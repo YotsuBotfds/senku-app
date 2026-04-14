@@ -80,6 +80,13 @@ Mobile:
 - Use `puppeteer` when you need to verify browser behavior instead of relying on description alone
 - Do not treat either MCP as a replacement for repo-local validation, Android harnesses, or sidecar-backed coding work
 
+### MCP Usage Examples
+
+- `sequential-thinking`: “Break this problem into steps first, then recommend the smallest safe next move.”
+- `context7`: “Find the current docs for X and summarize the relevant setup steps for this repo.”
+- `puppeteer`: “Open this page, verify the button exists, and capture a screenshot.”
+- `git`: “Summarize the last commit affecting these files and explain the diff risk.”
+
 ## Testing
 
 - Read [`TESTING_METHODOLOGY.md`](./TESTING_METHODOLOGY.md) for the living desktop/mobile validation workflow
