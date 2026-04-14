@@ -87,6 +87,22 @@ Mobile:
 - `puppeteer`: “Open this page, verify the button exists, and capture a screenshot.”
 - `git`: “Summarize the last commit affecting these files and explain the diff risk.”
 
+### Default MCP Routing For This Repo
+
+- Guide reviewing:
+  - start with `sequential-thinking` for structured review
+  - use `git` for diff/risk/history context when comparing edits
+  - use `context7` only when a guide depends on external library or API docs
+  - keep `puppeteer` out of guide work unless a browser check is explicitly needed
+- Ingest / retrieval:
+  - start with `sequential-thinking` for change-risk planning
+  - use `git` for manifest/history/diff awareness around ingest changes
+  - use `context7` only if a retrieval or embedding dependency needs current docs
+  - keep `puppeteer` out unless a browser-facing harness is actually part of the problem
+- In both lanes:
+  - keep Codex focused on orchestration and final judgment
+  - prefer Qwen for cheap scouting, Spark for bounded patches, and GLM sidecars for longer async work
+
 ## Testing
 
 - Read [`TESTING_METHODOLOGY.md`](./TESTING_METHODOLOGY.md) for the living desktop/mobile validation workflow
