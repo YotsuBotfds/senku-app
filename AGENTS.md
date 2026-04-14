@@ -68,6 +68,7 @@ Mobile:
 ## Local MCP Helpers
 
 - [`opencode.json`](./opencode.json): enables repo-local MCP servers for OpenCode
+- This workspace is now a real local git repo, so the `git` MCP lane is available for history/diff/branch-aware work
 - `context7`: use for library/docs grounding when you want current API or setup details without generic web-search drift
 - `git`: use for repo history, diff, branch, and git-aware reasoning inside OpenCode; it only becomes useful in a real git checkout with a `.git` root
 - `sequential-thinking`: use for stepwise planning, decomposition, and “think before acting” prompts
