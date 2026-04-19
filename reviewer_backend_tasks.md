@@ -603,12 +603,13 @@ parallel fill-lane with no gate of its own.
 
 ### Lane H — Hygiene (safe-parallel, low priority)
 
-- `BACK-H-01` · **P2 · S · worker** · Consolidate tag normalization
+- `BACK-H-01` · **[done 2026-04-19 `92116a8`]** · **P2 · S · worker** · Consolidate tag normalization
   - Files: `query.py:5520-5540` + `ingest.py:418-440`; new
     `metadata_helpers.py` shared module
   - Behavior: DRY the `_normalize_metadata_tag` / `normalize_tag_value`
     duplication; both sides import from the shared helper; test asserts
     identical behavior
+  - **Landed 2026-04-19 (`92116a8`)** — `metadata_helpers.py` now exposes canonical `normalize_metadata_tag`, keeps `normalize_tag_value` as a compatibility wrapper, and the helper tests cover lowercasing, whitespace stripping, punctuation, unicode folding, and idempotency
 
 - `BACK-H-02` · **P2 · M · worker** · Registry from introspection
   - Files: `deterministic_special_case_registry.py`, new
@@ -673,3 +674,4 @@ _Append entries here as tasks ship. Format:
 | BACK-H-03 | done | codex | 2026-04-18 | 2026-04-19 | registry builder already accepts an optional `Callable[..., str]` in immutable Wave B code; overnight queue verified zero legacy `Callable[[], str]` hits and recorded the landing; commit `739d26f` |
 | BACK-H-06 | done | codex | 2026-04-18 | 2026-04-19 | `FtsRuntime` now documents the FTS5 then FTS4 then LIKE fallback chain, plus the expected performance gap between FTS and the slower correctness-net path; commit `c269abe` |
 | BACK-D-03 | done | codex | 2026-04-18 | 2026-04-19 | deterministic builder-missing telemetry and the debug-only fallback note were already live in immutable Wave B code; overnight queue re-verified the exact event name and a green full Python test run before recording the landing; commit `d88da35` |
+| BACK-H-01 | done | codex | 2026-04-18 | 2026-04-19 | metadata tag normalization now lives in shared `metadata_helpers.py` under canonical `normalize_metadata_tag`, with the older helper name preserved as a wrapper and helper tests expanded through unicode and idempotency cases; commit `92116a8` |
