@@ -34,6 +34,7 @@ public final class AnswerPresenterTest {
         assertEquals(List.of("success:INITIAL_PENDING"), host.events);
         assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
         assertEquals("resolved:final answer:7", host.lastResult.resolvedAnswerBody);
+        assertEquals(host.lastResult.answerRun.confidenceLabel, host.lastResult.confidenceLabel);
         assertNull(host.lastFailure);
     }
 
@@ -60,6 +61,7 @@ public final class AnswerPresenterTest {
         );
         assertSame(engine.preparedToReturn, host.lastPreparedPreview);
         assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
+        assertEquals(host.lastResult.answerRun.confidenceLabel, host.lastResult.confidenceLabel);
     }
 
     @Test
@@ -251,6 +253,9 @@ public final class AnswerPresenterTest {
         boolean deterministic,
         boolean abstain
     ) {
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel = deterministic
+            ? OfflineAnswerEngine.ConfidenceLabel.HIGH
+            : (abstain ? OfflineAnswerEngine.ConfidenceLabel.LOW : OfflineAnswerEngine.ConfidenceLabel.MEDIUM);
         return new OfflineAnswerEngine.AnswerRun(
             query,
             "final answer",
@@ -261,6 +266,8 @@ public final class AnswerPresenterTest {
             abstain,
             "subtitle",
             "rule-id",
+            null,
+            confidenceLabel,
             false,
             false
         );

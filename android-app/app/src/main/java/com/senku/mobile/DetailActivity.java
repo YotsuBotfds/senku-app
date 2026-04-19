@@ -93,6 +93,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final String EXTRA_BODY = "body";
     private static final String EXTRA_GUIDE_ID = "guide_id";
     private static final String EXTRA_RULE_ID = "rule_id";
+    private static final String EXTRA_CONFIDENCE_LABEL = "confidence_label";
     private static final String EXTRA_IS_ANSWER = "is_answer";
     private static final String EXTRA_SOURCES = "sources";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
@@ -244,6 +245,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String currentBody;
     private String currentGuideId;
     private String currentRuleId;
+    private OfflineAnswerEngine.ConfidenceLabel currentAnswerConfidenceLabel;
     private ArrayList<SearchResult> currentSources = new ArrayList<>();
     private final ArrayList<SearchResult> currentRelatedGuides = new ArrayList<>();
     private final ArrayList<SuggestChipModel> currentFollowUpSuggestions = new ArrayList<>();
@@ -452,12 +454,37 @@ public final class DetailActivity extends AppCompatActivity {
         String conversationId,
         String ruleId
     ) {
+        return newAnswerIntent(
+            context,
+            title,
+            subtitle,
+            body,
+            sources,
+            autoFollowUpQuery,
+            conversationId,
+            ruleId,
+            null
+        );
+    }
+
+    public static Intent newAnswerIntent(
+        Context context,
+        String title,
+        String subtitle,
+        String body,
+        List<SearchResult> sources,
+        String autoFollowUpQuery,
+        String conversationId,
+        String ruleId,
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel
+    ) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TITLE, safe(title));
         intent.putExtra(EXTRA_SUBTITLE, safe(subtitle));
         intent.putExtra(EXTRA_BODY, safe(body));
         intent.putExtra(EXTRA_GUIDE_ID, primaryGuideIdForSources(sources));
         intent.putExtra(EXTRA_RULE_ID, safe(ruleId));
+        intent.putExtra(EXTRA_CONFIDENCE_LABEL, confidenceLabelExtraValue(confidenceLabel));
         intent.putExtra(EXTRA_IS_ANSWER, true);
         intent.putExtra(EXTRA_SOURCES, new ArrayList<>(sources == null ? Collections.emptyList() : sources));
         intent.putExtra(EXTRA_AUTO_FOLLOWUP_QUERY, safe(autoFollowUpQuery));
@@ -488,6 +515,10 @@ public final class DetailActivity extends AppCompatActivity {
         intent.putExtra(
             EXTRA_SOURCES,
             new ArrayList<>(prepared == null || prepared.sources == null ? Collections.emptyList() : prepared.sources)
+        );
+        intent.putExtra(
+            EXTRA_CONFIDENCE_LABEL,
+            confidenceLabelExtraValue(prepared == null ? null : prepared.confidenceLabel)
         );
         intent.putExtra(EXTRA_AUTO_FOLLOWUP_QUERY, safe(autoFollowUpQuery));
         intent.putExtra(EXTRA_CONVERSATION_ID, safe(conversationId));
@@ -716,6 +747,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentBody = safe(intent.getStringExtra(EXTRA_BODY));
         currentGuideId = safe(intent.getStringExtra(EXTRA_GUIDE_ID)).trim();
         currentRuleId = safe(intent.getStringExtra(EXTRA_RULE_ID)).trim();
+        currentAnswerConfidenceLabel = confidenceLabelFromExtra(intent.getStringExtra(EXTRA_CONFIDENCE_LABEL));
         answerMode = intent.getBooleanExtra(EXTRA_IS_ANSWER, false);
         pendingAutoFollowUpQuery = safe(intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY)).trim();
         pendingGeneration = intent.getBooleanExtra(EXTRA_PENDING_GENERATION, false);
@@ -2931,7 +2963,8 @@ public final class DetailActivity extends AppCompatActivity {
             pendingHostBaseUrl,
             pendingHostModelId,
             pendingSystemPrompt,
-            pendingPrompt
+            pendingPrompt,
+            currentAnswerConfidenceLabel
         );
         setBusy(buildInFlightStatus(false), true);
         beginGenerationStallMonitor(requestToken);
@@ -2974,6 +3007,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentSubtitle = "";
         currentBody = buildGeneratingPreviewBody(preparedAnswer.sources.size());
         currentRuleId = "";
+        currentAnswerConfidenceLabel = preparedAnswer.confidenceLabel;
         currentSources = new ArrayList<>(preparedAnswer.sources);
         pendingHostEnabled = preparedAnswer.inferenceSettings != null && preparedAnswer.inferenceSettings.enabled;
         currentAnswerHostFallbackUsed = false;
@@ -2990,6 +3024,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentSubtitle = answerRun.subtitle;
         currentBody = result.resolvedAnswerBody;
         currentRuleId = safe(answerRun.ruleId).trim();
+        currentAnswerConfidenceLabel = result.confidenceLabel;
         currentSources = new ArrayList<>(result.answerSources);
         pendingHostEnabled = answerRun.hostBackendUsed;
         currentAnswerHostFallbackUsed = answerRun.hostFallbackUsed;
@@ -3001,6 +3036,10 @@ public final class DetailActivity extends AppCompatActivity {
     void clearTabletFollowUpSelectionState() {
         tabletComposerText = selectedTabletTurnId = selectedSourceKey = tabletEvidenceSelectionKey = "";
         tabletEvidenceXRefs.clear();
+    }
+
+    void setAnswerConfidenceLabel(OfflineAnswerEngine.ConfidenceLabel label) {
+        currentAnswerConfidenceLabel = label;
     }
 
     void maybeShowPrimarySourceProvenancePanel() {
@@ -3068,6 +3107,17 @@ public final class DetailActivity extends AppCompatActivity {
             @Override
             public void onAnswerBody(String partialAnswerBody) {
                 updateStreamingBody(requestToken, partialAnswerBody);
+            }
+
+            @Override
+            public void onConfidenceLabel(OfflineAnswerEngine.ConfidenceLabel label) {
+                runOnUiThread(() -> {
+                    if (requestToken != followUpRenderToken || isFinishing() || isDestroyed()) {
+                        return;
+                    }
+                    setAnswerConfidenceLabel(label);
+                    renderDetailState();
+                });
             }
 
             @Override
@@ -3255,6 +3305,7 @@ public final class DetailActivity extends AppCompatActivity {
         completedStreamingToken = requestToken;
         lastFailedQuery = safe(fallbackQuery).trim();
         currentBody = buildGenerationFailureBody(exc);
+        currentAnswerConfidenceLabel = null;
         answerMode = true;
     }
 
@@ -4495,6 +4546,13 @@ public final class DetailActivity extends AppCompatActivity {
             String backendValue = buildSerialBackendValue();
             if (!backendValue.isEmpty()) {
                 items.add(new MetaItem(backendValue, Tone.Accent, false));
+            }
+            if (!isAbstainRoute() && currentAnswerConfidenceLabel != null) {
+                if (currentAnswerConfidenceLabel == OfflineAnswerEngine.ConfidenceLabel.MEDIUM) {
+                    items.add(new MetaItem("likely match", Tone.Default, false));
+                } else if (currentAnswerConfidenceLabel == OfflineAnswerEngine.ConfidenceLabel.LOW) {
+                    items.add(new MetaItem("low confidence", Tone.Warn, false));
+                }
             }
             items.add(new MetaItem(
                 getSourcesMetaLabel(currentSources.size()),
@@ -5861,6 +5919,22 @@ public final class DetailActivity extends AppCompatActivity {
 
     private static String safe(String text) {
         return text == null ? "" : text;
+    }
+
+    private static String confidenceLabelExtraValue(OfflineAnswerEngine.ConfidenceLabel label) {
+        return label == null ? "" : label.name();
+    }
+
+    private static OfflineAnswerEngine.ConfidenceLabel confidenceLabelFromExtra(String rawValue) {
+        String normalized = safe(rawValue).trim();
+        if (normalized.isEmpty()) {
+            return null;
+        }
+        try {
+            return OfflineAnswerEngine.ConfidenceLabel.valueOf(normalized.toUpperCase(Locale.US));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     private static String shortHash(String hash) {

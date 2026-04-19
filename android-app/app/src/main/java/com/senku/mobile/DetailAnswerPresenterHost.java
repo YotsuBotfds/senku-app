@@ -86,6 +86,7 @@ final class DetailAnswerPresenterHost implements AnswerPresenter.Host {
         AnswerPresenter.Kind kind,
         AnswerPresenter.AnswerRunResult result
     ) {
+        activity.setAnswerConfidenceLabel(result == null ? null : result.confidenceLabel);
         activity.applyAnswerSuccessState(requestToken, result);
         if (kind == AnswerPresenter.Kind.TABLET_FOLLOWUP) {
             activity.clearTabletFollowUpSelectionState();

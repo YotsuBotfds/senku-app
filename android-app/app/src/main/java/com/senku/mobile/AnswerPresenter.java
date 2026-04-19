@@ -71,15 +71,18 @@ final class AnswerPresenter {
         final OfflineAnswerEngine.AnswerRun answerRun;
         final List<SearchResult> answerSources;
         final String resolvedAnswerBody;
+        final OfflineAnswerEngine.ConfidenceLabel confidenceLabel;
 
         AnswerRunResult(
             OfflineAnswerEngine.AnswerRun run,
             List<SearchResult> sources,
-            String resolvedBody
+            String resolvedBody,
+            OfflineAnswerEngine.ConfidenceLabel confidenceLabel
         ) {
             this.answerRun = run;
             this.answerSources = sources == null ? Collections.emptyList() : new ArrayList<>(sources);
             this.resolvedAnswerBody = safe(resolvedBody);
+            this.confidenceLabel = confidenceLabel;
         }
     }
 
@@ -241,7 +244,8 @@ final class AnswerPresenter {
         return new AnswerRunResult(
             answerRun,
             answerSources,
-            finalBodyResolver.resolve(answerRun == null ? null : answerRun.answerBody, requestToken)
+            finalBodyResolver.resolve(answerRun == null ? null : answerRun.answerBody, requestToken),
+            answerRun == null ? null : answerRun.confidenceLabel
         );
     }
 
