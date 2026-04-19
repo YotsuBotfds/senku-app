@@ -60,7 +60,7 @@ try {
     foreach ($required in @(
         "## Preflight",
         "### 1. Stale lock sweep",
-        "### 8. Run log directory prep",
+        "### 6. Queue note present and well-formed",
         "## Wrapper Exit",
         "Queue note tasks are already satisfied"
     )) {
