@@ -43,7 +43,7 @@ from lmstudio_utils import (
     normalize_lm_studio_url,
     should_try_embedding_fallback,
 )
-from metadata_helpers import normalize_tag_value, normalize_tags
+from metadata_helpers import normalize_metadata_tag, normalize_tags
 from token_estimation import estimate_tokens
 
 console = Console()
@@ -5722,7 +5722,7 @@ def _is_bridge_guide_metadata(meta):
     if isinstance(bridge_value, bool):
         return bridge_value
 
-    normalized_bridge = normalize_tag_value(bridge_value)
+    normalized_bridge = normalize_metadata_tag(bridge_value)
     if normalized_bridge:
         return normalized_bridge == "bridge-guide"
 
