@@ -277,7 +277,7 @@ parallel fill-lane with no gate of its own.
   - **Depends on BACK-D-01** (graduation manifest specifies which gate level
     applies per rule)
 
-- `BACK-D-03` · **P1 · XS · worker** · Surface builder-missing warnings
+- `BACK-D-03` · **[done 2026-04-19 `d88da35`]** · **P1 · XS · worker** · Surface builder-missing warnings
   - Files: `query.py:5496-5507` (`build_special_case_response`)
   - Behavior: when a rule fires but its builder is `None` or missing, emit a
     structured `deterministic.builder_missing` telemetry event and — in debug
@@ -286,6 +286,7 @@ parallel fill-lane with no gate of its own.
     user but still log.
   - Accept: unit test covers the missing-builder path; log event shows up in
     bench runs
+  - **Landed 2026-04-19 (`d88da35`)** — acceptance was already satisfied in immutable Wave B code from `af49d91`; the queue re-verified the exact `deterministic.builder_missing` event, the debug-only fallback note behavior, and a green full Python test run before recording the landing
 
 - `BACK-D-04` · **P0 · S · worker (test-infra)** · Near-miss false-positive panel
   - Files:
@@ -671,3 +672,4 @@ _Append entries here as tasks ship. Format:
 | BACK-U-01 | done | codex | 2026-04-19 | 2026-04-19 | desktop + Android introduce three-way `confident`/`uncertain_fit`/`abstain` answer mode with deterministic uncertain-fit body template and `UNSURE FIT` card variant; reuses U-02 escalation helper for safety-critical uncertain-fit; boundary tests + reviewer-worked example pass on both engines; phone + tablet artifacts under `artifacts/bench/wave_b_back-u-01_2026-04-19/`; commit `eb398dc` |
 | BACK-H-03 | done | codex | 2026-04-18 | 2026-04-19 | registry builder already accepts an optional `Callable[..., str]` in immutable Wave B code; overnight queue verified zero legacy `Callable[[], str]` hits and recorded the landing; commit `739d26f` |
 | BACK-H-06 | done | codex | 2026-04-18 | 2026-04-19 | `FtsRuntime` now documents the FTS5 then FTS4 then LIKE fallback chain, plus the expected performance gap between FTS and the slower correctness-net path; commit `c269abe` |
+| BACK-D-03 | done | codex | 2026-04-18 | 2026-04-19 | deterministic builder-missing telemetry and the debug-only fallback note were already live in immutable Wave B code; overnight queue re-verified the exact event name and a green full Python test run before recording the landing; commit `d88da35` |
