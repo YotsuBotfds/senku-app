@@ -41,16 +41,16 @@ try {
         "## Task 1 - `DAY-G-01` - Already landed"
     ) | Set-Content -Path $queueNotePath -Encoding UTF8
 
+    $wrapperScriptPath = (Join-Path $repoRoot "scripts/run_overnight_queue_wrapped.ps1").Replace("'", "''")
+    $escapedQueueNotePath = $queueNotePath.Replace("'", "''")
+    $escapedBranch = $currentBranch.Replace("'", "''")
+    $escapedRunLogDir = $runLogDir.Replace("'", "''")
+    $wrapperCommand = "& { & '$wrapperScriptPath' -QueueNote '$escapedQueueNotePath' -Branch '$escapedBranch' -RunLogDir '$escapedRunLogDir'; exit `$LASTEXITCODE }"
+
     $wrapper = Start-Process -FilePath $shellExe -WorkingDirectory $repoRoot -PassThru -Wait -NoNewWindow -ArgumentList @(
         "-NoProfile",
-        "-File",
-        (Join-Path $repoRoot "scripts/run_overnight_queue_wrapped.ps1"),
-        "-QueueNote",
-        $queueNotePath,
-        "-Branch",
-        $currentBranch,
-        "-RunLogDir",
-        $runLogDir
+        "-Command",
+        $wrapperCommand
     )
 
     $exitCode = $wrapper.ExitCode
