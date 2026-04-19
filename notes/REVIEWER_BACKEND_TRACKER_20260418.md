@@ -10,21 +10,21 @@ Purpose:
 - Use this file for live execution order and lane policy, not for the full
   task bodies — those live in the root plan.
 
-Wave B dispatch trigger:
-- `OPUS-E-06` closed. Specifically: a new `AnswerPresenter` class exists
-  in `android-app/app/src/main/java/com/senku/mobile/`, and
-  `OfflineAnswerEngine.generate()` is invoked from the Presenter — not
-  from `DetailActivity.java`. (Today there are three direct call sites
-  in the Activity at lines 2939, 3064, 3186.) The merge hazard that
-  gates Wave B is resolved the moment that split lands.
-- `OPUS-E-06` is a narrowly-scoped carve-out from `OPUS-E-05` — it does
-  **not** require resuming the wider E-05 refactor, and it does **not**
-  attempt the CP9 line-count gate on `DetailActivity.java`. Spec:
+Wave B dispatch trigger — **cleared 2026-04-18**:
+- `OPUS-E-06` landed (`b41128a`). `AnswerPresenter` and
+  `DetailAnswerPresenterHost` now own the three former
+  `OfflineAnswerEngine.generate()` callsites (pre-E-06 `DetailActivity.java`
+  lines 2939, 3064, 3186). `DetailActivity.java` is 6264 → 6063 lines.
+  JVM verification: `./gradlew :app:testDebugUnitTest --tests
+  com.senku.mobile.AnswerPresenterTest` green. Instrumented smoke:
+  `scripts/run_android_instrumented_ui_smoke.ps1 -Device emulator-5554`
+  2/2. Full posture sweep: `scripts/build_android_ui_state_pack_parallel.ps1`
+  green at 45/45 across `5556 / 5560 / 5554 / 5558`.
+- `OPUS-E-06` was a narrowly-scoped carve-out from `OPUS-E-05`; landing it
+  did not require resuming the wider E-05 refactor and did not attempt the
+  CP9 line-count gate. `OPUS-E-05` stays deferred. Spec:
   `notes/specs/answer_presenter_extraction_spec.md`.
-- CP9 (release-candidate gate: gallery rebuild + external-review
-  sign-off + `MainActivity.java` under 1500 lines) is **not** a Wave B
-  prerequisite. CP9 is release-readiness; the Wave B gate is refactor-
-  safety on the three `OfflineAnswerEngine.generate()` callsites only.
+- CP9 (release-candidate gate) remains independent of E-06.
 
 ## Current State
 
@@ -35,16 +35,13 @@ aware reranking, session-aware rather than purely single-turn, real offline
 path, explicit abstain, narrow deterministic surface. The remaining work is the
 more mature class of problem:
 
-As of the Sprint 2 closeout, Wave A is 22 done + 3 closeout rows now blocked
-on `BACK-P-04` (`BACK-R-03`, `BACK-P-01`, `BACK-P-02`) + 1 invalidated
-(`BACK-H-05`) + **1 newly-added P0** (`BACK-P-04`, opened 2026-04-18) out of
-26 original tasks. The Wave A closeout emulator run surfaced a pipeline bug
-in `mobile_pack.py`: the export writes `senku_manifest.json` with the SQLite's
-pre-upsert SHA, then mutates the SQLite via `_upsert_pack_meta(...)`, so the
-bundled manifest has always been stale and `PackInstaller.validateInstalledFile`
-throws on first install. `BACK-P-04` fixes the export ordering and re-exports
-the stock bundle; the three closeout rows re-run on the post-P-04 bundle.
-Wave B stays parked until `OPUS-E-06` is closed — that gate is unchanged.
+As of 2026-04-18, Wave A is 23 done + 3 closeout rows pending re-run
+(`BACK-R-03`, `BACK-P-01`, `BACK-P-02`) + 1 invalidated (`BACK-H-05`) out of
+26 original tasks. `BACK-P-04` (pack export SHA race) landed as `bbc1b1d`;
+the re-exported stock bundle is `aa1b399`. The closeout re-run on the
+post-P-04 bundle (`BACK-P-02` → `BACK-P-01` → `BACK-R-03`) is the only
+remaining path to formally close Wave A. Wave B (`BACK-U-01`, `U-02`,
+`U-03`) is un-gated — `OPUS-E-06` landed (`b41128a`).
 
 - **Deterministic false-positive control.** Backend-side closure is landed:
   graduation manifest, promotion metadata, semantic exclusion-list gate,
@@ -52,9 +49,9 @@ Wave B stays parked until `OPUS-E-06` is closed — that gate is unchanged.
   mobile parity guard are all in.
 - **Uncertainty communication.** Backend-side coverage now includes the abstain
   tuning note + regression runner (`BACK-U-04`) and the Wave B confidence-label
-  contract tests. The remaining uncertainty work is intentionally UI-crossing
-  and parked behind `OPUS-E-06` (the AnswerPresenter carve-out from
-  `OPUS-E-05`).
+  contract tests. The remaining UI-crossing uncertainty work (`BACK-U-01` /
+  `U-02` / `U-03`) is un-gated as of 2026-04-18 (`OPUS-E-06` landed
+  `b41128a`) and dispatchable as Wave B.
 - **On-device latency.** Backend instrumentation is landed: structured
   retrieval / rerank / prompt-build / first-token / decode / total timing,
   `SenkuLatency` events, `SessionMemory` persistence, `PackRepository` stage
@@ -69,8 +66,9 @@ worth tracking alongside):
 - bridge-guide demotion is now context-aware for planning/readiness acute
   queries
 - FTS runtime selection and install-time schema validation are landed in code;
-  emulator validation for `BACK-P-01` and `BACK-P-02` is blocked behind
-  `BACK-P-04` (pack export SHA race — see `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18.md`)
+  `BACK-P-04` (pack export SHA race) landed (`bbc1b1d`); `BACK-P-01` / `BACK-P-02`
+  emulator validation is pending on the post-P-04 stock bundle — see
+  `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18.md`
 
 ## Worker Split
 
@@ -344,11 +342,9 @@ Landed backend-side:
   backend-side spec before UI plumbing starts
 
 Still live:
-- `BACK-U-01`, `BACK-U-02`, and `BACK-U-03` remain parked behind
-  `OPUS-E-06`; this is now a surface-integration gate, not a backend gap.
-  `OPUS-E-06` is the narrow AnswerPresenter carve-out spec at
-  `notes/specs/answer_presenter_extraction_spec.md` — it does **not** require
-  resuming the wider `OPUS-E-05` refactor
+- `BACK-U-01`, `BACK-U-02`, and `BACK-U-03` are **un-gated** as of 2026-04-18
+  (`OPUS-E-06` landed `b41128a`); dispatch as Wave B. `OPUS-E-05` stays
+  deferred.
 
 ### Latency lane
 
@@ -374,8 +370,7 @@ Confirmed:
 
 Still live:
 - `BACK-R-03` still needs emulator validation across the four-posture matrix —
-  blocked on `BACK-P-04` (stock install must reach a healthy state before
-  the idle-reset scenario is meaningful)
+  post-P-04 re-run pending on the restored stock install path.
 
 ### Pack lane
 
@@ -387,13 +382,10 @@ Confirmed:
 - bridge-tag consistency audit is landed at ingest time
 
 Still live:
-- `BACK-P-04` (new 2026-04-18, P0) — `mobile_pack.py:1455-1503` writes the
-  manifest before `_upsert_pack_meta(...)` mutates the SQLite, so every
-  shipped pack carries a stale `sqlite_sha256` and stock install fails at
-  `PackInstaller.validateInstalledFile`. Must land before closeout re-runs.
 - `BACK-P-01` and `BACK-P-02` still need emulator validation with stock,
-  degraded, and corrupted packs — blocked on `BACK-P-04` (the stock
-  install path itself is broken today)
+  degraded, and corrupted packs on the post-P-04 bundle (`BACK-P-04` landed
+  `bbc1b1d`, stock bundle re-exported `aa1b399`). Target:
+  `artifacts/bench/wave_a_closeout_20260418_rerun/`.
 
 ## Rule
 
@@ -402,48 +394,46 @@ pack hits LiteRT `500` failures, mark the wave as host-contaminated in the
 state log and re-run before drawing conclusions. This is the same discipline
 `APP_ROUTING_HARDENING_TRACKER_20260417.md` §5 applies to the guide lane.
 
-## Dispatch Strategy — Two Waves Around `OPUS-E-06`
+## Dispatch Strategy — Post-`OPUS-E-06` State
 
-Lane U (`BACK-U-01`, `U-02`, `U-03`) plumbs new `AnswerRun` fields through
-`DetailActivity.java`, where the three `OfflineAnswerEngine.generate()`
-callsites still live (lines 2939, 3064, 3186). `OPUS-E-05` is paused at
-partial completion — the View-layer formatters landed, but the Controller-
-layer Presenter did not. `OPUS-E-06` is the narrow carve-out that moves
-those three callsites behind a single `AnswerPresenter` boundary (spec:
-`notes/specs/answer_presenter_extraction_spec.md`). Landing Lane U on top
-of the current Activity forces merge churn on a 6264-line file.
-`BACK-U-04` is script + note only and is **not** gated.
+`OPUS-E-06` landed 2026-04-18 (`b41128a`): `AnswerPresenter` and
+`DetailAnswerPresenterHost` own the three former
+`OfflineAnswerEngine.generate()` callsites; `DetailActivity.java` is 6264
+→ 6063 lines. `OPUS-E-05` stays deferred. Lane U plumbing now targets the
+single Presenter callsite + a small `Host.onSuccess(...)` block rather
+than three near-duplicate `executor.execute(...)` blocks in the Activity.
 
 **Wave A — non-UI-crossing backend (26 original tasks):**
-- 22 done + 3 emulator validations pending (`BACK-R-03`, `BACK-P-01`,
+- 23 done + 3 emulator re-run pending (`BACK-R-03`, `BACK-P-01`,
   `BACK-P-02`) + 1 invalidated (`BACK-H-05`)
-- Zero collision with `OPUS-E-05` / `OPUS-E-06` — the remaining work is
-  validation only
+- `BACK-P-04` landed `bbc1b1d`; stock bundle re-exported `aa1b399`; closeout
+  re-run is the only remaining path to formally close Wave A.
 
-**Wave B — Lane U (3 tasks, dispatch after `OPUS-E-06` lands):**
-- `BACK-U-01`, `BACK-U-02`, `BACK-U-03` — edit the new `AnswerPresenter`
-  callsite + a small `Host.onSuccess(...)` block in the Activity instead
-  of three near-duplicate `executor.execute(...)` blocks
-- During the wait, Spark xhigh drafts the MetaStrip confidence-token
-  addendum, the PaperAnswerCard uncertain-fit addendum, and the escalation
-  copy draft, so Wave B ships within a day of E-06 closing
+**Wave B — Lane U (3 tasks, dispatchable now):**
+- `BACK-U-01`, `BACK-U-02`, `BACK-U-03` — edit the `AnswerPresenter` callsite
+  plus a small `Host.onSuccess(...)` block in the Activity. `BACK-U-04` is
+  script + note only and was never gated (landed).
+- Scout-tier Wave B spec addenda (MetaStrip confidence-token, PaperAnswerCard
+  uncertain-fit, escalation copy draft) should be in hand for the dispatch
+  prompt.
 
 ## Immediate Next Move
 
-1. Land `BACK-P-04` — fix the `mobile_pack.py:1455-1503` ordering so
-   `_upsert_pack_meta(...)` closes before `_file_info(sqlite_path)`
-   computes the manifest's SHA, add the pipeline regression test, and
-   re-export the stock bundle into `android-app/app/src/main/assets/mobile_pack/`
-   with manifest-parity sanity gate.
+1. ~~Land `BACK-P-04`.~~ **Done** 2026-04-18 (`bbc1b1d`); stock bundle
+   re-exported (`aa1b399`). Pipeline regression test is in `tests/`.
 2. Re-run Wave A closeout emulator validation on the post-P-04 stock
    bundle: `BACK-P-02` → `BACK-P-01` → `BACK-R-03` (in that order; P-02
-   is the fastest signal that the pipeline fix is effective).
-3. If validation is green, flip those three rows from `blocked` to `done`
-   in `reviewer_backend_tasks.md` and close Wave A formally.
-4. Dispatch `OPUS-E-06` in parallel with steps 1-2 — no file overlap, no
-   emulator contention until the final build_android_ui_state_pack_parallel
-   sweep.
-5. Keep Wave B parked until `OPUS-E-06` is d
+   is the fastest signal that the pipeline fix is effective). Target
+   artifact directory: `artifacts/bench/wave_a_closeout_20260418_rerun/`.
+3. If validation is green, flip those three rows from `pending` to `done`
+   in `reviewer_backend_tasks.md` State Log and close Wave A formally.
+4. ~~Dispatch `OPUS-E-06`.~~ **Done** 2026-04-18 (`b41128a`); Lane U is
+   un-gated.
+5. Dispatch Wave B (`BACK-U-01` / `U-02` / `U-03`) against the
+   `AnswerPresenter` callsite (`android-app/app/src/main/java/com/senku/mobile/AnswerPresenter.java`),
+   not the three former `DetailActivity.java` callsites. Scout-tier spec
+   addenda (MetaStrip confidence-token, PaperAnswerCard uncertain-fit,
+   escalation copy draft) should be drafted during the Wave A re-run.
 
 ## State Log
 
