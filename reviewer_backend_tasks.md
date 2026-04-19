@@ -324,7 +324,7 @@ parallel fill-lane with no gate of its own.
 
 ### Lane U — Uncertainty / abstain (reviewer priority #2)
 
-- `BACK-U-01` · **P0 · L · worker** · Low-applicability response mode
+- `BACK-U-01` · **[done 2026-04-19 `eb398dc`]** · **P0 · L · worker** · Low-applicability response mode
   - Files: `query.py:9879+` (`_should_abstain` + sibling helpers);
     `android-app/app/src/main/java/com/senku/mobile/OfflineAnswerEngine.java:184-195`
     (`shouldAbstain`) and `generate()` branching
@@ -343,7 +343,7 @@ parallel fill-lane with no gate of its own.
   - Spec: new `notes/specs/uncertain_fit_mode_spec.md`
   - **Depends on BACK-U-03** (confidence label must exist before the branching
     logic has a signal to key off)
-  - **Gate cleared** — `OPUS-E-06` landed 2026-04-18 (`b41128a`); dispatchable
+  - **Landed 2026-04-19 (`eb398dc`)** — `notes/specs/uncertain_fit_mode_spec.md` and `notes/specs/paper_answer_card_uncertain_fit_addendum.md` pin the three-way mode contract and `UNSURE FIT` card variant; reviewer example (`He has barely slept, keeps pacing...`) routes to uncertain-fit; phone + tablet artifacts at `artifacts/bench/wave_b_back-u-01_2026-04-19/`
 
 - `BACK-U-02` · **[done 2026-04-18 `d974ebc`]** · **P0 · S · worker** · Safety-critical escalation in abstain
   - Files:
@@ -665,3 +665,4 @@ _Append entries here as tasks ship. Format:
 | BACK-T-04 | open | — | 2026-04-18 | — | fix `Quote-AndroidShellArg` not-recognized in `scripts/run_android_session_flow.ps1` so the session-flow harness can drive idle-reset scenarios again; post-release |
 | BACK-U-02 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android abstain responses now prepend the pinned safety-critical escalation line above "Closest matches" when the upstream safety flag is set, with table-driven tests and phone + tablet validation artifacts; commit `d974ebc` |
 | BACK-U-03 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android compute and surface high/medium/low answer confidence labels; MetaStrip renders likely-match and low-confidence tokens with phone + tablet instrumentation proof; commit `af49d91` |
+| BACK-U-01 | done | codex | 2026-04-19 | 2026-04-19 | desktop + Android introduce three-way `confident`/`uncertain_fit`/`abstain` answer mode with deterministic uncertain-fit body template and `UNSURE FIT` card variant; reuses U-02 escalation helper for safety-critical uncertain-fit; boundary tests + reviewer-worked example pass on both engines; phone + tablet artifacts under `artifacts/bench/wave_b_back-u-01_2026-04-19/`; commit `eb398dc` |
