@@ -63,22 +63,26 @@ production — see `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Follow-ups
 `BACK-R-05` (Android anchor-prior decision) and `BACK-T-04` (harness repair)
 track post-release.
 
-**Wave B status:** un-gated 2026-04-18. `OPUS-E-06` landed (`b41128a`):
-`AnswerPresenter` and `DetailAnswerPresenterHost` exist in
+**Wave B status:** `BACK-U-03` landed 2026-04-18 (`af49d91`) after the
+2026-04-18 `OPUS-E-06` unblock (`b41128a`): `AnswerPresenter` and
+`DetailAnswerPresenterHost` exist in
 `android-app/app/src/main/java/com/senku/mobile/`, and all three former
 `DetailActivity.java` callsites (lines 2939, 3064, 3186 in the pre-E-06
 6264-line baseline) now route through the Presenter — Activity is down to
-6063 lines. Wave B (`BACK-U-01`, `U-02`, `U-03`) is dispatchable.
-`OPUS-E-05` stays deferred; CP9 release-candidate gate is independent of E-06.
+6063 lines. Remaining Wave B items are `BACK-U-01` and `BACK-U-02`;
+`BACK-U-01` is now unblocked because the confidence-label dependency is
+satisfied, and `BACK-U-02` was never dependency-gated. `OPUS-E-05` stays
+deferred; CP9 release-candidate gate is independent of E-06.
 
 **Reviewer-priority status:**
 - **Deterministic false-positive risk** — backend controls landed: graduation
   manifest, promotion metadata, exclusion-list semantic gate, near-miss panel,
   builder-missing telemetry, and mobile-parity guard. Lane `D` is closed.
 - **Low-applicability abstain / uncertainty** — backend tuning note and
-  regression runner (`BACK-U-04`) are landed; the UI-crossing answer-shape work
-  (`BACK-U-01`..`U-03`) is un-gated (`OPUS-E-06` landed `b41128a`) and
-  dispatchable as Wave B.
+  regression runner (`BACK-U-04`) are landed, and `BACK-U-03` landed
+  2026-04-18 (`af49d91`). The remaining UI-crossing uncertainty work is
+  `BACK-U-01` / `U-02`; `BACK-U-01` is unblocked and `BACK-U-02` was never
+  dependency-gated.
 - **On-device latency honesty** — per-stage timing, structured `SenkuLatency`
   events, `SessionMemory` persistence, `PackRepository` stage timing, and the
   desktop summary tool are landed. Lane `L` is closed.
@@ -148,10 +152,11 @@ uncertain-fit match, no-match abstain — instead of the current two.
 > **Gate cleared 2026-04-18.** `OPUS-E-06` landed (`b41128a`):
 > `AnswerPresenter` + `DetailAnswerPresenterHost` own the three former
 > `OfflineAnswerEngine.generate()` callsites; `DetailActivity.java` is
-> 6264 → 6063 lines. Phase B-2 (`BACK-U-01` / `U-02` / `U-03`) is
-> dispatchable. `BACK-U-04` is landed; Wave B scout-tier spec addenda
-> (MetaStrip confidence token, PaperAnswerCard uncertain-fit, escalation
-> copy) should be in hand for the dispatch prompt.
+> 6264 → 6063 lines. `BACK-U-03` landed 2026-04-18 (`af49d91`), so the
+> remaining Phase B-2 work is `BACK-U-01` / `U-02`. `BACK-U-04` is landed;
+> `BACK-U-01` is now unblocked, `BACK-U-02` was never dependency-gated, and
+> Wave B scout-tier spec addenda (MetaStrip confidence token, PaperAnswerCard
+> uncertain-fit, escalation copy) should be in hand for the dispatch prompt.
 
 `BACK-U-01` · `BACK-U-02` · `BACK-U-03` · `BACK-U-04`
 
@@ -355,7 +360,7 @@ parallel fill-lane with no gate of its own.
     should match the crisis-gestalt interpreter output
   - **Gate cleared** — `OPUS-E-06` landed 2026-04-18 (`b41128a`); dispatchable
 
-- `BACK-U-03` · **P1 · M · worker** · Confidence label on every answer
+- `BACK-U-03` · **[done 2026-04-18 `af49d91`]** · **P1 · M · worker** · Confidence label on every answer
   - Files: `query.py:~8488` (post-rerank pipeline), new helper
     `_confidence_label(reranked, scenario_frame)`; Android `AnswerRun` /
     `AnswerProgressListener` plumbing
@@ -368,7 +373,7 @@ parallel fill-lane with no gate of its own.
   - Accept: every answer surface carries a confidence tag; label matches
     ground-truth on ≥ 80 % of a curated 50-query panel
   - Coordinates with OPUS F-02 (MetaStrip primitive — already landed)
-  - **Gate cleared** — `OPUS-E-06` landed 2026-04-18 (`b41128a`); dispatchable
+  - **Landed 2026-04-18 (`af49d91`)** - desktop 50-query confidence panel + Android `ConfidenceTokenRenderTest` prove phone + tablet rendering; `notes/specs/meta_strip_confidence_token_addendum.md` captures the MetaStrip contract
 
 - `BACK-U-04` · **P1 · M · worker (test-infra)** · Abstain tuning analysis + panel
   - Files: new `notes/ABSTAIN_TUNING_ANALYSIS_<date>.md`, new
@@ -658,3 +663,4 @@ _Append entries here as tasks ship. Format:
 | OPUS-E-06 | done | codex | 2026-04-18 | 2026-04-18 | AnswerPresenter carve-out landed (`b41128a`); three `OfflineAnswerEngine.generate()` callsites moved behind `AnswerPresenter`; `DetailActivity.java` 6264 → 6063; Wave B un-gated |
 | BACK-R-05 | open | — | 2026-04-18 | — | decide whether to productize anchor-prior on Android (flip `SessionMemory.java:22` + wire production caller) or remove the half-commit code; scout spike; post-release |
 | BACK-T-04 | open | — | 2026-04-18 | — | fix `Quote-AndroidShellArg` not-recognized in `scripts/run_android_session_flow.ps1` so the session-flow harness can drive idle-reset scenarios again; post-release |
+| BACK-U-03 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android compute and surface high/medium/low answer confidence labels; MetaStrip renders likely-match and low-confidence tokens with phone + tablet instrumentation proof; commit `af49d91` |

@@ -48,17 +48,19 @@ sticky-anchor idle-reset path is non-observable in production — see
 (post-release, not Wave B dependencies): `BACK-R-05` (Android anchor-prior
 productization decision) and `BACK-T-04` (fix `Quote-AndroidShellArg` in
 the session-flow harness). Wave B (`BACK-U-01` / `U-02` / `U-03`) is
-un-gated — `OPUS-E-06` landed (`b41128a`).
+no longer dependency-blocked: `BACK-U-03` landed 2026-04-18 (`af49d91`), so
+the remaining Wave B uncertainty work is `BACK-U-01` / `U-02`; `BACK-U-01`
+is now unblocked and `BACK-U-02` was never dependency-gated.
 
 - **Deterministic false-positive control.** Backend-side closure is landed:
   graduation manifest, promotion metadata, semantic exclusion-list gate,
   builder-missing telemetry, equal-priority tie-break, near-miss tests, and
   mobile parity guard are all in.
 - **Uncertainty communication.** Backend-side coverage now includes the abstain
-  tuning note + regression runner (`BACK-U-04`) and the Wave B confidence-label
-  contract tests. The remaining UI-crossing uncertainty work (`BACK-U-01` /
-  `U-02` / `U-03`) is un-gated as of 2026-04-18 (`OPUS-E-06` landed
-  `b41128a`) and dispatchable as Wave B.
+  tuning note + regression runner (`BACK-U-04`), the Wave B confidence-label
+  contract tests, and the landed confidence-label plumbing (`BACK-U-03`
+  `af49d91`). Remaining Wave B uncertainty work is `BACK-U-01` / `U-02`;
+  `BACK-U-01` is unblocked and `BACK-U-02` was never dependency-gated.
 - **On-device latency.** Backend instrumentation is landed: structured
   retrieval / rerank / prompt-build / first-token / decode / total timing,
   `SenkuLatency` events, `SessionMemory` persistence, `PackRepository` stage
@@ -151,8 +153,9 @@ Risk:
   surface into "uncertain")
 
 Current implication:
-- confidence-label plumbing (`BACK-U-03`) must land before the low-
-  applicability branch (`BACK-U-01`) has a signal to key off
+- confidence-label plumbing (`BACK-U-03`) landed 2026-04-18 (`af49d91`), so
+  the low-applicability branch (`BACK-U-01`) now has its signal; `BACK-U-02`
+  was never dependency-gated
 
 ### 3. Latency honesty without overclaiming
 
@@ -274,7 +277,7 @@ Status:
 
 Why second:
 - reviewer's #2 unresolved risk
-- depends on `BACK-U-03` confidence label landing first within the wave
+- `BACK-U-03` confidence-label dependency is now satisfied (`af49d91`)
 - addresses the reviewer's sleep/pacing example directly
 
 Current target:
@@ -349,11 +352,13 @@ Landed backend-side:
 - regression runner + baseline artifact are checked in via `BACK-U-04`
 - confidence-label contract tests are checked in so Wave B has a locked
   backend-side spec before UI plumbing starts
+- `BACK-U-03` landed 2026-04-18 (`af49d91`): desktop + Android now surface
+  high / medium / low confidence labels end-to-end
 
 Still live:
-- `BACK-U-01`, `BACK-U-02`, and `BACK-U-03` are **un-gated** as of 2026-04-18
-  (`OPUS-E-06` landed `b41128a`); dispatch as Wave B. `OPUS-E-05` stays
-  deferred.
+- `BACK-U-01` and `BACK-U-02` remain live. `BACK-U-03` landed 2026-04-18
+  (`af49d91`), so `BACK-U-01` is now unblocked; `BACK-U-02` was never
+  dependency-gated. `OPUS-E-05` stays deferred.
 
 ### Latency lane
 
@@ -411,6 +416,9 @@ Landed this closeout:
   truncated variants all reach the expected code paths. Artifacts at
   `artifacts/bench/wave_a_closeout_20260418_rerun/`.
 - FTS status addendum: `notes/ANDROID_SQLITE_FTS5_STATUS_2026-04-18.md`.
+- `BACK-U-03` landed `af49d91`; desktop + Android now compute and surface
+  high / medium / low confidence labels, and MetaStrip token rendering has
+  phone + tablet instrumentation proof.
 
 ## Rule
 
@@ -435,10 +443,12 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
   `BACK-P-02` + `BACK-P-01` re-ran green; `BACK-R-03` was invalidated
   because Android anchor-prior is feature-gated off in production.
 
-**Wave B — Lane U (3 tasks, dispatchable now):**
-- `BACK-U-01`, `BACK-U-02`, `BACK-U-03` — edit the `AnswerPresenter` callsite
-  plus a small `Host.onSuccess(...)` block in the Activity. `BACK-U-04` is
-  script + note only and was never gated (landed).
+**Wave B — Lane U (2 tasks remaining):**
+- `BACK-U-01` and `BACK-U-02` remain on the `AnswerPresenter` callsite plus a
+  small `Host.onSuccess(...)` block in the Activity. `BACK-U-03` landed
+  `af49d91`, which satisfies the confidence-label dependency for `BACK-U-01`;
+  `BACK-U-02` was never dependency-gated. `BACK-U-04` is script + note only
+  and was never gated (landed).
 - Scout-tier Wave B spec addenda (MetaStrip confidence-token, PaperAnswerCard
   uncertain-fit, escalation copy draft) should be in hand for the dispatch
   prompt.
@@ -453,7 +463,7 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
 3. ~~Flip closeout rows.~~ **Done** 2026-04-18: P-02 / P-01 flipped to `done`,
    R-03 flipped to `invalidated`. Wave A formally closed.
 4. ~~Dispatch `OPUS-E-06`.~~ **Done** 2026-04-18 (`b41128a`); Lane U un-gated.
-5. Dispatch Wave B (`BACK-U-01` / `U-02` / `U-03`) against the
+5. Dispatch the remaining Wave B uncertainty work (`BACK-U-01` / `U-02`) against the
    `AnswerPresenter` callsite
    (`android-app/app/src/main/java/com/senku/mobile/AnswerPresenter.java`).
    Scout-tier spec addenda in progress (MetaStrip confidence token,
