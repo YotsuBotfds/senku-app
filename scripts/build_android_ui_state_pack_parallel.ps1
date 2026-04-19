@@ -1,0 +1,185 @@
+param(
+    [string]$OutputRoot = "artifacts/ui_state_pack",
+    [switch]$SkipBuild,
+    [switch]$SkipHostStates,
+    [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
+    [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
+    [int]$MaxParallelDevices = 4
+)
+
+$ErrorActionPreference = "Stop"
+if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue)) {
+    $PSNativeCommandUseErrorActionPreference = $false
+}
+
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$buildScript = Join-Path $PSScriptRoot "build_android_ui_state_pack.ps1"
+$gradlew = Join-Path (Join-Path $repoRoot "android-app") "gradlew.bat"
+if (-not (Test-Path -LiteralPath $buildScript)) {
+    throw "build_android_ui_state_pack.ps1 not found at $buildScript"
+}
+if (-not (Test-Path -LiteralPath $gradlew)) {
+    throw "gradlew.bat not found at $gradlew"
+}
+
+$runId = Get-Date -Format "yyyyMMdd_HHmmss"
+$roles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")
+$active = New-Object System.Collections.Generic.List[object]
+$sliceFailures = New-Object System.Collections.Generic.List[object]
+$logsDir = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "parallel_logs")
+New-Item -ItemType Directory -Force -Path $logsDir | Out-Null
+
+if (-not $SkipBuild) {
+    Push-Location (Join-Path $repoRoot "android-app")
+    try {
+        & $gradlew :app:assembleDebug :app:assembleDebugAndroidTest
+        if ($LASTEXITCODE -ne 0) {
+            throw "Gradle build failed"
+        }
+    } finally {
+        Pop-Location
+    }
+}
+
+function Start-RoleProcess {
+    param([string]$Role)
+
+    $logPath = Join-Path $logsDir ($Role + ".out.log")
+    $errPath = Join-Path $logsDir ($Role + ".err.log")
+    $exitCodePath = Join-Path $logsDir ($Role + ".exitcode.txt")
+    $launcherPath = Join-Path $logsDir ($Role + ".launcher.ps1")
+    $invokeLine = '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild -HostInferenceUrl "{4}" -HostInferenceModel "{5}"{6}' -f `
+        $buildScript,
+        $OutputRoot,
+        $runId,
+        $Role,
+        $HostInferenceUrl,
+        $HostInferenceModel,
+        $(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })
+    $launcherLines = @(
+        '$ErrorActionPreference = ''Stop''',
+        $invokeLine,
+        '$code = $LASTEXITCODE',
+        ('Set-Content -LiteralPath "{0}" -Value $code -Encoding ASCII' -f $exitCodePath),
+        'exit $code'
+    )
+    Set-Content -LiteralPath $launcherPath -Value $launcherLines -Encoding UTF8
+
+    $argList = @(
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy", "Bypass",
+        "-File", $launcherPath
+    )
+
+    $process = Start-Process -FilePath "powershell" -ArgumentList $argList -RedirectStandardOutput $logPath -RedirectStandardError $errPath -PassThru -WindowStyle Hidden
+    return [pscustomobject]@{
+        role = $Role
+        process = $process
+        log_path = $logPath
+        err_path = $errPath
+        exit_code_path = $exitCodePath
+    }
+}
+
+function Get-RoleProcessExitCode {
+    param([object]$Entry)
+
+    $Entry.process.WaitForExit()
+    $Entry.process.Refresh()
+
+    if (Test-Path -LiteralPath $Entry.exit_code_path) {
+        $rawExitCode = Get-Content -LiteralPath $Entry.exit_code_path -Raw
+        $parsedExitCode = 0
+        if ([int]::TryParse($rawExitCode.Trim(), [ref]$parsedExitCode)) {
+            return $parsedExitCode
+        }
+    }
+
+    return [int]$Entry.process.ExitCode
+}
+
+function Get-RoleFailureDetails {
+    param(
+        [object]$Entry,
+        [int]$ExitCode
+    )
+
+    $tail = ""
+    if (Test-Path -LiteralPath $Entry.log_path) {
+        $tail = (Get-Content -LiteralPath $Entry.log_path -Tail 80 | Out-String)
+    }
+    if (Test-Path -LiteralPath $Entry.err_path) {
+        $tail += (Get-Content -LiteralPath $Entry.err_path -Tail 80 | Out-String)
+    }
+
+    return [pscustomobject]@{
+        role = $Entry.role
+        exit_code = $exitCode
+        details = $tail.Trim()
+        log_path = $Entry.log_path
+        err_path = $Entry.err_path
+    }
+}
+
+function Complete-FinishedRoleProcesses {
+    param([object[]]$FinishedEntries)
+
+    foreach ($entry in @($FinishedEntries)) {
+        $exitCode = Get-RoleProcessExitCode -Entry $entry
+        $null = $active.Remove($entry)
+        if ($exitCode -ne 0) {
+            $sliceFailures.Add((Get-RoleFailureDetails -Entry $entry -ExitCode $exitCode))
+        }
+    }
+}
+
+foreach ($role in $roles) {
+    while ($active.Count -ge [Math]::Max(1, $MaxParallelDevices)) {
+        $finished = @($active | Where-Object { $_.process.HasExited })
+        if ($finished.Count -eq 0) {
+            Start-Sleep -Seconds 2
+            continue
+        }
+        Complete-FinishedRoleProcesses -FinishedEntries $finished
+    }
+    $active.Add((Start-RoleProcess -Role $role))
+}
+
+while ($active.Count -gt 0) {
+    $finished = @($active | Where-Object { $_.process.HasExited })
+    if ($finished.Count -eq 0) {
+        Start-Sleep -Seconds 2
+        continue
+    }
+    Complete-FinishedRoleProcesses -FinishedEntries $finished
+}
+
+& powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $buildScript -OutputRoot $OutputRoot -RunId $runId -FinalizeOnly -SkipBuild -HostInferenceUrl $HostInferenceUrl -HostInferenceModel $HostInferenceModel
+$finalizeExitCode = $LASTEXITCODE
+$summaryPath = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "summary.json")
+
+if ($sliceFailures.Count -gt 0) {
+    foreach ($failure in $sliceFailures) {
+        $message = "Role slice failed on {0} with exit code {1}." -f $failure.role, $failure.exit_code
+        if (-not [string]::IsNullOrWhiteSpace([string]$failure.details)) {
+            $message = "{0}{1}{2}" -f $message, [Environment]::NewLine, $failure.details
+        }
+        [Console]::Error.WriteLine($message)
+        Write-Host ("Logs: {0} | {1}" -f $failure.log_path, $failure.err_path)
+    }
+}
+
+if ($finalizeExitCode -ne 0) {
+    exit $finalizeExitCode
+}
+if (-not (Test-Path -LiteralPath $summaryPath)) {
+    [Console]::Error.WriteLine("Finalization did not produce summary.json at $summaryPath")
+    exit 1
+}
+Write-Host ("Summary: {0}" -f $summaryPath)
+if ($sliceFailures.Count -gt 0) {
+    exit 1
+}
+
+exit 0

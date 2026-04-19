@@ -1,0 +1,1276 @@
+param(
+    [string]$Device = "RFCX607ZM8L",
+    [string]$TestClass = "com.senku.mobile.PromptHarnessSmokeTest",
+    [switch]$BuildOnly,
+    [switch]$SkipBuild,
+    [switch]$SkipInstall,
+    [string]$ScriptedQuery = "",
+    [switch]$ScriptedAsk,
+    [string]$ScriptedFollowUpQuery = "",
+    [ValidateSet("detail", "results")]
+    [string]$ScriptedExpectedSurface = "detail",
+    [string]$ScriptedExpectedTitle = "",
+    [string]$ScriptedCaptureLabel = "",
+    [string]$ScriptedRequiredResId = "",
+    [int]$ScriptedTimeoutMs = 0,
+    [int]$ScriptedExtraSettleMs = 0,
+    [switch]$AllowHostFallback,
+    [switch]$EnableHostInferenceSmoke,
+    [switch]$EnableFollowUpSmoke,
+    [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
+    [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
+    [string]$ArtifactRoot = "artifacts/instrumented_ui_smoke",
+    [ValidateSet("", "phone-basic", "phone-host", "phone-full", "tablet-landscape", "large-font", "tablet-large-font")]
+    [string]$SmokePreset = "",
+    [ValidateSet("basic", "host", "full", "custom")]
+    [string]$SmokeProfile = "basic",
+    [ValidateSet("portrait", "landscape")]
+    [string]$Orientation = "portrait",
+    [double]$FontScale = 1.0,
+    [switch]$CaptureLogcat,
+    [switch]$ClearLogcatBeforeRun,
+    [string]$LogcatSpec = "SenkuPackRepo:D SenkuMobile:D AndroidJUnitRunner:D TestRunner:D *:S",
+    [string]$SummaryPath = "",
+    [switch]$SkipDeviceLock
+)
+
+$ErrorActionPreference = "Stop"
+if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue)) {
+    $PSNativeCommandUseErrorActionPreference = $false
+}
+
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$androidRoot = Join-Path $repoRoot "android-app"
+$gradlew = Join-Path $androidRoot "gradlew.bat"
+$adb = Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"
+$lockRoot = Join-Path $repoRoot "artifacts\\harness_locks"
+$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
+
+if (-not (Test-Path -LiteralPath $gradlew)) {
+    throw "gradlew.bat not found at $gradlew"
+}
+if (-not (Test-Path -LiteralPath $adb)) {
+    throw "adb not found at $adb"
+}
+if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
+    throw "android_harness_common.psm1 not found at $commonHarnessModule"
+}
+Import-Module $commonHarnessModule -Force -DisableNameChecking
+New-Item -ItemType Directory -Force -Path $lockRoot | Out-Null
+
+function Acquire-DeviceLock {
+    param(
+        [string]$DeviceName,
+        [int]$TimeoutSeconds = 900
+    )
+
+    return Acquire-AndroidHarnessDeviceLock -DeviceName $DeviceName -LockRoot $lockRoot -TimeoutSeconds $TimeoutSeconds
+}
+
+$deviceLock = $null
+if (-not $SkipDeviceLock) {
+    $deviceLock = Acquire-DeviceLock -DeviceName $Device
+}
+
+Push-Location $androidRoot
+try {
+    if (-not $SkipBuild) {
+        & $gradlew :app:assembleDebug :app:assembleDebugAndroidTest
+        if ($LASTEXITCODE -ne 0) {
+            throw "Gradle build failed"
+        }
+    }
+} finally {
+    Pop-Location
+}
+
+if ($BuildOnly) {
+    if ($deviceLock) {
+        $deviceLock.Dispose()
+        $deviceLock = $null
+    }
+    Write-Output ([pscustomobject]@{
+        built = (-not $SkipBuild)
+        build_skipped = [bool]$SkipBuild
+        device = $Device
+        test_class = $TestClass
+        app_apk = (Join-Path $androidRoot "app\\build\\outputs\\apk\\debug\\app-debug.apk")
+        test_apk = (Join-Path $androidRoot "app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk")
+    } | ConvertTo-Json -Depth 4)
+    return
+}
+
+$appApk = Join-Path $androidRoot "app\\build\\outputs\\apk\\debug\\app-debug.apk"
+$testApk = Join-Path $androidRoot "app\\build\\outputs\\apk\\androidTest\\debug\\app-debug-androidTest.apk"
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss_fff"
+$artifactDir = Join-Path $repoRoot (Join-Path $ArtifactRoot (Join-Path $timestamp $Device))
+$screenshotDir = Join-Path $artifactDir "screenshots"
+$dumpDir = Join-Path $artifactDir "dumps"
+$harnessStateDir = Join-Path $repoRoot "artifacts\\harness_state"
+$installStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_" + $Device + ".json")
+$identityStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_identity_" + $Device + ".json")
+New-Item -ItemType Directory -Force -Path $screenshotDir | Out-Null
+New-Item -ItemType Directory -Force -Path $dumpDir | Out-Null
+New-Item -ItemType Directory -Force -Path $harnessStateDir | Out-Null
+$runStartedUtc = (Get-Date).ToUniversalTime()
+$runStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+foreach ($apk in @($appApk, $testApk)) {
+    if (-not (Test-Path -LiteralPath $apk)) {
+        throw "Expected APK missing: $apk"
+    }
+}
+
+function Resolve-HostInferenceUrlForDevice {
+    param([string]$Url)
+
+    if (-not $EnableHostInferenceSmoke -or [string]::IsNullOrWhiteSpace($Url)) {
+        return $Url
+    }
+
+    if ($Device -like "emulator-*") {
+        return $Url
+    }
+
+    try {
+        $resolved = Resolve-AndroidHostInferenceUrlForDevice -AdbPath $adb -DeviceName $Device -Url $Url
+        if ($resolved -ne $Url) {
+            Write-Host ("Physical device {0}: using adb reverse for host inference {1} -> {2}" -f $Device, $Url, $resolved)
+        }
+        return $resolved
+    } catch {
+        Write-Warning ("Could not prepare physical-device host inference URL '{0}': {1}" -f $Url, $_.Exception.Message)
+        return $Url
+    }
+}
+
+function Get-ApkFingerprint {
+    param([string]$Path)
+
+    $item = Get-Item -LiteralPath $Path
+    return [pscustomobject]@{
+        path = $Path
+        length = [int64]$item.Length
+        last_write_utc = $item.LastWriteTimeUtc.ToString("o")
+    }
+}
+
+function Invoke-AdbChecked {
+    param(
+        [string[]]$Arguments,
+        [string]$FailureMessage
+    )
+
+    $output = & $adb @Arguments 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+        $details = $output.Trim()
+        if ([string]::IsNullOrWhiteSpace($details)) {
+            throw $FailureMessage
+        }
+        throw ("{0}: {1}" -f $FailureMessage, $details)
+    }
+    return $output
+}
+
+function Test-PackageInstalled {
+    param([string]$PackageName)
+
+    $packagePath = (& $adb -s $Device shell pm path $PackageName 2>$null | Out-String).Trim()
+    return -not [string]::IsNullOrWhiteSpace($packagePath)
+}
+
+function Test-InstallCacheMatch {
+    param(
+        [string]$StatePath,
+        [object]$AppFingerprint,
+        [object]$TestFingerprint
+    )
+
+    if (-not (Test-Path -LiteralPath $StatePath)) {
+        return $false
+    }
+    if (-not (Test-PackageInstalled -PackageName "com.senku.mobile")) {
+        return $false
+    }
+    if (-not (Test-PackageInstalled -PackageName "com.senku.mobile.test")) {
+        return $false
+    }
+    try {
+        $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json
+        return ($state.device -eq $Device) -and
+            ($state.app.length -eq $AppFingerprint.length) -and
+            ($state.app.last_write_utc -eq $AppFingerprint.last_write_utc) -and
+            ($state.test.length -eq $TestFingerprint.length) -and
+            ($state.test.last_write_utc -eq $TestFingerprint.last_write_utc)
+    } catch {
+        return $false
+    }
+}
+
+function Convert-ToShellSingleQuotedLiteral {
+    param([string]$Value)
+
+    if ($null -eq $Value) {
+        return "''"
+    }
+    return "'" + $Value.Replace("'", "'""'""'") + "'"
+}
+
+function Get-InstalledPackageCodePath {
+    param([string]$PackageName)
+
+    $packageOutput = (& $adb -s $Device shell pm path $PackageName 2>$null | Out-String)
+    $paths = @()
+    foreach ($line in ($packageOutput -split "`r?`n")) {
+        $trimmed = $line.Trim()
+        if ($trimmed -notlike "package:*") {
+            continue
+        }
+        $candidate = $trimmed.Substring(8).Trim()
+        if (-not [string]::IsNullOrWhiteSpace($candidate)) {
+            $paths += $candidate
+        }
+    }
+
+    $basePath = @($paths | Where-Object { $_ -like "*/base.apk" } | Select-Object -First 1)
+    if ($basePath.Count -gt 0) {
+        return [string]$basePath[0]
+    }
+
+    $firstPath = @($paths | Select-Object -First 1)
+    if ($firstPath.Count -gt 0) {
+        return [string]$firstPath[0]
+    }
+
+    return $null
+}
+
+function Get-RemoteFileListingSignature {
+    param(
+        [string]$Path,
+        [string]$RunAsPackage = ""
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $null
+    }
+
+    try {
+        $arguments = if ([string]::IsNullOrWhiteSpace($RunAsPackage)) {
+            @("-s", $Device, "shell", "ls", "-l", $Path)
+        } else {
+            @("-s", $Device, "shell", "run-as", $RunAsPackage, "ls", "-l", $Path)
+        }
+        $output = Invoke-AdbChecked -Arguments $arguments -FailureMessage ("Remote listing failed for {0}" -f $Path)
+        $trimmed = $output.Trim()
+        return $(if ([string]::IsNullOrWhiteSpace($trimmed)) { $null } else { $trimmed })
+    } catch {
+        return $null
+    }
+}
+
+function Get-RemoteSha256 {
+    param(
+        [string]$Path,
+        [string]$RunAsPackage = ""
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $null
+    }
+
+    $quotedPath = Convert-ToShellSingleQuotedLiteral -Value $Path
+    $command = "sha256sum $quotedPath 2>/dev/null || toybox sha256sum $quotedPath 2>/dev/null"
+    try {
+        $arguments = if ([string]::IsNullOrWhiteSpace($RunAsPackage)) {
+            @("-s", $Device, "shell", "sh", "-c", $command)
+        } else {
+            @("-s", $Device, "shell", "run-as", $RunAsPackage, "sh", "-c", $command)
+        }
+        $output = Invoke-AdbChecked -Arguments $arguments -FailureMessage ("SHA-256 probe failed for {0}" -f $Path)
+        foreach ($line in ($output -split "`r?`n")) {
+            $trimmed = $line.Trim()
+            if ($trimmed -match "^([0-9a-fA-F]{64})\s+") {
+                return $matches[1].ToLowerInvariant()
+            }
+        }
+    } catch {
+        return $null
+    }
+
+    return $null
+}
+
+function Get-AppModelMetadata {
+    $knownNames = @(
+        "gemma-4-E4B-it.litertlm",
+        "gemma-4-E4B-it.task",
+        "gemma-4-E2B-it.litertlm",
+        "gemma-4-E2B-it.task"
+    )
+    $candidateNames = New-Object System.Collections.Generic.List[string]
+    $listedNames = New-Object System.Collections.Generic.List[string]
+
+    try {
+        $prefsXml = Invoke-AdbChecked -Arguments @(
+            "-s", $Device, "shell", "run-as", "com.senku.mobile", "cat", "shared_prefs/senku_model_store.xml"
+        ) -FailureMessage "Model preference probe failed"
+        if ($prefsXml -match '<string name="model_name">([^<]+)</string>') {
+            $preferredName = $matches[1].Trim()
+            if (-not [string]::IsNullOrWhiteSpace($preferredName)) {
+                $candidateNames.Add($preferredName)
+            }
+        }
+    } catch {
+    }
+
+    try {
+        $listing = Invoke-AdbChecked -Arguments @(
+            "-s", $Device, "shell", "run-as", "com.senku.mobile", "ls", "files/models"
+        ) -FailureMessage "Model directory listing failed"
+        foreach ($line in ($listing -split "`r?`n")) {
+            $trimmed = $line.Trim()
+            if ([string]::IsNullOrWhiteSpace($trimmed)) {
+                continue
+            }
+            if ($trimmed.EndsWith(".litertlm") -or $trimmed.EndsWith(".task")) {
+                $listedNames.Add($trimmed)
+            }
+        }
+    } catch {
+    }
+
+    foreach ($knownName in $knownNames) {
+        if ($listedNames -contains $knownName -and -not ($candidateNames -contains $knownName)) {
+            $candidateNames.Add($knownName)
+        }
+    }
+    foreach ($listedName in $listedNames) {
+        if (-not ($candidateNames -contains $listedName)) {
+            $candidateNames.Add($listedName)
+        }
+    }
+
+    $modelName = $null
+    foreach ($candidateName in $candidateNames) {
+        if ([string]::IsNullOrWhiteSpace($candidateName)) {
+            continue
+        }
+        $modelName = $candidateName
+        break
+    }
+
+    if ([string]::IsNullOrWhiteSpace($modelName)) {
+        return [pscustomobject]@{
+            name = $null
+            path = $null
+            listing_signature = $null
+        }
+    }
+
+    $relativePath = "files/models/$modelName"
+    return [pscustomobject]@{
+        name = $modelName
+        path = $relativePath
+        listing_signature = Get-RemoteFileListingSignature -Path $relativePath -RunAsPackage "com.senku.mobile"
+    }
+}
+
+function Resolve-InstalledBinaryIdentity {
+    param([string]$CachePath)
+
+    $packagePath = Get-InstalledPackageCodePath -PackageName "com.senku.mobile"
+    $packageSignature = Get-RemoteFileListingSignature -Path $packagePath
+    $modelMetadata = Get-AppModelMetadata
+    $cachedIdentity = $null
+    if (Test-Path -LiteralPath $CachePath) {
+        try {
+            $cachedIdentity = Get-Content -LiteralPath $CachePath -Raw | ConvertFrom-Json
+        } catch {
+            $cachedIdentity = $null
+        }
+    }
+
+    $cacheCanMatchModel = if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.name)) {
+        [string]::IsNullOrWhiteSpace([string]$cachedIdentity.model_name)
+    } else {
+        (-not [string]::IsNullOrWhiteSpace([string]$modelMetadata.listing_signature)) -and
+            ([string]$cachedIdentity.model_name -eq [string]$modelMetadata.name) -and
+            ([string]$cachedIdentity.model_signature -eq [string]$modelMetadata.listing_signature)
+    }
+
+    $cacheMatches = ($null -ne $cachedIdentity) -and
+        ([string]$cachedIdentity.device -eq $Device) -and
+        (-not [string]::IsNullOrWhiteSpace($packagePath)) -and
+        (-not [string]::IsNullOrWhiteSpace($packageSignature)) -and
+        ([string]$cachedIdentity.package_path -eq $packagePath) -and
+        ([string]$cachedIdentity.package_signature -eq $packageSignature) -and
+        $cacheCanMatchModel
+
+    if ($cacheMatches -and -not [string]::IsNullOrWhiteSpace([string]$cachedIdentity.apk_sha)) {
+        if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.name) -or -not [string]::IsNullOrWhiteSpace([string]$cachedIdentity.model_sha)) {
+            return [pscustomobject]@{
+                device = $Device
+                package_path = $packagePath
+                package_signature = $packageSignature
+                apk_sha = [string]$cachedIdentity.apk_sha
+                model_name = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.name)) { $null } else { [string]$modelMetadata.name })
+                model_path = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.path)) { $null } else { [string]$modelMetadata.path })
+                model_signature = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.listing_signature)) { $null } else { [string]$modelMetadata.listing_signature })
+                model_sha = $(if ([string]::IsNullOrWhiteSpace([string]$cachedIdentity.model_sha)) { $null } else { [string]$cachedIdentity.model_sha })
+                recorded_at = [string]$cachedIdentity.recorded_at
+            }
+        }
+    }
+
+    $resolvedIdentity = [ordered]@{
+        device = $Device
+        package_path = $packagePath
+        package_signature = $packageSignature
+        apk_sha = $(if ([string]::IsNullOrWhiteSpace($packagePath)) { $null } else { Get-RemoteSha256 -Path $packagePath })
+        model_name = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.name)) { $null } else { [string]$modelMetadata.name })
+        model_path = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.path)) { $null } else { [string]$modelMetadata.path })
+        model_signature = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.listing_signature)) { $null } else { [string]$modelMetadata.listing_signature })
+        model_sha = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.path)) { $null } else { Get-RemoteSha256 -Path ([string]$modelMetadata.path) -RunAsPackage "com.senku.mobile" })
+        recorded_at = (Get-Date).ToUniversalTime().ToString("o")
+    }
+    $identityObject = [pscustomobject]$resolvedIdentity
+    try {
+        ($identityObject | ConvertTo-Json -Depth 6) | Set-Content -LiteralPath $CachePath -Encoding UTF8
+    } catch {
+    }
+    return $identityObject
+}
+
+function Convert-ToProcessArgumentString {
+    param([string[]]$Arguments)
+
+    $quoted = foreach ($argument in $Arguments) {
+        if ($null -eq $argument) {
+            '""'
+            continue
+        }
+        $value = [string]$argument
+        if ($value -match '[\s"]') {
+            '"' + $value.Replace('"', '\"') + '"'
+        } else {
+            $value
+        }
+    }
+    return ($quoted -join " ")
+}
+
+function Invoke-AdbStreamingCopy {
+    param(
+        [string[]]$Arguments,
+        [string]$DestinationPath,
+        [int]$TimeoutSeconds = 30
+    )
+
+    $destinationParent = Split-Path -Parent $DestinationPath
+    if ($destinationParent) {
+        New-Item -ItemType Directory -Force -Path $destinationParent | Out-Null
+    }
+
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = $adb
+    $psi.Arguments = Convert-ToProcessArgumentString -Arguments $Arguments
+    $psi.UseShellExecute = $false
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+    $psi.CreateNoWindow = $true
+
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $psi
+    $fileStream = $null
+    $stderrTask = $null
+    $copyTask = $null
+
+    try {
+        $fileStream = [System.IO.File]::Open($DestinationPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::Read)
+        [void]$process.Start()
+        $stderrTask = $process.StandardError.ReadToEndAsync()
+        $copyTask = $process.StandardOutput.BaseStream.CopyToAsync($fileStream)
+
+        $finished = $process.WaitForExit([Math]::Max(1000, $TimeoutSeconds * 1000))
+        if (-not $finished) {
+            try {
+                $process.Kill()
+            } catch {
+            }
+            throw "Timed out running adb streaming copy"
+        }
+
+        if ($copyTask -and -not $copyTask.Wait(5000)) {
+            throw "Timed out finalizing adb stdout copy"
+        }
+
+        $stderr = if ($stderrTask) { [string]$stderrTask.GetAwaiter().GetResult() } else { "" }
+        $stderr = [string]$stderr
+        $stderr = $stderr.Trim()
+        $exitCode = if ($null -eq $process.ExitCode) { 0 } else { [int]$process.ExitCode }
+
+        return [pscustomobject]@{
+            exit_code = $exitCode
+            stderr = $stderr
+            destination_path = $DestinationPath
+        }
+    } finally {
+        if ($fileStream) {
+            try {
+                $fileStream.Dispose()
+            } catch {
+            }
+        }
+        if ($process) {
+            try {
+                $process.Dispose()
+            } catch {
+            }
+        }
+    }
+}
+
+function Invoke-AdbCommandCapture {
+    param([string[]]$Arguments)
+
+    return Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments
+}
+
+function Capture-LogcatSnapshot {
+    param([string]$DestinationPath)
+
+    $filterArgs = @()
+    foreach ($spec in ($LogcatSpec -split '\s+')) {
+        $trimmed = ([string]$spec).Trim()
+        if (-not [string]::IsNullOrWhiteSpace($trimmed)) {
+            $filterArgs += $trimmed
+        }
+    }
+
+    $argumentList = @("-s", $Device, "logcat", "-d", "-v", "time")
+    if ($filterArgs.Count -gt 0) {
+        $argumentList += $filterArgs
+    }
+
+    $result = Invoke-AdbStreamingCopy -Arguments $argumentList -DestinationPath $DestinationPath -TimeoutSeconds 30
+    if ($result.exit_code -ne 0) {
+        if ([string]::IsNullOrWhiteSpace($result.stderr)) {
+            throw "Logcat capture failed"
+        }
+        throw "Logcat capture failed: $($result.stderr)"
+    }
+}
+
+function Get-RunAsArtifactFiles {
+    $listResult = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("-s", $Device, "shell", "run-as", "com.senku.mobile", "ls", "-1", "files/test-artifacts") -TimeoutMilliseconds 15000
+    if ($listResult.timed_out) {
+        throw "Artifact listing timed out after 15000 ms"
+    }
+
+    $listOutput = if ($null -eq $listResult.output) { "" } else { [string]$listResult.output }
+    $files = @()
+    foreach ($line in ($listOutput -split "`r?`n")) {
+        if ($null -eq $line) {
+            continue
+        }
+        $trimmed = ([string]$line).Trim()
+        if ([string]::IsNullOrWhiteSpace($trimmed)) {
+            continue
+        }
+        if ($trimmed -match '\.(png|xml)$') {
+            $files += $trimmed
+        }
+    }
+    return $files
+}
+
+function Get-ArtifactFileNames {
+    param([object[]]$Artifacts)
+
+    $names = New-Object System.Collections.Generic.List[string]
+    foreach ($artifact in @($Artifacts)) {
+        $name = [string]$artifact
+        if ([string]::IsNullOrWhiteSpace($name)) {
+            continue
+        }
+        $names.Add([System.IO.Path]::GetFileName($name))
+    }
+    return @($names)
+}
+
+function Join-FailureReasons {
+    param(
+        [string]$ExistingMessage,
+        [string[]]$AdditionalMessages
+    )
+
+    $parts = New-Object System.Collections.Generic.List[string]
+    if (-not [string]::IsNullOrWhiteSpace($ExistingMessage)) {
+        $parts.Add($ExistingMessage.Trim())
+    }
+    foreach ($message in @($AdditionalMessages)) {
+        $text = [string]$message
+        if (-not [string]::IsNullOrWhiteSpace($text)) {
+            $parts.Add($text.Trim())
+        }
+    }
+    if ($parts.Count -eq 0) {
+        return $null
+    }
+    return ($parts -join " | ")
+}
+
+function Get-ArtifactExpectationFailures {
+    param(
+        [string[]]$ListedArtifacts,
+        [string[]]$LocalScreenshotFiles,
+        [string[]]$LocalDumpFiles,
+        [string]$ScreenshotDirectory,
+        [string]$DumpDirectory
+    )
+
+    $failures = New-Object System.Collections.Generic.List[string]
+    $expectedScreenshots = Get-ArtifactFileNames -Artifacts @($ListedArtifacts | Where-Object { ([string]$_).ToLowerInvariant().EndsWith(".png") })
+    $expectedDumps = Get-ArtifactFileNames -Artifacts @($ListedArtifacts | Where-Object { ([string]$_).ToLowerInvariant().EndsWith(".xml") })
+
+    if ($LocalScreenshotFiles.Count -eq 0) {
+        $failures.Add("Expected at least one copied screenshot artifact under '$ScreenshotDirectory' but found none.")
+    }
+    if ($LocalDumpFiles.Count -eq 0) {
+        $failures.Add("Expected at least one copied dump artifact under '$DumpDirectory' but found none.")
+    }
+
+    $missingScreenshotCopies = @($expectedScreenshots | Where-Object { $LocalScreenshotFiles -notcontains $_ })
+    if ($missingScreenshotCopies.Count -gt 0) {
+        $failures.Add(("Listed screenshot artifacts were not copied locally: {0}" -f ($missingScreenshotCopies -join ", ")))
+    }
+    $missingDumpCopies = @($expectedDumps | Where-Object { $LocalDumpFiles -notcontains $_ })
+    if ($missingDumpCopies.Count -gt 0) {
+        $failures.Add(("Listed dump artifacts were not copied locally: {0}" -f ($missingDumpCopies -join ", ")))
+    }
+
+    return @($failures)
+}
+
+function Write-RunPhase {
+    param([string]$Phase)
+
+    Write-Host ("[instrumented-ui-smoke:{0}] {1}" -f $Device, $Phase)
+}
+
+function Get-InstrumentationTimeoutMs {
+    if (Use-ScriptedPromptRun) {
+        if ($ScriptedTimeoutMs -gt 0) {
+            return ($ScriptedTimeoutMs + 120000)
+        }
+        return 300000
+    }
+
+    switch ($SmokeProfile) {
+        "basic" { return 150000 }
+        "host" { return 300000 }
+        "full" { return 420000 }
+        default { return 300000 }
+    }
+}
+
+function Stop-InstrumentationPackages {
+    & $adb -s $Device shell am force-stop com.senku.mobile.test | Out-Null
+    & $adb -s $Device shell am force-stop com.senku.mobile | Out-Null
+    $psOutput = (& $adb -s $Device shell ps -A -o PID,NAME,ARGS 2>$null | Out-String)
+    foreach ($line in ($psOutput -split "`r?`n")) {
+        if ($line -notmatch "com\\.senku\\.mobile(?:\\.test)?") {
+            continue
+        }
+        $columns = ($line.Trim() -split "\s+")
+        if ($columns.Count -lt 1) {
+            continue
+        }
+        $targetPid = $columns[0]
+        if ($targetPid -match '^\d+$') {
+            & $adb -s $Device shell kill -9 $targetPid 2>$null | Out-Null
+        }
+    }
+}
+
+function Copy-RunAsFile {
+    param(
+        [string]$RemoteRelativePath,
+        [string]$LocalPath,
+        [int]$TimeoutSeconds = 30
+    )
+
+    $result = Invoke-AdbStreamingCopy -Arguments @("-s", $Device, "exec-out", "run-as", "com.senku.mobile", "cat", $RemoteRelativePath) -DestinationPath $LocalPath -TimeoutSeconds $TimeoutSeconds
+    if ($result.exit_code -ne 0) {
+        if ([string]::IsNullOrWhiteSpace($result.stderr)) {
+            throw "Failed to copy artifact $RemoteRelativePath"
+        }
+        throw "Failed to copy artifact ${RemoteRelativePath}: $($result.stderr)"
+    }
+}
+
+function Write-ZipBundle {
+    param(
+        [string]$SourceDirectory,
+        [string]$DestinationZip
+    )
+
+    return Write-AndroidHarnessZipBundle -SourceDirectory $SourceDirectory -DestinationZip $DestinationZip
+}
+
+function Get-ResolvedDeviceFacts {
+    param([string]$RequestedOrientation = "")
+
+    return Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device -RequestedOrientation $RequestedOrientation
+}
+
+function Resolve-InstrumentationClassArgument {
+    param(
+        [string]$BaseClass,
+        [string]$Profile
+    )
+
+    switch ($Profile) {
+        "basic" {
+            return @(
+                "${BaseClass}#searchQueryShowsResultsWithoutShellPolling",
+                "${BaseClass}#deterministicAskNavigatesToDetailScreen"
+            ) -join ","
+        }
+        "host" {
+            return @(
+                "${BaseClass}#searchQueryShowsResultsWithoutShellPolling",
+                "${BaseClass}#deterministicAskNavigatesToDetailScreen",
+                "${BaseClass}#generativeAskWithHostInferenceNavigatesToDetailScreen"
+            ) -join ","
+        }
+        "full" {
+            return @(
+                "${BaseClass}#searchQueryShowsResultsWithoutShellPolling",
+                "${BaseClass}#deterministicAskNavigatesToDetailScreen",
+                "${BaseClass}#generativeAskWithHostInferenceNavigatesToDetailScreen",
+                "${BaseClass}#autoFollowUpWithHostInferenceBuildsInlineThreadHistory"
+            ) -join ","
+        }
+        default {
+            return $BaseClass
+        }
+    }
+}
+
+function Use-ScriptedPromptRun {
+    return -not [string]::IsNullOrWhiteSpace($ScriptedQuery)
+}
+
+switch ($SmokePreset) {
+    "phone-basic" {
+        $SmokeProfile = "basic"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "phone-host" {
+        $SmokeProfile = "host"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "phone-full" {
+        $SmokeProfile = "full"
+        $Orientation = "portrait"
+        $FontScale = 1.0
+    }
+    "tablet-landscape" {
+        $SmokeProfile = "host"
+        $Orientation = "landscape"
+        $FontScale = 1.0
+    }
+    "large-font" {
+        $SmokeProfile = "basic"
+        $Orientation = "portrait"
+        $FontScale = 1.3
+    }
+    "tablet-large-font" {
+        $SmokeProfile = "host"
+        $Orientation = "landscape"
+        $FontScale = 1.3
+    }
+}
+
+switch ($SmokeProfile) {
+    "host" {
+        $EnableHostInferenceSmoke = $true
+    }
+    "full" {
+        $EnableHostInferenceSmoke = $true
+        $EnableFollowUpSmoke = $true
+    }
+}
+
+if ($EnableFollowUpSmoke -and -not $EnableHostInferenceSmoke) {
+    throw "Follow-up smoke requires host inference smoke to be enabled."
+}
+
+if (Use-ScriptedPromptRun) {
+    $SmokeProfile = "custom"
+}
+
+$script:OriginalFontScale = $null
+$script:OriginalAccelerometerRotation = $null
+$script:OriginalUserRotation = $null
+
+function Get-DeviceFontScale {
+    $raw = (& $adb -s $Device shell settings get system font_scale 2>$null | Out-String).Trim()
+    $parsed = 1.0
+    if ([double]::TryParse($raw, [System.Globalization.NumberStyles]::Float, [System.Globalization.CultureInfo]::InvariantCulture, [ref]$parsed)) {
+        return [Math]::Max(0.5, $parsed)
+    }
+    return 1.0
+}
+
+function Invoke-AdbBestEffort {
+    param([string[]]$Arguments)
+
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $Arguments -TimeoutMilliseconds 10000
+    return $result
+}
+
+function Set-DeviceFontScale([double]$Scale) {
+    $safeScale = [Math]::Max(0.5, [Math]::Min(2.0, $Scale))
+    $serialized = $safeScale.ToString("0.##", [System.Globalization.CultureInfo]::InvariantCulture)
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "settings", "put", "system", "font_scale", $serialized))
+    Start-Sleep -Milliseconds 700
+}
+
+function Set-DeviceSizeOverride([int]$Width, [int]$Height) {
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "wm", "size", "$Width`x$Height"))
+    Start-Sleep -Milliseconds 700
+}
+
+function Reset-DeviceSizeOverride() {
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "wm", "size", "reset"))
+    Start-Sleep -Milliseconds 700
+}
+
+function Wait-ForDeviceOrientation([string]$TargetOrientation) {
+    for ($attempt = 0; $attempt -lt 8; $attempt++) {
+        $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $TargetOrientation
+        if ($deviceFacts.rotation_matches_requested -eq $true) {
+            return $true
+        }
+        Start-Sleep -Milliseconds 400
+    }
+
+    return $false
+}
+
+function Set-DeviceOrientation([string]$TargetOrientation) {
+    $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $TargetOrientation
+    $rotation = if ($null -ne $deviceFacts.expected_rotation) {
+        [int]$deviceFacts.expected_rotation
+    } else {
+        if ($TargetOrientation -eq "landscape") { 1 } else { 0 }
+    }
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "settings", "put", "system", "accelerometer_rotation", "0"))
+    [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "settings", "put", "system", "user_rotation", "$rotation"))
+    Start-Sleep -Milliseconds 900
+}
+
+function Get-DeviceSettingValue([string]$Namespace, [string]$Key) {
+    return (& $adb -s $Device shell settings get $Namespace $Key 2>$null | Out-String).Trim()
+}
+
+function Restore-DeviceSettings {
+    if ($null -ne $script:OriginalFontScale) {
+        Set-DeviceFontScale -Scale $script:OriginalFontScale
+    }
+    if ($null -ne $script:OriginalAccelerometerRotation -and -not [string]::IsNullOrWhiteSpace($script:OriginalAccelerometerRotation)) {
+        [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "settings", "put", "system", "accelerometer_rotation", "$script:OriginalAccelerometerRotation"))
+    }
+    if ($null -ne $script:OriginalUserRotation -and -not [string]::IsNullOrWhiteSpace($script:OriginalUserRotation)) {
+        [void](Invoke-AdbBestEffort -Arguments @("-s", $Device, "shell", "settings", "put", "system", "user_rotation", "$script:OriginalUserRotation"))
+    }
+}
+
+$EffectiveHostInferenceUrl = Resolve-HostInferenceUrlForDevice -Url $HostInferenceUrl
+$appFingerprint = Get-ApkFingerprint -Path $appApk
+$testFingerprint = Get-ApkFingerprint -Path $testApk
+$EffectiveSkipInstall = $SkipInstall -or (Test-InstallCacheMatch -StatePath $installStatePath -AppFingerprint $appFingerprint -TestFingerprint $testFingerprint)
+$EffectiveTestClass = if (Use-ScriptedPromptRun) {
+    "${TestClass}#scriptedPromptFlowCompletes"
+} else {
+    Resolve-InstrumentationClassArgument -BaseClass $TestClass -Profile $SmokeProfile
+}
+
+if ($EnableHostInferenceSmoke -and [string]::IsNullOrWhiteSpace($EffectiveHostInferenceUrl)) {
+    throw "Host inference smoke requested but no host inference URL was provided."
+}
+
+& $adb -s $Device wait-for-device
+if (-not $EffectiveSkipInstall) {
+    [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $appApk) -FailureMessage "App APK install failed")
+    [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $testApk) -FailureMessage "Test APK install failed")
+} else {
+    if (-not (Test-PackageInstalled -PackageName "com.senku.mobile")) {
+        throw "SkipInstall requested but com.senku.mobile is not installed on $Device."
+    }
+    if (-not (Test-PackageInstalled -PackageName "com.senku.mobile.test")) {
+        throw "SkipInstall requested but com.senku.mobile.test is not installed on $Device."
+    }
+}
+& $adb -s $Device shell run-as com.senku.mobile rm -rf files/test-artifacts | Out-Null
+& $adb -s $Device shell run-as com.senku.mobile mkdir files/test-artifacts | Out-Null
+
+$script:OriginalFontScale = Get-DeviceFontScale
+$script:OriginalAccelerometerRotation = Get-DeviceSettingValue -Namespace system -Key accelerometer_rotation
+$script:OriginalUserRotation = Get-DeviceSettingValue -Namespace system -Key user_rotation
+$script:AppliedSizeOverride = $false
+
+$summaryStatus = "unknown"
+$failureReason = $null
+$artifactFiles = @()
+$pendingException = $null
+$logcatPath = $null
+$instrumentationLog = Join-Path $artifactDir "instrumentation.txt"
+$artifactManifestPath = Join-Path $artifactDir "artifact_manifest.json"
+$artifactBundleZip = $null
+$logcatCaptured = $false
+$deviceFacts = $null
+$artifactFacts = $null
+$orientationSettled = $false
+$artifactExpectationFailures = @()
+$artifactExpectationsMet = $false
+$installedIdentity = $null
+$identityProbeError = $null
+
+try {
+    try {
+        $installedIdentity = Resolve-InstalledBinaryIdentity -CachePath $identityStatePath
+    } catch {
+        $identityProbeError = $_.Exception.Message
+        Write-Warning ("Could not resolve installed APK/model identity on {0}: {1}" -f $Device, $identityProbeError)
+    }
+
+    Set-DeviceFontScale -Scale $FontScale
+    Set-DeviceOrientation -TargetOrientation $Orientation
+    $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
+    $orientationSettled = ($deviceFacts.rotation_matches_requested -eq $true)
+    if (-not $orientationSettled) {
+        $orientationSettled = Wait-ForDeviceOrientation -TargetOrientation $Orientation
+        if ($orientationSettled) {
+            $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
+        }
+    }
+    if (-not $orientationSettled) {
+        $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
+        $resolvedOrientation = if ($null -ne $deviceFacts -and -not [string]::IsNullOrWhiteSpace($deviceFacts.current_orientation)) {
+            $deviceFacts.current_orientation
+        } else {
+            "unknown"
+        }
+        throw "Requested orientation '$Orientation' did not settle on $Device (resolved: $resolvedOrientation). Refusing wm-size fallback because it can fake posture instead of rotating the device."
+    }
+    try {
+        if ($ClearLogcatBeforeRun) {
+            & $adb -s $Device logcat -c | Out-Null
+        }
+
+        $instrumentationTarget = "com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner"
+        $args = @(
+            "-s", $Device,
+            "shell", "am", "instrument", "-w",
+            "-e", "class", $EffectiveTestClass
+        )
+        if ($EnableHostInferenceSmoke -and -not [string]::IsNullOrWhiteSpace($HostInferenceUrl)) {
+            $args += @(
+                "-e", "hostInferenceEnabled", "true",
+                "-e", "hostInferenceUrl", $EffectiveHostInferenceUrl,
+                "-e", "hostInferenceModel", $HostInferenceModel
+            )
+        }
+        if ($EnableFollowUpSmoke) {
+            $args += @("-e", "followUpSmokeEnabled", "true")
+        }
+        if (Use-ScriptedPromptRun) {
+            $encodedScriptedQuery = [System.Uri]::EscapeDataString($ScriptedQuery)
+            $encodedScriptedFollowUpQuery = if (-not [string]::IsNullOrWhiteSpace($ScriptedFollowUpQuery)) {
+                [System.Uri]::EscapeDataString($ScriptedFollowUpQuery)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedTitle = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedTitle)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedTitle)
+            } else {
+                ""
+            }
+            $encodedScriptedCaptureLabel = if (-not [string]::IsNullOrWhiteSpace($ScriptedCaptureLabel)) {
+                [System.Uri]::EscapeDataString($ScriptedCaptureLabel)
+            } else {
+                ""
+            }
+            $encodedScriptedRequiredResId = if (-not [string]::IsNullOrWhiteSpace($ScriptedRequiredResId)) {
+                [System.Uri]::EscapeDataString($ScriptedRequiredResId)
+            } else {
+                ""
+            }
+            $args += @(
+                "-e", "scriptedQuery", $encodedScriptedQuery,
+                "-e", "scriptedAsk", $(if ($ScriptedAsk) { "true" } else { "false" }),
+                "-e", "scriptedExpectedSurface", $ScriptedExpectedSurface
+            )
+            if ($AllowHostFallback) {
+                $args += @("-e", "scriptedAllowHostFallback", "true")
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedFollowUpQuery)) {
+                $args += @("-e", "scriptedFollowUpQuery", $encodedScriptedFollowUpQuery)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedTitle)) {
+                $args += @("-e", "scriptedExpectedTitle", $encodedScriptedExpectedTitle)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedCaptureLabel)) {
+                $args += @("-e", "scriptedCaptureLabel", $encodedScriptedCaptureLabel)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedRequiredResId)) {
+                $args += @("-e", "scriptedRequiredResId", $encodedScriptedRequiredResId)
+            }
+            if ($ScriptedTimeoutMs -gt 0) {
+                $args += @("-e", "scriptedTimeoutMs", "$ScriptedTimeoutMs")
+            }
+            if ($ScriptedExtraSettleMs -gt 0) {
+                $args += @("-e", "scriptedExtraSettleMs", "$ScriptedExtraSettleMs")
+            }
+        }
+        $args += @(
+            $instrumentationTarget
+        )
+
+        Stop-InstrumentationPackages
+        $instrumentationTimeoutMs = Get-InstrumentationTimeoutMs
+        Write-RunPhase -Phase ("starting instrumentation {0}" -f $EffectiveTestClass)
+        $instrumentationResult = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments $args -TimeoutMilliseconds $instrumentationTimeoutMs
+        if ($instrumentationResult.timed_out) {
+            Stop-InstrumentationPackages
+            throw "Instrumentation run timed out after $instrumentationTimeoutMs ms"
+        }
+        Write-RunPhase -Phase "instrumentation completed"
+        $instrumentationOutput = if ($null -eq $instrumentationResult.output) { "" } else { [string]$instrumentationResult.output }
+        $instrumentationOutput | Set-Content -LiteralPath $instrumentationLog -Encoding UTF8
+        if (-not [string]::IsNullOrWhiteSpace($instrumentationOutput)) {
+            Write-Output $instrumentationOutput.TrimEnd()
+        }
+        $instrumentationLower = $instrumentationOutput.ToLowerInvariant()
+        $instrumentationLooksPassed = $instrumentationLower.Contains("ok (") -and -not $instrumentationLower.Contains("failures!!!")
+        $instrumentationLooksFailed = (($instrumentationResult.exit_code -ne 0) -and -not $instrumentationLooksPassed) -or
+            $instrumentationLower.Contains("failures!!!") -or
+            $instrumentationLower.Contains("process crashed") -or
+            $instrumentationLower.Contains("shortmsg=") -or
+            $instrumentationLower.Contains("ok (0 tests)") -or
+            [regex]::IsMatch($instrumentationOutput, 'Tests run:\s*\d+,\s*Failures:\s*[1-9]\d*')
+
+        if ($CaptureLogcat) {
+            Write-RunPhase -Phase "capturing logcat"
+            $logcatPath = Join-Path $artifactDir "logcat.txt"
+            Capture-LogcatSnapshot -DestinationPath $logcatPath
+            $logcatCaptured = $true
+            Write-RunPhase -Phase "logcat captured"
+        }
+
+        Stop-InstrumentationPackages
+        Write-RunPhase -Phase "listing artifacts"
+        $artifactFiles = @(Get-RunAsArtifactFiles)
+        Write-RunPhase -Phase ("artifacts listed: {0}" -f $artifactFiles.Count)
+
+        foreach ($artifactFile in $artifactFiles) {
+            $extension = ([string][System.IO.Path]::GetExtension($artifactFile)).ToLowerInvariant()
+            $targetDir = if ($extension -eq ".xml") { $dumpDir } else { $screenshotDir }
+            Write-RunPhase -Phase ("copying artifact {0}" -f $artifactFile)
+            Copy-RunAsFile -RemoteRelativePath ("files/test-artifacts/" + $artifactFile) -LocalPath (Join-Path $targetDir $artifactFile)
+        }
+        Write-RunPhase -Phase "artifact copy complete"
+
+        if ($instrumentationLooksFailed) {
+            throw "Instrumentation run failed"
+        }
+
+        if ((Use-ScriptedPromptRun) -and $artifactFiles.Count -eq 0) {
+            throw "Scripted instrumentation run completed without any captured artifacts"
+        }
+        $summaryStatus = "pass"
+    } catch {
+        $pendingException = $_
+        $failureReason = $_.Exception.Message
+        if ($failureReason -match "without any captured artifacts") {
+            $summaryStatus = "no_artifacts"
+        } elseif ($failureReason -match "crash" -or $failureReason -match "shortmsg=") {
+            $summaryStatus = "crash"
+        } else {
+            $summaryStatus = "fail"
+        }
+    } finally {
+        if ($CaptureLogcat -and -not $logcatCaptured) {
+            try {
+                $logcatPath = Join-Path $artifactDir "logcat.txt"
+                Capture-LogcatSnapshot -DestinationPath $logcatPath
+            } catch {
+                if ([string]::IsNullOrWhiteSpace($failureReason)) {
+                    $failureReason = "Failed to capture logcat after instrumentation failure: $($_.Exception.Message)"
+                    if ($summaryStatus -eq "pass") {
+                        $summaryStatus = "fail"
+                    }
+                }
+            }
+        }
+
+        $localScreenshotFiles = @()
+        $localDumpFiles = @()
+        if (Test-Path -LiteralPath $screenshotDir) {
+            $localScreenshotFiles = @(Get-ChildItem -LiteralPath $screenshotDir -File -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object { $_.Name })
+        }
+        if (Test-Path -LiteralPath $dumpDir) {
+            $localDumpFiles = @(Get-ChildItem -LiteralPath $dumpDir -File -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object { $_.Name })
+        }
+        $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
+        if ($localScreenshotFiles.Count -gt 0) {
+            $firstScreenshotPath = Join-Path $screenshotDir $localScreenshotFiles[0]
+            $artifactFacts = [pscustomobject]@{
+                first_screenshot = Get-AndroidScreenshotFacts -Path $firstScreenshotPath -RequestedOrientation $Orientation
+            }
+            if ($null -eq $artifactFacts.first_screenshot.dimensions_px) {
+                if ([string]::IsNullOrWhiteSpace($failureReason)) {
+                    $failureReason = "Could not read screenshot dimensions for $firstScreenshotPath"
+                }
+                if ($summaryStatus -eq "pass") {
+                    $summaryStatus = "fail"
+                }
+            } elseif ($artifactFacts.first_screenshot.orientation_mismatch -eq $true) {
+                $dimensions = $artifactFacts.first_screenshot.dimensions_px
+                if ([string]::IsNullOrWhiteSpace($failureReason)) {
+                    $failureReason = "Screenshot orientation mismatch: expected $Orientation but captured $($dimensions.width)x$($dimensions.height)"
+                }
+                if ($summaryStatus -eq "pass") {
+                    $summaryStatus = "fail"
+                }
+            }
+        } else {
+            $artifactFacts = [pscustomobject]@{
+                first_screenshot = $null
+            }
+        }
+
+        $artifactExpectationFailures = @(
+            Get-ArtifactExpectationFailures `
+                -ListedArtifacts $artifactFiles `
+                -LocalScreenshotFiles $localScreenshotFiles `
+                -LocalDumpFiles $localDumpFiles `
+                -ScreenshotDirectory $screenshotDir `
+                -DumpDirectory $dumpDir
+        )
+        $artifactExpectationsMet = ($artifactExpectationFailures.Count -eq 0)
+        if (-not $artifactExpectationsMet) {
+            if ($summaryStatus -eq "pass" -or [string]::IsNullOrWhiteSpace($failureReason)) {
+                $failureReason = Join-FailureReasons -ExistingMessage $failureReason -AdditionalMessages $artifactExpectationFailures
+            }
+            if ($summaryStatus -eq "pass") {
+                $summaryStatus = "fail"
+            }
+        }
+
+        $artifactManifest = [pscustomobject]@{
+            screenshots = $localScreenshotFiles
+            dumps = $localDumpFiles
+            instrumentation_log = $(if (Test-Path -LiteralPath $instrumentationLog) { [System.IO.Path]::GetFileName($instrumentationLog) } else { $null })
+            logcat = $(if ($logcatPath -and (Test-Path -LiteralPath $logcatPath)) { [System.IO.Path]::GetFileName($logcatPath) } else { $null })
+            generated_at_utc = (Get-Date).ToUniversalTime().ToString("o")
+        }
+        ($artifactManifest | ConvertTo-Json -Depth 4) | Set-Content -LiteralPath $artifactManifestPath -Encoding UTF8
+        $artifactBundleZip = Write-ZipBundle -SourceDirectory $artifactDir -DestinationZip (Join-Path (Split-Path -Parent $artifactDir) ($Device + "_bundle.zip"))
+
+        if ($summaryStatus -eq "pass") {
+            $installState = [pscustomobject]@{
+                device = $Device
+                app = $appFingerprint
+                test = $testFingerprint
+                recorded_at = (Get-Date).ToUniversalTime().ToString("o")
+            }
+            ($installState | ConvertTo-Json -Depth 4) | Set-Content -LiteralPath $installStatePath -Encoding UTF8
+        }
+
+        $runStopwatch.Stop()
+        $runCompletedUtc = (Get-Date).ToUniversalTime()
+        $summaryObject = [pscustomobject]@{
+        run_started_utc = $runStartedUtc.ToString("o")
+        run_completed_utc = $runCompletedUtc.ToString("o")
+        elapsed_ms = [int]$runStopwatch.ElapsedMilliseconds
+        duration_ms = [int]$runStopwatch.ElapsedMilliseconds
+        device = $Device
+        test_class = $EffectiveTestClass
+        requested_test_class = $TestClass
+        smoke_preset = $(if ([string]::IsNullOrWhiteSpace($SmokePreset)) { $null } else { $SmokePreset })
+        smoke_profile = $SmokeProfile
+        skip_build = [bool]$SkipBuild
+        skip_install = [bool]$EffectiveSkipInstall
+        scripted_query = $ScriptedQuery
+        scripted_ask = [bool]$ScriptedAsk
+        scripted_followup_query = $ScriptedFollowUpQuery
+        scripted_expected_surface = $(if (Use-ScriptedPromptRun) { $ScriptedExpectedSurface } else { $null })
+        scripted_allow_host_fallback = [bool]$AllowHostFallback
+        scripted_capture_label = $(if (Use-ScriptedPromptRun) { $ScriptedCaptureLabel } else { $null })
+        orientation = $Orientation
+        font_scale = $FontScale
+        host_inference_smoke = ($EnableHostInferenceSmoke -and -not [string]::IsNullOrWhiteSpace($EffectiveHostInferenceUrl))
+        followup_smoke = [bool]$EnableFollowUpSmoke
+        host_inference_url = $EffectiveHostInferenceUrl
+        apk_sha = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.apk_sha)) { [string]$installedIdentity.apk_sha } else { $null })
+        model_name = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_name)) { [string]$installedIdentity.model_name } else { $null })
+        model_sha = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_sha)) { [string]$installedIdentity.model_sha } else { $null })
+        identity_probe_error = $(if ([string]::IsNullOrWhiteSpace($identityProbeError)) { $null } else { $identityProbeError })
+        artifact_dir = $artifactDir
+        device_facts = $deviceFacts
+        artifact_facts = [pscustomobject]@{
+            orientation_settled = [bool]$orientationSettled
+            applied_size_override = [bool]$script:AppliedSizeOverride
+            first_screenshot = $(if ($null -ne $artifactFacts) { $artifactFacts.first_screenshot } else { $null })
+        }
+        artifact_expectations_met = [bool]$artifactExpectationsMet
+        artifact_expectation_failures = @($artifactExpectationFailures)
+        status = $summaryStatus
+        failure_reason = $failureReason
+        instrumentation_log = $instrumentationLog
+        artifact_manifest_path = $artifactManifestPath
+        artifact_bundle_zip = $artifactBundleZip
+        screenshot_count = $localScreenshotFiles.Count
+        dump_count = $localDumpFiles.Count
+        logcat_path = $(if ($CaptureLogcat) { Join-Path $artifactDir "logcat.txt" } else { $null })
+        screenshots = $localScreenshotFiles
+        dumps = $localDumpFiles
+        }
+        $summaryJson = $summaryObject | ConvertTo-Json -Depth 4
+        $defaultSummaryPath = Join-Path $artifactDir "summary.json"
+        $summaryJson | Set-Content -LiteralPath $defaultSummaryPath -Encoding UTF8
+        if (-not [string]::IsNullOrWhiteSpace($SummaryPath)) {
+            $summaryParent = Split-Path -Parent $SummaryPath
+            if ($summaryParent) {
+                New-Item -ItemType Directory -Force -Path $summaryParent | Out-Null
+            }
+            $summaryJson | Set-Content -LiteralPath $SummaryPath -Encoding UTF8
+        }
+        Write-Output $summaryJson
+    }
+}
+finally {
+    try {
+        if ($script:AppliedSizeOverride) {
+            Reset-DeviceSizeOverride
+        }
+        Restore-DeviceSettings
+    } finally {
+        if ($deviceLock) {
+            $deviceLock.Dispose()
+        }
+    }
+}
+
+if ($pendingException -ne $null) {
+    exit 1
+}
+
+exit 0

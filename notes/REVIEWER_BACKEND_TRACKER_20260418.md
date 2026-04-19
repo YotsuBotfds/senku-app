@@ -26,6 +26,11 @@ Wave B dispatch trigger — **cleared 2026-04-18**:
   `notes/specs/answer_presenter_extraction_spec.md`.
 - CP9 (release-candidate gate) remains independent of E-06.
 
+> Wave B code-level closure complete 2026-04-19 (`eb398dc`); on-device CP9
+> Stage 0 verification in progress. v2/v3/v4/v5 artifacts are INVALID
+> (APK/model mismatch). Stage 0 GREEN is a prerequisite for RC v3 packet
+> rebuild (Stage 1).
+
 ## Current State
 
 The reviewer packet
@@ -57,7 +62,9 @@ Wave B is closed and ready for CHECKPOINT 9 release-candidate gate planning.
   builder-missing telemetry, equal-priority tie-break, near-miss tests, and
   mobile parity guard are all in.
 - **Uncertainty communication.** Backend-side coverage now includes the abstain
-  tuning note + regression runner (`BACK-U-04`), the Wave B confidence-label
+  tuning note + regression runner (`BACK-U-04`,
+  `scripts/run_abstain_regression_panel.ps1`, baseline under
+  `artifacts/bench/abstain_baseline_20260418/`), the Wave B confidence-label
   contract tests, the landed confidence-label plumbing (`BACK-U-03`
   `af49d91`), the safety-critical abstain escalation (`BACK-U-02`
   `d974ebc`), and the uncertain-fit response mode (`BACK-U-01` `eb398dc`).
@@ -351,7 +358,9 @@ Status:
 
 Landed backend-side:
 - `_should_abstain()` thresholds are now documented in the abstain tuning note
-- regression runner + baseline artifact are checked in via `BACK-U-04`
+- regression runner (`scripts/run_abstain_regression_panel.ps1`) + baseline
+  artifact (`artifacts/bench/abstain_baseline_20260418/`) are checked in via
+  `BACK-U-04`
 - confidence-label contract tests are checked in so Wave B has a locked
   backend-side spec before UI plumbing starts
 - `BACK-U-03` landed 2026-04-18 (`af49d91`): desktop + Android now surface
@@ -430,6 +439,17 @@ Landed this closeout:
   `confident` / `uncertain_fit` / `abstain`, render the `UNSURE FIT` card
   variant, and pass the reviewer-worked example plus boundary coverage with
   phone + tablet artifacts at `artifacts/bench/wave_b_back-u-01_2026-04-19/`.
+
+Backlog stubs:
+- `BACK-P-05` - SQLite FTS runtime decision. Hypothesis: the current FTS5 /
+  FTS4 / LIKE fallback path is adequate for Wave B scale; reconfirm at RC v3
+  telemetry. Blocks nothing in CP9.
+- `BACK-P-06` - AVD data-partition sizing policy. Hypothesis: document
+  direct-stream as the default for E4B on tablet AVDs and keep tmp-staging
+  behind `--use-tmp-staging`. Blocks a clean Stage 0 replay on fresh AVDs.
+- `BACK-P-07` - unified LiteRT model push helper. Hypothesis: consolidate
+  `push_litert_model_to_android.ps1` and the direct-stream bypass behind one
+  entry point that chooses from a free-space probe. Nice-to-have.
 
 ## Rule
 
