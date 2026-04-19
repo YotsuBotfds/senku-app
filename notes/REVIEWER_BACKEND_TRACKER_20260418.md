@@ -35,13 +35,20 @@ aware reranking, session-aware rather than purely single-turn, real offline
 path, explicit abstain, narrow deterministic surface. The remaining work is the
 more mature class of problem:
 
-As of 2026-04-18, Wave A is 23 done + 3 closeout rows pending re-run
-(`BACK-R-03`, `BACK-P-01`, `BACK-P-02`) + 1 invalidated (`BACK-H-05`) out of
-26 original tasks. `BACK-P-04` (pack export SHA race) landed as `bbc1b1d`;
-the re-exported stock bundle is `aa1b399`. The closeout re-run on the
-post-P-04 bundle (`BACK-P-02` → `BACK-P-01` → `BACK-R-03`) is the only
-remaining path to formally close Wave A. Wave B (`BACK-U-01`, `U-02`,
-`U-03`) is un-gated — `OPUS-E-06` landed (`b41128a`).
+Wave A closed 2026-04-18: 25 done + 2 invalidated (`BACK-H-05`,
+`BACK-R-03`) out of 26 original tasks, plus `BACK-P-04` (newly added P0
+on 2026-04-18, landed `bbc1b1d`) — the pipeline-SHA-race fix that was
+needed before the closeout re-run could run. Stock bundle re-exported
+(`aa1b399`); `BACK-P-02` + `BACK-P-01` re-ran green on 2026-04-18
+(artifacts at `artifacts/bench/wave_a_closeout_20260418_rerun/`).
+`BACK-R-03` was invalidated because anchor-prior is feature-gated off on
+Android (`SessionMemory.java:22` `ENABLE_ANCHOR_PRIOR = false`) so the
+sticky-anchor idle-reset path is non-observable in production — see
+`notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Two follow-ups filed
+(post-release, not Wave B dependencies): `BACK-R-05` (Android anchor-prior
+productization decision) and `BACK-T-04` (fix `Quote-AndroidShellArg` in
+the session-flow harness). Wave B (`BACK-U-01` / `U-02` / `U-03`) is
+un-gated — `OPUS-E-06` landed (`b41128a`).
 
 - **Deterministic false-positive control.** Backend-side closure is landed:
   graduation manifest, promotion metadata, semantic exclusion-list gate,
@@ -60,15 +67,17 @@ remaining path to formally close Wave A. Wave B (`BACK-U-01`, `U-02`,
 Adjacent findings from the full backend audit (not in the reviewer packet, but
 worth tracking alongside):
 
-- anchor-prior is now productized on desktop and Android; the remaining
-  retrieval closeout is emulator validation for the idle-reset path in
-  `BACK-R-03`
+- anchor-prior decision is landed: productized on desktop (`query.py:60`
+  `ENABLE_ANCHOR_PRIOR = True`); Android code is landed but feature-gated
+  off (`SessionMemory.java:22` `ENABLE_ANCHOR_PRIOR = false`, only setter is
+  the test helper at line 1190). Follow-up `BACK-R-05` to decide Android
+  productization post-release.
 - bridge-guide demotion is now context-aware for planning/readiness acute
   queries
 - FTS runtime selection and install-time schema validation are landed in code;
-  `BACK-P-04` (pack export SHA race) landed (`bbc1b1d`); `BACK-P-01` / `BACK-P-02`
-  emulator validation is pending on the post-P-04 stock bundle — see
-  `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18.md`
+  `BACK-P-04` (pack export SHA race) landed (`bbc1b1d`); `BACK-P-01` /
+  `BACK-P-02` re-ran green on the post-P-04 stock bundle — see
+  `artifacts/bench/wave_a_closeout_20260418_rerun/`
 
 ## Worker Split
 
@@ -363,14 +372,27 @@ Status:
 ### Retrieval lane
 
 Confirmed:
-- anchor-prior decision is landed and productized on desktop + Android
+- anchor-prior decision is landed: productized on desktop (`query.py:60`
+  `ENABLE_ANCHOR_PRIOR = True`); Android code is landed but feature-gated
+  off (`SessionMemory.java:22` `ENABLE_ANCHOR_PRIOR = false`, only setter is
+  the test helper at line 1190). Follow-up `BACK-R-05` to decide Android
+  productization post-release.
 - bridge-guide demotion now skips planning/readiness acute queries instead of
   applying a blanket penalty
 - sticky anchor idle reset is landed in `SessionMemory` / `ChatSessionStore`
+  but is unreachable on Android until anchor-prior is productized there
 
-Still live:
-- `BACK-R-03` still needs emulator validation across the four-posture matrix —
-  post-P-04 re-run pending on the restored stock install path.
+Resolved this closeout:
+- `BACK-R-03` invalidated 2026-04-18 — Android anchor-prior is feature-gated
+  off so the idle-reset scenario is non-observable in production; see
+  `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`.
+
+Follow-ups (post-release):
+- `BACK-R-05` — decide whether to productize Android anchor-prior or remove
+  the half-commit code (scout spike + decision doc)
+- `BACK-T-04` — fix `Quote-AndroidShellArg` in
+  `scripts/run_android_session_flow.ps1` so the session-flow harness can
+  drive multi-turn / idle-reset scenarios again
 
 ### Pack lane
 
@@ -381,11 +403,14 @@ Confirmed:
   after size + SHA checks
 - bridge-tag consistency audit is landed at ingest time
 
-Still live:
-- `BACK-P-01` and `BACK-P-02` still need emulator validation with stock,
-  degraded, and corrupted packs on the post-P-04 bundle (`BACK-P-04` landed
-  `bbc1b1d`, stock bundle re-exported `aa1b399`). Target:
+Landed this closeout:
+- `BACK-P-04` landed `bbc1b1d`; stock bundle re-exported `aa1b399`;
+  manifest-parity pipeline regression test in `tests/` locks the invariant.
+- `BACK-P-01` + `BACK-P-02` re-ran green on `emulator-5554` +
+  `emulator-5556`; FTS runtime probe + schema validation + missing-table +
+  truncated variants all reach the expected code paths. Artifacts at
   `artifacts/bench/wave_a_closeout_20260418_rerun/`.
+- FTS status addendum: `notes/ANDROID_SQLITE_FTS5_STATUS_2026-04-18.md`.
 
 ## Rule
 
@@ -404,10 +429,11 @@ single Presenter callsite + a small `Host.onSuccess(...)` block rather
 than three near-duplicate `executor.execute(...)` blocks in the Activity.
 
 **Wave A — non-UI-crossing backend (26 original tasks):**
-- 23 done + 3 emulator re-run pending (`BACK-R-03`, `BACK-P-01`,
-  `BACK-P-02`) + 1 invalidated (`BACK-H-05`)
-- `BACK-P-04` landed `bbc1b1d`; stock bundle re-exported `aa1b399`; closeout
-  re-run is the only remaining path to formally close Wave A.
+- formally closed 2026-04-18: 25 done + 2 invalidated (`BACK-H-05`,
+  `BACK-R-03`) out of 26 original tasks
+- `BACK-P-04` landed `bbc1b1d`; stock bundle re-exported `aa1b399`;
+  `BACK-P-02` + `BACK-P-01` re-ran green; `BACK-R-03` was invalidated
+  because Android anchor-prior is feature-gated off in production.
 
 **Wave B — Lane U (3 tasks, dispatchable now):**
 - `BACK-U-01`, `BACK-U-02`, `BACK-U-03` — edit the `AnswerPresenter` callsite
@@ -420,20 +446,22 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
 ## Immediate Next Move
 
 1. ~~Land `BACK-P-04`.~~ **Done** 2026-04-18 (`bbc1b1d`); stock bundle
-   re-exported (`aa1b399`). Pipeline regression test is in `tests/`.
-2. Re-run Wave A closeout emulator validation on the post-P-04 stock
-   bundle: `BACK-P-02` → `BACK-P-01` → `BACK-R-03` (in that order; P-02
-   is the fastest signal that the pipeline fix is effective). Target
-   artifact directory: `artifacts/bench/wave_a_closeout_20260418_rerun/`.
-3. If validation is green, flip those three rows from `pending` to `done`
-   in `reviewer_backend_tasks.md` State Log and close Wave A formally.
-4. ~~Dispatch `OPUS-E-06`.~~ **Done** 2026-04-18 (`b41128a`); Lane U is
-   un-gated.
+   re-exported (`aa1b399`); pipeline regression test checked in.
+2. ~~Re-run Wave A closeout.~~ **Done** 2026-04-18. `BACK-P-02` + `BACK-P-01`
+   landed green; `BACK-R-03` invalidated (Android anchor-prior feature-gated
+   off). Artifacts at `artifacts/bench/wave_a_closeout_20260418_rerun/`.
+3. ~~Flip closeout rows.~~ **Done** 2026-04-18: P-02 / P-01 flipped to `done`,
+   R-03 flipped to `invalidated`. Wave A formally closed.
+4. ~~Dispatch `OPUS-E-06`.~~ **Done** 2026-04-18 (`b41128a`); Lane U un-gated.
 5. Dispatch Wave B (`BACK-U-01` / `U-02` / `U-03`) against the
-   `AnswerPresenter` callsite (`android-app/app/src/main/java/com/senku/mobile/AnswerPresenter.java`),
-   not the three former `DetailActivity.java` callsites. Scout-tier spec
-   addenda (MetaStrip confidence-token, PaperAnswerCard uncertain-fit,
-   escalation copy draft) should be drafted during the Wave A re-run.
+   `AnswerPresenter` callsite
+   (`android-app/app/src/main/java/com/senku/mobile/AnswerPresenter.java`).
+   Scout-tier spec addenda in progress (MetaStrip confidence token,
+   PaperAnswerCard uncertain-fit, escalation copy draft) — finish before
+   dispatch.
+6. File follow-ups post-release: `BACK-R-05` (Android anchor-prior
+   productization decision, scout spike) and `BACK-T-04` (fix
+   `Quote-AndroidShellArg` in session-flow harness).
 
 ## State Log
 

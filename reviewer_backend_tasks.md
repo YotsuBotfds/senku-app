@@ -46,16 +46,22 @@ use per-lane trackers for execution detail.
   work in `BACK-R-01` / `BACK-R-03`
 
 **New (this backlog):** `BACK-D-01`..`D-06` · `BACK-U-01`..`U-04` ·
-`BACK-L-01`..`L-04` · `BACK-R-01`..`R-04` · `BACK-P-01`..`P-03` ·
-`BACK-T-01`..`T-03` · `BACK-H-01`..`H-06` (30 original tasks; `BACK-H-05`
-later invalidated after re-audit).
+`BACK-L-01`..`L-04` · `BACK-R-01`..`R-05` · `BACK-P-01`..`P-03` ·
+`BACK-T-01`..`T-04` · `BACK-H-01`..`H-06` (30 original tasks; `BACK-H-05`
+later invalidated after re-audit; post-release follow-ups `BACK-R-05` and
+`BACK-T-04` added 2026-04-18).
 
-**Wave A status:** 23 done + 3 closeout rows pending re-run
-(`BACK-R-03`, `BACK-P-01`, `BACK-P-02`) + 1 invalidated (`BACK-H-05`) out of
-26 original tasks. `BACK-P-04` (pipeline SHA-race fix) landed 2026-04-18
-(`bbc1b1d`); the re-exported stock bundle landed as `aa1b399`. The coding
-wave is done; the remaining path is the closeout re-run on the post-P-04
-bundle → Wave A formally closed.
+**Wave A status:** formally closed 2026-04-18. 25 done + 2 invalidated
+(`BACK-H-05`, `BACK-R-03`) out of 26 original tasks, plus **1 newly-added P0**
+(`BACK-P-04`, landed `bbc1b1d`) surfaced during closeout. `BACK-P-04` fixed
+the pack export SHA race; stock bundle re-exported (`aa1b399`); closeout
+re-run on 2026-04-18 landed `BACK-P-02` + `BACK-P-01` green with artifacts
+under `artifacts/bench/wave_a_closeout_20260418_rerun/`. `BACK-R-03` was
+invalidated because anchor-prior is feature-gated off on Android
+(`SessionMemory.java:22`) so the idle-reset scenario is non-observable in
+production — see `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Follow-ups
+`BACK-R-05` (Android anchor-prior decision) and `BACK-T-04` (harness repair)
+track post-release.
 
 **Wave B status:** un-gated 2026-04-18. `OPUS-E-06` landed (`b41128a`):
 `AnswerPresenter` and `DetailAnswerPresenterHost` exist in
@@ -97,7 +103,7 @@ tasks touch different files. The collision hotspots to watch:
   validate). Bundle.
 - `mobile_pack.py` — `BACK-P-04` (export SHA race) **landed** 2026-04-18
   (`bbc1b1d`); stock bundle re-exported (`aa1b399`). Wave A closeout re-run
-  (`BACK-R-03` / `BACK-P-01` / `BACK-P-02`) is eligible on the post-P-04 bundle.
+  completed on the post-P-04 bundle.
 
 Strict-serial pairs:
 - `BACK-D-01` → `BACK-D-02` (graduation manifest must exist before semantic
@@ -107,8 +113,9 @@ Strict-serial pairs:
 - `BACK-R-01` decision → `BACK-R-03`, `BACK-R-04` (if anchor prior is deleted,
   R-03 and R-04 dissolve; if productized, they become P1)
 - **`BACK-P-04` → `BACK-R-03`, `BACK-P-01`, `BACK-P-02`** — **gate cleared**
-  2026-04-18. `BACK-P-04` landed (`bbc1b1d`); stock bundle re-exported
-  (`aa1b399`). Wave A closeout re-run is eligible on the post-P-04 bundle.
+  2026-04-18 and consumed the same day. `BACK-P-04` landed (`bbc1b1d`);
+  stock bundle re-exported (`aa1b399`); Wave A closeout re-run completed on
+  the post-P-04 bundle.
 - **`OPUS-E-06` → entire Lane U** — **gate cleared** 2026-04-18. `OPUS-E-06`
   landed (`b41128a`); `AnswerPresenter` + `DetailAnswerPresenterHost` now own
   the three former `OfflineAnswerEngine.generate()` callsites. Lane U
@@ -469,6 +476,13 @@ parallel fill-lane with no gate of its own.
   - **Gate on BACK-R-01 decision** (if anchor-prior is deleted, this task
     dissolves)
 
+- `BACK-R-05` · **P2 · S · scout** · Android anchor-prior productization decision
+  - Files: read-only audit of `android-app/app/src/main/java/com/senku/mobile/SessionMemory.java` (line 22 flag, line 1190 test-only setter, line 193 gate), `ChatSessionStore.java`, `OfflineAnswerEngine.java` for candidate production callers; desktop reference at `query.py:60`
+  - Behavior: decide whether to productize anchor-prior on Android by flipping `ENABLE_ANCHOR_PRIOR = true` and wiring a production caller, or remove the half-commit code entirely. Surfaced during Wave A closeout rerun when `BACK-R-03` was invalidated — desktop has `ENABLE_ANCHOR_PRIOR = True` in `query.py:60` but Android still has it `false` with no production setter, leaving the sticky-anchor idle-reset machinery unreachable on mobile.
+  - Accept: decision doc at `notes/specs/android_anchor_prior_decision_20260418.md` covers (a) current state on both sides, (b) cost/benefit of productizing on Android vs. removing the code, (c) recommendation, (d) follow-on tasks if productize is chosen (new `BACK-R-06` for on-device validation with a revived harness)
+  - Depends on: `BACK-R-01` decision context
+  - **Post-release; not a Wave A or Wave B dependency.**
+
 ### Lane P — Pack / repo / catalog
 
 - `BACK-P-01` · **P1 · M · worker** · FTS runtime capability test
@@ -573,6 +587,13 @@ parallel fill-lane with no gate of its own.
     `artifacts/bench/abstain_regression_<date>/`.
   - **Depends on BACK-U-04**
 
+- `BACK-T-04` · **P2 · XS · worker (test-infra)** · Fix `Quote-AndroidShellArg` in session-flow harness
+  - Files: `scripts/run_android_session_flow.ps1`
+  - Behavior: `scripts/run_android_session_flow.ps1` currently fails on `emulator-5556` with "`Quote-AndroidShellArg` not recognized" — the helper is referenced but not defined/imported. Fix by either inlining the quoting logic, dot-sourcing the helper from a sibling script, or importing from an existing PowerShell utility module. Ensure the repaired script can drive at least one idle-reset session-flow scenario end-to-end.
+  - Accept: `scripts/run_android_session_flow.ps1` runs cleanly against `emulator-5556` without the `Quote-AndroidShellArg` error; one sample session-flow scenario completes with captured logcat
+  - Surfaced during: Wave A closeout rerun when `BACK-R-03` could not be driven on-device
+  - **Post-release; unblocks future session-flow / multi-turn harness work including any revived anchor-prior validation if `BACK-R-05` decides productize.**
+
 ### Lane H — Hygiene (safe-parallel, low priority)
 
 - `BACK-H-01` · **P2 · S · worker** · Consolidate tag normalization
@@ -620,8 +641,8 @@ _Append entries here as tasks ship. Format:
 | task | status | owner | opened | closed | note |
 | ---- | ------ | ----- | ------ | ------ | ---- |
 | BACK-P-04 | done | codex | 2026-04-18 | 2026-04-18 | `export_mobile_pack()` now finalizes `pack_meta` before hashing, re-exported the stock bundle, and restored clean stock install on emulator-5556 |
-| BACK-P-02 | pending | codex | 2026-04-18 | — | post-P-04 re-run pending; stock install path restored by `bbc1b1d` + `aa1b399`; closeout re-run target: `artifacts/bench/wave_a_closeout_20260418_rerun/` |
-| BACK-P-01 | pending | codex | 2026-04-18 | — | post-P-04 re-run pending; runtime FTS probe to be validated on the post-P-04 stock install |
+| BACK-P-02 | done | codex | 2026-04-18 | 2026-04-18 | post-P-04 re-run green on emulator-5556: stock + missing_table + truncated variants all reach the schema-validation branch; artifacts under `artifacts/bench/wave_a_closeout_20260418_rerun/back_p_02/` |
+| BACK-P-01 | done | codex | 2026-04-18 | 2026-04-18 | post-P-04 re-run green on emulator-5554 + 5556; FTS runtime probe traces (`fts.runtime_probe ... lexical_chunks_fts4 supported=true`, live `routeChunkFts` execution) in `artifacts/bench/wave_a_closeout_20260418_rerun/back_p_01/`; FTS status addendum at `notes/ANDROID_SQLITE_FTS5_STATUS_2026-04-18.md` |
 | BACK-H-05 | invalidated | codex | 2026-04-18 | 2026-04-18 | `CONTEXT_SELECTION_STOP_TOKENS` is still live in `OfflineAnswerEngine`, so the delete-unused audit was struck |
 | BACK-H-04 | done | codex | 2026-04-18 | 2026-04-18 | `QUERY_LOCALE` now centralizes Locale.US usage in OfflineAnswerEngine, SessionMemory, and PackRepository |
 | BACK-H-02 | done | codex | 2026-04-18 | 2026-04-18 | regenerate_deterministic_registry.py now round-trips the registry from introspection plus a hand-curated YAML sidecar |
@@ -632,6 +653,8 @@ _Append entries here as tasks ship. Format:
 | BACK-L-01 + BACK-L-02 | done | codex | 2026-04-18 | 2026-04-18 | generate() now logs regex-stable latency summaries, emits SenkuLatency events, and persists AnswerRun latencyBreakdown through SessionMemory |
 | BACK-R-01 | done | codex | 2026-04-18 | 2026-04-18 | anchor-prior decision now matches desktop code with ENABLE_ANCHOR_PRIOR enabled and tests green |
 | BACK-R-02 | done | codex | 2026-04-18 | 2026-04-18 | planning/readiness acute queries now skip uniform bridge demotion and desktop rerank tests cover the branch |
-| BACK-R-03 | pending | codex | 2026-04-18 | — | post-P-04 re-run pending; idle-reset code landed; on-device validation target: `artifacts/bench/wave_a_closeout_20260418_rerun/` |
+| BACK-R-03 | invalidated | codex | 2026-04-18 | 2026-04-18 | anchor-prior is feature-gated off on Android (`SessionMemory.java:22` `ENABLE_ANCHOR_PRIOR = false`); only setter is the test helper at `SessionMemory.java:1190`; idle-reset path is non-observable in production; re-scope via `BACK-R-05` if/when Android anchor-prior is productized; see `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md` |
 | BACK-R-04 | done | codex | 2026-04-18 | 2026-04-18 | anchor prior now passes as a typed `AnchorPriorState` through retrieval and rerank |
 | OPUS-E-06 | done | codex | 2026-04-18 | 2026-04-18 | AnswerPresenter carve-out landed (`b41128a`); three `OfflineAnswerEngine.generate()` callsites moved behind `AnswerPresenter`; `DetailActivity.java` 6264 → 6063; Wave B un-gated |
+| BACK-R-05 | open | — | 2026-04-18 | — | decide whether to productize anchor-prior on Android (flip `SessionMemory.java:22` + wire production caller) or remove the half-commit code; scout spike; post-release |
+| BACK-T-04 | open | — | 2026-04-18 | — | fix `Quote-AndroidShellArg` not-recognized in `scripts/run_android_session_flow.ps1` so the session-flow harness can drive idle-reset scenarios again; post-release |
