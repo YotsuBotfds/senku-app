@@ -41,12 +41,19 @@ try {
         "## Task 1 - `DAY-G-01` - Already landed"
     ) | Set-Content -Path $queueNotePath -Encoding UTF8
 
-    & $shellExe -NoProfile -File (Join-Path $repoRoot "scripts/run_overnight_queue_wrapped.ps1") `
-        -QueueNote $queueNotePath `
-        -Branch $currentBranch `
-        -RunLogDir $runLogDir
+    $wrapper = Start-Process -FilePath $shellExe -PassThru -Wait -NoNewWindow -ArgumentList @(
+        "-NoProfile",
+        "-File",
+        (Join-Path $repoRoot "scripts/run_overnight_queue_wrapped.ps1"),
+        "-QueueNote",
+        $queueNotePath,
+        "-Branch",
+        $currentBranch,
+        "-RunLogDir",
+        $runLogDir
+    )
 
-    $exitCode = $LASTEXITCODE
+    $exitCode = $wrapper.ExitCode
     Assert-True ($exitCode -eq 0) "Expected wrapper test exit code 0, got $exitCode."
 
     $runLogPath = Join-Path $runLogDir "run_log.md"
