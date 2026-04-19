@@ -592,12 +592,13 @@ parallel fill-lane with no gate of its own.
     `artifacts/bench/abstain_regression_<date>/`.
   - **Depends on BACK-U-04**
 
-- `BACK-T-04` · **P2 · XS · worker (test-infra)** · Fix `Quote-AndroidShellArg` in session-flow harness
+- `BACK-T-04` · **[done 2026-04-19 `2656311`]** · **P2 · XS · worker (test-infra)** · Fix `Quote-AndroidShellArg` in session-flow harness
   - Files: `scripts/run_android_session_flow.ps1`
   - Behavior: `scripts/run_android_session_flow.ps1` currently fails on `emulator-5556` with "`Quote-AndroidShellArg` not recognized" — the helper is referenced but not defined/imported. Fix by either inlining the quoting logic, dot-sourcing the helper from a sibling script, or importing from an existing PowerShell utility module. Ensure the repaired script can drive at least one idle-reset session-flow scenario end-to-end.
   - Accept: `scripts/run_android_session_flow.ps1` runs cleanly against `emulator-5556` without the `Quote-AndroidShellArg` error; one sample session-flow scenario completes with captured logcat
   - Surfaced during: Wave A closeout rerun when `BACK-R-03` could not be driven on-device
   - **Post-release; unblocks future session-flow / multi-turn harness work including any revived anchor-prior validation if `BACK-R-05` decides productize.**
+  - **Landed 2026-04-19 (`2656311`)** — `run_android_session_flow.ps1` now defines `Quote-AndroidShellArg` locally, matching the sibling harness quoting behavior so `auto_query` launches no longer fail before `am start`
 
 ### Lane H — Hygiene (safe-parallel, low priority)
 
@@ -662,7 +663,7 @@ _Append entries here as tasks ship. Format:
 | BACK-R-04 | done | codex | 2026-04-18 | 2026-04-18 | anchor prior now passes as a typed `AnchorPriorState` through retrieval and rerank |
 | OPUS-E-06 | done | codex | 2026-04-18 | 2026-04-18 | AnswerPresenter carve-out landed (`b41128a`); three `OfflineAnswerEngine.generate()` callsites moved behind `AnswerPresenter`; `DetailActivity.java` 6264 → 6063; Wave B un-gated |
 | BACK-R-05 | open | — | 2026-04-18 | — | decide whether to productize anchor-prior on Android (flip `SessionMemory.java:22` + wire production caller) or remove the half-commit code; scout spike; post-release |
-| BACK-T-04 | open | — | 2026-04-18 | — | fix `Quote-AndroidShellArg` not-recognized in `scripts/run_android_session_flow.ps1` so the session-flow harness can drive idle-reset scenarios again; post-release |
+| BACK-T-04 | done | codex | 2026-04-18 | 2026-04-19 | `run_android_session_flow.ps1` now defines `Quote-AndroidShellArg` locally so the session-flow harness can quote `auto_query` safely again; commit `2656311` |
 | BACK-U-02 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android abstain responses now prepend the pinned safety-critical escalation line above "Closest matches" when the upstream safety flag is set, with table-driven tests and phone + tablet validation artifacts; commit `d974ebc` |
 | BACK-U-03 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android compute and surface high/medium/low answer confidence labels; MetaStrip renders likely-match and low-confidence tokens with phone + tablet instrumentation proof; commit `af49d91` |
 | BACK-U-01 | done | codex | 2026-04-19 | 2026-04-19 | desktop + Android introduce three-way `confident`/`uncertain_fit`/`abstain` answer mode with deterministic uncertain-fit body template and `UNSURE FIT` card variant; reuses U-02 escalation helper for safety-critical uncertain-fit; boundary tests + reviewer-worked example pass on both engines; phone + tablet artifacts under `artifacts/bench/wave_b_back-u-01_2026-04-19/`; commit `eb398dc` |
