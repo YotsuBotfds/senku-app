@@ -1,0 +1,37 @@
+# --- Build caches and generated output ---
+.gradle/
+.gradle-user-home/
+android-app/.gradle/
+android-app/.gradle-home/
+
+# --- IDE and editor metadata ---
+.idea/
+android-app/.idea/
+.android/
+android-app/.android/
+
+# --- Claude local configuration ---
+.claude/
+
+# --- Temporary directories ---
+.tmp/
+_tmp_gallery/
+
+# --- Python ---
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- Timestamped generated HTML reports at repo root ---
+# Pattern matches files like "1151-4-17-26.html" or "1400-4-17-26.html"
+# at the repo root only. Does not match HTML files under artifacts/ or
+# notes/ (those are intentional deliverables).
+/[0-9]*-[0-9]*-[0-9]*.html
