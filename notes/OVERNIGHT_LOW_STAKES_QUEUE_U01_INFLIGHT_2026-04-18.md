@@ -214,6 +214,24 @@ State Log row format:
 | BACK-XX-nn | done | codex | 2026-04-18 | 2026-04-18 | <one-line summary matching the code commit subject> |
 ```
 
+**Note cell hygiene.** The `note` cell must not contain any literal
+`|` characters, **including inside inline code backticks**. The 8-cell
+row validator splits on literal `|` regardless of Markdown code-span
+syntax, so a pipe inside backticks still breaks the row.
+
+Common offenders and rewrites:
+
+- Python union type hints: `Callable[..., str] | None` →
+  `optional Callable[..., str]` (or `Callable[..., str] or None` in
+  prose, or the HTML entity `&#124;` if the exact token must survive)
+- Shell pipelines in notes: `grep ... | wc -l` →
+  `grep ... and count with wc -l` (or drop the pipeline and describe
+  the intent)
+- Regex alternation: `foo|bar` → `foo or bar`
+
+If a literal `|` is truly unavoidable, use `&#124;`. Prefer prose over
+entities.
+
 Validate after each tracker commit with the pre-flight Python
 one-liner. If it fails, stop and log.
 
