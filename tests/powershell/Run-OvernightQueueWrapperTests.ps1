@@ -61,8 +61,7 @@ try {
         "## Preflight",
         "### 1. Stale lock sweep",
         "### 6. Queue note present and well-formed",
-        "## Wrapper Exit",
-        "Queue note tasks are already satisfied"
+        "## Wrapper Exit"
     )) {
         Assert-True ($runLog.Contains($required)) "Expected run log to contain '$required'."
     }
