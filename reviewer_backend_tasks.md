@@ -217,9 +217,10 @@ parallel fill-lane with no gate of its own.
   - Behavior: commit the repo's first `.gitignore` with the exact confirmed cache, editor metadata, Python, temporary-directory, and root HTML patterns from the daylight hygiene spec while leaving owner-decision docs and snapshots unignored
   - **Landed 2026-04-19 (`25b49ad`)** â€” `.gitignore` now hides the confirmed build caches, editor metadata, Claude local config, temporary directories, Python caches, and timestamped root HTML reports while leaving the owner-decision docs, config snapshot, and archive visible as untracked
 
-- `DAY-D-01` Â· **P2 Â· XS Â· worker docs** Â· No-op code commit protocol rule
+- `DAY-D-01` Â· **[done 2026-04-19 `73216a7`]** Â· **P2 Â· XS Â· worker docs** Â· No-op code commit protocol rule
   - Files: `notes/OVERNIGHT_LOW_STAKES_QUEUE_U01_INFLIGHT_2026-04-18.md`
   - Behavior: codify the correct protocol when a requested change is already present so the queue records verification and skips no-op code commits instead of adding empty history noise
+  - **Landed 2026-04-19 (`73216a7`)** â€” the overnight queue note now requires verification plus a direct tracker commit when a requested change is already present, and it records `none` in the run log code-commit column instead of minting empty history
 
 - `DAY-L-01` Â· **P1 Â· M Â· worker scripts** Â· Overnight launcher guardrail Phase 1
   - Files: new `scripts/run_overnight_queue_wrapped.ps1`, new `tests/powershell/Run-OvernightQueueWrapperTests.ps1`
@@ -697,3 +698,4 @@ _Append entries here as tasks ship. Format:
 | BACK-H-01 | done | codex | 2026-04-18 | 2026-04-19 | metadata tag normalization now lives in shared `metadata_helpers.py` under canonical `normalize_metadata_tag`, with the older helper name preserved as a wrapper and helper tests expanded through unicode and idempotency cases; commit `92116a8` |
 | BACK-P-03 | done | codex | 2026-04-19 | 2026-04-19 | bridge-tag consistency audit added to ingest with test; 11 prerequisite guide fixes landed as preceding commit; corpus clean; commit `aa2373c` |
 | DAY-G-01 | done | codex | 2026-04-19 | 2026-04-19 | first `.gitignore` landed with the exact daylight hygiene spec patterns, hiding confirmed caches and temp output while keeping owner-decision docs and snapshots visible as untracked; commit `25b49ad` |
+| DAY-D-01 | done | codex | 2026-04-19 | 2026-04-19 | overnight queue protocol now requires verification plus a direct tracker commit when a requested change is already present, and it records `none` in the run log code-commit column instead of creating an empty code commit; commit `73216a7` |
