@@ -197,6 +197,23 @@ including tasks that were not started because of an earlier stop.
 
 ### Tracker-commit template
 
+**No-op code commit rule.** If a task's requested change is already
+present in the codebase (either because immutable upstream code
+already satisfies the intent or because a prior commit landed it),
+do NOT create an empty or trivial code commit. Instead:
+
+1. Record the observation in the run log with the specific
+   verification command and its output (e.g., `rg -n '<pattern>'`
+   showing zero legacy hits).
+2. Skip directly to the tracker commit. The State Log row's note
+   cell should begin with `already present in <where>` and reference
+   the verification.
+3. Use `none` as the code commit hash in the run log table row
+   (e.g., `| BACK-X-nn | pass | none | <tracker-hash> | NN:NN |`).
+
+This preserves the audit trail without cluttering the git history
+with no-op commits.
+
 After each code commit lands, run:
 
 ```
