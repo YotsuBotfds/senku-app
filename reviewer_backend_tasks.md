@@ -617,11 +617,12 @@ parallel fill-lane with no gate of its own.
     rules. Hand-curated fields (priority, promotion_status, notes) stay in a
     sidecar YAML; the generator merges.
 
-- `BACK-H-03` · **P2 · XS · worker** · Type hint on registry builder
+- `BACK-H-03` · **[done 2026-04-19 `739d26f`]** · **P2 · XS · worker** · Type hint on registry builder
   - Files: `query.py:5364`
   - Behavior: change `Callable[[], str] | None` to `Callable[..., str] | None`
     so future builders that take the question as context don't trip the type
     check
+  - **Landed 2026-04-19 (`739d26f`)** — acceptance was already satisfied in immutable Wave B code from `af49d91`; this queue verified the broad `Callable[..., str] | None` signature is present, confirmed zero legacy `Callable[[], str] | None` hits, and left `query.py` untouched per the Wave B scope guard
 
 - `BACK-H-04` · **P2 · XS · worker** · Centralize Android `Locale`
   - Files: `OfflineAnswerEngine.java`, `SessionMemory.java`,
@@ -667,3 +668,4 @@ _Append entries here as tasks ship. Format:
 | BACK-U-02 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android abstain responses now prepend the pinned safety-critical escalation line above "Closest matches" when the upstream safety flag is set, with table-driven tests and phone + tablet validation artifacts; commit `d974ebc` |
 | BACK-U-03 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android compute and surface high/medium/low answer confidence labels; MetaStrip renders likely-match and low-confidence tokens with phone + tablet instrumentation proof; commit `af49d91` |
 | BACK-U-01 | done | codex | 2026-04-19 | 2026-04-19 | desktop + Android introduce three-way `confident`/`uncertain_fit`/`abstain` answer mode with deterministic uncertain-fit body template and `UNSURE FIT` card variant; reuses U-02 escalation helper for safety-critical uncertain-fit; boundary tests + reviewer-worked example pass on both engines; phone + tablet artifacts under `artifacts/bench/wave_b_back-u-01_2026-04-19/`; commit `eb398dc` |
+| BACK-H-03 | done | codex | 2026-04-18 | 2026-04-19 | registry builder already accepts `Callable[..., str] | None` in immutable Wave B code; overnight queue verified zero legacy `Callable[[], str] | None` hits and recorded the landing; commit `739d26f` |
