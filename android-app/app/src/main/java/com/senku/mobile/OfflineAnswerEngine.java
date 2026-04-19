@@ -26,6 +26,10 @@ public final class OfflineAnswerEngine {
     private static final int ABSTAIN_TOP_CHUNK_LIMIT = 3;
     private static final int ABSTAIN_MAX_OVERLAP_TOKENS = 1;
     private static final int ABSTAIN_MIN_UNIQUE_LEXICAL_HITS = 2;
+    static final String SAFETY_CRITICAL_ESCALATION_LINE =
+        "If this is urgent or could be a safety risk, stop and call local emergency services now "
+            + "(911 where applicable); if this may be poisoning, call Poison Control now, and "
+            + "keep the person with a trusted adult while waiting.";
     private static final Set<String> QUERY_STOP_TOKENS = buildSet(
         "a", "about", "an", "and", "are", "at", "be", "but", "by", "can", "do", "does",
         "for", "from", "how", "i", "if", "in", "is", "it", "my", "next", "of", "on",
@@ -35,6 +39,61 @@ public final class OfflineAnswerEngine {
     private static final Set<String> CONTEXT_SELECTION_STOP_TOKENS = buildSet(
         "construction", "freshly", "known", "make", "light", "lighting"
     );
+    private static final Set<String> SAFETY_CRITICAL_EXPLICIT_MARKERS = buildSet(
+        "poison control", "overdose", "self-harm", "self harm", "suicidal", "suicide", "911", "988"
+    );
+    private static final Set<String> SAFETY_CRITICAL_MENTAL_HEALTH_MARKERS = buildSet(
+        "hearing voices",
+        "voice telling",
+        "hallucination",
+        "hallucinations",
+        "paranoid",
+        "paranoia",
+        "normal rules do not apply",
+        "special mission",
+        "acting invincible",
+        "nothing can hurt",
+        "won't stop moving",
+        "will not stop moving",
+        "barely eating",
+        "hardly eating"
+    );
+    private static final Set<String> SAFETY_CRITICAL_ACUTE_QUERY_MARKERS = buildSet(
+        "right now",
+        "immediately",
+        "first aid",
+        "not breathing",
+        "can't breathe",
+        "cannot breathe",
+        "bleeding",
+        "hemorrhage",
+        "overdose",
+        "poison",
+        "poisoning",
+        "swallowed",
+        "ingested",
+        "seizure",
+        "unconscious",
+        "stroke",
+        "heart attack",
+        "chest pain",
+        "anaphylaxis",
+        "allergic reaction",
+        "eye injury",
+        "animal bite",
+        "rabies",
+        "severe burn",
+        "puncture wound",
+        "drain cleaner",
+        "bleach",
+        "battery acid",
+        "lye",
+        "ammonia",
+        "chemical burn",
+        "chemical in eye",
+        "chemical on skin"
+    );
+    private static final Set<String> SAFETY_CRITICAL_EMERGENCY_CONTEXT_MARKERS = buildSet("urgent", "emergency");
     private static final int MAX_PENDING_SESSION_LATENCIES = 12;
     private static final Object PENDING_SESSION_LATENCIES_LOCK = new Object();
     private static final LinkedHashMap<String, LatencyBreakdown> PENDING_SESSION_LATENCIES =
@@ -222,6 +281,7 @@ public final class OfflineAnswerEngine {
             contextSelectionQuery,
             retrievalPlan.metadataProfile
         );
+        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, abstainCandidates);
         if (shouldAbstain(abstainCandidates, contextSelectionQuery)) {
             List<SearchResult> adjacentGuides = topAbstainChunks(abstainCandidates);
             logDebug(
@@ -231,14 +291,15 @@ public final class OfflineAnswerEngine {
             long retrievalMs = Math.max(0L, elapsedMsSince(prepareStartedAtNs) - nanosToMillis(rerankNs));
             return PreparedAnswer.abstain(
                 trimmedQuery,
-                buildAbstainAnswerBody(trimmedQuery, adjacentGuides),
+                buildAbstainAnswerBody(trimmedQuery, adjacentGuides, safetyCritical),
                 adjacentGuides,
                 sessionUsed,
                 prepareStartedAtMs,
                 retrievalMs,
                 nanosToMillis(rerankNs),
                 0L,
-                confidenceLabel
+                confidenceLabel,
+                safetyCritical
             );
         }
 
@@ -284,7 +345,8 @@ public final class OfflineAnswerEngine {
             rerankMs,
             promptMs,
             LatencyPanel.classifyQuery(trimmedQuery, promptContextResults, false, false),
-            confidenceLabel
+            confidenceLabel,
+            safetyCritical
         );
     }
 
@@ -1075,6 +1137,22 @@ public final class OfflineAnswerEngine {
             && !strongSemanticHit;
     }
 
+    static boolean isSafetyCriticalQuery(String query, List<SearchResult> topChunks) {
+        String normalized = safe(query).trim().toLowerCase(QUERY_LOCALE);
+        if (normalized.isEmpty()) {
+            return false;
+        }
+        if (containsAny(normalized, SAFETY_CRITICAL_EXPLICIT_MARKERS)
+            || containsAny(normalized, SAFETY_CRITICAL_MENTAL_HEALTH_MARKERS)) {
+            return true;
+        }
+        if (containsAny(normalized, SAFETY_CRITICAL_ACUTE_QUERY_MARKERS)) {
+            return true;
+        }
+        return containsAny(normalized, SAFETY_CRITICAL_EMERGENCY_CONTEXT_MARKERS)
+            && containsAny(normalized, SAFETY_CRITICAL_ACUTE_QUERY_MARKERS);
+    }
+
     private static String truncateAbstainQuery(String query) {
         String normalized = safe(query).trim().replaceAll("\\s+", " ");
         if (normalized.length() <= 60) {
@@ -1084,6 +1162,10 @@ public final class OfflineAnswerEngine {
     }
 
     static String buildAbstainAnswerBody(String query, List<SearchResult> topChunks) {
+        return buildAbstainAnswerBody(query, topChunks, false);
+    }
+
+    static String buildAbstainAnswerBody(String query, List<SearchResult> topChunks, boolean safetyCritical) {
         List<SearchResult> adjacent = topAbstainChunks(topChunks);
         List<String> queryTokens = queryTokens(query);
         LinkedHashMap<String, Integer> categoryCounts = new LinkedHashMap<>();
@@ -1091,6 +1173,10 @@ public final class OfflineAnswerEngine {
         builder.append("Senku doesn't have a guide for \"")
             .append(truncateAbstainQuery(query))
             .append("\".");
+        String escalationLine = abstainEscalationLine(safetyCritical);
+        if (!escalationLine.isEmpty()) {
+            builder.append("\n\n").append(escalationLine);
+        }
         if (!adjacent.isEmpty()) {
             builder.append("\n\nClosest matches in the library:");
             for (SearchResult result : adjacent) {
@@ -1132,6 +1218,10 @@ public final class OfflineAnswerEngine {
             .append(" category")
             .append("\n- asking a simpler version (for example, \"what is X?\")");
         return builder.toString().trim();
+    }
+
+    private static String abstainEscalationLine(boolean safetyCritical) {
+        return safetyCritical ? SAFETY_CRITICAL_ESCALATION_LINE : "";
     }
 
     private static int lexicalOverlapScore(SearchResult source, List<String> queryTokens) {
@@ -1694,6 +1784,7 @@ public final class OfflineAnswerEngine {
         public final long promptMs;
         public final String queryClass;
         public final ConfidenceLabel confidenceLabel;
+        public final boolean safetyCritical;
 
         private PreparedAnswer(
             String query,
@@ -1711,7 +1802,8 @@ public final class OfflineAnswerEngine {
             long rerankMs,
             long promptMs,
             String queryClass,
-            ConfidenceLabel confidenceLabel
+            ConfidenceLabel confidenceLabel,
+            boolean safetyCritical
         ) {
             this.query = query == null ? "" : query;
             this.sources = sources == null ? Collections.emptyList() : new ArrayList<>(sources);
@@ -1729,6 +1821,7 @@ public final class OfflineAnswerEngine {
             this.promptMs = Math.max(0L, promptMs);
             this.queryClass = queryClass == null ? "" : queryClass;
             this.confidenceLabel = normalizeConfidenceLabel(confidenceLabel, deterministic, abstain);
+            this.safetyCritical = safetyCritical;
         }
 
         private static PreparedAnswer deterministic(
@@ -1783,7 +1876,8 @@ public final class OfflineAnswerEngine {
                 0L,
                 0L,
                 LatencyPanel.QUERY_CLASS_DETERMINISTIC,
-                ConfidenceLabel.HIGH
+                ConfidenceLabel.HIGH,
+                isSafetyCriticalQuery(query, sources)
             );
         }
 
@@ -1801,6 +1895,38 @@ public final class OfflineAnswerEngine {
             String queryClass,
             ConfidenceLabel confidenceLabel
         ) {
+            return generative(
+                query,
+                sources,
+                sessionUsed,
+                startedAtMs,
+                inferenceSettings,
+                systemPrompt,
+                prompt,
+                retrievalMs,
+                rerankMs,
+                promptMs,
+                queryClass,
+                confidenceLabel,
+                isSafetyCriticalQuery(query, sources)
+            );
+        }
+
+        private static PreparedAnswer generative(
+            String query,
+            List<SearchResult> sources,
+            boolean sessionUsed,
+            long startedAtMs,
+            HostInferenceConfig.Settings inferenceSettings,
+            String systemPrompt,
+            String prompt,
+            long retrievalMs,
+            long rerankMs,
+            long promptMs,
+            String queryClass,
+            ConfidenceLabel confidenceLabel,
+            boolean safetyCritical
+        ) {
             return new PreparedAnswer(
                 query,
                 sources,
@@ -1817,7 +1943,8 @@ public final class OfflineAnswerEngine {
                 rerankMs,
                 promptMs,
                 queryClass,
-                confidenceLabel
+                confidenceLabel,
+                safetyCritical
             );
         }
 
@@ -1896,6 +2023,32 @@ public final class OfflineAnswerEngine {
             long promptMs,
             ConfidenceLabel confidenceLabel
         ) {
+            return abstain(
+                query,
+                answerBody,
+                sources,
+                sessionUsed,
+                startedAtMs,
+                retrievalMs,
+                rerankMs,
+                promptMs,
+                confidenceLabel,
+                isSafetyCriticalQuery(query, sources)
+            );
+        }
+
+        static PreparedAnswer abstain(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            boolean sessionUsed,
+            long startedAtMs,
+            long retrievalMs,
+            long rerankMs,
+            long promptMs,
+            ConfidenceLabel confidenceLabel,
+            boolean safetyCritical
+        ) {
             return new PreparedAnswer(
                 query,
                 sources,
@@ -1912,7 +2065,8 @@ public final class OfflineAnswerEngine {
                 rerankMs,
                 promptMs,
                 LatencyPanel.QUERY_CLASS_ABSTAIN,
-                confidenceLabel
+                confidenceLabel,
+                safetyCritical
             );
         }
 

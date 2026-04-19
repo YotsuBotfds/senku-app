@@ -970,6 +970,56 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void buildAbstainAnswerBodyAddsSafetyCriticalEscalationOnlyWhenFlagged() {
+        List<SearchResult> adjacentGuides = List.of(
+            new SearchResult(
+                "Canvas Repair",
+                "",
+                "",
+                "",
+                "GD-102",
+                "Patching",
+                "crafts",
+                "vector"
+            ),
+            new SearchResult(
+                "Tent Maintenance",
+                "",
+                "",
+                "",
+                "GD-103",
+                "Storage",
+                "resource-management",
+                "lexical"
+            )
+        );
+        Object[][] cases = new Object[][]{
+            {"my child may have poisoning after swallowing drain cleaner", true},
+            {"how do i build a rain shelter from a tarp", false},
+        };
+
+        for (Object[] testCase : cases) {
+            String query = (String) testCase[0];
+            boolean expectEscalation = (Boolean) testCase[1];
+            String answerBody = OfflineAnswerEngine.buildAbstainAnswerBody(
+                query,
+                adjacentGuides,
+                OfflineAnswerEngine.isSafetyCriticalQuery(query, adjacentGuides)
+            );
+
+            boolean hasEscalation = answerBody.contains(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE);
+            assertEquals(query, expectEscalation, hasEscalation);
+            if (expectEscalation) {
+                assertTrue(
+                    query,
+                    answerBody.indexOf(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE)
+                        < answerBody.indexOf("Closest matches in the library:")
+                );
+            }
+        }
+    }
+
+    @Test
     public void shouldNotAbstainWhenHybridCandidateLooksGrounded() {
         boolean shouldAbstain = OfflineAnswerEngine.shouldAbstain(
             List.of(

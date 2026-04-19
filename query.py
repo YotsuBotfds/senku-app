@@ -6782,6 +6782,7 @@ def build_scenario_frame(question):
         "environment": _extract_environment(question),
         "deadline": deadline,
     }
+    frame["safety_critical"] = _scenario_frame_is_safety_critical(frame)
     return frame
 
 
@@ -10260,7 +10261,66 @@ def _truncate_abstain_query(query, *, limit=60):
     return f"{clipped}..."
 
 
-def build_abstain_response(query, results, match_labels):
+_SAFETY_CRITICAL_ESCALATION_LINE = (
+    "If this is urgent or could be a safety risk, stop and call local emergency "
+    "services now (911 where applicable); if this may be poisoning, call Poison "
+    "Control now, and keep the person with a trusted adult while waiting."
+)
+
+
+def _scenario_frame_is_safety_critical(frame):
+    """Return True when the current scenario needs emergency-style abstain copy."""
+    scenario = frame or {}
+    if "safety_critical" in scenario:
+        try:
+            return bool(scenario.get("safety_critical"))
+        except (TypeError, ValueError):
+            return False
+
+    question = (scenario.get("question") or "").strip()
+    if not question:
+        return False
+
+    lower = re.sub(r"\s+", " ", question.lower())
+    domains = set(scenario.get("domains") or [])
+    hazards = set(scenario.get("hazards") or [])
+    explicit_escalation_markers = (
+        "poison control",
+        "overdose",
+        "self-harm",
+        "self harm",
+        "suicidal",
+        "suicide",
+        "911",
+        "988",
+    )
+
+    if any(marker in lower for marker in explicit_escalation_markers):
+        return True
+
+    return (
+        _is_acute_symptom_query(question)
+        or _is_acute_overlap_collapse_query(question)
+        or _is_noncollapse_stroke_cardiac_overlap_query(question)
+        or _is_cardiac_emergency_query(question)
+        or _is_household_chemical_hazard_query(question)
+        or _is_mental_health_crisis_query(question)
+        or _is_emergency_mental_health_query(question)
+        or (
+            ("medical" in domains or hazards & {"bleeding", "poisoning", "seizure", "unconscious patient"})
+            and any(marker in lower for marker in ("urgent", "emergency"))
+        )
+    )
+
+
+def _abstain_escalation_line(scenario_frame):
+    """Return the safety-critical escalation copy for low-applicability states."""
+    if _scenario_frame_is_safety_critical(scenario_frame):
+        return _SAFETY_CRITICAL_ESCALATION_LINE
+    return ""
+
+
+def build_abstain_response(query, results, match_labels, scenario_frame=None):
     """Format a direct abstain card from adjacent retrieved guides."""
     rows = _abstain_top_rows(results)
     category_counts = Counter(
@@ -10270,6 +10330,9 @@ def build_abstain_response(query, results, match_labels):
         category_counts.most_common(1)[0][0] if category_counts else "survival"
     )
     lines = [f'Senku doesn\'t have a guide for "{_truncate_abstain_query(query)}".']
+    escalation_line = _abstain_escalation_line(scenario_frame)
+    if escalation_line:
+        lines.extend(["", escalation_line])
 
     if rows:
         lines.extend(["", "Closest matches in the library:"])
@@ -10308,7 +10371,12 @@ def stream_response(
     if should_abstain:
         review["confidence_label"] = "low"
         review["confidence_instruction"] = build_confidence_system_instruction("low")
-        response_text = build_abstain_response(question, results, match_labels)
+        response_text = build_abstain_response(
+            question,
+            results,
+            match_labels,
+            scenario_frame=scenario_frame,
+        )
         console.print()
         console.print(response_text, highlight=False, markup=False)
         console.print()
