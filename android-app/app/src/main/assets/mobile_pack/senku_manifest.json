@@ -1,0 +1,92 @@
+{
+  "counts": {
+    "chunks": 49654,
+    "deterministic_rules": 9,
+    "guide_related_links": 5737,
+    "guides": 754,
+    "retrieval_metadata_guides": 220
+  },
+  "embedding": {
+    "dimension": 768,
+    "distance": "cosine",
+    "int8_divisor": null,
+    "model_id": "nomic-ai/text-embedding-nomic-embed-text-v1.5",
+    "query_normalization_required": true,
+    "vector_dtype": "float16",
+    "vectors_normalized": true
+  },
+  "files": {
+    "sqlite": {
+      "bytes": 285310976,
+      "path": "senku_mobile.sqlite3",
+      "sha256": "af58bd127de3ec8c391eff1cb0f0a83f49aa8cde855c5d4f3e973bc3767da2c6"
+    },
+    "vectors": {
+      "bytes": 76268576,
+      "path": "senku_vectors.f16",
+      "sha256": "e5cfa2995623ac250e11c7e7f1a1034e98a94fbf1c02a8ba68ded5c112788981"
+    }
+  },
+  "generated_at": "2026-04-19T01:56:24.134056+00:00",
+  "pack_format": "senku-mobile-pack-v2",
+  "pack_version": 2,
+  "runtime_defaults": {
+    "desktop_top_k": 24,
+    "mobile_top_k": 10,
+    "prompt_modes": [
+      "default",
+      "review",
+      "demo",
+      "public-safe"
+    ]
+  },
+  "schema": {
+    "deterministic_rules": {
+      "columns": [
+        "rule_id",
+        "predicate_name",
+        "builder_name",
+        "sample_prompt"
+      ],
+      "metadata_only": true
+    },
+    "retrieval_metadata": {
+      "columns": [
+        "content_role",
+        "time_horizon",
+        "structure_type",
+        "topic_tags"
+      ]
+    },
+    "sqlite_tables": [
+      "guides",
+      "guide_related",
+      "deterministic_rules",
+      "chunks",
+      "lexical_chunks_fts",
+      "lexical_chunks_fts4",
+      "pack_meta"
+    ],
+    "vector_file": {
+      "dtype_code": 1,
+      "format": "senku-vectors-v1",
+      "header_bytes": 32,
+      "little_endian": true,
+      "magic": "SNKUVEC1",
+      "row_major": true,
+      "version": 1
+    }
+  },
+  "source": {
+    "chroma_dir": "C:\\Users\\tateb\\Documents\\senku_local_testing_bundle_20260410\\db",
+    "collection_name": "senku_guides",
+    "desktop_top_k": 24,
+    "guides_dir": "C:\\Users\\tateb\\Documents\\senku_local_testing_bundle_20260410\\guides",
+    "prompt_modes": [
+      "default",
+      "review",
+      "demo",
+      "public-safe"
+    ]
+  }
+}
