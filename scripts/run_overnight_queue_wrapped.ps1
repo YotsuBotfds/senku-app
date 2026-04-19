@@ -54,12 +54,20 @@ function Invoke-NativeCommand {
         [string[]]$Arguments = @()
     )
 
-    $output = & $FilePath @Arguments 2>&1
+    $previousPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        $output = & $FilePath @Arguments 2>&1
+    }
+    finally {
+        $ErrorActionPreference = $previousPreference
+    }
+
     $exitCode = $LASTEXITCODE
     $lines = @()
     foreach ($line in $output) {
         if ($null -ne $line) {
-            $lines += [string]$line
+            $lines += $line.ToString()
         }
     }
 
@@ -115,10 +123,10 @@ function Add-ExitSection {
 function Get-QueueTaskIds {
     param([string]$QueueText)
 
-    $matches = [regex]::Matches($QueueText, "(?m)^## Task \d+ - `(?<id>[^`]+)`")
+    $matches = [regex]::Matches($QueueText, '(?m)^## Task \d+ - `(?<id>[^`]+)`')
     $ids = @()
     foreach ($match in $matches) {
-        $ids += $match.Groups["id"].Value
+        $ids += $match.Groups['id'].Value
     }
     return $ids
 }
@@ -135,11 +143,12 @@ function Get-QueueTaskStatuses {
     $statuses = @()
     foreach ($taskId in $TaskIds) {
         $trackerDone = $false
-        if ($trackerText -match "(?m)^\| $([regex]::Escape($taskId)) \| done \|") {
+        $trackerPattern = '(?m)^\| ' + [regex]::Escape($taskId) + ' \| done \|'
+        if ($trackerText -match $trackerPattern) {
             $trackerDone = $true
         }
 
-        $gitLog = Invoke-NativeCommand -FilePath "git" -Arguments @("log", "--format=%s", "--grep", "^$taskId ", "-n", "1")
+        $gitLog = Invoke-NativeCommand -FilePath "git" -Arguments @("log", "--format=%s", "--grep", ("^" + $taskId + " "), "-n", "1")
         $codeCommitSeen = ($gitLog.ExitCode -eq 0) -and -not [string]::IsNullOrWhiteSpace($gitLog.Text)
 
         $source = "pending"
@@ -306,10 +315,12 @@ $unitTestCount = ""
 if ($unitTests.Text -match "Ran (\d+) tests") {
     $unitTestCount = $matches[1]
 }
+$unitTestCountSuffix = if ($unitTestCount) { " count=$unitTestCount" } else { "" }
+$unitTestPassSuffix = if ($unitTestCount) { " ($unitTestCount tests)" } else { "" }
 
 if ($unitTests.ExitCode -ne 0 -or $validator.ExitCode -ne 0) {
     Add-PreflightStep -Number 4 -Title "Baseline tests green" -Status "fail" -Details @(
-        "$python -m unittest discover -s tests -v exit=$($unitTests.ExitCode) $(if ($unitTestCount) { "count=$unitTestCount" } else { "" })",
+        "$python -m unittest discover -s tests -v exit=$($unitTests.ExitCode)$unitTestCountSuffix",
         "$python scripts/validate_special_cases.py exit=$($validator.ExitCode)"
     )
     Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Baseline tests were not green."
@@ -317,7 +328,7 @@ if ($unitTests.ExitCode -ne 0 -or $validator.ExitCode -ne 0) {
 }
 
 Add-PreflightStep -Number 4 -Title "Baseline tests green" -Status "pass" -Details @(
-    "$python -m unittest discover -s tests -v passed$(if ($unitTestCount) { " ($unitTestCount tests)" } else { "" }).",
+    "$python -m unittest discover -s tests -v passed$unitTestPassSuffix.",
     "$python scripts/validate_special_cases.py passed."
 )
 
