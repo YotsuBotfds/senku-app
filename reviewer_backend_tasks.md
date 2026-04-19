@@ -210,6 +210,21 @@ parallel fill-lane with no gate of its own.
 
 `BACK-T-01` · `BACK-T-02` · `BACK-T-03` · `BACK-H-01`..`BACK-H-04` · `BACK-H-06`
 
+### Lane DAY â€” Daylight hygiene follow-ups
+
+- `DAY-G-01` Â· **[done 2026-04-19 `25b49ad`]** Â· **P2 Â· XS Â· worker docs** Â· Commit first `.gitignore`
+  - Files: `.gitignore`
+  - Behavior: commit the repo's first `.gitignore` with the exact confirmed cache, editor metadata, Python, temporary-directory, and root HTML patterns from the daylight hygiene spec while leaving owner-decision docs and snapshots unignored
+  - **Landed 2026-04-19 (`25b49ad`)** â€” `.gitignore` now hides the confirmed build caches, editor metadata, Claude local config, temporary directories, Python caches, and timestamped root HTML reports while leaving the owner-decision docs, config snapshot, and archive visible as untracked
+
+- `DAY-D-01` Â· **P2 Â· XS Â· worker docs** Â· No-op code commit protocol rule
+  - Files: `notes/OVERNIGHT_LOW_STAKES_QUEUE_U01_INFLIGHT_2026-04-18.md`
+  - Behavior: codify the correct protocol when a requested change is already present so the queue records verification and skips no-op code commits instead of adding empty history noise
+
+- `DAY-L-01` Â· **P1 Â· M Â· worker scripts** Â· Overnight launcher guardrail Phase 1
+  - Files: new `scripts/run_overnight_queue_wrapped.ps1`, new `tests/powershell/Run-OvernightQueueWrapperTests.ps1`
+  - Behavior: add the Phase 1 overnight wrapper with preflight, stale-lock sweep, and per-task timeout monitoring around the existing continuation loop without modifying the existing overnight scripts
+
 ---
 
 ## Quick Start (If You Only Have ...)
@@ -681,3 +696,4 @@ _Append entries here as tasks ship. Format:
 | BACK-D-03 | done | codex | 2026-04-18 | 2026-04-19 | deterministic builder-missing telemetry and the debug-only fallback note were already live in immutable Wave B code; overnight queue re-verified the exact event name and a green full Python test run before recording the landing; commit `d88da35` |
 | BACK-H-01 | done | codex | 2026-04-18 | 2026-04-19 | metadata tag normalization now lives in shared `metadata_helpers.py` under canonical `normalize_metadata_tag`, with the older helper name preserved as a wrapper and helper tests expanded through unicode and idempotency cases; commit `92116a8` |
 | BACK-P-03 | done | codex | 2026-04-19 | 2026-04-19 | bridge-tag consistency audit added to ingest with test; 11 prerequisite guide fixes landed as preceding commit; corpus clean; commit `aa2373c` |
+| DAY-G-01 | done | codex | 2026-04-19 | 2026-04-19 | first `.gitignore` landed with the exact daylight hygiene spec patterns, hiding confirmed caches and temp output while keeping owner-decision docs and snapshots visible as untracked; commit `25b49ad` |
