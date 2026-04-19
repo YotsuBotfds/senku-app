@@ -176,3 +176,47 @@ Future agents should assume:
 - GLM sidecars are the async long-work lane
 - the default question is not “can Codex do this?”
 - the default question is “what is the cheapest safe lane that can do this first?”
+
+## Qwen 3.5 27B Usage Notes (LM Studio)
+
+### Load at fixed context (VRAM-safe lane)
+
+```powershell
+lms unload --all
+lms load qwen3.5-27b --identifier qwen27_58k --context-length 58000 --gpu max
+```
+
+Use the pinned identifier `qwen27_58k` for scout calls so the runtime context cap is explicit.
+
+### Verify active loaded context
+
+LM Studio may expose both a base id and a runtime-loaded id (`qwen3.5-27b:N`).
+Use the loaded runtime id to verify the real active context:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:1234/v1/models" | ConvertTo-Json -Depth 6
+Invoke-RestMethod -Uri "http://127.0.0.1:1234/api/v0/models/qwen27_58k" | ConvertTo-Json -Depth 6
+```
+
+Expected behavior:
+- `max_context_length` may still show the model max (`262144`)
+- `loaded_context_length` should show the enforced runtime value (`58000`)
+
+### Prompting lane policy for 27B scout calls
+
+- Use `scripts/invoke_qwen27_scout.ps1` for 27B scout requests.
+- The wrapper prefers `qwen27_58k` automatically when present, then falls back to active `qwen3.5-27b:N` ids.
+- Keep prompts compact and explicit for scout tasks:
+  - ask for exact line count
+  - cap verbosity
+  - prefer single-line outputs
+- Keep `MaxTokens` conservative for scout work unless longer synthesis is explicitly needed.
+- Known behavior: this 27B lane may still populate `reasoning_content` even with `/no_think`; evaluate and consume `message.content` as the final usable output.
+
+### Example scout call
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\invoke_qwen27_scout.ps1 `
+  -Message "Return exactly 8 one-line prompts for weak tap pressure triage." `
+  -MaxTokens 512
+```
