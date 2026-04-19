@@ -345,7 +345,7 @@ parallel fill-lane with no gate of its own.
     logic has a signal to key off)
   - **Gate cleared** — `OPUS-E-06` landed 2026-04-18 (`b41128a`); dispatchable
 
-- `BACK-U-02` · **P0 · S · worker** · Safety-critical escalation in abstain
+- `BACK-U-02` · **[done 2026-04-18 `d974ebc`]** · **P0 · S · worker** · Safety-critical escalation in abstain
   - Files:
     `android-app/app/src/main/java/com/senku/mobile/OfflineAnswerEngine.java:777-825`
     (`buildAbstainAnswerBody`); `query.py` abstain formatter
@@ -663,4 +663,5 @@ _Append entries here as tasks ship. Format:
 | OPUS-E-06 | done | codex | 2026-04-18 | 2026-04-18 | AnswerPresenter carve-out landed (`b41128a`); three `OfflineAnswerEngine.generate()` callsites moved behind `AnswerPresenter`; `DetailActivity.java` 6264 → 6063; Wave B un-gated |
 | BACK-R-05 | open | — | 2026-04-18 | — | decide whether to productize anchor-prior on Android (flip `SessionMemory.java:22` + wire production caller) or remove the half-commit code; scout spike; post-release |
 | BACK-T-04 | open | — | 2026-04-18 | — | fix `Quote-AndroidShellArg` not-recognized in `scripts/run_android_session_flow.ps1` so the session-flow harness can drive idle-reset scenarios again; post-release |
+| BACK-U-02 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android abstain responses now prepend the pinned safety-critical escalation line above "Closest matches" when the upstream safety flag is set, with table-driven tests and phone + tablet validation artifacts; commit `d974ebc` |
 | BACK-U-03 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android compute and surface high/medium/low answer confidence labels; MetaStrip renders likely-match and low-confidence tokens with phone + tablet instrumentation proof; commit `af49d91` |

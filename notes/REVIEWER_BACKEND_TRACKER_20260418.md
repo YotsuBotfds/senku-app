@@ -443,12 +443,15 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
   `BACK-P-02` + `BACK-P-01` re-ran green; `BACK-R-03` was invalidated
   because Android anchor-prior is feature-gated off in production.
 
-**Wave B — Lane U (2 tasks remaining):**
-- `BACK-U-01` and `BACK-U-02` remain on the `AnswerPresenter` callsite plus a
-  small `Host.onSuccess(...)` block in the Activity. `BACK-U-03` landed
-  `af49d91`, which satisfies the confidence-label dependency for `BACK-U-01`;
-  `BACK-U-02` was never dependency-gated. `BACK-U-04` is script + note only
-  and was never gated (landed).
+**Wave B — Lane U (1 task remaining):**
+- `BACK-U-02` landed 2026-04-18 (`d974ebc`): desktop + Android abstain
+  responses now prepend the pinned safety-critical escalation line above
+  "Closest matches" when the upstream safety flag is set, with tests and
+  phone/tablet validation artifacts.
+- `BACK-U-01` remains on the `AnswerPresenter` callsite plus a small
+  `Host.onSuccess(...)` block in the Activity. `BACK-U-03` landed `af49d91`,
+  so the confidence-label dependency is satisfied. `BACK-U-04` is script +
+  note only and was never gated (landed).
 - Scout-tier Wave B spec addenda (MetaStrip confidence-token, PaperAnswerCard
   uncertain-fit, escalation copy draft) should be in hand for the dispatch
   prompt.
@@ -463,12 +466,11 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
 3. ~~Flip closeout rows.~~ **Done** 2026-04-18: P-02 / P-01 flipped to `done`,
    R-03 flipped to `invalidated`. Wave A formally closed.
 4. ~~Dispatch `OPUS-E-06`.~~ **Done** 2026-04-18 (`b41128a`); Lane U un-gated.
-5. Dispatch the remaining Wave B uncertainty work (`BACK-U-01` / `U-02`) against the
+5. Dispatch the remaining Wave B uncertainty work (`BACK-U-01`) against the
    `AnswerPresenter` callsite
    (`android-app/app/src/main/java/com/senku/mobile/AnswerPresenter.java`).
-   Scout-tier spec addenda in progress (MetaStrip confidence token,
-   PaperAnswerCard uncertain-fit, escalation copy draft) — finish before
-   dispatch.
+   `BACK-U-02` landed 2026-04-18 (`d974ebc`); the remaining Wave B work is the
+   uncertain-fit branch only.
 6. File follow-ups post-release: `BACK-R-05` (Android anchor-prior
    productization decision, scout spike) and `BACK-T-04` (fix
    `Quote-AndroidShellArg` in session-flow harness).
@@ -476,3 +478,4 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
 ## State Log
 
 2026-04-18: `OPUS-E-06` landed with `DetailActivity.java` reduced from the spec's 6264-line baseline to 6063 lines (delta `-201`) and all three `OfflineAnswerEngine.generate()` callsites moved behind `AnswerPresenter`; JVM verification passed via `./gradlew :app:testDebugUnitTest --tests com.senku.mobile.AnswerPresenterTest`, the instrumented smoke passed on the available emulator default lane via `scripts/run_android_instrumented_ui_smoke.ps1 -Device emulator-5554` (2/2 tests), and `scripts/build_android_ui_state_pack_parallel.ps1` completed green at `45 / 45` across `5556 / 5560 / 5554 / 5558`, which is the Wave B unblock signal.
+2026-04-18: `BACK-U-02` landed (`d974ebc`): desktop + Android abstain responses now prepend the pinned safety-critical escalation line above "Closest matches" when the upstream safety flag is set, with table-driven test coverage and phone/tablet validation artifacts at `artifacts/bench/wave_b_back-u-02_2026-04-18/`.
