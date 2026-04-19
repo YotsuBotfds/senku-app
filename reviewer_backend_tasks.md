@@ -222,9 +222,10 @@ parallel fill-lane with no gate of its own.
   - Behavior: codify the correct protocol when a requested change is already present so the queue records verification and skips no-op code commits instead of adding empty history noise
   - **Landed 2026-04-19 (`73216a7`)** â€” the overnight queue note now requires verification plus a direct tracker commit when a requested change is already present, and it records `none` in the run log code-commit column instead of minting empty history
 
-- `DAY-L-01` Â· **P1 Â· M Â· worker scripts** Â· Overnight launcher guardrail Phase 1
+- `DAY-L-01` Â· **[done 2026-04-19 `9c5d4ca`]** Â· **P1 Â· M Â· worker scripts** Â· Overnight launcher guardrail Phase 1
   - Files: new `scripts/run_overnight_queue_wrapped.ps1`, new `tests/powershell/Run-OvernightQueueWrapperTests.ps1`
   - Behavior: add the Phase 1 overnight wrapper with preflight, stale-lock sweep, and per-task timeout monitoring around the existing continuation loop without modifying the existing overnight scripts
+  - **Landed 2026-04-19 (`9c5d4ca`)** â€” `run_overnight_queue_wrapped.ps1` now performs the full eight-step preflight, logs stale-process advisories, short-circuits already-satisfied queues, and wraps the existing continuation loop with timeout monitoring; the PowerShell integration harness passes and the daylight queue smoke run exited 0 under `artifacts/overnight_queue_20260419_140659/run_log.md`
 
 ---
 
@@ -699,3 +700,4 @@ _Append entries here as tasks ship. Format:
 | BACK-P-03 | done | codex | 2026-04-19 | 2026-04-19 | bridge-tag consistency audit added to ingest with test; 11 prerequisite guide fixes landed as preceding commit; corpus clean; commit `aa2373c` |
 | DAY-G-01 | done | codex | 2026-04-19 | 2026-04-19 | first `.gitignore` landed with the exact daylight hygiene spec patterns, hiding confirmed caches and temp output while keeping owner-decision docs and snapshots visible as untracked; commit `25b49ad` |
 | DAY-D-01 | done | codex | 2026-04-19 | 2026-04-19 | overnight queue protocol now requires verification plus a direct tracker commit when a requested change is already present, and it records `none` in the run log code-commit column instead of creating an empty code commit; commit `73216a7` |
+| DAY-L-01 | done | codex | 2026-04-19 | 2026-04-19 | overnight wrapper now runs the eight-step preflight, logs stale-process advisories, short-circuits already-satisfied queues, and the daylight queue smoke run exited 0 under `artifacts/overnight_queue_20260419_140659/run_log.md`; commit `9c5d4ca` |
