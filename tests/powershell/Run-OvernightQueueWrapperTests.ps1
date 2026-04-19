@@ -53,9 +53,6 @@ try {
         $wrapperCommand
     )
 
-    $exitCode = $wrapper.ExitCode
-    Assert-True ($exitCode -eq 0) "Expected wrapper test exit code 0, got $exitCode."
-
     $runLogPath = Join-Path $runLogDir "run_log.md"
     Assert-True (Test-Path $runLogPath) "Expected wrapper run log at $runLogPath."
 
@@ -69,6 +66,7 @@ try {
     )) {
         Assert-True ($runLog.Contains($required)) "Expected run log to contain '$required'."
     }
+    Assert-True ($runLog.Contains("**Exit code:** 0")) "Expected wrapper run log to record exit code 0."
 
     Write-Host "Run-OvernightQueueWrapperTests.ps1 passed"
 }
