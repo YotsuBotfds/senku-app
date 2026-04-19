@@ -337,7 +337,8 @@ text = open('reviewer_backend_tasks.md', encoding='utf-8').read()
 log = text.split('## State Log', 1)[1]
 rows = [l for l in log.splitlines() if l.startswith('|') and ('BACK-' in l or 'OPUS-' in l or 'DAY-' in l)]
 for r in rows:
-    assert len(r.split('|')) == 8, f'bad row: {r!r} ({len(r.split("|"))} cells)'
+    count = len(r.split('|'))
+    assert count == 8, f'bad row: {r!r} ({count} cells)'
 print(f'{len(rows)} rows validated')
 "@
 $trackerRows = Invoke-NativeCommand -FilePath $python -Arguments @("-c", $validatorScript)
