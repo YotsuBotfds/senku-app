@@ -633,10 +633,11 @@ parallel fill-lane with no gate of its own.
 Note: `BACK-H-05` was invalidated on 2026-04-18 after re-audit confirmed
 `CONTEXT_SELECTION_STOP_TOKENS` is still live in `OfflineAnswerEngine`.
 
-- `BACK-H-06` · **P2 · XS · worker** · Document `FtsRuntime` fallback chain
+- `BACK-H-06` · **[done 2026-04-19 `c269abe`]** · **P2 · XS · worker** · Document `FtsRuntime` fallback chain
   - Files: `PackRepository.java` around the `FtsRuntime` class
   - Behavior: class-level docstring documenting the FTS5 → FTS4 → `LIKE`
     fallback chain and the performance implications of each path
+  - **Landed 2026-04-19 (`c269abe`)** — `FtsRuntime` now carries class-level Javadoc covering the FTS5-first fallback chain, the FTS4 and `LIKE` branches, and the expected performance gap between steady-state FTS search and the slower safety-net path
 
 ---
 
@@ -669,3 +670,4 @@ _Append entries here as tasks ship. Format:
 | BACK-U-03 | done | codex | 2026-04-18 | 2026-04-18 | desktop + Android compute and surface high/medium/low answer confidence labels; MetaStrip renders likely-match and low-confidence tokens with phone + tablet instrumentation proof; commit `af49d91` |
 | BACK-U-01 | done | codex | 2026-04-19 | 2026-04-19 | desktop + Android introduce three-way `confident`/`uncertain_fit`/`abstain` answer mode with deterministic uncertain-fit body template and `UNSURE FIT` card variant; reuses U-02 escalation helper for safety-critical uncertain-fit; boundary tests + reviewer-worked example pass on both engines; phone + tablet artifacts under `artifacts/bench/wave_b_back-u-01_2026-04-19/`; commit `eb398dc` |
 | BACK-H-03 | done | codex | 2026-04-18 | 2026-04-19 | registry builder already accepts an optional `Callable[..., str]` in immutable Wave B code; overnight queue verified zero legacy `Callable[[], str]` hits and recorded the landing; commit `739d26f` |
+| BACK-H-06 | done | codex | 2026-04-18 | 2026-04-19 | `FtsRuntime` now documents the FTS5 then FTS4 then LIKE fallback chain, plus the expected performance gap between FTS and the slower correctness-net path; commit `c269abe` |
