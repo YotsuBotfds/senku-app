@@ -1,0 +1,450 @@
+# Reviewer Backend Tracker
+
+Date: 2026-04-18
+
+Purpose:
+- Execution companion to the root `reviewer_backend_tasks.md` plan.
+- Keep active work centered on the three reviewer-flagged backend unknowns:
+  deterministic false-positive risk, low-applicability abstain, on-device
+  latency honesty.
+- Use this file for live execution order and lane policy, not for the full
+  task bodies — those live in the root plan.
+
+Wave B dispatch trigger:
+- `OPUS-E-06` closed. Specifically: a new `AnswerPresenter` class exists
+  in `android-app/app/src/main/java/com/senku/mobile/`, and
+  `OfflineAnswerEngine.generate()` is invoked from the Presenter — not
+  from `DetailActivity.java`. (Today there are three direct call sites
+  in the Activity at lines 2939, 3064, 3186.) The merge hazard that
+  gates Wave B is resolved the moment that split lands.
+- `OPUS-E-06` is a narrowly-scoped carve-out from `OPUS-E-05` — it does
+  **not** require resuming the wider E-05 refactor, and it does **not**
+  attempt the CP9 line-count gate on `DetailActivity.java`. Spec:
+  `notes/specs/answer_presenter_extraction_spec.md`.
+- CP9 (release-candidate gate: gallery rebuild + external-review
+  sign-off + `MainActivity.java` under 1500 lines) is **not** a Wave B
+  prerequisite. CP9 is release-readiness; the Wave B gate is refactor-
+  safety on the three `OfflineAnswerEngine.generate()` callsites only.
+
+## Current State
+
+The reviewer packet
+([`REVIEWER_BACKEND_UNKNOWNS_20260418.md`](./REVIEWER_BACKEND_UNKNOWNS_20260418.md))
+confirms the backend is structurally strong — hybrid retrieval plus metadata-
+aware reranking, session-aware rather than purely single-turn, real offline
+path, explicit abstain, narrow deterministic surface. The remaining work is the
+more mature class of problem:
+
+As of the Sprint 2 closeout, Wave A is 22 done + 3 closeout rows now blocked
+on `BACK-P-04` (`BACK-R-03`, `BACK-P-01`, `BACK-P-02`) + 1 invalidated
+(`BACK-H-05`) + **1 newly-added P0** (`BACK-P-04`, opened 2026-04-18) out of
+26 original tasks. The Wave A closeout emulator run surfaced a pipeline bug
+in `mobile_pack.py`: the export writes `senku_manifest.json` with the SQLite's
+pre-upsert SHA, then mutates the SQLite via `_upsert_pack_meta(...)`, so the
+bundled manifest has always been stale and `PackInstaller.validateInstalledFile`
+throws on first install. `BACK-P-04` fixes the export ordering and re-exports
+the stock bundle; the three closeout rows re-run on the post-P-04 bundle.
+Wave B stays parked until `OPUS-E-06` is closed — that gate is unchanged.
+
+- **Deterministic false-positive control.** Backend-side closure is landed:
+  graduation manifest, promotion metadata, semantic exclusion-list gate,
+  builder-missing telemetry, equal-priority tie-break, near-miss tests, and
+  mobile parity guard are all in.
+- **Uncertainty communication.** Backend-side coverage now includes the abstain
+  tuning note + regression runner (`BACK-U-04`) and the Wave B confidence-label
+  contract tests. The remaining uncertainty work is intentionally UI-crossing
+  and parked behind `OPUS-E-06` (the AnswerPresenter carve-out from
+  `OPUS-E-05`).
+- **On-device latency.** Backend instrumentation is landed: structured
+  retrieval / rerank / prompt-build / first-token / decode / total timing,
+  `SenkuLatency` events, `SessionMemory` persistence, `PackRepository` stage
+  timing, and the desktop summary tool.
+
+Adjacent findings from the full backend audit (not in the reviewer packet, but
+worth tracking alongside):
+
+- anchor-prior is now productized on desktop and Android; the remaining
+  retrieval closeout is emulator validation for the idle-reset path in
+  `BACK-R-03`
+- bridge-guide demotion is now context-aware for planning/readiness acute
+  queries
+- FTS runtime selection and install-time schema validation are landed in code;
+  emulator validation for `BACK-P-01` and `BACK-P-02` is blocked behind
+  `BACK-P-04` (pack export SHA race — see `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18.md`)
+
+## Worker Split
+
+### `gpt-5.3-codex-spark` `xhigh` (scout)
+
+Use for:
+- near-miss false-positive brainstorming for deterministic rules
+- cheap audits of whether a BACK task overlaps a landed OPUS task
+- latency-panel schema drafting
+- abstain-threshold sensitivity spike (read-only sweep)
+- anchor-prior fate decision (code audit only)
+
+Do not use for:
+- code edits
+- safety-sensitive adjudication when the scout is ambiguous
+
+### `gpt-5.4` `high` (worker)
+
+Use for:
+- all code edits in `query.py`, `OfflineAnswerEngine.java`,
+  `PackRepository.java`, `DeterministicAnswerRouter.java`,
+  `deterministic_special_case_registry.py`
+- semantic adjudicator implementation (safety-critical)
+- `LatencyPanel` + `LiteRtModelRunner` instrumentation
+- spec authoring for BACK-D-01, BACK-U-01, BACK-R-01 decisions
+
+Default rule:
+1. start with Spark xhigh for read-only scouting + near-miss panels
+2. promote to GPT-5.4 high for the actual edits
+3. do not re-dispatch scout work at worker tier
+
+## Strategic Perspectives
+
+### 1. Deterministic false-positive control first
+
+Problem attacked:
+- a deterministic false positive is more dangerous than an ordinary retrieval
+  miss — it presents a wrong answer with a stronger evidence signal
+
+Best lane:
+- `deterministic_special_case_registry.py`, `DeterministicAnswerRouter.java`,
+  `query.py` special-case path
+
+Leverage:
+- high
+
+Risk:
+- medium (verifier tuning can over-gate real matches; near-miss panel is the
+  safety net)
+
+Current implication:
+- do not promote any new rule from pack metadata into the active set until
+  the graduation manifest and semantic verifier gates are in place
+
+### 2. Uncertain-fit as a distinct answer shape
+
+Problem attacked:
+- today's abstain gate is the only uncertainty signal; safety-critical
+  queries that retrieve *something* plausible can slip through with a
+  confident-shaped answer
+
+Best lane:
+- `query.py` abstain/answer pipeline, `OfflineAnswerEngine` branching,
+  MetaStrip confidence rendering (landed UI)
+
+Leverage:
+- high
+
+Risk:
+- medium (need to pick thresholds that don't convert the whole retrieval
+  surface into "uncertain")
+
+Current implication:
+- confidence-label plumbing (`BACK-U-03`) must land before the low-
+  applicability branch (`BACK-U-01`) has a signal to key off
+
+### 3. Latency honesty without overclaiming
+
+Problem attacked:
+- reviewer explicitly says current phone latency is not fully characterized,
+  yet UI decisions are partly being made against it
+
+Best lane:
+- `OfflineAnswerEngine.generate()`, `LiteRtModelRunner` streaming callback,
+  bench harness
+
+Leverage:
+- high (every subsequent UX decision improves once this lands)
+
+Risk:
+- low (pure instrumentation, no answer-path behavior change)
+
+Current implication:
+- land `BACK-L-01` + `BACK-L-02` as a bundle; baseline numbers in
+  `artifacts/bench/latency_baseline_<date>/` before any further UI latency
+  speculation
+
+### 4. Anchor-prior: decide, don't drift
+
+Problem attacked:
+- `ENABLE_ANCHOR_PRIOR` is False but the machinery is alive, and OPUS-B-03
+  (landed) already reads adjacent session state — we are effectively
+  half-committed
+
+Best lane:
+- `query.py` + `notes/specs/anchor_prior_decision_<date>.md`
+
+Leverage:
+- medium-high
+
+Risk:
+- low (a code-audit scout call decides; then a single wave lands the choice)
+
+Current implication:
+- take the decision before Phase B-4 starts; do not ship `BACK-R-03` /
+  `BACK-R-04` until the fate of anchor-prior is recorded
+
+### 5. Pack install honesty
+
+Problem attacked:
+- pack install passes on size + SHA but can hand the app a SQLite with
+  missing tables; the app finds out at query time
+
+Best lane:
+- `PackInstaller.java`, `PackRepository.java`
+
+Leverage:
+- medium (edge-case safety net; matters more when downloadable packs land)
+
+Risk:
+- low
+
+Current implication:
+- ship `BACK-P-02` opportunistically with any FTS runtime work (`BACK-P-01`)
+  so pack robustness lands in one wave
+
+### 6. Bridge-guide demotion is a blunt instrument
+
+Problem attacked:
+- uniform demotion on acute queries can bury primary sources for planning-
+  adjacent prompts (e.g., clinic readiness)
+
+Best lane:
+- `query.py` reranker
+
+Leverage:
+- medium
+
+Risk:
+- medium (must not regress the mental-health lane)
+
+Current implication:
+- this waits behind Phase B-1 and rebases onto the latest mental-health
+  hardening in `APP_ROUTING_HARDENING_TRACKER_20260417.md`
+
+### 7. Mobile parity is assumed, not validated
+
+Problem attacked:
+- deterministic rules exported in the mobile pack have no automated check
+  against Android predicate coverage
+
+Best lane:
+- `mobile_pack.py`, `scripts/`
+
+Leverage:
+- medium
+
+Risk:
+- low to medium
+
+Current implication:
+- `BACK-D-06` is a cheap, high-value safety net; land it inside the Phase
+  B-1 wave so future rule-promotion waves can't silently fail
+
+## Ranked Execution Order
+
+### 1. Deterministic safety wave (Phase B-1)
+
+Why first:
+- reviewer's #1 unresolved risk
+- cheap to ship in parallel (five of six tasks are S or smaller)
+- unblocks future rule promotion work without raising the current risk
+
+Current target:
+- graduation manifest + registry metadata
+- semantic verifier on the three most safety-critical live rules
+- near-miss false-positive panel
+- mobile parity check
+
+Status:
+- queued (this is the first dispatch)
+
+### 2. Uncertainty vocabulary wave (Phase B-2)
+
+Why second:
+- reviewer's #2 unresolved risk
+- depends on `BACK-U-03` confidence label landing first within the wave
+- addresses the reviewer's sleep/pacing example directly
+
+Current target:
+- confidence label plumbed end-to-end
+- low-applicability response mode live
+- safety-critical abstain escalation line
+
+Status:
+- queued behind Phase B-1 dispatch
+
+### 3. Latency instrumentation wave (Phase B-3)
+
+Why third:
+- reviewer's #3 unresolved risk
+- pure instrumentation; safe to land anytime but most useful once B-1 and
+  B-2 have stabilized answer shapes so the latency buckets are meaningful
+
+Current target:
+- TTFT, `LatencyPanel`, model-vs-harness breakdown, reranker timing
+- baseline JSONL checked in under `artifacts/bench/`
+
+Status:
+- ready to interleave as soon as a worker slot opens; does not block B-1 or
+  B-2
+
+### 4. Retrieval refinement + pack hardening wave (Phase B-4)
+
+Why fourth:
+- resolves the anchor-prior half-commit
+- context-aware bridge demotion is a routing-quality win but not safety-
+  gating
+- pack hardening is edge-case safety
+
+Current target:
+- anchor-prior decision recorded and implemented
+- context-aware bridge demotion
+- FTS runtime capability test
+- SQLite schema validation on install
+
+Status:
+- gated behind reviewer priorities (#1, #2, #3)
+
+### 5. Test coverage + hygiene lane (Phase B-5)
+
+Why fifth:
+- fill-lane; never gates a checkpoint but must run continuously
+- hygiene tasks are safe-parallel, use them to keep worker slots warm
+
+Status:
+- always open; orchestrator fills slack capacity with H-lane work
+
+## Active Findings From Initial Audit
+
+### Deterministic lane
+
+Landed:
+- graduation manifest + promotion metadata now document why 9 live Android
+  rules remain active out of 116 pack rules
+- exclusion-list semantic verifier landed on desktop + Android
+- builder-missing fallback now emits structured telemetry
+- equal-priority tie-break is explicit instead of implicit
+- near-miss panel covers all 9 live Android rules
+- mobile-pack parity script guards desktop/Android deterministic drift
+
+Status:
+- D-lane closed on the backend side
+
+### Uncertainty lane
+
+Landed backend-side:
+- `_should_abstain()` thresholds are now documented in the abstain tuning note
+- regression runner + baseline artifact are checked in via `BACK-U-04`
+- confidence-label contract tests are checked in so Wave B has a locked
+  backend-side spec before UI plumbing starts
+
+Still live:
+- `BACK-U-01`, `BACK-U-02`, and `BACK-U-03` remain parked behind
+  `OPUS-E-06`; this is now a surface-integration gate, not a backend gap.
+  `OPUS-E-06` is the narrow AnswerPresenter carve-out spec at
+  `notes/specs/answer_presenter_extraction_spec.md` — it does **not** require
+  resuming the wider `OPUS-E-05` refactor
+
+### Latency lane
+
+Landed:
+- `OfflineAnswerEngine.generate()` now records structured retrieval / rerank /
+  prompt-build / first-token / decode / total timings
+- `SenkuLatency` structured events now emit on every answer run
+- `AnswerRun.latencyBreakdown` persists through `SessionMemory`
+- `PackRepository` now emits search-stage timing + slow-query tripwires
+- `summarize_latency.py` now provides p50 / p95 / max summaries from exported
+  records
+
+Status:
+- latency instrumentation landed; L-lane closed
+
+### Retrieval lane
+
+Confirmed:
+- anchor-prior decision is landed and productized on desktop + Android
+- bridge-guide demotion now skips planning/readiness acute queries instead of
+  applying a blanket penalty
+- sticky anchor idle reset is landed in `SessionMemory` / `ChatSessionStore`
+
+Still live:
+- `BACK-R-03` still needs emulator validation across the four-posture matrix —
+  blocked on `BACK-P-04` (stock install must reach a healthy state before
+  the idle-reset scenario is meaningful)
+
+### Pack lane
+
+Confirmed:
+- runtime FTS selection now probes FTS5, then FTS4, then explicit LIKE
+  fallback in-process
+- `PackInstaller.validateInstalledFiles` now validates required SQLite tables
+  after size + SHA checks
+- bridge-tag consistency audit is landed at ingest time
+
+Still live:
+- `BACK-P-04` (new 2026-04-18, P0) — `mobile_pack.py:1455-1503` writes the
+  manifest before `_upsert_pack_meta(...)` mutates the SQLite, so every
+  shipped pack carries a stale `sqlite_sha256` and stock install fails at
+  `PackInstaller.validateInstalledFile`. Must land before closeout re-runs.
+- `BACK-P-01` and `BACK-P-02` still need emulator validation with stock,
+  degraded, and corrupted packs — blocked on `BACK-P-04` (the stock
+  install path itself is broken today)
+
+## Rule
+
+Do not overfit product behavior to a contaminated wave. If a BACK validation
+pack hits LiteRT `500` failures, mark the wave as host-contaminated in the
+state log and re-run before drawing conclusions. This is the same discipline
+`APP_ROUTING_HARDENING_TRACKER_20260417.md` §5 applies to the guide lane.
+
+## Dispatch Strategy — Two Waves Around `OPUS-E-06`
+
+Lane U (`BACK-U-01`, `U-02`, `U-03`) plumbs new `AnswerRun` fields through
+`DetailActivity.java`, where the three `OfflineAnswerEngine.generate()`
+callsites still live (lines 2939, 3064, 3186). `OPUS-E-05` is paused at
+partial completion — the View-layer formatters landed, but the Controller-
+layer Presenter did not. `OPUS-E-06` is the narrow carve-out that moves
+those three callsites behind a single `AnswerPresenter` boundary (spec:
+`notes/specs/answer_presenter_extraction_spec.md`). Landing Lane U on top
+of the current Activity forces merge churn on a 6264-line file.
+`BACK-U-04` is script + note only and is **not** gated.
+
+**Wave A — non-UI-crossing backend (26 original tasks):**
+- 22 done + 3 emulator validations pending (`BACK-R-03`, `BACK-P-01`,
+  `BACK-P-02`) + 1 invalidated (`BACK-H-05`)
+- Zero collision with `OPUS-E-05` / `OPUS-E-06` — the remaining work is
+  validation only
+
+**Wave B — Lane U (3 tasks, dispatch after `OPUS-E-06` lands):**
+- `BACK-U-01`, `BACK-U-02`, `BACK-U-03` — edit the new `AnswerPresenter`
+  callsite + a small `Host.onSuccess(...)` block in the Activity instead
+  of three near-duplicate `executor.execute(...)` blocks
+- During the wait, Spark xhigh drafts the MetaStrip confidence-token
+  addendum, the PaperAnswerCard uncertain-fit addendum, and the escalation
+  copy draft, so Wave B ships within a day of E-06 closing
+
+## Immediate Next Move
+
+1. Land `BACK-P-04` — fix the `mobile_pack.py:1455-1503` ordering so
+   `_upsert_pack_meta(...)` closes before `_file_info(sqlite_path)`
+   computes the manifest's SHA, add the pipeline regression test, and
+   re-export the stock bundle into `android-app/app/src/main/assets/mobile_pack/`
+   with manifest-parity sanity gate.
+2. Re-run Wave A closeout emulator validation on the post-P-04 stock
+   bundle: `BACK-P-02` → `BACK-P-01` → `BACK-R-03` (in that order; P-02
+   is the fastest signal that the pipeline fix is effective).
+3. If validation is green, flip those three rows from `blocked` to `done`
+   in `reviewer_backend_tasks.md` and close Wave A formally.
+4. Dispatch `OPUS-E-06` in parallel with steps 1-2 — no file overlap, no
+   emulator contention until the final build_android_ui_state_pack_parallel
+   sweep.
+5. Keep Wave B parked until `OPUS-E-06` is d
+
+## State Log
+
+2026-04-18: `OPUS-E-06` landed with `DetailActivity.java` reduced from the spec's 6264-line baseline to 6063 lines (delta `-201`) and all three `OfflineAnswerEngine.generate()` callsites moved behind `AnswerPresenter`; JVM verification passed via `./gradlew :app:testDebugUnitTest --tests com.senku.mobile.AnswerPresenterTest`, the instrumented smoke passed on the available emulator default lane via `scripts/run_android_instrumented_ui_smoke.ps1 -Device emulator-5554` (2/2 tests), and `scripts/build_android_ui_state_pack_parallel.ps1` completed green at `45 / 45` across `5556 / 5560 / 5554 / 5558`, which is the Wave B unblock signal.
