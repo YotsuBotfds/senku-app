@@ -104,6 +104,7 @@ public final class ConfidenceTokenRenderTest {
                 null,
                 "instrumented-confidence-token",
                 null,
+                null,
                 confidenceLabel
             )
         )) {

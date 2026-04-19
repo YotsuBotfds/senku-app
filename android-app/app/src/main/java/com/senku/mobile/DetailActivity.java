@@ -94,6 +94,7 @@ public final class DetailActivity extends AppCompatActivity {
     private static final String EXTRA_GUIDE_ID = "guide_id";
     private static final String EXTRA_RULE_ID = "rule_id";
     private static final String EXTRA_CONFIDENCE_LABEL = "confidence_label";
+    private static final String EXTRA_ANSWER_MODE = "answer_mode";
     private static final String EXTRA_IS_ANSWER = "is_answer";
     private static final String EXTRA_SOURCES = "sources";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
@@ -246,6 +247,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String currentGuideId;
     private String currentRuleId;
     private OfflineAnswerEngine.ConfidenceLabel currentAnswerConfidenceLabel;
+    private OfflineAnswerEngine.AnswerMode currentAnswerResponseMode;
     private ArrayList<SearchResult> currentSources = new ArrayList<>();
     private final ArrayList<SearchResult> currentRelatedGuides = new ArrayList<>();
     private final ArrayList<SuggestChipModel> currentFollowUpSuggestions = new ArrayList<>();
@@ -463,6 +465,7 @@ public final class DetailActivity extends AppCompatActivity {
             autoFollowUpQuery,
             conversationId,
             ruleId,
+            null,
             null
         );
     }
@@ -476,6 +479,7 @@ public final class DetailActivity extends AppCompatActivity {
         String autoFollowUpQuery,
         String conversationId,
         String ruleId,
+        OfflineAnswerEngine.AnswerMode answerMode,
         OfflineAnswerEngine.ConfidenceLabel confidenceLabel
     ) {
         Intent intent = new Intent(context, DetailActivity.class);
@@ -485,6 +489,7 @@ public final class DetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_GUIDE_ID, primaryGuideIdForSources(sources));
         intent.putExtra(EXTRA_RULE_ID, safe(ruleId));
         intent.putExtra(EXTRA_CONFIDENCE_LABEL, confidenceLabelExtraValue(confidenceLabel));
+        intent.putExtra(EXTRA_ANSWER_MODE, answerModeExtraValue(answerMode));
         intent.putExtra(EXTRA_IS_ANSWER, true);
         intent.putExtra(EXTRA_SOURCES, new ArrayList<>(sources == null ? Collections.emptyList() : sources));
         intent.putExtra(EXTRA_AUTO_FOLLOWUP_QUERY, safe(autoFollowUpQuery));
@@ -499,16 +504,18 @@ public final class DetailActivity extends AppCompatActivity {
         String autoFollowUpQuery,
         String conversationId
     ) {
+        boolean readyInstantAnswer = prepared != null
+            && (prepared.abstain || prepared.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT);
+        String pendingSubtitle = "";
+        if (prepared != null && prepared.abstain) {
+            pendingSubtitle = "Abstain | no guide match | instant";
+        } else if (prepared != null && prepared.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT) {
+            pendingSubtitle = "Uncertain fit | related guides | instant";
+        }
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TITLE, safe(prepared == null ? null : prepared.query));
-        intent.putExtra(
-            EXTRA_SUBTITLE,
-            prepared != null && prepared.abstain ? "Abstain | no guide match | instant" : ""
-        );
-        intent.putExtra(
-            EXTRA_BODY,
-            safe(prepared != null && prepared.abstain ? prepared.answerBody : "")
-        );
+        intent.putExtra(EXTRA_SUBTITLE, pendingSubtitle);
+        intent.putExtra(EXTRA_BODY, safe(readyInstantAnswer ? prepared.answerBody : ""));
         intent.putExtra(EXTRA_GUIDE_ID, primaryGuideIdForSources(prepared == null ? null : prepared.sources));
         intent.putExtra(EXTRA_RULE_ID, "");
         intent.putExtra(EXTRA_IS_ANSWER, true);
@@ -520,9 +527,19 @@ public final class DetailActivity extends AppCompatActivity {
             EXTRA_CONFIDENCE_LABEL,
             confidenceLabelExtraValue(prepared == null ? null : prepared.confidenceLabel)
         );
+        intent.putExtra(
+            EXTRA_ANSWER_MODE,
+            answerModeExtraValue(prepared == null ? null : prepared.mode)
+        );
         intent.putExtra(EXTRA_AUTO_FOLLOWUP_QUERY, safe(autoFollowUpQuery));
         intent.putExtra(EXTRA_CONVERSATION_ID, safe(conversationId));
-        intent.putExtra(EXTRA_PENDING_GENERATION, prepared != null && !prepared.deterministic && !prepared.abstain);
+        intent.putExtra(
+            EXTRA_PENDING_GENERATION,
+            prepared != null
+                && !prepared.deterministic
+                && !prepared.abstain
+                && prepared.mode != OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT
+        );
         intent.putExtra(EXTRA_PENDING_SESSION_USED, prepared != null && prepared.sessionUsed);
         intent.putExtra(EXTRA_PENDING_STARTED_AT_MS, prepared == null ? 0L : prepared.startedAtMs);
         HostInferenceConfig.Settings settings = prepared == null ? null : prepared.inferenceSettings;
@@ -748,6 +765,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentGuideId = safe(intent.getStringExtra(EXTRA_GUIDE_ID)).trim();
         currentRuleId = safe(intent.getStringExtra(EXTRA_RULE_ID)).trim();
         currentAnswerConfidenceLabel = confidenceLabelFromExtra(intent.getStringExtra(EXTRA_CONFIDENCE_LABEL));
+        currentAnswerResponseMode = answerModeFromExtra(intent.getStringExtra(EXTRA_ANSWER_MODE));
         answerMode = intent.getBooleanExtra(EXTRA_IS_ANSWER, false);
         pendingAutoFollowUpQuery = safe(intent.getStringExtra(EXTRA_AUTO_FOLLOWUP_QUERY)).trim();
         pendingGeneration = intent.getBooleanExtra(EXTRA_PENDING_GENERATION, false);
@@ -1041,7 +1059,10 @@ public final class DetailActivity extends AppCompatActivity {
             anchorChip.setVisibility(answerMode ? View.VISIBLE : View.GONE);
         }
         if (routeChip != null) {
-            boolean showAnswerRouteChip = !isCompactPortraitPhoneLayout() || isDeterministicRoute() || isAbstainRoute();
+            boolean showAnswerRouteChip = !isCompactPortraitPhoneLayout()
+                || isDeterministicRoute()
+                || isAbstainRoute()
+                || isUncertainFitRoute();
             routeChip.setText(answerMode
                 ? buildRouteLabel(true)
                 : getString(R.string.detail_header_guide));
@@ -1231,6 +1252,11 @@ public final class DetailActivity extends AppCompatActivity {
                         turn == null ? Collections.emptyList() : turn.sourceResults,
                         "",
                         0.0,
+                        AnswerContentFactory.evidenceForSourceCount(
+                            turn == null || turn.sourceResults == null ? 0 : turn.sourceResults.size()
+                        ),
+                        false,
+                        false,
                         false
                     ),
                     Status.Done,
@@ -1248,6 +1274,9 @@ public final class DetailActivity extends AppCompatActivity {
                     currentTurn == null ? Collections.emptyList() : currentTurn.sourceResults,
                     buildAnswerCardHostLabel(),
                     AnswerContentFactory.parseElapsedSeconds(currentSubtitle),
+                    buildAnswerCardEvidence(),
+                    isAbstainRoute(),
+                    isUncertainFitRoute(),
                     streamingCursorActive
                 ),
                 tabletBusy ? Status.Pending : Status.Active,
@@ -1278,6 +1307,9 @@ public final class DetailActivity extends AppCompatActivity {
                 guideSources,
                 "",
                 0.0,
+                AnswerContentFactory.evidenceForSourceCount(guideSources.size()),
+                false,
+                false,
                 false
             ),
             Status.Active,
@@ -1292,6 +1324,9 @@ public final class DetailActivity extends AppCompatActivity {
         List<SearchResult> sources,
         String host,
         double elapsedSeconds,
+        Evidence evidence,
+        boolean abstain,
+        boolean uncertainFit,
         boolean showStreamingCursor
     ) {
         List<SearchResult> safeSources = sources == null ? Collections.emptyList() : sources;
@@ -1300,8 +1335,9 @@ public final class DetailActivity extends AppCompatActivity {
             safeSources.size(),
             safe(host),
             elapsedSeconds,
-            AnswerContentFactory.evidenceForSourceCount(safeSources.size()),
-            false,
+            evidence,
+            abstain,
+            uncertainFit,
             showStreamingCursor
         );
     }
@@ -1547,6 +1583,7 @@ public final class DetailActivity extends AppCompatActivity {
             AnswerContentFactory.parseElapsedSeconds(currentSubtitle),
             buildAnswerCardEvidence(),
             isAbstainRoute(),
+            isUncertainFitRoute(),
             showStreamingCursor
         );
         answerCardView.setVisibility(View.VISIBLE);
@@ -1571,6 +1608,9 @@ public final class DetailActivity extends AppCompatActivity {
         if (isAbstainRoute() || isLowCoverageRoute()) {
             return Evidence.None;
         }
+        if (isUncertainFitRoute()) {
+            return Evidence.Moderate;
+        }
         if (isDeterministicRoute()) {
             return Evidence.Strong;
         }
@@ -1592,7 +1632,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (isDeterministicRoute()) {
             return "Deterministic";
         }
-        if (isAbstainRoute()) {
+        if (isAbstainRoute() || isUncertainFitRoute()) {
             return "Instant";
         }
         return "";
@@ -3008,6 +3048,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentBody = buildGeneratingPreviewBody(preparedAnswer.sources.size());
         currentRuleId = "";
         currentAnswerConfidenceLabel = preparedAnswer.confidenceLabel;
+        currentAnswerResponseMode = preparedAnswer.mode;
         currentSources = new ArrayList<>(preparedAnswer.sources);
         pendingHostEnabled = preparedAnswer.inferenceSettings != null && preparedAnswer.inferenceSettings.enabled;
         currentAnswerHostFallbackUsed = false;
@@ -3025,6 +3066,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentBody = result.resolvedAnswerBody;
         currentRuleId = safe(answerRun.ruleId).trim();
         currentAnswerConfidenceLabel = result.confidenceLabel;
+        currentAnswerResponseMode = result.mode;
         currentSources = new ArrayList<>(result.answerSources);
         pendingHostEnabled = answerRun.hostBackendUsed;
         currentAnswerHostFallbackUsed = answerRun.hostFallbackUsed;
@@ -3306,6 +3348,7 @@ public final class DetailActivity extends AppCompatActivity {
         lastFailedQuery = safe(fallbackQuery).trim();
         currentBody = buildGenerationFailureBody(exc);
         currentAnswerConfidenceLabel = null;
+        currentAnswerResponseMode = OfflineAnswerEngine.AnswerMode.CONFIDENT;
         answerMode = true;
     }
 
@@ -3501,7 +3544,9 @@ public final class DetailActivity extends AppCompatActivity {
         }
         int trustLabelRes = isDeterministicRoute()
             ? R.string.detail_route_deterministic
-            : (isAbstainRoute() ? R.string.detail_evidence_limited : evidenceStrengthLabelRes());
+            : (isAbstainRoute()
+                ? R.string.detail_evidence_limited
+                : (isUncertainFitRoute() ? R.string.detail_evidence_unsure_fit : evidenceStrengthLabelRes()));
         return getString(
             R.string.detail_body_answer_with_evidence,
             getString(R.string.detail_body_answer),
@@ -3534,6 +3579,9 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (isDeterministicRoute()) {
             return getString(R.string.detail_evidence_strong);
+        }
+        if (isUncertainFitRoute()) {
+            return getString(R.string.detail_evidence_unsure_fit);
         }
         if (isLowCoverageRoute() || isAbstainRoute()) {
             return getString(R.string.detail_evidence_limited);
@@ -3713,7 +3761,7 @@ public final class DetailActivity extends AppCompatActivity {
             answerMode,
             isDeterministicRoute(),
             isAbstainRoute(),
-            isLowCoverageRoute(),
+            isLowCoverageRoute() || isUncertainFitRoute(),
             pendingHostEnabled,
             currentAnswerUsesOnDeviceFallback(),
             wide,
@@ -3775,24 +3823,24 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private DetailProofPresentationFormatter.State buildProofPresentationState() {
-        boolean lowCoverageOrAbstain = isLowCoverageRoute() || isAbstainRoute();
+        boolean subduedRoute = isLowCoverageRoute() || isAbstainRoute() || isUncertainFitRoute();
         int lowCoverageAccentColor = getLowCoverageAccentColor();
         int evidenceAccentColor = lowCoverageAccentColor;
-        if (!currentSources.isEmpty() && !lowCoverageOrAbstain) {
+        if (!currentSources.isEmpty() && !subduedRoute) {
             evidenceAccentColor = getString(R.string.detail_evidence_strong).equals(getEvidenceStrengthLabel())
                 ? getColor(R.color.senku_accent_olive)
                 : getColor(R.color.senku_accent_warning);
         }
         return new DetailProofPresentationFormatter.State(
             buildSerialRouteValue(),
-            lowCoverageOrAbstain ? lowCoverageAccentColor : getSeverityAccentColor(),
+            subduedRoute ? lowCoverageAccentColor : getSeverityAccentColor(),
             buildBackendMetaLabel().isEmpty() ? "" : buildSerialBackendValue(),
             getEvidenceStrengthLabel(),
             currentSources == null ? 0 : currentSources.size(),
             evidenceAccentColor,
             buildPackFreshnessMeta(false),
             lowCoverageAccentColor,
-            lowCoverageOrAbstain
+            subduedRoute
         );
     }
 
@@ -3901,6 +3949,19 @@ public final class DetailActivity extends AppCompatActivity {
         return safe(currentBody).trim().startsWith("Senku doesn't have a guide for \"");
     }
 
+    private boolean isUncertainFitRoute() {
+        if (currentAnswerResponseMode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT) {
+            return true;
+        }
+        String lowerSubtitle = safe(currentSubtitle).trim().toLowerCase(Locale.US);
+        if (lowerSubtitle.startsWith("uncertain fit |")) {
+            return true;
+        }
+        String lowerBody = safe(currentBody).trim().toLowerCase(Locale.US);
+        return lowerBody.startsWith("senku found guides that may be relevant to \"")
+            || lowerBody.startsWith("senku found only loosely related guides for \"");
+    }
+
     private boolean isLowCoverageRoute() {
         return safe(currentSubtitle).toLowerCase().contains("low coverage");
     }
@@ -3908,6 +3969,9 @@ public final class DetailActivity extends AppCompatActivity {
     private String buildRouteLabel(boolean wide) {
         if (isAbstainRoute()) {
             return wide ? "No guide match" : "No match";
+        }
+        if (isUncertainFitRoute()) {
+            return getString(wide ? R.string.detail_route_uncertain_fit : R.string.detail_route_uncertain_fit_short);
         }
         if (isLowCoverageRoute()) {
             return getString(wide ? R.string.detail_route_low_coverage : R.string.detail_route_low_coverage_short);
@@ -3950,7 +4014,7 @@ public final class DetailActivity extends AppCompatActivity {
     private void applyResiliencyAccent() {
         int severityColor = getSeverityAccentColor();
         boolean highRisk = isHighRiskRoute();
-        int routeColor = (isLowCoverageRoute() || isAbstainRoute())
+        int routeColor = (isLowCoverageRoute() || isAbstainRoute() || isUncertainFitRoute())
             ? getLowCoverageAccentColor()
             : (isDeterministicRoute() && !highRisk
                 ? getColor(R.color.senku_accent_olive)
@@ -4603,6 +4667,9 @@ public final class DetailActivity extends AppCompatActivity {
         if (isAbstainRoute()) {
             return Tone.Danger;
         }
+        if (isUncertainFitRoute()) {
+            return Tone.Warn;
+        }
         if (isLowCoverageRoute()) {
             return Tone.Warn;
         }
@@ -4614,6 +4681,9 @@ public final class DetailActivity extends AppCompatActivity {
 
     private Tone evidenceTone() {
         String label = getEvidenceStrengthLabel();
+        if (label.equals(getString(R.string.detail_evidence_unsure_fit))) {
+            return Tone.Warn;
+        }
         if (label.equals(getString(R.string.detail_evidence_limited))) {
             return isAbstainRoute() ? Tone.Danger : Tone.Warn;
         }
@@ -5794,7 +5864,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private boolean shouldUseSubduedAnswerCard() {
-        return answerMode && (isAbstainRoute() || isLowCoverageRoute());
+        return answerMode && (isAbstainRoute() || isLowCoverageRoute() || isUncertainFitRoute());
     }
 
     private CharSequence buildStyledAnswerBody(String body, boolean showStreamingCursor) {
@@ -5894,7 +5964,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (routeChip == null) {
             return;
         }
-        boolean emphasizedChip = answerMode && (isDeterministicRoute() || isAbstainRoute());
+        boolean emphasizedChip = answerMode && (isDeterministicRoute() || isAbstainRoute() || isUncertainFitRoute());
         routeChip.setTypeface(emphasizedChip ? Typeface.MONOSPACE : Typeface.DEFAULT_BOLD, Typeface.BOLD);
         routeChip.setLetterSpacing(emphasizedChip ? 0.05f : 0f);
         Drawable icon = null;
@@ -5932,6 +6002,22 @@ public final class DetailActivity extends AppCompatActivity {
         }
         try {
             return OfflineAnswerEngine.ConfidenceLabel.valueOf(normalized.toUpperCase(Locale.US));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    private static String answerModeExtraValue(OfflineAnswerEngine.AnswerMode mode) {
+        return mode == null ? "" : mode.name();
+    }
+
+    private static OfflineAnswerEngine.AnswerMode answerModeFromExtra(String rawValue) {
+        String normalized = safe(rawValue).trim();
+        if (normalized.isEmpty()) {
+            return null;
+        }
+        try {
+            return OfflineAnswerEngine.AnswerMode.valueOf(normalized.toUpperCase(Locale.US));
         } catch (IllegalArgumentException ignored) {
             return null;
         }

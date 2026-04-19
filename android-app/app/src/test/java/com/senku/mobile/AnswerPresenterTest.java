@@ -35,6 +35,7 @@ public final class AnswerPresenterTest {
         assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
         assertEquals("resolved:final answer:7", host.lastResult.resolvedAnswerBody);
         assertEquals(host.lastResult.answerRun.confidenceLabel, host.lastResult.confidenceLabel);
+        assertEquals(host.lastResult.answerRun.mode, host.lastResult.mode);
         assertNull(host.lastFailure);
     }
 
@@ -62,6 +63,7 @@ public final class AnswerPresenterTest {
         assertSame(engine.preparedToReturn, host.lastPreparedPreview);
         assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
         assertEquals(host.lastResult.answerRun.confidenceLabel, host.lastResult.confidenceLabel);
+        assertEquals(host.lastResult.answerRun.mode, host.lastResult.mode);
     }
 
     @Test
@@ -129,6 +131,7 @@ public final class AnswerPresenterTest {
         );
         assertSame(engine.preparedToReturn, host.lastPreparedPreview);
         assertSame(engine.answerRunToReturn, host.lastResult.answerRun);
+        assertEquals(host.lastResult.answerRun.mode, host.lastResult.mode);
     }
 
     @Test

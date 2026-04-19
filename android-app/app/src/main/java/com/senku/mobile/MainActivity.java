@@ -652,6 +652,7 @@ public final class MainActivity extends AppCompatActivity {
                 answerBody,
                 deterministic.sources,
                 deterministic.ruleId,
+                OfflineAnswerEngine.AnswerMode.CONFIDENT,
                 OfflineAnswerEngine.ConfidenceLabel.HIGH
             );
             return;
@@ -2150,7 +2151,7 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void openAnswerDetail(String title, String subtitle, String body, List<SearchResult> sources, String ruleId) {
-        openAnswerDetail(title, subtitle, body, sources, ruleId, null);
+        openAnswerDetail(title, subtitle, body, sources, ruleId, null, null);
     }
 
     private void openAnswerDetail(
@@ -2159,6 +2160,7 @@ public final class MainActivity extends AppCompatActivity {
         String body,
         List<SearchResult> sources,
         String ruleId,
+        OfflineAnswerEngine.AnswerMode answerMode,
         OfflineAnswerEngine.ConfidenceLabel confidenceLabel
     ) {
         String autoFollowUpQuery = pendingAutoFollowUpQuery;
@@ -2172,6 +2174,7 @@ public final class MainActivity extends AppCompatActivity {
             autoFollowUpQuery,
             conversationId,
             ruleId,
+            answerMode,
             confidenceLabel
         );
         applyPackDetailExtras(intent);

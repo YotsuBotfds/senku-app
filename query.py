@@ -63,6 +63,7 @@ ANCHOR_BASE_BONUS = 0.08
 ANCHOR_PRIOR_MAX_BONUS = 0.10
 
 ConfidenceLabel = Literal["high", "medium", "low"]
+AnswerMode = Literal["confident", "uncertain_fit", "abstain"]
 
 
 def copy_to_clipboard(text):
@@ -8750,6 +8751,73 @@ def _confidence_label(reranked, scenario_frame) -> ConfidenceLabel:
     return "low"
 
 
+def _normalized_rrf_strength(raw_score: float) -> float:
+    """Clamp raw RRF support to a stable 0..1 strength scale for mode branching."""
+    try:
+        score = float(raw_score or 0.0)
+    except (TypeError, ValueError):
+        score = 0.0
+    if score <= 0.0:
+        return 0.0
+    return min(score / 0.03, 1.0)
+
+
+def _average_rrf_strength(rows) -> float:
+    """Average the normalized RRF support across the top retrieval rows."""
+    if not rows:
+        return 0.0
+    strengths = []
+    for _doc, meta, _dist in rows:
+        meta = meta or {}
+        strengths.append(_normalized_rrf_strength(meta.get("_rrf_score", 0.0)))
+    return sum(strengths) / len(strengths)
+
+
+def _has_primary_owner_support(results) -> bool:
+    """Return True when retrieval review signals direct support for the query family."""
+    review = results.get("_senku", {}) or results.get("_senku_review", {})
+    annotations = review.get("result_annotations", [])
+    objective_coverage = review.get("objective_coverage", [])
+    return any(
+        annotation.get("support_signal") == "direct" for annotation in annotations
+    ) or any(
+        coverage.get("status") == "covered" for coverage in objective_coverage
+    )
+
+
+def _resolve_answer_mode(
+    reranked, scenario_frame, confidence_label
+) -> AnswerMode:
+    """Resolve the deterministic answer branch from the post-rerank retrieval state."""
+    frame = scenario_frame or {}
+    question = (frame.get("question") or "").strip()
+    if not question:
+        return "confident"
+
+    should_abstain, _ = _should_abstain(reranked, question)
+    if should_abstain:
+        return "abstain"
+
+    rows = _abstain_top_rows(reranked)
+    if not rows:
+        return "confident"
+
+    average_rrf_strength = _average_rrf_strength(rows)
+    _doc, top_meta, top_dist = rows[0]
+    top_vector_similarity = _abstain_row_vector_similarity(top_meta or {}, top_dist)
+    if average_rrf_strength < 0.65:
+        return "uncertain_fit"
+    if 0.45 <= top_vector_similarity <= 0.62:
+        return "uncertain_fit"
+    if (
+        _scenario_frame_is_safety_critical(frame)
+        and not _has_primary_owner_support(reranked)
+        and confidence_label in {"medium", "low"}
+    ):
+        return "uncertain_fit"
+    return "confident"
+
+
 def retrieve_results(
     question, collection, top_k, category=None, session_state=None, lm_studio_url=None
 ):
@@ -8829,6 +8897,11 @@ def retrieve_results(
     )
     reranked["_senku"]["confidence_instruction"] = build_confidence_system_instruction(
         reranked["_senku"]["confidence_label"]
+    )
+    reranked["_senku"]["answer_mode"] = _resolve_answer_mode(
+        reranked,
+        scenario_frame,
+        reranked["_senku"]["confidence_label"],
     )
     return reranked, sub_queries, reranked["_senku"]
 
@@ -10320,6 +10393,59 @@ def _abstain_escalation_line(scenario_frame):
     return ""
 
 
+def _build_uncertain_fit_body(
+    query, results, confidence_label, scenario_frame=None, match_labels=None
+):
+    """Format a deterministic related-guides card for low-applicability non-abstain states."""
+    rows = _abstain_top_rows(results)
+    labels = match_labels
+    if labels is None:
+        query_tokens = _content_tokens(query or "")
+        labels = []
+        for doc, meta, dist in rows:
+            meta = meta or {}
+            overlap_count = len(_abstain_row_overlap_tokens(query_tokens, doc, meta))
+            vector_similarity = _abstain_row_vector_similarity(meta, dist)
+            lexical_hits = int(meta.get("_lexical_hits", 0) or 0)
+            labels.append(
+                _abstain_match_label(overlap_count, vector_similarity, lexical_hits)
+            )
+
+    fit_line = (
+        f'Senku found guides that may be relevant to "{_truncate_abstain_query(query)}", '
+        "but this is not a confident fit."
+    )
+    if confidence_label == "low":
+        fit_line = (
+            f'Senku found only loosely related guides for "{_truncate_abstain_query(query)}", '
+            "so this is not a confident fit."
+        )
+
+    lines = [fit_line]
+    escalation_line = _abstain_escalation_line(scenario_frame)
+    if escalation_line:
+        lines.extend(["", escalation_line])
+
+    if rows:
+        lines.extend(["", "Possibly relevant guides in the library:"])
+        for (doc, meta, _dist), label in zip(rows, labels):
+            guide_id = meta.get("guide_id") or "Guide"
+            title = meta.get("guide_title") or "Unknown guide"
+            category = meta.get("category") or "unknown"
+            lines.append(f"- [{guide_id}] {title} - {category} | {label}")
+
+    lines.extend(
+        [
+            "",
+            "Try:",
+            "- checking whether the guide matches the exact person, symptom, tool, or setting",
+            "- asking a narrower follow-up with the exact detail that is missing",
+            "- treating the guides above as related context, not a final answer",
+        ]
+    )
+    return "\n".join(lines).strip()
+
+
 def build_abstain_response(query, results, match_labels, scenario_frame=None):
     """Format a direct abstain card from adjacent retrieved guides."""
     rows = _abstain_top_rows(results)
@@ -10367,15 +10493,32 @@ def stream_response(
     review["confidence_instruction"] = build_confidence_system_instruction(
         confidence_label
     )
+    answer_mode = review.get("answer_mode")
+    if answer_mode not in {"confident", "uncertain_fit", "abstain"}:
+        answer_mode = _resolve_answer_mode(results, scenario_frame, confidence_label)
+    review["answer_mode"] = answer_mode
     should_abstain, match_labels = _should_abstain(results, question)
-    if should_abstain:
+    if answer_mode == "abstain" or should_abstain:
         review["confidence_label"] = "low"
         review["confidence_instruction"] = build_confidence_system_instruction("low")
+        review["answer_mode"] = "abstain"
         response_text = build_abstain_response(
             question,
             results,
             match_labels,
             scenario_frame=scenario_frame,
+        )
+        console.print()
+        console.print(response_text, highlight=False, markup=False)
+        console.print()
+        return response_text
+    if answer_mode == "uncertain_fit":
+        response_text = _build_uncertain_fit_body(
+            question,
+            results,
+            confidence_label,
+            scenario_frame=scenario_frame,
+            match_labels=match_labels,
         )
         console.print()
         console.print(response_text, highlight=False, markup=False)

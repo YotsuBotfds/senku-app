@@ -255,6 +255,194 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void resolveAnswerModeHitsBoundariesAndSafetyGate() {
+        String confidentQuery = "how do i build a cabin roof that sheds rain";
+        List<SearchResult> confidentResults = List.of(
+            new SearchResult(
+                "Cabin Roofing and Weatherproofing",
+                "",
+                "",
+                "",
+                "GD-410",
+                "Roof framing and rainproofing",
+                "building",
+                "hybrid",
+                "planning",
+                "long_term",
+                "cabin_house",
+                "roofing,weatherproofing"
+            ),
+            new SearchResult(
+                "Wall Construction",
+                "",
+                "",
+                "",
+                "GD-094",
+                "Wall framing",
+                "building",
+                "guide-focus",
+                "subsystem",
+                "long_term",
+                "cabin_house",
+                "wall_construction"
+            )
+        );
+        QueryMetadataProfile confidentProfile = QueryMetadataProfile.fromQuery(confidentQuery);
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                confidentResults,
+                confidentQuery,
+                confidentProfile,
+                OfflineAnswerEngine.confidenceLabel(confidentResults, confidentQuery, confidentProfile),
+                false
+            )
+        );
+
+        String uncertainQuery = "how do i repair a tarp shelter after wind damage";
+        List<SearchResult> uncertainResults = List.of(
+            new SearchResult(
+                "Tarp field notes",
+                "",
+                "",
+                "",
+                "GD-112",
+                "Quick patches",
+                "survival",
+                "hybrid",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter,repair"
+            ),
+            new SearchResult(
+                "Canvas Repair",
+                "",
+                "",
+                "",
+                "GD-102",
+                "Patch kits",
+                "crafts",
+                "vector"
+            )
+        );
+        QueryMetadataProfile uncertainProfile = QueryMetadataProfile.fromQuery(uncertainQuery);
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                uncertainResults,
+                uncertainQuery,
+                uncertainProfile,
+                OfflineAnswerEngine.confidenceLabel(uncertainResults, uncertainQuery, uncertainProfile),
+                false
+            )
+        );
+
+        String abstainQuery = "how do i build a rain shelter from a tarp";
+        List<SearchResult> abstainResults = List.of(
+            new SearchResult(
+                "Canvas Repair",
+                "",
+                "",
+                "",
+                "GD-102",
+                "Patching",
+                "crafts",
+                "vector"
+            ),
+            new SearchResult(
+                "Tent Maintenance",
+                "",
+                "",
+                "",
+                "GD-103",
+                "Storage",
+                "resource-management",
+                "lexical"
+            )
+        );
+        QueryMetadataProfile abstainProfile = QueryMetadataProfile.fromQuery(abstainQuery);
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            OfflineAnswerEngine.resolveAnswerMode(
+                abstainResults,
+                abstainQuery,
+                abstainProfile,
+                OfflineAnswerEngine.confidenceLabel(abstainResults, abstainQuery, abstainProfile),
+                false
+            )
+        );
+
+        String safetyQuery = "he has barely slept, keeps pacing, and says normal rules do not apply to him";
+        List<SearchResult> safetyUncertainResults = List.of(
+            new SearchResult(
+                "Barely Slept Pacing Notes",
+                "",
+                "",
+                "",
+                "GD-305",
+                "Normal rules observation",
+                "mental-health",
+                "vector"
+            ),
+            new SearchResult(
+                "Calm Down or Escalate Checklist",
+                "",
+                "",
+                "",
+                "GD-306",
+                "Pacing observer steps",
+                "mental-health",
+                "lexical"
+            )
+        );
+        QueryMetadataProfile safetyProfile = QueryMetadataProfile.fromQuery(safetyQuery);
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                safetyUncertainResults,
+                safetyQuery,
+                safetyProfile,
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            )
+        );
+
+        List<SearchResult> safetyConfidentResults = List.of(
+            new SearchResult(
+                "Normal Rules Do Not Apply Crisis Guide",
+                "",
+                "",
+                "",
+                "GD-307",
+                "Immediate normal-rules response",
+                "mental-health",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Barely Sleeping Crisis Escalation",
+                "",
+                "",
+                "",
+                "GD-308",
+                "pacing and barely sleeping",
+                "mental-health",
+                "hybrid"
+            )
+        );
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                safetyConfidentResults,
+                safetyQuery,
+                safetyProfile,
+                OfflineAnswerEngine.ConfidenceLabel.HIGH,
+                true
+            )
+        );
+    }
+
+    @Test
     public void generateFallsBackToOnDeviceWhenHostFailsAndModelExists() throws Exception {
         File tempModel = File.createTempFile("senku-fallback", ".litertlm");
         tempModel.deleteOnExit();
@@ -1020,6 +1208,99 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void buildUncertainFitAnswerBodyAddsSafetyCriticalEscalationOnlyWhenFlagged() {
+        List<SearchResult> adjacentGuides = List.of(
+            new SearchResult(
+                "Barely Slept Pacing Notes",
+                "",
+                "",
+                "",
+                "GD-305",
+                "Normal rules observation",
+                "mental-health",
+                "vector"
+            ),
+            new SearchResult(
+                "Calm Down or Escalate Checklist",
+                "",
+                "",
+                "",
+                "GD-306",
+                "Pacing observer steps",
+                "mental-health",
+                "lexical"
+            )
+        );
+        Object[][] cases = new Object[][]{
+            {"he has barely slept, keeps pacing, and says normal rules do not apply to him", true},
+            {"how do i repair a tarp shelter after wind damage", false},
+        };
+
+        for (Object[] testCase : cases) {
+            String query = (String) testCase[0];
+            boolean expectEscalation = (Boolean) testCase[1];
+            String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
+                query,
+                adjacentGuides,
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                OfflineAnswerEngine.isSafetyCriticalQuery(query, adjacentGuides)
+            );
+
+            boolean hasEscalation = answerBody.contains(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE);
+            assertEquals(query, expectEscalation, hasEscalation);
+            if (expectEscalation) {
+                assertTrue(
+                    query,
+                    answerBody.indexOf(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE)
+                        < answerBody.indexOf("Possibly relevant guides in the library:")
+                );
+            }
+        }
+    }
+
+    @Test
+    public void reviewerWorkedPromptRoutesToUncertainFitInsteadOfAbstain() {
+        String query =
+            "He has barely slept, keeps pacing, says normal rules do not apply to him. "
+                + "Is this just stress, or should I help him calm down?";
+        List<SearchResult> adjacentGuides = List.of(
+            new SearchResult(
+                "Barely Slept Pacing Notes",
+                "",
+                "",
+                "",
+                "GD-305",
+                "Normal rules observation",
+                "mental-health",
+                "vector"
+            ),
+            new SearchResult(
+                "Calm Down or Escalate Checklist",
+                "",
+                "",
+                "",
+                "GD-306",
+                "Pacing observer steps",
+                "mental-health",
+                "lexical"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        assertFalse(OfflineAnswerEngine.shouldAbstain(adjacentGuides, query));
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                adjacentGuides,
+                query,
+                metadataProfile,
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            )
+        );
+    }
+
+    @Test
     public void shouldNotAbstainWhenHybridCandidateLooksGrounded() {
         boolean shouldAbstain = OfflineAnswerEngine.shouldAbstain(
             List.of(
@@ -1085,6 +1366,62 @@ public final class OfflineAnswerEngineTest {
         assertEquals("", hostCall.get());
         assertEquals("", deviceCall.get());
         assertEquals("No guide match. Try rephrasing.", OfflineAnswerEngine.buildCompletionStatus(answerRun));
+    }
+
+    @Test
+    public void generateReturnsUncertainFitWithoutCallingGenerators() throws Exception {
+        AtomicReference<String> hostCall = new AtomicReference<>("");
+        AtomicReference<String> deviceCall = new AtomicReference<>("");
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                hostCall.set("called");
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                deviceCall.set("called");
+                throw new AssertionError("device generation should not run");
+            }
+        );
+
+        List<SearchResult> adjacentGuides = List.of(
+            new SearchResult(
+                "Behavior Supervision Notes",
+                "",
+                "",
+                "",
+                "GD-305",
+                "Observation",
+                "mental-health",
+                "vector"
+            )
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.uncertainFit(
+            "he has barely slept, keeps pacing, and says normal rules do not apply to him",
+            OfflineAnswerEngine.buildUncertainFitAnswerBody(
+                "he has barely slept, keeps pacing, and says normal rules do not apply to him",
+                adjacentGuides,
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            ),
+            adjacentGuides,
+            false,
+            System.currentTimeMillis() - 250L,
+            12L,
+            4L,
+            0L,
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            true
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertEquals(OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT, answerRun.mode);
+        assertFalse(answerRun.abstain);
+        assertFalse(answerRun.deterministic);
+        assertTrue(answerRun.answerBody.contains("not a confident fit"));
+        assertEquals("", hostCall.get());
+        assertEquals("", deviceCall.get());
+        assertEquals("Related guides ready. Verify the fit.", OfflineAnswerEngine.buildCompletionStatus(answerRun));
     }
 
     @Test

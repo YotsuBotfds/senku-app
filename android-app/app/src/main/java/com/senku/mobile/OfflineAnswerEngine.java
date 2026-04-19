@@ -26,6 +26,9 @@ public final class OfflineAnswerEngine {
     private static final int ABSTAIN_TOP_CHUNK_LIMIT = 3;
     private static final int ABSTAIN_MAX_OVERLAP_TOKENS = 1;
     private static final int ABSTAIN_MIN_UNIQUE_LEXICAL_HITS = 2;
+    private static final double UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD = 0.65d;
+    private static final double UNCERTAIN_FIT_MIN_VECTOR_SIMILARITY = 0.45d;
+    private static final double UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY = 0.62d;
     static final String SAFETY_CRITICAL_ESCALATION_LINE =
         "If this is urgent or could be a safety risk, stop and call local emergency services now "
             + "(911 where applicable); if this may be poisoning, call Poison Control now, and "
@@ -111,6 +114,12 @@ public final class OfflineAnswerEngine {
         HIGH,
         MEDIUM,
         LOW
+    }
+
+    public enum AnswerMode {
+        CONFIDENT,
+        UNCERTAIN_FIT,
+        ABSTAIN
     }
 
     public interface AnswerProgressListener {
@@ -275,15 +284,22 @@ public final class OfflineAnswerEngine {
         }
         contextResults = trimWeakSessionContext(contextSelectionQuery, sessionUsed, contextResults, recentSources);
 
-        List<SearchResult> abstainCandidates = contextResults.isEmpty() ? answerCandidates : contextResults;
+        List<SearchResult> modeCandidates = answerCandidates.isEmpty() ? contextResults : answerCandidates;
         ConfidenceLabel confidenceLabel = confidenceLabel(
-            abstainCandidates,
+            modeCandidates,
             contextSelectionQuery,
             retrievalPlan.metadataProfile
         );
-        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, abstainCandidates);
-        if (shouldAbstain(abstainCandidates, contextSelectionQuery)) {
-            List<SearchResult> adjacentGuides = topAbstainChunks(abstainCandidates);
+        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, modeCandidates);
+        AnswerMode answerMode = resolveAnswerMode(
+            modeCandidates,
+            contextSelectionQuery,
+            retrievalPlan.metadataProfile,
+            confidenceLabel,
+            safetyCritical
+        );
+        if (answerMode == AnswerMode.ABSTAIN) {
+            List<SearchResult> adjacentGuides = topAbstainChunks(modeCandidates);
             logDebug(
                 TAG,
                 "ask.abstain query=\"" + trimmedQuery + "\" adjacentGuides=" + adjacentGuides.size()
@@ -292,6 +308,26 @@ public final class OfflineAnswerEngine {
             return PreparedAnswer.abstain(
                 trimmedQuery,
                 buildAbstainAnswerBody(trimmedQuery, adjacentGuides, safetyCritical),
+                adjacentGuides,
+                sessionUsed,
+                prepareStartedAtMs,
+                retrievalMs,
+                nanosToMillis(rerankNs),
+                0L,
+                confidenceLabel,
+                safetyCritical
+            );
+        }
+        if (answerMode == AnswerMode.UNCERTAIN_FIT) {
+            List<SearchResult> adjacentGuides = topAbstainChunks(modeCandidates);
+            logDebug(
+                TAG,
+                "ask.uncertain_fit query=\"" + trimmedQuery + "\" adjacentGuides=" + adjacentGuides.size()
+            );
+            long retrievalMs = Math.max(0L, elapsedMsSince(prepareStartedAtNs) - nanosToMillis(rerankNs));
+            return PreparedAnswer.uncertainFit(
+                trimmedQuery,
+                buildUncertainFitAnswerBody(trimmedQuery, adjacentGuides, confidenceLabel, safetyCritical),
                 adjacentGuides,
                 sessionUsed,
                 prepareStartedAtMs,
@@ -422,6 +458,34 @@ public final class OfflineAnswerEngine {
                 "",
                 latencyBreakdown,
                 prepared.confidenceLabel
+            );
+        }
+        if (prepared.mode == AnswerMode.UNCERTAIN_FIT) {
+            long totalMs = Math.max(0L, System.currentTimeMillis() - prepared.startedAtMs);
+            LatencyBreakdown latencyBreakdown = new LatencyBreakdown(
+                prepared.queryClass,
+                prepared.retrievalMs,
+                prepared.rerankMs,
+                prepared.promptMs,
+                0L,
+                0L,
+                totalMs
+            );
+            logLatencySummary(prepared.query, latencyBreakdown);
+            LatencyPanel.emit(prepared.queryClass, latencyBreakdown);
+            return new AnswerRun(
+                prepared.query,
+                prepared.answerBody,
+                prepared.sources,
+                0L,
+                prepared.sessionUsed,
+                false,
+                false,
+                "Uncertain fit | related guides | instant",
+                "",
+                latencyBreakdown,
+                prepared.confidenceLabel,
+                prepared.mode
             );
         }
 
@@ -996,6 +1060,20 @@ public final class OfflineAnswerEngine {
         return ConfidenceLabel.HIGH;
     }
 
+    private static AnswerMode normalizeAnswerMode(
+        AnswerMode mode,
+        boolean deterministic,
+        boolean abstain
+    ) {
+        if (abstain) {
+            return AnswerMode.ABSTAIN;
+        }
+        if (mode != null) {
+            return mode;
+        }
+        return deterministic ? AnswerMode.CONFIDENT : AnswerMode.CONFIDENT;
+    }
+
     private static String buildConfidenceSystemInstruction(ConfidenceLabel label) {
         if (label == null) {
             return "";
@@ -1095,6 +1173,162 @@ public final class OfflineAnswerEngine {
             return ConfidenceLabel.MEDIUM;
         }
         return ConfidenceLabel.LOW;
+    }
+
+    static AnswerMode resolveAnswerMode(
+        List<SearchResult> topChunks,
+        String query,
+        QueryMetadataProfile metadataProfile,
+        ConfidenceLabel confidenceLabel,
+        boolean safetyCritical
+    ) {
+        if (safe(query).trim().isEmpty()) {
+            return AnswerMode.CONFIDENT;
+        }
+        if (shouldAbstain(topChunks, query)) {
+            return AnswerMode.ABSTAIN;
+        }
+        double averageRrfStrength = averageRrfStrength(topChunks, query, metadataProfile);
+        if (averageRrfStrength < UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD) {
+            return AnswerMode.UNCERTAIN_FIT;
+        }
+        double topVectorSimilarity = topVectorSimilarity(topChunks, query, metadataProfile);
+        if (topVectorSimilarity >= UNCERTAIN_FIT_MIN_VECTOR_SIMILARITY
+            && topVectorSimilarity <= UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY) {
+            return AnswerMode.UNCERTAIN_FIT;
+        }
+        if (safetyCritical
+            && confidenceLabel != ConfidenceLabel.HIGH
+            && !hasPrimaryOwnerSupport(topChunks, query, metadataProfile)) {
+            return AnswerMode.UNCERTAIN_FIT;
+        }
+        return AnswerMode.CONFIDENT;
+    }
+
+    private static double averageRrfStrength(
+        List<SearchResult> topChunks,
+        String query,
+        QueryMetadataProfile metadataProfile
+    ) {
+        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        if (adjacent.isEmpty()) {
+            return 0.0d;
+        }
+        List<String> queryTokens = queryTokens(query);
+        double total = 0.0d;
+        for (int index = 0; index < adjacent.size(); index++) {
+            total += candidateRrfStrength(adjacent.get(index), index, queryTokens, metadataProfile);
+        }
+        return total / adjacent.size();
+    }
+
+    private static double candidateRrfStrength(
+        SearchResult result,
+        int index,
+        List<String> queryTokens,
+        QueryMetadataProfile metadataProfile
+    ) {
+        if (result == null) {
+            return 0.0d;
+        }
+        String mode = safe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+        int overlap = lexicalOverlapScore(result, queryTokens);
+        double strength = Math.max(0.06d, 0.22d - (Math.max(0, index) * 0.04d));
+        if ("hybrid".equals(mode)) {
+            strength += 0.36d;
+        } else if ("guide-focus".equals(mode) || "route-focus".equals(mode)) {
+            strength += 0.28d;
+        } else if ("vector".equals(mode)) {
+            strength += 0.20d;
+        } else if ("lexical".equals(mode)) {
+            strength += 0.14d;
+        }
+        if (overlap >= 2) {
+            strength += 0.22d;
+        } else if (overlap >= 1) {
+            strength += 0.12d;
+        }
+        if (metadataProfile != null) {
+            if (metadataProfile.hasExplicitTopicOverlap(result.topicTags)) {
+                strength += 0.14d;
+            }
+            if (metadataProfile.preferredTopicOverlapCount(result.topicTags) > 0) {
+                strength += 0.10d;
+            }
+            if (metadataProfile.sectionHeadingBonus(result.sectionHeading) > 0) {
+                strength += 0.08d;
+            }
+        }
+        return Math.max(0.0d, Math.min(1.0d, strength));
+    }
+
+    private static double topVectorSimilarity(
+        List<SearchResult> topChunks,
+        String query,
+        QueryMetadataProfile metadataProfile
+    ) {
+        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        if (adjacent.isEmpty()) {
+            return 0.0d;
+        }
+        SearchResult top = adjacent.get(0);
+        List<String> queryTokens = queryTokens(query);
+        int overlap = lexicalOverlapScore(top, queryTokens);
+        String mode = safe(top == null ? null : top.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+        double similarity;
+        if ("hybrid".equals(mode)) {
+            similarity = overlap > 0 ? 0.64d : 0.62d;
+        } else if ("guide-focus".equals(mode) || "route-focus".equals(mode)) {
+            similarity = overlap > 0 ? 0.60d : 0.56d;
+        } else if ("vector".equals(mode)) {
+            similarity = overlap > 0 ? 0.56d : 0.52d;
+        } else if ("lexical".equals(mode)) {
+            similarity = overlap > 0 ? 0.47d : 0.42d;
+        } else {
+            similarity = overlap > 0 ? 0.45d : 0.0d;
+        }
+        if (metadataProfile != null) {
+            if (metadataProfile.hasExplicitTopicOverlap(top == null ? "" : top.topicTags)) {
+                similarity += 0.03d;
+            }
+            if (metadataProfile.sectionHeadingBonus(top == null ? "" : top.sectionHeading) > 0) {
+                similarity += 0.02d;
+            }
+        }
+        return Math.max(0.0d, Math.min(1.0d, similarity));
+    }
+
+    private static boolean hasPrimaryOwnerSupport(
+        List<SearchResult> topChunks,
+        String query,
+        QueryMetadataProfile metadataProfile
+    ) {
+        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        if (adjacent.isEmpty()) {
+            return false;
+        }
+        List<String> queryTokens = queryTokens(query);
+        for (SearchResult result : adjacent) {
+            if (result == null) {
+                continue;
+            }
+            int overlap = lexicalOverlapScore(result, queryTokens);
+            String mode = safe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+            int sectionBonus = metadataProfile == null ? 0 : metadataProfile.sectionHeadingBonus(result.sectionHeading);
+            int preferredTopicOverlap = metadataProfile == null
+                ? 0
+                : metadataProfile.preferredTopicOverlapCount(result.topicTags);
+            boolean explicitTopicMatch = metadataProfile != null
+                && metadataProfile.hasExplicitTopicOverlap(result.topicTags);
+            if ((("hybrid".equals(mode) || "guide-focus".equals(mode) || "route-focus".equals(mode)) && overlap >= 1)
+                || overlap >= 2
+                || sectionBonus >= 8
+                || preferredTopicOverlap > 0
+                || explicitTopicMatch) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String abstainMatchLabel(SearchResult result, List<String> queryTokens) {
@@ -1217,6 +1451,67 @@ public final class OfflineAnswerEngine {
             .append(topCategory)
             .append(" category")
             .append("\n- asking a simpler version (for example, \"what is X?\")");
+        return builder.toString().trim();
+    }
+
+    static String buildUncertainFitAnswerBody(
+        String query,
+        List<SearchResult> topChunks,
+        ConfidenceLabel confidenceLabel
+    ) {
+        return buildUncertainFitAnswerBody(query, topChunks, confidenceLabel, false);
+    }
+
+    static String buildUncertainFitAnswerBody(
+        String query,
+        List<SearchResult> topChunks,
+        ConfidenceLabel confidenceLabel,
+        boolean safetyCritical
+    ) {
+        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        List<String> queryTokens = queryTokens(query);
+        StringBuilder builder = new StringBuilder();
+        builder.append(
+            confidenceLabel == ConfidenceLabel.LOW
+                ? "Senku found only loosely related guides for \""
+                : "Senku found guides that may be relevant to \""
+        ).append(truncateAbstainQuery(query))
+            .append(confidenceLabel == ConfidenceLabel.LOW
+                ? "\", so this is not a confident fit."
+                : "\", but this is not a confident fit.");
+        String escalationLine = abstainEscalationLine(safetyCritical);
+        if (!escalationLine.isEmpty()) {
+            builder.append("\n\n").append(escalationLine);
+        }
+        if (!adjacent.isEmpty()) {
+            builder.append("\n\nPossibly relevant guides in the library:");
+            for (SearchResult result : adjacent) {
+                String category = safe(result == null ? null : result.category).trim();
+                if (category.isEmpty()) {
+                    category = "unknown";
+                }
+                String guideId = safe(result == null ? null : result.guideId).trim();
+                if (guideId.isEmpty()) {
+                    guideId = "Guide";
+                }
+                String title = safe(result == null ? null : result.title).trim();
+                if (title.isEmpty()) {
+                    title = "Unknown guide";
+                }
+                builder.append("\n- [")
+                    .append(guideId)
+                    .append("] ")
+                    .append(title)
+                    .append(" - ")
+                    .append(category)
+                    .append(" | ")
+                    .append(abstainMatchLabel(result, queryTokens));
+            }
+        }
+        builder.append("\n\nTry:")
+            .append("\n- checking whether the guide matches the exact person, symptom, tool, or setting")
+            .append("\n- asking a narrower follow-up with the exact detail that is missing")
+            .append("\n- treating the guides above as related context, not a final answer");
         return builder.toString().trim();
     }
 
@@ -1470,6 +1765,9 @@ public final class OfflineAnswerEngine {
         if (answerRun.abstain) {
             return "No guide match. Try rephrasing.";
         }
+        if (answerRun.mode == AnswerMode.UNCERTAIN_FIT) {
+            return "Related guides ready. Verify the fit.";
+        }
         int sourceCount = answerRun.sources == null ? 0 : answerRun.sources.size();
         String duration = PromptBuilder.formatDuration(answerRun.elapsedMs);
         if (answerRun.hostFallbackUsed) {
@@ -1584,6 +1882,7 @@ public final class OfflineAnswerEngine {
         public final boolean sessionUsed;
         public final boolean deterministic;
         public final boolean abstain;
+        public final AnswerMode mode;
         public final String subtitle;
         public final String ruleId;
         public final LatencyBreakdown latencyBreakdown;
@@ -1616,6 +1915,7 @@ public final class OfflineAnswerEngine {
                 ruleId,
                 null,
                 null,
+                null,
                 hostBackendUsed,
                 hostFallbackUsed
             );
@@ -1642,6 +1942,7 @@ public final class OfflineAnswerEngine {
                 abstain,
                 subtitle,
                 ruleId,
+                null,
                 null,
                 null,
                 false,
@@ -1674,8 +1975,74 @@ public final class OfflineAnswerEngine {
                 ruleId,
                 latencyBreakdown,
                 confidenceLabel,
+                null,
                 false,
                 false
+            );
+        }
+
+        AnswerRun(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            long elapsedMs,
+            boolean sessionUsed,
+            boolean deterministic,
+            boolean abstain,
+            String subtitle,
+            String ruleId,
+            LatencyBreakdown latencyBreakdown,
+            ConfidenceLabel confidenceLabel,
+            AnswerMode mode
+        ) {
+            this(
+                query,
+                answerBody,
+                sources,
+                elapsedMs,
+                sessionUsed,
+                deterministic,
+                abstain,
+                subtitle,
+                ruleId,
+                latencyBreakdown,
+                confidenceLabel,
+                mode,
+                false,
+                false
+            );
+        }
+
+        AnswerRun(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            long elapsedMs,
+            boolean sessionUsed,
+            boolean deterministic,
+            boolean abstain,
+            String subtitle,
+            String ruleId,
+            LatencyBreakdown latencyBreakdown,
+            ConfidenceLabel confidenceLabel,
+            boolean hostBackendUsed,
+            boolean hostFallbackUsed
+        ) {
+            this(
+                query,
+                answerBody,
+                sources,
+                elapsedMs,
+                sessionUsed,
+                deterministic,
+                abstain,
+                subtitle,
+                ruleId,
+                latencyBreakdown,
+                confidenceLabel,
+                null,
+                hostBackendUsed,
+                hostFallbackUsed
             );
         }
 
@@ -1703,6 +2070,7 @@ public final class OfflineAnswerEngine {
                 ruleId,
                 latencyBreakdown,
                 null,
+                null,
                 false,
                 false
             );
@@ -1720,6 +2088,7 @@ public final class OfflineAnswerEngine {
             String ruleId,
             LatencyBreakdown latencyBreakdown,
             ConfidenceLabel confidenceLabel,
+            AnswerMode mode,
             boolean hostBackendUsed,
             boolean hostFallbackUsed
         ) {
@@ -1730,6 +2099,7 @@ public final class OfflineAnswerEngine {
             this.sessionUsed = sessionUsed;
             this.deterministic = deterministic;
             this.abstain = abstain;
+            this.mode = normalizeAnswerMode(mode, deterministic, abstain);
             this.subtitle = subtitle == null ? "" : subtitle;
             this.ruleId = ruleId == null ? "" : ruleId;
             this.latencyBreakdown = latencyBreakdown;
@@ -1773,6 +2143,7 @@ public final class OfflineAnswerEngine {
         public final boolean sessionUsed;
         public final boolean deterministic;
         public final boolean abstain;
+        public final AnswerMode mode;
         public final String answerBody;
         public final String ruleId;
         public final long startedAtMs;
@@ -1792,6 +2163,7 @@ public final class OfflineAnswerEngine {
             boolean sessionUsed,
             boolean deterministic,
             boolean abstain,
+            AnswerMode mode,
             String answerBody,
             String ruleId,
             long startedAtMs,
@@ -1810,6 +2182,7 @@ public final class OfflineAnswerEngine {
             this.sessionUsed = sessionUsed;
             this.deterministic = deterministic;
             this.abstain = abstain;
+            this.mode = normalizeAnswerMode(mode, deterministic, abstain);
             this.answerBody = answerBody == null ? "" : answerBody;
             this.ruleId = ruleId == null ? "" : ruleId;
             this.startedAtMs = startedAtMs;
@@ -1866,6 +2239,7 @@ public final class OfflineAnswerEngine {
                 sessionUsed,
                 true,
                 false,
+                AnswerMode.CONFIDENT,
                 answerBody,
                 ruleId,
                 startedAtMs,
@@ -1933,6 +2307,7 @@ public final class OfflineAnswerEngine {
                 sessionUsed,
                 false,
                 false,
+                AnswerMode.CONFIDENT,
                 "",
                 "",
                 startedAtMs,
@@ -2055,6 +2430,7 @@ public final class OfflineAnswerEngine {
                 sessionUsed,
                 false,
                 true,
+                AnswerMode.ABSTAIN,
                 answerBody,
                 "",
                 startedAtMs,
@@ -2065,6 +2441,40 @@ public final class OfflineAnswerEngine {
                 rerankMs,
                 promptMs,
                 LatencyPanel.QUERY_CLASS_ABSTAIN,
+                confidenceLabel,
+                safetyCritical
+            );
+        }
+
+        static PreparedAnswer uncertainFit(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            boolean sessionUsed,
+            long startedAtMs,
+            long retrievalMs,
+            long rerankMs,
+            long promptMs,
+            ConfidenceLabel confidenceLabel,
+            boolean safetyCritical
+        ) {
+            return new PreparedAnswer(
+                query,
+                sources,
+                sessionUsed,
+                false,
+                false,
+                AnswerMode.UNCERTAIN_FIT,
+                answerBody,
+                "",
+                startedAtMs,
+                null,
+                "",
+                "",
+                retrievalMs,
+                rerankMs,
+                promptMs,
+                LatencyPanel.classifyQuery(query, sources, false, false),
                 confidenceLabel,
                 safetyCritical
             );
