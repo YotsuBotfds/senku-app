@@ -473,6 +473,10 @@ Use this as the default validation lane for Spark UI slices that touch:
 - Record which artifact is the current best baseline for each emulator lane instead of overwriting that context in chat only.
 - If logcat shows a single `fts.unavailable` debug line, treat Android lexical timings as fallback-path measurements rather than intended FTS-path measurements.
 
+## Environment
+
+The checked-in `venv/` is POSIX-origin. On Windows, create your own venv (for example `py -3 -m venv venv_win`) and activate that instead, or run under WSL.
+
 ## Model Deploy Discipline
 
 `MainActivity.runAsk(...)` hard-stops the local ask path when the app has neither host inference enabled nor a resident on-device LiteRT model (`android-app/app/src/main/java/com/senku/mobile/MainActivity.java`, lines `661-671`). If the UI says `Import a .litertlm or .task model first`, treat that as a deploy-state failure, not a retrieval or answer-quality regression.

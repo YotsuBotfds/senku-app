@@ -13,6 +13,7 @@ Keep it light and referential. Put changing execution detail in focused notes an
 
 ## Quick Start
 
+The checked-in `venv/` is POSIX-origin. On Windows, create your own venv (for example `py -3 -m venv venv_win`) and activate that instead, or run under WSL.
 PowerShell:
 ```powershell
 . .\venv\Scripts\Activate.ps1

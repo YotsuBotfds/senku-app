@@ -410,6 +410,32 @@ Follow-ups (post-release):
 - `BACK-T-04` — fix `Quote-AndroidShellArg` in
   `scripts/run_android_session_flow.ps1` so the session-flow harness can
   drive multi-turn / idle-reset scenarios again
+- `BACK-T-05` — tighten
+  `PromptHarnessSmokeTest.assertDetailSettled` body-content checks for
+  `uncertain_fit` / `abstain`.
+  **Problem.** `PromptHarnessSmokeTest.assertDetailSettled` reports
+  `status: pass` on `emulator-5560` landscape when the captured
+  `scriptedPromptFlowCompletes__prompt_detail.xml` is IME-dominated and does
+  not contain the detail body, `UNSURE FIT` chip, or escalation sentence; the
+  assertion currently passes on structural-hierarchy checks that do not verify
+  Wave B textual content.
+  **Current workaround.** A1b landed the harness-side BACK-dismiss fix
+  (`9cf405c`), which works around the dump issue, but the underlying
+  assertion is still weak.
+  **Evidence.**
+  `artifacts/cp9_stage0_20260419_142539/smoke_emulator-5560_v6/instrumented_summary_landscape.json`
+  shows `status: pass` and `artifact_expectations_met: true`, while the linked
+  capture at
+  `artifacts/instrumented_ui_smoke/20260419_170638_429/emulator-5560/dumps/scriptedPromptFlowCompletes__prompt_detail.xml`
+  is a 108768-byte IME-dominated dump.
+  **Post-RC work.** Tighten `assertDetailSettled` to require the escalation
+  sentence, or an equivalent body-content signal, when the expected mode is
+  `uncertain_fit` or `abstain`; tag this as test-quality /
+  safety-critical-escalation-visibility.
+  **Sizing.** medium (test + plumbing).
+  **Acceptance.** Re-running the pre-A1b v6 `emulator-5560` landscape smoke
+  against an IME-dominated dump reports `status: fail` with a body-content
+  assertion message; portrait and tablet postures continue to pass.
 
 ### Pack lane
 
@@ -444,12 +470,36 @@ Backlog stubs:
 - `BACK-P-05` - SQLite FTS runtime decision. Hypothesis: the current FTS5 /
   FTS4 / LIKE fallback path is adequate for Wave B scale; reconfirm at RC v3
   telemetry. Blocks nothing in CP9.
-- `BACK-P-06` - AVD data-partition sizing policy. Hypothesis: document
-  direct-stream as the default for E4B on tablet AVDs and keep tmp-staging
-  behind `--use-tmp-staging`. Blocks a clean Stage 0 replay on fresh AVDs.
-- `BACK-P-07` - unified LiteRT model push helper. Hypothesis: consolidate
-  `push_litert_model_to_android.ps1` and the direct-stream bypass behind one
-  entry point that chooses from a free-space probe. Nice-to-have.
+- `BACK-P-06` - AVD data-partition sizing policy.
+  **Problem.** Tablet AVDs with roughly 6 GB data partitions cannot tmp-stage
+  an E4B-size model via the standard push helper; CP9 Stage 0 v5 exposed this
+  when the push fell into a silent failure mode.
+  **Current workaround.** `push_litert_model_to_android.ps1` has a
+  direct-stream `adb shell run-as` path that bypasses tmp staging and writes
+  straight into `files/models/<name>`, which works on partition-constrained
+  AVDs.
+  **Post-RC work.** Promote direct-stream to the default path in
+  `push_litert_model_to_android.ps1`; keep tmp staging behind an opt-in
+  `--use-tmp-staging` flag.
+  **Sizing.** small (one script + docs).
+  **Acceptance.** Push helper succeeds on a 6 GB tablet AVD without any
+  posture-specific flag.
+- `BACK-P-07` - unified LiteRT model push helper.
+  **Problem.** Today the push path is split between
+  `push_litert_model_to_android.ps1` (tmp staging) and the manual
+  `adb shell run-as cat` recipe (direct-stream). Dispatches have to know which
+  to use, and the wrong choice fails silently on constrained AVDs.
+  **Current workaround.** Operators manually choose between tmp staging and
+  the direct-stream recipe based on device posture and recent failure history.
+  **Post-RC work.** Consolidate behind a free-space probe - if `stat -f` (or
+  equivalent `run-as` `df`) on `/data/user/0/com.senku.mobile/` shows less
+  than `2x model_size` free, auto-select direct-stream; otherwise use tmp
+  staging. The helper must fail loud, not silent, when neither path can stage
+  the model.
+  **Sizing.** small (one script).
+  **Acceptance.** One entrypoint works on both phone and tablet AVDs without
+  posture-specific flags, and fails loud when neither path can stage the
+  model.
 
 ## Rule
 
