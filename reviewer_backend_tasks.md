@@ -517,7 +517,7 @@ parallel fill-lane with no gate of its own.
   - Accept: unit test corrupts the tail of a pack, confirms install fails;
     unmodified pack still installs cleanly
 
-- `BACK-P-03` · **P2 · S · worker** · Bridge-tag consistency audit
+- `BACK-P-03` · **[done 2026-04-19 `aa2373c`]** · **P2 · S · worker** · Bridge-tag consistency audit
   - Files: `ingest.py:692` (sets `bridge` field), `query.py:5543-5553`
     (`_is_bridge_guide_metadata` with fallback logic)
   - Behavior: at ingest validation time, assert that if a guide is detected as
@@ -526,6 +526,11 @@ parallel fill-lane with no gate of its own.
     appears in both old-tag and new-tag form.
   - Accept: re-ingest on current guide corpus produces zero inconsistency
     warnings
+  - **Landed 2026-04-19 (`aa2373c`)** — `ingest.py` now runs a corpus-wide
+    bridge-tag consistency audit, `tests/test_bridge_tag_consistency.py`
+    covers both targeted cases and the live guide corpus, and the 11
+    inconsistent guide metadata rows were corrected in the prerequisite
+    commit so the full corpus now passes cleanly
   - **Post-OPUS-A-10 cleanup**
 
 - `BACK-P-04` · **[done 2026-04-18 `bbc1b1d`]** · **P0 · S · worker** · Pack export SHA race (stock bundle re-exported `aa1b399`)
@@ -675,3 +680,4 @@ _Append entries here as tasks ship. Format:
 | BACK-H-06 | done | codex | 2026-04-18 | 2026-04-19 | `FtsRuntime` now documents the FTS5 then FTS4 then LIKE fallback chain, plus the expected performance gap between FTS and the slower correctness-net path; commit `c269abe` |
 | BACK-D-03 | done | codex | 2026-04-18 | 2026-04-19 | deterministic builder-missing telemetry and the debug-only fallback note were already live in immutable Wave B code; overnight queue re-verified the exact event name and a green full Python test run before recording the landing; commit `d88da35` |
 | BACK-H-01 | done | codex | 2026-04-18 | 2026-04-19 | metadata tag normalization now lives in shared `metadata_helpers.py` under canonical `normalize_metadata_tag`, with the older helper name preserved as a wrapper and helper tests expanded through unicode and idempotency cases; commit `92116a8` |
+| BACK-P-03 | done | codex | 2026-04-19 | 2026-04-19 | bridge-tag consistency audit added to ingest with test; 11 prerequisite guide fixes landed as preceding commit; corpus clean; commit `aa2373c` |
