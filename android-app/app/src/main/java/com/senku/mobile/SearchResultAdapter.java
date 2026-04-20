@@ -1,0 +1,995 @@
+package com.senku.mobile;
+
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.StyleSpan;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.compose.ui.platform.ComposeView;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.senku.ui.search.SearchResultCardModel;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import static com.senku.ui.search.SearchResultCardKt.bindSearchResultCard;
+import static com.senku.ui.search.SearchResultCardKt.buildWarmThreadGuideIds;
+import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
+
+public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
+    private static final int MAX_HIGHLIGHT_TERMS = 4;
+
+    public static final class LinkedGuidePreview {
+        public final String guideId;
+        public final String title;
+        public final String displayLabel;
+
+        public LinkedGuidePreview(String guideId, String title, String displayLabel) {
+            this.guideId = guideId == null ? "" : guideId;
+            this.title = title == null ? "" : title;
+            this.displayLabel = displayLabel == null ? "" : displayLabel;
+        }
+
+        boolean hasTargetGuide() {
+            return !guideId.trim().isEmpty();
+        }
+    }
+
+    public interface OnResultClickListener {
+        void onResultClick(SearchResult result);
+    }
+
+    public interface OnLinkedGuideClickListener {
+        void onLinkedGuideClick(SearchResult sourceResult, LinkedGuidePreview preview);
+    }
+
+    private final LayoutInflater inflater;
+    private final List<SearchResult> results;
+    private final OnResultClickListener listener;
+    private final OnLinkedGuideClickListener linkedGuideClickListener;
+    private final int waterColor;
+    private final int fireColor;
+    private final int medicalColor;
+    private final int shelterColor;
+    private final int foodColor;
+    private final int toolsColor;
+    private final int commsColor;
+    private final int communityColor;
+    private final int accentOliveColor;
+    private final int hybridColor;
+    private final int lexicalColor;
+    private final int vectorColor;
+    private final int guideColor;
+    private final int defaultBadgeColor;
+    private Map<String, LinkedGuidePreview> linkedGuidePreviewMap = Collections.emptyMap();
+    private List<String> queryHighlightTerms = Collections.emptyList();
+    private Set<String> warmThreadGuideIds = Collections.emptySet();
+
+    public SearchResultAdapter(
+        Context context,
+        List<SearchResult> results,
+        OnResultClickListener listener,
+        OnLinkedGuideClickListener linkedGuideClickListener
+    ) {
+        this.inflater = LayoutInflater.from(context);
+        this.results = results;
+        this.listener = listener;
+        this.linkedGuideClickListener = linkedGuideClickListener;
+        this.waterColor = ContextCompat.getColor(context, R.color.senku_badge_water);
+        this.fireColor = ContextCompat.getColor(context, R.color.senku_badge_fire);
+        this.medicalColor = ContextCompat.getColor(context, R.color.senku_badge_medicine);
+        this.shelterColor = ContextCompat.getColor(context, R.color.senku_badge_shelter);
+        this.foodColor = ContextCompat.getColor(context, R.color.senku_badge_food);
+        this.toolsColor = ContextCompat.getColor(context, R.color.senku_badge_tools);
+        this.commsColor = ContextCompat.getColor(context, R.color.senku_badge_comms);
+        this.communityColor = ContextCompat.getColor(context, R.color.senku_badge_community);
+        this.accentOliveColor = ContextCompat.getColor(context, R.color.senku_accent_olive);
+        this.hybridColor = ContextCompat.getColor(context, R.color.senku_badge_hybrid);
+        this.lexicalColor = ContextCompat.getColor(context, R.color.senku_badge_lexical);
+        this.vectorColor = ContextCompat.getColor(context, R.color.senku_badge_vector);
+        this.guideColor = ContextCompat.getColor(context, R.color.senku_badge_guide);
+        this.defaultBadgeColor = ContextCompat.getColor(context, R.color.senku_badge_default);
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        SearchResult result = results.get(position);
+        return result.hashCode();
+    }
+
+    public void setLinkedGuidePreviewMap(Map<String, LinkedGuidePreview> linkedGuidePreviewMap) {
+        if (linkedGuidePreviewMap == null || linkedGuidePreviewMap.isEmpty()) {
+            this.linkedGuidePreviewMap = Collections.emptyMap();
+            return;
+        }
+        this.linkedGuidePreviewMap = new LinkedHashMap<>(linkedGuidePreviewMap);
+    }
+
+    public void setActiveQuery(String query) {
+        queryHighlightTerms = buildHighlightTerms(query);
+    }
+
+    @NonNull
+    @Override
+    public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.list_item_result, parent, false);
+        return new ResultViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ResultViewHolder holder, int position) {
+        SearchResult result = results.get(position);
+        Context context = holder.itemView.getContext();
+        warmThreadGuideIds = buildWarmThreadGuideIds(context);
+        boolean richTabletCard = isRichTabletCard(context);
+        boolean landscapePhoneCard = isLandscapePhoneCard(context);
+        boolean smallPhonePortraitCard = isSmallPhonePortraitCard(context);
+        boolean largeFontCard = isLargeFontScale(context);
+        boolean compactLinkedCue = smallPhonePortraitCard || landscapePhoneCard || largeFontCard;
+        boolean stressCompactCard = landscapePhoneCard && largeFontCard;
+        boolean allowLinkedGuidePreviewLine = !smallPhonePortraitCard && !landscapePhoneCard && !largeFontCard;
+        holder.title.setText(formatDisplayText(
+            result.title,
+            richTabletCard ? 128 : (landscapePhoneCard ? 100 : 90),
+            2
+        ));
+        holder.title.setMaxLines(richTabletCard ? 3 : (stressCompactCard ? 1 : 2));
+        holder.title.setEllipsize(TextUtils.TruncateAt.END);
+        holder.meta.setText(buildMetaLine(result));
+        holder.meta.setMaxLines(stressCompactCard ? 1 : 2);
+        holder.meta.setEllipsize(TextUtils.TruncateAt.END);
+        bindCategoryBadge(holder.categoryBadge, holder.accent, result.category);
+        bindLinkedGuideCue(
+            holder.linkedGuideCue,
+            holder.linkedGuidePreview,
+            result,
+            compactLinkedCue,
+            allowLinkedGuidePreviewLine,
+            stressCompactCard,
+            richTabletCard
+        );
+        bindRetrievalBadge(holder.retrievalBadge, holder.accent, result.retrievalMode);
+        holder.accent.setAlpha(rankAccentAlpha(position));
+        bindSection(holder.section, result.sectionHeading, smallPhonePortraitCard || stressCompactCard);
+        holder.snippet.setText(formatDisplayText(
+            result.snippet,
+            richTabletCard ? 420 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
+            richTabletCard ? 4 : 3
+        ));
+        holder.snippet.setMaxLines(richTabletCard ? 7 : (stressCompactCard ? 1 : (landscapePhoneCard ? 2 : (smallPhonePortraitCard ? 1 : 5))));
+        holder.snippet.setEllipsize(TextUtils.TruncateAt.END);
+        if (smallPhonePortraitCard || stressCompactCard) {
+            holder.snippet.setAlpha(0.66f);
+            holder.snippet.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.defaultSnippetTextSizePx * 0.94f);
+        } else {
+            holder.snippet.setAlpha(1.0f);
+            holder.snippet.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.defaultSnippetTextSizePx);
+        }
+        bindComposeCard(holder, result);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onResultClick(result);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return results.size();
+    }
+
+    private void bindCategoryBadge(TextView badge, View accent, String category) {
+        String normalized = safe(category).trim().toLowerCase(Locale.US);
+        int color = colorForCategory(normalized);
+        accent.setBackgroundColor(color);
+        if (normalized.isEmpty()) {
+            badge.setVisibility(View.GONE);
+            return;
+        }
+        applyBadgeStyle(badge, humanizeCategory(normalized), color);
+        badge.setCompoundDrawablePadding(dp(6));
+        badge.setCompoundDrawablesRelativeWithIntrinsicBounds(iconForCategory(normalized), 0, 0, 0);
+    }
+
+    private void bindRetrievalBadge(TextView badge, View accent, String retrievalMode) {
+        String normalized = safe(retrievalMode).trim().toLowerCase(Locale.US);
+        if (normalized.isEmpty() || "guide".equals(normalized)) {
+            badge.setVisibility(View.GONE);
+            return;
+        }
+        int color = colorForRetrievalMode(normalized);
+        accent.setBackgroundColor(color);
+        applyBadgeStyle(badge, humanizeMode(normalized), color);
+    }
+
+    private void bindLinkedGuideCue(
+        TextView cue,
+        TextView previewView,
+        SearchResult result,
+        boolean compactLinkedCue,
+        boolean allowLinkedGuidePreviewLine,
+        boolean stressCompactCard,
+        boolean richTabletCard
+    ) {
+        if (cue == null || previewView == null) {
+            return;
+        }
+        cue.setOnClickListener(null);
+        cue.setClickable(false);
+        cue.setFocusable(false);
+        previewView.setVisibility(View.GONE);
+        previewView.setText("");
+        previewView.setOnClickListener(null);
+        previewView.setClickable(false);
+        previewView.setFocusable(false);
+        if (stressCompactCard) {
+            cue.setVisibility(View.GONE);
+            return;
+        }
+        String normalizedGuideId = normalizeGuideIdKey(result == null ? null : result.guideId);
+        LinkedGuidePreview preview = normalizedGuideId.isEmpty() ? null : linkedGuidePreviewMap.get(normalizedGuideId);
+        if (preview == null || !preview.hasTargetGuide()) {
+            cue.setVisibility(View.GONE);
+            return;
+        }
+        String previewLabel = cleanDisplayText(
+            buildLinkedGuidePreviewLabel(preview),
+            richTabletCard ? 92 : 72
+        );
+        String actionLabel = previewLabel.isEmpty() ? safe(preview.guideId).trim() : previewLabel;
+        boolean usePreviewLineAction = allowLinkedGuidePreviewLine && !previewLabel.isEmpty();
+        applyBadgeStyle(
+            cue,
+            usePreviewLineAction
+                ? inflater.getContext().getString(R.string.browse_result_linked_lane_label)
+                : buildCompactLinkedGuideCueLabel(preview, compactLinkedCue),
+            guideColor
+        );
+        cue.setAlpha(usePreviewLineAction ? 0.78f : 0.94f);
+        cue.setContentDescription(
+            usePreviewLineAction
+                ? buildLinkedGuideAvailableDescription(actionLabel)
+                : buildLinkedGuideOpenDescription(actionLabel)
+        );
+        if (!usePreviewLineAction) {
+            bindLinkedGuideAction(cue, result, preview);
+            return;
+        }
+        cue.setClickable(false);
+        cue.setFocusable(false);
+        cue.setOnClickListener(null);
+        if (!allowLinkedGuidePreviewLine) {
+            return;
+        }
+        previewView.setVisibility(View.VISIBLE);
+        previewView.setText(buildLinkedGuidePreviewLine(preview, richTabletCard));
+        previewView.setAlpha(0.92f);
+        previewView.setContentDescription(buildLinkedGuideOpenDescription(actionLabel));
+        bindLinkedGuideAction(previewView, result, preview);
+    }
+
+    private void bindSection(TextView sectionView, String section) {
+        bindSection(sectionView, section, false);
+    }
+
+    private void bindSection(TextView sectionView, String section, boolean forceHidden) {
+        if (forceHidden) {
+            sectionView.setVisibility(View.GONE);
+            return;
+        }
+        CharSequence normalized = formatDisplayText(section, 0, 1);
+        if (TextUtils.isEmpty(normalized)) {
+            sectionView.setVisibility(View.GONE);
+            return;
+        }
+        sectionView.setVisibility(View.VISIBLE);
+        sectionView.setText(formatSectionAnchor(normalized.toString()));
+    }
+
+    private float rankAccentAlpha(int position) {
+        if (position <= 0) {
+            return 1.0f;
+        }
+        if (position == 1) {
+            return 0.82f;
+        }
+        if (position == 2) {
+            return 0.65f;
+        }
+        return 0.50f;
+    }
+
+    private boolean isLandscapePhoneCard(Context context) {
+        Configuration configuration = context.getResources().getConfiguration();
+        return configuration.smallestScreenWidthDp < 600
+            && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private boolean isSmallPhonePortraitCard(Context context) {
+        Configuration configuration = context.getResources().getConfiguration();
+        return configuration.smallestScreenWidthDp < 600
+            && configuration.orientation == Configuration.ORIENTATION_PORTRAIT;
+    }
+
+    private boolean isLargeFontScale(Context context) {
+        return context.getResources().getConfiguration().fontScale >= 1.25f;
+    }
+
+    private void applyBadgeStyle(TextView badge, String label, int color) {
+        badge.setVisibility(View.VISIBLE);
+        badge.setText(label);
+        if (badge.getBackground() instanceof GradientDrawable) {
+            GradientDrawable drawable = (GradientDrawable) badge.getBackground().mutate();
+            drawable.setColor(color);
+        }
+    }
+
+    private String buildMetaLine(SearchResult result) {
+        ArrayList<String> tokens = new ArrayList<>();
+        String guideId = cleanDisplayText(result == null ? null : result.guideId, 28);
+        String contentRole = humanizeContentRole(result == null ? null : result.contentRole, 22);
+        String timeHorizon = humanizeMetadataValue(result == null ? null : result.timeHorizon, 22);
+        String structureType = humanizeMetadataValue(result == null ? null : result.structureType, 26);
+        if (!guideId.isEmpty()) {
+            tokens.add(inflater.getContext().getString(R.string.browse_result_meta_ref, guideId));
+        }
+        if (shouldSurfaceMetadataToken(contentRole)) {
+            tokens.add(inflater.getContext().getString(R.string.browse_result_meta_role, contentRole));
+        }
+        if (shouldSurfaceMetadataToken(timeHorizon)) {
+            tokens.add(inflater.getContext().getString(R.string.browse_result_meta_window, timeHorizon));
+        }
+        if (shouldSurfaceMetadataToken(structureType)) {
+            tokens.add(inflater.getContext().getString(R.string.browse_result_meta_frame, structureType));
+        }
+        if (!tokens.isEmpty()) {
+            return TextUtils.join(" // ", tokens);
+        }
+        return buildMetaFallback(result);
+    }
+
+    private String buildLinkedGuidePreviewLabel(LinkedGuidePreview preview) {
+        if (preview == null) {
+            return "";
+        }
+        String displayLabel = safe(preview.displayLabel).trim();
+        if (!displayLabel.isEmpty()) {
+            return displayLabel;
+        }
+        String guideId = safe(preview.guideId).trim();
+        String title = safe(preview.title).trim();
+        if (!guideId.isEmpty() && !title.isEmpty()) {
+            return guideId + " - " + title;
+        }
+        if (!title.isEmpty()) {
+            return title;
+        }
+        return guideId;
+    }
+
+    private String buildCompactLinkedGuideCueLabel(LinkedGuidePreview preview, boolean compactLinkedCue) {
+        if (preview == null) {
+            return inflater.getContext().getString(
+                compactLinkedCue
+                    ? R.string.browse_result_linked_cue_short
+                    : R.string.browse_result_linked_cue_default
+            );
+        }
+        String guideId = safe(preview.guideId).trim();
+        if (!guideId.isEmpty()) {
+            if (compactLinkedCue) {
+                return inflater.getContext().getString(R.string.browse_result_linked_cue_short);
+            }
+            return cleanDisplayText(
+                inflater.getContext().getString(R.string.browse_result_linked_cue_with_id, guideId),
+                20
+            );
+        }
+        String label = buildLinkedGuidePreviewLabel(preview);
+        if (!label.isEmpty()) {
+            return inflater.getContext().getString(
+                compactLinkedCue
+                    ? R.string.browse_result_linked_cue_short
+                    : R.string.browse_result_linked_cue_default
+            );
+        }
+        return inflater.getContext().getString(
+            compactLinkedCue
+                ? R.string.browse_result_linked_cue_short
+                : R.string.browse_result_linked_cue_default
+        );
+    }
+
+    private String buildLinkedGuideAvailableDescription(String actionLabel) {
+        return inflater.getContext().getString(
+            R.string.browse_result_linked_guide_available_description,
+            actionLabel
+        );
+    }
+
+    private String buildLinkedGuideOpenDescription(String actionLabel) {
+        return inflater.getContext().getString(
+            R.string.browse_result_linked_guide_open_description,
+            actionLabel
+        );
+    }
+
+    private void bindLinkedGuideAction(View view, SearchResult result, LinkedGuidePreview preview) {
+        if (view == null || preview == null || !preview.hasTargetGuide()) {
+            return;
+        }
+        view.setClickable(true);
+        view.setFocusable(true);
+        view.setOnClickListener(v -> {
+            if (linkedGuideClickListener != null) {
+                linkedGuideClickListener.onLinkedGuideClick(result, preview);
+            }
+        });
+    }
+
+    private void bindComposeCard(ResultViewHolder holder, SearchResult result) {
+        if (holder == null || holder.composeView == null || result == null) {
+            return;
+        }
+        SearchResultCardModel model = buildSearchResultCardModel(result);
+        Runnable cardClick = () -> {
+            if (listener != null) {
+                listener.onResultClick(result);
+            }
+        };
+        Runnable linkedGuideClick = null;
+        LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
+        if (linkedPreview != null && linkedPreview.hasTargetGuide()) {
+            linkedGuideClick = () -> {
+                if (linkedGuideClickListener != null) {
+                    linkedGuideClickListener.onLinkedGuideClick(result, linkedPreview);
+                }
+            };
+        }
+        Runnable continueThreadClick = shouldShowContinueThreadChip(result)
+            ? () -> {
+                if (listener != null) {
+                    listener.onResultClick(result);
+                }
+            }
+            : null;
+        bindSearchResultCard(holder.composeView, model, cardClick, continueThreadClick, linkedGuideClick);
+    }
+
+    private SearchResultCardModel buildSearchResultCardModel(SearchResult result) {
+        String title = cleanDisplayText(result == null ? null : result.title, 120);
+        String subtitle = buildCardSubtitle(result);
+        String snippet = buildCardSnippet(result);
+        String laneLabel = laneLabelForRetrievalMode(safe(result == null ? null : result.retrievalMode));
+        int laneColor = colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
+        LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
+        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Cross-ref" : null;
+        String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
+            ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
+            : null;
+        boolean showContinueThreadChip = shouldShowContinueThreadChip(result);
+        return new SearchResultCardModel(
+            title,
+            subtitle,
+            snippet,
+            laneLabel,
+            laneColor,
+            showContinueThreadChip,
+            "Continue thread",
+            showContinueThreadChip ? buildContinueThreadContentDescription(result) : "Continue this thread",
+            linkedLabel,
+            linkedDescription
+        );
+    }
+
+    private LinkedGuidePreview resolveLinkedGuidePreview(SearchResult result) {
+        String normalizedGuideId = normalizeGuideIdKey(result == null ? null : result.guideId);
+        if (normalizedGuideId.isEmpty()) {
+            return null;
+        }
+        return linkedGuidePreviewMap.get(normalizedGuideId);
+    }
+
+    private boolean shouldShowContinueThreadChip(SearchResult result) {
+        String normalizedGuideId = normalizeGuideIdKey(result == null ? null : result.guideId);
+        return !normalizedGuideId.isEmpty() && warmThreadGuideIds.contains(normalizedGuideId);
+    }
+
+    private String buildContinueThreadContentDescription(SearchResult result) {
+        String guideId = cleanDisplayText(result == null ? null : result.guideId, 32);
+        if (guideId.isEmpty()) {
+            return "Continue this thread";
+        }
+        return "Continue thread from " + guideId;
+    }
+
+    private String buildCardSubtitle(SearchResult result) {
+        if (result == null) {
+            return "";
+        }
+        String guideId = cleanDisplayText(result.guideId, 40);
+        String category = humanizeMetadataValue(result.category, 24);
+        if (!guideId.isEmpty() && !category.isEmpty()) {
+            return guideId + " \u00B7 " + category;
+        }
+        if (!guideId.isEmpty()) {
+            return guideId;
+        }
+        if (!category.isEmpty()) {
+            return category;
+        }
+        return cleanDisplayText(result.subtitle, 64);
+    }
+
+    private String buildCardSnippet(SearchResult result) {
+        int maxLen = isRichTabletCard(inflater.getContext())
+            ? 320
+            : (isLandscapePhoneCard(inflater.getContext()) ? 220 : (isSmallPhonePortraitCard(inflater.getContext()) ? 150 : 260));
+        String snippet = cleanDisplayText(result == null ? null : result.snippet, maxLen);
+        if (!snippet.isEmpty()) {
+            return snippet;
+        }
+        return cleanDisplayText(result == null ? null : result.body, maxLen);
+    }
+
+    private int colorForCategory(String category) {
+        switch (category) {
+            case "water":
+            case "sanitation":
+                return waterColor;
+            case "fire":
+            case "energy":
+                return fireColor;
+            case "medical":
+            case "medicine":
+            case "health":
+                return medicalColor;
+            case "shelter":
+            case "building":
+            case "utility":
+                return shelterColor;
+            case "food":
+            case "agriculture":
+                return foodColor;
+            case "tools":
+            case "craft":
+            case "crafts":
+                return toolsColor;
+            case "communications":
+            case "communication":
+                return commsColor;
+            case "community":
+            case "defense":
+            case "resource-management":
+                return communityColor;
+            default:
+                return accentOliveColor;
+        }
+    }
+
+    private int colorForRetrievalMode(String mode) {
+        switch (mode) {
+            case "route-focus":
+            case "hybrid":
+                return hybridColor;
+            case "lexical":
+                return lexicalColor;
+            case "vector":
+                return vectorColor;
+            case "guide-focus":
+            case "guide":
+                return guideColor;
+            default:
+                return defaultBadgeColor;
+        }
+    }
+
+    private int iconForCategory(String category) {
+        switch (category) {
+            case "water":
+            case "sanitation":
+                return R.drawable.ic_category_water;
+            case "fire":
+            case "energy":
+                return R.drawable.ic_category_fire;
+            case "medical":
+            case "medicine":
+            case "health":
+                return R.drawable.ic_category_medicine;
+            case "shelter":
+            case "building":
+            case "utility":
+                return R.drawable.ic_category_shelter;
+            case "food":
+            case "agriculture":
+                return R.drawable.ic_category_food;
+            case "tools":
+            case "craft":
+            case "crafts":
+                return R.drawable.ic_category_tools;
+            case "communications":
+            case "communication":
+                return R.drawable.ic_category_comms;
+            case "community":
+            case "defense":
+            case "resource-management":
+                return R.drawable.ic_category_community;
+            default:
+                return 0;
+        }
+    }
+
+    private String humanizeCategory(String category) {
+        if ("resource-management".equals(category)) {
+            return "Community";
+        }
+        if ("communications".equals(category) || "communication".equals(category)) {
+            return "Comms";
+        }
+        return humanize(category);
+    }
+
+    private String humanizeMode(String mode) {
+        if ("route-focus".equals(mode)) {
+            return "Route";
+        }
+        if ("guide-focus".equals(mode)) {
+            return "Guide";
+        }
+        return humanize(mode);
+    }
+
+    private String humanize(String value) {
+        return humanizeStatic(value);
+    }
+
+    private static String humanizeStatic(String value) {
+        String[] parts = safe(value).replace('-', ' ').replace('_', ' ').split("\\s+");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(Character.toUpperCase(part.charAt(0)));
+            if (part.length() > 1) {
+                builder.append(part.substring(1));
+            }
+        }
+        return builder.toString();
+    }
+
+    private String buildMetaFallback(SearchResult result) {
+        ArrayList<String> fragments = new ArrayList<>();
+        String subtitle = cleanDisplayText(result == null ? null : result.subtitle, 96);
+        if (!subtitle.isEmpty()) {
+            String[] parts = subtitle.split("\\|");
+            String normalizedGuideId = safe(result == null ? null : result.guideId).trim();
+            String normalizedSection = cleanDisplayText(result == null ? null : result.sectionHeading, 48);
+            String normalizedRetrieval = humanizeMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
+            for (String part : parts) {
+                String cleaned = cleanDisplayText(part, 30);
+                if (cleaned.isEmpty()) {
+                    continue;
+                }
+                if (!normalizedGuideId.isEmpty() && cleaned.equalsIgnoreCase(normalizedGuideId)) {
+                    continue;
+                }
+                if (!normalizedSection.isEmpty() && cleaned.equalsIgnoreCase(normalizedSection)) {
+                    continue;
+                }
+                if (!normalizedRetrieval.isEmpty() && cleaned.equalsIgnoreCase(normalizedRetrieval)) {
+                    continue;
+                }
+                fragments.add(cleaned);
+                if (fragments.size() >= 3) {
+                    break;
+                }
+            }
+        }
+        if (!fragments.isEmpty()) {
+            return TextUtils.join(" // ", fragments);
+        }
+        return cleanDisplayText(result == null ? null : result.guideId, 40);
+    }
+
+    private boolean shouldSurfaceMetadataToken(String value) {
+        String normalized = safe(value).trim().toLowerCase(Locale.US);
+        return !normalized.isEmpty()
+            && !"general".equals(normalized)
+            && !"unknown".equals(normalized)
+            && !"none".equals(normalized);
+    }
+
+    static String humanizeContentRoleForTest(String raw, int maxLen) {
+        return humanizeContentRoleInternal(raw, maxLen);
+    }
+
+    private String humanizeContentRole(String raw, int maxLen) {
+        return humanizeContentRoleInternal(raw, maxLen);
+    }
+
+    private static String humanizeContentRoleInternal(String raw, int maxLen) {
+        String normalized = safe(raw).trim().toLowerCase(Locale.US);
+        normalized = normalized.replaceFirst("^role[\\s_-]+", "");
+        return cleanDisplayTextInternal(humanizeStatic(normalized), maxLen);
+    }
+
+    private String humanizeMetadataValue(String raw, int maxLen) {
+        return cleanDisplayText(humanize(safe(raw).trim().toLowerCase(Locale.US)), maxLen);
+    }
+
+    private String buildLinkedGuidePreviewLine(LinkedGuidePreview preview, boolean richTabletCard) {
+        String label = cleanDisplayText(buildLinkedGuidePreviewLabel(preview), richTabletCard ? 104 : 82);
+        if (label.isEmpty()) {
+            return "";
+        }
+        return inflater.getContext().getString(R.string.browse_result_linked_preview, label);
+    }
+
+    private String formatSectionAnchor(String section) {
+        String anchor = cleanDisplayText(section, 64);
+        if (anchor.isEmpty()) {
+            return "";
+        }
+        return inflater.getContext().getString(R.string.browse_result_section_anchor, anchor);
+    }
+
+    private static String safe(String text) {
+        return text == null ? "" : text;
+    }
+
+    private String normalizeGuideIdKey(String guideId) {
+        return safe(guideId).trim().toLowerCase(Locale.US);
+    }
+
+    private boolean isRichTabletCard(Context context) {
+        Configuration configuration = context.getResources().getConfiguration();
+        return configuration.smallestScreenWidthDp >= 600;
+    }
+
+    static String cleanDisplayTextForTest(String raw, int maxLen) {
+        return cleanDisplayTextInternal(raw, maxLen);
+    }
+
+    private String cleanDisplayText(String raw, int maxLen) {
+        return cleanDisplayTextInternal(raw, maxLen);
+    }
+
+    private static String cleanDisplayTextInternal(String raw, int maxLen) {
+        String cleaned = stripDisplayMarkdown(safe(raw).trim());
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        cleaned = DetailActivity.sanitizeWarningResidualCopy(cleaned);
+        cleaned = cleaned.replaceAll("\\s+", " ").trim();
+        if (maxLen > 0 && cleaned.length() > maxLen) {
+            return cleaned.substring(0, Math.max(0, maxLen - 1)).trim() + "\u2026";
+        }
+        return cleaned;
+    }
+
+    private static String stripDisplayMarkdown(String raw) {
+        String cleaned = safe(raw);
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        cleaned = cleaned.replace("\r", "\n");
+        cleaned = cleaned.replaceAll("!\\[([^\\]]*)\\]\\([^)]*\\)", "$1");
+        cleaned = cleaned.replaceAll("\\[([^\\]]+)\\]\\([^)]*\\)", "$1");
+        cleaned = cleaned.replaceAll("(?i)<br\\s*/?>", " ");
+        cleaned = cleaned.replaceAll("(?m)^\\s*#{1,6}\\s*", "");
+        cleaned = cleaned.replaceAll("\\s#{2,6}\\s*", " ");
+        cleaned = cleaned.replaceAll("(?m)^\\s*>+\\s*", "");
+        cleaned = cleaned.replaceAll("(?m)^\\s*[-*+]\\s+\\[[ xX]\\]\\s*", "");
+        cleaned = cleaned.replaceAll("(?m)^\\s*\\d+[.)]\\s+", "");
+        cleaned = cleaned.replaceAll("(?m)^\\s*[-*+]\\s+", "");
+        cleaned = cleaned.replaceAll("(?m)^\\s*\\|?(\\s*:?-{2,}:?\\s*\\|)+\\s*:?-{2,}:?\\s*\\|?\\s*$", " ");
+        cleaned = cleaned.replace("`", "");
+        cleaned = cleaned.replace("**", "");
+        cleaned = cleaned.replace("__", "");
+        cleaned = cleaned.replace("~~", "");
+        return cleaned;
+    }
+
+    private CharSequence formatDisplayText(String raw, int maxLen, int maxMatches) {
+        String cleaned = cleanDisplayText(raw, maxLen);
+        if (cleaned.isEmpty() || queryHighlightTerms.isEmpty() || maxMatches <= 0) {
+            return cleaned;
+        }
+        String lowerText = cleaned.toLowerCase(Locale.US);
+        SpannableString highlighted = new SpannableString(cleaned);
+        boolean[] occupied = new boolean[cleaned.length()];
+        int matchesApplied = 0;
+        for (String term : queryHighlightTerms) {
+            if (matchesApplied >= maxMatches) {
+                break;
+            }
+            matchesApplied += applyTermHighlight(
+                highlighted,
+                cleaned,
+                lowerText,
+                term,
+                occupied,
+                maxMatches - matchesApplied
+            );
+        }
+        return matchesApplied > 0 ? highlighted : cleaned;
+    }
+
+    private int applyTermHighlight(
+        SpannableString text,
+        String original,
+        String lowerText,
+        String term,
+        boolean[] occupied,
+        int remainingMatches
+    ) {
+        if (term.isEmpty() || remainingMatches <= 0) {
+            return 0;
+        }
+        int applied = 0;
+        int start = 0;
+        while (start >= 0 && start < lowerText.length() && applied < remainingMatches) {
+            int matchStart = lowerText.indexOf(term, start);
+            if (matchStart < 0) {
+                break;
+            }
+            int matchEnd = matchStart + term.length();
+            if (isWordBoundaryMatch(original, matchStart, matchEnd) && !hasOverlap(occupied, matchStart, matchEnd)) {
+                text.setSpan(new StyleSpan(Typeface.BOLD), matchStart, matchEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                markOccupied(occupied, matchStart, matchEnd);
+                applied += 1;
+            }
+            start = matchEnd;
+        }
+        return applied;
+    }
+
+    private boolean isWordBoundaryMatch(String text, int start, int end) {
+        return isBoundary(text, start - 1) && isBoundary(text, end);
+    }
+
+    private boolean isBoundary(String text, int index) {
+        if (index < 0 || index >= text.length()) {
+            return true;
+        }
+        return !Character.isLetterOrDigit(text.charAt(index));
+    }
+
+    private boolean hasOverlap(boolean[] occupied, int start, int end) {
+        for (int i = start; i < end; i++) {
+            if (occupied[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void markOccupied(boolean[] occupied, int start, int end) {
+        for (int i = start; i < end; i++) {
+            occupied[i] = true;
+        }
+    }
+
+    private List<String> buildHighlightTerms(String query) {
+        String normalizedQuery = safe(query).trim().toLowerCase(Locale.US);
+        if (normalizedQuery.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String[] parts = normalizedQuery.split("[^a-z0-9]+");
+        LinkedHashSet<String> terms = new LinkedHashSet<>();
+        for (String part : parts) {
+            String term = safe(part).trim();
+            if (!shouldHighlightTerm(term)) {
+                continue;
+            }
+            terms.add(term);
+            if (terms.size() >= MAX_HIGHLIGHT_TERMS) {
+                break;
+            }
+        }
+        if (terms.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(terms);
+    }
+
+    private boolean shouldHighlightTerm(String term) {
+        if (term.isEmpty()) {
+            return false;
+        }
+        if (term.length() < 2) {
+            return false;
+        }
+        if (term.length() < 3 && !containsDigit(term)) {
+            return false;
+        }
+        switch (term) {
+            case "the":
+            case "and":
+            case "for":
+            case "how":
+            case "what":
+            case "when":
+            case "where":
+            case "which":
+            case "with":
+            case "from":
+            case "into":
+            case "that":
+            case "this":
+            case "your":
+            case "you":
+            case "are":
+            case "can":
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    private boolean containsDigit(String term) {
+        for (int i = 0; i < term.length(); i++) {
+            if (Character.isDigit(term.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int dp(int value) {
+        float density = inflater.getContext().getResources().getDisplayMetrics().density;
+        return Math.round(value * density);
+    }
+
+    static final class ResultViewHolder extends RecyclerView.ViewHolder {
+        final ComposeView composeView;
+        final TextView title;
+        final TextView retrievalBadge;
+        final TextView categoryBadge;
+        final TextView linkedGuideCue;
+        final TextView linkedGuidePreview;
+        final TextView meta;
+        final TextView section;
+        final TextView snippet;
+        final View accent;
+        final float defaultSnippetTextSizePx;
+
+        ResultViewHolder(@NonNull View itemView) {
+            super(itemView);
+            composeView = itemView.findViewById(R.id.result_card_compose);
+            title = itemView.findViewById(R.id.result_title);
+            retrievalBadge = itemView.findViewById(R.id.result_retrieval_badge);
+            categoryBadge = itemView.findViewById(R.id.result_category_badge);
+            linkedGuideCue = itemView.findViewById(R.id.result_related_cue);
+            linkedGuidePreview = itemView.findViewById(R.id.result_related_preview);
+            meta = itemView.findViewById(R.id.result_meta);
+            section = itemView.findViewById(R.id.result_section);
+            snippet = itemView.findViewById(R.id.result_snippet);
+            accent = itemView.findViewById(R.id.result_accent_strip);
+            defaultSnippetTextSizePx = snippet.getTextSize();
+        }
+    }
+}

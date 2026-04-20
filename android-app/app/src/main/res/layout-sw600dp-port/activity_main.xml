@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_main_screen"
+    android:keepScreenOn="true"
+    android:orientation="vertical"
+    android:padding="@dimen/home_screen_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_hero_panel"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/home_panel_padding">
+
+        <TextView
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_badge"
+            android:gravity="center"
+            android:text="@string/app_badge_letter"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/senku_text_light"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/home_inline_gap"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name_short"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/senku_text_light"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/home_header_meta_gap"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/home_manual_stamp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/home_serial_gap"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.04"
+                    android:maxLines="1"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_muted_light"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/home_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/home_subtitle"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_muted_light" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_inline_gap"
+        android:accessibilityLiveRegion="polite"
+        android:background="@drawable/bg_status_pill"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        android:text="@string/status_starting"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/senku_text_light"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:background="@drawable/bg_surface_panel"
+        android:lineSpacingExtra="2dp"
+        android:padding="@dimen/home_surface_padding"
+        android:text="@string/info_loading"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/senku_text_muted_light" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/senku_accent_olive"
+        android:importantForAccessibility="no"
+        android:progressTint="@color/senku_accent_olive" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:addStatesFromChildren="true"
+        android:layout_marginTop="@dimen/home_major_gap"
+        android:background="@drawable/bg_search_shell"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/home_search_shell_padding">
+
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/search_input_description"
+            android:drawableStart="@drawable/ic_search_target"
+            android:drawablePadding="8dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="@string/search_hint"
+            android:importantForAutofill="no"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="@dimen/home_search_input_padding_horizontal"
+            android:paddingTop="@dimen/home_search_input_padding_vertical"
+            android:paddingEnd="@dimen/home_search_input_padding_horizontal"
+            android:paddingBottom="@dimen/home_search_input_padding_vertical"
+            android:textColor="@color/senku_text_light"
+            android:textColorHint="@color/senku_text_muted_light" />
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_button_primary"
+            android:minWidth="0dp"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:text="@string/external_review_home_search_button"
+            android:textAllCaps="false"
+            android:textColor="@color/senku_text_dark" />
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/search_suggestions_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_compact_gap"
+        android:fadingEdge="horizontal"
+        android:fadingEdgeLength="24dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/search_suggestions_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:background="@drawable/bg_home_nav_segment_shell"
+        android:orientation="horizontal"
+        android:padding="@dimen/home_nav_shell_padding">
+
+        <Button
+            android:id="@+id/browse_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_secondary"
+            android:text="@string/browse_guides_button"
+            android:textAllCaps="false"
+            android:textColor="@color/senku_text_light" />
+
+        <Button
+            android:id="@+id/ask_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/home_nav_segment_gap"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_secondary"
+            android:text="@string/ask_button"
+            android:textAllCaps="false"
+            android:textColor="@color/senku_text_light" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/home_entry_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/home_entry_lanes"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/senku_text_muted_light" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:background="@drawable/bg_home_baseline_rule" />
+
+    <LinearLayout
+        android:id="@+id/recent_threads_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recent_threads_title"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_text_muted_light"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/recent_threads_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_compact_gap"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pinned_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pinned_section_title"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_text_muted_light"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_compact_gap"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="24dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/pinned_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/home_related_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:background="@drawable/bg_surface_panel"
+        android:orientation="vertical"
+        android:padding="@dimen/home_surface_padding"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/external_review_home_related_section_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/senku_text_light"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/home_related_subtitle_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="2"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_text_muted_light"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/home_related_anchor_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_compact_gap"
+            android:background="@drawable/bg_home_linked_path_tab"
+            android:gravity="start|center_vertical"
+            android:minHeight="48dp"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
+            android:textColor="@color/senku_text_light"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/home_related_empty_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_compact_gap"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/external_review_home_related_empty"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_text_muted_light"
+            android:visibility="gone" />
+
+        <HorizontalScrollView
+            android:id="@+id/home_related_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_compact_gap"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="24dp"
+            android:scrollbars="none"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/home_related_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/category_section_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_section_gap"
+        android:text="@string/category_section_title"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/senku_text_light"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/category_section_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_block_gap"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/category_water_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_water"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_water"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_water"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_water_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/category_shelter_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/home_category_gap"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_shelter"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_shelter"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_shelter"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_shelter_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_category_gap"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/category_fire_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_fire"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_fire"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_fire"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_fire_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/category_medicine_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/home_category_gap"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_medicine"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_medicine"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_medicine"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_medicine_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_category_gap"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/category_food_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_food"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_food"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_food"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_food_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/category_tools_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/home_category_gap"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_tools"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_tools"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_tools"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_tools_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_category_gap"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/category_communications_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_comms"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_comms"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_communications"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_communications_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/category_community_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/home_category_gap"
+                android:layout_weight="1"
+                android:background="@drawable/bg_category_tile"
+                android:backgroundTint="@color/senku_badge_community"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/home_category_card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_category_community"
+                    android:drawablePadding="@dimen/home_category_drawable_gap"
+                    android:text="@string/category_community"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/senku_text_light"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/category_community_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/home_category_count_gap"
+                    android:text="@string/category_count_placeholder"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/session_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_major_gap"
+        android:background="@drawable/bg_surface_panel"
+        android:orientation="vertical"
+        android:padding="@dimen/home_surface_padding"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/session_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/chat_memory_title"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/senku_text_light"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/clear_chat_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_button_secondary"
+                android:text="@string/clear_chat_button"
+                android:textAllCaps="false"
+                android:textColor="@color/senku_text_light" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/session_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_compact_gap"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="5"
+            android:text="@string/chat_memory_empty"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_text_muted_light" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/developer_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_inline_gap"
+        android:background="@drawable/bg_developer_panel"
+        android:orientation="vertical"
+        android:padding="@dimen/home_inline_gap">
+
+        <Button
+            android:id="@+id/developer_toggle_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_button_secondary"
+            android:text="@string/developer_tools_show"
+            android:textAllCaps="false"
+            android:textColor="@color/senku_text_light" />
+
+        <LinearLayout
+            android:id="@+id/developer_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/home_block_gap"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/developer_diagnostics_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/home_compact_gap"
+                android:background="@drawable/bg_surface_panel"
+                android:lineSpacingExtra="2dp"
+                android:padding="@dimen/home_surface_padding"
+                android:text="@string/info_loading"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/senku_text_muted_light" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/import_model_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_secondary"
+                    android:text="@string/import_model_button"
+                    android:textAllCaps="false"
+                    android:textColor="@color/senku_text_light" />
+
+                <Button
+                    android:id="@+id/reinstall_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/home_compact_gap"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_secondary"
+                    android:text="@string/reinstall_pack_button"
+                    android:textAllCaps="false"
+                    android:textColor="@color/senku_text_light" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/host_inference_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/home_compact_gap"
+                android:background="@drawable/bg_button_secondary"
+                android:text="@string/host_inference_off_button"
+                android:textAllCaps="false"
+                android:textColor="@color/senku_text_light" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/results_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_major_gap"
+        android:accessibilityLiveRegion="polite"
+        android:text="@string/results_header_loading"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/senku_text_light"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/results_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/home_compact_gap"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:contentDescription="@string/results_list_description"
+        android:paddingBottom="6dp" />
+
+</LinearLayout>

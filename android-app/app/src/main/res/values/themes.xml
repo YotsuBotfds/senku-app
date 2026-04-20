@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.SenkuMobile" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@color/senku_bg_primary</item>
+        <item name="colorPrimary">@color/senku_accent_olive</item>
+        <item name="colorPrimaryDark">@color/senku_accent_olive_dark</item>
+        <item name="colorAccent">@color/senku_card</item>
+    </style>
+</resources>

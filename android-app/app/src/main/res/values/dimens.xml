@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_screen_padding">18dp</dimen>
+    <dimen name="home_panel_padding">16dp</dimen>
+    <dimen name="home_surface_padding">14dp</dimen>
+    <dimen name="home_block_gap">10dp</dimen>
+    <dimen name="home_major_gap">14dp</dimen>
+    <dimen name="home_section_gap">16dp</dimen>
+    <dimen name="home_compact_gap">8dp</dimen>
+    <dimen name="home_inline_gap">12dp</dimen>
+    <dimen name="home_category_gap">8dp</dimen>
+    <dimen name="home_header_meta_gap">4dp</dimen>
+    <dimen name="home_serial_gap">10dp</dimen>
+    <dimen name="home_search_shell_padding">5dp</dimen>
+    <dimen name="home_search_input_padding_horizontal">6dp</dimen>
+    <dimen name="home_search_input_padding_vertical">8dp</dimen>
+    <dimen name="home_nav_shell_padding">3dp</dimen>
+    <dimen name="home_nav_segment_gap">3dp</dimen>
+    <dimen name="home_category_card_padding">10dp</dimen>
+    <dimen name="home_category_drawable_gap">6dp</dimen>
+    <dimen name="home_category_count_gap">4dp</dimen>
+
+    <!-- Rev 03 spacing and sizing tokens -->
+    <dimen name="senku_rev03_space_3">3dp</dimen>
+    <dimen name="senku_rev03_space_4">4dp</dimen>
+    <dimen name="senku_rev03_space_6">6dp</dimen>
+    <dimen name="senku_rev03_space_8">8dp</dimen>
+    <dimen name="senku_rev03_space_10">10dp</dimen>
+    <dimen name="senku_rev03_space_12">12dp</dimen>
+    <dimen name="senku_rev03_space_14">14dp</dimen>
+    <dimen name="senku_rev03_space_16">16dp</dimen>
+    <dimen name="senku_rev03_space_20">20dp</dimen>
+    <dimen name="senku_rev03_space_24">24dp</dimen>
+    <dimen name="senku_rev03_corner_small">10dp</dimen>
+    <dimen name="senku_rev03_corner_medium">14dp</dimen>
+    <dimen name="senku_rev03_toolbar_button">34dp</dimen>
+    <dimen name="senku_rev03_identity_strip_height">36dp</dimen>
+    <dimen name="senku_rev03_bottom_tab_icon">19dp</dimen>
+</resources>

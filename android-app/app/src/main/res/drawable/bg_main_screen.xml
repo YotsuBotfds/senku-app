@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/senku_bg_shadow_warm" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:centerColor="@color/senku_bg_olive_deep"
+                android:endColor="@color/senku_bg_shadow_warm"
+                android:startColor="@color/senku_bg_olive_moss" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="315"
+                android:endColor="#00000000"
+                android:startColor="@color/senku_surface_glow_olive" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:endColor="#00000000"
+                android:startColor="@color/senku_surface_glow_parchment" />
+        </shape>
+    </item>
+</layer-list>

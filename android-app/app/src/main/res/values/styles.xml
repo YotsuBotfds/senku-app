@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.Senku.Rev03.CanvasTitle" parent="@style/TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/inter_tight</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:lineHeight">40sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="TextAppearance.Senku.Rev03.SectionTitle" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/inter_tight</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:lineHeight">27sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
+    <style name="TextAppearance.Senku.Rev03.UiBody" parent="@style/TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/inter_tight</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineHeight">21sp</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+
+    <style name="TextAppearance.Senku.Rev03.SmallBody" parent="@style/TextAppearance.AppCompat.Body2">
+        <item name="android:fontFamily">@font/inter_tight</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineHeight">19.5sp</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+
+    <style name="TextAppearance.Senku.Rev03.AnswerBody" parent="@style/TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/source_serif_4</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:lineHeight">24.65sp</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+
+    <style name="TextAppearance.Senku.Rev03.MonoCaps" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:lineHeight">15.4sp</item>
+        <item name="android:letterSpacing">0.09</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearance.Senku.Rev03.Tag" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/inter_tight</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineHeight">14.4sp</item>
+    </style>
+</resources>

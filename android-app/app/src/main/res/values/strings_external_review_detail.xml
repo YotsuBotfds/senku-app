@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_external_review_proof_route">Route</string>
+    <string name="detail_external_review_proof_backend">Backend</string>
+    <string name="detail_external_review_proof_evidence">Evidence</string>
+    <string name="detail_external_review_proof_lead">Lead</string>
+    <string name="detail_external_review_proof_section">Section</string>
+    <string name="detail_external_review_proof_lane">Lane</string>
+    <string name="detail_external_review_proof_corpus">Corpus</string>
+    <string name="detail_external_review_proof_verify">Verify</string>
+    <string name="detail_external_review_no_citations_value">No guide citations attached yet</string>
+    <string name="detail_external_review_no_citations_short">No guide citations yet</string>
+    <string name="detail_external_review_no_citations_verify">Reopen search or inspect a guide directly before relying on this.</string>
+    <string name="detail_external_review_corpus_limit_low_coverage">Installed pack coverage is thin for this query.</string>
+    <string name="detail_external_review_corpus_limit_no_citations">No cited guide lines surfaced from the installed pack for this answer yet.</string>
+    <string name="detail_external_review_sources_subtitle_none">No cited guide lines surfaced from the installed pack for this answer yet. Reopen search or inspect a guide directly before relying on it.</string>
+</resources>

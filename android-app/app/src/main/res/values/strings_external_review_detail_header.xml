@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_external_review_header_stamp">FIELD HEADER</string>
+    <string name="detail_external_review_proof_stamp">PROOF RAIL</string>
+    <string name="detail_external_review_provenance_stamp">SELECTED ENTRY</string>
+    <string name="detail_external_review_followup_stamp">FOLLOW-UP RAIL</string>
+</resources>

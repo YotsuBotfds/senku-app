@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browse_result_meta_ref">Ref %1$s</string>
+    <string name="browse_result_meta_role">Role %1$s</string>
+    <string name="browse_result_meta_window">Window %1$s</string>
+    <string name="browse_result_meta_frame">Frame %1$s</string>
+    <string name="browse_result_section_anchor">[%1$s]</string>
+    <string name="browse_result_linked_lane_label">Guide link</string>
+    <string name="browse_result_linked_cue_short">Link</string>
+    <string name="browse_result_linked_cue_default">Guide link</string>
+    <string name="browse_result_linked_cue_with_id">Link %1$s</string>
+    <string name="browse_result_linked_preview">Guide connection: %1$s</string>
+    <string name="browse_result_linked_guide_available_description">Guide connection available: %1$s</string>
+    <string name="browse_result_linked_guide_open_description">Open cross-reference guide: %1$s</string>
+</resources>

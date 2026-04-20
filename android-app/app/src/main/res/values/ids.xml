@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="detail_inline_thread_container" type="id" />
+    <item name="detail_station_rail" type="id" />
+</resources>

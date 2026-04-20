@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="external_review_1151_home_recent_thread_t_minus_hours_minutes">T-%1$02d:%2$02d</string>
+    <string name="external_review_1151_home_recent_thread_t_minus_days_hours">T-%1$dd %2$02dh</string>
+</resources>

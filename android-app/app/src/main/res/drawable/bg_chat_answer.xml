@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/senku_accent_olive_dark" />
+            <corners
+                android:topLeftRadius="22dp"
+                android:topRightRadius="22dp"
+                android:bottomLeftRadius="22dp"
+                android:bottomRightRadius="10dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:endColor="@color/senku_bg_surface"
+                android:startColor="@color/senku_bg_olive" />
+            <corners
+                android:topLeftRadius="21dp"
+                android:topRightRadius="21dp"
+                android:bottomLeftRadius="21dp"
+                android:bottomRightRadius="9dp" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/senku_card_border" />
+        </shape>
+    </item>
+
+    <item
+        android:left="12dp"
+        android:top="10dp"
+        android:right="12dp"
+        android:bottom="56dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:endColor="#00FFFFFF"
+                android:startColor="#14FFFFFF" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_screen_padding">32dp</dimen>
+    <dimen name="home_panel_padding">22dp</dimen>
+    <dimen name="home_surface_padding">18dp</dimen>
+    <dimen name="home_block_gap">14dp</dimen>
+    <dimen name="home_major_gap">18dp</dimen>
+    <dimen name="home_section_gap">24dp</dimen>
+    <dimen name="home_compact_gap">12dp</dimen>
+    <dimen name="home_inline_gap">16dp</dimen>
+    <dimen name="home_category_gap">12dp</dimen>
+    <dimen name="home_header_meta_gap">6dp</dimen>
+    <dimen name="home_serial_gap">12dp</dimen>
+    <dimen name="home_search_shell_padding">8dp</dimen>
+    <dimen name="home_search_input_padding_horizontal">8dp</dimen>
+    <dimen name="home_search_input_padding_vertical">12dp</dimen>
+    <dimen name="home_nav_shell_padding">4dp</dimen>
+    <dimen name="home_nav_segment_gap">4dp</dimen>
+    <dimen name="home_category_card_padding">12dp</dimen>
+    <dimen name="home_category_drawable_gap">6dp</dimen>
+    <dimen name="home_category_count_gap">5dp</dimen>
+</resources>

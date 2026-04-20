@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_loop4_meta_route_token">RTE %1$s</string>
+    <string name="detail_loop4_meta_backend_token">ENG %1$s</string>
+    <string name="detail_loop4_meta_evidence_token">EVD %1$s</string>
+    <string name="detail_loop4_meta_sources_token">SRC %1$d</string>
+    <string name="detail_loop4_meta_turns_token">TURN %1$d</string>
+    <string name="detail_loop4_meta_revision_token">Rev %1$s</string>
+    <string name="detail_loop4_meta_pack_token">PK %1$d</string>
+    <string name="detail_loop4_meta_hash_token">#%1$s</string>
+    <string name="detail_loop4_route_serial_deterministic">INST DET</string>
+    <string name="detail_loop4_route_serial_generated">AI GEN</string>
+    <string name="detail_loop4_route_serial_low_coverage">LOW COV</string>
+    <string name="detail_loop4_backend_serial_host">HOST GPU</string>
+    <string name="detail_loop4_backend_serial_device">THIS DEVICE</string>
+    <string name="detail_loop4_backend_serial_fallback">HOST&gt;DEVICE</string>
+    <string name="detail_loop4_evidence_serial_strong">STRONG</string>
+    <string name="detail_loop4_evidence_serial_moderate">MOD</string>
+    <string name="detail_loop4_evidence_serial_limited">LIMIT</string>
+    <string name="detail_loop4_evidence_serial_none">NO CITE</string>
+    <string name="detail_loop4_proof_revision">Revision</string>
+    <string name="detail_loop4_followup_title">Field follow-up</string>
+    <string name="detail_loop4_followup_subtitle">Add the next question without dropping this route, proof, or thread context.</string>
+    <string name="detail_loop4_followup_hint">Add the next field question in this thread</string>
+    <string name="detail_loop4_followup_hint_compact">Next field question</string>
+    <string name="detail_loop4_followup_send">Add entry</string>
+    <string name="detail_loop4_followup_send_compact">Add</string>
+</resources>

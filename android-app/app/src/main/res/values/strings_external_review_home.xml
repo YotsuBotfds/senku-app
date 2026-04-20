@@ -1,0 +1,27 @@
+<resources>
+    <string name="external_review_home_search_button">Find</string>
+    <string name="external_review_home_ready_status">Ready offline | %1$s guides</string>
+    <string name="external_review_home_subtitle_ready">MODE OFFLINE</string>
+    <string name="external_review_home_related_section_title">Linked paths</string>
+    <string name="external_review_home_related_anchor_recent_pivot_label">Recent pivot %1$s</string>
+    <string name="external_review_home_related_anchor_pinned_pivot_label">Pinned pivot %1$s</string>
+    <string name="external_review_home_related_anchor_compact_label">Pivot %1$s</string>
+    <string name="external_review_home_related_anchor_recent_pivot_content_description">Open the recent guide pivot anchoring these linked paths: %1$s</string>
+    <string name="external_review_home_related_anchor_pinned_pivot_content_description">Open the pinned guide pivot anchoring these linked paths: %1$s</string>
+    <string name="external_review_home_related_empty">No guide connections surfaced from this pivot yet.</string>
+    <string name="external_review_home_related_empty_recent">Recent pivot %1$s has not surfaced guide connections yet. Open that pivot guide, or pin a different guide to branch out.</string>
+    <string name="external_review_home_related_empty_pinned">Pinned pivot %1$s has not surfaced guide connections yet. Open that guide itself, or pin a different guide to try another path.</string>
+    <string name="external_review_home_related_button_content_description">Guide connection %1$d of %2$d: %3$s</string>
+    <string name="external_review_home_related_reason_recent">Shown because recent pivot %1$s links here</string>
+    <string name="external_review_home_related_reason_pinned">Shown because pinned pivot %1$s links here</string>
+    <string name="external_review_home_related_context_from_pivot">From %1$s</string>
+    <string name="external_review_home_related_context_from_pivot_with_anchor">From %1$s | %2$s</string>
+    <plurals name="external_review_home_related_subtitle_recent_count">
+        <item quantity="one">Recent pivot %2$s exposes %1$d guide connection.</item>
+        <item quantity="other">Recent pivot %2$s exposes %1$d guide connections.</item>
+    </plurals>
+    <plurals name="external_review_home_related_subtitle_pinned_count">
+        <item quantity="one">Pinned pivot %2$s exposes %1$d guide connection.</item>
+        <item quantity="other">Pinned pivot %2$s exposes %1$d guide connections.</item>
+    </plurals>
+</resources>
