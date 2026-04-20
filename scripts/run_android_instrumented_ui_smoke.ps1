@@ -279,26 +279,36 @@ function Get-RemoteSha256 {
         return $null
     }
 
-    $quotedPath = Convert-ToShellSingleQuotedLiteral -Value $Path
-    $command = "sha256sum $quotedPath 2>/dev/null || toybox sha256sum $quotedPath 2>/dev/null"
     try {
-        $arguments = if ([string]::IsNullOrWhiteSpace($RunAsPackage)) {
-            @("-s", $Device, "shell", "sh", "-c", $command)
+        $tempRoot = Join-Path $env:TEMP "senku_remote_hash"
+        New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
+        $tempPath = Join-Path $tempRoot ([System.Guid]::NewGuid().ToString("N") + ".bin")
+
+        $copyResult = if ([string]::IsNullOrWhiteSpace($RunAsPackage)) {
+            Invoke-AdbStreamingCopy -Arguments @("-s", $Device, "exec-out", "cat", $Path) -DestinationPath $tempPath -TimeoutSeconds 240
         } else {
-            @("-s", $Device, "shell", "run-as", $RunAsPackage, "sh", "-c", $command)
+            Invoke-AdbStreamingCopy -Arguments @("-s", $Device, "exec-out", "run-as", $RunAsPackage, "cat", $Path) -DestinationPath $tempPath -TimeoutSeconds 240
         }
-        $output = Invoke-AdbChecked -Arguments $arguments -FailureMessage ("SHA-256 probe failed for {0}" -f $Path)
-        foreach ($line in ($output -split "`r?`n")) {
-            $trimmed = $line.Trim()
-            if ($trimmed -match "^([0-9a-fA-F]{64})\s+") {
-                return $matches[1].ToLowerInvariant()
-            }
+        if ($copyResult.exit_code -ne 0) {
+            return $null
         }
+
+        if (-not (Test-Path -LiteralPath $tempPath)) {
+            return $null
+        }
+        $tempItem = Get-Item -LiteralPath $tempPath -ErrorAction SilentlyContinue
+        if ($null -eq $tempItem -or $tempItem.Length -le 0) {
+            return $null
+        }
+
+        return (Get-FileHash -Algorithm SHA256 -LiteralPath $tempPath).Hash.ToLowerInvariant()
     } catch {
         return $null
+    } finally {
+        if (-not [string]::IsNullOrWhiteSpace([string]$tempPath)) {
+            Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+        }
     }
-
-    return $null
 }
 
 function Get-AppModelMetadata {
@@ -423,15 +433,29 @@ function Resolve-InstalledBinaryIdentity {
         }
     }
 
+    $apkSha = if ([string]::IsNullOrWhiteSpace($packagePath)) { $null } else { Get-RemoteSha256 -Path $packagePath }
+    if (-not [string]::IsNullOrWhiteSpace($packagePath) -and [string]::IsNullOrWhiteSpace($apkSha)) {
+        throw "Unable to hash installed APK at $packagePath on $Device"
+    }
+
+    $modelSha = if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.path)) {
+        $null
+    } else {
+        Get-RemoteSha256 -Path ([string]$modelMetadata.path) -RunAsPackage "com.senku.mobile"
+    }
+    if (-not [string]::IsNullOrWhiteSpace([string]$modelMetadata.path) -and [string]::IsNullOrWhiteSpace($modelSha)) {
+        throw "Unable to hash installed model at $([string]$modelMetadata.path) on $Device"
+    }
+
     $resolvedIdentity = [ordered]@{
         device = $Device
         package_path = $packagePath
         package_signature = $packageSignature
-        apk_sha = $(if ([string]::IsNullOrWhiteSpace($packagePath)) { $null } else { Get-RemoteSha256 -Path $packagePath })
+        apk_sha = $apkSha
         model_name = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.name)) { $null } else { [string]$modelMetadata.name })
         model_path = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.path)) { $null } else { [string]$modelMetadata.path })
         model_signature = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.listing_signature)) { $null } else { [string]$modelMetadata.listing_signature })
-        model_sha = $(if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.path)) { $null } else { Get-RemoteSha256 -Path ([string]$modelMetadata.path) -RunAsPackage "com.senku.mobile" })
+        model_sha = $modelSha
         recorded_at = (Get-Date).ToUniversalTime().ToString("o")
     }
     $identityObject = [pscustomobject]$resolvedIdentity

@@ -1,6 +1,7 @@
 param(
     [string]$OutputRoot = "artifacts/ui_state_pack",
     [switch]$SkipBuild,
+    [switch]$SkipInstall,
     [switch]$SkipHostStates,
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
@@ -48,11 +49,12 @@ function Start-RoleProcess {
     $errPath = Join-Path $logsDir ($Role + ".err.log")
     $exitCodePath = Join-Path $logsDir ($Role + ".exitcode.txt")
     $launcherPath = Join-Path $logsDir ($Role + ".launcher.ps1")
-    $invokeLine = '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild -HostInferenceUrl "{4}" -HostInferenceModel "{5}"{6}' -f `
+    $invokeLine = '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4} -HostInferenceUrl "{5}" -HostInferenceModel "{6}"{7}' -f `
         $buildScript,
         $OutputRoot,
         $runId,
         $Role,
+        $(if ($SkipInstall) { ' -SkipInstall' } else { '' }),
         $HostInferenceUrl,
         $HostInferenceModel,
         $(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })

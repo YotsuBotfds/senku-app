@@ -1,6 +1,7 @@
 param(
     [string]$OutputRoot = "artifacts/ui_state_pack",
     [switch]$SkipBuild,
+    [switch]$SkipInstall,
     [switch]$SkipHostStates,
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
@@ -295,19 +296,36 @@ function Get-PackIdentityRollup {
         })
     }
 
-    $deviceSummaryArray = @($deviceSummaries)
-    $homogeneous = $deviceSummaryArray.Count -gt 0
-    if ($homogeneous) {
-        $homogeneous = (@($deviceSummaryArray | Where-Object { $_.identity_conflict -or $_.identity_missing }).Count -eq 0) -and
-            (@($deviceSummaryArray | Select-Object -ExpandProperty apk_sha -Unique).Count -eq 1) -and
+    $deviceSummaryArray = if ($deviceSummaries.Count -gt 0) {
+        [object[]]$deviceSummaries.ToArray()
+    } else {
+        @()
+    }
+    $apkHomogeneous = $deviceSummaryArray.Count -gt 0
+    if ($apkHomogeneous) {
+        $apkHomogeneous = (@($deviceSummaryArray | Where-Object {
+                $_.identity_conflict -or [string]::IsNullOrWhiteSpace([string]$_.apk_sha)
+            }).Count -eq 0) -and
+            (@($deviceSummaryArray | Select-Object -ExpandProperty apk_sha -Unique).Count -eq 1)
+    }
+
+    $modelHomogeneous = $deviceSummaryArray.Count -gt 0
+    if ($modelHomogeneous) {
+        $modelHomogeneous = (@($deviceSummaryArray | Where-Object {
+                $_.identity_conflict -or [string]::IsNullOrWhiteSpace([string]$_.model_sha)
+            }).Count -eq 0) -and
             (@($deviceSummaryArray | Select-Object -ExpandProperty model_sha -Unique).Count -eq 1)
     }
+
+    $homogeneous = $apkHomogeneous -and $modelHomogeneous
 
     $matrixApkSha = $null
     $matrixModelName = $null
     $matrixModelSha = $null
-    if ($homogeneous) {
+    if ($apkHomogeneous) {
         $matrixApkSha = @($deviceSummaryArray | Select-Object -ExpandProperty apk_sha -Unique)[0]
+    }
+    if ($modelHomogeneous) {
         $matrixModelSha = @($deviceSummaryArray | Select-Object -ExpandProperty model_sha -Unique)[0]
         $matrixModelNames = @($deviceSummaryArray | Select-Object -ExpandProperty model_name -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
         if ($matrixModelNames.Count -eq 1) {
@@ -587,7 +605,7 @@ if ($FinalizeOnly) {
                 "-SkipBuild"
             )
 
-            if ($installedByDevice[$device]) {
+            if ($SkipInstall -or $installedByDevice[$device]) {
                 $args += "-SkipInstall"
             }
 

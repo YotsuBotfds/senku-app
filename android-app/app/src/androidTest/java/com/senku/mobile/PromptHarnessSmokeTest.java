@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -77,6 +78,7 @@ public final class PromptHarnessSmokeTest {
     private static final long SEARCH_WAIT_MS = 10_000L;
     private static final long DETAIL_WAIT_MS = 15_000L;
     private static final long GENERATIVE_DETAIL_WAIT_MS = 20_000L;
+    private static final double SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD = 0.6d;
 
     private HarnessBusyIdlingResource harnessIdlingResource;
     private UiDevice device;
@@ -2907,38 +2909,70 @@ public final class PromptHarnessSmokeTest {
         return "";
     }
 
-    private boolean captureScreenshotWithFallback(File screenshotOutput) {
-        if (captureResumedActivityBitmap(screenshotOutput)) {
-            return true;
+    private boolean hasValidScreenshotFile(File screenshotOutput) {
+        return screenshotOutput.isFile() && screenshotOutput.length() > 0L;
+    }
+
+    private boolean hasPlausibleDisplayCoverage(File screenshotOutput) {
+        if (!hasValidScreenshotFile(screenshotOutput)) {
+            return false;
         }
-        if (captureShellScreenshot(screenshotOutput)) {
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(screenshotOutput.getAbsolutePath(), bounds);
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+            return false;
+        }
+        int displayWidth = Math.max(1, device.getDisplayWidth());
+        int displayHeight = Math.max(1, device.getDisplayHeight());
+        boolean sameOrientation = (bounds.outWidth >= bounds.outHeight) == (displayWidth >= displayHeight);
+        double widthCoverage = (double) bounds.outWidth / (double) displayWidth;
+        double heightCoverage = (double) bounds.outHeight / (double) displayHeight;
+        return sameOrientation
+            && widthCoverage >= SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD
+            && heightCoverage >= SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD;
+    }
+
+    private boolean writeBitmapToFile(Bitmap bitmap, File screenshotOutput) {
+        if (bitmap == null) {
+            return false;
+        }
+        try (FileOutputStream stream = new FileOutputStream(screenshotOutput)) {
+            if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
+                return false;
+            }
+            stream.flush();
+            return hasValidScreenshotFile(screenshotOutput);
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private boolean captureScreenshotWithFallback(File screenshotOutput) {
+        if (captureShellScreenshot(screenshotOutput) && hasPlausibleDisplayCoverage(screenshotOutput)) {
             return true;
         }
         UiAutomation automation = InstrumentationRegistry.getInstrumentation().getUiAutomation();
         if (automation != null) {
             Bitmap automationBitmap = automation.takeScreenshot();
             if (automationBitmap != null) {
-                try (FileOutputStream stream = new FileOutputStream(screenshotOutput)) {
-                    if (automationBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
-                        stream.flush();
-                        if (screenshotOutput.isFile() && screenshotOutput.length() > 0L) {
-                            return true;
-                        }
+                try {
+                    if (writeBitmapToFile(automationBitmap, screenshotOutput) && hasPlausibleDisplayCoverage(screenshotOutput)) {
+                        return true;
                     }
-                } catch (Exception ignored) {
                 } finally {
                     automationBitmap.recycle();
                 }
             }
         }
         for (int attempt = 0; attempt < 3; attempt++) {
-            if (device.takeScreenshot(screenshotOutput) && screenshotOutput.isFile() && screenshotOutput.length() > 0L) {
+            if (device.takeScreenshot(screenshotOutput) && hasPlausibleDisplayCoverage(screenshotOutput)) {
                 return true;
             }
             SystemClock.sleep(150L);
             device.waitForIdle();
         }
-        return screenshotOutput.isFile() && screenshotOutput.length() > 0L;
+        return captureResumedActivityBitmap(screenshotOutput) && hasPlausibleDisplayCoverage(screenshotOutput);
     }
 
     private boolean captureResumedActivityBitmap(File screenshotOutput) {
@@ -2969,14 +3003,8 @@ public final class PromptHarnessSmokeTest {
         if (bitmap == null) {
             return false;
         }
-        try (FileOutputStream stream = new FileOutputStream(screenshotOutput)) {
-            if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)) {
-                return false;
-            }
-            stream.flush();
-            return screenshotOutput.isFile() && screenshotOutput.length() > 0L;
-        } catch (Exception ignored) {
-            return false;
+        try {
+            return writeBitmapToFile(bitmap, screenshotOutput);
         } finally {
             bitmap.recycle();
         }
@@ -3007,7 +3035,7 @@ public final class PromptHarnessSmokeTest {
                 }
                 output.flush();
             }
-            return screenshotOutput.isFile() && screenshotOutput.length() > 0L;
+            return hasValidScreenshotFile(screenshotOutput);
         } catch (Exception ignored) {
             return false;
         } finally {
