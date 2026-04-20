@@ -15,27 +15,33 @@ edit the file, do not let the drift live only in your head.
   dispatching a scout or worker directly.
 - Delegation hints are **suggestions**, not orders. Main agent owns the
   final routing choice per `notes/SUBAGENT_WORKFLOW.md`.
+- For slices that touch external framework/library behavior (Android
+  SDK, Compose, Gradle, Python libs), include a one-line hint in
+  `Anti-recommendations` (or wherever natural) pointing Codex at the
+  relevant MCP — e.g. context7 for Android/Compose/library API docs,
+  git MCP for repo-history questions, sequential-thinking for
+  genuinely ambiguous decomposition. Codex has context7, git, and
+  sequential-thinking registered in `~/.codex/config.toml` but
+  doesn't always reach for them unprompted. Especially valuable
+  when the symptom involves framework behavior (IME, focus,
+  lifecycle, recomposition) — without the hint, Codex tends to
+  layer defensive code on top of assumptions rather than checking
+  authoritative docs (R-ui2 v1→v2→v3 is the cautionary tale).
 
 ## Active slices
 
-See `notes/CP9_ACTIVE_QUEUE.md` Dispatch order cheat-sheet for
-the canonical "what runs when" picture.
+CP9 is closed (RC v5 cut landed 2026-04-20). No slices are
+currently in flight.
 
-In flight:
-- `R-pack_poisoning_chunk_rebuild.md` - poisoning guide chunk + metadata fix; doing an ingest rebuild
-
-Parallel-safe with R-pack (dispatch now if you want):
-- `D3_pre_rc_followup_cleanup.md` - doc-only single commit; absorbs four small D1/D2 deferred items
-
-Sequential after R-pack lands:
-- `RP1_apk_rebuild_and_reprovision.md` - APK rebuild + four-serial re-provision; needs R-pack's commit + pack output
-
-Sequential after RP1 lands:
-- `S2-rerun_stage2_revalidation.md` - Wave B re-validation against the fixed matrix; dispatch with "use subagents where stated" for the 4-way fan-out
+Post-RC tracked slices (not yet drafted):
+- `R-ret1`, `R-cls2`, `R-gal1` - see `notes/CP9_ACTIVE_QUEUE.md`
+  "Dispatch order cheat-sheet" and
+  `notes/SLICE_SHAPES_FORWARD_RESEARCH_20260420.md`.
 
 ## Landed (not yet rotated)
 
-Rotation performed in D3 on 2026-04-19: the previously landed slice files were moved to `notes/dispatch/completed/`.
+Rotation performed in S3 on 2026-04-20: all CP9 slices moved to
+`notes/dispatch/completed/`.
 
 ## Superseded - do not redispatch
 

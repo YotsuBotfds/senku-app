@@ -114,7 +114,15 @@ Keep these as helper lanes. Prefer the existing OpenCode sidecar, Qwen scout, an
 - Subagent workflow (Codex-side role split): main agent `gpt-5.4 xhigh` (conductor), fast scout `gpt-5.3-codex-spark xhigh` (separate usage budget, read-only), heavier scout + worker `gpt-5.4 high`. Main agent owns delegation — planner briefs main with slice-level prompts in [`notes/dispatch/`](./notes/dispatch), main picks the sub-lane per step. Full contract: [`notes/SUBAGENT_WORKFLOW.md`](./notes/SUBAGENT_WORKFLOW.md)
 - Local sidecar routing ladder (orthogonal to the Codex-side split, for local compute): `GLM 5.1 sidecar > Spark > Qwen 27B > Qwen 9B`
 - Latest broad visual baseline:
-  - [`artifacts/external_review/ui_review_20260417_gallery/index.html`](./artifacts/external_review/ui_review_20260417_gallery/index.html)
+  - [`artifacts/external_review/ui_review_20260420_gallery_v6/index.html`](./artifacts/external_review/ui_review_20260420_gallery_v6/index.html)
+    (CP9 RC v5 cut, 41/45 state-pack with four documented `generativeAskWithHostInferenceNavigatesToDetailScreen` limitations tracked as `R-gal1` post-RC)
+- CP9 / RC v5 status (2026-04-20):
+  - Wave B actual contract: **20 / 20** under Option C scoring, confirmed in `artifacts/cp9_stage2_rerun4_20260420_143440/summary.md`.
+  - State-pack matrix: **41 / 45**, four documented `generativeAskWithHostInferenceNavigatesToDetailScreen` limitations on trust-spine strictness for `uncertain_fit` (see `R-gal1` in post-RC backlog).
+  - RC-blocking safety prompts (`mania`, `poisoning`): both render escalation line + Poison Control clause on all four serials.
+  - `5560` landscape-phone body-render gap resolved via `R-ui2 v3` (composer no longer programmatically auto-focuses; follow-up suggestion rail hidden on landscape phone).
+  - `rain_shelter` query settles to `uncertain_fit` instead of `confident`; retrieval anchors on GD-727 Batteries instead of shelter guides. Safe-conservative routing accepted under Option C; tracked as `R-ret1` post-RC.
+  - Substrate: debug APK `551385c9...`, androidTest APK `b260a219...`, pack `e48d3e1ab068c666...`, model `f335f2bfd1b758...` on on-device serials, tablets on host-inference lane per `notes/SCOPE_NOTE_TABLET_HOST_FALLBACK.md`.
 
 ## Practical Cautions
 

@@ -1,0 +1,723 @@
+# CP9 Active Queue
+
+Living document. Rotate freely. `Active` reflects the current CP9 state,
+`Post-RC Tracked` names follow-up slices with known code targets, and the
+completed rolling log keeps the historical record.
+
+- Last updated: 2026-04-20 UTC - CP9 CLOSED. RC v5 cut landed. See `notes/REVIEWER_BACKEND_TRACKER_20260418.md` for the closure summary and `artifacts/external_review/ui_review_20260420_gallery_v6/` for the published gallery.
+
+## Dispatch order cheat-sheet
+
+CP9 is closed. RC v5 cut landed 2026-04-20.
+
+Active post-RC tracked slices (not yet drafted; order flexible):
+
+- `R-ret1` - retrieval tuning so `rain_shelter` routes to `confident` instead of `uncertain_fit`. Code target: `QueryMetadataProfile.java:1585` `STRUCTURE_TYPE_EMERGENCY_SHELTER` marker set. Forward research at `notes/SLICE_SHAPES_FORWARD_RESEARCH_20260420.md` section 4.
+- `R-cls2` - move acute-mental-health markers from `OfflineAnswerEngine.java:49-82` to `QueryMetadataProfile.java`, with compound-match design preservation. Forward research section 6.
+- `R-gal1` - state-pack trust-spine assertion at `PromptHarnessSmokeTest.java:2794` does not accept `uncertain_fit` terminal state. Either relax the assertion or wait on `R-ret1` for self-resolve. Forward research section 5.
+
+See tracker for the full post-RC backlog.
+
+## Ordering Principle
+
+1. Stage 0 must close `GREEN` on the four-emulator matrix before Stage 1.
+2. Planner-side slices (doc edits, tracker cleanup, schema extensions) can
+   run **in parallel** with Stage 0 / Stage 1 via a sidecar — they do not
+   touch the emulator matrix and cannot invalidate artifacts.
+3. Stage 1 (RC v3 packet rebuild) and Stage 2 (RC validation sweep) are
+   serial and cannot begin until Stage 0 is `GREEN` (or partial-GREEN with
+   explicit scope cuts documented). Homogeneous `apk_sha` across serials is
+   the hard gate; `model_sha` may legitimately differ between on-device and
+   host-inference serials under the existing tablet scope cut.
+4. A slice is "done" only when its summary lands in `artifacts/` **and** its
+   row in this doc is struck or moved to a completed bucket at the bottom.
+
+## Active
+
+None - CP9 closed, RC v5 cut.
+
+## Post-RC Tracked
+
+- `R-ret1` - retrieval tuning so `rain_shelter` routes to `confident` instead of `uncertain_fit`. Code target: `QueryMetadataProfile.java:1585` `STRUCTURE_TYPE_EMERGENCY_SHELTER` marker set.
+- `R-cls2` - move acute-mental-health markers from `OfflineAnswerEngine.java:49-82` to `QueryMetadataProfile.java`, preserving the compound-match design from `R-eng2`.
+- `R-gal1` - relax or redesign the `PromptHarnessSmokeTest.java:2794` trust-spine assertion so `uncertain_fit` can settle cleanly in the host-generative state-pack lane.
+
+## Blocked / Deferred
+
+- `BACK-P-05` SQLite FTS runtime decision — deferred until RC cut.
+- `BACK-P-06` AVD data-partition sizing — deferred; covered by direct-stream
+  bypass as a runtime workaround. Post-RC ticket fleshed out by P4.
+- `BACK-P-07` unified LiteRT push helper — nice-to-have; picks up after
+  `push_litert_model_to_android.ps1` direct-stream lands as default.
+  Post-RC ticket fleshed out by P4.
+- `BACK-T-05` (tentative ID) `assertDetailSettled` visibility blind spot —
+  passes on IME-dominated dumps that lack body content. To be filed by P4.
+- Wave C planning (post-Wave-B confidence tuning, abstain threshold
+  revisit) — blocked on RC v3 telemetry.
+
+## Cancelled
+
+- **P5 — landscape-phone partial-GREEN scope note draft.**
+  `notes/dispatch/P5_scope_note_landscape_phone.md`. Not dispatched.
+  A1b closed Stage 0 GREEN on 5560 landscape on-device, so the
+  partial-GREEN fallback note is unnecessary. File retained for
+  record.
+
+## Carry-over Backlog
+
+- `push_litert_model_to_android.ps1` — promote direct-stream to default
+  path; keep tmp-staging behind an opt-in flag. Tracked by P4's
+  `BACK-P-06` / `BACK-P-07` work.
+- Guide-direction packs (`wave_x` / `wave_y` / `af` … `ai`) — add a
+  model-presence preflight so first-run-after-clean-install fails loud
+  instead of looking like a retrieval regression.
+- `reviewer_backend_tasks.md` (top-level) — drift from
+  `notes/REVIEWER_BACKEND_TRACKER_20260418.md`. Consolidate or link.
+- Generic Android dispatch template — add "clean install ⇒ model push"
+  as an explicit step. Partially addressed by P1's Model Deploy
+  Discipline section in `TESTING_METHODOLOGY.md`; a standalone
+  template may still be worth writing.
+- `reviewer_backend_tasks.md` `BACK-U-04` task header still reads
+  like open backlog even though the status prose says it is landed.
+  Out-of-scope flag from D2; left untouched because D2's scope was
+  D/L/R + Wave B framing, not broader U-lane header cleanup. S3
+  closure pass should absorb (small fix), or queue as a tiny
+  follow-up slice.
+- `OfflineAnswerEngine.promptContextLimitFor()` still defaults
+  ambiguous non-route-focused prompts to 2 items. R-eng
+  (commit `1f76ccf`) deliberately left it untouched because the
+  gate + low-coverage fixes closed the slice without needing to
+  bump the prompt window. If future ambiguous evidence-bearing
+  cases still feel narrow at 2-row prompts, file as a follow-up
+  slice.
+- R-eng's low-coverage handling is post-generation downgrade, not
+  pre-generation gate. That means violin-bridge-shaped queries
+  still spend ~25 seconds of model time before the surface gets
+  corrected. Acceptable for RC v3; candidate for a post-RC
+  optimization slice (move detection upstream so the model is
+  never invoked on no-evidence shapes).
+- `notes/dispatch/README.md` is stale as of 2026-04-20. "Active
+  slices" still lists R-pack as in-flight and RP1 as
+  "sequential after R-pack" — pre-dates R-tool1, R-ui1, R-ui2,
+  and every S2-rerun slice. Rotate during next doc-cleanup slice
+  (D4 shape) or absorb into S3 closure if small. Not urgent;
+  dispatch order of truth is the queue cheat-sheet above, not
+  the README.
+
+## Completed (rolling log)
+
+- 2026-04-19 — Subagent workflow formalized:
+  `notes/SUBAGENT_WORKFLOW.md` authoritative three-tier split
+  (main `gpt-5.4 xhigh` / scout `gpt-5.3-codex-spark xhigh` / worker
+  `gpt-5.4 high`); `notes/dispatch/` editable slice prompts; AGENTS.md +
+  SWARM_INDEX.md updated to point at both.
+- 2026-04-19 — Backlog risk scan (planner, this session) — 13 findings
+  folded into P1 / Carry-over above.
+- 2026-04-19 — Stage 0 v5 failure root-caused: `runAsk` model gate after
+  clean install. v6 dispatch added Step 6g.5 model push.
+- 2026-04-19 — Stage 0 v6 5560 failure diagnosed (outgoing Opus):
+  landscape IME occlusion of detail card in `ui_dump.xml`; not an
+  engine / Wave B / escalation-emit bug. Retry slice queued as
+  `A1-retry`.
+- 2026-04-19 evening — P1 planner-side backlog cleanup landed
+  (`0204177`). All five edits in one commit.
+  - Banner in tracker, `BACK-P-05/06/07` stubs, `summary.json` schema
+    extension with `apk_sha`/`model_name`/`model_sha` +
+    `matrix_homogeneous`, `TESTING_METHODOLOGY.md` first git-tracked
+    commit with the Model Deploy Discipline section.
+  - Surprise: `BACK-U-04` runner is real — lives at
+    `scripts/run_abstain_regression_panel.ps1` with baseline bundle at
+    `artifacts/bench/abstain_baseline_20260418/`. Outgoing Opus's
+    downgrade hypothesis was wrong; tracker now points at the runner by
+    name. Grep-before-asserting caught it.
+  - Scope note: Edit 5 needed `build_android_ui_state_pack.ps1` too,
+    beyond the two files the slice named.
+- 2026-04-19 evening — P2 Stage 1 preflight landed
+  (`artifacts/cp9_stage1_preflight_20260419_172605/preflight.json`).
+  - Catalog drift `[]`; `ingest.py --stats` returned
+    `754 guides / 14784 chunks`, internally consistent.
+  - Codex filed `ready_for_build: false` on one blocker:
+    `venv/Scripts/Activate.ps1` missing (checked-in `venv` is
+    POSIX-origin). Planner re-classified as docs/env drift, not data
+    drift — Stage 1 build surface is ready. Follow-up handled by P3.
+- 2026-04-19 evening — CP9 Stage 0 v6 5560 diagnosis revised (CLI
+  Claude planner). Outgoing Opus's "harness IME occlusion" read was
+  the right shape; the prescribed ESC-dismiss fix failed because ESC
+  keyevent 111 does not dismiss Gboard on modern AVDs. Device-level
+  `UiDevice.pressBack()` does. Codex's earlier testfix attempted
+  view-level `editText.clearFocus()` +
+  `InputMethodManager.hideSoftInputFromWindow()` + ScrollView
+  `scrollTo` — all operate on the app, not on the IME window, so none
+  closed the focused Gboard window. A1b slice dispatched the
+  device-level variant.
+- 2026-04-19 evening — A1b Stage 0 harness fix landed (`9cf405c`);
+  Stage 0 GREEN. New canonical artifact at
+  `smoke_emulator-5560_v6b/20260419_174515_884/emulator-5560/dumps/scriptedPromptFlowCompletes__prompt_detail.xml`
+  carries the full Wave B card (escalation sentence, UNSURE FIT
+  chip, a11y content-desc). Regression checks clean on 5556 portrait
+  and 5554 tablet host-inference. Stage 0 closes GREEN with the
+  existing tablet host-inference scope cut.
+- 2026-04-19 evening — P5 (landscape-phone scope note draft)
+  cancelled. A1b closed Stage 0 GREEN on 5560 landscape, so the
+  partial-GREEN fallback is unnecessary. Slice file retained for
+  record in `notes/dispatch/`.
+- 2026-04-19 evening — P3 docs drift + P1/P2 rotation landed
+  (`3154f0a8`). Codex's tracked delta was the `AGENTS.md`
+  Windows-venv note; `TESTING_METHODOLOGY.md`, `dispatch/README.md`,
+  and the canonical `notes/dispatch/completed/` P1/P2 copies were
+  already aligned in `HEAD` (user/linter had pre-staged those
+  edits mid-dispatch), so the remaining rotation work was removing
+  stale working-tree copies at the old P1/P2 paths. Clean landing.
+- 2026-04-19 evening — P4 tracker cleanup landed (`cfd4f1dd`).
+  `BACK-P-06`, `BACK-P-07`, and `BACK-T-05` rows all filed with
+  problem / workaround / post-RC work / sizing / acceptance. The
+  step-0 ID audit grep confirmed `BACK-T-04` is the latest test-lane
+  row; `BACK-T-05` is the next free ID. Caveat: Codex included
+  five pre-staged files in the commit (`AGENTS.md`,
+  `TESTING_METHODOLOGY.md`, `dispatch/README.md`, the two
+  `completed/P*` files) rather than rewriting the user's staged
+  state — accepted.
+- 2026-04-19 evening — S1 hard gate bug noticed by Codex: slice
+  Precondition 2 required `ready_for_build == true` but the latest
+  preflight still read `ready_for_build: false` (docs/env drift
+  that planner had already reclassified in the queue Completed log
+  without propagating the exception to the slice gate). Fixed by
+  narrowly amending Precondition 2 to accept the reclassification
+  when the blocker list is exactly the missing
+  `venv/Scripts/Activate.ps1` path-convention entry. S1 redispatched
+  and is now in flight.
+- 2026-04-19 evening — Subagent usage observation: P4's step 0
+  (ID audit grep) was tagged `(Spark xhigh — read-only audit)`,
+  but Codex ran it in the main lane citing "this turn did not
+  explicitly authorize subagent delegation." Inline slice tags are
+  suggestions per `notes/SUBAGENT_WORKFLOW.md`, but if Codex's
+  default is "main inline unless explicitly authorized," the
+  `feedback_slice_prompts_subagent_tags.md` assumption (that inline
+  tags are honored by default) is optimistic. Worth a brief
+  conversation with Tate on whether the slice language should
+  escalate from "(Spark xhigh — ...)" to an imperative
+  "Dispatch to Spark xhigh:" when we actually want Spark used.
+- 2026-04-19 late evening — S1 (Stage 1 RC v3 packet rebuild) landed
+  with one anomaly. Pack push GREEN on all four serials
+  (`pack_sha = 759741d12fc6bd18a77e1d0b457390e43907606f7b16a60613ce831c1ce90168`,
+  per-serial `installed_ok: true` + `badge_observed: true`), but
+  rollup at `artifacts/cp9_stage1_20260419_181929/pack_build.json`
+  reported `apk_sha_homogeneous: false`. 5560 was on
+  `88d0041e...` (current HEAD `app-debug.apk`); 5556/5554/5558 on
+  `37152c74...` (Stage 0 v5 APK). Codex correctly stopped at the
+  acceptance gate and reported S2-blocked. Diagnosis: A1b
+  (`9cf405c`) triggered a Gradle rebuild during the instrumentation
+  lane and the resulting APK was pushed only to 5560; the
+  source-equivalent old APK persisted on the other three. No
+  `src/main` changes since `c269abe` (BACK-H-06), so the delta is
+  Gradle build non-determinism, not real code drift.
+- 2026-04-19 late evening — S1.1 reparity continuation landed GREEN
+  (artifact-only, no commit). Codex re-installed current
+  `88d0041e...` APK on 5556/5554/5558 (5560 already on target),
+  pack survived `adb install -r` on all three (no re-push needed),
+  re-ran instrumented smoke on all four, fresh `PACK READY` observed.
+  Authoritative rollup now at
+  `artifacts/cp9_stage1_reparity_20260419_183440/pack_build.json`
+  with `apk_sha_homogeneous: true`, `pack_sha_homogeneous: true`,
+  `model_sha_homogeneous_on_device: true`, `matrix_homogeneous: true`,
+  `predecessor_artifact_dir: "artifacts/cp9_stage1_20260419_181929"`,
+  plus `apk_reparity_note` explaining the build-determinism fix.
+  Lesson worth carrying: any code change that triggers a rebuild
+  on a single serial during a stage should re-run the four-serial
+  APK parity check before claiming the stage still GREEN.
+- 2026-04-19 late evening — D1 pre-RC documentation drift audit
+  landed (audit-only, no commit). Output at
+  `notes/PRE_RC_DOC_AUDIT_20260419.md`: 3 RC-blocking, 8 RC-cleanup,
+  2 post-RC findings across 5 scout assignments. Codex ran all five
+  scouts inline (parallel-fan-out directive ignored — pattern noted
+  for future slice-language tuning, not blocking for now). Planner
+  recalibrated severity: none of the 3 "RC-blocking" findings
+  actually block S2 or invalidate RC v3; all 3 are S3-consume-blocking.
+  Inline planner fixes after D1: patched D1 slice's broken
+  `apk_deploy_v6/...` path reference (full
+  `artifacts/cp9_stage0_20260419_142539/apk_deploy_v6/...` path);
+  promoted scope note to stable
+  `notes/SCOPE_NOTE_TABLET_HOST_FALLBACK.md` with current-applicability
+  header (original artifact retained as evidence). D2 slice drafted
+  to resolve the remaining 6 S3-consume findings in one commit.
+- 2026-04-19 late evening — D2 (pre-RC documentation fixes)
+  landed in commit `66567f7` ("docs: resolve D1 audit RC-blocking +
+  RC-cleanup findings"). All 6 scoped edits applied across
+  `TESTING_METHODOLOGY.md` (+9), `reviewer_backend_tasks.md`
+  (+121/-64-net), and `notes/REVIEWER_BACKEND_TRACKER_20260418.md`
+  (+17). Codex verified `query.py:61 ENABLE_ANCHOR_PRIOR = True`
+  and commit `2656311` for BACK-T-04 before writing dependent
+  edits. Acceptance gap acknowledged: D2 said "git status shows
+  clean working tree" but the worktree had ~1138 unrelated entries
+  pre-existing; the three scoped files ARE clean post-commit.
+  Drafting miss on planner side, not a Codex failure. One
+  out-of-scope finding flagged by Codex: `BACK-U-04` task header
+  in `reviewer_backend_tasks.md` still reads like open backlog
+  even though prose says landed; deferred to Carry-over backlog
+  for S3 absorption or a tiny follow-up slice.
+- 2026-04-20 UTC — S2-rerun2 (third Wave B validation run
+  against RP2 matrix) landed **RED** but with substantial
+  progress: actual Wave B contract improved from S2-rerun's
+  7/20 to 14/20 (and S2's 8/20). Artifact-only at
+  `artifacts/cp9_stage2_rerun2_20260420_070512/`. Wrapper-vs-
+  actual gap closed from 13 to 6 (proves R-val2 is meaningfully
+  working for settle discipline). Per-serial actual:
+  5556=4/5, 5560=2/5, 5554=4/5, 5558=4/5. Zero safety-critical
+  escalation failures across the three serials with clean
+  captures; 5560's safety-escalation failures are evidence-gap
+  (logcat shows `ask.uncertain_fit` for mania and `ask.abstain`
+  for violin-bridge on 5560) caused by serial-specific capture
+  clipping to a 2400x331 top strip. **R-eng2 worked as
+  designed:** poisoning routes to ABSTAIN with Poison Control
+  clause rendered ("If this is urgent or could be a safety
+  risk, stop and call local emergency services now (911 where
+  applicable); if this may be poisoning, call Poison Control
+  now, and keep the person with a trusted adult while waiting.")
+  on all four serials' selected bundles; mania routes to
+  UNCERTAIN_FIT with the same escalation line on all three
+  non-clipped serials. **R-val2 worked as designed:** the old
+  placeholder-only failure signature is gone entirely; rain_
+  shelter now settles cleanly on the final UNSURE FIT body
+  rather than the old preview sentinel. Two named blockers:
+  (1) `confident_rain_shelter` settles to `uncertain_fit`
+  instead of `confident` on all four serials — engine is
+  routing conservatively given the off-route GD-727 Batteries
+  anchor that T2 identified, but the conservative route is
+  safe not dangerous; (2) 5560 landscape capture clipping is
+  a state-pack tooling bug that obscures evidence even when
+  the engine is correct per logcat. Codex explicitly noted
+  this is NOT the R-host hang signature from T2's callout —
+  host generation is completing cleanly, the remaining
+  failures are retrieval-quality and capture-tooling. Visual
+  state-pack gallery still 41/45 with the same four
+  `generativeAskWithHostInferenceNavigatesToDetailScreen`
+  failures as S2-rerun — R-val2 didn't move this number.
+  State-pack `apk_sha` bug (`e3b0c442...` instead of
+  `804119cb...`) and gallery finalization PowerShell mismatch
+  both reproduced, both handled the same way Codex handled
+  them in S2-rerun. Parallel fan-out worked: four
+  `gpt-5.4 high` workers ran one-per-serial; main lane
+  handled cross-artifact judgment for Steps 2-4. Bounded 5560
+  rerun confirmed the clipping is sticky to that serial/posture,
+  not a one-off. Planner response: two blockers are both
+  orthogonal to the remediation stack's engine correctness;
+  presenting Tate with Option A (accept as documented
+  limitations + R-ui1 + RP3 + S3 cut; file R-ret1/R-tool1/
+  R-cls2/R-gal1 post-RC), Option B (one more cycle with
+  R-ret1 + R-tool1 + S2-rerun3), or Option C (hybrid: ship
+  rain_shelter as limitation, fix 5560 clipping first since
+  tooling muddies future validation).
+- 2026-04-20 UTC — RP2 (APK rebuild + four-serial re-provision
+  post R-val2/R-eng2) landed artifact-only at
+  `artifacts/cp9_stage1_rcv5_20260420_063320/`. Fresh debug APK
+  rebuilt at HEAD with sha
+  `804119cbebc4a64a08cf622fe87354d725d417a5716ddb16ae67a238abc259f3`
+  — materially different from RP1's `389d8d0f...` as required,
+  confirming R-eng2's main-code change made it into the build.
+  APK pushed to all four serials (5556 / 5560 / 5554 / 5558);
+  per-serial installed sha matches built sha on all four
+  (`apk_sha_homogeneous: true`). R-pack pack reused from RP1
+  (sha `e48d3e1ab068c666d4399744038a2dbb444aa8a6626ddfa80f212fd20f4b24dc`,
+  source dir `artifacts/mobile_pack/senku_20260419_213821_r-pack/`);
+  three of four serials (5560, 5554, 5558) retained the pack
+  through `adb install -r` and only 5556 needed re-push. Pack
+  probe output preserved at `pack_probe_results.json` and
+  `pack_probe_results_final.json` — Codex actually probed
+  before deciding per-serial, matching Step 4's design.
+  `pack_sha_homogeneous: true`, `matrix_homogeneous: true`,
+  `pack_repush_required: true`, `pack_repush_serials: ["5556"]`.
+  On-device model sha `f335f2bfd1b758...` matches across
+  5556/5560; tablets stayed on host-inference lane
+  (`landscape_phone_scope_cut: false`). **Critical additional
+  work Codex handled:** `com.senku.mobile.test` (the
+  instrumentation test APK carrying R-val2's harness) was
+  missing on 5556 — Codex rebuilt the `androidTest` APK and
+  installed it on all four serials so R-val2's strict harness
+  is now live for S2-rerun2. Per-serial `test_apk_install_<serial>.log`
+  entries confirm. Without this, S2-rerun2 would have run
+  against the OLD loose harness and we'd have reproduced S2
+  RED. Three anomalies, all worked cleanly: (a) 5556 lost
+  app-private pack through APK reinstall (re-push); (b)
+  com.senku.mobile.test missing on 5556 (test APK rebuilt +
+  installed across all 4); (c) raw manifest text comparison
+  noisy due to line-ending differences on retained-pack serials
+  — Codex switched to file-size comparison plus fresh smoke.
+  Planner verified independently: `pack_build.json` contents
+  clean, no new commits past R-val2/R-eng2. RP2 acceptance
+  met; "S2-rerun2 ready: true" flag set.
+- 2026-04-20 UTC — R-val2 (harness settle/capture discipline)
+  landed in commit `6665bd8`. Touched
+  `android-app/app/src/androidTest/java/com/senku/mobile/PromptHarnessSmokeTest.java`
+  only (+162/-28). Tightened settle criterion so the harness now
+  rejects the generating-preview body as a final answer: body
+  counts as settled only when it is NOT the DetailActivity
+  generating-preview sentinel, busy/progress is clear, and
+  status text is not in retrieval/generating/still-building
+  wording. `assertGeneratedTrustSpineSettled(...)` reuses the
+  same strict gate. Idle fallback now fails loudly with
+  `HarnessTestSignals.snapshot()` on timeout (closing the silent
+  timeout described in T2 Cross-Cutting Finding #2). One new
+  instrumentation regression test added:
+  `previewLengthAnswerBodyDoesNotCountAsSettledDetail`. In-file
+  gap also closed: phone settle signals were not reading
+  `detail_status_text`; Codex populated that while wiring the
+  shared strict gate across phone/tablet capture paths. Validation:
+  `./gradlew.bat :app:compileDebugAndroidTestJavaWithJavac
+  :app:testDebugUnitTest` passed, instrumentation passed on
+  emulator-5556 for `previewLengthAnswerBodyDoesNotCountAsSettledDetail`
+  and `standardAnswerKeepsDefaultCardTreatment`. Out-of-scope
+  finding: no third settle path outside `PromptHarnessSmokeTest`
+  needed tightening. Codex's open question for planner: does any
+  production or tooling code outside the harness rely on the
+  loose "answer body length > N" heuristic? R-val2 did not
+  change non-harness code; worth a post-RC grep. Parallel-safe
+  with R-eng2 (different file tree); both landed within 1 minute
+  of each other under simultaneous dispatch.
+- 2026-04-20 UTC — R-eng2 (safety mode-gate narrowing) landed in
+  commit `8990cc6`. Touched
+  `android-app/app/src/main/java/com/senku/mobile/OfflineAnswerEngine.java`
+  (+87) and `android-app/app/src/test/java/com/senku/mobile/OfflineAnswerEngineTest.java`
+  (+408). Added two early returns in `resolveAnswerMode(...)`
+  before `shouldAbstain(...)` fires: (1) early `ABSTAIN` when
+  `safetyCritical && preferredStructureType()=='safety_poisoning'`
+  at line 1250; (2) early `UNCERTAIN_FIT` when an acute
+  mental-health fingerprint matches AND selected context lacks
+  behavioral-health support at line 1253. Helper logic at
+  lines 1276 and 1287. Three new unit tests:
+  `resolveAnswerModeRoutesSafetyPoisoningToAbstainBeforeGeneration`,
+  `resolveAnswerModeRoutesAcuteMentalHealthMismatchToUncertainFit`,
+  `safetyModeOverridesDoNotRerouteViolinBridgeOrRainShelter`.
+  Full suite 50/50 passing (47 prior + 3 new) via
+  `./gradlew.bat :app:testDebugUnitTest --tests
+  "com.senku.mobile.OfflineAnswerEngineTest*"`. Classifier
+  verdict from Codex: **sufficient for poisoning** (the log
+  already shows `structure=safety_poisoning
+  explicitTopics=[lye_safety]`), **not sufficient for mania**
+  (classifier returns empty
+  `preferredStructureType=""`, no explicit topics). For mania,
+  R-eng2 uses a narrow in-engine query heuristic around markers
+  like "normal rules do not apply", "barely slept", and
+  "pacing", gated by selected context lacking mental-health
+  support. Codex explicitly recommends a post-RC `R-cls2` slice
+  to surface an explicit acute-mental-health structure/topic
+  signal instead of relying on the gate heuristic — filed in
+  Carry-over. Out-of-scope finding from Codex: the broader
+  mania failure mode also exposed that generic lexical overlap
+  can make off-topic civic context (GD-197 Justice & Legal
+  Systems) look grounded; global gate behavior left untouched
+  per slice boundary. Design discipline worth noting: R-eng2
+  avoided touching `shouldAbstain(...)` or any of R-eng's
+  `1f76ccf` hardening — the fix is an explicit pre-gate
+  short-circuit, which keeps violin-bridge's passing behavior
+  intact (the regression unit test
+  `safetyModeOverridesDoNotRerouteViolinBridgeOrRainShelter`
+  locks this in).
+- 2026-04-20 UTC — T2 (S2-rerun placeholder_answer root-cause
+  diagnostic) landed in commit `2856ec6` with doc at
+  `notes/T2_S2_RERUN_ROOT_CAUSE_20260420.md` (142 lines, single
+  file). Diagnosis is a **split cause**, and planner's prior
+  hot hypothesis (H1: R-eng's post-generation downgrade) was
+  **ruled out**. Evidence-grounded findings:
+  (A) **Validation harness bug is the common-mode signature.**
+  The visible `placeholder_answer` body is the intentional
+  preview produced by `DetailActivity.applyPreparedPreviewState(...)`
+  and `buildGeneratingPreviewBody(...)` at
+  `DetailActivity.java:3045-3056` and `3132-3137`. The rerun
+  wrapper accepts that preview as "settled" because
+  `PromptHarnessSmokeTest.assertDetailSettled(...)` at
+  `PromptHarnessSmokeTest.java:2449-2453` only waits for a
+  non-trivial visible body via `waitForDetailBodyReady(...)` at
+  line 3905-3946, not for a final answer surface. The stricter
+  state-pack lane's `waitForHarnessIdleFallback(...)` at
+  line 2431-2440 does not fail hard on timeout either, so
+  unresolved `detail.pendingGeneration` work can roll forward
+  into "settled" assertions. This is why all three Wave B
+  failures and all four state-pack failures share one visible
+  artifact — one bug in the measurement layer. DetailActivity
+  itself is NOT broken; the preview surface is intentional.
+  (B) **Safety prompts also have a real upstream mode-gate
+  regression.** Both `mania_escalation` and `poisoning_escalation`
+  traces log `ask.prompt`, which means `resolveAnswerMode(...)`
+  at `OfflineAnswerEngine.java:1210-1238` did NOT short-circuit
+  to UNCERTAIN_FIT or ABSTAIN. Since neither builder ran, the
+  escalation line in `buildUncertainFitAnswerBody(...)`
+  (`OfflineAnswerEngine.java:1513-1563`) and
+  `buildAbstainAnswerBody(...)` (`1450-1502`) was never
+  appended. R-cls's classifier work IS working correctly —
+  poisoning query logs `structure=safety_poisoning
+  explicitTopics=[lye_safety]` — but the engine mode gate
+  doesn't map that classification to ABSTAIN. Independent of
+  (A), this is a real engine bug. (C) **Rain_shelter's final
+  story is unknown until (A) is fixed.** Its trace goes
+  `ask.prompt` → `host.request bodyWritten` → capture stops.
+  No `ask.generate` completion appears. Either host generation
+  genuinely hangs, or the capture is simply too early and
+  generation would complete after. Codex flagged this
+  explicitly: if R-val2's exposure shows genuine hang, that
+  becomes a follow-on R-host slice. Hypothesis verdicts: H1
+  ruled out, H2 not supported (no emission to examine), H3
+  partially correct (for safety prompts only), H4 ruled out as
+  primary. Anti-recommendations from Codex worth locking in:
+  do NOT revert `1f76ccf` (violin-bridge validates the gate
+  hardening), do NOT patch DetailActivity preview copy (it is
+  intentional), do NOT treat missing escalation as a formatting
+  bug. Remediation proposal: `R-val2` (harness) + `R-eng2`
+  (mode gate), parallel-safe (different file trees).
+  **Lesson for planner:** I published a strong hot-hypothesis
+  ("R-eng's post-generation downgrade + UI surface-swap") that
+  Codex ruled out with logs. The DetailActivity surface WAS
+  indeed the visible stall — I just assumed it without checking
+  that the engine was emitting a completion for that surface to
+  consume. The correct debugging move is "look for the engine
+  emission before blaming the consumer" — if there's no engine
+  completion in the log, the UI can't be the root cause no
+  matter how suggestive the surface looks. Filed under
+  "what I got wrong" for future handoffs.
+- 2026-04-20 UTC — S2-rerun (Stage 2 RC re-validation) returned
+  **RED**, artifact-only at
+  `artifacts/cp9_stage2_rerun_20260419_221343/`. Wrapper stayed
+  20/20; actual Wave B contract only 7/20 (one regression short
+  of S2's 8/20 baseline). Eight RC-blocking safety-escalation
+  failures across two safety prompts × four serials. Per-serial
+  actual contract: 5556=2/5, 5560=1/5, 5554=2/5, 5558=2/5.
+  **Violin-bridge is fixed** on all four serials (R-eng's gate
+  hardening validated in principle). The other two previously-
+  failing prompts and one new regression share a UNIFIED failure
+  signature: all three land on the `placeholder_answer` surface
+  (the intermediate "building answer / sources are ready below"
+  body at `DetailActivity.java:3132-3137`) rather than any Wave
+  B final mode. For the two safety prompts this strips the
+  escalation line and Poison Control clause entirely — the
+  strict slice gate Codex used in S2 (zero safety-critical
+  escalation failures) is now NOT met. Failure identity across
+  4 serials × 3 prompts strongly suggests a single common-mode
+  regression, almost certainly in R-eng's post-generation
+  downgrade path or the DetailActivity surface-swap consumer.
+  `uncertain_fit_drowning_resuscitation` is unverified on 5560
+  only (clipped capture, counted as fail for RC gating). Visual
+  gallery regression 45/45 → 41/45 published at
+  `artifacts/external_review/ui_review_20260419_gallery_v2/`;
+  all four failing state-pack captures are
+  `generativeAskWithHostInferenceNavigatesToDetailScreen` with
+  the same assertion `settled status should keep final backend
+  or completion wording when still visible` — matches the
+  engine/UI stall story exactly. Codex dispatched 4 parallel
+  `gpt-5.4 high` workers for Step 1 per the imperative directive
+  (required Tate's session-level subagent grant to fire). Steps
+  2-4 stayed main-inline. Two known-tooling issues that Codex
+  worked around but filed for post-RC: (a)
+  `build_android_ui_state_pack_parallel.ps1` reproduced the
+  `Argument types do not match` finalization error — Codex
+  reconstructed the top-level manifest from per-role manifests,
+  same workaround as S2; (b) state-pack `summary.json` reports
+  `apk_sha = e3b0c442...` (SHA256 of empty string) instead of
+  the real `389d8d0f...` — gallery script isn't pulling the
+  correct APK sha; tooling-side reporting gap, NOT a sign that
+  the wrong APK was captured (RP1 verified the right APK is
+  installed on all four serials). Planner response: S2-rerun RED
+  blocks the chain. Drafted T2 diagnostic slice (single-scope,
+  T1 shape) to root-cause the placeholder_answer common-mode
+  regression before choosing remediation scope. Do not jump to
+  remediation — diagnose first.
+- 2026-04-19 late evening / 2026-04-20 UTC — RP1 (APK rebuild +
+  four-serial re-provision) landed artifact-only at
+  `artifacts/cp9_stage1_rcv4_20260419_214851/`. Fresh debug APK
+  rebuilt at HEAD (includes R-cls + R-eng Java changes) with sha
+  `389d8d0f77158a89fbcd274f3fc48afe2019b3785f2b06d0b359e6913e915cbb`
+  — materially different from the S1.1 reparity APK
+  `88d0041e...` as required, confirming the remediation code
+  made it into the build. APK pushed to all four serials
+  (5556 / 5560 / 5554 / 5558); per-serial installed sha matches
+  built sha on all four (`apk_sha_homogeneous: true`). R-pack's
+  new pack (sha `e48d3e1ab068c666d4399744038a2dbb444aa8a6626ddfa80f212fd20f4b24dc`,
+  source dir `artifacts/mobile_pack/senku_20260419_213821_r-pack/`)
+  pushed to all four serials; per-serial `pack_install_<serial>.json`
+  all `installed_ok: true` + `badge_observed: true`;
+  `pack_sha_homogeneous: true`. On-device model sha
+  `f335f2bfd1b758...` matches across 5556/5560; tablets stayed on
+  the host-inference lane per the documented scope cut
+  (`landscape_phone_scope_cut: false`). `matrix_homogeneous: true`.
+  Planner verified independently: `pack_build.json` contents,
+  artifact-dir listing (40+ files), no new commits past R-pack
+  (`git log --oneline bd84835..HEAD` empty). RP1 acceptance gate
+  met, "ready for S2-rerun" flag set. Codex noted a few local
+  PowerShell wrapper hiccups during automation that did not
+  reflect emulator/app failures and did not require device
+  retries; not filed as a blocker.
+- 2026-04-19 late evening — R-pack (poisoning guide chunk
+  coverage + metadata enrichment) landed in commit `bd84835`
+  ("R-pack: restore poisoning guide chunk coverage"). Root cause
+  was **stale interrupted ingest state** (not a filter bug, not a
+  schema mismatch): the live Chroma collection had been truncated
+  to `14,784` rows versus `49,654` source chunks, with the cutoff
+  inside `ingest.py` batch embed/write loop at `GD-058` (6/187).
+  Fix was mixed: (a) `python ingest.py --rebuild` restored full
+  coverage (chunk counts now GD-898=21, GD-301=98, GD-054=87,
+  GD-602=52, GD-396=41 baseline); (b) `mobile_pack.py` heuristic
+  hardening added `STRUCTURE_TYPE_SAFETY_POISONING = "safety_poisoning"`
+  plus three new topic-tag markers (`poisoning_triage`, `toxidrome`,
+  `antidotes`) and expanded `lye_safety` keywords (bleach, drain
+  cleaner, detergent pod, poison control, unknown ingestion,
+  corrosive exposure). All four poisoning guides now export with
+  `structure_type='safety_poisoning'` and non-empty topic_tags.
+  The `safety_poisoning` structure_type string aligns EXACTLY
+  with R-cls's `STRUCTURE_TYPE_SAFETY_POISONING` constant at
+  `QueryMetadataProfile.java:43`, so R-cls's query bucket now
+  matches via direct structure-type overlap rather than only
+  through the generic `metadataBonus` pathway. Two regression
+  tests added: `tests/test_mobile_pack.py::test_poisoning_guides_detect_safety_poisoning_structure_and_tags`
+  and `tests/test_ingest.py::test_fresh_rebuild_populates_poisoning_guides_in_lexical_db`.
+  Full suite 214/214 passing via `python -m unittest discover -s
+  tests -v`. New pack artifact dir:
+  `artifacts/mobile_pack/senku_20260419_213821_r-pack/`. Planner
+  verified independently: chunk counts via sqlite probe match
+  the report; `structure_type` + `topic_tags` confirmed per
+  guide row; `total_chunks=49,654`, `total_guides=754`.
+  Out-of-scope finding to carry forward: **the old DB/pack
+  corruption was broader than the four poisoning guides** — the
+  cutoff at `GD-058` (6/187) means many later-alphabetized guides
+  were also partially or fully missing from the pre-fix corpus,
+  so S2's 8/20 RED verdict reflected a substrate that was weak
+  across most of the Wave B suite, not just the 3 documented
+  failures. Implication for S2-rerun: retrieval behavior should
+  improve materially across the whole suite; if any prompt is
+  still RED post-RP1, treat it as genuinely residual rather than
+  a carry-forward of the T1-diagnosed three.
+- 2026-04-19 late evening — D3 (pre-RC follow-up doc cleanup)
+  landed in commit `f203a48` ("D3: pre-RC follow-up doc cleanup
+  (D1/D2 deferred items)"). All four scoped edits applied:
+  AGENTS.md venv path drift fixed (Edit 1), `BACK-U-04` header
+  marked done in `reviewer_backend_tasks.md` (Edit 2),
+  `guideupdates.md` history moved to
+  `notes/dated/guide_validation_changelog_20260406.md` and main
+  file reduced to active-defects intent (Edit 3), 10 landed slice
+  files rotated to `notes/dispatch/completed/` via `git mv`
+  (Edit 4). 15 files changed, +1758/-9. R-pack slice file
+  retained in `notes/dispatch/` per its in-flight status.
+- 2026-04-19 late evening — R-eng (`OfflineAnswerEngine`
+  mode-gate hardening) landed in commit `1f76ccf`. Three coupled
+  fixes: (1) `prepare()` now passes finalized selected context
+  through as `gateContext`; new `resolveAnswerMode(selectedContext,
+  rawTopChunks, ...)` overload reads selected-context evidence via
+  new `gateLexicalOverlapScore()` and `hasPrimaryOwnerSupport()`
+  helpers plus the existing `averageRrfStrength()` and
+  `topVectorSimilarity()`. (2) `shouldAbstain()` semantic veto now
+  requires more than "any hybrid row" — needs 2+ unique lexical
+  hits, explicit topic/section support, or route-focused support;
+  raw top rows only help if their vector signal is above the
+  current max uncertain-fit band AND aligned with the selected
+  anchor guide (this is what would have caught the violin-bridge
+  case where GD-110 misaligned with actual anchor). (3)
+  `low_coverage_detected` is now route-affecting via
+  post-generation downgrade — `generate()` swaps the surface to
+  abstain or uncertain_fit while preserving the low-coverage
+  subtitle. 5 new tests + 42 preexisting = 47/47 passing via
+  `./gradlew.bat :app:testDebugUnitTest --tests
+  "com.senku.mobile.OfflineAnswerEngineTest"`. Two design notes
+  to carry: (a) R-eng chose post-generation downgrade not
+  pre-generation gate, so violin-shaped queries still burn ~25s
+  of model time before correction — fine for RC v3, candidate
+  for a post-RC pre-generation gate slice. (b)
+  `promptContextLimitFor()` still defaults ambiguous
+  non-route-focused queries to 2 items; deliberately untouched
+  because the gate + low-coverage fixes closed the slice without
+  it. Both filed in Carry-over backlog. Used a Zeno explorer
+  scout (`gpt-5.3-codex-spark`) to map the test class structure
+  before adding the 5 tests — second slice this session where
+  Codex actually dispatched a subagent.
+- 2026-04-19 late evening — R-cls (`QueryMetadataProfile`
+  token-aware hardening + poisoning branch) landed in commit
+  `e07d4e7` ("R-cls: harden QueryMetadataProfile token matching
+  + T1 poisoning routing"). Replaced raw substring marker checks
+  with token/phrase-aware matching across the file, added a
+  pre-house `safety_poisoning` branch biased toward
+  `medical`/`chemistry`/immediate/safety roles + poisoning-relevant
+  section headings. 7 new tests + 75 preexisting tests = 82/82
+  passing via `./gradlew.bat :app:testDebugUnitTest --tests
+  "com.senku.mobile.QueryMetadataProfileTest"`. Codex's design
+  insight worth keeping: `OfflineAnswerEngine` does not require
+  a predeclared enum for the new `safety_poisoning` bucket
+  string — it consumes the query profile generically through
+  `metadataBonus`, `sectionHeadingBonus`, preferred categories /
+  content roles / time horizon, and topic overlap. So the bucket
+  works WITHOUT engine code changes (means R-eng doesn't need to
+  know about `safety_poisoning` as a special case). Out-of-scope
+  finding flagged: GD-301 / GD-602 / GD-898 still present in the
+  current mobile DB with `structure_type='general'` and empty
+  `topic_tags`, so R-cls's new query bucket may not get a
+  meaningful metadata bonus until R-pack also enriches the
+  guide-row metadata. R-pack slice updated post-landing to cover
+  this (Step 5 metadata check + Step 5a enrichment-if-weak).
+  Eleven additional substring-match risks beyond `wall` caught
+  during the audit and hardened: `site`, `roof`, `seal`, `pipe`,
+  `clean`, `wash`, `note`, `order`, `stud`, `soap`, `glass`,
+  `trial` (the last three were old single-word guards). All
+  caught by the same token/phrase-aware change.
+- 2026-04-19 late evening — T1 (Stage 2 RED root-cause diagnostic)
+  landed at `notes/T1_STAGE2_ROOT_CAUSE_20260419.md`. Codex
+  dispatched 3 parallel Spark scouts (Parfit/Peirce/Russell, one
+  per failure track) — first slice this session where parallel
+  fan-out actually triggered. Per-failure root causes:
+  (1) `confident_rain_shelter`: `OfflineAnswerEngine.resolveAnswerMode()`
+  scores raw top retrieval rows via `topAbstainChunks()`, not the
+  finalized selected context. One off-topic GD-727 Batteries top
+  row drags the gate into uncertain_fit.
+  (2) `abstain_violin_bridge_soundpost`: `shouldAbstain()` treats
+  any top-3 hybrid row as a `strongSemanticHit` semantic veto, so
+  wrong-sense bridge hits prevent abstain. `low_coverage_detected`
+  is computed post-generation and only changes the subtitle, not
+  the route. `promptContextLimitFor()` also narrows generation to
+  2 wrong-sense rows. Pack DOES contain GD-191 instrument content,
+  but `soundpost` keyword has 0 hits anywhere in the shipped pack
+  DB (real knowledge gap on that specific term). Commit `aa2373c`
+  ruled OUT as cause — touches `ingest.py` + bridge-tag audit only.
+  (3) `safety_abstain_poisoning_escalation`: classic substring-vs-token
+  bug — `QueryMetadataProfile.containsAny()` is plain substring
+  matching, and `swallowing` contains `wall` which trips both
+  `HOUSE_PROJECT_MARKERS` and `wall_construction` in
+  `detectStructureType()` / `detectTopicTags()`. Compounded by
+  data-side issue: GD-898 / GD-301 / GD-054 / GD-602 (the four
+  most relevant poisoning guides) have 0 retrievable chunk rows in
+  both `senku_mobile.sqlite3` and `db/senku_lexical.sqlite3`,
+  despite `ingest.process_file()` producing chunks from source
+  markdown. Content-index integrity problem, not a ranking issue.
+  Cross-cutting: mobile mode decisions use the wrong evidence
+  surface; mobile metadata classification is more brittle than
+  desktop (`query.py` has `_text_has_marker()` boundary-aware
+  helpers); post-generation low-coverage signal is observational
+  only; threshold tuning alone is the wrong fix. Codex's planner
+  read: two-front repair — fix poisoning classifier + missing
+  chunks first, then harden abstain/confidence path; do NOT
+  retune thresholds (would only move rain-shelter symptom around).
+- 2026-04-19 late evening — S2 (Stage 2 RC validation sweep)
+  returned RED at `artifacts/cp9_stage2_20260419_185102/summary.md`.
+  Wrapper said 20/20 but actual Wave B contract was 8/20. Three
+  identical failures across all four serials: `confident_rain_shelter`
+  fell to uncertain_fit (over-cautious); `abstain_violin_bridge_soundpost`
+  rendered as a generated answer with `evidence=moderate` despite
+  `low_coverage_detected` firing post-generation (hallucination on
+  no-evidence query); `safety_abstain_poisoning_escalation` rendered
+  as uncertain_fit instead of abstain (escalation line still fired
+  correctly via the safety net). Strict slice gate (zero
+  safety-critical escalation failures) is met → `rc_blocking_failures: []`
+  in the rollup. Planner judgment-call: hold S3 anyway because the
+  violin-bridge hallucination is RC-blocking by user-impact even if
+  not by the slice's strict criterion. Codex's RED verdict was the
+  right call. Two post-RC findings filed: (a) wrapper validation
+  gap — pack reports 20/20 when actual contract is 8/20, tooling
+  trust failure for any future Wave B validation; (b)
+  `build_android_ui_state_pack_parallel.ps1` PowerShell type
+  mismatch in finalization that Codex worked around. Planner read
+  on root cause: code-side primary (Wave B mode-decision logic
+  doesn't gate on `low_coverage_detected` pre-render; routing
+  classifier mis-routes child-poisoning as cabin_house) with
+  pack-side amplification (rebuilt pack's hybrid scoring
+  over-weights GD-110 for "violin bridge"). Hot commit lead:
+  `aa2373c BACK-P-03 bridge-tag consistency audit and test`. T1
+  diagnostic slice drafted to confirm and produce remediation scope
+  before S3 unblocks.
+- 2026-04-20 - CP9 CLOSED. RC v5 cut landed. Full summary in
+  `notes/REVIEWER_BACKEND_TRACKER_20260418.md` under the
+  `CP9 RC v5 cut (2026-04-20)` section. Wave B 20/20, state-pack
+  41/45, fresh gallery at
+  `artifacts/external_review/ui_review_20260420_gallery_v6/`.

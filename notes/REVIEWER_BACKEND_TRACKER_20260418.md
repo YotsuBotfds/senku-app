@@ -90,6 +90,41 @@ worth tracking alongside):
   `BACK-P-02` re-ran green on the post-P-04 stock bundle — see
   `artifacts/bench/wave_a_closeout_20260418_rerun/`
 
+## CP9 RC v5 cut (2026-04-20)
+
+CP9 closed GREEN on 2026-04-20 with Wave B at **20 / 20** actual under
+Option C and state-pack at **41 / 45**. Landed CP9 chain in chronological
+order:
+
+- `R-pack` (`bd84835`) - poisoning guide chunk coverage + metadata enrichment.
+- `R-cls` (`e07d4e7`) - `QueryMetadataProfile` token-aware hardening + `safety_poisoning` branch.
+- `R-eng` (`1f76ccf`) - `OfflineAnswerEngine` mode-gate hardening + low-coverage downgrade.
+- `R-val2` (`6665bd8`) - harness settle / capture discipline tightening.
+- `R-eng2` (`8990cc6`) - safety prompts route to abstain / `uncertain_fit` before generation.
+- `R-tool1` (`2ba7d5c`) - `5560` landscape capture clipping fix + state-pack `apk_sha` reporting + parallel finalization fix.
+- `R-ui1` (`29463eb`) - `activity_main.xml` fully scrollable on phone-narrow viewports.
+- `R-ui2 v3` (`f095194`) - removed programmatic landscape composer auto-focus; suppressed follow-up suggestion rail on landscape phone to keep answer body visible; tracked v2 hygiene files (manifest + both `activity_detail` layouts) previously left untracked.
+- `R-val3` (`607ab916`) - aligned `waitForLandscapeDockedComposerReady` with post-R-ui2 v3 composer behavior (interactive-ready, not focus-ready).
+
+Validation artifact chain:
+- RP4: `artifacts/cp9_stage1_rcv7_20260420_141257/pack_build.json` (debug APK `551385c9...`, androidTest APK `b260a219...`, matrix homogeneous).
+- S2-rerun4: `artifacts/cp9_stage2_rerun4_20260420_143440/summary.md` (Wave B 20/20 actual).
+- S2-rerun4.5-retry-v2: `artifacts/cp9_stage2_rerun4_5_retry_v2_20260420_171857/summary.md` (state-pack 41/45, new gallery published).
+- Gallery: `artifacts/external_review/ui_review_20260420_gallery_v6/index.html`.
+
+Known RC v5 limitations (tracked post-RC, not shippable-without-workaround):
+
+1. `confident_rain_shelter` query settles to `uncertain_fit` instead of `confident` on all four serials. Retrieval anchors GD-727 Batteries instead of shelter-family guides. Safe conservative routing per Option C. Tracked as `R-ret1`: expand `QueryMetadataProfile.java:1585` `STRUCTURE_TYPE_EMERGENCY_SHELTER` marker set and possibly adjust metadata bonus weight. Verified root cause; code target known.
+2. State-pack gallery has four `generativeAskWithHostInferenceNavigatesToDetailScreen` failures (one per posture) on `assertGeneratedTrustSpineSettled` at `PromptHarnessSmokeTest.java:2794`. The assertion requires "final backend or completion wording" that `uncertain_fit` mode does not produce for the `rain_shelter` probe. Tracked as `R-gal1`: either relax the assertion to accept `uncertain_fit` / `abstain` terminal status, or wait on `R-ret1` to move `rain_shelter` to `confident` (potential self-resolve). Code target known.
+3. Acute mental-health gate lives in-engine via `OfflineAnswerEngine.java:49-82` marker sets + compound-match logic at line `1303-1305`, rather than via the `QueryMetadataProfile` classifier. `R-eng2` deliberately scoped this as in-engine; tracked as `R-cls2` post-RC. Code target and port-vs-compound design options documented in `notes/SLICE_SHAPES_FORWARD_RESEARCH_20260420.md`.
+
+Post-RC backlog (non-RC-blocking, tracked for follow-up):
+
+- `R-ret1`, `R-cls2`, `R-gal1` as above.
+- `MainActivity` landscape-phone focus / IME pattern audit - same shape as what `R-ui2 v3` cleaned up in `DetailActivity`. See `notes/T4_READY_EVIDENCE_20260420.md` section 7.
+- `DockedComposer.kt:139` `LaunchedEffect` rising-edge gate refactor (cosmetic ergonomics; doesn't affect current correctness).
+- Serena MCP keep/remove evaluation - mixed first-pass signal (wins for symbol overview, loses to grep for `this::methodRef` lambda call-site tracing). Re-evaluate after 2-3 more sessions.
+
 ## Worker Split
 
 ### `gpt-5.3-codex-spark` `xhigh` (scout)
