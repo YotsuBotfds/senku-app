@@ -1091,9 +1091,6 @@ public final class DetailActivity extends AppCompatActivity {
         renderDockedComposer();
         renderFollowUpSuggestions();
         refreshFollowUpCopy();
-        if (shouldAutoFocusLandscapeComposer()) {
-            followUpComposeView.post(this::requestLandscapeDockedComposerFocus);
-        }
         updateHeroPanelVisibility();
         applyResiliencyAccent();
         applyResponsiveLayout();
@@ -1718,7 +1715,8 @@ public final class DetailActivity extends AppCompatActivity {
         if (!answerMode
             || followUpPanel == null
             || followUpPanel.getVisibility() != View.VISIBLE
-            || (isLandscapePhoneLayout() && isFollowUpInputShellActive())
+            // On landscape phones the extra suggestion rail crowds the answer body offscreen.
+            || isLandscapePhoneLayout()
             || currentFollowUpSuggestions.isEmpty()) {
             followUpSuggestView.setVisibility(View.GONE);
             return;
@@ -1790,20 +1788,6 @@ public final class DetailActivity extends AppCompatActivity {
                 followUpComposeView.requestComposerFocus();
             }
         });
-    }
-
-    private boolean shouldAutoFocusLandscapeComposer() {
-        return isLandscapePhoneLayout()
-            && answerMode
-            && followUpPanel != null
-            && followUpPanel.getVisibility() == View.VISIBLE
-            && followUpComposeView != null
-            && followUpComposeView.getVisibility() == View.VISIBLE
-            && followUpInput != null
-            && followUpInput.isEnabled()
-            && !followUpComposerFocused
-            && !hasFollowUpDraft()
-            && !followUpInput.hasFocus();
     }
 
     private boolean isFollowUpInputShellActive() {
