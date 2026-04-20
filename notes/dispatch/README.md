@@ -18,14 +18,24 @@ edit the file, do not let the drift live only in your head.
 
 ## Active slices
 
-- `S1_stage1_rebuild.md` - Stage 1 RC v3 packet rebuild (unblocked by Stage 0 GREEN)
-- `P3_docs_drift_and_rotation.md` - P2 docs-drift follow-up + rotate landed slices
-- `P4_tracker_cleanup.md` - flesh out `BACK-P-06` / `BACK-P-07` + file `assertDetailSettled` blind-spot row
+See `notes/CP9_ACTIVE_QUEUE.md` Dispatch order cheat-sheet for
+the canonical "what runs when" picture.
+
+In flight:
+- `R-pack_poisoning_chunk_rebuild.md` - poisoning guide chunk + metadata fix; doing an ingest rebuild
+
+Parallel-safe with R-pack (dispatch now if you want):
+- `D3_pre_rc_followup_cleanup.md` - doc-only single commit; absorbs four small D1/D2 deferred items
+
+Sequential after R-pack lands:
+- `RP1_apk_rebuild_and_reprovision.md` - APK rebuild + four-serial re-provision; needs R-pack's commit + pack output
+
+Sequential after RP1 lands:
+- `S2-rerun_stage2_revalidation.md` - Wave B re-validation against the fixed matrix; dispatch with "use subagents where stated" for the 4-way fan-out
 
 ## Landed (not yet rotated)
 
-- `A1b_pressback_harness_fix.md` - landed 2026-04-19 (`9cf405c`);
-  flipped Stage 0 GREEN. Rotation by a later cleanup slice.
+Rotation performed in D3 on 2026-04-19: the previously landed slice files were moved to `notes/dispatch/completed/`.
 
 ## Superseded - do not redispatch
 

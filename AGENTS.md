@@ -17,7 +17,7 @@ The checked-in `venv/` is POSIX-origin. On Windows, create your own venv (for ex
 
 PowerShell:
 ```powershell
-. .\venv\Scripts\Activate.ps1
+. .\venv_win\Scripts\Activate.ps1
 python query.py
 python ingest.py --stats
 ```
@@ -111,8 +111,8 @@ Keep these as helper lanes. Prefer the existing OpenCode sidecar, Qwen scout, an
 - Daily Android work is emulator-first; physical phone/tablet checks are milestone truth checks and mirror/review lanes
 - Mobile now targets both `E2B` and `E4B`: `E2B` is the practical floor, `E4B` is the quality tier to keep evaluating
 - Session-aware follow-up behavior is part of normal validation now, not a later extra
-- Multi-model cost posture: keep Codex thin and strategic; push cheap scouting to local Qwen, bounded patches to Spark, and longer async work to OpenCode sidecars first
-- Preferred routing ladder for this repo: `GLM 5.1 sidecar > Spark > Qwen 27B > Qwen 9B`
+- Subagent workflow (Codex-side role split): main agent `gpt-5.4 xhigh` (conductor), fast scout `gpt-5.3-codex-spark xhigh` (separate usage budget, read-only), heavier scout + worker `gpt-5.4 high`. Main agent owns delegation — planner briefs main with slice-level prompts in [`notes/dispatch/`](./notes/dispatch), main picks the sub-lane per step. Full contract: [`notes/SUBAGENT_WORKFLOW.md`](./notes/SUBAGENT_WORKFLOW.md)
+- Local sidecar routing ladder (orthogonal to the Codex-side split, for local compute): `GLM 5.1 sidecar > Spark > Qwen 27B > Qwen 9B`
 - Latest broad visual baseline:
   - [`artifacts/external_review/ui_review_20260417_gallery/index.html`](./artifacts/external_review/ui_review_20260417_gallery/index.html)
 

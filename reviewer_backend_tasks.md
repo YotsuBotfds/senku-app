@@ -402,7 +402,7 @@ the landed work.
   - Coordinates with OPUS F-02 (MetaStrip primitive — already landed)
   - **Landed 2026-04-18 (`af49d91`)** - desktop 50-query confidence panel + Android `ConfidenceTokenRenderTest` prove phone + tablet rendering; `notes/specs/meta_strip_confidence_token_addendum.md` captures the MetaStrip contract
 
-- `BACK-U-04` · **P1 · M · worker (test-infra)** · Abstain tuning analysis + panel
+- `BACK-U-04` · **[done 2026-04-18]** · **P1 · M · worker (test-infra)** · Abstain tuning analysis + panel
   - Files: new `notes/ABSTAIN_TUNING_ANALYSIS_<date>.md`, new
     `scripts/run_abstain_regression_panel.ps1`,
     `artifacts/bench/abstain_baseline_<date>/`
