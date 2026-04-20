@@ -477,6 +477,14 @@ Use this as the default validation lane for Spark UI slices that touch:
 
 The checked-in `venv/` is POSIX-origin. On Windows, create your own venv (for example `py -3 -m venv venv_win`) and activate that instead, or run under WSL.
 
+## CP9 RC artifact discipline
+
+For CHECKPOINT 9 RC v3 validation, treat `artifacts/cp9_stage1_reparity_20260419_183440/pack_build.json` as the authoritative Stage 1 rollup for every downstream stage (Stage 2, RC verdict, and closure). The earlier Stage 1 artifact root `artifacts/cp9_stage1_20260419_181929/` is retained as evidence only: its rollup reports `apk_sha_homogeneous: false`, so it is not a valid Stage 2 precondition.
+
+Stage 0 v2 / v3 / v4 / v5 artifact families are likewise invalid as RC anchors. Each was superseded during the repair chain documented in `artifacts/cp9_stage0_20260419_142539/summary.md`; future RC readers should anchor to the Stage 0 v6b artifacts (the `_v6b` suffix in the smoke artifact directory names) together with the reparity rollup above.
+
+Carry the APK parity gate forward with the artifact choice: if any code change or rebuild touches only one serial during a stage, rerun the four-serial APK parity check before calling that stage green again. S1.1 reparity is the current example of this rule in action. For the reasoning trail and dates, see the [`Completed` log in `notes/CP9_ACTIVE_QUEUE.md`](./notes/CP9_ACTIVE_QUEUE.md#completed-rolling-log).
+
 ## Model Deploy Discipline
 
 `MainActivity.runAsk(...)` hard-stops the local ask path when the app has neither host inference enabled nor a resident on-device LiteRT model (`android-app/app/src/main/java/com/senku/mobile/MainActivity.java`, lines `661-671`). If the UI says `Import a .litertlm or .task model first`, treat that as a deploy-state failure, not a retrieval or answer-quality regression.
@@ -489,6 +497,7 @@ Practical rules:
 - the helper's tmp-staging path copies the model into `/data/local/tmp` first and then into `files/models/`, so budget at least `>= 2x model_size` free space on the AVD data partition before using that path
 - tablet AVDs with roughly `6 GB` data partitions cannot reliably tmp-stage `E4B`; use the direct-stream bypass there instead of treating the failure as an engine or model-tier problem
 - for Stage 0 / RC validation, record which local model was actually pushed (`E2B` or `E4B`) and re-push it after every reinstall before comparing answer quality across serials
+- `emulator-5554` and `emulator-5558` are under a documented temporary host-inference exception for the current RC lane; treat valid tablet evidence through that scope cut, not as a failed model deploy. See `notes/SCOPE_NOTE_TABLET_HOST_FALLBACK.md`.
 
 ## Prompt Sweep Structure
 

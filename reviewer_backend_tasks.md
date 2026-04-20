@@ -31,7 +31,7 @@ use per-lane trackers for execution detail.
   state log in `opustasks.md` first — A-01..A-10, B-03, C-08, E-03 all landed
   work in these areas and should be treated as prior art, not blockers.
 
-## Status Snapshot (2026-04-18, Sprint 2 closeout)
+## Status Snapshot (2026-04-19, pre-RC reconcile)
 
 **Landed (already covered by OPUS-\*; do not re-do):**
 - Sub-query dedup (`OPUS-A-09`) → supersedes an earlier audit finding on
@@ -60,32 +60,37 @@ under `artifacts/bench/wave_a_closeout_20260418_rerun/`. `BACK-R-03` was
 invalidated because anchor-prior is feature-gated off on Android
 (`SessionMemory.java:22`) so the idle-reset scenario is non-observable in
 production — see `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Follow-ups
-`BACK-R-05` (Android anchor-prior decision) and `BACK-T-04` (harness repair)
-track post-release.
+were filed from that closeout: `BACK-T-04` landed 2026-04-19 (`2656311`), and
+`BACK-R-05` (Android anchor-prior decision) remains the open post-release
+follow-up.
 
-**Wave B status:** `BACK-U-03` landed 2026-04-18 (`af49d91`) after the
-2026-04-18 `OPUS-E-06` unblock (`b41128a`): `AnswerPresenter` and
-`DetailAnswerPresenterHost` exist in
+**Wave B status:** `BACK-U-03` landed 2026-04-18 (`af49d91`), `BACK-U-02`
+landed 2026-04-18 (`d974ebc`), and `BACK-U-01` landed 2026-04-19
+(`eb398dc`) after the 2026-04-18 `OPUS-E-06` unblock (`b41128a`).
+`AnswerPresenter` and `DetailAnswerPresenterHost` exist in
 `android-app/app/src/main/java/com/senku/mobile/`, and all three former
 `DetailActivity.java` callsites (lines 2939, 3064, 3186 in the pre-E-06
 6264-line baseline) now route through the Presenter — Activity is down to
-6063 lines. Remaining Wave B items are `BACK-U-01` and `BACK-U-02`;
-`BACK-U-01` is now unblocked because the confidence-label dependency is
-satisfied, and `BACK-U-02` was never dependency-gated. `OPUS-E-05` stays
-deferred; CP9 release-candidate gate is independent of E-06.
+6063 lines. Wave B is closed and ready for CHECKPOINT 9 release-candidate
+gate planning; `OPUS-E-05` stays deferred and is not part of the RC gate.
 
 **Reviewer-priority status:**
 - **Deterministic false-positive risk** — backend controls landed: graduation
   manifest, promotion metadata, exclusion-list semantic gate, near-miss panel,
   builder-missing telemetry, and mobile-parity guard. Lane `D` is closed.
 - **Low-applicability abstain / uncertainty** — backend tuning note and
-  regression runner (`BACK-U-04`) are landed, and `BACK-U-03` landed
-  2026-04-18 (`af49d91`). The remaining UI-crossing uncertainty work is
-  `BACK-U-01` / `U-02`; `BACK-U-01` is unblocked and `BACK-U-02` was never
-  dependency-gated.
+  regression runner (`BACK-U-04`) are landed, `BACK-U-03` landed
+  2026-04-18 (`af49d91`), `BACK-U-02` landed 2026-04-18 (`d974ebc`), and
+  `BACK-U-01` landed 2026-04-19 (`eb398dc`). Wave B is closed and ready for
+  CHECKPOINT 9 release-candidate gate planning.
 - **On-device latency honesty** — per-stage timing, structured `SenkuLatency`
   events, `SessionMemory` persistence, `PackRepository` stage timing, and the
   desktop summary tool are landed. Lane `L` is closed.
+
+Current-status note: `notes/REVIEWER_BACKEND_TRACKER_20260418.md` is the
+authoritative landing log for the closed Wave A / Wave B work. Treat Lane `D`,
+Lane `L`, and landed retrieval items below as historical record unless they
+are explicitly called out as still open or post-release.
 
 ## Parallelism Notes
 
@@ -149,14 +154,13 @@ risk.
 Goal: give the app three distinct answer shapes — confident answer,
 uncertain-fit match, no-match abstain — instead of the current two.
 
-> **Gate cleared 2026-04-18.** `OPUS-E-06` landed (`b41128a`):
+> **Closed 2026-04-19.** `OPUS-E-06` landed (`b41128a`);
 > `AnswerPresenter` + `DetailAnswerPresenterHost` own the three former
 > `OfflineAnswerEngine.generate()` callsites; `DetailActivity.java` is
-> 6264 → 6063 lines. `BACK-U-03` landed 2026-04-18 (`af49d91`), so the
-> remaining Phase B-2 work is `BACK-U-01` / `U-02`. `BACK-U-04` is landed;
-> `BACK-U-01` is now unblocked, `BACK-U-02` was never dependency-gated, and
-> Wave B scout-tier spec addenda (MetaStrip confidence token, PaperAnswerCard
-> uncertain-fit, escalation copy) should be in hand for the dispatch prompt.
+> 6264 → 6063 lines. `BACK-U-03` landed 2026-04-18 (`af49d91`),
+> `BACK-U-02` landed 2026-04-18 (`d974ebc`), and `BACK-U-01` landed
+> 2026-04-19 (`eb398dc`). Phase B-2 is complete and CHECKPOINT 9 gate
+> planning can proceed independently of `OPUS-E-05`.
 
 `BACK-U-01` · `BACK-U-02` · `BACK-U-03` · `BACK-U-04`
 
@@ -231,15 +235,17 @@ parallel fill-lane with no gate of its own.
 
 ## Quick Start (If You Only Have ...)
 
-- **30 minutes** → `BACK-D-05` (document tie-break rule). One-file, XS.
-- **Half a day** → `BACK-L-01` (time-to-first-token instrumentation) alone —
-  one-file surgical change in `OfflineAnswerEngine.generate()`. High-value
-  reviewer-unknown closer.
-- **A full day** → Wave B-1a: `BACK-D-01` + `BACK-D-05` + `BACK-D-06` parallel.
-  Graduation fields + tie-break + mobile-parity check; closes the
-  "graduation-gate is missing" half of reviewer priority #1.
-- **A week** → Phases B-1 and B-2 fully landed. Closes reviewer priorities #1
-  and #2.
+Wave A and Wave B are landed. Use this section only for the remaining
+post-release items that are still open in this file.
+
+- **30 minutes** → `BACK-H-04` (centralize Android `Locale`). XS, isolated
+  hygiene.
+- **Half a day** → `BACK-R-05` (Android anchor-prior productization decision).
+  Scout-only and explicitly post-release.
+- **A full day** → `BACK-H-02` (registry from introspection). Medium, backend
+  hygiene, and isolated from the RC closure path.
+- **A week** → close the remaining post-release backlog that is already indexed
+  here: `BACK-H-02` + `BACK-H-04` plus a decision on `BACK-R-05`.
 
 ---
 
@@ -259,7 +265,10 @@ parallel fill-lane with no gate of its own.
 
 ### Lane D — Deterministic false-positive control (reviewer priority #1)
 
-- `BACK-D-01` · **P0 · S · worker** · Add rule promotion metadata to registry
+Lane `D` is closed; the task bodies below are retained as historical record for
+the landed work.
+
+- `BACK-D-01` · **[done 2026-04-18]** · **P0 · S · worker** · Add rule promotion metadata to registry
   - Files: `deterministic_special_case_registry.py:6-14`
     (`DeterministicSpecialCaseSpec` dataclass), new
     `notes/specs/deterministic_rule_graduation.md`
@@ -273,7 +282,7 @@ parallel fill-lane with no gate of its own.
     miss prompts, user-harm analysis for any emergency rule)
   - **Must-bundle with BACK-D-05** (same file, same region)
 
-- `BACK-D-02` · **P0 · M · worker** · Semantic adjudicator after lexical match
+- `BACK-D-02` · **[done 2026-04-18]** · **P0 · M · worker** · Semantic adjudicator after lexical match
   - Files: `query.py:5419-5427` (`_match_deterministic_special_case`), new
     helper in `special_case_builders.py`;
     `android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java:23-50`
@@ -305,7 +314,7 @@ parallel fill-lane with no gate of its own.
     bench runs
   - **Landed 2026-04-19 (`d88da35`)** — acceptance was already satisfied in immutable Wave B code from `af49d91`; the queue re-verified the exact `deterministic.builder_missing` event, the debug-only fallback note behavior, and a green full Python test run before recording the landing
 
-- `BACK-D-04` · **P0 · S · worker (test-infra)** · Near-miss false-positive panel
+- `BACK-D-04` · **[done 2026-04-18]** · **P0 · S · worker (test-infra)** · Near-miss false-positive panel
   - Files:
     `android-app/app/src/test/java/com/senku/mobile/DeterministicAnswerRouterTest.java`
     (expand); new
@@ -318,7 +327,7 @@ parallel fill-lane with no gate of its own.
     cases
   - **Must-bundle with BACK-D-02** (semantic verifier tuning is tested here)
 
-- `BACK-D-05` · **P2 · XS · worker** · Priority tie-break rule
+- `BACK-D-05` · **[done 2026-04-18]** · **P2 · XS · worker** · Priority tie-break rule
   - Files: `deterministic_special_case_registry.py` (schema comment),
     `query.py:5421-5427`
   - Behavior: document and enforce the tie-break among equal-priority matches.
@@ -329,7 +338,7 @@ parallel fill-lane with no gate of its own.
     deterministic outcome on a forced collision
   - **Must-bundle with BACK-D-01**
 
-- `BACK-D-06` · **P1 · S · worker (test-infra)** · Mobile pack deterministic parity
+- `BACK-D-06` · **[done 2026-04-18]** · **P1 · S · worker (test-infra)** · Mobile pack deterministic parity
   - Files: `mobile_pack.py:21+` (export path), new
     `scripts/validate_mobile_pack_deterministic_parity.ps1`,
     manifest file `android-app/deterministic_predicate_manifest.txt`
@@ -410,7 +419,10 @@ parallel fill-lane with no gate of its own.
 
 ### Lane L — Latency honesty (reviewer priority #3)
 
-- `BACK-L-01` · **P1 · S · worker** · Time-to-first-token + per-stage timing
+Lane `L` is closed; the task bodies below are retained as historical record for
+the landed work.
+
+- `BACK-L-01` · **[done 2026-04-18]** · **P1 · S · worker** · Time-to-first-token + per-stage timing
   - Files: `android-app/app/src/main/java/com/senku/mobile/OfflineAnswerEngine.java`
     (`generate()` and `prepare()`)
   - Behavior: record structured retrieval / rerank / prompt-build /
@@ -420,7 +432,7 @@ parallel fill-lane with no gate of its own.
   - Accept: unit test regex-parses the summary line; non-abstain runs carry a
     populated latency breakdown
 
-- `BACK-L-02` · **P1 · M · worker** · `LatencyPanel` events + persisted answer metadata
+- `BACK-L-02` · **[done 2026-04-18]** · **P1 · M · worker** · `LatencyPanel` events + persisted answer metadata
   - Files: `OfflineAnswerEngine.java`, `SessionMemory.java`, new
     `android-app/app/src/main/java/com/senku/mobile/telemetry/LatencyPanel.java`
   - Behavior: emit one structured `SenkuLatency` JSON event per answer run and
@@ -430,7 +442,7 @@ parallel fill-lane with no gate of its own.
     first-token / decode / total fields plus compatibility aliases
   - **Must-bundle with BACK-L-01** (both edit `generate()`)
 
-- `BACK-L-03` · **P2 · M · worker** · `PackRepository` stage timing + slow-query tripwire
+- `BACK-L-03` · **[done 2026-04-18]** · **P2 · M · worker** · `PackRepository` stage timing + slow-query tripwire
   - Files: `android-app/app/src/main/java/com/senku/mobile/PackRepository.java`
   - Behavior: time the FTS MATCH runtime probe, search-stage breakdown, and
     fallback detection; emit a slow-query debug warning when any stage exceeds
@@ -440,7 +452,7 @@ parallel fill-lane with no gate of its own.
     branches
   - **Depends on BACK-L-02** (schema must land first)
 
-- `BACK-L-04` · **P1 · S · worker** · Desktop latency summary tool
+- `BACK-L-04` · **[done 2026-04-18]** · **P1 · S · worker** · Desktop latency summary tool
   - Files: new `summarize_latency.py`, new `tests/test_summarize_latency.py`
   - Behavior: read exported `AnswerRun` JSON / JSONL records and print a
     p50 / p95 / max table per stage.
@@ -449,20 +461,21 @@ parallel fill-lane with no gate of its own.
 
 ### Lane R — Retrieval refinement
 
-- `BACK-R-01` · **P1 · S · scout → worker** · Anchor-prior fate decision
-  - Files: `query.py:59` (`ENABLE_ANCHOR_PRIOR = False`), lines 6748-6811
-    (machinery), `tests/test_anchor_prior.py`
-  - Behavior: scout audits whether anchor-prior is (a) dead code to delete,
-    (b) kept behind a flag documented in `config.py`, or (c) productized and
-    turned on. Recommendation from this audit: productize — OPUS-B-03
-    (contextual follow-up chips) already uses the adjacent infrastructure,
-    and follow-up quality is a known weak spot.
-  - Accept: decision recorded in
-    `notes/specs/anchor_prior_decision_<date>.md`; code matches the decision
-  - **Coordinates with OPUS-B-03** (landed; chip candidate generator reads
-    anchor state)
+Only `BACK-R-05` remains open post-release; the landed retrieval task bodies
+below stay in place as historical record.
 
-- `BACK-R-02` · **P1 · M · worker** · Context-aware bridge-guide demotion
+- `BACK-R-01` · **[done 2026-04-18]** · **P1 · S · scout → worker** · Anchor-prior fate decision
+  - Files: `query.py:61` (`ENABLE_ANCHOR_PRIOR = True`), Android reference in
+    `SessionMemory.java:22` (`ENABLE_ANCHOR_PRIOR = false`), and
+    `notes/specs/anchor_prior_decision_20260418.md`
+  - Status: desktop anchor-prior is already productized. Android still leaves
+    the feature flag off, so the remaining gap is Android-side productization
+    or removal of the half-commit mobile path.
+  - Accept: desktop docs stay aligned with code; `BACK-R-05` remains the
+    post-release Android decision.
+  - **Post-release mobile follow-up only** — no desktop RC blocker remains
+
+- `BACK-R-02` · **[done 2026-04-18]** · **P1 · M · worker** · Context-aware bridge-guide demotion
   - Files: `query.py:5606-5607` (uniform 0.06 demotion) and the 30-plus branch
     rerank conditions that follow
   - Behavior: when a query is flagged acute but *also* contains planning
@@ -486,7 +499,7 @@ parallel fill-lane with no gate of its own.
     the idle threshold, and confirms the third turn does not inherit the old
     anchor
 
-- `BACK-R-04` · **P2 · XS · worker** · Anchor-prior as typed parameter (hygiene)
+- `BACK-R-04` · **[done 2026-04-18]** · **P2 · XS · worker** · Anchor-prior as typed parameter (hygiene)
   - Files:
     `android-app/app/src/main/java/com/senku/mobile/SessionMemory.java:247-276`,
     `PackRepository.java:300-322` (`parseSearchQuery`)

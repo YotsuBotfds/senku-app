@@ -49,10 +49,10 @@ needed before the closeout re-run could run. Stock bundle re-exported
 `BACK-R-03` was invalidated because anchor-prior is feature-gated off on
 Android (`SessionMemory.java:22` `ENABLE_ANCHOR_PRIOR = false`) so the
 sticky-anchor idle-reset path is non-observable in production — see
-`notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Two follow-ups filed
-(post-release, not Wave B dependencies): `BACK-R-05` (Android anchor-prior
-productization decision) and `BACK-T-04` (fix `Quote-AndroidShellArg` in
-the session-flow harness). Wave B (`BACK-U-01` / `U-02` / `U-03`) is
+`notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Two follow-ups were
+filed: `BACK-T-04` landed 2026-04-19 (`2656311`), and `BACK-R-05`
+(Android anchor-prior productization decision) remains the open
+post-release item. Wave B (`BACK-U-01` / `U-02` / `U-03`) is
 complete: `BACK-U-03` landed 2026-04-18 (`af49d91`), `BACK-U-02` landed
 2026-04-18 (`d974ebc`), and `BACK-U-01` landed 2026-04-19 (`eb398dc`).
 Wave B is closed and ready for CHECKPOINT 9 release-candidate gate planning.
@@ -407,9 +407,6 @@ Resolved this closeout:
 Follow-ups (post-release):
 - `BACK-R-05` — decide whether to productize Android anchor-prior or remove
   the half-commit code (scout spike + decision doc)
-- `BACK-T-04` — fix `Quote-AndroidShellArg` in
-  `scripts/run_android_session_flow.ps1` so the session-flow harness can
-  drive multi-turn / idle-reset scenarios again
 - `BACK-T-05` — tighten
   `PromptHarnessSmokeTest.assertDetailSettled` body-content checks for
   `uncertain_fit` / `abstain`.
@@ -554,9 +551,9 @@ than three near-duplicate `executor.execute(...)` blocks in the Activity.
    **Done** 2026-04-19 (`eb398dc`). `BACK-U-02` landed 2026-04-18
    (`d974ebc`) and `BACK-U-03` landed 2026-04-18 (`af49d91`); Wave B is
    complete and ready for CHECKPOINT 9 release-candidate gate planning.
-6. File follow-ups post-release: `BACK-R-05` (Android anchor-prior
-   productization decision, scout spike) and `BACK-T-04` (fix
-   `Quote-AndroidShellArg` in session-flow harness).
+6. File follow-up post-release: `BACK-R-05` (Android anchor-prior
+   productization decision, scout spike). `BACK-T-04` already landed
+   2026-04-19 (`2656311`).
 
 ## State Log
 
