@@ -443,6 +443,414 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void resolveAnswerModeRoutesSafetyPoisoningToAbstainBeforeGeneration() {
+        String query = "my child may have poisoning after swallowing drain cleaner";
+        List<SearchResult> rawTopChunks = List.of(
+            new SearchResult(
+                "First Aid & Emergency Response",
+                "",
+                "Wound management basics.",
+                "Wound cleaning and dressing basics.",
+                "GD-232",
+                "Wound Management",
+                "medical",
+                "hybrid",
+                "safety",
+                "immediate",
+                "wound_care",
+                "first_aid,wound_cleaning"
+            ),
+            new SearchResult(
+                "Animal Bite Wound Care & Rabies Post-Exposure Protocols",
+                "",
+                "Amputation and salvage criteria.",
+                "Field bite care and rabies precautions.",
+                "GD-622",
+                "Amputation vs. Salvage Criteria",
+                "medical",
+                "vector",
+                "safety",
+                "immediate",
+                "wound_care",
+                "first_aid,infection_monitoring"
+            ),
+            new SearchResult(
+                "First Aid & Emergency Response",
+                "",
+                "Environmental emergencies and exposure response.",
+                "Corrosive exposure response, airway support, and escalation.",
+                "GD-232",
+                "Environmental Emergencies",
+                "medical",
+                "lexical",
+                "safety",
+                "immediate",
+                "safety_poisoning",
+                "lye_safety"
+            )
+        );
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "First Aid & Emergency Response",
+                "",
+                "Poisoning exposure priorities.",
+                "Drain cleaner and corrosive poisoning can worsen quickly and need Poison Control escalation.",
+                "GD-232",
+                "Environmental Emergencies",
+                "medical",
+                "guide-focus",
+                "safety",
+                "immediate",
+                "safety_poisoning",
+                "lye_safety"
+            ),
+            new SearchResult(
+                "First Aid & Emergency Response",
+                "",
+                "Poisoning and overdose triage.",
+                "Poisoning and overdose guidance starts with Poison Control, airway checks, and escalation.",
+                "GD-232",
+                "Poisoning and Overdose",
+                "medical",
+                "guide-focus",
+                "safety",
+                "immediate",
+                "safety_poisoning",
+                "lye_safety"
+            ),
+            new SearchResult(
+                "First Aid & Emergency Response",
+                "",
+                "Airway backup while waiting for emergency help.",
+                "Choking and airway management may support a poisoning response while awaiting help.",
+                "GD-232",
+                "Choking and Airway Management",
+                "medical",
+                "guide-focus",
+                "safety",
+                "immediate",
+                "safety_poisoning",
+                "lye_safety"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel = OfflineAnswerEngine.confidenceLabel(
+            selectedContext,
+            query,
+            metadataProfile
+        );
+
+        assertEquals("safety_poisoning", metadataProfile.preferredStructureType());
+        assertFalse(
+            OfflineAnswerEngine.shouldAbstain(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile,
+                confidenceLabel,
+                true
+            )
+        );
+
+        String answerBody = OfflineAnswerEngine.buildAbstainAnswerBody(query, selectedContext, true);
+        assertTrue(answerBody.contains(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE));
+        assertTrue(answerBody.contains("Poison Control"));
+    }
+
+    @Test
+    public void resolveAnswerModeRoutesAcuteMentalHealthMismatchToUncertainFit() {
+        String query =
+            "He has barely slept, keeps pacing, and says normal rules do not apply to him. "
+                + "Is this just stress, or should I help him calm down?";
+        List<SearchResult> rawTopChunks = List.of(
+            new SearchResult(
+                "First Aid & Emergency Response",
+                "",
+                "Environmental emergencies.",
+                "Emergency response basics for weather and exposure.",
+                "GD-232",
+                "Environmental Emergencies",
+                "medical",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Improvised Weapons and Defensive Tools",
+                "",
+                "Defensive encounter medical notes.",
+                "Medical considerations for defensive encounters.",
+                "GD-293",
+                "Medical Considerations for Defensive Encounters",
+                "defense",
+                "vector"
+            ),
+            new SearchResult(
+                "Justice & Legal Systems",
+                "",
+                "Civil disputes and legal process.",
+                "Rules for handling civil disputes and property conflicts.",
+                "GD-197",
+                "5. Civil Disputes",
+                "society",
+                "lexical"
+            )
+        );
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "Justice & Legal Systems",
+                "",
+                "Household rule disputes under stress.",
+                "These civil dispute rules apply when property stress rises in the group.",
+                "GD-197",
+                "5. Civil Disputes",
+                "society",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Justice & Legal Systems",
+                "",
+                "Property rules in stressed households.",
+                "Property law explains when rules apply during household stress.",
+                "GD-197",
+                "12. Property Law",
+                "society",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Justice & Legal Systems",
+                "",
+                "Criminal law basics.",
+                "Basic legal rules apply when conflicts escalate.",
+                "GD-197",
+                "4. Criminal Law Basics",
+                "society",
+                "guide-focus"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel = OfflineAnswerEngine.confidenceLabel(
+            selectedContext,
+            query,
+            metadataProfile
+        );
+
+        assertTrue(metadataProfile.preferredStructureType().isEmpty());
+        assertFalse(
+            OfflineAnswerEngine.shouldAbstain(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile,
+                confidenceLabel,
+                true
+            )
+        );
+
+        String answerBody = OfflineAnswerEngine.buildUncertainFitAnswerBody(
+            query,
+            selectedContext,
+            confidenceLabel,
+            true
+        );
+        assertTrue(answerBody.contains(OfflineAnswerEngine.SAFETY_CRITICAL_ESCALATION_LINE));
+        assertTrue(answerBody.contains("not a confident fit"));
+    }
+
+    @Test
+    public void safetyModeOverridesDoNotRerouteViolinBridgeOrRainShelter() {
+        String rainQuery = "How do I build a simple rain shelter from tarp and cord?";
+        List<SearchResult> rainRawTopChunks = List.of(
+            new SearchResult(
+                "Batteries & Energy Storage: Principles & Simple Applications",
+                "",
+                "Charging and maintenance basics for salvaged cells.",
+                "Battery banks, lead acid maintenance, and charging safety.",
+                "GD-727",
+                "Practical Survival Applications",
+                "utility",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Education System Design",
+                "",
+                "Schoolhouse management and mixed-age planning.",
+                "Lesson rotation, desks, and class planning.",
+                "GD-653",
+                "One-Room Schoolhouse & Mixed-Age Classroom Management",
+                "education",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Cave Shelter Systems and Long-Term Habitation",
+                "",
+                "Natural shelter options and drainage.",
+                "Choose shelter placement with runoff control and weather protection.",
+                "GD-294",
+                "Cave Selection Criteria",
+                "survival",
+                "hybrid",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "shelter"
+            )
+        );
+        List<SearchResult> rainSelectedContext = List.of(
+            new SearchResult(
+                "Cave Shelter Systems and Long-Term Habitation",
+                "",
+                "Use tarp panels and cord lashings to keep rain off the sleeping area.",
+                "A simple rain shelter can use a ridgeline, tarp angle, cord lashings, and drainage so runoff stays away from the sleeping area.",
+                "GD-294",
+                "Rain runoff and tarp placement",
+                "survival",
+                "guide-focus",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter,weatherproofing"
+            ),
+            new SearchResult(
+                "Cave Shelter Systems and Long-Term Habitation",
+                "",
+                "Cord tie-downs keep the tarp stable in wind and rain.",
+                "Secure the shelter with cord, tighten the ridgeline, and angle the tarp so rain sheds cleanly.",
+                "GD-294",
+                "Cord lashings and storm tension",
+                "survival",
+                "guide-focus",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter,weatherproofing"
+            ),
+            new SearchResult(
+                "Shelter basics",
+                "",
+                "Simple tarp shelter setup notes.",
+                "For a quick shelter, tie cord between anchors, drape the tarp, and pitch one side low for rain runoff.",
+                "GD-933",
+                "Simple tarp shelter setup",
+                "survival",
+                "lexical",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter"
+            )
+        );
+        QueryMetadataProfile rainMetadataProfile = QueryMetadataProfile.fromQuery(rainQuery);
+
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                rainSelectedContext,
+                rainRawTopChunks,
+                rainQuery,
+                rainMetadataProfile,
+                OfflineAnswerEngine.confidenceLabel(rainSelectedContext, rainQuery, rainMetadataProfile),
+                false
+            )
+        );
+
+        String violinQuery = "how do i tune a violin bridge and soundpost";
+        List<SearchResult> violinRawTopChunks = List.of(
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Suspension bridge load distribution.",
+                "Bridge span load calculations, deck tension, and cable support.",
+                "GD-110",
+                "Suspension Bridges",
+                "engineering",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Bridge stress testing in the field.",
+                "Load rating and structural bridge inspection routines.",
+                "GD-110",
+                "Field Load Testing and Structural Assessment",
+                "engineering",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Dental Prosthetics & Denture Making",
+                "",
+                "Repairing a dental bridge in low-resource settings.",
+                "Dental bridge stabilization and tooth replacement steps.",
+                "GD-061",
+                "Dental Bridge Improvisation",
+                "medical",
+                "hybrid"
+            )
+        );
+        List<SearchResult> violinSelectedContext = List.of(
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Bridge load tables and span measurements.",
+                "Bridge abutments, load paths, and span calculations for timber crossings.",
+                "GD-110",
+                "Bridge Load Calculations",
+                "engineering",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Aqueducts and water conveyance structures.",
+                "Bridge piers, aqueduct supports, and channel alignment.",
+                "GD-110",
+                "Aqueducts & Water Conveyance",
+                "engineering",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Dental Prosthetics & Denture Making",
+                "",
+                "Improvised dental bridge notes.",
+                "Dental bridge shaping and mouth-fit checks.",
+                "GD-061",
+                "Dental Bridge Improvisation",
+                "medical",
+                "hybrid"
+            )
+        );
+        QueryMetadataProfile violinMetadataProfile = QueryMetadataProfile.fromQuery(violinQuery);
+
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            OfflineAnswerEngine.resolveAnswerMode(
+                violinSelectedContext,
+                violinRawTopChunks,
+                violinQuery,
+                violinMetadataProfile,
+                OfflineAnswerEngine.confidenceLabel(violinSelectedContext, violinQuery, violinMetadataProfile),
+                false
+            )
+        );
+    }
+
+    @Test
     public void generateFallsBackToOnDeviceWhenHostFailsAndModelExists() throws Exception {
         File tempModel = File.createTempFile("senku-fallback", ".litertlm");
         tempModel.deleteOnExit();

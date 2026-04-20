@@ -29,6 +29,7 @@ public final class OfflineAnswerEngine {
     private static final double UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD = 0.65d;
     private static final double UNCERTAIN_FIT_MIN_VECTOR_SIMILARITY = 0.45d;
     private static final double UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY = 0.62d;
+    private static final String STRUCTURE_TYPE_SAFETY_POISONING = "safety_poisoning";
     static final String SAFETY_CRITICAL_ESCALATION_LINE =
         "If this is urgent or could be a safety risk, stop and call local emergency services now "
             + "(911 where applicable); if this may be poisoning, call Poison Control now, and "
@@ -60,6 +61,34 @@ public final class OfflineAnswerEngine {
         "will not stop moving",
         "barely eating",
         "hardly eating"
+    );
+    private static final Set<String> ACUTE_MENTAL_HEALTH_QUERY_MARKERS = buildSet(
+        "barely slept",
+        "hardly slept",
+        "keeps pacing",
+        "normal rules do not apply",
+        "special mission",
+        "acting invincible",
+        "nothing can hurt",
+        "just stress",
+        "calm down"
+    );
+    private static final Set<String> ACUTE_MENTAL_HEALTH_SUPPORT_MARKERS = buildSet(
+        "mental health",
+        "behavior",
+        "behaviour",
+        "agitation",
+        "pacing",
+        "calm down",
+        "de-escalation",
+        "de escalation",
+        "crisis",
+        "hallucination",
+        "hallucinations",
+        "paranoia",
+        "psychiatric",
+        "urgent support",
+        "trusted adult"
     );
     private static final Set<String> SAFETY_CRITICAL_ACUTE_QUERY_MARKERS = buildSet(
         "right now",
@@ -1218,6 +1247,12 @@ public final class OfflineAnswerEngine {
         if (safe(query).trim().isEmpty()) {
             return AnswerMode.CONFIDENT;
         }
+        if (shouldRouteSafetyPoisoningToAbstain(metadataProfile, safetyCritical)) {
+            return AnswerMode.ABSTAIN;
+        }
+        if (shouldRouteAcuteMentalHealthToUncertainFit(selectedContext, query, safetyCritical)) {
+            return AnswerMode.UNCERTAIN_FIT;
+        }
         if (shouldAbstain(selectedContext, topChunks, query, metadataProfile)) {
             return AnswerMode.ABSTAIN;
         }
@@ -1236,6 +1271,58 @@ public final class OfflineAnswerEngine {
             return AnswerMode.UNCERTAIN_FIT;
         }
         return AnswerMode.CONFIDENT;
+    }
+
+    private static boolean shouldRouteSafetyPoisoningToAbstain(
+        QueryMetadataProfile metadataProfile,
+        boolean safetyCritical
+    ) {
+        if (!safetyCritical || metadataProfile == null) {
+            return false;
+        }
+        String structureType = safe(metadataProfile.preferredStructureType()).trim().toLowerCase(QUERY_LOCALE);
+        return STRUCTURE_TYPE_SAFETY_POISONING.equals(structureType);
+    }
+
+    private static boolean shouldRouteAcuteMentalHealthToUncertainFit(
+        List<SearchResult> selectedContext,
+        String query,
+        boolean safetyCritical
+    ) {
+        if (!safetyCritical || !looksLikeAcuteMentalHealthQuery(query)) {
+            return false;
+        }
+        return !hasAcuteMentalHealthSupport(selectedContext);
+    }
+
+    private static boolean looksLikeAcuteMentalHealthQuery(String query) {
+        String normalized = safe(query).trim().toLowerCase(QUERY_LOCALE);
+        if (normalized.isEmpty()) {
+            return false;
+        }
+        return containsAny(normalized, ACUTE_MENTAL_HEALTH_QUERY_MARKERS)
+            || (normalized.contains("pacing")
+                && (normalized.contains("slept") || normalized.contains("sleep")));
+    }
+
+    private static boolean hasAcuteMentalHealthSupport(List<SearchResult> selectedContext) {
+        for (SearchResult result : topAbstainChunks(selectedContext)) {
+            if (result == null) {
+                continue;
+            }
+            String category = safe(result.category).trim().toLowerCase(QUERY_LOCALE);
+            String mode = safe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+            String surface = lexicalEvidenceText(result, true);
+            boolean supportMarkers = containsAny(surface, ACUTE_MENTAL_HEALTH_SUPPORT_MARKERS);
+            boolean mentalHealthCategory = category.contains("mental");
+            boolean medicalSafetyCategory = (category.contains("medical") || category.contains("health")) && supportMarkers;
+            boolean promptAnchoredSupport = supportMarkers
+                && ("guide-focus".equals(mode) || "route-focus".equals(mode) || "hybrid".equals(mode));
+            if (mentalHealthCategory || medicalSafetyCategory || promptAnchoredSupport) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static double averageRrfStrength(
