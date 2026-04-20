@@ -4102,6 +4102,7 @@ public final class PromptHarnessSmokeTest {
         );
     }
 
+    // R-ui2 v3 (commit f095194) removed programmatic landscape composer auto-focus; landscape composer is interactive-ready (visible + enabled) by default, and user interaction is required for focus.
     private boolean waitForLandscapeDockedComposerReady(long timeoutMs) {
         long deadline = SystemClock.uptimeMillis() + timeoutMs;
         while (SystemClock.uptimeMillis() < deadline) {
@@ -4114,8 +4115,7 @@ public final class PromptHarnessSmokeTest {
                 DockedComposerHostView composer = activity.findViewById(R.id.detail_followup_compose);
                 ViewGroup panel = activity.findViewById(R.id.detail_followup_panel);
                 requested[0] = composer != null
-                    && composer.getFocusRequestCount() > 0
-                    && composer.isComposerFocused()
+                    && composer.isEnabled()
                     && isEffectivelyVisible(composer)
                     && isEffectivelyVisible(panel);
             });
