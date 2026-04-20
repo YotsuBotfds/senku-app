@@ -4,6 +4,19 @@
 android-app/.gradle/
 android-app/.gradle-home/
 
+# android-app build output
+android-app/app/build/
+android-app/build/
+
+# android-app machine-specific config (SDK paths, etc.)
+android-app/local.properties
+
+# android-app lane bench scratch
+android-app/artifacts/
+
+# android-app device runtime state (SharedPreferences dump)
+android-app/senku_model_store.xml
+
 # --- IDE and editor metadata ---
 .idea/
 android-app/.idea/
