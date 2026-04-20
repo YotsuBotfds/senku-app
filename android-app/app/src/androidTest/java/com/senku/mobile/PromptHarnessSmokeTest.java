@@ -959,6 +959,70 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void previewLengthAnswerBodyDoesNotCountAsSettledDetail() {
+        Context context = ApplicationProvider.getApplicationContext();
+        ArrayList<SearchResult> sources = new ArrayList<>();
+        sources.add(new SearchResult(
+            "Rain shelter basics",
+            "Guide anchor",
+            "A ridgeline creates the main shelter spine.",
+            "Tie a ridgeline first, then drape and tension the tarp around it.",
+            "GD-202",
+            "Rain shelter basics",
+            "shelter",
+            "hybrid"
+        ));
+        Intent intent = DetailActivity.newAnswerIntent(
+            context,
+            "Preview settle regression",
+            "AI-generated answer",
+            "Short answer:\nStart with the ridgeline.\n\nSteps:\n1. Tie it first.\n\nLimits or safety:\nCheck runoff.",
+            sources,
+            null,
+            "test-preview-settle",
+            null,
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM
+        );
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        try (ActivityScenario<DetailActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            Assert.assertTrue(
+                "baseline answer detail should render before preview regression staging",
+                waitForDetailBodyReady(DETAIL_WAIT_MS, 8)
+            );
+            final boolean[] legacyWouldPass = {false};
+            final boolean[] strictWouldPass = {true};
+            scenario.onActivity(activity -> {
+                String previewBody = safe((String) invokePrivateMethod(
+                    activity,
+                    "buildGeneratingPreviewBody",
+                    new Class<?>[] { int.class },
+                    sources.size()
+                ));
+                Assert.assertFalse("preview body sentinel should resolve", previewBody.isEmpty());
+                Assert.assertTrue(
+                    "preview regression staging should be able to replace the current answer body",
+                    setPrivateField(activity, "currentBody", previewBody)
+                );
+                activity.renderDetailState();
+                DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                legacyWouldPass[0] = isLegacyDetailBodyReady(activity, signals, 40);
+                strictWouldPass[0] = isDetailBodyReady(activity, signals, 40);
+            });
+            Assert.assertTrue(
+                "legacy settle gate should have accepted the preview-length answer body",
+                legacyWouldPass[0]
+            );
+            Assert.assertFalse(
+                "preview body must not count as a settled detail answer",
+                strictWouldPass[0]
+            );
+        }
+    }
+
+    @Test
     public void returningFromAnswerKeepsAskLaneEmphasis() {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             awaitHarnessIdle();
@@ -2437,6 +2501,9 @@ public final class PromptHarnessSmokeTest {
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             SystemClock.sleep(50L);
         }
+        Assert.fail(
+            "harness never went idle within " + timeoutMs + "ms; active labels=" + HarnessTestSignals.snapshot()
+        );
     }
 
     private void assertResultsSettled(ActivityScenario<MainActivity> scenario, long timeoutMs) {
@@ -2448,7 +2515,7 @@ public final class PromptHarnessSmokeTest {
 
     private void assertDetailSettled(long timeoutMs, String expectedTitle, boolean expectHistory) {
         Assert.assertTrue(
-            "detail surface should settle in the active posture",
+            "detail surface should settle in the active posture; harness signals=" + HarnessTestSignals.snapshot(),
             waitForDetailBodyReady(timeoutMs, expectHistory ? 40 : 8)
         );
 
@@ -2490,6 +2557,10 @@ public final class PromptHarnessSmokeTest {
                     return;
                 }
                 DetailSettleSignals signals = collectDetailSettleSignals(activity);
+                if (!isDetailBodyReady(activity, signals, 40)) {
+                    failure[0] = "generated detail should reach a final answer surface before capture";
+                    return;
+                }
                 if (signals.tabletCompose) {
                     String metaText = String.join(" | ", signals.metaLabels);
                     String statusText = safe(signals.statusText);
@@ -3912,30 +3983,7 @@ public final class PromptHarnessSmokeTest {
                     return;
                 }
                 DetailSettleSignals signals = collectDetailSettleSignals(activity);
-                if (signals.tabletCompose) {
-                    boolean hasIdentity = !signals.title.trim().isEmpty() || !signals.guideId.trim().isEmpty();
-                    ready[0] = signals.tabletRootVisible
-                        && signals.bodyText.trim().length() >= Math.max(0, minimumVisibleLength)
-                        && (!signals.answerMode
-                            || signals.turnCount > 0
-                            || signals.sourceCount > 0
-                            || signals.evidenceAnchorReady)
-                        && (hasIdentity || signals.answerMode);
-                    return;
-                }
-                if (signals.answerMode) {
-                    android.view.View answerCard = activity.findViewById(R.id.detail_answer_card);
-                    android.view.View bodyMirrorShell = activity.findViewById(R.id.detail_body_mirror_shell);
-                    TextView detailBody = activity.findViewById(R.id.detail_body);
-                    ready[0] = signals.bodyText.trim().length() >= Math.max(0, minimumVisibleLength)
-                        && (isVisible(answerCard) || isVisible(bodyMirrorShell) || isVisible(detailBody));
-                    return;
-                }
-                TextView detailBody = activity.findViewById(R.id.detail_body);
-                if (detailBody == null || !isVisible(detailBody)) {
-                    return;
-                }
-                ready[0] = safe(detailBody.getText().toString()).trim().length() >= Math.max(0, minimumVisibleLength);
+                ready[0] = isDetailBodyReady(activity, signals, minimumVisibleLength);
             });
             if (ready[0]) {
                 return true;
@@ -3944,6 +3992,86 @@ public final class PromptHarnessSmokeTest {
             SystemClock.sleep(75L);
         }
         return false;
+    }
+
+    private boolean isLegacyDetailBodyReady(Activity activity, DetailSettleSignals signals, int minimumVisibleLength) {
+        if (activity == null || signals == null) {
+            return false;
+        }
+        int minimumLength = Math.max(0, minimumVisibleLength);
+        if (signals.tabletCompose) {
+            boolean hasIdentity = !signals.title.trim().isEmpty() || !signals.guideId.trim().isEmpty();
+            return signals.tabletRootVisible
+                && signals.bodyText.trim().length() >= minimumLength
+                && (!signals.answerMode
+                    || signals.turnCount > 0
+                    || signals.sourceCount > 0
+                    || signals.evidenceAnchorReady)
+                && (hasIdentity || signals.answerMode);
+        }
+        if (signals.answerMode) {
+            android.view.View answerCard = activity.findViewById(R.id.detail_answer_card);
+            android.view.View bodyMirrorShell = activity.findViewById(R.id.detail_body_mirror_shell);
+            TextView detailBody = activity.findViewById(R.id.detail_body);
+            return signals.bodyText.trim().length() >= minimumLength
+                && (isVisible(answerCard) || isVisible(bodyMirrorShell) || isVisible(detailBody));
+        }
+        TextView detailBody = activity.findViewById(R.id.detail_body);
+        return detailBody != null
+            && isVisible(detailBody)
+            && safe(detailBody.getText().toString()).trim().length() >= minimumLength;
+    }
+
+    private boolean isDetailBodyReady(Activity activity, DetailSettleSignals signals, int minimumVisibleLength) {
+        if (!isLegacyDetailBodyReady(activity, signals, minimumVisibleLength)) {
+            return false;
+        }
+        if (!signals.answerMode) {
+            return true;
+        }
+        if (isGeneratingPreviewBody(activity, signals)) {
+            return false;
+        }
+        if (signals.generationBusy) {
+            return false;
+        }
+        return !isInFlightDetailStatus(signals);
+    }
+
+    private boolean isGeneratingPreviewBody(Activity activity, DetailSettleSignals signals) {
+        if (activity == null || signals == null) {
+            return false;
+        }
+        String bodyText = safe(signals.bodyText).trim();
+        if (bodyText.isEmpty()) {
+            return false;
+        }
+        int sourceCount = Math.max(0, signals.sourceCount);
+        String emptyPreviewBody = safe((String) invokePrivateMethod(
+            activity,
+            "buildGeneratingPreviewBody",
+            new Class<?>[] { int.class },
+            0
+        )).trim();
+        String sourcePreviewBody = safe((String) invokePrivateMethod(
+            activity,
+            "buildGeneratingPreviewBody",
+            new Class<?>[] { int.class },
+            Math.max(1, sourceCount)
+        )).trim();
+        return bodyText.equals(emptyPreviewBody) || bodyText.equals(sourcePreviewBody);
+    }
+
+    private boolean isInFlightDetailStatus(DetailSettleSignals signals) {
+        String statusTextLower = safe(signals == null ? null : signals.statusText).toLowerCase(Locale.US);
+        return containsAny(
+            statusTextLower,
+            "finding guide evidence",
+            "building answer",
+            "still building",
+            "sources ready",
+            "continuing on this device"
+        );
     }
 
     private boolean waitForLandscapeDockedComposerReady(long timeoutMs) {
@@ -3984,6 +4112,14 @@ public final class PromptHarnessSmokeTest {
         signals.guideId = readPrivateStringField(activity, "currentGuideId");
         signals.bodyText = readPrivateStringField(activity, "currentBody");
         signals.statusText = readPrivateStringField(activity, "tabletStatusText");
+        signals.generationBusy = signals.tabletCompose
+            ? readPrivateBooleanField(activity, "tabletBusy")
+            : isVisible(activity.findViewById(R.id.detail_progress));
+        signals.sourceCount = collectionSize(readPrivateField(activity, "currentSources"));
+        if (!signals.tabletCompose) {
+            TextView statusView = activity.findViewById(R.id.detail_status_text);
+            signals.statusText = safe(statusView == null ? null : String.valueOf(statusView.getText()));
+        }
         signals.backendLabel = safe((String) invokePrivateNoArgMethod(activity, "buildSerialBackendValue"));
         signals.evidenceLabel = safe((String) invokePrivateNoArgMethod(activity, "getEvidenceStrengthLabel"));
         signals.deterministicRoute = readPrivateBooleanMethod(activity, "isDeterministicRoute");
@@ -4025,9 +4161,6 @@ public final class PromptHarnessSmokeTest {
                         || !invokeStringMethod(anchor, "getId").trim().isEmpty()
                         || !invokeStringMethod(anchor, "getTitle").trim().isEmpty();
                 }
-            }
-            if (signals.sourceCount <= 0) {
-                signals.sourceCount = collectionSize(readPrivateField(activity, "currentSources"));
             }
             if (signals.turnCount <= 0) {
                 Object sessionMemoryObject = readPrivateField(activity, "sessionMemory");
@@ -4289,6 +4422,7 @@ public final class PromptHarnessSmokeTest {
         boolean abstainRoute;
         boolean composerVisible;
         boolean evidenceAnchorReady;
+        boolean generationBusy;
         int sourceCount;
         int turnCount;
         String postureLabel = "detail";
