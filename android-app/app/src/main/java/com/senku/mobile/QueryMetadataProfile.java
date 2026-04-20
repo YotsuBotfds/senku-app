@@ -1582,7 +1582,14 @@ public final class QueryMetadataProfile {
 
     private static Map<String, Set<String>> buildStructureMarkers() {
         LinkedHashMap<String, Set<String>> markers = new LinkedHashMap<>();
-        markers.put(STRUCTURE_TYPE_EMERGENCY_SHELTER, buildSet("debris hut", "lean-to", "a-frame shelter", "emergency shelter"));
+        markers.put(
+            STRUCTURE_TYPE_EMERGENCY_SHELTER,
+            buildSet(
+                "debris hut", "lean-to", "a-frame shelter", "emergency shelter",
+                "rain shelter", "rain fly", "tarp shelter", "tarp ridgeline",
+                "ridgeline shelter", "tarp and cord", "tarp and rope"
+            )
+        );
         markers.put(STRUCTURE_TYPE_CABIN_HOUSE, buildSet("house", "home", "cabin", "homestead", "dwelling"));
         markers.put(
             STRUCTURE_TYPE_EARTH_SHELTER,

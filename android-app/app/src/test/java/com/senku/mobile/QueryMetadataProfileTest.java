@@ -1352,4 +1352,43 @@ public final class QueryMetadataProfileTest {
         assertTrue(profile.hasExplicitTopic("lye_safety"));
         assertFalse("safety_poisoning".equals(profile.preferredStructureType()));
     }
+
+    @Test
+    public void detectStructureTypeIdentifiesRainShelterFromTarpAndCord() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "How do I build a simple rain shelter from tarp and cord?"
+        );
+
+        assertTrue("emergency_shelter".equals(profile.preferredStructureType()));
+    }
+
+    @Test
+    public void detectStructureTypeIdentifiesRainFly() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("setting up a rain fly in a storm");
+
+        assertTrue("emergency_shelter".equals(profile.preferredStructureType()));
+    }
+
+    @Test
+    public void detectStructureTypeIdentifiesTarpRidgelineShelter() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "how to make a tarp ridgeline shelter with cord"
+        );
+
+        assertTrue("emergency_shelter".equals(profile.preferredStructureType()));
+    }
+
+    @Test
+    public void detectStructureTypeDoesNotRouteGenericTarpQuery() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("how to store a rolled tarp in the shed");
+
+        assertFalse("emergency_shelter".equals(profile.preferredStructureType()));
+    }
+
+    @Test
+    public void detectStructureTypeDoesNotRouteCampingTarpQuery() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("best tarp brand for weekend camping");
+
+        assertFalse("emergency_shelter".equals(profile.preferredStructureType()));
+    }
 }
