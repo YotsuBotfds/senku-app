@@ -1660,6 +1660,430 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void resolveAnswerModePrefersSelectedContextOverOffTopicRawTopRows() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        List<SearchResult> rawTopChunks = List.of(
+            new SearchResult(
+                "Batteries & Energy Storage: Principles & Simple Applications",
+                "",
+                "Charging and maintenance basics for salvaged cells.",
+                "Battery banks, lead acid maintenance, and charging safety.",
+                "GD-727",
+                "Practical Survival Applications",
+                "utility",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Education System Design",
+                "",
+                "Schoolhouse management and mixed-age planning.",
+                "Lesson rotation, desks, and class planning.",
+                "GD-653",
+                "One-Room Schoolhouse & Mixed-Age Classroom Management",
+                "education",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Cave Shelter Systems and Long-Term Habitation",
+                "",
+                "Natural shelter options and drainage.",
+                "Choose shelter placement with runoff control and weather protection.",
+                "GD-294",
+                "Cave Selection Criteria",
+                "survival",
+                "hybrid",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "shelter"
+            )
+        );
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "Cave Shelter Systems and Long-Term Habitation",
+                "",
+                "Use tarp panels and cord lashings to keep rain off the sleeping area.",
+                "A simple rain shelter can use a ridgeline, tarp angle, cord lashings, and drainage so runoff stays away from the sleeping area.",
+                "GD-294",
+                "Rain runoff and tarp placement",
+                "survival",
+                "guide-focus",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter,weatherproofing"
+            ),
+            new SearchResult(
+                "Cave Shelter Systems and Long-Term Habitation",
+                "",
+                "Cord tie-downs keep the tarp stable in wind and rain.",
+                "Secure the shelter with cord, tighten the ridgeline, and angle the tarp so rain sheds cleanly.",
+                "GD-294",
+                "Cord lashings and storm tension",
+                "survival",
+                "guide-focus",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter,weatherproofing"
+            ),
+            new SearchResult(
+                "Shelter basics",
+                "",
+                "Simple tarp shelter setup notes.",
+                "For a quick shelter, tie cord between anchors, drape the tarp, and pitch one side low for rain runoff.",
+                "GD-933",
+                "Simple tarp shelter setup",
+                "survival",
+                "lexical",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel = OfflineAnswerEngine.confidenceLabel(
+            selectedContext,
+            query,
+            metadataProfile
+        );
+
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile,
+                confidenceLabel,
+                false
+            )
+        );
+    }
+
+    @Test
+    public void hybridRawRowsDoNotBlockAbstainWithoutGroundedSelectedContext() {
+        String query = "how do i tune a violin bridge and soundpost";
+        List<SearchResult> rawTopChunks = List.of(
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Suspension bridge load distribution.",
+                "Bridge span load calculations, deck tension, and cable support.",
+                "GD-110",
+                "Suspension Bridges",
+                "engineering",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Bridge stress testing in the field.",
+                "Load rating and structural bridge inspection routines.",
+                "GD-110",
+                "Field Load Testing and Structural Assessment",
+                "engineering",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Dental Prosthetics & Denture Making",
+                "",
+                "Repairing a dental bridge in low-resource settings.",
+                "Dental bridge stabilization and tooth replacement steps.",
+                "GD-061",
+                "Dental Bridge Improvisation",
+                "medical",
+                "hybrid"
+            )
+        );
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Bridge load tables and span measurements.",
+                "Bridge abutments, load paths, and span calculations for timber crossings.",
+                "GD-110",
+                "Bridge Load Calculations",
+                "engineering",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Aqueducts and water conveyance structures.",
+                "Bridge piers, aqueduct supports, and channel alignment.",
+                "GD-110",
+                "Aqueducts & Water Conveyance",
+                "engineering",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Dental Prosthetics & Denture Making",
+                "",
+                "Improvised dental bridge notes.",
+                "Dental bridge shaping and mouth-fit checks.",
+                "GD-061",
+                "Dental Bridge Improvisation",
+                "medical",
+                "hybrid"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        assertTrue(
+            OfflineAnswerEngine.shouldAbstain(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.ABSTAIN,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile,
+                OfflineAnswerEngine.confidenceLabel(selectedContext, query, metadataProfile),
+                false
+            )
+        );
+    }
+
+    @Test
+    public void generateDowngradesLowCoverageAnswerToAbstainRoute() throws Exception {
+        File tempModel = File.createTempFile("senku-low-coverage", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                String lowCoverage = "The retrieved notes do not contain information about violin soundpost adjustment.";
+                listener.onPartialText(lowCoverage);
+                return lowCoverage;
+            }
+        );
+
+        String query = "how do i tune a violin bridge and soundpost";
+        List<SearchResult> promptSources = List.of(
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Bridge load tables and span measurements.",
+                "Bridge abutments, load paths, and span calculations for timber crossings.",
+                "GD-110",
+                "Bridge Load Calculations",
+                "engineering",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Bridges, Dams & Infrastructure",
+                "",
+                "Aqueducts and water conveyance structures.",
+                "Bridge piers, aqueduct supports, and channel alignment.",
+                "GD-110",
+                "Aqueducts & Water Conveyance",
+                "engineering",
+                "guide-focus"
+            )
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            query,
+            promptSources,
+            false,
+            System.currentTimeMillis() - 1200L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt",
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM
+        );
+
+        OfflineAnswerEngine.AnswerRun answerRun = OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertTrue(answerRun.abstain);
+        assertEquals(OfflineAnswerEngine.AnswerMode.ABSTAIN, answerRun.mode);
+        assertTrue(answerRun.answerBody.contains("Senku doesn't have a guide"));
+        assertTrue(answerRun.subtitle.startsWith("Low coverage |"));
+    }
+
+    @Test
+    public void drowningResuscitationRegressionStaysUncertainFit() {
+        String query = "What are the steps for drowning rescue and resuscitation?";
+        List<SearchResult> rawTopChunks = List.of(
+            new SearchResult(
+                "Cold Water Survival & Immersion Hypothermia",
+                "",
+                "Immersion survival positions and rescue posture.",
+                "Cold-water rescue positioning and survival posture.",
+                "GD-396",
+                "Immersion Survival Positions",
+                "survival",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Arctic Survival & Boreal Adaptation",
+                "",
+                "Frostbite prevention and treatment.",
+                "Cold exposure sheltering and frostbite response.",
+                "GD-445",
+                "Frostbite Prevention and Treatment",
+                "survival",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Cold Water Survival & Immersion Hypothermia",
+                "",
+                "Cold-water rescue techniques.",
+                "Rescue approach and recovery from cold water.",
+                "GD-396",
+                "Cold Water Rescue Techniques",
+                "survival",
+                "hybrid"
+            )
+        );
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "Cold Water Survival & Immersion Hypothermia",
+                "",
+                "Cold-water rescue techniques.",
+                "Rescue approach, flotation support, and extraction from the water.",
+                "GD-396",
+                "Cold Water Rescue Techniques",
+                "survival",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Cold Water Survival & Immersion Hypothermia",
+                "",
+                "Near-drowning follow-up checks.",
+                "Drowning follow-up signs and delayed symptom watch after extraction.",
+                "GD-396",
+                "Near-Drowning and Secondary Drowning",
+                "survival",
+                "guide-focus"
+            ),
+            new SearchResult(
+                "Coastal Navigation and Rescue Signaling",
+                "",
+                "Calling and signaling for rescue.",
+                "Rescue signaling and team coordination near water.",
+                "GD-475",
+                "Rescue Signaling",
+                "survival",
+                "lexical"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        assertFalse(
+            OfflineAnswerEngine.shouldAbstain(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile,
+                OfflineAnswerEngine.confidenceLabel(selectedContext, query, metadataProfile),
+                false
+            )
+        );
+    }
+
+    @Test
+    public void maniaEscalationRegressionStaysUncertainFit() {
+        String query =
+            "He has barely slept, keeps pacing, and says normal rules do not apply to him. "
+                + "Is this just stress, or should I help him calm down?";
+        List<SearchResult> rawTopChunks = List.of(
+            new SearchResult(
+                "Emergency Dental Procedures",
+                "",
+                "Rapid chairside triage.",
+                "Acute dental triage and stabilization steps.",
+                "GD-061",
+                "Dental Emergency Intake",
+                "medical",
+                "hybrid"
+            ),
+            new SearchResult(
+                "Behavior Supervision Notes",
+                "",
+                "Pacing observation cues.",
+                "Observation notes for pacing and agitation.",
+                "GD-305",
+                "Observation",
+                "mental-health",
+                "vector"
+            ),
+            new SearchResult(
+                "Calm Down or Escalate Checklist",
+                "",
+                "Escalation markers for observers.",
+                "When pacing worsens, move to escalation support.",
+                "GD-306",
+                "Pacing observer steps",
+                "mental-health",
+                "lexical"
+            )
+        );
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "Behavior Supervision Notes",
+                "",
+                "Barely slept, pacing, and observation cues.",
+                "Barely slept, pacing, and sudden behavior changes can need urgent support.",
+                "GD-305",
+                "Normal rules observation",
+                "mental-health",
+                "vector"
+            ),
+            new SearchResult(
+                "Calm Down or Escalate Checklist",
+                "",
+                "Pacing observer steps and calming support.",
+                "Pacing, calm voice, and when to move from calming support to urgent escalation.",
+                "GD-306",
+                "Pacing observer steps",
+                "mental-health",
+                "lexical"
+            )
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        assertFalse(
+            OfflineAnswerEngine.shouldAbstain(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                rawTopChunks,
+                query,
+                metadataProfile,
+                OfflineAnswerEngine.confidenceLabel(selectedContext, query, metadataProfile),
+                true
+            )
+        );
+    }
+
+    @Test
     public void offlineAnswerEngineUsesExplicitTokenBudget() {
         assertEquals(Integer.valueOf(2048), OfflineAnswerEngine.modelMaxTokensForTest());
     }

@@ -285,13 +285,15 @@ public final class OfflineAnswerEngine {
         contextResults = trimWeakSessionContext(contextSelectionQuery, sessionUsed, contextResults, recentSources);
 
         List<SearchResult> modeCandidates = answerCandidates.isEmpty() ? contextResults : answerCandidates;
+        List<SearchResult> gateContext = contextResults.isEmpty() ? modeCandidates : contextResults;
         ConfidenceLabel confidenceLabel = confidenceLabel(
-            modeCandidates,
+            gateContext,
             contextSelectionQuery,
             retrievalPlan.metadataProfile
         );
-        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, modeCandidates);
+        boolean safetyCritical = isSafetyCriticalQuery(trimmedQuery, gateContext);
         AnswerMode answerMode = resolveAnswerMode(
+            gateContext,
             modeCandidates,
             contextSelectionQuery,
             retrievalPlan.metadataProfile,
@@ -299,7 +301,7 @@ public final class OfflineAnswerEngine {
             safetyCritical
         );
         if (answerMode == AnswerMode.ABSTAIN) {
-            List<SearchResult> adjacentGuides = topAbstainChunks(modeCandidates);
+            List<SearchResult> adjacentGuides = topAbstainChunks(gateContext);
             logDebug(
                 TAG,
                 "ask.abstain query=\"" + trimmedQuery + "\" adjacentGuides=" + adjacentGuides.size()
@@ -319,7 +321,7 @@ public final class OfflineAnswerEngine {
             );
         }
         if (answerMode == AnswerMode.UNCERTAIN_FIT) {
-            List<SearchResult> adjacentGuides = topAbstainChunks(modeCandidates);
+            List<SearchResult> adjacentGuides = topAbstainChunks(gateContext);
             logDebug(
                 TAG,
                 "ask.uncertain_fit query=\"" + trimmedQuery + "\" adjacentGuides=" + adjacentGuides.size()
@@ -606,6 +608,19 @@ public final class OfflineAnswerEngine {
         );
         logLatencySummary(prepared.query, latencyBreakdown);
         LatencyPanel.emit(prepared.queryClass, latencyBreakdown);
+        if (lowCoverage) {
+            AnswerRun downgradedRun = buildLowCoverageDowngradeAnswerRun(
+                modelFile,
+                prepared,
+                elapsedMs,
+                subtitle,
+                latencyBreakdown,
+                hostBackendUsed,
+                hostFallbackUsed
+            );
+            rememberSessionLatencyBreakdown(downgradedRun);
+            return downgradedRun;
+        }
         AnswerRun answerRun = new AnswerRun(
             prepared.query,
             answerBody,
@@ -1099,7 +1114,7 @@ public final class OfflineAnswerEngine {
             return ConfidenceLabel.LOW;
         }
         List<String> queryTokens = queryTokens(query);
-        if (!safe(query).trim().isEmpty() && shouldAbstain(adjacent, query)) {
+        if (!safe(query).trim().isEmpty() && shouldAbstain(topChunks, topChunks, query, metadataProfile)) {
             return ConfidenceLabel.LOW;
         }
 
@@ -1118,7 +1133,7 @@ public final class OfflineAnswerEngine {
 
         for (int index = 0; index < adjacent.size(); index++) {
             SearchResult result = adjacent.get(index);
-            int overlap = lexicalOverlapScore(result, queryTokens);
+            int overlap = gateLexicalOverlapScore(result, queryTokens);
             maxOverlap = Math.max(maxOverlap, overlap);
             boolean hybrid = "hybrid".equalsIgnoreCase(safe(result == null ? null : result.retrievalMode).trim());
             anyHybrid |= hybrid;
@@ -1182,24 +1197,42 @@ public final class OfflineAnswerEngine {
         ConfidenceLabel confidenceLabel,
         boolean safetyCritical
     ) {
+        return resolveAnswerMode(
+            topChunks,
+            topChunks,
+            query,
+            metadataProfile,
+            confidenceLabel,
+            safetyCritical
+        );
+    }
+
+    static AnswerMode resolveAnswerMode(
+        List<SearchResult> selectedContext,
+        List<SearchResult> topChunks,
+        String query,
+        QueryMetadataProfile metadataProfile,
+        ConfidenceLabel confidenceLabel,
+        boolean safetyCritical
+    ) {
         if (safe(query).trim().isEmpty()) {
             return AnswerMode.CONFIDENT;
         }
-        if (shouldAbstain(topChunks, query)) {
+        if (shouldAbstain(selectedContext, topChunks, query, metadataProfile)) {
             return AnswerMode.ABSTAIN;
         }
-        double averageRrfStrength = averageRrfStrength(topChunks, query, metadataProfile);
+        double averageRrfStrength = averageRrfStrength(selectedContext, query, metadataProfile);
         if (averageRrfStrength < UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD) {
             return AnswerMode.UNCERTAIN_FIT;
         }
-        double topVectorSimilarity = topVectorSimilarity(topChunks, query, metadataProfile);
+        double topVectorSimilarity = topVectorSimilarity(selectedContext, query, metadataProfile);
         if (topVectorSimilarity >= UNCERTAIN_FIT_MIN_VECTOR_SIMILARITY
             && topVectorSimilarity <= UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY) {
             return AnswerMode.UNCERTAIN_FIT;
         }
         if (safetyCritical
             && confidenceLabel != ConfidenceLabel.HIGH
-            && !hasPrimaryOwnerSupport(topChunks, query, metadataProfile)) {
+            && !hasPrimaryOwnerSupport(selectedContext, query, metadataProfile)) {
             return AnswerMode.UNCERTAIN_FIT;
         }
         return AnswerMode.CONFIDENT;
@@ -1232,7 +1265,7 @@ public final class OfflineAnswerEngine {
             return 0.0d;
         }
         String mode = safe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        int overlap = lexicalOverlapScore(result, queryTokens);
+        int overlap = gateLexicalOverlapScore(result, queryTokens);
         double strength = Math.max(0.06d, 0.22d - (Math.max(0, index) * 0.04d));
         if ("hybrid".equals(mode)) {
             strength += 0.36d;
@@ -1247,6 +1280,9 @@ public final class OfflineAnswerEngine {
             strength += 0.22d;
         } else if (overlap >= 1) {
             strength += 0.12d;
+        }
+        if (("guide-focus".equals(mode) || "route-focus".equals(mode)) && overlap >= 3) {
+            strength += 0.06d;
         }
         if (metadataProfile != null) {
             if (metadataProfile.hasExplicitTopicOverlap(result.topicTags)) {
@@ -1273,19 +1309,19 @@ public final class OfflineAnswerEngine {
         }
         SearchResult top = adjacent.get(0);
         List<String> queryTokens = queryTokens(query);
-        int overlap = lexicalOverlapScore(top, queryTokens);
+        int overlap = gateLexicalOverlapScore(top, queryTokens);
         String mode = safe(top == null ? null : top.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
         double similarity;
         if ("hybrid".equals(mode)) {
-            similarity = overlap > 0 ? 0.64d : 0.62d;
+            similarity = overlap >= 2 ? 0.66d : (overlap > 0 ? 0.64d : 0.62d);
         } else if ("guide-focus".equals(mode) || "route-focus".equals(mode)) {
-            similarity = overlap > 0 ? 0.60d : 0.56d;
+            similarity = overlap >= 2 ? 0.64d : (overlap > 0 ? 0.60d : 0.56d);
         } else if ("vector".equals(mode)) {
-            similarity = overlap > 0 ? 0.56d : 0.52d;
+            similarity = overlap >= 2 ? 0.58d : (overlap > 0 ? 0.56d : 0.52d);
         } else if ("lexical".equals(mode)) {
-            similarity = overlap > 0 ? 0.47d : 0.42d;
+            similarity = overlap >= 2 ? 0.50d : (overlap > 0 ? 0.47d : 0.42d);
         } else {
-            similarity = overlap > 0 ? 0.45d : 0.0d;
+            similarity = overlap >= 2 ? 0.49d : (overlap > 0 ? 0.45d : 0.0d);
         }
         if (metadataProfile != null) {
             if (metadataProfile.hasExplicitTopicOverlap(top == null ? "" : top.topicTags)) {
@@ -1312,7 +1348,7 @@ public final class OfflineAnswerEngine {
             if (result == null) {
                 continue;
             }
-            int overlap = lexicalOverlapScore(result, queryTokens);
+            int overlap = gateLexicalOverlapScore(result, queryTokens);
             String mode = safe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
             int sectionBonus = metadataProfile == null ? 0 : metadataProfile.sectionHeadingBonus(result.sectionHeading);
             int preferredTopicOverlap = metadataProfile == null
@@ -1332,19 +1368,33 @@ public final class OfflineAnswerEngine {
     }
 
     private static String abstainMatchLabel(SearchResult result, List<String> queryTokens) {
-        int overlap = lexicalOverlapScore(result, queryTokens);
+        int overlap = gateLexicalOverlapScore(result, queryTokens);
         String retrievalMode = safe(result == null ? null : result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-        if (overlap >= 2 || "hybrid".equals(retrievalMode)) {
+        if (overlap >= 2) {
             return "moderate match";
         }
-        if (overlap >= 1 || "lexical".equals(retrievalMode) || "vector".equals(retrievalMode)) {
+        if (overlap >= 1
+            || "hybrid".equals(retrievalMode)
+            || "guide-focus".equals(retrievalMode)
+            || "route-focus".equals(retrievalMode)
+            || "lexical".equals(retrievalMode)
+            || "vector".equals(retrievalMode)) {
             return "low match";
         }
         return "off-topic candidate";
     }
 
     static boolean shouldAbstain(List<SearchResult> topChunks, String query) {
-        List<SearchResult> adjacent = topAbstainChunks(topChunks);
+        return shouldAbstain(topChunks, topChunks, query, QueryMetadataProfile.fromQuery(query));
+    }
+
+    static boolean shouldAbstain(
+        List<SearchResult> selectedContext,
+        List<SearchResult> retrievalTopChunks,
+        String query,
+        QueryMetadataProfile metadataProfile
+    ) {
+        List<SearchResult> adjacent = topAbstainChunks(selectedContext);
         List<String> queryTokens = queryTokens(query);
         if (adjacent.isEmpty() || queryTokens.isEmpty()) {
             return false;
@@ -1352,20 +1402,18 @@ public final class OfflineAnswerEngine {
 
         int maxOverlap = 0;
         LinkedHashSet<String> uniqueLexicalHits = new LinkedHashSet<>();
-        boolean strongSemanticHit = false;
         for (SearchResult result : adjacent) {
-            int overlap = lexicalOverlapScore(result, queryTokens);
+            int overlap = gateLexicalOverlapScore(result, queryTokens);
             maxOverlap = Math.max(maxOverlap, overlap);
-            String haystack = (safe(result.title) + " " + safe(result.sectionHeading)).toLowerCase(QUERY_LOCALE);
-            for (String token : queryTokens) {
-                if (haystack.contains(token)) {
-                    uniqueLexicalHits.add(token);
-                }
-            }
-            if ("hybrid".equalsIgnoreCase(safe(result.retrievalMode).trim())) {
-                strongSemanticHit = true;
-            }
+            collectLexicalHits(result, queryTokens, uniqueLexicalHits, true);
         }
+        boolean strongSemanticHit = hasStrongSemanticHit(
+            adjacent,
+            retrievalTopChunks,
+            query,
+            queryTokens,
+            metadataProfile
+        );
         return maxOverlap <= ABSTAIN_MAX_OVERLAP_TOKENS
             && uniqueLexicalHits.size() < ABSTAIN_MIN_UNIQUE_LEXICAL_HITS
             && !strongSemanticHit;
@@ -1531,6 +1579,113 @@ public final class OfflineAnswerEngine {
             }
         }
         return score;
+    }
+
+    private static int gateLexicalOverlapScore(SearchResult source, List<String> queryTokens) {
+        if (source == null || queryTokens.isEmpty()) {
+            return 0;
+        }
+        LinkedHashSet<String> hits = new LinkedHashSet<>();
+        collectLexicalHits(source, queryTokens, hits, true);
+        return hits.size();
+    }
+
+    private static void collectLexicalHits(
+        SearchResult source,
+        List<String> queryTokens,
+        Set<String> destination,
+        boolean includePromptSurface
+    ) {
+        if (source == null || queryTokens.isEmpty() || destination == null) {
+            return;
+        }
+        String haystack = lexicalEvidenceText(source, includePromptSurface);
+        if (haystack.isEmpty()) {
+            return;
+        }
+        for (String token : queryTokens) {
+            if (haystack.contains(token)) {
+                destination.add(token);
+            }
+        }
+    }
+
+    private static String lexicalEvidenceText(SearchResult source, boolean includePromptSurface) {
+        if (source == null) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(safe(source.title)).append(' ')
+            .append(safe(source.sectionHeading)).append(' ');
+        if (includePromptSurface) {
+            builder.append(safe(source.subtitle)).append(' ')
+                .append(safe(source.snippet)).append(' ')
+                .append(safe(source.body)).append(' ');
+        }
+        return builder.toString().toLowerCase(QUERY_LOCALE);
+    }
+
+    private static boolean hasStrongSemanticHit(
+        List<SearchResult> selectedContext,
+        List<SearchResult> retrievalTopChunks,
+        String query,
+        List<String> queryTokens,
+        QueryMetadataProfile metadataProfile
+    ) {
+        boolean routeFocused = QueryRouteProfile.fromQuery(query).isRouteFocused();
+        for (SearchResult result : selectedContext) {
+            if (result == null) {
+                continue;
+            }
+            int overlap = gateLexicalOverlapScore(result, queryTokens);
+            int sectionBonus = metadataProfile == null ? 0 : metadataProfile.sectionHeadingBonus(result.sectionHeading);
+            int preferredTopicOverlap = metadataProfile == null
+                ? 0
+                : metadataProfile.preferredTopicOverlapCount(result.topicTags);
+            boolean explicitTopicMatch = metadataProfile != null
+                && metadataProfile.hasExplicitTopicOverlap(result.topicTags);
+            String mode = safe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+            boolean selectedGuideSupport = overlap >= ABSTAIN_MIN_UNIQUE_LEXICAL_HITS
+                || explicitTopicMatch
+                || preferredTopicOverlap > 0
+                || sectionBonus >= 8
+                || (routeFocused
+                    && ("hybrid".equals(mode)
+                        || "guide-focus".equals(mode)
+                        || "route-focus".equals(mode))
+                    && overlap >= 1);
+            if (selectedGuideSupport) {
+                return true;
+            }
+        }
+        if (retrievalTopChunks == null || retrievalTopChunks.isEmpty()) {
+            return false;
+        }
+        if (topVectorSimilarity(retrievalTopChunks, query, metadataProfile) <= UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY) {
+            return false;
+        }
+        return rawTopChunkSupportsSelectedAnchor(retrievalTopChunks.get(0), selectedContext, queryTokens);
+    }
+
+    private static boolean rawTopChunkSupportsSelectedAnchor(
+        SearchResult rawTopChunk,
+        List<SearchResult> selectedContext,
+        List<String> queryTokens
+    ) {
+        if (rawTopChunk == null || selectedContext == null || selectedContext.isEmpty()) {
+            return false;
+        }
+        String rawGuideKey = guideKey(rawTopChunk);
+        if (rawGuideKey.isEmpty() || lexicalOverlapScore(rawTopChunk, queryTokens) <= ABSTAIN_MAX_OVERLAP_TOKENS) {
+            return false;
+        }
+        for (SearchResult selectedChunk : selectedContext) {
+            if (rawGuideKey.equals(guideKey(selectedChunk))
+                && gateLexicalOverlapScore(selectedChunk, queryTokens) > ABSTAIN_MAX_OVERLAP_TOKENS) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static List<String> queryTokens(String query) {
@@ -1824,6 +1979,45 @@ public final class OfflineAnswerEngine {
 
     static void rememberSessionLatencyBreakdownForTest(AnswerRun answerRun) {
         rememberSessionLatencyBreakdown(answerRun);
+    }
+
+    private static AnswerRun buildLowCoverageDowngradeAnswerRun(
+        File modelFile,
+        PreparedAnswer prepared,
+        long elapsedMs,
+        String subtitle,
+        LatencyBreakdown latencyBreakdown,
+        boolean hostBackendUsed,
+        boolean hostFallbackUsed
+    ) {
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(prepared.query);
+        boolean abstainShape = shouldAbstain(prepared.sources, prepared.sources, prepared.query, metadataProfile);
+        ConfidenceLabel downgradedConfidence = ConfidenceLabel.LOW;
+        String downgradedBody = abstainShape
+            ? buildAbstainAnswerBody(prepared.query, prepared.sources, prepared.safetyCritical)
+            : buildUncertainFitAnswerBody(prepared.query, prepared.sources, downgradedConfidence, prepared.safetyCritical);
+        AnswerMode downgradedMode = abstainShape ? AnswerMode.ABSTAIN : AnswerMode.UNCERTAIN_FIT;
+        logDebug(
+            TAG,
+            "ask.generate low_coverage_route query=\"" + prepared.query + "\" mode=" +
+                downgradedMode.name().toLowerCase(QUERY_LOCALE)
+        );
+        return new AnswerRun(
+            prepared.query,
+            downgradedBody,
+            prepared.sources,
+            elapsedMs,
+            prepared.sessionUsed,
+            false,
+            abstainShape,
+            subtitle,
+            null,
+            latencyBreakdown,
+            downgradedConfidence,
+            downgradedMode,
+            hostBackendUsed,
+            hostFallbackUsed
+        );
     }
 
     private static String buildSubtitle(
