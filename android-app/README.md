@@ -1,0 +1,234 @@
+# Senku Mobile Pack Test App
+
+This Android subproject packages the exported offline Senku mobile pack into the field-manual-style debug app used for local testing, review packs, and parity validation.
+
+## Current Scope
+
+The app currently:
+
+- bundles the exported pack from `artifacts/mobile_pack/senku_20260410`
+- installs the pack into app-local storage on first launch
+- parses the manifest and vector header
+- opens the packaged SQLite database locally
+- browses guides offline
+- searches chunks offline with:
+  - lexical FTS seeding
+  - vector-assisted reranking/expansion from `senku_vectors.f16`
+  - `LIKE` fallback if FTS is unavailable
+- imports a local `.litertlm` or `.task` model into app storage
+- builds a compact offline prompt from retrieved Senku context
+- runs local Gemma inference through LiteRT-LM
+- supports search, ask, recent-thread continuity, and guide/detail review flows
+- renders the current field-manual UI across phone/tablet portrait and landscape postures
+
+This is now an inference-integrated debug build.
+
+## Current Validation Baseline
+
+Use the fixed emulator matrix as the default posture proof:
+
+- `emulator-5556` = phone portrait
+- `emulator-5560` = phone landscape
+- `emulator-5554` = tablet portrait
+- `emulator-5558` = tablet landscape
+
+Practical rule:
+- use emulators for the day-to-day validation loop
+- use physical phone/tablet checks as milestone truth checks and live mirror/review lanes
+
+Recommended launcher from the repo root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start_senku_emulator_matrix.ps1
+```
+
+Notes:
+- default mode is read-only so each emulator session stays disposable
+- app installs, pushed packs, and imported models remain available during the live session, but they do not survive a full emulator restart in read-only mode
+
+## Build
+
+From this directory:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+.\gradlew.bat assembleDebug
+```
+
+## APK
+
+Latest debug APK output:
+
+- `app/build/outputs/apk/debug/app-debug.apk`
+
+## Install
+
+If a device is attached:
+
+```powershell
+& 'C:\Users\tateb\AppData\Local\Android\Sdk\platform-tools\adb.exe' install -r app\build\outputs\apk\debug\app-debug.apk
+```
+
+If the emulator throws a transient signature/certificate parse failure during streamed install, retry with:
+
+```powershell
+& 'C:\Users\tateb\AppData\Local\Android\Sdk\platform-tools\adb.exe' install --no-streaming app\build\outputs\apk\debug\app-debug.apk
+```
+
+## Instrumented Smoke
+
+The project now includes a first AndroidX instrumentation lane for harness validation.
+
+Run the smoke tests from the repo root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device RFCX607ZM8L
+```
+
+Fast repeat check against the current build:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device RFCX607ZM8L `
+  -SmokeProfile basic `
+  -SkipBuild
+```
+
+Run the host-backed generative smoke:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device RFCX607ZM8L `
+  -SmokeProfile host `
+  -SkipBuild `
+  -HostInferenceUrl http://10.0.2.2:1235/v1 `
+  -HostInferenceModel gemma-4-e2b-it-litert
+```
+
+Run the full phone smoke including follow-up continuity:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device RFCX607ZM8L `
+  -SmokeProfile full `
+  -SkipBuild `
+  -HostInferenceUrl http://10.0.2.2:1235/v1 `
+  -CaptureLogcat `
+  -ClearLogcatBeforeRun
+```
+
+What it currently checks:
+- pack install settles
+- search flow returns results without shell-polled XML completion logic
+- deterministic ask opens the detail screen
+- optional host-inference generative ask opens a populated detail screen
+- optional host-inference follow-up smoke verifies prior-turn continuity
+- posture-focused runs can reuse the same smoke suite with `-Orientation` and `-FontScale`
+
+Artifacts:
+- screenshots are copied into `artifacts/instrumented_ui_smoke/<timestamp>/<device>/screenshots`
+- XML hierarchy dumps are copied into `artifacts/instrumented_ui_smoke/<timestamp>/<device>/dumps`
+- the instrumentation console log is copied into `instrumentation.txt`
+- optional device logcat is copied into `logcat.txt`
+- a machine-readable `summary.json` is written next to the run artifacts
+- treat that `summary.json` as the authoritative contract for wrapper scripts; when richer posture, role, or orientation facts are present there, wrappers should trust them before trying shell-side rechecks
+- on physical devices, the runner automatically applies `adb reverse` when the host URL points at `10.0.2.2`
+
+Fast-lane options:
+- `-SmokeProfile basic` runs only search + deterministic ask
+- `-SmokeProfile host` adds the host-backed generative ask
+- `-SmokeProfile full` adds follow-up continuity
+- `-SkipBuild` reuses the current built APKs
+- `-SkipInstall` skips reinstall when the current app + test APK are already on the device
+
+The tests live under:
+
+- `app/src/androidTest/java/com/senku/mobile/PromptHarnessSmokeTest.java`
+
+The legacy shell runner can also use this lane as a preflight:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_prompt.ps1 `
+  -Emulator RFCX607ZM8L `
+  -Query "How do I start a fire in rain?" `
+  -Ask `
+  -InferenceMode host `
+  -UseInstrumentationPreflight
+```
+
+That preflight now uses the fast instrumentation profile automatically:
+- `basic` for normal prompt runs
+- `host` for host-inference prompt runs
+- and it reuses the current local APK build with `-SkipBuild`
+
+The UI validation pack now defaults to instrumentation-backed execution and consumes the instrumentation summary as artifact truth when available:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_ui_validation_pack.ps1 `
+  -Devices RFCX607ZM8L `
+  -InferenceMode host
+```
+
+If you need to force the legacy prompt runner, keep the instrumentation gate in front of it explicitly:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_ui_validation_pack.ps1 `
+  -Devices RFCX607ZM8L `
+  -InferenceMode host `
+  -ForceShellExecution `
+  -UseInstrumentationPreflight
+```
+
+Pack-runner notes:
+- the trusted fast path is instrumentation-first and fact-driven, not serial shell folklore
+- the wrapper copies dumps, screenshots, and logcat from the instrumentation summary when those facts are present
+- shell-side screenshot/orientation recovery is now only the fallback path when the richer summary facts are missing
+
+For live device observation while harnesses run, use the repo mirror helper from the repo root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start_senku_device_mirrors.ps1
+```
+
+Phone-only relaunch:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start_senku_device_mirrors.ps1 -PhoneOnly
+```
+
+## Emulator Note
+
+On the x86_64 Android emulator, Gemma 4 LiteRT models currently work on the CPU path in this app when LiteRT-LM is allowed to use the model/runtime default token budget.
+
+- Do not force `EngineConfig.maxNumTokens=512` on the emulator path. That setting caused LiteRT prefill failures with `DYNAMIC_UPDATE_SLICE`.
+- GPU/OpenCL is still not the reliable emulator path here; CPU is the working fallback.
+- Uninstalling the app clears the imported-model state. Re-import the model, or copy it back into the app's internal `files/models` directory before testing offline answers again.
+- The repo still defaults the host-side LiteRT lane to `E2B`, but the Android import path itself is generic. A real `E4B` device lane requires an actual `gemma-4-E4B-it.litertlm` or `.task` artifact, not just a host model ID.
+
+## Push A LiteRT Model Directly
+
+If you already have a local `E4B` or `E2B` `.litertlm` / `.task` file, you can push it straight into the debug app without using the document picker:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\push_litert_model_to_android.ps1 `
+  -Device emulator-5556 `
+  -ModelPath C:\path\to\gemma-4-E4B-it.litertlm `
+  -RestartApp
+```
+
+If `-ModelPath` is omitted, the helper looks for these common names in repo root, `models\`, and `Downloads`:
+
+- `gemma-4-E4B-it.litertlm`
+- `gemma-4-E4B-it.task`
+- `gemma-4-E2B-it.litertlm`
+- `gemma-4-E2B-it.task`
+
+## Next Step
+
+Current priorities:
+
+- keep Android deterministic parity widening against desktop
+- improve host-independent/on-device answer resilience
+- continue tightening the field-manual identity without regressing posture coverage
+- keep the fixed four-lane validation matrix and review gallery current as the UI evolves
