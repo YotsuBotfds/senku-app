@@ -98,6 +98,7 @@ STRUCTURE_TYPE_COMMUNITY_SECURITY = "community_security"
 STRUCTURE_TYPE_COMMUNITY_GOVERNANCE = "community_governance"
 STRUCTURE_TYPE_SOAPMAKING = "soapmaking"
 STRUCTURE_TYPE_GLASSMAKING = "glassmaking"
+STRUCTURE_TYPE_SAFETY_POISONING = "safety_poisoning"
 STRUCTURE_TYPE_GENERAL = "general"
 
 TOPIC_TAG_MARKERS = {
@@ -463,9 +464,43 @@ TOPIC_TAG_MARKERS = {
         "caustic soda",
         "sodium hydroxide",
         "potassium hydroxide",
+        "bleach",
+        "drain cleaner",
+        "detergent pod",
+        "poison control",
+        "unknown ingestion",
+        "corrosive exposure",
         "alkali burns",
         "chemical burns",
         "flush with water",
+    ),
+    "poisoning_triage": (
+        "poisoning",
+        "poison control",
+        "unknown ingestion",
+        "accidental poisoning",
+        "do not induce vomiting",
+        "activated charcoal",
+        "decontamination",
+        "chemical exposure",
+        "corrosive exposure",
+    ),
+    "toxidrome": (
+        "toxidrome",
+        "toxidromes",
+        "anticholinergic",
+        "cholinergic",
+        "sympathomimetic",
+        "opioid overdose",
+    ),
+    "antidotes": (
+        "antidote",
+        "antidotes",
+        "naloxone",
+        "atropine",
+        "pralidoxime",
+        "n-acetylcysteine",
+        "vitamin k",
     ),
     "glassmaking": (
         "glassmaking",
@@ -914,6 +949,30 @@ CHEMISTRY_CONTEXT_MARKERS = (
     "soda ash",
     "furnace",
 )
+SAFETY_POISONING_CORE_MARKERS = (
+    "toxicology",
+    "poisoning",
+    "poison management",
+    "poison control",
+    "toxidrome",
+    "toxidromes",
+    "antidote",
+    "antidotes",
+    "unknown ingestion",
+    "accidental poisoning",
+)
+SAFETY_POISONING_SUPPORT_MARKERS = (
+    "child accidental poisoning",
+    "swallowed cleaner",
+    "do not induce vomiting",
+    "activated charcoal",
+    "decontamination",
+    "chemical exposure",
+    "corrosive exposure",
+    "rodenticide",
+    "smoke and carbon monoxide exposure",
+    "field poisoning",
+)
 BUILDING_TOPIC_TAGS = frozenset(
     {
         "site_selection",
@@ -959,6 +1018,7 @@ COMMUNITY_GOVERNANCE_TOPIC_TAGS = frozenset(
     {"community_governance", "conflict_resolution", "trust_systems"}
 )
 CHEMISTRY_TOPIC_TAGS = frozenset({"soapmaking", "lye_safety", "glassmaking", "annealing"})
+POISONING_TOPIC_TAGS = frozenset({"poisoning_triage", "toxidrome", "antidotes"})
 
 
 @dataclass(frozen=True)
@@ -2021,6 +2081,8 @@ def _detect_structure_type(core_text: str, body_text: str = "") -> str:
     ):
         return STRUCTURE_TYPE_WATER_DISTRIBUTION
     combined = _normalized_match_text(core_text, body_text)
+    if _has_safety_poisoning_focus(core_text, body_text):
+        return STRUCTURE_TYPE_SAFETY_POISONING
     if _looks_like_chemistry_context(combined):
         soapmaking_strong = sum(1 for marker in SOAPMAKING_BODY_STRONG_MARKERS if _has_marker(combined, marker))
         soapmaking_support = sum(1 for marker in SOAPMAKING_BODY_SUPPORT_MARKERS if _has_marker(combined, marker))
@@ -2106,7 +2168,7 @@ def _detect_content_role(core_text: str, body_text: str = "") -> str:
 
 
 def _detect_time_horizon(text: str, structure_type: str) -> str:
-    if structure_type == STRUCTURE_TYPE_EMERGENCY_SHELTER:
+    if structure_type in {STRUCTURE_TYPE_EMERGENCY_SHELTER, STRUCTURE_TYPE_SAFETY_POISONING}:
         return TIME_HORIZON_IMMEDIATE
     if structure_type in (
         STRUCTURE_TYPE_CABIN_HOUSE,
@@ -2144,7 +2206,15 @@ def _detect_topic_tags(core_text: str, body_text: str, structure_type: str) -> l
         or _looks_like_water_context(core_text)
     )
     watercraft_context = structure_type == STRUCTURE_TYPE_SMALL_WATERCRAFT
-    medical_context = structure_type == STRUCTURE_TYPE_WOUND_CARE or _looks_like_medical_context(core_text)
+    poisoning_context = (
+        structure_type == STRUCTURE_TYPE_SAFETY_POISONING
+        or _looks_like_safety_poisoning_context(extended_context_text)
+    )
+    medical_context = (
+        structure_type in {STRUCTURE_TYPE_WOUND_CARE, STRUCTURE_TYPE_SAFETY_POISONING}
+        or poisoning_context
+        or _looks_like_medical_context(core_text)
+    )
     sanitation_context = (
         structure_type == STRUCTURE_TYPE_SANITATION_SYSTEM
         or _looks_like_sanitation_context(extended_context_text)
@@ -2184,6 +2254,9 @@ def _detect_topic_tags(core_text: str, body_text: str, structure_type: str) -> l
         if topic_tag in COMMUNITY_GOVERNANCE_TOPIC_TAGS and not community_governance_context:
             continue
         if topic_tag in CHEMISTRY_TOPIC_TAGS and not chemistry_context:
+            if not (topic_tag == "lye_safety" and poisoning_context):
+                continue
+        if topic_tag in POISONING_TOPIC_TAGS and not poisoning_context:
             continue
         if topic_tag == "water_storage" and not _has_water_storage_focus(core_text, body_text):
             continue
@@ -2226,6 +2299,10 @@ def _looks_like_chemistry_context(text: str) -> bool:
     return any(marker in text for marker in CHEMISTRY_CONTEXT_MARKERS)
 
 
+def _looks_like_safety_poisoning_context(text: str) -> bool:
+    return _has_safety_poisoning_focus(text)
+
+
 def _has_marker(text: str, marker: str) -> bool:
     if not marker:
         return False
@@ -2233,6 +2310,21 @@ def _has_marker(text: str, marker: str) -> bool:
         return marker in text
     pattern = rf"(?<![a-z0-9]){re.escape(marker)}(?![a-z0-9])"
     return re.search(pattern, text) is not None
+
+
+def _has_safety_poisoning_focus(core_text: str, body_text: str = "") -> bool:
+    combined = _normalized_match_text(core_text, body_text)
+    strong_matches = sum(
+        1 for marker in SAFETY_POISONING_CORE_MARKERS if _has_marker(combined, marker)
+    )
+    if strong_matches >= 2:
+        return True
+    if strong_matches == 0:
+        return False
+    support_matches = sum(
+        1 for marker in SAFETY_POISONING_SUPPORT_MARKERS if _has_marker(combined, marker)
+    )
+    return support_matches >= 1 or _has_marker(combined, "medical")
 
 
 def _has_water_storage_focus(core_text: str, body_text: str) -> bool:
