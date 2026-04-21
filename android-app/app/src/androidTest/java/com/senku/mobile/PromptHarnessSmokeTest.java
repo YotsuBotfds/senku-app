@@ -75,7 +75,8 @@ public final class PromptHarnessSmokeTest {
     private static final String EXTRA_AUTO_QUERY = "auto_query";
     private static final String EXTRA_AUTO_ASK = "auto_ask";
     private static final String EXTRA_AUTO_FOLLOWUP_QUERY = "auto_followup_query";
-    private static final long SEARCH_WAIT_MS = 10_000L;
+    // Empirical: "fire" search logs ~5.8-6.2s; 10s missed three times across 48h on 5554/5556. See notes/R-SEARCH_DIAGNOSTIC_20260421.md.
+    private static final long SEARCH_WAIT_MS = 15_000L;
     private static final long DETAIL_WAIT_MS = 15_000L;
     private static final long GENERATIVE_DETAIL_WAIT_MS = 20_000L;
     private static final double SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD = 0.6d;
