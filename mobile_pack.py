@@ -579,6 +579,11 @@ STRUCTURE_TYPE_MARKERS = (
         "tarp shelter",
         "tarp ridgeline",
         "ridgeline shelter",
+        "shelter site",
+        "primitive shelter",
+        "seasonal shelter",
+        "temporary shelter",
+        "cave shelter",
     )),
     (STRUCTURE_TYPE_CABIN_HOUSE, (
         "construction & carpentry",

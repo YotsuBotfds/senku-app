@@ -425,6 +425,96 @@ Guide body.
 
         self.assertEqual(negative_meta.structure_type, STRUCTURE_TYPE_GENERAL)
 
+    def test_emergency_shelter_markers_cover_corpus_vetted_shelter_phrases(self):
+        positive_phrases = (
+            "shelter site",
+            "primitive shelter",
+            "seasonal shelter",
+            "temporary shelter",
+            "cave shelter",
+        )
+
+        for index, phrase in enumerate(positive_phrases, start=1):
+            with self.subTest(phrase=phrase):
+                guide = GuideRecord(
+                    guide_id=f"GD-95{index}",
+                    slug=f"{phrase.replace(' ', '-')}-guide",
+                    title=f"{phrase.title()} Basics",
+                    source_file=f"{phrase.replace(' ', '-')}.md",
+                    description=f"Field notes for evaluating a {phrase} before the weather turns.",
+                    category="survival",
+                    tags="shelter,fieldcraft",
+                    body_markdown="Check wind, drainage, and local hazards before settling in for the night.",
+                )
+
+                meta = _derive_guide_metadata(guide)
+
+                self.assertEqual(meta.structure_type, STRUCTURE_TYPE_EMERGENCY_SHELTER)
+
+        arctic_shape = GuideRecord(
+            guide_id="GD-445",
+            slug="arctic-survival-boreal",
+            title="Arctic Survival & Boreal Adaptation",
+            source_file="arctic-survival-boreal.md",
+            description="Frostbite prevention, snow travel, igloo and snow shelter construction, and cold camp routine planning.",
+            category="survival",
+            tags="arctic,cold-weather,survival",
+            body_markdown="Preserve heat, manage layers, and maintain a dry sleep system in severe cold.",
+        )
+        self.assertNotEqual(
+            _derive_guide_metadata(arctic_shape).structure_type,
+            STRUCTURE_TYPE_EMERGENCY_SHELTER,
+        )
+
+        nuclear_shape = GuideRecord(
+            guide_id="GD-563",
+            slug="nuclear-preparedness-fallout",
+            title="Nuclear Preparedness & Fallout Shelter Operations",
+            source_file="nuclear-preparedness-fallout.md",
+            description="Fallout shelter design, dose-rate awareness, shelter construction (purpose-built and expedient), and contamination control.",
+            category="preparedness",
+            tags="nuclear,fallout,shelter",
+            body_markdown="Track exposure, improve shielding, and minimize contamination transfer between zones.",
+        )
+        self.assertNotEqual(
+            _derive_guide_metadata(nuclear_shape).structure_type,
+            STRUCTURE_TYPE_EMERGENCY_SHELTER,
+        )
+
+    def test_GD_446_reclassifies_from_cabin_house_to_emergency_shelter_post_marker_addition(self):
+        # The new "shelter site" marker intentionally wins before CABIN_HOUSE's
+        # longer site-selection phrase because _detect_structure_type is first-match.
+        guide = GuideRecord(
+            guide_id="GD-446",
+            slug="shelter-site-assessment",
+            title="Shelter Site Selection & Hazard Assessment",
+            source_file="shelter-site-assessment.md",
+            description="Terrain analysis, water proximity, wind exposure, natural hazards, defensibility, resource proximity, and seasonal considerations for shelter site selection.",
+            category="survival",
+            tags="essential,shelter,site-selection,campsite,camp-site,tent-location,safe-camp,flood-risk,shelter-location,where-to-build,base-camp,terrain-check,hazard-check",
+            body_markdown="Consider flood risk, drainage, and prevailing wind when selecting a shelter site.",
+        )
+
+        meta = _derive_guide_metadata(guide)
+
+        self.assertEqual(meta.structure_type, STRUCTURE_TYPE_EMERGENCY_SHELTER)
+
+    def test_GD_294_tags_emergency_shelter_post_marker_addition(self):
+        guide = GuideRecord(
+            guide_id="GD-294",
+            slug="cave-shelter-systems",
+            title="Cave Shelter Systems and Long-Term Habitation",
+            source_file="cave-shelter-systems.md",
+            description="Cave selection criteria, cold trap zones and ventilation, humidity management, radon and CO2 risks, lighting, water sources, and considerations for extended occupation.",
+            category="survival",
+            tags="practical,survival",
+            body_markdown="Evaluate cave air quality, humidity, and stability before extended use.",
+        )
+
+        meta = _derive_guide_metadata(guide)
+
+        self.assertEqual(meta.structure_type, STRUCTURE_TYPE_EMERGENCY_SHELTER)
+
     def test_chunk_metadata_detects_water_storage_without_inheriting_wrong_domain_tags(self):
         guide = GuideRecord(
             guide_id="GD-252",
