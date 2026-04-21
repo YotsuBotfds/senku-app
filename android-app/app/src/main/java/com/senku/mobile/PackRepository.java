@@ -40,6 +40,12 @@ public final class PackRepository implements AutoCloseable {
     private static final long SEARCH_RERANK_BUDGET_MS = 60L;
     private static final long SEARCH_TOTAL_BUDGET_MS = 280L;
     private static final long FTS_RUNTIME_PROBE_BUDGET_MS = 25L;
+    private static final int CANDIDATE_TELEMETRY_TOP_N = 20;
+    private static final int CANDIDATE_TELEMETRY_FALLBACK_TOP_N = 10;
+    private static final int CANDIDATE_TELEMETRY_QUERY_LIMIT = 120;
+    private static final int CANDIDATE_TELEMETRY_SECTION_LIMIT = 40;
+    private static final int CANDIDATE_TELEMETRY_TOPIC_LIMIT = 60;
+    private static final int CANDIDATE_TELEMETRY_MAX_LINE_LENGTH = 4096;
     private static final Object FTS_RUNTIME_LOCK = new Object();
     private static volatile FtsRuntime cachedFtsRuntime;
     private final Object closeLock = new Object();
@@ -523,6 +529,7 @@ public final class PackRepository implements AutoCloseable {
         List<RankedChunk> keywordHits = searchWithKeywordHits(queryTerms, lexicalCandidateLimit);
         List<RankedChunk> lexicalHits = mergeLexicalHits(ftsHits, keywordHits);
         long keywordElapsedMs = System.currentTimeMillis() - keywordStartedAt;
+        maybeLogCandidateTelemetry(buildLexicalCandidateTelemetryLine(query, lexicalHits));
 
         if (lexicalHits.isEmpty()) {
             if (!routeResults.isEmpty()) {
@@ -576,13 +583,15 @@ public final class PackRepository implements AutoCloseable {
         }
 
         if (vectorStore == null) {
-            List<SearchResult> lexicalResults = toSearchResults(
-                mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior),
-                limit
-            );
+            maybeLogCandidateTelemetry(buildVectorCandidateTelemetryLine(query, Collections.emptyList()));
+            List<CombinedHit> lexicalCombinedHits = mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior);
+            maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, lexicalCombinedHits, limit));
+            List<SearchResult> lexicalResults = toSearchResults(lexicalCombinedHits, limit);
             long rerankStartedAtNs = SystemClock.elapsedRealtimeNanos();
-            List<SearchResult> reranked = maybeRerankResults(queryTerms, lexicalResults, limit);
+            List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, lexicalResults, limit);
+            List<SearchResult> reranked = extractSearchResults(rerankedDetails);
             rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
+            maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
             SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
@@ -620,12 +629,20 @@ public final class PackRepository implements AutoCloseable {
         long vectorStartedAt = System.currentTimeMillis();
         float[] centroid = vectorStore.buildCentroid(seedRows, VECTOR_SEED_COUNT);
         if (centroid == null) {
+            maybeLogCandidateTelemetry(buildVectorCandidateTelemetryLine(query, Collections.emptyList()));
+            List<CombinedHit> lexicalCombinedHits = mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior);
+            maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, lexicalCombinedHits, limit));
+            List<SearchResult> lexicalResults = toSearchResults(lexicalCombinedHits, limit);
+            long rerankStartedAtNs = SystemClock.elapsedRealtimeNanos();
+            List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, lexicalResults, limit);
+            rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
+            maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
             SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
                 routeElapsedMs,
                 ftsElapsedMs,
                 keywordElapsedMs,
                 Math.max(0L, System.currentTimeMillis() - vectorStartedAt),
-                0L,
+                rerankElapsedMs,
                 Math.max(0L, System.currentTimeMillis() - startedAt),
                 "centroid_missing"
             );
@@ -644,23 +661,22 @@ public final class PackRepository implements AutoCloseable {
             logSearchTripwireIfNeeded(query, breakdown);
             return mergeResultsWhenCentroidMissing(
                 routeResults,
-                toSearchResults(
-                    mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior),
-                    limit
-                ),
+                extractSearchResults(rerankedDetails),
                 limit
             );
         }
 
         List<VectorStore.VectorNeighbor> neighbors = vectorStore.findNearest(centroid, VECTOR_NEIGHBOR_LIMIT);
         List<RankedChunk> vectorHits = loadVectorNeighborHits(neighbors);
-        List<SearchResult> hybridResults = toSearchResults(
-            mergeHybrid(lexicalHits, vectorHits, anchorPrior),
-            limit
-        );
+        maybeLogCandidateTelemetry(buildVectorCandidateTelemetryLine(query, vectorHits));
+        List<CombinedHit> hybridCombinedHits = mergeHybrid(lexicalHits, vectorHits, anchorPrior);
+        maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, hybridCombinedHits, limit));
+        List<SearchResult> hybridResults = toSearchResults(hybridCombinedHits, limit);
         long rerankStartedAtNs = SystemClock.elapsedRealtimeNanos();
-        List<SearchResult> reranked = maybeRerankResults(queryTerms, hybridResults, limit);
+        List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, hybridResults, limit);
+        List<SearchResult> reranked = extractSearchResults(rerankedDetails);
         rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
+        maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
         long vectorElapsedMs = System.currentTimeMillis() - vectorStartedAt;
         SearchLatencyBreakdown breakdown = new SearchLatencyBreakdown(
             routeElapsedMs,
@@ -895,26 +911,35 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private List<SearchResult> maybeRerankResults(QueryTerms queryTerms, List<SearchResult> results, int limit) {
+        List<RerankedResult> detailed = maybeRerankResultsDetailed(queryTerms, results, limit);
+        return extractSearchResults(detailed);
+    }
+
+    List<RerankedResult> maybeRerankResultsDetailed(QueryTerms queryTerms, List<SearchResult> results, int limit) {
         if (!queryTerms.routeProfile.isRouteFocused() || results.isEmpty()) {
-            return results;
+            ArrayList<RerankedResult> passthrough = new ArrayList<>();
+            int capped = limit <= 0 ? results.size() : Math.min(limit, results.size());
+            for (int index = 0; index < capped; index++) {
+                passthrough.add(new RerankedResult(results.get(index), index, 0, 0.0));
+            }
+            return passthrough;
         }
 
         long rerankStartedAtNanos = SystemClock.elapsedRealtimeNanos();
         LinkedHashMap<String, GuideScore> guides = new LinkedHashMap<>();
-        ArrayList<ScoredSearchResult> scored = new ArrayList<>();
+        ArrayList<RerankedResult> scored = new ArrayList<>();
         for (int index = 0; index < results.size(); index++) {
             SearchResult result = results.get(index);
+            int metadataBonus = metadataBonus(
+                queryTerms,
+                result.category,
+                result.contentRole,
+                result.timeHorizon,
+                result.structureType,
+                result.topicTags
+            );
             int score = supportScore(queryTerms, result);
-            String mode = emptySafe(result.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
-            if ("route-focus".equals(mode)) {
-                score += 8;
-            } else if ("hybrid".equals(mode)) {
-                score += 4;
-            } else if ("guide-focus".equals(mode)) {
-                score += 3;
-            } else if ("lexical".equals(mode)) {
-                score += 2;
-            }
+            score += rerankModeBonus(result.retrievalMode);
 
             String guideKey = guideGroupKey(result);
             GuideScore guide = guides.get(guideKey);
@@ -925,33 +950,27 @@ public final class PackRepository implements AutoCloseable {
             guide.totalScore += Math.max(1, score);
             guide.bestScore = Math.max(guide.bestScore, score);
             guide.sectionKeys.add(buildGuideSectionKey(result.guideId, result.title, result.sectionHeading));
-            scored.add(new ScoredSearchResult(result, index, score));
+            scored.add(new RerankedResult(result, index, metadataBonus, score));
         }
 
-        for (ScoredSearchResult scoredResult : scored) {
+        for (RerankedResult scoredResult : scored) {
             GuideScore guide = guides.get(guideGroupKey(scoredResult.result));
             if (guide == null) {
                 continue;
             }
-            scoredResult.score += Math.min(24, guide.totalScore / 3);
-            if (guide.sectionKeys.size() >= 2) {
-                scoredResult.score += 6;
-            }
+            scoredResult.addGuideBonus(guideAggregationBonus(guide));
         }
 
         scored.sort((left, right) -> {
-            int scoreOrder = Integer.compare(right.score, left.score);
+            int scoreOrder = Double.compare(right.finalScore, left.finalScore);
             if (scoreOrder != 0) {
                 return scoreOrder;
             }
             return Integer.compare(left.originalIndex, right.originalIndex);
         });
 
-        ArrayList<SearchResult> ordered = new ArrayList<>();
         int capped = limit <= 0 ? scored.size() : Math.min(limit, scored.size());
-        for (int index = 0; index < capped; index++) {
-            ordered.add(scored.get(index).result);
-        }
+        ArrayList<RerankedResult> ordered = new ArrayList<>(scored.subList(0, capped));
         safeLogDebug(
             buildRerankTimingDebugLine(
                 queryTerms.queryLower,
@@ -962,6 +981,34 @@ public final class PackRepository implements AutoCloseable {
             )
         );
         return ordered;
+    }
+
+    private static int rerankModeBonus(String retrievalMode) {
+        String mode = emptySafe(retrievalMode).trim().toLowerCase(QUERY_LOCALE);
+        if ("route-focus".equals(mode)) {
+            return 8;
+        }
+        if ("hybrid".equals(mode)) {
+            return 4;
+        }
+        if ("guide-focus".equals(mode)) {
+            return 3;
+        }
+        if ("lexical".equals(mode)) {
+            return 2;
+        }
+        return 0;
+    }
+
+    private static int guideAggregationBonus(GuideScore guide) {
+        if (guide == null) {
+            return 0;
+        }
+        int bonus = Math.min(24, guide.totalScore / 3);
+        if (guide.sectionKeys.size() >= 2) {
+            bonus += 6;
+        }
+        return bonus;
     }
 
     private static String buildRerankTimingDebugLine(
@@ -2274,6 +2321,7 @@ public final class PackRepository implements AutoCloseable {
             "",
             "",
             "",
+            0.0,
             "lexical".equals(mode) ? rank : Integer.MAX_VALUE,
             "vector".equals(mode) ? rank : Integer.MAX_VALUE,
             "vector".equals(mode) ? (1.0f - (rank * 0.01f)) : Float.NEGATIVE_INFINITY
@@ -3409,6 +3457,7 @@ public final class PackRepository implements AutoCloseable {
                     emptySafe(cursor.getString(8)),
                     emptySafe(cursor.getString(9)),
                     emptySafe(cursor.getString(10)),
+                    0.0,
                     rank,
                     -1,
                     0f
@@ -3724,6 +3773,7 @@ public final class PackRepository implements AutoCloseable {
                         timeHorizon,
                         structureType,
                         topicTags,
+                        score,
                         Integer.MAX_VALUE,
                         -1,
                         0f
@@ -3758,6 +3808,7 @@ public final class PackRepository implements AutoCloseable {
                     chunk.timeHorizon,
                     chunk.structureType,
                     chunk.topicTags,
+                    scored.get(index).score,
                     index,
                     -1,
                     0f
@@ -3850,6 +3901,7 @@ public final class PackRepository implements AutoCloseable {
                         emptySafe(cursor.getString(8)),
                         emptySafe(cursor.getString(9)),
                         emptySafe(cursor.getString(10)),
+                        0.0,
                         Integer.MAX_VALUE,
                         0,
                         neighbor.score
@@ -4016,7 +4068,7 @@ public final class PackRepository implements AutoCloseable {
 
         ArrayList<RankedChunk> results = new ArrayList<>();
         for (int index = 0; index < ordered.size(); index++) {
-            results.add(ordered.get(index).chunk.withLexicalRank(index));
+            results.add(ordered.get(index).chunk.withLexicalRank(index, ordered.get(index).score));
         }
         return results;
     }
@@ -4112,6 +4164,20 @@ public final class PackRepository implements AutoCloseable {
 
     static String buildFtsQueryForTest(String query) {
         return buildFtsQuery(QueryTerms.fromQuery(query));
+    }
+
+    static String buildSearchResultCandidateTelemetryLineForTest(
+        String stage,
+        String query,
+        List<SearchResult> results,
+        List<Double> scores
+    ) {
+        ArrayList<String> rows = new ArrayList<>();
+        int capped = Math.min(results == null ? 0 : results.size(), scores == null ? 0 : scores.size());
+        for (int index = 0; index < capped; index++) {
+            rows.add(formatTelemetryRow(index + 1, results.get(index), scores.get(index)));
+        }
+        return buildCandidateTelemetryLine(stage, query, rows);
     }
 
     private static void addFtsExpression(Set<String> expressions, String token) {
@@ -4621,6 +4687,251 @@ public final class PackRepository implements AutoCloseable {
         return text == null ? "" : text;
     }
 
+    private static void maybeLogCandidateTelemetry(String line) {
+        if (!shouldLogCandidateTelemetry() || emptySafe(line).trim().isEmpty()) {
+            return;
+        }
+        safeLogDebug(line);
+    }
+
+    private static boolean shouldLogCandidateTelemetry() {
+        try {
+            return !"user".equals(android.os.Build.TYPE) || Log.isLoggable(TAG, Log.DEBUG);
+        } catch (RuntimeException ignored) {
+            return false;
+        }
+    }
+
+    private static List<SearchResult> extractSearchResults(List<RerankedResult> detailed) {
+        ArrayList<SearchResult> ordered = new ArrayList<>();
+        if (detailed == null) {
+            return ordered;
+        }
+        for (RerankedResult result : detailed) {
+            if (result != null && result.result != null) {
+                ordered.add(result.result);
+            }
+        }
+        return ordered;
+    }
+
+    private static String buildLexicalCandidateTelemetryLine(String query, List<RankedChunk> hits) {
+        ArrayList<String> rows = new ArrayList<>();
+        if (hits != null) {
+            int capped = Math.min(CANDIDATE_TELEMETRY_TOP_N, hits.size());
+            for (int index = 0; index < capped; index++) {
+                RankedChunk hit = hits.get(index);
+                rows.add(
+                    formatTelemetryRow(
+                        index + 1,
+                        hit.guideId,
+                        hit.sectionHeading,
+                        hit.lexicalScore,
+                        hit.structureType,
+                        hit.category,
+                        hit.topicTags
+                    )
+                );
+            }
+        }
+        return buildCandidateTelemetryLine("lexical", query, rows);
+    }
+
+    private static String buildVectorCandidateTelemetryLine(String query, List<RankedChunk> hits) {
+        ArrayList<String> rows = new ArrayList<>();
+        if (hits != null) {
+            int capped = Math.min(CANDIDATE_TELEMETRY_TOP_N, hits.size());
+            for (int index = 0; index < capped; index++) {
+                RankedChunk hit = hits.get(index);
+                rows.add(
+                    formatTelemetryRow(
+                        index + 1,
+                        hit.guideId,
+                        hit.sectionHeading,
+                        hit.vectorScore,
+                        hit.structureType,
+                        hit.category,
+                        hit.topicTags
+                    )
+                );
+            }
+        }
+        return buildCandidateTelemetryLine("vector", query, rows);
+    }
+
+    private static String buildPrerankCandidateTelemetryLine(
+        String query,
+        List<CombinedHit> hits,
+        int limit
+    ) {
+        ArrayList<String> rows = new ArrayList<>();
+        if (hits != null) {
+            int capped = limit <= 0
+                ? Math.min(CANDIDATE_TELEMETRY_TOP_N, hits.size())
+                : Math.min(Math.min(limit, CANDIDATE_TELEMETRY_TOP_N), hits.size());
+            for (int index = 0; index < capped; index++) {
+                CombinedHit hit = hits.get(index);
+                rows.add(
+                    formatTelemetryRow(
+                        index + 1,
+                        hit.chunk.guideId,
+                        hit.chunk.sectionHeading,
+                        hit.rrfScore,
+                        hit.chunk.structureType,
+                        hit.chunk.category,
+                        hit.chunk.topicTags
+                    )
+                );
+            }
+        }
+        return buildCandidateTelemetryLine("prerank", query, rows);
+    }
+
+    private static String buildRerankedCandidateTelemetryLine(String query, List<RerankedResult> results) {
+        ArrayList<String> rows = new ArrayList<>();
+        if (results != null) {
+            int capped = Math.min(CANDIDATE_TELEMETRY_TOP_N, results.size());
+            for (int index = 0; index < capped; index++) {
+                RerankedResult result = results.get(index);
+                rows.add(
+                    formatTelemetryRow(
+                        index + 1,
+                        result.result,
+                        result.finalScore,
+                        result.baseScore,
+                        result.metadataBonus
+                    )
+                );
+            }
+        }
+        return buildCandidateTelemetryLine("reranked", query, rows);
+    }
+
+    private static String buildCandidateTelemetryLine(String stage, String query, List<String> rows) {
+        int available = rows == null ? 0 : rows.size();
+        if (available == 0) {
+            return composeCandidateTelemetryLine(stage, query, Collections.emptyList(), false);
+        }
+
+        int rowCount = Math.min(CANDIDATE_TELEMETRY_TOP_N, available);
+        String line = composeCandidateTelemetryLine(stage, query, rows.subList(0, rowCount), false);
+        if (line.length() <= CANDIDATE_TELEMETRY_MAX_LINE_LENGTH) {
+            return line;
+        }
+
+        rowCount = Math.min(CANDIDATE_TELEMETRY_FALLBACK_TOP_N, available);
+        while (rowCount > 0) {
+            line = composeCandidateTelemetryLine(stage, query, rows.subList(0, rowCount), true);
+            if (line.length() <= CANDIDATE_TELEMETRY_MAX_LINE_LENGTH) {
+                return line;
+            }
+            rowCount -= 1;
+        }
+        return composeCandidateTelemetryLine(stage, query, Collections.emptyList(), true);
+    }
+
+    private static String composeCandidateTelemetryLine(
+        String stage,
+        String query,
+        List<String> rows,
+        boolean truncated
+    ) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("search.candidates.")
+            .append(emptySafe(stage).trim())
+            .append(" query=\"")
+            .append(escapeTelemetryQuery(query))
+            .append("\" n=")
+            .append(rows == null ? 0 : rows.size());
+        if (truncated) {
+            builder.append(" truncated=true");
+        }
+        builder.append(" rows=[");
+        if (rows != null) {
+            for (int index = 0; index < rows.size(); index++) {
+                if (index > 0) {
+                    builder.append(" || ");
+                }
+                builder.append(rows.get(index));
+            }
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+    private static String formatTelemetryRow(
+        int rank,
+        SearchResult result,
+        double score
+    ) {
+        return formatTelemetryRow(
+            rank,
+            result == null ? "" : result.guideId,
+            result == null ? "" : result.sectionHeading,
+            score,
+            result == null ? "" : result.structureType,
+            result == null ? "" : result.category,
+            result == null ? "" : result.topicTags
+        );
+    }
+
+    private static String formatTelemetryRow(
+        int rank,
+        SearchResult result,
+        double finalScore,
+        double baseScore,
+        int metadataBonus
+    ) {
+        return formatTelemetryRow(rank, result, finalScore) +
+            "|" + formatTelemetryNumber(baseScore) +
+            "|" + metadataBonus +
+            "|" + formatTelemetryNumber(finalScore);
+    }
+
+    private static String formatTelemetryRow(
+        int rank,
+        String guideId,
+        String sectionHeading,
+        double score,
+        String structureType,
+        String category,
+        String topicTags
+    ) {
+        return rank +
+            "|" + escapeTelemetryField(guideId, 24) +
+            "|" + escapeTelemetryField(sectionHeading, CANDIDATE_TELEMETRY_SECTION_LIMIT) +
+            "|" + formatTelemetryNumber(score) +
+            "|" + escapeTelemetryField(structureType, 24) +
+            "|" + escapeTelemetryField(category, 24) +
+            "|" + escapeTelemetryField(topicTags, CANDIDATE_TELEMETRY_TOPIC_LIMIT);
+    }
+
+    private static String formatTelemetryNumber(double value) {
+        if (!Double.isFinite(value)) {
+            return "";
+        }
+        return String.format(QUERY_LOCALE, "%.3f", value);
+    }
+
+    private static String escapeTelemetryQuery(String query) {
+        return escapeTelemetryValue(query, CANDIDATE_TELEMETRY_QUERY_LIMIT, true);
+    }
+
+    private static String escapeTelemetryField(String value, int limit) {
+        return escapeTelemetryValue(value, limit, false);
+    }
+
+    private static String escapeTelemetryValue(String value, int limit, boolean escapeQuotes) {
+        String safe = clip(value, limit)
+            .replace("\\", "\\\\")
+            .replace("|", "\\|")
+            .replace("]", "\\]");
+        if (escapeQuotes) {
+            safe = safe.replace("\"", "\\\"");
+        }
+        return safe;
+    }
+
     private static void safeLogDebug(String message) {
         try {
             Log.d(TAG, emptySafe(message));
@@ -5079,6 +5390,7 @@ public final class PackRepository implements AutoCloseable {
         final String timeHorizon;
         final String structureType;
         final String topicTags;
+        final double lexicalScore;
         final int lexicalRank;
         final int vectorRank;
         final float vectorScore;
@@ -5095,6 +5407,7 @@ public final class PackRepository implements AutoCloseable {
             String timeHorizon,
             String structureType,
             String topicTags,
+            double lexicalScore,
             int lexicalRank,
             int vectorRank,
             float vectorScore
@@ -5110,6 +5423,7 @@ public final class PackRepository implements AutoCloseable {
             this.timeHorizon = timeHorizon;
             this.structureType = structureType;
             this.topicTags = topicTags;
+            this.lexicalScore = lexicalScore;
             this.lexicalRank = lexicalRank;
             this.vectorRank = vectorRank;
             this.vectorScore = vectorScore;
@@ -5128,6 +5442,7 @@ public final class PackRepository implements AutoCloseable {
                 timeHorizon,
                 structureType,
                 topicTags,
+                lexicalScore,
                 lexicalRank,
                 rank,
                 score
@@ -5135,6 +5450,10 @@ public final class PackRepository implements AutoCloseable {
         }
 
         RankedChunk withLexicalRank(int rank) {
+            return withLexicalRank(rank, lexicalScore);
+        }
+
+        RankedChunk withLexicalRank(int rank, double score) {
             return new RankedChunk(
                 chunkId,
                 vectorRowId,
@@ -5147,6 +5466,7 @@ public final class PackRepository implements AutoCloseable {
                 timeHorizon,
                 structureType,
                 topicTags,
+                score,
                 rank,
                 vectorRank,
                 vectorScore
@@ -5495,6 +5815,27 @@ public final class PackRepository implements AutoCloseable {
 
         GuideScore(SearchResult anchor) {
             this.anchor = anchor;
+        }
+    }
+
+    static final class RerankedResult {
+        final SearchResult result;
+        final int originalIndex;
+        final int metadataBonus;
+        double baseScore;
+        double finalScore;
+
+        RerankedResult(SearchResult result, int originalIndex, int metadataBonus, double finalScore) {
+            this.result = result;
+            this.originalIndex = originalIndex;
+            this.metadataBonus = metadataBonus;
+            this.finalScore = finalScore;
+            this.baseScore = finalScore - metadataBonus;
+        }
+
+        void addGuideBonus(int bonus) {
+            finalScore += bonus;
+            baseScore = finalScore - metadataBonus;
         }
     }
 
