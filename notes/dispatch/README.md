@@ -30,18 +30,21 @@ edit the file, do not let the drift live only in your head.
 
 ## Active slices
 
-CP9 is closed (RC v5 cut landed 2026-04-20). No slices are
+CP9 is closed (RC v5 cut landed 2026-04-20). The post-RC retrieval
+chain substantively closed 2026-04-20 with four landings:
+`2ec77b8`, `0a8b260`, `971961b`, and `585320c`. No slices are
 currently in flight.
 
-Post-RC tracked slices (not yet drafted):
-- `R-ret1`, `R-cls2`, `R-gal1` - see `notes/CP9_ACTIVE_QUEUE.md`
-  "Dispatch order cheat-sheet" and
-  `notes/SLICE_SHAPES_FORWARD_RESEARCH_20260420.md`.
+Remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
+`R-ret1b` corpus-vocab revision, `R-anchor2`, `R-host`, and
+ask-telemetry enrichment.
 
 ## Landed (not yet rotated)
 
-Rotation performed in S3 on 2026-04-20: all CP9 slices moved to
-`notes/dispatch/completed/`.
+D4 rotated the four post-RC retrieval-chain slice files
+(`R-ret1c`, `R-cls2`, `R-anchor1`, `R-gal1`) into
+`notes/dispatch/completed/`. The dispatch root should now only hold
+live/open items plus the retained superseded or cancelled records.
 
 ## Superseded - do not redispatch
 

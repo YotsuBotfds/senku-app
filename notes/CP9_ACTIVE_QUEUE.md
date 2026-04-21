@@ -4,17 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-20 UTC - CP9 CLOSED. RC v5 cut landed. See `notes/REVIEWER_BACKEND_TRACKER_20260418.md` for the closure summary and `artifacts/external_review/ui_review_20260420_gallery_v6/` for the published gallery.
+- Last updated: 2026-04-20 night - CP9 CLOSED, RC v5 cut landed. Post-RC retrieval chain landed as `R-ret1c` (`2ec77b8`), `R-cls2` (`0a8b260`), `R-anchor1` (`971961b`), and `R-gal1` (`585320c`). State-pack matrix at HEAD `585320c` is 44/45, and the one residual cleared as FLAKE in `artifacts/external_review/rgal1_flakecheck_20260420_221049/`. Gallery finalization is next.
 
 ## Dispatch order cheat-sheet
 
-CP9 is closed. RC v5 cut landed 2026-04-20.
+CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-Active post-RC tracked slices (not yet drafted; order flexible):
-
-- `R-ret1` - retrieval tuning so `rain_shelter` routes to `confident` instead of `uncertain_fit`. Code target: `QueryMetadataProfile.java:1585` `STRUCTURE_TYPE_EMERGENCY_SHELTER` marker set. Forward research at `notes/SLICE_SHAPES_FORWARD_RESEARCH_20260420.md` section 4.
-- `R-cls2` - move acute-mental-health markers from `OfflineAnswerEngine.java:49-82` to `QueryMetadataProfile.java`, with compound-match design preservation. Forward research section 6.
-- `R-gal1` - state-pack trust-spine assertion at `PromptHarnessSmokeTest.java:2794` does not accept `uncertain_fit` terminal state. Either relax the assertion or wait on `R-ret1` for self-resolve. Forward research section 5.
+No slices are currently in flight. Remaining post-RC tracked items are `R-ret1b` corpus-vocab revision, `R-anchor2` as a held fallback, `R-host` host-inference diagnosis, and ask-telemetry enrichment. Gallery finalization is the next planner move.
 
 See tracker for the full post-RC backlog.
 
@@ -34,13 +30,14 @@ See tracker for the full post-RC backlog.
 
 ## Active
 
-None - CP9 closed, RC v5 cut.
+Post-RC retrieval chain `R-ret1c` -> `R-cls2` -> `R-anchor1` -> `R-gal1` substantively closed 2026-04-20. State-pack matrix is 44/45 at HEAD `585320c`, the one residual cleared as FLAKE, and the pending move is gallery finalization.
 
 ## Post-RC Tracked
 
-- `R-ret1` - retrieval tuning so `rain_shelter` routes to `confident` instead of `uncertain_fit`. Code target: `QueryMetadataProfile.java:1585` `STRUCTURE_TYPE_EMERGENCY_SHELTER` marker set.
-- `R-cls2` - move acute-mental-health markers from `OfflineAnswerEngine.java:49-82` to `QueryMetadataProfile.java`, preserving the compound-match design from `R-eng2`.
-- `R-gal1` - relax or redesign the `PromptHarnessSmokeTest.java:2794` trust-spine assertion so `uncertain_fit` can settle cleanly in the host-generative state-pack lane.
+- `R-ret1b` follow-up revision (open, evidence gathered; last touched 2026-04-20) - Commit 1 `961d478` landed symmetric-marker code change but 0-delta pack regen. Corpus-vocabulary analysis at `notes/R-RET1B_CORPUS_VOCAB_20260420.md` identifies 6 corpus-vetted phrase additions (`shelter construction`, `shelter site`, `primitive shelter`, `seasonal shelter`, `temporary shelter`, `cave shelter`) that would widen `emergency_shelter` from 2 guides to 4. Scope would be a 2-commit chain (python code + test edits, then pack regen). Decision can wait on T5 evidence but is independent.
+- `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
+- `R-host` (not drafted, increasingly urgent) - `busy[1]: main.ask.prepare` at `PromptHarnessSmokeTest.java:1101` has blocked instrumentation mode-flip probes on `R-gate1`, `R-ret1c`, and `R-anchor1` across three cycles. Shape: T-style diagnostic; read the test's idle-fallback logic, trace `main.ask.prepare` signal emission in the host-inference pathway, and determine whether this is harness precondition drift or a real host-inference hang. Target output is doc-only; no code change.
+- **Ask-telemetry enrichment** (small follow-on) - add `metadataProfile`/`preferredStructureType` values to the `ask.prompt` / `ask.generate` logcat lines. Partially subsumed by T5's broader telemetry; revisit after T5 lands.
 
 ## Blocked / Deferred
 
@@ -96,13 +93,15 @@ None - CP9 closed, RC v5 cut.
   corrected. Acceptable for RC v3; candidate for a post-RC
   optimization slice (move detection upstream so the model is
   never invoked on no-evidence shapes).
-- `notes/dispatch/README.md` is stale as of 2026-04-20. "Active
-  slices" still lists R-pack as in-flight and RP1 as
-  "sequential after R-pack" — pre-dates R-tool1, R-ui1, R-ui2,
-  and every S2-rerun slice. Rotate during next doc-cleanup slice
-  (D4 shape) or absorb into S3 closure if small. Not urgent;
-  dispatch order of truth is the queue cheat-sheet above, not
-  the README.
+
+- Mobile pack export script may produce defunct filenames
+  (`senku.db`, `senku_guides.db`, `senku_mobile.db`, `senku_pack.db`,
+  `senku_pack.sqlite`, `metadata_validation_report.json`). Found
+  during R-hygiene1 Step 1 as 0-byte placeholders + one stale
+  validation report from 2026-04-19. Deleted in the slice. Audit
+  `scripts/export_mobile_pack.py` / `mobile_pack.py` to confirm
+  these write paths are gone; otherwise next pack regen will
+  reintroduce the noise. Post-hygiene follow-up slice (small).
 
 ## Completed (rolling log)
 
