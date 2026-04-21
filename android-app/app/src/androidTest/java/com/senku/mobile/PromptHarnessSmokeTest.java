@@ -1098,12 +1098,7 @@ public final class PromptHarnessSmokeTest {
             awaitHarnessIdle();
             submitSearchFromResumedActivity("How do I build a simple rain shelter from tarp and cord?", true);
 
-            Assert.assertTrue(
-                "generated detail body never appeared; harness signals=" + HarnessTestSignals.snapshot(),
-                waitForDetailBodyReady(GENERATIVE_DETAIL_WAIT_MS, 40)
-            );
-
-            awaitHarnessIdle();
+            assertHostAskDetailSettledAfterHandoff(GENERATIVE_DETAIL_WAIT_MS, false);
 
             InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
                 Activity activity = getResumedActivityOnMainThread();
@@ -1144,6 +1139,46 @@ public final class PromptHarnessSmokeTest {
     }
 
     @Test
+    public void hostAskProbeWaitsForSettledDetailActivityAfterMainHandoff() {
+        Bundle args = InstrumentationRegistry.getArguments();
+        boolean hostEnabled = "true".equalsIgnoreCase(safe(args.getString("hostInferenceEnabled")).trim());
+        String hostUrl = safe(args.getString("hostInferenceUrl"));
+        String hostModel = safe(args.getString("hostInferenceModel"));
+
+        Assume.assumeTrue("host inference smoke disabled", hostEnabled);
+        Assume.assumeTrue("host inference url missing", !hostUrl.isEmpty());
+        Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
+
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_ENABLED, true);
+        intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_URL, hostUrl);
+        if (!hostModel.isEmpty()) {
+            intent.putExtra(HostInferenceConfig.EXTRA_HOST_INFERENCE_MODEL, hostModel);
+        }
+
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
+            awaitHarnessIdle();
+            submitSearchFromResumedActivity("How do I build a simple rain shelter from tarp and cord?", true);
+
+            assertHostAskDetailSettledAfterHandoff(GENERATIVE_DETAIL_WAIT_MS, false);
+
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                String resumedActivityName = activity == null ? "none" : activity.getClass().getSimpleName();
+                Assert.assertTrue(
+                    "host ask handoff should settle on DetailActivity; resumedActivity="
+                        + resumedActivityName
+                        + "; harness signals="
+                        + HarnessTestSignals.snapshot(),
+                    activity instanceof DetailActivity
+                );
+            });
+            captureUiState("generative_detail_handoff_ready");
+        }
+    }
+
+    @Test
     public void autoFollowUpWithHostInferenceBuildsInlineThreadHistory() {
         Bundle args = InstrumentationRegistry.getArguments();
         boolean hostEnabled = "true".equalsIgnoreCase(safe(args.getString("hostInferenceEnabled")).trim());
@@ -1168,28 +1203,28 @@ public final class PromptHarnessSmokeTest {
             awaitHarnessIdle();
             submitSearchFromResumedActivity("How do I build a simple rain shelter from tarp and cord?", true);
 
+            assertHostAskDetailSettledAfterHandoff(GENERATIVE_DETAIL_WAIT_MS, false);
             Assert.assertTrue(
-                "detail body never appeared for initial ask; harness signals=" + HarnessTestSignals.snapshot(),
-                waitForDetailBodyReady(GENERATIVE_DETAIL_WAIT_MS, 40)
-            );
-            Assert.assertTrue(
-                "inline thread never appeared; harness signals=" + HarnessTestSignals.snapshot(),
+                "inline thread never appeared after the settled detail handoff; "
+                    + describeResumedActivityAndHarnessSignals(),
                 device.wait(Until.hasObject(By.res(APP_PACKAGE, "detail_followup_input")), DETAIL_WAIT_MS)
             );
-            awaitHarnessIdle();
             submitFollowUpFromResumedDetail("What should I do next after the ridge line is up?");
 
-            awaitHarnessIdle();
-            Assert.assertTrue(
-                "detail body did not return after follow-up; harness signals=" + HarnessTestSignals.snapshot(),
-                waitForDetailBodyReady(GENERATIVE_DETAIL_WAIT_MS, 40)
+            assertResumedDetailActivitySettled(
+                GENERATIVE_DETAIL_WAIT_MS,
+                40,
+                "",
+                false,
+                "follow-up detail did not settle on the resumed DetailActivity"
             );
             boolean historyReady = waitForFollowUpHistoryReady(GENERATIVE_DETAIL_WAIT_MS);
             if (!historyReady) {
                 captureUiState("followup_thread_failure");
             }
             Assert.assertTrue(
-                "follow-up should surface prior-turn history somewhere in detail; harness signals=" + HarnessTestSignals.snapshot(),
+                "follow-up should surface prior-turn history somewhere in detail; "
+                    + describeResumedActivityAndHarnessSignals(),
                 historyReady
             );
             InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
@@ -2516,21 +2551,52 @@ public final class PromptHarnessSmokeTest {
     }
 
     private void assertDetailSettled(long timeoutMs, String expectedTitle, boolean expectHistory) {
+        assertResumedDetailActivitySettled(
+            timeoutMs,
+            expectHistory ? 40 : 8,
+            expectedTitle,
+            expectHistory,
+            "detail surface should settle in the active posture"
+        );
+    }
+
+    private void assertHostAskDetailSettledAfterHandoff(long timeoutMs, boolean expectHistory) {
+        assertResumedDetailActivitySettled(
+            timeoutMs,
+            40,
+            "",
+            expectHistory,
+            "focused host-ask probe did not reach a settled DetailActivity"
+        );
+    }
+
+    private void assertResumedDetailActivitySettled(
+        long timeoutMs,
+        int minimumVisibleLength,
+        String expectedTitle,
+        boolean expectHistory,
+        String failureLabel
+    ) {
         Assert.assertTrue(
-            "detail surface should settle in the active posture; harness signals=" + HarnessTestSignals.snapshot(),
-            waitForDetailBodyReady(timeoutMs, expectHistory ? 40 : 8)
+            failureLabel + "; " + describeResumedActivityAndHarnessSignals(),
+            waitForResumedActivity(DetailActivity.class, timeoutMs)
+        );
+        Assert.assertTrue(
+            failureLabel + "; " + describeResumedActivityAndHarnessSignals(),
+            waitForDetailBodyReady(timeoutMs, minimumVisibleLength)
         );
 
         if (!expectedTitle.isEmpty()) {
             Assert.assertTrue(
-                "detail title did not include expected text",
+                "detail title did not include expected text; " + describeResumedActivityAndHarnessSignals(),
                 waitForDetailTitleContains(expectedTitle, timeoutMs)
             );
         }
 
         if (expectHistory) {
             Assert.assertTrue(
-                "follow-up should surface prior-turn history somewhere in detail; harness signals=" + HarnessTestSignals.snapshot(),
+                "follow-up should surface prior-turn history somewhere in detail; "
+                    + describeResumedActivityAndHarnessSignals(),
                 waitForFollowUpHistoryReady(timeoutMs)
             );
         }
@@ -4024,6 +4090,23 @@ public final class PromptHarnessSmokeTest {
         return false;
     }
 
+    private boolean waitForResumedActivity(Class<? extends Activity> expectedActivityClass, long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            final boolean[] matched = {false};
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+                Activity activity = getResumedActivityOnMainThread();
+                matched[0] = activity != null && expectedActivityClass.isInstance(activity);
+            });
+            if (matched[0]) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
     private boolean isLegacyDetailBodyReady(Activity activity, DetailSettleSignals signals, int minimumVisibleLength) {
         if (activity == null || signals == null) {
             return false;
@@ -5061,6 +5144,17 @@ public final class PromptHarnessSmokeTest {
             count.addAndGet(childCount(activity.findViewById(R.id.detail_thread_container)));
         });
         return count.get();
+    }
+
+    private String describeResumedActivityAndHarnessSignals() {
+        final String[] resumedActivityName = {"none"};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (activity != null) {
+                resumedActivityName[0] = activity.getClass().getSimpleName();
+            }
+        });
+        return "resumedActivity=" + resumedActivityName[0] + "; harness signals=" + HarnessTestSignals.snapshot();
     }
 
     private Activity getResumedActivityOnMainThread() {
