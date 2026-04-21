@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-21 late - D5 reconciled the `R-host` / `R-search` landings, and `R-telemetry` then landed in commit `ec7aabf` as additive final-mode breadcrumb coverage at every terminal `generate(...)` return; Android unit-suite coverage moved 431 -> 438.
+- Last updated: 2026-04-21 late - `R-ret1b` landed as a 2-commit chain: `16b498b` added 5 corpus-vetted `emergency_shelter` markers plus 3 tests (desktop suite 215 -> 218), and `6f9e07b` regenerated the mobile pack, moving `emergency_shelter` coverage from 2 guides / 65 chunks to 4 guides / 193 chunks with the expected GD-027 partial chunk carry-through.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight after D6. Key remaining post-RC tracked items are `R-ret1b` corpus-vocab revision, the state-pack `logcat_path: null` tooling gap, pack-drift investigation, and Wave C planning; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-host`, `R-search`, and `R-telemetry` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight after the `R-ret1b` landing chain. Key remaining post-RC tracked items are the drafted `R-tool2` state-pack `logcat_path: null` tooling gap, pack-drift investigation, and Wave C planning; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, and `R-telemetry` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -34,9 +34,8 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
 
 ## Post-RC Tracked
 
-- `R-ret1b` follow-up revision (open, evidence gathered; last touched 2026-04-20) - Commit 1 `961d478` landed symmetric-marker code change but 0-delta pack regen. Corpus-vocabulary analysis at `notes/R-RET1B_CORPUS_VOCAB_20260420.md` identifies 6 corpus-vetted phrase additions (`shelter construction`, `shelter site`, `primitive shelter`, `seasonal shelter`, `temporary shelter`, `cave shelter`) that would widen `emergency_shelter` from 2 guides to 4. Scope would be a 2-commit chain (python code + test edits, then pack regen). Decision can wait on T5 evidence but is independent.
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
-- **State-pack `logcat_path: null` tooling gap** - evidence-hit twice (R-host diagnostic Section 8, R-search diagnostic cross-cutting). Fix: wire per-lane logcat capture into `scripts/build_android_ui_state_pack_parallel.ps1` (or adjacent) and persist path in per-posture summary.
+- **State-pack `logcat_path: null` tooling gap** - evidence-hit twice (R-host diagnostic Section 8, R-search diagnostic cross-cutting). Draft slice: `notes/dispatch/R-tool2_state_pack_logcat_capture.md`. Root cause: `scripts/build_android_ui_state_pack.ps1` invokes `run_android_instrumented_ui_smoke.ps1` without `-CaptureLogcat`, so per-state `summary.json` files keep persisting `logcat_path: null`.
 - **Pack-drift investigation** - between 2026-04-20 17:18 and ~22:10, `af58bd12...` SQLite overwrote `f5cb2706...` on at least 5554; all four serials ended up on the older pack by the time the R-gal1 state-pack matrix ran. Not diagnosed. Worth a standalone read-only investigation slice before next substrate provisioning. Full evidence in `notes/PLANNER_HANDOFF_2026-04-21_DAY.md` under "Pack drift finding (unresolved)".
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
 
@@ -791,3 +790,34 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
   dispatch; the scout found two fixable nits (Test 7 route-set breadth
   and Test 6 source-summary-fallback trigger wording), both fixed
   before landing.
+- 2026-04-21 late - `R-ret1b` Commit 1 landed in commit `16b498b`
+  (`R-ret1b: add corpus-vetted emergency_shelter markers`).
+  `mobile_pack.py` changed +5/-0 and `tests/test_mobile_pack.py`
+  changed +90/-0. Added five corpus-vetted markers (`shelter site`,
+  `primitive shelter`, `seasonal shelter`, `temporary shelter`,
+  `cave shelter`) plus three tests covering the intended positives,
+  the GD-446 `cabin_house -> emergency_shelter` reclassification,
+  GD-294 new tagging, and the over-match guard on the GD-445 /
+  GD-563 shape. Desktop unit coverage moved 215 -> 218. Spark scout
+  audit of the draft slice caught the `shelter construction`
+  over-match risk before dispatch; planner then widened the scout's
+  2-guide read to a 4-guide chunk-level grep. Second slice in this
+  run where pre-dispatch scout audit proved load-bearing.
+- 2026-04-21 late - `R-ret1b` Commit 2 landed in commit `6f9e07b`
+  (`R-ret1b: regenerate mobile pack with corpus-vetted shelter markers`).
+  `android-app/app/src/main/assets/mobile_pack/senku_manifest.json`
+  changed +4/-4 and `senku_mobile.sqlite3` changed
+  `285310976 -> 285495296` bytes (`af58bd12... -> cf449ee9...`);
+  `senku_vectors.f16` stayed unchanged. Mobile-pack regen moved
+  `emergency_shelter` coverage from 2 guides / 65 chunks to
+  4 guide-table guides / 193 chunks:
+  `{GD-345, GD-618} -> {GD-345, GD-618, GD-446, GD-294}`, plus
+  GD-027 picked up 9 partial chunks from the `Primitive Shelters`
+  section as anticipated in the commit body. GD-618 flipped
+  whole-guide via the new `seasonal shelter` / `temporary shelter`
+  matches, GD-446 reclassified via first-match semantics, and the
+  over-match guard stayed clean for GD-445, GD-563, GD-024, and
+  GD-353. The conservative `[95, 160]` STOP gate missed because it
+  did not price in GD-618's whole-guide inheritance or GD-027's
+  partial chunk coverage; future marker-adding slices should account
+  for both mechanisms explicitly.
