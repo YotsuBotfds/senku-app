@@ -965,6 +965,11 @@ public final class PackRepository implements AutoCloseable {
             );
             int score = supportScore(queryTerms, result);
             score += rerankModeBonus(result.retrievalMode);
+            // Vector rows exit supportScore before metadataBonus is applied.
+            // Add it here so their metadata signal reaches the rerank sort key.
+            if (isVectorRetrievalMode(result.retrievalMode)) {
+                score += metadataBonus;
+            }
 
             String guideKey = guideGroupKey(result);
             GuideScore guide = guides.get(guideKey);
@@ -1006,6 +1011,10 @@ public final class PackRepository implements AutoCloseable {
             )
         );
         return ordered;
+    }
+
+    private static boolean isVectorRetrievalMode(String retrievalMode) {
+        return "vector".equals(emptySafe(retrievalMode).trim().toLowerCase(QUERY_LOCALE));
     }
 
     private static int rerankModeBonus(String retrievalMode) {

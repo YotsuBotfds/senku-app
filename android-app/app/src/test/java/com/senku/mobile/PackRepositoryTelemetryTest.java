@@ -156,6 +156,139 @@ public final class PackRepositoryTelemetryTest {
     }
 
     @Test
+    public void vectorRowsApplyMetadataBonusToSortKey() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Arrays.asList(
+                detailedSearchResult(
+                    "Camp Inventory Ledger",
+                    "Count crates and spare fittings before transport.",
+                    "GD-727",
+                    "Inventory",
+                    "utility",
+                    "lexical",
+                    "reference",
+                    "mixed",
+                    "general",
+                    "maintenance,storage"
+                ),
+                detailedSearchResult(
+                    "Camp Inventory Ledger",
+                    "Count crates and spare fittings before transport.",
+                    "GD-345",
+                    "Inventory",
+                    "survival",
+                    "vector",
+                    "starter",
+                    "immediate",
+                    "emergency_shelter",
+                    "maintenance,storage"
+                )
+            ),
+            5
+        );
+
+        PackRepository.RerankedResult vector = rerankedResult(reranked, "GD-345");
+        PackRepository.RerankedResult lexical = rerankedResult(reranked, "GD-727");
+
+        assertEquals("GD-345", reranked.get(0).result.guideId);
+        assertTrue(vector.metadataBonus > 0);
+        assertEquals(expectedSingleGuideFinalScore(vector.metadataBonus), vector.finalScore, 0.0);
+        assertTrue(vector.finalScore > lexical.finalScore);
+    }
+
+    @Test
+    public void vectorRowBaseScoreStillReflectsDisplayOnlyDerivation() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Collections.singletonList(
+                detailedSearchResult(
+                    "Shelter Build Log",
+                    "Count crates and spare fittings before transport.",
+                    "GD-345",
+                    "Inventory",
+                    "survival",
+                    "vector",
+                    "starter",
+                    "immediate",
+                    "emergency_shelter",
+                    "maintenance,storage"
+                )
+            ),
+            5
+        );
+
+        PackRepository.RerankedResult vector = reranked.get(0);
+
+        assertTrue(vector.metadataBonus > 0);
+        assertEquals(expectedSingleGuideFinalScore(vector.metadataBonus), vector.finalScore, 0.0);
+        assertEquals(vector.finalScore - vector.metadataBonus, vector.baseScore, 0.0);
+    }
+
+    @Test
+    public void lexicalRowsDoNotDoubleCountMetadataBonus() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Collections.singletonList(
+                detailedSearchResult(
+                    "Camp Inventory Ledger",
+                    "Count crates and spare fittings before transport.",
+                    "GD-345",
+                    "Inventory",
+                    "survival",
+                    "lexical",
+                    "starter",
+                    "immediate",
+                    "emergency_shelter",
+                    "maintenance,storage"
+                )
+            ),
+            5
+        );
+
+        PackRepository.RerankedResult lexical = reranked.get(0);
+        int preGuideScore = lexical.metadataBonus + 2;
+
+        assertTrue(lexical.metadataBonus > 0);
+        assertEquals(expectedSingleGuideFinalScore(preGuideScore), lexical.finalScore, 0.0);
+    }
+
+    @Test
+    public void emptyRetrievalModeIsTreatedAsNonVector() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Collections.singletonList(
+                detailedSearchResult(
+                    "Camp Inventory Ledger",
+                    "Count crates and spare fittings before transport.",
+                    "GD-345",
+                    "Inventory",
+                    "survival",
+                    "",
+                    "starter",
+                    "immediate",
+                    "emergency_shelter",
+                    "maintenance,storage"
+                )
+            ),
+            5
+        );
+
+        PackRepository.RerankedResult row = reranked.get(0);
+
+        assertTrue(row.metadataBonus > 0);
+        assertEquals(expectedSingleGuideFinalScore(row.metadataBonus), row.finalScore, 0.0);
+    }
+
+    @Test
     public void routeFocusedQueryStillTriggersMetadataRerankWithoutStructureHint() {
         String query = "how do i start a fire in the rain";
 
@@ -355,5 +488,9 @@ public final class PackRepositoryTelemetryTest {
         char[] chars = new char[count];
         Arrays.fill(chars, value);
         return new String(chars);
+    }
+
+    private static double expectedSingleGuideFinalScore(int score) {
+        return score + Math.min(24, Math.max(1, score) / 3);
     }
 }
