@@ -33,18 +33,25 @@ edit the file, do not let the drift live only in your head.
 CP9 is closed (RC v5 cut landed 2026-04-20). The post-RC retrieval
 chain substantively closed 2026-04-20 with four landings:
 `2ec77b8`, `0a8b260`, `971961b`, and `585320c`. No slices are
-currently in flight.
+currently in flight after D5.
 
 Remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
-`R-ret1b` corpus-vocab revision, `R-anchor2`, `R-host`, and
-ask-telemetry enrichment.
+`R-ret1b` corpus-vocab revision, `R-telemetry` final-mode breadcrumb,
+the state-pack `logcat_path: null` tooling gap, pack-drift
+investigation, and Wave C planning. `R-host` and `R-search` are
+closed, and the gallery is republished at
+`artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
+(45/45).
 
 ## Landed (not yet rotated)
 
-D4 rotated the four post-RC retrieval-chain slice files
-(`R-ret1c`, `R-cls2`, `R-anchor1`, `R-gal1`) into
-`notes/dispatch/completed/`. The dispatch root should now only hold
-live/open items plus the retained superseded or cancelled records.
+Nothing pending rotation as of D5 (this commit). The dispatch root
+now only holds live/open items
+(`R-ret1b_pack_marker_symmetry_substrate_rebuild.md`) plus retained
+superseded (`A1_retry_5560_landscape.md`) or cancelled
+(`P5_scope_note_landscape_phone.md`) records. `probe_rain_shelter_mode_flip.md`
+is retained as a stale read-only probe pending decision; no executed
+artifact or commit reference was confirmed.
 
 ## Superseded - do not redispatch
 

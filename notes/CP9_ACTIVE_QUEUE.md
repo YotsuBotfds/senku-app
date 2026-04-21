@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-20 night - CP9 CLOSED, RC v5 cut landed. Post-RC retrieval chain landed as `R-ret1c` (`2ec77b8`), `R-cls2` (`0a8b260`), `R-anchor1` (`971961b`), and `R-gal1` (`585320c`). State-pack matrix at HEAD `585320c` is 44/45, and the one residual cleared as FLAKE in `artifacts/external_review/rgal1_flakecheck_20260420_221049/`. Gallery finalization is next.
+- Last updated: 2026-04-21 day - Gallery republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45 final), `R-host` landed via diagnostic + harness fix `1edde326` + validation, and `R-search` landed via diagnostic + wait-budget bump `e1fbc50` + focused validation at `artifacts/cp9_stage2_r_search_validation_20260421_100111/`, which confirmed the old 10s budget was too tight and the 15s bump cleared the flake.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight. Remaining post-RC tracked items are `R-ret1b` corpus-vocab revision, `R-anchor2` as a held fallback, `R-host` host-inference diagnosis, and ask-telemetry enrichment. Gallery finalization is the next planner move.
+No slices are currently in flight after D5. Remaining post-RC tracked items are `R-ret1b` corpus-vocab revision, `R-telemetry` final-mode breadcrumb (forward research at `notes/R-TELEMETRY_FORWARD_RESEARCH_20260421.md`), the state-pack `logcat_path: null` tooling gap, pack-drift investigation, and Wave C planning. `R-host` and `R-search` both closed in this sequence. Gallery republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -30,14 +30,16 @@ See tracker for the full post-RC backlog.
 
 ## Active
 
-Post-RC retrieval chain `R-ret1c` -> `R-cls2` -> `R-anchor1` -> `R-gal1` substantively closed 2026-04-20. State-pack matrix is 44/45 at HEAD `585320c`, the one residual cleared as FLAKE, and the pending move is gallery finalization.
+No slices currently in flight. Next planner direction TBD (see post-RC tracked below).
 
 ## Post-RC Tracked
 
 - `R-ret1b` follow-up revision (open, evidence gathered; last touched 2026-04-20) - Commit 1 `961d478` landed symmetric-marker code change but 0-delta pack regen. Corpus-vocabulary analysis at `notes/R-RET1B_CORPUS_VOCAB_20260420.md` identifies 6 corpus-vetted phrase additions (`shelter construction`, `shelter site`, `primitive shelter`, `seasonal shelter`, `temporary shelter`, `cave shelter`) that would widen `emergency_shelter` from 2 guides to 4. Scope would be a 2-commit chain (python code + test edits, then pack regen). Decision can wait on T5 evidence but is independent.
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
-- `R-host` (not drafted, increasingly urgent) - `busy[1]: main.ask.prepare` at `PromptHarnessSmokeTest.java:1101` has blocked instrumentation mode-flip probes on `R-gate1`, `R-ret1c`, and `R-anchor1` across three cycles. Shape: T-style diagnostic; read the test's idle-fallback logic, trace `main.ask.prepare` signal emission in the host-inference pathway, and determine whether this is harness precondition drift or a real host-inference hang. Target output is doc-only; no code change.
-- **Ask-telemetry enrichment** (small follow-on) - add `metadataProfile`/`preferredStructureType` values to the `ask.prompt` / `ask.generate` logcat lines. Partially subsumed by T5's broader telemetry; revisit after T5 lands.
+- **R-telemetry final-mode breadcrumb** - forward research at `notes/R-TELEMETRY_FORWARD_RESEARCH_20260421.md`. Adds `ask.generate final_mode=<X> route=<Y>` emission at every terminal return in `OfflineAnswerEngine.generate()`. Prevents future harness bugs like R-host where observability depended on rendered-state inference. Scope ~10-30 LoC production + 5 new unit tests.
+- **State-pack `logcat_path: null` tooling gap** - evidence-hit twice (R-host diagnostic Section 8, R-search diagnostic cross-cutting). Fix: wire per-lane logcat capture into `scripts/build_android_ui_state_pack_parallel.ps1` (or adjacent) and persist path in per-posture summary.
+- **Pack-drift investigation** - between 2026-04-20 17:18 and ~22:10, `af58bd12...` SQLite overwrote `f5cb2706...` on at least 5554; all four serials ended up on the older pack by the time the R-gal1 state-pack matrix ran. Not diagnosed. Worth a standalone read-only investigation slice before next substrate provisioning. Full evidence in `notes/PLANNER_HANDOFF_2026-04-21_DAY.md` under "Pack drift finding (unresolved)".
+- **Ask-telemetry enrichment** (partially subsumed) - revisit after `R-telemetry` lands if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the final-mode breadcrumb.
 
 ## Blocked / Deferred
 
@@ -102,6 +104,17 @@ Post-RC retrieval chain `R-ret1c` -> `R-cls2` -> `R-anchor1` -> `R-gal1` substan
   `scripts/export_mobile_pack.py` / `mobile_pack.py` to confirm
   these write paths are gone; otherwise next pack regen will
   reintroduce the noise. Post-hygiene follow-up slice (small).
+- `R-search` wrapper hang observation (2026-04-21 day) - during
+  R-search Step 6 execution,
+  `scripts/run_android_instrumented_ui_smoke.ps1` hung for 20+ minutes
+  in setup before ever reaching `am instrument` on 5554 (confirmed by
+  logcat absence of AndroidJUnitRunner activity during the stall
+  window). APKs were already installed/verified, so the wrapper's
+  gradle/lock/identity-cache machinery was unnecessary overhead.
+  Planner bypassed the wrapper via direct `am instrument` per trial;
+  those runs completed in ~30s each versus the wrapper's indefinite
+  stall. If recurring, warrants a diagnostic slice into the wrapper's
+  setup phase.
 
 ## Completed (rolling log)
 
@@ -720,3 +733,48 @@ Post-RC retrieval chain `R-ret1c` -> `R-cls2` -> `R-anchor1` -> `R-gal1` substan
   `CP9 RC v5 cut (2026-04-20)` section. Wave B 20/20, state-pack
   41/45, fresh gallery at
   `artifacts/external_review/ui_review_20260420_gallery_v6/`.
+- 2026-04-21 day - D4 tracker reconciliation landed (`2e39021`).
+  Folded `R-ret1c`, `R-cls2`, `R-anchor1`, and `R-gal1` into this
+  tracker plus `notes/dispatch/README.md`, rotated the four slice
+  files, added the `SLICE_SHAPES_FORWARD_RESEARCH_20260420.md` banner,
+  and filed the `R-anchor2` closing status note.
+- 2026-04-21 day - Gallery finalization published at
+  `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`.
+  Flake-check2 cleared the 5556 phone-portrait
+  `searchQueryShowsResultsWithoutShellPolling` incident 3/3, bringing
+  the final gallery to 45/45 on HEAD `2e39021`.
+- 2026-04-21 day - `R-host` diagnostic landed at
+  `notes/R-HOST_DIAGNOSTIC_20260420.md`.
+  Verdict: harness precondition drift, not a production host-inference
+  hang. Root cause was probe dependence on `main.ask.prepare` plus a
+  generic `ask.generate mode=...` log line that confident paths no
+  longer emit.
+- 2026-04-21 day - `R-host` harness fix landed in commit `1edde326`.
+  `PromptHarnessSmokeTest.java` gained
+  `assertHostAskDetailSettledAfterHandoff`, rewired two host-inference
+  probes for DetailActivity-aware settling, and added regression test
+  `hostAskProbeWaitsForSettledDetailActivityAfterMainHandoff`.
+- 2026-04-21 day - `R-host` validation artifact landed at
+  `artifacts/cp9_stage2_post_r_host_20260421_065416/`.
+  Rebuilt `androidTest` APK `a0e6283b...`, pushed it homogeneously to
+  all four serials, passed the focused 5556 rain_shelter probe, and
+  returned 44/45 on the state-pack sweep with one unrelated
+  `main.search` flake on 5554.
+- 2026-04-21 day - Flake-check3 landed at
+  `artifacts/external_review/rhost_flakecheck3_5554_20260421_094902/`.
+  5554 passed `searchQueryShowsResultsWithoutShellPolling` 3/3 on
+  rerun, confirming the post-R-host residual was a recurrent
+  `main.search` flake and not a regression from the host-handoff fix.
+- 2026-04-21 day - `R-search` diagnostic landed at
+  `notes/R-SEARCH_DIAGNOSTIC_20260421.md`.
+  Verdict: harness wait-window too tight. `SEARCH_WAIT_MS = 10_000L`
+  was below the observed long-tail completion time for the fire-search
+  path, and `main.search` busy text was diagnostic-only rather than the
+  failure mechanism.
+- 2026-04-21 day - `R-search` remediation landed in commit `e1fbc50`
+  with focused validation at
+  `artifacts/cp9_stage2_r_search_validation_20260421_100111/`.
+  `PromptHarnessSmokeTest.java` bumped `SEARCH_WAIT_MS` from `10_000L`
+  to `15_000L`; six focused trials across 5554 + 5556 all passed, with
+  a worst-case observed settle of 11.7s that would have missed the old
+  10s budget.
