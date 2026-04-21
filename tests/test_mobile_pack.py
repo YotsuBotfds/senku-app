@@ -9,6 +9,7 @@ from pathlib import Path
 from mobile_pack import (
     STRUCTURE_TYPE_COMMUNITY_GOVERNANCE,
     STRUCTURE_TYPE_COMMUNITY_SECURITY,
+    STRUCTURE_TYPE_EMERGENCY_SHELTER,
     STRUCTURE_TYPE_FAIR_TRIAL,
     STRUCTURE_TYPE_GLASSMAKING,
     STRUCTURE_TYPE_MESSAGE_AUTH,
@@ -382,6 +383,47 @@ Guide body.
             "lye_safety",
             set(_derive_guide_metadata(records["GD-301"]).topic_tags.split(",")),
         )
+
+    def test_emergency_shelter_markers_cover_rain_and_tarp_phrase_variants(self):
+        positive_phrases = (
+            "rain shelter",
+            "rain fly",
+            "tarp shelter",
+            "tarp ridgeline",
+            "ridgeline shelter",
+        )
+
+        for index, phrase in enumerate(positive_phrases, start=1):
+            with self.subTest(phrase=phrase):
+                guide = GuideRecord(
+                    guide_id=f"GD-90{index}",
+                    slug=f"{phrase.replace(' ', '-')}-guide",
+                    title=f"{phrase.title()} Basics",
+                    source_file=f"{phrase.replace(' ', '-')}.md",
+                    description=f"Field notes for building a {phrase} with a tarp and cord.",
+                    category="construction",
+                    tags="shelter,tarp",
+                    body_markdown="Anchor the corners, tension the line, and check drainage away from the sleeping area.",
+                )
+
+                meta = _derive_guide_metadata(guide)
+
+                self.assertEqual(meta.structure_type, STRUCTURE_TYPE_EMERGENCY_SHELTER)
+
+        negative = GuideRecord(
+            guide_id="GD-999",
+            slug="tarp-storage-guide",
+            title="Tarp Storage Basics",
+            source_file="tarp-storage-guide.md",
+            description="How to fold, dry, and store a tarp after use.",
+            category="resource-management",
+            tags="tarp,storage",
+            body_markdown="Keep the tarp clean, dry it completely, and store it away from sharp edges.",
+        )
+
+        negative_meta = _derive_guide_metadata(negative)
+
+        self.assertEqual(negative_meta.structure_type, STRUCTURE_TYPE_GENERAL)
 
     def test_chunk_metadata_detects_water_storage_without_inheriting_wrong_domain_tags(self):
         guide = GuideRecord(

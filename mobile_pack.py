@@ -574,6 +574,11 @@ STRUCTURE_TYPE_MARKERS = (
         "wickiup",
         "tipi",
         "emergency shelter",
+        "rain shelter",
+        "rain fly",
+        "tarp shelter",
+        "tarp ridgeline",
+        "ridgeline shelter",
     )),
     (STRUCTURE_TYPE_CABIN_HOUSE, (
         "construction & carpentry",
