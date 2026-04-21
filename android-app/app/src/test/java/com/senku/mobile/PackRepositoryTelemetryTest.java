@@ -110,6 +110,146 @@ public final class PackRepositoryTelemetryTest {
         assertEquals("search.candidates.lexical query=\"rain shelter\" n=0 rows=[]", line);
     }
 
+    @Test
+    public void structureOnlyHintTriggersMetadataRerank() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+
+        assertFalse(QueryRouteProfile.fromQuery(query).isRouteFocused());
+        assertEquals("emergency_shelter", QueryMetadataProfile.fromQuery(query).preferredStructureType());
+        assertTrue(PackRepository.shouldApplyMetadataRerankForTest(query));
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Arrays.asList(
+                detailedSearchResult(
+                    "Tarp Shelter Setup",
+                    "Use a ridgeline, tarp angle, and drainage trenching so rain sheds cleanly.",
+                    "GD-345",
+                    "Tarp Shelter Setup",
+                    "survival",
+                    "lexical",
+                    "starter",
+                    "immediate",
+                    "emergency_shelter",
+                    "tarp_shelter,weatherproofing"
+                ),
+                detailedSearchResult(
+                    "Storage & Material Management",
+                    "General storage notes for unrelated camp supplies.",
+                    "GD-727",
+                    "Storage Basics",
+                    "utility",
+                    "lexical",
+                    "reference",
+                    "mixed",
+                    "general",
+                    "maintenance,storage"
+                )
+            ),
+            5
+        );
+
+        assertHasActiveRerank(reranked);
+        PackRepository.RerankedResult shelter = rerankedResult(reranked, "GD-345");
+        assertTrue(shelter.metadataBonus > 0);
+        assertTrue(shelter.finalScore > 0.0);
+    }
+
+    @Test
+    public void routeFocusedQueryStillTriggersMetadataRerankWithoutStructureHint() {
+        String query = "how do i start a fire in the rain";
+
+        assertTrue(QueryRouteProfile.fromQuery(query).isRouteFocused());
+        assertEquals("", QueryMetadataProfile.fromQuery(query).preferredStructureType());
+        assertTrue(PackRepository.shouldApplyMetadataRerankForTest(query));
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Arrays.asList(
+                detailedSearchResult(
+                    "Fire in Wet Conditions",
+                    "Use dry inner tinder, split damp wood, and shield the bundle from rain.",
+                    "GD-201",
+                    "Starting a Fire in Rain",
+                    "survival",
+                    "route-focus",
+                    "starter",
+                    "immediate",
+                    "general",
+                    "fire,wet_weather"
+                ),
+                detailedSearchResult(
+                    "Fire Suppression",
+                    "Wildland firebreak planning and suppression organization.",
+                    "GD-202",
+                    "Containment Lines",
+                    "fire",
+                    "lexical",
+                    "planning",
+                    "mixed",
+                    "general",
+                    "suppression"
+                )
+            ),
+            5
+        );
+
+        assertHasActiveRerank(reranked);
+    }
+
+    @Test
+    public void queryWithoutRouteFocusOrStructureHintReturnsPassthroughRerank() {
+        String query = "best way to organize spare tools";
+
+        assertFalse(QueryRouteProfile.fromQuery(query).isRouteFocused());
+        assertEquals("", QueryMetadataProfile.fromQuery(query).preferredStructureType());
+        assertFalse(PackRepository.shouldApplyMetadataRerankForTest(query));
+
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Arrays.asList(
+                detailedSearchResult(
+                    "Workshop Organization",
+                    "Store spare tools by task and frequency of use.",
+                    "GD-301",
+                    "Tool Storage Basics",
+                    "resource-management",
+                    "lexical",
+                    "planning",
+                    "long_term",
+                    "general",
+                    "storage,tools"
+                ),
+                detailedSearchResult(
+                    "Storage Containers",
+                    "Container sizing and labeling notes.",
+                    "GD-302",
+                    "Inventory Labels",
+                    "resource-management",
+                    "guide-focus",
+                    "reference",
+                    "long_term",
+                    "general",
+                    "inventory"
+                )
+            ),
+            5
+        );
+
+        assertPassthroughRerank(reranked);
+    }
+
+    @Test
+    public void emptyResultsReturnEmptyRerankList() {
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            "How do I build a simple rain shelter from tarp and cord?",
+            Collections.emptyList(),
+            5
+        );
+
+        assertTrue(reranked.isEmpty());
+    }
+
     private static SearchResult searchResult(
         String guideId,
         String sectionHeading,
@@ -131,6 +271,71 @@ public final class PackRepositoryTelemetryTest {
             structureType,
             topicTags
         );
+    }
+
+    private static SearchResult detailedSearchResult(
+        String title,
+        String body,
+        String guideId,
+        String sectionHeading,
+        String category,
+        String retrievalMode,
+        String contentRole,
+        String timeHorizon,
+        String structureType,
+        String topicTags
+    ) {
+        return new SearchResult(
+            title,
+            "",
+            body,
+            body,
+            guideId,
+            sectionHeading,
+            category,
+            retrievalMode,
+            contentRole,
+            timeHorizon,
+            structureType,
+            topicTags
+        );
+    }
+
+    private static PackRepository.RerankedResult rerankedResult(
+        List<PackRepository.RerankedResult> reranked,
+        String guideId
+    ) {
+        for (PackRepository.RerankedResult row : reranked) {
+            if (guideId.equals(row.result.guideId)) {
+                return row;
+            }
+        }
+        throw new AssertionError("Missing reranked result for " + guideId);
+    }
+
+    private static void assertHasActiveRerank(List<PackRepository.RerankedResult> reranked) {
+        assertFalse(reranked.isEmpty());
+        boolean sawNonZeroScore = false;
+        boolean sawNonZeroBonus = false;
+        for (PackRepository.RerankedResult row : reranked) {
+            if (row.finalScore != 0.0) {
+                sawNonZeroScore = true;
+            }
+            if (row.metadataBonus != 0) {
+                sawNonZeroBonus = true;
+            }
+        }
+        assertTrue(sawNonZeroScore || sawNonZeroBonus);
+    }
+
+    private static void assertPassthroughRerank(List<PackRepository.RerankedResult> reranked) {
+        assertFalse(reranked.isEmpty());
+        for (int index = 0; index < reranked.size(); index++) {
+            PackRepository.RerankedResult row = reranked.get(index);
+            assertEquals(index, row.originalIndex);
+            assertEquals(0, row.metadataBonus);
+            assertEquals(0.0, row.finalScore, 0.0);
+        }
     }
 
     private static int rowCount(String line) {

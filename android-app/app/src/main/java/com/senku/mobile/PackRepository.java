@@ -587,7 +587,7 @@ public final class PackRepository implements AutoCloseable {
             List<CombinedHit> lexicalCombinedHits = mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior);
             maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, lexicalCombinedHits, limit));
             List<SearchResult> lexicalResults = toSearchResults(lexicalCombinedHits, limit);
-            long rerankStartedAtNs = SystemClock.elapsedRealtimeNanos();
+            long rerankStartedAtNs = elapsedRealtimeNanosSafe();
             List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, lexicalResults, limit);
             List<SearchResult> reranked = extractSearchResults(rerankedDetails);
             rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
@@ -633,7 +633,7 @@ public final class PackRepository implements AutoCloseable {
             List<CombinedHit> lexicalCombinedHits = mergeHybrid(lexicalHits, Collections.emptyList(), anchorPrior);
             maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, lexicalCombinedHits, limit));
             List<SearchResult> lexicalResults = toSearchResults(lexicalCombinedHits, limit);
-            long rerankStartedAtNs = SystemClock.elapsedRealtimeNanos();
+            long rerankStartedAtNs = elapsedRealtimeNanosSafe();
             List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, lexicalResults, limit);
             rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
             maybeLogCandidateTelemetry(buildRerankedCandidateTelemetryLine(query, rerankedDetails));
@@ -672,7 +672,7 @@ public final class PackRepository implements AutoCloseable {
         List<CombinedHit> hybridCombinedHits = mergeHybrid(lexicalHits, vectorHits, anchorPrior);
         maybeLogCandidateTelemetry(buildPrerankCandidateTelemetryLine(query, hybridCombinedHits, limit));
         List<SearchResult> hybridResults = toSearchResults(hybridCombinedHits, limit);
-        long rerankStartedAtNs = SystemClock.elapsedRealtimeNanos();
+        long rerankStartedAtNs = elapsedRealtimeNanosSafe();
         List<RerankedResult> rerankedDetails = maybeRerankResultsDetailed(queryTerms, hybridResults, limit);
         List<SearchResult> reranked = extractSearchResults(rerankedDetails);
         rerankElapsedMs = elapsedRealtimeMsSince(rerankStartedAtNs);
@@ -910,22 +910,47 @@ public final class PackRepository implements AutoCloseable {
             && queryTerms.metadataProfile.hasExplicitTopic("water_distribution");
     }
 
+    static boolean shouldApplyMetadataRerankForTest(String query) {
+        return shouldApplyMetadataRerank(QueryTerms.fromQuery(query));
+    }
+
+    static List<RerankedResult> maybeRerankResultsDetailedForTest(String query, List<SearchResult> results, int limit) {
+        return maybeRerankResultsDetailed(QueryTerms.fromQuery(query), results, limit);
+    }
+
     private List<SearchResult> maybeRerankResults(QueryTerms queryTerms, List<SearchResult> results, int limit) {
         List<RerankedResult> detailed = maybeRerankResultsDetailed(queryTerms, results, limit);
         return extractSearchResults(detailed);
     }
 
-    List<RerankedResult> maybeRerankResultsDetailed(QueryTerms queryTerms, List<SearchResult> results, int limit) {
-        if (!queryTerms.routeProfile.isRouteFocused() || results.isEmpty()) {
-            ArrayList<RerankedResult> passthrough = new ArrayList<>();
-            int capped = limit <= 0 ? results.size() : Math.min(limit, results.size());
-            for (int index = 0; index < capped; index++) {
-                passthrough.add(new RerankedResult(results.get(index), index, 0, 0.0));
-            }
-            return passthrough;
+    private static boolean shouldApplyMetadataRerank(QueryTerms queryTerms) {
+        if (queryTerms == null) {
+            return false;
+        }
+        boolean routeFocused = queryTerms.routeProfile != null && queryTerms.routeProfile.isRouteFocused();
+        boolean hasStructureHint = queryTerms.metadataProfile != null
+            && !emptySafe(queryTerms.metadataProfile.preferredStructureType()).isEmpty();
+        return routeFocused || hasStructureHint;
+    }
+
+    private static List<RerankedResult> passthroughRerankedResults(List<SearchResult> results, int limit) {
+        ArrayList<RerankedResult> passthrough = new ArrayList<>();
+        int capped = limit <= 0 ? results.size() : Math.min(limit, results.size());
+        for (int index = 0; index < capped; index++) {
+            passthrough.add(new RerankedResult(results.get(index), index, 0, 0.0));
+        }
+        return passthrough;
+    }
+
+    private static List<RerankedResult> maybeRerankResultsDetailed(QueryTerms queryTerms, List<SearchResult> results, int limit) {
+        if (results.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (!shouldApplyMetadataRerank(queryTerms)) {
+            return passthroughRerankedResults(results, limit);
         }
 
-        long rerankStartedAtNanos = SystemClock.elapsedRealtimeNanos();
+        long rerankStartedAtNanos = elapsedRealtimeNanosSafe();
         LinkedHashMap<String, GuideScore> guides = new LinkedHashMap<>();
         ArrayList<RerankedResult> scored = new ArrayList<>();
         for (int index = 0; index < results.size(); index++) {
@@ -977,7 +1002,7 @@ public final class PackRepository implements AutoCloseable {
                 limit,
                 results.size(),
                 ordered.size(),
-                SystemClock.elapsedRealtimeNanos() - rerankStartedAtNanos
+                elapsedRealtimeNanosSafe() - rerankStartedAtNanos
             )
         );
         return ordered;
@@ -4940,6 +4965,14 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
+    private static long elapsedRealtimeNanosSafe() {
+        try {
+            return SystemClock.elapsedRealtimeNanos();
+        } catch (RuntimeException ignored) {
+            return System.nanoTime();
+        }
+    }
+
     private static boolean hasWaterDistributionTitleSignal(SearchResult result) {
         return containsAnyMarker(
             emptySafe(result.title) + " " + emptySafe(result.sectionHeading),
@@ -5103,7 +5136,7 @@ public final class PackRepository implements AutoCloseable {
             return FtsRuntimeProbeResult.notRun();
         }
 
-        long startedAtNs = SystemClock.elapsedRealtimeNanos();
+        long startedAtNs = elapsedRealtimeNanosSafe();
         boolean supported = false;
         try (Cursor ignored = database.rawQuery(
             "SELECT rowid FROM " + tableName + " WHERE " + tableName + " MATCH ? LIMIT 1",
@@ -5197,7 +5230,7 @@ public final class PackRepository implements AutoCloseable {
     }
 
     private static long elapsedRealtimeMsSince(long startedAtNs) {
-        return Math.max(0L, SystemClock.elapsedRealtimeNanos() - startedAtNs) / 1_000_000L;
+        return Math.max(0L, elapsedRealtimeNanosSafe() - startedAtNs) / 1_000_000L;
     }
 
     private static String resolveAnchorSnippet(String sessionChunkText, String guideChunkText, String guideBody) {
