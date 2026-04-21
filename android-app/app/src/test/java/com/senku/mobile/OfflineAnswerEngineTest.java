@@ -642,7 +642,7 @@ public final class OfflineAnswerEngineTest {
             metadataProfile
         );
 
-        assertTrue(metadataProfile.preferredStructureType().isEmpty());
+        assertEquals("acute_mental_health", metadataProfile.preferredStructureType());
         assertFalse(
             OfflineAnswerEngine.shouldAbstain(
                 selectedContext,

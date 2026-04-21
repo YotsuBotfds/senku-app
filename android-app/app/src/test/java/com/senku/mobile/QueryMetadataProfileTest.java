@@ -17,6 +17,12 @@ public final class QueryMetadataProfileTest {
         return (Boolean) containsAny.invoke(null, normalized, new LinkedHashSet<>(Arrays.asList(markers)));
     }
 
+    private static void assertAcuteMentalHealthStructure(String query) {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(query);
+
+        assertTrue("acute_mental_health".equals(profile.preferredStructureType()));
+    }
+
     @Test
     public void houseBuildPrefersBuildingMetadataOverAgriculture() {
         QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("how do i build a house");
@@ -1351,6 +1357,75 @@ public final class QueryMetadataProfileTest {
         assertTrue(profile.hasExplicitTopic("soapmaking"));
         assertTrue(profile.hasExplicitTopic("lye_safety"));
         assertFalse("safety_poisoning".equals(profile.preferredStructureType()));
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesBarelySleptMarker() {
+        assertAcuteMentalHealthStructure("He has barely slept for two days and is acting strange.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesHardlySleptMarker() {
+        assertAcuteMentalHealthStructure("She has hardly slept this week and will not slow down.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesKeepsPacingMarker() {
+        assertAcuteMentalHealthStructure("He keeps pacing around the room and will not sit down.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesNormalRulesDoNotApplyMarker() {
+        assertAcuteMentalHealthStructure("He says normal rules do not apply to him right now.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesSpecialMissionMarker() {
+        assertAcuteMentalHealthStructure("She insists she is on a special mission and cannot rest.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesActingInvincibleMarker() {
+        assertAcuteMentalHealthStructure("He is acting invincible and taking reckless risks.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesNothingCanHurtMarker() {
+        assertAcuteMentalHealthStructure("He keeps saying nothing can hurt him tonight.");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesJustStressMarker() {
+        assertAcuteMentalHealthStructure("Could this be just stress if he suddenly seems unstoppable?");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesCalmDownMarker() {
+        assertAcuteMentalHealthStructure("How do I help him calm down when he is getting more agitated?");
+    }
+
+    @Test
+    public void acuteMentalHealthStructureDoesNotMatchGenericPacingAdvice() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery("pace yourself when running a marathon");
+
+        assertFalse("acute_mental_health".equals(profile.preferredStructureType()));
+    }
+
+    @Test
+    public void acuteMentalHealthStructureMatchesFullEscalationFixture() {
+        assertAcuteMentalHealthStructure(
+            "He has barely slept, keeps pacing, and says normal rules do not apply to him. "
+                + "Is this just stress, or should I help him calm down?"
+        );
+    }
+
+    @Test
+    public void safetyPoisoningPrecedenceWinsOverAcuteMentalHealthStructure() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "My child swallowed bleach and has barely slept since then."
+        );
+
+        assertTrue("safety_poisoning".equals(profile.preferredStructureType()));
     }
 
     @Test

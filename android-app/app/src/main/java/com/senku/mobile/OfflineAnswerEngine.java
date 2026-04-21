@@ -1250,7 +1250,7 @@ public final class OfflineAnswerEngine {
         if (shouldRouteSafetyPoisoningToAbstain(metadataProfile, safetyCritical)) {
             return AnswerMode.ABSTAIN;
         }
-        if (shouldRouteAcuteMentalHealthToUncertainFit(selectedContext, query, safetyCritical)) {
+        if (shouldRouteAcuteMentalHealthToUncertainFit(selectedContext, query, metadataProfile, safetyCritical)) {
             return AnswerMode.UNCERTAIN_FIT;
         }
         if (shouldAbstain(selectedContext, topChunks, query, metadataProfile)) {
@@ -1287,9 +1287,16 @@ public final class OfflineAnswerEngine {
     private static boolean shouldRouteAcuteMentalHealthToUncertainFit(
         List<SearchResult> selectedContext,
         String query,
+        QueryMetadataProfile metadataProfile,
         boolean safetyCritical
     ) {
-        if (!safetyCritical || !looksLikeAcuteMentalHealthQuery(query)) {
+        if (!safetyCritical) {
+            return false;
+        }
+        boolean viaProfile = metadataProfile != null
+            && "acute_mental_health".equals(safe(metadataProfile.preferredStructureType()).trim().toLowerCase(QUERY_LOCALE));
+        boolean viaEngineFallback = looksLikeAcuteMentalHealthQuery(query);
+        if (!viaProfile && !viaEngineFallback) {
             return false;
         }
         return !hasAcuteMentalHealthSupport(selectedContext);

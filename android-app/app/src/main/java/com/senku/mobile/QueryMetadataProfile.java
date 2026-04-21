@@ -41,6 +41,7 @@ public final class QueryMetadataProfile {
     private static final String STRUCTURE_TYPE_SOAPMAKING = "soapmaking";
     private static final String STRUCTURE_TYPE_GLASSMAKING = "glassmaking";
     private static final String STRUCTURE_TYPE_SAFETY_POISONING = "safety_poisoning";
+    private static final String STRUCTURE_TYPE_ACUTE_MENTAL_HEALTH = "acute_mental_health";
 
     private static final Set<String> BUILD_MARKERS = buildSet(
         "how do i build", "how do we build", "how can i build", "how to build",
@@ -103,6 +104,17 @@ public final class QueryMetadataProfile {
         "unknown ingestion", "unknown substance",
         "under the sink", "under sink",
         "got into cleaner", "got into the cleaner", "got into some cleaner"
+    );
+    private static final Set<String> ACUTE_MENTAL_HEALTH_QUERY_MARKERS = buildSet(
+        "barely slept",
+        "hardly slept",
+        "keeps pacing",
+        "normal rules do not apply",
+        "special mission",
+        "acting invincible",
+        "nothing can hurt",
+        "just stress",
+        "calm down"
     );
     private static final Set<String> ACCESSIBILITY_MARKERS = buildSet(
         "accessible", "accessibility", "universal design", "wheelchair",
@@ -956,6 +968,8 @@ public final class QueryMetadataProfile {
             Collections.addAll(categories, "medical");
         } else if (STRUCTURE_TYPE_SAFETY_POISONING.equals(structureType)) {
             Collections.addAll(categories, "medical", "chemistry");
+        } else if (STRUCTURE_TYPE_ACUTE_MENTAL_HEALTH.equals(structureType)) {
+            Collections.addAll(categories, "medical");
         } else if (STRUCTURE_TYPE_SANITATION_SYSTEM.equals(structureType)) {
             Collections.addAll(categories, "building", "survival", "medical");
         } else if (STRUCTURE_TYPE_MESSAGE_AUTH.equals(structureType)
@@ -1513,6 +1527,9 @@ public final class QueryMetadataProfile {
         if (looksLikeSafetyPoisoning(normalized)) {
             return STRUCTURE_TYPE_SAFETY_POISONING;
         }
+        if (looksLikeAcuteMentalHealthProfile(normalized)) {
+            return STRUCTURE_TYPE_ACUTE_MENTAL_HEALTH;
+        }
         if (containsAny(normalized, HOUSE_PROJECT_MARKERS)) {
             return STRUCTURE_TYPE_CABIN_HOUSE;
         }
@@ -1549,6 +1566,7 @@ public final class QueryMetadataProfile {
     private static String detectTimeHorizon(String normalized, String structureType) {
         if (STRUCTURE_TYPE_EMERGENCY_SHELTER.equals(structureType)
             || STRUCTURE_TYPE_SAFETY_POISONING.equals(structureType)
+            || STRUCTURE_TYPE_ACUTE_MENTAL_HEALTH.equals(structureType)
             || containsAny(normalized, IMMEDIATE_MARKERS)) {
             return TIME_HORIZON_IMMEDIATE;
         }
@@ -1775,6 +1793,10 @@ public final class QueryMetadataProfile {
             || childUnknownIngestion
             || childChemicalIngestion
             || chemicalExposure;
+    }
+
+    private static boolean looksLikeAcuteMentalHealthProfile(String normalized) {
+        return containsAny(normalized, ACUTE_MENTAL_HEALTH_QUERY_MARKERS);
     }
 
     private static boolean matchesTopic(String text, String topicTag) {
