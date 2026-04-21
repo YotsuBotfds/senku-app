@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-21 day - Gallery republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45 final), `R-host` landed via diagnostic + harness fix `1edde326` + validation, and `R-search` landed via diagnostic + wait-budget bump `e1fbc50` + focused validation at `artifacts/cp9_stage2_r_search_validation_20260421_100111/`, which confirmed the old 10s budget was too tight and the 15s bump cleared the flake.
+- Last updated: 2026-04-21 late - D5 reconciled the `R-host` / `R-search` landings, and `R-telemetry` then landed in commit `ec7aabf` as additive final-mode breadcrumb coverage at every terminal `generate(...)` return; Android unit-suite coverage moved 431 -> 438.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight after D5. Remaining post-RC tracked items are `R-ret1b` corpus-vocab revision, `R-telemetry` final-mode breadcrumb (forward research at `notes/R-TELEMETRY_FORWARD_RESEARCH_20260421.md`), the state-pack `logcat_path: null` tooling gap, pack-drift investigation, and Wave C planning. `R-host` and `R-search` both closed in this sequence. Gallery republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight after D6. Key remaining post-RC tracked items are `R-ret1b` corpus-vocab revision, the state-pack `logcat_path: null` tooling gap, pack-drift investigation, and Wave C planning; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-host`, `R-search`, and `R-telemetry` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -36,10 +36,9 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
 
 - `R-ret1b` follow-up revision (open, evidence gathered; last touched 2026-04-20) - Commit 1 `961d478` landed symmetric-marker code change but 0-delta pack regen. Corpus-vocabulary analysis at `notes/R-RET1B_CORPUS_VOCAB_20260420.md` identifies 6 corpus-vetted phrase additions (`shelter construction`, `shelter site`, `primitive shelter`, `seasonal shelter`, `temporary shelter`, `cave shelter`) that would widen `emergency_shelter` from 2 guides to 4. Scope would be a 2-commit chain (python code + test edits, then pack regen). Decision can wait on T5 evidence but is independent.
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
-- **R-telemetry final-mode breadcrumb** - forward research at `notes/R-TELEMETRY_FORWARD_RESEARCH_20260421.md`. Adds `ask.generate final_mode=<X> route=<Y>` emission at every terminal return in `OfflineAnswerEngine.generate()`. Prevents future harness bugs like R-host where observability depended on rendered-state inference. Scope ~10-30 LoC production + 5 new unit tests.
 - **State-pack `logcat_path: null` tooling gap** - evidence-hit twice (R-host diagnostic Section 8, R-search diagnostic cross-cutting). Fix: wire per-lane logcat capture into `scripts/build_android_ui_state_pack_parallel.ps1` (or adjacent) and persist path in per-posture summary.
 - **Pack-drift investigation** - between 2026-04-20 17:18 and ~22:10, `af58bd12...` SQLite overwrote `f5cb2706...` on at least 5554; all four serials ended up on the older pack by the time the R-gal1 state-pack matrix ran. Not diagnosed. Worth a standalone read-only investigation slice before next substrate provisioning. Full evidence in `notes/PLANNER_HANDOFF_2026-04-21_DAY.md` under "Pack drift finding (unresolved)".
-- **Ask-telemetry enrichment** (partially subsumed) - revisit after `R-telemetry` lands if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the final-mode breadcrumb.
+- **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
 
 ## Blocked / Deferred
 
@@ -778,3 +777,17 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
   to `15_000L`; six focused trials across 5554 + 5556 all passed, with
   a worst-case observed settle of 11.7s that would have missed the old
   10s budget.
+- 2026-04-21 late - `R-telemetry` final-mode breadcrumb landed in
+  commit `ec7aabf`.
+  `OfflineAnswerEngine.java` changed +22/-1 with one private helper
+  (`logAskFinalMode`) and five terminal-return call sites in
+  `generate(...)`; `OfflineAnswerEngineTest.java` changed +412/-2 with
+  seven new route-covering tests plus one regression guard asserting
+  exactly one final-mode emission per lifecycle with mode/route
+  consistency.
+  Behavior change: none in answer routing or rendering semantics;
+  additive telemetry only. Android unit suite moved 431 -> 438.
+  This was the first slice scout-audited on Spark before Codex
+  dispatch; the scout found two fixable nits (Test 7 route-set breadth
+  and Test 6 source-summary-fallback trigger wording), both fixed
+  before landing.
