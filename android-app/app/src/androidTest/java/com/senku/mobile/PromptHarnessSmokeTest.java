@@ -2776,8 +2776,10 @@ public final class PromptHarnessSmokeTest {
                         failure[0] = "settled status should not be empty when still visible";
                         return;
                     }
+                    // R-gal1: uncertain-fit and abstain wording can be terminal.
                     if (!containsAny(statusText, hostLabel, onDeviceLabel, fallbackLabel)
-                        && !containsAny(statusTextLower, "answer ready", "offline answer ready", "no guide match")) {
+                        && !containsAny(statusTextLower, "answer ready", "offline answer ready",
+                            "no guide match", "not a confident fit", "uncertain fit", "abstain")) {
                         failure[0] = "settled status should keep final backend or completion wording when still visible";
                         return;
                     }
