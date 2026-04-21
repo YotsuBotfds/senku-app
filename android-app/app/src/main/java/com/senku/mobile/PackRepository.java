@@ -2943,7 +2943,15 @@ public final class PackRepository implements AutoCloseable {
         return score;
     }
 
-    private LinkedHashMap<String, GuideScore> buildAnchorGuideScores(
+    static LinkedHashMap<String, GuideScore> buildAnchorGuideScoresForTest(
+        String query,
+        List<SearchResult> rankedResults,
+        boolean requireDirectSignal
+    ) {
+        return buildAnchorGuideScores(QueryTerms.fromQuery(query), rankedResults, requireDirectSignal);
+    }
+
+    private static LinkedHashMap<String, GuideScore> buildAnchorGuideScores(
         QueryTerms queryTerms,
         List<SearchResult> rankedResults,
         boolean requireDirectSignal
@@ -2955,6 +2963,19 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
             int support = supportScore(queryTerms, result);
+            if (support <= 0 && isVectorRetrievalMode(result.retrievalMode)) {
+                // R-anchor1: vector rows' supportScore early-returns 0.
+                // Mirror the rerank-loop treatment so metadata-matched vector
+                // rows can compete for anchor selection alongside lexical rows.
+                support = metadataBonus(
+                    queryTerms,
+                    result.category,
+                    result.contentRole,
+                    result.timeHorizon,
+                    result.structureType,
+                    result.topicTags
+                );
+            }
             if (support <= 0) {
                 continue;
             }
@@ -3623,6 +3644,10 @@ public final class PackRepository implements AutoCloseable {
         return true;
     }
 
+    static int supportScoreForTest(String query, SearchResult result) {
+        return supportScore(QueryTerms.fromQuery(query), result);
+    }
+
     private static int supportScore(QueryTerms queryTerms, SearchResult result) {
         String retrievalMode = emptySafe(result.retrievalMode).toLowerCase(QUERY_LOCALE);
         if ("vector".equals(retrievalMode)) {
@@ -3678,6 +3703,10 @@ public final class PackRepository implements AutoCloseable {
             return 8 + specializedAnchorFocusBonus(queryTerms, result);
         }
         return -10;
+    }
+
+    static int anchorAlignmentBonusForTest(String query, SearchResult result) {
+        return anchorAlignmentBonus(QueryTerms.fromQuery(query), result);
     }
 
     private static int anchorAlignmentBonus(QueryTerms queryTerms, SearchResult result) {
@@ -5848,7 +5877,7 @@ public final class PackRepository implements AutoCloseable {
         }
     }
 
-    private static final class GuideScore {
+    static final class GuideScore {
         SearchResult anchor;
         int anchorScore;
         int totalScore;

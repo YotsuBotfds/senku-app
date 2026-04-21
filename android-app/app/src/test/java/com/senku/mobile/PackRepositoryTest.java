@@ -2384,6 +2384,138 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void anchorGuideScoresIncludeVectorRowsWhenMetadataBonusIsPositive() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult lexicalOffTopic = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-727",
+            "Inventory",
+            "utility",
+            "lexical",
+            "reference",
+            "mixed",
+            "general",
+            "maintenance,storage"
+        );
+        SearchResult vectorShelter = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-345",
+            "Inventory",
+            "survival",
+            "vector",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "maintenance,storage"
+        );
+
+        java.util.LinkedHashMap<String, PackRepository.GuideScore> guideScores =
+            PackRepository.buildAnchorGuideScoresForTest(
+                query,
+                java.util.Arrays.asList(lexicalOffTopic, vectorShelter),
+                false
+            );
+
+        assertTrue(guideScores.containsKey("gd-345"));
+        assertTrue(guideScores.get("gd-345").totalScore > 0);
+    }
+
+    @Test
+    public void anchorGuideScoresStillDropVectorRowsWhenMetadataBonusIsZero() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult vectorOffTopic = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-727",
+            "Inventory",
+            "utility",
+            "vector",
+            "reference",
+            "mixed",
+            "general",
+            "maintenance,storage"
+        );
+
+        java.util.LinkedHashMap<String, PackRepository.GuideScore> guideScores =
+            PackRepository.buildAnchorGuideScoresForTest(
+                query,
+                java.util.Collections.singletonList(vectorOffTopic),
+                false
+            );
+
+        assertFalse(guideScores.containsKey("gd-727"));
+    }
+
+    @Test
+    public void anchorGuideScoresDoNotDoubleCountMetadataBonusForLexicalRows() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult lexicalShelter = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-345",
+            "Inventory",
+            "survival",
+            "lexical",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "maintenance,storage"
+        );
+
+        java.util.LinkedHashMap<String, PackRepository.GuideScore> guideScores =
+            PackRepository.buildAnchorGuideScoresForTest(
+                query,
+                java.util.Collections.singletonList(lexicalShelter),
+                false
+            );
+        int expectedTotal = PackRepository.supportScoreForTest(query, lexicalShelter)
+            + 12
+            + PackRepository.anchorAlignmentBonusForTest(query, lexicalShelter)
+            + 2;
+
+        assertTrue(guideScores.containsKey("gd-345"));
+        assertEquals(expectedTotal, guideScores.get("gd-345").totalScore);
+    }
+
+    @Test
+    public void anchorGuideScoresTreatEmptyRetrievalModeAsNonVector() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult blankModeOffTopic = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-999",
+            "Inventory",
+            "utility",
+            "",
+            "reference",
+            "mixed",
+            "general",
+            "maintenance,storage"
+        );
+
+        java.util.LinkedHashMap<String, PackRepository.GuideScore> guideScores =
+            PackRepository.buildAnchorGuideScoresForTest(
+                query,
+                java.util.Collections.singletonList(blankModeOffTopic),
+                false
+            );
+
+        assertFalse(guideScores.containsKey("gd-999"));
+    }
+
+    @Test
     public void ordinaryWaterStorageGuideSweepUsesLowerThreshold() {
         QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
             "what's the safest way to store treated water long term"
