@@ -4,7 +4,7 @@
     "deterministic_rules": 9,
     "guide_related_links": 5737,
     "guides": 754,
-    "retrieval_metadata_guides": 220
+    "retrieval_metadata_guides": 231
   },
   "embedding": {
     "dimension": 768,
@@ -17,9 +17,9 @@
   },
   "files": {
     "sqlite": {
-      "bytes": 285310976,
+      "bytes": 285495296,
       "path": "senku_mobile.sqlite3",
-      "sha256": "af58bd127de3ec8c391eff1cb0f0a83f49aa8cde855c5d4f3e973bc3767da2c6"
+      "sha256": "cf449ee96654ad6cfffa51436ff57be74e2b41758c889b49d317e9136e283747"
     },
     "vectors": {
       "bytes": 76268576,
@@ -27,7 +27,7 @@
       "sha256": "e5cfa2995623ac250e11c7e7f1a1034e98a94fbf1c02a8ba68ded5c112788981"
     }
   },
-  "generated_at": "2026-04-19T01:56:24.134056+00:00",
+  "generated_at": "2026-04-21T21:18:59.639811+00:00",
   "pack_format": "senku-mobile-pack-v2",
   "pack_version": 2,
   "runtime_defaults": {
