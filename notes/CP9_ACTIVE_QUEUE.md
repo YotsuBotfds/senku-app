@@ -4,7 +4,7 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-21 late - `R-ret1b` landed as a 2-commit chain: `16b498b` added 5 corpus-vetted `emergency_shelter` markers plus 3 tests (desktop suite 215 -> 218), and `6f9e07b` regenerated the mobile pack, moving `emergency_shelter` coverage from 2 guides / 65 chunks to 4 guides / 193 chunks with the expected GD-027 partial chunk carry-through.
+- Last updated: 2026-04-21 late - `R-tool2` landed: `scripts/build_android_ui_state_pack.ps1` now always passes `-CaptureLogcat` to `run_android_instrumented_ui_smoke.ps1`, so per-state `summary.json` files in state-pack runs carry real `logcat_path` values instead of null. First landing under the in-slice tracker-update cadence.
 
 ## Dispatch order cheat-sheet
 
@@ -35,7 +35,7 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
-- **State-pack `logcat_path: null` tooling gap** - evidence-hit twice (R-host diagnostic Section 8, R-search diagnostic cross-cutting). Draft slice: `notes/dispatch/R-tool2_state_pack_logcat_capture.md`. Root cause: `scripts/build_android_ui_state_pack.ps1` invokes `run_android_instrumented_ui_smoke.ps1` without `-CaptureLogcat`, so per-state `summary.json` files keep persisting `logcat_path: null`.
+- **R-anchor-refactor1 forward research (in flight)** - Track the follow-on research note at `notes/R-ANCHOR-REFACTOR1_FORWARD_RESEARCH_20260421.md` for the next anchor-routing cleanup decision before any new slice is dispatched.
 - **Pack-drift investigation** - between 2026-04-20 17:18 and ~22:10, `af58bd12...` SQLite overwrote `f5cb2706...` on at least 5554; all four serials ended up on the older pack by the time the R-gal1 state-pack matrix ran. Not diagnosed. Worth a standalone read-only investigation slice before next substrate provisioning. Full evidence in `notes/PLANNER_HANDOFF_2026-04-21_DAY.md` under "Pack drift finding (unresolved)".
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
 
@@ -821,3 +821,23 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
   did not price in GD-618's whole-guide inheritance or GD-027's
   partial chunk coverage; future marker-adding slices should account
   for both mechanisms explicitly.
+- 2026-04-21 late - `R-tool2` landed. `scripts/build_android_ui_state_pack.ps1`
+  changed +1/-0 to add `"-CaptureLogcat"` to the common smoke-script args
+  array at line 596-606, closing the state-pack `logcat_path: null` tooling
+  gap that surfaced in both the `R-host` and `R-search` diagnostics. Root
+  cause was narrow: `run_android_instrumented_ui_smoke.ps1` already had
+  `Capture-LogcatSnapshot` plus summary wiring behind `[switch]$CaptureLogcat`,
+  and `Write-TrustedPackSummary` already preserved arbitrary source
+  properties through its generic property-copy loop, so the fix lived
+  entirely in the build-script invocation. Validation: single-role
+  state-pack run on `emulator-5556` via `-RoleFilter phone_portrait
+  -SkipBuild -SkipInstall -SkipHostStates`; all 10 per-state summaries
+  under `artifacts/tmp/r_tool2_validation_20260421_173635/` carried real
+  `logcat_path` values and every referenced `logcat.txt` existed
+  (`10456 -> 43218` bytes, advisory only). Out-of-scope: the
+  `detail_followup` branch remains unchanged because no currently-wired
+  state exercises it. Spark scout audit confirmed the pre-edit anchors and
+  surfaced the file-existence advisory on summary semantics before landing.
+  First slice under the in-slice tracker-update cadence: this commit also
+  updates `CP9_ACTIVE_QUEUE.md` and `dispatch/README.md`; slice rotation
+  still stays batched via the D-series.

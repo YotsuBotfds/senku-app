@@ -33,27 +33,27 @@ edit the file, do not let the drift live only in your head.
 CP9 is closed (RC v5 cut landed 2026-04-20). The post-RC retrieval
 chain substantively closed 2026-04-20 with four landings:
 `2ec77b8`, `0a8b260`, `971961b`, and `585320c`. No slices are
-currently in flight after D7.
+currently in flight after `R-tool2`.
 
 Key remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
-the drafted `R-tool2` state-pack `logcat_path: null` tooling gap,
-pack-drift investigation, and Wave C planning. `R-ret1b`, `R-host`,
-`R-search`, and `R-telemetry` are closed, and the gallery is
-republished at
+pack-drift investigation, Wave C planning, and the in-flight
+`R-anchor-refactor1` forward research note. `R-tool2`, `R-ret1b`,
+`R-host`, `R-search`, and `R-telemetry` are closed, and the gallery
+is republished at
 `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
 (45/45). The carry-over `R-search` wrapper-hang observation remains in
 backlog there as well.
 
 ## Landed (not yet rotated)
 
-Nothing pending rotation after D7. The dispatch root now holds only the
-open `R-tool2_state_pack_logcat_capture.md` slice plus its scout
-companion `R-tool2_SCOUT_PROMPT.md`, retained superseded
-(`A1_retry_5560_landscape.md`), cancelled
-(`P5_scope_note_landscape_phone.md`), the D7 slice file itself
-(`D7_post_r_ret1b_tracker_reconciliation.md`) pending the next
-reconciliation, the stale `probe_rain_shelter_mode_flip.md` read-only
-probe kept per D5, and this `README.md`.
+Pending rotation as of `R-tool2` landing:
+`R-tool2_state_pack_logcat_capture.md` (next D-slice will rotate).
+Retained live: `A1_retry_5560_landscape.md` (superseded-but-kept),
+`P5_scope_note_landscape_phone.md` (cancelled-but-kept),
+`probe_rain_shelter_mode_flip.md` (stale probe kept per D5),
+`D7_post_r_ret1b_tracker_reconciliation.md` (D7 bootstrap - waiting on
+next D-slice), `R-tool2_SCOUT_PROMPT.md` (scout-companion, rotate with
+R-tool2 slice file).
 
 ## Superseded - do not redispatch
 

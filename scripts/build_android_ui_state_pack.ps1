@@ -602,7 +602,8 @@ if ($FinalizeOnly) {
                 "-ArtifactRoot", $rawRootRelative,
                 "-SummaryPath", $stateSummaryPath,
                 "-Orientation", $orientation,
-                "-SkipBuild"
+                "-SkipBuild",
+                "-CaptureLogcat"
             )
 
             if ($SkipInstall -or $installedByDevice[$device]) {
