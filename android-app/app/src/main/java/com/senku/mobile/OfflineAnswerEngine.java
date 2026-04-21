@@ -461,6 +461,7 @@ public final class OfflineAnswerEngine {
                 latencyBreakdown,
                 prepared.confidenceLabel
             );
+            logAskFinalMode(prepared.query, AnswerMode.CONFIDENT, "deterministic", totalMs);
             rememberSessionLatencyBreakdown(answerRun);
             return answerRun;
         }
@@ -477,6 +478,7 @@ public final class OfflineAnswerEngine {
             );
             logLatencySummary(prepared.query, latencyBreakdown);
             LatencyPanel.emit(prepared.queryClass, latencyBreakdown);
+            logAskFinalMode(prepared.query, AnswerMode.ABSTAIN, "early_abstain", totalMs);
             return new AnswerRun(
                 prepared.query,
                 prepared.answerBody,
@@ -504,6 +506,7 @@ public final class OfflineAnswerEngine {
             );
             logLatencySummary(prepared.query, latencyBreakdown);
             LatencyPanel.emit(prepared.queryClass, latencyBreakdown);
+            logAskFinalMode(prepared.query, AnswerMode.UNCERTAIN_FIT, "early_uncertain_fit", totalMs);
             return new AnswerRun(
                 prepared.query,
                 prepared.answerBody,
@@ -647,6 +650,7 @@ public final class OfflineAnswerEngine {
                 hostBackendUsed,
                 hostFallbackUsed
             );
+            logAskFinalMode(prepared.query, downgradedRun.mode, "low_coverage_downgrade", elapsedMs);
             rememberSessionLatencyBreakdown(downgradedRun);
             return downgradedRun;
         }
@@ -661,10 +665,12 @@ public final class OfflineAnswerEngine {
             subtitle,
             null,
             latencyBreakdown,
-            prepared.confidenceLabel,
-            hostBackendUsed,
-            hostFallbackUsed
+                prepared.confidenceLabel,
+                hostBackendUsed,
+                hostFallbackUsed
         );
+        String confidentRoute = usedSourceFallback ? "source_summary_fallback" : "confident_generation";
+        logAskFinalMode(prepared.query, AnswerMode.CONFIDENT, confidentRoute, elapsedMs);
         rememberSessionLatencyBreakdown(answerRun);
         return answerRun;
     }
@@ -1894,6 +1900,16 @@ public final class OfflineAnswerEngine {
             debugLogSink.accept(tag, message);
         } catch (RuntimeException ignored) {
         }
+    }
+
+    private static void logAskFinalMode(String query, AnswerMode finalMode, String route, long totalElapsedMs) {
+        logDebug(
+            TAG,
+            "ask.generate final_mode=" + finalMode.name().toLowerCase(QUERY_LOCALE) +
+                " route=" + route +
+                " query=\"" + safe(query) + "\"" +
+                " totalElapsedMs=" + Math.max(0L, totalElapsedMs)
+        );
     }
 
     private static void logToAndroidDebug(String tag, String message) {

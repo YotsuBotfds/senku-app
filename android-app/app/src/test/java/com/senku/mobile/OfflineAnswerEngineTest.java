@@ -1153,6 +1153,418 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void generateDeterministicPathEmitsFinalModeConfidentRouteDeterministicTelemetry() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredDeterministic(
+            "can i use old soda bottles",
+            "Use only known food-safe bottles and sanitize them first.",
+            List.of(),
+            true,
+            "reused_container_water",
+            System.currentTimeMillis() - 25L
+        );
+
+        OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=confident route=deterministic query=\"can i use old soda bottles\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateEarlyAbstainPathEmitsFinalModeAbstainRouteEarlyAbstainTelemetry() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.abstain(
+            "how do i build a rain shelter from a tarp",
+            OfflineAnswerEngine.buildAbstainAnswerBody(
+                "how do i build a rain shelter from a tarp",
+                List.of(
+                    new SearchResult(
+                        "Canvas Repair",
+                        "",
+                        "",
+                        "",
+                        "GD-102",
+                        "Patching",
+                        "crafts",
+                        "vector"
+                    )
+                )
+            ),
+            List.of(),
+            false
+        );
+
+        OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=abstain route=early_abstain query=\"how do i build a rain shelter from a tarp\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateEarlyUncertainFitPathEmitsFinalModeUncertainFitRouteEarlyUncertainFitTelemetry() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.uncertainFit(
+            "he has barely slept, keeps pacing, and says normal rules do not apply to him",
+            OfflineAnswerEngine.buildUncertainFitAnswerBody(
+                "he has barely slept, keeps pacing, and says normal rules do not apply to him",
+                List.of(),
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            ),
+            List.of(),
+            false,
+            System.currentTimeMillis() - 250L,
+            12L,
+            4L,
+            0L,
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            true
+        );
+
+        OfflineAnswerEngine.generate(null, null, prepared);
+
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=uncertain_fit route=early_uncertain_fit query=\"he has barely slept, keeps pacing, and says normal rules do not apply to him\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateConfidentPathEmitsFinalModeConfidentRouteConfidentGenerationTelemetry() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        File tempModel = File.createTempFile("senku-confident-path", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                listener.onPartialText("Short answer: confidence path.");
+                return "Short answer: confidence path.";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How do i make a simple fire starter?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1200L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=confident route=confident_generation query=\"How do i make a simple fire starter\\?\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateLowCoverageDowngradePathEmitsFinalModeAbstainOrUncertainFitRouteLowCoverageDowngradeTelemetry() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        File tempModel = File.createTempFile("senku-low-coverage", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                return "No specific information available.";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How should i care for a minor sprain?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1800L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=(abstain|uncertain_fit) route=low_coverage_downgrade query=\"How should i care for a minor sprain\\?\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateSourceSummaryFallbackPathEmitsFinalModeConfidentRouteSourceSummaryFallbackTelemetry() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        File tempModel = File.createTempFile("senku-source-summary", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                return "";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "What is the safest way to carry a battery in stormy weather?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(1, finalModeLines.get().size());
+        assertTrue(
+            Pattern.compile(
+                "^ask\\.generate final_mode=confident route=source_summary_fallback query=\"What is the safest way to carry a battery in stormy weather\\?\" totalElapsedMs=\\d+$"
+            ).matcher(finalModeLines.get().get(0)).matches()
+        );
+    }
+
+    @Test
+    public void generateEachTerminalReturnEmitsExactlyOneFinalModeLine() throws Exception {
+        AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.get().add(message);
+            }
+        });
+        File tempModel = File.createTempFile("senku-terminal-regression", ".litertlm");
+        tempModel.deleteOnExit();
+        Pattern finalModePattern = Pattern.compile(
+            "^ask\\.generate final_mode=([^ ]+) route=([^ ]+) query=\".*\" totalElapsedMs=\\d+$"
+        );
+        List<String> expectedRoutes = List.of(
+            "deterministic",
+            "early_abstain",
+            "early_uncertain_fit",
+            "low_coverage_downgrade",
+            "confident_generation",
+            "source_summary_fallback"
+        );
+        List<String> seenRoutes = new ArrayList<>();
+        List<String> seenModes = new ArrayList<>();
+
+        OfflineAnswerEngine.PreparedAnswer deterministicPrepared = OfflineAnswerEngine.PreparedAnswer.restoredDeterministic(
+            "how do i pack light on trail?",
+            "Use lightweight items first.",
+            List.of(),
+            true,
+            "trail_pack",
+            System.currentTimeMillis() - 300L
+        );
+        int before = finalModeLines.get().size();
+        OfflineAnswerEngine.generate(null, null, deterministicPrepared);
+        assertEquals(before + 1, finalModeLines.get().size());
+
+        OfflineAnswerEngine.PreparedAnswer abstainPrepared = OfflineAnswerEngine.PreparedAnswer.abstain(
+            "how do i build a rain shelter from a tarp",
+            OfflineAnswerEngine.buildAbstainAnswerBody(
+                "how do i build a rain shelter from a tarp",
+                List.of()
+            ),
+            List.of(),
+            false
+        );
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                throw new AssertionError("device generation should not run");
+            }
+        );
+        before = finalModeLines.get().size();
+        OfflineAnswerEngine.generate(null, null, abstainPrepared);
+        assertEquals(before + 1, finalModeLines.get().size());
+
+        OfflineAnswerEngine.PreparedAnswer uncertainFitPrepared = OfflineAnswerEngine.PreparedAnswer.uncertainFit(
+            "he has barely slept, keeps pacing, and says normal rules do not apply to him",
+            OfflineAnswerEngine.buildUncertainFitAnswerBody(
+                "he has barely slept, keeps pacing, and says normal rules do not apply to him",
+                List.of(),
+                OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+                true
+            ),
+            List.of(),
+            false,
+            System.currentTimeMillis() - 250L,
+            12L,
+            4L,
+            0L,
+            OfflineAnswerEngine.ConfidenceLabel.MEDIUM,
+            true
+        );
+        before = finalModeLines.get().size();
+        OfflineAnswerEngine.generate(null, null, uncertainFitPrepared);
+        assertEquals(before + 1, finalModeLines.get().size());
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                return "No specific information available.";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer lowCoveragePrepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How should i treat a minor sunburn?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1800L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+        before = finalModeLines.get().size();
+        OfflineAnswerEngine.generate(null, tempModel, lowCoveragePrepared);
+        assertEquals(before + 1, finalModeLines.get().size());
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                listener.onPartialText("Short answer: confidence path.");
+                return "Short answer: confidence path.";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer confidentPrepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How do i make a simple water filter?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1200L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+        before = finalModeLines.get().size();
+        OfflineAnswerEngine.generate(null, tempModel, confidentPrepared);
+        assertEquals(before + 1, finalModeLines.get().size());
+
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                return "";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer sourceSummaryPrepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How do i maintain a fire in wind?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1000L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+        before = finalModeLines.get().size();
+        OfflineAnswerEngine.generate(null, tempModel, sourceSummaryPrepared);
+        assertEquals(before + 1, finalModeLines.get().size());
+
+        assertEquals(6, finalModeLines.get().size());
+        for (String line : finalModeLines.get()) {
+            java.util.regex.Matcher matcher = finalModePattern.matcher(line);
+            assertTrue(matcher.matches());
+            String finalMode = matcher.group(1);
+            String route = matcher.group(2);
+            seenRoutes.add(route);
+            seenModes.add(finalMode);
+        }
+
+        for (String expected : expectedRoutes) {
+            int routeCount = 0;
+            for (String route : seenRoutes) {
+                if (expected.equals(route)) {
+                    routeCount++;
+                }
+            }
+            assertEquals(1, routeCount);
+        }
+
+        for (int index = 0; index < seenRoutes.size(); index++) {
+            String route = seenRoutes.get(index);
+            String mode = seenModes.get(index);
+            if ("deterministic".equals(route)) {
+                assertEquals("confident", mode);
+            } else if ("early_abstain".equals(route)) {
+                assertEquals("abstain", mode);
+            } else if ("early_uncertain_fit".equals(route)) {
+                assertEquals("uncertain_fit", mode);
+            } else if ("low_coverage_downgrade".equals(route)) {
+                assertTrue("abstain".equals(mode) || "uncertain_fit".equals(mode));
+            } else if ("confident_generation".equals(route)) {
+                assertEquals("confident", mode);
+            } else if ("source_summary_fallback".equals(route)) {
+                assertEquals("confident", mode);
+            } else {
+                assertEquals("unexpected route: " + route, "", route);
+            }
+        }
+    }
+
+    @Test
     public void generateReportsPreparedConfidenceLabelToProgressListener() throws Exception {
         File tempModel = File.createTempFile("senku-confidence", ".litertlm");
         tempModel.deleteOnExit();
