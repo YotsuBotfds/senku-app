@@ -766,35 +766,13 @@ public final class PackRepository implements AutoCloseable {
             }
         }
 
-        ArrayList<ScoredSearchResult> supportingCandidates = new ArrayList<>();
-        for (int index = 1; index < rankedResults.size(); index++) {
-            SearchResult candidate = rankedResults.get(index);
-            if (emptySafe(candidate.guideId).equals(emptySafe(anchor.guideId))) {
-                continue;
-            }
-            if (!supportCandidateMatchesRoute(routeProfile, queryTerms.metadataProfile, diversifyContext, candidate)) {
-                continue;
-            }
-            int score = supportScore(queryTerms, candidate);
-            if (score <= 0) {
-                continue;
-            }
-            supportingCandidates.add(new ScoredSearchResult(candidate, index, score));
-        }
-        supportingCandidates.sort((left, right) -> {
-            int scoreOrder = Integer.compare(right.score, left.score);
-            if (scoreOrder != 0) {
-                return scoreOrder;
-            }
-            int modeOrder = Integer.compare(
-                supportRetrievalRank(right.result.retrievalMode),
-                supportRetrievalRank(left.result.retrievalMode)
-            );
-            if (modeOrder != 0) {
-                return modeOrder;
-            }
-            return Integer.compare(left.originalIndex, right.originalIndex);
-        });
+        ArrayList<ScoredSearchResult> supportingCandidates = rankSupportCandidates(
+            queryTerms,
+            routeProfile,
+            diversifyContext,
+            anchor,
+            rankedResults
+        );
         if (!supportingCandidates.isEmpty()) {
             StringBuilder debug = new StringBuilder();
             int previewCount = Math.min(6, supportingCandidates.size());
@@ -918,6 +896,69 @@ public final class PackRepository implements AutoCloseable {
         return maybeRerankResultsDetailed(QueryTerms.fromQuery(query), results, limit);
     }
 
+    /**
+     * Test-only seam over buildGuideAnswerContext's post-anchor support-candidate scoring path.
+     * Callers must supply a non-null anchor and the ranked rows from a non-empty production-style list.
+     */
+    static List<SearchResult> rankSupportCandidatesForTest(String query, SearchResult anchor, List<SearchResult> rankedResults) {
+        QueryTerms queryTerms = QueryTerms.fromQuery(query);
+        QueryRouteProfile routeProfile = queryTerms.routeProfile;
+        boolean diversifyContext = routeProfile.prefersDiversifiedAnswerContext()
+            || queryTerms.metadataProfile.prefersDiversifiedContext();
+        ArrayList<ScoredSearchResult> ranked = rankSupportCandidates(
+            queryTerms,
+            routeProfile,
+            diversifyContext,
+            anchor,
+            rankedResults
+        );
+        ArrayList<SearchResult> ordered = new ArrayList<>(ranked.size());
+        for (ScoredSearchResult scored : ranked) {
+            ordered.add(scored.result);
+        }
+        return ordered;
+    }
+
+    private static ArrayList<ScoredSearchResult> rankSupportCandidates(
+        QueryTerms queryTerms,
+        QueryRouteProfile routeProfile,
+        boolean diversifyContext,
+        SearchResult anchor,
+        List<SearchResult> rankedResults
+    ) {
+        ArrayList<ScoredSearchResult> supportingCandidates = new ArrayList<>();
+        for (int index = 1; index < rankedResults.size(); index++) {
+            SearchResult candidate = rankedResults.get(index);
+            if (emptySafe(candidate.guideId).equals(emptySafe(anchor.guideId))) {
+                continue;
+            }
+            if (!supportCandidateMatchesRoute(routeProfile, queryTerms.metadataProfile, diversifyContext, candidate)) {
+                continue;
+            }
+            SupportBreakdown support = supportBreakdown(queryTerms, candidate);
+            int score = support.supportWithMetadata();
+            if (score <= 0) {
+                continue;
+            }
+            supportingCandidates.add(new ScoredSearchResult(candidate, index, score));
+        }
+        supportingCandidates.sort((left, right) -> {
+            int scoreOrder = Integer.compare(right.score, left.score);
+            if (scoreOrder != 0) {
+                return scoreOrder;
+            }
+            int modeOrder = Integer.compare(
+                supportRetrievalRank(right.result.retrievalMode),
+                supportRetrievalRank(left.result.retrievalMode)
+            );
+            if (modeOrder != 0) {
+                return modeOrder;
+            }
+            return Integer.compare(left.originalIndex, right.originalIndex);
+        });
+        return supportingCandidates;
+    }
+
     private List<SearchResult> maybeRerankResults(QueryTerms queryTerms, List<SearchResult> results, int limit) {
         List<RerankedResult> detailed = maybeRerankResultsDetailed(queryTerms, results, limit);
         return extractSearchResults(detailed);
@@ -955,21 +996,10 @@ public final class PackRepository implements AutoCloseable {
         ArrayList<RerankedResult> scored = new ArrayList<>();
         for (int index = 0; index < results.size(); index++) {
             SearchResult result = results.get(index);
-            int metadataBonus = metadataBonus(
-                queryTerms,
-                result.category,
-                result.contentRole,
-                result.timeHorizon,
-                result.structureType,
-                result.topicTags
-            );
-            int score = supportScore(queryTerms, result);
+            SupportBreakdown support = supportBreakdown(queryTerms, result);
+            int metadataBonus = support.metadataBonus;
+            int score = support.supportWithMetadata();
             score += rerankModeBonus(result.retrievalMode);
-            // Vector rows exit supportScore before metadataBonus is applied.
-            // Add it here so their metadata signal reaches the rerank sort key.
-            if (isVectorRetrievalMode(result.retrievalMode)) {
-                score += metadataBonus;
-            }
 
             String guideKey = guideGroupKey(result);
             GuideScore guide = guides.get(guideKey);
@@ -2450,22 +2480,7 @@ public final class PackRepository implements AutoCloseable {
         if (routedAnchor == null) {
             return rankedAnchor;
         }
-        if (shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor)) {
-            return routedAnchor;
-        }
-        if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
-            && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
-            && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
-            && !hasWaterDistributionTitleSignal(rankedAnchor)) {
-            return routedAnchor;
-        }
-        if (guideGroupKey(routedAnchor).equals(guideGroupKey(rankedAnchor))) {
-            return routedAnchor;
-        }
-
-        int rankedScore = Math.max(1, supportScore(queryTerms, rankedAnchor));
-        int routedScore = Math.max(1, supportScore(queryTerms, routedAnchor));
-        return rankedScore >= routedScore + 12 ? rankedAnchor : routedAnchor;
+        return chooseRankedOrRoutedAnchor(queryTerms, rankedAnchor, routedAnchor);
     }
 
     private static boolean shouldPreferRouteAnchorOverRankedGuide(QueryTerms queryTerms, SearchResult rankedAnchor) {
@@ -2485,6 +2500,40 @@ public final class PackRepository implements AutoCloseable {
 
     static boolean shouldPreferRouteAnchorOverRankedGuideForTest(String query, SearchResult rankedAnchor) {
         return shouldPreferRouteAnchorOverRankedGuide(QueryTerms.fromQuery(query), rankedAnchor);
+    }
+
+    /**
+     * Test-only seam over the ranked-vs-routed anchor tiebreak.
+     * Callers must supply the already-selected non-null ranked and routed anchor candidates.
+     */
+    static SearchResult selectAnswerAnchorForTest(String query, SearchResult rankedAnchor, SearchResult routedAnchor) {
+        return chooseRankedOrRoutedAnchor(QueryTerms.fromQuery(query), rankedAnchor, routedAnchor);
+    }
+
+    private static SearchResult chooseRankedOrRoutedAnchor(
+        QueryTerms queryTerms,
+        SearchResult rankedAnchor,
+        SearchResult routedAnchor
+    ) {
+        if (!queryTerms.routeProfile.isRouteFocused()) {
+            return rankedAnchor;
+        }
+        if (shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor)) {
+            return routedAnchor;
+        }
+        if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
+            && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
+            && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
+            && !hasWaterDistributionTitleSignal(rankedAnchor)) {
+            return routedAnchor;
+        }
+        if (guideGroupKey(routedAnchor).equals(guideGroupKey(rankedAnchor))) {
+            return routedAnchor;
+        }
+
+        int rankedScore = Math.max(1, supportBreakdown(queryTerms, rankedAnchor).supportWithMetadata());
+        int routedScore = Math.max(1, supportBreakdown(queryTerms, routedAnchor).supportWithMetadata());
+        return rankedScore >= routedScore + 12 ? rankedAnchor : routedAnchor;
     }
 
     static SearchResult selectExplicitWaterDistributionAnchorForTest(String query, SearchResult... results) {
@@ -2537,7 +2586,7 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportScore(queryTerms, candidate)) + Math.max(0, 12 - index);
+            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata()) + Math.max(0, 12 - index);
             String category = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
             if ("building".equals(category)) {
                 score += 10;
@@ -2611,7 +2660,7 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportScore(queryTerms, candidate)) + Math.max(0, 12 - index);
+            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata()) + Math.max(0, 12 - index);
             int overlap = metadataProfile.preferredTopicOverlapCount(candidate.topicTags);
             String normalizedRole = emptySafe(candidate.contentRole).trim().toLowerCase(QUERY_LOCALE);
             String normalizedMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
@@ -2709,7 +2758,7 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportScore(queryTerms, candidate));
+            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata());
             score += Math.max(0, 12 - index);
             score += anchorAlignmentBonus(queryTerms, candidate);
             String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
@@ -2764,7 +2813,7 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportScore(queryTerms, candidate)) + Math.max(0, 12 - index);
+            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata()) + Math.max(0, 12 - index);
             score += broadHouseAnchorFocusBonus(candidate, sectionBonus, structureMatch);
             String retrievalMode = emptySafe(candidate.retrievalMode).trim().toLowerCase(QUERY_LOCALE);
             if ("route-focus".equals(retrievalMode)) {
@@ -2962,20 +3011,7 @@ public final class PackRepository implements AutoCloseable {
             if (!isSpecializedExplicitAnchorCandidate(queryTerms, result)) {
                 continue;
             }
-            int support = supportScore(queryTerms, result);
-            if (support <= 0 && isVectorRetrievalMode(result.retrievalMode)) {
-                // R-anchor1: vector rows' supportScore early-returns 0.
-                // Mirror the rerank-loop treatment so metadata-matched vector
-                // rows can compete for anchor selection alongside lexical rows.
-                support = metadataBonus(
-                    queryTerms,
-                    result.category,
-                    result.contentRole,
-                    result.timeHorizon,
-                    result.structureType,
-                    result.topicTags
-                );
-            }
+            int support = supportBreakdown(queryTerms, result).supportWithMetadata();
             if (support <= 0) {
                 continue;
             }
@@ -3428,7 +3464,7 @@ public final class PackRepository implements AutoCloseable {
                 continue;
             }
 
-            int score = Math.max(1, supportScore(queryTerms, candidate));
+            int score = Math.max(1, supportBreakdown(queryTerms, candidate).supportWithMetadata());
             score += Math.max(0, 12 - index);
             score += anchorAlignmentBonus(queryTerms, candidate);
             score += broadRouteSectionPreferenceBonus(queryTerms, candidate);
@@ -3644,25 +3680,54 @@ public final class PackRepository implements AutoCloseable {
         return true;
     }
 
-    static int supportScoreForTest(String query, SearchResult result) {
-        return supportScore(QueryTerms.fromQuery(query), result);
+    static SupportBreakdown supportBreakdownForTest(String query, SearchResult result) {
+        return supportBreakdown(QueryTerms.fromQuery(query), result);
     }
 
-    private static int supportScore(QueryTerms queryTerms, SearchResult result) {
-        String retrievalMode = emptySafe(result.retrievalMode).toLowerCase(QUERY_LOCALE);
-        if ("vector".equals(retrievalMode)) {
-            return 0;
+    static final class SupportBreakdown {
+        final int lexicalSupport;
+        final int metadataBonus;
+        final int specializedTopicBonus;
+        final int sectionBonus;
+        final int structurePenalty;
+
+        SupportBreakdown(
+            int lexicalSupport,
+            int metadataBonus,
+            int specializedTopicBonus,
+            int sectionBonus,
+            int structurePenalty
+        ) {
+            this.lexicalSupport = lexicalSupport;
+            this.metadataBonus = metadataBonus;
+            this.specializedTopicBonus = specializedTopicBonus;
+            this.sectionBonus = sectionBonus;
+            this.structurePenalty = structurePenalty;
         }
-        int score = lexicalKeywordScore(
-            queryTerms,
-            result.title,
-            result.sectionHeading,
-            result.category,
-            result.topicTags,
-            result.snippet,
-            result.body
-        );
-        score += metadataBonus(
+
+        int baseSupport() {
+            return lexicalSupport + specializedTopicBonus + sectionBonus + structurePenalty;
+        }
+
+        int supportWithMetadata() {
+            return baseSupport() + metadataBonus;
+        }
+    }
+
+    private static SupportBreakdown supportBreakdown(QueryTerms queryTerms, SearchResult result) {
+        String retrievalMode = emptySafe(result.retrievalMode).toLowerCase(QUERY_LOCALE);
+        int lexicalSupport = "vector".equals(retrievalMode)
+            ? 0
+            : lexicalKeywordScore(
+                queryTerms,
+                result.title,
+                result.sectionHeading,
+                result.category,
+                result.topicTags,
+                result.snippet,
+                result.body
+            );
+        int metadataBonus = metadataBonus(
             queryTerms,
             result.category,
             result.contentRole,
@@ -3670,14 +3735,20 @@ public final class PackRepository implements AutoCloseable {
             result.structureType,
             result.topicTags
         );
-        score += specializedExplicitTopicBonus(queryTerms, result);
-        score += queryTerms.metadataProfile.sectionHeadingBonus(result.sectionHeading);
-        score += supportStructurePenalty(
+        int specializedTopicBonus = specializedExplicitTopicBonus(queryTerms, result);
+        int sectionBonus = queryTerms.metadataProfile.sectionHeadingBonus(result.sectionHeading);
+        int structurePenalty = supportStructurePenalty(
             queryTerms.metadataProfile.prefersDiversifiedContext(),
             retrievalMode,
             result.sectionHeading
         );
-        return score;
+        return new SupportBreakdown(
+            lexicalSupport,
+            metadataBonus,
+            specializedTopicBonus,
+            sectionBonus,
+            structurePenalty
+        );
     }
 
     private static int specializedExplicitTopicBonus(QueryTerms queryTerms, SearchResult result) {

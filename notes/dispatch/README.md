@@ -33,20 +33,20 @@ edit the file, do not let the drift live only in your head.
 CP9 is closed (RC v5 cut landed 2026-04-20). The post-RC retrieval
 chain substantively closed 2026-04-20 with four landings:
 `2ec77b8`, `0a8b260`, `971961b`, and `585320c`. No slices are
-currently in flight after `R-tool2`.
+currently in flight after `R-anchor-refactor1`.
 
 Key remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
-pack-drift investigation, Wave C planning, and the in-flight
-`R-anchor-refactor1` forward research note. `R-tool2`, `R-ret1b`,
-`R-host`, `R-search`, and `R-telemetry` are closed, and the gallery
-is republished at
+pack-drift investigation, Wave C planning, and optional ask-telemetry
+enrichment. `R-tool2`, `R-anchor-refactor1`, `R-ret1b`, `R-host`,
+`R-search`, and `R-telemetry` are closed, and the gallery is republished at
 `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
 (45/45). The carry-over `R-search` wrapper-hang observation remains in
 backlog there as well.
 
 ## Landed (not yet rotated)
 
-Pending rotation as of `R-tool2` landing:
+Pending rotation as of `R-anchor-refactor1` landing:
+`R-anchor-refactor1_pack_support_breakdown.md`,
 `R-tool2_state_pack_logcat_capture.md` (next D-slice will rotate).
 Retained live: `A1_retry_5560_landscape.md` (superseded-but-kept),
 `P5_scope_note_landscape_phone.md` (cancelled-but-kept),

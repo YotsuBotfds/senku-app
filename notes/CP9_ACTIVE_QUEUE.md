@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-21 late - `R-tool2` landed: `scripts/build_android_ui_state_pack.ps1` now always passes `-CaptureLogcat` to `run_android_instrumented_ui_smoke.ps1`, so per-state `summary.json` files in state-pack runs carry real `logcat_path` values instead of null. First landing under the in-slice tracker-update cadence.
+- Last updated: 2026-04-21 night - `R-anchor-refactor1` unified PackRepository support boundaries: `supportScore(...)` removed in favor of a shared `SupportBreakdown`, all ten call sites across nine boundaries migrated, and both the `R-ret1c` + `R-anchor1` vector compensation branches deleted as superseded by broader vector-row credit. Android unit suite 438 -> 447 (+9); vector-row telemetry expectations held unchanged.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight after the `R-ret1b` landing chain. Key remaining post-RC tracked items are the drafted `R-tool2` state-pack `logcat_path: null` tooling gap, pack-drift investigation, and Wave C planning; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, and `R-telemetry` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight after the `R-anchor-refactor1` landing. Key remaining post-RC tracked items are pack-drift investigation, Wave C planning, and optional ask-telemetry enrichment; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, and `R-anchor-refactor1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -35,7 +35,6 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
-- **R-anchor-refactor1 forward research (in flight)** - Track the follow-on research note at `notes/R-ANCHOR-REFACTOR1_FORWARD_RESEARCH_20260421.md` for the next anchor-routing cleanup decision before any new slice is dispatched.
 - **Pack-drift investigation** - between 2026-04-20 17:18 and ~22:10, `af58bd12...` SQLite overwrote `f5cb2706...` on at least 5554; all four serials ended up on the older pack by the time the R-gal1 state-pack matrix ran. Not diagnosed. Worth a standalone read-only investigation slice before next substrate provisioning. Full evidence in `notes/PLANNER_HANDOFF_2026-04-21_DAY.md` under "Pack drift finding (unresolved)".
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
 
@@ -841,3 +840,29 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
   First slice under the in-slice tracker-update cadence: this commit also
   updates `CP9_ACTIVE_QUEUE.md` and `dispatch/README.md`; slice rotation
   still stays batched via the D-series.
+- 2026-04-21 night - `R-anchor-refactor1` landed. `PackRepository.java`
+  changed +267/-99 and the three scoped Android test files changed +501/-0
+  combined (`PackRepositoryTest.java` +392, `PackRepositoryTelemetryTest.java`
+  +29, `OfflineAnswerEngineTest.java` +80). Architectural contract change:
+  every PackRepository support boundary now consumes a shared
+  `SupportBreakdown` and applies metadata explicitly and exactly once via
+  `supportWithMetadata()`.
+  - Migration scope: all ten former `supportScore(...)` call sites across
+    nine boundaries now read through the shared breakdown helper; the old
+    `supportScore(...)` and `supportScoreForTest(...)` methods are gone.
+  - User-visible behavior shift: metadata-aligned vector support rows can now
+    survive the `buildGuideAnswerContext(...)` support-candidate ranking path
+    instead of dropping out at `support <= 0`.
+  - Superseded cleanup: both prior compensation branches were deleted
+    (`R-ret1c` rerank vector reinjection and `R-anchor1`
+    `buildAnchorGuideScores` vector fallback) because the shared breakdown now
+    grants the broader vector-row credit described in the slice decision.
+  - Validation: focused Android unit lane moved 306 -> 315 and the full
+    Android unit suite moved 438 -> 447. The two pre-existing vector rerank
+    telemetry fixtures held their exact numeric expectations unchanged, so
+    no telemetry fixture-value rewrites were needed.
+  - Engine regression note: no pre-existing `OfflineAnswerEngineTest`
+    expectations shifted; the new path-proxy regression covers the
+    ranked-results -> support-candidate scoring -> answer-mode path.
+  - Scout-audit note: this was the third slice under the scout-audit-before-
+    dispatch pattern and the first architectural-size one.

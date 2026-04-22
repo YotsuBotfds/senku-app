@@ -2583,6 +2583,77 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void rankedResultsWithMetadataMatchedVectorSurviveSelectedContextAndShapeAnswerMode() {
+        String query = "how do i repair a tarp shelter after wind damage";
+        SearchResult anchor = new SearchResult(
+            "Cave Shelter Systems and Long-Term Habitation",
+            "",
+            "Pick high ground and route runoff away from the sleeping area.",
+            "Pick high ground and route runoff away from the sleeping area.",
+            "GD-294",
+            "Rain runoff and tarp placement",
+            "survival",
+            "lexical",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "tarp_shelter,weatherproofing"
+        );
+        SearchResult offTopicLexical = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-727",
+            "Inventory",
+            "utility",
+            "lexical",
+            "reference",
+            "mixed",
+            "general",
+            "maintenance,storage"
+        );
+        SearchResult vectorRepair = new SearchResult(
+            "Tarp field notes",
+            "",
+            "Wind damage can tear tie-out points and seams.",
+            "Wind damage can tear tie-out points and seams. Patch the tarp, re-tension the ridgeline, and reset runoff angle after storms.",
+            "GD-112",
+            "Quick patches",
+            "survival",
+            "vector",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "tarp_shelter,repair"
+        );
+
+        List<SearchResult> selectedContext = PackRepository.rankSupportCandidatesForTest(
+            query,
+            anchor,
+            List.of(anchor, offTopicLexical, vectorRepair)
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel = OfflineAnswerEngine.confidenceLabel(
+            selectedContext,
+            query,
+            metadataProfile
+        );
+
+        assertTrue(containsGuideId(selectedContext, "GD-112"));
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                selectedContext,
+                query,
+                metadataProfile,
+                confidenceLabel,
+                false
+            )
+        );
+    }
+
+    @Test
     public void hybridRawRowsDoNotBlockAbstainWithoutGroundedSelectedContext() {
         String query = "how do i tune a violin bridge and soundpost";
         List<SearchResult> rawTopChunks = List.of(
@@ -2962,5 +3033,14 @@ public final class OfflineAnswerEngineTest {
     private static JSONObject lastLatencyEvent(List<JSONObject> events) {
         assertFalse(events.isEmpty());
         return events.get(events.size() - 1);
+    }
+
+    private static boolean containsGuideId(List<SearchResult> results, String guideId) {
+        for (SearchResult result : results) {
+            if (guideId.equals(result.guideId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

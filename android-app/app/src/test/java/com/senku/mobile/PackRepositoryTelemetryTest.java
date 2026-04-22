@@ -230,6 +230,35 @@ public final class PackRepositoryTelemetryTest {
     }
 
     @Test
+    public void vectorRerankUsesSharedSupportBreakdownMetadataBonus() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult vectorResult = detailedSearchResult(
+            "Shelter Build Log",
+            "Count crates and spare fittings before transport.",
+            "GD-345",
+            "Inventory",
+            "survival",
+            "vector",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "maintenance,storage"
+        );
+
+        PackRepository.SupportBreakdown breakdown = PackRepository.supportBreakdownForTest(query, vectorResult);
+        List<PackRepository.RerankedResult> reranked = PackRepository.maybeRerankResultsDetailedForTest(
+            query,
+            Collections.singletonList(vectorResult),
+            5
+        );
+        PackRepository.RerankedResult row = reranked.get(0);
+
+        assertEquals(breakdown.metadataBonus, row.metadataBonus);
+        assertEquals(expectedSingleGuideFinalScore(breakdown.supportWithMetadata()), row.finalScore, 0.0);
+        assertEquals(row.finalScore - row.metadataBonus, row.baseScore, 0.0);
+    }
+
+    @Test
     public void lexicalRowsDoNotDoubleCountMetadataBonus() {
         String query = "How do I build a simple rain shelter from tarp and cord?";
 

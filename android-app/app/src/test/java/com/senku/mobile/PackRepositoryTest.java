@@ -2384,6 +2384,387 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void buildGuideAnswerContextAdmitsMetadataMatchedVectorSupportRow() {
+        String query = "How do I build a simple rain shelter from tarp and cord?";
+        SearchResult anchor = new SearchResult(
+            "Cave Shelter Systems and Long-Term Habitation",
+            "",
+            "Pick high ground and route runoff away from the sleeping area.",
+            "Pick high ground and route runoff away from the sleeping area.",
+            "GD-294",
+            "Cave Selection Criteria",
+            "survival",
+            "lexical",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "shelter,drainage"
+        );
+        SearchResult offTopicLexical = new SearchResult(
+            "Camp Inventory Ledger",
+            "",
+            "Count crates and spare fittings before transport.",
+            "Count crates and spare fittings before transport.",
+            "GD-727",
+            "Inventory",
+            "utility",
+            "lexical",
+            "reference",
+            "mixed",
+            "general",
+            "maintenance,storage"
+        );
+        SearchResult vectorShelter = new SearchResult(
+            "Shelter Basics",
+            "",
+            "Tie a ridgeline, angle the tarp, and keep runoff away from the sleeping area.",
+            "Tie a ridgeline, angle the tarp, and keep runoff away from the sleeping area.",
+            "GD-933",
+            "Simple tarp shelter setup",
+            "survival",
+            "vector",
+            "starter",
+            "immediate",
+            "emergency_shelter",
+            "tarp_shelter,weatherproofing"
+        );
+
+        PackRepository.SupportBreakdown vectorSupport = PackRepository.supportBreakdownForTest(query, vectorShelter);
+        java.util.List<SearchResult> supportCandidates = PackRepository.rankSupportCandidatesForTest(
+            query,
+            anchor,
+            java.util.List.of(anchor, offTopicLexical, vectorShelter)
+        );
+
+        assertEquals(0, vectorSupport.lexicalSupport);
+        assertTrue(vectorSupport.supportWithMetadata() > 0);
+        assertTrue(containsGuideId(supportCandidates, "GD-933"));
+        assertFalse(containsGuideId(supportCandidates, "GD-727"));
+    }
+
+    @Test
+    public void rankedVsRoutedAnchorTiebreakUsesFullVectorSupportBothSides() {
+        String query = "how do i design a gravity-fed water distribution system";
+        SearchResult strongRankedVector = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "GD-270",
+            "Gravity-Fed Distribution Systems",
+            "building",
+            "vector",
+            "planning",
+            "long_term",
+            "water_distribution",
+            "water_distribution,water_storage"
+        );
+        SearchResult weakRoutedLexical = new SearchResult(
+            "Supply Notes",
+            "",
+            "Count spare fittings and hand tools before transport.",
+            "Count spare fittings and hand tools before transport.",
+            "GD-271",
+            "Materials Index",
+            "utility",
+            "route-focus",
+            "reference",
+            "mixed",
+            "general",
+            "water_distribution"
+        );
+        SearchResult weakRankedLexical = new SearchResult(
+            "Supply Notes",
+            "",
+            "Count spare fittings and hand tools before transport.",
+            "Count spare fittings and hand tools before transport.",
+            "GD-272",
+            "Materials Index",
+            "utility",
+            "lexical",
+            "reference",
+            "mixed",
+            "general",
+            "water_distribution"
+        );
+        SearchResult strongRoutedVector = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "GD-273",
+            "Storage Tank Planning",
+            "building",
+            "vector",
+            "planning",
+            "long_term",
+            "water_distribution",
+            "water_distribution,water_storage"
+        );
+
+        PackRepository.SupportBreakdown rankedVectorSupport = PackRepository.supportBreakdownForTest(query, strongRankedVector);
+        PackRepository.SupportBreakdown routedLexicalSupport = PackRepository.supportBreakdownForTest(query, weakRoutedLexical);
+        PackRepository.SupportBreakdown rankedLexicalSupport = PackRepository.supportBreakdownForTest(query, weakRankedLexical);
+        PackRepository.SupportBreakdown routedVectorSupport = PackRepository.supportBreakdownForTest(query, strongRoutedVector);
+
+        assertTrue(
+            "rankedVector=" + rankedVectorSupport.supportWithMetadata()
+                + " routedLexical=" + routedLexicalSupport.supportWithMetadata(),
+            rankedVectorSupport.supportWithMetadata() >= routedLexicalSupport.supportWithMetadata() + 12
+        );
+        assertEquals(
+            "GD-270",
+            PackRepository.selectAnswerAnchorForTest(query, strongRankedVector, weakRoutedLexical).guideId
+        );
+        assertTrue(routedVectorSupport.supportWithMetadata() + 11 >= rankedLexicalSupport.supportWithMetadata());
+        assertEquals(
+            "GD-273",
+            PackRepository.selectAnswerAnchorForTest(query, weakRankedLexical, strongRoutedVector).guideId
+        );
+    }
+
+    @Test
+    public void selectExplicitWaterDistributionAnchorUsesSupportBreakdown() {
+        String query = "how do i design a gravity-fed water distribution system";
+        SearchResult weakLexical = new SearchResult(
+            "Supply Notes",
+            "",
+            "Count spare fittings and hand tools before transport.",
+            "Count spare fittings and hand tools before transport.",
+            "GD-271",
+            "Materials Index",
+            "utility",
+            "",
+            "reference",
+            "mixed",
+            "general",
+            "water_distribution"
+        );
+        SearchResult strongVector = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "GD-270",
+            "Gravity-Fed Distribution Systems",
+            "building",
+            "vector",
+            "planning",
+            "long_term",
+            "water_distribution",
+            "water_distribution,water_storage"
+        );
+
+        PackRepository.SupportBreakdown lexicalSupport = PackRepository.supportBreakdownForTest(query, weakLexical);
+        PackRepository.SupportBreakdown vectorSupport = PackRepository.supportBreakdownForTest(query, strongVector);
+
+        // weakLexical support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // strongVector support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // Winning delta: supportWithMetadata() keeps the vector row ahead before chooser-specific bonuses apply.
+        assertTrue(
+            "distribution vector=" + vectorSupport.supportWithMetadata()
+                + " lexical=" + lexicalSupport.supportWithMetadata(),
+            vectorSupport.supportWithMetadata() > lexicalSupport.supportWithMetadata()
+        );
+        assertEquals(
+            "GD-270",
+            PackRepository.selectExplicitWaterDistributionAnchorForTest(query, weakLexical, strongVector).guideId
+        );
+    }
+
+    @Test
+    public void selectExplicitWaterStorageAnchorUsesSupportBreakdown() {
+        String query = "what is the safest way to store treated water long term";
+        SearchResult weakLexical = new SearchResult(
+            "Supply Notes",
+            "",
+            "Count spare fittings and hand tools before transport.",
+            "Count spare fittings and hand tools before transport.",
+            "GD-373",
+            "Materials Index",
+            "building",
+            "",
+            "reference",
+            "immediate",
+            "general",
+            "water_storage"
+        );
+        SearchResult strongVector = new SearchResult(
+            "Storage & Material Management",
+            "",
+            "Use food-safe containers, sanitize them, seal them, and rotate treated water on a schedule.",
+            "Use food-safe containers, sanitize them, seal them, and rotate treated water on a schedule.",
+            "GD-252",
+            "Water Storage & Rotation",
+            "resource-management",
+            "vector",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,container_sanitation,water_rotation"
+        );
+
+        PackRepository.SupportBreakdown lexicalSupport = PackRepository.supportBreakdownForTest(query, weakLexical);
+        PackRepository.SupportBreakdown vectorSupport = PackRepository.supportBreakdownForTest(query, strongVector);
+
+        // weakLexical support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // strongVector support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // Winning delta: supportWithMetadata() keeps the storage-specific vector row ahead before role bias applies.
+        assertTrue(
+            "storage vector=" + vectorSupport.supportWithMetadata()
+                + " lexical=" + lexicalSupport.supportWithMetadata(),
+            vectorSupport.supportWithMetadata() > lexicalSupport.supportWithMetadata()
+        );
+        assertEquals(
+            "GD-252",
+            PackRepository.selectExplicitWaterStorageAnchorForTest(query, weakLexical, strongVector).guideId
+        );
+    }
+
+    @Test
+    public void selectSpecializedStructuredAnchorUsesSupportBreakdown() {
+        String query = "How do I make soap from animal fat safely enough that it's actually useful?";
+        SearchResult weakLexical = new SearchResult(
+            "Homestead Chemistry",
+            "",
+            "Soapmaking notes with broad handling guidance and no dedicated process walkthrough.",
+            "Soapmaking notes with broad handling guidance and no dedicated process walkthrough.",
+            "GD-571",
+            "General handling notes",
+            "crafts",
+            "",
+            "subsystem",
+            "mixed",
+            "soapmaking",
+            ""
+        );
+        SearchResult strongVector = new SearchResult(
+            "Homestead Chemistry",
+            "",
+            "Render fat, prepare lye water, mix to trace, and cure soap bars safely.",
+            "Render fat, prepare lye water, mix to trace, and cure soap bars safely.",
+            "GD-122",
+            "Soap Making - Cold Process",
+            "crafts",
+            "vector",
+            "subsystem",
+            "mixed",
+            "soapmaking",
+            "soapmaking,lye_safety"
+        );
+
+        PackRepository.SupportBreakdown lexicalSupport = PackRepository.supportBreakdownForTest(query, weakLexical);
+        PackRepository.SupportBreakdown vectorSupport = PackRepository.supportBreakdownForTest(query, strongVector);
+
+        // weakLexical support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // strongVector support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // Winning delta: supportWithMetadata() keeps the dedicated soapmaking vector row ahead before anchor-alignment bias.
+        assertTrue(
+            "broadHouse vector=" + vectorSupport.supportWithMetadata()
+                + " lexical=" + lexicalSupport.supportWithMetadata(),
+            vectorSupport.supportWithMetadata() > lexicalSupport.supportWithMetadata()
+        );
+        assertEquals(
+            "GD-122",
+            PackRepository.selectSpecializedStructuredAnchorForTest(query, weakLexical, strongVector).guideId
+        );
+    }
+
+    @Test
+    public void selectBroadHouseAnchorUsesSupportBreakdown() {
+        String query = "how do i build a house";
+        SearchResult weakLexical = new SearchResult(
+            "Supply Notes",
+            "",
+            "Count nails, spare fittings, and hand tools before transport.",
+            "Count nails, spare fittings, and hand tools before transport.",
+            "GD-400",
+            "Materials Index",
+            "building",
+            "",
+            "reference",
+            "immediate",
+            "general",
+            "foundation,wall_construction"
+        );
+        SearchResult strongVector = new SearchResult(
+            "Construction & Carpentry",
+            "",
+            "Starter build sequence for site prep, foundations, walls, roofing, and weatherproofing.",
+            "Starter build sequence for site prep, foundations, walls, roofing, and weatherproofing.",
+            "GD-401",
+            "Roofing and Weatherproofing",
+            "building",
+            "vector",
+            "planning",
+            "long_term",
+            "cabin_house",
+            "foundation,wall_construction,roofing,weatherproofing"
+        );
+
+        PackRepository.SupportBreakdown lexicalSupport = PackRepository.supportBreakdownForTest(query, weakLexical);
+        PackRepository.SupportBreakdown vectorSupport = PackRepository.supportBreakdownForTest(query, strongVector);
+
+        // weakLexical support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // strongVector support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // Winning delta: supportWithMetadata() keeps the sectioned cabin-house vector row ahead before broad-house bias.
+        assertTrue(
+            "broadHouse vector=" + vectorSupport.supportWithMetadata()
+                + " lexical=" + lexicalSupport.supportWithMetadata(),
+            vectorSupport.supportWithMetadata() > lexicalSupport.supportWithMetadata()
+        );
+        assertEquals(
+            "GD-401",
+            PackRepository.selectBroadHouseAnchorForTest(query, weakLexical, strongVector).guideId
+        );
+    }
+
+    @Test
+    public void findRouteFocusedAnchorUsesSupportBreakdown() {
+        String query = "how do i design a gravity-fed water distribution system";
+        SearchResult weakRoute = new SearchResult(
+            "Water System Materials Index",
+            "",
+            "Pipe fittings, valve sizes, and spare parts notes.",
+            "Pipe fittings, valve sizes, and spare parts notes.",
+            "GD-271",
+            "Materials Index",
+            "building",
+            "route-focus",
+            "planning",
+            "long_term",
+            "general",
+            "water_distribution"
+        );
+        SearchResult strongRoute = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "Gravity-fed distribution and storage tank planning for settlement-scale water delivery.",
+            "GD-270",
+            "Storage Tank Planning",
+            "building",
+            "route-focus",
+            "planning",
+            "long_term",
+            "water_distribution",
+            "water_distribution,water_storage"
+        );
+
+        PackRepository.SupportBreakdown weakSupport = PackRepository.supportBreakdownForTest(query, weakRoute);
+        PackRepository.SupportBreakdown strongSupport = PackRepository.supportBreakdownForTest(query, strongRoute);
+
+        // weakRoute support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // strongRoute support: lexical / metadata / topic / section / penalty -> supportWithMetadata().
+        // Winning delta: supportWithMetadata() keeps the stronger route-focused row ahead before route-section preference.
+        assertTrue(strongSupport.supportWithMetadata() > weakSupport.supportWithMetadata());
+        assertEquals(
+            "GD-270",
+            PackRepository.routeFocusedAnchorForTest(query, java.util.List.of(weakRoute, strongRoute), true).guideId
+        );
+    }
+
+    @Test
     public void anchorGuideScoresIncludeVectorRowsWhenMetadataBonusIsPositive() {
         String query = "How do I build a simple rain shelter from tarp and cord?";
         SearchResult lexicalOffTopic = new SearchResult(
@@ -2478,7 +2859,7 @@ public final class PackRepositoryTest {
                 java.util.Collections.singletonList(lexicalShelter),
                 false
             );
-        int expectedTotal = PackRepository.supportScoreForTest(query, lexicalShelter)
+        int expectedTotal = PackRepository.supportBreakdownForTest(query, lexicalShelter).supportWithMetadata()
             + 12
             + PackRepository.anchorAlignmentBonusForTest(query, lexicalShelter)
             + 2;
@@ -3162,5 +3543,14 @@ public final class PackRepositoryTest {
         int penalty = PackRepository.supportStructurePenalty(true, "route-focus", "Water Storage");
 
         assertEquals(0, penalty);
+    }
+
+    private static boolean containsGuideId(java.util.List<SearchResult> results, String guideId) {
+        for (SearchResult result : results) {
+            if (guideId.equals(result.guideId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
