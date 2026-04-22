@@ -36,8 +36,9 @@ chain substantively closed 2026-04-20 with four landings:
 currently in flight after `R-anchor-refactor1`.
 
 Key remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
-pack-drift investigation, Wave C planning, and optional ask-telemetry
-enrichment. `R-tool2`, `R-anchor-refactor1`, `R-ret1b`, `R-host`,
+the post-`R-pack-drift1` hygiene/audit lane is `R-hygiene2` then
+`R-track1`, followed by Wave C planning and optional ask-telemetry
+enrichment; `R-tool2`, `R-anchor-refactor1`, `R-ret1b`, `R-host`,
 `R-search`, and `R-telemetry` are closed, and the gallery is republished at
 `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
 (45/45). The carry-over `R-search` wrapper-hang observation remains in

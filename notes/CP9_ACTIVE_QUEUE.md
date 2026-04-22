@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-21 night - `R-anchor-refactor1` unified PackRepository support boundaries: `supportScore(...)` removed in favor of a shared `SupportBreakdown`, all ten call sites across nine boundaries migrated, and both the `R-ret1c` + `R-anchor1` vector compensation branches deleted as superseded by broader vector-row credit. Android unit suite 438 -> 447 (+9); vector-row telemetry expectations held unchanged.
+- Last updated: 2026-04-22 afternoon - `R-hygiene2` removed `metadata_validation_report.json` writes from the two mobile-pack-dir paths, closed the pack-drift tracker item with the R-pack-drift1 forward recommendation, and dispositioned the false CABIN_HOUSE dead-marker claim.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight after the `R-anchor-refactor1` landing. Key remaining post-RC tracked items are pack-drift investigation, Wave C planning, and optional ask-telemetry enrichment; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, and `R-anchor-refactor1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight after the `R-anchor-refactor1` landing. Key remaining post-RC tracked items are the post-`R-pack-drift1` hygiene/audit lane (`R-hygiene2`, `R-track1`), Wave C planning, and optional ask-telemetry enrichment; the carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, and `R-anchor-refactor1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -35,8 +35,12 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
-- **Pack-drift investigation** - between 2026-04-20 17:18 and ~22:10, `af58bd12...` SQLite overwrote `f5cb2706...` on at least 5554; all four serials ended up on the older pack by the time the R-gal1 state-pack matrix ran. Not diagnosed. Worth a standalone read-only investigation slice before next substrate provisioning. Full evidence in `notes/PLANNER_HANDOFF_2026-04-21_DAY.md` under "Pack drift finding (unresolved)".
+- ~~Pack-drift investigation~~ - resolved 2026-04-22 via `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` §6: adopt `cf449ee9...` as the forward substrate; keep the historical correction in docs that retrieval-chain claims belong to `af58bd12...`, not `e48d3e1a...`.
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
+
+### Resolved without slice
+
+- ~~CABIN_HOUSE dead-marker prune~~ - investigated 2026-04-22; claim was false: marker is live via `guide.title` -> `core_text` at `mobile_pack.py:2003-2011`, and `guides/shelter-site-assessment.md:4` matches `mobile_pack.py:600` verbatim after lowercase normalization.
 
 ## Blocked / Deferred
 
@@ -93,14 +97,13 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
   optimization slice (move detection upstream so the model is
   never invoked on no-evidence shapes).
 
-- Mobile pack export script may produce defunct filenames
+- ~~Mobile pack export script may produce defunct filenames
   (`senku.db`, `senku_guides.db`, `senku_mobile.db`, `senku_pack.db`,
-  `senku_pack.sqlite`, `metadata_validation_report.json`). Found
-  during R-hygiene1 Step 1 as 0-byte placeholders + one stale
-  validation report from 2026-04-19. Deleted in the slice. Audit
-  `scripts/export_mobile_pack.py` / `mobile_pack.py` to confirm
-  these write paths are gone; otherwise next pack regen will
-  reintroduce the noise. Post-hygiene follow-up slice (small).
+  `senku_pack.sqlite`, `metadata_validation_report.json`).~~ Resolved
+  2026-04-22 by `R-hygiene1` + `R-hygiene2`: stale asset files were
+  deleted, live export/refresh code now emits only the current pack
+  filenames, and the mobile-pack-dir
+  `metadata_validation_report.json` writes are gone.
 - `R-search` wrapper hang observation (2026-04-21 day) - during
   R-search Step 6 execution,
   `scripts/run_android_instrumented_ui_smoke.ps1` hung for 20+ minutes
@@ -866,3 +869,11 @@ No slices currently in flight. Next planner direction TBD (see post-RC tracked b
     ranked-results -> support-candidate scoring -> answer-mode path.
   - Scout-audit note: this was the third slice under the scout-audit-before-
     dispatch pattern and the first architectural-size one.
+- 2026-04-22 afternoon - `R-hygiene2` landed. `mobile_pack.py` and
+  `scripts/refresh_mobile_pack_metadata.py` no longer write
+  `metadata_validation_report.json` into mobile-pack output dirs; the
+  validation error gate remains intact at both sites. Tracker follow-up:
+  pack-drift is now documented as historically resolved per
+  `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` §6, the defunct-filename
+  carry-over item is closed, and the CABIN_HOUSE dead-marker claim was
+  struck as false after code/path verification.

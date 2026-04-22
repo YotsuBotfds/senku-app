@@ -21,11 +21,9 @@ import config
 from deterministic_special_case_registry import DETERMINISTIC_SPECIAL_CASE_SPECS
 from ingest import parse_frontmatter
 from metadata_validation import (
-    REPORT_FILENAME as METADATA_VALIDATION_REPORT_FILENAME,
     format_validation_errors,
     report_has_errors,
     validate_guide_records,
-    write_validation_report,
 )
 from token_estimation import estimate_tokens
 
@@ -1437,7 +1435,6 @@ def export_mobile_pack(
     sqlite_path = output_path / sqlite_filename
     manifest_path = output_path / manifest_filename
     vector_path = output_path / _vector_filename_for_dtype(vector_dtype)
-    metadata_report_path = output_path / METADATA_VALIDATION_REPORT_FILENAME
 
     for path in (sqlite_path, manifest_path, vector_path):
         if path.exists():
@@ -1448,7 +1445,6 @@ def export_mobile_pack(
         guide_records,
         scope="mobile_pack_export",
     )
-    write_validation_report(metadata_report, metadata_report_path)
     if report_has_errors(metadata_report):
         raise ValueError(format_validation_errors(metadata_report))
     rule_records = load_deterministic_rule_records()
