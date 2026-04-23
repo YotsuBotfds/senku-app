@@ -18,50 +18,60 @@ edit the file, do not let the drift live only in your head.
 - For slices that touch external framework/library behavior (Android
   SDK, Compose, Gradle, Python libs), include a one-line hint in
   `Anti-recommendations` (or wherever natural) pointing Codex at the
-  relevant MCP — e.g. context7 for Android/Compose/library API docs,
+  relevant MCP - e.g. context7 for Android/Compose/library API docs,
   git MCP for repo-history questions, sequential-thinking for
   genuinely ambiguous decomposition. Codex has context7, git, and
   sequential-thinking registered in `~/.codex/config.toml` but
   doesn't always reach for them unprompted. Especially valuable
   when the symptom involves framework behavior (IME, focus,
-  lifecycle, recomposition) — without the hint, Codex tends to
+  lifecycle, recomposition) - without the hint, Codex tends to
   layer defensive code on top of assumptions rather than checking
-  authoritative docs (R-ui2 v1→v2→v3 is the cautionary tale).
+  authoritative docs (R-ui2 v1->v2->v3 is the cautionary tale).
 
 ## Active slices
 
-CP9 is closed (RC v5 cut landed 2026-04-20). The post-RC retrieval
-chain substantively closed 2026-04-20 with four landings:
-`2ec77b8`, `0a8b260`, `971961b`, and `585320c`. No slices are
-currently in flight; D8 landed this commit.
+CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
+`W-C-4`, `D11` has landed, and no slices are currently in flight.
 
-Key remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
-next is Wave C direction-note drafting, with optional ask-telemetry
-enrichment and the remaining post-`R-track1` follow-ups behind it.
-`R-tool2`, `R-anchor-refactor1`, `R-ret1b`, `R-host`, `R-search`,
-`R-telemetry`, and `R-track1` are closed, and the gallery is
-republished at
-`artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
-(45/45). The carry-over `R-search` wrapper-hang observation remains in
-backlog there as well.
+Use `notes/CP9_ACTIVE_QUEUE.md` as the live source for next-step
+ordering, post-RC backlog truth, and current status. Do not infer the
+next slice from this README alone.
 
 ## Landed (not yet rotated)
-
-Pending future rotation under the bootstrap constraint:
-`D8_notes_core_tracking_sidecar_and_dispatch_rotation.md`.
 
 Retained live root records:
 `A1_retry_5560_landscape.md` (superseded-but-kept),
 `P5_scope_note_landscape_phone.md` (cancelled-but-kept),
 `probe_rain_shelter_mode_flip.md` (stale probe kept per D5).
 
+Unrotated prompt drafts still present at the dispatch root:
+`D9_tracker_doc_reconciliation_and_historical_labeling.md`,
+`D10_wave_c_direction_note_lock.md`,
+`D11_repo_root_retention_triage.md`,
+`W-C-0_panel_expansion_and_runner_preflight.md`,
+`W-C-1a_final_mode_runtime_emission_fix.md`,
+`W-C-1_final_mode_telemetry_aggregation_helper.md`,
+`W-C-2_desktop_abstain_threshold_tuning.md`,
+`W-C-3_android_abstain_vector_mirror.md`,
+`W-C-4_uncertain_fit_upper_band_calibration.md`,
+`W-C-5a_low_coverage_canary_probe_and_closeout.md`.
+
+Those files reflect landed or historical dispatch work that has not yet
+been rotated out of the root. This slice does not move them.
+
 ## Dispatch-root trust
 
-`notes/dispatch/` should now be a trustworthy live root again:
-`README.md`, the three retained live records above, the current D8
-bootstrap file, and `completed/` for historical slice files. If a
-landed slice is not one of those retained live records, it should
-already be under `notes/dispatch/completed/`.
+`notes/dispatch/` is not a fully normalized live root. It currently
+mixes:
+
+- `README.md`
+- the retained live records above
+- unrotated prompt drafts that still document landed work
+- `completed/` for rotated historical slice files
+
+For cleanup, redispatch, or historical reasoning, take a fresh inventory
+of the root and cross-check `notes/CP9_ACTIVE_QUEUE.md` instead of
+trusting old D8-era assumptions about what has already been rotated.
 
 ## Superseded - do not redispatch
 
