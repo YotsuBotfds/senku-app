@@ -127,6 +127,48 @@ public final class OfflineAnswerEngine {
         "chemical on skin"
     );
     private static final Set<String> SAFETY_CRITICAL_EMERGENCY_CONTEXT_MARKERS = buildSet("urgent", "emergency");
+    private static final Set<String> WATER_STORAGE_PROMPT_PRIORITY_MARKERS = buildSet(
+        "hydration assurance",
+        "container sanitation",
+        "rotation",
+        "fifo",
+        "inspection",
+        "inspect",
+        "seal integrity",
+        "food grade",
+        "food-safe",
+        "food safe",
+        "storage location",
+        "contamination",
+        "maintenance",
+        "stored water"
+    );
+    private static final Set<String> WATER_STORAGE_PROMPT_DEMOTION_MARKERS = buildSet(
+        "bleach",
+        "chlorine",
+        "disinfection",
+        "disinfect",
+        "purification",
+        "treatment",
+        "treat water",
+        "boil",
+        "boiling",
+        "dosage",
+        "drops",
+        "taste improvement",
+        "aerate",
+        "failure modes",
+        "recovery"
+    );
+    private static final Set<String> WATER_STORAGE_PROMPT_HARD_DEMOTION_MARKERS = buildSet(
+        "root cellar",
+        "canning",
+        "preservation",
+        "chemical storage",
+        "hazard management",
+        "water tower",
+        "distribution"
+    );
     private static final int MAX_PENDING_SESSION_LATENCIES = 12;
     private static final Object PENDING_SESSION_LATENCIES_LOCK = new Object();
     private static final LinkedHashMap<String, LatencyBreakdown> PENDING_SESSION_LATENCIES =
@@ -380,9 +422,12 @@ public final class OfflineAnswerEngine {
         }
 
         int promptContextLimit = promptContextLimitFor(contextSelectionQuery);
-        List<SearchResult> promptContextResults = contextResults.isEmpty()
-            ? Collections.emptyList()
-            : new ArrayList<>(contextResults.subList(0, Math.min(promptContextLimit, contextResults.size())));
+        List<SearchResult> promptContextResults = shapePromptContextResults(
+            contextSelectionQuery,
+            retrievalPlan.metadataProfile,
+            contextResults,
+            promptContextLimit
+        );
 
         long promptStartedAtNs = SystemClock.elapsedRealtimeNanos();
         String prompt = PromptBuilder.buildOfflineAnswerPrompt(
@@ -813,6 +858,111 @@ public final class OfflineAnswerEngine {
             return Math.max(limit, 4);
         }
         return limit;
+    }
+
+    static List<SearchResult> shapePromptContextResults(
+        String contextSelectionQuery,
+        QueryMetadataProfile metadataProfile,
+        List<SearchResult> contextResults,
+        int promptContextLimit
+    ) {
+        if (contextResults == null || contextResults.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        int effectiveLimit = Math.max(1, promptContextLimit);
+        ArrayList<SearchResult> ordered = new ArrayList<>(contextResults);
+        if (!shouldShapeBroadWaterStoragePrompt(contextSelectionQuery, metadataProfile)) {
+            return new ArrayList<>(ordered.subList(0, Math.min(effectiveLimit, ordered.size())));
+        }
+
+        ArrayList<ScoredCandidate> scored = new ArrayList<>();
+        int positiveCount = 0;
+        for (int index = 0; index < ordered.size(); index++) {
+            SearchResult candidate = ordered.get(index);
+            int score = waterStoragePromptContextScore(candidate);
+            if (index == 0 && score > 0) {
+                score += 4;
+            }
+            if (score > 0) {
+                positiveCount += 1;
+            }
+            scored.add(new ScoredCandidate(candidate, index, score));
+        }
+
+        scored.sort((left, right) -> {
+            int scoreOrder = Integer.compare(right.score, left.score);
+            if (scoreOrder != 0) {
+                return scoreOrder;
+            }
+            return Integer.compare(left.originalIndex, right.originalIndex);
+        });
+
+        ArrayList<SearchResult> trimmed = new ArrayList<>();
+        for (ScoredCandidate candidate : scored) {
+            if (positiveCount >= 2 && candidate.score < 0) {
+                continue;
+            }
+            trimmed.add(candidate.result);
+            if (trimmed.size() >= effectiveLimit) {
+                break;
+            }
+        }
+
+        if (trimmed.isEmpty()) {
+            return new ArrayList<>(ordered.subList(0, Math.min(effectiveLimit, ordered.size())));
+        }
+        return trimmed;
+    }
+
+    private static boolean shouldShapeBroadWaterStoragePrompt(
+        String contextSelectionQuery,
+        QueryMetadataProfile metadataProfile
+    ) {
+        if (metadataProfile == null) {
+            return false;
+        }
+        if (!"water_storage".equalsIgnoreCase(safe(metadataProfile.preferredStructureType()).trim())) {
+            return false;
+        }
+        if (metadataProfile.hasExplicitTopic("water_distribution")) {
+            return false;
+        }
+        if (metadataProfile.waterStorageContainerMakingIntent()) {
+            return false;
+        }
+        String normalized = safe(contextSelectionQuery).toLowerCase(QUERY_LOCALE);
+        return normalized.contains("water")
+            && (normalized.contains("store")
+                || normalized.contains("storage")
+                || normalized.contains("treated water"));
+    }
+
+    private static int waterStoragePromptContextScore(SearchResult candidate) {
+        if (candidate == null) {
+            return 0;
+        }
+        String normalized = (
+            safe(candidate.title) + " "
+                + safe(candidate.sectionHeading) + " "
+                + safe(candidate.snippet) + " "
+                + safe(candidate.body) + " "
+                + safe(candidate.topicTags)
+        ).toLowerCase(QUERY_LOCALE);
+        int score = 0;
+        if ("water_storage".equalsIgnoreCase(safe(candidate.structureType).trim())) {
+            score += 10;
+        }
+        if (containsAny(normalized, WATER_STORAGE_PROMPT_PRIORITY_MARKERS)) {
+            score += 12;
+        }
+        if (containsAny(normalized, WATER_STORAGE_PROMPT_DEMOTION_MARKERS)) {
+            score -= 14;
+        }
+        if (containsAny(normalized, WATER_STORAGE_PROMPT_HARD_DEMOTION_MARKERS)) {
+            score -= 24;
+        }
+        return score;
     }
 
     private static boolean containsAny(String text, Set<String> markers) {

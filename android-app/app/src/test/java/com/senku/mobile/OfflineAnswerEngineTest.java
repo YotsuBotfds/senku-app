@@ -1908,6 +1908,127 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void broadWaterStoragePromptContextPrefersStorageRotationOverBleachHeavySupport() {
+        String query = "what's the safest way to store treated water long term";
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+
+        List<SearchResult> promptContext = OfflineAnswerEngine.shapePromptContextResults(
+            query,
+            metadataProfile,
+            List.of(
+                new SearchResult(
+                    "Storage & Material Management",
+                    "",
+                    "Use sealed food-safe containers in a dark, cool place.",
+                    "Use sealed food-safe containers in a dark, cool place.",
+                    "GD-252",
+                    "Water Storage: Hydration Assurance",
+                    "resource-management",
+                    "guide-focus",
+                    "safety",
+                    "long_term",
+                    "water_storage",
+                    "water_storage,container_sanitation,water_rotation"
+                ),
+                new SearchResult(
+                    "Storage & Material Management",
+                    "",
+                    "Label dates and rotate stored water with a FIFO schedule.",
+                    "Label dates and rotate stored water with a FIFO schedule.",
+                    "GD-252",
+                    "Rotation Schedules: FIFO Implementation & Discipline",
+                    "resource-management",
+                    "guide-focus",
+                    "safety",
+                    "long_term",
+                    "water_storage",
+                    "water_storage,water_rotation"
+                ),
+                new SearchResult(
+                    "Water Storage & Purification",
+                    "",
+                    "Add bleach drops, re-dose chlorine, and improve taste by aerating.",
+                    "Add bleach drops, re-dose chlorine, and improve taste by aerating.",
+                    "GD-373",
+                    "Chemical Treatment & Bleach Re-Dosing",
+                    "utility",
+                    "hybrid",
+                    "safety",
+                    "long_term",
+                    "water_storage",
+                    "water_storage,container_sanitation"
+                ),
+                new SearchResult(
+                    "Storage & Material Management",
+                    "",
+                    "Keep chemical storage separate from potable water containers.",
+                    "Keep chemical storage separate from potable water containers.",
+                    "GD-252",
+                    "Chemical Storage: Hazard Management",
+                    "resource-management",
+                    "guide-focus",
+                    "safety",
+                    "long_term",
+                    "water_storage",
+                    "water_storage"
+                )
+            ),
+            OfflineAnswerEngine.promptContextLimitFor(query)
+        );
+
+        assertEquals(2, promptContext.size());
+        assertEquals("Water Storage: Hydration Assurance", promptContext.get(0).sectionHeading);
+        assertEquals("Rotation Schedules: FIFO Implementation & Discipline", promptContext.get(1).sectionHeading);
+    }
+
+    @Test
+    public void broadWaterStoragePromptContextDoesNotRewriteDistributionStorageTankPrompt() {
+        String query = "storage tanks water distribution water storage";
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(
+            "how do i design a gravity-fed water distribution system what about storage tanks"
+        );
+        List<SearchResult> original = List.of(
+            new SearchResult(
+                "Community Water Distribution Systems",
+                "",
+                "Start with tower height and layout.",
+                "Start with tower height and layout.",
+                "GD-270",
+                "Water Tower Construction & Sizing",
+                "building",
+                "guide-focus",
+                "subsystem",
+                "long_term",
+                "water_storage",
+                "water_storage,water_distribution"
+            ),
+            new SearchResult(
+                "Storage & Material Management",
+                "",
+                "Use sealed food-safe containers in a dark, cool place.",
+                "Use sealed food-safe containers in a dark, cool place.",
+                "GD-252",
+                "Water Storage: Hydration Assurance",
+                "resource-management",
+                "guide-focus",
+                "safety",
+                "long_term",
+                "water_storage",
+                "water_storage,container_sanitation,water_rotation"
+            )
+        );
+
+        List<SearchResult> promptContext = OfflineAnswerEngine.shapePromptContextResults(
+            query,
+            metadataProfile,
+            original,
+            OfflineAnswerEngine.promptContextLimitFor(query)
+        );
+
+        assertEquals(original, promptContext);
+    }
+
+    @Test
     public void standaloneQuestionKeepsRawContextSelectionQuery() {
         String contextSelectionQuery = OfflineAnswerEngine.selectContextSelectionQuery(
             "how do i build a house",
