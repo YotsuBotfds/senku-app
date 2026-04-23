@@ -1,0 +1,214 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sidecar Viewer</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-kicker">Senku</div>
+        <h1>Sidecar Viewer</h1>
+        <p>Read-only monitor for local OpenCode sidecar tasks.</p>
+      </div>
+      <div class="topbar-actions">
+        <span id="healthBadge" class="pill pill--health">Checking bridge</span>
+        <span id="healthText" class="topbar-text">Waiting for bridge health...</span>
+        <label class="toggle">
+          <input id="refreshToggle" type="checkbox" checked>
+          <span>Auto refresh</span>
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel panel--list">
+        <div class="panel-header panel-header--stacked">
+          <div>
+            <div class="panel-kicker">Tasks</div>
+            <h2>Viewer Queue</h2>
+          </div>
+          <div class="panel-actions">
+            <span id="taskCount" class="counter">0 tasks</span>
+            <button
+              id="runningCount"
+              class="counter counter--button"
+              type="button"
+              disabled
+              title="Click to open the only running task, or filter to all running tasks when there are several."
+            >0 running</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <select id="stateFilter" aria-label="Filter by state">
+            <option value="all">All states</option>
+            <option value="running">Running</option>
+            <option value="busy">Busy</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+            <option value="aborted">Aborted</option>
+            <option value="submitted">Submitted</option>
+            <option value="queued">Queued</option>
+            <option value="timed_out">Timed out</option>
+            <option value="stale">Stale</option>
+          </select>
+          <input id="searchBox" type="search" placeholder="Search label, title, or task id">
+          <button id="refreshButton" class="button" type="button">Refresh</button>
+        </div>
+
+        <div id="taskListError" class="notice notice--error hidden"></div>
+        <div id="taskListEmptyState" class="notice hidden">No tasks match the current filter.</div>
+        <div id="taskList" class="task-list" role="list"></div>
+      </aside>
+
+      <section class="panel panel--detail">
+        <div id="detailErrorState" class="notice notice--error hidden"></div>
+        <div id="detailEmptyState" class="notice">No task selected yet.</div>
+
+        <div id="detailContent" class="detail-content hidden">
+          <div class="chat-header">
+            <div>
+              <h2 id="selectedTaskHeader" class="chat-header__title">Pick a task</h2>
+              <p id="selectedTaskMeta" class="chat-header__meta">Choose a task from the left to inspect its current state and results.</p>
+            </div>
+            <div class="chat-header__badges">
+              <span id="selectedTaskStateBadge" class="chat-status">-</span>
+            </div>
+          </div>
+
+          <div id="chatFlow" class="chat-flow">
+            <div class="message message--user" id="msgPrompt">
+              <div class="message__label">Prompt</div>
+              <div class="message__bubble" id="selectedTaskPromptBubble">
+                No prompt preview loaded yet.
+              </div>
+            </div>
+
+            <div class="message message--user" id="msgFollowup" style="display:none">
+              <div class="message__label">Follow-up</div>
+              <div class="message__bubble" id="selectedTaskFollowupBubble">
+                No follow-up loaded yet.
+              </div>
+            </div>
+
+            <div class="message message--assistant message--transcript" id="msgTranscript" style="display:none">
+              <div class="message__label">Transcript</div>
+              <div class="message__bubble chat-transcript" id="chatTranscript"></div>
+            </div>
+
+            <div class="message message--assistant message--latest-result" id="msgLatestResult" style="display:none">
+              <div class="message__label">Latest result</div>
+              <div class="message__bubble" id="resultLatestBubble"></div>
+              <div class="message__time" id="resultLatestTime"></div>
+            </div>
+
+            <div class="message message--assistant message--final-result" id="msgFinalResult" style="display:none">
+              <div class="message__label">Final result</div>
+              <div class="message__bubble" id="resultFinalBubble"></div>
+              <div class="message__time" id="resultFinalTime"></div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator" style="display:none">
+              <span class="typing-indicator__dot"></span>
+              <span class="typing-indicator__dot"></span>
+              <span class="typing-indicator__dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-collapsible" id="collapsibleMeta">
+            <button class="chat-collapsible__toggle" type="button" data-target="collapsibleMetaBody">
+              <span class="chat-collapsible__arrow">&#9654;</span>
+              Task metadata
+            </button>
+            <div class="chat-collapsible__body" id="collapsibleMetaBody">
+              <div class="meta-grid">
+                <div class="meta-card">
+                  <div class="meta-label">State</div>
+                  <div id="selectedTaskState" class="meta-value">-</div>
+                </div>
+                <div class="meta-card">
+                  <div class="meta-label">Updated</div>
+                  <div id="selectedTaskUpdated" class="meta-value">-</div>
+                </div>
+                <div class="meta-card">
+                  <div class="meta-label">Created</div>
+                  <div id="selectedTaskCreated" class="meta-value">-</div>
+                </div>
+                <div class="meta-card">
+                  <div class="meta-label">Submissions</div>
+                  <div id="selectedTaskSubmissions" class="meta-value">-</div>
+                </div>
+                <div class="meta-card">
+                  <div class="meta-label">Provider</div>
+                  <div id="selectedTaskProvider" class="meta-value">-</div>
+                </div>
+                <div class="meta-card">
+                  <div class="meta-label">Model</div>
+                  <div id="selectedTaskModel" class="meta-value">-</div>
+                </div>
+                <div class="meta-card">
+                  <div class="meta-label">Abort requested</div>
+                  <div id="selectedTaskAbortRequested" class="meta-value">-</div>
+                </div>
+                <div class="meta-card meta-card--wide">
+                  <div class="meta-label">Last error</div>
+                  <div id="selectedTaskLastError" class="meta-value">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-collapsible" id="collapsibleJson">
+            <button class="chat-collapsible__toggle" type="button" data-target="collapsibleJsonBody">
+              <span class="chat-collapsible__arrow">&#9654;</span>
+              Raw JSON &amp; paths
+            </button>
+            <div class="chat-collapsible__body" id="collapsibleJsonBody">
+              <div class="json-grid">
+                <section class="result-card">
+                  <div class="result-card__header">
+                    <h3>Status JSON</h3>
+                  </div>
+                  <pre id="taskJson" class="result-body result-body--json"></pre>
+                </section>
+                <section class="result-card">
+                  <div class="result-card__header">
+                    <h3>Latest result JSON</h3>
+                  </div>
+                  <pre id="resultJson" class="result-body result-body--json"></pre>
+                </section>
+                <section class="result-card">
+                  <div class="result-card__header">
+                    <h3>Final result JSON</h3>
+                  </div>
+                  <pre id="finalResultJson" class="result-body result-body--json"></pre>
+                </section>
+                <section class="result-card">
+                  <div class="result-card__header">
+                    <h3>Paths</h3>
+                  </div>
+                  <pre id="taskPaths" class="result-body result-body--json"></pre>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="lastRefresh">Not refreshed yet</span>
+      <span id="lastRefreshError" class="footer-error"></span>
+      <span id="bridgeUrl"></span>
+      <span id="viewerError" class="footer-error"></span>
+    </footer>
+  </div>
+
+  <script src="./contract.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

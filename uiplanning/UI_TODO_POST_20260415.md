@@ -1,0 +1,260 @@
+# Senku UI Todo - Post 2026-04-15 Validation
+
+This queue starts from the current live build, not the older prototype backlog.
+
+Current state:
+- the prior UI todo is effectively complete
+- host-backed generation now falls through to on-device LiteRT generation when the host is unavailable, so the app no longer hard-fails generative answers in field-only mode
+- phone and tablet portrait now support in-thread provenance preview from source taps
+- long provenance previews now support inline `Show more / Show less` expansion on both physical devices
+- tablet portrait now keeps `Why this answer` in the lower helper stack instead of burying it inside the answer bubble
+- tablet landscape now restores an explicit `Proof & routing` heading in the utility rail instead of leaving the proof text orphaned
+- compact phone proof toggle now has a clearer left-edge accent affordance
+- answer header meta now exposes `Host` vs `On-device` when the backend is known
+- recent threads now persist across cold relaunch and reopen from home on both physical devices
+- recent-thread cards now show route shorthand, turn count, relative time, and an explicit `Continue ->` affordance
+- saved deterministic threads now reopen with their instant-route trust cues preserved
+- recent-thread cards can now be removed with a long-press instead of requiring a full session clear
+- recent-thread home previews now suppress near-duplicate repeated questions within a short recency window
+- large-font validation exists across phone portrait, phone landscape, tablet portrait, and tablet landscape
+
+## Fresh Priority Queue
+
+### P0 - Field Independence
+
+- [x] Add true on-device generative fallback when host inference is unavailable
+  - Why:
+    - host inference is still the biggest field-failure mode for generative answers
+    - the UI is resilient, but the product is not yet field-independent if answer generation needs a desktop host
+  - Landed in:
+    - `android-app/app/src/main/java/com/senku/mobile/OfflineAnswerEngine.java`
+    - `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`
+    - `android-app/app/src/main/res/values/strings.xml`
+    - `android-app/app/src/androidTest/java/com/senku/mobile/PromptHarnessSmokeTest.java`
+    - `android-app/app/src/test/java/com/senku/mobile/OfflineAnswerEngineTest.java`
+    - `scripts/run_android_instrumented_ui_smoke.ps1`
+  - Acceptance:
+    - when host inference is unavailable, the app can still produce generative answers on-device
+    - status copy makes the slower path explicit without feeling broken
+  - Validation:
+    - targeted unit + Android build lane passed
+    - physical phone host-failure smoke passed in `artifacts/instrumented_ui_smoke/20260416_170854_177/RFCX607ZM8L`
+    - the captured screen shows an `On-device` backend label instead of leaving the user stuck on a dead host path
+
+### P1 - Knowledge Hub Depth
+
+- [ ] Surface guide-graph / cross-reference navigation in the UI
+  - Why:
+    - the repo already has graph-building utilities, but the app still hides family relationships
+    - users should be able to move from an answer into adjacent guide paths without guessing the right query
+  - Likely files:
+    - `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`
+    - `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`
+    - graph export / mobile-pack plumbing
+  - Acceptance:
+    - related guides/families are browseable from home and/or detail
+    - related-path navigation feels evidence-linked rather than decorative
+  - Current landed slice:
+    - detail guide-mode now presents linked-guide navigation more explicitly, with stronger related-guide labels and accessibility copy
+    - home now exposes a first graph-driven shelf anchored from the latest recent thread, with pinned-guide fallback
+    - result cards now expose a compact `Linked guides` cue for top guide-backed rows when adjacent-path availability exists
+    - home graph shelf now reads as a more intentional `Guide connections` surface with source-aware subtitle framing, anchor text, and compact empty-state behavior
+    - wide-tablet guide mode now promotes linked-guide movement into a dedicated cross-reference rail without changing phone / portrait behavior
+    - home `Guide connections` now uses stateful guidance copy, including linked-guide counts, pivot framing, and next-step empty-state wording
+    - wide-tablet cross-reference preview now explicitly distinguishes in-rail preview from `Open full guide` navigation
+    - home `Guide connections` buttons now carry lightweight second-line context using existing guide metadata, while preserving the chip-scroller posture
+    - wide-tablet cross-reference preview now uses its own resource-backed identity and surface treatment instead of provenance styling
+  - Validation:
+    - guide-detail smoke passed on `emulator-5554` in `artifacts/instrumented_ui_smoke/20260416_180017_231/emulator-5554`
+    - integrated basic smoke passed on `emulator-5554` in `artifacts/instrumented_ui_smoke/20260416_180127_797/emulator-5554`
+    - seeded-home capture shows the new shelf in:
+      - `artifacts/live_debug/home_related_home_20260416.xml`
+      - `artifacts/live_debug/home_related_home_20260416.png`
+    - browse bridge cue now appears in live result captures:
+      - `artifacts/live_debug/browse_bridge_fire_20260416.xml`
+      - `artifacts/live_debug/browse_bridge_fire_20260416.png`
+    - search/detail basic smoke re-passed after the browse-bridge crash fix in:
+      - `artifacts/instrumented_ui_smoke/20260416_190420_094/emulator-5554`
+    - home hub shelf refresh proof now lives in:
+      - `artifacts/live_debug/home_hub_recent_20260416.xml`
+      - `artifacts/live_debug/home_hub_recent_20260416.png`
+    - wide-tablet cross-reference rail proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_191556_818/emulator-5560`
+    - refreshed home guidance proof now lives in:
+      - `artifacts/live_debug/home_guide_connections_guidance_20260416.xml`
+      - `artifacts/live_debug/home_guide_connections_guidance_20260416.png`
+    - refreshed wide-tablet preview-hierarchy proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_211546_466/emulator-5558`
+    - richer home button proof now lives in:
+      - `artifacts/live_debug/home_guide_connections_buttons_20260416.xml`
+      - `artifacts/live_debug/home_guide_connections_buttons_20260416.png`
+    - refreshed tablet cross-reference identity proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_213405_536/emulator-5558`
+    - home pivot CTA proof now lives in:
+      - `artifacts/live_debug/home_pivot_cta_20260416.xml`
+      - `artifacts/live_debug/home_pivot_cta_20260416.png`
+    - refreshed tablet compare-cue proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_215114_554/emulator-5558`
+    - detail trust-spine consolidation proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_221314_594/emulator-5556`
+    - browse linked-guide handoff proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_223641_728/emulator-5556`
+    - non-rail guide-detail cross-reference proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_223708_490/emulator-5556`
+    - tablet rail regression proof after the non-rail cleanup now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_223358_782/emulator-5558`
+    - refreshed browse cross-reference cue proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_224534_519/emulator-5556`
+    - refreshed home guide-connections parity proof now lives in:
+      - `artifacts/live_debug/home_crossref_parity_20260416.xml`
+      - `artifacts/live_debug/home_crossref_parity_20260416.png`
+  - Current landed slice:
+    - detail trust chrome now uses one shared route/backend/provenance summary path across header meta, `Why this answer`, source subtitles, and provenance preview
+    - host-backed runs that fall back to on-device now keep that fallback truth visible after settle instead of flattening back to generic backend copy
+    - slow/stalled answer states keep provenance visible without mutating the guide action away from `Open full guide`
+    - browse result rows with existing linked-guide signals now expose one real secondary handoff instead of a passive cue
+    - phone and tall-tablet guide mode now frame linked guides as explicit cross-reference movement instead of helper-style `Related survival paths`
+    - home and browse copy now use `guide connection` / `cross-reference` parity instead of mixing in older `linked guide` / `related guide` language
+    - home `Guide connections` and browse cross-reference opens now preserve visible source-connection context on the destination guide detail page
+    - phone/tall guide-to-guide opens and wide-tablet `Open full guide` now preserve current-guide compare context when the user is moving through graph navigation
+    - answer-source provenance opens still stay neutral, so proof navigation and graph navigation remain distinct
+    - targeted handoff proof now explicitly validates the intended device/posture mapping instead of only trusting emulator serial folklore
+    - Home `Guide connections` chips now capture the rendered source guide identity at bind time, so graph opens no longer depend on mutable shelf state
+    - non-rail guide detail now exposes a local source/current-guide return card above `Guide cross-reference` for graph-navigation opens only
+    - wide-tablet destination continuity remains intact while explicitly not using the off-rail return card
+    - non-rail guide detail now uses preview-first cross-reference behavior when the preview panel is present, instead of immediately leaving the page on first tap
+    - non-rail layouts now expose the same active-guide compare and selected-guide preview surfaces as the rail flow, but with non-rail-neutral copy
+    - answer-mode provenance opens remain neutral, and that path is now explicitly covered by a targeted smoke
+    - answer mode now surfaces a source-anchored `Guide cross-reference` lane when the selected source guide has linked guides in the installed pack
+    - answer-side cross-reference taps now carry source-guide context into the destination detail screen instead of dropping that relationship on open
+    - answer-side graph fallback is now honest: selecting a source without a guide-backed ID hides the graph lane instead of silently shifting it to another source
+  - Validation:
+    - targeted phone browse handoff proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_231810_052/emulator-5556`
+    - targeted phone home-origin handoff proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_231842_246/emulator-5556`
+    - targeted tablet landscape guide-to-guide handoff proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_231805_043/emulator-5558`
+    - those summaries now explicitly confirm:
+      - `resolved_role: phone` on `emulator-5556`
+      - `resolved_role: tablet` and `current_orientation: landscape` on `emulator-5558`
+    - targeted phone non-rail return-card proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_233307_397/emulator-5556`
+    - targeted tablet-landscape destination continuity proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_233231_091/emulator-5558`
+    - targeted phone off-rail preview-first proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_234342_092/emulator-5556`
+    - targeted neutral answer-source provenance proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260416_234605_601/emulator-5556`
+    - the first failed provenance proof that surfaced a helper bug is preserved in:
+      - `artifacts/instrumented_ui_smoke/20260416_234412_161/emulator-5556`
+    - targeted answer-side source-anchored graph proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260417_050910_572/emulator-5556`
+    - refreshed neutral answer-source provenance proof now lives in:
+      - `artifacts/instrumented_ui_smoke/20260417_050935_306/emulator-5556`
+    - targeted tablet-landscape guide-mode regression proof after the answer-side split now lives in:
+      - `artifacts/instrumented_ui_smoke/20260417_050910_572/emulator-5558`
+
+- [ ] Expand Android deterministic-router parity with the desktop registry
+  - Why:
+    - desktop/mobile parity still breaks the "instant-first" promise in some families
+    - deterministic answers are a core trust feature, not a nice-to-have
+  - Likely files:
+    - Android deterministic routing layer
+    - mobile pack export metadata
+  - Acceptance:
+    - more desktop deterministic families resolve instantly on Android without a generative detour
+
+## Notes
+
+- This queue was seeded from validated device state plus GLM sidecar `ses_26bfef96cffe4Ki9ys915DjGao`.
+- The next reviewed pair after the first graph-home pass landed was:
+  - `Chunk 4a / Trust spine continuity`
+  - `Chunk 3a / Minimal browse bridges`
+- The next reviewed pair after that was:
+  - `Chunk 2b completion / Home hub depth`
+  - `Chunk 5a / Tablet station linked-guide promotion`
+- `Chunk 3a` surfaced one real regression during emulator browse proof:
+  - `SearchResultAdapter` assumed every result-card layout variant already had `result_related_cue`
+  - landscape/tablet result rows were missing that view
+  - the crash is now fixed with both null safety and matching cue views in the variant layouts
+- The sidecar recommendation to shift toward field independence is directionally right.
+- The tablet portrait helper stack is now grouped under the same `Thread context` shell used by the tablet rail patterns, so the remaining UI question is broader knowledge-hub depth rather than helper chrome cleanup.
+- GLM sidecar `ses_26bd01159ffebGLxWPmFkVSg8a` correctly called recent-thread persistence as the next highest-value slice, and that baseline is now landed.
+- GLM sidecar `ses_26bc19c08ffeO661mH4U7B6iMg` correctly called richer recent-thread cards as the next leverage step, and those subtitles/continue cues are now landed too.
+- The latest forward scout after the sixth reviewed pair pointed at the next smallest honest slice:
+  - tighten the detail-side trust spine so in-flight, stalled, and completed answers keep one coherent route/backend/provenance story
+- That trust-spine slice is now landed and validated in:
+  - `artifacts/instrumented_ui_smoke/20260416_221314_594/emulator-5556`
+- The first host-smoke replay for that slice also caught and closed a real test bug:
+  - the settled-trust helper was still looking at launcher views instead of the live `DetailActivity` surface
+  - fixed and revalidated after the failed proof in:
+    - `artifacts/instrumented_ui_smoke/20260416_221038_487/emulator-5556`
+- The next reviewed pair after that trust slice is now landed too:
+  - `Chunk 3b / Browse linked-guide handoff`
+  - `Chunk 3b / Non-rail guide-detail cross-reference copy cleanup`
+- The browse handoff smoke initially failed because the proof was asserting only guide IDs, while phone guide detail mostly surfaces the guide title.
+  - fixed by tightening the browse smoke to follow the actual handoff label/title path
+  - revalidated in:
+    - `artifacts/instrumented_ui_smoke/20260416_223641_728/emulator-5556`
+- The next reviewed pair after that is now landed as a copy-parity pass:
+  - home guide-connections cross-reference parity
+  - browse cue cross-reference parity
+- That pair did not change behavior. It tightened wording only, then revalidated the browse handoff path and captured home proof in:
+  - `artifacts/instrumented_ui_smoke/20260416_224534_519/emulator-5556`
+  - `artifacts/live_debug/home_crossref_parity_20260416.xml`
+- The next reviewed pair after that is now landed as a handoff-continuity pass:
+  - home + browse graph-handoff continuity
+  - detail-to-detail graph-handoff continuity
+- That pair makes destination guide pages keep the source connection/current-guide context instead of dropping back to a generic guide shell, and it was revalidated in:
+  - `artifacts/instrumented_ui_smoke/20260416_231810_052/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260416_231842_246/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260416_231805_043/emulator-5558`
+- The next reviewed pair after that is now landed as an actionable source-identity pass:
+  - graph source identity plumbing
+  - non-rail source-return card
+- That pair makes phone/tall graph navigation locally actionable instead of only descriptive, and it was revalidated in:
+  - `artifacts/instrumented_ui_smoke/20260416_233236_378/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260416_233317_077/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260416_233307_397/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260416_233231_091/emulator-5558`
+- The next reviewed pair after that is now landed as an off-rail preview-first pass:
+  - non-rail cross-reference preview-first
+  - non-rail current-guide compare cue
+- That pair makes phone/tall guide detail inspect-first instead of jump-first, and it was revalidated in:
+  - `artifacts/instrumented_ui_smoke/20260416_234342_092/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260416_234348_363/emulator-5558`
+  - `artifacts/instrumented_ui_smoke/20260416_234605_601/emulator-5556`
+- The next reviewed answer-side refinement is now landed too:
+  - answer-source preview-first cross-reference
+  - selected-source context cue + non-guide fallback truth
+- That pass closed one real accessibility/state bug:
+  - when answer mode fell back from source-anchored graph to generic helper paths, the next-steps panel could keep stale cross-reference content-description copy
+  - fixed in `DetailActivity`, then revalidated in:
+    - `artifacts/instrumented_ui_smoke/20260417_052835_448/emulator-5556`
+    - `artifacts/instrumented_ui_smoke/20260417_052907_814/emulator-5556`
+- The 2026-04-17 design-audit reconciliation narrowed the next non-graph UI work to:
+  - search-result scan polish
+  - detail answer chunking / step hierarchy
+  - home-entry lane emphasis
+  - surface materiality pass
+- The first two of those are now landed and validated:
+  - result cards now scrub markdown artifacts more aggressively, including inline heading markers
+  - active search/ask result states now use lightweight query-term emphasis
+  - search/ask now dismiss IME state cleanly enough for phone-landscape results to be usable
+  - answer-mode body text now renders with stronger section/step hierarchy instead of a flat text wall
+- Validation for that audit wave now lives in:
+  - `artifacts/instrumented_ui_smoke/20260417_095051_386/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260417_095051_386/emulator-5560`
+- The next honest audit pair after that was:
+  - home-entry lane emphasis
+  - surface materiality pass
+- That pair is now landed and validated too:
+  - Browse is now the visibly primary cold-home lane, while Ask becomes primary only during an active ask flow
+  - lane helper copy now reflects the active lane instead of reusing generic compare-copy
+  - returning from answer/detail into a result-backed home state now dismisses the IME instead of bouncing back into text entry
+  - shared shells now use deeper olive/parchment layering through XML-only background/panel/result-card updates
+- Validation for that second audit wave now lives in:
+  - `artifacts/instrumented_ui_smoke/20260417_100430_644/emulator-5556`
+  - `artifacts/instrumented_ui_smoke/20260417_100202_388/emulator-5560`
+  - `artifacts/instrumented_ui_smoke/20260417_100236_402/emulator-5556`

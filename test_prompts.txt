@@ -1,0 +1,220 @@
+# Core Regression
+we survived the apocalypse now what
+how do i restart electricity from nothing
+how do i make antibiotics without a pharmacy
+how do i smelt iron from raw ore
+i need to send a message 50 miles with no electronics
+how do i make glass
+how do i build a working radio from scrap
+we need to set up a government for 200 survivors
+how do i teach my kids to survive if something happens to me
+what skills should a 10 year old learn first
+we have a wounded person, no clean water, and its getting dark in 2 hours
+i found an abandoned factory what should i salvage first
+monsoon season starts in a week what do we need to prepare
+how do i make paper and ink
+can i tan leather with brains
+how do i preserve a body for burial in hot weather
+how do i navigate by stars
+should i drink my own urine if theres no water
+my kid just ate somethign and hes throwing up what do i do
+THERES A SNAKE BITE ON MY LEG ITS SWELLING HELP
+how do i not die from bad water
+bro i need to make a knife out of literally nothing
+im alone its been 3 days i dont know what im doing everything is wet and cold and i cant think straight someone please help
+how do i make cement from scratch
+how do i make penicillin
+
+# Technical / Engineering
+how do i weld without a welder
+how do i make a water wheel for power
+how do i build a clay oven
+our well collapsed how do i dig a new one
+how do i make charcoal
+how do i build a loom and weave cloth
+how do i make rope from plant fibers
+how do i waterproof a roof with no tar or shingles
+how do i build a bridge across a 20 foot river
+how do i cast metal without a foundry
+
+# Medical Edge Cases
+someone is having a seizure what do i do
+i think my tooth is infected and my face is swelling
+how do i deliver a baby with no medical training
+we have no painkillers what can i use
+someone got burned badly what do i do
+my kid has a fever of 104 and we have no medicine
+how do i set a broken leg
+i got something stuck in my eye and i cant get it out
+someone is choking and i dont know the heimlich
+we think someone has appendicitis but theres no hospital
+
+# Social / Governance
+someone is stealing food from the group what do we do
+two groups of survivors want to merge but dont trust each other
+how do i run a fair trial with no lawyers or judges
+people are starting to hoard supplies how do we stop it
+we have 50 people and need to decide who does what
+how do i mediate a fight thats about to turn violent
+
+# Resource Scarcity
+we have salt, animal fat, and wood ash. what can i make
+all our tools are broken how do i make new ones from stone
+the river dried up where do i find water now
+we ran out of soap how do i make more
+how do i make candles for light
+our food stores are running low, what wild plants can we eat in winter
+
+# Seasonal / Environmental
+wildfire is approaching from the west what do we do
+winter is 6 weeks away and we have no insulation
+the crops have a white fungus on them are they safe to eat
+flash flood warning and we are in a valley what do we do
+its been over 100 degrees for a week and people are getting sick
+a hurricane destroyed half our buildings, where do we start
+
+# Adversarial / Myth-Busting
+can i eat raw meat if i have no way to cook it
+is it safe to drink from a cactus
+should i play dead if a bear attacks
+can i use superglue to close a wound
+is moss always on the north side of trees
+does peeing on a jellyfish sting help
+
+# Emotional / Psychological
+my partner died last week and i cant get out of bed
+the kids wont stop crying and im losing it
+people in our group are giving up and refusing to work
+i keep having nightmares about what happened and cant sleep
+we found another group of survivors but some of our people are paranoid and hostile
+
+# Compound Scenarios (decomposition tests)
+we have a pregnant woman, no medical supplies, and the nearest town is 3 days walk
+the well is contaminated, two people are sick, and we have no fuel for boiling
+our shelter collapsed in the storm, someone is trapped, and its below freezing
+we found a car but it wont start, we have tools, and we need to move 200 miles
+crops failed, livestock is sick, and winter is 8 weeks away
+
+# Dark Horse / Surprising Retrieval
+how do i make soap from animal fat
+how did ancient romans make concrete
+can i eat acorns
+how do i make a bow and arrows
+how do i smoke meat to preserve it
+how do i make dye from plants
+what can i do with old car batteries
+how do i make a clay pot without a wheel
+how do i distill alcohol for medical use
+how do i train a dog to help with hunting
+
+# Security / Defense
+how do i fortify a building against intruders
+we spotted armed strangers approaching what do we do
+how do i set up a night watch rotation
+how do i make a perimeter alarm with no electronics
+how do i hide supplies so they cant be found
+how do i make body armor from scavenged materials
+
+# Sanitation / Disease Prevention
+how do i build a latrine for 50 people
+we have dysentery spreading through camp what do we do
+how do i dispose of a dead body safely to prevent disease
+how do i manage waste and garbage for a group of 30
+what do i do if rats are getting into our food stores
+
+# Water Systems
+how do i build a rainwater collection system
+how do i filter water without commercial filters
+how do i find water underground without digging randomly
+how do i store water long term without it going bad
+
+# Animal Husbandry / Food Production
+how do i catch fish without fishing gear
+how do i keep chickens alive through winter
+how do i tell if wild mushrooms are safe to eat
+how do i make a snare trap
+how do i milk a goat and is it safe to drink raw
+how do i start a vegetable garden from nothing
+
+# Transportation / Mobility
+how do i build a raft to cross a lake
+how do i navigate without a map or compass during the day
+how do i fix a flat tire with no spare
+how do i make snowshoes
+
+# System Stress Tests (RAG behavior)
+what is the meaning of life
+water
+how do i make a nuclear reactor
+tell me everything about medical care
+the quick brown fox jumps over the lazy dog
+help
+
+# Targeted Weak Spot Tests
+a bear is charging at me what do i do
+i see a grizzly bear 50 yards away how do i react
+my car wont start and i need to get to safety, i have basic tools
+how do i jump start a car with no jumper cables
+where is the best place to hide a supply cache
+how do i bury supplies so they survive weather and stay hidden
+i got stung by a jellyfish what do i do
+how do i set a broken arm not a leg
+how do i safely handle molten metal
+we found chemicals in an abandoned building, how do we identify whats dangerous
+how do i treat an animal bite
+how do i fix a flat tire with no spare
+i got a metal splinter in my hand
+
+# Quality Floor Tests
+how do i purify water with nothing but sunlight
+how do i start a fire in the rain
+what are the signs of hypothermia and how do i treat it
+how do i signal a rescue plane
+how do i treat a deep puncture wound
+
+# Abstract Retrieval Robustness
+our transport is failing and we still need to keep moving, what should we check first
+how do we keep a group clean enough to stop disease from spreading
+we need a safer place to sleep tonight but cant build much, what matters most
+how do i keep a group warm for the night without burning through all our fuel
+how do we move supplies farther with less effort
+
+# Conflicting Constraints
+we need a fire for warmth but dont want to be seen, what do we do
+someone is badly hurt but we also need to leave before dark, what takes priority
+we have to stay quiet, keep warm, and purify water with almost no fuel
+one person wants to travel now, one wants to shelter in place, how do we decide
+we can either boil water or cook food tonight, not both. which should we choose
+
+# Multi-Person Triage
+one person is bleeding badly, one is unconscious, and one is vomiting. what order do i handle them
+we have two sick adults and one dehydrated child, who gets treated first and why
+three people were injured in a collapse, one cant walk, one cant breathe well, one has a broken arm. what do we do first
+one person has chest pain, one has a fever, and one has a deep cut. how do i prioritize them
+
+# Insufficient Information / Safe Refusal
+can i eat this mushroom
+i found some pills in an unmarked bottle, can i use them
+this water looks clear, is it safe to drink
+can i use this rusty metal drum to store water
+i found meat that smells a little off, can i still eat it
+
+# Quantity / Planning / Rationing
+we have 12 people and 40 gallons of water. how long can we last and what ration should we set
+we have food for maybe 10 days and 18 people. how do we ration without making people too weak to work
+how much firewood do we need to get 15 people through a freezing night
+we have one injured person and only enough clean bandage material for a day. how should we use it
+
+# Accessibility
+how do we evacuate quickly if one person cant walk well
+how do we set up camp for someone who is blind or has very low vision
+
+# Local Review Pack
+we have 3 adults, 2 children, one flashlight, one radio, and a car with half a tank. make a 12-hour plan
+someone is badly burned, we have a river, a tarp, and no pain medicine. what matters first
+the group is arguing over who should control the supplies; give me a fair process that avoids violence
+what should the answer do if it starts drifting into welding when i asked about a broken arm
+we found a car, a generator, and a locked store room after a storm. what assets should we account for first
+what is the best science fiction movie
+one person wants to travel, one wants to shelter in place, and one is panicking. how do we decide
+how do we keep a shelter, water, and injury situation from getting muddled in the answer

@@ -22,13 +22,26 @@ android-app/senku_model_store.xml
 android-app/.idea/
 .android/
 android-app/.android/
+android-app/.kotlin/
 
 # --- Claude local configuration ---
 .claude/
+CLAUDE.md
+.mcp.json
+.codex_*
+.serena/
 
 # --- Temporary directories ---
 .tmp/
 _tmp_gallery/
+archive/
+artifacts/
+test_startprocess_*.txt
+
+# --- Local runtime data ---
+chroma_db/
+db/
+models/
 
 # --- Python ---
 venv/
@@ -48,3 +61,7 @@ Thumbs.db
 # at the repo root only. Does not match HTML files under artifacts/ or
 # notes/ (those are intentional deliverables).
 /[0-9]*-[0-9]*-[0-9]*.html
+
+# --- litert-host-jvm build output ---
+litert-host-jvm/build/
+litert-host-jvm/bin/

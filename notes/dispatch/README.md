@@ -33,22 +33,26 @@ edit the file, do not let the drift live only in your head.
 CP9 is closed (RC v5 cut landed 2026-04-20). The post-RC retrieval
 chain substantively closed 2026-04-20 with four landings:
 `2ec77b8`, `0a8b260`, `971961b`, and `585320c`. No slices are
-currently in flight after `R-anchor-refactor1`.
+currently in flight; `R-track1` landed this commit.
 
 Key remaining post-RC tracked items live in `notes/CP9_ACTIVE_QUEUE.md`:
-the post-`R-pack-drift1` hygiene/audit lane is `R-hygiene2` then
-`R-track1`, followed by Wave C planning and optional ask-telemetry
-enrichment; `R-tool2`, `R-anchor-refactor1`, `R-ret1b`, `R-host`,
-`R-search`, and `R-telemetry` are closed, and the gallery is republished at
+the post-`R-hygiene2` audit lane was `R-track1` (landed this commit);
+next is Wave C planning and optional ask-telemetry enrichment, plus the
+R-track1 carry-over follow-ups; `R-tool2`, `R-anchor-refactor1`,
+`R-ret1b`, `R-host`, `R-search`, and `R-telemetry` are closed, and the
+gallery is republished at
 `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
 (45/45). The carry-over `R-search` wrapper-hang observation remains in
 backlog there as well.
 
 ## Landed (not yet rotated)
 
-Pending rotation as of `R-anchor-refactor1` landing:
+Pending rotation as of `R-track1` landing (intentionally not rotated in-slice):
+`R-pack-drift1_forensic_investigation.md`,
+`R-hygiene2_metadata_report_mobile_write_removal.md`,
 `R-anchor-refactor1_pack_support_breakdown.md`,
-`R-tool2_state_pack_logcat_capture.md` (next D-slice will rotate).
+`R-tool2_state_pack_logcat_capture.md`,
+`R-track1_core_entry_point_tracking_audit.md`.
 Retained live: `A1_retry_5560_landscape.md` (superseded-but-kept),
 `P5_scope_note_landscape_phone.md` (cancelled-but-kept),
 `probe_rain_shelter_mode_flip.md` (stale probe kept per D5),
@@ -69,6 +73,7 @@ R-tool2 slice file).
   needed; A1b closed Stage 0 GREEN on 5560 landscape. File retained
   for record.
 
-Rotate (move to `notes/dispatch/completed/` or delete) when a slice
-lands. Do not leave stale slice files around - a new dispatcher should
-trust that every file here is current.
+Rotate landed slices during the next D-series cleanup slice unless the
+slice explicitly keeps the file live. Do not leave stale slice files
+around indefinitely - a new dispatcher should still be able to trust
+that every file here is current.
