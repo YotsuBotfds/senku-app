@@ -119,6 +119,35 @@ public final class PackRepository implements AutoCloseable {
         "seismic",
         "footing sizing"
     );
+    private static final Set<String> COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS = buildMarkerSet(
+        "trust",
+        "reputation",
+        "vouch",
+        "mediation",
+        "restorative",
+        "restitution"
+    );
+    private static final Set<String> COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS = buildMarkerSet(
+        "monitoring",
+        "membership",
+        "boundaries",
+        "graduated sanctions",
+        "sanctions",
+        "quota",
+        "allocation",
+        "allocations"
+    );
+    private static final Set<String> COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS = buildMarkerSet(
+        "insurance",
+        "risk pooling",
+        "reinsurance",
+        "risk transfer",
+        "accounting",
+        "fund governance",
+        "actuarial",
+        "record-keeping",
+        "mutual aid funds"
+    );
     private static final Set<String> WATER_DISTRIBUTION_ANCHOR_MARKERS = buildMarkerSet(
         "water distribution",
         "distribution system",
@@ -2996,13 +3025,8 @@ public final class PackRepository implements AutoCloseable {
                 "accounting", "ledger", "record", "records", "compensation"
             )
         );
-        boolean trustRepairIntent = containsAnyMarker(
-            queryLower,
-            buildMarkerSet(
-                "merge", "trust", "vouch", "reputation", "mediation", "restitution",
-                "sanction", "sanctions", "membership", "rules"
-            )
-        );
+        boolean trustRepairIntent = queryTerms.metadataProfile != null
+            && queryTerms.metadataProfile.trustRepairMergeIntent();
 
         int score = 0;
         if ("route-focus".equals(normalizedMode) && queryTerms.metadataProfile.sectionHeadingBonus(candidate.sectionHeading) > 0) {
@@ -3011,41 +3035,24 @@ public final class PackRepository implements AutoCloseable {
             score -= 6;
         }
 
-        if (!financialIntent && (
-            normalizedTitle.contains("insurance")
-                || normalizedTitle.contains("risk pooling")
-                || normalizedSection.contains("historical mutual aid")
-                || normalizedSection.contains("reinsurance")
-                || normalizedSection.contains("risk transfer")
-                || normalizedSection.contains("accounting")
-                || normalizedSection.contains("fund governance")
-                || normalizedSection.contains("actuarial")
-                || normalizedSection.contains("record-keeping")
-        )) {
+        boolean financeDistractor = containsAnyMarker(normalizedTitle, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS)
+            || containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS)
+            || normalizedSection.contains("historical mutual aid");
+        boolean monitoringDistractor = containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS);
+        boolean trustRepairSignal = containsAnyMarker(normalizedSection, COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS);
+
+        if (!financialIntent && financeDistractor) {
             score -= 28;
         }
 
-        if (trustRepairIntent && (
-            normalizedSection.contains("monitoring")
-                || normalizedSection.contains("sanctions")
-                || normalizedSection.contains("mediation")
-                || normalizedSection.contains("membership")
-                || normalizedSection.contains("boundaries")
-                || normalizedSection.contains("conflict")
-                || normalizedSection.contains("restitution")
-        )) {
-            score += 10;
+        if (trustRepairIntent && trustRepairSignal) {
+            score += 12;
+        }
+        if (trustRepairIntent && monitoringDistractor) {
+            score -= trustRepairSignal ? 6 : 12;
         }
 
-        if (financialIntent && (
-            normalizedTitle.contains("insurance")
-                || normalizedTitle.contains("risk pooling")
-                || normalizedSection.contains("fund governance")
-                || normalizedSection.contains("accounting")
-                || normalizedSection.contains("record-keeping")
-                || normalizedSection.contains("reinsurance")
-                || normalizedSection.contains("risk transfer")
-        )) {
+        if (financialIntent && financeDistractor) {
             score += 18;
         }
 
@@ -3630,6 +3637,33 @@ public final class PackRepository implements AutoCloseable {
         return score;
     }
 
+    private static boolean prefersGovernanceTrustRepairContext(QueryMetadataProfile metadataProfile) {
+        return metadataProfile != null
+            && "community_governance".equals(metadataProfile.preferredStructureType())
+            && metadataProfile.trustRepairMergeIntent();
+    }
+
+    private static boolean hasGovernanceTrustRepairSignal(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        String normalized = normalizeMatchText(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
+        );
+        return containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_TRUST_REPAIR_SECTION_MARKERS);
+    }
+
+    private static boolean hasGovernanceSupportMixDistractor(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        String normalized = normalizeMatchText(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
+        );
+        return containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_MONITORING_DISTRACTOR_MARKERS)
+            || containsAnyMarker(normalized, COMMUNITY_GOVERNANCE_FINANCE_DISTRACTOR_MARKERS);
+    }
+
     static boolean matchesSpecializedExplicitTopicRowForTest(String query, String structureType, String topicTags) {
         return matchesSpecializedExplicitTopicRow(QueryTerms.fromQuery(query), structureType, topicTags);
     }
@@ -3835,6 +3869,12 @@ public final class PackRepository implements AutoCloseable {
             && prefersRoofWeatherproofRouteAnchor(queryTerms)
             && sectionBonus <= 0
             && hasRoofWeatherproofDistractorSignal(candidate)) {
+            return false;
+        }
+        if ("community_governance".equals(preferredStructure)
+            && prefersGovernanceTrustRepairContext(queryTerms.metadataProfile)
+            && hasGovernanceSupportMixDistractor(candidate)
+            && !hasGovernanceTrustRepairSignal(candidate)) {
             return false;
         }
         return true;
@@ -4889,6 +4929,11 @@ public final class PackRepository implements AutoCloseable {
             if (sectionBonus <= 0 && hasRoofWeatherproofDistractorSignal(candidate)) {
                 return false;
             }
+        }
+        if (prefersGovernanceTrustRepairContext(metadataProfile)
+            && hasGovernanceSupportMixDistractor(candidate)
+            && !hasGovernanceTrustRepairSignal(candidate)) {
+            return false;
         }
         if (requiresSpecializedRouteAnchorSignal(metadataProfile.preferredStructureType())
             && "guide-focus".equals(retrievalMode)

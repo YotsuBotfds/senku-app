@@ -1738,6 +1738,100 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void communityGovernanceTrustMergeContextRejectsFinanceSupport() {
+        QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
+            "How do we merge with another group if we don't trust each other yet?"
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(
+            "How do we merge with another group if we don't trust each other yet?"
+        );
+        SearchResult financeGuide = new SearchResult(
+            "Insurance, Risk Pooling & Mutual Aid Funds",
+            "",
+            "Shared fund administration and accounting for pooled aid reserves.",
+            "Shared fund administration and accounting for pooled aid reserves.",
+            "GD-657",
+            "Fund Governance and Accounting",
+            "resource-management",
+            "guide-focus",
+            "reference",
+            "long_term",
+            "community_governance",
+            "community_governance,trust_systems"
+        );
+
+        boolean keep = PackRepository.supportCandidateMatchesRoute(routeProfile, metadataProfile, true, financeGuide);
+
+        assertEquals(false, keep);
+    }
+
+    @Test
+    public void communityGovernanceTrustMergeGuideContextRejectsMonitoringHeavySection() {
+        SearchResult candidate = new SearchResult(
+            "Commons Management & Sustainable Resource Governance",
+            "",
+            "Monitoring schedules, membership rules, and graduated sanctions for mixed communities.",
+            "Monitoring schedules, membership rules, and graduated sanctions for mixed communities.",
+            "GD-626",
+            "Monitoring, Membership Rules, and Graduated Sanctions",
+            "resource-management",
+            "guide-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,conflict_resolution,trust_systems"
+        );
+
+        boolean keep = PackRepository.shouldKeepGuideSectionForContextForTest(
+            "How do we merge with another group if we don't trust each other yet?",
+            candidate,
+            false
+        );
+
+        assertEquals(false, keep);
+    }
+
+    @Test
+    public void communityGovernanceTrustMergeAnchorPrefersTrustRepairSectionOverMonitoringSection() {
+        SearchResult monitoringGuide = new SearchResult(
+            "Commons Management & Sustainable Resource Governance",
+            "",
+            "Monitoring schedules, membership rules, and graduated sanctions for mixed communities.",
+            "Monitoring schedules, membership rules, and graduated sanctions for mixed communities.",
+            "GD-626",
+            "Monitoring, Membership Rules, and Graduated Sanctions",
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,conflict_resolution,trust_systems"
+        );
+        SearchResult trustRepairGuide = new SearchResult(
+            "Commons Management & Sustainable Resource Governance",
+            "",
+            "Trust repair, mediation, reputation, and vouching for cautious group integration.",
+            "Trust repair, mediation, reputation, and vouching for cautious group integration.",
+            "GD-626",
+            "Trust Repair, Reputation, and Vouching",
+            "resource-management",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "community_governance",
+            "community_governance,conflict_resolution,trust_systems"
+        );
+
+        SearchResult selected = PackRepository.selectSpecializedStructuredAnchorForTest(
+            "How do we merge with another group if we don't trust each other yet?",
+            monitoringGuide,
+            trustRepairGuide
+        );
+
+        assertEquals("Trust Repair, Reputation, and Vouching", selected.sectionHeading);
+    }
+
+    @Test
     public void diversifiedSoapmakingContextRejectsGenericChemistrySafetySupport() {
         QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
             "How do I make soap from animal fat safely enough that it's actually useful?"

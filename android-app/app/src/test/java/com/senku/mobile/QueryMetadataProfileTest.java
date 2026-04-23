@@ -1263,6 +1263,32 @@ public final class QueryMetadataProfileTest {
     }
 
     @Test
+    public void communityGovernanceTrustMergeQueryPrefersTrustRepairOverMonitoringSections() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "two groups want to merge but they dont trust each other yet"
+        );
+
+        int trustRepairBonus = profile.sectionHeadingBonus("Trust Repair, Reputation, and Vouching");
+        int monitoringBonus = profile.sectionHeadingBonus("Monitoring, Membership Rules, and Graduated Sanctions");
+
+        assertTrue(profile.trustRepairMergeIntent());
+        assertTrue(trustRepairBonus > monitoringBonus);
+    }
+
+    @Test
+    public void communityGovernanceTrustMergeQueryStronglyPenalizesFinanceSections() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "two groups want to merge but they dont trust each other yet"
+        );
+
+        int trustRepairBonus = profile.sectionHeadingBonus("Trust Repair, Reputation, and Vouching");
+        int financeBonus = profile.sectionHeadingBonus("Fund Governance and Accounting");
+
+        assertTrue(trustRepairBonus > financeBonus);
+        assertTrue(financeBonus < 0);
+    }
+
+    @Test
     public void communityGovernanceFormalPunishmentQueryUsesDedicatedStructureAndTopics() {
         QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
             "what if someone keeps stealing but nobody trusts formal punishment"

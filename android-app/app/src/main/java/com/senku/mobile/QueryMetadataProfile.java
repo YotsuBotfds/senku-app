@@ -197,6 +197,12 @@ public final class QueryMetadataProfile {
         "restorative", "sanction", "sanctions", "resource dispute", "commons",
         "resource governance", "resource rules"
     );
+    private static final Set<String> COMMUNITY_GOVERNANCE_MERGE_MARKERS = buildSet(
+        "merge", "merge groups", "merge with another group", "merge with another village", "integration"
+    );
+    private static final Set<String> COMMUNITY_GOVERNANCE_TRUST_REPAIR_MARKERS = buildSet(
+        "trust", "trusts", "dont trust", "don't trust", "vouch", "reputation", "mediation", "restorative"
+    );
     private static final Set<String> SOAP_QUERY_MARKERS = buildSet(
         "make soap", "making soap", "soap making", "soap from animal fat", "tallow soap",
         "wood ash lye", "lye water", "saponification"
@@ -223,6 +229,7 @@ public final class QueryMetadataProfile {
     private final boolean climateContextIntent;
     private final boolean siteSelectionLeadIntent;
     private final boolean siteBreadthIntent;
+    private final boolean trustRepairMergeIntent;
     private final boolean waterStorageContainerMakingIntent;
 
     private QueryMetadataProfile(
@@ -238,6 +245,7 @@ public final class QueryMetadataProfile {
         boolean climateContextIntent,
         boolean siteSelectionLeadIntent,
         boolean siteBreadthIntent,
+        boolean trustRepairMergeIntent,
         boolean waterStorageContainerMakingIntent
     ) {
         this.preferredContentRoles = preferredContentRoles;
@@ -252,6 +260,7 @@ public final class QueryMetadataProfile {
         this.climateContextIntent = climateContextIntent;
         this.siteSelectionLeadIntent = siteSelectionLeadIntent;
         this.siteBreadthIntent = siteBreadthIntent;
+        this.trustRepairMergeIntent = trustRepairMergeIntent;
         this.waterStorageContainerMakingIntent = waterStorageContainerMakingIntent;
     }
 
@@ -316,6 +325,9 @@ public final class QueryMetadataProfile {
         boolean siteBreadthIntent = STRUCTURE_TYPE_CABIN_HOUSE.equals(structureType)
             && siteSelectionIntent
             && matchCount(normalized, HOUSE_SITE_BREADTH_MARKERS) >= 2;
+        boolean trustRepairMergeIntent = STRUCTURE_TYPE_COMMUNITY_GOVERNANCE.equals(structureType)
+            && containsAny(normalized, COMMUNITY_GOVERNANCE_MERGE_MARKERS)
+            && containsAny(normalized, COMMUNITY_GOVERNANCE_TRUST_REPAIR_MARKERS);
         boolean waterStorageContainerMakingIntent = STRUCTURE_TYPE_WATER_STORAGE.equals(structureType)
             && containsAny(normalized, WATER_STORAGE_CONTAINER_MARKERS)
             && containsAny(normalized, WATER_STORAGE_CONTAINER_BUILD_MARKERS);
@@ -333,6 +345,7 @@ public final class QueryMetadataProfile {
             climateContextIntent,
             siteSelectionLeadIntent,
             siteBreadthIntent,
+            trustRepairMergeIntent,
             waterStorageContainerMakingIntent
         );
     }
@@ -396,6 +409,10 @@ public final class QueryMetadataProfile {
 
     public boolean siteSelectionLeadIntent() {
         return siteSelectionLeadIntent;
+    }
+
+    public boolean trustRepairMergeIntent() {
+        return trustRepairMergeIntent;
     }
 
     public boolean waterStorageContainerMakingIntent() {
@@ -767,6 +784,31 @@ public final class QueryMetadataProfile {
                 || normalizedSection.contains("checkpoint")
                 || normalizedSection.contains("perimeter")) {
                 score -= explicitTopicFocus ? 8 : 10;
+            }
+            if (trustRepairMergeIntent) {
+                if (normalizedSection.contains("trust")
+                    || normalizedSection.contains("reputation")
+                    || normalizedSection.contains("vouch")
+                    || normalizedSection.contains("restorative")
+                    || normalizedSection.contains("mediation")) {
+                    score += explicitTopicFocus ? 8 : 10;
+                }
+                if (normalizedSection.contains("monitoring")
+                    || normalizedSection.contains("membership")
+                    || normalizedSection.contains("boundaries")
+                    || normalizedSection.contains("graduated sanctions")
+                    || normalizedSection.contains("sanctions")
+                    || normalizedSection.contains("quota")
+                    || normalizedSection.contains("allocation")) {
+                    score -= explicitTopicFocus ? 6 : 8;
+                }
+                if (normalizedSection.contains("insurance")
+                    || normalizedSection.contains("accounting")
+                    || normalizedSection.contains("fund governance")
+                    || normalizedSection.contains("risk pooling")
+                    || normalizedSection.contains("record-keeping")) {
+                    score -= explicitTopicFocus ? 12 : 14;
+                }
             }
         }
 
