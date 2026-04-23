@@ -70,6 +70,30 @@ public final class PackRepository implements AutoCloseable {
         "snow shelter",
         "winter"
     );
+    private static final Set<String> HOUSE_SITE_SELECTION_ANCHOR_MARKERS = buildMarkerSet(
+        "terrain analysis",
+        "site assessment checklist",
+        "wind exposure",
+        "water proximity",
+        "natural hazards",
+        "seasonal considerations",
+        "access routes",
+        "sun exposure",
+        "microclimate"
+    );
+    private static final Set<String> HOUSE_FOUNDATION_DETAIL_MARKERS = buildMarkerSet(
+        "foundations",
+        "foundation planning",
+        "foundation layout",
+        "frost line",
+        "frost heave",
+        "footing",
+        "footings",
+        "footing sizing",
+        "rubble trench",
+        "french drain",
+        "drainage and waterproofing"
+    );
     private static final Set<String> WATER_DISTRIBUTION_ANCHOR_MARKERS = buildMarkerSet(
         "water distribution",
         "distribution system",
@@ -2521,6 +2545,11 @@ public final class PackRepository implements AutoCloseable {
         if (shouldPreferRouteAnchorOverRankedGuide(queryTerms, rankedAnchor)) {
             return routedAnchor;
         }
+        if (prefersCabinSiteSelectionRouteAnchor(queryTerms)
+            && hasCabinSiteSelectionAnchorSignal(routedAnchor)
+            && !hasCabinSiteSelectionAnchorSignal(rankedAnchor)) {
+            return routedAnchor;
+        }
         if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
             && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
             && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
@@ -3468,12 +3497,56 @@ public final class PackRepository implements AutoCloseable {
             score += Math.max(0, 12 - index);
             score += anchorAlignmentBonus(queryTerms, candidate);
             score += broadRouteSectionPreferenceBonus(queryTerms, candidate);
+            score += cabinSiteSelectionAnchorBias(queryTerms, candidate);
             if (score > bestScore) {
                 bestScore = score;
                 best = candidate;
             }
         }
         return best;
+    }
+
+    private static boolean prefersCabinSiteSelectionRouteAnchor(QueryTerms queryTerms) {
+        if (queryTerms == null || queryTerms.metadataProfile == null) {
+            return false;
+        }
+        return "cabin_house".equals(queryTerms.metadataProfile.preferredStructureType())
+            && queryTerms.metadataProfile.siteSelectionLeadIntent()
+            && queryTerms.metadataProfile.hasExplicitTopic("site_selection")
+            && queryTerms.metadataProfile.hasExplicitTopic("foundation");
+    }
+
+    private static boolean hasCabinSiteSelectionAnchorSignal(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        String normalized = normalizeMatchText(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
+        );
+        return containsAnyMarker(normalized, HOUSE_SITE_SELECTION_ANCHOR_MARKERS);
+    }
+
+    private static int cabinSiteSelectionAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
+        if (!prefersCabinSiteSelectionRouteAnchor(queryTerms) || candidate == null) {
+            return 0;
+        }
+        int score = 0;
+        String normalizedCategory = emptySafe(candidate.category).trim().toLowerCase(QUERY_LOCALE);
+        boolean siteSignal = hasCabinSiteSelectionAnchorSignal(candidate);
+        boolean foundationOnlySignal = containsAnyMarker(
+            normalizeMatchText(emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)),
+            HOUSE_FOUNDATION_DETAIL_MARKERS
+        );
+        if (siteSignal) {
+            score += 16;
+            if ("survival".equals(normalizedCategory)) {
+                score += 4;
+            }
+        }
+        if (foundationOnlySignal && !siteSignal) {
+            score -= 6;
+        }
+        return score;
     }
 
     static boolean matchesSpecializedExplicitTopicRowForTest(String query, String structureType, String topicTags) {

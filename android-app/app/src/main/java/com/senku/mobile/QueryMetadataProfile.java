@@ -221,6 +221,7 @@ public final class QueryMetadataProfile {
     private final boolean prefersDiversifiedContext;
     private final boolean accessibilityIntent;
     private final boolean climateContextIntent;
+    private final boolean siteSelectionLeadIntent;
     private final boolean siteBreadthIntent;
     private final boolean waterStorageContainerMakingIntent;
 
@@ -235,6 +236,7 @@ public final class QueryMetadataProfile {
         boolean prefersDiversifiedContext,
         boolean accessibilityIntent,
         boolean climateContextIntent,
+        boolean siteSelectionLeadIntent,
         boolean siteBreadthIntent,
         boolean waterStorageContainerMakingIntent
     ) {
@@ -248,6 +250,7 @@ public final class QueryMetadataProfile {
         this.prefersDiversifiedContext = prefersDiversifiedContext;
         this.accessibilityIntent = accessibilityIntent;
         this.climateContextIntent = climateContextIntent;
+        this.siteSelectionLeadIntent = siteSelectionLeadIntent;
         this.siteBreadthIntent = siteBreadthIntent;
         this.waterStorageContainerMakingIntent = waterStorageContainerMakingIntent;
     }
@@ -308,6 +311,8 @@ public final class QueryMetadataProfile {
             || STRUCTURE_TYPE_COMMUNITY_GOVERNANCE.equals(structureType);
         boolean accessibilityIntent = containsAny(normalized, ACCESSIBILITY_MARKERS);
         boolean climateContextIntent = containsAny(normalized, CLIMATE_CONTEXT_MARKERS);
+        boolean siteSelectionLeadIntent = STRUCTURE_TYPE_CABIN_HOUSE.equals(structureType)
+            && containsAny(normalized, HOUSE_SITE_QUERY_MARKERS);
         boolean siteBreadthIntent = STRUCTURE_TYPE_CABIN_HOUSE.equals(structureType)
             && siteSelectionIntent
             && matchCount(normalized, HOUSE_SITE_BREADTH_MARKERS) >= 2;
@@ -326,6 +331,7 @@ public final class QueryMetadataProfile {
             diversified,
             accessibilityIntent,
             climateContextIntent,
+            siteSelectionLeadIntent,
             siteBreadthIntent,
             waterStorageContainerMakingIntent
         );
@@ -386,6 +392,10 @@ public final class QueryMetadataProfile {
 
     public boolean climateContextIntent() {
         return climateContextIntent;
+    }
+
+    public boolean siteSelectionLeadIntent() {
+        return siteSelectionLeadIntent;
     }
 
     public boolean waterStorageContainerMakingIntent() {
@@ -1247,8 +1257,11 @@ public final class QueryMetadataProfile {
         score += explicitSingleTopicBonus(sectionHeading, "ventilation", 10);
 
         if (explicitTopicTags.contains("site_selection") && explicitTopicTags.contains("foundation")) {
+            if (matchesTopic(sectionHeading, "site_selection")) {
+                score += siteSelectionLeadIntent ? 12 : 4;
+            }
             if (matchesTopic(sectionHeading, "foundation")) {
-                score += 8;
+                score += siteSelectionLeadIntent ? 4 : 8;
             }
             if (matchesTopic(sectionHeading, "drainage") && !matchesTopic(sectionHeading, "foundation")) {
                 if (normalizedSection.contains("french drain")

@@ -689,6 +689,140 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void smallCabinSiteAndFoundationRouteAnchorPrefersSiteAssessmentGuideOverFoundationGuide() {
+        SearchResult siteAssessment = new SearchResult(
+            "Shelter Site Selection & Hazard Assessment",
+            "",
+            "Terrain analysis, wind exposure, sun, and practical access routes.",
+            "Terrain analysis, wind exposure, sun, and practical access routes.",
+            "GD-446",
+            "Terrain Analysis",
+            "survival",
+            "route-focus",
+            "safety",
+            "long_term",
+            "cabin_house",
+            "site_selection,drainage"
+        );
+        SearchResult foundations = new SearchResult(
+            "Construction & Carpentry",
+            "",
+            "Foundation planning and layout for a small cabin site.",
+            "Foundation planning and layout for a small cabin site.",
+            "GD-094",
+            "Foundations",
+            "building",
+            "route-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "site_selection,foundation,wall_construction"
+        );
+        SearchResult drainageEarthworks = new SearchResult(
+            "Drainage and Earthworks",
+            "",
+            "French drain layout and trenching for runoff control.",
+            "French drain layout and trenching for runoff control around structures.",
+            "GD-333",
+            "French Drain Construction",
+            "building",
+            "route-focus",
+            "subsystem",
+            "mixed",
+            "earth_shelter",
+            "site_selection,drainage"
+        );
+
+        SearchResult selected = PackRepository.routeFocusedAnchorForTest(
+            "how do i choose a safe site and foundation for a small cabin",
+            java.util.List.of(foundations, siteAssessment, drainageEarthworks),
+            true
+        );
+
+        assertEquals("GD-446", selected.guideId);
+    }
+
+    @Test
+    public void smallCabinSiteAndFoundationAnswerAnchorPrefersRoutedSiteGuideOverGuideFocusFoundation() {
+        SearchResult rankedAnchor = new SearchResult(
+            "Construction & Carpentry",
+            "",
+            "Foundation planning and layout for a small cabin site.",
+            "Foundation planning and layout for a small cabin site.",
+            "GD-094",
+            "Foundations",
+            "building",
+            "guide-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "site_selection,foundation,wall_construction"
+        );
+        SearchResult routedAnchor = new SearchResult(
+            "Shelter Site Selection & Hazard Assessment",
+            "",
+            "Terrain analysis, wind exposure, sun, and practical access routes.",
+            "Terrain analysis, wind exposure, sun, and practical access routes.",
+            "GD-446",
+            "Terrain Analysis",
+            "survival",
+            "route-focus",
+            "safety",
+            "long_term",
+            "cabin_house",
+            "site_selection,drainage"
+        );
+
+        SearchResult selected = PackRepository.selectAnswerAnchorForTest(
+            "how do i choose a safe site and foundation for a small cabin",
+            rankedAnchor,
+            routedAnchor
+        );
+
+        assertEquals("GD-446", selected.guideId);
+    }
+
+    @Test
+    public void explicitFoundationAnswerAnchorStillKeepsFoundationGuide() {
+        SearchResult rankedAnchor = new SearchResult(
+            "Foundations and Footings",
+            "",
+            "Foundation planning, rubble trench options, and frost-line considerations.",
+            "Foundation planning, rubble trench options, and frost-line considerations.",
+            "GD-383",
+            "Foundations",
+            "building",
+            "guide-focus",
+            "planning",
+            "long_term",
+            "cabin_house",
+            "foundation,drainage"
+        );
+        SearchResult routedAnchor = new SearchResult(
+            "Shelter Site Selection & Hazard Assessment",
+            "",
+            "Terrain analysis, wind exposure, sun, and practical access routes.",
+            "Terrain analysis, wind exposure, sun, and practical access routes.",
+            "GD-446",
+            "Terrain Analysis",
+            "survival",
+            "route-focus",
+            "safety",
+            "long_term",
+            "cabin_house",
+            "site_selection,drainage"
+        );
+
+        SearchResult selected = PackRepository.selectAnswerAnchorForTest(
+            "how do i build a cabin foundation with stone and rubble",
+            rankedAnchor,
+            routedAnchor
+        );
+
+        assertEquals("GD-383", selected.guideId);
+    }
+
+    @Test
     public void explicitBuildingSiteRouteRejectsDrainageAndWaterproofingFoundationReference() {
         SearchResult candidate = new SearchResult(
             "Foundations and Footings",

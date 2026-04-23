@@ -553,6 +553,19 @@ public final class QueryMetadataProfileTest {
     }
 
     @Test
+    public void smallCabinSiteAndFoundationPromptPrefersTerrainAnalysisOverFoundations() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "how do i choose a safe site and foundation for a small cabin"
+        );
+
+        int terrainBonus = profile.sectionHeadingBonus("Terrain Analysis");
+        int foundationBonus = profile.sectionHeadingBonus("Foundations");
+
+        assertTrue(terrainBonus > foundationBonus);
+        assertTrue(foundationBonus > 0);
+    }
+
+    @Test
     public void smallCabinSiteAndFoundationPromptPenalizesWatercraftWaterproofingRows() {
         QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
             "how do i choose a safe site and foundation for a small cabin"
@@ -615,6 +628,19 @@ public final class QueryMetadataProfileTest {
         assertTrue(!profile.preferredTopicTags().contains("roofing"));
         assertTrue(!profile.preferredTopicTags().contains("weatherproofing"));
         assertTrue(!profile.preferredTopicTags().contains("ventilation"));
+    }
+
+    @Test
+    public void explicitFoundationPromptStillPrefersFoundationsOverTerrainAnalysis() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "how do i build a cabin foundation with stone and rubble"
+        );
+
+        int terrainBonus = profile.sectionHeadingBonus("Terrain Analysis");
+        int foundationBonus = profile.sectionHeadingBonus("Foundations");
+
+        assertTrue(foundationBonus > terrainBonus);
+        assertTrue(foundationBonus > 0);
     }
 
     @Test
