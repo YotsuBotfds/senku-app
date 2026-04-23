@@ -8807,7 +8807,7 @@ def _resolve_answer_mode(
     top_vector_similarity = _abstain_row_vector_similarity(top_meta or {}, top_dist)
     if average_rrf_strength < 0.65:
         return "uncertain_fit"
-    if 0.45 <= top_vector_similarity <= 0.62:
+    if 0.45 <= top_vector_similarity <= 0.67:
         return "uncertain_fit"
     if (
         _scenario_frame_is_safety_critical(frame)

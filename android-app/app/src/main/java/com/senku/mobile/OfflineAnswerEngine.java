@@ -29,7 +29,7 @@ public final class OfflineAnswerEngine {
     private static final double ABSTAIN_MIN_VECTOR_SIMILARITY = 0.67d;
     private static final double UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD = 0.65d;
     private static final double UNCERTAIN_FIT_MIN_VECTOR_SIMILARITY = 0.45d;
-    private static final double UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY = 0.62d;
+    private static final double UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY = 0.67d;
     private static final String STRUCTURE_TYPE_SAFETY_POISONING = "safety_poisoning";
     static final String SAFETY_CRITICAL_ESCALATION_LINE =
         "If this is urgent or could be a safety risk, stop and call local emergency services now "

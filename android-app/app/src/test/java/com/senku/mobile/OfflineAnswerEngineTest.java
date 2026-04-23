@@ -264,13 +264,13 @@ public final class OfflineAnswerEngineTest {
                 "",
                 "",
                 "GD-410",
-                "Roof framing and rainproofing",
+                "Cabin roof rain setup",
                 "building",
                 "hybrid",
                 "planning",
                 "long_term",
                 "cabin_house",
-                "roofing,weatherproofing"
+                "roof,rain"
             ),
             new SearchResult(
                 "Wall Construction",
@@ -295,6 +295,49 @@ public final class OfflineAnswerEngineTest {
                 confidentQuery,
                 confidentProfile,
                 OfflineAnswerEngine.confidenceLabel(confidentResults, confidentQuery, confidentProfile),
+                false
+            )
+        );
+
+        String upperBandQuery = "how do i rig a tarp rain cover with cord";
+        List<SearchResult> upperBandResults = List.of(
+            new SearchResult(
+                "Tarp rain cover setup",
+                "",
+                "",
+                "",
+                "GD-113",
+                "Corded tarp rigging",
+                "survival",
+                "hybrid",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "tarp_shelter,cord"
+            ),
+            new SearchResult(
+                "Rain cover drainage",
+                "",
+                "",
+                "",
+                "GD-114",
+                "Runoff and stake order",
+                "survival",
+                "hybrid",
+                "starter",
+                "immediate",
+                "emergency_shelter",
+                "rain_cover,drainage"
+            )
+        );
+        QueryMetadataProfile upperBandProfile = QueryMetadataProfile.fromQuery(upperBandQuery);
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
+            OfflineAnswerEngine.resolveAnswerMode(
+                upperBandResults,
+                upperBandQuery,
+                upperBandProfile,
+                OfflineAnswerEngine.confidenceLabel(upperBandResults, upperBandQuery, upperBandProfile),
                 false
             )
         );
@@ -410,14 +453,18 @@ public final class OfflineAnswerEngineTest {
 
         List<SearchResult> safetyConfidentResults = List.of(
             new SearchResult(
-                "Normal Rules Do Not Apply Crisis Guide",
+                "Pacing Slept Normal Rules Crisis Guide",
                 "",
                 "",
                 "",
                 "GD-307",
-                "Immediate normal-rules response",
+                "Pacing slept normal rules response",
                 "mental-health",
-                "hybrid"
+                "hybrid",
+                "safety",
+                "immediate",
+                "acute_behavior",
+                "pacing,slept,normal"
             ),
             new SearchResult(
                 "Barely Sleeping Crisis Escalation",
@@ -425,13 +472,17 @@ public final class OfflineAnswerEngineTest {
                 "",
                 "",
                 "GD-308",
-                "pacing and barely sleeping",
+                "Pacing and barely slept escalation",
                 "mental-health",
-                "hybrid"
+                "hybrid",
+                "safety",
+                "immediate",
+                "acute_behavior",
+                "pacing,slept"
             )
         );
         assertEquals(
-            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
             OfflineAnswerEngine.resolveAnswerMode(
                 safetyConfidentResults,
                 safetyQuery,
@@ -674,7 +725,7 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
-    public void safetyModeOverridesDoNotRerouteViolinBridgeOrRainShelter() {
+    public void safetyModeOverridesKeepViolinBridgeAbstainAndRainShelterUncertainFit() {
         String rainQuery = "How do I build a simple rain shelter from tarp and cord?";
         List<SearchResult> rainRawTopChunks = List.of(
             new SearchResult(
@@ -759,7 +810,7 @@ public final class OfflineAnswerEngineTest {
         QueryMetadataProfile rainMetadataProfile = QueryMetadataProfile.fromQuery(rainQuery);
 
         assertEquals(
-            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
             OfflineAnswerEngine.resolveAnswerMode(
                 rainSelectedContext,
                 rainRawTopChunks,
@@ -2534,7 +2585,7 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
-    public void resolveAnswerModePrefersSelectedContextOverOffTopicRawTopRows() {
+    public void resolveAnswerModePrefersSelectedContextOverOffTopicRawTopRowsAndKeepsRainShelterUncertainFit() {
         String query = "How do I build a simple rain shelter from tarp and cord?";
         List<SearchResult> rawTopChunks = List.of(
             new SearchResult(
@@ -2624,7 +2675,7 @@ public final class OfflineAnswerEngineTest {
         );
 
         assertEquals(
-            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
             OfflineAnswerEngine.resolveAnswerMode(
                 selectedContext,
                 rawTopChunks,

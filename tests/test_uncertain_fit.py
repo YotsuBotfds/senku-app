@@ -54,7 +54,7 @@ class UncertainFitModeTests(unittest.TestCase):
                     guide_title="Tarp Shelter Setup",
                     section_heading="Rain pitch",
                     category="survival",
-                    dist=0.36,
+                    dist=0.31,
                     rrf_score=0.022,
                     vector_hits=1,
                     lexical_hits=1,
@@ -65,8 +65,34 @@ class UncertainFitModeTests(unittest.TestCase):
                     guide_title="Shelter Anchors",
                     section_heading="Anchor choices",
                     category="survival",
-                    dist=0.39,
+                    dist=0.33,
                     rrf_score=0.020,
+                    vector_hits=1,
+                    lexical_hits=1,
+                ),
+            ]
+        )
+        upper_band_uncertain_results = _results(
+            [
+                _row(
+                    doc="Tarp shelter ridge-line setup with rain runoff and cord tensioning.",
+                    guide_id="GD-205",
+                    guide_title="Ridgeline Rain Cover",
+                    section_heading="Corded tarp setup",
+                    category="survival",
+                    dist=0.35,
+                    rrf_score=0.022,
+                    vector_hits=1,
+                    lexical_hits=1,
+                ),
+                _row(
+                    doc="Drainage trench reminders for a tarp rain cover with cord anchors.",
+                    guide_id="GD-206",
+                    guide_title="Rain Cover Drainage",
+                    section_heading="Anchor and runoff checks",
+                    category="survival",
+                    dist=0.36,
+                    rrf_score=0.021,
                     vector_hits=1,
                     lexical_hits=1,
                 ),
@@ -184,6 +210,11 @@ class UncertainFitModeTests(unittest.TestCase):
                 "how do i build a tarp lean-to shelter",
                 confident_results,
                 "confident",
+            ),
+            (
+                "how do i rig a tarp rain cover with cord",
+                upper_band_uncertain_results,
+                "uncertain_fit",
             ),
             (
                 "how do i repair a tarp shelter after wind damage",

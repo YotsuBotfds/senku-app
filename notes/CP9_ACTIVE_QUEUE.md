@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-23 - W-C-3 landed: Android now mirrors the desktop abstain vector floor at 0.67 without widening the uncertain-fit 0.62 band, fresh pre/post probe bundle minted, next Wave C move W-C-4 uncertain-fit band calibration.
+- Last updated: 2026-04-23 - W-C-4 landed: coordinated desktop/Android uncertain-fit upper boundary move to 0.67 completed, lower bound 0.45 and Android average-RRF threshold 0.65 intentionally unchanged, fresh pre/post sentinel probe bundle minted, next Wave C move optional W-C-5 downgrade revisit only if evidence still warrants it.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight. `W-C-1a` closed the missing runtime `ask.generate final_mode=` breadcrumb gap, `W-C-1` aggregated the fresh verification logs into `artifacts/bench/final_mode_telemetry_sample_20260423/`, `W-C-2` raised the desktop abstain similarity floor to `0.67` while keeping the unique-hit floor at `2`, and `W-C-3` landed the Android abstain-vector mirror at `0.67` while intentionally keeping the uncertain-fit ceiling at `0.62`; next is `W-C-4` uncertain-fit band calibration. The fresh Android pre/post probe bundle lives at `artifacts/bench/android_abstain_vector_mirror_20260423/`. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight. `W-C-1a` closed the missing runtime `ask.generate final_mode=` breadcrumb gap, `W-C-1` aggregated the fresh verification logs into `artifacts/bench/final_mode_telemetry_sample_20260423/`, `W-C-2` raised the desktop abstain similarity floor to `0.67` while keeping the unique-hit floor at `2`, `W-C-3` landed the Android abstain-vector mirror at `0.67` while intentionally keeping the uncertain-fit ceiling at `0.62`, and `W-C-4` widened the shared uncertain-fit upper boundary to `0.67` while intentionally keeping the lower bound at `0.45` and Android `UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD` at `0.65`. The fresh Android pre/post probe bundles live at `artifacts/bench/android_abstain_vector_mirror_20260423/` and `artifacts/bench/uncertain_fit_upper_band_20260423/`. Optional `W-C-5` downgrade revisit remains evidence-gated. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -30,14 +30,14 @@ See tracker for the full post-RC backlog.
 
 ## Active
 
-No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mode breadcrumb gap after the `W-C-1` hard stop, `W-C-1` aggregated the fresh probe logs into a compact telemetry sample bundle, `W-C-2` tuned the desktop abstain production point to `0.67 / 2`, and `W-C-3` mirrored the dedicated abstain-vector floor on Android while keeping the uncertain-fit ceiling at `0.62`; next substantive planner move is `W-C-4` uncertain-fit band calibration plus the remaining post-`R-track1` follow-ups below.
+No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mode breadcrumb gap after the `W-C-1` hard stop, `W-C-1` aggregated the fresh probe logs into a compact telemetry sample bundle, `W-C-2` tuned the desktop abstain production point to `0.67 / 2`, `W-C-3` mirrored the dedicated abstain-vector floor on Android while keeping the uncertain-fit ceiling at `0.62`, and `W-C-4` widened the shared uncertain-fit upper boundary to `0.67` while intentionally leaving the lower bound at `0.45` and Android average-RRF threshold at `0.65`; next substantive planner move is optional `W-C-5` downgrade revisit only if evidence still warrants it, plus the remaining post-`R-track1` follow-ups below.
 
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
 - ~~Pack-drift investigation~~ - resolved 2026-04-22 via `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` Sec. 6: adopt `cf449ee9...` as the forward substrate; keep the historical correction in docs that retrieval-chain claims belong to `af58bd12...`, not `e48d3e1a...`.
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
-- **Wave C series** - direction locked by `notes/WAVE_C_DIRECTION_20260422.md`; `W-C-0`, `W-C-1a`, `W-C-1`, `W-C-2`, and `W-C-3` are closed, the fresh tuned desktop near-boundary bundle now lives at `artifacts/bench/abstain_nearboundary_tuned_20260423/`, the Android mirror bundle lives at `artifacts/bench/android_abstain_vector_mirror_20260423/`, and the next substantive move is `W-C-4` uncertain-fit band calibration.
+- **Wave C series** - direction locked by `notes/WAVE_C_DIRECTION_20260422.md`; `W-C-0`, `W-C-1a`, `W-C-1`, `W-C-2`, `W-C-3`, and `W-C-4` are closed, the fresh tuned desktop near-boundary bundle lives at `artifacts/bench/abstain_nearboundary_tuned_20260423/`, the Android mirror bundle lives at `artifacts/bench/android_abstain_vector_mirror_20260423/`, the uncertain-fit upper-band bundle lives at `artifacts/bench/uncertain_fit_upper_band_20260423/`, and the next substantive move is optional `W-C-5` downgrade revisit only if evidence still warrants it.
 
 ### Resolved without slice
 
@@ -157,6 +157,7 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 
 ## Completed (rolling log)
 
+- 2026-04-23 - `W-C-4` uncertain-fit upper-band calibration: widened the coordinated desktop/Android uncertain-fit upper boundary to `0.67`, intentionally kept the lower bound at `0.45` and Android `UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD` at `0.65`, reran the five-sentinel pre/post Android probe bundle into `artifacts/bench/uncertain_fit_upper_band_20260423/`, and left `W-C-5` as an optional evidence-gated downgrade revisit.
 - 2026-04-23 - `W-C-3` Android abstain-vector mirror: landed a dedicated Android abstain-side vector floor at `0.67` while intentionally keeping `UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY` at `0.62`, reran the five-sentinel pre/post final-mode probe bundle into `artifacts/bench/android_abstain_vector_mirror_20260423/`, and moved the next Wave C step to `W-C-4` uncertain-fit band calibration.
 - 2026-04-23 - `W-C-2` desktop abstain threshold tuning: raised the desktop abstain similarity floor to `0.67` while intentionally keeping the unique-hit floor at `2`, reran the tracked near-boundary panel into `artifacts/bench/abstain_nearboundary_tuned_20260423/`, and moved the next Wave C step to `W-C-3` Android alignment / mirror.
 - 2026-04-23 early - `W-C-1` telemetry aggregation helper: aggregated the fresh `W-C-1a` probe logs rather than re-collecting Android output, landed tracked helper `scripts/aggregate_final_mode_telemetry.py`, and wrote the derived sample bundle at `artifacts/bench/final_mode_telemetry_sample_20260423/`. Next Wave C move is `W-C-2` desktop abstain-threshold tuning.
