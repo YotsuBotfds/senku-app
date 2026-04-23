@@ -1,0 +1,104 @@
+panel_id: abstain_nearboundary_20260423
+title: Abstain Near-Boundary Panel - 2026-04-23
+description: Fork of the 2026-04-18 abstain baseline with eight additional should_not_abstain prompts for thin-but-real support cases before any Wave C threshold tuning.
+queries:
+  - id: lever_stone
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How do I use a simple lever to move a heavy stone?
+    rationale: Direct guide coverage for simple machines should surface multiple strong lexical overlaps in the top rows.
+  - id: puncture_wound
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: What should I do for a deep puncture wound from dirty metal?
+    rationale: High-priority medical guidance exists and should remain generation-eligible.
+  - id: soda_bottles
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: Can I store drinking water in old soda bottles?
+    rationale: This is a known retrieval lane and should not be suppressed by weak-retrieval heuristics.
+  - id: rain_shelter
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How do I build a simple rain shelter from tarp and cord?
+    rationale: Shelter and roof-repair guides should keep this in the supported set.
+  - id: glass_bottle
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How do I forge a glass bottle from sand and ash?
+    rationale: This is narrower than the guide wording, but glassmaking coverage is still real and should survive the abstain gate.
+  - id: warm_cap_hook
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How do I make a warm cap from yarn with a hook?
+    rationale: A paraphrased textiles query that checks whether the gate tolerates in-domain wording drift.
+  - id: debug_csv
+    bucket: should_abstain
+    expected_abstain: true
+    question: How do I debug a Python script that reads a CSV file?
+    rationale: Modern software-debugging request with no meaningful guide support.
+  - id: video_laptop
+    bucket: should_abstain
+    expected_abstain: true
+    question: How do I edit a video on a laptop?
+    rationale: Modern digital workflow that should be declined unless retrieval finds unusually strong support.
+  - id: sort_names
+    bucket: should_abstain
+    expected_abstain: true
+    question: How do I write a computer program that sorts a list of names?
+    rationale: Useful false-negative probe because the library contains adjacent computing material but not practical programming help.
+  - id: resume
+    bucket: should_abstain
+    expected_abstain: true
+    question: How do I write a resume for a job application?
+    rationale: Administrative modern-workflow prompt that should abstain despite partial lexical collisions.
+  - id: logo
+    bucket: should_abstain
+    expected_abstain: true
+    question: How do I design a logo for a business?
+    rationale: Creative-business request that often lands on adjacent visual-communication guides without actually being supported.
+  - id: wifi_router
+    bucket: should_abstain
+    expected_abstain: true
+    question: How do I tune my Wi-Fi router for faster speeds?
+    rationale: Modern networking prompt that should abstain even when radio-related guides create superficial similarity.
+  - id: dirty_nail
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: What should I do after stepping on a dirty nail?
+    rationale: Thin-but-real wound and tetanus coverage was explicitly called out as a near-boundary should-answer shape in the abstain analysis.
+  - id: clean_brown_water
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: If water looks clean but brown, how should I make it safer to drink?
+    rationale: Water assessment and purification guidance exists, but this wording was explicitly flagged as a weak-support case near the abstain boundary.
+  - id: tarp_between_trees
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How can I rig a tarp between trees to stay dry in steady rain?
+    rationale: A careful rain-shelter variant keeps the same support lane while testing wording drift closer to the boundary.
+  - id: reuse_juice_bottle
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: Can I wash and reuse a plastic juice bottle for drinking water?
+    rationale: This stays in the bottle-storage lane but uses thinner, more everyday wording than the baseline soda-bottle prompt.
+  - id: roof_leak_tarp
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How do I stop a small roof leak with a tarp until I can repair it?
+    rationale: Emergency roof-leak and shelter guidance should support this, but the ask is narrower and more temporary than a direct shelter-build query.
+  - id: creek_tea_color
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: Creek water is clear but tea-colored. What treatment steps still matter before drinking it?
+    rationale: This is another thin water-safety phrasing that should answer without being a comfort-case.
+  - id: rusty_nail_puncture
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: How should I clean and bandage a small puncture from a rusty nail?
+    rationale: A narrower paraphrase of the puncture-wound lane checks whether modest wording drift still clears the abstain gate.
+  - id: one_night_rain_cover
+    bucket: should_not_abstain
+    expected_abstain: false
+    question: What is the quickest way to make a rain cover with tarp and cord for one night?
+    rationale: Near-boundary shelter phrasing is explicitly in scope for W-C-0; this keeps it answerable while thinner than the baseline shelter prompt.
