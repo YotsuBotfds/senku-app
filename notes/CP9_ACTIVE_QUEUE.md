@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-22 evening - `R-track1` landed this commit with the atomic tracking-hygiene sweep (96 tracked / 13 ignored / 0 deleted / 49 deferred); report at `notes/R-TRACK1_HYGIENE_REPORT_20260422.md`.
+- Last updated: 2026-04-22 evening - D8 landed: notes operating spine tracked, sidecar spec validated clean, and dispatch root rotated/cleaned.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight. `R-track1` landed this commit; next is Wave C planning, optional ask-telemetry enrichment, and the R-track1 carry-over follow-ups below. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, and `R-anchor-refactor1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight. D8 landed this commit; next is Wave C direction-note drafting, optional ask-telemetry enrichment, and the remaining post-`R-track1` follow-ups below. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -30,13 +30,14 @@ See tracker for the full post-RC backlog.
 
 ## Active
 
-No slices currently in flight. `R-track1` landed this commit; next planner direction is Wave C planning plus the carry-over backlog below.
+No slices currently in flight. D8 landed this commit; next planner direction is Wave C direction-note drafting plus the remaining post-`R-track1` follow-ups below.
 
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
 - ~~Pack-drift investigation~~ - resolved 2026-04-22 via `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` Â§6: adopt `cf449ee9...` as the forward substrate; keep the historical correction in docs that retrieval-chain claims belong to `af58bd12...`, not `e48d3e1a...`.
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
+- **Wave C direction-note drafting** - no longer blocked on telemetry; use `notes/WAVE_C_FORWARD_RESEARCH_20260422.md` as the live input for the next post-Wave-B confidence / abstain-threshold direction note.
 
 ### Resolved without slice
 
@@ -44,16 +45,14 @@ No slices currently in flight. `R-track1` landed this commit; next planner direc
 
 ## Blocked / Deferred
 
-- `BACK-P-05` SQLite FTS runtime decision â€” deferred until RC cut.
-- `BACK-P-06` AVD data-partition sizing â€” deferred; covered by direct-stream
-  bypass as a runtime workaround. Post-RC ticket fleshed out by P4.
-- `BACK-P-07` unified LiteRT push helper â€” nice-to-have; picks up after
-  `push_litert_model_to_android.ps1` direct-stream lands as default.
-  Post-RC ticket fleshed out by P4.
-- `BACK-T-05` (tentative ID) `assertDetailSettled` visibility blind spot â€”
+- `BACK-P-05` SQLite FTS runtime decision - still deferred as post-RC work.
+- `BACK-P-06` AVD data-partition sizing - still deferred; direct-stream
+  bypass remains the runtime workaround. Post-RC ticket fleshed out by P4.
+- `BACK-P-07` unified LiteRT push helper - still a nice-to-have post-RC
+  follow-up after `push_litert_model_to_android.ps1` direct-stream lands as
+  default. Post-RC ticket fleshed out by P4.
+- `BACK-T-05` (tentative ID) `assertDetailSettled` visibility blind spot -
   passes on IME-dominated dumps that lack body content. To be filed by P4.
-- Wave C planning (post-Wave-B confidence tuning, abstain threshold
-  revisit) â€” blocked on RC v3 telemetry.
 
 ## Cancelled
 
@@ -65,9 +64,9 @@ No slices currently in flight. `R-track1` landed this commit; next planner direc
 
 ## Carry-over Backlog
 
-- **(a) Sidecar YAML tracking.** `notes/specs/deterministic_registry_sidecar.yaml` remains untracked; registry drift is still possible unless the sidecar spec is tracked or the discipline is locked somewhere else. Follow-up slice: track the sidecar spec and validate `scripts/regenerate_deterministic_registry.py --check` against `deterministic_special_case_registry.py`.
+- ~~**(a) Sidecar YAML tracking.**~~ Closed 2026-04-22 by D8: `notes/specs/deterministic_registry_sidecar.yaml` is now tracked and `python scripts/regenerate_deterministic_registry.py --check` is clean against `deterministic_special_case_registry.py`.
 - **(b) `guides/` content-tracking slice.** The untracked `guides/` corpus remains out of scope for R-track1 and needs its own content-tracking / triage pass.
-- **(c) `notes/` content-tracking slice.** Load-bearing untracked `notes/` material remains, including `notes/ABSTAIN_TUNING_ANALYSIS_20260418.md`, plus the nested `notes/handoffs/`, `notes/research/`, and `notes/reviews/` trees. Priority follow-up after R-track1 lands, and the next D-slice can absorb dispatch-file rotation there.
+- **(c) Residual historical `notes/` backlog.** The load-bearing notes operating spine is now tracked; the remaining `notes/` carry-over is the large historical root backlog still left untracked, such as `PLANNER_HANDOFF_*`, `CP9_STAGE_*`, `ACTIVE_WORK_LOG_*`, `AGENT_STATE.yaml`, historical audits/logs, and similar dated root notes.
 - **(d) Zip archives DELETE-candidate triage.** `4-13guidearchive.zip` and `guides.zip` stay deferred pending Tate review of whether they should be kept, archived elsewhere, or removed.
 - **(e) Screenshots visual-content review.** The six repo-root `senku_*.png` screenshots remain deferred pending a visual sanity pass for secrets/PII and any tracked-doc justification.
 - **(f) Dated snapshot triage.** `CURRENT_LOCAL_TESTING_STATE_20260410.md`, `LM_STUDIO_MODELS_20260410.json`, and `UI_DIRECTION_AUDIT_20260414.md` need a keep/archive/delete decision.
@@ -159,6 +158,7 @@ No slices currently in flight. `R-track1` landed this commit; next planner direc
 
 ## Completed (rolling log)
 
+- 2026-04-22 evening - D8 notes-core tracking / sidecar closure / dispatch rotation: tracked the notes operating spine, tracked `notes/specs/deterministic_registry_sidecar.yaml` with `python scripts/regenerate_deterministic_registry.py --check` clean, rotated landed dispatch files into `notes/dispatch/completed/`, and narrowed the remaining `notes/` carry-over to the residual historical root backlog.
 - 2026-04-22 evening - R-track1 atomic: 96 tracked / 13 ignored / 0 deleted / 49 deferred. Report at `notes/R-TRACK1_HYGIENE_REPORT_20260422.md`.
 
 - 2026-04-19 â€” Subagent workflow formalized:

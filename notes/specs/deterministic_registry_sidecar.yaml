@@ -1,0 +1,1083 @@
+rules:
+- rule_id: unknown_medication
+  predicate_name: _is_unknown_medication_special_case
+  builder_name: _build_unknown_medication_response
+  sample_prompt: i found some unmarked pills what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: unknown_bottle_ingestion
+  predicate_name: _is_unknown_bottle_ingestion_special_case
+  builder_name: _build_unknown_bottle_ingestion_response
+  sample_prompt: i swallowed a mouthful from an unlabeled bottle and dont know what
+    it was
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: antibiotic_synthesis
+  predicate_name: _is_antibiotic_synthesis_special_case
+  builder_name: _build_antibiotic_synthesis_response
+  sample_prompt: how do i make antibiotics without a pharmacy
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: dental_infection
+  predicate_name: _is_dental_infection_special_case
+  builder_name: _build_dental_infection_response
+  sample_prompt: i think my tooth is infected and my face is swelling
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: nonpharma_pain
+  predicate_name: _is_nonpharma_pain_special_case
+  builder_name: _build_nonpharma_pain_response
+  sample_prompt: we have no painkillers what can i use
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_seizure
+  predicate_name: _is_generic_seizure_special_case
+  builder_name: _build_generic_seizure_response
+  sample_prompt: someone is having a seizure what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_severe_burn
+  predicate_name: _is_generic_severe_burn_special_case
+  builder_name: _build_generic_severe_burn_response
+  sample_prompt: someone got burned badly what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: child_under_sink_cleaner_ingestion
+  predicate_name: _is_child_under_sink_cleaner_ingestion_special_case
+  builder_name: _build_child_under_sink_cleaner_ingestion_response
+  sample_prompt: my toddler licked bleach under the sink and is vomiting
+  priority: 120
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: child_under_sink_unknown_ingestion_vomiting
+  predicate_name: _is_child_under_sink_unknown_ingestion_vomiting_special_case
+  builder_name: _build_child_under_sink_unknown_ingestion_vomiting_response
+  sample_prompt: my toddler licked something under the sink and is vomiting
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: mixed_cleaners_respiratory
+  predicate_name: _is_mixed_cleaners_respiratory_special_case
+  builder_name: _build_mixed_cleaners_respiratory_response
+  sample_prompt: i mixed bleach and ammonia and now i am coughing and wheezing
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: corrosive_cleaner_eye_vision_change
+  predicate_name: _is_corrosive_cleaner_eye_vision_change_special_case
+  builder_name: _build_corrosive_cleaner_eye_vision_change_response
+  sample_prompt: got drain cleaner in my eye and now vision is blurry
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: active_electrical_odor_outlet
+  predicate_name: _is_active_electrical_odor_outlet_special_case
+  builder_name: _build_active_electrical_odor_outlet_response
+  sample_prompt: burning plastic smell coming from an outlet what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: roof_leak_near_electrical
+  predicate_name: _is_roof_leak_near_electrical_special_case
+  builder_name: _build_roof_leak_near_electrical_response
+  sample_prompt: roof leak near breaker box and wet outlets what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: car_battery_acid_on_skin
+  predicate_name: _is_car_battery_acid_on_skin_special_case
+  builder_name: _build_car_battery_acid_on_skin_response
+  sample_prompt: car battery acid leaked on my hands what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: classic_acs
+  predicate_name: _is_classic_acs_special_case
+  builder_name: _build_classic_acs_response
+  sample_prompt: chest pressure going into the left arm and jaw and hard to catch
+    my breath what do i do first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: stroke_cardiac_overlap
+  predicate_name: _is_stroke_cardiac_overlap_special_case
+  builder_name: _build_stroke_cardiac_overlap_response
+  sample_prompt: someone collapsed with chest pain one-sided weakness and slurred
+    speech what is the first move
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: classic_stroke_fast
+  predicate_name: _is_classic_stroke_fast_special_case
+  builder_name: _build_classic_stroke_fast_response
+  sample_prompt: my face is drooping one arm is weak and my words are coming out wrong
+    should i call now
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: head_injury_clear_fluid
+  predicate_name: _is_head_injury_clear_fluid_special_case
+  builder_name: _build_head_injury_clear_fluid_response
+  sample_prompt: clear fluid is coming from the nose after a fall what should i do
+    right now
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: chest_trauma_breathing
+  predicate_name: _is_chest_trauma_breathing_special_case
+  builder_name: _build_chest_trauma_breathing_response
+  sample_prompt: stab wound to the chest and trouble breathing what do i do first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: abuse_immediate_safety
+  predicate_name: _is_abuse_immediate_safety_special_case
+  builder_name: _build_abuse_immediate_safety_response
+  sample_prompt: my partner wont let me leave and keeps taking my phone what do i
+    do first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_broken_leg
+  predicate_name: _is_generic_broken_leg_special_case
+  builder_name: _build_generic_broken_leg_response
+  sample_prompt: how do i set a broken leg
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_broken_arm
+  predicate_name: _is_generic_broken_arm_special_case
+  builder_name: _build_generic_broken_arm_response
+  sample_prompt: how do i set a broken arm not a leg
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_hypothermia
+  predicate_name: _is_generic_hypothermia_special_case
+  builder_name: _build_generic_hypothermia_response
+  sample_prompt: what are the signs of hypothermia and how do i treat it
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_animal_bite
+  predicate_name: _is_generic_animal_bite_special_case
+  builder_name: _build_generic_animal_bite_response
+  sample_prompt: how do i treat an animal bite
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_jellyfish
+  predicate_name: _is_generic_jellyfish_special_case
+  builder_name: _build_generic_jellyfish_response
+  sample_prompt: i got stung by a jellyfish what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: solar_water
+  predicate_name: _is_solar_water_special_case
+  builder_name: _build_solar_water_response
+  sample_prompt: how do i purify water with nothing but sunlight
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: water_without_fuel
+  predicate_name: _is_water_without_fuel_special_case
+  builder_name: _build_water_without_fuel_response
+  sample_prompt: how do i purify water without fuel
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - purify
+  - water
+  - without
+  - fuel
+- rule_id: charcoal_sand_water_filter_starter
+  predicate_name: _is_charcoal_sand_water_filter_special_case
+  builder_name: _build_charcoal_sand_water_filter_response
+  sample_prompt: how do i build a charcoal sand water filter
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - charcoal
+  - sand
+  - water
+  - filter
+- rule_id: zero_resource_knife
+  predicate_name: _is_zero_resource_knife_special_case
+  builder_name: _build_zero_resource_knife_response
+  sample_prompt: bro i need to make a knife out of literally nothing
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: weld_without_welder_starter
+  predicate_name: _is_weld_without_welder_special_case
+  builder_name: _build_weld_without_welder_response
+  sample_prompt: how do i weld without a welder
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - weld
+  - without
+  - welder
+- rule_id: generic_paper_ink
+  predicate_name: _is_generic_paper_ink_special_case
+  builder_name: _build_generic_paper_ink_response
+  sample_prompt: how do i make paper and ink
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: radio_from_scrap
+  predicate_name: _is_radio_from_scrap_special_case
+  builder_name: _build_radio_from_scrap_response
+  sample_prompt: how do i build a working radio from scrap
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: factory_salvage_priority
+  predicate_name: _is_factory_salvage_special_case
+  builder_name: _build_factory_salvage_response
+  sample_prompt: i found an abandoned factory what should i salvage first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: fire_in_rain
+  predicate_name: _is_fire_in_rain_special_case
+  builder_name: _build_fire_in_rain_response
+  sample_prompt: how do i start a fire in the rain
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - start
+  - fire
+  - rain
+- rule_id: closed_room_fire
+  predicate_name: _is_closed_room_fire_question
+  builder_name: _build_closed_room_fire_response
+  sample_prompt: a fire started in the bedroom but i do not see any smoke yet do i
+    leave right now or try to put it out first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: brain_tanning
+  predicate_name: _is_brain_tanning_special_case
+  builder_name: _build_brain_tanning_response
+  sample_prompt: can i tan leather with brains
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: glassmaking_starter
+  predicate_name: _is_glassmaking_starter_special_case
+  builder_name: _build_glassmaking_starter_response
+  sample_prompt: how do i make glass
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - make
+  - glass
+- rule_id: age_ten_skills
+  predicate_name: _is_age_ten_skills_special_case
+  builder_name: _build_age_ten_skills_response
+  sample_prompt: what skills should a 10 year old learn first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: candles_for_light
+  predicate_name: _is_candles_for_light_special_case
+  builder_name: _build_candles_for_light_response
+  sample_prompt: how do i make candles for light
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - make
+  - candles
+  - light
+- rule_id: metal_splinter
+  predicate_name: _is_metal_splinter_special_case
+  builder_name: _build_metal_splinter_response
+  sample_prompt: i got a metal splinter in my hand
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - metal
+  - splinter
+- rule_id: rescue_plane_signal
+  predicate_name: _is_rescue_plane_signal_special_case
+  builder_name: _build_rescue_plane_signal_response
+  sample_prompt: how do i signal a rescue plane
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: deadline_monsoon_prep
+  predicate_name: _is_deadline_monsoon_special_case
+  builder_name: _build_deadline_monsoon_response
+  sample_prompt: monsoon season starts in a week what do we need to prepare
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: heat_wave_group_illness
+  predicate_name: _is_heat_wave_group_illness_special_case
+  builder_name: _build_heat_wave_group_illness_response
+  sample_prompt: its been over 100 degrees for a week and people are getting sick
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: molten_metal_safety
+  predicate_name: _is_molten_metal_safety_special_case
+  builder_name: _build_molten_metal_safety_response
+  sample_prompt: how do i safely handle molten metal
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: unknown_building_chemicals
+  predicate_name: _is_unknown_building_chemical_special_case
+  builder_name: _build_unknown_building_chemical_response
+  sample_prompt: we found chemicals in an abandoned building, how do we identify whats
+    dangerous
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: restart_electricity_bootstrap
+  predicate_name: _is_restart_electricity_bootstrap_special_case
+  builder_name: _build_restart_electricity_bootstrap_response
+  sample_prompt: how do i restart electricity from nothing
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: long_range_no_electronics_message
+  predicate_name: _is_long_range_no_electronics_message_special_case
+  builder_name: _build_long_range_no_electronics_message_response
+  sample_prompt: i need to send a message 50 miles with no electronics
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: wounded_dark_water
+  predicate_name: _is_wounded_dark_water_special_case
+  builder_name: _build_wounded_dark_water_response
+  sample_prompt: we have a wounded person, no clean water, and its getting dark in
+    2 hours
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: unknown_child_ingestion
+  predicate_name: _is_unknown_child_ingestion_special_case
+  builder_name: _build_unknown_child_ingestion_response
+  sample_prompt: my kid just ate somethign and hes throwing up what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: toddler_diaper_rash_no_pee
+  predicate_name: _is_toddler_diaper_rash_no_pee_special_case
+  builder_name: _build_toddler_diaper_rash_no_pee_response
+  sample_prompt: my toddler has diaper rash but suddenly wont pee and seems uncomfortable
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: buried_supply_cache
+  predicate_name: _is_buried_supply_cache_special_case
+  builder_name: _build_buried_supply_cache_response
+  sample_prompt: how do i bury supplies so they survive weather and stay hidden
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: hide_supplies
+  predicate_name: _is_hide_supplies_special_case
+  builder_name: _build_hide_supplies_response
+  sample_prompt: how do i hide supplies so they cant be found
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: snake_bite_swelling
+  predicate_name: _is_snake_bite_special_case
+  builder_name: _build_snake_bite_response
+  sample_prompt: THERES A SNAKE BITE ON MY LEG ITS SWELLING HELP
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: star_navigation
+  predicate_name: _is_star_navigation_special_case
+  builder_name: _build_star_navigation_response
+  sample_prompt: how do i navigate by stars
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: cement_from_scratch
+  predicate_name: _is_cement_from_scratch_special_case
+  builder_name: _build_cement_from_scratch_response
+  sample_prompt: how do i make cement from scratch
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: roman_concrete_starter
+  predicate_name: _is_roman_concrete_special_case
+  builder_name: _build_roman_concrete_response
+  sample_prompt: how did ancient romans make concrete
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: urine_hydration_myth
+  predicate_name: _is_urine_hydration_special_case
+  builder_name: _build_urine_hydration_response
+  sample_prompt: should i drink my own urine if theres no water
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: smelt_iron_starter
+  predicate_name: _is_smelt_iron_special_case
+  builder_name: _build_smelt_iron_response
+  sample_prompt: how do i smelt iron from raw ore
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: water_wheel_power_starter
+  predicate_name: _is_water_wheel_power_special_case
+  builder_name: _build_water_wheel_power_response
+  sample_prompt: how do i make a water wheel for power
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: plant_fiber_rope_starter
+  predicate_name: _is_plant_fiber_rope_special_case
+  builder_name: _build_plant_fiber_rope_response
+  sample_prompt: how do i make rope from plant fibers
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: imminent_violent_fight
+  predicate_name: _is_imminent_violent_fight_special_case
+  builder_name: _build_imminent_violent_fight_response
+  sample_prompt: how do i mediate a fight thats about to turn violent
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: stone_tools_starter
+  predicate_name: _is_stone_tools_starter_special_case
+  builder_name: _build_stone_tools_starter_response
+  sample_prompt: all our tools are broken how do i make new ones from stone
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: group_work_refusal
+  predicate_name: _is_group_work_refusal_special_case
+  builder_name: _build_group_work_refusal_response
+  sample_prompt: people in our group are giving up and refusing to work
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: teach_kids_survival
+  predicate_name: _is_teach_kids_survival_special_case
+  builder_name: _build_teach_kids_survival_response
+  sample_prompt: how do i teach my kids to survive if something happens to me
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: winter_wild_plants
+  predicate_name: _is_winter_wild_plants_special_case
+  builder_name: _build_winter_wild_plants_response
+  sample_prompt: our food stores are running low, what wild plants can we eat in winter
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: trauma_nightmares
+  predicate_name: _is_trauma_nightmares_special_case
+  builder_name: _build_trauma_nightmares_response
+  sample_prompt: i keep having nightmares about what happened and cant sleep
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: building_fortification
+  predicate_name: _is_building_fortification_special_case
+  builder_name: _build_building_fortification_response
+  sample_prompt: how do i fortify a building against intruders
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: armed_strangers_approaching
+  predicate_name: _is_armed_strangers_approaching_special_case
+  builder_name: _build_armed_strangers_approaching_response
+  sample_prompt: we spotted armed strangers approaching what do we do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: dead_body_disposal
+  predicate_name: _is_dead_body_disposal_special_case
+  builder_name: _build_dead_body_disposal_response
+  sample_prompt: how do i dispose of a dead body safely to prevent disease
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: hot_weather_burial_preservation
+  predicate_name: _is_hot_weather_burial_special_case
+  builder_name: _build_hot_weather_burial_response
+  sample_prompt: how do i preserve a body for burial in hot weather
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: cast_without_foundry_starter
+  predicate_name: _is_cast_without_foundry_special_case
+  builder_name: _build_cast_without_foundry_response
+  sample_prompt: how do i cast metal without a foundry
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: group_garbage_management
+  predicate_name: _is_group_garbage_management_special_case
+  builder_name: _build_group_garbage_management_response
+  sample_prompt: how do i manage waste and garbage for a group of 30
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: food_store_rats
+  predicate_name: _is_food_store_rats_special_case
+  builder_name: _build_food_store_rats_response
+  sample_prompt: what do i do if rats are getting into our food stores
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: vegetable_garden_starter
+  predicate_name: _is_vegetable_garden_starter_special_case
+  builder_name: _build_vegetable_garden_starter_response
+  sample_prompt: how do i start a vegetable garden from nothing
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: flat_tire_no_spare
+  predicate_name: _is_flat_tire_no_spare_special_case
+  builder_name: _build_flat_tire_no_spare_response
+  sample_prompt: how do i fix a flat tire with no spare
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: day_navigation_without_instruments
+  predicate_name: _is_day_navigation_without_instruments_special_case
+  builder_name: _build_day_navigation_without_instruments_response
+  sample_prompt: how do i navigate without a map or compass during the day
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: group_hygiene_disease_prevention
+  predicate_name: _is_group_hygiene_disease_prevention_special_case
+  builder_name: _build_group_hygiene_disease_prevention_response
+  sample_prompt: how do we keep a group clean enough to stop disease from spreading
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: clear_water_safe_to_drink
+  predicate_name: _is_clear_water_safe_to_drink_special_case
+  builder_name: _build_clear_water_safe_to_drink_response
+  sample_prompt: this water looks clear, is it safe to drink
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: bad_water_survival
+  predicate_name: _is_bad_water_survival_special_case
+  builder_name: _build_bad_water_survival_response
+  sample_prompt: how do i not die from bad water
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: group_water_ration_math
+  predicate_name: _is_group_water_ration_math_special_case
+  builder_name: _build_group_water_ration_math_response
+  sample_prompt: we have 12 people and 40 gallons of water. how long can we last and
+    what ration should we set
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: alone_wet_cold_help
+  predicate_name: _is_alone_wet_cold_help_special_case
+  builder_name: _build_alone_wet_cold_help_response
+  sample_prompt: im alone its been 3 days i dont know what im doing everything is
+    wet and cold and i cant think straight someone please help
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: limited_bandage_material
+  predicate_name: _is_limited_bandage_material_special_case
+  builder_name: _build_limited_bandage_material_response
+  sample_prompt: we have one injured person and only enough clean bandage material
+    for a day. how should we use it
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: quiet_warm_water_low_fuel
+  predicate_name: _is_quiet_warm_water_low_fuel_special_case
+  builder_name: _build_quiet_warm_water_low_fuel_response
+  sample_prompt: we have to stay quiet, keep warm, and purify water with almost no
+    fuel
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: crop_fungus_safety
+  predicate_name: _is_crop_fungus_safety_special_case
+  builder_name: _build_crop_fungus_safety_response
+  sample_prompt: the crops have a white fungus on them are they safe to eat
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: compound_farm_winter_failure
+  predicate_name: _is_compound_farm_winter_failure_special_case
+  builder_name: _build_compound_farm_winter_failure_response
+  sample_prompt: crops failed, livestock is sick, and winter is 8 weeks away
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: no_insulation_before_winter
+  predicate_name: _is_no_insulation_before_winter_special_case
+  builder_name: _build_no_insulation_before_winter_response
+  sample_prompt: winter is 6 weeks away and we have no insulation
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: night_watch_rotation
+  predicate_name: _is_night_watch_rotation_special_case
+  builder_name: _build_night_watch_rotation_response
+  sample_prompt: how do i set up a night watch rotation
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_choking_help
+  predicate_name: _is_generic_choking_help_special_case
+  builder_name: _build_generic_choking_help_response
+  sample_prompt: someone is choking and i dont know the heimlich
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: pregnant_no_supplies_transport
+  predicate_name: _is_pregnant_no_supplies_transport_special_case
+  builder_name: _build_pregnant_no_supplies_transport_response
+  sample_prompt: we have a pregnant woman, no medical supplies, and the nearest town
+    is 3 days walk
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: supply_movement_efficiency
+  predicate_name: _is_supply_movement_efficiency_special_case
+  builder_name: _build_supply_movement_efficiency_response
+  sample_prompt: how do we move supplies farther with less effort
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: group_warmth_fuel
+  predicate_name: _is_group_warmth_fuel_special_case
+  builder_name: _build_group_warmth_fuel_response
+  sample_prompt: how do i keep a group warm for the night without burning through
+    all our fuel
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: recent_partner_loss_shutdown
+  predicate_name: _is_recent_partner_loss_shutdown_special_case
+  builder_name: _build_recent_partner_loss_shutdown_response
+  sample_prompt: my partner died last week and i cant get out of bed
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: dry_river_find_water
+  predicate_name: _is_dry_river_find_water_special_case
+  builder_name: _build_dry_river_find_water_response
+  sample_prompt: the river dried up where do i find water now
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: freezing_night_firewood
+  predicate_name: _is_freezing_night_firewood_special_case
+  builder_name: _build_freezing_night_firewood_response
+  sample_prompt: how much firewood do we need to get 15 people through a freezing
+    night
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: stealth_warmth_fire
+  predicate_name: _is_stealth_warmth_fire_special_case
+  builder_name: _build_stealth_warmth_fire_response
+  sample_prompt: we need a fire for warmth but dont want to be seen, what do we do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: overloaded_caregiver_crying_children
+  predicate_name: _is_overloaded_caregiver_crying_children_special_case
+  builder_name: _build_overloaded_caregiver_crying_children_response
+  sample_prompt: the kids wont stop crying and im losing it
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: unknown_mushroom_edibility
+  predicate_name: _is_unknown_mushroom_edibility_special_case
+  builder_name: _build_unknown_mushroom_edibility_response
+  sample_prompt: can i eat this mushroom
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: flash_flood_valley
+  predicate_name: _is_flash_flood_valley_special_case
+  builder_name: _build_flash_flood_valley_response
+  sample_prompt: flash flood warning and we are in a valley what do we do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: targeted_groundwater_search
+  predicate_name: _is_targeted_groundwater_search_special_case
+  builder_name: _build_targeted_groundwater_search_response
+  sample_prompt: how do i find water underground without digging randomly
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: multi_casualty_collapse_triage
+  predicate_name: _is_multi_casualty_collapse_triage_special_case
+  builder_name: _build_multi_casualty_collapse_triage_response
+  sample_prompt: three people were injured in a collapse, one cant walk, one cant
+    breathe well, one has a broken arm. what do we do first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: contaminated_well_no_fuel
+  predicate_name: _is_contaminated_well_no_fuel_special_case
+  builder_name: _build_contaminated_well_no_fuel_response
+  sample_prompt: the well is contaminated, two people are sick, and we have no fuel
+    for boiling
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: collapsed_new_well
+  predicate_name: _is_collapsed_new_well_special_case
+  builder_name: _build_collapsed_new_well_response
+  sample_prompt: our well collapsed how do i dig a new one
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: superglue_wound
+  predicate_name: _is_superglue_wound_special_case
+  builder_name: _build_superglue_wound_response
+  sample_prompt: can i use superglue to close a wound
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: rusty_metal_drum_water
+  predicate_name: _is_rusty_metal_drum_water_special_case
+  builder_name: _build_rusty_metal_drum_water_response
+  sample_prompt: can i use this rusty metal drum to store water
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: reused_container_water
+  predicate_name: _is_reused_container_water_special_case
+  builder_name: _build_reused_container_water_response
+  sample_prompt: how do i store water safely in reused containers
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - store
+  - water
+  - reused
+  - containers
+- rule_id: group_food_theft
+  predicate_name: _is_group_food_theft_special_case
+  builder_name: _build_group_food_theft_response
+  sample_prompt: someone is stealing food from the group what do we do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: seal_now_or_dry_more
+  predicate_name: _is_seal_now_or_dry_more_special_case
+  builder_name: _build_seal_now_or_dry_more_response
+  sample_prompt: should we seal this now or dry it more first
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: new_group_paranoia_hostility
+  predicate_name: _is_new_group_paranoia_hostility_special_case
+  builder_name: _build_new_group_paranoia_hostility_response
+  sample_prompt: we found another group of survivors but some of our people are paranoid
+    and hostile
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: post_collapse_recovery
+  predicate_name: _is_post_collapse_recovery_query
+  builder_name: _build_post_collapse_recovery_response
+  sample_prompt: we survived the apocalypse now what
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: survivor_governance_setup
+  predicate_name: _is_survivor_governance_setup_query
+  builder_name: _build_survivor_governance_setup_response
+  sample_prompt: we need to set up a government for 200 survivors
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: untrained_childbirth
+  predicate_name: _is_untrained_childbirth_special_case
+  builder_name: _build_untrained_childbirth_response
+  sample_prompt: how do i deliver a baby with no medical training
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: generic_puncture
+  predicate_name: _is_generic_puncture_special_case
+  builder_name: _build_generic_puncture_response
+  sample_prompt: how do i treat a deep puncture wound
+  priority: 100
+  promotion_status: active
+  promotion_notes: Live in android-app/app/src/main/java/com/senku/mobile/DeterministicAnswerRouter.java.
+  lexical_signature_terms:
+  - deep
+  - puncture
+  - wound
+- rule_id: supply_conflict
+  predicate_name: _is_low_bureaucracy_supply_special_case
+  builder_name: _build_supply_conflict_response
+  sample_prompt: people are starting to hoard supplies how do we stop it
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: bear_near_campsite
+  predicate_name: _is_bear_near_campsite_special_case
+  builder_name: _build_bear_near_campsite_response
+  sample_prompt: theres a bear near my campsite what do i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: snake_in_yard
+  predicate_name: _is_snake_in_yard_special_case
+  builder_name: _build_snake_in_yard_response
+  sample_prompt: theres a snake in my yard what should i do
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: animal_acting_strange
+  predicate_name: _is_animal_acting_strange_special_case
+  builder_name: _build_animal_acting_strange_response
+  sample_prompt: theres a raccoon acting strange in my yard foaming at the mouth
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
