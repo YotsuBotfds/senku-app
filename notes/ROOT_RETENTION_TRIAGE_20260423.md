@@ -18,7 +18,8 @@ complete at `notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
 `notes/reviews/auditglm.md`, and `notes/reviews/gptaudit4-21.md`.
 
 The decision table below still stands as the original D11 triage record for
-the remaining root files: `4-13guidearchive.zip` stays local-only for now,
+the remaining root files: `4-13guidearchive.zip` stays local-only for now as
+an optional fallback even after D36 tracked the live `guides/` corpus,
 `guides.zip` was deleted by D18 as the superseded partial snapshot,
 `LM_STUDIO_MODELS_20260410.json` remains local-only, and the screenshot/mockup
 residue is now closed after D16 plus D17.
@@ -35,13 +36,15 @@ pre-execution triage record for the repo-root pass. D18 then deleted
 `guides.zip` as the superseded partial snapshot, left
 `4-13guidearchive.zip` intentionally local-only as the fuller fallback, and
 closed the actionable zip-cleanup branch without widening into `guides/`
-tracking.
+tracking. D36 later tracked the live `guides/` corpus as-is, so the archive
+is no longer waiting on unfinished guide tracking; it remains local-only as
+an extra fallback rather than as an active blocker.
 
 ## Candidate Dispositions
 
 | Path | What it is | Current git state | Recommended disposition | Rationale | Blocker or caution |
 | --- | --- | --- | --- | --- | --- |
-| `4-13guidearchive.zip` | 10.3 MB zip snapshot of the `guides/` tree; 754 entries and the entry list matches the current untracked repo-root `guides/` directory. | `untracked root file` | `keep-local-only` | This looks like a personal backup/export of the same corpus that is already present as the untracked `guides/` tree, so it has recovery value but not good tracked-repo value as a large binary duplicate. The archive is newer and fuller than `guides.zip`, so it is the safer one to preserve locally until the actual `guides/` tracking slice finishes. | Do not delete it before the `guides/` content-tracking pass or another verified backup exists; the file is still acting as a fallback copy of the corpus. |
+| `4-13guidearchive.zip` | 10.3 MB zip snapshot of the `guides/` tree; 754 entries and the entry list matches the current tracked repo `guides/` directory. | `untracked root file` | `keep-local-only` | This looks like a personal backup/export of the same corpus that is already present in the tracked `guides/` tree, so it has recovery value but not good tracked-repo value as a large binary duplicate. The archive is newer and fuller than `guides.zip`, so it remains the safer local-only fallback to preserve if Tate wants an extra off-git copy. | Keep it local-only unless there is a later explicit archive-retention or deletion decision; do not treat it as blocked on unfinished `guides/` tracking anymore. |
 | `guides.zip` | 10.1 MB older zip snapshot of the `guides/` tree; 693 entries, fully subsumed by `4-13guidearchive.zip` and missing 62 guide files present in the newer archive/current root tree. | `untracked root file` | `delete-candidate` | This archive is a superseded partial snapshot rather than the current corpus state. Keeping both zip exports in the root adds clutter without adding distinct durable history. | Delete only after Tate confirms that `4-13guidearchive.zip` or the root `guides/` tree is the intended fallback copy. |
 | `CURRENT_LOCAL_TESTING_STATE_20260410.md` | Small dated operator handoff for the initial local-model comparison lane, including prompt-pack pointers and example run commands. | `untracked root file` | `relocate-then-track` | The note has durable historical value because it captures the bundle-era local testing assumptions and points at specific benchmark artifacts, but it does not belong in the repo root. It reads like a dated working note and should live under `notes/` with explicit historical framing. | The commands include a stale `/Users/tbronson/...` path and should be treated as historical context, not an active quick-start surface. |
 | `LM_STUDIO_MODELS_20260410.json` | Snapshot of visible local LM Studio model IDs at bundle creation time. | `untracked root file` | `keep-local-only` | This is machine/local-runtime context rather than durable project history, and the value is tied to one workstation's LM Studio inventory on 2026-04-10. It is useful as personal provenance for local comparisons but weak as tracked repo history. | If it ever gets preserved in tracked history, it should be attached to a specific dated benchmark note rather than living as a root-level free-standing JSON snapshot. |
@@ -55,8 +58,8 @@ tracking.
 - All eight scoped candidates were inspected read-only for the original D11
   pass.
 - D18 later deleted only `guides.zip`; `4-13guidearchive.zip` remains the
-  intentionally local-only fallback and the `guides/` directory stayed
-  untouched.
+  intentionally local-only fallback, and D36 later tracked the live
+  `guides/` directory as-is without deleting the archive.
 - The six `senku_*.png` screenshots remain intentionally out of scope here and
   should stay under the separate visual-review bucket.
 - D16 later executed the preserve path for the four-screen mockup bundle at
