@@ -4,7 +4,7 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-23 - D11, D12, D13, D15, D16, D17, D18, D19, and D20 are landed, no slices are currently in flight, `notes/ROOT_RETENTION_TRIAGE_20260423.md` and `notes/ROOT_SCREENSHOT_REVIEW_20260423.md` now hold the repo-root retention/screenshot decision record, the historical four-screen mockup bundle now lives at `notes/reviews/senku_mobile_mockups.md` plus `notes/reviews/assets/senku_mobile_mockups/`, the two residual repo-root model-status screenshot delete-candidates are gone after D17, `guides.zip` is gone after D18 while `4-13guidearchive.zip` remains intentionally local-only as the fuller fallback, the two orphan encoding helper scripts are gone after D19 so the Rule-18 orphan `.py` branch is closed, D20 passed the narrow Rule-2b / HARD-STOP prepass on the non-destructive Android follow-up core and tracked `run_android_detail_followup.ps1`, `run_android_followup_suite.ps1`, `run_android_gap_pack.ps1`, and `run_android_session_batch.ps1`, and the Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`; `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
+- Last updated: 2026-04-23 - D11, D12, D13, D15, D16, D17, D18, D19, D20, and D23 are landed, no slices are currently in flight, `notes/ROOT_RETENTION_TRIAGE_20260423.md` and `notes/ROOT_SCREENSHOT_REVIEW_20260423.md` now hold the repo-root retention/screenshot decision record, the historical four-screen mockup bundle now lives at `notes/reviews/senku_mobile_mockups.md` plus `notes/reviews/assets/senku_mobile_mockups/`, the two residual repo-root model-status screenshot delete-candidates are gone after D17, `guides.zip` is gone after D18 while `4-13guidearchive.zip` remains intentionally local-only as the fuller fallback, the two orphan encoding helper scripts are gone after D19 so the Rule-18 orphan `.py` branch is closed, D20 passed the narrow Rule-2b / HARD-STOP prepass on the non-destructive Android follow-up core and tracked `run_android_detail_followup.ps1`, `run_android_followup_suite.ps1`, `run_android_gap_pack.ps1`, and `run_android_session_batch.ps1`, D23 passed the narrow Rule-2b / HARD-STOP prepass on `scripts/push_litert_model_to_android.ps1`, tracked the helper unchanged as the existing tmp-staging path, and repaired the stale direct-stream transport truth in the methodology/tracker/queue surfaces around D22, and the Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`; `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
 
 ## Dispatch order cheat-sheet
 
@@ -46,11 +46,14 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 ## Blocked / Deferred
 
 - `BACK-P-05` SQLite FTS runtime decision - still deferred as post-RC work.
-- `BACK-P-06` AVD data-partition sizing - still deferred; direct-stream
-  bypass remains the runtime workaround. Post-RC ticket fleshed out by P4.
+- `BACK-P-06` AVD data-partition sizing - still blocked on discovering a
+  byte-safe constrained-AVD transport path; D22 found the Windows
+  direct-stream family unsafe or unproven for real binary payloads, so the
+  tracked helper remains tmp-staging-based for now.
 - `BACK-P-07` unified LiteRT push helper - still a nice-to-have post-RC
-  follow-up after `push_litert_model_to_android.ps1` direct-stream lands as
-  default. Post-RC ticket fleshed out by P4.
+  follow-up after `BACK-P-06` proves more than one byte-safe transport option;
+  no Windows direct-stream default is currently blessed. Post-RC ticket
+  fleshed out by P4.
 - `BACK-T-05` (tentative ID) `assertDetailSettled` visibility blind spot -
   passes on IME-dominated dumps that lack body content. To be filed by P4.
 
@@ -79,7 +82,7 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
   - `scripts/invoke_qwen_scout.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
   - `scripts/launch_debug_detail_state.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
   - `scripts/post_rebuild_sanity_check.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
-  - `scripts/push_litert_model_to_android.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
+  - ~~`scripts/push_litert_model_to_android.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.~~ Closed 2026-04-23 by D23: narrow Rule-2b / HARD-STOP prepass passed and the helper is now tracked unchanged as the tmp-staging operator path.
   - ~~`scripts/run_android_detail_followup.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.~~ Closed 2026-04-23 by D20: narrow Rule-2b / HARD-STOP prepass passed and the script is now tracked.
   - `scripts/run_android_detail_followup_logged.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
   - `scripts/run_android_detail_followup_matrix.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
@@ -102,9 +105,11 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
   - `scripts/validate_mobile_pack_deterministic_parity.ps1` - DEFER to follow-up; no AGENTS anchor, rerun Rule-2b secret-scan/HARD-STOP policy first, then evaluate cross-references in follow-up slice.
 
 - **(k) Pre-existing carry-over retained.**
-- `push_litert_model_to_android.ps1` - promote direct-stream to default
-  path; keep tmp-staging behind an opt-in flag. Tracked by P4's
-  `BACK-P-06` / `BACK-P-07` work.
+- `push_litert_model_to_android.ps1` - now tracked as the tmp-staging
+  operator path. D22 found the Windows direct-stream family unsafe or
+  unproven for real binary payloads, so `BACK-P-06` remains blocked on a
+  byte-safe constrained-AVD transport path and `BACK-P-07` remains future
+  unification work after that proof exists.
 - Guide-direction packs (`wave_x` / `wave_y` / `af` ... `ai`) - add a
   model-presence preflight so first-run-after-clean-install fails loud
   instead of looking like a retrieval regression.
@@ -155,6 +160,7 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 
 ## Completed (rolling log)
 
+- 2026-04-23 - D23 track tmp-staging push helper and repair transport truth: ran the narrow Rule-2b / HARD-STOP prepass on `scripts/push_litert_model_to_android.ps1`; confirmed clean PowerShell parse, no embedded secrets, no bootstrap/download logic, no destructive local filesystem behavior beyond self-cleaned temp files, and only opt-in force-stop behavior plus the known `RemoteTempDir` `adb shell rm -rf` hardening caveat; tracked the helper unchanged as the existing tmp-staging path; and repaired the stale direct-stream transport claims in `TESTING_METHODOLOGY.md`, `notes/REVIEWER_BACKEND_TRACKER_20260418.md`, and this queue so D22 is now the explicit truth anchor for `BACK-P-06` / `BACK-P-07`.
 - 2026-04-23 - D20 track Android follow-up core scripts: ran the narrow Rule-2b / HARD-STOP prepass on `scripts/run_android_detail_followup.ps1`, `scripts/run_android_followup_suite.ps1`, `scripts/run_android_gap_pack.ps1`, and `scripts/run_android_session_batch.ps1`; confirmed clean PowerShell parses, no real secrets, no force-kill / destructive-recursive-delete / bootstrap drift, and real operational anchors in `TESTING_METHODOLOGY.md` plus existing runner relationships such as `build_android_ui_state_pack.ps1` -> `run_android_detail_followup.ps1`; tracked all four scripts without widening into the logged/matrix, kill/cleanup, Qwen, or host-bootstrap buckets; and narrowed carry-over backlog item `(j)` so the remaining PowerShell follow-up is limited to the harder buckets.
 - 2026-04-23 - D19 delete orphan encoding helper scripts: verified `scripts/check_mojibake.py` and `scripts/scan_encoding.py` were still orphaned scratch helpers with no operational repo refs outside excluded noise surfaces, deleted both untracked scripts, and closed carry-over backlog item `(h)` so the Rule-18 orphan `.py` branch no longer remains open.
 - 2026-04-23 - D18 delete superseded guides zip: deleted untracked repo-root `guides.zip`, updated the root-retention and active-queue tracker notes to close the zip-cleanup wording, and left `4-13guidearchive.zip` intentionally local-only as the fuller fallback without touching the `guides/` tree.

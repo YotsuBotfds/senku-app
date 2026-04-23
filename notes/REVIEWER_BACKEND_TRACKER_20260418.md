@@ -508,28 +508,31 @@ Backlog stubs:
   **Problem.** Tablet AVDs with roughly 6 GB data partitions cannot tmp-stage
   an E4B-size model via the standard push helper; CP9 Stage 0 v5 exposed this
   when the push fell into a silent failure mode.
-  **Current workaround.** `push_litert_model_to_android.ps1` has a
-  direct-stream `adb shell run-as` path that bypasses tmp staging and writes
-  straight into `files/models/<name>`, which works on partition-constrained
-  AVDs.
-  **Post-RC work.** Promote direct-stream to the default path in
-  `push_litert_model_to_android.ps1`; keep tmp staging behind an opt-in
-  `--use-tmp-staging` flag.
+  **Current state.** The tracked helper remains
+  `push_litert_model_to_android.ps1`, and it is still a tmp-staging path.
+  D22 (`notes/LITERT_PUSH_TRANSPORT_INVESTIGATION_20260423.md`) found the
+  Windows-host direct-stream family unsafe or unproven for real binary LiteRT
+  payloads, so there is no blessed byte-safe bypass today for constrained
+  tablet AVDs.
+  **Post-RC work.** Discover and validate a byte-safe transport path for
+  constrained AVDs, then update the helper and docs around that proven path.
+  Do not assume the Windows direct-stream family is ready to become default.
   **Sizing.** small (one script + docs).
-  **Acceptance.** Push helper succeeds on a 6 GB tablet AVD without any
-  posture-specific flag.
+  **Acceptance.** A real E4B payload can be deployed to a roughly 6 GB tablet
+  AVD through a proven byte-safe path, or the helper fails loudly with
+  transport truth instead of silent success semantics.
 - `BACK-P-07` - unified LiteRT model push helper.
   **Problem.** Today the push path is split between
   `push_litert_model_to_android.ps1` (tmp staging) and the manual
   `adb shell run-as cat` recipe (direct-stream). Dispatches have to know which
   to use, and the wrong choice fails silently on constrained AVDs.
-  **Current workaround.** Operators manually choose between tmp staging and
-  the direct-stream recipe based on device posture and recent failure history.
-  **Post-RC work.** Consolidate behind a free-space probe - if `stat -f` (or
-  equivalent `run-as` `df`) on `/data/user/0/com.senku.mobile/` shows less
-  than `2x model_size` free, auto-select direct-stream; otherwise use tmp
-  staging. The helper must fail loud, not silent, when neither path can stage
-  the model.
+  **Current state.** The helper is now tracked as the repo's tmp-staging
+  operator path. The manual direct-stream recipe is historical investigation
+  surface only, not a proven or documented default after D22.
+  **Post-RC work.** Keep this as future work after `BACK-P-06`. Any unified
+  helper should only auto-select between transport paths once more than one
+  byte-safe option is proven, and it must fail loud when neither path is
+  viable.
   **Sizing.** small (one script).
   **Acceptance.** One entrypoint works on both phone and tablet AVDs without
   posture-specific flags, and fails loud when neither path can stage the
