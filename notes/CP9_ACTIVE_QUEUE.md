@@ -4,7 +4,7 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-23 - Wave C closeout canary probe recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`; `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
+- Last updated: 2026-04-23 - Repo-root retention triage note added at `notes/ROOT_RETENTION_TRIAGE_20260423.md`; Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`, and `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
 
 ## Dispatch order cheat-sheet
 
@@ -67,10 +67,10 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 - ~~**(a) Sidecar YAML tracking.**~~ Closed 2026-04-22 by D8: `notes/specs/deterministic_registry_sidecar.yaml` is now tracked and `python scripts/regenerate_deterministic_registry.py --check` is clean against `deterministic_special_case_registry.py`.
 - **(b) `guides/` content-tracking slice.** The untracked `guides/` corpus remains out of scope for R-track1 and needs its own content-tracking / triage pass.
 - **(c) Residual historical `notes/` backlog.** The load-bearing notes operating spine is now tracked; the remaining `notes/` carry-over is the large historical root backlog still left untracked, such as `PLANNER_HANDOFF_*`, `CP9_STAGE_*`, `ACTIVE_WORK_LOG_*`, `AGENT_STATE.yaml`, historical audits/logs, and similar dated root notes.
-- **(d) Zip archives DELETE-candidate triage.** `4-13guidearchive.zip` and `guides.zip` stay deferred pending Tate review of whether they should be kept, archived elsewhere, or removed.
+- **(d) Repo-root zip archive execution follow-up.** See `notes/ROOT_RETENTION_TRIAGE_20260423.md`: keep `4-13guidearchive.zip` local-only as the fuller backup for now, and treat `guides.zip` as the superseded delete-candidate pending Tate confirmation.
 - **(e) Screenshots visual-content review.** The six repo-root `senku_*.png` screenshots remain deferred pending a visual sanity pass for secrets/PII and any tracked-doc justification.
-- **(f) Dated snapshot triage.** `CURRENT_LOCAL_TESTING_STATE_20260410.md`, `LM_STUDIO_MODELS_20260410.json`, and `UI_DIRECTION_AUDIT_20260414.md` need a keep/archive/delete decision.
-- **(g) Audit markdown triage.** `auditglm.md`, `gptaudit4-21.md`, and `senku_mobile_mockups.md` need Tate-facing keep/archive/delete triage.
+- **(f) Repo-root dated snapshot execution follow-up.** See `notes/ROOT_RETENTION_TRIAGE_20260423.md`: relocate-and-track `CURRENT_LOCAL_TESTING_STATE_20260410.md` and `UI_DIRECTION_AUDIT_20260414.md`, while keeping `LM_STUDIO_MODELS_20260410.json` local-only unless a later historical artifact slice needs it.
+- **(g) Repo-root audit/mockup execution follow-up.** See `notes/ROOT_RETENTION_TRIAGE_20260423.md`: relocate-and-track `auditglm.md` and `gptaudit4-21.md`, while treating `senku_mobile_mockups.md` as a delete-candidate unless a later screenshot-aware slice rewrites it to repo-stable assets.
 - **(h) Orphan `.py` DEFERs (Rule 18).**
   - `scripts/check_mojibake.py` - DEFER, Rule 18 (no importers, no test pair, no CLI shape).
   - `scripts/scan_encoding.py` - DEFER, Rule 18 (no importers, no test pair, no CLI shape).
@@ -157,6 +157,7 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 
 ## Completed (rolling log)
 
+- 2026-04-23 - D11 repo-root retention triage: added `notes/ROOT_RETENTION_TRIAGE_20260423.md`, inspected and dispositioned all eight scoped repo-root candidates read-only, and narrowed carry-over backlog items `(d)`, `(f)`, and `(g)` to point at the new note without acting on the files yet.
 - 2026-04-23 - Wave C closeout canary probe: ran `How do I build a simple rain shelter from tarp and cord?`, `How should I care for a minor sprain?`, `how do i tune a violin bridge and soundpost`, and `How do I build a cabin roof that sheds rain?` on `emulator-5556`, wrote the bundle to `artifacts/bench/low_coverage_canary_probe_20260423/`, confirmed `low_coverage_route` count remained `0`, and closed Wave C through `W-C-4` with `W-C-5` not warranted on current evidence.
 - 2026-04-23 - `W-C-4` uncertain-fit upper-band calibration: widened the coordinated desktop/Android uncertain-fit upper boundary to `0.67`, intentionally kept the lower bound at `0.45` and Android `UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD` at `0.65`, reran the five-sentinel pre/post Android probe bundle into `artifacts/bench/uncertain_fit_upper_band_20260423/`, and left `W-C-5` as an optional evidence-gated downgrade revisit.
 - 2026-04-23 - `W-C-3` Android abstain-vector mirror: landed a dedicated Android abstain-side vector floor at `0.67` while intentionally keeping `UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY` at `0.62`, reran the five-sentinel pre/post final-mode probe bundle into `artifacts/bench/android_abstain_vector_mirror_20260423/`, and moved the next Wave C step to `W-C-4` uncertain-fit band calibration.
