@@ -1,23 +1,13 @@
 # Swarm / Model Routing Index
 
-Single stop for multi-model orchestration. As of 2026-04-21, the OpenCode sidecar coding lane and the entire generic engineering swarm orchestration layer are archived (see `archive/README.md`); the active workflow is the GPT subagent split.
+Use this as the first stop for multi-model orchestration. The active workflow is the GPT subagent split; the OpenCode sidecar coding lane and the generic engineering swarm layer are archived and tracked in [`../archive/README.md`](../archive/README.md).
 
 ## Active workflow
 
-- [`SUBAGENT_WORKFLOW.md`](./SUBAGENT_WORKFLOW.md): **authoritative** Codex-side role split (main `gpt-5.4 xhigh` / scout `gpt-5.3-codex-spark xhigh` / worker `gpt-5.4 high`); main agent owns delegation. Planner briefs main with slice files in [`dispatch/`](./dispatch).
-
-## Qwen scout helpers (still active for cheap read-only scouting)
-
-- [`../scripts/start_qwen27_scout_job.ps1`](../scripts/start_qwen27_scout_job.ps1): detached async scout job.
-- [`../scripts/get_qwen27_scout_job.ps1`](../scripts/get_qwen27_scout_job.ps1): detached scout polling.
-
-## MCP helpers
-
-- [`../opencode.json`](../opencode.json): repo-local MCP server config (context7, git, sequential-thinking, puppeteer). MCP servers themselves stay useful even though the OpenCode sidecar workflow is archived.
-- `context7`: docs grounding.
-- `git`: history/diff context.
-- `sequential-thinking`: structured decomposition.
-- `puppeteer`: browser verification.
+- [`SUBAGENT_WORKFLOW.md`](./SUBAGENT_WORKFLOW.md): authoritative Codex-side role split (main `gpt-5.4 xhigh` / scout `gpt-5.3-codex-spark xhigh` / worker `gpt-5.4 high`); main agent owns delegation and takes slice briefs from [`dispatch/`](./dispatch).
+- [`../scripts/start_qwen27_scout_job.ps1`](../scripts/start_qwen27_scout_job.ps1): detached async scout job
+- [`../scripts/get_qwen27_scout_job.ps1`](../scripts/get_qwen27_scout_job.ps1): detached scout polling
+- [`../opencode.json`](../opencode.json): repo-local MCP server config (context7, git, sequential-thinking, puppeteer)
 
 ## Routing ladder
 
@@ -26,11 +16,8 @@ GPT subagent lanes first (main `gpt-5.4 xhigh`, worker `gpt-5.4 high`, scout `gp
 - Use a `gpt-5.4 high` worker for exact file edits and file-scoped review when main wants to offload.
 - Use Qwen for cheap scouting, prompt ideas, and bounded read-only support.
 
-## What's been archived (2026-04-21)
+## Archived workflow context
 
-The following workflows are no longer active. See `archive/README.md` for the full list.
-
-- OpenCode sidecar coding lane (17 scripts + 1 dedicated workflow doc).
-- Generic engineering swarm orchestration layer (10 scripts + 5 notes including operations, architecture, cost-reduction, agent-management, and minihigh-orchestration docs).
-
-If any of the archived workflows needs to come back, the files are at `archive/scripts/` and `archive/notes/` and can be restored with plain `mv`.
+- [`../archive/README.md`](../archive/README.md): tracked archive index for the OpenCode sidecar scripts and the archived engineering swarm notes
+- `ENGINEERING_SWARM_ARCHITECTURE_20260416.md` remains archive-only historical context; this index does not restore or recreate it.
+- If an archived workflow needs to come back, restore from `archive/scripts/` or `archive/notes/` as described in the archive index.

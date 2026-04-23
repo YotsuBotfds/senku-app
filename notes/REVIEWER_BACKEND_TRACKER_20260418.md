@@ -1,5 +1,7 @@
 # Reviewer Backend Tracker
 
+> Historical closure record: this file is a reviewer-backend lane snapshot and closure record. It is not the live execution-order source. Use [`CP9_ACTIVE_QUEUE.md`](./CP9_ACTIVE_QUEUE.md) for the live planner queue; the root `reviewer_backend_tasks.md` plan still carries the task bodies.
+
 Date: 2026-04-18
 
 Purpose:
@@ -7,14 +9,14 @@ Purpose:
 - Keep active work centered on the three reviewer-flagged backend unknowns:
   deterministic false-positive risk, low-applicability abstain, on-device
   latency honesty.
-- Use this file for live execution order and lane policy, not for the full
-  task bodies — those live in the root plan.
+- Keep this file as historical lane context and closure evidence, not as the
+  live execution-order source.
 
-Wave B dispatch trigger — **cleared 2026-04-18**:
+Wave B dispatch trigger - **cleared 2026-04-18**:
 - `OPUS-E-06` landed (`b41128a`). `AnswerPresenter` and
   `DetailAnswerPresenterHost` now own the three former
   `OfflineAnswerEngine.generate()` callsites (pre-E-06 `DetailActivity.java`
-  lines 2939, 3064, 3186). `DetailActivity.java` is 6264 → 6063 lines.
+  lines 2939, 3064, 3186). `DetailActivity.java` is 6264 -> 6063 lines.
   JVM verification: `./gradlew :app:testDebugUnitTest --tests
   com.senku.mobile.AnswerPresenterTest` green. Instrumented smoke:
   `scripts/run_android_instrumented_ui_smoke.ps1 -Device emulator-5554`
@@ -35,20 +37,20 @@ Wave B dispatch trigger — **cleared 2026-04-18**:
 
 The reviewer packet
 ([`REVIEWER_BACKEND_UNKNOWNS_20260418.md`](./REVIEWER_BACKEND_UNKNOWNS_20260418.md))
-confirms the backend is structurally strong — hybrid retrieval plus metadata-
+confirms the backend is structurally strong - hybrid retrieval plus metadata-
 aware reranking, session-aware rather than purely single-turn, real offline
 path, explicit abstain, narrow deterministic surface. The remaining work is the
 more mature class of problem:
 
 Wave A closed 2026-04-18: 25 done + 2 invalidated (`BACK-H-05`,
 `BACK-R-03`) out of 26 original tasks, plus `BACK-P-04` (newly added P0
-on 2026-04-18, landed `bbc1b1d`) — the pipeline-SHA-race fix that was
+on 2026-04-18, landed `bbc1b1d`) - the pipeline-SHA-race fix that was
 needed before the closeout re-run could run. Stock bundle re-exported
 (`aa1b399`); `BACK-P-02` + `BACK-P-01` re-ran green on 2026-04-18
 (artifacts at `artifacts/bench/wave_a_closeout_20260418_rerun/`).
 `BACK-R-03` was invalidated because anchor-prior is feature-gated off on
 Android (`SessionMemory.java:22` `ENABLE_ANCHOR_PRIOR = false`) so the
-sticky-anchor idle-reset path is non-observable in production — see
+sticky-anchor idle-reset path is non-observable in production - see
 `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`. Two follow-ups were
 filed: `BACK-T-04` landed 2026-04-19 (`2656311`), and `BACK-R-05`
 (Android anchor-prior productization decision) remains the open
@@ -87,7 +89,7 @@ worth tracking alongside):
   queries
 - FTS runtime selection and install-time schema validation are landed in code;
   `BACK-P-04` (pack export SHA race) landed (`bbc1b1d`); `BACK-P-01` /
-  `BACK-P-02` re-ran green on the post-P-04 stock bundle — see
+  `BACK-P-02` re-ran green on the post-P-04 stock bundle - see
   `artifacts/bench/wave_a_closeout_20260418_rerun/`
 
 ## CP9 RC v5 cut (2026-04-20)
@@ -161,7 +163,7 @@ Default rule:
 
 Problem attacked:
 - a deterministic false positive is more dangerous than an ordinary retrieval
-  miss — it presents a wrong answer with a stronger evidence signal
+  miss - it presents a wrong answer with a stronger evidence signal
 
 Best lane:
 - `deterministic_special_case_registry.py`, `DeterministicAnswerRouter.java`,
@@ -226,7 +228,7 @@ Current implication:
 
 Problem attacked:
 - `ENABLE_ANCHOR_PRIOR` is False but the machinery is alive, and OPUS-B-03
-  (landed) already reads adjacent session state — we are effectively
+  (landed) already reads adjacent session state - we are effectively
   half-committed
 
 Best lane:
@@ -435,14 +437,14 @@ Confirmed:
   but is unreachable on Android until anchor-prior is productized there
 
 Resolved this closeout:
-- `BACK-R-03` invalidated 2026-04-18 — Android anchor-prior is feature-gated
+- `BACK-R-03` invalidated 2026-04-18 - Android anchor-prior is feature-gated
   off so the idle-reset scenario is non-observable in production; see
   `notes/WAVE_A_CLOSEOUT_FAIL_2026-04-18_rerun.md`.
 
 Follow-ups (post-release):
-- `BACK-R-05` — decide whether to productize Android anchor-prior or remove
+- `BACK-R-05` - decide whether to productize Android anchor-prior or remove
   the half-commit code (scout spike + decision doc)
-- `BACK-T-05` — tighten
+- `BACK-T-05` - tighten
   `PromptHarnessSmokeTest.assertDetailSettled` body-content checks for
   `uncertain_fit` / `abstain`.
   **Problem.** `PromptHarnessSmokeTest.assertDetailSettled` reports
@@ -538,25 +540,25 @@ Backlog stubs:
 Do not overfit product behavior to a contaminated wave. If a BACK validation
 pack hits LiteRT `500` failures, mark the wave as host-contaminated in the
 state log and re-run before drawing conclusions. This is the same discipline
-`APP_ROUTING_HARDENING_TRACKER_20260417.md` §5 applies to the guide lane.
+`APP_ROUTING_HARDENING_TRACKER_20260417.md` Sec. 5 applies to the guide lane.
 
-## Dispatch Strategy — Post-`OPUS-E-06` State
+## Dispatch Strategy - Post-`OPUS-E-06` State
 
 `OPUS-E-06` landed 2026-04-18 (`b41128a`): `AnswerPresenter` and
 `DetailAnswerPresenterHost` own the three former
 `OfflineAnswerEngine.generate()` callsites; `DetailActivity.java` is 6264
-→ 6063 lines. `OPUS-E-05` stays deferred. Lane U plumbing now targets the
+-> 6063 lines. `OPUS-E-05` stays deferred. Lane U plumbing now targets the
 single Presenter callsite + a small `Host.onSuccess(...)` block rather
 than three near-duplicate `executor.execute(...)` blocks in the Activity.
 
-**Wave A — non-UI-crossing backend (26 original tasks):**
+**Wave A - non-UI-crossing backend (26 original tasks):**
 - formally closed 2026-04-18: 25 done + 2 invalidated (`BACK-H-05`,
   `BACK-R-03`) out of 26 original tasks
 - `BACK-P-04` landed `bbc1b1d`; stock bundle re-exported `aa1b399`;
   `BACK-P-02` + `BACK-P-01` re-ran green; `BACK-R-03` was invalidated
   because Android anchor-prior is feature-gated off in production.
 
-**Wave B — Lane U (complete):**
+**Wave B - Lane U (complete):**
 - `BACK-U-03` landed 2026-04-18 (`af49d91`): desktop + Android now compute
   and surface high / medium / low confidence labels end-to-end, and
   MetaStrip token rendering has phone/tablet instrumentation proof.
