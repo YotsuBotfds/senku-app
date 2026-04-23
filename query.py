@@ -898,6 +898,116 @@ _CHEMICAL_EXPOSURE_ROUTE_MARKERS = {
     "wheezing",
 }
 
+_CHEMICAL_EYE_ROUTE_MARKERS = {
+    "in eye",
+    "in my eye",
+    "in the eye",
+    "in eyes",
+    "in my eyes",
+    "eye exposure",
+    "eye burn",
+    "burning eye",
+    "got in my eye",
+    "got in the eye",
+    "splashed in my eye",
+    "splashed in the eye",
+    "sprayed in my eye",
+    "still burns after rinsing",
+}
+
+_HOUSEHOLD_CHEMICAL_INHALATION_SOURCE_MARKERS = {
+    "bleach",
+    "ammonia",
+    "cleaner",
+    "cleaners",
+    "cleaning product",
+    "drain cleaner",
+    "toilet bowl cleaner",
+    "oven cleaner",
+    "paint thinner",
+    "solvent",
+    "solvents",
+    "mineral spirits",
+    "turpentine",
+    "acetone",
+    "varnish",
+    "stain",
+    "staining product",
+    "chlorine gas",
+    "chloramine gas",
+}
+
+_CHEMICAL_INHALATION_ROUTE_MARKERS = {
+    "inhaled",
+    "breathed in",
+    "fumes",
+    "vapors",
+    "vapours",
+    "mixed cleaners",
+    "mix bleach",
+    "mixing bleach",
+    "coughing",
+    "chest tightness",
+    "shortness of breath",
+    "trouble breathing",
+    "difficulty breathing",
+    "wheezing",
+    "feel sick",
+    "feels sick",
+    "headache",
+    "dizzy",
+    "dizziness",
+    "nausea",
+    "nauseous",
+}
+
+_CHEMICAL_EYE_GUIDE_METADATA_MARKERS = {
+    "eye injuries",
+    "emergency ophthalmology",
+    "ophthalmology",
+    "chemical burns",
+    "ocular exposure",
+    "irrigation protocol",
+    "corneal",
+}
+
+_LAB_SAFETY_METADATA_MARKERS = {
+    "micro-scale chemistry lab safety",
+    "chemistry lab safety",
+    "lab safety",
+    "chemistry-lab-protocols-safety",
+    "sop",
+    "sops",
+}
+
+_HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS = {
+    "toxicology",
+    "poison",
+    "poison control",
+    "chemical exposure",
+    "decontamination",
+    "unknown ingestion",
+    "household cleaner",
+    "household chemical",
+    "corrosive",
+    "inhaled poisons",
+    "eye irrigation",
+}
+
+_COOKSTOVE_CO_METADATA_MARKERS = {
+    "cookstoves",
+    "indoor heating",
+    "woodstove",
+    "draft troubleshooting",
+    "smoke comes back into the room",
+    "ventilation and indoor air",
+    "smoke inhalation",
+    "fire-gas exposure",
+    "carbon monoxide",
+    "chimney",
+    "heater",
+}
+
 _URINARY_QUERY_MARKERS = {
     "pee",
     "peeing",
@@ -3277,6 +3387,22 @@ def _is_corrosive_household_chemical_exposure_query(question):
     return _text_has_marker(lower, _CORROSIVE_HOUSEHOLD_CHEMICAL_SOURCE_MARKERS) and _text_has_marker(
         lower, _CHEMICAL_EXPOSURE_ROUTE_MARKERS
     )
+
+
+def _is_household_chemical_eye_query(question):
+    """Detect household chemical prompts where the complaint is eye-first."""
+    lower = question.lower()
+    return _text_has_marker(
+        lower, _CORROSIVE_HOUSEHOLD_CHEMICAL_SOURCE_MARKERS
+    ) and _text_has_marker(lower, _CHEMICAL_EYE_ROUTE_MARKERS)
+
+
+def _is_household_chemical_inhalation_query(question):
+    """Detect household chemical inhalation prompts that should avoid stove/CO distractors."""
+    lower = question.lower()
+    return _text_has_marker(
+        lower, _HOUSEHOLD_CHEMICAL_INHALATION_SOURCE_MARKERS
+    ) and _text_has_marker(lower, _CHEMICAL_INHALATION_ROUTE_MARKERS)
 
 
 def _is_urinary_query(question):
@@ -5890,6 +6016,18 @@ def _metadata_rerank_delta(question, meta):
             if _text_has_marker(meta_text, _ALCOHOL_WITHDRAWAL_POSITIVE_METADATA_MARKERS):
                 apply_delta("mental_health_alcohol_withdrawal_positive", -0.08)
 
+    if _is_household_chemical_eye_query(question):
+        if _text_has_marker(meta_text, _CHEMICAL_EYE_GUIDE_METADATA_MARKERS):
+            apply_delta("household_chemical_eye_positive", -0.12)
+        if _text_has_marker(meta_text, _LAB_SAFETY_METADATA_MARKERS):
+            apply_delta("household_chemical_eye_lab_safety_distractor", 0.14)
+
+    if _is_household_chemical_inhalation_query(question):
+        if _text_has_marker(meta_text, _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS):
+            apply_delta("household_chemical_inhalation_positive", -0.06)
+        if _text_has_marker(meta_text, _COOKSTOVE_CO_METADATA_MARKERS):
+            apply_delta("household_chemical_inhalation_cookstove_distractor", 0.16)
+
     if _is_human_medical_query(question):
         if category == "medical":
             apply_delta("medical_category_medical", -0.03)
@@ -7781,6 +7919,52 @@ def _supplemental_retrieval_specs(
                     },
                 ]
             )
+
+    if _is_household_chemical_eye_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "chemical eye burn bleach cleaner eye splash irrigation "
+                        "ophthalmology ocular exposure flush water emergency"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} chemical eye burn ocular exposure "
+                        "irrigation ophthalmology emergency"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_household_chemical_inhalation_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "solvent fumes paint thinner mineral spirits turpentine "
+                        "acetone inhalation toxicology poison control fresh air "
+                        "decontamination"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        "mixed cleaners bleach ammonia chlorine gas chemical "
+                        "inhalation chest tightness coughing poison control "
+                        "fresh air"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
 
     if _text_has_marker(question_lower, _VEHICLE_QUERY_MARKERS):
         specs.append(

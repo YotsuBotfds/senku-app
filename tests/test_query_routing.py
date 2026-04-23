@@ -144,6 +144,95 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(question, bite_meta),
         )
 
+    def test_bleach_eye_metadata_rerank_prefers_eye_guide_over_lab_safety(self):
+        question = "bleach splashed in my eye while cleaning and it still burns after rinsing"
+        eye_meta = {
+            "guide_title": "Eye Injuries, Infections & Emergency Ophthalmology",
+            "section_heading": "Chemical Burns: Immediate Irrigation Protocol",
+            "slug": "eye-injuries-emergency-care",
+            "description": "Chemical burns, ocular exposure, and emergency irrigation.",
+            "category": "medical",
+            "related": "chemical-safety toxicology-poisoning-response",
+            "tags": "eye injuries, ophthalmology, ocular exposure, chemical burns",
+            "source_file": "GD-425.md",
+        }
+        lab_meta = {
+            "guide_title": "Micro-Scale Chemistry Lab Safety & SOPs",
+            "section_heading": "Emergency Procedures",
+            "slug": "chemistry-lab-protocols-safety",
+            "description": "Lab safety, SOPs, PPE, and chemistry handling procedures.",
+            "category": "chemistry",
+            "related": "",
+            "tags": "lab safety, chemistry lab safety, sops, emergency procedures",
+            "source_file": "GD-399.md",
+        }
+
+        self.assertLess(
+            query._metadata_rerank_delta(question, eye_meta),
+            query._metadata_rerank_delta(question, lab_meta),
+        )
+
+    def test_solvent_fume_metadata_rerank_prefers_toxicology_over_cookstove(self):
+        question = "I inhaled paint thinner fumes in the shed and now feel sick"
+        toxicology_meta = {
+            "guide_title": "Toxicology and Poisoning Response",
+            "section_heading": "Decontamination Methods",
+            "slug": "toxicology-poisoning-response",
+            "description": "Poison control, decontamination, inhaled poisons, and toxic exposures.",
+            "category": "medical",
+            "related": "chemical-safety unknown-ingestion-child-poisoning-triage",
+            "tags": "toxicology, poison control, chemical exposure, decontamination, inhaled poisons",
+            "source_file": "GD-301.md",
+        }
+        cookstove_meta = {
+            "guide_title": "Cookstoves, Indoor Heating & Safety",
+            "section_heading": "Draft Troubleshooting",
+            "slug": "cookstoves-indoor-heating-safety",
+            "description": "Indoor heating, chimneys, draft troubleshooting, and smoke backflow.",
+            "category": "survival",
+            "related": "smoke-inhalation-carbon-monoxide-fire-gas-exposure",
+            "tags": "cookstoves, indoor heating, chimney, draft troubleshooting, carbon monoxide",
+            "source_file": "GD-904.md",
+        }
+
+        self.assertLess(
+            query._metadata_rerank_delta(question, toxicology_meta),
+            query._metadata_rerank_delta(question, cookstove_meta),
+        )
+
+    def test_mixed_cleaner_metadata_rerank_prefers_chemical_exposure_over_cookstove(self):
+        question = "I mixed cleaners and now my chest feels tight and I am coughing"
+        chemical_meta = {
+            "guide_title": "Chemical Safety",
+            "section_heading": "13. Chemical Exposure Treatment",
+            "slug": "chemical-safety",
+            "description": "Chemical exposure treatment, decontamination, and incompatible cleaners.",
+            "category": "chemistry",
+            "related": "toxicology-poisoning-response",
+            "tags": "chemical exposure, mixed cleaners, bleach ammonia, poison control",
+            "source_file": "GD-227.md",
+        }
+        cookstove_meta = {
+            "guide_title": "Cookstoves, Indoor Heating & Safety",
+            "section_heading": "Draft Troubleshooting",
+            "slug": "cookstoves-indoor-heating-safety",
+            "description": "Indoor heating, chimneys, draft troubleshooting, and smoke backflow.",
+            "category": "survival",
+            "related": "smoke-inhalation-carbon-monoxide-fire-gas-exposure",
+            "tags": "cookstoves, indoor heating, chimney, draft troubleshooting, carbon monoxide",
+            "source_file": "GD-904.md",
+        }
+
+        self.assertLess(
+            query._metadata_rerank_delta(question, chemical_meta),
+            query._metadata_rerank_delta(question, cookstove_meta),
+        )
+
+    def test_stove_co_prompt_does_not_trigger_household_chemical_rerank(self):
+        question = "I get a headache every time we run the stove indoors for heat"
+        self.assertFalse(query._is_household_chemical_eye_query(question))
+        self.assertFalse(query._is_household_chemical_inhalation_query(question))
+
     def test_water_sanitation_style_domain_split_is_deduped(self):
         question = "how do i handle clean water sanitation shelter and medical needs"
         sub_queries = query.decompose_query(question)
