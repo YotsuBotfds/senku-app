@@ -26,6 +26,7 @@ public final class OfflineAnswerEngine {
     private static final int ABSTAIN_TOP_CHUNK_LIMIT = 3;
     private static final int ABSTAIN_MAX_OVERLAP_TOKENS = 1;
     private static final int ABSTAIN_MIN_UNIQUE_LEXICAL_HITS = 2;
+    private static final double ABSTAIN_MIN_VECTOR_SIMILARITY = 0.67d;
     private static final double UNCERTAIN_FIT_AVERAGE_RRF_THRESHOLD = 0.65d;
     private static final double UNCERTAIN_FIT_MIN_VECTOR_SIMILARITY = 0.45d;
     private static final double UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY = 0.62d;
@@ -1766,13 +1767,26 @@ public final class OfflineAnswerEngine {
                 return true;
             }
         }
+        return hasAbstainRawTopSemanticSupport(selectedContext, retrievalTopChunks, query, metadataProfile);
+    }
+
+    static boolean hasAbstainRawTopSemanticSupport(
+        List<SearchResult> selectedContext,
+        List<SearchResult> retrievalTopChunks,
+        String query,
+        QueryMetadataProfile metadataProfile
+    ) {
         if (retrievalTopChunks == null || retrievalTopChunks.isEmpty()) {
             return false;
         }
-        if (topVectorSimilarity(retrievalTopChunks, query, metadataProfile) <= UNCERTAIN_FIT_MAX_VECTOR_SIMILARITY) {
+        if (topVectorSimilarity(retrievalTopChunks, query, metadataProfile) < ABSTAIN_MIN_VECTOR_SIMILARITY) {
             return false;
         }
-        return rawTopChunkSupportsSelectedAnchor(retrievalTopChunks.get(0), selectedContext, queryTokens);
+        return rawTopChunkSupportsSelectedAnchor(
+            retrievalTopChunks.get(0),
+            selectedContext,
+            queryTokens(query)
+        );
     }
 
     private static boolean rawTopChunkSupportsSelectedAnchor(

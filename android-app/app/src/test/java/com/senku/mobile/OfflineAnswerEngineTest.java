@@ -2947,6 +2947,77 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void abstainRawTopSemanticSupportUsesDedicatedVectorFloor() {
+        String query = "How do I build a cabin roof that sheds rain?";
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(query);
+        List<SearchResult> selectedContext = List.of(
+            new SearchResult(
+                "Cabin Roofing and Weatherproofing",
+                "",
+                "Cabin roof framing and weatherproofing notes.",
+                "Build the cabin roof with water-shedding pitch, rainproof layers, and roof edge drainage.",
+                "GD-410",
+                "Roof framing and rainproofing",
+                "building",
+                "guide-focus",
+                "planning",
+                "long_term",
+                "cabin_house",
+                "roofing,weatherproofing"
+            )
+        );
+        List<SearchResult> belowFloorRawTopChunks = List.of(
+            new SearchResult(
+                "Cabin Roof Repair",
+                "",
+                "Cabin roof repair notes for rain shedding.",
+                "Reset roof pitch, repair weatherproof layers, and keep runoff moving off the cabin walls.",
+                "GD-410",
+                "Roof Weatherproofing",
+                "building",
+                "vector",
+                "planning",
+                "long_term",
+                "cabin_house",
+                "roofing,weatherproofing"
+            )
+        );
+        List<SearchResult> aboveFloorRawTopChunks = List.of(
+            new SearchResult(
+                "Cabin Roof Repair",
+                "",
+                "Cabin roof repair notes for rain shedding.",
+                "Reset roof pitch, repair weatherproof layers, and keep runoff moving off the cabin walls.",
+                "GD-410",
+                "Roof Weatherproofing",
+                "building",
+                "hybrid",
+                "planning",
+                "long_term",
+                "cabin_house",
+                "roofing,weatherproofing"
+            )
+        );
+
+        assertFalse(
+            OfflineAnswerEngine.hasAbstainRawTopSemanticSupport(
+                selectedContext,
+                belowFloorRawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+        assertTrue(
+            OfflineAnswerEngine.hasAbstainRawTopSemanticSupport(
+                selectedContext,
+                aboveFloorRawTopChunks,
+                query,
+                metadataProfile
+            )
+        );
+    }
+
+    @Test
     public void maniaEscalationRegressionStaysUncertainFit() {
         String query =
             "He has barely slept, keeps pacing, and says normal rules do not apply to him. "
