@@ -1,5 +1,12 @@
 # Spec: Overnight Launcher Guardrail Wrapper (Phase 1)
 
+> Historical 2026-04-19 planning/spec note.
+>
+> Current-checkout status as of 2026-04-23: the scripts referenced here still
+> assume `scripts/overnight_continue_loop.ps1`, but that file is absent in this
+> checkout. See `notes/OVERNIGHT_LAUNCHER_MISSING_LOOP_INVESTIGATION_20260423.md`
+> for the current-state investigation.
+
 Date: 2026-04-19
 Task: `DAY-L-01`
 
