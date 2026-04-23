@@ -54,15 +54,15 @@ aliases:
   - wheelchair access classroom
   - classroom wheelchair access
   - schoolhouse wheelchair ramp
-  - schoolhouse layout
-  - school facility layout
-  - classroom circulation
+  - accessible classroom circulation
   - accessible schoolhouse layout
   - accessible classroom space
   - how do we make a classroom accessible for students with mobility limits
   - what should an accessible schoolhouse entrance and layout include first
   - accessible schoolhouse entrance
   - schoolhouse entrance layout
+  - schoolhouse doorway width
+  - wheelchair schoolhouse entrance
   - making buildings accessible
   - accessible entrance
   - barrier-free building
@@ -104,8 +104,8 @@ In rebuilding communities, accessibility design costs little more than inaccessi
 
 - `how do we make a learning space accessible and usable` -> this guide
 - `how to make a classroom accessible`, `wheelchair ramp`, `door width`, or `grab bars` -> the matching sections below
-- `schoolhouse entrance layout`, `shared community building entrance layout`, or `classroom circulation` when the issue is ramps, doorway widths, thresholds, or turning space -> this guide first, then `education-system-design` for teacher station and student zones
-- `schoolhouse setup`, `schoolhouse layout`, `school facility layout`, or `how do we set up a schoolhouse` with no access-barrier complaint -> start with `education-system-design`; use this guide when the blocker is entry, thresholds, doorway width, or circulation clearance
+- `schoolhouse entrance layout`, `shared community building entrance layout`, `accessible classroom circulation`, or `what should an accessible schoolhouse entrance and layout include first` when the issue is ramps, doorway widths, thresholds, or turning space -> this guide first, then `education-system-design` for teacher station and student zones
+- `schoolhouse setup`, `schoolhouse layout`, `school facility layout`, or `how do we set up a schoolhouse` with no access-barrier complaint -> start with `education-system-design`; use this guide only when the blocker is entry, thresholds, doorway width, or circulation clearance
 - `how do we make a classroom accessible` -> this guide and `education-system-design`
 - `how do we make a classroom accessible for students with mobility limits` -> this guide first, then `education-system-design` for room flow after access is solved
 - `what should an accessible schoolhouse or shared community building entrance and layout include first` -> this guide first
@@ -408,15 +408,21 @@ Children are small, curious, and lack hazard awareness. Design protects while al
 - **Seating for adults:** Placed strategically so adults can monitor play
 - **Fencing:** Encloses play area from hazards (traffic, water)
 
-### Classroom Accessibility Layout
+- For classroom-specific mobility access in a schoolhouse, use the dedicated school-access section below, then hand off to `education-system-design` for teacher zones and one-room supervision flow.
 
-When the accessible space is also a classroom, keep the room easy to supervise and easy to move through:
+</section>
 
-- **Teacher station:** A small desk or table near the edge of the room for planning, record-keeping, and quick access to materials.
-- **Sight lines:** Teacher should be able to see the whole room without blocked corners.
-- **Quiet corner:** If possible, provide a screen-off or low-distraction area for individual help or brief assessments.
-- **Material access:** Keep commonly used items within easy reach so students and helpers do not need to cross the room constantly.
-- **Wide movement paths:** Leave enough space between zones for wheelchairs, walkers, and children carrying materials.
+<section id="accessible-schoolhouse-entrance-circulation">
+
+## Accessible Schoolhouse Entrance & Classroom Circulation
+
+If the classroom needs to work for students with mobility limits, solve entrance and circulation first, then hand off to `education-system-design` for the full one-room teaching layout.
+
+- **Accessible entrance first:** Provide one obvious route into the schoolhouse or shared community building without stairs, with the gentlest practical ramp, a firm surface, and no sharp threshold.
+- **Doorway and threshold clearance:** Keep the doorway wide enough for mobility aids and keep any remaining threshold as low and beveled as possible.
+- **Main circulation lane:** Hold one clear path from entrance to seating, teacher area, and any toilet/wash space so a student is not forced to squeeze between desks.
+- **Turning and transfer space:** Leave open floor area near the entrance or student seating so a wheelchair or walker user can turn, stop, and reposition without blocking the room.
+- **Teacher station and material reach:** After the access path is solved, place the teacher station and common materials so helpers do not have to cross the whole room to assist a student.
 
 </section>
 

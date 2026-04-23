@@ -91,7 +91,9 @@ Establishing education requires:
 - `how do we teach in one room with mixed ages` -> `pedagogy-curriculum` and `education-teaching-methods`
 - `how do we teach non-readers` or `teacher help` -> `teacher-training-non-educators`
 - `classroom layout`, `schoolhouse setup`, or `one-room schoolhouse layout` -> `education-system-design`
+- `how do we set up a schoolhouse in a shared community building` -> `education-system-design`
 - `how should classroom space be laid out for a one-room schoolhouse` -> `education-system-design`
+- `how do we make a classroom accessible for students with mobility limits` or `what should an accessible schoolhouse entrance and layout include first` -> `accessible-shelter-design` first, then `education-system-design`
 - physical-access questions about ramps, accessible entrances, doorway width, circulation clearance, wheelchair access, or school/shared community building accessibility -> `accessible-shelter-design` first, then `education-system-design` for room flow after access is solved
 - schoolhouse/classroom layout questions about teacher sightlines, zones, or one-room supervision flow -> `education-system-design`
 - `how to teach a blind, deaf, or disabled student` or `teaching students with disabilities` -> `education-system-design` (Special Education Adaptations)

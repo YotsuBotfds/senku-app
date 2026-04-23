@@ -24,20 +24,19 @@ aliases:
   - classroom zone layout
   - how to set up a school
   - schoolhouse setup
-  - schoolhouse accessibility
-  - classroom accessibility
-  - accessible classroom
+  - schoolhouse in shared community building
+  - shared community building schoolhouse setup
+  - how do we set up a schoolhouse in a shared community building
   - schoolhouse classroom layout
   - schoolhouse layout
   - one-room schoolhouse layout
   - how should classroom space be laid out for a one-room schoolhouse
   - school facility layout
-  - classroom circulation
-  - accessible schoolhouse layout
-  - accessible classroom space
   - school room arrangement
   - how to build a schoolhouse
   - classroom seating
+  - teacher sight lines classroom
+  - one-room classroom zones
 icon: schoolhouse
 description: 'Building functional schoolhouse and one-room classroom organization systems: curriculum sequencing, mixed-age pedagogy, teacher training propagation, record-keeping, and knowledge transmission systems'
 related:
@@ -70,7 +69,7 @@ Education is the mechanism by which communities preserve knowledge, transmit ski
 
 ### Task-first
 
-- `how do we set up a schoolhouse`, `how do we set up a shared community learning building`, `one-room schoolhouse layout`, `how should classroom space be laid out`, `schoolhouse layout`, or `school facility layout` -> `education-system-design`
+- `how do we set up a schoolhouse`, `how do we set up a shared community learning building`, `how do we set up a schoolhouse in a shared community building`, `one-room schoolhouse layout`, `how should classroom space be laid out`, `schoolhouse layout`, or `school facility layout` -> `education-system-design`
 - `how should classroom space be laid out for a one-room schoolhouse` -> `education-system-design`
 - `how do we physically modify a classroom for wheelchair or disability access` -> `accessible-shelter-design`, then come back here for the teacher station, student zones, and material flow
 - `how do we make a learning space accessible and usable` -> `accessible-shelter-design` for ramps, doorway widths, thresholds, and circulation; this guide for supervision and classroom function
@@ -99,6 +98,36 @@ This guide covers **education system structure, curriculum, teacher training, as
 
 - `what should we teach first` or `what subjects do kids need` -> curriculum-design section below
 - `how many teachers do we need` or `how to staff a school` -> teacher-training section below
+
+<section id="shared-community-building-schoolhouse-setup">
+
+## Shared Community Building Schoolhouse Setup
+
+If the schoolhouse must fit inside a shared community building, treat the education zone as a one-room classroom with a clear daily operating footprint rather than as a fully separate institution.
+
+- Pick one learning zone with predictable boundaries so desks, mats, or benches are not moved every hour.
+- Put the teacher station on an edge with full sight lines across the room and a direct path to the entrance.
+- Reserve at least one quiet corner or screen-off area for reading help, short assessments, or conflict cooling-off.
+- Keep the main circulation path open from door to teacher station to student seating so arrivals and helpers do not cut through every lesson group.
+- Store common materials at the edge of the room so the class can convert the shared building back to other community uses without losing school organization.
+- If the real blocker is stairs, narrow doorways, or wheelchair turning space, route that part to `accessible-shelter-design`, then return here for classroom function.
+
+</section>
+
+<section id="one-room-schoolhouse-layout">
+
+## One-Room Schoolhouse Layout
+
+For one-room schoolhouse layout questions, start with supervision flow and stable classroom zones before you optimize anything else.
+
+- Put the teacher station near the edge of the room where the teacher can see every student group without turning constantly.
+- Keep the center or one side as the main circulation lane so students, helpers, and materials do not cut through active lessons.
+- Group seating by activity or age band rather than in one undifferentiated block so whole-class, small-group, and peer-teaching work can happen in the same room.
+- Hold one quiet corner or screen-off spot for reading help, short assessments, or conflict cooling-off.
+- Keep the most-used teaching materials at the room edge or next to the teacher station so transitions stay short.
+- If a student cannot enter the room or move between zones safely, route the access fix to `accessible-shelter-design` first and then return to this layout.
+
+</section>
 
 ## Why Formal Education Matters
 
