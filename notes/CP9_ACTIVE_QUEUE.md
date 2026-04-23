@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-23 early - W-C-1 landed: aggregated the fresh final-mode probe logs into a compact sample bundle, next Wave C move W-C-2 desktop abstain-threshold tuning.
+- Last updated: 2026-04-23 - W-C-2 landed: desktop abstain similarity floor moved to 0.67 while unique-hit floor stayed at 2, fresh tuned panel bundle minted, next Wave C move W-C-3 Android alignment / mirror.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight. `W-C-1a` closed the missing runtime `ask.generate final_mode=` breadcrumb gap and `W-C-1` aggregated the fresh verification logs into `artifacts/bench/final_mode_telemetry_sample_20260423/`; next is `W-C-2` desktop abstain-threshold tuning, with optional ask-telemetry enrichment and the remaining post-`R-track1` follow-ups below still deferred behind it. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight. `W-C-1a` closed the missing runtime `ask.generate final_mode=` breadcrumb gap, `W-C-1` aggregated the fresh verification logs into `artifacts/bench/final_mode_telemetry_sample_20260423/`, and `W-C-2` raised the desktop abstain similarity floor to `0.67` while keeping the unique-hit floor at `2`; next is `W-C-3` Android alignment / mirror, with optional ask-telemetry enrichment and the remaining post-`R-track1` follow-ups below still deferred behind it. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -30,14 +30,14 @@ See tracker for the full post-RC backlog.
 
 ## Active
 
-No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mode breadcrumb gap after the `W-C-1` hard stop, and `W-C-1` aggregated the fresh probe logs into a compact telemetry sample bundle; next substantive planner move is `W-C-2` desktop abstain-threshold tuning plus the remaining post-`R-track1` follow-ups below.
+No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mode breadcrumb gap after the `W-C-1` hard stop, `W-C-1` aggregated the fresh probe logs into a compact telemetry sample bundle, and `W-C-2` tuned the desktop abstain production point to `0.67 / 2`; next substantive planner move is `W-C-3` Android alignment / mirror plus the remaining post-`R-track1` follow-ups below.
 
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
 - ~~Pack-drift investigation~~ - resolved 2026-04-22 via `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` Sec. 6: adopt `cf449ee9...` as the forward substrate; keep the historical correction in docs that retrieval-chain claims belong to `af58bd12...`, not `e48d3e1a...`.
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
-- **Wave C series** - direction locked by `notes/WAVE_C_DIRECTION_20260422.md`; `W-C-0`, `W-C-1a`, and `W-C-1` are closed, the fresh final-mode sample bundle now lives at `artifacts/bench/final_mode_telemetry_sample_20260423/`, and the next substantive move is `W-C-2` desktop abstain-threshold tuning.
+- **Wave C series** - direction locked by `notes/WAVE_C_DIRECTION_20260422.md`; `W-C-0`, `W-C-1a`, `W-C-1`, and `W-C-2` are closed, the fresh tuned desktop near-boundary bundle now lives at `artifacts/bench/abstain_nearboundary_tuned_20260423/`, and the next substantive move is `W-C-3` Android alignment / mirror.
 
 ### Resolved without slice
 
@@ -157,6 +157,7 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 
 ## Completed (rolling log)
 
+- 2026-04-23 - `W-C-2` desktop abstain threshold tuning: raised the desktop abstain similarity floor to `0.67` while intentionally keeping the unique-hit floor at `2`, reran the tracked near-boundary panel into `artifacts/bench/abstain_nearboundary_tuned_20260423/`, and moved the next Wave C step to `W-C-3` Android alignment / mirror.
 - 2026-04-23 early - `W-C-1` telemetry aggregation helper: aggregated the fresh `W-C-1a` probe logs rather than re-collecting Android output, landed tracked helper `scripts/aggregate_final_mode_telemetry.py`, and wrote the derived sample bundle at `artifacts/bench/final_mode_telemetry_sample_20260423/`. Next Wave C move is `W-C-2` desktop abstain-threshold tuning.
 - 2026-04-22 late night - `W-C-1a` runtime breadcrumb fix: `OfflineAnswerEngine` now emits `ask.generate final_mode=` for instant-answer paths from `prepare()` and dual-emits the breadcrumb through durable runtime logging for default Android execution; focused `OfflineAnswerEngineTest` coverage was extended and the fresh probe bundle landed at `artifacts/bench/final_mode_emission_probe_20260423/`. Next Wave C move returns to `W-C-1` telemetry aggregation helper.
 - 2026-04-22 late - `W-C-0` panel expansion / runner-preflight: runner preflight passed on the untracked surface (narrow CLI shape; no secret / HARD-STOP findings beyond benign local-runtime references), promoted the helper into tracked `scripts/abstain_regression_panel.py`, tracked `scripts/run_abstain_regression_panel.ps1`, added `notes/specs/abstain_nearboundary_panel_20260423.yaml` as the forked near-boundary sidecar, and wrote fresh artifacts under `artifacts/bench/abstain_nearboundary_20260423/`. Next Wave C move is `W-C-1` telemetry aggregation helper.

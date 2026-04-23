@@ -96,6 +96,68 @@ class AbstainPathTests(unittest.TestCase):
 
         self.assertFalse(should_abstain)
 
+    def test_should_abstain_when_similarity_is_below_new_floor_and_only_one_hit_matches(self):
+        results = _results_for_abstain(
+            [
+                {
+                    "doc": "Tarp seam patching for existing gear in wet weather.",
+                    "meta": {
+                        "guide_id": "GD-105",
+                        "guide_title": "Canvas Repair",
+                        "section_heading": "Patching",
+                        "category": "crafts",
+                        "_vector_hits": 1,
+                        "_lexical_hits": 0,
+                    },
+                    "dist": 0.34,
+                }
+            ]
+        )
+
+        should_abstain, match_labels = query._should_abstain(
+            results, "how do i build a rain shelter from a tarp"
+        )
+
+        self.assertTrue(should_abstain)
+        self.assertEqual(["low match"], match_labels)
+
+    def test_should_not_abstain_when_two_unique_hits_exist_below_similarity_floor(self):
+        results = _results_for_abstain(
+            [
+                {
+                    "doc": "Tarp seam patching for existing gear in wet weather.",
+                    "meta": {
+                        "guide_id": "GD-106",
+                        "guide_title": "Canvas Repair",
+                        "section_heading": "Patching",
+                        "category": "crafts",
+                        "_vector_hits": 1,
+                        "_lexical_hits": 0,
+                    },
+                    "dist": 0.34,
+                },
+                {
+                    "doc": "Shelter ventilation notes for existing camps.",
+                    "meta": {
+                        "guide_id": "GD-107",
+                        "guide_title": "Camp Ventilation",
+                        "section_heading": "Airflow",
+                        "category": "survival",
+                        "_vector_hits": 1,
+                        "_lexical_hits": 0,
+                    },
+                    "dist": 0.35,
+                },
+            ]
+        )
+
+        should_abstain, match_labels = query._should_abstain(
+            results, "how do i build a rain shelter from a tarp"
+        )
+
+        self.assertFalse(should_abstain)
+        self.assertEqual(["low match", "low match"], match_labels)
+
     def test_build_abstain_response_has_stable_single_card_shape(self):
         results = _results_for_abstain(
             [

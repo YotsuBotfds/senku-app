@@ -7118,7 +7118,7 @@ def decompose_query(question):
     if len(parts) > 1:
         return [question] + parts
 
-    # Strategy 2: Domain detection — if query spans 2+ survival domains,
+    # Strategy 2: Domain detection - if query spans 2+ survival domains,
     # generate a focused sub-query for each matched domain
     domains = _detect_domains(question)
     if len(domains) >= 2:
@@ -8910,16 +8910,16 @@ def _fix_mojibake(text):
     """Fix double-encoded UTF-8 produced by the LLM.
 
     When the model outputs UTF-8 bytes as individual Unicode code points
-    (e.g., U+00C2 U+00B0 instead of U+00B0 for °), re-encode them back
+    (e.g., U+00C2 U+00B0 instead of U+00B0 for deg), re-encode them back
     to the correct characters.
     """
     try:
-        # Encode each char as its raw byte value (latin-1 is 1:1 for U+0000–U+00FF),
+        # Encode each char as its raw byte value (latin-1 is 1:1 for U+0000-U+00FF),
         # then decode the resulting bytes as UTF-8 to recover the intended characters.
         return text.encode("latin-1").decode("utf-8")
     except (UnicodeDecodeError, UnicodeEncodeError):
         # Not all chars are in the latin-1 range, or the bytes don't form valid UTF-8.
-        # Fall back to fixing only the safe 2-byte sequences (Â + char).
+        # Fall back to fixing only the safe 2-byte sequences (A-circumflex + char).
         return re.sub(
             r"\u00c2([\u00a0-\u00bf])",
             lambda m: m.group(1),
@@ -10239,7 +10239,7 @@ def _build_crisis_retry_messages(system_prompt, prompt):
 
 _ABSTAIN_ROW_LIMIT = 3
 _ABSTAIN_MAX_OVERLAP_TOKENS = 1
-_ABSTAIN_MIN_VECTOR_SIMILARITY = 0.62
+_ABSTAIN_MIN_VECTOR_SIMILARITY = 0.67
 _ABSTAIN_MIN_UNIQUE_LEXICAL_HITS = 2
 
 
