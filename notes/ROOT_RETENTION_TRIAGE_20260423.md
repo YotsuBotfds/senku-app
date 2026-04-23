@@ -1,8 +1,9 @@
 # Root Retention Triage 2026-04-23
 
 Doc-only manual triage for the eight untracked repo-root retention candidates
-called out by D11. This note records disposition recommendations only; it does
-not execute any delete/move/track action.
+called out by D11. This note preserves the original disposition
+recommendations/table from that pass while later sections record the executed
+follow-through.
 
 ## Summary
 
@@ -16,11 +17,11 @@ complete at `notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
 `notes/reviews/UI_DIRECTION_AUDIT_20260414.md`,
 `notes/reviews/auditglm.md`, and `notes/reviews/gptaudit4-21.md`.
 
-The decision table below still stands for the remaining root files:
-`4-13guidearchive.zip` stays local-only for now, `guides.zip` remains a
-delete-candidate pending Tate confirmation, `LM_STUDIO_MODELS_20260410.json`
-remains local-only, and the screenshot/mockup residue is now closed after D16
-plus D17.
+The decision table below still stands as the original D11 triage record for
+the remaining root files: `4-13guidearchive.zip` stays local-only for now,
+`guides.zip` was deleted by D18 as the superseded partial snapshot,
+`LM_STUDIO_MODELS_20260410.json` remains local-only, and the screenshot/mockup
+residue is now closed after D16 plus D17.
 
 ## Execution Status
 
@@ -30,7 +31,11 @@ for `senku_mobile_mockups.md`: the note now lives at
 `notes/reviews/assets/senku_mobile_mockups/`. D17 then deleted the two
 residual model-status screenshots from the repo root. The screenshot/mockup
 residue is now closed, and the original candidate table below remains the
-pre-execution triage record for the repo-root pass.
+pre-execution triage record for the repo-root pass. D18 then deleted
+`guides.zip` as the superseded partial snapshot, left
+`4-13guidearchive.zip` intentionally local-only as the fuller fallback, and
+closed the actionable zip-cleanup branch without widening into `guides/`
+tracking.
 
 ## Candidate Dispositions
 
@@ -47,8 +52,11 @@ pre-execution triage record for the repo-root pass.
 
 ## Notes
 
-- All eight scoped candidates were inspected read-only for this pass.
-- No delete/move/rename/track action was taken on any of the eight root files.
+- All eight scoped candidates were inspected read-only for the original D11
+  pass.
+- D18 later deleted only `guides.zip`; `4-13guidearchive.zip` remains the
+  intentionally local-only fallback and the `guides/` directory stayed
+  untouched.
 - The six `senku_*.png` screenshots remain intentionally out of scope here and
   should stay under the separate visual-review bucket.
 - D16 later executed the preserve path for the four-screen mockup bundle at
