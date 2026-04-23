@@ -1153,6 +1153,60 @@ public final class OfflineAnswerEngineTest {
     }
 
     @Test
+    public void preparedEarlyAbstainPathEmitsFinalModeThroughDebugSinkWithoutDuplicates() {
+        List<String> finalModeLines = captureFinalModeLines();
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.abstain(
+            "how do i build a rain shelter from a tarp",
+            OfflineAnswerEngine.buildAbstainAnswerBody(
+                "how do i build a rain shelter from a tarp",
+                List.of()
+            ),
+            List.of(),
+            false
+        );
+
+        OfflineAnswerEngine.logPreparedFinalModeIfReady(prepared);
+        OfflineAnswerEngine.logPreparedFinalModeIfReady(prepared);
+
+        assertEquals(1, finalModeLines.size());
+        assertTrue(finalModeLines.get(0).contains("final_mode=abstain"));
+        assertTrue(finalModeLines.get(0).contains("route=early_abstain"));
+    }
+
+    @Test
+    public void generateConfidentPathStillEmitsFinalModeThroughDebugSink() throws Exception {
+        List<String> finalModeLines = captureFinalModeLines();
+        File tempModel = File.createTempFile("senku-confident-debug-sink", ".litertlm");
+        tempModel.deleteOnExit();
+        OfflineAnswerEngine.setGeneratorsForTest(
+            (settings, systemPrompt, prompt, maxTokens) -> {
+                throw new AssertionError("host generation should not run");
+            },
+            (context, modelFile, prompt, maxTokens, listener) -> {
+                listener.onPartialText("Short answer: confidence path.");
+                return "Short answer: confidence path.";
+            }
+        );
+        OfflineAnswerEngine.PreparedAnswer prepared = OfflineAnswerEngine.PreparedAnswer.restoredGenerative(
+            "How do i make a simple fire starter?",
+            List.of(),
+            false,
+            System.currentTimeMillis() - 1200L,
+            false,
+            "",
+            "",
+            "system",
+            "prompt"
+        );
+
+        OfflineAnswerEngine.generate(null, tempModel, prepared);
+
+        assertEquals(1, finalModeLines.size());
+        assertTrue(finalModeLines.get(0).contains("final_mode=confident"));
+        assertTrue(finalModeLines.get(0).contains("route=confident_generation"));
+    }
+
+    @Test
     public void generateDeterministicPathEmitsFinalModeConfidentRouteDeterministicTelemetry() throws Exception {
         AtomicReference<List<String>> finalModeLines = new AtomicReference<>(new ArrayList<>());
         OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
@@ -3033,6 +3087,16 @@ public final class OfflineAnswerEngineTest {
     private static JSONObject lastLatencyEvent(List<JSONObject> events) {
         assertFalse(events.isEmpty());
         return events.get(events.size() - 1);
+    }
+
+    private static List<String> captureFinalModeLines() {
+        ArrayList<String> finalModeLines = new ArrayList<>();
+        OfflineAnswerEngine.setDebugLogSinkForTest((tag, message) -> {
+            if ("SenkuMobile".equals(tag) && message.startsWith("ask.generate final_mode=")) {
+                finalModeLines.add(message);
+            }
+        });
+        return finalModeLines;
     }
 
     private static boolean containsGuideId(List<SearchResult> results, String guideId) {

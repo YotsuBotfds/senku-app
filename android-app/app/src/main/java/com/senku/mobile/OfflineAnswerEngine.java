@@ -190,9 +190,11 @@ public final class OfflineAnswerEngine {
             listener
         );
 
+    private static final BiConsumer<String, String> DEFAULT_DEBUG_LOG_SINK =
+        OfflineAnswerEngine::logToAndroidDebug;
     private static HostGenerator hostGenerator = DEFAULT_HOST_GENERATOR;
     private static OnDeviceGenerator onDeviceGenerator = DEFAULT_ON_DEVICE_GENERATOR;
-    private static BiConsumer<String, String> debugLogSink = OfflineAnswerEngine::logToAndroidDebug;
+    private static BiConsumer<String, String> debugLogSink = DEFAULT_DEBUG_LOG_SINK;
 
     public static AnswerRun run(Context context, PackRepository repository, SessionMemory sessionMemory, File modelFile, String query)
         throws Exception {
@@ -233,7 +235,7 @@ public final class OfflineAnswerEngine {
         );
         if (deterministic != null) {
             String answerBody = PromptBuilder.buildAnswerBody(deterministic.answerText, deterministic.sources, 0);
-            return PreparedAnswer.deterministic(
+            PreparedAnswer preparedAnswer = PreparedAnswer.deterministic(
                 trimmedQuery,
                 answerBody,
                 deterministic.sources,
@@ -241,6 +243,8 @@ public final class OfflineAnswerEngine {
                 deterministic.ruleId,
                 prepareStartedAtMs
             );
+            logPreparedFinalModeIfReady(preparedAnswer);
+            return preparedAnswer;
         }
 
         HostInferenceConfig.Settings inferenceSettings = HostInferenceConfig.resolve(context);
@@ -336,7 +340,7 @@ public final class OfflineAnswerEngine {
                 "ask.abstain query=\"" + trimmedQuery + "\" adjacentGuides=" + adjacentGuides.size()
             );
             long retrievalMs = Math.max(0L, elapsedMsSince(prepareStartedAtNs) - nanosToMillis(rerankNs));
-            return PreparedAnswer.abstain(
+            PreparedAnswer preparedAnswer = PreparedAnswer.abstain(
                 trimmedQuery,
                 buildAbstainAnswerBody(trimmedQuery, adjacentGuides, safetyCritical),
                 adjacentGuides,
@@ -348,6 +352,8 @@ public final class OfflineAnswerEngine {
                 confidenceLabel,
                 safetyCritical
             );
+            logPreparedFinalModeIfReady(preparedAnswer);
+            return preparedAnswer;
         }
         if (answerMode == AnswerMode.UNCERTAIN_FIT) {
             List<SearchResult> adjacentGuides = topAbstainChunks(gateContext);
@@ -356,7 +362,7 @@ public final class OfflineAnswerEngine {
                 "ask.uncertain_fit query=\"" + trimmedQuery + "\" adjacentGuides=" + adjacentGuides.size()
             );
             long retrievalMs = Math.max(0L, elapsedMsSince(prepareStartedAtNs) - nanosToMillis(rerankNs));
-            return PreparedAnswer.uncertainFit(
+            PreparedAnswer preparedAnswer = PreparedAnswer.uncertainFit(
                 trimmedQuery,
                 buildUncertainFitAnswerBody(trimmedQuery, adjacentGuides, confidenceLabel, safetyCritical),
                 adjacentGuides,
@@ -368,6 +374,8 @@ public final class OfflineAnswerEngine {
                 confidenceLabel,
                 safetyCritical
             );
+            logPreparedFinalModeIfReady(preparedAnswer);
+            return preparedAnswer;
         }
 
         int promptContextLimit = promptContextLimitFor(contextSelectionQuery);
@@ -461,7 +469,7 @@ public final class OfflineAnswerEngine {
                 latencyBreakdown,
                 prepared.confidenceLabel
             );
-            logAskFinalMode(prepared.query, AnswerMode.CONFIDENT, "deterministic", totalMs);
+            logPreparedFinalModeIfReady(prepared);
             rememberSessionLatencyBreakdown(answerRun);
             return answerRun;
         }
@@ -478,7 +486,7 @@ public final class OfflineAnswerEngine {
             );
             logLatencySummary(prepared.query, latencyBreakdown);
             LatencyPanel.emit(prepared.queryClass, latencyBreakdown);
-            logAskFinalMode(prepared.query, AnswerMode.ABSTAIN, "early_abstain", totalMs);
+            logPreparedFinalModeIfReady(prepared);
             return new AnswerRun(
                 prepared.query,
                 prepared.answerBody,
@@ -506,7 +514,7 @@ public final class OfflineAnswerEngine {
             );
             logLatencySummary(prepared.query, latencyBreakdown);
             LatencyPanel.emit(prepared.queryClass, latencyBreakdown);
-            logAskFinalMode(prepared.query, AnswerMode.UNCERTAIN_FIT, "early_uncertain_fit", totalMs);
+            logPreparedFinalModeIfReady(prepared);
             return new AnswerRun(
                 prepared.query,
                 prepared.answerBody,
@@ -1842,11 +1850,11 @@ public final class OfflineAnswerEngine {
     }
 
     static void setDebugLogSinkForTest(BiConsumer<String, String> sink) {
-        debugLogSink = sink == null ? OfflineAnswerEngine::logToAndroidDebug : sink;
+        debugLogSink = sink == null ? DEFAULT_DEBUG_LOG_SINK : sink;
     }
 
     static void resetDebugLogSinkForTest() {
-        debugLogSink = OfflineAnswerEngine::logToAndroidDebug;
+        debugLogSink = DEFAULT_DEBUG_LOG_SINK;
     }
 
     private static void rememberSessionLatencyBreakdown(AnswerRun answerRun) {
@@ -1902,14 +1910,47 @@ public final class OfflineAnswerEngine {
         }
     }
 
+    private static void logInfo(String tag, String message) {
+        try {
+            Log.i(tag, message);
+        } catch (RuntimeException ignored) {
+        }
+    }
+
     private static void logAskFinalMode(String query, AnswerMode finalMode, String route, long totalElapsedMs) {
-        logDebug(
-            TAG,
+        String message =
             "ask.generate final_mode=" + finalMode.name().toLowerCase(QUERY_LOCALE) +
                 " route=" + route +
                 " query=\"" + safe(query) + "\"" +
-                " totalElapsedMs=" + Math.max(0L, totalElapsedMs)
-        );
+                " totalElapsedMs=" + Math.max(0L, totalElapsedMs);
+        logDebug(TAG, message);
+        if (debugLogSink == DEFAULT_DEBUG_LOG_SINK) {
+            logInfo(TAG, message);
+        }
+    }
+
+    static void logPreparedFinalModeIfReady(PreparedAnswer prepared) {
+        if (prepared == null || prepared.finalModeEmitted) {
+            return;
+        }
+        AnswerMode finalMode = null;
+        String route = "";
+        if (prepared.deterministic) {
+            finalMode = AnswerMode.CONFIDENT;
+            route = "deterministic";
+        } else if (prepared.abstain) {
+            finalMode = AnswerMode.ABSTAIN;
+            route = "early_abstain";
+        } else if (prepared.mode == AnswerMode.UNCERTAIN_FIT) {
+            finalMode = AnswerMode.UNCERTAIN_FIT;
+            route = "early_uncertain_fit";
+        }
+        if (finalMode == null || route.isEmpty()) {
+            return;
+        }
+        long totalElapsedMs = Math.max(0L, System.currentTimeMillis() - prepared.startedAtMs);
+        logAskFinalMode(prepared.query, finalMode, route, totalElapsedMs);
+        prepared.finalModeEmitted = true;
     }
 
     private static void logToAndroidDebug(String tag, String message) {
@@ -2460,6 +2501,7 @@ public final class OfflineAnswerEngine {
         public final String queryClass;
         public final ConfidenceLabel confidenceLabel;
         public final boolean safetyCritical;
+        boolean finalModeEmitted;
 
         private PreparedAnswer(
             String query,

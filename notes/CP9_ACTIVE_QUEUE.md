@@ -4,13 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-22 late - W-C-0 landed: near-boundary panel fork, tracked abstain runner, artifact rerun, next Wave C move W-C-1 telemetry aggregation helper.
+- Last updated: 2026-04-22 late night - W-C-1a landed: restored final-mode runtime emission, verified fresh probe bundle, next Wave C move W-C-1 telemetry aggregation helper.
 
 ## Dispatch order cheat-sheet
 
 CP9 is closed. RC v5 cut landed 2026-04-20. The post-RC retrieval chain substantively closed 2026-04-20 with four landings: `2ec77b8`, `0a8b260`, `971961b`, and `585320c`.
 
-No slices are currently in flight. W-C-0 landed this commit; next is `W-C-1` telemetry aggregation helper, with optional ask-telemetry enrichment and the remaining post-`R-track1` follow-ups below still deferred behind it. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
+No slices are currently in flight. `W-C-1` hard-stopped on the missing runtime `ask.generate final_mode=` breadcrumb, and `W-C-1a` closed that blocker with a fresh verification bundle at `artifacts/bench/final_mode_emission_probe_20260423/`; next is `W-C-1` telemetry aggregation helper, with optional ask-telemetry enrichment and the remaining post-`R-track1` follow-ups below still deferred behind it. The carry-over `R-search` wrapper-hang observation remains in backlog below. `R-ret1b`, `R-host`, `R-search`, `R-telemetry`, `R-tool2`, `R-anchor-refactor1`, and `R-track1` are closed in this sequence. Gallery remains republished at `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/` (45/45).
 
 See tracker for the full post-RC backlog.
 
@@ -30,14 +30,14 @@ See tracker for the full post-RC backlog.
 
 ## Active
 
-No slices currently in flight. W-C-0 landed this commit; next substantive planner move is `W-C-1` telemetry aggregation helper plus the remaining post-`R-track1` follow-ups below.
+No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mode breadcrumb gap after the `W-C-1` hard stop; next substantive planner move is `W-C-1` telemetry aggregation helper plus the remaining post-`R-track1` follow-ups below.
 
 ## Post-RC Tracked
 
 - `R-anchor2` (research done, slice not needed at this time) - Probe evidence from `R-anchor1` on 5556 on 2026-04-20 night matched the low-risk scenario: `anchorGuide` flipped to GD-345 and `context.selected` became shelter-dominant (`3x GD-345 + 1x GD-727`). Evidence: `notes/R-ANCHOR2_FORWARD_RESEARCH_20260420.md`.
 - ~~Pack-drift investigation~~ - resolved 2026-04-22 via `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` Sec. 6: adopt `cf449ee9...` as the forward substrate; keep the historical correction in docs that retrieval-chain claims belong to `af58bd12...`, not `e48d3e1a...`.
 - **Ask-telemetry enrichment** (partially subsumed; still optional) - `R-telemetry` landed in `ec7aabf`; revisit only if `metadataProfile` / `preferredStructureType` still need dedicated emission coverage beyond the landed final-mode breadcrumb.
-- **Wave C series** - direction locked by `notes/WAVE_C_DIRECTION_20260422.md`; `W-C-0` is now closed with the tracked runner surface, tracked near-boundary YAML sidecar, and fresh artifact rerun, and the next substantive move is `W-C-1` telemetry aggregation helper.
+- **Wave C series** - direction locked by `notes/WAVE_C_DIRECTION_20260422.md`; `W-C-0` is closed, `W-C-1` hard-stopped on a missing runtime `final_mode` breadcrumb, `W-C-1a` fixed and verified that breadcrumb gap, and the next substantive move is back to `W-C-1` telemetry aggregation helper.
 
 ### Resolved without slice
 
@@ -157,6 +157,7 @@ No slices currently in flight. W-C-0 landed this commit; next substantive planne
 
 ## Completed (rolling log)
 
+- 2026-04-22 late night - `W-C-1a` runtime breadcrumb fix: `OfflineAnswerEngine` now emits `ask.generate final_mode=` for instant-answer paths from `prepare()` and dual-emits the breadcrumb through durable runtime logging for default Android execution; focused `OfflineAnswerEngineTest` coverage was extended and the fresh probe bundle landed at `artifacts/bench/final_mode_emission_probe_20260423/`. Next Wave C move returns to `W-C-1` telemetry aggregation helper.
 - 2026-04-22 late - `W-C-0` panel expansion / runner-preflight: runner preflight passed on the untracked surface (narrow CLI shape; no secret / HARD-STOP findings beyond benign local-runtime references), promoted the helper into tracked `scripts/abstain_regression_panel.py`, tracked `scripts/run_abstain_regression_panel.ps1`, added `notes/specs/abstain_nearboundary_panel_20260423.yaml` as the forked near-boundary sidecar, and wrote fresh artifacts under `artifacts/bench/abstain_nearboundary_20260423/`. Next Wave C move is `W-C-1` telemetry aggregation helper.
 - 2026-04-22 evening - D10 Wave C direction lock: landed `notes/WAVE_C_DIRECTION_20260422.md`, locked the Wave C order (`W-C-0` -> `W-C-1` -> `W-C-2` -> `W-C-3` -> `W-C-4` -> optional `W-C-5`), chose a forked near-boundary panel instead of in-place expansion for `W-C-0`, set tracked YAML sidecar input as the preferred panel representation, and made the untracked `scripts/run_abstain_regression_panel.ps1` runner-preflight an explicit W-C-0 gate.
 - 2026-04-22 evening - D9 tracker/index reconciliation / historical labeling: rewrote the live tracker surface so `CP9_ACTIVE_QUEUE.md` remains the live planner source, updated the Android / guide / swarm indexes to durable anchors, relabeled stale "live" trackers as historical lane records, tracked `notes/APP_ROUTING_HARDENING_TRACKER_20260417.md`, `notes/GUIDE_PROMPT_VALIDATION_QUEUE_20260413.md`, `notes/REVIEWER_BACKEND_UNKNOWNS_20260418.md`, and `archive/README.md`, and repaired tracker-surface mojibake / ASCII drift.
