@@ -16,9 +16,9 @@ The real caution is truthfulness: all six images read as stylized mockups rather
 than actual product captures, and several surfaces contain synthetic or
 obviously degraded text, stale guide/chunk counts, and fake citation details.
 
-Follow-up execution slice recommended: yes. The next cut should be a small
-preserve-or-delete execution pass driven by Tate's decision on whether the
-four-screen mockup bundle deserves tracked historical preservation.
+Follow-up execution slice recommended: no. D16 preserved the four-screen
+historical mockup bundle, and D17 executed the delete path for the two
+residual model-status screenshots.
 
 ## Execution Status
 
@@ -26,9 +26,13 @@ D16 executed the preserve path: the four mockup-linked screenshots now live as
 tracked historical assets under `notes/reviews/assets/senku_mobile_mockups/`,
 and `senku_mobile_mockups.md` was relocated to
 `notes/reviews/senku_mobile_mockups.md` with repo-stable relative links and
-explicit historical labeling. The original decision matrix below remains the
-triage record. The two model-status screenshots remain unresolved
-delete-candidates at the repo root pending Tate confirmation.
+explicit historical labeling. D17 then executed the delete path for
+`senku_model_loaded_1775908948158.png` and
+`senku_model_not_loaded_1775908960322.png`. The original decision matrix below
+remains the triage record. The screenshot/mockup branch is now closed: the
+four-screen historical mockup bundle was preserved by D16, the two residual
+model-status screenshots were deleted by D17, and no repo-root screenshot
+follow-up remains.
 
 ## Decision Matrix
 
@@ -60,9 +64,7 @@ while the `.gemini` paths are machine-local and non-portable.
 
 ## Recommended Next Move
 
-Preserve path complete via D16 for the four-screen mockup bundle. Remaining
-follow-up is limited to the two model-status delete-candidates:
-
-- If Tate confirms deletion: remove `senku_model_loaded_1775908948158.png` and
-  `senku_model_not_loaded_1775908960322.png`.
-- Otherwise: keep them as local-only residue until a later decision.
+Screenshot/mockup branch closed. D16 preserved the four-screen historical
+mockup bundle, D17 deleted `senku_model_loaded_1775908948158.png` and
+`senku_model_not_loaded_1775908960322.png`, and no repo-root screenshot
+follow-up remains.

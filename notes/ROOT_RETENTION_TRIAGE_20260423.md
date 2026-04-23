@@ -19,16 +19,18 @@ complete at `notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
 The decision table below still stands for the remaining root files:
 `4-13guidearchive.zip` stays local-only for now, `guides.zip` remains a
 delete-candidate pending Tate confirmation, `LM_STUDIO_MODELS_20260410.json`
-remains local-only, and `senku_mobile_mockups.md` remains coupled to the
-screenshot-aware follow-up.
+remains local-only, and the screenshot/mockup residue is now closed after D16
+plus D17.
 
 ## Execution Status
 
 D15 review plus D16 preservation superseded the earlier delete-candidate call
 for `senku_mobile_mockups.md`: the note now lives at
 `notes/reviews/senku_mobile_mockups.md` with tracked historical screenshots at
-`notes/reviews/assets/senku_mobile_mockups/`. The original candidate table
-below remains the pre-execution triage record for the repo-root pass.
+`notes/reviews/assets/senku_mobile_mockups/`. D17 then deleted the two
+residual model-status screenshots from the repo root. The screenshot/mockup
+residue is now closed, and the original candidate table below remains the
+pre-execution triage record for the repo-root pass.
 
 ## Candidate Dispositions
 
@@ -49,6 +51,8 @@ below remains the pre-execution triage record for the repo-root pass.
 - No delete/move/rename/track action was taken on any of the eight root files.
 - The six `senku_*.png` screenshots remain intentionally out of scope here and
   should stay under the separate visual-review bucket.
-- D16 later executed the preserve path for the four-screen mockup bundle only;
-  the two model-status screenshots remain untouched under the separate visual
-  bucket.
+- D16 later executed the preserve path for the four-screen mockup bundle at
+  `notes/reviews/senku_mobile_mockups.md` plus
+  `notes/reviews/assets/senku_mobile_mockups/`.
+- D17 then deleted the two residual model-status screenshots, so the
+  screenshot/mockup residue tracked from this root pass is now closed.
