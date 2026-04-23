@@ -2,41 +2,40 @@
 
 ## Scope
 
-This note documents the current-checkout behavior of
-`scripts/stop_android_device_processes_safe.ps1` as a read-only truth-surface
-slice. No script changes are part of D33.
+This note now records both the original D33 truth-surface findings and the D35
+disposition for `scripts/stop_android_device_processes_safe.ps1`.
 
-## Current-checkout behavior
+## D33 findings that remained true at retirement time
 
-In the current checkout, `scripts/stop_android_device_processes_safe.ps1` is a
-global Android device/emulator process-stop helper, not a lane-bounded harness
-cleanup tool.
+The D33 read-only audit remained the basis for the decision in D35:
 
-## Evidence
-
-- The script defines a fixed global process-name set:
+- The helper defined a fixed global process-name set:
   `adb`, `emulator`, `qemu-system-x86_64`, and `qemu-system-aarch64`.
-- It enumerates host processes with `Get-Process` and filters only by those raw
-  process names, with no harness-run id, workspace path, emulator-serial, or
-  lane ownership boundary.
-- It force-stops every matching process via `Stop-Process -Id $target.Id -Force`.
-- Its terminal message explicitly states: Android device/emulator processes only,
-  and that it intentionally does not target `node`.
+- It enumerated host processes with `Get-Process` and filtered only by those
+  raw process names, with no harness-run id, workspace path, emulator serial,
+  or lane ownership boundary.
+- It force-stopped every matching process with `Stop-Process -Id $target.Id
+  -Force`.
+- Its terminal message explicitly stated that it targeted Android
+  device/emulator processes only and intentionally did not target `node`.
 
-## Conclusion
+## D35 disposition
 
-The current-checkout contract is host-global Android cleanup. This helper can
-terminate any matching adb/emulator/qemu process on the host, regardless of
-which harness lane, emulator posture, or operator workflow started it.
+As of D35, `scripts/stop_android_device_processes_safe.ps1` was retired from
+the repo and removed rather than tracked or repaired.
 
-That makes this script part of the emergency Android device/emulator cleanup
-branch, not the narrower harness-helper tranche covered by D31 and not the mixed
-host-stop/device-reset branch covered by D32.
+## Why retirement was the cleanest outcome
 
-## Recommended next step
+- The helper's scope was host-global raw-process killing rather than
+  lane-bounded harness cleanup.
+- Current tracked workflow docs did not provide a live operator anchor that
+  recommended routine use of this helper.
+- The narrower tracked helper `scripts/stop_android_harness_orphans.ps1`
+  remains available for the lane-bounded cleanup path that still has an active
+  documented workflow.
 
-Keep this helper on its own allow/repair/retire follow-up path for global
-device-process stop behavior.
+## Forward rule
 
-Keep `scripts/cleanup_android_harness_artifacts.ps1` separate as the
-recursive-delete contract slice rather than merging the two cleanup surfaces.
+If a future global Android cleanup helper is needed, it should return only
+through a new explicit contract and tracked operator guidance, not by silently
+restoring this retired file.
