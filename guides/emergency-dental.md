@@ -15,8 +15,11 @@ tags:
   - tooth-abscess
   - swollen-face
   - jaw-pain
+  - throbbing-tooth-pain
+  - night-waking-tooth-pain
+  - fever-tooth-pain
 icon: 🦷
-description: Acute emergency procedures including tooth extraction, abscess drainage, local anesthesia, and field-improvised dental care for urgent tooth pain, swelling, infection, and trauma when professional care is unavailable. Not for routine bleeding gums, daily cleaning, plaque-related soreness, or mild tooth sensitivity without escalation; see preventive-dental-hygiene for those.
+description: Acute emergency procedures including tooth extraction, abscess drainage, local anesthesia, and field-improvised dental care for urgent tooth pain, swelling, infection, trauma, fever with tooth pain, or night-waking throbbing pain when professional care is unavailable. Not for routine bleeding gums, daily cleaning, plaque-related soreness, mild cold sensitivity without escalation, or poisoning exposures; see preventive-dental-hygiene and the poisoning guides for those.
 related:
   - alkali-production
   - anatomy-oral
@@ -66,9 +69,11 @@ Tooth cross-section: Enamel (hard outer), dentin (middle), pulp (nerve chamber),
 
 Emergency dental procedures address acute pain, infection, and trauma to teeth and supporting structures. In low-resource or austere environments without professional dental care, proper technique can prevent tooth loss, manage life-threatening infections, and alleviate severe pain. This guide covers recognition, assessment, safe field procedures, and preventive measures using improvised materials when necessary.
 
-Start here when the complaint is urgent first: throbbing tooth pain, pain that is constant or worsening, facial or jaw swelling, pus or foul drainage, fever with a tooth problem, a loose or knocked-out tooth after trauma, uncontrolled bleeding after dental injury, or pain severe enough to stop sleep, eating, or mouth opening.
+Start here when the complaint is urgent first: throbbing tooth pain, fever with a tooth problem, pain that is constant or worsening, facial or jaw swelling, pus or foul drainage, a loose or knocked-out tooth after trauma, uncontrolled bleeding after dental injury, or pain severe enough to stop sleep, eating, or mouth opening. This is the right guide for complaint-first prompts like `I feel sick with a fever and my tooth is throbbing and waking me at night`.
 
-Do not route routine hygiene complaints here just because they mention gums or teeth. If the real question is `how do I clean my teeth`, `my gums bleed when I brush`, `my mouth feels dirty`, `my tooth is only a little sensitive`, `my denture rubs my gums`, or `my breath smells bad unless I clean better`, use `preventive-dental-hygiene` or `dental-prosthetics` first unless swelling, pus, fever, trauma, or escalating pain is also present.
+Do not route routine hygiene complaints here just because they mention gums or teeth. If the real question is `how do I clean my teeth`, `my gums bleed when I brush`, `my gums bleed every time I brush but there is no swelling or pain`, `my mouth feels dirty`, `my tooth is only a little sensitive`, `my tooth aches mildly and I can still eat but it is sensitive to cold`, `my denture rubs my gums`, or `my breath smells bad unless I clean better`, use `preventive-dental-hygiene` or `dental-prosthetics` first unless swelling, pus, fever, trauma, or escalating pain is also present.
+
+Do not route cleaner ingestion, unknown pill ingestion, or mixed-cleaner fume complaints here just because they mention the mouth, drooling, or burning. If someone swallowed drain cleaner, swallowed unknown pills, or has chest tightness after mixing bleach and vinegar, use `unknown-ingestion-child-poisoning-triage` or `chemical-safety` instead of dental procedures.
 
 If the complaint is an appliance sore or fit problem with swelling, pus, fever, or rapidly worsening pain, treat it here as an urgent infection or trauma problem instead of sending it only to `dental-prosthetics`.
 
@@ -78,8 +83,10 @@ If the complaint is an appliance sore or fit problem with swelling, pus, fever, 
 - `my tooth hurts all the time` -> this guide
 - `my tooth pain keeps getting worse` -> this guide
 - `my tooth hurts so much I cannot sleep` -> this guide
+- `I feel sick with a fever and my tooth is throbbing and waking me at night` -> this guide
 - `my gums bleed when I brush` -> `preventive-dental-hygiene` first unless there is swelling, pus, fever, or loose teeth
 - `my gums bleed every day but nothing is swollen` -> `preventive-dental-hygiene`
+- `my gums bleed every time I brush but there is no swelling or pain` -> `preventive-dental-hygiene`
 - `my gums bleed with swelling or pus` -> this guide as dental infection
 - `bleeding gums with swelling or pus` -> this guide as dental infection
 - `my face is swelling from a tooth` -> this guide
@@ -101,6 +108,10 @@ If the complaint is an appliance sore or fit problem with swelling, pus, fever, 
 - `bad breath from poor mouth hygiene` -> `preventive-dental-hygiene`
 - `bad breath that does not improve after a week of cleaning` -> `preventive-dental-hygiene` first; come here only if swelling, pus, or loose teeth are also present
 - `how to clean teeth without modern supplies` -> `preventive-dental-hygiene`
+- `my tooth aches mildly and I can still eat but it is sensitive to cold` -> `preventive-dental-hygiene` first
+- `my child swallowed drain cleaner and is drooling` -> not this guide; use `unknown-ingestion-child-poisoning-triage`
+- `I mixed bleach and vinegar to clean the tub and now my chest is tight` -> not this guide; use `chemical-safety`
+- `my toddler found pills on the floor and I do not know how many were swallowed` -> not this guide; use `unknown-ingestion-child-poisoning-triage`
 - `abscess on gum` or `gum abscess` or `gum boil` -> this guide
 - `swollen face` or `my face is swelling` or `facial swelling` -> this guide
 - `jaw pain` or `my jaw hurts` or `jaw is swollen` -> this guide as dental infection; if the pain is joint-related without dental signs, see `common-ailments-recognition-care`

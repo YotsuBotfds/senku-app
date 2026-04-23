@@ -11,15 +11,18 @@ tags:
   - essential
   - oral-care
   - bleeding-gums
+  - bleeding-gums-without-swelling
   - toothache
+  - mild-toothache
   - gum-care
   - brushing-without-toothpaste
   - daily-mouth-care
   - tooth-sensitivity
   - sensitive-teeth
+  - cold-sensitivity
   - dry-mouth
 icon: 🦷
-description: Daily mouth care for limited-tool settings, including brushing substitutes (clean teeth without toothpaste or toothbrush), floss alternatives, rinsing after meals, gum care (bleeding gums, sore gums without swelling), denture and oral appliance hygiene, diet habits, and clear routing away from urgent tooth pain, swelling, injury, or infection.
+description: Daily mouth care for limited-tool settings, including brushing substitutes (clean teeth without toothpaste or toothbrush), floss alternatives, rinsing after meals, gum care (bleeding gums, sore gums without swelling), mild cold sensitivity or mild toothache without escalation, denture and oral appliance hygiene, and clear routing away from urgent tooth pain, swelling, injury, infection, or poisoning exposures.
 related:
   - anatomy-oral
   - common-ailments-recognition-care
@@ -48,11 +51,11 @@ liability_level: high
 
 Good mouth care prevents a large share of dental pain. In low-resource settings, the goal is simple: reduce plaque, protect the gums, limit sugar exposure, and catch problems early. Small daily habits prevent cavities, gum disease, loose teeth, bad breath, and many dental emergencies.
 
-Start here when the complaint is mainly routine care or a non-urgent mouth question: cleaning, brushing substitutes, floss alternatives, daily bad breath from buildup, bleeding with brushing, sore gums without facial swelling, mild sensitivity, or a mild toothache that is not constant and does not come with fever, pus, injury, or worsening pain.
+Start here when the complaint is mainly routine care or a non-urgent mouth question: cleaning, brushing substitutes, floss alternatives, daily bad breath from buildup, bleeding with brushing, sore gums without facial swelling, bleeding gums without swelling or pain, mild sensitivity, mild cold sensitivity, or a mild toothache that is not constant and does not come with fever, pus, injury, or worsening pain.
 
 Use `dental-prosthetics` for denture, retainer, mouthguard, or other appliance fit and cleaning problems; use `anatomy-oral` when the question is about structure or terminology rather than care.
 
-Do not stay in this guide if the complaint is really pain, swelling, injury, or infection. If there is facial or jaw swelling, fever, pus, foul drainage, a tooth knocked loose by trauma, uncontrolled bleeding after injury, trouble swallowing, trouble breathing, or tooth pain that is constant, worsening, or waking the person at night, move to `emergency-dental`.
+Do not stay in this guide if the complaint is really pain, swelling, injury, infection, or poisoning exposure. If there is facial or jaw swelling, fever, pus, foul drainage, a tooth knocked loose by trauma, uncontrolled bleeding after injury, trouble swallowing, trouble breathing, or tooth pain that is constant, worsening, or waking the person at night, move to `emergency-dental`. If someone swallowed cleaner, swallowed unknown pills, or has chest tightness after mixing cleaners, route away from dental guidance and use `unknown-ingestion-child-poisoning-triage` or `chemical-safety`.
 
 This guide focuses on the practical questions people usually ask:
 
@@ -71,11 +74,13 @@ The conservative rule is this: if you can clean gently and consistently, that is
 - `clean teeth without toothbrush or supplies` -> this guide
 - `how to clean teeth without modern supplies` -> this guide
 - `my gums bleed when I brush` -> this guide first; if swelling, pus, fever, or loose teeth appear, move to `emergency-dental`
+- `my gums bleed every time I brush but there is no swelling or pain` -> this guide first
 - `my gums bleed a little every day` -> this guide first; if swelling, pus, fever, or loose teeth appear, move to `emergency-dental`
 - `my gums bleed but there is no swelling` -> this guide first; if bleeding becomes heavy, painful, or comes with pus or fever, move to `emergency-dental`
 - `my gums are sore from plaque or not flossing` -> this guide unless there is swelling, drainage, fever, or severe pain
 - `my tooth hurts a little but there is no swelling` -> start here for gentle cleaning, rinsing, and diet changes; if pain is constant, worsening, biting-related and getting stronger, or wakes you at night, use `emergency-dental`
 - `mild toothache without swelling` -> start here first; escalate to `emergency-dental` if pain becomes constant, worsening, or night-waking
+- `my tooth aches mildly and I can still eat but it is sensitive to cold` -> this guide first; move to `emergency-dental` if pain becomes constant, throbbing, feverish, or night-waking
 - `tooth pain that comes and goes and is not swelling` -> this guide first; `emergency-dental` if it becomes constant or night-waking
 - `I chipped a tooth but it does not hurt and nothing is swollen` -> this guide for monitoring and gentle care; if sharp edges cut the tongue or cheek, pain worsens, or swelling appears, move to `emergency-dental`
 - `broken tooth no pain or swelling yet` -> this guide for now; avoid hard foods on that side; see `emergency-dental` if pain, looseness, or sharp edges develop
@@ -96,6 +101,9 @@ The conservative rule is this: if you can clean gently and consistently, that is
 - `my face is swelling from a tooth` -> do not stay here; use `emergency-dental`
 - `my jaw is swollen and my tooth hurts` -> do not stay here; use `emergency-dental`
 - `I got hit in the mouth and a tooth moved` -> do not stay here; use `emergency-dental`
+- `my child swallowed drain cleaner and is drooling` -> not this guide; use `unknown-ingestion-child-poisoning-triage`
+- `I mixed bleach and vinegar to clean the tub and now my chest is tight` -> not this guide; use `chemical-safety`
+- `my toddler found pills on the floor and I do not know how many were swallowed` -> not this guide; use `unknown-ingestion-child-poisoning-triage`
 - `routine dental cleaning question` -> this guide
 - `routine vs urgent dental question` -> this guide for preventive care; `emergency-dental` if swelling, fever, pus, injury, or constant worsening pain is present
 - `I feel sick and my tooth hurts` -> `common-ailments-recognition-care` for the general feeling-sick triage; then return here or `emergency-dental` for the tooth complaint
@@ -322,7 +330,7 @@ These are no longer just preventive-care problems. Move to `emergency-dental` fo
 
 ## Non-Emergency Tooth Pain
 
-Not every toothache is an emergency, but most tooth pain means something is wrong. This section is only for mild complaints like `my tooth aches a little`, `cold drinks sting one tooth`, or `it hurts some when food gets stuck there`. Common non-emergency causes include plaque buildup, a cavity that has not reached the nerve yet, a cracked filling, exposed root surfaces, clenching, or gum irritation around the tooth.
+Not every toothache is an emergency, but most tooth pain means something is wrong. This section is only for mild complaints like `my tooth aches a little`, `cold drinks sting one tooth`, `my tooth aches mildly and I can still eat but it is sensitive to cold`, or `it hurts some when food gets stuck there`. Common non-emergency causes include plaque buildup, a cavity that has not reached the nerve yet, a cracked filling, exposed root surfaces, clenching, or gum irritation around the tooth.
 
 ### What You Can Do First
 
