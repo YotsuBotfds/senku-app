@@ -11,18 +11,16 @@ not execute any delete/move/track action.
 - `keep-local-only`: 2
 - `delete-candidate`: 2
 
-Recommended next execution slice: move the four durable docs into an
-appropriate `notes/` home with dated/historical framing, keep screenshots in
-their separate deferred bucket, preserve `4-13guidearchive.zip` locally until
-the `guides/` tracking slice closes, and only act on the two
-`delete-candidate` files after Tate confirms the cleanup cut.
-
-Execution status: D13 completed the four `relocate-then-track` decisions at
-`notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
+Post-D13 reality: the four `relocate-then-track` decisions are already
+complete at `notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
 `notes/reviews/UI_DIRECTION_AUDIT_20260414.md`,
-`notes/reviews/auditglm.md`, and `notes/reviews/gptaudit4-21.md`. The
-`keep-local-only` and `delete-candidate` recommendations below remain
-unchanged.
+`notes/reviews/auditglm.md`, and `notes/reviews/gptaudit4-21.md`.
+
+The decision table below still stands for the remaining root files:
+`4-13guidearchive.zip` stays local-only for now, `guides.zip` remains a
+delete-candidate pending Tate confirmation, `LM_STUDIO_MODELS_20260410.json`
+remains local-only, and `senku_mobile_mockups.md` remains coupled to the
+screenshot-aware follow-up.
 
 ## Candidate Dispositions
 

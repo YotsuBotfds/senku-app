@@ -4,7 +4,7 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-22 - D13 relocated the four durable repo-root docs into `notes/dated/` and `notes/reviews/`; `notes/ROOT_RETENTION_TRIAGE_20260423.md` remains the decision record, the Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`, and `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
+- Last updated: 2026-04-23 - D11, D12, and D13 are landed, no slices are currently in flight, `notes/ROOT_RETENTION_TRIAGE_20260423.md` remains the decision record for the repo-root retention follow-up, and the Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`; `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
 
 ## Dispatch order cheat-sheet
 

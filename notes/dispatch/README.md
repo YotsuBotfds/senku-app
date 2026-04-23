@@ -31,7 +31,8 @@ edit the file, do not let the drift live only in your head.
 ## Active slices
 
 CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
-`W-C-4`, `D11` has landed, and no slices are currently in flight.
+`W-C-4`, `D11`, `D12`, and `D13` have landed, and no slices are
+currently in flight.
 
 Use `notes/CP9_ACTIVE_QUEUE.md` as the live source for next-step
 ordering, post-RC backlog truth, and current status. Do not infer the
@@ -48,6 +49,8 @@ Unrotated prompt drafts still present at the dispatch root:
 `D9_tracker_doc_reconciliation_and_historical_labeling.md`,
 `D10_wave_c_direction_note_lock.md`,
 `D11_repo_root_retention_triage.md`,
+`D12_dispatch_readme_resync.md`,
+`D13_relocate_root_docs_into_notes.md`,
 `W-C-0_panel_expansion_and_runner_preflight.md`,
 `W-C-1a_final_mode_runtime_emission_fix.md`,
 `W-C-1_final_mode_telemetry_aggregation_helper.md`,
