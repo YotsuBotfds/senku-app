@@ -2,7 +2,7 @@
 
 Date: 2026-04-17
 Source prototype: Claude.ai design artifact `e4447a88-7e32-4d36-bf89-afee48623d0f` (`senku-redesign.html`, `senku-components.jsx`, `senku-app.jsx`)
-Supersedes: `UI_DIRECTION_AUDIT_20260414.md` for all surface-level decisions (olive/parchment + typewriter stamps)
+Supersedes: `../reviews/UI_DIRECTION_AUDIT_20260414.md` for all surface-level decisions (olive/parchment + typewriter stamps)
 Paired with: `opustasks.md` F-lane, `parallelism_plan.md` Waves 4–9
 
 This doc is the committed design target for the Android app going forward. All B-lane polish and new F-lane migration work targets this doc. The React prototype in the design artifact is canonical — when a primitive spec is ambiguous, diff against `senku-components.jsx` / `senku-app.jsx`.

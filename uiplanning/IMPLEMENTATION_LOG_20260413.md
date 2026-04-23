@@ -1692,7 +1692,7 @@ The UI is being treated as a field tool, not a content browser. Design choices s
 - Rebuilt and reinstalled the latest APK to the physical phone and tablet lanes.
 
 ## Checkpoint 2026-04-14 18:08:35 -05:00
-- Folded `UI_DIRECTION_AUDIT_20260414.md` into planning artifacts:
+- Folded `../notes/reviews/UI_DIRECTION_AUDIT_20260414.md` into planning artifacts:
   - added audit-driven decisions `D12-D15` in `uiplanning/DECISIONS.md`
   - created prioritized execution tracker `uiplanning/UI_TODO_20260414.md`
 - Orchestrated multi-lane delegation for the first P0 slice:
@@ -2100,7 +2100,7 @@ The UI is being treated as a field tool, not a content browser. Design choices s
   - `android-app/app/src/main/res/drawable/bg_evidence_panel.xml`
     - collapsed `Why this answer` surfaces now carry a subtle left-edge accent so the trust drawer reads more like an interactive control and less like plain text
 - Audit refresh:
-  - `UI_DIRECTION_AUDIT_20260414.md`
+  - `../notes/reviews/UI_DIRECTION_AUDIT_20260414.md`
     - added a current-build delta section so the review no longer trails the live UI state
   - `uiplanning/UI_TODO_NEXT_20260414.md`
     - marked the doc-refresh slice complete and kept the remaining hero/why work separated from already-landed fixes

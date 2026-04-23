@@ -1,7 +1,7 @@
 # Android Audit Remaining Actions
 
 Date: 2026-04-13
-Purpose: handoff note for any follow-on agent working from `auditglm.md` and the verification/reconciliation work already completed.
+Purpose: handoff note for any follow-on agent working from [`auditglm.md`](./auditglm.md) and the verification/reconciliation work already completed.
 
 ## Read This First
 

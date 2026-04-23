@@ -4,7 +4,7 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-23 - Repo-root retention triage note added at `notes/ROOT_RETENTION_TRIAGE_20260423.md`; Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`, and `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
+- Last updated: 2026-04-22 - D13 relocated the four durable repo-root docs into `notes/dated/` and `notes/reviews/`; `notes/ROOT_RETENTION_TRIAGE_20260423.md` remains the decision record, the Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`, and `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
 
 ## Dispatch order cheat-sheet
 
@@ -69,8 +69,8 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 - **(c) Residual historical `notes/` backlog.** The load-bearing notes operating spine is now tracked; the remaining `notes/` carry-over is the large historical root backlog still left untracked, such as `PLANNER_HANDOFF_*`, `CP9_STAGE_*`, `ACTIVE_WORK_LOG_*`, `AGENT_STATE.yaml`, historical audits/logs, and similar dated root notes.
 - **(d) Repo-root zip archive execution follow-up.** See `notes/ROOT_RETENTION_TRIAGE_20260423.md`: keep `4-13guidearchive.zip` local-only as the fuller backup for now, and treat `guides.zip` as the superseded delete-candidate pending Tate confirmation.
 - **(e) Screenshots visual-content review.** The six repo-root `senku_*.png` screenshots remain deferred pending a visual sanity pass for secrets/PII and any tracked-doc justification.
-- **(f) Repo-root dated snapshot execution follow-up.** See `notes/ROOT_RETENTION_TRIAGE_20260423.md`: relocate-and-track `CURRENT_LOCAL_TESTING_STATE_20260410.md` and `UI_DIRECTION_AUDIT_20260414.md`, while keeping `LM_STUDIO_MODELS_20260410.json` local-only unless a later historical artifact slice needs it.
-- **(g) Repo-root audit/mockup execution follow-up.** See `notes/ROOT_RETENTION_TRIAGE_20260423.md`: relocate-and-track `auditglm.md` and `gptaudit4-21.md`, while treating `senku_mobile_mockups.md` as a delete-candidate unless a later screenshot-aware slice rewrites it to repo-stable assets.
+- ~~**(f) Repo-root dated snapshot execution follow-up.**~~ D13 completed the relocate-and-track portion at `notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md` and `notes/reviews/UI_DIRECTION_AUDIT_20260414.md`. `LM_STUDIO_MODELS_20260410.json` remains local-only with no action now.
+- ~~**(g) Repo-root audit/mockup execution follow-up.**~~ D13 completed the relocate-and-track portion at `notes/reviews/auditglm.md` and `notes/reviews/gptaudit4-21.md`. `senku_mobile_mockups.md` remains on the screenshot-aware delete-candidate path, and `4-13guidearchive.zip` / `guides.zip` stay under the separate zip-archive follow-up above.
 - **(h) Orphan `.py` DEFERs (Rule 18).**
   - `scripts/check_mojibake.py` - DEFER, Rule 18 (no importers, no test pair, no CLI shape).
   - `scripts/scan_encoding.py` - DEFER, Rule 18 (no importers, no test pair, no CLI shape).
@@ -929,3 +929,13 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
   `notes/R-PACK-DRIFT_INVESTIGATION_20260422.md` Sec. 6, the defunct-filename
   carry-over item is closed, and the CABIN_HOUSE dead-marker claim was
   struck as false after code/path verification.
+- 2026-04-22 evening - `D13` relocated four durable repo-root historical docs
+  into tracked `notes/` homes: `CURRENT_LOCAL_TESTING_STATE_20260410.md ->
+  notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
+  `UI_DIRECTION_AUDIT_20260414.md ->
+  notes/reviews/UI_DIRECTION_AUDIT_20260414.md`, `auditglm.md ->
+  notes/reviews/auditglm.md`, and `gptaudit4-21.md ->
+  notes/reviews/gptaudit4-21.md`. Live tracked backlinks were repaired in
+  `README_OPEN_IN_CODEX.md`, the review/spec/UI planning notes, and
+  `notes/ROOT_RETENTION_TRIAGE_20260423.md` now records the execution status
+  while preserving the remaining local-only and delete-candidate decisions.

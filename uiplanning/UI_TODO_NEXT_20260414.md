@@ -211,7 +211,7 @@ Current live note:
 - [x] Refresh docs from the current build before the next review cycle
   - Why: the audit currently lags the implementation in places like hero collapse and low-coverage signaling.
   - Scope:
-    - `UI_DIRECTION_AUDIT_20260414.md`
+    - `../notes/reviews/UI_DIRECTION_AUDIT_20260414.md`
     - `uiplanning/IMPLEMENTATION_LOG_20260413.md`
     - `uiplanning/UI_TODO_NEXT_20260414.md`
   - Acceptance:

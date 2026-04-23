@@ -17,6 +17,13 @@ their separate deferred bucket, preserve `4-13guidearchive.zip` locally until
 the `guides/` tracking slice closes, and only act on the two
 `delete-candidate` files after Tate confirms the cleanup cut.
 
+Execution status: D13 completed the four `relocate-then-track` decisions at
+`notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md`,
+`notes/reviews/UI_DIRECTION_AUDIT_20260414.md`,
+`notes/reviews/auditglm.md`, and `notes/reviews/gptaudit4-21.md`. The
+`keep-local-only` and `delete-candidate` recommendations below remain
+unchanged.
+
 ## Candidate Dispositions
 
 | Path | What it is | Current git state | Recommended disposition | Rationale | Blocker or caution |

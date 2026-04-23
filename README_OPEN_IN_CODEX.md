@@ -34,7 +34,7 @@ and confirm that the intended local models are loaded.
 
 ## Suggested First Prompt For Codex
 
-`Read AGENTS.md, README_OPEN_IN_CODEX.md, and CURRENT_LOCAL_TESTING_STATE_20260410.md first, then continue the local-only Senku model comparison on this machine. Start with the smoke pack, use qwen/qwen3.5-9b and gemma-4-e4b-it as the main laptop candidates, and only test google/gemma-4-26b-a4b if runtime looks practical.`
+`Read AGENTS.md, README_OPEN_IN_CODEX.md, and notes/dated/CURRENT_LOCAL_TESTING_STATE_20260410.md first, then continue the local-only Senku model comparison on this machine. Start with the smoke pack, use qwen/qwen3.5-9b and gemma-4-e4b-it as the main laptop candidates, and only test google/gemma-4-26b-a4b if runtime looks practical.`
 
 ## Quick Start
 

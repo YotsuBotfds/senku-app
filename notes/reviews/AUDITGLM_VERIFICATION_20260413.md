@@ -1,11 +1,11 @@
 # auditglm.md Verification And Reconciliation Plan
 
 Date: 2026-04-13
-Scope: verification of `auditglm.md` against the current `android-app/` tree
+Scope: verification of [`auditglm.md`](./auditglm.md) against the current `android-app/` tree
 
 ## Summary
 
-`auditglm.md` mixes three kinds of findings:
+[`auditglm.md`](./auditglm.md) mixes three kinds of findings:
 
 1. Confirmed defects or cleanup items that are visible in the repo now.
 2. Real concerns whose severity or wording is overstated.
@@ -109,4 +109,4 @@ These may still be good ideas, but they should not block the correctness cleanup
 
 ## Suggested Next Action
 
-Treat `auditglm.md` as a draft, not a source of truth. Reconcile the document first, then land the small confirmed fixes in one focused Android cleanup pass, then make an explicit product decision on whether mobile deterministic behavior should be driven by the packaged rule table or by the current hand-coded router.
+Treat [`auditglm.md`](./auditglm.md) as a draft, not a source of truth. Reconcile the document first, then land the small confirmed fixes in one focused Android cleanup pass, then make an explicit product decision on whether mobile deterministic behavior should be driven by the packaged rule table or by the current hand-coded router.
