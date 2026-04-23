@@ -70,6 +70,21 @@ class LMStudioUtilsTests(unittest.TestCase):
         self.assertEqual(info["category"], "context_pressure")
         self.assertFalse(info["retryable"])
 
+    def test_litert_context_overflow_500_is_classified_non_retryable(self):
+        error = requests.HTTPError(
+            response=Mock(
+                status_code=500,
+                text=(
+                    "LiteRT backend CPU failed with code 1. "
+                    "Error: Input token ids are too long. "
+                    "Exceeding the maximum number of tokens allowed: 4117 >= 4096"
+                ),
+            )
+        )
+        info = classify_lm_request_error(error)
+        self.assertEqual(info["category"], "context_overflow")
+        self.assertFalse(info["retryable"])
+
     def test_generic_400_is_classified_non_retryable_runtime_failure(self):
         error = requests.HTTPError(
             response=Mock(status_code=400, text="opaque runtime failure")

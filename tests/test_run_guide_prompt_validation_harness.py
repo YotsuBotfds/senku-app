@@ -107,6 +107,43 @@ class GuidePromptValidationHarnessTests(unittest.TestCase):
         self.assertFalse(info["should_retry"])
         self.assertEqual(info["server_error_500_count"], 0)
 
+    def test_litert_context_overflow_500_does_not_trigger_retry(self):
+        artifact = {
+            "results": [
+                {
+                    "index": 3,
+                    "error": (
+                        "LiteRT backend CPU failed with code 1. "
+                        "Error: Input token ids are too long. "
+                        "Exceeding the maximum number of tokens allowed: 4117 >= 4096"
+                    ),
+                    "error_category": "context_overflow",
+                    "error_status_code": 500,
+                    "server": "http://127.0.0.1:1235/v1",
+                    "model": "gemma-4-e2b-it-litert",
+                }
+            ]
+        }
+
+        with tempfile.TemporaryDirectory() as temp_root:
+            json_path = Path(temp_root) / "artifact.json"
+            json_path.write_text(json.dumps(artifact), encoding="utf-8")
+
+            output = self.run_powershell(
+                (
+                    "$info = Get-LiteRtHostFlakeInfo "
+                    f"-JsonPath '{json_path}' "
+                    "-GenerationModel 'gemma-4-e2b-it-litert' "
+                    "-GenerationUrl 'http://127.0.0.1:1235/v1'; "
+                    "$info | ConvertTo-Json -Compress -Depth 20"
+                )
+            )
+
+        info = json.loads(output)
+        self.assertTrue(info["is_litert_target"])
+        self.assertFalse(info["should_retry"])
+        self.assertEqual(info["server_error_500_count"], 0)
+
     def test_non_litert_500_artifact_does_not_trigger_retry(self):
         artifact = {
             "results": [

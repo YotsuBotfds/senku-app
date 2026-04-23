@@ -22,6 +22,12 @@ LM_STUDIO_CONTEXT_PRESSURE_400_MARKERS = (
     "exceeds the context",
 )
 
+LM_STUDIO_CONTEXT_OVERFLOW_500_MARKERS = (
+    "input token ids are too long",
+    "exceeding the maximum number of tokens allowed",
+    "maximum number of tokens allowed",
+)
+
 LM_STUDIO_BAD_REQUEST_400_MARKERS = (
     "invalid request",
     "invalid json",
@@ -125,11 +131,19 @@ def classify_lm_request_error(exc):
             category = "rate_limited"
             retryable = True
         elif status_code in (500, 502, 503, 504):
-            category = "server_error"
-            retryable = True
+            if any(marker in message_lower for marker in LM_STUDIO_CONTEXT_OVERFLOW_500_MARKERS):
+                category = "context_overflow"
+                retryable = False
+            else:
+                category = "server_error"
+                retryable = True
         elif status_code is not None and status_code >= 500:
-            category = "server_error"
-            retryable = True
+            if any(marker in message_lower for marker in LM_STUDIO_CONTEXT_OVERFLOW_500_MARKERS):
+                category = "context_overflow"
+                retryable = False
+            else:
+                category = "server_error"
+                retryable = True
         else:
             category = f"http_{status_code}" if status_code is not None else "http_error"
             retryable = status_code in LM_STUDIO_RETRY_STATUS_CODES
