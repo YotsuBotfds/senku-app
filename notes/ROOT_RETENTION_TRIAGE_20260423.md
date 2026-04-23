@@ -22,6 +22,14 @@ delete-candidate pending Tate confirmation, `LM_STUDIO_MODELS_20260410.json`
 remains local-only, and `senku_mobile_mockups.md` remains coupled to the
 screenshot-aware follow-up.
 
+## Execution Status
+
+D15 review plus D16 preservation superseded the earlier delete-candidate call
+for `senku_mobile_mockups.md`: the note now lives at
+`notes/reviews/senku_mobile_mockups.md` with tracked historical screenshots at
+`notes/reviews/assets/senku_mobile_mockups/`. The original candidate table
+below remains the pre-execution triage record for the repo-root pass.
+
 ## Candidate Dispositions
 
 | Path | What it is | Current git state | Recommended disposition | Rationale | Blocker or caution |
@@ -41,3 +49,6 @@ screenshot-aware follow-up.
 - No delete/move/rename/track action was taken on any of the eight root files.
 - The six `senku_*.png` screenshots remain intentionally out of scope here and
   should stay under the separate visual-review bucket.
+- D16 later executed the preserve path for the four-screen mockup bundle only;
+  the two model-status screenshots remain untouched under the separate visual
+  bucket.

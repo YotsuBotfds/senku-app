@@ -20,6 +20,16 @@ Follow-up execution slice recommended: yes. The next cut should be a small
 preserve-or-delete execution pass driven by Tate's decision on whether the
 four-screen mockup bundle deserves tracked historical preservation.
 
+## Execution Status
+
+D16 executed the preserve path: the four mockup-linked screenshots now live as
+tracked historical assets under `notes/reviews/assets/senku_mobile_mockups/`,
+and `senku_mobile_mockups.md` was relocated to
+`notes/reviews/senku_mobile_mockups.md` with repo-stable relative links and
+explicit historical labeling. The original decision matrix below remains the
+triage record. The two model-status screenshots remain unresolved
+delete-candidates at the repo root pending Tate confirmation.
+
 ## Decision Matrix
 
 | Path | What it appears to show | Safe / caution | Recommended disposition | Rationale | Blocker or Tate decision point |
@@ -50,11 +60,9 @@ while the `.gemini` paths are machine-local and non-portable.
 
 ## Recommended Next Move
 
-Run one narrow execution slice after Tate decides whether to preserve the
-mockup bundle:
+Preserve path complete via D16 for the four-screen mockup bundle. Remaining
+follow-up is limited to the two model-status delete-candidates:
 
-- If preserving: track the four mockup-linked PNGs as historical assets,
-  relocate `senku_mobile_mockups.md`, and rewrite it to use repo-stable
-  relative paths with explicit historical/mockup labeling.
-- If not preserving: delete the six screenshots and `senku_mobile_mockups.md`
-  together, with the strongest delete signal on the two model-status images.
+- If Tate confirms deletion: remove `senku_model_loaded_1775908948158.png` and
+  `senku_model_not_loaded_1775908960322.png`.
+- Otherwise: keep them as local-only residue until a later decision.
