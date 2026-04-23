@@ -1248,6 +1248,8 @@ public final class QueryMetadataProfile {
     private int explicitHouseSectionBonus(String sectionHeading) {
         int score = 0;
         String normalizedSection = normalize(sectionHeading);
+        boolean explicitRoofWeatherproofFocus = explicitTopicTags.contains("roofing")
+            || explicitTopicTags.contains("weatherproofing");
         score += explicitSingleTopicBonus(sectionHeading, "roofing", 18);
         score += explicitSingleTopicBonus(sectionHeading, "weatherproofing", 18);
         score += explicitSingleTopicBonus(sectionHeading, "foundation", 16);
@@ -1342,6 +1344,19 @@ public final class QueryMetadataProfile {
             score -= 12;
         }
         if (normalizedSection.contains("calculator") || normalizedSection.contains("calculation")) {
+            score -= 18;
+        }
+        if (explicitRoofWeatherproofFocus
+            && !matchesTopic(sectionHeading, "roofing")
+            && !matchesTopic(sectionHeading, "weatherproofing")
+            && (normalizedSection.contains("structural engineering basics")
+                || normalizedSection.contains("structural overview")
+                || normalizedSection.contains("general engineering")
+                || normalizedSection.contains("design loads")
+                || normalizedSection.contains("load paths")
+                || normalizedSection.contains("mixing ratio")
+                || normalizedSection.contains("seismic")
+                || normalizedSection.contains("sizing"))) {
             score -= 18;
         }
         return score;

@@ -848,6 +848,100 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void roofWeatherproofContextRejectsGenericStructuralOverviewSupport() {
+        QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
+            "how do i waterproof a roof with no tar or shingles"
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(
+            "how do i waterproof a roof with no tar or shingles"
+        );
+        SearchResult candidate = new SearchResult(
+            "Construction & Carpentry",
+            "",
+            "General structural overview for off-grid builders.",
+            "General structural overview for off-grid builders with generic engineering notes.",
+            "GD-094",
+            "Structural Engineering Basics for Off-Grid Builders",
+            "building",
+            "guide-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "foundation,wall_construction,roofing,weatherproofing"
+        );
+
+        boolean keep = PackRepository.supportCandidateMatchesRoute(routeProfile, metadataProfile, true, candidate);
+
+        assertEquals(false, keep);
+    }
+
+    @Test
+    public void roofWeatherproofGuideContextRejectsGenericStructuralOverviewSection() {
+        SearchResult candidate = new SearchResult(
+            "Construction & Carpentry",
+            "",
+            "General structural overview for off-grid builders.",
+            "General structural overview for off-grid builders with generic engineering notes.",
+            "GD-094",
+            "Structural Engineering Basics for Off-Grid Builders",
+            "building",
+            "guide-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "foundation,wall_construction,roofing,weatherproofing"
+        );
+
+        boolean keep = PackRepository.shouldKeepGuideSectionForContextForTest(
+            "how do i waterproof a roof with no tar or shingles",
+            candidate,
+            false
+        );
+
+        assertEquals(false, keep);
+    }
+
+    @Test
+    public void roofWeatherproofAnswerAnchorPrefersRoutedRoofGuideOverGenericGuideOverview() {
+        SearchResult rankedAnchor = new SearchResult(
+            "Construction & Carpentry",
+            "",
+            "General structural overview for off-grid builders.",
+            "General structural overview for off-grid builders with generic engineering notes.",
+            "GD-094",
+            "",
+            "building",
+            "guide-focus",
+            "starter",
+            "long_term",
+            "cabin_house",
+            "foundation,wall_construction,roofing,weatherproofing"
+        );
+        SearchResult routedAnchor = new SearchResult(
+            "Roofing & Weatherproofing",
+            "",
+            "Waterproofing and sealants for roof systems without industrial materials.",
+            "Waterproofing and sealants for roof systems without industrial materials.",
+            "GD-515",
+            "Waterproofing and Sealants",
+            "building",
+            "route-focus",
+            "subsystem",
+            "long_term",
+            "cabin_house",
+            "roofing,weatherproofing"
+        );
+
+        SearchResult selected = PackRepository.selectAnswerAnchorForTest(
+            "how do i waterproof a roof with no tar or shingles",
+            rankedAnchor,
+            routedAnchor
+        );
+
+        assertEquals("GD-515", selected.guideId);
+    }
+
+    @Test
     public void smallCabinSiteAndFoundationRouteRejectsFoundationInsulationSection() {
         SearchResult candidate = new SearchResult(
             "Insulation & Weatherproofing",

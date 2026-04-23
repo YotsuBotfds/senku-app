@@ -94,6 +94,31 @@ public final class PackRepository implements AutoCloseable {
         "french drain",
         "drainage and waterproofing"
     );
+    private static final Set<String> HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS = buildMarkerSet(
+        "roofing",
+        "roof waterproofing",
+        "roof waterproofing and sealants",
+        "rainproofing and water shedding",
+        "waterproofing and sealants",
+        "roof framing",
+        "roofing materials",
+        "flashing",
+        "ridge cap",
+        "drip edge",
+        "underlayment"
+    );
+    private static final Set<String> HOUSE_ROOF_WEATHERPROOF_DISTRACTOR_MARKERS = buildMarkerSet(
+        "structural engineering basics",
+        "structural overview",
+        "general engineering",
+        "concrete mixing ratio",
+        "calculator",
+        "calculation",
+        "design loads",
+        "load paths",
+        "seismic",
+        "footing sizing"
+    );
     private static final Set<String> WATER_DISTRIBUTION_ANCHOR_MARKERS = buildMarkerSet(
         "water distribution",
         "distribution system",
@@ -2550,6 +2575,12 @@ public final class PackRepository implements AutoCloseable {
             && !hasCabinSiteSelectionAnchorSignal(rankedAnchor)) {
             return routedAnchor;
         }
+        if (prefersRoofWeatherproofRouteAnchor(queryTerms)
+            && hasRoofWeatherproofAnchorSignal(routedAnchor)
+            && (hasRoofWeatherproofDistractorSignal(rankedAnchor)
+                || !hasRoofWeatherproofAnchorSignal(rankedAnchor))) {
+            return routedAnchor;
+        }
         if (queryTerms.metadataProfile.hasExplicitTopic("water_distribution")
             && "guide-focus".equals(emptySafe(rankedAnchor.retrievalMode).trim().toLowerCase(QUERY_LOCALE))
             && emptySafe(rankedAnchor.sectionHeading).trim().isEmpty()
@@ -3498,6 +3529,7 @@ public final class PackRepository implements AutoCloseable {
             score += anchorAlignmentBonus(queryTerms, candidate);
             score += broadRouteSectionPreferenceBonus(queryTerms, candidate);
             score += cabinSiteSelectionAnchorBias(queryTerms, candidate);
+            score += roofWeatherproofAnchorBias(queryTerms, candidate);
             if (score > bestScore) {
                 bestScore = score;
                 best = candidate;
@@ -3545,6 +3577,55 @@ public final class PackRepository implements AutoCloseable {
         }
         if (foundationOnlySignal && !siteSignal) {
             score -= 6;
+        }
+        return score;
+    }
+
+    private static boolean prefersRoofWeatherproofRouteAnchor(QueryTerms queryTerms) {
+        if (queryTerms == null || queryTerms.metadataProfile == null) {
+            return false;
+        }
+        return prefersRoofWeatherproofContext(queryTerms.metadataProfile);
+    }
+
+    private static boolean prefersRoofWeatherproofContext(QueryMetadataProfile metadataProfile) {
+        if (metadataProfile == null) {
+            return false;
+        }
+        return "cabin_house".equals(metadataProfile.preferredStructureType())
+            && (metadataProfile.hasExplicitTopic("roofing") || metadataProfile.hasExplicitTopic("weatherproofing"));
+    }
+
+    private static boolean hasRoofWeatherproofAnchorSignal(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        String normalized = normalizeMatchText(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
+        );
+        return containsAnyMarker(normalized, HOUSE_ROOF_WEATHERPROOF_ANCHOR_MARKERS);
+    }
+
+    private static boolean hasRoofWeatherproofDistractorSignal(SearchResult candidate) {
+        if (candidate == null) {
+            return false;
+        }
+        String normalized = normalizeMatchText(
+            emptySafe(candidate.title) + " " + emptySafe(candidate.sectionHeading)
+        );
+        return containsAnyMarker(normalized, HOUSE_ROOF_WEATHERPROOF_DISTRACTOR_MARKERS);
+    }
+
+    private static int roofWeatherproofAnchorBias(QueryTerms queryTerms, SearchResult candidate) {
+        if (!prefersRoofWeatherproofRouteAnchor(queryTerms) || candidate == null) {
+            return 0;
+        }
+        int score = 0;
+        if (hasRoofWeatherproofAnchorSignal(candidate)) {
+            score += 16;
+        }
+        if (hasRoofWeatherproofDistractorSignal(candidate) && !hasRoofWeatherproofAnchorSignal(candidate)) {
+            score -= 14;
         }
         return score;
     }
@@ -3748,6 +3829,12 @@ public final class PackRepository implements AutoCloseable {
         String preferredStructure = emptySafe(queryTerms.metadataProfile.preferredStructureType()).trim().toLowerCase(QUERY_LOCALE);
         if (("water_storage".equals(preferredStructure) || "water_distribution".equals(preferredStructure))
             && sectionBonus < 0) {
+            return false;
+        }
+        if ("cabin_house".equals(preferredStructure)
+            && prefersRoofWeatherproofRouteAnchor(queryTerms)
+            && sectionBonus <= 0
+            && hasRoofWeatherproofDistractorSignal(candidate)) {
             return false;
         }
         return true;
@@ -4790,6 +4877,16 @@ public final class PackRepository implements AutoCloseable {
             }
             if (containsAnyMarker(candidateText, WATER_DISTRIBUTION_DISTRACTOR_MARKERS)
                 && sectionBonus <= 0) {
+                return false;
+            }
+        }
+        if (prefersRoofWeatherproofContext(metadataProfile)) {
+            if ("guide-focus".equals(retrievalMode)
+                && emptySafe(candidate.sectionHeading).trim().isEmpty()
+                && !hasRoofWeatherproofAnchorSignal(candidate)) {
+                return false;
+            }
+            if (sectionBonus <= 0 && hasRoofWeatherproofDistractorSignal(candidate)) {
                 return false;
             }
         }

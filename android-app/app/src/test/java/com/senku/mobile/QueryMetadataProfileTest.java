@@ -885,6 +885,32 @@ public final class QueryMetadataProfileTest {
     }
 
     @Test
+    public void roofWeatherproofQueryPenalizesStructuralEngineeringBasics() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "how do i waterproof a roof with no tar or shingles"
+        );
+
+        int roofingBonus = profile.sectionHeadingBonus("Waterproofing and Sealants");
+        int structuralBonus = profile.sectionHeadingBonus("Structural Engineering Basics for Off-Grid Builders");
+
+        assertTrue(roofingBonus > structuralBonus);
+        assertTrue(structuralBonus < 0);
+    }
+
+    @Test
+    public void roofWeatherproofQueryPenalizesConcreteMixingCalculatorSections() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "how do i waterproof a roof with no tar or shingles"
+        );
+
+        int roofingBonus = profile.sectionHeadingBonus("Rainproofing and Water Shedding");
+        int calculatorBonus = profile.sectionHeadingBonus("Concrete Mixing Ratio Calculator");
+
+        assertTrue(roofingBonus > calculatorBonus);
+        assertTrue(calculatorBonus < 0);
+    }
+
+    @Test
     public void wallWeatherproofQueryDoesNotPromoteRoofingTopic() {
         QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
             "how do i weatherproof a cabin wall with rough lumber"
