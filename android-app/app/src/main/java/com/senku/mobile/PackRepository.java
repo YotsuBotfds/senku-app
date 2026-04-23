@@ -4659,6 +4659,14 @@ public final class PackRepository implements AutoCloseable {
         }
         if ("water_storage".equals(metadataProfile.preferredStructureType())
             && !metadataProfile.hasExplicitTopic("water_distribution")
+            && containsTerm(candidate.topicTags, "water_distribution")
+            && !containsTerm(candidate.topicTags, "container_sanitation")
+            && !containsTerm(candidate.topicTags, "water_rotation")
+            && sectionBonus <= 0) {
+            return false;
+        }
+        if ("water_storage".equals(metadataProfile.preferredStructureType())
+            && !metadataProfile.hasExplicitTopic("water_distribution")
             && "guide-focus".equals(retrievalMode)
             && emptySafe(candidate.sectionHeading).trim().isEmpty()
             && !"water_storage".equals(structureType)

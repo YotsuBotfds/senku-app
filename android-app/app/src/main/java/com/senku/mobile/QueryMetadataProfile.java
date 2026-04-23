@@ -489,7 +489,16 @@ public final class QueryMetadataProfile {
             if (!explicitTopicTags.contains("water_distribution")
                 && (normalizedSection.contains("distribution")
                     || normalizedSection.contains("system design")
-                    || normalizedSection.contains("community water"))) {
+                    || normalizedSection.contains("community water")
+                    || normalizedSection.contains("water tower")
+                    || normalizedSection.contains("distribution network")
+                    || normalizedSection.contains("main line")
+                    || normalizedSection.contains("branch line")
+                    || normalizedSection.contains("household taps")
+                    || normalizedSection.contains("spring box")
+                    || normalizedSection.contains("standpipe")
+                    || normalizedSection.contains("service line")
+                    || normalizedSection.contains("pressure"))) {
                 score -= explicitTopicFocus ? 10 : 14;
             }
             if (explicitTopicTags.contains("water_distribution")) {

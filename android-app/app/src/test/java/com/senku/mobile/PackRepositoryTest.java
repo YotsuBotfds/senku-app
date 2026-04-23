@@ -188,6 +188,34 @@ public final class PackRepositoryTest {
     }
 
     @Test
+    public void diversifiedWaterContextRejectsMixedTagWaterTowerSupportForBroadStorage() {
+        QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
+            "what's the safest way to store treated water long term"
+        );
+        QueryMetadataProfile metadataProfile = QueryMetadataProfile.fromQuery(
+            "what's the safest way to store treated water long term"
+        );
+        SearchResult candidate = new SearchResult(
+            "Community Water Distribution Systems",
+            "",
+            "Storage tank height, pressure, and household taps for a gravity-fed network.",
+            "Storage tank height, pressure, and household taps for a gravity-fed network.",
+            "GD-270",
+            "Water Tower Construction & Sizing",
+            "building",
+            "guide-focus",
+            "planning",
+            "long_term",
+            "water_storage",
+            "water_storage,water_distribution"
+        );
+
+        boolean keep = PackRepository.supportCandidateMatchesRoute(routeProfile, metadataProfile, true, candidate);
+
+        assertEquals(false, keep);
+    }
+
+    @Test
     public void explicitWaterDistributionContextKeepsGuideFocusDistributionOverviewSupport() {
         QueryRouteProfile routeProfile = QueryRouteProfile.fromQuery(
             "how do i design a gravity-fed water distribution system"

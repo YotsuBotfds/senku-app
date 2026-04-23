@@ -937,6 +937,46 @@ Guide body.
         self.assertIn("water_storage", tags)
         self.assertNotIn("water_distribution", tags)
 
+    def test_water_storage_chunk_with_cistern_catchment_note_stays_out_of_distribution_topic(self):
+        guide = GuideRecord(
+            guide_id="GD-252",
+            slug="storage-material-management",
+            title="Storage & Material Management",
+            source_file="storage-material-management.md",
+            description="Storage guidance for critical supplies and materials.",
+            category="resource-management",
+            tags="storage,water",
+        )
+        guide_meta = _derive_guide_metadata(guide)
+        chunk = ChunkRecord(
+            chunk_id="chunk_252b",
+            source_file="storage-material-management.md",
+            guide_id="GD-252",
+            guide_title="Storage & Material Management",
+            slug="storage-material-management",
+            description="Long-term treated-water reserve storage.",
+            category="resource-management",
+            difficulty="basic",
+            last_updated="2026-04-12",
+            version="v1",
+            liability_level="medium",
+            tags="storage,water",
+            related="",
+            section_id="reserve-water-storage",
+            section_heading="Water Storage: Reserve Capacity",
+            document=(
+                "A covered cistern catchment can hold treated water for long-term reserve use. "
+                "Keep the inlet screened and the access lid sealed even if a site later adapts it for gravity-fed distribution."
+            ),
+            embedding=(0.21, 0.21, 0.21),
+        )
+
+        meta = _derive_chunk_metadata(chunk, guide_meta)
+        tags = set(meta.topic_tags.split(",")) if meta.topic_tags else set()
+
+        self.assertIn("water_storage", tags)
+        self.assertNotIn("water_distribution", tags)
+
     def test_chunk_metadata_avoids_false_house_labels_for_pig_farming(self):
         guide = GuideRecord(
             guide_id="GD-067",

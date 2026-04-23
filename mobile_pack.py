@@ -189,9 +189,6 @@ TOPIC_TAG_MARKERS = {
         "water distribution",
         "distribution network",
         "water tower",
-        "cistern",
-        "storage tank",
-        "catchment",
         "spring box",
         "household taps",
         "community water",
@@ -558,8 +555,6 @@ WATER_DISTRIBUTION_BODY_STRONG_MARKERS = WATER_DISTRIBUTION_CORE_MARKERS
 WATER_DISTRIBUTION_BODY_SUPPORT_MARKERS = (
     "storage tank",
     "elevated storage",
-    "cistern",
-    "catchment",
     "spring box",
 )
 

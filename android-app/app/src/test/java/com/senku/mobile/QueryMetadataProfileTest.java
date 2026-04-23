@@ -405,6 +405,19 @@ public final class QueryMetadataProfileTest {
     }
 
     @Test
+    public void treatedWaterStorageLongTermDeprioritizesWaterTowerSections() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "what's the safest way to store treated water long term"
+        );
+
+        int containerBonus = profile.sectionHeadingBonus("Food-Safe Containers and Sanitation");
+        int towerBonus = profile.sectionHeadingBonus("Water Tower Construction & Sizing");
+
+        assertTrue(containerBonus > towerBonus);
+        assertTrue(towerBonus < 0);
+    }
+
+    @Test
     public void waterStorageContinuationPrefersHydrationOverFoodStorage() {
         QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
             "water storage container sanitation rotation"
