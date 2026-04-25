@@ -7854,6 +7854,9 @@ def _is_mania_no_sleep_immediate_safety_special_case(question):
             "has not slept",
             "hasn't slept",
             "not slept",
+            "not really slept",
+            "barely slept",
+            "hardly slept",
             "no sleep",
             "no sleep for",
             "awake for days",
@@ -7861,12 +7864,20 @@ def _is_mania_no_sleep_immediate_safety_special_case(question):
             "not need sleep",
             "do not need sleep",
             "does not need sleep",
+            "not sleeping",
+            "not slept for",
+            "haven't slept",
+            "not had sleep",
             "insomnia",
             "has not eaten",
             "hasn't eaten",
             "not eaten",
             "will not eat",
             "won't eat",
+            "hardly eaten",
+            "has hardly eaten",
+            "barely eating",
+            "barely ate",
         },
     )
     has_activation_or_risk = _text_has_marker(
@@ -7877,25 +7888,79 @@ def _is_mania_no_sleep_immediate_safety_special_case(question):
             "won't stop talking",
             "racing thoughts",
             "pacing all night",
+            "keeps pacing",
+            "talking fast",
+            "rearranging everything",
+            "trying to leave",
             "will not stop moving",
             "won't stop moving",
+            "can't stop moving",
             "impossible to slow down",
+            "will not let anyone slow",
+            "won't let anyone slow",
+            "normal rules do not apply",
+            "special mission",
+            "nothing can hurt",
+            "unsafe choices",
+            "walking outside at night",
+            "keep trying to walk outside",
             "risky plans",
+            "reckless spending",
+            "spending recklessly",
             "spending wildly",
             "acting invincible",
             "invincible",
-            "nothing can hurt",
             "paranoid",
             "grandiose",
-            " grand ",
             "grand and",
-            "reckless",
-            "agitated",
+            "reckless behavior",
+            "reckless plans",
             "driving around",
             "making risky",
         },
     )
-    return has_sleep_or_food_impairment and has_activation_or_risk
+    has_mania_risk_signature = _text_has_marker(
+        lower,
+        {
+            "acting invincible",
+            "normal rules do not apply",
+            "nothing can hurt",
+            "special mission",
+            "unsafe choices",
+            "walking outside at night",
+            "trying to leave",
+            "trying to leave with no plan",
+            "rearranging everything",
+            "will not let anyone slow",
+            "impossible to slow down",
+            "spending recklessly",
+            "spending wildly",
+        },
+    )
+    if not has_activation_or_risk or (
+        not has_sleep_or_food_impairment and not has_mania_risk_signature
+    ):
+        return False
+
+    ordinary_stress_or_anxiety_context = _text_has_marker(
+        lower,
+        {"stress", "stressed", "anxiety", "anxious", "routine anxiety", "just anxiety"},
+    ) and not _text_has_marker(
+        lower,
+        {
+            "special mission",
+            "normal rules do not apply",
+            "nothing can hurt",
+            "acting invincible",
+            "will not let anyone slow",
+            "impossible to slow down",
+            "unsafe choices",
+            "trying to leave",
+            "spending recklessly",
+            "spending wildly",
+        },
+    )
+    return not ordinary_stress_or_anxiety_context
 
 
 def _is_alcohol_withdrawal_agitated_special_case(question):

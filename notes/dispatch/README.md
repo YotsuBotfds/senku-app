@@ -192,6 +192,15 @@ Current active family:
   concentration remains best-rank `1.36`, top-3 `21/24`, top-k `22/24`.
   Dispatch note:
   `notes/dispatch/RAG-S20_reviewed_card_rank_drift_taxonomy.md`.
+- `RAG-S21` extends the existing `mania_no_sleep_immediate_safety`
+  deterministic predicate to cover the FD dangerous-activation phrasings while
+  preserving a stress/anxiety insomnia near-miss guard. Fresh FD proof:
+  `artifacts/bench/guide_wave_fd_20260425_150350.json`; combined FA/FB/FD/FE
+  proof:
+  `artifacts/bench/rag_diagnostics_20260425_1503_fa_fb_fd_fe_fd_deterministic/report.md`.
+  Quality score is now `9.37`, generated rows are `0/24`, deterministic rows
+  are `18/24`, and bad diagnostic buckets remain `0`. Dispatch note:
+  `notes/dispatch/RAG-S21_dangerous_activation_deterministic_extension.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually

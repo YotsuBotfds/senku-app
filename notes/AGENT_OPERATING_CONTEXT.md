@@ -140,6 +140,12 @@ in top-k.
   `artifacts/bench/rag_diagnostics_20260425_1448_fa_fb_fd_fe_current_taxonomy/`;
   quality score is `8.83`, bad diagnostic buckets are `0`, owner best-rank is
   `1.36`, top-3 `21/24`, top-k `22/24`.
+- Desktop `RAG-S21` extends the existing `mania_no_sleep_immediate_safety`
+  deterministic rule to the FD dangerous-activation phrasings. FD now has no
+  generation calls, the combined FA/FB/FD/FE panel reaches quality score
+  `9.37`, and deterministic rows are `18/24`. Proof:
+  `artifacts/bench/rag_diagnostics_20260425_1503_fa_fb_fd_fe_fd_deterministic/`.
+  This is safety routing, not a retrieval-ranking or Android change.
 - Desktop reviewed-card/provenance work does not automatically change Android
   behavior. Android needs explicit Kotlin/mobile-pack plumbing: `RAG-A1`
   landed display-only answer surface labels, `RAG-A2` landed optional

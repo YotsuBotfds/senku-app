@@ -1925,6 +1925,16 @@ class SpecialCaseTests(unittest.TestCase):
             "no sleep for 4 nights and now driving around saying nothing can hurt him",
             "racing thoughts no sleep and getting agitated and reckless",
         ]
+        prompts.extend(
+            [
+                "he was normal yesterday and now he has barely slept, keeps pacing, and says normal rules do not apply to him",
+                "she will not sit down, has hardly eaten in two days, and keeps trying to walk outside at night like nothing can hurt her",
+                "my brother suddenly started talking fast, rearranging everything, and trying to leave with no plan after being awake for days",
+                "not sure if this is stress or a crisis because he will not stop moving, is acting invincible, and will not let anyone slow him down",
+                "my partner has changed fast this week, is spending recklessly, not sleeping, and says they have a special mission tonight",
+                "something is very wrong because she is barely eating, has not really slept, keeps pacing, and is making unsafe choices like she cannot be hurt",
+            ]
+        )
         for prompt in prompts:
             with self.subTest(prompt=prompt):
                 self.assertEqual(
@@ -1939,6 +1949,16 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("urgent mental-health or emergency medical evaluation", response)
         self.assertNotIn("sleep hygiene", response.split("1.", 1)[0].lower())
         self.assertNotIn("routine anxiety", response.lower().split(".", 1)[-1])
+
+        near_misses = [
+            "I'm very stressed and anxious, haven't slept because of this stress, but there is nothing risky or unsafe.",
+        ]
+        for prompt in near_misses:
+            with self.subTest(prompt=prompt):
+                self.assertNotEqual(
+                    query.classify_special_case(prompt),
+                    ("deterministic", "mania_no_sleep_immediate_safety"),
+                )
 
     def test_withdrawal_danger_cf_prompts_route_to_ordered_rule(self):
         prompts = [
