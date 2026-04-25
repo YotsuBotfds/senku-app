@@ -180,6 +180,28 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(claim_result["status"], "pass")
         self.assertEqual(claim_result["forbidden_count"], 0)
 
+    def test_dangerous_activation_card_leads_with_crisis_escalation(self):
+        card = find_cards_for_guides("GD-859", cards=self.cards)[0]
+
+        self.assertEqual(card["card_id"], "dangerous_activation_mania_crisis")
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-859"])
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["cited_guide_ids"], ["GD-859"])
+        self.assertIn("acute mental health crisis", plan["answer_text"])
+        self.assertIn("urgent medical evaluation", plan["answer_text"])
+        self.assertIn("[GD-859]", plan["answer_text"])
+        card_result = evaluate_answer_card_contract(plan["answer_text"], [card])
+        self.assertEqual(card_result["status"], "pass")
+        claim_result = diagnose_claim_support(
+            plan["answer_text"],
+            [card],
+            cited_guide_ids=plan["cited_guide_ids"],
+            expected_guide_ids=["GD-859"],
+        )
+        self.assertEqual(claim_result["status"], "pass")
+        self.assertEqual(claim_result["forbidden_count"], 0)
+
     def test_compose_card_backed_answer_does_not_cite_unallowed_backup_owner(self):
         card = [
             candidate

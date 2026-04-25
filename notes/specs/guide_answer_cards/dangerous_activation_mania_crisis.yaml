@@ -1,0 +1,76 @@
+card_id: dangerous_activation_mania_crisis
+guide_id: GD-859
+slug: recognizing-mental-health-crises
+title: "Recognizing Mental Health Crises"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A person has gone days with little or no sleep but seems wired, invincible, grandiose, reckless, or impossible to interrupt.
+  - User asks whether nonstop talking, little sleep, risky behavior, or suddenly feeling unstoppable is anxiety, motivation, or a crisis.
+  - Acute activation appears with paranoia, hallucinations, severe confusion, unsafe wandering, violence risk, or self-harm risk.
+required_first_actions:
+  - Treat days of little or no sleep with grandiosity, recklessness, invincible behavior, or nonstop talking as an acute mental health crisis.
+  - Seek urgent medical evaluation when judgment is worsening, reality testing is slipping, or behavior is unsafe.
+  - Keep the person safe and supervised; reduce stimulation and remove obvious means of harm if it can be done safely.
+first_actions:
+  - Approach calmly with slow movements, a low voice, and non-threatening body language.
+  - Reassure without validating delusions, grandiose beliefs, or impossible claims.
+  - Check whether the person is a danger to self, a danger to others, or unable to care for basic needs.
+  - Use peer support only after immediate danger, psychosis, and acute activation have been routed to crisis or medical evaluation.
+urgent_red_flags:
+  - Very little or no sleep for 2 or more days without seeming tired.
+  - Talking nonstop, pressured speech, or jumping rapidly between ideas.
+  - Feeling invincible, specially chosen, unusually powerful, or grandiose.
+  - Reckless spending, driving, sex, fights, travel, or other high-risk behavior.
+  - Paranoia, hallucinations, severe confusion, unsafe wandering, violence risk, or self-harm risk.
+forbidden_advice:
+  - Do not treat days of no sleep with grandiosity, recklessness, or invincible behavior as routine anxiety, motivation, or just a lot of energy.
+  - Do not rely on grounding, breathing, peer support, or self-care alone when acute activation or psychosis signs are present.
+  - Do not validate delusions, grandiose beliefs, or unsafe plans.
+do_not:
+  - Do not leave the person alone if there is imminent danger.
+  - Do not argue the person out of delusions or grandiose beliefs.
+  - Do not delay urgent evaluation to continue routine calming exercises.
+routine_boundary: >
+  Routine anxiety, stress, motivation, sleep-hygiene, or peer-support framing is
+  out of bounds when little or no sleep for days is paired with grandiosity,
+  recklessness, invincible-seeming behavior, nonstop talking, psychosis, or
+  unsafe behavior.
+acceptable_uncertain_fit: >
+  If the activation pattern is plausible but incomplete, ask about sleep
+  duration, pressured speech, grandiosity, reckless behavior, psychosis, and
+  immediate safety while preserving an urgent evaluation warning if danger signs
+  are present.
+clarifying_questions:
+  - How many days has the person slept very little or not at all?
+  - Are they talking nonstop, grandiose, invincible-seeming, reckless, paranoid, hallucinating, or severely confused?
+  - Are they a danger to themself, a danger to others, or unable to stay safe without supervision?
+citation_ids:
+  - mental-health-crisis-acute-mania
+  - crisis-escalation-decision-tree
+  - psychosis-safety-management
+source_sections:
+  - guide: GD-859
+    slug: recognizing-mental-health-crises
+    title: "Recognizing Mental Health Crises"
+    sections:
+      - "#severe-mental-illness"
+      - "#severe-mental-illness > Acute Mania or Activated Bipolar State"
+      - "#severe-mental-illness > Immediate safety assessment"
+      - "#crisis-escalation"
+source_invariants:
+  - name: dangerous activation is crisis not routine anxiety
+    guide: GD-859
+    must_include:
+      - treat it as an acute mental health crisis and seek urgent evaluation
+      - This is not routine anxiety, motivation, or just "a lot of energy."
+      - Seek urgent medical evaluation.
+    must_not_match:
+      - "little or no sleep[^\\n]{0,120}(routine anxiety|motivation|just a lot of energy)"
+      - "grandiose[^\\n]{0,120}(grounding|breathing exercise)[^\\n]{0,80}alone"
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-859 because it carries the acute mania / activated-state
+  routing rule and crisis decision tree. PFA and anxiety guides remain
+  boundary-support guides; they hand off to this crisis lane rather than owning
+  the reviewed-card answer.

@@ -153,6 +153,12 @@ evaluate reviewed-card coverage or the deep-research `RAG-RUNTIME1` /
 `RAG-TRUST1` drafted the high-risk answer policy. Current policy:
 `notes/SENKU_TRUST_MODEL_HIGH_RISK_POLICY_20260425.md`.
 
+`RAG-CARD1` added a `GD-859` reviewed answer-card contract for dangerous
+activation / acute mania crisis. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1650_dangerous_activation_card.md`.
+The dangerous activation family now shows `0/2` frontmatter/card gaps; do not
+add routine anxiety or PFA cards just to force this family to zero.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

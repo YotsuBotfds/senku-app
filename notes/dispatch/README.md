@@ -577,6 +577,12 @@ Current active family:
   shows all four observed high-liability families at `0/N` frontmatter/card
   gaps with `consider_reviewed_answer_card`, preventing further false metadata
   churn.
+- `RAG-CARD1` added a reviewed `GD-859` answer-card contract for dangerous
+  activation / acute mania crisis. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1650_dangerous_activation_card.md`
+  moves dangerous activation from `0/3` to `0/2` frontmatter/card gaps and
+  score `6` to `4`, while leaving routine anxiety and PFA as boundary-support
+  guides rather than primary card owners.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.
