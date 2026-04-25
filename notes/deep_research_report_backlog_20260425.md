@@ -32,6 +32,10 @@ and user trust behavior.
 - `RAG-EVAL1`: add partial-hole and router-page retrieval diagnostics.
   Build held-out prompts that fail if an unresolved partial or thin router page
   becomes the primary answer source.
+  First analyzer overlay landed: `scripts/analyze_rag_bench_failures.py` accepts
+  `--corpus-marker-scan` and surfaces top-1 marker risk / bridge / unresolved
+  partial status. See
+  `notes/dispatch/RAG-EVAL1_corpus_marker_diagnostic_overlay.md`.
 
 ## Later Slices
 

@@ -103,6 +103,10 @@ CSV_FIELDS = (
     "cited_guide_ids",
     "top_retrieved_guide_ids",
     "top_retrieved_guide_ranks",
+    "top1_marker_risk",
+    "top1_is_bridge",
+    "top1_has_unresolved_partial",
+    "top1_marker_types",
     "expected_guide_ids",
     "expected_guide_family",
     "expected_owner_best_rank",
@@ -171,6 +175,76 @@ def artifact_reviewed_card_runtime_answers(data: dict) -> str:
         if value:
             return "enabled" if _truthy(value) else "disabled"
     return "unknown"
+
+
+def load_corpus_marker_lookup(path: Path | None) -> dict[str, dict]:
+    if path is None:
+        return {}
+    data = load_json(path)
+    lookup = {}
+    for record in data.get("guides", []):
+        if not isinstance(record, dict):
+            continue
+        keys = {
+            str(record.get("guide_id") or "").strip(),
+            str(record.get("source_file") or "").strip(),
+            str(record.get("slug") or "").strip(),
+        }
+        for key in keys:
+            if key:
+                lookup[key] = record
+    return lookup
+
+
+def top1_marker_fields(
+    candidate_ids: list[str],
+    marker_lookup: dict[str, dict],
+) -> dict[str, str]:
+    if not marker_lookup:
+        return {
+            "top1_marker_risk": "not_loaded",
+            "top1_is_bridge": "not_loaded",
+            "top1_has_unresolved_partial": "not_loaded",
+            "top1_marker_types": "not_loaded",
+        }
+    if not candidate_ids:
+        return {
+            "top1_marker_risk": "unknown",
+            "top1_is_bridge": "unknown",
+            "top1_has_unresolved_partial": "unknown",
+            "top1_marker_types": "unknown",
+        }
+
+    record = marker_lookup.get(candidate_ids[0])
+    if not record:
+        return {
+            "top1_marker_risk": "none",
+            "top1_is_bridge": "no",
+            "top1_has_unresolved_partial": "no",
+            "top1_marker_types": "none",
+        }
+
+    severity_counts = record.get("severity_counts") or {}
+    if severity_counts.get("fail"):
+        risk = "fail"
+    elif severity_counts.get("warn"):
+        risk = "warn"
+    elif severity_counts.get("info"):
+        risk = "info"
+    else:
+        risk = "none"
+    marker_counts = record.get("marker_counts") or {}
+    marker_types = "|".join(
+        marker_type for marker_type, count in sorted(marker_counts.items()) if count
+    )
+    return {
+        "top1_marker_risk": risk,
+        "top1_is_bridge": "yes" if record.get("bridge") else "no",
+        "top1_has_unresolved_partial": (
+            "yes" if marker_counts.get("unresolved_partial") else "no"
+        ),
+        "top1_marker_types": marker_types or "none",
+    }
 
 
 def load_expectations(path: Path | None) -> dict:
@@ -655,12 +729,14 @@ def build_rows(
     expectations: dict | None = None,
     guide_lookup: dict[str, dict[str, str]] | None = None,
     answer_cards: list[dict] | None = None,
+    corpus_marker_lookup: dict[str, dict] | None = None,
 ) -> list[dict]:
     rows = []
     expectations = expectations or {}
     guide_lookup = guide_lookup or load_guide_lookup()
     if answer_cards is None:
         answer_cards = load_answer_cards()
+    corpus_marker_lookup = corpus_marker_lookup or {}
     for path in paths:
         data = load_json(path)
         runtime_answer_setting = artifact_reviewed_card_runtime_answers(data)
@@ -764,6 +840,7 @@ def build_rows(
                 generated=evaluable_answer,
             )
             ranks = [f"{rank}:{guide_id}" for rank, guide_id in enumerate(candidate_ids, start=1)]
+            top1_marker = top1_marker_fields(candidate_ids, corpus_marker_lookup)
             rows.append(
                 {
                     "artifact_path": str(path),
@@ -783,6 +860,7 @@ def build_rows(
                     "cited_guide_ids": "|".join(cited_ids),
                     "top_retrieved_guide_ids": "|".join(candidate_ids) if candidate_ids else "unknown",
                     "top_retrieved_guide_ranks": "|".join(ranks) if ranks else "unknown",
+                    **top1_marker,
                     "expected_guide_ids": "|".join(expected_ids) if expected_ids else "unknown",
                     "expected_guide_family": expected_family or "unknown",
                     **owner_concentration_metrics(
@@ -832,6 +910,9 @@ def summarize(rows: list[dict]) -> dict:
     answer_provenance_counts = Counter()
     answer_surface_label_counts = Counter()
     artifact_runtime_counts = Counter()
+    top1_marker_risk_counts = Counter()
+    top1_bridge_count = 0
+    top1_unresolved_partial_count = 0
     reviewed_card_backed = 0
     evidence_owner_counts = Counter()
     safety_surface_counts = Counter()
@@ -900,6 +981,13 @@ def summarize(rows: list[dict]) -> dict:
         artifact = row["artifact_name"]
         runtime_setting = row.get("artifact_reviewed_card_runtime_answers") or "unknown"
         artifact_runtime_counts[runtime_setting] += 1
+        marker_risk = row.get("top1_marker_risk") or ""
+        if marker_risk:
+            top1_marker_risk_counts[marker_risk] += 1
+        if row.get("top1_is_bridge") == "yes":
+            top1_bridge_count += 1
+        if row.get("top1_has_unresolved_partial") == "yes":
+            top1_unresolved_partial_count += 1
         bucket = row["suspected_failure_bucket"]
         by_artifact_bucket[artifact][bucket] += 1
         if row["decision_path"] == "deterministic":
@@ -1069,6 +1157,9 @@ def summarize(rows: list[dict]) -> dict:
         "answer_provenance_counts": dict(answer_provenance_counts),
         "answer_surface_label_counts": dict(answer_surface_label_counts),
         "artifact_reviewed_card_runtime_answer_counts": dict(artifact_runtime_counts),
+        "top1_marker_risk_counts": dict(top1_marker_risk_counts),
+        "top1_bridge_rows": top1_bridge_count,
+        "top1_unresolved_partial_rows": top1_unresolved_partial_count,
         "reviewed_card_backed_rows": reviewed_card_backed,
         "app_acceptance_counts": dict(app_acceptance_counts),
         "evidence_owner_counts": dict(evidence_owner_counts),
@@ -1171,6 +1262,19 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
             lines.append(f"  - `{label}`: {count}")
     else:
         lines.append("- surface label: `none`")
+
+    marker_risk_counts = summary.get("top1_marker_risk_counts") or {}
+    lines.extend(["", "## Corpus Marker Overlay", ""])
+    if marker_risk_counts:
+        lines.append("- top-1 marker risk:")
+        for risk, count in sorted(marker_risk_counts.items()):
+            lines.append(f"  - `{risk}`: {count}")
+    else:
+        lines.append("- top-1 marker risk: `none`")
+    lines.append(f"- top-1 bridge rows: `{summary.get('top1_bridge_rows', 0)}`")
+    lines.append(
+        f"- top-1 unresolved-partial rows: `{summary.get('top1_unresolved_partial_rows', 0)}`"
+    )
 
     lines.extend(
         [
@@ -1369,9 +1473,15 @@ def analyze(
     paths: list[Path],
     output_dir: Path,
     expectations_path: Path | None = None,
+    corpus_marker_scan_path: Path | None = None,
 ) -> tuple[list[dict], dict]:
     expectations = load_expectations(expectations_path) if expectations_path else {}
-    rows = build_rows(paths, expectations=expectations)
+    corpus_marker_lookup = load_corpus_marker_lookup(corpus_marker_scan_path)
+    rows = build_rows(
+        paths,
+        expectations=expectations,
+        corpus_marker_lookup=corpus_marker_lookup,
+    )
     summary = summarize(rows)
     output_dir.mkdir(parents=True, exist_ok=True)
     write_markdown(rows, summary, output_dir / "report.md")
@@ -1402,6 +1512,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Disable default expectation manifest loading",
     )
+    parser.add_argument(
+        "--corpus-marker-scan",
+        type=Path,
+        default=None,
+        help="Optional JSON output from scripts/scan_corpus_markers.py",
+    )
     return parser.parse_args()
 
 
@@ -1413,7 +1529,12 @@ def main() -> int:
         raise SystemExit(f"Missing artifact(s): {', '.join(missing)}")
     output_dir = args.output_dir or default_output_dir()
     expectations_path = None if args.no_expectations else args.expectations
-    rows, summary = analyze(paths, output_dir, expectations_path=expectations_path)
+    rows, summary = analyze(
+        paths,
+        output_dir,
+        expectations_path=expectations_path,
+        corpus_marker_scan_path=args.corpus_marker_scan,
+    )
     print(f"Wrote {len(rows)} diagnostic rows to {output_dir}")
     print("Bucket counts:")
     for bucket, count in sorted(summary["by_bucket"].items()):

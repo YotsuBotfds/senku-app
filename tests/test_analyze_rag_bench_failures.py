@@ -1571,6 +1571,75 @@ waves:
         )
         self.assertIn("Artifact reviewed-card runtime answers", report)
 
+    def test_corpus_marker_scan_surfaces_top1_partial_overlay(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        marker_scan = root / "markers.json"
+        output_dir = root / "diagnostics"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Which water guide should I use?",
+                            "prompt_metadata": {"expected_guide_id": "GD-200"},
+                            "decision_path": "rag",
+                            "generation_time": 0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": [],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-100", "GD-200"]
+                            },
+                            "response_text": "",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        marker_scan.write_text(
+            json.dumps(
+                {
+                    "summary": {},
+                    "guides": [
+                        {
+                            "guide_id": "GD-100",
+                            "source_file": "router.md",
+                            "slug": "router",
+                            "bridge": True,
+                            "marker_counts": {
+                                "bridge_frontmatter": 1,
+                                "unresolved_partial": 1,
+                            },
+                            "severity_counts": {"fail": 1, "info": 1},
+                            "hits": [],
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows, summary = analyze(
+            [artifact],
+            output_dir,
+            corpus_marker_scan_path=marker_scan,
+        )
+        report = (output_dir / "report.md").read_text(encoding="utf-8")
+
+        self.assertEqual(rows[0]["top1_marker_risk"], "fail")
+        self.assertEqual(rows[0]["top1_is_bridge"], "yes")
+        self.assertEqual(rows[0]["top1_has_unresolved_partial"], "yes")
+        self.assertEqual(
+            rows[0]["top1_marker_types"],
+            "bridge_frontmatter|unresolved_partial",
+        )
+        self.assertEqual(summary["top1_marker_risk_counts"], {"fail": 1})
+        self.assertEqual(summary["top1_bridge_rows"], 1)
+        self.assertEqual(summary["top1_unresolved_partial_rows"], 1)
+        self.assertIn("Corpus Marker Overlay", report)
+
 
 if __name__ == "__main__":
     unittest.main()

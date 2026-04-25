@@ -79,6 +79,13 @@ in top-k.
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\scan_corpus_markers.py --guides-dir guides --output-json artifacts\bench\corpus_marker_scan.json --output-md artifacts\bench\corpus_marker_scan.md
 ```
 
+Pass the scanner JSON into RAG diagnostics when investigating retrieval/ranking
+misses:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py <bench-json> --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-dir artifacts\bench\<diagnostic-dir>
+```
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

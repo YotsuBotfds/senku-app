@@ -229,6 +229,11 @@ Current active family:
   research backlog. It found `55` unresolved partial markers in `55` guides
   and writes JSON/Markdown reports for packaging/eval follow-up. Dispatch note:
   `notes/dispatch/RAG-DOCS1_corpus_marker_scanner.md`.
+- `RAG-EVAL1` lets RAG diagnostics consume that marker scan with top-1 marker
+  risk, bridge, unresolved-partial, and marker-type columns. Fresh FA/FB/FD/FE
+  overlay stayed at `9.56/10` and showed no top-1 bridge or unresolved partial
+  rows. Dispatch note:
+  `notes/dispatch/RAG-EVAL1_corpus_marker_diagnostic_overlay.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`
