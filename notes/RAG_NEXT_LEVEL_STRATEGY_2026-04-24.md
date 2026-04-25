@@ -106,10 +106,10 @@ Fresh signals:
 
 Backlog integration:
 
-- `RAG-S14` - nugget / evidence-card evaluation harness. Extend analyzer output
-  from card pass/partial into TREC-style required evidence nuggets: present,
-  cited, supported, contradicted, or missing. Use existing answer-card clauses
-  and source invariants before adding any LLM judge.
+- `RAG-S14` - nugget / evidence-card analyzer diagnostics now extend analyzer
+  output from card pass/partial into TREC-style required evidence nuggets:
+  present, cited, supported, contradicted, or missing, using existing
+  answer-card clauses and source invariants before any LLM judge.
 - `RAG-S15` - contextual chunk ingest shadow experiment. Add a non-default
   contextual retrieval text field, re-ingest into a shadow collection or export,
   and compare hit@1/hit@3/hit@k and app-acceptance counts against the current

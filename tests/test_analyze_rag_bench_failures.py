@@ -389,6 +389,9 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         self.assertEqual(rows[0]["reviewed_card_review_status"], "pilot_reviewed")
         self.assertEqual(rows[0]["reviewed_card_guide_ids"], "GD-111")
         self.assertEqual(rows[0]["answer_card_status"], "pass")
+        self.assertEqual(rows[0]["evidence_nugget_status"], "pass")
+        self.assertEqual(rows[0]["evidence_nugget_total"], 2)
+        self.assertEqual(rows[0]["evidence_nugget_supported"], 2)
         self.assertEqual(rows[0]["claim_support_status"], "pass")
         self.assertEqual(summary["generation_workload"]["generated"], 0)
         self.assertEqual(summary["reviewed_card_backed_rows"], 1)
@@ -401,6 +404,18 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
             {"reviewed_card_evidence": 1},
         )
         self.assertEqual(summary["answer_card_counts"], {"pass": 1})
+        self.assertEqual(summary["evidence_nugget_counts"], {"pass": 1})
+        self.assertEqual(
+            summary["evidence_nugget_totals"],
+            {
+                "total": 2,
+                "present": 2,
+                "cited": 2,
+                "supported": 2,
+                "missing": 0,
+                "contradicted": 0,
+            },
+        )
         self.assertEqual(summary["claim_support_counts"], {"pass": 1})
 
     def test_provenance_distinguishes_reviewed_card_from_generated_strong_answer(self):
@@ -542,10 +557,17 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
             summary["generated_shadow_card_gap_examples"][0]["missing_required"],
             "Keep the airway open",
         )
+        self.assertEqual(summary["evidence_nugget_counts"], {"partial": 1, "pass": 1})
+        self.assertEqual(
+            summary["top_evidence_nugget_missing_phrases"],
+            [("Keep the airway open", 1)],
+        )
 
         output_dir.mkdir()
         write_markdown(rows, summary, output_dir / "report.md")
         report = (output_dir / "report.md").read_text(encoding="utf-8")
+        self.assertIn("## Evidence Nuggets", report)
+        self.assertIn("`partial`: 1", report)
         self.assertIn("## Generated vs Shadow Card Gaps", report)
         self.assertIn("Keep the airway open", report)
 
@@ -1047,11 +1069,14 @@ waves:
         self.assertEqual(csv_row["app_acceptance_status"], "abstain_accepted")
         self.assertEqual(csv_row["ui_surface_bucket"], "abstain")
         self.assertIn("answer_card_status", csv_row)
+        self.assertIn("evidence_nugget_status", csv_row)
+        self.assertIn("evidence_nugget_supported", csv_row)
         self.assertIn("claim_support_status", csv_row)
         self.assertIn("claim_action_count", csv_row)
         self.assertIn("shadow_card_answer_status", csv_row)
         self.assertIn("shadow_claim_support_status", csv_row)
         self.assertIn("## Answer Cards", report)
+        self.assertIn("## Evidence Nuggets", report)
         self.assertIn("## Claim Support", report)
         self.assertIn("## Shadow Card Composer", report)
 

@@ -8,6 +8,7 @@ from typing import Callable
 
 from guide_answer_card_contracts import (
     compose_card_backed_answer,
+    compose_evidence_units,
     evaluate_answer_card_contract,
     find_cards_for_guides,
 )
@@ -221,6 +222,115 @@ def answer_card_diagnostics(
             evaluation.get("forbidden_advice_hits") or []
         ),
     }
+
+
+def evidence_nugget_diagnostics(
+    result: dict,
+    *,
+    expected_family: str = "",
+    cited_ids: list[str],
+    generated: str,
+    selected_cards: list[dict],
+) -> dict[str, str | int]:
+    """Return TREC-style evidence coverage fields from reviewed answer cards."""
+
+    empty_fields = {
+        "evidence_nugget_status": "",
+        "evidence_nugget_total": 0,
+        "evidence_nugget_present": 0,
+        "evidence_nugget_cited": 0,
+        "evidence_nugget_supported": 0,
+        "evidence_nugget_missing": 0,
+        "evidence_nugget_contradicted": 0,
+        "evidence_nugget_missing_phrases": "",
+        "evidence_nugget_contradicted_phrases": "",
+    }
+    if not selected_cards:
+        return {**empty_fields, "evidence_nugget_status": "no_cards"}
+
+    answer_text = str(result.get("response_text") or "").strip()
+    if generated != "yes" or not answer_text:
+        return {**empty_fields, "evidence_nugget_status": "no_evaluable_answer"}
+
+    question_text = str(result.get("question") or result.get("prompt_text") or "")
+    if strict_card_not_applicable_to_compare_prompt(question_text, selected_cards):
+        return {**empty_fields, "evidence_nugget_status": "not_applicable_compare"}
+
+    evaluation = evaluate_answer_card_contract(
+        answer_text,
+        selected_cards,
+        question_text=question_text,
+        context=[expected_family],
+    )
+    hits = evaluation.get("required_action_hits") or []
+    missing = evaluation.get("missing_required_actions") or []
+    contradicted = evaluation.get("forbidden_advice_hits") or []
+    total = len(hits) + len(missing)
+    cited = set(cited_ids)
+    source_ids_by_card = _source_guide_ids_by_card(
+        selected_cards,
+        question_text=question_text,
+        context=[expected_family],
+    )
+    cited_hits = [
+        hit
+        for hit in hits
+        if cited & _source_ids_for_match(hit, source_ids_by_card)
+    ]
+    supported = len(cited_hits)
+
+    if contradicted:
+        status = "fail"
+    elif total == 0:
+        status = "no_required_nuggets"
+    elif supported == total:
+        status = "pass"
+    elif hits:
+        status = "partial"
+    else:
+        status = "missing"
+
+    return {
+        "evidence_nugget_status": status,
+        "evidence_nugget_total": total,
+        "evidence_nugget_present": len(hits),
+        "evidence_nugget_cited": len(cited_hits),
+        "evidence_nugget_supported": supported,
+        "evidence_nugget_missing": len(missing),
+        "evidence_nugget_contradicted": len(contradicted),
+        "evidence_nugget_missing_phrases": compact_match_phrases(missing),
+        "evidence_nugget_contradicted_phrases": compact_match_phrases(contradicted),
+    }
+
+
+def _source_guide_ids_by_card(
+    cards: list[dict],
+    *,
+    question_text: str,
+    context: list[str],
+) -> dict[str, set[str]]:
+    source_ids: dict[str, set[str]] = {}
+    for unit in compose_evidence_units(
+        cards,
+        question_text=question_text,
+        context=context,
+    ):
+        ids = {
+            str(guide_id).strip()
+            for guide_id in unit.get("source_guide_ids") or []
+            if str(guide_id).strip()
+        }
+        for key in (unit.get("card_id"), unit.get("guide_id")):
+            key = str(key or "").strip()
+            if key:
+                source_ids[key] = ids
+    return source_ids
+
+
+def _source_ids_for_match(match: dict, source_ids_by_card: dict[str, set[str]]) -> set[str]:
+    card_id = str(match.get("card_id") or "").strip()
+    guide_id = str(match.get("guide_id") or "").strip()
+    return source_ids_by_card.get(card_id) or source_ids_by_card.get(guide_id) or {guide_id}
 
 
 def strict_card_not_applicable_to_compare_prompt(question_text: str, cards: list[dict]) -> bool:

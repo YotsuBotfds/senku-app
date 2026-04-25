@@ -22,6 +22,7 @@ from rag_bench_answer_diagnostics import (
     answer_has_emergency_contract,
     app_acceptance_diagnostics,
     claim_support_diagnostics,
+    evidence_nugget_diagnostics,
     has_safety_prompt,
     select_answer_cards,
     shadow_card_answer_diagnostics,
@@ -112,6 +113,15 @@ CSV_FIELDS = (
     "answer_card_required_hits",
     "answer_card_missing_required",
     "answer_card_forbidden_hits",
+    "evidence_nugget_status",
+    "evidence_nugget_total",
+    "evidence_nugget_present",
+    "evidence_nugget_cited",
+    "evidence_nugget_supported",
+    "evidence_nugget_missing",
+    "evidence_nugget_contradicted",
+    "evidence_nugget_missing_phrases",
+    "evidence_nugget_contradicted_phrases",
     "claim_support_status",
     "claim_action_count",
     "claim_supported_count",
@@ -611,6 +621,13 @@ def build_rows(
                 selected_cards=selected_cards,
                 selected_guide_ids=selected_guide_ids,
             )
+            evidence_nugget_fields = evidence_nugget_diagnostics(
+                result,
+                expected_family=expected_family,
+                cited_ids=cited_ids,
+                generated=evaluable_answer,
+                selected_cards=selected_cards,
+            )
             claim_support_fields = claim_support_diagnostics(
                 result,
                 expected_ids=expected_ids,
@@ -669,6 +686,7 @@ def build_rows(
                         else "unknown"
                     ),
                     **answer_card_fields,
+                    **evidence_nugget_fields,
                     **claim_support_fields,
                     **shadow_card_answer_fields,
                     "cap_hit": bool(result.get("completion_cap_hit")),
@@ -703,6 +721,10 @@ def summarize(rows: list[dict]) -> dict:
     safety_surface_counts = Counter()
     ui_surface_counts = Counter()
     answer_card_counts = Counter()
+    evidence_nugget_counts = Counter()
+    evidence_nugget_totals = Counter()
+    evidence_nugget_missing_phrases = Counter()
+    evidence_nugget_contradicted_phrases = Counter()
     claim_support_counts = Counter()
     shadow_card_answer_counts = Counter()
     shadow_claim_support_counts = Counter()
@@ -745,6 +767,26 @@ def summarize(rows: list[dict]) -> dict:
         answer_card_status = row.get("answer_card_status") or ""
         if answer_card_status:
             answer_card_counts[answer_card_status] += 1
+        evidence_nugget_status = row.get("evidence_nugget_status") or ""
+        if evidence_nugget_status:
+            evidence_nugget_counts[evidence_nugget_status] += 1
+        for source_key, total_key in (
+            ("evidence_nugget_total", "total"),
+            ("evidence_nugget_present", "present"),
+            ("evidence_nugget_cited", "cited"),
+            ("evidence_nugget_supported", "supported"),
+            ("evidence_nugget_missing", "missing"),
+            ("evidence_nugget_contradicted", "contradicted"),
+        ):
+            evidence_nugget_totals[total_key] += int(row.get(source_key) or 0)
+        for phrase in str(row.get("evidence_nugget_missing_phrases") or "").split("|"):
+            phrase = phrase.strip()
+            if phrase:
+                evidence_nugget_missing_phrases[phrase] += 1
+        for phrase in str(row.get("evidence_nugget_contradicted_phrases") or "").split("|"):
+            phrase = phrase.strip()
+            if phrase:
+                evidence_nugget_contradicted_phrases[phrase] += 1
         claim_support_status = row.get("claim_support_status") or ""
         if claim_support_status:
             claim_support_counts[claim_support_status] += 1
@@ -821,6 +863,10 @@ def summarize(rows: list[dict]) -> dict:
         "safety_surface_counts": dict(safety_surface_counts),
         "ui_surface_counts": dict(ui_surface_counts),
         "answer_card_counts": dict(answer_card_counts),
+        "evidence_nugget_counts": dict(evidence_nugget_counts),
+        "evidence_nugget_totals": dict(evidence_nugget_totals),
+        "top_evidence_nugget_missing_phrases": evidence_nugget_missing_phrases.most_common(20),
+        "top_evidence_nugget_contradicted_phrases": evidence_nugget_contradicted_phrases.most_common(20),
         "claim_support_counts": dict(claim_support_counts),
         "shadow_card_answer_counts": dict(shadow_card_answer_counts),
         "shadow_claim_support_counts": dict(shadow_claim_support_counts),
@@ -949,6 +995,33 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
     else:
         lines.append("- `none`: 0")
 
+    lines.extend(["", "## Evidence Nuggets", ""])
+    evidence_counts = summary.get("evidence_nugget_counts") or {}
+    if evidence_counts:
+        for status, count in sorted(evidence_counts.items()):
+            lines.append(f"- `{status}`: {count}")
+    else:
+        lines.append("- `none`: 0")
+    evidence_totals = summary.get("evidence_nugget_totals") or {}
+    if evidence_totals:
+        lines.append(
+            "- coverage totals: "
+            f"`present={evidence_totals.get('present', 0)}` / "
+            f"`supported={evidence_totals.get('supported', 0)}` / "
+            f"`missing={evidence_totals.get('missing', 0)}` / "
+            f"`contradicted={evidence_totals.get('contradicted', 0)}`"
+        )
+    top_missing_nuggets = summary.get("top_evidence_nugget_missing_phrases") or []
+    if top_missing_nuggets:
+        lines.append("- top missing nuggets:")
+        for phrase, count in top_missing_nuggets:
+            lines.append(f"  - `{phrase}`: {count}")
+    top_contradicted_nuggets = summary.get("top_evidence_nugget_contradicted_phrases") or []
+    if top_contradicted_nuggets:
+        lines.append("- top contradicted nuggets:")
+        for phrase, count in top_contradicted_nuggets:
+            lines.append(f"  - `{phrase}`: {count}")
+
     lines.extend(["", "## Claim Support", ""])
     if summary["claim_support_counts"]:
         for status, count in sorted(summary["claim_support_counts"].items()):
@@ -1027,8 +1100,8 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
             "",
             "## Prompt Diagnostics",
             "",
-            "| artifact | # | bucket | decision | provenance | gate | accept | cards | claims | shadow | expected | top/source guide ids | cited | reason |",
-            "| --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| artifact | # | bucket | decision | provenance | gate | accept | cards | nuggets | claims | shadow | expected | top/source guide ids | cited | reason |",
+            "| --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in rows:
@@ -1040,6 +1113,9 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
             f"`{row.get('app_gate_status') or 'none'}` | "
             f"`{row.get('app_acceptance_status') or 'none'}` | "
             f"`{row.get('answer_card_status') or 'none'}` | "
+            f"`{row.get('evidence_nugget_status') or 'none'}:"
+            f"{row.get('evidence_nugget_supported') or 0}/"
+            f"{row.get('evidence_nugget_total') or 0}` | "
             f"`{row.get('claim_support_status') or 'none'}:{row.get('claim_action_count') or 0}` | "
             f"`{row.get('shadow_card_answer_status') or 'none'}/"
             f"{row.get('shadow_claim_support_status') or 'none'}:"

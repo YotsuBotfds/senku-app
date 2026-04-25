@@ -6,6 +6,7 @@ from rag_bench_answer_diagnostics import (
     app_acceptance_diagnostics,
     compact_claim_basis,
     compact_match_phrases,
+    evidence_nugget_diagnostics,
     is_bare_meningitis_vs_viral_compare,
     select_family_cards,
 )
@@ -92,6 +93,74 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         ]
 
         self.assertIs(select_family_cards(cards, "airway choking"), cards)
+
+    def test_evidence_nugget_diagnostics_returns_no_cards(self):
+        diagnostics = evidence_nugget_diagnostics(
+            {"question": "Prompt", "response_text": "Answer"},
+            cited_ids=[],
+            generated="yes",
+            selected_cards=[],
+        )
+
+        self.assertEqual(diagnostics["evidence_nugget_status"], "no_cards")
+        self.assertEqual(diagnostics["evidence_nugget_total"], 0)
+
+    def test_evidence_nugget_diagnostics_counts_supported_and_missing_required_actions(self):
+        diagnostics = evidence_nugget_diagnostics(
+            {
+                "question": "Child swallowed unknown cleaner",
+                "response_text": "Call Poison Control now. [GD-222]",
+            },
+            cited_ids=["GD-222"],
+            generated="yes",
+            selected_cards=[
+                {
+                    "card_id": "poisoning",
+                    "guide_id": "GD-111",
+                    "risk_tier": "critical",
+                    "required_first_actions": [
+                        "Call Poison Control now",
+                        "Check breathing and alertness",
+                    ],
+                    "forbidden_advice": [],
+                    "source_sections": [{"guide": "GD-222"}],
+                }
+            ],
+        )
+
+        self.assertEqual(diagnostics["evidence_nugget_status"], "partial")
+        self.assertEqual(diagnostics["evidence_nugget_total"], 2)
+        self.assertEqual(diagnostics["evidence_nugget_present"], 1)
+        self.assertEqual(diagnostics["evidence_nugget_cited"], 1)
+        self.assertEqual(diagnostics["evidence_nugget_supported"], 1)
+        self.assertEqual(diagnostics["evidence_nugget_missing"], 1)
+        self.assertEqual(
+            diagnostics["evidence_nugget_missing_phrases"],
+            "Check breathing and alertness",
+        )
+
+    def test_evidence_nugget_diagnostics_flags_forbidden_contradictions(self):
+        diagnostics = evidence_nugget_diagnostics(
+            {
+                "question": "Can we wait?",
+                "response_text": "Call 911 now, then give milk. [GD-111]",
+            },
+            cited_ids=["GD-111"],
+            generated="yes",
+            selected_cards=[
+                {
+                    "card_id": "poisoning",
+                    "guide_id": "GD-111",
+                    "risk_tier": "critical",
+                    "required_first_actions": ["Call 911 now"],
+                    "forbidden_advice": ["give milk"],
+                }
+            ],
+        )
+
+        self.assertEqual(diagnostics["evidence_nugget_status"], "fail")
+        self.assertEqual(diagnostics["evidence_nugget_contradicted"], 1)
+        self.assertEqual(diagnostics["evidence_nugget_contradicted_phrases"], "give milk")
 
     def test_is_bare_meningitis_vs_viral_compare_true_for_bare_compare(self):
         self.assertTrue(
