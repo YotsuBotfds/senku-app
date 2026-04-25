@@ -584,6 +584,73 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         )
         self.assertEqual(summary["claim_support_counts"], {"pass": 1})
 
+    def test_card_backed_runtime_evaluates_only_artifact_reviewed_card_ids(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Someone swallowed something unknown.",
+                            "prompt_metadata": {
+                                "expected_guide_ids": "GD-111|GD-222",
+                                "expected_guide_family": "unknown poisoning",
+                            },
+                            "decision_path": "card_backed_runtime",
+                            "answer_provenance": "reviewed_card_runtime",
+                            "reviewed_card_backed": True,
+                            "reviewed_card_ids": ["runtime_card"],
+                            "generation_time": 0,
+                            "source_mode": "cited",
+                            "cited_guide_ids": ["GD-111"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-111", "GD-222"],
+                                "safety_critical": True,
+                            },
+                            "response_text": "Call poison control now. Check airway. [GD-111]",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        cards = [
+            {
+                "card_id": "runtime_card",
+                "guide_id": "GD-111",
+                "slug": "unknown-poisoning-runtime",
+                "title": "Unknown Poisoning Runtime",
+                "risk_tier": "critical",
+                "required_first_actions": ["Call poison control now", "Check airway"],
+                "first_actions": [],
+                "urgent_red_flags": [],
+                "forbidden_advice": [],
+                "do_not": [],
+            },
+            {
+                "card_id": "support_card",
+                "guide_id": "GD-222",
+                "slug": "unknown-poisoning-support",
+                "title": "Unknown Poisoning Support",
+                "risk_tier": "critical",
+                "required_first_actions": ["Document the exact exposure time"],
+                "first_actions": [],
+                "urgent_red_flags": [],
+                "forbidden_advice": [],
+                "do_not": [],
+            },
+        ]
+
+        rows = build_rows([artifact], answer_cards=cards)
+
+        self.assertEqual(rows[0]["answer_card_ids"], "runtime_card")
+        self.assertEqual(rows[0]["answer_card_status"], "pass")
+        self.assertEqual(rows[0]["evidence_nugget_status"], "pass")
+        self.assertEqual(rows[0]["claim_support_status"], "pass")
+        self.assertEqual(rows[0]["answer_card_missing_required"], "")
+
     def test_reviewed_card_uncertain_fit_keeps_limited_surface_policy(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"

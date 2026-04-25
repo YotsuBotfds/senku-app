@@ -173,6 +173,14 @@ The unknown-child-ingestion / poisoning family now shows `0/0`
 frontmatter/card gaps and `regression_monitor`; keep it out of further
 card-count closure unless a fresh behavior panel exposes a real miss.
 
+`RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows so
+they evaluate against artifact `reviewed_card_ids`, not every reviewed card in
+the same expected guide family. Current proof:
+`artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter/`.
+The post-card FA/FB/FD/FE panel now has `0` ranking misses, `0` generated
+prompts, `5` reviewed-card runtime answers, `5` answer-card passes, and
+`strong_supported:23|uncertain_fit_accepted:1`.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

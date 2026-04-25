@@ -724,6 +724,27 @@ def reviewed_card_runtime_strict_supported(
     )
 
 
+def runtime_reviewed_cards(
+    selected_cards: list[dict],
+    answer_provenance_fields: dict,
+) -> list[dict]:
+    if answer_provenance_fields.get("answer_provenance") != "reviewed_card_runtime":
+        return selected_cards
+    reviewed_card_ids = {
+        card_id.strip()
+        for card_id in str(answer_provenance_fields.get("reviewed_card_ids") or "").split("|")
+        if card_id.strip()
+    }
+    if not reviewed_card_ids:
+        return selected_cards
+    filtered = [
+        card
+        for card in selected_cards
+        if str(card.get("card_id") or "").strip() in reviewed_card_ids
+    ]
+    return filtered or selected_cards
+
+
 def build_rows(
     paths: list[Path],
     expectations: dict | None = None,
@@ -781,6 +802,10 @@ def build_rows(
                 candidate_ids=candidate_ids,
                 answer_cards=answer_cards,
             )
+            evaluable_cards = runtime_reviewed_cards(
+                selected_cards,
+                answer_provenance_fields,
+            )
             answer_card_fields = answer_card_diagnostics(
                 result,
                 expected_ids=expected_ids,
@@ -789,7 +814,7 @@ def build_rows(
                 candidate_ids=candidate_ids,
                 generated=evaluable_answer,
                 answer_cards=answer_cards,
-                selected_cards=selected_cards,
+                selected_cards=evaluable_cards,
                 selected_guide_ids=selected_guide_ids,
             )
             evidence_nugget_fields = evidence_nugget_diagnostics(
@@ -797,14 +822,14 @@ def build_rows(
                 expected_family=expected_family,
                 cited_ids=cited_ids,
                 generated=evaluable_answer,
-                selected_cards=selected_cards,
+                selected_cards=evaluable_cards,
             )
             claim_support_fields = claim_support_diagnostics(
                 result,
                 expected_ids=expected_ids,
                 cited_ids=cited_ids,
                 generated=evaluable_answer,
-                selected_cards=selected_cards,
+                selected_cards=evaluable_cards,
             )
             shadow_card_answer_fields = shadow_card_answer_diagnostics(
                 result,

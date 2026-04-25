@@ -594,6 +594,14 @@ Current active family:
   moves unknown-child-ingestion / poisoning from `0/1` to `0/0`
   frontmatter/card gaps and score `2` to `0`; the family action is now
   `regression_monitor`.
+- `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
+  so answer-card / evidence-nugget / claim-support checks evaluate the
+  artifact's `reviewed_card_ids`, not every reviewed card in the expected guide
+  family. Fresh proof at
+  `artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter/`
+  restores the post-card FA/FB/FD/FE panel to `0` ranking misses, `5`
+  answer-card passes, `19/19` evidence nuggets, and
+  `strong_supported:23|uncertain_fit_accepted:1`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.
