@@ -242,6 +242,10 @@ Current active family:
   found `249` high-liability guides, `248` with at least one coverage gap, and
   only `6` reviewed answer-card guide surfaces. Dispatch note:
   `notes/dispatch/RAG-META1_high_liability_metadata_audit.md`.
+- `RAG-T7` joins observed diagnostics, metadata audit, and corpus marker scan
+  into a guide-quality priority table with candidate actions and reasons.
+  Fresh panel ranked `18` observed guides, `16` high-liability. Dispatch note:
+  `notes/dispatch/RAG-T7_guide_quality_priority_selector.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

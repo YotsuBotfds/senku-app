@@ -93,6 +93,12 @@ misses:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\audit_metadata_coverage.py --guides-dir guides --output-json artifacts\bench\metadata_coverage_audit.json --output-md artifacts\bench\metadata_coverage_audit.md
 ```
 
+- Guide-quality priority selector from observed diagnostics plus audits:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\prioritize_guide_quality_work.py artifacts\bench\<diagnostic-dir> --metadata-audit artifacts\bench\metadata_coverage_audit.json --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-json artifacts\bench\guide_quality_priorities.json --output-md artifacts\bench\guide_quality_priorities.md
+```
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell
