@@ -4,6 +4,19 @@ slug: winter-survival-systems
 title: Winter Survival Systems
 category: survival
 difficulty: intermediate
+aliases:
+  - below freezing lights out shelter priorities
+  - winter power outage hypothermia shelter
+  - cold night basic materials shelter
+  - immediate hypothermia prevention shelter
+routing_cues:
+  - Use for immediate below-freezing, lights-out, or overnight cold exposure priorities where the first job is shelter, dry insulation, wind blocking, and hypothermia watch.
+  - Use for cold-weather shelter setup when basic materials must reduce heat loss before comfort, food, or long-term camp construction.
+  - Primitive shelter or survival-basics guides may support structure details, but this guide is the winter hypothermia-prevention sequence.
+applicability:
+  - Below-freezing nights, power outages, stranded groups, collapsed heat, and improvised winter shelter with limited materials.
+  - Questions asking what to do first tonight to make a shelter livable and reduce hypothermia risk.
+  - Not the primary owner for warm-weather shelter design or long-term seasonal camp construction unless below-freezing hypothermia risk is central.
 tags:
   - critical
 icon: ❄️
@@ -59,6 +72,19 @@ You can survive:
 **FIND/CREATE SHELTER** - Do not attempt to travel in whiteout or blizzard conditions. Shelter is 5 minutes away (under a tree, against a rock face, building a snow pile) rather than 30 minutes away across open ground.
 **SIGNAL FOR RESCUE** - Make yourself visible. Create contrast with snow (dark objects). If you have a whistle: 3 blasts is universal distress. If you have a mirror or reflective surface, signal toward where help might be.
 **INSULATE FROM GROUND** - Snow is an insulator, but only when it's not in contact with your body conducting heat away. Use branches, pine boughs, spare clothing as ground insulation. Wet clothing must be removed or dried.
+
+### Lights-Out Below-Freezing Shelter Priorities
+
+When the heat or lights are out and the temperature is below freezing, stop
+heat loss first, then improve the shelter. Do not spend the first energy on a
+full shelter build, food, or a bright fire if people are exposed and cooling.
+
+1. **Pick the smallest protected zone.** Move everyone out of wind and falling precipitation into the tightest safe room, corner, vehicle, tent, lean-to, or natural wind break you can use tonight.
+2. **Build dry insulation before comfort.** Put dry layers under bodies first, then around the torso, head, and neck. Use blankets, spare clothes, sleeping pads, cardboard, rugs, pine boughs, packs, or anything that traps dry air.
+3. **Separate wet from dry.** Remove or isolate wet outer layers when dry substitutes exist. Keep one dry sleeping/rest layer sacred; do not let snow, damp boots, or wet coats contaminate it.
+4. **Block wind and drafts.** Hang tarps, plastic, blankets, doors, boards, snow blocks, brush, or furniture as wind barriers. A crude wind block plus ground insulation often prevents more heat loss than an open fire.
+5. **Use fire or heaters only as support.** If using flame, keep ventilation and carbon-monoxide risk in mind. Reflect heat toward the shelter; do not seal combustion inside a tight sleeping space.
+6. **Run a hypothermia watch.** Check each person for uncontrollable shivering, clumsiness, confusion, slurred speech, sleepiness, or shivering that stops. Anyone showing these signs becomes the priority: handle gently, keep flat if very impaired, insulate the core, and seek evacuation or medical help if available.
 
 ### Minnesota Winter Climate Overview
 

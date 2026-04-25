@@ -1244,6 +1244,25 @@ Burn pain is complex and often severe:
 
 ## Common Mistakes in Burn Care
 
+### Hot-Water Forearm Burn: First Aid Ladder
+
+For a fresh scald or hot-water burn on the forearm, use this quick first-aid
+sequence:
+
+1. **Cool first:** Hold the burned area under cool running water for 10-20
+   minutes as soon as possible. Remove rings, bracelets, watches, or tight
+   clothing near the forearm before swelling traps them.
+2. **Cover after cooling:** Pat around the area gently and cover the burn with
+   a clean, non-stick sterile dressing or clean cloth. Keep it loose; do not
+   wrap tightly around a swelling arm.
+3. **Do not do these:** Do not apply ice directly. Do not put butter, oil,
+   toothpaste, herbs, powders, or other home remedies on the burn. Do not pop
+   or peel blisters.
+4. **Escalate care:** Seek medical help for any deep, white, brown, black,
+   leathery, numb, circumferential, large, worsening, infected, face/hand/
+   genital/joint, chemical, electrical, or breathing-related burn. Also seek
+   care if pain, redness, swelling, drainage, fever, or function worsens.
+
 ### Fluid Resuscitation Errors
 
 #### Under-Resuscitation

@@ -264,3 +264,66 @@ Result:
 - generation/citation misses: `3`, down from `4`
 - `RE2-BR-003` / `GD-648` now retrieves and cites `GD-648` only
 - remaining generation/citation misses: `GD-024`, `GD-052`, `GD-646`
+
+## 2026-04-25 GD-646 Source-packaging Classification
+
+Read-only classifier verdict: `RE2-BR-005` / `GD-646` is a
+source-packaging repair, not a broad prompt/citation-contract issue. There is
+some expectation tension, but not enough to reclassify the row as drift.
+
+Evidence:
+
+- Latest diagnostics retrieve `GD-646` at rank 1 but cite
+  `GD-250|GD-039|GD-055`.
+- The retrieved `GD-646` evidence is the introductory ecosystem chunk, while
+  the relevant owner content is later in `Phase 3: Surgical Application and
+  Medical Context`, `Surgical Instrument Sterilization Protocol`, and
+  `Surgical Readiness Checklist`.
+- The cited guides directly support the generated reusable-instrument workflow,
+  so forcing the citation contract would be weaker than improving source
+  packaging.
+
+Queue item:
+
+`RE2-BR-005` / `GD-646`: package or boost the procedural `GD-646` sections for
+prompts about reusable instruments, medical use, field treatment, limited
+fuel/supplies, and cleaning between patients. Rerun
+`rag_eval_partial_router_holdouts` and require `GD-646` citation only when that
+procedural `GD-646` evidence is present.
+
+## 2026-04-25 GD-024 / GD-052 Source-packaging Proof
+
+Two focused guide patches added source-local answer anchors:
+
+- `guides/winter-survival-systems.md`: below-freezing lights-out aliases,
+  routing cues, applicability, and a "Lights-Out Below-Freezing Shelter
+  Priorities" sequence for protected zone, dry insulation, wet/dry separation,
+  wind blocking, heater/fire caution, and hypothermia watch.
+- `guides/burn-treatment.md`: a "Hot-Water Forearm Burn: First Aid Ladder" for
+  cool running water, removing tight items, loose sterile covering, avoiding
+  ice/home remedies, not popping blisters, and escalation signs.
+
+The changed guides were re-embedded with forced incremental ingest:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --files guides\burn-treatment.md guides\winter-survival-systems.md --force-files
+```
+
+Fresh merged proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd024_gd052_packaging.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd024_gd052_packaging_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `14`, up from `13`
+- generation/citation misses: `2`, down from `3`
+- `RE2-UP-001` / `GD-024` now retrieves and cites `GD-024` only
+- `RE2-UP-004` / `GD-052` now retrieves and cites `GD-052`
+- merged-run remaining generation/citation misses: `GD-029` and `GD-646`
+
+Note: `GD-029` had passed in earlier citation-priority and GD-648 proof runs,
+so treat its reappearance as a run-to-run citation miss before adding new guide
+churn. `GD-646` remains the next clear source-packaging target.
