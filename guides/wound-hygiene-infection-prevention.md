@@ -425,7 +425,23 @@ An abscess is a pocket of pus-filled fluid. On day 2–4, if you feel a soft, fl
 An abscess that re-forms despite repeated drainage indicates inadequate source control or ongoing bacterial introduction. Consider whether wound care is clean enough or if debridement (removal of dead tissue) is needed.
 :::
 
-{{> wound-assessment-tool }}
+### Wound Assessment Check
+
+Use the same check each time so changes are visible instead of guessed.
+
+1. **Mark spreading redness.** Draw a line at the edge of the red area. During the day 2-3 infection decision window, recheck every 2 hours. Redness expanding beyond the line means infection is still spreading.
+
+2. **Check for fluctuance.** Press gently around the swollen area. A soft, squishy pocket near the wound suggests pus collection or abscess formation; use the abscess management steps above.
+
+3. **Track fever and systemic symptoms.** If fever is stable or falling, local care may be controlling infection. If fever is rising, or chills, muscle aches, nausea, confusion, lethargy, or rapid heartbeat appear, treat this as possible spread toward sepsis.
+
+4. **Inspect drainage and tissue color.** Increasing drainage, foul odor, greenish drainage, deeper red or purple color, or blue-black tissue are danger signs.
+
+5. **Watch for red streaking and lymph nodes.** Stripe-like redness extending away from the wound toward the nearest lymph node, or rapidly swelling glands above or below the wound, means the infection may be moving through lymph vessels.
+
+:::warning
+Escalate immediately if redness keeps spreading, fever rises despite local care, red streaking develops, systemic symptoms worsen, or tissue becomes blue-black.
+:::
 
 ## Secondary Wound Care: Days 2–7
 

@@ -525,6 +525,12 @@ Current active family:
 - Android reviewed-card continuation is organized in
   `notes/ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`; do not rediscover
   the next steps from scratch.
+- `RAG-DOCS2` repaired the observed GD-585 `wound-assessment-tool` unresolved
+  partial by replacing it with source-local wound assessment content. Fresh
+  marker proof at
+  `artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md` drops
+  unresolved partials from `55` to `54`; the wound family now advances from
+  `repair_corpus_partial` to `expand_or_fix_answer_cards`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.

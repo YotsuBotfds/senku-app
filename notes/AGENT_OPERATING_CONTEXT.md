@@ -87,6 +87,12 @@ misses:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py <bench-json> --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-dir artifacts\bench\<diagnostic-dir>
 ```
 
+`RAG-DOCS2` repaired the observed GD-585 `wound-assessment-tool` unresolved
+partial with static, source-local wound assessment content. Fresh proof:
+`artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md`;
+unresolved partials are now `54`, and the wound family priority moved from
+`repair_corpus_partial` to `expand_or_fix_answer_cards`.
+
 - High-liability metadata coverage audit:
 
 ```powershell
