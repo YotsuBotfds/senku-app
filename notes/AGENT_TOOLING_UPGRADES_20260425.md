@@ -33,6 +33,9 @@ friction is obvious.
      status, claim support, app acceptance, generated-vs-shadow gaps, and
      generated/reviewed-card workload.
    - First dispatch: `notes/dispatch/RAG-T2_rag_diagnostics_trend_summarizer.md`.
+   - Follow-up utility: `scripts/rag_trend.py` prints the startup panel the
+     user asked for: app acceptance, answer-card status, claim support,
+     generation workload, and evidence nugget coverage side by side.
 
 3. Add agent run manifests.
    - Write JSONL records under ignored `artifacts/runs/` with:
@@ -40,6 +43,8 @@ friction is obvious.
      resulting commit.
    - This mirrors the repo's existing handoff culture without requiring a new
      service.
+   - Utility: `scripts/write_run_manifest.py`, defaulting to
+     `artifacts/runs/run_manifest.jsonl`.
 
 4. Formalize subagent roles in notes.
    - Roles: scout, worker, validator, writer.
@@ -92,6 +97,20 @@ when it saves repeated task time inside this repo.
 2. Add a RAG trend summary over existing bench/analyzer artifacts.
 3. Add an ignored `artifacts/runs/` manifest convention and a tiny writer.
 4. Only then consider optional dashboards or global terminal tools.
+
+## Current Quick Commands
+
+Startup answer/card panel:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\rag_trend.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
+```
+
+Append a run manifest entry:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\write_run_manifest.py --task RAG-T --lane tooling --role main --label startup-trend --command "scripts\rag_trend.py ..." --output artifacts\runs\run_manifest.jsonl --validation "tests.test_rag_trend passed"
+```
 
 ## Guardrail
 

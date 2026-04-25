@@ -17,10 +17,21 @@ more `rag_diagnostics_*` directories and prints a compact Markdown table by
 default. `--json` emits machine-readable output. Repeated `--label` arguments
 can pin stable labels to input directories.
 
+`scripts/rag_trend.py` is the companion startup panel. It reuses the
+diagnostics summarizer helpers and prints the answer-generation/card view the
+session kept reconstructing manually: app acceptance, answer-card status, claim
+support, generation workload, and evidence nugget coverage side by side.
+
 Example:
 
 ```powershell
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_rag_diagnostics.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
+```
+
+Startup panel:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\rag_trend.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
 ```
 
 Current comparison:

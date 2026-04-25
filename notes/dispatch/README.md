@@ -164,7 +164,9 @@ Current active family:
   `notes/AGENT_TOOLING_UPGRADES_20260425.md`. First utility dispatch:
   `notes/dispatch/RAG-T1_shadow_comparison_summarizer.md`. Diagnostics trend
   utility dispatch:
-  `notes/dispatch/RAG-T2_rag_diagnostics_trend_summarizer.md`.
+  `notes/dispatch/RAG-T2_rag_diagnostics_trend_summarizer.md`. Run-manifest
+  writer dispatch:
+  `notes/dispatch/RAG-T3_run_manifest_writer.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

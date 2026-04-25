@@ -53,6 +53,18 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_rag_diagnostics.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
 ```
 
+- RAG answer/card/evidence trend table:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\rag_trend.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
+```
+
+- Append a durable run manifest record for ignored/local artifacts:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\write_run_manifest.py --task RAG-T --lane tooling --role main --model gpt-5.5 --label example --command "..." --output artifacts\bench\example --metric rows=24 --validation "tests passed"
+```
+
 ## Android Baseline
 
 - Focused Android JVM tests are currently runnable from this shell. Emulator /

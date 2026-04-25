@@ -49,9 +49,9 @@ Current EZ summary:
 
 ## Next
 
-Use this as the first `RAG-T1` utility, then add:
+Use this as the first `RAG-T1` utility. The same tooling lane has now added:
 
 - an agent run manifest writer under ignored `artifacts/runs/`;
-- a broader RAG trend table over analyzer artifacts and shadow summaries;
+- a broader RAG trend table over analyzer artifacts;
 - optional dashboard/eval integrations only after the local summary path is
   stable.
