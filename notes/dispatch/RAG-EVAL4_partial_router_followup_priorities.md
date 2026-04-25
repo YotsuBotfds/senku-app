@@ -229,3 +229,38 @@ Remaining generation/citation misses:
 
 The remaining citation rows likely need deeper source packaging or answer-card
 support rather than another broad prompt-contract tweak.
+
+## 2026-04-25 GD-648 Minimum Operations Proof
+
+The next guide-only slice added targeted lifecycle-owner language to
+`guides/water-system-lifecycle.md` for small water systems with inconsistent
+flow and limited or unavailable maintenance tools:
+
+- frontmatter aliases for "minimum water system operations checklist",
+  "stabilize small water system", "inconsistent water flow checklist", and
+  "limited tools water operations";
+- routing cues and applicability that keep `GD-648` responsible for the safe
+  minimum operating checklist, while handing deep component repair to
+  water-system-failure-analysis;
+- a source-local "Safe Minimum Operations Checklist (Limited Tools)" under
+  preventive maintenance.
+
+The guide was re-embedded with forced incremental ingest:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --files guides\water-system-lifecycle.md --force-files
+```
+
+Fresh proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd648_minops.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd648_minops_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `13`, up from `12`
+- generation/citation misses: `3`, down from `4`
+- `RE2-BR-003` / `GD-648` now retrieves and cites `GD-648` only
+- remaining generation/citation misses: `GD-024`, `GD-052`, `GD-646`

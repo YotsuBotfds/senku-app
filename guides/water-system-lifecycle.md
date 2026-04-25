@@ -11,6 +11,19 @@ aliases:
   - water distribution setup
   - water system maintenance schedule
   - end to end water system
+  - minimum water system operations checklist
+  - stabilize small water system
+  - inconsistent water flow checklist
+  - no maintenance tools water system
+  - limited tools water operations
+routing_cues:
+  - Use for safe minimum operations of an existing small water system when flow is inconsistent and maintenance tools are limited or unavailable.
+  - Use for lifecycle checklists that combine source, testing, distribution, maintenance, troubleshooting, and contingency steps.
+  - Route deep diagnosis of a single failed component to water-system-failure-analysis after the minimum operating checklist is covered.
+applicability:
+  - Small wells, tanks, taps, and basic distribution systems that need safe operation before full repair.
+  - Questions asking what to check first when water still flows inconsistently but the team lacks repair tools.
+  - Not a substitute for water purification, testing, or failure-analysis guides when the question is only about treatment chemistry or component repair.
 tags:
   - water-security
   - drilling
@@ -352,6 +365,26 @@ Before routine use:
 | **Storage tank clean** | Remove sediment and debris | 1-2 hours | Brown water coming out, visible sludge |
 | **Drainage system check** | Overflow drains properly | 10 min | Water pooling at tank site |
 | **User area cleaning** | Remove standing water, algae near taps | 30 min | Slippery ground, algae growth at tap outlet |
+
+### Safe Minimum Operations Checklist (Limited Tools)
+
+Use this checklist when a small water system still produces some water but flow
+is inconsistent and the team does not have maintenance tools yet.
+
+- [ ] Keep the safest current source online, but label it provisional until
+  water testing is repeated.
+- [ ] Reduce demand to drinking, cooking, hygiene, and medical needs while the
+  system is unstable.
+- [ ] Check source, pump, tank, taps, and overflow in that order before taking
+  anything apart.
+- [ ] Let cloudy water settle, filter it if possible, and disinfect before use
+  until testing shows the system is safe again.
+- [ ] Use direct bucket collection from the well or tank only if the usual pipe
+  path is the suspected failure point.
+- [ ] Record when flow drops, which taps are affected, whether water is cloudy,
+  and what was changed before the problem appeared.
+- [ ] Escalate to component troubleshooting once spare parts or repair tools are
+  available; do not force stuck handles, valves, or fittings.
 
 ### Seasonal Maintenance Tasks
 
