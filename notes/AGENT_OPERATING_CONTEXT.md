@@ -90,8 +90,7 @@ misses:
 `RAG-DOCS2` repaired the observed GD-585 `wound-assessment-tool` unresolved
 partial with static, source-local wound assessment content. Fresh proof:
 `artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md`;
-unresolved partials are now `54`, and the wound family priority moved from
-`repair_corpus_partial` to `expand_or_fix_answer_cards`.
+unresolved partials are now `54`.
 
 - High-liability metadata coverage audit:
 
@@ -136,6 +135,13 @@ Current proof:
 
 `RAG-META5` added targeted stroke/cardiac metadata to `GD-601`. Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1743_stroke_cardiac_metadata.md`.
+
+`RAG-T11` separates frontmatter metadata gaps from
+`missing_reviewed_answer_card` in the family-priority selector. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1648_reviewed_card_semantics.md`.
+If a family shows `0/N` frontmatter/card gaps, do not continue metadata churn;
+evaluate reviewed-card coverage or the deep-research `RAG-RUNTIME1` /
+`RAG-TRUST1` backlog instead.
 
 - Append a durable run manifest record for ignored/local artifacts:
 

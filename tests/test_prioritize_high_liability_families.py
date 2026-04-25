@@ -215,6 +215,94 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
         self.assertNotEqual(uncertain_fit["candidate_action"], "inspect_retrieval_ranking")
         self.assertIn("wound_family", markdown)
 
+    def test_reviewed_answer_card_gaps_are_separate_from_frontmatter_metadata(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diag_dir = root / "diag"
+            diag_dir.mkdir()
+            metadata_path = root / "metadata.json"
+            (diag_dir / "diagnostics.json").write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "expected_guide_family": "reviewed_card_only_family",
+                                "expected_guide_ids": "GD-900",
+                                "cited_guide_ids": "GD-900",
+                                "top_retrieved_guide_ids": "GD-900",
+                                "suspected_failure_bucket": "expected_supported",
+                                "app_acceptance_status": "strong_supported",
+                                "answer_card_status": "pass",
+                                "decision_path": "rag",
+                                "generated": "yes",
+                            },
+                            {
+                                "expected_guide_family": "mixed_metadata_family",
+                                "expected_guide_ids": "GD-901",
+                                "cited_guide_ids": "GD-901",
+                                "top_retrieved_guide_ids": "GD-901",
+                                "suspected_failure_bucket": "expected_supported",
+                                "app_acceptance_status": "strong_supported",
+                                "answer_card_status": "pass",
+                                "decision_path": "rag",
+                                "generated": "yes",
+                            },
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            metadata_path.write_text(
+                json.dumps(
+                    {
+                        "guides": [
+                            {
+                                "guide_id": "GD-900",
+                                "gaps": ["missing_reviewed_answer_card"],
+                                "has_reviewed_answer_card": False,
+                            },
+                            {
+                                "guide_id": "GD-901",
+                                "gaps": [
+                                    "missing_reviewed_answer_card",
+                                    "missing_citation_policy",
+                                ],
+                                "has_reviewed_answer_card": False,
+                            },
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            payload = collect_family_priorities(
+                [diag_dir],
+                metadata_audit_path=metadata_path,
+            )
+            markdown = render_markdown(payload)
+
+        reviewed_card_only = next(
+            family
+            for family in payload["families"]
+            if family["expected_guide_family"] == "reviewed_card_only_family"
+        )
+        self.assertEqual(reviewed_card_only["metadata_gap_guide_count"], 0)
+        self.assertEqual(reviewed_card_only["reviewed_answer_card_gap_guide_count"], 1)
+        self.assertEqual(
+            reviewed_card_only["candidate_action"], "consider_reviewed_answer_card"
+        )
+        mixed_metadata = next(
+            family
+            for family in payload["families"]
+            if family["expected_guide_family"] == "mixed_metadata_family"
+        )
+        self.assertEqual(mixed_metadata["metadata_gap_guide_count"], 1)
+        self.assertEqual(mixed_metadata["reviewed_answer_card_gap_guide_count"], 1)
+        self.assertEqual(mixed_metadata["candidate_action"], "add_targeted_metadata")
+        self.assertIn("frontmatter/card gaps", markdown)
+        self.assertIn("0/1", markdown)
+        self.assertIn("1/1", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

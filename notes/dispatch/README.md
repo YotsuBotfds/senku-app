@@ -529,8 +529,7 @@ Current active family:
   partial by replacing it with source-local wound assessment content. Fresh
   marker proof at
   `artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md` drops
-  unresolved partials from `55` to `54`; the wound family now advances from
-  `repair_corpus_partial` to `expand_or_fix_answer_cards`.
+  unresolved partials from `55` to `54`.
 - `RAG-T9` refined the family-priority card columns so deterministic
   no-generation rows count as skipped/not evaluable instead of missing cards.
   Fresh proof at
@@ -561,6 +560,12 @@ Current active family:
   `artifacts/bench/high_liability_family_priorities_20260425_1743_stroke_cardiac_metadata.md`
   drops the stroke/cardiac score from `4` to `2`; remaining gap is a reviewed
   answer card for `GD-601`.
+- `RAG-T11` refined the family-priority selector so frontmatter metadata gaps
+  and `missing_reviewed_answer_card` are reported separately. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1648_reviewed_card_semantics.md`
+  shows all four observed high-liability families at `0/N` frontmatter/card
+  gaps with `consider_reviewed_answer_card`, preventing further false metadata
+  churn.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.

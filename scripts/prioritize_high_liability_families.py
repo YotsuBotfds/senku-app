@@ -18,6 +18,7 @@ BAD_BUCKETS = {
     "safety_contract_miss",
     "artifact_error",
 }
+REVIEWED_ANSWER_CARD_GAP = "missing_reviewed_answer_card"
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -138,6 +139,11 @@ def _candidate_action(record: dict[str, Any]) -> tuple[str, str]:
             "add_targeted_metadata",
             "observed family has high-liability metadata gaps",
         )
+    if record["reviewed_answer_card_gap_guide_count"]:
+        return (
+            "consider_reviewed_answer_card",
+            "observed family has high-liability guides without reviewed answer-card coverage",
+        )
     return ("regression_monitor", "observed family is currently passing")
 
 
@@ -236,11 +242,13 @@ def collect_family_priorities(
         missing_citation_policy = 0
         missing_applicability = 0
         reviewed_card_guide_count = 0
+        reviewed_answer_card_gap_count = 0
         corpus_unresolved_partial_guides = 0
         for guide_id in expected_ids:
             meta = metadata.get(guide_id, {})
             gaps = set(meta.get("gaps") or [])
-            if gaps:
+            frontmatter_gaps = gaps - {REVIEWED_ANSWER_CARD_GAP}
+            if frontmatter_gaps:
                 metadata_gap_count += 1
             if "missing_routing_support" in gaps:
                 missing_routing_support += 1
@@ -248,6 +256,8 @@ def collect_family_priorities(
                 missing_citation_policy += 1
             if "missing_applicability" in gaps:
                 missing_applicability += 1
+            if REVIEWED_ANSWER_CARD_GAP in gaps:
+                reviewed_answer_card_gap_count += 1
             if meta.get("has_reviewed_answer_card"):
                 reviewed_card_guide_count += 1
             marker_counts = (markers.get(guide_id) or {}).get("marker_counts") or {}
@@ -259,6 +269,7 @@ def collect_family_priorities(
         record["missing_citation_policy_count"] = missing_citation_policy
         record["missing_applicability_count"] = missing_applicability
         record["reviewed_card_guide_count"] = reviewed_card_guide_count
+        record["reviewed_answer_card_gap_guide_count"] = reviewed_answer_card_gap_count
         record["corpus_unresolved_partial_guides"] = corpus_unresolved_partial_guides
         record.setdefault("top1_marker_fail_rows", 0)
         record.setdefault("top1_unresolved_partial_rows", 0)
@@ -270,6 +281,7 @@ def collect_family_priorities(
             + record["ranking_drift_rows"] * 8
             + record["non_expected_owner_cited_rows"] * 5
             + record["metadata_gap_guide_count"] * 2
+            + record["reviewed_answer_card_gap_guide_count"] * 2
             + record["missing_routing_support_count"] * 2
             + record["missing_citation_policy_count"]
             + record["missing_applicability_count"]
@@ -309,6 +321,7 @@ def collect_family_priorities(
                 "card_not_evaluable_rows": record["card_not_evaluable_rows"],
                 "reviewed_card_guide_count": reviewed_card_guide_count,
                 "metadata_gap_guide_count": metadata_gap_count,
+                "reviewed_answer_card_gap_guide_count": reviewed_answer_card_gap_count,
                 "missing_routing_support_count": missing_routing_support,
                 "missing_citation_policy_count": missing_citation_policy,
                 "missing_applicability_count": missing_applicability,
@@ -365,7 +378,7 @@ def render_markdown(payload: dict[str, Any], *, limit: int = 40) -> str:
         f"- Diagnostic inputs: `{len(summary['diagnostic_inputs'])}`",
         f"- Families ranked: `{summary['families_ranked']}`",
         "",
-        "| rank | score | family | expected guides | prompts | bad | rank drift | top1 partial | corpus partial | card pass/gap/missing/skipped | metadata gaps | action | reason |",
+        "| rank | score | family | expected guides | prompts | bad | rank drift | top1 partial | corpus partial | card pass/gap/missing/skipped | frontmatter/card gaps | action | reason |",
         "| ---: | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- | --- |",
     ]
     for row in payload["families"][:limit]:
@@ -385,7 +398,7 @@ def render_markdown(payload: dict[str, Any], *, limit: int = 40) -> str:
             f"{row['top1_unresolved_partial_rows']} | "
             f"{row['corpus_unresolved_partial_guides']} | "
             f"{card_text} | "
-            f"{row['metadata_gap_guide_count']} | "
+            f"{row['metadata_gap_guide_count']}/{row['reviewed_answer_card_gap_guide_count']} | "
             f"{_escape_table(row['candidate_action'])} | "
             f"{_escape_table(row['reason'])} |"
         )
