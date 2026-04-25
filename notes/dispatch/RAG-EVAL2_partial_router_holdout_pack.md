@@ -33,6 +33,8 @@ top-1 is bridge-thin or unresolved-partial-bearing.
 - Result: 21 rows with expected-guide metadata.
 - Bucket counts: 8 retrieval misses, 4 ranking misses, 4 artifact errors,
   2 deterministic passes, 2 expected supported, 1 accepted `uncertain_fit`.
+- Artifact errors split into 2 prompt-budget overflows and 2 local generation
+  server 500s.
 - Marker overlay: 2 top-1 unresolved-partial rows and 1 top-1 bridge row.
 - Expected-owner rates: hit@1 3/21, hit@3 7/21, hit@k 10/21, cited 5/21.
 
@@ -70,5 +72,7 @@ top-1 is bridge-thin or unresolved-partial-bearing.
 
 - Parent diagnostic context:
   `notes/dispatch/RAG-EVAL1_corpus_marker_diagnostic_overlay.md`
-- The four `artifact_error` rows are prompt-budget/context-packaging signals,
-  not generation regressions; triage them separately from retrieval misses.
+- The four `artifact_error` rows are not retrieval misses: RE2-UP-001 and
+  RE2-BR-005 exceeded the runtime prompt budget, while RE2-UP-008 and
+  RE2-UP-010 hit local generation server 500s. Triage them separately from
+  retrieval/ranking misses.

@@ -100,9 +100,9 @@ primary-answer regressions. Keep this in context:
 - Latest diagnostics:
   `artifacts/bench/rag_eval_partial_router_holdouts_20260425_diag/report.md`
   with 21 expected-guide rows, 8 retrieval misses, 4 ranking misses, 4 prompt
-  budget/context artifact errors, 2 expected supported, 2 deterministic passes,
-  1 accepted `uncertain_fit`, 2 top-1 unresolved-partial rows, and 1 top-1
-  bridge row.
+  artifact errors (2 prompt-budget overflows, 2 local generation server 500s),
+  2 expected supported, 2 deterministic passes, 1 accepted `uncertain_fit`, 2
+  top-1 unresolved-partial rows, and 1 top-1 bridge row.
 
 `RAG-DOCS2` repaired the observed GD-585 `wound-assessment-tool` unresolved
 partial with static, source-local wound assessment content. Fresh proof:

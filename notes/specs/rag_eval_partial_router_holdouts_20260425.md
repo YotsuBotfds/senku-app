@@ -52,6 +52,8 @@ Latest local proof at
 - 21 rows with expected-guide metadata.
 - Bucket counts: 8 retrieval misses, 4 ranking misses, 4 artifact errors,
   2 deterministic passes, 2 expected supported, 1 accepted `uncertain_fit`.
+- Artifact errors split into 2 prompt-budget overflows and 2 local generation
+  server 500s.
 - Marker overlay: 2 top-1 unresolved-partial rows, 1 top-1 bridge row.
 - Expected-owner top-k hit rate: 10/21; cited rate: 5/21.
 

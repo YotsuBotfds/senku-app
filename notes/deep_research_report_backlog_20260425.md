@@ -54,8 +54,8 @@ and user trust behavior.
   Dispatch:
   `notes/dispatch/RAG-EVAL2_partial_router_holdout_pack.md`.
   Latest focused diagnostics found 2 top-1 unresolved-partial rows and 1 top-1
-  bridge row, separating routing misses from prompt-budget/context-packaging
-  errors.
+  bridge row, separating routing misses from prompt-budget and local generation
+  artifact errors.
 
 ## Later Slices
 
