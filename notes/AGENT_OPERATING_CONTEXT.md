@@ -163,6 +163,12 @@ families. Current handbook:
 gate, migration, and rollback ADR. Current contract:
 `notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`.
 
+`RAG-PRIV1` added the privacy/export/delete/incident policy. Do not add notes,
+sync, account-linked storage, or long-lived personal incident records as an
+incidental RAG/runtime change; those features now require explicit delete,
+export, artifact hygiene, and incident gates. Current policy:
+`notes/SENKU_PRIVACY_EXPORT_DELETE_INCIDENT_POLICY_20260425.md`.
+
 `RAG-CARD1` added a `GD-859` reviewed answer-card contract for dangerous
 activation / acute mania crisis. Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1650_dangerous_activation_card.md`.

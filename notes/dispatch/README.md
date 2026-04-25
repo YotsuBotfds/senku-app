@@ -614,6 +614,11 @@ Current active family:
   checklist tying deterministic rules, reviewed-card runtime, evidence nuggets,
   claim support, app acceptance, and Android enablement gates together for
   high-liability changes.
+- `RAG-PRIV1` added
+  `notes/SENKU_PRIVACY_EXPORT_DELETE_INCIDENT_POLICY_20260425.md`, documenting
+  local/offline posture, data classes, deletion/export gates, artifact hygiene,
+  incident response, and release blockers before any notes/sync/personal-record
+  feature ships.
 - `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
   so answer-card / evidence-nugget / claim-support checks evaluate the
   artifact's `reviewed_card_ids`, not every reviewed card in the expected guide

@@ -59,9 +59,12 @@ and user trust behavior.
   acceptance, and Android enablement gates into a release checklist.
   Completed note:
   `notes/SENKU_HIGH_LIABILITY_RED_TEAM_HANDBOOK_20260425.md`.
-- Privacy/deletion/export/incident docs before notes or sync features ship.
-  Especially important for health notes, location-like incident logs, or
-  personal records.
+- `RAG-PRIV1`: completed.
+  Added privacy, export, deletion, and incident policy before notes, sync, or
+  personal-record features ship, with explicit handling for health notes,
+  location-like incident logs, validation artifacts, and Android session state.
+  Completed note:
+  `notes/SENKU_PRIVACY_EXPORT_DELETE_INCIDENT_POLICY_20260425.md`.
 - Release/update/migration docs.
   Use existing guide `version` and `last_updated` metadata plus explicit
   "reindex required?" and rollback fields.
