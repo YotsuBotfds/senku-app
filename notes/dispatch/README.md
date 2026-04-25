@@ -181,6 +181,17 @@ Current active family:
   `artifacts/bench/rag_diagnostics_20260425_1445_fb_wound_card_runtime/report.md`.
   Dispatch note:
   `notes/dispatch/RAG-S19_infected_wound_reviewed_card_runtime.md`.
+- `RAG-S20` updates analyzer taxonomy so strict reviewed-card runtime rows that
+  cite an expected owner and pass answer-card, claim-support, and evidence
+  nugget checks count as `expected_supported` even when the expected owner was
+  not rank 1. Generated rank drift remains `ranking_miss`, and owner drift
+  remains visible through the `RAG-T4` owner concentration metrics. Fresh
+  FA/FB/FD/FE taxonomy proof:
+  `artifacts/bench/rag_diagnostics_20260425_1448_fa_fb_fd_fe_current_taxonomy/report.md`;
+  diagnostic bad buckets are now `0`, quality score is `8.83`, and owner
+  concentration remains best-rank `1.36`, top-3 `21/24`, top-k `22/24`.
+  Dispatch note:
+  `notes/dispatch/RAG-S20_reviewed_card_rank_drift_taxonomy.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually

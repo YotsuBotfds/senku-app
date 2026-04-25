@@ -606,6 +606,29 @@ def classify_bucket(
     return "rag_unknown_no_expectation", "no expected guide metadata available"
 
 
+def reviewed_card_runtime_strict_supported(
+    *,
+    bucket: str,
+    expected_ids: list[str],
+    cited_ids: list[str],
+    answer_provenance_fields: dict,
+    answer_card_fields: dict,
+    evidence_nugget_fields: dict,
+    claim_support_fields: dict,
+) -> bool:
+    if bucket != "ranking_miss":
+        return False
+    if answer_provenance_fields.get("answer_provenance") != "reviewed_card_runtime":
+        return False
+    if not expected_ids or not (set(expected_ids) & set(cited_ids)):
+        return False
+    return (
+        answer_card_fields.get("answer_card_status") == "pass"
+        and evidence_nugget_fields.get("evidence_nugget_status") == "pass"
+        and claim_support_fields.get("claim_support_status") == "pass"
+    )
+
+
 def build_rows(
     paths: list[Path],
     expectations: dict | None = None,
@@ -693,6 +716,20 @@ def build_rows(
                 selected_cards=selected_cards,
                 selected_guide_ids=selected_guide_ids,
             )
+            if reviewed_card_runtime_strict_supported(
+                bucket=bucket,
+                expected_ids=expected_ids,
+                cited_ids=cited_ids,
+                answer_provenance_fields=answer_provenance_fields,
+                answer_card_fields=answer_card_fields,
+                evidence_nugget_fields=evidence_nugget_fields,
+                claim_support_fields=claim_support_fields,
+            ):
+                bucket = "expected_supported"
+                reason = (
+                    "reviewed-card runtime cited expected owner and passed "
+                    "card/claim/evidence checks; rank drift remains in owner metrics"
+                )
             app_acceptance_fields = app_acceptance_diagnostics(
                 result,
                 bucket=bucket,

@@ -194,6 +194,92 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         self.assertEqual(rows[0]["claim_forbidden_count"], 0)
         self.assertEqual(rows[0]["claim_support_basis"], "card_required_action:1")
 
+    def test_reviewed_card_runtime_rank_drift_counts_supported_when_contract_passes(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "wound pain is getting worse instead of better",
+                            "prompt_metadata": {"expected_guide_ids": "GD-585"},
+                            "decision_path": "card_backed_runtime",
+                            "generation_time": 0,
+                            "source_mode": "reviewed_card",
+                            "cited_guide_ids": ["GD-585"],
+                            "answer_provenance": "reviewed_card_runtime",
+                            "reviewed_card_backed": True,
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": [
+                                    "GD-731",
+                                    "GD-917",
+                                    "GD-732",
+                                    "GD-585",
+                                ]
+                            },
+                            "response_text": (
+                                "- Assess whether redness is spreading, mark its edge, "
+                                "and recheck every 2 hours. [GD-585]\n"
+                                "- Escalate urgently if red streaking, systemic symptoms, "
+                                "high fever, confusion, rapid heartbeat, or rapid breathing "
+                                "are present. [GD-585]\n"
+                                "- Increase local wound care and cleaning frequency when "
+                                "infection is spreading. [GD-585]"
+                            ),
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+
+        self.assertEqual(rows[0]["expected_hit_at_1"], "no")
+        self.assertEqual(rows[0]["expected_cited"], "yes")
+        self.assertEqual(rows[0]["answer_card_status"], "pass")
+        self.assertEqual(rows[0]["claim_support_status"], "pass")
+        self.assertEqual(rows[0]["evidence_nugget_status"], "pass")
+        self.assertEqual(rows[0]["suspected_failure_bucket"], "expected_supported")
+        self.assertEqual(rows[0]["expected_owner_best_rank"], 4)
+        self.assertIn("rank drift remains", rows[0]["short_reason"])
+
+    def test_reviewed_card_runtime_rank_drift_stays_miss_when_contract_fails(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "wound pain is getting worse instead of better",
+                            "prompt_metadata": {"expected_guide_ids": "GD-585"},
+                            "decision_path": "card_backed_runtime",
+                            "generation_time": 0,
+                            "source_mode": "reviewed_card",
+                            "cited_guide_ids": ["GD-585"],
+                            "answer_provenance": "reviewed_card_runtime",
+                            "reviewed_card_backed": True,
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-731", "GD-585"]
+                            },
+                            "response_text": "Clean it and watch it. [GD-585]",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+
+        self.assertEqual(rows[0]["expected_cited"], "yes")
+        self.assertNotEqual(rows[0]["answer_card_status"], "pass")
+        self.assertEqual(rows[0]["suspected_failure_bucket"], "ranking_miss")
+
     def test_shadow_card_answer_diagnostics_do_not_change_actual_bucket(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"

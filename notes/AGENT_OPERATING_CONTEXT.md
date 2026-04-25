@@ -131,6 +131,15 @@ in top-k.
   the top-two card-selection window. FB #6 now uses reviewed-card runtime,
   cites `GD-585`, and passes card/claim/evidence checks; owner concentration
   still shows rank-4 drift, so do not treat this as a retrieval-ranking fix.
+- Desktop `RAG-S20` updates analyzer taxonomy for strict reviewed-card runtime
+  rank drift. If a reviewed-card answer cites an expected owner and passes
+  answer-card, claim-support, and evidence-nugget diagnostics, it is
+  `expected_supported` even when the expected owner is not rank 1. Generated
+  rank drift remains `ranking_miss`, and owner concentration metrics remain the
+  retrieval-quality signal. Fresh FA/FB/FD/FE proof:
+  `artifacts/bench/rag_diagnostics_20260425_1448_fa_fb_fd_fe_current_taxonomy/`;
+  quality score is `8.83`, bad diagnostic buckets are `0`, owner best-rank is
+  `1.36`, top-3 `21/24`, top-k `22/24`.
 - Desktop reviewed-card/provenance work does not automatically change Android
   behavior. Android needs explicit Kotlin/mobile-pack plumbing: `RAG-A1`
   landed display-only answer surface labels, `RAG-A2` landed optional
