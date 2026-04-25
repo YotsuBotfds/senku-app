@@ -113,11 +113,76 @@ class RAGTrendTests(unittest.TestCase):
             markdown = self.module.render_markdown_table(rows)
 
         self.assertIn(
-            "| label | total_rows | generated | app_acceptance | answer_cards | "
-            "claim_support | evidence_nuggets |",
+            "| label | total_rows | generated | app_acceptance | "
+            "reviewed_uncertain_fit | answer_cards | claim_support | "
+            "evidence_nuggets |",
             markdown,
         )
         self.assertIn("| trend_dir | 3 | 2/3 (66.7%) |", markdown)
+
+    def test_collect_summaries_includes_reviewed_uncertain_fit_from_rows(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_reviewed_uncertain"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=4)
+            payload["summary"]["generation_workload"]["generated"] = 4
+            payload["summary"]["generation_workload"]["not_generated"] = 0
+            payload["rows"] = [
+                {
+                    "generated": "yes",
+                    "answer_provenance": "reviewed_card_runtime",
+                    "answer_mode": "uncertain_fit",
+                    "app_gate_status": "",
+                    "app_acceptance_status": "uncertain_fit_accepted",
+                    "answer_card_status": "partial",
+                    "claim_support_status": "pass",
+                    "evidence_nugget_status": "pass",
+                    "evidence_nugget_total": 1,
+                    "evidence_nugget_supported": 1,
+                },
+                {
+                    "generated": "yes",
+                    "answer_provenance": "reviewed_card_runtime",
+                    "answer_mode": "",
+                    "app_gate_status": "uncertain_fit",
+                    "app_acceptance_status": "uncertain_fit_accepted",
+                    "answer_card_status": "partial",
+                    "claim_support_status": "pass",
+                    "evidence_nugget_status": "pass",
+                    "evidence_nugget_total": 1,
+                    "evidence_nugget_supported": 1,
+                },
+                {
+                    "generated": "yes",
+                    "answer_provenance": "reviewed_card_runtime",
+                    "answer_mode": "",
+                    "app_gate_status": "",
+                    "app_acceptance_status": "strong_supported",
+                    "answer_card_status": "partial",
+                    "claim_support_status": "pass",
+                    "evidence_nugget_status": "pass",
+                    "evidence_nugget_total": 1,
+                    "evidence_nugget_supported": 1,
+                },
+                {
+                    "generated": "yes",
+                    "answer_provenance": "generated_model",
+                    "answer_mode": "confident",
+                    "app_gate_status": "",
+                    "app_acceptance_status": "moderate_supported",
+                    "answer_card_status": "fail",
+                    "claim_support_status": "no_generated_answer",
+                    "evidence_nugget_status": "no_evaluable_answer",
+                    "evidence_nugget_total": 0,
+                    "evidence_nugget_supported": 0,
+                },
+            ]
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["reviewed_uncertain_fit"], "2/4 (50.0%)")
 
     def test_main_json_output(self):
         with tempfile.TemporaryDirectory() as tmpdir:

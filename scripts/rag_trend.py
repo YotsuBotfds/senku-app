@@ -27,6 +27,7 @@ DEFAULT_COLUMNS = (
     "total_rows",
     "generated",
     "app_acceptance",
+    "reviewed_uncertain_fit",
     "answer_cards",
     "claim_support",
     "evidence_nuggets",
@@ -100,6 +101,20 @@ def _status_counts(rows: Sequence[Mapping[str, Any]], field: str) -> Counter[str
         if value:
             counter[value] += 1
     return counter
+
+
+def _is_reviewed_uncertain_fit(row: Mapping[str, Any]) -> bool:
+    return (
+        str(row.get("answer_provenance") or "").strip() == "reviewed_card_runtime"
+        and (
+            str(row.get("app_gate_status") or "").strip() == "uncertain_fit"
+            or str(row.get("answer_mode") or "").strip() == "uncertain_fit"
+        )
+    )
+
+
+def _count_reviewed_uncertain_fit(rows: Sequence[Mapping[str, Any]]) -> int:
+    return sum(1 for row in rows if _is_reviewed_uncertain_fit(row))
 
 
 def _pick_status_counts(
@@ -227,12 +242,18 @@ def collect_summaries(
         evidence_total, evidence_supported, evidence_status_counts, evidence_rate = (
             _collect_evidence_counts(summary, parsed_rows)
         )
+        reviewed_uncertain_fit_count = _count_reviewed_uncertain_fit(parsed_rows)
 
         row = dict(row)
         row["generated_rows"] = generation
         row["not_generated_rows"] = not_generated
         row["generated"] = (
             f"{generation}/{row['total_rows']} ({_format_percent(_rate(generation, row['total_rows']))})"
+            if row["total_rows"]
+            else ""
+        )
+        row["reviewed_uncertain_fit"] = (
+            f"{reviewed_uncertain_fit_count}/{row['total_rows']} ({_format_percent(_rate(reviewed_uncertain_fit_count, row['total_rows']))})"
             if row["total_rows"]
             else ""
         )
