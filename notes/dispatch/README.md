@@ -158,7 +158,9 @@ Current active family:
   tables so later retrieval/card/evidence slices spend less time manually
   opening artifacts. Strategy note:
   `notes/AGENT_TOOLING_UPGRADES_20260425.md`. First utility dispatch:
-  `notes/dispatch/RAG-T1_shadow_comparison_summarizer.md`.
+  `notes/dispatch/RAG-T1_shadow_comparison_summarizer.md`. Diagnostics trend
+  utility dispatch:
+  `notes/dispatch/RAG-T2_rag_diagnostics_trend_summarizer.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

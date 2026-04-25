@@ -47,6 +47,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_shadow_comparisons.py artifacts\bench\contextual_shadow_compare_ez_newborn_20260425 artifacts\bench\section_family_compare_ez_newborn_20260425 artifacts\bench\section_family_compare_ez_newborn_stride1_20260425 --label contextual --label section-family --label section-family-stride1
 ```
 
+- RAG diagnostic trend summaries:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_rag_diagnostics.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
+```
+
 ## Android Baseline
 
 - Focused Android JVM tests are currently runnable from this shell. Emulator /

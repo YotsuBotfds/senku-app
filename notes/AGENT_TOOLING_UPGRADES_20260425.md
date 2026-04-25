@@ -25,24 +25,26 @@ friction is obvious.
    - This directly replaces the manual work used for S15/S16 EX/EZ reads.
    - First dispatch: `notes/dispatch/RAG-T1_shadow_comparison_summarizer.md`.
 
-2. Add agent run manifests.
+2. Build a RAG trend table.
+   - Inputs: existing analyzer `diagnostics.json` files, shadow comparator
+     summaries, and bench metadata.
+   - Outputs: a Markdown trend table per artifact family or selected run list.
+   - First metrics: expected-guide hit@1/hit@3/hit@k, cited owner, answer-card
+     status, claim support, app acceptance, generated-vs-shadow gaps, and
+     generated/reviewed-card workload.
+   - First dispatch: `notes/dispatch/RAG-T2_rag_diagnostics_trend_summarizer.md`.
+
+3. Add agent run manifests.
    - Write JSONL records under ignored `artifacts/runs/` with:
      task, role, model, prompt label, files changed, diff stat, validation, and
      resulting commit.
    - This mirrors the repo's existing handoff culture without requiring a new
      service.
 
-3. Formalize subagent roles in notes.
+4. Formalize subagent roles in notes.
    - Roles: scout, worker, validator, writer.
    - Keep write ownership explicit and disjoint.
    - Treat workers as patch producers, not silent owners of product direction.
-
-4. Build a RAG trend table.
-   - Inputs: existing analyzer JSON/CSV, shadow comparator summaries, and bench
-     metadata.
-   - Outputs: a Markdown trend table per commit or per artifact family.
-   - First metrics: expected-guide hit@1/hit@3/hit@k, cited owner, answer-card
-     status, claim support, app acceptance, shadow comparable deltas.
 
 ## Phase 2 - Optional Local Services
 
@@ -87,8 +89,8 @@ when it saves repeated task time inside this repo.
 ## Adoption Order
 
 1. Land the shadow-comparison summarizer.
-2. Add an ignored `artifacts/runs/` manifest convention and a tiny writer.
-3. Add a RAG trend summary over existing bench/analyzer artifacts.
+2. Add a RAG trend summary over existing bench/analyzer artifacts.
+3. Add an ignored `artifacts/runs/` manifest convention and a tiny writer.
 4. Only then consider optional dashboards or global terminal tools.
 
 ## Guardrail
