@@ -310,6 +310,14 @@ Current active family:
   `artifacts/android_reviewed_card_ch3_harness_contract_20260425/`. Dispatch
   note:
   `notes/dispatch/RAG-CH3_android_scripted_harness_contract.md`.
+- `RAG-CH5` added direct androidTest coverage for that extracted harness
+  contract. `ScriptedPromptHarnessContractTest` now checks URL decoding,
+  pipe-delimited argument parsing, legacy forbidden-label alias support,
+  boolean parsing, and fail-closed `REVIEWED EVIDENCE` requirements without
+  running the full prompt UI path. Android test compilation and the focused
+  connected instrumentation class passed `7` tests on each attached Senku
+  emulator lane. Dispatch note:
+  `notes/dispatch/RAG-CH5_android_scripted_harness_contract_tests.md`.
 - `RAG-A12` has a real-pack answer-card export probe at
   `artifacts/mobile_pack/senku_20260424_answer_cards_probe_20260424_190810/`:
   `6` pilot cards, `116` clauses, `19` sources, no sourceless or clauseless

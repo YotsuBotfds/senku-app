@@ -56,6 +56,8 @@ Landed Android sequence:
   runtime developer/test-only and default `off` for now.
 - `RAG-CH3`: Android scripted prompt harness contract extraction landed;
   behavior unchanged, androidTest-only.
+- `RAG-CH5`: direct androidTest coverage added for
+  `ScriptedPromptHarnessContract`; behavior unchanged, test-only.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
@@ -999,6 +1001,33 @@ Validation:
 - APK SHA:
   `c01e8e3ccc890a1fc9b2234b6c11955f8589eb8e1bcfeff2ef2bab5dffac8347`.
 
+### RAG-CH5 Scripted Harness Contract Tests
+
+Status: landed and validated; behavior unchanged.
+
+Dispatch:
+`notes/dispatch/RAG-CH5_android_scripted_harness_contract_tests.md`.
+
+`ScriptedPromptHarnessContractTest` now covers the extracted androidTest-only
+contract directly instead of relying only on full prompt smoke canaries.
+
+Coverage:
+
+- URL-decoding and trimming for scalar expected-label/rule/source/card fields;
+- pipe-delimited parsing for forbidden labels, body fragments, and reviewed
+  source guide IDs;
+- legacy singular forbidden-label alias compatibility;
+- strict boolean parsing for scripted runtime and recent-thread flags;
+- complete `REVIEWED EVIDENCE` contracts passing the fail-closed guard;
+- missing reviewed-card fields and non-`answer_card:` rule IDs failing the
+  guard.
+
+Validation:
+
+- `:app:compileDebugAndroidTestJavaWithJavac` passed;
+- focused connected `ScriptedPromptHarnessContractTest` passed `7` tests on
+  each attached Senku emulator lane.
+
 ## UI Notes
 
 Layout is not final, so reviewed-card UI work should be conservative:
@@ -1040,6 +1069,9 @@ This path is getting closer:
 - `RAG-CH3` reduced the A14-era prompt-harness monolith by moving pure scripted
   reviewed-card contract parsing/validation into `ScriptedPromptHarnessContract`
   while leaving behavior and product exposure unchanged.
+- `RAG-CH5` added direct instrumentation coverage for that extracted contract,
+  so future harness changes can catch parser/guard drift before full prompt UI
+  canaries.
 - `DetailReviewedCardMetadataBridge` now owns detail metadata transport/state
   and rule-id guarded lookup; this is code-health only, with behavior unchanged.
 - reviewed-card answers now require at least one visible source row, and

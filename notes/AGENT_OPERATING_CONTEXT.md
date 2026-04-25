@@ -270,6 +270,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
   helpers, and artifact capture. Android test compile / test APK assembly plus
   phone reviewed and non-reviewed forbidden-label canaries passed under
   `artifacts/android_reviewed_card_ch3_harness_contract_20260425/`.
+  `RAG-CH5` then added direct `ScriptedPromptHarnessContractTest`
+  instrumentation coverage for decoded/pipe-delimited scripted arguments,
+  legacy forbidden-label alias support, strict boolean parsing, and the
+  fail-closed reviewed-evidence guard. This is test-only; runtime defaults,
+  product exposure, prompt UI flow, pack assets, and card predicates are
+  unchanged.
 - `RAG-A4` extracted mobile-pack answer-card export helpers into
   `mobile_pack_answer_cards.py`; use that module for future pack-card export
   changes instead of growing `mobile_pack.py`.
