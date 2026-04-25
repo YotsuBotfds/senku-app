@@ -127,6 +127,10 @@ Backlog integration:
   rows than the old baseline artifact, but comparable-row deltas are unchanged
   because only two baseline rows have ranked retrieval candidates. Use
   high-coverage bench artifacts before treating a shadow run as a retrieval win.
+- `RAG-S16c` - owner-family concentration metric. Raw expected-guide hit rates
+  can hide primary-owner drift when backup guides are in the same expected
+  family. The comparator now separates primary owners from backup support guides
+  and reports concentration deltas before any retrieval promotion.
 - `RAG-S17` - instruction-aware rerank interface. Keep the first
   implementation deterministic and local, but shape the API so a reranker can
   later prioritize "emergency owner", "reviewed card source", "routine

@@ -50,6 +50,14 @@ EXPECTED_GUIDE_KEYS = (
     "guide_id",
     "guide_ids",
 )
+PRIMARY_EXPECTED_GUIDE_KEYS = (
+    "primary_expected_guide_id",
+    "primary_expected_guide_ids",
+    "primary_expected_guides",
+    "primary_target_guide_id",
+    "primary_target_guide_ids",
+    "primary_target_guides",
+)
 
 CSV_FIELDS = (
     "artifact_path",
@@ -60,6 +68,8 @@ CSV_FIELDS = (
     "question",
     "expected_topic",
     "expected_guide_ids",
+    "primary_expected_guide_ids",
+    "backup_expected_guide_ids",
     "baseline_top_guide_ids",
     "shadow_top_guide_ids",
     "baseline_expected_rank",
@@ -73,6 +83,15 @@ CSV_FIELDS = (
     "rank_delta",
     "top_k_overlap_count",
     "top_k_overlap_jaccard",
+    "baseline_primary_hit_at_1",
+    "baseline_primary_hit_at_3",
+    "baseline_primary_hit_at_k",
+    "shadow_primary_hit_at_1",
+    "shadow_primary_hit_at_3",
+    "shadow_primary_hit_at_k",
+    "baseline_owner_family_concentration",
+    "shadow_owner_family_concentration",
+    "owner_family_concentration_delta",
 )
 
 
@@ -148,6 +167,11 @@ def _dedupe(items: list[str]) -> list[str]:
     return deduped
 
 
+def _exclude_ids(items: list[str], excluded: list[str]) -> list[str]:
+    excluded_set = set(excluded)
+    return [item for item in items if item not in excluded_set]
+
+
 def _coerce_sequence(value: Any) -> list[Any]:
     if value is None:
         return []
@@ -202,11 +226,19 @@ def extract_expected_guides_from_wave_manifest(
 ) -> dict[str, Any]:
     wave_key = wave_key_from_artifact_path(artifact_path)
     wave_block = (expectations.get("waves") or {}).get(wave_key or "", {}) or {}
+    expected_guide_ids = normalize_expected_guide_ids(
+        wave_block.get("expected_guides"), guide_lookup
+    )
+    primary_expected_guide_ids = normalize_expected_guide_ids(
+        wave_block.get("primary_expected_guides"), guide_lookup
+    )
     return {
         "wave_key": wave_key,
         "expected_topic": wave_block.get("topic", ""),
-        "expected_guide_ids": normalize_expected_guide_ids(
-            wave_block.get("expected_guides"), guide_lookup
+        "expected_guide_ids": expected_guide_ids,
+        "primary_expected_guide_ids": primary_expected_guide_ids,
+        "backup_expected_guide_ids": _exclude_ids(
+            expected_guide_ids, primary_expected_guide_ids
         ),
     }
 
@@ -220,6 +252,7 @@ def extract_expected_guides(
     """Resolve row-specific expectations, falling back to the wave manifest."""
     guide_lookup = guide_lookup or {"slug_to_id": {}, "title_to_id": {}}
     row_expected: list[str] = []
+    row_primary_expected: list[str] = []
     for container in (
         row,
         row.get("prompt_metadata") if isinstance(row.get("prompt_metadata"), dict) else {},
@@ -230,14 +263,26 @@ def extract_expected_guides(
                 row_expected.extend(
                     normalize_expected_guide_ids(container.get(key), guide_lookup)
                 )
+        for key in PRIMARY_EXPECTED_GUIDE_KEYS:
+            if key in container:
+                row_primary_expected.extend(
+                    normalize_expected_guide_ids(container.get(key), guide_lookup)
+                )
 
     manifest_info = extract_expected_guides_from_wave_manifest(
         artifact_path, expectations, guide_lookup
     )
+    manifest_primary = manifest_info.get("primary_expected_guide_ids") or []
     if row_expected:
+        primary_expected = _dedupe(row_primary_expected) or manifest_primary
+        expected_guide_ids = _dedupe(row_expected)
         return {
             **manifest_info,
-            "expected_guide_ids": _dedupe(row_expected),
+            "expected_guide_ids": expected_guide_ids,
+            "primary_expected_guide_ids": primary_expected,
+            "backup_expected_guide_ids": _exclude_ids(
+                expected_guide_ids, primary_expected
+            ),
         }
     return manifest_info
 
@@ -348,6 +393,18 @@ def hit_flags(rank: int | None, candidates: list[str], expected_ids: list[str]) 
     }
 
 
+def owner_family_concentration(
+    candidates: list[str],
+    primary_expected_ids: list[str],
+) -> float | None:
+    """Return share of returned candidates that are primary owner guides."""
+    if not candidates or not primary_expected_ids:
+        return None
+    primary = set(primary_expected_ids)
+    primary_hits = {guide_id for guide_id in candidates if guide_id in primary}
+    return round(len(primary_hits) / len(candidates), 4)
+
+
 def compare_retrieval_row(
     *,
     artifact_path: os.PathLike[str] | str,
@@ -356,16 +413,40 @@ def compare_retrieval_row(
     baseline_top_guide_ids: list[str],
     shadow_top_guide_ids: list[str],
     expected_guide_ids: list[str],
+    primary_expected_guide_ids: list[str] | None = None,
+    backup_expected_guide_ids: list[str] | None = None,
     expected_topic: str = "",
     prompt_id: str | None = None,
     section: str | None = None,
 ) -> dict[str, Any]:
     baseline_rank = expected_rank(baseline_top_guide_ids, expected_guide_ids)
     shadow_rank = expected_rank(shadow_top_guide_ids, expected_guide_ids)
+    primary_expected_guide_ids = primary_expected_guide_ids or []
+    backup_expected_guide_ids = backup_expected_guide_ids or _exclude_ids(
+        expected_guide_ids, primary_expected_guide_ids
+    )
     baseline_hits = hit_flags(
         baseline_rank, baseline_top_guide_ids, expected_guide_ids
     )
     shadow_hits = hit_flags(shadow_rank, shadow_top_guide_ids, expected_guide_ids)
+    baseline_primary_rank = expected_rank(
+        baseline_top_guide_ids, primary_expected_guide_ids
+    )
+    shadow_primary_rank = expected_rank(
+        shadow_top_guide_ids, primary_expected_guide_ids
+    )
+    baseline_primary_hits = hit_flags(
+        baseline_primary_rank, baseline_top_guide_ids, primary_expected_guide_ids
+    )
+    shadow_primary_hits = hit_flags(
+        shadow_primary_rank, shadow_top_guide_ids, primary_expected_guide_ids
+    )
+    baseline_concentration = owner_family_concentration(
+        baseline_top_guide_ids, primary_expected_guide_ids
+    )
+    shadow_concentration = owner_family_concentration(
+        shadow_top_guide_ids, primary_expected_guide_ids
+    )
     baseline_set = set(baseline_top_guide_ids)
     shadow_set = set(shadow_top_guide_ids)
     overlap = baseline_set & shadow_set
@@ -383,6 +464,8 @@ def compare_retrieval_row(
         "question": question,
         "expected_topic": expected_topic,
         "expected_guide_ids": expected_guide_ids,
+        "primary_expected_guide_ids": primary_expected_guide_ids,
+        "backup_expected_guide_ids": backup_expected_guide_ids,
         "baseline_top_guide_ids": baseline_top_guide_ids,
         "shadow_top_guide_ids": shadow_top_guide_ids,
         "baseline_expected_rank": baseline_rank,
@@ -390,11 +473,23 @@ def compare_retrieval_row(
         "rank_delta": rank_delta,
         "top_k_overlap_count": len(overlap),
         "top_k_overlap_jaccard": round(len(overlap) / len(union), 4) if union else None,
+        "baseline_owner_family_concentration": baseline_concentration,
+        "shadow_owner_family_concentration": shadow_concentration,
     }
+    if baseline_concentration is not None and shadow_concentration is not None:
+        row["owner_family_concentration_delta"] = round(
+            shadow_concentration - baseline_concentration, 4
+        )
+    else:
+        row["owner_family_concentration_delta"] = None
     for metric, value in baseline_hits.items():
         row[f"baseline_{metric}"] = value
     for metric, value in shadow_hits.items():
         row[f"shadow_{metric}"] = value
+    for metric, value in baseline_primary_hits.items():
+        row[f"baseline_primary_{metric}"] = value
+    for metric, value in shadow_primary_hits.items():
+        row[f"shadow_primary_{metric}"] = value
     return row
 
 
@@ -414,12 +509,40 @@ def _score_side(rows: list[dict[str, Any]], side: str) -> dict[str, Any]:
     return metrics
 
 
+def _score_primary_side(rows: list[dict[str, Any]], side: str) -> dict[str, Any]:
+    scored_rows = [
+        row
+        for row in rows
+        if row.get("primary_expected_guide_ids")
+        and row.get(f"{side}_primary_hit_at_k") is not None
+    ]
+    metrics: dict[str, Any] = {"scored_rows": len(scored_rows)}
+    for metric in HIT_METRICS:
+        count = sum(
+            1 for row in scored_rows if row.get(f"{side}_primary_{metric}") is True
+        )
+        metrics[metric] = {
+            "count": count,
+            "rate": round(count / len(scored_rows), 4) if scored_rows else None,
+        }
+    return metrics
+
+
 def _comparable_hit_rows(rows: list[dict[str, Any]], metric: str) -> list[dict[str, Any]]:
     return [
         row
         for row in rows
         if row.get(f"baseline_{metric}") is not None
         and row.get(f"shadow_{metric}") is not None
+    ]
+
+
+def _comparable_primary_hit_rows(rows: list[dict[str, Any]], metric: str) -> list[dict[str, Any]]:
+    return [
+        row
+        for row in rows
+        if row.get(f"baseline_primary_{metric}") is not None
+        and row.get(f"shadow_primary_{metric}") is not None
     ]
 
 
@@ -445,6 +568,33 @@ def _metric_deltas(rows: list[dict[str, Any]], metric: str) -> dict[str, Any]:
     }
 
 
+def _primary_metric_deltas(rows: list[dict[str, Any]], metric: str) -> dict[str, Any]:
+    improved = regressed = unchanged = comparable = 0
+    for row in _comparable_primary_hit_rows(rows, metric):
+        baseline = row.get(f"baseline_primary_{metric}")
+        shadow = row.get(f"shadow_primary_{metric}")
+        comparable += 1
+        if baseline == shadow:
+            unchanged += 1
+        elif shadow and not baseline:
+            improved += 1
+        elif baseline and not shadow:
+            regressed += 1
+
+    return {
+        "comparable_rows": comparable,
+        "improved": improved,
+        "regressed": regressed,
+        "unchanged": unchanged,
+        "net_improved": improved - regressed,
+    }
+
+
+def _mean_numeric(rows: list[dict[str, Any]], key: str) -> float | None:
+    values = [row[key] for row in rows if isinstance(row.get(key), (int, float))]
+    return round(sum(values) / len(values), 4) if values else None
+
+
 def aggregate_comparison_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     overlap_values = [
         row["top_k_overlap_jaccard"]
@@ -456,13 +606,33 @@ def aggregate_comparison_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     baseline = _score_side(rows, "baseline")
     shadow = _score_side(rows, "shadow")
     deltas = {metric: _metric_deltas(rows, metric) for metric in HIT_METRICS}
+    baseline_primary = _score_primary_side(rows, "baseline")
+    shadow_primary = _score_primary_side(rows, "shadow")
+    primary_family_deltas = {
+        metric: _primary_metric_deltas(rows, metric) for metric in HIT_METRICS
+    }
     return {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "row_count": len(rows),
         "expected_row_count": sum(1 for row in rows if row.get("expected_guide_ids")),
+        "primary_expected_row_count": sum(
+            1 for row in rows if row.get("primary_expected_guide_ids")
+        ),
         "baseline": baseline,
         "shadow": shadow,
         "deltas": deltas,
+        "baseline_primary": baseline_primary,
+        "shadow_primary": shadow_primary,
+        "primary_family_deltas": primary_family_deltas,
+        "mean_baseline_owner_family_concentration": _mean_numeric(
+            rows, "baseline_owner_family_concentration"
+        ),
+        "mean_shadow_owner_family_concentration": _mean_numeric(
+            rows, "shadow_owner_family_concentration"
+        ),
+        "mean_owner_family_concentration_delta": _mean_numeric(
+            rows, "owner_family_concentration_delta"
+        ),
         "mean_top_k_overlap_jaccard": (
             round(sum(overlap_values) / len(overlap_values), 4)
             if overlap_values
@@ -681,6 +851,12 @@ def compare_bench_artifacts(
                     baseline_top_guide_ids=baseline_candidate_guide_ids(result),
                     shadow_top_guide_ids=shadow_top,
                     expected_guide_ids=expected["expected_guide_ids"],
+                    primary_expected_guide_ids=expected.get(
+                        "primary_expected_guide_ids"
+                    ),
+                    backup_expected_guide_ids=expected.get(
+                        "backup_expected_guide_ids"
+                    ),
                     expected_topic=expected.get("expected_topic", ""),
                 )
             )

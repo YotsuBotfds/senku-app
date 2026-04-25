@@ -11,6 +11,7 @@ from scripts.compare_contextual_shadow_retrieval import (
     extract_expected_guides_from_wave_manifest,
     load_contextual_shadow_jsonl,
     load_expectations,
+    owner_family_concentration,
     write_outputs,
 )
 
@@ -59,6 +60,9 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
     expected_guides:
       - id: GD-380
       - slug: trauma-hemorrhage-control
+      - id: GD-232
+    primary_expected_guides:
+      - id: GD-380
 """,
                 encoding="utf-8",
             )
@@ -73,7 +77,57 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
 
         self.assertEqual(info["wave_key"], "fc")
         self.assertEqual(info["expected_topic"], "abdominal_trauma_emergency")
-        self.assertEqual(info["expected_guide_ids"], ["GD-380", "GD-297"])
+        self.assertEqual(info["expected_guide_ids"], ["GD-380", "GD-297", "GD-232"])
+        self.assertEqual(info["primary_expected_guide_ids"], ["GD-380"])
+        self.assertEqual(info["backup_expected_guide_ids"], ["GD-297", "GD-232"])
+
+    def test_owner_family_concentration_scores_primary_owner_share(self):
+        self.assertEqual(
+            owner_family_concentration(
+                ["GD-589", "GD-298", "GD-232", "GD-492"],
+                ["GD-492", "GD-298", "GD-617", "GD-284"],
+            ),
+            0.5,
+        )
+        self.assertIsNone(owner_family_concentration([], ["GD-492"]))
+        self.assertIsNone(owner_family_concentration(["GD-492"], []))
+
+    def test_primary_owner_metrics_detect_backup_guide_drift(self):
+        rows = [
+            compare_retrieval_row(
+                artifact_path="guide_wave_ez_20260424_162406.json",
+                prompt_index=1,
+                question="newborn looks very sick",
+                expected_guide_ids=[
+                    "GD-492",
+                    "GD-298",
+                    "GD-617",
+                    "GD-284",
+                    "GD-589",
+                    "GD-232",
+                ],
+                primary_expected_guide_ids=["GD-492", "GD-298", "GD-617", "GD-284"],
+                backup_expected_guide_ids=["GD-589", "GD-232"],
+                baseline_top_guide_ids=["GD-492", "GD-298", "GD-589"],
+                shadow_top_guide_ids=["GD-589", "GD-232", "GD-298"],
+            )
+        ]
+
+        summary = aggregate_comparison_rows(rows)
+        row = rows[0]
+
+        self.assertTrue(row["baseline_hit_at_1"])
+        self.assertTrue(row["shadow_hit_at_1"])
+        self.assertTrue(row["baseline_primary_hit_at_1"])
+        self.assertFalse(row["shadow_primary_hit_at_1"])
+        self.assertEqual(row["baseline_owner_family_concentration"], 0.6667)
+        self.assertEqual(row["shadow_owner_family_concentration"], 0.3333)
+        self.assertEqual(row["owner_family_concentration_delta"], -0.3334)
+        self.assertEqual(summary["primary_expected_row_count"], 1)
+        self.assertEqual(summary["baseline_primary"]["hit_at_1"]["count"], 1)
+        self.assertEqual(summary["shadow_primary"]["hit_at_1"]["count"], 0)
+        self.assertEqual(summary["primary_family_deltas"]["hit_at_1"]["regressed"], 1)
+        self.assertEqual(summary["mean_owner_family_concentration_delta"], -0.3334)
 
     def test_hit_1_3_k_delta_aggregation(self):
         rows = [

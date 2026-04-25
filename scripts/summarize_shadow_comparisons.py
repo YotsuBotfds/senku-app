@@ -31,6 +31,12 @@ DEFAULT_COLUMNS = [
     "hit_at_3_net",
     "hit_at_k_net",
     "mean_top_k_overlap_jaccard",
+    "baseline_primary_hit_at_1_rate",
+    "shadow_primary_hit_at_1_rate",
+    "primary_hit_at_1_net",
+    "mean_baseline_owner_family_concentration",
+    "mean_shadow_owner_family_concentration",
+    "mean_owner_family_concentration_delta",
 ]
 
 
@@ -148,6 +154,15 @@ def summarize_comparison(directory: Path, *, label: str | None = None) -> dict[s
     hit_at_1_net = _safe_get(summary, "deltas", "hit_at_1", "net_improved")
     hit_at_3_net = _safe_get(summary, "deltas", "hit_at_3", "net_improved")
     hit_at_k_net = _safe_get(summary, "deltas", "hit_at_k", "net_improved")
+    baseline_primary_hit_at_1_rate = _safe_get(
+        summary, "baseline_primary", "hit_at_1", "rate"
+    )
+    shadow_primary_hit_at_1_rate = _safe_get(
+        summary, "shadow_primary", "hit_at_1", "rate"
+    )
+    primary_hit_at_1_net = _safe_get(
+        summary, "primary_family_deltas", "hit_at_1", "net_improved"
+    )
 
     result = {
         "label": label or directory.name,
@@ -162,6 +177,18 @@ def summarize_comparison(directory: Path, *, label: str | None = None) -> dict[s
         "hit_at_k_net": hit_at_k_net,
         "mean_top_k_overlap_jaccard": _safe_get(
             summary, "mean_top_k_overlap_jaccard"
+        ),
+        "baseline_primary_hit_at_1_rate": baseline_primary_hit_at_1_rate,
+        "shadow_primary_hit_at_1_rate": shadow_primary_hit_at_1_rate,
+        "primary_hit_at_1_net": primary_hit_at_1_net,
+        "mean_baseline_owner_family_concentration": _safe_get(
+            summary, "mean_baseline_owner_family_concentration"
+        ),
+        "mean_shadow_owner_family_concentration": _safe_get(
+            summary, "mean_shadow_owner_family_concentration"
+        ),
+        "mean_owner_family_concentration_delta": _safe_get(
+            summary, "mean_owner_family_concentration_delta"
         ),
     }
     return result

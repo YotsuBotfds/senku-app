@@ -50,6 +50,12 @@ class SummarizeShadowComparisonsTests(unittest.TestCase):
                 "baseline": {"hit_at_1": {"rate": 0.75}},
                 "shadow": {"hit_at_1": {"rate": 0.83}},
                 "mean_top_k_overlap_jaccard": 0.44,
+                "baseline_primary": {"hit_at_1": {"rate": 0.8}},
+                "shadow_primary": {"hit_at_1": {"rate": 0.6}},
+                "primary_family_deltas": {"hit_at_1": {"net_improved": -1}},
+                "mean_baseline_owner_family_concentration": 0.7,
+                "mean_shadow_owner_family_concentration": 0.4,
+                "mean_owner_family_concentration_delta": -0.3,
             }
             write_summary(dir_a / module.SUMMARY_FILENAME, summary)
             summary_b = dict(summary)
@@ -66,6 +72,10 @@ class SummarizeShadowComparisonsTests(unittest.TestCase):
         self.assertEqual(rows[0]["baseline_hit_at_1_rate"], 0.75)
         self.assertEqual(rows[0]["shadow_hit_at_1_rate"], 0.83)
         self.assertEqual(rows[0]["hit_at_1_net"], 1)
+        self.assertEqual(rows[0]["baseline_primary_hit_at_1_rate"], 0.8)
+        self.assertEqual(rows[0]["shadow_primary_hit_at_1_rate"], 0.6)
+        self.assertEqual(rows[0]["primary_hit_at_1_net"], -1)
+        self.assertEqual(rows[0]["mean_owner_family_concentration_delta"], -0.3)
 
     def test_collect_summaries_respects_explicit_labels_and_renders_markdown(self):
         module = load_module()

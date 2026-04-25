@@ -78,6 +78,14 @@ Summary:
 | Section-family shadow, non-overlap | 6 | 6/6 | 6/6 | 6/6 | 0.2865 |
 | Section-family shadow, stride 1 | 6 | 6/6 | 6/6 | 6/6 | 0.4214 |
 
+Owner-family concentration after `RAG-S16c`:
+
+| Retrieval lane | Raw hit@1 | Primary hit@1 | Mean owner concentration delta |
+| --- | ---: | ---: | ---: |
+| Contextual shadow | 6/6 | 4/6 | +0.0500 |
+| Section-family shadow, non-overlap | 6/6 | 4/6 | -0.1722 |
+| Section-family shadow, stride 1 | 6/6 | 4/6 | -0.0555 |
+
 Read:
 
 - EZ is a ceiling panel for this metric. Production baseline is already `6/6`
@@ -91,6 +99,9 @@ Read:
 - Overlapping section-family windows reduce that drift versus non-overlap, but
   still do not match contextual chunks for candidate-set stability on this
   panel.
+- Primary-owner concentration now quantifies the same issue: contextual chunks
+  preserve primary newborn/pediatric owners best, while section-family windows
+  still lean more toward backup support guides.
 
 ## Product Implication
 

@@ -153,6 +153,10 @@ Current active family:
   and the S15b comparator now accepts those records. Production query/index/guide
   behavior and Android behavior remain unchanged. Dispatch note:
   `notes/dispatch/RAG-S16_section_family_shadow_export.md`.
+- `RAG-S16c` adds primary-owner concentration diagnostics to the shadow
+  comparator so broad expected-guide families cannot hide drift toward backup
+  support guides. Dispatch note:
+  `notes/dispatch/RAG-S16c_owner_family_concentration_metric.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually

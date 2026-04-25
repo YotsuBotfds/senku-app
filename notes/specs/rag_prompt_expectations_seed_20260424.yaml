@@ -35,6 +35,11 @@ waves:
         slug: infant-child-care
       - id: GD-617
         slug: pediatric-emergencies-field
+    primary_expected_guides:
+      - id: GD-232
+        slug: first-aid
+      - id: GD-579
+        slug: emergency-airway-management
     required_concepts:
       - distinguish effective coughing/speaking from complete obstruction
       - urgent airway action for cannot breathe, speak, or effective-cough
@@ -63,6 +68,9 @@ waves:
         slug: infant-child-care
       - id: GD-268
         slug: public-health-disease-surveillance
+    primary_expected_guides:
+      - id: GD-589
+        slug: sepsis-recognition-antibiotic-protocols
     required_concepts:
       - fever plus stiff neck, severe headache, light sensitivity, vomiting, hard-to-wake, or petechial rash is urgent
       - do not reassure as routine viral illness when red flags are present
@@ -90,6 +98,15 @@ waves:
         slug: sepsis-recognition-antibiotic-protocols
       - id: GD-232
         slug: first-aid
+    primary_expected_guides:
+      - id: GD-492
+        slug: postpartum-care-mother-infant
+      - id: GD-298
+        slug: pediatric-emergency-medicine
+      - id: GD-617
+        slug: pediatric-emergencies-field
+      - id: GD-284
+        slug: infant-child-care
     required_concepts:
       - newborn fever, low temperature, limpness, poor feeding, breathing trouble, weak behavior, or hard-to-wake state is urgent
       - urgent medical help or evacuation first
@@ -150,6 +167,11 @@ waves:
         slug: trauma-hemorrhage-control
       - id: GD-232
         slug: first-aid
+    primary_expected_guides:
+      - id: GD-380
+        slug: acute-abdominal-emergencies
+      - id: GD-297
+        slug: trauma-hemorrhage-control
     required_concepts:
       - hard belly, worsening pain, vomiting after abdominal impact, dizziness/pallor, or handlebar injury is urgent
       - treat for shock and urgent evacuation

@@ -57,6 +57,10 @@ Expected outputs:
 - Reports `top_k_overlap_jaccard` as a simple set overlap. It is useful for
   drift detection, but rank-blind; it does not say whether shared guides moved
   up or down.
+- Reports optional primary-owner hit and owner-family concentration metrics when
+  the expectation manifest supplies `primary_expected_guides`. These metrics
+  expose drift from primary owner guides toward backup support guides without
+  changing raw expected-guide hit rates.
 - Keeps live retrieval comparison optional behind the CLI because it requires an
   embedding endpoint and may be expensive on the full corpus.
 
