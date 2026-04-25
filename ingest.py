@@ -284,6 +284,114 @@ def make_chunk_id(chunk, index):
     return f"chunk_{digest}"
 
 
+def build_contextual_retrieval_text(chunk):
+    """Build non-production retrieval text that preserves guide and section context."""
+    text = str(chunk.get("text", "") if isinstance(chunk, dict) else "")
+    metadata = chunk.get("metadata", {}) if isinstance(chunk, dict) else {}
+    if not isinstance(metadata, dict):
+        metadata = {}
+
+    guide_bits = [
+        metadata.get("guide_title", ""),
+        metadata.get("guide_id", ""),
+        metadata.get("slug", ""),
+    ]
+    guide_label = " | ".join(str(bit).strip() for bit in guide_bits if str(bit).strip())
+    lines = []
+    if guide_label:
+        lines.append(f"Guide: {guide_label}")
+    if metadata.get("description"):
+        lines.append(f"Purpose: {metadata.get('description')}")
+    if metadata.get("section_heading"):
+        lines.append(f"Section: {metadata.get('section_heading')}")
+    if metadata.get("category") or metadata.get("tags"):
+        category_tags = ", ".join(
+            str(bit).strip()
+            for bit in (metadata.get("category", ""), metadata.get("tags", ""))
+            if str(bit).strip()
+        )
+        lines.append(f"Category/tags: {category_tags}")
+    if metadata.get("liability_level"):
+        lines.append(f"Liability: {metadata.get('liability_level')}")
+    if metadata.get("related"):
+        lines.append(f"Related: {metadata.get('related')}")
+
+    if lines:
+        lines.append("")
+    lines.append(text.strip())
+    return "\n".join(lines).strip()
+
+
+def contextual_shadow_record(chunk, index):
+    """Return one JSONL-safe contextual shadow export record."""
+    metadata = dict(chunk.get("metadata", {}) if isinstance(chunk, dict) else {})
+    document = str(chunk.get("text", "") if isinstance(chunk, dict) else "")
+    return {
+        "chunk_id": make_chunk_id(chunk, index),
+        "document": document,
+        "contextual_retrieval_text": build_contextual_retrieval_text(chunk),
+        "metadata": metadata,
+    }
+
+
+def remove_contextual_shadow_jsonl(output_path):
+    """Remove stale shadow output before a new shadow-only export starts."""
+    try:
+        os.remove(os.fspath(output_path))
+    except FileNotFoundError:
+        return
+
+
+def write_contextual_shadow_jsonl(chunks, output_path):
+    """Write contextual retrieval text without changing production ingest stores."""
+    output_path = os.fspath(output_path)
+    parent = os.path.dirname(output_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as handle:
+        for index, chunk in enumerate(chunks):
+            json.dump(
+                contextual_shadow_record(chunk, index),
+                handle,
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+            handle.write("\n")
+    return len(chunks)
+
+
+def export_contextual_shadow_jsonl(md_files, output_path):
+    """Parse guides and write contextual shadow records without DB mutation."""
+    remove_contextual_shadow_jsonl(output_path)
+    all_chunks = []
+    errors = []
+    for filepath in md_files:
+        try:
+            meta, chunks = process_file(filepath)
+            basename = os.path.basename(filepath)
+            if meta is None:
+                errors.append((basename, "Failed to parse frontmatter"))
+                continue
+            if not chunks:
+                errors.append((basename, "Produced zero chunks"))
+                continue
+            all_chunks.extend(chunks)
+        except Exception as exc:
+            errors.append((os.path.basename(filepath), str(exc)))
+
+    if errors:
+        console.print("\n[bold red]Contextual shadow export failed.[/bold red]")
+        for filename, reason in errors:
+            console.print(f"  [red]{filename}:[/red] {reason}")
+        raise SystemExit(1)
+
+    count = write_contextual_shadow_jsonl(all_chunks, output_path)
+    console.print(
+        f"[green]Wrote {count} contextual shadow chunks to {output_path}[/green]"
+    )
+    return count
+
+
 def add_lexical_records(conn, ids, texts, metadatas):
     """Insert one batch into the lexical FTS shadow index."""
     meta_rows = []
@@ -776,7 +884,43 @@ def main():
             "Existing collection must exist unless using --rebuild."
         ),
     )
+    parser.add_argument(
+        "--contextual-shadow-jsonl",
+        help=(
+            "Write non-production contextual retrieval text records to this JSONL "
+            "path while preserving raw chunk documents."
+        ),
+    )
+    parser.add_argument(
+        "--contextual-shadow-only",
+        action="store_true",
+        help=(
+            "Only write --contextual-shadow-jsonl and exit before Chroma, "
+            "embedding, lexical, or manifest work."
+        ),
+    )
     args = parser.parse_args()
+
+    if args.contextual_shadow_only and not args.contextual_shadow_jsonl:
+        parser.error("--contextual-shadow-only requires --contextual-shadow-jsonl")
+
+    all_md_files = collect_markdown_files()
+    selected_md_files = (
+        normalize_selected_files(args.files) if args.files else all_md_files
+    )
+
+    if args.files:
+        requested_basenames = {os.path.basename(req) for req in args.files}
+        resolved_basenames = {os.path.basename(path) for path in selected_md_files}
+        missing = sorted(requested_basenames - resolved_basenames)
+        if any(missing):
+            for item in missing:
+                console.print(f"[red]Could not resolve guide file: {item}[/red]")
+            sys.exit(1)
+
+    if args.contextual_shadow_only:
+        export_contextual_shadow_jsonl(selected_md_files, args.contextual_shadow_jsonl)
+        return
 
     if args.rebuild and not args.stats and os.path.isdir(config.CHROMA_DB_DIR):
         shutil.rmtree(config.CHROMA_DB_DIR)
@@ -792,20 +936,6 @@ def main():
             sys.exit(1)
         print_stats(collection)
         return
-
-    all_md_files = collect_markdown_files()
-    selected_md_files = (
-        normalize_selected_files(args.files) if args.files else all_md_files
-    )
-
-    if args.files and not args.rebuild:
-        requested_basenames = {os.path.basename(req) for req in args.files}
-        resolved_basenames = {os.path.basename(path) for path in selected_md_files}
-        missing = sorted(requested_basenames - resolved_basenames)
-        if any(missing):
-            for item in missing:
-                console.print(f"[red]Could not resolve guide file: {item}[/red]")
-            sys.exit(1)
 
     # Check if DB already exists
     existing = [c.name for c in client.list_collections()]
@@ -993,6 +1123,13 @@ def main():
 
     console.print(f"Parsed {len(md_files)} files -> {len(all_chunks)} chunks")
 
+    if args.contextual_shadow_jsonl:
+        write_contextual_shadow_jsonl(all_chunks, args.contextual_shadow_jsonl)
+        console.print(
+            f"[green]Wrote {len(all_chunks)} contextual shadow chunks to "
+            f"{args.contextual_shadow_jsonl}[/green]"
+        )
+
     embedded_guide_ids = set()
     expected_chunks_by_guide_id = defaultdict(int)
     embedded_chunks_by_guide_id = defaultdict(int)
@@ -1012,21 +1149,31 @@ def main():
 
         try:
             embeddings = embed_batch_with_retry(texts, batch_no)
-            batch_records = list(zip(texts, metadatas, embeddings))
+            batch_records = [
+                (text, metadata, embedding, i + j)
+                for j, (text, metadata, embedding) in enumerate(
+                    zip(texts, metadatas, embeddings)
+                )
+            ]
         except Exception as e:
             console.print(
                 f"\n[yellow]Batch {batch_no} failed after retries; "
                 "falling back to per-chunk embedding.[/yellow]"
             )
             batch_records = []
-            for j, chunk in enumerate(batch, start=1):
+            for j, chunk in enumerate(batch):
                 try:
                     single_embedding = embed_batch_with_retry(
                         [chunk["text"]],
-                        f"{batch_no}.{j}",
+                        f"{batch_no}.{j + 1}",
                     )[0]
                     batch_records.append(
-                        (chunk["text"], chunk["metadata"], single_embedding)
+                        (
+                            chunk["text"],
+                            chunk["metadata"],
+                            single_embedding,
+                            i + j,
+                        )
                     )
                 except Exception as item_error:
                     guide_id = chunk["metadata"].get("guide_id", "unknown")
@@ -1049,9 +1196,7 @@ def main():
         metadatas = [record[1] for record in batch_records]
         embeddings = [record[2] for record in batch_records]
 
-        ids = [
-            make_chunk_id(batch_records[j], i + j) for j in range(len(batch_records))
-        ]
+        ids = [make_chunk_id(record, record[3]) for record in batch_records]
         collection = add_records_with_retry(
             collection,
             client,

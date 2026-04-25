@@ -110,10 +110,11 @@ Backlog integration:
   output from card pass/partial into TREC-style required evidence nuggets:
   present, cited, supported, contradicted, or missing, using existing
   answer-card clauses and source invariants before any LLM judge.
-- `RAG-S15` - contextual chunk ingest shadow experiment. Add a non-default
-  contextual retrieval text field, re-ingest into a shadow collection or export,
-  and compare hit@1/hit@3/hit@k and app-acceptance counts against the current
-  proof set. Do not replace the production index in the first slice.
+- `RAG-S15` - contextual chunk ingest shadow experiment. The first slice now
+  adds a non-default ingest JSONL sidecar with raw `document` plus
+  `contextual_retrieval_text`, `metadata`, and `chunk_id`. Next compare
+  hit@1/hit@3/hit@k against the current proof set from this shadow text. Do not
+  replace the production index in the first measurement pass.
 - `RAG-S16` - section-family summary retrieval spike. Create guide/section
   summaries for cross-section questions as a RAPTOR-lite experiment, especially
   for "normal vs urgent", comparison, and boundary prompts.

@@ -1,14 +1,21 @@
 import gc
+import json
 import shutil
 import sqlite3
 import sys
 import tempfile
 import unittest
+from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
 import ingest as ingest_module
-from ingest import clean_chunk_text, parse_frontmatter, process_file
+from ingest import (
+    build_contextual_retrieval_text,
+    clean_chunk_text,
+    parse_frontmatter,
+    process_file,
+)
 
 
 class IngestTests(unittest.TestCase):
@@ -108,6 +115,224 @@ but it still contains useful content that should be indexed.
         self.assertEqual(chunks[0]["metadata"]["section_heading"], "")
         self.assertIn("still contains useful content", chunks[0]["text"])
 
+    def test_build_contextual_retrieval_text_preserves_chunk_with_context(self):
+        chunk = {
+            "text": "Keep this exact operational step.",
+            "metadata": {
+                "guide_id": "GD-777",
+                "guide_title": "Context Guide",
+                "slug": "context-guide",
+                "description": "Purpose text",
+                "category": "utility",
+                "tags": "water,storage",
+                "section_heading": "Storage Steps",
+                "liability_level": "medium",
+                "related": "GD-778",
+            },
+        }
+
+        text = build_contextual_retrieval_text(chunk)
+
+        self.assertIn("Guide: Context Guide | GD-777 | context-guide", text)
+        self.assertIn("Purpose: Purpose text", text)
+        self.assertIn("Section: Storage Steps", text)
+        self.assertIn("Category/tags: utility, water,storage", text)
+        self.assertIn("Liability: medium", text)
+        self.assertIn("Related: GD-778", text)
+        self.assertTrue(text.endswith("Keep this exact operational step."))
+
+    def test_contextual_shadow_only_writes_jsonl_without_chroma_or_embeddings(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            guide_path = guides_dir / "shadow-guide.md"
+            guide_path.write_text(
+                """---
+id: GD-902
+slug: shadow-guide
+title: Shadow Guide
+category: utility
+description: A guide for contextual shadow export.
+tags: [shadow, test]
+---
+
+## First Section
+
+This raw chunk should stay raw.
+""",
+                encoding="utf-8",
+            )
+            _, chunks = process_file(str(guide_path))
+            output_path = root / "contextual-shadow.jsonl"
+
+            with (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(
+                    ingest_module.chromadb,
+                    "PersistentClient",
+                    side_effect=AssertionError("Chroma should not be opened"),
+                ),
+                patch.object(
+                    ingest_module,
+                    "embed_batch_with_retry",
+                    side_effect=AssertionError("Embeddings should not run"),
+                ),
+                patch.object(
+                    ingest_module.requests,
+                    "get",
+                    side_effect=AssertionError("Endpoint check should not run"),
+                ),
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "ingest.py",
+                        "--contextual-shadow-jsonl",
+                        str(output_path),
+                        "--contextual-shadow-only",
+                    ],
+                ),
+            ):
+                ingest_module.main()
+
+            records = [
+                json.loads(line)
+                for line in output_path.read_text(encoding="utf-8").splitlines()
+            ]
+
+        self.assertEqual(len(records), len(chunks))
+        self.assertEqual(records[0]["document"], chunks[0]["text"])
+        self.assertEqual(records[0]["metadata"]["guide_id"], "GD-902")
+        self.assertIn(
+            "Guide: Shadow Guide | GD-902 | shadow-guide",
+            records[0]["contextual_retrieval_text"],
+        )
+        self.assertIn(
+            "This raw chunk should stay raw.",
+            records[0]["contextual_retrieval_text"],
+        )
+
+    def test_contextual_shadow_only_removes_stale_jsonl_on_parse_error(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            guide_path = guides_dir / "bad-guide.md"
+            guide_path.write_text("This guide has no frontmatter.", encoding="utf-8")
+            output_path = root / "contextual-shadow.jsonl"
+            output_path.write_text('{"stale": true}\n', encoding="utf-8")
+
+            with (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(
+                    ingest_module.chromadb,
+                    "PersistentClient",
+                    side_effect=AssertionError("Chroma should not be opened"),
+                ),
+                patch.object(
+                    ingest_module.requests,
+                    "get",
+                    side_effect=AssertionError("Endpoint check should not run"),
+                ),
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "ingest.py",
+                        "--contextual-shadow-jsonl",
+                        str(output_path),
+                        "--contextual-shadow-only",
+                    ],
+                ),
+            ):
+                with self.assertRaises(SystemExit):
+                    ingest_module.main()
+
+            self.assertFalse(output_path.exists())
+
+    def test_contextual_shadow_ids_match_fallback_embedded_chunks(self):
+        tmpdir = Path(tempfile.mkdtemp())
+        try:
+            root = tmpdir
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            guide_path = guides_dir / "fallback-guide.md"
+            guide_path.write_text(
+                """---
+id: GD-903
+slug: fallback-guide
+title: Fallback Guide
+category: utility
+description: A guide for fallback chunk id alignment.
+---
+
+## First Section
+
+First fallback chunk should fail embedding.
+
+## Second Section
+
+Second fallback chunk should still align to its shadow record.
+""",
+                encoding="utf-8",
+            )
+            db_dir = root / "db"
+            lexical_path = db_dir / "senku_lexical.sqlite3"
+            manifest_path = db_dir / "ingest_manifest.json"
+            report_path = db_dir / "metadata_validation_report.json"
+            shadow_path = db_dir / "contextual-shadow.jsonl"
+
+            def embed_side_effect(texts, batch_no):
+                if len(texts) > 1:
+                    raise RuntimeError("batch failed")
+                if "First fallback chunk" in texts[0]:
+                    raise RuntimeError("first chunk failed")
+                return [[0.0, 1.0, 2.0]]
+
+            with (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(ingest_module.config, "CHROMA_DB_DIR", str(db_dir)),
+                patch.object(ingest_module.config, "LEXICAL_DB_PATH", str(lexical_path)),
+                patch.object(ingest_module, "MANIFEST_PATH", str(manifest_path)),
+                patch.object(ingest_module, "METADATA_VALIDATION_REPORT_PATH", str(report_path)),
+                patch.object(ingest_module.requests, "get", return_value=object()),
+                patch.object(
+                    ingest_module,
+                    "embed_batch_with_retry",
+                    side_effect=embed_side_effect,
+                ),
+                patch.object(ingest_module, "print_stats", return_value=None),
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "ingest.py",
+                        "--rebuild",
+                        "--contextual-shadow-jsonl",
+                        str(shadow_path),
+                    ],
+                ),
+            ):
+                ingest_module.main()
+
+            shadow_records = [
+                json.loads(line)
+                for line in shadow_path.read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(len(shadow_records), 2)
+            with closing(sqlite3.connect(lexical_path)) as conn:
+                rows = conn.execute(
+                    "SELECT chunk_id, document FROM lexical_chunk_meta"
+                ).fetchall()
+
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0][0], shadow_records[1]["chunk_id"])
+            self.assertEqual(rows[0][1], shadow_records[1]["document"])
+        finally:
+            gc.collect()
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
     def test_fresh_rebuild_populates_poisoning_guides_in_lexical_db(self):
         repo_root = Path(__file__).resolve().parents[1]
         source_guides_dir = repo_root / "guides"
@@ -137,6 +362,7 @@ but it still contains useful content that should be indexed.
             lexical_path = db_dir / "senku_lexical.sqlite3"
             manifest_path = db_dir / "ingest_manifest.json"
             report_path = db_dir / "metadata_validation_report.json"
+            shadow_path = db_dir / "contextual_shadow.jsonl"
 
             with (
                 patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
@@ -151,11 +377,20 @@ but it still contains useful content that should be indexed.
                     side_effect=lambda texts, batch_no: [[0.0, 1.0, 2.0] for _ in texts],
                 ),
                 patch.object(ingest_module, "print_stats", return_value=None),
-                patch.object(sys, "argv", ["ingest.py", "--rebuild"]),
+                patch.object(
+                    sys,
+                    "argv",
+                    [
+                        "ingest.py",
+                        "--rebuild",
+                        "--contextual-shadow-jsonl",
+                        str(shadow_path),
+                    ],
+                ),
             ):
                 ingest_module.main()
 
-            with sqlite3.connect(lexical_path) as conn:
+            with closing(sqlite3.connect(lexical_path)) as conn:
                 total_rows = conn.execute(
                     "SELECT COUNT(*) FROM lexical_chunk_meta"
                 ).fetchone()[0]
@@ -167,6 +402,24 @@ but it still contains useful content that should be indexed.
                             (guide_id,),
                         ).fetchone()[0]
                         self.assertEqual(actual_rows, expected_rows)
+                shadow_records = [
+                    json.loads(line)
+                    for line in shadow_path.read_text(encoding="utf-8").splitlines()
+                ]
+                self.assertEqual(len(shadow_records), total_rows)
+                lexical_document = conn.execute(
+                    "SELECT document FROM lexical_chunk_meta WHERE chunk_id = ?",
+                    (shadow_records[0]["chunk_id"],),
+                ).fetchone()[0]
+                self.assertEqual(lexical_document, shadow_records[0]["document"])
+                self.assertNotEqual(
+                    lexical_document,
+                    shadow_records[0]["contextual_retrieval_text"],
+                )
+                self.assertIn(
+                    "Guide:",
+                    shadow_records[0]["contextual_retrieval_text"],
+                )
         finally:
             gc.collect()
             shutil.rmtree(tmpdir, ignore_errors=True)

@@ -37,7 +37,7 @@ CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 
 Current active family:
 
-- `RAG-S1` through `RAG-S14` are the current RAG-next-level dispatches.
+- `RAG-S1` through `RAG-S15` are the current RAG-next-level dispatches.
 - `RAG-S1` has produced the first diagnostic result at
   `notes/RAG_S1_DIAGNOSTIC_RESULT_20260424.md`.
 - `RAG-S1b` observability has landed in the same work block.
@@ -131,6 +131,12 @@ Current active family:
   Markdown summaries. This is measurement only: no runtime query, retrieval,
   prompt, guide, or Android behavior changed. Dispatch note:
   `notes/dispatch/RAG-S14_nugget_evidence_diagnostics.md`.
+- `RAG-S15` has landed a non-default contextual-chunk shadow export lane.
+  Output is ingest-only JSONL with raw `document`,
+  `contextual_retrieval_text`, `metadata`, and `chunk_id` fields for analysis,
+  with no production Chroma, embedding, lexical, query, guide, or Android
+  behavior changes. Dispatch note:
+  `notes/dispatch/RAG-S15_contextual_chunk_shadow_export.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`
