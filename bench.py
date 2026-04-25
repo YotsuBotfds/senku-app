@@ -2,9 +2,9 @@
 """Batch test runner for Senku. Runs prompts from a file and produces a markdown report.
 
 Usage:
-    python3 bench.py                                        # local only
-    python3 bench.py --urls http://192.168.1.50:1234/v1     # desktop only
-    python3 bench.py --urls http://localhost:1234/v1,http://192.168.1.50:1234/v1  # both
+    python3 bench.py                                        # default split local runtime
+    python3 bench.py --urls http://127.0.0.1:1235/v1 --embed-url http://127.0.0.1:1234/v1
+    python3 bench.py --urls http://192.168.1.50:1235/v1 --embed-url http://127.0.0.1:1234/v1
 """
 
 import argparse
