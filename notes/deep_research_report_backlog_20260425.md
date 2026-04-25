@@ -26,13 +26,17 @@ and user trust behavior.
   found `249` high-liability guides and `248` with at least one metadata or
   reviewed-card coverage gap. See
   `notes/dispatch/RAG-META1_high_liability_metadata_audit.md`.
-- `RAG-RUNTIME1`: resolve Gemma/LiteRT target naming.
-  Clarify whether `gemma-4-e2b-it-litert` is internal shorthand, provisional
-  naming, or a real deployment target distinct from public Gemma 3n E2B/E4B
-  naming.
-- `RAG-TRUST1`: draft Senku trust model and high-risk answer policy.
-  Cover what Senku can answer, what it cannot verify, citation expectations,
-  offline assumptions, refusal/escalation behavior, and high-liability surfaces.
+- `RAG-RUNTIME1`: completed.
+  Resolved `gemma-4-e2b-it-litert` as the canonical local LiteRT generation
+  target ID for the current desktop/validation lane, distinct from public API
+  model IDs and broad-quality overrides. Decision note:
+  `notes/RUNTIME_TARGET_NAMING_20260425.md`.
+- `RAG-TRUST1`: completed.
+  Drafted the Senku trust model and high-risk answer policy with can-answer/
+  cannot-verify/escalate behavior, `uncertain_fit` vs `abstain` logic, citation
+  and provenance requirements, offline limitations, and high-liability examples.
+  Completed note:
+  `notes/SENKU_TRUST_MODEL_HIGH_RISK_POLICY_20260425.md`.
 - `RAG-EVAL1`: add partial-hole and router-page retrieval diagnostics.
   Build held-out prompts that fail if an unresolved partial or thin router page
   becomes the primary answer source.

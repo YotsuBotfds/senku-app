@@ -234,6 +234,17 @@ Current active family:
   overlay stayed at `9.56/10` and showed no top-1 bridge or unresolved partial
   rows. Dispatch note:
   `notes/dispatch/RAG-EVAL1_corpus_marker_diagnostic_overlay.md`.
+- `RAG-RUNTIME1` resolved model/runtime naming. `gemma-4-e2b-it-litert` is the
+  canonical local LiteRT generation target ID for the current desktop and guide
+  validation lanes, distinct from public model IDs and broad-quality overrides.
+  Decision note: `notes/RUNTIME_TARGET_NAMING_20260425.md`. Dispatch note:
+  `notes/dispatch/RAG-RUNTIME1_gemma_litert_target_naming.md`.
+- `RAG-TRUST1` drafted Senku's trust model and high-risk answer policy,
+  including can-answer/cannot-verify/escalate modes, `uncertain_fit` vs
+  `abstain`, citation/provenance expectations, offline limits, and
+  high-liability examples. Policy note:
+  `notes/SENKU_TRUST_MODEL_HIGH_RISK_POLICY_20260425.md`. Dispatch note:
+  `notes/dispatch/RAG-TRUST1_senku_trust_model_high_risk_policy.md`.
 - `RAG-T6` adds the same top-1 marker overlay to `rag_trend.py` so session
   startup tables can compare marker risk, bridge rows, and unresolved-partial
   rows across diagnostic panels. Dispatch note:

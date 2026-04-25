@@ -43,6 +43,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
   - generation model: `SENKU_GEN_MODEL` / `--model`, default `gemma-4-e2b-it-litert`;
   - embeddings: `SENKU_EMBED_URL` / `--embed-url`, default `http://127.0.0.1:1234/v1`;
   - legacy `LM_STUDIO_URL` remains an embedding alias only.
+- Runtime naming decision:
+  [`notes/RUNTIME_TARGET_NAMING_20260425.md`](./RUNTIME_TARGET_NAMING_20260425.md).
+  If `query.py` starts on `google/gemma-4-26b-a4b`, check `SENKU_*`
+  environment variables or CLI overrides before changing defaults.
 
 - If the default embedding lane is unavailable, pass the endpoint explicitly:
 
@@ -142,6 +146,12 @@ Current proof:
 If a family shows `0/N` frontmatter/card gaps, do not continue metadata churn;
 evaluate reviewed-card coverage or the deep-research `RAG-RUNTIME1` /
 `RAG-TRUST1` backlog instead.
+
+`RAG-RUNTIME1` resolved the current model-target vocabulary. Current decision:
+`notes/RUNTIME_TARGET_NAMING_20260425.md`.
+
+`RAG-TRUST1` drafted the high-risk answer policy. Current policy:
+`notes/SENKU_TRUST_MODEL_HIGH_RISK_POLICY_20260425.md`.
 
 - Append a durable run manifest record for ignored/local artifacts:
 
