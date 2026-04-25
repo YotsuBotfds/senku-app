@@ -157,6 +157,15 @@ Current active family:
   changed. Focused compile and unit validation passed `34` tests. Dispatch
   note:
   `notes/dispatch/RAG-CH8_desktop_bench_answer_diagnostics_tests.md`.
+- `RAG-CH9` added direct desktop helper coverage for `query_scenario_frame.py`.
+  `tests/test_query_scenario_frame.py` now proves import purity, injected
+  domain/restart behavior, inventory-to-asset handling, placeholder inventory
+  filtering, scenario extraction, session merge/update ordering, rendering, and
+  session-context gating. No `query.py`, prompt, routing predicate, guide,
+  Android, runtime, or product behavior changed. Focused scenario/routing
+  validation passed `69` tests, and the broader deterministic lane passed
+  `148` tests plus `173` rule validation. Dispatch note:
+  `notes/dispatch/RAG-CH9_desktop_scenario_frame_tests.md`.
 - `RAG-A1` has landed the first Android receiving-shape slice. `AnswerContent`
   now carries display-only answer surface/provenance fields with safe defaults,
   and `PaperAnswerCard` can distinguish deterministic, limited-fit, and abstain
