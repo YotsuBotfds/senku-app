@@ -45,3 +45,39 @@ Flag common high-signal patterns:
 
 Success means future agents can find encoding hotspots before editing, and
 guide work no longer discovers mojibake only through failed patch contexts.
+
+## 2026-04-25 Proof
+
+Implemented `scripts/scan_mojibake.py`, a stdlib-only scanner that reports
+likely mojibake by file, line, pattern kind, and snippet. It writes JSON and
+Markdown reports without editing source files.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_scan_mojibake -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile scripts\scan_mojibake.py tests\test_scan_mojibake.py
+```
+
+Baseline scan:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\scan_mojibake.py --paths guides notes --output-dir artifacts\text_quality
+```
+
+Output:
+
+- `artifacts/text_quality/mojibake_scan_20260425_233955.json`
+- `artifacts/text_quality/mojibake_scan_20260425_233955.md`
+
+Result:
+
+- files scanned: `1167`
+- findings: `3885`
+- top hotspot: `notes/specs/parallelism_plan.md`
+- highest guide hotspots include `food-preservation.md`, `home-inventory.md`,
+  `toxicology-poisoning-response.md`, and `toxidromes-field-poisoning.md`
+
+Next cleanup should be a separate reviewed slice. Start with frontmatter/icon
+lines or clearly mechanical punctuation ranges; do not batch-rewrite guide
+bodies without content review.
