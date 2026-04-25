@@ -137,6 +137,14 @@ Backlog integration:
 - `RAG-S19` - adaptive retrieval controller. Promote the existing retrieval
   profile work into a measured controller with per-profile latency, token, and
   failure-bucket metrics.
+- `RAG-T1` - workflow/tooling summarizers. Promote the April 2026 tooling read
+  into a near-future efficiency lane: shadow-comparison summaries, agent run
+  manifests, and RAG trend tables should ship alongside retrieval experiments
+  so later slices spend less time on artifact archaeology.
+- `RAG-T2` - optional eval/dashboard bridge. After local deterministic metrics
+  are stable, evaluate whether a Ragas- or Phoenix-inspired local workflow adds
+  useful context relevance / faithfulness / trace views without becoming a new
+  required service.
 
 Method verdict:
 
@@ -158,6 +166,10 @@ Immediate backlog integration:
 - `RAG-S7`: expand tiny source-content invariants for the remaining critical cards, then use guide edits only when an invariant exposes a real source contradiction.
 - `RAG-S8`: add an evidence-unit / citation-first answer composer spike; this should build a compact, ordered evidence packet from cards and retrieved chunks before generation.
 - `RAG-S6`: keep app evidence/confidence surface analyzer-first until card/claim fields are stable enough to render without debug clutter.
+- `RAG-T1`: keep tooling improvements near-term, not aspirational. Every
+  retrieval experiment should leave behind a one-command summary and a clean
+  enough artifact trail that the next agent can continue without redoing the
+  same manual reads.
 
 ## Current Repo Strengths
 

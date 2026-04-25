@@ -64,6 +64,12 @@ Outputs:
 - `artifacts/bench/section_family_compare_ez_newborn_20260425/`
 - `artifacts/bench/section_family_compare_ez_newborn_stride1_20260425/`
 
+One-command summary:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_shadow_comparisons.py artifacts\bench\contextual_shadow_compare_ez_newborn_20260425 artifacts\bench\section_family_compare_ez_newborn_20260425 artifacts\bench\section_family_compare_ez_newborn_stride1_20260425 --label contextual --label section-family --label section-family-stride1
+```
+
 Summary:
 
 | Retrieval lane | Comparable rows | hit@1 | hit@3 | hit@k | Mean top-k overlap |

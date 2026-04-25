@@ -41,6 +41,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_validation.ps1 -Wave be -PythonPath .\.venvs\senku-validate\Scripts\python.exe -EmbedUrl http://127.0.0.1:1234/v1
 ```
 
+- Shadow retrieval comparison summaries:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_shadow_comparisons.py artifacts\bench\contextual_shadow_compare_ez_newborn_20260425 artifacts\bench\section_family_compare_ez_newborn_20260425 artifacts\bench\section_family_compare_ez_newborn_stride1_20260425 --label contextual --label section-family --label section-family-stride1
+```
+
 ## Android Baseline
 
 - Focused Android JVM tests are currently runnable from this shell. Emulator /
