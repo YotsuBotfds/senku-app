@@ -337,9 +337,9 @@ def expected_rank(candidates: list[str], expected_ids: list[str]) -> int | None:
 
 
 def hit_flags(rank: int | None, candidates: list[str], expected_ids: list[str]) -> dict[str, bool | None]:
+    if not candidates or not expected_ids:
+        return {metric: None for metric in HIT_METRICS}
     if rank is None:
-        if not candidates or not expected_ids:
-            return {metric: None for metric in HIT_METRICS}
         return {metric: False for metric in HIT_METRICS}
     return {
         "hit_at_1": rank <= 1,
@@ -414,13 +414,20 @@ def _score_side(rows: list[dict[str, Any]], side: str) -> dict[str, Any]:
     return metrics
 
 
+def _comparable_hit_rows(rows: list[dict[str, Any]], metric: str) -> list[dict[str, Any]]:
+    return [
+        row
+        for row in rows
+        if row.get(f"baseline_{metric}") is not None
+        and row.get(f"shadow_{metric}") is not None
+    ]
+
+
 def _metric_deltas(rows: list[dict[str, Any]], metric: str) -> dict[str, Any]:
     improved = regressed = unchanged = comparable = 0
-    for row in rows:
+    for row in _comparable_hit_rows(rows, metric):
         baseline = row.get(f"baseline_{metric}")
         shadow = row.get(f"shadow_{metric}")
-        if baseline is None or shadow is None:
-            continue
         comparable += 1
         if baseline == shadow:
             unchanged += 1
@@ -443,6 +450,8 @@ def aggregate_comparison_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         row["top_k_overlap_jaccard"]
         for row in rows
         if row.get("top_k_overlap_jaccard") is not None
+        and row.get("baseline_hit_at_k") is not None
+        and row.get("shadow_hit_at_k") is not None
     ]
     baseline = _score_side(rows, "baseline")
     shadow = _score_side(rows, "shadow")

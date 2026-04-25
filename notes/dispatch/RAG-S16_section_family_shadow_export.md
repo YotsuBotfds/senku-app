@@ -59,6 +59,11 @@ the source chunks. The record shape stays compatible with
   the S15b comparator to score hit@1/hit@3/hit@k deltas.
 - Comparator loader remains backward-compatible with S15 contextual JSONL and
   forward-compatible with S16 `raptor_lite_text` records.
+- Section-family windows are currently non-overlapping by default. That keeps
+  the first export deterministic and compact, but overlapping/stride windows
+  should be measured before any production promotion.
+- Evidence fragments are extractive and capped by `--max-fragments`; treat the
+  export as a retrieval probe, not as a complete answer context yet.
 
 ## Validation
 
@@ -75,9 +80,13 @@ Live smoke also passed on the EX airway-family subset:
   airway guides.
 - Comparator wrote `6` EX comparison rows under
   `artifacts/bench/section_family_compare_ex_airway_20260425/`.
-- Shadow expected-guide hit@1/hit@3/hit@k was `6/6` on the EX airway proof
-  rows; the older baseline had ranked retrieval candidates for only `2`
-  comparable generated rows and was already `2/2` there.
+- Section-family shadow expected-guide hit@1/hit@3/hit@k was `6/6` on the EX
+  airway proof rows.
+- After comparator hygiene, only `2` rows are baseline-vs-shadow comparable
+  because the older baseline artifact has ranked retrieval candidates for only
+  those generated rows. Both baseline and shadow were already `2/2` there, so
+  this smoke proves compatibility and shadow coverage, not a true retrieval
+  improvement over baseline.
 
 Repro smoke:
 

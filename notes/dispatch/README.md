@@ -141,6 +141,8 @@ Current active family:
   comparator. It builds temporary shadow vector/lexical indexes from the S15
   JSONL export, compares existing bench baselines against shadow retrieval
   hit@1/hit@3/hit@k, and writes summary JSON, row JSONL, and CSV outputs.
+  Rows with no baseline retrieval candidates are unscored for baseline deltas,
+  so shadow-only coverage is visible without being counted as fake improvement.
   Runtime query, production indexes, guides, and Android behavior remain
   unchanged. Dispatch note:
   `notes/dispatch/RAG-S15b_contextual_shadow_retrieval_comparator.md`.

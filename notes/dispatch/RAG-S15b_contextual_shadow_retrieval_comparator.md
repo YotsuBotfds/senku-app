@@ -47,6 +47,16 @@ Expected outputs:
 - Emits row-level baseline and shadow top-guide IDs, expected ranks, hit@1,
   hit@3, hit@k, rank delta, and top-k overlap.
 - Emits aggregate baseline/shadow hit counts and comparable-row deltas.
+- Treats rows with expected guide IDs but no candidates on one side as
+  unscored (`null`) for that side, so deterministic/no-retrieval bench rows do
+  not become fake retrieval misses or fake shadow improvements.
+- Computes delta counts and mean top-k overlap only from rows where both
+  baseline and shadow have scorable retrieval candidates.
+- Reports `scored_rows` per side. Baseline and shadow denominators can differ;
+  use `deltas.*.comparable_rows` for direct A/B claims.
+- Reports `top_k_overlap_jaccard` as a simple set overlap. It is useful for
+  drift detection, but rank-blind; it does not say whether shared guides moved
+  up or down.
 - Keeps live retrieval comparison optional behind the CLI because it requires an
   embedding endpoint and may be expensive on the full corpus.
 
@@ -59,12 +69,25 @@ Focused helper validation:
 & .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_compare_contextual_shadow_retrieval -v
 ```
 
+Measurement hygiene validation added after the first EX smoke: baseline rows
+without retrieval candidates are excluded from comparable-row deltas and overlap
+averages, while shadow-only scored rows remain visible in the per-side summary.
+
 Optional live smoke:
 
 ```powershell
 & .\.venvs\senku-validate\Scripts\python.exe ingest.py --contextual-shadow-jsonl artifacts\tmp\contextual_shadow.jsonl --contextual-shadow-only
 & .\.venvs\senku-validate\Scripts\python.exe scripts\compare_contextual_shadow_retrieval.py --shadow-jsonl artifacts\tmp\contextual_shadow.jsonl --bench artifacts\bench\guide_wave_ex_20260424_1410_child_choking_gate.json --out-dir artifacts\bench\contextual_shadow_compare_ex_smoke --top-k 8 --max-shadow-records 2000 --max-prompts 2
 ```
+
+Current EX airway smoke interpretation after that hygiene fix:
+
+- Baseline and shadow are directly comparable on `2` EX rows; both are already
+  hit@1/hit@3/hit@k `2/2` there.
+- The contextual shadow index scores `6/6` rows, which is useful coverage
+  signal, but not proof of a comparable-row improvement over the baseline.
+- Use panels with baseline `top_retrieved_guide_ids` on most rows before
+  making promotion decisions.
 
 ## Next
 

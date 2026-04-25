@@ -123,6 +123,37 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertEqual(summary["deltas"]["hit_at_3"]["improved"], 1)
         self.assertEqual(summary["deltas"]["hit_at_k"]["improved"], 1)
 
+    def test_missing_baseline_candidates_are_not_counted_as_shadow_improvement(self):
+        rows = [
+            compare_retrieval_row(
+                artifact_path="guide_wave_ex_20260424_1410_child_choking_gate.json",
+                prompt_index=1,
+                question="deterministic row",
+                expected_guide_ids=["GD-232"],
+                baseline_top_guide_ids=[],
+                shadow_top_guide_ids=["GD-232"],
+            ),
+            compare_retrieval_row(
+                artifact_path="guide_wave_ex_20260424_1410_child_choking_gate.json",
+                prompt_index=2,
+                question="rag row",
+                expected_guide_ids=["GD-232"],
+                baseline_top_guide_ids=["GD-579", "GD-232"],
+                shadow_top_guide_ids=["GD-232", "GD-579"],
+            ),
+        ]
+
+        summary = aggregate_comparison_rows(rows)
+
+        self.assertIsNone(rows[0]["baseline_hit_at_1"])
+        self.assertTrue(rows[0]["shadow_hit_at_1"])
+        self.assertEqual(summary["baseline"]["scored_rows"], 1)
+        self.assertEqual(summary["shadow"]["scored_rows"], 2)
+        self.assertEqual(summary["deltas"]["hit_at_1"]["comparable_rows"], 1)
+        self.assertEqual(summary["deltas"]["hit_at_1"]["improved"], 1)
+        self.assertEqual(summary["deltas"]["hit_at_k"]["improved"], 0)
+        self.assertEqual(summary["mean_top_k_overlap_jaccard"], 1.0)
+
     def test_row_jsonl_and_summary_outputs(self):
         rows = [
             compare_retrieval_row(

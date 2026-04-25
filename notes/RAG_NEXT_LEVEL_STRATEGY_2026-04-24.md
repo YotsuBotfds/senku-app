@@ -121,6 +121,10 @@ Backlog integration:
   guide sections into deterministic windows with extractive evidence fragments.
   Next compare those records against S15/contextual-chunk retrieval for "normal
   vs urgent", comparison, and boundary prompts before any production promotion.
+  Measurement note: the first EX airway smoke shows shadow coverage on more
+  rows than the old baseline artifact, but comparable-row deltas are unchanged
+  because only two baseline rows have ranked retrieval candidates. Use
+  high-coverage bench artifacts before treating a shadow run as a retrieval win.
 - `RAG-S17` - instruction-aware rerank interface. Keep the first
   implementation deterministic and local, but shape the API so a reranker can
   later prioritize "emergency owner", "reviewed card source", "routine
