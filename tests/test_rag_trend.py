@@ -115,10 +115,111 @@ class RAGTrendTests(unittest.TestCase):
         self.assertIn(
             "| label | total_rows | generated | app_acceptance | "
             "reviewed_uncertain_fit | answer_cards | claim_support | "
-            "evidence_nuggets |",
+            "evidence_nuggets | expected_owner_best_rank | "
+            "expected_owner_top3_count | expected_owner_topk_count | "
+            "expected_owner_top3_share | expected_owner_topk_share |",
             markdown,
         )
         self.assertIn("| trend_dir | 3 | 2/3 (66.7%) |", markdown)
+
+    def test_collect_summaries_includes_expected_owner_metrics_from_summary(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_owner"
+            run_dir.mkdir()
+            payload = base_payload(include_evidence_summary=True)
+            payload["summary"].update(
+                {
+                    "expected_owner_rows": 2,
+                    "expected_owner_best_rank": "1.50",
+                    "expected_owner_top3_count": "1/2 (50.0%)",
+                    "expected_owner_topk_count": "1/2 (50.0%)",
+                    "expected_owner_top3_share": "0.2222",
+                    "expected_owner_topk_share": "0.5000",
+                }
+            )
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["expected_owner_best_rank"], "1.50")
+        self.assertEqual(rows[0]["expected_owner_top3_count"], "1/2 (50.0%)")
+        self.assertEqual(rows[0]["expected_owner_top3_share"], "0.2222")
+
+    def test_collect_summaries_includes_expected_owner_metrics_from_rows_when_missing(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_owner_rows"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=3)
+            payload.pop("evidence_nugget_counts", None)
+            payload.pop("evidence_nugget_totals", None)
+            payload["rows"] = [
+                {
+                    "generated": "yes",
+                    "expected_guide_ids": "GD-111",
+                    "expected_owner_best_rank": 1,
+                    "expected_owner_top3_count": 1,
+                    "expected_owner_topk_count": 1,
+                    "expected_owner_top3_share": 0.3333,
+                    "expected_owner_topk_share": 1.0,
+                    "evidence_nugget_status": "pass",
+                    "evidence_nugget_total": 2,
+                    "evidence_nugget_supported": 1,
+                },
+                {
+                    "generated": "no",
+                    "expected_guide_ids": "GD-222",
+                    "expected_owner_best_rank": 2,
+                    "expected_owner_top3_count": 0,
+                    "expected_owner_topk_count": 0,
+                    "expected_owner_top3_share": 0.0,
+                    "expected_owner_topk_share": 0.0,
+                    "evidence_nugget_status": "no_evaluable_answer",
+                    "evidence_nugget_total": 0,
+                    "evidence_nugget_supported": 0,
+                },
+            ]
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["expected_owner_best_rank"], "1.50")
+        self.assertEqual(rows[0]["expected_owner_top3_count"], "1/2 (50.0%)")
+        self.assertEqual(rows[0]["expected_owner_top3_share"], "0.1667")
+        self.assertEqual(rows[0]["expected_owner_topk_share"], "0.5000")
+
+    def test_collect_summaries_recomputes_expected_owner_metrics_for_old_rows(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_owner_old_rows"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=2)
+            payload["rows"] = [
+                {
+                    "generated": "yes",
+                    "expected_guide_ids": "GD-898|GD-301",
+                    "top_retrieved_guide_ids": "GD-054|GD-898|GD-301|GD-239",
+                    "evidence_nugget_status": "pass",
+                    "evidence_nugget_total": 2,
+                    "evidence_nugget_supported": 2,
+                },
+                {
+                    "generated": "yes",
+                    "expected_guide_ids": "GD-585|GD-589",
+                    "top_retrieved_guide_ids": "GD-731|GD-732|GD-403",
+                    "evidence_nugget_status": "missing",
+                    "evidence_nugget_total": 1,
+                    "evidence_nugget_supported": 0,
+                },
+            ]
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["expected_owner_best_rank"], "2.00")
+        self.assertEqual(rows[0]["expected_owner_top3_count"], "1/2 (50.0%)")
+        self.assertEqual(rows[0]["expected_owner_topk_count"], "1/2 (50.0%)")
+        self.assertEqual(rows[0]["expected_owner_top3_share"], "0.3333")
+        self.assertEqual(rows[0]["expected_owner_topk_share"], "0.2857")
 
     def test_collect_summaries_includes_reviewed_uncertain_fit_from_rows(self):
         with tempfile.TemporaryDirectory() as tmpdir:

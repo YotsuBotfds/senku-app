@@ -104,6 +104,11 @@ CSV_FIELDS = (
     "top_retrieved_guide_ranks",
     "expected_guide_ids",
     "expected_guide_family",
+    "expected_owner_best_rank",
+    "expected_owner_top3_count",
+    "expected_owner_topk_count",
+    "expected_owner_top3_share",
+    "expected_owner_topk_share",
     "expected_hit_at_1",
     "expected_hit_at_3",
     "expected_hit_at_k",
@@ -378,6 +383,51 @@ def hit_at(expected_ids: list[str], candidates: list[str], k: int) -> str:
     if not candidates:
         return "unknown"
     return "yes" if set(expected_ids) & set(candidates[:k]) else "no"
+
+
+def owner_concentration_metrics(
+    expected_ids: list[str],
+    candidates: list[str],
+    *,
+    top_k: int | None = None,
+) -> dict[str, str | int | float]:
+    if not expected_ids or not candidates:
+        return {
+            "expected_owner_best_rank": "unknown",
+            "expected_owner_top3_count": "unknown",
+            "expected_owner_topk_count": "unknown",
+            "expected_owner_top3_share": "unknown",
+            "expected_owner_topk_share": "unknown",
+        }
+
+    expected = set(expected_ids)
+    best_rank = "unknown"
+    for index, guide_id in enumerate(candidates, start=1):
+        if guide_id in expected:
+            best_rank = index
+            break
+
+    top3_count = 0
+    for guide_id in candidates[:3]:
+        if guide_id in expected:
+            top3_count += 1
+
+    topk_limit = max(1, int(top_k) if top_k else len(candidates))
+    topk_count = 0
+    for guide_id in candidates[:topk_limit]:
+        if guide_id in expected:
+            topk_count += 1
+
+    top3_share = round(top3_count / 3, 4)
+    topk_share = round(topk_count / topk_limit, 4)
+
+    return {
+        "expected_owner_best_rank": best_rank,
+        "expected_owner_top3_count": top3_count,
+        "expected_owner_topk_count": topk_count,
+        "expected_owner_top3_share": top3_share,
+        "expected_owner_topk_share": topk_share,
+    }
 
 
 def objective_coverage_status(result: dict) -> str:
@@ -675,6 +725,11 @@ def build_rows(
                     "top_retrieved_guide_ranks": "|".join(ranks) if ranks else "unknown",
                     "expected_guide_ids": "|".join(expected_ids) if expected_ids else "unknown",
                     "expected_guide_family": expected_family or "unknown",
+                    **owner_concentration_metrics(
+                        expected_ids,
+                        candidate_ids,
+                        top_k=len(candidate_ids),
+                    ),
                     "expected_hit_at_1": hit_at(expected_ids, candidate_ids, 1),
                     "expected_hit_at_3": hit_at(expected_ids, candidate_ids, 3),
                     "expected_hit_at_k": hit_at(expected_ids, candidate_ids, len(candidate_ids)),
@@ -731,6 +786,54 @@ def summarize(rows: list[dict]) -> dict:
     generated_shadow_missing_required = Counter()
     generated_shadow_card_gap_rows = []
     completion_safety_trimmed = 0
+    owner_expected_rows = 0
+    owner_best_rank_total = 0
+    owner_best_rank_known = 0
+    owner_top3_hit_rows = 0
+    owner_topk_hit_rows = 0
+    owner_top3_count_sum = 0
+    owner_topk_count_sum = 0
+    owner_topk_count_denominator = 0
+
+    def _as_int(value) -> int | None:
+        if value in ("", None, "unknown"):
+            return None
+        if isinstance(value, bool):
+            return int(value)
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value)
+        try:
+            return int(float(str(value).strip()))
+        except (TypeError, ValueError):
+            return None
+
+    def _retrieved_count(raw_ids) -> int | None:
+        if raw_ids in ("", None, "unknown"):
+            return None
+        if isinstance(raw_ids, list):
+            return len(raw_ids)
+        ids = [item for item in str(raw_ids).split("|") if item]
+        if not ids:
+            return 0
+        return len(ids)
+
+    def _ratio_label(numerator: int, denominator: int) -> str:
+        if denominator <= 0:
+            return "unknown"
+        return f"{numerator}/{denominator} ({numerator / denominator:.1%})"
+
+    def _average_float(
+        total: float,
+        denominator: int,
+        *,
+        precision: int = 4,
+        fallback: str = "unknown",
+    ) -> str:
+        if denominator <= 0:
+            return fallback
+        return f"{round(total / denominator, precision):.{precision}f}"
 
     for row in rows:
         artifact = row["artifact_name"]
@@ -822,6 +925,24 @@ def summarize(rows: list[dict]) -> dict:
             expected_rows.append(row)
             if gate_status:
                 gated_expected_rows.append(row)
+            owner_expected_rows += 1
+            best_rank = _as_int(row.get("expected_owner_best_rank"))
+            if best_rank is not None:
+                owner_best_rank_total += best_rank
+                owner_best_rank_known += 1
+            top3_count = _as_int(row.get("expected_owner_top3_count"))
+            if top3_count is not None:
+                owner_top3_count_sum += top3_count
+                if top3_count:
+                    owner_top3_hit_rows += 1
+            topk_count = _as_int(row.get("expected_owner_topk_count"))
+            if topk_count is not None:
+                owner_topk_count_sum += topk_count
+                if topk_count:
+                    owner_topk_hit_rows += 1
+            retrieved_count = _retrieved_count(row.get("top_retrieved_guide_ids"))
+            if retrieved_count:
+                owner_topk_count_denominator += retrieved_count
             for guide_id in (row["cited_guide_ids"] or "").split("|"):
                 if guide_id and guide_id not in expected_ids:
                     distractors[guide_id] += 1
@@ -850,6 +971,33 @@ def summarize(rows: list[dict]) -> dict:
             "completion_safety_trimmed": completion_safety_trimmed,
         },
         "expected_guide_rows": len(expected_rows),
+        "expected_owner_rows": owner_expected_rows,
+        "expected_owner_best_rank": _average_float(
+            owner_best_rank_total,
+            owner_best_rank_known,
+            precision=2,
+            fallback="unknown",
+        ),
+        "expected_owner_top3_count": _ratio_label(
+            owner_top3_hit_rows,
+            owner_expected_rows,
+        ),
+        "expected_owner_topk_count": _ratio_label(
+            owner_topk_hit_rows,
+            owner_expected_rows,
+        ),
+        "expected_owner_top3_share": _average_float(
+            owner_top3_count_sum,
+            owner_expected_rows * 3,
+            precision=4,
+            fallback="unknown",
+        ),
+        "expected_owner_topk_share": _average_float(
+            owner_topk_count_sum,
+            owner_topk_count_denominator,
+            precision=4,
+            fallback="unknown",
+        ),
         "expected_hit_at_1": rate("expected_hit_at_1"),
         "expected_hit_at_3": rate("expected_hit_at_3"),
         "expected_hit_at_k": rate("expected_hit_at_k"),
@@ -953,6 +1101,11 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
             "",
             "## Expected Guide Rates",
             "",
+            f"- expected-owner best rank: `{summary['expected_owner_best_rank']}`",
+            f"- expected-owner top-3 hit rate: `{summary['expected_owner_top3_count']}`",
+            f"- expected-owner top-k hit rate: `{summary['expected_owner_topk_count']}`",
+            f"- expected-owner top-3 share: `{summary['expected_owner_top3_share']}`",
+            f"- expected-owner top-k share: `{summary['expected_owner_topk_share']}`",
             f"- hit@1: `{summary['expected_hit_at_1']}`",
             f"- hit@3: `{summary['expected_hit_at_3']}`",
             f"- hit@k: `{summary['expected_hit_at_k']}`",

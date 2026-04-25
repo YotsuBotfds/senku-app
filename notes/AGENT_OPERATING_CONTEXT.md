@@ -59,6 +59,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\rag_trend.py artifacts\bench\rag_diagnostics_20260424_1654_rags12_meningitis_compare_final artifacts\bench\rag_diagnostics_20260424_1750_rags13_code_health_final_smoke --label rags12-gap --label rags13-final
 ```
 
+`rag_trend.py` now includes owner-family concentration columns. Use
+`expected_owner_best_rank`, top-3/top-k hit counts, and top-3/top-k shares to
+verify expected owners are moving closer instead of merely remaining somewhere
+in top-k.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

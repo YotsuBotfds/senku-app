@@ -31,6 +31,11 @@ DEFAULT_COLUMNS = (
     "answer_cards",
     "claim_support",
     "evidence_nuggets",
+    "expected_owner_best_rank",
+    "expected_owner_top3_count",
+    "expected_owner_topk_count",
+    "expected_owner_top3_share",
+    "expected_owner_topk_share",
 )
 
 
@@ -166,6 +171,104 @@ def _rate(value: int | None, total: int | None) -> float | None:
     return value / total
 
 
+def _safe_int(value: Any) -> int | None:
+    if value in ("", None, "unknown"):
+        return None
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    try:
+        return int(float(str(value).strip()))
+    except (TypeError, ValueError):
+        return None
+
+
+def _safe_float(value: Any) -> float | None:
+    if value in ("", None, "unknown"):
+        return None
+    if isinstance(value, bool):
+        return float(int(value))
+    if isinstance(value, (int, float)):
+        return float(value)
+    try:
+        return float(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _ratio_text(numerator: int, denominator: int) -> str:
+    if denominator <= 0:
+        return "unknown"
+    return f"{numerator}/{denominator} ({numerator / denominator:.1%})"
+
+
+def _average_text(total: float, denominator: int, *, precision: int = 4) -> str:
+    if denominator <= 0:
+        return "unknown"
+    return f"{(round(total / denominator, precision)):.{precision}f}"
+
+
+def _split_ids(value: Any) -> list[str]:
+    if value in ("", None, "unknown"):
+        return []
+    if isinstance(value, str):
+        return [item.strip() for item in value.split("|") if item.strip()]
+    if isinstance(value, Sequence):
+        return [str(item).strip() for item in value if str(item).strip()]
+    return []
+
+
+def _row_owner_metrics(row: Mapping[str, Any]) -> dict[str, int | float | str]:
+    best_rank = _safe_int(row.get("expected_owner_best_rank"))
+    top3_count = _safe_int(row.get("expected_owner_top3_count"))
+    topk_count = _safe_int(row.get("expected_owner_topk_count"))
+    top3_share = _safe_float(row.get("expected_owner_top3_share"))
+    topk_share = _safe_float(row.get("expected_owner_topk_share"))
+    if (
+        best_rank is not None
+        and top3_count is not None
+        and topk_count is not None
+        and top3_share is not None
+        and topk_share is not None
+    ):
+        return {
+            "expected_owner_best_rank": best_rank,
+            "expected_owner_top3_count": top3_count,
+            "expected_owner_topk_count": topk_count,
+            "expected_owner_top3_share": top3_share,
+            "expected_owner_topk_share": topk_share,
+        }
+
+    expected_ids = set(_split_ids(row.get("expected_guide_ids")))
+    retrieved_ids = _split_ids(row.get("top_retrieved_guide_ids"))
+    if not expected_ids or not retrieved_ids:
+        return {
+            "expected_owner_best_rank": "unknown",
+            "expected_owner_top3_count": "unknown",
+            "expected_owner_topk_count": "unknown",
+            "expected_owner_top3_share": "unknown",
+            "expected_owner_topk_share": "unknown",
+        }
+
+    computed_best_rank: int | str = "unknown"
+    for index, guide_id in enumerate(retrieved_ids, start=1):
+        if guide_id in expected_ids:
+            computed_best_rank = index
+            break
+    computed_top3_count = sum(1 for guide_id in retrieved_ids[:3] if guide_id in expected_ids)
+    computed_topk_count = sum(1 for guide_id in retrieved_ids if guide_id in expected_ids)
+    return {
+        "expected_owner_best_rank": computed_best_rank,
+        "expected_owner_top3_count": computed_top3_count,
+        "expected_owner_topk_count": computed_topk_count,
+        "expected_owner_top3_share": round(computed_top3_count / 3, 4),
+        "expected_owner_topk_share": round(computed_topk_count / len(retrieved_ids), 4),
+    }
+
+
 def _load_payload(directory: Path) -> tuple[Mapping[str, Any], list[Mapping[str, Any]]]:
     payload = base._load_json(directory / base.DIAGNOSTICS_FILENAME)
     summary = base._safe_get(payload, "summary", default=payload)
@@ -200,6 +303,113 @@ def _collect_evidence_counts(
         total += int(base._as_int(row.get("evidence_nugget_total")) or 0)
         supported += int(base._as_int(row.get("evidence_nugget_supported")) or 0)
     return total, supported, status_counts, _rate(supported, total)
+
+
+def _collect_owner_metrics(
+    summary: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> dict[str, str]:
+    required_keys = (
+        "expected_owner_best_rank",
+        "expected_owner_top3_count",
+        "expected_owner_topk_count",
+        "expected_owner_top3_share",
+        "expected_owner_topk_share",
+    )
+    if all(key in summary for key in required_keys):
+        return {
+            key: str(base._safe_get(summary, key, default="unknown"))
+            for key in required_keys
+        }
+
+    owner_rows = [
+        row
+        for row in rows
+        if isinstance(row, Mapping)
+        and row.get("expected_guide_ids") not in {"", None, "unknown"}
+    ]
+    if not owner_rows:
+        return {
+            "expected_owner_rows": "0",
+            "expected_owner_best_rank": "unknown",
+            "expected_owner_top3_count": "unknown",
+            "expected_owner_topk_count": "unknown",
+            "expected_owner_top3_share": "unknown",
+            "expected_owner_topk_share": "unknown",
+        }
+
+    owner_best_rank_total = 0
+    owner_best_rank_known = 0
+    owner_top3_hits = 0
+    owner_topk_hits = 0
+    owner_top3_count_sum = 0
+    owner_topk_count_sum = 0
+    owner_topk_count_denominator = 0
+    owner_top3_share_total = 0.0
+    owner_topk_share_total = 0.0
+    owner_top3_share_rows = 0
+    owner_topk_share_rows = 0
+
+    for row in owner_rows:
+        row_metrics = _row_owner_metrics(row)
+        best_rank = _safe_int(row_metrics.get("expected_owner_best_rank"))
+        if best_rank is not None:
+            owner_best_rank_total += best_rank
+            owner_best_rank_known += 1
+        top3_count = _safe_int(row_metrics.get("expected_owner_top3_count"))
+        if top3_count is not None and top3_count > 0:
+            owner_top3_hits += 1
+        if top3_count is not None:
+            owner_top3_count_sum += top3_count
+        topk_count = _safe_int(row_metrics.get("expected_owner_topk_count"))
+        if topk_count is not None and topk_count > 0:
+            owner_topk_hits += 1
+        if topk_count is not None:
+            owner_topk_count_sum += topk_count
+        top_retrieved = row.get("top_retrieved_guide_ids")
+        if isinstance(top_retrieved, str) and top_retrieved not in {"", "unknown"}:
+            owner_topk_count_denominator += len(
+                [item for item in top_retrieved.split("|") if item]
+            )
+        elif isinstance(top_retrieved, Sequence) and not isinstance(top_retrieved, str):
+            owner_topk_count_denominator += len(top_retrieved)
+        else:
+            topk_share = _safe_float(row_metrics.get("expected_owner_topk_share"))
+            if topk_share is not None:
+                owner_topk_share_total += topk_share
+                owner_topk_share_rows += 1
+        top3_share = _safe_float(row_metrics.get("expected_owner_top3_share"))
+        if top3_share is not None:
+            owner_top3_share_total += top3_share
+            owner_top3_share_rows += 1
+
+    return {
+        "expected_owner_rows": str(len(owner_rows)),
+        "expected_owner_best_rank": _average_text(
+            owner_best_rank_total,
+            owner_best_rank_known,
+            precision=2,
+        )
+        if owner_best_rank_known
+        else "unknown",
+        "expected_owner_top3_count": _ratio_text(owner_top3_hits, len(owner_rows)),
+        "expected_owner_topk_count": _ratio_text(owner_topk_hits, len(owner_rows)),
+        "expected_owner_top3_share": _average_text(
+            owner_top3_count_sum,
+            len(owner_rows) * 3,
+        )
+        if owner_rows
+        else "unknown",
+        "expected_owner_topk_share": _average_text(
+            owner_topk_count_sum,
+            owner_topk_count_denominator,
+        )
+        if owner_topk_count_denominator > 0
+        else (
+            _average_text(owner_topk_share_total, owner_topk_share_rows)
+            if owner_topk_share_rows
+            else "unknown"
+        ),
+    }
 
 
 def collect_summaries(
@@ -243,6 +453,7 @@ def collect_summaries(
             _collect_evidence_counts(summary, parsed_rows)
         )
         reviewed_uncertain_fit_count = _count_reviewed_uncertain_fit(parsed_rows)
+        owner_metrics = _collect_owner_metrics(summary, parsed_rows)
 
         row = dict(row)
         row["generated_rows"] = generation
@@ -273,6 +484,11 @@ def collect_summaries(
         row["evidence_nuggets"] = _compact_evidence_summary(
             evidence_status_counts, evidence_supported, evidence_total, evidence_rate
         )
+        row["expected_owner_best_rank"] = owner_metrics["expected_owner_best_rank"]
+        row["expected_owner_top3_count"] = owner_metrics["expected_owner_top3_count"]
+        row["expected_owner_topk_count"] = owner_metrics["expected_owner_topk_count"]
+        row["expected_owner_top3_share"] = owner_metrics["expected_owner_top3_share"]
+        row["expected_owner_topk_share"] = owner_metrics["expected_owner_topk_share"]
         rows_out.append(row)
 
     return rows_out

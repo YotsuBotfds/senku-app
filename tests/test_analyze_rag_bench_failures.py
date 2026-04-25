@@ -58,6 +58,86 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         self.assertEqual(rows[0]["expected_cited"], "yes")
         self.assertEqual(rows[0]["suspected_failure_bucket"], "ranking_miss")
 
+    def test_owner_family_concentration_metrics_appear_in_rows(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Sick and feverish newborn",
+                            "prompt_metadata": {"expected_guide_id": "GD-054"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": ["GD-054"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-898", "GD-054", "GD-301"]
+                            },
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+
+        self.assertEqual(rows[0]["expected_owner_best_rank"], 2)
+        self.assertEqual(rows[0]["expected_owner_top3_count"], 1)
+        self.assertEqual(rows[0]["expected_owner_topk_count"], 1)
+        self.assertEqual(rows[0]["expected_owner_top3_share"], 0.3333)
+        self.assertEqual(rows[0]["expected_owner_topk_share"], 0.3333)
+
+    def test_summarize_includes_expected_owner_concentration_metrics(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Primary owner rank 1",
+                            "prompt_metadata": {"expected_guide_id": "GD-111"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": ["GD-111"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-111"]
+                            },
+                        },
+                        {
+                            "index": 2,
+                            "question": "No expected in top retrieval",
+                            "prompt_metadata": {"expected_guide_id": "GD-222"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": [],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-333", "GD-444"]
+                            },
+                        },
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+        summary = summarize(rows)
+
+        self.assertEqual(summary["expected_owner_rows"], 2)
+        self.assertEqual(summary["expected_owner_best_rank"], "1.00")
+        self.assertEqual(summary["expected_owner_top3_count"], "1/2 (50.0%)")
+        self.assertEqual(summary["expected_owner_topk_count"], "1/2 (50.0%)")
+        self.assertEqual(summary["expected_owner_top3_share"], "0.1667")
+        self.assertEqual(summary["expected_owner_topk_share"], "0.3333")
+
     def test_answer_card_diagnostics_prefer_expected_guides(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"
@@ -923,6 +1003,37 @@ Answer.
         self.assertEqual(rows[0]["top_retrieved_guide_ids"], "GD-777")
         self.assertEqual(rows[0]["expected_hit_at_1"], "yes")
         self.assertEqual(rows[0]["suspected_failure_bucket"], "generation_miss")
+
+    def test_owner_concentration_metrics_unknown_without_expected_ids(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "No expected specified",
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": ["GD-111"],
+                            "retrieval_metadata": {"top_retrieved_guide_ids": ["GD-111"]},
+                            "response_text": "Call 911.",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        row = build_rows([artifact])[0]
+
+        self.assertEqual(row["expected_owner_best_rank"], "unknown")
+        self.assertEqual(row["expected_owner_top3_count"], "unknown")
+        self.assertEqual(row["expected_owner_topk_count"], "unknown")
+        self.assertEqual(row["expected_owner_top3_share"], "unknown")
+        self.assertEqual(row["expected_owner_topk_share"], "unknown")
 
     def test_expected_supported_bucket_separates_success_from_unknown(self):
         root = self.make_tmpdir()
