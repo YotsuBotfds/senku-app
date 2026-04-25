@@ -14,7 +14,7 @@ emits JSON/Markdown family rows with:
 - expected guide family and guide IDs
 - prompt, safety, generated, non-deterministic, and bad-bucket row counts
 - owner-rank concentration averages
-- card pass/gap/no-card counts
+- card pass/gap/missing/skipped counts
 - reviewed-card guide coverage
 - metadata gap counts
 - top-1 and corpus unresolved-partial counts
@@ -54,3 +54,10 @@ Use the family table before assigning content or answer-card work. The current
 top family is wound because observed prompts intersect with an unresolved
 partial on `GD-585`; the next safest slice is likely to inspect and replace or
 classify that partial rather than broad metadata churn.
+
+## Follow-Up
+
+`RAG-T9` refined the card columns after `RAG-DOCS2`: deterministic rows with no
+generated answer are now counted as skipped/not evaluable instead of missing
+answer-card coverage. Re-run the selector before assigning new card-expansion
+work.

@@ -531,6 +531,12 @@ Current active family:
   `artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md` drops
   unresolved partials from `55` to `54`; the wound family now advances from
   `repair_corpus_partial` to `expand_or_fix_answer_cards`.
+- `RAG-T9` refined the family-priority card columns so deterministic
+  no-generation rows count as skipped/not evaluable instead of missing cards.
+  Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1645_card_semantics.md`
+  shows wound at `1/0/0/5` pass/gap/missing/skipped and changes the next wound
+  action to `inspect_retrieval_ranking`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.

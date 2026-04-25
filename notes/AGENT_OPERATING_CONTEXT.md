@@ -111,6 +111,11 @@ unresolved partials are now `54`, and the wound family priority moved from
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\prioritize_high_liability_families.py artifacts\bench\<diagnostic-dir> --metadata-audit artifacts\bench\metadata_coverage_audit.json --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-json artifacts\bench\high_liability_family_priorities.json --output-md artifacts\bench\high_liability_family_priorities.md
 ```
 
+`RAG-T9` changed the family-priority card columns from pass/gap/no-card to
+pass/gap/missing/skipped. Deterministic rows without generated answers now count
+as skipped/not evaluable rather than answer-card gaps. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1645_card_semantics.md`.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

@@ -52,6 +52,49 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
                                 "decision_path": "rag",
                                 "generated": "no",
                             },
+                            {
+                                "expected_guide_family": "deterministic_card_family",
+                                "expected_guide_ids": "GD-400",
+                                "cited_guide_ids": "GD-400",
+                                "top_retrieved_guide_ids": "GD-400",
+                                "suspected_failure_bucket": "deterministic_pass",
+                                "app_acceptance_status": "strong_supported",
+                                "answer_card_status": "no_generated_answer",
+                                "answer_card_ids": "deterministic_card",
+                                "expected_owner_best_rank": 1,
+                                "expected_owner_top3_share": 1.0,
+                                "expected_owner_topk_share": 1.0,
+                                "decision_path": "deterministic",
+                                "generated": "no",
+                            },
+                            {
+                                "expected_guide_family": "deterministic_without_card_family",
+                                "expected_guide_ids": "GD-500",
+                                "cited_guide_ids": "GD-500",
+                                "top_retrieved_guide_ids": "GD-500",
+                                "suspected_failure_bucket": "deterministic_pass",
+                                "app_acceptance_status": "strong_supported",
+                                "answer_card_status": "no_cards",
+                                "expected_owner_best_rank": 1,
+                                "expected_owner_top3_share": 1.0,
+                                "expected_owner_topk_share": 1.0,
+                                "decision_path": "deterministic",
+                                "generated": "no",
+                            },
+                            {
+                                "expected_guide_family": "rag_without_card_family",
+                                "expected_guide_ids": "GD-600",
+                                "cited_guide_ids": "GD-600",
+                                "top_retrieved_guide_ids": "GD-600",
+                                "suspected_failure_bucket": "expected_supported",
+                                "app_acceptance_status": "strong_supported",
+                                "answer_card_status": "no_cards",
+                                "expected_owner_best_rank": 1,
+                                "expected_owner_top3_share": 1.0,
+                                "expected_owner_topk_share": 1.0,
+                                "decision_path": "rag",
+                                "generated": "yes",
+                            },
                         ]
                     }
                 ),
@@ -75,6 +118,21 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
                                 "guide_id": "GD-300",
                                 "gaps": [],
                                 "has_reviewed_answer_card": True,
+                            },
+                            {
+                                "guide_id": "GD-400",
+                                "gaps": [],
+                                "has_reviewed_answer_card": True,
+                            },
+                            {
+                                "guide_id": "GD-500",
+                                "gaps": [],
+                                "has_reviewed_answer_card": False,
+                            },
+                            {
+                                "guide_id": "GD-600",
+                                "gaps": [],
+                                "has_reviewed_answer_card": False,
                             },
                         ]
                     }
@@ -106,6 +164,28 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
         self.assertEqual(payload["families"][0]["candidate_action"], "repair_corpus_partial")
         self.assertEqual(payload["families"][0]["corpus_unresolved_partial_guides"], 1)
         self.assertEqual(payload["families"][0]["metadata_gap_guide_count"], 2)
+        deterministic = next(
+            family
+            for family in payload["families"]
+            if family["expected_guide_family"] == "deterministic_card_family"
+        )
+        self.assertEqual(deterministic["card_missing_rows"], 0)
+        self.assertEqual(deterministic["card_not_evaluable_rows"], 1)
+        self.assertEqual(deterministic["candidate_action"], "regression_monitor")
+        deterministic_without_card = next(
+            family
+            for family in payload["families"]
+            if family["expected_guide_family"] == "deterministic_without_card_family"
+        )
+        self.assertEqual(deterministic_without_card["card_missing_rows"], 0)
+        self.assertEqual(deterministic_without_card["card_not_evaluable_rows"], 1)
+        rag_without_card = next(
+            family
+            for family in payload["families"]
+            if family["expected_guide_family"] == "rag_without_card_family"
+        )
+        self.assertEqual(rag_without_card["card_missing_rows"], 1)
+        self.assertEqual(rag_without_card["candidate_action"], "expand_or_fix_answer_cards")
         self.assertIn("wound_family", markdown)
 
 

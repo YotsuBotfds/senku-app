@@ -102,7 +102,8 @@ def _new_record(family: str) -> dict[str, Any]:
         "non_expected_owner_cited_rows": 0,
         "card_pass_rows": 0,
         "card_gap_rows": 0,
-        "no_card_rows": 0,
+        "card_missing_rows": 0,
+        "card_not_evaluable_rows": 0,
         "owner_best_rank_total": 0.0,
         "owner_best_rank_count": 0,
         "owner_top3_share_total": 0.0,
@@ -121,7 +122,7 @@ def _candidate_action(record: dict[str, Any]) -> tuple[str, str]:
             "repair_corpus_partial",
             "observed family has unresolved partial evidence in retrieved or expected guides",
         )
-    if record["card_gap_rows"] or record["no_card_rows"]:
+    if record["card_gap_rows"] or record["card_missing_rows"]:
         return (
             "expand_or_fix_answer_cards",
             "observed family has missing or incomplete answer-card coverage",
@@ -173,7 +174,8 @@ def collect_family_priorities(
                 record["app_acceptance"][app_status] += 1
             if str(row.get("safety_critical") or "").lower() in {"true", "yes", "1"}:
                 record["safety_rows"] += 1
-            if row.get("decision_path") != "deterministic":
+            deterministic_row = row.get("decision_path") == "deterministic"
+            if not deterministic_row:
                 record["non_deterministic_rows"] += 1
             if row.get("generated") == "yes":
                 record["generated_rows"] += 1
@@ -189,8 +191,10 @@ def collect_family_priorities(
                 record["card_pass_rows"] += 1
             elif card_status in {"partial", "fail"}:
                 record["card_gap_rows"] += 1
-            elif card_status in {"no_cards", "no_generated_answer"}:
-                record["no_card_rows"] += 1
+            elif card_status in {"no_cards", "no_guide_ids"} and not deterministic_row:
+                record["card_missing_rows"] += 1
+            elif card_status in {"no_cards", "no_guide_ids", "no_generated_answer"}:
+                record["card_not_evaluable_rows"] += 1
 
             non_expected_cited = [guide_id for guide_id in cited_ids if guide_id not in expected]
             if non_expected_cited:
@@ -268,7 +272,7 @@ def collect_family_priorities(
             + record["top1_marker_fail_rows"] * 5
             + record["top1_unresolved_partial_rows"] * 6
             + record["corpus_unresolved_partial_guides"] * 4
-            + record["no_card_rows"]
+            + record["card_missing_rows"]
         )
         output.append(
             {
@@ -294,7 +298,8 @@ def collect_family_priorities(
                 "non_expected_owner_cited_rows": record["non_expected_owner_cited_rows"],
                 "card_pass_rows": record["card_pass_rows"],
                 "card_gap_rows": record["card_gap_rows"],
-                "no_card_rows": record["no_card_rows"],
+                "card_missing_rows": record["card_missing_rows"],
+                "card_not_evaluable_rows": record["card_not_evaluable_rows"],
                 "reviewed_card_guide_count": reviewed_card_guide_count,
                 "metadata_gap_guide_count": metadata_gap_count,
                 "missing_routing_support_count": missing_routing_support,
@@ -353,12 +358,13 @@ def render_markdown(payload: dict[str, Any], *, limit: int = 40) -> str:
         f"- Diagnostic inputs: `{len(summary['diagnostic_inputs'])}`",
         f"- Families ranked: `{summary['families_ranked']}`",
         "",
-        "| rank | score | family | expected guides | prompts | bad | rank drift | top1 partial | corpus partial | card pass/gap/no-card | metadata gaps | action | reason |",
+        "| rank | score | family | expected guides | prompts | bad | rank drift | top1 partial | corpus partial | card pass/gap/missing/skipped | metadata gaps | action | reason |",
         "| ---: | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | --- | --- |",
     ]
     for row in payload["families"][:limit]:
         card_text = (
-            f"{row['card_pass_rows']}/{row['card_gap_rows']}/{row['no_card_rows']}"
+            f"{row['card_pass_rows']}/{row['card_gap_rows']}/"
+            f"{row['card_missing_rows']}/{row['card_not_evaluable_rows']}"
         )
         lines.append(
             "| "

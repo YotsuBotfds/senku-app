@@ -51,7 +51,8 @@ Focused tests passed: `4`.
 
 ## Next
 
-The wound row is no longer blocked on corpus-marker debt. The next useful wound
-slice is answer-card coverage/routing review for the still-observed
-`abstain_or_clarify_needed` diagnostic row and the `1/0/5` card pass/gap/no-card
-family breakdown.
+The wound row is no longer blocked on corpus-marker debt. After `RAG-T9`, the
+same panel reads `1/0/0/5` card pass/gap/missing/skipped, so the current wound
+issue is not missing answer-card coverage. The next useful wound slice is
+retrieval/citation drift review for the deterministic citations and the one
+ambiguous `abstain_or_clarify_needed` prompt.
