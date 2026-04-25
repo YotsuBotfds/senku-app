@@ -16,6 +16,8 @@ icon: 🧂
 description: Salt evaporation, brine processing, mineral extraction, salt applications, preservation, and industrial uses.
 related:
   - salt-mining-processing
+  - food-preservation
+  - food-storage-packaging
   - alkali-production
   - chemistry-fundamentals
   - chlorine-bleach-production
@@ -33,7 +35,7 @@ liability_level: low
 ---
 
 :::note
-**Which salt guide do you need?** This guide covers *making salt from start to finish*: choosing a production method, building solar ponds, drilling brine wells, tapping salt springs, mining rock salt by hand, preservation ratios and curing formulas, yield planning, and storage. If your question is about **geological salt deposits and prospecting**, **boiling evaporation chemistry**, **purification chemistry (lime/soda treatment, freezing separation)**, or **salt quality grades (food-grade vs industrial)**, see [Salt Mining and Processing](salt-mining-processing.html). For **water disinfection with salt-derived chlorine**, see [Chlorine and Bleach Production](chlorine-bleach-production.html). For **preserving specific foods** (meat, fish, vegetables, dairy) beyond the salt ratios here, see [Food Preservation](food-preservation.html).
+**Which salt guide do you need?** This guide covers *making salt from start to finish*: choosing a production method, building solar ponds, drilling brine wells, tapping salt springs, mining rock salt by hand, preservation ratios and curing formulas, yield planning, and storage. If your question is about **geological salt deposits and prospecting**, **boiling evaporation chemistry**, **purification chemistry (lime/soda treatment, freezing separation)**, or **salt quality grades (food-grade vs industrial)**, see [Salt Mining and Processing](salt-mining-processing.html). For **water disinfection with salt-derived chlorine**, see [Chlorine and Bleach Production](chlorine-bleach-production.html). For **salted foods, salted fish, brined vegetables, or food kept in hot/humid storage**, route to [Food Preservation](food-preservation.html) first and [Food Storage Packaging](food-storage-packaging.html) for the container/storage step; this guide is for salt purity, production, and salt storage mechanics.
 :::
 
 ## 1\. The Vital Importance of Salt in Civilization

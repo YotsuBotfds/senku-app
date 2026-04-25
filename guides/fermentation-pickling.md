@@ -12,6 +12,11 @@ tags:
   - probiotics
 icon: 🥒
 description: Master salt brine fermentation and vinegar pickling to preserve vegetables, fruits, and other foods with minimal equipment or energy input.
+aliases:
+  - fermented vegetables clay pot or plastic bucket
+  - vegetables salt jars and time
+  - salt brine vegetables in jars
+  - keep fermented vegetables in clay pot or plastic bucket
 related:
   - food-preservation
   - fermentation-science
@@ -46,6 +51,8 @@ liability_level: medium
 
 For full technique details, troubleshooting, and scaling, read on below. If vegetables are already spoiling → see food-spoilage-assessment first.
 Once the batch is finished, keep it sealed and cool with food-storage-packaging; if you are judging an older jar, use food-salvage-shelf-life.
+
+**Container-choice boundary:** For ready fermented vegetables, the first safety question is still brine coverage, acidity, cleanliness, and cool storage. A glazed clay crock or clean glass jar is preferred; a food-grade plastic bucket is acceptable only if intact, clean, non-reactive, and previously food-use. Container choice does not rescue exposed, moldy, under-salted, or foul-smelling vegetables. Use `storage-containers-vessels` for vessel material tradeoffs and `food-storage-packaging` for sealed cool storage.
 
 **Can I ferment this safely?**
 - **Safe signs:** Vegetables fully submerged under brine, salt 2–5% by weight, temp 50–75°F, pleasant sour smell, white film on surface = harmless kahm yeast (skim off).

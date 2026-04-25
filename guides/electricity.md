@@ -8,7 +8,6 @@ tags:
   - rebuild
   - power is out
   - blackout
-  - live wire
   - battery sparks
   - electrical sparking
   - electrocution risk
@@ -47,9 +46,9 @@ liability_level: high
 
 If the prompt is about an outage, a live wire, a battery, or "what do I check first?", do not start troubleshooting components. Start with hazard control, then hand off to the right guide.
 
-**"Someone was shocked / won't let go / collapsed near electrical equipment."** -> Do not touch the person or the equipment until power is off. Shut off power at the breaker or source if you can do so safely. Then hand off immediately to [First Aid & Emergency Response](../first-aid.html#complaint-first-emergency-routing) for CPR, burns, and shock care.
+**"Someone was shocked / won't let go / collapsed near electrical equipment."** -> This is not a theory or repair problem. Do not touch the person or the equipment until power is off. Go to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) for scene safety and de-energizing, then [First Aid & Emergency Response](../first-aid.html#cpr) for CPR, AED use if available, burns, and shock care.
 
-**"I see an exposed wire / sparking wire."** -> Assume it is live. Move people away, do not touch it, and shut off power at the breaker or source if you can do so safely. If someone is already in contact, see [Electrical safety & hazard prevention](../electrical-safety-hazard-prevention.html) before approaching. Otherwise see [Wiring & Safety](#wiring).
+**"I see an exposed live wire / sparking outlet / downed line / wet breaker box."** -> Assume it is live. Move people away, do not touch it, and shut off power at the breaker or source only if you can do so safely from a dry place. For downed lines or unsafe panels, keep back and get the utility or a trained electrical responder. Go to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) before repair, flood cleanup, or generic troubleshooting.
 
 **"My power is out / nothing works."** -> First turn off sensitive loads. Then check the main breaker, fuse box, and any obvious tripped or unplugged loads. If the grid is down, move to [Power-out recovery](#fundamentals) and [Generation & backup power](#power-systems).
 
@@ -67,14 +66,14 @@ If the prompt is about an outage, a live wire, a battery, or "what do I check fi
 
 If your prompt mentions an outage, live wire, battery damage, or "what do I check first?", do this first:
 
-- If someone was shocked, cannot let go, or is unconscious near equipment: do not touch them or the equipment until power is off; shut off the source if safe, then hand off to [First Aid & Emergency Response](../first-aid.html#complaint-first-emergency-routing).
-- If you see a live wire, sparks, smoke, heat, or a burning smell: do not touch any exposed conductor, move people away, and turn power off at the source if you can do so safely.
+- If someone was shocked, cannot let go, or is unconscious near equipment: do not touch them or the equipment until power is off; go first to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html), then hand off to [First Aid & Emergency Response](../first-aid.html#cpr) for CPR/AED/burn care once clear.
+- If you see a live wire, sparking outlet, downed line, wet breaker box, smoke, heat, or a burning smell: do not touch any exposed conductor or wet panel, move people away, and turn power off at the source only if you can do so safely. Use [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) before wiring repair or troubleshooting.
 - If a battery is hot, swollen, leaking, venting, or sparking: keep distance, do not charge or short it, move everyone from the area, and call for help if there is smoke, flame, or heat injury risk.
 - If power is out: turn off sensitive gear first, then check the main breaker, fuse box, and any obvious tripped or unplugged loads.
 
 ### Symptom-first recognition: electrical injury
 
-- **Person shocked or unresponsive near electrical source:** disconnect power before touching; if unable, use dry wood or rubber to separate. Once clear, check breathing and pulse; begin CPR if absent.
+- **Person shocked or unresponsive near electrical source:** disconnect power before touching; if unable, keep back and use only a dry non-conductive object from a dry insulated position if immediate separation is unavoidable. Once clear and safe, check breathing and pulse; begin CPR if absent.
 - **Burns with entry and exit wounds:** treat as electrical burn — cool both sites, monitor for cardiac rhythm disturbance, evacuate to medical care.
 - **Tingling, muscle lock, or inability to let go:** still in circuit — break contact with non-conductive tool immediately.
 - **Equipment hot, smoking, or smelling of burning plastic:** turn off power at source or breaker, do not touch, ventilate the area.
@@ -87,7 +86,7 @@ If your prompt mentions an outage, live wire, battery damage, or "what do I chec
 
 ### Topic quick-jump
 
-- Shocked person / live wire: [First Aid & Emergency Response](../first-aid.html)
+- Shocked person / live wire / downed line / wet breaker box / sparking outlet: [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) first, then [First Aid & Emergency Response](../first-aid.html#cpr) if anyone was injured or collapsed
 - Power out / nothing works: [Generation and backup power](#power-systems)
 - Found a battery: [Building batteries from scratch](#batteries)
 - Fix a circuit: [Circuits and circuit laws](#circuits)

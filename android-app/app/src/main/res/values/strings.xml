@@ -12,6 +12,8 @@
     <string name="import_model_button">Import Model</string>
     <string name="host_inference_off_button">Use Host GPU</string>
     <string name="host_inference_on_button">Host GPU On</string>
+    <string name="reviewed_card_runtime_off_button">Reviewed Cards Off</string>
+    <string name="reviewed_card_runtime_on_button">Reviewed Cards On</string>
     <string name="browse_guides_button">Browse Manual</string>
     <string name="home_button">Home</string>
     <string name="bottom_tab_home">Home</string>
@@ -131,6 +133,7 @@
     <string name="detail_evidence_moderate">Moderate evidence</string>
     <string name="detail_evidence_limited">Limited evidence</string>
     <string name="detail_evidence_unsure_fit">Unsure fit</string>
+    <string name="detail_evidence_reviewed">Reviewed evidence</string>
     <string name="detail_sources_count_short">%1$d src</string>
     <string name="detail_turn_count_short">%1$d turn</string>
     <string name="detail_turn_count_short_plural">%1$d turns</string>

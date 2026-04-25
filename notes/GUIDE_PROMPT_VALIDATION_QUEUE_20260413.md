@@ -6,6 +6,15 @@ Use it after a clean re-ingest.
 
 This tracked queue is the durable prompt-pack companion note. Older 2026-04-13 guide-lane notes remain local context, not the live authority.
 
+2026-04-24 method banner:
+- Prompt waves after `EW` / `EX` / `EY` / `EZ` are paused as automatic
+  deterministic-slice sources.
+- Use `notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md` and `RAG-S1` diagnostics
+  to classify misses before adding predicates/builders.
+- `FA` through `FD` have fresh baselines but should not become `D52`+
+  deterministic work unless a human explicitly chooses another safety gate.
+- `FE` already validated deterministic `6/6` with no generation workload.
+
 Pair it with:
 - [`../GUIDE_PLAN.md`](../GUIDE_PLAN.md) for backlog priority
 - [`../guideupdates.md`](../guideupdates.md) for concrete active guide defects

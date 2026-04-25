@@ -120,7 +120,7 @@ MSDS (older format) and SDS (current standard) documents contain comprehensive c
 
 ### Unknown Chemicals: Never Guess
 
-If a container lacks a label and you cannot identify its contents through appearance, smell, or properties, do not attempt to identify it empirically through testing. Unknown chemicals are survival liabilities. Segregate the container in a separate location away from other chemicals and human habitation. Mark it as "Unknown - Do Not Use." If you suspect its identity (e.g., found in an automotive section of a warehouse), research that chemical category and handle accordingly. Only use unknown chemicals if absolutely certain of identification through multiple verification methods (original location, container shape/construction, residue testing with known reference materials).
+If a container lacks a label and you cannot identify its contents from existing records, original location, container markings, or other non-exposure clues, do not attempt to identify it empirically through sniffing, tasting, mixing, or improvised testing. Unknown chemicals are survival liabilities. Segregate the container in a separate location away from other chemicals and human habitation. Mark it as "Unknown - Do Not Use." If you suspect its identity (e.g., found in an automotive section of a warehouse), research that chemical category and handle accordingly. Only use unknown chemicals if absolutely certain of identification through multiple verification methods that do not expose people to fumes, contact, or reactions.
 
 ### Common Household vs. Industrial Equivalents
 
@@ -398,10 +398,10 @@ Chemicals degrade over time, changing composition and potentially creating new h
 
 ### Odor Assessment
 
-Fuel should smell fresh and hydrocarbon-like. Sour or chemical smell indicates degradation or contamination. Solvents should smell like solvents; chemical or burnt smell indicates degradation. Unusually strong smells often indicate problem—trust your nose. Rancid smell (fatty, rotten-egg-like) indicates bacterial or mold growth in food-based items (oils, hydraulic fluids containing organics).
+Fuel normally has a hydrocarbon odor, but do not deliberately sniff unknown or suspect containers. If a sour, unusually strong, chemical, burnt, or "wrong" odor is noticed incidentally, treat it as a warning sign: back away, increase ventilation only from a safe position, isolate the container, and do not use it. Rancid smell (fatty, rotten-egg-like) can indicate bacterial or mold growth in food-based items (oils, hydraulic fluids containing organics), but odor alone does not make an unknown chemical safe to handle.
 
 :::tip
-Smell is one of the best chemical assessment tools, but protect yourself. Work outdoors, avoid prolonged inhalation, and trust strong instinctive reactions to dangerous smells.
+Do not use smell as an intentional identification method for unknown chemicals. Work outdoors or from a safe distance when possible, avoid inhalation, and treat unexpected strong odors as a reason to isolate and escalate rather than investigate closely.
 :::
 
 </section>

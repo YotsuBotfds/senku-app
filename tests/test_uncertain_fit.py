@@ -204,6 +204,40 @@ class UncertainFitModeTests(unittest.TestCase):
             annotations=[{"support_signal": "direct"}],
             objective_coverage=[{"status": "covered"}],
         )
+        safety_profile_weak_results = _results(
+            [
+                _row(
+                    doc="Weakly related newborn note about normal behavior and observation.",
+                    guide_id="GD-401",
+                    guide_title="Routine Infant Care",
+                    section_heading="Normal behavior",
+                    category="medical",
+                    dist=0.34,
+                    rrf_score=0.023,
+                    vector_hits=1,
+                    lexical_hits=0,
+                ),
+                _row(
+                    doc="Another weak newborn reference without direct sepsis triage ownership.",
+                    guide_id="GD-402",
+                    guide_title="Newborn Monitoring",
+                    section_heading="Routine checks",
+                    category="medical",
+                    dist=0.36,
+                    rrf_score=0.021,
+                    vector_hits=1,
+                    lexical_hits=0,
+                ),
+            ],
+            annotations=[{"support_signal": "weak"}, {"support_signal": "weak"}],
+            objective_coverage=[{"status": "missing"}],
+        )
+        safety_profile_weak_results["_senku"].update(
+            {
+                "retrieval_profile": "safety_triage",
+                "safety_critical": True,
+            }
+        )
 
         cases = [
             (
@@ -236,11 +270,18 @@ class UncertainFitModeTests(unittest.TestCase):
                 safety_confident_results,
                 "confident",
             ),
+            (
+                "is this normal newborn behavior or sepsis",
+                safety_profile_weak_results,
+                "uncertain_fit",
+            ),
         ]
 
         for question, results, expected in cases:
             with self.subTest(question=question, expected=expected):
                 confidence_label = query._confidence_label(results, {"question": question})
+                if results is safety_profile_weak_results:
+                    confidence_label = "medium"
                 mode = query._resolve_answer_mode(
                     results,
                     {"question": question},
@@ -291,6 +332,42 @@ class UncertainFitModeTests(unittest.TestCase):
         self.assertIn(query._SAFETY_CRITICAL_ESCALATION_LINE, response)
         self.assertNotIn("Closest matches in the library:", response)
         self.assertFalse(response.startswith('Senku doesn\'t have a guide for "'))
+
+    def test_stream_response_uses_review_safety_flag_for_uncertain_fit_copy(self):
+        prompt = "is this normal newborn behavior or sepsis"
+        results = _results(
+            [
+                _row(
+                    doc="Weak routine newborn note.",
+                    guide_id="GD-401",
+                    guide_title="Routine Infant Care",
+                    section_heading="Normal behavior",
+                    category="medical",
+                    dist=0.34,
+                    rrf_score=0.023,
+                    vector_hits=1,
+                    lexical_hits=0,
+                ),
+            ],
+            annotations=[{"support_signal": "weak"}],
+            objective_coverage=[{"status": "missing"}],
+        )
+        results["_senku"].update(
+            {
+                "retrieval_profile": "safety_triage",
+                "safety_critical": True,
+                "confidence_label": "medium",
+            }
+        )
+
+        with patch(
+            "query.build_prompt",
+            side_effect=AssertionError("generation should be skipped for weak safety profile"),
+        ):
+            response = query.stream_response(prompt, copy.deepcopy(results))
+
+        self.assertIn("not a confident fit", response)
+        self.assertIn(query._SAFETY_CRITICAL_ESCALATION_LINE, response)
 
 
 if __name__ == "__main__":

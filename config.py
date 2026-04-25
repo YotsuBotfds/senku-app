@@ -4,10 +4,21 @@ COMPENDIUM_DIR = os.path.join(os.path.dirname(__file__), "guides")
 CHROMA_DB_DIR = os.path.join(os.path.dirname(__file__), "db")
 LEXICAL_DB_PATH = os.path.join(CHROMA_DB_DIR, "senku_lexical.sqlite3")
 
-LM_STUDIO_URL = "http://localhost:1234/v1"
+DEFAULT_EMBED_URL = "http://127.0.0.1:1234/v1"
+DEFAULT_GEN_URL = "http://127.0.0.1:1235/v1"
 
-EMBED_MODEL = "nomic-ai/text-embedding-nomic-embed-text-v1.5"
-GEN_MODEL = "google/gemma-4-26b-a4b"
+EMBED_URL = os.environ.get("SENKU_EMBED_URL", DEFAULT_EMBED_URL)
+GEN_URL = os.environ.get("SENKU_GEN_URL", DEFAULT_GEN_URL)
+# Legacy alias for scripts that still use the single-endpoint config as an
+# embedding endpoint. Generation code should use GEN_URL.
+LM_STUDIO_URL = EMBED_URL
+
+EMBED_MODEL = os.environ.get(
+    "SENKU_EMBED_MODEL", "nomic-ai/text-embedding-nomic-embed-text-v1.5"
+)
+LITERT_GEN_MODEL = "gemma-4-e2b-it-litert"
+BROAD_QUALITY_GEN_MODEL = "google/gemma-4-26b-a4b"
+GEN_MODEL = os.environ.get("SENKU_GEN_MODEL", LITERT_GEN_MODEL)
 
 TOP_K = 24
 TOP_K_LITERT = 8
@@ -130,7 +141,9 @@ SYSTEM_PROMPT_INJURIES = (
     "INJURIES: If the user mentions a wounded or injured person, ALWAYS "
     "address hemorrhage control first -- apply direct pressure with the "
     "cleanest available material. Assess wound severity before treatment. "
-    "This takes priority over all other actions."
+    "This takes priority over all other actions. Exception: for eye or globe "
+    "injuries, never press on the eyeball; shield the eye without pressure and "
+    "control only external facial bleeding around the eye."
 )
 
 SYSTEM_PROMPT_MEDICAL_CONSERVATISM = (

@@ -46,6 +46,10 @@ My cramps are really bad. If the pain is usual for your periods but intense, sta
 Heavy bleeding, possible pregnancy, severe weakness, fever, or pain that keeps getting worse can point to a more serious problem such as ectopic pregnancy, infection, endometriosis, fibroids, or another emergency. If you cannot keep fluids down, are fainting, or are soaking pads very quickly, get urgent medical help.
 :::
 
+This cramp-relief guide is for familiar period pain after emergency signs are excluded. If "cramps" are paired with a missed period, possible pregnancy, one-sided pelvic pain, shoulder-tip or belly pain, heavy bleeding, dizziness, or fainting, route to [Gynecological Emergencies & Women's Health](../gynecological-emergencies-womens-health.html) first.
+
+Emergency-first path when it might be pregnancy, ectopic pregnancy, or severe gynecologic bleeding: get urgent medical help or evacuation, lie flat if dizzy or faint, keep warm, do not eat or drink if surgery may be needed, and avoid internal inspection, vaginal direct pressure, or uterine massage unless this is clearly postpartum after delivery.
+
 <section id="quick-relief">
 
 ## Quick Relief for Period Cramps
@@ -214,7 +218,9 @@ Period pain is more likely to be dangerous when it is not acting like your usual
 
 - Bleeding that soaks a pad or tampon every hour or two
 - Fainting, chest pain, shortness of breath, or signs of shock
+- Missed or late period with one-sided pelvic pain, dizziness, or fainting
 - Severe pain with a possible pregnancy
+- Possible pregnancy with shoulder-tip pain, belly pain, or vaginal bleeding
 - One-sided pelvic pain, especially if pregnancy is possible
 - Fever, chills, or foul-smelling discharge
 - Sudden sharp pain that is much worse than usual
@@ -226,12 +232,15 @@ Period pain is more likely to be dangerous when it is not acting like your usual
 ### Problems these symptoms can point to
 
 - **Ectopic pregnancy:** possible if pregnancy is even a little bit possible
+- **Gynecologic emergency:** heavy bleeding plus severe pelvic pain, dizziness, fainting, shoulder-tip pain, or belly pain needs emergency care first, not routine cramp relief
 - **Pelvic infection:** more likely with fever, discharge, and pain
 - **Endometriosis or adenomyosis:** often causes severe, recurring pain
 - **Fibroids or polyps:** can cause heavy bleeding and cramping
 - **Anemia from blood loss:** fatigue, dizziness, pale skin, weakness
 
 If the pain is severe enough that you cannot do normal activities, if it is new and unusual, or if home measures never help, it deserves a medical evaluation even if you have had painful periods before.
+
+For heavy bleeding with severe pelvic pain or bleeding in early pregnancy with dizziness, the first action is urgent medical care or evacuation for possible ectopic pregnancy or gynecologic hemorrhage. Do not apply vaginal direct pressure, do not inspect internally, and do not use uterine massage unless this is clearly postpartum after delivery or a visible external wound is the bleeding source.
 
 </section>
 

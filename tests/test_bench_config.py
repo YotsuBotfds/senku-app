@@ -6,6 +6,19 @@ import config
 
 
 class BenchConfigTests(unittest.TestCase):
+    def test_bench_defaults_split_generation_and_embedding_urls(self):
+        with patch.object(config, "GEN_URL", "http://127.0.0.1:7777/v1"), patch.object(
+            config, "EMBED_URL", "http://127.0.0.1:8888/v1"
+        ), patch.object(config, "LM_STUDIO_URL", "http://127.0.0.1:1234/v1"):
+            self.assertEqual(
+                bench._parse_url_list(None, bench._default_generation_url()),
+                ["http://127.0.0.1:7777/v1"],
+            )
+            self.assertEqual(
+                bench._parse_url_list(None, bench._default_embedding_url()),
+                ["http://127.0.0.1:8888/v1"],
+            )
+
     @patch("bench.retrieve_chunks")
     def test_prepare_prompt_uses_embed_url_without_mutating_global_config(self, mock_retrieve_chunks):
         original_url = config.LM_STUDIO_URL

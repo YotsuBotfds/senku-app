@@ -49,7 +49,9 @@ liability_level: medium
 
 :::warning
 **Medical note:** Hemorrhoids are common, but rectal bleeding and rectal pain are not always "just hemorrhoids." This guide is for basic self-care and early warning signs. If bleeding is heavy, pain is severe, a lump will not go back in, or symptoms are new and concerning, get medical care if you can.
-Black tarry stool, coffee-ground vomit, vomiting blood, or dark clots are GI-bleed red flags and should route to acute-abdominal-emergencies, not hemorrhoid care.
+Black tarry / sticky stool, coffee-ground vomit, throwing up blood, vomiting blood, or dark clots are GI-bleed red flags and should route to acute-abdominal-emergencies, not hemorrhoid care.
+Bright red rectal blood with dizziness, fainting, weakness, pale skin, shortness of breath, or collapse is also emergency-first, not routine hemorrhoid care.
+Do not treat GI or rectal bleeding as a nosebleed, and do not use direct-pressure instructions for bowel bleeding. Do not insert packing or apply internal rectal pressure. Direct pressure is only for visible external bleeding where the bleeding site can be seen and compressed.
 Rectal symptoms with a hard or swollen belly, repeated vomiting, inability to pass stool or gas, or fever plus one very tender belly spot should also route to acute-abdominal-emergencies instead of routine hemorrhoid care.
 If the main problem is upper stomach burning, sour stomach, or chest discomfort after meals, use the heartburn guide instead.
 :::
@@ -59,7 +61,7 @@ If the main problem is upper stomach burning, sour stomach, or chest discomfort 
 Hemorrhoids are swollen veins in or around the anus and lower rectum. They can itch, burn, ache, or bleed a little, especially after straining or passing hard stool. They are common, and many cases improve with simple home care.
 
 This guide is for anus and rectum symptoms. If the main complaint is burning behind the breastbone, reflux, or sour stomach after eating or lying down, route to heartburn-reflux-basic-care instead.
-Small amounts of bright red blood after straining may fit hemorrhoids, but black tarry stool or upper-GI bleed symptoms do not.
+Small amounts of bright red blood after straining may fit hemorrhoids, but black tarry / sticky stool with dizziness or weakness, upper-GI bleed symptoms, or any bleeding with dizziness, weakness, pale skin, or fainting do not.
 If the belly is getting hard or swollen, pain is moving higher into the abdomen, the person is vomiting, or stool and gas stop passing, do not keep this in hemorrhoid care.
 
 This guide is for practical questions like:
@@ -201,7 +203,9 @@ Get urgent medical help if you have:
 
 - Heavy bleeding
 - Bleeding that does not stop or keeps coming back
-- Black or tar-like stool
+- Black, sticky, or tar-like stool, especially with dizziness, weakness, fainting, or pale skin
+- Bright red bleeding with dizziness, weakness, fainting, pale skin, or shortness of breath
+- Vomiting blood, coffee-ground vomit, or throwing up blood after alcohol
 - Severe pain
 - A lump or tissue that protrudes and will not go back in
 - Fever, pus, or increasing redness/swelling

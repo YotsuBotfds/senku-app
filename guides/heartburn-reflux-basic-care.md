@@ -27,7 +27,9 @@ liability_level: critical
 
 :::warning
 **Disclaimer:** This guide is for basic home care when professional medical care is unavailable or delayed. Heartburn and reflux are common, but chest pain, black stools, vomiting blood, trouble swallowing, or severe worsening pain can mean something more serious. If you have those signs, seek urgent care.
-Coffee-ground vomit, vomiting blood, dark clots, or black tarry stool are GI-bleed red flags; route those prompts to acute-abdominal-emergencies, not this guide.
+Coffee-ground vomit, vomiting blood, throwing up blood, dark clots, or black tarry / sticky stool are GI-bleed red flags; route those prompts to acute-abdominal-emergencies, not this guide.
+Reflux or sour-stomach wording with weakness, dizziness, pale skin, collapse, black sticky stool, or any vomiting of blood is acute-abdominal-emergencies first. Do not lead with hydration, rest, or routine reflux care for black tarry/sticky stool with dizziness or weakness.
+Vomiting blood after alcohol or heavy drinking is an acute GI-bleed emergency until proven otherwise; do not route it to nosebleed care unless an active nosebleed is clearly the source.
 If the belly is getting hard or swollen, the person is guarding, will not walk upright because of belly pain, has vomiting with no stool or gas, or has fever with one very tender abdominal spot, route to acute-abdominal-emergencies instead of reflux care.
 If the main problem is rectal bleeding, anal pain or itching, or a lump near the anus after straining, use the hemorrhoids guide instead.
 :::
@@ -39,7 +41,7 @@ If the main problem is rectal bleeding, anal pain or itching, or a lump near the
 Heartburn is a burning pain or sour feeling behind the breastbone or in the upper stomach. Reflux happens when stomach contents come back up into the esophagus. Some people also call this a "sour stomach," "acid stomach," or "indigestion."
 
 This guide is for symptoms felt above the waist. If the main symptom is bright red blood on toilet paper, pain during or after a bowel movement, anal itching, or a protruding anal lump, route to hemorrhoids-basic-care instead.
-If the main symptom is coffee-ground vomit, vomiting blood, or black tarry stool, route to acute-abdominal-emergencies instead of routine reflux care.
+If the main symptom is coffee-ground vomit, throwing up blood after drinking alcohol, vomiting blood, black tarry / sticky stool with dizziness or weakness, or stomach pain plus vomiting blood, route to acute-abdominal-emergencies instead of routine reflux care.
 If the pain is becoming sharply localized, the belly is hard or swollen, or the person is bent over and does not want to walk upright, do not treat it as routine sour stomach or reflux.
 
 Many mild cases come from:
@@ -145,7 +147,8 @@ Seek urgent care if heartburn or reflux comes with any of the following:
 - Chest pain, pressure, or pain spreading to the arm, jaw, back, or shoulder
 - Trouble breathing, sweating, fainting, or sudden weakness
 - Vomiting blood or material that looks like coffee grounds
-- Black, tarry, or bloody stool
+- Black tarry or black sticky stool, especially with weakness, dizziness, or pale skin, or any bloody stool with those systemic symptoms
+- Throwing up blood after alcohol or heavy drinking
 - Severe or worsening upper abdominal pain
 - Pain that wakes you often or keeps getting worse instead of better
 - Trouble swallowing, food getting stuck, or painful swallowing

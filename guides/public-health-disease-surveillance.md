@@ -11,6 +11,16 @@ tags:
   - quarantine
   - outbreak-response
   - public-health
+  - meningitis
+  - meningococcemia
+  - non-blanching rash
+aliases:
+  - fever stiff neck purple rash
+  - fever headache dark rash
+  - fever rash does not fade when pressed
+  - little purple dots fever
+  - spots on legs fever headache
+  - purplish rash confused fever
 icon: 🏥
 description: Community-level public health infrastructure, disease surveillance systems, outbreak detection and response, quarantine protocols, vaccination logistics, sanitation inspection, and epidemic preparedness
 related:
@@ -186,6 +196,8 @@ An outbreak occurs when cases of a specific disease exceed expected background l
 
 :::danger
 **Do not ignore fever + rash clusters.** Measles, meningococcal meningitis, smallpox, and hemorrhagic fevers spread explosively. Any patient with sustained fever and spreading rash requires immediate isolation and investigation. Delaying response increases community mortality by 10-50x.
+
+A single person with fever plus meningitis/brain-warning signs (stiff neck, severe headache with vomiting, confusion, or hard-to-wake sleepiness) or a purple/dark/bruise-like rash that does not fade when pressed should be treated as suspected meningitis, meningococcemia, or sepsis while public-health reporting starts. Do not wait for a cluster when the rash is non-blanching or described as little purple dots or spots on the legs.
 :::
 
 </section>
@@ -216,7 +228,7 @@ An outbreak is a higher-than-expected number of cases of a disease in a specific
 | Sudden respiratory illness in multiple households | Influenza, measles, or respiratory virus | Isolate cases, increase respiratory protection, contact tracing |
 | Acute diarrheal disease clustered at one location | Food-borne illness or water contamination | Investigate food source and water supply immediately |
 | Deaths of young children with fever and rash | Measles, meningitis, or hemorrhagic fever | Declare emergency, request external assistance, maximum isolation |
-| Fever with dark rash spreading from face | Meningococcal meningitis or smallpox | EXTREME isolation, consider vaccination of contacts, seek skilled help |
+| Fever with dark, purple, bruise-like, or non-blanching rash | Meningococcal meningitis, meningococcemia, sepsis, smallpox, or hemorrhagic fever | Emergency clinical evaluation, isolate immediately, alert Health Officer, trace close contacts |
 | Progressively fatal illness with bleeding | Hemorrhagic fever (Ebola, dengue, other) | Declare catastrophic emergency, extreme isolation protocols, evacuation planning |
 
 ### Assessment Checklist for Suspected Outbreaks
@@ -243,7 +255,7 @@ Begin aggressive outbreak response (quarantine, contact tracing, resource mobili
 - 5+ cases of diarrheal disease within 5 days from different sources
 - ANY case of fever + rash (especially if spreading)
 - ANY deaths from fever-related illness
-- ANY suspected meningitis (headache + fever + neck stiffness + rash)
+- ANY suspected meningitis or meningococcemia (fever + headache/stiff neck/vomiting/confusion/hard to wake + non-blanching purple, dark, bruise-like rash, little purple dots, or spots on legs)
 
 ### Disease Recognition Guide
 
@@ -297,6 +309,9 @@ Normal: Seasonal flu-like illness
 ---
 
 ### Fever + Skin Rash (Especially if spreading)
+
+Emergency meningococcal clues include fever with a rash that does not fade when pressed, purple/dark/bruise-like rash, little purple dots, spots on the legs, severe headache, stiff neck, vomiting, confusion, unusual sleepiness, or hard-to-wake behavior. Route as suspected meningococcemia, meningitis, or sepsis, not routine rash care.
+
 Normal: Common viral exanthems (measles, rubella), self-limited
 **Red flag:** Rash accompanied by fever >101°F, spreading rapidly through community, petechial (small red/purple dots) appearance
 
@@ -307,6 +322,9 @@ Normal: Common viral exanthems (measles, rubella), self-limited
 ---
 
 ### Fever + Headache + Stiff Neck (Meningismus)
+
+If this is paired with vomiting, confusion, unusual sleepiness, hard-to-wake behavior, or a non-blanching purple/dark/bruise-like rash, treat it as an emergency meningitis/meningococcemia/sepsis signal and begin isolation plus urgent clinical escalation.
+
 Normal: Tension headache with concurrent viral illness
 **Red flag:** Patient cannot touch chin to chest (neck rigidity), severe photophobia (light hurts eyes), confusion, rapid onset
 

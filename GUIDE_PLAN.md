@@ -5,6 +5,11 @@ Status:
 - Merged from the prior guide plan, the 2026-04-07 research bundle, and the external corpus gap analyses received on `2026-04-13`
 - Use this file for ongoing prioritization and sequencing
 - Use [`guideupdates.md`](./guideupdates.md) only for concrete in-flight guide defects, not speculative backlog
+- 2026-04-24 method update: more deterministic routing patches are no longer
+  the default response to prompt-wave misses. Use
+  [`notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md`](./notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md)
+  to classify whether a miss is retrieval, ranking, context assembly,
+  generation, unsupported-claim, safety-contract, or true guide-content work.
 
 ## Purpose
 
@@ -30,6 +35,8 @@ Before adding or expanding guides, classify the issue:
 1. `new guide` when the operational workflow is genuinely absent
 2. `guide expansion` when the topic exists but is too abstract, too fragmented, or too buried to answer practical questions well
 3. `retrieval hardening` when headings, intro phrasing, tags, aliases, or cross-links are the real fix
+4. `RAG system issue` when the right guide exists but the app failed to retrieve,
+   rank, assemble, cite, or faithfully use it
 
 Practical rules:
 - prefer everyday practical value over dramatic edge-case depth when deciding between equally plausible additions

@@ -6,6 +6,10 @@
     <string name="detail_external_review_proof_lead">Lead</string>
     <string name="detail_external_review_proof_section">Section</string>
     <string name="detail_external_review_proof_lane">Lane</string>
+    <string name="detail_external_review_proof_card">Card</string>
+    <string name="detail_external_review_proof_review">Review</string>
+    <string name="detail_external_review_proof_card_guide">Card guide</string>
+    <string name="detail_external_review_proof_reviewed_sources">Reviewed sources</string>
     <string name="detail_external_review_proof_corpus">Corpus</string>
     <string name="detail_external_review_proof_verify">Verify</string>
     <string name="detail_external_review_no_citations_value">No guide citations attached yet</string>

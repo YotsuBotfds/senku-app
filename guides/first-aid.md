@@ -21,6 +21,11 @@ tags:
   - is-this-an-emergency
   - when-to-go-to-hospital
   - not-breathing-or-no-pulse
+  - electrical shock
+  - electric shock
+  - shocked and collapsed
+  - cannot let go
+  - live wire
 aliases:
   - face drooping on one side
   - one side feels weak or numb
@@ -36,6 +41,12 @@ aliases:
   - cannot pass stool or gas and keep vomiting
   - belly pain with fever and one spot very tender
   - stomach flu or surgical abdomen
+  - someone was shocked and cannot let go
+  - shocked and cannot let go
+  - someone got shocked and collapsed
+  - shocked and collapsed
+  - collapsed after shock
+  - person stuck to live wire
 icon: Ã°Å¸Å¡Â¨
 description: "Severe chest pain, one-sided weakness, slurred speech, trouble breathing, uncontrolled bleeding, someone collapsed, not breathing, severe burn, broken bone, snakebite, poisoning, shock. Essential first aid procedures including CPR, wound care, burns, fractures, bleeding control, shock treatment, and emergency stabilization techniques."
 related:
@@ -135,6 +146,8 @@ CPR, wound closure, and other medical procedures described in this guide require
 
 **Symptom-first emergency rule:** If the question sounds like "their face is drooping," "one arm went weak," or "their words suddenly sound wrong," treat it as stroke now. If it sounds like "there is heavy chest pressure," "pain is going into the jaw or arm," or "they are sweaty, short of breath, and something feels very wrong," treat it as a heart emergency now. If it sounds like "too many pain pills and will not stay awake," "mixed pills and alcohol, hard to wake," "naloxone helped but sleepy again," or "accidental double-dose medicine and now confused," treat it as an overdose emergency now.
 
+**Electrical scene fast track:** If someone was shocked and cannot let go, got shocked and collapsed, or is down near a live wire, do not touch the person first. Call emergency services if available, isolate power from a dry safe location, and keep everyone back. Only after the person is clear of the electrical source should you check breathing/pulse, start CPR, and use an AED if available. Do not give food or fluids by mouth after collapse or serious electrical injury. Route scene control to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) before routine shock positioning.
+
 :::danger
 **Collapse + chest pain + stroke signs fast track:** If someone suddenly collapses with chest pain or pressure plus one-sided weakness, slurred speech, or barely responding, call emergency services or begin the fastest evacuation now. If unresponsive or not breathing, start CPR immediately. Do not give food, water, or pills by mouth.
 :::
@@ -143,7 +156,8 @@ CPR, wound closure, and other medical procedures described in this guide require
 
 ### Red-flag fast track - use this if ANY of these are present
 
-- Not breathing, only gasping, or no pulse: start [CPR](#cpr) immediately.
+- Not breathing, only gasping, or no pulse: start [CPR](#cpr) immediately once the scene is safe. If this is an electrical shock or live-wire scene, isolate power before touching the person.
+- Electrical shock, cannot-let-go contact, collapsed after shock, or live-wire scene: do not touch the person until power is isolated; call emergency services, keep people back, and go to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) first. Once safe, start [CPR](#cpr) and use an AED if breathing is absent or abnormal.
 - Severe uncontrolled bleeding, spurting blood, or amputation: go to [Hemorrhage Control](#bleeding) now.
 - Sudden face droop, one-sided weakness or numbness, confusion, trouble speaking or understanding, sudden vision change, or cannot repeat a sentence: treat as stroke and go to [Stroke recognition](#stroke-recognition--act-within-minutes).
 - Heavy chest pressure, chest tightness, or chest pain; pain into the jaw, arm, shoulder, or back; cold sweat, shortness of breath, nausea, or "something feels very wrong": treat as heart attack and go to [Acute Coronary Syndrome & Cardiac Emergencies](../acute-coronary-cardiac-emergencies.html).
@@ -159,7 +173,7 @@ CPR, wound closure, and other medical procedures described in this guide require
 
 ### Symptom-first emergency routing
 
-- **Unresponsive, not breathing, or no pulse:** start [CPR](#cpr) immediately.
+- **Unresponsive, not breathing, or no pulse:** start [CPR](#cpr) immediately once the scene is safe. If this follows electrical shock or a live-wire contact, isolate power before touching the person.
 - **Severe bleeding or amputation:** go to [Hemorrhage Control](#bleeding) immediately.
 - **Stroke signs** - sudden face droop, one-sided weakness or numbness, trouble speaking, words coming out wrong, sudden confusion, or sudden vision change: call emergency services or begin the fastest evacuation now, note the last-known-normal time, and go to [Stroke recognition](#stroke-recognition--act-within-minutes) first; if chest pressure or pain is also present, default to emergency services or the heart emergency guide first, and treat this as a stroke/cardiac overlap rather than an airway or needle-decompression problem unless there are actual airway signs (stridor, throat swelling, blue lips, inability to speak) or actual chest-trauma signs (penetrating or blunt chest injury, sudden unilateral absent breath sounds, JVD, tracheal deviation). Do not give food, water, or pills by mouth.
 - **Heart-attack signs** - heavy chest pressure or tightness, pain into the jaw/arm/back, cold sweat, nausea, sudden shortness of breath, or "something feels very wrong": call emergency services or begin the fastest evacuation now, stop exertion, keep the person resting, and go directly to [Acute Coronary Syndrome & Cardiac Emergencies](../acute-coronary-cardiac-emergencies.html) while you monitor breathing.
@@ -167,7 +181,7 @@ CPR, wound closure, and other medical procedures described in this guide require
 - **Hard or rigid belly, guarding, right-lower-quadrant pain with fever, pain that worsens with walking, coughing, or bumps, one clearly localized tender spot with fever, or repeated vomiting with distention and inability to pass stool or gas:** go directly to [Acute Abdominal Emergencies & Surgical Decision-Making](../acute-abdominal-emergencies.html); this includes complaint-first patterns like "right lower belly pain and will not walk upright," "cannot pass stool or gas and keep vomiting," or "stomach flu or surgical abdomen." Treat this as a possible surgical abdomen or bowel obstruction first, not ordinary constipation, reflux, or stomach flu.
 - **Seizure or convulsion in an adult:** go directly to [Adult Seizure & Status Epilepticus Field Protocol](../adult-seizure-status-epilepticus-field-protocol.html).
 - **Severe allergic reaction or throat swelling:** keep the airway open, give epinephrine if available and trained, and prepare for [CPR](#cpr) if the person stops breathing.
-- **Electrical shock, exposed live wire, or someone cannot let go:** de-energize if safe, then go to [Electricity & Magnetism](../electricity.html); return here for [CPR](#cpr) if the person becomes unresponsive.
+- **Electrical shock, exposed live wire, or someone cannot let go:** do not touch the person until power is off; de-energize if safe, then go to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html). Once clear, return here for [CPR](#cpr), AED use if available, burns, or shock care.
 - **Not an emergency:** if the person is alert, breathing comfortably, and has no red-flag symptoms, route to [Common Ailments: Recognition & Basic Home Care](../common-ailments-recognition-care.html).
 
 ### Stroke recognition - act within minutes
@@ -208,9 +222,9 @@ If the problem is mainly a common symptom rather than a true emergency, route to
 - Sudden one-sided weakness, slurred speech, facial droop, or sudden confusion: [Stroke recognition](#stroke-recognition--act-within-minutes) first; if chest symptoms are also present, open [Acute Coronary Syndrome & Cardiac Emergencies](../acute-coronary-cardiac-emergencies.html) too.
 - Chest pain, chest pressure, heaviness, or tightness with shortness of breath, cold sweat, nausea, back pain, or arm/jaw pain: [Acute Coronary Syndrome & Cardiac Emergencies](../acute-coronary-cardiac-emergencies.html) first.
 - Too sleepy to stay awake after pills or alcohol, slow breathing, pinpoint pupils, confusion after a double dose, or sleepy again after naloxone: [Poisoning and Overdose](#poisoning-and-overdose) first; treat this as an overdose emergency, protect the airway, and be ready to start [CPR](#cpr).
-- Not breathing, no pulse, or collapsed/unresponsive: [CPR](#cpr) first, then review [shock](#shock) and [complications](#complications).
+- Not breathing, no pulse, or collapsed/unresponsive: [CPR](#cpr) first, then review [shock](#shock) and [complications](#complications). Exception: if the collapse followed electrical shock or the person may still be in contact with a live source, isolate power and make the scene safe before touching them or starting CPR.
 - Seizure or convulsion in an adult: [Adult Seizure & Status Epilepticus Field Protocol](../adult-seizure-status-epilepticus-field-protocol.html) first.
-- Electrical shock, live wire, sparking outlet, downed power line, or electrical burn scene control: [Electricity & Magnetism](../electricity.html) first for de-energizing and hazard isolation, then return here for CPR, burns, or shock care.
+- Electrical shock, live wire, sparking outlet, downed power line, wet breaker box, or electrical burn scene control: [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) first for de-energizing and hazard isolation, then return here for CPR, AED use if available, burns, or shock care.
 - Hard or rigid belly, guarding, right-lower-quadrant pain with fever, pain that worsens with walking, coughing, or bumps, or repeated vomiting with a swollen belly and inability to pass stool or gas: [Acute Abdominal Emergencies & Surgical Decision-Making](../acute-abdominal-emergencies.html) first.
 - Mild nausea, diarrhea, or "stomach flu" symptoms without focal tenderness, a hard belly, fever plus one localized tender spot, distention, or obstruction signs: [Common Ailments: Recognition & Basic Home Care](../common-ailments-recognition-care.html)
 - Headaches or recurring head pain: [Headaches: Basic Care](../headaches-basic-care.html)
@@ -446,6 +460,10 @@ Daily cleaning: remove loose tissue gently, apply antibiotic ointment (Silvadene
 <section id="shock">
 
 ## Shock Management
+
+:::danger
+**Electrical shock is not routine shock management.** If someone was shocked, cannot let go, collapsed after shock, or is near a live wire, do not start by laying them down, elevating their legs, or giving fluids. First isolate power from a dry safe location, call emergency services if available, and keep bystanders back. Once the scene is safe, check responsiveness, breathing, and pulse; start [CPR](#cpr) and use an AED if available before routine shock positioning.
+:::
 
 ### Shock Recognition
 

@@ -13,7 +13,7 @@ Keep this file updated whenever any of the following change:
 ## Principles
 
 - Test retrieval and answer quality separately when possible.
-- Prefer deterministic fixes for repeated narrow failures before prompt-only fixes.
+- Prefer the RAG diagnostic loop for guide-answering misses; reserve deterministic fixes for narrow, high-risk safety gates with clear red-flag ownership.
 - Compare desktop and mobile on the same prompt families before assuming the model is the main issue.
 - Record artifacts for every meaningful sweep so regressions are reviewable later.
 - Prefer instrumentation-first artifact truth for Android when that lane emits machine-readable facts; only fall back to shell-side recovery when those facts are absent.
@@ -93,6 +93,33 @@ If desktop is also weak:
 
 If desktop is good but mobile is weak:
 - port the missing routing, rerank, session, or prompt behavior into Android
+
+## RAG Diagnostic Loop
+
+The current RAG measurement method is not "add another deterministic patch for every failed prompt." Use the diagnostic loop first:
+- expected guide manifest
+- source candidates / top retrieved guide IDs
+- app answer contract fields
+- safety-profile gates
+
+For safety-target waves, classify failures before assigning work:
+- `expected_supported`: expected guides were retrieved/cited correctly
+- `retrieval_miss`: expected owner absent from candidates
+- `ranking_miss`: expected owner present but too low or not accepted as evidence
+- `safety_contract_miss`: answer mode/support/safety contract did not match the risk
+- `abstain_or_clarify_needed`: weak support should produce uncertainty or a clarifying question
+- `rag_unknown_no_expectation`: no expectation contract exists yet
+
+Representative 2026-04-24 artifacts:
+- baseline target waves: `artifacts/bench/rag_diagnostics_20260424_1005_fresh_rags4/report.md`
+- owner-aware rerank: `artifacts/bench/rag_diagnostics_20260424_1152_rags4_owner_rerank/report.md`
+- EZ weak-support classification: `artifacts/bench/rag_diagnostics_20260424_ez_expected_supported`
+- cleaner EX/EY/EZ/FC owner-family taxonomy: `artifacts/bench/rag_diagnostics_20260424_1210_owner_family_taxonomy`
+- fresh runtime/card-contract proof: `artifacts/bench/rag_diagnostics_20260424_1218_fresh_runtime_contract/report.md`
+
+App-gate fields to preserve in fresh artifacts/reports: `answer_mode`, `support_strength`, `safety_critical`, `retrieval_profile`, and `app_gate_status`.
+
+Next useful measurement slices should prioritize app acceptance metrics and answer-card/evidence-owner contracts before runtime rerank. Inspect remaining ranking/retrieval misses for expectation mismatch first; prompt text that is not self-contained should be fixed in the prompt/expectation contract before runtime routing changes. Treat Android JVM failures caused by sandbox/Android Gradle Plugin home access as environment blockers, not answer-quality failures.
 
 ## Desktop Evaluation Loop
 

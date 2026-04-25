@@ -50,6 +50,8 @@ This guide is part of the **Electrical Systems Series**. Recommended reading ord
 **ELECTROCUTION HAZARD:** Electrical current as low as 20 milliamps (0.02 amps) across the heart can cause fatal cardiac arrest. All electrical work must be performed with circuits de-energized and locked out. NEVER work on live circuits. Backfeeding power into utility lines (connecting a generator without a transfer switch) can electrocute utility workers and is illegal. All electrical work should comply with local electrical codes and be inspected by qualified personnel.
 :::
 
+**Hazard-first routing:** If the problem is a sparking outlet, exposed live wire, downed line, wet breaker box, shock, or someone cannot let go, do not start with outlet repair or wiring diagrams. Go first to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) for de-energizing, scene isolation, and injury handoff.
+
 ![Wire ampacity derating, voltage drop charts, three-phase configurations, GFCI/AFCI comparison, off-grid wiring system, and wire gauge selection flowchart](../assets/svgs/electrical-wiring-1.svg)
 
 <section id="overview">

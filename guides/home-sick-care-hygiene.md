@@ -57,7 +57,7 @@ This guide focuses on practical home steps that answer the most common questions
 - Should I wash the sick person's clothes separately?
 - How do I handle bedding, dishes, trash, and shared rooms?
 
-Use this guide for routine home illness care, especially for flu-like illness, stomach bugs, vomiting, diarrhea, and respiratory infections. If the sick person has trouble breathing, confusion, severe dehydration, blood in vomit or stool, cannot keep fluids down, has a hard or swollen belly, keeps guarding the belly, will not walk upright because of belly pain, has vomiting with no stool or gas, or has fever with one very tender belly spot, seek medical help and route to acute-abdominal-emergencies rather than routine home-care hygiene.
+Use this guide for routine home illness care, especially for flu-like illness, stomach bugs, vomiting, diarrhea, and respiratory infections. If the sick person has trouble breathing, confusion, severe dehydration, blood in vomit or stool, coffee-ground vomit, black tarry stool, cannot keep fluids down, has a hard or swollen belly, keeps guarding the belly, will not walk upright because of belly pain, has vomiting with no stool or gas, or has fever with one very tender belly spot, seek medical help and route to acute-abdominal-emergencies rather than routine home-care hygiene.
 
 :::info
 **The core idea:** isolate the mess, not the person. Keep body fluids, dirty laundry, and shared surfaces under control, and the rest of the household has a much better chance of staying well.
@@ -65,6 +65,7 @@ Use this guide for routine home illness care, especially for flu-like illness, s
 
 ## Quick Routing
 
+- Blood in vomit or stool, coffee-ground vomit, black tarry stool, or rectal blood with weakness/dizziness routes to acute-abdominal-emergencies first, not airflow, cleanup, or routine sick-room setup.
 - If the question is about setting up a small clinic, patient flow, isolation corner, or records for a shared care space, see [Clinic Facility Basics](../clinic-facility-basics.html).
 - If the question is about household hygiene, laundry, mold, or rodent issues, see [Hygiene & Disease Prevention Basics](../hygiene-disease-prevention-basics.html), [Mold Prevention & Remediation](../mold-prevention-remediation.html), or [Rodent Control for Food Storage](../rodent-control-food-storage.html).
 - If the question is about a wound that needs daily cleaning, a bandage that keeps getting dirty, or cloth dressing reuse, see [Wound Hygiene, Infection Prevention & Field Sanitation](../wound-hygiene-infection-prevention.html) and [Chronic Wound Care](../wound-care-chronic.html).
@@ -86,7 +87,7 @@ If someone starts vomiting, has diarrhea, or is coughing heavily, do these first
 
 If you only remember one rule, remember this: do not touch your face until you have washed your hands after contact with the sick person or anything they touched.
 
-If the "stomach bug" picture starts looking wrong because the belly is getting hard, swollen, or very tender, the person will not stand or walk upright, or vomiting is paired with no stool or gas, stop treating it as routine home sick care and switch to urgent abdominal assessment.
+If the "stomach bug" picture starts looking wrong because vomit looks like coffee grounds, there is blood in vomit or stool, the stool is black and tarry, the belly is getting hard, swollen, or very tender, the person will not stand or walk upright, or vomiting is paired with no stool or gas, stop treating it as routine home sick care and switch to urgent abdominal assessment.
 
 ## How To Keep the Rest of the Family from Getting Sick
 

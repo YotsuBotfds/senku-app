@@ -47,7 +47,15 @@ related:
   - fermentation-pickling
   - food-spoilage-assessment
   - food-salvage-shelf-life
+  - food-storage-packaging
   - drying-dehydration-techniques
+  - storage-containers-vessels
+aliases:
+  - salt jars hot humid room
+  - salted fish hot humid room
+  - preservation or storage container
+  - dry salt ferment or eat first
+  - preserve with salt and jars
 read_time: 8
 word_count: 17096
 last_updated: '2026-02-24'
@@ -69,8 +77,12 @@ custom_css: |-
 - **High-acid foods** (fruits, jams, pickles, tomatoes with added acid): water-bath canning
 - **Low-acid foods** (vegetables, meats, poultry, seafood, soups): pressure canning only — water bath cannot kill botulinum spores
 - **Meat and fish**: smoking and curing, or pressure canning
+- **Salted fish in heat or humidity:** This is a food-preservation and packaging question, not a salt-storage question. Salt slows spoilage only after enough cure plus drying/smoking; heat and humidity can re-wet the fish and restart spoilage.
 - **Herbs, fruits, vegetables, mushrooms**: drying and dehydrating → detailed methods and drying-time tables in drying-dehydration-techniques
 - **Cabbage, vegetables**: salting, brining, and fermentation
+- **Salt + jars + hot humid room?** Treat this as a preservation-plus-packaging boundary, not salt production or tool salvage: choose salting/brining/fermentation here, then use `food-storage-packaging` for sealed, dry, cool storage.
+- **Salted fish in a hot humid room?** Keep the answer on food preservation and food-storage packaging: humidity is degrading the cure, so move it cooler/drier, protect it from reabsorbing moisture, and assess any off smell with `food-spoilage-assessment`.
+- **Jar, crock, bucket, or bag question while preservation is unfinished?** Container choice does not finish drying, curing, acidification, smoking, or canning. Finish the preservation step first; use containers only to protect food that is already shelf-stable or still safely fermenting under brine.
 - **Root crops, apples, hardy produce**: cold storage and root cellaring → see cold-storage-root-cellar
 - **How do I dry meat or make jerky?** Thin strips, heat-treat to 160°F first → drying-dehydration-techniques (Meat & Jerky); for curing and smoking → smoking-curing-meat and jerky recipe below
 - **Ferment vegetables (sauerkraut, kimchi, pickles)?** Salt + submerge in brine, no heat or fuel needed → fermentation-baking (Fermented Vegetables) and fermentation-pickling; for the science → Fermentation section below
@@ -84,6 +96,7 @@ custom_css: |-
 - **Vegetables starting to wilt or soften, but still sound:** ferment or brine tonight (fastest, no heat needed) → see fermentation-pickling. If too far gone, assess safety first → see food-spoilage-assessment.
 - **Meat with no refrigeration available, but still fresh:** salt-cure or smoke within hours. Thin strips → dry into jerky (160°F until brittle). Thick cuts → heavy dry-salt layer (cover completely) and keep below 60°F. Pressure canning works but takes hours of sustained fuel.
 - **Already spoiled?** Do not try to preserve it. Use food-spoilage-assessment first, then discard anything that fails the safety check.
+- **Smell changed after drying or after moving containers?** Use food-spoilage-assessment first. Packaging can explain moisture exposure, but an off smell is a safety assessment before it is a storage optimization.
 - **Not sure which method?** Use this priority: (1) Is it already spoiling? → check food-spoilage-assessment first. (2) Is it still sound and just needs longer storage? → salt-cure, smoke, dry, ferment, or pressure can it. (3) Do you have fuel and a pressure canner? → pressure can (longest shelf life). (4) Do you have sun or dry heat? → dry/dehydrate (lightweight, no containers needed).
 :::
 
@@ -1900,6 +1913,8 @@ Fermentation preserves through production of lactic acid by beneficial bacteria.
 
 Salt curing preserves through osmosis (salt draws water out of meat and bacteria, creating inhospitable environment). Combined with smoking and/or drying, creates long-term preservation (months to years).
 
+**Boundary for salted foods:** Questions about salted fish, salted meat, brined vegetables, or whether a salted food can sit in heat/humidity belong here first, then `food-storage-packaging` for final storage. Use `salt-production` only for making or purifying salt itself.
+
 ### Dry Curing (Salt Rubbed on Surface)
 
 **Ratio:** 1 tablespoon salt per pound of meat
@@ -1935,6 +1950,8 @@ Salt curing preserves through osmosis (salt draws water out of meat and bacteria
 - **Corned beef:** 1-2 weeks brine cure, then boil before use
 - **Salt pork:** 1-3 weeks brine, used as fat/seasoning in cooking
 - **Preserved fish:** 1-2 weeks brine, then air-dry (shelf-stable weeks to months)
+
+**Hot/humid caution for preserved fish:** Shelf-stable salted fish requires a complete cure plus drying and usually smoke or very dry storage. In a hot humid room, even salted fish can absorb moisture; keep it wrapped against pests but able to stay dry, move it to the coolest/driest place available, and discard or assess if it becomes damp, soft, moldy, sour, or putrid.
 
 :::danger
 **Nitrate/Nitrite Safety:** Traditional curing used saltpeter (potassium nitrate, KNOÃ¢â€šÆ’). Modern curing may use sodium nitrite (NaNOÃ¢â€šâ€š). Both are toxic at high doses but effective in tiny amounts (100-200 ppm). Use only if:

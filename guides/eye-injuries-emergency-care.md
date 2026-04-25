@@ -37,12 +37,16 @@ Eye injuries are time-sensitive and can result in permanent blindness if imprope
 
 Use this table to jump straight to the right protocol. If the complaint is **not** an emergency, it may belong in [Vision Correction & Field Optometry](vision-correction-optometry.md) instead.
 
+Bleach, drain cleaner, oven cleaner, battery acid, pool chemicals, solvents, and unknown cleaner splashes belong here first, not in mild pink-eye care. Start irrigation immediately for chemical eye exposure and keep irrigating while arranging urgent evaluation. Blunt trauma, penetrating trauma, high-speed debris, metal/wood chips, anything poking out, and debris that may be embedded also belong here first: do not flush, remove, rub, or press on the eye; shield the eye without pressure, shield/cover both eyes if possible to reduce eye movement, and seek urgent eye evaluation.
+
+Index these as emergency embedded-object patterns, not routine irritation: "metal chip flew into eye while grinding and stuck", "stick scratched eye and something poking out", "flying debris + darker vision", and "high-speed debris/embedded object". For any of those patterns, do not flush, remove, rub, press, or apply direct pressure. Shield or cover the eye without pressure, shield/cover both eyes if possible, keep the head still, and get urgent eye care.
+
 | Complaint | Urgency | Go to |
 |-----------|---------|-------|
 | **Chemical splash in eye** | EMERGENCY — seconds count | [Chemical Burns: Irrigation Protocol](#chemical-burn) — start flushing **now**, read details while irrigating |
-| **Something in my eye** | Urgent (within the hour) | [Foreign Body Removal](#foreign-body); if embedded in cornea, do not remove — see [Corneal Abrasion](#corneal-abrasion) |
+| **Something in my eye** | Urgent (within the hour) | [Foreign Body Removal](#foreign-body); if embedded, high-speed, metal/wood, or poking out, do not flush or remove; shield and use [Penetrating Injury](#penetrating-injury) |
 | **Sudden vision loss** (not gradual blur) | EMERGENCY | Rule out [Penetrating Injury](#penetrating-injury), [Blunt Trauma / Hyphema](#blunt-trauma); if no trauma, suspect retinal/optic nerve — evacuate |
-| **Eye hit / punched / struck** | Urgent | [Blunt Trauma and Hyphema](#blunt-trauma); check for [Orbital Fracture](#orbital-fracture) |
+| **Eye hit / punched / struck** | Urgent | [Blunt Trauma and Hyphema](#blunt-trauma); vision loss, halos, blood in the eye, abnormal pupil, or severe pain need urgent evaluation; check for [Orbital Fracture](#orbital-fracture) |
 | **Red, sticky, crusty eye** | Routine | [Conjunctivitis and Infection](#infection) |
 | **Lost or broke my glasses** | Routine — not an emergency | See [Vision Correction & Field Optometry](vision-correction-optometry.md) for frame repair, replacement, and lens grinding |
 | **Gradual blurring, need stronger glasses** | Routine | See [Vision Correction & Field Optometry](vision-correction-optometry.md) |
@@ -89,7 +93,9 @@ Understanding eye structure is essential for injury assessment and treatment.
 
 ## Chemical Burns: Immediate Irrigation Protocol
 
-Chemical burns are the most time-sensitive eye injury. Damage progresses for minutes to hours after contact. Immediate action is critical.
+Chemical burns are the most time-sensitive eye injury. Bleach, drain cleaner, oven cleaner, battery acid, pool chemicals, solvents, and unknown cleaners can damage the eye even when the surface looks only red at first. Damage progresses for minutes to hours after contact. Immediate action is critical.
+
+For any chemical splash in the eye, the first action is irrigation: flush immediately with running water or saline, hold the lids open, remove contacts only if they come out easily during rinsing, continue for at least 15-20 minutes and preferably longer for strong cleaners, and arrange urgent evaluation/Poison Control guidance. Do not neutralize with vinegar, baking soda, milk, eye drops, or other chemicals.
 
 ### Irrigation Procedure
 
@@ -104,6 +110,7 @@ Chemical burns are the most time-sensitive eye injury. Damage progresses for min
 5. **Have patient blink repeatedly** — Helps flush chemical deeper and into corners.
 
 **Irrigation timeline:**
+- **Do not stop just because pain or burning worsens at first.** Worsening pain can happen as trapped chemical moves; stopping irrigation leaves chemical in contact with the eye.
 - **0–5 minutes:** Maximum urgency. More important than transporting to medical facility.
 - **5–30 minutes:** Continue irrigation while transporting.
 - **30–60 minutes:** Complete at least 60 minutes of continuous irrigation.
@@ -140,7 +147,7 @@ Chemical burns are the most time-sensitive eye injury. Damage progresses for min
 - **Apply antibiotic ointment** if available (tetracycline or erythromycin) to reduce infection.
 - **Give analgesics** (acetaminophen, ibuprofen) to help patient tolerate eye opening for continued care.
 - **Re-irrigate** at 1, 4, and 12 hours after initial irrigation in austere settings (chemical may re-dissolve after initial flush).
-- **Arrange evacuation** for severe burns (require grafting and specialized care).
+- **Arrange urgent eye evaluation/evacuation** for chemical eye exposure, especially alkali cleaners such as drain cleaner or any vision change, severe pain, cloudy cornea, or persistent redness.
 
 </section>
 
@@ -207,10 +214,12 @@ Dust, sand, eyelash, or object under eyelid.
 3. **Eyelid retraction:** Grasp eyelid, pull gently to expose particle; allow patient to blink it out.
 4. **Irrigation:** Flush with water or saline to dislodge and wash away.
 
-**Embedded particles (in cornea or sclera):**
-- Do NOT attempt removal if embedded deeply.
-- Cover eye, patch loosely, seek professional help.
-- Rough extraction causes scarring and vision loss.
+**Embedded, high-speed, or penetrating particles (cornea, sclera, or anything poking out):**
+- Treat metal chips, grinding debris, glass, thorns, splinters, and any object that looks stuck in or protruding from the eye as a possible penetrating injury.
+- This includes "metal chip flew into eye while grinding and stuck", "stick scratched eye and something poking out", "flying debris + darker vision", and "high-speed debris/embedded object".
+- Do NOT flush, rub, press on the eye, apply direct pressure, or attempt removal.
+- Shield the injured eye with a rigid cup or loose cover with no pressure; shield/cover both eyes if possible to reduce eye movement.
+- Seek urgent eye evaluation/evacuation. Rough extraction or pressure can cause internal bleeding, fluid loss from the eye, scarring, and permanent vision loss.
 
 **Irregular particles (thorns, wood splinters):**
 - More damaging; increased infection risk.
@@ -230,6 +239,10 @@ Dust, sand, eyelash, or object under eyelid.
 ## Blunt Trauma and Hyphema
 
 Blunt impact to eye (punch, ball, object) can cause bleeding into anterior chamber (hyphema) or retinal/optic nerve damage.
+
+For blunt trauma with pain, halos, vision change or darkened vision, blood in the eye, abnormal pupil, severe light sensitivity, or concern for globe injury, use a rigid eye shield or loose cover with **no pressure** and seek urgent eye evaluation before treating it like mild irritation or pink eye. Do not apply direct pressure to the eyeball.
+
+Flying debris with darker vision or reduced vision is not a simple rinse case. If debris may still be in the eye, do not flush, remove, rub, press, or apply direct pressure; shield without pressure, keep the head still, cover both eyes if possible, and seek urgent eye care.
 
 ### Hyphema (Blood in Anterior Chamber)
 
@@ -278,12 +291,13 @@ Penetrating object (glass, metal, wood through eye wall) is surgical emergency. 
 :::
 
 1. **Immobilize object:** Do not touch or attempt removal.
-2. **Shield eye:** Cover with protective cup or loose dressing (not pressure patching, which may dislodge object).
-3. **Both eyes:** Patch non-injured eye to reduce eye movement (any movement affects injured eye; reduces motion of embedded object).
-4. **Head immobilization:** Have patient remain still; neck collar helps prevent movement.
-5. **Evacuate immediately:** Penetrating eye injuries require surgical intervention within hours (infection and internal hemorrhage worsen prognosis).
-6. **Pain control:** Acetaminophen (avoid NSAIDs).
-7. **NPO (nothing by mouth):** Patient may require surgery; withhold food/water.
+2. **No flushing or pressure:** Do not flush, rub, press, or apply direct pressure to an eye with a protruding or embedded object.
+3. **Shield eye:** Cover with protective cup or loose dressing (not pressure patching, which may dislodge object).
+4. **Both eyes:** Patch non-injured eye to reduce eye movement (any movement affects injured eye; reduces motion of embedded object).
+5. **Head immobilization:** Have patient remain still; neck collar helps prevent movement.
+6. **Evacuate immediately:** Penetrating eye injuries require surgical intervention within hours (infection and internal hemorrhage worsen prognosis).
+7. **Pain control:** Acetaminophen (avoid NSAIDs).
+8. **NPO (nothing by mouth):** Patient may require surgery; withhold food/water.
 
 **Prognosis:** Highly dependent on penetration depth, location, and time to surgery. Many cases result in significant vision loss or blindness despite optimal care.
 

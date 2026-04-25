@@ -9,6 +9,25 @@ tags:
   - communications
 icon: ✉️
 description: Wax seals, challenge-response protocols, one-time pads, courier vetting, dead drops, chain of custody, and tamper-evident methods for secure communication.
+aliases:
+  - prove a note is real
+  - verify a posted order
+  - verify evacuation notice
+  - order board verification
+  - forged notes
+  - forged orders
+  - rumor verification
+  - bad actor message verification
+  - urgent note chain of custody
+  - verified orders
+routing_cues:
+  - "how to prove a courier note is real"
+  - "verify a notice before acting on it"
+  - "check whether an evacuation order is authentic"
+  - "chain-of-custody for urgent notes"
+  - "tamper evidence and provenance for posted orders"
+  - "challenge-response for message verification"
+  - "forged notes rumors or bad actors"
 related:
   - cryptography-codes
   - visual-audio-signal-systems
@@ -22,6 +41,8 @@ liability_level: low
 ---
 
 ## Overview
+
+**Posted emergency orders:** If an evacuation order or other urgent notice appears on a board, verify the issuing authority or pre-agreed authentication signal through a trusted second channel before acting when time allows. If verification fails or is delayed, do not simply ignore the notice; escalate to the duty authority, send a runner/callback, warn nearby people that the order is unverified, and move vulnerable people to a safer interim posture if there is visible danger. Only treat "abort" as correct for the suspicious message itself, not for basic protective action during an actual hazard.
 
 In a low-connectivity environment, written messages are the primary record of agreements, orders, and intelligence. A forged message can trigger wars; an altered instruction can cause disaster. Message authentication—proving that a message is from whom it claims to be and has not been modified—is as critical as the message's content.
 

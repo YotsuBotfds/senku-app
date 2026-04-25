@@ -9,9 +9,9 @@ tags:
 icon: 💰
 description: Currency systems, markets, trade routes, pricing, accounting, taxation, and economic organization.
 aliases:
-  - market setup
-  - market organization
   - market pricing
+  - price-setting
+  - exchange rates
   - currency creation
   - economic structure
   - trade economy
@@ -48,18 +48,18 @@ custom_css: '.subtitle{font-size:1.1em;color:#b8860b;font-style:italic}.highligh
 :::
 
 :::tip
-**This guide owns:** currency systems, market organization, pricing, bookkeeping, insurance, debt & credit, and economic structure. For short-weight complaints, grade disputes, exchange-rate disputes, and written trade agreements, hand off to `trade-standards-exchange`. For tax assessment, collection, and revenue administration, hand off to `taxation-revenue-systems`.
+**This guide owns:** currency systems, price-setting, exchange rates, bookkeeping, insurance, debt & credit, and economic structure. For physical market footprint questions--stalls, walking lanes, cart clearance, loading edges, blocked corners, and notices inside the market--hand off to `marketplace-trade-space-basics`. For short-weight complaints, grade disputes, exchange-rate disputes, and written trade agreements, hand off to `trade-standards-exchange`. For explicit tax assessment, collection, receipts, levies, and public revenue administration, hand off to `taxation-revenue-systems`.
 
 **Quick routing — what problem do you have?**
 
 - "Complaint-first: a trade is short-weighted, misgraded, or the exchange rate is disputed" -> `trade-standards-exchange`
 - "Task-first: we need to create a currency or choose a medium of exchange" -> this guide (sections 1-4)
-- "Task-first: we need market rules, pricing, or a public price board" -> this guide and `community-bulletin-notice-systems`
+- "Task-first: we need price-setting rules, exchange rates, or a public price board" -> this guide and `community-bulletin-notice-systems`
 - "We need to announce a market day or reach non-readers" -> `community-bulletin-notice-systems`
-- "How should stalls and trade space be laid out?" -> `marketplace-trade-space-basics`
+- "How should stalls, walking lanes, cart clearance, loading edges, blocked corners, or market-footprint notices be laid out?" -> `marketplace-trade-space-basics`
 - "We need a written trade agreement with another community" -> `trade-standards-exchange`
 - "How do we connect storage intake, stock flow, or warehouse release to market demand?" -> `warehousing-inventory`
-- "How do taxes, market fees, and revenue collection fit together?" -> `taxation-revenue-systems`
+- "How do explicit taxes, levies, receipts, and public revenue collection fit together?" -> `taxation-revenue-systems`
 :::
 
 <section id="section1">
@@ -538,6 +538,8 @@ Create standard vessels (containers) marked with volume lines. Traders use these
 <section id="section6">
 
 ## 6\. Market Organization: Creating Spaces for Fair Trade
+
+This section covers the economic rules for markets. For the physical footprint--stall spacing, walking lanes, cart clearance, loading edges, blocked corners, and in-market notice placement--use `marketplace-trade-space-basics`.
 
 As communities grow beyond direct personal exchange, organized markets become essential. Markets—both physical spaces and institutions—solve logistical problems, reduce search costs for traders, and enable price discovery through competitive exchange.
 
@@ -1486,6 +1488,8 @@ Before standardized measurements, fraud in weights and measures was rampant. His
 ### Establishing a Regular Market
 
 Markets are not just economic institutions; they are social hubs that strengthen inter-community bonds, facilitate information exchange, and provide entertainment.
+
+Use this section for administration, pricing, quality rules, and trade records. Use `marketplace-trade-space-basics` for the actual layout of stalls, lanes, carts, loading edges, corners, and notices inside the market footprint.
 
 -   **Location:** Central, accessible location with space for stalls and foot traffic. Near a water source. Consider wind direction for animal pens and smithing.
 -   **Schedule:** Weekly or biweekly markets on a consistent day. Avoid critical agricultural periods.

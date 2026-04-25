@@ -45,6 +45,8 @@ custom_css: |
 
 **What is happening right now?**
 - chest pressure or heaviness, jaw or arm pain, cold sweat, shortness of breath, nausea with dread -> **heart attack / ACS** -> stay in this guide; see [Chest Pain Red Flag Assessment](#recognition) and [Immediate ACS Management](#initial-management)
+- chest pressure/tightness with exertion, jaw/arm/back pain, shortness of breath, cold sweat, faintness, dread/doom, or "something feels very wrong" -> **cardiac emergency first even if panic, stress, or hyperventilation is also present**
+- tingling, fast breathing, or panic without chest pressure, exertional symptoms, jaw/arm pain, fainting, blue lips, severe shortness of breath, or other red flags -> after red flags are excluded, use anxiety support and monitor for change
 - face drooping, arm weak on one side, speech slurred or cannot speak clearly, sudden confusion -> **stroke** -> route immediately to [First Aid & Emergency Response — Stroke recognition](../first-aid.html#stroke-recognition--act-within-minutes); return here only if cardiac signs co-occur
 - both sets of signs, or unsure -> treat as the most dangerous; start evacuation; use both this guide and [First Aid & Emergency Response](../first-aid.html)
 
@@ -126,11 +128,17 @@ A patient who quietly reports jaw pain or arm pain while another person is loude
 
 **High-risk features suggesting ACS:**
 - Substernal pressure/heaviness + dyspnea
+- Chest pressure/tightness brought on or worsened by exertion
 - Pain radiating to left arm or jaw
 - Diaphoresis (cold, clammy sweat)
 - Nausea/vomiting
 - Recent stress or exertion
+- Panic, dread/doom, stress, or hyperventilation language does not lower risk when chest pressure or tightness, exertional symptoms, jaw/arm pain, shortness of breath, faintness, or "something feels very wrong" is present
 - Age >40 + risk factors
+
+**Panic or hyperventilation only after red flags are excluded:**
+- Fast breathing, tingling around the mouth/fingers, trembling, or panic may fit anxiety/hyperventilation only when there is no chest pressure/heaviness, exertional trigger, jaw/arm/back radiation, cold sweat, fainting, blue lips, severe shortness of breath, or concerning medical change
+- If symptoms are new, severe, unusual for the person, or do not quickly improve with rest and slower breathing, continue cardiac/emergency assessment and evacuate
 
 **Lower-risk features (but DO NOT exclude ACS):**
 - Sharp, pleuritic pain (may be pericarditis, not MI)

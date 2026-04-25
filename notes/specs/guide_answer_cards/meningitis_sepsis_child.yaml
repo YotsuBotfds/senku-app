@@ -1,0 +1,109 @@
+card_id: meningitis_sepsis_child
+guide_id: GD-589
+slug: sepsis-recognition-antibiotic-protocols
+title: "Sepsis Recognition, Escalation & Empiric Antibiotic Protocols"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Fever with stiff neck, severe headache with vomiting, confusion, unusual sleepiness, or hard-to-wake behavior.
+  - Fever with purple, dark, bruise-like, or non-blanching rash.
+  - Child is sleepy, confused, or has little purple dots with fever.
+required_first_actions:
+  - Treat fever plus meningitis or brain-warning signs as suspected meningitis or meningococcemia.
+  - Escalate urgently for emergency medical evaluation and antibiotic-capable care.
+conditional_required_actions:
+  - trigger_terms:
+      - sepsis
+      - septic
+      - shock
+      - very sick
+      - very ill
+      - very unwell
+      - looks very sick
+      - low blood pressure
+      - fast breathing
+    required_actions:
+      - If sepsis, shock, or very-sick appearance is explicitly suspected, prioritize immediate sepsis screening and first-hour priorities.
+first_actions:
+  - Check mental status, breathing rate, blood pressure if available, and infection source.
+  - Look for CNS or meningitis clues: headache, neck stiffness, photophobia, vomiting, confusion, hard-to-wake behavior, and non-blanching purple or dark rash.
+  - Begin broad sepsis response and antibiotics immediately when sepsis, shock, or very-sick appearance is clinically indicated and available, following the source guide.
+urgent_red_flags:
+  - Fever with stiff neck.
+  - Severe headache with vomiting.
+  - Confusion, unusual sleepiness, or hard to wake.
+  - Purple, dark, bruise-like rash or little purple dots that do not fade when pressed.
+  - Fast breathing, low blood pressure, or altered mental status with infection.
+forbidden_advice:
+  - Do not route fever plus stiff neck, altered mental status, or non-blanching rash as routine fever, flu, common rash, or home-care triage.
+  - Do not wait for diagnostic confirmation before escalating suspected sepsis.
+  - Do not let reassurance or antipyretic advice replace urgent evaluation.
+do_not:
+  - Do not tell the caregiver to watch at home when the rash does not fade and fever or brain-warning signs are present.
+  - Do not narrow the answer to hydration or comfort care without emergency escalation.
+routine_boundary: >
+  Routine fever/rash guidance is out of bounds when fever is paired with brain
+  warning signs, hard-to-wake behavior, or a purple/dark/non-blanching rash.
+acceptable_uncertain_fit: >
+  If the rash description is unclear, ask whether it fades with pressure, but
+  preserve urgent escalation when fever plus severe illness or mental-status
+  change is present.
+clarifying_questions:
+  - Does the rash fade or blanch when pressed?
+  - Is there stiff neck, severe headache, repeated vomiting, confusion, unusual sleepiness, or hard-to-wake behavior?
+  - Is breathing fast, pulse very fast, or blood pressure low if known?
+citation_ids:
+  - sepsis-meningitis-routing
+  - sepsis-recognition-source-survey
+  - infant-child-meningococcal-rash
+source_sections:
+  - guide: GD-589
+    slug: sepsis-recognition-antibiotic-protocols
+    title: "Sepsis Recognition, Escalation & Empiric Antibiotic Protocols"
+    sections:
+      - "#overview"
+      - "#overview > Confused + Fever + Fast Heartbeat - Could Be Sepsis"
+      - "#recognition"
+      - "#recognition > Clinical Assessment: Where Is the Infection?"
+  - guide: GD-284
+    slug: infant-child-care
+    title: "Infant & Child Care (Birth to Age 5)"
+    sections:
+      - "#section-4"
+      - "#section-4 > Childhood Illness Recognition & Response"
+      - "#section-4 > Rash Identification & Serious vs. Benign"
+  - guide: GD-298
+    slug: pediatric-emergency-medicine
+    title: "Pediatric Emergency Medicine"
+    sections:
+      - "#common-pediatric-emergencies"
+      - "#common-pediatric-emergencies > Meningitis"
+  - guide: GD-268
+    slug: public-health-disease-surveillance
+    title: "Public Health Disease Surveillance"
+    sections:
+      - "Emergency Alert Triggers"
+      - "Fever/Rash Illness"
+      - "Meningitis / Meningococcal Disease"
+  - guide: GD-235
+    slug: infection-control
+    title: "Infection Control"
+    sections:
+      - "Community Disease Control"
+      - "Meningococcal Meningitis"
+source_invariants:
+  - name: meningitis sepsis is emergency not routine fever
+    guide: GD-589
+    must_include:
+      - treat it as suspected meningitis, meningococcemia, or sepsis
+      - This is an emergency, not routine fever, flu, rash, or home-care triage.
+      - Use this guide for immediate sepsis screening and first-hour priorities.
+    must_not_match:
+      - "non-blanching[^\\n]{0,120}(reassure|benign|routine rash)"
+review_status: pilot_reviewed
+notes: >
+  Primary guide is sepsis-recognition for emergency ownership; infant-child-care
+  corroborates the child-facing rash and meningitis warning language. Public
+  health disease surveillance is acceptable owner-family support when a prompt
+  explicitly includes fever-rash, suspected meningitis, outbreak, or community
+  emergency context; infection-control remains supporting context.

@@ -1,0 +1,70 @@
+card_id: infected_wound_spreading_infection
+guide_id: GD-585
+slug: wound-hygiene-infection-prevention
+title: "Wound Hygiene, Infection Prevention & Field Sanitation"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A cut, scrape, puncture, or wound has pus, foul odor, spreading redness, red streaking, fever, chills, worsening pain, or systemic symptoms.
+  - User asks whether a wound infection is spreading or becoming sepsis.
+  - New wound care question includes redness expanding from the wound.
+required_first_actions:
+  - Assess whether redness is spreading, mark its edge, and recheck every 2 hours.
+  - Escalate urgently if red streaking, systemic symptoms, high fever, confusion, rapid heartbeat, or rapid breathing are present.
+  - Increase local wound care and cleaning frequency when infection is spreading.
+first_actions:
+  - Clean the wound with boiled water, soap water, or saltwater and remove visible debris when safe.
+  - Change dirty or soaked dressings and use clean or sterile material for each dressing change.
+  - For spreading infection, clean 2 to 3 times daily; if sepsis is developing, change dressing every 6 hours.
+  - If antibiotics are available and systemic sepsis signs are present, use them immediately per the source guide and prioritize evacuation.
+urgent_red_flags:
+  - Redness spreading beyond 1 inch per hour or expanding beyond a marked line.
+  - Red streaking moving up a limb toward the heart.
+  - Fever above 103 F or temperature below 95 F.
+  - Rapid heartbeat over 120 bpm, rapid breathing over 20 breaths per minute, confusion, severe nausea, vomiting, diarrhea, or dehydration.
+  - Wound becoming darker purple, black, or greenish.
+forbidden_advice:
+  - Do not reassure rapidly spreading redness, red streaking, or systemic signs as normal healing.
+  - Do not close a wound that is infected, dirty, puncture-type, or likely contaminated.
+  - Do not reuse contaminated dressings or touch wounds with unwashed hands.
+  - Do not delay evacuation when sepsis signs appear.
+do_not:
+  - Do not save available antibiotics for later when sepsis is developing.
+  - Do not focus on perfect closure when systemic infection is present.
+routine_boundary: >
+  Routine dressing-change advice stops when redness spreads, red streaks appear,
+  pus or odor worsens, fever rises, or mental status/breathing/heart rate changes.
+acceptable_uncertain_fit: >
+  If the user is unsure whether redness is spreading, advise marking the border
+  and rechecking, while listing red streaking and systemic signs as escalation
+  triggers.
+clarifying_questions:
+  - How fast is the redness spreading, and has the edge been marked?
+  - Is there fever, chills, confusion, fast breathing, or a very fast heartbeat?
+  - Is there pus, foul odor, darker tissue, or red streaking toward the body?
+citation_ids:
+  - wound-infection-timeline
+  - wound-sepsis-escalation
+source_sections:
+  - guide: GD-585
+    slug: wound-hygiene-infection-prevention
+    title: "Wound Hygiene, Infection Prevention & Field Sanitation"
+    sections:
+      - "Timeline of Infection Progression"
+      - "Timeline of Infection Progression > Day 2-3: Critical Infection Decision Point"
+      - "Timeline of Infection Progression > Day 4-7: Infection vs. Healing"
+      - "Timeline of Infection Progression > Day 7+: Systemic Sepsis Risk"
+      - "Systemic Infection and Sepsis Escalation"
+source_invariants:
+  - name: spreading wound infection escalation
+    guide: GD-585
+    must_include:
+      - Mark the edge of the red area with a pen or line.
+      - Check every 2 hours to see if redness is spreading beyond the line.
+      - Red streaking moving up the limb from the wound toward the heart represents lymphangitis
+    must_not_match:
+      - "close[^\\n]{0,120}(infected|dirty|puncture)[^\\n]{0,80}wound"
+review_status: pilot_reviewed
+notes: >
+  Card avoids chronic-wound ownership and focuses on acute wound infection,
+  spreading cellulitis, lymphangitis, and sepsis escalation.

@@ -18,8 +18,11 @@ tags:
   - "heater making me dizzy"
   - "charcoal indoors"
   - "stove making me sick"
+  - "smoky stuffy room"
+  - "leave first or ventilate first"
+  - "ventilation blocked carbon monoxide"
 icon: 💨
-description: Field protocol for enclosed-fire smoke, charcoal indoors, generator exhaust, carbon monoxide poisoning, airway burns, cyanide clues, oxygen priorities, and delayed deterioration after fire-gas exposure.
+description: First-hop field protocol for smoky or stuffy rooms with symptoms, blocked ventilation with carbon monoxide concern, enclosed-fire smoke, charcoal indoors, generator exhaust, carbon monoxide poisoning, airway burns, cyanide clues, oxygen priorities, and delayed deterioration after fire-gas exposure.
 related:
   - asthma-chronic-respiratory-support
   - toxic-gas-identification-detection
@@ -73,10 +76,14 @@ This guide is meant for prompts such as:
 - "smoke smell indoors", "burning fuel smell", "headache near stove", or "heater making me dizzy" -> stop the fire and stay with this guide
 - "headache near fire or heater indoors" -> stop the fire, ventilate if you can do so safely, and follow this guide; for stove fixes after the scene is safe see [`cookstoves-indoor-heating-safety.md`](cookstoves-indoor-heating-safety.md)
 - "smoke smell indoors that will not clear" -> if anyone has symptoms or the source is still active, evacuate and stay with this guide; for chimney and draft fixes after the scene is safe see [`cookstoves-indoor-heating-safety.md`](cookstoves-indoor-heating-safety.md)
+- "cold smoky room, cough, and headache" -> indoor-air danger first; get to fresh air before troubleshooting heat
+- "someone got dizzy after running the stove" or "do we ventilate first or get out first" -> get people out first; ventilate only if it does not delay leaving
+- "ventilation is blocked and we are worried about carbon monoxide" -> this guide owns the first move: leave the exposure area and get fresh air
+- "room is smoky and stuffy" -> if anyone has headache, cough, dizziness, nausea, confusion, shortness of breath, or unusual sleepiness, use this guide before ventilation design or asthma/wildfire advice
 - "charcoal indoors" -> use this guide immediately; do not keep testing the air or stay in the room
 - "bad indoor air" or "room feels stale after running a stove" -> if anyone has symptoms, use this guide; if nobody is symptomatic and you need ventilation design help, see [`ventilation-air-systems.md`](ventilation-air-systems.md)
 
-First step: if anyone has headache, dizziness, nausea, confusion, shortness of breath, or collapse, stop the fire, get to fresh air, and stay with this guide. If the room is smoky but nobody is yet symptomatic, use the cookstoves guide for the draft, chimney, and ventilation fix after the scene is safe.
+First step: if anyone has headache, cough after smoke exposure, dizziness, nausea, confusion, unusual sleepiness, shortness of breath, or collapse, get out to fresh air and stay with this guide. Do not pause to decide whether it is "just heating trouble," to open windows, or to tune the stove unless doing so does not delay escape. If the room is smoky but nobody is yet symptomatic, use the cookstoves guide for the draft, chimney, and ventilation fix after the scene is safe.
 
 If the problem is general indoor airflow without active smoke or symptoms, hand off to the ventilation guide instead of trying to solve it here.
 

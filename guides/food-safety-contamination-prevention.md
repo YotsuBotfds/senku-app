@@ -17,6 +17,11 @@ aliases:
   - raw meat safety
   - raw meat handling
   - contamination avoidance
+  - food smells off
+  - do not taste test off smelling food
+  - spit and wait food safety
+  - mold on jam
+  - mold around jam lid
 tags:
   - essential
   - critical
@@ -82,7 +87,7 @@ If you are mainly trying to clean dishes without a sink, sanitize a board after 
 
 If your real question is "is this safe to eat", "can I still eat this", "what should I do with this food", or "should I toss this" because the food smells off, looks odd, the package failed, or you are deciding whether to salvage vs discard, start with `food-spoilage-assessment.md`. That guide is the final discard-vs-salvage call; this one is for prevention before food becomes questionable.
 
-If you are asking about "can I still eat this", bulging cans, meat left out overnight, or whether to cut mold off cheese, route first to `food-spoilage-assessment.md`.
+If you are asking about "can I still eat this", bulging cans, meat left out overnight, whether to cut mold off cheese, whether to scrape mold off jam, or whether to taste-test off-smelling food, route first to `food-spoilage-assessment.md`.
 
 If you are asking how long food lasts in storage, whether a sealed item is still worth keeping, or what shelf-life window to expect from salvage, use `food-salvage-shelf-life.md`.
 
@@ -460,7 +465,8 @@ In survival settings, you often can't throw away food without serious consequenc
 
 **Mold:**
 - **Harmless surface mold (can remove):** Hard cheeses (cut away 1 inch around/below), salami (wipe surface with clean cloth)
-- **Dangerous mold (discard entirely):** Soft cheeses, yogurt, bread, jams, wet/damp foods. Mold toxins (mycotoxins) can spread invisibly throughout soft foods.
+- **Dangerous mold (discard entirely):** Soft cheeses, yogurt, bread, jams, jellies, sugary preserves, fruit spreads, opened canned fruit, and wet/damp foods. Mold toxins (mycotoxins) can spread invisibly throughout soft foods.
+- **Jam and soft preserves:** Mold on the jam, around the lid or rim, or as a surface film means discard the whole jar. Do not scrape or skim it off, and do not borrow building-mold cleanup rules for food.
 - **Rule of thumb:** If the food is soft and mold is present, discard. If the food is hard and mold is only on the surface, you can cut it away, but it's a riskâ€”if supplies allow, discard to be safe.
 
 **Slime/Discoloration:**
@@ -479,7 +485,7 @@ In survival settings, you often can't throw away food without serious consequenc
 
 **Trust your nose,** but know the baseline:
 
-- **Sour smell (sour cream, yogurt):** May be normal; taste a tiny amount to confirm
+- **Sour smell (sour cream, yogurt):** May be normal only if expected and in date; if it is unexpected or stronger than normal, discard rather than taste-test
 - **Rotten/putrid smell (meat, fish):** Discard immediately
 - **Vinegary smell (any food):** May indicate fermentation (safe if intentional) or spoilage (unsafe if not)
 - **Musty/moldy smell (grains, bread):** Discard
@@ -492,21 +498,13 @@ In survival settings, you often can't throw away food without serious consequenc
 - **Vegetables:** Mushy, with water leaking out = discard. Firm = safe.
 - **Grains/dry goods:** Wet, clumping, or sticky = moisture contamination (risk of mold/spoilage); discard.
 
-### Taste Testing Protocol
+### Do Not Taste-Test Questionable Food
 
-Only use this for foods you're unsure about, and only if you have no other options. Do not use it to rescue food that already has an off smell, slime, mold, bulging, leakage, or seal failure; those are discard signals.
+There is no reliable spit-and-wait, mouth-burn, or tiny-sample test for food safety. Spitting food out does not reliably protect you from toxins, pathogens, or contaminated residue.
 
-1. Prepare a tiny amount (smaller than a pea)
-2. Put it on your tongue for 2â€“3 seconds to detect off-flavors
-3. **Do not swallow yet**
-4. Spit it out into a container (not back into the food)
-5. Wait 5 minutes to see if immediate reactions occur (mouth burning, tingling = toxins present; discard immediately)
-6. If no reaction and taste was normal, the food is likely safe
-7. If taste is "off" or the spit-out portion burns your mouth, discard
+Do not taste-test food that smells off, changed smell after repackaging, is moldy, slimy, bulging, leaking, gas-producing, seal-failed, or otherwise already questionable. Discard it or route the decision to `food-spoilage-assessment.md`.
 
-:::danger
-**Never swallow spoiled food to "test" it.** A tiny swallow can transmit lethal doses of botulism toxin or STEC. The spit-and-wait method is safer.
-:::
+Tasting is only for normal cooking quality in food that is already known to be sound, such as checking seasoning or an intentional ferment that has stayed submerged, clean, and otherwise normal. Do not use tasting to rescue suspect food.
 
 ### Gas Production
 

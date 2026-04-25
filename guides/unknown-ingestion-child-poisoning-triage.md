@@ -34,7 +34,7 @@ liability_level: high
 
 :::warning
 **Top routing for swallowed cleaners and under-sink exposures:**
-- If the main problem is mixed-cleaner fumes, coughing, chest tightness, cleaner in the eye, or chemical on the skin, treat it as a toxic exposure first: move to fresh air, irrigate with water, call poison control, and use `toxicology-poisoning-response.md`.
+- If the main problem is mixed-cleaner fumes, coughing, chest tightness, cleaner in the eye, or burning skin after touching an unknown or unlabeled chemical, treat it as a toxic exposure first: move to fresh air if needed, irrigate skin/eyes with running water, call poison control, and use `toxicology-poisoning-response.md`. Do not treat burning skin after an unknown cleaner as routine rash or poison ivy care.
 - If a child or adult swallowed cleaner, licked a detergent pod, had unknown liquid in the mouth, or may have drunk something from under the sink, stay in this guide and call poison control immediately.
 - If there is still an active spill or mixed-cleaner odor, isolate the room, stop all cleanup or mixing, keep other children and pets out, and do not add more products to "cancel it out."
 :::

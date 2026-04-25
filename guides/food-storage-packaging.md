@@ -25,6 +25,11 @@ aliases:
   - food storage limits
   - how long does packaged food last
   - food packaging shelf life
+  - salt jars hot humid room
+  - salted fish hot humid room storage
+  - dried herbs glass jar or cloth bag
+  - fermented vegetables clay pot or plastic bucket
+  - seal now or dry more first
 related:
   - food-preservation
   - food-spoilage-assessment
@@ -48,6 +53,12 @@ liability_level: medium
 :::tip
 **Fast routing - if your problem is...**
 - **Need dry goods to last longer without electricity?** -> Start here for containers, desiccants, oxygen control, and packing.
+- **Salt, jars, salted fish, or other preserved food in a hot humid room?** -> Pair this guide with `food-preservation`: preservation method first, then sealed food-safe containers, desiccants, and cooler/drier placement.
+- **Salted fish in heat or humidity?** -> Do not answer as salt storage alone. Confirm the fish was fully cured/dried or smoked, keep it cool and dry, and route any softness, dampness, sour/putrid odor, or mold to `food-spoilage-assessment`.
+- **Dried beans or dried herbs: jar, cloth, or bag?** -> Use sealed, pest-proof containers once fully dry. Cloth is only a breathable inner wrap or short-term holding method unless it sits inside a sealed bin or jar.
+- **Fermented vegetables are ready and the question is clay pot vs plastic bucket?** -> Use `fermentation-pickling` for brine/submersion safety, `storage-containers-vessels` for vessel material, and this guide for final sealed cool storage.
+- **Container choice after an unfinished process?** -> A better jar, crock, bag, or bucket cannot make damp, under-cured, or unsafe food shelf-stable; finish preservation first or assess spoilage.
+- **Smell changed after repackaging or a container move?** -> Start with `food-spoilage-assessment`; do not solve an off smell by simply changing containers.
 - **Food is already moldy, damp, or clumping?** -> desiccant production
 - **Food tastes stale, oily, or rancid?** -> oxygen removal
 - **You need a low-resource cold spot for roots or produce?** -> cold-storage-root-cellar
@@ -59,6 +70,7 @@ liability_level: medium
 :::tip
 **Quick triage — how to store and package what you have:**
 - **Need to make food shelf-stable first?** → drying-dehydration-techniques or fermentation-pickling
+- **Seal now or dry it more first?** If the food is not fully dry, keep drying; sealing damp food traps moisture and pushes the case toward spoilage assessment.
 - **Need to keep stored food usable longer?** Start here for containers, desiccants, oxygen control, and temperature
 - **Need to know whether stored food has reached its limit?** → food-salvage-shelf-life
 - **Grains, flour, rice, legumes**: sealed ceramic or Mylar with oxygen absorbers → Container Types by Commodity
@@ -340,6 +352,8 @@ If pure nitrogen gas is available (unlikely in off-grid scenarios), it can be us
 
 **Requirements:** Cool, dry, sealed against pests, darkness.
 
+**Dried beans and legumes:** Package like grain only after they are fully dry and hard. Use sealed ceramic, glass, Mylar, or food-grade buckets; add oxygen absorbers for weevil control if available. Avoid plain cloth bags in humid rooms unless the cloth bag is inside a sealed pest-proof container.
+
 **Container options:**
 
 | Type | Properties | Shelf Life |
@@ -382,6 +396,8 @@ If pure nitrogen gas is available (unlikely in off-grid scenarios), it can be us
 ### Dried Herbs and Spices
 
 **Requirements:** Darkness, cool temperature, low humidity, sealed against air.
+
+**Boundary:** Herbs must be crisp-dry before sealing. If leaves bend, feel leathery, or condense moisture in a jar, return to drying; sealed packaging will trap moisture and cause mold.
 
 **Container options:**
 

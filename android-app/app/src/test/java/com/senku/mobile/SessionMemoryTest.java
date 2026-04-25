@@ -292,6 +292,61 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void recordTurnPersistsReviewedCardMetadataThroughJsonRoundTrip() {
+        SessionMemory memory = new SessionMemory();
+        ReviewedCardMetadata metadata = new ReviewedCardMetadata(
+            "poisoning_unknown_ingestion",
+            "GD-898",
+            "pilot_reviewed",
+            "reviewed_source_family",
+            ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+            List.of("GD-898", "GD-898")
+        );
+
+        memory.recordTurn(
+            "my child swallowed an unknown cleaner",
+            "1. Call poison control.\nSources: [GD-898]",
+            List.of(new SearchResult(
+                "Poisoning",
+                "",
+                "Triage",
+                "Triage",
+                "GD-898",
+                "Triage",
+                "medical",
+                "answer-card"
+            )),
+            "answer_card:poisoning_unknown_ingestion",
+            metadata
+        );
+
+        SessionMemory.TurnSnapshot snapshot = memory.latestTurnSnapshot();
+        assertTrue(snapshot.reviewedCardMetadata.isPresent());
+        assertEquals("poisoning_unknown_ingestion", snapshot.reviewedCardMetadata.cardId);
+        assertEquals("GD-898", snapshot.reviewedCardMetadata.cardGuideId);
+        assertEquals("pilot_reviewed", snapshot.reviewedCardMetadata.reviewStatus);
+        assertEquals("reviewed_source_family", snapshot.reviewedCardMetadata.runtimeCitationPolicy);
+        assertEquals(List.of("GD-898"), snapshot.reviewedCardMetadata.citedReviewedSourceGuideIds);
+
+        SessionMemory restored = SessionMemory.fromJson(memory.toJson());
+        SessionMemory.TurnSnapshot restoredSnapshot = restored.latestTurnSnapshot();
+        assertEquals("poisoning_unknown_ingestion", restoredSnapshot.reviewedCardMetadata.cardId);
+        assertEquals("GD-898", restoredSnapshot.reviewedCardMetadata.cardGuideId);
+        assertEquals("pilot_reviewed", restoredSnapshot.reviewedCardMetadata.reviewStatus);
+        assertEquals(
+            ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+            restoredSnapshot.reviewedCardMetadata.provenance
+        );
+        assertEquals(List.of("GD-898"), restoredSnapshot.reviewedCardMetadata.citedReviewedSourceGuideIds);
+
+        SessionMemory noMetadata = new SessionMemory();
+        noMetadata.recordTurn("plain question", "plain answer", List.of());
+        assertFalse(noMetadata.latestTurnSnapshot().reviewedCardMetadata.isPresent());
+        assertFalse(SessionMemory.fromJson(noMetadata.toJson()).latestTurnSnapshot()
+            .reviewedCardMetadata.isPresent());
+    }
+
+    @Test
     public void genericFollowUpFallsBackToTopicHintsWhenNoMeaningfulTermsExist() {
         SessionMemory memory = new SessionMemory();
         memory.recordTurn(

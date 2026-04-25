@@ -22,6 +22,7 @@ final class DetailSessionPresentationFormatter {
         String currentBody,
         List<SearchResult> currentSources,
         String currentRuleId,
+        ReviewedCardMetadata reviewedCardMetadata,
         long timestampMs
     ) {
         ArrayList<String> sourceLabels = new ArrayList<>();
@@ -43,6 +44,8 @@ final class DetailSessionPresentationFormatter {
             sourceLabels,
             sourceResults,
             safe(currentRuleId),
+            ReviewedCardMetadata.normalize(reviewedCardMetadata),
+            null,
             timestampMs
         );
     }

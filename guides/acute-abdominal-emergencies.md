@@ -22,6 +22,18 @@ aliases:
   - cannot pass stool or gas and keep vomiting
   - belly pain with fever and one spot is very tender
   - stomach flu or surgical abdomen
+  - coffee-ground vomit
+  - black tarry sticky stool with weakness
+  - black sticky stool with dizziness
+  - stool is black and sticky like tar and they feel weak and dizzy
+  - black sticky tar stool and weak dizzy
+  - black tar-like stool and dizzy
+  - bright red blood with dizziness or pale skin
+  - vomiting blood after heavy drinking
+  - threw up blood after heavy drinking
+  - threw up blood after drinking alcohol
+  - vomited blood after alcohol
+  - stomach pain and vomiting blood
 icon: 🏥
 description: Systematic abdominal examination, peritoneal signs, appendicitis, bowel obstruction, perforated viscus, cholecystitis, pancreatitis, hernia emergencies, ectopic pregnancy differential, urinary obstruction, surgical decision matrix, perioperative antibiotics, and post-operative complications.
 related:
@@ -86,9 +98,27 @@ Exact complaint phrasings that should still land here first:
 
 ## Red-Zone GI Bleed Ownership: Hematemesis, Coffee-Ground Vomit, Melena
 
-This guide owns **coffee-ground vomit**, **vomiting blood**, **dark blood clots in vomit**, and **black tarry stool (melena)**. Treat these as possible **GI bleeding emergencies**, not routine heartburn, food poisoning, or hemorrhoids.
+This guide owns **coffee-ground vomit**, **vomiting blood**, **throwing up blood**, **dark blood clots in vomit**, **black tarry / sticky stool (melena)**, and **rectal blood with shock signs**. Treat these as possible **GI bleeding emergencies**, not routine heartburn, food poisoning, nosebleed cleanup, constipation, dehydration, or hemorrhoids.
 
-**Escalate urgently** if GI bleeding is paired with dizziness, fainting, weakness, rapid pulse, low blood pressure, cold clammy skin, confusion, severe abdominal pain, or ongoing vomiting. These are **shock concerns** and need emergency stabilization and higher-level care if available.
+**Escalate urgently** if GI bleeding is paired with dizziness, fainting, weakness, pale or cold clammy skin, rapid pulse, low blood pressure, confusion, severe abdominal / stomach pain, or ongoing vomiting. These are **shock concerns** and need emergency stabilization and higher-level care if available. Vomiting blood after heavy drinking is still a GI-bleed emergency until proven otherwise.
+
+For plain-language prompts, **"threw up blood after heavy drinking"**, **"threw up blood after drinking"**, **"vomited blood after alcohol"**, **"coffee grounds in vomit"**, **"black tarry stool and weak/dizzy"**, and **"rectal blood with dizziness, pale skin, weakness, fainting, or collapse"** all route here first. Do not answer these by leading with hydration, rest, reflux care, hemorrhoid care, airflow/ventilation, or nosebleed positioning unless an active nosebleed is clearly the source.
+
+Also route here first for ambiguous hemorrhoid or reflux prompts when bleeding appears with systemic symptoms such as dizziness, fainting, weakness, pale skin, shortness of breath, or collapse.
+
+### First Actions For Suspected GI Bleeding
+
+For hematemesis, coffee-ground vomit, black tarry / sticky stool, or bowel bleeding with shock signs:
+
+1. **Keep NPO** except clinician-directed medicines or tiny sips only if needed for transport instructions.
+2. **Arrange urgent transport or higher-level medical response.**
+3. **Monitor for shock**: level of alertness, pulse, breathing, skin color/clamminess, dizziness/fainting, and worsening weakness.
+4. **Position for safety**: if vomiting or drowsy, protect the airway and keep them from aspirating; do not use nosebleed lean-forward instructions unless the blood is clearly from an active nosebleed.
+5. **Do not treat GI or rectal bleeding as a nosebleed. Do not use direct-pressure bleeding instructions for bowel or upper-GI bleeding, and do not insert packing or apply internal rectal pressure.** Direct pressure applies only to visible external bleeding where you can see and compress the bleeding site.
+
+## Red-Zone Reproductive Abdomen Ownership: Possible Ectopic
+
+Abdominal or pelvic pain with **possible pregnancy**, a **missed or late period**, **one-sided lower belly pain**, **vaginal bleeding**, **shoulder-tip pain**, **dizziness**, or **fainting** should route to the ectopic/gynecological emergency path first. Treat this as possible internal bleeding from ruptured ectopic pregnancy until proven otherwise, not routine cramps, STI symptoms, nosebleed cleanup, cough/cold, or generic survival advice.
 
 ![Acute abdominal emergencies reference diagram](../assets/svgs/acute-abdominal-emergencies-1.svg)
 
@@ -450,6 +480,7 @@ Incarcerated hernia = hernial contents trapped and cannot reduce; strangulated =
 - **Lower abdominal/pelvic pain** (may be RLQ, LLQ, or diffuse)
 - **Vaginal bleeding** (often different from normal menses; may be dark, scant)
 - **Amenorrhea or irregular menses** (may not be obvious if cycle irregular)
+- **Shoulder-tip pain, fainting, dizziness, or weakness** suggest internal bleeding
 - **Shock** if rupture has occurred (sudden severe pain, hemodynamic instability)
 
 ### Diagnostic Approach (Austere Settings)

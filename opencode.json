@@ -27,14 +27,11 @@
       "enabled": true,
       "timeout": 30000
     },
-    "puppeteer": {
+    "playwright": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-puppeteer"],
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
       "enabled": true,
-      "timeout": 60000,
-      "environment": {
-        "PUPPETEER_LAUNCH_OPTIONS": "{\"headless\":true}"
-      }
+      "timeout": 60000
     }
   }
 }

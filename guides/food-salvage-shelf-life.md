@@ -19,6 +19,10 @@ aliases:
   - shelf life of flour
   - canned food expiration
   - does food expire
+  - mold on jam
+  - mold around jam lid
+  - scrape mold off jam
+  - surface film on jam
 related:
   - food-spoilage-assessment
   - building-materials-salvage
@@ -39,7 +43,9 @@ liability_level: low
 :::tip
 **Quick triage - is it already bad, or just not stored well?**
 
-If the item smells off, looks spoiled, is slimy, bulging, leaking, moldy, or has a failed package, start with `food-spoilage-assessment.md` and treat it as discard-first.
+If the item smells off, smells different after repackaging, looks spoiled, is slimy, bulging, leaking, moldy, or has a failed package, start with `food-spoilage-assessment.md` and treat it as discard-first.
+
+For jam, jelly, sugary preserves, fruit spreads, or opened canned fruit, any mold on the food, lid, rim, seal, or surface film is discard-first. Do not scrape, skim, or treat it as a hard-surface cleanup problem.
 
 If the food is still sound and you want it to last longer, go to `food-preservation.md` for canning, drying, smoking, fermenting, or cellaring.
 
@@ -56,7 +62,7 @@ This guide covers shelf life, sealed-item viability, and conservative keep-vs-to
 - **Honey, salt, sugar, vinegar:** essentially indefinite → Condiment & Spice Value
 - **Oils:** 1–2 years sealed; rancid smell = discard → Condiment & Spice Value
 - **MREs:** 3–20 years depending on storage temperature → MRE & Emergency Ration ID
-- **Signs a food is unsafe:** bulging can, off-smell, mold, hissing on open, slime, leakage, rodent damage → Hazard Identification
+- **Signs a food is unsafe:** bulging or leaking can, off-smell, changed smell after repackaging, mold, hissing on open, slime, leakage, rodent damage → Hazard Identification
 - **Preserve food for long-term storage?** → food-preservation
 - **Package food for maximum shelf life?** → food-storage-packaging
 - **How long does dried food last?** Vegetables/fruits 1–2 years sealed; jerky 2–3 months room temp, 6–12 months refrigerated → Dry Goods Viability; for home-dried storage and packaging → drying-dehydration-techniques and food-storage-packaging
@@ -167,7 +173,7 @@ Canned goods represent some of the most valuable salvage itemsÃ¢â‚¬â€
 
 ### Visual Inspection Protocol
 
-Begin by examining the entire can surface under good light. Look for bulging on either endÃ¢â‚¬â€this indicates bacterial gas production inside, making the contents unsafe regardless of appearance or smell. Never open a bulging can; discard it immediately. The contents have become pressurized and likely contain pathogens.
+Begin by examining the entire can surface under good light. Look for bulging on either endÃ¢â‚¬â€this indicates bacterial gas production inside, making the contents unsafe regardless of appearance or smell. Never open a bulging or leaking can; discard it immediately. The contents may be pressurized or contaminated and likely contain pathogens.
 
 Rust requires nuanced assessment. Surface rust (orange discoloration on the exterior) is primarily cosmetic and does not compromise safety. However, deep rust that creates pits in the metal can eventually create holes. Run your finger over rusty areas; if it flakes away easily or you feel sharp edges, the integrity is compromised. Seam rustÃ¢â‚¬â€rust appearing along the sealed edges of the canÃ¢â‚¬â€is more concerning than body rust, as seams are the critical pressure-holding component.
 
@@ -389,7 +395,7 @@ Salmonella (poultry, eggs, reptiles), E. coli (beef, contaminated vegetables), L
 
 ### Mold and Mycotoxins
 
-Mold on food indicates fungal contamination and possible mycotoxin production (fungal toxins). Some molds are non-toxic; many are poisonous. Never assume moldy food is safeÃ¢â‚¬â€you cannot visually distinguish safe molds from toxic ones. Reject all visibly moldy foods. Exceptions: hard cheeses can be salvaged by cutting away mold (mold doesn't penetrate hard cheese), and jams/jellies can be scooped (surface mold only). All other moldy foods should be rejected.
+Mold on food indicates fungal contamination and possible mycotoxin production (fungal toxins). Some molds are non-toxic; many are poisonous. Never assume moldy food is safeÃ¢â‚¬â€you cannot visually distinguish safe molds from toxic ones. Reject all visibly moldy foods. Exception: hard cheeses can sometimes be salvaged by cutting away mold. Do not scrape or skim mold, lid growth, rim growth, or surface film off jams, jellies, sugary preserves, or fruit spreads; discard them.
 
 ### Insect and Pest Contamination
 
@@ -411,7 +417,7 @@ Freezer burn appears as gray or white discoloration on frozen items and indicate
 
 ### Problem: Uncertainty About Canned Good Safety
 
-Solution: Use the conservative rule: if bulging, reject. If seams show rust, reject. If you opened it and it hisses (pressure release), reject. If smell is off, reject. If unsure, reject. Uncertain cans are not worth risking botulism.
+Solution: Use the conservative rule: if bulging or leaking, reject unopened. If seams show rust, reject. If you opened it and it hisses (pressure release), reject. If smell is off, reject without taste-testing. If unsure, reject. Uncertain cans are not worth risking botulism.
 
 ### Problem: Dry Goods Have Insect Infestation
 
@@ -423,7 +429,7 @@ Solution: If ice crystals remain and thawing occurred in cool conditions (below 
 
 ### Problem: Food Smells Off But You're Not Sure
 
-Solution: Never risk it. Smell is your best indicator of spoilage. Reject any food that smells wrong. Survival food comes from large salvage operations; eliminating questionable items doesn't create scarcity.
+Solution: Never risk it. Smell is your best indicator of spoilage. Reject any food that smells wrong, including food that changed smell after drying or repackaging. Do not taste-test to confirm. Survival food comes from large salvage operations; eliminating questionable items doesn't create scarcity.
 
 ### Problem: Can is Rusty But Still Sealed
 

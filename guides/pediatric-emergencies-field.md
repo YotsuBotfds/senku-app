@@ -295,11 +295,11 @@ Epiglottitis is life-threatening. Child appears very ill, cannot swallow saliva,
 **Examination:** May see object in mouth/throat; asymmetric air entry on auscultation
 
 **Treatment:**
-- If object visible and removable: Remove carefully with tweezers or gloved fingers
-- If suspected but not visible: Finger sweep of mouth/throat (do not push deeper)
-- Abdominal thrusts (Heimlich maneuver) or back blows if child unconscious
-- Position in recovery position if breathing restored
-- If breathing not restored: Attempt simple airway opening (head tilt, chin lift)
+- If object is clearly visible and reachable: remove it carefully with tweezers or gloved fingers.
+- If the object is suspected but not visible: do not perform a blind finger sweep.
+- If the child has complete obstruction and cannot cough, speak, cry, or breathe: use age-appropriate choking rescue from First Aid.
+- If the child becomes unresponsive: lower them to the floor, call for help/AED if available, start CPR, and remove only a clearly visible object when the mouth is opened.
+- Position in recovery position if breathing is restored and continue urgent monitoring.
 
 #### Pneumonia (Bacterial or Viral)
 

@@ -17,10 +17,21 @@ aliases:
   - nosebleed not stopping
   - frequent nosebleeds
   - epistaxis
+  - blood pouring from nose
+  - blood down throat nosebleed
+  - nosebleed on blood thinners
+  - dizzy pale nosebleed
+  - repeated heavy nosebleeds
 routing_cues:
   - "how to stop a nosebleed in minutes"
   - "nosebleed after picking or dry air"
   - "when is a nosebleed an emergency"
+  - "nosebleed will not stop after 20 minutes"
+  - "blood is pouring from the nose and down the throat"
+  - "nosebleed after starting blood thinners"
+  - "dizzy and pale from a nosebleed"
+  - "should I lean forward or get urgent help"
+  - "repeated heavy nosebleeds in one day"
 icon: "!"
 description: Practical first aid for common nosebleeds, pressure and positioning, dry-air prevention, recurrence prevention, what not to do, and warning signs that need urgent medical attention.
 related:
@@ -30,7 +41,7 @@ related:
   - hygiene-disease-prevention-basics
 read_time: 10
 word_count: 2200
-last_updated: '2026-04-16'
+last_updated: '2026-04-23'
 version: '1.0'
 liability_level: medium
 custom_css: |
@@ -64,7 +75,11 @@ This guide is built for searches such as:
 - "How do I prevent nosebleeds from dry air?"
 - "When is a nosebleed serious?"
 
-If you only need the shortest possible answer: sit upright, lean forward a little, pinch the soft part of the nose firmly for 10 to 15 minutes without checking, breathe through the mouth, and get help if the bleeding is heavy, follows an injury, or does not stop.`r`n`r`nIf the nosebleed came with a head injury, a sudden severe headache, vomiting, confusion, or other neurologic symptoms, do not treat it as a simple home bleed. Follow [Headaches: Basic Care & Red Flags](../headaches-basic-care.html) for the warning-sign route and [First Aid & Emergency Response](../first-aid.html) for injury care.
+If you only need the shortest possible answer: sit upright, lean forward a little, pinch the soft part of the nose firmly for 10 to 15 minutes without checking, breathe through the mouth, and get help if the bleeding is heavy, follows an injury, or does not stop.
+
+This nosebleed guide owns urgent-routing questions about bleeding that will not stop after 20 to 30 minutes of steady pressure, blood pouring from the nose or down the throat, a nosebleed while taking blood-thinning medicine, dizziness, paleness, weakness, or repeated heavy nosebleeds in one day. For those situations, keep leaning forward and using firm pressure while arranging urgent medical help; do not wait for perfect home control before escalating.
+
+If the nosebleed came with a head injury, a sudden severe headache, vomiting, confusion, or other neurologic symptoms, do not treat it as a simple home bleed. Follow [Headaches: Basic Care & Red Flags](../headaches-basic-care.html) for the warning-sign route and [First Aid & Emergency Response](../first-aid.html) for injury care.
 
 </section>
 
@@ -167,7 +182,7 @@ Get urgent medical help if any of the following apply:
 <div class="red-flag">
 
 - The bleeding is heavy or will not stop after 20 to 30 minutes of firm pressure.
-- The person feels faint, weak, confused, or short of breath.
+- The person feels faint, dizzy, pale, weak, confused, or short of breath.
 - The nosebleed followed a head, face, or nose injury.
 - Blood is pouring down the throat or causing vomiting.
 - Blood keeps draining into the throat with no clear front-of-nose source.

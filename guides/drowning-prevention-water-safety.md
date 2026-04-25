@@ -31,8 +31,9 @@ Drowning can happen fast and quietly. A person can be in severe trouble with alm
 :::
 
 :::quick-routing
+**Went under ice / fell through ice** -> call emergency help, keep rescuers off unsafe ice, and use reach/throw assisted rescue if visible or reachable; see [Cold Water Survival - Ice Rescue](/guides/cold-water-survival#ice-rescue). Search/probe actions are downstream only after rescue is not possible and help is coming.
 **Quick routing — if you need a different topic fast:**
-- **Someone is drowning right now** → jump to [Rescue Priorities](#rescue-priorities) below for the reach-throw-row-go ladder and post-rescue steps.
+- **Someone is drowning right now** → call for help, use reach-throw-row-go in that order, and after rescue check breathing and start CPR/rescue breaths if not breathing normally; jump to [Rescue Priorities](#rescue-priorities) below.
 - **Fell through ice** → see [Cold Water Survival — Ice Rescue](/guides/cold-water-survival#ice-rescue) for self-rescue from broken ice, assisted ice rescue, and submersion-under-ice protocols.
 - **Cold shock (gasping, loss of breathing control)** → see [Cold Water Survival — Cold Shock Response](/guides/cold-water-survival#cold-shock) for the gasp reflex, breath-hold breakpoint, and immediate cold-shock actions.
 - **How long can someone survive in cold water?** → see [Cold Water Survival — Survival Time by Water Temperature](/guides/cold-water-survival#survival-time) for the temperature / expected-survival table.
@@ -179,6 +180,8 @@ If you must enter the water:
 - Keep your own exit route in mind
 - Do not attempt a heroic rescue that creates a second casualty
 
+Once the person is out, shift immediately to airway and breathing. Drowning is primarily an oxygen problem: check responsiveness and breathing, call for emergency help, and start CPR with rescue breaths if trained and able when breathing is absent or abnormal.
+
 ## Post-Rescue Immediate Steps
 
 After the person is out of the water:
@@ -187,8 +190,9 @@ After the person is out of the water:
 2. Call for emergency help if available.
 3. If they are not breathing normally, start CPR right away. If you are trained and able, use rescue breaths with chest compressions because drowning is primarily a breathing and oxygen problem. If you are untrained or unable to give breaths, give chest compressions until help arrives.
 4. Remove wet clothing if safe and keep the person warm.
-5. Watch closely for vomiting, confusion, worsening cough, chest pain, or trouble breathing.
-6. Do not let the person "sleep it off" without observation if the rescue was significant.
+5. If they develop coughing, shortness of breath, chest pain, confusion, repeated vomiting, blue/gray/pale skin, or worsening breathing after rescue, get urgent medical evaluation now even if they seemed okay at first.
+6. Watch closely for vomiting, confusion, worsening cough, chest pain, or trouble breathing.
+7. Do not let the person "sleep it off" without observation if the rescue was significant.
 
 Important:
 - A person who inhaled or aspirated water can worsen later
@@ -197,7 +201,7 @@ Important:
 
 ## Red Flags
 
-Get urgent medical help if the rescued person has any of the following:
+Get urgent medical help now if the rescued person has any of the following:
 - Not breathing normally
 - Blue, gray, or very pale skin
 - Persistent cough or foam at the mouth

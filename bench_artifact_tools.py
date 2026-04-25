@@ -159,6 +159,8 @@ def build_eval_rows(paths):
         config = data.get("config", {})
         summary = data.get("summary", {})
         for result in data.get("results", []):
+            retrieval_metadata = result.get("retrieval_metadata") or {}
+            top_retrieved_guide_ids = retrieval_metadata.get("top_retrieved_guide_ids") or []
             rows.append({
                 "artifact_name": artifact["path"].name,
                 "artifact_path": str(artifact["path"]),
@@ -192,6 +194,7 @@ def build_eval_rows(paths):
                 "completion_cap_hit": result.get("completion_cap_hit"),
                 "completion_retry_count": result.get("completion_retry_count"),
                 "retrieval_metadata_summary": result.get("retrieval_metadata_summary"),
+                "top_retrieved_guide_ids": ",".join(top_retrieved_guide_ids),
                 "response_length": result.get("response_length"),
                 "server": result.get("server"),
                 "worker": result.get("worker"),
@@ -239,6 +242,7 @@ def eval_rows_to_csv(rows):
         "completion_cap_hit",
         "completion_retry_count",
         "retrieval_metadata_summary",
+        "top_retrieved_guide_ids",
         "response_length",
         "server",
         "worker",

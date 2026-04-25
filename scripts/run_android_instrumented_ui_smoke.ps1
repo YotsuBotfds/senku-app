@@ -14,6 +14,18 @@ param(
     [string]$ScriptedRequiredResId = "",
     [int]$ScriptedTimeoutMs = 0,
     [int]$ScriptedExtraSettleMs = 0,
+    [switch]$ScriptedEnableReviewedCardRuntime,
+    [string]$ScriptedExpectedAnswerSurfaceLabel = "",
+    [Alias("ScriptedForbiddenAnswerSurfaceLabel")]
+    [string]$ScriptedForbiddenAnswerSurfaceLabels = "",
+    [string]$ScriptedExpectedRuleId = "",
+    [string]$ScriptedExpectedSourceGuideId = "",
+    [string]$ScriptedExpectedReviewedCardId = "",
+    [string]$ScriptedExpectedReviewedCardGuideId = "",
+    [string]$ScriptedExpectedReviewedCardReviewStatus = "",
+    [string]$ScriptedExpectedReviewedCardSourceGuideIds = "",
+    [switch]$ScriptedAssertRecentThreadReviewedCardMetadata,
+    [string]$ScriptedExpectedBodyContains = "",
     [switch]$AllowHostFallback,
     [switch]$EnableHostInferenceSmoke,
     [switch]$EnableFollowUpSmoke,
@@ -942,7 +954,7 @@ if (-not $EffectiveSkipInstall) {
     }
 }
 & $adb -s $Device shell run-as com.senku.mobile rm -rf files/test-artifacts | Out-Null
-& $adb -s $Device shell run-as com.senku.mobile mkdir files/test-artifacts | Out-Null
+& $adb -s $Device shell run-as com.senku.mobile mkdir -p files/test-artifacts | Out-Null
 
 $script:OriginalFontScale = Get-DeviceFontScale
 $script:OriginalAccelerometerRotation = Get-DeviceSettingValue -Namespace system -Key accelerometer_rotation
@@ -1036,11 +1048,59 @@ try {
             } else {
                 ""
             }
+            $encodedScriptedExpectedAnswerSurfaceLabel = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedAnswerSurfaceLabel)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedAnswerSurfaceLabel)
+            } else {
+                ""
+            }
+            $encodedScriptedForbiddenAnswerSurfaceLabels = if (-not [string]::IsNullOrWhiteSpace($ScriptedForbiddenAnswerSurfaceLabels)) {
+                [System.Uri]::EscapeDataString($ScriptedForbiddenAnswerSurfaceLabels)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedRuleId = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedRuleId)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedRuleId)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedSourceGuideId = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedSourceGuideId)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedSourceGuideId)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedReviewedCardId = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedReviewedCardId)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedReviewedCardId)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedReviewedCardGuideId = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedReviewedCardGuideId)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedReviewedCardGuideId)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedReviewedCardReviewStatus = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedReviewedCardReviewStatus)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedReviewedCardReviewStatus)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedReviewedCardSourceGuideIds = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedReviewedCardSourceGuideIds)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedReviewedCardSourceGuideIds)
+            } else {
+                ""
+            }
+            $encodedScriptedExpectedBodyContains = if (-not [string]::IsNullOrWhiteSpace($ScriptedExpectedBodyContains)) {
+                [System.Uri]::EscapeDataString($ScriptedExpectedBodyContains)
+            } else {
+                ""
+            }
             $args += @(
                 "-e", "scriptedQuery", $encodedScriptedQuery,
                 "-e", "scriptedAsk", $(if ($ScriptedAsk) { "true" } else { "false" }),
                 "-e", "scriptedExpectedSurface", $ScriptedExpectedSurface
             )
+            if ($ScriptedEnableReviewedCardRuntime) {
+                $args += @("-e", "scriptedEnableReviewedCardRuntime", "true")
+            }
             if ($AllowHostFallback) {
                 $args += @("-e", "scriptedAllowHostFallback", "true")
             }
@@ -1055,6 +1115,36 @@ try {
             }
             if (-not [string]::IsNullOrWhiteSpace($encodedScriptedRequiredResId)) {
                 $args += @("-e", "scriptedRequiredResId", $encodedScriptedRequiredResId)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedAnswerSurfaceLabel)) {
+                $args += @("-e", "scriptedExpectedAnswerSurfaceLabel", $encodedScriptedExpectedAnswerSurfaceLabel)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedForbiddenAnswerSurfaceLabels)) {
+                $args += @("-e", "scriptedForbiddenAnswerSurfaceLabels", $encodedScriptedForbiddenAnswerSurfaceLabels)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedRuleId)) {
+                $args += @("-e", "scriptedExpectedRuleId", $encodedScriptedExpectedRuleId)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedSourceGuideId)) {
+                $args += @("-e", "scriptedExpectedSourceGuideId", $encodedScriptedExpectedSourceGuideId)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedReviewedCardId)) {
+                $args += @("-e", "scriptedExpectedReviewedCardId", $encodedScriptedExpectedReviewedCardId)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedReviewedCardGuideId)) {
+                $args += @("-e", "scriptedExpectedReviewedCardGuideId", $encodedScriptedExpectedReviewedCardGuideId)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedReviewedCardReviewStatus)) {
+                $args += @("-e", "scriptedExpectedReviewedCardReviewStatus", $encodedScriptedExpectedReviewedCardReviewStatus)
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedReviewedCardSourceGuideIds)) {
+                $args += @("-e", "scriptedExpectedReviewedCardSourceGuideIds", $encodedScriptedExpectedReviewedCardSourceGuideIds)
+            }
+            if ($ScriptedAssertRecentThreadReviewedCardMetadata) {
+                $args += @("-e", "scriptedAssertRecentThreadReviewedCardMetadata", "true")
+            }
+            if (-not [string]::IsNullOrWhiteSpace($encodedScriptedExpectedBodyContains)) {
+                $args += @("-e", "scriptedExpectedBodyContains", $encodedScriptedExpectedBodyContains)
             }
             if ($ScriptedTimeoutMs -gt 0) {
                 $args += @("-e", "scriptedTimeoutMs", "$ScriptedTimeoutMs")
@@ -1236,6 +1326,7 @@ try {
         scripted_ask = [bool]$ScriptedAsk
         scripted_followup_query = $ScriptedFollowUpQuery
         scripted_expected_surface = $(if (Use-ScriptedPromptRun) { $ScriptedExpectedSurface } else { $null })
+        scripted_forbidden_answer_surface_labels = $(if (Use-ScriptedPromptRun) { $ScriptedForbiddenAnswerSurfaceLabels } else { $null })
         scripted_allow_host_fallback = [bool]$AllowHostFallback
         scripted_capture_label = $(if (Use-ScriptedPromptRun) { $ScriptedCaptureLabel } else { $null })
         orientation = $Orientation

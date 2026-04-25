@@ -18,8 +18,17 @@ aliases:
   - find my way
   - map and compass basics
   - how to read a topo map
+  - topographic map for beginners
+  - what do contour lines mean
+  - orient a map without a compass
+  - compass bearing for beginners
+  - magnetic north vs map north
+  - beginner map and compass mistakes
+  - non-emergency map reorientation
+  - landmark hopping
+  - use landmarks for navigation
 icon: compass
-description: Beginner-friendly map reading, scale, contour lines, orienting a map, basic compass use, common navigation mistakes, and simple field habits for everyday travel.
+description: Beginner-friendly paper map and topographic map reading, contour lines, orienting a map with or without a compass, compass bearings, magnetic north versus map north, landmark hopping, common beginner mistakes, and simple field habits for everyday travel.
 related:
   - blind-low-vision-navigation
   - cartography-mapmaking
@@ -38,6 +47,8 @@ liability_level: low
 ## Overview
 
 This guide is for ordinary users who want to understand a paper map, a trail map, or a simple topographic map without turning it into a full land-navigation course.
+
+Use this guide for beginner questions about how to read a paper map or topographic map, what contour lines mean, how to orient a map without a compass, how to use a compass bearing, what magnetic north versus map north means, what beginner mistakes to avoid, how to re-check position on a paper map when there is no immediate emergency, or how to use landmarks and landmark hopping instead of staring at a compass. If someone is actively lost, injured, overdue, exposed to dangerous weather, or unable to retrace safely, treat that as a search-and-rescue problem rather than a beginner map lesson.
 
 If you can answer three questions, you are already doing most basic navigation correctly:
 

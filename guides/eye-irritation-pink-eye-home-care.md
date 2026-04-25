@@ -38,7 +38,7 @@ liability_level: high
 ---
 
 :::danger
-This guide is for mild, common eye complaints when vision is stable and the eye is not badly injured. Get urgent care for vision changes, severe pain, chemical exposure, contact-lens related red eye, a penetrating injury, or an eye that looks very abnormal.
+This guide is for mild, common eye complaints when vision is stable and the eye is not badly injured. Chemical exposure, blunt or penetrating trauma, high-speed debris, metal/wood chips, anything poking out, embedded debris, vision changes, severe pain, or an eye that looks very abnormal should route to [Eye Injuries, Infections & Emergency Ophthalmology](eye-injuries-emergency-care.md) first.
 :::
 
 <section id="overview">
@@ -55,7 +55,7 @@ Use this guide for questions like:
 - "What can I do for eye strain?"
 
 :::tip Quick routing cue
-Use this guide when the query is about mild red-eye complaints, irritation, foreign-body sensation, a stye, eye-strain irritation, or when to escalate to urgent eye evaluation.
+Use this guide when the query is about mild red-eye complaints, irritation, foreign-body sensation, a stye, eye-strain irritation, or when to escalate to urgent eye evaluation. If the story includes chemical splash, bleach, drain cleaner, trauma, high-speed metal/wood debris, anything poking out, embedded debris, vision change, or severe pain, use the emergency eye-injury guide instead.
 :::
 
 This guide covers:
@@ -79,7 +79,7 @@ Home care is reasonable only when all of these are true:
 
 - Vision is basically normal
 - Pain is mild, not severe
-- The eye is not injured by a hit, puncture, or chemical
+- The eye is not injured by a hit, puncture, embedded debris, or chemical
 - The red eye is not accompanied by a badly cloudy cornea or a very abnormal pupil
 - You are not wearing contact lenses with significant redness, pain, or light sensitivity
 
@@ -91,7 +91,7 @@ Think of this as a quick filter:
 - **Tender bump on the lid** often points to a stye
 - **Burning after screen time** often points to eye strain or dryness
 
-If the story does not fit a mild problem, stop and use urgent-care guidance.
+If the story does not fit a mild problem, stop and use urgent-care guidance. Chemical exposure and eye trauma should go to the emergency eye-injury guide before pink-eye home care.
 
 </section>
 
@@ -107,6 +107,12 @@ If someone says, "something is in my eye," the safest first move is usually gent
 - Eyelash
 - Small loose debris
 - Mild irritants like sweat, smoke, or wind-blown particles
+
+Chemical splashes are different: use the emergency eye-injury guide, start continuous irrigation immediately, and do not stop irrigation just because pain worsens. Bleach, drain cleaner, oven cleaner, acids, alkalis, pool chemicals, solvents, and unknown cleaners in the eye need immediate irrigation while arranging urgent evaluation/Poison Control guidance.
+
+Do not use this mild-debris flushing plan if the object may be embedded, came from grinding/hammering/high-speed debris, is metal/wood/glass, is poking out, or follows blunt trauma with vision change or severe pain. In those cases, do not flush, remove, rub, or press on the eye; shield it without pressure, cover both eyes if possible to reduce movement, and seek urgent eye care.
+
+Route these exact patterns away from home flushing: "metal chip flew into eye while grinding and stuck", "stick scratched eye and something poking out", "flying debris + darker vision", and "high-speed debris/embedded object". For those, explicitly do not flush, remove, rub, press, or apply direct pressure; shield/cover without pressure, keep the head still, cover both eyes if possible, and get urgent eye care.
 
 ### What to do
 
@@ -133,7 +139,7 @@ If someone says, "something is in my eye," the safest first move is usually gent
 
 ### If the object may still be stuck
 
-If flushing does not improve the sensation, or pain is sharp and persistent, the problem may be a corneal scratch or a retained foreign body. That needs evaluation, especially if light hurts or vision is worse.
+For loose dust, a lash, or tiny non-embedded debris only: if gentle rinsing has already been tried and the sensation persists, the problem may be a corneal scratch or retained loose foreign body. That needs evaluation, especially if light hurts or vision is worse. If anything appears stuck in the eye or poking out, or the story involves metal chips, grinding, high-speed debris, wood, glass, darker vision, or worse vision, stop home care: do not flush, remove, rub, or press; shield the eye without pressure and seek urgent eye care.
 
 </section>
 
@@ -246,9 +252,11 @@ If redness is mild and comes with burning after long screen time, dryness or str
 - Do not use old prescription eye drops without knowing what they are
 - Do not wear contact lenses through a red-eye episode
 - Do not patch a painful, infected, or contact-lens-related eye unless a clinician tells you to
-- Do not keep flushing if the problem is actually a chemical exposure that needs emergency irrigation guidance instead
+- Do not treat chemical exposure as routine "something in my eye" flushing; switch to emergency continuous irrigation guidance and keep irrigating while arranging urgent evaluation
+- Do not flush, remove, rub, or press on an eye with embedded debris, high-speed metal/wood/glass debris, anything poking out, or trauma with vision change; shield without pressure and seek urgent care
+- Do not apply direct pressure to an injured eye with flying debris, darker vision, a stuck metal chip, or something poking out
 
-If you are dealing with a chemical splash, use the eye-injury emergency guide and irrigate immediately.
+If you are dealing with a chemical splash, bleach, drain cleaner, or unknown cleaner in the eye, use the eye-injury emergency guide and irrigate immediately.
 
 </section>
 
@@ -264,7 +272,7 @@ Seek urgent or same-day care if any of these are present:
 - **A cloudy, hazy, or white-looking cornea**
 - **A misshapen, fixed, or very different pupil**
 - **Blood in the eye after injury**
-- **Chemical exposure**
+- **Chemical exposure, including bleach, drain cleaner, cleaners, acids, or alkalis**
 - **Penetrating injury or anything embedded in the eye**
 - **Contact lens wear with redness, pain, or discharge**
 - **Worsening swelling around the eye**
@@ -276,7 +284,7 @@ Seek urgent or same-day care if any of these are present:
 
 Special caution for contact lens wearers: red eye plus pain or light sensitivity can be a corneal infection, not simple conjunctivitis. That is not a routine home-care problem.
 
-If someone says "my eye is red and goopy" but also has bad pain, blurry vision, or light sensitivity, do not assume it is harmless pink eye.
+If someone says "my eye is red and goopy" but also has chemical exposure, trauma, bad pain, blurry vision, or light sensitivity, do not assume it is harmless pink eye; route to the emergency eye-injury guide first.
 
 </section>
 

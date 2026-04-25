@@ -102,6 +102,7 @@ public final class PromptHarnessSmokeTest {
 
     @After
     public void tearDown() {
+        ReviewedCardRuntimeConfig.setEnabled(ApplicationProvider.getApplicationContext(), false);
         if (harnessIdlingResource != null) {
             IdlingRegistry.getInstance().unregister(harnessIdlingResource);
             harnessIdlingResource.stopListening();
@@ -2429,6 +2430,25 @@ public final class PromptHarnessSmokeTest {
         String requiredResId = safe(args.getString("scriptedRequiredResId")).trim();
         boolean allowHostFallback = parseBooleanArg(args, "scriptedAllowHostFallback");
         boolean hostEnabled = parseBooleanArg(args, "hostInferenceEnabled");
+        boolean reviewedCardRuntimeEnabled = parseBooleanArg(args, "scriptedEnableReviewedCardRuntime");
+        String expectedAnswerSurfaceLabel = Uri.decode(safe(args.getString("scriptedExpectedAnswerSurfaceLabel"))).trim();
+        List<String> forbiddenAnswerSurfaceLabels = parseDelimitedArg(args, "scriptedForbiddenAnswerSurfaceLabels");
+        String legacyForbiddenAnswerSurfaceLabel =
+            Uri.decode(safe(args.getString("scriptedForbiddenAnswerSurfaceLabel"))).trim();
+        if (!legacyForbiddenAnswerSurfaceLabel.isEmpty()) {
+            forbiddenAnswerSurfaceLabels.add(legacyForbiddenAnswerSurfaceLabel);
+        }
+        String expectedRuleId = Uri.decode(safe(args.getString("scriptedExpectedRuleId"))).trim();
+        String expectedSourceGuideId = Uri.decode(safe(args.getString("scriptedExpectedSourceGuideId"))).trim();
+        String expectedReviewedCardId = Uri.decode(safe(args.getString("scriptedExpectedReviewedCardId"))).trim();
+        String expectedReviewedCardGuideId = Uri.decode(safe(args.getString("scriptedExpectedReviewedCardGuideId"))).trim();
+        String expectedReviewedCardReviewStatus =
+            Uri.decode(safe(args.getString("scriptedExpectedReviewedCardReviewStatus"))).trim();
+        List<String> expectedBodyFragments = parseDelimitedArg(args, "scriptedExpectedBodyContains");
+        List<String> expectedReviewedCardSourceGuideIds =
+            parseDelimitedArg(args, "scriptedExpectedReviewedCardSourceGuideIds");
+        boolean assertRecentThreadReviewedCardMetadata =
+            parseBooleanArg(args, "scriptedAssertRecentThreadReviewedCardMetadata");
         String hostUrl = safe(args.getString("hostInferenceUrl"));
         String hostModel = safe(args.getString("hostInferenceModel"));
 
@@ -2448,6 +2468,15 @@ public final class PromptHarnessSmokeTest {
                 Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
             }
         }
+        assertReviewedEvidenceExpectationIsClosed(
+            expectedAnswerSurfaceLabel,
+            expectedRuleId,
+            expectedSourceGuideId,
+            expectedReviewedCardId,
+            expectedReviewedCardGuideId,
+            expectedReviewedCardReviewStatus,
+            expectedReviewedCardSourceGuideIds
+        );
 
         long timeoutMs = parseLongArg(
             args,
@@ -2455,6 +2484,11 @@ public final class PromptHarnessSmokeTest {
             hostEnabled ? GENERATIVE_DETAIL_WAIT_MS : (ask ? DETAIL_WAIT_MS : SEARCH_WAIT_MS)
         );
         long extraSettleMs = parseLongArg(args, "scriptedExtraSettleMs", 0L);
+
+        ReviewedCardRuntimeConfig.setEnabled(
+            ApplicationProvider.getApplicationContext(),
+            reviewedCardRuntimeEnabled
+        );
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -2473,6 +2507,7 @@ public final class PromptHarnessSmokeTest {
             }
         }
 
+        long scriptedLaunchEpochMs = System.currentTimeMillis();
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(intent)) {
             try {
                 if ("detail".equals(expectedSurface)) {
@@ -2485,6 +2520,30 @@ public final class PromptHarnessSmokeTest {
                         "required resource never appeared: " + requiredResId + "; harness signals=" + HarnessTestSignals.snapshot(),
                         device.wait(Until.hasObject(By.res(APP_PACKAGE, requiredResId)), timeoutMs)
                     );
+                }
+                if ("detail".equals(expectedSurface)) {
+                    assertScriptedDetailExpectations(
+                        timeoutMs,
+                        expectedAnswerSurfaceLabel,
+                        forbiddenAnswerSurfaceLabels,
+                        expectedRuleId,
+                        expectedSourceGuideId,
+                        expectedReviewedCardId,
+                        expectedReviewedCardGuideId,
+                        expectedReviewedCardReviewStatus,
+                        expectedReviewedCardSourceGuideIds,
+                        expectedBodyFragments
+                    );
+                    if (assertRecentThreadReviewedCardMetadata) {
+                        assertRecentThreadReviewedCardMetadata(
+                            query,
+                            expectedReviewedCardId,
+                            expectedReviewedCardGuideId,
+                            expectedReviewedCardReviewStatus,
+                            expectedReviewedCardSourceGuideIds,
+                            scriptedLaunchEpochMs
+                        );
+                    }
                 }
                 if (extraSettleMs > 0L) {
                     SystemClock.sleep(extraSettleMs);
@@ -2504,6 +2563,48 @@ public final class PromptHarnessSmokeTest {
                 throw assertionError;
             }
         }
+    }
+
+    private void assertReviewedEvidenceExpectationIsClosed(
+        String expectedAnswerSurfaceLabel,
+        String expectedRuleId,
+        String expectedSourceGuideId,
+        String expectedReviewedCardId,
+        String expectedReviewedCardGuideId,
+        String expectedReviewedCardReviewStatus,
+        List<String> expectedReviewedCardSourceGuideIds
+    ) {
+        if (!"REVIEWED EVIDENCE".equalsIgnoreCase(safe(expectedAnswerSurfaceLabel).trim())) {
+            return;
+        }
+        Assert.assertFalse(
+            "REVIEWED EVIDENCE expectation must assert answer_card rule id",
+            safe(expectedRuleId).trim().isEmpty()
+        );
+        Assert.assertTrue(
+            "REVIEWED EVIDENCE expectation must use answer_card rule id",
+            safe(expectedRuleId).trim().startsWith("answer_card:")
+        );
+        Assert.assertFalse(
+            "REVIEWED EVIDENCE expectation must assert primary source guide id",
+            safe(expectedSourceGuideId).trim().isEmpty()
+        );
+        Assert.assertFalse(
+            "REVIEWED EVIDENCE expectation must assert reviewed card id",
+            safe(expectedReviewedCardId).trim().isEmpty()
+        );
+        Assert.assertFalse(
+            "REVIEWED EVIDENCE expectation must assert reviewed card guide id",
+            safe(expectedReviewedCardGuideId).trim().isEmpty()
+        );
+        Assert.assertFalse(
+            "REVIEWED EVIDENCE expectation must assert reviewed card review status",
+            safe(expectedReviewedCardReviewStatus).trim().isEmpty()
+        );
+        Assert.assertTrue(
+            "REVIEWED EVIDENCE expectation must assert at least one cited reviewed source guide id",
+            expectedReviewedCardSourceGuideIds != null && !expectedReviewedCardSourceGuideIds.isEmpty()
+        );
     }
 
     private void awaitHarnessIdle() {
@@ -2542,6 +2643,388 @@ public final class PromptHarnessSmokeTest {
         Assert.fail(
             "harness never went idle within " + timeoutMs + "ms; active labels=" + HarnessTestSignals.snapshot()
         );
+    }
+
+    private void assertScriptedDetailExpectations(
+        long timeoutMs,
+        String expectedAnswerSurfaceLabel,
+        List<String> forbiddenAnswerSurfaceLabels,
+        String expectedRuleId,
+        String expectedSourceGuideId,
+        String expectedReviewedCardId,
+        String expectedReviewedCardGuideId,
+        String expectedReviewedCardReviewStatus,
+        List<String> expectedReviewedCardSourceGuideIds,
+        List<String> expectedBodyFragments
+    ) {
+        if (safe(expectedAnswerSurfaceLabel).trim().isEmpty()
+            && (forbiddenAnswerSurfaceLabels == null || forbiddenAnswerSurfaceLabels.isEmpty())
+            && safe(expectedRuleId).trim().isEmpty()
+            && safe(expectedSourceGuideId).trim().isEmpty()
+            && safe(expectedReviewedCardId).trim().isEmpty()
+            && safe(expectedReviewedCardGuideId).trim().isEmpty()
+            && safe(expectedReviewedCardReviewStatus).trim().isEmpty()
+            && (expectedReviewedCardSourceGuideIds == null || expectedReviewedCardSourceGuideIds.isEmpty())
+            && (expectedBodyFragments == null || expectedBodyFragments.isEmpty())) {
+            return;
+        }
+
+        Assert.assertTrue(
+            "scripted detail expectations need a resumed DetailActivity; " + describeResumedActivityAndHarnessSignals(),
+            waitForResumedActivity(DetailActivity.class, timeoutMs)
+        );
+        if (!safe(expectedAnswerSurfaceLabel).trim().isEmpty()) {
+            Assert.assertTrue(
+                "expected answer surface label missing: " + expectedAnswerSurfaceLabel
+                    + "; " + describeResumedActivityAndHarnessSignals(),
+                waitForExpectedAnswerSurfaceLabel(expectedAnswerSurfaceLabel, timeoutMs)
+            );
+        }
+        if (forbiddenAnswerSurfaceLabels != null) {
+            for (String forbiddenAnswerSurfaceLabel : forbiddenAnswerSurfaceLabels) {
+                if (safe(forbiddenAnswerSurfaceLabel).trim().isEmpty()) {
+                    continue;
+                }
+                Assert.assertFalse(
+                    "forbidden answer surface label visible before detail assertion: " + forbiddenAnswerSurfaceLabel
+                        + "; " + describeResumedActivityAndHarnessSignals(),
+                    hasAnswerSurfaceLabel(forbiddenAnswerSurfaceLabel)
+                );
+            }
+        }
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            Assert.assertNotNull("scripted detail expectations found no resumed activity", activity);
+            DetailSettleSignals signals = collectDetailSettleSignals(activity);
+            String bodyText = safe(signals.bodyText);
+            if ("REVIEWED EVIDENCE".equalsIgnoreCase(safe(expectedAnswerSurfaceLabel).trim())) {
+                Assert.assertTrue(
+                    "REVIEWED EVIDENCE detail should expose at least one source row; signals="
+                        + describeDetailSignals(signals),
+                    signals.sourceCount > 0
+                );
+                String reviewedEvidence = activity.getString(R.string.detail_evidence_reviewed);
+                Assert.assertTrue(
+                    "REVIEWED EVIDENCE detail trust label should stay reviewed-card specific; signals="
+                        + describeDetailSignals(signals),
+                    containsAny(signals.evidenceLabel, reviewedEvidence, expectedAnswerSurfaceLabel)
+                );
+                Assert.assertTrue(
+                    "REVIEWED EVIDENCE proof summary should use reviewed-card trust wording; signals="
+                        + describeDetailSignals(signals),
+                    containsAny(signals.proofText, reviewedEvidence, expectedAnswerSurfaceLabel)
+                );
+            }
+            if (forbiddenAnswerSurfaceLabels != null) {
+                for (String forbiddenAnswerSurfaceLabel : forbiddenAnswerSurfaceLabels) {
+                    if (!safe(forbiddenAnswerSurfaceLabel).trim().isEmpty()) {
+                        assertForbiddenAnswerSurfaceLabelAbsent(forbiddenAnswerSurfaceLabel, signals);
+                    }
+                }
+            }
+            if (!safe(expectedRuleId).trim().isEmpty()) {
+                Assert.assertEquals(
+                    "scripted detail rule id should match",
+                    expectedRuleId.trim(),
+                    safe(signals.ruleId).trim()
+                );
+            }
+            if (!safe(expectedSourceGuideId).trim().isEmpty()) {
+                Assert.assertEquals(
+                    "scripted detail primary guide id should match expected source",
+                    expectedSourceGuideId.trim(),
+                    safe(signals.guideId).trim()
+                );
+            }
+            if (!safe(expectedReviewedCardId).trim().isEmpty()) {
+                Assert.assertEquals(
+                    "scripted detail reviewed card id should match",
+                    expectedReviewedCardId.trim(),
+                    safe(signals.reviewedCardId).trim()
+                );
+                Assert.assertTrue(
+                    "scripted detail proof summary should expose reviewed card id: " + expectedReviewedCardId
+                        + "; signals=" + describeDetailSignals(signals),
+                    containsAny(signals.proofText, expectedReviewedCardId)
+                );
+            }
+            if (!safe(expectedReviewedCardGuideId).trim().isEmpty()) {
+                Assert.assertEquals(
+                    "scripted detail reviewed card guide id should match",
+                    expectedReviewedCardGuideId.trim(),
+                    safe(signals.reviewedCardGuideId).trim()
+                );
+                Assert.assertTrue(
+                    "scripted detail proof summary should expose reviewed card guide id: " + expectedReviewedCardGuideId
+                        + "; signals=" + describeDetailSignals(signals),
+                    containsAny(signals.proofText, expectedReviewedCardGuideId)
+                );
+            }
+            if (!safe(expectedReviewedCardReviewStatus).trim().isEmpty()) {
+                Assert.assertEquals(
+                    "scripted detail reviewed card status should match",
+                    expectedReviewedCardReviewStatus.trim(),
+                    safe(signals.reviewedCardReviewStatus).trim()
+                );
+                Assert.assertTrue(
+                    "scripted detail proof summary should expose reviewed card status: " + expectedReviewedCardReviewStatus
+                        + "; signals=" + describeDetailSignals(signals),
+                    containsAny(
+                        signals.proofText,
+                        expectedReviewedCardReviewStatus,
+                        expectedReviewedCardReviewStatus.replace('_', ' ')
+                    )
+                );
+            }
+            if (expectedReviewedCardSourceGuideIds != null) {
+                for (String guideId : expectedReviewedCardSourceGuideIds) {
+                    Assert.assertTrue(
+                        "scripted detail reviewed card sources missing guide id: " + guideId
+                            + "; signals=" + describeDetailSignals(signals),
+                        signals.reviewedCardSourceGuideIds.contains(guideId)
+                    );
+                    Assert.assertTrue(
+                        "scripted detail proof summary should expose reviewed source guide id: " + guideId
+                            + "; signals=" + describeDetailSignals(signals),
+                        containsAny(signals.proofText, guideId)
+                    );
+                }
+            }
+            if (expectedBodyFragments != null) {
+                for (String fragment : expectedBodyFragments) {
+                    Assert.assertTrue(
+                        "scripted detail body missing fragment: " + fragment
+                            + "; signals=" + describeDetailSignals(signals),
+                        containsAny(bodyText, fragment)
+                    );
+                }
+            }
+        });
+    }
+
+    private boolean waitForExpectedAnswerSurfaceLabel(String expectedAnswerSurfaceLabel, long timeoutMs) {
+        String expected = safe(expectedAnswerSurfaceLabel).trim();
+        if (expected.isEmpty()) {
+            return true;
+        }
+        ArrayList<String> variants = answerSurfaceLabelVariants(expected);
+        long deadline = SystemClock.uptimeMillis() + Math.max(0L, timeoutMs);
+        while (SystemClock.uptimeMillis() <= deadline) {
+            if (hasAnswerSurfaceLabelVariant(variants)) {
+                return true;
+            }
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(100L);
+        }
+        return false;
+    }
+
+    private void assertForbiddenAnswerSurfaceLabelAbsent(String forbiddenAnswerSurfaceLabel, DetailSettleSignals signals) {
+        ArrayList<String> variants = answerSurfaceLabelVariants(forbiddenAnswerSurfaceLabel);
+        StringBuilder matched = new StringBuilder();
+        String metaText = String.join(" | ", signals.metaLabels);
+        for (String variant : variants) {
+            if (containsAny(signals.evidenceLabel, variant)
+                || containsAny(signals.proofText, variant)
+                || containsAny(signals.statusText, variant)
+                || containsAny(metaText, variant)) {
+                if (matched.length() > 0) {
+                    matched.append(", ");
+                }
+                matched.append(variant);
+            }
+        }
+        Assert.assertTrue(
+            "forbidden answer surface label present in settled detail state: "
+                + forbiddenAnswerSurfaceLabel
+                + " matched="
+                + matched
+                + "; signals="
+                + describeDetailSignals(signals),
+            matched.length() == 0
+        );
+    }
+
+    private boolean hasAnswerSurfaceLabel(String label) {
+        return hasAnswerSurfaceLabelVariant(answerSurfaceLabelVariants(label));
+    }
+
+    private boolean hasAnswerSurfaceLabelVariant(ArrayList<String> variants) {
+        for (String variant : variants) {
+            if (device.hasObject(By.textContains(variant)) || device.hasObject(By.descContains(variant))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<String> answerSurfaceLabelVariants(String label) {
+        String expected = safe(label).trim();
+        ArrayList<String> variants = new ArrayList<>();
+        variants.add(expected);
+        if ("REVIEWED EVIDENCE".equalsIgnoreCase(expected)) {
+            variants.add("Reviewed evidence");
+            variants.add("reviewed evidence");
+        } else if ("STRONG EVIDENCE".equalsIgnoreCase(expected)) {
+            variants.add("Strong evidence");
+            variants.add("strong evidence");
+        } else if ("MODERATE EVIDENCE".equalsIgnoreCase(expected)) {
+            variants.add("Moderate evidence");
+            variants.add("moderate evidence");
+        } else if ("DETERMINISTIC".equalsIgnoreCase(expected)) {
+            variants.add("Instant deterministic");
+            variants.add("instant deterministic");
+        }
+        return variants;
+    }
+
+    private void assertRecentThreadReviewedCardMetadata(
+        String expectedQuestion,
+        String expectedReviewedCardId,
+        String expectedReviewedCardGuideId,
+        String expectedReviewedCardReviewStatus,
+        List<String> expectedReviewedCardSourceGuideIds,
+        long minRecordedAtEpochMs
+    ) {
+        if (safe(expectedReviewedCardId).trim().isEmpty()
+            && safe(expectedReviewedCardGuideId).trim().isEmpty()
+            && safe(expectedReviewedCardReviewStatus).trim().isEmpty()
+            && (expectedReviewedCardSourceGuideIds == null || expectedReviewedCardSourceGuideIds.isEmpty())) {
+            return;
+        }
+        Context context = ApplicationProvider.getApplicationContext();
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(context, 8);
+        String expectedQuestionLower = safe(expectedQuestion).trim().toLowerCase(Locale.US);
+        SessionMemory.TurnSnapshot match =
+            findRecentThreadTurn(previews, expectedQuestionLower, minRecordedAtEpochMs);
+        Assert.assertNotNull(
+            "recent thread did not persist scripted reviewed-card turn; expectedQuestion="
+                + expectedQuestion + "; previews=" + describeRecentThreadPreviews(previews),
+            match
+        );
+        assertReviewedCardMetadataMatches(
+            "recent thread",
+            match,
+            previews,
+            expectedReviewedCardId,
+            expectedReviewedCardGuideId,
+            expectedReviewedCardReviewStatus,
+            expectedReviewedCardSourceGuideIds
+        );
+
+        ChatSessionStore.resetForTest();
+        List<ChatSessionStore.ConversationPreview> restoredPreviews =
+            ChatSessionStore.recentConversationPreviews(context, 8);
+        SessionMemory.TurnSnapshot restoredMatch =
+            findRecentThreadTurn(restoredPreviews, expectedQuestionLower, minRecordedAtEpochMs);
+        Assert.assertNotNull(
+            "recent thread did not restore scripted reviewed-card turn from preferences; expectedQuestion="
+                + expectedQuestion + "; previews=" + describeRecentThreadPreviews(restoredPreviews),
+            restoredMatch
+        );
+        assertReviewedCardMetadataMatches(
+            "restored recent thread",
+            restoredMatch,
+            restoredPreviews,
+            expectedReviewedCardId,
+            expectedReviewedCardGuideId,
+            expectedReviewedCardReviewStatus,
+            expectedReviewedCardSourceGuideIds
+        );
+    }
+
+    private SessionMemory.TurnSnapshot findRecentThreadTurn(
+        List<ChatSessionStore.ConversationPreview> previews,
+        String expectedQuestionLower,
+        long minRecordedAtEpochMs
+    ) {
+        if (previews == null || previews.isEmpty()) {
+            return null;
+        }
+        for (ChatSessionStore.ConversationPreview preview : previews) {
+            SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
+            if (turn == null) {
+                continue;
+            }
+            String questionLower = safe(turn.question).trim().toLowerCase(Locale.US);
+            if (!safe(expectedQuestionLower).isEmpty() && !expectedQuestionLower.equals(questionLower)) {
+                continue;
+            }
+            if (turn.recordedAtEpochMs < Math.max(0L, minRecordedAtEpochMs - 2_000L)) {
+                continue;
+            }
+            return turn;
+        }
+        return null;
+    }
+
+    private void assertReviewedCardMetadataMatches(
+        String label,
+        SessionMemory.TurnSnapshot turn,
+        List<ChatSessionStore.ConversationPreview> previews,
+        String expectedReviewedCardId,
+        String expectedReviewedCardGuideId,
+        String expectedReviewedCardReviewStatus,
+        List<String> expectedReviewedCardSourceGuideIds
+    ) {
+        ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(
+            turn == null ? null : turn.reviewedCardMetadata
+        );
+        if (!safe(expectedReviewedCardId).trim().isEmpty()) {
+            Assert.assertEquals(
+                label + " reviewed card id should match",
+                expectedReviewedCardId.trim(),
+                metadata.cardId
+            );
+        }
+        if (!safe(expectedReviewedCardGuideId).trim().isEmpty()) {
+            Assert.assertEquals(
+                label + " reviewed card guide id should match",
+                expectedReviewedCardGuideId.trim(),
+                metadata.cardGuideId
+            );
+        }
+        if (!safe(expectedReviewedCardReviewStatus).trim().isEmpty()) {
+            Assert.assertEquals(
+                label + " reviewed card status should match",
+                expectedReviewedCardReviewStatus.trim(),
+                metadata.reviewStatus
+            );
+        }
+        if (expectedReviewedCardSourceGuideIds != null) {
+            for (String guideId : expectedReviewedCardSourceGuideIds) {
+                Assert.assertTrue(
+                    label + " reviewed card sources missing guide id: " + guideId
+                        + "; previews=" + describeRecentThreadPreviews(previews),
+                    metadata.citedReviewedSourceGuideIds.contains(guideId)
+                );
+            }
+        }
+    }
+
+    private String describeRecentThreadPreviews(List<ChatSessionStore.ConversationPreview> previews) {
+        if (previews == null || previews.isEmpty()) {
+            return "[]";
+        }
+        ArrayList<String> values = new ArrayList<>();
+        for (ChatSessionStore.ConversationPreview preview : previews) {
+            SessionMemory.TurnSnapshot turn = preview == null ? null : preview.latestTurn;
+            if (turn == null) {
+                values.add("<null>");
+                continue;
+            }
+            ReviewedCardMetadata metadata = ReviewedCardMetadata.normalize(turn.reviewedCardMetadata);
+            values.add("{question=" + safe(turn.question)
+                + ", recordedAt=" + turn.recordedAtEpochMs
+                + ", ruleId=" + safe(turn.ruleId)
+                + ", cardId=" + metadata.cardId
+                + ", cardGuideId=" + metadata.cardGuideId
+                + ", reviewStatus=" + metadata.reviewStatus
+                + ", reviewedSources=" + metadata.citedReviewedSourceGuideIds
+                + "}");
+        }
+        return values.toString();
     }
 
     private void assertResultsSettled(ActivityScenario<MainActivity> scenario, long timeoutMs) {
@@ -2773,11 +3256,16 @@ public final class PromptHarnessSmokeTest {
                     metaText,
                     bodyLabelText,
                     context.getString(R.string.detail_evidence_strong),
+                    context.getString(R.string.detail_evidence_reviewed),
                     context.getString(R.string.detail_evidence_moderate),
                     context.getString(R.string.detail_evidence_limited),
                     context.getString(
                         R.string.detail_loop4_meta_evidence_token,
                         context.getString(R.string.detail_loop4_evidence_serial_strong)
+                    ),
+                    context.getString(
+                        R.string.detail_loop4_meta_evidence_token,
+                        context.getString(R.string.detail_loop4_evidence_serial_reviewed)
                     ),
                     context.getString(
                         R.string.detail_loop4_meta_evidence_token,
@@ -4224,6 +4712,17 @@ public final class PromptHarnessSmokeTest {
         signals.answerMode = readPrivateBooleanField(activity, "answerMode");
         signals.title = readPrivateStringField(activity, "currentTitle");
         signals.guideId = readPrivateStringField(activity, "currentGuideId");
+        signals.ruleId = readPrivateStringField(activity, "currentRuleId");
+        Object reviewedCardMetadata = readReviewedCardMetadata(activity);
+        signals.reviewedCardId = readPrivateStringField(reviewedCardMetadata, "cardId");
+        signals.reviewedCardGuideId = readPrivateStringField(reviewedCardMetadata, "cardGuideId");
+        signals.reviewedCardReviewStatus = readPrivateStringField(reviewedCardMetadata, "reviewStatus");
+        for (Object guideId : asCollection(readPrivateField(reviewedCardMetadata, "citedReviewedSourceGuideIds"))) {
+            String trimmed = safe(String.valueOf(guideId)).trim();
+            if (!trimmed.isEmpty()) {
+                signals.reviewedCardSourceGuideIds.add(trimmed);
+            }
+        }
         signals.bodyText = readPrivateStringField(activity, "currentBody");
         signals.statusText = readPrivateStringField(activity, "tabletStatusText");
         signals.generationBusy = signals.tabletCompose
@@ -4235,7 +4734,9 @@ public final class PromptHarnessSmokeTest {
             signals.statusText = safe(statusView == null ? null : String.valueOf(statusView.getText()));
         }
         signals.backendLabel = safe((String) invokePrivateNoArgMethod(activity, "buildSerialBackendValue"));
-        signals.evidenceLabel = safe((String) invokePrivateNoArgMethod(activity, "getEvidenceStrengthLabel"));
+        signals.evidenceLabel = safe((String) invokePrivateNoArgMethod(activity, "getEvidenceTrustSurfaceLabel"));
+        Object proofText = invokePrivateNoArgMethod(activity, "buildWhyThisAnswerSummary");
+        signals.proofText = safe(proofText == null ? null : String.valueOf(proofText));
         signals.deterministicRoute = readPrivateBooleanMethod(activity, "isDeterministicRoute");
         signals.lowCoverageRoute = readPrivateBooleanMethod(activity, "isLowCoverageRoute");
         signals.abstainRoute = readPrivateBooleanMethod(activity, "isAbstainRoute");
@@ -4296,6 +4797,15 @@ public final class PromptHarnessSmokeTest {
             signals.postureLabel = "compact";
         }
         return signals;
+    }
+
+    private Object readReviewedCardMetadata(Activity activity) {
+        Object metadata = readPrivateField(activity, "currentReviewedCardMetadata");
+        if (metadata != null) {
+            return metadata;
+        }
+        Object bridge = readPrivateField(activity, "reviewedCardMetadataBridge");
+        return invokePrivateNoArgMethod(bridge, "current");
     }
 
     private Object readPrivateField(Object target, String fieldName) {
@@ -4490,6 +5000,27 @@ public final class PromptHarnessSmokeTest {
                 && (expectedSection.isEmpty() || candidateSection.equals(expectedSection)));
     }
 
+    private String describeDetailSignals(DetailSettleSignals signals) {
+        if (signals == null) {
+            return "signals=<null>";
+        }
+        return "signals={posture=" + signals.postureLabel
+            + ", title=" + signals.title
+            + ", guideId=" + signals.guideId
+            + ", ruleId=" + signals.ruleId
+            + ", reviewedCardId=" + signals.reviewedCardId
+            + ", reviewedCardGuideId=" + signals.reviewedCardGuideId
+            + ", reviewedCardReviewStatus=" + signals.reviewedCardReviewStatus
+            + ", reviewedCardSources=" + signals.reviewedCardSourceGuideIds
+            + ", proofLength=" + safe(signals.proofText).length()
+            + ", answerMode=" + signals.answerMode
+            + ", deterministic=" + signals.deterministicRoute
+            + ", sources=" + signals.sourceCount
+            + ", bodyLength=" + safe(signals.bodyText).length()
+            + ", status=" + signals.statusText
+            + "}";
+    }
+
     private boolean hasTabletSourceStateMatch(Collection<?> sourceStates, SearchResult expectedSource, boolean requireSelected) {
         String expectedGuideId = safe(expectedSource == null ? null : expectedSource.guideId).trim().toLowerCase(Locale.US);
         String expectedTitle = safe(expectedSource == null ? null : expectedSource.title).trim().toLowerCase(Locale.US);
@@ -4542,10 +5073,16 @@ public final class PromptHarnessSmokeTest {
         String postureLabel = "detail";
         String title = "";
         String guideId = "";
+        String ruleId = "";
+        String reviewedCardId = "";
+        String reviewedCardGuideId = "";
+        String reviewedCardReviewStatus = "";
         String bodyText = "";
         String statusText = "";
         String backendLabel = "";
         String evidenceLabel = "";
+        String proofText = "";
+        final ArrayList<String> reviewedCardSourceGuideIds = new ArrayList<>();
         final ArrayList<String> metaLabels = new ArrayList<>();
     }
 
@@ -5131,6 +5668,21 @@ public final class PromptHarnessSmokeTest {
         } catch (NumberFormatException ignored) {
             return fallback;
         }
+    }
+
+    private static List<String> parseDelimitedArg(Bundle args, String key) {
+        String raw = Uri.decode(safe(args.getString(key))).trim();
+        ArrayList<String> values = new ArrayList<>();
+        if (raw.isEmpty()) {
+            return values;
+        }
+        for (String part : raw.split("\\|")) {
+            String value = part.trim();
+            if (!value.isEmpty()) {
+                values.add(value);
+            }
+        }
+        return values;
     }
 
     private int getHistoryBubbleCount() {

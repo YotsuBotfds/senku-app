@@ -100,6 +100,7 @@ public final class MainActivity extends AppCompatActivity {
     private Button askButton;
     private Button importModelButton;
     private Button hostInferenceButton;
+    private Button reviewedCardRuntimeButton;
     private Button browseButton;
     private Button reinstallButton;
     private View sessionPanel;
@@ -268,6 +269,7 @@ public final class MainActivity extends AppCompatActivity {
         askButton = findViewById(R.id.ask_button);
         importModelButton = findViewById(R.id.import_model_button);
         hostInferenceButton = findViewById(R.id.host_inference_button);
+        reviewedCardRuntimeButton = findViewById(R.id.reviewed_card_runtime_button);
         browseButton = findViewById(R.id.browse_button);
         reinstallButton = findViewById(R.id.reinstall_button);
         sessionPanel = findViewById(R.id.session_panel);
@@ -293,6 +295,7 @@ public final class MainActivity extends AppCompatActivity {
         developerContent = findViewById(R.id.developer_content);
         developerPanel = findViewById(R.id.developer_panel);
         developerDiagnosticsText = findViewById(R.id.developer_diagnostics_text);
+        updateReviewedCardRuntimeControls();
         browseRail = findViewById(R.id.browse_rail);
         legacyHomeHeroPanel = resolveLegacyHomeHeroPanel();
         if (homeEntryHint != null) {
@@ -363,6 +366,7 @@ public final class MainActivity extends AppCompatActivity {
         });
         importModelButton.setOnClickListener(v -> launchModelPicker());
         hostInferenceButton.setOnClickListener(v -> toggleHostInference());
+        reviewedCardRuntimeButton.setOnClickListener(v -> toggleReviewedCardRuntime());
         browseButton.setOnClickListener(v -> {
             setPhoneTabFromFlow(BottomTabDestination.HOME);
             browseGuides();
@@ -464,6 +468,7 @@ public final class MainActivity extends AppCompatActivity {
         updateIdentityStrip();
         updatePhoneTabBarState();
         updateActionLabels();
+        updateReviewedCardRuntimeControls();
         updateInfoTextVisibility();
         updateSessionPanel();
         refreshRecentThreads();
@@ -660,7 +665,7 @@ public final class MainActivity extends AppCompatActivity {
 
         File modelFile = ModelFileStore.getImportedModelFile(this);
         HostInferenceConfig.Settings inferenceSettings = HostInferenceConfig.resolve(this);
-        if (!inferenceSettings.enabled && modelFile == null) {
+        if (!ReviewedCardRuntimeConfig.isEnabled(this) && !inferenceSettings.enabled && modelFile == null) {
             askLaneActive = false;
             setBusy("Import a .litertlm or .task model first", false);
             if (!hasAutoQuery(getIntent())) {
@@ -1741,7 +1746,10 @@ public final class MainActivity extends AppCompatActivity {
             turn.sourceResults,
             null,
             conversationId,
-            turn.ruleId
+            turn.ruleId,
+            null,
+            null,
+            turn.reviewedCardMetadata
         );
         applyPackDetailExtras(intent);
         startActivity(intent);
@@ -2145,6 +2153,21 @@ public final class MainActivity extends AppCompatActivity {
     private void openPendingAnswerDetail(OfflineAnswerEngine.PreparedAnswer prepared) {
         String autoFollowUpQuery = pendingAutoFollowUpQuery;
         pendingAutoFollowUpQuery = null;
+        if (prepared != null
+            && !safe(prepared.answerBody).trim().isEmpty()
+            && (prepared.deterministic
+                || prepared.abstain
+                || prepared.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT)) {
+            sessionMemory.recordTurn(
+                prepared.query,
+                prepared.answerBody,
+                prepared.abstain ? Collections.emptyList() : prepared.sources,
+                prepared.ruleId,
+                prepared.reviewedCardMetadata
+            );
+            ChatSessionStore.persist(this);
+            refreshRecentThreads();
+        }
         Intent intent = DetailActivity.newPendingAnswerIntent(this, prepared, autoFollowUpQuery, conversationId);
         applyPackDetailExtras(intent);
         startActivity(intent);
@@ -2201,6 +2224,7 @@ public final class MainActivity extends AppCompatActivity {
         askButton.setEnabled(!busy);
         importModelButton.setEnabled(!busy);
         hostInferenceButton.setEnabled(!busy);
+        reviewedCardRuntimeButton.setEnabled(!busy);
         browseButton.setEnabled(!busy);
         reinstallButton.setEnabled(!busy);
         clearChatButton.setEnabled(!busy && sessionMemory.hasState());
@@ -2240,6 +2264,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private void updateInfoText() {
         updateInferenceControls();
+        updateReviewedCardRuntimeControls();
         updateActionLabels();
         if (installedPack == null || repository == null) {
             setInfoTextMessage(getString(R.string.info_loading), true);
@@ -2347,6 +2372,22 @@ public final class MainActivity extends AppCompatActivity {
         HostInferenceConfig.Settings updated = HostInferenceConfig.resolve(this);
         updateInfoText();
         setBusy(updated.enabled ? "Host GPU inference enabled" : "On-device inference enabled", false);
+    }
+
+    private void updateReviewedCardRuntimeControls() {
+        if (reviewedCardRuntimeButton == null) {
+            return;
+        }
+        reviewedCardRuntimeButton.setText(ReviewedCardRuntimeConfig.isEnabled(this)
+            ? getString(R.string.reviewed_card_runtime_on_button)
+            : getString(R.string.reviewed_card_runtime_off_button));
+    }
+
+    private void toggleReviewedCardRuntime() {
+        boolean enabled = !ReviewedCardRuntimeConfig.isEnabled(this);
+        ReviewedCardRuntimeConfig.setEnabled(this, enabled);
+        updateInfoText();
+        setBusy(enabled ? "Reviewed-card runtime enabled" : "Reviewed-card runtime disabled", false);
     }
 
     private String buildInfoWithError(Exception exc) {

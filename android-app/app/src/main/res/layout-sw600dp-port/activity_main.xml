@@ -729,6 +729,16 @@
             android:orientation="vertical"
             android:visibility="gone">
 
+            <Button
+                android:id="@+id/reviewed_card_runtime_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/home_compact_gap"
+                android:background="@drawable/bg_button_secondary"
+                android:text="@string/reviewed_card_runtime_off_button"
+                android:textAllCaps="false"
+                android:textColor="@color/senku_text_light" />
+
             <TextView
                 android:id="@+id/developer_diagnostics_text"
                 android:layout_width="match_parent"
@@ -777,6 +787,7 @@
                 android:text="@string/host_inference_off_button"
                 android:textAllCaps="false"
                 android:textColor="@color/senku_text_light" />
+
         </LinearLayout>
     </LinearLayout>
 

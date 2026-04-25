@@ -14,9 +14,11 @@ aliases:
   - tax collection
   - revenue collection
   - public revenue
-  - market fees
+  - market tax revenue
   - tax notices
   - levy collection
+  - tax receipts
+  - public revenue accounting
 related:
   - commons-management-resource-governance
   - community-organizing
@@ -49,16 +51,16 @@ This guide covers why taxation is necessary, different tax types and their trade
 </section>
 
 :::tip
-**Quick routing for tax and market-fee questions**
+**Quick routing for tax and public-revenue questions**
 
 - "Complaint-first: a tax notice is wrong, a fee was over-collected, or revenue is missing" -> this guide
 - "Task-first: set tax rates, exemptions, deadlines, or collection rules" -> this guide
-- "How do taxes, tariffs, and market fees fit together?" -> this guide and `trade-standards-exchange`
+- "How do taxes, tariffs, levies, receipts, and public revenue accounting fit together?" -> this guide and `trade-standards-exchange`
 - "How do we post taxes, dues, and deadlines?" -> `community-bulletin-notice-systems`
 - "How do we connect storage to market flow?" -> `warehousing-inventory`
-- "How do we organize stalls, fees, and market-day collection?" -> `marketplace-trade-space-basics`
+- "How do we organize stalls, walking lanes, cart clearance, loading edges, blocked corners, in-market notices, and market-day fee collection points?" -> `marketplace-trade-space-basics`
 - "How do we keep trade fair, priced, and organized?" -> `economics-trade` and `trade-standards-exchange`
-- "How do tax receipts, grain levies, or fee collections enter the storage ledger?" -> `warehousing-inventory`
+- "How do tax receipts, grain levies, public revenue, or fee collections enter the storage ledger?" -> this guide and `warehousing-inventory`
 :::
 
 <section id="why-taxation">

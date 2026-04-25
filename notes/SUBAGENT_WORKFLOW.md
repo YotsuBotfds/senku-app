@@ -5,8 +5,9 @@ repo. This supersedes the older "keep Codex thin" phrasing in AGENTS.md
 and the two-role split in `REVIEWER_BACKEND_TRACKER_20260418.md` §Worker
 Split (which is retained for history but no longer complete).
 
-- Last updated: 2026-04-19
+- Last updated: 2026-04-24
 - Proven: Tate's current daily workflow as of CP9 Stage 0.
+- 2026-04-24 budget update: route general-purpose scouts and workers to `gpt-5.5 medium`; reserve high reasoning for delicate safety/predicate implementation or ambiguous ownership decisions. This supersedes older xhigh-heavy labels below until the workflow is fully rewritten.
 
 ## The three roles
 
@@ -65,6 +66,8 @@ Do not use for:
 - Cheap read-only questions (waste — use Spark)
 
 ## Default rule
+
+Current routing overlay: use `gpt-5.5 medium` for ordinary scouts/workers, and use `gpt-5.5 high` only when the work is delicate enough to justify it.
 
 1. Opus (planner) briefs **main agent** with a slice: outcome, boundaries,
    acceptance criteria. The prompt lives as an editable file in

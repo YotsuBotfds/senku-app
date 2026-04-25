@@ -51,15 +51,30 @@ If the immediate question is "a child swallowed something unknown" rather than "
 Use this guide early when poisoning presents with pupil changes plus breathing or mental-status changes.
 
 Quick lay signals:
+- "medicine reaction or panic, diarrhea, fever, cannot stop moving"
+- "changing meds, restless, overheated, twitching all over"
+- "new antidepressant combo, shaking, sweaty, legs keep jerking"
+- "too much serotonin medicine, rigid muscles, very hot"
+- "antidepressants plus cough medicine, agitated, sweaty, trembling"
+- "flu or dangerous medication reaction, clonus, fever, confusion"
 - "pinpoint pupils and slow breathing"
 - "dilated pupils, dry mouth, confusion"
 - "sweating, twitching, vomiting after chemical exposure"
+- "new antidepressant combo and now shaking, sweaty, legs jerking"
+- "antidepressants plus cough medicine, agitated, trembling, fever"
+- "serotonin medicine overdose, rigid muscles, very hot, confused"
+- "dangerous medication reaction with clonus, fever, confusion"
+- "medicine reaction or panic with diarrhea, fever, cannot stop moving"
 - "too many pain pills and will not stay awake"
 - "mixed pills and alcohol, hard to wake"
 - "naloxone helped but sleepy again"
 - "accidental double-dose medicine and now confused"
 
 If the immediate problem is hard to wake, slow breathing, or repeat sleepiness after naloxone, treat that as an overdose or airway emergency first with [First Aid & Emergency Response](./first-aid.md), then use this guide to sort the toxidrome pattern.
+
+If the immediate problem follows a new serotonergic medicine, antidepressant combination, tramadol, linezolid, MAOI, dextromethorphan cough/cold medicine, serotonin-medicine overdose, changing meds, or a dangerous medication reaction and includes shaking, sweating, diarrhea, clonus, rigidity, fever, confusion, overheating, twitching, severe restlessness, leg jerking, or "cannot stop moving," treat it as possible serotonin syndrome first. Do not route these prompts to panic, flu, menopause, routine GI illness, dehydration-first diarrhea care, anticholinergic-first routing, or generic anxiety before toxicology escalation. If there is no medication trigger, medication mix, overdose, or serotonergic source phrase, keep ordinary flu, GI illness, heat illness, and anxiety/restlessness in their usual guides unless general emergency red flags apply.
+
+Medication-triggered serotonin patterns that should be indexable as first-choice routing: new antidepressant combo plus shaking, sweating, or jerking; medicine reaction or panic plus diarrhea, fever, or cannot stop moving; too much serotonin medicine plus rigidity or feeling hot; antidepressants plus cough medicine; clonus, fever, or confusion with medication concern; changing meds plus restless, overheated, or twitching. These are emergency toxicology patterns first. Ordinary flu, GI illness, heat symptoms, panic, or menopause without a medication trigger should not be pulled into this serotonin route solely by overlapping symptoms.
 
 ### Why Toxidrome Recognition Matters
 
@@ -74,6 +89,7 @@ If the immediate problem is hard to wake, slow breathing, or repeat sleepiness a
 - **Cholinergic** (organophosphate pesticides, nerve agents, physostigmine overdose)
 - **Opioid** (heroin, morphine, codeine, some pharmaceuticals)
 - **Sympathomimetic** (cocaine, amphetamines, decongestants, caffeine overdose)
+- **Serotonergic / serotonin syndrome** (SSRI/SNRI/MAOI combinations, tramadol, linezolid, dextromethorphan cough medicine, serotonergic overdose)
 - **Sedative/Hypnotic** (benzodiazepines, barbiturates, GHB)
 - **Hallucinogenic** (LSD, psilocybin, mescaline)
 
@@ -370,6 +386,24 @@ If the immediate problem is hard to wake, slow breathing, or repeat sleepiness a
 - Can occur even in young, healthy individuals
 - Coronary vasospasm is the mechanism (not atherosclerosis)
 - Management: Benzodiazepines, nitrates (if available), avoid beta-blockers (unopposed alpha-vasospasm)
+
+</section>
+
+<section id="serotonin-syndrome-routing">
+
+## Serotonin Syndrome Routing Pattern
+
+Use this as a toxicology routing pattern when the complaint starts with a medication change, medication interaction, or overdose rather than a primary infection, panic attack, menopause symptom, or routine stomach illness.
+
+**High-yield source phrases:** new antidepressant combo, mixed antidepressants, SSRI/SNRI/MAOI, tramadol, linezolid, dextromethorphan cough medicine, cough/cold medicine plus antidepressant, serotonin medicine, took too much serotonin medicine, changing meds, or dangerous medication reaction.
+
+**Complaint-first symptom cluster:** shaking, sweating, diarrhea, clonus, hyperreflexia, leg jerking, twitching, rigid muscles, fever, confusion, overheating, agitation, severe restlessness, trembling, or "cannot stop moving."
+
+**Exact first-choice aliases:** "started a new antidepressant combo and now I am shaking sweaty and my legs keep jerking," "medicine reaction or panic because I have diarrhea fever and cannot stop moving," "took too much serotonin medicine and now my muscles are rigid and I feel very hot," "agitated sweaty and trembling after mixing antidepressants and cough medicine," "flu or dangerous medication reaction because I have clonus fever and confusion," and "after changing meds I am restless overheated and twitching all over."
+
+**Routing rule:** When a serotonergic or medication-reaction source phrase and this symptom cluster appear together, escalate as possible serotonin syndrome and cross-check [Toxicology and Poisoning Response](../toxicology-poisoning-response.html). Do not answer first as panic, flu, menopause, ordinary GI illness, dehydration-first diarrhea care, anticholinergic-first toxicity, or generic anxiety. Symptom-only flu, diarrhea/vomiting, overheating, or anxiety without a medication trigger should not route here solely from those symptoms.
+
+**Lay first-action wording:** Say "do not take another dose of the suspected serotonergic medicine/source while contacting Poison Control, EMS, or a clinician" rather than "stop all serotonergic medications," "cease any potential source," "stop taking the combo immediately," or "stop all medicines." Cooling and urgent escalation come first. Benzodiazepines, cyproheptadine, or other antidote/sedation decisions require trained medical direction.
 
 </section>
 

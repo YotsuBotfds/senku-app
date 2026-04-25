@@ -42,6 +42,8 @@ This guide is for questions like:
 - "What helps when my mind keeps racing?"
 - "How do I build a routine when everything feels chaotic?"
 
+Use this guide for panic-like breathing, tingling, trembling, or dread only after urgent medical red flags have been excluded. Chest pressure or tightness, exertional worsening, jaw/arm/back pain, cold sweat, fainting, blue lips, severe shortness of breath, or a sense that "something feels very wrong" should be treated as medical/cardiac first, even when the person also feels panicked or stressed.
+
 Persistent anxiety often shows up as a body state, not just a thought state. People may feel keyed up, tense, restless, irritable, tired, or unable to settle even when nothing obvious is happening. Stress can also become a load that never seems to turn off: too much work, too many demands, too little rest, and not enough support.
 
 The goal of this guide is not to eliminate every anxious feeling. The goal is to lower the baseline, reduce spikes, and build a day that is easier for your nervous system to live in.
@@ -154,7 +156,7 @@ Use one sentence, not a long analysis:
 - "I do not need to solve everything right now."
 - "My job is to get through the next five minutes."
 
-If the symptoms feel like medical distress rather than anxiety, do not force a breathing exercise. Seek medical help instead.
+If there is chest pressure/tightness, exertional worsening, jaw/arm/back pain, cold sweat, fainting, blue lips, severe shortness of breath, dread with chest symptoms, or a new "something feels very wrong" feeling, do not force a breathing exercise or label it panic. Treat it as possible medical/cardiac distress and seek urgent help instead.
 
 </section>
 

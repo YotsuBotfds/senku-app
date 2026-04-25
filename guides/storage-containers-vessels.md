@@ -18,6 +18,8 @@ related:
   - pottery-ceramics
   - basketry-cordage
   - food-preservation
+  - food-storage-packaging
+  - fermentation-pickling
   - water-storage-tank-maintenance
 read_time: 10
 word_count: 4000
@@ -36,11 +38,18 @@ aliases:
   - waterproof container
   - fix leaking barrel
   - food safe container
+  - clay pot or plastic bucket for fermented vegetables
+  - best container for dried beans
+  - dried herbs glass jar or cloth bag
 ---
 <!-- quick-routing: "Container for water / water storage container?" → overview for vessel type comparison; wooden-barrels-coopering for barrels; ceramic-vessels for clay; container-sizing table for water capacity recommendations. "Seal a leaking jug / leaking ceramic / leaking barrel?" → sealing-methods section for beeswax, pine pitch, and clay slip fixes; ceramic-vessels for glaze options. "My pot cracked / cracked vessel?" → repair-vs-replace frame below; sealing-methods for crack sealing; if ceramic, see pottery-ceramics for full repair techniques. "Barrel / wooden barrel / coopering?" → wooden-barrels-coopering section. "Basket for storage?" → woven-baskets section. "Gourd container?" → gourds-birch-bark section. "Food safe sealing?" → sealing-methods section with safe/unsafe options. -->
 
 :::warning
 **Food contamination and pest infiltration:** Unsealed containers, cracks in ceramic, or poor sealing allow insects, rodents, and mold to spoil stored grain and dried food within weeks. Contaminated grain may harbor mycotoxins (aflatoxin) that cause liver damage. Test all seals before use. Use tight-fitting lids with no gaps. Store high-risk foods (grains, dried vegetables) separate from pest-access points.
+:::
+
+:::tip
+**Routing boundary for food containers:** Use this guide when the question is vessel material, repair, seal, or size. If the question is how to preserve the food, use `food-preservation`; if it is how to package already preserved food for shelf life, use `food-storage-packaging`; if the food smells different after a container move, use `food-spoilage-assessment` first. A different container cannot make under-dried, under-cured, under-acidified, or unsafe food shelf-stable.
 :::
 
 <section id="overview">
@@ -449,6 +458,8 @@ For full ceramic repair techniques (adhesive join, riveting, grog recycling), se
 | **Dried fruit/produce** | Basket (ventilated) or sealed ceramic | 5–20L | Air circulation preferred; sealed if needed |
 
 </section>
+
+**Food-specific boundary:** For dried beans and dried herbs, the vessel is secondary to dryness: use sealed, pest-proof storage only after the food is fully dry. For fermented vegetables, choose a glazed crock, clean glass jar, or intact food-grade plastic bucket only after brine coverage, acidity, and cleanliness are correct; the container does not fix a failed ferment.
 
 <section id="assembly-checklist">
 

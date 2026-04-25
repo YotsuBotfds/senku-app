@@ -1,6 +1,7 @@
 import json
-import tempfile
+import shutil
 import unittest
+import uuid
 from pathlib import Path
 
 from bench_artifact_tools import (
@@ -11,6 +12,14 @@ from bench_artifact_tools import (
 
 
 class BenchArtifactToolsTests(unittest.TestCase):
+    def make_tmpdir(self) -> Path:
+        root = Path("artifacts") / "bench" / "bench_artifact_tools_unit_tests"
+        root.mkdir(parents=True, exist_ok=True)
+        path = root / uuid.uuid4().hex
+        path.mkdir()
+        self.addCleanup(lambda: shutil.rmtree(path, ignore_errors=True))
+        return path
+
     def test_parse_bench_markdown_responses_extracts_answer_body(self):
         markdown = """# Report
 
@@ -33,33 +42,35 @@ Second line of answer.
         )
 
     def test_build_eval_rows_falls_back_to_markdown_response_text(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            root = Path(tmpdir)
-            json_path = root / "bench_sample.json"
-            md_path = root / "bench_sample.md"
-            json_path.write_text(
-                json.dumps(
-                    {
-                        "timestamp": "2026-04-10T00:00:00",
-                        "config": {"model": "test-model", "mode": "default"},
-                        "summary": {"total_prompts": 1},
-                        "results": [
-                            {
-                                "index": 1,
-                                "section": "Core Regression",
-                                "question": "What now?",
-                                "decision_path": "rag",
-                                "source_mode": "cited",
-                                "cited_guide_ids": ["GD-001"],
-                                "response_text": "",
-                            }
-                        ],
-                    }
-                ),
-                encoding="utf-8",
-            )
-            md_path.write_text(
-                """# Report
+        root = self.make_tmpdir()
+        json_path = root / "bench_sample.json"
+        md_path = root / "bench_sample.md"
+        json_path.write_text(
+            json.dumps(
+                {
+                    "timestamp": "2026-04-10T00:00:00",
+                    "config": {"model": "test-model", "mode": "default"},
+                    "summary": {"total_prompts": 1},
+                    "results": [
+                        {
+                            "index": 1,
+                            "section": "Core Regression",
+                            "question": "What now?",
+                            "decision_path": "rag",
+                            "source_mode": "cited",
+                            "cited_guide_ids": ["GD-001"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-001", "GD-002"]
+                            },
+                            "response_text": "",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        md_path.write_text(
+            """# Report
 
 ## 1. What now?
 *Section: Core Regression*
@@ -69,30 +80,30 @@ Recovered from markdown.
 **Sources:**
   - guide
 """,
-                encoding="utf-8",
-            )
+            encoding="utf-8",
+        )
 
-            rows = build_eval_rows([json_path])
+        rows = build_eval_rows([json_path])
 
         self.assertEqual(rows[0]["response_text"], "Recovered from markdown.")
         self.assertEqual(rows[0]["cited_guide_ids"], "GD-001")
+        self.assertEqual(rows[0]["top_retrieved_guide_ids"], "GD-001,GD-002")
 
     def test_build_eval_rows_supports_standalone_markdown_artifact(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            root = Path(tmpdir)
-            md_path = root / "bench_sample.md"
-            md_path.write_text(
-                """# Report
+        root = self.make_tmpdir()
+        md_path = root / "bench_sample.md"
+        md_path.write_text(
+            """# Report
 
 ## 1. What now?
 *Section: Core Regression*
 
 Recovered from markdown only.
 """,
-                encoding="utf-8",
-            )
+            encoding="utf-8",
+        )
 
-            rows = build_eval_rows([md_path])
+        rows = build_eval_rows([md_path])
 
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["section"], "Core Regression")
@@ -100,70 +111,69 @@ Recovered from markdown only.
         self.assertEqual(rows[0]["response_text"], "Recovered from markdown only.")
 
     def test_compare_artifacts_reports_prompt_level_deltas(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            root = Path(tmpdir)
-            baseline = root / "baseline.json"
-            candidate = root / "candidate.json"
+        root = self.make_tmpdir()
+        baseline = root / "baseline.json"
+        candidate = root / "candidate.json"
 
-            baseline.write_text(
-                json.dumps(
-                    {
-                        "config": {"model": "baseline-model"},
-                        "summary": {
-                            "errors": 0,
-                            "duplicate_citation_total": 1,
-                            "cap_hit_prompts": 0,
-                            "wall_duration": 10,
-                        },
-                        "results": [
-                            {
-                                "index": 1,
-                                "section": "Core Regression",
-                                "question": "Prompt A",
-                                "decision_path": "rag",
-                                "source_mode": "cited",
-                                "generation_time": 4.0,
-                                "duplicate_citation_count": 1,
-                                "completion_cap_hit": False,
-                                "finish_reason": "stop",
-                                "error": None,
-                            }
-                        ],
-                    }
-                ),
-                encoding="utf-8",
-            )
-            candidate.write_text(
-                json.dumps(
-                    {
-                        "config": {"model": "candidate-model"},
-                        "summary": {
-                            "errors": 1,
-                            "duplicate_citation_total": 4,
-                            "cap_hit_prompts": 1,
-                            "wall_duration": 12,
-                        },
-                        "results": [
-                            {
-                                "index": 1,
-                                "section": "Core Regression",
-                                "question": "Prompt A",
-                                "decision_path": "no-rag",
-                                "source_mode": "retrieved",
-                                "generation_time": 6.5,
-                                "duplicate_citation_count": 4,
-                                "completion_cap_hit": True,
-                                "finish_reason": "length",
-                                "error": "boom",
-                                "error_category": "runtime_400",
-                            }
-                        ],
-                    }
-                ),
-                encoding="utf-8",
-            )
+        baseline.write_text(
+            json.dumps(
+                {
+                    "config": {"model": "baseline-model"},
+                    "summary": {
+                        "errors": 0,
+                        "duplicate_citation_total": 1,
+                        "cap_hit_prompts": 0,
+                        "wall_duration": 10,
+                    },
+                    "results": [
+                        {
+                            "index": 1,
+                            "section": "Core Regression",
+                            "question": "Prompt A",
+                            "decision_path": "rag",
+                            "source_mode": "cited",
+                            "generation_time": 4.0,
+                            "duplicate_citation_count": 1,
+                            "completion_cap_hit": False,
+                            "finish_reason": "stop",
+                            "error": None,
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        candidate.write_text(
+            json.dumps(
+                {
+                    "config": {"model": "candidate-model"},
+                    "summary": {
+                        "errors": 1,
+                        "duplicate_citation_total": 4,
+                        "cap_hit_prompts": 1,
+                        "wall_duration": 12,
+                    },
+                    "results": [
+                        {
+                            "index": 1,
+                            "section": "Core Regression",
+                            "question": "Prompt A",
+                            "decision_path": "no-rag",
+                            "source_mode": "retrieved",
+                            "generation_time": 6.5,
+                            "duplicate_citation_count": 4,
+                            "completion_cap_hit": True,
+                            "finish_reason": "length",
+                            "error": "boom",
+                            "error_category": "runtime_400",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
 
-            comparison = compare_artifacts(baseline, candidate)
+        comparison = compare_artifacts(baseline, candidate)
 
         self.assertEqual(comparison["prompt_overlap"], 1)
         self.assertEqual(len(comparison["error_regressions"]), 1)
@@ -172,45 +182,44 @@ Recovered from markdown only.
         self.assertEqual(comparison["replay_packs"]["errors"], ["Prompt A"])
 
     def test_compare_artifacts_keeps_duplicate_questions_by_index(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            root = Path(tmpdir)
-            baseline = root / "baseline.json"
-            candidate = root / "candidate.json"
+        root = self.make_tmpdir()
+        baseline = root / "baseline.json"
+        candidate = root / "candidate.json"
 
-            payload = {
-                "config": {},
-                "summary": {},
-                "results": [
-                    {
-                        "index": 1,
-                        "section": "Core Regression",
-                        "question": "Prompt A",
-                        "decision_path": "rag",
-                        "source_mode": "cited",
-                        "generation_time": 4.0,
-                        "duplicate_citation_count": 0,
-                        "completion_cap_hit": False,
-                        "finish_reason": "stop",
-                        "error": None,
-                    },
-                    {
-                        "index": 2,
-                        "section": "Core Regression",
-                        "question": "Prompt A",
-                        "decision_path": "rag",
-                        "source_mode": "cited",
-                        "generation_time": 5.0,
-                        "duplicate_citation_count": 0,
-                        "completion_cap_hit": False,
-                        "finish_reason": "stop",
-                        "error": None,
-                    },
-                ],
-            }
-            baseline.write_text(json.dumps(payload), encoding="utf-8")
-            candidate.write_text(json.dumps(payload), encoding="utf-8")
+        payload = {
+            "config": {},
+            "summary": {},
+            "results": [
+                {
+                    "index": 1,
+                    "section": "Core Regression",
+                    "question": "Prompt A",
+                    "decision_path": "rag",
+                    "source_mode": "cited",
+                    "generation_time": 4.0,
+                    "duplicate_citation_count": 0,
+                    "completion_cap_hit": False,
+                    "finish_reason": "stop",
+                    "error": None,
+                },
+                {
+                    "index": 2,
+                    "section": "Core Regression",
+                    "question": "Prompt A",
+                    "decision_path": "rag",
+                    "source_mode": "cited",
+                    "generation_time": 5.0,
+                    "duplicate_citation_count": 0,
+                    "completion_cap_hit": False,
+                    "finish_reason": "stop",
+                    "error": None,
+                },
+            ],
+        }
+        baseline.write_text(json.dumps(payload), encoding="utf-8")
+        candidate.write_text(json.dumps(payload), encoding="utf-8")
 
-            comparison = compare_artifacts(baseline, candidate)
+        comparison = compare_artifacts(baseline, candidate)
 
         self.assertEqual(comparison["prompt_overlap"], 2)
         self.assertEqual(len(comparison["row_deltas"]), 2)

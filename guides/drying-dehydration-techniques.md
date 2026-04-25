@@ -47,6 +47,7 @@ Drying removes water from food, preventing bacterial growth and extending shelf 
   - **Dry it:** Fruits, vegetables, herbs, mushrooms, lean meat (jerky). Needs thin slicing and low humidity. Full details below.
   - **Salt it:** Fatty meat, fish, cabbage, cucumbers. Works when air is too humid for reliable drying. See food-preservation → salting-brining and fermentation-pickling.
   - **Smoke it:** Meat and fish (adds preservation + flavor). Requires fuel and time. See smoking-curing-meat.
+- **Dry meat or fish in humid air?** Do not treat salt as optional. For meat/fish in humidity, use salt cure or brine plus heat/smoke or a controlled dehydrator; open sun drying alone is unreliable. Keep strips on a raised screened rack or enclosed frame, protected from animals, flies, dust, and ground splash. If the air stays humid and you cannot keep heat/smoke/airflow going, stop and cook/eat promptly or discard rather than storing.
 - **Which preservation method fits this food?** Use this priority: (1) Herbs, mushrooms, thin-sliced fruit/veg → dry (lowest energy, longest shelf life). (2) Fatty meat or fish → salt cure or smoke. (3) Cabbage, root veg in bulk → ferment or root cellar. (4) Anything you need shelf-stable for years → pressure can (see food-preservation) or dry + vacuum seal.
 - **Preserve meat without refrigeration:** Jerky (thin strips, heat-treat to 160°F first) or pemmican (dried meat + rendered fat) → Meat & Jerky below; for smoking methods → smoking-curing-meat
 - **How do I dry meat?** Lean meat only, slice 1/4–1/2 inch thick, heat-treat to 160°F first (USDA requirement), then dry 2–4 days in sun/smoke → Meat & Jerky below
@@ -468,7 +469,7 @@ Underprocessed jerky is a serious food safety risk, especially for vulnerable po
 **Jerky preparation (see smoking-curing-meat guide for detailed methods):**
 - Lean meat only
 - Thin strips (1/4–1/2 inch thickness)
-- Cure with salt before drying (draws moisture, prevents spoilage during drying)
+- Cure with salt before drying; in humid conditions this is mandatory, not merely a flavor step
 - Marinate for flavor (optional)
 - Dry: 2–4 days (sun/heat) or 4–6 days (smoke) — *after* heat treatment
 - **Target moisture:** 20–30%
@@ -478,6 +479,7 @@ Underprocessed jerky is a serious food safety risk, especially for vulnerable po
 
 **Fish strips:**
 - Remove bones; slice thin
+- In humid conditions, salt-cure before drying and use heat/smoke or a controlled dehydrator rather than open sun alone
 - Salt-cure 3–5 days (optional but recommended)
 - Dry: 2–4 weeks solar; 10–16 hours dehydrator
 - Should be firm, not brittle

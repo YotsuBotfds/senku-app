@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public final class SessionMemory {
-    private static final int JSON_SCHEMA_VERSION = 4;
+    private static final int JSON_SCHEMA_VERSION = 5;
     private static final Locale QUERY_LOCALE = Locale.US;
     private static final int MAX_TURNS = 6;
     private static final int MAX_VISIBLE_QUESTIONS = 2;
@@ -73,10 +73,22 @@ public final class SessionMemory {
     }
 
     public synchronized void recordTurn(String question, String answerBody, List<SearchResult> sources, String ruleId) {
+        recordTurn(question, answerBody, sources, ruleId, ReviewedCardMetadata.empty());
+    }
+
+    public synchronized void recordTurn(
+        String question,
+        String answerBody,
+        List<SearchResult> sources,
+        String ruleId,
+        ReviewedCardMetadata reviewedCardMetadata
+    ) {
         String trimmedQuestion = safe(question).trim();
         if (trimmedQuestion.isEmpty()) {
             return;
         }
+        ReviewedCardMetadata normalizedReviewedCardMetadata =
+            ReviewedCardMetadata.normalize(reviewedCardMetadata);
         maybeRefreshStickyAnchor(trimmedQuestion, sources);
         turns.add(new Turn(
             trimmedQuestion,
@@ -85,6 +97,7 @@ public final class SessionMemory {
             summarizeSources(sources),
             summarizeSourceResults(sources),
             safe(ruleId).trim(),
+            normalizedReviewedCardMetadata,
             OfflineAnswerEngine.consumePendingSessionLatencyBreakdown(
                 trimmedQuestion,
                 safe(answerBody).trim(),
@@ -426,6 +439,7 @@ public final class SessionMemory {
                 turn.sources,
                 turn.sourceResults,
                 turn.ruleId,
+                turn.reviewedCardMetadata,
                 turn.latencyBreakdown,
                 turn.recordedAtEpochMs
             ));
@@ -445,6 +459,7 @@ public final class SessionMemory {
             latest.sources,
             latest.sourceResults,
             latest.ruleId,
+            latest.reviewedCardMetadata,
             latest.latencyBreakdown,
             latest.recordedAtEpochMs
         );
@@ -476,6 +491,12 @@ public final class SessionMemory {
                 turnJson.put("sources", toStringJsonArray(turn.sources));
                 turnJson.put("source_results", toSearchResultJsonArray(turn.sourceResults));
                 turnJson.put("rule_id", turn.ruleId);
+                if (turn.reviewedCardMetadata.isPresent()) {
+                    turnJson.put(
+                        "reviewed_card_metadata",
+                        toReviewedCardMetadataJson(turn.reviewedCardMetadata)
+                    );
+                }
                 if (turn.latencyBreakdown != null) {
                     turnJson.put("latency_breakdown", toLatencyBreakdownJson(turn.latencyBreakdown));
                 }
@@ -498,7 +519,7 @@ public final class SessionMemory {
         try {
             JSONObject root = new JSONObject(trimmed);
             int version = root.optInt("version", 1);
-            if (version == 4) {
+            if (version >= 4 && version <= JSON_SCHEMA_VERSION) {
                 memory.stickyAnchorGuideId = safe(root.optString("sticky_anchor_guide_id", "")).trim();
                 memory.anchorResetTurnIndex = Math.max(0, root.optInt("anchor_reset_turn_index", 0));
             } else if (version == 3) {
@@ -525,6 +546,7 @@ public final class SessionMemory {
                     fromStringJsonArray(turnJson.optJSONArray("sources")),
                     fromSearchResultJsonArray(turnJson.optJSONArray("source_results")),
                     turnJson.optString("rule_id", ""),
+                    fromReviewedCardMetadataJson(turnJson.optJSONObject("reviewed_card_metadata")),
                     fromLatencyBreakdownJson(turnJson.optJSONObject("latency_breakdown")),
                     turnJson.optLong("recorded_at_epoch_ms", 0L)
                 );
@@ -1282,6 +1304,38 @@ public final class SessionMemory {
         return values;
     }
 
+    private static JSONObject toReviewedCardMetadataJson(ReviewedCardMetadata metadata) throws JSONException {
+        JSONObject output = new JSONObject();
+        ReviewedCardMetadata normalized = ReviewedCardMetadata.normalize(metadata);
+        if (!normalized.isPresent()) {
+            return output;
+        }
+        output.put("card_id", normalized.cardId);
+        output.put("card_guide_id", normalized.cardGuideId);
+        output.put("review_status", normalized.reviewStatus);
+        output.put("runtime_citation_policy", normalized.runtimeCitationPolicy);
+        output.put("provenance", normalized.provenance);
+        output.put(
+            "cited_reviewed_source_guide_ids",
+            toStringJsonArray(normalized.citedReviewedSourceGuideIds)
+        );
+        return output;
+    }
+
+    private static ReviewedCardMetadata fromReviewedCardMetadataJson(JSONObject object) {
+        if (object == null) {
+            return ReviewedCardMetadata.empty();
+        }
+        return new ReviewedCardMetadata(
+            object.optString("card_id", ""),
+            object.optString("card_guide_id", ""),
+            object.optString("review_status", ""),
+            object.optString("runtime_citation_policy", ""),
+            object.optString("provenance", ""),
+            fromStringJsonArray(object.optJSONArray("cited_reviewed_source_guide_ids"))
+        );
+    }
+
     private static JSONObject toLatencyBreakdownJson(OfflineAnswerEngine.LatencyBreakdown latencyBreakdown)
         throws JSONException {
         JSONObject output = new JSONObject();
@@ -1324,6 +1378,7 @@ public final class SessionMemory {
         final List<String> sources;
         final List<SearchResult> sourceResults;
         final String ruleId;
+        final ReviewedCardMetadata reviewedCardMetadata;
         final OfflineAnswerEngine.LatencyBreakdown latencyBreakdown;
         final long recordedAtEpochMs;
 
@@ -1334,6 +1389,7 @@ public final class SessionMemory {
             List<String> sources,
             List<SearchResult> sourceResults,
             String ruleId,
+            ReviewedCardMetadata reviewedCardMetadata,
             OfflineAnswerEngine.LatencyBreakdown latencyBreakdown,
             long recordedAtEpochMs
         ) {
@@ -1343,6 +1399,7 @@ public final class SessionMemory {
             this.sources = sources == null ? Collections.emptyList() : new ArrayList<>(sources);
             this.sourceResults = sourceResults == null ? Collections.emptyList() : new ArrayList<>(sourceResults);
             this.ruleId = ruleId == null ? "" : ruleId;
+            this.reviewedCardMetadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
             this.latencyBreakdown = latencyBreakdown;
             this.recordedAtEpochMs = recordedAtEpochMs > 0L ? recordedAtEpochMs : System.currentTimeMillis();
         }
@@ -1404,6 +1461,7 @@ public final class SessionMemory {
         public final List<String> sources;
         public final List<SearchResult> sourceResults;
         public final String ruleId;
+        public final ReviewedCardMetadata reviewedCardMetadata;
         public final OfflineAnswerEngine.LatencyBreakdown latencyBreakdown;
         public final long recordedAtEpochMs;
 
@@ -1423,6 +1481,7 @@ public final class SessionMemory {
                 sources,
                 sourceResults,
                 ruleId,
+                ReviewedCardMetadata.empty(),
                 null,
                 recordedAtEpochMs
             );
@@ -1438,12 +1497,37 @@ public final class SessionMemory {
             OfflineAnswerEngine.LatencyBreakdown latencyBreakdown,
             long recordedAtEpochMs
         ) {
+            this(
+                question,
+                answerSummary,
+                answerBody,
+                sources,
+                sourceResults,
+                ruleId,
+                ReviewedCardMetadata.empty(),
+                latencyBreakdown,
+                recordedAtEpochMs
+            );
+        }
+
+        TurnSnapshot(
+            String question,
+            String answerSummary,
+            String answerBody,
+            List<String> sources,
+            List<SearchResult> sourceResults,
+            String ruleId,
+            ReviewedCardMetadata reviewedCardMetadata,
+            OfflineAnswerEngine.LatencyBreakdown latencyBreakdown,
+            long recordedAtEpochMs
+        ) {
             this.question = question == null ? "" : question;
             this.answerSummary = answerSummary == null ? "" : answerSummary;
             this.answerBody = answerBody == null ? "" : answerBody;
             this.sources = sources == null ? Collections.emptyList() : new ArrayList<>(sources);
             this.sourceResults = sourceResults == null ? Collections.emptyList() : new ArrayList<>(sourceResults);
             this.ruleId = ruleId == null ? "" : ruleId;
+            this.reviewedCardMetadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
             this.latencyBreakdown = latencyBreakdown;
             this.recordedAtEpochMs = recordedAtEpochMs;
         }

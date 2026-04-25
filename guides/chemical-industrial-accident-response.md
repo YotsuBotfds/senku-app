@@ -28,7 +28,7 @@ liability_level: high
 
 This guide is for response, not identification. Use it when the problem is a facility leak, transportation release, pipeline failure, explosion, or multi-person exposure and you need evacuation, sheltering, decontamination, or triage.
 
-If you are dealing with a household cleaner, an unknown powder or liquid in a home or garage, or a question about whether two products can be mixed, start with [`chemistry-fundamentals.md`](chemistry-fundamentals.md) and its safety and unknown-substance routing first. If the question is about a feedstock, precursor, or starting-material choice, use [`chemistry-fundamentals.md`](chemistry-fundamentals.md) for the industrial-chemistry path before returning here.
+If you are dealing with a household cleaner, an unknown powder or liquid in a home or garage, or a question about whether two products can be mixed, start with [`chemical-safety.md`](chemical-safety.md) for prevention and compatibility. If exposure or symptoms have already happened, use [`toxicology-poisoning-response.md`](toxicology-poisoning-response.md) or [`unknown-ingestion-child-poisoning-triage.md`](unknown-ingestion-child-poisoning-triage.md) first. If the question is about a feedstock, precursor, or starting-material choice, use [`chemistry-fundamentals.md`](chemistry-fundamentals.md) for the industrial-chemistry path before returning here.
 
 ## Understanding Industrial Chemical Hazards
 
@@ -38,7 +38,7 @@ Chemical accidents occur through transportation accidents, facility explosions o
 
 ### Quick routing: is this the right guide?
 
-- I need household unknown or cleaner-mix triage: use `chemistry-fundamentals.md` first.
+- I need household unknown or cleaner-mix triage: use `chemical-safety.md` first for prevention/compatibility, or toxicology/unknown-ingestion triage first if exposure or symptoms have started.
 - I need feedstock or precursor routing for a chemical product: use `chemistry-fundamentals.md` first.
 - I need evacuation, shelter-in-place, decontamination, or mass-exposure response for an industrial release: stay here.
 

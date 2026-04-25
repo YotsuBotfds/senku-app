@@ -29,6 +29,10 @@ custom_css: '.content-section{background-color:#242424;padding:25px;margin-botto
 Skeletal traction, fracture reduction, and splinting carry risks of nerve damage, vascular injury, compartment syndrome, and improper healing. These procedures require medical supervision. Compartment syndrome is a surgical emergency — watch for the 5 P's: Pain, Pallor, Pulselessness, Paresthesia, Paralysis.
 :::
 
+:::danger
+If a limb has pain out of proportion plus tightening, rapidly worsening swelling, shiny tense skin, numbness/tingling after being pinned under weight, a hard calf after crush injury, weakness, or severe pain when toes or fingers are gently moved, treat it as possible compartment syndrome now. Loosen or remove constricting splints, wraps, shoes, or jewelry; keep the limb at heart level; and arrange urgent surgical evaluation/evacuation. Do not make evacuation conditional on numbness persisting, inability to walk, or back-pain saddle/bladder warning signs.
+:::
+
 <section id="section1">
 
 ## 1\. Fracture Types and Assessment
@@ -86,7 +90,7 @@ Before and after any intervention, assess Circulation, Motion, and Sensation (CM
 
 -   **Test by area:** Light touch on fingers/toes distal to fracture. Compare sides.
 -   **Dermatomes:** Understand nerve distribution—specific areas served by specific nerves.
--   **Paresthesia:** Tingling or "pins and needles" usually indicates swelling around nerve (not permanent damage). Will improve with ice and elevation.
+-   **Paresthesia:** Tingling or "pins and needles" may be swelling around a nerve, but after crush injury, rapidly worsening swelling, severe tightness, or pain out of proportion it is a compartment-syndrome warning. Do not treat this pattern as routine swelling with ice/elevation first.
 -   **Complete numbness:** Suggests significant nerve injury. Document clearly and aim for evacuation.
 
 **CMS changes after reduction:** If circulation, motion, or sensation worsens after splinting or reduction, IMMEDIATELY loosen splint/cast. Tight immobilization can cause compartment syndrome (swelling builds pressure inside fascial compartment, cutting off circulation, causing tissue death). Symptoms: severe pain out of proportion to injury, pain with passive stretch of muscles, paresthesia, eventual paralysis and tissue death.
@@ -636,8 +640,9 @@ Compartment syndrome is a true surgical emergency. Tissue death begins within 4-
 
 **Signs:**
 - Severe pain out of proportion to visible injury
-- Pain with passive (gentle, external) stretching of muscles in that compartment
-- Paresthesia (tingling, "pins and needles")
+- Pain with passive (gentle, external) stretching of muscles in that compartment, including severe pain when someone gently moves the toes or fingers
+- Paresthesia (tingling, "pins and needles"), numbness, or new weakness beyond the injury
+- Limb feels tight, tense, or has shiny stretched skin as swelling worsens
 - Skin pallor, mottling, or purple discoloration
 - Eventually: paralysis and coldness (indicates tissue death)
 
@@ -645,14 +650,20 @@ Compartment syndrome is a true surgical emergency. Tissue death begins within 4-
 - Very tight cast or splint applied
 - Massive swelling after fracture
 - High-energy crush injury
+- Pinned under a heavy object or weight, especially with worsening limb swelling after release
 - Fracture requiring heavy traction
+
+Treat these lay descriptions as compartment/crush emergency clues first, not routine back pain, muscle soreness, foot care, DVT, or rehabilitation pain: "tight shiny limb," "pain out of proportion," "pain when toes/fingers move," "painful tight ankle," "hard calf after being pinned under weight," "numbness or weakness after a crush," or "swelling keeps getting worse after injury."
+
+**Routing boundary:** Crush plus worsening pain at rest, a swollen tight ankle with pain when toes are moved, being pinned under weight with numb foot and hard calf, pain out of proportion with a tightening limb, a crushed forearm with finger tingling and building pain, or tight shiny unbearable swelling should route here. Do not route these patterns to foot care, DVT, rehabilitation, NSAIDs, ice, compression, or elevate-above-heart advice. Remove constriction, keep the limb at heart level, and arrange urgent surgical evaluation/evacuation.
 
 **Immediate action:**
 1. Remove all wrapping, splint, or cast immediately
-2. Elevate limb above heart level
+2. Keep the limb at heart level; do not raise it above the heart because that can further reduce blood flow into the compartment
 3. If already cast, cut through cast without cutting skin—place scissors under cast, slide length of cast, then cut through plaster
 4. Re-assess CMS every 15 minutes
-5. If pain remains severe or symptoms worsen, consider open fasciotomy (incision through fascia to relieve pressure)—this requires surgical expertise and should be attempted only if evacuation is not possible
+5. Do not use ice, compression, elevation above heart level, or NSAIDs as the main response while these red flags are present; remove constriction, keep at heart level, and arrange urgent surgical evacuation
+6. If pain remains severe or symptoms worsen, consider open fasciotomy (incision through fascia to relieve pressure)—this requires surgical expertise and should be attempted only if evacuation is not possible
 
 **Fasciotomy procedure (emergency only):**
 - Make 2-3 small incisions (2-3 inches each) over middle of each muscle compartment in limb
@@ -662,6 +673,8 @@ Compartment syndrome is a true surgical emergency. Tissue death begins within 4-
 - Risk of infection is high—ensure maximum cleanliness, use antibiotics
 
 #### Deep Vein Thrombosis (DVT)
+
+DVT is usually a delayed immobility complication. If the calf feels hard after a crush injury or the person was pinned under weight, especially with numb foot, weakness, tight shiny skin, pain out of proportion, or pain when toes are moved, treat it as compartment/crush emergency first (see above), not as DVT.
 
 **Signs:**
 - Unilateral (one-sided) calf or thigh swelling
@@ -902,7 +915,7 @@ Swelling commonly recurs 2-4 weeks after cast removal when patient begins mobili
 - Loosen splint immediately—unwrap outer layer and reassess
 - Check for pressure marks on skin
 - If pain resolves with loosening: reapply with less tension
-- If pain persists: consider compartment syndrome (see Complications section)—may require splint removal and elevation
+- If pain persists, worsens while still, or is out of proportion: treat as possible compartment syndrome (see Complications section), remove constriction, keep the limb at heart level, and arrange urgent evacuation
 - If pain is localized to fracture site: consider inadequate reduction—gentle re-traction and repositioning may help
 
 ### Problem: Cast/Splint Becomes Wet or Damaged
@@ -930,11 +943,10 @@ Swelling commonly recurs 2-4 weeks after cast removal when patient begins mobili
 - If swelling continues to increase or becomes severe: concern for compartment syndrome
 
 **Management:**
-- Ensure elevation above heart level
-- Apply ice 15 minutes every 2-3 hours
 - Loosen splint/cast if patient reports tightness or pain
 - Re-check CMS
-- If severe swelling with pain: consider removing splint, elevating, icing for 24 hours, then reapplying once swelling peaks
+- If swelling is severe, fast-worsening, tight/shiny, or painful with toe/finger movement: treat as possible compartment syndrome, remove constriction, keep the limb at heart level, and arrange urgent evacuation
+- If there are no compartment-syndrome warning signs and CMS remains normal, routine swelling care can use short icing and elevation above heart level
 
 ### Problem: Patient Reports Numbness or Tingling in Fingers/Toes After Splinting
 
@@ -945,14 +957,14 @@ Swelling commonly recurs 2-4 weeks after cast removal when patient begins mobili
 
 **Immediate actions:**
 1. Loosen splint
-2. Elevate limb
-3. Ice to reduce swelling
-4. Re-check motor function (can patient move digits?)
-5. Re-test sensation after 30 minutes
+2. If numbness follows crush injury, being pinned under weight, hard-calf swelling, tight shiny swelling, severe worsening pain, or pain when digits are moved, treat as possible compartment syndrome: remove constriction, keep the limb at heart level, and arrange urgent surgical evacuation now
+3. Do not add compression, ice-first treatment, or elevation above the heart while compartment syndrome is possible
+4. Re-check motor function (can patient move digits?) while preparing evacuation
+5. Re-test sensation after 30 minutes only for isolated numbness/tingling after splinting when there are no crush, hard-calf, tight/shiny, fast-swelling, severe-pain, or pain-with-digit-movement warning signs
 
 **If numbness resolves with loosening:** Splint was too tight. Reapply more loosely.
 
-**If numbness persists:** Likely nerve injury from fracture or from reduction attempt. Document carefully and arrange professional evaluation.
+**If numbness persists without compartment-syndrome warning signs:** Likely nerve injury from fracture or from reduction attempt. Document carefully and arrange professional evaluation. Do not use this slower pathway for crush injury, hard-calf swelling, tight/shiny swelling, severe pain out of proportion, fast worsening swelling, or pain with toe/finger movement; those require urgent surgical evacuation now.
 
 ### Problem: Patient Cannot Tolerate Pain Medication Dose
 
@@ -967,6 +979,8 @@ Swelling commonly recurs 2-4 weeks after cast removal when patient begins mobili
 - Add non-medication pain control: elevation, ice, immobilization, distraction, breathing exercises
 - Allow longer time between doses if pain is controlled adequately
 - Document all attempts and patient tolerances
+
+Pain that keeps building after crush injury, is out of proportion, occurs when toes/fingers are gently moved, or comes with numbness/weakness is not a routine pain-medication problem. Treat it as possible compartment syndrome first; do not answer with NSAID, ice, or elevation-first advice.
 
 </section>
 

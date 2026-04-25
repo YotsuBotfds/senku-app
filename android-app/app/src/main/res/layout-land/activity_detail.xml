@@ -454,7 +454,15 @@
                             android:orientation="horizontal" />
                     </HorizontalScrollView>
 
+                    <com.senku.ui.answer.PaperAnswerCardHostView
+                        android:id="@+id/detail_answer_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone" />
+
                     <LinearLayout
+                        android:id="@+id/detail_body_mirror_shell"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"

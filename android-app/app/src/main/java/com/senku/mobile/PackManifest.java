@@ -11,6 +11,7 @@ public final class PackManifest {
     public final int chunkCount;
     public final int deterministicRuleCount;
     public final int relatedLinkCount;
+    public final int answerCardCount;
     public final String embeddingModelId;
     public final int embeddingDimension;
     public final String vectorDtype;
@@ -28,6 +29,7 @@ public final class PackManifest {
         int chunkCount,
         int deterministicRuleCount,
         int relatedLinkCount,
+        int answerCardCount,
         String embeddingModelId,
         int embeddingDimension,
         String vectorDtype,
@@ -44,6 +46,7 @@ public final class PackManifest {
         this.chunkCount = chunkCount;
         this.deterministicRuleCount = deterministicRuleCount;
         this.relatedLinkCount = relatedLinkCount;
+        this.answerCardCount = answerCardCount;
         this.embeddingModelId = embeddingModelId;
         this.embeddingDimension = embeddingDimension;
         this.vectorDtype = vectorDtype;
@@ -71,6 +74,7 @@ public final class PackManifest {
             counts.getInt("chunks"),
             counts.getInt("deterministic_rules"),
             counts.getInt("guide_related_links"),
+            counts.optInt("answer_cards", 0),
             embedding.getString("model_id"),
             embedding.getInt("dimension"),
             embedding.getString("vector_dtype"),

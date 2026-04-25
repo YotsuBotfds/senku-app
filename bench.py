@@ -25,12 +25,13 @@ import chromadb
 import requests
 
 import config
+import query_prompt_runtime as _prompt_runtime
 from lmstudio_utils import classify_lm_request_error, normalize_lm_studio_url
 from query import (
     _confidence_label,
+    _build_uncertain_fit_body,
     _fix_mojibake,
     _is_emergency_mental_health_query,
-    _is_obviously_incomplete_crisis_response,
     _relevance_tag,
     _should_abstain,
     build_special_case_response,
@@ -41,7 +42,9 @@ from query import (
     normalize_response_text,
     post_json_with_retry,
     retrieve_results,
+    _card_backed_runtime_answer_plan,
 )
+from query_completion_hardening import _is_obviously_incomplete_crisis_response
 from token_estimation import estimate_tokens
 
 DEFAULT_PROMPTS = os.path.join(os.path.dirname(__file__), "test_prompts.txt")
@@ -322,6 +325,14 @@ def _parse_url_list(value, default_url=None, *, dedupe=False):
     return unique_urls
 
 
+def _default_generation_url():
+    return getattr(config, "GEN_URL", config.LM_STUDIO_URL)
+
+
+def _default_embedding_url():
+    return getattr(config, "EMBED_URL", config.LM_STUDIO_URL)
+
+
 def _parse_worker_models(value, worker_count, default_model):
     """Parse per-worker generation models, broadcasting when one model is supplied."""
     if worker_count <= 0:
@@ -548,6 +559,79 @@ def _summarize_support_signals(value):
     return str(value)[:120]
 
 
+def _frame_is_safety_critical(frame):
+    if not isinstance(frame, dict):
+        return False
+    raw_value = frame.get("safety_critical")
+    if isinstance(raw_value, bool):
+        return raw_value
+    if isinstance(raw_value, (list, tuple, set)):
+        return bool(raw_value)
+    if isinstance(raw_value, str):
+        return raw_value.strip().lower() in {"1", "true", "yes", "critical"}
+    return bool(raw_value)
+
+
+def _profile_is_safety_critical(profile):
+    return (profile or "").strip().lower() in {"safety_triage", "normal_vs_urgent"}
+
+
+def _support_strength(confidence_label, answer_mode, support_signals):
+    normalized_confidence = (confidence_label or "").strip().lower()
+    normalized_mode = (answer_mode or "").strip().lower()
+    if normalized_mode in {"abstain", "uncertain_fit"} or normalized_confidence == "low":
+        return "limited"
+    if normalized_confidence == "medium":
+        return "moderate"
+    if normalized_confidence == "high":
+        if isinstance(support_signals, dict):
+            direct_count = int(support_signals.get("direct", 0) or 0)
+            covered_count = int(support_signals.get("covered", 0) or 0)
+            if direct_count or covered_count:
+                return "strong"
+        return "moderate"
+    return ""
+
+
+def _answer_provenance_for_decision(decision_path):
+    normalized = (decision_path or "").strip().lower()
+    if normalized == "card_backed_runtime":
+        return "reviewed_card_runtime"
+    if normalized == "rag":
+        return "generated_model"
+    if normalized == "rag-empty":
+        return "no_answer"
+    if normalized == "uncertain_fit":
+        return "uncertain_fit_card"
+    if normalized == "abstain":
+        return "abstain_card"
+    if normalized == "no-rag":
+        return "no_rag"
+    if normalized:
+        return "deterministic_rule"
+    return "unknown"
+
+
+def _primary_source_titles(source_candidates, limit=3):
+    titles = []
+    seen = set()
+    for candidate in source_candidates or []:
+        if not isinstance(candidate, dict):
+            continue
+        title = (candidate.get("title") or "").strip()
+        section = (candidate.get("section") or "").strip()
+        if not title:
+            continue
+        label = f"{title} -> {section}" if section else title
+        if label in seen:
+            continue
+        seen.add(label)
+        titles.append(label)
+        if len(titles) >= limit:
+            break
+    return titles
+
+
 def _runtime_profile(model_name=None, gen_url=None):
     """Return the configured runtime profile for a generation model."""
     if hasattr(config, "get_runtime_profile"):
@@ -618,6 +702,102 @@ def _is_completion_cap_hit(finish_reason, usage, requested_tokens, runtime_profi
     return completion_tokens >= max(int(requested_tokens * ratio), requested_tokens - 16)
 
 
+def _is_prepared_prompt_safety_critical(meta, results=None):
+    """Return True when prompt/runtime metadata marks a generated answer safety-critical."""
+    retrieval_meta = _coerce_mapping(meta).get("retrieval_metadata")
+    if not isinstance(retrieval_meta, dict):
+        retrieval_meta = {}
+    raw_safety_critical = _extract_optional_meta_value(
+        retrieval_meta or meta,
+        results or {},
+        "safety_critical",
+    )
+    scenario_frame = _extract_optional_meta_value(
+        retrieval_meta or meta,
+        results or {},
+        "scenario_frame",
+    )
+    retrieval_profile = _extract_optional_meta_value(
+        retrieval_meta or meta,
+        results or {},
+        "retrieval_profile",
+    )
+    return (
+        _frame_is_safety_critical({"safety_critical": raw_safety_critical})
+        or _frame_is_safety_critical(scenario_frame)
+        or _profile_is_safety_critical(retrieval_profile)
+    )
+
+
+def _is_obviously_incomplete_safety_response(text):
+    """Detect truncated final-line scaffolds that are too risky to accept as final."""
+    cleaned_text = normalize_response_text(text or "")
+    if not _has_substantive_response(cleaned_text):
+        return False
+
+    lines = [line.strip() for line in cleaned_text.splitlines() if line.strip()]
+    if not lines:
+        return False
+
+    final_line = lines[-1]
+    compact = re.sub(r"\s+", " ", final_line).strip()
+    markdown_light = re.sub(r"[*_`]+", "", compact).strip()
+    without_marker = re.sub(
+        r"^\s*(?:[-*+]\s*)?(?:\d+[\.)]\s*)?",
+        "",
+        markdown_light,
+    ).strip()
+    without_marker = without_marker.strip("-: ")
+
+    if re.search(r"(?i)(?:^|\s)if\s*$", markdown_light):
+        return True
+    if re.match(r"(?i)^if\b[^.!?]*:\s*$", without_marker):
+        return True
+    if re.match(r"(?i)^if\b", without_marker) and not re.search(r"[.!?]\s*$", without_marker):
+        tail = without_marker.lower().split()
+        if len(tail) <= 3 or tail[-1] in {
+            "a",
+            "an",
+            "and",
+            "by",
+            "for",
+            "of",
+            "or",
+            "the",
+            "to",
+            "with",
+        }:
+            return True
+    if re.match(r"^\s*(?:[-*+]\s*)?\d+[\.)]\s*$", compact):
+        return True
+    if re.match(r"^\s*(?:[-*+]\s*)?\d+[\.)]\s+[^.!?]{1,100}:\s*$", markdown_light):
+        return True
+    return False
+
+
+def _trim_incomplete_final_safety_line(text):
+    """Drop a final dangling scaffold line when the remaining safety answer is usable."""
+    cleaned_text = normalize_response_text(text or "")
+    if not _is_obviously_incomplete_safety_response(cleaned_text):
+        return cleaned_text, False
+
+    lines = cleaned_text.splitlines()
+    last_content_index = None
+    for index in range(len(lines) - 1, -1, -1):
+        if lines[index].strip():
+            last_content_index = index
+            break
+    if last_content_index is None:
+        return cleaned_text, False
+
+    trimmed = "\n".join(lines[:last_content_index]).rstrip()
+    if not _has_substantive_response(trimmed):
+        return cleaned_text, False
+    if _is_obviously_incomplete_safety_response(trimmed):
+        return cleaned_text, False
+    return trimmed, True
+
+
 def _retry_cause_counts(retry_events):
     """Return a compact retry-cause counter for artifact summaries."""
     return dict(
@@ -654,45 +834,31 @@ def _classify_generation_exception(exc):
 
 def _system_prompt_text(mode):
     """Return the system prompt text used for a given generation mode."""
-    return (
-        config.build_system_prompt(mode)
-        if hasattr(config, "build_system_prompt")
-        else config.SYSTEM_PROMPT
-    )
+    return _prompt_runtime.system_prompt_text(config, mode)
 
 
 def _prompt_token_limit(gen_model=None, gen_url=None, runtime_profile=None):
     """Return the configured prompt-window limit for the active runtime profile."""
-    profile = runtime_profile or _runtime_profile(gen_model, gen_url)
-    configured = profile.get("prompt_token_limit")
-    if configured is None:
-        raise ValueError(
-            f"Runtime profile {profile.get('name', '<unknown>')!r} is missing required prompt_token_limit"
-        )
-    return int(configured)
+    return _prompt_runtime.prompt_token_limit_from_runtime_profile(
+        gen_model,
+        gen_url,
+        runtime_profile=runtime_profile,
+        runtime_profile_getter=_runtime_profile,
+    )
 
 
 def _estimate_chat_prompt_tokens(
     prompt_text, *, use_system_prompt=True, mode="default", system_prompt_text=None
 ):
     """Estimate tokens for the chat request payload before generation."""
-    message_overhead = 24
-    prompt_tokens = estimate_tokens(prompt_text)
-    total = prompt_tokens + message_overhead
-    system_prompt_tokens = 0
-    if use_system_prompt:
-        resolved_system_prompt = (
-            _system_prompt_text(mode)
-            if system_prompt_text is None
-            else system_prompt_text
-        )
-        system_prompt_tokens = estimate_tokens(resolved_system_prompt)
-        total += system_prompt_tokens + message_overhead
-    return {
-        "prompt_text_tokens": prompt_tokens,
-        "system_prompt_tokens": system_prompt_tokens,
-        "estimated_prompt_tokens": total,
-    }
+    return _prompt_runtime.estimate_chat_prompt_tokens(
+        prompt_text,
+        estimate_tokens_fn=estimate_tokens,
+        system_prompt_resolver=_system_prompt_text,
+        use_system_prompt=use_system_prompt,
+        mode=mode,
+        system_prompt_text=system_prompt_text,
+    )
 
 
 def _prep_worker_plan(embed_urls, gen_urls, *, use_rag):
@@ -877,8 +1043,19 @@ def _is_valid_crisis_retry_response(text):
     return True
 
 
-def prepare_prompt(index, question, collection, top_k, category, use_rag=True, mode="default", embed_url=None):
+def prepare_prompt(
+    index,
+    question,
+    collection,
+    top_k,
+    category,
+    use_rag=True,
+    mode="default",
+    embed_url=None,
+    prompt_token_limit=None,
+):
     """Retrieve context and build the prompt before distributed generation."""
+    reviewed_card_plan = {}
     special_case_path, special_case_detail = classify_special_case(question) if use_rag else (None, None)
     special_case_response = build_special_case_response(question) if use_rag else None
     confidence_label = None
@@ -903,24 +1080,55 @@ def prepare_prompt(index, question, collection, top_k, category, use_rag=True, m
             embed_url=embed_url,
         )
         should_abstain, match_labels = _should_abstain(results, question)
+        confidence_label = retrieval_meta.get("confidence_label") or _confidence_label(
+            results,
+            retrieval_meta.get("scenario_frame", {"question": question}),
+        )
         if should_abstain:
             prompt_text = ""
             special_case_response = build_abstain_response(
                 question,
                 results,
                 match_labels,
+                scenario_frame=retrieval_meta.get("scenario_frame", {"question": question}),
             )
             decision_path = "abstain"
             decision_detail = None
             confidence_label = "low"
-        else:
-            prompt_text = build_prompt(question, results, mode=mode) if results["documents"][0] else ""
-            decision_path = "rag" if prompt_text else "rag-empty"
-            decision_detail = None
-            confidence_label = _confidence_label(
+        elif retrieval_meta.get("answer_mode") == "uncertain_fit":
+            prompt_text = ""
+            scenario_frame = retrieval_meta.get("scenario_frame", {"question": question})
+            if retrieval_meta.get("safety_critical") and isinstance(scenario_frame, dict):
+                scenario_frame = {**scenario_frame, "safety_critical": True}
+            special_case_response = _build_uncertain_fit_body(
+                question,
                 results,
-                retrieval_meta.get("scenario_frame", {"question": question}),
+                confidence_label,
+                scenario_frame=scenario_frame,
+                match_labels=match_labels,
             )
+            decision_path = "uncertain_fit"
+            decision_detail = None
+        else:
+            reviewed_card_plan = _card_backed_runtime_answer_plan(question, results) or {}
+            card_backed_response = str(reviewed_card_plan.get("answer_text") or "").strip()
+            if card_backed_response:
+                prompt_text = ""
+                special_case_response = card_backed_response
+                decision_path = "card_backed_runtime"
+            else:
+                prompt_text = (
+                    build_prompt(
+                        question,
+                        results,
+                        mode=mode,
+                        prompt_token_limit=prompt_token_limit,
+                    )
+                    if results["documents"][0]
+                    else ""
+                )
+                decision_path = "rag" if prompt_text else "rag-empty"
+            decision_detail = None
     else:
         results = empty_results()
         sub_queries = [question]
@@ -935,6 +1143,12 @@ def prepare_prompt(index, question, collection, top_k, category, use_rag=True, m
         "decomposed": use_rag and len(sub_queries) > 1,
         "decision_path": decision_path,
         "decision_detail": decision_detail,
+        "answer_provenance": _answer_provenance_for_decision(decision_path),
+        "reviewed_card_backed": decision_path == "card_backed_runtime",
+        "reviewed_card_ids": reviewed_card_plan.get("card_ids") or [],
+        "reviewed_card_review_status": reviewed_card_plan.get("review_status") or "",
+        "reviewed_card_guide_ids": reviewed_card_plan.get("guide_ids") or [],
+        "reviewed_card_cited_guide_ids": reviewed_card_plan.get("cited_guide_ids") or [],
         "confidence_label": confidence_label,
         "sub_queries": sub_queries,
         "retrieval_metadata": retrieval_meta,
@@ -995,6 +1209,7 @@ def process_prepared_prompt(
     crisis_retry_base_usage = {}
     crisis_retry_base_finish_reason = None
     crisis_retry_base_cap_hit = False
+    completion_safety_trimmed = False
     request_messages = None
     request_temperature = temperature
     empty_retry_budget = int(
@@ -1003,6 +1218,7 @@ def process_prepared_prompt(
     adaptive_retry_budget = int(runtime_profile.get("adaptive_completion_retries", 1))
     empty_retries_used = 0
     adaptive_retries_used = 0
+    safety_critical_generation = _is_prepared_prompt_safety_critical(meta, results)
     system_prompt_text = None
     if use_system_prompt:
         system_prompt_text = _system_prompt_text(mode)
@@ -1140,6 +1356,10 @@ def process_prepared_prompt(
             current_max_completion_tokens,
             runtime_profile,
         )
+        incomplete_safety_response = (
+            safety_critical_generation
+            and _is_obviously_incomplete_safety_response(response_text)
+        )
         completion_attempts.append({
             "attempt": len(completion_attempts) + 1,
             "max_completion_tokens": current_max_completion_tokens,
@@ -1149,6 +1369,7 @@ def process_prepared_prompt(
             "response_length": len(response_text or ""),
             "substantive": _has_substantive_response(response_text),
             "cap_hit": completion_cap_hit,
+            "incomplete_safety_response": incomplete_safety_response,
             "retry_event_count": len(request_retry_log),
         })
 
@@ -1176,6 +1397,19 @@ def process_prepared_prompt(
         if (
             completion_cap_hit
             and runtime_profile.get("retry_on_cap_hit", True)
+            and adaptive_retries_used < adaptive_retry_budget
+        ):
+            next_budget = _next_completion_budget(
+                current_max_completion_tokens,
+                runtime_profile,
+            )
+            if next_budget:
+                adaptive_retries_used += 1
+                current_max_completion_tokens = next_budget
+                continue
+
+        if (
+            incomplete_safety_response
             and adaptive_retries_used < adaptive_retry_budget
         ):
             next_budget = _next_completion_budget(
@@ -1229,6 +1463,12 @@ def process_prepared_prompt(
         finish_reason = crisis_retry_base_finish_reason
         completion_cap_hit = crisis_retry_base_cap_hit
 
+    if safety_critical_generation:
+        trimmed_response, did_trim = _trim_incomplete_final_safety_line(response_text)
+        if did_trim:
+            response_text = trimmed_response
+            completion_safety_trimmed = True
+
     if not _has_substantive_response(response_text):
         failure_meta = dict(meta)
         failure_meta.update({
@@ -1247,6 +1487,7 @@ def process_prepared_prompt(
             "retry_events": retry_events,
             "retry_cause_counts": _retry_cause_counts(retry_events),
             "completion_retry_count": max(len(completion_attempts) - 1, 0),
+            "completion_safety_trimmed": completion_safety_trimmed,
             "requested_max_completion_tokens": max_completion_tokens,
             "final_max_completion_tokens": current_max_completion_tokens,
             "runtime_profile": runtime_profile.get("name"),
@@ -1279,6 +1520,7 @@ def process_prepared_prompt(
         "retry_events": retry_events,
         "retry_cause_counts": _retry_cause_counts(retry_events),
         "completion_retry_count": max(len(completion_attempts) - 1, 0),
+        "completion_safety_trimmed": completion_safety_trimmed,
         "requested_max_completion_tokens": max_completion_tokens,
         "final_max_completion_tokens": current_max_completion_tokens,
         "runtime_profile": runtime_profile.get("name"),
@@ -1294,6 +1536,9 @@ def format_sources(results, response_text, retrieval_meta=None):
     cited_id_set = set(citation_matches)
     lines = []
     seen = set()
+    source_candidate_seen = set()
+    source_candidates = []
+    source_candidate_guide_ids = []
     category_counts = Counter()
     guide_families = set()
     metadatas = results.get("metadatas", [[]])[0] if isinstance(results, dict) else []
@@ -1304,6 +1549,24 @@ def format_sources(results, response_text, retrieval_meta=None):
         guide_family = meta.get("guide_id") or meta.get("guide_title") or meta.get("source_file")
         if guide_family:
             guide_families.add(guide_family)
+        candidate_key = (
+            meta.get("guide_id"),
+            meta.get("guide_title"),
+            meta.get("section_heading"),
+        )
+        if candidate_key not in source_candidate_seen:
+            source_candidate_seen.add(candidate_key)
+            guide_id = meta.get("guide_id") or ""
+            if guide_id and guide_id not in source_candidate_guide_ids:
+                source_candidate_guide_ids.append(guide_id)
+            source_candidates.append({
+                "rank": len(source_candidates) + 1,
+                "guide_id": guide_id,
+                "title": meta.get("guide_title") or "",
+                "section": meta.get("section_heading") or "",
+                "category": category,
+                "source_file": meta.get("source_file") or "",
+            })
         if cited_id_set and meta.get("guide_id") not in cited_id_set:
             continue
         key = (meta.get("guide_title"), meta.get("section_heading"))
@@ -1351,11 +1614,31 @@ def format_sources(results, response_text, retrieval_meta=None):
             "retrieved_chunk_count": len(metadatas),
         }
     retrieval_mix = _extract_optional_meta_value(retrieval_meta, results, "retrieval_mix")
+    retrieval_profile = _extract_optional_meta_value(
+        retrieval_meta, results, "retrieval_profile"
+    )
+    answer_mode = _extract_optional_meta_value(retrieval_meta, results, "answer_mode")
     confidence_label = _extract_optional_meta_value(
         retrieval_meta, results, "confidence_label"
     )
+    raw_safety_critical = _extract_optional_meta_value(
+        retrieval_meta, results, "safety_critical"
+    )
+    safety_critical = (
+        _frame_is_safety_critical({"safety_critical": raw_safety_critical})
+        or _frame_is_safety_critical(scenario_frame)
+        or _profile_is_safety_critical(retrieval_profile)
+    )
+    support_strength = _support_strength(
+        confidence_label,
+        answer_mode,
+        support_signals,
+    )
+    primary_source_titles = _primary_source_titles(source_candidates)
 
     metadata_summary_parts = []
+    if retrieval_profile:
+        metadata_summary_parts.append(f"profile={retrieval_profile}")
     scenario_frame_summary = _summarize_scenario_frame(scenario_frame)
     if scenario_frame_summary:
         metadata_summary_parts.append(f"scenario_frame={scenario_frame_summary}")
@@ -1375,6 +1658,10 @@ def format_sources(results, response_text, retrieval_meta=None):
     support_signals_summary = _summarize_support_signals(support_signals)
     if support_signals_summary:
         metadata_summary_parts.append(f"support={support_signals_summary}")
+    if answer_mode:
+        metadata_summary_parts.append(f"answer_mode={answer_mode}")
+    if support_strength:
+        metadata_summary_parts.append(f"support_strength={support_strength}")
     if confidence_label:
         metadata_summary_parts.append(f"confidence={confidence_label}")
 
@@ -1388,8 +1675,15 @@ def format_sources(results, response_text, retrieval_meta=None):
         "objective_coverage": objective_coverage,
         "category_distribution": category_distribution,
         "retrieval_mix": retrieval_mix,
+        "retrieval_profile": retrieval_profile,
+        "answer_mode": answer_mode,
+        "source_candidates": source_candidates,
+        "source_candidate_guide_ids": source_candidate_guide_ids,
+        "primary_source_titles": primary_source_titles,
         "guide_family_diversity": guide_family_diversity,
         "support_signals": support_signals,
+        "support_strength": support_strength,
+        "safety_critical": safety_critical,
         "confidence_label": confidence_label,
         "retrieval_metadata_raw": _coerce_mapping(retrieval_meta),
         "metadata_summary": "; ".join(metadata_summary_parts) if metadata_summary_parts else "",
@@ -1433,9 +1727,9 @@ def main():
     parser.add_argument("--category", type=str, default=None, help="Filter by category")
     parser.add_argument("--output", type=str, default=None, help="Output file (default: timestamped)")
     parser.add_argument("--urls", type=str, default=None,
-                        help="Comma-separated LM Studio generation URLs (default: config.LM_STUDIO_URL)")
+                        help="Comma-separated generation URLs (default: config.GEN_URL)")
     parser.add_argument("--embed-url", type=str, default=None,
-                        help="Comma-separated LM Studio URLs to use for embeddings/retrieval (default: config.LM_STUDIO_URL)")
+                        help="Comma-separated embedding/retrieval URLs (default: config.EMBED_URL)")
     parser.add_argument(
         "--max-completion-tokens",
         type=int,
@@ -1450,8 +1744,10 @@ def main():
     config.GEN_MODEL = args.model
 
     # Parse generation URLs
-    gen_urls = _parse_url_list(args.urls, config.LM_STUDIO_URL)
-    primary_gen_url = gen_urls[0] if gen_urls else config.LM_STUDIO_URL
+    default_gen_url = _default_generation_url()
+    default_embed_url = _default_embedding_url()
+    gen_urls = _parse_url_list(args.urls, default_gen_url)
+    primary_gen_url = gen_urls[0] if gen_urls else default_gen_url
     runtime_profile = _runtime_profile(config.GEN_MODEL, primary_gen_url)
     if args.top_k is None:
         if hasattr(config, "get_runtime_top_k"):
@@ -1465,7 +1761,7 @@ def main():
         sys.exit(1)
     embed_urls = [] if args.no_rag else _parse_url_list(
         args.embed_url,
-        config.LM_STUDIO_URL,
+        default_embed_url,
         dedupe=True,
     )
 
@@ -1619,6 +1915,7 @@ def main():
     peak_active_preps = [0]
     source_mode_counts = Counter()
     decision_path_counts = Counter()
+    answer_provenance_counts = Counter()
     retrieval_metadata_presence = Counter()
     duplicate_citation_total = 0
 
@@ -1630,6 +1927,7 @@ def main():
 
     stop_event = threading.Event()
     prep_queue = queue.Queue()
+    prepare_prompt_token_limit = _prompt_token_limit(runtime_profile=runtime_profile)
 
     def worker(worker_target):
         nonlocal total_time
@@ -1769,6 +2067,7 @@ def main():
                     use_rag=not args.no_rag,
                     mode=args.mode,
                     embed_url=prep_embed_url,
+                    prompt_token_limit=prepare_prompt_token_limit,
                 )
                 if prepared_prompt[2]:
                     work_queue.put({
@@ -1926,6 +2225,10 @@ def main():
         source_info = format_sources(results, response, meta.get("retrieval_metadata"))
         source_mode_counts[source_info["source_mode"]] += 1
         decision_path_counts[meta.get("decision_path", "unknown")] += 1
+        answer_provenance_counts[
+            meta.get("answer_provenance")
+            or _answer_provenance_for_decision(meta.get("decision_path"))
+        ] += 1
         if _count_items(source_info["scenario_frame"]):
             retrieval_metadata_presence["scenario_frame"] += 1
         if _count_items(source_info["objective_coverage"]):
@@ -1951,6 +2254,12 @@ def main():
             else decision_path
         )
         report.append(f"*Decision path: {decision_label}*\n")
+        answer_provenance = (
+            meta.get("answer_provenance")
+            or _answer_provenance_for_decision(decision_path)
+        )
+        if answer_provenance:
+            report.append(f"*Answer provenance: {answer_provenance}*\n")
         if meta.get("decomposed"):
             report.append(f"*Query decomposed into {len(meta['sub_queries'])} sub-queries: "
                           f"{meta['sub_queries'][1:]}*\n")
@@ -1963,12 +2272,14 @@ def main():
             meta.get("finish_reason")
             or meta.get("completion_retry_count")
             or meta.get("completion_cap_hit")
+            or meta.get("completion_safety_trimmed")
         ):
             report.append(
                 f"*Runtime: finish={meta.get('finish_reason') or 'unknown'} | "
                 f"retries={meta.get('completion_retry_count', 0)} | "
                 f"cap_hit={'yes' if meta.get('completion_cap_hit') else 'no'} | "
-                f"cap={meta.get('final_max_completion_tokens') or 'none'}*\n"
+                f"cap={meta.get('final_max_completion_tokens') or 'none'}"
+                f"{' | safety_trim=yes' if meta.get('completion_safety_trimmed') else ''}*\n"
             )
         if source_info["metadata_summary"]:
             report.append(f"*Retrieval metadata: {source_info['metadata_summary']}*\n")
@@ -2073,6 +2384,9 @@ def main():
     report.append(f"\n**Decision paths:**\n")
     for path, count in sorted(decision_path_counts.items()):
         report.append(f"- `{path}`: {count} prompts\n")
+    report.append(f"\n**Answer provenance:**\n")
+    for provenance, count in sorted(answer_provenance_counts.items()):
+        report.append(f"- `{provenance}`: {count} prompts\n")
     report.append(f"\n**Retrieval metadata coverage:**\n")
     for key in (
         "scenario_frame",
@@ -2129,6 +2443,15 @@ def main():
             "prompt_metadata": _json_safe(prompt_entry.get("metadata", {})),
             "decision_path": meta.get("decision_path"),
             "decision_detail": meta.get("decision_detail"),
+            "answer_provenance": meta.get("answer_provenance")
+            or _answer_provenance_for_decision(meta.get("decision_path")),
+            "reviewed_card_backed": bool(meta.get("reviewed_card_backed")),
+            "reviewed_card_ids": _json_safe(meta.get("reviewed_card_ids", [])),
+            "reviewed_card_review_status": meta.get("reviewed_card_review_status") or "",
+            "reviewed_card_guide_ids": _json_safe(meta.get("reviewed_card_guide_ids", [])),
+            "reviewed_card_cited_guide_ids": _json_safe(
+                meta.get("reviewed_card_cited_guide_ids", [])
+            ),
             "decomposed": meta.get("decomposed", False),
             "sub_queries": meta.get("sub_queries", []),
             "generation_time": meta.get("generation_time", 0),
@@ -2137,6 +2460,7 @@ def main():
             "finish_reason": meta.get("finish_reason"),
             "completion_cap_hit": meta.get("completion_cap_hit", False),
             "completion_retry_count": meta.get("completion_retry_count", 0),
+            "completion_safety_trimmed": meta.get("completion_safety_trimmed", False),
             "requested_max_completion_tokens": meta.get("requested_max_completion_tokens"),
             "final_max_completion_tokens": meta.get("final_max_completion_tokens"),
             "runtime_profile": meta.get("runtime_profile"),
@@ -2149,13 +2473,26 @@ def main():
             "worker": meta.get("gen_worker"),
             "cited_guide_ids": source_info["cited_guide_ids"],
             "source_mode": source_info["source_mode"],
+            "confidence_label": source_info["confidence_label"],
+            "answer_mode": source_info["answer_mode"],
+            "support_strength": source_info["support_strength"],
+            "safety_critical": source_info["safety_critical"],
+            "retrieval_profile": source_info["retrieval_profile"],
             "retrieval_metadata": _json_safe({
                 "scenario_frame": source_info["scenario_frame"],
                 "objective_coverage": source_info["objective_coverage"],
                 "category_distribution": source_info["category_distribution"],
+                "retrieval_mix": source_info["retrieval_mix"],
+                "retrieval_profile": source_info["retrieval_profile"],
+                "answer_mode": source_info["answer_mode"],
                 "guide_family_diversity": source_info["guide_family_diversity"],
                 "duplicate_citation_count": source_info["duplicate_citation_count"],
                 "support_signals": source_info["support_signals"],
+                "support_strength": source_info["support_strength"],
+                "safety_critical": source_info["safety_critical"],
+                "top_retrieved_guide_ids": source_info["source_candidate_guide_ids"],
+                "source_candidates": source_info["source_candidates"],
+                "primary_source_titles": source_info["primary_source_titles"],
             }),
             "retrieval_metadata_summary": source_info["metadata_summary"],
             "citation_count": source_info["citation_count"],
@@ -2257,6 +2594,7 @@ def main():
             "target_behavior_counts": prompt_target_behavior_counts,
             "source_mode_counts": dict(source_mode_counts),
             "decision_path_counts": dict(decision_path_counts),
+            "answer_provenance_counts": dict(answer_provenance_counts),
             "retrieval_metadata_presence": dict(retrieval_metadata_presence),
             "duplicate_citation_total": duplicate_citation_total,
         },

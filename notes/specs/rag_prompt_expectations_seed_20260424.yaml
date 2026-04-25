@@ -1,0 +1,193 @@
+# Seed expectation manifest for RAG-S1 diagnostics.
+#
+# This is intentionally conservative and guide-family oriented. It gives the
+# analyzer enough signal to classify retrieval/ranking/generation misses without
+# turning the prompt waves into another hard-coded answer corpus.
+
+version: 1
+created: 2026-04-24
+scope:
+  artifacts:
+    - artifacts/bench/guide_wave_ex_20260424_092327.json
+    - artifacts/bench/guide_wave_ey_20260424_092407.json
+    - artifacts/bench/guide_wave_ez_20260424_092437.json
+    - artifacts/bench/guide_wave_fa_20260424_092935.json
+    - artifacts/bench/guide_wave_fb_20260424_092957.json
+    - artifacts/bench/guide_wave_fc_20260424_093011.json
+    - artifacts/bench/guide_wave_fd_20260424_093037.json
+    - artifacts/bench/guide_wave_fe_20260424_093104.json
+
+waves:
+  ex:
+    topic: choking_food_obstruction
+    risk_tier: red_flag_emergency
+    expectation_notes:
+      - GD-232 and GD-579 remain primary airway/choking owners.
+      - GD-298, GD-284, and GD-617 are acceptable pediatric owner-family hits for child or infant choking prompts.
+    expected_guides:
+      - id: GD-232
+        slug: first-aid
+      - id: GD-579
+        slug: emergency-airway-management
+      - id: GD-298
+        slug: pediatric-emergency-medicine
+      - id: GD-284
+        slug: infant-child-care
+      - id: GD-617
+        slug: pediatric-emergencies-field
+    required_concepts:
+      - distinguish effective coughing/speaking from complete obstruction
+      - urgent airway action for cannot breathe, speak, or effective-cough
+      - no blind finger sweeps
+      - infant sequence differs from adult abdominal thrusts
+      - nothing by mouth and urgent help if drooling or cannot swallow persists
+    forbidden_or_suspicious:
+      - routine panic-only framing before airway check
+      - reflux or dry-mouth care as first action
+      - tweezers or probing unless the object is clearly visible and removable
+
+  ey:
+    topic: meningitis_stiff_neck_rash
+    risk_tier: red_flag_emergency
+    expectation_notes:
+      - GD-589 remains the primary sepsis/meningitis emergency owner; GD-232 and GD-235 remain first-aid and infection-control support.
+      - GD-284 and GD-268 are acceptable child-facing/public-health owner-family hits when the prompt explicitly carries meningitis, sepsis, or fever-rash emergency content.
+    expected_guides:
+      - id: GD-589
+        slug: sepsis-recognition-antibiotic-protocols
+      - id: GD-232
+        slug: first-aid
+      - id: GD-235
+        slug: infection-control
+      - id: GD-284
+        slug: infant-child-care
+      - id: GD-268
+        slug: public-health-disease-surveillance
+    required_concepts:
+      - fever plus stiff neck, severe headache, light sensitivity, vomiting, hard-to-wake, or petechial rash is urgent
+      - do not reassure as routine viral illness when red flags are present
+      - urgent medical evaluation or evacuation first
+    forbidden_or_suspicious:
+      - home watchful waiting as primary plan
+      - routine headache or stomach-bug framing
+
+  ez:
+    topic: newborn_sepsis_sick_infant
+    risk_tier: red_flag_emergency
+    expectation_notes:
+      - primary evidence owners are neonatal danger-sign / pediatric emergency guides
+      - general sepsis and first-aid guides are useful backup, but should not be forced above neonatal owners
+    expected_guides:
+      - id: GD-492
+        slug: postpartum-care-mother-infant
+      - id: GD-298
+        slug: pediatric-emergency-medicine
+      - id: GD-617
+        slug: pediatric-emergencies-field
+      - id: GD-284
+        slug: infant-child-care
+      - id: GD-589
+        slug: sepsis-recognition-antibiotic-protocols
+      - id: GD-232
+        slug: first-aid
+    required_concepts:
+      - newborn fever, low temperature, limpness, poor feeding, breathing trouble, weak behavior, or hard-to-wake state is urgent
+      - urgent medical help or evacuation first
+      - keep warm and monitor breathing/alertness while seeking help
+    forbidden_or_suspicious:
+      - normal newborn reassurance when severe behavior change is present
+      - routine feeding advice as primary answer
+
+  fa:
+    topic: unknown_child_ingestion_poisoning
+    risk_tier: red_flag_emergency
+    expected_guides:
+      - id: GD-898
+        slug: unknown-ingestion-child-poisoning-triage
+      - id: GD-301
+        slug: toxicology-poisoning-response
+      - id: GD-232
+        slug: first-aid
+    required_concepts:
+      - call poison control or emergency help
+      - check airway, breathing, alertness, drooling, burns, vomiting, and container clues
+      - do not induce vomiting unless directed
+      - do not neutralize unknown acids/alkalis with home substances
+      - nothing by mouth when drooling, sleepy, or swallowing/breathing is affected
+    forbidden_or_suspicious:
+      - make them vomit
+      - give milk, vinegar, baking soda, or charcoal as default home fix
+      - wait and see for altered mental status or mouth burns
+
+  fb:
+    topic: infected_wound_spreading_redness
+    risk_tier: red_flag_emergency
+    expected_guides:
+      - id: GD-585
+        slug: wound-hygiene-infection-prevention
+      - id: GD-589
+        slug: sepsis-recognition-antibiotic-protocols
+      - id: GD-232
+        slug: first-aid
+    required_concepts:
+      - spreading redness, red streaks, pus plus fever, weakness, or worsening pain needs urgent care
+      - mark/monitor spread only while arranging escalation
+      - clean/protect wound without squeezing or cutting into it
+    forbidden_or_suspicious:
+      - home cleaning only for fever, red streaks, or systemic weakness
+      - lance, squeeze, or dig into the wound
+
+  fc:
+    topic: abdominal_trauma_emergency
+    risk_tier: red_flag_emergency
+    expectation_notes:
+      - GD-558 EMS/field triage and GD-039 field surgery may be adjacent triage or surgical owners requiring review.
+      - Do not treat GD-558 or GD-039 as automatic rank-1 owners unless the answer card or prompt evidence explicitly says so.
+    expected_guides:
+      - id: GD-380
+        slug: acute-abdominal-emergencies
+      - id: GD-297
+        slug: trauma-hemorrhage-control
+      - id: GD-232
+        slug: first-aid
+    required_concepts:
+      - hard belly, worsening pain, vomiting after abdominal impact, dizziness/pallor, or handlebar injury is urgent
+      - treat for shock and urgent evacuation
+      - avoid food/drink if urgent abdominal injury is suspected
+    forbidden_or_suspicious:
+      - routine stomachache or watch-at-home framing for red flags
+      - laxatives or pain-masking advice as first action
+
+  fd:
+    topic: dangerous_activation_mania_crisis
+    risk_tier: red_flag_emergency
+    expected_guides:
+      - id: GD-859
+        slug: recognizing-mental-health-crises
+      - slug: psychological-first-aid-peer-support
+      - slug: anxiety-stress-self-care
+    required_concepts:
+      - days of little sleep plus pacing, grandiosity, invincibility, recklessness, or unsafe wandering is a crisis pattern
+      - reduce immediate access to hazards and supervise calmly
+      - urgent evaluation or crisis support, not routine stress advice
+    forbidden_or_suspicious:
+      - routine insomnia-only advice
+      - anxiety-only reassurance when unsafe choices or invincibility are present
+      - confrontation or punishment framing
+
+  fe:
+    topic: stroke_tia_cardiac_overlap
+    risk_tier: red_flag_emergency
+    expected_guides:
+      - id: GD-232
+        slug: first-aid
+      - id: GD-601
+        slug: acute-coronary-cardiac-emergencies
+    required_concepts:
+      - sudden facial droop, slurred speech, one-sided weakness/numbness, or transient focal deficits are emergency/TIA-stroke signs
+      - chest pain plus focal neurologic symptoms stays emergency-first
+      - call emergency help now and record last-known-well time
+      - do not wait for outpatient follow-up because symptoms improved
+    forbidden_or_suspicious:
+      - anxiety-only framing for focal neurologic signs
+      - outpatient follow-up as first action after transient deficits

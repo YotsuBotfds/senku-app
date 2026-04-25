@@ -75,6 +75,7 @@ Cold water submersion triggers immediate physiological responses independent of 
 - **If conscious in water:** Do not swim hard (exhaustion risk). Assume survival floating position (HELP or huddle).
 - **If face submerged:** Hold breath; surface immediately for controlled breathing.
 - **Avoid panic:** Recognize gasp reflex as involuntary. Train breathing control before immersion in cold water.
+- **After rescue from gasping or submersion:** Treat airway and breathing first. Call emergency help, check breathing, start CPR with rescue breaths if not breathing normally, remove wet clothing if safe, keep horizontal, and rewarm gently.
 
 </section>
 
@@ -450,6 +451,14 @@ Submersion under ice is universally fatal without rapid rescue (10–15 min befo
 
 ### Assisted Rescue
 
+Immediate priorities if someone fell through ice or went under:
+
+1. **Call emergency help now** — send one person to call while others prepare safe reach/throw tools.
+2. **Keep rescuers off unsafe ice** — do not walk, run, or crawl toward the hole unless trained and protected.
+3. **Reach or throw if visible or reachable** — from shore, a dock, a boat, or clearly solid ice, extend a rope, pole, branch, ladder, throw bag, or flotation into the hole.
+4. **Pull horizontally** — keep the victim low, slide or crawl away from the hole, and keep rescuers' weight spread out.
+5. **Treat it as cold-water drowning after retrieval** — check breathing, start CPR with rescue breaths if they are not breathing normally, keep them horizontal, remove wet clothing if safe, rewarm gently, and avoid rough handling.
+
 1. **Do not approach hole directly** — Rescuer may fall through.
 2. **Use long pole or ladder** — Extend from solid ice at 45° angle.
 3. **Lay ladder or plank flat** — Rescuer lies flat (distributes weight), reaching victim.
@@ -457,12 +466,14 @@ Submersion under ice is universally fatal without rapid rescue (10–15 min befo
 
 ### Submersion Under Ice
 
-If victim goes under ice:
-1. **Mark hole location** — Pace along ice edge to estimate drift (current carries underwater body).
-2. **Check downstream** — Move 1–2 meters downwind/downstream; often body drifts.
-3. **Probe ice** — Use pole to feel for body beneath ice.
-4. **Chisel hole** — Break ice in search area to retrieve body.
-5. **Resuscitate** — Begin CPR immediately; hypothermia provides neuroprotection (patients have survived 45 min submerged).
+If someone just went under ice, assume they may still be alive. The first actions are emergency response and assisted rescue: call for emergency help, keep rescuers off weak ice, and if the person is visible or reachable, reach or throw a rope, pole, branch, ladder, throw bag, or flotation into the hole. Do not lead with probing, chiseling, or body-search actions while a rescue attempt is still possible. After retrieval, check breathing immediately; start CPR with rescue breaths if they are not breathing normally, then rewarm gently and avoid rough handling.
+
+Downstream search or recovery actions belong only after emergency help is called, rescuers are kept off unsafe ice, immediate reach/throw rescue is not possible, and the victim is no longer visible or reachable:
+1. **Mark hole location from a safe place** — Do not pace onto suspect ice.
+2. **Direct trained responders to the last-seen point and likely drift** — Current, wind, or flow can move the victim under ice.
+3. **Probe only from a controlled safe position** — Use a pole or rescue tool only when it does not put another person on unsafe ice.
+4. **Chisel or cut only as a rescue-team action** — Breaking ice creates new hazards and should not delay emergency response or visible/reachable rescue.
+5. **Resuscitate after contact** — Begin CPR immediately if not breathing normally; hypothermia can be protective, so continue until advanced help takes over.
 
 **Key:** Even if unresponsive and apparently dead, resuscitate all cold-water submersion victims. Do not declare death until patient is warm.
 

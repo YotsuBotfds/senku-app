@@ -7,6 +7,18 @@ difficulty: advanced
 tags:
   - essential
   - medical
+aliases:
+  - missed period one sided pelvic pain fainting
+  - possible pregnancy shoulder pain belly pain
+  - early pregnancy bleeding dizziness
+  - bleeding in early pregnancy with dizziness
+  - early pregnancy bleeding dizziness no uterine massage
+  - pregnant shoulder belly pain emergency first
+  - heavy bleeding severe pelvic pain
+  - heavy pelvic bleeding severe pelvic pain no direct pressure
+  - vaginal bleeding pelvic pain do not inspect internally
+  - gynecological emergency first action
+  - gynecologic emergency first action path
 icon: 🏥
 description: Menstrual disorders, ectopic pregnancy recognition, ovarian torsion, sexual assault evidence preservation, postpartum hemorrhage, breast infections, urinary tract infections, pelvic inflammatory disease, cervical cancer screening basics, menstrual cup/pad alternatives.
 related:
@@ -31,6 +43,16 @@ liability_level: critical
 :::danger
 Gynecological emergencies (ectopic pregnancy, ovarian torsion, severe hemorrhage) are life-threatening and require rapid assessment and intervention. Many conditions mimic appendicitis or other acute abdomen emergencies. High suspicion and systematic examination are essential.
 :::
+
+## Complaint-First Red-Zone Ownership: Pregnancy, Pelvic Pain, Heavy Bleeding
+
+Use this guide first for **missed or late period plus one-sided pelvic pain**, **possible pregnancy plus shoulder-tip or belly pain**, **early pregnancy bleeding with dizziness or fainting**, and **heavy vaginal bleeding with severe pelvic pain**. Treat these as possible **ectopic pregnancy, ovarian torsion, miscarriage complications, or hemorrhage** until proven otherwise.
+
+First actions are emergency actions: arrange urgent medical care or evacuation now, assess airway/breathing/circulation, lay the person flat if faint or dizzy, keep them warm, do not give food or drink if surgery may be needed, and check a pregnancy test if available without delaying escalation.
+
+For vaginal bleeding with pelvic pain or possible pregnancy, use pads or cloth only to observe bleeding amount during transport. Do **not** apply direct pressure inside the vagina, perform internal inspection, or use uterine massage unless this is clearly postpartum bleeding after a recent delivery. Uterine massage belongs to postpartum hemorrhage, not early pregnancy bleeding, missed-period pain, or undifferentiated heavy pelvic bleeding.
+
+Do **not** route these red-zone prompts to routine menstrual-cramp care, STI-only advice, hemorrhoid/direct-pressure care, nosebleed cleanup, cough/cold care, or general survival basics just because the user says "period," "bleeding," "cramps," or "not sure if pregnant."
 
 <section id="menstrual-disorders">
 
@@ -59,6 +81,8 @@ Gynecological emergencies (ectopic pregnancy, ovarian torsion, severe hemorrhage
 ### Menorrhagia (Heavy Menstrual Bleeding)
 
 **Definition:** Menstrual bleeding >80 mL per cycle (typically soaks >5 pads per day).
+
+**Red-zone boundary:** Heavy bleeding with severe pelvic pain, dizziness, fainting, possible pregnancy, missed or late period, shoulder-tip pain, or belly pain is not routine menorrhagia care. Treat it as possible ectopic pregnancy, ovarian torsion, miscarriage complication, or gynecologic hemorrhage: arrange urgent medical care or evacuation first. Use pads or cloth only to observe bleeding amount during transport. Do not apply vaginal direct pressure, do not perform internal inspection, and do not use uterine massage unless this is clearly postpartum bleeding after delivery or a visible external wound is the bleeding source.
 
 **Causes:**
 - Fibroid uterus (benign smooth muscle tumor)
@@ -95,6 +119,8 @@ Gynecological emergencies (ectopic pregnancy, ovarian torsion, severe hemorrhage
 
 Ectopic pregnancy is fertilized egg implanted outside uterus (usually fallopian tube). Life-threatening emergency with high mortality if untreated.
 
+**Emergency-first aliases:** early pregnancy bleeding with dizziness, bleeding in early pregnancy with faintness, missed or late period with one-sided pelvic pain, possible pregnancy with shoulder-tip pain or belly pain, and heavy bleeding with severe pelvic pain all route here first. In these presentations, do not apply vaginal direct pressure, do not inspect internally, and do not use uterine massage unless the person has clearly just delivered a baby or there is a visible external wound.
+
 ### Risk Factors
 
 - **Prior pelvic inflammatory disease (PID):** Scarring narrows tubes
@@ -123,10 +149,16 @@ Ectopic pregnancy is fertilized egg implanted outside uterus (usually fallopian 
 **Rupture (emergency):**
 - Sudden severe abdominal pain (often described as worst pain ever)
 - Vaginal bleeding
+- Shoulder-tip pain, belly pain, fainting, or severe dizziness can mean internal bleeding
 - Hypotension, tachycardia, shock (pale, clammy, lightheaded)
 - Peritoneal signs (tenderness throughout abdomen)
 
 ### Management
+
+**Bleeding in early pregnancy with dizziness or fainting:**
+- Arrange urgent medical care or evacuation immediately; treat as possible ectopic rupture or serious hemorrhage until proven otherwise.
+- Lay the person flat if dizzy or faint, keep warm, monitor airway/breathing/circulation, and avoid food or drink if surgery may be needed.
+- Use pads or cloth only to observe bleeding amount during transport. Do not apply direct pressure to vaginal bleeding, do not perform internal inspection, and do not use uterine massage.
 
 **Suspected ectopic (before rupture):**
 - Confirm with ultrasound if available
@@ -207,6 +239,8 @@ Ovarian torsion is twisting of ovarian ligament, cutting off blood supply. Surgi
 ## Postpartum Hemorrhage: Recognition and Management
 
 Postpartum hemorrhage (PPH) is leading cause of maternal death globally. Defined as bleeding >500 mL within 24 hours of delivery (>1000 mL = severe).
+
+This section applies only after delivery. Do not borrow uterine massage, manual uterine exploration, or postpartum laceration inspection for early pregnancy bleeding, missed-period pelvic pain, or undifferentiated heavy vaginal bleeding with severe pelvic pain.
 
 ### Primary Causes
 

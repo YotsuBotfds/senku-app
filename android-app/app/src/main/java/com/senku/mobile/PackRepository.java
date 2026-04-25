@@ -233,6 +233,7 @@ public final class PackRepository implements AutoCloseable {
     private final String ftsTableName;
     private final boolean ftsSupportsBm25;
     private final Map<String, Map<String, Double>> anchorRelatedLinkWeights;
+    private final AnswerCardDao answerCardDao;
     private boolean closed;
 
     public PackRepository(File databaseFile, File vectorFile) {
@@ -255,6 +256,7 @@ public final class PackRepository implements AutoCloseable {
         this.ftsTableName = ftsRuntime.tableName;
         this.ftsSupportsBm25 = ftsRuntime.supportsBm25;
         this.anchorRelatedLinkWeights = loadAnchorRelatedLinkWeights();
+        this.answerCardDao = new AnswerCardDao(database);
     }
 
     public boolean hasVectorStore() {
@@ -386,6 +388,10 @@ public final class PackRepository implements AutoCloseable {
             return new ArrayList<>(ordered.subList(0, cappedLimit));
         }
         return ordered;
+    }
+
+    public List<AnswerCard> loadAnswerCardsForGuideIds(Set<String> guideIds, int limit) {
+        return answerCardDao.loadCardsForGuideIds(guideIds, limit);
     }
 
     private ParsedSearchQuery parseSearchQuery(String rawQuery) {

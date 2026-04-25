@@ -7,8 +7,42 @@ difficulty: intermediate
 tags:
   - essential
   - safety
+  - electrical shock
+  - electric shock
+  - electrocution
+  - electrical injury first aid
+  - shocked and collapsed
+  - cannot let go
+  - live wire
+  - exposed wire
+  - downed power line
+  - wet breaker box
+  - sparking outlet
+  - outlet spark
+aliases:
+  - someone got shocked
+  - someone was shocked and cannot let go
+  - shocked and cannot let go
+  - shocked and collapsed
+  - got shocked and collapsed
+  - cannot let go of wire
+  - won't let go of wire
+  - person stuck to live wire
+  - collapsed near electrical equipment
+  - collapsed after shock
+  - exposed live wire
+  - exposed live wire in the wall
+  - live wire in wall
+  - bare wire in wall
+  - bare conductor
+  - downed line
+  - downed power line
+  - wet breaker box
+  - breaker box got wet
+  - outlet sparked
+  - sparking outlet
 icon: ⚡
-description: Comprehensive electrical safety for post-infrastructure environments including grounding principles, insulation testing, circuit protection, lockout/tagout procedures, common electrocution scenarios and prevention, working safely with salvaged electrical equipment, arc flash awareness, and emergency response to electrical injuries.
+description: Hazard-first electrical safety for electrical shock victims, cannot-let-go contact, shocked-and-collapsed emergencies, collapse near electrical equipment, exposed live wires, downed lines, wet breaker boxes, sparking outlets, grounding, insulation testing, lockout/tagout, arc flash awareness, and emergency response to electrical injuries before repair, CPR, or troubleshooting.
 related:
   - electrical-wiring
   - electricity-basics-for-beginners
@@ -39,7 +73,11 @@ This guide is part of the **Electrical Systems Series**. Recommended reading ord
 
 ## Step 1: What is your electrical safety problem right now?
 
-**"Someone got shocked / is still in contact with a wire."** → Do NOT touch the person. Cut power at the breaker or source first. If you cannot, use a dry wooden board or rubber object to separate them. Once clear, check breathing and pulse — begin CPR if absent. See [Emergency response](#emergency-response).
+**"Someone was shocked and cannot let go / got shocked and collapsed / collapsed near electrical equipment."** -> Do NOT touch the person. Call emergency services if available and cut power at the breaker, disconnect, unplug, or source first if you can do it from a dry, safe place. If you cannot isolate power, keep everyone back and have the utility or trained electrical responder disconnect it; only use a dry non-conductive object from a dry insulated position if immediate separation is unavoidable and you can avoid becoming part of the circuit. Once the person is clear and the scene is safe, check breathing and pulse; begin CPR and use an AED if available when breathing is absent or abnormal. See [Emergency response](#emergency-response) and [First Aid & Emergency Response](../first-aid.html#cpr).
+
+**"Exposed live wire / downed line / wet breaker box / sparking outlet."** -> Treat this as a hazard before repair, flood cleanup, or generic troubleshooting. Keep people back, do not touch exposed conductors, wet panels, standing water, or metal equipment, and shut off power only from a dry, safe location. For a downed utility line, do not approach, do not try to test or move it, and do not use a non-conductive object to separate it from anything. Keep people, vehicles, animals, fences, puddles, and wet ground well away until the utility or trained electrical responder de-energizes and grounds it. See [Insulation & conductor safety](#insulation), [Arc flash awareness](#arc-flash), and [Circuit protection](#circuit-protection).
+
+**"There is an exposed live wire in the wall. What should I do right now?"** -> Do not touch the wire, wall box, wet surface, or nearby metal. Keep people away, call emergency services or a qualified electrical responder if available, and shut off that circuit or the main breaker only from a dry safe location. Treat the area as live until power is off and verified with a tester.
 
 **"I see sparks / something electrical is smoking or on fire."** → Turn off power at the main breaker or source if you can do so safely. Do not throw water on an electrical fire. Move people away. If smoke or flame is spreading, evacuate first. See [Arc flash awareness](#arc-flash) and [Circuit protection](#circuit-protection).
 
@@ -341,17 +379,18 @@ Arc flash typically occurs during:
 ### Rescuing a Shock Victim
 
 :::danger
-**Do NOT touch a person who is in contact with an energized conductor.** You will become a second victim. De-energize the source FIRST. If you cannot de-energize, use a dry, non-conductive object (wooden board, dry rope, leather belt) to separate the victim from the conductor. Stand on dry, insulating material (rubber mat, dry wood) while attempting rescue.
+**Do NOT touch a person who is in contact with an energized conductor.** You will become a second victim. Call emergency services if available and de-energize the source FIRST from a dry, safe location. If you cannot de-energize, keep everyone back and wait for the utility or a trained electrical responder when possible. If immediate separation is unavoidable, use only a dry non-conductive object such as a dry wooden board or rated insulated rescue hook, stand on dry insulating material, and avoid any wet, dirty, metal, or uncertain material.
 :::
 
 ### First Aid for Electrical Injury
 
-1. **Ensure the scene is safe** — verify power is off; check for secondary hazards
-2. **Check responsiveness** — if the victim is unconscious, check for breathing and pulse
-3. **Begin CPR if needed** — electrical shock often causes cardiac arrest; immediate CPR is the most important intervention
-4. **Treat burns** — electrical burns may be more severe internally than they appear externally; cool with clean water, cover with sterile dressings
-5. **Immobilize the spine** — if the victim was thrown or fell, treat as a potential spinal injury
-6. **Monitor continuously** — cardiac arrhythmias can develop hours after electrical contact; keep the victim at rest and under observation for at least 24 hours
+1. **Ensure the scene is safe** — verify power is off; check for secondary hazards before touching the person
+2. **Call emergency services or begin fastest evacuation** — electrical injury, collapse, burns, or cannot-let-go contact can cause sudden cardiac arrest
+3. **Check responsiveness, breathing, and pulse** only after safe access
+4. **Begin CPR and use an AED if needed** — electrical shock often causes cardiac arrest; CPR/AED comes before routine shock positioning, but only once the person is safely clear and the scene is de-energized
+5. **Treat burns** — electrical burns may be more severe internally than they appear externally; cool with clean water, cover with sterile dressings
+6. **Immobilize the spine** — if the victim was thrown or fell, treat as a potential spinal injury
+7. **Monitor continuously** — cardiac arrhythmias can develop hours after electrical contact; keep the victim at rest and under observation for at least 24 hours
 
 ### Burn Pattern Awareness
 

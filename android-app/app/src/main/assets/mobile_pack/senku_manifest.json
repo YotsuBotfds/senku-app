@@ -1,10 +1,11 @@
 {
   "counts": {
-    "chunks": 49654,
+    "answer_cards": 6,
+    "chunks": 49726,
     "deterministic_rules": 9,
-    "guide_related_links": 5737,
+    "guide_related_links": 5743,
     "guides": 754,
-    "retrieval_metadata_guides": 231
+    "retrieval_metadata_guides": 233
   },
   "embedding": {
     "dimension": 768,
@@ -17,17 +18,17 @@
   },
   "files": {
     "sqlite": {
-      "bytes": 285495296,
+      "bytes": 286695424,
       "path": "senku_mobile.sqlite3",
-      "sha256": "cf449ee96654ad6cfffa51436ff57be74e2b41758c889b49d317e9136e283747"
+      "sha256": "bf2d8e616c2855c63ab52d72c537290ca2e022b967e975368059cce1a3366540"
     },
     "vectors": {
-      "bytes": 76268576,
+      "bytes": 76379168,
       "path": "senku_vectors.f16",
-      "sha256": "e5cfa2995623ac250e11c7e7f1a1034e98a94fbf1c02a8ba68ded5c112788981"
+      "sha256": "893a7d5704603dd2dfb9645dd90c845e9ede61f4d1f27b5e7fe86bee5df81802"
     }
   },
-  "generated_at": "2026-04-21T21:18:59.639811+00:00",
+  "generated_at": "2026-04-25T00:08:46.459832+00:00",
   "pack_format": "senku-mobile-pack-v2",
   "pack_version": 2,
   "runtime_defaults": {
@@ -41,6 +42,43 @@
     ]
   },
   "schema": {
+    "answer_card_clauses": {
+      "columns": [
+        "card_id",
+        "clause_kind",
+        "ordinal",
+        "text",
+        "trigger_terms_json"
+      ],
+      "metadata_only": true
+    },
+    "answer_card_sources": {
+      "columns": [
+        "card_id",
+        "source_guide_id",
+        "slug",
+        "title",
+        "sections_json",
+        "is_primary"
+      ],
+      "metadata_only": true
+    },
+    "answer_cards": {
+      "columns": [
+        "card_id",
+        "guide_id",
+        "slug",
+        "title",
+        "risk_tier",
+        "evidence_owner",
+        "review_status",
+        "runtime_citation_policy",
+        "routine_boundary",
+        "acceptable_uncertain_fit",
+        "notes"
+      ],
+      "metadata_only": true
+    },
     "deterministic_rules": {
       "columns": [
         "rule_id",
@@ -62,6 +100,9 @@
       "guides",
       "guide_related",
       "deterministic_rules",
+      "answer_cards",
+      "answer_card_clauses",
+      "answer_card_sources",
       "chunks",
       "lexical_chunks_fts",
       "lexical_chunks_fts4",

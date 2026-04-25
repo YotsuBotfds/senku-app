@@ -7,8 +7,14 @@ difficulty: advanced
 tags:
   - essential
   - medical
+  - emergency
+  - triage
+  - anaphylaxis
+  - epinephrine
+  - allergic-emergency
+  - allergen-wheeze
 icon: 🚨
-description: Allergy spectrum (mild to anaphylaxis), epinephrine protocols, biphasic reactions, improvised epinephrine auto-injectors, antihistamine pharmacology, plant-based antihistamines (quercetin, stinging nettle), desensitization principles, allergy identification and avoidance, anaphylaxis action plans.
+description: "Emergency triage and red flags for allergic reactions and anaphylaxis: allergen-triggered wheeze after bee/wasp sting, food or medicine exposure, throat swelling, hives with face/lip/tongue swelling, blue lips or cannot talk, rescue inhaler failure after allergen, epinephrine-first protocols, biphasic reactions, antihistamines as adjuncts, allergy identification and avoidance, and anaphylaxis action plans."
 related:
   - bites-stings-itch-relief
   - medications
@@ -35,7 +41,11 @@ Use this table first. Match the **patient complaint or visible sign** to decide 
 |---|---|---|---|
 | "Throat swelling", "throat closing", "lump in throat", difficulty swallowing | **ANAPHYLAXIS** | Give epinephrine NOW | Epinephrine IM → lie flat → call 911 |
 | "Can't breathe", wheezing, stridor, shortness of breath, chest tightness | **ANAPHYLAXIS** | Give epinephrine NOW | Epinephrine IM → lie flat → call 911 |
+| Wheeze or chest tightness after bee/wasp sting, food, medicine, or another likely allergen | **ANAPHYLAXIS until proven otherwise** | Give epinephrine NOW; do not treat as asthma-only | Epinephrine IM → lie flat → call 911; use prescribed inhaler only as an adjunct |
+| Blue lips, gray color, or can barely talk after suspected allergen exposure | **ANAPHYLAXIS / airway emergency** | Give epinephrine NOW | Epinephrine IM → call 911; prepare for rescue breathing if trained |
+| Rescue inhaler is not helping after allergen exposure | **ANAPHYLAXIS until proven otherwise** | Give epinephrine NOW | Epinephrine IM → call 911; repeat epinephrine if worsening per protocol |
 | "Face swelling", lip/tongue swelling, swollen eyes — especially after sting or food | **ANAPHYLAXIS** if airway involved | Give epinephrine if any breathing difficulty or dizziness | Epinephrine IM if airway signs; otherwise antihistamine + observe |
+| Hives plus face/lip/tongue swelling or any breathing trouble | **ANAPHYLAXIS** | Give epinephrine NOW | Epinephrine IM → lie flat → call 911 |
 | Dizziness, faintness, rapid heartbeat, cold clammy skin after allergen exposure | **ANAPHYLAXIS** (cardiovascular) | Give epinephrine NOW | Epinephrine IM → lie flat → elevate legs → call 911 |
 | Hives, itchy welts, rash — no breathing trouble, no swelling of throat/face | **Mild–moderate** | Observe; do NOT give epinephrine unless progressing | Antihistamine → cool compress → monitor 4–6 h |
 | "Face swelling after sting" but breathing is normal, no dizziness | **Moderate (anaphylactoid)** | Observe closely; have epinephrine ready | Antihistamine + corticosteroid → monitor for 4–6 h |
@@ -44,12 +54,71 @@ Use this table first. Match the **patient complaint or visible sign** to decide 
 
 **Mild vs severe — the hard rule:**
 - **Any breathing difficulty, throat/tongue swelling, or dizziness/fainting after allergen exposure = anaphylaxis until proven otherwise → give epinephrine first.**
+- **Wheeze after a sting, food, medicine, or other likely allergen is not "just asthma" or panic until anaphylaxis is addressed. Epinephrine and emergency help come first; inhalers are adjuncts.**
 - **Skin-only symptoms (hives, itch, rash) with normal breathing and normal consciousness = mild/moderate → antihistamine, observe, keep epinephrine nearby.**
 - **When in doubt, give epinephrine.** It is far safer to give an unnecessary dose than to withhold a needed one.
 
 :::danger
 Anaphylaxis is a life-threatening allergic emergency. Epinephrine is the only reliably effective first-line medication. Delays or use of other drugs (antihistamines, steroids alone) can be fatal. Recognize anaphylaxis immediately; administer epinephrine without delay.
 :::
+
+<section id="anaphylaxis-bee-sting-wheeze">
+
+## Wheezing Right After a Bee Sting
+
+"I started wheezing right after a bee sting. What matters first?" Treat this as **anaphylaxis first**. Give epinephrine immediately if available, call emergency help, and use a rescue inhaler only as an adjunct while help is arranged.
+
+</section>
+
+<section id="anaphylaxis-throat-swelling-vs-asthma">
+
+## Throat Swelling Versus Asthma Flare
+
+"How do I tell if this is throat swelling or just an asthma flare?" If throat tightness, swelling, wheeze, or breathing trouble follows a likely allergen, treat it as **anaphylaxis until proven otherwise** and give epinephrine first if available.
+
+</section>
+
+<section id="anaphylaxis-inhaler-failure-after-food">
+
+## Rescue Inhaler Not Helping After Food
+
+"My rescue inhaler is not helping after I ate something. What do I do first?" Treat inhaler failure after food, medicine, or another likely allergen as **anaphylaxis first**: give epinephrine if available and call emergency help.
+
+</section>
+
+<section id="anaphylaxis-blue-lips-cannot-talk-sting">
+
+## Blue Lips and Can Barely Talk After a Sting
+
+"They have blue lips and can barely talk after a sting. What matters first?" This is an airway emergency and possible **anaphylaxis**. Give epinephrine immediately if available, call emergency help, and prepare basic airway/rescue-breathing support if trained.
+
+</section>
+
+<section id="anaphylaxis-panic-asthma-uncertain">
+
+## Panic, Anaphylaxis, or Asthma Unclear
+
+"I can't tell if this is panic or anaphylaxis or asthma. What do I do first?" If breathing trouble follows allergen exposure or appears with hives, swelling, throat symptoms, dizziness/fainting, or blue/gray lips, treat as **anaphylaxis first** and give epinephrine if available.
+
+</section>
+
+<section id="anaphylaxis-hives-face-swelling-breathing">
+
+## Breathing Trouble With Hives and Face Swelling
+
+"They have breathing trouble with hives and face swelling. What matters first?" Treat this as **anaphylaxis**. Give epinephrine immediately if available, call emergency help, and do not delay for antihistamines, steroids, or asthma-only steps.
+
+</section>
+
+<section id="anaphylaxis-red-zone-routing">
+
+## Anaphylaxis Red-Zone Routing: Allergens, Wheeze, Hives, Swelling
+
+If the question is "what matters first" after wheezing right after a bee or wasp sting, blue lips or can barely talk after a sting, rescue inhaler not helping after eating food or taking medicine, throat swelling versus asthma, panic versus anaphylaxis versus asthma, or breathing trouble with hives and face swelling, route here first.
+
+First action: treat as **anaphylaxis until proven otherwise**. Give epinephrine immediately if available and call emergency help. Use an asthma rescue inhaler only as downstream support while help is arranged; do not treat allergen-triggered airway symptoms as ordinary asthma-only. Ordinary asthma without likely allergen exposure, hives, swelling, throat symptoms, dizziness/fainting, or blue/gray lips routes to asthma support instead.
+
+</section>
 
 <section id="allergy-spectrum">
 
@@ -83,20 +152,20 @@ Allergic reactions range from minor annoyance to fatal in minutes. Understanding
 
 ### Anaphylactoid Reactions (Moderate, Reversible)
 
-**Definition:** Allergic symptoms involving multiple systems without yet being life-threatening (respiratory and cardiovascular stable).
+**Definition:** Allergic symptoms involving multiple systems without respiratory or cardiovascular compromise. If wheezing, throat tightness, trouble breathing, dizziness, faintness, or blue lips appear after a likely allergen, treat it as anaphylaxis instead of this moderate category.
 
 **Symptoms:**
 - Systemic flushing (red skin, sensation of warmth)
 - Urticaria + angioedema (swelling of lips, tongue, throat)
 - Gastrointestinal: abdominal pain, vomiting, diarrhea
-- Bronchospasm (mild): wheezing without severe shortness of breath
+- Mild chest tightness or cough without wheeze, throat tightness, trouble breathing, dizziness, or color change
 - Hypotension precursor: dizziness, lightheadedness, weakness
 
 **Treatment:**
 - Give antihistamine (first-line for moderate reaction)
 - Give corticosteroid (oral prednisone 0.5–1 mg/kg or IV dexamethasone)
 - Observe patient 4–6 hours for progression to anaphylaxis
-- Do NOT give epinephrine unless clear respiratory/circulatory compromise
+- Do NOT keep this in the moderate category if respiratory or circulatory signs appear; move immediately to anaphylaxis care and give epinephrine first when indicated.
 
 **Prognosis:** Excellent if recognized and treated early. 10–20% progress to anaphylaxis.
 

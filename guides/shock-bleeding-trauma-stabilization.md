@@ -336,25 +336,29 @@ This procedure is used only as a last resort when a patient is actively dying fr
 
 ## Crush Injuries and Crush Syndrome
 
-Large crushing injuries (trapped under debris, logs, rocks) can cause traumatic crush syndrome: shock from release of cellular contents when the person is freed.
+Large crushing injuries (trapped under debris, logs, rocks, or pinned under a heavy weight) can cause traumatic crush syndrome: shock from release of cellular contents when the person is freed. A tight shiny limb, hard calf after being pinned, pain out of proportion, pain when toes or fingers are moved, numbness, weakness, or rapidly worsening swelling after crush injury is an urgent compartment/crush emergency first, not foot care, DVT, routine soreness, or rehabilitation.
+
+Index these exact crush/compartment patterns to this section: crush plus worsening pain at rest; swollen tight ankle with pain on toe movement; pinned under weight plus numb foot plus hard calf; pain out of proportion plus tightening limb; crushed forearm plus finger tingling plus building pain; tight shiny unbearable swelling. Do not route these to foot care, DVT, rehabilitation, NSAIDs, ice, compression, or elevate-above-heart advice. Remove constricting shoes, jewelry, wraps, or splints; keep the limb at heart level; arrange urgent surgical evacuation.
 
 ### Recognition
 
 - Heavy weight on limb or torso for extended period (> 4 hours)
 - Limb appears swollen, discolored, or has obvious compartment syndrome (skin tight, shiny, very painful to passive movement)
+- Pain out of proportion, pain when toes/fingers are gently moved, numbness, weakness, or worsening swelling after a crush injury
+- Pinned under weight with a numb foot/hand, hard calf/forearm, finger/toe tingling, or worsening pain even while still
 - Upon release: shock, hypothermia, hyperkalemia (low heartbeat, cardiac arrhythmia)
 
 ### Field Management
 
-1. **Do NOT remove the weight quickly.** If possible, gradually reduce pressure or pack ice around the limb before full removal (if time permits).
+1. **Do NOT remove the weight quickly.** If possible, gradually reduce pressure before full removal while preparing for shock care and evacuation.
 
 2. **Upon release, expect shock.** Follow shock management protocol (see below).
 
 3. **Aggressive fluid replacement if available.** Crush victims need 2–3 times normal fluid intake to prevent kidney failure. If you have water, encourage drinking if patient is conscious and able to swallow.
 
-4. **Expect rhabdomyolysis complications.** Dark brown urine, weakness, and cardiac arrhythmias are signs of muscle breakdown. Evacuation is urgent.
+4. **Expect rhabdomyolysis complications.** Dark brown urine, weakness, and cardiac arrhythmias are signs of muscle breakdown. Evacuation is urgent; do not manage as routine soreness, back pain, or rehabilitation.
 
-5. **Splint the limb.** Immobilize the crushed limb to reduce further tissue damage and swelling.
+5. **Protect the limb at heart level.** Remove constricting shoes, jewelry, tight wraps, or splints if they worsen circulation. Keep the crushed limb at heart level; do not elevate it above the heart when compartment syndrome is possible. Do not use ice, compression, NSAIDs, or DVT-style calf compression as the first response to these red flags. This is an urgent surgical evacuation problem.
 
 ## Shock Management Protocol
 

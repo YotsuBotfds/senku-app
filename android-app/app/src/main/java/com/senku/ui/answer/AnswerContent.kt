@@ -3,8 +3,18 @@
 package com.senku.ui.answer
 
 import com.senku.mobile.OfflineAnswerEngine
+import com.senku.mobile.ReviewedCardMetadata
 import java.util.Locale
 import kotlin.math.round
+
+enum class AnswerSurfaceLabel {
+    ReviewedCardEvidence,
+    GeneratedEvidence,
+    DeterministicRule,
+    LimitedFit,
+    Abstain,
+    Unknown,
+}
 
 data class AnswerContent(
     val short: String,
@@ -17,21 +27,43 @@ data class AnswerContent(
     val abstain: Boolean = false,
     val uncertainFit: Boolean = false,
     val showStreamingCursor: Boolean = false,
+    val answerSurfaceLabel: AnswerSurfaceLabel = AnswerSurfaceLabel.Unknown,
+    val answerProvenance: String = "",
+    val reviewedCardBacked: Boolean = false,
+    val reviewedCardMetadata: ReviewedCardMetadata = ReviewedCardMetadata.empty(),
 )
 
 fun fromAnswerRun(run: OfflineAnswerEngine.AnswerRun): AnswerContent {
+    val answerSurface = inferAnswerSurface(
+        mode = run.mode,
+        abstain = run.abstain,
+        deterministic = run.deterministic,
+        sourceCount = run.sources.size,
+        ruleId = run.ruleId,
+        reviewedCardMetadata = run.reviewedCardMetadata,
+    )
     return fromRenderedAnswer(
         body = run.answerBody,
         sourceCount = run.sources.size,
         host = parseHost(run.subtitle),
         elapsedSeconds = roundSeconds(run.elapsedMs / 1000.0),
-        evidence = if (run.abstain) Evidence.None else evidenceForSourceCount(run.sources.size),
+        evidence = evidenceForAnswerState(
+            confidenceLabel = run.confidenceLabel,
+            mode = run.mode,
+            abstain = run.abstain,
+            sourceCount = run.sources.size,
+        ),
         abstain = run.abstain,
         uncertainFit = run.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT,
         showStreamingCursor = false,
+        answerSurfaceLabel = answerSurface.answerSurfaceLabel,
+        answerProvenance = answerSurface.answerProvenance,
+        reviewedCardBacked = answerSurface.answerSurfaceLabel == AnswerSurfaceLabel.ReviewedCardEvidence,
+        reviewedCardMetadata = run.reviewedCardMetadata,
     )
 }
 
+@JvmOverloads
 fun fromRenderedAnswer(
     body: String,
     sourceCount: Int,
@@ -41,6 +73,10 @@ fun fromRenderedAnswer(
     abstain: Boolean,
     uncertainFit: Boolean = false,
     showStreamingCursor: Boolean = false,
+    answerSurfaceLabel: AnswerSurfaceLabel = AnswerSurfaceLabel.Unknown,
+    answerProvenance: String = "",
+    reviewedCardBacked: Boolean = false,
+    reviewedCardMetadata: ReviewedCardMetadata = ReviewedCardMetadata.empty(),
 ): AnswerContent {
     val cleaned = stripEnvelope(body)
     if (cleaned.isBlank()) {
@@ -53,6 +89,10 @@ fun fromRenderedAnswer(
             abstain = abstain,
             uncertainFit = uncertainFit,
             showStreamingCursor = showStreamingCursor,
+            answerSurfaceLabel = answerSurfaceLabel,
+            answerProvenance = answerProvenance,
+            reviewedCardBacked = reviewedCardBacked,
+            reviewedCardMetadata = reviewedCardMetadata,
         )
     }
 
@@ -74,6 +114,10 @@ fun fromRenderedAnswer(
         abstain = abstain,
         uncertainFit = uncertainFit,
         showStreamingCursor = showStreamingCursor,
+        answerSurfaceLabel = answerSurfaceLabel,
+        answerProvenance = answerProvenance,
+        reviewedCardBacked = reviewedCardBacked,
+        reviewedCardMetadata = reviewedCardMetadata,
     )
 }
 
@@ -119,6 +163,73 @@ fun evidenceForSourceCount(sourceCount: Int): Evidence {
         sourceCount >= 3 -> Evidence.Strong
         sourceCount >= 1 -> Evidence.Moderate
         else -> Evidence.None
+    }
+}
+
+fun evidenceForAnswerState(
+    confidenceLabel: OfflineAnswerEngine.ConfidenceLabel?,
+    mode: OfflineAnswerEngine.AnswerMode?,
+    abstain: Boolean,
+    sourceCount: Int,
+): Evidence {
+    if (abstain || mode == OfflineAnswerEngine.AnswerMode.ABSTAIN) {
+        return Evidence.None
+    }
+    if (mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT) {
+        return Evidence.None
+    }
+    return when (confidenceLabel) {
+        OfflineAnswerEngine.ConfidenceLabel.HIGH -> evidenceForSourceCount(sourceCount)
+        OfflineAnswerEngine.ConfidenceLabel.MEDIUM -> if (sourceCount > 0) Evidence.Moderate else Evidence.None
+        OfflineAnswerEngine.ConfidenceLabel.LOW -> Evidence.None
+        null -> evidenceForSourceCount(sourceCount)
+    }
+}
+
+data class AnswerSurfaceInference(
+    val answerSurfaceLabel: AnswerSurfaceLabel,
+    val answerProvenance: String,
+)
+
+@JvmOverloads
+fun inferAnswerSurface(
+    mode: OfflineAnswerEngine.AnswerMode?,
+    abstain: Boolean,
+    deterministic: Boolean,
+    sourceCount: Int,
+    ruleId: String = "",
+    reviewedCardMetadata: ReviewedCardMetadata = ReviewedCardMetadata.empty(),
+): AnswerSurfaceInference {
+    return when {
+        abstain || mode == OfflineAnswerEngine.AnswerMode.ABSTAIN -> AnswerSurfaceInference(
+            answerSurfaceLabel = AnswerSurfaceLabel.Abstain,
+            answerProvenance = "abstain_card",
+        )
+        mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT -> AnswerSurfaceInference(
+            answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+            answerProvenance = "uncertain_fit_card",
+        )
+        deterministic
+            && sourceCount > 0
+            && ruleId.trim().startsWith("answer_card:")
+            && reviewedCardMetadata.isPresent()
+            && reviewedCardMetadata.provenance == ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME
+            && reviewedCardMetadata.citedReviewedSourceGuideIds.isNotEmpty() -> AnswerSurfaceInference(
+            answerSurfaceLabel = AnswerSurfaceLabel.ReviewedCardEvidence,
+            answerProvenance = "reviewed_card_runtime",
+        )
+        deterministic -> AnswerSurfaceInference(
+            answerSurfaceLabel = AnswerSurfaceLabel.DeterministicRule,
+            answerProvenance = "deterministic_rule",
+        )
+        mode == OfflineAnswerEngine.AnswerMode.CONFIDENT && sourceCount > 0 -> AnswerSurfaceInference(
+            answerSurfaceLabel = AnswerSurfaceLabel.GeneratedEvidence,
+            answerProvenance = "generated_model",
+        )
+        else -> AnswerSurfaceInference(
+            answerSurfaceLabel = AnswerSurfaceLabel.Unknown,
+            answerProvenance = "",
+        )
     }
 }
 

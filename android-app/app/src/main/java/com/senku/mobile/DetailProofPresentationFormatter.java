@@ -24,6 +24,7 @@ final class DetailProofPresentationFormatter {
         final String revisionStamp;
         final int lowCoverageAccentColor;
         final boolean lowCoverageOrAbstain;
+        final ReviewedCardMetadata reviewedCardMetadata;
 
         State(
             String routeValue,
@@ -34,7 +35,8 @@ final class DetailProofPresentationFormatter {
             int evidenceAccentColor,
             String revisionStamp,
             int lowCoverageAccentColor,
-            boolean lowCoverageOrAbstain
+            boolean lowCoverageOrAbstain,
+            ReviewedCardMetadata reviewedCardMetadata
         ) {
             this.routeValue = safe(routeValue).trim();
             this.routeAccentColor = routeAccentColor;
@@ -45,6 +47,7 @@ final class DetailProofPresentationFormatter {
             this.revisionStamp = safe(revisionStamp).trim();
             this.lowCoverageAccentColor = lowCoverageAccentColor;
             this.lowCoverageOrAbstain = lowCoverageOrAbstain;
+            this.reviewedCardMetadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
         }
     }
 
@@ -194,6 +197,7 @@ final class DetailProofPresentationFormatter {
                 context.getColor(R.color.senku_text_muted_light)
             ));
         }
+        appendReviewedCardLines(lines, state);
         appendProofRevisionLine(lines, state.revisionStamp);
         return buildStructuredLineBlock(lines);
     }
@@ -231,8 +235,51 @@ final class DetailProofPresentationFormatter {
                 context.getColor(R.color.senku_accent_olive)
             ));
         }
+        appendReviewedCardLines(lines, state);
         appendProofRevisionLine(lines, state.revisionStamp);
         return lines;
+    }
+
+    private void appendReviewedCardLines(List<StructuredLine> lines, State state) {
+        ReviewedCardMetadata metadata = state == null
+            ? ReviewedCardMetadata.empty()
+            : ReviewedCardMetadata.normalize(state.reviewedCardMetadata);
+        if (!metadata.isPresent()) {
+            return;
+        }
+        int accentColor = context.getColor(R.color.senku_text_muted_light);
+        if (!metadata.cardId.isEmpty()) {
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_card),
+                metadata.cardId,
+                accentColor,
+                true
+            ));
+        }
+        if (!metadata.reviewStatus.isEmpty()) {
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_review),
+                humanizeReviewedCardToken(metadata.reviewStatus),
+                accentColor
+            ));
+        }
+        if (!metadata.cardGuideId.isEmpty()) {
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_card_guide),
+                metadata.cardGuideId,
+                accentColor,
+                true
+            ));
+        }
+        String sourceGuideIds = metadata.citedSourceGuideIdsCsv();
+        if (!sourceGuideIds.isEmpty()) {
+            lines.add(new StructuredLine(
+                context.getString(R.string.detail_external_review_proof_reviewed_sources),
+                sourceGuideIds,
+                accentColor,
+                true
+            ));
+        }
     }
 
     private void addProofDetailLines(
@@ -289,6 +336,10 @@ final class DetailProofPresentationFormatter {
             default:
                 return mode.replace('-', ' ');
         }
+    }
+
+    private String humanizeReviewedCardToken(String token) {
+        return safe(token).trim().replace('_', ' ');
     }
 
     String buildSourceEntryValue(SearchResult source, List<SearchResult> currentSources) {

@@ -535,7 +535,9 @@ def embed_batch(texts, model=None, base_url=None):
     """Call LM Studio embeddings endpoint for a batch of texts."""
     model = model or config.EMBED_MODEL
     models = embedding_models_to_try(model)
-    lm_studio_url = normalize_lm_studio_url(base_url or config.LM_STUDIO_URL)
+    lm_studio_url = normalize_lm_studio_url(
+        base_url or getattr(config, "EMBED_URL", config.LM_STUDIO_URL)
+    )
     url = f"{lm_studio_url}/embeddings"
     last_exc = None
 
@@ -821,13 +823,14 @@ def main():
         )
         sys.exit(1)
 
-    # Test LM Studio connectivity
+    # Test embedding endpoint connectivity
+    embed_url = getattr(config, "EMBED_URL", config.LM_STUDIO_URL)
     try:
-        requests.get(f"{config.LM_STUDIO_URL}/models", timeout=5)
+        requests.get(f"{embed_url}/models", timeout=5)
     except requests.ConnectionError:
         console.print(
-            f"[red]Cannot connect to LM Studio at {config.LM_STUDIO_URL}. "
-            "Make sure it's running with both embedding and generation models loaded.[/red]"
+            f"[red]Cannot connect to embedding endpoint at {embed_url}. "
+            "Make sure the embedding-capable LM Studio server is running.[/red]"
         )
         sys.exit(1)
 

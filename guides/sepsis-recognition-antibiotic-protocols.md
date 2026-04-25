@@ -11,6 +11,17 @@ tags:
   - sepsis emergency
   - pediatric sepsis
   - sepsis respiratory distress
+  - meningitis emergency
+  - meningococcemia
+  - non-blanching rash
+aliases:
+  - fever stiff neck purple rash
+  - fever headache stiff neck rash
+  - fever confusion dark rash
+  - fever hard to wake bruise-like rash
+  - rash does not fade when pressed
+  - little purple dots with fever
+  - purple spots on legs fever
 icon: ðŸ”¥
 description: qSOFA/SIRS criteria, antibiotic selection by suspected source, combination therapy, source control urgency, lactate monitoring alternatives, fluid management in sepsis, and field-based assessment without blood cultures.
 related:
@@ -45,11 +56,18 @@ custom_css: |
 
 If someone is suddenly confused, breathing fast, and has fever or shaking chills, treat this as possible sepsis first.
 
+If fever is paired with meningitis/brain-warning signs (stiff neck, severe headache with vomiting, confusion, unusual sleepiness, or being hard to wake) or with a purple/dark/bruise-like rash that does not fade when pressed, treat it as suspected meningitis, meningococcemia, or sepsis. This is an emergency, not routine fever, flu, rash, or home-care triage.
+
 Common lay phrasing that should route here:
 - "confused with fever"
 - "fast pulse and fever"
 - "shaking chills and acting strange"
 - "infection and now hard to wake"
+- "fever stiff neck and a purple rash that does not fade when pressed"
+- "bad headache fever and spots on the legs"
+- "sudden fever with confusion and a dark rash"
+- "stiff neck throwing up and sleepy with little purple dots"
+- "high fever hard to wake and bruise-like rash"
 
 Use this guide for immediate sepsis screening and first-hour priorities.
 ### Why Sepsis is Deadly
@@ -120,7 +138,7 @@ qSOFA is simpler and predicts poor outcomes better than SIRS:
 | **Urinary tract** | Dysuria, frequency, urgency, flank pain | Positive urinalysis (if available); CVA tenderness |
 | **Intra-abdominal** | Abdominal pain, nausea, vomiting, diarrhea | Peritoneal signs (tenderness, guarding, rebound) |
 | **Skin/soft tissue** | Cellulitis, abscess, bite, puncture, surgical wound | Erythema, warmth, drainage, fluctuance |
-| **CNS/Meningitis** | Headache, neck stiffness, photophobia, confusion | Kernig/Brudzinski signs; rash (meningococcemia) |
+| **CNS/Meningitis** | Headache, neck stiffness, photophobia, vomiting, confusion, hard to wake | Kernig/Brudzinski signs; non-blanching purple/dark/bruise-like rash or little purple dots/spots on legs (meningococcemia) |
 | **Unknown source** | Fever, malaise, no obvious site | Begin broad-spectrum; investigate during treatment |
 
 </section>

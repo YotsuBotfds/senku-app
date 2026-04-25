@@ -180,6 +180,9 @@ final class DetailMetaPresentationFormatter {
             return context.getString(R.string.detail_loop4_evidence_serial_none);
         }
         String label = safe(state.evidenceStrengthLabel);
+        if (context.getString(R.string.detail_evidence_reviewed).equals(label)) {
+            return context.getString(R.string.detail_loop4_evidence_serial_reviewed);
+        }
         if (context.getString(R.string.detail_evidence_strong).equals(label)) {
             return context.getString(R.string.detail_loop4_evidence_serial_strong);
         }

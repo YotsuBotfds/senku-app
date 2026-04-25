@@ -67,28 +67,46 @@ aliases:
   - market loading edge
   - market setup order
   - bazaar layout
+  - physical market layout
+  - market day layout
+  - market footprint layout
+  - market footprint notices
+  - notices inside market footprint
+  - where notices and stalls go
+  - market foot traffic
+  - foot traffic through market stalls
+  - walking lanes through stalls
+  - carts can pass market
+  - market carts and stalls
+  - market blocked corners
+  - blocked corners in market
+  - stalls arranged so carts can pass
+  - organize stalls carts and walking lanes
+  - connect storage and loading to market day
   - how should trade stalls and walking lanes be organized so the market does not jam up
   - market does not jam up
 ---
 
 :::note
-This guide is about the physical market space: where stalls go, how people move, where notices are posted, how goods are checked in and out, and who may collect fees.
+This guide is the primary guide for physical market footprint questions: where stalls go, how walking lanes work, how carts pass, which corners stay open, where the loading edge begins, where notices sit inside the market footprint, how goods are checked in and out, and who may collect market-day fees.
 
-For price-setting, trade law, and the wider economy, see [`economics-trade`](./economics-trade.md) and [`trade-standards-exchange`](./trade-standards-exchange.md). For public notices, see [`community-bulletin-notice-systems`](./community-bulletin-notice-systems.md). For storage handoff, see [`warehousing-inventory`](./warehousing-inventory.md). For taxes and market fees, see [`taxation-revenue-systems`](./taxation-revenue-systems.md). For settlement-scale siting, zoning, circulation, and growth corridors around the market, see [`settlement-layout-growth-planning`](./settlement-layout-growth-planning.md).
+For price-setting, exchange rates, trade law, and the wider economy, see [`economics-trade`](./economics-trade.md) and [`trade-standards-exchange`](./trade-standards-exchange.md). For broad public announcement systems and community notice boards outside the market footprint, see [`community-bulletin-notice-systems`](./community-bulletin-notice-systems.md). For storage handoff, see [`warehousing-inventory`](./warehousing-inventory.md). For explicit taxes, levies, receipts, and public revenue accounting, see [`taxation-revenue-systems`](./taxation-revenue-systems.md). For settlement-scale siting, zoning, circulation, and growth corridors around the market, see [`settlement-layout-growth-planning`](./settlement-layout-growth-planning.md).
 :::
 
 :::tip
 **Quick routing for market-space questions**
 
-- "How do we set up a market day?" or "how do we choose market layout?" or "where do stalls go?" -> [`marketplace-trade-space-basics`](./marketplace-trade-space-basics.md), [`economics-trade`](./economics-trade.md), and [`community-bulletin-notice-systems`](./community-bulletin-notice-systems.md)
+- "How do we set up a market day?" or "how do we choose market layout?" or "where do stalls go?" -> this guide first; add [`economics-trade`](./economics-trade.md) only for pricing/exchange-rate rules and [`community-bulletin-notice-systems`](./community-bulletin-notice-systems.md) only for broader public announcements
 - "Where should we put the market in our settlement layout?" or "how far should the market be from homes or latrines?" -> [`settlement-layout-growth-planning`](./settlement-layout-growth-planning.md) for settlement zoning and this guide for the market footprint, stalls, and internal circulation
 - "How do we keep the market from blocking roads, drainage, or future growth?" -> this guide and [`settlement-layout-growth-planning`](./settlement-layout-growth-planning.md)
 - "How do we set up market stalls?" or "how much spacing between stalls?" or "where should loading happen?" -> this guide
-- "Where should fees, prices, and notice boards be posted?" or "how do we make market rules visible?" -> this guide and [`community-bulletin-notice-systems`](./community-bulletin-notice-systems.md)
+- "How do we arrange stalls so carts can pass, corners do not get blocked, and foot traffic keeps moving?" -> this guide
+- "Where should fees, prices, and notice boards be posted inside the market?" or "how do we make market rules visible at entries and stall lanes?" -> this guide
+- "Where should notices be placed inside the market footprint?" -> this guide for entry, stall, and lane placement; use [`community-bulletin-notice-systems`](./community-bulletin-notice-systems.md) only for broader public-notice design
 - "How should we keep crowd flow, waiting lines, and disputes under control?" -> this guide and [`trade-standards-exchange`](./trade-standards-exchange.md)
 - "How do stall zones, queueing, and one-way lanes work?" or "how to make a lane flow map?" -> this guide
 - "How should trade stalls and walking lanes be organized so the market does not jam up?" -> this guide, especially Lay Out The Space and Keep Crowd Flow Calm
-- "How do taxes, duties, and market fees connect?" -> [`taxation-revenue-systems`](./taxation-revenue-systems.md)
+- "How do taxes, duties, levies, receipts, and public revenue accounting connect?" -> [`taxation-revenue-systems`](./taxation-revenue-systems.md)
 - "How do we connect storage handoff and returns from market to warehouse?" -> this guide and [`warehousing-inventory`](./warehousing-inventory.md)
 - "If shoppers, delivery traffic, or public circulation are crossing a clinic queue," -> use [`clinic-facility-basics`](./clinic-facility-basics.md) for intake and triage, and keep this guide for market lanes, stalls, notices, and loading around it.
 - "Where to post fair trade rules and weight standards?" -> this guide and [`weights-measures-standards`](./weights-measures-standards.md)
@@ -109,6 +127,8 @@ For price-setting, trade law, and the wider economy, see [`economics-trade`](./e
 ## Retrieval Checklist
 
 - market day setup and stall layout
+- physical market layout: stalls, carts, walking lanes, blocked corners, loading edge, and foot traffic
+- notice placement inside the market footprint, especially at entries and lane decision points
 - posted fees, notices, and measure standards
 - crowd flow, handoff, and dispute routing
 
@@ -153,6 +173,8 @@ The simplest market layout and stall arrangement is a clear entry, a central wal
 
 This section assumes the settlement-scale location is already chosen. If you still need to decide where the market belongs in the town or village plan, hand that question to [`settlement-layout-growth-planning`](./settlement-layout-growth-planning.md) first.
 
+For physical market-day layout prompts, keep the answer inside the market footprint: where stalls sit, how carts pass, which corners stay open, where foot traffic turns, where the loading edge begins, and where notices are visible before people enter the stall lanes.
+
 ### Basic Zones
 
 - **Entry and notice zone**: first thing people see; post rules, fees, and times here
@@ -175,6 +197,8 @@ Try to make movement feel obvious:
 
 If the market is busy, use one-way walking loops or marked lanes so people are not constantly colliding.
 
+Keep corners open. A blocked corner turns into a knot of shoppers, carts, and vendors because people cannot see who is turning, stopping, or loading.
+
 ### Stalls And Spacing
 
 Do not place stalls so close together that people cannot stop and look without blocking the lane.
@@ -188,9 +212,13 @@ Good spacing should allow:
 
 Put heavier goods near the loading edge and lighter goods deeper inside the market. Put fragile goods, food, and high-value items where they are visible and protected.
 
+If carts must pass through the same footprint as shoppers, give carts a clear loading edge or timed lane. Do not make carts cross the tightest stall corners or the main stopping area unless there is no other route.
+
 ## Use Clear Notices
 
 The market should have one obvious notice board or announcement point near the entry. People should not have to ask three different people where the rules are.
+
+Inside the market footprint, place notices where they shape movement: at the entry, beside the stall assignment point, near weights and measures, and before any one-way lane or loading edge. Avoid putting the only notice board deep inside a crowded stall row.
 
 Post:
 
@@ -238,6 +266,8 @@ Crowd flow is a safety issue, not just a comfort issue. Bad flow causes argument
 - Keep the main lane wide enough for two-way movement if possible
 - Do not allow stalls to spill into the lane
 - Put waiting lines to the side, not in the middle
+- Keep corners and lane turns clear enough that carts, shoppers, and stall workers can see each other
+- Keep loading carts on the loading edge, not weaving through the busiest foot-traffic lane
 - Reserve one clear path for carts, stretchers, or emergency access
 - Keep children, animals, and loud bargaining away from the tightest spots
 - Keep clinic intake or triage lines outside the market flow if a clinic shares the same frontage

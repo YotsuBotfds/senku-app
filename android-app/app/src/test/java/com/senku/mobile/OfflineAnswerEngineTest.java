@@ -23,6 +23,7 @@ public final class OfflineAnswerEngineTest {
     public void resetGenerationAdapters() {
         OfflineAnswerEngine.resetGeneratorsForTest();
         OfflineAnswerEngine.resetDebugLogSinkForTest();
+        AnswerCardRuntime.resetEnabledForTest();
         LatencyPanel.resetLogSinkForTest();
     }
 

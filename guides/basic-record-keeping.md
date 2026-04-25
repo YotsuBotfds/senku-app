@@ -9,6 +9,16 @@ tags:
   - foundation
   - entry-point
   - documentation
+aliases:
+  - maintenance logs
+  - repair history
+  - failure logs
+  - repeat failure prevention
+  - lessons learned from breakdowns
+routing_cues:
+  - "what records should we keep for maintenance repairs and failures"
+  - "maintenance log repair history failure log repeat failure prevention"
+  - "lessons learned from breakdowns so the same mistake does not repeat"
 icon: 📝
 description: Introduction to record-keeping systems, documentation methods, organization strategies, and information preservation. Essential foundation for information management, archival systems, and knowledge preservation. Perfect entry point for Information Preservation learning path.
 related:

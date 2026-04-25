@@ -16,6 +16,18 @@ param(
     [int]$PollSeconds = 5,
     [string]$DumpPath,
     [string]$ExpectedDetailTitle,
+    [switch]$ReviewedCardRuntime,
+    [string]$ExpectedAnswerSurfaceLabel = "",
+    [Alias("ForbiddenAnswerSurfaceLabel")]
+    [string]$ForbiddenAnswerSurfaceLabels = "",
+    [string]$ExpectedRuleId = "",
+    [string]$ExpectedSourceGuideId = "",
+    [string]$ExpectedReviewedCardId = "",
+    [string]$ExpectedReviewedCardGuideId = "",
+    [string]$ExpectedReviewedCardReviewStatus = "",
+    [string]$ExpectedReviewedCardSourceGuideIds = "",
+    [switch]$AssertRecentThreadReviewedCardMetadata,
+    [string]$ExpectedBodyContains = "",
     [switch]$ClearLogcatBeforeLaunch,
     [string]$LogcatPath,
     [string]$LogcatSpec = "SenkuPackRepo:D SenkuMobile:D *:S",
@@ -642,6 +654,10 @@ function Capture-LogcatSnapshot {
 
 $EffectiveHostInferenceUrl = Resolve-HostInferenceUrlForDevice -Url $HostInferenceUrl
 
+if ($ReviewedCardRuntime -and -not $resolvedInstrumentationExecution) {
+    throw "Reviewed-card runtime prompt execution requires instrumentation execution."
+}
+
 if ($resolvedInstrumentationExecution) {
     if (-not (Test-Path -LiteralPath $instrumentedSmokeScript)) {
         throw "instrumented smoke script not found at $instrumentedSmokeScript"
@@ -680,6 +696,39 @@ if ($resolvedInstrumentationExecution) {
             if (-not [string]::IsNullOrWhiteSpace($ExpectedDetailTitle)) {
                 $instrumentationArgs += @("-ScriptedExpectedTitle", $ExpectedDetailTitle)
             }
+        }
+        if ($ReviewedCardRuntime) {
+            $instrumentationArgs += @("-ScriptedEnableReviewedCardRuntime")
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedAnswerSurfaceLabel)) {
+            $instrumentationArgs += @("-ScriptedExpectedAnswerSurfaceLabel", $ExpectedAnswerSurfaceLabel)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ForbiddenAnswerSurfaceLabels)) {
+            $instrumentationArgs += @("-ScriptedForbiddenAnswerSurfaceLabels", $ForbiddenAnswerSurfaceLabels)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedRuleId)) {
+            $instrumentationArgs += @("-ScriptedExpectedRuleId", $ExpectedRuleId)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedSourceGuideId)) {
+            $instrumentationArgs += @("-ScriptedExpectedSourceGuideId", $ExpectedSourceGuideId)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedReviewedCardId)) {
+            $instrumentationArgs += @("-ScriptedExpectedReviewedCardId", $ExpectedReviewedCardId)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedReviewedCardGuideId)) {
+            $instrumentationArgs += @("-ScriptedExpectedReviewedCardGuideId", $ExpectedReviewedCardGuideId)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedReviewedCardReviewStatus)) {
+            $instrumentationArgs += @("-ScriptedExpectedReviewedCardReviewStatus", $ExpectedReviewedCardReviewStatus)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedReviewedCardSourceGuideIds)) {
+            $instrumentationArgs += @("-ScriptedExpectedReviewedCardSourceGuideIds", $ExpectedReviewedCardSourceGuideIds)
+        }
+        if ($AssertRecentThreadReviewedCardMetadata) {
+            $instrumentationArgs += @("-ScriptedAssertRecentThreadReviewedCardMetadata")
+        }
+        if (-not [string]::IsNullOrWhiteSpace($ExpectedBodyContains)) {
+            $instrumentationArgs += @("-ScriptedExpectedBodyContains", $ExpectedBodyContains)
         }
         if (-not [string]::IsNullOrWhiteSpace($FollowUpQuery)) {
             $instrumentationArgs += @("-ScriptedFollowUpQuery", $FollowUpQuery)

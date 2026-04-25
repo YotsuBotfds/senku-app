@@ -14,8 +14,10 @@ tags:
   - "safe chimney"
   - "keep warm indoors"
   - "chimney safety"
+  - "overnight heat"
+  - "passive heat after stove safety"
 icon: 🔥
-description: Master passive heating/cooling, thermal mass, insulation, fire safety, and shelter thermal design for survival situations. Covers chemistry of combustion, thermodynamics of heat transfer, and integrated heating systems.
+description: Master passive heating/cooling, thermal mass, insulation, and shelter thermal design after active smoke, stove, chimney, or carbon monoxide hazards are ruled out. Covers chemistry of combustion, thermodynamics of heat transfer, and integrated heating systems.
 related:
   - agriculture
   - animal-husbandry
@@ -68,6 +70,9 @@ Heat and cold are among the deadliest threats in survival scenarios. This page i
 - "heat my cabin" or "keep warm indoors": practical stove heating - see [#cookstoves-indoor-heating-safety](cookstoves-indoor-heating-safety.md).
 - "safe chimney" or "chimney safety": chimney draft, maintenance, and clearance - see [#cookstoves-indoor-heating-safety](cookstoves-indoor-heating-safety.md).
 - "smoke in the house" or "smoke backing into room": smoke-back response - see [#smoke-inhalation-carbon-monoxide-fire-gas-exposure](smoke-inhalation-carbon-monoxide-fire-gas-exposure.md) first, then the cookstove guide.
+- "heat the room overnight without electricity and without poisoning ourselves": use [#cookstoves-indoor-heating-safety](cookstoves-indoor-heating-safety.md) first for stove/flue/CO rules; return here only for insulation, thermal mass, and passive heat planning.
+- "cold smoky room, cough, and headache" or "dizzy after running the stove": this is not passive heat management; use [#smoke-inhalation-carbon-monoxide-fire-gas-exposure](smoke-inhalation-carbon-monoxide-fire-gas-exposure.md) first.
+- Heating pads, sleep comfort, hot-water bottles, and passive thermal mass are comfort tools only after combustion fumes, smoke-back, and CO risk are handled by the smoke and cookstove guides.
 If you are mainly asking about insulation, thermal mass, passive temperature control, or shelter heat design with no active smoke or CO concern, stay here.
 
 Heat management divides into two domains:

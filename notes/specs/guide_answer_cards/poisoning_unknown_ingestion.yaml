@@ -1,0 +1,84 @@
+card_id: poisoning_unknown_ingestion
+guide_id: GD-898
+slug: unknown-ingestion-child-poisoning-triage
+title: "Unknown Ingestion & Child Accidental Poisoning Triage"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Child or adult may have swallowed an unknown substance, pills, cleaner, detergent pod, fuel, alcohol, plant, rodenticide, or household chemical.
+  - Caregiver asks whether to induce vomiting or give charcoal after an unknown ingestion.
+  - Exposure involves an unlabeled or under-sink container, swallowed cleaner, or cleaner-licking.
+required_first_actions:
+  - Call poison control, EMS, or the fastest available clinician immediately for unknown or unlabeled ingestion.
+  - Check airway and breathing before product identification.
+  - Make the scene safe, stop cleanup or mixing, isolate the area, and remove the container or spill if safe.
+  - Do not induce vomiting.
+first_actions:
+  - If unresponsive and not breathing normally, start CPR.
+  - If breathing but altered, place the patient on their side.
+  - If chemical is on skin or clothing, remove contaminated clothing and irrigate with water.
+  - If chemical is in the eye, flush with clean water for at least 15 minutes.
+  - Save the container, label, pill fragments, or vomit sample for identification.
+urgent_red_flags:
+  - Trouble breathing, noisy breathing, wheezing, or blue lips.
+  - Drooling, inability to swallow, severe mouth pain, burns around lips or mouth.
+  - Repeated vomiting or vomiting blood.
+  - Sleepiness, confusion, seizure, collapse, stridor, hoarseness, facial swelling, or worsening symptoms.
+  - Cough, chest tightness, or worsening breathing after mixed-cleaner fumes or detergent pod exposure.
+forbidden_advice:
+  - Do not induce vomiting for unknown ingestion.
+  - Do not use syrup of ipecac, salt water, or fingers in the mouth to trigger vomiting.
+  - Do not force milk, water, vinegar, baking soda, lemon juice, charcoal, or home remedies unless poison control directs it.
+  - Do not give activated charcoal for caustics, hydrocarbons, or when airway safety is uncertain.
+  - Do not neutralize acid with alkali or alkali with acid.
+do_not:
+  - Do not taste or smell the substance to identify it.
+  - Do not add more products to cancel out an exposure.
+  - Do not delay airway care while looking for the product name.
+routine_boundary: >
+  Unknown ingestion, cleaner ingestion, rodenticide, fuel, pill exposure, or
+  under-sink unlabeled exposure is poisoning triage first, not routine rash,
+  stomach upset, cleaning, or pest-control advice.
+acceptable_uncertain_fit: >
+  If the substance is unknown, answer from the unknown-ingestion rule set:
+  poison control/EMS, airway check, no vomiting, no oral remedies unless
+  specifically instructed.
+clarifying_questions:
+  - What might it be?
+  - About how much is missing?
+  - When did it happen?
+  - Can the patient speak and swallow normally?
+citation_ids:
+  - unknown-ingestion-overview
+  - unknown-ingestion-first-five-minutes
+  - unknown-ingestion-no-vomiting
+  - unknown-ingestion-substance-groups
+source_sections:
+  - guide: GD-898
+    slug: unknown-ingestion-child-poisoning-triage
+    title: "Unknown Ingestion & Child Accidental Poisoning Triage"
+    sections:
+      - "#overview"
+      - "#first-five-minutes"
+      - "#never-induce-vomiting"
+      - "#substance-groups"
+  - guide: GD-301
+    slug: toxicology-poisoning-response
+    title: "Toxicology and Poisoning Response"
+    sections:
+      - "#overview"
+      - "#initial-assessment"
+source_invariants:
+  - name: unknown ingestion airway and no vomiting
+    guide: GD-898
+    must_include:
+      - call Poison Control / EMS immediately first
+      - Protect airway and breathing first.
+      - Do not induce vomiting for unknown ingestion.
+    must_not_match:
+      - "induce vomiting\\s+(?:to|after)"
+      - "give activated charcoal for caustic"
+review_status: pilot_reviewed
+notes: >
+  Source guide GD-898 owns caregiver-facing unknown ingestion; GD-301 is cited
+  only for toxicology triage and initial assessment alignment.

@@ -12,8 +12,8 @@ import subprocess
 import sys
 import time
 from collections import Counter
-from dataclasses import dataclass
-from typing import Callable, Literal
+from functools import lru_cache
+from typing import Literal
 
 try:
     import termios
@@ -33,9 +33,35 @@ from rich.panel import Panel
 
 import config
 import special_case_builders
+import query_abstain_policy as _abstain_policy
+import query_completion_hardening as _completion_hardening
+import query_citation_policy as _citation_policy
+import query_answer_card_runtime as _answer_card_runtime
+import query_prompt_runtime as _prompt_runtime
+import query_response_normalization as _response_normalization
+import query_scenario_frame as _scenario_frame_helpers
 from confidence_label_contract import resolve_confidence_presentation
 from deterministic_special_case_registry import DETERMINISTIC_SPECIAL_CASE_SPECS
+from deterministic_special_case_router import (
+    DeterministicSpecialCaseRule,
+    _build_deterministic_builder_missing_debug_note,
+    _lexical_signature_size,
+    _passes_deterministic_semantic_gate,
+    _resolve_deterministic_special_case_rules as _router_resolve_deterministic_special_case_rules,
+    _select_deterministic_special_case_rule as _router_select_deterministic_special_case_rule,
+    get_deterministic_special_case_overlaps as _router_get_deterministic_special_case_overlaps,
+)
 from guide_catalog import all_guide_ids, get_anchor_related_link_weights
+try:
+    from guide_answer_card_contracts import (
+        build_evidence_packet as _build_guide_evidence_packet,
+        compose_card_backed_answer as _compose_guide_card_backed_answer,
+        load_answer_cards as _load_guide_answer_cards,
+    )
+except Exception:  # pragma: no cover - optional runtime pilot data.
+    _build_guide_evidence_packet = None
+    _compose_guide_card_backed_answer = None
+    _load_guide_answer_cards = None
 from lmstudio_utils import (
     classify_lm_request_error,
     embedding_models_to_try,
@@ -44,6 +70,60 @@ from lmstudio_utils import (
     should_try_embedding_fallback,
 )
 from metadata_helpers import normalize_metadata_tag, normalize_tags
+from query_routing_predicates import (
+    _ADHESIVE_BINDER_QUERY_MARKERS,
+    _ANXIETY_CRISIS_EXPLAIN_CRISIS_MARKERS,
+    _ANXIETY_CRISIS_EXPLAIN_QUERY_MARKERS,
+    _BUILDING_HABITABILITY_QUERY_MARKERS,
+    _BUILDING_HABITABILITY_RISK_MARKERS,
+    _CHEMICAL_EXPOSURE_ROUTE_MARKERS,
+    _CHEMICAL_EYE_ROUTE_MARKERS,
+    _CHEMICAL_INHALATION_ROUTE_MARKERS,
+    _is_chemical_spill_sick_exposure_query,
+    _CORROSIVE_HOUSEHOLD_CHEMICAL_SOURCE_MARKERS,
+    _DRY_MEAT_FISH_CONTAMINATION_HAZARD_MARKERS,
+    _DRY_MEAT_FISH_CONTAMINATION_QUERY_MARKERS,
+    _FOOD_STORAGE_CONTAINER_QUERY_MARKERS,
+    _HOUSEHOLD_CHEMICAL_HAZARD_MARKERS,
+    _HOUSEHOLD_CHEMICAL_INHALATION_SOURCE_MARKERS,
+    _MAINTENANCE_RECORD_QUERY_MARKERS,
+    _MAINTENANCE_RECORD_RECORD_MARKERS,
+    _MARKET_SPACE_LAYOUT_QUERY_MARKERS,
+    _MARKET_TAX_REVENUE_QUERY_MARKERS,
+    _MESSAGE_AUTH_QUERY_MARKERS,
+    _ROOF_ACTIVE_RAIN_REPAIR_QUERY_MARKERS,
+    _ROOF_ACTIVE_RAIN_REPAIR_RISK_MARKERS,
+    _UNKNOWN_LOOSE_CHEMICAL_POWDER_QUERY_FORM_MARKERS,
+    _UNKNOWN_LOOSE_CHEMICAL_POWDER_QUERY_HAZARD_MARKERS,
+    _UNKNOWN_LOOSE_CHEMICAL_POWDER_QUERY_UNKNOWN_MARKERS,
+    _is_active_rain_roof_repair_query,
+    _is_adhesive_binder_query,
+    _is_anxiety_crisis_explainer_query,
+    _is_building_habitability_safety_query,
+    _is_canned_fruit_soft_spot_query,
+    _is_cooked_rice_power_outage_spoilage_query,
+    _is_corrosive_household_chemical_exposure_query,
+    _is_dry_meat_fish_contamination_query,
+    _is_food_storage_container_query,
+    _is_household_chemical_eye_query,
+    _is_household_chemical_inhalation_query,
+    _is_indoor_combustion_co_smoke_query,
+    _is_industrial_chemical_smell_boundary_query,
+    _is_maintenance_record_query,
+    _is_market_space_layout_query,
+    _is_market_tax_revenue_query,
+    _is_message_auth_query,
+    _is_posted_order_verification_query,
+    _is_precursor_feedstock_exposure_boundary_query,
+    _is_salt_jars_hot_humid_setup_query,
+    _is_simple_courier_note_auth_query,
+    _is_stretcher_access_query,
+    _is_unknown_chemical_skin_burn_query,
+    _is_unknown_leaking_chemical_container_query,
+    _is_unknown_loose_chemical_powder_query,
+    _is_unlabeled_sealed_drum_safety_triage_query,
+)
+from query_routing_text import text_has_marker as _text_has_marker
 from token_estimation import estimate_tokens
 
 console = Console()
@@ -130,7 +210,9 @@ def post_json_with_retry(
 
 def _post_embeddings_with_fallback(inputs, model, *, timeout, context, base_url=None):
     """POST embeddings, retrying with a compatible model alias when needed."""
-    lm_studio_url = normalize_lm_studio_url(base_url or config.LM_STUDIO_URL)
+    lm_studio_url = normalize_lm_studio_url(
+        base_url or getattr(config, "EMBED_URL", config.LM_STUDIO_URL)
+    )
     url = f"{lm_studio_url}/embeddings"
     models = embedding_models_to_try(model)
     last_exc = None
@@ -405,6 +487,8 @@ _HUMAN_MEDICAL_KEYWORDS = {
     "burned",
     "bite",
     "bleeding",
+    "blood in stool",
+    "bloody stool",
     "shortness of breath",
     "bleed",
     "splinter",
@@ -412,15 +496,42 @@ _HUMAN_MEDICAL_KEYWORDS = {
     "infected",
     "fever",
     "swelling",
+    "swollen",
     "seizure",
     "choking",
     "vomiting",
+    "vomited blood",
+    "threw up blood",
+    "stool",
+    "stools",
     "diarrhea",
     "dehydrated",
     "pain",
+    "cramping",
+    "hurts",
+    "dizzy",
+    "faint",
+    "fainting",
+    "pale",
+    "numb",
+    "numbness",
+    "tingle",
+    "tingling",
+    "ankle",
+    "calf",
+    "forearm",
+    "fingers",
+    "toes",
     "injured",
     "broken",
     "fracture",
+    "cough",
+    "coughing",
+    "sore throat",
+    "body aches",
+    "rash",
+    "rashes",
+    "skin irritation",
     "tooth",
     "cut",
     "laceration",
@@ -451,7 +562,11 @@ _HUMAN_MEDICAL_KEYWORDS = {
     "mini stroke",
     "face droop",
     "facial droop",
+    "face looks droopy",
+    "face is droopy",
     "slurred speech",
+    "speech is weird",
+    "speech sounds weird",
     "trouble speaking",
     "trouble finding words",
     "one-sided weakness",
@@ -480,7 +595,11 @@ _ACUTE_SYMPTOM_MARKERS = {
     "mini stroke",
     "face droop",
     "facial droop",
+    "face looks droopy",
+    "face is droopy",
     "slurred speech",
+    "speech is weird",
+    "speech sounds weird",
     "trouble speaking",
     "trouble finding words",
     "cannot get words out",
@@ -728,8 +847,12 @@ _FAST_SIGN_MARKERS = {
     "facial droop",
     "face drooping",
     "facial drooping",
+    "face looks droopy",
+    "face is droopy",
     "slurred speech",
     "speech is slurred",
+    "speech is weird",
+    "speech sounds weird",
     "trouble speaking",
     "trouble finding words",
     "difficulty finding words",
@@ -771,6 +894,9 @@ _CARDIAC_OVERLAP_SIGNAL_MARKERS = {
     "chest pain",
     "chest pressure",
     "chest tightness",
+    "chest feels wrong",
+    "wrong in my chest",
+    "something feels wrong in my chest",
     "shortness of breath",
     "trouble breathing",
     "difficulty breathing",
@@ -785,180 +911,58 @@ _CARDIAC_OVERLAP_SIGNAL_MARKERS = {
     "cardiac emergency",
 }
 
-_HOUSEHOLD_CHEMICAL_HAZARD_MARKERS = {
-    "bleach",
-    "ammonia",
-    "drain cleaner",
-    "toilet bowl cleaner",
-    "oven cleaner",
-    "muriatic acid",
-    "pool acid",
-    "sulfuric acid",
-    "sulphuric acid",
-    "battery acid",
-    "car battery acid",
-    "lead-acid battery",
-    "lead acid battery",
-    "lye",
-    "caustic",
-    "corrosive",
-    "poison control",
-    "poisoning",
-    "chemical burn",
-    "chemical in eye",
-    "chemical in my eye",
-    "chemical on skin",
-    "chemical on my skin",
-    "acid in eye",
-    "acid in my eye",
-    "acid on skin",
-    "acid on my skin",
-    "battery acid in eye",
-    "battery acid in my eye",
-    "battery acid on skin",
-    "battery acid on my skin",
-    "swallowed cleaner",
-    "swallowed bleach",
-    "swallowed ammonia",
-    "swallowed drain cleaner",
-    "swallowed oven cleaner",
-    "swallowed toilet bowl cleaner",
-    "inhaled bleach",
-    "inhaled ammonia",
-    "mixed cleaners",
-    "mix bleach",
-    "mixing bleach",
-    "mixed bleach and ammonia",
-    "chlorine gas",
-    "chloramine gas",
-}
-
-_CORROSIVE_HOUSEHOLD_CHEMICAL_SOURCE_MARKERS = {
-    "bleach",
-    "ammonia",
-    "cleaner",
-    "cleaning product",
-    "drain cleaner",
-    "toilet bowl cleaner",
-    "oven cleaner",
-    "muriatic acid",
-    "pool acid",
-    "sulfuric acid",
-    "sulphuric acid",
-    "battery acid",
-    "car battery acid",
-    "lead-acid battery",
-    "lead acid battery",
-    "lye",
-    "caustic",
-    "corrosive",
-}
-
-_CHEMICAL_EXPOSURE_ROUTE_MARKERS = {
-    "in eye",
-    "in my eye",
-    "in the eye",
-    "in eyes",
-    "in my eyes",
-    "eye exposure",
-    "eye burn",
-    "burning eye",
-    "on skin",
-    "on my skin",
-    "on the skin",
-    "skin exposure",
-    "skin burn",
-    "burning skin",
-    "chemical burn",
-    "acid burn",
-    "splashed",
-    "splash",
-    "sprayed on",
-    "got on",
-    "swallowed",
-    "drank",
-    "drink it",
-    "ingested",
-    "ate",
-    "in mouth",
-    "mouth burn",
-    "mouth exposure",
-    "inhaled",
-    "breathed in",
-    "fumes",
-    "vapors",
-    "vapours",
-    "mixed cleaners",
-    "mix bleach",
-    "mixing bleach",
-    "coughing",
+_CARDIAC_FIRST_QUERY_MARKERS = {
+    "panic attack or heart attack",
+    "heart attack or panic attack",
+    "chest pain",
+    "chest pressure",
     "chest tightness",
-    "trouble breathing",
-    "shortness of breath",
-    "wheezing",
-}
-
-_CHEMICAL_EYE_ROUTE_MARKERS = {
-    "in eye",
-    "in my eye",
-    "in the eye",
-    "in eyes",
-    "in my eyes",
-    "eye exposure",
-    "eye burn",
-    "burning eye",
-    "got in my eye",
-    "got in the eye",
-    "splashed in my eye",
-    "splashed in the eye",
-    "sprayed in my eye",
-    "still burns after rinsing",
-}
-
-_HOUSEHOLD_CHEMICAL_INHALATION_SOURCE_MARKERS = {
-    "bleach",
-    "ammonia",
-    "cleaner",
-    "cleaners",
-    "cleaning product",
-    "drain cleaner",
-    "toilet bowl cleaner",
-    "oven cleaner",
-    "paint thinner",
-    "solvent",
-    "solvents",
-    "mineral spirits",
-    "turpentine",
-    "acetone",
-    "varnish",
-    "stain",
-    "staining product",
-    "chlorine gas",
-    "chloramine gas",
-}
-
-_CHEMICAL_INHALATION_ROUTE_MARKERS = {
-    "inhaled",
-    "breathed in",
-    "fumes",
-    "vapors",
-    "vapours",
-    "mixed cleaners",
-    "mix bleach",
-    "mixing bleach",
-    "coughing",
-    "chest tightness",
+    "pressure in my chest",
+    "tightness in my chest",
     "shortness of breath",
     "trouble breathing",
     "difficulty breathing",
-    "wheezing",
-    "feel sick",
-    "feels sick",
+    "jaw pain",
+    "arm pain",
+    "left arm pain",
+    "pain in my arm",
+    "pain in my jaw",
+    "dread",
+    "sense of doom",
+    "something feels very wrong in my chest",
+    "something feels wrong in my chest",
+    "exertion",
+    "exertional",
+    "after exertion",
+    "when walking",
+}
+
+_CARDIAC_FIRST_POSITIVE_METADATA_MARKERS = {
+    "acute coronary",
+    "acute-coronary-cardiac-emergencies",
+    "heart attack",
+    "myocardial infarction",
+    "chest pain",
+    "chest pressure",
+    "angina",
+    "cardiac emergency",
+    "first aid",
+    "emergency response",
+    "cpr",
+    "aed",
+}
+
+_CARDIAC_FIRST_DISTRACTOR_METADATA_MARKERS = {
+    "anxiety",
+    "panic",
+    "stress & daily self-care",
+    "sleep hygiene",
+    "grief",
     "headache",
-    "dizzy",
-    "dizziness",
-    "nausea",
-    "nauseous",
+    "migraine",
+    "menopause",
+    "common ailments",
+    "routine self-care",
 }
 
 _CHEMICAL_EYE_GUIDE_METADATA_MARKERS = {
@@ -982,9 +986,12 @@ _LAB_SAFETY_METADATA_MARKERS = {
 
 _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS = {
     "toxicology",
+    "toxicology-poisoning-response",
     "poison",
     "poison control",
     "chemical exposure",
+    "chemical safety",
+    "chemical-safety",
     "decontamination",
     "unknown ingestion",
     "household cleaner",
@@ -992,6 +999,25 @@ _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS = {
     "corrosive",
     "inhaled poisons",
     "eye irrigation",
+    "mixed cleaners",
+    "incompatible cleaners",
+    "bleach ammonia",
+    "bleach vinegar",
+    "chlorine gas",
+    "chloramine",
+}
+
+_HOUSEHOLD_CHEMICAL_INHALATION_DISTRACTOR_METADATA_MARKERS = {
+    "emergency dental",
+    "dental procedures",
+    "personal hygiene",
+    "grooming",
+    "bathing without plumbing",
+    "hemorrhoids",
+    "food safety",
+    "kitchen hygiene",
+    "sterilization methods",
+    "chemical sterilization",
 }
 
 _COOKSTOVE_CO_METADATA_MARKERS = {
@@ -1006,6 +1032,24 @@ _COOKSTOVE_CO_METADATA_MARKERS = {
     "carbon monoxide",
     "chimney",
     "heater",
+}
+
+_INDOOR_COMBUSTION_CO_OWNER_METADATA_MARKERS = {
+    "smoke inhalation, carbon monoxide",
+    "smoke-inhalation-carbon-monoxide-fire-gas-exposure",
+    "cookstoves, indoor heating",
+    "cookstoves-indoor-heating-safety",
+    "toxicology-poisoning-response",
+    "carbon monoxide poisoning",
+}
+
+_HOT_WATER_HEATING_DISTRACTOR_METADATA_MARKERS = {
+    "hot water systems",
+    "hot-water-systems-bathing-cleaning",
+    "bathing",
+    "cleaning & sanitation",
+    "cleaning and sanitation",
+    "when a heating setup becomes dangerous",
 }
 
 _URINARY_QUERY_MARKERS = {
@@ -1030,6 +1074,1513 @@ _URINARY_QUERY_MARKERS = {
     "frequent urination",
 }
 
+_VAGINAL_SYMPTOM_QUERY_MARKERS = {
+    "vaginal itching",
+    "vaginal itch",
+    "itching and discharge",
+    "vaginal discharge",
+    "discharge",
+    "itching",
+    "itchy",
+    "yeast infection",
+    "bv",
+    "bacterial vaginosis",
+}
+
+_HEMATURIA_QUERY_MARKERS = {
+    "blood in the urine",
+    "blood in urine",
+    "bloody urine",
+    "pee blood",
+    "peeing blood",
+    "blood when i pee",
+    "red urine",
+    "urine is red",
+    "hematuria",
+}
+
+_ALLERGEN_EXPOSURE_MARKERS = {
+    "bee sting",
+    "wasp sting",
+    "hornet sting",
+    "yellow jacket",
+    "sting",
+    "stings",
+    "stung",
+    "peanut",
+    "peanuts",
+    "tree nut",
+    "nuts",
+    "shellfish",
+    "food",
+    "ate",
+    "eating",
+    "medicine",
+    "medication",
+    "new medicine",
+    "antibiotic",
+    "amoxicillin",
+    "pain pill",
+    "pill",
+}
+
+_ANAPHYLAXIS_RED_ZONE_MARKERS = {
+    "throat feels tight",
+    "throat tight",
+    "tight throat",
+    "throat closing",
+    "throat swelling",
+    "tongue swelling",
+    "tongue is swelling",
+    "tongue are swelling",
+    "lips and tongue",
+    "lip swelling",
+    "lips swelling",
+    "mouth swelling",
+    "swallowing is getting harder",
+    "swallowing getting harder",
+    "harder to swallow",
+    "trouble swallowing",
+    "difficulty swallowing",
+    "voice sounds strange",
+    "strange voice",
+    "breathing feels off",
+    "breathing is off",
+    "wheezing",
+    "wheeze",
+    "breathing trouble",
+    "trouble breathing",
+    "difficulty breathing",
+    "shortness of breath",
+    "chest tightness",
+    "face swelling",
+    "facial swelling",
+    "blue lips",
+    "can barely talk",
+    "rescue inhaler is not helping",
+    "rescue inhaler not helping",
+    "inhaler is not helping",
+    "inhaler not helping",
+    "dizzy",
+    "dizziness",
+    "faint",
+    "fainting",
+    "feeling faint",
+    "weakness",
+    "vomiting",
+    "whole body hives",
+}
+
+_UPPER_AIRWAY_SWELLING_DANGER_MARKERS = {
+    "harsh noisy breath",
+    "harsh noisy breathing",
+    "noisy breath",
+    "noisy breathing",
+    "muffled voice",
+    "voice sounds muffled",
+    "muffled speech",
+    "words sound strange",
+    "word sounds strange",
+    "harder to talk",
+    "hard to talk",
+    "trouble talking",
+    "hoarse voice",
+    "voice sounds hoarse",
+    "voice change",
+    "upper-airway noise",
+    "upper airway noise",
+    "sound is more in the throat",
+    "sound more in the throat",
+    "sound is in the throat",
+    "sound in the throat",
+    "throat than the chest",
+    "throat is closing",
+    "throat closing",
+    "airway swelling",
+    "real airway swelling",
+    "throat-tightness",
+    "throat tightness",
+    "tongue feels thick",
+    "tongue feels bigger",
+    "thick tongue",
+    "blue lips",
+    "cannot speak more than a word",
+    "can't speak more than a word",
+    "cant speak more than a word",
+}
+
+_UPPER_AIRWAY_CONTEXT_MARKERS = {
+    "what matters first",
+    "what do i do first",
+    "after exposure",
+    "exposure",
+    "rescue inhaler",
+    "panic hyperventilation",
+    "breathing fast after a scare",
+    "after a scare",
+    "asthma flare",
+    "wheezing",
+    "wheeze",
+    "lip swelling",
+    "lips swelling",
+    "lip and tongue swelling",
+    "lips getting bigger",
+    "lip getting bigger",
+    "mouth swelling",
+    "tongue swelling",
+    "tongue feels thick",
+    "tongue feels bigger",
+    "face swelling",
+    "facial swelling",
+}
+
+_SMOKE_CHEMICAL_AIRWAY_SOURCE_MARKERS = {
+    "smoke",
+    "fire",
+    "carbon monoxide",
+    " co ",
+    "bleach",
+    "ammonia",
+    "cleaner",
+    "chemical",
+    "solvent",
+    "fume",
+    "fumes",
+    "gas leak",
+    "chlorine",
+}
+
+_MEDICATION_ALLERGY_MARKERS = {
+    "medicine",
+    "medication",
+    "new medicine",
+    "antibiotic",
+    "amoxicillin",
+    "pill",
+    "drug",
+    "pain pill",
+}
+
+_ALLERGY_SKIN_MARKERS = {
+    "hives",
+    "urticaria",
+    "itchy welts",
+    "itchy rash",
+    "rash",
+}
+
+_ALLERGY_SWELLING_MARKERS = {
+    "facial swelling",
+    "face swelling",
+    "swollen face",
+    "lip swelling",
+    "lips swelling",
+    "lips and tongue",
+    "lips and tongue are swelling",
+    "tongue swelling",
+    "mouth swelling",
+}
+
+_SOAP_RASH_QUERY_MARKERS = {
+    "soap",
+    "new soap",
+    "body wash",
+    "detergent",
+    "cleanser",
+}
+
+_BREATHING_FINE_MARKERS = {
+    "breathing is fine",
+    "breathing fine",
+    "can breathe",
+    "no trouble breathing",
+    "no breathing trouble",
+    "breath normally",
+}
+
+_COMMON_AILMENTS_COMPLAINT_QUERY_MARKERS = {
+    "cough",
+    "coughing",
+    "sore throat",
+    "cold",
+    "flu",
+    "fever",
+    "body aches",
+    "rash",
+    "rashes",
+    "skin irritation",
+    "itchy",
+    "itching",
+    "new soap",
+    "mild reaction",
+    "pee",
+    "peeing",
+    "urine",
+    "urinary",
+    "urinate",
+    "urination",
+    "dysuria",
+    "urgency",
+    "frequency",
+    "bladder",
+    "burning when i pee",
+    "burns when i pee",
+}
+
+_COMMON_AILMENTS_GATEWAY_QUERY_MARKERS = {
+    "which guide should i start with",
+    "what guide should i start with",
+    "which guide should i use",
+    "what guide should i use",
+    "where should i start",
+    "start with",
+    "home-care first",
+    "home care first",
+    "rest at home first",
+    "watch at home",
+    "watch this at home",
+    "mild reaction",
+    "something urgent",
+    "more urgent",
+    "urgent help",
+    "when should i worry",
+    "when to worry",
+}
+
+_COMMON_AILMENTS_GATEWAY_METADATA_MARKERS = {
+    "common ailments",
+    "common-ailments-recognition-care",
+    "recognition & basic home care",
+    "recognition and basic home care",
+    "when something is just a cold",
+    "when something is \"just a cold\"",
+    "when to seek professional medical care",
+    "red flag summary",
+}
+
+_MAINTENANCE_RECORD_POSITIVE_METADATA_MARKERS = {
+    "basic record-keeping",
+    "basic-record-keeping",
+    "maintenance logs",
+    "repair history",
+    "failure logs",
+    "repeat failure prevention",
+    "lessons learned from breakdowns",
+    "consequences of poor record-keeping",
+    "design simple record-keeping systems",
+}
+
+_MAINTENANCE_RECORD_DISTRACTOR_METADATA_MARKERS = {
+    "hydroelectric",
+    "seasonal operation",
+    "predictive maintenance",
+    "records & archives",
+    "archives",
+    "archival",
+    "cataloging",
+    "census",
+    "vital records",
+    "accounting",
+    "ledger",
+    "tax",
+    "trade",
+}
+
+_ANXIETY_CRISIS_POSITIVE_METADATA_MARKERS = {
+    "crisis red flags",
+    "urgent help",
+    "thoughts of suicide",
+    "thoughts of self-harm",
+    "unable to stay safe",
+    "988",
+    "recognizing mental health crises",
+    "professional help",
+    "chest pain, fainting",
+    "severe trouble breathing",
+}
+
+_MARKET_TAX_REVENUE_POSITIVE_METADATA_MARKERS = {
+    "taxation & public revenue systems",
+    "taxation-revenue-systems",
+    "tax assessment",
+    "tax collection",
+    "revenue collection",
+    "public revenue",
+    "market fees",
+    "tax notices",
+    "fairness principles",
+    "assessment and collection",
+    "public budgeting",
+}
+
+_MARKET_SPACE_LAYOUT_POSITIVE_METADATA_MARKERS = {
+    "marketplace trade space",
+    "marketplace-trade-space-basics",
+    "stalls",
+    "walking lane",
+    "walking lanes",
+    "foot traffic",
+    "loading edge",
+    "blocked corners",
+    "inside the market footprint",
+    "market steward",
+    "stall assignment",
+}
+
+_MARKET_SPACE_LAYOUT_DISTRACTOR_METADATA_MARKERS = {
+    "taxation",
+    "taxation-revenue-systems",
+    "public revenue",
+    "assessment and collection",
+    "community bulletin",
+    "community-bulletin-notice-systems",
+    "town crier",
+    "price-setting",
+    "exchange rates",
+}
+
+_BUILDING_HABITABILITY_POSITIVE_METADATA_MARKERS = {
+    "building inspection and habitability checklist",
+    "building-inspection-habitability-checklist",
+    "do not enter checklist",
+    "entry hazard checklist",
+    "pre-entry inspection",
+    "visible damage triage",
+    "can we go in",
+    "can we live here",
+    "can we store things here",
+    "safe to occupy",
+    "soft floor",
+    "floor that feels soft or bouncy",
+    "what to check from outside first",
+    "enter only for short salvage",
+}
+
+_BUILDING_HABITABILITY_DISTRACTOR_METADATA_MARKERS = {
+    "roof leak emergency repair",
+    "temporary fixes versus durable repairs",
+    "after the storm",
+    "mold prevention",
+    "spotting mold",
+    "moldy clothes",
+    "simple home repairs",
+}
+
+_FOCUSED_COMMON_SYMPTOM_METADATA_MARKERS = {
+    "cough, cold",
+    "cough-cold-sore-throat-home-care",
+    "common rashes",
+    "common-rashes-skin-irritation",
+    "skin irritation",
+    "contact dermatitis",
+    "seasonal allergies",
+    "hay fever",
+}
+
+_GI_BLEED_QUERY_MARKERS = {
+    "coffee grounds",
+    "coffee ground vomit",
+    "coffee ground emesis",
+    "black tarry stool",
+    "black tarry stools",
+    "black sticky stool",
+    "black sticky stools",
+    "black stool",
+    "black stools",
+    "sticky like tar",
+    "tarry",
+    "melena",
+    "bright red blood with bowel movements",
+    "bright red blood in stool",
+    "blood with bowel movements",
+    "blood in stool",
+    "bloody stool",
+    "bloody stools",
+    "bright red blood in vomit",
+    "bright red blood in the vomit",
+    "red blood in vomit",
+    "red blood in the vomit",
+    "blood in vomit",
+    "blood in the vomit",
+    "bright red vomit",
+    "vomit blood",
+    "vomiting blood",
+    "vomited blood",
+    "threw up blood",
+    "throwing up blood",
+    "dark clots",
+    "hematemesis",
+}
+
+_GI_BLEED_SHOCK_OR_PAIN_MARKERS = {
+    "dizzy",
+    "dizziness",
+    "weak",
+    "weakness",
+    "pale",
+    "faint",
+    "fainting",
+    "almost fainted",
+    "passed out",
+    "passing out",
+    "cold clammy",
+    "rapid pulse",
+    "stomach pain",
+    "abdominal pain",
+    "belly pain",
+    "heavy drinking",
+    "drinking",
+    "alcohol",
+}
+
+_GI_BLEED_POSITIVE_METADATA_MARKERS = {
+    "acute abdominal emergencies",
+    "acute-abdominal-emergencies",
+    "gastrointestinal bleeding",
+    "gi bleed",
+    "upper gi bleed",
+    "hematemesis",
+    "melena",
+    "coffee ground",
+    "vomiting blood",
+    "black tarry stool",
+    "black stool",
+    "bleeding emergencies",
+    "surgical abdomen",
+}
+
+_GI_BLEED_DISTRACTOR_METADATA_MARKERS = {
+    "common ailments",
+    "common ailment",
+    "common-ailments",
+    "food safety",
+    "food-safety",
+    "food poisoning",
+    "gastroenteritis",
+    "diarrhea",
+    "dehydration",
+    "constipation",
+    "hemorrhoid",
+    "hemorrhoids",
+    "nosebleed",
+    "nosebleeds",
+    "reflux",
+    "acid reflux",
+    "heartburn",
+    "gerd",
+    "home sick care",
+    "home-sick-care",
+    "airflow",
+    "ventilation",
+}
+
+_SURGICAL_ABDOMEN_EXPLICIT_QUERY_MARKERS = {
+    "surgical abdomen",
+    "acute abdomen",
+    "acute abdominal emergency",
+    "acute abdominal emergencies",
+    "bowel obstruction",
+    "intestinal obstruction",
+    "appendicitis",
+    "pain is sharp on one side and getting worse",
+    "sharp on one side and getting worse",
+    "upper belly pain straight through to the back",
+    "upper abdominal pain straight through to the back",
+    "belly pain straight through to the back",
+    "stomach pain straight through to the back",
+}
+
+_SURGICAL_ABDOMEN_GUARDING_QUERY_MARKERS = {
+    "guarding",
+    "rigid belly",
+    "rigid abdomen",
+    "belly is rigid",
+    "abdomen is rigid",
+    "hard belly",
+    "belly is hard",
+    "belly getting hard",
+    "belly is getting hard",
+    "abdomen is hard",
+    "stomach is hard",
+    "swollen and hard",
+    "board-like",
+    "board like",
+}
+
+_SURGICAL_ABDOMEN_RLQ_QUERY_MARKERS = {
+    "right lower belly",
+    "lower right belly",
+    "right lower abdomen",
+    "lower right abdomen",
+    "right lower abdominal",
+    "lower right abdominal",
+    "rlq",
+}
+
+_SURGICAL_ABDOMEN_RLQ_RED_FLAG_MARKERS = {
+    "will not walk upright",
+    "won't walk upright",
+    "wont walk upright",
+    "cannot walk upright",
+    "can't walk upright",
+    "hurts to walk",
+    "pain with walking",
+    "pain when walking",
+    "pain with movement",
+    "pain with every bump",
+    "fever",
+    "nausea",
+    "nauseated",
+    "vomiting",
+    "guarding",
+}
+
+_SURGICAL_ABDOMEN_OBSTRUCTION_VOMITING_MARKERS = {
+    "vomiting",
+    "throwing up",
+    "keep vomiting",
+    "repeated vomiting",
+    "nonstop nausea",
+    "green stuff",
+    "throwing up green stuff",
+    "vomiting foul brown material",
+    "foul brown material",
+    "cannot keep anything down",
+    "can't keep anything down",
+    "cant keep anything down",
+    "cannot keep fluids down",
+    "can't keep fluids down",
+}
+
+_SURGICAL_ABDOMEN_OBSTRUCTION_NO_OUTPUT_MARKERS = {
+    "nothing is coming out",
+    "no stool",
+    "no gas",
+    "no bowel movement",
+    "no bowel movement or gas",
+    "not passing stool",
+    "not passing gas",
+    "cannot pass stool",
+    "can't pass stool",
+    "cant pass stool",
+    "cannot pass gas",
+    "can't pass gas",
+    "cant pass gas",
+    "not pooped",
+    "has not pooped",
+    "haven't pooped",
+    "havent pooped",
+    "not farted",
+    "has not farted",
+    "haven't farted",
+    "havent farted",
+    "pooped or farted",
+}
+
+_SURGICAL_ABDOMEN_DISTENTION_MARKERS = {
+    "swollen belly",
+    "belly is swollen",
+    "swollen abdomen",
+    "abdomen is swollen",
+    "belly is swelling up",
+    "bloating",
+    "bloated",
+    "distended",
+    "distention",
+    "hard belly",
+    "belly is hard",
+    "belly getting hard",
+    "belly is getting hard",
+    "abdomen is hard",
+    "hard abdomen",
+    "stomach is hard",
+}
+
+_SURGICAL_ABDOMEN_FOCAL_TENDER_MARKERS = {
+    "one spot is very tender",
+    "one spot very tender",
+    "one very tender spot",
+    "localized tender",
+    "focal tenderness",
+    "very tender spot",
+}
+
+_SURGICAL_ABDOMEN_POSITIVE_METADATA_MARKERS = {
+    "acute abdominal emergencies",
+    "acute-abdominal-emergencies",
+    "surgical abdomen",
+    "bowel obstruction",
+    "appendicitis",
+    "peritoneal signs",
+    "guarding",
+    "rigidity",
+    "rigid belly",
+    "hard or rigid belly",
+    "focal peritoneal tenderness",
+}
+
+_SURGICAL_ABDOMEN_DISTRACTOR_METADATA_MARKERS = {
+    "common ailments",
+    "common-ailments",
+    "home sick care",
+    "home-sick-care",
+    "heartburn",
+    "reflux",
+    "sour stomach",
+    "constipation",
+    "digestive regularity",
+    "hemorrhoid",
+    "hemorrhoids",
+    "earache",
+    "ear care",
+    "ear pain",
+    "child nutrition",
+    "nutrition",
+    "back pain",
+    "routine back pain",
+    "musculoskeletal self-care",
+    "gastroenteritis",
+    "diarrhea",
+    "dehydration",
+    "routine constipation",
+    "routine stomach",
+}
+
+_FOOD_STORAGE_CONTAINER_POSITIVE_METADATA_MARKERS = {
+    "food storage packaging",
+    "food-storage-packaging",
+    "food preservation",
+    "food-preservation",
+    "storage containers",
+    "storage-containers-vessels",
+    "fermentation and pickling",
+    "fermentation-pickling",
+    "salted fish",
+    "dried beans",
+    "dried herbs",
+    "food-grade",
+    "sealed container",
+    "cool dry",
+}
+
+_FOOD_STORAGE_CONTAINER_DISTRACTOR_METADATA_MARKERS = {
+    "salt production",
+    "salt-production",
+    "salt storage",
+    "salt purity",
+    "warehousing",
+    "inventory",
+    "hot water",
+    "water storage",
+    "spices, seasonings",
+    "spices-seasonings",
+    "herb cultivation",
+    "drying & dehydration techniques",
+    "drying-dehydration-techniques",
+}
+
+_DRY_MEAT_FISH_CONTAMINATION_POSITIVE_METADATA_MARKERS = {
+    "drying & dehydration techniques",
+    "drying-dehydration-techniques",
+    "solar drying",
+    "screen",
+    "screens",
+    "racks",
+    "raised rack",
+    "cheesecloth",
+    "food preservation",
+    "food-preservation",
+    "smoking & curing meat",
+    "smoking-curing-meat",
+}
+
+_DRY_MEAT_FISH_CONTAMINATION_DISTRACTOR_METADATA_MARKERS = {
+    "traditional women's trades",
+    "traditional food preservation heritage",
+    "spices",
+    "herbs",
+    "seed saving",
+}
+
+_GYN_EMERGENCY_QUERY_MARKERS = {
+    "gynecologic emergency",
+    "gynecological emergency",
+    "gyn emergency",
+    "early pregnancy",
+    "early pregnancy bleeding",
+    "bleeding in early pregnancy",
+    "first trimester",
+    "pregnancy bleeding",
+    "pregnant and bleeding",
+    "pregnancy test",
+    "positive test",
+    "missed period",
+    "missed a period",
+    "missed their period",
+    "missed her period",
+    "missed my period",
+    "late period",
+    "maybe 6 weeks",
+    "6 weeks",
+    "miscarriage",
+    "might be pregnant",
+    "possible pregnancy",
+    "could be pregnant",
+    "pregnant",
+}
+
+_GYN_EMERGENCY_RED_FLAG_MARKERS = {
+    "one-sided lower belly pain",
+    "one sided lower belly pain",
+    "one-sided pelvic pain",
+    "one sided pelvic pain",
+    "one-sided pain",
+    "one sided pain",
+    "cramping on one side",
+    "sharp on one side",
+    "pelvic pain",
+    "severe pelvic pain",
+    "lower belly pain",
+    "belly pain",
+    "abdominal pain",
+    "shoulder pain",
+    "shoulder-tip pain",
+    "shoulder tip pain",
+    "heavy bleeding",
+    "vaginal bleeding",
+    "bleeding",
+    "dizzy",
+    "dizziness",
+    "faint",
+    "fainting",
+    "feeling faint",
+    "almost fainted",
+    "almost passed out",
+    "passed out",
+    "getting worse",
+    "pale",
+}
+
+_GYN_EMERGENCY_POSITIVE_METADATA_MARKERS = {
+    "gynecological emergencies",
+    "gynecological-emergencies-womens-health",
+    "gynecologic emergency",
+    "women's health",
+    "ectopic pregnancy",
+    "early pregnancy bleeding",
+    "ovarian torsion",
+    "severe hemorrhage",
+    "acute abdominal emergencies",
+    "acute-abdominal-emergencies",
+}
+
+_GYN_EMERGENCY_DISTRACTOR_METADATA_MARKERS = {
+    "postpartum",
+    "uterine massage",
+    "menstrual pain",
+    "period cramps",
+    "menorrhagia",
+    "sti recognition",
+    "sexually transmitted",
+    "common vaginal infections",
+    "vaginal infections",
+    "cough",
+    "cold",
+    "sore throat",
+    "heartburn",
+    "reflux",
+    "hemorrhoid",
+    "hemorrhoids",
+    "direct pressure",
+}
+
+_CRUSH_COMPARTMENT_SOURCE_MARKERS = {
+    "crush",
+    "crushed",
+    "pinned",
+    "pinned under",
+    "heavy object",
+    "under weight",
+    "compartment syndrome",
+}
+
+_CRUSH_COMPARTMENT_SYMPTOM_MARKERS = {
+    "pain is getting worse",
+    "pain keeps building",
+    "pain out of proportion",
+    "out of proportion",
+    "swollen tight",
+    "swelling fast",
+    "skin feels tight",
+    "tight shiny",
+    "feels hard",
+    "calf feels hard",
+    "numb",
+    "numbness",
+    "tingle",
+    "tingling",
+    "fingers tingle",
+    "toes",
+    "moves my toes",
+    "unbearable",
+}
+
+_CRUSH_COMPARTMENT_POSITIVE_METADATA_MARKERS = {
+    "crush injuries",
+    "crush syndrome",
+    "compartment syndrome",
+    "shock, bleeding",
+    "shock bleeding",
+    "trauma stabilization",
+    "orthopedics",
+    "fracture management",
+    "neurovascular assessment",
+    "splinting",
+    "troubleshooting",
+    "complications and when to stop",
+}
+
+_CRUSH_COMPARTMENT_DISTRACTOR_METADATA_MARKERS = {
+    "foot and nail care",
+    "my feet hurt from walking",
+    "back pain",
+    "musculoskeletal self-care",
+    "common ailments",
+    "minor conditions",
+    "bug bites",
+    "sting",
+    "itch relief",
+    "physical rehabilitation",
+    "occupational therapy",
+    "prosthetics",
+    "diabetic foot",
+    "nsaid",
+    "ibuprofen",
+    "rest",
+}
+
+_SEROTONIN_SOURCE_QUERY_MARKERS = {
+    "antidepressant",
+    "antidepressants",
+    "ssri",
+    "snri",
+    "maoi",
+    "serotonin medicine",
+    "serotonergic",
+    "tramadol",
+    "linezolid",
+    "cough medicine",
+    "cough syrup",
+    "dextromethorphan",
+    "medicine reaction",
+    "medication reaction",
+    "changing meds",
+    "changed meds",
+    "after changing meds",
+    "new med",
+    "new medication",
+}
+
+_SEROTONIN_SYMPTOM_QUERY_MARKERS = {
+    "shaking",
+    "sweaty",
+    "sweating",
+    "trembling",
+    "tremor",
+    "diarrhea",
+    "fever",
+    "clonus",
+    "jerking",
+    "legs keep jerking",
+    "rigid",
+    "rigid muscles",
+    "muscles are rigid",
+    "very hot",
+    "overheated",
+    "overheating",
+    "twitching",
+    "restless",
+    "cannot stop moving",
+    "can't stop moving",
+    "agitated",
+    "confusion",
+    "confused",
+}
+
+_SEROTONIN_POSITIVE_METADATA_MARKERS = {
+    "toxicology and poisoning response",
+    "toxicology-poisoning-response",
+    "toxidromes",
+    "toxidromes-field-poisoning",
+    "serotonin syndrome",
+    "serotonergic",
+    "toxidrome",
+    "poison control",
+    "poisoning",
+    "common toxidromes",
+    "supportive care and monitoring",
+}
+
+_SEROTONIN_DISTRACTOR_METADATA_MARKERS = {
+    "common ailments",
+    "gastrointestinal illness",
+    "diarrhea, vomiting",
+    "dehydration",
+    "anxiety",
+    "stress & daily self-care",
+    "panic",
+    "menopause",
+    "midlife women's health",
+    "dementia",
+    "elder dementia",
+    "routine stability",
+    "constipation",
+    "allergic reactions",
+    "anaphylaxis",
+    "pregnant",
+    "pregnancy",
+    "miscarriage",
+    "palliative",
+    "end-of-life",
+}
+
+_MENINGITIS_RASH_FEVER_MARKERS = {
+    "fever",
+    "high fever",
+    "temperature",
+}
+
+_MENINGITIS_RASH_DANGER_MARKERS = {
+    "purple rash",
+    "purplish rash",
+    "dark rash",
+    "dark red rash",
+    "bruise-like rash",
+    "bruiselike rash",
+    "non-blanching",
+    "nonblanching",
+    "does not fade",
+    "doesn't fade",
+    "little purple dots",
+    "purple dots",
+    "spots on the legs",
+    "spreading purplish rash",
+    "petechial",
+    "petechiae",
+    "purpura",
+}
+
+_MENINGITIS_RASH_NEURO_MARKERS = {
+    "stiff neck",
+    "neck is stiff",
+    "rigid neck",
+    "neck is rigid",
+    "neck stiffness",
+    "neck rigidity",
+    "bad headache",
+    "severe headache",
+    "headache",
+    "photophobia",
+    "light hurts",
+    "lights hurt",
+    "hurts to look at light",
+    "throwing up",
+    "vomiting",
+    "confusion",
+    "confused",
+    "acting confused",
+    "hard to wake",
+    "sleepy",
+    "unusual sleepiness",
+}
+
+_MENINGITIS_RASH_POSITIVE_METADATA_MARKERS = {
+    "sepsis recognition",
+    "sepsis-recognition-antibiotic-protocols",
+    "meningitis",
+    "meningococcemia",
+    "meningococcal",
+    "non-blanching",
+    "nonblanching",
+    "petechial",
+    "petechiae",
+    "purpuric",
+    "purple/dark/bruise-like rash",
+    "fever with dark, purple",
+    "fever + rash",
+    "infant & child care",
+    "infant-child-care",
+    "childhood illness recognition",
+    "early warning: sentinel symptoms",
+}
+
+_MENINGITIS_RASH_DISTRACTOR_METADATA_MARKERS = {
+    "common ailments",
+    "common-ailments-recognition-care",
+    "minor conditions",
+    "bug bites",
+    "bug-bites-stings-itch-relief",
+    "poison ivy",
+    "contact rash",
+    "common rashes",
+    "common-rashes-skin-irritation",
+    "infectious disease management",
+    "troubleshooting",
+    "antipyretic",
+    "fever management",
+    "disease surveillance systems",
+    "health officer",
+    "contact tracing",
+    "quarantine",
+    "isolation",
+    "measles",
+}
+
+_AIRWAY_OBSTRUCTION_POSITIVE_METADATA_MARKERS = {
+    "first aid & emergency response",
+    "first-aid",
+    "emergency airway management",
+    "emergency-airway-management",
+    "choking and airway management",
+    "foreign body airway obstruction",
+    "airway obstruction",
+    "choking",
+    "back blows",
+    "abdominal thrust",
+    "abdominal thrusts",
+    "chest thrust",
+    "chest thrusts",
+    "food bolus",
+    "food-bolus",
+    "dysphagia",
+    "cannot swallow",
+    "drooling",
+}
+
+_AIRWAY_OBSTRUCTION_DISTRACTOR_METADATA_MARKERS = {
+    "unknown ingestion",
+    "unknown-ingestion",
+    "unknown-ingestion-child-poisoning-triage",
+    "swallowed substances",
+    "poison control",
+    "poisoning",
+    "toxicology",
+    "food allergy",
+    "allergic reaction",
+    "allergic reactions",
+    "anaphylaxis",
+    "routine panic",
+    "anxiety",
+    "anatomy-basics-body-systems",
+    "respiratory anatomy",
+}
+
+_NEWBORN_SEPSIS_POSITIVE_METADATA_MARKERS = {
+    "sepsis recognition",
+    "sepsis-recognition-antibiotic-protocols",
+    "infant & child care",
+    "infant-child-care",
+    "pediatric emergencies",
+    "newborn",
+    "neonatal",
+    "poor feeding",
+    "hard to wake",
+    "low temperature",
+    "fever or low temperature",
+    "serious infection",
+}
+
+_ABDOMINAL_TRAUMA_POSITIVE_METADATA_MARKERS = {
+    "acute abdominal emergencies",
+    "acute-abdominal-emergencies",
+    "shock bleeding trauma stabilization",
+    "shock-bleeding-trauma-stabilization",
+    "abdominal trauma",
+    "blunt abdominal trauma",
+    "handlebar injury",
+    "handlebar",
+    "left side pain",
+    "belly pain after fall",
+    "fell and belly pain",
+    "solid organ injury",
+    "hard belly",
+    "rigid belly",
+    "internal bleeding",
+    "hemorrhage",
+}
+
+_INFECTED_WOUND_POSITIVE_METADATA_MARKERS = {
+    "wound hygiene",
+    "wound hygiene, infection prevention",
+    "wound-hygiene",
+    "infection prevention",
+    "first aid",
+    "sepsis recognition",
+    "sepsis-recognition-antibiotic-protocols",
+    "red streak",
+    "red streaks",
+    "pus",
+    "spreading redness",
+    "field sanitation",
+}
+
+_INFECTED_WOUND_DISTRACTOR_METADATA_MARKERS = {
+    "bug bites",
+    "stings",
+    "itch relief",
+    "poison ivy",
+    "contact rash",
+    "common rashes",
+    "routine skin irritation",
+    "routine self-care",
+}
+
+_EYE_GLOBE_INJURY_QUERY_MARKERS = {
+    "metal chip",
+    "grinding",
+    "flying debris",
+    "high-speed debris",
+    "high speed debris",
+    "embedded",
+    "stuck",
+    "still feels stuck",
+    "poking out",
+    "pull it out",
+    "scratched my eye",
+    "stick scratched",
+    "wood chip",
+    "glass shard",
+    "vision is darker",
+    "darker vision",
+    "vision change",
+    "vision changes",
+    "blurry vision",
+    "vision is blurry",
+    "see halos",
+    "halos",
+    "hit in the eye",
+    "eye hit",
+    "hit by a rock",
+    "rock hit",
+    "eye injury",
+    "hurts to open",
+    "hard to open",
+}
+
+_EYE_GLOBE_INJURY_POSITIVE_METADATA_MARKERS = {
+    "eye injuries",
+    "emergency ophthalmology",
+    "eye-injuries-emergency-care",
+    "penetrating injury",
+    "do not remove",
+    "embedded",
+    "high-speed",
+    "poking out",
+    "globe injury",
+    "blunt trauma",
+    "hyphema",
+    "eye patching and shield",
+    "shield without pressure",
+    "vision change",
+    "darker vision",
+}
+
+_EYE_GLOBE_INJURY_DISTRACTOR_METADATA_MARKERS = {
+    "red eye",
+    "pink eye",
+    "eye irritation home care",
+    "eye-irritation-pink-eye-home-care",
+    "safe flushing",
+    "styes",
+    "eyelid bumps",
+    "mild red-eye",
+    "optics & vision care",
+    "optics",
+    "direct pressure",
+    "hemorrhage control",
+    "wound management",
+}
+
+_RETINAL_DETACHMENT_EYE_QUERY_MARKERS = {
+    "flashes and floaters",
+    "floaters and flashes",
+    "bright flashes",
+    "new shower of floaters",
+    "shower of floaters",
+    "dark curtain",
+    "gray curtain",
+    "curtain over one eye",
+    "curtain falling over one eye",
+    "shadow creeping",
+    "side vision",
+    "lost part of vision",
+    "half my vision went dark",
+    "sudden vision loss",
+    "sudden loss of vision",
+    "vision loss in one eye",
+    "loss of vision in one eye",
+    "painless sudden vision loss",
+}
+
+_RETINAL_DETACHMENT_EYE_POSITIVE_METADATA_MARKERS = {
+    "eye injuries",
+    "emergency ophthalmology",
+    "eye-injuries-emergency-care",
+    "sudden vision loss",
+    "vision loss is emergency",
+    "retinal",
+    "retinal detachment",
+    "optic nerve",
+    "optics & vision care",
+    "optics-vision",
+    "flashes",
+    "floaters",
+    "dark curtain",
+}
+
+_RETINAL_DETACHMENT_EYE_DISTRACTOR_METADATA_MARKERS = {
+    "red eye",
+    "pink eye",
+    "eye irritation",
+    "eye-irritation-pink-eye-home-care",
+    "safe flushing",
+    "styes",
+    "eyelid bumps",
+    "vision correction",
+    "vision-correction-optometry",
+    "glasses",
+    "routine eye exam",
+    "headaches",
+    "headaches-basic-care",
+    "migraine",
+    "astronomy",
+    "night sky",
+    "observation skills",
+    "navigation",
+    "signaling",
+    "fire",
+}
+
+_ELECTRICAL_HAZARD_QUERY_MARKERS = {
+    "shocked",
+    "electric shock",
+    "electrical shock",
+    "cannot let go",
+    "can't let go",
+    "collapsed near electrical",
+    "exposed live wire",
+    "live wire",
+    "downed power line",
+    "downed line",
+    "wire across driveway",
+    "sparking outlet",
+    "outlet sparked",
+    "wet breaker box",
+    "breaker box after flood",
+    "before touching anything",
+}
+
+_DOWNED_POWER_LINE_QUERY_MARKERS = {
+    "downed power line",
+    "downed line",
+    "power line across",
+    "wire across driveway",
+    "line across driveway",
+}
+
+_ELECTRICAL_HAZARD_POSITIVE_METADATA_MARKERS = {
+    "electrical safety",
+    "electrical-safety-hazard-prevention",
+    "electrical shock",
+    "electric shock",
+    "live wire",
+    "downed power line",
+    "wet breaker",
+    "sparking outlet",
+    "de-energize",
+    "do not touch",
+    "cpr",
+    "aed",
+}
+
+_ELECTRICAL_HAZARD_DISTRACTOR_METADATA_MARKERS = {
+    "home repair",
+    "simple home repairs",
+    "storm damage",
+    "seismic",
+    "earthquake",
+    "wiring project",
+    "test functionality",
+    "appliance repair",
+}
+
+_DROWNING_COLD_WATER_QUERY_MARKERS = {
+    "drowning right now",
+    "someone is drowning",
+    "face down",
+    "silent in the water",
+    "motionless in the water",
+    "went under water",
+    "underwater",
+    "cold-water rescue",
+    "cold water rescue",
+    "gasping hard",
+    "pulled from the water",
+    "after being pulled from the water",
+    "after water rescue",
+    "water rescue",
+    "coughing and short of breath",
+    "fell through ice",
+    "went under the ice",
+    "under ice",
+    "ice rescue",
+}
+
+_POST_RESCUE_DROWNING_BREATHING_MARKERS = {
+    "pulled from the water",
+    "after being pulled from the water",
+    "after water rescue",
+    "water rescue",
+    "coughing",
+    "short of breath",
+    "chest pain",
+    "confusion",
+}
+
+_DROWNING_COLD_WATER_POSITIVE_METADATA_MARKERS = {
+    "drowning prevention",
+    "drowning-prevention-water-safety",
+    "cold water survival",
+    "cold-water-survival",
+    "reach throw row go",
+    "reach-throw",
+    "rescue priorities",
+    "post-rescue",
+    "ice rescue",
+    "hypothermia",
+    "rescue breathing",
+    "cpr",
+}
+
+_DROWNING_COLD_WATER_DISTRACTOR_METADATA_MARKERS = {
+    "drowning red flags",
+    "headache",
+    "home sick care",
+    "general hypothermia",
+    "boat building",
+    "water storage",
+}
+
+_NOSEBLEED_URGENT_QUERY_MARKERS = {
+    "nosebleed",
+    "nosebleeds",
+    "blood from my nose",
+    "bleeding from nose",
+    "lean forward",
+}
+
+_NOSEBLEED_URGENT_RED_FLAG_MARKERS = {
+    "urgent help",
+    "get urgent help",
+    "urgent medical help",
+    "will not stop",
+    "won't stop",
+    "wont stop",
+    "20 minutes",
+    "30 minutes",
+    "pouring",
+    "down throat",
+    "blood thinners",
+    "blood thinner",
+    "warfarin",
+    "anticoagulant",
+    "dizzy",
+    "pale",
+    "weak",
+    "faint",
+    "repeated heavy",
+    "same day",
+}
+
+_NOSEBLEED_URGENT_POSITIVE_METADATA_MARKERS = {
+    "nosebleeds",
+    "nosebleeds-basic-care",
+    "epistaxis",
+    "blood down throat",
+    "blood thinners",
+    "repeated heavy nosebleeds",
+    "urgent medical attention",
+    "lean forward",
+    "firm pressure",
+}
+
+_NOSEBLEED_URGENT_DISTRACTOR_METADATA_MARKERS = {
+    "emergency dental",
+    "tooth",
+    "headache",
+    "migraine",
+    "drowning",
+    "rectal",
+    "gi bleed",
+    "hemorrhoid",
+}
+
+_MAJOR_BLOOD_LOSS_SHOCK_BLOOD_MARKERS = {
+    "losing blood",
+    "lost blood",
+    "blood loss",
+    "after losing blood",
+    "after blood loss",
+    "bled a lot",
+    "lost a lot of blood",
+    "bleeding slowed",
+    "bleeding slowed but",
+    "heavy bleeding",
+    "severe bleeding",
+    "uncontrolled bleeding",
+}
+
+_MAJOR_BLOOD_LOSS_SHOCK_MARKERS = {
+    "shock",
+    "pale",
+    "dizzy",
+    "dizziness",
+    "weak",
+    "faint",
+    "fainting",
+    "clammy",
+    "cold skin",
+    "confused",
+    "confusion",
+    "altered mental",
+    "rapid pulse",
+}
+
+_MAJOR_BLOOD_LOSS_SHOCK_POSITIVE_METADATA_MARKERS = {
+    "trauma hemorrhage control",
+    "trauma-hemorrhage-control",
+    "shock-bleeding-trauma-stabilization",
+    "shock recognition",
+    "shock-recognition-resuscitation",
+    "hemorrhagic shock",
+    "hemorrhage control",
+    "blood loss",
+    "tourniquet",
+    "wound packing",
+    "shock management",
+}
+
+_MAJOR_BLOOD_LOSS_SHOCK_DISTRACTOR_METADATA_MARKERS = {
+    "nosebleed",
+    "nosebleeds",
+    "nosebleeds-basic-care",
+    "epistaxis",
+    "lean forward",
+    "pinch the soft",
+    "hemorrhoid",
+    "hemorrhoids",
+}
+
 _URINARY_METADATA_MARKERS = {
     "urinary",
     "urination",
@@ -1040,6 +2591,42 @@ _URINARY_METADATA_MARKERS = {
     "frequency",
     "urgency",
     "dysuria",
+}
+
+_VAGINAL_SYMPTOM_METADATA_MARKERS = {
+    "common vaginal infections",
+    "vaginal infections",
+    "vaginal itching",
+    "vaginal discharge",
+    "itching & discharge",
+    "itching and discharge",
+    "yeast infection",
+    "vaginitis",
+    "bacterial vaginosis",
+    "reproductive-health",
+    "gynecological",
+    "sti",
+}
+
+_HEMATURIA_DISTRACTOR_METADATA_MARKERS = {
+    "cough",
+    "cold",
+    "sore throat",
+    "asthma",
+    "respiratory",
+    "nosebleed",
+    "nosebleeds",
+    "rectal",
+    "hemorrhoid",
+    "hemorrhoids",
+    "gi bleed",
+    "stool",
+    "microscopy",
+    "magnification",
+    "medical diagnostics",
+    "sti recognition",
+    "sexually transmitted",
+    "urgent red flags",
 }
 
 _BOWEL_RECTAL_DISTRACTOR_MARKERS = {
@@ -1707,7 +3294,13 @@ _EYE_METADATA_MARKERS = {
 _ANIMAL_BITE_QUERY_MARKERS = {
     "animal bite",
     "dog bite",
+    "dog bit",
     "cat bite",
+    "cat bit",
+    "bite on",
+    "bite wound",
+    "deep bite",
+    "punctured deeply",
     "rabies",
     "bitten by",
 }
@@ -1783,6 +3376,50 @@ _PAPER_INK_DISTRACTOR_METADATA_MARKERS = {
     "printing press",
     "movable type",
     "newsletter",
+}
+
+_ADHESIVE_BINDER_POSITIVE_METADATA_MARKERS = {
+    "adhesives binders formulation",
+    "adhesives-binders-formulation",
+    "glue adhesives",
+    "glue-adhesives",
+    "adhesive selection",
+    "binder families",
+    "hide glue",
+    "casein",
+    "starch paste",
+    "pine pitch",
+}
+
+_ADHESIVE_BINDER_DISTRACTOR_METADATA_MARKERS = {
+    "soap",
+    "bleach",
+    "fuel",
+    "dye",
+    "chemical exposure",
+}
+
+_MESSAGE_AUTH_POSITIVE_METADATA_MARKERS = {
+    "message authentication",
+    "message-authentication-courier",
+    "courier protocols",
+    "challenge-response",
+    "challenge response",
+    "wax seals",
+    "tamper-evident",
+    "tamper evidence",
+    "chain of custody",
+    "verify a notice",
+    "posted orders",
+}
+
+_MESSAGE_AUTH_DISTRACTOR_METADATA_MARKERS = {
+    "wildfire",
+    "evacuation planning",
+    "emergency dental",
+    "essential medications",
+    "water purification",
+    "forensic investigation",
 }
 
 _BOW_ARROW_QUERY_MARKERS = {
@@ -2797,17 +4434,26 @@ _ANTIBIOTIC_SYNTHESIS_MARKERS = {
 }
 
 _DENTAL_INFECTION_SPECIAL_CASE_MARKERS = {
+    "bad tooth pain",
+    "tooth pain",
     "tooth is infected",
     "tooth infection",
     "tooth abscess",
     "dental abscess",
+    "abscess",
+    "from a tooth",
+    "dental",
 }
 
 _FACIAL_SWELLING_MARKERS = {
     "face is swelling",
     "face swelling",
     "jaw swelling",
+    "swelling under the jaw",
     "cheek swelling",
+    "mouth is swelling",
+    "mouth swelling",
+    "tongue feels pushed up",
     "swelling in my face",
 }
 
@@ -2828,8 +4474,26 @@ _GENERIC_SEIZURE_SPECIAL_CASE_MARKERS = {
     "convulsion",
 }
 
+_SEIZURE_RED_FLAG_SPECIAL_CASE_MARKERS = {
+    "5 minutes",
+    "6 minutes",
+    "more than 5 minutes",
+    "over 5 minutes",
+    "back to back",
+    "never fully woke",
+    "never fully woke up",
+    "without waking",
+    "without waking up",
+    "did not wake up",
+    "didn't wake up",
+    "confused and sleepy",
+    "sleepy after the seizure",
+    "confused after the seizure",
+    "alcohol withdrawal",
+    "head injury",
+}
+
 _SEIZURE_SPECIAL_CASE_EXCLUSION_MARKERS = {
-    "status epilepticus",
     "midazolam",
     "lorazepam",
     "diazepam",
@@ -2845,7 +4509,6 @@ _SEIZURE_SPECIAL_CASE_EXCLUSION_MARKERS = {
     "eclampsia",
     "poison",
     "overdose",
-    "withdrawal",
 }
 
 _GENERIC_SEVERE_BURN_SPECIAL_CASE_MARKERS = {
@@ -2853,6 +4516,11 @@ _GENERIC_SEVERE_BURN_SPECIAL_CASE_MARKERS = {
     "badly burned",
     "severe burn",
     "serious burn",
+    "needs a burn center",
+    "need a burn center",
+    "burn center",
+    "needs a clinic",
+    "need a clinic",
 }
 
 _CHEST_TRAUMA_SPECIAL_CASE_TRAUMA_MARKERS = {
@@ -2892,24 +4560,40 @@ _ABUSE_IMMEDIATE_SAFETY_RELATIONSHIP_MARKERS = {
     "my partner",
     "my ex",
     "the person who hurt me",
+    "someone who hurt me",
     "someone at home is hurting them",
+    "person they live with",
     "sexually assaulted",
     "sexual assault",
+    "assaulted",
     "abuser",
 }
 
 _ABUSE_IMMEDIATE_SAFETY_DANGER_MARKERS = {
     "won't let me leave",
     "wont let me leave",
+    "try to leave",
+    "try to go",
+    "stands in front of the door",
+    "hides my keys",
     "keeps taking my phone",
     "taking my phone",
+    "scared to use my phone",
+    "scared to tell anyone",
+    "tracking device",
     "tracking my phone",
     "they are tracking my phone",
+    "seems to know where i am",
     "kill themselves if i leave",
     "will kill themselves if i leave",
+    "they will kill themselves",
+    "threatens suicide if i leave",
     "have to go back tonight",
+    "not safe going back",
     "in the house right now",
+    "in the next room right now",
     "bleeding",
+    "pain and bleeding",
 }
 
 _GENERIC_BROKEN_ARM_SPECIAL_CASE_MARKERS = {
@@ -3085,18 +4769,6 @@ _RELEVANT_SCOPE_MARKERS = {
 }
 
 
-def _text_has_marker(text, markers):
-    """Return True if any marker appears in text."""
-    lower = text.lower()
-    for marker in markers:
-        if " " in marker:
-            if marker in lower:
-                return True
-        elif re.search(r"\b" + re.escape(marker) + r"\b", lower):
-            return True
-    return False
-
-
 def _has_explicit_geriatric_or_cognitive_decline_evidence(question):
     """Return True when the query explicitly indicates elder/cognitive-decline context."""
     lower = question.lower()
@@ -3137,6 +4809,28 @@ def _is_acute_symptom_query(question):
 def _is_mental_health_crisis_query(question):
     """Detect acute mental-health crisis prompts that need crisis-guide routing."""
     lower = question.lower()
+    panic_only = "panic attack" in lower and not _text_has_marker(
+        lower,
+        {
+            "suicide",
+            "self-harm",
+            "self harm",
+            "can't stay safe",
+            "cannot stay safe",
+            "hearing voices",
+            "hallucination",
+            "hallucinations",
+            "psychosis",
+            "paranoid",
+            "paranoia",
+            "not acting normal",
+            "unsafe choices",
+            "won't stop moving",
+            "will not stop moving",
+        },
+    )
+    if panic_only and _is_cardiac_first_query(question):
+        return False
     return any(marker in lower for marker in _MENTAL_HEALTH_CRISIS_QUERY_MARKERS) or _is_mania_or_psychosis_like_query(
         question
     )
@@ -3277,6 +4971,7 @@ def _is_mania_or_psychosis_like_query(question):
 def _is_cardiac_emergency_query(question):
     """Detect collapse and cardiac-emergency prompts that need first-aid routing."""
     lower = question.lower()
+    cardiac_first = _is_cardiac_first_query(question)
     has_collapse_or_unresponsive = any(
         marker in lower for marker in _COLLAPSE_UNRESPONSIVE_MARKERS
     )
@@ -3284,7 +4979,9 @@ def _is_cardiac_emergency_query(question):
     has_direct_cardiac_terms = any(
         marker in lower for marker in _CARDIAC_EMERGENCY_MARKERS
     )
-    return _is_human_medical_query(question) and (
+    return (_is_human_medical_query(question) or cardiac_first) and (
+        cardiac_first
+        or
         has_direct_cardiac_terms
         or (
             has_collapse_or_unresponsive
@@ -3294,6 +4991,23 @@ def _is_cardiac_emergency_query(question):
                 or "chest pressure" in lower
             )
         )
+    )
+
+
+def _is_cardiac_first_query(question):
+    """Detect chest-symptom/panic-overlap prompts that must stay cardiac-first."""
+    lower = question.lower()
+    has_cardiac_marker = _text_has_marker(lower, _CARDIAC_FIRST_QUERY_MARKERS)
+    if "panic" in lower and _text_has_marker(lower, {"heart attack", "chest"}):
+        return True
+    return has_cardiac_marker and (
+        "chest" in lower
+        or "heart attack" in lower
+        or "jaw pain" in lower
+        or "arm pain" in lower
+        or "shortness of breath" in lower
+        or "exertion" in lower
+        or "dread" in lower
     )
 
 
@@ -3376,38 +5090,718 @@ def _is_household_chemical_hazard_query(question):
     )
     if "food poisoning" in lower and has_gi_bleed_signal and not has_corrosive_exposure:
         return False
-    return _text_has_marker(lower, _HOUSEHOLD_CHEMICAL_HAZARD_MARKERS) or (
-        has_corrosive_exposure
+    return (
+        _text_has_marker(lower, _HOUSEHOLD_CHEMICAL_HAZARD_MARKERS)
+        or has_corrosive_exposure
+        or _is_unknown_chemical_skin_burn_query(question)
     )
-
-
-def _is_corrosive_household_chemical_exposure_query(question):
-    """Detect actual corrosive/household-chemical exposures that need emergency-first structure."""
-    lower = question.lower()
-    return _text_has_marker(lower, _CORROSIVE_HOUSEHOLD_CHEMICAL_SOURCE_MARKERS) and _text_has_marker(
-        lower, _CHEMICAL_EXPOSURE_ROUTE_MARKERS
-    )
-
-
-def _is_household_chemical_eye_query(question):
-    """Detect household chemical prompts where the complaint is eye-first."""
-    lower = question.lower()
-    return _text_has_marker(
-        lower, _CORROSIVE_HOUSEHOLD_CHEMICAL_SOURCE_MARKERS
-    ) and _text_has_marker(lower, _CHEMICAL_EYE_ROUTE_MARKERS)
-
-
-def _is_household_chemical_inhalation_query(question):
-    """Detect household chemical inhalation prompts that should avoid stove/CO distractors."""
-    lower = question.lower()
-    return _text_has_marker(
-        lower, _HOUSEHOLD_CHEMICAL_INHALATION_SOURCE_MARKERS
-    ) and _text_has_marker(lower, _CHEMICAL_INHALATION_ROUTE_MARKERS)
 
 
 def _is_urinary_query(question):
     """Detect urinary complaint-first prompts that need stronger medical routing."""
     return _text_has_marker(question, _URINARY_QUERY_MARKERS)
+
+
+def _is_urinary_vaginal_overlap_query(question):
+    """Detect urinary complaints mixed with vaginal itching/discharge symptoms."""
+    lower = question.lower()
+    return _is_urinary_query(lower) and _text_has_marker(
+        lower, _VAGINAL_SYMPTOM_QUERY_MARKERS
+    )
+
+
+def _is_hematuria_query(question):
+    """Detect visible-blood-in-urine prompts as a urinary red-flag lane."""
+    lower = question.lower()
+    return _is_urinary_query(lower) and _text_has_marker(
+        lower, _HEMATURIA_QUERY_MARKERS
+    )
+
+
+def _is_anaphylaxis_red_zone_special_case(question):
+    """Detect allergen-linked airway, breathing, or circulation red flags."""
+    lower = question.lower()
+    if _text_has_marker(
+        lower,
+        {
+            "only nausea and no swelling or breathing trouble",
+            "no swelling or breathing trouble",
+            "no swelling and no breathing trouble",
+            "no breathing trouble or swelling",
+            "no breathing trouble and no swelling",
+        },
+    ):
+        return False
+    has_allergen = _text_has_marker(lower, _ALLERGEN_EXPOSURE_MARKERS)
+    has_red_zone = _text_has_marker(lower, _ANAPHYLAXIS_RED_ZONE_MARKERS)
+    if has_allergen and has_red_zone:
+        return True
+
+    has_skin_swelling_airway_overlap = (
+        _text_has_marker(lower, _ALLERGY_SKIN_MARKERS)
+        and _text_has_marker(lower, _ALLERGY_SWELLING_MARKERS)
+        and _text_has_marker(
+            lower,
+            {
+                "breathing trouble",
+                "trouble breathing",
+                "difficulty breathing",
+                "wheezing",
+                "wheeze",
+                "can barely talk",
+                "blue lips",
+            },
+        )
+    )
+    if has_skin_swelling_airway_overlap:
+        return True
+
+    has_explicit_anaphylaxis_overlap = "anaphylaxis" in lower and _text_has_marker(
+        lower,
+        {
+            "asthma",
+            "panic",
+            "wheezing",
+            "wheeze",
+            "breathing trouble",
+            "trouble breathing",
+            "rescue inhaler",
+            "inhaler",
+        },
+    )
+    if has_explicit_anaphylaxis_overlap:
+        return True
+
+    has_explicit_allergic_reaction_overlap = _text_has_marker(
+        lower, {"allergic reaction", "allergy reaction"}
+    ) and _text_has_marker(
+        lower,
+        {
+            "wheezing",
+            "wheeze",
+            "throat tight",
+            "throat feels tight",
+            "breathing trouble",
+            "trouble breathing",
+            "lip",
+            "tongue",
+            "swelling",
+            "first dose",
+        },
+    )
+    if has_explicit_allergic_reaction_overlap:
+        return True
+
+    return _text_has_marker(
+        lower,
+        {
+            "throat swelling or just an asthma flare",
+            "throat swelling or asthma",
+            "throat swelling versus asthma",
+            "throat swelling vs asthma",
+        },
+    )
+
+
+def _is_upper_airway_swelling_danger_special_case(question):
+    """Detect noisy upper-airway, throat-closing, or swelling-vs-panic/asthma prompts."""
+    lower = question.lower()
+    if _text_has_marker(lower, _SMOKE_CHEMICAL_AIRWAY_SOURCE_MARKERS):
+        return False
+    return _text_has_marker(
+        lower, _UPPER_AIRWAY_SWELLING_DANGER_MARKERS
+    ) and _text_has_marker(lower, _UPPER_AIRWAY_CONTEXT_MARKERS)
+
+
+def _is_facial_swelling_anxiety_screen_special_case(question):
+    """Detect face swelling framed as anxiety while breathing is currently normal."""
+    lower = question.lower()
+    return (
+        _text_has_marker(lower, {"face swelling", "facial swelling", "face is swelling", "swollen face"})
+        and _text_has_marker(lower, {"anxiety", "panic", "just anxiety", "routine anxiety"})
+        and _text_has_marker(lower, {"breathing is still okay", "breathing still okay", "breathing is okay", "breathing okay", "breathing is fine", "can breathe"})
+    )
+
+
+def _is_medication_allergy_swelling_special_case(question):
+    """Detect medication-linked face/lip/tongue swelling prompts."""
+    lower = question.lower()
+    return (
+        _text_has_marker(lower, _MEDICATION_ALLERGY_MARKERS)
+        and _text_has_marker(lower, _ALLERGY_SWELLING_MARKERS)
+    )
+
+
+def _is_medicine_hives_skin_only_special_case(question):
+    """Detect hives after a medicine without anaphylaxis red-zone wording."""
+    lower = question.lower()
+    return (
+        _text_has_marker(lower, _MEDICATION_ALLERGY_MARKERS)
+        and _text_has_marker(lower, _ALLERGY_SKIN_MARKERS)
+        and not _text_has_marker(lower, _ANAPHYLAXIS_RED_ZONE_MARKERS)
+    )
+
+
+def _is_soap_rash_breathing_fine_special_case(question):
+    """Detect skin-only soap/contact-rash prompts with breathing explicitly normal."""
+    lower = question.lower()
+    return (
+        _text_has_marker(lower, _SOAP_RASH_QUERY_MARKERS)
+        and _text_has_marker(lower, _ALLERGY_SKIN_MARKERS)
+        and _text_has_marker(lower, _BREATHING_FINE_MARKERS)
+        and not _text_has_marker(lower, _ANAPHYLAXIS_RED_ZONE_MARKERS)
+    )
+
+
+def _is_common_ailments_gateway_query(question):
+    """Detect broad mild-vs-urgent symptom prompts that should start at common ailments."""
+    lower = question.lower()
+    if _is_acute_symptom_query(question):
+        return False
+    return _text_has_marker(
+        lower, _COMMON_AILMENTS_COMPLAINT_QUERY_MARKERS
+    ) and _text_has_marker(lower, _COMMON_AILMENTS_GATEWAY_QUERY_MARKERS)
+
+
+def _is_gi_bleed_emergency_query(question):
+    """Detect GI-bleed presentations that should not route to routine GI or visible-bleed care."""
+    lower = question.lower()
+    if _text_has_marker(lower, _GI_BLEED_QUERY_MARKERS):
+        return True
+    if (
+        "dangerous bleeding" in lower
+        and _text_has_marker(lower, {"hemorrhoids", "hemorrhoid", "reflux"})
+    ):
+        return True
+    if (
+        "bleed" in lower
+        and _text_has_marker(
+            lower,
+            {
+                "minor stomach issue",
+                "stomach issue",
+                "minor stomach",
+                "minor gi issue",
+                "routine stomach",
+            },
+        )
+    ):
+        return True
+    return (
+        ("black" in lower and ("sticky" in lower or "tar" in lower))
+        or (
+            "bright red blood" in lower
+            and _text_has_marker(lower, {"bowel movement", "bowel movements", "stool"})
+            and _text_has_marker(lower, _GI_BLEED_SHOCK_OR_PAIN_MARKERS)
+        )
+    )
+
+
+def _is_surgical_abdomen_emergency_query(question):
+    """Detect red-zone abdominal patterns that should route to acute abdomen ownership."""
+    lower = question.lower()
+    if _is_gi_bleed_emergency_query(question) or _is_gyn_emergency_query(question):
+        return False
+    if _text_has_marker(lower, _SURGICAL_ABDOMEN_EXPLICIT_QUERY_MARKERS):
+        return True
+    has_belly_context = _text_has_marker(
+        lower, {"belly", "abdomen", "abdominal", "stomach"}
+    )
+    if _text_has_marker(
+        lower,
+        {
+            "no hard belly or guarding",
+            "no hard belly and no guarding",
+            "without hard belly or guarding",
+            "without hard belly and without guarding",
+        },
+    ) or (
+        _text_has_marker(lower, {"no hard belly", "without hard belly", "no rigid belly"})
+        and _text_has_marker(lower, {"no guarding", "without guarding"})
+    ):
+        return False
+    if has_belly_context and _text_has_marker(
+        lower, _SURGICAL_ABDOMEN_GUARDING_QUERY_MARKERS
+    ):
+        return True
+    if _text_has_marker(lower, _SURGICAL_ABDOMEN_RLQ_QUERY_MARKERS) and _text_has_marker(
+        lower, _SURGICAL_ABDOMEN_RLQ_RED_FLAG_MARKERS
+    ):
+        return True
+    if (
+        _text_has_marker(lower, _SURGICAL_ABDOMEN_OBSTRUCTION_VOMITING_MARKERS)
+        and _text_has_marker(lower, _SURGICAL_ABDOMEN_OBSTRUCTION_NO_OUTPUT_MARKERS)
+        and _text_has_marker(lower, _SURGICAL_ABDOMEN_DISTENTION_MARKERS)
+    ):
+        return True
+    if _text_has_marker(
+        lower,
+        {"foul brown material", "foul brown vomit", "feculent", "fecal vomiting"},
+    ) and _text_has_marker(lower, _SURGICAL_ABDOMEN_OBSTRUCTION_NO_OUTPUT_MARKERS):
+        return True
+    if _text_has_marker(lower, {"blockage", "obstruction"}) and _text_has_marker(
+        lower, _SURGICAL_ABDOMEN_OBSTRUCTION_NO_OUTPUT_MARKERS
+    ) and _text_has_marker(lower, {"pain comes in waves", "cramping", "severe cramping", "bloating", "bloated"}):
+        return True
+    if has_belly_context and _text_has_marker(
+        lower, {"had surgery before", "prior surgery", "previous surgery"}
+    ) and _text_has_marker(
+        lower, _SURGICAL_ABDOMEN_OBSTRUCTION_NO_OUTPUT_MARKERS
+    ) and _text_has_marker(lower, {"swollen abdomen", "abdomen is swollen", "nonstop nausea", "vomiting"}):
+        return True
+    if has_belly_context and _text_has_marker(
+        lower, {"severe stomach pain", "severe abdominal pain", "severe belly pain"}
+    ) and _text_has_marker(
+        lower, _SURGICAL_ABDOMEN_OBSTRUCTION_VOMITING_MARKERS
+    ) and _text_has_marker(lower, {"bloating", "bloated", "distention", "distended"}):
+        return True
+    if has_belly_context and _text_has_marker(
+        lower, {"severe abdominal pain with fainting", "severe belly pain with fainting", "severe stomach pain with fainting"}
+    ):
+        return True
+    if _text_has_marker(
+        lower,
+        {
+            "stomach pain plus passing out",
+            "belly pain plus passing out",
+            "abdominal pain plus passing out",
+            "stomach pain and passing out",
+            "belly pain and passing out",
+            "abdominal pain and passing out",
+        },
+    ):
+        return True
+    if _text_has_marker(
+        lower,
+        {
+            "pain started suddenly after eating and keeps getting worse",
+            "pain started suddenly after eating and is getting worse",
+            "sudden pain after eating and keeps getting worse",
+        },
+    ):
+        return True
+    if has_belly_context and _text_has_marker(lower, {"severe cramping", "cramping"}) and _text_has_marker(
+        lower, {"bloating", "bloated", "distention", "distended"}
+    ) and _text_has_marker(lower, _SURGICAL_ABDOMEN_OBSTRUCTION_VOMITING_MARKERS):
+        return True
+    return (
+        "fever" in lower
+        and has_belly_context
+        and _text_has_marker(lower, _SURGICAL_ABDOMEN_FOCAL_TENDER_MARKERS)
+    )
+
+
+def _is_electrical_hazard_query(question):
+    """Detect electrical danger prompts that should route to hazard-first guidance."""
+    lower = question.lower()
+    return _text_has_marker(lower, _ELECTRICAL_HAZARD_QUERY_MARKERS)
+
+
+def _is_downed_power_line_query(question):
+    """Detect downed-line prompts that require no-approach utility response."""
+    lower = question.lower()
+    return _text_has_marker(lower, _DOWNED_POWER_LINE_QUERY_MARKERS)
+
+
+def _is_drowning_cold_water_query(question):
+    """Detect active drowning/cold-water/ice rescue prompts."""
+    lower = question.lower()
+    return _text_has_marker(lower, _DROWNING_COLD_WATER_QUERY_MARKERS)
+
+
+def _is_post_rescue_drowning_breathing_query(question):
+    """Detect delayed breathing symptoms after water rescue."""
+    lower = question.lower()
+    return (
+        _text_has_marker(lower, {"pulled from the water", "after water rescue", "water rescue"})
+        and _text_has_marker(lower, {"coughing", "short of breath", "chest pain", "confusion"})
+    )
+
+
+def _is_post_rescue_drowning_breathing_special_case(question):
+    """Detect after-rescue drowning breathing problems that need deterministic escalation."""
+    lower = question.lower()
+    has_after_rescue_context = _text_has_marker(
+        lower,
+        {
+            "pulled from the water",
+            "pulled them from the water",
+            "pulled him from the water",
+            "pulled her from the water",
+            "after being pulled from the water",
+            "after water rescue",
+            "water rescue",
+            "rescued from the water",
+            "being rescued from the water",
+            "cold-water rescue",
+            "cold water rescue",
+            "submersion incident",
+            "submersion",
+            "inhaled water",
+            "inhaling water",
+            "water inhalation",
+            "at the pool",
+        },
+    )
+    has_breathing_problem = _text_has_marker(
+        lower,
+        {
+            "not breathing normally",
+            "not breathing",
+            "abnormal breathing",
+            "breathing is abnormal",
+            "coughing",
+            "cough",
+            "cough got worse",
+            "keep coughing",
+            "short of breath",
+            "breathing trouble",
+            "chest pain",
+            "confusion",
+            "sleepy",
+            "sleepiness",
+            "lethargic",
+            "worsening breathing",
+            "looked fine",
+            "feel fine",
+            "seem okay",
+            "seems okay",
+        },
+    )
+    return has_after_rescue_context and has_breathing_problem
+
+
+def _is_active_drowning_rescue_special_case(question):
+    """Detect active drowning/cold-water/ice rescue prompts before post-rescue care."""
+    return _is_drowning_cold_water_query(
+        question
+    ) and not _is_post_rescue_drowning_breathing_special_case(question)
+
+
+def _is_urgent_nosebleed_query(question):
+    """Detect nosebleeds with urgent red flags."""
+    lower = question.lower()
+    return _text_has_marker(lower, _NOSEBLEED_URGENT_QUERY_MARKERS) and (
+        _text_has_marker(lower, _NOSEBLEED_URGENT_RED_FLAG_MARKERS)
+    )
+
+
+def _is_major_blood_loss_shock_query(question):
+    """Detect blood-loss shock prompts that should not route to nosebleed care."""
+    lower = question.lower()
+    if _is_urgent_nosebleed_query(lower):
+        return False
+    has_blood_loss = _text_has_marker(lower, _MAJOR_BLOOD_LOSS_SHOCK_BLOOD_MARKERS)
+    has_shock = _text_has_marker(lower, _MAJOR_BLOOD_LOSS_SHOCK_MARKERS)
+    return has_blood_loss and has_shock
+
+
+def _is_gyn_emergency_query(question):
+    """Detect gynecologic or early-pregnancy red flags that need emergency ownership."""
+    lower = question.lower()
+    if _text_has_marker(
+        lower, {"gynecologic emergency", "gynecological emergency", "gyn emergency"}
+    ):
+        return True
+    if _text_has_marker(lower, {"gynecologic", "gynecological", "gyn"}) and _text_has_marker(
+        lower, {"emergency first-action", "emergency first action", "emergency path", "what matters first"}
+    ):
+        return True
+    if _text_has_marker(lower, {"period cramps", "period cramp"}) and _text_has_marker(
+        lower, {"or an emergency", "or emergency", "what do i do first", "what matters first"}
+    ):
+        return True
+    if not _is_human_medical_query(question):
+        return False
+    if _text_has_marker(lower, {"spotting only", "only spotting"}) and _text_has_marker(
+        lower, {"no pain", "without pain"}
+    ) and _text_has_marker(
+        lower, {"no dizziness", "or dizziness", "no faint", "no faintness", "or faintness"}
+    ):
+        return False
+    has_gyn_context = _text_has_marker(lower, _GYN_EMERGENCY_QUERY_MARKERS)
+    has_red_flag = _text_has_marker(lower, _GYN_EMERGENCY_RED_FLAG_MARKERS)
+    has_pelvic_bleed_pair = (
+        _text_has_marker(lower, {"pelvic pain", "severe pelvic pain"})
+        and _text_has_marker(lower, {"heavy bleeding", "vaginal bleeding", "bleeding"})
+    )
+    return (has_gyn_context and has_red_flag) or has_pelvic_bleed_pair
+
+
+def _is_crush_compartment_query(question):
+    """Detect crush/compartment-syndrome warning clusters without requiring exact guide language."""
+    lower = question.lower()
+    source_hits = sum(
+        1 for marker in _CRUSH_COMPARTMENT_SOURCE_MARKERS if marker in lower
+    )
+    symptom_hits = sum(
+        1 for marker in _CRUSH_COMPARTMENT_SYMPTOM_MARKERS if marker in lower
+    )
+    passive_stretch = "hurts badly" in lower and "toes" in lower and "move" in lower
+    tight_swelling = (
+        ("swollen" in lower or "swelling" in lower)
+        and ("tight" in lower or "shiny" in lower)
+    )
+    return (
+        "compartment syndrome" in lower
+        or (source_hits >= 1 and symptom_hits >= 1)
+        or passive_stretch
+        or ("pain out of proportion" in lower)
+        or ("out of proportion" in lower and ("tight" in lower or "tighter" in lower))
+        or (tight_swelling and ("badly" in lower or "unbearable" in lower))
+    )
+
+
+def _is_serotonin_syndrome_query(question):
+    """Detect medication-triggered serotonin-syndrome/toxidrome prompts."""
+    lower = question.lower()
+    has_source = _text_has_marker(lower, _SEROTONIN_SOURCE_QUERY_MARKERS)
+    has_symptoms = _text_has_marker(lower, _SEROTONIN_SYMPTOM_QUERY_MARKERS)
+    return has_source and has_symptoms
+
+
+def _is_serotonin_syndrome_special_case(question):
+    """Detect high-specificity serotonin-syndrome/toxidrome prompts."""
+    lower = question.lower()
+    has_source = _text_has_marker(lower, _SEROTONIN_SOURCE_QUERY_MARKERS)
+    if not has_source:
+        return False
+    high_specificity = _text_has_marker(
+        lower,
+        {
+            "clonus",
+            "hyperreflexia",
+            "cannot stop moving",
+            "can't stop moving",
+            "jerking",
+            "legs keep jerking",
+            "rigid",
+            "rigid muscles",
+            "muscles are rigid",
+            "twitching",
+            "twitching all over",
+        },
+    )
+    symptom_hits = sum(
+        1 for marker in _SEROTONIN_SYMPTOM_QUERY_MARKERS if marker in lower
+    )
+    return high_specificity or symptom_hits >= 2
+
+
+def _is_meningitis_rash_emergency_query(question):
+    """Detect fever plus non-blanching/purple rash or meningitis red flags."""
+    lower = question.lower()
+    has_fever = _text_has_marker(lower, _MENINGITIS_RASH_FEVER_MARKERS)
+    has_danger_rash = _text_has_marker(lower, _MENINGITIS_RASH_DANGER_MARKERS)
+    has_neuro_or_meningitis_sign = _text_has_marker(
+        lower, _MENINGITIS_RASH_NEURO_MARKERS
+    )
+    neuro_hit_count = sum(
+        1 for marker in _MENINGITIS_RASH_NEURO_MARKERS if marker in lower
+    )
+    has_neck_stiffness = _text_has_marker(
+        lower,
+        {
+            "stiff neck",
+            "neck is stiff",
+            "rigid neck",
+            "neck is rigid",
+            "neck stiffness",
+            "neck rigidity",
+        },
+    )
+    has_meningitis_companion = _text_has_marker(
+        lower,
+        {
+            "headache",
+            "bad headache",
+            "severe headache",
+            "photophobia",
+            "light hurts",
+            "lights hurt",
+            "hurts to look at light",
+            "vomiting",
+            "throwing up",
+            "confusion",
+            "confused",
+            "sleepy",
+            "hard to wake",
+        },
+    )
+    has_classic_meningitis_cluster = has_fever and (
+        has_neck_stiffness or (has_neuro_or_meningitis_sign and has_meningitis_companion)
+    )
+    has_plain_rash = _text_has_marker(lower, {"rash", "spots", "dots"})
+    has_child_context = _text_has_marker(
+        lower, {"child", "kid", "toddler", "infant", "baby"}
+    )
+    has_hard_to_wake = _text_has_marker(
+        lower,
+        {
+            "hard to wake",
+            "hard to wake up",
+            "will not wake",
+            "won't wake",
+            "cannot wake",
+            "can't wake",
+        },
+    )
+    has_severe_sick_appearance = _text_has_marker(
+        lower,
+        {
+            "very sick",
+            "very sick-looking",
+            "sick-looking",
+            "looks very sick",
+            "seems very sick",
+        },
+    )
+    return has_fever and (
+        has_danger_rash
+        or (
+            has_neuro_or_meningitis_sign
+            and _text_has_marker(lower, {"rash", "spots", "dots"})
+        )
+    ) or (has_danger_rash and neuro_hit_count >= 2) or has_classic_meningitis_cluster or (
+        has_child_context and has_plain_rash and has_hard_to_wake
+    ) or (
+        has_danger_rash and has_severe_sick_appearance
+    )
+
+
+def _is_meningitis_vs_viral_query(question):
+    """Detect non-red-flag meningitis-vs-viral comparison prompts."""
+    lower = question.lower()
+    has_meningitis_context = _text_has_marker(
+        lower,
+        {
+            "meningitis",
+            "meningococcemia",
+            "meningococcal",
+            "sepsis",
+        },
+    )
+    has_routine_illness_context = _text_has_marker(
+        lower,
+        {
+            "viral",
+            "viral illness",
+            "virus",
+            "flu",
+            "cold",
+            "routine illness",
+            "common illness",
+        },
+    )
+    has_boundary_language = _text_has_marker(lower, {" or ", "versus", "vs ", "v. "})
+    return has_meningitis_context and has_routine_illness_context and has_boundary_language
+
+
+def _is_public_health_response_query(question):
+    lower = question.lower()
+    return _text_has_marker(
+        lower,
+        {
+            "outbreak",
+            "cluster",
+            "community",
+            "public health",
+            "surveillance",
+            "health officer",
+            "contact tracing",
+            "quarantine",
+            "isolation",
+            "reporting",
+            "reportable",
+        },
+    )
+
+
+def _is_eye_globe_injury_query(question):
+    """Detect embedded, penetrating, high-speed, or vision-change eye trauma."""
+    lower = question.lower()
+    if "eye" not in lower and "vision" not in lower:
+        return False
+    has_eye_context = "eye" in lower or "vision" in lower
+    has_trauma_or_vision_marker = _text_has_marker(
+        lower, _EYE_GLOBE_INJURY_QUERY_MARKERS
+    )
+    has_embedded_object = (
+        has_eye_context
+        and _text_has_marker(lower, {"stuck", "embedded", "poking out", "pull it out"})
+    )
+    has_high_speed_debris = has_eye_context and _text_has_marker(
+        lower, {"metal chip", "grinding", "flying debris", "high-speed debris", "high speed debris"}
+    )
+    has_vision_change_after_trauma = (
+        _text_has_marker(
+            lower,
+            {
+                "hit in the eye",
+                "eye hit",
+                "hit by a rock",
+                "rock hit",
+                "eye injury",
+                "flying debris",
+            },
+        )
+        and _text_has_marker(
+            lower,
+            {
+                "vision is darker",
+                "darker vision",
+                "vision change",
+                "vision changes",
+                "vision is blurry",
+                "blurry vision",
+                "see halos",
+                "halos",
+                "hurts to open",
+                "hard to open",
+                "severe pain",
+            },
+        )
+    )
+    return (
+        has_trauma_or_vision_marker
+        and (has_embedded_object or has_high_speed_debris or has_vision_change_after_trauma)
+    )
+
+
+def _is_retinal_detachment_eye_emergency_query(question):
+    """Detect sudden monocular curtain/floaters/flashes vision-loss emergencies."""
+    lower = question.lower()
+    if _is_eye_globe_injury_query(question):
+        return False
+    if _text_has_marker(lower, {"face droop", "slurred speech", "one-sided weakness", "arm weakness"}):
+        return False
+    if _text_has_marker(lower, {"signal flashes", "lost trail", "trail is lost", "bright signal"}):
+        return False
+    if "both eyes" in lower and _text_has_marker(lower, {"usual migraine aura", "migraine aura"}):
+        return False
+    has_eye_or_vision = _text_has_marker(lower, {"eye", "vision", "floaters", "flashes"})
+    has_pattern = _text_has_marker(lower, _RETINAL_DETACHMENT_EYE_QUERY_MARKERS)
+    has_one_eye = _text_has_marker(lower, {"one eye", "monocular", "in one eye"})
+    has_curtain_or_shadow = _text_has_marker(lower, {"curtain", "shadow", "went dark", "vision went dark"})
+    has_flashes_or_floaters = _text_has_marker(lower, {"flashes", "floaters", "bright flashes", "shower of floaters"})
+    has_vision_loss = _text_has_marker(
+        lower,
+        {
+            "vision loss",
+            "lost part of vision",
+            "half my vision",
+            "vision went dark",
+            "went dark",
+            "dark curtain",
+            "gray curtain",
+            "getting worse",
+        },
+    )
+    return has_eye_or_vision and (
+        has_pattern
+        or (has_one_eye and has_vision_loss)
+        or (has_flashes_or_floaters and (has_curtain_or_shadow or has_vision_loss))
+    )
 
 
 def _has_major_bleeding_signal(question):
@@ -3865,9 +6259,35 @@ def _is_antibiotic_synthesis_special_case(question):
 def _is_dental_infection_special_case(question):
     """Detect dental infection prompts with facial swelling that need conservative guidance."""
     lower = question.lower()
-    return _text_has_marker(
+    has_dental_source = _text_has_marker(
         lower, _DENTAL_INFECTION_SPECIAL_CASE_MARKERS
-    ) and _text_has_marker(lower, _FACIAL_SWELLING_MARKERS)
+    )
+    has_swelling = _text_has_marker(lower, _FACIAL_SWELLING_MARKERS)
+    has_airway_or_deep_space_red_flag = _text_has_marker(
+        lower,
+        {
+            "hurts to swallow",
+            "trouble swallowing",
+            "difficulty swallowing",
+            "drooling",
+            "tongue feels pushed up",
+            "cannot open it well",
+            "can't open it well",
+            "cannot open my mouth",
+            "can't open my mouth",
+            "airway at risk",
+            "fever and drooling",
+        },
+    )
+    explicit_airway_uncertainty = _text_has_marker(
+        lower, {"can this wait", "airway at risk"}
+    )
+    return (
+        (has_dental_source and has_swelling)
+        or (has_dental_source and has_airway_or_deep_space_red_flag)
+        or (has_swelling and has_airway_or_deep_space_red_flag)
+        or explicit_airway_uncertainty
+    )
 
 
 def _is_nonpharma_pain_special_case(question):
@@ -3878,9 +6298,16 @@ def _is_nonpharma_pain_special_case(question):
 def _is_generic_seizure_special_case(question):
     """Detect generic seizure prompts that need conservative hands-off guidance."""
     lower = question.lower()
-    return _text_has_marker(
+    has_seizure = "seizure" in lower or _text_has_marker(
         lower, _GENERIC_SEIZURE_SPECIAL_CASE_MARKERS
-    ) and not _text_has_marker(lower, _SEIZURE_SPECIAL_CASE_EXCLUSION_MARKERS)
+    )
+    has_generic_marker = _text_has_marker(lower, _GENERIC_SEIZURE_SPECIAL_CASE_MARKERS)
+    has_red_flag_marker = has_seizure and _text_has_marker(
+        lower, _SEIZURE_RED_FLAG_SPECIAL_CASE_MARKERS
+    )
+    return (has_generic_marker or has_red_flag_marker) and not _text_has_marker(
+        lower, _SEIZURE_SPECIAL_CASE_EXCLUSION_MARKERS
+    )
 
 
 def _is_generic_severe_burn_special_case(question):
@@ -3935,7 +6362,20 @@ def _is_abuse_immediate_safety_special_case(question):
     has_immediate_danger_marker = _text_has_marker(
         lower, _ABUSE_IMMEDIATE_SAFETY_DANGER_MARKERS
     )
-    return has_relationship_or_assault_context and has_immediate_danger_marker
+    has_exit_blocking_context = _text_has_marker(
+        lower,
+        {
+            "hides my keys",
+            "stands in front of the door",
+            "blocking the door",
+            "blocks the door",
+            "door when i try to leave",
+            "when i try to leave",
+        },
+    ) and _text_has_marker(lower, {"leave", "go", "door", "keys"})
+    return (
+        has_relationship_or_assault_context and has_immediate_danger_marker
+    ) or has_exit_blocking_context
 
 
 def _is_generic_broken_arm_special_case(question):
@@ -4105,7 +6545,13 @@ def _is_closed_room_fire_question(question):
             "hallway",
         )
     )
-    return has_room_signal and (has_fire_signal or has_smoke_signal)
+    blocked_bedroom_egress_signal = (
+        _text_has_marker(lower, {"blocked", "blocked door", "door is blocked", "exit is blocked"})
+        and _text_has_marker(lower, {"bedroom", "sleeping room", "upstairs bedroom", "second-floor bedroom"})
+        and _text_has_marker(lower, {"door", "exit", "hallway"})
+        and _text_has_marker(lower, {"window", "escape", "another exit", "go out", "upstairs", "second-floor"})
+    )
+    return (has_room_signal and (has_fire_signal or has_smoke_signal)) or blocked_bedroom_egress_signal
 
 
 def _is_enclosed_room_fire_smoke_question(question):
@@ -4132,6 +6578,144 @@ def _is_enclosed_room_fire_smoke_question(question):
         )
     )
     return has_fire_signal and has_smoke_signal and has_enclosed_signal
+
+
+_INDOOR_CO_EXPOSURE_SOURCE_MARKERS = {
+    "heater",
+    "stove",
+    "wood stove",
+    "woodstove",
+    "charcoal burner",
+    "charcoal indoors",
+    "charcoal",
+    "coal burner",
+    "generator",
+    "fireplace",
+    "combustion",
+}
+
+_INDOOR_CO_EXPOSURE_SYMPTOM_MARKERS = {
+    "headache",
+    "nausea",
+    "nauseated",
+    "dizzy",
+    "dizziness",
+    "weak",
+    "sleepy",
+    "confused",
+    "confusion",
+    "flu",
+    "flu-like",
+    "feels like flu",
+    "gets better outside",
+    "better outside",
+    "fresh air",
+}
+
+_INDOOR_CO_EXPOSURE_CONTEXT_MARKERS = {
+    "indoors",
+    "inside",
+    "same room",
+    "room",
+    "house",
+    "cabin",
+    "tent",
+    "sleeping",
+    "slept",
+    "woke up",
+    "wake up",
+    "near",
+    "with the heater on",
+    "no visible smoke",
+    "does not look smoky",
+    "doesn't look smoky",
+}
+
+_INDOOR_CO_EXPOSURE_EXPLICIT_MARKERS = {
+    "carbon monoxide",
+    "co poisoning",
+    "co alarm",
+    "carbon monoxide alarm",
+}
+
+
+def _is_indoor_combustion_co_exposure_special_case(question):
+    """Detect symptomatic indoor combustion or carbon-monoxide alarm prompts."""
+    lower = question.lower()
+    if _is_household_chemical_inhalation_query(lower):
+        return False
+    if _is_charcoal_sand_water_filter_special_case(lower):
+        return False
+
+    has_explicit_co = _text_has_marker(lower, _INDOOR_CO_EXPOSURE_EXPLICIT_MARKERS)
+    has_symptom = _text_has_marker(lower, _INDOOR_CO_EXPOSURE_SYMPTOM_MARKERS)
+    has_source = _text_has_marker(lower, _INDOOR_CO_EXPOSURE_SOURCE_MARKERS)
+    has_context = _text_has_marker(lower, _INDOOR_CO_EXPOSURE_CONTEXT_MARKERS)
+    has_group_signal = _text_has_marker(
+        lower,
+        {
+            "we all",
+            "several people",
+            "everyone",
+            "people are",
+            "people in",
+            "same room",
+        },
+    )
+
+    if has_explicit_co and (has_symptom or "alarm went off" in lower):
+        return True
+    return has_source and has_symptom and (has_context or has_group_signal)
+
+
+_SMOKE_AIRWAY_BURN_SOURCE_MARKERS = {
+    "fire",
+    "smoke",
+    "smoke exposure",
+    "after the fire",
+    "after a fire",
+    "fire-gas",
+    "fire gas",
+}
+
+_SMOKE_AIRWAY_BURN_DANGER_MARKERS = {
+    "hoarse voice",
+    "hoarseness",
+    "voice sounds different",
+    "voice change",
+    "soot in the mouth",
+    "soot in mouth",
+    "soot in the mouth and nose",
+    "soot in the nose",
+    "soot on the face",
+    "singed nose hairs",
+    "singed nasal hair",
+    "face is burned",
+    "face burned",
+    "facial burns",
+    "burns after the fire",
+    "airway is in danger",
+    "airway danger",
+    "keep coughing",
+    "repeated coughing",
+    "coughing after smoke exposure",
+}
+
+
+def _is_smoke_airway_burn_danger_special_case(question):
+    """Detect smoke/fire airway-burn danger prompts."""
+    lower = question.lower()
+    if _text_has_marker(
+        lower, {"face is burned", "face burned", "facial burns"}
+    ) and _text_has_marker(
+        lower, {"breathing is okay", "breathing okay", "airway is in danger", "airway danger"}
+    ):
+        return True
+    return _text_has_marker(
+        lower, _SMOKE_AIRWAY_BURN_SOURCE_MARKERS
+    ) and _text_has_marker(
+        lower, _SMOKE_AIRWAY_BURN_DANGER_MARKERS
+    )
 
 
 def _is_brain_tanning_special_case(question):
@@ -4412,6 +6996,40 @@ def _is_snake_in_yard_special_case(question):
 def _is_animal_acting_strange_special_case(question):
     """Detect animal-acting-strange prompts that may indicate rabies risk."""
     lower = question.lower()
+    exposure_terms = (
+        "bite",
+        "bit",
+        "scratch",
+        "scratched",
+        "saliva",
+        "open wound",
+        "not sure if it bit",
+        "unsure if it bit",
+        "cannot verify",
+        "can't verify",
+        "ran off",
+    )
+    rabies_risk_animals = ("bat", "raccoon", "skunk", "fox", "wild animal", "unknown animal")
+    domestic_uncertain = any(term in lower for term in ("dog", "cat", "kitten"))
+    rabies_exposure_risk = (
+        (
+            any(term in lower for term in rabies_risk_animals)
+            or (domestic_uncertain and any(term in lower for term in ("acting strange", "foaming", "cannot verify", "can't verify", "ran off")))
+            or "rabies" in lower
+        )
+        and any(term in lower for term in exposure_terms)
+    )
+    bat_living_space_risk = "bat" in lower and any(
+        term in lower
+        for term in (
+            "woke up",
+            "in the room",
+            "living space",
+            "bedroom",
+            "not sure if it bit",
+            "unsure if it bit",
+        )
+    )
     return (
         any(
             marker in lower
@@ -4440,6 +7058,8 @@ def _is_animal_acting_strange_special_case(question):
                 )
             )
         )
+        or rabies_exposure_risk
+        or bat_living_space_risk
     ) and not _is_explicit_veterinary_query(lower)
 
 
@@ -5018,7 +7638,23 @@ def _is_night_watch_rotation_special_case(question):
 def _is_generic_choking_help_special_case(question):
     """Detect direct choking-help prompts that want a compact airway response."""
     lower = question.lower()
-    if "choking" not in lower:
+    has_choking_context = "choking" in lower or _text_has_marker(
+        lower,
+        {
+            "food stuck",
+            "stuck in the throat",
+            "swallowed wrong",
+            "food went down wrong",
+            "after dinner",
+            "after a bite",
+            "bite of food",
+            "after one bite",
+            "one bite",
+            "choked on",
+            "choking on",
+        },
+    )
+    if not has_choking_context:
         return False
     has_help_phrase = any(
         marker in lower
@@ -5038,13 +7674,45 @@ def _is_generic_choking_help_special_case(question):
         for marker in (
             "still coughing",
             "still talking",
+            "coughing hard",
+            "wheezing after dinner",
+            "cannot talk",
+            "can't talk",
+            "unable to talk",
+            "no words",
             "cannot speak",
             "can't speak",
+            "cannot get words out",
             "cannot cough",
             "can't cough",
             "cannot breathe",
             "can't breathe",
             "turning blue",
+            "clutching his throat",
+            "clutching her throat",
+            "clutching their throat",
+            "clutching throat",
+            "weak noises",
+            "still breathing a little",
+            "breathing a little",
+            "barely breathing",
+            "silent cough",
+            "weak cough",
+            "is choking on",
+            "choking on a",
+            "choking on food",
+            "choking on meat",
+            "choking on bread",
+            "choking on grape",
+            "choking on a grape",
+            "drooling and cannot swallow",
+            "drooling",
+            "cannot swallow",
+            "can't swallow",
+            "cannot swallow normally",
+            "can't swallow normally",
+            "cant swallow normally",
+            "swallow normally",
             "pregnant",
             "infant",
             "gagging",
@@ -5117,21 +7785,294 @@ def _is_recent_partner_loss_shutdown_special_case(question):
             "my wife died",
             "my husband died",
             "my spouse died",
+            "since the death",
+            "after the death",
+            "since they died",
         )
     )
     has_recent_signal = any(
-        marker in lower for marker in ("last week", "few days ago", "recently")
+        marker in lower
+        for marker in (
+            "last week",
+            "few days ago",
+            "recently",
+            "since the death",
+            "after the death",
+        )
     )
     has_shutdown_signal = any(
         marker in lower
         for marker in (
             "cant get out of bed",
             "can't get out of bed",
+            "wont get out of bed",
+            "won't get out of bed",
+            "will not get out of bed",
             "cant function",
             "can't function",
+            "wont eat",
+            "won't eat",
+            "will not eat",
+            "not eating",
         )
     )
     return has_loss_signal and has_recent_signal and has_shutdown_signal
+
+
+def _is_psychosis_paranoia_immediate_safety_special_case(question):
+    """Detect hearing-voices/paranoia prompts that need crisis ordering."""
+    lower = question.lower()
+    has_psychosis_signal = _text_has_marker(
+        lower,
+        {
+            "hearing voices",
+            "hears voices",
+            "voice telling",
+            "voices telling",
+            "hallucination",
+            "hallucinations",
+        },
+    )
+    has_paranoia_signal = _text_has_marker(
+        lower,
+        {
+            "paranoid",
+            "paranoia",
+            "thinks people are after",
+            "thinks someone is after",
+        },
+    )
+    return has_psychosis_signal and has_paranoia_signal
+
+
+def _is_mania_no_sleep_immediate_safety_special_case(question):
+    """Detect no-sleep activation clusters that need crisis ordering."""
+    lower = question.lower()
+    has_sleep_or_food_impairment = _text_has_marker(
+        lower,
+        {
+            "has not slept",
+            "hasn't slept",
+            "not slept",
+            "no sleep",
+            "no sleep for",
+            "awake for days",
+            "awake for",
+            "not need sleep",
+            "do not need sleep",
+            "does not need sleep",
+            "insomnia",
+            "has not eaten",
+            "hasn't eaten",
+            "not eaten",
+            "will not eat",
+            "won't eat",
+        },
+    )
+    has_activation_or_risk = _text_has_marker(
+        lower,
+        {
+            "talking nonstop",
+            "will not stop talking",
+            "won't stop talking",
+            "racing thoughts",
+            "pacing all night",
+            "will not stop moving",
+            "won't stop moving",
+            "impossible to slow down",
+            "risky plans",
+            "spending wildly",
+            "acting invincible",
+            "invincible",
+            "nothing can hurt",
+            "paranoid",
+            "grandiose",
+            " grand ",
+            "grand and",
+            "reckless",
+            "agitated",
+            "driving around",
+            "making risky",
+        },
+    )
+    return has_sleep_or_food_impairment and has_activation_or_risk
+
+
+def _is_alcohol_withdrawal_agitated_special_case(question):
+    """Detect dangerous alcohol/benzodiazepine withdrawal prompts."""
+    lower = question.lower()
+    has_withdrawal_signal = _text_has_marker(
+        lower,
+        {
+            "stopped drinking",
+            "stopping alcohol",
+            "stopped alcohol",
+            "quit drinking",
+            "quitting drinking",
+            "last drink",
+            "alcohol withdrawal",
+            "withdrawing from alcohol",
+            "withdrawal after drinking",
+            "during withdrawal",
+            "benzo withdrawal",
+            "benzodiazepine withdrawal",
+            "from benzo",
+            "from benzodiazepine",
+            "dts",
+            "dt's",
+            "delirium tremens",
+        },
+    )
+    has_danger_signal = _text_has_marker(
+        lower,
+        {
+            "shaking badly",
+            "shaking",
+            "tremor",
+            "tremors",
+            "agitated",
+            "agitation",
+            "feverish",
+            "fever",
+            "confused",
+            "confusion",
+            "seeing things",
+            "started seeing things",
+            "hallucination",
+            "hallucinations",
+            "seizure",
+            "seizures",
+            "safe to leave alone",
+            "not safe to leave alone",
+            "dts",
+            "dt's",
+            "delirium tremens",
+            "panic",
+        },
+    )
+    return has_withdrawal_signal and has_danger_signal
+
+
+def _is_trauma_dissociation_after_violence_special_case(question):
+    """Detect post-violence dissociation/reliving prompts needing safety first."""
+    lower = question.lower()
+    has_trauma_signal = _text_has_marker(
+        lower,
+        {
+            "after the attack",
+            "after an attack",
+            "violent event",
+            "after a violent event",
+            "after violence",
+            "after being attacked",
+        },
+    )
+    has_altered_state_signal = _text_has_marker(
+        lower,
+        {
+            "dissociating",
+            "dissociation",
+            "reliving what happened",
+            "flashback",
+            "flashbacks",
+            "not acting normal",
+            "not acting normally",
+            "out of it",
+        },
+    )
+    return has_trauma_signal and has_altered_state_signal
+
+
+def _is_suicide_immediate_safety_special_case(question):
+    """Detect suicide/self-harm prompts that need immediate safety ordering."""
+    lower = question.lower()
+    coercive_partner_threat = _text_has_marker(
+        lower,
+        {
+            "if i leave",
+            "if we leave",
+            "if you leave",
+            "if i go",
+            "if we go",
+            "if you go",
+            "to stop me from leaving",
+            "to keep me from leaving",
+        },
+    ) and _text_has_marker(lower, {"partner", "ex", "boyfriend", "girlfriend", "spouse"})
+    if coercive_partner_threat:
+        return False
+
+    return _text_has_marker(
+        lower,
+        {
+            "wish they were dead",
+            "wish i were dead",
+            "wish i was dead",
+            "wishes they were dead",
+            "want to die",
+            "wants to die",
+            "wanted to die",
+            "kill themselves",
+            "kill himself",
+            "kill herself",
+            "kill myself",
+            "suicidal",
+            "suicide",
+            "self-harm",
+            "self harm",
+            "hurt themselves",
+            "hurt himself",
+            "hurt herself",
+            "hurt myself",
+            "pills ready",
+            "have pills ready",
+            "has pills ready",
+            "giving away their things",
+            "giving away his things",
+            "giving away her things",
+            "writing goodbye messages",
+            "goodbye messages",
+            "goodbye note",
+            "goodbye notes",
+            "not safe to leave alone",
+            "safe to leave alone tonight",
+        },
+    )
+
+
+def _is_violence_to_others_immediate_safety_special_case(question):
+    """Detect threats of violence toward others needing separation/escalation."""
+    lower = question.lower()
+    return _text_has_marker(
+        lower,
+        {
+            "hurt someone",
+            "hurt somebody",
+            "hurt others",
+            "hurt another person",
+            "attack someone",
+            "attack somebody",
+            "attack another person",
+            "attacking someone",
+            "killing a person",
+            "kill a person",
+            "kill someone",
+            "kill somebody",
+            "harm someone",
+            "harm somebody",
+            "harm others",
+            "threatening people",
+            "threatening others",
+            "danger to others",
+            "may hurt others",
+            "might hurt others",
+            "might hurt somebody",
+            "might hurt someone",
+            "voices are telling them to attack",
+            "voices telling them to attack",
+            "going to hurt someone",
+        },
+    )
 
 
 def _is_dry_river_find_water_special_case(question):
@@ -5334,6 +8275,163 @@ def _is_classic_acs_special_case(question):
     return has_chest_symptom and (associated_count >= 2 or has_exertion_trigger)
 
 
+def _is_exertional_syncope_chest_emergency_special_case(question):
+    """Detect exertional fainting/blackout with cardiac or post-collapse red flags."""
+    lower = question.lower()
+    has_exertion_trigger = _text_has_marker(
+        lower,
+        {
+            "carrying water uphill",
+            "uphill",
+            "chopping wood",
+            "climbing stairs",
+            "hard work",
+            "during hard work",
+            "during exertion",
+            "with exertion",
+            "after exertion",
+            "walking fast",
+            "while walking fast",
+            "working hard",
+            "after hard work",
+        },
+    )
+    has_syncope_signal = _text_has_marker(
+        lower,
+        {
+            "passed out",
+            "fainted",
+            "fainting",
+            "almost fainted",
+            "nearly blacking out",
+            "nearly blacked out",
+            "brief blackout",
+            "blackout",
+            "collapsed",
+            "collapse",
+            "came around",
+            "woke up fast",
+        },
+    )
+    has_cardiac_red_flag = _text_has_marker(
+        lower,
+        {
+            "heart problem",
+            "heart problem after",
+            "chest still hurts",
+            "chest hurts",
+            "chest pain",
+            "chest pressure",
+            "feel pressure",
+            "chest tightness",
+            "tight in the chest",
+            "tightness in the chest",
+            "shortness of breath",
+            "heart is racing",
+            "heart racing",
+            "racing heart",
+        },
+    )
+    has_post_collapse_neuro_signal = _text_has_marker(
+        lower,
+        {
+            "jerked once",
+            "jerk once",
+            "came around confused",
+            "woke up confused",
+            "confused after",
+        },
+    )
+    return has_exertion_trigger and has_syncope_signal and (
+        has_cardiac_red_flag or has_post_collapse_neuro_signal
+    )
+
+
+def _is_panic_hyperventilation_tingling_special_case(question):
+    """Detect clean hyperventilation/tingling panic prompts without chest red flags."""
+    lower = question.lower()
+    has_hyperventilation_signal = _text_has_marker(
+        lower,
+        {
+            "hyperventilating",
+            "hyperventilation",
+            "breathing too fast",
+            "fast breathing",
+        },
+    )
+    has_panic_pattern_signal = _text_has_marker(
+        lower,
+        {
+            "heart is racing",
+            "racing heart",
+            "hands are tingling",
+            "tingling hands",
+            "fingers are tingling",
+            "tingling fingers",
+        },
+    )
+    has_cardiac_red_flag = _text_has_marker(
+        lower,
+        {
+            "chest pressure",
+            "chest pain",
+            "chest tightness",
+            "jaw pain",
+            "arm pain",
+            "shortness of breath",
+            "fainting",
+            "passed out",
+            "exertion",
+            "after exercise",
+            "with exercise",
+        },
+    )
+    return has_hyperventilation_signal and has_panic_pattern_signal and not has_cardiac_red_flag
+
+
+def _is_respiratory_distress_panic_overlap_special_case(question):
+    """Detect panic/asthma overlap where breathing danger must come first."""
+    lower = question.lower()
+    if _text_has_marker(lower, _ALLERGEN_EXPOSURE_MARKERS):
+        return False
+    has_overlap_signal = _text_has_marker(
+        lower,
+        {
+            "panic attack or an asthma attack",
+            "panic or asthma",
+            "panic or real breathing trouble",
+            "can't tell if this is panic",
+            "cant tell if this is panic",
+            "panicking",
+            "after getting stressed",
+            "throat feels tight",
+            "throat tight",
+            "can't get a satisfying breath",
+            "cant get a satisfying breath",
+        },
+    )
+    has_respiratory_signal = _text_has_marker(
+        lower,
+        {
+            "asthma attack",
+            "wheezing",
+            "wheeze",
+            "chest tightness",
+            "real breathing trouble",
+            "breathing trouble",
+            "throat feels tight",
+            "throat tight",
+            "can't get a satisfying breath",
+            "cant get a satisfying breath",
+            "rescue inhaler is not helping",
+            "rescue inhaler not helping",
+            "inhaler is not helping",
+            "inhaler not helping",
+        },
+    )
+    return has_overlap_signal and has_respiratory_signal
+
+
 def _is_stroke_cardiac_overlap_special_case(question):
     """Detect FAST-sign prompts that also include cardiac-emergency features."""
     lower = question.lower()
@@ -5350,9 +8448,36 @@ def _is_stroke_cardiac_overlap_special_case(question):
 def _has_stroke_tia_routing_signal(question):
     """Detect direct or transient FAST-like stroke/TIA presentations for routing."""
     lower = question.lower()
+    if "heat stroke" in lower:
+        return False
+    if any(
+        marker in lower
+        for marker in (
+            "food stuck",
+            "stuck in the throat",
+            "choking",
+            "choked",
+            "cannot swallow",
+            "can't swallow",
+            "drooling",
+            "clutching his throat",
+            "clutching her throat",
+            "clutching their throat",
+        )
+    ):
+        return False
     has_direct_stroke_terms = any(marker in lower for marker in _STROKE_TIA_MARKERS)
     has_face = any(
-        marker in lower for marker in ("face droop", "face drooping", "facial droop")
+        marker in lower
+        for marker in (
+            "face droop",
+            "face drooping",
+            "facial droop",
+            "face looks droopy",
+            "face is droopy",
+            "one side of the face looks droopy",
+            "one side of the face",
+        )
     )
     has_one_sided_weakness_or_numbness = any(
         marker in lower
@@ -5363,6 +8488,8 @@ def _has_stroke_tia_routing_signal(question):
             "leg numbness",
             "one arm feels weak",
             "one arm is weak",
+            "one arm are weak",
+            "one arm weak",
             "one arm is numb",
             "one leg is weak",
             "one leg is numb",
@@ -5380,8 +8507,13 @@ def _has_stroke_tia_routing_signal(question):
         for marker in (
             "slurred speech",
             "speech is slurred",
+            "speech is weird",
+            "speech sounds weird",
+            "weird speech",
             "trouble speaking",
             "trouble finding words",
+            "trouble understanding simple words",
+            "trouble understanding words",
             "difficulty finding words",
             "word-finding difficulty",
             "word finding difficulty",
@@ -5401,8 +8533,41 @@ def _has_stroke_tia_routing_signal(question):
     has_transient_language = any(
         marker in lower for marker in _TRANSIENT_NEURO_EPISODE_MARKERS
     )
-    return has_direct_stroke_terms or fast_bucket_count >= 2 or (
+    has_stroke_vs_glucose_context = _text_has_marker(
+        lower,
+        {
+            "low blood sugar or stroke",
+            "diabetic confusion or a stroke",
+            "diabetic confusion or stroke",
+            "got sugar",
+            "after not eating",
+            "skipped meals",
+            "sweaty shaky",
+            "sweaty and shaky",
+            "looks drunk",
+            "look drunk",
+            "not going away",
+        },
+    )
+    has_altered_context = _text_has_marker(
+        lower, {"confused", "confusion", "slurring", "slurred", "acting drunk"}
+    )
+    has_stroke_vision_headache = _text_has_marker(
+        lower,
+        {
+            "sudden vision loss with a bad headache",
+            "sudden vision loss and a bad headache",
+            "vision loss with a bad headache",
+            "vision loss with face droop",
+            "vision loss and slurred speech",
+        },
+    )
+    return has_direct_stroke_terms or fast_bucket_count >= 1 or has_stroke_vision_headache or (
         has_transient_language and fast_bucket_count >= 1
+    ) or (
+        fast_bucket_count >= 1
+        and has_stroke_vs_glucose_context
+        and (has_altered_context or "stroke" in lower)
     )
 
 
@@ -5454,6 +8619,88 @@ def _is_head_injury_clear_fluid_special_case(question):
     return has_clear_fluid and has_head_trauma
 
 
+def _is_adult_head_injury_red_flag_special_case(question):
+    """Detect adult head-injury red flags that need trauma-first ownership."""
+    lower = question.lower()
+    if _is_head_injury_clear_fluid_special_case(lower):
+        return False
+    has_head_trauma = any(
+        marker in lower
+        for marker in (
+            "hit my head",
+            "hit their head",
+            "hit the head",
+            "hit head",
+            "hit my head lightly",
+            "hit head lightly",
+            "slipped hit head",
+            "bonked head",
+            "bonked my head",
+            "bonked their head",
+            "hitting their head",
+            "head injury",
+            "minor head injury",
+            "head bump",
+            "bumped my head",
+            "bumped their head",
+            "after a fall",
+            "after the fall",
+            "small fall",
+            "fall yesterday",
+            "after a head injury",
+            "after hitting their head",
+            "after hitting the head",
+            "after a head bump",
+            "fall and",
+            "fell and",
+        )
+    )
+    has_red_flag = any(
+        marker in lower
+        for marker in (
+            "keep vomiting",
+            "keeps vomiting",
+            "vomiting",
+            "vomit",
+            "nauseated",
+            "more nauseated",
+            "getting more nauseated",
+            "nausea",
+            "blacked out",
+            "blackout",
+            "passed out",
+            "lost consciousness",
+            "became confused",
+            "still confused",
+            "confused",
+            "unequal pupil",
+            "unequal pupils",
+            "one pupil looks bigger",
+            "pupil looks bigger",
+            "pupils are different",
+            "sleep after",
+            "can they sleep",
+            "sleepy",
+            "hard to wake",
+            "hard to wake up",
+            "worsening headache",
+            "worse headache",
+            "headache is getting worse",
+            "headache getting worse",
+            "blood thinners",
+            "blood thinner",
+            "warfarin",
+            "anticoagulant",
+            "anticoagulated",
+            "getting worse after a head injury",
+            "seizure",
+            "weakness",
+            "clear fluid",
+        )
+    )
+    return has_head_trauma and has_red_flag
+
+
 def _is_superglue_wound_special_case(question):
     """Detect direct superglue-for-wounds prompts that want a narrow closure answer."""
     lower = question.lower()
@@ -5502,21 +8749,6 @@ def _is_untrained_childbirth_special_case(question):
     )
 
 
-@dataclass(frozen=True)
-class DeterministicSpecialCaseRule:
-    """Deterministic control-path rule with a canonical validation prompt."""
-
-    rule_id: str
-    predicate: Callable[[str], bool]
-    builder: Callable[..., str] | None
-    sample_prompt: str
-    builder_name: str
-    priority: int
-    promotion_status: str
-    promotion_notes: str | None
-    lexical_signature_terms: tuple[str, ...]
-
-
 def _log_warn_event(event_name, **fields):
     """Emit a structured warning that unit tests and operators can both see."""
     payload = {"event": event_name, **dict(sorted(fields.items()))}
@@ -5526,41 +8758,13 @@ def _log_warn_event(event_name, **fields):
     )
 
 
-def _build_deterministic_builder_missing_debug_note(rule_id, builder_name):
-    """Render the debug-only fallback note for missing deterministic builders."""
-    return (
-        f"Debug note: deterministic rule '{rule_id}' matched, but builder "
-        f"'{builder_name}' is unavailable; falling back to retrieval."
-    )
-
-
 def _resolve_deterministic_special_case_rules():
     """Build the live deterministic rule objects from the declarative registry."""
-    rules = []
-    for spec in DETERMINISTIC_SPECIAL_CASE_SPECS:
-        predicate = globals().get(spec.predicate_name)
-        if predicate is None:
-            predicate = getattr(special_case_builders, spec.predicate_name, None)
-        if predicate is None:
-            raise RuntimeError(
-                f"Deterministic special-case registry references unknown symbol "
-                f"{spec.predicate_name!r} for rule {spec.rule_id!r}"
-            )
-        builder = getattr(special_case_builders, spec.builder_name, None)
-        rules.append(
-            DeterministicSpecialCaseRule(
-                spec.rule_id,
-                predicate,
-                builder,
-                spec.sample_prompt,
-                spec.builder_name,
-                spec.priority,
-                spec.promotion_status,
-                spec.promotion_notes,
-                spec.lexical_signature_terms,
-            )
-        )
-    return tuple(rules)
+    return _router_resolve_deterministic_special_case_rules(
+        DETERMINISTIC_SPECIAL_CASE_SPECS,
+        predicate_namespaces=(globals(), vars(special_case_builders)),
+        builder_namespace=vars(special_case_builders),
+    )
 
 
 _DETERMINISTIC_SPECIAL_CASE_RULES = _resolve_deterministic_special_case_rules()
@@ -5574,149 +8778,19 @@ _DETERMINISTIC_SPECIAL_CASE_BUILDERS = {
     if rule.builder is not None
 }
 
-_ACTIVE_DETERMINISTIC_SEMANTIC_EXCLUSION_MARKERS = {
-    "generic_puncture": (
-        "animal",
-        "bite",
-        "bit",
-        "bit me",
-        "bitten",
-        "dog",
-        "cat",
-        "face",
-        "joint",
-        "mouth",
-        "infected",
-        "infection",
-        "fever",
-        "extract",
-        "remove",
-        "severe bleeding",
-        "uncontrolled bleeding",
-        "hemorrhage",
-        "spurting",
-    ),
-    "charcoal_sand_water_filter_starter": (),
-    "reused_container_water": (
-        "bleach",
-        "fuel",
-        "solvent",
-        "solvents",
-        "pesticide",
-        "pesticides",
-        "paint",
-        "rust",
-        "rusty",
-        "chemical",
-        "chemicals",
-        "barrel",
-        "drum",
-        "metal drum",
-        "steel barrel",
-        "detergent",
-        "cleaner",
-        "cleaning chemical",
-        "cleaning detergent",
-    ),
-    "water_without_fuel": (
-        "sunlight",
-        "well is contaminated",
-        "the well is contaminated",
-        "people are sick",
-        "two people are sick",
-        "wounded",
-        "wounded person",
-    ),
-    "fire_in_rain": (
-        "keep a fire going",
-        "stay warm",
-        "without starting a fire",
-    ),
-    "weld_without_welder_starter": (
-        "screws and bolts",
-        "wood",
-        "wooden",
-        "boards",
-    ),
-    "metal_splinter": (
-        "eye",
-        "eyeball",
-        "vision",
-        "severe bleeding",
-        "uncontrolled bleeding",
-        "hemorrhage",
-        "spurting",
-    ),
-    "candles_for_light": (
-        "buy candles",
-        "burn for",
-        "burn time",
-        "how long do candles burn",
-    ),
-    "glassmaking_starter": (
-        "make a glass",
-        "repair",
-        "cracked",
-        "bottle",
-    ),
-}
-
 
 def get_deterministic_special_case_rules():
     """Expose deterministic rules for validation scripts."""
     return _DETERMINISTIC_SPECIAL_CASE_RULES
 
 
-def _passes_deterministic_semantic_gate(question, rule):
-    """Apply rule-specific exclusion checks for active Android-promoted rules."""
-    if rule.promotion_status != "active":
-        return True
-    exclusion_markers = _ACTIVE_DETERMINISTIC_SEMANTIC_EXCLUSION_MARKERS.get(
-        rule.rule_id
-    )
-    if exclusion_markers is None:
-        return True
-    return not _text_has_marker(question, exclusion_markers)
-
-
-def _lexical_signature_size(rule):
-    """Return the explicit lexical signature size used for equal-priority ties."""
-    return len(rule.lexical_signature_terms)
-
-
 def _select_deterministic_special_case_rule(matches, *, log_first_defined_tie):
     """Pick one deterministic rule using priority, lexical signature, then order."""
-    if not matches:
-        return None, None
-
-    winning_priority = max(rule.priority for rule in matches)
-    priority_matches = [
-        rule for rule in matches if rule.priority == winning_priority
-    ]
-    if len(priority_matches) == 1:
-        return priority_matches[0], "priority"
-
-    winning_signature_size = max(
-        _lexical_signature_size(rule) for rule in priority_matches
+    return _router_select_deterministic_special_case_rule(
+        matches,
+        log_first_defined_tie=log_first_defined_tie,
+        warn_event=_log_warn_event,
     )
-    signature_matches = [
-        rule
-        for rule in priority_matches
-        if _lexical_signature_size(rule) == winning_signature_size
-    ]
-    if len(signature_matches) == 1:
-        return signature_matches[0], "lexical_signature"
-
-    winner = signature_matches[0]
-    if log_first_defined_tie:
-        _log_warn_event(
-            "deterministic_priority_tie",
-            lexical_signature_size=winning_signature_size,
-            priority=winning_priority,
-            tied_rule_ids=",".join(rule.rule_id for rule in signature_matches),
-            winner_rule_id=winner.rule_id,
-        )
-    return winner, "first_defined"
 
 
 def _match_deterministic_special_case(question):
@@ -5735,37 +8809,9 @@ def _match_deterministic_special_case(question):
 
 def get_deterministic_special_case_overlaps():
     """Return canonical-prompt overlap records for deterministic predicates."""
-    overlaps = []
-    for source_rule in _DETERMINISTIC_SPECIAL_CASE_RULES:
-        matches = [
-            rule
-            for rule in _DETERMINISTIC_SPECIAL_CASE_RULES
-            if rule.predicate(source_rule.sample_prompt)
-        ]
-        if len(matches) < 2:
-            continue
-        winner, winner_reason = _select_deterministic_special_case_rule(
-            matches,
-            log_first_defined_tie=False,
-        )
-        overlaps.append(
-            {
-                "source_rule_id": source_rule.rule_id,
-                "sample_prompt": source_rule.sample_prompt,
-                "matches": [
-                    {
-                        "rule_id": rule.rule_id,
-                        "lexical_signature_size": _lexical_signature_size(rule),
-                        "priority": rule.priority,
-                        "promotion_status": rule.promotion_status,
-                    }
-                    for rule in matches
-                ],
-                "winner_reason": winner_reason,
-                "winner_rule_ids": [winner.rule_id] if winner is not None else [],
-            }
-        )
-    return overlaps
+    return _router_get_deterministic_special_case_overlaps(
+        _DETERMINISTIC_SPECIAL_CASE_RULES
+    )
 
 
 def classify_special_case(question):
@@ -5894,6 +8940,7 @@ def _metadata_rerank_delta(question, meta):
             meta.get("source_file", ""),
         ]
     ).lower()
+    guide_id = str(meta.get("guide_id") or "").strip().upper()
     category = meta.get("category", "")
     delta = 0.0
     debug_enabled = logger.isEnabledFor(logging.DEBUG)
@@ -6022,11 +9069,458 @@ def _metadata_rerank_delta(question, meta):
         if _text_has_marker(meta_text, _LAB_SAFETY_METADATA_MARKERS):
             apply_delta("household_chemical_eye_lab_safety_distractor", 0.14)
 
+    if _is_eye_globe_injury_query(question):
+        if _text_has_marker(meta_text, _EYE_GLOBE_INJURY_POSITIVE_METADATA_MARKERS):
+            apply_delta("eye_globe_injury_positive_metadata", -0.13)
+        if _text_has_marker(meta_text, _EYE_GLOBE_INJURY_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("eye_globe_injury_distractor_metadata", 0.16)
+
+    if _is_retinal_detachment_eye_emergency_query(question):
+        if _text_has_marker(meta_text, _RETINAL_DETACHMENT_EYE_POSITIVE_METADATA_MARKERS):
+            apply_delta("retinal_detachment_eye_positive_metadata", -0.16)
+        if _text_has_marker(meta_text, _RETINAL_DETACHMENT_EYE_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("retinal_detachment_eye_distractor_metadata", 0.22)
+        if category not in {"medical"}:
+            apply_delta("retinal_detachment_eye_nonmedical_distractor", 0.12)
+
     if _is_household_chemical_inhalation_query(question):
         if _text_has_marker(meta_text, _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS):
-            apply_delta("household_chemical_inhalation_positive", -0.06)
+            apply_delta("household_chemical_inhalation_positive", -0.12)
         if _text_has_marker(meta_text, _COOKSTOVE_CO_METADATA_MARKERS):
             apply_delta("household_chemical_inhalation_cookstove_distractor", 0.16)
+        if _text_has_marker(
+            meta_text, _HOUSEHOLD_CHEMICAL_INHALATION_DISTRACTOR_METADATA_MARKERS
+        ):
+            apply_delta("household_chemical_inhalation_unrelated_medical_distractor", 0.18)
+
+    if _is_indoor_combustion_co_smoke_query(question):
+        if _text_has_marker(meta_text, _INDOOR_COMBUSTION_CO_OWNER_METADATA_MARKERS):
+            apply_delta("indoor_combustion_co_owner_metadata", -0.16)
+        elif _text_has_marker(meta_text, _COOKSTOVE_CO_METADATA_MARKERS):
+            apply_delta("indoor_combustion_co_related_metadata", -0.06)
+        if _text_has_marker(meta_text, _HOT_WATER_HEATING_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("indoor_combustion_co_hot_water_distractor", 0.18)
+
+    if _is_chemical_spill_sick_exposure_query(question):
+        if _text_has_marker(
+            meta_text,
+            {
+                "chemical safety",
+                "chemical-safety",
+                "toxicology",
+                "poison",
+                "chemical & industrial accident response",
+                "chemical-industrial-accident-response",
+                "hazard recognition",
+                "first aid",
+            },
+        ):
+            apply_delta("chemical_spill_sick_exposure_positive", -0.14)
+        if _text_has_marker(
+            meta_text,
+            {
+                "chemistry fundamentals",
+                "industrial chemistry technology tree",
+                "feedstock",
+                "raw material",
+                "chemical synthesis",
+            },
+        ):
+            apply_delta("chemical_spill_sick_process_distractor", 0.14)
+
+    if _is_unknown_chemical_skin_burn_query(question):
+        if _text_has_marker(meta_text, _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS):
+            apply_delta("unknown_chemical_skin_burn_toxicology_positive", -0.13)
+        if _text_has_marker(
+            meta_text,
+            {"poison ivy", "contact rash", "common rashes", "skin irritation", "bug bites"},
+        ):
+            apply_delta("unknown_chemical_skin_burn_rash_distractor", 0.20)
+
+    if _is_industrial_chemical_smell_boundary_query(question):
+        if _text_has_marker(
+            meta_text,
+            {
+                "chemical & industrial accident response",
+                "chemical-industrial-accident-response",
+                "chemical safety",
+                "chemical-safety",
+                "hazmat",
+                "industrial accident",
+                "public exposure",
+            },
+        ):
+            apply_delta("industrial_chemical_smell_safety_positive", -0.15)
+        if _text_has_marker(
+            meta_text,
+            {
+                "chemical fuel salvage",
+                "chemical-fuel-salvage",
+                "chemical degradation identification",
+                "fuel salvage",
+                "chemistry fundamentals",
+            },
+        ):
+            apply_delta("industrial_chemical_smell_sniff_or_fundamentals_distractor", 0.16)
+
+    if _is_precursor_feedstock_exposure_boundary_query(question):
+        if _text_has_marker(
+            meta_text,
+            {
+                "chemical safety",
+                "chemical-safety",
+                "toxicology",
+                "poison",
+                "chemical & industrial accident response",
+                "chemical-industrial-accident-response",
+                "chemistry fundamentals",
+                "industrial chemistry technology tree",
+                "feedstock",
+                "raw material",
+            },
+        ):
+            apply_delta("precursor_feedstock_exposure_boundary_positive", -0.08)
+        if _text_has_marker(meta_text, {"food", "market", "communications", "courier"}):
+            apply_delta("precursor_feedstock_exposure_boundary_distractor", 0.10)
+
+    if _is_unlabeled_sealed_drum_safety_triage_query(question):
+        if _text_has_marker(
+            meta_text,
+            {
+                "chemical safety",
+                "chemical-safety",
+                "chemical & industrial accident response",
+                "chemical-industrial-accident-response",
+                "unknown chemicals",
+                "never guess",
+                "hazardous waste",
+                "hazmat",
+            },
+        ):
+            apply_delta("unlabeled_sealed_drum_safety_positive", -0.14)
+        if _text_has_marker(
+            meta_text,
+            {
+                "petroleum refining",
+                "bitumen",
+                "road repair",
+                "waterproofing",
+                "disaster triage",
+                "mci",
+                "field hospital",
+            },
+        ):
+            apply_delta("unlabeled_sealed_drum_reuse_or_medical_distractor", 0.22)
+
+    if _is_unknown_loose_chemical_powder_query(question):
+        if _text_has_marker(meta_text, _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS):
+            apply_delta("unknown_powder_toxicology_positive", -0.10)
+        if _text_has_marker(
+            meta_text,
+            {
+                "food spoilage",
+                "food safety",
+                "urban survival",
+                "scavenging",
+                "waste cleanup",
+                "powdered food",
+            },
+        ):
+            apply_delta("unknown_powder_handling_distractor", 0.16)
+
+    if _is_common_ailments_gateway_query(question):
+        if _text_has_marker(meta_text, _COMMON_AILMENTS_GATEWAY_METADATA_MARKERS):
+            apply_delta("common_ailments_gateway_positive", -0.14)
+        elif _text_has_marker(meta_text, _FOCUSED_COMMON_SYMPTOM_METADATA_MARKERS):
+            apply_delta("common_ailments_gateway_focused_symptom_secondary", 0.035)
+
+    if _is_maintenance_record_query(question):
+        if _text_has_marker(meta_text, _MAINTENANCE_RECORD_POSITIVE_METADATA_MARKERS):
+            apply_delta("maintenance_record_positive_metadata", -0.14)
+        if _text_has_marker(meta_text, _MAINTENANCE_RECORD_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("maintenance_record_distractor_metadata", 0.14)
+
+    if _is_anxiety_crisis_explainer_query(question):
+        if _text_has_marker(meta_text, _ANXIETY_CRISIS_POSITIVE_METADATA_MARKERS):
+            apply_delta("anxiety_crisis_positive_metadata", -0.12)
+
+    if _is_food_storage_container_query(question):
+        if _text_has_marker(meta_text, _FOOD_STORAGE_CONTAINER_POSITIVE_METADATA_MARKERS):
+            apply_delta("food_storage_container_positive_metadata", -0.11)
+        if _text_has_marker(meta_text, _FOOD_STORAGE_CONTAINER_DISTRACTOR_METADATA_MARKERS):
+            if _is_salt_jars_hot_humid_setup_query(question) or _text_has_marker(
+                question.lower(), {"preservation setup"}
+            ):
+                apply_delta("food_storage_container_salt_setup_distractor_metadata", 0.26)
+            else:
+                apply_delta("food_storage_container_distractor_metadata", 0.13)
+        if _is_salt_jars_hot_humid_setup_query(question):
+            if _text_has_marker(
+                meta_text,
+                {
+                    "food preservation",
+                    "food-preservation",
+                    "food storage packaging",
+                    "food-storage-packaging",
+                },
+            ):
+                apply_delta("salt_jars_setup_owner_metadata", -0.12)
+            if _text_has_marker(
+                meta_text,
+                {
+                    "salt production",
+                    "salt-production",
+                    "salt storage",
+                    "salt packaging",
+                    "drying & dehydration techniques",
+                    "drying-dehydration-techniques",
+                    "spices-seasonings",
+                    "spices, seasonings",
+                },
+            ):
+                apply_delta("salt_jars_setup_secondary_distractor_metadata", 0.18)
+
+    if _is_dry_meat_fish_contamination_query(question):
+        if _text_has_marker(meta_text, _DRY_MEAT_FISH_CONTAMINATION_POSITIVE_METADATA_MARKERS):
+            apply_delta("dry_meat_fish_contamination_positive_metadata", -0.12)
+        if _text_has_marker(meta_text, _DRY_MEAT_FISH_CONTAMINATION_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("dry_meat_fish_contamination_distractor_metadata", 0.14)
+
+    if _is_cooked_rice_power_outage_spoilage_query(question):
+        if _text_has_marker(meta_text, {"food spoilage", "food-spoilage-assessment", "food safety"}):
+            apply_delta("cooked_rice_power_outage_spoilage_positive", -0.12)
+        if _text_has_marker(meta_text, {"shelf life of rice", "dry goods viability", "rice storage"}):
+            apply_delta("cooked_rice_power_outage_storage_distractor", 0.16)
+
+    if _is_market_space_layout_query(question):
+        if _text_has_marker(meta_text, _MARKET_SPACE_LAYOUT_POSITIVE_METADATA_MARKERS):
+            apply_delta("market_space_layout_positive_metadata", -0.12)
+        if _text_has_marker(meta_text, _MARKET_SPACE_LAYOUT_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("market_space_layout_distractor_metadata", 0.08)
+
+    if _is_market_tax_revenue_query(question):
+        if _text_has_marker(meta_text, _MARKET_TAX_REVENUE_POSITIVE_METADATA_MARKERS):
+            apply_delta("market_tax_revenue_positive_metadata", -0.12)
+
+    if _is_adhesive_binder_query(question):
+        if _text_has_marker(meta_text, _ADHESIVE_BINDER_POSITIVE_METADATA_MARKERS):
+            apply_delta("adhesive_binder_positive_metadata", -0.13)
+        if _text_has_marker(meta_text, _ADHESIVE_BINDER_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("adhesive_binder_distractor_metadata", 0.08)
+
+    if _is_message_auth_query(question):
+        if _text_has_marker(meta_text, _MESSAGE_AUTH_POSITIVE_METADATA_MARKERS):
+            apply_delta("message_auth_positive_metadata", -0.16)
+        if _text_has_marker(meta_text, _MESSAGE_AUTH_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("message_auth_distractor_metadata", 0.14)
+
+    if _is_building_habitability_safety_query(question):
+        if _text_has_marker(meta_text, _BUILDING_HABITABILITY_POSITIVE_METADATA_MARKERS):
+            apply_delta("building_habitability_positive_metadata", -0.13)
+        if _text_has_marker(meta_text, _BUILDING_HABITABILITY_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("building_habitability_distractor_metadata", 0.08)
+
+    if _is_gi_bleed_emergency_query(question):
+        if _text_has_marker(meta_text, _GI_BLEED_POSITIVE_METADATA_MARKERS):
+            apply_delta("gi_bleed_positive_metadata", -0.12)
+        if _text_has_marker(meta_text, _GI_BLEED_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("gi_bleed_distractor", 0.24)
+
+    if _is_surgical_abdomen_emergency_query(question):
+        if _text_has_marker(meta_text, _SURGICAL_ABDOMEN_POSITIVE_METADATA_MARKERS):
+            apply_delta("surgical_abdomen_positive_metadata", -0.14)
+        if _text_has_marker(meta_text, _SURGICAL_ABDOMEN_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("surgical_abdomen_distractor_metadata", 0.20)
+
+    if _is_electrical_hazard_query(question):
+        if _text_has_marker(meta_text, _ELECTRICAL_HAZARD_POSITIVE_METADATA_MARKERS):
+            apply_delta("electrical_hazard_positive_metadata", -0.14)
+        if _text_has_marker(meta_text, _ELECTRICAL_HAZARD_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("electrical_hazard_distractor_metadata", 0.13)
+
+    if _is_drowning_cold_water_query(question):
+        if _text_has_marker(meta_text, _DROWNING_COLD_WATER_POSITIVE_METADATA_MARKERS):
+            apply_delta("drowning_cold_water_positive_metadata", -0.13)
+        if _text_has_marker(meta_text, _DROWNING_COLD_WATER_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("drowning_cold_water_distractor_metadata", 0.10)
+
+    if _is_urgent_nosebleed_query(question):
+        if _text_has_marker(meta_text, _NOSEBLEED_URGENT_POSITIVE_METADATA_MARKERS):
+            apply_delta("urgent_nosebleed_positive_metadata", -0.14)
+        if _text_has_marker(meta_text, _NOSEBLEED_URGENT_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("urgent_nosebleed_distractor_metadata", 0.15)
+
+    if _is_major_blood_loss_shock_query(question):
+        if _text_has_marker(meta_text, _MAJOR_BLOOD_LOSS_SHOCK_POSITIVE_METADATA_MARKERS):
+            apply_delta("major_blood_loss_shock_positive_metadata", -0.18)
+        if _text_has_marker(meta_text, _MAJOR_BLOOD_LOSS_SHOCK_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("major_blood_loss_shock_distractor_metadata", 0.24)
+
+    if _is_cardiac_first_query(question):
+        if _text_has_marker(meta_text, _CARDIAC_FIRST_POSITIVE_METADATA_MARKERS):
+            apply_delta("cardiac_first_positive_metadata", -0.14)
+        if _text_has_marker(meta_text, _CARDIAC_FIRST_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("cardiac_first_distractor_metadata", 0.18)
+
+    if _is_gyn_emergency_query(question):
+        if _text_has_marker(meta_text, _GYN_EMERGENCY_POSITIVE_METADATA_MARKERS):
+            apply_delta("gyn_emergency_positive_metadata", -0.12)
+        if _text_has_marker(meta_text, _GYN_EMERGENCY_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("gyn_emergency_distractor_metadata", 0.28)
+
+    if _is_crush_compartment_query(question):
+        if _text_has_marker(meta_text, _CRUSH_COMPARTMENT_POSITIVE_METADATA_MARKERS):
+            apply_delta("crush_compartment_positive_metadata", -0.10)
+        if _text_has_marker(meta_text, _CRUSH_COMPARTMENT_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("crush_compartment_distractor_metadata", 0.18)
+
+    if _is_serotonin_syndrome_query(question):
+        if _text_has_marker(meta_text, _SEROTONIN_POSITIVE_METADATA_MARKERS):
+            apply_delta("serotonin_syndrome_positive_metadata", -0.12)
+        if _text_has_marker(meta_text, _SEROTONIN_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("serotonin_syndrome_distractor_metadata", 0.20)
+
+    if _is_meningitis_rash_emergency_query(question):
+        if _text_has_marker(meta_text, _MENINGITIS_RASH_POSITIVE_METADATA_MARKERS):
+            apply_delta("meningitis_rash_positive_metadata", -0.14)
+        if _text_has_marker(meta_text, _MENINGITIS_RASH_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("meningitis_rash_distractor_metadata", 0.20)
+
+    if _is_meningitis_vs_viral_query(question):
+        if guide_id == "GD-589":
+            apply_delta("meningitis_vs_viral_primary_owner_id", -0.24)
+        elif guide_id == "GD-284":
+            apply_delta("meningitis_vs_viral_child_boundary_owner_id", -0.18)
+        elif guide_id == "GD-298":
+            apply_delta("meningitis_vs_viral_pediatric_owner_id", -0.06)
+        elif guide_id == "GD-949":
+            apply_delta("meningitis_vs_viral_headache_support_owner_id", -0.03)
+        if _text_has_marker(meta_text, _MENINGITIS_RASH_POSITIVE_METADATA_MARKERS):
+            apply_delta("meningitis_vs_viral_owner_metadata", -0.12)
+        if _text_has_marker(
+            meta_text,
+            {
+                "sepsis recognition",
+                "sepsis-recognition-antibiotic-protocols",
+                "infant & child care",
+                "infant-child-care",
+                "pediatric emergency medicine",
+                "pediatric-emergency-medicine",
+                "headaches: basic care",
+                "headaches-basic-care",
+                "meningitis or serious infection warning signs",
+                "cns/meningitis",
+            },
+        ):
+            apply_delta("meningitis_vs_viral_clinical_owner_metadata", -0.08)
+        if (
+            not _is_public_health_response_query(question)
+            and _text_has_marker(
+                meta_text,
+                {
+                    "public health",
+                    "public-health-disease-surveillance",
+                    "disease surveillance systems",
+                    "health officer",
+                    "contact tracing",
+                    "quarantine",
+                    "isolation",
+                },
+            )
+        ):
+            apply_delta("meningitis_vs_viral_public_health_drift_metadata", 0.14)
+        if (
+            not _text_has_marker(meta_text, _MENINGITIS_RASH_POSITIVE_METADATA_MARKERS)
+            and _text_has_marker(meta_text, _MENINGITIS_RASH_DISTRACTOR_METADATA_MARKERS)
+        ):
+            apply_delta("meningitis_vs_viral_routine_distractor_metadata", 0.10)
+
+    if _is_airway_obstruction_rag_query(question):
+        has_airway_owner_metadata = _text_has_marker(
+            meta_text, _AIRWAY_OBSTRUCTION_POSITIVE_METADATA_MARKERS
+        )
+        if has_airway_owner_metadata:
+            apply_delta("airway_obstruction_owner_metadata", -0.16)
+            if _is_food_bolus_airway_query(question):
+                apply_delta("food_bolus_airway_owner_metadata", -0.10)
+        if (
+            not has_airway_owner_metadata
+            and _text_has_marker(meta_text, _AIRWAY_OBSTRUCTION_DISTRACTOR_METADATA_MARKERS)
+        ):
+            apply_delta("airway_obstruction_distractor_metadata", 0.12)
+        if _is_food_bolus_airway_query(question) and _text_has_marker(
+            meta_text,
+            {
+                "unknown ingestion",
+                "unknown-ingestion",
+                "poison control",
+                "poisoning",
+                "toxicology",
+                "swallowed substances",
+            },
+        ):
+            apply_delta("food_bolus_poisoning_distractor_metadata", 0.28)
+
+    if _is_newborn_sepsis_danger_query(question):
+        has_routine_newborn_metadata = _text_has_marker(
+            meta_text,
+            {
+                "common ailments",
+                "common-ailments",
+                "routine baby care",
+                "normal newborn",
+                "digestive regularity",
+                "routine feeding",
+            },
+        )
+        if _text_has_marker(meta_text, _NEWBORN_SEPSIS_POSITIVE_METADATA_MARKERS):
+            apply_delta("newborn_sepsis_owner_metadata", -0.16)
+        if has_routine_newborn_metadata:
+            apply_delta("newborn_sepsis_routine_distractor_metadata", 0.12)
+
+    if _is_abdominal_trauma_danger_query(question):
+        if _text_has_marker(meta_text, _ABDOMINAL_TRAUMA_POSITIVE_METADATA_MARKERS):
+            apply_delta("abdominal_trauma_owner_metadata", -0.16)
+            if _is_fall_belly_pain_query(question) or _is_handlebar_abdominal_trauma_query(question):
+                apply_delta("abdominal_trauma_specific_owner_metadata", -0.08)
+        if _is_fall_belly_pain_query(question) and _text_has_marker(
+            meta_text,
+            {
+                "gynecological",
+                "women's health",
+                "ectopic pregnancy",
+                "pregnancy",
+                "vaginal bleeding",
+            },
+        ):
+            apply_delta("child_fall_belly_pain_gyn_distractor_metadata", 0.18)
+        if _text_has_marker(meta_text, _SURGICAL_ABDOMEN_DISTRACTOR_METADATA_MARKERS):
+            apply_delta("abdominal_trauma_routine_gi_distractor_metadata", 0.12)
+            if _is_fall_belly_pain_query(question) or _is_handlebar_abdominal_trauma_query(question):
+                apply_delta("abdominal_trauma_specific_routine_distractor_metadata", 0.08)
+    if _is_handlebar_abdominal_trauma_query(question) and _text_has_marker(
+        meta_text,
+        {"back pain", "musculoskeletal", "routine back pain", "self-care"},
+    ):
+        apply_delta("handlebar_back_pain_distractor_metadata", 0.18)
+    if (
+        (_is_fall_belly_pain_query(question) or _is_handlebar_abdominal_trauma_query(question))
+        and not _text_has_marker(meta_text, _ABDOMINAL_TRAUMA_POSITIVE_METADATA_MARKERS)
+        and _text_has_marker(meta_text, {"field surgery", "surgical procedures", "invasive"})
+    ):
+        apply_delta("abdominal_trauma_invasive_surgery_adjacent_metadata", 0.10)
+
+    if _is_infected_wound_boundary_query(question):
+        has_wound_owner_metadata = _text_has_marker(
+            meta_text, _INFECTED_WOUND_POSITIVE_METADATA_MARKERS
+        )
+        if has_wound_owner_metadata:
+            apply_delta("infected_wound_owner_metadata", -0.15)
+        if (
+            not has_wound_owner_metadata
+            and _text_has_marker(meta_text, _INFECTED_WOUND_DISTRACTOR_METADATA_MARKERS)
+        ):
+            apply_delta("infected_wound_skin_distractor_metadata", 0.12)
 
     if _is_human_medical_query(question):
         if category == "medical":
@@ -6053,55 +9547,16 @@ def _metadata_rerank_delta(question, meta):
         if _is_urinary_query(question_lower):
             if _text_has_marker(meta_text, _URINARY_METADATA_MARKERS):
                 apply_delta("urinary_positive_metadata", -0.06)
+            if _is_urinary_vaginal_overlap_query(question_lower) and _text_has_marker(
+                meta_text, _VAGINAL_SYMPTOM_METADATA_MARKERS
+            ):
+                apply_delta("urinary_vaginal_overlap_positive_metadata", -0.08)
+            if _is_hematuria_query(question_lower) and _text_has_marker(
+                meta_text, _HEMATURIA_DISTRACTOR_METADATA_MARKERS
+            ):
+                apply_delta("hematuria_nonurinary_distractor", 0.12)
             if _text_has_marker(meta_text, _BOWEL_RECTAL_DISTRACTOR_MARKERS):
                 apply_delta("urinary_bowel_distractor", 0.08)
-
-        gi_bleed_markers = (
-            "coffee grounds",
-            "coffee ground vomit",
-            "black tarry stool",
-            "black tarry stools",
-            "black stool",
-            "black stools",
-            "bright red vomit",
-            "vomit blood",
-            "vomiting blood",
-            "dark clots",
-        )
-        if any(marker in question_lower for marker in gi_bleed_markers):
-            if _text_has_marker(
-                meta_text,
-                (
-                    "gastrointestinal bleeding",
-                    "gi bleed",
-                    "upper gi bleed",
-                    "hematemesis",
-                    "melena",
-                    "coffee ground",
-                    "vomiting blood",
-                    "black tarry stool",
-                    "black stool",
-                ),
-            ):
-                apply_delta("gi_bleed_positive_metadata", -0.09)
-            if any(
-                term in meta_text
-                for term in (
-                    "common ailments",
-                    "common ailment",
-                    "common-ailments",
-                    "food safety",
-                    "food-safety",
-                    "food poisoning",
-                    "hemorrhoid",
-                    "hemorrhoids",
-                    "reflux",
-                    "acid reflux",
-                    "heartburn",
-                    "gerd",
-                )
-            ):
-                apply_delta("gi_bleed_distractor", 0.24)
 
         if _is_acute_symptom_query(question):
             if category not in {"medical", "survival"}:
@@ -6188,6 +9643,28 @@ def _metadata_rerank_delta(question, meta):
                 apply_delta("invasive_medical_penalty", 0.11)
             if _text_has_marker(meta_text, _CONSERVATIVE_MEDICAL_METADATA_MARKERS):
                 apply_delta("conservative_medical_bonus", -0.03)
+        if _is_food_bolus_airway_query(question) and _text_has_marker(
+            meta_text,
+            {
+                "unknown ingestion",
+                "unknown-ingestion",
+                "poison control",
+                "poisoning",
+                "toxicology",
+                "swallowed substances",
+            },
+        ):
+            apply_delta("food_bolus_poisoning_post_generic_distractor", 0.06)
+        if _is_handlebar_abdominal_trauma_query(question) and _text_has_marker(
+            meta_text,
+            {"back pain", "musculoskeletal", "routine back pain", "self-care"},
+        ):
+            apply_delta("handlebar_back_pain_post_generic_distractor", 0.04)
+        if _is_abdominal_trauma_danger_query(question) and _text_has_marker(
+            meta_text,
+            _ABDOMINAL_TRAUMA_POSITIVE_METADATA_MARKERS,
+        ):
+            apply_delta("abdominal_trauma_owner_post_generic_metadata", -0.10)
 
         if _is_generic_puncture_query(question_lower):
             if (
@@ -6738,297 +10215,112 @@ def _has_meaningful_restart_content(clause):
 
 def _unique_ordered(items):
     """Return unique non-empty strings in first-seen order."""
-    seen = set()
-    ordered = []
-    for item in items:
-        normalized = item.strip()
-        if not normalized:
-            continue
-        key = normalized.lower()
-        if key in seen:
-            continue
-        seen.add(key)
-        ordered.append(normalized)
-    return ordered
-
-
-def _is_generic_asset_placeholder(text):
-    """Return True for vague placeholder phrases that are not real assets."""
-    normalized = " ".join(re.findall(r"[a-z0-9']+", (text or "").lower()))
-    return normalized in {
-        "what i have",
-        "what we have",
-        "what ive got",
-        "what we've got",
-        "what weve got",
-        "what we got",
-        "what i got",
-        "what i ve got",
-        "what we ve got",
-    }
+    return _scenario_frame_helpers._unique_ordered(items)
 
 
 def _split_scenario_clauses(question):
     """Split a scenario prompt into meaningful user-written clauses."""
-    comma_parts = [p.strip() for p in question.split(",")]
-    comma_parts = [
-        re.sub(r"^(?:and|but|or|also)\s+", "", p).strip() for p in comma_parts
-    ]
-    restart_parts = [
-        re.sub(r"^(?:and|but|or|also)\s+", "", p).strip()
-        for p in _split_at_question_restart(question)
-    ]
-    return _unique_ordered(
-        [part for part in comma_parts + restart_parts if len(part.split()) >= 2]
+    return _scenario_frame_helpers._split_scenario_clauses(
+        question, split_at_question_restart=_split_at_question_restart
     )
 
 
 def _content_tokens(text):
     """Extract lightweight content tokens for overlap checks."""
-    return {
-        token
-        for token in re.findall(r"[a-z0-9-]+", text.lower())
-        if len(token) >= 3 and token not in _SCENARIO_STOPWORDS
-    }
+    return _scenario_frame_helpers._content_tokens(text)
 
 
 def _extract_deadline(question):
     """Return a compact deadline/time-pressure phrase when present."""
-    patterns = (
-        r"\bin\s+(\d+\s+(?:minutes?|hours?|days?|weeks?))\b",
-        r"\b(\d+\s+(?:minutes?|hours?|days?|weeks?)\s+walk)\b",
-        r"\b(before dark)\b",
-        r"\b(tonight|tomorrow|today)\b",
-        r"\bstarts in\s+(\d+\s+(?:hours?|days?|weeks?))\b",
-    )
-    lower = question.lower()
-    for pattern in patterns:
-        match = re.search(pattern, lower)
-        if match:
-            return match.group(1)
-    return None
+    return _scenario_frame_helpers._extract_deadline(question)
 
 
 def _extract_assets(clauses):
     """Return user-stated assets/resources for the current turn."""
-    assets = []
-    for clause in clauses:
-        lower = clause.lower()
-        cleaned = clause.strip(" .")
-        if re.match(r"^(?:we|i)\s+(?:have|got)\b", lower):
-            asset = re.sub(
-                r"^(?:we|i)\s+(?:have|got)\s+", "", cleaned, flags=re.IGNORECASE
-            )
-            candidate = asset or cleaned
-            if not _is_generic_asset_placeholder(candidate):
-                assets.append(candidate)
-            continue
-        if _looks_like_inventory_fragment(clause):
-            if not _is_generic_asset_placeholder(cleaned):
-                assets.append(cleaned)
-            continue
-        match = re.search(r"\bwith\s+([^,.]+)", clause, flags=re.IGNORECASE)
-        if match:
-            candidate = match.group(1).strip()
-            if not _is_generic_asset_placeholder(candidate):
-                assets.append(candidate)
-    return _unique_ordered(assets)
+    return _scenario_frame_helpers._extract_assets(clauses)
 
 
 def _extract_constraints(clauses, deadline):
     """Return user-stated constraints or limiting factors."""
-    constraints = []
-    for clause in clauses:
-        lower = clause.lower()
-        if any(marker in lower for marker in _CONSTRAINT_MARKERS):
-            constraints.append(clause.strip(" ."))
-    if deadline:
-        constraints.append(f"time pressure: {deadline}")
-    return _unique_ordered(constraints)
+    return _scenario_frame_helpers._extract_constraints(clauses, deadline)
 
 
 def _extract_hazards(question):
     """Return salient hazards called out by the user."""
-    lower = question.lower()
-    hazards = [label for marker, label in _HAZARD_MARKERS.items() if marker in lower]
-    return _unique_ordered(hazards)
+    return _scenario_frame_helpers._extract_hazards(question)
 
 
 def _extract_people(question):
     """Return people/patient descriptors from the current turn."""
-    people = []
-    lower = question.lower()
-    for pattern in _PEOPLE_PATTERNS:
-        for match in re.finditer(pattern, lower):
-            people.append(match.group(0))
-    return _unique_ordered(people)
+    return _scenario_frame_helpers._extract_people(question)
 
 
 def _extract_environment(question):
     """Return environment/context signals from the question."""
-    lower = question.lower()
-    return _unique_ordered(
-        [marker for marker in _ENVIRONMENT_MARKERS if marker in lower]
-    )
+    return _scenario_frame_helpers._extract_environment(question)
 
 
 def _derive_objectives(question, clauses):
     """Return objective clauses for coverage tracking and review."""
-    objectives = []
-    for clause in clauses:
-        if _looks_like_inventory_fragment(clause):
-            continue
-        if _is_query_bearing(clause) or _detect_domains(clause):
-            objective_domains = sorted(_detect_domains(clause))
-            objectives.append(
-                {
-                    "text": clause.strip(),
-                    "domains": objective_domains,
-                    "tokens": sorted(_content_tokens(clause)),
-                }
-            )
-    if not objectives:
-        if _looks_like_inventory_fragment(question):
-            return []
-        objectives.append(
-            {
-                "text": question.strip(),
-                "domains": sorted(_detect_domains(question)),
-                "tokens": sorted(_content_tokens(question)),
-            }
-        )
-
-    question_domains = sorted(_detect_domains(question))
-    for objective in objectives:
-        if not objective["domains"]:
-            objective["domains"] = question_domains
-    return objectives
+    return _scenario_frame_helpers._derive_objectives(
+        question, clauses, detect_domains=_detect_domains
+    )
 
 
 def build_scenario_frame(question):
     """Parse user-facing scenario structure without changing decomposition."""
-    clauses = _split_scenario_clauses(question)
-    deadline = _extract_deadline(question)
-    frame = {
-        "question": question,
-        "clauses": clauses,
-        "domains": sorted(_detect_domains(question)),
-        "objectives": _derive_objectives(question, clauses),
-        "assets": _extract_assets(clauses),
-        "constraints": _extract_constraints(clauses, deadline),
-        "hazards": _extract_hazards(question),
-        "people": _extract_people(question),
-        "environment": _extract_environment(question),
-        "deadline": deadline,
-    }
-    frame["safety_critical"] = _scenario_frame_is_safety_critical(frame)
+    frame = _scenario_frame_helpers.build_scenario_frame(
+        question,
+        detect_domains=_detect_domains,
+        split_at_question_restart=_split_at_question_restart,
+        safety_critical_callback=_scenario_frame_is_safety_critical,
+    )
+    if _is_retinal_detachment_eye_emergency_query(question or ""):
+        domains = set(frame.get("domains") or [])
+        domains.add("medical")
+        frame["domains"] = sorted(domains)
+        for objective in frame.get("objectives") or []:
+            objective_domains = set(objective.get("domains") or [])
+            objective_domains.add("medical")
+            objective["domains"] = sorted(objective_domains)
     return frame
 
 
 def empty_session_state():
     """Return the default structured session state."""
-    return {
-        "assets": [],
-        "constraints": [],
-        "hazards": [],
-        "people": [],
-        "environment": [],
-        "deadline": None,
-        "active_objectives": [],
-        "anchor_guide_id": "",
-        "anchor_turn_index": None,
-        "turn_count": 0,
-    }
+    return _scenario_frame_helpers.empty_session_state()
 
 
 def _copy_session_state(session_state):
     """Return a detached copy of the structured session state."""
-    state = empty_session_state()
-    if not session_state:
-        return state
-    for key in state:
-        value = session_state.get(key)
-        if isinstance(state[key], list):
-            state[key] = list(value or [])
-        else:
-            state[key] = value
-    return state
+    return _scenario_frame_helpers._copy_session_state(session_state)
 
 
 def merge_frame_with_session(frame, session_state):
     """Merge current-turn structure onto prior session context for prompting/review."""
-    merged = dict(frame)
-    state = _copy_session_state(session_state)
-    for key in ("assets", "constraints", "hazards", "people", "environment"):
-        merged[key] = _unique_ordered(state.get(key, []) + frame.get(key, []))
-    merged["deadline"] = frame.get("deadline") or state.get("deadline")
-    merged["session_active_objectives"] = list(state.get("active_objectives", []))
-    return merged
+    return _scenario_frame_helpers.merge_frame_with_session(frame, session_state)
 
 
 def update_session_state(session_state, frame):
     """Persist user-provided scenario facts into structured session state."""
-    state = _copy_session_state(session_state)
-    frame = frame or {}
-    for key in ("assets", "constraints", "hazards", "people", "environment"):
-        state[key] = _unique_ordered(state[key] + frame.get(key, []))[:12]
-    if frame.get("deadline"):
-        state["deadline"] = frame["deadline"]
-    if frame.get("objectives"):
-        state["active_objectives"] = _unique_ordered(
-            [obj["text"] for obj in frame["objectives"]] + state["active_objectives"]
-        )[:8]
-    return state
+    return _scenario_frame_helpers.update_session_state(session_state, frame)
 
 
 def _session_state_is_empty(session_state):
     """Return True when the structured session state has no stored facts."""
-    state = session_state or {}
-    return not any(
-        state.get(key)
-        for key in (
-            "assets",
-            "constraints",
-            "hazards",
-            "people",
-            "environment",
-            "active_objectives",
-        )
-    ) and not state.get("deadline")
+    return _scenario_frame_helpers._session_state_is_empty(session_state)
 
 
 def _render_session_state_text(session_state):
     """Render session state as compact text for prompts/debug."""
-    if _session_state_is_empty(session_state):
-        return ""
-
-    state = session_state or {}
-    parts = []
-    if state.get("active_objectives"):
-        parts.append("active objectives: " + "; ".join(state["active_objectives"][:4]))
-    if state.get("people"):
-        parts.append("people: " + ", ".join(state["people"][:4]))
-    if state.get("assets"):
-        parts.append("assets: " + ", ".join(state["assets"][:4]))
-    if state.get("constraints"):
-        parts.append("constraints: " + "; ".join(state["constraints"][:4]))
-    if state.get("hazards"):
-        parts.append("hazards: " + ", ".join(state["hazards"][:4]))
-    if state.get("deadline"):
-        parts.append("deadline: " + state["deadline"])
-    return " | ".join(parts)
+    return _scenario_frame_helpers._render_session_state_text(session_state)
 
 
 def _should_use_session_context(question, frame, session_state):
     """Return True when retrieval should widen a vague follow-up using session state."""
-    if _session_state_is_empty(session_state):
-        return False
-    lower = question.lower().strip()
-    if any(lower.startswith(marker) for marker in _ANCHOR_RESET_MARKERS):
-        return False
-    if any(hint in lower for hint in _SESSION_CONTEXT_HINTS):
-        return True
-    return len(_content_tokens(question)) <= 4 and not frame.get("domains")
+    return _scenario_frame_helpers._should_use_session_context(
+        question, frame, session_state
+    )
 
 
 def _anchor_decay(turns_since_anchor):
@@ -7486,6 +10778,7 @@ def rerank_results(question, results, top_k, scenario_frame=None):
     debug_enabled = logger.isEnabledFor(logging.DEBUG)
     objectives = (scenario_frame or {}).get("objectives", [])
     exclude_gd_918_for_mania_psychosis = _is_mania_or_psychosis_like_query(question)
+    exclude_nosebleed_for_gi_bleed = _is_gi_bleed_emergency_query(question)
     rows = []
     for id_, doc, meta, dist in zip(
         results["ids"][0],
@@ -7495,6 +10788,18 @@ def rerank_results(question, results, top_k, scenario_frame=None):
     ):
         if exclude_gd_918_for_mania_psychosis and meta.get("guide_id") == "GD-918":
             continue
+        if exclude_nosebleed_for_gi_bleed:
+            meta_text = " ".join(
+                [
+                    meta.get("guide_title", ""),
+                    meta.get("section_heading", ""),
+                    meta.get("slug", ""),
+                    meta.get("description", ""),
+                    meta.get("source_file", ""),
+                ]
+            ).lower()
+            if _text_has_marker(meta_text, {"nosebleed", "nosebleeds"}):
+                continue
         row = _annotate_row(question, objectives, doc, {**meta, "id": id_}, dist)
         rows.append(row)
 
@@ -7520,6 +10825,21 @@ def rerank_results(question, results, top_k, scenario_frame=None):
         family_counts[chosen["family"]] += 1
         section_counts[chosen["section_key"]] += 1
         preserved_objectives.append(_format_objective_brief(objective))
+
+    if _is_salt_jars_hot_humid_setup_query(question):
+        for owner_id in ("GD-065", "GD-966"):
+            owner_candidates = [
+                row
+                for row in rows
+                if row["meta"].get("guide_id") == owner_id and row["id"] not in selected_ids
+            ]
+            if not owner_candidates:
+                continue
+            chosen = owner_candidates[0]
+            selected.append(chosen)
+            selected_ids.add(chosen["id"])
+            family_counts[chosen["family"]] += 1
+            section_counts[chosen["section_key"]] += 1
 
     overflow_rows = []
     for row in rows:
@@ -7626,6 +10946,215 @@ def _looks_like_multi_person_triage(question, frame):
     )
 
 
+def _is_airway_obstruction_rag_query(question):
+    """Detect airway-obstruction prompts for retrieval-profile support."""
+    lower = question.lower()
+    return _text_has_marker(
+        lower,
+        {
+            "choking",
+            "food stuck",
+            "stuck in the throat",
+            "cannot speak",
+            "can't speak",
+            "cannot breathe",
+            "can't breathe",
+            "blue lips",
+            "back blows",
+            "heimlich",
+            "abdominal thrust",
+            "choking on",
+            "drooling and cannot swallow",
+            "cannot swallow after",
+        },
+    )
+
+
+def _has_allergy_or_anaphylaxis_trigger(question):
+    """Return True when an airway prompt explicitly includes allergy-trigger language."""
+    lower = (question or "").lower()
+    return _text_has_marker(
+        lower,
+        {
+            "allergy",
+            "allergic",
+            "allergic reaction",
+            "anaphylaxis",
+            "epinephrine",
+            "epi pen",
+            "epipen",
+            "hives",
+            "whole body hives",
+            "bee sting",
+            "wasp sting",
+            "hornet sting",
+            "stung",
+            "peanut",
+            "shellfish",
+            "new medicine",
+            "medicine reaction",
+            "throat tight",
+            "throat feels tight",
+            "throat closing",
+            "tongue swelling",
+            "lip swelling",
+            "lips swelling",
+            "face swelling",
+            "facial swelling",
+        },
+    )
+
+
+def _is_food_bolus_airway_query(question):
+    """Detect food-bolus airway prompts that should outrank poisoning lanes."""
+    lower = question.lower()
+    food_context = _text_has_marker(
+        lower,
+        {"after a bite", "bite of food", "food stuck", "food bolus", "choking on"},
+    )
+    airway_context = _text_has_marker(
+        lower,
+        {"drooling", "cannot swallow", "can't swallow", "cannot breathe", "cannot speak"},
+    )
+    toxin_context = _text_has_marker(
+        lower,
+        {
+            "poison",
+            "toxin",
+            "unknown substance",
+            "cleaner",
+            "chemical",
+            "pills",
+            "medication",
+            "detergent",
+            "fuel",
+        },
+    )
+    return food_context and airway_context and not toxin_context
+
+
+def _is_newborn_sepsis_danger_query(question):
+    """Detect sick-newborn phrasing that needs sepsis-first retrieval."""
+    lower = question.lower()
+    newborn_context = _text_has_marker(lower, {"newborn", "baby", "infant"})
+    danger = _text_has_marker(
+        lower,
+        {
+            "limp",
+            "will not feed",
+            "won't feed",
+            "poor feeding",
+            "hard to wake",
+            "sleepy",
+            "fever",
+            "low temperature",
+            "acting weak",
+            "very sick",
+            "breathing trouble",
+            "sepsis",
+        },
+    )
+    return newborn_context and danger
+
+
+def _is_abdominal_trauma_danger_query(question):
+    """Detect abdominal trauma prompts that should retrieve trauma/acute-abdomen owners."""
+    lower = question.lower()
+    abdomen = _text_has_marker(
+        lower,
+        {"belly", "abdomen", "abdominal", "stomach", "left side", "right side"},
+    )
+    trauma = _text_has_marker(
+        lower,
+        {"fell", "kicked", "hit", "handlebar", "injury", "trauma", "after a hit"},
+    )
+    danger = _text_has_marker(
+        lower,
+        {
+            "hard belly",
+            "vomiting",
+            "pale",
+            "dizzy",
+            "watch at home",
+            "urgent help",
+            "get urgent help",
+        },
+    )
+    return abdomen and (trauma or danger)
+
+
+def _is_handlebar_abdominal_trauma_query(question):
+    lower = question.lower()
+    return "handlebar" in lower and _text_has_marker(
+        lower,
+        {"belly", "abdomen", "abdominal", "stomach", "left side", "right side", "pain"},
+    )
+
+
+def _is_fall_belly_pain_query(question):
+    lower = question.lower()
+    return _text_has_marker(lower, {"fell", "fall", "fallen"}) and _text_has_marker(
+        lower,
+        {"belly pain", "abdominal pain", "abdomen pain", "stomach pain"},
+    )
+
+
+def _is_infected_wound_boundary_query(question):
+    """Detect wound infection boundary prompts that need infection/sepsis owners."""
+    lower = question.lower()
+    wound = _text_has_marker(lower, {"wound", "cut", "red streak", "red streaks"})
+    danger = _text_has_marker(
+        lower,
+        {
+            "spreading",
+            "pus",
+            "fever",
+            "red streak",
+            "red streaks",
+            "feel weak",
+            "treated urgently",
+            "getting worse",
+        },
+    )
+    return wound and danger
+
+
+def _retrieval_profile_for_question(question, frame=None):
+    """Classify the retrieval shape before fetching evidence."""
+    lower = question.lower()
+    has_urgent_boundary = any(
+        marker in lower
+        for marker in (
+            "or just",
+            "normal or",
+            "watch at home",
+            "can this wait",
+            "treated urgently",
+            "get urgent help first",
+        )
+    )
+    if (
+        _is_airway_obstruction_rag_query(question)
+        or _is_meningitis_rash_emergency_query(question)
+        or _is_newborn_sepsis_danger_query(question)
+        or _is_abdominal_trauma_danger_query(question)
+        or _is_infected_wound_boundary_query(question)
+        or _is_gi_bleed_emergency_query(question)
+        or _is_cardiac_first_query(question)
+        or _scenario_frame_is_safety_critical(frame or build_scenario_frame(question))
+    ):
+        if has_urgent_boundary:
+            return "normal_vs_urgent"
+        return "safety_triage"
+    if has_urgent_boundary:
+        return "normal_vs_urgent"
+    if any(marker in lower for marker in (" or ", "versus", "vs ", "which")):
+        return "compare_or_boundary"
+    if len(_content_tokens(question)) <= 3:
+        return "low_support"
+    return "how_to_task"
+
+
 def _supplemental_retrieval_specs(
     question, top_k, category=None, scenario_frame=None, session_state=None
 ):
@@ -7637,21 +11166,454 @@ def _supplemental_retrieval_specs(
     supplemental_limit = min(candidate_limit, max(top_k, 24))
     question_lower = question.lower()
     frame = scenario_frame or build_scenario_frame(question)
+    retrieval_profile = _retrieval_profile_for_question(question, frame)
     specs = []
-    gi_bleed_markers = (
-        "coffee grounds",
-        "coffee ground vomit",
-        "black tarry stool",
-        "black tarry stools",
-        "black stool",
-        "black stools",
-        "bright red vomit",
-        "vomit blood",
-        "vomiting blood",
-        "dark clots",
-    )
+    if retrieval_profile in {"safety_triage", "normal_vs_urgent"}:
+        specs.append(
+            {
+                "text": (
+                    f"{question} first aid emergency red flags urgent evaluation "
+                    "airway breathing circulation shock sepsis poisoning trauma "
+                    "do not reassure as routine home care before danger signs"
+                ),
+                "category": "medical",
+                "limit": supplemental_limit,
+            }
+        )
+        if _is_airway_obstruction_rag_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} first-aid emergency-airway-management choking "
+                        "foreign body airway obstruction cannot breathe cannot speak "
+                        "ineffective cough back blows abdominal thrust chest thrust "
+                        "infant choking no blind finger sweep nothing by mouth "
+                        "drooling cannot swallow"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+            if _is_food_bolus_airway_query(question):
+                specs.append(
+                    {
+                        "text": (
+                            f"{question} First Aid Emergency Response Choking and "
+                            "Airway Management Emergency Airway Management Aspiration "
+                            "Airway Foreign Bodies food bolus after bite of food "
+                            "drooling cannot swallow nothing by mouth no poison ingestion"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    }
+                )
+        if _is_newborn_sepsis_danger_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} sepsis-recognition-antibiotic-protocols newborn "
+                        "sepsis neonatal fever low temperature limp poor feeding hard "
+                        "to wake breathing trouble weak very sick urgent escalation "
+                        "first aid"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+        if _is_abdominal_trauma_danger_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} acute-abdominal-emergencies trauma hemorrhage "
+                        "control abdominal trauma hard belly vomiting pale dizzy "
+                        "handlebar injury shock urgent evacuation nothing by mouth"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+            if _is_fall_belly_pain_query(question):
+                specs.append(
+                    {
+                        "text": (
+                            f"{question} Acute Abdominal Emergencies blunt abdominal "
+                            "trauma child fall belly pain internal bleeding shock "
+                            "urgent medical evaluation not constipation"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    }
+                )
+            if _is_handlebar_abdominal_trauma_query(question):
+                specs.append(
+                    {
+                        "text": (
+                            f"{question} Acute Abdominal Emergencies blunt abdominal "
+                            "trauma handlebar injury left side pain internal bleeding "
+                            "solid organ injury shock urgent medical evaluation"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    }
+                )
+        if _is_infected_wound_boundary_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} wound hygiene infection prevention sepsis "
+                        "spreading redness red streaks pus fever weakness urgent "
+                        "care not home cleaning only"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+    if _is_meningitis_vs_viral_query(question):
+        specs.append(
+            {
+                "text": (
+                    f"{question} sepsis-recognition-antibiotic-protocols suspected "
+                    "meningitis meningococcemia viral illness warning signs stiff neck "
+                    "severe headache photophobia vomiting confusion hard to wake "
+                    "non-blanching purple rash compare clarify not routine headache"
+                ),
+                "category": "medical",
+                "limit": supplemental_limit,
+            }
+        )
+    if _is_indoor_combustion_co_smoke_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        f"{question} smoke inhalation carbon monoxide fire-gas "
+                        "exposure get fresh air evacuate symptoms headache dizziness "
+                        "confusion coughing indoor stove blocked ventilation"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} cookstoves indoor heating safety woodstove "
+                        "smoke-back chimney draft blocked flue stop stove ventilate "
+                        "only if safe carbon monoxide alarm"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
 
-    if any(marker in question_lower for marker in gi_bleed_markers):
+    if _is_food_storage_container_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "food-storage-packaging Food Storage Packaging salt jars "
+                        "hot humid room food storage packaging salted fish preserved "
+                        "food sealed food-grade containers cool dry desiccants "
+                        "preservation method first"
+                    ),
+                    "category": "agriculture",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} answer: this is primarily a food preservation "
+                        "question, with storage-container choice second. "
+                        "food-preservation food storage packaging container "
+                        "choice does not fix unsafe unfinished preservation salt is "
+                        "ingredient not only salt storage hot humid room jars are "
+                        "not a complete preservation setup"
+                    ),
+                    "category": "agriculture",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+        if _is_salt_jars_hot_humid_setup_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": (
+                            "food-preservation Food Preservation salt jars hot humid "
+                            "room preserve sound food first drying salting acidifying "
+                            "fermenting before storage container choice"
+                        ),
+                        "category": "agriculture",
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            "food-storage-packaging Food Storage Packaging hot humid "
+                            "room jars sealed containers desiccants cool dry location "
+                            "after preservation is complete"
+                        ),
+                        "category": "agriculture",
+                        "limit": supplemental_limit,
+                    },
+                ]
+            )
+
+    if _is_dry_meat_fish_contamination_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "dry meat fish humidity animals dirt protected solar drying "
+                        "raised rack screen cheesecloth cover insects flies dust "
+                        "airflow low humidity avoid open hanging contamination"
+                    ),
+                    "category": "agriculture",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} simplest safe drying setup thin slices salted "
+                        "if needed raised enclosed screened rack breathable cover "
+                        "protect from animals flies dirt dust dry breezy low humidity"
+                    ),
+                    "category": "agriculture",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_canned_fruit_soft_spot_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "food spoilage assessment canned fruit soft spots bulging "
+                        "leaking broken seal cloudiness off smell changed texture "
+                        "discard first do not cut away affected portions"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} canned food safety discard if bulging leaking "
+                        "seal failed pressure cloudy off smell suspicious texture "
+                        "not salvageable by trimming"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_cooked_rice_power_outage_spoilage_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "food spoilage assessment cooked rice power outage tastes off "
+                        "discard stop eating do not taste test warm leftovers toxin risk"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} cooked rice after power loss discard first unsafe "
+                        "warm holding not stale food sensory signs unreliable"
+                    ),
+                    "category": "agriculture",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_unknown_loose_chemical_powder_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "unknown loose chemical powder white powder residue fertilizer "
+                        "detergent toxic substance isolate area keep people pets away "
+                        "do not move sweep smell taste or handle poison control hazmat"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} unknown powder on counter possible household "
+                        "chemical exposure toxicology poison control do not touch "
+                        "do not move do not identify by handling"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_unknown_chemical_skin_burn_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        f"{question} unknown unlabeled under sink bottle hands "
+                        "burning chemical skin burn toxicology dermal exposure "
+                        "flush running water remove contaminated jewelry clothing "
+                        "poison control not poison ivy not routine rash"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        "toxicology poisoning response dermal exposure unknown "
+                        "household cleaner skin burning chemical burn water irrigation "
+                        "poison control"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_industrial_chemical_smell_boundary_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "chemical industrial accident response strong chemical odor "
+                        "wrong smell avoid inhalation do not sniff isolate area hand "
+                        "off to chemical safety hazmat exposure response"
+                    ),
+                    "category": "defense",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} chemical smells wrong industrial process do not "
+                        "assess by smell do not stay in chemistry fundamentals unless "
+                        "pure feedstock design isolate ventilate from safe distance "
+                        "chemical safety industrial accident response"
+                    ),
+                    "category": "chemistry",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_chemical_spill_sick_exposure_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        f"{question} chemical spill workshop someone feels sick "
+                        "exposure triage first isolate area move to fresh air "
+                        "identify exposure route skin eye inhalation ingestion "
+                        "chemical safety toxicology first aid"
+                    ),
+                    "category": "medical",
+                    "where": {
+                        "$or": [
+                            {"slug": "chemical-safety"},
+                            {"slug": "toxicology-poisoning-response"},
+                            {"slug": "chemical-industrial-accident-response"},
+                            {"slug": "unknown-ingestion-child-poisoning-triage"},
+                            {"slug": "first-aid"},
+                        ]
+                    },
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        "chemical spill sick person first response avoid inhalation "
+                        "do not troubleshoot process isolate ventilate from safe "
+                        "distance decontaminate by exposure route poison control "
+                        "emergency medical help"
+                    ),
+                    "category": "chemistry",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_precursor_feedstock_exposure_boundary_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        f"{question} precursor feedstock raw material boundary known materials "
+                        "product design chemistry fundamentals no exposure no spill no symptoms"
+                    ),
+                    "category": "chemistry",
+                    "where": {"$or": [{"slug": "chemistry-fundamentals"}]},
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} poisoning exposure boundary unknown chemical spill leak odor "
+                        "symptoms chemical safety toxicology industrial accident first response"
+                    ),
+                    "category": "medical",
+                    "where": {
+                        "$or": [
+                            {"slug": "chemical-safety"},
+                            {"slug": "toxicology-poisoning-response"},
+                            {"slug": "chemical-industrial-accident-response"},
+                            {"slug": "unknown-ingestion-child-poisoning-triage"},
+                        ]
+                    },
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_unlabeled_sealed_drum_safety_triage_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "unlabeled sealed drum unknown chemical safety triage isolate "
+                        "do not open sniff test move use reuse disposal hazmat mark "
+                        "unknown do not use"
+                    ),
+                    "category": "chemistry",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} sealed unlabeled drum nobody sick safety triage "
+                        "first hazardous waste unknown container do not infer bitumen "
+                        "do not use for waterproofing road repair feedstock"
+                    ),
+                    "category": "defense",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_market_space_layout_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "marketplace trade space physical footprint stalls walking "
+                        "lanes foot traffic cart clearance loading edge blocked "
+                        "corners notices inside market footprint"
+                    ),
+                    "category": "resource-management",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} market layout stalls lanes notices inside market "
+                        "space storage loading handoff without tax revenue drift"
+                    ),
+                    "category": "resource-management",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_gi_bleed_emergency_query(question):
         specs.extend(
             [
                 {
@@ -7668,6 +11630,477 @@ def _supplemental_retrieval_specs(
                         f"{question} possible gastrointestinal bleeding bleed-first "
                         "triage airway active bleeding shock urgent escalation "
                         "before hydration or food poisoning advice"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_surgical_abdomen_emergency_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "acute abdominal emergencies surgical abdomen guarding "
+                        "rigid hard belly right lower quadrant appendicitis bowel "
+                        "obstruction vomiting distention no stool no gas fever "
+                        "localized tender spot urgent escalation npo"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} surgical-abdomen red flags first action "
+                        "do not flatten into stomach flu constipation reflux "
+                        "or dehydration home care"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_electrical_hazard_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "electrical safety hazard prevention shock cannot let go "
+                        "collapsed live wire downed power line sparking outlet wet "
+                        "breaker box de-energize do not touch cpr aed after safe"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} electrical hazard first keep people back shut "
+                        "off power from dry safe place verify de-energized before repair"
+                    ),
+                    "category": "power-generation",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+        if _is_downed_power_line_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} downed utility power line first action stay far "
+                        "back keep everyone away call utility emergency response do "
+                        "not approach do not move line no nonconductive separation "
+                        "attempt avoid vehicles fences wet ground"
+                    ),
+                    "category": "power-generation",
+                    "limit": supplemental_limit,
+                }
+            )
+
+    if _is_drowning_cold_water_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "drowning rescue priorities reach throw row go post rescue "
+                        "breathing cpr cold water gasping airway gentle warming ice rescue"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} active drowning cold water under ice first action "
+                        "call help keep rescuer safe throw reach breathing cpr hypothermia"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+        if _text_has_marker(question_lower, {"face down", "silent in the water", "motionless in the water"}):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} face down silent in water active drowning now "
+                        "call alert help immediately safe reach throw rescue remove "
+                        "from water check breathing start cpr rescue breaths do not "
+                        "lead with observation"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                }
+            )
+        if _is_post_rescue_drowning_breathing_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} after water rescue coughing short of breath "
+                        "requires urgent medical evaluation now monitor breathing "
+                        "call emergency help aspiration delayed respiratory distress"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+
+    if _is_urgent_nosebleed_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "nosebleed urgent red flags will not stop 20 30 minutes "
+                        "blood down throat blood thinners dizzy pale weak repeated "
+                        "heavy lean forward firm pressure urgent medical help"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} epistaxis urgent care lean forward pinch soft "
+                        "nose blood thinner repeated heavy same day not headache dental"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_cardiac_first_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "acute coronary cardiac emergencies chest pressure chest "
+                        "tightness shortness of breath jaw arm pain dread exertion "
+                        "panic versus heart attack call emergency help aspirin if appropriate"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} cardiac first do not dismiss as panic urgent "
+                        "medical evaluation heart attack warning signs"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_major_blood_loss_shock_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        f"{question} hemorrhagic shock blood loss pale dizzy "
+                        "clammy weak control bleeding keep flat warm urgent "
+                        "evacuation trauma hemorrhage control"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} trauma hemorrhage control major bleeding "
+                        "direct pressure tourniquet wound packing impaled object "
+                        "shock recognition resuscitation"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} shock bleeding trauma stabilization "
+                        "hemorrhage control decision tree pale dizzy after blood "
+                        "loss not nosebleed care"
+                    ),
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_gyn_emergency_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "gynecological emergency early pregnancy bleeding dizziness "
+                        "missed period one-sided pelvic pain ectopic pregnancy "
+                        "heavy vaginal bleeding shoulder pain urgent evacuation"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} gynecologic emergency first action possible "
+                        "ectopic pregnancy hemorrhage do not use uterine massage "
+                        "unless postpartum"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_crush_compartment_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "crush injury compartment syndrome pain out of proportion "
+                        "tight swelling numbness tingling passive stretch urgent "
+                        "immobilize at heart level no massage"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} possible compartment syndrome crush syndrome "
+                        "neurovascular assessment splint keep limb at heart level "
+                        "urgent evacuation"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_maintenance_record_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "basic record-keeping maintenance logs repair history failure logs "
+                        "repeat failure prevention cause fix date person equipment lessons "
+                        "learned from breakdowns"
+                    ),
+                    "category": "culture-knowledge",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} basic record keeping log template maintenance "
+                        "repair failure cause fix date responsible person repeat mistake prevention"
+                    ),
+                    "category": "culture-knowledge",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_anxiety_crisis_explainer_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "anxiety stress crisis red flags thoughts of suicide self-harm "
+                        "unable to stay safe hallucinations confusion chest pain fainting "
+                        "blue lips severe trouble breathing urgent help 988"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} anxiety crisis boundary self-harm suicide cannot "
+                        "function safely urgent escalation panic medically different symptoms"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_market_tax_revenue_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "taxation public revenue market fees taxes assessment collection "
+                        "fairness transparency receipts posted rules appeals budget corruption prevention"
+                    ),
+                    "category": "resource-management",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} taxation revenue systems tax collection market fees "
+                        "public revenue fair assessment visible rules receipts appeals"
+                    ),
+                    "category": "resource-management",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_adhesive_binder_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "adhesives binders formulation adhesive selection wood leather "
+                        "paper containers hide glue casein starch paste pine pitch "
+                        "surface prep clamping curing safety"
+                    ),
+                    "category": "crafts",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} choose simple adhesive binder family by material "
+                        "wood leather paper container concise complete matrix safety "
+                        "limits ventilation heat caustic solvent hazards"
+                    ),
+                    "category": "crafts",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_message_auth_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "message authentication courier protocols prove note real "
+                        "challenge response wax seal tamper evidence courier roster "
+                        "chain of custody verify posted order before acting"
+                    ),
+                    "category": "communications",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} message trust verification authenticity integrity "
+                        "sender confirmation posted evacuation order courier note "
+                        "not wildfire evacuation planning"
+                    ),
+                    "category": "communications",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+        if _is_simple_courier_note_auth_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} simplest robust courier note authenticity use "
+                        "one shared sender mark seal or phrase plus courier roster "
+                        "and callback path avoid fragile heavy one-time-pad checksum "
+                        "witness bureaucracy"
+                    ),
+                    "category": "communications",
+                    "limit": supplemental_limit,
+                }
+            )
+        if _is_posted_order_verification_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} posted evacuation order verify issuing authority "
+                        "agreed authentication signal trusted courier runner radio "
+                        "second channel before acting unless immediate visible danger"
+                    ),
+                    "category": "communications",
+                    "limit": supplemental_limit,
+                }
+            )
+
+    if _is_building_habitability_safety_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "building inspection habitability checklist do not enter soft floor "
+                        "damaged building storage sleep occupancy outside first active collapse "
+                        "sagging gas smell fire damage sewage backup short salvage"
+                    ),
+                    "category": "salvage",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} damaged building no entry triage structural safety "
+                        "soft bouncy floor roof leak mold storage only usable after repair"
+                    ),
+                    "category": "salvage",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_stretcher_access_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "clinic stretcher access entrance patient transport door "
+                        "direct outside route wide straight threshold turning space "
+                        "waiting triage clinic layout"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} stretcher-capable access door should connect "
+                        "outside approach directly to triage treatment route avoid "
+                        "wheelchair-only minimums"
+                    ),
+                    "category": "building",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_serotonin_syndrome_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "serotonin syndrome antidepressant cough medicine "
+                        "serotonergic medication reaction clonus fever confusion "
+                        "rigid muscles shaking sweating poison control ems cooling"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} toxicology poisoning toxidrome emergency "
+                        "serotonin syndrome agitation tremor diarrhea overheating "
+                        "urgent escalation"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_meningitis_rash_emergency_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "meningitis meningococcemia sepsis emergency fever "
+                        "purple dark bruise-like non-blanching rash confusion "
+                        "hard to wake stiff neck vomiting EMS emergency care now"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} suspected meningitis meningococcal sepsis "
+                        "non-blanching petechial purplish rash altered mental "
+                        "status immediate emergency evaluation not routine rash"
                     ),
                     "category": "medical",
                     "limit": supplemental_limit,
@@ -7777,6 +12210,22 @@ def _supplemental_retrieval_specs(
                 }
             )
 
+        if _is_common_ailments_gateway_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": "common ailments recognition basic home care mild versus urgent symptoms red flags",
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": "when to seek professional medical care common ailments red flags home care",
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    },
+                ]
+            )
+
         if _is_acute_symptom_query(question):
             specs.extend(
                 [
@@ -7821,7 +12270,14 @@ def _supplemental_retrieval_specs(
                 }
             )
 
-        if _is_household_chemical_hazard_query(question):
+        if (
+            (
+                _is_household_chemical_hazard_query(question)
+                and not _is_unknown_chemical_skin_burn_query(question)
+            )
+            or _is_unknown_leaking_chemical_container_query(question)
+            or _is_unknown_loose_chemical_powder_query(question)
+        ):
             specs.extend(
                 [
                     {
@@ -7851,6 +12307,43 @@ def _supplemental_retrieval_specs(
                     },
                 ]
             )
+            if _is_unknown_leaking_chemical_container_query(question):
+                specs.append(
+                    {
+                        "text": (
+                            f"{question} unknown leaking chemical container sharp smell "
+                            "evacuate isolate do not touch do not open do not move "
+                            "container ventilate only from safe distance poison control hazmat"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    }
+                )
+            if _is_unknown_chemical_skin_burn_query(question):
+                specs.append(
+                    {
+                        "text": (
+                            f"{question} unknown unlabeled under sink bottle hands "
+                            "burning chemical skin burn toxicology dermal exposure "
+                            "flush running water remove contaminated jewelry clothing "
+                            "poison control not poison ivy not routine rash"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    }
+                )
+            if _is_unknown_loose_chemical_powder_query(question):
+                specs.append(
+                    {
+                        "text": (
+                            f"{question} unknown loose chemical powder white powder residue "
+                            "isolate area keep people pets away do not touch do not move "
+                            "do not sweep do not smell do not taste poison control hazmat"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    }
+                )
 
         if _is_urinary_query(question_lower):
             specs.extend(
@@ -7867,6 +12360,36 @@ def _supplemental_retrieval_specs(
                     },
                 ]
             )
+            if _is_urinary_vaginal_overlap_query(question_lower):
+                specs.extend(
+                    [
+                        {
+                            "text": "vaginal itching discharge burning urination common vaginal infections vaginitis yeast bacterial vaginosis STI urinary overlap",
+                            "category": "medical",
+                            "limit": supplemental_limit,
+                        },
+                        {
+                            "text": "burning when urinating plus vaginal itching and discharge differential diagnosis do not guess antibiotic choice",
+                            "category": "medical",
+                            "limit": supplemental_limit,
+                        },
+                    ]
+                )
+            if _is_hematuria_query(question_lower):
+                specs.extend(
+                    [
+                        {
+                            "text": "visible blood in urine hematuria urinary red flag medical evaluation urgent if clots heavy bleeding flank pain fever urinary retention",
+                            "category": "medical",
+                            "limit": supplemental_limit,
+                        },
+                        {
+                            "text": "blood in urine urinary tract infection kidney stone bladder symptoms common ailments urinary when urgent",
+                            "category": "medical",
+                            "limit": supplemental_limit,
+                        },
+                    ]
+                )
 
         if _text_has_marker(question_lower, _SPLINTER_QUERY_MARKERS):
             body_part = _body_part_hint(question_lower)
@@ -7942,6 +12465,52 @@ def _supplemental_retrieval_specs(
             ]
         )
 
+    if _is_eye_globe_injury_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "eye injury embedded object penetrating globe high-speed "
+                        "metal debris darker vision shield without pressure do not "
+                        "flush remove rub or press urgent ophthalmology"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} emergency ophthalmology eye shield cover both "
+                        "eyes no direct pressure no flushing embedded debris"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
+    if _is_retinal_detachment_eye_emergency_query(question):
+        specs.extend(
+            [
+                {
+                    "text": (
+                        "sudden vision loss flashes floaters curtain shadow one eye "
+                        "retinal detachment emergency ophthalmology urgent eye evaluation "
+                        "do not treat as migraine glasses pink eye or night vision"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} retinal detachment warning sudden monocular vision "
+                        "loss dark curtain floaters flashes urgent ophthalmology evacuate"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
     if _is_household_chemical_inhalation_query(question):
         specs.extend(
             [
@@ -7956,11 +12525,21 @@ def _supplemental_retrieval_specs(
                 },
                 {
                     "text": (
-                        "mixed cleaners bleach ammonia chlorine gas chemical "
+                        "mixed cleaners bleach ammonia vinegar acid chlorine "
+                        "chloramine gas chemical "
                         "inhalation chest tightness coughing poison control "
                         "fresh air"
                     ),
                     "category": "medical",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} chemical safety incompatible cleaners mixed "
+                        "bleach vinegar ammonia toxic fumes fresh air evacuate "
+                        "poison control emergency exposure"
+                    ),
+                    "category": "chemistry",
                     "limit": supplemental_limit,
                 },
             ]
@@ -8776,7 +13355,13 @@ def _results_family_diversity(results):
 
 
 def _review_metadata(
-    results, specs, sub_queries, scenario_frame, current_frame, session_state_used
+    results,
+    specs,
+    sub_queries,
+    scenario_frame,
+    current_frame,
+    session_state_used,
+    retrieval_profile,
 ):
     """Build retrieval metadata for review/debug/bench tooling."""
     review = dict(results.get("_senku_review", {}))
@@ -8795,9 +13380,14 @@ def _review_metadata(
             retrieval_mix["lexical_only"] += 1
         else:
             retrieval_mix["vector_only"] += 1
+    safety_critical = _scenario_frame_is_safety_critical(
+        scenario_frame
+    ) or retrieval_profile in {"safety_triage", "normal_vs_urgent"}
 
     return {
         "sub_queries": sub_queries,
+        "retrieval_profile": retrieval_profile,
+        "safety_critical": safety_critical,
         "scenario_frame": scenario_frame,
         "current_frame": current_frame,
         "session_state_used": session_state_used,
@@ -8969,6 +13559,16 @@ def _has_primary_owner_support(results) -> bool:
     )
 
 
+def _review_marks_safety_critical(results, frame=None) -> bool:
+    """Return True when retrieval metadata or the scenario frame says safety-first."""
+    review = results.get("_senku", {}) or results.get("_senku_review", {})
+    if bool(review.get("safety_critical")):
+        return True
+    if review.get("retrieval_profile") in {"safety_triage", "normal_vs_urgent"}:
+        return True
+    return _scenario_frame_is_safety_critical(frame)
+
+
 def _resolve_answer_mode(
     reranked, scenario_frame, confidence_label
 ) -> AnswerMode:
@@ -8994,7 +13594,7 @@ def _resolve_answer_mode(
     if 0.45 <= top_vector_similarity <= 0.67:
         return "uncertain_fit"
     if (
-        _scenario_frame_is_safety_critical(frame)
+        _review_marks_safety_critical(reranked, frame)
         and not _has_primary_owner_support(reranked)
         and confidence_label in {"medium", "low"}
     ):
@@ -9013,6 +13613,9 @@ def retrieve_results(
     )
     sub_queries = decompose_query(question)
     candidate_limit = _retrieval_candidate_limit(top_k)
+    if _is_salt_jars_hot_humid_setup_query(question):
+        candidate_limit = max(candidate_limit, 30)
+    retrieval_profile = _retrieval_profile_for_question(question, scenario_frame)
     specs = []
     seen = set()
 
@@ -9075,6 +13678,7 @@ def retrieve_results(
         scenario_frame,
         current_frame,
         session_state_used,
+        retrieval_profile,
     )
     reranked["_senku"]["confidence_label"] = _confidence_label(
         reranked, scenario_frame
@@ -9097,18 +13701,7 @@ def _fix_mojibake(text):
     (e.g., U+00C2 U+00B0 instead of U+00B0 for deg), re-encode them back
     to the correct characters.
     """
-    try:
-        # Encode each char as its raw byte value (latin-1 is 1:1 for U+0000-U+00FF),
-        # then decode the resulting bytes as UTF-8 to recover the intended characters.
-        return text.encode("latin-1").decode("utf-8")
-    except (UnicodeDecodeError, UnicodeEncodeError):
-        # Not all chars are in the latin-1 range, or the bytes don't form valid UTF-8.
-        # Fall back to fixing only the safe 2-byte sequences (A-circumflex + char).
-        return re.sub(
-            r"\u00c2([\u00a0-\u00bf])",
-            lambda m: m.group(1),
-            text,
-        )
+    return _response_normalization._fix_mojibake(text)
 
 
 def _relevance_tag(distance):
@@ -9166,35 +13759,577 @@ def _prompt_mode_notes(mode, review, question=None):
         notes.append(
             "- Use plain, conservative wording and avoid stylized voice flourishes."
         )
-    if any(
-        marker in question_lower
-        for marker in (
-            "coffee grounds",
-            "coffee ground vomit",
-            "black tarry stool",
-            "black tarry stools",
-            "black stool",
-            "black stools",
-            "bright red vomit",
-            "vomit blood",
-            "vomiting blood",
-            "dark clots",
-        )
-    ):
+    if _is_gi_bleed_emergency_query(question or ""):
         notes.append(
             "- Treat these symptoms as a possible GI bleed. Lead with airway, "
             "ongoing bleeding, and shock checks plus urgent escalation before "
-            "hydration, food poisoning, or routine GI self-care advice."
+            "hydration, food poisoning, nosebleed positioning, visible-wound "
+            "direct pressure, or routine GI self-care advice."
+        )
+        notes.append(
+            "- For bowel, rectal, black-tarry-stool, coffee-ground-vomit, or "
+            "vomiting-blood presentations, do not write 'apply direct pressure' "
+            "unless there is a separate visible external bleeding site."
+        )
+        notes.append(
+            "- If the only bleeding described is stool, rectal bleeding, vomit, "
+            "coffee-ground material, or vomiting blood, do not mention direct "
+            "pressure at all; use shock checks, airway positioning, nothing by "
+            "mouth for severe symptoms, and urgent transport."
         )
         notes.append(
             "- If immediate actions are needed, use a compact numbered list with "
             "bleed-first triage and emergency help up front."
+        )
+    if _is_surgical_abdomen_emergency_query(question or ""):
+        notes.append(
+            "- Surgical-abdomen red flags: lead with possible appendicitis, bowel "
+            "obstruction, perforation, or another acute abdominal emergency. "
+            "Escalate urgently before dehydration, stomach-flu, constipation, "
+            "reflux, or routine home-care advice."
+        )
+        notes.append(
+            "- For guarding, rigid/hard belly, right-lower-belly pain with movement "
+            "or fever, localized very tender spot with fever, or vomiting plus "
+            "distention and no stool/gas: keep them NPO/nothing by mouth if surgery "
+            "or obstruction is possible, monitor shock/airway, and arrange urgent "
+            "medical help."
+        )
+    if _is_gyn_emergency_query(question or ""):
+        notes.append(
+            "- Gynecologic/early-pregnancy red flags: lead with urgent evaluation "
+            "or evacuation for possible ectopic pregnancy, ovarian torsion, "
+            "miscarriage complication, or hemorrhage before routine cramps, STI, "
+            "heartburn, or visible-wound bleeding care."
+        )
+        notes.append(
+            "- For early pregnancy or undifferentiated pelvic bleeding, do not "
+            "recommend vaginal direct pressure, internal inspection, or uterine "
+            "massage unless the prompt clearly says this is postpartum bleeding."
+        )
+        notes.append(
+            "- Unless the prompt clearly says postpartum hemorrhage after delivery, "
+            "do not give uterotonic drug names/doses, uterine tamponade, embolization, "
+            "or hysterectomy steps; say higher-level care may be needed instead."
+        )
+        notes.append(
+            "- For early-pregnancy ectopic red flags, do not frame the action as "
+            "postpartum hemorrhage care, emergency delivery, or uterine evacuation; "
+            "use emergency evaluation/evacuation for possible ectopic pregnancy or "
+            "internal bleeding."
+        )
+    if _is_crush_compartment_query(question or ""):
+        notes.append(
+            "- Crush/compartment warning signs: treat worsening out-of-proportion "
+            "pain, tight swelling, numbness/tingling, or pain with passive toe/finger "
+            "movement as urgent. Immobilize, keep the limb around heart level, "
+            "remove constricting items, and write urgent surgical evaluation/evacuation "
+            "as a required action now. Do not make urgent evaluation conditional when "
+            "pain out of proportion plus tightening, pinned-under-weight with numbness "
+            "or a hard calf, or fast swelling is present; do not write escalation as "
+            "'if numbness persists' or 'if pain continues.' Treat the red flags named "
+            "in the user's question as already present; do not tell them to wait for "
+            "the same signs to appear or worsen before evacuation."
+        )
+        notes.append(
+            "- Do not lead with elevation above heart level, massage, stretching, "
+            "foot-care hygiene, rest-only care, back-pain saddle/bladder red flags, "
+            "or NSAIDs as the primary response."
+        )
+    if _is_serotonin_syndrome_query(question or ""):
+        notes.append(
+            "- Medication-triggered serotonin-syndrome cues: name possible serotonin "
+            "syndrome/toxidrome first, say not to take another dose of the suspected "
+            "serotonergic medicine/source while contacting Poison Control, EMS, or a "
+            "clinician, cool overheating, and escalate before panic, flu, dehydration, "
+            "menopause, or dementia framing."
+        )
+        notes.append(
+            "- Do not use broad stop phrases like 'stop all serotonergic medications,' "
+            "'cease any potential source,' or 'stop taking the combo immediately'; do "
+            "not tell the user to stop all medicines indefinitely or start "
+            "cyproheptadine/benzodiazepines on their own. Frame medication holds, "
+            "sedation, and antidotes as Poison Control, EMS, clinician, or trained-care decisions."
+        )
+    if _is_meningitis_rash_emergency_query(question or ""):
+        notes.append(
+            "- Fever plus confusion, hard-to-wake behavior, stiff neck, severe headache, "
+            "vomiting, or a purple/dark/bruise-like/non-blanching rash: treat as possible "
+            "meningitis or meningococcemia. The first numbered instruction "
+            "must explicitly be to call EMS, go to emergency care, or seek emergency "
+            "medical care immediately; do not lead with routine flu/rash care, antipyretic "
+            "schedules, bug-bite infection checks, isolation, Health Officer notification, "
+            "contact tracing, quarantine, or other public-health reporting."
+        )
+        if _text_has_marker(question_lower, {"sepsis", "septic", "shock", "very sick", "very ill", "very unwell"}):
+            notes.append(
+                "- Because the prompt explicitly frames sepsis, shock, or very-sick "
+                "appearance, include sepsis screening and first-hour priorities after "
+                "the emergency escalation."
+            )
+        notes.append(
+            "- Isolation, health-officer notification, contact tracing, fever comfort "
+            "measures, and hydration are secondary after urgent clinical escalation "
+            "unless the prompt is only about community surveillance."
+        )
+    elif _is_meningitis_vs_viral_query(question or ""):
+        notes.append(
+            "- Meningitis-vs-viral comparison prompts should use an if/then compare "
+            "shape: say you cannot diagnose from the label alone, check red flags "
+            "first, and then distinguish dangerous meningitis signs from a possible "
+            "uncomplicated viral illness. If stiff neck, severe headache, photophobia, "
+            "repeated vomiting, confusion, hard-to-wake behavior, or a non-blanching "
+            "purple/dark rash is present, treat it as possible meningitis or "
+            "meningococcemia and seek emergency clinical evaluation. If those signs "
+            "are absent and symptoms are mild, viral illness is possible; monitor for "
+            "red flags. Do not recommend Health Officer notification, quarantine, "
+            "contact tracing, isolation, or empiric treatment unless the question is "
+            "about an outbreak, community response, surveillance, or public-health "
+            "reporting."
+        )
+    if _is_airway_obstruction_rag_query(question or ""):
+        notes.append(
+            "- Choking/possible airway-obstruction prompts are emergency-first: if the "
+            "person cannot speak, breathe, cough effectively, is blue, drooling, or "
+            "cannot swallow, lead with urgent airway actions and emergency help. Do "
+            "not answer as poison ingestion, panic, allergy, or routine observation "
+            "before airway danger is handled. Do not mention anaphylaxis unless the "
+            "prompt includes hives, swelling, allergic exposure, throat tightness, or "
+            "another allergy trigger."
+        )
+        notes.append(
+            "- Do not advise blind finger sweeps. Remove an object from the mouth only "
+            "if it is clearly visible and reachable; otherwise continue age-appropriate "
+            "choking rescue or CPR/escalation as indicated."
+        )
+        if not _has_allergy_or_anaphylaxis_trigger(question or ""):
+            notes.append(
+                "- This airway-obstruction prompt has no allergy trigger: do not "
+                "mention allergy, allergic reaction, anaphylaxis, epinephrine, "
+                "antihistamines, hives, swelling, or throat-tightness branches."
+            )
+        if "panic" in (question or "").lower():
+            notes.append(
+                "- For choking-versus-panic boundary prompts, give complete branch "
+                "logic: first check whether the person can speak, cough forcefully, "
+                "breathe, and maintain normal color; start choking rescue only if "
+                "speech/cough/breathing is absent, weak, or worsening, or if blue "
+                "color/collapse appears; discuss panic or observation only after "
+                "those airway danger signs are absent. Do not leave conditional "
+                "headings such as 'If unresponsive' without a complete action."
+            )
+    if _is_newborn_sepsis_danger_query(question or ""):
+        notes.append(
+            "- Newborn danger signs such as limpness, very weak or very sick appearance, "
+            "poor feeding, hard-to-wake behavior, breathing trouble, fever, or low "
+            "temperature require urgent medical evaluation immediately. The first "
+            "numbered instruction must explicitly say to seek urgent medical evaluation "
+            "immediately or emergency help now, keep the newborn warm, and perform ABC "
+            "checks while arranging that help; do not substitute topical antiseptic, "
+            "watchful waiting, routine feeding advice, or observation-only care."
+        )
+    if _is_abdominal_trauma_danger_query(question or ""):
+        notes.append(
+            "- Abdominal trauma with hard belly, vomiting, pale/dizzy appearance, "
+            "handlebar impact, or watch-at-home uncertainty is trauma-first: arrange "
+            "urgent medical evaluation/evacuation, monitor shock, keep them still, "
+            "and avoid food or drink if internal injury or surgery is possible. Do "
+            "not lead with routine stomach upset or constipation care."
+        )
+    if _is_infected_wound_boundary_query(question or ""):
+        notes.append(
+            "- Wounds with spreading redness, pus, red streaks, fever, worsening pain, "
+            "or weakness need infection/sepsis escalation first. Lead with urgent care "
+            "for red streaks/systemic symptoms plus wound protection/cleaning; do not "
+            "answer as routine rash, bug bite, itch relief, or cosmetic skin irritation."
+        )
+    if _is_maintenance_record_query(question or ""):
+        notes.append(
+            "- Maintenance/repair/failure record prompts should start from basic "
+            "record-keeping: log date, asset/equipment, symptom/failure, cause, fix, "
+            "parts/materials, person responsible, follow-up check, and lessons to "
+            "prevent repeat failures. Do not answer only as archives, accounting, "
+            "tax, trade ledgers, or one specific equipment-maintenance guide."
+        )
+    if _is_anxiety_crisis_explainer_query(question or ""):
+        notes.append(
+            "- If asked when anxiety/stress becomes a crisis, explicitly list red "
+            "flags: thoughts of suicide or self-harm, feeling unable to stay safe, "
+            "confusion/hallucinations, inability to function safely, chest pain, "
+            "fainting, blue lips, severe shortness of breath, or new/severe panic "
+            "symptoms that feel medically different. Mention urgent help/988 or "
+            "emergency care for those red flags before routine self-care."
+        )
+    if _is_active_rain_roof_repair_query(question or ""):
+        notes.append(
+            "- Active-rain roof repair: lead with fall/storm/electrical safety. Do "
+            "not tell the user to climb onto a wet roof or work during lightning, "
+            "high wind, ice, unstable footing, or active storm conditions. Prefer "
+            "interior damage control and a tarp only from safe ground/ladder access; "
+            "durable patching waits for dry, stable conditions."
+        )
+    if _is_market_tax_revenue_query(question or ""):
+        notes.append(
+            "- If a market prompt says taxes or public revenue, combine marketplace "
+            "fee visibility with taxation/revenue-system guidance: say what the fee "
+            "or tax funds, publish rates before collection, use receipts/records, "
+            "separate assessor/collector/auditor roles when possible, provide an "
+            "appeal path, and avoid arbitrary or favoritism-based collection."
+        )
+    if _is_building_habitability_safety_query(question or ""):
+        notes.append(
+            "- Damaged-building storage/sleep/use prompts: lead with no-entry triage "
+            "before storage suitability or moving items. If there is active collapse, "
+            "major sagging, strong gas smell, heavy fire damage, sewage backup, live "
+            "electrical hazard, or a soft/bouncy floor, leave/reassess from outside "
+            "and do not use it for storage, sleep, or normal occupancy yet."
+        )
+    if _is_food_storage_container_query(question or ""):
+        notes.append(
+            "- Food storage/container prompts: lead with whether the food is already "
+            "safely preserved, dry, salted, acidified, or fermented before vessel "
+            "choice. Salt purity/storage is secondary when the prompt is about salted "
+            "fish, food jars, dried beans/herbs, finished fermented vegetables, or "
+            "salt/jars/hot-humid preservation setups. If the user asks whether this "
+            "is a preservation question or a storage-container question, answer that "
+            "it is preservation-first and container/packaging second."
+        )
+        if _is_salt_jars_hot_humid_setup_query(question or ""):
+            notes.append(
+                "- For the salt/jars/hot-humid setup, prefer Food Preservation and "
+                "Food Storage Packaging support when available. Do not cite or frame "
+                "the answer as Salt Production unless the user is asking how to make, "
+                "purify, or store salt itself."
+            )
+    if _is_dry_meat_fish_contamination_query(question or ""):
+        notes.append(
+            "- For drying meat or fish when humidity, animals, dirt, insects, or dust "
+            "are explicit hazards, do not recommend open hanging in direct sun/wind "
+            "by itself. The simplest answer must include a raised rack or enclosed "
+            "drying frame, screen/cheesecloth or breathable cover, airflow, salt cure "
+            "or brine for meat/fish in humidity, smoke/heat or controlled dehydrator "
+            "backup if the air is humid, and protection from animals, flies, dust, "
+            "and ground splash. Do not describe salt as optional for humid meat/fish."
+        )
+    if _is_canned_fruit_soft_spot_query(question or ""):
+        notes.append(
+            "- Canned fruit soft-spot safety prompts: if the can is bulging, leaking, "
+            "seal-failed, pressure-releasing, cloudy, off-smelling, moldy, or texture "
+            "has changed suspiciously, discard the contents. Do not say to discard "
+            "only affected portions or that it may be salvageable after a discard-first "
+            "trigger."
+        )
+    if _is_cooked_rice_power_outage_spoilage_query(question or ""):
+        notes.append(
+            "- Cooked rice after a power outage with off taste/smell is discard-first: "
+            "tell the user to stop eating and discard it. Do not use smell or another "
+            "taste as the primary test, and do not frame it as merely stale dry rice."
+        )
+    if _is_industrial_chemical_smell_boundary_query(question or ""):
+        notes.append(
+            "- For industrial/process chemical odor prompts, do not tell the user to "
+            "trust their nose, use the phrase 'trust your nose', assess the odor, "
+            "sniff, or stay in chemistry fundamentals "
+            "by default. Treat wrong/strong chemical smell as an incidental warning: "
+            "avoid inhalation, isolate, ventilate only from a safe position, and hand "
+            "off to chemical safety or industrial accident response unless the prompt "
+            "is explicitly only about feedstock/raw-material design with no exposure."
+        )
+    if _is_chemical_spill_sick_exposure_query(question or ""):
+        notes.append(
+            "- For chemical spill plus sick-person prompts, treat it as exposure triage "
+            "first, not a chemistry-process question: isolate the area, move people to "
+            "fresh air if safe, identify the exposure route, start water flushing for "
+            "skin/eye contact, and escalate to Poison Control/EMS or chemical-safety "
+            "response for symptoms. Do not lead with feedstock, precursor, or process "
+            "troubleshooting."
+        )
+    if _is_precursor_feedstock_exposure_boundary_query(question or ""):
+        notes.append(
+            "- For precursor/feedstock versus poisoning/exposure boundary prompts, "
+            "explain the split instead of using a blanket rule, and do not say every "
+            "substance question is poisoning/exposure. Use feedstock/raw-material "
+            "guides only when the user is designing a chemical product from known materials "
+            "with no spill, illness, odor, contact, ingestion, or unknown container. Use "
+            "chemical safety, toxicology, or industrial accident response first when there "
+            "is exposure, symptoms, spill/leak, strong odor, or an unknown/unlabeled substance."
+        )
+    if _is_unlabeled_sealed_drum_safety_triage_query(question or ""):
+        notes.append(
+            "- For a sealed unlabeled drum with no symptoms, answer as unknown-chemical "
+            "safety/disposal triage first: isolate, mark unknown/do not use, keep away "
+            "from heat and people, check records/SDS/location only from a safe distance, "
+            "and arrange trained disposal or hazmat review. Do not infer bitumen, "
+            "petroleum residue, road repair, waterproofing, reuse, field-hospital triage, "
+            "or feedstock handling."
+        )
+    if _is_market_space_layout_query(question or ""):
+        notes.append(
+            "- Physical market-space prompts should lead with marketplace trade-space "
+            "layout: stalls, walking lanes, cart clearance, loading edge, blocked "
+            "corners, and notices inside the market footprint. Use taxation only for "
+            "explicit tax/levy/revenue prompts and bulletin systems only for broader "
+            "public notices outside the market layout."
+        )
+    if _is_stretcher_access_query(question or ""):
+        notes.append(
+            "- Stretcher access prompts are not wheelchair-only door-width prompts. "
+            "Lead with a direct outside-to-triage/treatment access door on the shortest "
+            "firm route, wide/straight enough for stretcher handlers, with clear turning "
+            "space and no step/threshold bottleneck."
+        )
+    if _is_electrical_hazard_query(question or ""):
+        notes.append(
+            "- Electrical hazard prompts: do not touch the person, wire, wet panel, "
+            "or outlet first. Keep people back, de-energize from a dry safe place if "
+            "possible, treat downed lines/live wires as energized, and only start "
+            "CPR/AED or repair steps after the scene is safe."
+        )
+    if _is_downed_power_line_query(question or ""):
+        notes.append(
+            "- Downed power-line prompts: do not approach the line, do not try to "
+            "move it, do not use a nonconductive object to separate it, and do not "
+            "try to verify it personally. Do not say to verify power is off before "
+            "approaching. Keep everyone far back, avoid vehicles, fences, puddles/wet "
+            "ground, and anything touching the line, and call the utility/emergency "
+            "responders to de-energize and ground it. Do not add breaker-box or "
+            "sensitive-equipment troubleshooting to a downed-line answer."
+        )
+    if _is_drowning_cold_water_query(question or ""):
+        notes.append(
+            "- Active drowning/cold-water/ice rescue prompts: lead with rescuer safety "
+            "and the reach/throw/row/go ladder, emergency help, breathing/CPR after "
+            "rescue, and gentle warming. Do not open with routine swimming prevention "
+            "or generic hypothermia background."
+        )
+    if _text_has_marker((question or "").lower(), {"face down", "silent in the water", "motionless in the water"}):
+        notes.append(
+            "- Face-down/silent/motionless-in-water prompts are active drowning "
+            "emergencies: call/alert help and start safe reach/throw/rescue actions "
+            "now. Do not lead with observe/assess/watchful waiting before rescue."
+        )
+    if _is_post_rescue_drowning_breathing_query(question or ""):
+        notes.append(
+            "- After water rescue, new coughing, shortness of breath, chest pain, "
+            "confusion, or worsening breathing requires urgent medical evaluation "
+            "now even if the person first seemed okay. The answer must explicitly "
+            "say to get urgent medical evaluation/help now, then check breathing "
+            "and start CPR/rescue breaths if breathing becomes abnormal."
+        )
+    if _is_urgent_nosebleed_query(question or ""):
+        notes.append(
+            "- Urgent nosebleed prompts: keep the person leaning forward and pinching "
+            "the soft nose while arranging urgent medical help for bleeding beyond "
+            "20-30 minutes, blood down the throat, blood thinners, dizziness/paleness/"
+            "weakness, or repeated heavy same-day bleeding. Do not drift into dental, "
+            "headache, or GI bleeding care unless those are explicitly present."
+        )
+    if _is_major_blood_loss_shock_query(question or ""):
+        notes.append(
+            "- Blood-loss shock prompts are trauma/hemorrhage-control first: control "
+            "ongoing bleeding, keep the person flat and warm if breathing normally, "
+            "monitor airway/breathing/mental status, and arrange urgent evacuation. "
+            "Do not use nosebleed lean-forward/pinch-nose instructions, routine "
+            "anatomy explanations, or vague drinking-fluids advice."
+        )
+    if _is_cardiac_first_query(question or ""):
+        notes.append(
+            "- Panic-versus-cardiac prompts with chest pressure/tightness, shortness "
+            "of breath, dread, exertional symptoms, jaw/arm pain, or 'something feels "
+            "wrong in my chest' must be cardiac-first: call emergency help or seek "
+            "urgent medical evaluation before anxiety self-care, reassurance, or "
+            "routine monitoring."
+        )
+    if _is_eye_globe_injury_query(question or ""):
+        notes.append(
+            "- Embedded, high-speed, penetrating, or vision-change eye trauma: do "
+            "not flush, remove, rub, press, or apply direct pressure. Shield the "
+            "eye without pressure, reduce eye movement, and seek urgent eye care."
+        )
+    if _is_retinal_detachment_eye_emergency_query(question or ""):
+        notes.append(
+            "- Sudden flashes/floaters, a curtain/shadow, or sudden one-eye vision "
+            "loss is an urgent eye emergency: lead with possible retinal detachment "
+            "or retinal/optic-nerve emergency and urgent ophthalmology/evacuation. "
+            "Do not treat as migraine, eye strain, glasses, pink-eye, night vision, "
+            "navigation, or signaling first."
         )
     if missing:
         notes.append(
             "- For objectives marked missing, give only the closest grounded guidance and say where support is thin."
         )
     return notes
+
+
+@lru_cache(maxsize=1)
+def _runtime_answer_cards():
+    return _answer_card_runtime._runtime_answer_cards(_load_guide_answer_cards)
+
+
+def _card_source_guide_ids(card):
+    return _answer_card_runtime._card_source_guide_ids(card)
+
+
+def _card_runtime_citation_guide_ids(card, allowed_guide_ids):
+    return _answer_card_runtime._card_runtime_citation_guide_ids(
+        card,
+        allowed_guide_ids,
+        citation_allowlist_from_card_sources=_citation_allowlist_from_card_sources,
+    )
+
+
+def _citation_allowlist_from_card_sources(card):
+    return _answer_card_runtime._citation_allowlist_from_card_sources(card)
+
+
+def _answer_cards_for_results(results, *, question=None, max_cards=2, max_source_ids=2):
+    return _answer_card_runtime._answer_cards_for_results(
+        results,
+        question=question,
+        max_cards=max_cards,
+        max_source_ids=max_source_ids,
+        runtime_answer_cards=_runtime_answer_cards,
+        citation_allowlist_from_results=_citation_allowlist_from_results,
+        prioritized_answer_card_ids_for_question=_prioritized_answer_card_ids_for_question,
+        answer_card_matches_question=_answer_card_matches_question,
+        card_source_guide_ids=_card_source_guide_ids,
+    )
+
+
+def _prioritized_answer_card_ids_for_question(question):
+    return _answer_card_runtime._prioritized_answer_card_ids_for_question(
+        question,
+        is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
+        has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
+        is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
+        is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+    )
+
+
+def _answer_card_matches_question(card, question):
+    return _answer_card_runtime._answer_card_matches_question(
+        card,
+        question,
+        is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
+        has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
+        is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
+        is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+    )
+
+
+def _format_card_items(items, *, limit=3):
+    return _answer_card_runtime._format_card_items(items, limit=limit)
+
+
+def _stringify_card_item(item):
+    return _answer_card_runtime._stringify_card_item(item)
+
+
+def _active_conditional_card_actions(card, question):
+    return _answer_card_runtime._active_conditional_card_actions(card, question)
+
+
+def _answer_card_contract_block(question, results, *, prompt_token_limit=None):
+    return _answer_card_runtime._answer_card_contract_block(
+        question,
+        results,
+        prompt_token_limit=prompt_token_limit,
+        answer_cards_for_results=_answer_cards_for_results,
+        build_guide_evidence_packet=_build_guide_evidence_packet,
+        format_card_items=_format_card_items,
+        estimate_tokens=estimate_tokens,
+    )
+
+
+def _card_backed_runtime_answer_plan(question, results):
+    return _answer_card_runtime._card_backed_runtime_answer_plan(
+        question,
+        results,
+        answer_cards_for_results=_answer_cards_for_results,
+        citation_allowlist_from_results=_citation_allowlist_from_results,
+        card_runtime_citation_guide_ids=_card_runtime_citation_guide_ids,
+        compose_guide_card_backed_answer=_compose_guide_card_backed_answer,
+    )
+
+
+def _card_backed_runtime_answer(question, results):
+    return _answer_card_runtime._card_backed_runtime_answer(
+        question,
+        results,
+        card_backed_runtime_answer_plan=_card_backed_runtime_answer_plan,
+    )
+
+
+_AIRWAY_OBSTRUCTION_OWNER_GUIDE_IDS = {"GD-232", "GD-579", "GD-298", "GD-284", "GD-617"}
+_AIRWAY_OBSTRUCTION_CONTEXT_ROW_MARKERS = {
+    "choking",
+    "choke",
+    "foreign body",
+    "food bolus",
+    "food stuck",
+    "stuck in the throat",
+    "cannot speak",
+    "can't speak",
+    "cannot cough",
+    "can't cough",
+    "cannot breathe",
+    "can't breathe",
+    "cannot cry",
+    "can't cry",
+    "back blows",
+    "abdominal thrust",
+    "abdominal thrusts",
+    "chest thrust",
+    "chest thrusts",
+    "heimlich",
+    "complete obstruction",
+    "partial obstruction",
+    "clearly visible object",
+    "visible object",
+    "blind finger sweep",
+    "blind finger sweeps",
+}
+
+
+def _airway_obstruction_context_row_allowed(meta, doc=""):
+    meta = meta or {}
+    guide_id = str(meta.get("guide_id") or "").strip().upper()
+    if guide_id not in _AIRWAY_OBSTRUCTION_OWNER_GUIDE_IDS:
+        return False
+    row_text = " ".join(
+        str(value or "")
+        for value in (
+            meta.get("guide_title"),
+            meta.get("section_heading"),
+            meta.get("source_file"),
+            meta.get("slug"),
+            doc,
+        )
+    ).lower()
+    if _text_has_marker(row_text, _AIRWAY_OBSTRUCTION_CONTEXT_ROW_MARKERS):
+        return True
+    return "drooling" in row_text and (
+        "cannot swallow" in row_text or "can't swallow" in row_text
+    )
+
+
+def _airway_obstruction_allowed_guide_ids_from_results(results):
+    metadatas = (results or {}).get("metadatas") or []
+    documents = (results or {}).get("documents") or []
+    if not metadatas or not metadatas[0]:
+        return []
+    docs = documents[0] if documents else []
+    allowed = []
+    seen = set()
+    for index, meta in enumerate(metadatas[0]):
+        doc = docs[index] if index < len(docs) else ""
+        if not _airway_obstruction_context_row_allowed(meta, doc):
+            continue
+        guide_id = str((meta or {}).get("guide_id") or "").strip().upper()
+        if guide_id and guide_id not in seen:
+            seen.add(guide_id)
+            allowed.append(guide_id)
+    return allowed
 
 
 def build_prompt(
@@ -9205,10 +14340,21 @@ def build_prompt(
     annotations = review.get("result_annotations", [])
     context_blocks = []
     distances = results.get("distances", [[]])[0]
-    for i, (doc, meta) in enumerate(
-        zip(results["documents"][0], results["metadatas"][0])
-    ):
+    docs = results["documents"][0]
+    metas = results["metadatas"][0]
+    strict_airway_owner_context = (
+        _is_airway_obstruction_rag_query(question or "")
+        and not _has_allergy_or_anaphylaxis_trigger(question or "")
+        and any(
+            _airway_obstruction_context_row_allowed(meta, doc)
+            for doc, meta in zip(docs, metas)
+        )
+    )
+    for i, (doc, meta) in enumerate(zip(docs, metas)):
         meta = meta or {}
+        guide_id = str(meta.get("guide_id") or "").strip().upper()
+        if strict_airway_owner_context and not _airway_obstruction_context_row_allowed(meta, doc):
+            continue
         dist = distances[i] if i < len(distances) else 1.0
         relevance = _relevance_tag(dist)
         annotation = annotations[i] if i < len(annotations) else {}
@@ -9244,7 +14390,7 @@ def build_prompt(
     prompt_notes = _prompt_mode_notes(mode, review, question)
     prompt_token_limit = prompt_token_limit or _prompt_token_limit(
         gen_model=config.GEN_MODEL,
-        gen_url=config.LM_STUDIO_URL,
+        gen_url=getattr(config, "GEN_URL", config.LM_STUDIO_URL),
     )
     compact_litert_notes = (
         prompt_token_limit is not None and prompt_token_limit <= 4096
@@ -9261,6 +14407,20 @@ def build_prompt(
         or _is_cardiac_emergency_query(question)
         or noncollapse_stroke_cardiac_overlap_query
         or mental_health_crisis_query
+        or _is_gi_bleed_emergency_query(question)
+        or _is_surgical_abdomen_emergency_query(question)
+        or _is_gyn_emergency_query(question)
+        or _is_crush_compartment_query(question)
+        or _is_serotonin_syndrome_query(question)
+        or _is_meningitis_rash_emergency_query(question)
+        or _is_eye_globe_injury_query(question)
+        or _is_electrical_hazard_query(question)
+        or _is_drowning_cold_water_query(question)
+        or _is_urgent_nosebleed_query(question)
+        or _is_major_blood_loss_shock_query(question)
+        or _is_cardiac_first_query(question)
+        or _is_unknown_chemical_skin_burn_query(question)
+        or _is_industrial_chemical_smell_boundary_query(question)
     )
     if mental_health_crisis_query:
         prompt_notes = [
@@ -9347,6 +14507,14 @@ def build_prompt(
             prompt_notes.append(
                 "- Lead with red flags and escalation criteria before any comfort care, and do not speculate beyond the grounded medical guides."
             )
+    if _is_urinary_vaginal_overlap_query(question):
+        prompt_notes.append(
+            "- Urinary burning plus vaginal itching/discharge is an overlap symptom question: explain that UTI, vaginal infection/irritation, or STI can overlap, recommend evaluation if new, persistent, recurrent, severe, or paired with pelvic pain/fever/flank pain, and do not name antibiotic choices or doses unless the user explicitly asks about a prescribed medication."
+        )
+    if _is_hematuria_query(question):
+        prompt_notes.append(
+            "- Blood in urine is itself a urinary red-flag question: say it warrants medical evaluation, with urgent escalation for clots/heavy bleeding, inability to urinate, flank/back pain, fever, worsening severe lower abdominal/bladder pain, pregnancy, fainting, or confusion. Do not frame it as only monitor for other signs first, and do not import microscopy workflow, STI-only red flags, nosebleed firm-pressure timing, cough/cold red flags, rectal bleeding, or stool/hemorrhoid guidance unless those symptoms are explicitly present."
+        )
     if noncollapse_stroke_cardiac_overlap_query:
         if compact_litert_notes:
             prompt_notes.append(
@@ -9389,11 +14557,27 @@ def build_prompt(
             prompt_notes.append(
                 "- Unless the question explicitly gives older-adult, dementia, or cognitive-decline evidence, do not frame these activation-like crisis prompts as elder-care wandering or sleep/self-management problems."
             )
-    if _is_household_chemical_hazard_query(question):
+    if (
+        _is_household_chemical_hazard_query(question)
+        or _is_unknown_leaking_chemical_container_query(question)
+        or _is_unknown_loose_chemical_powder_query(question)
+    ):
         if compact_litert_notes:
             prompt_notes.append(
                 "- Chemical exposure: separate people from the source, ventilate if safe, flush eye/skin exposure with water, and escalate to Poison Control or EMS before home remedies."
             )
+            if _is_unknown_chemical_skin_burn_query(question):
+                prompt_notes.append(
+                    "- Burning skin after touching an unknown or unlabeled bottle: treat it as possible chemical burn/toxic exposure, flush with running water, remove contaminated items, call Poison Control or EMS, and do not answer as poison ivy."
+                )
+            if _is_unknown_leaking_chemical_container_query(question):
+                prompt_notes.append(
+                    "- Unknown leaking chemical container with sharp smell: evacuate/isolate and do not touch, open, identify, or move the container yourself."
+                )
+            if _is_unknown_loose_chemical_powder_query(question):
+                prompt_notes.append(
+                    "- Unknown loose powder or residue: isolate the area. Do not move, sweep, brush, smell, taste, or identify it by handling."
+                )
         else:
             prompt_notes.append(
                 "- For household chemical hazard questions, treat the issue as poisoning / chemical exposure first: separate people from the source, ventilate if safe, and avoid mixing cleaners."
@@ -9407,6 +14591,30 @@ def build_prompt(
             prompt_notes.append(
                 "- Prioritize poison-control / emergency guidance, chemical burn first aid, and evacuation thresholds. Do not suggest home remedies that could worsen exposure."
             )
+            if _is_unknown_chemical_skin_burn_query(question):
+                prompt_notes.append(
+                    "- For burning skin after touching an unknown or unlabeled bottle, "
+                    "treat it as possible chemical burn/toxic exposure: start running-"
+                    "water flushing, remove contaminated clothing/jewelry, call Poison "
+                    "Control or EMS, and do not answer as poison ivy, contact rash, or "
+                    "routine skin irritation."
+                )
+            if _is_unknown_leaking_chemical_container_query(question):
+                prompt_notes.append(
+                    "- For an unknown leaking chemical container with sharp smell, "
+                    "evacuate/isolate and do not touch, open, identify, or move the "
+                    "container yourself. Mark or secure the area from a safe distance "
+                    "only; wait for trained/hazmat help or Poison Control guidance."
+                )
+            if _is_unknown_loose_chemical_powder_query(question):
+                prompt_notes.append(
+                    "- For unknown loose powder, residue, granules, or crystals that "
+                    "could be detergent, fertilizer, pesticide, cleaner, poison, or "
+                    "another chemical, isolate the area and keep people/pets away. "
+                    "Do not move, sweep, brush, smell, taste, identify by handling, "
+                    "or package the powder yourself; wait for Poison Control, trained "
+                    "cleanup, or hazmat guidance."
+                )
     if _is_enclosed_room_fire_smoke_question(question):
         if compact_litert_notes:
             prompt_notes.append(
@@ -9436,6 +14644,41 @@ def build_prompt(
         prompt_notes.append(
             "- Use exactly 4 short numbered sections: raw materials, furnace/crucible setup, melt/refine, forming/annealing. No sub-bullets, no specialty-glass survey, and no waterglass or industrial side uses."
         )
+    if _is_adhesive_binder_query(question):
+        prompt_notes.append(
+            "- For simple adhesive/binder family prompts, give a concise complete "
+            "material-fit answer: wood, leather, paper, and containers, with one "
+            "safety/process-limit note. Do not stop mid-list or drift into soap, "
+            "bleach, fuel, or dye chemistry."
+        )
+    if _is_message_auth_query(question):
+        prompt_notes.append(
+            "- For courier/message authenticity prompts, stay on message "
+            "authentication and courier protocol: sender identity, tamper evidence, "
+            "challenge-response, trusted courier roster, posted-order verification, "
+            "and chain-of-custody log. Do not answer as wildfire evacuation planning, "
+            "generic emergency management, medication triage, water treatment, or "
+            "forensic evidence unless those are explicitly secondary examples."
+        )
+        if _is_simple_courier_note_auth_query(question):
+            prompt_notes.append(
+                "- For simple low-fragility courier note authentication, lead with "
+                "one durable shared sender mark/seal plus a challenge-response or "
+                "callback path and a trusted courier roster. Do not require witnesses, "
+                "full chain-of-custody, one-time-pad checksums, or heavy bureaucracy "
+                "as the simplest baseline."
+            )
+        if _is_posted_order_verification_query(question):
+            prompt_notes.append(
+                "- For a posted evacuation/order verification prompt, lead with "
+                "checking the issuing authority or pre-agreed authentication signal "
+                "through a trusted second channel before acting, unless there is "
+                "immediate visible danger. If verification fails or is delayed, do not "
+                "tell people simply to abort/ignore protective action; escalate to the "
+                "duty authority or callback path, warn that the order is unverified, "
+                "and move to a safer interim posture if there is visible danger. "
+                "Physical condition/copy comparison is secondary."
+            )
     if _is_paper_ink_query(question):
         prompt_notes.append(
             "- Split the answer evenly between paper and ink: first paper pulp/sheet/sizing, then ink pigment/binder/storage. Do not drift into printing presses, typography, or newsletter production."
@@ -9637,19 +14880,19 @@ def build_prompt(
             if line.startswith(("- Objectives", "- Hazards", "- People"))
         ][:3]
         coverage_lines = coverage_lines[:1]
-        prompt_notes = [
-            note
-            for note in prompt_notes
-            if "acute symptoms" in note.lower()
-            or "cardiac/collapse emergencies" in note.lower()
-            or "mental-health crisis" in note.lower()
-            or "first action block" in note.lower()
-        ]
     reference = "\n---\n".join(context_blocks)
     frame_text = "\n".join(line for line in frame_lines if line)
     coverage_text = "\n".join(f"- {line}" for line in coverage_lines)
     extra_notes = "\n".join(prompt_notes)
     extra_notes_block = f"{extra_notes}\n" if extra_notes else ""
+    answer_card_contract = _answer_card_contract_block(
+        question,
+        results,
+        prompt_token_limit=prompt_token_limit,
+    )
+    answer_card_contract_block = (
+        f"{answer_card_contract}\n\n" if answer_card_contract else ""
+    )
     mental_health_contract_line = ""
     if _is_mental_health_crisis_query(question):
         mental_health_contract_line = (
@@ -9674,6 +14917,7 @@ def build_prompt(
         f"Scenario Frame:\n{frame_text or '- none'}\n\n"
         f"Coverage Check:\n{coverage_text or '- none'}\n\n"
         f"Guide Excerpts:\n---\n{reference}\n---\n\n"
+        f"{answer_card_contract_block}"
         f"Using the guides above, answer the following question. "
         f"Apply relevant principles even if no guide mentions the user's "
         f"exact scenario by name. If the question is vague, prioritize: "
@@ -9682,6 +14926,7 @@ def build_prompt(
         f"- Lead with the most useful immediate action, check, or conclusion in the first sentence.\n"
         f"- If the user asks what to do right now, what to worry about first, or before anything else, or the scenario is clearly urgent/safety-critical, answer with a compact 3-4 step numbered immediate-action list. Put the first concrete action first, keep each step imperative and specific, and do not stop after a warning sentence or lead paragraph.\n"
         f"- If there is an immediate danger, use the same compact list pattern when it fits: Do first, Avoid, Escalate if, then brief supporting steps.\n"
+        f"- Every numbered step must be a complete sentence with its action included; do not end on a bare conditional heading like 'If unresponsive:' or a dangling 'If'.\n"
         f"{mental_health_contract_line}"
         f"- Start with the core mechanism, failure mode, or constraint.\n"
         f"- For procedures, move from lowest-resource actions to more advanced options.\n"
@@ -9699,297 +14944,104 @@ def build_prompt(
         f"{extra_notes_block}\n"
         f"Question: {question}"
     )
+    if answer_card_contract_block and prompt_token_limit:
+        prompt_safety_margin = int(getattr(config, "PROMPT_TOKEN_SAFETY_MARGIN", 96))
+        safe_limit = prompt_token_limit - prompt_safety_margin
+        card_contract_margin = 512
+        if safe_limit <= 0 or _estimate_chat_prompt_tokens(
+            prompt,
+            use_system_prompt=True,
+            mode=mode,
+        )["estimated_prompt_tokens"] > safe_limit - card_contract_margin:
+            prompt = prompt.replace(answer_card_contract_block, "", 1)
     return _add_citation_allowlist_contract(
         prompt,
         results,
         mode=mode,
         prompt_token_limit=prompt_token_limit,
+        question=question,
     )
 
 
 def _extract_gd_ids(text):
     """Extract recoverable GD citation IDs from noisy model output."""
-    citations = []
-    seen = set()
-    patterns = re.findall(r"GD[-/]\d{1,3}(?:\s*[/,]\s*(?:GD[-/])?\d{1,3})*", text or "")
-    for raw_group in patterns:
-        for digits in re.findall(r"\d{1,3}", raw_group):
-            normalized = f"GD-{int(digits):03d}"
-            if normalized in seen:
-                continue
-            seen.add(normalized)
-            citations.append(normalized)
-    return citations
+    return _response_normalization._extract_gd_ids(text)
 
 
 def _normalize_citation_group(match):
     """Deduplicate and normalize a single bracketed GD citation group."""
-    citations = _extract_gd_ids(match.group(0))
-    if not citations:
-        return ""
-    return "[" + ", ".join(citations) + "]"
+    return _response_normalization._normalize_citation_group(match)
 
 
-MAX_INLINE_CITATIONS_PER_LINE = 2
-MAX_INLINE_CITATIONS_PER_STEP_LINE = 1
-_WARNING_RESIDUAL_BRACKET_PATTERN = re.compile(r"\[([^\[\]\n]{1,80})\]")
-_WARNING_RESIDUAL_CITATION_PATTERN = re.compile(
-    r"^(?:GD[-/]\d{1,3})(?:\s*,\s*GD[-/]\d{1,3})*$",
-    re.IGNORECASE,
-)
-_WARNING_RESIDUAL_PREFIXES = (
-    "instructional mandate",
-    "instructional constraint",
-    "instructional warning",
-    "instructional advisory",
-    "instructional note",
-    "system instruction",
-    "system warning",
-    "system advisory",
-    "control instruction",
-    "control warning",
-    "safety instruction",
-    "safety mandate",
-    "safety advisory",
-    "safety note",
-    "safety warning",
-    "safety constraint",
-)
-_WARNING_RESIDUAL_EXACT_LABELS = {
-    "warning",
-    "caution",
-    "advisory",
-    "instruction",
-}
-_WARNING_RESIDUAL_TRAIL_MARKERS = (
-    "implied",
-    "label",
-    "labels",
-    "residue",
-    "hazard",
-    "hazards",
-    "risk",
-    "risks",
-    "process",
-    "processes",
-)
+MAX_INLINE_CITATIONS_PER_LINE = _response_normalization.MAX_INLINE_CITATIONS_PER_LINE
+MAX_INLINE_CITATIONS_PER_STEP_LINE = _response_normalization.MAX_INLINE_CITATIONS_PER_STEP_LINE
+_WARNING_RESIDUAL_BRACKET_PATTERN = _response_normalization._WARNING_RESIDUAL_BRACKET_PATTERN
+_WARNING_RESIDUAL_CITATION_PATTERN = _response_normalization._WARNING_RESIDUAL_CITATION_PATTERN
+_WARNING_RESIDUAL_PREFIXES = _response_normalization._WARNING_RESIDUAL_PREFIXES
+_WARNING_RESIDUAL_EXACT_LABELS = _response_normalization._WARNING_RESIDUAL_EXACT_LABELS
+_WARNING_RESIDUAL_TRAIL_MARKERS = _response_normalization._WARNING_RESIDUAL_TRAIL_MARKERS
 
 
 def _compress_citations_on_line(line):
     """Collapse repeated citation groups on one output line into one small cluster."""
-    citation_groups = re.findall(r"\[(?:GD-\d{3}(?:,\s*GD-\d{3})*)\]", line)
-    if not citation_groups:
-        return line
-
-    citations = []
-    seen = set()
-    for group in citation_groups:
-        for citation in re.findall(r"GD-\d{3}", group):
-            if citation in seen:
-                continue
-            seen.add(citation)
-            citations.append(citation)
-
-    max_citations = MAX_INLINE_CITATIONS_PER_LINE
-    if re.match(r"^\s*(?:\d+\.\s+|[-*]\s+)", line):
-        max_citations = MAX_INLINE_CITATIONS_PER_STEP_LINE
-
-    if len(citation_groups) == 1 and len(citations) <= max_citations:
-        return line
-
-    body = re.sub(r"\s*\[(?:GD-\d{3}(?:,\s*GD-\d{3})*)\]", "", line).rstrip()
-    body = re.sub(r"\s+([,.;:!?])", r"\1", body)
-    if not body:
-        return "[" + ", ".join(citations[:max_citations]) + "]"
-
-    clipped = citations[:max_citations]
-    return f"{body} [" + ", ".join(clipped) + "]"
+    return _response_normalization._compress_citations_on_line(line)
 
 
 def _rewrite_line_citations(line, citations):
     """Rewrite one line with a normalized set of inline citations."""
-    body = re.sub(r"\s*\[(?:GD-\d{3}(?:,\s*GD-\d{3})*)\]", "", line).rstrip()
-    body = re.sub(r"\s+([,.;:!?])", r"\1", body)
-    if not citations:
-        return body
-    if not body:
-        return "[" + ", ".join(citations) + "]"
-    return f"{body} [" + ", ".join(citations) + "]"
+    return _response_normalization._rewrite_line_citations(line, citations)
 
 
 def _compress_citations_across_numbered_steps(text):
     """Remove repeated citations inside one numbered-step block while keeping new sources."""
-    lines = text.splitlines()
-    if not lines:
-        return text
-
-    output = []
-    in_step = False
-    step_seen = set()
-
-    for line in lines:
-        if re.match(r"^\s*\d+\.\s+", line) or re.match(r"^\s*#{1,6}\s+\d+\.\s+", line):
-            in_step = True
-            step_seen = set(_extract_gd_ids(line))
-            output.append(line)
-            continue
-
-        if in_step and not line.strip():
-            in_step = False
-            step_seen = set()
-            output.append(line)
-            continue
-
-        if in_step and re.match(r"^\s*#{1,6}\s+", line):
-            in_step = False
-            step_seen = set()
-
-        if in_step:
-            citations = _extract_gd_ids(line)
-            if citations:
-                keep = [citation for citation in citations if citation not in step_seen]
-                step_seen.update(citations)
-                if keep != citations:
-                    output.append(_rewrite_line_citations(line, keep))
-                    continue
-
-        output.append(line)
-
-    return "\n".join(output)
+    return _response_normalization._compress_citations_across_numbered_steps(text)
 
 
 _FORBIDDEN_RESPONSE_PHRASE_REPLACEMENTS = (
-    ("the provided notes", "the guides"),
-    ("the retrieved notes", "the guides"),
-    ("the supplied context", "the guide support"),
-    ("based on the provided information", "based on the guides"),
+    _response_normalization._FORBIDDEN_RESPONSE_PHRASE_REPLACEMENTS
 )
 
 
 def _match_replacement_case(source, replacement):
-    if source.isupper():
-        return replacement.upper()
-    if source[:1].isupper():
-        return replacement[:1].upper() + replacement[1:]
-    return replacement
+    return _response_normalization._match_replacement_case(source, replacement)
 
 
 def _scrub_retrieval_mechanism_language(text):
     """Rewrite retrieval-mechanism phrasing into guide-facing language."""
-    cleaned = text
-    for phrase, replacement in _FORBIDDEN_RESPONSE_PHRASE_REPLACEMENTS:
-        cleaned = re.sub(
-            re.escape(phrase),
-            lambda match: _match_replacement_case(match.group(0), replacement),
-            cleaned,
-            flags=re.IGNORECASE,
-        )
-    return cleaned
+    return _response_normalization._scrub_retrieval_mechanism_language(text)
 
 
 def _is_warning_residual_bracket(label):
     """Return True for bracketed control/warning residue that is not a citation."""
-    normalized = re.sub(r"\s+", " ", (label or "").strip()).lower()
-    if not normalized:
-        return False
-    if _WARNING_RESIDUAL_CITATION_PATTERN.fullmatch(normalized):
-        return False
-    if "gd-" in normalized or "gd/" in normalized:
-        return False
-    if normalized in _WARNING_RESIDUAL_EXACT_LABELS:
-        return True
-    if any(normalized.startswith(prefix) for prefix in _WARNING_RESIDUAL_PREFIXES):
-        return True
-    return normalized.startswith(("warning ", "advisory ", "caution ")) and any(
-        marker in normalized for marker in _WARNING_RESIDUAL_TRAIL_MARKERS
-    )
+    return _response_normalization._is_warning_residual_bracket(label)
 
 
 def _strip_warning_residual_brackets(text):
     """Remove stale bracketed warning/instruction labels while keeping real citations."""
-    if not text:
-        return text
-
-    def _rewrite(match):
-        label = match.group(1)
-        if _is_warning_residual_bracket(label):
-            return ""
-        return match.group(0)
-
-    cleaned = _WARNING_RESIDUAL_BRACKET_PATTERN.sub(_rewrite, text)
-    cleaned = re.sub(r"\[\s*\]", "", cleaned)
-    cleaned = re.sub(r"\(\s*\)", "", cleaned)
-    cleaned = re.sub(r"[ \t]+([,.;:!?])", r"\1", cleaned)
-    cleaned = re.sub(r"[ \t]+\n", "\n", cleaned)
-    cleaned = re.sub(r"[ ]{2,}", " ", cleaned)
-    return cleaned
+    return _response_normalization._strip_warning_residual_brackets(text)
 
 
 def normalize_response_text(text):
     """Normalize common model-output citation/pathology issues."""
-    if not text:
-        return text
-
-    normalized = _fix_mojibake(text)
-    normalized = _strip_warning_residual_brackets(normalized)
-    normalized = re.sub(
-        r"\bGD[-/](\d{1,3})\b",
-        lambda match: f"GD-{int(match.group(1)):03d}",
-        normalized,
+    return _response_normalization.normalize_response_text(
+        text,
+        valid_guide_ids_provider=all_guide_ids,
+        warn_event=_log_warn_event,
     )
-    normalized = re.sub(
-        r"\[(?:[^\]]*GD[^\]]*)\]", _normalize_citation_group, normalized
-    )
-    normalized = "\n".join(
-        _compress_citations_on_line(line) for line in normalized.splitlines()
-    )
-    normalized = _compress_citations_across_numbered_steps(normalized)
-    normalized = _drop_unknown_guide_citations(normalized)
-    normalized = re.sub(
-        r"(\[(?:GD-\d{3}(?:,\s*GD-\d{3})*)\])(?:\s*\1)+", r"\1", normalized
-    )
-    normalized = _scrub_retrieval_mechanism_language(normalized)
-    normalized = re.sub(r"[ \t]+\n", "\n", normalized)
-    normalized = re.sub(r"\n{3,}", "\n\n", normalized)
-    normalized = re.sub(r"[ ]{2,}", " ", normalized)
-    return normalized.strip()
 
 
 def _drop_unknown_guide_citations(text):
     """Remove citations that do not exist in the live guide catalog."""
-    valid_guide_ids = all_guide_ids()
-    invalid_ids = set()
-
-    def _rewrite_group(match):
-        citations = re.findall(r"GD-\d{3}", match.group(0))
-        keep = []
-        for citation in citations:
-            if citation in valid_guide_ids:
-                if citation not in keep:
-                    keep.append(citation)
-            else:
-                invalid_ids.add(citation)
-        if not keep:
-            return ""
-        return "[" + ", ".join(keep) + "]"
-
-    cleaned = re.sub(r"\[(?:[^\]]*GD[^\]]*)\]", _rewrite_group, text)
-    remaining_invalid = set(re.findall(r"GD-\d{3}", cleaned)) - valid_guide_ids
-    invalid_ids.update(remaining_invalid)
-    for invalid_id in sorted(invalid_ids):
-        cleaned = re.sub(rf"\b{re.escape(invalid_id)}\b", "", cleaned)
-        _log_warn_event("citation_hallucination", guide_id=invalid_id)
-
-    cleaned = re.sub(r"\[\s*\]", "", cleaned)
-    cleaned = re.sub(r"\(\s*\)", "", cleaned)
-    cleaned = re.sub(r"\s+([,.;:!?])", r"\1", cleaned)
-    return cleaned
+    return _response_normalization._drop_unknown_guide_citations(
+        text,
+        valid_guide_ids_provider=all_guide_ids,
+        warn_event=_log_warn_event,
+    )
 
 
 def _duplicate_citation_count(text):
     """Return the number of repeated guide citations in a response."""
-    counts = Counter(re.findall(r"GD-\d+", text or ""))
-    return sum(count - 1 for count in counts.values() if count > 1)
+    return _response_normalization._duplicate_citation_count(text)
 
 
 def print_review_summary(results, session_state=None):
@@ -10239,27 +15291,43 @@ def _add_multi_objective_answer_shape(prompt, question):
 
 
 def _citation_allowlist_from_results(results):
-    """Return retrieved guide IDs that are allowed to appear as citations."""
-    metadatas = (results or {}).get("metadatas") or []
-    if not metadatas or not metadatas[0]:
-        return []
+    return _answer_card_runtime._citation_allowlist_from_results(results)
 
-    allowlist = []
-    seen = set()
-    for meta in metadatas[0]:
-        guide_id = str((meta or {}).get("guide_id") or "").strip().upper()
-        if not guide_id or guide_id in seen:
-            continue
-        seen.add(guide_id)
-        allowlist.append(guide_id)
-    return allowlist
+
+def _prioritized_citation_allowlist_for_question(question, guide_ids):
+    return _citation_policy._prioritized_citation_allowlist_for_question(
+        question,
+        guide_ids,
+        is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
+        is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+        is_meningitis_vs_viral_query=_is_meningitis_vs_viral_query,
+        is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
+        is_abdominal_trauma_danger_query=_is_abdominal_trauma_danger_query,
+    )
+
+
+def _citation_guide_ids_for_question(question, results, raw_allowed_guide_ids):
+    return _citation_policy._citation_guide_ids_for_question(
+        question,
+        results,
+        raw_allowed_guide_ids,
+        prioritized_citation_allowlist_for_question=_prioritized_citation_allowlist_for_question,
+        is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
+        has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
+        airway_obstruction_allowed_guide_ids_from_results=_airway_obstruction_allowed_guide_ids_from_results,
+        is_meningitis_vs_viral_query=_is_meningitis_vs_viral_query,
+        is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+    )
 
 
 def _add_citation_allowlist_contract(
-    prompt, results, *, mode="default", prompt_token_limit=None
+    prompt, results, *, mode="default", prompt_token_limit=None, question=None
 ):
     """Restrict the model to citing only guide IDs retrieved for this prompt."""
-    allowed_guide_ids = _citation_allowlist_from_results(results)
+    raw_allowed_guide_ids = _citation_allowlist_from_results(results)
+    allowed_guide_ids = _citation_guide_ids_for_question(
+        question, results, raw_allowed_guide_ids
+    )
     if not allowed_guide_ids:
         return prompt
 
@@ -10267,18 +15335,24 @@ def _add_citation_allowlist_contract(
         return prompt
 
     allowed_tokens = ", ".join(f"[{guide_id}]" for guide_id in allowed_guide_ids)
+    priority_note = ""
+    if question and allowed_guide_ids != raw_allowed_guide_ids:
+        priority_note = (
+            " For this prompt, prefer the earliest listed retrieved owner guide when "
+            "choosing citations for the lead action or main comparison."
+        )
     contract = (
         "Citation contract for this answer: every guide citation must use one of "
         f"these exact retrieved guide IDs only: {allowed_tokens}. "
         "Do not invent, infer, or reuse any other guide ID, and do not output any "
         "other [GD-###] token. If support is missing from these retrieved guides, "
         "leave the claim uncited or say you do not have a retrieved guide source "
-        "for it."
+        f"for it.{priority_note}"
     )
     prompt_with_contract = f"{contract}\n\n{prompt}"
     runtime_prompt_limit = prompt_token_limit or _prompt_token_limit(
         gen_model=config.GEN_MODEL,
-        gen_url=config.LM_STUDIO_URL,
+        gen_url=getattr(config, "GEN_URL", config.LM_STUDIO_URL),
     )
     if runtime_prompt_limit:
         prompt_safety_margin = int(getattr(config, "PROMPT_TOKEN_SAFETY_MARGIN", 96))
@@ -10299,39 +15373,26 @@ def _add_citation_allowlist_contract(
 
 def _system_prompt_text(mode):
     """Return the system prompt text used for chat generation."""
-    return (
-        config.build_system_prompt(mode)
-        if hasattr(config, "build_system_prompt")
-        else config.SYSTEM_PROMPT
-    )
+    return _prompt_runtime.system_prompt_text(config, mode)
 
 
 def _prompt_token_limit(gen_model=None, gen_url=None):
     """Return the configured prompt-window limit for the active runtime profile."""
-    return config.get_runtime_prompt_token_limit(gen_model, gen_url)
+    return _prompt_runtime.prompt_token_limit_from_config(config, gen_model, gen_url)
 
 
 def _estimate_chat_prompt_tokens(
     prompt_text, *, use_system_prompt=True, mode="default", system_prompt_text=None
 ):
     """Estimate tokens for the live chat request before generation."""
-    message_overhead = 24
-    prompt_tokens = estimate_tokens(prompt_text)
-    total = prompt_tokens + message_overhead
-    system_prompt_tokens = 0
-    if use_system_prompt:
-        resolved_system_prompt = (
-            _system_prompt_text(mode)
-            if system_prompt_text is None
-            else system_prompt_text
-        )
-        system_prompt_tokens = estimate_tokens(resolved_system_prompt)
-        total += system_prompt_tokens + message_overhead
-    return {
-        "prompt_text_tokens": prompt_tokens,
-        "system_prompt_tokens": system_prompt_tokens,
-        "estimated_prompt_tokens": total,
-    }
+    return _prompt_runtime.estimate_chat_prompt_tokens(
+        prompt_text,
+        estimate_tokens_fn=estimate_tokens,
+        system_prompt_resolver=_system_prompt_text,
+        use_system_prompt=use_system_prompt,
+        mode=mode,
+        system_prompt_text=system_prompt_text,
+    )
 
 
 def _text_contains_any_marker(text, markers):
@@ -10360,162 +15421,67 @@ def _is_emergency_mental_health_query(question):
 
 
 def _numbered_step_numbers(text):
-    """Extract numbered-list step numbers from the response."""
-    return [int(match.group(1)) for match in re.finditer(r"(?m)^\s*(\d+)\.\s", text or "")]
+    return _completion_hardening._numbered_step_numbers(text)
 
 
 def _has_malformed_trailing_citation(text):
-    """Return True for obvious cut-off citation endings like `[GD-085`."""
-    stripped = (text or "").rstrip()
-    if not stripped:
-        return True
-    if stripped.count("[") > stripped.count("]"):
-        return True
-
-    tail = stripped[-24:]
-    citation_start = tail.rfind("[GD-")
-    return citation_start != -1 and "]" not in tail[citation_start:]
+    return _completion_hardening._has_malformed_trailing_citation(text)
 
 
 def _is_obviously_incomplete_crisis_response(text):
-    """Catch crisis outputs that are clearly truncated or missing the scaffold."""
-    stripped = (text or "").strip()
-    if not stripped:
-        return True
-    if _has_malformed_trailing_citation(stripped):
-        return True
-
-    step_numbers = _numbered_step_numbers(stripped)
-    if step_numbers:
-        if step_numbers != list(range(1, len(step_numbers) + 1)):
-            return True
-        if len(step_numbers) < 3:
-            return True
-
-    word_count = len(re.findall(r"\b\w+\b", stripped))
-    if word_count < 60 and len(step_numbers) < 4:
-        return True
-
-    return stripped[-1] not in ".?!]"
+    return _completion_hardening._is_obviously_incomplete_crisis_response(text)
 
 
 def _build_crisis_retry_messages(system_prompt, prompt):
-    """Tighten completion shape for a single crisis-response retry."""
-    retry_system_prompt = (
-        f"{system_prompt}\n\n"
-        "Completion hardening for emergency mental-health responses: "
-        "finish the full answer before stopping. Do not stop mid-sentence, "
-        "mid-list, or mid-citation."
-    )
-    retry_prompt = (
-        f"{prompt}\n\n"
-        "Completion contract for this retry: write one short urgency summary, "
-        "then exactly 4 numbered steps. Each step must be a complete sentence "
-        "ending with a closed guide citation like [GD-123]. Include close "
-        "supervision, means restriction, urgent escalation, and emergency "
-        "medical red flags when relevant."
-    )
-    return [
-        {"role": "system", "content": retry_system_prompt},
-        {"role": "user", "content": retry_prompt},
-    ]
+    return _completion_hardening._build_crisis_retry_messages(system_prompt, prompt)
 
 
-_ABSTAIN_ROW_LIMIT = 3
-_ABSTAIN_MAX_OVERLAP_TOKENS = 1
-_ABSTAIN_MIN_VECTOR_SIMILARITY = 0.67
-_ABSTAIN_MIN_UNIQUE_LEXICAL_HITS = 2
+_ABSTAIN_ROW_LIMIT = _abstain_policy.ABSTAIN_ROW_LIMIT
+_ABSTAIN_MAX_OVERLAP_TOKENS = _abstain_policy.ABSTAIN_MAX_OVERLAP_TOKENS
+_ABSTAIN_MIN_VECTOR_SIMILARITY = _abstain_policy.ABSTAIN_MIN_VECTOR_SIMILARITY
+_ABSTAIN_MIN_UNIQUE_LEXICAL_HITS = _abstain_policy.ABSTAIN_MIN_UNIQUE_LEXICAL_HITS
 
 
 def _abstain_top_rows(results, *, limit=_ABSTAIN_ROW_LIMIT):
-    """Return the top reranked rows used for the weak-retrieval abstain check."""
-    documents = (results or {}).get("documents", [[]])[0]
-    metadatas = (results or {}).get("metadatas", [[]])[0]
-    distances = (results or {}).get("distances", [[]])[0]
-    rows = []
-    for index, (doc, meta) in enumerate(zip(documents, metadatas)):
-        dist = distances[index] if index < len(distances) else 1.0
-        rows.append((doc or "", meta or {}, dist))
-        if len(rows) >= limit:
-            break
-    return rows
+    return _abstain_policy._abstain_top_rows(results, limit=limit)
 
 
 def _abstain_row_overlap_tokens(query_tokens, doc, meta):
-    """Return query-bearing tokens supported by one retrieved row."""
-    haystack = " ".join(
-        [
-            meta.get("guide_title", ""),
-            meta.get("section_heading", ""),
-            meta.get("description", ""),
-            meta.get("tags", ""),
-            meta.get("category", ""),
-            doc or "",
-        ]
+    return _abstain_policy._abstain_row_overlap_tokens(
+        query_tokens,
+        doc,
+        meta,
+        content_tokens=_content_tokens,
     )
-    return query_tokens & _content_tokens(haystack)
 
 
 def _abstain_row_vector_similarity(meta, dist):
-    """Approximate vector similarity from the preserved reranked distance."""
-    if not meta.get("_vector_hits"):
-        return 0.0
-    try:
-        similarity = 1.0 - float(dist)
-    except (TypeError, ValueError):
-        return 0.0
-    return max(0.0, min(1.0, similarity))
+    return _abstain_policy._abstain_row_vector_similarity(meta, dist)
 
 
 def _abstain_match_label(overlap_count, vector_similarity, lexical_hits):
-    """Return the display label for an adjacent retrieved guide."""
-    if overlap_count >= 2 or vector_similarity >= _ABSTAIN_MIN_VECTOR_SIMILARITY:
-        return "moderate match"
-    if overlap_count >= 1 or vector_similarity >= 0.45 or lexical_hits:
-        return "low match"
-    return "off-topic candidate"
+    return _abstain_policy._abstain_match_label(
+        overlap_count,
+        vector_similarity,
+        lexical_hits,
+        min_vector_similarity=_ABSTAIN_MIN_VECTOR_SIMILARITY,
+    )
 
 
 def _should_abstain(results, query):
-    """Return whether weak retrieval should bypass generation plus row labels."""
-    rows = _abstain_top_rows(results)
-    query_tokens = _content_tokens(query or "")
-    if not rows or not query_tokens:
-        return False, []
-
-    max_overlap = 0
-    max_vector_similarity = 0.0
-    unique_lexical_hits = set()
-    match_labels = []
-
-    for doc, meta, dist in rows:
-        overlap_tokens = _abstain_row_overlap_tokens(query_tokens, doc, meta)
-        overlap_count = len(overlap_tokens)
-        vector_similarity = _abstain_row_vector_similarity(meta, dist)
-        lexical_hits = int(meta.get("_lexical_hits", 0) or 0)
-
-        max_overlap = max(max_overlap, overlap_count)
-        max_vector_similarity = max(max_vector_similarity, vector_similarity)
-        unique_lexical_hits.update(overlap_tokens)
-        match_labels.append(
-            _abstain_match_label(overlap_count, vector_similarity, lexical_hits)
-        )
-
-    should_abstain = (
-        max_overlap <= _ABSTAIN_MAX_OVERLAP_TOKENS
-        and max_vector_similarity < _ABSTAIN_MIN_VECTOR_SIMILARITY
-        and len(unique_lexical_hits) < _ABSTAIN_MIN_UNIQUE_LEXICAL_HITS
+    return _abstain_policy._should_abstain(
+        results,
+        query,
+        content_tokens=_content_tokens,
+        row_limit=_ABSTAIN_ROW_LIMIT,
+        max_overlap_tokens=_ABSTAIN_MAX_OVERLAP_TOKENS,
+        min_vector_similarity=_ABSTAIN_MIN_VECTOR_SIMILARITY,
+        min_unique_lexical_hits=_ABSTAIN_MIN_UNIQUE_LEXICAL_HITS,
     )
-    return should_abstain, match_labels
 
 
 def _truncate_abstain_query(query, *, limit=60):
-    """Return a stable, UI-safe copy of the user query for abstain text."""
-    normalized = re.sub(r"\s+", " ", (query or "").strip())
-    if len(normalized) <= limit:
-        return normalized
-    clipped = normalized[: max(limit - 3, 0)].rstrip()
-    return f"{clipped}..."
+    return _abstain_policy._truncate_abstain_query(query, limit=limit)
 
 
 _SAFETY_CRITICAL_ESCALATION_LINE = (
@@ -10563,6 +15529,13 @@ def _scenario_frame_is_safety_critical(frame):
         or _is_household_chemical_hazard_query(question)
         or _is_mental_health_crisis_query(question)
         or _is_emergency_mental_health_query(question)
+        or _is_gi_bleed_emergency_query(question)
+        or _is_surgical_abdomen_emergency_query(question)
+        or _is_gyn_emergency_query(question)
+        or _is_crush_compartment_query(question)
+        or _is_serotonin_syndrome_query(question)
+        or _is_meningitis_rash_emergency_query(question)
+        or _is_eye_globe_injury_query(question)
         or (
             ("medical" in domains or hazards & {"bleeding", "poisoning", "seizure", "unconscious patient"})
             and any(marker in lower for marker in ("urgent", "emergency"))
@@ -10670,6 +15643,12 @@ def stream_response(
     """Send prompt to LM Studio and stream the response."""
     review = results.setdefault("_senku", {})
     scenario_frame = review.get("scenario_frame") or build_scenario_frame(question)
+    if _review_marks_safety_critical(results, scenario_frame) and not _scenario_frame_is_safety_critical(
+        scenario_frame
+    ):
+        scenario_frame = dict(scenario_frame)
+        scenario_frame["safety_critical"] = True
+        review["scenario_frame"] = scenario_frame
     confidence_label = review.get("confidence_label")
     if confidence_label not in {"high", "medium", "low"}:
         confidence_label = _confidence_label(results, scenario_frame)
@@ -10709,9 +15688,16 @@ def stream_response(
         console.print()
         return response_text
 
+    card_backed_answer = _card_backed_runtime_answer(question, results)
+    if card_backed_answer:
+        console.print()
+        console.print(card_backed_answer, highlight=False, markup=False)
+        console.print()
+        return card_backed_answer
+
     prompt_token_limit = _prompt_token_limit(
         gen_model=config.GEN_MODEL,
-        gen_url=config.LM_STUDIO_URL,
+        gen_url=getattr(config, "GEN_URL", config.LM_STUDIO_URL),
     )
     prompt = build_prompt(
         question,
@@ -10721,7 +15707,8 @@ def stream_response(
         prompt_token_limit=prompt_token_limit,
     )
     prompt = _add_multi_objective_answer_shape(prompt, question)
-    url = f"{config.LM_STUDIO_URL}/chat/completions"
+    gen_url = getattr(config, "GEN_URL", config.LM_STUDIO_URL)
+    url = f"{gen_url}/chat/completions"
     system_prompt = _system_prompt_text(mode)
     confidence_instruction = review.get("confidence_instruction", "")
     if confidence_instruction:
@@ -10860,6 +15847,24 @@ def main():
         help=f"Generation model override (default: {config.GEN_MODEL})",
     )
     parser.add_argument(
+        "--gen-url",
+        type=str,
+        default=getattr(config, "GEN_URL", config.LM_STUDIO_URL),
+        help=(
+            "Generation endpoint override "
+            f"(default: {getattr(config, 'GEN_URL', config.LM_STUDIO_URL)})"
+        ),
+    )
+    parser.add_argument(
+        "--embed-url",
+        type=str,
+        default=getattr(config, "EMBED_URL", config.LM_STUDIO_URL),
+        help=(
+            "Embedding/retrieval endpoint override "
+            f"(default: {getattr(config, 'EMBED_URL', config.LM_STUDIO_URL)})"
+        ),
+    )
+    parser.add_argument(
         "--mode",
         type=str,
         default="default",
@@ -10876,16 +15881,27 @@ def main():
     )
     args = parser.parse_args()
     config.GEN_MODEL = args.model
+    config.GEN_URL = normalize_lm_studio_url(args.gen_url)
+    config.EMBED_URL = normalize_lm_studio_url(args.embed_url)
+    config.LM_STUDIO_URL = config.EMBED_URL
     if args.top_k is None:
-        args.top_k = config.get_runtime_top_k(config.GEN_MODEL, config.LM_STUDIO_URL)
+        args.top_k = config.get_runtime_top_k(config.GEN_MODEL, config.GEN_URL)
 
-    # Test LM Studio
+    # Test local endpoints.
     try:
-        requests.get(f"{config.LM_STUDIO_URL}/models", timeout=5)
+        requests.get(f"{config.GEN_URL}/models", timeout=5)
     except requests.ConnectionError:
         console.print(
-            f"[red]Cannot connect to LM Studio at {config.LM_STUDIO_URL}. "
-            "Make sure it's running with both embedding and generation models loaded.[/red]"
+            f"[red]Cannot connect to generation endpoint at {config.GEN_URL}. "
+            "Make sure the LiteRT/LM Studio generation server is running.[/red]"
+        )
+        sys.exit(1)
+    try:
+        requests.get(f"{config.EMBED_URL}/models", timeout=5)
+    except requests.ConnectionError:
+        console.print(
+            f"[red]Cannot connect to embedding endpoint at {config.EMBED_URL}. "
+            "Make sure the embedding-capable LM Studio server is running.[/red]"
         )
         sys.exit(1)
 
@@ -10904,6 +15920,8 @@ def main():
             + (f" | category={args.category}" if args.category else "")
             + (f" | mode={args.mode}" if args.mode else "")
             + (f" | model={config.GEN_MODEL}" if config.GEN_MODEL else "")
+            + f" | gen={config.GEN_URL}"
+            + f" | embed={config.EMBED_URL}"
             + "[/dim]",
             border_style="green",
         )
@@ -10969,11 +15987,12 @@ def main():
                 args.top_k,
                 args.category,
                 session_state=session_state,
+                lm_studio_url=config.EMBED_URL,
             )
         except requests.ConnectionError:
             console.print(
-                f"[red]Cannot connect to LM Studio at {config.LM_STUDIO_URL}. "
-                "Make sure it's running with both embedding and generation models loaded.[/red]"
+                f"[red]Cannot connect to embedding endpoint at {config.EMBED_URL}. "
+                "Make sure the embedding-capable LM Studio server is running.[/red]"
             )
             continue
 
@@ -11034,8 +16053,8 @@ def main():
                 )
         except requests.ConnectionError:
             console.print(
-                f"\n[red]Cannot connect to LM Studio at {config.LM_STUDIO_URL}. "
-                "Make sure it's running with both embedding and generation models loaded.[/red]"
+                f"\n[red]Cannot connect to generation endpoint at {config.GEN_URL}. "
+                "Make sure the LiteRT/LM Studio generation server is running.[/red]"
             )
             continue
 

@@ -79,6 +79,18 @@ Get emergency help now if there is:
 If the person has a rescue inhaler, nebulizer, oxygen, or written action plan already prescribed to them, use it exactly as directed while help is arranged. Do not delay emergency care in order to try home measures first.
 :::
 
+### If Wheezing Follows an Allergen
+
+If wheeze, chest tightness, blue lips, trouble talking, throat tightness, face/lip/tongue swelling, or hives with breathing trouble start after a bee/wasp sting, food, medicine, or another likely allergen, treat it as **anaphylaxis first**, not routine asthma or panic.
+
+- For these allergen-triggered airway cases, the allergy/anaphylaxis guide is the primary emergency path; this asthma guide is downstream support only.
+- If anaphylaxis signs are present, follow the allergy/anaphylaxis emergency steps and give epinephrine first if available.
+- Call emergency services or get urgent medical help immediately.
+- Use a prescribed rescue inhaler only as an adjunct while help is arranged.
+- If the rescue inhaler is not clearly helping after allergen exposure, do not keep repeating asthma-only steps; follow anaphylaxis emergency care.
+
+See `allergic-reactions-anaphylaxis` for epinephrine-first emergency steps.
+
 ## The Core Support Plan
 
 If you want the shortest practical answer:

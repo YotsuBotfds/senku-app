@@ -44,6 +44,8 @@ import androidx.core.view.ViewCompat;
 
 import com.senku.ui.answer.AnswerContent;
 import com.senku.ui.answer.AnswerContentFactory;
+import com.senku.ui.answer.AnswerSurfaceInference;
+import com.senku.ui.answer.AnswerSurfaceLabel;
 import com.senku.ui.answer.Evidence;
 import com.senku.ui.answer.Mode;
 import com.senku.ui.answer.PaperAnswerCardHostView;
@@ -246,6 +248,7 @@ public final class DetailActivity extends AppCompatActivity {
     private String currentBody;
     private String currentGuideId;
     private String currentRuleId;
+    private final DetailReviewedCardMetadataBridge reviewedCardMetadataBridge = new DetailReviewedCardMetadataBridge();
     private OfflineAnswerEngine.ConfidenceLabel currentAnswerConfidenceLabel;
     private OfflineAnswerEngine.AnswerMode currentAnswerResponseMode;
     private ArrayList<SearchResult> currentSources = new ArrayList<>();
@@ -482,12 +485,41 @@ public final class DetailActivity extends AppCompatActivity {
         OfflineAnswerEngine.AnswerMode answerMode,
         OfflineAnswerEngine.ConfidenceLabel confidenceLabel
     ) {
+        return newAnswerIntent(
+            context,
+            title,
+            subtitle,
+            body,
+            sources,
+            autoFollowUpQuery,
+            conversationId,
+            ruleId,
+            answerMode,
+            confidenceLabel,
+            ReviewedCardMetadata.empty()
+        );
+    }
+
+    public static Intent newAnswerIntent(
+        Context context,
+        String title,
+        String subtitle,
+        String body,
+        List<SearchResult> sources,
+        String autoFollowUpQuery,
+        String conversationId,
+        String ruleId,
+        OfflineAnswerEngine.AnswerMode answerMode,
+        OfflineAnswerEngine.ConfidenceLabel confidenceLabel,
+        ReviewedCardMetadata reviewedCardMetadata
+    ) {
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TITLE, safe(title));
         intent.putExtra(EXTRA_SUBTITLE, safe(subtitle));
         intent.putExtra(EXTRA_BODY, safe(body));
         intent.putExtra(EXTRA_GUIDE_ID, primaryGuideIdForSources(sources));
         intent.putExtra(EXTRA_RULE_ID, safe(ruleId));
+        DetailReviewedCardMetadataBridge.putInto(intent, reviewedCardMetadata);
         intent.putExtra(EXTRA_CONFIDENCE_LABEL, confidenceLabelExtraValue(confidenceLabel));
         intent.putExtra(EXTRA_ANSWER_MODE, answerModeExtraValue(answerMode));
         intent.putExtra(EXTRA_IS_ANSWER, true);
@@ -505,19 +537,22 @@ public final class DetailActivity extends AppCompatActivity {
         String conversationId
     ) {
         boolean readyInstantAnswer = prepared != null
-            && (prepared.abstain || prepared.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT);
+            && (prepared.deterministic || prepared.abstain || prepared.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT);
         String pendingSubtitle = "";
         if (prepared != null && prepared.abstain) {
             pendingSubtitle = "Abstain | no guide match | instant";
         } else if (prepared != null && prepared.mode == OfflineAnswerEngine.AnswerMode.UNCERTAIN_FIT) {
             pendingSubtitle = "Uncertain fit | related guides | instant";
+        } else if (prepared != null && prepared.deterministic) {
+            pendingSubtitle = "Offline answer | deterministic | instant";
         }
         Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(EXTRA_TITLE, safe(prepared == null ? null : prepared.query));
         intent.putExtra(EXTRA_SUBTITLE, pendingSubtitle);
         intent.putExtra(EXTRA_BODY, safe(readyInstantAnswer ? prepared.answerBody : ""));
         intent.putExtra(EXTRA_GUIDE_ID, primaryGuideIdForSources(prepared == null ? null : prepared.sources));
-        intent.putExtra(EXTRA_RULE_ID, "");
+        intent.putExtra(EXTRA_RULE_ID, safe(prepared == null ? null : prepared.ruleId));
+        DetailReviewedCardMetadataBridge.putInto(intent, prepared == null ? null : prepared.reviewedCardMetadata);
         intent.putExtra(EXTRA_IS_ANSWER, true);
         intent.putExtra(
             EXTRA_SOURCES,
@@ -764,6 +799,7 @@ public final class DetailActivity extends AppCompatActivity {
         currentBody = safe(intent.getStringExtra(EXTRA_BODY));
         currentGuideId = safe(intent.getStringExtra(EXTRA_GUIDE_ID)).trim();
         currentRuleId = safe(intent.getStringExtra(EXTRA_RULE_ID)).trim();
+        reviewedCardMetadataBridge.readFrom(intent);
         currentAnswerConfidenceLabel = confidenceLabelFromExtra(intent.getStringExtra(EXTRA_CONFIDENCE_LABEL));
         currentAnswerResponseMode = answerModeFromExtra(intent.getStringExtra(EXTRA_ANSWER_MODE));
         answerMode = intent.getBooleanExtra(EXTRA_IS_ANSWER, false);
@@ -1254,7 +1290,8 @@ public final class DetailActivity extends AppCompatActivity {
                         ),
                         false,
                         false,
-                        false
+                        false,
+                        safe(turn == null ? null : turn.ruleId)
                     ),
                     Status.Done,
                     true,
@@ -1274,7 +1311,8 @@ public final class DetailActivity extends AppCompatActivity {
                     buildAnswerCardEvidence(),
                     isAbstainRoute(),
                     isUncertainFitRoute(),
-                    streamingCursorActive
+                    streamingCursorActive,
+                    currentRuleId
                 ),
                 tabletBusy ? Status.Pending : Status.Active,
                 true,
@@ -1307,7 +1345,8 @@ public final class DetailActivity extends AppCompatActivity {
                 AnswerContentFactory.evidenceForSourceCount(guideSources.size()),
                 false,
                 false,
-                false
+                false,
+                ""
             ),
             Status.Active,
             false,
@@ -1324,9 +1363,19 @@ public final class DetailActivity extends AppCompatActivity {
         Evidence evidence,
         boolean abstain,
         boolean uncertainFit,
-        boolean showStreamingCursor
-    ) {
+        boolean showStreamingCursor,
+        String ruleId
+        ) {
         List<SearchResult> safeSources = sources == null ? Collections.emptyList() : sources;
+        ReviewedCardMetadata turnReviewedCardMetadata = reviewedCardMetadataBridge.forRuleId(ruleId, currentRuleId);
+        AnswerSurfaceInference answerSurface = inferAnswerSurface(
+            null,
+            abstain,
+            !safe(ruleId).trim().isEmpty(),
+            safeSources.size(),
+            ruleId,
+            turnReviewedCardMetadata
+        );
         return AnswerContentFactory.fromRenderedAnswer(
             formatAnswerBody(rawBody),
             safeSources.size(),
@@ -1335,7 +1384,11 @@ public final class DetailActivity extends AppCompatActivity {
             evidence,
             abstain,
             uncertainFit,
-            showStreamingCursor
+            showStreamingCursor,
+            answerSurface.getAnswerSurfaceLabel(),
+            answerSurface.getAnswerProvenance(),
+            answerSurface.getAnswerSurfaceLabel() == AnswerSurfaceLabel.ReviewedCardEvidence,
+            turnReviewedCardMetadata
         );
     }
 
@@ -1573,6 +1626,7 @@ public final class DetailActivity extends AppCompatActivity {
             answerCardView.setVisibility(View.GONE);
             return;
         }
+        AnswerSurfaceInference answerSurface = inferCurrentAnswerSurface();
         AnswerContent content = AnswerContentFactory.fromRenderedAnswer(
             formatAnswerBody(currentBody),
             currentSources == null ? 0 : currentSources.size(),
@@ -1581,7 +1635,11 @@ public final class DetailActivity extends AppCompatActivity {
             buildAnswerCardEvidence(),
             isAbstainRoute(),
             isUncertainFitRoute(),
-            showStreamingCursor
+            showStreamingCursor,
+            answerSurface.getAnswerSurfaceLabel(),
+            answerSurface.getAnswerProvenance(),
+            answerSurface.getAnswerSurfaceLabel() == AnswerSurfaceLabel.ReviewedCardEvidence,
+            reviewedCardMetadataBridge.current()
         );
         answerCardView.setVisibility(View.VISIBLE);
         answerCardView.updateModel(
@@ -1619,6 +1677,35 @@ public final class DetailActivity extends AppCompatActivity {
             return Evidence.Moderate;
         }
         return Evidence.None;
+    }
+
+    private AnswerSurfaceInference inferCurrentAnswerSurface() {
+        return inferAnswerSurface(
+            currentAnswerResponseMode,
+            isAbstainRoute(),
+            isDeterministicRoute(),
+            currentSources == null ? 0 : currentSources.size(),
+            currentRuleId,
+            reviewedCardMetadataBridge.current()
+        );
+    }
+
+    private AnswerSurfaceInference inferAnswerSurface(
+        OfflineAnswerEngine.AnswerMode mode,
+        boolean abstain,
+        boolean deterministic,
+        int sourceCount,
+        String ruleId,
+        ReviewedCardMetadata reviewedCardMetadata
+    ) {
+        return AnswerContentFactory.inferAnswerSurface(
+            mode,
+            abstain,
+            deterministic,
+            sourceCount,
+            safe(ruleId).trim(),
+            ReviewedCardMetadata.normalize(reviewedCardMetadata)
+        );
     }
 
     private String buildAnswerCardHostLabel() {
@@ -3022,6 +3109,7 @@ public final class DetailActivity extends AppCompatActivity {
         generationStallToken = requestToken;
         generationStallNoticeVisible = false;
         currentAnswerHostFallbackUsed = false;
+        reviewedCardMetadataBridge.reset();
         setBusy(OfflineAnswerEngine.buildRetrievalStatus(query, sessionMemory), true);
         answerPresenter.prepareThenGenerate(requestToken, kind, repository, query);
     }
@@ -3030,7 +3118,8 @@ public final class DetailActivity extends AppCompatActivity {
         currentTitle = preparedAnswer.query;
         currentSubtitle = "";
         currentBody = buildGeneratingPreviewBody(preparedAnswer.sources.size());
-        currentRuleId = "";
+        currentRuleId = safe(preparedAnswer.ruleId).trim();
+        reviewedCardMetadataBridge.set(preparedAnswer.reviewedCardMetadata);
         currentAnswerConfidenceLabel = preparedAnswer.confidenceLabel;
         currentAnswerResponseMode = preparedAnswer.mode;
         currentSources = new ArrayList<>(preparedAnswer.sources);
@@ -3043,12 +3132,15 @@ public final class DetailActivity extends AppCompatActivity {
         OfflineAnswerEngine.AnswerRun answerRun = result.answerRun;
         completedStreamingToken = requestToken;
         sessionMemory.recordTurn(answerRun.query, result.resolvedAnswerBody,
-            answerRun.abstain ? Collections.emptyList() : result.answerSources, answerRun.ruleId);
+            answerRun.abstain ? Collections.emptyList() : result.answerSources,
+            answerRun.ruleId,
+            answerRun.reviewedCardMetadata);
         ChatSessionStore.persist(this);
         currentTitle = answerRun.query;
         currentSubtitle = answerRun.subtitle;
         currentBody = result.resolvedAnswerBody;
         currentRuleId = safe(answerRun.ruleId).trim();
+        reviewedCardMetadataBridge.set(answerRun.reviewedCardMetadata);
         currentAnswerConfidenceLabel = result.confidenceLabel;
         currentAnswerResponseMode = result.mode;
         currentSources = new ArrayList<>(result.answerSources);
@@ -3461,6 +3553,7 @@ public final class DetailActivity extends AppCompatActivity {
             currentBody,
             currentSources,
             currentRuleId,
+            reviewedCardMetadataBridge.current(),
             System.currentTimeMillis()
         );
     }
@@ -3526,11 +3619,13 @@ public final class DetailActivity extends AppCompatActivity {
         if (!answerMode) {
             return getString(R.string.detail_body_guide);
         }
-        int trustLabelRes = isDeterministicRoute()
-            ? R.string.detail_route_deterministic
-            : (isAbstainRoute()
-                ? R.string.detail_evidence_limited
-                : (isUncertainFitRoute() ? R.string.detail_evidence_unsure_fit : evidenceStrengthLabelRes()));
+        int trustLabelRes = isReviewedCardRoute()
+            ? R.string.detail_evidence_reviewed
+            : (isDeterministicRoute()
+                ? R.string.detail_route_deterministic
+                : (isAbstainRoute()
+                    ? R.string.detail_evidence_limited
+                    : (isUncertainFitRoute() ? R.string.detail_evidence_unsure_fit : evidenceStrengthLabelRes())));
         return getString(
             R.string.detail_body_answer_with_evidence,
             getString(R.string.detail_body_answer),
@@ -3616,6 +3711,12 @@ public final class DetailActivity extends AppCompatActivity {
             return getString(R.string.detail_evidence_moderate);
         }
         return getString(R.string.detail_evidence_limited);
+    }
+
+    private String getEvidenceTrustSurfaceLabel() {
+        return inferCurrentAnswerSurface().getAnswerSurfaceLabel() == AnswerSurfaceLabel.ReviewedCardEvidence
+            ? getString(R.string.detail_evidence_reviewed)
+            : getEvidenceStrengthLabel();
     }
 
     private DetailProofPresentationFormatter detailProofPresentationFormatter() {
@@ -3753,7 +3854,7 @@ public final class DetailActivity extends AppCompatActivity {
             sessionMemory == null ? 0 : sessionMemory.recentTurnSnapshots(6).size(),
             currentPackVersion,
             currentSubtitle,
-            getEvidenceStrengthLabel(),
+            getEvidenceTrustSurfaceLabel(),
             currentPackGeneratedAt,
             currentPackHashShort
         );
@@ -3810,8 +3911,10 @@ public final class DetailActivity extends AppCompatActivity {
         boolean subduedRoute = isLowCoverageRoute() || isAbstainRoute() || isUncertainFitRoute();
         int lowCoverageAccentColor = getLowCoverageAccentColor();
         int evidenceAccentColor = lowCoverageAccentColor;
+        String evidenceLabel = getEvidenceTrustSurfaceLabel();
         if (!currentSources.isEmpty() && !subduedRoute) {
-            evidenceAccentColor = getString(R.string.detail_evidence_strong).equals(getEvidenceStrengthLabel())
+            evidenceAccentColor = getString(R.string.detail_evidence_strong).equals(evidenceLabel)
+                || getString(R.string.detail_evidence_reviewed).equals(evidenceLabel)
                 ? getColor(R.color.senku_accent_olive)
                 : getColor(R.color.senku_accent_warning);
         }
@@ -3819,12 +3922,13 @@ public final class DetailActivity extends AppCompatActivity {
             buildSerialRouteValue(),
             subduedRoute ? lowCoverageAccentColor : getSeverityAccentColor(),
             buildBackendMetaLabel().isEmpty() ? "" : buildSerialBackendValue(),
-            getEvidenceStrengthLabel(),
+            evidenceLabel,
             currentSources == null ? 0 : currentSources.size(),
             evidenceAccentColor,
             buildPackFreshnessMeta(false),
             lowCoverageAccentColor,
-            subduedRoute
+            subduedRoute,
+            reviewedCardMetadataBridge.current()
         );
     }
 
@@ -3923,6 +4027,10 @@ public final class DetailActivity extends AppCompatActivity {
     private boolean isDeterministicRoute() {
         return !safe(currentRuleId).isEmpty()
             || safe(currentSubtitle).toLowerCase(Locale.US).contains("deterministic");
+    }
+
+    private boolean isReviewedCardRoute() {
+        return safe(currentRuleId).trim().toLowerCase(Locale.US).startsWith("answer_card:");
     }
 
     private boolean isAbstainRoute() {
@@ -4614,7 +4722,7 @@ public final class DetailActivity extends AppCompatActivity {
                 false
             ));
             items.add(new MetaItem(
-                getEvidenceStrengthLabel(),
+                getEvidenceTrustSurfaceLabel(),
                 evidenceTone(),
                 false
             ));
@@ -4664,7 +4772,10 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private Tone evidenceTone() {
-        String label = getEvidenceStrengthLabel();
+        String label = getEvidenceTrustSurfaceLabel();
+        if (label.equals(getString(R.string.detail_evidence_reviewed))) {
+            return Tone.Ok;
+        }
         if (label.equals(getString(R.string.detail_evidence_unsure_fit))) {
             return Tone.Warn;
         }
@@ -4825,7 +4936,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (!trustSummary.isEmpty()) {
             parts.add(trustSummary);
         }
-        parts.add(getEvidenceStrengthLabel());
+        parts.add(getEvidenceTrustSurfaceLabel());
         parts.add(getString(R.string.detail_sources_count_short, currentSources.size()));
         return TextUtils.join(" | ", parts);
     }

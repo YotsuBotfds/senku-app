@@ -1,0 +1,355 @@
+﻿{
+    "next_index":  70,
+    "launched":  [
+                     {
+                         "task_id":  "ses_270a2e8e5ffendQulw5Ca9M0pE",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-14T23:18:55.9482778-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2709e5129fferlPYUp6dy48uXc",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-14T23:23:56.8987560-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27099b998ffe84o5wJRihBs7D1",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-14T23:28:57.8450116-05:00"
+                     },
+                     {
+                         "task_id":  "ses_270952222ffeFzpFFcDCKKjxU3",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-14T23:33:58.7646920-05:00"
+                     },
+                     {
+                         "task_id":  "ses_270908a8dffe2NxHroE8ALPEmS",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-14T23:38:59.7107422-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2708bf352ffes0Y5jHoLjvWg7o",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-14T23:44:00.5708061-05:00"
+                     },
+                     {
+                         "task_id":  "ses_270875c2effepPih7BV1vGbPCC",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-14T23:49:01.4075242-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27082c50effem76b22lSgam2cU",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-14T23:54:02.2377485-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2707e2db6ffe5l0srEgM4Wsy6L",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-14T23:59:03.1270454-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27074efb4ffetWKY88YWRPhmCe",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T00:09:08.8279021-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27070588fffe162A7jVoCvEvd9",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T00:14:09.6611394-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2706bc175ffeSavZxUL2JkYOlZ",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T00:19:10.4868717-05:00"
+                     },
+                     {
+                         "task_id":  "ses_270672a5affeQNshsEF0X5J4AO",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T00:24:11.3135687-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2705dfd95ffePCSoqlonD7Oid2",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T00:34:12.6018106-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27059664affe5slqWBDx19Qf5H",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T00:39:13.4758829-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27054cf32ffeU3FIKGk0k2KJks",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T00:44:14.2965571-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2705037efffeXoGPNvLVXZI1bg",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T00:49:15.1632376-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2704ba0b4ffeXEt4Wxh0juo4ze",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T00:54:16.0248630-05:00"
+                     },
+                     {
+                         "task_id":  "ses_270470961ffeqTZ8lVA8fZ7jGD",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T00:59:16.9102430-05:00"
+                     },
+                     {
+                         "task_id":  "ses_270427210ffeIm6CWwW5qXIsk5",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T01:04:17.7923688-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2703ddad7ffenPHSLF8pjhMfgC",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T01:09:18.6488103-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2703943caffeFtgXuIYyfbI67V",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T01:14:19.4587527-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27034acb5ffeTy08m7kK7q2BEr",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T01:19:20.2837407-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2702b8012ffeH14oRaCx7ZH6OZ",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T01:29:21.5299163-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27026e89dffeVThYuk5O0cefPD",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T01:34:22.4467967-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2701dbbe5ffeK6L9ZfHu5P4akQ",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T01:44:23.7199422-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2701924d2ffeBPMGY8V3712do1",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T01:49:24.5369979-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2700ff7eaffeLt7SjRTQIXD31G",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T01:59:25.8576838-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2700b60d8ffeaJ6PwgqEJxUq7p",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T02:04:26.6744933-05:00"
+                     },
+                     {
+                         "task_id":  "ses_27006c96bffeZkAOHCHgh3g23l",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T02:09:27.5852070-05:00"
+                     },
+                     {
+                         "task_id":  "ses_2700231dbffeqFc6nCH74xqJZJ",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T02:14:28.5301057-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26ffd9aa0ffeVEFz2bEtFOQBpo",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T02:19:29.3886900-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26ff90349ffeVAr62KpdiG0Qh7",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T02:24:30.2769293-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26ff46c41ffeWbO0yWIAlR9ILS",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T02:29:31.0861128-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fefd526ffe22jpHjOfIISYUP",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T02:34:31.9100208-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26feb3dccffeA4ETIHL8iYWLu4",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T02:39:32.8043780-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fe6a691ffes2O0Ps2KLQ0Ono",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T02:44:33.6603837-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fe20f7dffeG6BEBDB59lq0RR",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T02:49:34.4789432-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fdd7858ffeNG5Ux1w4gkMhRa",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T02:54:35.3161640-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fd8e13cffeMx6nqOTLK28sxd",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T02:59:36.1432859-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fd44a00ffeTkzfYyJmGJTJa1",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T03:04:37.0035758-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fcfb2c7ffe545LvMUHT6cvJO",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T03:09:37.8601713-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fcb1bd0ffevsRCj9tHCMoQPr",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T03:14:38.6506797-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fc684adffe6A8bLp9ce4LKhh",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T03:19:39.4870204-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fc1ed8affeAzGCw2EOVq8Rn7",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T03:24:40.3249876-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fbd5662ffezPseWCFvQizukh",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T03:29:41.1611710-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fb429a1ffeXbrYSH95bTwei1",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T03:39:42.4437426-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26faf9268ffee3S3H3Y8lSuXYY",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T03:44:43.3007262-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26faafb43ffe6dzhJUZqzh2WaJ",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T03:49:44.1361537-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fa66422ffe091ZkpGEkwBV64",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T03:54:44.9741715-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26fa1cce4ffebeF4NkP6z3harC",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T03:59:45.8319749-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f9d3590ffeN7r7WvA6pl5y1s",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T04:04:46.7176640-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f989e2effeoRA3dQZALYm4KV",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T04:09:47.6180822-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f8f716cffeBl2OiRbYKxR6hy",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T04:19:48.8977610-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f8ada56ffe08Aluv9d2dwocX",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T04:24:49.7235439-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f864341fferUgTQIdzR6QO8S",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T04:29:50.5371797-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f81abcdffeLykPdB6E8Tjwgv",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T04:34:51.4561255-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f7d1449ffeCslaDdTMG5pMK7",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T04:39:52.3921823-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f787d06ffeH2xHECSEqUQtQG",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T04:44:53.2548807-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f73e5e1ffePDy4olXTouEMDY",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T04:49:54.0901198-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f6f4edcffemTyAYDRyNQ3KPB",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T04:54:54.8940672-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26f6ab7c1ffeGxFbtnU2cSYqwM",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T04:59:55.7225986-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26c12391fffeKl7QTbkGUH9mz3",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T20:35:26.9791452-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26c0d89b7ffe7RNql3TJ7btLCg",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T20:40:33.9835030-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26bf698b6ffeOIOw0z6XMRICz5",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T21:05:37.4896888-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26bed69caffeCdkVDGECZRfjPe",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T21:15:39.3196382-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26be8d20cffeJ5oLFl4T1M7jBz",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T21:20:40.3038592-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26bdb055fffeBmYnh14BHTrGYc",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T21:35:44.6971233-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26bcd39ceffeQpoUbmnQLxjNPt",
+                         "label":  "guide_overnight_next_batch",
+                         "launched_at":  "2026-04-15T21:50:48.7467856-05:00"
+                     },
+                     {
+                         "task_id":  "ses_26bc89f61ffe5bcA3xEoYjQppH",
+                         "label":  "retrieval_overnight_followup",
+                         "launched_at":  "2026-04-15T21:55:50.4456234-05:00"
+                     }
+                 ]
+}

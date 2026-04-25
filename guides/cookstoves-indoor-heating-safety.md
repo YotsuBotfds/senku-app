@@ -21,8 +21,11 @@ tags:
   - "heater making me dizzy"
   - "charcoal indoors"
   - "carbon monoxide"
+  - "wood stove smoking back"
+  - "overnight heat without poisoning"
+  - "safe room heating no electricity"
 icon: 🔥
-description: Simple cookstoves, rocket stoves, basic woodstoves, chimney and flue basics, draft troubleshooting, smoke-back response, carbon monoxide warnings, ventilation, fuel efficiency, and safe indoor heating for cabins and shelters.
+description: Simple cookstoves, rocket stoves, basic woodstoves, chimney and flue basics, draft troubleshooting, smoke-back response, overnight room-heating safety, carbon monoxide warnings, ventilation, fuel efficiency, and safe indoor heating for cabins and shelters.
 related:
   - clay-bread-oven-construction
   - fire-safety-compartmentalization
@@ -54,6 +57,9 @@ This guide is for practical questions like:
 - "What should I check first?" -> check draft, fuel, and air supply first
 - "Why is my stove smoking instead of drafting?" -> see draft troubleshooting
 - "smoke coming back into the room" -> use the smoke-back section
+- "wood stove is smoking back into the room" -> get people away first, then use smoke-back and draft troubleshooting here if nobody has symptoms
+- "how do we heat the room overnight without electricity and without poisoning ourselves" -> use the safe indoor heating rules here before comfort-only heat tricks
+- "safe room heating with no power" or "keep warm indoors without CO" -> use a tested stove, working flue, ventilation, and CO warning rules here
 - "dizzy or headache near the stove" -> leave the area and use the smoke guide first
 - "headache while the stove runs" -> possible CO buildup; ventilate and use the smoke guide
 - "smoke smell indoors", "burning fuel smell", "heater making me dizzy", or "charcoal indoors" -> stop the fire and use the smoke guide first
@@ -69,7 +75,7 @@ This guide is for practical questions like:
 - "best way to heat a room" -> see the quick comparison and cabin heating rules
 - "chimney safety" -> see chimney basics, draft troubleshooting, and maintenance
 
-First step: get people out / evacuate immediately if smoke is entering the room or anyone is already dizzy, nauseous, sleepy, confused, or short of breath near the stove. If everyone is safe and you are trying to fix the stove, start with draft, fuel, and air supply. If the whole room or building feels stale without active smoke, use the ventilation guide instead of treating it as a stove problem.
+First step: get people out / evacuate immediately if smoke is entering the room or anyone is already coughing from smoke, dizzy, nauseous, sleepy, confused, short of breath, or has a headache near the stove. If everyone is safe and you are trying to fix the stove, start with draft, fuel, and air supply. If the whole room or building feels stale without active smoke or symptoms, use the ventilation guide instead of treating it as a stove problem.
 
 If smoke is entering the room but nobody has symptoms yet, treat it as a draft or ventilation failure and use this guide to fix the flue, air inlet, or chimney after the room is safe. If symptoms appear at any point, stop troubleshooting and switch to the smoke guide immediately.
 
@@ -246,6 +252,14 @@ If the issue is already causing headache, dizziness, nausea, confusion, or short
 3. **Do not throttle the fire too early.** Let the stove and chimney get hot first.
 4. **Watch the smoke outside.** A clean-burning stove sends very little visible smoke once established.
 5. **Ventilate the room.** Even a good stove needs fresh air entering the space.
+
+### Overnight heating without poisoning people
+
+- Do not rely on charcoal, an open pan of coals, an unvented burner, or a stove that smokes into the room.
+- Prove the draft in daylight before depending on the stove overnight.
+- Keep a working flue or chimney open, keep make-up air available, and use a CO alarm if one is available.
+- Let a questionable fire die down rather than sleeping beside a smoky or backdrafting stove.
+- If anyone wakes with headache, cough, dizziness, nausea, confusion, or unusual sleepiness, leave first and use the smoke guide before adjusting the fire.
 
 ### Never do these things
 

@@ -20,7 +20,7 @@ aliases:
   - market notice
   - market-day notice
   - where to post notices
-  - notice placement
+  - public notice placement
   - announcement system
   - price board
   - bulletin board placement
@@ -60,18 +60,18 @@ This guide covers designing bulletin systems that reach diverse audiences, train
 </section>
 
 :::tip
-**This guide owns:** physical bulletin boards, town crier protocols, notice formats, emergency alerts, pictographic/low-literacy notices, message prioritization, notice record-keeping, and public market announcements. For the underlying tax, trade, or pricing rule itself, hand off to `taxation-revenue-systems`, `trade-standards-exchange`, or `economics-trade`.
+**This guide owns:** broad public bulletin boards, town crier protocols, notice formats, emergency alerts, pictographic/low-literacy notices, message prioritization, notice record-keeping, and public market announcements. For notices inside a market footprint--entry boards, stall-assignment signs, lane-turn notices, loading-edge signs, and rules posted where shoppers move--hand off to `marketplace-trade-space-basics`. For the underlying tax, trade, or pricing rule itself, hand off to `taxation-revenue-systems`, `trade-standards-exchange`, or `economics-trade`.
 
 **Quick routing â€” what problem do you have?**
 
 - "Complaint-first: people missed the notice or the message is being spread badly" -> this guide
-- "Complaint-first: where should the bulletin board be placed, or where should notices be posted?" -> this guide
+- "Complaint-first: where should the community bulletin board be placed, or how should public notices be distributed across town?" -> this guide
 - "Complaint-first: a market day, price, or tax deadline needs to be announced clearly" -> this guide
 - "Task-first: we need to post prices, market days, emergency alerts, or public warnings" -> this guide
 - "Task-first: we need to reach non-readers or low-literacy neighbors" -> this guide
-- "Task-first: we need to place a public notice board or post market notices" -> this guide
+- "Task-first: we need to place a public notice board or post market announcements beyond the stall lanes" -> this guide
 - "The issue is a disputed weight, grade, or exchange rate" -> `trade-standards-exchange`
-- "The issue is market organization or stall layout" -> `marketplace-trade-space-basics`
+- "The issue is market organization, stall layout, walking lanes, cart clearance, loading edges, blocked corners, or notices inside the market footprint" -> `marketplace-trade-space-basics`
 - "The issue is the tax, fee, or revenue rule itself" -> `taxation-revenue-systems`
 - "The issue is creating a currency or setting market rules" -> `economics-trade`
 :::

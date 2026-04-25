@@ -18,13 +18,21 @@ aliases:
   - mosquito disease exposure
   - biting insect control
   - mosquito exposure prevention
+  - keep mosquitoes off me at night
+  - plant mosquito repellent
+  - simple mosquito net
+  - reduce mosquitoes around where we sleep
 routing_cues:
   - "how to stop mosquito bites"
+  - "how do i keep mosquitoes off me at night"
   - "mosquito bite prevention at night"
   - "how to protect against mosquito disease exposure"
+  - "can i make mosquito repellent from plants around me"
   - "keep mosquitoes away without chemicals"
+  - "how do i make a simple mosquito net or sleeping barrier"
   - "bitten by mosquitoes what to do"
   - "mosquitoes in my sleeping area"
+  - "best way to reduce mosquitoes around where we sleep"
   - "how to prevent malaria and mosquito disease"
   - "mosquito exposure how to reduce risk"
   - "too many mosquitoes in my house"

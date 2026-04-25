@@ -49,6 +49,9 @@ aliases:
   - bedwetting after a dry period
   - diaper rash treatment
   - diaper change routine
+  - child fever stiff neck purple rash
+  - child hard to wake bruise-like rash
+  - child little purple dots fever
 routing_cues:
   - "breastfeeding latch problems milk supply or engorgement"
   - "oral rehydration for infant with diarrhea or vomiting"
@@ -68,6 +71,9 @@ routing_cues:
   - "baby won't stop crying colic teething see baby discomforts"
   - "teething pain chewing drooling see baby discomforts"
   - "diaper rash red sore bottom see baby discomforts"
+  - "child high fever hard to wake bruise-like rash emergency"
+  - "child sleepy confused stiff neck vomiting purple dots emergency"
+  - "fever rash does not fade when pressed child meningitis sepsis"
   - "delayed milestones not walking not talking see development milestones"
 icon: 👶
 description: Breastfeeding support, oral rehydration therapy, childhood illness recognition, neonatal danger signs, toilet training and bedwetting, and improvised infant nutrition.
@@ -353,6 +359,8 @@ If toileting becomes painful, the child is holding urine or stool, or accidents 
 
 Use this section when the child has fever, rash, cough, diarrhea, or a behavior change and you need to decide what is dangerous now. Early recognition of serious illness allows intervention before decompensation. Post-collapse, the absence of medical facilities requires caregivers to accurately identify danger signs and implement supportive care to buy time for complications to resolve.
 
+Emergency shortcut: a child with fever plus meningitis/brain-warning signs (stiff neck, bad headache with repeated vomiting, confusion, unusual sleepiness, or hard-to-wake behavior) or a purple/dark/bruise-like rash that does not fade when pressed needs emergency evaluation for meningitis, meningococcemia, or sepsis. Do not route this as routine fever, flu, common rash, or diaper-rash care.
+
 ### Fever Management & Temperature Assessment
 
 **Normal Temperature Range:** Infants have variable normal temperature; 36.5-37.5°C (97.7-99.5°F) is average. Fever (≥38°C or 100.4°F) is the body's immune response, not inherently dangerous. High fevers (≥40°C or 104°F) indicate moderate-severe infection and warrant concern.
@@ -365,9 +373,9 @@ Use this section when the child has fever, rash, cough, diarrhea, or a behavior 
 
 ### Rash Identification & Serious vs. Benign
 
-**Meningococcal Rash (MEDICAL EMERGENCY):** Petechial rash (pinpoint red/purple spots that do not blanch when pressed with glass) associated with fever, stiff neck, altered consciousness, or severe illness. This indicates sepsis; infant requires immediate medical intervention. Supportive care (hydration, fever management) may be the only available therapy in collapse settings. Prognosis is poor without antibiotics; survival rates drop significantly without treatment within 12 hours.
+**Meningococcal Rash (MEDICAL EMERGENCY):** Petechial rash (pinpoint red/purple spots that do not blanch when pressed with glass) associated with fever, stiff neck, bad headache, vomiting, altered consciousness, unusual sleepiness, hard-to-wake behavior, or severe illness. Families may describe this as little purple dots, spots on the legs, a dark or purplish spreading rash, a bruise-like rash, or a rash that does not fade when pressed. This can indicate meningococcemia, meningitis, or sepsis; the child requires immediate medical intervention. Supportive care (hydration, fever management) may be the only available therapy in collapse settings. Prognosis is poor without antibiotics; survival rates drop significantly without treatment within 12 hours.
 
-**Measles Rash:** Presents 3-4 days after fever onset; typically high fever (39-40.5°C) with "3 Cs": Cough, Coryza (runny nose), Conjunctivitis (red eyes). Rash appears on hairline/temples first, spreads downward over face then trunk. Rash is red, maculopapular (raised spots), not blanching. Associated with cough, respiratory symptoms. Mortality in malnourished children or those with vitamin A deficiency reaches 5-10% (versus 0.1% in well-nourished children). Supportive care: maintain hydration, provide vitamin A if available (reduces mortality by 25%), manage respiratory symptoms.
+**Measles Rash:** Presents 3-4 days after fever onset; typically high fever (39-40.5°C) with "3 Cs": Cough, Coryza (runny nose), Conjunctivitis (red eyes). Rash appears on hairline/temples first, spreads downward over face then trunk. Rash is red, maculopapular (raised spots), and follows the classic face-down measles pattern rather than the petechial or bruise-like "purple dots that do not fade when pressed" pattern above. Associated with cough, respiratory symptoms. Mortality in malnourished children or those with vitamin A deficiency reaches 5-10% (versus 0.1% in well-nourished children). Supportive care: maintain hydration, provide vitamin A if available (reduces mortality by 25%), manage respiratory symptoms.
 
 **Varicella (Chickenpox) Rash:** Crops of vesicles (fluid-filled blisters) appearing in stages over 3-5 days; pruritic (intensely itchy). Preceded by low-grade fever and mild systemic symptoms. Rash appears first on trunk, spreads to face and extremities. Vesicles crust over and shed infectivity after crusting. Low mortality in healthy children; prevent infection with strict isolation (highly contagious until all lesions crusted).
 

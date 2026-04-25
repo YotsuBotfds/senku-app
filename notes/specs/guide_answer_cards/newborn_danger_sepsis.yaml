@@ -1,0 +1,105 @@
+card_id: newborn_danger_sepsis
+guide_id: GD-284
+slug: infant-child-care
+title: "Infant & Child Care (Birth to Age 5)"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Newborn in the first 28 days has fever, low temperature, breathing difficulty, poor feeding, weak cry, seizure, vomiting, or no urine output.
+  - Caregiver asks whether newborn danger signs could be sepsis or serious infection.
+  - Umbilical cord has spreading redness, swelling, pus, foul odor, or fever.
+required_first_actions:
+  - Treat breathing difficulty, inability to feed, fever or hypothermia, seizures, bilious vomiting, or severe lethargy as requiring immediate escalation.
+  - Keep the newborn warm and monitor breathing closely while arranging urgent evaluation.
+conditional_required_actions:
+  - trigger_terms:
+      - umbilical
+      - cord
+      - stump
+      - belly button
+      - navel
+      - redness
+      - swelling
+      - pus
+      - foul odor
+    required_actions:
+      - If umbilical infection has fever or spreading redness, treat it as life-threatening and seek antibiotic-capable care.
+first_actions:
+  - For fast or difficult breathing, keep the newborn warm, semi-upright, and under close breathing observation.
+  - For inability to breastfeed or weak suck, express breastmilk for cup feeding only as supportive care while escalating.
+  - For fever or hypothermia, keep warm or gradually rewarm and seek evaluation.
+  - For seizures or jerking movements, protect from injury, maintain airway, and evaluate for fever or infection.
+urgent_red_flags:
+  - Difficulty breathing or fast breathing over 60 breaths per minute at rest.
+  - Inability to breastfeed or suckle, or weak cry.
+  - Fever over 38 C or hypothermia under 36.5 C.
+  - Seizures or jerking movements.
+  - Bilious or green vomiting.
+  - No urine output in the first 24 hours or none after day 3.
+  - Cord redness or swelling extending onto the abdominal wall, pus, foul odor, or fever.
+forbidden_advice:
+  - Do not reassure a sick newborn with these signs as routine fussiness or ordinary feeding trouble.
+  - Do not delay escalation while trying comfort measures alone.
+  - Do not apply substances to a clean umbilical cord unless infection is suspected.
+do_not:
+  - Do not treat fever, hypothermia, poor feeding, or breathing trouble in the first 28 days as watchful waiting.
+  - Do not bathe or keep the cord moist before separation; keep clean and dry unless infection requires action.
+routine_boundary: >
+  Routine newborn care stops when the infant has abnormal temperature, breathing
+  trouble, poor feeding, weak cry, seizures, bilious vomiting, low urine output,
+  or cord infection signs.
+acceptable_uncertain_fit: >
+  If age is uncertain but the baby may be under 28 days old, use the newborn
+  danger-sign frame and escalate rather than treating as routine infant illness.
+clarifying_questions:
+  - How old is the baby in days?
+  - Is the baby feeding normally and making urine?
+  - Is breathing fast, labored, grunting, or bluish?
+  - Is there fever, low temperature, or spreading redness around the cord?
+citation_ids:
+  - infant-child-neonatal-danger-signs
+  - infant-child-cord-infection
+source_sections:
+  - guide: GD-284
+    slug: infant-child-care
+    title: "Infant & Child Care (Birth to Age 5)"
+    sections:
+      - "#section-5"
+      - "#section-5 > Critical Danger Signs Requiring Escalation"
+      - "#section-5 > Umbilical Cord Care & Infection Prevention"
+  - guide: GD-492
+    slug: postpartum-care-mother-infant
+    title: "Postpartum Care: Mother & Infant"
+    sections:
+      - "#newborn-danger-signs"
+      - "#newborn-danger-signs > Danger Sign Follow-Up"
+      - "#umbilical-care"
+      - "#umbilical-care > Daily Inspection"
+  - guide: GD-298
+    slug: pediatric-emergency-medicine
+    title: "Pediatric Emergency Medicine"
+    sections:
+      - "#neonatal-emergencies"
+      - "#neonatal-emergencies > Neonatal Sepsis Recognition"
+      - "#neonatal-emergencies > Neonatal Thermoregulation"
+  - guide: GD-617
+    slug: pediatric-emergencies-field
+    title: "Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress"
+    sections:
+      - "#rapid-breathing-lethargy-wont-eat-emergency-check"
+      - "#neonatal-complications-in-field"
+source_invariants:
+  - name: newborn danger signs require escalation
+    guide: GD-284
+    must_include:
+      - The first 28 days carry the highest mortality risk in childhood
+      - Fever (>38
+      - hypothermia (<36.5
+      - If fever or spreading redness develops, infant requires antibiotic therapy; this is life-threatening.
+    must_not_match:
+      - "newborn[^\\n]{0,120}(fever|hypothermia|poor feeding|breathing trouble)[^\\n]{0,120}(watch at home|wait and see)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Card intentionally uses supportive care only as a bridge to escalation because
+  the source guide treats neonatal danger signs as immediate or urgent.

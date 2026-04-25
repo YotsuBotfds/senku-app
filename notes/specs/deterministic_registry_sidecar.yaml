@@ -54,11 +54,184 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: seizure_syncope_panic_withdrawal_triage
+  predicate_name: _is_seizure_syncope_panic_withdrawal_triage_special_case
+  builder_name: _build_seizure_syncope_panic_withdrawal_triage_response
+  sample_prompt: i need to tell whether this is seizure syncope withdrawal or panic
+    what matters first
+  priority: 85
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: overdose_toxidrome_airway
+  predicate_name: _is_overdose_toxidrome_airway_special_case
+  builder_name: _build_overdose_toxidrome_airway_response
+  sample_prompt: they mixed pills and alcohol and are hard to wake up what matters
+    first
+  priority: 95
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: stimulant_toxidrome_emergency
+  predicate_name: _is_stimulant_toxidrome_emergency_special_case
+  builder_name: _build_stimulant_toxidrome_emergency_response
+  sample_prompt: they used stimulants and now have chest pain and paranoia what matters
+    first
+  priority: 105
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: serotonin_syndrome_emergency
+  predicate_name: _is_serotonin_syndrome_special_case
+  builder_name: _build_serotonin_syndrome_emergency_response
+  sample_prompt: started a new antidepressant combo and now i am shaking sweaty and
+    my legs keep jerking
+  priority: 96
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - antidepressant
+  - clonus
+  - fever
+- rule_id: diabetic_glucose_emergency
+  predicate_name: _is_diabetic_glucose_emergency_special_case
+  builder_name: _build_diabetic_glucose_emergency_response
+  sample_prompt: they are diabetic sweaty shaky and acting drunk what matters first
+  priority: 96
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: infection_delirium_danger
+  predicate_name: _is_infection_delirium_danger_special_case
+  builder_name: _build_infection_delirium_danger_response
+  sample_prompt: they have a high fever and are not making sense what matters first
+  priority: 89
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: respiratory_infection_distress_emergency
+  predicate_name: _is_respiratory_infection_distress_emergency_special_case
+  builder_name: _build_respiratory_infection_distress_emergency_response
+  sample_prompt: chest infection with fever and breathing so hard i cannot say full
+    sentences
+  priority: 93
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - cough
+  - fever
+  - breathing
+- rule_id: meningitis_rash_emergency
+  predicate_name: _is_meningitis_rash_emergency_query
+  builder_name: _build_meningitis_rash_emergency_response
+  sample_prompt: fever stiff neck and a purple rash that does not fade when pressed
+  priority: 91
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - fever
+  - purple rash
+  - stiff neck
+- rule_id: heat_illness_emergency
+  predicate_name: _is_heat_illness_emergency_special_case
+  builder_name: _build_heat_illness_emergency_response
+  sample_prompt: they stopped sweating on a hot day and are getting confused what
+    matters first
+  priority: 92
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: gi_bleed_emergency
+  predicate_name: _is_gi_bleed_emergency_special_case
+  builder_name: _build_gi_bleed_emergency_response
+  sample_prompt: they vomited something that looks like coffee grounds what matters
+    first
+  priority: 94
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: surgical_abdomen_emergency
+  predicate_name: _is_surgical_abdomen_emergency_query
+  builder_name: _build_surgical_abdomen_emergency_response
+  sample_prompt: right lower belly pain with fever and nausea and it hurts to walk
+  priority: 93
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: blunt_abdominal_trauma_internal_bleeding
+  predicate_name: _is_blunt_abdominal_trauma_internal_bleeding_special_case
+  builder_name: _build_blunt_abdominal_trauma_internal_bleeding_response
+  sample_prompt: belly pain after trauma with lightheadedness and fast heartbeat
+  priority: 97
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - trauma
+  - belly pain
+  - lightheaded
+- rule_id: severe_dehydration_gi_emergency
+  predicate_name: _is_severe_dehydration_gi_emergency_special_case
+  builder_name: _build_severe_dehydration_gi_emergency_response
+  sample_prompt: diarrhea all day and now too weak to stand and barely peeing
+  priority: 92
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: active_labor_delivery_emergency
+  predicate_name: _is_active_labor_delivery_emergency_special_case
+  builder_name: _build_active_labor_delivery_emergency_response
+  sample_prompt: baby is crowning at home and there is no time to get anywhere
+  priority: 108
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: postpartum_hemorrhage_emergency
+  predicate_name: _is_postpartum_hemorrhage_emergency_special_case
+  builder_name: _build_postpartum_hemorrhage_emergency_response
+  sample_prompt: delivered the baby an hour ago and now soaking pads and feeling faint
+  priority: 109
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: generic_severe_burn
   predicate_name: _is_generic_severe_burn_special_case
   builder_name: _build_generic_severe_burn_response
   sample_prompt: someone got burned badly what do i do
   priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: active_drowning_rescue
+  predicate_name: _is_active_drowning_rescue_special_case
+  builder_name: _build_active_drowning_rescue_response
+  sample_prompt: someone is drowning right now what do i do first
+  priority: 120
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: post_rescue_drowning_breathing
+  predicate_name: _is_post_rescue_drowning_breathing_special_case
+  builder_name: _build_post_rescue_drowning_breathing_response
+  sample_prompt: they seemed okay after being pulled from the water but now they are
+    coughing and short of breath
+  priority: 130
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
@@ -81,11 +254,51 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: button_battery_ingestion_emergency
+  predicate_name: _is_button_battery_ingestion_emergency_special_case
+  builder_name: _build_button_battery_ingestion_emergency_response
+  sample_prompt: toddler swallowed a hearing aid battery and now keeps drooling
+  priority: 124
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - battery
+  - swallowed
+- rule_id: hydrocarbon_ingestion_aspiration_emergency
+  predicate_name: _is_hydrocarbon_ingestion_aspiration_emergency_special_case
+  builder_name: _build_hydrocarbon_ingestion_aspiration_emergency_response
+  sample_prompt: toddler drank lamp oil and coughed right away
+  priority: 122
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: industrial_chemical_smell_boundary
+  predicate_name: _is_industrial_chemical_smell_boundary_query
+  builder_name: _build_industrial_chemical_smell_boundary_response
+  sample_prompt: a chemical smells wrong and may be part of an industrial process
+    do we stay in chemistry fundamentals or hand off immediately
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: mixed_cleaners_respiratory
   predicate_name: _is_mixed_cleaners_respiratory_special_case
   builder_name: _build_mixed_cleaners_respiratory_response
   sample_prompt: i mixed bleach and ammonia and now i am coughing and wheezing
   priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: chemical_fumes_panic_respiratory
+  predicate_name: _is_chemical_fumes_panic_respiratory_special_case
+  builder_name: _build_chemical_fumes_panic_respiratory_response
+  sample_prompt: i cannot tell if this is a panic attack or chemical fumes what matters
+    first
+  priority: 90
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
@@ -99,6 +312,39 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: eye_globe_injury_emergency
+  predicate_name: _is_eye_globe_injury_query
+  builder_name: _build_eye_globe_injury_response
+  sample_prompt: metal chip flew into my eye while grinding and it still feels stuck
+  priority: 95
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: retinal_detachment_eye_emergency
+  predicate_name: _is_retinal_detachment_eye_emergency_special_case
+  builder_name: _build_retinal_detachment_eye_emergency_response
+  sample_prompt: sudden flashes and floaters then a dark curtain over one eye
+  priority: 94
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - one eye
+  - vision loss
+  - floaters
+- rule_id: contact_lens_corneal_infection_emergency
+  predicate_name: _is_contact_lens_corneal_infection_emergency_special_case
+  builder_name: _build_contact_lens_corneal_infection_emergency_response
+  sample_prompt: slept in contact lenses and now one eye hurts badly and hates light
+  priority: 93
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - contact lens
+  - red eye
+  - light sensitivity
 - rule_id: active_electrical_odor_outlet
   predicate_name: _is_active_electrical_odor_outlet_special_case
   builder_name: _build_active_electrical_odor_outlet_response
@@ -108,6 +354,19 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: electrical_injury_red_flag
+  predicate_name: _is_electrical_injury_red_flag_special_case
+  builder_name: _build_electrical_injury_red_flag_response
+  sample_prompt: shocked by house current and passed out for a second but only have
+    a small burn
+  priority: 104
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - electrical shock
+  - passed out
+  - small burn
 - rule_id: roof_leak_near_electrical
   predicate_name: _is_roof_leak_near_electrical_special_case
   builder_name: _build_roof_leak_near_electrical_response
@@ -136,12 +395,83 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: exertional_syncope_chest_emergency
+  predicate_name: _is_exertional_syncope_chest_emergency_special_case
+  builder_name: _build_exertional_syncope_chest_emergency_response
+  sample_prompt: brief blackout during exertion with chest tightness and shortness
+    of breath
+  priority: 93
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: stroke_cardiac_overlap
   predicate_name: _is_stroke_cardiac_overlap_special_case
   builder_name: _build_stroke_cardiac_overlap_response
   sample_prompt: someone collapsed with chest pain one-sided weakness and slurred
     speech what is the first move
   priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: panic_hyperventilation_tingling
+  predicate_name: _is_panic_hyperventilation_tingling_special_case
+  builder_name: _build_panic_hyperventilation_tingling_response
+  sample_prompt: my heart is racing and my hands are tingling after hyperventilating
+    what do i do first
+  priority: 80
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: respiratory_distress_panic_overlap
+  predicate_name: _is_respiratory_distress_panic_overlap_special_case
+  builder_name: _build_respiratory_distress_panic_overlap_response
+  sample_prompt: my rescue inhaler is not helping and i am panicking what matters
+    first
+  priority: 75
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: asthma_severe_respiratory_distress
+  predicate_name: _is_asthma_severe_respiratory_distress_special_case
+  builder_name: _build_asthma_severe_respiratory_distress_response
+  sample_prompt: using the inhaler over and over and now the chest is nearly silent
+  priority: 92
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - asthma
+  - silent chest
+  - inhaler
+- rule_id: upper_airway_swelling_danger
+  predicate_name: _is_upper_airway_swelling_danger_special_case
+  builder_name: _build_upper_airway_swelling_danger_response
+  sample_prompt: i hear a harsh noisy breath and they look like their throat is closing
+    what matters first
+  priority: 88
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: deep_throat_airway_infection_emergency
+  predicate_name: _is_deep_throat_airway_infection_emergency_special_case
+  builder_name: _build_deep_throat_airway_infection_emergency_response
+  sample_prompt: throat pain and muffled hot potato voice with drooling
+  priority: 89
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: facial_swelling_anxiety_screen
+  predicate_name: _is_facial_swelling_anxiety_screen_special_case
+  builder_name: _build_facial_swelling_anxiety_screen_response
+  sample_prompt: their face is swelling and they think it is anxiety because breathing
+    is still okay what do i do first
+  priority: 87
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
@@ -156,11 +486,112 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: hematuria_urgent
+  predicate_name: _is_hematuria_query
+  builder_name: _build_hematuria_urgent_response
+  sample_prompt: blood in the urine without fever when is this urgent
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: kidney_infection_urosepsis_emergency
+  predicate_name: _is_kidney_infection_urosepsis_emergency_special_case
+  builder_name: _build_kidney_infection_urosepsis_emergency_response
+  sample_prompt: burning pee turned into flank pain fever and confusion tonight
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - flank pain
+  - fever
+  - urinary symptoms
+- rule_id: ectopic_pregnancy_emergency
+  predicate_name: _is_ectopic_pregnancy_emergency_special_case
+  builder_name: _build_ectopic_pregnancy_emergency_response
+  sample_prompt: early pregnancy spotting and one-sided lower belly pain and shoulder
+    pain
+  priority: 101
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - pregnant
+  - one-sided pain
+  - dizziness
+- rule_id: late_pregnancy_hypertensive_emergency
+  predicate_name: _is_late_pregnancy_hypertensive_emergency_special_case
+  builder_name: _build_late_pregnancy_hypertensive_emergency_response
+  sample_prompt: 34 weeks pregnant with severe headache and flashing lights in vision
+  priority: 102
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - pregnant
+  - severe headache
+  - vision
+- rule_id: major_blood_loss_shock
+  predicate_name: _is_major_blood_loss_shock_query
+  builder_name: _build_major_blood_loss_shock_response
+  sample_prompt: they are pale and dizzy after losing blood what should i do first
+  priority: 85
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: anaphylaxis_red_zone
+  predicate_name: _is_anaphylaxis_red_zone_special_case
+  builder_name: _build_anaphylaxis_red_zone_response
+  sample_prompt: bee sting and now the throat feels tight what do i do first
+  priority: 90
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: medication_allergy_swelling
+  predicate_name: _is_medication_allergy_swelling_special_case
+  builder_name: _build_medication_allergy_swelling_response
+  sample_prompt: facial swelling after taking amoxicillin do i stop and call now
+  priority: 95
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: medicine_hives_skin_only
+  predicate_name: _is_medicine_hives_skin_only_special_case
+  builder_name: _build_medicine_hives_skin_only_response
+  sample_prompt: hives after a new medicine is this anaphylaxis or a mild rash
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: soap_rash_breathing_fine
+  predicate_name: _is_soap_rash_breathing_fine_special_case
+  builder_name: _build_soap_rash_breathing_fine_response
+  sample_prompt: itchy rash after soap but breathing is fine do i still need emergency
+    care
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: head_injury_clear_fluid
   predicate_name: _is_head_injury_clear_fluid_special_case
   builder_name: _build_head_injury_clear_fluid_response
   sample_prompt: clear fluid is coming from the nose after a fall what should i do
     right now
+  priority: 85
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: adult_head_injury_red_flag
+  predicate_name: _is_adult_head_injury_red_flag_special_case
+  builder_name: _build_adult_head_injury_red_flag_response
+  sample_prompt: i hit my head and keep vomiting what do i do first
   priority: 100
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
@@ -194,6 +625,46 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: limb_fracture_neurovascular_emergency
+  predicate_name: _is_limb_fracture_neurovascular_emergency_special_case
+  builder_name: _build_limb_fracture_neurovascular_emergency_response
+  sample_prompt: broken arm looks bent wrong and the fingers are numb and pale
+  priority: 112
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: crush_compartment_syndrome_emergency
+  predicate_name: _is_crush_compartment_query
+  builder_name: _build_crush_compartment_syndrome_emergency_response
+  sample_prompt: pain out of proportion and the leg is getting tighter after a crush
+    injury
+  priority: 114
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - crush
+  - pain
+  - tight
+- rule_id: spinal_trauma_neurologic_emergency
+  predicate_name: _is_spinal_trauma_neurologic_emergency_special_case
+  builder_name: _build_spinal_trauma_neurologic_emergency_response
+  sample_prompt: fell off a ladder and now both legs feel weak and tingly
+  priority: 116
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: infected_wound_spreading_emergency
+  predicate_name: _is_infected_wound_spreading_emergency_special_case
+  builder_name: _build_infected_wound_spreading_emergency_response
+  sample_prompt: cut on my hand yesterday and now a red streak is moving up the arm
+  priority: 110
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: generic_broken_arm
   predicate_name: _is_generic_broken_arm_special_case
   builder_name: _build_generic_broken_arm_response
@@ -212,6 +683,16 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: wet_cold_hypothermia_emergency
+  predicate_name: _is_wet_cold_hypothermia_emergency_special_case
+  builder_name: _build_wet_cold_hypothermia_emergency_response
+  sample_prompt: fell in cold water and now i cannot stop shivering and thinking feels
+    slow
+  priority: 104
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: generic_animal_bite
   predicate_name: _is_generic_animal_bite_special_case
   builder_name: _build_generic_animal_bite_response
@@ -221,6 +702,28 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: high_risk_animal_bite_emergency
+  predicate_name: _is_high_risk_animal_bite_emergency_special_case
+  builder_name: _build_high_risk_animal_bite_emergency_response
+  sample_prompt: cat bite over the knuckle and now the hand is swelling
+  priority: 105
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: child_aspirated_foreign_body_emergency
+  predicate_name: _is_child_aspirated_foreign_body_emergency_special_case
+  builder_name: _build_child_aspirated_foreign_body_emergency_response
+  sample_prompt: toddler choked on a peanut then stopped choking but now keeps coughing
+    and wheezing
+  priority: 106
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - child
+  - choked
+  - wheezing
 - rule_id: generic_jellyfish
   predicate_name: _is_generic_jellyfish_special_case
   builder_name: _build_generic_jellyfish_response
@@ -263,6 +766,26 @@ rules:
   - sand
   - water
   - filter
+- rule_id: indoor_combustion_co_exposure
+  predicate_name: _is_indoor_combustion_co_exposure_special_case
+  builder_name: _build_indoor_combustion_co_exposure_response
+  sample_prompt: we all woke up with headache and nausea after sleeping with the heater
+    on what matters first
+  priority: 95
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: smoke_airway_burn_danger
+  predicate_name: _is_smoke_airway_burn_danger_special_case
+  builder_name: _build_smoke_airway_burn_danger_response
+  sample_prompt: there is soot in the mouth and nose after smoke exposure what do
+    i do first
+  priority: 115
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: zero_resource_knife
   predicate_name: _is_zero_resource_knife_special_case
   builder_name: _build_zero_resource_knife_response
@@ -847,6 +1370,64 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: psychosis_paranoia_immediate_safety
+  predicate_name: _is_psychosis_paranoia_immediate_safety_special_case
+  builder_name: _build_psychosis_paranoia_immediate_safety_response
+  sample_prompt: someone is hearing voices and getting paranoid what matters first
+  priority: 90
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: mania_no_sleep_immediate_safety
+  predicate_name: _is_mania_no_sleep_immediate_safety_special_case
+  builder_name: _build_mania_no_sleep_immediate_safety_response
+  sample_prompt: has not slept for 3 days and is talking nonstop and making risky
+    plans
+  priority: 91
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: alcohol_withdrawal_agitated
+  predicate_name: _is_alcohol_withdrawal_agitated_special_case
+  builder_name: _build_alcohol_withdrawal_agitated_response
+  sample_prompt: they stopped drinking and now they are shaking and agitated what
+    do i do first
+  priority: 90
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: trauma_dissociation_after_violence
+  predicate_name: _is_trauma_dissociation_after_violence_special_case
+  builder_name: _build_trauma_dissociation_after_violence_response
+  sample_prompt: they keep dissociating after a violent event what matters first
+  priority: 90
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: suicide_immediate_safety
+  predicate_name: _is_suicide_immediate_safety_special_case
+  builder_name: _build_suicide_immediate_safety_response
+  sample_prompt: they say they want to die and already have pills ready what do i
+    do first
+  priority: 110
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: violence_to_others_immediate_safety
+  predicate_name: _is_violence_to_others_immediate_safety_special_case
+  builder_name: _build_violence_to_others_immediate_safety_response
+  sample_prompt: they are talking about killing a person and they have a weapon what
+    matters first
+  priority: 130
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
 - rule_id: recent_partner_loss_shutdown
   predicate_name: _is_recent_partner_loss_shutdown_special_case
   builder_name: _build_recent_partner_loss_shutdown_response
@@ -1076,7 +1657,7 @@ rules:
   predicate_name: _is_animal_acting_strange_special_case
   builder_name: _build_animal_acting_strange_response
   sample_prompt: theres a raccoon acting strange in my yard foaming at the mouth
-  priority: 100
+  priority: 111
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.

@@ -176,13 +176,7 @@ fun PaperAnswerCard(
                             )
                         }
                         Text(
-                            text = when {
-                                content.uncertainFit -> "UNSURE FIT"
-                                content.evidence == Evidence.Strong -> "STRONG EVIDENCE"
-                                content.evidence == Evidence.Moderate -> "MODERATE EVIDENCE"
-                                content.abstain -> "NO MATCH"
-                                else -> "LIMITED EVIDENCE"
-                            },
+                            text = compactEvidenceLabel(content),
                             style = typography.monoCaps.copy(
                                 fontSize = 10.sp,
                                 lineHeight = 12.sp,
@@ -386,6 +380,23 @@ private fun evidenceToneColor(
         Evidence.Strong -> if (usePaperTones) colors.paperOk else colors.ok
         Evidence.Moderate -> if (usePaperTones) colors.paperWarn else colors.warn
         Evidence.None -> if (usePaperTones) colors.paperDanger else colors.danger
+    }
+}
+
+private fun compactEvidenceLabel(content: AnswerContent): String {
+    return when (content.answerSurfaceLabel) {
+        AnswerSurfaceLabel.DeterministicRule -> "DETERMINISTIC"
+        AnswerSurfaceLabel.LimitedFit -> "UNSURE FIT"
+        AnswerSurfaceLabel.Abstain -> "NO MATCH"
+        AnswerSurfaceLabel.ReviewedCardEvidence -> "REVIEWED EVIDENCE"
+        AnswerSurfaceLabel.GeneratedEvidence,
+        AnswerSurfaceLabel.Unknown -> when {
+            content.uncertainFit -> "UNSURE FIT"
+            content.evidence == Evidence.Strong -> "STRONG EVIDENCE"
+            content.evidence == Evidence.Moderate -> "MODERATE EVIDENCE"
+            content.abstain -> "NO MATCH"
+            else -> "LIMITED EVIDENCE"
+        }
     }
 }
 

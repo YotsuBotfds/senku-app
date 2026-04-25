@@ -25,6 +25,10 @@ from metadata_validation import (
     report_has_errors,
     validate_guide_records,
 )
+from mobile_pack_answer_cards import (
+    insert_answer_cards as _insert_answer_cards,
+    prepare_answer_cards_for_mobile_pack as _prepare_answer_cards_for_mobile_pack,
+)
 from token_estimation import estimate_tokens
 
 
@@ -1415,6 +1419,7 @@ def export_mobile_pack(
     vector_dtype: str = "float16",
     mobile_top_k: int = DEFAULT_MOBILE_TOP_K,
     source=None,
+    answer_cards: Sequence[dict] | None = None,
     sqlite_filename: str = DEFAULT_SQLITE_FILENAME,
     manifest_filename: str = DEFAULT_MANIFEST_FILENAME,
 ):
@@ -1452,6 +1457,10 @@ def export_mobile_pack(
     related_link_count = sum(
         1 for guide in guide_records for item in _split_csv_field(guide.related)
     )
+    exported_answer_cards = _prepare_answer_cards_for_mobile_pack(
+        guide_by_id,
+        answer_cards=answer_cards,
+    )
 
     vector_dimension = None
     vector_writer = None
@@ -1464,6 +1473,7 @@ def export_mobile_pack(
             _create_mobile_schema(conn)
             _insert_guides(conn, guide_records, guide_by_slug, guide_by_id, guide_metadata_by_id)
             _insert_deterministic_rules(conn, rule_records)
+            _insert_answer_cards(conn, exported_answer_cards)
 
             for batch in chunk_batches:
                 rows = list(batch)
@@ -1517,6 +1527,7 @@ def export_mobile_pack(
         "guides": len(guide_records),
         "chunks": chunk_count,
         "deterministic_rules": len(rule_records),
+        "answer_cards": len(exported_answer_cards),
         "guide_related_links": related_link_count,
         "retrieval_metadata_guides": sum(
             1
@@ -1541,6 +1552,7 @@ def export_mobile_pack(
                 "guide_count": str(counts["guides"]),
                 "chunk_count": str(counts["chunks"]),
                 "deterministic_rule_count": str(counts["deterministic_rules"]),
+                "answer_card_count": str(counts["answer_cards"]),
                 "retrieval_metadata_guide_count": str(counts["retrieval_metadata_guides"]),
                 "sqlite_filename": sqlite_path.name,
                 "vector_filename": vector_path.name,
@@ -1668,6 +1680,48 @@ def _create_mobile_schema(conn):
             builder_name TEXT NOT NULL,
             sample_prompt TEXT NOT NULL
         );
+
+        CREATE TABLE answer_cards (
+            card_id TEXT PRIMARY KEY,
+            guide_id TEXT NOT NULL,
+            slug TEXT,
+            title TEXT,
+            risk_tier TEXT,
+            evidence_owner TEXT,
+            review_status TEXT,
+            runtime_citation_policy TEXT,
+            routine_boundary TEXT,
+            acceptable_uncertain_fit TEXT,
+            notes TEXT
+        );
+
+        CREATE INDEX answer_cards_guide_id_idx ON answer_cards(guide_id);
+        CREATE INDEX answer_cards_review_status_idx ON answer_cards(review_status);
+
+        CREATE TABLE answer_card_clauses (
+            card_id TEXT NOT NULL,
+            clause_kind TEXT NOT NULL,
+            ordinal INTEGER NOT NULL,
+            text TEXT NOT NULL,
+            trigger_terms_json TEXT,
+            PRIMARY KEY (card_id, clause_kind, ordinal)
+        );
+
+        CREATE INDEX answer_card_clauses_card_idx ON answer_card_clauses(card_id);
+        CREATE INDEX answer_card_clauses_kind_idx ON answer_card_clauses(clause_kind);
+
+        CREATE TABLE answer_card_sources (
+            card_id TEXT NOT NULL,
+            source_guide_id TEXT NOT NULL,
+            slug TEXT,
+            title TEXT,
+            sections_json TEXT NOT NULL,
+            is_primary INTEGER NOT NULL,
+            PRIMARY KEY (card_id, source_guide_id)
+        );
+
+        CREATE INDEX answer_card_sources_card_idx ON answer_card_sources(card_id);
+        CREATE INDEX answer_card_sources_guide_idx ON answer_card_sources(source_guide_id);
 
         CREATE TABLE chunks (
             row_id INTEGER PRIMARY KEY,
@@ -1953,6 +2007,9 @@ def _build_manifest(
                 "guides",
                 "guide_related",
                 "deterministic_rules",
+                "answer_cards",
+                "answer_card_clauses",
+                "answer_card_sources",
                 "chunks",
                 "lexical_chunks_fts",
                 "lexical_chunks_fts4",
@@ -1972,6 +2029,43 @@ def _build_manifest(
                     "predicate_name",
                     "builder_name",
                     "sample_prompt",
+                ],
+                "metadata_only": True,
+            },
+            "answer_cards": {
+                "columns": [
+                    "card_id",
+                    "guide_id",
+                    "slug",
+                    "title",
+                    "risk_tier",
+                    "evidence_owner",
+                    "review_status",
+                    "runtime_citation_policy",
+                    "routine_boundary",
+                    "acceptable_uncertain_fit",
+                    "notes",
+                ],
+                "metadata_only": True,
+            },
+            "answer_card_clauses": {
+                "columns": [
+                    "card_id",
+                    "clause_kind",
+                    "ordinal",
+                    "text",
+                    "trigger_terms_json",
+                ],
+                "metadata_only": True,
+            },
+            "answer_card_sources": {
+                "columns": [
+                    "card_id",
+                    "source_guide_id",
+                    "slug",
+                    "title",
+                    "sections_json",
+                    "is_primary",
                 ],
                 "metadata_only": True,
             },

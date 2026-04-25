@@ -290,6 +290,18 @@ public final class OfflineAnswerEngine {
             return preparedAnswer;
         }
 
+        PreparedAnswer reviewedCardAnswer = tryPrepareReviewedCardRuntimeAnswer(
+            context,
+            repository,
+            trimmedQuery,
+            sessionUsed,
+            prepareStartedAtMs
+        );
+        if (reviewedCardAnswer != null) {
+            logPreparedFinalModeIfReady(reviewedCardAnswer);
+            return reviewedCardAnswer;
+        }
+
         HostInferenceConfig.Settings inferenceSettings = HostInferenceConfig.resolve(context);
 
         if (!inferenceSettings.enabled && modelFile == null) {
@@ -471,6 +483,29 @@ public final class OfflineAnswerEngine {
         );
     }
 
+    private static PreparedAnswer tryPrepareReviewedCardRuntimeAnswer(
+        Context context,
+        PackRepository repository,
+        String query,
+        boolean sessionUsed,
+        long prepareStartedAtMs
+    ) {
+        AnswerCardRuntime.AnswerPlan plan = AnswerCardRuntime.tryPlan(context, repository, query);
+        if (plan == null) {
+            return null;
+        }
+        String answerBody = PromptBuilder.buildAnswerBody(plan.answerText, plan.sources, 0);
+        return PreparedAnswer.deterministic(
+            query,
+            answerBody,
+            plan.sources,
+            sessionUsed,
+            plan.ruleId,
+            prepareStartedAtMs,
+            plan.reviewedCardMetadata
+        );
+    }
+
     public static AnswerRun generate(Context context, File modelFile, PreparedAnswer prepared)
         throws Exception {
         return generate(context, modelFile, prepared, null);
@@ -513,7 +548,8 @@ public final class OfflineAnswerEngine {
                 "Offline answer | deterministic | instant",
                 prepared.ruleId,
                 latencyBreakdown,
-                prepared.confidenceLabel
+                prepared.confidenceLabel,
+                prepared.reviewedCardMetadata
             );
             logPreparedFinalModeIfReady(prepared);
             rememberSessionLatencyBreakdown(answerRun);
@@ -2398,6 +2434,7 @@ public final class OfflineAnswerEngine {
         public final ConfidenceLabel confidenceLabel;
         public final boolean hostBackendUsed;
         public final boolean hostFallbackUsed;
+        public final ReviewedCardMetadata reviewedCardMetadata;
 
         AnswerRun(
             String query,
@@ -2456,6 +2493,39 @@ public final class OfflineAnswerEngine {
                 null,
                 false,
                 false
+            );
+        }
+
+        AnswerRun(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            long elapsedMs,
+            boolean sessionUsed,
+            boolean deterministic,
+            boolean abstain,
+            String subtitle,
+            String ruleId,
+            LatencyBreakdown latencyBreakdown,
+            ConfidenceLabel confidenceLabel,
+            ReviewedCardMetadata reviewedCardMetadata
+        ) {
+            this(
+                query,
+                answerBody,
+                sources,
+                elapsedMs,
+                sessionUsed,
+                deterministic,
+                abstain,
+                subtitle,
+                ruleId,
+                latencyBreakdown,
+                confidenceLabel,
+                null,
+                false,
+                false,
+                reviewedCardMetadata
             );
         }
 
@@ -2601,6 +2671,42 @@ public final class OfflineAnswerEngine {
             boolean hostBackendUsed,
             boolean hostFallbackUsed
         ) {
+            this(
+                query,
+                answerBody,
+                sources,
+                elapsedMs,
+                sessionUsed,
+                deterministic,
+                abstain,
+                subtitle,
+                ruleId,
+                latencyBreakdown,
+                confidenceLabel,
+                mode,
+                hostBackendUsed,
+                hostFallbackUsed,
+                ReviewedCardMetadata.empty()
+            );
+        }
+
+        AnswerRun(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            long elapsedMs,
+            boolean sessionUsed,
+            boolean deterministic,
+            boolean abstain,
+            String subtitle,
+            String ruleId,
+            LatencyBreakdown latencyBreakdown,
+            ConfidenceLabel confidenceLabel,
+            AnswerMode mode,
+            boolean hostBackendUsed,
+            boolean hostFallbackUsed,
+            ReviewedCardMetadata reviewedCardMetadata
+        ) {
             this.query = query == null ? "" : query;
             this.answerBody = answerBody == null ? "" : answerBody;
             this.sources = sources == null ? Collections.emptyList() : new ArrayList<>(sources);
@@ -2615,6 +2721,7 @@ public final class OfflineAnswerEngine {
             this.confidenceLabel = normalizeConfidenceLabel(confidenceLabel, deterministic, abstain);
             this.hostBackendUsed = hostBackendUsed;
             this.hostFallbackUsed = hostFallbackUsed;
+            this.reviewedCardMetadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
         }
     }
 
@@ -2665,6 +2772,7 @@ public final class OfflineAnswerEngine {
         public final String queryClass;
         public final ConfidenceLabel confidenceLabel;
         public final boolean safetyCritical;
+        public final ReviewedCardMetadata reviewedCardMetadata;
         boolean finalModeEmitted;
 
         private PreparedAnswer(
@@ -2687,6 +2795,50 @@ public final class OfflineAnswerEngine {
             ConfidenceLabel confidenceLabel,
             boolean safetyCritical
         ) {
+            this(
+                query,
+                sources,
+                sessionUsed,
+                deterministic,
+                abstain,
+                mode,
+                answerBody,
+                ruleId,
+                startedAtMs,
+                inferenceSettings,
+                systemPrompt,
+                prompt,
+                retrievalMs,
+                rerankMs,
+                promptMs,
+                queryClass,
+                confidenceLabel,
+                safetyCritical,
+                ReviewedCardMetadata.empty()
+            );
+        }
+
+        private PreparedAnswer(
+            String query,
+            List<SearchResult> sources,
+            boolean sessionUsed,
+            boolean deterministic,
+            boolean abstain,
+            AnswerMode mode,
+            String answerBody,
+            String ruleId,
+            long startedAtMs,
+            HostInferenceConfig.Settings inferenceSettings,
+            String systemPrompt,
+            String prompt,
+            long retrievalMs,
+            long rerankMs,
+            long promptMs,
+            String queryClass,
+            ConfidenceLabel confidenceLabel,
+            boolean safetyCritical,
+            ReviewedCardMetadata reviewedCardMetadata
+        ) {
             this.query = query == null ? "" : query;
             this.sources = sources == null ? Collections.emptyList() : new ArrayList<>(sources);
             this.sessionUsed = sessionUsed;
@@ -2705,6 +2857,7 @@ public final class OfflineAnswerEngine {
             this.queryClass = queryClass == null ? "" : queryClass;
             this.confidenceLabel = normalizeConfidenceLabel(confidenceLabel, deterministic, abstain);
             this.safetyCritical = safetyCritical;
+            this.reviewedCardMetadata = ReviewedCardMetadata.normalize(reviewedCardMetadata);
         }
 
         private static PreparedAnswer deterministic(
@@ -2743,6 +2896,26 @@ public final class OfflineAnswerEngine {
             String ruleId,
             long startedAtMs
         ) {
+            return deterministic(
+                query,
+                answerBody,
+                sources,
+                sessionUsed,
+                ruleId,
+                startedAtMs,
+                ReviewedCardMetadata.empty()
+            );
+        }
+
+        private static PreparedAnswer deterministic(
+            String query,
+            String answerBody,
+            List<SearchResult> sources,
+            boolean sessionUsed,
+            String ruleId,
+            long startedAtMs,
+            ReviewedCardMetadata reviewedCardMetadata
+        ) {
             return new PreparedAnswer(
                 query,
                 sources,
@@ -2761,7 +2934,8 @@ public final class OfflineAnswerEngine {
                 0L,
                 LatencyPanel.QUERY_CLASS_DETERMINISTIC,
                 ConfidenceLabel.HIGH,
-                isSafetyCriticalQuery(query, sources)
+                isSafetyCriticalQuery(query, sources),
+                reviewedCardMetadata
             );
         }
 

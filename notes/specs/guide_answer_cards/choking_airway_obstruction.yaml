@@ -1,0 +1,106 @@
+card_id: choking_airway_obstruction
+guide_id: GD-232
+slug: first-aid
+title: "First Aid & Emergency Response"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Adult, child, or infant may be choking on food or an object.
+  - Person cannot speak, cannot cough, cannot breathe, or is turning blue.
+  - Infant cannot cry, cannot cough, or cannot breathe during feeding or object exposure.
+required_first_actions:
+  - If the person is coughing and talking, keep them upright, encourage coughing, and watch closely.
+  - If the person cannot speak, cough, or breathe, call for emergency help and start age-appropriate choking rescue.
+  - If the choking person collapses, lower them to the floor, call for help/AED, start CPR, and remove only a clearly visible object.
+conditional_required_actions:
+  - trigger_terms:
+      - adult
+      - older child
+      - teen
+      - teenager
+    required_actions:
+      - If an adult or older child cannot speak, cough, or breathe, call for emergency help and start abdominal thrusts.
+  - trigger_terms:
+      - infant
+      - baby
+      - newborn
+      - under 1
+      - under one
+    required_actions:
+      - If an infant cannot cry, cough, or breathe, use 5 back blows followed by 5 chest thrusts.
+first_actions:
+  - For a conscious adult or older child with complete obstruction, stand behind them and repeat quick upward abdominal thrusts until the object clears or they become unconscious.
+  - Use chest thrusts instead of abdominal thrusts when the person is pregnant or too large for abdominal thrusts.
+  - For an infant under 1 year, alternate 5 back blows and 5 chest thrusts until the object clears or the infant becomes unresponsive.
+urgent_red_flags:
+  - Cannot speak, cough, or breathe.
+  - Blue lips or cyanosis.
+  - Collapse or unresponsiveness.
+  - Severe airway obstruction, stridor, or inability to speak.
+forbidden_advice:
+  - Do not do blind finger sweeps.
+  - Do not start abdominal thrusts when an adult or older child is still coughing and talking.
+  - Do not perform abdominal thrusts on infants.
+  - Do not delay CPR after collapse to keep searching blindly for an object.
+do_not:
+  - Do not put fingers into the mouth unless the object is clearly visible.
+  - Do not feed or continue feeding an infant who is gagging or crying strongly; stop feeding and watch.
+routine_boundary: >
+  Any inability to speak, cough, breathe, cry, or any cyanosis/collapse is an
+  airway emergency, not a routine feeding or cough question.
+acceptable_uncertain_fit: >
+  If the prompt does not clearly distinguish coughing/talking from complete
+  obstruction, answer with the branch: encourage coughing if air is moving, but
+  start emergency choking actions if speech/cough/breathing is absent.
+clarifying_questions:
+  - Can they speak, cry, or cough forcefully right now?
+  - Are they breathing or turning blue?
+  - Is the patient under 1 year old, pregnant, or too large for abdominal thrusts?
+citation_ids:
+  - first-aid-choking-response
+  - first-aid-infant-choking
+  - first-aid-life-threatening-signs
+source_sections:
+  - guide: GD-232
+    slug: first-aid
+    title: "First Aid & Emergency Response"
+    sections:
+      - "#choking"
+      - "#choking > Choking Response"
+      - "#choking > Infant Choking"
+      - "Recognition & Assessment of Life-Threatening Conditions > Life-Threatening Signs Requiring Immediate Intervention"
+  - guide: GD-298
+    slug: pediatric-emergency-medicine
+    title: "Pediatric Emergency Medicine"
+    sections:
+      - "#airway-anatomy"
+      - "Foreign Body Airway Obstruction"
+  - guide: GD-284
+    slug: infant-child-care
+    title: "Infant & Child Care (Birth to Age 5)"
+    sections:
+      - "Safety & Injury Prevention > Suffocation & Choking Prevention"
+      - "Childhood Illness Recognition & Response > Severe Respiratory Distress"
+  - guide: GD-617
+    slug: pediatric-emergencies-field
+    title: "Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress"
+    sections:
+      - "Airway Obstruction / Choking"
+      - "Respiratory Distress Assessment"
+source_invariants:
+  - name: no blind finger sweeps in pediatric airway support
+    guide: GD-617
+    must_include:
+      - do not perform a blind finger sweep
+      - remove only a clearly visible object
+    must_not_match:
+      - "not visible:\\s*finger sweep"
+      - "if suspected but not visible:\\s*finger sweep"
+      - "finger sweep of mouth/throat"
+review_status: pilot_reviewed
+notes: >
+  Pilot card preserves the guide's branch logic for partial versus complete
+  airway obstruction and separates infant actions from adult/older-child actions.
+  GD-232 remains the first-aid owner; pediatric emergency, infant-child-care, and
+  pediatric field-emergency guides are supporting owner-family evidence for
+  child or infant choking prompts.

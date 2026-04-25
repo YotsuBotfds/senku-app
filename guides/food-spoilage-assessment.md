@@ -33,6 +33,16 @@ aliases:
   - should I keep or toss this
   - safe to eat or toss
   - toss or salvage
+  - food smells different after drying
+  - preserved food smells different after moving containers
+  - smell changed after repackaging
+  - storage trouble or spoilage first
+  - do not taste test off smelling food
+  - spit and wait food safety
+  - mold on jam
+  - scrape mold off jam
+  - mold around jam lid
+  - surface film on jam
 related:
   - food-preservation
   - fermentation-pickling
@@ -72,9 +82,11 @@ If you notice any of these, do not eat it:
 
 - Bulging can, leaking jar, broken seal, or foamy spurting when opened
 - Sour, rancid, rotten, fermented, or “off” smell
+- A preserved or dried food that smells different after drying, repackaging, or moving to another container
 - Slimy, sticky, fuzzy, or unusually soft texture
 - Mold on soft foods, moist foods, bread, leftovers, or cooked dishes
 - Meat, dairy, or leftovers held too warm for too long
+- Cooked rice, pasta, or other leftovers after a power outage, especially if they taste off, smell off, or were lukewarm for hours
 - Unknown cloudiness, odd gas, or pressure in canned food
 - Pest contamination in flour, grain, or dry goods when infestation is heavy
 
@@ -82,7 +94,11 @@ If your real question is about preventing contamination during raw-meat handling
 
 If the decision is really **safe to eat vs toss**, keep the boundary narrow: salvage only works for hard, dry, localized damage with no off smell and no package failure. Soft, wet, warm, mold-spreading, or seal-compromised food goes to discard.
 
-**Intentional fermentation is the exception:** sauerkraut, kimchi, brined pickles, vinegar ferments, kefir, and other foods that are supposed to sour, bubble, or smell yeasty should route to `fermentation-science` or `fermentation-science-applied` instead of staying in spoilage assessment. Unplanned fermentation in leftovers, canned food, opened dairy, meat, or other ordinary storage food is still a discard signal.
+If a storage question includes a **changed smell** after drying or a container move, answer the spoilage question first. Containers, jars, cloth bags, desiccants, and cooler rooms can prevent future problems, but they do not make off-smelling food safe.
+
+Do not use taste, spit-and-wait, mouth-burn, or "tiny sample" checks to decide whether questionable food is safe. If smell, mold, package failure, slime, gas, or pressure is the reason for doubt, discard the food.
+
+**Intentional fermentation is the exception:** sauerkraut, kimchi, brined pickles, vinegar ferments, kefir, and other foods that are supposed to sour, bubble, or smell yeasty should route to `fermentation-science` or `fermentation-science-applied` instead of staying in spoilage assessment. Unplanned fermentation in leftovers, canned food, opened dairy, meat, jam, jelly, fruit spreads, or other ordinary storage food is still a discard signal.
 
 If you are searching for phrases like "can I still eat this", "bulging can", "meat left out overnight", "cut mold off cheese", "should I toss this", or "what should I do with this food", this guide is the right first stop.
 
@@ -102,6 +118,10 @@ Start with what you can see, smell, and feel. Do **not** taste something to “t
 - **Rotten smell:** Strong discard signal for meat, fish, eggs, and cooked foods.
 - **Rancid smell:** Common in old nuts, oils, nut butters, seed meals, and flour with high fat content.
 - **Alcohol, yeast, or fermentation smell:** Unplanned fermentation means discard unless the food is specifically meant to ferment.
+
+If a food smells off or smells different after repackaging, do not taste-test it. Treat the smell change as the safety decision and discard unless it is an intentional ferment with expected odor.
+
+If cooked rice tastes off after a power outage, stop eating it and discard it. Do not use smell or another taste as the main test; cooked rice can become unsafe after warm holding even when sensory signs are weak.
 
 ### Texture
 
@@ -135,9 +155,9 @@ Packaging is part of food safety. If the package fails, the food is no longer re
 
 ### Canned Food Warning Signs
 
-For canned food, **bulging is enough to discard**. Do not open it indoors if it is visibly swollen and be careful with any leaking or spurting content.
+For canned food, **bulging or leaking is enough to discard**. Do not open it indoors if it is visibly swollen or leaking, and be careful with any spurting content.
 
-- **Bulging cans:** Discard. Do not taste.
+- **Bulging or leaking cans:** Discard unopened if possible. Do not open, taste, or sniff closely.
 - **Cloudy canned food:** If the can is otherwise intact, the cloudiness alone is not always decisive, but if there is gas, pressure, odd smell, leaking, or damaged seal, discard.
 - **Sputtering or spurting when opened:** Strong warning sign of gas production. Discard.
 - **Broken seal on home-canned food:** Discard unless you know exactly why it failed and have verified safe processing, which most people cannot do in the moment.
@@ -168,6 +188,8 @@ Mold is not always equally dangerous, but the food type matters.
 - Bread and baked goods with mold
 - Soft fruits with mold
 - Jams, jellies, sauces, yogurt, sour cream, and soft dairy with mold
+- Jam, jelly, fruit spreads, and soft preserves with mold around the lid, rim, seal, or surface film
+- Sugary preserves, fruit spreads, and opened canned fruit with mold or seal concerns
 - Cooked leftovers with mold
 - Crumbly, shredded, or sliced cheeses with mold
 - Any food where mold is deep, widespread, or accompanied by an off smell
@@ -181,6 +203,8 @@ Mold is not always equally dangerous, but the food type matters.
 ### Not Worth Stretching
 
 Do not try to “save” moldy foods just because they still look mostly fine. If mold shows up on soft food, the contamination is often not just on the surface.
+
+Jam and soft preserves are discard-first. Do not scrape, skim, or treat them like a hard surface; building mold cleanup rules and fermentation film rules do not apply to jam, jelly, fruit spreads, or opened canned fruit.
 
 </section>
 
@@ -214,6 +238,7 @@ Leftovers are safe only when they are cooled quickly and kept cold.
 - Food sat at room temperature too long
 - A cooler or fridge lost power and food warmed up
 - Soup, stew, rice, pasta, meat, or dairy stayed lukewarm for hours
+- Cooked rice, pasta, or grains were in the fridge/cooler during a power outage and now taste off, smell off, or were above refrigerator temperature for hours
 - The container feels warm to the touch and the food was stored in that condition for an extended time
 
 ### Safer Handling
@@ -272,6 +297,7 @@ Fresh produce can sometimes be salvaged, but only when the damage is minor and l
 
 - **Soft potatoes:** If the potato is only slightly softened, not moldy, not sprouting heavily, and not shriveled or rotten, it may still be usable after trimming minor damaged areas. If it is wet, slimy, deeply green, or rotten, discard.
 - **Apples or firm fruit:** Small bruises or soft spots can often be cut away if the rest is firm and smells normal.
+- **Canned fruit:** Soft pieces are not automatically unsafe after opening, but soft spots plus a bulging can, leakage, broken seal, pressure, cloudiness, or changed smell should route back to canned-food spoilage and discard-first.
 - **Onions and squash:** Surface damage can sometimes be trimmed if the interior is sound.
 
 ### Green Potatoes

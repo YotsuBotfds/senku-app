@@ -1,0 +1,97 @@
+card_id: abdominal_internal_bleeding
+guide_id: GD-380
+slug: acute-abdominal-emergencies
+title: "Acute Abdominal Emergencies & Surgical Decision-Making"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Abdominal trauma or impact with belly pain, hard or swollen belly, guarding, vomiting, dizziness, pale clammy skin, rapid pulse, confusion, fainting, or collapse.
+  - Abdominal pain or injury with shock signs, fainting, dizziness, pale clammy skin, rapid pulse, confusion, or collapse.
+  - Vomiting blood, coffee-ground vomit, black tarry stool, or rectal blood with dizziness, weakness, pale skin, fainting, or collapse.
+  - Possible pregnancy with one-sided lower belly pain, vaginal bleeding, shoulder-tip pain, dizziness, or fainting.
+required_first_actions:
+  - Check for signs of serious internal injury or signs of shock.
+  - Urgent medical evaluation, requiring urgent stabilization, higher-level medical response, or urgent medical evacuation.
+first_actions:
+  - Keep the patient NPO except clinician-directed medicines or tiny sips if needed for transport instructions.
+  - Pair abdominal emergency triage with first-aid stabilization if the patient is collapsing or in shock.
+  - Assess for guarding, rigidity, focal tenderness, distention, inability to pass stool or gas, and ongoing bleeding symptoms.
+  - If vomiting or drowsy, position to protect the airway.
+urgent_red_flags:
+  - Abdominal trauma or impact followed by belly pain plus dizziness, pallor, clamminess, rapid pulse, confusion, fainting, collapse, hard belly, guarding, swelling, or repeated vomiting.
+  - Dizziness, fainting, weakness, pale or cold clammy skin, rapid pulse, low blood pressure, confusion, or collapse with bleeding.
+  - Coffee-ground vomit, vomiting blood, black tarry stool, or rectal blood with shock signs.
+  - Possible pregnancy plus one-sided lower belly pain, vaginal bleeding, shoulder-tip pain, dizziness, or fainting.
+  - Hard or rigid belly, guarding, repeated vomiting with swelling, or inability to pass stool or gas.
+forbidden_advice:
+  - Do not treat GI or rectal bleeding with shock signs as a nosebleed, hemorrhoid, heartburn, food poisoning, or routine hydration problem.
+  - Do not use direct-pressure instructions for bowel or upper-GI bleeding.
+  - Do not insert packing or apply internal rectal pressure.
+  - Do not give food, water, or pills by mouth to a drowsy/vomiting patient when aspiration risk is present.
+do_not:
+  - Do not let the patient walk around or push through collapse/shock signs.
+  - Do not delay urgent response to finish routine abdominal home care.
+routine_boundary: >
+  Routine stomach flu, reflux, constipation, cramps, hemorrhoid, or hydration
+  advice is out of bounds when bleeding, possible pregnancy rupture, hard belly,
+  collapse, or shock signs are present.
+acceptable_uncertain_fit: >
+  If the prompt could be routine abdominal illness or minor abdominal trauma but
+  includes shock signs, visible GI bleeding, possible pregnancy red flags,
+  hard/rigid belly, repeated vomiting after impact, swelling, or guarding, route
+  as abdominal emergency first.
+clarifying_questions:
+  - Was there a fall, kick, handlebar impact, crash, crush, or other abdominal trauma?
+  - Is there vomiting blood, coffee-ground vomit, black tarry stool, rectal bleeding, or possible pregnancy?
+  - Is the person dizzy, fainting, pale, clammy, confused, weak, or collapsing?
+  - Is the belly hard, rigid, guarded, swollen, or very tender in one spot?
+citation_ids:
+  - acute-abdomen-overview-red-zone
+  - acute-abdomen-gi-bleed
+  - acute-abdomen-ectopic-internal-bleeding
+  - first-aid-abdominal-red-flags
+source_sections:
+  - guide: GD-380
+    slug: acute-abdominal-emergencies
+    title: "Acute Abdominal Emergencies & Surgical Decision-Making"
+    sections:
+      - "#overview"
+      - "#overview > Complaint-First Red-Zone Ownership: Guarding, Hard Belly, RLQ Pain, Obstruction"
+      - "#overview > Red-Zone GI Bleed Ownership: Hematemesis, Coffee-Ground Vomit, Melena"
+      - "#overview > First Actions For Suspected GI Bleeding"
+      - "#overview > Red-Zone Reproductive Abdomen Ownership: Possible Ectopic"
+      - "#systematic-exam > The Four-Step Approach"
+      - "#peritoneal-signs > Peritoneal Signs: The Red Flag Cluster"
+  - guide: GD-232
+    slug: first-aid
+    title: "First Aid & Emergency Response"
+    sections:
+      - "Red-flag fast track - use this if ANY of these are present"
+      - "Symptom-first emergency routing"
+  - guide: GD-584
+    slug: shock-bleeding-trauma-stabilization
+    title: "Shock, Bleeding & Trauma Stabilization"
+    sections:
+      - "Shock Management Protocol"
+      - "Monitoring for Shock Improvement or Deterioration"
+source_invariants:
+  - name: abdominal bleeding shock and ectopic red zones
+    guide: GD-380
+    must_include:
+      - Keep NPO
+      - Monitor for shock
+      - GI bleeding is paired with dizziness, fainting, weakness, pale or cold clammy skin
+      - possible internal bleeding from ruptured ectopic pregnancy
+    must_not_match:
+      - "gi bleeding[^\\n]{0,120}(watch at home|wait and see)"
+      - "possible pregnancy[^\\n]{0,120}(watch at home|wait and see)"
+review_status: pilot_reviewed
+notes: >
+  Candidate family mentions abdominal trauma/internal bleeding. This pilot card
+  uses the current guide-owned abdominal emergency surfaces: hard or guarded
+  belly, shock/collapse with abdominal pain or injury, GI bleeding with shock
+  signs, and possible ruptured ectopic pregnancy, plus first-aid/trauma shock
+  routing. It does not add new abdominal trauma procedures. GD-558 EMS/field
+  triage and GD-039 field surgery may be adjacent triage or surgical owners
+  requiring review, but are not automatic card owners without explicit
+  prompt/card evidence.

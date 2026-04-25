@@ -8,6 +8,19 @@ tags:
   - chemistry
   - adhesives
   - formulation
+aliases:
+  - simple adhesives
+  - simple binders
+  - practical binder families
+  - adhesive for wood
+  - adhesive for leather
+  - adhesive for paper
+  - adhesive for containers
+  - material fit for glue
+routing_cues:
+  - "which simple adhesive or binder family fits wood leather paper or containers"
+  - "which binder family fits wood leather paper or container repair"
+  - "safe process limits for simple adhesives and binders"
 icon: 🧴
 description: Adhesive formulation chemistry, binder ratios, hide/bone/fish glue recipes, casein glue, starch paste formulations, pine pitch, shellac, cement and mortar mixes, application techniques, joint prep, clamping, curing schedules, and troubleshooting. For step-by-step glue-making instructions see Glue & Adhesives (GD-135).
 related:

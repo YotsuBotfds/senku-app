@@ -1,5 +1,7 @@
 """Shared deterministic and control-path response builders."""
 
+import re
+
 
 def _build_system_behavior_response(question):
     """Return a deterministic response for assistant-control questions."""
@@ -181,6 +183,23 @@ def _build_classic_acs_response():
     )
 
 
+def _build_exertional_syncope_chest_emergency_response():
+    """Return emergency-first guidance for exertional syncope with cardiac red flags."""
+    return (
+        "Fainting, near-fainting, or blackout during exertion with chest pressure, chest tightness, shortness of breath, "
+        "a racing heart, or confusion afterward is a cardiac/collapse emergency first, not routine panic or simple dehydration. "
+        "[GD-601, GD-232]\n\n"
+        "1. Stop activity immediately. Call emergency services or start urgent evacuation now, especially if chest symptoms, "
+        "shortness of breath, racing/irregular heartbeat, weakness, dizziness, confusion, or another collapse is present. [GD-601]\n"
+        "2. Keep them at rest in the position that makes breathing easiest. Do not let them keep walking, climbing, chopping, or "
+        "carrying loads to test whether it passes. [GD-601, GD-232]\n"
+        "3. Check airway, breathing, pulse, color, alertness, and whether chest pain or pressure persists. Give nothing by mouth "
+        "if they are confused, vomiting, very weak, or may faint again. [GD-232]\n"
+        "4. If they become unresponsive and are not breathing normally, start CPR and use an AED if available. If there was a brief "
+        "jerk during collapse, still protect from injury and note timing, but do not dismiss exertional collapse as a routine faint. [GD-232, GD-900]"
+    )
+
+
 def _build_stroke_cardiac_overlap_response():
     """Return a deterministic response for stroke-plus-cardiac overlap emergencies."""
     return (
@@ -199,6 +218,159 @@ def _build_stroke_cardiac_overlap_response():
     )
 
 
+def _build_panic_hyperventilation_tingling_response():
+    """Return a compact answer for hyperventilation tingling without cardiac red flags."""
+    return (
+        "Racing heart and tingling hands after hyperventilating can fit panic or overbreathing, but first screen for the "
+        "danger signs that would make this cardiac or respiratory instead. [GD-918, GD-601]\n\n"
+        "1. Call emergency help now if there is chest pressure or heaviness, jaw/arm/back pain, fainting, blue lips, severe "
+        "shortness of breath, new weakness, or symptoms triggered by exertion. Do not dismiss those as panic. [GD-601]\n"
+        "2. If those red flags are absent and this clearly followed fast breathing, sit upright somewhere safe, loosen tight "
+        "clothing, and slow the breathing gently. Do not breathe into a bag. [GD-918]\n"
+        "3. Use a simple breathing reset: breathe in through the nose if possible, extend the exhale, and keep attention on "
+        "the room, feet, or another steady sensory anchor until tingling eases. [GD-918, GD-858]\n"
+        "4. Get medical help if this is new, recurrent, worsening, different from usual, or not improving after a short calm "
+        "period, or if you are unsure whether red flags are present. [GD-918, GD-601]"
+    )
+
+
+def _build_respiratory_distress_panic_overlap_response():
+    """Return a compact answer for panic/asthma breathing-overlap prompts."""
+    return (
+        "When panic overlaps with wheeze, throat tightness, a failed rescue inhaler, or real breathing trouble, treat the "
+        "breathing problem first. Calming can wait until airway danger is screened. [GD-936, GD-918]\n\n"
+        "1. Call emergency help now if there are blue/gray lips, severe shortness of breath, inability to speak full "
+        "sentences, confusion, fainting, worsening wheeze, throat swelling, or the rescue inhaler is not helping. [GD-936]\n"
+        "2. If the person has a prescribed rescue inhaler, use it exactly as prescribed while arranging help. Sit upright, "
+        "loosen tight clothing, and avoid smoke, cold air, exertion, or other triggers. [GD-936]\n"
+        "3. If this followed food, medicine, a sting, hives, face/lip/tongue swelling, or sudden throat swelling, treat it as "
+        "possible anaphylaxis and use epinephrine if available. [GD-400]\n"
+        "4. Only after breathing red flags are absent and symptoms are improving, use panic support: slow exhale, grounding, "
+        "and reassurance. Do not flatten wheeze or failed-inhaler symptoms into panic alone. [GD-918, GD-858]"
+    )
+
+
+def _is_respiratory_infection_distress_emergency_special_case(question):
+    """Detect cough/fever/pneumonia prompts with respiratory-failure red flags."""
+    lower = question.lower()
+    if any(term in lower for term in ("no fever or cough", "no cough or fever", "no fever and no cough", "no cough and no fever")):
+        return False
+    if any(term in lower for term in ("dark rash", "purple rash", "purplish rash", "nonblanching rash", "rash that does not fade")):
+        return False
+    if any(term in lower for term in ("bee sting", "wasp sting", "hives", "tongue swelling", "face swelling", "after eating", "after i ate")):
+        return False
+    if any(term in lower for term in ("bleach", "ammonia", "fumes", "chemical", "smoke exposure", "fire smoke")):
+        return False
+    if any(term in lower for term in ("stab", "shot", "chest trauma", "blunt chest", "live wire", "electrical shock")):
+        return False
+
+    infection_context = any(
+        term in lower
+        for term in (
+            "cough",
+            "coughing",
+            "bad cold",
+            "flu",
+            "chest infection",
+            "pneumonia",
+        )
+    )
+    if not infection_context:
+        return False
+
+    respiratory_red_flags = (
+        "lips look a little blue",
+        "blue lips",
+        "confused",
+        "confusion",
+        "short of breath with fever",
+        "breathing fast",
+        "fast and shallow",
+        "breathing so hard",
+        "cannot say full sentences",
+        "can't say full sentences",
+        "cannot speak full sentences",
+        "too breathless to walk",
+        "breathless to walk",
+        "chest pain with breathing",
+        "getting weaker",
+        "high and breathing",
+    )
+    return any(term in lower for term in respiratory_red_flags)
+
+
+def _build_respiratory_infection_distress_emergency_response():
+    """Return emergency-first guidance for cough/fever with respiratory distress."""
+    return (
+        "Cough, flu, fever, chest infection, or possible pneumonia with blue lips, confusion, fast/shallow breathing, chest pain with breathing, "
+        "worsening weakness, inability to speak full sentences, or being too breathless to walk is an emergency respiratory-infection pattern, not routine cold care. [GD-911]\n\n"
+        "1. Call emergency help or start urgent evacuation now. Do not wait on steam, room ventilation, watchful waiting, home cough care, or reassurance to fix breathing distress. [GD-911, GD-232]\n"
+        "2. Keep the person upright or in the position that makes breathing easiest, reduce exertion, loosen tight clothing, and keep them warm enough without overheating. [GD-232, GD-734]\n"
+        "3. Watch breathing rate and effort, ability to speak, alertness/confusion, lip/skin color, chest pain with breathing, fever trend, and hydration. If they become unresponsive or stop breathing normally, start CPR/rescue breathing if trained. [GD-734, GD-232]\n"
+        "4. Do not frame this first as asthma-only, cardiac-only, air-quality setup, panic, minor cold/flu, or invasive chest-trauma care unless those separate clues are actually present. [GD-911, GD-232]"
+    )
+
+
+def _is_asthma_severe_respiratory_distress_special_case(question):
+    """Detect severe asthma/lower-airway respiratory distress without allergen or trauma ownership."""
+    lower = question.lower()
+    if any(term in lower for term in ("panicking", "panic attack", "can't tell if this is panic", "cant tell if this is panic")):
+        return False
+    if "no blue lips" in lower and any(term in lower for term in ("speak full sentences", "can speak full sentences", "speaking full sentences")):
+        return False
+    if any(term in lower for term in ("bee sting", "after eating", "after i ate", "peanuts", "hives", "tongue", "lip swelling", "face swelling", "new medicine")):
+        return False
+    if any(term in lower for term in ("throat", "muffled voice", "hot potato voice", "tongue feels thick")):
+        return False
+    if any(term in lower for term in ("bleach", "smoke", "fumes", "chemical", "fire")):
+        return False
+    if any(term in lower for term in ("stab", "shot", "chest trauma", "blunt chest", "rib hit", "pneumothorax")):
+        return False
+    if any(term in lower for term in ("choked", "choking", "inhaled object", "toy piece", "bead")):
+        return False
+
+    asthma_context = any(term in lower for term in ("asthma", "inhaler", "rescue inhaler", "wheezing", "wheeze", "breathing fast"))
+    severe_airway = any(
+        term in lower
+        for term in (
+            "wheezing is getting quieter",
+            "wheezing getting quieter",
+            "breathing is harder",
+            "rescue inhaler not helping",
+            "rescue inhaler is not helping",
+            "inhaler not helping",
+            "inhaler is not helping",
+            "too tired to finish a sentence",
+            "too tired to talk",
+            "too weak to cough",
+            "too weak to talk",
+            "almost no air movement",
+            "no air movement",
+            "nearly silent",
+            "silent chest",
+            "chest is nearly silent",
+            "lips look a little blue",
+            "blue lips",
+            "feel exhausted",
+            "too weak",
+        )
+    )
+    repeated_inhaler_failure = "inhaler over and over" in lower and any(term in lower for term in ("silent", "nearly silent", "not helping"))
+    return asthma_context and (severe_airway or repeated_inhaler_failure)
+
+
+def _build_asthma_severe_respiratory_distress_response():
+    """Return emergency-first guidance for severe asthma/lower-airway distress."""
+    return (
+        "Asthma or lower-airway breathing trouble with a quieter/near-silent chest, almost no air movement, blue lips, exhaustion, "
+        "inability to finish sentences, failed rescue inhaler, or being too weak to cough/talk is a life-threatening respiratory emergency. [GD-936]\n\n"
+        "1. Call emergency help or start urgent evacuation now. Do not wait for home care, reassurance, repeated inhaler tries, steam, 20-20-20-style rest, or panic-only support to work. [GD-936]\n"
+        "2. Sit upright, loosen tight clothing, reduce exertion, avoid smoke/cold air/triggers, and use the prescribed rescue inhaler or action plan exactly as directed while help is being arranged. [GD-936]\n"
+        "3. Watch breathing effort, ability to speak, alertness, skin/lip color, and air movement continuously. Be ready for rescue breathing/CPR if breathing or responsiveness fails. [GD-734]\n"
+        "4. Do not import needle decompression, field-surgery, chest-trauma, anaphylaxis, chemical-fume, choking, or upper-airway swelling steps unless those clues are actually present. [GD-936, GD-734]"
+    )
+
+
 def _build_classic_stroke_fast_response():
     """Return a deterministic response for classic FAST-positive stroke symptoms."""
     return (
@@ -211,6 +383,507 @@ def _build_classic_stroke_fast_response():
         "breathing, roll them onto their side. [GD-232]\n"
         "4. If they become unresponsive and are not breathing normally, start CPR and use an AED if "
         "available. [GD-232]"
+    )
+
+
+def _build_hematuria_urgent_response():
+    """Return a deterministic response for visible blood in urine."""
+    return (
+        "Visible blood in the urine warrants medical evaluation even if there is no fever. "
+        "Treat it as a urinary red flag, not as a nosebleed, stool-bleeding, or cough/cold problem. [GD-733]\n\n"
+        "1. Seek urgent care now if there are clots or heavy bleeding, inability to urinate, severe lower belly or bladder pain, flank/back pain, fever, vomiting, fainting, confusion, pregnancy, or symptoms that are worsening. [GD-733]\n"
+        "2. If none of those urgent signs are present, arrange prompt medical evaluation and track when the blood started, whether there is burning, frequency, urgency, bladder pressure, or pain spreading to the side/back. [GD-733]\n"
+        "3. Do not use firm-pressure timing, stool-bleeding rules, cough/cold red flags, or microscope-testing workflow as the first answer. Those are different lanes unless the user also has those symptoms. [GD-733]\n"
+        "4. While waiting, hydrate if able and avoid delaying evaluation just because there is no fever. Fever or flank pain would make kidney infection more concerning. [GD-733]"
+    )
+
+
+def _is_kidney_infection_urosepsis_emergency_special_case(question):
+    """Detect kidney infection / urosepsis red-zone urinary or flank pain prompts."""
+    lower = question.lower()
+    no_fever = any(
+        term in lower
+        for term in ("no fever", "without fever", "not feverish", "no feverish")
+    )
+    no_urinary = any(
+        term in lower
+        for term in (
+            "no urinary symptoms",
+            "no fever or urinary symptoms",
+            "without urinary symptoms",
+            "no urine symptoms",
+            "no fever or urine symptoms",
+            "without urine symptoms",
+            "no burning pee",
+            "no burning when i pee",
+        )
+    )
+    no_kidney_or_back = any(
+        term in lower
+        for term in (
+            "no back pain",
+            "without back pain",
+            "no flank pain",
+            "without flank pain",
+            "no side pain",
+            "without side pain",
+            "no kidney pain",
+        )
+    )
+    urinary_or_kidney_context = any(
+        term in lower
+        for term in (
+            "uti",
+            "urinary symptoms",
+            "urine symptoms",
+            "burning pee",
+            "burning when i pee",
+            "burning urination",
+            "pee turned into",
+            "kidney infection",
+            "near the kidney",
+            "flank pain",
+            "side pain",
+            "side of my back",
+            "pain in the side of my back",
+            "back hurts near the kidney",
+            "fever flank pain",
+            "fever with flank pain",
+        )
+    )
+    has_explicit_urinary = any(
+        term in lower
+        for term in (
+            "uti",
+            "urinary symptoms",
+            "urine symptoms",
+            "burning pee",
+            "burning when i pee",
+            "burning urination",
+            "pee turned into",
+        )
+    )
+    fever_or_systemic = any(
+        term in lower
+        for term in (
+            "fever",
+            "feverish",
+            "chills",
+            "shaking",
+            "vomiting",
+            "throwing up",
+            "keep vomiting",
+            "confusion",
+            "confused",
+            "very weak",
+            "weak",
+            "dizzy",
+            "dizziness",
+            "dizzy when i stand",
+            "faint",
+        )
+    )
+    severe_kidney_cluster = any(
+        term in lower
+        for term in (
+            "flank pain fever",
+            "fever and flank pain",
+            "fever flank pain",
+            "fever with flank pain",
+            "back pain with fever",
+            "side pain is severe",
+            "side pain severe",
+            "back hurts near the kidney",
+            "bad pain in the side of my back",
+        )
+    )
+    urinary_progression = any(
+        term in lower
+        for term in (
+            "turned into flank pain",
+            "urine symptoms are suddenly worse",
+            "urinary symptoms and now",
+            "uti or emergency",
+            "kidney infection or stomach bug",
+        )
+    )
+    fever_flank = (
+        "fever flank pain" in lower
+        or "fever with flank pain" in lower
+        or ("fever" in lower and "flank pain" in lower)
+    )
+    if no_fever and (no_urinary or no_kidney_or_back):
+        return False
+    if no_urinary and not has_explicit_urinary:
+        return False
+    if no_kidney_or_back and not severe_kidney_cluster:
+        return False
+    return urinary_or_kidney_context and (
+        (has_explicit_urinary and fever_flank)
+        or (has_explicit_urinary and not no_fever and severe_kidney_cluster)
+        or (fever_or_systemic and severe_kidney_cluster)
+        or (fever_or_systemic and urinary_progression)
+        or (
+            any(term in lower for term in ("urinary symptoms", "urine symptoms", "burning pee", "uti"))
+            and any(term in lower for term in ("fever", "feverish", "confusion", "dizzy", "very weak", "vomiting"))
+            and any(term in lower for term in ("back", "flank", "kidney", "side"))
+        )
+    )
+
+
+def _build_kidney_infection_urosepsis_emergency_response():
+    """Return urgent guidance for kidney infection / urosepsis red-zone prompts."""
+    return (
+        "Urinary symptoms, burning pee, flank/side/back-near-kidney pain, or suspected kidney infection with fever, chills, "
+        "shaking, vomiting, confusion, weakness, dizziness, or worsening symptoms can be pyelonephritis or urosepsis. Treat it "
+        "as urgent medical care, not a simple UTI, stomach bug, back strain, dehydration-only problem, or heat illness. [GD-733, GD-401]\n\n"
+        "1. Get urgent medical evaluation or start evacuation now, especially with fever plus flank/back-near-kidney pain, vomiting, "
+        "confusion, dizziness/faintness, severe weakness, or symptoms suddenly getting worse. [GD-733, GD-401]\n"
+        "2. Check airway, breathing, alertness, pulse, skin temperature/color, urination, fever trend, vomiting, and shock signs such "
+        "as fast weak pulse, pale/clammy skin, confusion, or fainting. [GD-232, GD-589]\n"
+        "3. Give small sips of fluid only if fully awake and able to swallow; do not force fluids if confused, repeatedly vomiting, "
+        "or unsafe to swallow. Do not rely on hydration, cranberry, home UTI care, or pain medicine as the first plan. [GD-733]\n"
+        "4. Note urinary symptoms, flank/back pain location, fever/chills, vomiting, confusion, dizziness, pregnancy possibility, "
+        "medicines, and timing for medical responders. [GD-401, GD-733]"
+    )
+
+
+def _is_ectopic_pregnancy_emergency_special_case(question):
+    """Detect early-pregnancy ectopic/hemorrhage red-zone prompts."""
+    lower = question.lower()
+    if any(term in lower for term in ("postpartum", "after delivery", "after birth", "delivered the baby")):
+        return False
+    if any(
+        term in lower
+        for term in (
+            "pregnancy test negative",
+            "negative pregnancy test",
+            "test is negative",
+            "test was negative",
+            "not pregnant",
+        )
+    ):
+        return False
+    pregnancy_context = any(
+        term in lower
+        for term in (
+            "early pregnancy",
+            "first trimester",
+            "pregnant",
+            "pregnancy",
+            "positive pregnancy test",
+            "maybe 6 weeks",
+            "6 weeks",
+            "late period",
+            "positive test",
+            "missed period",
+            "miscarriage",
+        )
+    )
+    pain = any(
+        term in lower
+        for term in (
+            "one-sided lower belly pain",
+            "one sided lower belly pain",
+            "one-sided pelvic pain",
+            "one sided pelvic pain",
+            "one-sided pain",
+            "one sided pain",
+            "sharp on one side",
+            "cramping on one side",
+            "sudden pelvic pain",
+            "shoulder pain",
+            "belly pain",
+            "lower belly pain",
+            "pelvic pain",
+            "cramps",
+            "cramping",
+        )
+    )
+    bleeding_or_collapse = any(
+        term in lower
+        for term in (
+            "spotting",
+            "bleeding",
+            "light bleeding",
+            "feeling faint",
+            "feel faint",
+            "faint",
+            "almost passed out",
+            "passed out",
+            "dizzy",
+            "dizziness",
+            "getting worse",
+            "worse",
+        )
+    )
+    return pregnancy_context and (
+        ("ectopic" in lower)
+        or (pain and bleeding_or_collapse)
+        or ("positive test" in lower and "pelvic pain" in lower)
+        or ("positive pregnancy test" in lower and (pain or "bleeding" in lower))
+        or ("pregnancy test" in lower and "positive" in lower and (pain or "bleeding" in lower))
+        or ("pregnancy" in lower and any(term in lower for term in ("passed out", "fainted", "fainting")))
+        or ("pregnant" in lower and "belly pain" in lower and any(term in lower for term in ("faint", "passed out", "dizzy")))
+    )
+
+
+def _build_ectopic_pregnancy_emergency_response():
+    """Return emergency-first guidance for early-pregnancy ectopic red flags."""
+    return (
+        "Early pregnancy, a late/missed period, a positive test, or possible pregnancy with one-sided pelvic/lower-belly pain, "
+        "shoulder pain, spotting/bleeding, dizziness, faintness, or worsening pain can be ectopic pregnancy or internal bleeding "
+        "until proven otherwise. [GD-401]\n\n"
+        "1. Get emergency medical care or start urgent evacuation now. Do not wait because bleeding is light, and do not treat this "
+        "as routine cramps, a normal miscarriage at home, dehydration, constipation, or ordinary stomach pain first. [GD-401]\n"
+        "2. Keep the person resting, warm, and still while arranging help. If dizzy, faint, or nearly passed out, have them lie flat "
+        "if tolerated and monitor breathing, alertness, pulse, skin color/temperature, pain, and bleeding. [GD-232, GD-401]\n"
+        "3. Do not perform uterine massage, internal inspection, vaginal packing/pressure, or field uterine-evacuation attempts. "
+        "Do not frame this as postpartum hemorrhage care or emergency delivery unless the prompt clearly says delivery already happened. [GD-401]\n"
+        "4. Note last menstrual period or estimated weeks pregnant, test result, bleeding amount, pain side/location, shoulder pain, "
+        "dizziness/fainting, and timing for responders. Avoid food or drink if surgery may be needed or if they are vomiting/drowsy. "
+        "[GD-401, GD-380]"
+    )
+
+
+def _is_late_pregnancy_hypertensive_emergency_special_case(question):
+    """Detect late-pregnancy preeclampsia/eclampsia warning clusters."""
+    lower = question.lower()
+    if any(term in lower for term in ("postpartum", "after delivery", "after birth", "delivered the baby")):
+        return False
+    if any(term in lower for term in ("not pregnant", "no pregnancy")):
+        return False
+    if any(term in lower for term in ("early pregnancy", "first trimester", "maybe 6 weeks", "6 weeks")):
+        return False
+    if any(
+        term in lower
+        for term in (
+            "no headache vision changes or high blood pressure",
+            "no headache, vision changes, or high blood pressure",
+            "no headache, no vision changes, and no high blood pressure",
+        )
+    ):
+        return False
+    if "no headache" in lower and "no high blood pressure" in lower:
+        return False
+    if "no headache" in lower and "no vision" in lower:
+        return False
+
+    late_context = any(
+        term in lower
+        for term in (
+            "late pregnancy",
+            "third trimester",
+            "34 weeks",
+            "pregnant",
+            "pregnancy",
+        )
+    )
+    headache = any(
+        term in lower
+        for term in (
+            "severe headache",
+            "bad headache",
+            "pounding headache",
+            "new severe headache",
+            "headache",
+            "migraine",
+        )
+    )
+    vision = any(
+        term in lower
+        for term in (
+            "flashing lights",
+            "vision is blurry",
+            "blurry vision",
+            "seeing spots",
+            "spots",
+            "vision",
+        )
+    )
+    pressure = any(term in lower for term in ("blood pressure is high", "high blood pressure", "bp is high"))
+    swelling = any(
+        term in lower
+        for term in (
+            "face swelling",
+            "hands face are swelling",
+            "hands face",
+            "hands and face",
+            "swelling fast",
+            "late pregnancy swelling",
+        )
+    )
+    right_upper_pain = any(
+        term in lower
+        for term in (
+            "right upper belly pain",
+            "right upper quadrant pain",
+            "pain under the ribs on the right",
+            "under the ribs on the right",
+            "right rib pain",
+        )
+    )
+    breathing = any(term in lower for term in ("suddenly short of breath", "short of breath", "trouble breathing"))
+
+    return late_context and (
+        (headache and vision)
+        or (headache and swelling)
+        or (headache and right_upper_pain)
+        or (pressure and (vision or headache))
+        or (right_upper_pain and (vision or swelling))
+        or (breathing and swelling and headache)
+    )
+
+
+def _build_late_pregnancy_hypertensive_emergency_response():
+    """Return emergency-first guidance for late-pregnancy hypertensive red flags."""
+    return (
+        "Late pregnancy or possible third-trimester pregnancy with severe/new headache, flashing lights or blurry vision, "
+        "seeing spots, high blood pressure, face/hand swelling, right-upper-belly or right-rib pain, or sudden shortness of "
+        "breath can be preeclampsia, eclampsia, or HELLP until proven otherwise. [GD-381]\n\n"
+        "1. Get urgent obstetric/emergency evaluation or start evacuation now. Do not treat this as a routine migraine, normal "
+        "pregnancy swelling, eye strain, stomach upset, menstrual pain, or early-pregnancy ectopic problem first. [GD-381]\n"
+        "2. Keep the person resting on the left side if tolerated, reduce exertion, and monitor breathing, alertness, seizure "
+        "activity, headache/vision changes, right-upper-belly pain, swelling, and blood pressure if you can check it. [GD-051, GD-381]\n"
+        "3. If seizure, confusion, fainting, severe shortness of breath, chest pain, or worsening severe headache/vision changes occur, "
+        "treat it as an immediate emergency while arranging transport. Protect from injury during a seizure; do not put anything in the mouth. [GD-051]\n"
+        "4. Bring or record gestational age, blood-pressure readings, symptom onset, swelling location, headache severity, vision symptoms, "
+        "right-sided belly/rib pain, breathing symptoms, medicines, and prenatal history for responders. [GD-381, GD-949]"
+    )
+
+
+def _build_major_blood_loss_shock_response():
+    """Return a deterministic response for blood-loss shock wording."""
+    return (
+        "Pale, dizzy, weak, clammy, faint, or confused after blood loss is possible hemorrhagic shock. "
+        "Treat it as trauma/bleeding control, not nosebleed care. [GD-297, GD-580]\n\n"
+        "1. Keep controlling any ongoing bleeding now: firm direct pressure, wound packing for deep wounds if trained, or a tourniquet for life-threatening limb bleeding that direct pressure cannot control. Do not remove an impaled object. [GD-297]\n"
+        "2. If they are breathing normally, keep them flat, keep them warm, and minimize movement while you arrange urgent evacuation or emergency help. [GD-580]\n"
+        "3. Watch airway, breathing, mental status, pulse, skin temperature/color, and return of bleeding. Be ready for CPR if breathing or circulation fails. [GD-580]\n"
+        "4. Do not sit them forward, tell them to spit blood, pinch the nose, or rely on drinking fluids as the first fix unless the actual problem is a nosebleed. [GD-297, GD-580]"
+    )
+
+
+def _build_anaphylaxis_red_zone_response():
+    """Return a deterministic response for allergen-linked anaphylaxis red flags."""
+    return (
+        "Treat this as possible anaphylaxis now. Airway symptoms, tongue/lip swelling, throat tightness, wheezing, or dizziness after a sting, food, or medicine exposure are emergency allergy signs. [GD-400]\n\n"
+        "1. Give epinephrine immediately if it is available and you are able to use it. Do not wait for antihistamines, a rash check, or local sting care first. [GD-400]\n"
+        "2. Call emergency help now or start the fastest evacuation, and keep the person with help until symptoms are fully stable. [GD-400]\n"
+        "3. Have the person lie flat with legs raised if tolerated; if breathing is difficult, let them sit upright enough to breathe. Do not give food or drink. [GD-400]\n"
+        "4. A rescue inhaler can be used only as an adjunct for wheeze while emergency allergy treatment and help are underway; it does not replace epinephrine. [GD-400]"
+    )
+
+
+def _build_upper_airway_swelling_danger_response():
+    """Return a deterministic response for noisy upper-airway or throat-closing danger."""
+    return (
+        "Treat harsh or noisy upper-airway breathing, throat closing/swelling, blue lips, or one-word speech as an airway emergency, not simple panic or routine asthma. [GD-734, GD-400]\n\n"
+        "1. Call emergency help now or start the fastest evacuation. Stay with the person and watch breathing, color, speech, and alertness continuously. [GD-734]\n"
+        "2. If this followed a likely allergen exposure or comes with hives, swelling, wheeze, throat symptoms, dizziness, or blue/gray lips, give epinephrine immediately if available. [GD-400]\n"
+        "3. Let them sit upright enough to breathe if lying flat worsens breathing. Do not give food or drink, and be ready for basic airway/rescue-breathing support if trained. [GD-400, GD-734]\n"
+        "4. A rescue inhaler is only an adjunct for wheeze; if the sound is in the throat, speech is limited, or the inhaler is not helping, do not keep repeating asthma-only steps. [GD-936, GD-400]"
+    )
+
+
+def _build_facial_swelling_anxiety_screen_response():
+    """Return a deterministic response for face swelling framed as anxiety with breathing normal."""
+    return (
+        "Do not treat new face swelling as routine anxiety just because breathing is still okay. First screen for allergy or airway danger, then get medical guidance if swelling is limited. [GD-400, GD-733]\n\n"
+        "1. Call emergency help now and use epinephrine if available if there is tongue, lip, mouth, or throat swelling, voice change, wheezing, trouble breathing, dizziness, fainting, confusion, or rapidly worsening swelling. [GD-400]\n"
+        "2. If swelling is only in the face and breathing, speech, swallowing, and alertness are normal, contact a clinician, pharmacist, poison center, or urgent-care line promptly for next steps. [GD-733]\n"
+        "3. Stop any likely new exposure for now, such as a new medicine, food, sting exposure, cosmetic, or chemical, and save names/timing/photos for the clinician. Do not take another dose of a suspected medicine unless a clinician says to. [GD-400, GD-053]\n"
+        "4. Keep watching closely. If breathing, swallowing, voice, tongue/lip swelling, dizziness, or worsening symptoms appear, escalate immediately rather than waiting for a rash or hives. [GD-400]"
+    )
+
+
+def _build_medication_allergy_swelling_response():
+    """Return a deterministic response for medication-linked facial swelling."""
+    return (
+        "Facial, lip, mouth, or tongue swelling after a medicine can be a serious drug allergy. Stop taking that medicine for now and get urgent medical advice; treat any airway or breathing sign as anaphylaxis. [GD-400, GD-053]\n\n"
+        "1. If there is tongue/lip/throat swelling, wheezing, trouble breathing, dizziness, faintness, or spreading hives, give epinephrine if available and call emergency help now. [GD-400]\n"
+        "2. Do not take another dose of the suspected medicine unless a clinician specifically tells you to. Keep the package/name and timing ready for the clinician. [GD-053]\n"
+        "3. If swelling is limited and breathing is normal, still call a clinician, pharmacist, poison center, or urgent-care line promptly for medication-allergy instructions. [GD-053]\n"
+        "4. Do not treat this as an infection-only swelling problem until allergy danger is screened first. [GD-400]"
+    )
+
+
+def _is_deep_throat_airway_infection_emergency_special_case(question):
+    """Detect severe sore-throat/deep-neck infection airway red flags."""
+    lower = question.lower()
+    throat_context = any(
+        term in lower
+        for term in (
+            "sore throat",
+            "throat pain",
+            "severe throat pain",
+            "one-sided throat",
+            "throat swelling",
+            "swallowing hurts",
+            "strep",
+        )
+    )
+    danger_sign = any(
+        term in lower
+        for term in (
+            "barely open my mouth",
+            "cannot open my mouth",
+            "can't open my mouth",
+            "muffled hot potato voice",
+            "hot potato voice",
+            "muffled voice",
+            "voice sounds strange",
+            "drooling",
+            "neck is swelling",
+            "neck swelling",
+            "cannot swallow my saliva",
+            "can't swallow my saliva",
+            "cannot swallow saliva",
+            "trouble breathing when lying down",
+            "one-sided throat swelling",
+            "jaw is stiff",
+            "stiff jaw",
+        )
+    )
+    return throat_context and danger_sign
+
+
+def _build_deep_throat_airway_infection_emergency_response():
+    """Return urgent airway-first guidance for deep throat infection red flags."""
+    return (
+        "Severe or one-sided throat pain with trouble opening the mouth, muffled or hot-potato voice, drooling, neck swelling, "
+        "inability to swallow saliva, stiff jaw, or breathing worse when lying down is a deep throat/neck infection or airway "
+        "emergency until proven otherwise, not routine sore-throat home care. [GD-911, GD-221]\n\n"
+        "1. Get urgent medical evaluation or emergency transport now. Keep the person sitting upright and calm; do not have them "
+        "lie flat if breathing or swallowing is worse that way. [GD-911, GD-232]\n"
+        "2. Do not force food, warm drinks, gargles, pills, or home remedies. Drooling or inability to swallow saliva means the "
+        "airway may be at risk and swallowing may not be safe. [GD-911, GD-221]\n"
+        "3. Watch breathing continuously. Escalate immediately for noisy breathing, blue/gray lips, worsening neck/throat swelling, "
+        "confusion, severe weakness, or any trouble speaking/breathing. [GD-232, GD-911]\n"
+        "4. Do not press on the throat, try to drain anything, or delay for routine strep/sore-throat treatment. Save timing, fever, "
+        "voice, drooling, and swelling details for the clinician. [GD-221, GD-911]"
+    )
+
+
+def _build_medicine_hives_skin_only_response():
+    """Return a deterministic response for hives after a medicine without red-zone signs."""
+    return (
+        "Hives after a new medicine may be a skin-only allergic reaction, but it can progress. First screen for anaphylaxis signs, then pause the suspected medicine and get medication-specific advice. [GD-400, GD-053]\n\n"
+        "1. Call emergency help and use epinephrine if available if hives come with trouble breathing, wheezing, throat tightness, lip/tongue/face swelling, dizziness, fainting, confusion, or rapidly worsening symptoms. [GD-400]\n"
+        "2. If it is hives only and breathing is normal, stop or hold the new medicine until a clinician or pharmacist advises what to do next. [GD-053]\n"
+        "3. Do not list or guess antihistamine doses unless the user asks about a specific medicine they have; the key decision here is mild skin-only versus anaphylaxis risk. [GD-400]\n"
+        "4. Track when the medicine was taken, when hives started, and any swelling, breathing, stomach, or dizziness symptoms that appear. [GD-400]"
+    )
+
+
+def _build_soap_rash_breathing_fine_response():
+    """Return a deterministic response for skin-only soap/contact rash."""
+    return (
+        "If the rash started after soap exposure and breathing is normal with no face, lip, tongue, or throat swelling, this is usually not an emergency right now. Treat it as skin irritation/contact rash and watch for red flags. [GD-938]\n\n"
+        "1. Stop using the soap or product and rinse the area with cool or lukewarm water; do not scrub or keep reapplying soap to test it. [GD-938]\n"
+        "2. Keep the skin cool, dry, and protected from friction; use a bland barrier if rubbing is making it worse. [GD-938]\n"
+        "3. Get urgent help if breathing trouble, wheezing, throat tightness, face/lip/tongue swelling, dizziness, rapidly spreading hives, fever, pus, or severe pain appears. [GD-938, GD-400]\n"
+        "4. If it keeps spreading, recurs, or does not settle after avoiding the trigger, use the common rash/skin guide or medical evaluation rather than treating it as poison ivy or a chemical burn. [GD-938]"
     )
 
 
@@ -236,16 +909,18 @@ def _build_antibiotic_synthesis_response():
 def _build_dental_infection_response():
     """Return conservative guidance for facial-swelling dental infections."""
     return (
-        "A tooth infection with facial swelling is an escalation problem, not a home-surgery problem. "
-        "Do not cut, lance, or pull the tooth yourself. [GD-047, GD-221]\n\n"
-        "1. Treat breathing trouble, drooling, trouble swallowing, voice change, neck swelling, eye "
-        "swelling, high fever, or rapidly spreading swelling as an emergency now. [GD-047, GD-221]\n"
-        "2. Until you get care, use warm salt-water rinses, cold packs on the outside of the face, head "
-        "elevation, fluids, and gentle oral hygiene. [GD-047, GD-351]\n"
-        "3. Do not seal pus in and do not improvise drainage with knives or needles unless trained care "
-        "explicitly takes over. [GD-047, GD-055]\n"
-        "4. The goal is urgent dental or medical treatment before the infection spreads deeper into the "
-        "jaw, neck, or airway. [GD-047, GD-221]"
+        "A tooth or mouth infection with face/jaw swelling, trouble swallowing, drooling, tongue/floor-of-mouth swelling, "
+        "or trouble opening the mouth can threaten the airway. Treat it as urgent dental or medical care, not a wait-and-see "
+        "toothache or home-surgery problem. [GD-047, GD-221]\n\n"
+        "1. Get urgent medical/dental help or start evacuation now if there is drooling, trouble swallowing, voice change, trouble "
+        "breathing, tongue pushed up, swelling under the jaw/neck, high fever, or rapidly spreading swelling. [GD-047, GD-221]\n"
+        "2. Keep them upright and calm. Give nothing by mouth if they are drooling, cannot swallow safely, are vomiting, or breathing "
+        "is affected; otherwise use only gentle fluids as tolerated while arranging care. [GD-232, GD-047]\n"
+        "3. Do not cut, lance, squeeze, pull the tooth, probe under the jaw, pack the mouth, or improvise drainage with knives or "
+        "needles unless trained care explicitly takes over. [GD-047, GD-055]\n"
+        "4. If swallowing and breathing are safe while waiting, use warm salt-water rinses, cold packs on the outside of the face, "
+        "head elevation, and gentle oral hygiene. Watch closely for worsening swelling, fever, drooling, voice change, or breathing "
+        "trouble. [GD-047, GD-351]"
     )
 
 
@@ -284,6 +959,933 @@ def _build_generic_seizure_response():
     )
 
 
+def _is_seizure_syncope_panic_withdrawal_triage_special_case(question):
+    """Detect collapse/shaking ambiguity prompts where seizure safety should come first."""
+    lower = question.lower()
+    collapse_terms = (
+        "passed out",
+        "pass out",
+        "fainted",
+        "fainting",
+        "syncope",
+        "collapsed",
+        "collapse",
+        "lost consciousness",
+    )
+    shaking_terms = (
+        "body jerks",
+        "jerked",
+        "jerking",
+        "body-shaking",
+        "body shaking",
+        "shaking spell",
+        "shook",
+        "convuls",
+    )
+    recovery_or_uncertainty_terms = (
+        "woke up",
+        "woke again",
+        "alive but confused",
+        "confused",
+        "recovered",
+        "recovered quickly",
+        "somewhat responsive",
+        "stayed somewhat responsive",
+        "cannot tell",
+        "can't tell",
+        "tell whether",
+        "what matters first",
+        "what do i do first",
+    )
+    explicit_differential_terms = (
+        "first adult seizure",
+        "first seizure",
+        "seizure or panic",
+        "seizure, syncope",
+        "seizure syncope",
+        "syncope, withdrawal",
+        "withdrawal, or panic",
+        "panic with hyperventilation",
+    )
+    withdrawal_terms = (
+        "stopping alcohol",
+        "stopped alcohol",
+        "stopping benzos",
+        "stopped benzos",
+        "after stopping alcohol",
+        "after stopping benzos",
+        "benzo withdrawal",
+        "withdrawal",
+    )
+    return (
+        (
+            any(term in lower for term in collapse_terms)
+            and any(term in lower for term in shaking_terms)
+            and any(term in lower for term in recovery_or_uncertainty_terms)
+        )
+        or (
+            any(term in lower for term in explicit_differential_terms)
+            and (
+                "seizure" in lower
+                or any(term in lower for term in shaking_terms)
+                or any(term in lower for term in collapse_terms)
+            )
+        )
+        or (
+            any(term in lower for term in shaking_terms)
+            and any(term in lower for term in recovery_or_uncertainty_terms)
+        )
+        or (
+            any(term in lower for term in withdrawal_terms)
+            and any(term in lower for term in ("shaking", "jerking", "seizure"))
+        )
+    )
+
+
+def _build_seizure_syncope_panic_withdrawal_triage_response():
+    """Return first actions for collapse/shaking events with unclear cause."""
+    return (
+        "When collapse, body jerks, confusion, withdrawal risk, syncope, or panic are hard to separate, treat it as a "
+        "possible seizure or medical collapse first, not as routine panic or simple fainting. [GD-900, GD-232]\n\n"
+        "1. Make the scene seizure-safe: lower them away from stairs, fire, water, tools, traffic, and sharp objects; "
+        "cushion the head; do not restrain them and do not put anything in the mouth. [GD-900, GD-232]\n"
+        "2. Check breathing and responsiveness. When shaking stops, roll them onto their side if they are drowsy, vomiting, "
+        "or not fully alert, and keep watching breathing and color. [GD-900]\n"
+        "3. Escalate urgently for a first adult seizure, confusion that does not clear, repeated events, severe injury, "
+        "pregnancy, diabetes, poisoning, head injury, withdrawal from alcohol or sedatives, or any breathing problem. "
+        "[GD-900, GD-299]\n"
+        "4. After immediate safety, collect timing and clues: how long they were out, how long jerking lasted, whether they "
+        "were responsive, medications/substances, alcohol or benzo stoppage, glucose/diabetes if known, and whether this "
+        "has happened before. [GD-900]"
+    )
+
+
+def _is_overdose_toxidrome_airway_special_case(question):
+    """Detect adult overdose/toxidrome prompts where airway and EMS come first."""
+    lower = question.lower()
+    exposure_terms = (
+        "too many pain pills",
+        "too many pills",
+        "pain pills",
+        "pills and alcohol",
+        "mixed pills and alcohol",
+        "after pills",
+        "double-dosed",
+        "double dosed",
+        "double-dose",
+        "double dose",
+        "medicine",
+        "medication",
+        "naloxone",
+        "overdose",
+        "toxidrome",
+    )
+    danger_terms = (
+        "will not stay awake",
+        "won't stay awake",
+        "cannot stay awake",
+        "can't stay awake",
+        "hard to wake",
+        "hard to wake up",
+        "slow breathing",
+        "breathing is slow",
+        "not breathing normally",
+        "pinpoint pupils",
+        "pupils are pinpoint",
+        "confused",
+        "confusion",
+        "sleepy again",
+        "getting sleepy again",
+        "routine side effect",
+        "side effect",
+    )
+    explicit_overdose_differential = "overdose or toxidrome" in lower
+    naloxone_rebound = "naloxone" in lower and any(
+        term in lower for term in ("sleepy", "hard to wake", "breathing", "again")
+    )
+    return (
+        explicit_overdose_differential
+        or naloxone_rebound
+        or (
+            any(term in lower for term in exposure_terms)
+            and any(term in lower for term in danger_terms)
+        )
+    )
+
+
+def _build_overdose_toxidrome_airway_response():
+    """Return emergency-first guidance for overdose and toxidrome prompts."""
+    return (
+        "Treat this as an overdose or toxidrome emergency first, not a routine side effect or something to sleep off. "
+        "Airway, breathing, naloxone when opioid exposure is possible, and emergency help come before sorting out the exact "
+        "medicine. [GD-232, GD-301]\n\n"
+        "1. Check breathing now. If breathing is slow, absent, gasping, or abnormal, call emergency services, start CPR if "
+        "needed, and use naloxone if opioids or unknown pills could be involved and naloxone is available. [GD-232, GD-602]\n"
+        "2. If they are breathing but hard to wake, confused, or getting sleepy again, place them on their side, keep the "
+        "airway open, and do not give more pills, alcohol, food, or drink by mouth. [GD-232]\n"
+        "3. Call Poison Control or emergency services now and keep watching breathing and alertness. Repeat sleepiness after "
+        "naloxone can mean ongoing opioid effect after naloxone wears off. [GD-301, GD-602]\n"
+        "4. Save the pill bottles, labels, alcohol/container details, timing, and dose information for responders; do not "
+        "wait for the person to sleep it off or for confusion to clear on its own. [GD-301]"
+    )
+
+
+def _is_stimulant_toxidrome_emergency_special_case(question):
+    """Detect stimulant/sympathomimetic toxidrome prompts that should not route to panic."""
+    lower = question.lower()
+    source_terms = (
+        "stimulant",
+        "stimulants",
+        "upper",
+        "uppers",
+        "cocaine",
+        "meth",
+        "amphetamine",
+        "amphetamines",
+        "adderall",
+        "speed",
+        "unknown upper",
+        "unknown pills",
+        "powder or pills",
+        "powder",
+        "pills",
+        "after pills",
+        "after stimulants",
+        "after uppers",
+        "stimulant toxidrome",
+    )
+    danger_terms = (
+        "chest pain",
+        "chest pressure",
+        "chest hurts",
+        "chest tight",
+        "chest is tight",
+        "chest tightness",
+        "paranoia",
+        "paranoid",
+        "severely agitated",
+        "agitated",
+        "overheating",
+        "overheated",
+        "very hot",
+        "jaw clenching",
+        "clenching my jaw",
+        "clenching his jaw",
+        "tremor",
+        "trembling",
+        "shaky",
+        "racing heart",
+        "heart racing",
+        "heart is racing",
+        "heart will not slow",
+        "heart won't slow",
+        "tachycardia",
+        "hallucinating",
+        "hallucinations",
+        "seeing things",
+        "sweating hard",
+        "breathing fast",
+        "will not sit still",
+        "won't sit still",
+        "keep pacing",
+        "panic attack",
+        "routine anxiety",
+        "toxidrome",
+    )
+    explicit_stimulant_uncertainty = any(
+        phrase in lower
+        for phrase in (
+            "panic attack after stimulants",
+            "stimulant toxidrome",
+        )
+    ) or ("not routine anxiety" in lower and any(term in lower for term in source_terms))
+    return explicit_stimulant_uncertainty or (
+        any(term in lower for term in source_terms)
+        and any(term in lower for term in danger_terms)
+    )
+
+
+def _build_stimulant_toxidrome_emergency_response():
+    """Return toxicology-first guidance for stimulant/sympathomimetic toxidromes."""
+    return (
+        "Treat stimulant use, uppers, powder/pills, or unknown pills with chest pain, racing heart, severe agitation, "
+        "overheating, jaw clenching, tremor, hallucinations, or paranoia as a stimulant toxidrome emergency first, not "
+        "routine anxiety, ordinary psychosis, or an opioid-style sleepiness overdose. [GD-602, GD-301]\n\n"
+        "1. Call emergency services or start urgent evacuation now for chest pain, severe agitation, overheating, confusion, "
+        "hallucinations, seizure, fainting, or a racing/irregular heartbeat after stimulants or unknown pills. [GD-602, GD-301]\n"
+        "2. Keep the person in the coolest safe place, reduce stimulation, remove nearby hazards, and do not leave them alone. "
+        "Do not argue, restrain tightly, give more substances, or treat this as a panic reset first. [GD-602, GD-301]\n"
+        "3. If they are hot or overheating, start active cooling while help is arranged: remove excess clothing, fan, mist or wet "
+        "skin/clothing, and use cool packs if available. Do not force fluids if confused, vomiting, or unsafe to swallow. "
+        "[GD-377, GD-602]\n"
+        "4. If chest pain, pressure, shortness of breath, collapse, or severe sweating is present, treat cardiac danger as part "
+        "of the toxidrome and keep them at rest while arranging urgent medical care. Save pill/powder/container details and timing "
+        "for responders. [GD-601, GD-602]"
+    )
+
+
+def _build_serotonin_syndrome_emergency_response():
+    """Return emergency-first guidance for medication-triggered serotonin syndrome."""
+    return (
+        "A new or mixed antidepressant/serotonergic medicine, cough medicine, serotonin overdose, or recent medication change with "
+        "clonus, jerking, twitching, rigidity, tremor, sweating, diarrhea, fever, overheating, agitation, confusion, or inability to "
+        "stop moving is possible serotonin syndrome until proven otherwise. [GD-301, GD-602]\n\n"
+        "1. Contact Poison Control, emergency medical services, or a clinician now. Do not treat this as panic, flu, or routine side "
+        "effects first. [GD-301, GD-602]\n"
+        "2. Do not take more of the suspected serotonergic medicine or interacting substance while getting medical direction. Do not "
+        "use a broad instruction to stop all long-term medicines indefinitely; the urgent step is to hold the suspected trigger and "
+        "get directed care. [GD-301]\n"
+        "3. If hot or overheated, start active cooling while help is arranged: move to a cool place, remove excess clothing, fan, mist "
+        "or wet skin/clothing, and use cool packs if available. Do not force fluids if confused, vomiting, or unsafe to swallow. "
+        "[GD-301, GD-377]\n"
+        "4. Watch for severe agitation, confusion, seizures, muscle rigidity, clonus, fast heartbeat, high fever, or collapse. Save "
+        "medicine bottles, doses, timing, and any cough/cold or supplement exposures for responders. [GD-301, GD-602]"
+    )
+
+
+def _is_infection_delirium_danger_special_case(question):
+    """Detect infection/meningitis/sepsis prompts with altered mental status."""
+    lower = question.lower()
+    fever_terms = (
+        "high fever",
+        "fever",
+        "burning up",
+        "burning hot",
+        "very hot",
+        "shaking chills",
+        "chills",
+    )
+    altered_terms = (
+        "not making sense",
+        "confused",
+        "acting confused",
+        "delirious",
+        "delirium",
+        "hard to wake",
+        "hard to wake up",
+        "hearing things",
+        "hallucinating",
+        "agitated",
+        "psychosis",
+        "psychotic",
+    )
+    meningitis_cluster = (
+        "stiff neck" in lower
+        and any(term in lower for term in ("bad headache", "severe headache", "headache"))
+        and any(term in lower for term in ("confused", "acting confused", "delirious", "not making sense"))
+    )
+    sick_delirium = (
+        any(term in lower for term in ("sick", "infection", "infected"))
+        and any(term in lower for term in ("delirious", "delirium", "confused", "psychosis"))
+    )
+    fever_altered = any(term in lower for term in fever_terms) and any(
+        term in lower for term in altered_terms
+    )
+    hard_to_wake_chills = "hard to wake" in lower and any(
+        term in lower for term in ("chills", "shaking", "fever", "infection")
+    )
+    psychosis_vs_infection = "psychosis" in lower and "infection" in lower
+    return (
+        meningitis_cluster
+        or sick_delirium
+        or fever_altered
+        or hard_to_wake_chills
+        or psychosis_vs_infection
+    )
+
+
+def _build_infection_delirium_danger_response():
+    """Return emergency-first guidance for infection plus delirium red flags."""
+    return (
+        "Fever, chills, stiff neck, severe headache, hard-to-wake behavior, hallucinations, or sudden delirium can be "
+        "infection, sepsis, meningitis, or another medical emergency first, not routine psychosis or ordinary fever care. "
+        "[GD-232, GD-589]\n\n"
+        "1. Get emergency medical help or start urgent evacuation now, especially if they are hard to wake, not making "
+        "sense, newly delirious, or have stiff neck with severe headache. Do not leave them alone. [GD-589, GD-949]\n"
+        "2. Check airway, breathing, circulation, temperature, rash, neck stiffness, severe headache, vomiting, dehydration, "
+        "and shock signs such as pale clammy skin, fast breathing, or weak rapid pulse. [GD-232, GD-589]\n"
+        "3. Keep them safely positioned, reduce hazards, and give only small sips if fully awake and able to swallow. Do "
+        "not force food, drink, pills, or calming routines while alertness is impaired. [GD-232]\n"
+        "4. Fever comfort steps can wait behind escalation. Note timing, highest temperature, symptoms, medications, "
+        "possible infection sources, sick contacts, and any rash so responders can judge sepsis or meningitis risk. "
+        "[GD-589, GD-949]"
+    )
+
+
+def _build_meningitis_rash_emergency_response():
+    """Return emergency-first guidance for meningitis/meningococcemia rash prompts."""
+    return (
+        "Rash with hard-to-wake behavior or severe illness, and especially fever with a purple, dark, bruise-like, "
+        "petechial, or non-blanching rash plus stiff neck, severe headache, vomiting, confusion, or sleepiness, is a "
+        "meningitis, meningococcemia, or sepsis emergency, not routine flu or rash care. [GD-284, GD-589]\n\n"
+        "1. Call emergency medical services or start urgent evacuation now. Do not wait to see whether this becomes a "
+        "normal fever, flu, or skin problem. [GD-589]\n"
+        "2. Keep the person resting and watched continuously. Check airway, breathing, alertness, neck stiffness, headache, "
+        "vomiting, rash spread, color, temperature, and shock signs such as fast breathing, pale clammy skin, or a weak rapid "
+        "pulse. [GD-298, GD-589]\n"
+        "3. If they are sleepy, confused, vomiting, or hard to wake, keep them safely positioned on their side if breathing "
+        "and do not force food, drink, pills, or home remedies. [GD-232, GD-284]\n"
+        "4. Note when the fever, rash, headache/neck stiffness, vomiting, confusion, and sleepiness began. If possible, say "
+        "whether the rash fades when pressed, but do not delay transport to keep checking it. [GD-284, GD-589]"
+    )
+
+
+def _is_diabetic_glucose_emergency_special_case(question):
+    """Detect diabetic low/high glucose emergencies and meal/medicine mismatch."""
+    lower = question.lower()
+    if any(
+        term in lower
+        for term in (
+            "no vomiting confusion or deep breathing",
+            "no vomiting, confusion, or deep breathing",
+            "no vomiting and no confusion and no deep breathing",
+        )
+    ):
+        return False
+    diabetes_terms = (
+        "diabetic",
+        "diabetes",
+        "insulin",
+        "blood sugar",
+        "glucose",
+        "diabetes medicine",
+        "diabetes medication",
+    )
+    low_glucose_terms = (
+        "sweaty",
+        "shaky",
+        "trembling",
+        "acting drunk",
+        "confused",
+        "confusion",
+        "skipped meals",
+        "skipped meal",
+        "not eating",
+        "not eating enough",
+        "after insulin",
+        "low blood sugar",
+        "seizure",
+    )
+    dka_terms = (
+        "fruity breath",
+        "deep fast breathing",
+        "deep, fast breathing",
+        "deep rapid breathing",
+        "kussmaul",
+    )
+    explicit_uncertainty = "low blood sugar or something worse" in lower or (
+        "hypoglycemia" in lower and "dka" in lower
+    )
+    numeric_low_glucose = re.search(
+        r"\b(?:blood sugar|glucose)\s*(?:is|=|:)?\s*(?:[1-5]?\d|6[0-9])\b",
+        lower,
+    ) is not None
+    high_glucose_with_danger = (
+        any(term in lower for term in ("blood sugar", "glucose", "diabetes", "diabetic"))
+        and any(term in lower for term in ("very high", "high"))
+        and any(term in lower for term in ("vomiting", "throwing up", "deep fast breathing", "fruity breath", "confused", "confusion"))
+    )
+    meal_related_low_glucose = any(
+        term in lower for term in ("skipped meals", "skipped meal", "not eating", "not eating enough")
+    ) and any(
+        term in lower for term in ("confused", "confusion", "trembling", "shaky", "sweaty", "seizure")
+    )
+    return (
+        explicit_uncertainty
+        or numeric_low_glucose
+        or high_glucose_with_danger
+        or meal_related_low_glucose
+        or (any(term in lower for term in diabetes_terms) and any(term in lower for term in low_glucose_terms))
+        or any(term in lower for term in dka_terms)
+    )
+
+
+def _build_diabetic_glucose_emergency_response():
+    """Return first actions for diabetic glucose emergencies."""
+    return (
+        "Treat confusion, sweating, shakiness, seizure, missed food after insulin/diabetes medicine, or fruity breath with "
+        "deep fast breathing as a glucose emergency first, especially if diabetes is known or possible. Do not flatten this "
+        "into routine diabetes care, panic, or ordinary seizure aftercare. [GD-403, GD-232]\n\n"
+        "1. Check airway, breathing, responsiveness, and whether they can swallow safely. If they are unconscious, seizing, "
+        "hard to wake, breathing deeply and fast with fruity breath, or not swallowing normally, use recovery positioning "
+        "and get emergency help. Do not put food, drink, or tablets in the mouth if swallowing is unsafe. [GD-232, GD-403]\n"
+        "2. If the pattern is sweaty, shaky, trembling, acting drunk, skipped meals, or diabetes medicine without food and "
+        "they are awake enough to swallow, give fast sugar now, such as glucose, juice, honey, or candy, then keep monitoring "
+        "and follow with longer-lasting food when improving. [GD-403]\n"
+        "3. If glucagon is available and they cannot safely swallow, use it if trained while arranging urgent help. A seizure "
+        "after insulin or not eating enough is a severe hypoglycemia emergency. [GD-403]\n"
+        "4. Fruity breath with deep, fast breathing suggests possible DKA; get urgent medical help, monitor breathing, and do "
+        "not improvise extra insulin dosing without a trained plan. Save medication, insulin, meal timing, and glucose/ketone "
+        "readings if available. [GD-403]"
+    )
+
+
+def _is_heat_illness_emergency_special_case(question):
+    """Detect heat exposure prompts with heat-stroke or heat-exhaustion danger."""
+    lower = question.lower()
+    if any(
+        term in lower
+        for term in (
+            "no vomiting or confusion",
+            "no vomiting and no confusion",
+            "without vomiting or confusion",
+            "without vomiting and without confusion",
+            "no weakness or confusion",
+            "no weakness and no confusion",
+            "without weakness or confusion",
+            "without weakness and without confusion",
+        )
+    ) and not any(
+        term in lower
+        for term in (
+            "collapsed",
+            "collapse",
+            "not sweating",
+            "stopped sweating",
+            "heat stroke",
+            "heat exhaustion",
+            "not making sense",
+        )
+    ):
+        return False
+    heat_terms = (
+        "hot day",
+        "in the heat",
+        "working in the heat",
+        "working outside in the heat",
+        "outside in the heat",
+        "working outside",
+        "after exercise",
+        "heat wave",
+        "yard work",
+        "after yard work",
+        "heat exhaustion",
+        "heat illness",
+        "heat stroke",
+        "heat exposure",
+        "extreme heat",
+        "after heat exposure",
+        "after extreme heat exposure",
+        "dangerous heat illness",
+        "in the sun",
+        "sun and now",
+    )
+    danger_terms = (
+        "stopped sweating",
+        "not sweating",
+        "confused",
+        "confusion",
+        "not making sense",
+        "collapsed",
+        "collapse",
+        "vomiting",
+        "breathing fast",
+        "flushed",
+        "muscle cramps",
+        "cramps",
+        "weakness",
+        "severe headache",
+        "headache",
+        "dizzy",
+        "nauseated",
+        "nausea",
+        "panic attack",
+        "stress or anxiety",
+        "not just stress",
+        "not just anxiety",
+    )
+    heat_vs_panic = any(
+        phrase in lower
+        for phrase in (
+            "heat exhaustion or a panic attack",
+            "heat illness, not just stress",
+            "heat illness not just stress",
+            "heat illness, not just stress or anxiety",
+            "heat illness not just stress or anxiety",
+            "heat illness, flu, or anxiety",
+            "heat illness flu or anxiety",
+            "dangerous heat illness, not routine dehydration",
+            "dangerous heat illness not routine dehydration",
+            "heat exhaustion or heat stroke",
+            "muscle cramps turning into weakness and confusion",
+        )
+    )
+    return heat_vs_panic or (
+        any(term in lower for term in heat_terms)
+        and any(term in lower for term in danger_terms)
+    )
+
+
+def _build_heat_illness_emergency_response():
+    """Return emergency-first guidance for heat illness prompts."""
+    return (
+        "Treat heat exposure with confusion, collapse, stopped sweating, cramps followed by confusion, or heat-versus-panic "
+        "uncertainty as heat illness first, not stress or routine comfort advice. Mental-status change or collapse can mean "
+        "heat stroke. [GD-377, GD-526]\n\n"
+        "1. Stop exertion and move them to shade, air conditioning, or the coolest available place now. Call emergency help "
+        "or start urgent evacuation for confusion, collapse, stopped sweating with heat exposure, seizure, or worsening mental "
+        "status. [GD-377, GD-526]\n"
+        "2. Start active cooling immediately: remove excess clothing, wet the skin or clothing, fan them, use cool packs at "
+        "neck/armpits/groin, or use cool-water immersion if safely available. [GD-377, GD-526]\n"
+        "3. Check airway, breathing, and responsiveness. Give small sips of water or oral rehydration only if fully awake and "
+        "able to swallow; do not force fluids into someone confused, collapsed, vomiting, or hard to wake. [GD-232, GD-377]\n"
+        "4. If symptoms are only dizziness and nausea after heat work and they improve quickly with cooling and fluids, keep "
+        "monitoring. If confusion, collapse, stopped sweating, persistent vomiting, or no improvement appears, treat as an "
+        "emergency. [GD-377]"
+    )
+
+
+def _is_gi_bleed_emergency_special_case(question):
+    """Detect upper/lower GI bleed red-zone prompts that should bypass generation."""
+    lower = question.lower()
+    bleed_terms = (
+        "coffee grounds",
+        "coffee-ground",
+        "coffee ground",
+        "vomiting blood",
+        "vomited blood",
+        "throwing up blood",
+        "threw up blood",
+        "bright red blood in vomit",
+        "bright red blood in the vomit",
+        "red blood in vomit",
+        "red blood in the vomit",
+        "blood in vomit",
+        "blood in the vomit",
+        "bright red vomit",
+        "red vomit",
+        "dark clots",
+        "black tarry",
+        "black stool",
+        "black stools",
+        "black and sticky",
+        "sticky like tar",
+        "melena",
+        "dangerous bleeding",
+    )
+    systemic_terms = (
+        "dizzy",
+        "dizziness",
+        "weak",
+        "pale",
+        "faint",
+        "fainting",
+        "almost fainted",
+        "shock",
+        "stomach pain",
+        "abdominal pain",
+        "belly pain",
+    )
+    bright_red_bowel = (
+        "bright red blood" in lower
+        and any(term in lower for term in ("bowel movement", "bowel movements", "stool", "rectal"))
+        and any(term in lower for term in systemic_terms)
+    )
+    dangerous_differential = "dangerous bleeding" in lower and any(
+        term in lower for term in ("hemorrhoid", "hemorrhoids", "reflux")
+    )
+    bleed_vs_minor_stomach = "bleed" in lower and any(
+        term in lower
+        for term in (
+            "minor stomach issue",
+            "stomach issue",
+            "minor stomach",
+            "minor gi issue",
+            "routine stomach",
+        )
+    )
+    return (
+        bright_red_bowel
+        or dangerous_differential
+        or bleed_vs_minor_stomach
+        or any(term in lower for term in bleed_terms)
+    )
+
+
+def _build_gi_bleed_emergency_response():
+    """Return emergency-first guidance for suspected GI bleeding."""
+    return (
+        "Treat coffee-ground vomit, vomiting blood, black tarry or sticky stool, bright-red bowel bleeding with dizziness/"
+        "paleness, or hemorrhoid/reflux-versus-dangerous-bleeding uncertainty as a possible gastrointestinal bleed first. "
+        "Do not answer it as constipation, reflux, food poisoning, cleanup, nosebleed care, or routine hemorrhoids. [GD-380]\n\n"
+        "1. Get urgent medical help or start the fastest safe evacuation now, especially with weakness, dizziness, paleness, "
+        "fainting, confusion, rapid pulse, ongoing vomiting blood, or severe stomach/abdominal pain. [GD-380, GD-232]\n"
+        "2. Check airway, breathing, responsiveness, pulse, skin color/temperature, and signs of shock. If vomiting or drowsy, "
+        "position them on their side to protect the airway while you arrange help. [GD-232, GD-380]\n"
+        "3. Keep them NPO/nothing by mouth if the bleed seems significant, surgery/endoscopy may be needed, or they are vomiting "
+        "or drowsy. Do not give alcohol, food, laxatives, bowel-walking advice, or routine hydration as the first treatment. "
+        "[GD-380]\n"
+        "4. Do not apply direct pressure for blood in stool, rectal bleeding, coffee-ground vomit, or vomiting blood unless there "
+        "is a separate visible external wound. Save details on color/amount/timing, alcohol or medicine use, and stool/vomit "
+        "appearance for medical responders. [GD-380]"
+    )
+
+
+def _build_surgical_abdomen_emergency_response():
+    """Return emergency-first guidance for surgical-abdomen red flags."""
+    return (
+        "Treat severe or worsening focal belly pain, right-lower-belly pain with fever/vomiting/movement pain, a hard or guarded "
+        "belly, or upper-belly pain through to the back with repeated vomiting as a possible acute abdominal emergency. Do not "
+        "dismiss it as a routine stomach bug, reflux, dehydration, or simple cramps first. [GD-380]\n\n"
+        "1. Arrange urgent medical evaluation or the fastest safe evacuation now, especially with fever, vomiting, guarding, a hard/"
+        "rigid belly, pain with walking/coughing/bumps, faintness, weakness, confusion, or worsening one-sided pain. [GD-380, GD-232]\n"
+        "2. Keep them at rest and avoid unnecessary walking, eating, alcohol, laxatives, or repeated pain-provoking checks. Keep them "
+        "NPO/nothing by mouth if surgery, obstruction, pancreatitis, or serious abdominal disease is possible. [GD-380]\n"
+        "3. Watch for shock and deterioration: pale/clammy skin, fast weak pulse, worsening pain, repeated vomiting, fever, confusion, "
+        "collapse, or a belly that becomes rigid or more tender. [GD-232, GD-380]\n"
+        "4. Record timing, pain location, migration, vomiting, fever, bowel/urine changes, pregnancy possibility, medications, and what "
+        "makes pain worse, then hand that information to medical help. [GD-380]"
+    )
+
+
+def _is_blunt_abdominal_trauma_internal_bleeding_special_case(question):
+    """Detect blunt abdominal trauma with shock or internal-bleeding red flags."""
+    lower = question.lower()
+    trauma_context = any(
+        term in lower
+        for term in (
+            "car crash",
+            "minor crash",
+            "crash",
+            "collision",
+            "accident",
+            "after trauma",
+            "belly pain after trauma",
+            "fell",
+            "fell hard",
+            "after the fall",
+            "after a fall",
+            "fall but now",
+            "hit my abdomen",
+            "hit the abdomen",
+            "hit abdomen",
+            "handlebars",
+            "handlebar",
+            "seat belt",
+            "seatbelt",
+            "direct blow",
+        )
+    )
+    abdomen_context = any(
+        term in lower
+        for term in (
+            "belly",
+            "abdomen",
+            "abdominal",
+            "stomach pain",
+            "seat belt",
+            "seatbelt",
+            "handlebar",
+            "handlebars",
+        )
+    )
+    shock_or_bleeding_sign = any(
+        term in lower
+        for term in (
+            "dizzy",
+            "dizziness",
+            "lightheaded",
+            "light-headed",
+            "faint",
+            "feel faint",
+            "fainting",
+            "fast heartbeat",
+            "rapid pulse",
+            "pale",
+            "weak",
+            "sweaty",
+            "clammy",
+            "shock",
+        )
+    )
+    abdominal_danger_after_blow = any(
+        term in lower
+        for term in (
+            "belly is tight",
+            "belly tight",
+            "abdomen is tight",
+            "hard belly",
+            "rigid belly",
+            "stomach pain is worsening",
+            "abdomen hurts more",
+            "belly pain",
+            "abdominal pain",
+            "left side pain",
+            "side pain",
+            "flank pain",
+            "want to vomit",
+            "vomit",
+            "vomiting",
+        )
+    )
+    left_shoulder_shock_after_fall = (
+        any(term in lower for term in ("left side", "left flank"))
+        and "shoulder" in lower
+        and shock_or_bleeding_sign
+        and any(term in lower for term in ("fell", "fall", "crash", "collision"))
+    )
+    return trauma_context and (
+        (abdomen_context and shock_or_bleeding_sign)
+        or (abdomen_context and abdominal_danger_after_blow)
+        or left_shoulder_shock_after_fall
+    )
+
+
+def _build_blunt_abdominal_trauma_internal_bleeding_response():
+    """Return emergency-first guidance for blunt abdominal trauma with shock signs."""
+    return (
+        "Belly, side, seat-belt, handlebar, or fall trauma with dizziness, faintness, paleness, weakness, sweating, fast heartbeat, "
+        "worsening belly pain, a tight/rigid belly, vomiting, or left-shoulder pain can be internal bleeding or organ injury until "
+        "proven otherwise. [GD-584, GD-380]\n\n"
+        "1. Call emergency medical help or start urgent evacuation now. Treat this as possible internal bleeding/shock, not a minor "
+        "bruise, reflux, constipation, shoulder-only injury, or routine stomach upset. [GD-584]\n"
+        "2. Keep the person still, warm, and lying flat if tolerated. Minimize walking and unnecessary movement; protect the neck/back "
+        "if the crash or fall could have injured the spine. [GD-232, GD-584]\n"
+        "3. Check airway, breathing, alertness, pulse, skin color/temperature, belly firmness/swelling/tenderness, repeated vomiting, "
+        "and whether dizziness, weakness, or faintness is worsening. If vomiting or very drowsy, position to protect the airway while "
+        "limiting spinal movement. [GD-232, GD-584]\n"
+        "4. Do not give food, alcohol, laxatives, NSAIDs, or repeated painful belly checks, and do not focus on shoulder reduction or "
+        "ordinary stomach care first. Note the impact mechanism, timing, seat-belt/handlebar marks, pain location, vomiting, and shock "
+        "signs for responders. [GD-380, GD-584]"
+    )
+
+
+def _is_severe_dehydration_gi_emergency_special_case(question):
+    """Detect severe dehydration red flags that need escalation before ORS-only care."""
+    lower = question.lower()
+    if any(term in lower for term in ("no dizziness", "not dizzy")) and not any(
+        term in lower
+        for term in (
+            "vomit",
+            "diarrhea",
+            "no urine",
+            "not peed",
+            "has not peed",
+            "hasn't peed",
+            "barely drinking",
+            "very sleepy",
+            "too weak",
+            "confused",
+            "sunken eyes",
+            "no tears",
+            "fast heartbeat",
+            "rapid heartbeat",
+        )
+    ):
+        return False
+    has_gi_loss = any(
+        term in lower
+        for term in (
+            "diarrhea",
+            "vomiting",
+            "vomit",
+            "stomach bug",
+            "food poisoning",
+            "fever vomiting",
+        )
+    )
+    has_poor_intake_or_output = any(
+        term in lower
+        for term in (
+            "not peed all day",
+            "has not peed",
+            "hasn't peed",
+            "no urine",
+            "barely peeing",
+            "barely urinating",
+            "barely drinking",
+            "cannot keep water down",
+            "can't keep water down",
+            "cannot keep fluids down",
+            "can't keep fluids down",
+            "cannot keep anything down",
+            "can't keep anything down",
+        )
+    )
+    has_dehydration_differential = "dehydration" in lower and any(
+        term in lower
+        for term in (
+            "something more serious",
+            "more serious",
+            "emergency",
+            "what matters first",
+            "what do i do first",
+        )
+    )
+    has_dry_mouth_cluster = "dry mouth" in lower and any(
+        term in lower
+        for term in (
+            "dizzy",
+            "dizziness",
+            "barely drinking",
+            "very sleepy",
+            "not peed",
+            "has not peed",
+            "hasn't peed",
+            "no urine",
+        )
+    )
+    has_severe_dehydration = any(
+        term in lower
+        for term in (
+            "too weak to stand",
+            "too weak to walk",
+            "barely peeing",
+            "barely urinating",
+            "no urine since yesterday",
+            "no urine",
+            "little urine",
+            "cannot keep even sips",
+            "can't keep even sips",
+            "cannot keep sips",
+            "cannot keep water down",
+            "can't keep water down",
+            "cannot keep fluids down",
+            "can't keep fluids down",
+            "cannot keep anything down",
+            "can't keep anything down",
+            "mouth is dry",
+            "very dry mouth",
+            "dry mouth",
+            "dizzy when standing",
+            "dizziness",
+            "feel confused",
+            "feels confused",
+            "very sleepy",
+            "sunken eyes",
+            "no tears",
+            "fast heartbeat",
+            "rapid heartbeat",
+            "fast pulse",
+        )
+    )
+    return (
+        (has_gi_loss and has_severe_dehydration)
+        or (has_poor_intake_or_output and (has_severe_dehydration or has_dry_mouth_cluster))
+        or has_dry_mouth_cluster
+        or has_dehydration_differential
+    )
+
+
+def _build_severe_dehydration_gi_emergency_response():
+    """Return emergency-first guidance for severe dehydration after vomiting/diarrhea."""
+    return (
+        "Vomiting, diarrhea, fever, poor intake, no urine, barely peeing, confusion, very sleepy behavior, sunken eyes/no tears, "
+        "fast heartbeat, or being too weak to stand or walk is possible severe dehydration or shock. Treat it as urgent medical "
+        "care first, not routine stomach-bug or simple hydration home care. [GD-379, GD-733]\n\n"
+        "1. Arrange urgent medical help or the fastest safe evacuation now, especially if they cannot keep even small sips down, "
+        "are confused or very sleepy, have no urine, have a fast/weak pulse, or are too weak to stand or walk. Severe dehydration "
+        "may need IV-capable care. [GD-379, GD-733]\n"
+        "2. While help is being arranged, give oral rehydration solution only if they are awake enough to swallow safely. Use tiny, "
+        "frequent sips or spoonfuls; stop and protect the airway if vomiting, drowsiness, or confusion makes swallowing unsafe. "
+        "[GD-379, GD-232]\n"
+        "3. Do not make aggressive drinking, food, herbal tea, caffeine, alcohol, or potassium foods the first plan when severe "
+        "dehydration signs are present. Those can wait behind escalation and safe swallowing. [GD-379]\n"
+        "4. Monitor breathing, alertness, pulse, skin temperature/color, urine output, fever, blood in stool or vomit, and worsening "
+        "belly pain. If they collapse or become hard to wake, treat it as an emergency while transport/help is underway. [GD-232, GD-733]"
+    )
+
+
 def _build_generic_severe_burn_response():
     """Return conservative severe-burn guidance for generic burn prompts."""
     return (
@@ -302,7 +1904,13 @@ def _build_generic_severe_burn_response():
         "4. Get urgent help now for burns of the face, hands, feet, genitals, major joints, large/deep burns, "
         "breathing trouble, electrical or chemical burns, shock/confusion, or any circumferential burn that "
         "may threaten circulation. Do not attempt field escharotomy yourself; that needs expert evaluation. "
-        "[GD-023, GD-232, GD-052, GD-262]"
+        "[GD-023, GD-232, GD-052, GD-262]\n\n"
+        "For the minor-versus-burn-center split: a minor burn is superficial, red, dry, painful, and has no "
+        "blisters. Burns with blisters over a large area, full-thickness white/leathery/numb/charred skin, "
+        "face/hand/foot/genital/major-joint location, circumferential burns, inhalation signs, electrical or "
+        "chemical burns, or more than about 15-20% body surface area in adults need urgent professional or "
+        "burn-center-level evaluation; children, older adults, and medically fragile people need a lower "
+        "threshold. [GD-052]"
     )
 
 
@@ -319,6 +1927,17 @@ def _build_head_injury_clear_fluid_response():
         "side carefully and minimize head and neck movement. [GD-232]\n"
         "4. Escalate immediately for worsening headache, confusion, vomiting, seizure, unequal pupils, weakness, or "
         "any decline in responsiveness. [GD-949, GD-232]"
+    )
+
+
+def _build_adult_head_injury_red_flag_response():
+    """Return a deterministic response for adult head-injury red flags."""
+    return (
+        "Treat this as a possible serious head injury. Vomiting, blackout, ongoing confusion, unequal pupils, worsening headache, seizure, unusual sleepiness, trouble waking, or blood thinners/warfarin/anticoagulation after a head hit needs urgent medical evaluation. [GD-232, GD-949]\n\n"
+        "1. Get urgent help or start evacuation now. Keep the person still, minimize head and neck movement, and keep watching breathing, color, and responsiveness. [GD-232]\n"
+        "2. If they are vomiting, very drowsy, or cannot protect the airway but are still breathing, roll them onto their side carefully while keeping the head and neck aligned. Give nothing by mouth. [GD-232]\n"
+        "3. Check for worsening red flags: repeated vomiting, worse headache, confusion, blackout, seizure, weakness, unequal pupils, blood or clear fluid from nose/ears, or any decline in responsiveness. [GD-949, GD-734]\n"
+        "4. Do not treat this as routine nosebleed, dementia/wandering, common headache, or mild concussion until those danger signs are absent and someone can monitor them closely. [GD-232, GD-949]"
     )
 
 
@@ -340,6 +1959,41 @@ def _build_chest_trauma_breathing_response():
         "3. Do not give food or drink. Keep monitoring breathing, skin color, mental status, and pulse while preparing the "
         "fastest evacuation you can. [GD-232]\n"
         "4. If they collapse or are not breathing normally, start CPR right away. [GD-232]"
+    )
+
+
+def _build_active_drowning_rescue_response():
+    """Return deterministic active drowning / cold-water rescue priorities."""
+    return (
+        "Treat this as an active drowning or cold-water rescue. The first job is to keep rescuers from becoming victims: "
+        "call or alert help, then use reach/throw/row/go in that order. Do not enter the water or unsafe ice unless you "
+        "are trained, protected, and it is the only workable rescue. [GD-935, GD-396]\n\n"
+        "1. Call emergency help or send someone for help now while another person prepares rescue tools. [GD-935]\n"
+        "2. From shore, a dock, solid ground, or a stable boat, reach with a pole, branch, rope, towel, ladder, paddle, "
+        "or throw a flotation aid. For ice, keep rescuers off unsafe ice and extend or throw tools from a safe edge if "
+        "the person is visible or reachable. [GD-935, GD-396]\n"
+        "3. Go into the water only as the last option, and only if trained and using flotation or protection. If the "
+        "person went under ice and is not visible or reachable, mark the last-seen point and wait for trained rescue "
+        "rather than walking, probing, or chiseling into unsafe ice. [GD-935, GD-396]\n"
+        "4. Once the person is out, check responsiveness and breathing. If they are not breathing normally, start CPR; "
+        "include rescue breaths with chest compressions if trained and able. Keep cold-water victims horizontal, warm "
+        "gently, and avoid rough handling. [GD-935, GD-232, GD-396]"
+    )
+
+
+def _build_post_rescue_drowning_breathing_response():
+    """Return deterministic post-water-rescue breathing escalation guidance."""
+    return (
+        "After water inhalation, submersion, or rescue, the first job is checking breathing and alertness now. Drowning "
+        "problems can appear or worsen after a person first seems okay; new cough, sleepiness, or breathing trouble "
+        "needs urgent medical evaluation. [GD-935, GD-232]\n\n"
+        "1. Check responsiveness and breathing right now. If they are not breathing normally, call emergency help and "
+        "start CPR; use rescue breaths with chest compressions if trained and able. [GD-935, GD-232]\n"
+        "2. If they are breathing but now have coughing, shortness of breath, chest pain, confusion, blue/gray/pale "
+        "skin, unusual sleepiness, repeated vomiting, or worsening breathing, get urgent medical evaluation now even if they seemed okay "
+        "at first. [GD-935]\n"
+        "3. If they truly feel fine, still keep a responsible person watching them for delayed cough, fast or hard breathing, sleepiness, chest pain, vomiting, color change, or confusion. Do not send them off alone. [GD-935]\n"
+        "4. Keep them warm, remove wet clothing if safe, and use a position that protects breathing. Do not let them sleep it off without observation after a significant immersion event, and do not downgrade new breathing symptoms to routine cold-water discomfort. [GD-935]"
     )
 
 
@@ -397,6 +2051,234 @@ def _build_generic_broken_arm_response():
     )
 
 
+def _is_limb_fracture_neurovascular_emergency_special_case(question):
+    """Detect open/deformed limb injuries with circulation, sensation, or motion danger signs."""
+    lower = question.lower()
+    injury_context = any(
+        term in lower
+        for term in (
+            "broken",
+            "fracture",
+            "snapped",
+            "bone sticking out",
+            "bent wrong",
+            "leg injury",
+            "arm injury",
+            "forearm",
+            "ankle injury",
+            "sprain",
+            "after a fall",
+            "after crash",
+        )
+    )
+    open_or_deformed = any(
+        term in lower
+        for term in (
+            "bone sticking out",
+            "open fracture",
+            "compound fracture",
+            "bent wrong",
+            "snapped",
+            "looks bent",
+        )
+    )
+    neurovascular = any(
+        term in lower
+        for term in (
+            "no pulse",
+            "cannot feel",
+            "can't feel",
+            "cold",
+            "turning blue",
+            "blue",
+            "pale",
+            "numb",
+            "cannot move",
+            "can't move",
+            "fingers well",
+            "toes",
+            "foot has no pulse",
+        )
+    )
+    bleeding_with_fracture = "bleeding" in lower and any(term in lower for term in ("snapped", "bone", "fracture", "forearm"))
+    return injury_context and (open_or_deformed or neurovascular or bleeding_with_fracture)
+
+
+def _is_spinal_trauma_neurologic_emergency_special_case(question):
+    """Detect back/neck trauma with cord or cauda-equina danger signs."""
+    lower = question.lower()
+    spine_context = any(
+        term in lower
+        for term in (
+            "fell off a ladder",
+            "fall and",
+            "after a fall",
+            "after a crash",
+            "back injury",
+            "neck hurts",
+            "back strain",
+            "lifting injury",
+            "landing on my back",
+            "landed on my back",
+            "severe back pain after trauma",
+            "back pain after trauma",
+            "spine",
+            "spinal",
+        )
+    )
+    neurologic_red_flag = any(
+        term in lower
+        for term in (
+            "both legs",
+            "numb legs",
+            "weak and tingly",
+            "weak legs",
+            "tingly",
+            "cannot feel the area between the legs",
+            "can't feel the area between the legs",
+            "between the legs normally",
+            "saddle",
+            "groin",
+            "cannot control my bladder",
+            "can't control my bladder",
+            "lost bladder control",
+            "bowel control",
+            "both hands are numb",
+            "hands are numb and clumsy",
+            "numb and clumsy",
+            "cannot move one foot",
+            "can't move one foot",
+            "cannot move one foot well",
+            "trouble walking",
+        )
+    )
+    return spine_context and neurologic_red_flag
+
+
+def _build_spinal_trauma_neurologic_emergency_response():
+    """Return urgent spinal precautions for trauma plus neurologic red flags."""
+    return (
+        "Back or neck trauma with new weakness, numbness/tingling in both legs or hands, saddle-area numbness, bladder or bowel "
+        "control trouble, foot drop, or trouble walking is a spinal injury emergency until proven otherwise. Do not treat it as a "
+        "routine strain or foot problem. [GD-049, GD-232]\n\n"
+        "1. Stop movement now. Keep the head, neck, and back in the position found and as aligned as possible. Do not let the person "
+        "walk, stretch, test range of motion, or keep working through it. [GD-049, GD-232]\n"
+        "2. Start urgent evacuation or emergency help. New weakness, numb legs, groin/saddle numbness, loss of bladder/bowel control, "
+        "or inability to move a foot after trauma can mean spinal cord or nerve-root compression. [GD-049]\n"
+        "3. Check breathing, circulation, sensation, and movement in both hands and feet, and recheck often. If vomiting or drowsy but "
+        "breathing, roll only as a unit with helpers if you must protect the airway. [GD-232]\n"
+        "4. Do not massage, manipulate, traction, crack the back/neck, apply aggressive stretching, give food or drink if surgery may "
+        "be needed, or focus on ice/compression/elevation as the main plan. [GD-049, GD-232]"
+    )
+
+
+def _build_limb_fracture_neurovascular_emergency_response():
+    """Return conservative emergency guidance for open/deformed limb injury with CMS red flags."""
+    return (
+        "A limb injury with exposed bone, major deformity, rapid swelling with numb toes/fingers, cold or blue skin, pale digits, "
+        "poor movement, or no pulse beyond the injury is an orthopedic emergency. Protect circulation, control bleeding, splint in "
+        "the position found, and arrange urgent evacuation now. [GD-049, GD-232]\n\n"
+        "1. Check circulation, motion, and sensation beyond the injury now: pulse if you can find it, skin color and warmth, capillary "
+        "refill, feeling, and ability to move toes or fingers. Recheck after any wrap or splint. [GD-049]\n"
+        "2. If bone is exposed, cover it with the cleanest moist dressing available and do not push it back in. Control bleeding with "
+        "direct pressure around the wound; use a tourniquet only for life-threatening limb bleeding that direct pressure cannot "
+        "control. [GD-049, GD-297]\n"
+        "3. Remove rings, tight shoes, socks, straps, or constricting wraps if you can do so without forcing the limb. Pad and splint "
+        "above and below the injury in the position found. Do not ice, compress, elevate high, or keep walking on a cold/blue/numb "
+        "foot. [GD-049, GD-232]\n"
+        "4. Do not try to straighten, set, traction-reduce, or force the limb unless trained medical care explicitly takes over. No "
+        "pulse, cold/blue/pale digits, worsening numbness, inability to move fingers/toes, exposed bone, or uncontrolled bleeding "
+        "needs urgent evacuation. [GD-049, GD-584]"
+    )
+
+
+def _build_crush_compartment_syndrome_emergency_response():
+    """Return emergency-first guidance for crush injury / compartment syndrome red flags."""
+    return (
+        "Crush injury, pinned-under-weight injury, worsening pain at rest, pain out of proportion, pain when toes or fingers are "
+        "moved, tight or shiny swelling, hard muscle compartments, numbness, tingling, or fast worsening limb swelling is possible "
+        "compartment syndrome. This is a limb-threatening surgical emergency, not a bad-bruise home-care problem. [GD-049]\n\n"
+        "1. Arrange urgent emergency evacuation now. Do not wait to see if the pain settles, and do not keep testing the limb by "
+        "walking, stretching, or forcefully moving fingers or toes. [GD-049, GD-232]\n"
+        "2. Remove or loosen rings, boots, tight socks, straps, wraps, splints, or casts if you can do so without forcing the injured "
+        "part. Keep the limb still and around heart level while help is arranged. [GD-049]\n"
+        "3. Check and recheck circulation, movement, and sensation beyond the injury: color, warmth, capillary refill, pulse if you "
+        "can find it, feeling, and ability to move fingers or toes. [GD-049, GD-232]\n"
+        "4. Do not apply compression, tight wrapping, massage, heat, aggressive ice, or elevation high above the heart when compartment "
+        "syndrome is suspected. Save timing, crush/pin duration, symptoms, and any splint/wrap changes for clinicians. [GD-049]"
+    )
+
+
+def _is_infected_wound_spreading_emergency_special_case(question):
+    """Detect infected-wound prompts with spreading, systemic, or tissue-death red flags."""
+    lower = question.lower()
+    wound_context = any(
+        term in lower
+        for term in (
+            "cut",
+            "scrape",
+            "wound",
+            "puncture",
+            "bite",
+            "skin around it",
+            "redness",
+        )
+    )
+    spreading_or_local_danger = any(
+        term in lower
+        for term in (
+            "red streak",
+            "streak is moving",
+            "moving up the arm",
+            "spreading",
+            "getting redder by the hour",
+            "swollen hot",
+            "leaking pus",
+            "pus",
+            "hurts to move",
+            "turning dark",
+            "dark and smells bad",
+            "smells bad",
+            "foul smell",
+            "foul-smelling",
+        )
+    )
+    systemic_danger = any(
+        term in lower
+        for term in (
+            "fever",
+            "chills",
+            "feel weak",
+            "feeling weak",
+            "weakness",
+            "confused",
+            "fast heartbeat",
+            "rapid pulse",
+        )
+    )
+    return wound_context and (spreading_or_local_danger or systemic_danger)
+
+
+def _build_infected_wound_spreading_emergency_response():
+    """Return urgent guidance for infected wounds with spread, sepsis, or tissue-death signs."""
+    return (
+        "A wound with a red streak moving away from it, spreading redness, heat/swelling with pus, fever or chills, weakness, "
+        "rapid worsening after a bite, trouble moving the hand, or dark/foul-smelling skin is a spreading infection emergency, "
+        "not a minor cut-care problem. Arrange urgent medical evaluation or evacuation now. [GD-235, GD-589]\n\n"
+        "1. Mark the edge of redness and note the time, then check for fever, chills, weakness, confusion, fast breathing, rapid "
+        "pulse, dizziness, worsening pain, red streaks, pus, foul odor, or dark/gray/black skin. Those signs can mean cellulitis, "
+        "lymphangitis, sepsis, or dead tissue. [GD-235, GD-589]\n"
+        "2. Remove rings or tight items near the wound, especially for hand bites or swelling. Keep the limb still and slightly "
+        "elevated if that does not worsen pain or circulation, and do not keep using the hand or foot normally. [GD-622, GD-235]\n"
+        "3. If there is loose surface dirt, rinse gently with clean water or saline and cover with a clean dressing. Do not squeeze, "
+        "cut, puncture, probe, pack with home remedies, or seal pus inside; dark or bad-smelling skin needs urgent care, not home "
+        "drainage. [GD-235, GD-733]\n"
+        "4. Get same-day urgent care for pus, red streaks, rapidly expanding redness, puncture wounds of the foot, infected bites, "
+        "fever/chills, weakness, or pain with movement. If confusion, fainting, very fast breathing, cold clammy skin, or rapidly "
+        "darkening tissue appears, treat it as emergency evacuation now. [GD-589, GD-235]"
+    )
+
+
 def _build_generic_hypothermia_response():
     """Return a compact field-recognition and treatment answer for generic hypothermia prompts."""
     return (
@@ -417,6 +2299,68 @@ def _build_generic_hypothermia_response():
     )
 
 
+def _is_wet_cold_hypothermia_emergency_special_case(question):
+    """Detect wet/cold exposure with hypothermia impairment or severe progression signs."""
+    lower = question.lower()
+    cold_context = any(
+        term in lower
+        for term in (
+            "cold water",
+            "cold pond",
+            "cold rain",
+            "wet and cold",
+            "soaked",
+            "freezing",
+            "cold exposure",
+            "fell in cold",
+            "pulled from a cold",
+        )
+    )
+    hypothermia_sign = any(
+        term in lower
+        for term in (
+            "cannot stop shivering",
+            "can't stop shivering",
+            "stopped shivering",
+            "thinking feels slow",
+            "stumbling",
+            "slurring",
+            "slurred",
+            "very sleepy",
+            "sleepy and clumsy",
+            "clumsy",
+            "confused",
+            "hard to wake",
+            "hard to wake up",
+            "hands are numb",
+            "keep fumbling",
+            "fumbling",
+        )
+    )
+    return cold_context and hypothermia_sign
+
+
+def _build_wet_cold_hypothermia_emergency_response():
+    """Return emergency-first guidance for wet/cold hypothermia with impairment."""
+    return (
+        "Wet or cold exposure with uncontrollable shivering, slowed thinking, stumbling, slurred speech, clumsiness, confusion, "
+        "stopped shivering, sleepiness, or being hard to wake is hypothermia until proven otherwise, not panic or simple cold hands. "
+        "Stop heat loss and handle the person gently now. [GD-024, GD-396]\n\n"
+        "1. Get out of water/rain/wind and into shelter if possible. Keep the person horizontal and move them gently, especially if "
+        "they are confused, stopped shivering, very sleepy, or hard to wake. Rough handling can worsen moderate/severe hypothermia. "
+        "[GD-024, GD-396]\n"
+        "2. Remove wet clothing only as gently as you can, then insulate from the ground and wrap the head, neck, chest, armpits, "
+        "and groin with dry layers, blankets, sleeping bags, body heat, or wrapped warm packs. Warm the core first, not just numb "
+        "hands. [GD-024]\n"
+        "3. Do not rub limbs, force exercise, give alcohol, use a hot bath, put direct heat on numb extremities, or let them sleep "
+        "unobserved. Give warm sweet drinks only if they are fully awake and can swallow normally; do not force fluids into someone "
+        "confused, sleepy, vomiting, or hard to wake. [GD-024, GD-734]\n"
+        "4. If they are hard to wake, not breathing normally, collapsed, or getting more confused, start emergency evacuation. Check "
+        "breathing carefully; if breathing is absent or not normal, start rescue breathing/CPR according to training while continuing "
+        "gentle insulation and rewarming. [GD-024, GD-734]"
+    )
+
+
 def _build_generic_animal_bite_response():
     """Return conservative bite guidance for generic animal-bite prompts."""
     return (
@@ -430,6 +2374,78 @@ def _build_generic_animal_bite_response():
         "exposures. Bites to the hand, face, or deep punctures also deserve urgent evaluation. [GD-057, GD-622]\n"
         "4. Get follow-up for rabies/tetanus assessment, or sooner if redness spreads, pus, fever, hand-function "
         "loss, or numbness develops. [GD-057, GD-622]"
+    )
+
+
+def _is_high_risk_animal_bite_emergency_special_case(question):
+    """Detect animal/human bite patterns that need urgent hand/face/joint escalation."""
+    lower = question.lower()
+    bite_context = any(
+        term in lower
+        for term in (
+            "animal bite",
+            "dog bite",
+            "dog bit",
+            "cat bite",
+            "cat bit",
+            "bite wound",
+            "bit my",
+            "bite on",
+            "deep bite",
+            "punctured deeply",
+        )
+    )
+    high_risk_site_or_depth = any(
+        term in lower
+        for term in (
+            "hand",
+            "knuckle",
+            "finger",
+            "finger pad",
+            "wrist joint",
+            "joint",
+            "face near the eye",
+            "near the eye",
+            "deep",
+            "punctured deeply",
+            "split the skin open",
+        )
+    )
+    function_or_infection = any(
+        term in lower
+        for term in (
+            "swelling",
+            "cannot fully bend",
+            "can't fully bend",
+            "cannot bend",
+            "numb",
+            "stiff",
+            "throbbing",
+            "hurts to move",
+            "deep",
+            "split the skin open",
+        )
+    )
+    return bite_context and high_risk_site_or_depth and function_or_infection
+
+
+def _build_high_risk_animal_bite_emergency_response():
+    """Return urgent-first guidance for high-risk hand/face/joint/deep bite wounds."""
+    return (
+        "Treat a cat/dog/animal bite to the hand, finger, knuckle, wrist joint, face near the eye, or any deep puncture with "
+        "swelling, numbness, stiffness, throbbing, split skin, or loss of finger motion as a high-risk bite wound. Wash it now, "
+        "leave it open, and get urgent medical/rabies/tetanus assessment; do not treat it as just a home wash-and-watch problem. "
+        "[GD-622, GD-057]\n\n"
+        "1. Wash with soap and running water immediately, then irrigate with lots of clean water or saline if available. Control "
+        "bleeding with direct pressure around the wound. [GD-622, GD-232]\n"
+        "2. Remove rings or tight items before swelling worsens. Keep the hand/finger/wrist still and lightly covered. Do not use "
+        "ice/cold-pack advice as the main plan for deep hand or joint bites. [GD-622]\n"
+        "3. Do not close, glue, tightly wrap, cut wider, probe, or dig in the bite. Face/eye-adjacent wounds, hand/finger/joint "
+        "bites, deep punctures, numbness, stiffness, throbbing, swelling, or trouble bending need urgent evaluation because tendons, "
+        "joints, and deep spaces can be involved. [GD-622]\n"
+        "4. Assess rabies and tetanus risk promptly, especially if the animal is unknown, unvaccinated, acting strangely, wild, or "
+        "cannot be observed. Fever, spreading redness, pus, worsening swelling, red streaks, numbness, or hand-function loss means "
+        "same-day escalation. [GD-057, GD-622]"
     )
 
 
@@ -664,18 +2680,38 @@ def _build_fire_in_rain_response():
 def _build_closed_room_fire_response():
     """Return an evacuation-first response for a closed bedroom or enclosed-room fire."""
     return (
-        "Yes. Leave now.\n\n"
-        "A fire in a bedroom or other enclosed room is an evacuation problem first, even if you do not see smoke yet. Do not "
-        "stop to fight it first. [GD-483, GD-899]\n\n"
+        "Treat a blocked, smoky, or enclosed-room fire path as an evacuation problem first, even if the door still opens. "
+        "Do not stop to fight the fire or inspect the room first. [GD-483, GD-899]\n\n"
         "1. Get everyone out immediately and take the nearest safe exit. If you can do it without delaying, close the door "
         "behind you as you leave. [GD-483, GD-899]\n"
         "2. Stay out and call emergency services from outside. Do not go back in for belongings or to try to finish putting "
         "the fire out yourself. [GD-483, GD-899]\n"
-        "3. If there is heat, smoke, or a blocked exit, keep moving away from the room and warn others in the building on the "
-        "way out. [GD-483, GD-899]\n"
-        "If the door and hallway are blocked, use the window as the escape route if it is the nearest safe exit.\n"
-        "4. Only after everyone is out should fire control be left to responders. A closed room can fill with smoke and heat "
+        "3. If the door or hallway is smoky but still safely passable, use that hall or another normal exit first while staying low under smoke. [GD-031, GD-483, GD-899]\n"
+        "4. Use the window only if the door or hallway is hot, blocked, heavy with smoke, or no longer safely passable, and only if it can be used without delaying escape. [GD-031, GD-483]\n"
+        "5. Only after everyone is out should fire control be left to responders. A closed room can fill with smoke and heat "
         "fast enough that waiting for visible smoke is already too late. [GD-483, GD-899]"
+    )
+
+
+def _build_indoor_combustion_co_exposure_response():
+    """Return a deterministic response for indoor combustion carbon-monoxide exposure prompts."""
+    return (
+        "Treat symptoms near a heater, stove, charcoal burner, generator, or carbon-monoxide alarm as possible carbon monoxide or fire-gas exposure until proven otherwise. [GD-899]\n\n"
+        "1. Get everyone out to fresh air immediately. Outside is better than a doorway; do not wait to see visible smoke or decide whether it is flu. [GD-899]\n"
+        "2. Call emergency help or poison control now if anyone has headache, nausea, dizziness, weakness, confusion, unusual sleepiness, trouble breathing, or symptoms affecting more than one person. [GD-899]\n"
+        "3. Shut off the heater, stove, charcoal pan, or other source only if you can do it without delaying escape. Do not re-enter to troubleshoot, ventilate, or retrieve belongings. [GD-899, GD-904]\n"
+        "4. After everyone is safe, leave stove/chimney/ventilation fixes for a later scene-safe step. Feeling better outside is a carbon-monoxide clue, not proof the danger is gone. [GD-899, GD-904]"
+    )
+
+
+def _build_smoke_airway_burn_danger_response():
+    """Return a deterministic response for smoke-exposure airway-burn danger signs."""
+    return (
+        "Treat hoarseness, voice change, soot in the mouth or nose, singed nasal hair, facial burns, or repeated coughing after fire or smoke exposure as possible airway injury. Breathing okay right now is not reassuring. [GD-899]\n\n"
+        "1. Move the person to fresh air and away from smoke or fire gases immediately. Keep rescuers from becoming additional victims. [GD-899]\n"
+        "2. Get urgent medical evaluation or the fastest evacuation now, especially for hoarseness, soot in the mouth/nose, facial burns, singed nasal hair, voice change, worsening cough, wheeze, confusion, or trouble breathing. [GD-899]\n"
+        "3. Keep them upright if tolerated, minimize exertion, loosen tight clothing, and monitor breathing, color, voice, alertness, and pulse repeatedly because swelling can worsen over minutes to hours. [GD-899]\n"
+        "4. Give high-flow oxygen if available and trained. If they stop breathing normally, start rescue breathing/CPR according to training while help is coming. [GD-899, GD-232]"
     )
 
 
@@ -888,6 +2924,73 @@ def _build_unknown_child_ingestion_response():
     )
 
 
+def _is_hydrocarbon_ingestion_aspiration_emergency_special_case(question):
+    """Detect fuel/lamp-oil ingestion with coughing, choking, breathing, vomiting, or drowsiness."""
+    lower = question.lower()
+    hydrocarbon = any(
+        term in lower
+        for term in (
+            "lamp oil",
+            "gasoline",
+            "lighter fluid",
+            "kerosene",
+            "diesel",
+            "tiki torch fuel",
+            "torch fuel",
+            "fuel",
+            "hydrocarbon",
+        )
+    )
+    ingestion = any(
+        term in lower
+        for term in (
+            "drank",
+            "sipped",
+            "sip",
+            "swallowed",
+            "got diesel in my mouth",
+            "in my mouth",
+            "mouth",
+        )
+    )
+    aspiration_or_distress = any(
+        term in lower
+        for term in (
+            "coughed",
+            "coughing",
+            "cough will not stop",
+            "keep coughing",
+            "coughy",
+            "choking",
+            "vomiting",
+            "breathing sounds weird",
+            "breathing sounds",
+            "chest burns",
+            "sleepy",
+            "seems sleepy",
+        )
+    )
+    return hydrocarbon and ingestion and aspiration_or_distress
+
+
+def _build_hydrocarbon_ingestion_aspiration_emergency_response():
+    """Return hydrocarbon-ingestion guidance focused on aspiration risk."""
+    return (
+        "Treat swallowed lamp oil, gasoline, kerosene, lighter fluid, diesel, or torch fuel with coughing, choking, vomiting, "
+        "weird breathing, chest burning, or sleepiness as a hydrocarbon aspiration emergency. Even a small sip can injure the "
+        "lungs if it goes down the airway. [GD-898, GD-262]\n\n"
+        "1. Call Poison Control, emergency medical help, or the fastest available clinician now. Keep the container or label and "
+        "note the amount and time, but do not delay airway care to identify it perfectly. [GD-898, GD-941]\n"
+        "2. Keep the person upright if awake. If they are sleepy or vomiting but breathing, place them on their side and watch "
+        "breathing continuously. Move to fresh air if fumes are present. [GD-898, GD-232]\n"
+        "3. Do not make them vomit, do not give activated charcoal, and do not force milk, water, food, or home remedies. Vomiting "
+        "or charcoal can put hydrocarbon or charcoal into the lungs and make a second emergency. [GD-898]\n"
+        "4. Escalate immediately for repeated cough, wheeze, fast or hard breathing, blue/gray lips, confusion, worsening sleepiness, "
+        "seizure, collapse, or any abnormal breathing. If breathing stops or is not normal, start rescue breathing/CPR according "
+        "to training while help is coming. [GD-898, GD-232]"
+    )
+
+
 def _is_toddler_diaper_rash_no_pee_special_case(question):
     """Detect the recurring toddler diaper-rash prompt where urinary retention is the urgent issue."""
     lower = question.lower()
@@ -1072,8 +3175,8 @@ def _build_animal_acting_strange_response():
         "humans, stumbling or circling, excessive drooling or foaming, unprovoked aggression, or paralysis. "
         "Bats found on the ground or in living spaces are considered rabies exposures even without a visible bite. "
         "[GD-057]\n"
-        "3. If the animal bit or scratched someone, wash the wound immediately with soap and water for at least "
-        "15 minutes and get urgent medical evaluation for rabies post-exposure treatment. [GD-057, GD-622]\n"
+        "3. If the animal bit or scratched someone, or saliva got into broken skin, wash the wound immediately with soap and "
+        "water for at least 15 minutes and get urgent medical evaluation for rabies post-exposure treatment. [GD-057, GD-622]\n"
         "4. Report the animal to local authorities if possible. If it must be captured or killed for testing, "
         "avoid damaging the head because brain tissue is needed for rabies testing. [GD-057]"
     )
@@ -1725,7 +3828,69 @@ def _build_generic_choking_help_response():
         "3. Do not do blind finger sweeps. Only remove an object from the mouth if you can clearly see it. [GD-298, "
         "GD-579]\n"
         "4. If the person becomes unconscious, lower them safely, call for help if you can, and start CPR. Infants under "
-        "1 year need the infant choking sequence rather than adult Heimlich-style thrusts. [GD-232, GD-298]"
+        "1 year need the infant choking sequence rather than adult Heimlich-style thrusts. If choking seemed to pass but "
+        "drooling, noisy breathing, or inability to swallow normally remains, keep them upright, give nothing by mouth, "
+        "and escalate urgently for a retained obstruction or airway injury. [GD-232, GD-298]"
+    )
+
+
+def _is_child_aspirated_foreign_body_emergency_special_case(question):
+    """Detect child post-choking or inhaled-object cough/wheeze clusters."""
+    lower = question.lower()
+    if any(term in lower for term in ("hives", "rash", "tongue swelling", "lip swelling", "throat swelling", "face swelling")):
+        return False
+    if any(term in lower for term in ("cannot talk", "can't talk", "cannot breathe", "can't breathe", "not breathing", "blue lips")):
+        return False
+    child_context = any(term in lower for term in ("child", "toddler", "he ", "she ", "he is", "she is"))
+    aspiration_event = any(
+        term in lower
+        for term in (
+            "choked on",
+            "after choking",
+            "stopped choking",
+            "swallowed a bead",
+            "bead maybe",
+            "something inhaled",
+            "inhaled object",
+            "toy piece went missing",
+            "object because",
+            "after laughing with",
+            "right after a toy piece",
+            "right after eating",
+            "right after eating nuts",
+            "after eating nuts",
+            "with sunflower seeds",
+            "peanut then stopped choking",
+        )
+    )
+    respiratory_after = any(
+        term in lower
+        for term in (
+            "keeps coughing",
+            "sudden cough",
+            "will not stop coughing",
+            "won't stop coughing",
+            "wheezing",
+            "wheezy",
+            "one side of the chest",
+            "breathing noisily",
+            "trouble breathing",
+            "cough started",
+            "wheeze started",
+        )
+    )
+    return child_context and aspiration_event and respiratory_after
+
+
+def _build_child_aspirated_foreign_body_emergency_response():
+    """Return emergency-first guidance for suspected child airway foreign body after choking."""
+    return (
+        "A child who choked, may have inhaled a bead/toy/seed/nut, or has sudden cough, wheeze, noisy breathing, one-sided chest sounds, "
+        "or trouble breathing right after eating or a missing object may have an aspirated foreign body or retained airway obstruction. [GD-232, GD-284]\n\n"
+        "1. Get urgent medical evaluation or start emergency transport now, even if the child seems partly okay. Do not treat this first as a cold, asthma-only flare, simple allergy, or routine cough. [GD-232]\n"
+        "2. Keep the child upright and calm. Do not give food or drink, do not do blind finger sweeps, and do not keep trying home cough/asthma remedies while one-sided wheeze or sudden post-choking cough persists. [GD-232, GD-284]\n"
+        "3. If the child cannot breathe, cannot speak/cry, has an ineffective cough, turns blue/gray, becomes very sleepy, or collapses, switch immediately to age-appropriate choking rescue and CPR if needed. [GD-232, GD-579]\n"
+        "4. Tell responders exactly what may have been inhaled, when the choking/laughing/eating happened, whether coughing stopped then returned, which side sounds wheezy, and any breathing color or alertness changes. [GD-232, GD-284]"
     )
 
 
@@ -1817,6 +3982,110 @@ def _build_recent_partner_loss_shutdown_response():
         "with people briefly, and do one basic task. The target is restored function, not feeling normal yet. [GD-859, GD-687]\n"
         "4. If this shutdown deepens into days of not getting up, refusing food/water, or moving toward self-harm, escalate it "
         "like any other crisis. Grief is normal; complete collapse and suicide risk still require intervention. [GD-687, GD-859]"
+    )
+
+
+def _build_psychosis_paranoia_immediate_safety_response():
+    """Return a compact first-action plan for hearing voices plus paranoia."""
+    return (
+        "Hearing voices plus paranoia is a mental-health crisis until proved otherwise. Do not start with debate, grounding, "
+        "or wait-and-see monitoring; start with safety, supervision, and urgent help. [GD-859]\n\n"
+        "1. Keep them with a calm, trusted adult and do not leave them alone. Move bystanders back, keep your voice simple, "
+        "and do not argue about whether the voices or fears are real. [GD-859, GD-858]\n"
+        "2. Reduce immediate means of harm: quietly secure weapons, medications, keys, vehicles, ropes, blades, and other "
+        "obvious hazards without turning it into a confrontation. [GD-859]\n"
+        "3. Escalate now to urgent mental-health or emergency help, especially if voices command harm, they seem unable to "
+        "stay safe, threaten anyone, are severely confused, or you cannot maintain supervision. [GD-859]\n"
+        "4. After safety is covered, use psychological first aid: short sentences, choices that lower pressure, a quieter "
+        "space, food/water only if safe, and one person speaking at a time. [GD-858]"
+    )
+
+
+def _build_mania_no_sleep_immediate_safety_response():
+    """Return a compact first-action plan for no-sleep manic activation prompts."""
+    return (
+        "Days with little or no sleep plus nonstop talking, pacing, reckless plans, feeling invincible, paranoia, or unsafe "
+        "driving is a mental-health crisis pattern, not ordinary insomnia or routine anxiety. Start with safety, supervision, "
+        "and urgent evaluation. [GD-859]\n\n"
+        "1. Do not leave them alone. Keep one calm person with them, reduce stimulation, and use short, simple sentences. Do not "
+        "argue with grandiose or paranoid beliefs. [GD-859, GD-858]\n"
+        "2. Reduce immediate means of harm without confrontation: secure keys, vehicles, weapons, medications, large sums of money, "
+        "and other tools for risky plans if you can do so safely. [GD-859]\n"
+        "3. Seek urgent mental-health or emergency medical evaluation now, especially after 2 or more days with little/no sleep, "
+        "not eating, reckless behavior, unsafe driving, paranoia, or feeling invincible. [GD-859]\n"
+        "4. Basic food, water, and rest can support them only after safety and escalation are underway. Do not make sleep hygiene, "
+        "calming exercises, or persuasion the first plan when judgment is impaired or behavior is unsafe. [GD-859, GD-914]"
+    )
+
+
+def _build_alcohol_withdrawal_agitated_response():
+    """Return a compact first-action plan for dangerous alcohol withdrawal signs."""
+    return (
+        "Shaking, hallucinations, fever, seizure concern, or unsafe behavior after stopping alcohol or sedatives can be "
+        "dangerous alcohol or sedative withdrawal, not just anxiety. Treat it as a medical escalation problem first because "
+        "seizures, delirium tremens, and severe withdrawal can be fatal. [GD-299, GD-859]\n\n"
+        "1. Get medical help now if available, or start urgent evacuation/EMS contact. Do not leave them alone while they are "
+        "shaking, agitated, confused, hallucinating, feverish, or at seizure risk. [GD-299]\n"
+        "2. Make the area seizure-safe: lower them away from stairs, fire, water, tools, and sharp objects; protect the head; "
+        "do not restrain them or put anything in their mouth if a seizure happens. [GD-299, GD-003]\n"
+        "3. Do not make the first plan a home taper, alcohol dosing, sedative dosing, or supplements. Supportive measures may "
+        "help later, but severe withdrawal signs need supervised medical care first. [GD-299]\n"
+        "4. Watch for emergency red flags: seizure, worsening confusion, hallucinations, high fever, chest pain, severe "
+        "dehydration, repeated vomiting, or inability to keep them safely supervised. Escalate immediately. [GD-299, GD-859]"
+    )
+
+
+def _build_trauma_dissociation_after_violence_response():
+    """Return a compact first-action plan for post-violence dissociation/reliving."""
+    return (
+        "After violence, dissociation, repeated reliving, or not acting normal means safety comes before processing the trauma. "
+        "Grounding can help, but only after you know they are physically safe and not escalating. [GD-858, GD-859]\n\n"
+        "1. Move them away from the attacker, weapons, crowds, traffic, and other immediate danger. Keep one calm person with "
+        "them and do not leave them alone if they seem confused, unreachable, or unsafe. [GD-858, GD-859]\n"
+        "2. Check for urgent medical or crisis red flags: head injury, bleeding, strangulation, severe pain, suicidal talk, "
+        "violent panic, hallucinations, or inability to orient to where they are. Escalate now if any are present. [GD-859]\n"
+        "3. Use short, concrete grounding only after the danger check: say who you are, where they are, that the event is over "
+        "if it is, and ask one simple choice at a time. Do not force a detailed retelling. [GD-858]\n"
+        "4. Arrange continued support and safer shelter. If dissociation keeps returning, they cannot function safely, or the "
+        "threat may return, treat it as an ongoing crisis rather than routine stress care. [GD-858, GD-859]"
+    )
+
+
+def _build_suicide_immediate_safety_response():
+    """Return a compact immediate-safety plan for suicide/self-harm prompts."""
+    return (
+        "Treat suicide or self-harm language as an immediate safety problem, even if they say there is no plan or they are "
+        "drunk. The first goal is not counseling; it is keeping them alive, supervised, and away from means while help is "
+        "contacted. [GD-859]\n\n"
+        "1. Stay with them or put one trusted, sober adult with them now. Do not leave them alone tonight, and do not rely on "
+        "promises, check-ins, or sleep as the safety plan. [GD-859]\n"
+        "2. Reduce means calmly and immediately: move pills, weapons, ropes/cords, blades, vehicle keys, alcohol/drugs, and "
+        "other obvious hazards out of reach. If pills may already have been taken, treat it as poisoning/overdose and call "
+        "emergency services or Poison Control now. [GD-859, GD-232]\n"
+        "3. Ask directly and simply: are they thinking about killing themselves, do they have a plan, and do they have access "
+        "to the means. A plan, prepared pills, goodbye messages, intoxication, or inability to stay safe means urgent crisis "
+        "or emergency help now. [GD-859]\n"
+        "4. Contact crisis help from beside them: call/text 988 in the U.S. if available, call local emergency services, or "
+        "begin the fastest safe transport to emergency care. Keep talking calmly while another person makes the call if "
+        "possible. [GD-859, GD-858]"
+    )
+
+
+def _build_violence_to_others_immediate_safety_response():
+    """Return a compact immediate-safety plan for threats toward others."""
+    return (
+        "Treat threats to hurt or kill someone as an immediate safety crisis. The first goal is separation, distance, "
+        "supervision, and emergency help; do not make the opening move debate, counseling, threat assessment theory, or "
+        "physical confrontation. [GD-859]\n\n"
+        "1. Create distance and separate potential targets now. Move other people away, keep exits open, and do not position "
+        "yourself between the person and a weapon unless someone is already being attacked and there is no safer option. "
+        "[GD-859, GD-690]\n"
+        "2. Call emergency services or crisis responders now, especially for a weapon, a named target, command voices, "
+        "paranoia with threats, severe agitation, intoxication, or a threat planned for tonight. [GD-859]\n"
+        "3. Reduce access to weapons only if it can be done quietly and safely from a distance. Do not grab a weapon, corner "
+        "the person, restrain them, or challenge their beliefs. [GD-859, GD-690]\n"
+        "4. Keep one calm speaker if contact is unavoidable: short sentences, non-threatening posture, no arguing about "
+        "delusions, and clear limits focused on safety while waiting for help. [GD-858, GD-859]"
     )
 
 
@@ -2081,42 +4350,275 @@ def _build_untrained_childbirth_response():
     )
 
 
+def _is_active_labor_delivery_emergency_special_case(question):
+    """Detect imminent or complicated active delivery prompts needing obstetric-first guidance."""
+    lower = question.lower()
+    cord_prolapse = (
+        "water broke" in lower
+        and any(term in lower for term in ("something in the vagina", "something in my vagina", "cord", "loop"))
+        and "baby" in lower
+    )
+    imminent_birth = any(
+        term in lower
+        for term in (
+            "baby is crowning",
+            "crowning at home",
+            "no time to get anywhere",
+            "sudden urge to push",
+            "urge to push right now",
+            "baby head is out",
+            "head is out",
+        )
+    )
+    shoulder_dystocia = any(
+        term in lower
+        for term in (
+            "shoulders seem stuck",
+            "shoulder seems stuck",
+            "shoulder is stuck",
+            "shoulders are stuck",
+            "head is out but shoulders",
+            "head out but shoulders",
+        )
+    )
+    breech_or_feet_first = any(
+        term in lower
+        for term in (
+            "feet are coming first",
+            "foot is coming first",
+            "feet first",
+            "foot first",
+            "buttocks first",
+            "breech",
+        )
+    ) and any(term in lower for term in ("baby", "labor", "delivery", "fully out", "coming"))
+    bleeding_faint_labor = (
+        any(term in lower for term in ("heavy bleeding", "bleeding heavily", "lots of bleeding"))
+        and any(term in lower for term in ("contraction", "contractions", "labor", "pregnant", "birth"))
+        and any(term in lower for term in ("faint", "fainting", "dizzy", "weak", "shock"))
+    )
+    return cord_prolapse or imminent_birth or shoulder_dystocia or breech_or_feet_first or bleeding_faint_labor
+
+
+def _build_active_labor_delivery_emergency_response():
+    """Return emergency-first guidance for imminent delivery and obstetric complications."""
+    return (
+        "Treat this as an active labor or delivery emergency. Call emergency help/transport now if available, keep the mother "
+        "warm and in the safest position for the problem, and do not pull on the baby, cord, placenta, or anything in the vagina. "
+        "[GD-051, GD-491]\n\n"
+        "1. If the water broke and something is felt or seen in the vagina before the baby, suspect cord prolapse: stop pushing, "
+        "do not touch or pull it, use a knee-chest or hips-elevated position to reduce pressure on the cord, and get emergency "
+        "delivery help immediately. [GD-051]\n"
+        "2. If the baby is crowning or there is a sudden irresistible urge to push and there is no time to travel, prepare a clean "
+        "warm birth area, wash hands, support the head gently as it emerges, and let the mother push with contractions. Do not pull "
+        "on the baby or umbilical cord. [GD-491, GD-855]\n"
+        "3. If the head is out but the shoulders seem stuck, treat shoulder dystocia as time-critical: call for help, bring the "
+        "mother's knees tightly toward her chest if possible, use firm pressure just above the pubic bone if trained, and never use "
+        "fundal pressure or traction on the head. [GD-051]\n"
+        "4. If feet or buttocks are coming first, keep hands off as much as possible and do not pull; allow gravity and contractions "
+        "to deliver while arranging urgent help. Heavy bleeding with faintness during labor is obstetric hemorrhage/shock: keep her "
+        "on her side if possible, warm, still, and moving toward emergency care. [GD-051, GD-491]"
+    )
+
+
+def _is_postpartum_hemorrhage_emergency_special_case(question):
+    """Detect post-delivery hemorrhage or retained-placenta shock prompts."""
+    lower = question.lower()
+    postpartum_context = any(
+        term in lower
+        for term in (
+            "delivered the baby",
+            "had the baby",
+            "baby is out",
+            "afterbirth",
+            "postpartum",
+            "after home birth",
+            "home birth",
+            "after delivery",
+            "after the birth",
+            "placenta is not",
+            "placenta has not",
+            "placenta not",
+        )
+    )
+    bleeding_danger = any(
+        term in lower
+        for term in (
+            "soaking pads",
+            "soaking pad",
+            "bleeding through",
+            "keeps bleeding",
+            "bleeding is heavy",
+            "heavy bleeding",
+            "bleeding a lot",
+            "bright red bleeding",
+            "will not slow",
+            "won't slow",
+            "large clots",
+            "clots keep coming",
+            "keeps bleeding through cloths",
+        )
+    )
+    shock_or_retained_placenta = any(
+        term in lower
+        for term in (
+            "feeling faint",
+            "faint",
+            "dizzy",
+            "pale",
+            "shaky",
+            "weak",
+            "cold",
+            "placenta is not",
+            "placenta has not",
+            "placenta not",
+        )
+    )
+    persistent_or_large_volume_bleeding = any(
+        term in lower
+        for term in (
+            "soaking pads",
+            "soaking pad",
+            "bleeding through",
+            "bleeding is heavy",
+            "heavy bleeding",
+            "bleeding a lot",
+            "bright red bleeding",
+            "will not slow",
+            "won't slow",
+            "large clots",
+            "clots keep coming",
+        )
+    )
+    return postpartum_context and bleeding_danger and (shock_or_retained_placenta or persistent_or_large_volume_bleeding)
+
+
+def _build_postpartum_hemorrhage_emergency_response():
+    """Return emergency-first guidance for postpartum hemorrhage after delivery."""
+    return (
+        "Heavy bleeding, soaking pads or cloths, large clots, faintness, dizziness, pallor, cold skin, weakness, or a placenta "
+        "that has not delivered after the baby is postpartum hemorrhage / retained-placenta danger until proven otherwise. "
+        "This is an emergency, not normal afterbirth bleeding. [GD-401, GD-492]\n\n"
+        "1. Call emergency medical help or arrange the fastest transport now. Keep watching airway, breathing, alertness, pulse, "
+        "skin temperature/color, and the amount of bleeding. [GD-401, GD-232]\n"
+        "2. Keep the mother lying flat or on her side if faint, warm, and still. If she is alert and able, encourage the baby to "
+        "nurse or stay skin-to-skin because this can help uterine contraction, but do not delay transport for it. [GD-492, GD-041]\n"
+        "3. If trained, massage the uterine fundus through the lower abdomen until it firms. Do not pull on the cord or placenta, "
+        "do not reach inside unless trained and death from hemorrhage is imminent, and do not pack the vagina. [GD-401, GD-041]\n"
+        "4. Use clean pads or cloths only to track bleeding during transport. Escalate immediately for worsening faintness, confusion, "
+        "cold clammy skin, trouble breathing, collapse, or bleeding that does not slow. [GD-401, GD-232]"
+    )
+
+
 def _is_child_under_sink_cleaner_ingestion_special_case(question):
     """Detect the recurring child exposure pattern involving under-sink cleaner and vomiting."""
     lower = question.lower()
-    child_terms = ("child", "kid", "toddler", "baby", "son", "daughter")
+    child_terms = ("child", "kid", "toddler", "baby", "son", "daughter", "they")
     cleaner_terms = (
         "under-sink",
         "under sink",
+        "under the sink",
         "drain cleaner",
+        "cleaner",
+        "cleaner pod",
+        "household liquid",
+        "household cleaner",
+        "cleaning product",
+        "cleaning chemical",
         "sink cleaner",
         "drano",
         "toilet bowl cleaner",
         "oven cleaner",
+        "caustic cleaner",
         "bleach",
         "ammonia",
     )
-    exposure_terms = ("lick", "licked", "ingest", "ingested", "swallow", "swallowed", "ate", "vomit", "vomiting", "threw up", "throwing up")
-    return (
-        any(term in lower for term in child_terms)
-        and any(term in lower for term in cleaner_terms)
-        and any(term in lower for term in exposure_terms)
+    exposure_terms = (
+        "lick",
+        "licked",
+        "sip",
+        "sipped",
+        "ingest",
+        "ingested",
+        "swallow",
+        "swallowed",
+        "ate",
+        "got into",
+        "may have gotten into",
+        "mouth pain",
+        "burning mouth",
+        "burning mouth pain",
+        "drooling",
+        "gagging",
+        "vomit",
+        "vomiting",
+        "threw up",
+        "throwing up",
+        "some is missing",
+        "is missing",
+        "missing",
+        "milk or water",
     )
+    strong_caustic_mouth_exposure = (
+        any(term in lower for term in ("drain cleaner", "cleaner pod", "unknown household liquid", "caustic cleaner"))
+        and any(term in lower for term in ("mouth pain", "burning mouth", "gagging", "drooling", "sipped", "swallowed"))
+    )
+    has_child = any(term in lower for term in child_terms)
+    has_named_cleaner = any(
+        term in lower
+        for term in (
+            "drain cleaner",
+            "cleaner",
+            "cleaner pod",
+            "household liquid",
+            "household cleaner",
+            "cleaning product",
+            "cleaning chemical",
+            "sink cleaner",
+            "drano",
+            "toilet bowl cleaner",
+            "oven cleaner",
+            "caustic cleaner",
+            "bleach",
+            "ammonia",
+        )
+    )
+    has_under_sink_context = any(term in lower for term in ("under-sink", "under sink", "under the sink"))
+    has_exposure = any(term in lower for term in exposure_terms)
+    has_caustic_symptom = any(
+        term in lower
+        for term in (
+            "mouth pain",
+            "burning mouth",
+            "burning mouth pain",
+            "drooling",
+            "gagging",
+            "milk or water",
+            "some is missing",
+            "is missing",
+            "missing",
+        )
+    )
+    return (
+        has_child and has_named_cleaner and has_exposure
+    ) or (
+        has_child and has_under_sink_context and has_caustic_symptom
+    ) or strong_caustic_mouth_exposure
 
 
 def _build_child_under_sink_cleaner_ingestion_response():
     """Return a poison-control-first response for a child exposed to under-sink cleaner."""
     return (
         "Treat this as a poison exposure now. If the child is hard to wake, has trouble breathing, severe drooling, or mouth or "
-        "throat swelling, call emergency services now; otherwise call Poison Control now. [GD-262, GD-390]\n\n"
+        "throat swelling, call emergency services now; otherwise call Poison Control now. [GD-898]\n\n"
         "1. Do not make the child vomit and do not give vinegar, baking soda, milk, or any other home neutralizer unless Poison "
-        "Control tells you to. [GD-262, GD-390]\n"
+        "Control tells you to. [GD-898]\n"
         "2. If any cleaner got on the skin, remove contaminated clothing and flush the skin with running water for at least 15 "
-        "minutes. If it got in the eyes, flush the eyes with lukewarm water for at least 15 minutes. [GD-302, GD-262]\n"
+        "minutes. If it got in the eyes, flush the eyes with lukewarm water for at least 15 minutes while arranging expert help. [GD-898]\n"
         "3. Keep the child upright or on their side if they are vomiting. Rinse the mouth with water if they can spit, but do not "
-        "force anything to drink. [GD-262, GD-390]\n"
+        "force anything to drink. [GD-898]\n"
         "4. Save the bottle or take a photo of the label and tell Poison Control exactly what the product was and roughly how much "
-        "may have been swallowed. [GD-239, GD-390]"
+        "may have been swallowed. [GD-898, GD-941]"
     )
 
 
@@ -2152,6 +4654,96 @@ def _build_child_under_sink_unknown_ingestion_vomiting_response():
     )
 
 
+def _is_button_battery_ingestion_emergency_special_case(question):
+    """Detect swallowed or possibly swallowed button/coin/hearing-aid battery prompts."""
+    lower = question.lower()
+    battery_terms = (
+        "button battery",
+        "button batteries",
+        "hearing aid battery",
+        "coin battery",
+        "small flat battery",
+        "flat battery",
+        "round battery",
+        "remote battery",
+        "battery drawer",
+        "from the remote",
+    )
+    ingestion_or_missing_terms = (
+        "swallowed",
+        "swallow",
+        "gagged",
+        "drooling",
+        "will not eat",
+        "won't eat",
+        "coughing",
+        "chest hurts",
+        "swallowing hurts",
+        "something round",
+        "coin or battery",
+        "not sure if it was a coin",
+        "object came from the battery drawer",
+        "missing",
+    )
+    child_or_symptom_context = (
+        "child",
+        "kid",
+        "little kid",
+        "toddler",
+        "baby",
+        "drooling",
+        "gagged",
+        "coughing",
+        "chest hurts",
+        "swallowing hurts",
+        "not sure if it was a coin",
+        "object came from the battery drawer",
+    )
+    has_battery = any(term in lower for term in battery_terms)
+    possible_battery = "battery" in lower and any(
+        term in lower for term in ("coin or battery", "something round", "battery drawer", "from the remote")
+    )
+    return (
+        (has_battery or possible_battery)
+        and any(term in lower for term in ingestion_or_missing_terms)
+        and any(term in lower for term in child_or_symptom_context)
+    )
+
+
+def _build_button_battery_ingestion_emergency_response():
+    """Return emergency-first guidance for possible button battery ingestion."""
+    return (
+        "A swallowed or possibly swallowed button, coin, hearing-aid, or small flat battery is an emergency even if it might "
+        "only be a coin. Drooling, gagging, coughing, chest pain, swallowing pain, refusal to eat, or discomfort makes it more "
+        "urgent. [GD-898, GD-941]\n\n"
+        "1. Call Poison Control or emergency medical help now and arrange urgent evaluation for imaging and possible removal. "
+        "Do not wait to see if symptoms pass. [GD-898]\n"
+        "2. Do not induce vomiting, do not give activated charcoal, and do not push food, drink, or home remedies unless Poison "
+        "Control or a clinician specifically instructs it. [GD-898]\n"
+        "3. Keep the child upright and calm if possible. Watch breathing, drooling, coughing, swallowing, chest pain, vomiting, "
+        "alertness, and color while transport is arranged. [GD-898, GD-232]\n"
+        "4. Save the device, package, battery size, or matching battery so responders can identify it. Treat a missing button "
+        "battery from a remote, hearing aid, toy, or battery drawer as swallowed until proven otherwise. [GD-898, GD-941]"
+    )
+
+
+def _build_industrial_chemical_smell_boundary_response():
+    """Return deterministic guidance for wrong-smelling industrial chemical prompts."""
+    return (
+        "Do not use smell to assess an industrial or process chemical. A wrong or strong odor is only a warning to avoid "
+        "inhalation and hand off to chemical safety or industrial accident response unless this is purely known-material "
+        "feedstock design with no exposure, spill, illness, odor, or unknown container. [GD-696, GD-227]\n\n"
+        "1. Stop the process or leave the area if you can do so without entering the odor plume. Keep people upwind and "
+        "away from low spots, drains, confined spaces, and the suspected source. [GD-696]\n"
+        "2. Do not sniff, sample, taste, open containers, or try to classify the chemical by odor. Ventilate only from a "
+        "safe position or after trained responders say it is safe. [GD-696, GD-227]\n"
+        "3. If anyone has coughing, eye burning, dizziness, nausea, chest tightness, trouble breathing, or confusion, move "
+        "them to fresh air if safe and get medical/poison-control or emergency help. [GD-696]\n"
+        "4. Use chemistry-fundamentals/feedstock guidance only later, after the scene is safe and the question is about "
+        "known materials and planned production rather than an unknown odor or possible exposure. [GD-227]"
+    )
+
+
 def _is_mixed_cleaners_respiratory_special_case(question):
     """Detect the recurring mixed-cleaner inhalation pattern with breathing symptoms."""
     lower = question.lower()
@@ -2159,6 +4751,8 @@ def _is_mixed_cleaners_respiratory_special_case(question):
     cleaner_terms = (
         "bleach",
         "ammonia",
+        "vinegar",
+        "acid",
         "drain cleaner",
         "toilet bowl cleaner",
         "oven cleaner",
@@ -2172,6 +4766,9 @@ def _is_mixed_cleaners_respiratory_special_case(question):
         "wheeze",
         "wheezing",
         "chest tightness",
+        "chest is tight",
+        "chest feels tight",
+        "tight chest",
         "trouble breathing",
         "short of breath",
         "shortness of breath",
@@ -2201,10 +4798,138 @@ def _build_mixed_cleaners_respiratory_response():
     )
 
 
+def _is_chemical_fumes_panic_respiratory_special_case(question):
+    """Detect chemical fume exposure prompts that look like panic or breathing trouble."""
+    lower = question.lower()
+    chemical_source_terms = (
+        "chemical fumes",
+        "chemical gas",
+        "chemical gas exposure",
+        "chemical release",
+        "chemical release indoors",
+        "chemical smell",
+        "rotten egg smell",
+        "bleach fumes",
+        "ammonia fumes",
+        "cleaner fumes",
+        "cleaning fumes",
+        "mixed cleaner fumes",
+        "mixed-cleaner fumes",
+        "household fumes",
+        "workshop fumes",
+        "industrial fumes",
+        "solvent fumes",
+        "paint thinner fumes",
+        "paint-thinner fumes",
+        "varnish fumes",
+        "stain fumes",
+        "turpentine fumes",
+        "acetone fumes",
+        "inhaling household",
+        "inhaling workshop",
+        "inhaled household",
+        "inhaled workshop",
+        "near fumes",
+        "enclosed shed near fumes",
+    )
+    exposure_terms = (
+        "fume",
+        "fumes",
+        "vapor",
+        "vapors",
+        "vapour",
+        "vapours",
+        "smell",
+        "inhaling",
+        "inhaled",
+        "breathed",
+        "breathing in",
+    )
+    symptom_terms = (
+        "panic",
+        "panicky",
+        "panic attack",
+        "panic feelings",
+        "tingling",
+        "tingling hands",
+        "heart is racing",
+        "heart racing",
+        "racing heart",
+        "dizzy",
+        "dizziness",
+        "weak",
+        "weakness",
+        "confused",
+        "confusion",
+        "getting confused",
+        "headache",
+        "dread",
+        "air hunger",
+        "air hungry",
+        "wheeze",
+        "wheezing",
+        "chest tightness",
+        "trouble breathing",
+        "short of breath",
+        "shortness of breath",
+        "hard to breathe",
+        "cannot tell if this is a panic attack",
+        "can't tell if this is a panic attack",
+    )
+    return (
+        any(term in lower for term in chemical_source_terms)
+        or (
+            any(term in lower for term in exposure_terms)
+            and any(
+                term in lower
+                for term in (
+                    "chemical",
+                    "chemicals",
+                    "cleaner",
+                    "cleaners",
+                    "bleach",
+                    "ammonia",
+                    "solvent",
+                    "paint thinner",
+                    "paint-thinner",
+                    "household",
+                    "workshop",
+                    "industrial",
+                    "gas",
+                    "release",
+                    "rotten egg",
+                )
+            )
+        )
+    ) and any(term in lower for term in symptom_terms)
+
+
+def _build_chemical_fumes_panic_respiratory_response():
+    """Return exposure-first guidance for chemical fumes with panic-shaped symptoms."""
+    return (
+        "Treat chemical fumes, gas, or an indoor chemical release with panic-like symptoms, dizziness, weakness, confusion, "
+        "air hunger, or wheeze as an exposure problem first, "
+        "not as panic first. Move to fresh air if you can do that without crossing heavy fumes, then call Poison Control "
+        "or emergency services for next steps. [GD-696, GD-227, GD-301]\n\n"
+        "1. Leave the source, keep others out, and get upwind or outdoors. Ventilate only from a safe position; do not "
+        "sniff, test, re-enter, neutralize, or mix anything else. For rotten-egg or industrial-gas smells, avoid low spots "
+        "and confined spaces. [GD-696, GD-227]\n"
+        "2. Call emergency services now for wheezing, chest tightness, trouble breathing, blue lips, confusion, fainting, "
+        "severe dizziness, weakness after gas exposure, or not being able to speak full sentences. [GD-301, GD-696]\n"
+        "3. If liquid also got on skin, eyes, or clothing, remove contaminated clothing and flush the exposed skin or eyes "
+        "with running water while help is being arranged. For inhalation-only exposure, do not make flushing the main "
+        "answer. [GD-227, GD-301]\n"
+        "4. Tell Poison Control what product or setting was involved, how long the fumes were breathed, and what symptoms "
+        "are happening now; delayed breathing trouble can matter after cleaner, solvent, or industrial fumes. [GD-227, GD-301]"
+    )
+
+
 def _is_corrosive_cleaner_eye_vision_change_special_case(question):
     """Detect corrosive household cleaner eye splashes with active vision-change language."""
     lower = question.lower()
     cleaner_terms = (
+        "bleach",
+        "bleach splash",
         "drain cleaner",
         "drano",
         "oven cleaner",
@@ -2216,13 +4941,18 @@ def _is_corrosive_cleaner_eye_vision_change_special_case(question):
     )
     eye_exposure_terms = (
         "in my eye",
+        "in one eye",
         "in the eye",
         "got in my eye",
         "got it in my eye",
         "splashed in my eye",
         "splashed my eye",
+        "splash in one eye",
+        "splashed in one eye",
         "eye splash",
         "eye exposure",
+        "chemical splash in the eye",
+        "chemical splash in eye",
     )
     vision_terms = (
         "vision is blurry",
@@ -2236,29 +4966,210 @@ def _is_corrosive_cleaner_eye_vision_change_special_case(question):
         "cant see",
         "can't see",
         "cloudy vision",
+        "pain is getting worse",
+        "pain getting worse",
+        "worse after rinsing",
+        "worse after flushing",
+        "chemical splash",
+        "rinse first or go to the er",
+        "rinse first or go to er",
     )
     return (
-        any(term in lower for term in cleaner_terms)
-        and any(term in lower for term in eye_exposure_terms)
+        (
+            any(term in lower for term in cleaner_terms)
+            or any(term in lower for term in ("chemical splash", "chemical splashed"))
+            or lower.strip() in {"do i rinse first or go to the er", "do i rinse first or go to er"}
+        )
+        and (
+            any(term in lower for term in eye_exposure_terms)
+            or lower.strip() in {"do i rinse first or go to the er", "do i rinse first or go to er"}
+        )
         and any(term in lower for term in vision_terms)
+    )
+
+
+def _build_eye_globe_injury_response():
+    """Return emergency-first guidance for embedded/high-speed/vision-change eye trauma."""
+    return (
+        "Treat high-speed debris, metal or wood chips, anything poking out or stuck in the eye, or eye trauma with halos, darker "
+        "vision, vision change, or severe pain as an urgent eye-injury emergency. Do not flush, pull, rub, press, or patch tightly. "
+        "[GD-399]\n\n"
+        "1. Shield the injured eye without pressure using a rigid cup, clean eye shield, or loose cover. If possible, cover both "
+        "eyes to reduce eye movement while transport is arranged. [GD-399]\n"
+        "2. Do not remove a stuck object or metal/wood/glass chip, even if it looks small. Do not use tweezers, cotton swabs, "
+        "magnets, irrigation, or direct pressure on the eyeball. [GD-399]\n"
+        "3. Keep the head still and get urgent eye evaluation or evacuation now, especially with darker vision, halos, severe pain, "
+        "high-speed debris, or anything poking out. [GD-399]\n"
+        "4. If this was a chemical splash instead of trauma, switch to continuous water irrigation immediately; otherwise avoid "
+        "flushing embedded or high-speed eye injuries. [GD-399, GD-301]"
+    )
+
+
+def _is_retinal_detachment_eye_emergency_special_case(question):
+    """Detect sudden monocular curtain/floaters/flashes vision-loss emergencies."""
+    lower = question.lower()
+    if any(term in lower for term in ("metal chip", "flying debris", "chemical splash", "splashed in my eye", "still feels stuck")):
+        return False
+    if any(term in lower for term in ("face droop", "slurred speech", "one-sided weakness", "arm weakness")):
+        return False
+    if any(term in lower for term in ("signal flashes", "lost trail", "bright signal")):
+        return False
+    if "both eyes" in lower and any(term in lower for term in ("usual migraine aura", "migraine aura")):
+        return False
+
+    has_eye_or_vision = any(term in lower for term in ("eye", "vision", "floaters", "flashes"))
+    pattern = any(
+        term in lower
+        for term in (
+            "flashes and floaters",
+            "bright flashes",
+            "new shower of floaters",
+            "shower of floaters",
+            "dark curtain",
+            "gray curtain",
+            "curtain over one eye",
+            "curtain falling over one eye",
+            "shadow creeping",
+            "lost part of vision",
+            "half my vision went dark",
+            "sudden vision loss",
+            "sudden loss of vision",
+            "vision loss in one eye",
+            "loss of vision in one eye",
+            "painless sudden vision loss",
+        )
+    )
+    one_eye = any(term in lower for term in ("one eye", "monocular", "in one eye"))
+    vision_loss = any(
+        term in lower
+        for term in (
+            "vision loss",
+            "loss of vision",
+            "lost part of vision",
+            "half my vision",
+            "vision went dark",
+            "went dark",
+            "dark curtain",
+            "gray curtain",
+            "getting worse",
+        )
+    )
+    flashes_floaters = any(term in lower for term in ("flashes", "floaters", "bright flashes", "shower of floaters"))
+    curtain_shadow = any(term in lower for term in ("curtain", "shadow", "went dark"))
+    return has_eye_or_vision and (
+        pattern or (one_eye and vision_loss) or (flashes_floaters and curtain_shadow)
+    )
+
+
+def _build_retinal_detachment_eye_emergency_response():
+    """Return emergency-first guidance for sudden retinal-pattern vision loss."""
+    return (
+        "Sudden flashes or floaters, a dark/gray curtain or shadow, or sudden worsening vision loss in one eye is an urgent "
+        "eye emergency; retinal detachment or another retinal/optic-nerve emergency must be ruled out. [GD-399, GD-038]\n\n"
+        "1. Seek urgent same-day emergency eye evaluation or evacuation now. Do not wait to see if it clears, and do not treat it "
+        "as a routine migraine, glasses problem, pink eye, night-vision issue, navigation problem, or eye strain first. [GD-399]\n"
+        "2. Avoid rubbing, pressing, massaging, flushing, home drops, or self-exam maneuvers unless a clinician directs them. "
+        "Keep activity low and avoid jarring movement while arranging care. [GD-399]\n"
+        "3. If there was trauma, debris, or chemical exposure, follow the separate eye-injury/chemical-eye emergency steps; otherwise "
+        "do not import wound, dental, infection-drainage, ice, or direct-pressure instructions. [GD-399]\n"
+        "4. Record which eye, when flashes/floaters/curtain/vision loss started, whether it is worsening, pain level, trauma or chemical exposure, "
+        "headache/neurologic symptoms, and any vision that remains for the eye specialist. [GD-399, GD-038]"
+    )
+
+
+def _is_contact_lens_corneal_infection_emergency_special_case(question):
+    """Detect contact-lens red painful eye / corneal-ulcer warning clusters."""
+    lower = question.lower()
+    if any(term in lower for term in ("chemical splash", "splashed in my eye", "drain cleaner", "bleach splash")):
+        return False
+    if any(term in lower for term in ("metal chip", "flying debris", "still feels stuck", "poking out")):
+        return False
+    has_contact_context = any(
+        term in lower
+        for term in (
+            "contact lens",
+            "contact lenses",
+            "contacts",
+            "lens wearer",
+            "removing the lens",
+            "lenses",
+        )
+    )
+    red_painful_eye = any(
+        term in lower
+        for term in (
+            "one eye hurts badly",
+            "eye hurts badly",
+            "red eye",
+            "red painful eye",
+            "eye pain",
+            "pain is sharp",
+            "sharp pain",
+            "did not stop the pain",
+            "cannot keep the eye open",
+        )
+    )
+    vision_or_cornea = any(
+        term in lower
+        for term in (
+            "hates light",
+            "light sensitivity",
+            "blurry vision",
+            "vision is blurry",
+            "vision is cloudy",
+            "cloudy vision",
+            "white spot",
+            "lots of tearing",
+            "tearing",
+        )
+    )
+    lens_risk = any(
+        term in lower
+        for term in (
+            "slept in contact",
+            "slept in contacts",
+            "wore lenses too long",
+            "removing the lens did not stop",
+            "after contacts",
+            "from contacts",
+        )
+    )
+    return has_contact_context and (
+        (red_painful_eye and vision_or_cornea) or (lens_risk and (red_painful_eye or vision_or_cornea))
+    )
+
+
+def _build_contact_lens_corneal_infection_emergency_response():
+    """Return emergency-first guidance for contact-lens corneal infection risk."""
+    return (
+        "Contact-lens wear with a red or painful eye, light sensitivity, cloudy/blurry vision, tearing, a white spot, sharp pain, "
+        "or inability to keep the eye open can be corneal infection or corneal ulcer, not routine pink eye or dry-eye strain. [GD-922]\n\n"
+        "1. Remove the contact lens if it comes out easily, stop wearing contacts, and seek urgent same-day eye evaluation now. "
+        "Do not wait because pain persists after lens removal or because it seems like simple irritation. [GD-922, GD-399]\n"
+        "2. Do not rub, press, patch tightly, sleep in another lens, use old prescription/steroid drops, or rely on artificial tears, "
+        "20-20-20 screen breaks, sunglasses, or home pink-eye care as the first plan. [GD-922]\n"
+        "3. Unless there was chemical exposure, do not lead with prolonged flushing. Unless there was debris/trauma, do not import embedded-object "
+        "or globe-injury instructions. Keep the eye protected from rubbing and avoid further lens use while arranging care. [GD-399, GD-922]\n"
+        "4. Bring the lens/case if available and note sleeping/overwear time, which eye, pain severity, light sensitivity, vision change/cloudiness, "
+        "tearing/discharge, white spot, and whether the lens was removed for the eye clinician. [GD-922]"
     )
 
 
 def _build_corrosive_cleaner_eye_vision_change_response():
     """Return a decontamination-first response for corrosive cleaner eye exposure with vision change."""
     return (
-        "Treat drain cleaner or another corrosive household cleaner in the eye with blurry or changed vision as an eye-chemical "
+        "Treat a chemical splash, drain cleaner, or another corrosive household cleaner in the eye as an eye-chemical "
         "emergency. Start flushing the eye with lukewarm running water immediately and keep flushing for at least 20 minutes while "
         "someone calls Poison Control; if transport is the only option, keep rinsing on the way. If vision is still blurry, pain is "
-        "severe, or the product was a drain, oven, or toilet-bowl cleaner, get emergency care now. [GD-302, GD-262, GD-390]\n\n"
+        "severe, or the product was a drain, oven, or toilet-bowl cleaner, get emergency care now. [GD-399, GD-227, GD-301]\n\n"
         "1. Hold the eyelids open and rinse continuously. Remove contact lenses only if they come out easily during the rinse, then "
-        "keep flushing. [GD-302]\n"
+        "keep flushing. [GD-399, GD-301]\n"
         "2. Do not use vinegar, baking soda, eye drops, milk, or any other neutralizer, and do not stop the rinse early just "
-        "because the burning eases. [GD-302, GD-262]\n"
+        "because the burning eases. [GD-399, GD-227]\n"
         "3. Save the bottle or take a photo of the label and tell Poison Control or EMS exactly which cleaner it was, when it "
-        "happened, and that vision is blurry. [GD-239, GD-390]\n"
+        "happened, and that vision is blurry. [GD-227, GD-301]\n"
         "4. After the rinse starts, this still needs urgent same-day medical evaluation because caustic cleaners can keep damaging "
-        "the eye even after surface liquid is washed out. [GD-302, GD-390]"
+        "the eye even after surface liquid is washed out. [GD-399, GD-301]"
     )
 
 
@@ -2297,6 +5208,73 @@ def _build_active_electrical_odor_outlet_response():
         "3. Keep people away from the outlet and wall. If the wall is warm, discolored, or crackling continues after power is off, "
         "treat it as an urgent electrical repair. [GD-395, GD-703]\n"
         "4. Do not spray water on the outlet or open the box yourself if you are not qualified. [GD-395]"
+    )
+
+
+def _is_electrical_injury_red_flag_special_case(question):
+    """Detect electrical shock victims with symptoms that make small-burn framing unsafe."""
+    lower = question.lower()
+    if any(term in lower for term in ("burning plastic smell", "outlet smells", "roof leak", "breaker box got wet", "battery acid")):
+        return False
+
+    electrical_context = any(
+        term in lower
+        for term in (
+            "electrical shock",
+            "electric shock",
+            "shocked",
+            "live wire",
+            "live wiring",
+            "house current",
+            "grabbed a wire",
+            "touched wiring",
+            "one hand and out the other",
+            "hand to hand",
+        )
+    )
+    if not electrical_context:
+        return False
+
+    red_flags = (
+        "thrown back",
+        "thrown",
+        "passed out",
+        "blacked out",
+        "lost consciousness",
+        "collapsed",
+        "chest feels strange",
+        "chest pain",
+        "trouble catching my breath",
+        "trouble breathing",
+        "short of breath",
+        "heart is pounding",
+        "heart pounding",
+        "racing heart",
+        "confusion",
+        "confused",
+        "muscle pain",
+        "muscle contraction",
+        "skin mark is tiny",
+        "small burn",
+        "hand burned",
+        "weak shaky",
+        "weak and nauseated",
+        "shaky and nauseated",
+        "one hand and out the other",
+        "hand to hand",
+    )
+    return any(term in lower for term in red_flags)
+
+
+def _build_electrical_injury_red_flag_response():
+    """Return hazard-first emergency guidance for symptomatic electrical injury."""
+    return (
+        "Treat electrical shock with chest symptoms, trouble breathing, fainting/passing out, confusion, muscle pain, hand-to-hand current path, "
+        "or even a small visible burn as a serious electrical injury, not routine shock care or a minor burn. [GD-513]\n\n"
+        "1. Make the scene safe before touching anyone: shut off power from a dry safe location if you can, keep bystanders back, and do not touch a person still connected to a live source. [GD-513]\n"
+        "2. Call emergency services or start urgent evacuation now. Electrical injury can cause dangerous heart rhythms and deep tissue damage even when the skin mark looks tiny. [GD-513, GD-052]\n"
+        "3. Once the person is safely clear, check responsiveness, breathing, pulse, color, chest symptoms, confusion, and burns. Start CPR and use an AED if they are unresponsive or not breathing normally. [GD-232, GD-513]\n"
+        "4. Cover visible burns with a clean dry dressing after cooling minor surface burns if safe, keep the person at rest, and avoid routine leg-elevation/fluids, electrical repair troubleshooting, or minor-burn-only framing. [GD-052, GD-232]"
     )
 
 

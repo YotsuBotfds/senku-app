@@ -8,8 +8,11 @@ tags:
   - passive-systems
   - health
   - building-services
+  - "stuffy room"
+  - "make-up air"
+  - "blocked ventilation"
 icon: 🌬️
-description: Natural and mechanical ventilation design principles. Stack effect calculations, cross-ventilation strategies, wind towers, roof ventilators, subfloor ventilation, fume extraction for kitchens and workshops, humidity control, and heat recovery ventilation concepts for off-grid buildings.
+description: Natural and mechanical ventilation design principles for non-emergency stale air, make-up air, blocked vents, and whole-room airflow. Stack effect calculations, cross-ventilation strategies, wind towers, roof ventilators, subfloor ventilation, fume extraction for kitchens and workshops, humidity control, and heat recovery ventilation concepts for off-grid buildings.
 related:
   - construction
   - heat-management
@@ -39,7 +42,12 @@ liability_level: medium
 - "bad indoor air" or "air smells stale all the time" - see humidity control and make-up air sections below
 - "smoke smell indoors", "smoke backing into room", or "stove making me sick" - use the cookstove/smoke guides first, then come back here for whole-building airflow or make-up air
 - "headache near fire" or dizziness near a stove - possible CO exposure - use the smoke guide first
+- "ventilation is blocked and carbon monoxide is possible" - use the smoke guide for the first move, then return here only after people are in fresh air
+- "open windows or leave first when the room is smoky and stuffy" - if anyone has symptoms or a combustion source is active, leave first and use the smoke guide
+- "stove only works with a cracked window" - use the cookstove guide for draft and CO safety, then use this guide to design make-up air
 - If you actually need insulation, passive cooling, or shelter heat control, see [#heat-management](heat-management.md).
+
+This guide is not the first stop for an active smoky room, suspected carbon monoxide exposure, dizziness, headache, cough from smoke, nausea, confusion, or unusual sleepiness near a heater. In those cases, get to fresh air and use the smoke-inhalation / carbon-monoxide guide first; use this page later for make-up air and building airflow fixes.
 Ventilation removes stale air, moisture, and pollutants (CO₂, formaldehyde, ammonia) while introducing fresh air. In sealed buildings without mechanical systems, poor ventilation causes condensation, mold, wood rot, and respiratory health issues. In occupied spaces (kitchens, workshops, occupied rooms), stagnant air traps heat, humidity, and fumes, reducing comfort and increasing disease transmission.
 
 **Core principle:** Air must circulate continuously. Humans exhale CO₂ (~40,000 ppm) and moisture (~50g/hour in occupied space). Without exchange, CO₂ reaches hazardous levels (>2000 ppm causes cognitive impairment) within 2-4 hours in sealed rooms.

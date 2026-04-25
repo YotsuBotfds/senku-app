@@ -15,6 +15,7 @@
     <string name="detail_loop4_backend_serial_device">THIS DEVICE</string>
     <string name="detail_loop4_backend_serial_fallback">HOST&gt;DEVICE</string>
     <string name="detail_loop4_evidence_serial_strong">STRONG</string>
+    <string name="detail_loop4_evidence_serial_reviewed">REVIEWED</string>
     <string name="detail_loop4_evidence_serial_moderate">MOD</string>
     <string name="detail_loop4_evidence_serial_limited">LIMIT</string>
     <string name="detail_loop4_evidence_serial_none">NO CITE</string>

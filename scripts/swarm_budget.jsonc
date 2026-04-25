@@ -1,0 +1,9 @@
+{
+  // Keep the sidecar lane from exploding under unattended loops.
+  "maxConcurrentOpenTasks": 12,
+  "maxTotalTrackedTasks": 5000,
+  "modelTiers": {
+    "glm-5.1": "async_long_work",
+    "qwen27_58k": "local_scout"
+  }
+}

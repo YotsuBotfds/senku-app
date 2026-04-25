@@ -152,6 +152,7 @@ Guide body.
                 vector_dtype="float16",
                 mobile_top_k=10,
                 source={"collection_name": "test"},
+                answer_cards=(),
             )
 
             sqlite_path = Path(summary.sqlite_path)
@@ -181,6 +182,9 @@ Guide body.
                     LIMIT 1
                     """
                 ).fetchone()
+                answer_card_count = conn.execute(
+                    "SELECT COUNT(*) FROM answer_cards"
+                ).fetchone()[0]
                 vector_row = conn.execute(
                     "SELECT vector_row_id FROM chunks WHERE chunk_id = 'chunk_1'"
                 ).fetchone()[0]
@@ -199,6 +203,7 @@ Guide body.
         self.assertGreater(deterministic_rule_count, 0)
         self.assertEqual(len(deterministic_rule_row), 4)
         self.assertTrue(all(deterministic_rule_row))
+        self.assertEqual(answer_card_count, 0)
         self.assertEqual(vector_row, 1)
         self.assertEqual(header[0], VECTOR_FILE_MAGIC)
         self.assertEqual(header[3], 2)
@@ -207,14 +212,237 @@ Guide body.
         self.assertEqual(first_row, (1.0, 0.0, 0.0))
         self.assertEqual(second_row, (0.0, 1.0, 0.0))
         self.assertEqual(manifest["counts"]["chunks"], 2)
+        self.assertEqual(manifest["counts"]["answer_cards"], 0)
         self.assertEqual(manifest["embedding"]["vector_dtype"], "float16")
         self.assertEqual(manifest["embedding"]["dimension"], 3)
         self.assertEqual(manifest["runtime_defaults"]["mobile_top_k"], 10)
+        self.assertIn("answer_cards", manifest["schema"]["sqlite_tables"])
         self.assertEqual(
             manifest["schema"]["deterministic_rules"]["columns"],
             ["rule_id", "predicate_name", "builder_name", "sample_prompt"],
         )
         self.assertTrue(manifest["schema"]["deterministic_rules"]["metadata_only"])
+        self.assertEqual(
+            manifest["schema"]["answer_cards"]["columns"][:3],
+            ["card_id", "guide_id", "slug"],
+        )
+        self.assertTrue(manifest["schema"]["answer_cards"]["metadata_only"])
+
+    def test_export_mobile_pack_writes_optional_answer_card_tables(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = [
+                GuideRecord(
+                    guide_id="GD-001",
+                    slug="poisoning",
+                    title="Poisoning",
+                    source_file="poisoning.md",
+                    description="Poisoning triage",
+                    category="medical",
+                ),
+                GuideRecord(
+                    guide_id="GD-002",
+                    slug="first-aid",
+                    title="First Aid",
+                    source_file="first_aid.md",
+                    description="Airway basics",
+                    category="medical",
+                ),
+            ]
+            chunks = [
+                ChunkRecord(
+                    chunk_id="chunk_0",
+                    source_file="poisoning.md",
+                    guide_id="GD-001",
+                    guide_title="Poisoning",
+                    slug="poisoning",
+                    description="",
+                    category="medical",
+                    difficulty="basic",
+                    last_updated="",
+                    version="",
+                    liability_level="",
+                    tags="",
+                    related="",
+                    section_id="triage",
+                    section_heading="Triage",
+                    document="Call poison control.",
+                    embedding=(1.0, 0.0),
+                )
+            ]
+            answer_cards = [
+                {
+                    "card_id": "poisoning_unknown_ingestion",
+                    "guide_id": "GD-001",
+                    "slug": "poisoning",
+                    "title": "Unknown ingestion",
+                    "risk_tier": "critical",
+                    "evidence_owner": "guide-corpus",
+                    "review_status": "reviewed",
+                    "runtime_citation_policy": "cite_card_sources",
+                    "required_first_actions": ["Call Poison Control now."],
+                    "conditional_required_actions": [
+                        {
+                            "trigger_terms": ["child", "kid"],
+                            "required_actions": ["Keep the child with an adult."],
+                        }
+                    ],
+                    "first_actions": ["Check airway and breathing."],
+                    "urgent_red_flags": ["Trouble breathing."],
+                    "forbidden_advice": ["Do not induce vomiting."],
+                    "do_not": ["Do not give food or drink unless directed."],
+                    "routine_boundary": "If symptoms are severe, escalate.",
+                    "acceptable_uncertain_fit": "If the substance is unknown, say so.",
+                    "source_sections": [
+                        {
+                            "guide": "GD-001",
+                            "slug": "poisoning",
+                            "title": "Poisoning",
+                            "sections": ["Triage"],
+                        },
+                        {
+                            "guide": "GD-002",
+                            "slug": "first-aid",
+                            "title": "First Aid",
+                            "sections": ["Airway"],
+                        },
+                    ],
+                    "notes": "Synthetic mobile pack card.",
+                }
+            ]
+
+            summary = export_mobile_pack(
+                root / "pack",
+                guides,
+                [chunks],
+                chunk_count=1,
+                embedding_model_id="test-embed",
+                vector_dtype="float16",
+                answer_cards=answer_cards,
+            )
+
+            with closing(sqlite3.connect(summary.sqlite_path)) as conn:
+                card_row = conn.execute(
+                    """
+                    SELECT card_id, guide_id, slug, title, risk_tier, evidence_owner,
+                           review_status, runtime_citation_policy, routine_boundary,
+                           acceptable_uncertain_fit, notes
+                    FROM answer_cards
+                    """
+                ).fetchone()
+                conditional_clause = conn.execute(
+                    """
+                    SELECT clause_kind, ordinal, text, trigger_terms_json
+                    FROM answer_card_clauses
+                    WHERE clause_kind = 'conditional_required_action'
+                    """
+                ).fetchone()
+                source_rows = conn.execute(
+                    """
+                    SELECT source_guide_id, sections_json, is_primary
+                    FROM answer_card_sources
+                    ORDER BY source_guide_id
+                    """
+                ).fetchall()
+                meta_answer_card_count = conn.execute(
+                    "SELECT value FROM pack_meta WHERE key = 'answer_card_count'"
+                ).fetchone()[0]
+
+            manifest = json.loads(Path(summary.manifest_path).read_text(encoding="utf-8"))
+
+        self.assertEqual(
+            card_row,
+            (
+                "poisoning_unknown_ingestion",
+                "GD-001",
+                "poisoning",
+                "Unknown ingestion",
+                "critical",
+                "guide-corpus",
+                "reviewed",
+                "cite_card_sources",
+                "If symptoms are severe, escalate.",
+                "If the substance is unknown, say so.",
+                "Synthetic mobile pack card.",
+            ),
+        )
+        self.assertEqual(
+            conditional_clause,
+            (
+                "conditional_required_action",
+                1,
+                "Keep the child with an adult.",
+                '["child", "kid"]',
+            ),
+        )
+        self.assertEqual(
+            source_rows,
+            [
+                ("GD-001", '["Triage"]', 1),
+                ("GD-002", '["Airway"]', 0),
+            ],
+        )
+        self.assertEqual(meta_answer_card_count, "1")
+        self.assertEqual(manifest["counts"]["answer_cards"], 1)
+        self.assertEqual(
+            manifest["schema"]["answer_cards"]["columns"][:3],
+            ["card_id", "guide_id", "slug"],
+        )
+
+    def test_export_mobile_pack_rejects_answer_card_unknown_source_guides(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = [
+                GuideRecord(
+                    guide_id="GD-001",
+                    slug="poisoning",
+                    title="Poisoning",
+                    source_file="poisoning.md",
+                    description="Poisoning triage",
+                    category="medical",
+                )
+            ]
+            chunks = [
+                ChunkRecord(
+                    chunk_id="chunk_0",
+                    source_file="poisoning.md",
+                    guide_id="GD-001",
+                    guide_title="Poisoning",
+                    slug="poisoning",
+                    description="",
+                    category="medical",
+                    difficulty="basic",
+                    last_updated="",
+                    version="",
+                    liability_level="",
+                    tags="",
+                    related="",
+                    section_id="triage",
+                    section_heading="Triage",
+                    document="Call poison control.",
+                    embedding=(1.0, 0.0),
+                )
+            ]
+            answer_cards = [
+                {
+                    "card_id": "poisoning_unknown_ingestion",
+                    "guide_id": "GD-001",
+                    "source_sections": [{"guide": "GD-999"}],
+                }
+            ]
+
+            with self.assertRaisesRegex(
+                ValueError,
+                "unknown source guide ids: GD-999",
+            ):
+                export_mobile_pack(
+                    root / "pack",
+                    guides,
+                    [chunks],
+                    chunk_count=1,
+                    embedding_model_id="test-embed",
+                    answer_cards=answer_cards,
+                )
 
     def test_export_mobile_pack_writes_int8_vector_payload(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -259,6 +487,7 @@ Guide body.
                 embedding_model_id="test-embed",
                 vector_dtype="int8",
                 mobile_top_k=8,
+                answer_cards=(),
             )
             payload = Path(summary.vector_path).read_bytes()
             header = VECTOR_HEADER_STRUCT.unpack(payload[: VECTOR_HEADER_STRUCT.size])
