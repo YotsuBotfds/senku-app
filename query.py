@@ -9030,6 +9030,9 @@ def _metadata_rerank_delta(question, meta):
             meta.get("category", ""),
             meta.get("related", ""),
             meta.get("tags", ""),
+            meta.get("aliases", ""),
+            meta.get("routing_cues", ""),
+            meta.get("applicability", ""),
             meta.get("source_file", ""),
         ]
     ).lower()

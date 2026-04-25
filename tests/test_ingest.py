@@ -115,6 +115,41 @@ but it still contains useful content that should be indexed.
         self.assertEqual(chunks[0]["metadata"]["section_heading"], "")
         self.assertIn("still contains useful content", chunks[0]["text"])
 
+    def test_process_file_preserves_routing_frontmatter_in_metadata(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guide_path = Path(tmpdir) / "routing-guide.md"
+            guide_path.write_text(
+                """---
+id: GD-904
+slug: routing-guide
+title: Routing Guide
+category: utility
+description: A guide with routing metadata.
+aliases:
+  - cloudy water after flood
+  - scald burn first aid
+routing_cues:
+  - settle filter disinfect store
+  - cool water first
+applicability:
+  - Use for post-flood water treatment order.
+  - Use for hot water burns before blister care.
+---
+
+## First Section
+
+This guide has frontmatter routing language.
+""",
+                encoding="utf-8",
+            )
+
+            _meta, chunks = process_file(str(guide_path))
+
+        metadata = chunks[0]["metadata"]
+        self.assertIn("cloudy water after flood", metadata["aliases"])
+        self.assertIn("settle filter disinfect store", metadata["routing_cues"])
+        self.assertIn("post-flood water treatment order", metadata["applicability"])
+
     def test_build_contextual_retrieval_text_preserves_chunk_with_context(self):
         chunk = {
             "text": "Keep this exact operational step.",
@@ -128,6 +163,9 @@ but it still contains useful content that should be indexed.
                 "section_heading": "Storage Steps",
                 "liability_level": "medium",
                 "related": "GD-778",
+                "aliases": "cloudy water after flood",
+                "routing_cues": "settle filter disinfect store",
+                "applicability": "Use for post-flood water treatment order.",
             },
         }
 
@@ -139,6 +177,9 @@ but it still contains useful content that should be indexed.
         self.assertIn("Category/tags: utility, water,storage", text)
         self.assertIn("Liability: medium", text)
         self.assertIn("Related: GD-778", text)
+        self.assertIn("Aliases: cloudy water after flood", text)
+        self.assertIn("Routing cues: settle filter disinfect store", text)
+        self.assertIn("Applicability: Use for post-flood water treatment order.", text)
         self.assertTrue(text.endswith("Keep this exact operational step."))
 
     def test_contextual_shadow_only_writes_jsonl_without_chroma_or_embeddings(self):

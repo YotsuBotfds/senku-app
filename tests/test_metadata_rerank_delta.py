@@ -135,6 +135,33 @@ class MetadataRerankDeltaTests(unittest.TestCase):
         self.assertGreater(bridge_delta, plain_delta)
         self.assertAlmostEqual(bridge_delta - plain_delta, 0.06, places=3)
 
+    def test_rerank_delta_sees_frontmatter_routing_fields(self):
+        question = "how do i build a charcoal sand water filter"
+        base_meta = {
+            "guide_id": "GD-999",
+            "guide_title": "Sparse Guide",
+            "section_heading": "Overview",
+            "slug": "sparse-guide",
+            "description": "",
+            "category": "survival",
+            "related": "",
+            "tags": "",
+            "source_file": "GD-999.md",
+        }
+
+        plain_delta = query._metadata_rerank_delta(question, base_meta)
+        routed_delta = query._metadata_rerank_delta(
+            question,
+            {
+                **base_meta,
+                "routing_cues": "water purification filtration systems",
+                "aliases": "biosand filter, charcoal sand filter",
+                "applicability": "Use for simple water treatment methods.",
+            },
+        )
+
+        self.assertLess(routed_delta, plain_delta)
+
     def test_planning_style_acute_query_skips_bridge_demotion(self):
         question = (
             "Before we set up a clinic, how should we plan for chest pain and stroke readiness "

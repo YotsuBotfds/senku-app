@@ -105,3 +105,37 @@ do not cite it:
 Next best slice is retrieval-miss repair, starting with metadata ingestion of
 frontmatter `aliases`, `routing_cues`, and `applicability` into chunk metadata
 before adding more guide-frontmatter churn.
+
+## 2026-04-25 Metadata Visibility Proof
+
+The next slice preserved frontmatter `aliases`, `routing_cues`, and
+`applicability` in chunk metadata, exposed those fields to contextual retrieval
+text, and let metadata reranking read them. After a full reingest, the held-out
+pack wrote:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_metadata_visible.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_metadata_visible_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- retrieval misses: `7`, down from `9`
+- ranking misses: `1`, up from `0`
+- expected-supported rows: `7`, up from `6`
+- expected-owner top-3/top-k hit rate: `13/21`, up from `11/21`
+- expected-owner hit@1: `12/21`
+- remaining buckets: `5` generation/citation misses, `1` accepted
+  `uncertain_fit`
+
+This proves the metadata path has value, but guide/frontmatter edits are still
+needed for the remaining retrieval misses. For the next guide-only pass, prefer
+incremental ingest instead of another full rebuild:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --files path\to\changed-guide.md
+```
+
+`--files` requires an existing collection, preflights duplicate guide IDs, skips
+unchanged SHA-256 matches from `chroma_db/ingest_manifest.json`, and deletes /
+re-embeds only changed guide IDs in Chroma and the lexical index.

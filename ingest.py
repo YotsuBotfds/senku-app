@@ -315,11 +315,44 @@ def build_contextual_retrieval_text(chunk):
         lines.append(f"Liability: {metadata.get('liability_level')}")
     if metadata.get("related"):
         lines.append(f"Related: {metadata.get('related')}")
+    if metadata.get("aliases"):
+        lines.append(f"Aliases: {metadata.get('aliases')}")
+    if metadata.get("routing_cues"):
+        lines.append(f"Routing cues: {metadata.get('routing_cues')}")
+    if metadata.get("applicability"):
+        lines.append(f"Applicability: {metadata.get('applicability')}")
 
     if lines:
         lines.append("")
     lines.append(text.strip())
     return "\n".join(lines).strip()
+
+
+def _frontmatter_text(value):
+    """Return a compact metadata string from scalar/list frontmatter values."""
+    if value is None:
+        return ""
+    if isinstance(value, (list, tuple, set)):
+        parts = []
+        for item in value:
+            if isinstance(item, dict):
+                parts.extend(
+                    str(part).strip()
+                    for part in item.values()
+                    if str(part).strip()
+                )
+            else:
+                text = str(item).strip()
+                if text:
+                    parts.append(text)
+        return ",".join(parts)
+    if isinstance(value, dict):
+        return ",".join(
+            str(part).strip()
+            for part in value.values()
+            if str(part).strip()
+        )
+    return str(value).strip()
 
 
 def contextual_shadow_record(chunk, index):
@@ -782,6 +815,9 @@ def process_file(filepath):
     normalized_tags = bridge_metadata["normalized_tags"]
     related = meta.get("related", [])
     related_str = ",".join(related) if isinstance(related, list) else str(related)
+    aliases = _frontmatter_text(meta.get("aliases"))
+    routing_cues = _frontmatter_text(meta.get("routing_cues"))
+    applicability = _frontmatter_text(meta.get("applicability"))
     common_metadata = {
         "source_file": os.path.basename(filepath),
         "guide_id": str(guide_id),
@@ -795,6 +831,9 @@ def process_file(filepath):
         "liability_level": str(liability_level or ""),
         "tags": ",".join(normalized_tags),
         "related": related_str,
+        "aliases": aliases,
+        "routing_cues": routing_cues,
+        "applicability": applicability,
         "bridge": bridge_metadata["bridge"],
     }
 
