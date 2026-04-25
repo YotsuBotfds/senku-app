@@ -40,3 +40,32 @@ After any follow-up slice, rerun the held-out pack and marker overlay:
 & .\.venvs\senku-validate\Scripts\python.exe -B .\bench.py --prompts artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl --output artifacts\bench\rag_eval_partial_router_holdouts_20260425_rerun.md
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py artifacts\bench\rag_eval_partial_router_holdouts_20260425_rerun.json --corpus-marker-scan artifacts\bench\corpus_marker_scan_20260425_1622_gd585_repair.json --output-dir artifacts\bench\rag_eval_partial_router_holdouts_20260425_rerun_diag
 ```
+
+## Post-fix proof
+
+After `RAG-EVAL5`, the GD-064/GD-066 partial repairs, and the bridge metadata
+pass, a focused rerun wrote:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_post_fixes.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_post_fixes_diag/report.md`
+
+Result:
+
+- deterministic rows: `0` (the two hijacks now fall through)
+- top-1 unresolved-partial rows: `0`
+- top-1 bridge rows: `1`
+- expected-owner top-k hit rate: `11/21`, up from `10/21`
+- expected-owner top-3 hit rate: `8/21`, up from `7/21`
+- bucket counts: `9` retrieval misses, `5` ranking misses, `4` artifact errors,
+  `2` expected supported, `1` accepted `uncertain_fit`
+
+Interpretation:
+
+- The deterministic fixes succeeded, but `RE2-UP-002` and `RE2-BR-004` now
+  expose real RAG ranking/retrieval work instead of being hidden by
+  deterministic passes.
+- GD-064/GD-066 content repairs succeeded: the marker overlay no longer shows
+  top-1 unresolved partials.
+- Bridge metadata improved guide metadata coverage but did not move `GD-634`,
+  `GD-635`, or `GD-636` into retrieved candidates without re-ingest or deeper
+  retrieval/ranking work.
