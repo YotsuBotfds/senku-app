@@ -360,6 +360,30 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(claim_result["status"], "pass")
         self.assertEqual(claim_result["forbidden_count"], 0)
 
+    def test_dangerous_activation_support_guides_are_source_only_boundaries(self):
+        card = find_cards_for_guides("GD-859", cards=self.cards)[0]
+
+        unit = compose_evidence_units([card])[0]
+        source_roles = {
+            source["guide"]: source.get("role")
+            for source in unit["source_sections"]
+            if source.get("guide") in {"GD-858", "GD-918"}
+        }
+
+        self.assertIn("GD-858", unit["source_guide_ids"])
+        self.assertIn("GD-918", unit["source_guide_ids"])
+        self.assertEqual(source_roles, {"GD-858": "boundary-support", "GD-918": "boundary-support"})
+        self.assertFalse(find_cards_for_guides("GD-858", cards=self.cards))
+        self.assertFalse(find_cards_for_guides("GD-918", cards=self.cards))
+
+        gd858_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-858"])
+        gd918_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-918"])
+
+        self.assertEqual(gd858_plan["cited_guide_ids"], [])
+        self.assertEqual(gd918_plan["cited_guide_ids"], [])
+        self.assertNotIn("[GD-858]", gd858_plan["answer_text"])
+        self.assertNotIn("[GD-918]", gd918_plan["answer_text"])
+
     def test_acute_coronary_overlap_card_stays_emergency_first(self):
         card = find_cards_for_guides("GD-601", cards=self.cards)[0]
 

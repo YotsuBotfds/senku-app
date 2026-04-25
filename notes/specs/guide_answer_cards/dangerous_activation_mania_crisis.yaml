@@ -58,6 +58,20 @@ source_sections:
       - "#severe-mental-illness > Acute Mania or Activated Bipolar State"
       - "#severe-mental-illness > Immediate safety assessment"
       - "#crisis-escalation"
+  - guide: GD-858
+    slug: psychological-first-aid-peer-support
+    title: "Psychological First Aid & Peer Support"
+    role: boundary-support
+    sections:
+      - "#routing-note-start-here-for-acute-distress-crisis-aftercare-and-peer-support"
+      - "#counseling-skills > When to Refer or Get More Help"
+  - guide: GD-918
+    slug: anxiety-stress-self-care
+    title: "Anxiety, Stress & Daily Self-Care"
+    role: boundary-support
+    sections:
+      - "#overview > What This Guide Is Not For"
+      - "#crisis-red-flags"
 source_invariants:
   - name: dangerous activation is crisis not routine anxiety
     guide: GD-859
@@ -68,9 +82,21 @@ source_invariants:
     must_not_match:
       - "little or no sleep[^\\n]{0,120}(routine anxiety|motivation|just a lot of energy)"
       - "grandiose[^\\n]{0,120}(grounding|breathing exercise)[^\\n]{0,80}alone"
+  - name: pfa hands off dangerous activation first
+    guide: GD-858
+    must_include:
+      - If the complaint is "they have barely slept for days,"
+      - move to the acute crisis/medical lane first
+      - PFA can support after handoff
+  - name: anxiety self-care excludes manic activation
+    guide: GD-918
+    must_include:
+      - mania or acute activation with days of little or no sleep
+      - little or no sleep for days with extreme energy, nonstop talking, grandiosity, feeling invincible, or reckless agitation
+      - treat that as a crisis rather than everyday anxiety
 review_status: pilot_reviewed
 notes: >
   Primary owner is GD-859 because it carries the acute mania / activated-state
   routing rule and crisis decision tree. PFA and anxiety guides remain
-  boundary-support guides; they hand off to this crisis lane rather than owning
-  the reviewed-card answer.
+  boundary-support guides; their source sections document handoff language but
+  they do not own or carry the reviewed-card runtime answer.

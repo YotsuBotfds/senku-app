@@ -588,7 +588,10 @@ Current active family:
   `artifacts/bench/high_liability_family_priorities_20260425_1650_dangerous_activation_card.md`
   moves dangerous activation from `0/3` to `0/2` frontmatter/card gaps and
   score `6` to `4`, while leaving routine anxiety and PFA as boundary-support
-  guides rather than primary card owners.
+  guides rather than primary card owners. A follow-up now includes `GD-858` and
+  `GD-918` as boundary-support source sections with invariants proving they
+  hand manic/dangerous activation to the crisis lane; audit semantics still
+  count only direct reviewed-card ownership.
 - `RAG-CARD2` added a reviewed `GD-601` answer-card contract for acute
   coronary / stroke overlap. Fresh proof at
   `artifacts/bench/high_liability_family_priorities_20260425_1656_acute_coronary_card.md`

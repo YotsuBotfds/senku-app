@@ -226,6 +226,9 @@ rows, `1` accepted uncertain-fit row, `0` retrieval/ranking/generation/safety
 misses, and `5` answer-card passes. Dangerous activation still reports `0/2`
 frontmatter/card gaps only because `GD-858`/`GD-918` remain support surfaces;
 the behavior panel does not justify adding those cards mechanically.
+The dangerous activation card now lists `GD-858` and `GD-918` as
+`boundary-support` source sections with invariants proving handoff to the
+`GD-859` crisis lane; they remain non-owner/non-runtime-citation support guides.
 
 `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows so
 they evaluate against artifact `reviewed_card_ids`, not every reviewed card in

@@ -65,3 +65,16 @@ Focused tests passed: `34`.
 Do not add routine anxiety or PFA cards just to zero this family. If continuing
 reviewed-card coverage, prefer a measured support-guide card only when a fresh
 prompt panel needs that guide as a primary reviewed-card owner.
+
+## Boundary-support follow-up
+
+A later focused patch added `GD-858` and `GD-918` as `boundary-support` source
+sections on `dangerous_activation_mania_crisis` and added source invariants
+proving both guides hand manic/dangerous activation back to the crisis lane.
+
+This does not make `GD-858` or `GD-918` reviewed-card owners and does not change
+runtime citation targets. The focused contract test
+`test_dangerous_activation_support_guides_are_source_only_boundaries` verifies
+they are source-covered but not direct card owners. Keep the audit semantics
+strict: direct reviewed-card ownership still belongs to `GD-859` unless a fresh
+behavior panel shows PFA or anxiety self-care must own a separate reviewed card.
