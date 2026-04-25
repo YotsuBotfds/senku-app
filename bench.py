@@ -44,7 +44,13 @@ from query import (
     retrieve_results,
     _card_backed_runtime_answer_plan,
 )
-from query_completion_hardening import _is_obviously_incomplete_crisis_response
+from query_completion_hardening import (
+    _has_substantive_response as _hardening_has_substantive_response,
+    _is_obviously_incomplete_crisis_response,
+    _is_obviously_incomplete_safety_response as _hardening_is_obviously_incomplete_safety_response,
+    _is_valid_crisis_retry_response as _hardening_is_valid_crisis_retry_response,
+    _trim_incomplete_final_safety_line as _hardening_trim_incomplete_final_safety_line,
+)
 from token_estimation import estimate_tokens
 
 DEFAULT_PROMPTS = os.path.join(os.path.dirname(__file__), "test_prompts.txt")
@@ -730,72 +736,17 @@ def _is_prepared_prompt_safety_critical(meta, results=None):
 
 
 def _is_obviously_incomplete_safety_response(text):
-    """Detect truncated final-line scaffolds that are too risky to accept as final."""
-    cleaned_text = normalize_response_text(text or "")
-    if not _has_substantive_response(cleaned_text):
-        return False
-
-    lines = [line.strip() for line in cleaned_text.splitlines() if line.strip()]
-    if not lines:
-        return False
-
-    final_line = lines[-1]
-    compact = re.sub(r"\s+", " ", final_line).strip()
-    markdown_light = re.sub(r"[*_`]+", "", compact).strip()
-    without_marker = re.sub(
-        r"^\s*(?:[-*+]\s*)?(?:\d+[\.)]\s*)?",
-        "",
-        markdown_light,
-    ).strip()
-    without_marker = without_marker.strip("-: ")
-
-    if re.search(r"(?i)(?:^|\s)if\s*$", markdown_light):
-        return True
-    if re.match(r"(?i)^if\b[^.!?]*:\s*$", without_marker):
-        return True
-    if re.match(r"(?i)^if\b", without_marker) and not re.search(r"[.!?]\s*$", without_marker):
-        tail = without_marker.lower().split()
-        if len(tail) <= 3 or tail[-1] in {
-            "a",
-            "an",
-            "and",
-            "by",
-            "for",
-            "of",
-            "or",
-            "the",
-            "to",
-            "with",
-        }:
-            return True
-    if re.match(r"^\s*(?:[-*+]\s*)?\d+[\.)]\s*$", compact):
-        return True
-    if re.match(r"^\s*(?:[-*+]\s*)?\d+[\.)]\s+[^.!?]{1,100}:\s*$", markdown_light):
-        return True
-    return False
+    return _hardening_is_obviously_incomplete_safety_response(
+        text,
+        normalize_response_text_fn=normalize_response_text,
+    )
 
 
 def _trim_incomplete_final_safety_line(text):
-    """Drop a final dangling scaffold line when the remaining safety answer is usable."""
-    cleaned_text = normalize_response_text(text or "")
-    if not _is_obviously_incomplete_safety_response(cleaned_text):
-        return cleaned_text, False
-
-    lines = cleaned_text.splitlines()
-    last_content_index = None
-    for index in range(len(lines) - 1, -1, -1):
-        if lines[index].strip():
-            last_content_index = index
-            break
-    if last_content_index is None:
-        return cleaned_text, False
-
-    trimmed = "\n".join(lines[:last_content_index]).rstrip()
-    if not _has_substantive_response(trimmed):
-        return cleaned_text, False
-    if _is_obviously_incomplete_safety_response(trimmed):
-        return cleaned_text, False
-    return trimmed, True
+    return _hardening_trim_incomplete_final_safety_line(
+        text,
+        normalize_response_text_fn=normalize_response_text,
+    )
 
 
 def _retry_cause_counts(retry_events):
@@ -966,8 +917,7 @@ def generate_response(
 
 
 def _has_substantive_response(text):
-    """Return True when the model returned non-empty content."""
-    return bool(text and text.strip())
+    return _hardening_has_substantive_response(text)
 
 
 def _build_crisis_continuation_messages(question, partial_response_text):
@@ -1026,21 +976,10 @@ def _build_crisis_continuation_messages(question, partial_response_text):
 
 
 def _is_valid_crisis_retry_response(text):
-    """Return True when a crisis retry produced a complete 4-step scaffold."""
-    cleaned_text = normalize_response_text(text or "")
-    if not _has_substantive_response(cleaned_text):
-        return False
-    if _is_obviously_incomplete_crisis_response(cleaned_text):
-        return False
-    step_matches = re.findall(
-        r"(?m)^\s*(?:Step\s*)?([1-4])[\)\.\:-]",
-        cleaned_text,
+    return _hardening_is_valid_crisis_retry_response(
+        text,
+        normalize_response_text_fn=normalize_response_text,
     )
-    if step_matches != ["1", "2", "3", "4"]:
-        return False
-    if re.search(r"(?m)^\s*(?:Step\s*)?[5-9][\)\.\:-]", cleaned_text):
-        return False
-    return True
 
 
 def prepare_prompt(

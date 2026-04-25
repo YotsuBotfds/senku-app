@@ -125,6 +125,14 @@ Current active family:
   without a new scoped slice. Android does not consume these Python modules
   automatically; carry the reviewed-card/provenance contract into Android via a
   dedicated Kotlin/mobile-pack slice.
+- `RAG-CH4` landed a narrow desktop code-health extraction after the Android
+  A14 policy loop. Remaining pure bench completion-shape helpers moved into
+  `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`
+  and direct helper coverage in `tests/test_query_completion_hardening.py`.
+  No retry policy, prompt text, retrieval/ranking, `query.py`, or medical
+  predicate behavior changed. Focused compile and unit validation passed
+  `39` tests. Dispatch note:
+  `notes/dispatch/RAG-CH4_desktop_completion_shape_hardening_extraction.md`.
 - `RAG-A1` has landed the first Android receiving-shape slice. `AnswerContent`
   now carries display-only answer surface/provenance fields with safe defaults,
   and `PaperAnswerCard` can distinguish deterministic, limited-fit, and abstain

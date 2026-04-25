@@ -63,6 +63,40 @@ class QueryCompletionHardeningExtractionTests(unittest.TestCase):
         self.assertIn("finish the full answer", messages[0]["content"])
         self.assertIn("exactly 4 numbered steps", messages[1]["content"])
 
+    def test_safety_response_helpers_detect_and_trim_dangling_tail(self):
+        response = (
+            "1. Check for shock.\n"
+            "2. Arrange urgent evaluation.\n"
+            "3. Keep them still.\n"
+            "4. If the"
+        )
+
+        self.assertTrue(hardening._is_obviously_incomplete_safety_response(response))
+        self.assertEqual(
+            hardening._trim_incomplete_final_safety_line(response),
+            ("1. Check for shock.\n2. Arrange urgent evaluation.\n3. Keep them still.", True),
+        )
+
+    def test_safety_response_helper_uses_injected_normalizer(self):
+        self.assertEqual(
+            hardening._trim_incomplete_final_safety_line(
+                None,
+                normalize_response_text_fn=lambda text: "answer",
+            ),
+            ("answer", False),
+        )
+
+    def test_valid_crisis_retry_response_shape(self):
+        complete = (
+            "1. Call emergency services now and stay with the person right now. [GD-101]\n"
+            "2. Keep a trusted adult with them continuously right now. [GD-101]\n"
+            "3. Move hazards away if you can do so safely right now. [GD-101]\n"
+            "4. Get urgent same-day emergency evaluation now and share what changed. [GD-101]"
+        )
+
+        self.assertTrue(hardening._is_valid_crisis_retry_response(complete))
+        self.assertFalse(hardening._is_valid_crisis_retry_response(complete + "\n5. Extra."))
+
 
 if __name__ == "__main__":
     unittest.main()
