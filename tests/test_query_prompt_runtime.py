@@ -6,13 +6,24 @@ from types import SimpleNamespace
 
 class QueryPromptRuntimeTests(unittest.TestCase):
     def test_import_does_not_import_query_or_bench(self):
+        original_modules = {
+            module_name: sys.modules.get(module_name)
+            for module_name in ("query_prompt_runtime", "query", "bench")
+        }
         for module_name in ("query_prompt_runtime", "query", "bench"):
             sys.modules.pop(module_name, None)
 
-        importlib.import_module("query_prompt_runtime")
+        try:
+            importlib.import_module("query_prompt_runtime")
 
-        self.assertNotIn("query", sys.modules)
-        self.assertNotIn("bench", sys.modules)
+            self.assertNotIn("query", sys.modules)
+            self.assertNotIn("bench", sys.modules)
+        finally:
+            for module_name, module in original_modules.items():
+                if module is None:
+                    sys.modules.pop(module_name, None)
+                else:
+                    sys.modules[module_name] = module
 
     def test_system_prompt_text_uses_mode_builder_when_present(self):
         import query_prompt_runtime
