@@ -59,6 +59,85 @@ The April 2026 read is not "more prompt patches." The strongest current ideas ma
 - **Use guide relationships, but keep it scoped.** Microsoft GraphRAG targets global corpus questions with entity/community summaries: <https://www.microsoft.com/en-us/research/publication/from-local-to-global-a-graph-rag-approach-to-query-focused-summarization/>. DRIFT search uses global/community reports to steer local follow-up retrieval: <https://www.microsoft.com/en-us/research/blog/introducing-drift-search-combining-global-and-local-search-methods-to-improve-quality-and-efficiency/>. Senku should first exploit its existing guide catalog and related-guide graph before adding a graph database.
 - **Select evidence before polishing prose.** TREC RAG 2025 submissions emphasize evidence selection, evidence-card/nugget compression, citation-first generation, and gap-aware iterative retrieval: <https://pages.nist.gov/trec-browser/trec34/rag/proceedings/>. This points to a new `RAG-S8` evidence-unit composer after answer cards and claim support are stable.
 
+## 2026-04-25 Research Refresh
+
+Current read after another web pass: Senku is on the right track, but the next
+level should be more measurement and evidence organization, not broader
+handwritten medical routing.
+
+Fresh signals:
+
+- Anthropic's contextual retrieval write-up remains the most practical ingest
+  target for this repo: contextualized chunks plus contextual BM25 plus rerank,
+  aimed directly at the lost-context problem in chunked RAG:
+  <https://www.anthropic.com/engineering/contextual-retrieval>.
+- RAGChecker frames the exact thing we need: separate diagnostics for retrieval
+  and generation modules, because long-form RAG cannot be understood from one
+  answer-level score:
+  <https://arxiv.org/abs/2408.08067>.
+- ARES evaluates context relevance, answer faithfulness, and answer relevance,
+  and is useful as a mental model even if Senku keeps local deterministic
+  checks first:
+  <https://aclanthology.org/2024.naacl-long.20/>.
+- Self-RAG shows the value of deciding when retrieval is needed and critiquing
+  relevance/support instead of always stuffing a fixed top-k context:
+  <https://openreview.net/pdf?id=hSyW5go0v8>.
+- RAPTOR and late chunking both attack chunk-context loss from different
+  angles: hierarchical document summaries and chunk embeddings that preserve
+  long-document context:
+  <https://arxiv.org/abs/2401.18059> and
+  <https://arxiv.org/abs/2409.04701>.
+- RankRAG and instruction-aware ranking work reinforce that ranking and answer
+  generation are coupled; in Senku terms, urgent first-aid owner evidence must
+  outrank semantically adjacent routine-care text:
+  <https://papers.nips.cc/paper_files/paper/2024/file/db93ccb6cf392f352570dd5af0a223d3-Paper-Conference.pdf>.
+- LightRAG / graph-assisted retrieval is now a credible later-stage direction,
+  but it should start from Senku's existing guide relationship graph instead of
+  a new graph database:
+  <https://aclanthology.org/2025.findings-emnlp.568/>.
+- TREC RAG 2025 centers response completeness, attribution verification, and
+  nugget-style evidence coverage. That maps more cleanly to Senku answer cards
+  and source invariants than to another wave of prompt-specific patches:
+  <https://arxiv.org/abs/2603.09891>.
+- Agentic RAG surveys in early 2026 are useful mainly as a warning label: more
+  autonomous loops raise reliability risk unless the system has crisp state,
+  evaluation, and fallback contracts first:
+  <https://arxiv.org/abs/2603.07379>.
+
+Backlog integration:
+
+- `RAG-S14` - nugget / evidence-card evaluation harness. Extend analyzer output
+  from card pass/partial into TREC-style required evidence nuggets: present,
+  cited, supported, contradicted, or missing. Use existing answer-card clauses
+  and source invariants before adding any LLM judge.
+- `RAG-S15` - contextual chunk ingest shadow experiment. Add a non-default
+  contextual retrieval text field, re-ingest into a shadow collection or export,
+  and compare hit@1/hit@3/hit@k and app-acceptance counts against the current
+  proof set. Do not replace the production index in the first slice.
+- `RAG-S16` - section-family summary retrieval spike. Create guide/section
+  summaries for cross-section questions as a RAPTOR-lite experiment, especially
+  for "normal vs urgent", comparison, and boundary prompts.
+- `RAG-S17` - instruction-aware rerank interface. Keep the first
+  implementation deterministic and local, but shape the API so a reranker can
+  later prioritize "emergency owner", "reviewed card source", "routine
+  boundary", or "comparison evidence" explicitly.
+- `RAG-S18` - related-guide graph expansion. Use `guide_catalog.py` related and
+  reciprocal links as a bounded graph before considering GraphRAG/LightRAG
+  infrastructure.
+- `RAG-S19` - adaptive retrieval controller. Promote the existing retrieval
+  profile work into a measured controller with per-profile latency, token, and
+  failure-bucket metrics.
+
+Method verdict:
+
+We are getting closer. The strongest evidence is that the EX/EY/EZ/FC loop
+moved from retrieval/ranking confusion to reviewed-card contracts, provenance,
+claim support, Android parity, and code-health seams with direct tests. That is
+not infinite patching. The risk is slipping back into patching whenever a new
+question fails. The guardrail is: every new failure should first become a row in
+retrieval/generation/evidence/app-acceptance diagnostics; only high-risk
+red-flag gaps get deterministic predicates.
+
 ## 1455 Planner Read
 
 We are getting closer. The current proof set moved from mostly retrieval/ranking failures to `0` retrieval, ranking, generation, and safety-contract misses on `EX/EY/EZ/FC`; expected owner citation is `24/24`. The current defect class is now answer shape and evidence surfacing: answer cards remain `15` no-generated-answer / `7` partial / `2` pass, while claim support is clean for all generated rows (`9` pass). That is a much better place to be than infinite deterministic expansion.
