@@ -112,9 +112,10 @@ Backlog integration:
   answer-card clauses and source invariants before any LLM judge.
 - `RAG-S15` - contextual chunk ingest shadow experiment. The first slice now
   adds a non-default ingest JSONL sidecar with raw `document` plus
-  `contextual_retrieval_text`, `metadata`, and `chunk_id`. Next compare
-  hit@1/hit@3/hit@k against the current proof set from this shadow text. Do not
-  replace the production index in the first measurement pass.
+  `contextual_retrieval_text`, `metadata`, and `chunk_id`. `RAG-S15b` adds the
+  measurement tool for that next step: temporary shadow vector/lexical indexes
+  plus baseline-versus-shadow hit@1/hit@3/hit@k output. Do not replace the
+  production index in the first measurement pass.
 - `RAG-S16` - section-family summary retrieval spike. Create guide/section
   summaries for cross-section questions as a RAPTOR-lite experiment, especially
   for "normal vs urgent", comparison, and boundary prompts.
