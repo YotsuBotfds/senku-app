@@ -38,7 +38,9 @@ Expected record shape (JSONL):
 
 Each section-family record groups adjacent guide sections with
 `--family-window` (default `2`) and includes extractive evidence fragments from
-the source chunks. The record shape stays compatible with
+the source chunks. `--family-stride` defaults to `--family-window`, preserving
+the original non-overlapping export; use `--family-stride 1` for overlapping
+section windows. The record shape stays compatible with
 `scripts/compare_contextual_shadow_retrieval.py`; the comparator also accepts
 `raptor_lite_text` when `contextual_retrieval_text` is absent.
 
@@ -59,9 +61,9 @@ the source chunks. The record shape stays compatible with
   the S15b comparator to score hit@1/hit@3/hit@k deltas.
 - Comparator loader remains backward-compatible with S15 contextual JSONL and
   forward-compatible with S16 `raptor_lite_text` records.
-- Section-family windows are currently non-overlapping by default. That keeps
-  the first export deterministic and compact, but overlapping/stride windows
-  should be measured before any production promotion.
+- Section-family windows are non-overlapping by default. That keeps the first
+  export deterministic and compact, while `--family-stride` enables overlapping
+  shadow experiments before any production promotion.
 - Evidence fragments are extractive and capped by `--max-fragments`; treat the
   export as a retrieval probe, not as a complete answer context yet.
 
@@ -94,6 +96,17 @@ Repro smoke:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\export_section_family_shadow.py --out artifacts\tmp\section_family_ex_airway.jsonl --files first-aid.md emergency-airway-management.md pediatric-emergency-medicine.md pediatric-emergencies-field.md infant-child-care.md --family-window 2 --max-fragments 6
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\compare_contextual_shadow_retrieval.py --shadow-jsonl artifacts\tmp\section_family_ex_airway.jsonl --bench artifacts\bench\guide_wave_ex_20260424_1410_child_choking_gate.json --out-dir artifacts\bench\section_family_compare_ex_airway_20260425 --top-k 8 --embed-url http://127.0.0.1:1234/v1
 ```
+
+Overlapping-window smoke:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\export_section_family_shadow.py --out artifacts\tmp\section_family_ez_newborn_stride1.jsonl --files postpartum-care-mother-infant.md pediatric-emergency-medicine.md pediatric-emergencies-field.md infant-child-care.md sepsis-recognition-antibiotic-protocols.md first-aid.md --family-window 2 --family-stride 1 --max-fragments 6
+```
+
+On the EZ newborn panel, `--family-stride 1` produced `79` records, kept
+expected-owner hit@1/hit@3/hit@k at `6/6`, and improved mean top-k overlap
+versus the non-overlapping section-family export from `0.2865` to `0.4214`.
+Contextual chunk shadow remained closer to baseline at `0.5492`.
 
 ## Next
 

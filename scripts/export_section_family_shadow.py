@@ -34,6 +34,16 @@ DEFAULT_MAX_FRAGMENTS = 8
 DEFAULT_FAMILY_WINDOW = 2
 
 
+def _positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(f"Invalid integer value: {value}") from exc
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("Values must be positive integers")
+    return parsed
+
+
 def _clean_fragment(text: str) -> str:
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"!\[[^\]]*\]\([^)]+\)", " ", text)
@@ -130,10 +140,15 @@ def group_chunks_by_section_family(
     chunks: list[dict[str, Any]],
     *,
     family_window: int = DEFAULT_FAMILY_WINDOW,
+    family_stride: int | None = None,
 ) -> list[dict[str, Any]]:
     """Group adjacent section blocks into deterministic RAPTOR-lite families."""
     if family_window < 1:
         raise ValueError("family_window must be >= 1")
+    if family_stride is None:
+        family_stride = family_window
+    if family_stride < 1:
+        raise ValueError("family_stride must be >= 1")
 
     guide_blocks: OrderedDict[tuple[str, str], list[dict[str, Any]]] = OrderedDict()
     for block in section_blocks_from_chunks(chunks):
@@ -146,7 +161,7 @@ def group_chunks_by_section_family(
 
     families: list[dict[str, Any]] = []
     for _guide_key, blocks in guide_blocks.items():
-        for family_index, start in enumerate(range(0, len(blocks), family_window)):
+        for family_index, start in enumerate(range(0, len(blocks), family_stride)):
             family_blocks = blocks[start : start + family_window]
             first_metadata = dict(family_blocks[0].get("metadata") or {})
             guide_id = str(first_metadata.get("guide_id", ""))
@@ -170,6 +185,7 @@ def group_chunks_by_section_family(
                     ),
                     "family_index": str(family_index),
                     "family_window": str(family_window),
+                    "family_stride": str(family_stride),
                 }
             )
             texts: list[str] = []
@@ -279,6 +295,7 @@ def build_section_family_records(
     chunks: list[dict[str, Any]],
     *,
     family_window: int = DEFAULT_FAMILY_WINDOW,
+    family_stride: int | None = None,
     max_fragments: int = DEFAULT_MAX_FRAGMENTS,
 ) -> list[dict[str, Any]]:
     return [
@@ -286,6 +303,7 @@ def build_section_family_records(
         for group in group_chunks_by_section_family(
             chunks,
             family_window=family_window,
+            family_stride=family_stride,
         )
     ]
 
@@ -308,12 +326,14 @@ def export_section_family_shadow_jsonl(
     output_path: os.PathLike[str] | str,
     *,
     family_window: int = DEFAULT_FAMILY_WINDOW,
+    family_stride: int | None = None,
     max_fragments: int = DEFAULT_MAX_FRAGMENTS,
 ) -> int:
     chunks = load_chunks_from_files(md_files)
     records = build_section_family_records(
         chunks,
         family_window=family_window,
+        family_stride=family_stride,
         max_fragments=max_fragments,
     )
     return write_section_family_jsonl(records, output_path)
@@ -331,17 +351,26 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--family-window",
-        type=int,
+        type=_positive_int,
         default=DEFAULT_FAMILY_WINDOW,
         help="Adjacent section count per section-family shadow record.",
     )
     parser.add_argument(
+        "--family-stride",
+        type=_positive_int,
+        default=None,
+        help="Advance families by this many sections between windows. Defaults to family-window.",
+    )
+    parser.add_argument(
         "--max-fragments",
-        type=int,
+        type=_positive_int,
         default=DEFAULT_MAX_FRAGMENTS,
         help="Maximum extractive fragments per section-family record.",
     )
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.family_stride is None:
+        args.family_stride = args.family_window
+    return args
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -360,6 +389,7 @@ def main(argv: list[str] | None = None) -> int:
         md_files,
         args.out,
         family_window=args.family_window,
+        family_stride=args.family_stride,
         max_fragments=args.max_fragments,
     )
     print(f"Wrote {count} section-family shadow records to {args.out}")

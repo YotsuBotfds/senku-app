@@ -119,6 +119,8 @@ Backlog integration:
 - `RAG-S16` - section-family summary retrieval spike. The first slice now
   exports shadow-only RAPTOR-lite section-family records by grouping adjacent
   guide sections into deterministic windows with extractive evidence fragments.
+  The export supports overlapping windows with `--family-stride`; default
+  behavior remains non-overlapping for compact replay.
   Next compare those records against S15/contextual-chunk retrieval for "normal
   vs urgent", comparison, and boundary prompts before any production promotion.
   Measurement note: the first EX airway smoke shows shadow coverage on more

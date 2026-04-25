@@ -149,8 +149,9 @@ Current active family:
 - `RAG-S16` has landed a shadow-only section-family / RAPTOR-lite export for
   later retrieval-comparison experiments. It writes non-production JSONL records
   with `section_family`, `contextual_retrieval_text`, `raptor_lite_text`, and
-  metadata, and the S15b comparator now accepts those records. Production
-  query/index/guide behavior and Android behavior remain unchanged. Dispatch note:
+  metadata, supports optional overlapping windows through `--family-stride`,
+  and the S15b comparator now accepts those records. Production query/index/guide
+  behavior and Android behavior remain unchanged. Dispatch note:
   `notes/dispatch/RAG-S16_section_family_shadow_export.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into

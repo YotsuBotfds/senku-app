@@ -1,12 +1,17 @@
+import argparse
 import json
 import tempfile
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
 from pathlib import Path
 
 from scripts.export_section_family_shadow import (
     build_section_family_records,
     export_section_family_shadow_jsonl,
+    parse_args,
     group_chunks_by_section_family,
+    _positive_int,
 )
 
 
@@ -29,6 +34,11 @@ def _chunk(text, section_id, heading, chunk_id):
     }
 
 
+def _parse_args_expecting_exit(args):
+    with redirect_stderr(StringIO()):
+        parse_args(args)
+
+
 class ExportSectionFamilyShadowTests(unittest.TestCase):
     def test_group_chunks_by_section_family_uses_adjacent_windows(self):
         chunks = [
@@ -47,6 +57,61 @@ class ExportSectionFamilyShadowTests(unittest.TestCase):
         self.assertEqual(groups[0]["source_chunk_ids"], ["chunk_1", "chunk_2", "chunk_3"])
         self.assertEqual(groups[1]["section_family"], "GD-100:01")
         self.assertEqual(groups[1]["metadata"]["section_ids"], "warnings")
+
+    def test_group_chunks_by_section_family_default_stride_matches_window(self):
+        chunks = [
+            _chunk("Section one.", "section_one", "One", "chunk_1"),
+            _chunk("Section two.", "section_two", "Two", "chunk_2"),
+            _chunk("Section three.", "section_three", "Three", "chunk_3"),
+            _chunk("Section four.", "section_four", "Four", "chunk_4"),
+        ]
+
+        groups = group_chunks_by_section_family(chunks, family_window=3)
+
+        self.assertEqual(len(groups), 2)
+        self.assertEqual(groups[0]["metadata"]["section_ids"], "section_one,section_two,section_three")
+        self.assertEqual(groups[0]["metadata"]["family_stride"], "3")
+        self.assertEqual(groups[1]["metadata"]["section_ids"], "section_four")
+
+    def test_group_chunks_by_section_family_supports_overlap_with_stride(self):
+        chunks = [
+            _chunk("Section one.", "section_one", "One", "chunk_1"),
+            _chunk("Section two.", "section_two", "Two", "chunk_2"),
+            _chunk("Section three.", "section_three", "Three", "chunk_3"),
+        ]
+
+        groups = group_chunks_by_section_family(chunks, family_window=2, family_stride=1)
+
+        self.assertEqual(len(groups), 3)
+        self.assertEqual(groups[0]["section_family"], "GD-100:00")
+        self.assertEqual(groups[0]["metadata"]["section_ids"], "section_one,section_two")
+        self.assertEqual(groups[1]["section_family"], "GD-100:01")
+        self.assertEqual(groups[1]["metadata"]["section_ids"], "section_two,section_three")
+        self.assertEqual(groups[2]["section_family"], "GD-100:02")
+        self.assertEqual(groups[2]["metadata"]["section_ids"], "section_three")
+
+    def test_parse_args_defaults_stride_to_window_size(self):
+        args = parse_args(["--out", "section_family.jsonl", "--family-window", "3"])
+
+        self.assertEqual(args.family_window, 3)
+        self.assertEqual(args.family_stride, 3)
+
+    def test_parse_args_rejects_non_positive_family_stride(self):
+        with self.assertRaises(SystemExit):
+            _parse_args_expecting_exit(
+                ["--out", "section_family.jsonl", "--family-stride", "0"]
+            )
+
+    def test_parse_args_rejects_non_positive_family_window(self):
+        with self.assertRaises(SystemExit):
+            _parse_args_expecting_exit(
+                ["--out", "section_family.jsonl", "--family-window", "0"]
+            )
+
+    def test_positive_int_validator_rejects_non_positive(self):
+        self.assertEqual(_positive_int("2"), 2)
+        with self.assertRaises(argparse.ArgumentTypeError):
+            _positive_int("0")
 
     def test_build_section_family_records_emit_raptor_lite_shape(self):
         chunks = [
