@@ -425,11 +425,13 @@ def export_contextual_shadow_jsonl(md_files, output_path):
     return count
 
 
-def add_lexical_records(conn, ids, texts, metadatas):
+def add_lexical_records(conn, ids, texts, metadatas, search_texts=None):
     """Insert one batch into the lexical FTS shadow index."""
+    if search_texts is None:
+        search_texts = texts
     meta_rows = []
     fts_rows = []
-    for chunk_id, text, meta in zip(ids, texts, metadatas):
+    for chunk_id, text, meta, search_text in zip(ids, texts, metadatas, search_texts):
         meta_rows.append(
             (
                 chunk_id,
@@ -453,7 +455,7 @@ def add_lexical_records(conn, ids, texts, metadatas):
         fts_rows.append(
             (
                 chunk_id,
-                text,
+                search_text,
                 meta.get("guide_title", ""),
                 meta.get("guide_id", ""),
                 meta.get("section_heading", ""),
@@ -924,6 +926,11 @@ def main():
         ),
     )
     parser.add_argument(
+        "--force-files",
+        action="store_true",
+        help="With --files, re-embed selected guides even if their manifest SHA is unchanged.",
+    )
+    parser.add_argument(
         "--contextual-shadow-jsonl",
         help=(
             "Write non-production contextual retrieval text records to this JSONL "
@@ -939,6 +946,9 @@ def main():
         ),
     )
     args = parser.parse_args()
+
+    if args.force_files and not args.files:
+        parser.error("--force-files requires --files")
 
     if args.contextual_shadow_only and not args.contextual_shadow_jsonl:
         parser.error("--contextual-shadow-only requires --contextual-shadow-jsonl")
@@ -1143,6 +1153,9 @@ def main():
             if info is None:
                 changed.add(guide_id)
                 continue
+            if args.force_files:
+                changed.add(guide_id)
+                continue
             if manifest.get(guide_id, {}).get("sha256") == info["sha256"]:
                 skipped.add(guide_id)
             else:
@@ -1183,15 +1196,16 @@ def main():
     for i in range(0, len(all_chunks), BATCH_SIZE):
         batch = all_chunks[i : i + BATCH_SIZE]
         texts = [c["text"] for c in batch]
+        retrieval_texts = [build_contextual_retrieval_text(c) for c in batch]
         metadatas = [c["metadata"] for c in batch]
         batch_no = i // BATCH_SIZE + 1
 
         try:
-            embeddings = embed_batch_with_retry(texts, batch_no)
+            embeddings = embed_batch_with_retry(retrieval_texts, batch_no)
             batch_records = [
-                (text, metadata, embedding, i + j)
-                for j, (text, metadata, embedding) in enumerate(
-                    zip(texts, metadatas, embeddings)
+                (text, metadata, embedding, i + j, retrieval_text)
+                for j, (text, metadata, embedding, retrieval_text) in enumerate(
+                    zip(texts, metadatas, embeddings, retrieval_texts)
                 )
             ]
         except Exception as e:
@@ -1202,8 +1216,9 @@ def main():
             batch_records = []
             for j, chunk in enumerate(batch):
                 try:
+                    retrieval_text = build_contextual_retrieval_text(chunk)
                     single_embedding = embed_batch_with_retry(
-                        [chunk["text"]],
+                        [retrieval_text],
                         f"{batch_no}.{j + 1}",
                     )[0]
                     batch_records.append(
@@ -1212,6 +1227,7 @@ def main():
                             chunk["metadata"],
                             single_embedding,
                             i + j,
+                            retrieval_text,
                         )
                     )
                 except Exception as item_error:
@@ -1234,6 +1250,7 @@ def main():
         texts = [record[0] for record in batch_records]
         metadatas = [record[1] for record in batch_records]
         embeddings = [record[2] for record in batch_records]
+        retrieval_texts = [record[4] for record in batch_records]
 
         ids = [make_chunk_id(record, record[3]) for record in batch_records]
         collection = add_records_with_retry(
@@ -1245,7 +1262,7 @@ def main():
             metadatas,
             batch_no,
         )
-        add_lexical_records(lexical_conn, ids, texts, metadatas)
+        add_lexical_records(lexical_conn, ids, texts, metadatas, retrieval_texts)
         total_chunks += len(batch_records)
         for _rec in batch_records:
             guide_id = _rec[1].get("guide_id", "")

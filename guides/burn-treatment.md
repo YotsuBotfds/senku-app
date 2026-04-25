@@ -4,6 +4,15 @@ slug: burn-treatment
 title: Burn Treatment & Management
 category: medical
 difficulty: advanced
+aliases:
+  - hot water forearm burn
+  - scald burn first aid
+  - what not to do for burn
+  - do not pop burn blisters
+routing_cues:
+  - Use for thermal or scald burns from hot water, steam, flame, or contact heat when the ask is first actions, do-not-do items, dressings, or escalation signs.
+  - Cool the burn first with running cool water, avoid ice and home remedies, do not pop blisters, cover with a clean dressing, and escalate for depth, size, location, infection, or systemic danger signs.
+applicability: First-aid and escalation guidance for burns and scalds when the user needs immediate safe steps before advanced burn classification or fluid-resuscitation details.
 tags:
   - critical
 icon: 🩹

@@ -12,6 +12,15 @@ tags:
   - microgrids
   - energy-independence
 bridge: true
+aliases:
+  - storm electrical system partially alive
+  - load triage temporary restoration
+  - temporary power restoration sequence
+  - bootstrap electrical loads after outage
+routing_cues:
+  - Use for post-storm electrical bootstrap questions about prioritizing loads, isolating damaged sections, staged temporary restoration, batteries, charging, and microgrid or load planning.
+  - Pair with electrical-safety for shock, fire, live-wire, grounding, and damaged-wiring hazards.
+applicability: Community or shelter electrical bootstrap planning after outages when limited generation, batteries, or partial power must be triaged into a safe temporary restoration sequence.
 icon: ⚡
 description: Progressive path from hand-crank generators through stored battery systems to renewable energy and community microgrids. Includes load planning, storage calculations, and troubleshooting.
 related:

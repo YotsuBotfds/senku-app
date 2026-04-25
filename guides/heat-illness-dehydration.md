@@ -8,6 +8,15 @@ tags:
   - essential
   - medical
   - survival
+aliases:
+  - overheated confused weak field work
+  - heat stroke field work first aid
+  - heat illness worsening signs
+  - confused and weak in heat
+routing_cues:
+  - Use when heat exposure plus confusion, weakness, dizziness, collapse, or altered mental status asks for immediate cooling, hydration limits, escalation, or monitoring for heat stroke.
+  - Prioritize immediate cooling, stopping work, shade, wetting or fanning, careful fluids only if awake and able to swallow, and escalation for confusion, collapse, seizure, high temperature, or worsening.
+applicability: Heat illness and dehydration triage for field work, hot weather labor, and emergency cooling decisions when confusion or weakness may indicate heat stroke.
 icon: 🌡️
 description: Heat exhaustion vs heat stroke differential diagnosis, core temperature measurement, cooling protocols, dehydration stages, oral rehydration therapy, electrolyte imbalance, work-rest cycles, acclimatization, field-expedient electrolyte solutions, and prevention.
 related:

@@ -139,3 +139,54 @@ incremental ingest instead of another full rebuild:
 `--files` requires an existing collection, preflights duplicate guide IDs, skips
 unchanged SHA-256 matches from `chroma_db/ingest_manifest.json`, and deletes /
 re-embeds only changed guide IDs in Chroma and the lexical index.
+
+## 2026-04-25 Contextual Index Proof
+
+The next slice moved contextual retrieval text from shadow-only evidence into
+candidate selection while preserving raw chunk text as the stored document:
+
+- Chroma embeddings are now generated from contextual retrieval text.
+- The lexical FTS search column is populated from contextual retrieval text.
+- Chroma documents and lexical `document` rows stay raw chunk text for answer
+  context.
+- `ingest.py --files ... --force-files` can re-embed selected guides even when
+  guide SHA-256 values are unchanged, which avoids full rebuilds after ingest
+  plumbing changes.
+
+The six edited guides were re-embedded with:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --files guides\water-purification.md guides\burn-treatment.md guides\food-preservation.md guides\heat-illness-dehydration.md guides\electrical-system-bootstrap.md guides\alloy-decision-tree.md --force-files
+```
+
+Fresh proof after contextual indexing and narrow owner rerank hints:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_contextual_index_rerank2.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_contextual_index_rerank2_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- retrieval misses: `1`, down from `7` after metadata visibility
+- expected-supported rows: `10`, up from `7`
+- expected-owner hit@1: `17/21`
+- expected-owner hit@3/hit@k: `19/21`
+- expected-owner cited: `11/21`
+- remaining buckets: `6` generation/citation misses, `2` ranking misses, `2`
+  accepted `uncertain_fit`, `1` retrieval miss
+
+Remaining retrieval miss:
+
+- `RE2-UP-009` expects `GD-120`, but the prompt asks to sharpen a dull field
+  blade and continues to retrieve/cite `GD-397` Tool Sharpening. Treat this as
+  expectation drift unless the prompt is rewritten to ask about forging,
+  reshaping, material repair, or heat treatment.
+
+Remaining ranking misses:
+
+- `RE2-UP-003` retrieves `GD-035` but still ranks flood/storm support above it.
+- `RE2-BR-004` retrieves `GD-649` but still ranks storm preparedness above it.
+
+Remaining high-value next slice is citation-owner behavior for expected owners
+already at rank 1: `GD-024`, `GD-029`, `GD-052`, `GD-108`, `GD-648`, `GD-646`.

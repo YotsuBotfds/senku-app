@@ -9130,6 +9130,105 @@ def _metadata_rerank_delta(question, meta):
     ):
         apply_delta("shelter_site_hazard_owner", -0.13)
 
+    if guide_id == "GD-035" and _text_has_marker(
+        question_lower,
+        {
+            "cloudy",
+            "debris",
+            "flooding",
+            "floodwater",
+            "drinking-water plan",
+            "drinking water plan",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "safest order",
+            "order of steps",
+            "make a drinking",
+            "water",
+        },
+    ):
+        apply_delta("floodwater_purification_owner", -0.22)
+
+    if guide_id == "GD-052" and _text_has_marker(
+        question_lower,
+        {
+            "hot water",
+            "scald",
+            "burned",
+            "burn",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "what should i do first",
+            "what should i not do",
+            "when should i escalate",
+            "blister",
+            "forearm",
+        },
+    ):
+        apply_delta("thermal_burn_first_aid_owner", -0.15)
+
+    if guide_id == "GD-065" and _text_has_marker(
+        question_lower,
+        {
+            "cooked food",
+            "preserve cooked",
+            "next few days",
+            "prolonged outage",
+            "outage",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "preserve",
+            "safely preserve",
+            "food",
+        },
+    ):
+        apply_delta("cooked_food_outage_preservation_owner", -0.14)
+
+    if guide_id == "GD-635" and _text_has_marker(
+        question_lower,
+        {
+            "limited medical supplies",
+            "few trained people",
+            "local team",
+            "shelter",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "safe high-impact decisions",
+            "high-impact decisions",
+            "at once",
+            "medical",
+        },
+    ):
+        apply_delta("healthcare_capability_limited_team_owner", -0.13)
+
+    if guide_id == "GD-649" and _text_has_marker(
+        question_lower,
+        {
+            "storm",
+            "electrical system",
+            "partially alive",
+            "load triage",
+            "temporary restoration",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "safe sequence",
+            "load triage",
+            "temporary restoration",
+            "restoration",
+        },
+    ):
+        apply_delta("electrical_bootstrap_storm_restoration_owner", -0.22)
+
     if guide_id == "GD-648" and _text_has_marker(
         question_lower,
         {

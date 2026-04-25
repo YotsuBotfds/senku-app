@@ -56,6 +56,13 @@ aliases:
   - preservation or storage container
   - dry salt ferment or eat first
   - preserve with salt and jars
+  - preserve cooked food during outage
+  - cooked food next few days no power
+  - short term cooked food preservation
+routing_cues:
+  - Use when sound cooked food must be kept usable for several days during an outage by cooling, drying, salting, smoking, fermentation, or safe storage choices.
+  - Route visibly spoiled, moldy, slimy, leaking, or foul-smelling food to food-spoilage-assessment instead of preservation.
+applicability: Short-term and long-term preservation planning for food that is still sound, including cooked-food outage triage, preservation method choice, and storage boundaries.
 read_time: 8
 word_count: 17096
 last_updated: '2026-02-24'

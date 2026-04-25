@@ -8,6 +8,13 @@ aliases:
   - water purification
   - water treatment
   - clean dirty water
+  - cloudy flood water drinking plan
+  - debris in water after flooding
+  - settle filter disinfect drinking water
+routing_cues:
+  - Use when floodwater, muddy water, cloudy water, or visible debris requires an immediate drinking-water treatment order.
+  - Sequence sediment settling and filtration before disinfection, then store treated water safely.
+applicability: Field water purification planning when source water may be biologically unsafe, cloudy, muddy, or debris-filled and the user needs a safe order of treatment steps.
 tags:
   - critical
 icon: 💧

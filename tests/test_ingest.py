@@ -452,9 +452,17 @@ Second fallback chunk should still align to its shadow record.
                     "SELECT document FROM lexical_chunk_meta WHERE chunk_id = ?",
                     (shadow_records[0]["chunk_id"],),
                 ).fetchone()[0]
+                lexical_search_text = conn.execute(
+                    "SELECT search_text FROM lexical_chunks_fts WHERE chunk_id = ?",
+                    (shadow_records[0]["chunk_id"],),
+                ).fetchone()[0]
                 self.assertEqual(lexical_document, shadow_records[0]["document"])
                 self.assertNotEqual(
                     lexical_document,
+                    shadow_records[0]["contextual_retrieval_text"],
+                )
+                self.assertEqual(
+                    lexical_search_text,
                     shadow_records[0]["contextual_retrieval_text"],
                 )
                 self.assertIn(

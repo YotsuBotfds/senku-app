@@ -163,6 +163,21 @@ class QueryRoutingTests(unittest.TestCase):
                 {"guide_id": "GD-446", "guide_title": "Shelter Site Selection & Hazard Assessment"},
                 {"guide_id": "GD-023", "guide_title": "Survival Basics & First 72 Hours"},
             ),
+            (
+                "After flooding, our water is cloudy and has debris. What is the safest order of steps to make a drinking-water plan immediately?",
+                {"guide_id": "GD-035", "guide_title": "Water Purification"},
+                {"guide_id": "GD-931", "guide_title": "Questionable Water Assessment"},
+            ),
+            (
+                "I got burned on my forearm by hot water. What should I do first, what should I not do, and when should I escalate?",
+                {"guide_id": "GD-052", "guide_title": "Burn Treatment & Management"},
+                {"guide_id": "GD-946", "guide_title": "Sunburn, Sun Protection & Heat-Skin Care"},
+            ),
+            (
+                "How should I safely preserve cooked food for the next few days during a prolonged outage?",
+                {"guide_id": "GD-065", "guide_title": "Food Preservation"},
+                {"guide_id": "GD-260", "guide_title": "Food Salvage & Shelf Life"},
+            ),
         ]
 
         for question, owner_meta, distractor_meta in cases:
@@ -188,6 +203,16 @@ class QueryRoutingTests(unittest.TestCase):
                 "A community kitchen is getting understocked. How can we prioritize procurement, storage, and cooking reliability for the next week?",
                 {"guide_id": "GD-637", "guide_title": "Community Nutrition Pipeline"},
                 {"guide_id": "GD-252", "guide_title": "Food Storage Management"},
+            ),
+            (
+                "Our shelter has only limited medical supplies and few trained people. How can a local team make safe, high-impact decisions at once?",
+                {"guide_id": "GD-635", "guide_title": "Healthcare Capability Assessment"},
+                {"guide_id": "GD-667", "guide_title": "Shelter Medical Station Setup"},
+            ),
+            (
+                "After a storm, the electrical system is partially alive. What is a safe sequence for load triage and temporary restoration?",
+                {"guide_id": "GD-649", "guide_title": "Electrical System Bootstrap - Hand-Crank to Microgrid"},
+                {"guide_id": "GD-695", "guide_title": "Storm Preparedness and Recovery"},
             ),
         ]
 

@@ -14,11 +14,14 @@ icon: ⚙️
 description: Application-specific alloy selection when you can't order from a catalog—mapping available metals to required properties (strength, workability, availability)
 aliases:
   - stronger hand-tool edge temporary alloy choice
+  - stronger hand-tool edge quickly
   - safe first checks alloy choice heat treatment
   - temporary alloy and heat treatment planning
   - choose steel for stronger tool edge
+  - hand tool edge alloy heat treatment checks
 routing_cues:
   - Use when the ask is about choosing a temporary alloy or steel for a stronger hand-tool edge, balancing hardness, toughness, available scrap, forgeability, and heat-treatment planning.
+  - Match questions that ask for safe first checks before temporary alloy choice, steel selection, or heat treatment planning for a stronger hand-tool edge.
   - If the ask is only sharpening an already suitable blade, use tool sharpening first; return here when material choice, alloy composition, or heat treatment is the limiting question.
 citations_required: true
 applicability: Resource-limited alloy and steel selection for parts or tool edges where available scrap, strength, toughness, workability, corrosion exposure, and heat-treatment feasibility must be checked before making or modifying the part.
