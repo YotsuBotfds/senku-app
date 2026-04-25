@@ -148,6 +148,15 @@ Current active family:
   changed. Focused compile and unit validation passed `12` tests. Dispatch
   note:
   `notes/dispatch/RAG-CH7_desktop_citation_policy_tests.md`.
+- `RAG-CH8` added direct desktop helper coverage for
+  `rag_bench_answer_diagnostics.py`. `tests/test_rag_bench_answer_diagnostics.py`
+  now proves import purity, compact phrase/basis helpers, family-card
+  selection, bare-vs-red-flag meningitis compare behavior, and key
+  app-acceptance classifications with injected detectors. No analyzer columns,
+  bucket classifications, guide content, runtime behavior, or product behavior
+  changed. Focused compile and unit validation passed `34` tests. Dispatch
+  note:
+  `notes/dispatch/RAG-CH8_desktop_bench_answer_diagnostics_tests.md`.
 - `RAG-A1` has landed the first Android receiving-shape slice. `AnswerContent`
   now carries display-only answer surface/provenance fields with safe defaults,
   and `PaperAnswerCard` can distinguish deterministic, limited-fit, and abstain
