@@ -166,6 +166,13 @@ Current active family:
   validation passed `69` tests, and the broader deterministic lane passed
   `148` tests plus `173` rule validation. Dispatch note:
   `notes/dispatch/RAG-CH9_desktop_scenario_frame_tests.md`.
+- `RAG-CH10` added direct desktop helper coverage for `query_routing_text.py`.
+  `tests/test_query_routing_text.py` now proves import purity, phrase-marker
+  matching, single-word word-boundary behavior, empty-input behavior, and the
+  legacy `_text_has_marker` alias. No routing predicate, deterministic rule,
+  guide, Android, runtime, or product behavior changed. Focused compile and
+  routing validation passed `67` tests. Dispatch note:
+  `notes/dispatch/RAG-CH10_desktop_routing_text_tests.md`.
 - `RAG-A1` has landed the first Android receiving-shape slice. `AnswerContent`
   now carries display-only answer surface/provenance fields with safe defaults,
   and `PaperAnswerCard` can distinguish deterministic, limited-fit, and abstain
