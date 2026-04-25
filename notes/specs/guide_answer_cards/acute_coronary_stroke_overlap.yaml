@@ -1,0 +1,91 @@
+card_id: acute_coronary_stroke_overlap
+guide_id: GD-601
+slug: acute-coronary-cardiac-emergencies
+title: "Acute Coronary Syndrome & Cardiac Emergencies"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Chest pressure, heaviness, or tightness appears with jaw, arm, shoulder, or back pain.
+  - Chest discomfort appears with cold sweat, shortness of breath, nausea, faintness, dread, or "something feels very wrong."
+  - Cardiac signs co-occur with stroke/TIA signs such as face droop, one-sided weakness, slurred speech, sudden confusion, collapse, or transient focal deficits.
+required_first_actions:
+  - Treat chest pressure or heaviness with jaw or arm pain, cold sweat, shortness of breath, nausea, faintness, or dread as a cardiac emergency.
+  - Call emergency services or begin the fastest available evacuation now.
+  - Stop exertion, keep the person resting in the most comfortable breathing position, and monitor breathing and pulse.
+  - If stroke signs, confusion, vomiting, reduced alertness, or swallowing concern are present, do not give food, water, or pills by mouth.
+first_actions:
+  - Distinguish whether stroke signs dominate, cardiac signs dominate, or both are present.
+  - If the person becomes unresponsive or is not breathing normally, start CPR and use an AED if available.
+  - Check onset time, symptom character, radiation to jaw or arm, shortness of breath, sweating, nausea, fainting, and cardiac risk factors.
+urgent_red_flags:
+  - Heavy chest pressure, chest tightness, or chest pain.
+  - Pain into the jaw, arm, shoulder, or back.
+  - Cold sweat, shortness of breath, nausea, faintness, dread, or sudden weakness.
+  - Face droop, one-sided weakness or numbness, slurred speech, sudden confusion, or possible TIA with chest symptoms.
+  - Collapse, reduced alertness, abnormal breathing, or cardiac arrest signs.
+forbidden_advice:
+  - Label possible heart-attack symptoms as routine anxiety or panic before checking cardiac red flags.
+  - Let the person walk around or push through possible heart-attack symptoms.
+  - Give oral food, water, or pills when stroke signs or reduced alertness are possible.
+  - Delay emergency evacuation for routine panic, stress, or hyperventilation exercises.
+do_not:
+  - Delay CPR or AED use during unresponsiveness or abnormal breathing.
+  - Do not treat FAST-positive stroke signs as a cardiac-only problem.
+  - Do not use this card as a medication dosing protocol.
+routine_boundary: >
+  Routine anxiety, panic, hyperventilation, indigestion, or musculoskeletal
+  framing is out of bounds until chest-pressure, jaw/arm/back radiation, cold
+  sweat, shortness of breath, faintness, dread, and stroke/TIA signs have been
+  checked and excluded.
+acceptable_uncertain_fit: >
+  If the story is incomplete but chest pressure, exertional symptoms, jaw/arm
+  pain, cold sweat, shortness of breath, faintness, dread, or neurologic signs
+  are plausible, preserve cardiac/stroke emergency framing while asking for
+  onset time and dominant symptoms.
+clarifying_questions:
+  - When did the chest or neurologic symptoms start, and were they sudden?
+  - Is there chest pressure or heaviness, jaw or arm pain, cold sweat, shortness of breath, nausea, faintness, or dread?
+  - Is there face droop, one-sided weakness or numbness, slurred speech, sudden confusion, collapse, vomiting, or reduced alertness?
+citation_ids:
+  - acs-symptom-first-routing
+  - acs-stroke-heart-attack-routing
+  - first-aid-stroke-heart-emergency
+source_sections:
+  - guide: GD-601
+    slug: acute-coronary-cardiac-emergencies
+    title: "Acute Coronary Syndrome & Cardiac Emergencies"
+    sections:
+      - "#symptom-first-quick-routing-start-here"
+      - "#quick-triage-chest-pain-heart-attack-or-not"
+      - "#quick-triage-chest-pain-heart-attack-or-not > Stroke vs. heart attack - distinguish before you triage"
+      - "#initial-management"
+  - guide: GD-232
+    slug: first-aid
+    title: "First Aid & Emergency Response"
+    sections:
+      - "#symptom-first-emergency-routing"
+      - "#stroke-recognition--act-within-minutes"
+      - "#heart-attack-recognition"
+source_invariants:
+  - name: chest pain stroke overlap emergency routing
+    guide: GD-601
+    must_include:
+      - cardiac emergency first even if panic, stress, or hyperventilation is also present
+      - both sets of signs, or unsure -> treat as the most dangerous; start evacuation
+    must_not_match:
+      - "chest pressure[^\\n]{0,120}(routine anxiety|panic only|hyperventilation only)"
+      - "stroke signs[^\\n]{0,120}(give food|give water|give pills)"
+  - name: stroke overlap oral intake precaution
+    guide: GD-232
+    must_include:
+      - do not give food, water, or pills by mouth
+    must_not_match:
+      - "stroke signs[^\\n]{0,120}(give food|give water|give pills)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-601 for cardiac emergency recognition and mixed
+  stroke/cardiac routing. GD-232 is reviewed source-family support for
+  symptom-first emergency routing, stroke precautions, CPR/AED escalation, and
+  no oral intake when stroke signs or reduced alertness are present. This card
+  intentionally avoids becoming a medication dosing protocol.

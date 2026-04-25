@@ -583,6 +583,11 @@ Current active family:
   moves dangerous activation from `0/3` to `0/2` frontmatter/card gaps and
   score `6` to `4`, while leaving routine anxiety and PFA as boundary-support
   guides rather than primary card owners.
+- `RAG-CARD2` added a reviewed `GD-601` answer-card contract for acute
+  coronary / stroke overlap. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1656_acute_coronary_card.md`
+  moves stroke/cardiac overlap from `0/1` to `0/0` frontmatter/card gaps and
+  score `2` to `0`; the family action is now `regression_monitor`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.

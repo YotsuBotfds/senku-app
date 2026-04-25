@@ -202,6 +202,29 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(claim_result["status"], "pass")
         self.assertEqual(claim_result["forbidden_count"], 0)
 
+    def test_acute_coronary_overlap_card_stays_emergency_first(self):
+        card = find_cards_for_guides("GD-601", cards=self.cards)[0]
+
+        self.assertEqual(card["card_id"], "acute_coronary_stroke_overlap")
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-601"])
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["cited_guide_ids"], ["GD-601"])
+        self.assertIn("cardiac emergency", plan["answer_text"])
+        self.assertIn("fastest available evacuation", plan["answer_text"])
+        self.assertIn("do not give food, water, or pills", plan["answer_text"])
+        self.assertIn("[GD-601]", plan["answer_text"])
+        card_result = evaluate_answer_card_contract(plan["answer_text"], [card])
+        self.assertEqual(card_result["status"], "pass")
+        claim_result = diagnose_claim_support(
+            plan["answer_text"],
+            [card],
+            cited_guide_ids=plan["cited_guide_ids"],
+            expected_guide_ids=["GD-601"],
+        )
+        self.assertEqual(claim_result["status"], "pass")
+        self.assertEqual(claim_result["forbidden_count"], 0)
+
     def test_compose_card_backed_answer_does_not_cite_unallowed_backup_owner(self):
         card = [
             candidate
