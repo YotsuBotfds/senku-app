@@ -53,10 +53,12 @@ and user trust behavior.
   re-ingest/rebuild triggers, release gates, migration, and rollback posture.
   Completed note:
   `notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`.
-- High-liability answer policy and red-team handbook.
-  Tie deterministic rules, reviewed-card runtime, evidence nuggets,
-  claim-support diagnostics, and Android enablement gates into one release
-  policy.
+- `RAG-TRUST2`: completed.
+  Added the high-liability red-team handbook tying deterministic rules,
+  reviewed-card runtime, evidence nuggets, claim-support diagnostics, app
+  acceptance, and Android enablement gates into a release checklist.
+  Completed note:
+  `notes/SENKU_HIGH_LIABILITY_RED_TEAM_HANDBOOK_20260425.md`.
 - Privacy/deletion/export/incident docs before notes or sync features ship.
   Especially important for health notes, location-like incident logs, or
   personal records.

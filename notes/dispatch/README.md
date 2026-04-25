@@ -609,6 +609,11 @@ Current active family:
   `notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`, documenting canonical
   guide/card sources, rebuildable Chroma/mobile-pack snapshots, release gates,
   migration rules, and rollback posture for future RAG changes.
+- `RAG-TRUST2` added
+  `notes/SENKU_HIGH_LIABILITY_RED_TEAM_HANDBOOK_20260425.md`, a release/red-team
+  checklist tying deterministic rules, reviewed-card runtime, evidence nuggets,
+  claim support, app acceptance, and Android enablement gates together for
+  high-liability changes.
 - `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
   so answer-card / evidence-nugget / claim-support checks evaluate the
   artifact's `reviewed_card_ids`, not every reviewed card in the expected guide

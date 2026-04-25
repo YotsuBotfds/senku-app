@@ -153,6 +153,12 @@ evaluate reviewed-card coverage or the deep-research `RAG-RUNTIME1` /
 `RAG-TRUST1` drafted the high-risk answer policy. Current policy:
 `notes/SENKU_TRUST_MODEL_HIGH_RISK_POLICY_20260425.md`.
 
+`RAG-TRUST2` added the high-liability red-team/release handbook. Use it when
+changing deterministic safety rules, reviewed-card runtime, answer-card
+contracts, evidence diagnostics, or Android exposure for high-liability
+families. Current handbook:
+`notes/SENKU_HIGH_LIABILITY_RED_TEAM_HANDBOOK_20260425.md`.
+
 `RAG-OPS1` drafted the RAG schema, vector-store, mobile-pack snapshot, release
 gate, migration, and rollback ADR. Current contract:
 `notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`.
