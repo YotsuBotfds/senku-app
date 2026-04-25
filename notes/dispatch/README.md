@@ -225,6 +225,10 @@ Current active family:
   artifacts and diagnostics so comparable 9.x panels cannot accidentally mix
   opt-in reviewed-card runtime rows with plain RAG rows. Dispatch note:
   `notes/dispatch/RAG-T5_reviewed_card_runtime_validation_harness.md`.
+- `RAG-DOCS1` adds the first static corpus marker scanner from the deep
+  research backlog. It found `55` unresolved partial markers in `55` guides
+  and writes JSON/Markdown reports for packaging/eval follow-up. Dispatch note:
+  `notes/dispatch/RAG-DOCS1_corpus_marker_scanner.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

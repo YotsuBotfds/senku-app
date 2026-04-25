@@ -15,6 +15,9 @@ and user trust behavior.
 - `RAG-DOCS1`: scout canonical corpus packaging and unresolved partials.
   Add a scanner/report for unresolved `{{> ... }}` style partials and classify
   by guide, category, and liability level before guide edits.
+  Static scanner landed in `scripts/scan_corpus_markers.py`; first corpus scan
+  found `55` unresolved partial markers in `55` guides. See
+  `notes/dispatch/RAG-DOCS1_corpus_marker_scanner.md`.
 - `RAG-META1`: audit high-liability metadata coverage.
   Check aliases, routing cues, router/bridge markers, citations-required flags,
   applicability fields, and liability level for high-liability/high-traffic

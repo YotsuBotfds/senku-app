@@ -73,6 +73,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 verify expected owners are moving closer instead of merely remaining somewhere
 in top-k.
 
+- Corpus marker scan for unresolved partials / router-page diagnostics:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\scan_corpus_markers.py --guides-dir guides --output-json artifacts\bench\corpus_marker_scan.json --output-md artifacts\bench\corpus_marker_scan.md
+```
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell
