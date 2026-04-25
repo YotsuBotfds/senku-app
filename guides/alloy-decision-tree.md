@@ -12,6 +12,16 @@ tags:
 bridge: true
 icon: ⚙️
 description: Application-specific alloy selection when you can't order from a catalog—mapping available metals to required properties (strength, workability, availability)
+aliases:
+  - stronger hand-tool edge temporary alloy choice
+  - safe first checks alloy choice heat treatment
+  - temporary alloy and heat treatment planning
+  - choose steel for stronger tool edge
+routing_cues:
+  - Use when the ask is about choosing a temporary alloy or steel for a stronger hand-tool edge, balancing hardness, toughness, available scrap, forgeability, and heat-treatment planning.
+  - If the ask is only sharpening an already suitable blade, use tool sharpening first; return here when material choice, alloy composition, or heat treatment is the limiting question.
+citations_required: true
+applicability: Resource-limited alloy and steel selection for parts or tool edges where available scrap, strength, toughness, workability, corrosion exposure, and heat-treatment feasibility must be checked before making or modifying the part.
 related:
   - basic-forge-operation
   - bridges-dams
@@ -37,6 +47,8 @@ When supply chains collapse, you cannot pick "stainless steel" from a catalog. Y
 This guide is a decision tree—not a metallurgy textbook, but a *practical navigation tool*. Given your available metals, application requirements, and offline constraints, it walks you to a workable alloy.
 
 The bridge connects **available metals inventory** → **application constraints** → **property requirements** → **alloy candidate selection** → **manufacturability verification** → **final decision**.
+
+**Retrieval routing note:** Use this guide for stronger hand-tool edge questions when the missing step is temporary alloy choice, steel selection, hardness-versus-toughness tradeoff, or safe heat-treatment planning before forging, grinding, or sharpening.
 
 ## Visual Decision Flowchart
 

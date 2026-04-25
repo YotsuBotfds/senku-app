@@ -11,6 +11,14 @@ tags:
 bridge: true
 icon: 🌾
 description: Building caloric and nutritional security across staples, backup crops, and foraging into long-term storage systems
+aliases:
+  - community food system failing after bad weather
+  - keep families fed through short shelf-life disruptions
+  - food system bad weather disruption plan
+  - short shelf-life food disruption bridge
+routing_cues:
+  - Use when the ask is about keeping families or a community fed across bad weather, supply disruption, short shelf-life gaps, backup crops, staples, foraging, preservation, and storage planning.
+  - If the ask is only whether a specific food is spoiled or expired, start with food salvage or spoilage assessment, then return here for system-level continuity planning.
 related:
   - community-nutrition-pipeline
   - composting-systems
@@ -32,6 +40,8 @@ liability_level: medium
 Food resilience is not about eating well—it's about having *enough to eat* when supply chains fail. This guide walks you from subsistence staples through backup crops, supplemental foraging, and preservation into a year-round nutritional system that survives winter, drought, and disruption.
 
 The bridge connects **production** (what you grow) → **diversity** (what you can pivot to) → **wild supplements** (what the land offers) → **storage** (how you get from harvest to next harvest) → **verification** (are you actually eating enough?).
+
+**Retrieval routing note:** Use this guide for community food-system continuity after bad weather or short shelf-life disruption: keeping families fed by linking staples, backup crops, foraging, preservation, storage, and calorie verification.
 
 ## What You Need Before Starting
 

@@ -11,6 +11,16 @@ tags:
 bridge: true
 icon: ⚕️
 description: Diagnostic tools, supplies, medications, surgical capacity, and quarantine readiness—assessing what your community can actually treat at current technology level
+aliases:
+  - limited medical supplies few trained people
+  - local team safe high-impact medical decisions
+  - community medical capability triage
+  - what can our shelter medical team handle
+routing_cues:
+  - Use when the ask is about a shelter or local team making safe high-impact decisions with limited medical supplies, few trained people, triage capacity, treatment limits, and escalation gaps.
+  - If the ask is an immediate emergency for one patient, stabilize with first aid first, then use this guide to assess whether the community can safely treat or must escalate.
+citations_required: true
+applicability: Community-level capability assessment for limited-supply clinics, shelters, camps, or local teams deciding what they can safely diagnose, treat, isolate, or refer.
 related:
   - anatomy-basics-body-systems
   - ear-infections-otitis-management
@@ -30,6 +40,8 @@ liability_level: critical
 Healthcare without electricity, resupply, or expert physicians means **knowing what you *can* handle and what you cannot**. This guide is a systematic assessment framework—not a training program, but a diagnostic tool to measure your community's medical preparedness gap.
 
 The bridge connects **diagnostic capability** (can you identify what's wrong?) → **treatment capacity** (can you actually help?) → **supply sufficiency** (do you have enough?) → **surgical readiness** (can you handle trauma?) → **infection control** (can you prevent cascade failure?).
+
+**Retrieval routing note:** Use this guide when a shelter, clinic, or local team has limited medical supplies and few trained people and needs safe, high-impact decisions about triage, diagnostic limits, treatment capacity, supplies, infection control, and escalation.
 
 ## What You Need Before Starting
 
