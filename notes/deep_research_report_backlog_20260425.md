@@ -47,10 +47,12 @@ and user trust behavior.
 
 ## Later Slices
 
-- `RAG-OPS1`: draft RAG schema, vector-store, and release operations ADR.
-  Include chunk schema, metadata rules, router/bridge handling, citation
-  rendering, hybrid retrieval, index rebuilds, snapshots, rollback, migration,
-  and corruption recovery.
+- `RAG-OPS1`: completed.
+  Drafted the RAG schema, vector-store, and release operations ADR covering
+  canonical sources, chunk and reviewed-card metadata, mobile-pack snapshots,
+  re-ingest/rebuild triggers, release gates, migration, and rollback posture.
+  Completed note:
+  `notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`.
 - High-liability answer policy and red-team handbook.
   Tie deterministic rules, reviewed-card runtime, evidence nuggets,
   claim-support diagnostics, and Android enablement gates into one release

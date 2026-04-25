@@ -600,7 +600,15 @@ Current active family:
   `artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md`
   moves infected-wound / spreading-redness from `0/2` to `0/0`
   frontmatter/card gaps and score `4` to `0`; the family action is now
-  `regression_monitor`.
+  `regression_monitor`. Post-wound runtime proof at
+  `artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/`
+  keeps retrieval/ranking/generation/safety misses at `0`; the remaining
+  dangerous activation `0/2` card gaps are support-surface counters only on
+  current evidence.
+- `RAG-OPS1` added
+  `notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`, documenting canonical
+  guide/card sources, rebuildable Chroma/mobile-pack snapshots, release gates,
+  migration rules, and rollback posture for future RAG changes.
 - `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
   so answer-card / evidence-nugget / claim-support checks evaluate the
   artifact's `reviewed_card_ids`, not every reviewed card in the expected guide

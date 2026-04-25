@@ -153,6 +153,10 @@ evaluate reviewed-card coverage or the deep-research `RAG-RUNTIME1` /
 `RAG-TRUST1` drafted the high-risk answer policy. Current policy:
 `notes/SENKU_TRUST_MODEL_HIGH_RISK_POLICY_20260425.md`.
 
+`RAG-OPS1` drafted the RAG schema, vector-store, mobile-pack snapshot, release
+gate, migration, and rollback ADR. Current contract:
+`notes/RAG_SCHEMA_VECTOR_RELEASE_OPS_ADR_20260425.md`.
+
 `RAG-CARD1` added a `GD-859` reviewed answer-card contract for dangerous
 activation / acute mania crisis. Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1650_dangerous_activation_card.md`.
@@ -179,6 +183,13 @@ owners `GD-235` and `GD-622`. Current proof:
 The infected-wound / spreading-redness family now shows `0/0`
 frontmatter/card gaps and `regression_monitor`; keep it out of further
 card-count closure unless a fresh behavior panel exposes a real miss.
+Fresh post-wound FA/FB/FD/FE runtime proof:
+`artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/`
+has `18` deterministic passes, `5` expected-supported reviewed-card runtime
+rows, `1` accepted uncertain-fit row, `0` retrieval/ranking/generation/safety
+misses, and `5` answer-card passes. Dangerous activation still reports `0/2`
+frontmatter/card gaps only because `GD-858`/`GD-918` remain support surfaces;
+the behavior panel does not justify adding those cards mechanically.
 
 `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows so
 they evaluate against artifact `reviewed_card_ids`, not every reviewed card in
