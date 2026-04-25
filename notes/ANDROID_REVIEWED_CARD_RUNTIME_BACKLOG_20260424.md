@@ -54,6 +54,8 @@ Landed Android sequence:
   `STRONG EVIDENCE` do not leak onto the wrong answer surface.
 - `RAG-A14d`: exposure policy decision recorded as Option A: keep reviewed-card
   runtime developer/test-only and default `off` for now.
+- `RAG-CH3`: Android scripted prompt harness contract extraction landed;
+  behavior unchanged, androidTest-only.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
@@ -967,6 +969,36 @@ support-language proof across phone/tablet portrait and landscape while keeping
 runtime default `off`, without adding a top-level product UI or expanding
 cards.
 
+### RAG-CH3 Scripted Harness Contract Extraction
+
+Status: landed and validated; behavior unchanged.
+
+Dispatch:
+`notes/dispatch/RAG-CH3_android_scripted_harness_contract.md`.
+
+`ScriptedPromptHarnessContract` now owns androidTest-only scripted reviewed-card
+Bundle parsing and pure fail-closed `REVIEWED EVIDENCE` expectation validation.
+`PromptHarnessSmokeTest` keeps UIAutomator waits, activity assertions,
+reflection helpers, settled detail signals, and artifact capture.
+
+Guardrails:
+
+- production app code unchanged;
+- runtime defaults and product exposure unchanged;
+- instrumentation argument names and pipe-delimited semantics preserved;
+- no changes to `DetailActivity`, proof formatter copy, pack assets, card
+  predicates, or UI resources.
+
+Validation:
+
+- Android test compile / test APK assembly passed;
+- reviewed poisoning canary passed under
+  `artifacts/android_reviewed_card_ch3_harness_contract_20260425/reviewed_5556/20260425_091908_871/emulator-5556`;
+- runtime-on non-reviewed puncture canary passed under
+  `artifacts/android_reviewed_card_ch3_harness_contract_20260425/non_reviewed_5556_runtime_on/20260425_092020_829/emulator-5556`;
+- APK SHA:
+  `c01e8e3ccc890a1fc9b2234b6c11955f8589eb8e1bcfeff2ef2bab5dffac8347`.
+
 ## UI Notes
 
 Layout is not final, so reviewed-card UI work should be conservative:
@@ -1005,6 +1037,9 @@ This path is getting closer:
 - A14d chose Option A for exposure policy: keep reviewed-card runtime
   developer/test-only and default `off` until exact support language and
   product layout are proven across the fixed postures.
+- `RAG-CH3` reduced the A14-era prompt-harness monolith by moving pure scripted
+  reviewed-card contract parsing/validation into `ScriptedPromptHarnessContract`
+  while leaving behavior and product exposure unchanged.
 - `DetailReviewedCardMetadataBridge` now owns detail metadata transport/state
   and rule-id guarded lookup; this is code-health only, with behavior unchanged.
 - reviewed-card answers now require at least one visible source row, and

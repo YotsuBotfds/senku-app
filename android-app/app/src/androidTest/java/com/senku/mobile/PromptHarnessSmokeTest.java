@@ -2430,25 +2430,7 @@ public final class PromptHarnessSmokeTest {
         String requiredResId = safe(args.getString("scriptedRequiredResId")).trim();
         boolean allowHostFallback = parseBooleanArg(args, "scriptedAllowHostFallback");
         boolean hostEnabled = parseBooleanArg(args, "hostInferenceEnabled");
-        boolean reviewedCardRuntimeEnabled = parseBooleanArg(args, "scriptedEnableReviewedCardRuntime");
-        String expectedAnswerSurfaceLabel = Uri.decode(safe(args.getString("scriptedExpectedAnswerSurfaceLabel"))).trim();
-        List<String> forbiddenAnswerSurfaceLabels = parseDelimitedArg(args, "scriptedForbiddenAnswerSurfaceLabels");
-        String legacyForbiddenAnswerSurfaceLabel =
-            Uri.decode(safe(args.getString("scriptedForbiddenAnswerSurfaceLabel"))).trim();
-        if (!legacyForbiddenAnswerSurfaceLabel.isEmpty()) {
-            forbiddenAnswerSurfaceLabels.add(legacyForbiddenAnswerSurfaceLabel);
-        }
-        String expectedRuleId = Uri.decode(safe(args.getString("scriptedExpectedRuleId"))).trim();
-        String expectedSourceGuideId = Uri.decode(safe(args.getString("scriptedExpectedSourceGuideId"))).trim();
-        String expectedReviewedCardId = Uri.decode(safe(args.getString("scriptedExpectedReviewedCardId"))).trim();
-        String expectedReviewedCardGuideId = Uri.decode(safe(args.getString("scriptedExpectedReviewedCardGuideId"))).trim();
-        String expectedReviewedCardReviewStatus =
-            Uri.decode(safe(args.getString("scriptedExpectedReviewedCardReviewStatus"))).trim();
-        List<String> expectedBodyFragments = parseDelimitedArg(args, "scriptedExpectedBodyContains");
-        List<String> expectedReviewedCardSourceGuideIds =
-            parseDelimitedArg(args, "scriptedExpectedReviewedCardSourceGuideIds");
-        boolean assertRecentThreadReviewedCardMetadata =
-            parseBooleanArg(args, "scriptedAssertRecentThreadReviewedCardMetadata");
+        ScriptedPromptHarnessContract scriptedContract = new ScriptedPromptHarnessContract(args);
         String hostUrl = safe(args.getString("hostInferenceUrl"));
         String hostModel = safe(args.getString("hostInferenceModel"));
 
@@ -2468,15 +2450,7 @@ public final class PromptHarnessSmokeTest {
                 Assume.assumeTrue("host inference endpoint unreachable: " + hostUrl, isHostReachable(hostUrl));
             }
         }
-        assertReviewedEvidenceExpectationIsClosed(
-            expectedAnswerSurfaceLabel,
-            expectedRuleId,
-            expectedSourceGuideId,
-            expectedReviewedCardId,
-            expectedReviewedCardGuideId,
-            expectedReviewedCardReviewStatus,
-            expectedReviewedCardSourceGuideIds
-        );
+        scriptedContract.assertReviewedEvidenceExpectationIsClosed();
 
         long timeoutMs = parseLongArg(
             args,
@@ -2487,7 +2461,7 @@ public final class PromptHarnessSmokeTest {
 
         ReviewedCardRuntimeConfig.setEnabled(
             ApplicationProvider.getApplicationContext(),
-            reviewedCardRuntimeEnabled
+            scriptedContract.reviewedCardRuntimeEnabled
         );
 
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
@@ -2524,23 +2498,15 @@ public final class PromptHarnessSmokeTest {
                 if ("detail".equals(expectedSurface)) {
                     assertScriptedDetailExpectations(
                         timeoutMs,
-                        expectedAnswerSurfaceLabel,
-                        forbiddenAnswerSurfaceLabels,
-                        expectedRuleId,
-                        expectedSourceGuideId,
-                        expectedReviewedCardId,
-                        expectedReviewedCardGuideId,
-                        expectedReviewedCardReviewStatus,
-                        expectedReviewedCardSourceGuideIds,
-                        expectedBodyFragments
+                        scriptedContract
                     );
-                    if (assertRecentThreadReviewedCardMetadata) {
+                    if (scriptedContract.assertRecentThreadReviewedCardMetadata) {
                         assertRecentThreadReviewedCardMetadata(
                             query,
-                            expectedReviewedCardId,
-                            expectedReviewedCardGuideId,
-                            expectedReviewedCardReviewStatus,
-                            expectedReviewedCardSourceGuideIds,
+                            scriptedContract.expectedReviewedCardId,
+                            scriptedContract.expectedReviewedCardGuideId,
+                            scriptedContract.expectedReviewedCardReviewStatus,
+                            scriptedContract.expectedReviewedCardSourceGuideIds,
                             scriptedLaunchEpochMs
                         );
                     }
@@ -2563,48 +2529,6 @@ public final class PromptHarnessSmokeTest {
                 throw assertionError;
             }
         }
-    }
-
-    private void assertReviewedEvidenceExpectationIsClosed(
-        String expectedAnswerSurfaceLabel,
-        String expectedRuleId,
-        String expectedSourceGuideId,
-        String expectedReviewedCardId,
-        String expectedReviewedCardGuideId,
-        String expectedReviewedCardReviewStatus,
-        List<String> expectedReviewedCardSourceGuideIds
-    ) {
-        if (!"REVIEWED EVIDENCE".equalsIgnoreCase(safe(expectedAnswerSurfaceLabel).trim())) {
-            return;
-        }
-        Assert.assertFalse(
-            "REVIEWED EVIDENCE expectation must assert answer_card rule id",
-            safe(expectedRuleId).trim().isEmpty()
-        );
-        Assert.assertTrue(
-            "REVIEWED EVIDENCE expectation must use answer_card rule id",
-            safe(expectedRuleId).trim().startsWith("answer_card:")
-        );
-        Assert.assertFalse(
-            "REVIEWED EVIDENCE expectation must assert primary source guide id",
-            safe(expectedSourceGuideId).trim().isEmpty()
-        );
-        Assert.assertFalse(
-            "REVIEWED EVIDENCE expectation must assert reviewed card id",
-            safe(expectedReviewedCardId).trim().isEmpty()
-        );
-        Assert.assertFalse(
-            "REVIEWED EVIDENCE expectation must assert reviewed card guide id",
-            safe(expectedReviewedCardGuideId).trim().isEmpty()
-        );
-        Assert.assertFalse(
-            "REVIEWED EVIDENCE expectation must assert reviewed card review status",
-            safe(expectedReviewedCardReviewStatus).trim().isEmpty()
-        );
-        Assert.assertTrue(
-            "REVIEWED EVIDENCE expectation must assert at least one cited reviewed source guide id",
-            expectedReviewedCardSourceGuideIds != null && !expectedReviewedCardSourceGuideIds.isEmpty()
-        );
     }
 
     private void awaitHarnessIdle() {
@@ -2647,16 +2571,18 @@ public final class PromptHarnessSmokeTest {
 
     private void assertScriptedDetailExpectations(
         long timeoutMs,
-        String expectedAnswerSurfaceLabel,
-        List<String> forbiddenAnswerSurfaceLabels,
-        String expectedRuleId,
-        String expectedSourceGuideId,
-        String expectedReviewedCardId,
-        String expectedReviewedCardGuideId,
-        String expectedReviewedCardReviewStatus,
-        List<String> expectedReviewedCardSourceGuideIds,
-        List<String> expectedBodyFragments
+        ScriptedPromptHarnessContract scriptedContract
     ) {
+        String expectedAnswerSurfaceLabel = scriptedContract.expectedAnswerSurfaceLabel;
+        List<String> forbiddenAnswerSurfaceLabels = scriptedContract.forbiddenAnswerSurfaceLabels;
+        String expectedRuleId = scriptedContract.expectedRuleId;
+        String expectedSourceGuideId = scriptedContract.expectedSourceGuideId;
+        String expectedReviewedCardId = scriptedContract.expectedReviewedCardId;
+        String expectedReviewedCardGuideId = scriptedContract.expectedReviewedCardGuideId;
+        String expectedReviewedCardReviewStatus = scriptedContract.expectedReviewedCardReviewStatus;
+        List<String> expectedReviewedCardSourceGuideIds =
+            scriptedContract.expectedReviewedCardSourceGuideIds;
+        List<String> expectedBodyFragments = scriptedContract.expectedBodyFragments;
         if (safe(expectedAnswerSurfaceLabel).trim().isEmpty()
             && (forbiddenAnswerSurfaceLabels == null || forbiddenAnswerSurfaceLabels.isEmpty())
             && safe(expectedRuleId).trim().isEmpty()
@@ -5668,21 +5594,6 @@ public final class PromptHarnessSmokeTest {
         } catch (NumberFormatException ignored) {
             return fallback;
         }
-    }
-
-    private static List<String> parseDelimitedArg(Bundle args, String key) {
-        String raw = Uri.decode(safe(args.getString(key))).trim();
-        ArrayList<String> values = new ArrayList<>();
-        if (raw.isEmpty()) {
-            return values;
-        }
-        for (String part : raw.split("\\|")) {
-            String value = part.trim();
-            if (!value.isEmpty()) {
-                values.add(value);
-            }
-        }
-        return values;
     }
 
     private int getHistoryBubbleCount() {

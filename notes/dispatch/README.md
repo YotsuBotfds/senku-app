@@ -293,6 +293,15 @@ Current active family:
   `notes/ANDROID_REVIEWED_CARD_EXPOSURE_POLICY_DECISION_20260425.md`;
   dispatch prompt:
   `notes/dispatch/RAG-A14d_android_reviewed_card_exposure_policy_closeout.md`.
+- `RAG-CH3` landed the androidTest-only scripted harness contract extraction:
+  `ScriptedPromptHarnessContract` now owns reviewed-card scripted Bundle
+  parsing and pure fail-closed reviewed-evidence validation, while
+  `PromptHarnessSmokeTest` keeps UI/activity assertions and artifact capture.
+  Android test compile / test APK assembly plus phone reviewed and non-reviewed
+  forbidden-label canaries passed under
+  `artifacts/android_reviewed_card_ch3_harness_contract_20260425/`. Dispatch
+  note:
+  `notes/dispatch/RAG-CH3_android_scripted_harness_contract.md`.
 - `RAG-A12` has a real-pack answer-card export probe at
   `artifacts/mobile_pack/senku_20260424_answer_cards_probe_20260424_190810/`:
   `6` pilot cards, `116` clauses, `19` sources, no sourceless or clauseless

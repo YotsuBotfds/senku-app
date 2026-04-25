@@ -263,6 +263,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
   `notes/ANDROID_REVIEWED_CARD_EXPOSURE_POLICY_DECISION_20260425.md`; draft
   background:
   `notes/ANDROID_REVIEWED_CARD_EXPOSURE_POLICY_DRAFT_20260424.md`.
+  `RAG-CH3` then extracted androidTest-only scripted reviewed-card contract
+  parsing and pure fail-closed validation into
+  `ScriptedPromptHarnessContract`. `PromptHarnessSmokeTest` still owns
+  UIAutomator waits, activity assertions, settled detail signals, reflection
+  helpers, and artifact capture. Android test compile / test APK assembly plus
+  phone reviewed and non-reviewed forbidden-label canaries passed under
+  `artifacts/android_reviewed_card_ch3_harness_contract_20260425/`.
 - `RAG-A4` extracted mobile-pack answer-card export helpers into
   `mobile_pack_answer_cards.py`; use that module for future pack-card export
   changes instead of growing `mobile_pack.py`.

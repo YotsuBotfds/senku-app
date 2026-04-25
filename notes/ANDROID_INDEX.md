@@ -16,7 +16,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/run_android_ui_validation_pack.ps1`](../scripts/run_android_ui_validation_pack.ps1): deterministic + generative UI smoke pack
 - [`../scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1): parallel four-lane screenshot/dump sweep across the fixed emulator matrix
 - [`ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md`](./ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md): desktop reviewed-card/provenance contract translated into Android work
-- [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1`, and `RAG-CH2`
+- [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1` through `RAG-CH3`
 
 ## Current artifact baseline
 
@@ -148,6 +148,13 @@ Use this as the first stop for Android parity and mobile-pack work.
   Decision is Option A: keep reviewed-card runtime developer/test-only and
   default `off`; no product-default behavior, card expansion, top-level product
   UI, local-preview toggle, or runtime default change is approved.
+- Reviewed-card CH3 scripted harness contract proof:
+  `artifacts/android_reviewed_card_ch3_harness_contract_20260425/reviewed_5556/20260425_091908_871/emulator-5556`
+  and
+  `artifacts/android_reviewed_card_ch3_harness_contract_20260425/non_reviewed_5556_runtime_on/20260425_092020_829/emulator-5556`
+  prove the extracted androidTest helper still parses reviewed and
+  non-reviewed expected/forbidden label contracts on APK SHA
+  `c01e8e3ccc890a1fc9b2234b6c11955f8589eb8e1bcfeff2ef2bab5dffac8347`.
 - Reviewed-card developer-panel toggle proof:
   `artifacts/android_reviewed_card_toggle_20260424_193049/`
   (phone/tablet portrait and landscape screenshots)
@@ -190,6 +197,10 @@ Use this as the first stop for Android parity and mobile-pack work.
   proof. `RAG-A14d` then chose Option A for exposure policy: runtime remains
   developer/test-only and default `off`. A future non-developer preview would
   need its exact support language proven across the fixed four postures first.
+  `RAG-CH3` then extracted pure scripted reviewed-card harness parsing and
+  fail-closed validation into `ScriptedPromptHarnessContract`, reducing future
+  prompt-proof edits in `PromptHarnessSmokeTest` without product behavior
+  changes.
 - `RAG-A14` is a product enablement gate, not card expansion. Its first
   enforceable guard has landed for reviewed-evidence labeling, proof-harness
   fail-closed checks, and old-pack fallback, but runtime remains off by default
