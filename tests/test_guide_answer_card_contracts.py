@@ -59,6 +59,84 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertTrue(unit["source_invariants"])
         self.assertTrue(unit["support_phrases"])
 
+    def test_load_answer_cards_includes_toxicology_contract_fields(self):
+        card = next(
+            card
+            for card in self.cards
+            if card["card_id"] == "poisoning_unknown_ingestion_toxicology"
+        )
+
+        self.assertEqual(card["guide_id"], "GD-301")
+        self.assertEqual(card["risk_tier"], "critical")
+        self.assertIn("required_first_actions", card)
+        self.assertIn("forbidden_advice", card)
+        self.assertIn("source_sections", card)
+
+    def test_compose_evidence_units_returns_gd301_fields(self):
+        card = next(
+            card
+            for card in find_cards_for_guides("GD-301", cards=self.cards)
+            if card["card_id"] == "poisoning_unknown_ingestion_toxicology"
+        )
+
+        units = compose_evidence_units([card])
+
+        self.assertEqual(len(units), 1)
+        unit = units[0]
+        self.assertEqual(unit["unit_id"], "poisoning_unknown_ingestion_toxicology")
+        self.assertEqual(unit["source_guide_ids"], ["GD-301"])
+        self.assertIn("toxicology-overview", unit["citation_ids"])
+        self.assertIn("GD-301", unit["source_guide_ids"])
+        self.assertTrue(unit["support_phrases"])
+
+    def test_compose_card_backed_answer_for_gd301_passes_contract_and_claim_support(self):
+        card = next(
+            card
+            for card in find_cards_for_guides("GD-301", cards=self.cards)
+            if card["card_id"] == "poisoning_unknown_ingestion_toxicology"
+        )
+
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-301"])
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["card_ids"], ["poisoning_unknown_ingestion_toxicology"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-301"])
+        self.assertIn("Call poison control", plan["answer_text"])
+        self.assertIn("[GD-301]", plan["answer_text"])
+        contract = evaluate_answer_card_contract(plan["answer_text"], [card])
+        self.assertEqual(contract["status"], "pass")
+        self.assertEqual(contract["forbidden_advice_hits"], [])
+        claim = diagnose_claim_support(
+            plan["answer_text"],
+            [card],
+            cited_guide_ids=plan["cited_guide_ids"],
+            expected_guide_ids=["GD-301"],
+        )
+        self.assertEqual(claim["status"], "pass")
+        self.assertEqual(claim["forbidden_count"], 0)
+
+    def test_gd301_contract_flags_unnegated_harmful_charcoal_advice(self):
+        card = next(
+            card
+            for card in find_cards_for_guides("GD-301", cards=self.cards)
+            if card["card_id"] == "poisoning_unknown_ingestion_toxicology"
+        )
+        answer = """
+        Call poison control now. The patient is drowsy and the exposure is unknown.
+        Give activated charcoal for unknown ingestion now and hope for the best.
+        """
+
+        result = evaluate_answer_card_contract(answer, [card])
+
+        self.assertEqual(result["status"], "fail")
+        self.assertTrue(result["forbidden_advice_hits"])
+        self.assertTrue(
+            any(
+                "activated charcoal" in record["phrase"]
+                for record in result["forbidden_advice_hits"]
+            )
+        )
+
     def test_compose_evidence_units_resolves_conditional_requirements_from_question(self):
         card = find_cards_for_guides("GD-284", cards=self.cards)[0]
 

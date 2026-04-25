@@ -166,6 +166,13 @@ The stroke/cardiac overlap family now shows `0/0` frontmatter/card gaps and
 `regression_monitor`; keep it out of additional card-count closure unless a
 fresh behavior panel exposes a real miss.
 
+`RAG-CARD3` added a `GD-301` reviewed answer-card contract for poisoning /
+unknown toxic exposure support. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1700_poisoning_gd301_card.md`.
+The unknown-child-ingestion / poisoning family now shows `0/0`
+frontmatter/card gaps and `regression_monitor`; keep it out of further
+card-count closure unless a fresh behavior panel exposes a real miss.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

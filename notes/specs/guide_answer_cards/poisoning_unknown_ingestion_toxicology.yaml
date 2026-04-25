@@ -1,0 +1,70 @@
+card_id: poisoning_unknown_ingestion_toxicology
+guide_id: GD-301
+slug: toxicology-poisoning-response
+title: Toxicology and Poisoning Response
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Child or adult may have ingested, tasted, or been exposed to an unknown household chemical, cleaner, pill, rodenticide, solvent, or unlabeled liquid.
+  - Prompt asks for first steps after mouth-contact, swallowing, or child exposure with confusion, drooling, burning mouth, breathing trouble, or sudden drowsiness.
+required_first_actions:
+  - Call poison control, EMS, or the fastest available emergency service immediately for unknown ingestion or unknown toxic exposure.
+  - Check airway, breathing, and circulation first.
+  - Stop the exposure source, isolate the scene, and move everyone to a safer area.
+  - Do not induce vomiting.
+first_actions:
+  - Move the exposed person to fresh air or a safe ventilated area and keep them stable while waiting for guidance.
+  - Keep them off the floor and monitor breathing, color, and response until EMS or poison control guidance arrives.
+  - Remove contaminated clothing where exposure touched skin, then rinse skin or eyes with clean running water when this can be done safely.
+  - Record what was swallowed or contacted (ingredient, quantity, time, and source), and keep the container or sample if available.
+urgent_red_flags:
+  - Trouble breathing, wheeze, noisy breathing, drooling, severe mouth/throat burns, hoarseness, facial swelling, or repeated vomiting.
+  - Inability to stay awake, confusion, seizures, collapse, or worsening symptoms after an unknown exposure.
+  - Blue lips, severe chest pain, or any airway compromise while exposure symptoms are evolving.
+forbidden_advice:
+  - Do not induce vomiting.
+  - Do not give activated charcoal for unknown, caustic, or hydrocarbon ingestions unless poison control specifically directs it.
+  - Do not neutralize or mix chemicals at the scene.
+do_not:
+  - Do not delay airway checks to identify the exact product name.
+  - Do not force large drinks, oral remedies, or home mixtures while breathing is uncertain.
+routine_boundary: >
+  This is a poisoning triage contract; routine household-chemistry compatibility,
+  product storage, and prevention details are out-of-scope until exposure
+  response is stabilized.
+acceptable_uncertain_fit: >
+  If ingestion is uncertain but exposure is likely, use this toxicology triage
+  lane for immediate stabilization and poisoning support while retaining only a
+  narrow, reversible next-step scope.
+clarifying_questions:
+  - What was the substance, when, and how much?
+  - Can the person speak, cry, breathe, or swallow normally right now?
+  - Are they drooling, confused, vomiting blood, or having trouble breathing?
+citation_ids:
+  - toxicology-overview
+  - toxicology-initial-assessment
+  - toxicology-quick-decontamination
+source_sections:
+  - guide: GD-301
+    slug: toxicology-poisoning-response
+    title: Toxicology and Poisoning Response
+    sections:
+      - "#overview"
+      - "#initial-assessment"
+      - "#decontamination"
+source_invariants:
+  - name: toxicology unknown ingestion lane
+    guide: GD-301
+    must_include:
+      - call poison control
+      - do not induce vomiting
+      - trouble breathing, drooling, chest pain, hoarseness
+      - isolated
+      - do not mix cleaners
+    must_not_match:
+      - "neutraliz\\w*\\s+with\\s+\\w+"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Tight toxicology triage contract for unknown or uncertain ingestion/exposure,
+  focused on emergency first actions and non-dosing, non-protocol steps.

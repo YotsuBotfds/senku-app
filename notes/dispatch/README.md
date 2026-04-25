@@ -588,6 +588,12 @@ Current active family:
   `artifacts/bench/high_liability_family_priorities_20260425_1656_acute_coronary_card.md`
   moves stroke/cardiac overlap from `0/1` to `0/0` frontmatter/card gaps and
   score `2` to `0`; the family action is now `regression_monitor`.
+- `RAG-CARD3` added a reviewed `GD-301` answer-card contract for poisoning /
+  unknown toxic exposure support. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1700_poisoning_gd301_card.md`
+  moves unknown-child-ingestion / poisoning from `0/1` to `0/0`
+  frontmatter/card gaps and score `2` to `0`; the family action is now
+  `regression_monitor`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.
