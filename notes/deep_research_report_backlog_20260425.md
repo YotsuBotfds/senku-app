@@ -44,6 +44,18 @@ and user trust behavior.
   `--corpus-marker-scan` and surfaces top-1 marker risk / bridge / unresolved
   partial status. See
   `notes/dispatch/RAG-EVAL1_corpus_marker_diagnostic_overlay.md`.
+- `RAG-EVAL2`: completed.
+  Added a held-out primary-answer regression pack for unresolved partial and
+  bridge-thin matches.
+  Evidence-driven prompt pack:
+  `artifacts/prompts/adhoc/rag_eval_partial_router_holdouts_20260425.jsonl`.
+  Spec:
+  `notes/specs/rag_eval_partial_router_holdouts_20260425.md`.
+  Dispatch:
+  `notes/dispatch/RAG-EVAL2_partial_router_holdout_pack.md`.
+  Latest focused diagnostics found 2 top-1 unresolved-partial rows and 1 top-1
+  bridge row, separating routing misses from prompt-budget/context-packaging
+  errors.
 
 ## Later Slices
 

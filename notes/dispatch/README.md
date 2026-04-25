@@ -231,9 +231,15 @@ Current active family:
   `notes/dispatch/RAG-DOCS1_corpus_marker_scanner.md`.
 - `RAG-EVAL1` lets RAG diagnostics consume that marker scan with top-1 marker
   risk, bridge, unresolved-partial, and marker-type columns. Fresh FA/FB/FD/FE
-  overlay stayed at `9.56/10` and showed no top-1 bridge or unresolved partial
-  rows. Dispatch note:
+  overlay stayed at `9.56/10` and showed no top-1 bridge or unresolved
+  partial rows. Dispatch note:
   `notes/dispatch/RAG-EVAL1_corpus_marker_diagnostic_overlay.md`.
+- `RAG-EVAL2` adds a held-out prompt pack (`RE2-UP-*`, `RE2-BR-*`) to directly
+  test primary-answer regressions where top-1 retrieval is partial-bearing or
+  thin bridge. Latest diagnostics found 2 top-1 unresolved-partial rows, 1
+  top-1 bridge row, 8 retrieval misses, and 4 ranking misses. See:
+  `notes/specs/rag_eval_partial_router_holdouts_20260425.md` and
+  `notes/dispatch/RAG-EVAL2_partial_router_holdout_pack.md`.
 - `RAG-RUNTIME1` resolved model/runtime naming. `gemma-4-e2b-it-litert` is the
   canonical local LiteRT generation target ID for the current desktop and guide
   validation lanes, distinct from public model IDs and broad-quality overrides.

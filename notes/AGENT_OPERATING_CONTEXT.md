@@ -91,6 +91,19 @@ misses:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py <bench-json> --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-dir artifacts\bench\<diagnostic-dir>
 ```
 
+`RAG-EVAL2` adds a held-out eval pack for bridge-thin and unresolved-partial
+primary-answer regressions. Keep this in context:
+
+- Pack: `artifacts/prompts/adhoc/rag_eval_partial_router_holdouts_20260425.jsonl`
+- Spec: `notes/specs/rag_eval_partial_router_holdouts_20260425.md`
+- Dispatch: `notes/dispatch/RAG-EVAL2_partial_router_holdout_pack.md`
+- Latest diagnostics:
+  `artifacts/bench/rag_eval_partial_router_holdouts_20260425_diag/report.md`
+  with 21 expected-guide rows, 8 retrieval misses, 4 ranking misses, 4 prompt
+  budget/context artifact errors, 2 expected supported, 2 deterministic passes,
+  1 accepted `uncertain_fit`, 2 top-1 unresolved-partial rows, and 1 top-1
+  bridge row.
+
 `RAG-DOCS2` repaired the observed GD-585 `wound-assessment-tool` unresolved
 partial with static, source-local wound assessment content. Fresh proof:
 `artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md`;
