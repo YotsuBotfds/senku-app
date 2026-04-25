@@ -23,6 +23,10 @@ aliases:
   - little purple dots with fever
   - purple spots on legs fever
 icon: ðŸ”¥
+routing_cues:
+  - Use for suspected sepsis, fever with confusion, fast breathing, rapid pulse, shaking chills, hard-to-wake illness, infection with systemic symptoms, or red-flag wound infection that may be spreading beyond local care.
+  - Use for fever plus stiff neck, severe headache with vomiting, unusual sleepiness, or non-blanching purple/dark rash as meningitis, meningococcemia, or sepsis emergency.
+citations_required: true
 description: qSOFA/SIRS criteria, antibiotic selection by suspected source, combination therapy, source control urgency, lactate monitoring alternatives, fluid management in sepsis, and field-based assessment without blood cultures.
 related:
   - infection-control

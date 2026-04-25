@@ -8,6 +8,22 @@ tags:
   - critical
 icon: 🧼
 description: Practical protocols for preventing disease transmission and maintaining asepsis in resource-limited survival environments
+aliases:
+  - infection control
+  - prevent infection spread
+  - wound infection hygiene
+  - spreading cellulitis infection control
+  - red streaking infection
+  - sepsis prevention hygiene
+routing_cues:
+  - Use for preventing infection transmission, asepsis, hand hygiene, sterilization, disinfection, isolation, contaminated laundry or surfaces, and infection-control setup in care spaces.
+  - Use as support for infected wounds when the question involves hygiene, contamination, spreading cellulitis, lymphangitis, source control, or sepsis risk.
+citations_required: true
+applicability: >
+  Use for infection prevention, hygiene, asepsis, disinfection, isolation, and
+  infection-control practices in care settings. Not a substitute for immediate
+  first aid, wound-specific cleaning, sepsis escalation, or antibiotic protocols
+  when the user presents red flags or systemic infection signs.
 related:
   - alkali-production
   - chlorine-bleach-production

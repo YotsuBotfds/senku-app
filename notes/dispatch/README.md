@@ -547,6 +547,11 @@ Current active family:
   `artifacts/bench/metadata_coverage_audit_20260425_1724_dangerous_activation_metadata.md`
   shows aliases/routing/citation/applicability covered; the remaining family
   gap is reviewed answer-card coverage.
+- `RAG-META3` added wound-family support metadata for `GD-232`, `GD-235`,
+  `GD-589`, and `GD-622`. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1732_wound_family_metadata.md`
+  drops the wound score from `14` to `4`; remaining wound gaps are reviewed
+  answer cards for `GD-235` and `GD-622`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.

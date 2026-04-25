@@ -10,6 +10,24 @@ tags:
   - infectious-disease
 icon: 🏥
 description: Wound assessment by animal type, immediate care protocols, primary vs delayed closure decisions, prophylactic antibiotics specific to bite wounds, rabies risk assessment and post-exposure prophylaxis decision-making, tetanus considerations, infection monitoring timelines, special considerations for hand/puncture wounds, and amputation vs salvage criteria.
+aliases:
+  - animal bite wound
+  - dog bite
+  - cat bite
+  - human bite
+  - hand bite swelling
+  - puncture bite infection
+  - rabies exposure bite
+  - bite wound red streaks
+routing_cues:
+  - Use for animal or human bites, puncture bites, hand bites, crush wounds from teeth, rabies exposure, bite-wound infection monitoring, and bite-related tetanus or antibiotic decisions.
+  - Use as support for infected-wound prompts when rapid worsening follows a bite, puncture, hand/finger swelling, trouble moving fingers, red streaking, fever, or systemic toxicity.
+citations_required: true
+applicability: >
+  Use for bite and saliva-contaminated wounds, rabies risk, puncture/hand-bite
+  infection monitoring, delayed closure decisions, and bite-specific
+  prophylaxis. Not for unrelated clean cuts, chronic ulcers, or general sepsis
+  care unless the infection source is a bite or puncture wound.
 related:
   - infection-control
   - medications

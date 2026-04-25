@@ -126,6 +126,10 @@ the dangerous activation family guides `GD-858`, `GD-859`, and `GD-918`.
 Current proof:
 `artifacts/bench/metadata_coverage_audit_20260425_1724_dangerous_activation_metadata.md`.
 
+`RAG-META3` added targeted wound-family metadata to `GD-232`, `GD-235`,
+`GD-589`, and `GD-622`. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1732_wound_family_metadata.md`.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell
