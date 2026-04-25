@@ -37,7 +37,7 @@ CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 
 Current active family:
 
-- `RAG-S1` through `RAG-S15b` are the current RAG-next-level dispatches.
+- `RAG-S1` through `RAG-S16` are the current RAG-next-level dispatches.
 - `RAG-S1` has produced the first diagnostic result at
   `notes/RAG_S1_DIAGNOSTIC_RESULT_20260424.md`.
 - `RAG-S1b` observability has landed in the same work block.
@@ -144,6 +144,12 @@ Current active family:
   Runtime query, production indexes, guides, and Android behavior remain
   unchanged. Dispatch note:
   `notes/dispatch/RAG-S15b_contextual_shadow_retrieval_comparator.md`.
+- `RAG-S16` has landed a shadow-only section-family / RAPTOR-lite export for
+  later retrieval-comparison experiments. It writes non-production JSONL records
+  with `section_family`, `contextual_retrieval_text`, `raptor_lite_text`, and
+  metadata, and the S15b comparator now accepts those records. Production
+  query/index/guide behavior and Android behavior remain unchanged. Dispatch note:
+  `notes/dispatch/RAG-S16_section_family_shadow_export.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

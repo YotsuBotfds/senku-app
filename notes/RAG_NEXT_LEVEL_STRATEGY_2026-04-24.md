@@ -116,9 +116,11 @@ Backlog integration:
   measurement tool for that next step: temporary shadow vector/lexical indexes
   plus baseline-versus-shadow hit@1/hit@3/hit@k output. Do not replace the
   production index in the first measurement pass.
-- `RAG-S16` - section-family summary retrieval spike. Create guide/section
-  summaries for cross-section questions as a RAPTOR-lite experiment, especially
-  for "normal vs urgent", comparison, and boundary prompts.
+- `RAG-S16` - section-family summary retrieval spike. The first slice now
+  exports shadow-only RAPTOR-lite section-family records by grouping adjacent
+  guide sections into deterministic windows with extractive evidence fragments.
+  Next compare those records against S15/contextual-chunk retrieval for "normal
+  vs urgent", comparison, and boundary prompts before any production promotion.
 - `RAG-S17` - instruction-aware rerank interface. Keep the first
   implementation deterministic and local, but shape the API so a reranker can
   later prioritize "emergency owner", "reviewed card source", "routine

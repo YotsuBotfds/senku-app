@@ -29,7 +29,8 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
                 {
                     "chunk_id": "chunk_b",
                     "document": "raw B",
-                    "contextual_retrieval_text": "Guide: B\n\nraw B",
+                    "raptor_lite_text": "Guide: B\n\nraw B",
+                    "metadata": {"record_type": "section_family_summary"},
                 },
             ]
             shadow_path.write_text(
@@ -44,7 +45,9 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertEqual(loaded[0]["document"], "raw A")
         self.assertEqual(loaded[0]["contextual_retrieval_text"], "Guide: A\n\nraw A")
         self.assertEqual(loaded[0]["metadata"], {"guide_id": "GD-111", "slug": "guide-a"})
-        self.assertEqual(loaded[1]["metadata"], {})
+        self.assertEqual(loaded[1]["contextual_retrieval_text"], "Guide: B\n\nraw B")
+        self.assertEqual(loaded[1]["raptor_lite_text"], "Guide: B\n\nraw B")
+        self.assertEqual(loaded[1]["metadata"], {"record_type": "section_family_summary"})
 
     def test_extract_expected_guides_from_wave_manifest_uses_wave_key_from_artifact_filename(self):
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -257,9 +257,12 @@ def load_contextual_shadow_jsonl(path: os.PathLike[str] | str) -> list[dict[str,
                 raise ValueError(f"Shadow record at {path}:{line_number} is not an object")
             if not record.get("chunk_id"):
                 raise ValueError(f"Shadow record at {path}:{line_number} lacks chunk_id")
-            if not record.get("contextual_retrieval_text"):
+            retrieval_text = record.get("contextual_retrieval_text") or record.get(
+                "raptor_lite_text"
+            )
+            if not retrieval_text:
                 raise ValueError(
-                    f"Shadow record at {path}:{line_number} lacks contextual_retrieval_text"
+                    f"Shadow record at {path}:{line_number} lacks contextual_retrieval_text/raptor_lite_text"
                 )
             metadata = record.get("metadata")
             if not isinstance(metadata, dict):
@@ -268,9 +271,8 @@ def load_contextual_shadow_jsonl(path: os.PathLike[str] | str) -> list[dict[str,
                 {
                     "chunk_id": str(record["chunk_id"]),
                     "document": str(record.get("document", "")),
-                    "contextual_retrieval_text": str(
-                        record["contextual_retrieval_text"]
-                    ),
+                    "contextual_retrieval_text": str(retrieval_text),
+                    "raptor_lite_text": str(record.get("raptor_lite_text", retrieval_text)),
                     "metadata": metadata,
                 }
             )
