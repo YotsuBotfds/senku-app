@@ -2165,6 +2165,16 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertIn("[GD-232]", airway_contract)
         self.assertNotIn("[GD-400]", airway_contract)
 
+        general_contract = query._add_citation_allowlist_contract(
+            "answer body",
+            {
+                "documents": [["Primary excerpt.", "Support excerpt."]],
+                "metadatas": [[{"guide_id": "GD-024"}, {"guide_id": "GD-023"}]],
+            },
+            question="what should I do first?",
+        )
+        self.assertIn("Prefer the earliest listed retrieved guide", general_contract)
+
         allergic_airway_contract = query._add_citation_allowlist_contract(
             "answer body",
             airway_results,

@@ -15872,10 +15872,11 @@ def _add_citation_allowlist_contract(
 
     allowed_tokens = ", ".join(f"[{guide_id}]" for guide_id in allowed_guide_ids)
     priority_note = ""
-    if question and allowed_guide_ids != raw_allowed_guide_ids:
+    if question:
         priority_note = (
-            " For this prompt, prefer the earliest listed retrieved owner guide when "
-            "choosing citations for the lead action or main comparison."
+            " Prefer the earliest listed retrieved guide that directly supports "
+            "the lead action, main sequence, or main comparison before citing "
+            "supporting guides."
         )
     contract = (
         "Citation contract for this answer: every guide citation must use one of "

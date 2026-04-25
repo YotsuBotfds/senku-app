@@ -190,3 +190,42 @@ Remaining ranking misses:
 
 Remaining high-value next slice is citation-owner behavior for expected owners
 already at rank 1: `GD-024`, `GD-029`, `GD-052`, `GD-108`, `GD-648`, `GD-646`.
+
+## 2026-04-25 Citation Priority Proof
+
+The next slice made the citation contract source-order aware for all generated
+answers: when a question is present, the prompt now asks the model to prefer the
+earliest retrieved guide that directly supports the lead action, main sequence,
+or main comparison before using lower-ranked support guides.
+
+Fresh proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_citation_priority.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_citation_priority_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `12`, up from `10`
+- generation/citation misses: `4`, down from `6`
+- expected-owner cited: `13/21`, up from `11/21`
+- expected-owner hit@1: `17/21`
+- expected-owner hit@3/hit@k: `19/21`
+- remaining buckets: `2` accepted `uncertain_fit`, `2` ranking misses, `1`
+  expectation-drift retrieval miss
+
+Rows improved by citation priority:
+
+- `RE2-UP-002` now cites `GD-029`.
+- `RE2-UP-010` now cites `GD-108`.
+
+Remaining generation/citation misses:
+
+- `RE2-UP-001` / `GD-024`
+- `RE2-UP-004` / `GD-052`
+- `RE2-BR-003` / `GD-648`
+- `RE2-BR-005` / `GD-646`
+
+The remaining citation rows likely need deeper source packaging or answer-card
+support rather than another broad prompt-contract tweak.
