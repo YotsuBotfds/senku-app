@@ -3,521 +3,149 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RAG Reviewed-Card Coverage - 2026-04-25</title>
+  <title>Senku RAG Coverage Map - 2026-04-25</title>
   <style>
     :root {
       color-scheme: light;
-      --ink: #18212f;
-      --muted: #617084;
-      --line: #d8e0e8;
-      --panel: #ffffff;
+      --ink: #17202d;
+      --muted: #617086;
+      --line: #d9e2e9;
       --bg: #f4f7f6;
-      --blue: #2f6f9f;
-      --teal: #238477;
+      --panel: #ffffff;
+      --blue: #2d6f96;
       --green: #2f7a4f;
-      --amber: #b76b19;
-      --red: #b33c37;
-      --violet: #6b5ca5;
-      --shadow: 0 16px 36px rgba(32, 45, 63, .10);
+      --teal: #1f8175;
+      --amber: #b86b1f;
+      --red: #b5453f;
+      --violet: #655aa0;
+      --shadow: 0 14px 32px rgba(26, 39, 56, .10);
       --radius: 8px;
     }
 
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
-      background:
-        linear-gradient(180deg, rgba(47, 111, 159, .10), rgba(244, 247, 246, 0) 360px),
-        var(--bg);
       color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(45, 111, 150, .12), rgba(244, 247, 246, 0) 340px),
+        var(--bg);
       line-height: 1.5;
     }
-
-    a { color: var(--blue); }
-
-    .wrap {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    header {
-      padding: 34px 0 20px;
-    }
-
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 34px 0 20px; }
     .eyebrow {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 650;
-      letter-spacing: .02em;
-      text-transform: uppercase;
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase;
     }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--teal);
-      display: inline-block;
-    }
-
-    h1 {
-      margin: 10px 0 8px;
-      max-width: 920px;
-      font-size: clamp(32px, 5vw, 58px);
-      line-height: 1;
-      letter-spacing: 0;
-    }
-
-    .lede {
-      max-width: 920px;
-      margin: 0;
-      color: #334257;
-      font-size: clamp(16px, 2vw, 20px);
-    }
-
-    .source-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
+    .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--teal); }
+    h1 { margin: 10px 0 8px; max-width: 940px; font-size: clamp(32px, 5vw, 58px); line-height: 1; letter-spacing: 0; }
+    .lede { margin: 0; max-width: 940px; color: #334257; font-size: clamp(16px, 2vw, 20px); }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      min-height: 30px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 5px 10px;
-      background: rgba(255, 255, 255, .78);
-      color: #334257;
-      font-size: 12px;
-      font-weight: 650;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; min-height: 30px; gap: 7px;
+      border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px;
+      background: rgba(255,255,255,.82); color: #334257; font-size: 12px; font-weight: 700;
     }
-
-    main { padding-bottom: 46px; }
-
-    section {
-      margin-top: 22px;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-      letter-spacing: 0;
-    }
-
-    h3 {
-      margin: 0 0 6px;
-      font-size: 15px;
-      letter-spacing: 0;
-    }
-
-    .grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    .metrics {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .metric {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+    main { padding-bottom: 42px; }
+    section { margin-top: 22px; }
+    h2 { margin: 0 0 12px; font-size: 20px; letter-spacing: 0; }
+    h3 { margin: 0 0 6px; font-size: 15px; letter-spacing: 0; }
+    p { margin: 0; }
+    code { font-family: Consolas, "Cascadia Mono", monospace; font-size: .96em; }
+    .grid { display: grid; gap: 14px; }
+    .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .metric, .panel, .card, .gap, .slice {
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 16px;
-      min-height: 132px;
     }
-
-    .metric .value {
-      font-size: clamp(30px, 4vw, 44px);
-      line-height: 1;
-      font-weight: 800;
-      margin: 3px 0 8px;
-    }
-
-    .metric .label {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 650;
-    }
-
-    .metric p {
-      margin: 0;
-      color: #435169;
-      font-size: 13px;
-    }
-
-    .bar {
-      height: 9px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: #e6edf2;
-      margin: 12px 0 8px;
-    }
-
-    .fill {
-      height: 100%;
-      width: var(--w);
-      background: var(--c);
-      border-radius: inherit;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1.35fr .65fr;
-      gap: 14px;
-      align-items: start;
-    }
-
-    .panel {
-      background: rgba(255, 255, 255, .92);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-    }
-
-    .family-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
+    .metric { padding: 16px; min-height: 134px; }
+    .label { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .value { margin: 4px 0 8px; font-size: clamp(30px, 4vw, 44px); line-height: 1; font-weight: 850; }
+    .metric p, .card p, .gap p, .slice p, .note p, td { color: #3d4b60; font-size: 13px; }
+    .bar { height: 9px; margin: 12px 0 8px; background: #e6edf2; border-radius: 999px; overflow: hidden; }
+    .fill { height: 100%; width: var(--w); background: var(--c); border-radius: inherit; }
+    .two-col { display: grid; grid-template-columns: 1.35fr .65fr; gap: 14px; align-items: start; }
+    .panel { padding: 16px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
     button {
-      appearance: none;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #fff;
-      color: #263447;
-      cursor: pointer;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 7px 10px;
+      appearance: none; border: 1px solid var(--line); border-radius: 6px; background: #fff;
+      color: #27374a; cursor: pointer; font: inherit; font-size: 13px; font-weight: 750; padding: 7px 10px;
     }
-
-    button[aria-pressed="true"] {
-      border-color: rgba(35, 132, 119, .55);
-      background: rgba(35, 132, 119, .10);
-      color: #135d54;
-    }
-
-    .family-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .family {
-      border: 1px solid var(--line);
-      border-left: 5px solid var(--status);
-      border-radius: var(--radius);
-      background: #fff;
-      padding: 12px;
-    }
-
-    .family-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
-    .family-name {
-      font-size: 17px;
-      font-weight: 800;
-      overflow-wrap: anywhere;
-    }
-
+    button[aria-pressed="true"] { border-color: rgba(31,129,117,.55); background: rgba(31,129,117,.10); color: #135d54; }
+    .cards { display: grid; gap: 10px; }
+    .card { border-left: 5px solid var(--status); padding: 12px; }
+    .card-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .name { font-size: 17px; font-weight: 850; overflow-wrap: anywhere; }
+    .small { color: var(--muted); font-size: 12px; }
     .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 4px 9px;
-      min-height: 24px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-      color: #fff;
-      background: var(--status);
+      display: inline-flex; align-items: center; justify-content: center; min-height: 24px;
+      border-radius: 999px; padding: 4px 9px; color: #fff; background: var(--status);
+      font-size: 12px; font-weight: 850; white-space: nowrap;
     }
-
-    .family-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 8px 0 10px;
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
+    .meta span { border-radius: 6px; background: #eef3f6; color: #425169; padding: 3px 7px; font-size: 12px; font-weight: 700; }
+    .mini-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .mini { min-height: 62px; border-radius: 6px; background: #f7f9fb; padding: 8px; }
+    .mini strong { display: block; margin-bottom: 5px; font-size: 17px; line-height: 1; }
+    .mini span { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stack { display: grid; gap: 10px; }
+    .note { border-left: 4px solid var(--blue); border-radius: 6px; background: #f7fafc; padding: 11px 12px; }
+    .slice-grid, .gap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .slice, .gap { padding: 13px; }
+    .tag {
+      display: inline-flex; margin-bottom: 9px; border-radius: 999px; padding: 3px 8px;
+      background: #edf4f7; color: #35576b; font-size: 12px; font-weight: 850;
     }
-
-    .family-meta span {
-      border-radius: 6px;
-      background: #eef3f6;
-      color: #425169;
-      padding: 3px 7px;
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .mini {
-      border-radius: 6px;
-      background: #f7f9fb;
-      padding: 8px;
-      min-height: 62px;
-    }
-
-    .mini strong {
-      display: block;
-      font-size: 17px;
-      line-height: 1;
-      margin-bottom: 5px;
-    }
-
-    .mini span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .stack {
-      display: grid;
-      gap: 10px;
-    }
-
-    .note {
-      border-left: 4px solid var(--blue);
-      border-radius: 6px;
-      background: #f7fafc;
-      padding: 11px 12px;
-    }
-
-    .note p,
-    .slice p,
-    .gap p {
-      margin: 0;
-      color: #3d4b60;
-      font-size: 13px;
-    }
-
-    .slice-grid,
-    .gap-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .slice,
-    .gap {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 13px;
-    }
-
-    .slice .tag,
-    .gap .tag {
-      display: inline-flex;
-      border-radius: 999px;
-      padding: 3px 8px;
-      margin-bottom: 9px;
-      background: #edf4f7;
-      color: #35576b;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .timeline {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .step {
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #fff;
-      min-height: 96px;
-      padding: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .step::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 4px;
-      background: var(--step);
-    }
-
-    .step strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 13px;
-    }
-
-    .step span {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th, td {
-      border-bottom: 1px solid var(--line);
-      padding: 9px 7px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .02em;
-    }
-
-    td.num,
-    th.num {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .small {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .legend span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-    }
-
-    .swatch {
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
-      background: var(--swatch);
-    }
-
-    footer {
-      padding: 16px 0 34px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    code {
-      font-family: Consolas, "Cascadia Mono", monospace;
-      font-size: .96em;
-    }
+    .timeline { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .step { position: relative; min-height: 94px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: #fff; padding: 10px; }
+    .step::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--step); }
+    .step strong { display: block; margin-bottom: 5px; font-size: 13px; }
+    .step span { color: var(--muted); font-size: 12px; font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 7px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    footer { padding: 16px 0 34px; color: var(--muted); font-size: 12px; }
 
     @media (max-width: 920px) {
-      .metrics,
-      .slice-grid,
-      .gap-grid,
-      .timeline {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .two-col {
-        grid-template-columns: 1fr;
-      }
+      .metrics, .slice-grid, .gap-grid, .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .two-col { grid-template-columns: 1fr; }
     }
-
     @media (max-width: 640px) {
-      .wrap {
-        width: min(100% - 20px, 1180px);
-      }
-
-      header {
-        padding-top: 24px;
-      }
-
-      .metrics,
-      .slice-grid,
-      .gap-grid,
-      .timeline,
-      .mini-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .family-top {
-        display: block;
-      }
-
-      .badge {
-        margin-top: 8px;
-      }
-
-      .panel {
-        padding: 12px;
-      }
-
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
+      .wrap { width: min(100% - 20px, 1180px); }
+      header { padding-top: 24px; }
+      .metrics, .slice-grid, .gap-grid, .timeline, .mini-grid { grid-template-columns: 1fr; }
+      .card-top { display: block; }
+      .badge { margin-top: 8px; }
+      .panel { padding: 12px; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <div class="eyebrow"><span class="dot"></span> Senku RAG coverage map <span>Generated from 2026-04-25 artifacts</span></div>
-      <h1>High-liability reviewed-card coverage</h1>
-      <p class="lede">A compact offline dashboard for the current RAG guide corpus, observed high-liability families, reviewed-card slices, and the remaining card-contract gaps that still matter.</p>
-      <div class="source-row" aria-label="Primary sources">
-        <span class="chip">Latest family proof: <code>high_liability_family_priorities_20260425_1720_wound_support_cards</code></span>
-        <span class="chip">Audit: <code>metadata_coverage_audit_20260425_1720_wound_support_cards</code></span>
-        <span class="chip">Context: <code>notes/AGENT_OPERATING_CONTEXT.md</code></span>
+      <div class="eyebrow"><span class="dot"></span> Senku RAG / guide coverage map <span>Offline snapshot: April 25, 2026</span></div>
+      <h1>Current RAG coverage and remaining guide work</h1>
+      <p class="lede">A static status page for the high-liability guide families, reviewed-card runtime coverage, validation artifacts, and dispatch/backlog posture that matter to the current RAG/guide lane.</p>
+      <div class="chips" aria-label="Primary sources">
+        <span class="chip">Latest behavior proof: <code>rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel</code></span>
+        <span class="chip">Latest family selector: <code>high_liability_family_priorities_20260425_1720_wound_support_cards</code></span>
+        <span class="chip">Holdout eval: <code>rag_eval_partial_router_holdouts_20260425_diag</code></span>
       </div>
     </div>
   </header>
 
   <main class="wrap">
     <section aria-labelledby="coverage-heading">
-      <h2 id="coverage-heading">Corpus Coverage</h2>
+      <h2 id="coverage-heading">Coverage Snapshot</h2>
       <div class="grid metrics">
         <article class="metric">
-          <div class="label">Total guide corpus</div>
+          <div class="label">Guide corpus scanned</div>
           <div class="value">754</div>
           <div class="bar"><div class="fill" style="--w:100%; --c: var(--blue);"></div></div>
-          <p>Guide count from the latest mobile-pack manifest and metadata audit.</p>
+          <p>Corpus marker scan and metadata audit agree on the current guide count.</p>
         </article>
         <article class="metric">
           <div class="label">High-liability guides</div>
@@ -526,16 +154,16 @@
           <p>61 critical and 188 high-liability guides are in the audited corpus.</p>
         </article>
         <article class="metric">
-          <div class="label">Reviewed-card guide surfaces</div>
-          <div class="value">11</div>
-          <div class="bar"><div class="fill" style="--w:4.4%; --c: var(--teal);"></div></div>
-          <p>Latest audit reports 11 answer-card-backed guide surfaces.</p>
+          <div class="label">Observed families ranked</div>
+          <div class="value">4</div>
+          <div class="bar"><div class="fill" style="--w:100%; --c: var(--green);"></div></div>
+          <p>Current FA/FB/FD/FE behavior panel rolls up to four high-liability families.</p>
         </article>
         <article class="metric">
-          <div class="label">Shipped mobile pilot cards</div>
+          <div class="label">Android pilot cards</div>
           <div class="value">6</div>
-          <div class="bar"><div class="fill" style="--w:66.7%; --c: var(--violet);"></div></div>
-          <p>Bundled pack has 6 pilot-reviewed cards, 116 clauses, and 19 sources.</p>
+          <div class="bar"><div class="fill" style="--w:66%; --c: var(--violet);"></div></div>
+          <p>Bundled mobile pack has 6 pilot-reviewed cards, 116 clauses, and 19 sources; runtime stays off by default.</p>
         </article>
       </div>
     </section>
@@ -543,88 +171,68 @@
     <section class="two-col" aria-labelledby="family-heading">
       <div class="panel">
         <h2 id="family-heading">Observed High-Liability Families</h2>
-        <div class="family-toolbar" role="toolbar" aria-label="Family filters">
+        <div class="toolbar" role="toolbar" aria-label="Family filters">
           <button type="button" data-filter="all" aria-pressed="true">All families</button>
           <button type="button" data-filter="gap" aria-pressed="false">Needs card</button>
           <button type="button" data-filter="monitor" aria-pressed="false">Monitor</button>
         </div>
-        <div class="family-list" id="family-list">
-          <article class="family" data-status="gap" style="--status: var(--amber);">
-            <div class="family-top">
-              <div>
-                <div class="family-name">dangerous_activation_mania_crisis</div>
-                <div class="small">Expected guides: GD-858, GD-859, GD-918</div>
-              </div>
+        <div class="cards" id="family-list">
+          <article class="card" data-status="gap" style="--status: var(--amber);">
+            <div class="card-top">
+              <div><div class="name">dangerous_activation_mania_crisis</div><div class="small">Expected guides: GD-858, GD-859, GD-918</div></div>
               <span class="badge">Needs 2 cards</span>
             </div>
-            <div class="family-meta">
-              <span>6 prompts</span><span>score 4</span><span>rank drift 0</span><span>frontmatter/card gaps 0/2</span>
-            </div>
-            <p>RAG-CARD1 added reviewed coverage for GD-859. GD-858 and GD-918 remain boundary/support surfaces without reviewed answer-card coverage.</p>
+            <div class="meta"><span>6 prompts</span><span>score 4</span><span>rank drift 0</span><span>frontmatter/card gaps 0/2</span></div>
+            <p>GD-859 now has a reviewed crisis card. GD-858 and GD-918 are boundary-support source sections, so the current selector keeps them visible as reviewed-card gaps without treating them as metadata churn.</p>
             <div class="mini-grid">
               <div class="mini"><strong>0/0/0/6</strong><span>card pass/gap/missing/skipped</span></div>
               <div class="mini"><strong>1</strong><span>reviewed-card guide</span></div>
-              <div class="mini"><strong>0</strong><span>metadata gaps</span></div>
-              <div class="mini"><strong>consider</strong><span>reviewed answer-card</span></div>
+              <div class="mini"><strong>0</strong><span>frontmatter gaps</span></div>
+              <div class="mini"><strong>consider</strong><span>reviewed-card work</span></div>
             </div>
           </article>
 
-          <article class="family" data-status="monitor" style="--status: var(--green);">
-            <div class="family-top">
-              <div>
-                <div class="family-name">infected_wound_spreading_redness</div>
-                <div class="small">Expected guides: GD-232, GD-235, GD-585, GD-589, GD-622</div>
-              </div>
+          <article class="card" data-status="monitor" style="--status: var(--green);">
+            <div class="card-top">
+              <div><div class="name">infected_wound_spreading_redness</div><div class="small">Expected guides: GD-232, GD-235, GD-585, GD-589, GD-622</div></div>
               <span class="badge">Monitor</span>
             </div>
-            <div class="family-meta">
-              <span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span>
-            </div>
-            <p>RAG-CARD4 added GD-235 infection-control support and GD-622 animal-bite support cards; current action is regression monitoring.</p>
+            <div class="meta"><span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span></div>
+            <p>GD-235 and GD-622 support-card contracts closed the wound support gaps. Current action is regression monitoring, not another metadata/card-count pass.</p>
             <div class="mini-grid">
               <div class="mini"><strong>1/0/0/5</strong><span>card pass/gap/missing/skipped</span></div>
               <div class="mini"><strong>5</strong><span>reviewed-card guides</span></div>
-              <div class="mini"><strong>1</strong><span>uncertain-fit row</span></div>
-              <div class="mini"><strong>monitor</strong><span>observed family passing</span></div>
+              <div class="mini"><strong>1</strong><span>accepted uncertain-fit row</span></div>
+              <div class="mini"><strong>0</strong><span>bad diagnostic buckets</span></div>
             </div>
           </article>
 
-          <article class="family" data-status="monitor" style="--status: var(--green);">
-            <div class="family-top">
-              <div>
-                <div class="family-name">stroke_tia_cardiac_overlap</div>
-                <div class="small">Expected guides: GD-232, GD-601</div>
-              </div>
+          <article class="card" data-status="monitor" style="--status: var(--green);">
+            <div class="card-top">
+              <div><div class="name">stroke_tia_cardiac_overlap</div><div class="small">Expected guides: GD-232, GD-601</div></div>
               <span class="badge">Monitor</span>
             </div>
-            <div class="family-meta">
-              <span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span>
-            </div>
-            <p>RAG-CARD2 added GD-601 acute coronary / stroke overlap coverage; current action is regression monitoring.</p>
+            <div class="meta"><span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span></div>
+            <p>GD-601 acute coronary / stroke overlap coverage is in place. The family is passing in the observed panel and should stay out of mechanical closure work.</p>
             <div class="mini-grid">
               <div class="mini"><strong>0/0/0/6</strong><span>card pass/gap/missing/skipped</span></div>
               <div class="mini"><strong>2</strong><span>reviewed-card guides</span></div>
-              <div class="mini"><strong>1.00</strong><span>avg owner best rank</span></div>
-              <div class="mini"><strong>monitor</strong><span>no fresh card-count closure</span></div>
+              <div class="mini"><strong>FE</strong><span>deterministic wave</span></div>
+              <div class="mini"><strong>monitor</strong><span>regression only</span></div>
             </div>
           </article>
 
-          <article class="family" data-status="monitor" style="--status: var(--green);">
-            <div class="family-top">
-              <div>
-                <div class="family-name">unknown_child_ingestion_poisoning</div>
-                <div class="small">Expected guides: GD-232, GD-301, GD-898</div>
-              </div>
+          <article class="card" data-status="monitor" style="--status: var(--green);">
+            <div class="card-top">
+              <div><div class="name">unknown_child_ingestion_poisoning</div><div class="small">Expected guides: GD-232, GD-301, GD-898</div></div>
               <span class="badge">Monitor</span>
             </div>
-            <div class="family-meta">
-              <span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span>
-            </div>
-            <p>The GD-301 toxicology card closes the remaining poisoning-family reviewed-card gap; current action is regression monitoring.</p>
+            <div class="meta"><span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span></div>
+            <p>GD-301 toxicology support and GD-898 reviewed source-family alignment close the observed poisoning gap. FA #3 still exposes owner-rank drift in metrics, but no failure bucket remains.</p>
             <div class="mini-grid">
               <div class="mini"><strong>4/0/0/2</strong><span>card pass/gap/missing/skipped</span></div>
               <div class="mini"><strong>3</strong><span>reviewed-card guides</span></div>
-              <div class="mini"><strong>1.17</strong><span>avg owner best rank</span></div>
+              <div class="mini"><strong>FA</strong><span>runtime/card wave</span></div>
               <div class="mini"><strong>monitor</strong><span>observed family passing</span></div>
             </div>
           </article>
@@ -635,124 +243,89 @@
         <h2>Current Reading</h2>
         <div class="stack">
           <div class="note">
-            <h3>Observed panel health</h3>
-            <p>24 rows: 18 deterministic pass, 5 expected-supported reviewed-card runtime rows, and 1 accepted uncertain-fit row. Generated rows are 0/24.</p>
+            <h3>Behavior panel is clean</h3>
+            <p>24 rows: 18 deterministic pass, 5 expected-supported reviewed-card runtime rows, and 1 accepted uncertain-fit row. Retrieval, ranking, generation, safety, and artifact misses are all 0.</p>
           </div>
           <div class="note" style="border-left-color: var(--teal);">
-            <h3>Selector semantics</h3>
-            <p>Frontmatter metadata gaps and missing reviewed-card gaps are now separate. These four observed families show zero metadata gaps.</p>
+            <h3>Owner retrieval is visible</h3>
+            <p>Expected-owner top-k is 24/24, cited is 23/24, and expected-owner best rank is 1.42. Rank concentration remains a signal even when reviewed-card rows pass.</p>
           </div>
-          <div class="note" style="border-left-color: var(--green);">
-            <h3>Do not churn metadata</h3>
-            <p>For families at 0/N frontmatter/card gaps, the next action is reviewed-card coverage or regression monitoring, not more routine metadata edits.</p>
+          <div class="note" style="border-left-color: var(--amber);">
+            <h3>Holdouts are not solved</h3>
+            <p>The partial-router holdout pack has 8 retrieval misses, 4 ranking misses, 4 artifact errors, 2 top-1 unresolved-partial rows, and 1 top-1 bridge row.</p>
           </div>
           <div class="note" style="border-left-color: var(--violet);">
-            <h3>Android posture</h3>
-            <p>The six-card Android runtime pack is bundled but remains developer/test-only and off by default under the 2026-04-25 exposure decision.</p>
+            <h3>Android remains gated</h3>
+            <p>The six-card runtime pack is bundled and proven through harnesses, but A14d keeps reviewed-card runtime developer/test-only and default off.</p>
           </div>
         </div>
       </aside>
     </section>
 
-    <section aria-labelledby="slice-heading">
-      <h2 id="slice-heading">Recent Card Slices</h2>
+    <section aria-labelledby="validation-heading">
+      <h2 id="validation-heading">Recent Validation And Artifacts</h2>
       <div class="slice-grid">
-        <article class="slice">
-          <span class="tag">RAG-CARD1</span>
-          <h3>Dangerous activation</h3>
-          <p>Added <code>dangerous_activation_mania_crisis</code> for GD-859. Family moved to 0/2 frontmatter/card gaps; routine anxiety and PFA are intentionally not forced into card ownership.</p>
-        </article>
-        <article class="slice">
-          <span class="tag">RAG-CARD2</span>
-          <h3>Acute coronary / stroke</h3>
-          <p>Added <code>acute_coronary_stroke_overlap</code> for GD-601. Stroke/cardiac overlap moved to 0/0 gaps and <code>regression_monitor</code>.</p>
-        </article>
-        <article class="slice">
-          <span class="tag">GD-301</span>
-          <h3>Toxicology poisoning response</h3>
-          <p>Added <code>poisoning_unknown_ingestion_toxicology</code> for GD-301. Poisoning moved from one reviewed-card gap to 0/0 gaps and <code>regression_monitor</code>.</p>
-        </article>
-        <article class="slice">
-          <span class="tag">RAG-CARD4</span>
-          <h3>Wound support owners</h3>
-          <p>Added <code>infection_control_wound_infection</code> and <code>animal_bite_wound_infection_support</code>. Wound support moved from two reviewed-card gaps to 0/0 and <code>regression_monitor</code>.</p>
-        </article>
+        <article class="slice"><span class="tag">Runtime panel</span><h3>FA/FB/FD/FE post-wound proof</h3><p><code>rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel</code>: 24 prompt rows, 5 reviewed-card runtime answers, 19/19 evidence nuggets supported, 0 bad diagnostic buckets.</p></article>
+        <article class="slice"><span class="tag">Family selector</span><h3>Observed family closure</h3><p><code>high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>: dangerous activation remains 0/2; wound, stroke/cardiac, and poisoning are 0/0 regression-monitor families.</p></article>
+        <article class="slice"><span class="tag">Metadata audit</span><h3>Broad audit remains sparse</h3><p><code>metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>: 754 guides scanned, 249 high-liability, 240 high-liability guides with at least one audit gap.</p></article>
+        <article class="slice"><span class="tag">Corpus markers</span><h3>Partial markers reduced</h3><p><code>corpus_marker_scan_20260425_1622_gd585_repair.md</code>: GD-585 repair dropped unresolved partials to 54 across 54 guides; 329 guides still have some marker class.</p></article>
+        <article class="slice"><span class="tag">Holdout eval</span><h3>Partial/router stress remains</h3><p><code>rag_eval_partial_router_holdouts_20260425_diag/report.md</code>: top-k expected-owner hit rate is 10/21 and cited is 5/21, identifying real retrieval/ranking backlog outside the clean FA/FB/FD/FE panel.</p></article>
+        <article class="slice"><span class="tag">Android</span><h3>Six-card pilot complete</h3><p>Android A11a-e plus A13/A14a-c prove the bundled six-card pilot path, forbidden-label guards, and pack parity. A14d explicitly defers product enablement.</p></article>
       </div>
       <div class="timeline" aria-label="Recent coverage timeline">
-        <div class="step" style="--step: var(--blue);"><strong>RAG-META2</strong><span>Dangerous activation metadata covered.</span></div>
-        <div class="step" style="--step: var(--blue);"><strong>RAG-META3</strong><span>Wound-family support metadata covered.</span></div>
-        <div class="step" style="--step: var(--blue);"><strong>RAG-META4</strong><span>GD-301 and GD-898 poisoning metadata covered.</span></div>
-        <div class="step" style="--step: var(--green);"><strong>RAG-CARD2</strong><span>Stroke/cardiac reviewed-card gap closed.</span></div>
-        <div class="step" style="--step: var(--green);"><strong>GD-301 card</strong><span>Poisoning reviewed-card gap closed.</span></div>
-        <div class="step" style="--step: var(--green);"><strong>RAG-CARD4</strong><span>Wound support reviewed-card gaps closed.</span></div>
+        <div class="step" style="--step: var(--blue);"><strong>RAG-META2-5</strong><span>Targeted metadata for dangerous activation, wound, poisoning, stroke/cardiac.</span></div>
+        <div class="step" style="--step: var(--green);"><strong>RAG-CARD1-4</strong><span>Reviewed-card contracts added for crisis, stroke/cardiac, poisoning, wound support.</span></div>
+        <div class="step" style="--step: var(--teal);"><strong>RAG-T12</strong><span>Analyzer evaluates actual reviewed-card runtime IDs.</span></div>
+        <div class="step" style="--step: var(--green);"><strong>Post-wound panel</strong><span>FA/FB/FD/FE reaches 0 bad diagnostic buckets.</span></div>
+        <div class="step" style="--step: var(--amber);"><strong>RAG-EVAL2</strong><span>Held-out partial/router pack exposes retrieval/ranking backlog.</span></div>
+        <div class="step" style="--step: var(--violet);"><strong>A14d</strong><span>Android reviewed-card runtime remains developer/test-only.</span></div>
       </div>
     </section>
 
     <section aria-labelledby="gap-heading">
-      <h2 id="gap-heading">Remaining Reviewed-Card Gaps</h2>
+      <h2 id="gap-heading">Known Gaps And Backlog</h2>
       <div class="gap-grid">
-        <article class="gap">
-          <span class="tag">Open</span>
-          <h3>Dangerous activation support owners</h3>
-          <p>Family still reports 2 reviewed answer-card gaps across GD-858/GD-918 after GD-859 coverage. Candidate action: consider reviewed answer-card only if behavior panels expose a real prompt need.</p>
-        </article>
-        <article class="gap">
-          <span class="tag">Broad audit</span>
-          <h3>High-liability corpus at large</h3>
-          <p>Latest audit still shows 239 high-liability guides missing reviewed answer cards. The observed-family panel should guide immediate work before broad mechanical expansion.</p>
-        </article>
+        <article class="gap"><span class="tag">Open</span><h3>Dangerous activation support cards</h3><p>GD-858 and GD-918 remain reviewed-card gaps in the observed family selector. Treat them as candidate card-contract work only if a behavior panel shows a real answer need.</p></article>
+        <article class="gap"><span class="tag">Open</span><h3>Partial/router retrieval</h3><p>RAG-EVAL2 is the sharpest current backlog signal: 8 retrieval misses, 4 ranking misses, and weak top-k/cited rates on held-out bridge-thin and unresolved-partial prompts.</p></article>
+        <article class="gap"><span class="tag">Open</span><h3>Broad high-liability audit</h3><p>Corpus-wide metadata/card coverage remains sparse, but observed passing families should not receive routine churn just to reduce broad counters.</p></article>
+        <article class="gap"><span class="tag">Deferred</span><h3>Android product exposure</h3><p>Runtime is real and harnessed, yet A14d chooses Option A: keep it hidden/developer scoped until support language, layout, and product policy are proven together.</p></article>
+        <article class="gap"><span class="tag">Operations</span><h3>Release discipline</h3><p>RAG-OPS1, RAG-REL1, RAG-TRUST2, and RAG-PRIV1 define release gates, rollback, red-team checks, and privacy/artifact hygiene for future high-liability changes.</p></article>
+        <article class="gap"><span class="tag">Evaluation</span><h3>Compound scenarios</h3><p>RAG-PLAY1 adds multi-lane stress playbooks; use them before assuming clean single-family panels cover outage, contamination, evacuation, shelter, injury, cold, and water interactions.</p></article>
       </div>
     </section>
 
     <section class="panel" aria-labelledby="audit-heading">
-      <h2 id="audit-heading">Audit Snapshot</h2>
+      <h2 id="audit-heading">Audit Table</h2>
       <table>
-        <thead>
-          <tr>
-            <th>Measure</th>
-            <th class="num">Count</th>
-            <th>Source / note</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Measure</th><th class="num">Count</th><th>Interpretation</th></tr></thead>
         <tbody>
-          <tr><td>Guides scanned</td><td class="num">754</td><td>Latest metadata audit and mobile pack manifest agree.</td></tr>
-          <tr><td>High-liability guides</td><td class="num">249</td><td>61 critical, 188 high.</td></tr>
-          <tr><td>High-liability guides with any audit gap</td><td class="num">240</td><td>Broad audit remains sparse outside targeted observed families.</td></tr>
-          <tr><td>Missing reviewed answer-card metadata</td><td class="num">239</td><td>Corpus-wide count; not all are observed prompt families.</td></tr>
-          <tr><td>Missing citation policy</td><td class="num">238</td><td>Broad audit count after targeted medical-family metadata work.</td></tr>
-          <tr><td>Missing applicability</td><td class="num">237</td><td>Broad audit count after targeted medical-family metadata work.</td></tr>
-          <tr><td>Missing routing cues</td><td class="num">230</td><td>Broad audit count; observed panel families are already targeted.</td></tr>
-          <tr><td>Observed high-liability families ranked</td><td class="num">4</td><td>Latest family selector proof at 2026-04-25T17:10:58.</td></tr>
+          <tr><td>Guides scanned</td><td class="num">754</td><td>Current corpus size in marker/audit tooling.</td></tr>
+          <tr><td>High-liability guides</td><td class="num">249</td><td>61 critical plus 188 high-liability guides.</td></tr>
+          <tr><td>High-liability guides with audit gaps</td><td class="num">240</td><td>Broad coverage remains incomplete outside targeted observed families.</td></tr>
+          <tr><td>Missing reviewed answer-card metadata</td><td class="num">239</td><td>Audit count from the latest metadata scan; use observed behavior to prioritize.</td></tr>
+          <tr><td>Unresolved partial markers</td><td class="num">54</td><td>After GD-585 repair, down from 55.</td></tr>
+          <tr><td>Clean runtime-panel prompt rows</td><td class="num">24</td><td>FA/FB/FD/FE post-wound proof has 0 retrieval/ranking/generation/safety misses.</td></tr>
+          <tr><td>Holdout expected-owner top-k</td><td class="num">10/21</td><td>Partial-router holdout pack remains the clearest retrieval backlog.</td></tr>
+          <tr><td>Android shipped pilot cards</td><td class="num">6</td><td>Bundled and tested, but developer/test-only and default off.</td></tr>
         </tbody>
       </table>
-      <div class="legend" aria-label="Legend">
-        <span><i class="swatch" style="--swatch: var(--amber);"></i> needs reviewed card</span>
-        <span><i class="swatch" style="--swatch: var(--green);"></i> regression monitor</span>
-        <span><i class="swatch" style="--swatch: var(--blue);"></i> metadata/selector tooling</span>
-      </div>
     </section>
   </main>
 
   <footer>
     <div class="wrap">
-      Built as a self-contained offline HTML page. Source material: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md/json</code>, <code>artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter</code>, and the latest metadata audit.
+      Sources used: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>notes/ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>, <code>artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/report.md</code>, <code>artifacts/bench/metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>, <code>artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md</code>, and <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_diag/report.md</code>.
     </div>
   </footer>
 
   <script>
     const buttons = Array.from(document.querySelectorAll("[data-filter]"));
-    const families = Array.from(document.querySelectorAll(".family"));
-
+    const cards = Array.from(document.querySelectorAll(".card"));
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
         const filter = button.dataset.filter;
-        buttons.forEach((candidate) => {
-          candidate.setAttribute("aria-pressed", String(candidate === button));
-        });
-        families.forEach((family) => {
-          const show = filter === "all" || family.dataset.status === filter;
-          family.hidden = !show;
-        });
+        buttons.forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
+        cards.forEach((card) => { card.hidden = !(filter === "all" || card.dataset.status === filter); });
       });
     });
   </script>
