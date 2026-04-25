@@ -69,3 +69,39 @@ Interpretation:
 - Bridge metadata improved guide metadata coverage but did not move `GD-634`,
   `GD-635`, or `GD-636` into retrieved candidates without re-ingest or deeper
   retrieval/ranking work.
+
+## 2026-04-25 Owner Hint Rerank Proof
+
+After the prompt-packaging repair, a narrow owner-hint rerank pass added
+question-intent deltas for retrieved-but-not-top owners:
+
+- unresolved-partial owners: `GD-024`, `GD-029`, `GD-239`, `GD-108`, `GD-446`
+- bridge owners: `GD-648`, `GD-646`, `GD-637`
+
+Fresh rerun:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_bridge_owner_hints.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_bridge_owner_hints_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- ranking misses: `0`
+- expected-owner hit@1: `11/21`, up from `3/21` after context compaction
+- expected-supported rows: `6`, up from `3`
+- remaining buckets: `9` retrieval misses, `5` generation/citation misses, `1`
+  accepted `uncertain_fit`
+
+Remaining generation/citation misses now have the expected owner at rank 1 but
+do not cite it:
+
+- `RE2-UP-001` / `GD-024`
+- `RE2-UP-002` / `GD-029`
+- `RE2-UP-010` / `GD-108`
+- `RE2-BR-003` / `GD-648`
+- `RE2-BR-005` / `GD-646`
+
+Next best slice is retrieval-miss repair, starting with metadata ingestion of
+frontmatter `aliases`, `routing_cues`, and `applicability` into chunk metadata
+before adding more guide-frontmatter churn.

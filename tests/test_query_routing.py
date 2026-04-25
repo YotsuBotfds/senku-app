@@ -136,6 +136,68 @@ class QueryRoutingTests(unittest.TestCase):
             "normal_vs_urgent",
         )
 
+    def test_rag_eval_unresolved_partial_rerank_owner_hints(self):
+        cases = [
+            (
+                "The lights are out and it is below freezing. What are the most important steps to set up a livable shelter and reduce hypothermia risk tonight with basic materials?",
+                {"guide_id": "GD-024", "guide_title": "Winter Survival Systems"},
+                {"guide_id": "GD-345", "guide_title": "Primitive Shelter Construction Techniques"},
+            ),
+            (
+                "After a small camp accident, one person is confused and dizzy while another has minor scrapes. How should a responder sort priorities in the first 10 minutes?",
+                {"guide_id": "GD-029", "guide_title": "Disaster Triage & MCI"},
+                {"guide_id": "GD-558", "guide_title": "Minor Wound Care"},
+            ),
+            (
+                "Two old medicine labels disagree and the patient weight is uncertain. What can Senku safely verify before giving anything?",
+                {"guide_id": "GD-239", "guide_title": "Medications"},
+                {"guide_id": "GD-056", "guide_title": "Pharmacy Inventory"},
+            ),
+            (
+                "We have one small solar panel and limited battery capacity after power loss. What is the safest setup order to keep charging for lights and phone alerts?",
+                {"guide_id": "GD-108", "guide_title": "Solar Technology"},
+                {"guide_id": "GD-288", "guide_title": "Emergency Power Bootstrap"},
+            ),
+            (
+                "What is a practical checklist for choosing a shelter site to avoid flooding risk and wind exposure before nightfall?",
+                {"guide_id": "GD-446", "guide_title": "Shelter Site Selection & Hazard Assessment"},
+                {"guide_id": "GD-023", "guide_title": "Survival Basics & First 72 Hours"},
+            ),
+        ]
+
+        for question, owner_meta, distractor_meta in cases:
+            with self.subTest(owner=owner_meta["guide_id"]):
+                self.assertLess(
+                    query._metadata_rerank_delta(question, owner_meta),
+                    query._metadata_rerank_delta(question, distractor_meta),
+                )
+
+    def test_rag_eval_bridge_rerank_owner_hints(self):
+        cases = [
+            (
+                "We have inconsistent water flow and no maintenance tools. What is a safe minimum operations checklist to stabilize a small water system?",
+                {"guide_id": "GD-648", "guide_title": "Water System Lifecycle - Drilling to Troubleshooting"},
+                {"guide_id": "GD-935", "guide_title": "Cold Water Immersion and Drowning Prevention"},
+            ),
+            (
+                "Field treatment needs reusable instruments cleaned between patients. What is a safe sterilization workflow we can do with limited fuel and supplies?",
+                {"guide_id": "GD-646", "guide_title": "Sterilization Ecosystem - Water Testing to Medical Application"},
+                {"guide_id": "GD-250", "guide_title": "Boiling and Water Disinfection"},
+            ),
+            (
+                "A community kitchen is getting understocked. How can we prioritize procurement, storage, and cooking reliability for the next week?",
+                {"guide_id": "GD-637", "guide_title": "Community Nutrition Pipeline"},
+                {"guide_id": "GD-252", "guide_title": "Food Storage Management"},
+            ),
+        ]
+
+        for question, owner_meta, distractor_meta in cases:
+            with self.subTest(owner=owner_meta["guide_id"]):
+                self.assertLess(
+                    query._metadata_rerank_delta(question, owner_meta),
+                    query._metadata_rerank_delta(question, distractor_meta),
+                )
+
     def test_fire_in_rain_and_join_metal_without_welder_get_targeted_specs(self):
         fire_specs = query._supplemental_retrieval_specs("how do i start a fire in rain", 10)
         self.assertTrue(any("fire in wet conditions" in spec["text"] for spec in fire_specs))

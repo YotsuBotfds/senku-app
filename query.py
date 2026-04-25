@@ -9045,6 +9045,147 @@ def _metadata_rerank_delta(question, meta):
             delta, branch_name, branch_delta, chunk_id, debug_enabled
         )
 
+    if guide_id == "GD-024" and _text_has_marker(
+        question_lower,
+        {
+            "below freezing",
+            "hypothermia",
+            "freezing",
+            "winter",
+            "cold",
+        },
+    ) and _text_has_marker(question_lower, {"shelter", "livable", "tonight"}):
+        apply_delta("winter_shelter_hypothermia_owner", -0.13)
+
+    if guide_id == "GD-029" and _text_has_marker(
+        question_lower,
+        {
+            "sort priorities",
+            "sort priority",
+            "triage",
+            "responder sort",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "first 10 minutes",
+            "first ten minutes",
+            "multiple",
+            "another",
+            "one person",
+        },
+    ):
+        apply_delta("small_incident_triage_owner", -0.14)
+
+    if guide_id == "GD-239" and _text_has_marker(
+        question_lower,
+        {
+            "medicine labels disagree",
+            "medication labels disagree",
+            "patient weight",
+            "weight is uncertain",
+            "verify before giving",
+        },
+    ):
+        apply_delta("medication_label_weight_owner", -0.12)
+
+    if guide_id == "GD-108" and _text_has_marker(
+        question_lower,
+        {
+            "solar panel",
+            "small solar",
+            "charging",
+            "charge",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "limited battery",
+            "battery capacity",
+            "phone alerts",
+            "lights",
+        },
+    ):
+        apply_delta("solar_panel_charging_owner", -0.13)
+
+    if guide_id == "GD-446" and _text_has_marker(
+        question_lower,
+        {
+            "shelter site",
+            "choosing a shelter",
+            "choose a shelter",
+            "site",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "flooding",
+            "flood",
+            "wind exposure",
+            "before nightfall",
+        },
+    ):
+        apply_delta("shelter_site_hazard_owner", -0.13)
+
+    if guide_id == "GD-648" and _text_has_marker(
+        question_lower,
+        {
+            "inconsistent water flow",
+            "water flow",
+            "small water system",
+            "water system",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "maintenance tools",
+            "minimum operations",
+            "operations checklist",
+            "stabilize",
+        },
+    ):
+        apply_delta("water_system_lifecycle_ops_owner", -0.13)
+
+    if guide_id == "GD-646" and _text_has_marker(
+        question_lower,
+        {
+            "reusable instruments",
+            "instruments cleaned",
+            "between patients",
+            "sterilization workflow",
+            "sterilize",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "limited fuel",
+            "limited supplies",
+            "field treatment",
+            "patients",
+        },
+    ):
+        apply_delta("sterilization_ecosystem_instruments_owner", -0.14)
+
+    if guide_id == "GD-637" and _text_has_marker(
+        question_lower,
+        {
+            "community kitchen",
+            "understocked",
+            "procurement",
+            "cooking reliability",
+            "next week",
+        },
+    ) and _text_has_marker(
+        question_lower,
+        {
+            "procurement",
+            "storage",
+            "cooking",
+            "nutrition",
+        },
+    ):
+        apply_delta("community_nutrition_pipeline_owner", -0.12)
+
     if _is_bridge_guide_metadata(meta) and _is_bridge_demoted_acute_query(question):
         apply_delta("acute_bridge_guide_uniform", 0.06)
 
