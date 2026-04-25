@@ -171,6 +171,7 @@ def _prioritized_answer_card_ids_for_question(
     is_newborn_sepsis_danger_query,
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
+    is_infected_wound_card_query=lambda question: False,
 ):
     if not question:
         return []
@@ -184,6 +185,8 @@ def _prioritized_answer_card_ids_for_question(
         prioritized.append("meningitis_sepsis_child")
     if is_poisoning_unknown_ingestion_card_query(question):
         prioritized.append("poisoning_unknown_ingestion")
+    if is_infected_wound_card_query(question):
+        prioritized.append("infected_wound_spreading_infection")
     return prioritized
 
 
@@ -196,6 +199,7 @@ def _answer_card_matches_question(
     is_newborn_sepsis_danger_query,
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
+    is_infected_wound_card_query=lambda question: False,
 ):
     if not question:
         return True
@@ -209,6 +213,8 @@ def _answer_card_matches_question(
         return is_airway_obstruction_rag_query(question) and not has_allergy_or_anaphylaxis_trigger(question)
     if card_id == "poisoning_unknown_ingestion":
         return is_poisoning_unknown_ingestion_card_query(question)
+    if card_id == "infected_wound_spreading_infection":
+        return is_infected_wound_card_query(question)
     return True
 
 

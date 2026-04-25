@@ -126,6 +126,11 @@ in top-k.
   FA #4/#5/#6 are now strong reviewed-card runtime passes, and FA #3 has
   card/claim/evidence pass but remains a ranking-miss row because an adjacent
   non-owner still ranks above the expected owner.
+- Desktop `RAG-S19` lets the reviewed `infected_wound_spreading_infection`
+  card answer wound-boundary prompts when `GD-585` is retrieved but outside
+  the top-two card-selection window. FB #6 now uses reviewed-card runtime,
+  cites `GD-585`, and passes card/claim/evidence checks; owner concentration
+  still shows rank-4 drift, so do not treat this as a retrieval-ranking fix.
 - Desktop reviewed-card/provenance work does not automatically change Android
   behavior. Android needs explicit Kotlin/mobile-pack plumbing: `RAG-A1`
   landed display-only answer surface labels, `RAG-A2` landed optional

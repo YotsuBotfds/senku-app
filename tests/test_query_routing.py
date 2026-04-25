@@ -2791,6 +2791,44 @@ class QueryRoutingTests(unittest.TestCase):
             [],
         )
 
+    def test_infected_wound_card_priority_uses_retrieved_owner_beyond_top_two(self):
+        results = {
+            "documents": [["Wound care adjacent context."]],
+            "metadatas": [[
+                {"guide_id": "GD-731"},
+                {"guide_id": "GD-917"},
+                {"guide_id": "GD-732"},
+                {"guide_id": "GD-585"},
+                {"guide_id": "GD-300"},
+            ]],
+        }
+
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(
+                "wound pain is getting worse instead of better",
+                results,
+            )
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["infected_wound_spreading_infection"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-585"])
+        self.assertIn("Escalate urgently", plan["answer_text"])
+
+    def test_infected_wound_card_does_not_match_non_wound_pain(self):
+        results = {"metadatas": [[{"guide_id": "GD-585"}]]}
+
+        self.assertEqual(
+            query._answer_cards_for_results(
+                results,
+                question="knee pain is getting worse instead of better",
+                max_cards=1,
+            ),
+            [],
+        )
+
     def test_card_backed_runtime_answer_uses_question_only_for_conditionals(self):
         results = {
             "documents": [[

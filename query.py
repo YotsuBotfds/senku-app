@@ -14321,6 +14321,7 @@ def _prioritized_answer_card_ids_for_question(question):
         is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
         is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
+        is_infected_wound_card_query=_is_infected_wound_boundary_query,
     )
 
 
@@ -14333,6 +14334,7 @@ def _answer_card_matches_question(card, question):
         is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
         is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
+        is_infected_wound_card_query=_is_infected_wound_boundary_query,
     )
 
 

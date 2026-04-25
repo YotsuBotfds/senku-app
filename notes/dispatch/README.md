@@ -173,6 +173,14 @@ Current active family:
   `artifacts/bench/rag_diagnostics_20260425_1431_fa_poison_card_alignment/report.md`.
   Dispatch note:
   `notes/dispatch/RAG-S18_poisoning_card_retrieval_alignment.md`.
+- `RAG-S19` lets the reviewed infected-wound card answer when `GD-585` is
+  retrieved outside the top-two card-selection window. FB #6 now uses
+  `card_backed_runtime`, cites `GD-585`, and passes answer-card, claim, and
+  evidence-nugget checks while preserving the visible rank-4 owner drift for a
+  later ranking slice. Fresh FB proof:
+  `artifacts/bench/rag_diagnostics_20260425_1445_fb_wound_card_runtime/report.md`.
+  Dispatch note:
+  `notes/dispatch/RAG-S19_infected_wound_reviewed_card_runtime.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually
