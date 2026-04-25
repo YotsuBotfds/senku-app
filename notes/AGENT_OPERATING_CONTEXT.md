@@ -104,6 +104,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 - For guide-family cleanup, prefer stronger routing blocks and reciprocal links before merging files.
 - LiteRT guide-validation smoke works with `top_k=8`; desktop `top_k=24` is too large for the current 4096-token LiteRT context window.
 - Prompt-pack validation and manual desktop queries should use the split LiteRT generation host plus a separate embedding-capable endpoint; do not silently fall back to the broad desktop generation lane.
+- Desktop `RAG-S17` lets strict reviewed-card runtime plans answer before
+  uncertain-fit copy when the opt-in runtime can produce a ready cited card
+  answer. It improved EX/EY/EZ/FC answer-card pass from `8` to `10` and
+  claim-support pass from `9` to `11`; the two promoted rows still carry
+  `answer_mode=uncertain_fit` / `app_acceptance_status=uncertain_fit_accepted`
+  because product-surface relabeling is intentionally deferred.
 - Desktop reviewed-card/provenance work does not automatically change Android
   behavior. Android needs explicit Kotlin/mobile-pack plumbing: `RAG-A1`
   landed display-only answer surface labels, `RAG-A2` landed optional

@@ -157,6 +157,14 @@ Current active family:
   comparator so broad expected-guide families cannot hide drift toward backup
   support guides. Dispatch note:
   `notes/dispatch/RAG-S16c_owner_family_concentration_metric.md`.
+- `RAG-S17` lets the reviewed-card runtime answer before uncertain-fit copy
+  when the existing strict planner can produce a ready cited answer. Abstain
+  still wins first, the runtime remains opt-in, and no app-gate/product surface
+  relabeling is included. Fresh EX/EY/EZ/FC proof moves reviewed-card runtime
+  answers from `8` to `10`, answer-card pass from `8` to `10`, and
+  claim-support pass from `9` to `11` with retrieval/ranking/generation/safety
+  misses still `0`. Dispatch note:
+  `notes/dispatch/RAG-S17_uncertain_fit_reviewed_card_fallback.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually

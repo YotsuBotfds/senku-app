@@ -15675,6 +15675,14 @@ def stream_response(
         console.print(response_text, highlight=False, markup=False)
         console.print()
         return response_text
+
+    card_backed_answer = _card_backed_runtime_answer(question, results)
+    if card_backed_answer:
+        console.print()
+        console.print(card_backed_answer, highlight=False, markup=False)
+        console.print()
+        return card_backed_answer
+
     if answer_mode == "uncertain_fit":
         response_text = _build_uncertain_fit_body(
             question,
@@ -15687,13 +15695,6 @@ def stream_response(
         console.print(response_text, highlight=False, markup=False)
         console.print()
         return response_text
-
-    card_backed_answer = _card_backed_runtime_answer(question, results)
-    if card_backed_answer:
-        console.print()
-        console.print(card_backed_answer, highlight=False, markup=False)
-        console.print()
-        return card_backed_answer
 
     prompt_token_limit = _prompt_token_limit(
         gen_model=config.GEN_MODEL,

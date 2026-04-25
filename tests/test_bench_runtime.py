@@ -92,12 +92,14 @@ class BenchRuntimeTests(unittest.TestCase):
         self.assertTrue(source_info["safety_critical"])
         self.assertEqual(source_info["support_strength"], "moderate")
 
+    @patch("bench._card_backed_runtime_answer_plan", return_value=None)
     @patch("bench._should_abstain", return_value=(False, ["weak match"]))
     @patch("bench.retrieve_chunks")
     def test_prepare_prompt_returns_uncertain_fit_as_immediate_response(
         self,
         mock_retrieve_chunks,
         _mock_should_abstain,
+        mock_card_backed_answer_plan,
     ):
         results = {
             "documents": [["Weak routine newborn note."]],
@@ -137,6 +139,10 @@ class BenchRuntimeTests(unittest.TestCase):
         self.assertEqual(meta["confidence_label"], "medium")
         self.assertIn("not a confident fit", meta["special_case_response"])
         self.assertIn(query._SAFETY_CRITICAL_ESCALATION_LINE, meta["special_case_response"])
+        mock_card_backed_answer_plan.assert_called_once_with(
+            "is this normal newborn behavior or sepsis",
+            results,
+        )
 
     def test_prepare_prompt_returns_card_backed_runtime_as_immediate_response(self):
         results = {
@@ -197,6 +203,69 @@ class BenchRuntimeTests(unittest.TestCase):
         self.assertEqual(meta["special_case_response"], "Call poison control now. [GD-898]")
         card_backed_answer_plan.assert_called_once_with(
             "child swallowed something from an unlabeled cleaner bottle",
+            results,
+        )
+        build_prompt.assert_not_called()
+
+    def test_prepare_prompt_allows_card_backed_runtime_for_uncertain_fit(self):
+        results = {
+            "documents": [["Newborn danger sign source family note."]],
+            "metadatas": [[{"guide_id": "GD-492"}]],
+            "distances": [[0.22]],
+        }
+        retrieval_meta = {
+            "answer_mode": "uncertain_fit",
+            "confidence_label": "medium",
+            "retrieval_profile": "safety_triage",
+            "safety_critical": True,
+            "scenario_frame": {"question": "is this normal newborn behavior or sepsis"},
+        }
+        card_plan = {
+            "answer_text": "Get urgent medical care now and keep the newborn warm. [GD-492]",
+            "card_ids": ["newborn_danger_sepsis"],
+            "review_status": "pilot_reviewed",
+            "guide_ids": ["GD-284", "GD-492"],
+            "cited_guide_ids": ["GD-492"],
+        }
+
+        with patch("bench.classify_special_case", return_value=(None, None)), patch(
+            "bench.build_special_case_response", return_value=None
+        ), patch(
+            "bench.retrieve_chunks",
+            return_value=(
+                results,
+                ["is this normal newborn behavior or sepsis"],
+                retrieval_meta,
+            ),
+        ), patch("bench._should_abstain", return_value=(False, [])), patch(
+            "bench._card_backed_runtime_answer_plan",
+            return_value=card_plan,
+        ) as card_backed_answer_plan, patch(
+            "bench._build_uncertain_fit_body",
+            side_effect=AssertionError("ready reviewed card should answer first"),
+        ), patch("bench.build_prompt") as build_prompt:
+            _index, _question, prompt_text, prepared_results, meta = bench.prepare_prompt(
+                0,
+                "is this normal newborn behavior or sepsis",
+                collection=object(),
+                top_k=8,
+                category=None,
+            )
+
+        self.assertEqual(prompt_text, "")
+        self.assertIs(prepared_results, results)
+        self.assertEqual(meta["decision_path"], "card_backed_runtime")
+        self.assertEqual(meta["answer_provenance"], "reviewed_card_runtime")
+        self.assertTrue(meta["reviewed_card_backed"])
+        self.assertEqual(meta["reviewed_card_ids"], ["newborn_danger_sepsis"])
+        self.assertEqual(meta["reviewed_card_cited_guide_ids"], ["GD-492"])
+        self.assertEqual(meta["retrieval_metadata"]["answer_mode"], "uncertain_fit")
+        self.assertEqual(
+            meta["special_case_response"],
+            "Get urgent medical care now and keep the newborn warm. [GD-492]",
+        )
+        card_backed_answer_plan.assert_called_once_with(
+            "is this normal newborn behavior or sepsis",
             results,
         )
         build_prompt.assert_not_called()

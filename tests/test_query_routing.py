@@ -2854,6 +2854,94 @@ class QueryRoutingTests(unittest.TestCase):
         )
         build_prompt.assert_not_called()
 
+    def test_stream_response_card_backed_answer_can_override_uncertain_fit(self):
+        results = {
+            "documents": [["Newborn danger sign source family note."]],
+            "metadatas": [[{"guide_id": "GD-492"}]],
+            "distances": [[0.22]],
+            "_senku": {
+                "scenario_frame": {
+                    "objectives": [],
+                    "assets": [],
+                    "constraints": [],
+                    "hazards": [],
+                    "people": [],
+                },
+                "confidence_label": "medium",
+                "answer_mode": "uncertain_fit",
+            },
+        }
+
+        with patch.object(
+            query, "_should_abstain", return_value=(False, [])
+        ), patch.object(
+            query,
+            "_card_backed_runtime_answer",
+            return_value="Get urgent medical care now. [GD-492]",
+        ) as runtime_answer, patch.object(
+            query,
+            "_build_uncertain_fit_body",
+            side_effect=AssertionError("ready reviewed card should answer first"),
+        ), patch.object(
+            query, "build_prompt"
+        ) as build_prompt, patch.object(query.console, "print"):
+            response = query.stream_response(
+                "is this normal newborn behavior or sepsis",
+                results,
+            )
+
+        self.assertEqual(response, "Get urgent medical care now. [GD-492]")
+        self.assertEqual(results["_senku"]["answer_mode"], "uncertain_fit")
+        runtime_answer.assert_called_once_with(
+            "is this normal newborn behavior or sepsis",
+            results,
+        )
+        build_prompt.assert_not_called()
+
+    def test_stream_response_uncertain_fit_falls_back_without_card_answer(self):
+        results = {
+            "documents": [["Weak routine newborn note."]],
+            "metadatas": [[{"guide_id": "GD-401"}]],
+            "distances": [[0.34]],
+            "_senku": {
+                "scenario_frame": {
+                    "objectives": [],
+                    "assets": [],
+                    "constraints": [],
+                    "hazards": [],
+                    "people": [],
+                },
+                "confidence_label": "medium",
+                "answer_mode": "uncertain_fit",
+            },
+        }
+
+        with patch.object(
+            query, "_should_abstain", return_value=(False, ["weak match"])
+        ), patch.object(
+            query,
+            "_card_backed_runtime_answer",
+            return_value=None,
+        ) as runtime_answer, patch.object(
+            query,
+            "_build_uncertain_fit_body",
+            return_value="uncertain fit fallback",
+        ) as uncertain_fit_body, patch.object(
+            query, "build_prompt"
+        ) as build_prompt, patch.object(query.console, "print"):
+            response = query.stream_response(
+                "is this normal newborn behavior or sepsis",
+                results,
+            )
+
+        self.assertEqual(response, "uncertain fit fallback")
+        runtime_answer.assert_called_once_with(
+            "is this normal newborn behavior or sepsis",
+            results,
+        )
+        uncertain_fit_body.assert_called_once()
+        build_prompt.assert_not_called()
+
     def test_gi_bleed_rerank_excludes_nosebleed_chunks(self):
         results = {
             "ids": [["gi", "nose"]],

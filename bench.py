@@ -1034,20 +1034,6 @@ def prepare_prompt(
             decision_path = "abstain"
             decision_detail = None
             confidence_label = "low"
-        elif retrieval_meta.get("answer_mode") == "uncertain_fit":
-            prompt_text = ""
-            scenario_frame = retrieval_meta.get("scenario_frame", {"question": question})
-            if retrieval_meta.get("safety_critical") and isinstance(scenario_frame, dict):
-                scenario_frame = {**scenario_frame, "safety_critical": True}
-            special_case_response = _build_uncertain_fit_body(
-                question,
-                results,
-                confidence_label,
-                scenario_frame=scenario_frame,
-                match_labels=match_labels,
-            )
-            decision_path = "uncertain_fit"
-            decision_detail = None
         else:
             reviewed_card_plan = _card_backed_runtime_answer_plan(question, results) or {}
             card_backed_response = str(reviewed_card_plan.get("answer_text") or "").strip()
@@ -1055,6 +1041,19 @@ def prepare_prompt(
                 prompt_text = ""
                 special_case_response = card_backed_response
                 decision_path = "card_backed_runtime"
+            elif retrieval_meta.get("answer_mode") == "uncertain_fit":
+                prompt_text = ""
+                scenario_frame = retrieval_meta.get("scenario_frame", {"question": question})
+                if retrieval_meta.get("safety_critical") and isinstance(scenario_frame, dict):
+                    scenario_frame = {**scenario_frame, "safety_critical": True}
+                special_case_response = _build_uncertain_fit_body(
+                    question,
+                    results,
+                    confidence_label,
+                    scenario_frame=scenario_frame,
+                    match_labels=match_labels,
+                )
+                decision_path = "uncertain_fit"
             else:
                 prompt_text = (
                     build_prompt(
