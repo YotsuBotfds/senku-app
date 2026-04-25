@@ -8559,7 +8559,7 @@ def _has_stroke_tia_routing_signal(question):
         )
     ):
         return False
-    has_direct_stroke_terms = any(marker in lower for marker in _STROKE_TIA_MARKERS)
+    has_direct_stroke_terms = _text_has_marker(lower, _STROKE_TIA_MARKERS)
     has_face = any(
         marker in lower
         for marker in (

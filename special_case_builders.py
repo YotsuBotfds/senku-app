@@ -2256,7 +2256,25 @@ def _is_infected_wound_spreading_emergency_special_case(question):
             "rapid pulse",
         )
     )
-    return wound_context and (spreading_or_local_danger or systemic_danger)
+    infection_context = any(
+        term in lower
+        for term in (
+            "infected",
+            "infection",
+            "red",
+            "redness",
+            "hot",
+            "swollen",
+            "pus",
+            "streak",
+            "smells bad",
+            "foul",
+            "dark",
+        )
+    )
+    return wound_context and (
+        spreading_or_local_danger or (systemic_danger and infection_context)
+    )
 
 
 def _build_infected_wound_spreading_emergency_response():

@@ -212,6 +212,26 @@ class SpecialCaseTests(unittest.TestCase):
                     ("deterministic", "classic_stroke_fast"),
                 )
 
+    def test_stroke_fast_does_not_match_electrical_restoration_language(self):
+        prompt = "After a storm, the electrical system is partially alive. What is a safe sequence for load triage and temporary restoration?"
+        self.assertEqual(query.classify_special_case(prompt), (None, None))
+
+    def test_infected_wound_requires_infection_specific_context_for_systemic_danger(self):
+        prompt = "After a small camp accident, one person is confused and dizzy while another has minor scrapes. How should a responder sort priorities in the first 10 minutes?"
+        self.assertEqual(query.classify_special_case(prompt), (None, None))
+
+        intended_prompts = [
+            "cut on my hand yesterday and now a red streak is moving up the arm",
+            "the wound is red and swollen and now they have fever and chills",
+            "a bite wound is leaking pus and the skin around it smells bad",
+        ]
+        for intended_prompt in intended_prompts:
+            with self.subTest(prompt=intended_prompt):
+                self.assertEqual(
+                    query.classify_special_case(intended_prompt),
+                    ("deterministic", "infected_wound_spreading_emergency"),
+                )
+
     def test_visible_blood_in_urine_routes_to_hematuria_urgent(self):
         prompt = "Blood in the urine without fever. When is this urgent?"
         self.assertEqual(
