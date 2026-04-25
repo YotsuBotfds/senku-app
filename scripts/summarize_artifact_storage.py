@@ -1,0 +1,208 @@
+#!/usr/bin/env python3
+"""Summarize artifact storage without reading file bodies."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections import Counter, defaultdict
+from pathlib import Path
+
+
+GENERATED_DIR_MARKERS = {
+    "__pycache__",
+    ".cache",
+    ".pytest_cache",
+    "bench",
+    "build",
+    "cache",
+    "generated",
+    "out",
+    "output",
+    "outputs",
+    "prompt_packs",
+    "prompts",
+    "reports",
+    "tmp",
+}
+
+
+def summarize_storage(root, limit=20):
+    """Return a read-only storage summary for files below root."""
+    root_path = Path(root)
+    limit = max(0, int(limit))
+    files = []
+    dir_sizes = defaultdict(int)
+    suffix_counts = defaultdict(lambda: {"count": 0, "bytes": 0})
+    basename_groups = defaultdict(list)
+
+    if not root_path.exists():
+        return {
+            "root": root_path.as_posix(),
+            "exists": False,
+            "total_bytes": 0,
+            "file_count": 0,
+            "dir_count": 0,
+            "largest_files": [],
+            "largest_dirs": [],
+            "suffix_counts": [],
+            "generated_dirs": [],
+            "duplicate_basename_families": [],
+        }
+
+    for path in sorted(root_path.rglob("*")):
+        try:
+            if not path.is_file():
+                continue
+            size = path.stat().st_size
+        except OSError:
+            continue
+
+        rel_path = path.relative_to(root_path).as_posix()
+        files.append({"path": rel_path, "bytes": size})
+
+        suffix = path.suffix.lower() or "<none>"
+        suffix_counts[suffix]["count"] += 1
+        suffix_counts[suffix]["bytes"] += size
+        basename_groups[path.name].append({"path": rel_path, "bytes": size})
+
+        parent = path.parent
+        while True:
+            dir_rel = "." if parent == root_path else parent.relative_to(root_path).as_posix()
+            dir_sizes[dir_rel] += size
+            if parent == root_path:
+                break
+            parent = parent.parent
+
+    dir_paths = [p for p in root_path.rglob("*") if p.is_dir()]
+    largest_dirs = [
+        {"path": path, "bytes": size}
+        for path, size in sorted(dir_sizes.items(), key=lambda item: (-item[1], item[0]))
+        if path != "."
+    ][:limit]
+
+    generated_dirs = [
+        {"path": path, "bytes": size}
+        for path, size in sorted(dir_sizes.items(), key=lambda item: (-item[1], item[0]))
+        if path != "." and _looks_generated_dir(path)
+    ][:limit]
+
+    duplicates = []
+    for basename, entries in basename_groups.items():
+        if len(entries) < 2:
+            continue
+        entries = sorted(entries, key=lambda item: (-item["bytes"], item["path"]))
+        duplicates.append(
+            {
+                "basename": basename,
+                "count": len(entries),
+                "bytes": sum(entry["bytes"] for entry in entries),
+                "examples": entries[:limit],
+            }
+        )
+
+    return {
+        "root": root_path.as_posix(),
+        "exists": True,
+        "total_bytes": sum(file["bytes"] for file in files),
+        "file_count": len(files),
+        "dir_count": len(dir_paths),
+        "largest_files": sorted(files, key=lambda item: (-item["bytes"], item["path"]))[:limit],
+        "largest_dirs": largest_dirs,
+        "suffix_counts": _sort_suffix_counts(suffix_counts)[:limit],
+        "generated_dirs": generated_dirs,
+        "duplicate_basename_families": sorted(
+            duplicates, key=lambda item: (-item["bytes"], item["basename"])
+        )[:limit],
+    }
+
+
+def _sort_suffix_counts(suffix_counts):
+    rows = [
+        {"suffix": suffix, "count": values["count"], "bytes": values["bytes"]}
+        for suffix, values in suffix_counts.items()
+    ]
+    return sorted(rows, key=lambda item: (-item["bytes"], item["suffix"]))
+
+
+def _looks_generated_dir(rel_path):
+    parts = {part.lower() for part in Path(rel_path).parts}
+    return any(part in GENERATED_DIR_MARKERS for part in parts)
+
+
+def render_text(summary):
+    """Render a compact human-readable storage report."""
+    lines = [
+        f"Artifact storage report: {summary['root']}",
+        f"Exists: {summary['exists']}",
+        f"Total: {_format_bytes(summary['total_bytes'])} across {summary['file_count']} files, "
+        f"{summary['dir_count']} dirs",
+    ]
+    if not summary["exists"]:
+        return "\n".join(lines) + "\n"
+
+    _append_table(lines, "Largest files", summary["largest_files"], ("path", "bytes"))
+    _append_table(lines, "Largest dirs", summary["largest_dirs"], ("path", "bytes"))
+    _append_table(lines, "Suffix counts", summary["suffix_counts"], ("suffix", "count", "bytes"))
+    _append_table(lines, "Generated dirs", summary["generated_dirs"], ("path", "bytes"))
+    _append_duplicates(lines, summary["duplicate_basename_families"])
+    return "\n".join(lines) + "\n"
+
+
+def _append_table(lines, title, rows, columns):
+    lines.extend(["", title + ":"])
+    if not rows:
+        lines.append("  (none)")
+        return
+    for row in rows:
+        parts = []
+        for column in columns:
+            value = row[column]
+            if column == "bytes":
+                value = _format_bytes(value)
+            parts.append(f"{column}={value}")
+        lines.append("  " + "  ".join(parts))
+
+
+def _append_duplicates(lines, rows):
+    lines.extend(["", "Duplicate basename families:"])
+    if not rows:
+        lines.append("  (none)")
+        return
+    for row in rows:
+        examples = ", ".join(example["path"] for example in row["examples"])
+        lines.append(
+            f"  basename={row['basename']}  count={row['count']}  "
+            f"bytes={_format_bytes(row['bytes'])}  examples={examples}"
+        )
+
+
+def _format_bytes(size):
+    units = ("B", "KiB", "MiB", "GiB")
+    value = float(size)
+    for unit in units:
+        if value < 1024 or unit == units[-1]:
+            if unit == "B":
+                return f"{int(value)} {unit}"
+            return f"{value:.1f} {unit}"
+        value /= 1024
+    return f"{size} B"
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", default="artifacts", help="Artifact tree to summarize")
+    parser.add_argument("--limit", type=int, default=20, help="Rows per section")
+    parser.add_argument("--json", action="store_true", help="Emit JSON instead of text")
+    args = parser.parse_args(argv)
+
+    summary = summarize_storage(args.root, args.limit)
+    if args.json:
+        print(json.dumps(summary, indent=2, sort_keys=True))
+    else:
+        print(render_text(summary), end="")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
