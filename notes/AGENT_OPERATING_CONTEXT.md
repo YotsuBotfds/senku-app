@@ -99,6 +99,12 @@ misses:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\prioritize_guide_quality_work.py artifacts\bench\<diagnostic-dir> --metadata-audit artifacts\bench\metadata_coverage_audit.json --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-json artifacts\bench\guide_quality_priorities.json --output-md artifacts\bench\guide_quality_priorities.md
 ```
 
+- Family-grain priority selector for assigning actual guide/card work:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\prioritize_high_liability_families.py artifacts\bench\<diagnostic-dir> --metadata-audit artifacts\bench\metadata_coverage_audit.json --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-json artifacts\bench\high_liability_family_priorities.json --output-md artifacts\bench\high_liability_family_priorities.md
+```
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

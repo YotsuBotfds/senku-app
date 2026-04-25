@@ -246,6 +246,11 @@ Current active family:
   into a guide-quality priority table with candidate actions and reasons.
   Fresh panel ranked `18` observed guides, `16` high-liability. Dispatch note:
   `notes/dispatch/RAG-T7_guide_quality_priority_selector.md`.
+- `RAG-T8` collapses the same evidence to expected-guide-family grain. Fresh
+  panel ranked four families: wound partial repair first, then mental-health,
+  stroke/cardiac overlap, and child-ingestion card expansion lanes. Dispatch
+  note:
+  `notes/dispatch/RAG-T8_high_liability_family_priority_selector.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`
