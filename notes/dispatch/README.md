@@ -133,6 +133,13 @@ Current active family:
   predicate behavior changed. Focused compile and unit validation passed
   `39` tests. Dispatch note:
   `notes/dispatch/RAG-CH4_desktop_completion_shape_hardening_extraction.md`.
+- `RAG-CH6` added direct desktop helper coverage for `query_prompt_runtime.py`.
+  `tests/test_query_prompt_runtime.py` now proves import purity, system-prompt
+  builder/fallback behavior, runtime-profile prompt-limit errors, and
+  chat-prompt token overhead with injected counting/resolver functions. No
+  query/bench runtime behavior changed. Focused compile and unit validation
+  passed `17` tests. Dispatch note:
+  `notes/dispatch/RAG-CH6_desktop_prompt_runtime_tests.md`.
 - `RAG-A1` has landed the first Android receiving-shape slice. `AnswerContent`
   now carries display-only answer surface/provenance fields with safe defaults,
   and `PaperAnswerCard` can distinguish deterministic, limited-fit, and abstain
