@@ -115,12 +115,34 @@ class RAGTrendTests(unittest.TestCase):
         self.assertIn(
             "| label | total_rows | generated | app_acceptance | "
             "reviewed_uncertain_fit | answer_cards | claim_support | "
-            "evidence_nuggets | expected_owner_best_rank | "
+            "evidence_nuggets | top1_marker_risk | top1_bridge | "
+            "top1_unresolved_partial | expected_owner_best_rank | "
             "expected_owner_top3_count | expected_owner_topk_count | "
             "expected_owner_top3_share | expected_owner_topk_share |",
             markdown,
         )
         self.assertIn("| trend_dir | 3 | 2/3 (66.7%) |", markdown)
+
+    def test_collect_summaries_includes_top1_marker_overlay_from_summary(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_markers"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=4)
+            payload["summary"].update(
+                {
+                    "top1_marker_risk_counts": {"fail": 1, "info": 2, "none": 1},
+                    "top1_bridge_rows": 1,
+                    "top1_unresolved_partial_rows": 1,
+                }
+            )
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["top1_marker_risk"], "fail:1|info:2|none:1")
+        self.assertEqual(rows[0]["top1_bridge"], "1/4 (25.0%)")
+        self.assertEqual(rows[0]["top1_unresolved_partial"], "1/4 (25.0%)")
 
     def test_collect_summaries_includes_expected_owner_metrics_from_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:

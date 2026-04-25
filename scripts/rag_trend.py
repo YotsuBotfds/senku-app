@@ -31,6 +31,9 @@ DEFAULT_COLUMNS = (
     "answer_cards",
     "claim_support",
     "evidence_nuggets",
+    "top1_marker_risk",
+    "top1_bridge",
+    "top1_unresolved_partial",
     "expected_owner_best_rank",
     "expected_owner_top3_count",
     "expected_owner_topk_count",
@@ -73,6 +76,15 @@ EVIDENCE_NUGGET_ORDER = (
     "no_evaluable_answer",
     "not_applicable_compare",
     "no_cards",
+)
+
+MARKER_RISK_ORDER = (
+    "fail",
+    "warn",
+    "info",
+    "none",
+    "unknown",
+    "not_loaded",
 )
 
 
@@ -412,6 +424,47 @@ def _collect_owner_metrics(
     }
 
 
+def _collect_marker_overlay(
+    summary: Mapping[str, Any], rows: Sequence[Mapping[str, Any]]
+) -> dict[str, str]:
+    summary_counts = base._safe_get(
+        summary,
+        "top1_marker_risk_counts",
+        default=None,
+    )
+    if isinstance(summary_counts, Mapping):
+        risk_counts = {
+            str(status): int(base._as_int(value) or 0)
+            for status, value in summary_counts.items()
+        }
+    else:
+        risk_counts = dict(_status_counts(rows, "top1_marker_risk"))
+
+    bridge_rows = base._as_int(summary.get("top1_bridge_rows"))
+    if bridge_rows is None:
+        bridge_rows = sum(1 for row in rows if row.get("top1_is_bridge") == "yes")
+
+    partial_rows = base._as_int(summary.get("top1_unresolved_partial_rows"))
+    if partial_rows is None:
+        partial_rows = sum(
+            1 for row in rows if row.get("top1_has_unresolved_partial") == "yes"
+        )
+
+    risk_text = (
+        _compact_status_breakdown(risk_counts, MARKER_RISK_ORDER)
+        if risk_counts
+        else "unavailable"
+    )
+    total_rows = int(base._as_int(summary.get("total_rows")) or len(rows) or 0)
+    bridge_text = _ratio_text(int(bridge_rows or 0), total_rows)
+    partial_text = _ratio_text(int(partial_rows or 0), total_rows)
+    return {
+        "top1_marker_risk": risk_text,
+        "top1_bridge": bridge_text,
+        "top1_unresolved_partial": partial_text,
+    }
+
+
 def collect_summaries(
     diagnostic_dirs: Sequence[Path], labels: Sequence[str] | None = None
 ) -> list[dict[str, Any]]:
@@ -454,6 +507,7 @@ def collect_summaries(
         )
         reviewed_uncertain_fit_count = _count_reviewed_uncertain_fit(parsed_rows)
         owner_metrics = _collect_owner_metrics(summary, parsed_rows)
+        marker_overlay = _collect_marker_overlay(summary, parsed_rows)
 
         row = dict(row)
         row["generated_rows"] = generation
@@ -484,6 +538,9 @@ def collect_summaries(
         row["evidence_nuggets"] = _compact_evidence_summary(
             evidence_status_counts, evidence_supported, evidence_total, evidence_rate
         )
+        row["top1_marker_risk"] = marker_overlay["top1_marker_risk"]
+        row["top1_bridge"] = marker_overlay["top1_bridge"]
+        row["top1_unresolved_partial"] = marker_overlay["top1_unresolved_partial"]
         row["expected_owner_best_rank"] = owner_metrics["expected_owner_best_rank"]
         row["expected_owner_top3_count"] = owner_metrics["expected_owner_top3_count"]
         row["expected_owner_topk_count"] = owner_metrics["expected_owner_topk_count"]

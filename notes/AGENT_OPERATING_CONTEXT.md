@@ -71,7 +71,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
 `rag_trend.py` now includes owner-family concentration columns. Use
 `expected_owner_best_rank`, top-3/top-k hit counts, and top-3/top-k shares to
 verify expected owners are moving closer instead of merely remaining somewhere
-in top-k.
+in top-k. It also includes top-1 corpus marker overlay columns when diagnostics
+were run with `--corpus-marker-scan`.
 
 - Corpus marker scan for unresolved partials / router-page diagnostics:
 
