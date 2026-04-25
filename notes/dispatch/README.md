@@ -140,6 +140,14 @@ Current active family:
   query/bench runtime behavior changed. Focused compile and unit validation
   passed `17` tests. Dispatch note:
   `notes/dispatch/RAG-CH6_desktop_prompt_runtime_tests.md`.
+- `RAG-CH7` added direct desktop helper coverage for `query_citation_policy.py`.
+  `tests/test_query_citation_policy.py` now proves import purity,
+  safety-owner priority ordering, non-allergy airway narrowing, allergy
+  non-narrowing, newborn owner-family ordering, and meningitis comparison
+  owner filtering with injected predicates. No citation-policy behavior
+  changed. Focused compile and unit validation passed `12` tests. Dispatch
+  note:
+  `notes/dispatch/RAG-CH7_desktop_citation_policy_tests.md`.
 - `RAG-A1` has landed the first Android receiving-shape slice. `AnswerContent`
   now carries display-only answer surface/provenance fields with safe defaults,
   and `PaperAnswerCard` can distinguish deterministic, limited-fit, and abstain
