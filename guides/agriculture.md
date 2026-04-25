@@ -1366,7 +1366,21 @@ Calculate
 
 </section>
 
-{{> agriculture-troubleshooter }}
+### Agriculture Troubleshooter
+
+Use quick observation before changing the whole bed: check soil moisture 2 inches down, inspect leaf undersides, compare affected and healthy plants, and note whether damage is spreading from one patch or appearing everywhere at once.
+
+| Symptom | Likely cause | Immediate response |
+|---|---|---|
+| Wilting with wet soil | Waterlogged roots, compaction, or root rot | Stop watering until the top 1-2 inches dry, loosen crusted soil at the edge of the root zone, improve drainage, and remove plants with black or mushy roots. |
+| Wilting with dry soil | Drought stress or shallow roots | Water slowly at the base, mulch after moisture returns, and shade transplants during the hottest part of the day. |
+| Yellow lower leaves | Nitrogen shortage, old leaves, or soggy soil | Add finished compost or diluted manure tea only if drainage is sound; if soil is wet, fix water first. |
+| Holes or chewed edges | Caterpillars, beetles, slugs, or snails | Hand-pick pests at dawn/dusk, remove egg clusters, use barriers for seedlings, and add trap crops only after the main crop is protected. |
+| White powder or spotted leaves | Fungal pressure from crowding or overhead water | Remove worst leaves, water at soil level, thin for airflow, and avoid saving seed from badly diseased plants. |
+| Flowers but no fruit | Poor pollination, heat stress, or excess nitrogen | Add flowering companions, hand-pollinate squash/tomatoes if needed, and reduce high-nitrogen feeding until fruit set improves. |
+| Seedlings collapse at soil line | Damping-off disease | Start over in clean containers or fresh bed space, reduce watering, increase airflow, and avoid reusing contaminated seed-starting mix. |
+
+Escalate by crop family: if the same disease appears on tomatoes, peppers, potatoes, or eggplants, rotate all nightshades out of that bed for at least 3 years. If multiple unrelated crops fail in the same strip, investigate soil contamination, salinity, pH, drainage, or shade before replanting.
 
 :::affiliate
 **If you're preparing in advance,** consider these essential tools and monitoring equipment for successful food production:

@@ -1692,6 +1692,24 @@ Successful large-scale fermentation requires consistent quality and protection a
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the supplies discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> fermentation-baking-troubleshooter }}
+### Fermentation & Baking Troubleshooter
+
+Diagnose by smell, texture, temperature, and time. Do not taste a questionable ferment to decide whether it is safe.
+
+| Symptom | Likely cause | Immediate response |
+|---|---|---|
+| Starter has no bubbles after several days | Too cold, chlorinated water, weak flour, or underfeeding | Move to 72-78 F, use fresh flour and non-chlorinated water, feed daily at 1:1:1, and allow several extra days before declaring failure. |
+| Pink, orange, black, or fuzzy growth | Mold contamination | Discard the whole starter or ferment, wash the vessel thoroughly, and restart with cleaner equipment. |
+| Dough spreads flat and will not hold shape | Over-proofing, weak gluten, or too much water | Shorten the next bulk rise, add stretch-and-folds, lower hydration, and bake the current dough as flatbread if it still smells normal. |
+| Dense loaf with tight crumb | Under-fermentation, weak starter, or insufficient kneading | Extend bulk fermentation until the dough rises about 50%, strengthen the starter before baking, and knead or fold until elastic. |
+| Pale crust or gummy center | Under-baking or low oven heat | Bake longer, preheat the oven or stone fully, and confirm large loaves reach about 205-210 F internally when a thermometer is available. |
+| Vegetable ferment smells rotten, feels slimy throughout, or has colored mold | Spoilage or oxygen exposure | Discard without tasting; keep future vegetables fully submerged under 2-3% brine and use clean weights. |
+| Vegetable ferment has white film or mild yeast smell | Kahm yeast from oxygen exposure | Skim the film, improve submersion, and move to cooler storage if the ferment still smells pleasantly sour. |
+| Yogurt or dairy culture stays thin | Incubation too cool, weak starter, or disturbed set | Hold near 110 F for yogurt, use a fresher starter, and avoid moving jars during incubation. |
+| Vinegar smells alcoholic but not acidic | Needs more oxygen or time for acetobacter | Use a breathable cloth cover, keep warm, and continue aging until sharp acidity develops. |
+| Alcohol fermentation stops early | Temperature swing, exhausted sugar, or stressed yeast | Check temperature, rack off sediment if needed, and restart only with clean equipment and an active yeast culture. |
+| Headache, dizziness, or candle goes out near fermenting vessels | Carbon dioxide buildup | Leave immediately, ventilate low areas thoroughly, and never enter fermentation rooms alone. |
+
+When in doubt, separate salvage from safety: misshapen bread can become flatbread, crumbs, or porridge, but moldy starters, rotten vegetable ferments, and suspect dairy batches should be discarded.
 
 </section>
