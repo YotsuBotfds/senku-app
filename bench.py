@@ -2102,6 +2102,17 @@ def main():
     error_count = timing_summary["error_count"]
     success_count = timing_summary["success_count"]
     worker_model_summary = ", ".join(sorted({worker["model"] for worker in worker_targets}))
+    reviewed_card_runtime_answers_env = os.environ.get(
+        "SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS",
+        "",
+    ).strip()
+    reviewed_card_runtime_answers_enabled = reviewed_card_runtime_answers_env.lower() in {
+        "1",
+        "true",
+        "yes",
+        "y",
+        "on",
+    }
     report.append(f"**Config:** model=`{config.GEN_MODEL}` | top_k={args.top_k} | "
                   f"temp={args.temperature} | mode={args.mode} | runtime_profile={runtime_profile['name']} | "
                   f"max_completion_tokens={args.max_completion_tokens} | "
@@ -2109,6 +2120,7 @@ def main():
                   f"chunks_indexed={chunk_count_label} | "
                   f"servers={len(gen_urls)} | worker_models=`{worker_model_summary}` | "
                   f"embed_urls=`{embed_config_label}` | "
+                  f"reviewed_card_runtime_answers={'on' if reviewed_card_runtime_answers_enabled else 'off'} | "
                   f"rag={'off' if args.no_rag else 'on'} | "
                   f"system_prompt={'off' if args.no_system_prompt else 'on'}\n")
     report.append(
@@ -2487,6 +2499,8 @@ def main():
             "embed_url": None if args.no_rag else primary_embed_url,
             "embed_urls": [] if args.no_rag else embed_urls,
             "prep_embed_urls": [] if args.no_rag else prep_embed_urls,
+            "reviewed_card_runtime_answers_env": reviewed_card_runtime_answers_env,
+            "reviewed_card_runtime_answers_enabled": reviewed_card_runtime_answers_enabled,
             "rag": not args.no_rag,
             "system_prompt": not args.no_system_prompt,
         },
@@ -2533,6 +2547,8 @@ def main():
             "source_mode_counts": dict(source_mode_counts),
             "decision_path_counts": dict(decision_path_counts),
             "answer_provenance_counts": dict(answer_provenance_counts),
+            "reviewed_card_runtime_answers_env": reviewed_card_runtime_answers_env,
+            "reviewed_card_runtime_answers_enabled": reviewed_card_runtime_answers_enabled,
             "retrieval_metadata_presence": dict(retrieval_metadata_presence),
             "duplicate_citation_total": duplicate_citation_total,
         },

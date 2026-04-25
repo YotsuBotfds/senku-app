@@ -75,6 +75,7 @@ EXPECTED_FAMILY_KEYS = (
 CSV_FIELDS = (
     "artifact_path",
     "artifact_name",
+    "artifact_reviewed_card_runtime_answers",
     "prompt_index",
     "prompt_id",
     "section",
@@ -150,6 +151,26 @@ CSV_FIELDS = (
 def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def artifact_reviewed_card_runtime_answers(data: dict) -> str:
+    config = data.get("config") if isinstance(data, dict) else {}
+    summary = data.get("summary") if isinstance(data, dict) else {}
+    if not isinstance(config, dict):
+        config = {}
+    if not isinstance(summary, dict):
+        summary = {}
+    for container in (config, summary):
+        if "reviewed_card_runtime_answers_enabled" in container:
+            return (
+                "enabled"
+                if _truthy(container.get("reviewed_card_runtime_answers_enabled"))
+                else "disabled"
+            )
+        value = str(container.get("reviewed_card_runtime_answers_env") or "").strip()
+        if value:
+            return "enabled" if _truthy(value) else "disabled"
+    return "unknown"
 
 
 def load_expectations(path: Path | None) -> dict:
@@ -642,6 +663,7 @@ def build_rows(
         answer_cards = load_answer_cards()
     for path in paths:
         data = load_json(path)
+        runtime_answer_setting = artifact_reviewed_card_runtime_answers(data)
         markdown_sources = parse_markdown_source_lines(path.with_suffix(".md"))
         manifest_expected_ids, manifest_expected_family = expected_from_manifest(
             path, expectations, guide_lookup
@@ -746,6 +768,7 @@ def build_rows(
                 {
                     "artifact_path": str(path),
                     "artifact_name": path.name,
+                    "artifact_reviewed_card_runtime_answers": runtime_answer_setting,
                     "prompt_index": prompt_index,
                     "prompt_id": result.get("prompt_id") or "",
                     "section": result.get("section") or "",
@@ -808,6 +831,7 @@ def summarize(rows: list[dict]) -> dict:
     app_acceptance_counts = Counter()
     answer_provenance_counts = Counter()
     answer_surface_label_counts = Counter()
+    artifact_runtime_counts = Counter()
     reviewed_card_backed = 0
     evidence_owner_counts = Counter()
     safety_surface_counts = Counter()
@@ -874,6 +898,8 @@ def summarize(rows: list[dict]) -> dict:
 
     for row in rows:
         artifact = row["artifact_name"]
+        runtime_setting = row.get("artifact_reviewed_card_runtime_answers") or "unknown"
+        artifact_runtime_counts[runtime_setting] += 1
         bucket = row["suspected_failure_bucket"]
         by_artifact_bucket[artifact][bucket] += 1
         if row["decision_path"] == "deterministic":
@@ -1042,6 +1068,7 @@ def summarize(rows: list[dict]) -> dict:
         "app_gate_counts": dict(app_gate_counts),
         "answer_provenance_counts": dict(answer_provenance_counts),
         "answer_surface_label_counts": dict(answer_surface_label_counts),
+        "artifact_reviewed_card_runtime_answer_counts": dict(artifact_runtime_counts),
         "reviewed_card_backed_rows": reviewed_card_backed,
         "app_acceptance_counts": dict(app_acceptance_counts),
         "evidence_owner_counts": dict(evidence_owner_counts),
@@ -1091,10 +1118,22 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
         f"- Generated at: `{datetime.now().isoformat(timespec='seconds')}`",
         f"- Prompt rows: `{summary['total_rows']}`",
         f"- Rows with expected guide metadata: `{summary['expected_guide_rows']}`",
-        "",
-        "## Bucket Counts",
-        "",
     ]
+    runtime_counts = summary.get("artifact_reviewed_card_runtime_answer_counts") or {}
+    if runtime_counts:
+        formatted_runtime_counts = ", ".join(
+            f"`{key}`: {value}" for key, value in sorted(runtime_counts.items())
+        )
+        lines.append(
+            f"- Artifact reviewed-card runtime answers: {formatted_runtime_counts}"
+        )
+    lines.extend(
+        [
+            "",
+            "## Bucket Counts",
+            "",
+        ]
+    )
     for bucket in BUCKETS:
         lines.append(f"- `{bucket}`: {summary['by_bucket'].get(bucket, 0)}")
     for bucket, count in sorted(summary["by_bucket"].items()):

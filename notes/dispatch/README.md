@@ -221,6 +221,10 @@ Current active family:
   `notes/dispatch/RAG-T3_run_manifest_writer.md`. Owner-family concentration
   metric dispatch:
   `notes/dispatch/RAG-T4_owner_family_concentration_metric.md`.
+- `RAG-T5` surfaces reviewed-card runtime-answer enablement in guide validation
+  artifacts and diagnostics so comparable 9.x panels cannot accidentally mix
+  opt-in reviewed-card runtime rows with plain RAG rows. Dispatch note:
+  `notes/dispatch/RAG-T5_reviewed_card_runtime_validation_harness.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

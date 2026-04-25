@@ -39,6 +39,42 @@ class GuidePromptValidationHarnessTests(unittest.TestCase):
         self.assertEqual(first, "217")
         self.assertEqual(second, "817")
 
+    def test_card_backed_runtime_flag_defaults_off_without_env(self):
+        output = self.run_powershell(
+            "Remove-Item Env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS "
+            "-ErrorAction SilentlyContinue; "
+            "Get-EffectiveCardBackedRuntimeAnswerFlag"
+        )
+
+        self.assertEqual(output, "0")
+
+    def test_card_backed_runtime_switch_sets_and_restores_env(self):
+        output = self.run_powershell(
+            "$env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS = 'outer'; "
+            "$before = Get-EffectiveCardBackedRuntimeAnswerFlag; "
+            "$inside = Invoke-WithCardBackedRuntimeEnv "
+            "-EnableCardBackedRuntimeAnswers "
+            "-ScriptBlock { Get-EffectiveCardBackedRuntimeAnswerFlag }; "
+            "$after = $env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS; "
+            "[pscustomobject]@{ before=$before; inside=$inside; after=$after } "
+            "| ConvertTo-Json -Compress"
+        )
+
+        payload = json.loads(output)
+        self.assertEqual(payload["before"], "outer")
+        self.assertEqual(payload["inside"], "1")
+        self.assertEqual(payload["after"], "outer")
+
+    def test_runtime_env_wrapper_preserves_callsite_variables(self):
+        output = self.run_powershell(
+            "$benchArgs = @('bench.py', '--prompts', 'pack.json'); "
+            "Invoke-WithCardBackedRuntimeEnv "
+            "-EnableCardBackedRuntimeAnswers "
+            "-ScriptBlock { $benchArgs -join '|' }"
+        )
+
+        self.assertEqual(output, "bench.py|--prompts|pack.json")
+
     def test_detects_litert_http_500_artifact_for_retry(self):
         artifact = {
             "results": [

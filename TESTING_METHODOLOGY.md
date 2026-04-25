@@ -119,6 +119,12 @@ Representative 2026-04-24 artifacts:
 
 App-gate fields to preserve in fresh artifacts/reports: `answer_mode`, `support_strength`, `safety_critical`, `retrieval_profile`, and `app_gate_status`.
 
+When validating reviewed-card runtime answers, run the guide harness with
+`-EnableCardBackedRuntimeAnswers` and preserve the artifact fields
+`reviewed_card_runtime_answers_enabled` and
+`reviewed_card_runtime_answers_env`. Diagnostics should report the artifact
+setting before comparing answer-card, evidence, or app-acceptance rates.
+
 Next useful measurement slices should prioritize app acceptance metrics and answer-card/evidence-owner contracts before runtime rerank. Inspect remaining ranking/retrieval misses for expectation mismatch first; prompt text that is not self-contained should be fixed in the prompt/expectation contract before runtime routing changes. Treat Android JVM failures caused by sandbox/Android Gradle Plugin home access as environment blockers, not answer-quality failures.
 
 ## Desktop Evaluation Loop
@@ -531,6 +537,7 @@ Practical rules:
 For any meaningful sweep, log results in a structured way:
 - prompt
 - environment
+- reviewed-card runtime answer setting, if the sweep can use answer cards
 - model
 - retrieval mode or deterministic path
 - answer quality summary

@@ -29,6 +29,15 @@ $text = Get-Content -LiteralPath .\scripts\run_guide_prompt_validation.ps1 -Raw;
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_validation.ps1 -Wave be -PythonPath .\.venvs\senku-validate\Scripts\python.exe
 ```
 
+- Reviewed-card runtime proof runs should use the explicit opt-in switch and
+  then check the artifact config/summary fields
+  `reviewed_card_runtime_answers_enabled` and
+  `reviewed_card_runtime_answers_env`:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_validation.ps1 -Wave fa -PythonPath .\.venvs\senku-validate\Scripts\python.exe -EnableCardBackedRuntimeAnswers
+```
+
 - Manual desktop `query.py` uses the same split runtime by default:
   - generation: `SENKU_GEN_URL` / `--gen-url`, default `http://127.0.0.1:1235/v1`;
   - generation model: `SENKU_GEN_MODEL` / `--model`, default `gemma-4-e2b-it-litert`;
@@ -92,9 +101,12 @@ in top-k.
 
 ## Subagent Routing
 
-- Current budget posture as of 2026-04-24: use `gpt-5.5 medium` for general-purpose scout and worker delegation; reserve high reasoning for delicate safety/predicate implementation or ambiguous ownership decisions.
+- Current budget posture as of 2026-04-25: use `gpt-5.5 low` for
+  general-purpose scout and worker delegation after Spark budget is exhausted;
+  reserve higher reasoning for delicate safety/predicate implementation or
+  ambiguous ownership decisions.
 - Codex-side main conductor: current session default unless the user requests otherwise.
-- Fast read-only scout: `gpt-5.5 medium` unless a cheaper separate-budget lane is explicitly available and requested.
+- Fast read-only scout: `gpt-5.5 low` unless a cheaper separate-budget lane is explicitly available and requested.
 - Heavier scout / worker: `gpt-5.5 high` only when the work is genuinely delicate.
 - Main agent owns delegation; planner briefs slice-level prompts in [`notes/dispatch`](./dispatch), and main picks the lane per step.
 - Async Qwen scout helpers:

@@ -15,7 +15,9 @@ param(
 
     [string]$OutputDir = "artifacts/bench",
 
-    [string[]]$ExtraBenchArgs = @()
+    [string[]]$ExtraBenchArgs = @(),
+
+    [switch]$EnableCardBackedRuntimeAnswers
 )
 
 $ErrorActionPreference = 'Stop'
@@ -88,6 +90,51 @@ function Get-LiteRtRetryDelayMilliseconds {
     }
 
     return ($baseDelayMs + $jitterMs)
+}
+
+function Get-EffectiveCardBackedRuntimeAnswerFlag {
+    [CmdletBinding()]
+    param(
+        [switch]$EnableCardBackedRuntimeAnswers
+    )
+
+    if ($EnableCardBackedRuntimeAnswers) {
+        return '1'
+    }
+
+    $current = ([string]$env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS).Trim()
+    if ([string]::IsNullOrWhiteSpace($current)) {
+        return '0'
+    }
+    return $current
+}
+
+function Invoke-WithCardBackedRuntimeEnv {
+    [CmdletBinding()]
+    param(
+        [switch]$EnableCardBackedRuntimeAnswers,
+
+        [Parameter(Mandatory)]
+        [scriptblock]$ScriptBlock
+    )
+
+    $hadPrevious = Test-Path Env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS
+    $previous = $env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS
+    if ($EnableCardBackedRuntimeAnswers) {
+        $env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS = '1'
+    }
+    try {
+        & $ScriptBlock
+    }
+    finally {
+        if ($EnableCardBackedRuntimeAnswers) {
+            if ($hadPrevious) {
+                $env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS = $previous
+            } else {
+                Remove-Item Env:SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS -ErrorAction SilentlyContinue
+            }
+        }
+    }
 }
 
 function Get-LiteRtHostFlakeInfo {
@@ -471,7 +518,8 @@ function Invoke-GuidePromptValidation {
         [string]$EmbedUrl,
         [int]$TopK,
         [string]$OutputDir,
-        [string[]]$ExtraBenchArgs
+        [string[]]$ExtraBenchArgs,
+        [switch]$EnableCardBackedRuntimeAnswers
     )
 
     New-Item -ItemType Directory -Force -Path $outputRoot | Out-Null
@@ -506,7 +554,7 @@ function Invoke-GuidePromptValidation {
 
             $outputPath = Join-Path $outputRoot ("guide_wave_{0}_{1}.md" -f $currentWave, $timestamp)
             $jsonPath = Get-BenchJsonPath -OutputPath $outputPath
-            $args = @(
+            $benchArgs = @(
                 $benchPath,
                 '--prompts', $promptPath,
                 '--output', $outputPath,
@@ -516,7 +564,7 @@ function Invoke-GuidePromptValidation {
             ) + $waveExtraBenchArgs + $ExtraBenchArgs
 
             if (-not [string]::IsNullOrWhiteSpace($EmbedUrl)) {
-                $args += @('--embed-url', $EmbedUrl)
+                $benchArgs += @('--embed-url', $EmbedUrl)
             }
 
             for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
@@ -527,8 +575,11 @@ function Invoke-GuidePromptValidation {
                 Write-Host ("  model   : {0}" -f $effectiveGenerationModel)
                 Write-Host ("  top_k   : {0}" -f $effectiveTopK)
                 Write-Host ("  embed   : {0}" -f $EmbedUrl)
+                Write-Host ("  reviewed-card runtime answers: {0}" -f (Get-EffectiveCardBackedRuntimeAnswerFlag -EnableCardBackedRuntimeAnswers:$EnableCardBackedRuntimeAnswers))
 
-                & $PythonPath @args
+                Invoke-WithCardBackedRuntimeEnv -EnableCardBackedRuntimeAnswers:$EnableCardBackedRuntimeAnswers -ScriptBlock {
+                    & $PythonPath @benchArgs
+                }
                 if ($LASTEXITCODE -ne 0) {
                     throw "bench.py failed for wave '$currentWave' with exit code $LASTEXITCODE"
                 }
@@ -566,5 +617,6 @@ if ($MyInvocation.InvocationName -ne '.') {
         -EmbedUrl $EmbedUrl `
         -TopK $TopK `
         -OutputDir $OutputDir `
-        -ExtraBenchArgs $ExtraBenchArgs
+        -ExtraBenchArgs $ExtraBenchArgs `
+        -EnableCardBackedRuntimeAnswers:$EnableCardBackedRuntimeAnswers
 }

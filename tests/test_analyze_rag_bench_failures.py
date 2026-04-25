@@ -1512,6 +1512,65 @@ waves:
         self.assertTrue((output_dir / "diagnostics.csv").exists())
         self.assertTrue((output_dir / "diagnostics.json").exists())
 
+    def test_artifact_runtime_card_setting_surfaces_in_outputs(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        output_dir = root / "diagnostics"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "config": {
+                        "reviewed_card_runtime_answers_enabled": True,
+                        "reviewed_card_runtime_answers_env": "1",
+                    },
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "How do I handle a poisoning risk?",
+                            "prompt_metadata": {"expected_guide_id": "GD-111"},
+                            "decision_path": "rag",
+                            "generation_time": 0,
+                            "source_mode": "cited",
+                            "cited_guide_ids": ["GD-111"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-111"]
+                            },
+                            "response_text": "Call poison control now. [GD-111]",
+                            "response_metadata": {
+                                "answer_provenance": "reviewed_card_runtime",
+                                "reviewed_card_backed": True,
+                            },
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows, summary = analyze([artifact], output_dir)
+        with (output_dir / "diagnostics.csv").open(encoding="utf-8") as handle:
+            csv_rows = list(csv.DictReader(handle))
+        diagnostics = json.loads((output_dir / "diagnostics.json").read_text(encoding="utf-8"))
+        report = (output_dir / "report.md").read_text(encoding="utf-8")
+
+        self.assertEqual(
+            rows[0]["artifact_reviewed_card_runtime_answers"],
+            "enabled",
+        )
+        self.assertEqual(
+            csv_rows[0]["artifact_reviewed_card_runtime_answers"],
+            "enabled",
+        )
+        self.assertEqual(
+            summary["artifact_reviewed_card_runtime_answer_counts"],
+            {"enabled": 1},
+        )
+        self.assertEqual(
+            diagnostics["summary"]["artifact_reviewed_card_runtime_answer_counts"],
+            {"enabled": 1},
+        )
+        self.assertIn("Artifact reviewed-card runtime answers", report)
+
 
 if __name__ == "__main__":
     unittest.main()
