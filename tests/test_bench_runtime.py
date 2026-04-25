@@ -395,8 +395,57 @@ class BenchRuntimeTests(unittest.TestCase):
             ["gemma-4-e4b-it@q4_k_s", "gemma-4-e4b-it@q4_k_s", "gemma-4-e4b-it"],
         )
 
+    def test_prepare_prompt_token_limit_reserves_runtime_margin(self):
+        self.assertEqual(
+            bench._prepare_prompt_token_limit(SMALL_MODEL_PROFILE),
+            4000,
+        )
+
     def test_next_completion_budget_rounds_to_clean_cap(self):
         self.assertEqual(bench._next_completion_budget(768, SMALL_MODEL_PROFILE), 1024)
+
+    @patch("bench.generate_response")
+    @patch(
+        "bench._estimate_chat_prompt_tokens",
+        return_value={
+            "prompt_text_tokens": 3600,
+            "system_prompt_tokens": 353,
+            "estimated_prompt_tokens": 4001,
+        },
+    )
+    def test_process_prepared_prompt_still_fails_closed_over_safe_budget(
+        self,
+        _mock_estimate_tokens,
+        mock_generate,
+    ):
+        prepared_prompt = (
+            0,
+            "test prompt",
+            "prompt body",
+            bench.empty_results(),
+            {"decision_path": "no-rag"},
+        )
+
+        with self.assertRaises(bench.PreparedPromptGenerationError) as raised:
+            bench.process_prepared_prompt(
+                prepared_prompt,
+                0.11,
+                "http://localhost:1234/v1",
+                gen_worker="local",
+                mode="default",
+                max_completion_tokens=768,
+                runtime_profile=SMALL_MODEL_PROFILE,
+            )
+
+        self.assertIn("4001 est > 4000 safe limit", str(raised.exception))
+        self.assertEqual(
+            raised.exception.cause_info["category"],
+            "prompt_budget_exceeded",
+        )
+        self.assertEqual(raised.exception.meta["estimated_prompt_tokens"], 4001)
+        self.assertEqual(raised.exception.meta["prompt_token_limit"], 4096)
+        self.assertEqual(raised.exception.meta["prompt_token_safety_margin"], 96)
+        mock_generate.assert_not_called()
 
     def test_incomplete_safety_response_detects_dangling_conditional_tail(self):
         self.assertTrue(

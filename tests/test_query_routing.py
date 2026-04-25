@@ -2626,6 +2626,63 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertNotIn("Evidence packet from reviewed guide answer cards", tiny_budget_prompt)
         self.assertNotIn("Evidence packet from reviewed guide answer cards", over_budget_prompt)
 
+    def test_build_prompt_compacts_context_for_small_runtime_budget(self):
+        long_doc = " ".join(f"detail{i}" for i in range(900))
+        results = {
+            "documents": [[long_doc, long_doc, long_doc]],
+            "metadatas": [[
+                {
+                    "guide_title": "Guide One",
+                    "guide_id": "GD-101",
+                    "section_heading": "Primary Section",
+                    "category": "survival",
+                    "difficulty": "basic",
+                },
+                {
+                    "guide_title": "Guide Two",
+                    "guide_id": "GD-102",
+                    "section_heading": "Secondary Section",
+                    "category": "survival",
+                    "difficulty": "basic",
+                },
+                {
+                    "guide_title": "Guide Three",
+                    "guide_id": "GD-103",
+                    "section_heading": "Tertiary Section",
+                    "category": "survival",
+                    "difficulty": "basic",
+                },
+            ]],
+            "distances": [[0.1, 0.2, 0.3]],
+            "_senku": {
+                "scenario_frame": {
+                    "objectives": [],
+                    "assets": [],
+                    "constraints": [],
+                    "hazards": [],
+                    "people": [],
+                },
+                "objective_coverage": [],
+                "result_annotations": [
+                    {"support_signal": "direct", "matched_objectives": []},
+                    {"support_signal": "direct", "matched_objectives": []},
+                    {"support_signal": "direct", "matched_objectives": []},
+                ],
+            },
+        }
+
+        prompt = query.build_prompt(
+            "make a fast shelter plan",
+            results,
+            prompt_token_limit=1200,
+        )
+
+        self.assertIn("GD-101", prompt)
+        self.assertIn("GD-102", prompt)
+        self.assertIn("GD-103", prompt)
+        self.assertIn("...", prompt)
+        self.assertLess(prompt.count("detail"), 900)
+
     def test_card_backed_runtime_answer_gate_off_returns_none(self):
         results = {"metadatas": [[{"guide_id": "GD-898"}]]}
 

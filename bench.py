@@ -798,6 +798,16 @@ def _prompt_token_limit(gen_model=None, gen_url=None, runtime_profile=None):
     )
 
 
+def _prepare_prompt_token_limit(runtime_profile):
+    """Return the prompt assembly limit after reserving runtime safety margin."""
+    prompt_token_limit = _prompt_token_limit(runtime_profile=runtime_profile)
+    prompt_safety_margin = int(runtime_profile.get("prompt_token_safety_margin", 96))
+    return _prompt_runtime.safe_prompt_token_limit(
+        prompt_token_limit,
+        prompt_safety_margin,
+    )
+
+
 def _estimate_chat_prompt_tokens(
     prompt_text, *, use_system_prompt=True, mode="default", system_prompt_text=None
 ):
@@ -1865,7 +1875,7 @@ def main():
 
     stop_event = threading.Event()
     prep_queue = queue.Queue()
-    prepare_prompt_token_limit = _prompt_token_limit(runtime_profile=runtime_profile)
+    prepare_prompt_token_limit = _prepare_prompt_token_limit(runtime_profile)
 
     def worker(worker_target):
         nonlocal total_time
@@ -2405,6 +2415,11 @@ def main():
             "decomposed": meta.get("decomposed", False),
             "sub_queries": meta.get("sub_queries", []),
             "generation_time": meta.get("generation_time", 0),
+            "estimated_prompt_tokens": meta.get("estimated_prompt_tokens"),
+            "prompt_text_tokens": meta.get("prompt_text_tokens"),
+            "system_prompt_tokens": meta.get("system_prompt_tokens"),
+            "prompt_token_limit": meta.get("prompt_token_limit"),
+            "prompt_token_safety_margin": meta.get("prompt_token_safety_margin"),
             "prompt_tokens": meta.get("prompt_tokens", 0),
             "completion_tokens": meta.get("completion_tokens", 0),
             "finish_reason": meta.get("finish_reason"),

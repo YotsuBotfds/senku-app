@@ -75,6 +75,18 @@ class QueryPromptRuntimeTests(unittest.TestCase):
                 },
             )
 
+    def test_safe_prompt_token_limit_reserves_margin(self):
+        import query_prompt_runtime
+
+        self.assertEqual(query_prompt_runtime.safe_prompt_token_limit(4096, 96), 4000)
+        self.assertEqual(query_prompt_runtime.safe_prompt_token_limit("4096", "128"), 3968)
+
+    def test_safe_prompt_token_limit_clamps_impossible_margin(self):
+        import query_prompt_runtime
+
+        self.assertEqual(query_prompt_runtime.safe_prompt_token_limit(64, 96), 0)
+        self.assertIsNone(query_prompt_runtime.safe_prompt_token_limit(None, 96))
+
     def test_estimate_chat_prompt_tokens_counts_system_prompt_with_overhead(self):
         import query_prompt_runtime
 

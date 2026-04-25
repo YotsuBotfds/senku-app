@@ -142,7 +142,16 @@ def _answer_cards_for_results(
                 cards.append(card)
                 return cards
     for guide_id in guide_ids:
-        for card in cards_by_guide_id.get(guide_id, []):
+        guide_cards = cards_by_guide_id.get(guide_id, [])
+        if prioritized_card_ids:
+            guide_cards = sorted(
+                guide_cards,
+                key=lambda card: (
+                    str(card.get("card_id") or "").strip()
+                    not in prioritized_card_ids
+                ),
+            )
+        for card in guide_cards:
             card_id = str(card.get("card_id") or "").strip()
             if card_id in seen_card_ids:
                 continue

@@ -14546,6 +14546,75 @@ def _airway_obstruction_allowed_guide_ids_from_results(results):
     return allowed
 
 
+_CONTEXT_COMPACTION_DOC_CHAR_LIMITS = (1200, 900, 700, 520, 380, 260, 180)
+
+
+def _compact_context_block_doc(block, max_doc_chars):
+    """Shorten a guide excerpt body while preserving its citation header."""
+    header, separator, body = (block or "").partition("\n")
+    if not separator:
+        return block
+    body = body.strip()
+    if len(body) <= max_doc_chars:
+        return block
+    compact_body = body[:max_doc_chars].rstrip()
+    return f"{header}\n{compact_body} ..."
+
+
+def _context_prompt_fit_limit(prompt_token_limit):
+    """Return the target prompt estimate for context compaction."""
+    if not prompt_token_limit:
+        return None
+    prompt_token_limit = int(prompt_token_limit)
+    prompt_safety_margin = int(getattr(config, "PROMPT_TOKEN_SAFETY_MARGIN", 96))
+    fit_limit = prompt_token_limit - prompt_safety_margin
+    if prompt_token_limit <= 4096:
+        fit_limit -= 256
+    return max(fit_limit, 0)
+
+
+def _fit_context_blocks_to_prompt_budget(
+    context_blocks,
+    render_prompt,
+    *,
+    prompt_token_limit=None,
+    mode="default",
+):
+    """Progressively compact guide excerpts until the rendered prompt fits."""
+    prompt = render_prompt(context_blocks)
+    fit_limit = _context_prompt_fit_limit(prompt_token_limit)
+    if not fit_limit:
+        return context_blocks, prompt
+    if (
+        _estimate_chat_prompt_tokens(prompt, use_system_prompt=True, mode=mode)[
+            "estimated_prompt_tokens"
+        ]
+        <= fit_limit
+    ):
+        return context_blocks, prompt
+
+    best_blocks = context_blocks
+    best_prompt = prompt
+    for max_doc_chars in _CONTEXT_COMPACTION_DOC_CHAR_LIMITS:
+        compacted_blocks = [
+            _compact_context_block_doc(block, max_doc_chars)
+            for block in context_blocks
+        ]
+        compacted_prompt = render_prompt(compacted_blocks)
+        best_blocks = compacted_blocks
+        best_prompt = compacted_prompt
+        if (
+            _estimate_chat_prompt_tokens(
+                compacted_prompt,
+                use_system_prompt=True,
+                mode=mode,
+            )["estimated_prompt_tokens"]
+            <= fit_limit
+        ):
+            return compacted_blocks, compacted_prompt
+    return best_blocks, best_prompt
+
+
 def build_prompt(
     question, results, mode="default", session_state=None, prompt_token_limit=None
 ):
@@ -15094,7 +15163,6 @@ def build_prompt(
             if line.startswith(("- Objectives", "- Hazards", "- People"))
         ][:3]
         coverage_lines = coverage_lines[:1]
-    reference = "\n---\n".join(context_blocks)
     frame_text = "\n".join(line for line in frame_lines if line)
     coverage_text = "\n".join(f"- {line}" for line in coverage_lines)
     extra_notes = "\n".join(prompt_notes)
@@ -15127,37 +15195,41 @@ def build_prompt(
             "evidence, do not reframe the scenario as elder-care wandering.\n"
         )
 
-    prompt = (
-        f"Scenario Frame:\n{frame_text or '- none'}\n\n"
-        f"Coverage Check:\n{coverage_text or '- none'}\n\n"
-        f"Guide Excerpts:\n---\n{reference}\n---\n\n"
-        f"{answer_card_contract_block}"
-        f"Using the guides above, answer the following question. "
-        f"Apply relevant principles even if no guide mentions the user's "
-        f"exact scenario by name. If the question is vague, prioritize: "
-        f"shelter, water, fire, food, signaling.\n\n"
-        f"Response requirements:\n"
-        f"- Lead with the most useful immediate action, check, or conclusion in the first sentence.\n"
-        f"- If the user asks what to do right now, what to worry about first, or before anything else, or the scenario is clearly urgent/safety-critical, answer with a compact 3-4 step numbered immediate-action list. Put the first concrete action first, keep each step imperative and specific, and do not stop after a warning sentence or lead paragraph.\n"
-        f"- If there is an immediate danger, use the same compact list pattern when it fits: Do first, Avoid, Escalate if, then brief supporting steps.\n"
-        f"- Every numbered step must be a complete sentence with its action included; do not end on a bare conditional heading like 'If unresponsive:' or a dangling 'If'.\n"
-        f"{mental_health_contract_line}"
-        f"- Start with the core mechanism, failure mode, or constraint.\n"
-        f"- For procedures, move from lowest-resource actions to more advanced options.\n"
-        f"- For conceptual questions, explain the system-design logic and safeguards.\n"
-        f"- If the user asks for order, answer as a numbered plan and account for major listed assets/constraints.\n"
-        f"- Default to one short summary plus at most 4 numbered steps or sections unless a prompt note below asks for a different structure or more are necessary for safety.\n"
-        f"- Stop after the smallest complete answer; do not add appendices, exhaustive variant lists, or long catalogs unless the user asks for depth.\n"
-        f"- For very broad build/planning questions, give the first viable path and the main failure modes instead of a full curriculum.\n"
-        f"- Once the answer is already grounded in a focused guide, stay with the recommendation instead of explaining the sourcing process.\n"
-        f"- Use the minimum citations needed to ground each paragraph or numbered step; usually 1 guide ID is enough, and use 2 only when a step truly combines distinct sources.\n"
-        f"- Prefer non-invasive stabilization over advanced field procedures unless the scenario clearly supports them.\n"
-        f"- Stay tightly scoped to the question; avoid adjacent upgrades unless they are necessary.\n"
-        f"- Keep citations inline as [GD-xxx], merge duplicates, and do not invent bracketed labels.\n"
-        f"- Put at least one inline citation in every substantive paragraph or numbered step; do not save citations for the end.\n"
-        f"{extra_notes_block}\n"
-        f"Question: {question}"
-    )
+    def render_prompt(active_context_blocks, active_answer_card_contract_block):
+        reference = "\n---\n".join(active_context_blocks)
+        return (
+            f"Scenario Frame:\n{frame_text or '- none'}\n\n"
+            f"Coverage Check:\n{coverage_text or '- none'}\n\n"
+            f"Guide Excerpts:\n---\n{reference}\n---\n\n"
+            f"{active_answer_card_contract_block}"
+            f"Using the guides above, answer the following question. "
+            f"Apply relevant principles even if no guide mentions the user's "
+            f"exact scenario by name. If the question is vague, prioritize: "
+            f"shelter, water, fire, food, signaling.\n\n"
+            f"Response requirements:\n"
+            f"- Lead with the most useful immediate action, check, or conclusion in the first sentence.\n"
+            f"- If the user asks what to do right now, what to worry about first, or before anything else, or the scenario is clearly urgent/safety-critical, answer with a compact 3-4 step numbered immediate-action list. Put the first concrete action first, keep each step imperative and specific, and do not stop after a warning sentence or lead paragraph.\n"
+            f"- If there is an immediate danger, use the same compact list pattern when it fits: Do first, Avoid, Escalate if, then brief supporting steps.\n"
+            f"- Every numbered step must be a complete sentence with its action included; do not end on a bare conditional heading like 'If unresponsive:' or a dangling 'If'.\n"
+            f"{mental_health_contract_line}"
+            f"- Start with the core mechanism, failure mode, or constraint.\n"
+            f"- For procedures, move from lowest-resource actions to more advanced options.\n"
+            f"- For conceptual questions, explain the system-design logic and safeguards.\n"
+            f"- If the user asks for order, answer as a numbered plan and account for major listed assets/constraints.\n"
+            f"- Default to one short summary plus at most 4 numbered steps or sections unless a prompt note below asks for a different structure or more are necessary for safety.\n"
+            f"- Stop after the smallest complete answer; do not add appendices, exhaustive variant lists, or long catalogs unless the user asks for depth.\n"
+            f"- For very broad build/planning questions, give the first viable path and the main failure modes instead of a full curriculum.\n"
+            f"- Once the answer is already grounded in a focused guide, stay with the recommendation instead of explaining the sourcing process.\n"
+            f"- Use the minimum citations needed to ground each paragraph or numbered step; usually 1 guide ID is enough, and use 2 only when a step truly combines distinct sources.\n"
+            f"- Prefer non-invasive stabilization over advanced field procedures unless the scenario clearly supports them.\n"
+            f"- Stay tightly scoped to the question; avoid adjacent upgrades unless they are necessary.\n"
+            f"- Keep citations inline as [GD-xxx], merge duplicates, and do not invent bracketed labels.\n"
+            f"- Put at least one inline citation in every substantive paragraph or numbered step; do not save citations for the end.\n"
+            f"{extra_notes_block}\n"
+            f"Question: {question}"
+        )
+
+    prompt = render_prompt(context_blocks, answer_card_contract_block)
     if answer_card_contract_block and prompt_token_limit:
         prompt_safety_margin = int(getattr(config, "PROMPT_TOKEN_SAFETY_MARGIN", 96))
         safe_limit = prompt_token_limit - prompt_safety_margin
@@ -15167,7 +15239,14 @@ def build_prompt(
             use_system_prompt=True,
             mode=mode,
         )["estimated_prompt_tokens"] > safe_limit - card_contract_margin:
-            prompt = prompt.replace(answer_card_contract_block, "", 1)
+            answer_card_contract_block = ""
+            prompt = render_prompt(context_blocks, answer_card_contract_block)
+    context_blocks, prompt = _fit_context_blocks_to_prompt_budget(
+        context_blocks,
+        lambda active_blocks: render_prompt(active_blocks, answer_card_contract_block),
+        prompt_token_limit=prompt_token_limit,
+        mode=mode,
+    )
     return _add_citation_allowlist_contract(
         prompt,
         results,

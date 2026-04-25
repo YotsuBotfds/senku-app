@@ -67,3 +67,43 @@ answer body.
   focused holdout pack; only then compare expected-owner rates.
 - If errors persist, inspect final prepared prompt sizing for the four affected
   IDs before changing retrieval/ranking behavior.
+
+## 2026-04-25 Implementation Update
+
+Implemented small-model prompt packaging repairs:
+
+- `query_prompt_runtime.py`: added `safe_prompt_token_limit(...)` for callers
+  that need the prompt assembly window after reserving runtime safety margin.
+- `bench.py`: passes the safe prompt assembly limit into `prepare_prompt(...)`
+  and exports prompt-budget estimate fields into bench JSON rows.
+- `query.py`: compacts retrieved guide excerpt bodies for tight runtime windows
+  while preserving each guide header / guide ID and citation allowlist surface.
+- `query_answer_card_runtime.py`: preserves retrieved guide order while letting
+  question-prioritized cards win inside a shared source-family guide.
+
+Fresh held-out rerun:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\bench.py --prompts artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl --output artifacts\bench\rag_eval_partial_router_holdouts_20260425_context_compact.md
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py artifacts\bench\rag_eval_partial_router_holdouts_20260425_context_compact.json --corpus-marker-scan artifacts\bench\corpus_marker_scan_20260425_1622_gd585_repair.json --output-dir artifacts\bench\rag_eval_partial_router_holdouts_20260425_context_compact_diag
+```
+
+Result:
+
+- Bench summary: `21/21` successful prompts, `0` errors.
+- Diagnostic buckets: `9` retrieval misses, `8` ranking misses, `3`
+  expected-supported, `1` abstain/clarify, `0` artifact errors.
+- Former artifact rows generated successfully:
+  - `RE2-UP-001`: `3625` estimated prompt tokens, `165` completion tokens.
+  - `RE2-UP-008`: `3587` estimated prompt tokens, `194` completion tokens,
+    cites expected `GD-066`.
+  - `RE2-UP-010`: `3613` estimated prompt tokens, `245` completion tokens.
+  - `RE2-BR-005`: `3462` estimated prompt tokens, `135` completion tokens.
+
+Focused validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_query_prompt_runtime tests.test_bench_runtime tests.test_query_answer_card_runtime tests.test_query_routing -v
+```
+
+Proof: `111` tests passed.

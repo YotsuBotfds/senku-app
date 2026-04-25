@@ -32,6 +32,13 @@ def prompt_token_limit_from_runtime_profile(
     return int(configured)
 
 
+def safe_prompt_token_limit(prompt_token_limit, prompt_safety_margin=96):
+    """Return the prompt assembly limit after reserving generation safety margin."""
+    if prompt_token_limit is None:
+        return None
+    return max(int(prompt_token_limit) - int(prompt_safety_margin), 0)
+
+
 def estimate_chat_prompt_tokens(
     prompt_text,
     *,
