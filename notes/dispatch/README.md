@@ -537,6 +537,11 @@ Current active family:
   `artifacts/bench/high_liability_family_priorities_20260425_1645_card_semantics.md`
   shows wound at `1/0/0/5` pass/gap/missing/skipped and changes the next wound
   action to `inspect_retrieval_ranking`.
+- `RAG-T10` added FB support-owner expectations for `GD-235` and `GD-622` and
+  separated uncertain-fit non-owner citations from true retrieval-ranking
+  drift. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1658_support_uncertainfit_semantics.md`
+  moves the observed families to targeted metadata work.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.

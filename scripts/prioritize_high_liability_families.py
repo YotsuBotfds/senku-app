@@ -100,6 +100,7 @@ def _new_record(family: str) -> dict[str, Any]:
         "ranking_drift_rows": 0,
         "retrieval_miss_rows": 0,
         "non_expected_owner_cited_rows": 0,
+        "uncertain_fit_non_expected_owner_cited_rows": 0,
         "card_pass_rows": 0,
         "card_gap_rows": 0,
         "card_missing_rows": 0,
@@ -198,8 +199,11 @@ def collect_family_priorities(
 
             non_expected_cited = [guide_id for guide_id in cited_ids if guide_id not in expected]
             if non_expected_cited:
-                record["non_expected_owner_cited_rows"] += 1
-                record["recurring_distractors"].update(non_expected_cited)
+                if app_status == "uncertain_fit_accepted":
+                    record["uncertain_fit_non_expected_owner_cited_rows"] += 1
+                else:
+                    record["non_expected_owner_cited_rows"] += 1
+                    record["recurring_distractors"].update(non_expected_cited)
             record["recurring_distractors"].update(
                 guide_id for guide_id in top_ids[:3] if guide_id not in expected
             )
@@ -296,6 +300,9 @@ def collect_family_priorities(
                     record["owner_topk_share_total"], record["owner_topk_share_count"]
                 ),
                 "non_expected_owner_cited_rows": record["non_expected_owner_cited_rows"],
+                "uncertain_fit_non_expected_owner_cited_rows": record[
+                    "uncertain_fit_non_expected_owner_cited_rows"
+                ],
                 "card_pass_rows": record["card_pass_rows"],
                 "card_gap_rows": record["card_gap_rows"],
                 "card_missing_rows": record["card_missing_rows"],

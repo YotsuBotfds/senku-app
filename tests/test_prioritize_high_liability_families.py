@@ -95,6 +95,20 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
                                 "decision_path": "rag",
                                 "generated": "yes",
                             },
+                            {
+                                "expected_guide_family": "uncertain_fit_family",
+                                "expected_guide_ids": "GD-700",
+                                "cited_guide_ids": "GD-701",
+                                "top_retrieved_guide_ids": "GD-701|GD-700",
+                                "suspected_failure_bucket": "abstain_or_clarify_needed",
+                                "app_acceptance_status": "uncertain_fit_accepted",
+                                "answer_card_status": "no_generated_answer",
+                                "expected_owner_best_rank": 2,
+                                "expected_owner_top3_share": 0.5,
+                                "expected_owner_topk_share": 0.5,
+                                "decision_path": "uncertain_fit",
+                                "generated": "no",
+                            },
                         ]
                     }
                 ),
@@ -131,6 +145,11 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
                             },
                             {
                                 "guide_id": "GD-600",
+                                "gaps": [],
+                                "has_reviewed_answer_card": False,
+                            },
+                            {
+                                "guide_id": "GD-700",
                                 "gaps": [],
                                 "has_reviewed_answer_card": False,
                             },
@@ -186,6 +205,14 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
         )
         self.assertEqual(rag_without_card["card_missing_rows"], 1)
         self.assertEqual(rag_without_card["candidate_action"], "expand_or_fix_answer_cards")
+        uncertain_fit = next(
+            family
+            for family in payload["families"]
+            if family["expected_guide_family"] == "uncertain_fit_family"
+        )
+        self.assertEqual(uncertain_fit["non_expected_owner_cited_rows"], 0)
+        self.assertEqual(uncertain_fit["uncertain_fit_non_expected_owner_cited_rows"], 1)
+        self.assertNotEqual(uncertain_fit["candidate_action"], "inspect_retrieval_ranking")
         self.assertIn("wound_family", markdown)
 
 

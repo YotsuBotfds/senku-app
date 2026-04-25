@@ -139,7 +139,21 @@ waves:
   fb:
     topic: infected_wound_spreading_redness
     risk_tier: red_flag_emergency
+    expectation_notes:
+      - GD-235 infection-control guidance and GD-622 bite/puncture hand-function guidance are valid support owners for the deterministic spreading-wound emergency answer.
+      - GD-585 remains the wound-hygiene/card owner; GD-589 remains the sepsis escalation owner.
     expected_guides:
+      - id: GD-585
+        slug: wound-hygiene-infection-prevention
+      - id: GD-589
+        slug: sepsis-recognition-antibiotic-protocols
+      - id: GD-232
+        slug: first-aid
+      - id: GD-235
+        slug: infection-control
+      - id: GD-622
+        slug: animal-bite-wound-care
+    primary_expected_guides:
       - id: GD-585
         slug: wound-hygiene-infection-prevention
       - id: GD-589

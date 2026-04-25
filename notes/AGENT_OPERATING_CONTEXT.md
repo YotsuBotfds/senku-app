@@ -116,6 +116,11 @@ pass/gap/missing/skipped. Deterministic rows without generated answers now count
 as skipped/not evaluable rather than answer-card gaps. Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1645_card_semantics.md`.
 
+`RAG-T10` added FB support-owner expectations for `GD-235` and `GD-622` and
+tracks uncertain-fit non-owner citations separately from true ranking drift.
+Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1658_support_uncertainfit_semantics.md`.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell
