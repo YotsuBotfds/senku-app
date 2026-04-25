@@ -173,6 +173,13 @@ The unknown-child-ingestion / poisoning family now shows `0/0`
 frontmatter/card gaps and `regression_monitor`; keep it out of further
 card-count closure unless a fresh behavior panel exposes a real miss.
 
+`RAG-CARD4` added reviewed support-card contracts for wound-family support
+owners `GD-235` and `GD-622`. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md`.
+The infected-wound / spreading-redness family now shows `0/0`
+frontmatter/card gaps and `regression_monitor`; keep it out of further
+card-count closure unless a fresh behavior panel exposes a real miss.
+
 `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows so
 they evaluate against artifact `reviewed_card_ids`, not every reviewed card in
 the same expected guide family. Current proof:

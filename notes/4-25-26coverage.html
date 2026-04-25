@@ -502,8 +502,8 @@
       <h1>High-liability reviewed-card coverage</h1>
       <p class="lede">A compact offline dashboard for the current RAG guide corpus, observed high-liability families, reviewed-card slices, and the remaining card-contract gaps that still matter.</p>
       <div class="source-row" aria-label="Primary sources">
-        <span class="chip">Latest family proof: <code>high_liability_family_priorities_20260425_1700_poisoning_gd301_card</code></span>
-        <span class="chip">Audit: <code>metadata_coverage_audit_20260425_1700_poisoning_gd301_card</code></span>
+        <span class="chip">Latest family proof: <code>high_liability_family_priorities_20260425_1720_wound_support_cards</code></span>
+        <span class="chip">Audit: <code>metadata_coverage_audit_20260425_1720_wound_support_cards</code></span>
         <span class="chip">Context: <code>notes/AGENT_OPERATING_CONTEXT.md</code></span>
       </div>
     </div>
@@ -527,9 +527,9 @@
         </article>
         <article class="metric">
           <div class="label">Reviewed-card guide surfaces</div>
-          <div class="value">9</div>
-          <div class="bar"><div class="fill" style="--w:3.6%; --c: var(--teal);"></div></div>
-          <p>Latest audit reports 9 answer-card-backed guide surfaces.</p>
+          <div class="value">11</div>
+          <div class="bar"><div class="fill" style="--w:4.4%; --c: var(--teal);"></div></div>
+          <p>Latest audit reports 11 answer-card-backed guide surfaces.</p>
         </article>
         <article class="metric">
           <div class="label">Shipped mobile pilot cards</div>
@@ -569,23 +569,23 @@
             </div>
           </article>
 
-          <article class="family" data-status="gap" style="--status: var(--amber);">
+          <article class="family" data-status="monitor" style="--status: var(--green);">
             <div class="family-top">
               <div>
                 <div class="family-name">infected_wound_spreading_redness</div>
                 <div class="small">Expected guides: GD-232, GD-235, GD-585, GD-589, GD-622</div>
               </div>
-              <span class="badge">Needs 2 cards</span>
+              <span class="badge">Monitor</span>
             </div>
             <div class="family-meta">
-              <span>6 prompts</span><span>score 4</span><span>rank drift 0</span><span>frontmatter/card gaps 0/2</span>
+              <span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span>
             </div>
-            <p>Wound-family metadata is now covered; remaining gaps are reviewed-card contracts for GD-235 and GD-622.</p>
+            <p>RAG-CARD4 added GD-235 infection-control support and GD-622 animal-bite support cards; current action is regression monitoring.</p>
             <div class="mini-grid">
               <div class="mini"><strong>1/0/0/5</strong><span>card pass/gap/missing/skipped</span></div>
-              <div class="mini"><strong>3</strong><span>reviewed-card guides</span></div>
+              <div class="mini"><strong>5</strong><span>reviewed-card guides</span></div>
               <div class="mini"><strong>1</strong><span>uncertain-fit row</span></div>
-              <div class="mini"><strong>consider</strong><span>reviewed answer-card</span></div>
+              <div class="mini"><strong>monitor</strong><span>observed family passing</span></div>
             </div>
           </article>
 
@@ -672,6 +672,11 @@
           <h3>Toxicology poisoning response</h3>
           <p>Added <code>poisoning_unknown_ingestion_toxicology</code> for GD-301. Poisoning moved from one reviewed-card gap to 0/0 gaps and <code>regression_monitor</code>.</p>
         </article>
+        <article class="slice">
+          <span class="tag">RAG-CARD4</span>
+          <h3>Wound support owners</h3>
+          <p>Added <code>infection_control_wound_infection</code> and <code>animal_bite_wound_infection_support</code>. Wound support moved from two reviewed-card gaps to 0/0 and <code>regression_monitor</code>.</p>
+        </article>
       </div>
       <div class="timeline" aria-label="Recent coverage timeline">
         <div class="step" style="--step: var(--blue);"><strong>RAG-META2</strong><span>Dangerous activation metadata covered.</span></div>
@@ -679,6 +684,7 @@
         <div class="step" style="--step: var(--blue);"><strong>RAG-META4</strong><span>GD-301 and GD-898 poisoning metadata covered.</span></div>
         <div class="step" style="--step: var(--green);"><strong>RAG-CARD2</strong><span>Stroke/cardiac reviewed-card gap closed.</span></div>
         <div class="step" style="--step: var(--green);"><strong>GD-301 card</strong><span>Poisoning reviewed-card gap closed.</span></div>
+        <div class="step" style="--step: var(--green);"><strong>RAG-CARD4</strong><span>Wound support reviewed-card gaps closed.</span></div>
       </div>
     </section>
 
@@ -691,14 +697,9 @@
           <p>Family still reports 2 reviewed answer-card gaps across GD-858/GD-918 after GD-859 coverage. Candidate action: consider reviewed answer-card only if behavior panels expose a real prompt need.</p>
         </article>
         <article class="gap">
-          <span class="tag">Open</span>
-          <h3>Wound support owners</h3>
-          <p>GD-235 and GD-622 remain reviewed-card gaps. Metadata is already covered; the gap is contract coverage, not aliases/routing/citation/applicability.</p>
-        </article>
-        <article class="gap">
           <span class="tag">Broad audit</span>
           <h3>High-liability corpus at large</h3>
-          <p>Latest audit still shows 241 high-liability guides missing reviewed answer cards. The observed-family panel should guide immediate work before broad mechanical expansion.</p>
+          <p>Latest audit still shows 239 high-liability guides missing reviewed answer cards. The observed-family panel should guide immediate work before broad mechanical expansion.</p>
         </article>
       </div>
     </section>
@@ -716,12 +717,12 @@
         <tbody>
           <tr><td>Guides scanned</td><td class="num">754</td><td>Latest metadata audit and mobile pack manifest agree.</td></tr>
           <tr><td>High-liability guides</td><td class="num">249</td><td>61 critical, 188 high.</td></tr>
-          <tr><td>High-liability guides with any audit gap</td><td class="num">242</td><td>Broad audit remains sparse outside targeted observed families.</td></tr>
-          <tr><td>Missing reviewed answer-card metadata</td><td class="num">241</td><td>Corpus-wide count; not all are observed prompt families.</td></tr>
+          <tr><td>High-liability guides with any audit gap</td><td class="num">240</td><td>Broad audit remains sparse outside targeted observed families.</td></tr>
+          <tr><td>Missing reviewed answer-card metadata</td><td class="num">239</td><td>Corpus-wide count; not all are observed prompt families.</td></tr>
           <tr><td>Missing citation policy</td><td class="num">238</td><td>Broad audit count after targeted medical-family metadata work.</td></tr>
           <tr><td>Missing applicability</td><td class="num">237</td><td>Broad audit count after targeted medical-family metadata work.</td></tr>
           <tr><td>Missing routing cues</td><td class="num">230</td><td>Broad audit count; observed panel families are already targeted.</td></tr>
-          <tr><td>Observed high-liability families ranked</td><td class="num">4</td><td>Latest family selector proof at 2026-04-25T17:01:08.</td></tr>
+          <tr><td>Observed high-liability families ranked</td><td class="num">4</td><td>Latest family selector proof at 2026-04-25T17:10:58.</td></tr>
         </tbody>
       </table>
       <div class="legend" aria-label="Legend">
@@ -734,7 +735,7 @@
 
   <footer>
     <div class="wrap">
-      Built as a self-contained offline HTML page. Source material: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1700_poisoning_gd301_card.md/json</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1656_acute_coronary_card.md</code>, and the latest metadata audit.
+      Built as a self-contained offline HTML page. Source material: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md/json</code>, <code>artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter</code>, and the latest metadata audit.
     </div>
   </footer>
 

@@ -1,0 +1,69 @@
+card_id: infection_control_wound_infection
+guide_id: GD-235
+slug: infection-control
+title: Infection Control
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Wound has spreading redness, red streaking, lymphangitis, pus, or fever with local infection signs.
+  - A bite or contaminated wound is worsening over hours with concern for cellulitis.
+  - Prompt asks whether to escalate for a wound infection concern.
+required_first_actions:
+  - Mark the wound edge and check every 2 hours for expansion of redness.
+  - Escalate urgently if red streaking, rapid spread, or systemic deterioration is present.
+first_actions:
+  - Keep the patient warm and upright if possible, support fluids, and reassess frequently while arranging urgent source-control care.
+  - Start source-control escalation for cellulitis/lymphangitis concern: elevation, drainage source control, and higher-level care when available.
+  - Repeat exam at short intervals and stop routine home-only care when infection is spreading or systemic symptoms appear.
+urgent_red_flags:
+  - Red streaking from wound toward regional nodes or very rapid spread beyond a marked border.
+  - Worsening pain, fever, chills, rapid heartbeat, or altered mental status with wound infection signs.
+  - New dark discoloration, purulent foul drainage, or tissue necrosis around the wound.
+forbidden_advice:
+  - Do not reassure red streaking or spreading cellulitis as normal healing.
+  - Do not close an infected, foul-draining, or spreading wound.
+  - Do not delay escalation for spreading redness or systemic signs.
+do_not:
+  - Do not rely on routine care only when red streaking, necrosis, or systemic signals are present.
+  - Do not restart normal field care without a focused reassessment for spread.
+routine_boundary: >
+  Routine dressing-change or routine wound follow-up wording is unsuitable once the
+  wound shows red streaking, rapid spreading, foul drainage, fever, or altered status.
+acceptable_uncertain_fit: >
+  When spread is unclear, advise edge marking and short-interval reassessment,
+  while keeping urgent escalation triggers explicit.
+clarifying_questions:
+  - How quickly has redness expanded, and is there any red streaking?
+  - Is there fever, chills, confusion, or rapid breathing with wound worsening?
+  - Are lymph nodes or limb swelling increasing with wound pain?
+citation_ids:
+  - infection-control-wound-recognition
+  - infection-control-spreading-cellulitis
+source_sections:
+  - guide: GD-235
+    slug: infection-control
+    title: Infection Control
+    sections:
+      - "#recognition"
+      - "#recognition > Identifying Infection vs. Normal Inflammation"
+      - "#recognition > Infection Type Identification"
+      - "Spreading Cellulitis/Lymphangitis"
+      - "Necrotizing Fasciitis Warning Signs"
+source_invariants:
+  - name: red_streaking_lymphangitis_detection
+    guide: GD-235
+    must_include:
+      - Red streaking from wound toward regional lymph nodes, fever, enlarged/tender nodes
+      - rapidly spreading redness/warmth
+      - lymphangitis (infection in lymphatic vessels)
+  - name: systemic_deterioration_escalation
+    guide: GD-235
+    must_include:
+      - sepsis
+      - fever + any 2
+      - altered mental status
+review_status: pilot_reviewed
+notes: >
+  This card is intentionally narrow: wound spread and infection escalation
+  management tied to local and systemic progression signals. It avoids newborn,
+  sepsis-general, or broader infection-control-only content.

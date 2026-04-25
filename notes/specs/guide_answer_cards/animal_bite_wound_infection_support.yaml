@@ -1,0 +1,80 @@
+card_id: animal_bite_wound_infection_support
+guide_id: GD-622
+slug: animal-bite-wound-care
+title: Animal Bite Wound Care & Rabies Post-Exposure Protocols
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Recent bite or scratch with deep puncture, hand involvement, swelling, or delayed fever.
+  - Prompt asks about bite wound infection risk, red streaking, spreading cellulitis, or closure timing.
+  - Bite-related wound looks contaminated and is worsening over 1-3 days.
+required_first_actions:
+  - Irrigate puncture openings thoroughly and do not probe or widen puncture tracts in the field.
+  - Keep high-risk bite wounds open initially, and use delayed closure when contamination or puncture risk is present.
+  - Reassess at 24-48 hours for fever, spreading erythema, red streaking, purulent drainage, or reduced function.
+first_actions:
+  - Start broad bite-wound care immediately with tetanus review, analgesia if safe, and frequent reassessment.
+  - If systemic toxicity develops, arrange urgent higher-level care while continuing source control and antibiotics as indicated.
+  - For suspected rabies exposure, arrange post-exposure prophylaxis without delay.
+urgent_red_flags:
+  - Red streaking toward lymph nodes, spreading erythema, or swelling that worsens despite care.
+  - Fever with systemic signs (tachycardia, hypotension, confusion) or hand functional decline.
+  - Purulent drainage, fluctuance, abscess, or suspected tissue death in bite wounds.
+forbidden_advice:
+  - Do not close deep puncture or hand bites on day 1.
+  - Do not probe or widen bite tracts while trying to assess spread.
+  - Do not delay rabies post-exposure action in high-risk exposures.
+do_not:
+  - Do not close potentially infected bite wounds just because they look cleaner after irrigation.
+  - Do not wait 72 hours to seek care if infection spread is progressing now.
+routine_boundary: >
+  Routine closure-only guidance is out of scope when bite wounds spread, become
+  painful or feverish, or develop red streaking/impairment.
+acceptable_uncertain_fit: >
+  If risk is uncertain, prioritize irrigation quality, delayed closure safety, and
+  short-interval reassessment rather than routine primary closure.
+clarifying_questions:
+  - What type of bite was it and is the wound a deep puncture or hand wound?
+  - Is there spreading redness, red streaking, fever, or reduced finger movement?
+  - Did exposure include bat, raccoon, fox, feral dog, human bite, or unknown animal?
+citation_ids:
+  - animal-bite-irrigation
+  - animal-bite-delayed-closure
+  - animal-bite-infection-monitoring
+  - animal-bite-rabies-urgency
+source_sections:
+  - guide: GD-622
+    slug: animal-bite-wound-care
+    title: Animal Bite Wound Care & Rabies Post-Exposure Protocols
+    sections:
+      - "#immediate-care"
+      - "#immediate-care > Irrigation & Debridement"
+      - "#immediate-care > Primary vs. Delayed Closure Decision"
+      - "#antibiotic-prophylaxis > Duration vs. Treatment"
+      - "#rabies-assessment"
+      - "#infection-monitoring"
+      - "#infection-monitoring > Days 1-3: Early Infection Signs"
+      - "#infection-monitoring > Days 4-7: Established Infection Risk"
+source_invariants:
+  - name: puncture_wound_management
+    guide: GD-622
+    must_include:
+      - Irrigate the visible opening thoroughly; do not probe or widen the tract in the field
+      - Keep the wound open with dressing choice, not by cutting or probing it open
+      - Delayed primary closure
+      - observe for infection signs
+  - name: hand_bite_monitoring
+    guide: GD-622
+    must_include:
+      - delayed closure
+      - inability to move fingers
+  - name: rabies_time_critical
+    guide: GD-622
+    must_include:
+      - Time to initiate PEP is critical
+      - assume any bat contact = rabies exposure
+review_status: pilot_reviewed
+notes: >
+  This card is scoped to bite-related wound infection support: irrigation quality,
+  delayed closure, monitoring progression, and rabies-first response. It does not
+  add general first-aid or newborn/sepsis guidance beyond bite context.

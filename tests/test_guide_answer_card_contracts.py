@@ -72,6 +72,36 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertIn("forbidden_advice", card)
         self.assertIn("source_sections", card)
 
+    def test_load_answer_cards_includes_gd235_contract_fields(self):
+        card = next(
+            card
+            for card in self.cards
+            if card["card_id"] == "infection_control_wound_infection"
+        )
+
+        self.assertEqual(card["guide_id"], "GD-235")
+        self.assertEqual(card["slug"], "infection-control")
+        self.assertEqual(card["risk_tier"], "high")
+        self.assertIn("required_first_actions", card)
+        self.assertIn("urgent_red_flags", card)
+        self.assertIn("forbidden_advice", card)
+        self.assertIn("do_not", card)
+
+    def test_load_answer_cards_includes_gd622_contract_fields(self):
+        card = next(
+            card
+            for card in self.cards
+            if card["card_id"] == "animal_bite_wound_infection_support"
+        )
+
+        self.assertEqual(card["guide_id"], "GD-622")
+        self.assertEqual(card["slug"], "animal-bite-wound-care")
+        self.assertEqual(card["risk_tier"], "high")
+        self.assertIn("required_first_actions", card)
+        self.assertIn("urgent_red_flags", card)
+        self.assertIn("forbidden_advice", card)
+        self.assertIn("source_sections", card)
+
     def test_compose_evidence_units_returns_gd301_fields(self):
         card = next(
             card
@@ -88,6 +118,56 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertIn("toxicology-overview", unit["citation_ids"])
         self.assertIn("GD-301", unit["source_guide_ids"])
         self.assertTrue(unit["support_phrases"])
+
+    def test_compose_evidence_units_returns_gd235_and_gd622_fields(self):
+        gd235_card = find_cards_for_guides("GD-235", cards=self.cards)[0]
+        gd622_card = find_cards_for_guides("GD-622", cards=self.cards)[0]
+
+        units = compose_evidence_units([gd235_card, gd622_card])
+
+        self.assertEqual(len(units), 2)
+        self.assertEqual(units[0]["unit_id"], "infection_control_wound_infection")
+        self.assertEqual(units[0]["citation_ids"][0], "infection-control-wound-recognition")
+        self.assertIn("GD-235", units[0]["source_guide_ids"])
+        self.assertTrue(units[0]["required_first_actions"])
+        self.assertEqual(units[1]["unit_id"], "animal_bite_wound_infection_support")
+        self.assertEqual(units[1]["citation_ids"][0], "animal-bite-irrigation")
+        self.assertIn("GD-622", units[1]["source_guide_ids"])
+        self.assertTrue(units[1]["required_first_actions"])
+
+    def test_compose_card_backed_answer_for_gd235_passes_contract(self):
+        card = find_cards_for_guides("GD-235", cards=self.cards)[0]
+
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-235"])
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["card_ids"], ["infection_control_wound_infection"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-235"])
+        self.assertIn("red streaking", plan["answer_text"])
+        self.assertIn("[GD-235]", plan["answer_text"])
+        result = evaluate_answer_card_contract(
+            plan["answer_text"],
+            [card],
+            question_text="The wound is getting red and spreading with fever.",
+        )
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["forbidden_advice_hits"], [])
+
+    def test_compose_card_backed_answer_for_gd622_flags_forbidden_closure_advice(self):
+        card = find_cards_for_guides("GD-622", cards=self.cards)[0]
+
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-622"])
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["cited_guide_ids"], ["GD-622"])
+        self.assertIn("do not probe", plan["answer_text"])
+        self.assertIn("Irrigate puncture openings thoroughly", plan["answer_text"])
+
+        result = evaluate_answer_card_contract(
+            "Irrigate the puncture quickly and close deep puncture or hand bites on day 1 for best healing.",
+            [card],
+        )
+        self.assertEqual(result["status"], "fail")
+        self.assertTrue(result["forbidden_advice_hits"])
 
     def test_compose_card_backed_answer_for_gd301_passes_contract_and_claim_support(self):
         card = next(

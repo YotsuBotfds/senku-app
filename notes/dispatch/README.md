@@ -594,6 +594,13 @@ Current active family:
   moves unknown-child-ingestion / poisoning from `0/1` to `0/0`
   frontmatter/card gaps and score `2` to `0`; the family action is now
   `regression_monitor`.
+- `RAG-CARD4` added reviewed support-card contracts for `GD-235` infection
+  control wound escalation and `GD-622` animal-bite wound infection support.
+  Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md`
+  moves infected-wound / spreading-redness from `0/2` to `0/0`
+  frontmatter/card gaps and score `4` to `0`; the family action is now
+  `regression_monitor`.
 - `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
   so answer-card / evidence-nugget / claim-support checks evaluate the
   artifact's `reviewed_card_ids`, not every reviewed card in the expected guide
