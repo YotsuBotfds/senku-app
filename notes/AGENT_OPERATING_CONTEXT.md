@@ -87,6 +87,12 @@ misses:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py <bench-json> --corpus-marker-scan artifacts\bench\corpus_marker_scan.json --output-dir artifacts\bench\<diagnostic-dir>
 ```
 
+- High-liability metadata coverage audit:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\audit_metadata_coverage.py --guides-dir guides --output-json artifacts\bench\metadata_coverage_audit.json --output-md artifacts\bench\metadata_coverage_audit.md
+```
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

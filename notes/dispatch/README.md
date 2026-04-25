@@ -238,6 +238,10 @@ Current active family:
   startup tables can compare marker risk, bridge rows, and unresolved-partial
   rows across diagnostic panels. Dispatch note:
   `notes/dispatch/RAG-T6_rag_trend_marker_overlay_columns.md`.
+- `RAG-META1` adds a non-blocking high-liability metadata audit. First scan
+  found `249` high-liability guides, `248` with at least one coverage gap, and
+  only `6` reviewed answer-card guide surfaces. Dispatch note:
+  `notes/dispatch/RAG-META1_high_liability_metadata_audit.md`.
 - `RAG-CH4` landed a narrow desktop code-health extraction after the Android
   A14 policy loop. Remaining pure bench completion-shape helpers moved into
   `query_completion_hardening.py`, with same-name wrappers kept in `bench.py`

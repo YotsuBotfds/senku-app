@@ -22,6 +22,10 @@ and user trust behavior.
   Check aliases, routing cues, router/bridge markers, citations-required flags,
   applicability fields, and liability level for high-liability/high-traffic
   guides first.
+  Non-blocking audit landed in `scripts/audit_metadata_coverage.py`; first scan
+  found `249` high-liability guides and `248` with at least one metadata or
+  reviewed-card coverage gap. See
+  `notes/dispatch/RAG-META1_high_liability_metadata_audit.md`.
 - `RAG-RUNTIME1`: resolve Gemma/LiteRT target naming.
   Clarify whether `gemma-4-e2b-it-litert` is internal shorthand, provisional
   naming, or a real deployment target distinct from public Gemma 3n E2B/E4B
