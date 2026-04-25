@@ -16,6 +16,26 @@ tags:
   - emergency-stroke-signs
 icon: ❤️
 description: ACS recognition without ECG, including heart attack triage in mixed-casualty scenes, chest pain with jaw or arm pain, aspirin dosing, arrhythmia recognition, defibrillation principles, tamponade assessment, and post-MI complications.
+aliases:
+  - chest pressure
+  - chest pain jaw arm
+  - possible heart attack
+  - acute coronary syndrome
+  - cardiac emergency
+  - heart attack or panic
+  - chest tightness with exertion
+  - stroke and chest pain
+  - face droop chest pain
+  - slurred speech chest pressure
+routing_cues:
+  - Use for chest pressure or heaviness, jaw or arm pain, cold sweat, shortness of breath, nausea with dread, exertional chest tightness, faintness, or suspected heart attack/acute coronary syndrome.
+  - Use with first-aid stroke guidance when cardiac signs co-occur with face droop, one-sided weakness or numbness, slurred speech, sudden confusion, transient focal deficits, collapse, or possible TIA.
+citations_required: true
+applicability: >
+  Use for acute coronary syndrome, heart attack, cardiac emergency recognition,
+  arrhythmia warning signs, chest-pain triage, and mixed cardiac plus stroke/TIA
+  presentations. Not for routine anxiety or hyperventilation once cardiac and
+  neurologic red flags have been excluded.
 related:
   - disaster-triage
   - blood-pressure-management

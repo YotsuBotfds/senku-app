@@ -134,6 +134,9 @@ Current proof:
 Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1738_poisoning_metadata.md`.
 
+`RAG-META5` added targeted stroke/cardiac metadata to `GD-601`. Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1743_stroke_cardiac_metadata.md`.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

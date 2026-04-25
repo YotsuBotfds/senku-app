@@ -557,6 +557,10 @@ Current active family:
   `artifacts/bench/high_liability_family_priorities_20260425_1738_poisoning_metadata.md`
   drops the poisoning score from `6` to `2`; remaining poisoning gap is a
   reviewed answer card for `GD-301`.
+- `RAG-META5` added stroke/cardiac metadata for `GD-601`. Fresh proof at
+  `artifacts/bench/high_liability_family_priorities_20260425_1743_stroke_cardiac_metadata.md`
+  drops the stroke/cardiac score from `4` to `2`; remaining gap is a reviewed
+  answer card for `GD-601`.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.
