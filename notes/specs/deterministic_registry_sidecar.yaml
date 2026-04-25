@@ -981,7 +981,7 @@ rules:
   predicate_name: _is_unknown_child_ingestion_special_case
   builder_name: _build_unknown_child_ingestion_response
   sample_prompt: my kid just ate somethign and hes throwing up what do i do
-  priority: 100
+  priority: 101
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.

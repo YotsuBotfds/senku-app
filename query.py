@@ -6890,8 +6890,34 @@ def _is_wounded_dark_water_special_case(question):
 def _is_unknown_child_ingestion_special_case(question):
     """Detect unknown child-ingestion prompts that need a conservative poisoning triage answer."""
     lower = question.lower()
+    has_child_marker = _text_has_marker(lower, _CHILD_QUERY_MARKERS)
     has_unknown_ingestion_marker = _text_has_marker(
         lower, _UNKNOWN_CHILD_INGESTION_UNKNOWN_MARKERS
+    )
+    has_child_unknown_medication_ingestion = (
+        has_child_marker
+        and _text_has_marker(
+            lower,
+            {
+                "swallowed",
+                "took",
+                "ate",
+                "ingested",
+            },
+        )
+        and _text_has_marker(
+            lower,
+            {
+                "unknown pill",
+                "unknown pills",
+                "unknown medicine",
+                "unknown medication",
+                "unknown tablet",
+                "unknown tablets",
+                "unknown capsule",
+                "unknown capsules",
+            },
+        )
     )
     has_vomiting_marker = any(
         marker in lower for marker in ("throwing up", "vomiting", "threw up")
@@ -6900,8 +6926,10 @@ def _is_unknown_child_ingestion_special_case(question):
         marker in lower
         for marker in ("got into cleaner", "got into the cleaner", "got into some cleaner")
     )
+    if has_child_unknown_medication_ingestion:
+        return True
     return (
-        _text_has_marker(lower, _CHILD_QUERY_MARKERS)
+        has_child_marker
         and has_unknown_ingestion_marker
         and (has_vomiting_marker or has_child_cleaner_ingestion_marker)
     )

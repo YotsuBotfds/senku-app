@@ -108,6 +108,21 @@ class RegistryOverlapTests(unittest.TestCase):
             ["child_under_sink_cleaner_ingestion"],
         )
 
+    def test_child_unknown_pill_overlap_prefers_child_ingestion_rule(self):
+        matches = [
+            rule
+            for rule in query._DETERMINISTIC_SPECIAL_CASE_RULES
+            if rule.predicate("toddler swallowed an unknown pill")
+        ]
+
+        winner, winner_reason = query._select_deterministic_special_case_rule(
+            matches,
+            log_first_defined_tie=False,
+        )
+
+        self.assertEqual(winner.rule_id, "unknown_child_ingestion")
+        self.assertEqual(winner_reason, "priority")
+
 
 if __name__ == "__main__":
     unittest.main()

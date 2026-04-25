@@ -1461,6 +1461,7 @@ class QueryRoutingTests(unittest.TestCase):
 
     def test_poisoning_ingestion_boundary_uses_safety_profile(self):
         for question in (
+            "toddler swallowed an unknown pill",
             "sleepy after possible medicine ingestion",
             "mouth burns after tasting a liquid",
         ):

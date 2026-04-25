@@ -146,6 +146,18 @@ in top-k.
   `9.37`, and deterministic rows are `18/24`. Proof:
   `artifacts/bench/rag_diagnostics_20260425_1503_fa_fb_fd_fe_fd_deterministic/`.
   This is safety routing, not a retrieval-ranking or Android change.
+- Desktop `RAG-S22` moves child/toddler unknown-pill ingestion away from the
+  generic found-medication rule and into `unknown_child_ingestion`. With
+  `SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS=1`, the combined FA/FB/FD/FE panel
+  reaches quality score `9.56`, generated rows remain `0/24`, and the prior
+  FA #1 `needs_evidence_owner` row is gone. Proof:
+  `artifacts/bench/rag_diagnostics_20260425_1513_fa_child_pill_runtime_fd_deterministic/`.
+- External deep-research backlog input from
+  `C:\Users\tateb\Documents\prep\Books\deep-research-report.md` is captured at
+  `notes/deep_research_report_backlog_20260425.md`. Main themes: canonical
+  rendered corpus/partial expansion, high-liability metadata audit, runtime
+  naming clarity, trust model, eval diagnostics, vector/release operations, and
+  privacy/update docs.
 - Desktop reviewed-card/provenance work does not automatically change Android
   behavior. Android needs explicit Kotlin/mobile-pack plumbing: `RAG-A1`
   landed display-only answer surface labels, `RAG-A2` landed optional

@@ -1985,6 +1985,23 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertNotIn("earthquake", response.lower())
         self.assertNotIn("anaphylaxis", response.lower())
 
+    def test_unknown_child_medication_ingestion_prefers_poisoning_rule(self):
+        prompt = "toddler swallowed an unknown pill"
+
+        self.assertEqual(
+            query.classify_special_case(prompt),
+            ("deterministic", "unknown_child_ingestion"),
+        )
+        response = query.build_special_case_response(prompt)
+        self.assertIn("poisoning emergency", response)
+        self.assertIn("[GD-898", response)
+        self.assertNotIn("GD-239", response)
+
+        self.assertEqual(
+            query.classify_special_case("i found some unmarked pills what do i do"),
+            ("deterministic", "unknown_medication"),
+        )
+
     def test_suicide_immediate_safety_cd_prompts_route(self):
         prompts = [
             "They say they wish they were dead but say they have no plan. What matters first?",

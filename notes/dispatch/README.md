@@ -201,6 +201,14 @@ Current active family:
   Quality score is now `9.37`, generated rows are `0/24`, deterministic rows
   are `18/24`, and bad diagnostic buckets remain `0`. Dispatch note:
   `notes/dispatch/RAG-S21_dangerous_activation_deterministic_extension.md`.
+- `RAG-S22` routes "toddler swallowed an unknown pill" through
+  `unknown_child_ingestion` instead of generic `unknown_medication`, while
+  preserving found-medication guidance for unmarked pills that were not
+  swallowed. With reviewed-card runtime enabled, combined FA/FB/FD/FE proof is
+  `artifacts/bench/rag_diagnostics_20260425_1513_fa_child_pill_runtime_fd_deterministic/report.md`.
+  Quality score is now `9.56`, generated rows remain `0/24`, and app
+  acceptance no longer has a `needs_evidence_owner` row. Dispatch note:
+  `notes/dispatch/RAG-S22_child_unknown_pill_poisoning_boundary.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually

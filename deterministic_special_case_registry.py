@@ -714,6 +714,7 @@ DETERMINISTIC_SPECIAL_CASE_SPECS = (
         '_is_unknown_child_ingestion_special_case',
         '_build_unknown_child_ingestion_response',
         'my kid just ate somethign and hes throwing up what do i do',
+        priority=101,
     ),
     DeterministicSpecialCaseSpec(
         'toddler_diaper_rash_no_pee',
