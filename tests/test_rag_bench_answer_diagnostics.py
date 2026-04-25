@@ -200,6 +200,29 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         self.assertEqual(diagnostics["ui_surface_bucket"], "limited_fit")
         self.assertEqual(diagnostics["evidence_owner_status"], "unknown")
 
+    def test_app_acceptance_keeps_uncertain_fit_limited_even_with_card_pass(self):
+        diagnostics = app_acceptance_diagnostics(
+            {"question": "Is this choking or just panic?", "response_text": "Call emergency help. [GD-1]"},
+            bucket="abstain_or_clarify_needed",
+            expected_ids=["GD-1"],
+            candidate_ids=["GD-1"],
+            cited_ids=["GD-1"],
+            app_gate_fields={
+                "app_gate_status": "uncertain_fit",
+                "safety_critical": "true",
+            },
+            answer_card_fields={"answer_card_status": "pass"},
+            claim_support_fields={"claim_support_status": "pass"},
+            generated="no",
+            safety_prompt_detector=lambda _question: True,
+            emergency_contract_detector=lambda _answer: True,
+        )
+
+        self.assertEqual(diagnostics["app_acceptance_status"], "uncertain_fit_accepted")
+        self.assertEqual(diagnostics["ui_surface_bucket"], "limited_fit")
+        self.assertEqual(diagnostics["evidence_owner_status"], "expected_owner_cited")
+        self.assertIn("gate_uncertain_fit", diagnostics["app_acceptance_reason"])
+
     def test_app_acceptance_classifies_expected_owner_cited_strong_path(self):
         diagnostics = app_acceptance_diagnostics(
             {"question": "Can this wait?", "response_text": "Call 911 now. [GD-1]"},

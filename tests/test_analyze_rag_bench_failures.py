@@ -418,6 +418,72 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         )
         self.assertEqual(summary["claim_support_counts"], {"pass": 1})
 
+    def test_reviewed_card_uncertain_fit_keeps_limited_surface_policy(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Is this choking or just panic?",
+                            "prompt_metadata": {"expected_guide_ids": "GD-111"},
+                            "decision_path": "card_backed_runtime",
+                            "answer_provenance": "reviewed_card_runtime",
+                            "reviewed_card_backed": True,
+                            "reviewed_card_ids": ["airway_shadow"],
+                            "reviewed_card_review_status": "pilot_reviewed",
+                            "reviewed_card_guide_ids": ["GD-111"],
+                            "generation_time": 0,
+                            "source_mode": "cited",
+                            "cited_guide_ids": ["GD-111"],
+                            "retrieval_metadata": {
+                                "answer_mode": "uncertain_fit",
+                                "support_strength": "limited",
+                                "safety_critical": True,
+                                "top_retrieved_guide_ids": ["GD-111"],
+                            },
+                            "response_text": "Call 911. Keep the airway open. [GD-111]",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        cards = [
+            {
+                "card_id": "airway_shadow",
+                "guide_id": "GD-111",
+                "risk_tier": "critical",
+                "required_first_actions": [
+                    "Call 911",
+                    "Keep the airway open",
+                ],
+                "first_actions": [],
+                "urgent_red_flags": [],
+                "forbidden_advice": [],
+                "do_not": [],
+            }
+        ]
+
+        rows = build_rows([artifact], answer_cards=cards)
+        summary = summarize(rows)
+
+        self.assertEqual(rows[0]["answer_provenance"], "reviewed_card_runtime")
+        self.assertEqual(rows[0]["answer_mode"], "uncertain_fit")
+        self.assertEqual(rows[0]["app_gate_status"], "uncertain_fit")
+        self.assertEqual(rows[0]["answer_surface_label"], "limited_fit")
+        self.assertEqual(rows[0]["app_acceptance_status"], "uncertain_fit_accepted")
+        self.assertEqual(rows[0]["ui_surface_bucket"], "limited_fit")
+        self.assertEqual(rows[0]["answer_card_status"], "pass")
+        self.assertEqual(rows[0]["claim_support_status"], "pass")
+        self.assertEqual(rows[0]["suspected_failure_bucket"], "abstain_or_clarify_needed")
+        self.assertEqual(
+            summary["answer_surface_label_counts"],
+            {"limited_fit": 1},
+        )
+
     def test_provenance_distinguishes_reviewed_card_from_generated_strong_answer(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"
