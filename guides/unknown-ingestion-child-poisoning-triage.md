@@ -13,6 +13,19 @@ tags:
   - swallowed pills
 icon: warning
 description: Caregiver-facing field triage for a child or adult with unknown ingestion, swallowed cleaner, lamp oil, pills, detergent pods, or other poison, including when not to induce vomiting and when activated charcoal is unsafe.
+aliases:
+  - child swallowed something
+  - toddler swallowed pills
+  - child swallowed cleaner
+  - unknown ingestion
+  - cleaner under the sink
+  - detergent pod ingestion
+  - child ate rat poison
+  - should i make them vomit
+  - can i give charcoal
+routing_cues:
+  - Use immediately when a child or adult may have swallowed an unknown substance, pills, cleaner, detergent pod, fuel, rodenticide, plant, or unlabeled under-sink liquid.
+  - Use for caregiver-facing first steps: poison control or EMS, airway and breathing check, scene safety, no induced vomiting, no home neutralization, and no activated charcoal unless directed.
 related:
   - toxicology-poisoning-response
   - chemical-safety

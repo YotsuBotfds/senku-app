@@ -130,6 +130,10 @@ Current proof:
 `GD-589`, and `GD-622`. Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1732_wound_family_metadata.md`.
 
+`RAG-META4` added targeted poisoning-family metadata to `GD-301` and `GD-898`.
+Current proof:
+`artifacts/bench/high_liability_family_priorities_20260425_1738_poisoning_metadata.md`.
+
 - Append a durable run manifest record for ignored/local artifacts:
 
 ```powershell

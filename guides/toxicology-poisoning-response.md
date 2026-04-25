@@ -10,6 +10,27 @@ tags:
   - poisoning
 icon: warning
 description: Poison identification, unknown ingestion triage, child accidental poisoning response, decontamination methods, specific antidotes, toxidrome recognition, smoke and carbon monoxide exposure, and snakebite management without antivenin.
+aliases:
+  - poisoning response
+  - toxic exposure
+  - swallowed cleaner
+  - household chemical exposure
+  - medication overdose
+  - pill overdose
+  - unknown ingestion toxicology
+  - poison control
+  - toxidrome
+  - serotonin syndrome
+routing_cues:
+  - Use for poisoning, overdose, toxidrome recognition, unknown or known toxic ingestion, medication error, swallowed cleaner, chemical skin/eye/inhalation exposure, smoke or carbon monoxide exposure, and antidote/decontamination decisions.
+  - Use with the unknown-ingestion child triage guide when a child, unlabeled container, under-sink chemical, cleaner, pill, rodenticide, fuel, or unknown substance may have been swallowed.
+citations_required: true
+applicability: >
+  Use for poisoning and toxic exposure triage, decontamination, toxidrome
+  recognition, antidote considerations, and emergency stabilization after an
+  exposure has occurred. Not for routine chemical storage, product compatibility,
+  pest-control prevention, or non-toxic routine medication questions unless
+  symptoms, dosing error, or exposure risk is present.
 related:
   - chemical-safety
   - first-aid
