@@ -65,9 +65,11 @@ and user trust behavior.
   location-like incident logs, validation artifacts, and Android session state.
   Completed note:
   `notes/SENKU_PRIVACY_EXPORT_DELETE_INCIDENT_POLICY_20260425.md`.
-- Release/update/migration docs.
-  Use existing guide `version` and `last_updated` metadata plus explicit
-  "reindex required?" and rollback fields.
+- `RAG-REL1`: completed.
+  Added release/update/migration runbook using guide `version` and
+  `last_updated` metadata, explicit `reindex_required` values, manifest capture,
+  migration rules, and rollback fields. Completed note:
+  `notes/SENKU_RELEASE_UPDATE_MIGRATION_RUNBOOK_20260425.md`.
 - Compound-scenario playbooks.
   Examples: sick child during outage, contaminated well plus food shortage,
   evacuation with livestock, storm-damaged shelter recovery.

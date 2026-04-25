@@ -619,6 +619,11 @@ Current active family:
   local/offline posture, data classes, deletion/export gates, artifact hygiene,
   incident response, and release blockers before any notes/sync/personal-record
   feature ships.
+- `RAG-REL1` added
+  `notes/SENKU_RELEASE_UPDATE_MIGRATION_RUNBOOK_20260425.md`, documenting
+  release classes, guide `version`/`last_updated` expectations, explicit
+  `reindex_required` values, manifest capture, migration rules, and rollback
+  proof.
 - `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
   so answer-card / evidence-nugget / claim-support checks evaluate the
   artifact's `reviewed_card_ids`, not every reviewed card in the expected guide
