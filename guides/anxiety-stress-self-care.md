@@ -13,6 +13,23 @@ tags:
   - grounding
 icon: "🌿"
 description: Practical daily self-care for persistent anxiety, overwhelm, stress load, grounding, breathing, routines, activity structure, social support, and crisis red flags.
+aliases:
+  - anxiety self care
+  - stress self care
+  - calm down when overwhelmed
+  - racing thoughts
+  - grounding for anxiety
+  - breathing for panic
+  - daily stress routine
+routing_cues:
+  - Use for persistent anxiety, worry, stress overload, overwhelm, racing thoughts, grounding, breathing, and routine-building after urgent medical and mental-health red flags are excluded.
+  - Hand off to crisis guidance when there are suicidal thoughts, hallucinations, paranoia, severe confusion, or days of little or no sleep with grandiosity, recklessness, nonstop talking, or feeling invincible.
+citations_required: true
+applicability: >
+  Use for non-emergency anxiety, stress, overwhelm, grounding, breathing, and
+  daily self-care planning. Not for chest pain, severe shortness of breath,
+  self-harm risk, psychosis, acute manic activation, heavy substance use, or
+  other crisis patterns that require urgent medical or mental-health escalation.
 related:
   - psychological-first-aid-peer-support
   - recognizing-mental-health-crises

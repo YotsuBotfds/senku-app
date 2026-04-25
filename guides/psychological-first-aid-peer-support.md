@@ -8,6 +8,22 @@ tags:
   - important
 icon: 💚
 description: Psychological First Aid framework, peer support groups, counseling skills for non-professionals. Evidence-based protocols for community helpers in resource-limited settings.
+aliases:
+  - psychological first aid
+  - peer support after crisis
+  - acute distress support
+  - grounding after trauma
+  - panic after a bad event
+  - crisis aftercare
+routing_cues:
+  - Use for acute distress, shock, grief, overwhelm, numbness, dissociation, flashbacks, and immediate peer-support stabilization after a stressful or traumatic event.
+  - Hand off first when the person is suicidal, violent, medically unstable, unsafe at home, or showing days of little sleep with grandiosity, recklessness, nonstop talking, or impossible-to-slow behavior.
+citations_required: true
+applicability: >
+  Use for non-professional stabilization, grounding, connection, and practical
+  support after distress or trauma. Not for primary management of suicide risk,
+  violence, acute psychosis, manic activation, medical instability, or abuse
+  danger; those require crisis, medical, or safety escalation first.
 related:
   - addiction-withdrawal-management
   - adolescent-health-development

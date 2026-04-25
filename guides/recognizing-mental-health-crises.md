@@ -8,6 +8,25 @@ tags:
   - important
 icon: 💚
 description: Crisis recognition, screening frameworks, escalation decisions. PTSD, psychosis, depression, panic, suicidal ideation, and withdrawal identification in field settings.
+aliases:
+  - mental health crisis
+  - acute mania
+  - manic activation
+  - no sleep for days
+  - talking nonstop
+  - feeling invincible
+  - reckless grandiose behavior
+  - psychosis crisis
+  - suicidal crisis
+routing_cues:
+  - Use for acute crisis screening, suicide risk, psychosis, hallucinations, paranoia, severe withdrawal, or days of little sleep with grandiosity, recklessness, nonstop talking, unsafe wandering, or impossible-to-slow behavior.
+  - Prefer this guide over anxiety or routine self-care when judgment, safety, reality testing, sleep, or supervision is compromised.
+citations_required: true
+applicability: >
+  Use for recognizing and escalating mental health emergencies, including acute
+  manic activation, psychosis, suicidality, severe withdrawal, and unsafe crisis
+  states. Not for routine stress management or everyday anxiety after emergency
+  red flags have been excluded.
 related:
   - psychological-first-aid-peer-support
   - long-term-mental-health-recovery

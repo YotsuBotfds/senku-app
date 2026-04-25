@@ -542,6 +542,11 @@ Current active family:
   drift. Fresh proof at
   `artifacts/bench/high_liability_family_priorities_20260425_1658_support_uncertainfit_semantics.md`
   moves the observed families to targeted metadata work.
+- `RAG-META2` added frontmatter metadata for the dangerous-activation family
+  (`GD-858`, `GD-859`, `GD-918`). Fresh proof at
+  `artifacts/bench/metadata_coverage_audit_20260425_1724_dangerous_activation_metadata.md`
+  shows aliases/routing/citation/applicability covered; the remaining family
+  gap is reviewed answer-card coverage.
 - `D48` through `D51` remain parked safety-gate dispatches for EW/EX/EY/EZ.
 - The implied `D52`+ continuation into FA/FB/FC/FD is paused; do not infer
   those slices from the morning handoff alone.
