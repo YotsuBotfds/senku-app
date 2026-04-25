@@ -519,7 +519,12 @@ def _cleanup_tempdir(
     tempdir: tempfile.TemporaryDirectory[str] | None,
 ) -> tempfile.TemporaryDirectory[str] | None:
     if tempdir is not None:
-        tempdir.cleanup()
+        try:
+            tempdir.cleanup()
+        except PermissionError:
+            # Windows can keep Chroma/SQLite temp files locked for a moment after
+            # the script finishes. The indexes are temporary and ignored by git.
+            pass
     return None
 
 
@@ -543,7 +548,10 @@ def build_shadow_index(
     if hasattr(chromadb, "EphemeralClient"):
         client = chromadb.EphemeralClient()
     else:  # pragma: no cover - compatibility branch for older Chroma.
-        chroma_tempdir = tempfile.TemporaryDirectory(prefix="senku-shadow-chroma-")
+        chroma_tempdir = tempfile.TemporaryDirectory(
+            prefix="senku-shadow-chroma-",
+            ignore_cleanup_errors=True,
+        )
         client = chromadb.PersistentClient(path=chroma_tempdir.name)
 
     collection = client.create_collection(
@@ -569,7 +577,10 @@ def build_shadow_index(
     if include_lexical:
         from ingest import add_lexical_records, create_lexical_index
 
-        lexical_tempdir = tempfile.TemporaryDirectory(prefix="senku-shadow-lexical-")
+        lexical_tempdir = tempfile.TemporaryDirectory(
+            prefix="senku-shadow-lexical-",
+            ignore_cleanup_errors=True,
+        )
         lexical_path = Path(lexical_tempdir.name) / "senku_shadow_lexical.sqlite3"
         conn = create_lexical_index(str(lexical_path))
         try:
