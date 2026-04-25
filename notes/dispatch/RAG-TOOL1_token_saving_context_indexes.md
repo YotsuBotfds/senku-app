@@ -25,6 +25,66 @@ large artifacts, long dispatch notes, and verbose diagnostics.
    Support validation planning, prompt-pack inventory, and quick dirty-tree
    grouping.
 
+## 2026-04-25 Scout Triage Queue
+
+Three read-only scouts reviewed the current RAG/tooling lane with web search
+encouraged and converged on the same operating shape: retrieval is now mostly
+healthy for the partial/router pack, while agents are still spending too much
+context stitching together related diagnostic runs and separating citation
+owner misses from retrieval misses.
+
+Actionable order:
+
+1. **Close the current eval-pack owner-citation misses first.**
+   Continue source-local packaging for rank-1 retrieved owners that are still
+   not cited. After the `GD-648` minimum-operations slice, the remaining
+   generation/citation misses are `GD-024`, `GD-052`, and `GD-646`. Gate each
+   guide change with forced incremental ingest and a held-out pack rerun.
+
+2. **Add RAG experiment lineage reporting.**
+   Build `scripts/rag_experiment_lineage.py` to auto-discover related
+   `*_diag` directories by stem, sort runs, join each diagnostic directory to
+   its bench JSON/config, and emit run-level deltas plus per-prompt bucket and
+   citation-owner transitions. This is the highest-leverage token saver after
+   the active eval-pack closure because it replaces manual comparison across
+   many variant artifacts.
+
+3. **Add a retrieval-only evaluator.**
+   Build a generation-free prompt-pack evaluator for hit@1, hit@3, hit@k,
+   MRR/NDCG-style owner rank, owner share, top distractors, and marker overlay.
+   Use it for rerank/index experiments before spending generation cycles.
+
+4. **Add a regression gate around RAG trends.**
+   Extend `rag_trend.py` or add a thin `rag_gate.py` so a candidate diagnostic
+   run can be compared against a baseline and fail on configured regressions.
+   This should catch cases like the reverted primary-source-label experiment
+   before a later note treats the latest run as an improvement.
+
+5. **Move hardcoded owner-hint rerank rules toward data.**
+   Replace or supplement narrow `query.py` owner hints with guide frontmatter
+   or a small manifest once the current held-out pack is stable. Keep gates
+   strict so data-driven weights do not become broad catchalls.
+
+6. **Make touched-file quality gates delta-based.**
+   Extend marker/mojibake tooling so it can fail only on new or touched-file
+   damage. The current corpus baselines are intentionally noisy, so broad
+   fail-the-world gates would slow every guide patch.
+
+7. **Add report-only artifact retention/storage tooling.**
+   Add a dry-run storage reporter/retention planner that summarizes large
+   artifact families, duplicate basename families, and generated-directory
+   candidates while preserving files referenced by dispatch notes and run
+   manifests.
+
+8. **Enrich run manifests automatically.**
+   Auto-derive changed files from git status/diff stat when
+   `write_run_manifest.py` callers omit explicit changed-file arguments. This
+   makes startup snapshots and future lineage reports more trustworthy.
+
+Non-goal for this queue: do not reopen high-liability card families that now
+show `0/0` frontmatter/card gaps unless a fresh behavior panel exposes a real
+miss.
+
 ## Landed proof
 
 Commits:
