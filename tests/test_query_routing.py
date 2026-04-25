@@ -1441,6 +1441,14 @@ class QueryRoutingTests(unittest.TestCase):
                 "Is this a panic attack or heart attack if I have chest pressure and shortness of breath?",
                 "acute coronary cardiac emergencies chest pressure",
             ),
+            (
+                "sleepy after possible medicine ingestion",
+                "unknown-ingestion-child-poisoning-triage toxicology poisoning response",
+            ),
+            (
+                "mouth burns after tasting a liquid",
+                "unknown-ingestion-child-poisoning-triage toxicology poisoning response",
+            ),
         ]
 
         for question, expected in cases:
@@ -1450,6 +1458,15 @@ class QueryRoutingTests(unittest.TestCase):
                     any(expected in spec["text"] for spec in specs),
                     [spec["text"] for spec in specs],
                 )
+
+    def test_poisoning_ingestion_boundary_uses_safety_profile(self):
+        for question in (
+            "sleepy after possible medicine ingestion",
+            "mouth burns after tasting a liquid",
+        ):
+            with self.subTest(question=question):
+                self.assertTrue(query._is_poisoning_unknown_ingestion_card_query(question))
+                self.assertEqual(query._retrieval_profile_for_question(question), "safety_triage")
 
     def test_safety_wave_metadata_rerank_prefers_emergency_owners_over_distractors(self):
         gi_question = "The stool is black and sticky like tar, and they feel weak and dizzy."
@@ -1693,6 +1710,25 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertGreaterEqual(
             query._metadata_rerank_delta(food_bolus_question, ingestion_meta),
             0.30,
+        )
+        poison_question = "sleepy after possible medicine ingestion"
+        toxicology_meta = {
+            "guide_title": "Toxicology and Poisoning Response",
+            "section_heading": "Initial Assessment",
+            "slug": "toxicology-poisoning-response",
+            "description": "Poison control, toxidrome, medication ingestion, and altered mental status.",
+            "category": "medical",
+        }
+        allergy_meta = {
+            "guide_title": "Allergy and Anaphylaxis",
+            "section_heading": "Medication Hives",
+            "slug": "allergy-anaphylaxis",
+            "description": "Food allergy, hives, medication side effects, and routine rash checks.",
+            "category": "medical",
+        }
+        self.assertLess(
+            query._metadata_rerank_delta(poison_question, toxicology_meta),
+            query._metadata_rerank_delta(poison_question, allergy_meta),
         )
         panic_anatomy_meta = {
             "guide_title": "Human Anatomy Basics: Body Systems & Functions",
@@ -2691,6 +2727,69 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertIn("GD-898", plan["guide_ids"])
         self.assertEqual(plan["cited_guide_ids"], ["GD-898"])
         self.assertIn("Call poison control", plan["answer_text"])
+
+    def test_poisoning_card_priority_accepts_secondary_source_owner(self):
+        results = {
+            "documents": [["Possible medication ingestion and overdose triage."]],
+            "metadatas": [[{"guide_id": "GD-914"}, {"guide_id": "GD-301"}]],
+        }
+
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(
+                "sleepy after possible medicine ingestion",
+                results,
+            )
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["poisoning_unknown_ingestion"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-301"])
+        self.assertIn("Call poison control", plan["answer_text"])
+
+    def test_poisoning_card_priority_can_use_lower_ranked_retrieved_owner(self):
+        results = {
+            "documents": [["Chemical burn context."]],
+            "metadatas": [[
+                {"guide_id": "GD-325"},
+                {"guide_id": "GD-399"},
+                {"guide_id": "GD-054"},
+                {"guide_id": "GD-939"},
+                {"guide_id": "GD-666"},
+                {"guide_id": "GD-898"},
+            ]],
+        }
+
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(
+                "mouth burns after tasting a liquid",
+                results,
+            )
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["poisoning_unknown_ingestion"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-898"])
+
+    def test_poisoning_card_does_not_match_medicine_allergy_prompt(self):
+        results = {"metadatas": [[{"guide_id": "GD-898"}]]}
+
+        self.assertFalse(
+            query._is_poisoning_unknown_ingestion_card_query(
+                "I took medicine and now have hives but can breathe"
+            )
+        )
+        self.assertEqual(
+            query._answer_cards_for_results(
+                results,
+                question="I took medicine and now have hives but can breathe",
+                max_cards=1,
+            ),
+            [],
+        )
 
     def test_card_backed_runtime_answer_uses_question_only_for_conditionals(self):
         results = {

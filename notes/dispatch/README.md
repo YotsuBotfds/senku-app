@@ -37,7 +37,7 @@ CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 
 Current active family:
 
-- `RAG-S1` through `RAG-S16` are the current RAG-next-level dispatches.
+- `RAG-S1` through `RAG-S18` are the current RAG-next-level dispatches.
 - `RAG-S1` has produced the first diagnostic result at
   `notes/RAG_S1_DIAGNOSTIC_RESULT_20260424.md`.
 - `RAG-S1b` observability has landed in the same work block.
@@ -165,6 +165,14 @@ Current active family:
   claim-support pass from `9` to `11` with retrieval/ranking/generation/safety
   misses still `0`. Dispatch note:
   `notes/dispatch/RAG-S17_uncertain_fit_reviewed_card_fallback.md`.
+- `RAG-S18` aligns unknown-ingestion / poisoning retrieval with the reviewed
+  poisoning card. Possible medicine ingestion, mouth-burn-after-tasting, and
+  unknown-ate-acting-off prompts now route through safety-triage retrieval,
+  targeted toxicology supplemental search, owner-positive metadata rerank, and
+  reviewed source-family card citation. Fresh FA proof:
+  `artifacts/bench/rag_diagnostics_20260425_1431_fa_poison_card_alignment/report.md`.
+  Dispatch note:
+  `notes/dispatch/RAG-S18_poisoning_card_retrieval_alignment.md`.
 - `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
   targets are shadow-comparison summaries, agent run manifests, and RAG trend
   tables so later retrieval/card/evidence slices spend less time manually

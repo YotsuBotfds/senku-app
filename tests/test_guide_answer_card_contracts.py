@@ -181,13 +181,17 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(claim_result["forbidden_count"], 0)
 
     def test_compose_card_backed_answer_does_not_cite_unallowed_backup_owner(self):
-        card = find_cards_for_guides("GD-898", cards=self.cards)[0]
+        card = [
+            candidate
+            for candidate in self.cards
+            if candidate["card_id"] == "abdominal_internal_bleeding"
+        ][0]
 
-        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-301"])
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-232"])
 
         self.assertEqual(plan["cited_guide_ids"], [])
-        self.assertNotIn("[GD-301]", plan["answer_text"])
-        self.assertNotIn("[GD-898]", plan["answer_text"])
+        self.assertNotIn("[GD-232]", plan["answer_text"])
+        self.assertNotIn("[GD-380]", plan["answer_text"])
 
     def test_compose_card_backed_answer_can_cite_reviewed_source_family_when_opted_in(self):
         card = find_cards_for_guides("GD-284", cards=self.cards)[0]

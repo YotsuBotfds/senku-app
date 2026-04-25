@@ -9137,6 +9137,24 @@ def _metadata_rerank_delta(question, meta):
         ):
             apply_delta("unknown_chemical_skin_burn_rash_distractor", 0.20)
 
+    if _is_poisoning_unknown_ingestion_card_query(question):
+        if _text_has_marker(meta_text, _HOUSEHOLD_CHEMICAL_EXPOSURE_METADATA_MARKERS):
+            apply_delta("poisoning_unknown_ingestion_owner_metadata", -0.14)
+        if _text_has_marker(
+            meta_text,
+            {
+                "food allergy",
+                "allergy and anaphylaxis",
+                "routine medication",
+                "medication schedule",
+                "side effects",
+                "hives",
+                "common ailments",
+                "routine stomach",
+            },
+        ):
+            apply_delta("poisoning_unknown_ingestion_routine_distractor", 0.12)
+
     if _is_industrial_chemical_smell_boundary_query(question):
         if _text_has_marker(
             meta_text,
@@ -11139,6 +11157,7 @@ def _retrieval_profile_for_question(question, frame=None):
         or _is_newborn_sepsis_danger_query(question)
         or _is_abdominal_trauma_danger_query(question)
         or _is_infected_wound_boundary_query(question)
+        or _is_poisoning_unknown_ingestion_card_query(question)
         or _is_gi_bleed_emergency_query(question)
         or _is_cardiac_first_query(question)
         or _scenario_frame_is_safety_critical(frame or build_scenario_frame(question))
@@ -11263,6 +11282,20 @@ def _supplemental_retrieval_specs(
                         f"{question} wound hygiene infection prevention sepsis "
                         "spreading redness red streaks pus fever weakness urgent "
                         "care not home cleaning only"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+        if _is_poisoning_unknown_ingestion_card_query(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} unknown-ingestion-child-poisoning-triage "
+                        "toxicology poisoning response poison control possible "
+                        "medicine ingestion sleepy drowsy altered mental status "
+                        "mouth burns tasting liquid do not induce vomiting airway "
+                        "breathing no oral remedies"
                     ),
                     "category": "medical",
                     "limit": supplemental_limit,
@@ -14196,6 +14229,90 @@ def _answer_cards_for_results(results, *, question=None, max_cards=2, max_source
     )
 
 
+def _is_poisoning_unknown_ingestion_card_query(question):
+    lower = (question or "").lower()
+    if not lower or "food poisoning" in lower:
+        return False
+
+    route = _text_has_marker(
+        lower,
+        {
+            "swallow",
+            "swallowed",
+            "swallowing",
+            "ingest",
+            "ingested",
+            "ingestion",
+            "ate",
+            "eaten",
+            "tasted",
+            "tasting",
+            "taste",
+            "drank",
+            "drink",
+            "sipped",
+            "licked",
+            "took",
+            "taken",
+        },
+    )
+    source = _text_has_marker(
+        lower,
+        {
+            "medicine",
+            "medication",
+            "pills",
+            "pill",
+            "tablet",
+            "capsule",
+            "drug",
+            "cleaner",
+            "chemical",
+            "liquid",
+            "bottle",
+            "unlabeled",
+            "unknown",
+            "not sure",
+            "something",
+            "poison",
+            "poisoning",
+            "overdose",
+        },
+    )
+    danger = _text_has_marker(
+        lower,
+        {
+            "possible",
+            "maybe",
+            "might have",
+            "not sure",
+            "unknown",
+            "unlabeled",
+            "sleepy",
+            "drowsy",
+            "hard to wake",
+            "acting off",
+            "confused",
+            "mouth burns",
+            "burning mouth",
+            "burned mouth",
+            "throat burns",
+            "drooling",
+            "vomiting",
+            "overdose",
+            "poison",
+            "poisoning",
+            "poison control",
+        },
+    )
+    explicit_poisoning = _text_has_marker(
+        lower, {"poison", "poisoning", "poison control", "overdose", "toxidrome"}
+    )
+    if _has_allergy_or_anaphylaxis_trigger(question) and not explicit_poisoning:
+        return False
+    return explicit_poisoning or (route and source and danger)
+
+
 def _prioritized_answer_card_ids_for_question(question):
     return _answer_card_runtime._prioritized_answer_card_ids_for_question(
         question,
@@ -14203,6 +14320,7 @@ def _prioritized_answer_card_ids_for_question(question):
         has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
         is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
         is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+        is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
     )
 
 
@@ -14214,6 +14332,7 @@ def _answer_card_matches_question(card, question):
         has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
         is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
         is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+        is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
     )
 
 

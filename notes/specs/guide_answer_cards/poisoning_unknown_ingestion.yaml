@@ -78,6 +78,7 @@ source_invariants:
     must_not_match:
       - "induce vomiting\\s+(?:to|after)"
       - "give activated charcoal for caustic"
+runtime_citation_policy: reviewed_source_family
 review_status: pilot_reviewed
 notes: >
   Source guide GD-898 owns caregiver-facing unknown ingestion; GD-301 is cited

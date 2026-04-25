@@ -110,6 +110,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_guide_prompt_v
   claim-support pass from `9` to `11`; the two promoted rows still carry
   `answer_mode=uncertain_fit` / `app_acceptance_status=uncertain_fit_accepted`
   because product-surface relabeling is intentionally deferred.
+- Desktop `RAG-S18` aligns unknown-ingestion / poisoning retrieval with the
+  reviewed `poisoning_unknown_ingestion` card. The strict predicate covers
+  possible medicine ingestion, mouth burns after tasting a liquid, and
+  unknown-food/acting-off wording while guarding medicine-allergy prompts.
+  Matching prompts now use safety-triage retrieval, a targeted toxicology
+  supplemental lane, owner-positive metadata rerank, and reviewed source-family
+  citation for GD-301/GD-898. Fresh FA proof:
+  `artifacts/bench/rag_diagnostics_20260425_1431_fa_poison_card_alignment/`;
+  FA #4/#5/#6 are now strong reviewed-card runtime passes, and FA #3 has
+  card/claim/evidence pass but remains a ranking-miss row because an adjacent
+  non-owner still ranks above the expected owner.
 - Desktop reviewed-card/provenance work does not automatically change Android
   behavior. Android needs explicit Kotlin/mobile-pack plumbing: `RAG-A1`
   landed display-only answer surface labels, `RAG-A2` landed optional

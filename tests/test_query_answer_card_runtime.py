@@ -74,6 +74,38 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
         )
         self.assertGreaterEqual(len(calls), 1)
 
+    def test_prioritized_answer_cards_can_match_full_retrieved_allowlist(self):
+        poison_card = {
+            "card_id": "poisoning_unknown_ingestion",
+            "guide_id": "GD-898",
+            "review_status": "approved",
+        }
+        unrelated_card = {
+            "card_id": "unrelated",
+            "guide_id": "GD-111",
+            "review_status": "approved",
+        }
+
+        cards = runtime._answer_cards_for_results(
+            {
+                "metadatas": [[
+                    {"guide_id": "GD-111"},
+                    {"guide_id": "GD-222"},
+                    {"guide_id": "GD-898"},
+                ]]
+            },
+            question="mouth burns after tasting a mystery liquid",
+            max_cards=1,
+            max_source_ids=2,
+            runtime_answer_cards=lambda: [unrelated_card, poison_card],
+            citation_allowlist_from_results=lambda results: ["GD-111", "GD-222", "GD-898"],
+            prioritized_answer_card_ids_for_question=lambda question: ["poisoning_unknown_ingestion"],
+            answer_card_matches_question=lambda card, question: card["card_id"] == "poisoning_unknown_ingestion",
+            card_source_guide_ids=runtime._card_source_guide_ids,
+        )
+
+        self.assertEqual([card["card_id"] for card in cards], ["poisoning_unknown_ingestion"])
+
     def test_card_backed_runtime_answer_plan_uses_injected_composer(self):
         selected_card = {
             "card_id": "newborn_danger_sepsis",

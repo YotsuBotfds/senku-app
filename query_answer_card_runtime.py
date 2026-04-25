@@ -102,8 +102,9 @@ def _answer_cards_for_results(
     answer_card_matches_question,
     card_source_guide_ids,
 ):
-    guide_ids = citation_allowlist_from_results(results)[:max_source_ids]
-    if not guide_ids:
+    allowed_guide_ids = citation_allowlist_from_results(results)
+    guide_ids = allowed_guide_ids[:max_source_ids]
+    if not allowed_guide_ids:
         return []
 
     cards = []
@@ -116,11 +117,13 @@ def _answer_cards_for_results(
         guide_id = str(card.get("guide_id") or "").strip()
         if not guide_id:
             continue
-        cards_by_guide_id.setdefault(guide_id, []).append(card)
+        for source_guide_id in card_source_guide_ids(card) or {guide_id}:
+            cards_by_guide_id.setdefault(source_guide_id, []).append(card)
 
     prioritized_card_ids = prioritized_answer_card_ids_for_question(question)
     if prioritized_card_ids:
-        retrieved_guide_ids = set(guide_ids)
+        retrieved_guide_ids = set(allowed_guide_ids)
+        prioritized_cards = []
         for card in runtime_answer_cards():
             review_status = str(card.get("review_status") or "").strip().lower()
             card_id = str(card.get("card_id") or "").strip()
@@ -132,9 +135,11 @@ def _answer_cards_for_results(
                 continue
             if not (retrieved_guide_ids & card_source_guide_ids(card)):
                 continue
-            seen_card_ids.add(card_id)
-            cards.append(card)
-            if len(cards) >= max_cards:
+            prioritized_cards.append(card)
+        if max_cards == 1:
+            for card in prioritized_cards:
+                seen_card_ids.add(str(card.get("card_id") or "").strip())
+                cards.append(card)
                 return cards
     for guide_id in guide_ids:
         for card in cards_by_guide_id.get(guide_id, []):
@@ -147,6 +152,14 @@ def _answer_cards_for_results(
             cards.append(card)
             if len(cards) >= max_cards:
                 return cards
+    for card in prioritized_cards if prioritized_card_ids else []:
+        card_id = str(card.get("card_id") or "").strip()
+        if card_id in seen_card_ids:
+            continue
+        seen_card_ids.add(card_id)
+        cards.append(card)
+        if len(cards) >= max_cards:
+            return cards
     return cards
 
 
@@ -157,6 +170,7 @@ def _prioritized_answer_card_ids_for_question(
     has_allergy_or_anaphylaxis_trigger,
     is_newborn_sepsis_danger_query,
     is_meningitis_rash_emergency_query,
+    is_poisoning_unknown_ingestion_card_query=lambda question: False,
 ):
     if not question:
         return []
@@ -168,6 +182,8 @@ def _prioritized_answer_card_ids_for_question(
         prioritized.append("newborn_danger_sepsis")
     if is_meningitis_rash_emergency_query(question):
         prioritized.append("meningitis_sepsis_child")
+    if is_poisoning_unknown_ingestion_card_query(question):
+        prioritized.append("poisoning_unknown_ingestion")
     return prioritized
 
 
@@ -179,6 +195,7 @@ def _answer_card_matches_question(
     has_allergy_or_anaphylaxis_trigger,
     is_newborn_sepsis_danger_query,
     is_meningitis_rash_emergency_query,
+    is_poisoning_unknown_ingestion_card_query=lambda question: False,
 ):
     if not question:
         return True
@@ -190,6 +207,8 @@ def _answer_card_matches_question(
         return is_meningitis_rash_emergency_query(question)
     if card_id == "choking_airway_obstruction":
         return is_airway_obstruction_rag_query(question) and not has_allergy_or_anaphylaxis_trigger(question)
+    if card_id == "poisoning_unknown_ingestion":
+        return is_poisoning_unknown_ingestion_card_query(question)
     return True
 
 
