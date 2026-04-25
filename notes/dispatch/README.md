@@ -624,6 +624,11 @@ Current active family:
   release classes, guide `version`/`last_updated` expectations, explicit
   `reindex_required` values, manifest capture, migration rules, and rollback
   proof.
+- `RAG-PLAY1` added
+  `notes/SENKU_COMPOUND_SCENARIO_PLAYBOOKS_20260425.md`, documenting multi-lane
+  evaluation playbooks and prompt-shape expectations for outage, contaminated
+  water/food, evacuation/livestock, storm shelter recovery, and
+  injury/cold/water scenarios.
 - `RAG-T12` fixed analyzer diagnostics for actual reviewed-card runtime rows
   so answer-card / evidence-nugget / claim-support checks evaluate the
   artifact's `reviewed_card_ids`, not every reviewed card in the expected guide

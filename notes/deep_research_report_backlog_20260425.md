@@ -70,9 +70,11 @@ and user trust behavior.
   `last_updated` metadata, explicit `reindex_required` values, manifest capture,
   migration rules, and rollback fields. Completed note:
   `notes/SENKU_RELEASE_UPDATE_MIGRATION_RUNBOOK_20260425.md`.
-- Compound-scenario playbooks.
-  Examples: sick child during outage, contaminated well plus food shortage,
-  evacuation with livestock, storm-damaged shelter recovery.
+- `RAG-PLAY1`: completed.
+  Added compound-scenario playbooks for sick child during outage, contaminated
+  well plus food shortage, evacuation with livestock, storm-damaged shelter
+  recovery, and injured/cold/questionable-water lane separation. Completed note:
+  `notes/SENKU_COMPOUND_SCENARIO_PLAYBOOKS_20260425.md`.
 
 ## Risks And Dependencies
 

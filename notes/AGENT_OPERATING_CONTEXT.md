@@ -174,6 +174,12 @@ class, `reindex_required`, guide `version`/`last_updated` expectations, manifest
 capture, migration rules, and rollback proof. Current runbook:
 `notes/SENKU_RELEASE_UPDATE_MIGRATION_RUNBOOK_20260425.md`.
 
+`RAG-PLAY1` added compound-scenario evaluation playbooks for multi-lane
+stressors such as sick child plus outage, contaminated well plus food shortage,
+evacuation with livestock, storm-damaged shelter recovery, and injury/cold/water
+lane separation. Current playbooks:
+`notes/SENKU_COMPOUND_SCENARIO_PLAYBOOKS_20260425.md`.
+
 `RAG-CARD1` added a `GD-859` reviewed answer-card contract for dangerous
 activation / acute mania crisis. Current proof:
 `artifacts/bench/high_liability_family_priorities_20260425_1650_dangerous_activation_card.md`.
