@@ -89,6 +89,10 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
                 "expected_owner_best_rank": 1,
                 "expected_owner_count": 1,
                 "retrieved_count": 3,
+                "retrieval_elapsed_ms": 12.0,
+                "top1_marker_risk": "warn",
+                "top1_is_bridge": "yes",
+                "top1_has_unresolved_partial": "yes",
                 "top_distractor_guide_ids": [
                     {"guide_id": "GD-222", "count": 2},
                 ],
@@ -101,6 +105,10 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
                 "expected_owner_best_rank": None,
                 "expected_owner_count": 0,
                 "retrieved_count": 2,
+                "retrieval_elapsed_ms": 4.0,
+                "top1_marker_risk": "none",
+                "top1_is_bridge": "no",
+                "top1_has_unresolved_partial": "no",
                 "top_distractor_guide_ids": [
                     {"guide_id": "GD-222", "count": 1},
                     {"guide_id": "GD-444", "count": 1},
@@ -126,6 +134,10 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertEqual(summary["expected_hit_at_k"]["text"], "1/2 (50.0%)")
         self.assertEqual(summary["expected_owner_best_rank"], "1.00")
         self.assertEqual(summary["simple_owner_share"]["text"], "1/5 (20.0%)")
+        self.assertEqual(summary["retrieval_latency_ms"], {"count": 2, "mean": 8.0, "p95": 12.0})
+        self.assertEqual(summary["top1_marker_risk_counts"], {"warn": 1, "none": 1})
+        self.assertEqual(summary["top1_bridge_rows"], 1)
+        self.assertEqual(summary["top1_unresolved_partial_rows"], 1)
         self.assertEqual(
             summary["top_distractor_guide_ids"][:2],
             [
@@ -149,11 +161,19 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             ["GD-001", "GD-002"],
         )
 
-    def test_evaluate_pack_uses_retrieval_hook_without_generation(self):
+    def test_evaluate_pack_uses_retrieval_hook_without_generation_and_adds_marker_overlay(self):
         calls = []
         original = self.module.retrieve_for_prompt
 
-        def fake_retrieve(prompt, collection, *, top_k, category, embed_url):
+        def fake_retrieve(
+            prompt,
+            collection,
+            *,
+            top_k,
+            category,
+            embed_url,
+            retrieval_profile_override=None,
+        ):
             calls.append(
                 {
                     "prompt": prompt,
@@ -161,6 +181,7 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
                     "top_k": top_k,
                     "category": category,
                     "embed_url": embed_url,
+                    "retrieval_profile_override": retrieval_profile_override,
                 }
             )
             return ["GD-999", "GD-123"], {"retrieval_meta": {"fake": True}}
@@ -181,6 +202,14 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
                 top_k=3,
                 category="medical",
                 embed_url="http://embed",
+                retrieval_profile_override="safety_triage",
+                corpus_marker_lookup={
+                    "GD-999": {
+                        "severity_counts": {"warn": 1},
+                        "marker_counts": {"unresolved_partial": 1},
+                        "bridge": True,
+                    }
+                },
             )
         finally:
             self.module.retrieve_for_prompt = original
@@ -190,9 +219,50 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertEqual(calls[0]["top_k"], 3)
         self.assertEqual(calls[0]["category"], "medical")
         self.assertEqual(calls[0]["embed_url"], "http://embed")
+        self.assertEqual(calls[0]["retrieval_profile_override"], "safety_triage")
         self.assertEqual(rows[0]["top_retrieved_guide_ids"], ["GD-999", "GD-123"])
         self.assertEqual(rows[0]["expected_owner_best_rank"], 2)
+        self.assertEqual(rows[0]["top1_marker_risk"], "warn")
+        self.assertEqual(rows[0]["top1_is_bridge"], "yes")
+        self.assertEqual(rows[0]["top1_has_unresolved_partial"], "yes")
+        self.assertIsInstance(rows[0]["retrieval_elapsed_ms"], float)
         self.assertTrue(rows[0]["retrieval_meta"]["fake"])
+
+    def test_retrieve_for_prompt_profile_override_is_scoped(self):
+        import bench
+        import query
+
+        original_retrieve = bench.retrieve_chunks
+        original_profile = query._retrieval_profile_for_question
+        seen_profiles = []
+
+        def fake_profile(_question):
+            return "original-profile"
+
+        def fake_retrieve(prompt, collection, top_k, *, category, embed_url):
+            seen_profiles.append(query._retrieval_profile_for_question(prompt))
+            return {"metadatas": [[{"guide_id": "GD-123"}]]}, [], {"profile": seen_profiles[-1]}
+
+        query._retrieval_profile_for_question = fake_profile
+        bench.retrieve_chunks = fake_retrieve
+        try:
+            retrieved, meta = self.module.retrieve_for_prompt(
+                "prompt",
+                collection=object(),
+                top_k=8,
+                category=None,
+                embed_url=None,
+                retrieval_profile_override="forced-profile",
+            )
+        finally:
+            bench.retrieve_chunks = original_retrieve
+            restored = query._retrieval_profile_for_question
+            query._retrieval_profile_for_question = original_profile
+
+        self.assertEqual(retrieved, ["GD-123"])
+        self.assertEqual(meta["retrieval_meta"]["profile"], "forced-profile")
+        self.assertEqual(seen_profiles, ["forced-profile"])
+        self.assertIs(restored, fake_profile)
 
 
 if __name__ == "__main__":

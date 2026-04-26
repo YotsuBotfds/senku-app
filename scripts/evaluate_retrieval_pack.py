@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
+import time
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -200,7 +202,21 @@ def summarize_rows(rows: Sequence[Mapping[str, Any]], *, distractor_limit: int =
     owner_slots = sum(int(row.get("expected_owner_count") or 0) for row in expected_rows)
     retrieved_slots = sum(int(row.get("retrieved_count") or 0) for row in expected_rows)
     distractors = Counter()
+    marker_risks = Counter()
+    latencies = []
+    top1_bridge_rows = 0
+    top1_unresolved_partial_rows = 0
     for row in expected_rows:
+        latency = row.get("retrieval_elapsed_ms")
+        if isinstance(latency, (int, float)):
+            latencies.append(float(latency))
+        risk = str(row.get("top1_marker_risk") or "").strip()
+        if risk:
+            marker_risks[risk] += 1
+        if _truthy_marker_value(row.get("top1_is_bridge")):
+            top1_bridge_rows += 1
+        if _truthy_marker_value(row.get("top1_has_unresolved_partial")):
+            top1_unresolved_partial_rows += 1
         for item in row.get("top_distractor_guide_ids") or []:
             if isinstance(item, Mapping):
                 distractors[str(item.get("guide_id") or "")] += int(item.get("count") or 0)
@@ -226,12 +242,32 @@ def summarize_rows(rows: Sequence[Mapping[str, Any]], *, distractor_limit: int =
         ),
         "expected_owner_ranked_rows": len(best_ranks),
         "simple_owner_share": ratio_summary(owner_slots, retrieved_slots),
+        "retrieval_latency_ms": latency_summary(latencies),
+        "top1_marker_risk_counts": dict(marker_risks),
+        "top1_bridge_rows": top1_bridge_rows,
+        "top1_unresolved_partial_rows": top1_unresolved_partial_rows,
         "top_distractor_guide_ids": [
             {"guide_id": guide_id, "count": count}
             for guide_id, count in distractors.most_common(distractor_limit)
             if guide_id
         ],
     }
+
+
+def latency_summary(values: Sequence[float]) -> dict[str, Any]:
+    if not values:
+        return {"count": 0, "mean": None, "p95": None}
+    sorted_values = sorted(values)
+    p95_index = min(len(sorted_values) - 1, max(0, math.ceil(len(sorted_values) * 0.95) - 1))
+    return {
+        "count": len(sorted_values),
+        "mean": round(sum(sorted_values) / len(sorted_values), 3),
+        "p95": round(sorted_values[p95_index], 3),
+    }
+
+
+def _truthy_marker_value(value: Any) -> bool:
+    return str(value or "").strip().lower() in {"1", "true", "yes"}
 
 
 def ratio_summary(numerator: int, denominator: int) -> dict[str, Any]:
@@ -256,17 +292,38 @@ def retrieve_for_prompt(
     top_k: int,
     category: str | None,
     embed_url: str | None,
+    retrieval_profile_override: str | None = None,
 ) -> tuple[list[str], dict[str, Any]]:
     """Run the repository retrieval wrapper without invoking generation."""
     from bench import retrieve_chunks
 
-    results, _sub_queries, retrieval_meta = retrieve_chunks(
-        prompt,
-        collection,
-        top_k,
-        category=category,
-        embed_url=embed_url,
-    )
+    if retrieval_profile_override:
+        import query
+
+        original = query._retrieval_profile_for_question
+
+        def forced_profile(_question: str) -> str:
+            return str(retrieval_profile_override)
+
+        query._retrieval_profile_for_question = forced_profile
+        try:
+            results, _sub_queries, retrieval_meta = retrieve_chunks(
+                prompt,
+                collection,
+                top_k,
+                category=category,
+                embed_url=embed_url,
+            )
+        finally:
+            query._retrieval_profile_for_question = original
+    else:
+        results, _sub_queries, retrieval_meta = retrieve_chunks(
+            prompt,
+            collection,
+            top_k,
+            category=category,
+            embed_url=embed_url,
+        )
     return guide_ids_from_results(results), {
         "retrieval_meta": retrieval_meta,
     }
@@ -287,9 +344,12 @@ def evaluate_pack(
     top_k: int,
     category: str | None = None,
     embed_url: str | None = None,
+    retrieval_profile_override: str | None = None,
+    corpus_marker_lookup: dict[str, dict] | None = None,
     progress: bool = False,
 ) -> list[dict[str, Any]]:
     rows = []
+    corpus_marker_lookup = corpus_marker_lookup or {}
     for index, entry in enumerate(prompt_rows, start=1):
         prompt = str(entry["prompt"])
         expected_ids = list(entry.get("expected_guide_ids") or [])
@@ -308,15 +368,22 @@ def evaluate_pack(
             label = row["prompt_id"] or f"line {row['line_number']}"
             print(f"[{index}/{len(prompt_rows)}] retrieving {label}", file=sys.stderr)
         try:
+            start = time.perf_counter()
             retrieved_ids, meta = retrieve_for_prompt(
                 prompt,
                 collection,
                 top_k=top_k,
                 category=category,
                 embed_url=embed_url,
+                retrieval_profile_override=retrieval_profile_override,
             )
+            row["retrieval_elapsed_ms"] = round((time.perf_counter() - start) * 1000, 3)
             row["top_retrieved_guide_ids"] = retrieved_ids
             row.update(row_metrics(expected_ids, retrieved_ids, top_k=top_k))
+            if corpus_marker_lookup:
+                from scripts.analyze_rag_bench_failures import top1_marker_fields
+
+                row.update(top1_marker_fields(retrieved_ids, corpus_marker_lookup))
             row.update(meta)
         except Exception as exc:  # pragma: no cover - live retrieval failures vary.
             row["top_retrieved_guide_ids"] = []
@@ -336,6 +403,7 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
         f"- top_k: `{config['top_k']}`",
         f"- category: `{config.get('category') or ''}`",
         f"- embed_url: `{config.get('embed_url') or ''}`",
+        f"- retrieval_profile_override: `{config.get('retrieval_profile_override') or ''}`",
         f"- total_prompts: {summary['total_prompts']}",
         f"- expected_owner_rows: {summary['expected_owner_rows']}",
         f"- retrieval_error_rows: {summary['retrieval_error_rows']}",
@@ -347,6 +415,8 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
         f"| expected hit@k | {summary['expected_hit_at_k']['text']} |",
         f"| expected owner best rank | {summary['expected_owner_best_rank']} |",
         f"| simple owner share | {summary['simple_owner_share']['text']} |",
+        f"| retrieval latency mean ms | {summary['retrieval_latency_ms']['mean'] or ''} |",
+        f"| retrieval latency p95 ms | {summary['retrieval_latency_ms']['p95'] or ''} |",
         "",
         "## Top Distractors",
         "",
@@ -409,6 +479,7 @@ def build_payload(
                 "top_k": top_k,
                 "category": category,
                 "embed_url": embed_url,
+                "retrieval_profile_override": None,
                 "generation": "disabled",
             },
             "summary": summarize_rows(rows),
@@ -444,6 +515,17 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-json", type=Path, default=None, help="write JSON report")
     parser.add_argument("--output-md", type=Path, default=None, help="write Markdown report")
     parser.add_argument("--limit", type=int, default=None, help="evaluate only the first N prompts")
+    parser.add_argument(
+        "--retrieval-profile-override",
+        default=None,
+        help="Force one retrieval profile inside this analyzer run only.",
+    )
+    parser.add_argument(
+        "--corpus-marker-scan",
+        type=Path,
+        default=None,
+        help="Optional JSON output from scripts/scan_corpus_markers.py.",
+    )
     parser.add_argument("--progress", action="store_true", help="print progress to stderr")
     return parser.parse_args(argv)
 
@@ -454,12 +536,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.limit is not None:
         prompt_rows = prompt_rows[: args.limit]
     collection = load_collection()
+    corpus_marker_lookup = {}
+    if args.corpus_marker_scan:
+        from scripts.analyze_rag_bench_failures import load_corpus_marker_lookup
+
+        corpus_marker_lookup = load_corpus_marker_lookup(args.corpus_marker_scan)
     rows = evaluate_pack(
         prompt_rows,
         collection=collection,
         top_k=args.top_k,
         category=args.category,
         embed_url=args.embed_url,
+        retrieval_profile_override=args.retrieval_profile_override,
+        corpus_marker_lookup=corpus_marker_lookup,
         progress=args.progress,
     )
     payload = build_payload(
@@ -469,6 +558,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         category=args.category,
         embed_url=args.embed_url,
     )
+    payload["config"]["retrieval_profile_override"] = args.retrieval_profile_override
     markdown = render_markdown(payload)
 
     if args.output_json:
