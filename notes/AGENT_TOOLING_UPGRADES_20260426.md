@@ -37,6 +37,12 @@ self-indexing fix. Current pushed commits:
   local `scripts/run_dependency_security_scan.ps1` lane for `pip-audit`.
   Android Gradle dependency verification remains a documented follow-on and was
   not reopened in this slice.
+- Status update, 2026-04-26 dependency lock slice: root Python dependencies now
+  keep `requirements.txt` as the human-edited top-level input and add
+  `requirements.lock.txt` as a generated Windows CPython 3.13 constraints/lock
+  artifact with hashes. Refresh it with
+  `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\compile_python_lock.ps1`;
+  use `-WhatIf` to print the exact `uv pip compile` invocation without writing.
 - Add dependency locking/scanning prep from the completed tooling scout: create
   a reproducible Python dependency lock path (`uv lock` or equivalent), enable
   Dependabot for Python and GitHub Actions, add a local/CI `pip-audit` or OSV

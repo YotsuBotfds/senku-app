@@ -8,6 +8,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEPENDABOT_PATH = REPO_ROOT / ".github" / "dependabot.yml"
 SCAN_SCRIPT_PATH = REPO_ROOT / "scripts" / "run_dependency_security_scan.ps1"
+LOCK_SCRIPT_PATH = REPO_ROOT / "scripts" / "compile_python_lock.ps1"
 
 
 class DependabotConfigTests(unittest.TestCase):
@@ -66,6 +67,45 @@ class DependencySecurityScanScriptTests(unittest.TestCase):
             (
                 "$tokens=$null; $errors=$null; "
                 f"[System.Management.Automation.Language.Parser]::ParseFile('{SCAN_SCRIPT_PATH}', "
+                "[ref]$tokens, [ref]$errors) > $null; "
+                "if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_.Message }; exit 1 }"
+            ),
+        ]
+        result = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class PythonDependencyLockScriptTests(unittest.TestCase):
+    def test_lock_script_uses_uv_compile_with_windows_python313_defaults(self):
+        content = LOCK_SCRIPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("uv", content)
+        self.assertIn('"pip"', content)
+        self.assertIn('"compile"', content)
+        self.assertIn('$RequirementsPath = "requirements.txt"', content)
+        self.assertIn('$OutputPath = "requirements.lock.txt"', content)
+        self.assertIn('$PythonVersion = "3.13"', content)
+        self.assertIn('$PythonPlatform = "x86_64-pc-windows-msvc"', content)
+        self.assertIn("--generate-hashes", content)
+        self.assertIn("--custom-compile-command", content)
+        self.assertIn(".\\scripts\\compile_python_lock.ps1", content)
+        self.assertIn("[switch]$WhatIf", content)
+
+    def test_lock_script_parses_as_powershell(self):
+        command = [
+            "powershell",
+            "-NoProfile",
+            "-Command",
+            (
+                "$tokens=$null; $errors=$null; "
+                f"[System.Management.Automation.Language.Parser]::ParseFile('{LOCK_SCRIPT_PATH}', "
                 "[ref]$tokens, [ref]$errors) > $null; "
                 "if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Error $_.Message }; exit 1 }"
             ),
