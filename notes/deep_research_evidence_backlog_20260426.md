@@ -1109,6 +1109,15 @@ Validation:
   `tests.test_summarize_latency` cover non-scalar card policy fields,
   malformed bench `results` containers, malformed corpus-marker hit rows,
   malformed mojibake report rows, and non-finite latency values.
+- Read-only tool use now identifies the next active work as EVAL9 retrieval
+  proofing, high-liability metadata/card surfacing, unresolved partial cleanup
+  with safety review, and duplicate-citation behavior in card-backed/runtime
+  rows. `notes/ACTIVE_WORK_TRACKER_20260426.md` records the current execution
+  queue so agents can stop expanding tooling and start applying it.
+- EVAL9 retrieval proofing is current-head green: prompt expectations passed on
+  the `8`-row high-liability compound pack, retrieval-only evaluation at top-k
+  `8` produced expected hit@1 and primary hit@1 on all rows with no retrieval
+  errors, and the retrieval expectation cross-check passed without warnings.
 
 Deferred unless evidenced:
 

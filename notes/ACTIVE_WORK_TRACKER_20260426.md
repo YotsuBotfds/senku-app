@@ -17,6 +17,24 @@ the `Master Head Health` run for that HEAD was green.
    - Do not treat historical proof runs in that file as current HEAD proof
      without checking `git log -1` and `gh run list`.
 
+## Current Tool-Derived Queue
+
+1. EVAL9 retrieval proof path:
+   - Status: current-head retrieval proof complete at `e2dee41`.
+   - `validate_prompt_expectations.py` passed on `artifacts/prompts/adhoc/rag_eval9_high_liability_compound_holdouts_20260426.jsonl` with `8` prompts and `0` warnings.
+   - `evaluate_retrieval_pack.py --top-k 8` produced `8/8` expected hit@1 and `8/8` primary hit@1 with `0` retrieval errors.
+   - Retrieval expectation cross-check passed with `--fail-on-errors --fail-on-warnings`.
+   - No profile comparison needed unless later changes reopen weak EVAL9 rows.
+2. Metadata/card surfacing:
+   - Near-finished card-only blockers: `GD-666`, `GD-298`, `GD-617`, `GD-635`, `GD-732`, `GD-035`, `GD-054`, `GD-492`, `GD-526`, `GD-579`, `GD-602`, `GD-858`, `GD-918`, `GD-636`, `GD-024`.
+   - Broad critical metadata/card gaps start with `GD-037`, `GD-039`, `GD-044`, `GD-045`, `GD-051`, `GD-058`, `GD-059`, `GD-227`, `GD-133`, `GD-152`, `GD-025`, `GD-396`, `GD-584`, and `GD-935`.
+3. Corpus/content hygiene:
+   - `51` unresolved partials remain actionable, with critical/high guides first.
+   - Guide-body edits require safety review and re-ingest before retrieval claims.
+4. Runtime/citation behavior:
+   - Recent bench artifacts show duplicate-citation hotspots in card-backed/runtime rows, especially RE6 cardiac, RE7 young-infant, and EVAL8 compound food/medical cases.
+   - Re-check young-infant and contaminated-creek uncertain-fit rows after routing/card changes.
+
 ## Active Operating Rules
 
 - Protected local planner handoffs matching `notes/PLANNER_HANDOFF*.md` are
