@@ -268,6 +268,9 @@ Action:
   issue in other artifacts.
 - Added retrieval-eval coverage proving prompt-pack primary expected owners are
   applied when a retrieval artifact omits its row-level primary owner fields.
+- Added RAG trend coverage proving top-1 marker risk, bridge, and unresolved
+  partial overlays fall back to row-level diagnostics when summary counts are
+  absent.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

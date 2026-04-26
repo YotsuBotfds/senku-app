@@ -180,6 +180,40 @@ class RAGTrendTests(unittest.TestCase):
         self.assertEqual(rows[0]["top1_bridge"], "1/4 (25.0%)")
         self.assertEqual(rows[0]["top1_unresolved_partial"], "1/4 (25.0%)")
 
+    def test_collect_summaries_falls_back_to_rows_for_top1_marker_overlay(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_marker_rows"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=3)
+            payload["summary"].pop("top1_marker_risk_counts", None)
+            payload["summary"].pop("top1_bridge_rows", None)
+            payload["summary"].pop("top1_unresolved_partial_rows", None)
+            payload["rows"] = [
+                {
+                    "top1_marker_risk": "fail",
+                    "top1_is_bridge": "yes",
+                    "top1_has_unresolved_partial": "no",
+                },
+                {
+                    "top1_marker_risk": "info",
+                    "top1_is_bridge": "no",
+                    "top1_has_unresolved_partial": "yes",
+                },
+                {
+                    "top1_marker_risk": "info",
+                    "top1_is_bridge": "yes",
+                    "top1_has_unresolved_partial": "yes",
+                },
+            ]
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["top1_marker_risk"], "fail:1|info:2")
+        self.assertEqual(rows[0]["top1_bridge"], "2/3 (66.7%)")
+        self.assertEqual(rows[0]["top1_unresolved_partial"], "2/3 (66.7%)")
+
     def test_collect_summaries_includes_expected_owner_metrics_from_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
