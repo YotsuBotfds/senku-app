@@ -244,37 +244,63 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
 
     def test_deterministic_emergency_surface_does_not_change_acceptance_status(self):
-        diagnostics = app_acceptance_diagnostics(
-            {
-                "question": (
-                    "After a generator was moved into an attached garage, two people "
-                    "have headaches and a child is very sleepy. What comes first?"
-                ),
-                "decision_path": "deterministic",
-                "decision_detail": "indoor_combustion_co_exposure",
-                "answer_provenance": "deterministic_rule",
-                "response_text": (
-                    "Get everyone out to fresh air immediately. Call emergency help "
-                    "or poison control now if anyone has headache or unusual sleepiness. [GD-899]"
-                ),
-            },
-            bucket="deterministic_pass",
-            expected_ids=["GD-899"],
-            candidate_ids=["GD-899"],
-            cited_ids=["GD-899"],
-            app_gate_fields={"safety_critical": "False"},
-            answer_card_fields={"answer_card_status": "no_generated_answer"},
-            claim_support_fields={"claim_support_status": "not_applicable_prompt"},
-            generated="no",
-            safety_prompt_detector=lambda _question: False,
-            emergency_contract_detector=lambda answer: "emergency help" in answer,
-        )
+        cases = [
+            (
+                "RE9-SM-001",
+                "indoor_combustion_co_exposure",
+                "GD-899",
+                "Get everyone out to fresh air immediately. Call emergency help now. [GD-899]",
+            ),
+            (
+                "RE9-AN-001",
+                "anaphylaxis_red_zone",
+                "GD-400",
+                "Use epinephrine if available and call emergency services now. [GD-400]",
+            ),
+            (
+                "RE9-PO-001",
+                "child_under_sink_cleaner_ingestion",
+                "GD-898",
+                "Call Poison Control or emergency help now before cleanup tasks. [GD-898]",
+            ),
+            (
+                "RE9-MH-001",
+                "mania_no_sleep_immediate_safety",
+                "GD-859",
+                "Get urgent mental-health or emergency help now; do not let them drive. [GD-859]",
+            ),
+        ]
 
-        self.assertEqual(diagnostics["app_acceptance_status"], "strong_supported")
-        self.assertEqual(diagnostics["evidence_owner_status"], "expected_owner_cited")
-        self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_supported")
-        self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
-        self.assertIn("bucket_deterministic_pass", diagnostics["app_acceptance_reason"])
+        for prompt_id, decision_detail, expected_id, response_text in cases:
+            with self.subTest(prompt_id=prompt_id):
+                diagnostics = app_acceptance_diagnostics(
+                    {
+                        "question": f"{prompt_id} deterministic emergency prompt",
+                        "decision_path": "deterministic",
+                        "decision_detail": decision_detail,
+                        "answer_provenance": "deterministic_rule",
+                        "response_text": response_text,
+                    },
+                    bucket="deterministic_pass",
+                    expected_ids=[expected_id],
+                    candidate_ids=[expected_id],
+                    cited_ids=[expected_id],
+                    app_gate_fields={"safety_critical": "False"},
+                    answer_card_fields={"answer_card_status": "no_generated_answer"},
+                    claim_support_fields={"claim_support_status": "not_applicable_prompt"},
+                    generated="no",
+                    safety_prompt_detector=lambda _question: False,
+                    emergency_contract_detector=lambda answer: "emergency" in answer.lower(),
+                )
+
+                self.assertEqual(diagnostics["app_acceptance_status"], "strong_supported")
+                self.assertEqual(diagnostics["evidence_owner_status"], "expected_owner_cited")
+                self.assertEqual(
+                    diagnostics["safety_surface_status"],
+                    "emergency_first_supported",
+                )
+                self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
+                self.assertIn("bucket_deterministic_pass", diagnostics["app_acceptance_reason"])
 
     def test_app_acceptance_classifies_generated_expected_owner_missing(self):
         diagnostics = app_acceptance_diagnostics(

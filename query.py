@@ -9303,6 +9303,29 @@ def get_deterministic_special_case_overlaps():
     )
 
 
+def _ingest_freshness_preflight_message(freshness, *, allow_stale_ingest=False):
+    """Return query startup freshness action without printing or exiting."""
+    if freshness.status == STALE and not allow_stale_ingest:
+        return (
+            "block",
+            (
+                f"{freshness.message} Run ingest.py --rebuild before querying, "
+                "or pass --allow-stale-ingest for an unsafe diagnostic run."
+            ),
+        )
+    if freshness.status == STALE:
+        return (
+            "warn",
+            f"{freshness.message} Continuing because --allow-stale-ingest was set.",
+        )
+    if freshness.status in (INCOMPLETE_UNTRUSTED, ABSENT_OR_INVALID):
+        return (
+            "warn",
+            f"{freshness.message} Run ingest.py --rebuild to enable strict freshness checks.",
+        )
+    return ("ok", "")
+
+
 def classify_special_case(question):
     """Return the special-case routing labels for a question when applicable."""
     if _is_system_behavior_query(question):
@@ -17317,20 +17340,15 @@ def main():
         sys.exit(1)
 
     freshness = evaluate_ingest_freshness()
-    if freshness.status == STALE and not args.allow_stale_ingest:
-        console.print(
-            f"[red]{freshness.message} Run ingest.py --rebuild before querying, "
-            "or pass --allow-stale-ingest for an unsafe diagnostic run.[/red]"
-        )
+    freshness_action, freshness_message = _ingest_freshness_preflight_message(
+        freshness,
+        allow_stale_ingest=args.allow_stale_ingest,
+    )
+    if freshness_action == "block":
+        console.print(f"[red]{freshness_message}[/red]")
         sys.exit(1)
-    if freshness.status == STALE:
-        console.print(
-            f"[yellow]{freshness.message} Continuing because --allow-stale-ingest was set.[/yellow]"
-        )
-    elif freshness.status in (INCOMPLETE_UNTRUSTED, ABSENT_OR_INVALID):
-        console.print(
-            f"[yellow]{freshness.message} Run ingest.py --rebuild to enable strict freshness checks.[/yellow]"
-        )
+    if freshness_action == "warn":
+        console.print(f"[yellow]{freshness_message}[/yellow]")
 
     console.print(
         Panel(

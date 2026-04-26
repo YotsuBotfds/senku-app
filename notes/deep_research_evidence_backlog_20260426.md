@@ -99,6 +99,10 @@ Action:
   `tests.test_ingest_freshness.test_deleted_guide_leaves_blocking_extra_manifest_key`
   proves an extra manifest key from a removed guide is also blocking stale
   state, matching the incremental-ingest planner's rebuild-required policy.
+- Added query-level preflight coverage:
+  `tests.test_query_ingest_freshness` pins the startup policy directly:
+  trusted stale manifests block unless `--allow-stale-ingest` is set, while
+  `incomplete_untrusted` and `absent_or_invalid` warn without blocking.
 
 Validation:
 
@@ -178,7 +182,9 @@ Action:
   explicit emergency-first text can now surface `emergency_first_supported`
   and `ui_surface_bucket=emergency_first` without changing the acceptance
   status. The unit proof uses the `RE9-SM-001` carbon-monoxide/storm pattern
-  and keeps `app_acceptance_status=strong_supported`.
+  and keeps `app_acceptance_status=strong_supported`. Follow-up table coverage
+  applies the same acceptance/taxonomy split to `RE9-AN-001`, `RE9-PO-001`,
+  and `RE9-MH-001`.
 
 Validation:
 

@@ -5,6 +5,21 @@ artifacts are retained for a bounded period.
 
 ## Current Green Head
 
+- Head: `88564b1` (`cover deleted guide ingest freshness`)
+- Non-Android Regression Gate: run `24958570887`
+- Result: success
+- URL: `https://github.com/YotsuBotfds/senku-app/actions/runs/24958570887`
+- Mode: `Generated`
+- Label: `github_88564b1_generated_fixture_current_head_20260426`
+- Speed proof: `Cache FastEmbed model files` and `Cache retrieval index` were
+  both skipped; generated analyzer/regression gate completed green.
+- Security companion: no `Actions Security Lint` run was expected for
+  `c7c9270`, `0624765`, or `88564b1` because those pushes did not touch
+  `.github/workflows/**` or `.github/CODEOWNERS`; the latest applicable
+  security lint remains `379181a` / run `24958384160`, which passed.
+
+## Previous Green Head
+
 - Head: `c7c9270` (`add freshness and overlap backlog proofs`)
 - Non-Android Regression Gate: run `24958459769`
 - Result: success
