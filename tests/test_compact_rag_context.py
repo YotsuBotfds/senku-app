@@ -61,6 +61,8 @@ class CompactRagContextTests(unittest.TestCase):
                     "suspected_failure_bucket": "artifact_error",
                     "app_acceptance_status": "needs_evidence_owner",
                     "app_acceptance_root_cause": "evidence_owner",
+                    "safety_surface_status": "needs_review|unsafe",
+                    "ui_surface_bucket": "emergency_first",
                     "answer_card_status": "no_cards",
                     "claim_support_status": "no_generated_answer",
                     "evidence_nugget_status": "no_cards",
@@ -80,6 +82,8 @@ class CompactRagContextTests(unittest.TestCase):
                     "suspected_failure_bucket": "expected_supported",
                     "app_acceptance_status": "moderate_supported",
                     "app_acceptance_root_cause": "supported",
+                    "safety_surface_status": "not_safety_critical",
+                    "ui_surface_bucket": "standard",
                     "answer_card_status": "no_cards",
                     "claim_support_status": "no_cards",
                     "evidence_nugget_status": "no_cards",
@@ -97,6 +101,8 @@ class CompactRagContextTests(unittest.TestCase):
                     "suspected_failure_bucket": "retrieval_miss",
                     "app_acceptance_status": "needs_evidence_owner",
                     "app_acceptance_root_cause": "evidence_owner",
+                    "safety_surface_status": "emergency_first_supported",
+                    "ui_surface_bucket": "emergency_first",
                     "answer_card_status": "no_cards",
                     "claim_support_status": "no_cards",
                     "evidence_nugget_status": "no_cards",
@@ -123,8 +129,18 @@ class CompactRagContextTests(unittest.TestCase):
         self.assertIn("- Top-1 unresolved-partial rows: `1`", markdown)
         self.assertIn("- App acceptance: `moderate_supported`: 1, `needs_evidence_owner`: 2", markdown)
         self.assertIn("- App acceptance root causes: `evidence_owner`: 2, `supported`: 1", markdown)
-        self.assertIn("| 1 | P-001 | artifact_error |", markdown)
-        self.assertIn("| 3 | P-003 | retrieval_miss |", markdown)
+        self.assertIn(
+            "| idx | id | bucket | app | app_acceptance_root_cause | safety_surface_status | ui_surface_bucket |",
+            markdown,
+        )
+        self.assertIn(
+            "| 1 | P-001 | artifact_error | needs_evidence_owner | evidence_owner | needs_review\\|unsafe | emergency_first |",
+            markdown,
+        )
+        self.assertIn(
+            "| 3 | P-003 | retrieval_miss | needs_evidence_owner | evidence_owner | emergency_first_supported | emergency_first |",
+            markdown,
+        )
         self.assertNotIn("| 2 | P-002 | expected_supported |", markdown)
         self.assertIn("A bad row with a long...", markdown)
 

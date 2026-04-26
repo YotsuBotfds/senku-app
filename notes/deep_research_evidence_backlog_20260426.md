@@ -319,6 +319,11 @@ Action:
 - Extended trace redaction to plural raw prompt/question fields (`prompts`,
   `questions`) while preserving safe metadata suffixes like ids, hash, index,
   and count.
+- Added bounded no-FastEmbed compact diagnostics display coverage: the
+  Bad/Interesting Rows table now surfaces row-level
+  `app_acceptance_root_cause`, `safety_surface_status`, and
+  `ui_surface_bucket` without changing retrieval, FastEmbed, or acceptance
+  behavior.
 
 Validation:
 
@@ -334,6 +339,8 @@ Validation:
 - Compact RAG diagnostics summary tests now cover
   `reviewed_card_runtime_unknown` from summary-level artifact counts and
   fallback from row-level runtime-answer status.
+- Compact RAG diagnostics row-table tests now cover the new acceptance root
+  cause, safety surface, and UI surface columns, including Markdown escaping.
 
 Deferred unless evidenced:
 

@@ -174,8 +174,8 @@ def render_markdown(
         "",
         "## Bad/Interesting Rows",
         "",
-        "| idx | id | bucket | app | card | claim | evidence | expected | top retrieved | markers | text |",
-        "| ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| idx | id | bucket | app | app_acceptance_root_cause | safety_surface_status | ui_surface_bucket | card | claim | evidence | expected | top retrieved | markers | text |",
+        "| ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
 
     for row in selected_rows:
@@ -200,6 +200,9 @@ def render_markdown(
                     row.get("prompt_id", ""),
                     row.get("suspected_failure_bucket", ""),
                     row.get("app_acceptance_status", ""),
+                    row.get("app_acceptance_root_cause", ""),
+                    row.get("safety_surface_status", ""),
+                    row.get("ui_surface_bucket", ""),
                     row.get("answer_card_status", ""),
                     row.get("claim_support_status", ""),
                     row.get("evidence_nugget_status", ""),
