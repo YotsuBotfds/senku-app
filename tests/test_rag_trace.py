@@ -215,6 +215,25 @@ class RAGTraceTests(unittest.TestCase):
         self.assertEqual(attrs["safe"], True)
         self.assertIn("'", attrs["tags"])
 
+    def test_sanitize_attributes_redacts_plural_prompt_question_fields(self):
+        attrs = sanitize_attributes(
+            {
+                "prompts": ["raw prompt one", "raw prompt two"],
+                "questions": ["raw question"],
+                "prompt_ids": ["P-1"],
+                "question_hash": "safe-hash",
+                "prompt_index": 3,
+                "prompt_count": 2,
+            }
+        )
+
+        self.assertEqual(attrs["prompts"], "[redacted]")
+        self.assertEqual(attrs["questions"], "[redacted]")
+        self.assertEqual(attrs["prompt_ids"], ["P-1"])
+        self.assertEqual(attrs["question_hash"], "safe-hash")
+        self.assertEqual(attrs["prompt_index"], 3)
+        self.assertEqual(attrs["prompt_count"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

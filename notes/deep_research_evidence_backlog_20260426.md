@@ -284,6 +284,9 @@ Action:
 - Surfaced reviewed-card runtime visibility in RAG diagnostics summaries:
   runtime-enabled and runtime-disabled artifact counts now appear in compact
   Markdown/JSON summary rows.
+- Extended trace redaction to plural raw prompt/question fields (`prompts`,
+  `questions`) while preserving safe metadata suffixes like ids, hash, index,
+  and count.
 
 Validation:
 

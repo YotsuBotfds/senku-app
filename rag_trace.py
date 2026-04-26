@@ -284,9 +284,9 @@ def _is_sensitive_key(key: str) -> bool:
     )
     parts = [part for part in normalized.split("_") if part]
     safe_suffixes = {"id", "ids", "index", "hash", "count"}
-    if "question" in parts:
+    if any(part in {"question", "questions"} for part in parts):
         return parts[-1] not in safe_suffixes
-    if "prompt" in parts:
+    if any(part in {"prompt", "prompts"} for part in parts):
         return parts[-1] not in safe_suffixes
     return False
 
