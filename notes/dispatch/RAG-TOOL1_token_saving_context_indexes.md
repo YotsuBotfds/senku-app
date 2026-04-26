@@ -33,53 +33,45 @@ healthy for the partial/router pack, while agents are still spending too much
 context stitching together related diagnostic runs and separating citation
 owner misses from retrieval misses.
 
-Actionable order:
+Actionable order, now mostly landed:
 
-1. **Close the current eval-pack owner-citation misses first.**
-   Continue source-local packaging for rank-1 retrieved owners that are still
-   not cited. After the `GD-648` minimum-operations slice, the remaining
-   generation/citation misses are `GD-024`, `GD-052`, and `GD-646`. Gate each
-   guide change with forced incremental ingest and a held-out pack rerun.
+1. **Eval-pack owner/citation closure - landed.**
+   The partial/router held-out pack now has `19` expected-supported rows,
+   `2` accepted clarify rows, and `0` retrieval/ranking/generation/artifact
+   misses after source packaging plus the `GD-397` expectation cleanup.
 
-2. **Add RAG experiment lineage reporting.**
-   Build `scripts/rag_experiment_lineage.py` to auto-discover related
-   `*_diag` directories by stem, sort runs, join each diagnostic directory to
-   its bench JSON/config, and emit run-level deltas plus per-prompt bucket and
-   citation-owner transitions. This is the highest-leverage token saver after
-   the active eval-pack closure because it replaces manual comparison across
-   many variant artifacts.
+2. **RAG experiment lineage reporting - landed.**
+   `scripts/rag_experiment_lineage.py` discovers related diagnostics and shows
+   the full-pack progression through `gd397_expectation_cleanup`.
 
-3. **Add a retrieval-only evaluator.**
-   Build a generation-free prompt-pack evaluator for hit@1, hit@3, hit@k,
-   MRR/NDCG-style owner rank, owner share, top distractors, and marker overlay.
-   Use it for rerank/index experiments before spending generation cycles.
+3. **Retrieval-only evaluator - landed.**
+   `scripts/evaluate_retrieval_pack.py` gives generation-free owner hit/rank
+   checks before spending local generation cycles.
 
-4. **Add a regression gate around RAG trends.**
-   Extend `rag_trend.py` or add a thin `rag_gate.py` so a candidate diagnostic
-   run can be compared against a baseline and fail on configured regressions.
-   This should catch cases like the reverted primary-source-label experiment
-   before a later note treats the latest run as an improvement.
+4. **RAG regression gate - landed.**
+   `scripts/rag_regression_gate.py` compares diagnostics and can fail on
+   configured count/rate regressions.
 
-5. **Move hardcoded owner-hint rerank rules toward data.**
-   Replace or supplement narrow `query.py` owner hints with guide frontmatter
-   or a small manifest once the current held-out pack is stable. Keep gates
-   strict so data-driven weights do not become broad catchalls.
+5. **Data-backed owner-hint rerank rules - landed.**
+   The narrow partial/router owner hints now live in
+   `data/rag_owner_rerank_hints.json` with strict marker-group matching.
 
-6. **Make touched-file quality gates delta-based.**
-   Extend marker/mojibake tooling so it can fail only on new or touched-file
-   damage. The current corpus baselines are intentionally noisy, so broad
-   fail-the-world gates would slow every guide patch.
+6. **Touched-file quality gates - landed for mojibake.**
+   `scripts/scan_mojibake.py --touched` can scan only changed text files and
+   fail only on non-allowlisted findings.
 
-7. **Add report-only artifact retention/storage tooling.**
-   Add a dry-run storage reporter/retention planner that summarizes large
-   artifact families, duplicate basename families, and generated-directory
-   candidates while preserving files referenced by dispatch notes and run
-   manifests.
+7. **Report-only artifact retention/storage tooling - landed.**
+   `scripts/summarize_artifact_storage.py` summarizes storage, and
+   `scripts/plan_artifact_retention.py` builds protected dry-run retention
+   plans.
 
-8. **Enrich run manifests automatically.**
-   Auto-derive changed files from git status/diff stat when
-   `write_run_manifest.py` callers omit explicit changed-file arguments. This
-   makes startup snapshots and future lineage reports more trustworthy.
+8. **Run manifest auto-enrichment - landed.**
+   `scripts/write_run_manifest.py` now captures capped git state and artifact
+   path context when explicit fields are omitted.
+
+9. **Prompt expectation validator - landed.**
+   `scripts/validate_prompt_expectations.py` catches structural prompt-pack
+   expectation drift and can cross-check retrieval-only eval outputs.
 
 Non-goal for this queue: do not reopen high-liability card families that now
 show `0/0` frontmatter/card gaps unless a fresh behavior panel exposes a real
