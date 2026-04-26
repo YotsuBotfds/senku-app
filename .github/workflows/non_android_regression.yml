@@ -263,6 +263,10 @@ jobs:
             } elseif ($selectedGuides.Count -gt 0) {
               Write-Host "Retrieval index cache miss; rebuilding compact scoped CI retrieval db."
               python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 1 --files @selectedGuides
+              if ($args -notcontains '-AllowRetrievalWarnings') {
+                Write-Host "Compact cache-miss smoke index: allowing retrieval warnings for this run."
+                $args += '-AllowRetrievalWarnings'
+              }
             } else {
               Write-Host "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild."
             }
