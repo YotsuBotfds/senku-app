@@ -257,6 +257,9 @@ Action:
   artifact comparison engine.
 - Tightened the `Master Head Health` workflow contract test around generated
   fixture inputs, head-health label shape, and compact retrieval-index flavor.
+- Surfaced missing artifact path names in run-manifest summaries, capped through
+  the existing compact-list rendering, so stale proof artifacts are identifiable
+  without opening raw JSONL records.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

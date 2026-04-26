@@ -108,6 +108,31 @@ class SummarizeRunManifestTests(unittest.TestCase):
 
         self.assertIn("paths=0; missing=2", markdown)
 
+    def test_artifact_health_lists_missing_artifact_paths_when_available(self):
+        records = [
+            {
+                "task": "missing-proof",
+                "lane": "tooling",
+                "label": "artifact-health",
+                "artifact_path_count": 4,
+                "artifact_path_missing_count": 3,
+                "artifact_path_missing": [
+                    "artifacts/bench/missing-a/report.md",
+                    "artifacts/bench/missing-b/report.md",
+                    "artifacts/bench/missing-c/report.md",
+                ],
+            }
+        ]
+
+        markdown = render_markdown(records)
+
+        self.assertIn("paths=4; missing=3; missing_paths=", markdown)
+        self.assertIn(
+            "artifacts/bench/missing-a/report.md<br>artifacts/bench/missing-b/report.md (+1)",
+            markdown,
+        )
+        self.assertNotIn("missing-c/report.md", markdown)
+
     def test_cli_writes_output_and_prints_stdout(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

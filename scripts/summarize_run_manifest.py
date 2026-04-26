@@ -134,6 +134,9 @@ def _artifact_health(record: dict[str, Any]) -> str:
         truncated = record.get("artifact_path_truncated", False)
 
         parts = [f"paths={artifact_count}", f"missing={missing_count}"]
+        missing_paths = _compact_list(record.get("artifact_path_missing"))
+        if missing_paths != "-":
+            parts.append(f"missing_paths={missing_paths}")
         if truncated:
             parts.append("truncated")
     else:
