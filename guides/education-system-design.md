@@ -86,7 +86,7 @@ Education is the mechanism by which communities preserve knowledge, transmit ski
 
 ## Scope Boundary
 
-This guide covers **education system structure, curriculum, teacher training, assessment, scheduling, and funding**. It does not cover physical building accessibility (ramps, doorway widths, grab bars, flooring) or room-layout dimensions â€” those belong in `accessible-shelter-design`. It does not cover teaching methods, phonics instruction, or classroom discipline â€” those belong in `education-teaching` and `education-teaching-methods`.
+This guide covers **education system structure, curriculum, teacher training, assessment, scheduling, and funding**. It does not cover physical building accessibility (ramps, doorway widths, grab bars, flooring) or room-layout dimensions — those belong in `accessible-shelter-design`. It does not cover teaching methods, phonics instruction, or classroom discipline — those belong in `education-teaching` and `education-teaching-methods`.
 
 - Symptom: *need to build or modify a physical space so someone can enter or move through it* -> route to `accessible-shelter-design` first
 - Symptom: *need to change accessible entrance clearances, doorway width, thresholds, turning space, or circulation paths* -> route to `accessible-shelter-design` first
@@ -143,7 +143,7 @@ Formal education addresses this by:
 
 **Preservation**: Documented curriculum can be replicated across communities and time, reducing dependence on single experts.
 
-**Critical thinking**: Beyond rote knowledge transmission, formal education teaches problem-solving, questioning, and adaptationâ€”essential for communities facing new challenges.
+**Critical thinking**: Beyond rote knowledge transmission, formal education teaches problem-solving, questioning, and adaptation—essential for communities facing new challenges.
 
 **Specialization pathways**: Formal schooling enables identification and training of people suited for advanced roles (medicine, craft, governance) through structured assessment.
 
@@ -153,7 +153,7 @@ Formal education addresses this by:
 Communities sometimes view education as luxury (expenditure when resources could go to food/defense). Evidence from history contradicts this:
 
 - Literate communities are more efficient (written records reduce disputes, enable specialization).
-- Educated farmers adopt innovations (crop rotation, tool optimization) 20â€“30% faster than untrained ones.
+- Educated farmers adopt innovations (crop rotation, tool optimization) 20–30% faster than untrained ones.
 - Trained craftspeople produce higher-value goods.
 - Education is compounding: an educated generation produces more goods and resources, enabling more education for the next.
 
@@ -191,7 +191,7 @@ The hardest goal, but essential. Students must learn to:
 Avoid rote memorization culture. Even in resource-constrained contexts, emphasize understanding over regurgitation.
 
 **Blended Approach**
-Integrate practical + academic + critical thinking in each lesson. Example arithmetic lesson: "We harvested 450 kg grain (weighing and recording). We need 0.5 kg/person/day for 80 people. Calculate how many days our supply lasts. If we eat less (0.4 kg/day), how much longer? What if we plant twice as much next yearâ€”how much surplus could we store?" This teaches math, nutrition, planning, and decision-making simultaneously.
+Integrate practical + academic + critical thinking in each lesson. Example arithmetic lesson: "We harvested 450 kg grain (weighing and recording). We need 0.5 kg/person/day for 80 people. Calculate how many days our supply lasts. If we eat less (0.4 kg/day), how much longer? What if we plant twice as much next year—how much surplus could we store?" This teaches math, nutrition, planning, and decision-making simultaneously.
 
 :::tip
 **Pedagogy for Low-Literate Communities**
@@ -214,9 +214,9 @@ Example: Teaching "how to preserve food" via oral story (narrative of someone pr
 
 Effective education sequences skill-building from foundational to advanced. Use these age-based tiers.
 
-**Ages 5â€“8: Foundational Literacy, Numeracy, and Health**
+**Ages 5–8: Foundational Literacy, Numeracy, and Health**
 
-**Literacy Goals**: Recognize letters; sound out simple words; read 50â€“100 high-frequency words by sight; write own name; begin copying short sentences.
+**Literacy Goals**: Recognize letters; sound out simple words; read 50–100 high-frequency words by sight; write own name; begin copying short sentences.
 
 *Content*: Letter recognition; phonetic decoding; sight words (the, and, I, to, is); simple sentences using phonetically regular words; copying practice.
 
@@ -238,7 +238,7 @@ Effective education sequences skill-building from foundational to advanced. Use 
 
 *Content*: Running games; climbing; jumping; rhythm/dance; carrying objects; swimming (where applicable).
 
-**Ages 8â€“12: Expanded Literacy, Applied Numeracy, and Skill Specialization**
+**Ages 8–12: Expanded Literacy, Applied Numeracy, and Skill Specialization**
 
 **Literacy Goals**: Read with fluency and comprehension; write simple paragraphs; spell correctly; understand word categories (verbs, nouns, adjectives).
 
@@ -248,7 +248,7 @@ Effective education sequences skill-building from foundational to advanced. Use 
 
 **Numeracy Goals**: Addition/subtraction to 100; multiplication and division concepts; fractions (1/2, 1/4); measurement (length, weight, volume); money/barter equivalents.
 
-*Content*: Multiplication drills (times tables to 10Ã—10); division as inverse; fraction identification (cutting pies, dividing goods); measuring for practical tasks (cooking, building); keeping trade records (barter ledger).
+*Content*: Multiplication drills (times tables to 10×10); division as inverse; fraction identification (cutting pies, dividing goods); measuring for practical tasks (cooking, building); keeping trade records (barter ledger).
 
 *Materials*: Objects for practicing arithmetic; scales for weighing; measuring cups and rulers; ledgers for recording transactions.
 
@@ -270,9 +270,9 @@ Effective education sequences skill-building from foundational to advanced. Use 
 
 *Materials*: Wood scraps; hand tools; fiber (wool, flax); clay; rope; tools to maintain.
 
-**Age 8â€“12 typically begins apprenticeship in a trade of interest. By age 10â€“12, some students transition to formal apprenticeship while continuing schooling 2â€“3 days/week.**
+**Age 8–12 typically begins apprenticeship in a trade of interest. By age 10–12, some students transition to formal apprenticeship while continuing schooling 2–3 days/week.**
 
-**Ages 12â€“16: Specialization, Advanced Skills, and Civic Education**
+**Ages 12–16: Specialization, Advanced Skills, and Civic Education**
 
 **Literacy Goals**: Advanced reading and writing; critical analysis; document interpretation; record-keeping.
 
@@ -312,29 +312,29 @@ Effective education sequences skill-building from foundational to advanced. Use 
 
 <section id="mixed-age-teaching">
 
-In small communities, you cannot afford separate classrooms for each age. One teacher may have ages 5â€“12 in the same space. Manage this using mixed-age pedagogy.
+In small communities, you cannot afford separate classrooms for each age. One teacher may have ages 5–12 in the same space. Manage this using mixed-age pedagogy.
 
 **Multigrade Classroom Structure**
 
 Divide the school day into blocks by type of activity:
 
-**Whole-class block (30â€“45 min)**: Teacher leads all ages. Content: stories, demonstrations, shared learning. Example: "Today we're learning about how plants grow," teacher plants seeds with all students watching, using age-appropriate language.
+**Whole-class block (30–45 min)**: Teacher leads all ages. Content: stories, demonstrations, shared learning. Example: "Today we're learning about how plants grow," teacher plants seeds with all students watching, using age-appropriate language.
 
 **Small-group rotation (90 min)**: Class divides into 3 age groups; each rotates through activities. While one group works with teacher, others work independently or with an older student mentor.
 
 Example rotation:
 
-| Time | Group 1 (5â€“7) | Group 2 (8â€“10) | Group 3 (11â€“14) |
+| Time | Group 1 (5–7) | Group 2 (8–10) | Group 3 (11–14) |
 |------|---|---|---|
-| 9:00â€“9:30 | Teacher: letter recognition | Independent: copying practice | Older student: math drills |
-| 9:30â€“10:00 | Independent: drawing/handwriting | Older student: arithmetic | Teacher: reading comprehension |
-| 10:00â€“10:30 | Older student: games/movement | Teacher: science observation | Independent: written assignment |
+| 9:00–9:30 | Teacher: letter recognition | Independent: copying practice | Older student: math drills |
+| 9:30–10:00 | Independent: drawing/handwriting | Older student: arithmetic | Teacher: reading comprehension |
+| 10:00–10:30 | Older student: games/movement | Teacher: science observation | Independent: written assignment |
 
 **Practical activity block (60 min)**: All ages work on practical task (gardening, food preservation, craft) with teacher and older students coaching younger. Natural differentiation: younger do simpler tasks (pulling weeds), older do complex tasks (soil preparation, tool selection).
 
 **Peer Teaching & Mentorship**
 
-Older students (ages 11â€“14) who have mastered content become "student teachers" for younger groups. This reinforces their learning and provides supervision while teacher works with another group.
+Older students (ages 11–14) who have mastered content become "student teachers" for younger groups. This reinforces their learning and provides supervision while teacher works with another group.
 
 *Mentor roles*:
 - Supervise younger group during seatwork (check they understand, redirect if off-task).
@@ -355,22 +355,22 @@ Older students (ages 11â€“14) who have mastered content become "student tea
 :::tip
 **Managing a 40-person Mixed-Age School (1 teacher, 2 assistants)**
 
-Assume: ages 5â€“14, 40 students total, 1 full-time teacher, 2 part-time assistants (mornings only).
+Assume: ages 5–14, 40 students total, 1 full-time teacher, 2 part-time assistants (mornings only).
 
 **Schedule**:
-- 8:00â€“8:45: Whole-group gathering (stories, songs, announcements; teacher).
-- 8:45â€“10:15: Rotations (3 groups, 30 min each):
-  - Group A (ages 5â€“7, ~12 students): Assistant 1 leads literacy/games.
-  - Group B (ages 8â€“10, ~15 students): Teacher leads science/math.
-  - Group C (ages 11â€“14, ~13 students): Assistant 2 leads reading comprehension + assignment review; mentors from this group assist younger groups.
-- 10:15â€“10:45: Break (water, food, outdoor play).
-- 10:45â€“12:00: Practical activity (all mixed ages; gardening, preservation, craft; teacher + assistants circulate coaching).
-- 12:00â€“13:00: Lunch + outdoor time.
-- 13:00â€“14:30: Continuation of morning work OR specialized tracks (ages 11â€“14 do additional math/scholarship track; younger continue foundational skills).
-- 14:30â€“15:00: Community time (assembly, announcements, storytelling, song).
+- 8:00–8:45: Whole-group gathering (stories, songs, announcements; teacher).
+- 8:45–10:15: Rotations (3 groups, 30 min each):
+  - Group A (ages 5–7, ~12 students): Assistant 1 leads literacy/games.
+  - Group B (ages 8–10, ~15 students): Teacher leads science/math.
+  - Group C (ages 11–14, ~13 students): Assistant 2 leads reading comprehension + assignment review; mentors from this group assist younger groups.
+- 10:15–10:45: Break (water, food, outdoor play).
+- 10:45–12:00: Practical activity (all mixed ages; gardening, preservation, craft; teacher + assistants circulate coaching).
+- 12:00–13:00: Lunch + outdoor time.
+- 13:00–14:30: Continuation of morning work OR specialized tracks (ages 11–14 do additional math/scholarship track; younger continue foundational skills).
+- 14:30–15:00: Community time (assembly, announcements, storytelling, song).
 - 15:00: Dismissal.
 
-**Cost**: 1 full-time teacher (paid in labor credits, goods, or status), 2 part-time assistants (community service or older youth fulfilling education requirement). Estimated 400â€“500 day-labor equivalent/year for pay, plus materials (slate boards, seeds, tools).
+**Cost**: 1 full-time teacher (paid in labor credits, goods, or status), 2 part-time assistants (community service or older youth fulfilling education requirement). Estimated 400–500 day-labor equivalent/year for pay, plus materials (slate boards, seeds, tools).
 
 This is lower than pre-collapse schooling cost (~$10k/student/year in money) and sustainable for small communities.
 :::
@@ -449,8 +449,8 @@ Without printing, prioritize creating copies of the most essential texts:
 
 1. **Alphabet & phonetics** (single page, carved or written large on board; every student memorizes).
 2. **Arithmetic facts** (tables, posted on wall; students drill until memorized).
-3. **Core curriculum** (recipes, agricultural techniques, medical basics, lawsâ€”copied by hand from originals; create multiple copies, store in library).
-4. **Student-created works** (collections of student writing, diagrams, solutionsâ€”create as reference for future students).
+3. **Core curriculum** (recipes, agricultural techniques, medical basics, laws—copied by hand from originals; create multiple copies, store in library).
+4. **Student-created works** (collections of student writing, diagrams, solutions—create as reference for future students).
 
 Invest the effort in handcopying the top 10 texts essential to your community (agricultural guide, health guide, laws, history, moral teachings). This forms the core curriculum library. All other content is taught orally or via demonstration.
 :::
@@ -480,13 +480,13 @@ Train a small number of master teachers, who then train other teachers. This sca
 
 **Level 0 (Master Teacher)**: One person with deepest expertise in pedagogy/curriculum. Recruited from outside community (if possible) or trained extensively if internal. Responsible for training all Level 1 teachers.
 
-**Level 1 (School Teachers)**: 3â€“5 people trained by master teacher. Each teaches a school (or co-teaches if school is large). Level 1 teachers begin training Level 2 teachers.
+**Level 1 (School Teachers)**: 3–5 people trained by master teacher. Each teaches a school (or co-teaches if school is large). Level 1 teachers begin training Level 2 teachers.
 
-**Level 2 (Assistant Teachers)**: 10â€“15 people trained by Level 1 teachers. Assist in classrooms, supervise groups, begin taking lead on some lessons.
+**Level 2 (Assistant Teachers)**: 10–15 people trained by Level 1 teachers. Assist in classrooms, supervise groups, begin taking lead on some lessons.
 
 **Cascade Timeline**:
 - Year 1: Master teacher arrives/is trained. Trains 3 Level 1 teachers intensively (9 months).
-- Year 2: Level 1 teachers each train 3â€“4 Level 2 teachers (part-time, 6 months).
+- Year 2: Level 1 teachers each train 3–4 Level 2 teachers (part-time, 6 months).
 - Year 3: Schools are staffed and functioning; Level 1 teachers continue training replacements as needed.
 
 **Master Teacher Responsibilities**
@@ -550,7 +550,7 @@ At end of school year, students demonstrate competency:
 
 **Character performance**: Teacher notes: does student listen, try hard, help others, persist when confused?
 
-**Outcome recording**: After assessment, teacher writes one-line summary in ledger: "Sarah, age 8, reads with fluency; understands simple stories; does addition to 20; strong in practical skills. Recommended for advancement to age 9â€“10 group." Or: "James, age 10, reads slowly and needs support; strong in arithmetic; needs continued literacy focus; recommend repeating reading drills with peer mentor."
+**Outcome recording**: After assessment, teacher writes one-line summary in ledger: "Sarah, age 8, reads with fluency; understands simple stories; does addition to 20; strong in practical skills. Recommended for advancement to age 9–10 group." Or: "James, age 10, reads slowly and needs support; strong in arithmetic; needs continued literacy focus; recommend repeating reading drills with peer mentor."
 
 **Advancement decision**: At end of year, students advance to next age group if they show readiness. Some students may stay in same group for another year (not "held back" in shame; framed as "getting extra time to solidify foundations"). Advancement is based on demonstrated competency, not completion of time.
 
@@ -575,21 +575,21 @@ Schools cannot demand constant attendance if community depends on seasonal labor
 
 **Seasonal Schedule**
 
-**Planting season (spring, 8â€“10 weeks)**: School reduces to 3 days/week (Mon, Wed, Fri). Focus on practical work: preparing soil, planting, field maintenance. Older students (12+) do heavy planting labor; younger students attend school or light tasks.
+**Planting season (spring, 8–10 weeks)**: School reduces to 3 days/week (Mon, Wed, Fri). Focus on practical work: preparing soil, planting, field maintenance. Older students (12+) do heavy planting labor; younger students attend school or light tasks.
 
-**Growing season (early summer, 6â€“8 weeks)**: School is 5 days/week. Work requirements are low (minimal weeding, watering); students attend full-time. This is intensive academic season.
+**Growing season (early summer, 6–8 weeks)**: School is 5 days/week. Work requirements are low (minimal weeding, watering); students attend full-time. This is intensive academic season.
 
-**Harvest season (late summer/fall, 8â€“12 weeks)**: School reduces to 2â€“3 days/week. Students do harvest labor (picking, processing, preservation). Harvest work is community priority; school accommodates.
+**Harvest season (late summer/fall, 8–12 weeks)**: School reduces to 2–3 days/week. Students do harvest labor (picking, processing, preservation). Harvest work is community priority; school accommodates.
 
-**Winter (13â€“17 weeks)**: School is 5 days/week, 6 hours/day. This is primary academic season. Work requirements are low (maintenance, indoor tasks).
+**Winter (13–17 weeks)**: School is 5 days/week, 6 hours/day. This is primary academic season. Work requirements are low (maintenance, indoor tasks).
 
 **Total school days/year**: ~160 days (vs. ~180 in pre-collapse; slightly less, but concentrated in seasons when intensive learning is feasible).
 
 **Mandatory vs. Optional Attendance**
 
-**Ages 5â€“12**: Mandatory school attendance. Parents who do not send children to school face community pressure (poor reputation, reduced access to shared resources).
+**Ages 5–12**: Mandatory school attendance. Parents who do not send children to school face community pressure (poor reputation, reduced access to shared resources).
 
-**Ages 13â€“16**: Flexible attendance. Students are transitioning to adult work and apprenticeship. Attend school 2â€“3 days/week while learning trade. Optional advanced tracks (scholarship, governance) are part-time (afternoon sessions).
+**Ages 13–16**: Flexible attendance. Students are transitioning to adult work and apprenticeship. Attend school 2–3 days/week while learning trade. Optional advanced tracks (scholarship, governance) are part-time (afternoon sessions).
 
 **Rationale**: By age 13, basic literacy and numeracy should be established. Continued learning is increasingly through apprenticeship and practical experience. Part-time school allows specialization while maintaining literacy/numeracy.
 
@@ -631,17 +631,17 @@ Not everyone has access to school. Offer adult literacy to older community membe
 
 **Adult Literacy Program**
 
-**Schedule**: Evenings (after work) or weekends. 1â€“2 hours, 2â€“3 days/week. Community gathers at schoolhouse.
+**Schedule**: Evenings (after work) or weekends. 1–2 hours, 2–3 days/week. Community gathers at schoolhouse.
 
 **Content**: Same foundational literacy/numeracy as children (letter recognition, sounding out, sight words, arithmetic basics) but accelerated and contextualized. Use practical, adult-relevant texts (laws, recipes, property records) instead of children's stories.
 
-**Teaching method**: Peer teaching. Advanced readers (literate adults or teachers) lead small groups (3â€“5 people) of learners. Same mixed-age and hands-on approaches as children's school.
+**Teaching method**: Peer teaching. Advanced readers (literate adults or teachers) lead small groups (3–5 people) of learners. Same mixed-age and hands-on approaches as children's school.
 
 **Motivation**: Emphasize utility. "Learning to read helps you understand laws, keep records, and participate in community decisions."
 
 **No shame**: Frame adult literacy as normal and necessary. People of all ages can learn. Many adults will be non-literate initially; this is expected.
 
-**Duration**: Intensive program: most learners reach basic literacy in 6â€“12 months of consistent attendance. Some take longer; this is okay.
+**Duration**: Intensive program: most learners reach basic literacy in 6–12 months of consistent attendance. Some take longer; this is okay.
 
 :::info-box
 **Adult Literacy Success Rates**
@@ -661,13 +661,13 @@ Target: 80%+ of community literate within 5 years of priority adult education pr
 
 <section id="apprenticeship">
 
-Formal school (ages 5â€“12) provides foundation. Ages 13â€“16 integrate apprenticeship (learning a trade) with part-time schooling.
+Formal school (ages 5–12) provides foundation. Ages 13–16 integrate apprenticeship (learning a trade) with part-time schooling.
 
 **Apprenticeship Structure**
 
-A young person (age 12â€“16) learns a craft or skill from a master. Apprenticeship typically lasts 5â€“7 years; by age 18â€“23, the apprentice is a journeyperson (competent practitioner) or master (expert).
+A young person (age 12–16) learns a craft or skill from a master. Apprenticeship typically lasts 5–7 years; by age 18–23, the apprentice is a journeyperson (competent practitioner) or master (expert).
 
-**Time commitment**: Days: Mornings with master (practical work); afternoons in school (literacy, math, civic education). Weeks: 3 weeks with master, 1 week in school (or other rotation). Years: 2â€“3 years intense apprenticeship; continuing part-time school.
+**Time commitment**: Days: Mornings with master (practical work); afternoons in school (literacy, math, civic education). Weeks: 3 weeks with master, 1 week in school (or other rotation). Years: 2–3 years intense apprenticeship; continuing part-time school.
 
 **Apprenticeship subjects**: Farming, animal husbandry, carpentry, blacksmithing, weaving, masonry, medicine, governance/administration, scholarship/teaching.
 
@@ -702,7 +702,7 @@ Identify community experts (older farmers, healers, craftspeople, leaders with d
 
 **Written guides**: Compile documentation into guide format (see <a href="../content-authoring.html">Content Authoring guide</a>) and store in community library. Include expert's name (giving them credit and validation).
 
-**Younger documentation team**: Train 2â€“3 younger people to be "knowledge documentarians." Their role is to interview experts, observe practices, and write guides. By age 30, they know much of community expertise in written form; they can then train next generation of documentarians.
+**Younger documentation team**: Train 2–3 younger people to be "knowledge documentarians." Their role is to interview experts, observe practices, and write guides. By age 30, they know much of community expertise in written form; they can then train next generation of documentarians.
 
 **Timeline**: Document at least one critical skill/knowledge area per year (medicine, agriculture, crafts, governance). In 10 years, most critical community knowledge is preserved.
 
@@ -750,7 +750,7 @@ Schools need oversight to ensure they serve community needs and maintain quality
 
 **School Board**
 
-A 5â€“7 person board elected or appointed by community council. Board responsibilities:
+A 5–7 person board elected or appointed by community council. Board responsibilities:
 - **Oversight**: Ensure school operates effectively, teachers are trained, curriculum aligns with community needs.
 - **Hiring & evaluation**: Recruit teachers, evaluate their performance annually, provide feedback.
 - **Budget**: Allocate community resources (labor credits, goods, land) to school.
@@ -771,9 +771,9 @@ A 5â€“7 person board elected or appointed by community council. Board respo
 
 Education is costly. Fund it explicitly.
 
-**Labor-credit model**: School is budgeted 1000â€“1500 day-labor-equivalent/year for mixed-age school of 40â€“60 students. This pays teacher (400â€“500 credits), assistants (300â€“400 credits), materials and maintenance (200â€“300 credits), library (100 credits).
+**Labor-credit model**: School is budgeted 1000–1500 day-labor-equivalent/year for mixed-age school of 40–60 students. This pays teacher (400–500 credits), assistants (300–400 credits), materials and maintenance (200–300 credits), library (100 credits).
 
-*Funding source*: Community labor tax. Each household contributes 5â€“10 day-labor-equivalent per year to community fund, which pays for education, defense, infrastructure, and mutual aid. (See <a href="../governance-leadership.html">Governance & Leadership Structures</a> for tax design.)
+*Funding source*: Community labor tax. Each household contributes 5–10 day-labor-equivalent per year to community fund, which pays for education, defense, infrastructure, and mutual aid. (See <a href="../governance-leadership.html">Governance & Leadership Structures</a> for tax design.)
 
 **In-kind contributions**: Community members donate materials (seeds for school garden, wood for repairs, food for school meals) instead of labor. These are credited against labor tax.
 
@@ -788,7 +788,7 @@ Education is costly. Fund it explicitly.
 - 15% Library (books, preservation, cataloging)
 - 10% Contingency / special needs
 
-**Cost benchmarking**: Pre-collapse, formal education cost $5,000â€“$12,000 per student per year. Post-collapse mixed-age school with volunteer assistants costs $400â€“$800 per student per year (in labor credits). This is 5â€“15% of pre-collapse cost, reflecting lower overhead and volunteer contribution.
+**Cost benchmarking**: Pre-collapse, formal education cost $5,000–$12,000 per student per year. Post-collapse mixed-age school with volunteer assistants costs $400–$800 per student per year (in labor credits). This is 5–15% of pre-collapse cost, reflecting lower overhead and volunteer contribution.
 
 </section>
 
@@ -798,13 +798,13 @@ Education is costly. Fund it explicitly.
 
 Education is infrastructure for long-term community viability. Begin implementation:
 
-1. **Identify prospective teachers** (2â€“3 people with literacy, patience, community respect).
+1. **Identify prospective teachers** (2–3 people with literacy, patience, community respect).
 2. **Recruit master teacher** (from outside community if possible, or intensive training of local person).
 3. **Design core curriculum** (what to teach at each age; write as simple document).
 4. **Establish school location** (existing building or construct simple structure).
 5. **Create school calendar** (accommodate seasonal labor; target 160 school days/year).
-6. **Train teachers** (6â€“9 month intensive with master teacher).
-7. **Open school** (start with ages 5â€“12; phase in older students and apprenticeship).
+6. **Train teachers** (6–9 month intensive with master teacher).
+7. **Open school** (start with ages 5–12; phase in older students and apprenticeship).
 8. **Establish library** (collect books, set up cataloging, designate librarian).
 9. **Launch adult literacy program** (concurrent with children's school; same teachers, different schedule).
 10. **Annual review** (gather teacher feedback, parent feedback; adjust curriculum and practices).
@@ -819,12 +819,12 @@ By year 3, communities operating formal education systems report:
 :::affiliate
 **If you're preparing in advance,** these resources help design and operate educational institutions:
 
-- [Understanding by Design: A Guide to Curriculum Development](https://www.amazon.com/dp/0131950843?tag=offlinecompen-20) â€” Framework for building coherent, outcomes-based curricula from first principles
-- [Pedagogy of the Oppressed by Paolo Freire](https://www.amazon.com/dp/0826412769?tag=offlinecompen-20) â€” Philosophy of community-based education and knowledge development
-- [The Learning Edge: How Smart Managers and Smart Companies Stay Ahead](https://www.amazon.com/dp/0071379819?tag=offlinecompen-20) â€” Systems for institutional learning and continuous improvement
-- [Managing Teacher Stress in the Classroom](https://www.amazon.com/dp/0595004733?tag=offlinecompen-20) â€” Support for educator wellbeing and sustainable teaching practices
+- [Understanding by Design: A Guide to Curriculum Development](https://www.amazon.com/dp/0131950843?tag=offlinecompen-20) — Framework for building coherent, outcomes-based curricula from first principles
+- [Pedagogy of the Oppressed by Paolo Freire](https://www.amazon.com/dp/0826412769?tag=offlinecompen-20) — Philosophy of community-based education and knowledge development
+- [The Learning Edge: How Smart Managers and Smart Companies Stay Ahead](https://www.amazon.com/dp/0071379819?tag=offlinecompen-20) — Systems for institutional learning and continuous improvement
+- [Managing Teacher Stress in the Classroom](https://www.amazon.com/dp/0595004733?tag=offlinecompen-20) — Support for educator wellbeing and sustainable teaching practices
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 Related guides: See <a href="../governance-leadership.html">Governance & Leadership Structures</a> for school board integration, <a href="../library-organization-preservation.html">Library Classification</a> for organizing knowledge systems, and <a href="../census-vital-records.html">Census & Vital Records</a> for tracking school enrollment and demographic data.
