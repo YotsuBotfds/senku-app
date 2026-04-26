@@ -1082,7 +1082,7 @@ def main():
     incremental_mode = args.files and not args.rebuild
     manifest = load_ingest_manifest() if incremental_mode else {}
 
-    if incremental_mode:
+    if args.files:
         md_files = selected_md_files
     else:
         md_files = all_md_files

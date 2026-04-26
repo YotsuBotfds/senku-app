@@ -507,6 +507,80 @@ Second guide content.
             gc.collect()
             shutil.rmtree(tmpdir, ignore_errors=True)
 
+    def test_rebuild_with_files_builds_scoped_index(self):
+        tmpdir = Path(tempfile.mkdtemp())
+        try:
+            root = tmpdir
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            first = guides_dir / "first-guide.md"
+            second = guides_dir / "second-guide.md"
+            first.write_text(
+                """---
+id: GD-906
+slug: first-guide
+title: First Guide
+category: utility
+description: First test guide.
+---
+
+## First
+
+First guide content.
+""",
+                encoding="utf-8",
+            )
+            second.write_text(
+                """---
+id: GD-907
+slug: second-guide
+title: Second Guide
+category: utility
+description: Second test guide.
+---
+
+## Second
+
+Second guide content.
+""",
+                encoding="utf-8",
+            )
+            db_dir = root / "db"
+            lexical_path = db_dir / "senku_lexical.sqlite3"
+            manifest_path = db_dir / "ingest_manifest.json"
+            report_path = db_dir / "metadata_validation_report.json"
+
+            with (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(ingest_module.config, "CHROMA_DB_DIR", str(db_dir)),
+                patch.object(ingest_module.config, "LEXICAL_DB_PATH", str(lexical_path)),
+                patch.object(ingest_module, "MANIFEST_PATH", str(manifest_path)),
+                patch.object(ingest_module, "METADATA_VALIDATION_REPORT_PATH", str(report_path)),
+                patch.object(ingest_module.requests, "get", return_value=object()),
+                patch.object(
+                    ingest_module,
+                    "embed_batch_with_retry",
+                    side_effect=lambda texts, batch_no: [[0.0, 1.0, 2.0] for _ in texts],
+                ),
+                patch.object(ingest_module, "print_stats", return_value=None),
+                patch.object(sys, "argv", ["ingest.py", "--rebuild", "--files", "first-guide.md"]),
+            ):
+                ingest_module.main()
+
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(set(manifest), {"GD-906"})
+            with closing(sqlite3.connect(lexical_path)) as conn:
+                guide_ids = {
+                    row[0]
+                    for row in conn.execute(
+                        "SELECT DISTINCT guide_id FROM lexical_chunk_meta"
+                    ).fetchall()
+                }
+            self.assertEqual(guide_ids, {"GD-906"})
+        finally:
+            gc.collect()
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
     def test_fresh_rebuild_populates_poisoning_guides_in_lexical_db(self):
         repo_root = Path(__file__).resolve().parents[1]
         source_guides_dir = repo_root / "guides"

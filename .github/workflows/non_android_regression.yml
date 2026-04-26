@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: db
-          key: retrieval-index-${{ runner.os }}-${{ hashFiles('requirements.lock.txt', 'ingest.py', 'ingest_freshness.py', 'config.py', 'metadata_helpers.py', 'metadata_validation.py', 'token_estimation.py', 'guides/**/*.md') }}
+          key: retrieval-index-${{ runner.os }}-${{ inputs.mode }}-${{ inputs.include_safety_critical }}-${{ hashFiles('requirements.lock.txt', 'ingest.py', 'ingest_freshness.py', 'config.py', 'metadata_helpers.py', 'metadata_validation.py', 'token_estimation.py', 'scripts/select_prompt_pack_guides.py', 'guides/**/*.md', 'artifacts/prompts/**/*.jsonl') }}
           restore-keys: |
             retrieval-index-${{ runner.os }}-
 
@@ -239,11 +239,32 @@ jobs:
               }
             }
 
+            $ciGuideList = Join-Path $env:RUNNER_TEMP 'senku-ci-retrieval-guides.txt'
+            $ciPromptPacks = @()
+            if ($env:INPUT_MODE -in @('Fast', 'All')) {
+              $ciPromptPacks += 'artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl'
+              $ciPromptPacks += 'artifacts\prompts\adhoc\rag_eval9_high_liability_compound_holdouts_20260426.jsonl'
+              if ($env:INPUT_INCLUDE_SAFETY_CRITICAL -eq 'true') {
+                $ciPromptPacks += 'artifacts\prompts\adhoc\rag_eval_high_liability_compound_holdouts_20260425.jsonl'
+              }
+            }
+
+            if ($ciPromptPacks.Count -gt 0) {
+              python -B scripts\select_prompt_pack_guides.py @ciPromptPacks --include-related-depth 0 --output $ciGuideList
+              $selectedGuides = @(Get-Content -LiteralPath $ciGuideList | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+              Write-Host "Selected $($selectedGuides.Count) guide file(s) for CI retrieval smoke index."
+            } else {
+              $selectedGuides = @()
+            }
+
             if ($env:RETRIEVAL_INDEX_CACHE_HIT -eq 'true') {
               Write-Host "Retrieval index cache hit; validating existing db with ingest.py --stats."
               python -B ingest.py --stats
+            } elseif ($selectedGuides.Count -gt 0) {
+              Write-Host "Retrieval index cache miss; rebuilding scoped CI retrieval db."
+              python -B ingest.py --rebuild --embedding-batch-size 32 --files @selectedGuides
             } else {
-              Write-Host "Retrieval index cache miss; rebuilding db."
+              Write-Host "Retrieval index cache miss and no fast prompt packs selected; rebuilding full db."
               python -B ingest.py --rebuild --embedding-batch-size 16
             }
             powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args

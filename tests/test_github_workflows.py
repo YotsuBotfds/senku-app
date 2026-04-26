@@ -94,6 +94,14 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("guides/**/*.md", retrieval_cache_step["with"]["key"])
         self.assertIn("ingest_freshness.py", retrieval_cache_step["with"]["key"])
         self.assertIn(
+            "scripts/select_prompt_pack_guides.py",
+            retrieval_cache_step["with"]["key"],
+        )
+        self.assertIn(
+            "artifacts/prompts/**/*.jsonl",
+            retrieval_cache_step["with"]["key"],
+        )
+        self.assertIn(
             "python -m pip install --require-hashes -r requirements.lock.txt",
             install_step.get("run", ""),
         )
@@ -110,7 +118,13 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("Invoke-RestMethod `", gate_script)
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
         self.assertIn("RETRIEVAL_INDEX_CACHE_HIT", gate_step.get("env", {}))
+        self.assertIn("scripts\\select_prompt_pack_guides.py", gate_script)
+        self.assertIn("--include-related-depth 0", gate_script)
+        self.assertIn("rag_eval_partial_router_holdouts_20260425.jsonl", gate_script)
+        self.assertIn("rag_eval9_high_liability_compound_holdouts_20260426.jsonl", gate_script)
+        self.assertIn("--files @selectedGuides", gate_script)
         self.assertIn("python -B ingest.py --stats", gate_script)
+        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 32 --files @selectedGuides", gate_script)
         self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 16", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
