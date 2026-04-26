@@ -244,9 +244,29 @@ def ingest_artifacts(
 
 
 def ingest_artifact(conn, path: Path, *, run_id: str, base_dir: Path | None) -> dict[str, int]:
-    stat = path.stat()
     rel_path = _relative_display_path(path, base_dir)
     paired_markdown = _paired_markdown_path(path, base_dir)
+    try:
+        stat = path.stat()
+        size_bytes = stat.st_size
+        mtime_utc = datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat()
+    except OSError as exc:
+        artifact_id = _insert_artifact(
+            conn,
+            run_id=run_id,
+            path=rel_path,
+            absolute_path=str(path.resolve()),
+            kind=infer_artifact_kind(path),
+            suffix=path.suffix.lower(),
+            size_bytes=0,
+            mtime_utc=datetime.now(timezone.utc).isoformat(),
+            paired_markdown_path=paired_markdown,
+        )
+        conn.execute(
+            "UPDATE artifacts SET error = ? WHERE artifact_id = ?",
+            (f"{exc.__class__.__name__}: {exc}", artifact_id),
+        )
+        return {"artifacts": 1, "metrics": 0, "detail_rows": 0, "markdown_reports": 0}
     artifact_id = _insert_artifact(
         conn,
         run_id=run_id,
@@ -254,8 +274,8 @@ def ingest_artifact(conn, path: Path, *, run_id: str, base_dir: Path | None) -> 
         absolute_path=str(path.resolve()),
         kind=infer_artifact_kind(path),
         suffix=path.suffix.lower(),
-        size_bytes=stat.st_size,
-        mtime_utc=datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat(),
+        size_bytes=size_bytes,
+        mtime_utc=mtime_utc,
         paired_markdown_path=paired_markdown,
     )
 

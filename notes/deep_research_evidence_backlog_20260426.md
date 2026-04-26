@@ -587,6 +587,9 @@ Action:
   dedicated SQL columns (`evidence_task`, `evidence_lane`, `evidence_label`,
   `evidence_commit`, `evidence_generated_at`, and `evidence_record_type`) while
   preserving raw JSON as canonical evidence.
+- Metrics-lake artifact ingestion now records a per-file stat/read disappearance
+  as an artifact error row instead of aborting ingestion for valid sibling
+  artifacts.
 - Metrics-lake schema initialization now has legacy-DB regression coverage
   proving old `detail_rows` tables are backfilled with the new evidence-context
   columns before artifact evidence inserts.
@@ -695,6 +698,8 @@ Validation:
   handoffs and tracked planner handoffs that protect referenced artifacts.
 - `tests.test_bench_metrics_lake` covers direct SQL access to artifact evidence
   parent context columns and entity-id path joinability.
+- `tests.test_bench_metrics_lake` covers artifacts disappearing between
+  discovery and stat without aborting sibling metric ingestion.
 - `tests.test_bench_metrics_lake` also covers legacy SQLite schema upgrade for
   evidence-context columns.
 - `tests.test_plan_artifact_retention` now exercises real `git ls-files`

@@ -200,6 +200,60 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_artifact_disappears_between_discovery_and_stat(self):
+        root = self.make_tmpdir()
+        good_path = root / "good.json"
+        good_path.write_text(
+            json.dumps({"summary": {"total_prompts": 1}, "results": []}),
+            encoding="utf-8",
+        )
+        disappearing_path = root / "disappearing.json"
+        disappearing_path.write_text(
+            json.dumps({"summary": {"total_prompts": 2}, "results": []}),
+            encoding="utf-8",
+        )
+
+        artifact_paths = self.module.iter_artifact_paths([root])
+        disappearing_path.unlink()
+
+        output = root / "lake.sqlite"
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        summary = self.module.ingest_artifacts(
+            conn,
+            artifact_paths,
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        self.assertEqual(summary["artifacts"], 2)
+        self.assertEqual(summary["metrics"], 1)
+        self.assertEqual(summary["detail_rows"], 0)
+
+        verify = sqlite3.connect(output)
+        try:
+            artifact_errors = {
+                row[0]: row[1]
+                for row in verify.execute(
+                    "SELECT path, error FROM artifacts ORDER BY path"
+                ).fetchall()
+            }
+            self.assertIn("good.json", artifact_errors)
+            self.assertIn("disappearing.json", artifact_errors)
+            self.assertIsNone(artifact_errors["good.json"])
+            self.assertIsNotNone(artifact_errors["disappearing.json"])
+            self.assertIn("FileNotFoundError", artifact_errors["disappearing.json"])
+            metric_count = verify.execute(
+                "SELECT COUNT(*) FROM metrics WHERE artifact_id IN "
+                "(SELECT artifact_id FROM artifacts WHERE path = ?)",
+                ("good.json",),
+            ).fetchone()[0]
+            self.assertEqual(metric_count, 1)
+        finally:
+            verify.close()
+
     def test_jsonl_manifest_artifact_path_evidence_adds_detail_rows(self):
         root = self.make_tmpdir()
         jsonl_path = root / "run_manifest.jsonl"
