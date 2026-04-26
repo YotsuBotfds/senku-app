@@ -168,6 +168,63 @@ class SummarizeShadowComparisonsTests(unittest.TestCase):
 
         self.assertEqual(rows[0]["row_count"], 3)
 
+    def test_primary_fields_are_optional_and_stay_stable_when_missing(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "contextual_shadow_compare_optional_primary"
+            root.mkdir()
+            write_summary(
+                root / module.SUMMARY_FILENAME,
+                {
+                    "deltas": {
+                        "hit_at_1": {"comparable_rows": 2, "net_improved": 0},
+                        "hit_at_3": {"net_improved": 0},
+                        "hit_at_k": {"net_improved": 0},
+                    },
+                    "baseline": {"scored_rows": 2, "hit_at_1": {"count": 1, "rate": 0.5}},
+                    "shadow": {"scored_rows": 2, "hit_at_1": {"count": 1, "rate": 0.5}},
+                    "mean_top_k_overlap_jaccard": 0.1,
+                },
+            )
+
+            rows = module.collect_summaries([root])
+
+        self.assertIsNone(rows[0]["baseline_primary_hit_at_1_rate"])
+        self.assertIsNone(rows[0]["shadow_primary_hit_at_1_rate"])
+        self.assertIsNone(rows[0]["primary_hit_at_1_net"])
+
+    def test_primary_metrics_remain_stable_when_zero_primary_denominator(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "contextual_shadow_compare_zero_primary"
+            root.mkdir()
+            write_summary(
+                root / module.SUMMARY_FILENAME,
+                {
+                    "row_count": 4,
+                    "deltas": {
+                        "hit_at_1": {"comparable_rows": 0, "net_improved": 0},
+                        "hit_at_3": {"net_improved": 0},
+                        "hit_at_k": {"net_improved": 0},
+                    },
+                    "baseline": {"scored_rows": 0, "hit_at_1": {"count": 0, "rate": None}},
+                    "shadow": {"scored_rows": 0, "hit_at_1": {"count": 0, "rate": None}},
+                    "baseline_primary": {"scored_rows": 0, "hit_at_1": {"count": 0, "rate": None}},
+                    "shadow_primary": {"scored_rows": 0, "hit_at_1": {"count": 0, "rate": None}},
+                    "primary_family_deltas": {"hit_at_1": {"net_improved": 0}},
+                    "mean_top_k_overlap_jaccard": 0.0,
+                },
+            )
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                module.main([str(root), "--json"])
+            payload = json.loads(output.getvalue())
+
+        self.assertEqual(payload[0]["baseline_primary_hit_at_1_rate"], None)
+        self.assertEqual(payload[0]["shadow_primary_hit_at_1_rate"], None)
+        self.assertEqual(payload[0]["primary_hit_at_1_net"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

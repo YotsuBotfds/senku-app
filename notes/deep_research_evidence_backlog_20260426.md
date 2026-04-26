@@ -516,6 +516,9 @@ Action:
   retrieval reports' display-only `primary_guide_ids` column does not count as
   an explicit primary expectation, while prompt-pack primary owners still drive
   primary-owner retrieval checks.
+- Shadow-comparison summaries now have regression coverage for missing
+  primary-owner blocks and zero-denominator primary metrics, keeping optional
+  primary fields stable when absent.
 
 Validation:
 
@@ -556,6 +559,8 @@ Validation:
   artifact signals alongside benign protected handoff context.
 - `tests.test_validate_prompt_expectations` covers the generated
   `primary_guide_ids` display column contract.
+- `tests.test_summarize_shadow_comparisons` covers optional/zero-denominator
+  primary metric summary behavior.
 
 Deferred unless evidenced:
 
