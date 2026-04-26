@@ -8,6 +8,39 @@ tags:
   - essential
   - agriculture
   - emergency-response
+aliases:
+  - community food rationing
+  - emergency community rations
+  - community ration cards
+  - ration cards for families
+  - fair food distribution shortage
+  - community food allocation
+  - vulnerable groups food allocation
+  - distribution during scarcity
+  - emergency food allocation plan
+  - inventory food scarcity
+  - spoilage planning food reserves
+  - food continuity planning
+routing_cues:
+  - Use this guide when a community needs transparent food allocation and distribution during shortage, with clear fairness and continuity.
+  - Use this guide for household-size-based ration planning, at-risk population prioritization, inventory/distribution tracking, and short-term continuity under scarcity.
+  - Route suspected/unsafe food, contamination clusters, and medical escalation cases to specialized food-safety or acute-care guides before routine ration distribution advice.
+citations_required: true
+citation_policy: cite this reviewed GD-591 answer card for community rationing, allocation fairness, inventory/distribution logs, and reserve planning; hand off suspect food, contamination, severe depletion stress, and individual clinical questions to GD-666, GD-906, and GD-089 where appropriate
+applicability:
+  owner: community rationing and distribution planning
+  use_when:
+    - Community-level planning for fair allocation, anti-hoarding methods, and transparent tracking during shortages.
+    - Questions about prioritizing children, pregnant/lactating people, elders, heavy laborers, and high-need roles while preserving continuity of distribution.
+    - Requests for stock ledgers, spoilage accounting, continuity math, and short-term reserve planning.
+  do_not_use_when:
+    - Queries focused on suspected/unsafe food, foodborne illness clusters, contamination chemistry, or individual clinical malnutrition treatment.
+    - Requests that are primarily refeeding schedules, dietary dosing, or clinical supplement-dose planning.
+  handoff:
+    - food-safety-contamination-prevention (GD-666) for contamination safety and prevention when food safety dominates.
+    - food-spoilage-assessment (GD-906) for suspect/salvageable/unsafe-food decisions.
+    - food-rationing (GD-089) for household/individual ration optimization when community logistics are not the main point.
+    - food-system-outage-illness-boundary when widespread gastrointestinal illness, dehydration risk, or outbreak-linked ration delivery is likely.
 icon: 🍞
 description: Establish fair, sustainable rationing systems based on caloric minimums, micronutrient needs, and population vulnerabilities. Manage inventory, prevent malnutrition, and transition from rationing to sufficiency.
 related:
@@ -23,6 +56,11 @@ word_count: 6500
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: low
+reviewed_applicability:
+  - Safe when a community is operating a rationing program for fairness, continuity, vulnerability-sensitive allocation, inventory control, anti-hoarding controls, spoilage accounting, and reserve planning.
+  - Not for food safety decisions on suspect food, foodborne illness response, medical malnutrition treatment, dosing guidance, refeeding schedules, or individual clinical replacement plans.
+answer_card:
+  - emergency_food_rationing
 ---
 
 ## Overview

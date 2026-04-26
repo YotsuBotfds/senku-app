@@ -1,0 +1,155 @@
+card_id: fuel_storage_handling_planning
+guide_id: GD-556
+slug: fuel-storage-handling
+title: Fuel Storage and Handling Systems
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Settlement fuel logistics planning only: storage prioritization, supply continuity,
+  safe separation posture, routine inventory/rotation, reserve planning, and tripwires
+  for fire, carbon-monoxide, fume, leak, spill, or active hazard escalation. Use source
+  sections that contain production or handling detail only as planning constraints, not
+  as procedural instructions.
+applies_when:
+  - A community needs a plan for firewood, charcoal, liquid fuel, or mixed fuel reserves.
+  - A user asks how to prioritize essential heat, cooking, power, and emergency fuel stocks.
+  - A user asks for checklist-level separation of fuel storage from homes, water, food, sparks, heat, weather, and high-traffic areas.
+  - A user asks how to track fuel inventory, rotation, reserve drawdown, consumption rate, or replenishment timing.
+  - A user asks when a fuel-storage situation stops being routine and needs evacuation, isolation, or specialist handoff.
+required_first_actions:
+  - First separate routine planning from active hazards: fire, smoke/CO symptoms, strong fumes in living space, leaking containers, fuel near heat/sparks, or spill exposure override inventory planning.
+  - Identify essential fuel uses before allocation: heat, cooking, water treatment, clinic/communications power, transport, and emergency reserve.
+  - Keep fuel stores outside living areas and away from water, food storage, ignition sources, heat, children, and routine foot traffic.
+  - Split reserves into main working stock and protected emergency reserve, then rotate older safe stock first.
+  - Start a simple fuel ledger with stock type, amount, container/store location, condition, date acquired, date checked, issued amount, and remaining balance.
+first_actions:
+  - Prioritize the driest, safest, most stable storage locations before increasing stock volume.
+  - Store firewood off wet ground, ventilated, rain-protected, and separated from heat sources and sleeping structures.
+  - Keep charcoal completely dry and protected from moisture, using its source details only to plan dry storage and supply expectations.
+  - Keep liquid fuels in appropriate approved containers in cool, ventilated, separated storage with routine checks for water, leaks, corrosion, swelling, odor, or contamination.
+  - Use multiple smaller stores where practical so one loss does not remove the entire community reserve.
+  - Compare monthly/seasonal consumption against remaining stock and trigger replenishment or conservation before reserve stock is reached.
+  - Write a short depot checklist for separation, labels, access control, ventilation, container condition, spill/fire/CO warning signs, and emergency contact or handoff path.
+urgent_red_flags:
+  - Active fire, smoke, explosion risk, fuel vapor accumulation, or fuel stored near flames, sparks, hot surfaces, stoves, generators, or sleeping areas.
+  - Headache, dizziness, confusion, fainting, vomiting, unusual sleepiness, or multiple people ill near combustion, stored fuel, charcoal, gasifier, or biogas equipment.
+  - Liquid fuel leak, strong fuel odor indoors, damaged or swollen containers, visible pooling, contaminated water route, or fuel reaching drains/soil/water sources.
+  - Any request to handle, transfer, ignite, blend, produce, gasify, scrub, combust, or modify fuel systems while a hazard is present.
+  - Inventory records show emergency reserve is being consumed without a replenishment plan or essential heat/cooking/medical power continuity is threatened.
+forbidden_advice:
+  - Do not provide ignition-source guidance, ignition placement, or lighting instructions.
+  - Do not provide fuel transfer, siphoning, pumping, draining, pouring, venting, or decanting steps.
+  - Do not provide chemical blend ratios, stabilizer formulas, biocide dosing, cold-flow improver recipes, or fuel additive instructions.
+  - Do not provide charcoal production, kiln operation, biogas production, gasification production, gas scrubbing, or combustion-process instructions.
+  - Do not provide stove, furnace, burner, heater, engine, pressure, piping, regulator, or gasifier engineering guidance.
+  - Do not provide combustion chemistry, explosive mixture calculations, vapor concentration analysis, or performance optimization.
+  - Do not provide spill cleanup recipes or active firefighting tactics beyond evacuate, isolate, avoid exposure, and hand off to trained responders.
+do_not:
+  - Do not convert source production sections into how-to steps.
+  - Do not normalize indoor fuel storage, fuel fumes in living space, or carbon-monoxide symptoms as routine planning.
+  - Do not answer requests for precise procedural handling by reframing them as "safe storage" instructions.
+  - Do not cite this card as authority for manufacturing, modifying, or operating fuel systems.
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+routine_boundary: >
+  This card closes only the planning lane for settlement fuel logistics. It can advise
+  on storage priority, separation, inventory, reserve rotation, and escalation tripwires.
+  It must hand off active hazards and all procedural fuel handling, production,
+  combustion, engineering, cleanup, or emergency response requests.
+acceptable_uncertain_fit: >
+  If details are incomplete, provide a conservative planning checklist, name the
+  missing information, and keep the answer at storage/inventory/separation level.
+  If any active hazard is plausible, lead with evacuation/isolation and handoff.
+clarifying_questions:
+  - Which fuel types are currently stored, and are any indoors or near heat, sparks, water, food, or sleeping areas?
+  - Is there any active odor, leak, smoke, CO alarm, illness cluster, damaged container, or spill?
+  - Which uses are essential this week: heat, cooking, water treatment, clinic/communications power, transport, or emergency reserve?
+  - What stock amounts, storage locations, check dates, and monthly consumption are already recorded?
+fallback:
+  - If there is fire, smoke, fumes, CO symptoms, explosion risk, or fuel near ignition sources, stop routine planning and advise evacuation/isolation plus emergency or trained-responder handoff.
+  - If the user asks for CO or smoke-exposure recognition or care, hand off to smoke-inhalation-carbon-monoxide-fire-gas-exposure.
+  - If the user asks for active fire suppression after evacuation framing, hand off to fire-management-suppression.
+  - If the user asks for cooking-fire operation or stove/heater troubleshooting, hand off to daily-cooking-fire-management or cookstoves-indoor-heating-safety.
+  - If the user asks for production, transfer, blending, gasification, biogas, or engineering instructions, decline procedural detail and keep only planning constraints.
+fallback_handoff_language:
+  - "Treat active fuel odor, leak, fire, smoke, or CO symptoms as an evacuation/isolation problem before inventory planning."
+  - "This card can help organize reserves and separation, but it cannot provide transfer, production, ignition, cleanup, or engineering steps."
+  - "Use production or gasification sections only to understand why separation, ventilation, dry storage, and CO tripwires matter."
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid_unsafe_source_usage: true
+  include_inventory_recordkeeping: true
+  include_supply_continuity: true
+  include_separation_checklist: true
+citation_ids:
+  - fuel-storage-overview-continuity
+  - firewood-storage-safety-planning
+  - charcoal-storage-planning-boundary
+  - liquid-fuel-storage-safety-boundary
+  - fuel-inventory-continuity
+  - fuel-troubleshooting-escalation-tripwires
+source_sections:
+  - guide: GD-556
+    slug: fuel-storage-handling
+    title: Fuel Storage and Handling Systems
+    sections:
+      - "#overview"
+      - "#firewood-management"
+      - "#charcoal-production"
+      - "#liquid-fuel-storage"
+      - "#inventory-management"
+      - "#troubleshooting"
+source_invariants:
+  - name: settlement continuity and reserve planning
+    guide: GD-556
+    must_include:
+      - "Reliable fuel supply determines whether a settlement has heat, power, and cooking capability."
+      - "12+ months of stored fuel"
+      - "12–18 months supply is prudent"
+      - "Separate from main inventory"
+  - name: storage separation and quality posture
+    guide: GD-556
+    must_include:
+      - "Dry, sheltered area"
+      - "Good air circulation"
+      - "Keep wood away from heat sources and sparks"
+      - "Store fuel away from ignition sources"
+      - "Store in well-ventilated area"
+  - name: inventory and rotation
+    guide: GD-556
+    must_include:
+      - "Track wood supply"
+      - "Rotate stock"
+      - "Track how much fuel is consumed monthly"
+      - "Plan replenishment schedule before stock runs out"
+  - name: unsafe procedural source boundary
+    guide: GD-556
+    must_include:
+      - "Wood gasification produces carbon monoxide"
+      - "Produces carbon monoxide; never operate in enclosed spaces"
+      - "Liquid fuels"
+      - "flammable vapors"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed for settlement fuel logistics planning closure only. This card deliberately
+  excludes ignition, transfer, blending, production, gasification, combustion chemistry,
+  stove/furnace engineering, spill cleanup recipes, and firefighting tactics. Source
+  sections with procedural production or handling content are retained only as planning
+  constraints for storage, separation, inventory, continuity, and hazard tripwires.
+  READY_FOR_PARENT_CLOSE.

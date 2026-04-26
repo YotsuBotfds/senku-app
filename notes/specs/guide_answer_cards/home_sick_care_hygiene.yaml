@@ -1,0 +1,147 @@
+card_id: home_sick_care_hygiene
+guide_id: GD-924
+slug: home-sick-care-hygiene
+title: Home Sick Care & Hygiene
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Household support when one family member is sick at home and the ask is practical
+  spread reduction: vomit/diarrhea cleanup, bedding and laundry separation, dish
+  handling, caregiver protection, ventilation, and the decision points for urgent help.
+applies_when:
+  - A household asks for practical ways to reduce spread when a family member has fever, cough, vomiting, diarrhea, or mucus-heavy illness.
+  - The prompt asks how to clean up vomit, manage sick-person bedding/laundry, or prevent family spread without clinical treatment.
+  - The user asks for a first minutes/first hour sick-room response and ongoing safe routine.
+  - The goal is routine home hygiene and exposure reduction, not invasive care, diagnosis, or medication selection.
+required_first_actions:
+  - Put the sick person in one room if possible, and keep non-essential visitors away.
+  - Do hand hygiene before and after touching the sick person, body fluids, dirty laundry, dishes, or cleanup supplies.
+  - Set out one waste route, one trash bag, soap/water, gloves, and one dedicated cup set.
+  - If body-fluid cleanup is needed now, contain and clean it before moving on to optional room upgrades.
+  - Re-check for urgent red flags in the next few minutes and route to urgent care if present.
+actions:
+  required_first_actions:
+    - Put the sick person in one room if possible, and keep non-essential visitors away.
+    - Do hand hygiene before and after touching the sick person, body fluids, dirty laundry, dishes, or cleanup supplies.
+    - Set out one waste route, one trash bag, soap/water, gloves, and one dedicated cup set.
+    - If body-fluid cleanup is needed now, contain and clean it before moving on to optional room upgrades.
+    - Re-check for urgent red flags in the next few minutes and route to urgent care if present.
+  first_actions:
+    - Keep one cup, one towel, one set of eating utensils, and one bed area for the sick person.
+    - Wash hands at each transition: before/after care, after toilet use, after cleaning, after touching used tissues, before food prep, before eating.
+    - Open airflow: windows where safe and maintain one-way airflow from healthier spaces toward outside.
+    - Handle sick laundry and bed sheets as separate from family laundry until washed.
+    - Put each used tissue, wipe, and cleanup cloth directly into a tied bag.
+    - Wash hands and change exposed clothes before returning to shared family tasks.
+first_actions:
+  - Keep the sick person in one room or one defined care zone if possible.
+  - Establish one-dedicated set of items for the sick person: cup, towel, utensils, bedding.
+  - Open airflow safely: fresh air in the room while limiting airflow from the sick person toward rest of the home.
+  - Place a closed trash bag and cleaning container at the sick zone; carry cleanup waste out only after tying it off.
+  - Handle soiled bedding and laundry separately; keep soiled items out of household clean flow.
+  - Wash hands before/after every close care interaction and after cleaning body-fluid spills.
+urgent_red_flags:
+  - Blood in vomit or stool, coffee-ground vomit, black tarry stool, or rectal blood with dizziness.
+  - Belly becomes hard, swollen, very tender, or the person cannot pass stool or gas while vomiting.
+  - Inability to keep fluids down, confusion, severe dehydration, trouble breathing, seizure, severe weakness, or faintness.
+  - Trouble caring at home with repeated vomiting of stool/fluids, or the person not walking upright from pain.
+forbidden_advice:
+  - Diagnose the illness or provide likely pathogen-level certainty from symptoms alone.
+  - Give invasive care, medication names, dosing, or drug-class instructions.
+  - Provide medical treatment algorithms, IV plans, or replacement-level care that should be done by urgent medical services.
+  - Claim that home cleanup alone prevents illness spread in all cases or replaces urgent assessment.
+  - Run outbreak operations (mass transport, shelter-wide shutdown, public-health control, or community quarantine) beyond household-level hygiene scope.
+forbidden:
+  - diagnose or confirm the illness
+  - prescribe or dose medications
+  - invasive care or procedure instructions
+  - replacement of urgent assessment with cleanup steps
+  - claim cleanup alone prevents all spread
+do_not:
+  - Do not use this guide for red-flag GI bleed or acute abdominal pain workups that are routing-dominant.
+  - Do not recommend invasive care, antibiotics, IV fluids, or procedure steps from this guide.
+  - Do not vacuum fresh vomit or sweep wet spill powder through the air.
+  - Do not suggest cleaning and then letting dirty laundry or dishes mix with clean household items.
+  - Do not route ongoing multiple-person spread to routine routine household routines only; move to the illness-operations lane when cluster evidence appears.
+routine_boundary: >
+  This card is for household-level infection-prevention and sick-room hygiene only. If a prompt
+  already contains signs of medical emergency, acute abdominal danger, severe breathing distress,
+  dehydration instability, or a spreading cluster outside one-room household context, route first to
+  urgent medical care and/or illness-outbreak owners before giving routine hygiene advice.
+acceptable_uncertain_fit: >
+  If the contamination route is clear but the exact symptom mix is unclear, give safe containment
+  actions first (isolation of care zone, gloves, separate linen/dishes, waste control, handwashing,
+  ventilation), then immediately list red flags and route boundaries before any non-critical routine advice.
+clarifying_questions:
+  - Is the person able to stay hydrated and alert with safe swallowing?
+  - Is there visible blood, black stools, vomit with blood, hard swollen abdomen, or no urine?
+  - Is multiple-family spread happening quickly or tied to shared food/water or shared caregivers?
+  - Is there chemical contamination or a large body-fluid spill needing a stronger decontamination lane?
+citation_ids:
+  - home-sick-overview-spread-reduction
+  - home-sick-first-ten-minutes
+  - home-sick-vomit-cleanup
+  - home-sick-bedding-and-laundry
+  - home-sick-dishes-and-cups
+  - home-sick-waste-handling
+  - home-sick-caregiver-protection
+  - home-sick-when-to-get-help
+source_sections:
+  - guide: GD-924
+    slug: home-sick-care-hygiene
+    title: Home Sick Care & Hygiene
+    sections:
+      - "#overview"
+      - "#quick-routing"
+      - "#the-first-10-minutes"
+      - "#how-to-keep-the-rest-of-the-family-from-getting-sick"
+      - "#how-to-keep-the-rest-of-the-family-from-getting-sick > reduce contact"
+      - "#how-to-keep-the-rest-of-the-family-from-getting-sick > separate high-risk items"
+      - "#clean-hands-at-the-right-moments"
+      - "#room-setup"
+      - "#room-setup > ventilation"
+      - "#bedding-and-laundry"
+      - "#dishes-and-cups"
+      - "#vomit-cleanup"
+      - "#waste-handling"
+      - "#caregiver-protection"
+      - "#caregiver-protection > do-not-share-contaminated-air-or-surfaces"
+      - "#when-to-get-help"
+fallback:
+  - If active red-flag signs suggest surgical abdomen, shock risk, or severe dehydration, route to acute-abdominal-emergencies and emergency care immediately.
+  - If several household members become ill quickly with likely shared exposure, route to community-kitchen-mess-hall-operations or camp-outbreak-dysentery-operations while preserving household spread controls.
+  - If stool/vomit cleanup looks chemically contaminated or highly toxic, route to chemical-safety for contamination decision support.
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - do_not
+  must_include_urgent_handoff: true
+  forbid: true
+source_invariants:
+  - name: isolate-mess-over-person
+    guide: GD-924
+    must_include:
+      - isolate the mess, not the person
+      - keep body fluids, dirty laundry, and shared surfaces under control
+      - If you can smell the spill, assume some contamination is still present and clean again
+  - name: unsafe-cleaning-practices
+    guide: GD-924
+    must_include:
+      - do not vacuum fresh vomit
+      - do not sweep dry powder through the air
+  - name: hygiene-ritual-boundary
+    guide: GD-924
+    must_include:
+      - wash hands before and after each care task
+      - "if you only remember one rule, remember this: do not touch your face until you have washed your hands after contact with the sick person or anything they touched"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed card closure for GD-924. It supports household-level routine hygiene for an
+  actively sick person at home and sets strict escalation boundaries for blood in stool,
+  coffee-ground or bloody vomit, severe abdominal danger signs, dehydration risk, breathing
+  compromise, and cluster spread. It excludes diagnosis, invasive care, medication
+  instructions, and broad outbreak-management workflows beyond household containment.

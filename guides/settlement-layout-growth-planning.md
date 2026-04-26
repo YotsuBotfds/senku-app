@@ -60,6 +60,32 @@ aliases:
   - where should the first road go
   - where should animals go in a new settlement
   - where should houses market latrines animals and the first road go
+routing_cues:
+  - Use this guide first for first-layout decisions, house placement, market, clinic,
+    water and waste placement, animal separation, public circulation, and early growth
+    corridors before specialist design instructions.
+  - Use this guide for "where should roads/lanes go" decisions that need bad-weather
+    access, access for carts, and protected growth lines from day one.
+  - Use this guide for layout safety checks before deciding on water collection points,
+    sanitation placement, and storage/clinic market zoning.
+  - Escalate to surveying-land-management for land measurement, slope math, or formal
+    site surveying workflows.
+  - Escalate to water-system-design, road-building, or construction only after this
+    settlement skeleton and zoning pattern is decided.
+citations_required: true
+applicability: >
+  Use for community/civil settlement planning at concept level: first-layout sequencing,
+  clean/dirty/quiet/hazardous use separation, water-first sequencing, road and access
+  layout, expansion corridors, growth safety checks, and specialist handoff prep for
+  layout-sensitive infrastructure placement.
+citation_policy: >
+  Cite the settlement-layout-growth-planning guide family for planning and sequencing claims,
+  including clean/dirty zoning and growth-corridor checks. Do not generate
+  surveying math, utility sizing, construction methods, electrical/building/medical repair
+  procedures, road grading procedures, water-system design formulas, or legal/compliance
+  claims from this guide.
+answer_card:
+  - settlement_layout_planning
 ---
 
 ## Overview
@@ -76,7 +102,7 @@ If the real complaint is about the water itself, such as cloudy, stale, smelly, 
 
 It is not a deep surveying manual or a full construction manual. It is the planning guide that sits between them.
 
-### Quick routing
+## Quick Routing
 
 - if the complaint is **where should we put houses, the market, latrines, animals, the clinic, water storage, or the first road**, start here for the settlement-scale plan, then use `marketplace-trade-space-basics.md` for the market's internal stalls, lanes, notices, and loading edge
 - if the complaint is **where should the clinic or market sit on the site without causing access, drainage, or crowding problems**, start here for the placement and buffers, then hand off to `clinic-facility-basics.md` or `marketplace-trade-space-basics.md` for the internal layout

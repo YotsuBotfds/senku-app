@@ -18,9 +18,25 @@ aliases:
   - children drinking questionable well water
   - boil once after flood
   - well contamination testing
+  - water is clear after flood is it safe
+  - is cloudy water safe to drink
+  - can I cook with this water
+  - source water contamination assessment
+  - suspect chemical contamination in water source
 routing_cues:
   - Use for source assessment and testing of drinking wells after flood, especially when the user asks if clear water or boiling makes it safe.
   - Use to identify biological versus chemical, fuel, heavy-metal, or sewage concerns before choosing purification.
+  - Use for test-first/source-change-first closures and source acceptability decisions for drinking/cooking.
+  - Route to water-purification once contamination type is classified and treatment selection is needed.
+  - Route to questionable-water-assessment-clarification when clarification sequencing for muddy or suspicious water is the primary request.
+  - Keep GD-035 treatment protocol prompts separate once contamination category is established.
+citations_required: true
+citation_policy: >
+  Use GD-406 citations for source assessment and acceptability boundaries; only hand into water-purification or other treatment cards after contamination category is stated and source-risk closure is complete.
+applicability: >
+  Use for suspected or uncertain source-water assessment and immediate use decisions for drinking, cooking, irrigation, and livestock. This card answers whether a source is acceptable now, what to test next, and what to do next.
+answer_card:
+  - water_testing_quality_assessment
 related:
   - chemistry-fundamentals
   - questionable-water-assessment-clarification
@@ -45,7 +61,7 @@ Testing does not require laboratory equipment; most methods use simple indicator
 
 </section>
 
-<section id="quick-routing">
+<section id="quick-routing-for-water-testing-questions">
 
 ## Quick Routing for Water Testing Questions
 
@@ -159,7 +175,7 @@ If pH is consistently outside 6–7.5, treat the water or select crops tolerant 
 
 </section>
 
-<section id="bacterial-contamination">
+<section id="bacterial-contamination-testing">
 
 ## Bacterial Contamination Testing
 
@@ -203,7 +219,7 @@ Do NOT use water with clear signs of sewage (smell, visible feces, foam) for cro
 
 </section>
 
-<section id="chemical-contaminants">
+<section id="chemical-contaminant-testing">
 
 ## Chemical Contaminant Testing
 
@@ -339,7 +355,7 @@ If your source shows low DO, increase aeration by splashing water, using a fount
 
 </section>
 
-<section id="source-assessment">
+<section id="source-assessment-springs-wells-and-surface-water">
 
 ## Source Assessment: Springs, Wells, and Surface Water
 
@@ -359,6 +375,8 @@ Springs emerge from groundwater and are generally clean if the spring outlet is 
 - Seasonal variability; may dry in summer.
 
 **Testing frequency:** Monthly during rainy season; quarterly in dry season.
+
+<section id="well-water">
 
 ### Well Water
 
@@ -380,6 +398,8 @@ Wells tap groundwater at depth, offering better protection from surface contamin
 - Inspect well cap; ensure it is sealed and elevated above ground.
 - No standing water around well.
 - No obvious cracks in well casing.
+
+</section>
 
 ### Surface Water (Rivers, Ponds, Ditches)
 
@@ -442,7 +462,9 @@ Maintain a simple table in a notebook or spreadsheet:
 - Animals avoiding the water.
 - Visible algal bloom or foam.
 
-### Response to Problem Results
+<section id="response-to-problem-results">
+
+## Response to Problem Results
 
 | **Issue** | **Action** |
 |-----------|-----------|
@@ -451,6 +473,8 @@ Maintain a simple table in a notebook or spreadsheet:
 | Coliform positive | Boil water if for drinking, or hand off to [Water Purification](water-purification) for treatment selection; do not use for leafy greens; treat with bleach (0.5–2 ppm) and retest |
 | High iron (>0.3 mg/L) | Aerate; install settling pond; monitor emitters for clogging |
 | High hardness (>200 ppm) | Apply gypsum to soil; increase leaching fraction; blend with softer source if available |
+
+</section>
 
 </section>
 
@@ -464,12 +488,16 @@ Allow water to sit in a still pond or tank for 24 hours. Sediment and some patho
 
 **Effectiveness:** Removes 70–90% of suspended solids; some pathogens (sinks with sediment).
 
+<section id="boiling">
+
 ### Boiling
 
 Heat water to a rolling boil for 1 minute (3 minutes above 2000 m elevation). Kills all pathogens.
 
 **Use for:** Drinking water or high-value crops if contamination is confirmed.
 **Limitation:** Not practical for irrigation of large areas; energy-intensive.
+
+</section>
 
 ### Bleach (Chlorination)
 

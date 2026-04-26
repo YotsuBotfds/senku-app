@@ -1,0 +1,184 @@
+card_id: underground_shelter_bunker_planning
+guide_id: GD-873
+slug: underground-shelter-bunker
+title: Underground Shelter & Bunker Construction
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user is deciding whether to build or occupy an underground shelter and needs pre-commitment triage checks.
+  - A user asks about site selection, groundwater/flood exposure, ventilation readiness, egress safety, or pre-occupancy safety gates for bunker planning.
+  - A user presents an apparent shelter opportunity and needs immediate safety boundaries before excavation, resource commitment, or long-duration stay decisions.
+required_first_actions:
+  - Compare candidate locations first: drainage, slope behavior, signs of saturation, unstable ground, access reliability, and nearby natural hazards before any build commitment.
+  - Confirm water and flood risk before planning a bunker: if water collects in the area, seasonal flows are unclear, or groundwater is high, halt planning and reassess site.
+  - Confirm air safety constraints at the planning stage: no occupancy decisions without a feasible ventilation path, oxygen strategy, and contingency if powered systems fail.
+  - Confirm exit strategy before any commitment: at least one immediate egress plan and one independent fallback route where possible.
+  - Separate "worth pursuing" from "must halt and reroute" explicitly, then only provide a planning checklist for the pursuit path.
+  - Avoid moving into construction sequencing language; this card closes planning and readiness only.
+conditional_required_actions:
+  - trigger_terms:
+      - flood
+      - seasonal rain
+      - high water
+      - seepage
+      - water table
+      - waterlogged
+    required_actions:
+      - Do not progress with siting or use decisions until floodplain, flow concentration, and groundwater context are clarified with a hard stop.
+  - trigger_terms:
+      - gas
+      - carbon monoxide
+      - oxygen
+      - air
+      - ventilation failure
+      - no airflow
+    required_actions:
+      - Prioritize immediate air-safety wording: no occupancy without ventilation path and independent observer/verification strategy.
+  - trigger_terms:
+      - blocked exit
+      - one exit
+      - escape
+      - ladder
+      - shaft
+      - staircase
+    required_actions:
+      - Verify and document secondary egress or clearly defer occupancy planning until an alternate exit approach is possible.
+first_actions:
+  - Run a short "commit-or-abstain" pass: site drainage, flood exposure, soil stability cues, water source distance/quality burden, and egress redundancy.
+  - Keep planning at high level:
+    - site/terrain screening and hazard ranking,
+    - water and flood controls,
+    - airflow concept and backup,
+    - entrance and independent exit logic,
+    - occupancy duration risk bands and immediate support needs.
+  - Treat all calculations and material choices as out of scope for this lane; route them away unless the user asks for a lower-liability engineering owner.
+  - If uncertainty remains on any critical gate, recommend conservative pause and ask a focused clarification set.
+urgent_red_flags:
+  - Active flooding, persistent water intrusion, or immediate evidence that the site floods or collects runoff.
+  - Unclear or rising groundwater with no clear safe lower depth margin.
+  - Visible slope/ground instability signs (cracks, heavy seepage, saturated earth near planned footprint, or recurring movement patterns).
+  - No feasible air/ventilation plan or inability to monitor air safely.
+  - Missing independent egress logic (single fragile exit only, no fallback pathway, inaccessible recovery route).
+  - Unsafe occupancy pressure: extended stay intent despite unresolved critical water, air, or access hazards.
+forbidden_advice:
+  - Do not provide excavation techniques, excavation staging, or digging safety procedures.
+  - Do not provide structural engineering calculations, shoring design, load-path sizing, reinforcement layouts, or material quantity planning.
+  - Do not provide detailed ventilation sizing equations, blower/duct design specs, or flood-proofing engineering formulas.
+  - Do not provide construction sequencing, procurement plans, or construction-day execution steps.
+  - Do not provide concealment, security hardening, tactical defense, trap, or conflict-resilient behavior guidance.
+  - Do not provide first-aid, rescue-in-trench, or active response playbooks beyond planning readiness and escalation.
+do_not:
+  - Do not answer as if this is a build manual.
+  - Do not normalize long-duration occupation without explicit hazard checks and exit viability.
+  - Do not include weaponized, tactical, or concealment narratives.
+  - Do not imply "safe to excavate now" in the presence of unresolved flood, air, or egress risk.
+  - Do not provide formulas and capacities beyond high-level readiness thresholds and planning gates.
+routine_boundary: >
+  This card governs pre-commitment planning and triage only. It is not a construction
+  playbook and does not authorize excavation, engineering detailing, or tactical
+  architecture. Use this lane for "should I commit?" decisions, readiness gates,
+  red-flag escalation, and minimum planning constraints.
+acceptable_uncertain_fit: >
+  If the user’s context is partial, give a conservative default: pause commitment,
+  ask focused clarifying questions, and escalate on uncertain flood, air, or access
+  hazards before giving any build-facing direction.
+clarifying_questions:
+  - What are the key terrain clues at the candidate site (water channels, runoff, prior high-water marks, and saturated soil behavior)?
+  - Do you have an independent path for exit if the primary access is blocked?
+  - What is the expected occupancy duration, and what is the backup if ventilation or water control fails?
+  - Is water the candidate area prone to seasonal flooding or shallow groundwater?
+  - What are the closest reliable resources for safe monitoring, communication, and relocation support?
+applicability:
+  owner: underground shelter planning triage
+  use_when:
+    - pre-construction site comparison for an underground shelter
+    - readiness checks before committing to excavation, occupancy, or long-duration use
+    - high-level review of drainage, air, exit, and water-risk gates
+  do_not_use_when:
+    - detailed excavation, shoring, or construction sequencing
+    - structural load or reinforcement design
+    - tactical or concealment planning
+    - detailed ventilation engineering and floodproofing calculations
+  handoff:
+    - construction for build sequencing and execution details
+    - structural-safety-building-entry for active collapse or movement risk
+    - emergency-airway-management for confirmed oxygen or CO hazard events
+    - water-purification for unsafe water collection or treatment concerns
+    - family-emergency-plan for broader continuity and relocation decisions
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback_handoff_language
+forbidden:
+  - forbidden_advice
+  - do_not
+fallback:
+  - If flood indicators, high groundwater, or active saturation are confirmed, halt planning and escalate immediately.
+  - If air/oxygen constraints or CO risk are present, switch to breathing/respiratory escalation language before any occupancy framing.
+  - If egress is non-redundant or blocked, require route redesign or a stop in occupancy decisions.
+  - If uncertainty is high on any red-flag domain, route to specialist owners and avoid construction-level instruction.
+fallback_handoff_language:
+  - If flood or active saturation risk is present, pause shelter commitment and defer to hydrology/ground-stability safety owners before continuing planning.
+  - If ventilation or oxygen risk emerges, hand off to respiratory and immediate safety pathways before any use recommendations.
+  - If exits are not resilient or blocked, mark as not-ready and hand off to accessibility or security planning owners.
+  - If multiple red flags are present, recommend relocation or delay and provide only safe relocation checklist steps.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - underground-shelter-overview-readiness
+  - underground-shelter-site-safety-scan
+  - underground-shelter-water-and-flood-gate
+  - underground-shelter-ventilation-air-readiness
+  - underground-shelter-entrance-and-egress-checks
+  - underground-shelter-planning-escalation
+source_sections:
+  - guide: GD-873
+    slug: underground-shelter-bunker
+    title: Underground Shelter & Bunker Construction
+    sections:
+      - "#overview"
+      - "#site-assessment"
+      - "#entrance-design"
+      - "#ventilation"
+      - "#waterproofing"
+      - "#long-term-occupation"
+source_invariants:
+  - name: high-risk safety pre-commitment gate
+    guide: GD-873
+    must_include:
+      - critical safety hazards
+      - excavation collapse is the leading cause of death
+      - never enter an underground space without proper ventilation
+      - flooding is sudden and catastrophic
+  - name: planning scope separation
+    guide: GD-873
+    must_include:
+      - before breaking ground
+      - site assessment
+      - multiple exits are critical
+      - single blocked exit traps everyone inside
+  - name: review status boundary
+    guide: GD-873
+    must_include:
+      - ventilation
+      - water
+      - drainage
+      - air changes
+review_status: pilot_reviewed
+notes: >
+  Reviewed for safe, high-level planning closure for GD-873. This card intentionally
+  limits scope to pre-build readiness and triage, with explicit forbidden-action
+  boundaries around excavation, structural design, detailed ventilation/flooding engineering,
+  construction sequencing, and tactical-concealment guidance. It requires
+  escalation when flood, air, or egress hazards are present or uncertain.

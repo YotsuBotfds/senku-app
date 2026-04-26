@@ -12,6 +12,29 @@ tags:
   - combustion
   - carbon-monoxide
   - indoor-air
+aliases:
+  - fuel storage and handling
+  - fuel storage planning
+  - settlement fuel logistics
+  - fuel inventory planning
+  - fuel reserve planning
+  - firewood storage planning
+  - liquid fuel storage safety
+  - fuel depot safety checklist
+routing_cues:
+  - Use this guide for settlement-level fuel storage prioritization, inventory tracking,
+    reserve planning, supply continuity, separation of fuel stores from living/water/food
+    areas, and non-procedural safety checklist language.
+  - Use this guide when the user asks how to organize firewood, charcoal, liquid fuel,
+    or mixed fuel reserves without asking for production, transfer, stove, furnace,
+    combustion, or chemical instructions.
+  - Route active fire, carbon-monoxide symptoms, spill exposure, leaking containers,
+    fumes in living space, or fuel near ignition sources to evacuation, isolation,
+    and specialist/emergency handoff language before routine planning.
+  - Do not use this guide to teach ignition-source guidance, fuel-transfer steps,
+    chemical blending, charcoal/gasification production, stove/furnace engineering,
+    combustion chemistry, spill cleanup recipes, or fire response beyond evacuation
+    and handoff.
 icon: ⚙️
 description: Safe storage and handling of fuels (firewood, charcoal, oil, natural gas), fuel preservation and quality maintenance, wood gasification, biogas production from organic waste, and fuel inventory management for long-term energy security.
 related:
@@ -27,6 +50,30 @@ word_count: 3000
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+citations_required: true
+citation_policy: >
+  Cite the reviewed GD-556 fuel storage handling answer card for settlement fuel
+  logistics planning, storage prioritization, inventory continuity, separation
+  checklists, and fire/CO/spill escalation tripwires. Do not cite GD-556 as
+  authority for ignition-source guidance, fuel-transfer procedures, chemical
+  blend ratios, charcoal or gasification production steps, combustion chemistry,
+  stove/furnace engineering, spill cleanup recipes, or fire response beyond
+  evacuation and handoff.
+applicability:
+  owner: settlement fuel storage and handling planning
+  use_when:
+    - Planning community fuel reserves, storage priorities, inventory rotation, and continuity of essential heat, cooking, power, and emergency fuel stocks.
+    - Separating firewood, charcoal, and liquid fuel storage from homes, water, food, sparks, heat, and high-traffic living areas at a checklist level.
+    - Setting tripwires for evacuation or specialist handoff when fire, carbon-monoxide, fumes, leaks, or spills make routine planning unsafe.
+  do_not_use_when:
+    - The user asks how to ignite, transfer, blend, produce, gasify, chemically process, or engineer fuel systems.
+    - The user asks for spill cleanup recipes, active firefighting, stove/furnace modification, or combustion chemistry.
+  handoff:
+    - smoke-inhalation-carbon-monoxide-fire-gas-exposure for CO or smoke exposure symptoms.
+    - fire-management-suppression for active fire response after evacuation/handoff framing.
+    - daily-cooking-fire-management or cookstoves-indoor-heating-safety for active cooking-fire or stove-operation issues.
+answer_card:
+  - fuel_storage_handling_planning
 ---
 
 :::danger

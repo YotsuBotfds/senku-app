@@ -25,6 +25,35 @@ word_count: 3200
 last_updated: '2026-02-25'
 version: '1.0'
 liability_level: high
+aliases:
+  - underground shelter planning
+  - bunker planning checklist
+  - bunker readiness check
+  - underground shelter risk assessment
+  - shelter site safety screening
+  - sheltering underground decision
+  - egress and ventilation planning
+  - flood-safe bunker siting
+  - water and drainage for shelters
+  - shelter viability check
+  - planning to use an underground shelter
+routing_cues:
+  - Use this guide for bounded planning and triage before committing to underground sheltering: compare sites, verify drainage/flood risk, evaluate egress, water safety, ventilation backup, and safety readiness.
+  - Route away from detailed excavation, shoring, structural, concealment, tactical, or tactical-defense instructions.
+  - Keep focus on high-level checks only: site stability, water and flood vulnerability, fresh-air controls, exits, occupancy risk, and escalation triggers.
+  - If site risk, unstable access, or critical life-safety mismatch appears, stop commitment and recommend deferral/escalation to specialist owners.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for non-procedural planning safety checks.
+  Do not cite or import construction sequencing, structural load computations, shoring playbooks,
+  detailed ventilation design, flood-proofing formulas, or tactical/concealment playbook content.
+applicability: >
+  Use for pre-construction planning and commitment decisions about underground shelters:
+  site selection quality, drainage/flood risk, access and egress, water-source safety,
+  ventilation readiness, and high-level occupancy safety. Do not use this guide as a
+  construction how-to or tactical-hardening manual.
+answer_card:
+  - underground_shelter_bunker_planning
 ---
 
 :::danger

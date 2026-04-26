@@ -1,0 +1,164 @@
+card_id: water_testing_quality_assessment
+guide_id: GD-406
+slug: water-testing-quality-assessment
+title: Water Testing & Quality Assessment
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks whether source water is acceptable for drinking, cooking, irrigation, or livestock when clarity is uncertain.
+  - User asks if a suspicious source is safe after flood, runoff, surface runoff, or unknown contamination exposure.
+  - User asks how to test first, which tests to run, or whether to keep using a source pending results.
+  - User reports signs linked to contamination risk (odor, foam, turbidity, algae film, chemical or fuel concerns).
+required_first_actions:
+  - Identify immediate use intent first (drinking/cooking versus irrigation/livestock) and treat drinking/cooking decisions as more conservative.
+  - Use test-first/source-change-first logic: classify risk, collect fresh sample context, then decide acceptability.
+  - If obvious contamination is present, do not normalize consumption; recommend safer source or temporary use restriction.
+  - Split risk by source family (springs/wells/surface), turbidity behavior, bacterial indicators, and chemical clues before advising action.
+conditional_required_actions:
+  - trigger_terms:
+      - child
+      - infant
+      - pregnant
+      - immunocompromised
+      - elderly
+      - high-risk
+    required_actions:
+      - Prioritize avoidance of uncertain drinking/cooking use; safe source + handoff language is required before any routine instruction.
+  - trigger_terms:
+      - sewage
+      - fuel
+      - rainbow sheen
+      - chemical
+      - arsenic
+      - lead
+      - pesticide
+      - industrial
+      - unknown contamination
+      - cannot trust
+    required_actions:
+      - Treat as chemical-or-high-risk branch; do not provide treatment protocol details here and do not endorse use for drinking/cooking.
+      - Defer to storage/purification/contamination-specific owners after source-risk closure.
+first_actions:
+  - State that apparent clarity does not guarantee safety; keep to source assessment, testing order, and safety boundary language.
+  - Recommend collection hygiene, clean containers, source documentation, and retest plan from the relevant section.
+  - Offer the conservative next action:
+    - continue if source currently safe for planned use,
+    - retest/monitor if only borderline or ordinary turbidity is present,
+    - switch source/avoid now if chemical/biological red flags or uncertain high-risk.
+  - If risk is elevated, explicitly separate what is still safe (irrigation-only/livestock-only) versus unsafe for drinking/cooking.
+urgent_red_flags:
+  - Sewage odor, visible feces, foamy runoff, or obvious waste/fecal contamination signs.
+  - Oily sheen, fuel smell, industrial runoff clues, or clearly unusual chemical taste/odor.
+  - Coliform-positive evidence or repeated turbidity after runoff without source correction.
+  - Any user intent for infant/child/vulnerable person consumption with unresolved uncertainty.
+forbidden_advice:
+  - Do not claim clear appearance, taste, smell, or one field test proves a source is safe for drinking or cooking.
+  - Do not provide chemical formulas, treatment dosing, concentration formulas, concentration units, or required contact-time schedules.
+  - Do not claim that boiling, bleach, or one treatment step fixes chemical contamination in all cases.
+  - Do not recommend specific products, kit brands, or procurement paths.
+  - Do not provide medical treatment for illness from suspected waterborne exposure.
+do_not:
+  - Do not switch into treatment protocol sequencing; this card closes source assessment only.
+  - Do not normalize unsafe water for high-risk populations without resolved contamination category and source-risk closure.
+  - Do not include guaranteed-safety statements, precision-lab promises, or universal compliance claims.
+routine_boundary: >
+  This card is for conservative source testing and immediate safety closure when source quality is in
+  question. Do not use it as a treatment protocol; once contamination type is identified, hand off to
+  purification or contamination-specific treatment cards.
+acceptable_uncertain_fit: >
+  If evidence is incomplete, state uncertainty conservatively and ask for missing source details.
+  Default to "not safe for drinking/cooking until verified" when a high-risk clue exists.
+clarifying_questions:
+  - Where is the water coming from (spring/well/surface) and has exposure changed since last use?
+  - What is the intended use: cooking/drinking, irrigation, or livestock?
+  - Are there visible contamination clues: odors, foam, color shift, sheen, fish/algae changes, nearby runoff?
+  - Who is exposed (children, pregnant people, sick, elderly, immunocompromised)?
+citation_ids:
+  - water-testing-overview-scope
+  - water-testing-routing-rationale
+  - water-testing-bacterial-hygiene-boundary
+  - water-testing-source-assessment
+  - water-testing-response-boundary
+source_sections:
+  - guide: GD-406
+    slug: water-testing-quality-assessment
+    title: Water Testing & Quality Assessment
+    sections:
+      - "#overview"
+      - "#quick-routing-for-water-testing-questions"
+      - "#turbidity-testing"
+      - "#ph-testing"
+      - "#bacterial-contamination-testing"
+      - "#chemical-contaminant-testing"
+      - "#hardness-testing"
+      - "#dissolved-oxygen"
+      - "#source-assessment-springs-wells-and-surface-water"
+      - "#well-water"
+      - "#testing-schedule"
+      - "#response-to-problem-results"
+      - "#boiling"
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: assessment-first ownership
+    guide: GD-406
+    must_include:
+      - Use this guide when the user needs an assessment, not a treatment recipe.
+      - clear signs of sewage
+      - Do NOT use water with clear signs of sewage
+      - source assessment
+  - name: high-risk branching
+    guide: GD-406
+    must_include:
+      - Coliform positive
+      - Boil water if for drinking
+      - hand off to [Water Purification]
+      - do not use for leafy greens
+  - name: source family assessment
+    guide: GD-406
+    must_include:
+      - testing frequency
+      - Well Water
+      - Surface Water (Rivers, Ponds, Ditches)
+  - name: test-first and retest order
+    guide: GD-406
+    must_include:
+      - test again
+      - hand off
+      - settle
+applicability:
+  - Primary use: source-risk triage for water acceptability and testing sequence.
+  - Secondary use: uncertainty branch for drinking/cooking decisions.
+  - Exclude: treatment dose guidance and direct purification sequencing.
+actions:
+  required:
+    - classify source and contamination concern
+    - identify whether drinking/cooking is safe now
+    - issue safe-source or restriction boundary
+  standard:
+    - route to purification cards once contamination type is identified
+    - request missing context only when it blocks a safe answer
+forbidden:
+  - chemical formulas or treatment dosing schedules
+  - claiming clear water is safe without tests
+  - guaranteeing safety with boiling for chemical contamination
+  - procurement or kit-purchase guidance
+  - medical treatment instructions
+fallback:
+  - If contamination class is uncertain, default to no-drinking/cooking recommendation and safer source/use reduction.
+  - Escalate to GD-035 for treatment protocol choices.
+  - Escalate to GD-931 when source clarification and pre-treatment sequencing are the immediate blocker.
+output:
+  required:
+    - source risk class
+    - immediate use boundary (safe now / retest / avoid)
+    - concise next test or source change path
+  prohibited:
+    - dosing tables
+    - formula-based treatment steps
+    - deterministic medical treatment
+review_status: pilot_reviewed
+notes: >
+  This reviewed card anchors GD-406 as assessment-first, conservative ownership for deciding source acceptability.
+  It separates test-first source-risk closure from treatment protocol owners (GD-035) and clarification flow
+  (GD-931), and blocks treatment promises or dosing language at generation time.
+  READY_FOR_PARENT_CLOSE.

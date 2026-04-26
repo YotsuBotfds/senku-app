@@ -39,6 +39,28 @@ related:
   - waste-management-recycling
   - wound-care-chronic
   - wound-hygiene-infection-prevention
+routing_cues:
+  - sick person at home with vomiting, diarrhea, cough, or fever asking how to keep the rest of the family from getting sick
+  - cleaning up vomit, stool-contaminated messes, or body-fluid spills in a home-care setting
+  - questions on separate bowls, bedding, laundry, towels, and gloves during household sick-care
+  - how to set up a sick room, ventilation, and daily routine so household spread stays lower
+  - caregiver questions about what to clean first, what to wear, and what to avoid in a sick-person household
+  - asking when household sick-care should stop and urgent help be sought
+citations_required: true
+applicability: >
+  Use this guide for routine household illness-control after a person becomes acutely ill at
+  home: vomiting, diarrhea, persistent cough/respiratory droplets, or mucus-heavy illness
+  where the task is hygiene and spread-reduction. Avoid using this guide for diagnosis,
+  invasive care, medication instructions, red-flag medical treatment pathways, or outbreak
+  planning that goes beyond household-level spread-reduction boundaries.
+citation_policy: >
+  Cite reviewed GD-924 sections for all household containment steps and ask for urgent
+  medical escalation when red flags are present. For community or food-service spill-over,
+  or when multiple household members become acutely ill at once, hand off first to
+  community-kitchen-mess-hall-operations or camp-outbreak-dysentery-operations and keep
+  home hygiene boundaries in force without diagnosis, procedure, or medication advice.
+answer_card:
+  - home_sick_care_hygiene
 read_time: 10
 word_count: 1876
 last_updated: '2026-04-13'

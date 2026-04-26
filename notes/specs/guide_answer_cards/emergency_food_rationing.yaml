@@ -1,0 +1,173 @@
+card_id: emergency_food_rationing
+guide_id: GD-591
+slug: emergency-food-rationing
+title: Emergency Food Rationing for Communities
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - A community has limited food and needs to estimate days of supply, set fair portions,
+    prioritize at-risk households/groups, run distribution logs, and preserve continuity.
+  - The request asks for anti-hoarding rules, transparent ration governance, and stock-loss/spoilage planning.
+  - The user is planning community reserve pacing while shortages are ongoing but acute safety risks are already separated.
+required_first_actions:
+  - Confirm only clearly safe food is being planned and exclude suspect, spoiled, contaminated, or illness-linked food from the ration base.
+  - Keep community continuity as the success condition: maintain predictable routines, inventory discipline, and one source of allocation truth.
+  - Prioritize vulnerable groups first in allocation: children, pregnant/lactating people, elders, sick/disabled people, and heavy laborers where function is critical.
+  - Set the first plan around measured stock, household size, and simple distribution interval before any long-form optimization.
+  - Add spoilage buffers and reserve pacing to avoid abrupt ration collapse mid-cycle.
+conditional_required_actions:
+  - trigger_terms:
+      - suspect
+      - spoiled
+      - bulging
+      - mold
+      - leaking
+      - slimy
+      - sick after same meal
+      - outbreak
+      - diarrhea
+      - vomiting
+      - contamination
+    required_actions:
+      - Stop counting suspect/unsafe food and route contamination, spoilage, or outbreak-risk decisions to GD-666 and GD-906 before continuing routine allocation language.
+  - trigger_terms:
+      - faint
+      - confused
+      - severe dehydration
+      - not drinking
+      - very weak
+      - blood sugar
+      - severe weight loss
+    required_actions:
+      - Escalate from routine planning to medical or acute support guidance and avoid giving individual correction instructions from this card.
+first_actions:
+  - Build a daily/weekly food ledger with stock in, stock out, remaining inventory, spoilage loss, and redistribution.
+  - Estimate ration base from safe food quantity divided by people and planned ration duration.
+  - Define a transparent distribution method (weekly cards or daily controlled issue) and communicate the formula publicly.
+  - Use vulnerability tiers, not random discretion: children first protection, then pregnant/nursing, labor-required roles, elders/illness support, then standard allocations.
+  - Preserve nutrient mix across staples, protein foods, fats, and preserved produce where available instead of calories-only math.
+  - Add reserve margin and spoilage loss factor into the consumption projection, then adjust at least weekly.
+  - Create a concise compliance loop: record shortfalls, disputes, refusals, and corrective adjustments by date.
+urgent_red_flags:
+  - Widespread GI illness or suspected foodborne clustering after the same meal or distribution batch.
+  - Ongoing inability to use only clearly safe foods due to contamination or spoilage pressure.
+  - Severe vulnerability signals in vulnerable people (confusion, reduced urine, collapse risk, persistent severe weakness, inability to take fluids or feed).
+  - Distribution math would require repeated cuts below minimum community protection for children, pregnant, nursing, or medically high-need people.
+  - Repeated theft/hoarding spikes while supplies are low and records are missing or contradictory.
+  - Evidence that any group is being excluded from food for non-transparent reasons.
+forbidden_advice:
+  - Do not provide medical dosing, therapeutic refeeding schedules, deficiency correction math, or individual clinical replacement regimens.
+  - Do not provide food chemistry, conversion equations for supplements, or recipe-heavy ration redesign formulas.
+  - Do not recommend serving suspect/unsafe food because people are hungry.
+  - Do not design punishment-first enforcement systems or encourage punitive ration seizure as routine practice.
+  - Do not provide starvation timelines or severe-minimum ration plans as the default answer endpoint.
+  - Do not route severe medical, dehydration, or poisoning/contamination events into routine ration-only steps.
+do_not:
+  - Do not include household meal plans with precise nutrient correction targets, supplement-dose tables, or weight-loss logic.
+  - Do not provide detailed menu engineering, micronutrient conversion calculations, or disease-specific treatment content.
+  - Do not treat food contamination and suspected outbreak cases as normal distribution optimization.
+  - Do not answer individual calorie-cutting or recovery-diet plans from this card.
+routine_boundary: >
+  This card is for community ration system setup and management while safe food is
+  identified and no immediate medical contamination- or outbreak-driven emergency is
+  active. It must defer to food safety, food-spoilage, infection, or acute medical
+  guides for suspect food, contamination clusters, severe dehydration, and severe
+  malnutrition treatment questions.
+acceptable_uncertain_fit: >
+  If community-level details are incomplete, provide a conservative default:
+  count only clearly safe food, set a temporary transparent minimum ration with vulnerability
+  protection, add spoilage reserve assumptions, and ask one or two clarifying questions before deeper optimization.
+clarifying_questions:
+  - How many people are in each vulnerable category (children, pregnant/nursing, elders, ill/disabled, labor roles)?
+  - What foods are confirmed safe versus questionable, and what signs triggered any uncertainty?
+  - What is the current storage loss rate by food type and expected spoilage this week?
+  - Is distribution weekly or daily, and how are receipts/redistribution losses recorded?
+  - Is there any sign of clustered illness or suspected contamination linked to a shared meal or cooking line?
+citation_ids:
+  - emergency-food-rationing-overview-boundary
+  - emergency-food-rationing-ration-tiers
+  - emergency-food-rationing-inventory-distribution
+  - emergency-food-rationing-record-keeping
+  - emergency-food-rationing-spoilage-reserves
+source_sections:
+  - guide: GD-591
+    slug: emergency-food-rationing
+    title: Emergency Food Rationing for Communities
+    sections:
+      - "#overview"
+      - "#part-1-caloric-minimums-by-activity-level"
+      - "#part-4-at-risk-populations-priority-allocation"
+      - "#part-5-inventory-management-distribution"
+      - "#part-9-record-keeping-templates"
+      - "#part-11-spoilage-accounting-and-reserve-planning"
+source_invariants:
+  - name: safety boundary excludes contamination and treatment
+    guide: GD-591
+    must_include:
+      - "suspected/unsafe food"
+      - "Do NOT reduce rations for infants or young children"
+  - name: vulnerable prioritization
+    guide: GD-591
+    must_include:
+      - "children"
+      - "pregnant women"
+      - "lactating mothers"
+      - "heavy laborers"
+      - "elderly"
+  - name: continuity and transparency
+    guide: GD-591
+    must_include:
+      - "transparent"
+      - "inventory"
+      - "weekly"
+      - "distribution"
+      - "spoilage"
+applicability:
+  owner: community ration closure
+  route_from: emergency-food-rationing
+  must_handle_within_card:
+    - fair allocation and public formula
+    - household-size-based distribution
+    - record-keeping and adjustment loop
+  must_handoff:
+    - food-safety-contamination-prevention (GD-666) when contamination drives decisions
+    - food-spoilage-assessment (GD-906) for spoilage/salvage uncertainty
+    - food-rationing (GD-089) for household-level nutrition optimization
+    - food-system-outage-illness-boundary for clustered illness logistics
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+fallback:
+  - If contamination, outbreak, or uncertain food safety is detected, defer detailed ration numbers and immediate distribution policy to GD-666 and GD-906.
+  - If individual clinical decline is likely (confusion, repeated vomiting/diarrhea, severe weakness, dehydration), hand off to medical/illness owners immediately.
+  - If the user is asking primarily for individual clinical dosing or correction plans, close the community lane and switch to the household/clinical sibling route.
+fallback_handoff_language:
+  - "Food safety checks and outbreak/illness triage are done before any normal rationing plan continues."
+  - "Do not normalize severe restriction or suspect-food use because food is scarce."
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid_unsafe_source_usage: true
+  include_recordkeeping: true
+review_status: pilot_reviewed
+notes: >
+  This is a safe community-scale closure card for GD-591. It intentionally limits
+  output to fair allocation, transparent distribution governance, stock tracking,
+  vulnerability-aware prioritization, spoilage accounting, and reserve planning.
+  It explicitly excludes medical dosing, severe malnutrition treatment, refeeding
+  protocols, chemical/recipe details, and suspect-food-serving guidance. Coverage
+  and handoff logic are aligned to GD-666/GD-906 contamination boundaries and
+  sibling individual ration planning (GD-089) when appropriate.

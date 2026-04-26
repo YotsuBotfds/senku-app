@@ -1,0 +1,153 @@
+card_id: settlement_layout_planning
+guide_id: GD-962
+slug: settlement-layout-growth-planning
+title: Settlement Layout and Growth Planning
+risk_tier: medium
+evidence_owner: guide-corpus
+applicability: >
+  Community layout planning, clean/dirty/quiet/hazardous zoning, water-first sequencing,
+  bad-weather access, road and corridor safety, and growth-space planning. Escalate to
+  surveying-land-management, water-system-design, road-building, construction, and clinic
+  or marketplace specialist guides only after the settlement skeleton and placement lanes are decided.
+applies_when:
+  - A user asks where to place houses, roads, water points, latrines, animals, clinic, or market in a new settlement.
+  - A user asks how to protect drainage, access, and growth corridors before building starts.
+  - A user asks for a first-layout sequence for a new camp/village with water, sanitation, and service zones.
+  - A user asks for practical handoff boundaries before moving to surveying, water-system design, or road construction.
+actions:
+  required_first_actions:
+    - Start at the site reality scan: drainage direction, flood paths, wind, access friction, and obvious hazard zones.
+    - Sketch the settlement skeleton first, then set the clean/dirty/quiet/hazardous zones.
+    - Place water and sanitation paths before house placement and market/work allocation.
+    - Fix the main bad-weather route early, then add secondary lanes to avoid dead-end dependence on one entry line.
+    - Reserve growth corridors before filling the area with shelters or sheds.
+  first_actions:
+    - Use the core order: water/drainage, access, buffers, dirty/clean uses, household clusters, and expansion space.
+    - Classify land into concept zones using distance, flow direction, wind drift, and practical access rules.
+    - Keep water source, sanitation discharge, livestock zones, fire/hot-work, and clinics/trade areas in separate operating lanes.
+    - Keep roads and footpaths passable in wet conditions and for loaded cart movement.
+    - Protect public common spaces and future storage/clinic/market strips as first-class land uses.
+    - Add a simple layout checklist pass before any permanent build spot is approved.
+required_first_actions:
+  - Start at the site reality scan: drainage direction, flood paths, wind, access friction, and obvious hazard zones.
+  - Sketch the settlement skeleton first, then set the clean/dirty/quiet/hazardous zones.
+  - Place water and sanitation paths before house placement and market/work allocation.
+  - Fix the main bad-weather route early, then add secondary lanes to avoid dead-end dependence on one entry line.
+  - Reserve growth corridors before filling the area with shelters or sheds.
+first_actions:
+  - Use the core order: water/drainage, access, buffers, dirty/clean uses, household clusters, and expansion space.
+  - Classify land into concept zones using distance, flow direction, wind drift, and practical access rules.
+  - Keep water source, sanitation discharge, livestock zones, fire/hot-work, and clinics/trade areas in separate operating lanes.
+  - Keep roads and footpaths passable in wet conditions and for loaded cart movement.
+  - Protect public common spaces and future storage/clinic/market strips as first-class land uses.
+  - Add a simple layout checklist pass before any permanent build spot is approved.
+urgent_red_flags:
+  - Clean water route crosses dirty runoff paths or must cross the settlement's dirty side.
+  - Drainage flows toward sleeping or food/cooking zones.
+  - Any permanent home placement before reserved expansion corridor and main access is fixed.
+  - Temporary or permanent dump/garden barriers occupying the future main service corridor.
+  - Cumulative placement decisions that leave no room for clinic, storage, or road widening.
+forbidden_advice:
+  - Do not provide utility sizing, engineering formulas, detailed grading, or construction procedures.
+  - Do not provide surveying calculations, line stakes, or legal/compliance determinations.
+  - Do not provide electrical, medical repair, building engineering, or road-construction how-to details.
+  - Do not recommend routing by occupancy or construction shortcuts that ignore drainage or growth lanes.
+  - Do not present layout advice as if it is final legal siting or permitting guidance.
+forbidden:
+  - utility sizing/engineering calculations
+  - surveying math or land-staking procedures
+  - road construction grading and machinery sequencing
+  - water-system design formulas
+  - construction or medical/utility repair procedures
+  - compliance/legal permit instructions
+do_not:
+  - Do not treat this as a technical build manual for surveying, utilities, grading, or medical/electrical repairs.
+  - Do not convert this into a code and permit workflow.
+  - Do not provide definitive legal zoning, environmental permitting, or structural design decisions.
+routine_boundary: >
+  This card is for community-scale settlement planning and safety-first layout sequencing.
+  It is not a full engineering, surveying, construction, legal, or medical workflow.
+acceptable_uncertain_fit: >
+  If the user cannot describe the site context well, provide a conservative planning
+  sequence, ask short clarifying questions, and delay location commitments until
+  critical information (drainage, road access, placement conflicts) is known.
+clarifying_questions:
+  - Is there a clear downhill flow and does rain water currently pool in the candidate area?
+  - Which zones are already fixed, and which can remain flexible for expansion?
+  - Where will the first all-weather access line, hand-wash point, and sanitation corridor be?
+  - Where must clinics, storage, and trade space stay within safe distance from homes and waste routes?
+fallback:
+  - If flood, active erosion, severe mud-lock, or repeated unsafe drainage is likely, pause permanent placement and reroute to surveying-land-management for rapid field safety triage.
+  - If a water-risk decision is central and unresolved, use water-system-design for sizing and infrastructure logic after layout sequencing.
+  - If public building internals are required, hand off to clinic-facility-basics, marketplace-trade-space-basics, or community-kitchen-illness-control.
+fallback_handoff_language:
+  - If active drainage hazard, repeated muddy access, or unsafe waste trajectory is likely, advise a placement pause and re-route to surveying-land-management before construction planning.
+  - If water and sanitation sequencing is blocked, hand off to water-system-design and keep location decisions at plan level.
+  - If construction sequence questions arise, route to construction only after this guide's layout skeleton is set.
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid: true
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - settlement-layout-sequencing
+  - clean-dirty-zone-definition
+  - water-first-order
+  - road-and-access-weather-first
+  - expansion-corridors
+  - growth-safety-checklist
+source_sections:
+  - guide: GD-962
+    slug: settlement-layout-growth-planning
+    title: Settlement Layout and Growth Planning
+    sections:
+      - "#quick-routing"
+      - "#core-rule"
+      - "#1-start-with-site-reality"
+      - "#2-sketch-the-settlement-skeleton-first"
+      - "#3-separate-clean-dirty-quiet-and-hazardous-uses"
+      - "#4-put-water-and-sanitation-up-front"
+      - "#5-plan-roads-and-footpaths-for-bad-weather-not-good-weather"
+      - "#6-build-household-clusters-not-random-scatter"
+      - "#8-leave-expansion-corridors"
+      - "#9-use-a-simple-layout-checklist-before-building"
+      - "#11-common-mistakes"
+source_invariants:
+  - name: water-first planning
+    guide: GD-962
+    must_include:
+      - Do not place buildings first and hope the infrastructure works itself out later.
+      - water and drainage
+      - "If clean water must travel through the dirty part of the settlement to reach homes, the plan is wrong."
+  - name: clean-dirty separation and hazard buffers
+    guide: GD-962
+    must_include:
+      - Put these in the cleaner, drier, better-drained part of the settlement
+      - Place these downwind and downhill when practical, while still allowing access
+      - Leave clear working space and simple firebreaks between these areas and sleeping structures
+  - name: growth corridor protection
+    guide: GD-962
+    must_include:
+      - Leave obvious expansion corridors
+      - Do not use your best future road corridor as your temporary dump
+      - If two or more answers are "no," stop and re-site the build unless there is a very strong reason not to.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed for community layout safety closure only. Keeps scope at concept-level
+  settlement planning and growth safety checks, with explicit handoffs to surveying
+  and specialist design guides for technical follow-through.
+  READY_FOR_PARENT_CLOSE.
