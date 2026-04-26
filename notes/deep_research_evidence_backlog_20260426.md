@@ -234,6 +234,9 @@ Action:
 - Hardened the runtime endpoint preflight used by guide prompt validation:
   malformed `/v1/models` JSON is now reported as a failed endpoint check
   instead of escaping as an uncaught parser exception.
+- Pinned the runtime preflight fail-loud contract: expected-model mismatches
+  exit nonzero by default, `--warn-only` is the explicit waiver, and JSON
+  evidence still records `model_found=false`.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

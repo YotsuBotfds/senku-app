@@ -1,5 +1,10 @@
+import io
+import json
+import tempfile
 import unittest
-from unittest.mock import Mock
+from contextlib import redirect_stdout
+from pathlib import Path
+from unittest.mock import Mock, patch
 
 from scripts import check_runtime_endpoints as preflight
 
@@ -98,6 +103,30 @@ class RuntimeEndpointPreflightTests(unittest.TestCase):
         self.assertEqual(targets["generation"]["model"], "gen-model")
         self.assertEqual(targets["embedding"]["url"], "http://embed/v1")
         self.assertEqual(targets["embedding"]["model"], "embed-model")
+
+    def test_main_fails_loud_unless_warn_only_and_still_writes_json(self):
+        failed_check = preflight.EndpointCheck(
+            role="generation",
+            url="http://127.0.0.1:1235/v1",
+            expected_model="gemma-4-e2b-it-litert",
+            ok=True,
+            status_code=200,
+            models=("different-model",),
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_out = Path(tmpdir) / "runtime_preflight.json"
+            with patch.object(preflight, "check_targets", return_value=[failed_check]):
+                with redirect_stdout(io.StringIO()):
+                    rc = preflight.main(["--json-out", str(json_out)])
+                    warn_rc = preflight.main(["--json-out", str(json_out), "--warn-only"])
+
+            payload = json.loads(json_out.read_text(encoding="utf-8"))
+
+        self.assertEqual(rc, 1)
+        self.assertEqual(warn_rc, 0)
+        self.assertFalse(payload["checks"][0]["model_found"])
+        self.assertEqual(payload["checks"][0]["models"], ["different-model"])
 
 
 if __name__ == "__main__":
