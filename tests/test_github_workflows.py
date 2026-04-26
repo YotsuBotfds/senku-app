@@ -334,6 +334,8 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("hashFiles('artifacts/security/pip_audit_lock.json')", upload_step["if"])
         self.assertEqual("dependency-security-report", upload_step["with"]["name"])
         self.assertEqual("artifacts/security/pip_audit_lock.json", upload_step["with"]["path"])
+        self.assertEqual("error", upload_step["with"]["if-no-files-found"])
+        self.assertEqual(14, upload_step["with"]["retention-days"])
 
         workflow_text = (WORKFLOW_DIR / "dependency_security.yml").read_text(encoding="utf-8")
         self.assertNotIn("android", workflow_text.lower())

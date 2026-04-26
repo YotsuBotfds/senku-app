@@ -234,6 +234,8 @@ Action:
 - Bench bundle artifact guard added: workflow tests now pin the bench-bundle
   build step, upload path, `if-no-files-found: error`, 14-day retention, and
   public-repository attestation subject path.
+- Dependency security artifact guard extended: workflow tests now also pin
+  `if-no-files-found: error` and 14-day retention for the pip-audit report.
 
 Validation:
 
@@ -244,6 +246,8 @@ Validation:
   prefix carry the same mode/safety/flavor dimensions.
 - `tests.test_github_workflows` also asserts the bench-bundle upload and
   attestation stay tied to `steps.bench_bundle.outputs.bundle_zip`.
+- The dependency-security workflow upload remains a small JSON report with
+  explicit failure-on-missing and bounded retention.
 
 Deferred unless evidenced:
 
