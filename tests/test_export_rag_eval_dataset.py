@@ -141,6 +141,8 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
                                 "app_gate_status": "pass",
                                 "app_acceptance_status": "pass",
                                 "app_acceptance_root_cause": "supported",
+                                "safety_surface_status": "not_safety_critical",
+                                "ui_surface_bucket": "standard",
                                 "evidence_owner_status": "expected_owner_cited",
                                 "claim_support_status": "pass",
                                 "cited_guide_ids": "GD-301",
@@ -166,6 +168,8 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
         self.assertEqual(metadata["answer_card_status"], "pass")
         self.assertEqual(metadata["app_acceptance_status"], "pass")
         self.assertEqual(metadata["app_acceptance_root_cause"], "supported")
+        self.assertEqual(metadata["safety_surface_status"], "not_safety_critical")
+        self.assertEqual(metadata["ui_surface_bucket"], "standard")
         self.assertEqual(metadata["expected_guide_ids"], ["GD-301"])
         self.assertEqual(metadata["top_retrieved_guide_ids"], ["GD-301", "GD-999"])
 
@@ -184,6 +188,8 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
                                 "cited_guide_ids": "",
                                 "suspected_failure_bucket": "retrieval_miss",
                                 "app_acceptance_root_cause": "evidence_owner",
+                                "safety_surface_status": "emergency_first_supported",
+                                "ui_surface_bucket": "emergency_first",
                             }
                         ]
                     }
@@ -201,6 +207,11 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
         self.assertEqual(records[0]["contexts"], ["GD-010", "GD-011"])
         self.assertEqual(records[0]["metadata"]["suspected_failure_bucket"], "retrieval_miss")
         self.assertEqual(records[0]["metadata"]["app_acceptance_root_cause"], "evidence_owner")
+        self.assertEqual(
+            records[0]["metadata"]["safety_surface_status"],
+            "emergency_first_supported",
+        )
+        self.assertEqual(records[0]["metadata"]["ui_surface_bucket"], "emergency_first")
 
     def test_repeatable_trace_jsonl_adds_span_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:

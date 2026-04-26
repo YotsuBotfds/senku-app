@@ -237,6 +237,8 @@ def metadata_from_sources(
         "app_gate_status": diagnostics.get("app_gate_status") or "",
         "app_acceptance_status": diagnostics.get("app_acceptance_status") or "",
         "app_acceptance_root_cause": diagnostics.get("app_acceptance_root_cause") or "",
+        "safety_surface_status": diagnostics.get("safety_surface_status") or "",
+        "ui_surface_bucket": diagnostics.get("ui_surface_bucket") or "",
         "evidence_owner_status": diagnostics.get("evidence_owner_status") or "",
         "claim_support_status": diagnostics.get("claim_support_status") or "",
         "generated": diagnostics.get("generated") or "",

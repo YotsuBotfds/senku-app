@@ -213,6 +213,9 @@ Action:
 - Extended row-level diagnostics queries with safety/UI surfacing filters:
   `--safety-surface-status` and `--ui-surface-bucket` now let triage isolate
   emergency-first or non-safety rows without opening the raw artifact.
+- Preserved safety/UI diagnostic facets in RAG eval dataset metadata so
+  exported rows retain `safety_surface_status` and `ui_surface_bucket`
+  alongside acceptance/root-cause fields.
 - Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
   the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
   security installs pinned `uv==0.11.7` before checking the generated lock.
@@ -302,6 +305,10 @@ Action:
 - Surfaced reviewed-card runtime visibility in RAG diagnostics summaries:
   runtime-enabled and runtime-disabled artifact counts now appear in compact
   Markdown/JSON summary rows.
+- Extended reviewed-card runtime visibility in compact RAG diagnostics
+  summaries: runtime-unknown artifact counts now appear beside enabled and
+  disabled counts, with row-level fallback from
+  `artifact_reviewed_card_runtime_answers` when summary counts are absent.
 - Extended trace redaction to plural raw prompt/question fields (`prompts`,
   `questions`) while preserving safe metadata suffixes like ids, hash, index,
   and count.
@@ -317,6 +324,9 @@ Validation:
   `ui_surface_bucket=emergency_first`.
 - Run-manifest Markdown summary tests now cover legacy no-evidence records and
   partial artifact-evidence records.
+- Compact RAG diagnostics summary tests now cover
+  `reviewed_card_runtime_unknown` from summary-level artifact counts and
+  fallback from row-level runtime-answer status.
 
 Deferred unless evidenced:
 

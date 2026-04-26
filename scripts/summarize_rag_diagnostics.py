@@ -37,6 +37,7 @@ DEFAULT_COLUMNS = (
     "reviewed_card_runtime",
     "reviewed_card_runtime_enabled",
     "reviewed_card_runtime_disabled",
+    "reviewed_card_runtime_unknown",
     "deterministic_rule",
     "quality_score_10",
 )
@@ -68,6 +69,9 @@ _FALLBACK_FIELD_BY_PATH = {
     ("answer_provenance_counts", "generated_model"): "answer_provenance",
     ("answer_provenance_counts", "reviewed_card_runtime"): "answer_provenance",
     ("answer_provenance_counts", "deterministic_rule"): "answer_provenance",
+    ("artifact_reviewed_card_runtime_answer_counts", "enabled"): "artifact_reviewed_card_runtime_answers",
+    ("artifact_reviewed_card_runtime_answer_counts", "disabled"): "artifact_reviewed_card_runtime_answers",
+    ("artifact_reviewed_card_runtime_answer_counts", "unknown"): "artifact_reviewed_card_runtime_answers",
 }
 
 
@@ -393,6 +397,12 @@ def _summarize_directory(directory: Path, label: str | None = None) -> dict[str,
             parsed_rows,
             "artifact_reviewed_card_runtime_answer_counts",
             "disabled",
+        ),
+        "reviewed_card_runtime_unknown": _count(
+            summary,
+            parsed_rows,
+            "artifact_reviewed_card_runtime_answer_counts",
+            "unknown",
         ),
         "deterministic_rule": _count(summary, parsed_rows, "answer_provenance_counts", "deterministic_rule"),
     }

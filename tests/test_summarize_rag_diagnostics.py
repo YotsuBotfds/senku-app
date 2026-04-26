@@ -60,8 +60,9 @@ def base_summary() -> dict:
             "deterministic_rule": 11,
         },
         "artifact_reviewed_card_runtime_answer_counts": {
-            "enabled": 8,
+            "enabled": 7,
             "disabled": 16,
+            "unknown": 1,
         },
     }
 
@@ -103,8 +104,9 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(row["generated_shadow_card_gap_rows"], 2)
         self.assertEqual(row["generated_model"], 6)
         self.assertEqual(row["reviewed_card_runtime"], 7)
-        self.assertEqual(row["reviewed_card_runtime_enabled"], 8)
+        self.assertEqual(row["reviewed_card_runtime_enabled"], 7)
         self.assertEqual(row["reviewed_card_runtime_disabled"], 16)
+        self.assertEqual(row["reviewed_card_runtime_unknown"], 1)
         self.assertEqual(row["deterministic_rule"], 11)
         self.assertAlmostEqual(row["quality_score_10"], 6.55)
 
@@ -125,10 +127,11 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
                 markdown,
             )
             self.assertIn("reviewed_card_runtime_enabled", markdown)
+            self.assertIn("reviewed_card_runtime_unknown", markdown)
             self.assertIn("root_evidence_owner", markdown)
             self.assertIn("| dir_a |  | 24 | 24 | 7 | 0.875 |", markdown)
             self.assertIn("| 5 | 2 | 1 | 7 | 2 | 1 | 3 | 1 | 3 |", markdown)
-            self.assertIn("| 6 | 7 | 8 | 16 | 11 |", markdown)
+            self.assertIn("| 6 | 7 | 7 | 16 | 1 | 11 |", markdown)
 
             json_output = io.StringIO()
             with redirect_stdout(json_output):
@@ -183,6 +186,28 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(rows[0]["root_card_contract"], 1)
         self.assertEqual(rows[0]["root_safety_surface"], 1)
         self.assertEqual(rows[0]["root_gate_policy"], 1)
+
+    def test_collect_summaries_counts_runtime_unknown_from_rows_when_summary_missing(self):
+        payload = base_summary()
+        payload.pop("artifact_reviewed_card_runtime_answer_counts")
+        payload["rows"] = [
+            {"artifact_reviewed_card_runtime_answers": "enabled"},
+            {"artifact_reviewed_card_runtime_answers": "disabled"},
+            {"artifact_reviewed_card_runtime_answers": "disabled"},
+            {"artifact_reviewed_card_runtime_answers": "unknown"},
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            dir_a = root / "dir_a"
+            dir_a.mkdir()
+            write_diagnostics(dir_a / self.module.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([dir_a])
+
+        self.assertEqual(rows[0]["reviewed_card_runtime_enabled"], 1)
+        self.assertEqual(rows[0]["reviewed_card_runtime_disabled"], 2)
+        self.assertEqual(rows[0]["reviewed_card_runtime_unknown"], 1)
 
     def test_parse_rate_handles_multiple_formats(self):
         self.assertAlmostEqual(self.module._parse_rate("21/24 (87.5%)"), 0.875)
