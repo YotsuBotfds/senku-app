@@ -15,6 +15,41 @@ related:
   - electrical-wiring
   - electrical-safety-hazard-prevention
   - battery-management-charge-controllers
+aliases:
+  - fuse breaker hazard inventory
+  - overcurrent protection condition checklist
+  - breaker fuse mismatch symptoms
+  - do not energize electrical protection
+  - electrical isolation label handoff
+  - qualified electrical owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level fuse, breaker, and overcurrent-device hazard or condition inventory, nameplate/context facts, mismatch symptoms, do-not-energize triggers, labels/isolation documentation, and qualified electrical owner handoff.
+  - Keep answers non-invasive: location, owner, readable labels or nameplate text, affected load, device type as labeled, visible damage, heat, odor, arcing, smoke, water exposure, repeated trips, wrong or improvised device concerns, missing covers, exposed conductors, access control, isolation labels, and who was notified.
+  - Route fuse or breaker sizing, panel work, wiring diagrams, grounding/bonding, installation/replacement steps, live testing, arc-flash calculations, generator/backfeed/interconnection, code/legal claims, return-to-service decisions, and safety certification away from this card.
+citations_required: true
+citation_policy: >
+  Cite GD-624 and its reviewed answer card only for non-invasive
+  fuses/overcurrent-protection hazard or condition inventory, nameplate and
+  context facts, overcurrent-device mismatch symptoms, do-not-energize or
+  stop-work triggers, labels/isolation documentation, and qualified electrical
+  owner handoff. Do not use it for fuse/breaker sizing, panel work, wiring
+  diagrams, grounding/bonding, installation or replacement steps, live testing,
+  arc-flash calculations, generator/backfeed/interconnection, code/legal
+  claims, return-to-service claims, or safety certification.
+applicability: >
+  Boundary-only overcurrent protection questions: visible fuse, breaker,
+  disconnect, panel, or protective-device condition inventory; readable
+  nameplate/context facts; mismatch or nuisance-trip symptom logging;
+  do-not-energize and stop-work screening; labels, isolation, access-control,
+  and notification records; and handoff to the responsible electrical owner,
+  qualified electrician, utility, inspector, manufacturer, emergency services,
+  or local authority. Not for designing, sizing, installing, replacing, wiring,
+  testing live equipment, calculating arc flash, approving interconnection, or
+  declaring equipment safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: fuses_overcurrent_protection_boundary_handoff
+answer_card:
+  - fuses_overcurrent_protection_boundary_handoff
 read_time: 26
 word_count: 4350
 last_updated: '2026-02-21'
@@ -53,6 +88,16 @@ liability_level: high
 This guide teaches the physics of fuse operation, how to size and construct fuses in austere settings, and how to coordinate multiple protective devices so the right one opens first.
 
 </section>
+
+## Reviewed Answer-Card Boundary: Overcurrent Protection Inventory and Handoff
+
+This is the reviewed answer-card surface for GD-624. Use it only for boundary-level fuse, breaker, and overcurrent-device hazard or condition inventory, nameplate and context facts, overcurrent-device mismatch symptoms, do-not-energize or stop-work triggers, labels and isolation documentation, access control, and handoff to the responsible electrical owner, qualified electrician, utility, inspector, manufacturer, emergency services, or local authority.
+
+Start with what can be observed without opening panels, removing covers, touching conductors, operating disconnects, replacing devices, probing, live testing, changing wiring, or working inside electrical equipment: location, owner or maintainer, affected load, readable label or nameplate text, device type and rating only as already labeled, enclosure condition, cover status, access control, isolation tag status, water or impact exposure, heat, odor, smoke, arcing, buzzing, repeated trips, blown fuses, mismatched or improvised devices, missing labels, exposed conductors, and who was notified.
+
+Do-not-energize or stop-work triggers include shock or injury, arcing, smoke, burning smell, unusual heat, melted insulation, exposed or suspected live conductors, wet or flooded electrical equipment, missing covers, damaged enclosures, repeated trips or blown fuses, evidence that the wrong fuse or breaker has been installed, improvised bypasses, unknown isolation status, unknown ownership, or pressure to reset, replace, upsize, bypass, test, connect, or energize equipment before qualified review. Keep people back from the affected electrical area and preserve labels, isolation tags, and notification records for handoff.
+
+Do not provide fuse or breaker sizing, panel work, wiring diagrams, grounding or bonding instructions, installation or replacement steps, live testing, arc-flash calculations, generator/backfeed/interconnection advice, code or legal claims, return-to-service statements, safe-to-energize statements, or safety certification from this reviewed card.
 
 <section id="fuse-principles">
 
@@ -542,4 +587,3 @@ Breaker current rating = 1.25 × motor full-load current
 </div>
 
 </section>
-

@@ -24,6 +24,28 @@ custom_css: |-
   .tool-name{font-family:Arial,sans-serif;font-size:11px;fill:#b8956a;text-anchor:middle}.tool-title{font-family:Arial,sans-serif;font-size:15px;font-weight:bold;fill:#d4a574;text-anchor:middle}.tool-shape{fill:#b8956a;stroke:#b8956a;stroke-width:2}
   table { border-collapse: collapse; width: 100%; margin: 1.5em 0; } table th, table td { border: 1px solid var(--accent); padding: 0.75em; text-align: left; } table th { background-color: var(--card); font-weight: bold; } table tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
 liability_level: critical
+aliases:
+  - hoof condition inventory
+  - horse hoof red flags
+  - farrier vet handoff
+  - lame horse hoof check
+  - hoof bleeding infection pain red flags
+  - keep horse off work hoof problem
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level hoof condition inventory, environment and workload notes, lameness, bleeding, infection, heat, swelling, and pain red flags, keep-off-work or rest triggers, and owner/farrier/veterinary handoff.
+  - Route hoof trimming, shoeing, nailing, tool procedures, restraint, sedation, wound treatment, lameness diagnosis, dosing, corrective shoeing, return-to-work clearance, legal claims, and safety certification outside this reviewed card.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: hoof_care_farriery_condition_handoff
+answer_card:
+  - hoof_care_farriery_condition_handoff
+citations_required: true
+citation_policy: >
+  Cite GD-093 and its reviewed answer card only for boundary-level hoof
+  condition inventory, hoof red flags, environment and workload notes,
+  keep-off-work or rest triggers, and owner/farrier/veterinary routing. Do not
+  use the reviewed card for hoof trimming, shoeing, nailing, tool procedures,
+  restraint, sedation, wound treatment, lameness diagnosis, dosing, corrective
+  shoeing, return-to-work clearance, legal claims, or safety certification.
 ---
 
 <section id="overview">
@@ -40,6 +62,21 @@ This guide covers complete hoof care protocols: anatomy and assessment, trimming
 In post-collapse scenarios, mechanized transport disappears. Pack animals become invaluable for transport, plowing, and all heavy work. A skilled farrier becomes one of the community's most valuable members. Communities with farriery knowledge gain enormous advantages in mobility and productivity.
 :::
 
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-093 hoof-care-farriery. Use it only for boundary-level hoof condition inventory, visible red flags, environment and workload notes, keep-off-work or rest triggers, and routing to the owner, farrier, veterinarian, emergency veterinary service, or responsible animal-care lead.
+
+Start with animal identity, species or type, affected hoof or limb if known, date noticed, recent workload, terrain, wet or dry footing, bedding or stall condition, shoe status if already known, recent travel or injury history, and what changed from the animal's normal gait or willingness to bear weight. Record only observable hoof conditions: uneven gait or lameness, reluctance to bear weight, shortened stride, heat compared across hooves, cracks or splits, swelling at the coronary band, foul odor, black or fetid discharge, bleeding from the sole, stones or debris, loose or missing shoe, and visible pain response.
+
+Keep the animal out of work and reduce movement when lameness, bleeding, infection signs, marked pain, heat, swelling, sudden gait change, penetrating injury concern, loose shoe injury risk, or inability or reluctance to bear weight appears. Make a dated handoff note with observations, workload, footing, bedding, photos if safe, and recent changes; then route hoof-care decisions to a qualified farrier for routine hoof maintenance and to a veterinarian or emergency veterinary service for pain, infection, bleeding, severe or sudden lameness, suspected abscess, laminitis, trauma, or systemic illness.
+
+Do not use this reviewed card for hoof trimming, shoeing, nailing, hot or cold shoe fitting, tool procedures, restraint or sedation, wound treatment, lameness diagnosis, medication or dosing, corrective or therapeutic shoeing, return-to-work clearance, legal claims, or safety certification.
+
+</section>
 
 <section id="historical">
 

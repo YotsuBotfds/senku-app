@@ -6,6 +6,38 @@ category: medical
 difficulty: intermediate
 tags:
   - important
+aliases:
+  - mortuary intake log
+  - death care custody notes
+  - temporary holding red flags
+  - body identity chain of custody
+  - family death care coordination
+  - public health mortuary handoff
+routing_cues:
+  - mortuary death-care intake logging identity custody family coordination hygiene access heat odor red flags
+  - respectful temporary holding body labeling custody notes family liaison public health authority handoff
+  - death care boundary no cause of death autopsy embalming preservation diagnosis burial engineering law enforcement
+citations_required: true
+citation_policy: >
+  Cite the reviewed GD-242 answer card only for death-care intake/logging,
+  identity and chain-of-custody notes, family/community coordination,
+  hygiene/access/heat/odor red flags, respectful temporary holding, and
+  public-health or authority handoff. Do not use it for cause-of-death
+  determination, autopsy, embalming, invasive body preparation, chemical
+  preservation, infectious-disease diagnosis, burial/exhumation engineering,
+  legal declarations, law-enforcement decisions, religious directives, or
+  safety certification.
+applicability: >
+  Mortuary boundary intake and handoff: factual death-care logging, identity
+  and custody notes, family/community coordination, hygiene and access controls,
+  heat or odor red flags, respectful temporary holding, and public-health or
+  authority handoff. Not a cause-of-death, autopsy, embalming, invasive
+  preparation, chemical preservation, diagnosis, burial-engineering, legal,
+  law-enforcement, religious, or safety-certification guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: mortuary_science_death_care_boundary
+answer_card:
+  - mortuary_science_death_care_boundary
 icon: ⚱️
 description: Respectful, sanitary preparation of human remains in post-collapse society
 related:
@@ -47,6 +79,18 @@ Funeral rites exist in every known culture because they serve essential function
 Mortuary knowledge—how to determine death, handle disease transmission, prepare remains for burial, manage decomposition, and conduct mass casualty procedures—is survival knowledge. Communities without mortuary expertise suffer preventable disease and psychological collapse. This knowledge must be documented and taught.
 
 </section>
+
+:::danger
+## Reviewed Boundary: Death-Care Intake and Temporary Holding
+
+This is the reviewed answer-card surface for GD-242. Use it only for boundary-level mortuary intake and handoff: factual death-care logging, identity and chain-of-custody notes, family or community coordination, hygiene and access controls, heat or odor red flags, respectful temporary holding, and public-health or authority handoff.
+
+Start by separating the intake record from any medical, legal, or law-enforcement judgment. Record who found the body, when and where it was found, who confirmed identity if known, what tags or labels are attached, who has custody, who has been notified, and what red flags require a public-health, medical, legal, or designated authority handoff. Keep nonessential people away, use basic hygiene barriers, protect dignity with clean covering and limited viewing, and move the body only through the agreed custody process.
+
+Use heat, odor, fluid leakage, insects, access by animals or unauthorized people, uncertain identity, missing custody notes, multiple deaths, suspected contagious illness, violent or suspicious circumstances, family dispute, or community alarm as stop-and-handoff triggers. For temporary holding, keep the body shaded, covered, labeled, supervised, separate from food and water areas, and as cool as conditions allow while preserving identity and custody notes.
+
+Do not use this reviewed card to determine cause of death, declare death legally, perform or explain autopsy, embalm, use chemical preservation, do invasive body preparation, diagnose infectious disease, engineer burial or exhumation, make law-enforcement decisions, issue religious directives, certify safety, or reassure a family or community that there is no risk. When the prompt asks for those decisions, preserve facts, maintain respectful custody, and hand off to the appropriate medical, public-health, legal, law-enforcement, religious, cemetery, or community authority.
+:::
 
 <section id="immediate-procedures">
 

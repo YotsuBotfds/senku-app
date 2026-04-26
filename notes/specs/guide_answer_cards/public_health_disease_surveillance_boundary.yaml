@@ -1,0 +1,98 @@
+card_id: public_health_disease_surveillance_boundary
+guide_id: GD-268
+slug: public-health-disease-surveillance
+title: "Public Health & Disease Surveillance"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Community illness reports need symptom or event count intake, cluster logging, privacy-aware records, or a concise handoff to public-health owners.
+  - Prompt asks whether a small group of similar symptoms should be logged, watched, or reported without requesting diagnosis, treatment, enforcement, or outbreak declaration.
+  - Prompt involves possible food, water, sanitation, or communication handoff based on illness counts or clusters.
+required_first_actions:
+  - Keep the answer at boundary-level surveillance support, not diagnosis, treatment, enforcement, or declaration.
+  - Start by collecting what is already known as counts, dates, symptom patterns, coarse location, severity count, deaths if any, and whether the count is rising, stable, or uncertain.
+  - Protect privacy by using aggregate or need-to-know records and avoiding unnecessary disclosure of names, household details, or private contact lists.
+  - Treat reporting thresholds as prompts to consult responsible public-health, medical, sanitation, water, infection-control, community leadership, or incident-command owners.
+first_actions:
+  - Make a dated log using the same symptom or event definition for each entry.
+  - Separate confirmed reports from rumor and mark unknowns plainly.
+  - Record coarse location, onset or report date, count affected, severity count, deaths if any, shared exposure if already volunteered, and whether similar reports are increasing.
+  - Prepare a concise handoff for public-health owners and flag sanitation, water, infection-control, or communication needs when the pattern suggests those lanes.
+  - Increase observation frequency or reporting cadence when counts approach the guide's alert thresholds, while preserving uncertainty about cause and authority.
+urgent_red_flags:
+  - Any severe illness, death cluster, suspected meningitis or meningococcemia, fever with non-blanching rash, hemorrhagic fever concern, or rapidly rising count.
+  - Multiple similar cases in a household, neighborhood, event, food source, or water source within days.
+  - Any prompt asking for a decision to diagnose, treat, declare an outbreak, impose quarantine, expose private data, or certify safety.
+forbidden_advice:
+  - Do not diagnose the disease, identify a definitive cause, or provide treatment, medication, vaccine, antibiotic, or prophylaxis guidance from this card.
+  - Do not issue quarantine, isolation enforcement, contact-tracing, public-shaming, legal, or compliance orders.
+  - Do not ask for or publish private contact lists, names, household details, or identifiable exposure networks unless a qualified public-health owner explicitly needs them.
+  - Do not provide lab sampling, specimen handling, water sampling, or test interpretation instructions from this card.
+  - Do not declare an outbreak, certify a place as safe, or make legal claims.
+do_not:
+  - Do not turn reporting thresholds into an outbreak declaration.
+  - Do not replace public-health owners, clinicians, sanitation leads, water leads, infection-control owners, legal authorities, or incident command.
+  - Do not reveal patient names, household identities, or private contacts in community-facing communication.
+  - Do not make reassurance sound certain when counts, symptom definitions, exposures, or authority are unclear.
+routine_boundary: >
+  Routine surveillance support is appropriate only for factual intake, aggregate
+  cluster logging, privacy-aware records, threshold prompts, handoff preparation,
+  and uncertainty language. It stops before diagnosis, treatment, enforcement,
+  contact tracing tactics, lab sampling, outbreak declarations, legal claims, or
+  safety certification.
+acceptable_uncertain_fit: >
+  If the pattern is plausible but incomplete, preserve uncertainty, ask for
+  counts and dates, recommend a minimal dated log, and hand off to the relevant
+  public-health, medical, sanitation, water, infection-control, leadership, or
+  incident-command owner rather than declaring a cause or outcome.
+clarifying_questions:
+  - How many people are affected, when did each report or symptom pattern start, and is the count rising?
+  - Are the reports in one household, area, event, food source, or water source, using only the coarsest location needed?
+  - What symptom pattern is being counted, and which details are confirmed versus rumor or uncertain?
+  - Is there severe illness, death, fever with non-blanching rash, suspected meningitis, or a sanitation/water concern that needs owner handoff now?
+citation_ids:
+  - reviewed-boundary
+  - reporting-system-intake
+  - disease-ledger-cluster-log
+  - surveillance-threshold-consult
+  - privacy-data-misuse-boundary
+source_sections:
+  - guide: GD-268
+    slug: public-health-disease-surveillance
+    title: "Public Health & Disease Surveillance"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#surveillance-systems > Setting Up a Disease Reporting System"
+      - "#surveillance-systems > Disease Tracking Ledger"
+      - "#surveillance-systems > Surveillance Triggers: When to Escalate"
+      - "#surveillance-systems > Identifying Outbreak Thresholds"
+      - "#recognition-assessment > Assessment Checklist for Suspected Outbreaks"
+      - "#community-health-organization > Protocol When Case Reports Are Received"
+      - "#recovery-complications > Data Misuse"
+source_invariants:
+  - name: reviewed boundary preserves narrow surveillance scope
+    guide: GD-268
+    must_include:
+      - This is the reviewed answer-card surface for GD-268.
+      - symptom and event count intake
+      - privacy-aware records
+      - reporting-threshold prompts to consult public-health owners
+      - Do not use this card for diagnosis, treatment, medication or vaccine guidance
+      - contact tracing tactics that expose private data
+      - outbreak declarations, legal claims, or safety certification
+  - name: source guide supports intake ledgers and privacy warnings
+    guide: GD-268
+    must_include:
+      - Key information includes patient name, age, household location, date symptoms began
+      - Maintain a physical ledger with columns for
+      - If 2+ related cases exist, flag for outbreak assessment
+      - Protect personal information from unnecessary disclosure.
+      - Do not publicly shame individuals with reported illness.
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only GD-268 card for community illness surveillance intake,
+  cluster logging, privacy-aware records, threshold consultation prompts, and
+  sanitation/communication handoff. It deliberately excludes diagnosis,
+  treatment, medications, vaccines, quarantine or enforcement orders,
+  identifiable contact-tracing tactics, lab sampling instructions, outbreak
+  declarations, legal determinations, and safety certification.

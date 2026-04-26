@@ -24,11 +24,53 @@ word_count: 10500
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+aliases:
+  - wind turbine blade observation log
+  - wind turbine site red flags
+  - wind turbine noise vibration handoff
+  - turbine overspeed stop use
+  - wind turbine access control checklist
+  - wind turbine owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level site and intended-use intake, visible blade, tower, rotating-part, electrical, and weather red flags, noise, vibration, or overspeed symptom logging, access-control status, stop-use triggers, and qualified wind, mechanical, or electrical owner handoff for existing or proposed wind turbine blade systems.
+  - Keep routine answers focused on what can be observed from a safe public or authorized vantage point: damaged blades, loose or missing guards, leaning or damaged towers, accessible rotating parts, exposed wiring, unusual noise or vibration, overspeed symptoms, recent storms, lightning, icing, high wind, public access, and maintenance-record gaps.
+  - Route aerodynamic calculations, blade design or fabrication, material layups, balancing, climbing, rigging, installation, repair, generator wiring, grid-tie or interconnection, live operation troubleshooting, performance guarantees, code or legal claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-658 answer card for boundary-only site and intended-use intake, visible blade/tower/rotating-part/electrical/weather red flags, symptom logging, access control, stop-use triggers, and qualified wind/mechanical/electrical owner handoff only; do not use it for aerodynamic calculations, blade design or fabrication, material layups, balancing, climbing/rigging, installation, repair, generator wiring, grid-tie/interconnection, live operation troubleshooting, performance guarantees, code/legal claims, or safety certification.
+applicability: >
+  Use for boundary-only site and intended-use intake, visible hazard
+  recognition, noise/vibration/overspeed symptom logging, access-control
+  status, stop-use triggers, and qualified wind, mechanical, or electrical
+  owner handoff for wind turbine blade systems. Do not use for aerodynamic
+  calculations, blade design or fabrication, material layups, balancing,
+  climbing or rigging, installation, repair, generator wiring, grid-tie or
+  interconnection, live operation troubleshooting, performance guarantees,
+  code or legal claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: wind_turbine_blade_aerodynamics_boundary_handoff
+answer_card:
+  - wind_turbine_blade_aerodynamics_boundary_handoff
 ---
 
 # Wind Turbine Blade Design & Aerodynamics
 
 Wind turbine blades are the primary energy-capture mechanism in wind power systems. Their aerodynamic efficiency directly determines how much electrical power can be generated from a given wind speed. **If you are new to wind power, start with <a href="../wind-power-basics.html">Wind Power Basics</a> for site assessment, simple turbine designs, and electrical setup before diving into blade aerodynamics.** This guide covers the physics of airfoil design, practical blade geometry for hand-built and salvaged-material turbines, and the calculations needed to optimize blade performance for your specific rotor size and wind conditions. Advanced builders can increase power output by 20–40% through proper aerodynamic design compared to simple flat-blade designs.
+
+## Scope Boundary
+
+This guide contains educational and historical blade-aerodynamics material, but its reviewed answer-card surface is boundary-only site and intended-use intake, visible hazard recognition, access-control awareness, symptom logging, stop-use triggers, and qualified owner handoff. Use the reviewed card to organize observations from a safe public or authorized vantage point: site or asset name, intended use, owner or operator if known, current access status, recent high wind, storm, icing, lightning, impact, repair, or maintenance history, visible blade damage, tower leaning or damage, exposed rotating parts, missing guards, exposed or wet electrical components, unusual noise, vibration, runaway or overspeed symptoms, and maintenance-record gaps.
+
+Do not use the reviewed card for aerodynamic calculations; blade design or fabrication; material layups; balancing; climbing or rigging; installation; repair; generator wiring; grid-tie or interconnection; live operation troubleshooting; performance guarantees; code or legal claims; or safety certification.
+
+## Reviewed Answer-Card Boundary: Wind Turbine Observation, Stop-Use Triggers, and Handoffs
+
+This is the reviewed answer-card surface for GD-658. Start from a safe public or authorized vantage point. Do not climb the tower, enter restricted areas, approach spinning blades, pass under a rotor, remove guards, touch wiring, energize equipment, brake the turbine, adjust pitch, loosen fasteners, balance blades, troubleshoot live operation, or attempt repair.
+
+For routine boundary intake, record the site or asset, date, observer, intended use, owner or operator, access-control status, recent weather or impact history, whether the rotor is stopped or moving, and what is visible without touching or operating anything. Log blade cracks, splits, chips, delamination, missing pieces, ice, debris impact, unusual blade tracking, tower leaning, loose or damaged tower parts, damaged guy wires or anchors, missing guards, accessible shafts, belts, hubs, brakes, generators, exposed wiring, wet electrical equipment, heat, odor, sparks, unusual noise, vibration, rapid speed changes, suspected overspeed, and missing or contradictory maintenance records.
+
+Stop routine use, keep people back, and hand off to the owner, operator, qualified wind technician, mechanical maintainer, electrician, structural engineer, inspector, emergency manager, or local authority when red flags are present: damaged or shedding blades, tower movement or leaning, storm, lightning, icing, impact, missing guards, public access under or near the rotor, exposed wiring, wet or damaged electrical equipment, smoke, sparking, severe vibration, grinding, banging, blade wobble, overspeed or runaway symptoms, failed brake or governor symptoms, damaged access controls, or no responsible owner for an active or accessible turbine.
+
+The handoff log should separate site and intended use, visible blade condition, tower and access condition, rotating-part hazards, electrical red flags, weather history, symptom timeline, stop-use decisions already made, and the named qualified owner needed next. Do not declare the turbine safe, certify it, predict performance, or turn the source guide's design, fabrication, balancing, wiring, installation, repair, or live troubleshooting passages into reviewed-card instructions.
 
 <section id="wind-energy-fundamentals">
 
@@ -840,4 +882,3 @@ Properly designed turbine blades can increase power generation by 20–40% compa
 :::
 
 </section>
-

@@ -1,0 +1,196 @@
+card_id: fuses_overcurrent_protection_boundary_handoff
+guide_id: GD-624
+slug: fuses-overcurrent-protection
+title: Fuses, Circuit Breakers & Overcurrent Protection Design
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applicability: >
+  Boundary-only card for fuse, breaker, and overcurrent-device hazard or
+  condition inventory, nameplate/context facts, mismatch symptom logging,
+  do-not-energize or stop-work triggers, labels/isolation documentation,
+  access control, and qualified electrical owner handoff. It is not a
+  fuse/breaker sizing, panel-work, wiring, grounding/bonding, installation,
+  replacement, live-testing, arc-flash, generator/backfeed/interconnection,
+  code/legal, return-to-service, or safety-certification card.
+applies_when:
+  - A user asks what to record about fuses, breakers, disconnects, panels, or overcurrent protection before a responsible electrical owner or qualified electrician reviews it.
+  - A prompt reports repeated trips, blown fuses, hot devices, burning smell, arcing, smoke, wet electrical equipment, exposed conductors, missing covers, wrong-size or improvised devices, bypassed protection, unclear labels, or unknown isolation status.
+  - A user needs a do-not-energize checklist, stop-work trigger list, label/isolation record, access-control note, or qualified-owner handoff without sizing, replacement, panel work, wiring, or live testing.
+required_first_actions:
+  - Start with non-invasive observation and stop-work screening; do not open panels, remove covers, touch conductors, operate disconnects, reset breakers, replace fuses, probe, live test, alter wiring, bypass protection, or work inside electrical equipment.
+  - If shock, injury, arcing, smoke, burning smell, unusual heat, melted insulation, exposed or suspected live conductors, wet or flooded electrical equipment, missing covers, damaged enclosures, repeated trips or blown fuses, wrong or improvised overcurrent devices, unknown isolation status, or pressure to energize is present, treat it as a do-not-energize handoff.
+  - Gather only visible facts useful for handoff: location, owner or maintainer, affected load, labels/nameplate text readable from a safe distance, device type and rating only as already labeled, enclosure condition, cover status, access control, isolation tag status, water or impact history, heat/odor/smoke/arcing/buzzing signs, repeated-trip history, and notification log.
+  - Preserve labels, isolation tags, and access control, keep people back from the affected electrical area, and route to the responsible electrical owner, qualified electrician, utility, inspector, manufacturer, emergency services, or local authority.
+  - State that fuse/breaker sizing, panel work, wiring diagrams, grounding/bonding, installation/replacement, live testing, arc-flash calculations, generator/backfeed/interconnection, code/legal decisions, return-to-service, and safety certification require qualified review rather than this card.
+conditional_required_actions:
+  - trigger_terms:
+      - shock
+      - shocked
+      - arcing
+      - arc
+      - spark
+      - smoke
+      - burning smell
+      - hot breaker
+      - hot fuse
+      - melted insulation
+      - exposed conductor
+      - wet panel
+      - flooded
+    required_actions:
+      - Treat the condition as a do-not-energize or stop-work red flag; keep people back, avoid touching or testing equipment, preserve isolation labels, and route to qualified electrical or emergency handoff.
+  - trigger_terms:
+      - keeps tripping
+      - repeated trip
+      - blown fuse
+      - wrong fuse
+      - wrong breaker
+      - oversized
+      - bypass
+      - jumper
+      - improvised fuse
+      - nuisance trip
+    required_actions:
+      - Log the mismatch or repeated-operation symptom without sizing, upsizing, replacing, bypassing, or return-to-service advice; hand off to a qualified electrical owner.
+  - trigger_terms:
+      - size the fuse
+      - size the breaker
+      - replace
+      - install
+      - panel
+      - wiring diagram
+      - grounding
+      - bonding
+      - live test
+      - arc flash
+      - generator
+      - backfeed
+      - interconnect
+    required_actions:
+      - Do not provide procedural electrical work; answer only with boundary screening, visible documentation, do-not-energize triggers, labels/isolation records, and qualified-owner handoff.
+first_actions:
+  - Identify whether the request is hazard inventory, condition record, nameplate/context fact gathering, mismatch symptom logging, do-not-energize screening, labels/isolation documentation, or handoff planning.
+  - Ask what is visible from a safe distance: location, owner, affected load, labels or nameplate text, device type/rating as labeled, cover and enclosure condition, access control, isolation tag status, water or impact exposure, heat, odor, smoke, arcing, buzzing, exposed conductors, repeated trips, blown fuses, wrong or improvised devices, and unknown power or isolation status.
+  - Record the site identifier, date, observer, equipment location, owner or maintainer, readable labels/nameplate text, affected load, visible damage, warning signs, access controls, isolation tags, and who was notified.
+  - Mark unresolved red flags as do-not-energize or stop-work until the responsible qualified owner reviews them.
+  - Keep all sizing, panel work, wiring, grounding/bonding, installation, replacement, live testing, arc-flash, generator/backfeed/interconnection, and return-to-service decisions out of the answer-card lane.
+urgent_red_flags:
+  - Shock, injury, arcing, smoke, burning smell, unusual heat, melted insulation, visible damage, missing covers, damaged enclosure, exposed or suspected live conductors, wet or flooded electrical equipment, or public access to affected electrical gear.
+  - Repeated trips, repeated blown fuses, unknown power status, unknown isolation status, unknown ownership, missing labels, wrong-size or mismatched fuse/breaker, improvised fuse, jumper, bypassed protection, or pressure to reset, replace, upsize, test, connect, or energize.
+  - Any request for fuse/breaker sizing, panel work, wiring diagrams, grounding/bonding, installation/replacement steps, live testing, arc-flash calculations, generator/backfeed/interconnection, code/legal claims, return-to-service claims, or safety certification.
+forbidden_advice:
+  - Do not provide fuse or breaker sizing, rating selection, coordination calculations, time-current calculations, load calculations, safety-factor calculations, or arc-flash calculations.
+  - Do not provide panel work, wiring diagrams, grounding/bonding instructions, installation steps, replacement steps, repair steps, bypass steps, jumper instructions, or generator/backfeed/interconnection advice.
+  - Do not provide live testing, meter probing, continuity checks on installed energized equipment, reset-to-test instructions, isolation verification steps, or troubleshooting inside electrical equipment.
+  - Do not make code/legal, compliance, inspection-pass, safe-to-energize, return-to-service, safe-to-use, or safety-certification claims.
+do_not:
+  - Do not convert GD-624's sizing tables, homemade fuse construction, breaker coordination, load-specific protection, ground fault wiring, testing, or design checklist material into reviewed answer-card instructions.
+  - Do not treat repeated trips, blown fuses, wrong or improvised devices, bypassed protection, heat, odor, smoke, arcing, water exposure, missing covers, or exposed conductors as routine use questions.
+  - Do not tell the user how to reset, replace, upsize, bypass, test, touch, disconnect, reconnect, wire, energize, or inspect inside overcurrent-protection equipment.
+routine_boundary: >
+  This card owns only the GD-624 boundary lane: non-invasive fuse, breaker, and
+  overcurrent-device condition inventory; nameplate/context fact gathering;
+  overcurrent-device mismatch symptom logging; do-not-energize and stop-work
+  triggers; labels, isolation, access-control, and notification records; and
+  qualified electrical owner handoff. It must hand off all sizing, panel work,
+  wiring, grounding/bonding, installation, replacement, live testing, arc-flash,
+  generator/backfeed/interconnection, code/legal, return-to-service, and
+  certification requests.
+acceptable_uncertain_fit: >
+  If details are incomplete but an overcurrent-protection hazard is plausible,
+  give the conservative boundary answer: document only what is visible from a
+  safe distance, preserve do-not-energize or stop-work language for red flags,
+  keep people back from affected electrical equipment, preserve labels and
+  isolation tags, and route to the qualified owner before any reset,
+  replacement, sizing, testing, wiring, or energizing decision.
+clarifying_questions:
+  - Is there shock, injury, arcing, smoke, burning smell, unusual heat, melted insulation, exposed conductor, wet/flooded equipment, missing cover, repeated trip, repeated blown fuse, bypassed protection, or unknown power/isolation status?
+  - What location, owner or maintainer, affected load, labels/nameplate text, device type/rating as labeled, enclosure condition, access control, and isolation tag status can be observed from a safe distance?
+  - Who is the responsible electrical owner, qualified electrician, utility, inspector, manufacturer, emergency service, or local authority for this equipment?
+  - Has anyone asked to reset, replace, upsize, bypass, test, connect, wire, or energize the equipment before qualified review?
+fallback_handoff_language:
+  - "I can help make an overcurrent-protection hazard inventory and handoff checklist, but I cannot provide fuse/breaker sizing, panel work, wiring, grounding/bonding, installation, replacement, live testing, arc-flash, generator/backfeed, code, return-to-service, or certification advice."
+  - "If there is shock, arcing, smoke, burning smell, heat, melted insulation, wet equipment, exposed conductors, missing covers, repeated trips or blown fuses, wrong or improvised devices, bypassed protection, unknown isolation, or pressure to energize, treat it as do-not-energize or stop-work and hand off."
+  - "Document only visible facts from a safe distance: location, owner, affected load, labels/nameplate text, device type and rating as labeled, enclosure condition, access control, isolation tags, water or damage history, heat/odor/noise/smoke/arcing signs, and who was notified."
+handoff:
+  - electrical-safety-hazard-prevention for active electrical hazards, shock, arcing, smoke, exposed live conductors, wet equipment, emergency isolation, and scene safety.
+  - electrical-wiring for wiring project boundary triage and qualified-electrician handoff when overcurrent protection is part of a wiring change.
+  - battery-management-charge-controllers for non-invasive battery-bank protection, monitor/controller alarms, ventilation, and owner handoff when the issue is battery-system context rather than a fuse/breaker device.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  must_include_stop_work_screen: true
+  must_include_qualified_owner_handoff: true
+  must_include_condition_inventory: true
+  forbid_procedural_electrical_work: true
+routing_tests:
+  positive:
+    - prompt: "The breaker keeps tripping and smells hot. What should we record before calling an electrician?"
+      expect: fuses_overcurrent_protection_boundary_handoff
+    - prompt: "Make a do-not-energize checklist for a panel with a blown fuse and missing labels."
+      expect: fuses_overcurrent_protection_boundary_handoff
+  near_miss:
+    - prompt: "What size breaker should I install for this motor circuit?"
+      expect_handoff: qualified_electrical_owner
+    - prompt: "Show me how to replace this fuse and test the panel live."
+      expect_handoff: electrical_work_refusal
+    - prompt: "Draw the wiring and grounding diagram for this generator backfeed setup."
+      expect_handoff: qualified_electrical_owner
+  boundary:
+    - prompt: "Someone bypassed the fuse with wire and wants to energize the circuit."
+      expect: do_not_energize_stop_work_handoff
+    - prompt: "Can you certify this breaker panel is safe to return to service?"
+      expect: safety_certification_handoff_not_card
+citation_ids:
+  - gd-624-reviewed-overcurrent-boundary
+  - gd-624-overview-hazard-context
+  - gd-624-mismatch-coordination-context
+  - gd-624-labels-testing-checklist-context
+source_sections:
+  - guide: GD-624
+    slug: fuses-overcurrent-protection
+    title: Fuses, Circuit Breakers & Overcurrent Protection Design
+    sections:
+      - "Reviewed Answer-Card Boundary: Overcurrent Protection Inventory and Handoff"
+      - "#overview"
+      - "#protection-strategy"
+      - "#testing"
+      - "#design-checklist"
+source_invariants:
+  - name: reviewed_overcurrent_boundary_remains
+    guide: GD-624
+    must_include:
+      - "This is the reviewed answer-card surface for GD-624."
+      - "Use it only for boundary-level fuse, breaker, and overcurrent-device hazard or condition inventory"
+      - "do-not-energize or stop-work triggers"
+      - "qualified electrician"
+      - "Do not provide fuse or breaker sizing, panel work, wiring diagrams, grounding or bonding instructions, installation or replacement steps, live testing, arc-flash calculations, generator/backfeed/interconnection advice, code or legal claims, return-to-service statements, safe-to-energize statements, or safety certification from this reviewed card."
+  - name: source_hazard_context_remains
+    guide: GD-624
+    must_include:
+      - "Without overcurrent protection:"
+      - "Short circuits deliver thousands of amperes in milliseconds"
+      - "Personnel are electrocuted if touching faulted equipment"
+  - name: source_procedural_content_is_not_reviewed_card_authority
+    guide: GD-624
+    must_include:
+      - "Copper Wire Fuse Sizing Table"
+      - "Simple Copper-Tin Fuse Construction"
+      - "Breaker Trip Curves"
+      - "Testing Fuses and Breakers"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-624 as a boundary-only fuse, breaker, and
+  overcurrent-protection hazard inventory and qualified-owner handoff card. The
+  source guide contains sizing, homemade fuse construction, breaker
+  coordination, load-specific protection, ground-fault, testing, and design
+  material, but this reviewed card carries only condition inventory,
+  nameplate/context facts, mismatch symptoms, do-not-energize and stop-work
+  triggers, labels/isolation records, access control, and qualified electrical
+  owner handoff. READY_FOR_PARENT_CLOSE.

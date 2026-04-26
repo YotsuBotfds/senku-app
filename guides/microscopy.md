@@ -20,6 +20,21 @@ related:
   - pest-control
   - vision-correction-optometry
   - water-purification
+aliases:
+  - microscopy observation intake
+  - microscope condition log
+  - slide sample labeling checklist
+  - unknown sample handoff
+  - microscopy uncertainty notes
+  - lab owner review
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level microscopy observation/project intake, equipment condition, sample or source labeling, uncertainty notes, do-not-handle guidance for unknown biological or chemical samples, and lab/medical owner handoff.
+  - Keep routine answers focused on what is being observed, who owns the work, equipment condition, sample/source labels, known provenance, observation notes, uncertainty, and whether unknown or hazardous material should remain untouched.
+  - Route diagnostic identification, pathogen culture or staining protocols, patient sample collection, chemical fixation or staining recipes, sharps/biohazard handling, medical/environmental conclusions, legal claims, and safety certification away from this card.
+routing_support:
+  - first-aid for patient care, illness, injury, sharps exposure, biohazard exposure, or medical triage concerns.
+  - water-purification and water-testing-quality-assessment for water safety decisions, treatment, and environmental conclusions beyond observation intake.
+  - pest-control or agriculture guides for pest/crop management decisions after qualified identification.
 read_time: 20
 word_count: 4993
 last_updated: '2026-02-16'
@@ -28,8 +43,43 @@ custom_css: |
   .technique-box { background: var(--surface); padding: 1em; border-radius: 4px; margin: 1em 0; }
   .staining-table { font-family: monospace; }
 liability_level: high
+citations_required: true
+citation_policy: >
+  Cite GD-362 and its reviewed answer card only for microscopy observation
+  intake, microscope/equipment condition notes, sample/source labeling,
+  uncertainty language, do-not-handle guidance for unknown biological or
+  chemical samples, and lab/medical owner handoff. Do not use it for
+  diagnostic identification, pathogen culture or staining protocols, patient
+  sample collection, chemical fixation or staining recipes, sharps/biohazard
+  handling, medical/environmental conclusions, legal claims, or safety
+  certification.
+applicability: >
+  Use for boundary-only microscopy intake and observation planning: naming the
+  observation goal, microscope condition, slide/sample/source labels, known
+  provenance, uncertainty notes, do-not-handle boundaries for unknown
+  biological or chemical samples, and identifying the responsible lab,
+  medical, environmental, or project owner. Do not use for diagnostic
+  identification, pathogen culture or staining protocols, patient sample
+  collection, chemical fixation or staining recipes, sharps/biohazard handling,
+  medical/environmental conclusions, legal claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: microscopy_observation_intake_boundary
+answer_card:
+  - microscopy_observation_intake_boundary
 ---
 <!-- SVG-TODO: Compound microscope cross-section with light path diagram; Simple magnifier ray optics diagram; Microscope optical formula and magnification relationships; Sample preparation workflow showing wet mount assembly -->
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-362. Use it only for boundary-level microscopy observation or project intake, microscope and equipment condition notes, sample or source labeling, uncertainty language, do-not-handle guidance for unknown biological or chemical samples, and handoff to the responsible lab, medical, environmental, or project owner.
+
+Start by identifying the observation goal, owner or decision maker, microscope condition, slide or sample identifier, source and collection context if already known, labels, photos or notes, whether the material is biological, chemical, environmental, food, crop, or equipment-related, and what remains uncertain. If the sample identity, source, hazard status, patient relationship, chemical contents, biohazard status, or decision authority is unknown, keep the answer to labeling, isolation from routine handling, uncertainty notes, and owner handoff.
+
+Do not use this reviewed card for diagnostic identification, pathogen culture or staining protocols, sample collection from patients, chemical fixation or staining recipes, sharps or biohazard handling, medical or environmental conclusions, legal claims, safe-to-handle claims, or safety certification. If a prompt asks for those, answer only the intake, labeling, uncertainty, do-not-handle, and handoff portion.
+
+</section>
 
 
 <section id="why">

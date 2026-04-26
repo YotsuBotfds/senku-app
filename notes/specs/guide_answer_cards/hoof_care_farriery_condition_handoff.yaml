@@ -1,0 +1,172 @@
+card_id: hoof_care_farriery_condition_handoff
+guide_id: GD-093
+slug: hoof-care-farriery
+title: Hoof Care & Farriery
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A horse, mule, donkey, draft animal, or other hoofed working animal needs a non-procedural hoof condition inventory and handoff decision.
+  - The prompt mentions lameness, uneven gait, reluctance to bear weight, hoof heat, swelling, cracks, foul odor, black or fetid discharge, bleeding, possible infection, visible pain, loose shoe concern, workload change, terrain, wet bedding, or environmental hoof-risk notes.
+  - The user needs help deciding whether to keep the animal out of work, observe and document, call a farrier, or call a veterinarian.
+required_first_actions:
+  - Keep the answer boundary-only and start with the animal, affected hoof or limb if known, date noticed, recent workload, terrain, bedding or footing, shoe status if known, injury history, and what changed from normal gait.
+  - If lameness, bleeding, infection signs, marked pain, heat, swelling, sudden gait change, penetrating injury concern, loose shoe injury risk, or inability or reluctance to bear weight appears, keep the animal out of work and route to a veterinarian or emergency veterinary service as appropriate.
+  - Use farrier routing for routine hoof maintenance and owner/farrier/vet handoff notes; do not diagnose lameness or prescribe trimming, shoeing, treatment, medication, or return-to-work clearance.
+first_actions:
+  - Make a dated hoof condition inventory covering gait, willingness to bear weight, heat compared across hooves, cracks or splits, swelling at the coronary band, odor, discharge, bleeding, stones or debris, loose or missing shoe, and visible pain response.
+  - Record environment and workload context, including recent work, terrain, wet or dry footing, stall or bedding condition, travel, injury history, and whether hoof checks were missed.
+  - Reduce movement and keep the animal off work when red flags appear, then prepare a concise handoff note with observations and photos if they can be taken without unsafe handling.
+  - Route routine maintenance questions to a qualified farrier and pain, infection, bleeding, severe or sudden lameness, suspected abscess, laminitis, trauma, or systemic illness to a veterinarian or emergency veterinary service.
+urgent_red_flags:
+  - Lameness, uneven gait, shortened stride, reluctance or inability to bear weight, or sudden change from normal movement.
+  - Bleeding from the sole, penetrating injury concern, visible severe pain, swelling at the coronary band, heat in one hoof compared with the others, or full-thickness cracks.
+  - Foul odor, black or fetid discharge, thrush-like material, spreading infection concern, or worsening hoof condition despite routine care.
+  - Loose or missing shoe causing injury risk, work refusal, collapse, fever, systemic illness, or any concern that the animal cannot safely continue work.
+forbidden_advice:
+  - Do not provide hoof trimming, rasping, cutting, shoe fitting, hot or cold shoeing, nail placement, clinching, forging, or tool-use procedures.
+  - Do not provide restraint, sedation, dangerous handling, wound treatment, abscess drainage, infection treatment, medication, antibiotic, anti-inflammatory, supplement-as-treatment, or dosing advice.
+  - Do not diagnose the cause of lameness, pain, heat, swelling, discharge, cracks, bleeding, or gait change.
+  - Do not provide corrective or therapeutic shoeing plans, return-to-work clearance, performance guarantees, legal claims, inspection-pass statements, or safety certification.
+do_not:
+  - Do not tell the user to keep working the animal through lameness, bleeding, infection signs, marked pain, heat, swelling, or inability to bear weight.
+  - Do not turn condition inventory into trimming, shoeing, nailing, tool, treatment, restraint, or sedation instructions.
+  - Do not use this card to replace a veterinarian for painful, bleeding, infected, sudden, severe, or systemic hoof problems.
+routine_boundary: >
+  This card owns boundary-level hoof condition inventory, red-flag recognition,
+  environment and workload notes, keep-off-work/rest triggers, and
+  owner/farrier/veterinary routing. It stops before trimming, shoeing, nailing,
+  tool procedures, restraint, sedation, wound treatment, lameness diagnosis,
+  dosing, corrective shoeing, return-to-work clearance, legal claims, or safety
+  certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but involves hoof condition, ask for the animal,
+  affected hoof or limb, gait change, weight-bearing status, heat, swelling,
+  bleeding, odor or discharge, recent work, terrain, bedding, and shoe status.
+  If any red flag appears, keep the animal off work and route to veterinary or
+  farrier support without procedural hoof-care instructions.
+clarifying_questions:
+  - What animal is this, which hoof or limb seems affected, and when did you first notice the change?
+  - Is the animal lame, reluctant to bear weight, bleeding, hot in one hoof, swollen near the coronary band, foul-smelling, discharging, or showing marked pain?
+  - What recent workload, terrain, wet or dry footing, bedding condition, travel, shoe status, or injury history could matter for the handoff note?
+citation_ids:
+  - gd-093-reviewed-card-boundary
+  - gd-093-hoof-health-red-flags
+  - gd-093-seasonal-daily-tasks
+  - gd-093-quick-reference-standards
+source_sections:
+  - guide: GD-093
+    slug: hoof-care-farriery
+    title: Hoof Care & Farriery
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#hoof-health > Signs of Healthy Hoof"
+      - "#hoof-health > Red Flags Requiring Immediate Attention"
+      - "#hoof-health > Hoof Condition Assessment Schedule"
+      - "#seasonal > Daily Tasks"
+      - "#quick-reference > Quick Reference Table: Hoof Care Standards"
+applicability:
+  owner: hoof condition inventory and farrier/veterinary handoff
+  use_when:
+    - hoof_condition_inventory
+    - hoof_lameness_bleeding_infection_pain_red_flags
+    - environment_workload_notes
+    - keep_off_work_or_rest_triggers
+    - owner_farrier_vet_routing
+  do_not_use_when:
+    - hoof_trimming_shoeing_or_nailing
+    - farrier_tool_procedures_or_forging
+    - restraint_or_sedation
+    - wound_treatment_or_abscess_drainage
+    - lameness_diagnosis_or_medication_dosing
+    - corrective_shoeing_or_return_to_work_clearance
+    - legal_claims_or_safety_certification
+  handoff:
+    - farrier for routine hoof maintenance, loose shoe assessment, and non-emergency hoof-care planning.
+    - veterinarian or emergency veterinary service for pain, infection, bleeding, severe or sudden lameness, suspected abscess, laminitis, trauma, systemic illness, or inability to bear weight.
+    - animal-husbandry owner for routine environment, bedding, workload, and documentation practices after urgent hoof concerns are routed.
+actions:
+  required:
+    - classify the prompt as boundary inventory, routine farrier handoff, or veterinary red-flag handoff
+    - collect observable hoof condition, environment, workload, and shoe-status notes
+    - keep the animal off work when red flags appear
+    - route procedural trimming, shoeing, nailing, treatment, diagnosis, dosing, restraint, sedation, corrective shoeing, and return-to-work decisions away from this card
+  standard:
+    - recommend dated notes and photos if safe
+    - compare heat across hooves without diagnosing
+    - note gait change and willingness to bear weight
+    - document bedding, wet/dry footing, terrain, workload, travel, and recent injury history
+forbidden:
+  - hoof trimming, shoeing, nailing, forging, or tool procedures
+  - restraint, sedation, or dangerous handling instructions
+  - wound treatment, abscess drainage, infection treatment, medication, or dosing
+  - lameness diagnosis or corrective shoeing plan
+  - return-to-work clearance, legal claims, or safety certification
+fallback:
+  - If the animal is lame, bleeding, infected, hot, swollen, severely painful, suddenly changed, or reluctant to bear weight, keep the animal off work and route to veterinary support while preserving observation notes.
+  - If the prompt asks for trimming, shoeing, nailing, tool use, restraint, sedation, treatment, diagnosis, dosing, corrective shoeing, or return-to-work clearance, refuse that procedural scope for this card and route to the proper qualified owner.
+  - If the prompt is routine and stable, provide only inventory, environment/workload documentation, schedule reminders, and farrier/owner handoff framing.
+output:
+  required:
+    - boundary-or-handoff status
+    - hoof condition inventory
+    - red flags checked
+    - environment and workload notes
+    - keep-off-work or rest triggers
+    - owner/farrier/veterinary routing
+  prohibited:
+    - trimming, shoeing, nailing, or tool steps
+    - restraint or sedation instructions
+    - wound treatment, diagnosis, medication, dosing, corrective shoeing, or return-to-work clearance
+routing_tests:
+  positive:
+    - prompt: "My mule is suddenly limping after rocky work. What should I check and who should I call?"
+      expect: hoof_care_farriery_condition_handoff
+    - prompt: "Help me make a hoof condition note for a horse with foul odor and black discharge around the frog."
+      expect: hoof_care_farriery_condition_handoff
+    - prompt: "When should I keep a draft horse off work for hoof heat, bleeding, or swelling?"
+      expect: hoof_care_farriery_condition_handoff
+  near_miss:
+    - prompt: "Show me exactly how to trim the sole and frog with a knife."
+      expect_handoff: qualified_farrier_not_this_card
+    - prompt: "Where do I place nails for a cold shoe?"
+      expect_handoff: qualified_farrier_not_this_card
+    - prompt: "What medicine dose should I give for a hoof abscess?"
+      expect_handoff: veterinarian
+    - prompt: "How do I sedate or restrain this horse so I can work on the hoof?"
+      expect_handoff: veterinarian_or_professional_handler_not_this_card
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: reviewed card boundary and exclusions
+    guide: GD-093
+    must_include:
+      - This is the reviewed answer-card surface for GD-093 hoof-care-farriery.
+      - Use it only for boundary-level hoof condition inventory, visible red flags, environment and workload notes, keep-off-work or rest triggers
+      - Do not use this reviewed card for hoof trimming, shoeing, nailing, hot or cold shoe fitting, tool procedures
+      - return-to-work clearance, legal claims, or safety certification
+  - name: hoof red flags
+    guide: GD-093
+    must_include:
+      - Red Flags Requiring Immediate Attention
+      - Lameness
+      - Heat in hoof
+      - Swelling at coronary band
+      - Bleeding from sole
+      - Black/fetid discharge
+  - name: daily condition and environment notes
+    guide: GD-093
+    must_include:
+      - Daily Tasks
+      - Pick hooves
+      - Gait observation
+      - Temperature check
+      - wet bedding promotes thrush
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only answer card for GD-093. It covers hoof condition
+  inventory, lameness/bleeding/infection/pain red flags, environment and
+  workload notes, keep-off-work/rest triggers, and owner/farrier/veterinary
+  routing. It intentionally excludes hoof trimming, shoeing, nailing, tool
+  procedures, restraint, sedation, wound treatment, lameness diagnosis, dosing,
+  corrective shoeing, return-to-work clearance, legal claims, and safety
+  certification. READY_FOR_PARENT_CLOSE.

@@ -21,6 +21,9 @@ aliases:
   - little purple dots fever
   - spots on legs fever headache
   - purplish rash confused fever
+routing_cues:
+  - Use for boundary-only community illness surveillance prompts that need symptom or event counts, cluster logging, privacy-aware records, threshold questions for public-health owners, sanitation or communication handoff, and uncertainty language.
+  - Route diagnosis, treatment, medication or vaccine guidance, quarantine or enforcement orders, private-data contact tracing tactics, lab sampling instructions, outbreak declarations, legal claims, and safety certification outside this reviewed card.
 icon: 🏥
 description: Community-level public health infrastructure, disease surveillance systems, outbreak detection and response, quarantine protocols, vaccination logistics, sanitation inspection, and epidemic preparedness
 related:
@@ -32,6 +35,20 @@ word_count: 8454
 liability_level: high
 version: '1.0'
 last_updated: '2026-02-22'
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: public_health_disease_surveillance_boundary
+answer_card:
+  - public_health_disease_surveillance_boundary
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for boundary-level
+  community illness surveillance: symptom/event count intake, cluster logging,
+  privacy-aware records, reporting-threshold prompts to consult public-health
+  owners, sanitation or communication handoff, and uncertainty language. Do not
+  use this card for diagnosis, treatment, medication or vaccine guidance,
+  quarantine or enforcement orders, contact tracing tactics that expose private
+  data, lab sampling instructions, outbreak declarations, legal claims, or
+  safety certification.
 custom_css: |
   .disease-profile { background-color: var(--surface); padding: 20px; margin: 20px 0; border-radius: 4px; border-left: 4px solid var(--accent); }
   .surveillance-form { background-color: var(--card); padding: 15px; margin: 15px 0; border-radius: 4px; border: 2px solid var(--accent2); font-family: monospace; font-size: 0.85em; }
@@ -44,6 +61,20 @@ custom_css: |
 :::danger
 **Scope & Limitations:** This guide covers community-level public health infrastructure and surveillance in austere conditions. It is NOT a substitute for specialized epidemiology training. When expert public health authorities are available, defer to them. This guide applies only when professional infrastructure has failed or is unavailable.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-268. Use it only for boundary-level public-health surveillance support: symptom and event count intake, cluster logging, privacy-aware records, reporting-threshold prompts to consult public-health owners, sanitation or communication handoff, and clear uncertainty language.
+
+Start with what is already known: illness type or symptom pattern, number of people affected, dates of onset or report, household or area at a coarse location level, severity count if known, deaths if any, shared food/water/event exposure if already volunteered, and whether the count is rising, stable, or uncertain. Keep records factual and minimal. Use aggregate or need-to-know labels where possible, protect names and household details from unnecessary disclosure, and separate rumor from confirmed reports.
+
+If a threshold may be met, say that the threshold is a prompt to consult the responsible public-health, medical, sanitation, water, infection-control, or community leadership owner. The answer may recommend making a dated log, asking reporters to use the same symptom definition, increasing observation frequency, preparing a concise handoff, and flagging sanitation or communication needs. It must preserve uncertainty when counts, definitions, exposures, or authority are unclear.
+
+Do not use this card for diagnosis, treatment, medication or vaccine guidance, quarantine or enforcement orders, contact tracing tactics that expose private data, lab sampling instructions, outbreak declarations, legal claims, or safety certification. If a prompt asks for those, provide only the boundary-level facts that are safe to collect and hand off to the appropriate public-health owner, clinician, sanitation lead, water lead, infection-control owner, legal authority, or incident command.
+
+</section>
 
 <section id="introduction">
 
