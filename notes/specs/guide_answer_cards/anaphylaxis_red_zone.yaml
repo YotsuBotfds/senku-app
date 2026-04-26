@@ -1,0 +1,77 @@
+card_id: anaphylaxis_red_zone
+guide_id: GD-400
+slug: allergic-reactions-anaphylaxis
+title: "Allergic Reactions, Anaphylaxis & Antihistamine Production"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A sting, food, medicine, or other likely allergen is followed by throat, tongue, or lip swelling.
+  - A sting, food, medicine, or other likely allergen is followed by wheezing, stridor, shortness of breath, blue or gray color, barely talking, faintness, collapse, or cold clammy skin.
+  - Hives occur with breathing trouble, face swelling, tongue swelling, throat symptoms, faintness, or blue or gray color.
+required_first_actions:
+  - Treat breathing difficulty, throat/tongue/lip swelling, wheeze, stridor, blue or gray color, barely talking, faintness, or collapse after likely allergen exposure as anaphylaxis until proven otherwise.
+  - Give epinephrine immediately if available or prescribed, and do not wait for antihistamines, steroids, rash checks, or an inhaler trial.
+  - Call emergency services or begin the fastest available evacuation now.
+  - "Position safely while help is arranged: lie flat with legs raised if tolerated, or sit upright only as needed to breathe; monitor breathing and be ready for rescue breathing or CPR if trained."
+first_actions:
+  - Use a prescribed asthma rescue inhaler only as an adjunct for wheeze while epinephrine-first allergy care and emergency help are underway.
+  - Use antihistamines or steroids only as adjuncts after epinephrine-first emergency care for anaphylaxis, not as replacements.
+  - Keep epinephrine available during observation because symptoms can return after initial improvement.
+urgent_red_flags:
+  - Throat swelling, throat closing, tongue swelling, lip swelling, difficulty swallowing, wheeze, stridor, shortness of breath, or chest tightness after a likely allergen.
+  - Blue lips, gray color, can barely talk, faintness, collapse, rapid heartbeat, or cold clammy skin after a likely allergen.
+  - Hives plus breathing trouble, face swelling, tongue swelling, throat symptoms, faintness, or blue or gray color.
+forbidden_advice:
+  - Treat allergen-triggered airway symptoms as antihistamine-first care.
+  - Delay epinephrine for antihistamines, steroids, rash checks, or asthma-only inhaler steps.
+  - Give food or drink during airway or breathing compromise.
+  - Reassure as mild hives when breathing trouble, throat swelling, faintness, or blue color is present.
+do_not:
+  - Do not treat wheeze after a sting, food, medicine, or another likely allergen as ordinary asthma-only or panic-only care.
+  - Do not use this card as a medication dosing protocol.
+routine_boundary: >
+  Skin-only hives, itch, or rash with normal breathing and normal alertness is
+  outside this red-zone card; use mild or moderate allergy guidance with close
+  observation and readiness to escalate if airway, breathing, circulation, or
+  alertness changes appear.
+acceptable_uncertain_fit: >
+  If the story is incomplete but allergen exposure plus airway, breathing,
+  color, faintness, collapse, tongue/throat/lip swelling, or hives with breathing
+  or face/tongue swelling is plausible, preserve anaphylaxis-first framing while
+  asking what exposure occurred and whether epinephrine is available.
+clarifying_questions:
+  - What exposure happened: sting, food, medicine, or another likely allergen?
+  - Is there throat tightness, tongue or lip swelling, wheeze, stridor, shortness of breath, blue or gray color, faintness, or collapse?
+  - Is epinephrine available or prescribed, and has it already been used?
+citation_ids:
+  - anaphylaxis-red-zone-routing
+  - anaphylaxis-quick-triage
+  - epinephrine-first-line
+  - antihistamines-adjunct
+source_sections:
+  - guide: GD-400
+    slug: allergic-reactions-anaphylaxis
+    title: "Allergic Reactions, Anaphylaxis & Antihistamine Production"
+    sections:
+      - "#quick-triage-what-do-you-see"
+      - "#anaphylaxis-red-zone-routing"
+      - "#epinephrine"
+      - "#antihistamines"
+source_invariants:
+  - name: anaphylaxis red-zone epinephrine first
+    guide: GD-400
+    must_include:
+      - Any breathing difficulty, throat/tongue swelling, or dizziness/fainting after allergen exposure = anaphylaxis until proven otherwise.
+      - Epinephrine and emergency help come first; inhalers are adjuncts.
+      - Antihistamines are adjuncts to epinephrine, not replacements.
+    must_not_match:
+      - "allergen-triggered airway[^\\n]{0,120}antihistamine-first"
+      - "delay epinephrine[^\\n]{0,120}(antihistamine|steroid|rash|inhaler)"
+      - "(give|offer)[^\\n]{0,80}(food|drink)[^\\n]{0,80}(airway|breathing)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-400 for allergen-triggered airway, breathing, circulation,
+  color, and swelling red-zone prompts. This card deliberately excludes mild
+  skin-only hives, itch, or rash with normal breathing and normal alertness so
+  the runtime does not default-match GD-400 for non-red-zone allergy prompts.

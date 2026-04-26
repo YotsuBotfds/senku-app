@@ -106,6 +106,81 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
 
         self.assertEqual([card["card_id"] for card in cards], ["poisoning_unknown_ingestion"])
 
+    def test_anaphylaxis_red_zone_is_prioritized_for_allergen_airway_prompt(self):
+        prioritized = runtime._prioritized_answer_card_ids_for_question(
+            "Wheezing and throat swelling right after a bee sting. What matters first?",
+            is_airway_obstruction_rag_query=lambda question: False,
+            has_allergy_or_anaphylaxis_trigger=lambda question: True,
+            is_newborn_sepsis_danger_query=lambda question: False,
+            is_meningitis_rash_emergency_query=lambda question: False,
+        )
+
+        self.assertIn("anaphylaxis_red_zone", prioritized)
+
+    def test_anaphylaxis_red_zone_does_not_match_mild_skin_only_hives_prompt(self):
+        anaphylaxis_card = {
+            "card_id": "anaphylaxis_red_zone",
+            "guide_id": "GD-400",
+            "review_status": "pilot_reviewed",
+        }
+        mild_hives_question = (
+            "After a new medicine I have mild hives and itching only, "
+            "normal breathing and normal alertness. Is this anaphylaxis?"
+        )
+
+        self.assertFalse(
+            runtime._answer_card_matches_question(
+                anaphylaxis_card,
+                mild_hives_question,
+                is_airway_obstruction_rag_query=lambda question: False,
+                has_allergy_or_anaphylaxis_trigger=lambda question: True,
+                is_newborn_sepsis_danger_query=lambda question: False,
+                is_meningitis_rash_emergency_query=lambda question: False,
+            )
+        )
+
+        cards = runtime._answer_cards_for_results(
+            {"metadatas": [[{"guide_id": "GD-400"}]]},
+            question=mild_hives_question,
+            max_cards=1,
+            runtime_answer_cards=lambda: [anaphylaxis_card],
+            citation_allowlist_from_results=lambda results: ["GD-400"],
+            prioritized_answer_card_ids_for_question=lambda question: [],
+            answer_card_matches_question=lambda card, question: runtime._answer_card_matches_question(
+                card,
+                question,
+                is_airway_obstruction_rag_query=lambda text: False,
+                has_allergy_or_anaphylaxis_trigger=lambda text: True,
+                is_newborn_sepsis_danger_query=lambda text: False,
+                is_meningitis_rash_emergency_query=lambda text: False,
+            ),
+            card_source_guide_ids=runtime._card_source_guide_ids,
+        )
+
+        self.assertEqual(cards, [])
+
+    def test_anaphylaxis_red_zone_ignores_negated_airway_and_swelling_terms(self):
+        anaphylaxis_card = {
+            "card_id": "anaphylaxis_red_zone",
+            "guide_id": "GD-400",
+            "review_status": "pilot_reviewed",
+        }
+        mild_hives_question = (
+            "After eating shellfish I have hives, but no throat swelling, "
+            "no trouble breathing, no lip swelling, and normal alertness."
+        )
+
+        self.assertFalse(
+            runtime._answer_card_matches_question(
+                anaphylaxis_card,
+                mild_hives_question,
+                is_airway_obstruction_rag_query=lambda question: False,
+                has_allergy_or_anaphylaxis_trigger=lambda question: True,
+                is_newborn_sepsis_danger_query=lambda question: False,
+                is_meningitis_rash_emergency_query=lambda question: False,
+            )
+        )
+
     def test_card_backed_runtime_answer_plan_uses_injected_composer(self):
         selected_card = {
             "card_id": "newborn_danger_sepsis",

@@ -181,11 +181,17 @@ def _prioritized_answer_card_ids_for_question(
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
     is_infected_wound_card_query=lambda question: False,
+    is_anaphylaxis_red_zone_card_query=None,
 ):
     if not question:
         return []
 
+    if is_anaphylaxis_red_zone_card_query is None:
+        is_anaphylaxis_red_zone_card_query = _is_anaphylaxis_red_zone_card_query
+
     prioritized = []
+    if is_anaphylaxis_red_zone_card_query(question):
+        prioritized.append("anaphylaxis_red_zone")
     if is_airway_obstruction_rag_query(question) and not has_allergy_or_anaphylaxis_trigger(question):
         prioritized.append("choking_airway_obstruction")
     if is_newborn_sepsis_danger_query(question):
@@ -209,11 +215,17 @@ def _answer_card_matches_question(
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
     is_infected_wound_card_query=lambda question: False,
+    is_anaphylaxis_red_zone_card_query=None,
 ):
     if not question:
         return True
 
+    if is_anaphylaxis_red_zone_card_query is None:
+        is_anaphylaxis_red_zone_card_query = _is_anaphylaxis_red_zone_card_query
+
     card_id = str(card.get("card_id") or "").strip()
+    if card_id == "anaphylaxis_red_zone":
+        return is_anaphylaxis_red_zone_card_query(question)
     if card_id == "newborn_danger_sepsis":
         return is_newborn_sepsis_danger_query(question)
     if card_id == "meningitis_sepsis_child":
@@ -225,6 +237,156 @@ def _answer_card_matches_question(
     if card_id == "infected_wound_spreading_infection":
         return is_infected_wound_card_query(question)
     return True
+
+
+_ANAPHYLAXIS_EXPOSURE_TERMS = {
+    "allergen",
+    "allergic reaction",
+    "allergy",
+    "ate",
+    "bee sting",
+    "bee stung",
+    "bitten",
+    "food",
+    "medicine",
+    "medication",
+    "new medicine",
+    "new medication",
+    "peanut",
+    "shellfish",
+    "sting",
+    "stung",
+    "wasp",
+}
+_ANAPHYLAXIS_SKIN_TERMS = {
+    "hives",
+    "itchy welts",
+    "rash",
+    "welts",
+}
+_ANAPHYLAXIS_AIRWAY_BREATHING_TERMS = {
+    "barely talk",
+    "barely talking",
+    "blue lips",
+    "breathing trouble",
+    "can barely talk",
+    "cant breathe",
+    "chest tightness",
+    "difficulty breathing",
+    "gray color",
+    "grey color",
+    "shortness of breath",
+    "stridor",
+    "throat closing",
+    "throat swelling",
+    "tongue swelling",
+    "trouble breathing",
+    "wheeze",
+    "wheezing",
+}
+_ANAPHYLAXIS_CIRCULATION_TERMS = {
+    "collapse",
+    "collapsed",
+    "cold clammy",
+    "faint",
+    "fainted",
+    "fainting",
+    "faintness",
+    "passed out",
+}
+_ANAPHYLAXIS_SWELLING_TERMS = {
+    "face swelling",
+    "facial swelling",
+    "lip swelling",
+    "lips swelling",
+    "swollen face",
+    "swollen lip",
+    "swollen lips",
+    "swollen tongue",
+    "tongue swelling",
+}
+_ANAPHYLAXIS_SKIN_ONLY_NORMAL_TERMS = {
+    "alert",
+    "breathing fine",
+    "breathing is fine",
+    "breathing is normal",
+    "breathing normal",
+    "normal alertness",
+    "normal breathing",
+    "no breathing trouble",
+    "no dizziness",
+    "no fainting",
+    "no swelling",
+    "no throat swelling",
+    "no trouble breathing",
+}
+_ANAPHYLAXIS_NEGATED_RED_ZONE_PHRASES = {
+    "no blue lips",
+    "no breathing trouble",
+    "no chest tightness",
+    "no collapse",
+    "no dizziness",
+    "no face swelling",
+    "no facial swelling",
+    "no fainting",
+    "no faintness",
+    "no gray color",
+    "no grey color",
+    "no lip swelling",
+    "no lips swelling",
+    "no shortness of breath",
+    "no stridor",
+    "no swollen face",
+    "no swollen lips",
+    "no swollen tongue",
+    "no throat closing",
+    "no throat swelling",
+    "no tongue swelling",
+    "no trouble breathing",
+    "not faint",
+    "not wheezing",
+}
+
+
+def _is_anaphylaxis_red_zone_card_query(question):
+    """Detect allergen-linked airway, breathing, circulation, or swelling danger."""
+    lower = str(question or "").lower()
+    if not lower:
+        return False
+
+    has_exposure = _text_has_any(lower, _ANAPHYLAXIS_EXPOSURE_TERMS)
+    has_skin = _text_has_any(lower, _ANAPHYLAXIS_SKIN_TERMS)
+    red_zone_text = _without_anaphylaxis_negated_red_zone_phrases(lower)
+    has_airway_or_breathing = _text_has_any(
+        red_zone_text, _ANAPHYLAXIS_AIRWAY_BREATHING_TERMS
+    )
+    has_circulation = _text_has_any(red_zone_text, _ANAPHYLAXIS_CIRCULATION_TERMS)
+    has_swelling = _text_has_any(red_zone_text, _ANAPHYLAXIS_SWELLING_TERMS)
+
+    if has_exposure and (has_airway_or_breathing or has_circulation or has_swelling):
+        return True
+    if has_skin and (has_airway_or_breathing or has_circulation or has_swelling):
+        return True
+
+    skin_only_normal = (
+        has_exposure
+        and has_skin
+        and _text_has_any(lower, _ANAPHYLAXIS_SKIN_ONLY_NORMAL_TERMS)
+    )
+    if skin_only_normal:
+        return False
+
+    return False
+
+
+def _without_anaphylaxis_negated_red_zone_phrases(text):
+    for phrase in _ANAPHYLAXIS_NEGATED_RED_ZONE_PHRASES:
+        text = text.replace(phrase, " ")
+    return text
+
+
+def _text_has_any(text, terms):
+    return any(term in text for term in terms)
 
 
 def _format_card_items(items, *, limit=3):

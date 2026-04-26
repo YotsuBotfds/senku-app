@@ -407,6 +407,53 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(claim_result["status"], "pass")
         self.assertEqual(claim_result["forbidden_count"], 0)
 
+    def test_anaphylaxis_red_zone_card_stays_epinephrine_and_emergency_first(self):
+        card = find_cards_for_guides("GD-400", cards=self.cards)[0]
+
+        self.assertEqual(card["card_id"], "anaphylaxis_red_zone")
+        self.assertEqual(card["slug"], "allergic-reactions-anaphylaxis")
+        self.assertEqual(card["risk_tier"], "critical")
+        self.assertIn("required_first_actions", card)
+        self.assertIn("urgent_red_flags", card)
+        self.assertIn("forbidden_advice", card)
+
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-400"])
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["card_ids"], ["anaphylaxis_red_zone"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-400"])
+        self.assertIn("Give epinephrine immediately", plan["answer_text"])
+        self.assertIn("Call emergency services", plan["answer_text"])
+        self.assertIn("[GD-400]", plan["answer_text"])
+        card_result = evaluate_answer_card_contract(
+            plan["answer_text"],
+            [card],
+            question_text="Wheezing and throat swelling after a bee sting.",
+        )
+        self.assertEqual(card_result["status"], "pass")
+        self.assertEqual(card_result["forbidden_advice_hits"], [])
+        claim_result = diagnose_claim_support(
+            plan["answer_text"],
+            [card],
+            cited_guide_ids=plan["cited_guide_ids"],
+            expected_guide_ids=["GD-400"],
+        )
+        self.assertEqual(claim_result["status"], "pass")
+        self.assertEqual(claim_result["forbidden_count"], 0)
+
+    def test_anaphylaxis_red_zone_contract_flags_antihistamine_first_delay(self):
+        card = find_cards_for_guides("GD-400", cards=self.cards)[0]
+        answer = """
+        This sounds like allergen-triggered airway symptoms.
+        Treat allergen-triggered airway symptoms as antihistamine-first care and
+        delay epinephrine for antihistamines or rash checks.
+        """
+
+        result = evaluate_answer_card_contract(answer, [card])
+
+        self.assertEqual(result["status"], "fail")
+        self.assertTrue(result["forbidden_advice_hits"])
+
     def test_compose_card_backed_answer_does_not_cite_unallowed_backup_owner(self):
         card = [
             candidate
