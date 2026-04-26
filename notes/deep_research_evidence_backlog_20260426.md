@@ -298,6 +298,8 @@ Action:
   original JSONL records.
 - Added artifact tooling coverage for default text-mode storage summaries and
   bench-artifact JSONL indexing that intentionally records `jsonl_not_read`.
+- Tightened the artifact-storage summary CLI so non-positive `--limit` values
+  are rejected while the library function still supports zero-limit summaries.
 - Added live-queue monitor coverage proving today's protected
   `PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md` note is treated as
   benign even when Windows-style backslashes appear in `git status --short`.

@@ -229,7 +229,7 @@ def _format_bytes(size: int) -> str:
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", default="artifacts", help="Artifact tree to summarize")
-    parser.add_argument("--limit", type=int, default=20, help="Rows per section")
+    parser.add_argument("--limit", type=_positive_int, default=20, help="Rows per section")
     parser.add_argument("--json", action="store_true", help="Emit JSON instead of text")
     args = parser.parse_args(argv)
 
@@ -239,6 +239,13 @@ def main(argv=None):
     else:
         print(render_text(summary), end="")
     return 0
+
+
+def _positive_int(value: str) -> int:
+    limit = int(value)
+    if limit <= 0:
+        raise argparse.ArgumentTypeError("--limit must be greater than 0")
+    return limit
 
 
 if __name__ == "__main__":

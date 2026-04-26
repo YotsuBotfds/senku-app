@@ -1,7 +1,7 @@
 import json
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -91,6 +91,20 @@ class SummarizeArtifactStorageTests(unittest.TestCase):
         self.assertEqual(summary["total_bytes"], 0)
         self.assertEqual(summary["largest_files"], [])
 
+    def test_summarize_storage_allows_zero_limit_for_library_use(self):
+        root = self.make_tmpdir()
+        self.write_bytes(root / "bench" / "summary.json", 4)
+
+        summary = summarize_storage(root, limit=0)
+
+        self.assertTrue(summary["exists"])
+        self.assertEqual(summary["total_bytes"], 4)
+        self.assertEqual(summary["largest_files"], [])
+        self.assertEqual(summary["largest_dirs"], [])
+        self.assertEqual(summary["suffix_counts"], [])
+        self.assertEqual(summary["generated_dirs"], [])
+        self.assertEqual(summary["duplicate_basename_families"], [])
+
     def test_render_text_includes_sections(self):
         root = self.make_tmpdir()
         self.write_bytes(root / "bench" / "summary.json", 4)
@@ -128,6 +142,26 @@ class SummarizeArtifactStorageTests(unittest.TestCase):
         self.assertIn("Artifact storage report:", output)
         self.assertIn("Largest files:", output)
         self.assertIn("bench/summary.json", output)
+
+    def test_main_rejects_zero_limit(self):
+        stderr = StringIO()
+
+        with redirect_stderr(stderr):
+            with self.assertRaises(SystemExit) as raised:
+                main(["--limit", "0"])
+
+        self.assertEqual(raised.exception.code, 2)
+        self.assertIn("--limit must be greater than 0", stderr.getvalue())
+
+    def test_main_rejects_negative_limit(self):
+        stderr = StringIO()
+
+        with redirect_stderr(stderr):
+            with self.assertRaises(SystemExit) as raised:
+                main(["--limit", "-1"])
+
+        self.assertEqual(raised.exception.code, 2)
+        self.assertIn("--limit must be greater than 0", stderr.getvalue())
 
 
 if __name__ == "__main__":
