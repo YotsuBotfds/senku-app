@@ -97,6 +97,51 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertEqual(1, len(attest_steps))
         self.assertIn("github.event.repository.private == false", attest_steps[0].get("if", ""))
 
+    def test_dependency_security_workflow_runs_non_android_scan(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "dependency_security.yml").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual({"contents": "read"}, workflow.get("permissions"))
+        triggers = workflow.get("on", workflow.get(True, {}))
+        self.assertIn("pull_request", triggers)
+        self.assertIn("workflow_dispatch", triggers)
+        self.assertNotIn("pull_request_target", triggers)
+
+        pull_request = triggers["pull_request"]
+        self.assertEqual(
+            [
+                ".github/workflows/dependency_security.yml",
+                "requirements.txt",
+                "scripts/run_dependency_security_scan.ps1",
+            ],
+            pull_request["paths"],
+        )
+
+        jobs = workflow["jobs"]
+        self.assertEqual(["dependency-security"], list(jobs))
+        job = jobs["dependency-security"]
+        self.assertEqual("windows-latest", job["runs-on"])
+
+        steps = job["steps"]
+        names = [step.get("name") for step in steps]
+        scan_step = steps[names.index("Run dependency security scan")]
+        self.assertEqual("pwsh", scan_step.get("shell"))
+        self.assertIn(
+            r".\scripts\run_dependency_security_scan.ps1 -SkipIfUnavailable",
+            scan_step.get("run", ""),
+        )
+
+        upload_step = steps[names.index("Upload dependency security report")]
+        self.assertIn("hashFiles('artifacts/security/pip_audit.json')", upload_step["if"])
+        self.assertEqual("dependency-security-report", upload_step["with"]["name"])
+        self.assertEqual("artifacts/security/pip_audit.json", upload_step["with"]["path"])
+
+        workflow_text = (WORKFLOW_DIR / "dependency_security.yml").read_text(encoding="utf-8")
+        self.assertNotIn("android", workflow_text.lower())
+        self.assertNotIn("gradle", workflow_text.lower())
+        self.assertNotIn("emulator", workflow_text.lower())
+
     def test_codeowners_covers_github_configuration(self):
         content = CODEOWNERS_PATH.read_text(encoding="utf-8")
         self.assertIn(".github/ @YotsuBotfds", content)

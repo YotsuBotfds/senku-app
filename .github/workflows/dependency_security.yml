@@ -1,0 +1,43 @@
+name: Dependency Security Scan
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dependency_security.yml"
+      - "requirements.txt"
+      - "scripts/run_dependency_security_scan.ps1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-security:
+    name: Dependency Security
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Run dependency security scan
+        shell: pwsh
+        run: |
+          $env:SENKU_PYTHON_PATH = (Get-Command python).Source
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_dependency_security_scan.ps1 -SkipIfUnavailable
+
+      - name: Upload dependency security report
+        if: always() && hashFiles('artifacts/security/pip_audit.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dependency-security-report
+          path: artifacts/security/pip_audit.json
+          if-no-files-found: error
+          retention-days: 14
