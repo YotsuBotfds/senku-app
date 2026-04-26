@@ -102,6 +102,63 @@ def load_lane_leases(lease_dir: Path) -> dict[str, Any]:
     return {"leases": leases, "malformed": malformed, "lease_dir": str(lease_dir)}
 
 
+def _dirty_status_label(index_status: str, worktree_status: str) -> str:
+    if index_status == "R" or worktree_status == "R":
+        return "renamed"
+    if index_status == "?" and worktree_status == "?":
+        return "untracked"
+    if index_status == "M" or worktree_status == "M":
+        return "modified"
+    if index_status == "A" or worktree_status == "A":
+        return "added"
+    if index_status == "D" or worktree_status == "D":
+        return "deleted"
+    if index_status == "C" or worktree_status == "C":
+        return "copied"
+    if index_status == "U" or worktree_status == "U":
+        return "unmerged"
+    return "changed"
+
+
+def parse_git_status_short_line(line: str) -> dict[str, str]:
+    """Parse one `git status --short` line into a stable summary."""
+
+    if len(line) < 3:
+        return {
+            "raw": line,
+            "index_status": "",
+            "worktree_status": "",
+            "status": "changed",
+            "path": line.strip(),
+        }
+
+    index_status = line[0]
+    worktree_status = line[1]
+    path_text = line[3:]
+    detail = {
+        "raw": line,
+        "index_status": index_status,
+        "worktree_status": worktree_status,
+        "status": _dirty_status_label(index_status, worktree_status),
+        "path": path_text,
+    }
+    if " -> " in path_text and detail["status"] == "renamed":
+        old_path, new_path = path_text.split(" -> ", 1)
+        detail["original_path"] = old_path
+        detail["path"] = new_path
+    return detail
+
+
+def parse_git_status_short(text: str) -> tuple[list[str], list[dict[str, str]], dict[str, int]]:
+    entries = [line for line in text.splitlines() if line.strip()]
+    entry_details = [parse_git_status_short_line(line) for line in entries]
+    status_counts: dict[str, int] = {}
+    for detail in entry_details:
+        status = detail["status"]
+        status_counts[status] = status_counts.get(status, 0) + 1
+    return entries, entry_details, status_counts
+
+
 def _dirty_summary(path: Path, runner: CommandRunner) -> dict[str, Any]:
     result = runner(["git", "-C", str(path), "status", "--short"], path)
     if result.returncode:
@@ -109,13 +166,17 @@ def _dirty_summary(path: Path, runner: CommandRunner) -> dict[str, Any]:
             "clean": False,
             "changed": 0,
             "entries": [],
+            "entry_details": [],
+            "status_counts": {},
             "error": (result.stderr or result.stdout or f"git exited {result.returncode}").strip(),
         }
-    entries = [line for line in result.stdout.splitlines() if line.strip()]
+    entries, entry_details, status_counts = parse_git_status_short(result.stdout)
     return {
         "clean": not entries,
         "changed": len(entries),
         "entries": entries[:20],
+        "entry_details": entry_details[:20],
+        "status_counts": status_counts,
         "truncated": len(entries) > 20,
     }
 

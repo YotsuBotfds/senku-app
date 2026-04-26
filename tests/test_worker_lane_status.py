@@ -86,6 +86,49 @@ class WorkerLaneStatusTests(unittest.TestCase):
         self.assertEqual(lane["dirty"]["changed"], 1)
         self.assertIn(("git", "worktree", "list", "--porcelain"), [call[0] for call in calls])
 
+    def test_dirty_summary_adds_structured_details_and_status_counts(self):
+        status_text = "\n".join(
+            [
+                " M scripts/tool.py",
+                "?? notes/new.md",
+                "R  old_name.py -> new_name.py",
+            ]
+        )
+
+        def fake_runner(command, cwd):
+            return subprocess.CompletedProcess(command, 0, status_text, "")
+
+        dirty = worker_lane_status._dirty_summary(Path("C:/repo"), fake_runner)
+
+        self.assertFalse(dirty["clean"])
+        self.assertEqual(dirty["changed"], 3)
+        self.assertEqual(
+            dirty["entries"],
+            [" M scripts/tool.py", "?? notes/new.md", "R  old_name.py -> new_name.py"],
+        )
+        self.assertFalse(dirty["truncated"])
+        self.assertEqual(dirty["status_counts"], {"modified": 1, "untracked": 1, "renamed": 1})
+        self.assertEqual(dirty["entry_details"][0]["status"], "modified")
+        self.assertEqual(dirty["entry_details"][0]["path"], "scripts/tool.py")
+        self.assertEqual(dirty["entry_details"][1]["status"], "untracked")
+        self.assertEqual(dirty["entry_details"][2]["status"], "renamed")
+        self.assertEqual(dirty["entry_details"][2]["original_path"], "old_name.py")
+        self.assertEqual(dirty["entry_details"][2]["path"], "new_name.py")
+
+    def test_dirty_summary_caps_entries_and_details_but_counts_all_changes(self):
+        status_text = "\n".join(f" M file_{index}.py" for index in range(22))
+
+        def fake_runner(command, cwd):
+            return subprocess.CompletedProcess(command, 0, status_text, "")
+
+        dirty = worker_lane_status._dirty_summary(Path("C:/repo"), fake_runner)
+
+        self.assertEqual(dirty["changed"], 22)
+        self.assertEqual(len(dirty["entries"]), 20)
+        self.assertEqual(len(dirty["entry_details"]), 20)
+        self.assertTrue(dirty["truncated"])
+        self.assertEqual(dirty["status_counts"], {"modified": 22})
+
     def test_render_markdown_contains_compact_table(self):
         markdown = worker_lane_status.render_markdown(
             {

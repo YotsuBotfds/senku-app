@@ -297,6 +297,8 @@ Action:
 - Aligned worktree-delta summaries with the protected planner handoff policy,
   excluding those local handoff notes from actionable changed-file counts while
   reporting the benign exclusion count.
+- Added structured worker-lane dirty summaries with parsed entry details and
+  status counts while preserving the existing compact entries contract.
 - Hardened bench Markdown response recovery so padded source/context headings
   stop answer extraction instead of leaking source bullets into fallback
   response text.
