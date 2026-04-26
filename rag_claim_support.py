@@ -104,7 +104,7 @@ def diagnose_claim_support(
     if not generated or not str(answer_text or "").strip():
         return _empty_result("no_generated_answer")
 
-    card_list = list(cards or [])
+    card_list = [card for card in cards or [] if isinstance(card, dict)]
     if not card_list:
         actions = extract_action_lines(answer_text)
         return _result_for_actions(actions, "no_cards")

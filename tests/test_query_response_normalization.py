@@ -50,6 +50,14 @@ class QueryResponseNormalizationExtractionTests(unittest.TestCase):
 
         self.assertEqual(normalized, "1. Boil first and cool before storage. [GD-001]")
 
+    def test_terminal_unclosed_citation_group_is_recovered(self):
+        normalized = normalization.normalize_response_text(
+            "Use clean jars [GD-1, GD/2",
+            valid_guide_ids_provider=lambda: {"GD-001", "GD-002"},
+        )
+
+        self.assertEqual(normalized, "Use clean jars [GD-001, GD-002]")
+
     def test_query_wrapper_keeps_query_logger_warning_behavior(self):
         query = importlib.import_module("query")
 

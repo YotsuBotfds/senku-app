@@ -134,6 +134,22 @@ class QueryScenarioFrameTests(unittest.TestCase):
         self.assertEqual(merged["deadline"], "before dark")
         self.assertEqual(merged["session_active_objectives"], ["stop roof leak"])
 
+    def test_update_session_state_ignores_malformed_objectives(self):
+        state = scenario_frame.update_session_state(
+            scenario_frame.empty_session_state(),
+            {
+                "objectives": [
+                    {"text": "filter water"},
+                    {},
+                    {"text": "   "},
+                    "stop roof leak",
+                    None,
+                ],
+            },
+        )
+
+        self.assertEqual(state["active_objectives"], ["filter water"])
+
     def test_render_session_state_text_and_context_gating(self):
         state = scenario_frame.update_session_state(
             scenario_frame.empty_session_state(),

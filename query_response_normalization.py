@@ -96,6 +96,22 @@ def _normalize_citation_group(match):
     return "[" + ", ".join(citations) + "]"
 
 
+def _close_terminal_unclosed_citation_groups(text):
+    """Recover a trailing unclosed citation group without touching prose brackets."""
+    lines = []
+    for line in text.splitlines():
+        lines.append(
+            re.sub(
+                r"\[(?=[^\]\n]*\bGD-\d{3}\b)([^\]\n]*\bGD-\d{3}\b[^\]\n]*)$",
+                lambda match: _normalize_citation_group(match),
+                line,
+            )
+        )
+    if text.endswith("\n"):
+        return "\n".join(lines) + "\n"
+    return "\n".join(lines)
+
+
 def _compress_citations_on_line(line):
     """Collapse repeated citation groups on one output line into one small cluster."""
     citation_groups = re.findall(r"\[(?:GD-\d{3}(?:,\s*GD-\d{3})*)\]", line)
@@ -290,6 +306,7 @@ def normalize_response_text(text, *, valid_guide_ids_provider=None, warn_event=N
         lambda match: f"GD-{int(match.group(1)):03d}",
         normalized,
     )
+    normalized = _close_terminal_unclosed_citation_groups(normalized)
     normalized = re.sub(
         r"\[(?:[^\]]*GD[^\]]*)\]", _normalize_citation_group, normalized
     )

@@ -53,6 +53,22 @@ class ConfidenceLabelContractTests(unittest.TestCase):
         self.assertEqual("", presentation.metastrip_token)
         self.assertEqual(META_TONE_NONE, presentation.metastrip_tone)
 
+    def test_label_aliases_normalize_to_stable_public_labels(self):
+        cases = [
+            (None, "high"),
+            (" DEFAULT ", "high"),
+            ("Likely_Match", "medium"),
+            ("low_confidence", "low"),
+            (" UNCERTAIN ", "uncertain-fit"),
+            ("unexpected-label", "high"),
+        ]
+
+        for raw_label, expected_label in cases:
+            with self.subTest(raw_label=raw_label):
+                presentation = resolve_confidence_presentation(raw_label)
+
+                self.assertEqual(expected_label, presentation.label)
+
 
 if __name__ == "__main__":
     unittest.main()

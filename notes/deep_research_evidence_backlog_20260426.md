@@ -628,6 +628,11 @@ Action:
   call-operator invocation rather than `Invoke-Expression`, overnight queue
   wrappers reject directory queue notes before reading, and live queue monitor
   rendering guards malformed status payloads.
+- Hardened policy/normalization helpers: abstain policy tolerates malformed
+  metadata rows, response normalization recovers terminal unclosed citation
+  groups, scenario-frame updates ignore malformed objectives, claim-support
+  classification skips non-dict card rows, and confidence/uncertain-fit tests
+  pin stable public label and safety-gate boundaries.
 
 Validation:
 
@@ -690,6 +695,11 @@ Validation:
   `tests.test_powershell_quality_gate`, `tests.test_run_non_android_regression_gate`,
   plus `tests/powershell/Run-OvernightQueueWrapperTests.ps1` and the focused
   PowerShell parser gate cover the manifest/PowerShell/queue tooling batch.
+- `tests.test_abstain`, `tests.test_query_abstain_policy`,
+  `tests.test_query_response_normalization`, `tests.test_query_scenario_frame`,
+  `tests.test_confidence_label`, `tests.test_query_confidence_label`,
+  `tests.test_rag_claim_support`, and `tests.test_uncertain_fit` cover the
+  policy/normalization helper hardening batch.
 
 Deferred unless evidenced:
 

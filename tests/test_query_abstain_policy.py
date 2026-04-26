@@ -66,6 +66,22 @@ class QueryAbstainPolicyExtractionTests(unittest.TestCase):
         self.assertTrue(should_abstain)
         self.assertEqual(labels, ["off-topic candidate", "off-topic candidate"])
 
+    def test_should_abstain_handles_malformed_metadata_with_stable_labels(self):
+        results = {
+            "documents": [["Unrelated canvas patching only.", "Tool rust cleanup."]],
+            "metadatas": [["not-a-metadata-dict", ["also", "malformed"]]],
+            "distances": [[0.82, "not-a-distance"]],
+        }
+
+        should_abstain, labels = abstain_policy._should_abstain(
+            results,
+            "build rain shelter from tarp",
+            content_tokens=_content_tokens,
+        )
+
+        self.assertTrue(should_abstain)
+        self.assertEqual(labels, ["off-topic candidate", "off-topic candidate"])
+
     def test_truncate_abstain_query_is_stable(self):
         self.assertEqual(
             abstain_policy._truncate_abstain_query("  a   b   c  ", limit=10),

@@ -573,7 +573,12 @@ def update_session_state(session_state, frame):
         state["deadline"] = frame["deadline"]
     if frame.get("objectives"):
         state["active_objectives"] = _unique_ordered(
-            [obj["text"] for obj in frame["objectives"]] + state["active_objectives"]
+            [
+                obj.get("text")
+                for obj in frame["objectives"]
+                if isinstance(obj, dict)
+            ]
+            + state["active_objectives"]
         )[:8]
     return state
 

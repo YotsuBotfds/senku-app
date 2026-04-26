@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 
 
 ABSTAIN_ROW_LIMIT = 3
@@ -19,7 +20,7 @@ def _abstain_top_rows(results, *, limit=ABSTAIN_ROW_LIMIT):
     rows = []
     for index, (doc, meta) in enumerate(zip(documents, metadatas)):
         dist = distances[index] if index < len(distances) else 1.0
-        rows.append((doc or "", meta or {}, dist))
+        rows.append((doc or "", meta if isinstance(meta, Mapping) else {}, dist))
         if len(rows) >= limit:
             break
     return rows
@@ -29,12 +30,12 @@ def _abstain_row_overlap_tokens(query_tokens, doc, meta, *, content_tokens):
     """Return query-bearing tokens supported by one retrieved row."""
     haystack = " ".join(
         [
-            meta.get("guide_title", ""),
-            meta.get("section_heading", ""),
-            meta.get("description", ""),
-            meta.get("tags", ""),
-            meta.get("category", ""),
-            doc or "",
+            str(meta.get("guide_title", "") or ""),
+            str(meta.get("section_heading", "") or ""),
+            str(meta.get("description", "") or ""),
+            str(meta.get("tags", "") or ""),
+            str(meta.get("category", "") or ""),
+            str(doc or ""),
         ]
     )
     return query_tokens & content_tokens(haystack)

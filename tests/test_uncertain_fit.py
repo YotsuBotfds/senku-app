@@ -369,6 +369,48 @@ class UncertainFitModeTests(unittest.TestCase):
         self.assertIn("not a confident fit", response)
         self.assertIn(query._SAFETY_CRITICAL_ESCALATION_LINE, response)
 
+    def test_safety_review_gate_preserves_high_confidence_mode(self):
+        results = _results(
+            [
+                _row(
+                    doc="Urgent newborn sepsis triage signs and same-day escalation steps.",
+                    guide_id="GD-501",
+                    guide_title="Newborn Urgent Triage",
+                    section_heading="Sepsis warning signs",
+                    category="medical",
+                    dist=0.24,
+                    rrf_score=0.029,
+                    vector_hits=1,
+                    lexical_hits=1,
+                ),
+                _row(
+                    doc="Fever, poor feeding, lethargy, and emergency evaluation guidance.",
+                    guide_id="GD-502",
+                    guide_title="Infant Fever Escalation",
+                    section_heading="Emergency thresholds",
+                    category="medical",
+                    dist=0.26,
+                    rrf_score=0.028,
+                    vector_hits=1,
+                    lexical_hits=1,
+                ),
+            ]
+        )
+        results["_senku"].update(
+            {
+                "retrieval_profile": "safety_triage",
+                "safety_critical": True,
+            }
+        )
+
+        mode = query._resolve_answer_mode(
+            results,
+            {"question": "newborn fever poor feeding sepsis warning signs"},
+            "high",
+        )
+
+        self.assertEqual("confident", mode)
+
 
 if __name__ == "__main__":
     unittest.main()

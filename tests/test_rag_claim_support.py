@@ -138,6 +138,24 @@ This longer background sentence explains why a helper should remain calm and wat
         self.assertEqual(result["status"], "pass")
         self.assertEqual(result["actions"][0]["support_basis"], "retrieved_or_cited_owner")
 
+    def test_malformed_card_rows_do_not_hide_valid_support(self):
+        result = diagnose_claim_support(
+            "- Call 911 now.",
+            [
+                None,
+                "not a card",
+                {
+                    "card_id": "emergency",
+                    "guide_id": "GD-911",
+                    "required_first_actions": ["Call 911"],
+                },
+            ],
+        )
+
+        self.assertEqual(result["status"], "pass")
+        self.assertEqual(result["supported_count"], 1)
+        self.assertEqual(result["actions"][0]["card_id"], "emergency")
+
     def test_long_bullets_keep_raw_citations_for_support(self):
         long_action = (
             "- Assess breathing, feeding, temperature, alertness, skin color, urine "
