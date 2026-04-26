@@ -340,6 +340,9 @@ Action:
 - Added a behavior-contract guard for the same high-liability holdout packs:
   every row now needs target behavior, scenario/risk/fair-test metadata,
   expected behavior, required concepts, and forbidden/suspicious actions.
+- Added high-liability retrieval-smoke-first hygiene coverage proving current
+  EVAL8/EVAL9 smoke-first rows keep primary owner metadata inside expected
+  guide sets and expose at least one forbidden/suspicious cue in prompt context.
 - Added a `master` push trigger to the Dependency Security Scan workflow for
   dependency/security-tooling path changes, matching the pull-request path
   filter so dependency scan health becomes visible on relevant HEAD updates.

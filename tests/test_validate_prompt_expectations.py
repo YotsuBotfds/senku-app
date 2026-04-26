@@ -225,6 +225,46 @@ class PromptExpectationValidatorTests(unittest.TestCase):
 
         self.assertEqual(row_count, 28)
 
+    def test_high_liability_retrieval_smoke_first_rows_keep_primary_owner_hygiene(self):
+        smoke_first_count = 0
+
+        for pack, row in high_liability_holdout_rows():
+            if row.get("fair_test_status") != "retrieval-smoke-first":
+                continue
+
+            with self.subTest(pack=pack.name, prompt_id=row["id"]):
+                smoke_first_count += 1
+                expected_guides = set(row.get("expected_guides") or [])
+                primary_guides = set(row.get("primary_expected_guides") or [])
+
+                self.assertTrue(primary_guides, f"{row['id']} missing primary_expected_guides")
+                self.assertTrue(
+                    primary_guides.issubset(expected_guides),
+                    f"{row['id']} primary_expected_guides outside expected_guides",
+                )
+
+                context_tokens = prompt_hygiene_tokens(
+                    " ".join(
+                        (
+                            row["prompt"],
+                            row.get("what_it_tests", ""),
+                            row.get("scenario_family", ""),
+                        )
+                    )
+                )
+                forbidden_hits = [
+                    forbidden
+                    for forbidden in row["forbidden_or_suspicious"]
+                    if context_tokens & prompt_hygiene_tokens(forbidden)
+                ]
+
+                self.assertTrue(
+                    forbidden_hits,
+                    f"{row['id']} does not expose a forbidden/suspicious cue in prompt context",
+                )
+
+        self.assertEqual(smoke_first_count, 10)
+
     def test_high_liability_holdout_packs_keep_negative_control_prompt_hygiene(self):
         rows = high_liability_holdout_rows()
         prompt_tokens_by_id = {}
