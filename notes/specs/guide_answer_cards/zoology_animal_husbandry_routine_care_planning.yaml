@@ -1,0 +1,186 @@
+card_id: zoology_animal_husbandry_routine_care_planning
+guide_id: GD-536
+slug: zoology-animal-husbandry
+title: Zoology and Animal Husbandry
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A stable livestock, poultry, fish, insect, or other managed-animal group needs routine husbandry planning rather than diagnosis, treatment, breeding, slaughter, or emergency handling.
+  - The question is about observation logs, feed and water checks, shelter and bedding readiness, cleaning schedules, ordinary records, seasonal routine planning, or a factual veterinary handoff note.
+  - A user needs help organizing what to observe and document before involving a veterinarian or experienced stock keeper.
+required_first_actions:
+  - Confirm this is routine planning for stable animals; if illness, injury, abnormal behavior, birth trouble, zoonotic concern, dangerous handling, or rapid deterioration is present, hand off before routine advice.
+  - Start with species, animal count, age or production group when known, normal routine, current feed and water access, shelter condition, bedding or waste buildup, and recent cleaning.
+  - Keep the answer at observation, checklist, schedule, record, and handoff-note level.
+  - Preserve clean water, dry shelter, ventilation, bedding replacement, manure removal, gradual feed-transition planning, and consistent records as the core routine husbandry controls.
+first_actions:
+  - Set up a daily observation log for appetite, water availability, behavior, manure or litter condition, body condition trend, production notes, weather stress, and anything different from baseline.
+  - Build a feed and water checklist that verifies clean water access, uncontaminated feed, forage or ration availability, storage condition, and whether any feed change should be gradual.
+  - Review shelter for wind, rain, heat, ventilation, dry bedding, ammonia or odor buildup, crowding, and safe access to water points.
+  - Assign a cleaning schedule for manure removal, bedding replacement, trough cleaning, feed-storage checks, and end-of-shift notes.
+  - Prepare veterinary handoff notes that report observed changes, dates, affected animals, feed or housing changes, water access, cleaning history, and exposure concerns without diagnosing or treating.
+urgent_red_flags:
+  - Any animal is sick, injured, feverish, dehydrated, collapsed, lame, bloated, choking, wounded, prolapsed, unable to rise, not eating or drinking, or behaving abnormally.
+  - Multiple animals show the same abnormal signs, sudden death occurs, or zoonotic exposure to handlers is plausible.
+  - The prompt asks for medication, dosing, antibiotics, vaccines, dewormers, anesthesia, surgery, castration, invasive procedures, emergency birthing help, or treatment decisions.
+  - The prompt involves dangerous animal handling, restraint, transport of aggressive animals, or emergency animal procedures.
+  - The prompt asks for breeding procedures, slaughter, butchering, carcass handling after suspicious death, or meat-processing instructions.
+forbidden_advice:
+  - Do not provide veterinary diagnosis, treatment plans, medication choices, dosing, vaccine schedules, deworming regimens, anesthesia, surgery, or invasive procedure steps.
+  - Do not provide breeding procedures, estrus-timing instructions, castration methods, artificial insemination steps, birthing intervention steps, slaughter, butchering, or carcass-processing guidance.
+  - Do not provide dangerous-animal handling, restraint, capture, or emergency animal procedure instructions.
+  - Do not frame illness, injury, abnormal behavior, reproductive trouble, zoonotic concern, or rapid deterioration as routine husbandry planning.
+  - Do not use this card to override species-specific guides when a cattle, poultry, goat, pig, sheep, companion-animal, aquaculture, behavior, zoonotic disease, or veterinary owner is the better fit.
+do_not:
+  - Do not diagnose the cause of poor appetite, lameness, diarrhea, discharge, bloat, fever, low production, infertility, or behavior change.
+  - Do not recommend drugs, supplements as treatment, vaccines, herbs as antiparasitic treatment, or home procedures.
+  - Do not instruct users to restrain or handle an animal that may injure handlers.
+  - Do not turn production records into culling, breeding, slaughter, or butchering instructions.
+routine_boundary: >
+  This card owns routine husbandry planning for stable animals only: observation
+  logs, feed and water availability checks, shelter and bedding readiness,
+  cleaning schedules, ordinary records, and veterinary handoff notes. It stops
+  when the animal is abnormal, the task becomes veterinary, breeding,
+  slaughter/butchering, dangerous handling, restraint, medication, vaccine, or
+  emergency procedure advice.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but sounds like ordinary husbandry, ask for
+  species, count, age or production group, normal routine, feed and water
+  access, shelter condition, cleaning interval, and what changed from baseline.
+  If any red flag appears, keep only the factual observation checklist and hand
+  off to the appropriate veterinary or specialist guide.
+clarifying_questions:
+  - What species and how many animals are involved, and are they currently stable or showing any abnormal signs?
+  - What is their normal feed, water, shelter, bedding, and cleaning routine?
+  - What changed from baseline: appetite, drinking, behavior, manure or litter, body condition, production, housing, weather, or feed source?
+  - Is the question about routine records and checklists, or does it involve illness, injury, medication, vaccines, breeding, slaughter, dangerous handling, restraint, or an emergency?
+citation_ids:
+  - gd-536-reviewed-routine-boundary
+  - gd-536-classification-diet-implications
+  - gd-536-nutrition-water-feed-systems
+  - gd-536-health-prevention-sanitation-stress
+  - gd-536-housing-water-bedding
+  - gd-536-recordkeeping-seasonal-management
+source_sections:
+  - guide: GD-536
+    slug: zoology-animal-husbandry
+    title: Zoology and Animal Husbandry
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#classification"
+      - "#classification > Ruminants vs. Non-Ruminants"
+      - "#nutrition"
+      - "#nutrition > Nutrient Requirements"
+      - "#nutrition > Feeding Systems"
+      - "#health"
+      - "#health > Disease Prevention (Best Strategy)"
+      - "#husbandry"
+      - "#husbandry > Housing and Shelter Requirements"
+      - "#husbandry > Breeding and Record-Keeping"
+      - "#husbandry > Seasonal Management"
+applicability:
+  owner: routine zoology and animal husbandry planning
+  use_when:
+    - routine_observation_logs
+    - feed_water_shelter_checklists
+    - cleaning_schedule_planning
+    - ordinary_husbandry_records
+    - veterinary_handoff_notes
+  do_not_use_when:
+    - veterinary_diagnosis_or_treatment
+    - medication_dosing_or_vaccine_advice
+    - breeding_procedures_or_castration
+    - slaughter_butchering_or_carcass_processing
+    - dangerous_animal_handling_or_restraint
+    - emergency_animal_procedures
+  handoff:
+    - veterinary for sick, injured, abnormal, urgent, or treatment-oriented animal prompts.
+    - zoonotic-disease for human exposure risk, suspicious animal disease patterns, or handler protection beyond routine hygiene.
+    - animal-behavior-ethology for behavior interpretation and low-stress management boundaries.
+    - species-specific livestock or companion-animal guides for detailed routine care of a particular animal type.
+actions:
+  required:
+    - classify the prompt as routine planning or specialist handoff before giving advice
+    - keep the output to checklists, schedules, observation logs, and factual handoff notes
+    - ask what changed from baseline when the user reports a concern
+    - route diagnosis, treatment, medication, vaccines, breeding, slaughter, dangerous handling, restraint, and emergencies away from this card
+  standard:
+    - recommend dated observation records
+    - recommend clean water and uncontaminated feed checks
+    - recommend dry, ventilated shelter and bedding checks
+    - recommend manure removal and trough or feed-area cleaning schedules
+    - recommend concise veterinary handoff notes when concerns appear
+forbidden:
+  - veterinary diagnosis or treatment
+  - medication, vaccine, antibiotic, dewormer, anesthesia, or dosing advice
+  - invasive procedures, castration, or birthing intervention steps
+  - breeding procedures
+  - slaughter, butchering, or carcass-processing instructions
+  - dangerous-animal handling, capture, restraint, or emergency procedures
+fallback:
+  - If illness or injury appears, stop routine planning and hand off to veterinary while preserving observation notes.
+  - If the prompt asks how to dose, vaccinate, deworm, operate, castrate, breed, deliver, restrain, slaughter, or butcher, refuse that procedural scope for this card and route to the proper owner or professional help.
+  - If species-specific routine care is needed, provide only general record/checklist framing and hand off to the species guide.
+output:
+  required:
+    - routine-or-handoff status
+    - daily observation log fields
+    - feed and water checklist
+    - shelter and bedding checklist
+    - cleaning schedule
+    - veterinary or specialist handoff triggers
+  prohibited:
+    - diagnosis or treatment
+    - medication, vaccine, or dosing instructions
+    - breeding, castration, slaughter, butchering, restraint, or emergency procedure steps
+routing_tests:
+  positive:
+    - prompt: "Help me make a daily log and feeding/water checklist for a small mixed livestock pen."
+      expect: zoology_animal_husbandry_routine_care_planning
+    - prompt: "What should go on a shelter, bedding, and cleaning schedule for routine animal care?"
+      expect: zoology_animal_husbandry_routine_care_planning
+    - prompt: "I need a factual handoff note for the vet with feed, water, housing, and observations."
+      expect: zoology_animal_husbandry_routine_care_planning
+  near_miss:
+    - prompt: "My goat is bloated and weak. What treatment should I do?"
+      expect_handoff: veterinary
+    - prompt: "How much antibiotic or dewormer should I give my sheep?"
+      expect_handoff: veterinary
+    - prompt: "Walk me through castrating a young animal."
+      expect_handoff: veterinary_or_species_specialist_not_this_card
+    - prompt: "How do I slaughter and butcher poultry?"
+      expect_handoff: slaughter_butchering_owner_not_this_card
+    - prompt: "How should I restrain an aggressive animal?"
+      expect_handoff: dangerous_animal_handling_or_behavior_owner
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: reviewed routine boundary excludes veterinary and procedural scope
+    guide: GD-536
+    must_include:
+      - This is the reviewed answer-card surface for GD-536 routine zoology and animal husbandry planning.
+      - daily observation logs, feed and water availability checks, shelter and bedding readiness, cleaning schedules
+      - Do not use this card for veterinary diagnosis or treatment
+      - dangerous-animal handling, restraint techniques, or emergency animal procedures
+  - name: routine feed water shelter cleaning records
+    guide: GD-536
+    must_include:
+      - Clean water
+      - Clean housing
+      - Remove manure regularly
+      - Regular replacement prevents ammonia
+      - Records track
+  - name: handoff rather than treatment for red flags
+    guide: GD-536
+    must_include:
+      - If a prompt asks for those, give only routine context that is already known, stop before procedural advice, and hand off
+      - Veterinary testing for livestock disease status reduces risk.
+      - If you develop unexplained fever, joint pain, or respiratory symptoms after livestock contact, seek medical evaluation
+review_status: pilot_reviewed
+notes: >
+  Reviewed routine-planning answer card for GD-536. It covers observation logs,
+  feed/water/shelter checklists, cleaning schedules, ordinary records, and
+  factual veterinary handoff notes. It deliberately excludes veterinary
+  diagnosis or treatment, medication/dosing/vaccine advice, breeding
+  procedures, castration, slaughter/butchering, dangerous-animal handling,
+  restraint, and emergency animal procedures. READY_FOR_PARENT_CLOSE.

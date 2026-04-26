@@ -1,4 +1,4 @@
-﻿---
+---
 id: GD-535
 slug: animal-behavior-ethology
 title: Animal Behavior and Ethology
@@ -18,11 +18,40 @@ related:
   - veterinary-parasitology
   - survival-basics
   - zoology-animal-husbandry
+aliases:
+  - animal behavior observation
+  - ethogram
+  - behavior log
+  - livestock stress behavior
+  - animal stress signs
+  - enrichment planning
+  - supervision plan for animals
+  - low stress animal observation
+routing_cues:
+  - Use for observation planning, ethogram or behavior-log design, stress-behavior recognition, enrichment and supervision planning, and handoffs for domestic animals or wildlife viewed from a safe distance.
+  - Route illness, injury, diagnosis, medication, reproductive disease, parasites, or emergency treatment to veterinary or veterinary-parasitology guides.
+  - Route wildlife capture, handling, legal control, nuisance removal, restraint, sedation, coercive training, or dangerous-animal approach away from this guide's reviewed answer card.
+applicability: >
+  Observation-only animal behavior and ethology support: baseline behavior
+  notes, ethogram categories, stress and escalation signs,
+  enrichment/supervision planning, and safe handoffs.
+citations_required: true
+citation_policy: >
+  Cite the reviewed GD-535 answer card for observation planning, ethogram/log
+  design, stress-behavior recognition, enrichment and supervision planning, and
+  sibling handoffs. Do not use the reviewed answer card for wildlife capture or
+  handling, dangerous-animal approach, veterinary diagnosis or treatment,
+  coercive training, restraint, sedation, breeding decisions, or legal wildlife
+  control.
 read_time: 8
 word_count: 4200
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: animal_behavior_ethology_observation
+answer_card:
+  - animal_behavior_ethology_observation
 ---
 
 ## Overview: Understanding Animal Behavior
@@ -43,6 +72,16 @@ Key principles:
 
 :::info-box
 **Sibling handoff:** Use this guide for fear, aggression, habituation, training, herd movement, and low-stress handling. For housing density, fencing, feed and water placement, breeding setup, and routine herd care, route to [Animal Husbandry and Veterinary](animal-husbandry.html). For fever, lameness, diarrhea, wounds, or reproductive disease, route to [Veterinary](veterinary.html). For worms, lice, mites, and pasture parasite control, route to [Veterinary Parasitology](veterinary-parasitology.html).
+:::
+
+:::warning
+**Reviewed answer-card boundary:** This is the reviewed answer-card surface for GD-535. Use it for observation planning, ethogram and behavior-log design, stress-behavior recognition, enrichment and supervision planning, and handoffs. Keep observations from a safe distance unless the user is already doing routine care with domestic animals they are responsible for.
+
+Start with a baseline: species or group, setting, time of day, weather or disturbance, distance from people, food and water access, group composition, and what "normal" looked like before the change. Build an ethogram with simple behavior categories such as feeding, resting, moving, social contact, avoidance, vigilance, vocalizing, grooming, repetitive behavior, and aggression displays. Log time, duration, trigger, body posture, ears or tail position when relevant, distance from stimulus, and recovery time.
+
+Treat repeated pacing, freezing, hiding, refusal to eat or drink, sudden aggression, excessive vocalizing, abnormal vigilance, repeated escape attempts, self-injury, collapse, labored breathing, bleeding, severe weakness, or heat/cold distress as stress or emergency signals that require stopping the current plan and handing off to the appropriate veterinary, husbandry, wildlife, or emergency authority.
+
+For enrichment and supervision, reduce crowding and competition, provide predictable routines, quiet retreat space, species-appropriate foraging or exploration opportunities, clean water and food access, and supervision that watches for escalation rather than forcing contact. Do not use this card for wildlife capture or handling, dangerous-animal approach, veterinary diagnosis or treatment, coercive training, restraint, sedation, breeding decisions, or legal wildlife control.
 :::
 
 </section>

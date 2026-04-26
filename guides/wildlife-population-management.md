@@ -28,6 +28,30 @@ custom_css: |
   .survey-protocol li:before { content: "■"; position: absolute; left: 0; color: var(--accent); }
   .calendar-box { margin: 1.5rem 0; padding: 1rem; background: var(--card); border-radius: 4px; font-family: monospace; font-size: 13px; }
 liability_level: high
+aliases:
+  - wildlife population monitoring
+  - wildlife counts
+  - animal track survey
+  - game trail monitoring
+  - non invasive wildlife conflict prevention
+  - wildlife habitat notes
+routing_cues:
+  - Use this guide's reviewed answer card only for observation, non-invasive counts, track/scat/trail/direct-observation notes, habitat-condition notes, trend monitoring, record keeping, and handoff planning.
+  - Keep answers focused on repeatable survey routes, dates, locations, species/sign counts, weather, habitat observations, trend comparison, and non-invasive livestock or garden conflict-prevention planning.
+  - Route hunting, trapping, poisoning, relocation, capture, lethal control, legal permit claims, disease diagnosis, dangerous animal approach, and ecosystem manipulation requests away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-663 answer card for wildlife observation, count methods, habitat notes, trend monitoring, non-invasive conflict-prevention planning, and handoffs only; do not use it for hunting/trapping/poisoning, relocation/capture, lethal control, legal permit claims, disease diagnosis, dangerous animal approach, or ecosystem manipulation guarantees.
+applicability: >
+  Use for planning safe, repeatable wildlife observation and population trend
+  monitoring: track and sign surveys, game-trail notes, feeding-sign notes,
+  scat counts, direct observation from a safe vantage point, habitat condition
+  notes, records, and non-invasive conflict-prevention planning. Do not use for
+  hunting, trapping, poisoning, capture, relocation, lethal control, legal
+  permit claims, diagnosing animal disease, approaching dangerous animals, or
+  promising ecosystem outcomes.
+answer_card:
+  - wildlife_population_monitoring
+reviewed: true
 ---
 
 ## Overview: Wildlife Management for Long-Term Food Security

@@ -23,6 +23,39 @@ word_count: 4700
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+aliases:
+  - aquatic ecology fisheries
+  - fisheries management plan
+  - pond fish population monitoring
+  - stream habitat assessment
+  - water quality observation fisheries
+  - sustainable harvest planning
+  - stocking decision handoff
+  - non invasive aquatic management
+routing_cues:
+  - Use this guide for freshwater habitat observation, stream and pond monitoring plans, simple water-quality trend observation, biological indicators, catch trend review, and sustainable harvest planning.
+  - Keep answers focused on measurements, logs, habitat condition, riparian shade, bank stability, plant coverage, fish community indicators, stocking/harvest decision handoffs, and non-invasive management planning.
+  - Route chemical dosing, fish-kill cleanup, dam or pond engineering, invasive release, legal permit claims, food safety, medical illness, and hazardous-water entry outside this reviewed card.
+citations_required: true
+applicability: >
+  Use GD-710 for aquatic ecology and fisheries monitoring plans, habitat
+  observation, water-quality observation, biological indicators, catch/harvest
+  trend review, stocking or harvest decision handoffs, and non-invasive
+  freshwater management planning. Do not use the reviewed answer card for
+  chemical dosing, fish-kill cleanup, dam or pond engineering, invasive
+  releases, legal permit claims, food safety, medical illness, or entering
+  hazardous water.
+citation_policy: >
+  Cite this reviewed GD-710 answer card for monitoring plans, habitat
+  observation, stocking or harvest decision handoffs, water-quality observation,
+  and non-invasive aquatic management planning. Hand off chemical treatment,
+  fish-kill cleanup, engineering, invasive-release, legal, food-safety,
+  medical, and hazardous-water-entry requests to the appropriate authority or
+  specialist guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: aquatic_ecology_fisheries_management
+answer_card:
+  - aquatic_ecology_fisheries_management
 ---
 
 <section id="overview">
@@ -544,4 +577,3 @@ Connection to food preservation: See <a href="../food-preservation.html">Food Pr
 :::
 
 </section>
-

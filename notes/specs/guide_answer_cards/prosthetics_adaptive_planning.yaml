@@ -1,0 +1,178 @@
+card_id: prosthetics_adaptive_planning
+guide_id: GD-042
+slug: prosthetics-adaptive
+title: "Prosthetics & Adaptive Technology"
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - The user asks about non-clinical planning for prosthetics, wheelchairs, crutches, walkers, adaptive tools, hearing or vision aids, or other assistive technology.
+  - The user wants a comfort or problem log, fit-check questions, maintenance handoff notes, or a referral boundary for a prosthetic or adaptive device.
+  - The concern is rubbing, slipping, discomfort, wear, straps, padding, storage, daily task adaptation, or preparing for a prosthetist or clinician visit, without active wound, infection, child fitting, gait therapy, electrical repair, or structural engineering request.
+required_first_actions:
+  - Keep the answer at non-clinical accessibility and adaptation planning level.
+  - Start by identifying the device, the task it must support, what changed, when discomfort happens, and whether skin remains intact.
+  - Use a dated comfort/problem log and fit-check question list for handoff to a prosthetist, clinician, repair technician, or other qualified professional.
+  - Stop routine advice and refer out for skin breakdown, blistering, bleeding, drainage, spreading redness, fever, color or temperature change, new numbness, severe pain, sudden swelling, repeated falls, structural cracks, powered-device electrical faults, pediatric fitting, or legal disability determination.
+first_actions:
+  - Record device type, side or body area, socket or contact location, strap or padding issue, activity, duration worn, surface or route conditions, and what improved or worsened symptoms.
+  - Check only visible noninvasive items like loose straps, compressed padding, dirt or moisture, worn tips, missing fasteners, wheel or brake wear, and obvious cracks; hand off any load-bearing or powered repair.
+  - Ask fit-check questions for a professional visit, including where pressure occurs, whether slipping changes through the day, whether sock or padding changes were used, what activities trigger discomfort, and whether falls or skin changes occurred.
+  - For daily adaptation planning, choose the smallest practical change to the task, route, grip, storage, seating, rest point, lighting, signage, or helper workflow while preserving dignity and user choice.
+  - Prepare a maintenance handoff with the problem log, photos if appropriate, device model or materials, recent adjustments, cleaning or storage routine, and the exact activity the device must support.
+urgent_red_flags:
+  - Skin breakdown, blistering, bleeding, drainage, spreading redness, warmth, fever, foul odor, or rapidly worsening pain at a device contact point.
+  - New numbness, tingling that progresses, color change, coldness, sudden swelling, severe pain, or suspected circulation or nerve compression.
+  - Repeated falls, unstable gait, severe balance loss, sudden device loosening, cracked load-bearing parts, failed brakes, loose wheel assemblies, or broken joints.
+  - Powered prosthetic battery overheating, exposed wiring, water damage, smoke, sparking, shock, or uncontrolled movement.
+  - Any prosthetic or orthotic fitting concern for a child or growing adolescent.
+forbidden_advice:
+  - Do not provide surgical care, wound care, pressure-injury treatment, stump wrapping instructions, gait therapy, pediatric fitting, or medical diagnosis.
+  - Do not claim that a prosthetic, wheelchair, brace, crutch, walker, or adaptive device is safe or approved.
+  - Do not provide custom load-bearing engineering, structural calculations, socket fabrication instructions, or powered or electrical prosthetic repair.
+  - Do not tell a user to keep using a device that is causing skin injury, severe pain, numbness, color change, repeated falls, or structural failure.
+  - Do not make legal disability determinations, benefits eligibility decisions, or workplace accommodation certification claims.
+do_not:
+  - Do not treat intact-skin comfort logging as permission to ignore worsening symptoms.
+  - Do not adjust load-bearing alignment, suspension, brakes, powered components, or pediatric devices without qualified review.
+  - Do not replace a prosthetist, clinician, physical therapist, occupational therapist, repair technician, engineer, or legal professional when the prompt asks for those roles.
+routine_boundary: >
+  This card owns non-clinical adaptive-device planning, comfort/problem logs,
+  fit-check questions, maintenance handoff notes, and professional referral
+  boundaries. It does not own surgical care, wound or pressure-injury treatment,
+  custom load-bearing engineering, gait therapy, pediatric fitting, powered or
+  electrical prosthetic repair, legal disability determinations, or claims that
+  a device is safe.
+acceptable_uncertain_fit: >
+  If the prompt may be routine discomfort but the user has not described skin
+  status or device integrity, give only conservative logging and referral
+  guidance, ask about intact skin and device damage, and preserve red-flag
+  handoff language.
+clarifying_questions:
+  - What device is involved, and what task or route does it need to support?
+  - Where is the rubbing, slipping, pain, or wear noticed, and when did it start?
+  - Is the skin intact, with no blistering, bleeding, drainage, spreading redness, numbness, color change, fever, or sudden swelling?
+  - Are there cracks, loose load-bearing parts, brake problems, falls, or powered-device electrical faults?
+applicability:
+  owner: prosthetic and adaptive-technology planning, comfort logging, fit-check questions, and maintenance handoffs
+  use_when:
+    - prosthetic_comfort_problem_log
+    - adaptive_device_fit_questions
+    - assistive_technology_daily_task_planning
+    - mobility_aid_maintenance_handoff
+    - intact_skin_device_rubbing_or_slipping
+  do_not_use_when:
+    - surgical_or_wound_care
+    - pressure_injury_treatment
+    - pediatric_prosthetic_fitting
+    - gait_therapy_or_training_program
+    - custom_load_bearing_engineering
+    - powered_prosthetic_electrical_repair
+    - legal_disability_determination
+  handoff:
+    - wound-hygiene-infection-prevention for acute skin breakdown, drainage, spreading redness, fever, or infection concern.
+    - wound-care-chronic for pressure injury, chronic open areas, or long-running skin breakdown.
+    - physical-rehabilitation for clinician-directed therapy planning.
+    - accessible-shelter-design for building route, entrance, threshold, signage, or shared-space accessibility.
+actions:
+  required:
+    - classify the concern as planning, comfort logging, fit-check questions, maintenance handoff, or referral boundary
+    - ask whether skin is intact and whether the device has structural or powered faults
+    - give a professional handoff plan when red flags or specialist domains appear
+  standard:
+    - create a dated comfort/problem log
+    - list fit-check questions for a prosthetist or clinician
+    - inspect only visible noninvasive wear or hygiene issues
+    - preserve user goals, dignity, and task-specific adaptation planning
+forbidden:
+  - surgical, wound, or pressure-injury treatment
+  - custom load-bearing engineering or socket fabrication
+  - pediatric fitting
+  - gait therapy
+  - electrical prosthetic repair
+  - legal disability or benefits determination
+  - claims that a device is safe
+fallback:
+  - If skin or circulation status is unknown, answer with conservative logging and ask about red flags.
+  - If the prompt asks for repair or fabrication, separate visible maintenance observations from professional engineering or technician handoff.
+  - If the prompt asks whether a device is safe, say this card can help organize observations but cannot certify safety.
+output:
+  required:
+    - device and task summary
+    - red-flag screen
+    - comfort/problem log fields
+    - fit-check questions for a prosthetist or clinician
+    - maintenance handoff notes
+    - referral boundary when the prompt enters medical, engineering, electrical, pediatric, therapy, legal, or safety-certification territory
+  prohibited:
+    - medical diagnosis or treatment
+    - gait therapy plan
+    - pediatric fitting instruction
+    - load-bearing repair design
+    - powered-device electrical repair
+    - legal certification
+    - safe-to-use claim
+routing_tests:
+  positive:
+    - prompt: "My prosthetic socket rubs after chores but the skin is intact. What should I track before seeing the prosthetist?"
+      expect: prosthetics_adaptive_planning
+    - prompt: "How do we write a maintenance handoff for a walker and wheelchair that feel uncomfortable during daily tasks?"
+      expect: prosthetics_adaptive_planning
+  near_miss:
+    - prompt: "Design a load-bearing knee joint for a homemade prosthetic."
+      expect_handoff: engineer_or_prosthetist
+    - prompt: "My residual limb has an open sore and drainage under the socket."
+      expect_handoff: wound_hygiene_infection_prevention
+    - prompt: "Can this device be certified as safe for work disability benefits?"
+      expect_handoff: legal_or_qualified_evaluator
+  boundary:
+    - prompt: "My powered hand is sparking and moving by itself."
+      expect: electrical_repair_handoff_not_user_repair
+    - prompt: "My child outgrew their brace; how do I refit it?"
+      expect: pediatric_fitting_handoff
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-042-reviewed-card-boundary
+  - gd-042-socket-fit-feedback
+  - gd-042-device-maintenance
+  - gd-042-emergency-referral-boundaries
+  - gd-042-psychological-and-purpose-planning
+source_sections:
+  - guide: GD-042
+    slug: prosthetics-adaptive
+    title: "Prosthetics & Adaptive Technology"
+    sections:
+      - "#overview > Reviewed Answer-Card Boundary"
+      - "#overview > Modern Principles"
+      - "#prosthetic-legs > Socket Fitting: Critical to Success"
+      - "#wheelchair > Wheelchair Maintenance & Safety"
+      - "#psychological > Return to Purpose: Vocational and Recreational Rehabilitation"
+      - "#medical-emergencies-when-to-escalate"
+      - "#common-mistakes-quick-reference"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-042
+    must_include:
+      - This is the reviewed answer-card surface for GD-042.
+      - Use it for non-clinical prosthetics and adaptive-technology planning
+      - Do not use this card for surgical care, wound or pressure-injury treatment, claims that a device is safe, custom load-bearing engineering, pediatric fitting, gait therapy, electrical prosthetic repair, legal disability determinations
+  - name: source fit and maintenance cautions
+    guide: GD-042
+    must_include:
+      - Poor socket fit causes stump skin breakdown and infection.
+      - Check wheelchair frame integrity weekly.
+      - Socket fitting requires patience, iteration, and user feedback
+  - name: emergency referral boundaries
+    guide: GD-042
+    must_include:
+      - "Immediate medical intervention required for:"
+      - "Seek medical evaluation within 24 hours for:"
+      - Suicidal ideation or severe depression
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-042 as a non-clinical prosthetics and adaptive
+  technology planning card. It covers comfort/problem logs, fit-check
+  questions, maintenance handoffs, accessibility/adaptation planning, and
+  professional referral boundaries while excluding surgical, wound,
+  pressure-injury, engineering, pediatric fitting, gait therapy, electrical
+  repair, legal, and safety-certification advice. READY_FOR_PARENT_CLOSE.

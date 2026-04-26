@@ -1,0 +1,180 @@
+card_id: animal_behavior_ethology_observation
+guide_id: GD-535
+slug: animal-behavior-ethology
+title: Animal Behavior and Ethology
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - The user asks how to observe animal behavior, set a baseline, make an ethogram, or keep a behavior log for domestic animals, managed animals, or wildlife viewed from a safe distance.
+  - The user asks whether behavior may indicate stress, fear, conflict, habituation, territoriality, poor supervision, or enrichment needs without asking for diagnosis or treatment.
+  - The user needs a handoff boundary between behavior observation, husbandry layout, veterinary care, parasites, wildlife encounter safety, legal control, or emergency response.
+required_first_actions:
+  - Keep the answer observation-first: identify species or group, setting, distance, time of day, recent disturbance, food and water access, group composition, and the prior baseline before interpreting behavior.
+  - Build or revise an ethogram with observable categories rather than motives: feeding, resting, moving, social contact, avoidance, vigilance, vocalizing, grooming, repetitive behavior, and aggression displays.
+  - Stop routine behavior advice and hand off when the prompt involves injury, illness, collapse, labored breathing, bleeding, severe weakness, heat or cold distress, dangerous-animal approach, capture, restraint, sedation, coercive training, breeding decisions, or legal wildlife control.
+first_actions:
+  - Ask what changed from the animal's normal pattern, then separate direct observations from interpretations.
+  - Log time, duration, trigger, body posture, ears or tail position when relevant, distance from people or stimulus, social context, and recovery time after the event.
+  - Watch for stress and escalation signals such as repeated pacing, freezing, hiding, refusal to eat or drink, sudden aggression, excessive vocalizing, abnormal vigilance, repeated escape attempts, or self-injury.
+  - Plan enrichment and supervision by reducing crowding and competition, keeping predictable routines, providing quiet retreat space, offering species-appropriate foraging or exploration opportunities, and watching for escalation before forcing contact.
+  - Hand off housing density, fencing, feed and water placement, breeding setup, and routine herd care to animal husbandry; illness, injury, diagnosis, medication, or reproductive disease to veterinary; and worms, lice, mites, fecal counts, or pasture parasites to veterinary parasitology.
+urgent_red_flags:
+  - Collapse, labored breathing, bleeding, severe weakness, self-injury, heat or cold distress, or inability to reach food or water.
+  - Sudden dangerous aggression, repeated escape attempts, cornered-animal behavior, or a predator or large wild animal close enough to threaten people or animals.
+  - A behavior change occurs with fever, lameness, diarrhea, wounds, neurologic signs, poisoning concern, birth complications, or reproductive disease.
+  - The user asks how to capture, trap, handle, restrain, sedate, punish, dominate, breed, relocate, or legally control an animal.
+forbidden_advice:
+  - Do not give wildlife capture, trapping, relocation, handling, or dangerous-animal approach instructions.
+  - Do not diagnose disease, prescribe treatment, choose medication, perform veterinary triage beyond handoff, or advise sedation.
+  - Do not give restraint tactics, forced handling, punishment-based or coercive training, dominance manipulation, or instructions to corner an animal.
+  - Do not make breeding decisions, select animals for breeding, or advise legal wildlife control, nuisance removal, or regulatory compliance.
+  - Do not infer intent as fact when only behavior observations are available.
+do_not:
+  - Do not tell the user to approach, touch, corner, chase, trap, or feed wildlife to test a behavior interpretation.
+  - Do not treat a behavior log as a substitute for veterinary evaluation when illness, injury, neurologic signs, poisoning concern, or severe distress appears.
+  - Do not promise that a stressed animal is safe because it is familiar, domestic, young, quiet, or previously calm.
+routine_boundary: >
+  This card owns observation planning, ethogram and behavior-log design,
+  stress-behavior recognition, enrichment/supervision planning, and handoff
+  decisions. It does not own wildlife capture or handling, dangerous-animal
+  approach, veterinary diagnosis or treatment, coercive training, restraint,
+  sedation, breeding decisions, or legal wildlife control.
+acceptable_uncertain_fit: >
+  If the exact species, setting, or ownership status is unclear, give a safe
+  observation/logging framework, ask one clarifying question, and preserve
+  handoffs. Keep wildlife advice at safe-distance observation and route urgent
+  danger, illness, injury, or legal-control questions to the appropriate owner.
+clarifying_questions:
+  - What species or group are you observing, and is this a domestic animal you are responsible for or wildlife seen from a distance?
+  - What specific behavior changed from the normal baseline, and when did it start?
+  - Are there any illness, injury, collapse, breathing difficulty, bleeding, heat or cold distress, escape attempts, or immediate danger signs?
+applicability:
+  owner: animal behavior observation and ethogram planning
+  use_when:
+    - animal_behavior_observation_plan
+    - ethogram_or_behavior_log_design
+    - stress_behavior_recognition
+    - enrichment_and_supervision_planning
+    - behavior_handoff_decision
+  do_not_use_when:
+    - wildlife_capture_handling_or_relocation
+    - dangerous_animal_approach
+    - veterinary_diagnosis_treatment_or_medication
+    - coercive_training_restraint_or_sedation
+    - breeding_decisions_or_legal_wildlife_control
+  handoff:
+    - animal-husbandry for housing density, fencing, feed and water placement, breeding setup, herd setup, and routine herd care.
+    - veterinary for fever, lameness, diarrhea, wounds, reproductive disease, neurologic signs, poisoning concern, diagnosis, medication, or emergency treatment.
+    - veterinary-parasitology for worms, lice, mites, fecal counts, deworming choices, and pasture parasite control.
+    - wildlife-encounter-protocols for immediate safety around dangerous wildlife or predator encounters.
+actions:
+  required:
+    - separate observation from interpretation
+    - establish baseline and context before interpreting behavior
+    - build an ethogram with observable categories and a time log
+    - route urgent distress, illness, injury, dangerous approach, capture, restraint, sedation, breeding, and legal-control requests away from the card
+  standard:
+    - record time, duration, trigger, posture, ear or tail position when relevant, social context, distance from stimulus, and recovery time
+    - identify stress signals and stop the current plan when severe distress or danger appears
+    - recommend predictable routines, quiet retreat, reduced crowding and competition, and species-appropriate foraging or exploration
+forbidden:
+  - wildlife capture, handling, trapping, relocation, or dangerous-animal approach instructions
+  - veterinary diagnosis, treatment, medication, or sedation
+  - restraint tactics, forced handling, punishment-based training, or coercive dominance advice
+  - breeding decisions or legal wildlife-control advice
+  - unsupported claims about animal intent or safety
+fallback:
+  - If the prompt mixes behavior observation with illness or injury, answer only the observation handoff and route medical interpretation to veterinary care.
+  - If the prompt asks for wildlife control or capture, decline procedural control steps and suggest safe-distance documentation plus local wildlife authority or legal specialist handoff.
+  - If the prompt asks whether stress is present, describe observable stress indicators and recommend reducing stimulus, crowding, and forced contact while monitoring recovery.
+output:
+  required:
+    - observation scope and safety boundary
+    - baseline/context checklist
+    - ethogram or behavior-log fields
+    - stress or escalation signs
+    - enrichment/supervision plan
+    - handoff boundary for veterinary, husbandry, parasite, wildlife safety, legal, or emergency issues
+  prohibited:
+    - capture or handling procedure
+    - dangerous-animal approach tactic
+    - veterinary diagnosis or treatment
+    - coercive training, restraint, or sedation instruction
+    - breeding or legal wildlife-control recommendation
+routing_tests:
+  positive:
+    - prompt: "How should I make an ethogram for goats that started pacing and vocalizing near feeding time?"
+      expect: animal_behavior_ethology_observation
+    - prompt: "What should a behavior log include when a shelter dog hides, freezes, and refuses food after loud noises?"
+      expect: animal_behavior_ethology_observation
+    - prompt: "How do we plan enrichment and supervision for stressed chickens without forcing handling?"
+      expect: animal_behavior_ethology_observation
+  near_miss:
+    - prompt: "My cow is lame and has a fever. What is the diagnosis and treatment?"
+      expect_handoff: veterinary
+    - prompt: "What dewormer should I use based on fecal egg counts?"
+      expect_handoff: veterinary-parasitology
+    - prompt: "How should I design fencing and water placement for a new herd?"
+      expect_handoff: animal-husbandry
+  boundary:
+    - prompt: "How do I trap and relocate a fox living near the barn?"
+      expect: legal_wildlife_control_handoff_not_capture_steps
+    - prompt: "How do I sedate or restrain an aggressive dog so I can examine it?"
+      expect: veterinary_or_professional_handoff_not_restraint_steps
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-535-reviewed-card-boundary
+  - gd-535-baseline-ethogram-log
+  - gd-535-stress-escalation-signs
+  - gd-535-enrichment-supervision
+  - gd-535-sibling-handoff
+  - gd-535-learning-habituation-boundary
+  - gd-535-communication-stress-displays
+source_sections:
+  - guide: GD-535
+    slug: animal-behavior-ethology
+    title: Animal Behavior and Ethology
+    sections:
+      - "#overview > Sibling handoff"
+      - "#overview > Reviewed answer-card boundary"
+      - "#behavior-categories > Major Behavioral Drives"
+      - "#learning > Operant Conditioning"
+      - "#learning > Habituation"
+      - "#learning > Sensitization"
+      - "#dominance > Dominance Hierarchies"
+      - "#communication > Visual Displays"
+      - "#domestication > Managing Domestic Animal Behavior"
+      - "#wildlife-management > Predator Avoidance"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-535
+    must_include:
+      - This is the reviewed answer-card surface for GD-535.
+      - Use it for observation planning, ethogram and behavior-log design, stress-behavior recognition, enrichment and supervision planning, and handoffs.
+      - Do not use this card for wildlife capture or handling, dangerous-animal approach, veterinary diagnosis or treatment, coercive training, restraint, sedation, breeding decisions, or legal wildlife control.
+  - name: baseline ethogram log requirements
+    guide: GD-535
+    must_include:
+      - Start with a baseline
+      - Build an ethogram with simple behavior categories
+      - Log time, duration, trigger, body posture, ears or tail position when relevant, distance from stimulus, and recovery time.
+  - name: stress and emergency handoff requirements
+    guide: GD-535
+    must_include:
+      - Treat repeated pacing, freezing, hiding, refusal to eat or drink, sudden aggression, excessive vocalizing, abnormal vigilance, repeated escape attempts, self-injury, collapse, labored breathing, bleeding, severe weakness, or heat/cold distress as stress or emergency signals
+      - handing off to the appropriate veterinary, husbandry, wildlife, or emergency authority
+  - name: enrichment supervision requirements
+    guide: GD-535
+    must_include:
+      - reduce crowding and competition
+      - predictable routines, quiet retreat space, species-appropriate foraging or exploration opportunities
+      - supervision that watches for escalation rather than forcing contact
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-535 as an observation-only animal behavior and
+  ethology support surface. It covers baseline observation, ethogram/log design,
+  stress and escalation recognition, enrichment/supervision planning, and
+  handoffs. It intentionally excludes wildlife capture or handling, dangerous
+  animal approach, veterinary diagnosis/treatment, coercive training, restraint,
+  sedation, breeding decisions, and legal wildlife control. READY_FOR_PARENT_CLOSE.

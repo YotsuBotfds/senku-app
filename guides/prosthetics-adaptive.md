@@ -7,6 +7,28 @@ difficulty: intermediate
 tags:
   - important
   - critical-care
+aliases:
+  - prosthetic fit check
+  - prosthetic comfort log
+  - adaptive equipment planning
+  - assistive device maintenance
+  - mobility aid fit questions
+  - prosthetic maintenance handoff
+  - wheelchair comfort problem log
+  - adaptive technology referral boundaries
+  - residual limb comfort tracking
+  - prosthetic socket rubbing
+  - prosthetic feels loose
+  - prosthetic strap problem
+  - adaptive tool planning
+routing_cues:
+  - "my prosthetic is rubbing what should i track"
+  - "what questions should i ask my prosthetist about fit"
+  - "how do i log comfort problems with a mobility aid"
+  - "how should we hand off prosthetic maintenance notes"
+  - "what adaptive equipment barriers should we plan around"
+  - "my wheelchair or prosthetic feels uncomfortable but there is no wound"
+  - "how do we plan non clinical adaptations for daily tasks"
 icon: 🦿
 description: Comprehensive guide to prosthetics, mobility aids, assistive devices, wheelchair construction, hearing aids, vision aids, dental prosthetics, and psychological rehabilitation. Covers device construction, fitting, training, and long-term management.
 related:
@@ -21,11 +43,21 @@ last_updated: '2026-02-16'
 version: '2.0'
 custom_css: nav{background-color:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:40px;display:flex;flex-wrap:wrap;gap:10px}nav a{color:var(--accent2);text-decoration:none;padding:8px 16px;background-color:var(--card);border-radius:4px;transition:all .3s ease;border:1px solid var(--accent);font-size:.95em}nav a:hover{background-color:var(--accent);color:var(--bg)}.spec-box{background-color:var(--card);border-left:4px solid var(--accent2);padding:15px;margin:15px 0;border-radius:4px}.spec-box strong{color:var(--accent2)}.diagram{background-color:var(--card);border:1px solid var(--border);border-radius:4px;padding:20px;margin:20px 0;text-align:center}.guide-link{display:inline-block;margin-right:20px;margin-bottom:10px;color:var(--accent2);text-decoration:none;padding:8px 12px;background-color:var(--surface);border-radius:4px;transition:all .3s ease}.guide-link:hover{background-color:var(--accent);color:var(--bg)}.success{background-color:rgba(83,216,168,0.1);border-left:4px solid var(--accent2);padding:15px;margin:15px 0;border-radius:4px}
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: prosthetics_adaptive_planning
 ---
 
 <section id="overview">
 
 ## 1\. Overview: Recognition & Assessment
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-042. Use it for non-clinical prosthetics and adaptive-technology planning: daily-task barriers, comfort and problem logs, fit-check questions to bring to a prosthetist or clinician, routine maintenance handoff notes, and referral boundaries when a device or body-contact issue needs professional review.
+
+Start with the user's goal and the affected device or task. Ask what changed, when discomfort occurs, where rubbing or slipping is noticed, whether skin is intact, what parts or straps seem loose or worn, and what activity the device must support. A safe answer may help the user make a dated comfort/problem log, pause or reduce nonessential use when a device is causing pain, inspect for obvious wear, clean and store the device according to known instructions, list fit-check questions for a prosthetist, and prepare a concise maintenance handoff.
+
+Do not use this card for surgical care, wound or pressure-injury treatment, claims that a device is safe, custom load-bearing engineering, pediatric fitting, gait therapy, electrical prosthetic repair, legal disability determinations, or instructions to keep using a painful or damaging device. Escalate to a medical professional or prosthetist for skin breakdown, blistering, bleeding, drainage, spreading redness, fever, new numbness, color or temperature change, severe pain, sudden swelling, repeated falls, device cracks or structural failure, powered-device electrical faults, or any child fitting concern.
 
 ### The Human Right to Function
 

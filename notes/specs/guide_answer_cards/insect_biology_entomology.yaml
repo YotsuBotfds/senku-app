@@ -1,0 +1,184 @@
+card_id: insect_biology_entomology
+guide_id: GD-533
+slug: insect-biology-entomology
+title: Insect Biology and Entomology
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks what an insect might be, how to observe it, or which visible features to check before deciding what to do.
+  - A user asks about insect life stages, habitat clues, seasonal timing, or whether a specimen is an adult, larva, nymph, pupa, pollinator, predator, parasitoid, decomposer, or possible pest.
+  - A user asks whether an insect in a garden, shelter, stored material, livestock area, or wild habitat is likely beneficial, neutral, or a problem that needs handoff to a specialist guide.
+  - A user needs non-chemical triage and handoffs before pest-control, crop-treatment, medical, veterinary, vector, beekeeping, or pollinator-conservation details.
+required_first_actions:
+  - Start with observation and identification workflow before any action advice: body regions, six legs, antennae, wings, mouthparts, life stage, behavior, host plant or material, and habitat.
+  - Preserve uncertainty when identification is incomplete; classify only to a broad group or likely role when species-level identification is not supported.
+  - Triage likely role as beneficial, neutral/decomposer, nuisance, possible crop/storage pest, possible vector/parasite, or unknown, then hand off to the appropriate specialist owner.
+  - Keep the answer within observation, lifecycle/habitat notes, beneficial-vs-pest triage, and handoffs; do not provide pesticide mixing, fumigation, medical treatment, disease diagnosis, eradication guarantees, invasive release, or crop-treatment formulas.
+conditional_required_actions:
+  - trigger_terms:
+      - pesticide
+      - insecticide
+      - spray
+      - mix
+      - fumigate
+      - eradication
+      - kill all
+      - crop treatment
+    required_actions:
+      - Do not provide pesticide mixing, fumigation, eradication guarantees, or crop-treatment formulas from this card.
+      - Limit GD-533 content to identification, likely role, lifecycle/habitat clues, monitoring, non-chemical triage, and handoff to integrated pest management, agriculture, pest-control, or warehousing owners.
+  - trigger_terms:
+      - bite
+      - sting
+      - venom
+      - allergic
+      - anaphylaxis
+      - swelling
+      - disease
+      - infection
+      - fever
+    required_actions:
+      - Do not provide venom, allergy, bite/sting treatment, disease diagnosis, or infection advice from this card.
+      - Hand off medical, allergy, toxicology, zoonotic/vector, or veterinary concerns to the appropriate safety owner while preserving only identification observations that may help that handoff.
+  - trigger_terms:
+      - release
+      - introduce
+      - invasive
+      - non-native
+      - biological control
+    required_actions:
+      - Do not recommend releasing insects or introducing non-native or invasive species.
+      - Keep biological-control discussion to habitat support and specialist handoff unless the source guide clearly supports a bounded non-release observation point.
+first_actions:
+  - Ask for or summarize observable traits: body regions, number of legs, antennae, wing count/shape, mouthparts, leg adaptations, size, color pattern, life stage, host plant or material, feeding signs, and behavior.
+  - Use broad order-level clues first: caterpillars and moths/butterflies, beetles, true bugs with sucking mouthparts, ants/bees/wasps, flies/mosquitoes, grasshoppers/crickets, and aquatic or soil-dwelling forms.
+  - Compare life cycle evidence: complete metamorphosis has egg, larva, pupa, adult; incomplete metamorphosis has egg, nymph, adult, with nymphs resembling adults.
+  - Note habitat and timing: host plant, damaged tissue, stored food, damp organic matter, water, soil, leaf litter, flowers, dead wood, season, and whether several life stages are present.
+  - Triage beneficial roles before pest labels: pollinator, predator, parasitoid, decomposer, neutral visitor, possible crop pest, possible storage pest, possible parasite/vector, or unknown.
+  - Recommend monitoring, records, photographs, isolated observation, habitat support for beneficials, and specialist handoff when action beyond observation is needed.
+urgent_red_flags:
+  - The user reports severe allergic symptoms, breathing trouble, widespread swelling, collapse, or systemic reaction after a bite or sting.
+  - The prompt involves suspected disease transmission, fever after bites, livestock illness, parasites on people or animals, or a potential vector-control problem.
+  - The situation involves large indoor infestation, stored-food contamination, structural damage, public-health sanitation concerns, or crop damage requiring treatment decisions.
+  - The user wants fumigation, pesticide mixing, crop-treatment quantities, total eradication, or release/introduction of a species into the environment.
+  - The insect may be a protected pollinator, beneficial predator/parasitoid, or unknown species and the proposed action would destroy habitat or spread it elsewhere.
+forbidden_advice:
+  - Do not provide pesticide mixing ratios, application rates, fumigation procedures, crop-treatment formulas, or chemical eradication plans.
+  - Do not promise total infestation eradication, species-level identification certainty from weak evidence, or crop protection outcomes.
+  - Do not provide venom, allergy, anaphylaxis, bite/sting, infection, or disease diagnosis/treatment advice.
+  - Do not advise releasing, importing, spreading, or relocating invasive, non-native, or unidentified insects.
+  - Do not use this card as an insect-farming, insect-food preparation, beekeeping, vector-control, veterinary, or medical treatment owner.
+do_not:
+  - Do not skip identification and role triage before labeling an insect a pest.
+  - Do not treat every garden insect as harmful; preserve pollinator, predator, parasitoid, and decomposer possibilities.
+  - Do not turn lifecycle notes into a pesticide timing protocol or chemical-control recommendation.
+  - Do not answer crop, storage, livestock, medical, allergy, disease, or fumigation questions as if GD-533 owns those procedures.
+routine_boundary: >
+  This card is routine only for observation-first insect biology, broad
+  identification workflow, lifecycle and habitat interpretation,
+  beneficial-vs-pest triage, monitoring, and handoffs. It does not own
+  pesticide mixing, fumigation, crop-treatment formulas, medical or veterinary
+  diagnosis/treatment, venom/allergy care, infestation eradication guarantees,
+  invasive-species release, beekeeping operations, or insect-food procedures.
+acceptable_uncertain_fit: >
+  If details are incomplete, state the uncertainty, ask for photos or visible
+  traits, and give a conservative broad-group workflow. Preserve beneficial and
+  neutral possibilities, avoid treatment instructions, and hand off any chemical,
+  medical, veterinary, vector, crop-treatment, storage-infestation, beekeeping,
+  or invasive-release question to the relevant specialist guide.
+clarifying_questions:
+  - Where was the insect found: host plant, stored food, water, soil, leaf litter, animal, indoor structure, flower, dead wood, or crop?
+  - What visible traits can you observe: six legs, antennae, wing count, mouthpart type, body shape, size, color pattern, larvae/nymph/pupa/adult stage, and behavior?
+  - Is it causing damage, feeding, pollinating, hunting other insects, decomposing organic matter, clustered in large numbers, or simply present?
+  - Are people or animals bitten, stung, ill, allergic, or exposed to possible parasites or disease vectors?
+  - Do you need identification/monitoring only, or are you asking about crop treatment, pesticide use, storage infestation, beekeeping, livestock, or medical response?
+applicability:
+  owner: insect observation, broad identification, lifecycle/habitat notes, beneficial-vs-pest triage, and handoffs
+  use_when:
+    - insect_observation_and_identification_workflow
+    - broad_order_or_role_triage
+    - lifecycle_stage_and_habitat_notes
+    - beneficial_pollinator_predator_parasitoid_or_decomposer_recognition
+    - nonchemical_monitoring_and_specialist_handoff
+  do_not_use_when:
+    - pesticide_mixing_or_fumigation
+    - crop_treatment_formulas_or_eradication_guarantees
+    - venom_allergy_bite_sting_or_disease_treatment
+    - veterinary_or_livestock_diagnosis
+    - invasive_species_release_or_import
+    - beekeeping_operations_or_insect_farming_food_preparation
+  handoff:
+    - integrated-pest-management or pest-control for pest-control strategy beyond observation and monitoring.
+    - agriculture or companion-planting for crop-specific damage, thresholds, and garden system decisions.
+    - warehousing-inventory for stored-grain or warehouse infestation operations.
+    - parasite-vector-control, zoonotic-disease, toxicology, bites-stings-itch-relief, allergic-reactions-anaphylaxis, or veterinary for bite, sting, allergy, disease-vector, parasite, livestock, or animal-health concerns.
+    - beekeeping or pollinator-conservation for honeybee colony care, native pollinator habitat, nesting, and forage planning.
+    - insect-farming for edible insect culture, harvest, or preparation.
+fallback_handoff_language:
+  - If the user asks for treatment, chemicals, fumigation, eradication, or crop formulas, keep only the identification and role triage here and route the procedural decision to the specialist owner.
+  - If bites, stings, allergy symptoms, disease concerns, parasites, or animal illness are present, hand off to medical, vector, toxicology, or veterinary owners before routine entomology advice.
+  - If the insect is unknown or may be beneficial, avoid destruction or relocation claims; recommend observation, documentation, and local/species-specific confirmation.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - gd533-observation-first-identification
+  - gd533-life-cycle-interpretation
+  - gd533-beneficial-vs-pest-triage
+  - gd533-nonchemical-management-boundary
+  - gd533-pollinator-habitat-support
+  - gd533-handoff-boundaries
+source_sections:
+  - guide: GD-533
+    slug: insect-biology-entomology
+    title: Insect Biology and Entomology
+    sections:
+      - "#overview"
+      - "#anatomy"
+      - "#life-cycles"
+      - "#pest-management"
+      - "#beneficial-insects"
+      - "#summary"
+source_invariants:
+  - name: identification workflow traits
+    guide: GD-533
+    must_include:
+      - "All adult insects share:"
+      - "Mouthparts:"
+      - "Wings:"
+      - "Legs:"
+  - name: life cycle distinction
+    guide: GD-533
+    must_include:
+      - "Complete metamorphosis"
+      - "Incomplete metamorphosis"
+      - "Practical implication"
+  - name: beneficial insects and pesticide disruption
+    guide: GD-533
+    must_include:
+      - "Beneficial insects are abundant"
+      - "Pollinators:"
+      - "Predators:"
+      - "Chemical pesticides kill beneficial insects as well as pests"
+  - name: card handoff boundaries are source-adjacent
+    guide: GD-533
+    must_include:
+      - "Pesticide disruption"
+      - "Supporting Pollinator Populations"
+      - "Monitor and adapt"
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-533 insect biology and entomology. The
+  card keeps answers in observation, broad identification workflow,
+  lifecycle/habitat interpretation, beneficial-vs-pest triage, monitoring, and
+  handoffs. It intentionally excludes pesticide mixing, fumigation, venom or
+  allergy treatment, disease diagnosis, infestation eradication guarantees,
+  invasive-species release, crop-treatment formulas, and specialist procedural
+  ownership for beekeeping, insect farming, medical, veterinary, vector, crop,
+  or storage-infestation work.

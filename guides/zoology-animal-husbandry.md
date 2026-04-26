@@ -22,6 +22,29 @@ word_count: 4200
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: critical
+aliases:
+  - routine animal husbandry checklist
+  - livestock care log
+  - animal feed water shelter checklist
+  - animal cleaning schedule
+  - stable animal care planning
+  - veterinary handoff notes
+routing_cues:
+  - Use for stable managed animals when the user needs routine observation logs, feed/water/shelter checks, cleaning schedules, ordinary records, or factual veterinary handoff notes.
+  - Route illness, injury, abnormal behavior, medication, vaccines, breeding procedures, slaughter, dangerous handling, restraint, or emergency animal procedures outside this reviewed card.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: zoology_animal_husbandry_routine_care_planning
+answer_card:
+  - zoology_animal_husbandry_routine_care_planning
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for routine animal husbandry
+  planning only: observation logs, feed and water checks, shelter readiness,
+  cleaning schedules, ordinary record keeping, and veterinary handoff notes.
+  Do not use this card for veterinary diagnosis or treatment, medication
+  dosing, vaccine advice, breeding procedures, castration, slaughter or
+  butchering, dangerous-animal handling, restraint, or emergency animal
+  procedures.
 ---
 
 ## Overview: Zoology and Practical Animal Husbandry
@@ -38,6 +61,18 @@ Key principles:
 - **Breeding aims for improvement:** Selective breeding for productivity, hardiness, and health
 - **Health prevention is key:** Good conditions prevent most diseases
 - **Species-specific care matters:** Different animals have different requirements
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-536 routine zoology and animal husbandry planning. Use it for stable, non-emergency care organization: daily observation logs, feed and water availability checks, shelter and bedding readiness, cleaning schedules, ordinary production or body-condition notes, supply lists, and concise handoff notes for a veterinarian or experienced stock keeper.
+
+Start with the animal group, normal routine, current feed and water access, shelter conditions, bedding or waste buildup, recent cleaning, and what has changed from baseline. Keep recommendations at the planning and observation level: make a dated log, check that clean water is available, note appetite and behavior, inspect shelter ventilation and dryness, schedule manure removal and bedding replacement, separate routine records from concerns, and prepare a factual veterinary handoff when illness, injury, abnormal behavior, reproductive trouble, zoonotic concern, or rapid deterioration is present.
+
+Do not use this card for veterinary diagnosis or treatment, medication dosing, vaccine selection or schedules, invasive procedures, castration, breeding procedures, slaughter or butchering, dangerous-animal handling, restraint techniques, or emergency animal procedures. If a prompt asks for those, give only routine context that is already known, stop before procedural advice, and hand off to the veterinary, zoonotic disease, animal behavior, species-specific, or emergency owner as appropriate.
 
 </section>
 

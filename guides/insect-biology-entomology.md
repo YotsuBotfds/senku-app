@@ -10,6 +10,31 @@ tags:
   - pests
   - beneficial
   - identification
+aliases:
+  - insect identification
+  - identify an insect
+  - entomology field observation
+  - insect life cycle
+  - beneficial insect or pest
+  - pollinator predator parasitoid
+  - insect habitat notes
+  - unknown bug in garden
+  - insect observation workflow
+routing_cues:
+  - Use this guide for insect observation, basic identification by body parts, mouthparts, wings, antennae, legs, life stage, habitat, and behavior.
+  - Use this guide when the user needs to distinguish likely beneficial insects, neutral decomposers, pollinators, predators, parasitoids, and possible pests before taking action.
+  - Keep answers to non-chemical observation, identification workflow, lifecycle and habitat notes, beneficial-vs-pest triage, and handoffs to agriculture, IPM, beekeeping, pollinator, parasite-vector, toxicology, medical, or veterinary owners.
+  - Do not use this guide as a pesticide mixing, fumigation, venom/allergy treatment, disease diagnosis, infestation eradication guarantee, invasive-species release, or crop-treatment formula owner.
+citations_required: true
+citation_policy: cite GD-533 and its reviewed answer card for insect observation, identification workflow, lifecycle/habitat notes, beneficial-vs-pest triage, and handoffs only
+applicability: >
+  Observation-first insect biology and entomology guidance for identifying broad
+  insect groups, life stages, habitat clues, and likely beneficial-vs-pest role.
+  Not a pesticide, fumigation, bite/sting medical, allergy/venom treatment,
+  disease diagnosis, eradication guarantee, invasive release, or crop-treatment
+  formula guide.
+answer_card:
+  - insect_biology_entomology
 icon: 🦗
 description: Insect anatomy, life cycles, identification, pest management, beneficial insects, and insect protein
 related:
@@ -24,8 +49,9 @@ related:
 read_time: 7
 word_count: 3900
 last_updated: '2026-02-21'
-version: '1.0'
+version: '1.1'
 liability_level: critical
+reviewed_answer_card: insect_biology_entomology
 ---
 ## Overview: Insects in Survival Contexts
 
