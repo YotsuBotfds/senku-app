@@ -40,6 +40,14 @@ DETERMINISTIC_SPECIAL_CASE_SPECS = (
         'i found some unmarked pills what do i do',
     ),
     DeterministicSpecialCaseSpec(
+        'conflicting_medication_labels_child_dose',
+        '_is_conflicting_medication_labels_child_dose_special_case',
+        '_build_conflicting_medication_labels_child_dose_response',
+        'power is out two old medicine labels disagree and someone wants to give a child an antibiotic dose by flashlight before we can call anyone',
+        priority=103,
+        lexical_signature_terms=('child', 'antibiotic', 'labels disagree'),
+    ),
+    DeterministicSpecialCaseSpec(
         'unknown_bottle_ingestion',
         '_is_unknown_bottle_ingestion_special_case',
         '_build_unknown_bottle_ingestion_response',

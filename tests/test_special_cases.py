@@ -2054,6 +2054,40 @@ class SpecialCaseTests(unittest.TestCase):
             ("deterministic", "unknown_medication"),
         )
 
+    def test_conflicting_medication_labels_child_dose_routes_to_hard_stop(self):
+        prompt = (
+            "Power is out, two old medicine labels disagree, and someone wants to give "
+            "a child an antibiotic dose by flashlight before we can call anyone. What "
+            "can Senku safely verify?"
+        )
+
+        self.assertEqual(
+            query.classify_special_case(prompt),
+            ("deterministic", "conflicting_medication_labels_child_dose"),
+        )
+        response = query.build_special_case_response(prompt)
+        self.assertIn("Do not give a child an antibiotic", response)
+        self.assertIn("does not make an uncertain dose safe", response)
+        self.assertIn("medication identity", response)
+        self.assertIn("intended patient", response)
+        self.assertIn("route", response)
+        self.assertIn("expiration date", response)
+        self.assertIn("known allergy", response)
+        self.assertIn("Do not split the difference", response)
+        self.assertIn("[GD-239", response)
+
+        near_misses = [
+            "The labels on our storage bins disagree and a child needs a blanket.",
+            "Power is out and a child needs an antibiotic, but the label is clear and readable.",
+            "Two old medicine labels disagree, but this is inventory only and nobody is dosing a child.",
+        ]
+        for near_miss in near_misses:
+            with self.subTest(prompt=near_miss):
+                self.assertNotEqual(
+                    query.classify_special_case(near_miss),
+                    ("deterministic", "conflicting_medication_labels_child_dose"),
+                )
+
     def test_suicide_immediate_safety_cd_prompts_route(self):
         prompts = [
             "They say they wish they were dead but say they have no plan. What matters first?",

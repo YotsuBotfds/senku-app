@@ -146,6 +146,97 @@ def _build_unknown_medication_response():
     )
 
 
+def _is_conflicting_medication_labels_child_dose_special_case(question):
+    """Detect child-dosing prompts where conflicting medication labels block safe use."""
+    lower = question.lower()
+    if any(
+        term in lower
+        for term in (
+            "inventory only",
+            "nobody is dosing",
+            "no one is dosing",
+            "not dosing",
+            "not giving",
+        )
+    ):
+        return False
+    medication_terms = (
+        "antibiotic",
+        "antibiotics",
+        "medicine",
+        "medicines",
+        "medication",
+        "medications",
+        "pill",
+        "pills",
+        "tablet",
+        "tablets",
+        "capsule",
+        "capsules",
+        "dose",
+        "dosing",
+    )
+    conflict_terms = (
+        "labels disagree",
+        "label disagree",
+        "conflicting labels",
+        "conflicting label",
+        "labels conflict",
+        "label conflict",
+        "two labels",
+        "two old medicine labels",
+        "old medicine labels",
+        "old labels",
+        "dose labels disagree",
+        "dosage labels disagree",
+        "different doses",
+        "different dosage",
+        "disagree on the dose",
+        "disagree about the dose",
+    )
+    child_terms = ("child", "kid", "toddler", "baby", "infant", "pediatric")
+    dose_pressure_terms = (
+        "give",
+        "giving",
+        "dose",
+        "dosing",
+        "by flashlight",
+        "power is out",
+        "power outage",
+        "before we can call",
+        "cannot call",
+        "can't call",
+        "cant call",
+    )
+    return (
+        any(term in lower for term in medication_terms)
+        and any(term in lower for term in conflict_terms)
+        and any(term in lower for term in child_terms)
+        and any(term in lower for term in dose_pressure_terms)
+    )
+
+
+def _build_conflicting_medication_labels_child_dose_response():
+    """Return a hard-stop template for conflicting child medication labels."""
+    return (
+        "Do not give a child an antibiotic or other medicine when old labels disagree. "
+        "A power outage, flashlight, or hard-to-reach phone line does not make an uncertain "
+        "dose safe. [GD-239]\n\n"
+        "1. You can safely verify only non-dosing facts you can read clearly: medication identity, "
+        "the intended patient, route, concentration/strength, expiration date, storage condition, "
+        "and known allergy history. If any of those are unclear or conflicting, stop. [GD-239]\n"
+        "2. Do not split the difference, scale from an adult dose by intuition, use the older label "
+        "because it is available, or give a test dose. Conflicting labels mean the dose is not "
+        "verified. [GD-239]\n"
+        "3. Segregate the medicine, keep both labels/packages, photograph them if possible, and wait "
+        "for a pharmacist, clinician, Poison Control, or emergency medical advice before dosing. "
+        "[GD-239, GD-232]\n"
+        "4. If the child is already very ill, hard to wake, struggling to breathe, dehydrated, or "
+        "worsening fast, escalate for urgent medical help; do not let the outage pressure turn "
+        "guesswork into treatment. [GD-284, GD-232]"
+    )
+
+
 def _build_unknown_bottle_ingestion_response():
     """Return a poison-control-first template for unlabeled bottle ingestion."""
     return (
