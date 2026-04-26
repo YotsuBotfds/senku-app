@@ -1,0 +1,162 @@
+card_id: wine_brewing_fermentation_safety_boundary
+guide_id: GD-072
+slug: wine-brewing
+title: Wine, Brewing & Distillation
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether a wine, beer, cider, wash, mash, or other alcohol batch may be spoiled, contaminated, unsafe, mislabeled, or unsuitable to serve.
+  - A user needs a planning answer for batch labeling, sanitation logs, spoilage red flags, service-stop decisions, or alcohol/community-risk handoffs.
+  - A prompt mentions distillation hazards, unknown spirits, methanol concern, pressure or fire hazards, shared-community alcohol, public service, sale, donation, barter, illness, or vulnerable-person exposure.
+required_first_actions:
+  - Keep suspect fermented alcohol out of service while safety is uncertain; label, separate, and prevent mixing with fresh or known-good batches.
+  - Identify the batch, product type, container, date opened or started, storage location, sanitation records, visible condition, odor or appearance concerns, pressure or swelling, and who consumed it.
+  - Screen for spoilage, contamination, illness linkage, vulnerable-person exposure, unknown-source alcohol, distillation hazards, and community distribution before routine fermentation discussion.
+  - Route distillation hazards, methanol concern, severe symptoms, intoxication, illness clusters, public service, sale, donation, barter, and legal or regulatory questions to the appropriate owner.
+  - Do not provide recipes, ratios, temperatures, fermentation schedules, distillation procedures, methanol separation advice, equipment build steps, medical treatment, legal compliance claims, or safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - methanol
+      - distill
+      - still
+      - cuts
+      - heads
+      - tails
+      - spirit run
+      - moonshine
+    required_actions:
+      - Treat as distillation hazard routing, not routine brewing; do not provide setup, operation, cut, methanol separation, still design, or safety-certification advice.
+      - Route fire, pressure, unknown-spirit, methanol, legal, or community-distribution concerns to emergency, medical, legal, regulatory, or qualified technical owners as appropriate.
+  - trigger_terms:
+      - sick
+      - vomiting
+      - diarrhea
+      - fever
+      - blind
+      - confusion
+      - intoxicated
+      - passed out
+      - seizure
+    required_actions:
+      - Treat symptoms after alcohol or suspect fermentation as medical or public-health routing; do not provide medical treatment, detox, intoxication management, or reassurance from this card.
+first_actions:
+  - Ask only essential triage questions needed to identify the batch, consumer exposure, spoilage signs, distribution setting, and whether distillation or unknown spirits are involved.
+  - Stop service of suspect alcohol, label and isolate the batch, and document who was notified while safety is uncertain.
+  - Review sanitation logs for clean containers, tools, transfer points, closures, storage area, batch code, and any mixing of old, unknown, or fresh batches.
+  - Check for red flags such as visible mold or contamination, abnormal odor or appearance, swelling or pressure, damaged container, unknown source, missing records, illness linkage, or vulnerable-person exposure.
+  - Hand off distillation, legal, medical, public-health, emergency, regulatory, sale, donation, barter, or community-service issues before any routine fermentation topic.
+urgent_red_flags:
+  - Methanol concern, unknown-source spirits, home-distilled alcohol, distillation fire or pressure hazard, still malfunction, or request for distillation cuts or setup.
+  - Vomiting, diarrhea, fever, confusion, severe weakness, vision changes, seizure, unconsciousness, breathing problems, severe intoxication, pregnancy concern, or several people ill after the same batch.
+  - Suspect alcohol served to or intended for pregnant people, minors, older adults, immunocompromised people, a shelter, school, clinic, public event, sale, donation, barter, or other shared-community setting.
+  - Visible mold or contamination, abnormal odor or appearance, swollen or pressurized container, damaged closure, missing sanitation records, unknown source, or mixing with old or unknown batches.
+forbidden_advice:
+  - Recipes, ingredient ratios, sugar or nutrient additions, yeast selection instructions, temperatures, fermentation schedules, aging schedules, bottling schedules, or hydrometer procedures.
+  - Distillation setup, operation, still design, equipment build steps, heat-source advice, pressure-management tactics, cuts, heads/tails collection, or methanol separation advice.
+  - Claims that smell, taste, freezing, discarding the first portion, boiling, filtering, aging, or visual inspection makes alcohol safe.
+  - Medical diagnosis, treatment, detox, intoxication management, overdose management, poisoning treatment, or reassurance after symptoms.
+  - Legal compliance claims, licensing advice, public-sale authorization, or certification that a batch, still, process, or product is safe or compliant.
+do_not:
+  - Do not convert a safety or spoilage question into a fermentation recipe.
+  - Do not provide process parameters, ratios, temperatures, schedules, cuts, or still-operation steps.
+  - Do not reassure users that unknown, suspect, home-distilled, or symptomatic-exposure alcohol is safe.
+  - Do not treat public service, sale, donation, barter, vulnerable-person exposure, or illness clusters as routine batch troubleshooting.
+  - Do not certify alcohol, distillation equipment, sanitation, or legal status as safe, compliant, or approved.
+routine_boundary: >
+  This card owns only fermentation and alcohol safety boundaries: batch
+  labeling, sanitation logs, spoilage red flags, service-stop decisions,
+  community-risk screening, legal or regulatory handoff triggers, and
+  distillation hazard routing. It does not own recipes, ratios, temperatures,
+  fermentation or aging schedules, hydrometer procedures, distillation setup or
+  operation, methanol separation, equipment builds, medical or intoxication
+  management, legal compliance, or safety certification.
+acceptable_uncertain_fit: >
+  If the prompt may be a production question but mentions spoilage, sanitation,
+  labeling, missing records, symptoms, vulnerable people, public service, sale,
+  donation, barter, unknown alcohol, or distillation, apply this boundary first:
+  stop service, isolate the batch, ask essential triage questions, and route
+  before giving any routine fermentation information.
+clarifying_questions:
+  - What product and batch is involved, and is it fermented only or distilled/unknown-source alcohol?
+  - What labels, dates, storage location, container condition, and sanitation records are available?
+  - Are there visible mold, contamination, abnormal odor or appearance, swelling, pressure, damaged closure, or missing records?
+  - Has anyone consumed it, and are there symptoms, vulnerable people, or multiple people exposed to the same batch?
+  - Is this for household use, public service, sale, donation, barter, school, shelter, clinic, or another shared-community setting?
+citation_ids:
+  - gd-072-methanol-poisoning-warning
+  - gd-072-legal-notice
+  - gd-072-reviewed-fermentation-safety-boundary
+  - gd-072-sanitation-contamination-controls
+  - gd-072-troubleshooting-spoilage
+  - gd-072-bottling-storage-safety
+source_sections:
+  - guide: GD-072
+    slug: wine-brewing
+    title: Wine, Brewing & Distillation
+    sections:
+      - "METHANOL POISONING WARNING"
+      - "Legal Notice"
+      - "Reviewed Boundary: Fermentation Safety and Distillation Hazard Routing"
+      - "Safety & Legal Considerations > Sanitation: Preventing Contamination"
+      - "Safety & Legal Considerations > Safe Tasting and Evaluation"
+      - "Distillation"
+      - "Equipment Construction > Sanitation Equipment"
+applicability:
+  owner: fermentation and alcohol safety routing boundary
+  use_when:
+    - batch labeling and identity records
+    - sanitation logs for fermentation equipment and containers
+    - spoilage or contamination red flags
+    - service-stop and hold-or-discard decisions for suspect alcohol
+    - alcohol legal, public-health, medical, community-risk, or regulatory handoffs
+    - distillation hazard routing without setup or operation advice
+  do_not_use_when:
+    - recipes, ratios, temperatures, fermentation schedules, or aging schedules are requested
+    - distillation setup, operation, cuts, methanol separation, or still construction is requested
+    - medical treatment, detox, intoxication management, or poisoning care is needed
+    - legal compliance, licensing, sale approval, or safety certification is requested
+    - equipment design, construction, process validation, or hazard-control engineering is requested
+  handoff:
+    - food-spoilage-assessment for broader questionable-food spoilage triage.
+    - food-safety-contamination-prevention for general sanitation and contamination control.
+    - toxicology or poisoning owners for suspected methanol, unknown alcohol exposure, poisoning symptoms, or severe illness after alcohol.
+    - emergency, fire, or qualified technical owners for distillation fire, pressure, equipment, or still hazards.
+    - public-health or medical owners for illness clusters, severe symptoms, vulnerable-person exposure, or shared-batch exposure.
+    - legal, regulatory, or local authority for distillation legality, licensing, public sale, donation, barter, or compliance questions.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_applicability_boundary: true
+  avoid_recipes_process_parameters_medical_legal_certification: true
+fallback_handoff_language:
+  - Hold the alcohol out of service, label and separate the batch, and do not mix it with other alcohol while safety is uncertain.
+  - If symptoms, vulnerable-person exposure, several exposed people, unknown-source spirits, or methanol concern are involved, route to medical, poison, emergency, or public-health help before product-use advice.
+  - Distillation questions require hazard and legal routing; this card does not provide still setup, operation, cuts, methanol separation, equipment build steps, or safety certification.
+  - If sanitation logs, source identity, storage records, or batch labels are missing, use the conservative stop-service and handoff path.
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: methanol_and_legal_warnings_remain
+    guide: GD-072
+    must_include:
+      - "METHANOL POISONING WARNING"
+      - "Methanol cannot be reliably detected by taste or smell."
+      - "Home distillation of alcohol is illegal in most jurisdictions."
+  - name: reviewed_boundary_remains
+    guide: GD-072
+    must_include:
+      - "This is the reviewed answer-card surface for GD-072."
+      - "Use it only for fermentation and alcohol safety routing"
+      - "Do not use this reviewed card for recipes, ingredient ratios, temperatures, fermentation schedules"
+      - "Distillation hazards, unknown spirits, methanol concern"
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for the GD-072 metadata/card audit gap. This is a
+  fermentation/alcohol safety and routing card only. It intentionally preserves
+  batch labeling, sanitation logs, spoilage red flags, alcohol/legal/community
+  risk handoffs, and distillation hazard routing while excluding recipes,
+  ratios, temperatures, schedules, distillation setup or operation, methanol
+  separation, equipment builds, medical treatment, intoxication management,
+  legal compliance claims, and safety certification.

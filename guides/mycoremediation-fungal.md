@@ -27,9 +27,49 @@ custom_css: |
   .protocol-steps li { margin: 0.75rem 0; padding-left: 2rem; position: relative; }
   .protocol-steps li:before { content: "▶"; position: absolute; left: 0; color: var(--accent); }
 liability_level: high
+aliases:
+  - mycoremediation site observation
+  - fungal remediation planning
+  - contaminated soil fungus question
+  - mycofiltration safety boundary
+  - fungal cleanup handoff
+routing_cues:
+  - Use this reviewed card only for contamination-site observation, planning, isolation, logging, uncertainty statements, PPE/access-control planning flags, and environmental-owner handoff.
+  - Route culturing, spawn production, inoculation, species selection guarantees, contaminant-removal guarantees, hazardous-waste handling, indoor mold remediation, exposure treatment, legal cleanup claims, and safety certification away from this reviewed card.
+citations_required: true
+applicability: >
+  Use GD-661 for planning-level fungal remediation questions when the answer can
+  stay at site observation, contamination context, isolation or marking, logs,
+  uncertainty, PPE/access-control planning flags, and environmental-owner
+  routing. Do not use its reviewed card for culturing, spawn production,
+  inoculation, species guarantees, contaminant-removal guarantees, hazardous
+  waste handling, indoor mold procedures, human or animal exposure treatment,
+  legal cleanup claims, or safety certification.
+citation_policy: >
+  Cite GD-661 and its reviewed answer card for contaminated-site observation,
+  planning, isolation, logging, uncertainty, PPE/access-control planning flags,
+  and environmental-owner handoff only. Do not cite it as authority for
+  culturing, spawn production, inoculation, species guarantees,
+  contaminant-removal guarantees, hazardous-waste handling, indoor mold
+  remediation, exposure treatment, legal cleanup claims, or safety
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: mycoremediation_fungal_site_observation
+answer_card:
+  - mycoremediation_fungal_site_observation
 ---
 
 > **Guide role: environmental cleanup** — deploying fungi to break down pollutants and sequester heavy metals in contaminated soil and water. For cultivation techniques see [Mushroom Cultivation](mushroom-cultivation.html); for biology and identification see [Fungi and Mycology](fungi-mycology.html).
+
+## Reviewed Answer-Card Boundary: Site Observation, Planning, and Handoff
+
+<section id="reviewed-answer-card-boundary">
+
+This is the reviewed answer-card surface for GD-661. Use it only for contaminated-site observation and planning: identify the contamination context, isolate or mark the suspect area, start an observation log, state uncertainty clearly, flag PPE and access-control needs as planning concerns, and route decisions to the environmental owner or appropriate authority.
+
+Do not use this guide surface to provide culturing instructions, spawn production, inoculation steps, species guarantees, contaminant-removal guarantees, hazardous-waste handling procedures, indoor mold remediation procedures, human or animal exposure treatment, legal cleanup claims, or safety certification. If contamination involves hazardous waste, regulated cleanup, indoor mold, illness/exposure, drinking-water risk, or property/legal responsibility, pause routine advice and hand off to the appropriate specialist owner.
+
+</section>
 
 ## Overview: Mycoremediation Principles and Applications
 

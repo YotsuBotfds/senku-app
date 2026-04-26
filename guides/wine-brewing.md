@@ -21,6 +21,33 @@ last_updated: '2026-02-15'
 version: '1.0'
 custom_css: .subtitle{color:var(--accent2);font-size:1.1rem;margin-bottom:1rem}.formula{background-color:var(--surface);border:1px solid var(--accent2);padding:1.2rem;margin:1.5rem 0;border-radius:4px;font-family:'Courier New',monospace;overflow-x:auto}thead{background-color:var(--card)}.diagram-container{background-color:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin:2rem 0;display:flex;justify-content:center;align-items:center;min-height:300px}.recipe-box{background-color:var(--card);border:2px solid var(--accent2);border-radius:6px;padding:1.5rem;margin:1.5rem 0}.recipe-box h4{color:var(--accent2);margin-top:0}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}.steps{counter-reset:step-counter;list-style:none;margin-left:0}.steps li{counter-increment:step-counter;margin-bottom:1rem;padding-left:3rem;position:relative}.steps li:before{content:counter(step-counter);position:absolute;left:0;top:0;background-color:var(--accent);color:var(--bg);width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}.measurement{color:var(--accent2);font-weight:600}.note{background-color:rgba(83,216,168,0.1);border-left:3px solid var(--accent2);padding:1rem;margin:1.5rem 0;border-radius:4px}.danger{background-color:rgba(233,69,96,0.1);border-left:3px solid var(--accent);padding:1rem;margin:1.5rem 0;border-radius:4px}
 liability_level: high
+aliases:
+  - alcohol fermentation safety
+  - brewing sanitation log
+  - wine batch labeling
+  - spoiled fermentation
+  - distillation hazard
+  - home distilling safety boundary
+  - suspect alcohol batch
+routing_cues:
+  - Use this guide's reviewed answer card only for fermentation and alcohol safety boundaries, batch labeling, sanitation logs, spoilage red flags, and owner-routing handoffs.
+  - Route distillation setup, operation, methanol separation, equipment builds, legal compliance, intoxication, medical treatment, and safety certification away from this card.
+  - Treat public service, sale, shared-community alcohol, illness clusters, vulnerable-person exposure, unknown-source alcohol, or distillation hazards as handoff triggers before routine fermentation discussion.
+citations_required: true
+citation_policy: cite GD-072 and its reviewed wine/brewing fermentation-safety boundary card for batch labeling, sanitation logs, spoilage red flags, alcohol/legal/community-risk handoffs, and distillation hazard routing only; do not use it for recipes, ratios, temperatures, fermentation schedules, distillation setup or operation, methanol separation advice, equipment builds, medical treatment, intoxication management, legal compliance claims, or safety certification.
+applicability: >
+  Fermentation and alcohol safety routing for wine, beer, cider, and related
+  alcohol batches when the answer can stay at the level of batch identity,
+  sanitation records, spoilage red flags, service-stop decisions, and handoffs
+  for legal, medical, public-health, community-risk, or distillation hazards.
+  Do not use this reviewed card for production recipes, process parameters,
+  distillation instructions, methanol separation, equipment construction,
+  intoxication or medical management, compliance claims, or certification that
+  alcohol is safe to drink, serve, sell, or distill.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: wine_brewing_fermentation_safety_boundary
+answer_card:
+  - wine_brewing_fermentation_safety_boundary
 ---
 
 :::danger
@@ -29,6 +56,16 @@ liability_level: high
 
 :::warning
 **Legal Notice:** Home distillation of alcohol is illegal in most jurisdictions. Verify your local laws before attempting any distillation process.
+:::
+
+:::danger
+## Reviewed Boundary: Fermentation Safety and Distillation Hazard Routing
+
+This is the reviewed answer-card surface for GD-072. Use it only for fermentation and alcohol safety routing: batch labeling, sanitation logs, spoilage red flags, service-stop decisions, alcohol/legal/community-risk handoffs, and distillation hazard routing. Start with batch identity and records: product type, batch label, date opened or started, storage location, container condition, sanitation notes, visible mold or contamination, abnormal odor or appearance, pressure or swelling, who has consumed it, and whether it is for household use, public service, sale, donation, barter, school, shelter, clinic, or other shared-community setting.
+
+For suspect wine, beer, cider, wash, mash, or other fermented alcohol, keep the batch out of service while safety is uncertain, label and separate it, prevent mixing with other batches, review sanitation and storage records, and discard or route when records are missing or spoilage, contamination, illness linkage, vulnerable-person exposure, unknown-source alcohol, or community distribution is involved.
+
+Do not use this reviewed card for recipes, ingredient ratios, temperatures, fermentation schedules, hydrometer procedures, yeast management, distillation setup or operation, cuts or methanol separation advice, still construction, equipment build steps, medical treatment, intoxication management, legal compliance claims, or safety certification. Distillation hazards, unknown spirits, methanol concern, fire or pressure hazards, illness clusters, severe symptoms, vulnerable-person exposure, or any plan to sell, serve, donate, barter, or distribute alcohol require handoff to the appropriate medical, public-health, emergency, legal, regulatory, or qualified technical owner.
 :::
 
 <section id="fermentation-science">

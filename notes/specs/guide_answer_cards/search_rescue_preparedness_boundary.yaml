@@ -1,0 +1,126 @@
+card_id: search_rescue_preparedness_boundary
+guide_id: GD-030
+slug: search-rescue
+title: Search & Rescue Operations
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks how to prepare information for official search-and-rescue, emergency services, park staff, law enforcement, or incident command when someone is missing or overdue.
+  - A user needs a safe checklist for last-known point notes, missing-person description, communication plan, weather and terrain observations, volunteer staging, stop/go red flags, or authority handoff.
+  - The user is organizing bystanders or volunteers at a non-tactical coordination level and needs boundaries before trained responders arrive.
+required_first_actions:
+  - If someone is missing now, contact local emergency services or the responsible SAR, park, law-enforcement, or incident-command authority first; do not delay official notification while gathering notes.
+  - Keep the answer to preparedness, incident information, communication planning, volunteer staging away from hazards, stop/go red flags, and authority handoff.
+  - Record factual handoff notes: last-known point and time, planned route or destination, missing-person description, clothing and gear, medical or mobility concerns, communication attempts, weather and terrain observations, witnesses, and who has already been notified.
+  - Stop untrained volunteer activity and hand off when hazards, technical rescue needs, medical emergencies, possible crime, severe weather, darkness, water, cliffs, avalanche terrain, confined spaces, unstable structures, or official responders are involved.
+conditional_required_actions:
+  - trigger_terms:
+      - last known point
+      - last seen
+      - overdue
+      - missing person
+      - description
+    required_actions:
+      - Ask for or organize last-known point details, time last seen, intended route, description, clothing, gear, health or mobility concerns, communication attempts, and witness names for official handoff.
+  - trigger_terms:
+      - volunteers
+      - staging
+      - neighbors
+      - community search
+      - bystanders
+    required_actions:
+      - Keep volunteers at a safe staging area with sign-in, contact information, assignment status, boundaries, check-in expectations, and a clear instruction not to self-deploy or enter hazard areas.
+  - trigger_terms:
+      - water
+      - cliff
+      - cave
+      - confined space
+      - avalanche
+      - unstable structure
+      - night
+      - severe weather
+    required_actions:
+      - Treat the situation as a stop/go red flag: do not enter or send volunteers into the hazard, mark the observation from a safe location, and hand off to trained responders.
+first_actions:
+  - Create a single incident note with date, time, caller, missing person's name if known, last-known point, last-seen time, intended destination or route, and who has been contacted.
+  - Capture a concise missing-person description: age range, height/build, hair, clothing colors, footwear, backpack or gear, phone or locator device, medications, mobility limits, and likely behavior concerns.
+  - Keep a communication log of calls, texts, radio attempts, location pings, witness reports, and messages left, with times and names.
+  - Note weather and terrain observations from safe locations: temperature, precipitation, wind, daylight, visibility, water, cliffs, snow, avalanche signs, unstable structures, access roads, and blocked routes.
+  - Stage volunteers in one safe location, keep a sign-in/out roster, assign non-field support roles when appropriate, and prevent self-deployment, solo searching, or entry into hazardous areas.
+  - Prepare a concise handoff packet for official responders and update it as facts change.
+urgent_red_flags:
+  - A child, older adult, person with dementia, person with disability, injured person, suicidal person, or medically fragile person is missing or overdue.
+  - Darkness, severe weather, extreme heat or cold, water, ice, cliffs, caves, mines, avalanche terrain, confined spaces, unstable structures, fire, hazardous materials, or blocked access is involved.
+  - There are signs of injury, abandoned essential gear, distress messages, possible crime, vehicle crash, blood, threats, coercion, or suspicious circumstances.
+  - Volunteers want to self-deploy, search alone, enter hazard areas, follow tracks, collect evidence, confront people, or make law-enforcement decisions.
+  - Official responders, incident command, park authorities, or law enforcement arrive or issue instructions.
+forbidden_advice:
+  - Do not provide rescue tactics, search pattern instructions, tracking procedures, pursuit, extraction, rope rescue, water rescue, avalanche rescue, helicopter operations, confined-space entry, unstable-structure entry, or high-risk entry instructions.
+  - Do not provide medical assessment, treatment, CPR, hypothermia care, wound care, medication, evacuation, or casualty movement instructions from this card.
+  - Do not encourage solo searching, self-deployment, night searching, hazard entry, evidence handling, confrontation, or volunteers exceeding official instructions.
+  - Do not make law-enforcement decisions, legal claims, custody determinations, crime-scene judgments, liability claims, or safety-certification statements.
+  - Do not present volunteer coordination as a substitute for official SAR, emergency services, park authority, law enforcement, or incident command.
+do_not:
+  - Do not turn the guide's tactical SAR sections into reviewed answer-card advice.
+  - Do not tell users to follow tracks, enter water, climb, rappel, probe avalanche debris, enter caves, enter unstable buildings, or conduct technical rescue.
+  - Do not advise moving, treating, or assessing an injured person beyond emergency handoff language.
+  - Do not delay contacting authorities while completing a checklist.
+routine_boundary: >
+  This card owns search-and-rescue preparedness, factual incident-information
+  capture, communication logs, safe volunteer staging, stop/go red flags, and
+  authority handoff. It stops before rescue tactics, tracking, technical entry,
+  medical treatment, law-enforcement decisions, legal claims, solo searching,
+  high-risk entry, or safety certification.
+acceptable_uncertain_fit: >
+  If details are incomplete, give a conservative handoff checklist and ask
+  only for facts that improve official response: last-known point/time, missing
+  person description, intended route, communication attempts, weather/terrain
+  observations, volunteer status, and whether authorities have been contacted.
+  If any red flag is plausible, lead with emergency or responsible-authority
+  contact and keep volunteers staged safely.
+clarifying_questions:
+  - Have local emergency services, park staff, law enforcement, SAR, or incident command already been contacted?
+  - What is the last-known point and time, and what route or destination was expected?
+  - What description, clothing, gear, phone or locator device, medications, mobility limits, or behavior concerns should responders know?
+  - What weather, terrain, water, cliff, avalanche, confined-space, unstable-structure, darkness, or access hazards are present?
+  - Are any volunteers staged, and are they signed in and waiting for official instructions rather than self-deploying?
+citation_ids:
+  - gd-030-reviewed-boundary
+  - gd-030-sar-safety-principle
+  - gd-030-search-coordination
+  - gd-030-safety-briefing
+  - gd-030-teamwork-authority
+source_sections:
+  - guide: GD-030
+    slug: search-rescue
+    title: Search & Rescue Operations
+    sections:
+      - "#overview > Reviewed Answer-Card Boundary"
+      - "#overview > Search & Rescue Overview"
+      - "#search > Search Coordination"
+      - "#safety-protocols > Pre-Operation Safety Briefing"
+      - "#safety-protocols > Teamwork Requirements"
+source_invariants:
+  - name: reviewed boundary remains preparedness and handoff only
+    guide: GD-030
+    must_include:
+      - This is the reviewed answer-card surface for GD-030.
+      - last-known point notes, missing-person description, communication plan, weather and terrain observations, volunteer staging away from hazards, stop/go red flags, and transfer of information
+      - Do not use the reviewed answer card for rescue tactics, tracking procedures, grid/sweep instructions, rope rescue, water rescue, avalanche rescue, confined-space or unstable-structure entry, medical assessment or treatment, law-enforcement decisions, legal claims, safety certification, solo search encouragement, or high-risk entry.
+  - name: source safety and coordination anchors remain
+    guide: GD-030
+    must_include:
+      - Always prioritize rescuer safety.
+      - Coordinate with agencies (police, fire, SAR groups).
+      - Establish incident command center
+      - Hazard assessment
+      - Never search alone
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-030 as a narrow SAR preparedness and incident-handoff
+  card. The source guide contains tactical SAR material, but this card only
+  carries last-known-point notes, missing-person description, communication
+  planning, weather/terrain observations, safe volunteer staging, stop/go red
+  flags, and authority handoff into reviewed answer-card use.

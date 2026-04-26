@@ -34,6 +34,37 @@ word_count: 5647
 last_updated: '2026-02-15'
 version: '1.0'
 liability_level: critical
+aliases:
+  - carcass food safety planning
+  - carcass contamination red flags
+  - animal condition screen before processing
+  - meat cold chain log
+  - carcass hold discard decision
+  - butchering sanitation handoff
+routing_cues:
+  - Use the reviewed card only for carcass food-safety planning boundaries, animal condition screening, contamination red flags, cold-chain/log checks, sanitation readiness, discard/hold decisions, and owner handoffs.
+  - Do not use the reviewed card for slaughter steps, cuts, evisceration, field dressing, preservation recipes, processing times or temperatures, disease diagnosis or treatment, inspection certification, public sale/legal claims, or safety guarantees.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: butchering_carcass_food_safety_boundary
+answer_card:
+  - butchering_carcass_food_safety_boundary
+citations_required: true
+applicability: >
+  Use GD-075 for carcass food-safety planning boundaries: animal condition
+  screening, carcass contamination red flags, cold-chain and custody logs,
+  sanitation readiness, discard or hold decisions, and owner handoffs. Do not
+  use its reviewed card for slaughter steps, cuts, evisceration, field
+  dressing, preservation recipes, processing times or temperatures, disease
+  diagnosis or treatment, meat inspection certification, public sale or legal
+  claims, or safety guarantees.
+citation_policy: >
+  Cite this guide and its reviewed answer card only for carcass food-safety
+  planning boundaries: animal condition screening, contamination red flags,
+  cold-chain/log checks, sanitation readiness, discard/hold decisions, and
+  owner handoffs. Do not cite this reviewed card for slaughter steps, cuts,
+  evisceration, field dressing, preservation recipes, processing times or
+  temperatures, disease diagnosis or treatment, meat inspection certification,
+  public sale or legal claims, or safety guarantees.
 custom_css: '.subtitle{font-size:1.1em;color:#999;font-style:italic}nav{background-color:#2d2416;padding:15px;margin:20px 0;border-left:4px solid #d4a574;border-radius:4px}nav h3{color:#d4a574;margin-bottom:10px}nav ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}nav a{color:#b8956a;text-decoration:none;padding:5px 10px;display:inline-block;border-radius:3px;transition:background-color .3s}nav a:hover{background-color:#3a3020;color:#d4a574}section:nth-child(odd){border-left-color:#b8956a}section:nth-child(odd) h2{color:#b8956a;border-bottom-color:#b8956a}.equipment-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin:20px 0}.equipment-item{background-color:#2d2416;padding:15px;border-radius:4px;border-top:3px solid #d4531f}.equipment-item h4{color:#d4a574;margin-top:0}.cuts-table{width:100%;border-collapse:collapse;margin:20px 0;background-color:#2d2416}.cuts-table th,.cuts-table td{padding:12px;text-align:left;border-bottom:1px solid #3a3a3a}.cuts-table th{background-color:#3a3020;color:#d4a574;font-weight:bold}.cuts-table tr:hover{background-color:#2a3a3a}.recipe-card{background-color:#2d2416;padding:20px;margin:15px 0;border-radius:6px;border-left:4px solid #b8956a}.recipe-card h4{color:#b8956a;margin-top:0}.ingredients{background-color:#1a2a2a;padding:15px;border-radius:4px;margin:10px 0}.instructions{background-color:#1a2a2a;padding:15px;border-radius:4px;margin:10px 0}.temperature-guide{background-color:#2d2416;padding:15px;margin:15px 0;border-radius:4px;font-family:''Courier New'',monospace}.temperature-guide strong{color:#d4a574}svg{max-width:100%;height:auto;margin:20px 0}.diagram-container{background-color:#2d2416;padding:20px;border-radius:6px;text-align:center;margin:20px 0}.primal-cuts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:15px;margin:20px 0}.cut-card{background-color:#2d2416;padding:15px;border-radius:4px;border-top:3px solid #d4531f}.cut-card h4{color:#d4a574;margin-top:0}.cut-card p{font-size:.95em;margin-bottom:8px}.process-steps{counter-reset:step-counter;margin:20px 0}.process-steps li{counter-increment:step-counter;list-style:none;margin-bottom:15px;padding-left:40px;position:relative}.process-steps li:before{content:counter(step-counter);position:absolute;left:0;top:0;background-color:#d4531f;color:#f5f0e8;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}.safety-checklist{background-color:#2d3a2a;padding:20px;border-radius:6px;margin:20px 0;border-left:5px solid #4a6d4a}.safety-checklist h4{color:#b8956a;margin-top:0}.safety-checklist ul{list-style:none;margin-left:0}.safety-checklist li{padding-left:25px;position:relative;margin-bottom:10px}.safety-checklist li:before{content:"✓";position:absolute;left:0;color:#b8956a;font-weight:bold}'
 ---
 :::danger
@@ -48,6 +79,18 @@ custom_css: '.subtitle{font-size:1.1em;color:#999;font-style:italic}nav{backgrou
 - **What are you processing / what animal am I butchering?** → This guide covers cattle, hogs, poultry (chicken, turkey, duck), rabbit, squirrel, fish, and wild game. Each section has species-specific steps.
 - **How do I know if the meat is spoiled?** → Discard if you see: slime layer, green or gray color, sour or ammonia smell, gas pockets, or sticky texture. When in doubt, throw it out.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-075 carcass food-safety planning only. Use it for animal condition screening before any processing decision, carcass contamination red flags, cold-chain and custody logs, sanitation readiness, discard or hold decisions, and concise owner handoffs.
+
+Start with the source animal, whether it appeared healthy or abnormal before death, whether death was expected or unexplained, visible contamination, odor, damage, exposure history, elapsed custody notes, available cooling, clean water and tool/surface sanitation status, and who owns the final food-safety decision. Keep recommendations at the planning, record, triage, and handoff level: separate suspect material, document observations, prevent cross-contamination, maintain logs, sanitize contact surfaces, label hold/discard status, and route uncertain or red-flag cases to the appropriate food-safety, veterinary, zoonotic-disease, refrigeration, sanitation, or legal/inspection owner.
+
+Do not use this card for slaughter steps, animal killing methods, cuts, evisceration, field dressing instructions, carcass breakdown, preservation recipes, curing, smoking, canning, processing times or temperatures, disease diagnosis or treatment, meat inspection certification, public sale or legal claims, or guarantees that meat is safe. If a prompt asks for those, give only the non-procedural food-safety boundary that is already known, stop before operational detail, and hand off to the qualified owner.
+
+</section>
 
 <section id="pre-slaughter">
 

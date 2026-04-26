@@ -7,6 +7,31 @@ difficulty: intermediate
 tags:
   - critical
   - specialized
+aliases:
+  - search rescue preparedness
+  - missing person handoff
+  - last known point notes
+  - SAR volunteer staging
+  - missing person description checklist
+  - search incident information
+routing_cues:
+  - search rescue preparedness incident information coordination handoff
+  - last known point missing person description communication plan
+  - volunteer staging authority handoff weather terrain observations
+  - SAR stop go red flags before official responders arrive
+citations_required: true
+citation_policy: cite reviewed GD-030 answer card only for preparedness, incident-information gathering, volunteer staging, communication planning, stop/go red flags, and authority handoff; do not use it for rescue tactics, tracking procedures, rope/water/confined-space entry, medical treatment, law-enforcement decisions, solo search encouragement, high-risk entry, legal claims, or safety certification
+applicability: >
+  Search-and-rescue preparedness and factual incident handoff only: last-known
+  point notes, missing-person description, communication plan, weather/terrain
+  observations, volunteer staging, stop/go red flags, and handoff to official
+  SAR, emergency, law-enforcement, park, or incident-command authority. Not a
+  rescue tactics, tracking, technical entry, medical, legal, or law-enforcement
+  decision guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: search_rescue_preparedness_boundary
+answer_card:
+  - search_rescue_preparedness_boundary
 icon: 🔍
 description: Grid search patterns, rope rescue, water/avalanche rescue, wilderness tracking, and evacuation methods. Practical SAR techniques for untrained responders.
 related:
@@ -52,6 +77,12 @@ Search and rescue operations save lives when people become lost, injured, or str
 :::warning
 **Critical SAR Principle:** Always prioritize rescuer safety. An injured or deceased rescuer creates additional victims. Never enter hazardous areas without proper training and equipment. If conditions exceed your capabilities, wait for professional responders.
 :::
+
+### Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-030. Use it only for search-and-rescue preparedness and factual incident handoff: last-known point notes, missing-person description, communication plan, weather and terrain observations, volunteer staging away from hazards, stop/go red flags, and transfer of information to official SAR, emergency, law-enforcement, park, or incident-command authority.
+
+Do not use the reviewed answer card for rescue tactics, tracking procedures, grid/sweep instructions, rope rescue, water rescue, avalanche rescue, confined-space or unstable-structure entry, medical assessment or treatment, law-enforcement decisions, legal claims, safety certification, solo search encouragement, or high-risk entry. If a person is missing now, begin by contacting local emergency services or the responsible authority, preserve factual notes, keep untrained volunteers out of hazard zones, and hand off command when responders arrive.
 
 ### Core SAR Principles
 

@@ -22,10 +22,52 @@ word_count: 2800
 last_updated: '2026-02-25'
 version: '1.0'
 liability_level: high
+aliases:
+  - canal condition inventory
+  - lock gate visible condition log
+  - waterway access control handoff
+  - canal bank erosion red flags
+  - water level observation log
+  - waterway owner engineer routing
+routing_cues:
+  - Use this guide's reviewed answer card only for non-invasive condition inventory, waterway purpose clarification, visible bank/lock/gate/channel observations, access-control status, water-level observations, erosion or flood red flags, maintenance-log review, and owner or engineer routing.
+  - Keep routine answers focused on what can be observed from a safe public or authorized location: waterway purpose, posted restrictions, bank erosion, slumping, seepage, gate or lock damage, channel blockage, debris, water-level change, recent storms, and available maintenance records.
+  - Route excavation, lock or gate construction, hydraulic calculations, dam or levee design, dredging, flood-control manipulation, confined-space entry, rescue tactics, legal/code claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-871 answer card for condition inventory, waterway purpose, visible bank/lock/gate/channel condition, access control, water-level observations, erosion/flood red flags, maintenance logs, and owner/engineer routing only; do not use it for excavation, lock/gate construction, hydraulic calculations, dam/levee design, dredging, flood-control manipulation, confined-space entry, rescue tactics, legal/code claims, or safety certification.
+applicability: >
+  Use for planning and handoff questions about existing canals, locks, gates,
+  towpaths, and managed waterways where the safe answer is to identify purpose,
+  visible condition, access-control status, water-level changes, erosion or
+  flood red flags, maintenance-log gaps, and the responsible owner, operator,
+  engineer, inspector, emergency manager, or waterway authority. Do not use for
+  excavation, lock or gate construction, hydraulic calculations, dam or levee
+  design, dredging, flood-control manipulation, confined-space entry, rescue
+  tactics, legal/code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: canal_lock_waterway_condition_planning
+answer_card:
+  - canal_lock_waterway_condition_planning
 ---
 :::danger
 **Critical Safety Hazards:** Canal construction involves risks of excavation collapse, drowning, and cave-ins. Shoring and embankment failures can be fatal. Excavation must be properly shored with timber or steel. Never work alone in excavations. All personnel must wear life jackets near water. Confined spaces near locks require proper ventilation monitoring.
 :::
+
+## Scope Boundary
+
+This guide contains historical and educational canal, lock, and waterway construction material, but its reviewed answer-card surface is condition inventory, planning, and handoff only. Use it to clarify waterway purpose, observe visible bank, lock, gate, towpath, and channel condition from safe public or authorized locations, note access-control status, track water-level observations, recognize erosion or flood red flags, review maintenance-log gaps, and route decisions to the owner, operator, qualified engineer, inspector, emergency manager, or waterway authority.
+
+Do not use the reviewed card for excavation, lock or gate construction, hydraulic calculations, dam or levee design, dredging, flood-control manipulation, confined-space entry, rescue tactics, legal or code claims, or safety certification. Those requests require the responsible owner or operator, qualified civil or hydraulic engineer, inspector, emergency manager, rescue authority, or local jurisdiction as appropriate.
+
+## Reviewed Answer-Card Boundary: Condition Inventory, Logs, and Handoffs
+
+This is the reviewed answer-card surface for GD-871. Start from a safe public or authorized vantage point and do not enter closed, posted, flooded, undermined, confined, fast-water, unstable-bank, lock-chamber, culvert, sluice, gate machinery, or low-visibility areas. Record what can be observed without excavation, probing, climbing, draining, dredging, manipulating gates or water controls, entering confined spaces, or attempting repair: waterway name or location, purpose if known, date and observer, recent storm or flood history, posted restrictions, access barriers, bank erosion, cracks, slumping, seepage, sinkholes, overtopping marks, debris, channel blockage, sediment buildup observations, damaged or stuck gates, lock-wall cracks, unusual sounds, water-level changes, towpath ruts, and available maintenance logs.
+
+Routine planning should preserve a simple handoff log: what changed, when it was first noticed, whether it is worsening, photos from safe locations if allowed, current access-control status, recent water-level or storm observations, maintenance records already available, and the named owner, operator, engineer, inspector, emergency manager, or waterway authority responsible for decisions.
+
+Red flags require stopping routine inventory and keeping people back or escalating immediately: active bank collapse or movement, rapidly rising water, overtopping, new or muddy seepage, sinkholes, sudden slumps, fresh erosion channels, damaged barriers, posted closure, stuck or visibly damaged gates, blocked spillway or channel, debris jams, undermined towpaths, people entering restricted areas, or any uncertainty about safe public access near water, banks, locks, gates, or control structures.
+
+Do not calculate canal slope, water velocity, flow, lock forces, gate size, freeboard, scour depth, dredging needs, dam or levee capacity, or flood-control settings. Do not design, excavate, dredge, construct, repair, operate gates, enter confined spaces, perform rescue tactics, declare the waterway safe, reopen access, certify safety, or make legal/code compliance claims. Route those questions to the owner/operator and qualified civil or hydraulic engineer, inspector, emergency manager, rescue authority, or local jurisdiction.
 
 <section id="overview">
 

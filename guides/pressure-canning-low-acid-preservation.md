@@ -7,6 +7,38 @@ difficulty: intermediate
 tags:
   - essential
   - food-safety
+aliases:
+  - low acid canning safety
+  - pressure canning boundary
+  - botulism canning risk
+  - home canned jar bulging
+  - pressure canned batch logs
+  - safe pressure canning source
+  - canning hold or discard
+  - canner equipment red flags
+routing_cues:
+  - Use this guide for pressure-canning safety-boundary questions about low-acid sealed foods, botulism risk, tested-source referral, batch labeling and logs, equipment red flags, hold/discard decisions, vulnerable-person warnings, and owner handoffs.
+  - Route requests for exact processing times, pressure settings, recipes, substitutions, altitude adjustments, gauge calibration procedure, equipment repair, botulism treatment, public-sale claims, shelf-life guarantees, or safety certification away from this reviewed card surface.
+  - Treat bulging, leaking, spurting, broken-seal, off-odor, moldy, cloudy, rusty, cracked, underprocessed, unknown-source, or missing-record jars as discard/hold safety questions before routine preservation planning.
+  - When a prompt involves infants, pregnant people, older adults, immunocompromised people, illness symptoms, group exposure, public service, sale, donation, shelter, clinic, or school food, lead with conservative hold/discard and medical, public-health, food-safety, or regulatory owner handoff.
+citations_required: true
+applicability: >
+  Pressure-canning low-acid food safety-boundary and routing: botulism risk
+  recognition, tested-source referral, batch labeling and logs, equipment
+  condition red flags, hold/discard decisions, vulnerable-person warnings, and
+  owner handoffs. Do not use this reviewed card to provide processing times,
+  pressure settings, recipes, substitutions, altitude adjustments, gauge
+  calibration procedure, equipment repair or build steps, botulism treatment,
+  shelf-life guarantees, public-sale or legal claims, or safety certification.
+citation_policy: >
+  Cite GD-665 and the reviewed pressure-canning low-acid safety-boundary card
+  only for non-procedural safety triage, tested-source referral, records,
+  discard/hold decisions, vulnerable-person warnings, and owner routing. For
+  current process parameters, recipes, altitude tables, equipment service,
+  illness response, public sale, donation, or legal compliance, cite and route
+  to the appropriate tested recipe source, equipment manufacturer or extension
+  office, medical or poison-control owner, public-health owner, or regulatory
+  authority rather than deriving instructions or certification from this guide.
 icon: 🫙
 description: Comprehensive pressure canning guide for low-acid foods — equipment, procedures, botulism prevention, altitude adjustments, and tested processing times for vegetables, meats, poultry, and seafood.
 related:
@@ -24,7 +56,21 @@ word_count: 8000
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: pressure_canning_low_acid_safety_boundary
+answer_card:
+  - pressure_canning_low_acid_safety_boundary
 ---
+
+:::danger
+## Reviewed Boundary: Pressure-Canning Low-Acid Safety Routing
+
+Use GD-665 only for the pressure-canning safety boundary when the answer can stay at the level of botulism risk recognition, tested-source referral, batch identity and logs, equipment condition red flags, hold/discard decisions, vulnerable-person warnings, and owner handoff. Low-acid sealed foods are a botulism-risk category; do not reassure users that smell, taste, a visual check, a sealed lid, boiling, reheating, storage time, or family tradition proves a batch safe.
+
+For suspect low-acid jars, start with: hold the batch out of service, label and separate it, prevent serving or mixing, review the tested-source recipe used, batch date, jar size, canner type, pressure/venting record, altitude source, seal checks, storage conditions, and who consumed it. Discard or keep out of service when the source, process record, container condition, seal status, equipment condition, or storage history is uncertain, or when the jar is bulging, leaking, spurting, cracked, rusty, moldy, cloudy in an abnormal way, pressurized, off-smelling, underprocessed, unknown-source, or linked to illness.
+
+Do not provide processing times, pressure settings, recipes, substitutions, altitude adjustments, gauge calibration procedure, equipment repair or build steps, botulism treatment, shelf-life guarantees, public-sale or legal claims, or safety certification from this boundary. Processing and recipe questions require current tested sources such as USDA, NCHFP, Ball, or extension guidance; gauge testing and canner service require the manufacturer, extension office, or qualified equipment owner. Infants, pregnant people, older adults, immunocompromised people, severe symptoms, neurologic symptoms, multiple people ill, public sale, donation, school, shelter, clinic, or group feeding require medical, poison-control, public-health, food-safety, or regulatory owner handoff before routine canning advice.
+:::
 
 ## Why Pressure Canning Matters
 

@@ -1,0 +1,128 @@
+card_id: mycoremediation_fungal_site_observation
+guide_id: GD-661
+slug: mycoremediation-fungal
+title: Mycoremediation & Fungal Bioremediation
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Use for bounded mycoremediation questions where the safe answer is site
+  observation, contamination-context capture, isolation/planning, logging,
+  uncertainty language, PPE/access-control flags, and environmental-owner handoff.
+  This card does not authorize culturing, spawn production, inoculation,
+  hazardous-waste handling, indoor mold remediation, exposure treatment, or
+  cleanup-certification claims.
+applies_when:
+  - A user asks how to start thinking about a suspected contaminated outdoor site where fungi might be relevant.
+  - A user asks what to record before deciding whether mycoremediation is appropriate.
+  - A user asks for a planning checklist for site isolation, observation logs, PPE concerns, or environmental-owner routing.
+  - A user asks whether fungi can guarantee removal or make contaminated soil/water safe.
+required_first_actions:
+  - Start with contamination context, not treatment: identify suspected contaminant family, location, source history, visible clues, water/runoff connection, and who or what could be exposed.
+  - Isolate and mark the suspect area for planning purposes; limit unnecessary access and keep people, animals, food crops, and drinking-water use away until an environmental owner evaluates it.
+  - Create an observation log with dates, weather, odors, staining, runoff direction, boundaries, photos/sketches, and any sampling/testing already performed.
+  - State uncertainty explicitly; do not claim that a fungus, species choice, or visible improvement proves contaminant removal or safety.
+  - Treat PPE, sampling, waste movement, and access controls as planning flags that require an environmental/industrial-hygiene owner, not as procedural instructions in this card.
+first_actions:
+  - Classify the concern at a high level: petroleum/hydrocarbon, pesticide/herbicide, dye/textile waste, heavy metals, unknown chemical, sewage/biological, indoor mold, or mixed/unknown contamination.
+  - Separate observation from intervention: document boundaries and changes over time before recommending any remediation project.
+  - If water, wells, streams, gardens, livestock, or neighbors may be affected, route to environmental and water-quality owners before any reuse or safety statement.
+  - Use the guide only to explain broad mechanisms and limitations when needed; keep the response anchored to site observation, uncertainty, and handoff.
+urgent_red_flags:
+  - Unknown chemical dumping, fuel sheen, strong solvent/fuel odor, dead vegetation or animals, or contamination moving toward water, wells, homes, food crops, or livestock.
+  - Any human or animal illness, exposure, skin/eye/respiratory symptoms, or ingestion concern linked to the site.
+  - Indoor mold, sewage, flood-contaminated buildings, regulated hazardous waste, or legal/property cleanup questions.
+  - Requests to certify a site as safe, sell/reuse treated material, or guarantee contaminant removal.
+forbidden_advice:
+  - Do not provide culturing instructions, strain isolation, spawn production, substrate sterilization/pasteurization, or incubation steps.
+  - Do not provide inoculation rates, mixing/application steps, colonization troubleshooting, or operational remediation sequencing.
+  - Do not guarantee species performance, contaminant removal percentages, timelines to safety, soil reuse safety, or drinking-water safety.
+  - Do not provide hazardous-waste handling, disposal, burial, incineration, or transport procedures.
+  - Do not provide indoor mold remediation procedures, building cleanup instructions, or clearance/testing certification.
+  - Do not provide human or animal exposure treatment, medical reassurance, legal cleanup claims, regulatory compliance claims, or safety certification.
+do_not:
+  - Do not tell the user to grow, source, prepare, or apply fungi or spawn.
+  - Do not frame mushrooms or visible mycelium as proof that contaminants are gone.
+  - Do not advise eating mushrooms or using biomass from a contaminated site.
+  - Do not turn PPE mentions into a task procedure; keep PPE as a flag for qualified-owner planning.
+routine_boundary: >
+  This card is a site-observation, planning, and handoff card only. It can help
+  structure what to document and who should own the next decision, but it must not
+  become a field remediation protocol, waste-handling manual, indoor mold cleanup
+  guide, medical exposure answer, or legal/regulatory certification.
+acceptable_uncertain_fit: >
+  If the contamination type or exposure pathway is unclear, stay conservative:
+  mark uncertainty, restrict access/use, log observations, ask only the missing
+  context needed for routing, and hand off to environmental, water-quality,
+  medical/veterinary, or property/legal owners as appropriate.
+clarifying_questions:
+  - What is the suspected contaminant source and history: fuel, pesticide, metals, dye/textile waste, sewage, indoor mold, dumping, or unknown?
+  - Is the suspect area connected to runoff, a stream, well, garden, livestock area, home, or shared property boundary?
+  - What visible clues are present: staining, sheen, odor, dead vegetation, unusual growth, or changing boundaries after rain?
+  - Has anyone or any animal had direct contact, symptoms, ingestion, or respiratory exposure linked to the site?
+  - What observations, photos, sketches, tests, or prior cleanup actions are already logged?
+fallback_handoff_language:
+  - If contamination is unknown, moving, or near water/food/living areas, pause reuse and route to environmental assessment or local environmental authority.
+  - If there is illness or direct exposure, route to medical, poison-control, veterinary, or public-health owners before site-planning advice.
+  - If the question is indoor mold, regulated hazardous waste, disposal, compliance, or certification, hand off to the appropriate building, hazardous-waste, environmental, or legal owner.
+handoff:
+  - environmental-site-assessment for owner review, sampling plans, and cleanup decisions
+  - water-testing-quality-assessment for wells, surface water, runoff, or drinking/cooking use questions
+  - chemical-safety for unknown chemical exposure boundaries
+  - home-sick-care-hygiene or medical owners for human exposure or symptoms
+  - veterinary for animal exposure or illness
+  - building-inspection-habitability-checklist for indoor mold or contaminated building questions
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - mycoremediation-reviewed-boundary
+  - contamination-assessment-context
+  - mechanisms-and-limitations
+  - monitoring-observation-logs
+  - metals-and-biomass-caution
+source_sections:
+  - guide: GD-661
+    slug: mycoremediation-fungal
+    title: Mycoremediation & Fungal Bioremediation
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#mechanisms"
+      - "#soil-remediation"
+      - "#mycofiltration"
+      - "#limitations"
+source_invariants:
+  - name: reviewed planning boundary
+    guide: GD-661
+    must_include:
+      - Use it only for contaminated-site observation and planning
+      - state uncertainty clearly
+      - route decisions to the environmental owner
+      - Do not use this guide surface to provide culturing instructions
+  - name: contamination assessment context
+    guide: GD-661
+    must_include:
+      - Contaminant type
+      - Extent of contamination
+      - Mark boundaries with flags or paint
+  - name: biomass and consumption caution
+    guide: GD-661
+    must_include:
+      - Do NOT harvest and consume mushrooms from metal-contaminated sites
+      - Metals are concentrated, not destroyed
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed as a narrow GD-661 audit-gap closure. The card intentionally limits
+  answers to site observation, isolation/planning, logs, uncertainty, PPE/access
+  flags, and environmental-owner routing. It blocks culturing, spawn production,
+  inoculation, species/removal guarantees, hazardous-waste handling, indoor mold
+  remediation, exposure treatment, legal cleanup claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.
