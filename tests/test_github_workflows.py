@@ -125,7 +125,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("--files @selectedGuides", gate_script)
         self.assertIn("python -B ingest.py --stats", gate_script)
         self.assertIn(
-            "python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 16 --files @selectedGuides",
+            "python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 1 --files @selectedGuides",
             gate_script,
         )
         self.assertIn(

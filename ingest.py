@@ -44,9 +44,9 @@ METADATA_VALIDATION_REPORT_PATH = os.path.join(
 )
 DEFAULT_EMBEDDING_BATCH_SIZE = 64
 EMBEDDING_BATCH_SIZE_ENV = "SENKU_INGEST_EMBED_BATCH_SIZE"
-GUIDE_SUMMARY_FIELD_CHARS = 600
-GUIDE_SUMMARY_HEADINGS_CHARS = 800
-GUIDE_SUMMARY_BODY_EXCERPT_CHARS = 800
+GUIDE_SUMMARY_FIELD_CHARS = 300
+GUIDE_SUMMARY_HEADINGS_CHARS = 400
+GUIDE_SUMMARY_BODY_EXCERPT_CHARS = 0
 
 
 def create_lexical_index(path):
@@ -454,7 +454,11 @@ def guide_summary_index_text(meta, body):
             )
         )
 
-    body_excerpt = clean_chunk_text(body)[:GUIDE_SUMMARY_BODY_EXCERPT_CHARS].strip()
+    body_excerpt = (
+        clean_chunk_text(body)[:GUIDE_SUMMARY_BODY_EXCERPT_CHARS].strip()
+        if GUIDE_SUMMARY_BODY_EXCERPT_CHARS > 0
+        else ""
+    )
     if body_excerpt:
         lines.extend(["", body_excerpt])
     return "\n".join(lines).strip()

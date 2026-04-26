@@ -262,7 +262,7 @@ jobs:
               python -B ingest.py --stats
             } elseif ($selectedGuides.Count -gt 0) {
               Write-Host "Retrieval index cache miss; rebuilding compact scoped CI retrieval db."
-              python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 16 --files @selectedGuides
+              python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 1 --files @selectedGuides
             } else {
               Write-Host "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild."
             }
