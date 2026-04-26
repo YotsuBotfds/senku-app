@@ -389,6 +389,40 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertFalse(query._is_classic_stroke_fast_special_case(mixed_prompt))
         self.assertTrue(query._is_noncollapse_stroke_cardiac_overlap_query(mixed_prompt))
 
+    def test_re8_tr001_compound_evacuation_triage_routes_to_human_triage_delegation(self):
+        prompt = (
+            "During evacuation prep, one person fell and is confused and dizzy, "
+            "another has minor scrapes, goats are loose, and the road may flood. "
+            "Who gets attention first and what gets delegated?"
+        )
+        triage_meta = {"guide_id": "GD-029", "guide_title": "Disaster Triage & MCI"}
+        animal_meta = {
+            "guide_id": "GD-470",
+            "guide_title": "Animal Husbandry Transportation",
+        }
+        route_meta = {"guide_id": "GD-695", "guide_title": "Evacuation Route Planning"}
+
+        self.assertTrue(query._is_compound_evacuation_triage_delegation_query(prompt))
+        self.assertEqual(query.classify_special_case(prompt), (None, None))
+        specs = query._supplemental_retrieval_specs(prompt, 8)
+        spec_text = "\n".join(spec["text"] for spec in specs)
+        self.assertIn(
+            "disaster triage multiple casualties evacuation delegation first attention minor injuries",
+            spec_text,
+        )
+        self.assertIn(
+            "first aid red flags after fall confusion dizziness head injury shock urgent evaluation",
+            spec_text,
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(prompt, triage_meta),
+            query._metadata_rerank_delta(prompt, animal_meta),
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(prompt, triage_meta),
+            query._metadata_rerank_delta(prompt, route_meta),
+        )
+
     def test_rag_eval_unresolved_partial_rerank_owner_hints(self):
         cases = [
             (

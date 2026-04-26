@@ -185,6 +185,11 @@ Action:
   and keeps `app_acceptance_status=strong_supported`. Follow-up table coverage
   applies the same acceptance/taxonomy split to `RE9-AN-001`, `RE9-PO-001`,
   and `RE9-MH-001`.
+- Added `RE8-TR-001` route/delegation proof without changing generated answer
+  behavior. The focused routing test asserts the exact evacuation triage /
+  animal logistics prompt stays out of deterministic special cases, gets human
+  triage supplemental retrieval specs, and prefers `GD-029` over animal/route
+  support owners.
 
 Validation:
 
