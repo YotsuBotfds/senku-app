@@ -85,6 +85,39 @@ acceptable_uncertain_fit: Ask for clarification.
         self.assertEqual(record["severity"], "none")
         self.assertEqual(record["gaps"], [])
 
+    def test_body_routing_marker_counts_as_high_liability_routing_support(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guides_dir = Path(tmpdir) / "guides"
+            guides_dir.mkdir()
+            (guides_dir / "body-routing-guide.md").write_text(
+                """---
+id: GD-103
+slug: body-routing-guide
+title: Body Routing Guide
+category: medical
+description: A high risk guide.
+liability_level: high
+tags: [medical]
+citations_required: true
+applicability: Emergency field care.
+related: [GD-101]
+---
+
+Use this guide when urgent symptoms are present.
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir)
+            markdown = render_markdown(audit)
+
+        record = audit["guides"][0]
+        self.assertTrue(record["has_routing_support"])
+        self.assertEqual(record["body_routing_marker_count"], 1)
+        self.assertNotIn("missing_routing_support", record["gaps"])
+        self.assertEqual(record["severity"], "warn")
+        self.assertIn("GD-103", markdown)
+
     def test_low_liability_metadata_gaps_are_not_counted_as_high_liability_gaps(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"

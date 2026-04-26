@@ -278,6 +278,9 @@ Action:
   phase fallback still attach spans and error phases to exported rows.
 - Hardened the RAG trace OTel adapter for raw string status values so trace
   consumers do not fail before they can summarize mixed trace shapes.
+- Added metadata-audit coverage proving body routing markers count as
+  high-liability routing support without requiring explicit alias/routing-cue
+  frontmatter for that specific support signal.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
