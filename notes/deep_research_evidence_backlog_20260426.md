@@ -519,6 +519,9 @@ Action:
 - Shadow-comparison summaries now have regression coverage for missing
   primary-owner blocks and zero-denominator primary metrics, keeping optional
   primary fields stable when absent.
+- Bench artifact JSONL summaries now count non-object lines separately,
+  truncate long type values deterministically, and preserve frequency order in
+  formatted type-count summaries.
 
 Validation:
 
@@ -561,6 +564,8 @@ Validation:
   `primary_guide_ids` display column contract.
 - `tests.test_summarize_shadow_comparisons` covers optional/zero-denominator
   primary metric summary behavior.
+- `tests.test_index_bench_artifacts` covers JSONL non-object counts, long type
+  truncation, and count-order formatting.
 
 Deferred unless evidenced:
 

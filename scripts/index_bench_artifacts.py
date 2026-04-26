@@ -11,6 +11,7 @@ from pathlib import Path
 
 DEFAULT_MAX_JSON_BYTES = 256 * 1024
 LOG_SUFFIXES = {".log", ".out", ".err"}
+JSONL_TYPE_VALUE_MAX_LEN = 80
 BINARY_SUFFIXES = {
     ".apk",
     ".bin",
@@ -157,6 +158,7 @@ def summarize_jsonl_file(path):
     summary = {
         "line_count": len(lines),
         "object_count": 0,
+        "non_object_lines": 0,
         "malformed_lines": 0,
     }
     record_type_counts = Counter()
@@ -172,6 +174,7 @@ def summarize_jsonl_file(path):
             summary["malformed_lines"] += 1
             continue
         if not isinstance(data, dict):
+            summary["non_object_lines"] += 1
             continue
 
         summary["object_count"] += 1
@@ -182,6 +185,8 @@ def summarize_jsonl_file(path):
         summary["record_type_counts"] = dict(record_type_counts.most_common(8))
     if report_type_counts:
         summary["report_type_counts"] = dict(report_type_counts.most_common(8))
+    if summary["non_object_lines"] == 0:
+        del summary["non_object_lines"]
     return summary
 
 
@@ -231,9 +236,20 @@ def _select_numeric_keys(data):
 
 
 def _count_jsonl_type_value(counter, value):
-    if not isinstance(value, str) or not value or len(value) > 80:
+    normalized = _normalize_jsonl_type_value(value)
+    if normalized is None:
         return
-    counter[value] += 1
+    counter[normalized] += 1
+
+
+def _normalize_jsonl_type_value(value):
+    if not isinstance(value, str) or not value:
+        return None
+    if len(value) <= JSONL_TYPE_VALUE_MAX_LEN:
+        return value
+    if JSONL_TYPE_VALUE_MAX_LEN <= 3:
+        return value[:JSONL_TYPE_VALUE_MAX_LEN]
+    return f"{value[:JSONL_TYPE_VALUE_MAX_LEN - 3]}..."
 
 
 def write_jsonl(records, output_path):
@@ -282,14 +298,20 @@ def _format_summary(summary):
         parts.extend(f"{key}={value}" for key, value in sorted(counts.items())[:8])
     if "title" in summary:
         parts.append(f"title={summary['title']}")
-    for key in ("line_count", "object_count", "malformed_lines", "heading_count"):
+    for key in (
+        "line_count",
+        "object_count",
+        "non_object_lines",
+        "malformed_lines",
+        "heading_count",
+    ):
         if key in summary:
             parts.append(f"{key}={summary[key]}")
     for count_key in ("record_type_counts", "report_type_counts"):
         counts = summary.get(count_key)
         if isinstance(counts, dict):
             formatted_counts = ", ".join(
-                f"{key}:{value}" for key, value in sorted(counts.items())[:8]
+                f"{key}:{value}" for key, value in counts.items()
             )
             if formatted_counts:
                 parts.append(f"{count_key}={formatted_counts}")

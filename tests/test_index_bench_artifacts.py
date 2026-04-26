@@ -108,6 +108,35 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertNotIn("body", summary)
         self.assertNotIn("sensitive prompt text", json.dumps(summary))
 
+    def test_iter_bench_artifacts_counts_non_object_lines_and_truncates_long_type_values(self):
+        root = self.make_tmpdir()
+        long_type = "result-" + ("x" * 90)
+        (root / "records.jsonl").write_text(
+            "\n".join(
+                [
+                    json.dumps({"record_type": "result", "report_type": "guide_validation"}),
+                    json.dumps({"record_type": long_type, "report_type": "guide_validation"}),
+                    json.dumps({"record_type": "diagnostic", "report_type": "routing"}),
+                    '"not-an-object"',
+                    "",
+                    "{bad",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        summary = list(iter_bench_artifacts(root))[0]["summary"]
+
+        self.assertEqual(summary["line_count"], 6)
+        self.assertEqual(summary["object_count"], 3)
+        self.assertEqual(summary["non_object_lines"], 1)
+        self.assertEqual(summary["malformed_lines"], 2)
+        self.assertEqual(summary["record_type_counts"]["result"], 1)
+        truncated = f"{long_type[:77]}..."
+        self.assertEqual(summary["record_type_counts"][truncated], 1)
+        self.assertNotIn(long_type, summary["record_type_counts"])
+
     def test_iter_bench_artifacts_skips_large_jsonl(self):
         root = self.make_tmpdir()
         (root / "large.jsonl").write_text(json.dumps({"record_type": "result"}) + "\n", encoding="utf-8")
@@ -180,6 +209,31 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertIn("malformed_lines=1", formatted)
         self.assertIn("record_type_counts=diagnostic:1, result:2", formatted)
         self.assertIn("report_type_counts=routing:1", formatted)
+
+    def test_jsonl_summary_formatting_preserves_count_order(self):
+        root = self.make_tmpdir()
+        path = root / "order.jsonl"
+        path.write_text(
+            "\n".join(
+                [
+                    json.dumps({"record_type": "beta"}),
+                    json.dumps({"record_type": "alpha"}),
+                    json.dumps({"record_type": "beta"}),
+                    json.dumps({"record_type": "alpha"}),
+                    json.dumps({"record_type": "gamma"}),
+                    json.dumps({"record_type": "beta"}),
+                    "bad json",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        summary = list(iter_bench_artifacts(root))[0]["summary"]
+        formatted = _format_summary(summary)
+
+        self.assertIn("record_type_counts=beta:3, alpha:2, gamma:1", formatted)
+        self.assertIn("malformed_lines=1", formatted)
 
     def test_main_writes_jsonl_and_markdown(self):
         root = self.make_tmpdir()
