@@ -207,6 +207,9 @@ Action:
 - Added row-level fallback for the same compact root-cause summary columns, so
   older diagnostics without summary-level root-cause counts still expose the
   distribution from per-row `app_acceptance_root_cause` fields.
+- Added row-level acceptance-root-cause plumbing to diagnostics triage tools:
+  `query_rag_diagnostics.py` can filter by `--acceptance-root-cause`, and RAG
+  eval dataset exports preserve `app_acceptance_root_cause` in metadata.
 - Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
   the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
   security installs pinned `uv==0.11.7` before checking the generated lock.

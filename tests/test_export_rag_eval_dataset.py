@@ -140,6 +140,7 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
                                 "answer_card_status": "pass",
                                 "app_gate_status": "pass",
                                 "app_acceptance_status": "pass",
+                                "app_acceptance_root_cause": "supported",
                                 "evidence_owner_status": "expected_owner_cited",
                                 "claim_support_status": "pass",
                                 "cited_guide_ids": "GD-301",
@@ -164,6 +165,7 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
         self.assertEqual(metadata["suspected_failure_bucket"], "expected_supported")
         self.assertEqual(metadata["answer_card_status"], "pass")
         self.assertEqual(metadata["app_acceptance_status"], "pass")
+        self.assertEqual(metadata["app_acceptance_root_cause"], "supported")
         self.assertEqual(metadata["expected_guide_ids"], ["GD-301"])
         self.assertEqual(metadata["top_retrieved_guide_ids"], ["GD-301", "GD-999"])
 
@@ -181,6 +183,7 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
                                 "top_retrieved_guide_ids": "GD-010|GD-011",
                                 "cited_guide_ids": "",
                                 "suspected_failure_bucket": "retrieval_miss",
+                                "app_acceptance_root_cause": "evidence_owner",
                             }
                         ]
                     }
@@ -197,6 +200,7 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
         self.assertEqual(records[0]["answer"], "")
         self.assertEqual(records[0]["contexts"], ["GD-010", "GD-011"])
         self.assertEqual(records[0]["metadata"]["suspected_failure_bucket"], "retrieval_miss")
+        self.assertEqual(records[0]["metadata"]["app_acceptance_root_cause"], "evidence_owner")
 
     def test_repeatable_trace_jsonl_adds_span_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:

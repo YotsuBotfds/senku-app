@@ -19,6 +19,7 @@ DEFAULT_COLUMNS = (
     "top1_is_bridge",
     "top1_has_unresolved_partial",
     "answer_card_status",
+    "app_acceptance_root_cause",
     "short_reason",
 )
 GUIDE_ID_FIELDS = (
@@ -71,6 +72,12 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         action="append",
         default=[],
         help="Filter by answer_card_status. Repeat to include multiple statuses.",
+    )
+    parser.add_argument(
+        "--acceptance-root-cause",
+        action="append",
+        default=[],
+        help="Filter by app_acceptance_root_cause. Repeat to include multiple causes.",
     )
     parser.add_argument(
         "--json",
@@ -137,11 +144,17 @@ def filter_rows(
     top1_unresolved_partial: bool = False,
     top1_bridge: bool = False,
     card_statuses: Sequence[str] = (),
+    acceptance_root_causes: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
     bucket_set = {bucket.strip() for bucket in buckets if bucket.strip()}
     guide_id_set = {guide_id.strip() for guide_id in guide_ids if guide_id.strip()}
     prompt_id_set = {prompt_id.strip() for prompt_id in prompt_ids if prompt_id.strip()}
     card_status_set = {status.strip() for status in card_statuses if status.strip()}
+    root_cause_set = {
+        root_cause.strip()
+        for root_cause in acceptance_root_causes
+        if root_cause.strip()
+    }
 
     matches: list[dict[str, Any]] = []
     for row in rows:
@@ -150,6 +163,11 @@ def filter_rows(
         if prompt_id_set and str(row.get("prompt_id") or "") not in prompt_id_set:
             continue
         if card_status_set and str(row.get("answer_card_status") or "") not in card_status_set:
+            continue
+        if (
+            root_cause_set
+            and str(row.get("app_acceptance_root_cause") or "") not in root_cause_set
+        ):
             continue
         if top1_unresolved_partial and not _truthy_diagnostic(
             row.get("top1_has_unresolved_partial")
@@ -196,6 +214,7 @@ def query_diagnostics(path: Path, args: argparse.Namespace) -> list[dict[str, An
         top1_unresolved_partial=args.top1_unresolved_partial,
         top1_bridge=args.top1_bridge,
         card_statuses=args.card_status,
+        acceptance_root_causes=args.acceptance_root_cause,
     )
 
 

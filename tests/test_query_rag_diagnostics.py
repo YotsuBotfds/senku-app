@@ -48,6 +48,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                 "top1_is_bridge": "yes",
                 "top1_has_unresolved_partial": "no",
                 "answer_card_status": "pass",
+                "app_acceptance_root_cause": "supported",
             },
             {
                 "prompt_id": "P2",
@@ -58,6 +59,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                 "top1_is_bridge": "no",
                 "top1_has_unresolved_partial": "yes",
                 "answer_card_status": "fail",
+                "app_acceptance_root_cause": "evidence_owner",
             },
         ]
 
@@ -73,6 +75,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
             guide_ids=["GD-012"],
             prompt_ids=["P2"],
             top1_unresolved_partial=True,
+            acceptance_root_causes=["evidence_owner"],
         )
 
         self.assertEqual([row["prompt_id"] for row in bridge_rows], ["P1"])
@@ -85,13 +88,16 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                     "prompt_id": "P1",
                     "suspected_failure_bucket": "ranking_miss",
                     "expected_guide_ids": "GD-001|GD-002",
+                    "app_acceptance_root_cause": "evidence_owner",
                     "short_reason": "expected | cited",
                 }
             ]
         )
 
         self.assertIn("| prompt_id | suspected_failure_bucket |", markdown)
+        self.assertIn("app_acceptance_root_cause", markdown)
         self.assertIn("GD-001\\|GD-002", markdown)
+        self.assertIn("evidence_owner", markdown)
         self.assertIn("expected \\| cited", markdown)
 
     def test_main_emits_json(self):
@@ -100,14 +106,31 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
             write_diagnostics(
                 root / self.module.DIAGNOSTICS_FILENAME,
                 [
-                    {"prompt_id": "P1", "suspected_failure_bucket": "ranking_miss"},
-                    {"prompt_id": "P2", "suspected_failure_bucket": "retrieval_miss"},
+                    {
+                        "prompt_id": "P1",
+                        "suspected_failure_bucket": "ranking_miss",
+                        "app_acceptance_root_cause": "supported",
+                    },
+                    {
+                        "prompt_id": "P2",
+                        "suspected_failure_bucket": "retrieval_miss",
+                        "app_acceptance_root_cause": "gate_policy",
+                    },
                 ],
             )
 
             output = io.StringIO()
             with redirect_stdout(output):
-                self.module.main([str(root), "--bucket", "retrieval_miss", "--json"])
+                self.module.main(
+                    [
+                        str(root),
+                        "--bucket",
+                        "retrieval_miss",
+                        "--acceptance-root-cause",
+                        "gate_policy",
+                        "--json",
+                    ]
+                )
             payload = json.loads(output.getvalue())
 
         self.assertEqual(len(payload), 1)
