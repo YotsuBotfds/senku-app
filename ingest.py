@@ -42,6 +42,8 @@ METADATA_VALIDATION_REPORT_PATH = os.path.join(
     config.CHROMA_DB_DIR,
     METADATA_VALIDATION_REPORT_FILENAME,
 )
+DEFAULT_EMBEDDING_BATCH_SIZE = 64
+EMBEDDING_BATCH_SIZE_ENV = "SENKU_INGEST_EMBED_BATCH_SIZE"
 
 
 def create_lexical_index(path):
@@ -126,6 +128,24 @@ def save_ingest_manifest(manifest):
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, sort_keys=True)
     os.replace(tmp, MANIFEST_PATH)
+
+
+def resolve_embedding_batch_size(value=None):
+    """Return the embedding batch size requested by CLI/env."""
+    raw_value = value
+    if raw_value is None:
+        raw_value = os.environ.get(EMBEDDING_BATCH_SIZE_ENV, DEFAULT_EMBEDDING_BATCH_SIZE)
+    try:
+        batch_size = int(raw_value)
+    except (TypeError, ValueError):
+        raise ValueError(
+            f"Embedding batch size must be a positive integer: {raw_value!r}"
+        )
+    if batch_size < 1:
+        raise ValueError(
+            f"Embedding batch size must be a positive integer: {raw_value!r}"
+        )
+    return batch_size
 
 
 def normalize_ingest_manifest(manifest, file_info_by_guide_id):
@@ -945,6 +965,15 @@ def main():
             "embedding, lexical, or manifest work."
         ),
     )
+    parser.add_argument(
+        "--embedding-batch-size",
+        type=int,
+        default=None,
+        help=(
+            "Embedding request batch size. Defaults to "
+            f"${EMBEDDING_BATCH_SIZE_ENV} or {DEFAULT_EMBEDDING_BATCH_SIZE}."
+        ),
+    )
     args = parser.parse_args()
 
     if args.force_files and not args.files:
@@ -1192,14 +1221,18 @@ def main():
             expected_chunks_by_guide_id[guide_id] += 1
 
     # Embed and store in batches
-    BATCH_SIZE = 64
-    total_batches = (len(all_chunks) + BATCH_SIZE - 1) // BATCH_SIZE
-    for i in range(0, len(all_chunks), BATCH_SIZE):
-        batch = all_chunks[i : i + BATCH_SIZE]
+    try:
+        batch_size = resolve_embedding_batch_size(args.embedding_batch_size)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise SystemExit(1)
+    total_batches = (len(all_chunks) + batch_size - 1) // batch_size
+    for i in range(0, len(all_chunks), batch_size):
+        batch = all_chunks[i : i + batch_size]
         texts = [c["text"] for c in batch]
         retrieval_texts = [build_contextual_retrieval_text(c) for c in batch]
         metadatas = [c["metadata"] for c in batch]
-        batch_no = i // BATCH_SIZE + 1
+        batch_no = i // batch_size + 1
         console.print(f"  Embedding batch {batch_no}/{total_batches} ({len(batch)} chunks)")
 
         try:

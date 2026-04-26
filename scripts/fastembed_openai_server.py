@@ -6,9 +6,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import threading
 import time
 import traceback
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from fastembed import TextEmbedding
 
@@ -37,6 +38,7 @@ class FastEmbedRunner:
         self.accepted_model_ids = accepted_model_ids
         self.cache_dir = cache_dir
         self.threads = threads
+        self._lock = threading.Lock()
         self.model = TextEmbedding(
             model_name=backend_model_name,
             cache_dir=cache_dir,
@@ -54,7 +56,11 @@ class FastEmbedRunner:
         }
 
     def embed(self, inputs: list[str]) -> list[list[float]]:
-        return [vector.tolist() for vector in self.model.embed(inputs)]
+        # FastEmbed/ONNX inference is not safe to enter concurrently on the
+        # constrained Windows CI runner. Serialize requests so client retries
+        # cannot overlap with a timed-out batch that is still finishing.
+        with self._lock:
+            return [vector.tolist() for vector in self.model.embed(inputs)]
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -155,7 +161,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.close_connection = True
 
 
-class FastEmbedHttpServer(ThreadingHTTPServer):
+class FastEmbedHttpServer(HTTPServer):
     def __init__(self, server_address, request_handler_class, runner: FastEmbedRunner):
         super().__init__(server_address, request_handler_class)
         self.runner = runner

@@ -1,5 +1,6 @@
 import gc
 import json
+import os
 import shutil
 import sqlite3
 import sys
@@ -15,10 +16,19 @@ from ingest import (
     clean_chunk_text,
     parse_frontmatter,
     process_file,
+    resolve_embedding_batch_size,
 )
 
 
 class IngestTests(unittest.TestCase):
+    def test_resolve_embedding_batch_size_uses_env_override(self):
+        with patch.dict(os.environ, {"SENKU_INGEST_EMBED_BATCH_SIZE": "8"}):
+            self.assertEqual(resolve_embedding_batch_size(), 8)
+
+    def test_resolve_embedding_batch_size_rejects_non_positive_values(self):
+        with self.assertRaises(ValueError):
+            resolve_embedding_batch_size(0)
+
     def test_parse_frontmatter_only_from_leading_fence(self):
         meta, body = parse_frontmatter(
             """Intro text

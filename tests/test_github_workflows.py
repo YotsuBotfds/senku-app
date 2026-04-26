@@ -104,6 +104,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("POST /v1/embeddings", gate_script)
         self.assertIn("Invoke-RestMethod `", gate_script)
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
+        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 8", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog", gate_script)

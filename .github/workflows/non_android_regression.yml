@@ -229,7 +229,7 @@ jobs:
               }
             }
 
-            python -B ingest.py --rebuild
+            python -B ingest.py --rebuild --embedding-batch-size 8
             powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args
           } finally {
             if ($process -and -not $process.HasExited) {
