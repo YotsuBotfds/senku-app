@@ -1,0 +1,113 @@
+card_id: water_purification
+guide_id: GD-035
+slug: water-purification
+title: "Water Purification"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Water may be biologically unsafe, cloudy, muddy, flood-affected, debris-filled, or from an unknown source and the user needs a safe treatment order.
+  - A well or household water source may be contaminated after flooding, even if the water appears clear.
+  - The user asks whether boiling, bleach, filtration, SODIS, distillation, or storage makes questionable water drinkable.
+required_first_actions:
+  - Avoid sources with obvious chemical, fuel, saltwater, sewage, industrial, agricultural, or algae-bloom contamination when another source exists.
+  - Let heavy sediment settle, then strain or filter clearer water before using chemical treatment or solar disinfection.
+  - Disinfect clear-enough water with a guide-supported method such as boiling, correct chemical treatment, or solar disinfection when conditions fit the method.
+  - Store treated water in clean, sealed containers and keep dirty handling separate from clean water.
+  - State that clear appearance is not proof of safety and that no single field method is completely reliable.
+first_actions:
+  - Sort the source risk first: biological contamination, chemical contamination, turbidity or debris, flooded well concern, weather and fuel limits, and container cleanliness.
+  - For cloudy or debris-filled floodwater, use the guide sequence of source avoidance when possible, settling, straining or filtration, disinfection, then clean sealed storage.
+  - For chemical contamination concerns, do not rely on boiling, bleach, iodine, or SODIS alone; use a safer source or the guide's chemical-contaminant methods.
+  - For turbid water, reduce sediment before downstream treatment because cloudiness interferes with chemical treatment and UV/solar disinfection.
+  - For treated water, prevent recontamination by using clean covered containers, clean utensils, and separate dirty and clean handling.
+urgent_red_flags:
+  - Water source has obvious chemical, fuel, industrial runoff, pesticide, saltwater, sewage, or algae-bloom contamination.
+  - Water is highly turbid, muddy, debris-filled, foul-smelling, discolored, or from a flooded or questionable well.
+  - Children, elders, pregnant people, immunocompromised people, or dehydrated people may drink the questionable water.
+  - After drinking water, anyone has bloody diarrhea, persistent high fever, severe dehydration signs, severe abdominal pain, persistent vomiting, confusion, jaundice, or severe symptoms in children or elders.
+forbidden_advice:
+  - Say clear water is safe to drink without treatment.
+  - Treat one boil, bleach, iodine, filtration, or SODIS as a guarantee against all biological and chemical hazards.
+  - Recommend boiling, chlorine, iodine, or SODIS as adequate for heavy metals, nitrates, pesticides, industrial pollutants, saltwater, or other stable chemical contamination.
+  - Skip sediment settling or filtration before chemical treatment or solar disinfection when water is visibly cloudy or muddy.
+  - Mix dirty source-water handling with clean treated-water storage or serving.
+do_not:
+  - Do not present taste, smell, or visual clarity as proof that unknown water is safe.
+  - Do not let scarcity logistics override source assessment, treatment limitations, or safer-source selection.
+  - Do not give unanchored dosing, contact-time, or medical-treatment claims beyond the cited guide sections.
+  - Do not use routine hydration advice when waterborne illness red flags or high-risk people are involved.
+routine_boundary: >
+  Questionable, cloudy, flood-affected, chemically suspect, or poorly stored
+  water is safety-critical source assessment and treatment planning, not routine
+  hydration, taste improvement, or convenience filtering.
+acceptable_uncertain_fit: >
+  If the exact contaminant is unknown, preserve the conservative order from the
+  guide: avoid obviously contaminated sources when alternatives exist, reduce
+  sediment before treatment, choose a method whose limitations fit the suspected
+  hazard, use multiple methods when possible, and protect clean storage from
+  recontamination.
+clarifying_questions:
+  - What is the water source, and was it affected by flooding, sewage, fuel, chemicals, saltwater, agriculture, mining, or algae?
+  - Is the water clear, slightly cloudy, very muddy, foul-smelling, discolored, or full of visible debris?
+  - What treatment options and clean containers are available right now: fuel for boiling, filters, bleach or tablets, sun, distillation setup, or safer source water?
+  - Who will drink it, and is anyone already vomiting, having diarrhea, fever, dehydration signs, jaundice, or severe abdominal pain?
+citation_ids:
+  - cloudy-floodwater-treatment-order
+  - water-purification-limitations
+  - boiling-and-chemical-boundaries
+  - turbidity-and-storage-controls
+  - contamination-risk-assessment
+source_sections:
+  - guide: GD-035
+    slug: water-purification
+    title: "Water Purification"
+    sections:
+      - "#quick-routing-for-water-purification-questions"
+      - "#cloudy-floodwater-drinking-plan"
+      - "#safety-basics"
+      - "#boiling"
+      - "#chemical-treatment"
+      - "#filtration"
+      - "#sodis"
+      - "#distillation"
+      - "#storage"
+      - "#testing"
+      - "#water-contamination-types"
+      - "#common-mistakes-water"
+      - "#multi-method-purification"
+      - "#water-selection-guide"
+source_invariants:
+  - name: field methods have explicit limits
+    guide: GD-035
+    must_include:
+      - No single field water purification method is 100% reliable.
+      - Chemical treatment does NOT remove chemical contaminants
+      - Boiling kills pathogens but does not remove chemical contamination.
+      - UV treatment requires clear water to be effective.
+  - name: cloudy floodwater sequence
+    guide: GD-035
+    must_include:
+      - let heavy sediment settle
+      - strain or filter the clearer water
+      - store treated water in a clean sealed container
+      - without mixing dirty and clean handling
+  - name: clear appearance is not safety proof
+    guide: GD-035
+    must_include:
+      - Clear-looking water can contain invisible pathogens
+      - Never assume water is safe based on appearance or taste.
+      - Water clarity is not a safety indicator.
+  - name: treatment matching by contaminant
+    guide: GD-035
+    must_include:
+      - Boiling does NOT remove heavy metals, nitrates, pesticides, or other chemical pollutants.
+      - Chlorine/iodine
+      - Does NOT remove chemical contaminants.
+      - Best for chemical contamination concerns
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-035. The card is intentionally structured around
+  treatment order, method limitations, source assessment, and storage hygiene.
+  It avoids standalone dosing and contact-time claims in the card text; answer
+  generation should cite and quote the guide's treatment tables directly when
+  those details are needed.

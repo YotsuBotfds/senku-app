@@ -1,0 +1,110 @@
+card_id: hygiene_disease_prevention_basics
+guide_id: GD-732
+slug: hygiene-disease-prevention-basics
+title: "Hygiene Practices & Disease Prevention Basics"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks for everyday disease-prevention basics, critical handwashing moments, no-soap/no-running-water hygiene, or how to break common transmission routes.
+  - A household, camp, clinic, kitchen, or shared shelter needs basic hygiene priorities for water, food, waste, sick-room separation, laundry, or bedding.
+  - Someone asks what to clean or do first to reduce germ spread without moving into detailed disinfection, outbreak operations, or symptom-first medical care.
+required_first_actions:
+  - Start with hand washing using soap and water before eating, before preparing food, and after using the latrine.
+  - If water is scarce, prioritize hand washing before eating and after latrine use.
+  - Keep drinking water safe by treating questionable water before drinking and keeping treated water away from dirty hands and containers.
+  - Separate waste, sick-person items, contaminated surfaces, and raw or suspect food from clean food, water, bedding, and healthy people.
+first_actions:
+  - "Use the transmission route to choose the prevention step: food, water, contact, respiratory droplets, vectors, or blood."
+  - For hands, scrub palms, backs, between fingers, under nails, and wrists for at least 20 seconds, then rinse and dry with a clean cloth or air dry.
+  - When soap or water is limited, use ash, sand, clean barriers, short nails, and fewer food handlers as fallback measures while reserving water for critical handwashing.
+  - Cover coughs and sneezes with an elbow, distance sick people when possible, use separate bedding and utensils, and improve ventilation.
+  - Wash laundry and bedding with soap and water when possible, dry in sun, and keep sick-person laundry and bedding separate.
+urgent_red_flags:
+  - Fever lasting more than 48 hours.
+  - Severe diarrhea or vomiting lasting more than 24 hours.
+  - Cough lasting more than 1 week, especially with blood or difficulty breathing.
+  - Skin infection spreading despite hygiene efforts.
+  - Wound infection signs such as increasing redness, warmth, pus, or red streaks extending from the wound.
+  - High fever over 39 C or 102 F with stiff neck and severe headache.
+  - Multiple people becoming sick with the same illness in a short time.
+forbidden_advice:
+  - Treat routine hygiene as optional when water, soap, antibiotics, or sanitation are limited.
+  - Reuse contaminated water for hand washing as if it were clean.
+  - Let dirty hands touch treated drinking water.
+  - Share bedding, towels, eating utensils, or sick-person laundry between ill and healthy people.
+  - Taste questionable food to test whether it is safe.
+  - Use kerosene for lice treatment.
+  - Keep routine home-care framing when fever, severe vomiting or diarrhea, spreading skin or wound infection, breathing difficulty, stiff neck with severe headache, or outbreak warning signs are present.
+do_not:
+  - Do not skip the highest-risk handwashing moments because water is scarce.
+  - Do not wash or bathe upstream from drinking-water collection points.
+  - Do not leave garbage exposed where animals, insects, or disease vectors can access it.
+  - Do not combine greywater with drinking-water sources.
+  - Do not reuse water from washing contaminated raw meat for other foods.
+routine_boundary: >
+  This card supports prevention and cleanup framing. It should stop being
+  routine hygiene advice when symptoms match the guide's professional-care
+  triggers, when multiple people become sick with the same illness in a short
+  time, or when the prompt asks for advanced disinfection, outbreak command, or
+  treatment procedures outside the guide's prevention basics.
+acceptable_uncertain_fit: >
+  If the exact transmission route is unclear, give conservative prevention
+  basics first: critical handwashing, safe drinking water, food and waste
+  separation, respiratory hygiene, sick-person separation, and laundry or
+  bedding separation, then ask what route or symptom pattern is present.
+clarifying_questions:
+  - Is the concern mainly hands, drinking water, food handling, waste, respiratory illness, bedding or laundry, blood or body fluids, or insects and parasites?
+  - Is anyone currently sick, and are multiple people developing the same symptoms in a short time?
+  - What supplies are available right now: soap, clean water, clean cloths, containers, fuel for boiling, bleach, separate bedding, or latrine access?
+citation_ids:
+  - hygiene-overview-handwashing
+  - hygiene-critical-handwashing-moments
+  - hygiene-no-soap-water-scarce
+  - hygiene-transmission-routes
+  - hygiene-water-food-waste-basics
+  - hygiene-sick-person-laundry-red-flags
+source_sections:
+  - guide: GD-732
+    slug: hygiene-disease-prevention-basics
+    title: "Hygiene Practices & Disease Prevention Basics"
+    sections:
+      - "#overview"
+      - "#hand-washing"
+      - "#hand-washing > When to Wash Hands"
+      - "#hand-washing > Proper Hand Washing Technique"
+      - "#hand-washing > Waterless Cleaning (When Water Is Scarce)"
+      - "#hand-washing > If You Have No Soap and No Water"
+      - "#personal-hygiene"
+      - "#disease-transmission"
+      - "#water-safety"
+      - "#waste-disposal"
+      - "#food-safety"
+      - "#breaking-infection-chain"
+      - "#laundry-and-bedding"
+      - "#when-to-seek-help"
+source_invariants:
+  - name: critical handwashing priority
+    guide: GD-732
+    must_include:
+      - The single most effective thing you can do to prevent disease at home is wash your hands with soap and water before eating, before preparing food, and after using the latrine.
+      - "If water is scarce, prioritize the moments with highest disease transmission risk: before eating and after latrine use."
+      - Do NOT reuse water for hand washing if it's contaminated.
+  - name: water and food safety boundaries
+    guide: GD-732
+    must_include:
+      - If you are unsure whether water is safe, bring it to a rolling boil for at least one minute
+      - Don't touch treated water with dirty hands
+      - Do not taste questionable food to test it.
+  - name: escalation and outbreak boundary
+    guide: GD-732
+    must_include:
+      - Multiple people becoming sick with same illness in short time period indicates possible outbreak.
+      - Fever lasting more than 48 hours
+      - Skin infection spreading despite hygiene efforts
+review_status: pilot_reviewed
+notes: >
+  Primary-owner card for GD-732 prevention basics only. It intentionally avoids
+  inventing detailed disinfection recipes, medical treatment procedures, or
+  outbreak operations beyond the guide's own prevention, separation, and
+  escalation language. Related guides may own detailed sick-room cleanup,
+  sanitation design, water purification, food safety, or epidemic response.

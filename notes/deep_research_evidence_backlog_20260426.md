@@ -1123,6 +1123,12 @@ Validation:
   card answers. Focused validation covers the composer, runtime wrapper, bench
   runtime, and response-normalization surfaces, and a direct GD-601 proof now
   cites once with duplicate count `0`.
+- Added reviewed answer cards for five near-finished metadata/card blockers:
+  `GD-666` food safety, `GD-732` hygiene/disease prevention, `GD-035` water
+  purification, `GD-024` winter survival systems, and `GD-636` alloy decision
+  tree. `scripts/validate_guide_answer_cards.py` validates `19` cards, focused
+  guide-card tests pass, and metadata audit reports no remaining gaps for those
+  five guide IDs.
 
 Deferred unless evidenced:
 

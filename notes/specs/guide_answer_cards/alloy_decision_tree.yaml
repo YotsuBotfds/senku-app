@@ -1,0 +1,113 @@
+card_id: alloy_decision_tree
+guide_id: GD-636
+slug: alloy-decision-tree
+title: Alloy Decision Tree
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user needs to choose an alloy or steel family from available scrap for a part, tool edge, cutting tool, pipe, bearing, fitting, or structural shape.
+  - The question asks how to balance strength, edge hardness, corrosion resistance, wear resistance, ductility, workability, and offline availability before making or modifying metal.
+  - A stronger hand-tool edge, blade, saw, drill bit, axe head, or temporary tool material is being considered and the missing step is material choice or heat-treatment planning.
+required_first_actions:
+  - Define the application category and narrow the required properties to the most important few before naming an alloy candidate.
+  - Inventory and identify the available scrap first, separating ferrous from non-ferrous metals and keeping stainless, lead, cadmium-risk scrap, and unknown contaminated material out of routine melts.
+  - Match only to alloy candidates and use cases listed in the guide, then verify manufacturability, heat-treatment needs, and testing capacity before relying on the part.
+  - Put ventilation, PPE, dry crucibles, bystander distance, and toxic-fume controls ahead of melting, zinc addition, lead handling, or hot work.
+  - Treat every batch or finished part as unproven until visual inspection and the relevant hardness, bend, corrosion, or impact checks are completed.
+first_actions:
+  - Sort the ask into structural/load-bearing, cutting/edge-holding, chemical/corrosion-resistant, or wear/bearing use.
+  - For cutting and edge-holding uses, keep the answer within the guide's carbon-steel path and include the need for hardening plus tempering, with scrap testing before relying on the tool.
+  - For structural or formed parts, distinguish mild steel and cast iron limits: mild steel is workable and ductile, while cast iron is brittle and not suitable for shock.
+  - For wet, coastal, water-fitting, or bearing uses, consider the guide's copper-alloy paths while preserving its zinc fume, lead, and food-contact cautions.
+  - If making or reworking metal is part of the answer, include scrap sorting, crucible preheating, appropriate flux choice, temperature-color caution, slow cooling where required, and batch notes.
+urgent_red_flags:
+  - Lead-based scrap, lead paint, old battery plates, lead pipe, or cadmium-risk alloy is present or uncertain.
+  - Zinc is being added to copper/brass, galvanized material may be heated, or white smoke/fume exposure is possible.
+  - Water, damp crucible, damp mold, or wet tools may contact molten metal.
+  - A part shows visible cracks, large pits, porosity, brittleness, shattering on impact, or failure in a small test.
+  - A load-bearing, cutting, vehicle, suspension, pressure, food, or water-contact use is proposed without identification and testing.
+forbidden_advice:
+  - Do not provide invented alloy recipes, carbon percentages, heat-treatment temperatures, quench media, structural ratings, or test claims beyond the guide.
+  - Do not recommend using an untested offline alloy part for safety-critical load, impact, cutting, food, or water service.
+  - Do not tell the user to melt lead indoors, handle lead without PPE, or treat cadmium-risk scrap as usable melt stock.
+  - Do not suggest adding zinc quickly, dumping zinc powder into a melt, or heating galvanized/zinc-bearing metal without ventilation and fume controls.
+  - Do not treat carbon steel as ready for tool use after hardening alone; preserve the guide's tempering and scrap-test warnings.
+  - Do not rely on visual carbon-content guesses alone when hardness or safety matters.
+do_not:
+  - Do not skip the application-property inventory step and jump straight to a named alloy.
+  - Do not mix stainless steel with carbon steel when the guide calls out contamination and brittle weld risk.
+  - Do not quench castings or cool them fast when the guide calls for slow cooling to reduce brittleness and cracking.
+  - Do not forge below the guide's workable color range if the metal resists or cracks.
+  - Do not use lead-bearing alloys for food-contact guidance.
+routine_boundary: >
+  Alloy selection that involves melting, forging, quenching, lead, zinc, cadmium,
+  load-bearing parts, cutting edges, food contact, or water contact is not routine
+  shopping or generic materials advice; keep it framed as source-limited selection
+  plus hazard control and verification.
+acceptable_uncertain_fit: >
+  If the exact scrap composition or application load is uncertain, keep the
+  answer conservative: identify and separate scrap, choose only from the guide's
+  broad candidate families, avoid hazardous unknowns, make test pieces first,
+  and state that the finished part remains untrusted until the relevant checks pass.
+clarifying_questions:
+  - What must the part do: carry load, hold an edge, resist corrosion, avoid food/water contamination, or survive sliding wear?
+  - What scrap metals are actually available, and how were they identified by magnet, weight, color, spark, acid, or file tests?
+  - Will the work involve melting, forging, casting, hardening, tempering, zinc/brass, lead, galvanized metal, or unknown industrial scrap?
+  - What simple tests can be done before use: visual inspection, file hardness, bend, corrosion exposure, or small impact check?
+citation_ids:
+  - alloy-overview-decision-bridge
+  - alloy-property-matrix
+  - alloy-inventory-decision-tree
+  - alloy-candidate-limits
+  - alloy-making-heat-treatment
+  - alloy-troubleshooting-testing
+  - alloy-safety-hazards
+source_sections:
+  - guide: GD-636
+    slug: alloy-decision-tree
+    title: Alloy Decision Tree
+    sections:
+      - "#overview"
+      - "#what-you-need-before-starting"
+      - "#property-matrix-what-does-your-application-need"
+      - "#available-metals-inventory-template"
+      - "#decision-tree-from-inventory-to-alloy"
+      - "#the-alloy-candidates-ordered-by-offline-availability"
+      - "#decision-matrix-alloy-by-application"
+      - "#the-making-process-from-decision-to-metal"
+      - "#scrap-identification-guide"
+      - "#troubleshooting-failed-alloys"
+      - "#safety-hazards-and-mitigation"
+      - "#verification-checklist"
+source_invariants:
+  - name: application_and_property_selection_first
+    guide: GD-636
+    must_include:
+      - Narrow to the 3 most critical for your application.
+      - Reality check
+      - blending what you have
+  - name: carbon_steel_requires_tempering_and_testing
+    guide: GD-636
+    must_include:
+      - You must quench (rapid cool) and temper (reheat to specific temperature) to avoid brittleness.
+      - Over-hardening (too-fast quench) makes tools shatter.
+      - Test on scrap first.
+  - name: zinc_lead_cadmium_hazard_boundaries
+    guide: GD-636
+    must_include:
+      - Add zinc in small chunks, one at a time.
+      - Do not melt lead indoors.
+      - Identify and avoid cadmium alloys.
+  - name: verification_before_reliance
+    guide: GD-636
+    must_include:
+      - Test every batch
+      - Never assume.
+      - No visible cracks, pits, or large voids
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-636 only. This card deliberately preserves the guide's
+  decision-tree shape and avoids inventing recipes, ratings, or performance
+  guarantees. It is suitable for answer planning around alloy choice and
+  pre-work safety/verification boundaries, not for certifying structural,
+  pressure, food-contact, or tool-service suitability.

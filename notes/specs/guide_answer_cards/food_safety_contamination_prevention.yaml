@@ -1,0 +1,120 @@
+card_id: food_safety_contamination_prevention
+guide_id: GD-666
+slug: food-safety-contamination-prevention
+title: "Food Safety & Contamination Prevention"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Someone is deciding how to prevent foodborne illness while cooking, storing, serving, thawing, cooling, reheating, or stretching scarce food.
+  - Raw meat, eggs, unsafe water, questionable leftovers, mold, bulging containers, off smells, limited fuel, or limited sanitation could contaminate a meal.
+  - A household or group needs a safe food-handling answer before food becomes a discard-versus-salvage decision.
+required_first_actions:
+  - Put food safety before scarcity, zero-waste, or throughput pressure; do not serve food that is already questionable.
+  - Keep raw meat juice away from ready-to-eat foods, clean hands, utensils, boards, and storage areas unless they are washed or sanitized first.
+  - Use water that is as safe as drinking water for washing produce, cleaning utensils, making ice, and preparing food.
+  - Keep prepared food out of the 40 F to 140 F danger zone beyond the guide's time limits, and cool hot foods rapidly in shallow pans when storing leftovers.
+  - Make handwashing mandatory after latrine use, after raw meat or fish, before food handling, and between raw and ready-to-eat foods.
+first_actions:
+  - Cook high-risk animal foods thoroughly, using a thermometer when available or the guide's visual doneness checks when it is not.
+  - Store raw meat below other foods, in the coolest available area, and prevent drips onto anything ready to eat.
+  - Wash used boards and utensils with hot water and soap when available, then sanitize or air-dry according to the guide's cleanup sequence.
+  - Inspect food for mold, slime, bulging, leaking, gas production, unexpected odors, or moisture contamination before serving.
+  - Isolate ill people from food preparation and keep vomit, stool, sick-care dishes, and dirty cleanup workflows away from clean food service.
+urgent_red_flags:
+  - Bloody diarrhea, neurologic symptoms such as double vision, weakness, difficulty swallowing, or paralysis, inability to keep fluids down, blood in vomit, confusion, loss of consciousness, high fever, or symptoms lasting more than 7 days.
+  - Signs of severe dehydration, including extreme thirst, dry mouth, no urine output for 12 or more hours, sunken eyes, confusion or lethargy, rapid weak pulse, or cold clammy skin.
+  - Bulging cans, hissing containers, fizzing in non-fermented foods, leaking containers, seal failure, mold on soft foods or jam, slime, or rotten/putrid smells.
+  - Multiple people becoming ill after the same meal, shared water source, shared utensil, or shared food-handling workflow.
+forbidden_advice:
+  - Taste-test food that smells off, is moldy, slimy, bulging, leaking, gas-producing, seal-failed, or otherwise questionable.
+  - Scrape mold off jam, soft preserves, bread, yogurt, soft cheese, opened canned fruit, or wet foods and keep eating the rest.
+  - Use untreated stream water, unknown well water, or water from animal-activity areas to wash produce, clean utensils, make ice, or prepare food.
+  - Thaw meat at room temperature or in warm water.
+  - Serve food that has exceeded the danger-zone limits because supplies are scarce.
+  - Let raw meat juice touch ready-to-eat foods, clean utensils, boards, hands, or other stored food without washing or sanitizing first.
+do_not:
+  - Do not use smell, appearance, or a tiny sample as proof that questionable food is safe.
+  - Do not skip post-latrine handwashing or raw-meat handwashing because water is limited.
+  - Do not treat limited cooking fuel as permission to undercook poultry, ground meat, eggs, game meat, fish, or shellfish.
+  - Do not keep sick people in food preparation, service, dishwashing, or water-handling roles while vomiting or diarrhea may spread.
+routine_boundary: >
+  Food that is already questionable, temperature-abused, moldy, leaking,
+  bulging, gas-producing, contaminated by unsafe water, or linked to vomiting
+  or diarrhea is not routine meal planning or ration optimization; it requires
+  conservative food-safety controls or routing to the spoilage-assessment guide.
+acceptable_uncertain_fit: >
+  If the exact contamination route is unclear, preserve the conservative
+  prevention sequence from GD-666: separate raw from ready-to-eat food, require
+  critical handwashing, use safe water for food contact, keep food out of the
+  danger zone, cook high-risk animal foods thoroughly, and do not taste-test or
+  serve suspect food.
+clarifying_questions:
+  - What food is involved, and has it been raw, cooked, reheated, cooled, thawed, left out, moldy, leaking, bulging, slimy, or linked to illness?
+  - Was safe drinking-quality water used for washing produce, cleaning utensils, making ice, and cooking?
+  - Did raw meat, fish, eggs, drippings, hands, boards, or utensils touch ready-to-eat food?
+  - Are any people vomiting, having diarrhea, fever, bloody stool, neurologic symptoms, or signs of dehydration?
+citation_ids:
+  - food-safety-danger-zone
+  - food-safety-cross-contamination
+  - food-safety-safe-water
+  - food-safety-meat-doneness
+  - food-safety-no-taste-testing
+  - foodborne-illness-red-flags
+source_sections:
+  - guide: GD-666
+    slug: food-safety-contamination-prevention
+    title: "Food Safety & Contamination Prevention"
+    sections:
+      - "#why-food-safety-matters-in-survival-settings"
+      - "#the-temperature-danger-zone"
+      - "#the-temperature-danger-zone > The 2-Hour Rule"
+      - "#the-temperature-danger-zone > Cooling Hot Foods Safely"
+      - "#cross-contamination-prevention"
+      - "#cross-contamination-prevention > Raw Meat Handling"
+      - "#cross-contamination-prevention > Handwashing Protocol (20-Second Method)"
+      - "#safe-water-for-food-preparation"
+      - "#meat-animal-product-safety"
+      - "#spoilage-detection"
+      - "#spoilage-detection > Do Not Taste-Test Questionable Food"
+      - "#foodborne-illness-recognition-response"
+      - "#foodborne-illness-recognition-response > Isolation of Ill Persons"
+      - "#kitchen-hygiene-in-austere-conditions"
+      - "#summary-the-non-negotiables"
+source_invariants:
+  - name: danger zone and discard boundary
+    guide: GD-666
+    must_include:
+      - "Food in the 40°F–140°F zone"
+      - "After 2 hours"
+      - "Discard, even if it looks fine"
+      - "Cool from 140°F to 70°F in under 2 hours"
+    must_not_match:
+      - "serve[^\\n]{0,120}danger zone[^\\n]{0,120}(scarce|shortage|ration)"
+  - name: raw meat and handwashing separation
+    guide: GD-666
+    must_include:
+      - "Raw meat juice must never touch ready-to-eat foods"
+      - "After using the latrine"
+      - "After handling raw meat or fish"
+      - "Between handling raw and ready-to-eat foods"
+  - name: safe water and no taste testing
+    guide: GD-666
+    must_include:
+      - "Water used to wash vegetables, clean utensils, or prepare food must be as safe as drinking water."
+      - "Do not taste-test food that smells off"
+      - "Do not use tasting to rescue suspect food."
+      - "Mold on the jam, around the lid or rim, or as a surface film means discard the whole jar."
+  - name: illness escalation and isolation
+    guide: GD-666
+    must_include:
+      - "Serious warning signs"
+      - "Neurological symptoms"
+      - "Signs of severe dehydration"
+      - "Separate the sick person from food preparation areas"
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-666. This card intentionally stays in prevention and
+  contamination-control territory: discard-versus-salvage calls for already
+  questionable food should route to the food-spoilage-assessment guide, while
+  community service-line outbreak operations remain better covered by the
+  community-kitchen illness-control card.

@@ -1,0 +1,99 @@
+card_id: winter_survival_systems
+guide_id: GD-024
+slug: winter-survival-systems
+title: "Winter Survival Systems"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A below-freezing night, winter power outage, lights-out building, stranded vehicle, tent, lean-to, or improvised shelter is exposing people to cold, wind, precipitation, or wet layers.
+  - The user asks what to do first tonight to make a cold shelter livable or reduce immediate hypothermia risk with limited materials.
+  - The situation needs winter survival priorities before comfort, food planning, long-term camp construction, or a full snow-shelter build.
+required_first_actions:
+  - Stop heat loss first, then improve the shelter; do not spend the first energy on a full shelter build, food, or a bright fire while people are exposed and cooling.
+  - Move everyone out of wind and falling precipitation into the smallest protected safe zone available tonight.
+  - Put dry insulation under bodies first, then around the torso, head, and neck.
+  - Run a hypothermia watch for uncontrollable shivering, clumsiness, confusion, slurred speech, sleepiness, or shivering that stops.
+first_actions:
+  - Separate wet from dry by removing or isolating wet outer layers when dry substitutes exist, and keep one dry sleeping or rest layer uncontaminated by snow, damp boots, or wet coats.
+  - Block wind and drafts with tarps, plastic, blankets, doors, boards, snow blocks, brush, furniture, or other available barriers.
+  - Treat fire or heaters as support only; keep ventilation and carbon-monoxide risk in mind and reflect heat toward the shelter rather than sealing combustion inside a tight sleeping space.
+  - Use branches, pine boughs, spare clothing, sleeping pads, cardboard, rugs, packs, or other dry air-trapping materials as ground and body insulation.
+  - If someone shows hypothermia signs, make that person the priority, handle gently, keep flat if very impaired, insulate the core, and seek evacuation or medical help if available.
+urgent_red_flags:
+  - Uncontrollable shivering, clumsiness, confusion, slurred speech, sleepiness, or shivering that stops.
+  - Exposure to wind, falling precipitation, wet clothing, damp sleeping layers, or direct ground contact while people are cooling.
+  - Combustion or flame used in a tight sleeping space without ventilation or with carbon-monoxide risk.
+  - A severe or very impaired person who may need gentle flat handling, core insulation, evacuation, or medical help.
+forbidden_advice:
+  - Give food-first, comfort-first, construction-first, or fire-first instructions before moving cooling people into protection and insulation.
+  - Seal combustion inside a tight sleeping space.
+  - Treat an open fire as more important than ground insulation and a crude wind block.
+  - Let snow, damp boots, or wet coats contaminate the one dry sleeping or rest layer.
+  - Dismiss hypothermia warning signs as routine cold discomfort.
+do_not:
+  - Do not frame a below-freezing lights-out shelter problem as comfort planning before heat-loss control.
+  - Do not invent shelter engineering, heater operation, hypothermia treatment, or rescue claims beyond GD-024.
+  - Do not route this card as the primary owner for warm-weather shelter design or long-term seasonal camp construction unless below-freezing hypothermia risk is central.
+routine_boundary: >
+  A below-freezing lights-out shelter, stranded group, collapsed heat source, or
+  wet/cooling winter exposure problem is immediate hypothermia-prevention
+  triage, not routine camping comfort, food-first planning, or long-term shelter
+  design.
+acceptable_uncertain_fit: >
+  If the exact shelter type or gear list is unclear but below-freezing exposure,
+  wind, wet layers, or cooling people are plausible, preserve the conservative
+  sequence: get into the smallest protected zone, build dry insulation under and
+  around bodies, keep wet materials away from the dry rest layer, block drafts,
+  use combustion only with ventilation and carbon-monoxide caution, and watch
+  for hypothermia signs while asking for details.
+clarifying_questions:
+  - Is everyone out of wind and falling precipitation, and what is the smallest safe protected zone available tonight?
+  - What dry insulation is available for under bodies and around the torso, head, and neck?
+  - Is anyone uncontrollably shivering, clumsy, confused, slurring speech, sleepy, or no longer shivering after being cold?
+citation_ids:
+  - winter-lights-out-shelter-priorities
+  - winter-immediate-action-protocol
+  - winter-hypothermia-watch
+  - winter-fire-shelter-combustion-boundary
+source_sections:
+  - guide: GD-024
+    slug: winter-survival-systems
+    title: "Winter Survival Systems"
+    sections:
+      - "#overview"
+      - "#overview > The Critical First 15 Minutes"
+      - "#overview > Immediate Action Protocol (First 15 Minutes)"
+      - "#overview > Lights-Out Below-Freezing Shelter Priorities"
+      - "#shelters > Fire and Shelter Integration"
+      - "#hypothermia > Hypothermia Recognition & Treatment"
+      - "#fire > Fire Safety in Winter Survival"
+source_invariants:
+  - name: lights-out heat-loss sequence
+    guide: GD-024
+    must_include:
+      - heat loss first, then improve the shelter.
+      - full shelter build, food, or a bright fire if people are exposed and cooling.
+      - Pick the smallest protected zone.
+      - Build dry insulation before comfort.
+  - name: wet-dry wind combustion boundaries
+    guide: GD-024
+    must_include:
+      - Separate wet from dry.
+      - Block wind and drafts.
+      - Use fire or heaters only as support.
+      - do not seal combustion inside a tight sleeping space.
+  - name: hypothermia watch signs and escalation
+    guide: GD-024
+    must_include:
+      - Run a hypothermia watch.
+      - uncontrollable shivering, clumsiness, confusion, slurred speech, sleepiness, or shivering that stops
+      - handle gently, keep flat if very impaired, insulate the core, and seek evacuation or medical help if available.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-024 for immediate below-freezing, lights-out, or
+  overnight winter shelter priorities where the answer must reduce heat loss
+  before comfort, food, full shelter construction, or fire-first advice. The
+  card is deliberately constrained to GD-024 language and should not add
+  unsourced heater procedures, snow-shelter engineering, hypothermia treatment
+  protocols, or rescue guarantees.
