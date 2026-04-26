@@ -39,6 +39,14 @@ def markdown_code_span(value: object) -> str:
     return f"{fence}{padding}{text}{padding}{fence}"
 
 
+def _report_field(record: dict, key: str, fallback: str) -> str:
+    value = record.get(key, "")
+    if value is None or isinstance(value, (list, tuple, set, dict)):
+        return fallback
+    text = str(value).strip()
+    return text or fallback
+
+
 def parse_frontmatter(text: str) -> tuple[dict, str]:
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
@@ -115,8 +123,8 @@ def write_outputs(records: list[dict], output_dir: Path) -> tuple[Path, Path]:
         for record in records:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
-    by_guide = Counter(record["slug"] for record in records)
-    by_section = Counter(record["section_heading"] for record in records)
+    by_guide = Counter(_report_field(record, "slug", "(missing slug)") for record in records)
+    by_section = Counter(_report_field(record, "section_heading", "(missing section)") for record in records)
 
     lines = [
         "# Guide Invariants Summary",

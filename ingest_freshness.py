@@ -109,8 +109,13 @@ def normalize_manifest(
 ) -> tuple[dict[str, dict[str, str]], tuple[str, ...]]:
     normalized: dict[str, dict[str, str]] = {}
     unmatched: list[str] = []
+    basename_to_guide_ids: dict[str, list[str]] = {}
+    for guide_id, info in file_info_by_guide_id.items():
+        basename_to_guide_ids.setdefault(info["basename"], []).append(guide_id)
     basename_to_guide_id = {
-        info["basename"]: guide_id for guide_id, info in file_info_by_guide_id.items()
+        basename: guide_ids[0]
+        for basename, guide_ids in basename_to_guide_ids.items()
+        if len(guide_ids) == 1
     }
     sha_to_guide_ids: dict[str, list[str]] = {}
     for guide_id, info in file_info_by_guide_id.items():

@@ -41,6 +41,24 @@ class ReportBenchWatchlistTests(unittest.TestCase):
         self.assertEqual([12, 0], [row["completion_tokens"] for row in rows])
         self.assertEqual([0, 0], [row["duplicate_citation_count"] for row in rows])
 
+    def test_load_rows_handles_malformed_artifact_envelope(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            list_artifact = Path(tmpdir) / "list.json"
+            list_artifact.write_text(json.dumps(["not", "a", "bench"]), encoding="utf-8")
+            bad_summary_artifact = Path(tmpdir) / "bad_summary.json"
+            bad_summary_artifact.write_text(
+                json.dumps({"summary": ["bad"], "results": []}),
+                encoding="utf-8",
+            )
+
+            list_summary, list_rows = report_bench_watchlist.load_rows(list_artifact)
+            bad_summary, bad_summary_rows = report_bench_watchlist.load_rows(bad_summary_artifact)
+
+        self.assertEqual({}, list_summary)
+        self.assertEqual([], list_rows)
+        self.assertEqual({}, bad_summary)
+        self.assertEqual([], bad_summary_rows)
+
     def test_print_markdown_sanitizes_row_breaking_text(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             artifact = Path(tmpdir) / "bench.json"

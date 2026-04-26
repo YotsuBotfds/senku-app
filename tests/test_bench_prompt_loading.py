@@ -120,6 +120,17 @@ class BenchPromptLoadingTests(unittest.TestCase):
             ):
                 bench.load_prompts(str(prompt_path))
 
+    def test_load_prompts_jsonl_rejects_non_object_rows(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            prompt_path = Path(tmpdir) / "prompts.jsonl"
+            prompt_path.write_text(json.dumps(["not", "an", "object"]) + "\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                ValueError,
+                r"Structured prompt row 1 in .* is not an object",
+            ):
+                bench.load_prompts(str(prompt_path))
+
     def test_apply_prompt_filters_matches_structured_fields(self):
         prompt_entries = [
             bench._build_prompt_entry(

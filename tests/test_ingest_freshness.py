@@ -137,6 +137,57 @@ class IngestFreshnessTests(unittest.TestCase):
         self.assertEqual(report.status, FRESH)
         self.assertEqual(report.extra_manifest_keys, ())
 
+    def test_ambiguous_manifest_basename_matches_by_sha(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            (guides / "alpha").mkdir(parents=True)
+            (guides / "beta").mkdir()
+            write_guide(guides / "alpha" / "shared.md", "GD-001", "One")
+            write_guide(guides / "beta" / "shared.md", "GD-002", "Two", body="Different.")
+            info = collect_guide_file_info(str(guides))
+
+            normalized, extra_keys = normalize_manifest(
+                {
+                    "legacy-one": {
+                        "source_file": r"archive\shared.md",
+                        "sha256": info["GD-001"]["sha256"],
+                    },
+                    "legacy-two": {
+                        "source_file": "other/shared.md",
+                        "sha256": info["GD-002"]["sha256"],
+                    },
+                },
+                info,
+            )
+
+        self.assertEqual(set(normalized), {"GD-001", "GD-002"})
+        self.assertEqual(extra_keys, ())
+
+    def test_ambiguous_manifest_basename_without_matching_sha_is_stale(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            (guides / "alpha").mkdir(parents=True)
+            (guides / "beta").mkdir()
+            write_guide(guides / "alpha" / "shared.md", "GD-001", "One")
+            write_guide(guides / "beta" / "shared.md", "GD-002", "Two", body="Different.")
+            manifest = root / "db" / "ingest_manifest.json"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps({"legacy-key": {"source_file": "archive/shared.md", "sha256": "0" * 64}}),
+                encoding="utf-8",
+            )
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, INCOMPLETE_UNTRUSTED)
+        self.assertEqual(report.missing_guide_ids, ("GD-001", "GD-002"))
+        self.assertEqual(report.extra_manifest_keys, ("legacy-key",))
+
     def test_normalize_manifest_stringifies_malformed_keys_for_reporting(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

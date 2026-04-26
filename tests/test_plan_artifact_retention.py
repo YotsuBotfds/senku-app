@@ -339,6 +339,56 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertEqual(row["action"], "keep_protected")
         self.assertIn(manifest.as_posix(), row["protection_sources"])
 
+    def test_malformed_artifact_path_evidence_records_do_not_protect_families(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        self.write_bytes(
+            artifacts / "bench" / "valid_evidence_run" / "summary.json",
+            7,
+            age_days=90,
+        )
+        self.write_bytes(
+            artifacts / "bench" / "malformed_evidence_run" / "summary.json",
+            7,
+            age_days=90,
+        )
+        self.write_text(
+            manifest,
+            json.dumps(
+                {
+                    "artifact_path_evidence": [
+                        {
+                            "path": "artifacts/bench/valid_evidence_run",
+                            "exists": True,
+                            "kind": "directory",
+                        },
+                        "artifacts/bench/malformed_evidence_run",
+                        {
+                            "path": ["artifacts/bench/malformed_evidence_run"],
+                            "exists": True,
+                            "kind": "directory",
+                        },
+                    ]
+                }
+            )
+            + "\n",
+        )
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[],
+            manifest_paths=[manifest],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
+
+        families = {row["path"]: row for row in plan["families"]}
+        self.assertEqual(families["bench/valid_evidence_run"]["action"], "keep_protected")
+        self.assertEqual(families["bench/malformed_evidence_run"]["action"], "archive_candidate")
+        self.assertEqual(plan["summary"]["reference_count"], 1)
+
     def test_malformed_manifest_lines_do_not_abort_retention_planning(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"

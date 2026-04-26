@@ -69,6 +69,8 @@ def normalize_path(path: str | Path) -> str:
 
 
 def path_exists(path: str) -> bool:
+    if not path:
+        return False
     try:
         return (REPO_ROOT / path).exists()
     except (OSError, ValueError):

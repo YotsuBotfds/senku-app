@@ -65,6 +65,29 @@ Wait 5 minutes and recheck.
         self.assertIn("- `` Dose `limits` ``: 1", summary)
         self.assertIn("- ``` Dose ``limits`` ```: 1", summary)
 
+    def test_summary_handles_missing_or_non_scalar_report_fields(self):
+        module = load_module()
+        records = [
+            {
+                "slug": "",
+                "section_heading": None,
+            },
+            {
+                "slug": ["bad-guide"],
+                "section_heading": {"bad": "section"},
+            },
+            {
+                "text": "row missing summary fields",
+            },
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            _, summary_path = module.write_outputs(records, Path(tmpdir))
+            summary = summary_path.read_text(encoding="utf-8")
+
+        self.assertIn("- `(missing slug)`: 3", summary)
+        self.assertIn("- `(missing section)`: 3", summary)
+
     def test_non_scalar_frontmatter_metadata_is_ignored(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as tmpdir:

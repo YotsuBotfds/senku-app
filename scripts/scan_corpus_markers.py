@@ -201,6 +201,15 @@ def _escape_table(value: Any) -> str:
     return single_line.replace("|", "\\|")
 
 
+def _format_example(hit: dict[str, Any]) -> str:
+    marker = hit.get("marker")
+    if isinstance(marker, (str, int, float, bool)) and str(marker):
+        detail = marker
+    else:
+        detail = hit.get("example", "")
+    return f"L{hit.get('line', '?')} {hit.get('type', 'unknown')} {detail}"
+
+
 def render_markdown(scan: dict[str, Any]) -> str:
     summary = scan["summary"]
     lines = [
@@ -246,8 +255,7 @@ def render_markdown(scan: dict[str, Any]) -> str:
             key=lambda hit: (severity_order.get(hit["severity"], 99), hit["line"]),
         )
         examples = "; ".join(
-            f"L{hit['line']} {hit['type']} {hit['marker'] or hit['example']}"
-            for hit in example_hits[:3]
+            _format_example(hit) for hit in example_hits[:3]
         )
         lines.append(
             "| "

@@ -90,6 +90,17 @@ class IncrementalIngestPlannerTests(unittest.TestCase):
         self.assertIn("Malformed paths", text)
         self.assertTrue(any("Malformed paths" in warning for warning in plan["warnings"]))
 
+    def test_parent_traversal_paths_are_ignored_as_malformed(self):
+        root = self.make_root()
+        (root / "guides" / "water.md").write_text("# guide\n", encoding="utf-8")
+
+        plan = build_plan(["guides/water.md", "../guides/outside.md"], root=root)
+
+        self.assertEqual(plan["guide_files"], ["guides/water.md"])
+        self.assertEqual(plan["malformed_paths"], ["../guides/outside.md"])
+        self.assertNotIn("outside.md", "\n".join(plan["commands"]))
+        self.assertTrue(any("Malformed paths" in warning for warning in plan["warnings"]))
+
     def test_collect_git_changes_includes_renames_and_untracked_paths(self):
         root = self.make_root()
 

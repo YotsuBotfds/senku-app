@@ -112,6 +112,43 @@ Use ordinary text.
         self.assertIn("TODO \\| route break", markdown)
         self.assertNotIn("\r", markdown)
 
+    def test_render_markdown_falls_back_for_malformed_marker_values(self):
+        scan = {
+            "summary": {
+                "generated_at": "2026-04-26T12:00:00",
+                "guides_scanned": 1,
+                "guides_with_markers": 1,
+                "marker_counts": {"template_marker": 1},
+                "severity_counts": {"warn": 1},
+                "guide_counts_by_marker": {"template_marker": 1},
+            },
+            "guides": [
+                {
+                    "source_file": "bad-marker.md",
+                    "guide_id": "GD-200",
+                    "category": "utility",
+                    "liability_level": "",
+                    "bridge": False,
+                    "marker_counts": {"template_marker": 1},
+                    "severity_counts": {"warn": 1},
+                    "hits": [
+                        {
+                            "type": "template_marker",
+                            "severity": "warn",
+                            "line": 4,
+                            "marker": {"bad": "shape"},
+                            "example": "Use {{ bad.shape }} safely.",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        markdown = render_markdown(scan)
+
+        self.assertIn("L4 template_marker Use {{ bad.shape }} safely.", markdown)
+        self.assertNotIn("{'bad': 'shape'}", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

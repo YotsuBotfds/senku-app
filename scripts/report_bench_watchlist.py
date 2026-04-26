@@ -34,6 +34,11 @@ def numeric_value(value):
 
 def load_rows(path):
     data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return {}, []
+    summary = data.get("summary", {})
+    if not isinstance(summary, dict):
+        summary = {}
     rows = []
     for result in data.get("results", []):
         if not isinstance(result, dict):
@@ -50,7 +55,7 @@ def load_rows(path):
                 "retrieval_metadata_summary": result.get("retrieval_metadata_summary") or "",
             }
         )
-    return data.get("summary", {}), rows
+    return summary, rows
 
 
 def render_rows(rows, metric, top_n):

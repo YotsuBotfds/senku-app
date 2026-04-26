@@ -594,11 +594,25 @@ def _iter_json_strings(value: Any) -> Iterable[str]:
     if isinstance(value, str):
         yield value
     elif isinstance(value, dict):
-        for item in value.values():
+        for key, item in value.items():
+            if key == "artifact_path_evidence":
+                yield from _iter_artifact_path_evidence_strings(item)
+                continue
             yield from _iter_json_strings(item)
     elif isinstance(value, list):
         for item in value:
             yield from _iter_json_strings(item)
+
+
+def _iter_artifact_path_evidence_strings(value: Any) -> Iterable[str]:
+    if not isinstance(value, list):
+        return
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        path = item.get("path")
+        if isinstance(path, str):
+            yield path
 
 
 def _normalize_artifact_ref(value: str, artifact_root: Path) -> str | None:

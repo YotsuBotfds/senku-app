@@ -75,6 +75,10 @@ def _has_control_chars(value: str) -> bool:
     return any(ord(char) < 32 or ord(char) == 127 for char in value)
 
 
+def _has_parent_traversal(value: str) -> bool:
+    return value == ".." or value.startswith("../") or "/../" in value
+
+
 def _display_path(value: str) -> str:
     return "".join(
         char if ord(char) >= 32 and ord(char) != 127 else f"\\x{ord(char):02x}"
@@ -144,7 +148,7 @@ def build_plan(
         rel_path = normalize_requested_path(change.path, root)
         if not rel_path:
             continue
-        if _has_control_chars(rel_path):
+        if _has_control_chars(rel_path) or _has_parent_traversal(rel_path):
             malformed_paths.append(rel_path)
             continue
         file_exists = (root / rel_path).is_file()

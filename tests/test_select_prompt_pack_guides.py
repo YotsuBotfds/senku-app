@@ -50,6 +50,25 @@ class SelectPromptPackGuidesTests(unittest.TestCase):
 
         self.assertEqual(guide_ids, ["GD-001", "GD-002"])
 
+    def test_load_prompt_pack_normalizes_mixed_case_guide_ids(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pack = Path(tmpdir) / "pack.jsonl"
+            pack.write_text(
+                json.dumps(
+                    {
+                        "id": "row",
+                        "expected_guide_ids": ["gd-001", "GD-002"],
+                        "primary_expected_guides": ["Gd-001"],
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            guide_ids = load_prompt_pack_guide_ids(pack)
+
+        self.assertEqual(guide_ids, ["GD-001", "GD-002"])
+
     def test_load_prompt_pack_skips_malformed_jsonl_rows(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             pack = Path(tmpdir) / "pack.jsonl"

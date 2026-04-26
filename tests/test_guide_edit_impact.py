@@ -114,6 +114,17 @@ class GuideEditImpactTests(unittest.TestCase):
         self.assertNotIn("\x00", rendered)
         self.assertIn("guides/bad<NUL>name.md", rendered)
 
+    def test_blank_path_does_not_report_repo_root_as_existing_file(self):
+        module = load_module()
+
+        change = module.classify_path('   ""   ')
+        rendered = module.render_markdown(module.build_plan(['   ""   ']))
+
+        self.assertEqual(change.path, "")
+        self.assertEqual(change.categories, ("other",))
+        self.assertFalse(change.exists)
+        self.assertIn("- ``: other missing", rendered)
+
     def test_json_cli_output_is_parseable(self):
         module = load_module()
 

@@ -381,6 +381,32 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("`?? notes/OTHER_HANDOFF.md`", markdown)
         self.assertNotIn("`?? notes/PLANNER_HANDOFF", markdown)
 
+    def test_git_summary_uses_safe_code_spans_for_backtick_output(self):
+        root = self.make_tmpdir()
+
+        def runner(command, cwd):
+            joined = " ".join(command)
+            if joined == "git rev-parse --short HEAD":
+                return subprocess.CompletedProcess(command, 0, "abc`123\n", "")
+            if joined == "git log -5 --oneline --decorate":
+                return subprocess.CompletedProcess(command, 0, "abc`123 change `subject`\n", "")
+            if joined == "git status --short":
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    " M scripts/name`with`tick.py\n"
+                    "?? notes/PLANNER_HANDOFF_back`tick.md\n",
+                    "",
+                )
+            return subprocess.CompletedProcess(command, 1, "", "unexpected")
+
+        markdown = "\n".join(collect_git_summary(root, runner))
+
+        self.assertIn("- HEAD: `` abc`123 ``", markdown)
+        self.assertIn("- `` abc`123 change `subject` ``", markdown)
+        self.assertIn("- ``  M scripts/name`with`tick.py ``", markdown)
+        self.assertIn("`` notes/PLANNER_HANDOFF_back`tick.md ``", markdown)
+
     def test_artifact_summary_excludes_log_body_content(self):
         root = self.make_tmpdir()
         log = root / "secret_progress.log"

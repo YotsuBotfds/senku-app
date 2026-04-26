@@ -51,6 +51,13 @@ def _escape_md(value: object) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
 
 
+def _md_code(value: object) -> str:
+    text = str(value).replace("\r", " ").replace("\n", " ")
+    if "`" not in text:
+        return f"`{text}`"
+    return f"`` {text} ``"
+
+
 def _relative_path(path: Path, repo_root: Path) -> str:
     try:
         return path.relative_to(repo_root).as_posix()
@@ -96,14 +103,14 @@ def collect_git_summary(repo_root: Path, runner: CommandRunner = run_command) ->
 
     lines: list[str] = []
     if head.returncode == 0:
-        lines.append(f"- HEAD: `{head.stdout.strip() or 'unknown'}`")
+        lines.append(f"- HEAD: {_md_code(head.stdout.strip() or 'unknown')}")
     else:
         lines.append("- HEAD: unavailable")
 
     lines.append("")
     lines.append("### Latest Commits")
     if commits.returncode == 0 and commits.stdout.strip():
-        lines.extend(f"- `{line}`" for line in commits.stdout.splitlines()[:5])
+        lines.extend(f"- {_md_code(line)}" for line in commits.stdout.splitlines()[:5])
     else:
         lines.append("- No commit data available.")
 
@@ -112,7 +119,7 @@ def collect_git_summary(repo_root: Path, runner: CommandRunner = run_command) ->
     if status.returncode == 0:
         actionable_lines, benign_lines = _split_actionable_status_lines(status.stdout)
         if actionable_lines:
-            lines.extend(f"- `{line}`" for line in actionable_lines[:12])
+            lines.extend(f"- {_md_code(line)}" for line in actionable_lines[:12])
             if len(actionable_lines) > 12:
                 lines.append(f"- ... {len(actionable_lines) - 12} more actionable status entries")
         else:
@@ -120,7 +127,7 @@ def collect_git_summary(repo_root: Path, runner: CommandRunner = run_command) ->
         if benign_lines:
             lines.append(
                 "- Benign untracked: "
-                + ", ".join(f"`{line[3:]}`" for line in benign_lines[:4])
+                + ", ".join(_md_code(line[3:]) for line in benign_lines[:4])
             )
             if len(benign_lines) > 4:
                 lines.append(f"- ... {len(benign_lines) - 4} more benign untracked entries")

@@ -584,6 +584,14 @@ Action:
   ingestion skips unusable metric paths, and guide prompt wrappers now keep
   local/main wave allowlists in parity; answer-card validation now rejects
   blank required metadata with explicit field errors.
+- Hardened planner/snapshot/report tooling: ingest freshness only uses legacy
+  basename manifest matching when the basename is unique, incremental ingest
+  planning rejects parent traversal paths, artifact retention protection ignores
+  malformed artifact-evidence records, startup context git summaries escape
+  inline-code data safely, guide-impact treats blank normalized paths as
+  missing, invariant/watchlist/corpus-marker Markdown reports tolerate malformed
+  summary rows, and prompt-pack loading/selection tests pin fail-closed
+  non-object rows plus stable mixed-case guide-id normalization.
 
 Validation:
 
@@ -609,6 +617,13 @@ Validation:
   `tests.test_run_validation_slice`, `tests.test_summarize_artifact_storage`,
   `tests.test_validate_prompt_expectations`, and
   `tests.test_citation_validation` cover the validation/artifact/audit tooling
+  hardening batch.
+- `tests.test_agent_context_snapshot`, `tests.test_bench_prompt_loading`,
+  `tests.test_extract_guide_invariants`, `tests.test_guide_edit_impact`,
+  `tests.test_ingest_freshness`, `tests.test_plan_artifact_retention`,
+  `tests.test_plan_incremental_ingest`, `tests.test_report_bench_watchlist`,
+  `tests.test_scan_corpus_markers`, and
+  `tests.test_select_prompt_pack_guides` cover the planner/snapshot/report
   hardening batch.
 
 Deferred unless evidenced:
