@@ -41,6 +41,31 @@ Second line of answer.
             "First line of answer.\nSecond line of answer.",
         )
 
+    def test_parse_bench_markdown_responses_stops_at_padded_source_headers(self):
+        markdown = """# Report
+
+## 1. What now?
+*Section: Core Regression*
+
+Answer before cited sources.
+
+  **Sources:**
+  - cited guide that should not become answer text
+
+## 2. What else?
+*Section: Core Regression*
+
+Answer before retrieved context.
+
+  **Retrieved Context (not explicitly cited):**
+  - retrieved guide that should not become answer text
+"""
+
+        responses = parse_bench_markdown_responses(markdown)
+
+        self.assertEqual(responses[1], "Answer before cited sources.")
+        self.assertEqual(responses[2], "Answer before retrieved context.")
+
     def test_build_eval_rows_falls_back_to_markdown_response_text(self):
         root = self.make_tmpdir()
         json_path = root / "bench_sample.json"

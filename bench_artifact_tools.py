@@ -85,18 +85,13 @@ def parse_bench_markdown_results(markdown_text):
 
 def _extract_response_from_section(section_body):
     """Return just the model response content from one markdown prompt section."""
-    content = section_body
-    for source_header in SOURCE_HEADERS:
-        marker = f"\n{source_header}\n"
-        if marker in content:
-            content = content.split(marker, 1)[0]
-            break
-
     lines = []
     started = False
-    for raw_line in content.splitlines():
+    for raw_line in section_body.splitlines():
         line = raw_line.rstrip()
         stripped = line.strip()
+        if stripped in SOURCE_HEADERS:
+            break
         if not started:
             if not stripped:
                 continue

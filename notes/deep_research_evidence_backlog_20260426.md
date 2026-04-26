@@ -291,6 +291,9 @@ Action:
 - Aligned agent startup snapshots with the same actionable-clean semantics,
   keeping protected planner handoff paths visible as benign context instead of
   dirty worktree entries.
+- Hardened bench Markdown response recovery so padded source/context headings
+  stop answer extraction instead of leaking source bullets into fallback
+  response text.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
