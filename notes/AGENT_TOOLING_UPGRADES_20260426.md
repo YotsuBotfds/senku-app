@@ -30,6 +30,17 @@ self-indexing fix. Current pushed commits:
 - `7f8e774` single-step CI embedding/index/gate execution so the FastEmbed
   process stays alive for retrieval eval
 
+## Near-Top Dependency/Security Queue
+
+- Add dependency locking/scanning prep from the completed tooling scout: create
+  a reproducible Python dependency lock path (`uv lock` or equivalent), enable
+  Dependabot for Python and GitHub Actions, add a local/CI `pip-audit` or OSV
+  scan lane, and track Gradle dependency verification as an Android follow-on
+  rather than reopening emulator work in this slice.
+- Keep this as queue prep only until assigned: no workflow/code edits from this
+  note pass; expected future touch points are dependency metadata, security scan
+  scripts/workflows, and Android Gradle verification docs or config.
+
 ## Tonight Top 3
 
 1. Runtime endpoint preflight
