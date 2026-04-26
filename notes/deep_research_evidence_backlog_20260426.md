@@ -240,6 +240,9 @@ Action:
 - Added direct token-estimation coverage for empty input, fallback word/
   punctuation splitting, dense-string character floors, and the tokenizer-backed
   encoder path without requiring the optional tokenizer dependency.
+- Added direct metadata validation coverage for guide-record coercion, legacy
+  `id` fallback, error truncation, report error detection, formatted failures,
+  and JSON report writing.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
