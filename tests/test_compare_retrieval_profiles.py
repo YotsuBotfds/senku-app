@@ -210,6 +210,34 @@ class CompareRetrievalProfilesTests(unittest.TestCase):
         self.assertIn("line label:4", markdown)
         self.assertIn("pipe\\|label:2", markdown)
 
+    def test_render_markdown_flattens_carriage_returns_in_table_cells(self):
+        payload = {
+            "prompt_pack": "pack.jsonl",
+            "generated_at": "2026-04-26T00:00:00",
+            "config": {"top_k": 8},
+            "profile_rows": [
+                {
+                    "profile": "base\rprofile",
+                    "hit_at_1_rate": None,
+                    "hit_at_3_rate": None,
+                    "hit_at_k_rate": None,
+                    "mean_owner_share": None,
+                    "mean_latency_ms": None,
+                    "p95_latency_ms": None,
+                    "top1_marker_risk_counts": {"warn\ronly": "2\rparts"},
+                }
+            ],
+            "deltas_vs_baseline": [],
+        }
+
+        markdown = self.module.render_markdown(payload)
+
+        table_rows = [line for line in markdown.splitlines() if line.startswith("|")]
+        self.assertEqual(len(table_rows), 3)
+        self.assertIn("base profile", markdown)
+        self.assertIn("warn only:2 parts", markdown)
+        self.assertNotIn("\r", markdown)
+
     def test_cli_parse_accepts_profiles_and_outputs(self):
         args = self.module.parse_args(
             [

@@ -30,6 +30,14 @@ def markdown_value(value):
         return str(value).strip()
 
 
+def _scalar_text(value) -> str:
+    if isinstance(value, str):
+        return value.strip()
+    if value is None or isinstance(value, (list, tuple, set, dict)):
+        return ""
+    return str(value).strip()
+
+
 def load_structured_prompt_pack(path):
     prompt_path = Path(path)
     suffix = prompt_path.suffix.lower()
@@ -44,25 +52,29 @@ def load_structured_prompt_pack(path):
                 line = line.strip()
                 if not line:
                     continue
-                rows.append(_clean_prompt_row(json.loads(line)))
+                row = json.loads(line)
+                if isinstance(row, dict):
+                    rows.append(_clean_prompt_row(row))
         return [row for row in rows if row.get("question")]
     raise SystemExit(f"Unsupported prompt pack format for {prompt_path}")
 
 
 def _prompt_text(row):
-    return (row.get("prompt") or row.get("question") or "").strip()
+    if not isinstance(row, dict):
+        return ""
+    return _scalar_text(row.get("prompt")) or _scalar_text(row.get("question"))
 
 
 def _clean_prompt_row(row):
     question = _prompt_text(row)
-    section = (row.get("section") or "").strip() or "Unsectioned"
+    section = _scalar_text(row.get("section")) or "Unsectioned"
     return {
-        "prompt_id": (row.get("id") or row.get("prompt_id") or "").strip(),
-        "lane": (row.get("lane") or "").strip(),
+        "prompt_id": _scalar_text(row.get("id")) or _scalar_text(row.get("prompt_id")),
+        "lane": _scalar_text(row.get("lane")),
         "section": section,
-        "style": (row.get("style") or "").strip(),
-        "target_behavior": (row.get("target_behavior") or "").strip(),
-        "what_it_tests": (row.get("what_it_tests") or "").strip(),
+        "style": _scalar_text(row.get("style")),
+        "target_behavior": _scalar_text(row.get("target_behavior")),
+        "what_it_tests": _scalar_text(row.get("what_it_tests")),
         "question": question,
     }
 

@@ -192,7 +192,7 @@ def _append_table(lines: list[str], title: str, rows: list[dict[str, Any]], colu
     for row in rows:
         parts = []
         for column in columns:
-            value = row[column]
+            value = row.get(column, "") if isinstance(row, dict) else ""
             if column == "bytes":
                 value = _format_bytes(value)
             if isinstance(value, list):
@@ -207,10 +207,16 @@ def _append_duplicates(lines: list[str], rows: list[dict[str, Any]]) -> None:
         lines.append("  (none)")
         return
     for row in rows:
-        examples = ", ".join(_inline_text(example["path"]) for example in row["examples"])
+        if not isinstance(row, dict):
+            row = {}
+        examples = ", ".join(
+            _inline_text(example.get("path", "") if isinstance(example, dict) else example)
+            for example in row.get("examples", [])
+        )
         lines.append(
-            f"  basename={_inline_text(row['basename'])}  count={_inline_text(row['count'])}  "
-            f"bytes={_format_bytes(row['bytes'])}  examples={examples}"
+            f"  basename={_inline_text(row.get('basename', ''))}  "
+            f"count={_inline_text(row.get('count', ''))}  "
+            f"bytes={_format_bytes(row.get('bytes', ''))}  examples={examples}"
         )
 
 

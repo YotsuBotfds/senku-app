@@ -1,4 +1,5 @@
 import importlib.util
+from collections import Counter
 import tempfile
 import unittest
 from pathlib import Path
@@ -174,6 +175,37 @@ title: Gamma
             ],
         )
         self.assertEqual(graph["summary"]["edge_count"], 2)
+
+    def test_markdown_summary_sanitizes_code_span_values(self):
+        module = load_module()
+        graph = {
+            "summary": {
+                "node_count": 1,
+                "edge_count": 1,
+                "orphan_count": 1,
+                "edge_type_counts": Counter({"frontmatter_related": 1}),
+            },
+            "nodes": [],
+            "edges": [],
+            "orphans": ["odd`slug\nnext-list-item"],
+            "top_incoming": [
+                {
+                    "guide_id": "GD-`001\nspoof",
+                    "slug": "odd`slug\nnext-list-item",
+                    "title": "",
+                    "count": 1,
+                }
+            ],
+            "top_outgoing": [],
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            _, md_path = module.write_outputs(graph, Path(tmpdir))
+            summary = md_path.read_text(encoding="utf-8")
+
+        self.assertIn("- `` GD-`001 spoof `` `` odd`slug next-list-item ``: 1", summary)
+        self.assertIn("- `` odd`slug next-list-item ``", summary)
+        self.assertNotIn("spoof\n", summary)
+        self.assertNotIn("next-list-item\n-", summary)
 
 
 if __name__ == "__main__":

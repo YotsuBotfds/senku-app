@@ -536,6 +536,14 @@ Action:
   commands while surfacing escaped malformed-path evidence, and artifact
   retention dry-run Markdown renders path/family cells as escaped code text
   without changing approval-only retention behavior.
+- Hardened report-helper surfaces: prompt-pack answer packaging skips malformed
+  JSONL prompt rows and structured prompt fields, trace JSONL writes convert
+  non-finite floats before strict serialization, bench artifact eval extraction
+  skips non-object result rows and malformed retrieval metadata, guide graph
+  summaries escape inline-code values, artifact-storage text output tolerates
+  malformed rows, retrieval-profile Markdown flattens carriage returns, and
+  metadata coverage treats false-like/list-shaped routing and related fields as
+  absent.
 
 Validation:
 
@@ -904,6 +912,11 @@ Validation:
   `tests.test_plan_artifact_retention` cover scalar-only catalog frontmatter,
   malformed-path incremental-ingest reporting, and retention dry-run Markdown
   escaping.
+- `tests.test_package_dual_model_answers_markdown`, `tests.test_rag_trace`,
+  `tests.test_bench_artifact_tools`, `tests.test_build_guide_graph`,
+  `tests.test_summarize_artifact_storage`,
+  `tests.test_compare_retrieval_profiles`, and
+  `tests.test_audit_metadata_coverage` cover the report-helper hardening batch.
 
 Deferred unless evidenced:
 

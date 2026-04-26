@@ -131,7 +131,7 @@ def load_bench_artifact(path):
     if markdown_path.exists():
         response_fallbacks = parse_bench_markdown_responses(markdown_path.read_text(encoding="utf-8"))
 
-    for result in data.get("results", []):
+    for result in _iter_result_rows(data.get("results", [])):
         if result.get("response_text"):
             continue
         fallback = response_fallbacks.get(result.get("index"))
@@ -153,8 +153,8 @@ def build_eval_rows(paths):
         data = artifact["data"]
         config = data.get("config", {})
         summary = data.get("summary", {})
-        for result in data.get("results", []):
-            retrieval_metadata = result.get("retrieval_metadata") or {}
+        for result in _iter_result_rows(data.get("results", [])):
+            retrieval_metadata = _dict_or_empty(result.get("retrieval_metadata"))
             top_retrieved_guide_ids = retrieval_metadata.get("top_retrieved_guide_ids") or []
             rows.append({
                 "artifact_name": artifact["path"].name,
@@ -195,6 +195,21 @@ def build_eval_rows(paths):
                 "worker": result.get("worker"),
             })
     return rows
+
+
+def _iter_result_rows(results):
+    """Yield only dict-shaped result rows from artifact payloads."""
+    if not isinstance(results, list):
+        return
+    for result in results:
+        if isinstance(result, dict):
+            yield result
+
+
+def _dict_or_empty(value):
+    if isinstance(value, dict):
+        return value
+    return {}
 
 
 def _join_sanitized_values(values):

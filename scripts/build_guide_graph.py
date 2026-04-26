@@ -77,6 +77,14 @@ def normalize_slug_reference(value) -> str:
     return match.group(1).lower()
 
 
+def markdown_code(value) -> str:
+    text = str(value).replace("\r", " ").replace("\n", " ")
+    if "`" not in text:
+        return f"`{text}`"
+    fence = "`" * (max(len(match.group(0)) for match in re.finditer(r"`+", text)) + 1)
+    return f"{fence} {text} {fence}"
+
+
 def load_guides(guides_dir: Path) -> tuple[list[dict], dict[str, dict]]:
     guides = []
     by_slug = {}
@@ -245,16 +253,16 @@ def write_outputs(graph: dict, output_dir: Path) -> tuple[Path, Path]:
 
     lines.extend(["", "## Top Incoming", ""])
     for item in graph["top_incoming"]:
-        lines.append(f"- `{item['guide_id']}` `{item['slug']}`: {item['count']}")
+        lines.append(f"- {markdown_code(item['guide_id'])} {markdown_code(item['slug'])}: {item['count']}")
 
     lines.extend(["", "## Top Outgoing", ""])
     for item in graph["top_outgoing"]:
-        lines.append(f"- `{item['guide_id']}` `{item['slug']}`: {item['count']}")
+        lines.append(f"- {markdown_code(item['guide_id'])} {markdown_code(item['slug'])}: {item['count']}")
 
     lines.extend(["", "## Orphans", ""])
     if graph["orphans"]:
         for slug in graph["orphans"]:
-            lines.append(f"- `{slug}`")
+            lines.append(f"- {markdown_code(slug)}")
     else:
         lines.append("- none")
 

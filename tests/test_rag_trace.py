@@ -1,4 +1,5 @@
 import json
+import math
 import tempfile
 import threading
 import unittest
@@ -262,6 +263,37 @@ class RAGTraceTests(unittest.TestCase):
 
         self.assertEqual(attrs["safe"], True)
         self.assertIn("'", attrs["tags"])
+
+    def test_direct_write_converts_non_finite_values_to_json_strings(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "trace.jsonl"
+            with RAGTraceWriter(path) as writer:
+                writer.write(
+                    {
+                        "name": "manual",
+                        "duration_ms": math.inf,
+                        "attributes": {
+                            "score": math.nan,
+                            "finite_score": 0.25,
+                        },
+                        "events": [
+                            {
+                                "name": "rank",
+                                "attributes": {"delta": -math.inf},
+                            }
+                        ],
+                    }
+                )
+
+            raw = path.read_text(encoding="utf-8")
+            rows = read_jsonl(path)
+
+        self.assertNotIn("NaN", raw)
+        self.assertNotIn("Infinity", raw)
+        self.assertEqual(rows[0]["duration_ms"], "inf")
+        self.assertEqual(rows[0]["attributes"]["score"], "nan")
+        self.assertEqual(rows[0]["attributes"]["finite_score"], 0.25)
+        self.assertEqual(rows[0]["events"][0]["attributes"]["delta"], "-inf")
 
     def test_sanitize_attributes_redacts_plural_prompt_question_fields(self):
         attrs = sanitize_attributes(

@@ -144,6 +144,36 @@ class SummarizeArtifactStorageTests(unittest.TestCase):
         self.assertIn("path=tmp reports  bytes=0 B  files=  markers=tmp prefix", text)
         self.assertIn("basename=summary .json  count=  bytes=0 B  examples=bench summary.json", text)
 
+    def test_render_text_tolerates_malformed_rows(self):
+        summary = {
+            "root": "artifacts",
+            "exists": True,
+            "total_bytes": 9,
+            "file_count": 1,
+            "dir_count": 1,
+            "largest_files": [{"path": "bench/result.json"}, "not-a-row"],
+            "largest_dirs": [{"bytes": 9, "files": 1}],
+            "suffix_counts": [{"suffix": ".json", "bytes": 9}],
+            "generated_dirs": [{"path": "tmp_reports", "markers": ["tmp\nprefix"]}],
+            "duplicate_basename_families": [
+                {"basename": "result.json", "bytes": 9, "examples": [{"path": "bench/result.json"}, "loose/path"]},
+                "not-a-family",
+            ],
+        }
+
+        text = render_text(summary)
+
+        self.assertIn("path=bench/result.json  bytes=0 B", text)
+        self.assertIn("path=  bytes=0 B", text)
+        self.assertIn("path=  bytes=9 B  files=1", text)
+        self.assertIn("suffix=.json  count=  bytes=9 B", text)
+        self.assertIn("path=tmp_reports  bytes=0 B  files=  markers=tmp prefix", text)
+        self.assertIn(
+            "basename=result.json  count=  bytes=9 B  examples=bench/result.json, loose/path",
+            text,
+        )
+        self.assertIn("basename=  count=  bytes=0 B  examples=", text)
+
     def test_main_emits_json(self):
         root = self.make_tmpdir()
         self.write_bytes(root / "bench" / "summary.json", 4)

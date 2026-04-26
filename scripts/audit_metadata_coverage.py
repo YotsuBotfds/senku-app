@@ -6,6 +6,7 @@ import argparse
 import json
 import re
 import sys
+from collections.abc import Mapping
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -46,23 +47,42 @@ BODY_ROUTING_PHRASES = (
     "switch to",
 )
 FRONTMATTER_KEY_VALUE_RE = re.compile(r"^\s*([^:]+)\s*:\s*(.*)$")
+FALSE_LIKE_METADATA_STRINGS = {"", "false", "0", "no", "none", "null"}
+
+
+def _is_false_like_metadata_value(value: Any) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, bool):
+        return not value
+    if isinstance(value, str):
+        return value.strip().lower() in FALSE_LIKE_METADATA_STRINGS
+    if isinstance(value, (int, float)) and not value:
+        return True
+    return False
 
 
 def _as_list(value: Any) -> list[str]:
-    if value is None:
+    if _is_false_like_metadata_value(value) or isinstance(value, Mapping):
         return []
-    if isinstance(value, list):
-        return [str(item).strip() for item in value if str(item).strip()]
-    return [item.strip() for item in str(value).split(",") if item.strip()]
+    if isinstance(value, (list, tuple, set)):
+        return [
+            str(item).strip()
+            for item in value
+            if not _is_false_like_metadata_value(item)
+            and not isinstance(item, (Mapping, list, tuple, set))
+            and str(item).strip()
+        ]
+    return [
+        item.strip()
+        for item in str(value).split(",")
+        if not _is_false_like_metadata_value(item)
+    ]
 
 
 def _has_any_key(metadata: dict[str, Any], keys: tuple[str, ...]) -> bool:
     def has_meaningful_value(value: Any) -> bool:
-        if isinstance(value, bool):
-            return value
-        if isinstance(value, str):
-            return value.strip().lower() not in {"", "false", "0", "no", "none"}
-        if isinstance(value, (int, float)) and not value:
+        if _is_false_like_metadata_value(value):
             return False
         if isinstance(value, list):
             return any(has_meaningful_value(item) for item in value)

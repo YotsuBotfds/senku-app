@@ -294,6 +294,50 @@ Body.
         self.assertIn("missing_citation_policy", record["gaps"])
         self.assertEqual(record["severity"], "gap")
 
+    def test_high_liability_false_like_metadata_shapes_do_not_satisfy_gaps(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guides_dir = Path(tmpdir) / "guides"
+            guides_dir.mkdir()
+            (guides_dir / "false-shaped-metadata-guide.md").write_text(
+                """---
+id: GD-108
+slug: false-shaped-metadata-guide
+title: False Shaped Metadata Guide
+category: medical
+description: A high risk guide.
+liability_level: high
+tags: [medical]
+aliases: false
+routing_cues:
+  primary: false
+related: ["none", "0", false]
+citations_required:
+  required: false
+applicability:
+  use_when: none
+  not_for: false
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir)
+
+        record = audit["guides"][0]
+        self.assertEqual(record["aliases_count"], 0)
+        self.assertEqual(record["routing_cues_count"], 0)
+        self.assertEqual(record["related_count"], 0)
+        self.assertFalse(record["has_structured_routing_support"])
+        self.assertFalse(record["has_citation_policy"])
+        self.assertFalse(record["has_applicability"])
+        self.assertIn("missing_routing_support", record["gaps"])
+        self.assertIn("missing_related", record["gaps"])
+        self.assertIn("missing_citation_policy", record["gaps"])
+        self.assertIn("missing_applicability", record["gaps"])
+        self.assertEqual(record["severity"], "gap")
+
     def test_low_liability_metadata_gaps_are_not_counted_as_high_liability_gaps(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"

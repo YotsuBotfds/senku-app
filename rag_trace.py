@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextvars
 import json
+import math
 import secrets
 import threading
 import time
@@ -124,7 +125,12 @@ class RAGTraceWriter:
             if self._handle is None:
                 raise ValueError("trace writer is closed")
             self._handle.write(
-                json.dumps(_sanitize_record(record), sort_keys=True, separators=(",", ":"))
+                json.dumps(
+                    _sanitize_record(record),
+                    allow_nan=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
                 + "\n"
             )
             self._handle.flush()
@@ -302,8 +308,12 @@ def _is_sensitive_key(key: str) -> bool:
 
 
 def _json_safe(value: Any) -> Any:
-    if value is None or isinstance(value, (str, int, float, bool)):
+    if value is None or isinstance(value, (str, bool, int)):
         return value
+    if isinstance(value, float):
+        if math.isfinite(value):
+            return value
+        return str(value)
     if isinstance(value, Mapping):
         return {str(key): _json_safe(inner) for key, inner in value.items()}
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):

@@ -69,6 +69,43 @@ class PackageDualModelAnswersMarkdownTests(unittest.TestCase):
         self.assertEqual("Where next?", rows[0]["question"])
         self.assertEqual("Navigation", rows[0]["section"])
 
+    def test_load_structured_prompt_pack_ignores_malformed_jsonl_rows_and_fields(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "prompts.jsonl"
+            path.write_text(
+                "\n".join(
+                    [
+                        json.dumps(["not", "a", "row"]),
+                        json.dumps(
+                            {
+                                "prompt_id": ["structured"],
+                                "question": {"text": "structured"},
+                                "section": ["bad"],
+                            }
+                        ),
+                        json.dumps(
+                            {
+                                "id": {"bad": "id"},
+                                "prompt": " Keep this? ",
+                                "lane": {"bad": "lane"},
+                                "style": ["bad"],
+                            }
+                        ),
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            rows = packager.load_structured_prompt_pack(path)
+
+        self.assertEqual(1, len(rows))
+        self.assertEqual("", rows[0]["prompt_id"])
+        self.assertEqual("", rows[0]["lane"])
+        self.assertEqual("", rows[0]["style"])
+        self.assertEqual("Unsectioned", rows[0]["section"])
+        self.assertEqual("Keep this?", rows[0]["question"])
+
     def test_prompt_key_prefers_prompt_id_over_question(self):
         self.assertEqual(
             ("prompt_id", "P-003"),

@@ -202,7 +202,7 @@ def _md_value(value: Any) -> str:
         return ""
     if isinstance(value, float):
         return f"{value:.4f}".rstrip("0").rstrip(".")
-    return str(value).replace("|", "\\|").replace("\n", " ")
+    return str(value).replace("|", "\\|").replace("\r", " ").replace("\n", " ")
 
 
 def _marker_risk_text(marker_risks: Mapping[Any, Any] | None) -> str:

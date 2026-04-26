@@ -144,6 +144,68 @@ Recovered from markdown.
         self.assertEqual(rows[0]["cited_guide_ids"], "GD-001,42")
         self.assertEqual(rows[0]["top_retrieved_guide_ids"], "GD-002,43")
 
+    def test_build_eval_rows_ignores_non_dict_result_rows(self):
+        root = self.make_tmpdir()
+        json_path = root / "bench_sample.json"
+        json_path.write_text(
+            json.dumps(
+                {
+                    "config": {},
+                    "summary": {"total_prompts": 3},
+                    "results": [
+                        "not a result row",
+                        ["also", "not", "a", "row"],
+                        {
+                            "index": 1,
+                            "section": "Core Regression",
+                            "question": "What now?",
+                            "cited_guide_ids": ["GD-001"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-002"]
+                            },
+                            "response_text": "Answer.",
+                        },
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_eval_rows([json_path])
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["question"], "What now?")
+        self.assertEqual(rows[0]["cited_guide_ids"], "GD-001")
+        self.assertEqual(rows[0]["top_retrieved_guide_ids"], "GD-002")
+
+    def test_build_eval_rows_treats_malformed_retrieval_metadata_as_empty(self):
+        root = self.make_tmpdir()
+        json_path = root / "bench_sample.json"
+        json_path.write_text(
+            json.dumps(
+                {
+                    "config": {},
+                    "summary": {"total_prompts": 1},
+                    "results": [
+                        {
+                            "index": 1,
+                            "section": "Core Regression",
+                            "question": "What now?",
+                            "cited_guide_ids": ["GD-001"],
+                            "retrieval_metadata": ["not", "metadata"],
+                            "response_text": "Answer.",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_eval_rows([json_path])
+
+        self.assertEqual(rows[0]["cited_guide_ids"], "GD-001")
+        self.assertEqual(rows[0]["top_retrieved_guide_ids"], "")
+
     def test_build_eval_rows_supports_standalone_markdown_artifact(self):
         root = self.make_tmpdir()
         md_path = root / "bench_sample.md"
