@@ -358,6 +358,7 @@ def collect_artifact_path_evidence(
     *,
     evidence_paths: dict[str, Path] | None = None,
     repo_root: Path | None = None,
+    entry_limit: int | None = None,
 ) -> dict[str, object]:
     entries: list[dict[str, object]] = []
     missing: list[str] = []
@@ -367,14 +368,15 @@ def collect_artifact_path_evidence(
         try:
             exists = path.exists()
         except OSError as exc:
-            entries.append(
-                {
-                    "path": value,
-                    "exists": False,
-                    "kind": "unknown",
-                    "error": exc.__class__.__name__,
-                }
-            )
+            if entry_limit is None or len(entries) < entry_limit:
+                entries.append(
+                    {
+                        "path": value,
+                        "exists": False,
+                        "kind": "unknown",
+                        "error": exc.__class__.__name__,
+                    }
+                )
             missing.append(value)
             continue
 
@@ -387,7 +389,8 @@ def collect_artifact_path_evidence(
             entry["modified_at"] = _format_mtime(path)
         else:
             missing.append(value)
-        entries.append(entry)
+        if entry_limit is None or len(entries) < entry_limit:
+            entries.append(entry)
 
     return {
         "entries": entries,
@@ -421,9 +424,10 @@ def build_record(
         repo_root=repo_root,
     )
     artifact_evidence = collect_artifact_path_evidence(
-        artifact_summary["paths"],
+        list(artifact_summary["evidence_paths"].keys()),
         evidence_paths=artifact_summary["evidence_paths"],
         repo_root=repo_root,
+        entry_limit=len(artifact_summary["paths"]),
     )
     generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     return {

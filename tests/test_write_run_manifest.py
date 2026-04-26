@@ -493,6 +493,40 @@ class WriteRunManifestTests(unittest.TestCase):
         self.assertEqual(record["artifact_path_count"], 3)
         self.assertTrue(record["artifact_path_truncated"])
 
+    def test_truncated_artifact_paths_still_count_hidden_missing_outputs(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            present_path = root / "artifacts" / "bench" / "present" / "report.md"
+            present_path.parent.mkdir(parents=True)
+            present_path.write_text("ok\n", encoding="utf-8")
+            manifest_path = root / "manifest.jsonl"
+
+            payload = _run_script(
+                [
+                    "--task",
+                    "artifact-hidden-missing",
+                    "--lane",
+                    "tooling",
+                    "--output",
+                    "artifacts/bench/present/report.md",
+                    "--output",
+                    "artifacts/bench/missing/report.md",
+                    "--artifact-path-limit",
+                    "1",
+                    "--manifest-path",
+                    str(manifest_path),
+                ],
+                cwd=tmpdir,
+            )
+
+        self.assertEqual(payload["artifact_path"], ["artifacts/bench/present/report.md"])
+        self.assertEqual(payload["artifact_path_count"], 2)
+        self.assertTrue(payload["artifact_path_truncated"])
+        self.assertEqual(payload["artifact_path_missing"], ["artifacts/bench/missing/report.md"])
+        self.assertEqual(payload["artifact_path_missing_count"], 1)
+        self.assertEqual(len(payload["artifact_path_evidence"]), 1)
+        self.assertIs(payload["artifact_path_evidence"][0]["exists"], True)
+
     def test_git_failure_is_graceful(self):
         def failing_runner(args):
             return CommandResult(stdout="", stderr="not a git repository", returncode=128)
