@@ -13,6 +13,8 @@ param(
 
     [switch]$AllowRetrievalWarnings,
 
+    [string]$AllowedDriftManifest = "notes\specs\partial_router_allowed_drift_20260426.json",
+
     [string]$GeneratedBenchJson = "",
 
     [switch]$FailOnGeneratedRegression,
@@ -95,7 +97,9 @@ function Add-FastGateCommands {
         [int]$RetrievalTopK,
 
         [Parameter(Mandatory)]
-        [bool]$StrictWarnings
+        [bool]$StrictWarnings,
+
+        [string]$AllowedDriftManifest = ""
     )
 
     $retrievalJson = "artifacts\bench\${BenchStem}_${RunLabel}_retrieval_only.json"
@@ -132,6 +136,9 @@ function Add-FastGateCommands {
         "$RetrievalTopK",
         '--fail-on-errors'
     )
+    if (-not [string]::IsNullOrWhiteSpace($AllowedDriftManifest)) {
+        $validationArgs += @('--allowed-drift-manifest', $AllowedDriftManifest)
+    }
     if ($StrictWarnings) {
         $validationArgs += '--fail-on-warnings'
     }
@@ -300,7 +307,8 @@ if ($Mode -in @('Fast', 'All')) {
         -CommandPrefix 'PartialRouter' `
         -RunLabel $runLabel `
         -RetrievalTopK $TopK `
-        -StrictWarnings $strictWarnings
+        -StrictWarnings $strictWarnings `
+        -AllowedDriftManifest $AllowedDriftManifest
 
     if ($IncludeSafetyCritical) {
         Add-FastGateCommands `

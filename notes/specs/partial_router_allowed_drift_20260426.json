@@ -1,0 +1,10 @@
+{
+  "allowed_drift": [
+    {
+      "prompt_id": "RE2-UP-011",
+      "issue_codes": ["retrieval_missing_expected_owner"],
+      "guide_ids": ["GD-219"],
+      "reason": "Accepted clarify/limited-fit partial-router row documented in notes/dispatch/RAG-NEXT_current_backlog_triage_20260425.md."
+    }
+  ]
+}

@@ -33,6 +33,8 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertIn("PartialRouter.retrieval_eval", result.stdout)
         self.assertIn("PartialRouter.retrieval_expectations", result.stdout)
         self.assertIn("rag_eval_partial_router_holdouts_20260425_unit_label_retrieval_only.json", result.stdout)
+        self.assertIn("--allowed-drift-manifest", result.stdout)
+        self.assertIn("notes\\specs\\partial_router_allowed_drift_20260426.json", result.stdout)
         self.assertIn("--fail-on-warnings", result.stdout)
 
     def test_allow_retrieval_warnings_omits_strict_warning_flag(self):
