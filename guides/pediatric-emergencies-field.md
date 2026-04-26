@@ -52,20 +52,20 @@ Accurate weight is critical for medication dosing and fluid calculations. Use th
 
 **Infants (0-12 months):**
 ```
-Weight (kg) = (Age in months Ãƒâ€” 0.5) + 4
-Example: 6-month-old = (6 Ãƒâ€” 0.5) + 4 = 7 kg
+Weight (kg) = (Age in months × 0.5) + 4
+Example: 6-month-old = (6 × 0.5) + 4 = 7 kg
 ```
 
 **Children (1-10 years):**
 ```
-Weight (kg) = (Age in years Ãƒâ€” 2) + 8
-Example: 5-year-old = (5 Ãƒâ€” 2) + 8 = 18 kg
+Weight (kg) = (Age in years × 2) + 8
+Example: 5-year-old = (5 × 2) + 8 = 18 kg
 ```
 
 **Adolescents (11-16 years):**
 ```
-Weight (kg) = (Age in years Ãƒâ€” 3) + 7
-Example: 14-year-old = (14 Ãƒâ€” 3) + 7 = 49 kg
+Weight (kg) = (Age in years × 3) + 7
+Example: 14-year-old = (14 × 3) + 7 = 49 kg
 ```
 
 If child is visibly overweight or small for age, adjust downward or upward by 5-10 kg as clinical judgment dictates.
@@ -133,8 +133,8 @@ In children, **maintain normal blood pressure longer than adults** during shock 
 ### Sepsis Assessment Protocol
 
 1. **Temperature:** Use any available thermometer (oral, axillary, rectal)
-   - Fever >38.5Ã‚Â°C with other signs = concerning
-   - Hypothermia (<36Ã‚Â°C) in sepsis is worse than fever
+   - Fever >38.5°C with other signs = concerning
+   - Hypothermia (<36°C) in sepsis is worse than fever
 
 2. **Mental status:**
    - Normal alertness = good sign
@@ -166,7 +166,7 @@ In children, **maintain normal blood pressure longer than adults** during shock 
 3. **Antibiotics:** Initiate within first hour if possible
    - **If community-acquired pneumonia suspected:** Ceftriaxone 50-80 mg/kg/day (max 2g) IV/IM
    - **If broad-spectrum (unknown source):** Cefotaxime 50 mg/kg IV q4-6h + Gentamicin 7.5 mg/kg/day IV
-   - If NO IV access and infection is suspected, do NOT delayÃ¢â‚¬â€treat with IM or oral antibiotics
+   - If NO IV access and infection is suspected, do NOT delay—treat with IM or oral antibiotics
 
 4. **Maintain temperature control:** Do not actively cool febrile child; keep warm with blankets
 5. **Monitor urine output:** Encourage drinking if conscious and able to swallow; if decreased, suspect shock
@@ -236,9 +236,9 @@ Each kg above 20: 1 mL/kg/hour
 ```
 
 **Example:** 25 kg child
-- First 10 kg: 10 Ãƒâ€” 4 = 40 mL/hour
-- Next 10 kg: 10 Ãƒâ€” 2 = 20 mL/hour
-- Remaining 5 kg: 5 Ãƒâ€” 1 = 5 mL/hour
+- First 10 kg: 10 × 4 = 40 mL/hour
+- Next 10 kg: 10 × 2 = 20 mL/hour
+- Remaining 5 kg: 5 × 1 = 5 mL/hour
 - **Total: 65 mL/hour**
 
 :::info-box
@@ -285,7 +285,7 @@ Maintenance fluids replace ongoing losses (urine, insensible loss). They do NOT 
 - Escalate urgently
 
 :::danger
-Epiglottitis is life-threatening. Child appears very ill, cannot swallow saliva, has stridor, and high fever. Do not delay antibiotics for imaging. This requires advanced airway managementÃ¢â‚¬â€escalate immediately.
+Epiglottitis is life-threatening. Child appears very ill, cannot swallow saliva, has stridor, and high fever. Do not delay antibiotics for imaging. This requires advanced airway management—escalate immediately.
 :::
 
 #### Foreign Body Aspiration
@@ -341,7 +341,7 @@ Epiglottitis is life-threatening. Child appears very ill, cannot swallow saliva,
 - **Action:** Oxygen, medication (epinephrine for croup, bronchodilators), hydration
 
 **Severe distress:**
-- RR very elevated (or may be decreasingÃ¢â‚¬â€sign of fatigue)
+- RR very elevated (or may be decreasing—sign of fatigue)
 - Stridor at rest
 - Severe retractions, nasal flaring, grunting
 - Altered mental status, cyanosis
@@ -476,20 +476,20 @@ This documentation allows any subsequent provider to understand what was done an
 :::affiliate
 **If you're preparing in advance,** stock pediatric emergency supplies for field management:
 
-- [Pediatric First Aid Kit (Comprehensive)](https://www.amazon.com/dp/B08P8N7MHF?tag=offlinecompen-20) Ã¢â‚¬â€ Pre-assembled with pediatric-sized supplies and reference cards
-- [Infant Bag-Valve-Mask (BVM) Kit](https://www.amazon.com/dp/B09XKR4JZY?tag=offlinecompen-20) Ã¢â‚¬â€ Manual ventilation equipment sized for neonates and infants
-- [Pediatric Stethoscope with Dual Sides](https://www.amazon.com/dp/B07T8G8J7N?tag=offlinecompen-20) Ã¢â‚¬â€ Appropriately-sized earpieces for children; clearer lung sounds
-- [Pediatric Drug Dosing Reference Card](https://www.amazon.com/dp/B0BHJKLJY7?tag=offlinecompen-20) Ã¢â‚¬â€ Weight-based dosing by age for critical medications
+- [Pediatric First Aid Kit (Comprehensive)](https://www.amazon.com/dp/B08P8N7MHF?tag=offlinecompen-20) — Pre-assembled with pediatric-sized supplies and reference cards
+- [Infant Bag-Valve-Mask (BVM) Kit](https://www.amazon.com/dp/B09XKR4JZY?tag=offlinecompen-20) — Manual ventilation equipment sized for neonates and infants
+- [Pediatric Stethoscope with Dual Sides](https://www.amazon.com/dp/B07T8G8J7N?tag=offlinecompen-20) — Appropriately-sized earpieces for children; clearer lung sounds
+- [Pediatric Drug Dosing Reference Card](https://www.amazon.com/dp/B0BHJKLJY7?tag=offlinecompen-20) — Weight-based dosing by age for critical medications
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide Ã¢â‚¬â€ see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 ## References & Related Guides
 
-- <a href="../infant-child-care.html">Infant & Child Care</a> Ã¢â‚¬â€ Foundational care before escalation to emergency protocols
-- <a href="../sepsis-recognition-antibiotic-protocols.html">Sepsis Recognition, Escalation & Empiric Antibiotic Protocols</a> Ã¢â‚¬â€ Detailed sepsis assessment and antibiotic selection for infected children
-- <a href="../pediatric-emergency-medicine.html">Pediatric Emergency Medicine</a> Ã¢â‚¬â€ Comprehensive pediatric emergency management
-- <a href="../medications.html">Essential Medications</a> Ã¢â‚¬â€ Pediatric-specific medication dosing and administration
+- <a href="../infant-child-care.html">Infant & Child Care</a> — Foundational care before escalation to emergency protocols
+- <a href="../sepsis-recognition-antibiotic-protocols.html">Sepsis Recognition, Escalation & Empiric Antibiotic Protocols</a> — Detailed sepsis assessment and antibiotic selection for infected children
+- <a href="../pediatric-emergency-medicine.html">Pediatric Emergency Medicine</a> — Comprehensive pediatric emergency management
+- <a href="../medications.html">Essential Medications</a> — Pediatric-specific medication dosing and administration
 
 ---
 
