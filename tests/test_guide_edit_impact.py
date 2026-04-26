@@ -85,6 +85,8 @@ class GuideEditImpactTests(unittest.TestCase):
                 " M guides/first-aid.md\n"
                 "R  guides/old.md -> guides/new.md\n"
                 "?? notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md\n"
+                "?? notes\\PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md\n"
+                "?? notes/new-note.md\n"
             ),
             stderr="",
         )
@@ -97,7 +99,7 @@ class GuideEditImpactTests(unittest.TestCase):
             [
                 "guides/first-aid.md",
                 "guides/new.md",
-                "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
+                "notes/new-note.md",
             ],
         )
 

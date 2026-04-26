@@ -37,6 +37,12 @@ RUNTIME_PREFIXES = (
     "deterministic_special_case_registry.py",
     "special_case_builders.py",
 )
+PROTECTED_BENIGN_UNTRACKED = {
+    "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
+    "notes/PLANNER_HANDOFF_2026-04-25_POST_CLI_TERMINATION.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
+}
 
 
 @dataclass(frozen=True)
@@ -75,7 +81,10 @@ def read_git_status_paths() -> list[str]:
         payload = line[3:] if len(line) > 3 else line.strip()
         if " -> " in payload:
             payload = payload.split(" -> ", 1)[1]
-        paths.append(normalize_path(payload))
+        normalized = normalize_path(payload)
+        if line[:2] == "??" and normalized in PROTECTED_BENIGN_UNTRACKED:
+            continue
+        paths.append(normalized)
     return paths
 
 

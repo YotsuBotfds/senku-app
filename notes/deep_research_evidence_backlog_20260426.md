@@ -297,6 +297,9 @@ Action:
 - Aligned worktree-delta summaries with the protected planner handoff policy,
   excluding those local handoff notes from actionable changed-file counts while
   reporting the benign exclusion count.
+- Aligned guide-edit impact planning with the protected planner handoff policy,
+  so `--from-git-status` ignores local handoff notes and keeps validation
+  planning focused on guide/card/runtime edits.
 - Added structured worker-lane dirty summaries with parsed entry details and
   status counts while preserving the existing compact entries contract.
 - Hardened bench Markdown response recovery so padded source/context headings
