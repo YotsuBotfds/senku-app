@@ -74,6 +74,39 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
         )
         self.assertGreaterEqual(len(calls), 1)
 
+    def test_broad_pediatric_card_does_not_crowd_out_airway_fallback(self):
+        choking_card = {
+            "card_id": "choking_airway_obstruction",
+            "guide_id": "GD-232",
+            "review_status": "pilot_reviewed",
+            "source_sections": [{"guide": "GD-298"}],
+        }
+        pediatric_card = {
+            "card_id": "pediatric_emergency_medicine",
+            "guide_id": "GD-298",
+            "review_status": "pilot_reviewed",
+        }
+
+        cards = runtime._answer_cards_for_results(
+            {"metadatas": [[{"guide_id": "GD-298"}]]},
+            question="My child is choking and cannot cough.",
+            max_cards=2,
+            runtime_answer_cards=lambda: [choking_card, pediatric_card],
+            citation_allowlist_from_results=lambda results: ["GD-298"],
+            prioritized_answer_card_ids_for_question=lambda question: ["choking_airway_obstruction"],
+            answer_card_matches_question=lambda card, question: runtime._answer_card_matches_question(
+                card,
+                question,
+                is_airway_obstruction_rag_query=lambda text: "choking" in text,
+                has_allergy_or_anaphylaxis_trigger=lambda text: False,
+                is_newborn_sepsis_danger_query=lambda text: False,
+                is_meningitis_rash_emergency_query=lambda text: False,
+            ),
+            card_source_guide_ids=runtime._card_source_guide_ids,
+        )
+
+        self.assertEqual([card["card_id"] for card in cards], ["choking_airway_obstruction"])
+
     def test_prioritized_answer_cards_can_match_full_retrieved_allowlist(self):
         poison_card = {
             "card_id": "poisoning_unknown_ingestion",

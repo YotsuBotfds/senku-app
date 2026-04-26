@@ -271,6 +271,14 @@ def _answer_card_matches_question(
         return is_meningitis_rash_emergency_query(question)
     if card_id == "choking_airway_obstruction":
         return is_airway_obstruction_rag_query(question) and not has_allergy_or_anaphylaxis_trigger(question)
+    if card_id == "pediatric_emergency_medicine":
+        return _is_pediatric_emergency_medicine_card_query(
+            question,
+            is_airway_obstruction_rag_query=is_airway_obstruction_rag_query,
+            has_allergy_or_anaphylaxis_trigger=has_allergy_or_anaphylaxis_trigger,
+            is_newborn_sepsis_danger_query=is_newborn_sepsis_danger_query,
+            is_meningitis_rash_emergency_query=is_meningitis_rash_emergency_query,
+        )
     if card_id == "poisoning_unknown_ingestion":
         return is_poisoning_unknown_ingestion_card_query(question)
     if card_id == "infected_wound_spreading_infection":
@@ -280,6 +288,67 @@ def _answer_card_matches_question(
     if card_id == "community_kitchen_illness_control":
         return is_community_kitchen_illness_control_card_query(question)
     return True
+
+
+_PEDIATRIC_CONTEXT_TERMS = {
+    "baby",
+    "child",
+    "children",
+    "infant",
+    "kid",
+    "neonate",
+    "newborn",
+    "pediatric",
+    "toddler",
+}
+_PEDIATRIC_EMERGENCY_TERMS = {
+    "altered mental",
+    "blue",
+    "capillary refill",
+    "convulsion",
+    "cyanotic",
+    "dehydration",
+    "febrile seizure",
+    "grunting",
+    "hard to wake",
+    "head bobbing",
+    "lethargic",
+    "limp",
+    "mottled",
+    "nasal flaring",
+    "not peeing",
+    "poor feeding",
+    "retractions",
+    "seizure",
+    "shock",
+    "stridor",
+    "trouble breathing",
+    "unresponsive",
+}
+
+
+def _is_pediatric_emergency_medicine_card_query(
+    question,
+    *,
+    is_airway_obstruction_rag_query,
+    has_allergy_or_anaphylaxis_trigger,
+    is_newborn_sepsis_danger_query,
+    is_meningitis_rash_emergency_query,
+):
+    lower = str(question or "").lower()
+    if not lower:
+        return False
+
+    if is_airway_obstruction_rag_query(question) and not has_allergy_or_anaphylaxis_trigger(question):
+        return False
+    if is_newborn_sepsis_danger_query(question):
+        return False
+    if is_meningitis_rash_emergency_query(question):
+        return False
+
+    if not _text_has_any(lower, _PEDIATRIC_CONTEXT_TERMS):
+        return False
+    return _text_has_any(lower, _PEDIATRIC_EMERGENCY_TERMS)
 
 
 _ANAPHYLAXIS_EXPOSURE_TERMS = {
