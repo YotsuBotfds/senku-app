@@ -223,6 +223,9 @@ Action:
   metadata.
 - Added a generated round-trip overlap proof that every matrix winner matches
   the live `classify_special_case()` result for the canonical overlap prompt.
+- Added a diagnostics/acceptance separation proof: a generated answer with
+  emergency-first wording and a `deterministic_pass` diagnostic bucket still
+  remains `needs_evidence_owner` when it cites only a non-expected guide.
 
 Validation:
 

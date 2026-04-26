@@ -325,6 +325,32 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_supported")
         self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
 
+    def test_app_acceptance_missing_owner_beats_diagnostic_bucket(self):
+        diagnostics = app_acceptance_diagnostics(
+            {
+                "question": "Generated emergency answer with the wrong owner",
+                "response_text": "Call emergency help now. [GD-2]",
+                "decision_path": "deterministic",
+                "answer_provenance": "deterministic_rule",
+            },
+            bucket="deterministic_pass",
+            expected_ids=["GD-1"],
+            candidate_ids=["GD-2"],
+            cited_ids=["GD-2"],
+            app_gate_fields={"safety_critical": "true"},
+            answer_card_fields={"answer_card_status": "pass"},
+            claim_support_fields={"claim_support_status": "pass"},
+            generated="yes",
+            safety_prompt_detector=lambda _question: True,
+            emergency_contract_detector=lambda _answer: True,
+        )
+
+        self.assertEqual(diagnostics["app_acceptance_status"], "needs_evidence_owner")
+        self.assertEqual(diagnostics["evidence_owner_status"], "non_expected_owner_cited")
+        self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_supported")
+        self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
+        self.assertIn("bucket_deterministic_pass", diagnostics["app_acceptance_reason"])
+
     def test_app_acceptance_classifies_safety_emergency_first_missing(self):
         diagnostics = app_acceptance_diagnostics(
             {"question": "Safety prompt", "response_text": "Watch closely at home. [GD-1]"},
