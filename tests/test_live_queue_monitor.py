@@ -31,6 +31,41 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertEqual(len(summary["entries"]), 2)
         self.assertTrue(summary["truncated"])
 
+    def test_parse_git_status_short_splits_benign_untracked_paths(self):
+        module = load_module()
+
+        summary = module.parse_git_status_short(
+            "?? notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md\n M query.py\n",
+            benign_untracked_paths={"notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md"},
+        )
+
+        self.assertFalse(summary["clean"])
+        self.assertFalse(summary["raw_clean"])
+        self.assertEqual(summary["total_changed"], 1)
+        self.assertEqual(summary["raw_total_changed"], 2)
+        self.assertEqual(summary["status_counts"], {" M": 1})
+        self.assertEqual(summary["raw_status_counts"], {"??": 1, " M": 1})
+        self.assertEqual(
+            summary["benign_untracked"],
+            [{"status": "??", "path": "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md"}],
+        )
+        self.assertEqual(summary["entries"], [{"status": " M", "path": "query.py"}])
+
+    def test_parse_git_status_short_is_clean_when_only_benign_untracked_is_present(self):
+        module = load_module()
+
+        summary = module.parse_git_status_short(
+            "?? notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md\n",
+            benign_untracked_paths={"notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md"},
+        )
+
+        self.assertTrue(summary["clean"])
+        self.assertFalse(summary["raw_clean"])
+        self.assertEqual(summary["total_changed"], 0)
+        self.assertEqual(summary["raw_total_changed"], 1)
+        self.assertEqual(summary["entries"], [])
+        self.assertEqual(summary["benign_untracked_count"], 1)
+
     def test_collect_git_summary_uses_injected_runner(self):
         module = load_module()
         calls = []
@@ -43,6 +78,8 @@ class LiveQueueMonitorTests(unittest.TestCase):
                 return module.CommandResult(stdout="main\n")
             if args[:3] == ["rev-parse", "--short", "HEAD"]:
                 return module.CommandResult(stdout="abc1234\n")
+            if args[:2] == ["rev-parse", "HEAD"]:
+                return module.CommandResult(stdout="abc1234def5678\n")
             if args and args[0] == "log":
                 return module.CommandResult(
                     stdout="abc1234\t2026-04-25T12:00:00+00:00\tAdd monitor\n"
@@ -58,8 +95,31 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertIn(("status", "--short"), calls)
         self.assertEqual(summary["branch"], "main")
         self.assertEqual(summary["head"], "abc1234")
+        self.assertEqual(summary["head_full"], "abc1234def5678")
         self.assertEqual(summary["status"]["total_changed"], 1)
         self.assertEqual(summary["latest_commits"][0]["subject"], "Add monitor")
+
+    def test_collect_git_summary_treats_protected_handoff_as_benign(self):
+        module = load_module()
+
+        def fake_git_runner(repo_root, args):
+            if args[:2] == ["status", "--short"]:
+                return module.CommandResult(stdout="?? notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md\n")
+            if args[:2] == ["branch", "--show-current"]:
+                return module.CommandResult(stdout="master\n")
+            if args[:3] == ["rev-parse", "--short", "HEAD"]:
+                return module.CommandResult(stdout="3c8678b\n")
+            if args[:2] == ["rev-parse", "HEAD"]:
+                return module.CommandResult(stdout="3c8678b000000000000000000000000000000000\n")
+            return module.CommandResult(stdout="")
+
+        summary = module.collect_git_summary(Path("repo"), git_runner=fake_git_runner)
+
+        self.assertTrue(summary["status"]["clean"])
+        self.assertFalse(summary["status"]["raw_clean"])
+        self.assertEqual(summary["status"]["total_changed"], 0)
+        self.assertEqual(summary["status"]["raw_total_changed"], 1)
+        self.assertEqual(summary["status"]["benign_untracked_count"], 1)
 
     def test_collect_dispatch_pointers_sorts_recent_and_filters_tooling(self):
         module = load_module()
@@ -105,6 +165,39 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertIn("artifacts/bench/run_diag", diagnostic_paths)
         self.assertIn("artifacts/bench/run_diag/report.md", diagnostic_paths)
 
+    def test_collect_cp9_summary_extracts_active_snippet_and_rag_landings(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            notes_dir = root / "notes"
+            notes_dir.mkdir()
+            cp9 = notes_dir / "CP9_ACTIVE_QUEUE.md"
+            cp9.write_text(
+                "\n".join(
+                    [
+                        "# CP9 Active Queue",
+                        "",
+                        "## Active",
+                        "",
+                        "No slices currently in flight.",
+                        "- `RAG-S10` answer-provenance labels landed: proof exists.",
+                        "- `RAG-A7` kept the Android runtime path narrow.",
+                        "",
+                        "## Backlog",
+                        "- Older item.",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            summary = module.collect_cp9_summary(root, limit=3)
+
+        self.assertEqual(summary["path"], "notes/CP9_ACTIVE_QUEUE.md")
+        self.assertEqual(summary["title"], "CP9 Active Queue")
+        self.assertEqual(summary["active_snippet"][0], "No slices currently in flight.")
+        self.assertIn("RAG-S10 answer-provenance labels landed", summary["rag_landed"][0])
+        self.assertEqual(len(summary["rag_landed"]), 1)
+
     def test_collect_monitor_data_and_render_html_are_server_independent(self):
         module = load_module()
 
@@ -115,6 +208,8 @@ class LiveQueueMonitorTests(unittest.TestCase):
                 return module.CommandResult(stdout="main\n")
             if args[:3] == ["rev-parse", "--short", "HEAD"]:
                 return module.CommandResult(stdout="abc1234\n")
+            if args[:2] == ["rev-parse", "HEAD"]:
+                return module.CommandResult(stdout="abc1234def5678\n")
             return module.CommandResult(stdout="")
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -131,9 +226,11 @@ class LiveQueueMonitorTests(unittest.TestCase):
 
         self.assertEqual(data["timestamp"], "2026-04-25T12:34:56-05:00")
         self.assertTrue(data["git"]["status"]["clean"])
+        self.assertIn("cp9", data)
         self.assertIn("fetch('/status.json?ts='", rendered)
         self.assertIn("setInterval(refresh, REFRESH_MS)", rendered)
         self.assertIn("Polling every <code>20s</code>", rendered)
+        self.assertIn("CP9 / RAG Queue", rendered)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import re
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -20,7 +21,10 @@ DEFAULT_REFRESH_SECONDS = 20
 DEFAULT_DISPATCH_LIMIT = 10
 DEFAULT_BENCH_LIMIT = 16
 DEFAULT_COMMIT_LIMIT = 6
+DEFAULT_CP9_SNIPPET_LIMIT = 6
+DEFAULT_CP9_LINE_CHARS = 280
 SKIP_DISPATCH_FILENAMES = {"README.md", "dispatch_index.generated.md"}
+PROTECTED_BENIGN_UNTRACKED = {"notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md"}
 
 
 @dataclass(frozen=True)
@@ -72,25 +76,45 @@ def _git_error(result: CommandResult) -> str | None:
     return None
 
 
-def parse_git_status_short(status_text: str, *, limit: int = 40) -> dict[str, Any]:
+def parse_git_status_short(
+    status_text: str,
+    *,
+    limit: int = 40,
+    benign_untracked_paths: set[str] | None = None,
+) -> dict[str, Any]:
     counts: dict[str, int] = {}
+    actionable_counts: dict[str, int] = {}
     entries: list[dict[str, str]] = []
+    benign_untracked: list[dict[str, str]] = []
     total = 0
+    actionable_total = 0
+    benign_paths = {path.replace("\\", "/") for path in benign_untracked_paths or set()}
     for raw_line in status_text.splitlines():
         if not raw_line.strip():
             continue
         total += 1
         status = raw_line[:2]
-        path = raw_line[3:].strip() if len(raw_line) > 3 else ""
+        path = (raw_line[3:].strip() if len(raw_line) > 3 else "").replace("\\", "/")
         counts[status] = counts.get(status, 0) + 1
+        entry = {"status": status, "path": path}
+        if status == "??" and path in benign_paths:
+            benign_untracked.append(entry)
+            continue
+        actionable_total += 1
+        actionable_counts[status] = actionable_counts.get(status, 0) + 1
         if len(entries) < limit:
-            entries.append({"status": status, "path": path.replace("\\", "/")})
+            entries.append(entry)
     return {
-        "clean": total == 0,
-        "total_changed": total,
-        "status_counts": counts,
+        "clean": actionable_total == 0,
+        "raw_clean": total == 0,
+        "total_changed": actionable_total,
+        "raw_total_changed": total,
+        "status_counts": actionable_counts,
+        "raw_status_counts": counts,
         "entries": entries,
-        "truncated": total > len(entries),
+        "benign_untracked": benign_untracked,
+        "benign_untracked_count": len(benign_untracked),
+        "truncated": actionable_total > len(entries),
     }
 
 
@@ -128,23 +152,37 @@ def collect_git_summary(
     status_result = git_runner(repo_root, ["status", "--short"])
     branch_result = git_runner(repo_root, ["branch", "--show-current"])
     head_result = git_runner(repo_root, ["rev-parse", "--short", "HEAD"])
+    head_full_result = git_runner(repo_root, ["rev-parse", "HEAD"])
     log_result = git_runner(
         repo_root,
         ["log", f"-n{commit_limit}", "--date=iso-strict", "--pretty=format:%h%x09%cI%x09%s"],
     )
 
     status_error = _git_error(status_result)
-    status = parse_git_status_short(status_result.stdout) if not status_error else {
-        "clean": False,
-        "total_changed": 0,
-        "status_counts": {},
-        "entries": [],
-        "truncated": False,
-        "error": status_error,
-    }
+    status = (
+        parse_git_status_short(
+            status_result.stdout,
+            benign_untracked_paths=PROTECTED_BENIGN_UNTRACKED,
+        )
+        if not status_error
+        else {
+            "clean": False,
+            "raw_clean": False,
+            "total_changed": 0,
+            "raw_total_changed": 0,
+            "status_counts": {},
+            "raw_status_counts": {},
+            "entries": [],
+            "benign_untracked": [],
+            "benign_untracked_count": 0,
+            "truncated": False,
+            "error": status_error,
+        }
+    )
     return {
         "branch": branch_result.stdout.strip() if not _git_error(branch_result) else "",
         "head": head_result.stdout.strip() if not _git_error(head_result) else "",
+        "head_full": head_full_result.stdout.strip() if not _git_error(head_full_result) else "",
         "status": status,
         "latest_commits": parse_git_commits(log_result.stdout) if not _git_error(log_result) else [],
         "latest_commits_error": _git_error(log_result),
@@ -270,6 +308,94 @@ def collect_bench_artifacts(
     }
 
 
+def _markdown_section(text: str, heading: str) -> list[str]:
+    lines = text.splitlines()
+    start_index: int | None = None
+    heading_marker = f"## {heading}".casefold()
+    for index, line in enumerate(lines):
+        if line.strip().casefold() == heading_marker:
+            start_index = index + 1
+            break
+    if start_index is None:
+        return []
+
+    section: list[str] = []
+    for line in lines[start_index:]:
+        if line.startswith("## "):
+            break
+        section.append(line)
+    return section
+
+
+def _compact_markdown_line(line: str) -> str:
+    compact = line.strip()
+    compact = re.sub(r"^\s*[-*]\s+", "", compact)
+    compact = re.sub(r"\*\*([^*]+)\*\*", r"\1", compact)
+    compact = compact.replace("`", "")
+    return compact.strip()
+
+
+def _truncate_text(text: str, *, max_chars: int = DEFAULT_CP9_LINE_CHARS) -> str:
+    if len(text) <= max_chars:
+        return text
+    return text[: max(0, max_chars - 3)].rstrip() + "..."
+
+
+def _compact_snippet(lines: Sequence[str], *, limit: int) -> list[str]:
+    snippet: list[str] = []
+    for line in lines:
+        compact = _compact_markdown_line(line)
+        if not compact:
+            continue
+        snippet.append(_truncate_text(compact))
+        if len(snippet) >= limit:
+            break
+    return snippet
+
+
+def collect_cp9_summary(
+    repo_root: Path,
+    *,
+    limit: int = DEFAULT_CP9_SNIPPET_LIMIT,
+) -> dict[str, Any]:
+    cp9_path = repo_root / "notes" / "CP9_ACTIVE_QUEUE.md"
+    if not cp9_path.is_file():
+        return {
+            "path": repo_relative(cp9_path, repo_root),
+            "active_snippet": [],
+            "rag_landed": [],
+            "error": f"missing {repo_relative(cp9_path, repo_root)}",
+        }
+
+    try:
+        text = cp9_path.read_text(encoding="utf-8", errors="replace")
+        stat = cp9_path.stat()
+    except OSError as exc:
+        return {
+            "path": repo_relative(cp9_path, repo_root),
+            "active_snippet": [],
+            "rag_landed": [],
+            "error": exc.__class__.__name__,
+        }
+
+    active_lines = _markdown_section(text, "Active")
+    landed = [
+        _truncate_text(_compact_markdown_line(line))
+        for line in active_lines
+        if "landed" in line.casefold() and re.search(r"`?RAG-[A-Z0-9-]+`?", line)
+    ]
+    landed = [line for line in landed if line]
+    return {
+        "path": repo_relative(cp9_path, repo_root),
+        "title": _first_heading(text),
+        "mtime": datetime.fromtimestamp(stat.st_mtime, timezone.utc).astimezone().isoformat(
+            timespec="seconds"
+        ),
+        "active_snippet": _compact_snippet(active_lines, limit=limit),
+        "rag_landed": landed[:limit],
+    }
+
+
 def collect_monitor_data(
     repo_root: Path,
     *,
@@ -285,6 +411,7 @@ def collect_monitor_data(
         "repo_root": str(root),
         "git": collect_git_summary(root, commit_limit=commit_limit, git_runner=git_runner),
         "queues": collect_dispatch_pointers(root, limit=dispatch_limit),
+        "cp9": collect_cp9_summary(root),
         "bench": collect_bench_artifacts(root, limit=bench_limit),
     }
 
@@ -401,6 +528,12 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
       <ul id="tooling"></ul>
     </section>
     <section class="wide">
+      <h2>CP9 / RAG Queue</h2>
+      <ul id="cp9-active"></ul>
+      <h2>Recent RAG Landings</h2>
+      <ul id="cp9-landed"></ul>
+    </section>
+    <section class="wide">
       <h2>Newest Bench Diagnostics</h2>
       <ul id="diagnostics"></ul>
     </section>
@@ -443,6 +576,19 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
       }}
       values.forEach((item) => appendPointer(list, item));
     }};
+    const fillTextList = (id, values, emptyText) => {{
+      const list = el(id);
+      clear(list);
+      if (!values || !values.length) {{
+        empty(list, emptyText);
+        return;
+      }}
+      values.forEach((text) => {{
+        const item = document.createElement('li');
+        item.textContent = text;
+        list.appendChild(item);
+      }});
+    }};
     function render(data) {{
       el('repo-root').textContent = data.repo_root || '';
       el('snapshot-time').textContent = data.timestamp || '';
@@ -459,10 +605,19 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
         ? `Git status unavailable: ${{status.error}}`
         : `${{status.clean ? 'Clean' : `${{status.total_changed || 0}} changed`}} on ${{branch}} ${{head}}`;
       statusBox.appendChild(line);
+      const benign = status.benign_untracked || [];
+      if (benign.length) {{
+        const detail = document.createElement('div');
+        detail.className = 'meta';
+        detail.textContent = `Benign untracked: ${{benign.map((item) => item.path).join(', ')}}`;
+        statusBox.appendChild(detail);
+      }}
       fillList('git-files', status.entries || [], 'No worktree changes.');
       fillList('commits', data.git ? data.git.latest_commits : [], 'No commits found.');
       fillList('dispatch', data.queues ? data.queues.active : [], 'No active dispatch notes found.');
       fillList('tooling', data.queues ? data.queues.tooling : [], 'No tooling notes found.');
+      fillTextList('cp9-active', data.cp9 ? data.cp9.active_snippet : [], 'No CP9 active queue snippet found.');
+      fillTextList('cp9-landed', data.cp9 ? data.cp9.rag_landed : [], 'No recent RAG landings found.');
       fillList('diagnostics', data.bench ? data.bench.diagnostics : [], 'No bench diagnostics found.');
       fillList('bench', data.bench ? data.bench.newest : [], 'No bench artifacts found.');
     }}
