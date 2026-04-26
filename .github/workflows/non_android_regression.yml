@@ -11,6 +11,7 @@ on:
         options:
           - Fast
           - Generated
+          - Structural
           - All
       label:
         description: Optional output label. Defaults to the GitHub run id.

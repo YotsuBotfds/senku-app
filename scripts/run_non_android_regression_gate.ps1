@@ -2,7 +2,7 @@
 param(
     [string]$Label = "",
 
-    [ValidateSet('Fast', 'Generated', 'All')]
+    [ValidateSet('Fast', 'Generated', 'Structural', 'All')]
     [string]$Mode = 'Fast',
 
     [string]$VenvPath = ".venvs\senku-validate",
@@ -149,6 +149,26 @@ function Add-FastGateCommands {
         -Name "$CommandPrefix.retrieval_expectations" `
         -Executable $PythonPath `
         -Arguments $validationArgs))
+}
+
+function Add-StructuralGateCommands {
+    param(
+        [System.Collections.ArrayList]$Commands,
+
+        [Parameter(Mandatory)]
+        [string]$PythonPath,
+
+        [Parameter(Mandatory)]
+        [string]$PackPath,
+
+        [Parameter(Mandatory)]
+        [string]$CommandPrefix
+    )
+
+    [void]$Commands.Add((New-GateCommand `
+        -Name "$CommandPrefix.prompt_expectations" `
+        -Executable $PythonPath `
+        -Arguments @('-B', 'scripts\validate_prompt_expectations.py', $PackPath, '--fail-on-errors')))
 }
 
 function Add-GeneratedGateCommands {
@@ -351,6 +371,20 @@ if ($Mode -in @('Fast', 'All')) {
             -RetrievalTopK $TopK `
             -StrictWarnings $false
     }
+}
+
+if ($Mode -eq 'Structural') {
+    Add-StructuralGateCommands `
+        -Commands $commandsToRun `
+        -PythonPath $pythonPath `
+        -PackPath 'artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl' `
+        -CommandPrefix 'PartialRouter'
+
+    Add-StructuralGateCommands `
+        -Commands $commandsToRun `
+        -PythonPath $pythonPath `
+        -PackPath 'artifacts\prompts\adhoc\rag_eval9_high_liability_compound_holdouts_20260426.jsonl' `
+        -CommandPrefix 'Eval9Primary'
 }
 
 if ($Mode -in @('Generated', 'All')) {

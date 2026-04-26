@@ -21,6 +21,14 @@ Run the default partial/router structural plus retrieval-only gate:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 -Label <label>
 ```
 
+Run the prompt-expectation-only structural gate when you need a fast offline
+check with no retrieval index, FastEmbed service, or generated-output
+diagnostics:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 -Mode Structural -Label <label>
+```
+
 Include the optional safety-critical EVAL6 retrieval checks when the edit
 touches high-liability guide language, routing, owner hints, or prompt
 expectations:

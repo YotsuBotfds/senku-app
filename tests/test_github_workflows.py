@@ -115,6 +115,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             retrieval_cache_step["if"],
         )
         triggers = workflow.get("on", workflow.get(True, {}))
+        self.assertEqual(
+            ["Fast", "Generated", "Structural", "All"],
+            triggers["workflow_dispatch"]["inputs"]["mode"]["options"],
+        )
         self.assertIn("retrieval_index_flavor", triggers["workflow_dispatch"]["inputs"])
         self.assertEqual(
             "compact",

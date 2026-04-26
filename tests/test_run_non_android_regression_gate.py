@@ -130,6 +130,31 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         )
         self.assertNotIn("FastEmbed", result.stdout)
 
+    def test_structural_mode_whatif_omits_retrieval_and_generated_commands(self):
+        result = self.run_script(
+            "-Mode",
+            "Structural",
+            "-Label",
+            "unit_label",
+            "-WhatIf",
+        )
+
+        self.assertIn("Non-Android regression gate dry run. Label: unit_label", result.stdout)
+        self.assertIn("PartialRouter.prompt_expectations", result.stdout)
+        self.assertIn("Eval9Primary.prompt_expectations", result.stdout)
+        self.assertIn("scripts\\validate_prompt_expectations.py", result.stdout)
+        self.assertIn("rag_eval_partial_router_holdouts_20260425.jsonl", result.stdout)
+        self.assertIn("rag_eval9_high_liability_compound_holdouts_20260426.jsonl", result.stdout)
+
+        self.assertNotIn("PartialRouter.retrieval_eval", result.stdout)
+        self.assertNotIn("Eval9Primary.retrieval_eval", result.stdout)
+        self.assertNotIn("scripts\\evaluate_retrieval_pack.py", result.stdout)
+        self.assertNotIn("Generated.failure_analysis", result.stdout)
+        self.assertNotIn("scripts\\analyze_rag_bench_failures.py", result.stdout)
+        self.assertNotIn("Generated.regression_gate", result.stdout)
+        self.assertNotIn("scripts\\rag_regression_gate.py", result.stdout)
+        self.assertNotIn("FastEmbed", result.stdout)
+
     def test_generated_mode_whatif_summary_omits_fast_retrieval_commands(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             summary_path = Path(tmpdir) / "summary.md"
