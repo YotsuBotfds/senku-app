@@ -303,6 +303,66 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
         self.assertIn("0/1", markdown)
         self.assertIn("1/1", markdown)
 
+    def test_row_status_coercion_handles_report_shape_variants(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diag_dir = root / "diag"
+            diag_dir.mkdir()
+            metadata_path = root / "metadata.json"
+            (diag_dir / "diagnostics.json").write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "expected_guide_family": "coerced_family",
+                                "expected_guide_ids": "GD-910",
+                                "cited_guide_ids": "GD-911",
+                                "top_retrieved_guide_ids": "GD-911|GD-910",
+                                "suspected_failure_bucket": " Ranking_Miss ",
+                                "app_acceptance_status": " Uncertain_Fit_Accepted ",
+                                "answer_card_status": " No_Cards ",
+                                "decision_path": " RAG ",
+                                "generated": True,
+                                "safety_critical": True,
+                                "top1_marker_risk": " Fail ",
+                                "top1_has_unresolved_partial": True,
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            metadata_path.write_text(
+                json.dumps(
+                    {
+                        "guides": [
+                            {
+                                "guide_id": "GD-910",
+                                "gaps": "missing_reviewed_answer_card|missing_citation_policy",
+                                "has_reviewed_answer_card": False,
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            payload = collect_family_priorities(
+                [diag_dir],
+                metadata_audit_path=metadata_path,
+            )
+
+        family = payload["families"][0]
+        self.assertEqual(family["safety_rows"], 1)
+        self.assertEqual(family["generated_rows"], 1)
+        self.assertEqual(family["ranking_drift_rows"], 1)
+        self.assertEqual(family["card_missing_rows"], 1)
+        self.assertEqual(family["top1_marker_fail_rows"], 1)
+        self.assertEqual(family["top1_unresolved_partial_rows"], 1)
+        self.assertEqual(family["uncertain_fit_non_expected_owner_cited_rows"], 1)
+        self.assertEqual(family["metadata_gap_guide_count"], 1)
+        self.assertEqual(family["reviewed_answer_card_gap_guide_count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

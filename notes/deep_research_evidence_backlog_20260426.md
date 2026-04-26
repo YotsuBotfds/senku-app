@@ -454,6 +454,15 @@ Action:
   `app_acceptance_root_cause`, `safety_surface_status`, and
   `ui_surface_bucket` without changing retrieval, FastEmbed, or acceptance
   behavior.
+- Hardened compact diagnostics and priority tooling against benign row-shape
+  variants: row-level fallback status counts now trim status cells, generated
+  shadow-card gaps accept padded `yes` values, guide-priority IDs accept comma
+  separators, and high-liability family prioritization normalizes status-like
+  booleans plus pipe-delimited metadata gaps.
+- Hardened retrieval-eval row normalization across related evidence tools:
+  nested/dict guide-id records now feed contextual-shadow comparisons and
+  retrieval-pack evaluation, and prompt-expectation validation accepts a
+  top-level JSON object that is itself a retrieval-eval row.
 
 Validation:
 
@@ -734,6 +743,14 @@ Validation:
   boolean, fractional-float, and negative artifact-count inputs.
 - `tests.test_summarize_run_manifest` covers missing-path-only artifact
   evidence and pre-limit `Records matched` reporting.
+- `tests.test_summarize_rag_diagnostics`,
+  `tests.test_prioritize_guide_quality_work`,
+  `tests.test_prioritize_high_liability_families`,
+  `tests.test_compare_contextual_shadow_retrieval`,
+  `tests.test_evaluate_retrieval_pack`, and
+  `tests.test_validate_prompt_expectations` cover the row-shape normalization
+  batch for padded statuses, comma-delimited IDs, dict guide-id records, nested
+  retrieval-pack records, and single-object retrieval eval JSON.
 
 Deferred unless evidenced:
 

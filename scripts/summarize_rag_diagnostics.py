@@ -196,13 +196,17 @@ def _count(mapping: Mapping[str, Any], rows: list[dict[str, Any]], *path: str) -
             return sum(
                 1
                 for row in rows
-                if isinstance(row, Mapping) and row.get(status_field) == path[-1]
+                if isinstance(row, Mapping)
+                and str(row.get(status_field) or "").strip() == path[-1]
             )
         if len(path) == 1:
             key = path[0]
             if key == "generated_shadow_card_gap_rows":
                 return sum(
-                    1 for row in rows if isinstance(row, Mapping) and row.get(key) == "yes"
+                    1
+                    for row in rows
+                    if isinstance(row, Mapping)
+                    and str(row.get(key) or "").strip() == "yes"
                 )
 
     return 0

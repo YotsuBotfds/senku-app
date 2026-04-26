@@ -93,6 +93,35 @@ class PrioritizeGuideQualityWorkTests(unittest.TestCase):
         self.assertEqual(top["candidate_action"], "repair_corpus_partial")
         self.assertIn("GD-100", markdown)
 
+    def test_prioritizer_accepts_comma_separated_guide_id_fields(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diagnostics_path = root / "diagnostics.json"
+            diagnostics_path.write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "artifact_name": "sample.json",
+                                "suspected_failure_bucket": "ranking_miss",
+                                "expected_guide_ids": "GD-100, GD-101",
+                                "cited_guide_ids": "GD-200",
+                                "top_retrieved_guide_ids": "GD-200,GD-100",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            payload = collect_priorities([diagnostics_path])
+
+        guides = {record["guide_id"]: record for record in payload["guides"]}
+        self.assertEqual(guides["GD-100"]["expected_rows"], 1)
+        self.assertEqual(guides["GD-101"]["expected_rows"], 1)
+        self.assertEqual(guides["GD-200"]["top1_rows"], 1)
+        self.assertEqual(guides["GD-100"]["topk_rows"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

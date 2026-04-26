@@ -31,6 +31,15 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             ),
             ["GD-111", "GD-222", "GD-333"],
         )
+        self.assertEqual(
+            self.module.extract_guide_ids(
+                {
+                    "guide_ids": ["GD-444|GD-555"],
+                    "expected_source_guide_ids": [{"target_guide_id": "gd-666"}],
+                }
+            ),
+            ["GD-444", "GD-555", "GD-666"],
+        )
 
     def test_load_prompt_pack_preserves_metadata_and_expected_owner(self):
         with tempfile.TemporaryDirectory() as tmpdir:

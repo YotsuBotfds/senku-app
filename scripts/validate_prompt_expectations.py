@@ -658,6 +658,16 @@ def rows_from_json_payload(data: Any) -> list[dict[str, Any]]:
         value = data.get(key)
         if isinstance(value, list):
             return [dict(item) for item in value if isinstance(item, Mapping)]
+    row_keys = (
+        PROMPT_ID_KEYS
+        + EXPECTED_GUIDE_KEYS
+        + PRIMARY_EXPECTED_GUIDE_KEYS
+        + RETRIEVED_GUIDE_KEYS
+        + tuple(PRIMARY_HIT_KEYS_BY_TOP_K.values())
+        + ("primary_hit_at_k",)
+    )
+    if any(key in data for key in row_keys):
+        return [dict(data)]
     return []
 
 

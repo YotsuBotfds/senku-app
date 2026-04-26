@@ -28,7 +28,11 @@ def _split_ids(value: Any) -> list[str]:
     if value in ("", None, "unknown"):
         return []
     if isinstance(value, str):
-        return [item.strip() for item in value.split("|") if item.strip()]
+        return [
+            item.strip()
+            for item in value.replace(",", "|").split("|")
+            if item.strip()
+        ]
     if isinstance(value, list):
         return [str(item).strip() for item in value if str(item).strip()]
     return []

@@ -55,7 +55,13 @@ def extract_guide_ids(value: Any) -> list[str]:
         return []
     if isinstance(value, Mapping):
         values: list[str] = []
-        for key in ("guide_id", "id", "expected_guide_id", "expected_guide_ids"):
+        for key in (
+            "guide_id",
+            "guide_ids",
+            "id",
+            *EXPECTED_GUIDE_KEYS,
+            *PRIMARY_EXPECTED_GUIDE_KEYS,
+        ):
             values.extend(extract_guide_ids(value.get(key)))
         return _dedupe(values)
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):

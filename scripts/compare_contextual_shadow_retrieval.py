@@ -204,6 +204,10 @@ def normalize_expected_guide_ids(
     resolved: list[str] = []
     for item in _coerce_sequence(value):
         if isinstance(item, dict):
+            if item.get("guide_id"):
+                resolved.extend(normalize_expected_guide_ids(item["guide_id"], guide_lookup))
+            if item.get("guide_ids"):
+                resolved.extend(normalize_expected_guide_ids(item["guide_ids"], guide_lookup))
             if item.get("id"):
                 resolved.extend(normalize_expected_guide_ids(item["id"], guide_lookup))
             if item.get("slug"):

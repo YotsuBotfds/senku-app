@@ -57,6 +57,32 @@ def _as_float(value: Any) -> float | None:
         return None
 
 
+def _status(value: Any) -> str:
+    if value in ("", None):
+        return ""
+    return str(value).strip().lower()
+
+
+def _is_truthy_status(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return _status(value) in {"true", "yes", "1"}
+
+
+def _as_gap_set(value: Any) -> set[str]:
+    if value in ("", None, "unknown"):
+        return set()
+    if isinstance(value, str):
+        return {item.strip() for item in value.split("|") if item.strip()}
+    if isinstance(value, list):
+        return {
+            str(item).strip()
+            for item in value
+            if item not in ("", None, "unknown") and str(item).strip()
+        }
+    return set()
+
+
 def _metadata_lookup(path: Path | None) -> dict[str, dict[str, Any]]:
     if path is None:
         return {}
@@ -170,21 +196,22 @@ def collect_family_priorities(
             cited_ids = _split_ids(row.get("cited_guide_ids"))
             top_ids = _split_ids(row.get("top_retrieved_guide_ids"))
             expected = set(expected_ids)
-            bucket = str(row.get("suspected_failure_bucket") or "")
-            app_status = str(row.get("app_acceptance_status") or "")
-            card_status = str(row.get("answer_card_status") or "")
+            bucket = _status(row.get("suspected_failure_bucket"))
+            app_status = _status(row.get("app_acceptance_status"))
+            card_status = _status(row.get("answer_card_status"))
+            decision_path = _status(row.get("decision_path"))
 
             record["prompt_rows"] += 1
             record["expected_guide_ids"].update(expected_ids)
             record["buckets"][bucket] += 1
             if app_status:
                 record["app_acceptance"][app_status] += 1
-            if str(row.get("safety_critical") or "").lower() in {"true", "yes", "1"}:
+            if _is_truthy_status(row.get("safety_critical")):
                 record["safety_rows"] += 1
-            deterministic_row = row.get("decision_path") == "deterministic"
+            deterministic_row = decision_path == "deterministic"
             if not deterministic_row:
                 record["non_deterministic_rows"] += 1
-            if row.get("generated") == "yes":
+            if _is_truthy_status(row.get("generated")):
                 record["generated_rows"] += 1
             if bucket in BAD_BUCKETS:
                 record["bad_bucket_rows"] += 1
@@ -227,10 +254,10 @@ def collect_family_priorities(
                 record["owner_topk_share_total"] += topk_share
                 record["owner_topk_share_count"] += 1
 
-            if row.get("top1_marker_risk") == "fail":
+            if _status(row.get("top1_marker_risk")) == "fail":
                 record.setdefault("top1_marker_fail_rows", 0)
                 record["top1_marker_fail_rows"] += 1
-            if row.get("top1_has_unresolved_partial") == "yes":
+            if _is_truthy_status(row.get("top1_has_unresolved_partial")):
                 record.setdefault("top1_unresolved_partial_rows", 0)
                 record["top1_unresolved_partial_rows"] += 1
 
@@ -246,7 +273,7 @@ def collect_family_priorities(
         corpus_unresolved_partial_guides = 0
         for guide_id in expected_ids:
             meta = metadata.get(guide_id, {})
-            gaps = set(meta.get("gaps") or [])
+            gaps = _as_gap_set(meta.get("gaps"))
             frontmatter_gaps = gaps - {REVIEWED_ANSWER_CARD_GAP}
             if frontmatter_gaps:
                 metadata_gap_count += 1

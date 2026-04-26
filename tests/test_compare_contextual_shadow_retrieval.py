@@ -7,6 +7,7 @@ from scripts.compare_contextual_shadow_retrieval import (
     ROWS_FILENAME,
     SUMMARY_FILENAME,
     aggregate_comparison_rows,
+    baseline_candidate_guide_ids,
     compare_retrieval_row,
     extract_expected_guides,
     extract_expected_guides_from_wave_manifest,
@@ -101,6 +102,32 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertEqual(expected["expected_guide_ids"], ["GD-100", "GD-200"])
         self.assertEqual(expected["primary_expected_guide_ids"], ["GD-200"])
         self.assertEqual(expected["backup_expected_guide_ids"], ["GD-100"])
+
+    def test_dict_guide_id_records_are_normalized_for_expected_and_top_ids(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            row = {
+                "expected_guides": [
+                    {"guide_id": "GD-100"},
+                    {"guide_ids": ["GD-200", "GD-100"]},
+                ],
+                "primary_expected_guides": [{"guide_id": "GD-200"}],
+                "retrieval_metadata": {
+                    "top_retrieved_guide_ids": [
+                        {"guide_id": "GD-300"},
+                        {"guide_ids": ["GD-400", "GD-300"]},
+                    ],
+                },
+            }
+
+            expected = extract_expected_guides(
+                row,
+                Path(tmpdir) / "guide_wave_fc_20260424_000000.json",
+                {},
+            )
+
+        self.assertEqual(expected["expected_guide_ids"], ["GD-100", "GD-200"])
+        self.assertEqual(expected["primary_expected_guide_ids"], ["GD-200"])
+        self.assertEqual(baseline_candidate_guide_ids(row), ["GD-300", "GD-400"])
 
     def test_compare_row_filters_out_primary_expectations_outside_expected_set(self):
         row = compare_retrieval_row(
