@@ -91,6 +91,17 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         )
         self.assertEqual("retrieval_index_cache", retrieval_cache_step["id"])
         self.assertEqual("db", retrieval_cache_step["with"]["path"])
+        triggers = workflow.get("on", workflow.get(True, {}))
+        self.assertIn("retrieval_index_flavor", triggers["workflow_dispatch"]["inputs"])
+        self.assertEqual(
+            "compact",
+            triggers["workflow_dispatch"]["inputs"]["retrieval_index_flavor"]["default"],
+        )
+        self.assertIn(
+            "retrieval_index_flavor",
+            triggers["workflow_call"]["inputs"],
+        )
+        self.assertIn("inputs.retrieval_index_flavor", retrieval_cache_step["with"]["key"])
         self.assertIn("guides/**/*.md", retrieval_cache_step["with"]["key"])
         self.assertIn("ingest_freshness.py", retrieval_cache_step["with"]["key"])
         self.assertIn(
@@ -118,10 +129,13 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("Invoke-RestMethod `", gate_script)
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
         self.assertIn("RETRIEVAL_INDEX_CACHE_HIT", gate_step.get("env", {}))
+        self.assertIn("INPUT_RETRIEVAL_INDEX_FLAVOR", gate_step.get("env", {}))
+        self.assertIn("Unsupported retrieval_index_flavor", gate_script)
         self.assertIn("scripts\\select_prompt_pack_guides.py", gate_script)
         self.assertIn("--include-related-depth 0", gate_script)
         self.assertIn("rag_eval_partial_router_holdouts_20260425.jsonl", gate_script)
         self.assertIn("rag_eval9_high_liability_compound_holdouts_20260426.jsonl", gate_script)
+        self.assertIn("$retrievalIndexFlavor -eq 'compact'", gate_script)
         self.assertIn("--files @selectedGuides", gate_script)
         self.assertIn("python -B ingest.py --stats", gate_script)
         self.assertIn(
@@ -138,10 +152,11 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             gate_script.index("RETRIEVAL_INDEX_CACHE_HIT"),
         )
         self.assertIn(
-            "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild.",
+            "Mode $env:INPUT_MODE does not require retrieval index; skipping db rebuild.",
             gate_script,
         )
-        self.assertNotIn("python -B ingest.py --rebuild --embedding-batch-size 16", gate_script)
+        self.assertIn("Retrieval index cache miss; rebuilding full CI retrieval db.", gate_script)
+        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 16", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog", gate_script)
