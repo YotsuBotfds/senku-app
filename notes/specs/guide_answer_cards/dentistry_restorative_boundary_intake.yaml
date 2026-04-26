@@ -1,0 +1,135 @@
+card_id: dentistry_restorative_boundary_intake
+guide_id: GD-055
+slug: dentistry-restorative
+title: Restorative Dentistry
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks how to organize information about a tooth, cavity, fracture, broken filling, loose crown, restoration discomfort, or post-restoration sensitivity before seeing a dentist or clinician.
+  - User needs conservative temporary protection while waiting for dental care, limited to avoiding chewing on the affected side, avoiding hard or sticky foods, gentle brushing, careful flossing, and monitoring.
+  - User asks which symptoms after a suspected cavity, pulp exposure, dental pain, swelling, filling loss, restoration fracture, or dental procedure should trigger urgent handoff.
+required_first_actions:
+  - Screen first for facial or jaw swelling, fever, pus or foul drainage, trouble swallowing, trouble breathing, uncontrolled bleeding, severe or worsening pain, spreading infection signs, or tooth injury with looseness or displacement.
+  - Keep guidance boundary-only by logging tooth location, symptom timing, pain pattern, swelling or drainage, visible fracture or cavity, restoration material if known, date placed or lost, chewing sensitivity, and what has changed.
+  - Protect the tooth or restoration while arranging dental or clinician handoff by avoiding chewing on that side, avoiding sticky or hard foods, brushing gently around the area, and reporting sensitivity, fracture, or filling loss promptly.
+conditional_required_actions:
+  - trigger_terms:
+      - swelling
+      - fever
+      - pus
+      - drainage
+      - bad taste
+      - abscess
+    required_actions:
+      - If swelling, fever, pus, foul drainage, spreading infection signs, trouble swallowing, or trouble breathing is present, do not frame this as routine restorative intake; route urgently to dental or medical care.
+  - trigger_terms:
+      - broken
+      - chipped
+      - crack
+      - fracture
+      - filling fell out
+      - lost filling
+      - crown loose
+    required_actions:
+      - For broken teeth, filling loss, restoration fracture, or loose crown, log the event and protect the area, but do not advise drilling, filing, filling, re-cementing, extraction, bite adjustment, or return-to-chewing clearance.
+  - trigger_terms:
+      - pain
+      - throbbing
+      - sensitive
+      - biting
+      - wakes
+      - night
+    required_actions:
+      - For tooth pain or sensitivity, document whether pain is constant, worsening, night-waking, biting-related, temperature-related, or associated with swelling or drainage; escalate worsening or severe patterns.
+first_actions:
+  - Make a concise dental handoff log with the tooth or mouth area involved, when the problem started, what was seen or felt, pain severity and pattern, swelling or drainage status, fever or swallowing/breathing status, trauma history, and whether any restoration was placed, cracked, loose, or lost.
+  - Record restoration details if known: material type, placement or loss date, whether the bite feels high or uncomfortable, whether chewing causes pain, and whether there is sensitivity, visible margin change, fracture, or filling loss.
+  - While awaiting dental review, avoid chewing on the affected tooth or restoration, avoid sticky or hard foods, and keep the area clean with gentle brushing and careful flossing around margins without aggressive scraping.
+  - If there was a recent dental procedure, report discomfort, sensitivity that persists or increases, restoration loss, fracture, fever, foul odor, uncontrolled bleeding, or severe pain beyond the expected healing trajectory.
+urgent_red_flags:
+  - Facial, jaw, gum, tongue, or under-jaw swelling.
+  - Fever, pus, foul odor, foul drainage, bad taste from one tooth or gum area, or spreading infection signs.
+  - Trouble swallowing, trouble breathing, throat swelling, or rapidly spreading swelling.
+  - Severe, constant, worsening, throbbing, night-waking, or stronger biting-related tooth pain.
+  - Uncontrolled bleeding, fainting, chest pain, palpitations, confusion, or loss of consciousness around dental treatment.
+  - Tooth knocked loose or displaced by injury, large fracture with visible inner tooth structure, sharp edge cutting the tongue or cheek, or numbness after injury.
+forbidden_advice:
+  - Do not diagnose cavities, pulp status, abscesses, periapical pathology, restoration failure cause, bite problems, infection severity, or fracture depth from this card.
+  - Do not give drilling, excavation, decay removal, filling placement, crown placement, re-cementing, extraction, drainage, suturing, socket packing, bite adjustment, filing, polishing, or dental appliance fabrication instructions.
+  - Do not provide anesthetic or injection technique, anesthetic dose calculations, antibiotic selection or dosing, pain-medication dosing, sedation advice, or medication changes.
+  - Do not tell the user a tooth or restoration is safe for normal chewing, cleared for return to service, legally adequate, professionally certified, or safe as a permanent repair.
+  - Do not delay urgent dental or medical handoff when swelling, fever, pus, trouble swallowing, trouble breathing, uncontrolled bleeding, systemic symptoms, severe worsening pain, or major trauma is present.
+do_not:
+  - Do not attempt to seal, drill, fill, re-cement, reshape, grind, file, or extract a tooth based on this boundary card.
+  - Do not chew hard, sticky, or forcefully on a damaged, painful, recently treated, or temporarily protected tooth while awaiting dental review.
+  - Do not scrape aggressively around a damaged tooth or restoration.
+  - Do not treat increasing pain, swelling, fever, drainage, or trouble swallowing as a routine restoration problem.
+routine_boundary: >
+  This card is appropriate only for restorative dental intake, symptom and
+  restoration logs, temporary avoid-chewing and gentle hygiene notes, red-flag
+  screening, and dentist or clinician handoff. It stops before diagnosis,
+  procedures, medication dosing, appliance fabrication, return-to-chewing
+  clearance, legal claims, and safety certification.
+acceptable_uncertain_fit: >
+  If the prompt may involve a cavity, broken restoration, pain, swelling, or
+  fracture but severity is unclear, lead with the red-flag screen, collect a
+  concise handoff log, and give only protective non-procedural steps that do
+  not delay dental or medical evaluation.
+clarifying_questions:
+  - Which tooth or area is involved, and when did the pain, fracture, cavity, swelling, filling loss, or restoration problem start?
+  - Is there facial, jaw, gum, tongue, or under-jaw swelling, fever, pus, foul drainage, bad taste, trouble swallowing, or trouble breathing?
+  - Is the pain mild and brief, or constant, worsening, throbbing, waking the person at night, or worse when biting?
+  - Was there trauma, a loose or displaced tooth, a sharp edge cutting the tongue or cheek, uncontrolled bleeding, or numbness after injury?
+  - Was a filling, crown, temporary material, or other restoration recently placed, cracked, loosened, or lost, and what date did that happen?
+citation_ids:
+  - restorative-intake-red-flags
+  - temporary-restoration-protection
+  - restorative-aftercare-monitoring
+  - restoration-failure-handoff
+source_sections:
+  - guide: GD-055
+    slug: dentistry-restorative
+    title: Restorative Dentistry
+    sections:
+      - "#sterile-technique"
+      - "#tooth-anatomy"
+      - "#temporary-restoration"
+      - "#complications-when-stop"
+      - "#recovery-aftercare"
+      - "#troubleshooting"
+      - "#failure-modes"
+      - "#safety"
+      - "#mistakes"
+source_invariants:
+  - name: restorative boundary keeps post-care red flags visible
+    guide: GD-055
+    must_include:
+      - "Symptoms to watch for: fever, swelling, pus discharge, worsening pain after treatment (patient must report these)"
+      - "Post-treatment care: avoid chewing on restoration for 24 hours, maintain oral hygiene, report any discomfort"
+      - "Return for any complications (pain, restoration loss, sensitivity increase)."
+  - name: temporary protection remains bridge and handoff oriented
+    guide: GD-055
+    must_include:
+      - "Provide patient instructions: avoid chewing on that tooth for 24 hours, report if sensitivity persists or filling loss occurs, avoid sticky/hard foods"
+      - "Document placement material and date for future provider reference."
+      - "Temporary is bridge to definitive care, not solution."
+  - name: pulp and infection content does not become routine reassurance
+    guide: GD-055
+    must_include:
+      - "Document exposure; monitor for abscess formation."
+      - "Undiagnosed periapical pathology = restoration over infection fails, spreads."
+      - "Persistent or increasing pain"
+  - name: restorative card does not authorize procedure or medication dosing
+    guide: GD-055
+    must_not_match:
+      - "(drill|excavat|remove decay|condense|inject|extract|prescribe|dose)[^\\n]{0,160}(from this card|boundary card|answer card)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary card for GD-055. It closes the metadata/card audit gap
+  without expanding runtime ownership into restorative dentistry procedures.
+  It is limited to intake, symptom/restoration logs, temporary avoid-chewing
+  and protective hygiene notes, red flags, and dentist or clinician handoff.
+  It intentionally excludes drilling, filling, extraction, restoration
+  placement, anesthetic/injection technique, antibiotics and pain-medication
+  dosing, diagnosis, dental appliance fabrication, return-to-service or
+  chewing clearance, legal claims, and safety certification.

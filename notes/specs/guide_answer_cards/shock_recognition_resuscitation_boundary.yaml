@@ -1,0 +1,158 @@
+card_id: shock_recognition_resuscitation_boundary
+guide_id: GD-580
+slug: shock-recognition-resuscitation
+title: Hemorrhagic Shock, Septic Shock & Emergency Resuscitation
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether someone may be in shock based on cold pale clammy skin, weak or very rapid pulse, confusion, lethargy, collapse, low blood pressure, mottled skin, abnormal breathing, or sudden deterioration.
+  - The prompt needs first-hop shock concern intake, danger-sign recognition, a time/status log, or an emergency/clinician handoff note before a more specific trauma, sepsis, cardiac, airway, obstetric, pediatric, or toxicology owner is selected.
+  - The person has possible shock after injury, bleeding, infection, dehydration, burns, heat illness, or unclear serious illness, but the prompt is asking for non-invasive support and handoff rather than protocols or procedures.
+  - The scene includes possible shock and obvious external bleeding, but the user has not asked for tourniquet, wound packing, crush injury, amputation, chest-trauma procedure, or detailed hemorrhage-control decisions.
+required_first_actions:
+  - Treat suspected shock with cold extremities, weak pulse, altered mental status, collapse, worsening breathing, or serious deterioration as an emergency; call emergency services or arrange urgent clinician-level help or transport.
+  - Keep the person still, warm, and monitored while help is arranged, and track breathing, pulse, skin color, mental status, blood pressure if available, and whether the person is improving or deteriorating.
+  - If there is obvious external bleeding, apply firm direct pressure with clean cloth while routing detailed traumatic bleeding decisions to the reviewed shock_bleeding_trauma_stabilization card.
+  - Ask only focused intake questions that do not delay help, warmth, monitoring, or pressure for obvious bleeding.
+conditional_required_actions:
+  - trigger_terms:
+      - spurting
+      - soaking
+      - tourniquet
+      - wound packing
+      - amputation
+      - crush
+      - chest trauma
+      - one side silent
+    required_actions:
+      - Route/support the reviewed shock_bleeding_trauma_stabilization card for life-threatening traumatic bleeding, tourniquet, wound packing, crush/compartment, amputation, chest-trauma deterioration, and suspected tension-pneumothorax prompts.
+  - trigger_terms:
+      - hard belly
+      - abdominal trauma
+      - internal bleeding
+      - black stool
+      - guarding
+      - pregnant
+      - ectopic
+    required_actions:
+      - Route/support the reviewed abdominal_internal_bleeding card when abdominal or concealed internal bleeding is central.
+  - trigger_terms:
+      - fever
+      - infection
+      - wound infection
+      - sepsis
+      - antibiotics
+    required_actions:
+      - Keep this card to shock red flags and urgent handoff, and route antibiotic or sepsis-source management to the sepsis or infected-wound owner instead of supplying antibiotic protocols.
+  - trigger_terms:
+      - chest pain
+      - jaw pain
+      - arm pain
+      - heart attack
+      - pulmonary edema
+    required_actions:
+      - Preserve shock emergency framing, then route acute coronary or cardiogenic-shock-specific decisions to the cardiac owner rather than giving medication, oxygen, fluid, or vasopressor instructions.
+first_actions:
+  - Identify whether shock danger signs are present, especially cold pale clammy skin, weak or very rapid pulse, confusion, lethargy, collapse, low blood pressure, mottling, abnormal breathing, or worsening alertness.
+  - Call for emergency help or urgent clinician transport early; do not wait for a complete differential or a full set of vital signs if the person is deteriorating.
+  - Keep the person still and warm, monitor airway, breathing, circulation, alertness, skin color, pulse, and blood pressure if available, and avoid letting them walk around.
+  - Apply direct pressure to obvious external bleeding and record what was done, when it started, and whether bleeding or shock signs improve.
+  - Start a concise handoff log with time first seen, suspected trigger, symptoms, vital signs if available, skin and mental-status changes, bleeding status, actions taken, and response.
+urgent_red_flags:
+  - Cold pale clammy or mottled skin, blue or gray color, weak or very rapid pulse, collapse, fainting, low or unmeasurable blood pressure, or worsening weakness.
+  - Confusion, agitation, lethargy, unconsciousness, inability to stay awake, abnormal breathing, or rapid deterioration.
+  - Shock signs after trauma, visible bleeding, burns, severe dehydration, possible infection, chest pain, jaw pain, arm pain, shortness of breath, or suspected internal bleeding.
+  - Persistent or worsening shock signs despite basic non-invasive support, or any concern that help, monitoring, or transport is delayed.
+forbidden_advice:
+  - Do not provide IV access, fluid bolus, permissive-hypotension, vasopressor, antibiotic, oxygen, medication, or dosing instructions from this boundary card.
+  - Do not provide diagnostic differentiation, resuscitation algorithms, invasive procedures, needle decompression, pericardiocentesis, REBOA, central-line, chest-tube, or surgery instructions.
+  - Do not compete with the reviewed shock_bleeding_trauma_stabilization card for tourniquet, wound-packing, crush/compartment, amputation, major limb hemorrhage, or chest-trauma deterioration prompts.
+  - Do not reassure shock signs as routine observation, hydration-only care, rest-only care, or transport clearance.
+  - Do not make legal, regulatory, occupational, return-to-duty, or safety-certification claims.
+do_not:
+  - Do not delay calling for help or urgent handoff while collecting a full history, building a differential, or explaining shock classification.
+  - Do not let a person with shock signs walk around or remain unmonitored.
+  - Do not give oral fluids when the person is unconscious, vomiting, severely confused, or deteriorating.
+  - Do not remove embedded objects or disrupt clotting; route detailed bleeding decisions to the trauma bleeding owner.
+  - Do not clear transport, return to activity, or continued observation when red flags are present.
+routine_boundary: >
+  Suspected shock is outside routine self-care when danger signs such as cold
+  clammy skin, weak pulse, confusion, collapse, abnormal breathing, low blood
+  pressure, visible major bleeding, chest-pain equivalents, possible infection,
+  or rapid deterioration are present. This card owns only first-hop recognition,
+  basic non-invasive support, logs, and handoff; specific traumatic bleeding,
+  internal bleeding, sepsis, anaphylaxis, cardiac, airway, obstetric,
+  pediatric, and toxicology pathways remain with their more specific owners.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but shock is plausible, lead with emergency
+  handoff, keeping the person still and warm, monitoring breathing/pulse/skin/
+  alertness, applying pressure to obvious bleeding, and logging changes. Ask
+  brief clarifying questions only after those immediate boundary actions.
+clarifying_questions:
+  - What happened just before this, and is there injury, bleeding, infection, fever, vomiting/diarrhea, burns, heat exposure, chest pain, jaw pain, arm pain, or shortness of breath?
+  - Is the person cold, pale, clammy, mottled, blue or gray, confused, fainting, hard to keep awake, breathing abnormally, or getting worse?
+  - Can you feel a pulse, measure blood pressure, or tell whether the pulse is weak, very fast, or barely present?
+  - Is there obvious bleeding, and if so is firm direct pressure already being held while help is arranged?
+  - What time did symptoms start, what has changed since then, what actions were taken, and what help or transport is available now?
+citation_ids:
+  - shock-recognition-boundary
+  - shock-danger-signs
+  - shock-basic-support-handoff
+  - shock-status-log
+  - shock-specific-owner-routing
+source_sections:
+  - guide: GD-580
+    slug: shock-recognition-resuscitation
+    title: Hemorrhagic Shock, Septic Shock & Emergency Resuscitation
+    sections:
+      - "#overview"
+      - "#classification"
+      - "#mixed-patient-cardiac-shock"
+      - "#hemorrhage-control"
+      - "#vasopressors"
+      - "#resources"
+  - guide: GD-584
+    slug: shock-bleeding-trauma-stabilization
+    title: "Shock, Bleeding & Trauma Stabilization"
+    sections:
+      - "#shock-management-protocol"
+      - "#hemorrhage-control-decision-tree"
+      - "#tourniquet-application"
+    role: boundary-support
+source_invariants:
+  - name: shock recognition danger signs
+    guide: GD-580
+    must_include:
+      - "Cold extremities + weak pulse + altered mental status = YES"
+      - "Prepare for evacuation/advanced care"
+      - "Monitor response: Is skin perfusion improving? Is mental status improving? Is pulse stronger?"
+    must_not_match:
+      - "cold extremities[^\\n]{0,160}(routine|watchful waiting)"
+  - name: obvious bleeding gets pressure but trauma details remain specific
+    guide: GD-580
+    must_include:
+      - "Direct pressure"
+      - "If blood soaks through, ADD more gauze on top"
+      - "Do NOT remove tourniquet in field"
+    must_not_match:
+      - "tourniquet[^\\n]{0,160}(routine first|all bleeding)"
+  - name: status log source fields
+    guide: GD-580
+    must_include:
+      - "Time of IV placement"
+      - "Fluid amounts given"
+      - "Vital signs"
+      - "Clinical response to treatment"
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed boundary card for GD-580. It closes the metadata/card audit
+  gap for broad shock-recognition intake while deliberately avoiding GD-580's
+  advanced treatment protocols. The card owns non-invasive shock concern
+  recognition, call-for-help, still/warm positioning, obvious-bleeding direct
+  pressure, time/status logs, red flags, and emergency or clinician handoff.
+  It routes life-threatening traumatic bleeding, tourniquets, packing, crush,
+  amputation, chest-trauma deterioration, and tension-pneumothorax prompts to
+  the existing reviewed shock_bleeding_trauma_stabilization card, and routes
+  internal bleeding, sepsis/antibiotic, cardiac, anaphylaxis, airway,
+  obstetric, pediatric, toxicology, and procedure-specific prompts to their
+  more specific owners.

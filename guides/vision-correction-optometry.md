@@ -22,6 +22,37 @@ last_updated: '2026-02-15'
 version: '1.0'
 custom_css: 'body.tags{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.tag{background-color:var(--card);color:var(--accent);padding:6px 12px;border-radius:20px;font-size:.85em;border:1px solid var(--accent)}nav{background-color:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;height:fit-content;position:sticky;top:20px}nav h2{color:var(--accent2);margin-bottom:15px;font-size:1.1em}nav a{color:var(--text);text-decoration:none;display:block;padding:8px 12px;border-radius:4px;transition:all .3s;border-left:3px solid transparent}nav a:hover{background-color:var(--card);border-left-color:var(--accent2);padding-left:20px}main{background-color:var(--surface);border:1px solid var(--border);border-radius:8px;padding:40px}.field-note{background-color:var(--card);border:1px dashed var(--accent2);padding:15px;margin:20px 0;border-radius:4px;font-style:italic;color:var(--text)}.field-note::before{content:"📝 FIELD NOTE: ";color:var(--accent2);font-weight:bold;font-style:normal}table th,table td{padding:12px;text-align:left;border:1px solid var(--border)}table th{background-color:var(--bg);color:var(--accent2);font-weight:bold}table tr:hover{background-color:rgba(83,216,168,0.1)}svg{max-width:100%;height:auto;display:block;margin:0 auto}.process-steps{counter-reset:step-counter;margin:20px 0}.step{counter-increment:step-counter;background-color:var(--card);padding:15px;margin:15px 0;border-radius:4px;border-left:4px solid var(--accent2);padding-left:50px;position:relative}.step::before{content:counter(step-counter);position:absolute;left:15px;top:15px;background-color:var(--accent2);color:var(--bg);width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}.theme-toggle:hover{background-color:var(--card);transform:scale(1.1)}pre code{background-color:transparent;padding:0;color:var(--accent2)}.reference-box{background-color:var(--card);border:2px solid var(--accent);padding:15px;margin:20px 0;border-radius:4px}.reference-box h4{color:var(--accent);margin-top:0}@media(max-width:1024px){.container{grid-template-columns:1fr}nav{display:none}}'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: vision_correction_optometry_boundary
+answer_card:
+  - vision_correction_optometry_boundary
+aliases:
+  - vision difficulty intake
+  - blurry vision glasses check
+  - current glasses contact lens use
+  - eye strain functional limitations
+  - vision red flags handoff
+  - optometry boundary handoff
+routing_cues:
+  - log vision difficulty before optometry handoff
+  - screen current glasses or contacts and eye strain
+  - sudden vision loss or flashes floaters curtain
+  - severe eye pain trauma infection or contact lens red eye
+  - hand off routine vision needs to optometrist or clinician
+citations_required: true
+applicability: >
+  Boundary-only support for vision-difficulty intake logs, current glasses or
+  contact lens use, eye strain and functional limitations, emergency red-flag
+  screening, and optometrist, clinician, or emergency handoff. Do not use this
+  guide as reviewed-card authority for prescribing lenses, refractive
+  measurements, contact lens fitting, lens grinding, eye medication or dosing,
+  diagnosis, return-to-work or driving clearance, legal claims, or safety
+  certification.
+citation_policy: >
+  Cite GD-062 and its reviewed answer card only for intake, red-flag screening,
+  routine optometry handoff, and boundary language. Route sudden vision loss,
+  eye trauma, severe pain, flashes, floaters, curtain or shade over vision, or
+  possible eye infection to urgent clinician or emergency eye-care guidance.
 ---
 
 <section id="triage-quick-look">
@@ -41,6 +72,42 @@ This guide covers **routine** vision correction. If your complaint is an eye inj
 :::tip
 If you still have your old prescription (even partially), start at [Trial Lens Set Creation](#trial-lens-set) — it speeds up re-manufacture significantly.
 :::
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-062. It supports a
+boundary-only intake before optometry or medical handoff: what vision difficulty
+is happening, when it started, whether it is one eye or both eyes, whether the
+person already uses glasses or contact lenses, whether current correction helps,
+and which tasks are limited by eye strain, blur, glare, headaches, or reading
+difficulty.
+
+Start every intake by separating routine vision-correction needs from emergency
+eye complaints. Sudden vision loss, eye trauma, severe eye pain, flashes,
+floaters, a curtain or shade over vision, chemical splash, embedded debris, a
+very red or infected-looking eye, contact lens use with pain or discharge, or
+rapidly worsening vision are not routine optometry problems. Hand these off to
+emergency eye care, a clinician, or the eye-injury guide before discussing
+routine glasses, testing, or repairs.
+
+For non-emergency vision difficulty, keep the log practical and non-diagnostic:
+current glasses or contacts, last known prescription if available, whether the
+person has backup glasses, near versus distance difficulty, one-eye versus
+both-eye symptoms, eye strain triggers, lighting or glare problems, and the
+functional tasks affected such as reading, tool work, walking, cooking, or
+recognizing faces. Record changes over time and send the person to an
+optometrist or clinician when possible.
+
+Do not use this reviewed card to prescribe lenses, estimate or calculate a
+refractive measurement, fit contact lenses, grind lenses, choose eye medication,
+give medication dosing, diagnose eye disease, clear someone for driving or work,
+make legal claims, or certify visual safety. Those are outside the reviewed
+answer-card boundary even though the broader source guide contains technical
+field-optometry material.
 
 </section>
 

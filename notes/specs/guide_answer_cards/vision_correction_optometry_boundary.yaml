@@ -1,0 +1,145 @@
+card_id: vision_correction_optometry_boundary
+guide_id: GD-062
+slug: vision-correction-optometry
+title: Vision Correction & Field Optometry
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for a conservative intake log for blurred vision, eye strain, difficulty reading, trouble seeing distance, broken or current glasses, current contact lens use, or functional limits from vision difficulty.
+  - User needs help deciding whether a vision-correction complaint is routine optometry/clinician handoff or an emergency eye-care handoff.
+  - User asks for boundary language that avoids prescribing lenses, refractive measurements, contact lens fitting, lens grinding, medication, diagnosis, driving/work clearance, legal claims, or safety certification.
+required_first_actions:
+  - Start by screening for emergency eye red flags before routine vision-correction intake or glasses discussion.
+  - Escalate sudden vision loss, eye trauma, severe eye pain, flashes, floaters, curtain or shade over vision, chemical splash, embedded debris, infected-looking red eye, contact lens use with pain or discharge, or rapidly worsening vision to emergency eye care, a clinician, or the eye-injury guide.
+  - If no emergency red flag is present, keep the answer to a non-diagnostic intake log covering onset, one eye or both eyes, current glasses or contacts, whether current correction helps, eye strain triggers, and functional limitations.
+  - Hand off routine vision-correction needs to an optometrist or clinician when available, especially if current correction no longer works or vision changes are new or progressive.
+conditional_required_actions:
+  - trigger_terms:
+      - sudden vision loss
+      - suddenly can't see
+      - curtain
+      - shade
+      - flashes
+      - floaters
+      - trauma
+      - hit in the eye
+      - severe pain
+      - chemical
+      - embedded
+      - infected
+      - pus
+      - contact lens pain
+      - discharge
+    required_actions:
+      - Treat the prompt as an emergency or urgent clinician handoff, not routine optometry intake.
+      - Do not discuss lens selection, refraction, contact fitting, or glasses repair as the main answer until emergency eye danger has been addressed.
+  - trigger_terms:
+      - prescription
+      - diopter
+      - refractive
+      - lens power
+      - contact lens fitting
+      - grind lenses
+      - driving clearance
+      - return to work
+      - certify
+      - legal
+    required_actions:
+      - Give the boundary and handoff only; do not prescribe lenses, calculate or infer refractive measurements, fit contacts, grind lenses, clear driving or work, make legal claims, or certify safety.
+first_actions:
+  - Build a vision-difficulty intake log with the main complaint, onset, whether symptoms are sudden or gradual, whether one eye or both eyes are affected, and whether vision is stable, improving, or worsening.
+  - Record current correction status: glasses, contacts, backup pair, old prescription if already known, whether current correction helps, and any contact lens pain, redness, discharge, or light sensitivity.
+  - Record eye strain and functional limits such as reading difficulty, distance blur, glare, headaches with visual tasks, tool-work limits, walking or navigation difficulty, cooking or label-reading difficulty, and problems recognizing faces or signs.
+  - Separate known facts from uncertainty, avoid diagnosis, and end with optometrist, clinician, or emergency handoff depending on red flags and functional impairment.
+urgent_red_flags:
+  - Sudden vision loss, rapidly worsening vision, new vision darkening, or a curtain or shade over part of vision.
+  - Eye trauma, chemical splash, high-speed or embedded debris, puncture concern, blood in the eye after injury, or anything poking out of the eye.
+  - Severe eye pain, strong light sensitivity, severe headache with a very red eye, abnormal pupil, cloudy cornea, or eye that looks very abnormal.
+  - New flashes, many new floaters, or flashes/floaters with a curtain or field defect.
+  - Red or infected-looking eye with pain, discharge, swelling, fever, pain with eye movement, reduced vision, or contact lens use.
+forbidden_advice:
+  - Do not prescribe glasses, contact lenses, lens powers, prism, cylinder, axis, reading add, or any refractive measurement from this card.
+  - Do not provide contact lens fitting, contact lens substitution, lens grinding instructions, optical fabrication steps, or frame-safety certification from this card.
+  - Do not diagnose cataract, glaucoma, retinal detachment, infection, corneal ulcer, migraine, stroke, or any eye disease from this card.
+  - Do not recommend eye medication, old prescription drops, antibiotic drops, steroid drops, numbing drops, or medication dosing.
+  - Do not clear someone to drive, operate machinery, return to work, perform safety-critical tasks, meet legal vision standards, or certify visual safety.
+do_not:
+  - Do not let routine optometry intake delay emergency care for sudden vision loss, trauma, severe pain, flashes, floaters, curtain/shade, chemical exposure, embedded debris, or infection signs.
+  - Do not convert the source guide's Snellen chart, pinhole, trial lens, diopter, lens grinding, fitting, or manufacturing sections into reviewed-card prescribing or fabrication instructions.
+  - Do not treat contact lens pain, discharge, reduced vision, or light sensitivity as routine eye strain.
+routine_boundary: >
+  Routine GD-062 reviewed-card answers are limited to vision-difficulty intake
+  logs, current glasses/contact use, eye strain and functional limitations,
+  emergency red-flag screening, and optometrist, clinician, or emergency
+  handoff. Prescribing lenses, estimating refractive measurements, contact lens
+  fitting, lens grinding, medication or dosing, diagnosis, return-to-work or
+  driving clearance, legal claims, and safety certification are outside this
+  card.
+acceptable_uncertain_fit: >
+  If the prompt may fit routine vision correction but onset, one-eye versus
+  both-eye status, pain, trauma, flashes/floaters/curtain symptoms, infection
+  signs, contact lens status, or functional impact is unclear, lead with the
+  red-flag screen and collect intake details. Give only boundary-safe logging
+  and handoff language until emergency eye danger is excluded.
+clarifying_questions:
+  - Did the vision change happen suddenly, and is it one eye or both eyes?
+  - Is there severe pain, eye trauma, chemical splash, embedded debris, strong light sensitivity, abnormal pupil, or cloudy cornea?
+  - Are there new flashes, many new floaters, or a curtain or shade over part of vision?
+  - Does the person wear contacts, and is there redness, pain, discharge, reduced vision, or light sensitivity?
+  - What glasses or contacts are currently used, do they help, and is there an old prescription or backup pair?
+  - Which tasks are limited by the vision difficulty or eye strain?
+citation_ids:
+  - gd-062-reviewed-answer-card-boundary
+  - gd-062-complaint-first-triage
+  - gd-062-simple-eye-testing-intake
+  - gd-062-fitting-functional-strain
+  - gd-062-maintenance-records
+source_sections:
+  - guide: GD-062
+    slug: vision-correction-optometry
+    title: Vision Correction & Field Optometry
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#triage-quick-look"
+      - "#eye-testing"
+      - "#fitting-adjustment"
+      - "#protecting-glasses"
+      - "#common-mistakes"
+source_invariants:
+  - name: reviewed boundary limits card scope
+    guide: GD-062
+    must_include:
+      - "This is the reviewed answer-card surface for GD-062."
+      - "boundary-only intake before optometry or medical handoff"
+      - "current glasses or contacts"
+      - "Do not use this reviewed card to prescribe lenses"
+      - "certify visual safety"
+  - name: emergency eye red flags remain handoff-first
+    guide: GD-062
+    must_include:
+      - "Sudden vision loss"
+      - "EMERGENCY"
+      - "not this guide"
+      - "If your complaint is an eye injury or emergency"
+    must_not_match:
+      - "sudden vision loss[^\\n]{0,160}(routine|trial lens|lens correction|glasses repair)"
+      - "chemical splash[^\\n]{0,160}(routine|trial lens|lens correction|glasses repair)"
+  - name: source procedural content is not reviewed card authority
+    guide: GD-062
+    must_include:
+      - "Simple Eye Testing: Snellen Chart Construction"
+      - "Trial Lens Set Creation"
+      - "Lens Grinding Basics"
+      - "Prescription Verification Over Time"
+      - "Field Optometry"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary card for GD-062. It closes the metadata/card audit gap for
+  vision-correction-optometry while intentionally limiting the card to
+  vision-difficulty intake logs, current glasses/contact use, eye strain and
+  functional limitations, emergency red-flag screening, and optometrist,
+  clinician, or emergency handoff. It excludes prescribing lenses, refractive
+  measurements, contact lens fitting, lens grinding, eye medication or dosing,
+  diagnosis, return-to-work or driving clearance, legal claims, and safety
+  certification. READY_FOR_PARENT_CLOSE.

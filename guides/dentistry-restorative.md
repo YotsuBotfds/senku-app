@@ -20,6 +20,41 @@ word_count: 9100
 last_updated: '2026-02-19'
 version: '1.1'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: dentistry_restorative_boundary_intake
+answer_card:
+  - dentistry_restorative_boundary_intake
+aliases:
+  - restorative dental problem intake
+  - broken filling log
+  - chipped tooth tracking
+  - cavity symptom log
+  - temporary dental protection
+  - avoid chewing on a sore tooth
+  - dental handoff notes
+routing_cues:
+  - log tooth pain swelling fracture cavity or broken restoration details
+  - protect a tooth or restoration while waiting for a dentist
+  - avoid chewing on a damaged or recently treated tooth
+  - monitor for dental red flags and hand off to dental care
+  - document dental materials dates symptoms and changes for clinician review
+citations_required: true
+applicability: >
+  Boundary-only support for tooth or restoration problem intake, pain,
+  swelling, fracture, cavity, sensitivity, and filling-loss logs; temporary
+  avoid-chewing and gentle hygiene notes; red-flag screening; and dental or
+  clinician handoff. Route procedure instructions, diagnosis, drilling,
+  filling, extraction, restoration placement, anesthetic injection,
+  antibiotic or pain-medication dosing, appliance fabrication, chewing
+  clearance, legal claims, and safety certification elsewhere.
+citation_policy: >
+  Cite GD-055 and its reviewed answer card only for bounded restorative
+  dentistry intake, protective hygiene, monitoring language, red flags, and
+  clinician handoff. Do not use this guide as a runtime source for drilling,
+  filling, extraction, restoration placement, anesthetic/injection technique,
+  antibiotics or pain-med dosing, diagnosis, dental appliance fabrication,
+  return-to-service or chewing clearance, legal claims, or safety
+  certification.
 ---
 <section id="historical">
 

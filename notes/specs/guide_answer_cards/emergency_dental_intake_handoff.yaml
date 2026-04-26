@@ -1,0 +1,136 @@
+card_id: emergency_dental_intake_handoff
+guide_id: GD-047
+slug: emergency-dental
+title: "Emergency Dental Procedures"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User reports urgent dental pain, constant or worsening tooth pain, throbbing pain waking them at night, pain with fever, facial or jaw swelling, pus, foul drainage, or trouble opening the mouth.
+  - User reports dental trauma such as a broken, chipped, loose, displaced, or knocked-out tooth, sharp tooth edges cutting soft tissue, or bleeding after a dental injury.
+  - User asks whether a tooth, gum, jaw, or face symptom needs a dentist, clinician, emergency department, EMS, or urgent handoff.
+required_first_actions:
+  - Screen immediately for airway danger, trouble breathing, trouble swallowing, drooling, voice change, stridor, floor-of-mouth or tongue swelling, rapidly spreading facial or neck swelling, fever, confusion, uncontrolled bleeding, major trauma, or swelling near the eye.
+  - Log the red flags and context for handoff, including onset, pain severity, fever, swelling location and spread, pus or foul drainage, trauma mechanism, bleeding, loose or missing tooth status, ability to swallow and breathe, and any medication allergies or medical conditions the clinician should know.
+  - Keep first aid conservative while arranging dental or medical handoff: use clean-water gentle rinsing, avoid chewing on the injured or painful side, protect sharp fragments from cutting the mouth, and save any tooth or fragment for the dentist.
+conditional_required_actions:
+  - trigger_terms:
+      - swelling
+      - fever
+      - pus
+      - infection
+      - abscess
+      - face
+      - jaw
+    required_actions:
+      - Treat fever, pus, foul drainage, spreading facial or jaw swelling, neck swelling, floor-of-mouth swelling, drooling, voice change, stridor, or trouble swallowing or breathing as urgent clinician or emergency handoff, not routine dental advice.
+  - trigger_terms:
+      - broken
+      - chipped
+      - crack
+      - fragment
+      - sharp
+    required_actions:
+      - For a broken or chipped tooth, advise clean-water gentle rinse, avoid chewing on that side, protect the sharp edge or fragment if it is cutting the cheek, lip, or tongue, save the fragment if available, and seek dental evaluation.
+  - trigger_terms:
+      - knocked
+      - loose
+      - displaced
+      - trauma
+      - bleeding
+    required_actions:
+      - For trauma, check for other injuries, uncontrolled bleeding, looseness or displacement, numbness, bite change, jaw injury, and airway or swallowing problems; arrange urgent dental or emergency evaluation.
+first_actions:
+  - Ask what happened, when it started, where the pain or swelling is, whether symptoms are worsening, whether chewing or biting changes the pain, and whether fever, pus, foul taste, trauma, bleeding, or trouble swallowing or breathing is present.
+  - For non-airway dental pain or trauma while waiting for care, rinse gently with clean water or mild salt water if the person can swallow and spit normally.
+  - Avoid chewing on the painful, broken, loose, or injured side; use soft foods only if swallowing is safe and there is no airway concern.
+  - If a sharp broken edge is cutting the mouth, cover or buffer the edge with clean temporary material if available and do not file, drill, or reshape the tooth.
+  - Save any tooth or fragment in a clean container and bring it to the dentist or emergency clinician; do not scrub the root or attempt procedural repair in this card.
+  - Escalate promptly to a dentist, clinician, urgent care, emergency department, EMS, or local emergency pathway based on red flags, trauma severity, and availability.
+urgent_red_flags:
+  - Trouble breathing, stridor, voice change, drooling, inability to swallow saliva, tongue swelling, floor-of-mouth swelling, or swelling spreading into the neck.
+  - Fever with spreading facial or jaw swelling, pus, foul drainage, feeling very ill, confusion, fast breathing, rapid heartbeat, or signs of sepsis.
+  - Swelling near the eye, vision change, eye bulging, severe headache, stiff neck, or swelling crossing the midline or spreading rapidly.
+  - Uncontrolled bleeding after dental injury or bleeding that does not stop with steady pressure.
+  - Tooth knocked out, tooth displaced or very loose after trauma, jaw pain with bite change, numbness after injury, or major facial trauma.
+  - Severe constant pain, worsening pain, pain waking the person from sleep, or pain with swelling or fever.
+forbidden_advice:
+  - Do not give extraction, drilling, filing, incision, drainage, splinting, nerve block, suturing, reimplantation, or other dental procedure steps.
+  - Do not recommend antibiotics, antibiotic selection or dosing, pain-medication dosing, anesthetic dosing, sedation, herbal dosing, or medication changes.
+  - Do not diagnose the cause as a cavity, abscess, cellulitis, fracture type, dry socket, nerve injury, sinus infection, or other specific disease from this card.
+  - Do not reassure fever with swelling, airway symptoms, spreading infection signs, uncontrolled bleeding, or dental trauma as safe for routine home care.
+  - Do not provide return-to-work, return-to-play, return-to-duty, legal, liability, licensing, or safety-certification claims.
+do_not:
+  - Do not delay emergency care to gather perfect dental details when airway, swallowing, sepsis, eye, uncontrolled bleeding, or major trauma red flags are present.
+  - Do not chew on a painful, broken, loose, or injured tooth.
+  - Do not scrub a knocked-out tooth root, force a tooth back into place, drain a swelling, cut gum tissue, file a sharp edge, or pull a tooth.
+  - Do not route swallowed cleaners, unknown pills, chemical burns, mixed-cleaner fumes, or poisoning exposures to dental triage just because the mouth is involved.
+routine_boundary: >
+  This emergency dental card is not for daily cleaning, mild cold sensitivity,
+  bad breath from poor hygiene, dentures rubbing without infection signs, or
+  bleeding gums without swelling, pus, fever, trauma, or worsening pain. It is
+  also not a procedure card. Its safe scope is red-flag intake, conservative
+  rinse and protect basics, avoid-chewing advice, documentation for handoff,
+  and escalation to dental, medical, or emergency care.
+acceptable_uncertain_fit: >
+  If it is unclear whether the dental problem is urgent, lead with the red-flag
+  screen, give only conservative clean-water rinse, avoid-chewing, fragment
+  protection, and handoff logging steps, and advise dental or medical contact
+  if swelling, fever, pus, trauma, severe or worsening pain, or swallowing or
+  breathing symptoms are present.
+clarifying_questions:
+  - Is there any trouble breathing, trouble swallowing, drooling, voice change, tongue or floor-of-mouth swelling, or swelling spreading into the neck?
+  - Is there fever, pus, foul drainage or taste, facial or jaw swelling, swelling near the eye, confusion, or feeling very ill?
+  - Was there an injury, knocked-out tooth, loose or displaced tooth, uncontrolled bleeding, jaw pain, bite change, numbness, or a sharp broken edge?
+  - Is the pain mild and intermittent, or constant, worsening, throbbing, waking the person from sleep, or worse with biting?
+  - Is there any chance this is a swallowed chemical, cleaner, unknown pill, or mixed-cleaner fume exposure rather than a dental problem?
+citation_ids:
+  - emergency-dental-overview-boundary
+  - emergency-dental-recognition-red-flags
+  - emergency-dental-common-emergencies
+  - dental-infection-airway-red-flags
+  - emergency-dental-life-threat-handoff
+  - emergency-dental-documentation-handoff
+source_sections:
+  - guide: GD-047
+    slug: emergency-dental
+    title: "Emergency Dental Procedures"
+    sections:
+      - "#overview"
+      - "#recognition"
+      - "#common-emergencies"
+      - "#abscess-drainage-and-management"
+      - "#dental-infection-identification-types"
+      - "#when-dental-issues-become-life-threatening-emergencies"
+      - "#complications-when-to-stop"
+      - "#common-mistakes"
+      - "#quick-reference"
+source_invariants:
+  - name: emergency dental routing owns urgent pain swelling trauma and poisoning boundary
+    guide: GD-047
+    must_include:
+      - Start here when the complaint is urgent first
+      - Do not route routine hygiene complaints here just because they mention gums or teeth.
+      - Do not route cleaner ingestion, unknown pill ingestion, or mixed-cleaner fume complaints here just because they mention the mouth, drooling, or burning.
+  - name: infection airway and fever red flags require handoff
+    guide: GD-047
+    must_include:
+      - with spreading facial swelling indicates possible systemic infection.
+      - Difficulty swallowing (dysphagia) or drooling (suggests airway compromise)
+      - Stridor or voice changes (airway obstruction)
+      - Swelling extends to floor of mouth or neck
+  - name: conservative broken tooth and handoff details are source backed
+    guide: GD-047
+    must_include:
+      - Cover sharp edge with temporary cement or wax; avoid that side when chewing.
+      - "Document: tooth number, reason for extraction, anesthetic used, bleeding control, complications, antibiotics given, date."
+      - Seek professional care as soon as possible for X-rays and proper fixation
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary card for GD-047. It intentionally narrows the broad source
+  guide to emergency dental intake, red-flag logging, conservative clean-water
+  rinse and protect-fragment basics, avoid-chewing advice, infection, airway,
+  fever, trauma, and bleeding escalation, and dentist/clinician/emergency
+  handoff. It excludes extraction, drilling, incision or drainage, splinting,
+  reimplantation procedure steps, medication dosing, diagnosis, clearance,
+  legal claims, and safety certification.

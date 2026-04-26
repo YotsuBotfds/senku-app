@@ -21,6 +21,44 @@ word_count: 5100
 last_updated: '2026-04-06'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: shock_recognition_resuscitation_boundary
+answer_card:
+  - shock_recognition_resuscitation_boundary
+citations_required: true
+aliases:
+  - shock recognition
+  - signs of shock
+  - possible shock
+  - shock concern
+  - weak pulse and clammy skin
+  - pale clammy confused
+  - cold extremities weak pulse
+  - shock handoff
+  - shock status log
+  - shock after bleeding
+  - shock after infection
+  - shock after trauma
+routing_cues:
+  - Use for first-hop recognition that a person may be in shock, especially cold pale clammy skin, weak or very rapid pulse, confusion, lethargy, collapse, low blood pressure, mottled skin, or abnormal breathing.
+  - Keep the answer boundary-only for intake, danger-sign recognition, call-for-help, positioning, warmth, obvious bleeding pressure, time/status logs, red flags, and emergency or clinician handoff.
+  - Route life-threatening traumatic bleeding, tourniquet, wound-packing, crush/compartment, amputation, chest-trauma deterioration, or tension-pneumothorax prompts to shock-bleeding-trauma-stabilization rather than competing with that card.
+  - Route abdominal or concealed internal-bleeding prompts to abdominal-internal-bleeding when hard belly, guarding, abdominal trauma, black stool with danger signs, pregnancy concern, or internal abdominal bleeding is central.
+  - Route sepsis-source, empiric antibiotic, anaphylaxis, acute coronary, airway, obstetric, pediatric, or toxicology-specific prompts to the more specific reviewed card or guide after the shock concern is stabilized.
+  - Do not provide IV fluids, vasopressors, antibiotics, oxygen protocols, diagnostic differentiation, resuscitation algorithms, medication or dosing, invasive procedures, transport clearance, legal claims, or safety certification from this card.
+citation_policy: cite this guide for broad shock recognition and handoff boundaries; cite the more specific trauma, bleeding, sepsis, anaphylaxis, airway, cardiac, obstetric, pediatric, or toxicology owner when the prompt centers those specific conditions.
+applicability: first-hop shock concern intake, danger-sign recognition, simple non-invasive support while help is arranged, time/status logs, red-flag monitoring, and emergency or clinician handoff.
+not_for:
+  - IV or fluid resuscitation protocols
+  - vasopressor protocols
+  - antibiotics or sepsis medication protocols
+  - oxygen protocols
+  - diagnostic differentiation or resuscitation algorithms
+  - medication dosing
+  - invasive procedures
+  - tourniquet, wound packing, crush injury, or chest-trauma procedure ownership
+  - transport clearance
+  - legal claims or safety certification
 custom_css: |
   .shock-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
   .shock-table th { background-color: var(--card); border-bottom: 2px solid var(--accent); padding: 12px; text-align: left; font-weight: bold; }

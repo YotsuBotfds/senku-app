@@ -6,8 +6,17 @@ category: medical
 difficulty: advanced
 tags:
   - critical
+aliases:
+  - blood medicine boundary intake
+  - bleeding anemia transfusion topic handoff
+  - blood bank compatibility uncertainty log
+  - transfusion status observation handoff
+  - blood medicine reviewed card boundary
 icon: 🩸
 description: Field blood typing (ABO/Rh), emergency transfusion protocols, blood storage, IV fluid preparation, and hemorrhage management.
+routing_cues:
+  - Use this reviewed card only for boundary-level blood-medicine intake: bleeding, anemia, or transfusion-topic status logs; visible deterioration screening; compatibility, identity, labeling, or blood-bank uncertainty flags; stop-and-handoff triggers; and clinician, blood-bank, transfusion-service, emergency-response, or public-health owner handoff.
+  - Route transfusion procedures, blood typing or crossmatch instructions, collection/storage, donor selection, anticoagulant/additive recipes, dosing, volumes, rates, diagnosis, treatment decisions, emergency resuscitation protocols, legal/consent decisions, and safety certification outside this reviewed card.
 related:
   - burn-treatment
   - elder-care
@@ -26,8 +35,23 @@ related:
 read_time: 5
 word_count: 2389
 last_updated: '2026-02-15'
-version: '1.0'
+version: '1.1'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: blood_medicine_boundary_handoff
+answer_card:
+  - blood_medicine_boundary_handoff
+citations_required: true
+citation_policy: >
+  Cite this guide and reviewed card only for boundary-level blood-medicine
+  intake, bleeding/anemia/transfusion-topic status logs, visible deterioration
+  screening, compatibility/identity/labeling uncertainty flags,
+  stop-and-handoff triggers, and clinician, blood-bank, transfusion-service,
+  emergency-response, or public-health handoff. Do not use the reviewed card
+  for transfusion procedures, blood typing/crossmatch instructions,
+  collection/storage, donor selection, anticoagulant/additive recipes, dosing,
+  volumes, rates, diagnosis, treatment decisions, emergency resuscitation
+  protocols, legal/consent decisions, or safety certification.
 custom_css: .top-controls{display:flex;gap:10px;margin-top:15px;justify-content:flex-end}.theme-toggle,.mark-read-btn{padding:8px 16px;background-color:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;cursor:pointer;transition:all .3s ease;font-size:1em}.theme-toggle:hover,.mark-read-btn:hover{background-color:var(--card);border-color:var(--accent2)}.mark-read-btn.completed{background-color:var(--accent2);color:white}.guide-metadata{display:flex;gap:30px;margin-top:15px;font-size:.95em;color:var(--muted)}thead{background-color:var(--card)}.highlight{background-color:rgba(233,69,96,0.1);padding:2px 6px;border-radius:3px;color:var(--accent)}.two-column{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}.notes-section{background-color:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:40px;overflow:hidden}.notes-header{background-color:var(--surface);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}.notes-header:hover{background-color:rgba(83,216,168,0.1)}.notes-content{max-height:0;overflow:hidden;transition:max-height .3s ease}.notes-content.open{max-height:500px}.notes-textarea{width:100%;min-height:150px;padding:15px;background-color:var(--surface);color:var(--text);border:0;resize:vertical;font-family:inherit}.notes-actions{display:flex;gap:10px;padding:15px 20px;background-color:var(--card);border-top:1px solid var(--border)}.save-notes-btn{padding:8px 16px;background-color:var(--accent2);color:white;border:0;border-radius:4px;cursor:pointer}#back-to-top{position:fixed;bottom:20px;right:20px;padding:12px 16px;background-color:var(--accent);color:white;border:0;border-radius:4px;cursor:pointer;display:none;z-index:1000}
 ---
 
@@ -38,6 +62,20 @@ custom_css: .top-controls{display:flex;gap:10px;margin-top:15px;justify-content:
 :::danger
 **EXTREME RISK WARNING:** Blood transfusion outside a hospital setting carries extreme risks including transmission of HIV, hepatitis B and C, and other bloodborne pathogens. Hemolytic transfusion reactions (from blood type mismatch) can be rapidly fatal. Blood typing errors are the leading cause of transfusion deaths. Emergency transfusion should only be attempted when death from blood loss is imminent and no professional medical care is available.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-046. Use it only for boundary-level blood-medicine intake: bleeding, anemia, or transfusion-topic status logs; visible deterioration screening; compatibility, identity, labeling, or blood-bank uncertainty flags; stop-and-handoff triggers; and clinician, blood-bank, transfusion-service, emergency-response, or public-health owner handoff.
+
+Start with what is already visible and known: the person involved, the time course, visible bleeding or suspected blood loss, pallor, weakness, dizziness, fainting, shortness of breath, chest pain, confusion, cold or clammy skin, rapid pulse if known, urine color if already observed, fever or chills if a transfusion is already in progress, pregnancy or infant status, medication or anticoagulant context if known, prior transfusion reaction if known, and any labels, identity bands, records, or blood-bank information that are missing, mismatched, unreadable, or uncertain. Keep observations separate from guesses.
+
+Routine boundary support may include making a dated status log, preserving labels and records, marking compatibility or identity uncertainty, noting who verified what, keeping blood-medicine questions tied to a clinician or blood-bank owner, and preparing a concise handoff. If a transfusion-topic event is already underway, visible deterioration, suspected reaction, identity mismatch, compatibility uncertainty, missing labels, wrong-person concern, contaminated or damaged materials, fever/chills, chest/back/flank pain, breathing trouble, hypotension, dark urine, shock signs, or rapidly worsening symptoms are stop-and-handoff triggers.
+
+Do not use this reviewed card for transfusion procedures, blood typing or crossmatch instructions, collection or storage instructions, donor selection, anticoagulant or additive recipes, dosing, volumes, rates, diagnosis, treatment decisions, emergency resuscitation protocols, legal or consent decisions, or safety certification. If a prompt asks for those, answer only the safe intake, uncertainty flagging, stop-trigger, and handoff portion and route the rest to the appropriate qualified owner.
+
+</section>
 
 <section id="overview">
 

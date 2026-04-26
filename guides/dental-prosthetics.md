@@ -25,6 +25,46 @@ last_updated: '2026-04-13'
 version: '1.0'
 custom_css: 'body.light-mode{--bg:#f5f5f5;--surface:#fff;--card:#e8f1f8;--accent:#d32f2f;--accent2:#00897b;--text:#222;--muted:#666;--border:#d0d0d0}@keyframes drift{0%{transform:translate(0,0)}100%{transform:translate(50px,50px)}}.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.theme-toggle{background:var(--card);border:2px solid var(--accent);color:var(--text);padding:.5rem 1rem;border-radius:4px;cursor:pointer;font-weight:500;transition:all .3s ease}.theme-toggle:hover{background-color:var(--accent);color:var(--surface)}.subtitle{color:var(--accent2);font-size:1.2rem;margin-bottom:.5rem}.tags{margin-top:.5rem}.tag{display:inline-block;background-color:var(--card);color:var(--accent2);padding:.25rem .75rem;border-radius:20px;font-size:.85rem;margin-right:.5rem;border:1px solid var(--accent2)}.content-wrapper{display:grid;grid-template-columns:280px 1fr;gap:2rem;margin-top:2rem}.nav-toc{background-color:var(--surface);border:2px solid var(--border);border-radius:8px;padding:1.5rem;height:fit-content;position:sticky;top:20px}.nav-toc h3{color:var(--accent);margin-bottom:1rem;font-size:1.1rem}.nav.nav-toc li{margin-bottom:.5rem}.nav-toc a{color:var(--text);text-decoration:none;padding:.3rem .5rem;display:block;border-left:3px solid transparent;transition:all .3s ease}.nav-toc a:hover,.nav-toc a.active{color:var(--accent2);border-left-color:var(--accent2);background-color:var(--card);border-radius:4px;padding-left:.8rem}.main-content{background-color:var(--surface);border:2px solid var(--border);border-radius:8px;padding:2rem}section>p{margin-bottom:1rem;text-align:justify}.field-note{background-color:var(--card);border:2px dashed var(--border);padding:1rem;margin:1rem 0;border-radius:4px;font-style:italic;color:var(--muted)}.field-note::before{content:''📝 Field Note: '';font-weight:bold;color:var(--accent2);font-style:normal;display:block;margin-bottom:.5rem}svg{max-width:100%;height:auto;margin:1.5rem 0;display:block;background-color:var(--card);border-radius:8px;padding:1rem}.diagram-caption{text-align:center;color:var(--muted);font-size:.9rem;margin-top:-1rem;margin-bottom:1rem}.cross-refs{background-color:var(--card);padding:1rem;border-radius:8px;margin:1.5rem 0;border-left:4px solid var(--accent2)}.cross-refs h4{color:var(--accent2);margin-bottom:.5rem}.cross-refs ul{list-style:none;padding-left:0}.cross-refs li{margin-bottom:.3rem}.cross-refs a{color:var(--accent2);text-decoration:none;transition:color .3s ease}.cross-refs a:hover{text-decoration:underline}.procedure-steps{background-color:var(--card);padding:1.5rem;border-radius:8px;margin:1.5rem 0}.procedure-steps ol{margin-left:1.5rem;line-height:2}.procedure-steps li{margin-bottom:1rem}.procedure-steps strong{color:var(--accent2)}.materials-list{background-color:var(--card);padding:1.5rem;border-radius:8px;margin:1.5rem 0}.materials-list h4{color:var(--accent);margin-bottom:1rem}.materials-list ul{column-count:2;column-gap:2rem}.materials-list li{margin-bottom:.5rem;break-inside:avoid}.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.comparison-card{background-color:var(--card);padding:1rem;border-radius:8px;border-left:4px solid var(--accent2)}.comparison-card h4{color:var(--accent2);margin-bottom:.5rem}.comparison-card ul{font-size:.95rem;margin-left:1rem}.scroll-to-top{position:fixed;bottom:20px;right:20px;background-color:var(--accent);color:var(--surface);width:50px;height:50px;border-radius:50%;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:1.5rem;transition:all .3s ease;z-index:100}.scroll-to-top:hover{background-color:var(--accent2)}.scroll-to-top.show{display:flex}'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: dental_prosthetics_comfort_handoff
+answer_card:
+  - dental_prosthetics_comfort_handoff
+aliases:
+  - denture rubbing
+  - denture sore spot
+  - sore gums under dentures
+  - mouth sore from denture
+  - loose denture
+  - broken denture
+  - cracked denture
+  - retainer rubbing
+  - mouthguard rubbing
+  - oral appliance cleaning
+  - denture comfort log
+routing_cues:
+  - denture or removable appliance rubbing gums
+  - denture fit comfort eating log
+  - cracked or broken denture handoff
+  - clean removable oral appliance
+  - when to stop using a denture
+  - mouth sore swelling pus or choking risk with appliance
+citations_required: true
+applicability: >
+  Boundary-only support for removable denture, partial, retainer, mouthguard,
+  night-guard, or similar oral-appliance comfort intake, eating and wear logs,
+  fit/rubbing/breakage/cleaning notes, stop-use triggers, red-flag handoff, and
+  dentist, prosthodontist, or clinician communication. It does not support
+  fabrication, impressions, grinding, adjustment, adhesives, implant work,
+  appliance repair instructions, diagnosis, medication dosing, clearance, legal
+  claims, or safety certification.
+citation_policy: >
+  Cite GD-061 and its reviewed answer card for appliance comfort intake,
+  cleaning and inspection notes, stop-use triggers, red flags, and clinician
+  handoff only. Do not cite it as authority for denture fabrication,
+  impressions, relines, adjustment/grinding, adhesive recipes or formulas,
+  implant work, appliance repair procedures, diagnosis, pain-medicine or
+  antibiotic dosing, return-to-use clearance, legal claims, or safety
+  certification.
 ---
 
 <section id="overview">
@@ -54,6 +94,14 @@ Use this guide for prosthetic fit, repair, and maintenance. Use `preventive-dent
 If denture rubbing is accompanied by swelling, pus, fever, or rapidly worsening pain, route to `emergency-dental` instead of trying to adjust the appliance only.
 
 Use this guide for dentures, partials, retainers, mouthguards, night guards, and similar removable appliances when the main problem is fit, rubbing, looseness, repair, or appliance cleaning.
+
+### Reviewed Boundary: Comfort, Stop-Use Triggers, and Handoff
+
+For a denture, partial, retainer, mouthguard, night guard, or similar removable appliance, keep routine guidance limited to comfort intake and handoff: when it rubs, where it rubs, how long it has been worn, whether eating or speaking is affected, what foods trigger trouble, whether it feels loose or unstable, whether it is cracked or broken, and how it is being cleaned and stored. A simple log of wear time, sore locations, meals tolerated, slipping, rubbing, and breakage helps a dentist, prosthodontist, or clinician decide the next step.
+
+Stop using the appliance and seek dental or clinical help if it causes a mouth sore that is worsening, bleeding, not improving, or looks infected; if there is swelling, pus, fever, rapidly worsening pain, foul drainage, or trouble opening the mouth; if the appliance is cracked, sharp, loose enough to choke on, or breaks in a way that could be swallowed or inhaled; or if it causes trouble swallowing, choking, gagging that does not settle, or breathing concern. Do not keep wearing an appliance that cuts tissue, traps food against a sore, or feels unsafe.
+
+Do not use this boundary card to give denture fabrication, impressions, adjustment, grinding, relining, adhesive formulas, implant work, appliance repair instructions, diagnosis, pain-medicine or antibiotic dosing, return-to-use clearance, legal claims, or safety certification. For daily mouth cleaning use `preventive-dental-hygiene`; for swelling, pus, fever, trauma, airway risk, severe or rapidly worsening pain, or suspected infection, use `emergency-dental` or urgent medical care as appropriate.
 
 Dental prosthetics serve multiple survival functions:
 

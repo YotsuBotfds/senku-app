@@ -40,6 +40,43 @@ word_count: 6500
 last_updated: '2026-04-13'
 version: '1.2'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: emergency_dental_intake_handoff
+answer_card:
+  - emergency_dental_intake_handoff
+aliases:
+  - emergency dental triage
+  - tooth pain with swelling
+  - dental infection red flags
+  - broken tooth first aid
+  - knocked loose tooth handoff
+  - facial swelling from tooth
+  - dental trauma intake
+routing_cues:
+  - tooth pain with fever swelling or pus
+  - face or jaw swelling from a tooth
+  - broken chipped loose or knocked out tooth
+  - dental injury with bleeding or sharp fragment
+  - trouble swallowing or breathing with dental swelling
+  - when dental pain needs emergency care
+citations_required: true
+applicability: >
+  Boundary-only emergency dental intake and handoff support for urgent
+  dental pain, dental trauma, broken or knocked-out tooth reports, facial or
+  jaw swelling, pus or foul drainage, fever with tooth pain, and airway or
+  swallowing danger signs. Use only for red-flag screening, logging,
+  conservative clean-water rinse and protect-fragment basics, avoid-chewing
+  advice, and dentist, clinician, EMS, or emergency-department handoff.
+  Routine hygiene belongs in preventive-dental-hygiene; possible swallowed
+  chemicals, pills, cleaners, fumes, or poisoning exposures belong in
+  poisoning or chemical-safety owners.
+citation_policy: >
+  Cite GD-047 and its reviewed answer card for emergency dental triage,
+  red-flag screening, conservative non-procedural first steps, and handoff
+  boundaries only. Do not use this guide or card to support extraction,
+  drilling, incision or drainage, splinting, reimplantation procedure steps,
+  antibiotic or pain-medication dosing, diagnosis, return-to-work or
+  return-to-duty clearance, legal claims, or safety certification.
 custom_css: .guide-card{background:var(--card);padding:15px;border-radius:5px;border:1px solid var(--border)}.guide-card a{color:var(--accent2);text-decoration:none;font-weight:bold}#notes-area{background:var(--bg);color:var(--text);padding:10px;border-radius:3px;min-height:100px;border:1px solid var(--border);font-family:monospace}.back-to-top{display:none;position:fixed;bottom:30px;right:30px;background:var(--accent);color:var(--bg);border:0;padding:15px 20px;border-radius:5px;cursor:pointer;font-weight:bold;z-index:999}.back-to-top.show{display:block}
 ---
 

@@ -1,0 +1,95 @@
+card_id: dental_prosthetics_comfort_handoff
+guide_id: GD-061
+slug: dental-prosthetics
+title: "Dental Prosthetics & Denture Making"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about a denture, partial, retainer, mouthguard, night guard, or similar removable oral appliance that rubs, feels loose, hurts, affects eating, is dirty, is cracked, or may be broken.
+  - User needs a conservative comfort and intake log for prosthetic wear time, sore locations, meals tolerated, slipping, rubbing, cleaning, storage, or breakage before seeing a dentist, prosthodontist, or clinician.
+  - User asks when to stop using a denture or oral appliance and seek dental or clinical help.
+required_first_actions:
+  - Screen first for swelling, pus, fever, rapidly worsening pain, foul drainage, trouble opening the mouth, trouble swallowing, choking, gagging that does not settle, breathing concern, sharp broken edges, or an appliance loose enough to be swallowed or inhaled.
+  - If red flags are present, stop routine appliance-comfort advice, stop using the appliance when it feels unsafe or is injuring tissue, and arrange urgent dental, clinical, or emergency help as appropriate.
+  - Keep supported guidance to comfort intake, cleaning and inspection notes, stop-use triggers, and dentist/prosthodontist/clinician handoff.
+first_actions:
+  - Remove the appliance if it is cutting tissue, worsening a sore, broken with sharp edges, unstable enough to choke on, or causing swallowing, choking, gagging, or breathing concern.
+  - Note where it rubs, how long it has been worn each day, whether eating or speaking is affected, which foods are difficult, whether it slips or rocks, and whether there are cracks, loose teeth, sharp edges, or clasp problems.
+  - Clean and rinse the appliance gently with cool water and mild soap or denture cleaner, inspect it for cracks, loose teeth, sharp areas, and trapped debris, and store it in water or denture-soaking solution when out of the mouth.
+  - Remove dentures overnight when safe to do so, let the tissues recover from pressure, and rinse or gently clean the mouth and denture-bearing tissues.
+  - Share the comfort and intake log with a dentist, prosthodontist, or clinician rather than attempting grinding, adjustment, relining, fabrication, repair, or adhesive/formula changes.
+urgent_red_flags:
+  - Mouth sore that is worsening, bleeding, not improving, growing, or looks infected.
+  - Gum, jaw, tongue, facial, or under-jaw swelling; pus; fever; foul drainage; bad taste from a sore area; spreading redness; or rapidly worsening pain.
+  - Trouble swallowing, trouble breathing, choking, gagging that does not settle, or trouble opening the mouth.
+  - Appliance that is cracked, broken, sharp, unstable, loose enough to be swallowed or inhaled, or missing pieces that could have been swallowed or inhaled.
+  - Food trapping against a sore, tissue being cut, or a fit problem that prevents eating or drinking enough.
+forbidden_advice:
+  - Do not give denture fabrication, impressions, relining, adjustment, grinding, occlusal correction, adhesive recipes, adhesive formulas, implant work, or appliance repair instructions.
+  - Do not diagnose oral infection, ulcers, thrush, cancer, abscess, bite problems, appliance safety, or appliance fitness from this card.
+  - Do not recommend pain-medicine dosing, antibiotic selection or dosing, chemical cautery, drilling, filing, extraction, drainage, or other dental procedures.
+  - Do not tell the user a repaired, cracked, adjusted, or improvised appliance is safe to return to use.
+  - Do not make legal, warranty, fitness-for-work, return-to-duty, medical-clearance, or safety-certification claims.
+do_not:
+  - Do not keep wearing an appliance that cuts tissue, worsens a sore, traps food against injured tissue, feels unstable enough to choke on, or causes swallowing or breathing concern.
+  - Do not file, grind, heat, bend, glue, solvent-weld, reline, or fabricate an appliance as a home comfort answer.
+  - Do not use adhesives or improvised formulas to mask a dangerous fit, breakage, choking risk, swelling, infection signs, or worsening pain.
+  - Do not treat swelling, pus, fever, spreading infection signs, airway concern, or rapidly worsening pain as a routine denture-comfort problem.
+routine_boundary: >
+  Routine denture or oral-appliance support is limited to comfort/intake logs,
+  gentle cleaning and inspection, storage notes, stop-use triggers, and handoff
+  to a dentist, prosthodontist, or clinician. It is not a procedure card and
+  must not provide fabrication, impression, adjustment, grinding, relining,
+  adhesive/formula, implant, repair, diagnosis, medication dosing, clearance,
+  legal, or safety-certification advice.
+acceptable_uncertain_fit: >
+  If the prompt may be a routine appliance comfort issue but the severity,
+  swelling, infection signs, breakage, choking risk, swallowing/breathing
+  status, food intake, or pain trajectory is unclear, lead with the red-flag
+  screen and give only low-risk logging, cleaning, stop-use, and handoff steps
+  that do not delay dental or medical care.
+clarifying_questions:
+  - Is there swelling, pus, fever, foul drainage, bad taste from one sore area, trouble opening the mouth, or rapidly worsening pain?
+  - Is the appliance cracked, sharp, missing a piece, or loose enough that it could be swallowed or inhaled?
+  - Is there trouble swallowing, trouble breathing, choking, or gagging that does not settle when the appliance is removed?
+  - Where does it rub, how long is it worn each day, and does it affect eating, drinking, speaking, or sleep?
+  - How is it cleaned and stored, and have you noticed food trapped against a sore or tissue being cut?
+citation_ids:
+  - appliance-routing-boundary
+  - comfort-stop-use-handoff
+  - cleaning-inspection-storage
+  - monitoring-complications
+source_sections:
+  - guide: GD-061
+    slug: dental-prosthetics
+    title: "Dental Prosthetics & Denture Making"
+    sections:
+      - "#overview"
+      - "#maintenance"
+      - "#long-term-care"
+source_invariants:
+  - name: appliance comfort boundary stays handoff only
+    guide: GD-061
+    must_include:
+      - Use this guide for dentures, partials, retainers, mouthguards, night guards, and similar removable appliances when the main problem is fit, rubbing, looseness, repair, or appliance cleaning.
+      - For a denture, partial, retainer, mouthguard, night guard, or similar removable appliance, keep routine guidance limited to comfort intake and handoff
+      - Stop using the appliance and seek dental or clinical help if it causes a mouth sore that is worsening, bleeding, not improving, or looks infected
+      - if the appliance is cracked, sharp, loose enough to choke on, or breaks in a way that could be swallowed or inhaled
+      - Do not use this boundary card to give denture fabrication, impressions, adjustment, grinding, relining, adhesive formulas, implant work, appliance repair instructions, diagnosis, pain-medicine or antibiotic dosing, return-to-use clearance, legal claims, or safety certification.
+    must_not_match:
+      - "return\\s+to\\s+use[^\\n]{0,120}(safe|cleared|approved)"
+      - "(ibuprofen|acetaminophen|paracetamol|amoxicillin|antibiotic)[^\\n]{0,80}\\b\\d+\\s*(mg|milligram)"
+  - name: cleaning and monitoring remain inspection support
+    guide: GD-061
+    must_include:
+      - While cleaning, examine denture for cracks, loose teeth, or damage. Early detection prevents catastrophic failure.
+      - Remove denture nightly to allow tissue recovery.
+      - If persistent sore spots develop, may require denture adjustment or soft reline application.
+review_status: pilot_reviewed
+notes: >
+  Reviewed GD-061 boundary card for denture/prosthetic comfort intake, wear and
+  eating logs, cleaning and inspection notes, stop-use triggers, red flags, and
+  dentist/prosthodontist/clinician handoff. It intentionally excludes
+  fabrication, impressions, adjustment/grinding, adhesives/formulas, implant
+  work, appliance repair instructions, diagnosis, medication dosing,
+  return-to-use clearance, legal claims, and safety certification.
