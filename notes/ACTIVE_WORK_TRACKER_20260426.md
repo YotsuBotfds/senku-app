@@ -32,7 +32,9 @@ the `Master Head Health` run for that HEAD was green.
    - `51` unresolved partials remain actionable, with critical/high guides first.
    - Guide-body edits require safety review and re-ingest before retrieval claims.
 4. Runtime/citation behavior:
-   - Recent bench artifacts show duplicate-citation hotspots in card-backed/runtime rows, especially RE6 cardiac, RE7 young-infant, and EVAL8 compound food/medical cases.
+   - Status: desktop card-backed answer composer now suppresses repeated inline citations for the same source while preserving `cited_guide_ids`.
+   - Direct cardiac proof: GD-601 card-backed answer cites `[GD-601]` once and `_duplicate_citation_count(...)` returns `0`.
+   - Recent bench artifacts showed duplicate-citation hotspots in card-backed/runtime rows, especially RE6 cardiac, RE7 young-infant, and EVAL8 compound food/medical cases.
    - Re-check young-infant and contaminated-creek uncertain-fit rows after routing/card changes.
 
 ## Active Operating Rules

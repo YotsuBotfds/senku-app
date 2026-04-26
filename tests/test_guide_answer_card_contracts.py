@@ -752,6 +752,16 @@ source_sections:
         self.assertIn("[GD-492]", plan["answer_text"])
         self.assertNotIn("[GD-284]", plan["answer_text"])
 
+    def test_compose_card_backed_answer_cites_repeated_source_once(self):
+        card = find_cards_for_guides("GD-601", cards=self.cards)[0]
+
+        plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-601"])
+
+        self.assertEqual(plan["cited_guide_ids"], ["GD-601"])
+        self.assertEqual(plan["answer_text"].count("[GD-601]"), 1)
+        self.assertIn("cardiac emergency", plan["answer_text"])
+        self.assertIn("fastest available evacuation", plan["answer_text"])
+
     def test_compose_card_backed_answer_returns_no_cards_for_empty_input(self):
         plan = compose_card_backed_answer([])
 

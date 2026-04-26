@@ -1118,6 +1118,11 @@ Validation:
   the `8`-row high-liability compound pack, retrieval-only evaluation at top-k
   `8` produced expected hit@1 and primary hit@1 on all rows with no retrieval
   errors, and the retrieval expectation cross-check passed without warnings.
+- Desktop card-backed answer composition now suppresses repeated inline
+  citations for the same source guide before rendering deterministic reviewed
+  card answers. Focused validation covers the composer, runtime wrapper, bench
+  runtime, and response-normalization surfaces, and a direct GD-601 proof now
+  cites once with duplicate count `0`.
 
 Deferred unless evidenced:
 

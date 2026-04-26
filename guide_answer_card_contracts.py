@@ -215,6 +215,7 @@ def compose_card_backed_answer(
         for text in unit["urgent_red_flags"][:max_red_flags]:
             lines.append(_card_answer_line(unit, "red_flag", f"Red flag: {text}", citation_id))
 
+    lines = _suppress_repeated_answer_line_citations(lines)
     answer_text = "\n".join(
         f"{index}. {line['text']}{_citation_suffix(line)}"
         for index, line in enumerate(lines, start=1)
@@ -311,6 +312,24 @@ def _safe_negative_answer_lines(unit: dict[str, Any], limit: int) -> list[str]:
 def _citation_suffix(line: dict[str, str]) -> str:
     citation_id = str(line.get("citation_id") or "").strip()
     return f" [{citation_id}]" if citation_id else ""
+
+
+def _suppress_repeated_answer_line_citations(
+    lines: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    seen_citation_ids = set()
+    normalized_lines = []
+    for line in lines:
+        citation_id = str(line.get("citation_id") or "").strip()
+        if not citation_id or citation_id not in seen_citation_ids:
+            normalized_lines.append(line)
+            if citation_id:
+                seen_citation_ids.add(citation_id)
+            continue
+        normalized = dict(line)
+        normalized["citation_id"] = ""
+        normalized_lines.append(normalized)
+    return normalized_lines
 
 
 def _card_source_guide_ids(card: dict[str, Any]) -> list[str]:
