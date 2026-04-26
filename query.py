@@ -15003,7 +15003,7 @@ def _prioritized_answer_card_ids_for_question(question):
         is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
         has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
         is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
-        is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+        is_meningitis_rash_emergency_query=_is_meningitis_rash_retrieval_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
         is_infected_wound_card_query=_is_infected_wound_boundary_query,
         is_community_kitchen_illness_control_card_query=(
@@ -15019,7 +15019,7 @@ def _answer_card_matches_question(card, question):
         is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
         has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
         is_newborn_sepsis_danger_query=_is_newborn_sepsis_danger_query,
-        is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
+        is_meningitis_rash_emergency_query=_is_meningitis_rash_retrieval_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
         is_infected_wound_card_query=_is_infected_wound_boundary_query,
         is_community_kitchen_illness_control_card_query=(

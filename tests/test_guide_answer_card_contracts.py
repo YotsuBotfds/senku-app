@@ -672,7 +672,7 @@ class GuideAnswerCardContractTests(unittest.TestCase):
     def test_meningitis_red_flag_prompt_does_not_require_sepsis_first_hour_language(self):
         cards = find_cards_for_guides("GD-589", cards=self.cards)
         answer = """
-        Treat fever plus meningitis or brain-warning signs as suspected
+        Treat meningitis or brain-warning signs as suspected
         meningitis or meningococcemia. Escalate urgently for emergency medical
         evaluation and antibiotic-capable care.
         """
@@ -689,6 +689,22 @@ class GuideAnswerCardContractTests(unittest.TestCase):
             "If sepsis, shock, or very-sick appearance is explicitly suspected, prioritize immediate sepsis screening and first-hour priorities.",
             missing_phrases,
         )
+
+    def test_meningitis_child_stiff_neck_rash_prompt_passes_without_fever(self):
+        cards = find_cards_for_guides("GD-589", cards=self.cards)
+        answer = """
+        Treat meningitis or brain-warning signs as suspected meningitis or
+        meningococcemia. Escalate urgently for emergency medical evaluation
+        and antibiotic-capable care.
+        """
+
+        result = evaluate_answer_card_contract(
+            answer,
+            cards,
+            question_text="A child has a stiff neck with a purple rash.",
+        )
+
+        self.assertEqual(result["status"], "pass")
 
     def test_meningitis_sepsis_framing_enforces_first_hour_language(self):
         cards = find_cards_for_guides("GD-589", cards=self.cards)

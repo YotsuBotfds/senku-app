@@ -3095,6 +3095,21 @@ class QueryRoutingTests(unittest.TestCase):
 
         self.assertEqual([card["card_id"] for card in cards], ["meningitis_sepsis_child"])
 
+    def test_answer_card_contract_uses_meningitis_card_for_child_stiff_neck_rash(self):
+        results = {"metadatas": [[{"guide_id": "GD-589"}, {"guide_id": "GD-284"}]]}
+
+        cards = query._answer_cards_for_results(
+            results,
+            question=(
+                "The internet is down, cell service is weak, and a child has a "
+                "stiff neck with a purple rash. Should I troubleshoot the router "
+                "first or start moving toward help?"
+            ),
+            max_cards=1,
+        )
+
+        self.assertEqual([card["card_id"] for card in cards], ["meningitis_sepsis_child"])
+
     def test_answer_card_contract_uses_meningitis_card_for_stiff_neck_compare(self):
         results = {"metadatas": [[{"guide_id": "GD-589"}, {"guide_id": "GD-284"}]]}
 

@@ -7,9 +7,10 @@ evidence_owner: guide-corpus
 applies_when:
   - Fever with stiff neck, severe headache with vomiting, confusion, unusual sleepiness, or hard-to-wake behavior.
   - Fever with purple, dark, bruise-like, or non-blanching rash.
+  - Child with stiff neck plus purple, dark, bruise-like, or non-blanching rash, even if fever is not stated.
   - Child is sleepy, confused, or has little purple dots with fever.
 required_first_actions:
-  - Treat fever plus meningitis or brain-warning signs as suspected meningitis or meningococcemia.
+  - Treat meningitis or brain-warning signs as suspected meningitis or meningococcemia.
   - Escalate urgently for emergency medical evaluation and antibiotic-capable care.
 conditional_required_actions:
   - trigger_terms:
@@ -26,9 +27,10 @@ conditional_required_actions:
       - If sepsis, shock, or very-sick appearance is explicitly suspected, prioritize immediate sepsis screening and first-hour priorities.
 first_actions:
   - Check mental status, breathing rate, blood pressure if available, and infection source.
-  - Look for CNS or meningitis clues: headache, neck stiffness, photophobia, vomiting, confusion, hard-to-wake behavior, and non-blanching purple or dark rash.
+  - "Look for CNS or meningitis clues: headache, neck stiffness, photophobia, vomiting, confusion, hard-to-wake behavior, and non-blanching purple or dark rash."
   - Begin broad sepsis response and antibiotics immediately when sepsis, shock, or very-sick appearance is clinically indicated and available, following the source guide.
 urgent_red_flags:
+  - Child with stiff neck plus purple, dark, bruise-like, or non-blanching rash.
   - Fever with stiff neck.
   - Severe headache with vomiting.
   - Confusion, unusual sleepiness, or hard to wake.
@@ -44,10 +46,12 @@ do_not:
 routine_boundary: >
   Routine fever/rash guidance is out of bounds when fever is paired with brain
   warning signs, hard-to-wake behavior, or a purple/dark/non-blanching rash.
+  For a child, stiff neck plus a purple/dark/non-blanching rash is also out of
+  bounds for routine care even when fever is not stated.
 acceptable_uncertain_fit: >
   If the rash description is unclear, ask whether it fades with pressure, but
-  preserve urgent escalation when fever plus severe illness or mental-status
-  change is present.
+  preserve urgent escalation when fever plus severe illness, mental-status
+  change, or child stiff-neck plus dangerous-rash wording is present.
 clarifying_questions:
   - Does the rash fade or blanch when pressed?
   - Is there stiff neck, severe headache, repeated vomiting, confusion, unusual sleepiness, or hard-to-wake behavior?
