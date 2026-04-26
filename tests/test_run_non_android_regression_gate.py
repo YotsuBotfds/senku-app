@@ -100,6 +100,35 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertIn("tests\\fixtures\\non_android_generated\\baseline_diag", result.stdout)
         self.assertIn("--fail-on-regression", result.stdout)
 
+    def test_generated_mode_whatif_omits_fast_retrieval_commands(self):
+        result = self.run_script(
+            "-Mode",
+            "Generated",
+            "-Label",
+            "unit_label",
+            "-GeneratedBenchJson",
+            "tests\\fixtures\\non_android_generated\\candidate.json",
+            "-GeneratedBaselineDiag",
+            "tests\\fixtures\\non_android_generated\\baseline_diag",
+            "-FailOnGeneratedRegression",
+            "-WhatIf",
+        )
+
+        self.assertIn("Generated.failure_analysis", result.stdout)
+        self.assertIn("scripts\\analyze_rag_bench_failures.py", result.stdout)
+        self.assertIn("Generated.regression_gate", result.stdout)
+        self.assertIn("scripts\\rag_regression_gate.py", result.stdout)
+
+        self.assertNotIn("PartialRouter.retrieval_eval", result.stdout)
+        self.assertNotIn("Eval9Primary.retrieval_eval", result.stdout)
+        self.assertNotIn("scripts\\evaluate_retrieval_pack.py", result.stdout)
+        self.assertNotIn("validate_prompt_expectations.py", result.stdout)
+        self.assertNotIn(
+            "rag_eval9_high_liability_compound_holdouts_20260426_retrieval_only",
+            result.stdout,
+        )
+        self.assertNotIn("FastEmbed", result.stdout)
+
     def test_generated_fixture_chain_passes_analysis_and_regression_gate(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             output_dir = Path(tmpdir) / "diag"

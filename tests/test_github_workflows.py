@@ -46,6 +46,21 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
                         self.assertNotIn(ref, {"main", "master"})
                         self.assertRegex(ref, COMMIT_SHA_RE)
 
+    def test_upload_artifacts_use_short_retention_and_error_on_missing_files(self):
+        for path, workflow in _workflow_docs():
+            jobs = workflow.get("jobs", {})
+            for job_name, job in jobs.items():
+                for index, step in enumerate(job.get("steps", [])):
+                    uses = str(step.get("uses", ""))
+                    if not uses.startswith("actions/upload-artifact@"):
+                        continue
+                    with self.subTest(path=path.name, job=job_name, step=index):
+                        options = step.get("with", {})
+                        self.assertTrue(options.get("name"))
+                        self.assertTrue(options.get("path"))
+                        self.assertEqual("error", options.get("if-no-files-found"))
+                        self.assertLessEqual(int(options.get("retention-days", 0)), 14)
+
     def test_attestation_jobs_have_scoped_permissions(self):
         for path, workflow in _workflow_docs():
             jobs = workflow.get("jobs", {})

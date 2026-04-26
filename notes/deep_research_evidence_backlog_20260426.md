@@ -204,6 +204,11 @@ Action:
 - Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
   the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
   security installs pinned `uv==0.11.7` before checking the generated lock.
+- Added a Generated-mode `-WhatIf` contract proof that keeps the cheap smoke
+  path on analyzer/regression commands only, with explicit negatives for
+  retrieval packs, prompt expectation validation, and FastEmbed. Also added a
+  generic workflow artifact policy check for short retention and missing-file
+  errors on every upload step.
 
 Validation:
 
