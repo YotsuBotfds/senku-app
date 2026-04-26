@@ -49,7 +49,10 @@ class GuideEditImpactTests(unittest.TestCase):
         )
         commands = [item["command"] for item in plan["commands"]]
 
-        self.assertIn("& .\\.venvs\\senku-validate\\Scripts\\python.exe -B ingest.py", commands)
+        self.assertIn(
+            "& .\\.venvs\\senku-validate\\Scripts\\python.exe -B scripts\\plan_incremental_ingest.py guides\\first-aid.md",
+            commands,
+        )
         self.assertIn(
             "& .\\.venvs\\senku-validate\\Scripts\\python.exe -B scripts\\scan_corpus_markers.py --fail-on-unresolved",
             commands,

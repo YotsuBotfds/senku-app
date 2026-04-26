@@ -132,6 +132,18 @@ def focused_test_for_script(path: str) -> str | None:
     return None
 
 
+def powershell_quote(value: str) -> str:
+    value = value.replace("/", "\\")
+    if value and all(char.isalnum() or char in "_.:\\-" for char in value):
+        return value
+    return "'" + value.replace("'", "''") + "'"
+
+
+def incremental_ingest_plan_command(paths: list[str]) -> str:
+    args = " ".join(powershell_quote(path) for path in sorted(dict.fromkeys(paths)))
+    return f"& {PYTHON} -B scripts\\plan_incremental_ingest.py {args}".rstrip()
+
+
 def build_plan(paths: list[str]) -> dict[str, Any]:
     changes = [classify_path(path) for path in paths]
     category_map: dict[str, list[str]] = {}
@@ -143,8 +155,8 @@ def build_plan(paths: list[str]) -> dict[str, Any]:
     if "guide" in category_map:
         commands.append(
             {
-                "reason": "Re-ingest after guide edits before trusting retrieval behavior.",
-                "command": f"& {PYTHON} -B ingest.py",
+                "reason": "Plan focused incremental ingest for touched guide markdown before trusting retrieval behavior.",
+                "command": incremental_ingest_plan_command(category_map["guide"]),
             }
         )
         commands.append(
