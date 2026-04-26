@@ -507,12 +507,12 @@ Fuel management is critical to long-term settlement viability. Invest time in sy
 
 <section id="see-also">
 
-- <a href="../power-distribution-basics.html">Power Distribution Basics</a> â€" Use fuel to generate electricity
-- <a href="../emergency-power-bootstrap.html">Emergency Power Bootstrap</a> â€" Generate backup power
-- <a href="../combustion-fire-chemistry-basics.html">Combustion &amp; Fire Chemistry</a> â€" How fuels burn, combustion byproducts, and CO hazards
-- <a href="../smoke-inhalation-carbon-monoxide-fire-gas-exposure.html">Smoke Inhalation &amp; Carbon Monoxide</a> â€" Field protocol for CO poisoning and fire-gas exposure
-- <a href="../agriculture.html">Agriculture</a> â€" Use fuel for food production
-- <a href="../fire-management-suppression.html">Fire Management and Suppression</a> â€" Handle fuel fires safely
+- <a href="../power-distribution-basics.html">Power Distribution Basics</a> - Use fuel to generate electricity
+- <a href="../emergency-power-bootstrap.html">Emergency Power Bootstrap</a> - Generate backup power
+- <a href="../combustion-fire-chemistry-basics.html">Combustion &amp; Fire Chemistry</a> - How fuels burn, combustion byproducts, and CO hazards
+- <a href="../smoke-inhalation-carbon-monoxide-fire-gas-exposure.html">Smoke Inhalation &amp; Carbon Monoxide</a> - Field protocol for CO poisoning and fire-gas exposure
+- <a href="../agriculture.html">Agriculture</a> - Use fuel for food production
+- <a href="../fire-management-suppression.html">Fire Management and Suppression</a> - Handle fuel fires safely
 
 </section>
 
