@@ -1,0 +1,111 @@
+card_id: common_ailments_recognition_care
+guide_id: GD-733
+slug: common-ailments-recognition-care
+title: "Common Ailments: Recognition & Basic Home Care"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - User asks whether an everyday symptom can be watched at home or needs urgent help.
+  - User describes common complaints such as fever, chills, body aches, cold or flu symptoms, nausea, vomiting, diarrhea, mild stomach cramps, urinary burning or urgency, itchy rash, headache within a broader illness, or mild allergy-like symptoms.
+  - User asks for non-medication supportive care such as fluids, rest, cooling, bland foods, hygiene, isolation, comfort measures, and monitoring.
+required_first_actions:
+  - Start with emergency red-flag screening before routine home-care advice.
+  - Route sudden face droop, one-sided weakness or numbness, trouble speaking, sudden confusion, or sudden vision change to emergency stroke/first-aid care, not common-ailment watchful waiting.
+  - Route heavy chest pressure or tightness, pain spreading to the arm, jaw, back, cold sweat, nausea with chest discomfort, or sudden shortness of breath to emergency first-aid care, not routine home care.
+  - Route hard or swollen belly, guarding, refusal to walk upright because of belly pain, vomiting with no stool or gas, fever with one very tender abdominal spot, severe localized belly pain, altered mental status, shock signs, trouble breathing, or inability to wake to urgent/emergency care.
+first_actions:
+  - If no red flags are present, keep the person resting, alert, breathing comfortably, and monitored for worsening.
+  - Encourage frequent fluids and watch urine color and frequency when dehydration is a concern.
+  - Use light clothing, rest, and gentle cooling for fever discomfort.
+  - For cold or flu symptoms, use rest, fluids, head elevation, saline if available, warm salt-water gargles, honey for cough only when age-appropriate, and isolation from others.
+  - For vomiting or diarrhea without abdominal red flags, use small frequent sips of oral rehydration solution or clean fluids and advance to bland foods as vomiting settles.
+  - For mild urinary burning, frequency, or urgency without red flags, hydrate, urinate regularly, monitor closely for hours to 1-2 days, and escalate if worsening or not improving.
+  - For itch, minor rash, bites, mild allergy symptoms, headache, or muscle aches, keep care supportive and use the focused guide for that body area when the complaint is specific.
+urgent_red_flags:
+  - Trouble breathing, coughing blood, or severe breathing distress.
+  - Heavy chest pain or pressure, chest tightness with cold sweat or nausea, pain spreading into the arm, jaw, or back, or sudden shortness of breath that feels wrong.
+  - Sudden face droop, one-sided weakness or numbness, trouble speaking, sudden confusion, sudden vision change, seizure, cannot be woken, or altered mental status.
+  - Sudden severe headache, especially worst-ever headache or headache with fever and stiff neck.
+  - Hard, swollen, or rigid belly; guarding; refusal to walk upright because of belly pain; vomiting with no stool or gas; severe localized abdominal pain; or fever with one very tender abdominal spot.
+  - Vomiting blood, bloody diarrhea, signs of severe dehydration, shock signs, severe allergic reaction, uncontrolled bleeding, or high fever with confusion or severe weakness.
+  - Urinary symptoms with high fever and flank pain, vomiting preventing hydration, pregnancy, inability to urinate, visible blood in urine, or worsening after 1-2 days of hydration and close monitoring.
+forbidden_advice:
+  - Do not diagnose the cause of symptoms from this card.
+  - Do not recommend medication doses, drug choices, antibiotic selection, medication timing, maximum daily dose, side-effect management, or drug-interaction decisions.
+  - Do not claim a symptom is viral, bacterial, allergic, anxiety, heartburn, flu, UTI, cellulitis, or another diagnosis as a certainty.
+  - Do not frame stroke signs, chest pressure patterns, hard or swollen belly with vomiting or no stool/gas, altered mental status, shock signs, severe breathing trouble, or inability to wake as safe for routine home care.
+  - Do not tell someone to keep watching at home when symptoms are worsening, red flags are present, hydration is failing, or the person cannot be monitored.
+do_not:
+  - Do not give food, water, or pills by mouth when stroke signs, confusion, reduced alertness, or inability to swallow safely is present.
+  - Do not delay emergency help for chest pain, stroke signs, hard belly patterns, altered mental status, severe breathing trouble, shock, severe allergic reaction, or uncontrolled bleeding.
+  - Do not turn this broad triage card into a medication, antibiotic, diagnosis, or interaction protocol.
+routine_boundary: >
+  Routine common-ailment home care is appropriate only when the person is alert,
+  talking normally, breathing comfortably, drinking and keeping fluids down,
+  stable or improving over 12 to 24 hours, and has none of the red flags. Any
+  stroke-like symptom, chest-pressure pattern, hard or swollen belly with
+  vomiting or no stool/gas, altered mental status, severe breathing problem,
+  shock sign, severe allergic reaction, uncontrolled bleeding, or worsening
+  trajectory is outside routine home care.
+acceptable_uncertain_fit: >
+  If the symptom fit is plausible but incomplete, lead with the red-flag
+  boundary, ask only brief severity and localization questions, and offer
+  low-risk supportive measures such as rest, fluids, hygiene, isolation,
+  cooling, bland foods, or monitoring only when doing so does not delay urgent
+  care. Route medication, antibiotic, diagnosis, and interaction questions to
+  the appropriate medication or clinician-facing source instead of answering
+  them from this card.
+clarifying_questions:
+  - Is the person alert, talking normally, breathing comfortably, and able to keep fluids down?
+  - Are there stroke signs, chest pressure, severe shortness of breath, confusion, seizure, fainting, or inability to wake?
+  - Is there a hard or swollen belly, guarding, refusal to walk upright because of belly pain, severe localized belly pain, vomiting with no stool or gas, blood in vomit or stool, or signs of dehydration?
+  - Are symptoms stable or improving, or are they worsening despite rest, fluids, and monitoring?
+citation_ids:
+  - common-ailments-start-here-boundary
+  - red-flag-fast-track
+  - watch-at-home-criteria
+  - quick-symptom-routing
+  - gastroenteritis-supportive-care-boundary
+  - urinary-watchful-waiting-boundary
+  - red-flags-summary
+source_sections:
+  - guide: GD-733
+    slug: common-ailments-recognition-care
+    title: "Common Ailments: Recognition & Basic Home Care"
+    sections:
+      - "Start here symptom box"
+      - "Red-flag fast track"
+      - "Watch at home"
+      - "#overview > Quick symptom routing"
+      - "#gastroenteritis"
+      - "#urinary-infections"
+      - "#red-flags-summary"
+      - "#when-to-seek-help"
+source_invariants:
+  - name: common ailments routes stroke and chest pain away
+    guide: GD-733
+    must_include:
+      - sudden face droop, one-sided weakness or numbness, trouble speaking, or sudden confusion
+      - heavy chest pressure or tightness, pain spreading into the jaw/arm/back
+      - Do not give food, water, or pills by mouth if stroke signs, confusion, or reduced alertness are present.
+  - name: common ailments routes hard belly away
+    guide: GD-733
+    must_include:
+      - If the belly is swollen or hard, the person cannot keep anything down, and they are not passing stool or farting, do not stay in this guide.
+      - A hard or rigid belly, guarding, refusing to walk upright because of belly pain
+      - Swollen or hard belly, not passing stool or fart, and repeated vomiting
+  - name: common ailments watchful waiting criteria
+    guide: GD-733
+    must_include:
+      - Alert, talking normally, breathing comfortably
+      - Drinking and keeping fluids down
+      - Symptoms improving or stable over the last
+      - No red-flag items from the list above
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-733. It covers symptom triage, red-flag
+  routing, watchful waiting, and non-medication supportive care only. It
+  intentionally forbids diagnosis, medication dosing, drug-choice, antibiotic,
+  side-effect, maximum-dose, and interaction claims, and routes stroke,
+  chest-pain, hard-belly, altered-mental-status, severe breathing, shock, and
+  severe allergic reaction patterns away from routine home care.

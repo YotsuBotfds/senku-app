@@ -1,0 +1,92 @@
+card_id: gastroenteritis_diarrhea_management
+guide_id: GD-379
+slug: gastroenteritis-diarrhea-management
+title: "GI Illness, Diarrhea & Dysentery Management"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A diarrhea, stomach bug, food poisoning, or gastroenteritis prompt asks whether symptoms are dangerous or whether home supportive care is reasonable.
+  - The main decision is dehydration or red-flag triage rather than full dysentery, cholera, parasite, antibiotic, IV, zinc, or outbreak management.
+  - The person has watery or mild diarrhea and the answer should decide between escalation and supportive fluids, rest, and monitoring.
+required_first_actions:
+  - Check first for escalation triggers: severe dehydration, blood in stool, altered mental status, no urine output, inability to keep fluids down, shock signs, severe lethargy, seizure, or abdominal pain with bloody diarrhea.
+  - If severe dehydration, blood, altered mental status, no urine, or inability to keep fluids down is present, treat it as urgent and seek higher-level medical care or evacuation rather than routine home care.
+  - If diarrhea is mild and the person is alert, drinking, urinating, and keeping fluids down, use supportive fluids, rest, and close monitoring for worsening signs.
+  - Use small frequent ORS sips only when the person is awake enough and safe to swallow; do not give oral fluids to an unconscious or unsafe-swallow patient.
+first_actions:
+  - Stage hydration from general appearance, eyes, tears, mouth, skin turgor, pulse, blood pressure if available, and urine output.
+  - For mild diarrhea without red flags, prioritize clean fluids or ORS, rest, and monitoring of alertness, urine output, vomiting, stool blood, and worsening dehydration.
+  - Give ORS in frequent small amounts rather than large gulps when oral intake is safe.
+  - If vomiting occurs but the person remains alert and can swallow safely, pause briefly and resume ORS slowly; escalate if vomiting prevents oral intake.
+urgent_red_flags:
+  - Severe dehydration, including lethargy, unconsciousness, very sunken eyes, very dry mouth, skin pinch staying up more than 2 seconds, weak or undetectable pulse, low blood pressure, or minimal/absent urine.
+  - Blood in stool, abdominal pain with bloody diarrhea, black tarry stool, coffee-ground vomit, or vomiting blood.
+  - Altered mental status, confusion, seizure, severe lethargy, unconsciousness, shock signs, or rapid pulse with low blood pressure.
+  - No urine output, minimal urine, or signs that fluid loss is outpacing intake.
+  - Inability to keep fluids down, intractable vomiting, inability to drink, or unsafe swallowing.
+forbidden_advice:
+  - Do not select antibiotics or give antibiotic indications beyond saying this card is not for antibiotic selection.
+  - Do not provide IV fluid protocols, IV solution choice, infusion rates, or resuscitation dosing.
+  - Do not give zinc, anti-diarrheal, antiemetic, antiparasitic, or other medication dosing.
+  - Do not claim diagnostic certainty, identify a specific pathogen as definite, or differentiate viral, bacterial, parasitic, cholera, or dysentery as the answer.
+  - Do not provide food-service, sanitation-surge, epidemic, outbreak investigation, or operations guidance from this card.
+  - Do not give oral fluids when the person is unconscious, has altered mental status that makes swallowing unsafe, or cannot protect the airway.
+do_not:
+  - Do not frame bloody stool, altered mental status, no urine, severe dehydration, or inability to keep fluids down as routine mild diarrhea.
+  - Do not turn a supportive-care prompt into a full gastroenteritis treatment plan with antibiotics, IV, zinc, medication, diagnostic, or outbreak branches.
+  - Do not reassure based only on probable viral illness when red flags are present.
+routine_boundary: >
+  Routine supportive care applies only when diarrhea is mild, the person is
+  alert, safe to swallow, drinking, keeping fluids down, and not showing blood,
+  severe dehydration, altered mental status, no urine, shock signs, or severe
+  lethargy.
+acceptable_uncertain_fit: >
+  If details are incomplete, answer from the conservative dehydration triage
+  lane: list the red flags that require urgent escalation, allow supportive
+  fluids/rest/monitoring only when the person is alert and drinking, and avoid
+  antibiotics, IV protocols, medication dosing, diagnostic certainty, pathogen
+  differentiation, or outbreak operations.
+clarifying_questions:
+  - Is there blood in the stool, black tarry stool, coffee-ground vomit, or vomiting blood?
+  - Is the person alert and safe to swallow, or confused, very drowsy, seizing, unconscious, or unable to drink?
+  - When did they last urinate, and are there severe dehydration signs such as very dry mouth, sunken eyes, weak pulse, or skin pinch staying up?
+  - Can they keep small sips down, or is vomiting preventing oral intake?
+citation_ids:
+  - diarrhea-danger-red-flags
+  - dehydration-assessment-scale
+  - ors-small-sips-supportive-care
+  - escalation-complications
+source_sections:
+  - guide: GD-379
+    slug: gastroenteritis-diarrhea-management
+    title: "GI Illness, Diarrhea & Dysentery Management"
+    sections:
+      - "#how-do-i-know-if-dehydration-is-serious"
+      - "#when-does-diarrhea-become-dangerous"
+      - "#dehydration-assessment"
+      - "#ors-therapy"
+      - "#iv-fluids"
+      - "#complications"
+source_invariants:
+  - name: diarrhea red flags require escalation
+    guide: GD-379
+    must_include:
+      - "bloody stool"
+      - "inability to keep fluids down"
+      - "altered mental status"
+      - "no urine output"
+      - "Severe dehydration"
+  - name: supportive oral rehydration boundaries
+    guide: GD-379
+    must_include:
+      - "Normal, alert"
+      - "ORS + continued monitoring"
+      - "frequent small amounts"
+      - "Inability to drink (unconscious patient)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-379 only. It covers dehydration triage,
+  red-flag escalation, and supportive fluids/rest monitoring for mild diarrhea.
+  It intentionally excludes full treatment: antibiotic selection, IV protocols,
+  zinc or medication dosing, diagnostic certainty, pathogen differentiation,
+  and food-service or outbreak operations.

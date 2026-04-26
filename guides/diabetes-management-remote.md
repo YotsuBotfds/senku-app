@@ -7,6 +7,28 @@ difficulty: advanced
 tags:
   - essential
   - medical
+aliases:
+  - diabetic emergency
+  - low blood sugar emergency
+  - hypoglycemia emergency
+  - dka warning signs
+  - diabetic ketoacidosis danger
+routing_cues:
+  - diabetic confused
+  - diabetes unconscious
+  - low glucose
+  - skipped meal insulin shaky sweaty
+  - fruity breath
+  - deep rapid breathing
+  - vomiting ketones
+citations_required: true
+applicability: >
+  Diabetic glucose emergency safety triage only: severe low-glucose danger,
+  unsafe swallowing, altered mental status, seizure, unconsciousness, or DKA
+  danger signs. Use this guide's reviewed answer card for emergency escalation
+  and oral-intake boundaries, not for insulin dose changes, insulin extraction
+  or manufacture, infusion or bolus dosing, glucagon dosing, viability
+  estimates, or rationing percentages.
 icon: 💉
 description: Type 1 vs type 2 differentiation, blood glucose monitoring alternatives, insulin storage without refrigeration, dietary management, DKA recognition and treatment, hypoglycemia management, foot care and wound management, long-term complications, insulin rationing strategies.
 related:

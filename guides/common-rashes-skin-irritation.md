@@ -39,6 +39,12 @@ aliases:
   - foot fungus
 icon: 🩹
 description: "Practical home care for common itchy or irritated skin problems: contact dermatitis, heat rash, chafing, dry cracked skin, athlete's foot, ringworm, and other common fungal skin problems. Includes low-tech irritation reduction steps and red flags."
+routing_cues:
+  - Use for routine itchy rash, mild contact irritation, heat rash, chafing, dry cracked skin, and common fungal-suspect skin irritation after urgent red flags have been screened first.
+  - Use when the safe answer should remove a likely trigger, gently wash, keep skin cool and dry, reduce friction, protect mildly irritated skin, and reassess within 24 to 48 hours.
+  - Do not use as the owner for meningitis or sepsis rash, infected wound or cellulitis, anaphylaxis, chemical burns, medication reaction, SJS-like peeling or mouth sores, or high-risk infant/frail/diabetes/immunosuppressed rash.
+citation_policy: cite reviewed GD-938 routine rash red-flag screen and mild-care sections for non-diagnostic routine rash or skin-irritation answers
+applicability: Routine rash and skin-irritation care only after red flags are screened; not diagnosis and not the owner for systemic illness, allergic airway/facial swelling, infected wound/cellulitis, chemical burn, medication reaction/SJS-like rash, or high-risk infant/frail/diabetes/immunosuppressed rash.
 related:
   - common-ailments-recognition-care
   - foot-nail-care
@@ -58,6 +64,22 @@ liability_level: high
 :::warning
 This guide is for common skin irritation and likely fungal skin problems. Many rashes look similar. If you are not sure what the rash is, or if it is worsening quickly, treat this as a symptom to watch carefully rather than a diagnosis to trust.
 :::
+
+<section id="routine-rash-red-flag-screen-and-mild-care">
+
+## Routine Rash Red-Flag Screen and Mild Care
+
+This is the reviewed answer-card surface for GD-938. Use it for routine rash or skin-irritation questions only after red flags have been screened. It supports care steps for mild irritation, heat rash, chafing, dry cracked skin, and common fungal-suspect rashes; it does not diagnose the rash.
+
+**Screen red flags first:** trouble breathing, wheezing, throat tightness, or swelling of the face, lips, tongue, or throat; fever, chills, or feeling very sick; pus, honey-colored crusting, bad smell, increasing warmth and redness, or another infected-wound/cellulitis pattern; rapid spread, severe pain, large blisters, skin peeling, purple spots, or mouth sores; rash after a new medicine with fever, widespread rash, mouth sores, blisters, or peeling; chemical burn or chemical exposure; or rash in an infant, frail elder, or a person with diabetes, immune suppression, poor circulation, or another high-risk condition.
+
+**If the rash is mild and no red flags are present:** remove the likely trigger, gently wash with cool or lukewarm water, pat dry, keep the area cool and dry, reduce rubbing and sweating, and protect mildly irritated skin with a bland barrier only when friction or raw skin makes that helpful.
+
+**Reassess within 24 to 48 hours:** mild irritation should show less redness, itching, burning, spread, or wetness. If it worsens, spreads, becomes painful, drains pus, develops fever, blisters, peeling, or mouth sores, or the person seems sick, leave routine rash care and seek medical help if available.
+
+**Ownership boundary:** do not use this guide as the primary owner for meningitis or sepsis rash, infected wound or cellulitis, anaphylaxis, chemical burns, medication reaction or SJS-like peeling or mouth sores, or infant/frail/diabetes/immunosuppressed high-risk rash.
+
+</section>
 
 ## Overview
 

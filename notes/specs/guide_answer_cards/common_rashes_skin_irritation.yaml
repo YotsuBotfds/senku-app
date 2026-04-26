@@ -1,0 +1,161 @@
+card_id: common_rashes_skin_irritation
+guide_id: GD-938
+slug: common-rashes-skin-irritation
+title: "Common Rashes, Skin Irritation & Fungal Skin Problems"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about routine itchy rash, mild contact irritation, heat rash, chafing, dry cracked skin, or common fungal-suspect skin irritation.
+  - Rash appears mild, breathing is normal, there is no face/lip/tongue/throat swelling, no systemic illness signs, no rapid spread, no severe pain, no pus, no blistering or peeling, no mouth sores, and no high-risk patient factors are stated.
+  - Prompt asks for non-diagnostic home-care steps such as stopping a trigger, gentle washing, keeping skin cool and dry, reducing friction, or when to reassess.
+required_first_actions:
+  - Screen for urgent red flags before routine rash, skin-irritation, chafing, heat-rash, dry-skin, or fungal-suspect care.
+  - Escalate for trouble breathing, wheezing, throat tightness, face/lip/tongue/throat swelling, fever, pus, honey-colored crusting, bad smell, increasing warmth and redness, rapid spread, severe pain, large blisters, skin peeling, purple spots, mouth sores, new-medicine rash with systemic signs, chemical exposure or burn, or rash in an infant, frail elder, or person with diabetes, immune suppression, or poor circulation.
+  - Keep the answer scoped to routine rash and skin-irritation care, not diagnosis.
+conditional_required_actions:
+  - trigger_terms:
+      - breathing
+      - wheezing
+      - throat
+      - face swelling
+      - lip swelling
+      - tongue swelling
+      - facial swelling
+      - anaphylaxis
+      - allergic reaction
+    required_actions:
+      - Treat breathing trouble or face/lip/tongue/throat swelling as an allergic emergency concern, not routine rash care.
+  - trigger_terms:
+      - fever
+      - chills
+      - very sick
+      - purple spots
+      - non-blanching
+      - meningitis
+      - sepsis
+    required_actions:
+      - Do not reassure fever, very sick appearance, purple or non-blanching rash, or sepsis/meningitis concern as ordinary skin irritation.
+  - trigger_terms:
+      - pus
+      - honey-colored crust
+      - bad smell
+      - warmth
+      - redness spreading
+      - cellulitis
+      - infected wound
+    required_actions:
+      - Treat pus, crusting, bad smell, increasing warmth/redness, or wound-like infection signs as possible infected wound or cellulitis rather than routine rash care.
+  - trigger_terms:
+      - new medicine
+      - medication
+      - antibiotic rash
+      - blisters
+      - peeling
+      - mouth sores
+      - stevens-johnson
+      - sjs
+    required_actions:
+      - Treat new-medicine rash with fever, widespread rash, mouth sores, blisters, or peeling as outside this card and escalate instead of giving routine rash-care reassurance.
+  - trigger_terms:
+      - chemical
+      - bleach
+      - drain cleaner
+      - burn
+      - acid
+      - lye
+    required_actions:
+      - Treat chemical exposure or chemical burn as a chemical-safety or burn problem, not routine rash care.
+first_actions:
+  - If no red flags are present and the rash is mild, stop or remove the likely trigger such as a new soap, lotion, detergent, plant exposure, tight clothing, sweat, friction, or job-related irritant when possible.
+  - Gently wash dirty or sweaty skin with cool or lukewarm water and mild soap if needed; do not scrub.
+  - Pat the area dry, keep it cool and dry, change out of wet clothing, and use loose breathable clothing to reduce heat, sweat, and rubbing.
+  - Protect mildly irritated or chafed skin with a thin bland barrier such as petroleum jelly or zinc oxide only when friction or raw skin makes protection helpful.
+  - For fungal-suspect areas, keep the area dry, change damp socks or underwear, air out shoes and clothing, wash and dry towels/clothes well, and avoid sharing towels, shoes, hats, combs, or clothing.
+  - Reassess within 24 to 48 hours for less redness, itching, burning, spread, wetness, or irritation.
+urgent_red_flags:
+  - Trouble breathing, wheezing, throat tightness, or swelling of the face, lips, tongue, or throat.
+  - Fever, chills, feeling very sick, confusion, weakness, dehydration, purple spots, or concern for meningitis or sepsis rash.
+  - Pus, honey-colored crusting, bad smell, increasing warmth and redness, drainage, or a wound/cellulitis pattern.
+  - Rapid spread, severe pain, large blisters, open sores, skin peeling, or mouth sores.
+  - Rash after a new medicine with fever, widespread rash, mouth sores, blisters, or peeling.
+  - Chemical burn or chemical exposure.
+  - Rash in an infant, frail elder, or person with diabetes, immune suppression, poor circulation, or another high-risk condition.
+forbidden_advice:
+  - Do not diagnose the rash or claim it is definitely contact dermatitis, fungal infection, poison ivy, heat rash, chafing, medication reaction, cellulitis, meningitis, sepsis, or anaphylaxis based only on appearance.
+  - Do not provide routine home-care reassurance when breathing trouble, facial/lip/tongue/throat swelling, fever, pus, rapid spread, severe pain, blisters, peeling, mouth sores, or high-risk patient factors are present.
+  - Do not use this card as the owner for meningitis or sepsis rash, infected wound or cellulitis, anaphylaxis, chemical burns, medication reaction or SJS-like peeling/mouth sores, or high-risk infant/frail/diabetes/immunosuppressed rash.
+  - Do not recommend harsh chemicals, fuel, bleach, strong antiseptics, hard scrubbing, popping blisters, or continuing the suspected trigger.
+  - Do not provide medication dosing or prescription treatment protocols.
+do_not:
+  - Do not assume every itchy patch is fungal or every circular rash is ringworm.
+  - Do not keep using the product or exposure suspected to have caused the rash.
+  - Do not cover sweaty skin so tightly that it stays wet.
+  - Do not treat itch alone while ignoring pus, fever, rapid worsening, pain, blisters, peeling, mouth sores, or systemic illness signs.
+routine_boundary: >
+  Routine rash and skin-irritation care is appropriate only after red flags are
+  screened and the rash appears mild. This card is for removing likely triggers,
+  gentle washing, cooling and drying, friction reduction, bland protection, and
+  24- to 48-hour reassessment; it is not diagnosis and not the owner for
+  meningitis/sepsis rash, infected wound/cellulitis, anaphylaxis, chemical burns,
+  medication reaction/SJS-like peeling or mouth sores, or high-risk patient rash.
+acceptable_uncertain_fit: >
+  If rash cause, severity, exposure, patient risk, or systemic symptoms are
+  unclear, lead with the red-flag screen and ask focused questions. Give only
+  mild-care steps that are safe across routine irritation patterns, and escalate
+  if any red flag or high-risk factor is present or cannot be ruled out.
+clarifying_questions:
+  - Is there any trouble breathing, wheezing, throat tightness, or swelling of the face, lips, tongue, or throat?
+  - Is there fever, chills, feeling very sick, rapid spread, severe pain, pus, crusting, bad smell, warmth, blisters, peeling, purple spots, or mouth sores?
+  - Did it start after a new medicine, chemical exposure, new soap/lotion/detergent, plant exposure, sweat, friction, or tight clothing?
+  - Is the person an infant, frail elder, or someone with diabetes, immune suppression, poor circulation, or another high-risk condition?
+  - After removing likely triggers and keeping the area cool and dry, is it improving over 24 to 48 hours?
+citation_ids:
+  - routine-rash-red-flag-screen
+  - routine-rash-mild-care
+  - routine-rash-reassessment
+  - routine-rash-ownership-boundary
+  - fungal-suspect-dryness-hygiene
+source_sections:
+  - guide: GD-938
+    slug: common-rashes-skin-irritation
+    title: "Common Rashes, Skin Irritation & Fungal Skin Problems"
+    sections:
+      - "#routine-rash-red-flag-screen-and-mild-care"
+      - "#when-a-rash-is-dangerous"
+      - "#first-steps-for-almost-any-mild-rash"
+      - "#fungal-skin-problems"
+      - "#what-not-to-do"
+      - "#when-to-reassess"
+source_invariants:
+  - name: routine rash red flags remain first
+    guide: GD-938
+    must_include:
+      - Screen red flags first
+      - trouble breathing, wheezing, throat tightness, or swelling of the face, lips, tongue, or throat
+      - fever, chills, or feeling very sick
+      - rapid spread, severe pain, large blisters, skin peeling, purple spots, or mouth sores
+      - rash in an infant, frail elder, or a person with diabetes, immune suppression, poor circulation, or another high-risk condition
+  - name: mild care and reassessment stay bounded
+    guide: GD-938
+    must_include:
+      - If the rash is mild and no red flags are present
+      - remove the likely trigger
+      - gently wash with cool or lukewarm water
+      - keep the area cool and dry
+      - Reassess within 24 to 48 hours
+  - name: serious owner boundaries remain explicit
+    guide: GD-938
+    must_include:
+      - do not use this guide as the primary owner for meningitis or sepsis rash
+      - infected wound or cellulitis
+      - anaphylaxis
+      - chemical burns
+      - medication reaction or SJS-like peeling or mouth sores
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-938 routine rash and skin-irritation support.
+  The card requires red-flag screening before mild care, keeps advice
+  non-diagnostic, and explicitly defers meningitis/sepsis rash, infected
+  wound/cellulitis, anaphylaxis, chemical burns, medication reaction/SJS-like
+  peeling or mouth sores, and high-risk infant/frail/diabetes/immunosuppressed
+  rash to other owners.

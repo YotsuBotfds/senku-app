@@ -46,6 +46,19 @@ aliases:
   - what can I do for nausea at home
   - what can I do for urinary burning at home
   - what can I do for an itchy rash at home
+routing_cues:
+  - everyday symptom triage for fever chills body aches cold flu stomach upset urinary burning itchy rash headache or mild allergy symptoms
+  - can I watch this at home versus urgent help for a common complaint after emergency red flags are excluded
+  - non-medication supportive care hydration rest cooling isolation bland foods hygiene cool compresses and monitoring
+  - stroke signs chest pressure hard swollen belly inability to pass stool or gas altered mental status or trouble breathing should route away from routine home care
+citations_required: true
+applicability: >
+  Use for broad complaint-first triage of common everyday symptoms and
+  non-medication supportive home care only after emergency red flags are
+  excluded. Not for diagnosis, medication choice or dosing, antibiotic
+  selection, drug interactions, stroke-like symptoms, chest pressure, hard or
+  swollen belly with vomiting or no stool/gas, altered mental status, severe
+  breathing problems, or other urgent red flags.
 icon: 🤒
 description: Identifying common conditions from everyday complaints like "I feel sick," "my stomach hurts," "is this serious or can I watch it at home," "burning when I pee," "peeing often," "itchy rash," "fever and body aches," and "cold or flu at home," with basic comfort care and red flags requiring urgent care.
 related:

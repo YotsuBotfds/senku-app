@@ -4,6 +4,21 @@ slug: gastroenteritis-diarrhea-management
 title: GI Illness, Diarrhea & Dysentery Management
 category: medical
 difficulty: intermediate
+aliases:
+  - diarrhea dehydration red flags
+  - gastroenteritis dehydration warning signs
+  - diarrhea cannot keep fluids down
+  - diarrhea no urine
+  - bloody diarrhea escalation
+  - mild diarrhea supportive fluids
+  - oral rehydration small sips
+routing_cues:
+  - Use for diarrhea or gastroenteritis prompts where the main need is dehydration triage, red-flag escalation, and supportive fluids/rest monitoring.
+  - Escalate when severe dehydration, blood in stool, altered mental status, no urine output, inability to keep fluids down, shock signs, or severe lethargy are present.
+  - For mild diarrhea when the person is alert and can drink, keep the answer supportive: safe fluids, rest, monitoring, and small frequent ORS sips only if safe to swallow.
+  - Do not use this reviewed card for antibiotic selection, IV protocols, zinc or medication dosing, diagnostic certainty, pathogen differentiation, or food-service/outbreak operations.
+citations_required: true
+applicability: Diarrhea or gastroenteritis dehydration/red-flag triage and supportive-care guidance when the answer should avoid full treatment protocols.
 tags:
   - essential
   - medical

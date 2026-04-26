@@ -1,0 +1,89 @@
+card_id: blood_pressure_crisis_shock_boundary
+guide_id: GD-402
+slug: blood-pressure-management
+title: Blood Pressure Management
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Very high blood pressure is paired with neurologic symptoms, chest pain, breathing trouble, vision change, confusion, seizure, fainting, or severe worsening illness.
+  - A high blood-pressure reading is near or above crisis range but the person has no red-flag symptoms and asks whether to rapidly lower it.
+  - Low blood pressure or a sudden major blood-pressure drop is paired with shock signs such as cold clammy skin, collapse, confusion, severe weakness, blue or gray color, abnormal breathing, or inability to stay awake.
+required_first_actions:
+  - Treat very high BP with neurologic symptoms, chest pain, breathing trouble, vision change, confusion, or seizure as an emergency requiring emergency evaluation and transport.
+  - Treat low BP with shock signs as an emergency requiring emergency services or urgent transport.
+  - For high BP without red-flag symptoms, state that it is not a rapid self-lowering situation; recheck with correct technique after rest and seek clinician-directed urgent follow-up for persistent very high readings.
+first_actions:
+  - Ask whether symptoms include chest pain, severe shortness of breath, new neurologic symptoms, severe headache with confusion, seizure, fainting, one-sided weakness or numbness, trouble speaking, vision loss, or major vision change.
+  - While emergency help or transport is arranged, keep the person resting, avoid exertion and stimulants, note readings and symptoms, and monitor breathing, alertness, chest pain, and neurologic changes.
+  - For shock signs, keep the person warm and still, monitor airway, breathing, circulation, and alertness, and identify likely causes without delaying transport.
+urgent_red_flags:
+  - BP around or above 180 systolic or 120 diastolic plus chest pain, severe shortness of breath, new neurologic symptoms, severe headache with confusion, seizure, fainting, weakness or numbness on one side, trouble speaking, new vision loss, or major vision change.
+  - Low BP or sudden major BP drop plus cold clammy skin, collapse, fainting, confusion, severe weakness, blue or gray color, very fast or weak pulse, abnormal breathing, or inability to stay awake.
+  - Any rapid deterioration, worsening breathing, worsening alertness, or stroke-like symptoms with abnormal blood pressure.
+forbidden_advice:
+  - Do not provide antihypertensive dosing for blood-pressure crisis prompts.
+  - Do not provide IV antihypertensive medication protocols.
+  - Do not provide rapid BP-lowering targets or instructions to crash BP down at home.
+  - Do not provide saline bolus details for shock prompts.
+  - Do not present herbs, supplements, or lifestyle steps as emergency treatment for hypertensive crisis or shock.
+do_not:
+  - Do not reassure very high BP with neurologic, chest, breathing, vision, confusion, or seizure symptoms as routine home monitoring.
+  - Do not tell an asymptomatic person with high BP to rapidly self-lower the reading or invent a rescue dose.
+  - Do not route low BP with shock signs to routine hydration-only or watchful waiting.
+  - Do not use this card as a medication dosing, IV protocol, or fluid-resuscitation protocol.
+routine_boundary: >
+  Routine blood-pressure lifestyle, herbal, and medication-maintenance advice is
+  outside this red-flag card when crisis symptoms or shock signs are present.
+  Asymptomatic high BP remains urgent clinician-follow-up territory, not a
+  rapid self-lowering emergency treatment plan.
+acceptable_uncertain_fit: >
+  If the reading, symptoms, or measurement technique are unclear but very high
+  BP with neurologic, chest, breathing, vision, confusion, or seizure symptoms
+  is plausible, preserve emergency evaluation and transport framing while
+  asking focused questions. If low BP with shock signs is plausible, preserve
+  emergency transport framing.
+clarifying_questions:
+  - What was the BP reading, and was it repeated after five to ten minutes of rest with correct cuff position?
+  - Is there chest pain, severe shortness of breath, confusion, seizure, fainting, one-sided weakness or numbness, trouble speaking, or vision loss/change?
+  - Is the person cold and clammy, blue or gray, collapsing, severely weak, breathing abnormally, very confused, or hard to keep awake?
+citation_ids:
+  - blood-pressure-crisis-shock-boundary
+  - hypertensive-crisis-urgency
+  - hypotension-shock-differential
+source_sections:
+  - guide: GD-402
+    slug: blood-pressure-management
+    title: Blood Pressure Management
+    sections:
+      - "#blood-pressure-crisis-shock-boundary"
+      - "#hypertensive-emergency"
+      - "#hypotension"
+source_invariants:
+  - name: bp crisis symptoms require emergency transport
+    guide: GD-402
+    must_include:
+      - "very high BP with neurologic symptoms, chest pain, breathing trouble, vision change, confusion, or seizure as an emergency"
+      - "needs emergency evaluation and transport"
+      - "A high reading without red-flag symptoms is not a rapid self-lowering situation"
+    must_not_match:
+      - "very high bp[^\\n]{0,160}(routine home|watchful waiting)"
+      - "asymptomatic high bp[^\\n]{0,160}(rapidly lower|crash)"
+  - name: shock boundary forbids fluid protocol expansion
+    guide: GD-402
+    must_include:
+      - "Low BP with shock signs is immediately life-threatening"
+      - "This guide does not provide saline bolus details"
+      - "Do not provide antihypertensive dosing, IV medication protocols, rapid BP-lowering targets, saline bolus details, or herbal emergency treatment"
+    must_not_include:
+      - "Normal saline bolus"
+      - "Labetalol: IV"
+      - "Target: Lower BP"
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-402 safety triage only. It preserves the
+  guide's emergency boundary for very high BP with neurologic/chest/breathing/
+  vision/confusion/seizure symptoms, separates asymptomatic high BP from rapid
+  self-lowering advice, and treats low BP with shock signs as emergency
+  transport. It deliberately forbids antihypertensive dosing, IV medication
+  protocols, rapid BP-lowering targets, saline bolus details, and herbal
+  emergency treatment.

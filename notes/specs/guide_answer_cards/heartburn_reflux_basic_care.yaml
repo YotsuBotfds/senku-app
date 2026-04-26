@@ -1,0 +1,161 @@
+card_id: heartburn_reflux_basic_care
+guide_id: GD-950
+slug: heartburn-reflux-basic-care
+title: "Heartburn, Reflux & Sour Stomach Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about routine heartburn, acid reflux, sour stomach, acid stomach, indigestion, burning after eating, burping acid, or nighttime reflux self-care.
+  - Symptoms are mild or familiar and linked to meals, trigger foods, lying down after eating, tight waist pressure, pregnancy, smoking, alcohol, caffeine, or other everyday reflux triggers.
+  - User asks for non-medication steps, when to worry, or how to use over-the-counter products without dose details.
+required_first_actions:
+  - Screen first for chest-pain emergency symptoms, GI bleeding, acute abdomen patterns, and rectal/anus symptoms before giving routine reflux self-care.
+  - If red flags are absent, frame care around staying upright after eating, smaller meals, reducing clear triggers, avoiding large meals near bedtime, raising the head of the bed for nighttime reflux, and choosing bland foods briefly if the stomach feels irritated.
+  - Keep medicine advice limited to following the product label exactly or checking with a clinician; do not provide antacid, PPI, or H2 blocker dosing schedules.
+conditional_required_actions:
+  - trigger_terms:
+      - chest pain
+      - chest pressure
+      - pressure
+      - arm pain
+      - jaw pain
+      - back pain
+      - shoulder pain
+      - shortness of breath
+      - trouble breathing
+      - sweating
+      - fainting
+      - weakness
+    required_actions:
+      - Treat chest pressure, pain spreading to the arm, jaw, back, or shoulder, trouble breathing, sweating, fainting, or sudden weakness as urgent chest-pain routing rather than routine reflux care.
+  - trigger_terms:
+      - black stool
+      - tarry stool
+      - sticky stool
+      - vomiting blood
+      - vomit blood
+      - coffee grounds
+      - coffee-ground
+      - throwing up blood
+      - alcohol
+      - heavy drinking
+    required_actions:
+      - Treat black tarry or sticky stool, vomiting blood, coffee-ground vomit, or throwing up blood after alcohol or heavy drinking as GI-bleed or acute-abdominal emergency routing rather than routine reflux care.
+  - trigger_terms:
+      - hard belly
+      - swollen belly
+      - rigid belly
+      - guarding
+      - cannot walk upright
+      - no stool
+      - no gas
+      - not passing gas
+      - very tender
+      - fever
+    required_actions:
+      - Treat a hard or swollen belly, guarding, refusal or inability to walk upright from belly pain, vomiting with no stool or gas, or fever with one very tender abdominal spot as acute-abdominal emergency routing.
+  - trigger_terms:
+      - rectal bleeding
+      - anus
+      - anal pain
+      - anal itching
+      - lump near anus
+      - hemorrhoid
+      - blood on toilet paper
+    required_actions:
+      - Route rectal bleeding, anal pain or itching, blood on toilet paper, or a lump near the anus away from this card to hemorrhoids or rectal-bleeding guidance.
+first_actions:
+  - Stay upright after eating; avoid lying down for at least 2 to 3 hours after meals, and avoid bending over right after eating.
+  - Eat smaller meals, eat slowly, and stop before feeling overly full.
+  - Reduce triggers that clearly worsen symptoms, such as fatty or fried foods, hot spice, tomato or citrus if they bother the person, caffeine, chocolate, peppermint, alcohol, smoking, or tight waist pressure.
+  - For nighttime reflux, avoid large meals close to bedtime and raise the head of the bed with a wedge or blocks under the bed legs rather than relying only on extra pillows.
+  - Use bland foods briefly if the stomach feels sour or irritated, such as oatmeal, rice, toast, bananas, crackers, or plain soup.
+  - If over-the-counter medicine is used, follow the label exactly and check label warnings or a clinician when pregnant, with kidney disease, or when taking several regular medicines.
+urgent_red_flags:
+  - Chest pain or pressure, pain spreading to the arm, jaw, back, or shoulder, trouble breathing, sweating, fainting, or sudden weakness.
+  - Vomiting blood, coffee-ground vomit, black tarry or sticky stool, bloody stool with systemic symptoms, or throwing up blood after alcohol or heavy drinking.
+  - Severe or worsening upper abdominal pain, fever with belly pain, a hard or swollen abdomen, one very tender abdominal spot, guarding, vomiting with no stool or gas, or refusing to walk upright because of belly pain.
+  - Trouble swallowing, food getting stuck, painful swallowing, unexplained weight loss, repeated vomiting, or pain that wakes the person often or keeps worsening.
+  - Rectal bleeding, anal pain or itching, blood on toilet paper, or a lump near the anus should not be handled as routine reflux.
+forbidden_advice:
+  - Do not present chest pressure, radiating chest pain, trouble breathing, sweating, fainting, or sudden weakness as heartburn self-care.
+  - Do not present black tarry or sticky stool, vomiting blood, coffee-ground vomit, bloody stool with systemic symptoms, or vomiting blood after alcohol as routine reflux.
+  - Do not present a hard or swollen belly, guarding, vomiting with no stool or gas, fever with one very tender abdominal spot, or refusal to walk upright from belly pain as routine reflux.
+  - Do not route rectal bleeding, anal pain or itching, blood on toilet paper, or a lump near the anus to this card as the primary owner.
+  - Do not provide antacid, proton-pump inhibitor, PPI, H2 blocker, famotidine, omeprazole, calcium carbonate, or similar dosing schedules.
+  - Do not suggest mixing multiple over-the-counter stomach products unless the label or a clinician says it is safe.
+do_not:
+  - Do not skip red-flag screening before routine reflux self-care.
+  - Do not make medicine the main answer when posture, meal size, trigger reduction, sleep positioning, and escalation boundaries are the guide's core scope.
+  - Do not let sour-stomach wording override emergency routing for chest-pain, GI-bleed, acute-abdomen, or rectal/anus symptom prompts.
+routine_boundary: >
+  Routine self-care applies only to mild heartburn, reflux, sour stomach, acid
+  stomach, or indigestion when red flags are absent. Chest pressure/radiation,
+  dyspnea, sweating, fainting, sudden weakness, vomiting blood, coffee-ground
+  vomit, black tarry or sticky stool, alcohol-associated hematemesis, hard or
+  swollen belly, guarding, no stool or gas with vomiting, fever with one very
+  tender spot, and rectal/anus bleeding or pain exit this routine card.
+acceptable_uncertain_fit: >
+  If the prompt sounds like reflux but does not state whether red flags are
+  absent, lead with focused emergency-boundary questions and give only
+  conservative interim steps that do not delay care: sit upright, stop the
+  triggering meal or alcohol, avoid lying flat, and seek urgent help if any
+  warning sign is present.
+clarifying_questions:
+  - Is there chest pressure, pain spreading to the arm, jaw, back, or shoulder, shortness of breath, sweating, fainting, or sudden weakness?
+  - Is there vomiting blood, coffee-ground vomit, black tarry or sticky stool, blood after alcohol or heavy drinking, severe or worsening belly pain, a hard or swollen belly, guarding, or vomiting with no stool or gas?
+  - Is the main problem rectal bleeding, anal pain or itching, blood on toilet paper, or a lump near the anus?
+  - Did this start after a large meal, lying down after eating, a clear trigger food or drink, tight waistband pressure, or nighttime reflux?
+citation_ids:
+  - heartburn-overview-routine-scope
+  - heartburn-upright-after-eating
+  - heartburn-smaller-meals-trigger-reduction
+  - heartburn-sleep-positioning
+  - heartburn-medicine-label-boundary
+  - heartburn-red-flags
+source_sections:
+  - guide: GD-950
+    slug: heartburn-reflux-basic-care
+    title: "Heartburn, Reflux & Sour Stomach Care"
+    sections:
+      - "#overview"
+      - "#what-to-do-now"
+      - "#medicines"
+      - "#what-not-to-do"
+      - "#when-to-worry"
+      - "#prevention"
+      - "#summary"
+source_invariants:
+  - name: routine reflux scope and first actions
+    guide: GD-950
+    must_include:
+      - Heartburn is a burning pain or sour feeling behind the breastbone or in the upper stomach.
+      - Do not lie down for at least 2 to 3 hours after a meal
+      - Smaller meals put less pressure on the stomach
+      - Raise the head of the bed if nighttime reflux is a problem
+    must_not_match:
+      - "(chest pressure|vomiting blood|black tarry|hard, swollen|guarding)[^\\n]{0,160}(harmless|safe to ignore|watch at home|routine self-care)"
+  - name: medicine boundary avoids dosing schedules
+    guide: GD-950
+    must_include:
+      - If over-the-counter medicine is available, follow the label exactly.
+      - Do not mix many products at once unless the label says it is safe
+      - If you have kidney disease, are pregnant, or take several regular medicines, check for label warnings before using anything new
+    must_not_match:
+      - "(antacid|acid reducer|PPI|H2 blocker|famotidine|omeprazole|calcium carbonate)[^\\n]{0,120}(mg|milligram|every [0-9]|twice daily|once daily|dose)"
+  - name: red flags route away from heartburn care
+    guide: GD-950
+    must_include:
+      - Chest pain, pressure, or pain spreading to the arm, jaw, back, or shoulder
+      - Vomiting blood or material that looks like coffee grounds
+      - Black tarry or black sticky stool, especially with weakness, dizziness, or pale skin, or any bloody stool with those systemic symptoms
+      - A hard, swollen, or very tender abdomen
+      - Vomiting with no stool or gas
+      - If the main problem is rectal bleeding, anal pain or itching, or a lump near the anus after straining, use the hemorrhoids guide instead.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-950 routine reflux and heartburn self-care plus
+  red-flag handoffs only. Medication advice is limited to label or clinician
+  direction; antacid, PPI, and H2 blocker dosing schedules are intentionally
+  out of scope.

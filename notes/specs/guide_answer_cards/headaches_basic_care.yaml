@@ -1,0 +1,173 @@
+card_id: headaches_basic_care
+guide_id: GD-949
+slug: headaches-basic-care
+title: "Headaches: Basic Care & Red Flags"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about common mild headache self-care from tension, dehydration, heat exposure without heat-illness danger signs, missed meals, sleep loss, mild viral illness, eye strain, caffeine change, or frequent headaches.
+  - The headache is described as familiar, gradual, mild to moderate, or linked to an everyday trigger, and no red flags are present.
+  - User asks what to do at home, when to worry, how to avoid repeated pain-reliever use, or when headache symptoms should be urgent.
+required_first_actions:
+  - First screen for headache red flags before giving routine self-care.
+  - If red flags are absent, frame care as stopping the trigger, resting in a quiet or dim place, sipping fluids, eating if meals were missed, using a cool or warm compress, reducing eye strain, and using pain relief only as directed on the package or by a clinician.
+  - Keep the answer bounded to common mild headache self-care and red-flag handoffs; do not provide medication dosing or turn severe, sudden, neurologic, traumatic, pregnancy, eye-emergency, poisoning, heat-illness, stroke, or trauma cues into routine self-care.
+conditional_required_actions:
+  - trigger_terms:
+      - fever
+      - stiff neck
+      - confusion
+      - rash
+      - purple rash
+      - light sensitivity
+    required_actions:
+      - Treat severe headache with fever, stiff neck, confusion, reduced alertness, vomiting with worsening headache, strong light sensitivity, or a purple/dark rash as urgent rather than routine self-care.
+  - trigger_terms:
+      - weakness
+      - numbness
+      - face drooping
+      - speech trouble
+      - trouble walking
+      - balance
+      - vision loss
+      - sudden confusion
+    required_actions:
+      - Treat headache with stroke-like or neurologic symptoms as an urgent handoff, including face droop, arm weakness, speech trouble, one-sided numbness, sudden confusion, or trouble walking, seeing, or balancing.
+  - trigger_terms:
+      - head injury
+      - fall
+      - hit head
+      - car crash
+      - blow to head
+      - blood from nose
+      - clear fluid
+    required_actions:
+      - If the headache follows head injury, fall, crash, or a blow to the head or face, route to injury guidance and urgent help for loss of consciousness, vomiting, confusion, unusual sleepiness, seizure, worsening headache, or blood or clear fluid from the nose or ears.
+  - trigger_terms:
+      - worst headache
+      - sudden
+      - thunderclap
+      - maximum intensity
+      - severe
+    required_actions:
+      - Treat a sudden very severe headache, worst headache of life, headache reaching maximum intensity within minutes, or very different headache as urgent rather than routine self-care.
+  - trigger_terms:
+      - pregnant
+      - pregnancy
+      - postpartum
+      - swelling
+      - high blood pressure
+      - vision changes
+    required_actions:
+      - Treat headache during pregnancy or postpartum with swelling, high blood pressure, or vision changes as a pregnancy warning-sign handoff rather than routine self-care.
+  - trigger_terms:
+      - eye pain
+      - vision loss
+      - blurry vision
+      - red eye
+      - carbon monoxide
+      - co
+      - fumes
+      - poisoning
+      - heat stroke
+      - heat illness
+      - trauma
+    required_actions:
+      - Route severe eye pain or sudden vision loss, carbon monoxide or poisoning exposure, heat-illness danger signs, stroke cues, and trauma cues away from routine headache self-care.
+first_actions:
+  - Leave bright sun, heat, smoke, or other likely trigger; pause screens or close work if eye strain is likely.
+  - Rest in a quiet, dim place if possible, loosen tight hats or hairstyles, and use a cool cloth on the forehead or eyes or warmth on the neck and shoulders if that feels better.
+  - Sip water or oral rehydration drink slowly; use fluids plus some salt and food after heavy sweating, and avoid chugging large amounts if nauseated.
+  - Eat a small snack or meal with carbohydrate and some protein if meals were skipped or shakiness, weakness, or irritability suggests low intake.
+  - Reduce eye strain with better lighting, screen breaks, and resting the eyes.
+  - If pain relief is available and safe for the person, use only package or clinician directions, avoid mixing medicines with the same pain reliever, and avoid repeated day-after-day use for frequent headaches.
+urgent_red_flags:
+  - Severe headache with fever, stiff neck, confusion, reduced alertness, purple or dark rash, strong light sensitivity, or vomiting with worsening headache.
+  - Headache with face drooping, arm weakness, speech trouble, one-sided numbness, sudden confusion, or trouble walking, seeing, or balancing.
+  - Headache after head injury with loss of consciousness, vomiting, confusion, unusual sleepiness, behavior change, seizure, worsening headache, or blood or clear fluid from the nose or ears.
+  - Sudden very severe headache, worst headache of life, headache reaching maximum intensity within minutes, or a headache very different from usual.
+  - New seizure, fainting, persistent vomiting, severe eye pain, or sudden vision loss.
+  - Headache during pregnancy with swelling, high blood pressure, or vision changes.
+  - Headache linked to carbon monoxide, poisoning, heat-illness danger signs, stroke cues, or significant trauma.
+forbidden_advice:
+  - Do not routine-self-care a severe headache with fever, stiff neck, confusion, reduced alertness, rash, neurologic deficits, head injury, sudden worst headache, pregnancy warning signs, severe eye pain, sudden vision loss, carbon monoxide or poisoning exposure, heat-illness danger signs, stroke cues, or trauma cues.
+  - Do not provide medication dosing or expand beyond package or clinician directions.
+  - Do not encourage repeated pain-reliever use for frequent or daily headaches.
+  - Do not advise pain relievers casually when the person is dehydrated, vomiting, has kidney disease, stomach ulcers, uses blood thinners, or is pregnant; advise caution and clinician guidance instead.
+  - Do not let home care delay urgent help for a new, different, worsening, severe, or red-flag headache.
+do_not:
+  - Do not skip the red-flag screen before offering mild headache self-care.
+  - Do not make medication the main answer or give adult medicine advice for children beyond label or clinician direction.
+  - Do not route poisoning, heat illness, stroke, trauma, eye emergency, or pregnancy warning-sign prompts to this card as the primary routine owner.
+routine_boundary: >
+  Routine self-care applies only to common mild headaches that are familiar,
+  gradual, mild to moderate, and linked to everyday triggers such as tension,
+  dehydration, heat exposure without heat-illness danger signs, missed meals,
+  sleep loss, mild illness, eye strain, or caffeine change. Severe headache with
+  fever/stiff neck/confusion/rash, neurologic deficits, head injury, sudden
+  worst headache, pregnancy warning signs, severe eye pain or sudden vision
+  loss, carbon monoxide or poisoning exposure, heat-illness danger signs,
+  stroke cues, and trauma cues exit routine self-care.
+acceptable_uncertain_fit: >
+  If the prompt sounds like a common headache but does not state whether red
+  flags are absent, lead with the urgent-boundary screen and offer only
+  conservative interim steps that do not delay help: stop heat/smoke/screens,
+  rest somewhere safe, sip fluids if able, eat if meals were missed, and seek
+  urgent care if any warning sign is present.
+clarifying_questions:
+  - Did the headache start suddenly, become the worst headache of life, or feel very different from usual?
+  - Is there fever, stiff neck, confusion, rash, persistent vomiting, fainting, seizure, weakness, numbness, speech trouble, balance trouble, severe eye pain, or vision loss?
+  - Was there a fall, hit to the head or face, car crash, possible carbon monoxide or poisoning exposure, heat-illness danger signs, stroke cues, trauma, or pregnancy with swelling, high blood pressure, or vision changes?
+  - Is this a frequent or daily headache, and are pain relievers being used repeatedly?
+citation_ids:
+  - headache-overview-mild-boundary
+  - headache-basic-care-steps
+  - headache-medication-boundary
+  - headache-what-not-to-do
+  - headache-red-flags
+  - headache-frequent-headaches
+source_sections:
+  - guide: GD-949
+    slug: headaches-basic-care
+    title: "Headaches: Basic Care & Red Flags"
+    sections:
+      - "#overview"
+      - "#simple-causes"
+      - "#basic-care"
+      - "#what-not-to-do"
+      - "#when-to-worry"
+      - "#when-it-is-probably-simple"
+      - "#prevention"
+      - "#faq"
+source_invariants:
+  - name: routine headache self-care stays mild and bounded
+    guide: GD-949
+    must_include:
+      - This guide is for common headaches from tension, dehydration, heat, missed meals, sleep loss, mild illness, and eye strain.
+      - A headache is more likely to be simple if it is familiar, gradual, and improves with rest, fluids, food, or a quieter environment.
+      - Do not assume a headache is harmless just because headaches are common.
+    must_not_match:
+      - "(sudden|worst|severe|confusion|stiff neck|neurologic|head injury)[^\\n]{0,140}(routine self-care|harmless|simple headache)"
+  - name: red flags require urgent handoff
+    guide: GD-949
+    must_include:
+      - If the headache comes with a high fever, stiff neck, confusion, or rash, treat it as a red flag
+      - "Get urgent help if the headache comes with:"
+      - a headache that starts suddenly and is very severe
+      - severe eye pain or sudden vision loss
+      - headache during pregnancy with swelling, high blood pressure, or vision changes
+  - name: medication boundary avoids dosing expansion
+    guide: GD-949
+    must_include:
+      - Use only as directed on the package or by a clinician.
+      - Do not keep taking pain medicine day after day for frequent headaches without getting checked.
+      - If you are dehydrated, vomiting, have kidney disease, stomach ulcers, are on blood thinners, or are pregnant, be cautious and seek guidance before using pain medicine.
+    must_not_match:
+      - "(ibuprofen|acetaminophen|aspirin|naproxen)[^\\n]{0,120}(mg|milligram|every [0-9]|dose)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-949 common mild headache self-care and red-flag
+  handoffs only. Medication guidance is deliberately limited to package or
+  clinician directions, avoiding repeated pain-reliever use, and caution for
+  dehydration, vomiting, kidney disease, ulcers, blood thinners, and pregnancy.

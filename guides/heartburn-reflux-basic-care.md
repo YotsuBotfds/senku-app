@@ -9,6 +9,29 @@ tags:
   - medical
   - digestion
   - symptom-care
+aliases:
+  - heartburn
+  - acid reflux
+  - reflux
+  - sour stomach
+  - acid stomach
+  - indigestion
+  - burning after eating
+  - burping acid
+  - nighttime reflux
+routing_cues:
+  - Routine reflux or heartburn self-care after meals, lying down after eating, trigger foods, nighttime sour taste, or recurrent mild burning when red flags are absent.
+  - Route chest pressure, pain spreading to arm/jaw/back/shoulder, shortness of breath, sweating, fainting, or sudden weakness away from routine reflux care.
+  - Route vomiting blood, coffee-ground vomit, black tarry or sticky stool, bloody stool with systemic symptoms, and blood after alcohol or heavy drinking to acute abdominal or GI-bleed emergency guidance.
+  - Route hard or swollen belly, guarding, inability to walk upright from belly pain, fever with one very tender abdominal spot, or vomiting with no stool or gas to acute abdominal emergency guidance.
+  - Route rectal bleeding, anal pain or itching, and lumps near the anus to hemorrhoids or rectal-bleeding guidance instead of heartburn care.
+citations_required: true
+applicability: >
+  Routine self-care for mild heartburn, reflux, sour stomach, or indigestion
+  when red flags are absent. Use for posture, meal-size, trigger-reduction,
+  sleep-positioning, and label-or-clinician-only medicine boundaries. Do not
+  use as the primary owner for chest-pain emergency symptoms, GI bleeding,
+  acute abdomen patterns, or rectal/anus symptoms.
 icon: 🤢
 description: Conservative basic care for heartburn, acid reflux, and sour stomach, including common triggers, meal timing, posture, smaller meals, avoiding lying down after eating, limited over-the-counter options, and red flags that can signal ulcer, GI bleeding, chest pain, or another serious problem.
 related:

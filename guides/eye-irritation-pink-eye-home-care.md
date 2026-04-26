@@ -25,6 +25,12 @@ routing_cues:
   - "painful itchy red eye at home"
   - "stye treatment at home"
   - "when to seek urgent eye care"
+use_when:
+  - Routine red-eye, pink-eye, mild loose-debris irritation, stye, dry-eye, or eye-strain home-care questions when vision is stable and pain is mild.
+  - Questions asking how to clean crusting, use compresses, avoid spread, use artificial tears, or decide when routine eye irritation needs same-day care.
+not_for:
+  - Chemical splash, blunt or penetrating trauma, high-speed debris, embedded object, object poking out, vision change, severe pain, strong light sensitivity, abnormal pupil, cloudy cornea, or contact-lens red eye with pain or discharge.
+citation_policy: cite this routine eye-care guide for mild pink-eye, stye, dry-eye, and loose-debris irritation; cite the emergency eye-injury guide instead for chemical exposure, trauma, high-speed or embedded debris, vision change, severe pain or light sensitivity, abnormal pupil/cloudy cornea, or contact-lens red eye with pain/discharge
 related:
   - eye-injuries-emergency-care
   - allergic-reactions-anaphylaxis
@@ -32,8 +38,8 @@ related:
   - first-aid
 read_time: 16
 word_count: 2600
-last_updated: '2026-04-13'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: high
 ---
 

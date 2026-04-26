@@ -1,0 +1,125 @@
+card_id: diabetic_glucose_emergency_safety
+guide_id: GD-403
+slug: diabetes-management-remote
+title: Diabetes Management in Resource-Poor Settings
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A person with diabetes, possible diabetes, insulin use, skipped meal, or suspected glucose emergency is confused, shaky, sweaty, seizing, unconscious, vomiting, breathing deeply and rapidly, or has fruity breath or ketones.
+  - A bystander asks whether symptoms could be low glucose or diabetic ketoacidosis and what safety-first triage is appropriate.
+  - The prompt involves oral sugar, food, drink, swallowing safety, altered mental status, seizure, unconsciousness, DKA danger signs, or urgent escalation for a diabetic emergency.
+required_first_actions:
+  - Treat altered mental status, seizure, unconsciousness, or unsafe swallowing as an emergency.
+  - Give nothing by mouth when the person is unconscious, seizing, unable to swallow safely, or not awake enough to protect the airway.
+  - Place an unconscious or post-seizure person in a recovery position when safe, monitor airway and breathing, and get emergency help or the fastest available evacuation.
+  - Sweaty, shaky, hungry, anxious, or confused symptoms after a skipped meal or insulin can be low glucose only if the person is awake enough to swallow safely.
+  - Fruity breath, deep rapid breathing, vomiting, confusion, or ketones are DKA danger signs requiring urgent medical care.
+conditional_required_actions:
+  - trigger_terms:
+      - unconscious
+      - seizure
+      - seizing
+      - altered mental status
+      - cannot swallow
+      - unsafe swallow
+      - hard to wake
+    required_actions:
+      - Treat as an emergency, give nothing by mouth, protect the airway, use recovery position when safe, and arrange urgent help.
+  - trigger_terms:
+      - skipped meal
+      - insulin
+      - sweaty
+      - shaky
+      - hungry
+      - confused
+      - low glucose
+      - hypoglycemia
+    required_actions:
+      - If awake enough to swallow safely, consider low glucose and use only simple oral carbohydrate support from the source guide while monitoring for worsening.
+      - If swallowing is not clearly safe, do not give food, drink, honey, sugar, or tablets by mouth.
+  - trigger_terms:
+      - fruity breath
+      - deep rapid breathing
+      - kussmaul
+      - vomiting
+      - ketones
+      - dka
+      - diabetic ketoacidosis
+    required_actions:
+      - Treat fruity breath, deep rapid breathing, vomiting, confusion, or ketones as DKA danger signs and seek urgent medical care or evacuation.
+first_actions:
+  - Check consciousness, breathing, seizure activity, and ability to swallow safely before any oral sugar, food, or drink.
+  - If a glucose meter or urine ketone test is available, use it as supporting information without delaying emergency escalation for red flags.
+  - For a person who is awake and swallowing safely with likely low glucose, give fast-acting carbohydrate from the source guide and reassess symptoms.
+  - After low-glucose symptoms improve, follow with longer-acting food when the person can eat safely and continue monitoring for relapse.
+  - For DKA danger signs, prioritize urgent care, hydration support only if awake and swallowing safely, and rapid evacuation rather than home management.
+urgent_red_flags:
+  - Altered mental status, severe confusion, seizure, unconsciousness, inability to swallow, or unsafe swallowing.
+  - Fruity breath, deep rapid breathing, vomiting, confusion, or positive ketones suggesting DKA.
+  - Persistent or worsening symptoms after oral carbohydrate when the person is awake and swallowing safely.
+  - Known type 1 diabetes with illness, missed insulin, dehydration, vomiting, or rapidly worsening weakness.
+forbidden_advice:
+  - Do not recommend insulin dose changes.
+  - Do not describe insulin extraction, insulin manufacture, or improvised insulin production.
+  - Do not provide insulin infusion dosing, IV insulin bolus dosing, or insulin bolus instructions.
+  - Do not provide glucagon dosing.
+  - Do not provide insulin viability percentages, potency-loss percentages, or rationing percentages.
+  - Do not give or recommend anything by mouth when the person is unconscious, seizing, has altered mental status, cannot swallow safely, or may aspirate.
+  - Do not frame altered mental status, seizure, unconsciousness, unsafe swallowing, or DKA danger signs as routine home care.
+do_not:
+  - Do not force food, drink, glucose tablets, honey, or sugar into the mouth of someone who is unconscious, seizing, hard to wake, or unable to swallow safely.
+  - Do not delay emergency help for DKA danger signs.
+  - Do not turn this emergency-safety card into an insulin, glucagon, extraction, manufacture, viability, or rationing protocol.
+routine_boundary: >
+  Routine low-glucose support is limited to a person who is awake enough to
+  swallow safely and has no seizure, unconsciousness, unsafe swallow, or DKA
+  danger signs. Altered mental status, seizure, unconsciousness, unsafe
+  swallowing, fruity breath, deep rapid breathing, vomiting, confusion with
+  ketones, or suspected DKA requires emergency escalation.
+acceptable_uncertain_fit: >
+  If the glucose level, ketone status, or cause is unclear, lead with airway,
+  breathing, consciousness, swallowing safety, nothing by mouth when unsafe,
+  and urgent escalation for any red flag. Ask clarifying questions only after
+  preserving those emergency boundaries.
+clarifying_questions:
+  - Is the person awake enough to swallow safely, or are they unconscious, seizing, hard to wake, or severely confused?
+  - Did symptoms start after insulin use, missed food, exertion, alcohol, illness, or vomiting?
+  - Are there fruity breath, deep rapid breathing, repeated vomiting, ketones, dehydration, or known type 1 diabetes?
+  - Is a glucose reading or urine ketone result available without delaying urgent help?
+citation_ids:
+  - clinical-monitoring-glucose-symptoms
+  - dka-recognition-danger
+  - hypoglycemia-recognition-treatment
+  - severe-hypoglycemia-airway-boundary
+source_sections:
+  - guide: GD-403
+    slug: diabetes-management-remote
+    title: Diabetes Management in Resource-Poor Settings
+    sections:
+      - "#glucose-monitoring"
+      - "#dka-recognition"
+      - "#hypoglycemia"
+source_invariants:
+  - name: diabetic emergency symptom recognition
+    guide: GD-403
+    must_include:
+      - Shakiness, tremor
+      - Sweating
+      - Confusion, disorientation, loss of consciousness
+      - fruity breath
+      - Kussmaul breathing
+      - nausea/vomiting
+  - name: unsafe swallow oral intake boundary
+    guide: GD-403
+    must_include:
+      - Do NOT force food/liquid
+      - aspiration risk
+      - Place in recovery position
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-403 as diabetic glucose emergency safety only.
+  It preserves low-glucose recognition when a person is awake enough to swallow,
+  DKA danger-sign escalation, and the no-oral-intake airway boundary. It
+  explicitly excludes insulin dose changes, insulin extraction or manufacture,
+  insulin infusion or bolus dosing, glucagon dosing, insulin viability or
+  potency percentages, and rationing percentages.

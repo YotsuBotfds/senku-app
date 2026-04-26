@@ -39,6 +39,19 @@ routing_cues:
   - "headache keeps coming back"
 icon: head
 description: Conservative basic care for common headaches from tension, dehydration, heat, missed meals, sleep loss, mild illness, and eye strain. Clear red flags for head injury, stroke-like symptoms, meningitis warning signs, and sudden severe headache.
+use_when:
+  - Common mild headache self-care questions when the headache is familiar or gradual and red flags are absent.
+  - Questions about hydration, food, rest, heat or cold, eye strain, sleep loss, tension, mild illness, or avoiding frequent pain-reliever use.
+not_for:
+  - Sudden worst headache, severe headache with fever/stiff neck/confusion/rash, neurologic deficits, head injury, pregnancy warning signs, eye pain or vision loss, carbon monoxide or poisoning exposure, heat illness, stroke, or trauma cues.
+citations_required: true
+citation_policy: cite this reviewed headache self-care guide only for common mild headache care and red-flag handoff boundaries; do not cite it as routine self-care for severe infectious, neurologic, traumatic, pregnancy, eye-emergency, poisoning, heat-illness, stroke, or trauma presentations
+applicability: >
+  Common mild headache self-care and red-flag triage only, including tension,
+  dehydration, heat exposure without heat-illness danger signs, missed meals,
+  sleep loss, mild illness, and eye strain. Excludes medication dosing and any
+  severe, sudden, neurologic, traumatic, pregnancy-associated, eye-emergency,
+  carbon-monoxide/poisoning, heat-illness, stroke, or broader trauma pattern.
 related:
   - common-ailments-recognition-care
   - cough-cold-sore-throat-home-care

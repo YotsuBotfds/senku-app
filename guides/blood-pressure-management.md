@@ -7,6 +7,17 @@ difficulty: intermediate
 tags:
   - essential
   - medical
+aliases:
+  - hypertensive crisis symptoms
+  - very high blood pressure chest pain
+  - high blood pressure confusion seizure vision change
+  - low blood pressure shock signs
+routing_cues:
+  - Use for blood-pressure danger screening when very high blood pressure is paired with neurologic symptoms, chest pain, breathing trouble, vision change, confusion, or seizure.
+  - Use for low blood pressure paired with shock signs such as collapse, confusion, cold clammy skin, severe weakness, or abnormal breathing.
+  - Do not use this guide's reviewed answer card as an antihypertensive dosing, IV medication, rapid blood-pressure-lowering target, saline bolus, or herbal emergency-treatment protocol.
+citation_policy: cite reviewed blood-pressure crisis and shock boundary sections plus the reviewed GD-402 answer card for safety-critical blood-pressure danger answers
+applicability: blood-pressure crisis and shock red-flag boundary only; not a medication dosing, IV antihypertensive, rapid BP-lowering target, saline bolus, or herbal emergency-treatment protocol
 icon: 💓
 description: Measurement techniques (auscultatory method), normal vs abnormal ranges, hypertensive emergencies, salt restriction, herbal antihypertensives, lifestyle modification, hypotension and shock differential, improvised sphygmomanometer construction.
 related:
@@ -28,6 +39,22 @@ liability_level: critical
 :::warning
 High blood pressure (hypertension) is often asymptomatic but damages vessels and organs over time. Hypertensive crisis (very high BP with symptoms) requires emergency intervention. Low blood pressure can indicate shock or medical emergency. Proper measurement technique is essential for accurate diagnosis.
 :::
+
+<section id="blood-pressure-crisis-shock-boundary">
+
+## Blood Pressure Crisis and Shock Red-Flag Boundary
+
+This is the reviewed answer-card surface for GD-402. Use it only for immediate safety triage when blood-pressure readings are paired with possible organ-damage symptoms or shock signs.
+
+**Emergency blood-pressure warning signs:**
+- **Very high blood pressure with symptoms:** BP around or above 180 systolic or 120 diastolic plus chest pain, severe shortness of breath, new neurologic symptoms, severe headache with confusion, seizure, fainting, weakness or numbness on one side, trouble speaking, new vision loss or major vision change, or severe worsening illness needs emergency evaluation and transport.
+- **Low blood pressure with shock signs:** low BP or a sudden major BP drop plus cold clammy skin, collapse, fainting, confusion, severe weakness, blue or gray color, very fast or weak pulse, abnormal breathing, or inability to stay awake is an emergency.
+
+**Asymptomatic high BP boundary:** A high reading without red-flag symptoms is not a rapid self-lowering situation. Recheck with correct technique after resting, avoid exertion and stimulants, contact a clinician or urgent care promptly for persistent very high readings, and do not try to crash the number down at home.
+
+**Hard stops for answers:** Do not provide antihypertensive dosing, IV medication protocols, rapid BP-lowering targets, saline bolus details, or herbal emergency treatment for blood-pressure crisis or shock prompts. Herbal or lifestyle measures are prevention/routine-support topics, not emergency treatment.
+
+</section>
 
 <section id="measurement">
 
@@ -109,10 +136,10 @@ Automated oscillometric devices are convenient but less accurate than auscultato
 **Definition:** BP >180/120 without symptoms or end-organ damage.
 
 **Management:**
-- Do NOT treat acutely (lowering BP too fast risks stroke)
+- Do NOT try to rapidly lower BP at home or in the field; lowering BP too fast can worsen stroke or heart risk
 - Recheck BP in 5–10 min (may be white-coat effect; elevated from stress)
-- If persistently elevated: Initiate or increase regular antihypertensive medication
-- Follow up with physician within 24 hours
+- If persistently elevated, seek clinician-directed adjustment or urgent follow-up; do not invent a rescue dose
+- Follow up with a physician or urgent care promptly, especially for persistent readings near or above 180/120
 
 ### Hypertensive Emergency (Crisis)
 
@@ -126,14 +153,10 @@ Automated oscillometric devices are convenient but less accurate than auscultato
 - **Pulmonary:** Dyspnea, orthopnea (shortness of breath when lying down)
 
 **Management:**
-1. **Immediate evaluation:** Assess for end-organ damage (neuro exam, chest exam, urinalysis if available)
-2. **IV access:** Establish large-bore IV
-3. **Antihypertensive medication (if available):**
-   - **Labetalol:** IV 20 mg bolus, repeat every 10 min (max 80 mg per dose)
-   - **Nitroglycerin:** SL nitrate tablet (0.3–0.6 mg), repeat every 5 min; or IV nitroprusside (requires ICU)
-   - **Nifedipine:** Immediate-release 10 mg SL (controversial; variable absorption)
-4. **Target:** Lower BP by ~10% in first hour (avoid excessive rapid lowering, which worsens stroke/MI risk)
-5. **Hospital transport:** Hypertensive emergency requires ICU-level monitoring and titrated antihypertensive therapy
+1. **Emergency evaluation and transport:** Treat very high BP with neurologic symptoms, chest pain, breathing trouble, vision change, confusion, or seizure as an emergency.
+2. **Do not rapidly self-lower:** Avoid giving ad hoc rescue doses or trying to force BP down outside clinician-directed care.
+3. **Monitor while arranging help:** Keep the person resting, avoid exertion, note symptoms and readings, and watch breathing, alertness, chest pain, and neurologic changes.
+4. **Escalate rather than protocolize:** Hospital or emergency clinicians decide whether IV medication and monitored BP reduction are needed; this guide does not provide antihypertensive dosing, IV medication protocols, or rapid BP-lowering targets.
 
 **Prognosis:** With prompt treatment, most hypertensive emergencies resolve without permanent organ damage. Delays increase risk of stroke, MI, or kidney damage.
 
@@ -284,14 +307,10 @@ In austere settings without pharmaceuticals, herbs may provide modest BP reducti
 
 **Immediate actions:**
 1. **Lay patient flat:** Elevate legs ~30° (improves venous return)
-2. **Large-bore IV access:** ×2 if possible
-3. **Identify cause:** Blood loss? Infection? Allergic reaction? Cardiac event?
-4. **Rapid fluid resuscitation:**
-   - **Hypovolemic shock:** Normal saline bolus 1–2 liters over 10–20 min; repeat if BP not improving
-   - **Septic shock:** Similar fluid bolus, then antibiotics
-   - **Anaphylactic:** Epinephrine FIRST (see anaphylaxis guide); fluids second
-   - **Cardiogenic:** Cautious fluids (overload worsens pulmonary edema); needs vasopressor support
-5. **Treat underlying cause:** Control bleeding, antibiotics for infection, epinephrine for anaphylaxis
+2. **Call emergency services or begin urgent transport:** Low BP with shock signs is immediately life-threatening.
+3. **Monitor airway, breathing, circulation, and alertness:** Keep the person warm and still while help is arranged.
+4. **Identify likely cause without delaying transport:** Blood loss, dehydration, infection, allergic reaction, and cardiac events need different definitive treatment.
+5. **Use the right emergency guide for the cause:** Control major bleeding, use epinephrine-first anaphylaxis care when allergic airway/circulation signs are present, and seek higher-level care for infection or cardiac causes. This guide does not provide saline bolus details, vasopressor protocols, antibiotic protocols, or IV shock-management instructions.
 
 **Prognosis:** Shock is immediately life-threatening; mortality increases with delay. Survival depends on rapid recognition and treatment of underlying cause.
 

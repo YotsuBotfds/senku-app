@@ -1,0 +1,155 @@
+card_id: eye_irritation_pink_eye_home_care
+guide_id: GD-922
+slug: eye-irritation-pink-eye-home-care
+title: "Red Eye, Pink Eye & Eye Irritation Home Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Person asks about mild red eye, pink eye, crusting, watery or sticky discharge, itching, mild burning, stye, dry eye, eye strain, or loose dust/eyelash irritation.
+  - Vision is basically normal, pain is mild, the eye was not injured, and there is no chemical exposure, high-speed debris, embedded object, abnormal pupil, cloudy cornea, or severe light sensitivity.
+  - Prompt asks for routine home care such as handwashing, gentle rinsing, warm or cool compresses, eyelid cleaning, artificial tears, contact-lens break, contagion precautions, or when to seek care.
+required_first_actions:
+  - First separate routine eye irritation from eye emergencies before giving pink-eye, stye, dry-eye, or loose-debris home care.
+  - Route chemical splash, blunt or penetrating trauma, high-speed metal/wood/glass debris, embedded object or anything poking out, vision change, severe pain, strong light sensitivity, cloudy cornea, abnormal pupil, blood in the eye after injury, or contact-lens red eye with pain or discharge to urgent eye evaluation or the emergency eye-injury guide.
+  - Keep the answer bounded to routine care only when vision is stable, pain is mild, and the story fits conjunctivitis, allergy, dry eye, eye strain, stye, or loose non-embedded debris.
+conditional_required_actions:
+  - trigger_terms:
+      - chemical
+      - bleach
+      - drain cleaner
+      - oven cleaner
+      - acid
+      - alkali
+      - pool chemical
+      - solvent
+      - cleaner
+    required_actions:
+      - Do not use this routine card for chemical exposure; switch to emergency eye-injury guidance with immediate continuous irrigation while arranging urgent evaluation or Poison Control guidance.
+  - trigger_terms:
+      - hit
+      - punched
+      - trauma
+      - puncture
+      - grinding
+      - hammering
+      - metal chip
+      - wood chip
+      - glass
+      - high speed
+      - embedded
+      - poking out
+      - stuck in eye
+    required_actions:
+      - If trauma, high-speed debris, embedded material, or anything poking out is possible, do not flush, remove, rub, press, or patch the eye; shield without pressure, reduce eye movement if possible, and seek urgent eye care.
+  - trigger_terms:
+      - contact lens
+      - contacts
+      - lens wearer
+      - light sensitivity
+      - blurry
+      - vision change
+      - severe pain
+      - cloudy cornea
+      - pupil
+      - discharge
+    required_actions:
+      - Treat contact-lens red eye with pain, discharge, reduced vision, or light sensitivity as possible corneal infection rather than routine pink eye.
+first_actions:
+  - Wash hands, avoid touching or rubbing the eye, and remove contact lenses if present and easy to remove.
+  - For loose dust, lash, sweat, smoke, or wind-blown particles only, blink and rinse gently with clean water, bottled water, sterile saline, or eyewash from the inner corner toward the outer corner.
+  - For pink-eye symptoms, use clean warm compresses for crusting, gently clean eyelids with clean water or saline, use artificial tears for irritation, avoid sharing towels or pillowcases, and replace contaminated eye makeup.
+  - For allergy-like itchy watery bilateral redness, consider cool compresses, avoiding triggers, and appropriate allergy medicine or allergy eye drops already suitable for the person.
+  - For a stye, use warm compresses for 10 to 15 minutes several times a day, keep the lid clean, avoid makeup and contact lenses, and do not squeeze or pop the bump.
+  - For dry eye or eye strain, take screen breaks, reduce glare, blink more often, use lubricating artificial tears, improve lighting, and rest the eyes.
+urgent_red_flags:
+  - Vision changes, reduced vision, blurry or darker vision, double vision, or blood in the eye after injury.
+  - Moderate to severe eye pain, strong light sensitivity, severe headache with nausea and a very red eye, or symptoms worsening instead of improving.
+  - Cloudy, hazy, or white-looking cornea, misshapen or fixed pupil, very different pupil, or eye that looks very abnormal.
+  - Chemical exposure, penetrating injury, embedded object, anything poking out, high-speed metal/wood/glass debris, or blunt trauma with vision change or severe pain.
+  - Contact lens wear with redness plus pain, discharge, light sensitivity, or reduced vision.
+  - Worsening eyelid or facial swelling, fever with eye pain or eyelid swelling, pain with eye movement, or spreading swelling around the eye.
+forbidden_advice:
+  - Do not treat chemical splash, trauma, high-speed debris, embedded object, vision change, severe pain, strong light sensitivity, abnormal pupil, cloudy cornea, or contact-lens red eye with pain/discharge as routine pink eye.
+  - Do not advise flushing, removing, rubbing, pressing, scraping, using tweezers, using cotton swabs on the eyeball, or direct pressure when an object may be embedded or high-speed debris/trauma is involved.
+  - Do not recommend steroid drops, old prescription eye drops, eye patching for painful/infected/contact-lens-related eyes, or wearing contacts through a red-eye episode unless clinician-directed.
+  - Do not provide diagnosis, antibiotic selection, medication dosing, or emergency eye-injury procedure details beyond the cited guide.
+do_not:
+  - Do not let routine home-care advice delay urgent evaluation for vision change, severe pain, strong light sensitivity, abnormal pupil, cloudy cornea, chemical exposure, trauma, or contact-lens red eye with pain or discharge.
+  - Do not call a persistent foreign-body sensation harmless if rinsing was tried and light hurts or vision is worse.
+  - Do not squeeze or pop a stye.
+routine_boundary: >
+  Routine eye-irritation care is appropriate only for mild red-eye, pink-eye,
+  stye, dry-eye, eye-strain, allergy-like irritation, or loose non-embedded
+  debris when vision is stable, pain is mild, and no emergency boundary is
+  present. Chemical splash, blunt or penetrating trauma, high-speed debris,
+  embedded object, vision change, severe pain or light sensitivity, abnormal
+  pupil/cloudy cornea, and contact-lens red eye with pain or discharge are
+  outside this card.
+acceptable_uncertain_fit: >
+  If the prompt sounds like routine eye irritation but does not clearly state
+  vision, pain severity, contact-lens status, chemical exposure, trauma, debris
+  mechanism, light sensitivity, pupil/cornea appearance, or discharge pattern,
+  lead with the emergency-boundary screen and ask focused questions. If any
+  red flag is already present, escalate instead of giving routine care as the
+  main answer.
+clarifying_questions:
+  - Is vision normal, and is pain mild rather than moderate or severe?
+  - Was there any chemical splash, hit, puncture, grinding, hammering, high-speed debris, or anything poking out or embedded?
+  - Is there strong light sensitivity, cloudy or white-looking cornea, abnormal pupil, blood in the eye, double vision, or severe headache with nausea?
+  - Does the person wear contact lenses, and if so is there pain, discharge, reduced vision, or light sensitivity?
+  - Is the main pattern itchy/watery, sticky or crusted, dry/burning after screens, loose debris sensation, or a tender eyelid bump?
+citation_ids:
+  - routine-eye-care-boundary
+  - safe-loose-debris-flushing
+  - pink-eye-home-care
+  - stye-dry-eye-strain-care
+  - urgent-eye-red-flags
+source_sections:
+  - guide: GD-922
+    slug: eye-irritation-pink-eye-home-care
+    title: "Red Eye, Pink Eye & Eye Irritation Home Care"
+    sections:
+      - "#overview"
+      - "#first-check"
+      - "#safe-flushing"
+      - "#pink-eye"
+      - "#stye"
+      - "#eye-strain"
+      - "#what-not-to-do"
+      - "#urgent-care"
+      - "#home-care-summary"
+source_invariants:
+  - name: routine eye care stays bounded away from emergency eye injury
+    guide: GD-922
+    must_include:
+      - This guide is for mild, common eye complaints when vision is stable and the eye is not badly injured.
+      - Chemical exposure and eye trauma should go to the emergency eye-injury guide before pink-eye home care.
+      - Contact lens wear with redness, pain, or discharge
+    must_not_match:
+      - "chemical exposure is safe for home care"
+      - "contact lens[^\\n]{0,120}(routine pink eye|watch at home|harmless)"
+  - name: embedded and high-speed debris negatives remain conservative
+    guide: GD-922
+    must_include:
+      - Do not use this mild-debris flushing plan if the object may be embedded
+      - do not flush, remove, rub, or press on the eye
+      - shield it without pressure
+    must_not_match:
+      - "embedded[^\\n]{0,120}(safe to flush|try to remove|rub it|press on it)"
+  - name: routine care actions remain nonprescriptive
+    guide: GD-922
+    must_include:
+      - Use a clean warm compress
+      - Use artificial tears
+      - Do not use steroid eye drops unless a clinician specifically told you to
+      - Do not squeeze or pop it.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-922 routine eye irritation, pink-eye, stye,
+  dry-eye, eye-strain, and loose non-embedded debris support only. It is
+  intentionally bounded away from chemical splash, blunt or penetrating trauma,
+  high-speed debris, embedded object, vision change, severe pain or light
+  sensitivity, abnormal pupil/cloudy cornea, and contact-lens red eye with pain
+  or discharge, which remain emergency eye-injury or urgent ophthalmology
+  surfaces.
