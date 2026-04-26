@@ -10,6 +10,7 @@ from scripts.agent_context_snapshot import (
     build_snapshot,
     cap_markdown_lines,
     collect_artifact_summary,
+    collect_git_summary,
     main,
 )
 
@@ -86,6 +87,8 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("# Agent Startup Context Snapshot", markdown)
         self.assertIn("## Git", markdown)
         self.assertIn("`abc1234`", markdown)
+        self.assertIn("` M scripts/existing.py`", markdown)
+        self.assertIn("Benign untracked", markdown)
         self.assertIn("PLANNER_HANDOFF_2026-04-25_FAST_MODE.md", markdown)
         self.assertIn("## Worker Lanes", markdown)
         self.assertIn("## Recent Dispatch Notes", markdown)
@@ -95,6 +98,31 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("## Latest Bench Artifact Pointers", markdown)
         self.assertIn("run.json", markdown)
         self.assertLessEqual(len(markdown.splitlines()), 80)
+
+    def test_git_summary_treats_only_protected_handoffs_as_actionable_clean(self):
+        root = self.make_tmpdir()
+
+        def runner(command, cwd):
+            joined = " ".join(command)
+            if joined == "git rev-parse --short HEAD":
+                return subprocess.CompletedProcess(command, 0, "abc1234\n", "")
+            if joined == "git log -5 --oneline --decorate":
+                return subprocess.CompletedProcess(command, 0, "abc1234 Latest change\n", "")
+            if joined == "git status --short":
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    "?? notes\\PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md\n",
+                    "",
+                )
+            return subprocess.CompletedProcess(command, 1, "", "unexpected")
+
+        markdown = "\n".join(collect_git_summary(root, runner))
+
+        self.assertIn("Clean actionable tree", markdown)
+        self.assertIn("Benign untracked", markdown)
+        self.assertIn("PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md", markdown)
+        self.assertNotIn("`?? notes", markdown)
 
     def test_artifact_summary_excludes_log_body_content(self):
         root = self.make_tmpdir()

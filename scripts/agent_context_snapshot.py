@@ -24,6 +24,12 @@ DEFAULT_MAX_LINES = 120
 DEFAULT_DISPATCH_LIMIT = 8
 DEFAULT_MANIFEST_LIMIT = 5
 DEFAULT_ARTIFACT_LIMIT = 10
+PROTECTED_BENIGN_UNTRACKED = {
+    "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
+    "notes/PLANNER_HANDOFF_2026-04-25_POST_CLI_TERMINATION.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
+}
 
 CommandRunner = Callable[[Sequence[str], Path], subprocess.CompletedProcess[str]]
 
@@ -53,6 +59,27 @@ def _section(title: str, lines: Sequence[str]) -> list[str]:
     return [f"## {title}", "", *lines, ""]
 
 
+def _split_actionable_status_lines(
+    status_text: str,
+    *,
+    benign_untracked_paths: set[str] = PROTECTED_BENIGN_UNTRACKED,
+) -> tuple[list[str], list[str]]:
+    benign_paths = {path.replace("\\", "/") for path in benign_untracked_paths}
+    actionable: list[str] = []
+    benign: list[str] = []
+    for line in status_text.splitlines():
+        if not line.strip():
+            continue
+        status = line[:2]
+        path = (line[3:].strip() if len(line) > 3 else "").replace("\\", "/")
+        normalized_line = f"{status} {path}".rstrip()
+        if status == "??" and path in benign_paths:
+            benign.append(normalized_line)
+        else:
+            actionable.append(normalized_line)
+    return actionable, benign
+
+
 def collect_git_summary(repo_root: Path, runner: CommandRunner = run_command) -> list[str]:
     head = runner(["git", "rev-parse", "--short", "HEAD"], repo_root)
     commits = runner(["git", "log", "-5", "--oneline", "--decorate"], repo_root)
@@ -74,13 +101,20 @@ def collect_git_summary(repo_root: Path, runner: CommandRunner = run_command) ->
     lines.append("")
     lines.append("### Working Tree")
     if status.returncode == 0:
-        status_lines = [line for line in status.stdout.splitlines() if line.strip()]
-        if status_lines:
-            lines.extend(f"- `{line}`" for line in status_lines[:12])
-            if len(status_lines) > 12:
-                lines.append(f"- ... {len(status_lines) - 12} more status entries")
+        actionable_lines, benign_lines = _split_actionable_status_lines(status.stdout)
+        if actionable_lines:
+            lines.extend(f"- `{line}`" for line in actionable_lines[:12])
+            if len(actionable_lines) > 12:
+                lines.append(f"- ... {len(actionable_lines) - 12} more actionable status entries")
         else:
-            lines.append("- Clean")
+            lines.append("- Clean actionable tree")
+        if benign_lines:
+            lines.append(
+                "- Benign untracked: "
+                + ", ".join(f"`{line[3:]}`" for line in benign_lines[:4])
+            )
+            if len(benign_lines) > 4:
+                lines.append(f"- ... {len(benign_lines) - 4} more benign untracked entries")
     else:
         lines.append("- Git status unavailable.")
     return lines
