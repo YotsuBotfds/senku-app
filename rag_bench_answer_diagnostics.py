@@ -194,7 +194,11 @@ def answer_card_diagnostics(
         }
 
     question_text = str(result.get("question") or result.get("prompt_text") or "")
-    not_applicable_status = strict_card_not_applicable_to_prompt(question_text, cards)
+    not_applicable_status = strict_card_not_applicable_to_prompt(
+        question_text,
+        cards,
+        expected_family=expected_family,
+    )
     if not_applicable_status:
         return {
             "answer_card_status": not_applicable_status,
@@ -257,6 +261,7 @@ def evidence_nugget_diagnostics(
     not_applicable_status = strict_card_not_applicable_to_prompt(
         question_text,
         selected_cards,
+        expected_family=expected_family,
     )
     if not_applicable_status:
         return {**empty_fields, "evidence_nugget_status": not_applicable_status}
@@ -349,7 +354,12 @@ def strict_card_not_applicable_to_compare_prompt(question_text: str, cards: list
     )
 
 
-def strict_card_not_applicable_to_prompt(question_text: str, cards: list[dict]) -> str:
+def strict_card_not_applicable_to_prompt(
+    question_text: str,
+    cards: list[dict],
+    *,
+    expected_family: str = "",
+) -> str:
     if strict_card_not_applicable_to_compare_prompt(question_text, cards):
         return "not_applicable_compare"
 
@@ -358,10 +368,27 @@ def strict_card_not_applicable_to_prompt(question_text: str, cards: list[dict]) 
         for card in cards or []
         if str(card.get("card_id") or "").strip()
     }
+    strict_prompt_scoped_cards = {
+        "choking_airway_obstruction": has_choking_airway_prompt,
+        "newborn_danger_sepsis": has_newborn_danger_prompt,
+    }
+    family = family_tokens(expected_family)
+    family_matches_strict_card = any(
+        family
+        & family_tokens(
+            " ".join(
+                str(card.get(key) or "")
+                for key in ("card_id", "slug", "title")
+            )
+        )
+        for card in cards or []
+        if str(card.get("card_id") or "").strip() in strict_prompt_scoped_cards
+    )
     if (
         card_ids
-        and card_ids <= {"choking_airway_obstruction"}
-        and not has_choking_airway_prompt(question_text)
+        and card_ids <= set(strict_prompt_scoped_cards)
+        and not family_matches_strict_card
+        and not any(strict_prompt_scoped_cards[card_id](question_text) for card_id in card_ids)
     ):
         return "not_applicable_prompt"
 
@@ -404,6 +431,42 @@ def has_choking_airway_prompt(question_text: str) -> bool:
         "drooling",
     )
     return any(marker in lower for marker in markers)
+
+
+def has_newborn_danger_prompt(question_text: str) -> bool:
+    lower = str(question_text or "").lower()
+    has_newborn_context = any(
+        marker in lower
+        for marker in (
+            "newborn",
+            "neonate",
+            "neonatal",
+            "baby",
+            "infant",
+            "cord stump",
+        )
+    )
+    has_danger_context = any(
+        marker in lower
+        for marker in (
+            "hard to wake",
+            "limp",
+            "will not feed",
+            "won't feed",
+            "poor feeding",
+            "fever",
+            "low temperature",
+            "breathing trouble",
+            "seizure",
+            "jerking",
+            "very sick",
+            "lethargic",
+            "sleepy",
+            "pus",
+            "spreading redness",
+        )
+    )
+    return has_newborn_context and has_danger_context
 
 
 def is_bare_meningitis_vs_viral_compare(question_text: str) -> bool:
@@ -463,6 +526,21 @@ def claim_support_diagnostics(
     generated: str,
     selected_cards: list[dict],
 ) -> dict[str, str | int]:
+    question_text = str(result.get("question") or result.get("prompt_text") or "")
+    not_applicable_status = strict_card_not_applicable_to_prompt(
+        question_text,
+        selected_cards,
+    )
+    if not_applicable_status:
+        return {
+            "claim_support_status": not_applicable_status,
+            "claim_action_count": 0,
+            "claim_supported_count": 0,
+            "claim_unknown_count": 0,
+            "claim_forbidden_count": 0,
+            "claim_support_basis": "",
+        }
+
     evaluation = diagnose_claim_support(
         str(result.get("response_text") or ""),
         selected_cards,
@@ -489,9 +567,24 @@ def shadow_card_answer_diagnostics(
     selected_cards: list[dict],
     selected_guide_ids: list[str],
 ) -> dict[str, str | int]:
+    question_text = str(result.get("question") or result.get("prompt_text") or "")
+    not_applicable_status = strict_card_not_applicable_to_prompt(
+        question_text,
+        selected_cards,
+        expected_family=expected_family,
+    )
+    if not_applicable_status:
+        return {
+            "shadow_card_answer_status": not_applicable_status,
+            "shadow_claim_support_status": not_applicable_status,
+            "shadow_claim_action_count": 0,
+            "shadow_card_answer_cited_guide_ids": "",
+            "shadow_card_answer_text": "",
+        }
+
     plan = compose_card_backed_answer(
         selected_cards,
-        question_text=str(result.get("question") or result.get("prompt_text") or ""),
+        question_text=question_text,
         context=[expected_family],
         allowed_guide_ids=expected_ids or cited_ids or selected_guide_ids,
     )
@@ -509,7 +602,7 @@ def shadow_card_answer_diagnostics(
     card_evaluation = evaluate_answer_card_contract(
         answer_text,
         selected_cards,
-        question_text=str(result.get("question") or result.get("prompt_text") or ""),
+        question_text=question_text,
         context=[expected_family],
     )
     claim_evaluation = diagnose_claim_support(
@@ -590,13 +683,16 @@ def app_acceptance_diagnostics(
             card_status
             in {"pass", "no_generated_answer", "not_applicable_compare", "not_applicable_prompt", ""}
         )
-        and (claim_status in {"pass", "no_generated_answer", ""})
+        and (
+            claim_status
+            in {"pass", "no_generated_answer", "not_applicable_compare", "not_applicable_prompt", ""}
+        )
     ):
         app_status = "strong_supported"
     elif (
         evidence_owner_status == "expected_owner_cited"
         and card_status in {"pass", "partial", "not_applicable_compare", "not_applicable_prompt", ""}
-        and claim_status in {"pass", "partial", ""}
+        and claim_status in {"pass", "partial", "not_applicable_compare", "not_applicable_prompt", ""}
     ):
         app_status = "moderate_supported"
     elif bucket in {"deterministic_pass", "expected_supported"} and evidence_owner_status in {

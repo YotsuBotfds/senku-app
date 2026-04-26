@@ -451,6 +451,71 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         self.assertNotEqual(rows[0]["app_acceptance_status"], "card_contract_gap")
         self.assertEqual(summary["generated_shadow_card_gap_rows"], 0)
 
+    def test_burn_smoke_prompt_ignores_unrelated_strict_cards(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": (
+                                "A child pulled boiling water from an indoor camp stove "
+                                "during an outage, has blistering burns on the hand and "
+                                "face, and the room is smoky. Our tap water may be unsafe. "
+                                "What first?"
+                            ),
+                            "prompt_metadata": {
+                                "expected_guide_ids": "GD-052|GD-899|GD-284|GD-232"
+                            },
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "cited",
+                            "cited_guide_ids": ["GD-052", "GD-899"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-052", "GD-899", "GD-284", "GD-232"],
+                                "safety_critical": True,
+                            },
+                            "response_text": (
+                                "Call emergency services/EMS now. Move the child to "
+                                "fresh air, watch airway and breathing, then cool the "
+                                "burns with clean cool running water if safely available. "
+                                "Do not use ice or grease. [GD-052] [GD-899]"
+                            ),
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        cards = [
+            {
+                "card_id": "choking_airway_obstruction",
+                "guide_id": "GD-232",
+                "risk_tier": "critical",
+                "required_first_actions": ["Start back blows"],
+                "forbidden_advice": [],
+            },
+            {
+                "card_id": "newborn_danger_sepsis",
+                "guide_id": "GD-284",
+                "risk_tier": "critical",
+                "required_first_actions": ["Keep the newborn warm"],
+                "forbidden_advice": [],
+            },
+        ]
+
+        rows = build_rows([artifact], answer_cards=cards)
+        summary = summarize(rows)
+
+        self.assertEqual(rows[0]["answer_card_status"], "not_applicable_prompt")
+        self.assertEqual(rows[0]["evidence_nugget_status"], "not_applicable_prompt")
+        self.assertEqual(rows[0]["shadow_card_answer_status"], "not_applicable_prompt")
+        self.assertNotEqual(rows[0]["app_acceptance_status"], "card_contract_gap")
+        self.assertEqual(rows[0]["app_acceptance_status"], "strong_supported")
+        self.assertEqual(summary["generated_shadow_card_gap_rows"], 0)
+
     def test_red_flag_meningitis_prompt_still_uses_strict_emergency_card(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"
