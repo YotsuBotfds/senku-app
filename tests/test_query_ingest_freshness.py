@@ -18,7 +18,8 @@ class QueryIngestFreshnessPreflightTests(unittest.TestCase):
         )
 
         self.assertEqual(action, "block")
-        self.assertIn("Run ingest.py --rebuild before querying", message)
+        self.assertIn("run ingest.py --rebuild before querying", message)
+        self.assertIn("Query startup is blocked", message)
         self.assertIn("--allow-stale-ingest", message)
 
     def test_stale_ingest_warns_with_override(self):
@@ -41,6 +42,8 @@ class QueryIngestFreshnessPreflightTests(unittest.TestCase):
                 )
 
                 self.assertEqual(action, "warn")
+                self.assertIn("warning-only startup policy", message)
+                self.assertIn("querying will continue", message)
                 self.assertIn("enable strict freshness checks", message)
 
     def test_fresh_ingest_continues_silently(self):

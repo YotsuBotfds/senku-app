@@ -9305,15 +9305,16 @@ def get_deterministic_special_case_overlaps():
 
 def _ingest_freshness_preflight_message(freshness, *, allow_stale_ingest=False):
     """Return query startup freshness action without printing or exiting."""
-    if freshness.status == STALE and not allow_stale_ingest:
-        return (
-            "block",
-            (
-                f"{freshness.message} Run ingest.py --rebuild before querying, "
-                "or pass --allow-stale-ingest for an unsafe diagnostic run."
-            ),
-        )
     if freshness.status == STALE:
+        if not allow_stale_ingest:
+            return (
+                "block",
+                (
+                    f"{freshness.message} Query startup is blocked; "
+                    "run ingest.py --rebuild before querying, or pass "
+                    "--allow-stale-ingest for an unsafe diagnostic run."
+                ),
+            )
         return (
             "warn",
             f"{freshness.message} Continuing because --allow-stale-ingest was set.",
@@ -9321,7 +9322,11 @@ def _ingest_freshness_preflight_message(freshness, *, allow_stale_ingest=False):
     if freshness.status in (INCOMPLETE_UNTRUSTED, ABSENT_OR_INVALID):
         return (
             "warn",
-            f"{freshness.message} Run ingest.py --rebuild to enable strict freshness checks.",
+            (
+                f"{freshness.message} This is a warning-only startup policy; "
+                "querying will continue, but run ingest.py --rebuild to enable "
+                "strict freshness checks."
+            ),
         )
     return ("ok", "")
 

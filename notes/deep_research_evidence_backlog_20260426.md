@@ -109,6 +109,9 @@ Action:
   `tests.test_query_ingest_freshness` pins the startup policy directly:
   trusted stale manifests block unless `--allow-stale-ingest` is set, while
   `incomplete_untrusted` and `absent_or_invalid` warn without blocking.
+- Query startup freshness messaging now explicitly distinguishes blocked stale
+  ingest from warning-only incomplete/absent manifest states, preserving the
+  fail-closed policy while making the operator path harder to misread.
 
 Validation:
 
@@ -239,6 +242,8 @@ Action:
   shape in `-WhatIf` runs.
 - Added PowerShell non-Android gate wrapper contract coverage for blank
   generated-baseline diagnostics and `-Mode All` dry-run command composition.
+- Extended the same PowerShell wrapper proof so `-Mode All -IncludeSafetyCritical`
+  dry runs include Fast-family, safety-critical, and Generated command families.
 - Hardened the runtime endpoint preflight used by guide prompt validation:
   malformed `/v1/models` JSON is now reported as a failed endpoint check
   instead of escaping as an uncaught parser exception.
@@ -694,6 +699,11 @@ Validation:
   parity, preventing extra manual-dispatch or workflow-call-only inputs.
 - `tests.test_run_non_android_regression_gate` covers generated-baseline
   fail-loud behavior and `-Mode All` dry-run command composition.
+- `tests.test_run_non_android_regression_gate` covers
+  `-Mode All -IncludeSafetyCritical` dry-run composition across all command
+  families.
+- `tests.test_query_ingest_freshness` covers explicit blocked-stale and
+  warning-only startup messaging.
 - `tests.test_plan_artifact_retention` covers ignored untracked planner
   handoffs and tracked planner handoffs that protect referenced artifacts.
 - `tests.test_bench_metrics_lake` covers direct SQL access to artifact evidence

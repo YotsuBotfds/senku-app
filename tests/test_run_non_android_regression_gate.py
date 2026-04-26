@@ -137,6 +137,32 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertIn("Generated.regression_gate", result.stdout)
         self.assertNotIn("SafetyCritical.prompt_expectations", result.stdout)
 
+    def test_all_mode_whatif_with_safety_critical_includes_all_command_families(self):
+        result = self.run_script(
+            "-Mode",
+            "All",
+            "-IncludeSafetyCritical",
+            "-Label",
+            "unit_label",
+            "-GeneratedBenchJson",
+            "tests\\fixtures\\non_android_generated\\candidate.json",
+            "-GeneratedBaselineDiag",
+            "tests\\fixtures\\non_android_generated\\baseline_diag",
+            "-WhatIf",
+        )
+
+        self.assertIn("PartialRouter.prompt_expectations", result.stdout)
+        self.assertIn("PartialRouter.retrieval_eval", result.stdout)
+        self.assertIn("PartialRouter.retrieval_expectations", result.stdout)
+        self.assertIn("Eval9Primary.prompt_expectations", result.stdout)
+        self.assertIn("Eval9Primary.retrieval_eval", result.stdout)
+        self.assertIn("Eval9Primary.retrieval_expectations", result.stdout)
+        self.assertIn("SafetyCritical.prompt_expectations", result.stdout)
+        self.assertIn("SafetyCritical.retrieval_eval", result.stdout)
+        self.assertIn("SafetyCritical.retrieval_expectations", result.stdout)
+        self.assertIn("Generated.failure_analysis", result.stdout)
+        self.assertIn("Generated.regression_gate", result.stdout)
+
     def test_generated_mode_whatif_omits_fast_retrieval_commands(self):
         result = self.run_script(
             "-Mode",
