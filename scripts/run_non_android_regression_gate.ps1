@@ -210,6 +210,72 @@ function Invoke-GateCommand {
     }
 }
 
+function Add-GateSummaryLine {
+    param(
+        [System.Collections.Generic.List[string]]$Lines,
+
+        [AllowNull()]
+        [string]$Value = ""
+    )
+
+    [void]$Lines.Add($Value)
+}
+
+function Write-GateStepSummary {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Status,
+
+        [Parameter(Mandatory)]
+        [string]$RunLabel,
+
+        [Parameter(Mandatory)]
+        [string]$SelectedMode,
+
+        [Parameter(Mandatory)]
+        [pscustomobject[]]$Commands,
+
+        [Parameter(Mandatory)]
+        [datetime]$StartedAt,
+
+        [string]$ErrorMessage = ""
+    )
+
+    if ([string]::IsNullOrWhiteSpace($env:GITHUB_STEP_SUMMARY)) {
+        return
+    }
+
+    $finishedAt = Get-Date
+    $elapsed = New-TimeSpan -Start $StartedAt -End $finishedAt
+    $lines = [System.Collections.Generic.List[string]]::new()
+    Add-GateSummaryLine $lines "## Non-Android Regression Gate"
+    Add-GateSummaryLine $lines ""
+    Add-GateSummaryLine $lines ("- Status: {0}" -f $Status)
+    Add-GateSummaryLine $lines ('- Label: `{0}`' -f $RunLabel)
+    Add-GateSummaryLine $lines ('- Mode: `{0}`' -f $SelectedMode)
+    Add-GateSummaryLine $lines ("- Commands: {0}" -f $Commands.Count)
+    Add-GateSummaryLine $lines ("- Duration: {0:n1}s" -f $elapsed.TotalSeconds)
+
+    if (-not [string]::IsNullOrWhiteSpace($ErrorMessage)) {
+        Add-GateSummaryLine $lines ('- Error: `{0}`' -f ($ErrorMessage -replace '\r?\n', ' '))
+    }
+
+    Add-GateSummaryLine $lines ""
+    Add-GateSummaryLine $lines "### Planned Commands"
+    foreach ($item in $Commands) {
+        Add-GateSummaryLine $lines ('- `{0}`' -f $item.Name)
+    }
+
+    $benchPath = Join-Path $repoRoot "artifacts\bench"
+    if (Test-Path -LiteralPath $benchPath) {
+        $benchOutputs = Get-ChildItem -LiteralPath $benchPath -Recurse -File -Include *.json, *.md -ErrorAction SilentlyContinue
+        Add-GateSummaryLine $lines ""
+        Add-GateSummaryLine $lines ('Bench artifact candidates: {0} JSON/Markdown file(s) under `artifacts/bench`.' -f @($benchOutputs).Count)
+    }
+
+    Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value $lines
+}
+
 $repoRoot = Get-SenkuRepoRoot
 Initialize-SenkuUvCache -RepoRoot $repoRoot | Out-Null
 $pythonPath = Resolve-SenkuPythonPath -RepoRoot $repoRoot -VenvPath $VenvPath
@@ -258,9 +324,14 @@ if ($Mode -in @('Generated', 'All')) {
         -FailOnRegression $FailOnGeneratedRegression
 }
 
+$gateStartedAt = Get-Date
+$gateStatus = 'success'
+$gateError = ''
+
 Push-Location $repoRoot
 try {
     if ($WhatIf) {
+        $gateStatus = 'what-if'
         Write-Host "Non-Android regression gate dry run. Label: $runLabel"
         foreach ($item in $commandsToRun) {
             Write-Host ("[{0}] {1}" -f $item.Name, $item.Display)
@@ -271,6 +342,17 @@ try {
     foreach ($item in $commandsToRun) {
         Invoke-GateCommand -Command $item
     }
+} catch {
+    $gateStatus = 'failed'
+    $gateError = $_.Exception.Message
+    throw
 } finally {
     Pop-Location
+    Write-GateStepSummary `
+        -Status $gateStatus `
+        -RunLabel $runLabel `
+        -SelectedMode $Mode `
+        -Commands @($commandsToRun) `
+        -StartedAt $gateStartedAt `
+        -ErrorMessage $gateError
 }

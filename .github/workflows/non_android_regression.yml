@@ -1,0 +1,128 @@
+name: Non-Android Regression Gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Gate mode to run.
+        required: true
+        default: Fast
+        type: choice
+        options:
+          - Fast
+          - Generated
+          - All
+      label:
+        description: Optional output label. Defaults to the GitHub run id.
+        required: false
+        type: string
+      include_safety_critical:
+        description: Include the safety-critical retrieval pack.
+        required: false
+        default: false
+        type: boolean
+      allow_retrieval_warnings:
+        description: Allow retrieval expectation warnings.
+        required: false
+        default: false
+        type: boolean
+      generated_bench_json:
+        description: Bench JSON path for Generated or All mode.
+        required: false
+        type: string
+      fail_on_generated_regression:
+        description: Fail when generated regression gate detects regression.
+        required: false
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      mode:
+        required: false
+        default: Fast
+        type: string
+      label:
+        required: false
+        default: ""
+        type: string
+      include_safety_critical:
+        required: false
+        default: false
+        type: boolean
+      allow_retrieval_warnings:
+        required: false
+        default: false
+        type: boolean
+      generated_bench_json:
+        required: false
+        default: ""
+        type: string
+      fail_on_generated_regression:
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  non-android-regression:
+    name: Non-Android Regression
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install validation dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          "SENKU_PYTHON_PATH=$((Get-Command python).Source)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Run non-Android regression gate
+        shell: pwsh
+        run: |
+          $label = '${{ inputs.label }}'
+          if ([string]::IsNullOrWhiteSpace($label)) {
+            $label = "github_${{ github.run_id }}_${{ github.run_attempt }}"
+          }
+
+          $args = @(
+            '-Mode', '${{ inputs.mode }}',
+            '-Label', $label,
+            '-VenvPath', '.venvs\senku-validate'
+          )
+
+          if ('${{ inputs.include_safety_critical }}' -eq 'true') {
+            $args += '-IncludeSafetyCritical'
+          }
+          if ('${{ inputs.allow_retrieval_warnings }}' -eq 'true') {
+            $args += '-AllowRetrievalWarnings'
+          }
+          if (-not [string]::IsNullOrWhiteSpace('${{ inputs.generated_bench_json }}')) {
+            $args += @('-GeneratedBenchJson', '${{ inputs.generated_bench_json }}')
+          }
+          if ('${{ inputs.fail_on_generated_regression }}' -eq 'true') {
+            $args += '-FailOnGeneratedRegression'
+          }
+
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args
+
+      - name: Upload bench artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: non-android-regression-bench
+          path: |
+            artifacts/bench/**/*.json
+            artifacts/bench/**/*.md
+          if-no-files-found: ignore
