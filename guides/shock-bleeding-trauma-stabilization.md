@@ -9,8 +9,29 @@ tags:
   - survival
   - trauma
   - medical
+aliases:
+  - arterial bleeding will not stop
+  - bright red spurting wound
+  - deep wound packing for bleeding
+  - tourniquet for life threatening limb bleeding
+  - bleeding through cloth after pressure
+  - pale clammy rapid pulse after injury
+  - trauma shock field stabilization
+  - crush injury tight shiny limb
+  - pinned under weight numb foot hard calf
+  - chest trauma sudden breathing trouble one side silent
 icon: 🔴
 description: Hemorrhage control decision trees, trauma assessment without equipment, tension pneumothorax recognition, tourniquet timing and placement, wound packing techniques, hemostatic agents from natural materials, and shock management for non-medical survivors.
+routing_cues:
+  - Use for emergency-first field stabilization of life-threatening external bleeding, arterial spurting, deep traumatic wounds, tourniquet decisions, hemorrhagic shock, and evacuation framing.
+  - Use for crush/compartment red flags after a limb or torso is pinned, crushed, swollen, tight, shiny, numb, weak, or painful out of proportion.
+  - Use as trauma support when chest injury is followed by sudden severe breathing trouble, cyanosis, unilateral absent breath sounds, distended neck veins, hypotension, or rapidly worsening shock.
+citations_required: true
+applicability: >
+  High-liability field trauma guidance for uncontrolled bleeding, shock after
+  injury, crush/compartment emergencies, and suspected tension pneumothorax
+  where answers must preserve immediate hemorrhage control, airway/breathing
+  checks, shock care, and urgent evacuation boundaries.
 related:
   - trauma-hemorrhage-control
   - first-aid

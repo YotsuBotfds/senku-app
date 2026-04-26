@@ -1,0 +1,113 @@
+card_id: cold_water_survival
+guide_id: GD-396
+slug: cold-water-survival
+title: "Cold Water Survival & Immersion Hypothermia"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Someone is in cold water, just fell into cold water, fell through ice, or is being rescued from cold-water immersion.
+  - The user asks about cold shock, uncontrollable gasping, swimming failure, HELP position, huddle position, or how to survive until rescue in cold water.
+  - A person has been retrieved from cold water or under ice and may have hypothermia, near-drowning, abnormal breathing, confusion, collapse, or apparent death.
+required_first_actions:
+  - Call emergency help or start the fastest available emergency response for cold-water submersion, ice breakthrough, abnormal breathing, collapse, or altered consciousness.
+  - After rescue, treat airway and breathing first; check breathing and start CPR with rescue breaths if the person is not breathing normally.
+  - Keep the person horizontal, handle them gently, remove wet clothing if safe, prevent further heat loss, and rewarm gently.
+  - If the person is still conscious in the water, prioritize flotation and a survival position instead of hard swimming or thrashing.
+first_actions:
+  - For a conscious person in the water, avoid panic and hard swimming; use HELP or huddle if flotation is available and conserve energy while calling or signaling for rescue.
+  - For assisted rescue, use reach or throw tools from a safe position before direct water entry, and keep rescuers off unsafe ice unless trained and protected.
+  - For ice breakthrough, reach or throw if the person is visible or reachable, pull horizontally, then treat as cold-water drowning after retrieval.
+  - For post-rescue care, keep the patient supine or semi-reclined, avoid sudden standing or rough movement, remove wet clothing carefully, insulate, and use gentle rewarming.
+  - For severe hypothermia or apparent death, assume the patient may still be alive and continue emergency response and resuscitation until advanced help takes over.
+urgent_red_flags:
+  - Face submerged, gasping, abnormal breathing, no normal breathing, unconsciousness, collapse, or altered consciousness after water exposure.
+  - Cold-water or under-ice submersion, especially when the person is no longer visible or reachable.
+  - Confusion, slurred speech, drowsiness, decreased or absent shivering, fixed pupils, undetectable pulse, or apparent death after cold exposure.
+  - Coughing, gasping, frothy sputum, chest tightness, wheezing, agitation, cyanosis, or progressive breathing difficulty after submersion.
+forbidden_advice:
+  - Tell a cold-water victim to swim hard, thrash, stand up immediately after rescue, walk around, or warm up through vigorous exercise.
+  - Delay emergency help, airway and breathing checks, rescue breathing, CPR when indicated, or retrieval of a visible/reachable ice victim in order to discuss survival-time tables.
+  - Declare a severely hypothermic person dead because they look dead, have fixed pupils, or have no easily detectable pulse.
+  - Use rough handling, sudden vertical positioning, or vigorous external heat for moderate or severe hypothermia.
+  - Lead with probing, chiseling, or recovery actions while an under-ice victim is still visible or reachable and rescue is possible.
+do_not:
+  - Do not use this card as a precise prognosis or survival-time guarantee.
+  - Do not introduce new temperature thresholds, drug advice, or hospital treatments beyond the cited guide.
+  - Do not treat cold-water submersion as routine warming advice when airway, breathing, collapse, confusion, or near-drowning signs are present.
+routine_boundary: >
+  Cold-water immersion, ice breakthrough, cold shock, near-drowning, abnormal
+  breathing, altered consciousness, collapse, or suspected immersion hypothermia
+  is emergency response and rescue-first guidance, not routine comfort warming
+  or general swimming advice.
+acceptable_uncertain_fit: >
+  If details are incomplete but cold-water or ice-water immersion is plausible,
+  preserve emergency-first framing: call for help, prioritize safe rescue,
+  airway and breathing checks after retrieval, horizontal gentle handling,
+  wet-clothing removal when safe, insulation, and gentle rewarming while asking
+  only clarifying questions that do not delay first actions.
+clarifying_questions:
+  - Is the person still in the water or already out, and are they visible or reachable?
+  - Are they breathing normally, gasping, coughing, confused, unconscious, or apparently not breathing?
+  - Is this open water or broken ice, and what safe reach or throw tools are available right now?
+  - After rescue, are wet clothes off or being removed safely, and can they be kept horizontal and insulated?
+citation_ids:
+  - cold-shock-immediate-actions
+  - swimming-failure-survival-strategy
+  - cold-water-rescue-horizontal-handling
+  - rewarming-protocols
+  - near-drowning-field-management
+  - ice-rescue-assisted-rescue
+source_sections:
+  - guide: GD-396
+    slug: cold-water-survival
+    title: "Cold Water Survival & Immersion Hypothermia"
+    sections:
+      - "#cold-shock > Immediate Actions"
+      - "#swimming-failure > Survival Strategy During Swimming Failure"
+      - "#immersion-positions"
+      - "#rescue > Assisted Rescue (Bystander or Trained Responder)"
+      - "#rescue > Immobilization After Rescue"
+      - "#rewarming"
+      - "#near-drowning > Field Management"
+      - "#ice-rescue > Assisted Rescue"
+      - "#ice-rescue > Submersion Under Ice"
+source_invariants:
+  - name: post-rescue airway breathing and gentle warming
+    guide: GD-396
+    must_include:
+      - Treat airway and breathing first.
+      - start CPR with rescue breaths if not breathing normally
+      - keep horizontal
+      - rewarm gently
+    must_not_match:
+      - "have them (stand|walk)[^\\n]{0,80}immediately after rescue"
+      - "swim hard to (stay warm|warm up|survive)"
+  - name: in-water survival favors flotation and conservation
+    guide: GD-396
+    must_include:
+      - Do not swim hard
+      - Assume survival floating position (HELP or huddle).
+      - Avoid vigorous swimming
+      - Conserve energy
+  - name: ice rescue visible victim sequence
+    guide: GD-396
+    must_include:
+      - Call emergency help now
+      - Keep rescuers off unsafe ice
+      - Reach or throw if visible or reachable
+      - Pull horizontally
+      - Do not lead with probing, chiseling, or body-search actions while a rescue attempt is still possible.
+  - name: severe hypothermia apparent death boundary
+    guide: GD-396
+    must_include:
+      - Assume patient is alive.
+      - Even if unresponsive and apparently dead, resuscitate all cold-water submersion victims.
+      - Do not declare death until patient is warm.
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-396 for cold-water immersion, cold shock, swimming
+  failure, HELP/huddle positioning, post-rescue horizontal handling, gentle
+  rewarming, near-drowning after cold-water rescue, and ice-breakthrough rescue
+  sequencing. The card intentionally avoids adding new survival-time thresholds
+  or prognosis claims and keeps answer generation anchored to rescue,
+  airway/breathing, and gentle hypothermia handling first.

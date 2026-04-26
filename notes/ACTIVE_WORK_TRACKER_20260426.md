@@ -30,13 +30,15 @@ the `Master Head Health` run for that HEAD was green.
    - Completed in follow-up medical slice: reviewed answer cards for `GD-298`, `GD-617`, `GD-635`, `GD-579`, and `GD-526`; metadata audit now reports no gaps for those five guides.
    - Completed in final near-finished slice: reviewed answer cards for `GD-054`, `GD-492`, `GD-602`, `GD-858`, and `GD-918`; metadata audit now reports no gaps for those five guides.
    - No near-finished card-only blockers remain; next card work should move to broad critical metadata/card gaps or safety-reviewed unresolved partials.
-   - Broad critical metadata/card gaps start with `GD-037`, `GD-039`, `GD-044`, `GD-045`, `GD-051`, `GD-058`, `GD-059`, `GD-227`, `GD-133`, `GD-152`, `GD-025`, `GD-396`, `GD-584`, and `GD-935`.
+   - Completed first broad critical application slice: frontmatter metadata plus reviewed cards for `GD-037`, `GD-051`, `GD-396`, `GD-584`, and `GD-935`; focused card/audit/routing tests pass and metadata audit reports no gaps for those five guides.
+   - Remaining broad critical metadata/card gaps start with `GD-039`, `GD-044`, `GD-045`, `GD-058`, `GD-059`, `GD-227`, `GD-133`, `GD-152`, and `GD-025`. Treat pharma/manufacturing/weapons/explosives lanes as deliberate safety-review work, not quick card churn.
 3. Corpus/content hygiene:
    - `51` unresolved partials remain actionable, with critical/high guides first.
    - Guide-body edits require safety review and re-ingest before retrieval claims.
 4. Runtime/citation behavior:
    - Status: desktop card-backed answer composer now suppresses repeated inline citations for the same source while preserving `cited_guide_ids`.
    - Direct cardiac proof: GD-601 card-backed answer cites `[GD-601]` once and `_duplicate_citation_count(...)` returns `0`.
+   - Follow-up review found broad `GD-298` pediatric card matching could crowd out the more specific choking card; `0591a5c` gates that broad card away from airway/newborn/meningitis prompts and restores the routing/card test slice.
    - Recent bench artifacts showed duplicate-citation hotspots in card-backed/runtime rows, especially RE6 cardiac, RE7 young-infant, and EVAL8 compound food/medical cases.
    - Re-check young-infant and contaminated-creek uncertain-fit rows after routing/card changes.
 

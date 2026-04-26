@@ -1143,6 +1143,23 @@ Validation:
   reports no remaining gaps for those five guide IDs. The dangerous-activation
   boundary test now preserves the `GD-859` support-source invariant while
   recognizing the new dedicated `GD-858` and `GD-918` cards.
+- Follow-up commit review caught a routing regression from the broad
+  `GD-298` pediatric emergency card: unmatched reviewed-card IDs defaulted to
+  match, allowing the broad pediatric card to crowd out the more specific
+  choking card under the answer-card budget gate. `0591a5c` adds an explicit
+  prompt gate for `pediatric_emergency_medicine` and a runtime regression test;
+  `tests.test_query_answer_card_runtime`, `tests.test_query_routing`,
+  `tests.test_special_cases`, `tests.test_registry_overlap`,
+  `tests.test_deterministic_near_miss`, and `scripts/validate_special_cases.py`
+  pass after the repair.
+- Added the first broad critical metadata/card application slice: `GD-037`
+  veterinary triage, `GD-051` obstetric emergencies, `GD-396` cold-water
+  survival, `GD-584` shock/bleeding/trauma stabilization, and `GD-935`
+  drowning prevention/water safety. This slice adds frontmatter aliases,
+  routing cues, citation policy, applicability, and reviewed answer cards;
+  `scripts/validate_guide_answer_cards.py` now validates `34` cards, the
+  focused guide-card/audit/routing test slice passes, and metadata audit reports
+  no remaining gaps for those five guide IDs.
 
 Deferred unless evidenced:
 

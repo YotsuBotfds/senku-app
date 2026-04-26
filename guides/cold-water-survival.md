@@ -4,6 +4,23 @@ slug: cold-water-survival
 title: Cold Water Survival & Immersion Hypothermia
 category: survival
 difficulty: advanced
+aliases:
+  - cold water survival
+  - cold water immersion
+  - immersion hypothermia
+  - fell in cold water
+  - fell through ice
+  - cold shock response
+  - HELP position
+  - huddle position cold water
+  - near drowning cold water
+  - cold water rewarming
+routing_cues:
+  - Use for cold-water immersion, cold shock, swimming failure, immersion hypothermia, HELP or huddle positioning, cold-water rescue, ice breakthrough, or post-rescue rewarming decisions.
+  - Lead with airway, breathing, emergency help, horizontal handling, wet-clothing removal when safe, and gentle rewarming before survival-time tables or background physiology.
+  - Pair with drowning-prevention-water-safety when active drowning rescue priorities dominate; pair with first-aid when CPR, rescue breathing, airway checks, or shock monitoring are central.
+citations_required: true
+applicability: Cold-water or ice-water immersion, cold shock, swimming failure, suspected immersion hypothermia, near-drowning after cold-water rescue, or ice breakthrough where immediate rescue, airway/breathing checks, horizontal handling, and gentle rewarming must be cited.
 tags:
   - essential
   - medical

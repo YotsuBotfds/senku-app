@@ -1,0 +1,142 @@
+card_id: obstetric_emergencies
+guide_id: GD-051
+slug: obstetric-emergencies
+title: "Obstetric Emergencies"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Labor, delivery, postpartum, or immediate newborn prompt includes heavy bleeding, shock, seizure, severe headache or visual symptoms, cord visible before the baby, shoulder dystocia, breech complication, uterine rupture concern, or newborn not breathing.
+  - User asks what to do first for a true obstetric emergency when professional obstetric care may be delayed.
+  - Prompt needs emergency-first distinction from routine midwifery, normal labor support, or ordinary postpartum care.
+required_first_actions:
+  - Treat shoulder dystocia, postpartum hemorrhage, eclamptic seizure or severe warning symptoms, cord prolapse, neonatal asphyxia, uterine rupture, and HELLP-pattern illness as immediate emergencies, not routine labor problems.
+  - Call emergency services or begin the fastest available obstetric-capable evacuation while starting only the source-backed first actions that match the emergency.
+  - Preserve maternal airway, breathing, circulation, positioning, warmth, and shock monitoring while preparing for rapid handoff or definitive delivery capability.
+conditional_required_actions:
+  - trigger_terms:
+      - shoulder
+      - dystocia
+      - turtle sign
+      - head delivered
+      - shoulders stuck
+    required_actions:
+      - Use McRoberts positioning with suprapubic pressure as the first maneuver and do not use fundal pressure.
+  - trigger_terms:
+      - postpartum hemorrhage
+      - heavy bleeding
+      - boggy uterus
+      - placenta delivered
+      - bleeding after birth
+    required_actions:
+      - Start uterine massage immediately and support circulation while preparing escalation or intervention.
+  - trigger_terms:
+      - eclampsia
+      - seizure
+      - convulsion
+      - severe headache
+      - vision changes
+      - epigastric pain
+      - right upper quadrant pain
+    required_actions:
+      - Position on the left side during seizure care, keep the airway clear, and do not put anything in the mouth.
+  - trigger_terms:
+      - cord prolapse
+      - cord visible
+      - umbilical cord
+      - cord came out
+    required_actions:
+      - Put the mother in knee-chest position, stop pushing, protect any exposed cord with sterile warm cloth, and do not push the cord back in.
+  - trigger_terms:
+      - newborn not breathing
+      - baby not breathing
+      - blue baby
+      - limp newborn
+      - APGAR
+    required_actions:
+      - Dry and stimulate, position the airway, clear the mouth and nose, and begin ventilation if breathing does not start.
+first_actions:
+  - Rapidly identify which GD-051 emergency pattern is present before giving condition-specific steps.
+  - For shoulder dystocia, move quickly through the source sequence beginning with McRoberts and suprapubic pressure.
+  - For postpartum hemorrhage, begin uterine massage immediately; do not wait for medications to work.
+  - For eclampsia warning symptoms or seizure, protect the airway and prevent injury while arranging emergency delivery-capable care.
+  - For cord prolapse, reduce cord compression with positioning and urgent delivery-capable evacuation.
+  - For a newborn who is not breathing, warm, dry, stimulate, position and clear the airway, then ventilate if needed.
+urgent_red_flags:
+  - Turtle sign, head delivered but shoulders do not deliver, or no progress after head delivery.
+  - Soaking more than one pad per hour, heavy vaginal bleeding after birth, boggy uterus, lightheadedness, rapid pulse, cold skin, confusion, or shock.
+  - Seizure, severe headache, visual disturbance, epigastric or right upper quadrant pain, altered mental status, or hypertension pattern during pregnancy, labor, or postpartum.
+  - Umbilical cord visible or palpable before delivery, sudden fetal bradycardia if monitored, or abrupt loss of fetal movement.
+  - Newborn with no breathing, blue or pale color, limp tone, no response, or heart rate under 60 after ventilation.
+  - Severe abdominal pain between contractions with bleeding and shock signs suggesting uterine rupture.
+forbidden_advice:
+  - Do not frame these red flags as routine labor, normal postpartum bleeding, anxiety, or watchful waiting.
+  - Do not advise fundal pressure for shoulder dystocia or active labor.
+  - Do not tell the mother to push with cord prolapse.
+  - Do not push a prolapsed cord back into the vagina.
+  - Do not put anything in the mouth during an eclamptic seizure.
+  - Do not provide unsupported obstetric procedures, surgery instructions, or medication dosing beyond what the cited guide sections support.
+do_not:
+  - Do not pull on a breech baby before the umbilicus is visible.
+  - Do not delay postpartum hemorrhage massage while waiting for oxytocin.
+  - Do not give oxytocin as a rapid IV bolus.
+  - Do not attempt last-resort cesarean or destructive delivery framing unless the source's extreme indications and professional-care limits are explicit.
+routine_boundary: >
+  Routine pregnancy, labor, midwifery, or postpartum-care framing stops when the
+  prompt includes shoulder dystocia, heavy bleeding or shock, seizure or severe
+  preeclampsia/HELLP warning symptoms, cord prolapse, suspected uterine rupture,
+  or an asphyxiated newborn at delivery.
+acceptable_uncertain_fit: >
+  If the story is incomplete but a labor, delivery, postpartum, or immediate
+  newborn red flag is plausible, preserve obstetric-emergency framing, begin
+  evacuation or emergency-call advice, and ask targeted clarifying questions only
+  after the non-delaying first actions.
+clarifying_questions:
+  - Is the mother pregnant, in labor, just delivered, or postpartum, and how many weeks pregnant if known?
+  - What is happening right now: heavy bleeding, seizure, cord visible, head delivered but shoulders stuck, severe pain/shock, or newborn not breathing?
+  - Is professional obstetric, surgical, neonatal, or ambulance help reachable now?
+  - For bleeding, is the uterus firm or soft/boggy, and has the placenta delivered?
+citation_ids:
+  - shoulder-dystocia-emergency
+  - postpartum-hemorrhage-first-response
+  - eclampsia-emergency-management
+  - cord-prolapse-emergency
+  - neonatal-resuscitation-initial
+  - obstetric-emergency-quick-reference
+source_sections:
+  - guide: GD-051
+    slug: obstetric-emergencies
+    title: "Obstetric Emergencies"
+    sections:
+      - "#section3"
+      - "#section3 > Recognition"
+      - "#section3 > Emergency Maneuvers (In Order of Attempting)"
+      - "#section4"
+      - "#section4 > Emergency Treatment Protocol"
+      - "#section5"
+      - "#section5 > Prodromal Symptoms (Before Seizure)"
+      - "#section5 > Emergency Management"
+      - "#section6"
+      - "#section6 > Cord Prolapse (Cord Comes Out Before Baby)"
+      - "#section8"
+      - "#section8 > Immediate Care (All Newborns)"
+      - "#section8 > Resuscitation if Baby Not Breathing"
+      - "#section13"
+source_invariants:
+  - name: obstetric red flags require emergency-first response
+    guide: GD-051
+    must_include:
+      - Shoulder dystocia is a true obstetric emergency.
+      - Start uterine massage IMMEDIATELY upon recognition of postpartum hemorrhage.
+      - Do not wait for seizure to confirm diagnosis.
+      - This is ABSOLUTE EMERGENCY. Fetus will die without immediate delivery.
+      - Interpretation:** 7-10 = Normal, 4-6 = Moderate distress, 0-3 = Severe distress requiring resuscitation
+    must_not_match:
+      - "(recommend|encourage|advise)[^\\n]{0,80}fundal pressure[^\\n]{0,120}shoulder dystocia"
+      - "cord prolapse[^\\n]{0,160}(push|pushing)[^\\n]{0,80}(allowed|encouraged)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed card is intentionally emergency-first and bounded to GD-051 source
+  sections. It preserves recognition, evacuation, stabilization, and explicit
+  negative constraints while avoiding free-standing obstetric procedures or
+  dosing advice outside the cited guide text.

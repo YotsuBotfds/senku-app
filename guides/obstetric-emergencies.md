@@ -6,6 +6,26 @@ category: medical
 difficulty: advanced
 tags:
   - critical
+aliases:
+  - baby head delivered but shoulders stuck
+  - turtle sign during delivery
+  - postpartum bleeding with boggy uterus
+  - heavy bleeding after placenta delivery
+  - seizure during pregnancy labor or postpartum
+  - severe headache vision changes right upper belly pain pregnancy
+  - umbilical cord visible before baby
+  - cord prolapse during labor
+  - newborn not breathing after birth
+  - severe abdominal pain shock and bleeding during labor
+routing_cues:
+  - Use for immediate obstetric red-zone prompts involving shoulder dystocia, breech complications, postpartum hemorrhage, eclampsia or HELLP signs, cord prolapse, uterine rupture or inversion, perimortem cesarean context, and neonatal asphyxia at delivery.
+  - Prefer over routine midwifery or postpartum-care guides when the prompt includes collapse, shock, seizure, heavy bleeding, cord visible before birth, turtle sign, no newborn breathing, or need for emergency evacuation or delivery.
+citations_required: true
+applicability: >
+  Emergency obstetric recognition and first-response framing for life-threatening
+  labor, delivery, postpartum, and immediate newborn complications when answers
+  must lead with escalation, stabilization, and GD-051 source-backed limits rather
+  than routine childbirth guidance or unsupported procedure details.
 icon: 👩‍⚕️
 description: Breech delivery, shoulder dystocia, postpartum hemorrhage, eclampsia, emergency C-section, neonatal resuscitation
 related:

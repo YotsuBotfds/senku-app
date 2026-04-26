@@ -9,6 +9,26 @@ tags:
   - safety
   - water
   - emergency
+aliases:
+  - drowning prevention
+  - water safety
+  - drowning rescue
+  - someone drowning
+  - near drowning
+  - post rescue breathing trouble
+  - child water safety
+  - floodwater drowning risk
+  - cold water drowning risk
+routing_cues:
+  - Person is in the water, silent, face down, motionless, missing near water, or actively drowning.
+  - User needs safe rescue priority order before entering water.
+  - After water rescue, the person has abnormal breathing, cough, chest pain, confusion, vomiting, blue or pale skin, severe sleepiness, seizure, or cold exposure.
+  - Child, weak swimmer, boater, floodwater exposure, well, pond, lake, river, canal, or cold-water immersion creates drowning risk.
+citations_required: true
+applicability: >
+  Drowning prevention, water-rescue first actions, post-rescue emergency
+  screening, and water-hazard safety around rivers, lakes, wells, tanks,
+  floodwater, small boats, children, weak swimmers, and cold-water exposure.
 icon: water
 description: Practical drowning prevention for rivers, lakes, wells, floods, boats, and child safety, including supervision, throw-reach-don't-go rescue priorities, cold-water risk, and post-rescue red flags.
 related:

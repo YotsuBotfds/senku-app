@@ -1,0 +1,107 @@
+card_id: veterinary_sick_injured_animal_triage
+guide_id: "GD-037"
+slug: veterinary
+title: Veterinary Medicine
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - An animal is already sick, injured, feverish, dehydrated, bloated, lame, choking, collapsed, prolapsed, wounded, or behaving abnormally.
+  - A livestock or working-animal question needs vital-sign assessment, emergency stabilization, wound infection monitoring, isolation, biosecurity, or zoonotic exposure precautions.
+  - The prompt asks whether to keep treating at home, isolate from the herd or flock, call a veterinarian, report a disease, or protect handlers from animal-transmitted infection.
+required_first_actions:
+  - Lead with triage and safety; secure the animal, protect handlers, and arrange veterinary or higher-level help when available for emergencies, complex procedures, zoonotic suspicion, or deterioration.
+  - Record vital signs in the same order each exam, compare with the individual animal's baseline when known, and repeat assessment after 30-60 minutes to track change.
+  - Isolate sick animals promptly when contagious disease, fly strike with danger signs, zoonotic disease, or herd spread is plausible.
+  - For wounds and procedures, prioritize restraint, hygiene, daily reassessment, and infection monitoring rather than expanding into unsupported surgery or medication dosing.
+first_actions:
+  - Check for illness indicators from GD-037, including fever, dehydration, lethargy, abnormal discharge, lameness, bloating, diarrhea, constipation, or collapse.
+  - For wound recovery, monitor bandages, swelling, heat, discharge, foul odor, fever, nutrition, activity restriction, and the need to reassess for surgical intervention.
+  - For bloat, choking, prolapse, snake bite, or heat stroke presentations, use the emergency-procedure sections as the controlling source and keep referral/escalation prominent.
+  - When zoonotic risk is possible, use protective equipment, hand hygiene, wound protection, decontamination, safe carcass handling, and reporting or community disease-watch steps from GD-037.
+urgent_red_flags:
+  - Difficulty breathing, collapse, severe weakness, heat-stroke signs, suspected snake bite with airway swelling, choking distress, or rapidly worsening bloat.
+  - Fever with lethargy, dehydration, abnormal discharge, foul odor, tissue invasion, spreading wound infection signs, or suspected sepsis after treatment or birth.
+  - Uterine prolapse after calving, exposed or bleeding prolapsed tissue, no progress after 2 hours of straining, excessive distress in labor, or retained placenta beyond 24 hours.
+  - Sudden animal death, suspected rabies, anthrax-compatible carcass signs, avian influenza signs, brucellosis risk at birth, or any pattern that could threaten handlers or the herd.
+forbidden_advice:
+  - Do not present routine feeding, housing, grooming, stocking, or stable companion-animal care as the answer when the animal is sick or injured.
+  - Do not add medication doses, antibiotic choices, anesthesia plans, or surgical steps that are not directly supported by GD-037.
+  - Do not tell the user to continue complex surgery or invasive treatment without training when GD-037 says to know limits and provide supportive care instead.
+  - Do not delay isolation, biosecurity, veterinary referral, or public-health/livestock authority contact when contagious or zoonotic disease is suspected.
+do_not:
+  - Do not ignore early signs of illness or delay treatment when the guide says delayed treatment reduces recovery chance.
+  - Do not fail to isolate sick animals; GD-037 identifies this as a herd-spread risk and says to quarantine immediately upon suspicion.
+  - Do not pull hard during birthing except with contractions, and do not frame excessive traction as routine.
+  - Do not open carcasses when anthrax is suspected, and do not attempt treatment of a suspected rabid animal.
+routine_boundary: >
+  This card is not for normal feeding, water, shelter, stocking, daily dog or cat
+  care, low-stress handling, or parasite-only planning. It applies once an
+  animal is abnormal, injured, infectious, in labor trouble, or poses a herd or
+  handler safety risk.
+acceptable_uncertain_fit: >
+  If the exact diagnosis is unclear, preserve GD-037's conservative sequence:
+  secure the animal, protect handlers, record and repeat vital signs, isolate
+  when spread is plausible, monitor red flags closely, and seek veterinary or
+  public-health support when available.
+clarifying_questions:
+  - What species, age, pregnancy or recent-birth status, and baseline vital signs are known?
+  - What changed first: appetite, behavior, temperature, breathing, manure, discharge, gait, swelling, wound appearance, or herd exposure?
+  - Are there red flags such as collapse, breathing trouble, bloat, prolapse, no birth progress after 2 hours, foul odor, tissue invasion, fever, sudden death, or wildlife exposure?
+  - Are other animals or handlers exposed, and can the animal be safely isolated now?
+citation_ids:
+  - veterinary-assessment-repeat-vitals
+  - veterinary-wound-infection-monitoring
+  - veterinary-emergency-procedure-red-flags
+  - veterinary-isolation-biosecurity
+  - veterinary-zoonotic-handler-protection
+  - veterinary-know-limits
+source_sections:
+  - guide: "GD-037"
+    slug: veterinary
+    title: Veterinary Medicine
+    sections:
+      - "#overview"
+      - "#recognition--assessment"
+      - "#recognition--assessment > Illness Indicators"
+      - "#recovery--aftercare"
+      - "#birthing-assistance"
+      - "#troubleshooting-common-birthing-problems"
+      - "#emergency-procedures"
+      - "#preventive-medicine > Quarantine & Biosecurity"
+      - "#common-mistakes"
+      - "#zoonotic-disease-transmission--prevention"
+      - "#zoonotic-disease-transmission--prevention > Transmission Pathways & Prevention Protocols"
+      - "#zoonotic-disease-transmission--prevention > Surveillance & Reporting Requirements"
+source_invariants:
+  - name: repeat_assessment_and_baseline
+    guide: "GD-037"
+    must_include:
+      - "Record all vital signs in same order each exam."
+      - "Note baseline for individual animals"
+      - "Repeat assessment after 30-60 minutes"
+  - name: wound_infection_and_fly_strike_danger
+    guide: "GD-037"
+    must_include:
+      - "Increased swelling, heat, discharge, foul odor, or fever"
+      - "Foul odor, tissue invasion, fever = emergency; isolate from herd"
+  - name: isolation_and_limits
+    guide: "GD-037"
+    must_include:
+      - "Failing to isolate sick animals"
+      - "quarantine immediately upon suspicion"
+      - "Attempting complex surgery without training"
+      - "know your limits and provide supportive care instead"
+  - name: zoonotic_escalation_controls
+    guide: "GD-037"
+    must_include:
+      - "Personal protective equipment essential"
+      - "Contact livestock veterinarian or public health department within 24 hours of suspicion."
+      - "isolate sick animals, restrict movement, enhanced hygiene"
+review_status: pilot_reviewed
+notes: >
+  Source-backed reviewed card for GD-037 metadata/card audit closure. It is
+  intentionally triage-, isolation-, monitoring-, and referral-first, and avoids
+  reproducing or expanding GD-037 medication dosing and invasive procedure
+  detail. Parasite-only, obstetric-specialty, routine husbandry, and everyday
+  companion-animal prompts should route to their more specific guides when those
+  are the better owner.

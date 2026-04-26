@@ -1,0 +1,149 @@
+card_id: shock_bleeding_trauma_stabilization
+guide_id: GD-584
+slug: shock-bleeding-trauma-stabilization
+title: "Shock, Bleeding & Trauma Stabilization"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A traumatic wound has bright red spurting blood, rapidly soaking cloth, uncontrolled limb bleeding, partial or complete amputation, or bleeding that threatens life.
+  - Deep traumatic bleeding, penetrating injury, crush injury, or laceration cannot be controlled with direct pressure alone.
+  - Injury is followed by shock signs such as cool pale clammy skin, weak or very rapid pulse, confusion, lethargy, low blood pressure, collapse, or worsening breathing.
+  - Crush or compartment warning signs appear after being pinned or crushed, including tight shiny swelling, pain out of proportion, pain with toe or finger movement, numbness, weakness, hard calf or forearm, or rapidly worsening swelling.
+  - Chest trauma or penetrating chest injury is followed by sudden severe breathing difficulty, cyanosis, unilateral silent breath sounds, distended neck veins, severe hypotension, or rapid deterioration.
+required_first_actions:
+  - Do not delay hemorrhage control to gather materials; apply direct pressure immediately to visible external bleeding while arranging urgent evacuation or higher-level medical care.
+  - Treat Class 3 or Class 4 hemorrhage signs, ongoing shock, tourniquet use, compartment signs, or suspected tension pneumothorax as emergency conditions rather than routine wound care.
+  - If direct pressure fails for life-threatening limb bleeding, escalate to source-backed packing or tourniquet decisions and mark the tourniquet time when used.
+  - For shock after trauma, keep the person warm and calm, monitor vitals repeatedly, avoid oral fluids if unconscious or vomiting, and prepare evacuation if deterioration continues.
+conditional_required_actions:
+  - trigger_terms:
+      - tourniquet
+      - spurting
+      - arterial
+      - amputation
+      - limb bleeding
+    required_actions:
+      - Use tourniquet framing only for life-threatening limb hemorrhage when direct pressure fails after the guide threshold, direct pressure cannot be maintained, crush injury has active hemorrhage, amputation is present, or limb bleeding threatens life.
+      - Place the tourniquet above the wound on the limb and not over a joint, tighten until bleeding stops completely, and mark the time applied.
+  - trigger_terms:
+      - wound packing
+      - deep wound
+      - penetrating wound
+      - cannot stop bleeding
+      - soaked through
+    required_actions:
+      - For deep wounds uncontrolled by direct pressure, pack clean cloth or gauze into the wound to apply pressure to bleeding vessels, maintain direct pressure after packing, secure it, monitor for re-bleeding, and do not remove original packing.
+  - trigger_terms:
+      - crush
+      - pinned
+      - compartment
+      - hard calf
+      - tight shiny
+      - pain out of proportion
+    required_actions:
+      - Treat crush/compartment signs as an urgent surgical evacuation problem, remove constricting items if they worsen circulation, keep the crushed limb at heart level, and do not route to routine soreness, DVT, rehabilitation, ice, compression, NSAIDs, or elevate-above-heart advice.
+  - trigger_terms:
+      - tension pneumothorax
+      - chest trauma
+      - one side silent
+      - distended neck veins
+      - cyanosis
+      - severe breathing trouble
+    required_actions:
+      - Treat suspected tension pneumothorax after trauma with severe and worsening breathing/shock signs as life-threatening; do not wait for routine care, and keep any decompression discussion tightly bounded to the guide's last-resort deterioration criteria.
+first_actions:
+  - Identify the bleeding source and severity, prioritizing arterial spurting, rapid soaking, Class 3 or Class 4 hemorrhage signs, and shock over background explanation.
+  - Apply firm, consistent direct pressure with clean cloth or a hand if needed; layer new cloth over soaked cloth instead of removing the original cloth.
+  - Use elevation only for appropriate limb wounds and avoid elevation when the patient is in shock or when compartment/crush syndrome is possible.
+  - Reassess shock by pulse, breathing, skin color, mental status, blood pressure if available, and whether the person is becoming more alert or deteriorating.
+urgent_red_flags:
+  - Bright red spurting bleeding, bleeding that does not slow with direct pressure, or cloth larger than a hand soaking through in less than 2 minutes.
+  - Confusion, agitation, lethargy, unconsciousness, weak or very rapid pulse, cold pale clammy skin, cyanosis, low blood pressure, or collapse after injury.
+  - Partial or complete amputation, crush injury with active hemorrhage, or inability to apply or maintain pressure because of multiple injuries or hazards.
+  - Tight shiny limb, hard calf or forearm, numbness, weakness, pain out of proportion, pain with passive toe or finger movement, or rapidly worsening swelling after crush injury.
+  - Sudden dyspnea after chest trauma, cyanosis, distended neck veins, unilateral silent breath sounds, severe hypotension, or severe worsening after thoracic injury.
+forbidden_advice:
+  - Do not delay control of major bleeding while gathering supplies, asking nonessential questions, or explaining background.
+  - Do not remove embedded objects; stabilize them in place because removal may cause massive bleeding.
+  - Do not remove cloth or packing that has soaked through or formed a clot; add layers or pressure instead.
+  - Do not present tourniquets as routine first-line treatment for all bleeding or place them before direct pressure unless the prompt clearly fits the guide's life-threatening limb hemorrhage context.
+  - Do not give oral fluids to an unconscious or vomiting shock patient.
+  - Do not route crush/compartment red flags to routine soreness, DVT, rehabilitation, NSAIDs, ice, compression, or elevation-above-heart advice.
+  - Do not expand into unsourced medication dosing, analgesia, blood products, IV protocols, suturing, or procedure instructions beyond the cited guide.
+do_not:
+  - Do not probe a wound except within the guide's packing context, and do not repeatedly check under pressure dressings in a way that disrupts clot formation.
+  - Do not apply a tourniquet over a joint or omit marking the time of application.
+  - Do not leave a shock patient alone, let them walk around, or treat worsening shock as routine observation.
+  - Do not quickly remove heavy weight in crush injury when gradual release and preparation for shock care are possible.
+  - Do not use honey in infants or on wounds that will be sutured in hospital when discussing guide-listed natural hemostatic materials.
+routine_boundary: >
+  Uncontrolled traumatic bleeding, shock signs, tourniquet use, deep wound
+  packing, crush/compartment signs, amputation, or suspected tension
+  pneumothorax is outside routine first-aid comfort care and must keep immediate
+  stabilization plus evacuation framing.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but major bleeding, shock after injury,
+  crush/compartment syndrome, or serious chest trauma is plausible, lead with
+  immediate pressure, warmth, airway/breathing monitoring, and urgent evacuation
+  while asking only brief clarifying questions that do not delay first actions.
+clarifying_questions:
+  - Is the bleeding spurting, soaking through cloth quickly, from a limb, or from a deep/penetrating wound?
+  - Is the person pale, clammy, confused, weak, fainting, breathing abnormally, or losing consciousness?
+  - Was there a crush, pinning, amputation, chest trauma, or object still embedded in the wound?
+  - What help, evacuation, clean cloth or gauze, tourniquet material, warmth, and monitoring resources are available right now?
+citation_ids:
+  - trauma-overview-major-bleeding
+  - hemorrhage-direct-pressure
+  - trauma-tourniquet-criteria
+  - trauma-wound-packing
+  - trauma-tension-pneumothorax
+  - trauma-crush-compartment
+  - trauma-shock-management
+source_sections:
+  - guide: GD-584
+    slug: shock-bleeding-trauma-stabilization
+    title: "Shock, Bleeding & Trauma Stabilization"
+    sections:
+      - "#overview"
+      - "#understanding-blood-loss-categories"
+      - "#hemorrhage-control-decision-tree"
+      - "#tourniquet-application"
+      - "#wound-packing-for-deep-hemorrhage"
+      - "#tension-pneumothorax-recognition-and-treatment"
+      - "#crush-injuries-and-crush-syndrome"
+      - "#shock-management-protocol"
+      - "#summary-decision-tree-for-limb-hemorrhage"
+source_invariants:
+  - name: immediate hemorrhage control and direct pressure
+    guide: GD-584
+    must_include:
+      - Do not delay hemorrhage control to gather materials
+      - Use direct pressure immediately
+      - If bleeding soaks through cloth, do not remove the cloth
+      - Do not remove embedded objects
+    must_not_match:
+      - "major arterial wound[^\\n]{0,160}(wait|observe|routine)"
+  - name: tourniquet criteria and time marking
+    guide: GD-584
+    must_include:
+      - Only apply if direct pressure fails after 3 minutes and bleeding is Class 3+
+      - Mark the time
+      - Uncontrolled bleeding in a limb that threatens life
+    must_not_match:
+      - "tourniquet[^\\n]{0,120}(minor|routine|first-line for all)"
+  - name: shock and crush boundaries
+    guide: GD-584
+    must_include:
+      - Do NOT give fluids if patient is unconscious or vomiting
+      - Remove constricting shoes, jewelry, tight wraps, or splints
+      - do not elevate it above the heart when compartment syndrome is possible
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-584 card for field trauma stabilization. The card preserves
+  the guide's emergency-first sequence for visible hemorrhage, shock,
+  tourniquet/packing decisions, crush-compartment red flags, and suspected
+  tension pneumothorax. It deliberately avoids expanding medication dosing,
+  IV/blood-product care, suturing, analgesia, or procedural detail beyond the
+  cited guide. Abdominal/internal bleeding remains owned by the separate
+  abdominal_internal_bleeding card when prompts center GI bleeding, hard belly,
+  guarding, possible pregnancy, or internal abdominal trauma.

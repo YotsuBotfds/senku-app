@@ -1,5 +1,5 @@
-﻿---
-id: GD-037
+---
+id: "GD-037"
 slug: veterinary
 title: Veterinary Medicine
 category: medical
@@ -24,6 +24,26 @@ word_count: 4715
 last_updated: '2026-04-16'
 version: '1.1'
 custom_css: .subtitle{color:var(--accent2);font-size:1.1rem;margin-bottom:1.5rem}.nav-links{margin-bottom:2rem}.nav-links a{display:inline-block;margin:.5rem 1rem .5rem 0;padding:.5rem 1.5rem;background-color:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--accent2);text-decoration:none;transition:all .3s ease}.nav-links a:hover{background-color:var(--card);border-color:var(--accent2)}li{margin-bottom:.8rem}.dosage-box{background-color:rgba(83,216,168,0.1);border-left:4px solid var(--accent2);padding:1.5rem;margin:1.5rem 0;border-radius:6px}.guide-links{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-top:1.5rem}.guide-links a{padding:.8rem 1.5rem;background-color:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--accent2);text-decoration:none;transition:all .3s ease}.guide-links a:hover{background-color:var(--accent);color:var(--bg);border-color:var(--accent)}.diagram-container{text-align:center;margin:2rem 0;padding:2rem;background-color:var(--surface);border-radius:8px}
+aliases:
+  - veterinary medicine
+  - livestock emergency care
+  - sick animal triage
+  - animal disease recognition
+  - herd health emergency
+  - livestock wound care
+  - animal biosecurity
+  - zoonotic livestock disease
+routing_cues:
+  - Use for sick, injured, feverish, bloated, choking, collapsed, prolapsed, wounded, or abnormally behaving livestock and working animals.
+  - Use when an animal needs vital-sign assessment, isolation decisions, emergency stabilization, wound monitoring, herd biosecurity, or zoonotic exposure precautions.
+  - Route routine feeding, shelter, stocking, and stable daily herd setup to Animal Husbandry and Veterinary unless an animal is already ill or injured.
+  - Route everyday stable dog or cat care to Companion Animal Care, fear and low-stress handling to Animal Behavior and Ethology, and parasite-specific fecal counts or dewormer planning to Veterinary Parasitology.
+citations_required: true
+applicability: >
+  High-liability veterinary triage for already sick, injured, or abnormal animals,
+  including recognition of emergency signs, isolation and biosecurity decisions,
+  wound infection monitoring, zoonotic exposure precautions, and referral-first
+  limits where professional veterinary or public-health support is available.
 liability_level: critical
 ---
 ## Overview
