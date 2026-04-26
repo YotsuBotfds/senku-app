@@ -555,6 +555,9 @@ Action:
 - Added a separate Strict Retrieval Head Health workflow that runs on schedule
   or manual dispatch only, uses the reusable non-Android Fast gate with full
   retrieval index flavor, and keeps retrieval warnings fail-closed by default.
+- Master Head Health and Strict Retrieval Head Health workflow contract tests
+  now assert their manual dispatch triggers remain input-less, preventing
+  accidental operator overrides of generated/strict health semantics.
 - Artifact retention now distinguishes local/untracked `PLANNER_HANDOFF*.md`
   notes from committed durable handoffs: local handoff noise stays ignored, but
   tracked handoff references can protect artifact families.
@@ -649,6 +652,8 @@ Validation:
 - `tests.test_github_workflows` covers the strict retrieval health workflow's
   manual/scheduled triggers, no push trigger, full index flavor, and
   fail-on-warning defaults.
+- `tests.test_github_workflows` covers input-less manual dispatch for generated
+  head health and strict retrieval head health workflows.
 - `tests.test_plan_artifact_retention` covers ignored untracked planner
   handoffs and tracked planner handoffs that protect referenced artifacts.
 - `tests.test_bench_metrics_lake` covers direct SQL access to artifact evidence

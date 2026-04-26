@@ -284,6 +284,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertNotIn("paths", push)
         self.assertNotIn("paths-ignore", push)
         self.assertIn("workflow_dispatch", triggers)
+        self.assertNotIn("inputs", triggers["workflow_dispatch"] or {})
         self.assertEqual(
             {
                 "group": "${{ github.workflow }}-${{ github.ref }}",
@@ -331,6 +332,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
 
         triggers = workflow.get("on", workflow.get(True, {}))
         self.assertIn("workflow_dispatch", triggers)
+        self.assertNotIn("inputs", triggers["workflow_dispatch"] or {})
         self.assertIn("schedule", triggers)
         self.assertNotIn("push", triggers)
         self.assertNotIn("pull_request", triggers)
