@@ -454,6 +454,105 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(result["status"], "fail")
         self.assertTrue(result["forbidden_advice_hits"])
 
+    def test_load_answer_cards_includes_community_kitchen_illness_control(self):
+        card = next(
+            card
+            for card in self.cards
+            if card["card_id"] == "community_kitchen_illness_control"
+        )
+
+        self.assertEqual(card["guide_id"], "GD-961")
+        self.assertEqual(card["slug"], "community-kitchen-mess-hall-operations")
+        self.assertEqual(card["risk_tier"], "high")
+        self.assertEqual(card["runtime_citation_policy"], "reviewed_source_family")
+        self.assertIn("required_first_actions", card)
+        self.assertIn("forbidden_advice", card)
+        self.assertIn("source_sections", card)
+
+    def test_community_kitchen_illness_control_evidence_sources(self):
+        card = find_cards_for_guides("GD-961", cards=self.cards)[0]
+
+        unit = compose_evidence_units([card])[0]
+
+        self.assertEqual(unit["unit_id"], "community_kitchen_illness_control")
+        self.assertIn("community-kitchen-outbreak-aware-service", unit["citation_ids"])
+        self.assertEqual(unit["source_guide_ids"][0], "GD-961")
+        self.assertIn("GD-732", unit["source_guide_ids"])
+        self.assertIn("GD-902", unit["source_guide_ids"])
+        self.assertIn("GD-666", unit["source_guide_ids"])
+        self.assertIn("GD-672", unit["source_guide_ids"])
+        self.assertNotIn("GD-591", unit["source_guide_ids"])
+        self.assertTrue(unit["support_phrases"])
+
+    def test_community_kitchen_illness_control_composes_and_passes_contract(self):
+        card = find_cards_for_guides("GD-961", cards=self.cards)[0]
+
+        plan = compose_card_backed_answer(
+            [card],
+            allowed_guide_ids=["GD-961"],
+            question_text=(
+                "A crowded volunteer kitchen has several people with diarrhea "
+                "after yesterday's meal, handwashing water is limited, and "
+                "meals still need to go out. What should the kitchen lead "
+                "change first?"
+            ),
+        )
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["card_ids"], ["community_kitchen_illness_control"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-961"])
+        self.assertEqual(plan["lines"][0]["kind"], "required_first_action")
+        self.assertIn("Put illness control before meal throughput", plan["answer_text"])
+        self.assertIn("Remove sick workers from cooking", plan["answer_text"])
+        self.assertIn("Hold and inspect suspect food", plan["answer_text"])
+        self.assertIn("Make handwashing mandatory", plan["answer_text"])
+        self.assertIn("Separate clean food service", plan["answer_text"])
+        self.assertIn("[GD-961]", plan["answer_text"])
+
+        contract = evaluate_answer_card_contract(plan["answer_text"], [card])
+        self.assertEqual(contract["status"], "pass")
+        self.assertEqual(contract["forbidden_advice_hits"], [])
+        claim = diagnose_claim_support(
+            plan["answer_text"],
+            [card],
+            cited_guide_ids=plan["cited_guide_ids"],
+            expected_guide_ids=["GD-961"],
+        )
+        self.assertEqual(claim["status"], "pass")
+        self.assertEqual(claim["forbidden_count"], 0)
+
+    def test_community_kitchen_illness_control_can_cite_reviewed_source_family(self):
+        card = find_cards_for_guides("GD-961", cards=self.cards)[0]
+
+        outbreak_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-902"])
+        hygiene_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-732"])
+        rationing_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-591"])
+
+        self.assertEqual(outbreak_plan["cited_guide_ids"], ["GD-902"])
+        self.assertIn("[GD-902]", outbreak_plan["answer_text"])
+        self.assertNotIn("[GD-961]", outbreak_plan["answer_text"])
+        self.assertEqual(hygiene_plan["cited_guide_ids"], ["GD-732"])
+        self.assertIn("[GD-732]", hygiene_plan["answer_text"])
+        self.assertEqual(rationing_plan["cited_guide_ids"], [])
+        self.assertNotIn("[GD-591]", rationing_plan["answer_text"])
+
+    def test_community_kitchen_illness_control_flags_unsafe_throughput_advice(self):
+        card = find_cards_for_guides("GD-961", cards=self.cards)[0]
+        answer = """
+        Keep sick volunteers cooking or serving because meals need to go out.
+        Serve suspect leftovers without holding or inspecting the batch.
+        Skipping handwashing due to limited water.
+        """
+
+        result = evaluate_answer_card_contract(answer, [card])
+
+        self.assertEqual(result["status"], "fail")
+        hit_phrases = [record["phrase"] for record in result["forbidden_advice_hits"]]
+        self.assertTrue(
+            any("Keep sick volunteers cooking" in phrase for phrase in hit_phrases)
+        )
+        self.assertTrue(any("Skipping handwashing" in phrase for phrase in hit_phrases))
+
     def test_compose_card_backed_answer_does_not_cite_unallowed_backup_owner(self):
         card = [
             candidate

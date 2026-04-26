@@ -1,0 +1,126 @@
+card_id: community_kitchen_illness_control
+guide_id: GD-961
+slug: community-kitchen-mess-hall-operations
+title: "Community Kitchen & Mess Hall Operations"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A community kitchen, mess hall, shelter kitchen, or volunteer food line has multiple people with diarrhea, vomiting, fever, jaundice, or suspected foodborne illness.
+  - Food still needs to be served while handwashing water, soap, staffing, or cleanup capacity is limited.
+  - The kitchen lead must choose whether to keep service moving, use suspect leftovers, or stop contamination routes first.
+required_first_actions:
+  - Put illness control before meal throughput until the kitchen has separated sick people, suspect food, and clean service.
+  - Remove sick workers from cooking, serving, water, dishwashing, and childcare food duties immediately.
+  - Hold and inspect suspect food, leftovers, shared utensils, and active service batches before serving more.
+  - Make handwashing mandatory at critical points even when clean water or soap is limited.
+  - Separate clean food service from sick-person care, dirty dishes, stool, vomit, and cleanup workflows.
+first_actions:
+  - Use a smaller stable crew that has no vomiting or diarrhea and keep them assigned to clean food service only.
+  - Serve simple hot food promptly, avoid buffet-style self-service, and stop shared cups, ladles, or communal dipping bowls.
+  - Put the limited clean water and soap first at latrine exits, food prep, serving, dish return, and sick-care transitions.
+  - Shift to outbreak control if illness is spreading beyond one meal, the source is unclear, or dehydration appears.
+urgent_red_flags:
+  - Several people develop diarrhea or vomiting after the same meal.
+  - A food handler has vomiting, diarrhea, fever, jaundice, or unexplained weakness.
+  - Dishwashing failed, raw and cooked foods crossed paths, or water quality is in doubt.
+  - Blood in stool, little or no urine, confusion, repeated vomiting, shock signs, or rapid dehydration in children, elders, or pregnant patients.
+forbidden_advice:
+  - Keep sick volunteers cooking or serving because meals need to go out.
+  - Serve suspect leftovers or service batches without holding, inspecting, and controlling the contamination route.
+  - Skipping handwashing due to limited water.
+  - Prioritize meal throughput over illness control during diarrhea or vomiting clusters.
+  - Let dirty cleanup, sick care, or dish return cross into clean food service.
+do_not:
+  - Do not rotate symptomatic workers into water, food, dishwashing, or childcare duties.
+  - Do not use rationing pressure as a reason to serve food that may be contaminated.
+  - Do not treat limited water as permission to remove hand hygiene from latrine-to-kitchen or food-service transitions.
+routine_boundary: >
+  A crowded kitchen with multiple diarrhea cases is illness-control and
+  contamination-control work first, not ordinary meal throughput, staffing, or
+  rationing optimization.
+acceptable_uncertain_fit: >
+  If the source is unclear but several people became ill after a shared meal,
+  preserve the conservative kitchen-control sequence: remove sick food workers,
+  hold suspect food/service, enforce critical handwashing, and separate clean
+  service from dirty or sick workflows.
+clarifying_questions:
+  - Who has vomiting, diarrhea, fever, jaundice, or weakness, and did any of them handle food, water, dishes, or children?
+  - Which meal, batch, leftover, water source, utensil, or serving line was shared before symptoms began?
+  - Where are the latrine, handwashing, dish return, sick-care, and clean serving points right now?
+citation_ids:
+  - community-kitchen-outbreak-aware-service
+  - community-kitchen-illness-boundary
+  - camp-outbreak-food-service-restrictions
+  - hygiene-critical-handwashing
+  - food-safety-handwashing-service-control
+  - latrine-handwashing-separation
+source_sections:
+  - guide: GD-961
+    slug: community-kitchen-mess-hall-operations
+    title: "Community Kitchen & Mess Hall Operations"
+    sections:
+      - "#overview"
+      - "#core-rules"
+      - "#dishwashing > Illness boundary"
+      - "#outbreak-aware"
+      - "#outbreak-aware > Immediate actions when illness appears"
+      - "#outbreak-aware > When to hold back food"
+  - guide: GD-732
+    slug: hygiene-disease-prevention-basics
+    title: "Hygiene Practices & Disease Prevention Basics"
+    sections:
+      - "#overview"
+      - "#hand-washing"
+      - "#hand-washing > When to Wash Hands"
+      - "#hand-washing > Waterless Cleaning (When Water Is Scarce)"
+  - guide: GD-902
+    slug: camp-outbreak-dysentery-operations
+    title: "Camp Outbreak & Dysentery Operations Quickstart"
+    sections:
+      - "#first-hour"
+      - "#handwashing-enforcement"
+      - "#food-service-restrictions"
+      - "#red-flags"
+  - guide: GD-666
+    slug: food-safety-contamination-prevention
+    title: "Food Safety & Contamination Prevention"
+    sections:
+      - "#cross-contamination-prevention"
+      - "#cross-contamination-prevention > Handwashing Protocol (20-Second Method)"
+      - "#safe-water-for-food-preparation"
+      - "#illness-response"
+  - guide: GD-672
+    slug: latrine-sanitation-design
+    title: "Latrine & Sanitation Design"
+    sections:
+      - "#site-selection-and-planning"
+      - "#site-selection-and-planning > Choosing a Location"
+      - "#handwashing-stations"
+source_invariants:
+  - name: community kitchen illness control before throughput
+    guide: GD-961
+    must_include:
+      - If anyone handling food has vomiting, diarrhea, fever, jaundice, or unexplained weakness, remove them from food work until the situation is assessed.
+      - Do not let one sick worker contaminate a whole meal line.
+      - If contamination is suspected, stop serving and isolate the batch.
+      - keep handwashing visible and mandatory
+    must_not_match:
+      - "(keep|allow|let) sick (workers|volunteers)[^\\n]{0,120}(cook|serve|food duty)"
+      - "throughput[^\\n]{0,120}(before|over)[^\\n]{0,80}illness control"
+  - name: outbreak food service restrictions and handwashing
+    guide: GD-902
+    must_include:
+      - Stop sick people from food, water, and childcare duties immediately.
+      - Do not leave handwashing as a suggestion during a diarrhea outbreak.
+      - remove sick workers from cooking duty
+    must_not_match:
+      - "skip handwashing[^\\n]{0,120}(limited water|no soap)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-961 for community-kitchen service flow and illness
+  boundaries. GD-732 and GD-902 are reviewed source-family support for hygiene
+  and diarrhea-outbreak food-service restrictions; GD-666 and GD-672 support
+  food-safety and latrine/handwashing separation. GD-591 rationing pressure is
+  intentionally contextual only: meal throughput and rationing never override
+  illness control or contamination prevention.

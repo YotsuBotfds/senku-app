@@ -295,6 +295,128 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
                     )
                 )
 
+    def test_community_kitchen_illness_control_prioritized_for_queue_prompt(self):
+        prompt = (
+            "A crowded volunteer kitchen has several people with diarrhea after "
+            "yesterday's meal, handwashing water is limited, and meals still need "
+            "to go out. What should the kitchen lead change first?"
+        )
+        prioritized = runtime._prioritized_answer_card_ids_for_question(
+            prompt,
+            is_airway_obstruction_rag_query=lambda question: False,
+            has_allergy_or_anaphylaxis_trigger=lambda question: False,
+            is_newborn_sepsis_danger_query=lambda question: False,
+            is_meningitis_rash_emergency_query=lambda question: False,
+        )
+
+        self.assertIn("community_kitchen_illness_control", prioritized)
+
+        card = {
+            "card_id": "community_kitchen_illness_control",
+            "guide_id": "GD-961",
+            "review_status": "approved",
+        }
+        self.assertTrue(
+            runtime._answer_card_matches_question(
+                card,
+                prompt,
+                is_airway_obstruction_rag_query=lambda question: False,
+                has_allergy_or_anaphylaxis_trigger=lambda question: False,
+                is_newborn_sepsis_danger_query=lambda question: False,
+                is_meningitis_rash_emergency_query=lambda question: False,
+            )
+        )
+
+    def test_community_kitchen_illness_control_can_match_source_family(self):
+        unrelated_card = {
+            "card_id": "ordinary_hygiene",
+            "guide_id": "GD-732",
+            "review_status": "approved",
+        }
+        kitchen_card = {
+            "card_id": "community_kitchen_illness_control",
+            "guide_id": "GD-961",
+            "review_status": "approved",
+            "source_sections": [
+                {"guide": "GD-666"},
+                {"guide": "GD-902"},
+            ],
+        }
+        prompt = (
+            "In the mess hall, multiple volunteers are vomiting after lunch and "
+            "the food line is still open. What should change first?"
+        )
+
+        cards = runtime._answer_cards_for_results(
+            {
+                "metadatas": [[
+                    {"guide_id": "GD-732"},
+                    {"guide_id": "GD-666"},
+                    {"guide_id": "GD-902"},
+                ]]
+            },
+            question=prompt,
+            max_cards=1,
+            max_source_ids=1,
+            runtime_answer_cards=lambda: [unrelated_card, kitchen_card],
+            citation_allowlist_from_results=lambda results: [
+                "GD-732",
+                "GD-666",
+                "GD-902",
+            ],
+            prioritized_answer_card_ids_for_question=(
+                lambda question: runtime._prioritized_answer_card_ids_for_question(
+                    question,
+                    is_airway_obstruction_rag_query=lambda text: False,
+                    has_allergy_or_anaphylaxis_trigger=lambda text: False,
+                    is_newborn_sepsis_danger_query=lambda text: False,
+                    is_meningitis_rash_emergency_query=lambda text: False,
+                )
+            ),
+            answer_card_matches_question=(
+                lambda card, question: runtime._answer_card_matches_question(
+                    card,
+                    question,
+                    is_airway_obstruction_rag_query=lambda text: False,
+                    has_allergy_or_anaphylaxis_trigger=lambda text: False,
+                    is_newborn_sepsis_danger_query=lambda text: False,
+                    is_meningitis_rash_emergency_query=lambda text: False,
+                )
+            ),
+            card_source_guide_ids=runtime._card_source_guide_ids,
+        )
+
+        self.assertEqual(
+            [card["card_id"] for card in cards],
+            ["community_kitchen_illness_control"],
+        )
+
+    def test_community_kitchen_illness_control_rejects_near_misses(self):
+        card = {
+            "card_id": "community_kitchen_illness_control",
+            "guide_id": "GD-961",
+            "review_status": "approved",
+        }
+        prompts = [
+            "The community kitchen has limited handwashing water and meals to send out. How should we run cleanup?",
+            "A volunteer kitchen has one cook with diarrhea after yesterday's meal. What should we do?",
+            "Handwashing water is limited in camp and people need hygiene rules. What changes first?",
+            "A camp has many people with diarrhea after dinner. What outbreak steps come first?",
+        ]
+
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertFalse(
+                    runtime._answer_card_matches_question(
+                        card,
+                        prompt,
+                        is_airway_obstruction_rag_query=lambda question: False,
+                        has_allergy_or_anaphylaxis_trigger=lambda question: False,
+                        is_newborn_sepsis_danger_query=lambda question: False,
+                        is_meningitis_rash_emergency_query=lambda question: False,
+                    )
+                )
+
     def test_card_backed_runtime_answer_plan_uses_injected_composer(self):
         selected_card = {
             "card_id": "newborn_danger_sepsis",

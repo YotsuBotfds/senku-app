@@ -61,7 +61,7 @@ source_invariants:
   - name: anaphylaxis red-zone epinephrine first
     guide: GD-400
     must_include:
-      - Any breathing difficulty, throat/tongue swelling, or dizziness/fainting after allergen exposure = anaphylaxis until proven otherwise.
+      - Any breathing difficulty, throat/tongue swelling, or dizziness/fainting after allergen exposure = anaphylaxis until proven otherwise
       - Epinephrine and emergency help come first; inhalers are adjuncts.
       - Antihistamines are adjuncts to epinephrine, not replacements.
     must_not_match:

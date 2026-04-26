@@ -196,11 +196,16 @@ def _prioritized_answer_card_ids_for_question(
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
     is_infected_wound_card_query=lambda question: False,
+    is_community_kitchen_illness_control_card_query=None,
     is_anaphylaxis_red_zone_card_query=None,
 ):
     if not question:
         return []
 
+    if is_community_kitchen_illness_control_card_query is None:
+        is_community_kitchen_illness_control_card_query = (
+            _is_community_kitchen_illness_control_card_query
+        )
     if is_anaphylaxis_red_zone_card_query is None:
         is_anaphylaxis_red_zone_card_query = _is_anaphylaxis_red_zone_card_query
 
@@ -213,6 +218,8 @@ def _prioritized_answer_card_ids_for_question(
         prioritized.append("newborn_danger_sepsis")
     if is_meningitis_rash_emergency_query(question):
         prioritized.append("meningitis_sepsis_child")
+    if is_community_kitchen_illness_control_card_query(question):
+        prioritized.append("community_kitchen_illness_control")
     if is_poisoning_unknown_ingestion_card_query(question):
         prioritized.append("poisoning_unknown_ingestion")
     if is_infected_wound_card_query(question):
@@ -230,11 +237,16 @@ def _answer_card_matches_question(
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
     is_infected_wound_card_query=lambda question: False,
+    is_community_kitchen_illness_control_card_query=None,
     is_anaphylaxis_red_zone_card_query=None,
 ):
     if not question:
         return True
 
+    if is_community_kitchen_illness_control_card_query is None:
+        is_community_kitchen_illness_control_card_query = (
+            _is_community_kitchen_illness_control_card_query
+        )
     if is_anaphylaxis_red_zone_card_query is None:
         is_anaphylaxis_red_zone_card_query = _is_anaphylaxis_red_zone_card_query
 
@@ -251,6 +263,8 @@ def _answer_card_matches_question(
         return is_poisoning_unknown_ingestion_card_query(question)
     if card_id == "infected_wound_spreading_infection":
         return is_infected_wound_card_query(question)
+    if card_id == "community_kitchen_illness_control":
+        return is_community_kitchen_illness_control_card_query(question)
     return True
 
 
@@ -440,6 +454,163 @@ def _without_anaphylaxis_negated_red_zone_phrases(text):
 
 def _text_has_any(text, terms):
     return any(term in text for term in terms)
+
+
+_COMMUNITY_KITCHEN_FOOD_SERVICE_TERMS = {
+    "camp kitchen",
+    "canteen",
+    "cafeteria",
+    "communal kitchen",
+    "community kitchen",
+    "field kitchen",
+    "food line",
+    "food service",
+    "food-service",
+    "group meal service",
+    "kitchen crew",
+    "kitchen lead",
+    "kitchen staff",
+    "mass feeding",
+    "meal line",
+    "meal service",
+    "mess hall",
+    "relief kitchen",
+    "serving line",
+    "shelter kitchen",
+    "soup kitchen",
+    "volunteer kitchen",
+}
+_COMMUNITY_KITCHEN_CONTEXT_TERMS = {
+    "community",
+    "communal",
+    "crowded",
+    "relief",
+    "shelter",
+    "volunteer",
+}
+_COMMUNITY_KITCHEN_OPERATION_TERMS = {
+    "cooks",
+    "food line",
+    "food service",
+    "food-service",
+    "kitchen crew",
+    "kitchen lead",
+    "kitchen staff",
+    "meal line",
+    "meal service",
+    "meals",
+    "serving meals",
+}
+_COMMUNITY_KITCHEN_CLUSTER_TERMS = {
+    "a few",
+    "cluster",
+    "crowd",
+    "diners",
+    "dozens",
+    "everyone",
+    "group",
+    "many",
+    "multiple",
+    "outbreak",
+    "people",
+    "residents",
+    "several",
+    "volunteers",
+    "workers",
+}
+_COMMUNITY_KITCHEN_GI_ILLNESS_TERMS = {
+    "diarrhea",
+    "diarrhoea",
+    "food poisoning",
+    "foodborne",
+    "food-borne",
+    "stomach cramps",
+    "stomach illness",
+    "stomach sickness",
+    "throwing up",
+    "vomit",
+    "vomited",
+    "vomiting",
+}
+_COMMUNITY_KITCHEN_MEAL_LINK_TERMS = {
+    "after breakfast",
+    "after dinner",
+    "after eating",
+    "after lunch",
+    "after meal",
+    "after the meal",
+    "after yesterday's meal",
+    "ate the meal",
+    "food poisoning",
+    "foodborne",
+    "food-borne",
+    "from the meal",
+    "from yesterday's meal",
+    "last night's meal",
+    "meal made",
+    "meal service",
+    "meals still",
+    "since breakfast",
+    "since dinner",
+    "since lunch",
+    "still need to feed",
+    "still need to serve",
+    "still serving",
+    "served food",
+    "served meal",
+    "serving food",
+    "serving meals",
+    "yesterday's meal",
+}
+
+
+def _is_community_kitchen_illness_control_card_query(question):
+    """Detect food-service illness clusters, not routine kitchen or camp outbreaks."""
+    lower = str(question or "").lower()
+    if not lower:
+        return False
+
+    if not _has_community_kitchen_food_service_context(lower):
+        return False
+    if not _has_community_kitchen_cluster_illness(lower):
+        return False
+    return _has_community_kitchen_meal_service_link(lower)
+
+
+def _has_community_kitchen_food_service_context(text):
+    if _text_has_any(text, _COMMUNITY_KITCHEN_FOOD_SERVICE_TERMS):
+        return True
+    if "kitchen" not in text:
+        return False
+    return _text_has_any(
+        text,
+        _COMMUNITY_KITCHEN_CONTEXT_TERMS | _COMMUNITY_KITCHEN_OPERATION_TERMS,
+    )
+
+
+def _has_community_kitchen_cluster_illness(text):
+    if not _text_has_any(text, _COMMUNITY_KITCHEN_GI_ILLNESS_TERMS):
+        return False
+    if _text_has_any(text, _COMMUNITY_KITCHEN_CLUSTER_TERMS):
+        return True
+    return bool(
+        re.search(
+            r"\b(?:two|three|four|five|six|seven|eight|nine|ten|[2-9]|[1-9]\d+)\b"
+            r".{0,48}\b(?:cooks|diners|people|residents|staff|volunteers|workers)\b",
+            text,
+        )
+    )
+
+
+def _has_community_kitchen_meal_service_link(text):
+    if _text_has_any(text, _COMMUNITY_KITCHEN_MEAL_LINK_TERMS):
+        return True
+    return bool(
+        re.search(
+            r"\bafter\b.{0,48}\b(?:food|meal|breakfast|lunch|dinner|supper)\b",
+            text,
+        )
+    )
 
 
 def _format_card_items(items, *, limit=3):

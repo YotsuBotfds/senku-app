@@ -14926,6 +14926,9 @@ def _prioritized_answer_card_ids_for_question(question):
         is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
         is_infected_wound_card_query=_is_infected_wound_boundary_query,
+        is_community_kitchen_illness_control_card_query=(
+            _answer_card_runtime._is_community_kitchen_illness_control_card_query
+        ),
     )
 
 
@@ -14939,6 +14942,9 @@ def _answer_card_matches_question(card, question):
         is_meningitis_rash_emergency_query=_is_meningitis_rash_emergency_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
         is_infected_wound_card_query=_is_infected_wound_boundary_query,
+        is_community_kitchen_illness_control_card_query=(
+            _answer_card_runtime._is_community_kitchen_illness_control_card_query
+        ),
     )
 
 

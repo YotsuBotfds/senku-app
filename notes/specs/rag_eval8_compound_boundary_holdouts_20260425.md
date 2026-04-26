@@ -75,7 +75,7 @@ checked before any generated-answer acceptance claim.
 | RE8-HT-001 | heat_toxic_exposure_water_uncertainty | abstain or uncertain/clarify | retrieval-smoke-first | GD-377, GD-526, GD-602, GD-054 |
 | RE8-MD-001 | medication_uncertainty_outage | abstain | ready | GD-239 |
 | RE8-RW-001 | runoff_infant_water_boundary | uncertain/clarify | retrieval-smoke-first | GD-721, GD-035, GD-931 |
-| RE8-KT-001 | community_kitchen_illness_cluster | generated evidence | retrieval-smoke-first | GD-961, GD-732 |
+| RE8-KT-001 | community_kitchen_illness_cluster | generated evidence | retrieval-smoke-first | GD-961, GD-732, GD-902 |
 | RE8-TR-001 | evacuation_triage_animal_logistics | generated evidence | ready | GD-029, GD-232 |
 | RE8-SP-001 | spine_cold_water_movement_boundary | abstain or uncertain/clarify | ready | GD-049 |
 | RE8-CM-001 | medical_red_flags_connectivity_outage | reviewed-card runtime | ready | GD-589 |
@@ -96,8 +96,9 @@ checked before any generated-answer acceptance claim.
   treatment, and questionable-source uncertainty. Infant/newborn guides support
   risk framing but should not erase water-contamination limits.
 - `RE8-KT-001`: `GD-961` owns community kitchen operations; `GD-732` owns
-  hygiene/disease controls. Food-safety and sanitation guides are expected
-  support.
+  hygiene/disease controls; `GD-902` owns diarrhea-outbreak food-service
+  restrictions when the kitchen has an active illness cluster. Food-safety and
+  sanitation guides are expected support.
 - `RE8-TR-001`: `GD-029` / `GD-232` own human triage; animal and route guides
   support delegation only.
 - `RE8-SP-001`: `GD-049` owns spine/nerve injury movement limits; first-aid,
