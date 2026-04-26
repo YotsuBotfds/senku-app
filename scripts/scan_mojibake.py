@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import posixpath
 import re
 import subprocess
 from collections import Counter
@@ -124,6 +125,12 @@ def _split_nul_paths(output: str) -> list[str]:
     return [item for item in output.split("\0") if item]
 
 
+def _normalize_relative_path(value: str) -> str:
+    normalized = posixpath.normpath(value.replace("\\", "/").strip())
+    normalized = normalized.strip("/")
+    return "." if normalized in {"", "."} else normalized
+
+
 def changed_git_paths(root: Path, *, git_runner: GitRunner = _run_git) -> list[str]:
     outputs = [
         git_runner(["diff", "--name-only", "-z", "--diff-filter=ACMRTUXB", "--cached", "--"], root),
@@ -135,9 +142,9 @@ def changed_git_paths(root: Path, *, git_runner: GitRunner = _run_git) -> list[s
     seen: set[str] = set()
     for output in outputs:
         for rel_path in _split_nul_paths(output):
-            normalized = rel_path.replace("\\", "/").strip("/")
+            normalized = _normalize_relative_path(rel_path)
             key = normalized.casefold()
-            if not normalized or key in seen:
+            if normalized == "." or key in seen:
                 continue
             seen.add(key)
             paths.append(normalized)
@@ -155,10 +162,8 @@ def _normalize_allowed_path(value: str, *, root: Path) -> str:
             text = path.resolve().relative_to(root).as_posix()
         except ValueError:
             text = path.as_posix()
-    else:
-        text = text.replace("\\", "/")
 
-    normalized = text.strip("/")
+    normalized = _normalize_relative_path(text)
     return normalized.casefold() if normalized else "."
 
 
@@ -169,7 +174,7 @@ def _path_is_allowed(
     root: Path,
     empty_matches_all: bool = True,
 ) -> bool:
-    normalized = rel_path.replace("\\", "/").strip("/").casefold()
+    normalized = _normalize_relative_path(rel_path).casefold()
     allowed = [_normalize_allowed_path(item, root=root) for item in allowed_paths]
     if not allowed:
         return empty_matches_all

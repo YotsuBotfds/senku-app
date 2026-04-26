@@ -114,6 +114,8 @@ def parse_porcelain_status(
         if not raw_line.strip():
             continue
         status = raw_line[:2]
+        if status == "##":
+            continue
         rest = raw_line[3:] if len(raw_line) > 3 else ""
         old_path: str | None = None
         path = rest

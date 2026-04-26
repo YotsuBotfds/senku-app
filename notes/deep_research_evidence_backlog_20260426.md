@@ -482,6 +482,11 @@ Action:
   recognizes newly named protected planner handoffs as benign only when
   untracked, and metadata coverage treats list/dict citation policy values as
   present only when they contain a meaningful truthy value.
+- Hardened adjacent worker/status/text-quality helpers: worktree delta
+  summaries ignore porcelain branch headers, worker-lane Markdown tables
+  flatten newlines and escape pipes, and mojibake touched-path collection
+  normalizes Windows separators plus `.`/`..` segments before de-duping and
+  allowlist checks.
 
 Validation:
 
@@ -785,6 +790,9 @@ Validation:
   `tests.test_audit_metadata_coverage` cover branch-header status parsing,
   pattern-based protected planner handoff handling, and list-shaped false-like
   citation metadata.
+- `tests.test_summarize_worktree_delta`, `tests.test_worker_lane_status`, and
+  `tests.test_scan_mojibake` cover branch-header status parsing, worker-lane
+  Markdown table sanitation, and normalized touched-path/allowlist handling.
 
 Deferred unless evidenced:
 

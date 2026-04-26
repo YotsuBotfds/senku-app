@@ -159,6 +159,10 @@ def parse_git_status_short(text: str) -> tuple[list[str], list[dict[str, str]], 
     return entries, entry_details, status_counts
 
 
+def _markdown_table_cell(value: Any) -> str:
+    return str(value or "").replace("\r", " ").replace("\n", " ").replace("|", "\\|")
+
+
 def _dirty_summary(path: Path, runner: CommandRunner) -> dict[str, Any]:
     result = runner(["git", "-C", str(path), "status", "--short"], path)
     if result.returncode:
@@ -273,10 +277,10 @@ def render_markdown(status: dict[str, Any], *, limit: int = 12) -> str:
             dirty_label = "unknown"
         lines.append(
             "| {lane} | {branch} | {dirty} | {path} |".format(
-                lane=str(worktree.get("lane") or "").replace("|", "\\|"),
-                branch=str(worktree.get("branch_short") or "").replace("|", "\\|"),
+                lane=_markdown_table_cell(worktree.get("lane")),
+                branch=_markdown_table_cell(worktree.get("branch_short")),
                 dirty=dirty_label,
-                path=str(worktree.get("worktree") or "").replace("|", "\\|"),
+                path=_markdown_table_cell(worktree.get("worktree")),
             )
         )
     if len(worktrees) > limit:

@@ -134,6 +134,23 @@ class MojibakeScanTests(unittest.TestCase):
             ["guides/damaged.md", "guides/new.txt", "scripts/tool.py"],
         )
 
+    def test_changed_git_paths_normalizes_dot_segments_before_deduping(self):
+        root = Path("repo").resolve()
+
+        def fake_git(args, cwd):
+            self.assertEqual(cwd, root)
+            if "--cached" in args:
+                return ".\\guides\\damaged.md\0"
+            if args[0] == "diff":
+                return "guides/damaged.md\0./notes/../guides/new.txt\0"
+            if args[0] == "ls-files":
+                return "guides/new.txt\0"
+            raise AssertionError(f"Unexpected git args: {args}")
+
+        paths = scan_mojibake.changed_git_paths(root, git_runner=fake_git)
+
+        self.assertEqual(paths, ["guides/damaged.md", "guides/new.txt"])
+
     @unittest.skipIf(shutil.which("git") is None, "git is required for CLI touched-mode test")
     def test_cli_touched_mode_scans_tracked_and_untracked_files(self):
         with tempfile.TemporaryDirectory() as tmpdir:

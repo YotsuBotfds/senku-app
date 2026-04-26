@@ -86,6 +86,15 @@ class SummarizeWorktreeDeltaTests(unittest.TestCase):
         self.assertEqual("scripts/new_name.py", item["path"])
         self.assertEqual("12 +++++++-----", item["diff_stat"])
 
+    def test_ignores_porcelain_branch_header(self):
+        status = "## main...origin/main [ahead 1]\n M scripts/new_tool.py\n"
+
+        summary = summarize_worktree_delta(status_text=status)
+
+        self.assertEqual(1, summary["total_changed"])
+        self.assertEqual("scripts/tooling", summary["lanes"][0]["lane"])
+        self.assertEqual("scripts/new_tool.py", summary["lanes"][0]["files"][0]["path"])
+
     def test_render_markdown_is_compact(self):
         summary = summarize_worktree_delta(status_text=" M scripts/new_tool.py\n")
 
