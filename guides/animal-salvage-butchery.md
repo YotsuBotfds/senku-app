@@ -35,7 +35,7 @@ liability_level: medium
 
 If you are asking, "Can I save this animal for meat after a disaster?" start with the triage block above: healthy stock gets water and shelter, salvageable injuries get fast slaughter, and decomposed or obviously unsafe carcasses are discarded.
 
-Disaster (flood, earthquake, war) often leaves livestock stranded, injured, or without feed and water. Quick action salvages meat before spoilage, removes disease vectors, and prevents suffering. Unlike routine butchering (controlled, sanitary), emergency salvage operates in chaotic conditionsâ€”limited tools, no refrigeration, contaminated water, disease risk. Success requires rapid decision-making, basic anatomy knowledge, and improvisation.
+Disaster (flood, earthquake, war) often leaves livestock stranded, injured, or without feed and water. Quick action salvages meat before spoilage, removes disease vectors, and prevents suffering. Unlike routine butchering (controlled, sanitary), emergency salvage operates in chaotic conditions—limited tools, no refrigeration, contaminated water, disease risk. Success requires rapid decision-making, basic anatomy knowledge, and improvisation.
 
 This guide covers livestock recovery, emergency slaughter, field butchery procedures, and preservation under duress. Principles apply to both domestic animals and feral/wild animals encountered in post-disaster zones.
 
@@ -70,7 +70,7 @@ This guide covers livestock recovery, emergency slaughter, field butchery proced
 
 **Water and feed** (immediate priority):
 
-- **Water:** Animals need water within 2 hours (critical in heat). Offer frequently in small amounts (prevents bloat if severely dehydrated; give electrolyte solution if availableâ€”salt + sugar in water).
+- **Water:** Animals need water within 2 hours (critical in heat). Offer frequently in small amounts (prevents bloat if severely dehydrated; give electrolyte solution if available—salt + sugar in water).
 - **Feed:** Offer forage (hay, grass) or grain if available. Small amounts first (prevents colic).
 
 **Shelter:** Protect from further weather (rain, extreme cold/heat). Group animals together (reduces stress; allows body heat sharing in cold).
@@ -126,7 +126,7 @@ Deer, boar, rabbits may forage near settlements post-disaster. Risk: Disease (es
 - **Hunting:** If meat is needed, organized hunts with trained shooters. Avoid eating organs (disease vector); use only muscle meat.
 
 :::warning
-Disease in stressed animals is high. Assume all wild and feral animals carry parasites and pathogens. Cook meat thoroughly (internal temperature 160â€“165Â°F for all game). Boil or filter water after animal contact.
+Disease in stressed animals is high. Assume all wild and feral animals carry parasites and pathogens. Cook meat thoroughly (internal temperature 160–165°F for all game). Boil or filter water after animal contact.
 :::
 
 </section>
@@ -145,7 +145,7 @@ Disease in stressed animals is high. Assume all wild and feral animals carry par
 
 1. **Restraint:** Have person hold animal securely (headlock or rope).
 2. **Positioning:** Animal's head slightly extended (exposes neck).
-3. **Cut:** Sharp knife across windpipe and carotid artery (major vein on side of neck). Both sides severed simultaneously = rapid unconsciousness (10â€“20 seconds) followed by death (loss of blood pressure to brain).
+3. **Cut:** Sharp knife across windpipe and carotid artery (major vein on side of neck). Both sides severed simultaneously = rapid unconsciousness (10–20 seconds) followed by death (loss of blood pressure to brain).
 4. **Bleed out:** Allow blood to drain into container (can be used for blood sausage or fertilizer).
 
 **Stunned-then-cut method (preferred if captive bolt available):**
@@ -166,13 +166,13 @@ Disease in stressed animals is high. Assume all wild and feral animals carry par
 **Procedure:**
 
 1. **Stun:** Captive bolt or shot; animal drops unconscious.
-2. **Bleed:** Immediately cut neck; blood loss causes death within 1â€“2 minutes.
+2. **Bleed:** Immediately cut neck; blood loss causes death within 1–2 minutes.
 
 ### Post-Slaughter Handling
 
 **Immediate actions:**
 
-1. **Bleed out:** Allow 5â€“10 minutes for complete blood drainage (improves meat quality and shelf life).
+1. **Bleed out:** Allow 5–10 minutes for complete blood drainage (improves meat quality and shelf life).
 2. **Eviscerate:** Remove internal organs quickly (bacterial contamination accelerates if stomach/intestines remain).
 3. **Chill:** Move to shade or cool location if refrigeration unavailable.
 
@@ -216,8 +216,8 @@ Disease in stressed animals is high. Assume all wild and feral animals carry par
 **Approximate yield:**
 
 - Carcass weight: 60% of live weight (carcass after hide/organs removed).
-- Meat yield: 65â€“75% of carcass weight.
-- Example: 1,000 lb live cattle â†’ 600 lb carcass â†’ 400 lb meat + 200 lb bone/waste.
+- Meat yield: 65–75% of carcass weight.
+- Example: 1,000 lb live cattle → 600 lb carcass → 400 lb meat + 200 lb bone/waste.
 
 ### Butchery Process
 
@@ -230,8 +230,8 @@ Use hide for leather (see tanning guide); if time-critical, skip and bury hide.
 Cut around joints; use minimal knife work (wasting meat). Pull limb back; cut through joint capsule.
 
 ```
-Forelegs: Cut vertically through shoulder joint; front legs separate with 15â€“20 lb meat.
-Rear legs: Cut through hip joint; rear legs separate with 30â€“40 lb meat each.
+Forelegs: Cut vertically through shoulder joint; front legs separate with 15–20 lb meat.
+Rear legs: Cut through hip joint; rear legs separate with 30–40 lb meat each.
 ```
 
 **Step 3: Spine separation**
@@ -243,13 +243,13 @@ Cut along backbone; separate ribs from spine.
 Follow natural muscle seams (anatomy minimizes cutting):
 
 ```
-Chuck (shoulder): Separate from ribs along natural line; yields 20â€“30 lbs.
+Chuck (shoulder): Separate from ribs along natural line; yields 20–30 lbs.
 Rib section: Remove ribs; separate back strap (tender, premium cut).
 Loin: Remove from underneath ribs; separate into steaks or roast.
-Round (rear leg): Separate into 3â€“4 parts based on muscle groups.
+Round (rear leg): Separate into 3–4 parts based on muscle groups.
 ```
 
-**Timeline:** 30â€“45 minutes for experienced butcher; 1â€“2 hours for inexperienced person. Minimize time (heat = bacterial growth).
+**Timeline:** 30–45 minutes for experienced butcher; 1–2 hours for inexperienced person. Minimize time (heat = bacterial growth).
 
 ### Meat Contamination Prevention
 
@@ -284,12 +284,12 @@ In disaster, refrigeration is unavailable. Preservation methods must be rapid.
 
 1. **Slice meat:** Cut thin (1/4 inch) along the grain (easier to chew when dry).
 2. **Salt application:** Coat each slice heavily with salt (draws out water; preserves).
-3. **Drying:** Hang on rope/line in sun and wind; takes 2â€“5 days depending on humidity and temperature.
-4. **Test:** Meat is done when it bends but does not snap; moisture has reduced from 70% to 10â€“20%.
+3. **Drying:** Hang on rope/line in sun and wind; takes 2–5 days depending on humidity and temperature.
+4. **Test:** Meat is done when it bends but does not snap; moisture has reduced from 70% to 10–20%.
 
-**Yield:** 10 lbs fresh meat â†’ 2.5 lbs jerky (75% water loss).
+**Yield:** 10 lbs fresh meat → 2.5 lbs jerky (75% water loss).
 
-**Shelf life:** 1â€“3 months if kept dry; longer if stored in sealed container.
+**Shelf life:** 1–3 months if kept dry; longer if stored in sealed container.
 
 ### Salting (Salt Pork)
 
@@ -297,12 +297,12 @@ In disaster, refrigeration is unavailable. Preservation methods must be rapid.
 
 **Process:**
 
-1. **Cut into chunks:** 2â€“4 inch cubes.
+1. **Cut into chunks:** 2–4 inch cubes.
 2. **Pack with salt:** Layer meat and salt in barrel or container (salt must contact all surfaces).
 3. **Weight down:** Press meat to extract water; cover with cloth.
-4. **Storage:** Keep cool and dry; meat will last 3â€“6 months.
+4. **Storage:** Keep cool and dry; meat will last 3–6 months.
 
-**Preparation for eating:** Soak in water for 6â€“12 hours to remove excess salt before cooking.
+**Preparation for eating:** Soak in water for 6–12 hours to remove excess salt before cooking.
 
 **Limitation:** High salt content may not be acceptable if fresh water is scarce (salt requires water to rinse/cook).
 
@@ -313,11 +313,11 @@ In disaster, refrigeration is unavailable. Preservation methods must be rapid.
 **Process:**
 
 1. **Build smoke fire:** Oak, hickory, or other hardwood; avoid softwood (too resinous).
-2. **Hang meat:** At height where smoke is warm (~100â€“150Â°F) but animal is not cooking.
-3. **Smoke duration:** 6â€“12 hours for light smoking (cold smoking); 1â€“2 days for heavy smoking.
+2. **Hang meat:** At height where smoke is warm (~100–150°F) but animal is not cooking.
+3. **Smoke duration:** 6–12 hours for light smoking (cold smoking); 1–2 days for heavy smoking.
 4. **Test:** Meat surface should be brown/tan and firm.
 
-**Shelf life:** 1â€“2 months if meat is also dried; longer if heavily smoked.
+**Shelf life:** 1–2 months if meat is also dried; longer if heavily smoked.
 
 **Advantage:** Improves flavor; smoky taste often preferred.
 
@@ -328,7 +328,7 @@ For fatty meats (pork, beef brisket):
 1. **Cut fat into small pieces.**
 2. **Heat slowly:** Render out liquid fat; strain through cloth.
 3. **Cool in containers:** Fat solidifies.
-4. **Store:** Sealed container, cool location, lasts 3â€“6 months.
+4. **Store:** Sealed container, cool location, lasts 3–6 months.
 
 **Uses:** Cooking medium, candle wax, leather conditioning.
 
@@ -336,17 +336,17 @@ For fatty meats (pork, beef brisket):
 
 In cold climate or during cool season:
 
-- **Bury in snow:** Wrap meat; bury in snow or ice; insulate with more snow/straw. Lasts weeks if temperature stays below 35Â°F.
-- **Spring/stream:** Place wrapped meat in cool flowing water. Current prevents stagnation; temperature stays ~50Â°F even in summer.
-- **Root cellar:** If available (cave, buried shelter), natural coolness (50â€“55Â°F) extends shelf life to weeks.
+- **Bury in snow:** Wrap meat; bury in snow or ice; insulate with more snow/straw. Lasts weeks if temperature stays below 35°F.
+- **Spring/stream:** Place wrapped meat in cool flowing water. Current prevents stagnation; temperature stays ~50°F even in summer.
+- **Root cellar:** If available (cave, buried shelter), natural coolness (50–55°F) extends shelf life to weeks.
 
 **Duration:**
 
 ```
-Above 50Â°F: 2â€“3 days before spoilage visible
-40â€“50Â°F: 4â€“7 days
-30â€“40Â°F: 10â€“14 days
-Below 30Â°F (near freezing): Weeksâ€“months
+Above 50°F: 2–3 days before spoilage visible
+40–50°F: 4–7 days
+30–40°F: 10–14 days
+Below 30°F (near freezing): Weeks–months
 ```
 
 </section>
@@ -383,13 +383,13 @@ Before consuming salvaged meat:
 
 **Temperature requirements (kills most pathogens):**
 
-- **Beef, pork, lamb, goat:** 160Â°F internal temperature minimum.
-- **Poultry:** 165Â°F.
-- **Game (deer, wild boar):** 160â€“165Â°F.
+- **Beef, pork, lamb, goat:** 160°F internal temperature minimum.
+- **Poultry:** 165°F.
+- **Game (deer, wild boar):** 160–165°F.
 
 **Test:** Use clean stick/knife as thermometer (internal color reaches no pink); or cooking time (well-done appearance throughout).
 
-**Boiling:** High heat cooking (soups, stews) at 212Â°F kills most pathogens within 10â€“15 minutes.
+**Boiling:** High heat cooking (soups, stews) at 212°F kills most pathogens within 10–15 minutes.
 
 </section>
 
@@ -401,8 +401,8 @@ Before consuming salvaged meat:
 
 | **Tool** | **Purpose** | **Alternative** |
 |---|---|---|
-| Large knife (8â€“10 in blade) | Primary butchering | Machete, sharp rock |
-| Small knife (4â€“5 in blade) | Detail work, offal removal | - |
+| Large knife (8–10 in blade) | Primary butchering | Machete, sharp rock |
+| Small knife (4–5 in blade) | Detail work, offal removal | - |
 | Sharpening stone | Keep blades sharp (critical for safety/efficiency) | Smooth rock, steel |
 | Saw (bone saw or hacksaw) | Separate large bones | Heavy knife, hatchet |
 | Cutting board or clean surface | Prevent contamination | Large flat rock, clean wood |
@@ -437,13 +437,13 @@ Before consuming salvaged meat:
 
 **Severely injured (1):** Cannot recover without veterinary surgery (not available). Decision: Slaughter for meat immediately (before spoilage).
 
-**Ill cattle (1):** Isolate; observe for 12 hours. If condition improves, treat. If worsens (fever >105Â°F, severe respiratory distress), slaughter for meat.
+**Ill cattle (1):** Isolate; observe for 12 hours. If condition improves, treat. If worsens (fever >105°F, severe respiratory distress), slaughter for meat.
 
 **Slaughter process (2 cattle):**
 
-1. **Prepare:** Gather team (3â€“4 people), tools (knife, captive bolt if available), containers.
+1. **Prepare:** Gather team (3–4 people), tools (knife, captive bolt if available), containers.
 2. **Stun:** Captive bolt to forehead or rifle shot (if trained).
-3. **Bleed:** Cut neck; blood drains into container (5â€“10 min).
+3. **Bleed:** Cut neck; blood drains into container (5–10 min).
 4. **Hide removal:** (optional; time-critical, skip if necessary)
 5. **Eviscerate:** Remove organs within 30 minutes.
 6. **Butcher:** Separate into sections (chuck, rib, loin, round, shank).
@@ -451,10 +451,10 @@ Before consuming salvaged meat:
 
 **Yield:**
 
-- Beef cattle (1,200 lbs live) â†’ 600 lb carcass â†’ 400 lbs meat.
+- Beef cattle (1,200 lbs live) → 600 lb carcass → 400 lbs meat.
 - 2 cattle = 800 lbs meat.
-- Dried: 800 Ã— 0.25 = 200 lbs jerky (lasts 2â€“3 months).
-- Feed: 800 lbs / 0.5 lbs per person per meal = 1,600 meals (30 people Ã— 50 days supply).
+- Dried: 800 × 0.25 = 200 lbs jerky (lasts 2–3 months).
+- Feed: 800 lbs / 0.5 lbs per person per meal = 1,600 meals (30 people × 50 days supply).
 
 **Waste products:**
 
@@ -465,12 +465,12 @@ Before consuming salvaged meat:
 :::affiliate
 **If you're preparing emergency slaughter and butchery supplies,** professional tools ensure fast, efficient field processing:
 
-- [Weston 10-Piece Game Processing Knife Kit with Butcher Saw](https://www.amazon.com/dp/B0058DPLQC?tag=offlinecompen-20) â€” Complete set with 8" butcher knife, 6" cleaver, skinning knife, fillet knife, bone saw, shears, and storage case
-- [Stainless Steel Sharpening Stone for Butcher Knives](https://www.amazon.com/dp/B0857QYLVL?tag=offlinecompen-20) â€” Keep blades sharp during field butchery to ensure clean cuts and safety
-- [Large Cutting Board for Meat Processing](https://www.amazon.com/dp/B08ZQXNXNT?tag=offlinecompen-20) â€” Heavy-duty food-grade plastic board prevents cross-contamination during evisceration
-- [Digital Thermometer with Meat Probe for Temperature Verification](https://www.amazon.com/dp/B07XXSYLL8?tag=offlinecompen-20) â€” Verify internal temperature during cooking to eliminate disease risk from stressed animals
+- [Weston 10-Piece Game Processing Knife Kit with Butcher Saw](https://www.amazon.com/dp/B0058DPLQC?tag=offlinecompen-20) — Complete set with 8" butcher knife, 6" cleaver, skinning knife, fillet knife, bone saw, shears, and storage case
+- [Stainless Steel Sharpening Stone for Butcher Knives](https://www.amazon.com/dp/B0857QYLVL?tag=offlinecompen-20) — Keep blades sharp during field butchery to ensure clean cuts and safety
+- [Large Cutting Board for Meat Processing](https://www.amazon.com/dp/B08ZQXNXNT?tag=offlinecompen-20) — Heavy-duty food-grade plastic board prevents cross-contamination during evisceration
+- [Digital Thermometer with Meat Probe for Temperature Verification](https://www.amazon.com/dp/B07XXSYLL8?tag=offlinecompen-20) — Verify internal temperature during cooking to eliminate disease risk from stressed animals
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the methods discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the methods discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 </section>
