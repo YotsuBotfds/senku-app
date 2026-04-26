@@ -230,6 +230,38 @@ review_status: pilot_reviewed
         self.assertIn("missing_citation_policy", record["gaps"])
         self.assertNotIn("missing_reviewed_answer_card", record["gaps"])
 
+    def test_high_liability_numeric_zero_citations_required_does_not_satisfy_policy(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guides_dir = Path(tmpdir) / "guides"
+            guides_dir.mkdir()
+            (guides_dir / "zero-citation-guide.md").write_text(
+                """---
+id: GD-106
+slug: zero-citation-guide
+title: Zero Citation Guide
+category: medical
+description: A high risk guide.
+liability_level: high
+tags: [medical]
+aliases: [danger help]
+routing_cues: [danger triage]
+related: [GD-101]
+citations_required: 0
+applicability: Emergency field care.
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir)
+
+        record = audit["guides"][0]
+        self.assertFalse(record["has_citation_policy"])
+        self.assertIn("missing_citation_policy", record["gaps"])
+        self.assertEqual(record["severity"], "gap")
+
     def test_low_liability_metadata_gaps_are_not_counted_as_high_liability_gaps(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"
