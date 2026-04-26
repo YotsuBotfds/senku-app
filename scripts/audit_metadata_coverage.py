@@ -60,6 +60,9 @@ def _has_any_key(metadata: dict[str, Any], keys: tuple[str, ...]) -> bool:
             if value:
                 return True
             continue
+        if isinstance(value, str):
+            if value.strip().lower() in {"", "false", "0", "no", "none"}:
+                continue
         if value not in (None, "", [], {}):
             return True
     return False

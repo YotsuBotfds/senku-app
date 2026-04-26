@@ -494,6 +494,9 @@ Action:
 - Live queue monitor output now renders worker-lane dirty status counts
   (`modified`, `untracked`, and related categories) from the structured worker
   lane payload instead of only showing a raw changed count.
+- Metadata coverage auditing now treats false-like strings such as `"false"`,
+  `"0"`, `"no"`, and `"none"` as absent policy metadata, matching boolean
+  false semantics for high-liability citation-policy checks.
 
 Validation:
 
@@ -520,6 +523,8 @@ Validation:
   primary-owner fields as validation failures.
 - `tests.test_live_queue_monitor` covers structured worker-lane dirty counts
   flowing through monitor data and HTML rendering.
+- `tests.test_audit_metadata_coverage` covers quoted false citation-policy
+  metadata as a missing high-liability policy signal.
 
 Deferred unless evidenced:
 

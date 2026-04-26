@@ -150,6 +150,48 @@ Body.
         self.assertIn("missing_citation_policy", record["gaps"])
         self.assertEqual(record["severity"], "gap")
 
+    def test_high_liability_string_false_citations_required_does_not_satisfy_policy(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides_dir = root / "guides"
+            cards_dir = root / "cards"
+            guides_dir.mkdir()
+            cards_dir.mkdir()
+            (guides_dir / "quoted-false-citation-guide.md").write_text(
+                """---
+id: GD-105
+slug: quoted-false-citation-guide
+title: Quoted False Citation Guide
+category: medical
+description: A high risk guide.
+liability_level: high
+tags: [medical]
+aliases: [danger help]
+routing_cues: [danger triage]
+related: [GD-101]
+citations_required: "false"
+applicability: Emergency field care.
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+            (cards_dir / "quoted-false-citation-guide.yaml").write_text(
+                """card_id: quoted_false_citation_guide
+guide_id: GD-105
+review_status: pilot_reviewed
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir, cards_dir=cards_dir)
+
+        record = audit["guides"][0]
+        self.assertFalse(record["has_citation_policy"])
+        self.assertIn("missing_citation_policy", record["gaps"])
+        self.assertNotIn("missing_reviewed_answer_card", record["gaps"])
+
     def test_low_liability_metadata_gaps_are_not_counted_as_high_liability_gaps(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"
