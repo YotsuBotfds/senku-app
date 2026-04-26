@@ -27,15 +27,20 @@ Body.
             )
 
             audit = audit_guides(guides_dir)
+            markdown = render_markdown(audit)
 
         record = audit["guides"][0]
         self.assertEqual(audit["summary"]["guides_scanned"], 1)
         self.assertEqual(audit["summary"]["high_liability_guides"], 1)
         self.assertEqual(audit["summary"]["high_liability_guides_with_gaps"], 1)
+        self.assertEqual(audit["summary"]["malformed_frontmatter_count"], 1)
+        self.assertIn("malformed_frontmatter", audit["summary"]["gap_counts"])
         self.assertIn("malformed_frontmatter", record["gaps"])
         self.assertTrue(record["high_liability"])
         self.assertEqual(record["severity"], "gap")
         self.assertIn("frontmatter", record["frontmatter_error"].lower())
+        self.assertIn("broken-guide.md", markdown)
+        self.assertIn("frontmatter_error", markdown)
 
     def test_high_liability_missing_routing_and_policy_is_reported(self):
         with tempfile.TemporaryDirectory() as tmpdir:

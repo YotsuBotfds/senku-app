@@ -551,6 +551,9 @@ Action:
 - Retention planner now has an integration-style temporary-git regression
   proving tracked planner handoffs protect artifacts while untracked planner
   handoffs remain ignored as local noise.
+- Metadata coverage Markdown now includes a malformed-frontmatter summary and
+  table with source file plus parser reason so operators can see malformed guide
+  evidence without opening JSON.
 
 Validation:
 
@@ -614,6 +617,8 @@ Validation:
   evidence-context columns.
 - `tests.test_plan_artifact_retention` now exercises real `git ls-files`
   detection for tracked planner handoff refs when git is available.
+- `tests.test_audit_metadata_coverage` covers malformed-frontmatter summary
+  counts and Markdown reporting.
 
 Deferred unless evidenced:
 

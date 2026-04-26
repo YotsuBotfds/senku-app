@@ -321,9 +321,22 @@ def audit_guides(
     cards_dir: Path | None = None,
 ) -> dict[str, Any]:
     answer_cards_by_guide = _answer_card_lookup(cards_dir)
+    malformed_frontmatter = sorted(
+        [
+            {
+                "source_file": issue["source_file"],
+                "frontmatter_error": issue["reason"],
+            }
+            for issue in find_malformed_frontmatter(guides_dir)
+        ],
+        key=lambda issue: issue["source_file"],
+    )
     malformed_by_source = {
-        issue["source_file"]: issue["reason"] for issue in find_malformed_frontmatter(guides_dir)
+        issue["source_file"]: issue["frontmatter_error"] for issue in malformed_frontmatter
     }
+    frontmatter_error_counts = Counter(
+        issue["frontmatter_error"] for issue in malformed_frontmatter
+    )
     records = []
     for path in sorted(guides_dir.glob("*.md")):
         record = audit_guide(
@@ -349,10 +362,13 @@ def audit_guides(
         "guides_scanned": len(records),
         "high_liability_guides": len(high_records),
         "high_liability_guides_with_gaps": len(gap_records),
+        "malformed_frontmatter_count": len(malformed_frontmatter),
         "gap_counts": dict(sorted(gap_counts.items())),
         "severity_counts": dict(sorted(severity_counts.items())),
         "liability_counts": dict(sorted(liability_counts.items())),
         "answer_card_guides": len(answer_cards_by_guide),
+        "frontmatter_errors": malformed_frontmatter,
+        "frontmatter_error_counts": dict(sorted(frontmatter_error_counts.items())),
     }
     return {
         "summary": summary,
@@ -373,6 +389,7 @@ def render_markdown(audit: dict[str, Any]) -> str:
         f"- Guides scanned: `{summary['guides_scanned']}`",
         f"- High-liability guides: `{summary['high_liability_guides']}`",
         f"- High-liability guides with gaps: `{summary['high_liability_guides_with_gaps']}`",
+        f"- Malformed frontmatter files: `{summary['malformed_frontmatter_count']}`",
         "",
         "## Gap Counts",
         "",
@@ -381,6 +398,24 @@ def render_markdown(audit: dict[str, Any]) -> str:
         lines.append(f"- `{gap}`: {count}")
     if not summary["gap_counts"]:
         lines.append("- `none`: 0")
+
+    malformed_frontmatter = summary["frontmatter_errors"]
+    if malformed_frontmatter:
+        lines.extend(
+            [
+                "",
+                "## Malformed Frontmatter",
+                "",
+                "| source_file | frontmatter_error |",
+                "| --- | --- |",
+            ]
+        )
+        for issue in malformed_frontmatter:
+            lines.append(
+                "| "
+                f"{_escape_table(issue['source_file'])} | "
+                f"{_escape_table(issue['frontmatter_error'])} |"
+            )
 
     lines.extend(
         [
