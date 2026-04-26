@@ -87,18 +87,46 @@ def load_records(path: Path, hotspot_slugs: set[str]) -> list[dict]:
         for line in handle:
             if not line.strip():
                 continue
-            record = json.loads(line)
-            if hotspot_slugs and record["slug"] not in hotspot_slugs:
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
                 continue
-            record["normalized_heading"] = normalize_heading(record["section_heading"])
-            record["keywords"] = sorted(extract_keywords(record["text"]))
-            record["unit_family"] = classify_unit_family(record.get("matches", []))
-            record["numbers"] = NUMBER_RE.findall(record["text"])
+            if not isinstance(record, dict):
+                continue
+
+            slug = record.get("slug")
+            guide_id = record.get("guide_id")
+            section_heading = record.get("section_heading")
+            text = record.get("text")
+            matches = record.get("matches", [])
+            if (
+                not isinstance(slug, str)
+                or not slug.strip()
+                or not isinstance(guide_id, str)
+                or not guide_id.strip()
+                or not isinstance(section_heading, str)
+                or not isinstance(text, str)
+                or not isinstance(matches, list)
+                or any(not isinstance(match, str) for match in matches)
+            ):
+                continue
+
+            slug = slug.strip()
+            guide_id = guide_id.strip()
+
+            if hotspot_slugs and slug not in hotspot_slugs:
+                continue
+            record["slug"] = slug
+            record["guide_id"] = guide_id
+            record["normalized_heading"] = normalize_heading(section_heading)
+            record["keywords"] = sorted(extract_keywords(text))
+            record["unit_family"] = classify_unit_family(matches)
+            record["numbers"] = NUMBER_RE.findall(text)
             if not record["numbers"]:
                 continue
             # Link/product rows produce lots of numeric noise without yielding
             # meaningful cross-guide contradictions.
-            if "http://" in record["text"] or "https://" in record["text"]:
+            if "http://" in text or "https://" in text:
                 continue
             records.append(record)
     return records

@@ -71,6 +71,47 @@ Use ordinary text.
         self.assertEqual(scan["summary"]["guides_scanned"], 0)
         self.assertEqual(scan["summary"]["guides_with_markers"], 0)
 
+    def test_render_markdown_sanitizes_table_cells_without_changing_counts(self):
+        scan = {
+            "summary": {
+                "generated_at": "2026-04-26T12:00:00",
+                "guides_scanned": 1,
+                "guides_with_markers": 1,
+                "marker_counts": {"html_comment": 1},
+                "severity_counts": {"warn": 1},
+                "guide_counts_by_marker": {"html_comment": 1},
+            },
+            "guides": [
+                {
+                    "source_file": "weird.md",
+                    "guide_id": "GD|BAD",
+                    "category": "cat\rbroken",
+                    "liability_level": "low\nrisk",
+                    "bridge": False,
+                    "marker_counts": {"html_comment": 1},
+                    "severity_counts": {"warn": 1},
+                    "hits": [
+                        {
+                            "type": "html_comment",
+                            "severity": "warn",
+                            "line": 7,
+                            "marker": "TODO | route\rbreak",
+                            "example": "ignored",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        markdown = render_markdown(scan)
+
+        self.assertEqual(scan["summary"]["marker_counts"]["html_comment"], 1)
+        self.assertIn("GD\\|BAD", markdown)
+        self.assertIn("cat broken", markdown)
+        self.assertIn("low risk", markdown)
+        self.assertIn("TODO \\| route break", markdown)
+        self.assertNotIn("\r", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

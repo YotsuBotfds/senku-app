@@ -1,5 +1,8 @@
 import importlib.util
+import json
+import tempfile
 import unittest
+from pathlib import Path
 
 
 def load_module():
@@ -12,6 +15,63 @@ def load_module():
 
 
 class FindInvariantConflictCandidateTests(unittest.TestCase):
+    def test_load_records_skips_malformed_invariant_rows(self):
+        module = load_module()
+        rows = [
+            "{not json",
+            json.dumps(["not", "an", "object"]),
+            json.dumps(
+                {
+                    "slug": "water-pressure-a",
+                    "guide_id": "GD-001",
+                    "section_heading": "System pressure",
+                    "text": 12,
+                    "matches": ["10 psi"],
+                }
+            ),
+            json.dumps(
+                {
+                    "slug": "",
+                    "guide_id": "GD-002",
+                    "section_heading": "System pressure",
+                    "text": "Use pipe gauge and pressure release valve at 20 psi.",
+                    "matches": ["20 psi"],
+                }
+            ),
+            json.dumps(
+                {
+                    "slug": "water-pressure-b",
+                    "guide_id": "GD-003",
+                    "section_heading": "System pressure",
+                    "text": "Use pipe gauge and pressure release valve at 30 psi.",
+                    "matches": [30],
+                }
+            ),
+            json.dumps(
+                {
+                    "slug": " water-pressure-good ",
+                    "guide_id": " GD-004 ",
+                    "section_heading": "System pressure",
+                    "text": "Use pipe gauge and pressure release valve at 40 psi.",
+                    "matches": ["40 psi"],
+                }
+            ),
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "guide_invariants.jsonl"
+            path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+            records = module.load_records(path, {"water-pressure-good"})
+
+        self.assertEqual(len(records), 1)
+        record = records[0]
+        self.assertEqual(record["slug"], "water-pressure-good")
+        self.assertEqual(record["guide_id"], "GD-004")
+        self.assertEqual(record["normalized_heading"], "system pressure")
+        self.assertEqual(record["unit_family"], "pressure")
+        self.assertEqual(record["numbers"], ["40"])
+
     def test_build_candidates_ignores_same_guide_pairs(self):
         module = load_module()
         records = [

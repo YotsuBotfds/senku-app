@@ -88,6 +88,26 @@ class SummarizeLatencyTests(unittest.TestCase):
         self.assertEqual(12.0, rows[0]["retrieval"])
         self.assertEqual(120.0, rows[1]["decode"])
 
+    def test_iter_latency_rows_skips_malformed_jsonl_rows(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "answer_runs.jsonl"
+            path.write_text(
+                "\n".join(
+                    [
+                        json.dumps({"latency_breakdown": {"retrieval_ms": 10, "total_ms": 50}}),
+                        '{"latency_breakdown": ',
+                        json.dumps({"latency_breakdown": {"retrieval_ms": 20, "total_ms": 80}}),
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            rows = list(summarize_latency.iter_latency_rows([path]))
+
+        self.assertEqual(2, len(rows))
+        self.assertEqual([10.0, 20.0], [row["retrieval"] for row in rows])
+        self.assertEqual([50.0, 80.0], [row["total"] for row in rows])
+
     def test_render_summary_table_uses_expected_headers(self):
         summary = [
             {"stage": "retrieval", "count": 2, "p50_ms": 15.0, "p95_ms": 19.5, "max_ms": 20.0}

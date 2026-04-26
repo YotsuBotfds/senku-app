@@ -582,6 +582,9 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
       node.textContent = text || '';
       return node;
     }};
+    const isRecord = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
+    const asArray = (value) => Array.isArray(value) ? value : [];
+    const displayText = (value) => value == null ? '' : String(value);
     const clear = (node) => {{ while (node.firstChild) node.removeChild(node.firstChild); }};
     const empty = (node, text) => {{
       clear(node);
@@ -592,44 +595,51 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
     }};
     const appendPointer = (list, item) => {{
       const li = document.createElement('li');
-      li.appendChild(code(item.path || item.hash || ''));
-      const text = item.title || item.subject || item.kind || '';
+      if (!isRecord(item)) {{
+        li.textContent = displayText(item);
+        list.appendChild(li);
+        return;
+      }}
+      li.appendChild(code(displayText(item.path || item.hash || '')));
+      const text = displayText(item.title || item.subject || item.kind || '');
       li.appendChild(document.createTextNode(text ? ` ${{text}}` : ''));
-      const meta = item.mtime || item.time || '';
+      const meta = displayText(item.mtime || item.time || '');
       if (meta) li.appendChild(document.createTextNode(` (${{meta}})`));
       list.appendChild(li);
     }};
     const fillList = (id, values, emptyText) => {{
       const list = el(id);
       clear(list);
-      if (!values || !values.length) {{
+      const items = asArray(values);
+      if (!items.length) {{
         empty(list, emptyText);
         return;
       }}
-      values.forEach((item) => appendPointer(list, item));
+      items.forEach((item) => appendPointer(list, item));
     }};
     const fillTextList = (id, values, emptyText) => {{
       const list = el(id);
       clear(list);
-      if (!values || !values.length) {{
+      const items = asArray(values);
+      if (!items.length) {{
         empty(list, emptyText);
         return;
       }}
-      values.forEach((text) => {{
+      items.forEach((text) => {{
         const item = document.createElement('li');
-        item.textContent = text;
+        item.textContent = displayText(text);
         list.appendChild(item);
       }});
     }};
     const formatDirtySummary = (dirty) => {{
-      if (!dirty || dirty.error) {{
+      if (!isRecord(dirty) || dirty.error) {{
         return "dirty unknown";
       }}
       if (dirty.clean) {{
         return "clean";
       }}
       const changed = Number(dirty.changed || 0);
-      const counts = dirty.status_counts || {{}};
+      const counts = isRecord(dirty.status_counts) ? dirty.status_counts : {{}};
       const ordered = [
         "modified",
         "added",
@@ -655,17 +665,23 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
     const fillWorkerLanes = (values) => {{
       const list = el('worker-lanes');
       clear(list);
-      if (!values || !values.length) {{
+      const items = asArray(values);
+      if (!items.length) {{
         empty(list, 'No git worktrees found.');
         return;
       }}
-      values.forEach((item) => {{
+      items.forEach((item) => {{
         const li = document.createElement('li');
-        const lane = item.lane || '(unleased)';
-        const branch = item.branch_short || '(detached)';
+        if (!isRecord(item)) {{
+          li.textContent = displayText(item);
+          list.appendChild(li);
+          return;
+        }}
+        const lane = displayText(item.lane || '(unleased)');
+        const branch = displayText(item.branch_short || '(detached)');
         const dirty = formatDirtySummary(item.dirty);
         li.appendChild(code(lane));
-        li.appendChild(document.createTextNode(` ${{branch}} - ${{dirty}} - ${{item.worktree || ''}}`));
+        li.appendChild(document.createTextNode(` ${{branch}} - ${{dirty}} - ${{displayText(item.worktree)}}`));
         list.appendChild(li);
       }});
     }};

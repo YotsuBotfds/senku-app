@@ -94,7 +94,11 @@ def iter_latency_rows(paths: Iterable[Path]) -> Iterable[dict[str, float]]:
                 line = raw_line.strip()
                 if not line:
                     continue
-                breakdown = _extract_latency_breakdown(json.loads(line))
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                breakdown = _extract_latency_breakdown(record)
                 if breakdown is None:
                     continue
                 yield {

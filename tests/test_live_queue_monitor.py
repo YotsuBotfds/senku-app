@@ -348,6 +348,24 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertIn("return `${changedLabel} (${summaryParts.join(\", \")})`;", rendered)
         self.assertIn("const dirty = formatDirtySummary(item.dirty);", rendered)
 
+    def test_render_html_page_guards_malformed_worker_lane_payloads(self):
+        module = load_module()
+
+        rendered = module.render_html_page(refresh_seconds=20)
+
+        self.assertIn(
+            "const isRecord = (value) => !!value && typeof value === 'object' && !Array.isArray(value);",
+            rendered,
+        )
+        self.assertIn("const asArray = (value) => Array.isArray(value) ? value : [];", rendered)
+        self.assertIn("if (!isRecord(dirty) || dirty.error) {", rendered)
+        self.assertIn(
+            "const counts = isRecord(dirty.status_counts) ? dirty.status_counts : {};",
+            rendered,
+        )
+        self.assertIn("const items = asArray(values);", rendered)
+        self.assertIn("if (!isRecord(item)) {", rendered)
+
     def test_status_endpoint_returns_json_monitor_state(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as tmpdir:

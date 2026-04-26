@@ -197,7 +197,8 @@ def scan_guides(guides_dir: Path) -> dict[str, Any]:
 
 
 def _escape_table(value: Any) -> str:
-    return str(value).replace("|", "\\|").replace("\n", " ")
+    single_line = " ".join(str(value).split())
+    return single_line.replace("|", "\\|")
 
 
 def render_markdown(scan: dict[str, Any]) -> str:

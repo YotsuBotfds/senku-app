@@ -363,7 +363,11 @@ def render_markdown(report: dict[str, Any], *, limit: int = 200) -> str:
 
 
 def _escape_md(value: object) -> str:
-    return str(value).replace("\n", " ").replace("|", "\\|")
+    text = str(value).replace("\n", " ").replace("\r", " ").replace("|", "\\|")
+    return "".join(
+        char if char == "\t" or ord(char) >= 32 else f"\\x{ord(char):02x}"
+        for char in text
+    )
 
 
 def output_paths(output_dir: Path, stamp: str) -> tuple[Path, Path]:

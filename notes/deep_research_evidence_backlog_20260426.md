@@ -555,6 +555,13 @@ Action:
   counts now skip malformed/non-object JSONL rows, worktree delta summaries skip
   malformed porcelain status lines without paths, and worker-lane status tables
   normalize non-printing ASCII controls before pipe escaping.
+- Hardened queue/scan/watchlist helpers: bench watchlists skip malformed result
+  rows and sanitize Markdown, mojibake and corpus-marker Markdown reports
+  escape control/table-breaking values, guide edit impact normalizes awkward
+  paths and fails closed on invalid path checks, latency summaries skip
+  malformed JSONL rows, live queue monitor rendering tolerates malformed
+  worker/status payloads, and invariant-conflict loading ignores malformed
+  invariant rows without changing ranking semantics.
 
 Validation:
 
@@ -937,6 +944,11 @@ Validation:
   `tests.test_summarize_worktree_delta`, and `tests.test_worker_lane_status`
   cover malformed invariant rows, malformed porcelain status rows, and
   control-character Markdown sanitation.
+- `tests.test_report_bench_watchlist`, `tests.test_scan_mojibake`,
+  `tests.test_guide_edit_impact`, `tests.test_scan_corpus_markers`,
+  `tests.test_summarize_latency`, `tests.test_live_queue_monitor`, and
+  `tests.test_find_invariant_conflict_candidates` cover the
+  queue/scan/watchlist hardening batch.
 
 Deferred unless evidenced:
 

@@ -95,6 +95,25 @@ class GuideEditImpactTests(unittest.TestCase):
             "& .\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_guide_catalog -v",
         )
 
+    def test_focused_test_for_script_normalizes_repeated_relative_prefixes(self):
+        module = load_module()
+
+        self.assertEqual(
+            module.focused_test_for_script(".\\.\\scripts\\\\scan_corpus_markers.py"),
+            "& .\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_scan_corpus_markers -v",
+        )
+
+    def test_nul_path_is_sanitized_and_does_not_crash_existence_check(self):
+        module = load_module()
+
+        change = module.classify_path("guides/bad\x00name.md")
+        rendered = module.render_markdown(module.build_plan(["guides/bad\x00name.md"]))
+
+        self.assertEqual(change.path, "guides/bad<NUL>name.md")
+        self.assertFalse(change.exists)
+        self.assertNotIn("\x00", rendered)
+        self.assertIn("guides/bad<NUL>name.md", rendered)
+
     def test_json_cli_output_is_parseable(self):
         module = load_module()
 

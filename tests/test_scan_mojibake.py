@@ -67,6 +67,32 @@ class MojibakeScanTests(unittest.TestCase):
         self.assertIn("- Allowed findings: `1`", markdown)
         self.assertIn("- Gate findings: `1`", markdown)
 
+    def test_render_markdown_sanitizes_control_characters(self):
+        report = {
+            "generated_at": "2026-04-26T00:00:00+00:00",
+            "files_scanned": 1,
+            "findings_count": 1,
+            "allowed_findings_count": 0,
+            "gate_findings_count": 1,
+            "counts_by_kind": {"replacement_character": 1},
+            "top_files": [{"path": "notes/bad\x07name.md", "findings": 1}],
+            "findings": [
+                {
+                    "path": "notes/bad\x07name.md",
+                    "line": 3,
+                    "kind": "replacement_character",
+                    "snippet": "Bad\x1b[31m \ufffd | still table-safe",
+                }
+            ],
+        }
+
+        markdown = scan_mojibake.render_markdown(report)
+
+        self.assertIn("notes/bad\\x07name.md", markdown)
+        self.assertIn("Bad\\x1b[31m \ufffd \\| still table-safe", markdown)
+        self.assertNotIn("\x07", markdown)
+        self.assertNotIn("\x1b", markdown)
+
     def test_cli_writes_json_and_markdown_reports(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

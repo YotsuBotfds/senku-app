@@ -60,13 +60,19 @@ class Change:
 def normalize_path(path: str | Path) -> str:
     value = str(path).strip().strip('"')
     value = value.replace("\\", "/")
-    if value.startswith("./"):
+    value = value.replace("\x00", "<NUL>")
+    while value.startswith("./"):
         value = value[2:]
+    while "//" in value:
+        value = value.replace("//", "/")
     return value
 
 
 def path_exists(path: str) -> bool:
-    return (REPO_ROOT / path).exists()
+    try:
+        return (REPO_ROOT / path).exists()
+    except (OSError, ValueError):
+        return False
 
 
 def is_protected_benign_untracked(path: str) -> bool:
