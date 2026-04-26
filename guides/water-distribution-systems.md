@@ -73,16 +73,16 @@ Gravity-fed systems represent the most reliable post-collapse water distribution
 
 ### Elevation and Head Pressure
 
-Water pressure is created by the weight of water above any given point. This is expressed as "head"â€”the vertical distance water must fall. The relationship between elevation and pressure is direct and predictable:
+Water pressure is created by the weight of water above any given point. This is expressed as "head" - the vertical distance water must fall. The relationship between elevation and pressure is direct and predictable:
 
 :::info-box
 #### Pressure-Head Relationship
 
-**P = Ïgh**
+**P = rho*g*h**
 
 -   **P** = Pressure (Pascals or PSI)
--   **Ï** = Water density (1000 kg/mÂ³ or 62.4 lb/ftÂ³)
--   **g** = Gravitational acceleration (9.81 m/sÂ² or 32.2 ft/sÂ²)
+-   **rho** = Water density (1000 kg/m^3 or 62.4 lb/ft^3)
+-   **g** = Gravitational acceleration (9.81 m/s^2 or 32.2 ft/s^2)
 -   **h** = Vertical height difference (meters or feet)
 
 **Practical conversion:** 1 meter of head = 0.0981 bar = 1.42 PSI
@@ -101,14 +101,14 @@ The volume of water flowing through a system depends on pipe diameter, pressure,
 :::info-box
 #### Darcy-Weisbach Equation (Pressure Loss in Pipes)
 
-**hf = f Ã— (L/D) Ã— (vÂ²/2g)**
+**hf = f x (L/D) x (v^2/2g)**
 
 -   **hf** = Head loss (meters)
 -   **f** = Friction factor (0.02-0.04 for typical pipes)
 -   **L** = Pipe length (meters)
 -   **D** = Pipe diameter (meters)
 -   **v** = Flow velocity (m/s)
--   **g** = 9.81 m/sÂ²
+-   **g** = 9.81 m/s^2
 
 **Simplified rule of thumb:** Each 100 meters of 2-inch (50mm) pipe loses ~2-3 meters of head for typical flow rates. Larger pipes lose less pressure.
 :::
@@ -151,13 +151,13 @@ Storage volume must account for daily demand variations and emergency reserves. 
 :::info-box
 #### Daily Water Requirement Calculation
 
-**Daily requirement = Population Ã— Daily per capita use Ã— Safety factor**
+**Daily requirement = Population x Daily per capita use x Safety factor**
 
 -   **Population:** Number of community members served
 -   **Daily per capita use:** 20-40 liters/person/day (subsistence living); 50-100 liters/person/day (comfortable); 150+ liters/person/day (developed world)
 -   **Safety factor:** 1.5-2.0 (accounts for peak usage and emergencies)
 
-**Example:** 500-person community at 50 liters/person/day with 1.5x factor = 500 Ã— 50 Ã— 1.5 = 37,500 liters (37.5 cubic meters)
+**Example:** 500-person community at 50 liters/person/day with 1.5x factor = 500 x 50 x 1.5 = 37,500 liters (37.5 cubic meters)
 
 **Tower sizing rule:** 1.5x daily requirement for typical systems; 2.0x for areas with highly variable demand or limited source reliability
 :::
@@ -171,13 +171,13 @@ The height of the water surface above the distribution network determines system
 :::info-box
 #### Required Tower Height
 
-**h = P / (Ïg)**
+**h = P / (rho*g)**
 
-Or simply: **height (meters) â‰ˆ desired pressure (PSI) / 1.4**
+Or simply: **height (meters) approximately desired pressure (PSI) / 1.4**
 
--   For 30 PSI (typical requirement): height â‰ˆ 21 meters (70 feet)
--   For 20 PSI (minimal): height â‰ˆ 14 meters (46 feet)
--   For 40 PSI (more robust): height â‰ˆ 28 meters (92 feet)
+-   For 30 PSI (typical requirement): height approximately 21 meters (70 feet)
+-   For 20 PSI (minimal): height approximately 14 meters (46 feet)
+-   For 40 PSI (more robust): height approximately 28 meters (92 feet)
 :::
 
 In practice, towers 15-25 meters (50-80 feet) tall suit most post-collapse communities. The tower supports must reach from ground level to the tank base, then the tank itself adds another 3-5 meters.
@@ -187,7 +187,7 @@ In practice, towers 15-25 meters (50-80 feet) tall suit most post-collapse commu
 Post-collapse communities will typically construct towers from:
 
 -   **Steel framework:** Salvaged I-beams or angle iron, bolted together
--   **Wooden lattice:** Hardwood timber (oak, cedar) in triangular bracingâ€”requires professional engineering
+-   **Wooden lattice:** Hardwood timber (oak, cedar) in triangular bracing - requires professional engineering
 -   **Stone/brick columns:** Four reinforced concrete or stone legs with diagonal bracing
 -   **Steel cable tension:** Cables running from tank support to ground anchors (economical but requires precise engineering)
 
@@ -202,7 +202,7 @@ Foundation depth rule: Dig to below frost line (1-2 meters in most climates) or 
 
 ### Tank Material Selection
 
-<table class="comparison-table"><thead><tr><th>Material</th><th>Advantages</th><th>Disadvantages</th><th>Lifespan</th><th>Post-Collapse Viability</th></tr></thead><tbody><tr><td>Concrete (cast or reinforced)</td><td>Durable, strong, monolithic, long-lasting</td><td>Requires skilled concrete work, cracking prone, difficult to modify</td><td>40-60 years</td><td>Highâ€”if access to cement and rebar</td></tr><tr><td>Steel (riveted or welded)</td><td>Salvageable from existing structures, repairable, tolerates impact</td><td>Requires welding/riveting skills, rust prevention critical, heavy</td><td>20-40 years (with maintenance)</td><td>Highâ€”salvaged materials widely available</td></tr><tr><td>Wooden staves (traditional)</td><td>Fully renewable, repairable, low-tech construction</td><td>Requires tight cooperage skills, wood rot prevention critical, regular maintenance</td><td>10-25 years</td><td>Moderateâ€”requires skilled woodworkers</td></tr><tr><td>Masonry/brick (rendered)</td><td>Uses local materials, monolithic structure</td><td>Difficult to make watertight, heavy, slow construction</td><td>30-50 years</td><td>Moderateâ€”requires skilled masons</td></tr><tr><td>Salvaged plastic (large containers)</td><td>Lightweight, watertight, readily available</td><td>UV degradation, capacity limits (rarely &gt;10,000L individual tanks), multiple tanks needed</td><td>5-15 years</td><td>Lowâ€”temporary solution only</td></tr></tbody></table>
+<table class="comparison-table"><thead><tr><th>Material</th><th>Advantages</th><th>Disadvantages</th><th>Lifespan</th><th>Post-Collapse Viability</th></tr></thead><tbody><tr><td>Concrete (cast or reinforced)</td><td>Durable, strong, monolithic, long-lasting</td><td>Requires skilled concrete work, cracking prone, difficult to modify</td><td>40-60 years</td><td>High - if access to cement and rebar</td></tr><tr><td>Steel (riveted or welded)</td><td>Salvageable from existing structures, repairable, tolerates impact</td><td>Requires welding/riveting skills, rust prevention critical, heavy</td><td>20-40 years (with maintenance)</td><td>High - salvaged materials widely available</td></tr><tr><td>Wooden staves (traditional)</td><td>Fully renewable, repairable, low-tech construction</td><td>Requires tight cooperage skills, wood rot prevention critical, regular maintenance</td><td>10-25 years</td><td>Moderate - requires skilled woodworkers</td></tr><tr><td>Masonry/brick (rendered)</td><td>Uses local materials, monolithic structure</td><td>Difficult to make watertight, heavy, slow construction</td><td>30-50 years</td><td>Moderate - requires skilled masons</td></tr><tr><td>Salvaged plastic (large containers)</td><td>Lightweight, watertight, readily available</td><td>UV degradation, capacity limits (rarely &gt;10,000L individual tanks), multiple tanks needed</td><td>5-15 years</td><td>Low - temporary solution only</td></tr></tbody></table>
 
 For long-term community systems, steel or reinforced concrete are the best choices. Both are repairable and can be maintained indefinitely with proper care.
 
@@ -238,7 +238,7 @@ Bamboo is an excellent post-collapse material: renewable, fast-growing, easy to 
 
 **Preparation:**
 
-1.  Select 3-5 year old bamboo culms (check by tappingâ€”mature bamboo sounds hollow and deep)
+1.  Select 3-5 year old bamboo culms (check by tapping - mature bamboo sounds hollow and deep)
 2.  Cut between nodes, leaving 2-3cm of solid bamboo above the bottom joint (this creates a floor)
 3.  Carefully punch or drill out the internal membranes using a long wooden rod or drill
 4.  Season in shade for 4-6 weeks to prevent checking and cracking
@@ -333,7 +333,7 @@ Variable demand creates pressure fluctuations. A pressure tank (pressurized air 
 :::info-box
 #### Hydropneumatic Tank Sizing
 
-**V = (Q Ã— t Ã— 2) / (P1 - P2)**
+**V = (Q x t x 2) / (P1 - P2)**
 
 -   **V** = Tank volume (liters)
 -   **Q** = Flow rate (liters/minute)
@@ -373,7 +373,7 @@ A small concrete or stone structure protects the tap from animals and improves u
 
 **Materials:** Stone, brick, or concrete block walls with simple roof
 
-**Dimensions:** 1.5m Ã— 1.5m footprint, 2m height
+**Dimensions:** 1.5m x 1.5m footprint, 2m height
 
 **Components:**
 
@@ -408,7 +408,7 @@ Every water point requires maintenance valve access:
 
 Public taps are frequent contamination sources. Minimize risk:
 
--   Keep the tap outlet clear of the basinâ€”don't allow containers to submerge the outlet
+-   Keep the tap outlet clear of the basin - don't allow containers to submerge the outlet
 -   Keep surfaces clean; install a brush and scrub brush at each point for daily cleaning
 -   Maintain drainage systems to prevent standing water near the tap
 -   Train community members in correct collection: don't let filled containers touch the ground before transport
@@ -452,10 +452,10 @@ Leaks waste water and indicate system failures. Detection methods:
 
 **Leaking joints:**
 
-1.  If a threaded connection is weeping: attempt tightening with a wrench (quarter-turn onlyâ€”too much risks cracking)
+1.  If a threaded connection is weeping: attempt tightening with a wrench (quarter-turn only - too much risks cracking)
 2.  If tightening fails, drain the section and apply PTFE tape to the male thread, then re-thread and tighten
 3.  For compression fittings, try tightening the nut. If that fails, drain, remove fitting, reinsert ferrule (small ring inside), and retighten
-4.  For soldered or welded joints: external patching is your only option (wrap and sealant)â€”proper repair requires brazier/welder
+4.  For soldered or welded joints: external patching is your only option (wrap and sealant) - proper repair requires brazier/welder
 
 **Large ruptures or breaks:**
 
@@ -510,7 +510,7 @@ If your system includes intake filters (essential to prevent sediment clogging):
 
 ## 7\. Greywater Separation & Reuse Systems
 
-Greywaterâ€”lightly used water from washing, bathing, and cleaningâ€”represents 50-80% of household wastewater. Separating and reusing greywater dramatically reduces system load and extends available freshwater for drinking and cooking. This is essential in water-scarce communities.
+Greywater - lightly used water from washing, bathing, and cleaning - represents 50-80% of household wastewater. Separating and reusing greywater dramatically reduces system load and extends available freshwater for drinking and cooking. This is essential in water-scarce communities.
 
 ### Greywater Sources and Characteristics
 
@@ -570,7 +570,7 @@ Greywater must be applied directly to soil, not stored for later use (disease ri
 
 **Surface stream/swale:** Shallow channel directing water across gardens and landscape. Water infiltrates as it flows. Lower cost, visible feedback, but more evaporation.
 
-**Constructed wetland:** For larger communities, a planted wetland basin acts as final treatment and polishing. Water-loving plants (reeds, cattails) naturally treat greywater while providing wildlife habitat. Requires >1mÂ² per person daily flow.
+**Constructed wetland:** For larger communities, a planted wetland basin acts as final treatment and polishing. Water-loving plants (reeds, cattails) naturally treat greywater while providing wildlife habitat. Requires >1m^2 per person daily flow.
 
 ### Health and Safety Considerations
 
@@ -694,12 +694,12 @@ If a pipeline rupture released contaminated water into the pipe interior, more a
 :::affiliate
 **If you're preparing in advance,** quality piping and monitoring tools accelerate system construction:
 
-- [SharkBite 1/2" x 50' Red PEX Tubing](https://www.amazon.com/dp/B00A8HUV2C?tag=offlinecompen-20) â€” Flexible potable water pipe suitable for both main lines and branch distribution, easy to fit without soldering
-- [60-Piece Brass Pipe Fitting Assortment](https://www.amazon.com/dp/B071XJW471?tag=offlinecompen-20) â€” Common sizes (1/8" to 1/2") for adapting and connecting pipe sections in gravity-fed systems
-- [MEASUREMAN Water Pressure & Flow Test Gauge](https://www.amazon.com/dp/B097696NX4?tag=offlinecompen-20) â€” Dual measurement (0-160 PSI, 0-13 GPM) with brass valve for diagnosing flow rates and pressure drops across sections
-- [Amazon Basics 4-Piece Adjustable Wrench Set](https://www.amazon.com/dp/B08L6V3VCW?tag=offlinecompen-20) â€” Essential for tightening fittings and valve repairs during system installation and maintenance
+- [SharkBite 1/2" x 50' Red PEX Tubing](https://www.amazon.com/dp/B00A8HUV2C?tag=offlinecompen-20) - Flexible potable water pipe suitable for both main lines and branch distribution, easy to fit without soldering
+- [60-Piece Brass Pipe Fitting Assortment](https://www.amazon.com/dp/B071XJW471?tag=offlinecompen-20) - Common sizes (1/8" to 1/2") for adapting and connecting pipe sections in gravity-fed systems
+- [MEASUREMAN Water Pressure & Flow Test Gauge](https://www.amazon.com/dp/B097696NX4?tag=offlinecompen-20) - Dual measurement (0-160 PSI, 0-13 GPM) with brass valve for diagnosing flow rates and pressure drops across sections
+- [Amazon Basics 4-Piece Adjustable Wrench Set](https://www.amazon.com/dp/B08L6V3VCW?tag=offlinecompen-20) - Essential for tightening fittings and valve repairs during system installation and maintenance
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 <section id="section-10">
