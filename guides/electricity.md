@@ -56,7 +56,7 @@ If the prompt is about an outage, a live wire, a battery, or "what do I check fi
 
 **"What do I check first?"** -> Check for danger first: heat, smell, smoke, sparks, exposed conductors, swollen batteries, and water. If any hazard is present, stop and shut off power only if safe. If there is no immediate hazard, check source power, breaker/fuse, polarity, and the load disconnect in that order.
 
-**"How do I check if something is live?"** -> Use a non-contact voltage tester first â€” it detects voltage without touching the conductor. If you only have a multimeter, set it to AC or DC voltage and probe across the terminals or from terminal to ground. Never assume a circuit is dead without testing. See [Electrical safety rules](#wiring).
+**"How do I check if something is live?"** -> Use a non-contact voltage tester first — it detects voltage without touching the conductor. If you only have a multimeter, set it to AC or DC voltage and probe across the terminals or from terminal to ground. Never assume a circuit is dead without testing. See [Electrical safety rules](#wiring).
 
 <section id="fundamentals"> 
 
