@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -108,7 +109,9 @@ def summarize_artifact(path, size, max_json_bytes):
             return {"skipped": "markdown_too_large"}
         return summarize_markdown_file(path)
     if suffix == ".jsonl":
-        return {"skipped": "jsonl_not_read"}
+        if size > max_json_bytes:
+            return {"skipped": "jsonl_too_large"}
+        return summarize_jsonl_file(path)
     if suffix in LOG_SUFFIXES:
         return {"skipped": "log_not_read"}
     if suffix in BINARY_SUFFIXES:
@@ -143,6 +146,43 @@ def summarize_json_file(path):
     if isinstance(data, list):
         return {"json_type": "array", "items_count": len(data)}
     return {"json_type": type(data).__name__}
+
+
+def summarize_jsonl_file(path):
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        return {"skipped": "jsonl_unreadable", "error": exc.__class__.__name__}
+
+    summary = {
+        "line_count": len(lines),
+        "object_count": 0,
+        "malformed_lines": 0,
+    }
+    record_type_counts = Counter()
+    report_type_counts = Counter()
+
+    for line in lines:
+        if not line.strip():
+            summary["malformed_lines"] += 1
+            continue
+        try:
+            data = json.loads(line)
+        except json.JSONDecodeError:
+            summary["malformed_lines"] += 1
+            continue
+        if not isinstance(data, dict):
+            continue
+
+        summary["object_count"] += 1
+        _count_jsonl_type_value(record_type_counts, data.get("record_type"))
+        _count_jsonl_type_value(report_type_counts, data.get("report_type"))
+
+    if record_type_counts:
+        summary["record_type_counts"] = dict(record_type_counts.most_common(8))
+    if report_type_counts:
+        summary["report_type_counts"] = dict(report_type_counts.most_common(8))
+    return summary
 
 
 def summarize_markdown_file(path):
@@ -188,6 +228,12 @@ def _select_numeric_keys(data):
         if isinstance(value, (int, float)):
             counts[key] = value
     return counts
+
+
+def _count_jsonl_type_value(counter, value):
+    if not isinstance(value, str) or not value or len(value) > 80:
+        return
+    counter[value] += 1
 
 
 def write_jsonl(records, output_path):
@@ -236,9 +282,17 @@ def _format_summary(summary):
         parts.extend(f"{key}={value}" for key, value in sorted(counts.items())[:8])
     if "title" in summary:
         parts.append(f"title={summary['title']}")
-    for key in ("line_count", "heading_count"):
+    for key in ("line_count", "object_count", "malformed_lines", "heading_count"):
         if key in summary:
             parts.append(f"{key}={summary[key]}")
+    for count_key in ("record_type_counts", "report_type_counts"):
+        counts = summary.get(count_key)
+        if isinstance(counts, dict):
+            formatted_counts = ", ".join(
+                f"{key}:{value}" for key, value in sorted(counts.items())[:8]
+            )
+            if formatted_counts:
+                parts.append(f"{count_key}={formatted_counts}")
     if "skipped" in summary:
         parts.append(f"skipped={summary['skipped']}")
     if not parts and "json_type" in summary:

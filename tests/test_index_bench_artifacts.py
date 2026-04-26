@@ -70,15 +70,53 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(records["run_stdout.log"]["summary"]["skipped"], "log_not_read")
         self.assertEqual(records["screen.png"]["summary"]["skipped"], "binary_not_read")
 
-    def test_iter_bench_artifacts_marks_jsonl_as_not_read(self):
+    def test_iter_bench_artifacts_summarizes_small_jsonl(self):
         root = self.make_tmpdir()
-        (root / "records.jsonl").write_text(json.dumps({"id": "r1"}) + "\n", encoding="utf-8")
+        (root / "records.jsonl").write_text(
+            "\n".join(
+                [
+                    json.dumps(
+                        {
+                            "record_type": "result",
+                            "report_type": "guide_validation",
+                            "prompt": "sensitive prompt text",
+                            "body": "large raw content",
+                        }
+                    ),
+                    json.dumps({"record_type": "result", "report_type": "guide_validation"}),
+                    json.dumps({"record_type": "diagnostic", "report_type": "routing"}),
+                    json.dumps(["not", "an", "object"]),
+                    "{not-json",
+                    "",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
 
         records = list(iter_bench_artifacts(root))
 
         self.assertEqual(len(records), 1)
+        summary = records[0]["summary"]
         self.assertEqual(records[0]["kind"], "jsonl")
-        self.assertEqual(records[0]["summary"], {"skipped": "jsonl_not_read"})
+        self.assertEqual(summary["line_count"], 6)
+        self.assertEqual(summary["object_count"], 3)
+        self.assertEqual(summary["malformed_lines"], 2)
+        self.assertEqual(summary["record_type_counts"], {"result": 2, "diagnostic": 1})
+        self.assertEqual(summary["report_type_counts"], {"guide_validation": 2, "routing": 1})
+        self.assertNotIn("prompt", summary)
+        self.assertNotIn("body", summary)
+        self.assertNotIn("sensitive prompt text", json.dumps(summary))
+
+    def test_iter_bench_artifacts_skips_large_jsonl(self):
+        root = self.make_tmpdir()
+        (root / "large.jsonl").write_text(json.dumps({"record_type": "result"}) + "\n", encoding="utf-8")
+
+        records = list(iter_bench_artifacts(root, max_json_bytes=4))
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["kind"], "jsonl")
+        self.assertEqual(records[0]["summary"], {"skipped": "jsonl_too_large"})
 
     def test_iter_bench_artifacts_summarizes_markdown_report(self):
         root = self.make_tmpdir()
@@ -125,6 +163,23 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         markdown = output_md.read_text(encoding="utf-8")
         self.assertIn("wave_report.md", markdown)
         self.assertIn("title=Wave Report; line_count=6; heading_count=2", markdown)
+
+    def test_jsonl_summary_formatting_exposes_counts(self):
+        summary = {
+            "line_count": 4,
+            "object_count": 3,
+            "malformed_lines": 1,
+            "record_type_counts": {"diagnostic": 1, "result": 2},
+            "report_type_counts": {"routing": 1},
+        }
+
+        formatted = _format_summary(summary)
+
+        self.assertIn("line_count=4", formatted)
+        self.assertIn("object_count=3", formatted)
+        self.assertIn("malformed_lines=1", formatted)
+        self.assertIn("record_type_counts=diagnostic:1, result:2", formatted)
+        self.assertIn("report_type_counts=routing:1", formatted)
 
     def test_main_writes_jsonl_and_markdown(self):
         root = self.make_tmpdir()

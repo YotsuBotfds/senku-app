@@ -474,6 +474,9 @@ Action:
   public-repository attestation subject path.
 - Dependency security artifact guard extended: workflow tests now also pin
   `if-no-files-found: error` and 14-day retention for the pip-audit report.
+- Bench artifact indexing now summarizes small JSONL files under the existing
+  size cap with line/object/malformed counts and bounded type counts, without
+  retaining raw prompt/body content.
 
 Validation:
 
@@ -486,6 +489,8 @@ Validation:
   attestation stay tied to `steps.bench_bundle.outputs.bundle_zip`.
 - The dependency-security workflow upload remains a small JSON report with
   explicit failure-on-missing and bounded retention.
+- `tests.test_index_bench_artifacts` covers the JSONL summary path, large-JSONL
+  skip behavior, and Markdown formatting for the exposed counts.
 
 Deferred unless evidenced:
 
