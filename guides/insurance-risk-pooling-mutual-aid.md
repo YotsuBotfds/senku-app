@@ -27,11 +27,11 @@ liability_level: low
 
 ## Overview
 
-Insuranceâ€”pooling risk across a community to share the cost of unexpected lossesâ€”is among humanity's oldest and most effective strategies for stability. When one family's barn burns or a farmer's crop fails, the entire community shares the loss rather than the individual bearing catastrophic debt. This guide covers the mathematical and organizational foundations of cooperative insurance: how to calculate fair contributions, manage a shared fund, and govern decision-making to prevent fraud and bias.
+Insurance—pooling risk across a community to share the cost of unexpected losses—is among humanity's oldest and most effective strategies for stability. When one family's barn burns or a farmer's crop fails, the entire community shares the loss rather than the individual bearing catastrophic debt. This guide covers the mathematical and organizational foundations of cooperative insurance: how to calculate fair contributions, manage a shared fund, and govern decision-making to prevent fraud and bias.
 
 Unlike commercial insurance (which profits an external company), mutual aid funds are community-owned. Contributions return to members as needed. Well-managed mutual aid systems strengthen communities, reduce inequality, and help individuals and families recover from setbacks that would otherwise force them into debt, asset liquidation, or displacement.
 
-This guide addresses cooperative insurance for livestock, crops, catastrophic health events, death/funeral expenses, and property damageâ€”the risks most relevant to resilient communities. It also covers historical models (friendly societies, burial clubs, rotating savings groups) that maintained stability for centuries without external oversight.
+This guide addresses cooperative insurance for livestock, crops, catastrophic health events, death/funeral expenses, and property damage—the risks most relevant to resilient communities. It also covers historical models (friendly societies, burial clubs, rotating savings groups) that maintained stability for centuries without external oversight.
 
 Routing note: use this guide when the main task is designing shared-risk pooling, contribution rules, claim approval, reserves, or reinsurance. If the question is broader community coordination, volunteer structure, tool libraries, skill exchange, or neighborhood mutual aid operations, hand off to [Mutual Aid Networks and Resource Pooling](./mutual-aid-networks.html).
 
@@ -44,9 +44,9 @@ Routing note: use this guide when the main task is designing shared-risk pooling
 
 **Risk:** The probability that an undesirable event will occur and cause loss. Risk is quantified as:
 
-Risk = Probability of Event Ã— Expected Loss (in currency/goods/value)
+Risk = Probability of Event × Expected Loss (in currency/goods/value)
 
-Example: A farmer owns 10 goats. Historical data shows 1 goat dies of disease per year on average (10% mortality). Each goat is worth 500 tokens. Risk = 0.10 Ã— 500 = 50 tokens/year on average.
+Example: A farmer owns 10 goats. Historical data shows 1 goat dies of disease per year on average (10% mortality). Each goat is worth 500 tokens. Risk = 0.10 × 500 = 50 tokens/year on average.
 
 **Actuarial Value:** The mathematical expectation of loss over a defined period. For a farmer with risk of 50 tokens/year, the actuarial value is 50 tokens.
 
@@ -54,7 +54,7 @@ Example: A farmer owns 10 goats. Historical data shows 1 goat dies of disease pe
 
 **Claim:** A request for payment from the fund due to a loss event.
 
-**Reserve (Fund Balance):** Accumulated contributions minus paid claims. A healthy reserve is 1â€“2 years of average claims, ensuring the fund survives a year with higher-than-usual losses.
+**Reserve (Fund Balance):** Accumulated contributions minus paid claims. A healthy reserve is 1–2 years of average claims, ensuring the fund survives a year with higher-than-usual losses.
 
 **Deductible:** A fixed amount the claimant must pay before the fund covers the rest. Example: "Livestock insurance covers losses >500 tokens; you pay the first 500 tokens of any loss."
 
@@ -79,7 +79,7 @@ If all pay the same premium (premiums = actuarial value = 8.5%):
 - Hilltop farmers underpay (should pay 15%).
 - Hilltop farmers file claims; lowland farmers have surplus. Eventually lowland farmers leave, destabilizing the fund.
 
-Solution: **Risk Stratification** â€” segment members into homogeneous groups (lowland, hilltop, by experience, etc.) and set premiums per group.
+Solution: **Risk Stratification** — segment members into homogeneous groups (lowland, hilltop, by experience, etc.) and set premiums per group.
 
 **Calculating Actuarial Value:**
 
@@ -96,16 +96,16 @@ Year | Deaths | Average Value/Death | Total Loss
 Avg  | 3.6    | 486 tokens         | 1,752
 ```
 
-2. **Actuarial Value per Member:** Total loss Ã· number of members
-   If there are 20 members, actuarial value = 1,752 Ã· 20 = 87.6 tokens/member/year
+2. **Actuarial Value per Member:** Total loss ÷ number of members
+   If there are 20 members, actuarial value = 1,752 ÷ 20 = 87.6 tokens/member/year
 
-3. **Premium Calculation:** Premium â‰¥ Actuarial Value + Administrative Cost + Reserve Build
+3. **Premium Calculation:** Premium ≥ Actuarial Value + Administrative Cost + Reserve Build
 
    If administrative cost is 10% and reserve build is 20%:
-   Premium = 87.6 + (87.6 Ã— 0.10) + (87.6 Ã— 0.20) = 105 tokens/member/year
+   Premium = 87.6 + (87.6 × 0.10) + (87.6 × 0.20) = 105 tokens/member/year
 
-4. **Adjustment for Confidence:** With only 5 years of data, variance is high. Add a safety margin (15â€“20%) to account for unusually bad years:
-   Premium = 105 Ã— 1.15 = 121 tokens/member/year
+4. **Adjustment for Confidence:** With only 5 years of data, variance is high. Add a safety margin (15–20%) to account for unusually bad years:
+   Premium = 105 × 1.15 = 121 tokens/member/year
 
 **Frequency & Severity Analysis:**
 
@@ -130,7 +130,7 @@ Mutual aid funds typically handle low-frequency, high-severity events (disaster 
 
 A mutual aid fund requires:
 1. **Members:** All participants who contribute and are eligible for claims.
-2. **Governing Committee:** 3â€“7 elected members who approve claims, set premiums, and manage funds.
+2. **Governing Committee:** 3–7 elected members who approve claims, set premiums, and manage funds.
 3. **Treasurer:** Maintains records, collects contributions, pays claims.
 4. **Claims Adjudicator:** Verifies claims are legitimate and within policy.
 
@@ -218,7 +218,7 @@ Members contribute regularly, but payouts are sequential: one member receives th
 Example (5 members, 100 tokens/month each):
 - Month 1: Member A gets 500 tokens.
 - Month 2: Member B gets 500 tokens.
-- Months 3â€“5: Members C, D, E receive their 500-token payouts.
+- Months 3–5: Members C, D, E receive their 500-token payouts.
 - Year 2: Cycle repeats.
 
 This is not insurance (no shared loss), but it builds savings and capital for members in order. Fraud risk: if Member A defaults the next month, the fund collapses. Mitigation: collateral (land claim, livestock pledge) or reputation (defaulters are shunned).
@@ -229,7 +229,7 @@ This is not insurance (no shared loss), but it builds savings and capital for me
 
 ## Historical Mutual Aid Models
 
-**Friendly Societies (UK & Europe, 18thâ€“20th centuries):**
+**Friendly Societies (UK & Europe, 18th–20th centuries):**
 
 Working-class mutual aid societies pooled resources for:
 - Sick pay (during illness, when unable to work).
@@ -239,7 +239,7 @@ Working-class mutual aid societies pooled resources for:
 Organization:
 - Members met monthly in public houses (taverns).
 - Treasurers maintained ledgers in bound books.
-- Fixed contribution (often 1â€“2% of wages) adjusted annually per claims experience.
+- Fixed contribution (often 1–2% of wages) adjusted annually per claims experience.
 - Strict rules: members must prove eligibility (present physician's letter for sick pay; death certificate for death benefits).
 
 **Burial Clubs (Pre-industrial & Industrial):**
@@ -247,9 +247,9 @@ Organization:
 Communities pooled money to cover funeral costs. Death is predictable (low frequency, fixed cost), making this highly feasible.
 
 Structure:
-- Fixed contribution: 5â€“10 tokens/member/year.
+- Fixed contribution: 5–10 tokens/member/year.
 - Payout on death: Fixed amount (500 tokens) regardless of actual funeral cost.
-- Reserve: Only need enough for 1â€“2 deaths at any time; turnover is slow.
+- Reserve: Only need enough for 1–2 deaths at any time; turnover is slow.
 
 These clubs were enormously popular because:
 - Burial is non-negotiable culturally.
@@ -269,7 +269,7 @@ Ethical issue: Tontines incentivize beneficiary-motivated harm (accelerating oth
 
 **Livestock Lending Circles:**
 
-Community members lend breeding animals (bull, ram, stallion) to farmers in rotation. The farmer keeps offspring as payment for care and returns the animal after an agreed term (1â€“3 years).
+Community members lend breeding animals (bull, ram, stallion) to farmers in rotation. The farmer keeps offspring as payment for care and returns the animal after an agreed term (1–3 years).
 
 Example: A community owns 1 breeding bull. Each year, a different farmer gets use of it (breeds their cows). The farmer calf is born, the farmer keeps it. After 1 year, the bull returns to the community for the next farmer.
 
@@ -289,31 +289,31 @@ Calculation:
 - Market value per animal: 500 tokens/goat, 5,000 tokens/cattle.
 - Historical mortality: 3% goats/year, 1% cattle/year.
 - Premium: Actuarial value + margin
-  - Goats: (0.03 Ã— 500) + margin = 15 + 10 = 25 tokens/year
-  - Cattle: (0.01 Ã— 5,000) + margin = 50 + 15 = 65 tokens/year
+  - Goats: (0.03 × 500) + margin = 15 + 10 = 25 tokens/year
+  - Cattle: (0.01 × 5,000) + margin = 50 + 15 = 65 tokens/year
 
 **Milk Production Loss Coverage:**
 
 Dairy producers face loss of income if animals sicken or die mid-lactation. Coverage includes replacement costs.
 
 Premium calculation:
-- Dairy goat daily milk: 2 liters Ã— 10 tokens/liter = 20 tokens/day income.
-- Average lactation duration: 300 days/year Ã— 20 tokens/day = 6,000 tokens annual income/goat.
-- If sickness/death loses 3% of lactation seasons: 6,000 Ã— 0.03 = 180 tokens/year actuarial value.
+- Dairy goat daily milk: 2 liters × 10 tokens/liter = 20 tokens/day income.
+- Average lactation duration: 300 days/year × 20 tokens/day = 6,000 tokens annual income/goat.
+- If sickness/death loses 3% of lactation seasons: 6,000 × 0.03 = 180 tokens/year actuarial value.
 - Premium: 180 + margin = 220 tokens/year.
 
 **Herd Loss Coverage (Contagious Disease):**
 
-Epidemic losses are rare but catastrophic. A single disease can kill 20â€“50% of a herd.
+Epidemic losses are rare but catastrophic. A single disease can kill 20–50% of a herd.
 
 Modeling:
 - Probability of epidemic in a 5-year period: ~5% (low, but nonzero).
 - Loss if epidemic: 40% of herd value.
-- Actuarial value: 0.05 Ã— 0.40 Ã— (total herd value) / 5 years = 0.004 Ã— herd value/year.
+- Actuarial value: 0.05 × 0.40 × (total herd value) / 5 years = 0.004 × herd value/year.
 
-Example (100 cattle Ã— 5,000 tokens each = 500,000 tokens herd value):
-- Actuarial value: 0.004 Ã— 500,000 = 2,000 tokens/year.
-- Premium per farmer: 2,000 Ã· 100 farmers = 20 tokens/year.
+Example (100 cattle × 5,000 tokens each = 500,000 tokens herd value):
+- Actuarial value: 0.004 × 500,000 = 2,000 tokens/year.
+- Premium per farmer: 2,000 ÷ 100 farmers = 20 tokens/year.
 
 Low premium because risk is rare.
 
@@ -329,7 +329,7 @@ Covers loss of harvest due to weather, pests, or disease.
 
 Calculation:
 - Expected yield: 2,000 kg grain/hectare.
-- Market value: 2,000 kg Ã— 1 token/kg = 2,000 tokens/hectare revenue.
+- Market value: 2,000 kg × 1 token/kg = 2,000 tokens/hectare revenue.
 - Historical loss (average): 5% (100 tokens/hectare).
 - Premium: 100 + margin = 125 tokens/hectare/year.
 
@@ -339,7 +339,7 @@ Issue: Yield is affected by both farm-specific factors (farmer skill, weeds) and
 
 Instead of verifying individual losses, insurance pays based on an objective index (rainfall, temperature, market price).
 
-Example: "If rainfall in Juneâ€“August falls below 200 mm, the fund pays 500 tokens/hectare to all members with crops in the region."
+Example: "If rainfall in June–August falls below 200 mm, the fund pays 500 tokens/hectare to all members with crops in the region."
 
 Advantage: Low administrative cost (no need to inspect every field). Disadvantage: Basis risk (index moves, but your field may not be affected, or vice versa).
 
@@ -347,7 +347,7 @@ Advantage: Low administrative cost (no need to inspect every field). Disadvantag
 
 Lenders offering crop loans require insurance against default due to crop failure.
 
-Premium: 3â€“5% of loan value (borrowed capital Ã— interest rate).
+Premium: 3–5% of loan value (borrowed capital × interest rate).
 
 Payout: If the borrower's harvest is <50% of expectation (verified by committee inspection), the insurance covers 75% of the remaining loan balance.
 
@@ -362,8 +362,8 @@ Payout: If the borrower's harvest is <50% of expectation (verified by committee 
 Pooled resources for unexpected medical costs (major injury, childbirth complications, extended illness requiring care or medicine).
 
 Structure:
-- Small regular contribution: 20â€“50 tokens/family/month.
-- Large shared fund: 500â€“2,000 tokens per family when an emergency strikes.
+- Small regular contribution: 20–50 tokens/family/month.
+- Large shared fund: 500–2,000 tokens per family when an emergency strikes.
 - No formal insurance; judgment-based decisions ("This family needs help.").
 
 Governance: Community meeting votes on requests. Typically granted for:
@@ -383,11 +383,11 @@ Model:
 - Simple rules: "If you've contributed for 6+ months and died (any cause except self-harm), your family receives 2,000 tokens."
 
 This covers:
-- Funeral costs (500â€“1,000 tokens depending on ceremony).
+- Funeral costs (500–1,000 tokens depending on ceremony).
 - Loss of income during mourning.
 - Any immediate needs of the surviving family.
 
-Multi-generational sustainability: Contributions accumulate over years; deaths are infrequent (1â€“2/year in a 100-person community). The fund grows naturally.
+Multi-generational sustainability: Contributions accumulate over years; deaths are infrequent (1–2/year in a 100-person community). The fund grows naturally.
 
 **Health Cooperative (More Complex):**
 
@@ -419,7 +419,7 @@ This is not insurance but rather mutual healthcare provision.
    Prevention: Maintain clear ledger of paid contributions. Withhold benefits if premium is outstanding.
 
 4. **Collusion:** Committee members approve inflated claims for friends.
-   Prevention: Require majority voting (â‰¥3 votes for approval). Rotate committee members. Audit decisions.
+   Prevention: Require majority voting (≥3 votes for approval). Rotate committee members. Audit decisions.
 
 **Verification Procedures:**
 
@@ -504,30 +504,30 @@ If literate population is large, spreadsheets or simple database (ledger softwar
 
 **Archiving:**
 
-Retain records for â‰¥20 years. Disputes or verification requests can emerge years later. For burial clubs or hereditary membership, retain permanently.
+Retain records for ≥20 years. Disputes or verification requests can emerge years later. For burial clubs or hereditary membership, retain permanently.
 
 </section>
 
 :::affiliate
 **If you're formalizing a community mutual aid fund**, these materials support governance, record-keeping, and transparency:
 
-- [Bound Ledger Book (200 pages, acid-free, hardcover)](https://www.amazon.com/dp/B0B5TVJPCD?tag=offlinecompen-20) â€” Professional ledger for permanent financial records; resists deterioration and is tamper-evident
-- [Waterproof Ink Pen Set (5-pack, archival quality)](https://www.amazon.com/dp/B07P9Q5NVG?tag=offlinecompen-20) â€” Ensures records remain legible and unfade for decades
-- [Laminated Poster Kits (insurance rules, claim procedures, FAQs)](https://www.amazon.com/dp/B07B3VDXPM?tag=offlinecompen-20) â€” Displays fund policies visibly; reduces disputes over unknown rules
-- [Rolling File Cabinet (4-drawer, weather-resistant)](https://www.amazon.com/dp/B0CB7K8XJM?tag=offlinecompen-20) â€” Secure storage for records, protected from pests and moisture; keeps historical documents safe
+- [Bound Ledger Book (200 pages, acid-free, hardcover)](https://www.amazon.com/dp/B0B5TVJPCD?tag=offlinecompen-20) — Professional ledger for permanent financial records; resists deterioration and is tamper-evident
+- [Waterproof Ink Pen Set (5-pack, archival quality)](https://www.amazon.com/dp/B07P9Q5NVG?tag=offlinecompen-20) — Ensures records remain legible and unfade for decades
+- [Laminated Poster Kits (insurance rules, claim procedures, FAQs)](https://www.amazon.com/dp/B07B3VDXPM?tag=offlinecompen-20) — Displays fund policies visibly; reduces disputes over unknown rules
+- [Rolling File Cabinet (4-drawer, weather-resistant)](https://www.amazon.com/dp/B0CB7K8XJM?tag=offlinecompen-20) — Secure storage for records, protected from pests and moisture; keeps historical documents safe
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools/methods discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools/methods discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 ## See Also
 
-- <a href="../basic-accounting-record-keeping.html">Basic Accounting & Record-Keeping</a> â€” Detailed ledger and audit methods
-- <a href="../barter-trade-systems.html">Barter & Trade Systems</a> â€” Contextualizing insurance within local economy
-- <a href="../debt-credit-lending.html">Debt, Credit & Lending</a> â€” Relationship between insurance and credit systems
-- <a href="../community-governance-leadership.html">Community Governance & Meetings</a> â€” Decision-making frameworks for funds
+- <a href="../basic-accounting-record-keeping.html">Basic Accounting & Record-Keeping</a> — Detailed ledger and audit methods
+- <a href="../barter-trade-systems.html">Barter & Trade Systems</a> — Contextualizing insurance within local economy
+- <a href="../debt-credit-lending.html">Debt, Credit & Lending</a> — Relationship between insurance and credit systems
+- <a href="../community-governance-leadership.html">Community Governance & Meetings</a> — Decision-making frameworks for funds
 
 - <a href='./mutual-aid-networks.html'>Mutual Aid Networks and Resource Pooling</a> - Sibling guide for coordination, exchange, and support structures
 
 ## Summary
 
-Mutual aid insurance pools community resources to protect against catastrophic loss, enabling individuals and families to recover from setbacks without debt or displacement. Success requires understanding risk (probability and expected loss), calculating fair premiums based on actuarial data, and organizing governance to prevent fraud and ensure accountability. Contribution models range from flat per-member rates to risk-stratified and ability-based. Historical societies (friendly societies, burial clubs, rotating savings) demonstrate that simple structures can sustain for centuries. Livestock, crop, catastrophic health, and funeral assistance are key coverage areas in resilient communities. Strong governanceâ€”written rules, elected committees, transparent records, regular audits, and community meetingsâ€”prevents disputes and maintains trust. Reinsurance and federation allow small communities to offer larger coverage limits. Record-keeping in durable formats (ledgers, stone, cloth) preserves institutional memory and enables auditing. Properly structured mutual aid funds are not welfare but reciprocal insurance: all contribute; all receive when needed. This reciprocal logic maintains dignity and participation while spreading risk, creating a foundation for community stability and interdependence.
+Mutual aid insurance pools community resources to protect against catastrophic loss, enabling individuals and families to recover from setbacks without debt or displacement. Success requires understanding risk (probability and expected loss), calculating fair premiums based on actuarial data, and organizing governance to prevent fraud and ensure accountability. Contribution models range from flat per-member rates to risk-stratified and ability-based. Historical societies (friendly societies, burial clubs, rotating savings) demonstrate that simple structures can sustain for centuries. Livestock, crop, catastrophic health, and funeral assistance are key coverage areas in resilient communities. Strong governance—written rules, elected committees, transparent records, regular audits, and community meetings—prevents disputes and maintains trust. Reinsurance and federation allow small communities to offer larger coverage limits. Record-keeping in durable formats (ledgers, stone, cloth) preserves institutional memory and enables auditing. Properly structured mutual aid funds are not welfare but reciprocal insurance: all contribute; all receive when needed. This reciprocal logic maintains dignity and participation while spreading risk, creating a foundation for community stability and interdependence.
