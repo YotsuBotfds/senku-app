@@ -466,6 +466,10 @@ Action:
 - Hardened RAG eval dataset export guide-id parsing so mixed whitespace,
   comma, and pipe-delimited diagnostic/retrieval artifact fields normalize
   through the same de-duplicated guide-id path.
+- Hardened analyzer and retrieval-profile comparison evidence paths: categorical
+  analyzer labels now normalize benign casing/whitespace/hyphen variants before
+  gate/status/root-cause/safety-surface counting, and profile comparisons
+  normalize guide-id/status row shapes before summary aggregation.
 
 Validation:
 
@@ -756,6 +760,9 @@ Validation:
   retrieval-pack records, and single-object retrieval eval JSON.
 - `tests.test_export_rag_eval_dataset` covers mixed whitespace guide-id
   normalization across nested dict/list diagnostic metadata shapes.
+- `tests.test_analyze_rag_bench_failures` and
+  `tests.test_compare_retrieval_profiles` cover analyzer category
+  normalization plus retrieval-profile guide/status row-shape normalization.
 
 Deferred unless evidenced:
 

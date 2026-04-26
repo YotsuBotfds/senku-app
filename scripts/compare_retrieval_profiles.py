@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -25,6 +26,55 @@ DEFAULT_PROFILES = (
     "how_to_task",
     "low_support",
 )
+
+
+STATUS_FIELD_NAMES = ("top1_is_bridge", "top1_has_unresolved_partial")
+GUIDE_ID_FIELD_NAMES = ("expected_guide_ids", "primary_expected_guide_ids")
+STATUS_TRUE_VALUES = {"1", "true", "yes"}
+
+
+def _coerce_guide_id_list(value: Any) -> list[str]:
+    extract = getattr(eval_pack, "extract_guide_ids", None)
+    if callable(extract):
+        return extract(value)
+    if value is None:
+        return []
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        values = []
+        for item in value:
+            values.extend(_coerce_guide_id_list(item))
+        return values
+    return re.findall(r"\bGD-\d+\b", str(value), flags=re.IGNORECASE)
+
+
+def _status_tokens(value: Any) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        tokens = []
+        for item in value:
+            tokens.extend(_status_tokens(item))
+        return tokens
+    return [
+        token.strip().lower()
+        for token in re.split(r"[\s,|]+", str(value))
+        if token.strip()
+    ]
+
+
+def _coerce_status_value(value: Any) -> str:
+    return "yes" if any(token in STATUS_TRUE_VALUES for token in _status_tokens(value)) else "no"
+
+
+def _normalize_summary_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    normalized = dict(row)
+    for field in GUIDE_ID_FIELD_NAMES:
+        if field in normalized:
+            normalized[field] = _coerce_guide_id_list(normalized.get(field))
+    for field in STATUS_FIELD_NAMES:
+        if field in normalized:
+            normalized[field] = _coerce_status_value(normalized.get(field))
+    return normalized
 
 
 def _rate(summary: Mapping[str, Any], key: str) -> float | None:
@@ -119,6 +169,7 @@ def compare_profiles(
             corpus_marker_lookup=corpus_marker_lookup,
             progress=progress,
         )
+        rows = [_normalize_summary_row(row) for row in rows]
         summary = eval_pack.summarize_rows(rows)
         runs.append(
             {

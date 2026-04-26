@@ -1693,6 +1693,61 @@ waves:
         self.assertEqual(rows[0]["expected_hit_at_1"], "yes")
         self.assertEqual(rows[0]["expected_hit_at_k"], "yes")
 
+    def test_categorical_status_variants_normalize_for_logic_and_counts(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Can I use this for a rash?",
+                            "prompt_metadata": {"expected_guide_ids": "GD-123"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": [],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-123"],
+                                "answer_mode": " Abstain ",
+                                "support_strength": " Strong ",
+                                "safety_critical": False,
+                            },
+                            "response_text": "I cannot confidently answer this.",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+        rows[0]["app_acceptance_status"] = " Strong_Supported "
+        rows[0]["app_acceptance_root_cause"] = " Supported "
+        rows[0]["safety_surface_status"] = " Not_Safety_Critical "
+        rows[0]["ui_surface_bucket"] = " Strong_Evidence "
+        summary = summarize(rows)
+
+        self.assertEqual(rows[0]["answer_mode"], "abstain")
+        self.assertEqual(rows[0]["support_strength"], "strong")
+        self.assertEqual(rows[0]["app_gate_status"], "abstain")
+        self.assertEqual(
+            rows[0]["suspected_failure_bucket"],
+            "abstain_or_clarify_needed",
+        )
+        self.assertEqual(summary["app_gate_counts"], {"abstain": 1})
+        self.assertEqual(summary["app_acceptance_counts"], {"strong_supported": 1})
+        self.assertEqual(
+            summary["app_acceptance_root_cause_counts"],
+            {"supported": 1},
+        )
+        self.assertEqual(
+            summary["safety_surface_counts"],
+            {"not_safety_critical": 1},
+        )
+        self.assertEqual(summary["ui_surface_counts"], {"strong_evidence": 1})
+
     def test_analyze_reports_app_gate_counts_and_writes_csv_columns(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"

@@ -487,6 +487,11 @@ def _truthy(value) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
+def normalize_category_value(value) -> str:
+    """Normalize categorical artifact labels without inventing new labels."""
+    return re.sub(r"[\s-]+", "_", str(value or "").strip().lower())
+
+
 def wave_key_for_artifact(path: Path) -> str:
     match = WAVE_ARTIFACT_RE.search(path.name)
     return match.group(1).lower() if match else ""
@@ -741,13 +746,17 @@ def extract_answer_provenance_fields(result: dict) -> dict[str, str]:
 
 
 def extract_app_gate_fields(result: dict) -> dict[str, str]:
-    answer_mode = first_text(metadata_value(result, "answer_mode"))
-    support_strength = first_text(metadata_value(result, "support_strength"))
+    answer_mode = normalize_category_value(first_text(metadata_value(result, "answer_mode")))
+    support_strength = normalize_category_value(
+        first_text(metadata_value(result, "support_strength"))
+    )
     safety_critical = first_text(metadata_value(result, "safety_critical"))
     retrieval_profile = first_text(metadata_value(result, "retrieval_profile"))
 
     decision_path = str(result.get("decision_path") or "")
-    gate_status = first_text(metadata_value(result, "app_gate_status"))
+    gate_status = normalize_category_value(
+        first_text(metadata_value(result, "app_gate_status"))
+    )
     if not gate_status:
         if decision_path == "uncertain_fit" or answer_mode == "uncertain_fit":
             gate_status = "uncertain_fit"
@@ -772,7 +781,7 @@ def classify_bucket(
 ) -> tuple[str, str]:
     decision_path = str(result.get("decision_path") or "")
     retrieval_meta = result.get("retrieval_metadata") or {}
-    answer_mode = str(
+    answer_mode = normalize_category_value(
         result.get("answer_mode") or retrieval_meta.get("answer_mode") or ""
     )
     answer = result.get("response_text") or ""
@@ -1038,7 +1047,9 @@ def build_rows(
 
 
 def summarize(rows: list[dict]) -> dict:
-    by_bucket = Counter(row["suspected_failure_bucket"] for row in rows)
+    by_bucket = Counter(
+        normalize_category_value(row["suspected_failure_bucket"]) for row in rows
+    )
     by_artifact_bucket = defaultdict(Counter)
     deterministic = 0
     rag = 0
@@ -1121,34 +1132,37 @@ def summarize(rows: list[dict]) -> dict:
 
     for row in rows:
         artifact = row["artifact_name"]
-        runtime_setting = row.get("artifact_reviewed_card_runtime_answers") or "unknown"
+        runtime_setting = (
+            normalize_category_value(row.get("artifact_reviewed_card_runtime_answers"))
+            or "unknown"
+        )
         artifact_runtime_counts[runtime_setting] += 1
-        marker_risk = row.get("top1_marker_risk") or ""
+        marker_risk = normalize_category_value(row.get("top1_marker_risk"))
         if marker_risk:
             top1_marker_risk_counts[marker_risk] += 1
-        if row.get("top1_is_bridge") == "yes":
+        if normalize_category_value(row.get("top1_is_bridge")) == "yes":
             top1_bridge_count += 1
-        if row.get("top1_has_unresolved_partial") == "yes":
+        if normalize_category_value(row.get("top1_has_unresolved_partial")) == "yes":
             top1_unresolved_partial_count += 1
-        bucket = row["suspected_failure_bucket"]
+        bucket = normalize_category_value(row["suspected_failure_bucket"])
         by_artifact_bucket[artifact][bucket] += 1
-        if row["decision_path"] == "deterministic":
+        if normalize_category_value(row["decision_path"]) == "deterministic":
             deterministic += 1
         else:
             rag += 1
-        if row["generated"] == "yes":
+        if normalize_category_value(row["generated"]) == "yes":
             generated += 1
         if _truthy(row.get("completion_safety_trimmed")):
             completion_safety_trimmed += 1
-        provenance = row.get("answer_provenance") or ""
+        provenance = normalize_category_value(row.get("answer_provenance"))
         if provenance:
             answer_provenance_counts[provenance] += 1
-        surface_label = row.get("answer_surface_label") or ""
+        surface_label = normalize_category_value(row.get("answer_surface_label"))
         if surface_label:
             answer_surface_label_counts[surface_label] += 1
         if _truthy(row.get("reviewed_card_backed")):
             reviewed_card_backed += 1
-        gate_status = row.get("app_gate_status") or ""
+        gate_status = normalize_category_value(row.get("app_gate_status"))
         if gate_status:
             app_gate_counts[gate_status] += 1
         for key, counter in (
@@ -1158,13 +1172,15 @@ def summarize(rows: list[dict]) -> dict:
             ("safety_surface_status", safety_surface_counts),
             ("ui_surface_bucket", ui_surface_counts),
         ):
-            value = row.get(key) or ""
+            value = normalize_category_value(row.get(key))
             if value:
                 counter[value] += 1
-        answer_card_status = row.get("answer_card_status") or ""
+        answer_card_status = normalize_category_value(row.get("answer_card_status"))
         if answer_card_status:
             answer_card_counts[answer_card_status] += 1
-        evidence_nugget_status = row.get("evidence_nugget_status") or ""
+        evidence_nugget_status = normalize_category_value(
+            row.get("evidence_nugget_status")
+        )
         if evidence_nugget_status:
             evidence_nugget_counts[evidence_nugget_status] += 1
         for source_key, total_key in (
@@ -1184,19 +1200,23 @@ def summarize(rows: list[dict]) -> dict:
             phrase = phrase.strip()
             if phrase:
                 evidence_nugget_contradicted_phrases[phrase] += 1
-        claim_support_status = row.get("claim_support_status") or ""
+        claim_support_status = normalize_category_value(row.get("claim_support_status"))
         if claim_support_status:
             claim_support_counts[claim_support_status] += 1
-        shadow_card_answer_status = row.get("shadow_card_answer_status") or ""
+        shadow_card_answer_status = normalize_category_value(
+            row.get("shadow_card_answer_status")
+        )
         if shadow_card_answer_status:
             shadow_card_answer_counts[shadow_card_answer_status] += 1
-        shadow_claim_support_status = row.get("shadow_claim_support_status") or ""
+        shadow_claim_support_status = normalize_category_value(
+            row.get("shadow_claim_support_status")
+        )
         if shadow_claim_support_status:
             shadow_claim_support_counts[shadow_claim_support_status] += 1
         if (
-            row.get("generated") == "yes"
-            and row.get("answer_card_status") in {"partial", "fail"}
-            and row.get("shadow_card_answer_status") == "pass"
+            normalize_category_value(row.get("generated")) == "yes"
+            and answer_card_status in {"partial", "fail"}
+            and shadow_card_answer_status == "pass"
         ):
             missing_required = [
                 phrase.strip()

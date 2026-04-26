@@ -101,6 +101,59 @@ class CompareRetrievalProfilesTests(unittest.TestCase):
         self.assertEqual(payload["deltas_vs_baseline"][0]["hit_at_1_rate_delta"], 1.0)
         self.assertEqual(payload["deltas_vs_baseline"][0]["mean_latency_ms_delta"], -5.0)
 
+    def test_compare_profiles_normalizes_benign_row_shape_variants(self):
+        original_load_prompt_pack = self.module.eval_pack.load_prompt_pack
+        original_evaluate_pack = self.module.eval_pack.evaluate_pack
+
+        def fake_load_prompt_pack(path):
+            return [{"prompt": "q", "expected_guide_ids": ["GD-1"]}]
+
+        def fake_evaluate_pack(prompt_rows, *, retrieval_profile_override, **kwargs):
+            return [
+                {
+                    "expected_guide_ids": " GD-1 | gd-2 ",
+                    "primary_expected_guide_ids": ["gd-1, GD-2"],
+                    "expected_hit_at_1": True,
+                    "expected_hit_at_3": True,
+                    "expected_hit_at_k": True,
+                    "expected_owner_best_rank": 1,
+                    "primary_hit_at_1": True,
+                    "primary_hit_at_3": True,
+                    "primary_hit_at_k": True,
+                    "primary_owner_best_rank": 1,
+                    "expected_owner_count": 1,
+                    "retrieved_count": 2,
+                    "owner_share": 0.5,
+                    "retrieval_elapsed_ms": 5.0,
+                    "top1_marker_risk": "none",
+                    "top1_is_bridge": [" no ", "yes"],
+                    "top1_has_unresolved_partial": "no | true",
+                    "top_distractor_guide_ids": [],
+                }
+            ]
+
+        self.module.eval_pack.load_prompt_pack = fake_load_prompt_pack
+        self.module.eval_pack.evaluate_pack = fake_evaluate_pack
+        try:
+            payload = self.module.compare_profiles(
+                Path("pack.jsonl"),
+                ["baseline"],
+                collection=object(),
+                top_k=8,
+            )
+        finally:
+            self.module.eval_pack.load_prompt_pack = original_load_prompt_pack
+            self.module.eval_pack.evaluate_pack = original_evaluate_pack
+
+        summary = payload["runs"][0]["summary"]
+        normalized_row = payload["runs"][0]["rows"][0]
+        self.assertEqual(normalized_row["expected_guide_ids"], ["GD-1", "GD-2"])
+        self.assertEqual(normalized_row["primary_expected_guide_ids"], ["GD-1", "GD-2"])
+        self.assertEqual(summary["expected_owner_rows"], 1)
+        self.assertEqual(summary["primary_expected_rows"], 1)
+        self.assertEqual(summary["top1_bridge_rows"], 1)
+        self.assertEqual(summary["top1_unresolved_partial_rows"], 1)
+
     def test_render_markdown_includes_profile_latency_and_marker_columns(self):
         payload = {
             "prompt_pack": "pack.jsonl",
