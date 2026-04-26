@@ -133,6 +133,34 @@ class SummarizeRunManifestTests(unittest.TestCase):
         )
         self.assertNotIn("missing-c/report.md", markdown)
 
+    def test_render_markdown_sanitizes_newlines_and_carriage_returns_in_cells(self):
+        records = [
+            {
+                "task": "task with\nnewline and\r\ncarriage",
+                "lane": "tooling",
+                "label": "row|with|pipes",
+                "commit": "abc\n123",
+                "generated_at": "2026-04-25T05:00:00+00:00",
+                "changed_file": ["path/with\rreturn.txt", "clean/path.py"],
+                "validation": ["ok\r\nall good"],
+            }
+        ]
+
+        markdown = render_markdown(records, limit=1)
+        lines = markdown.splitlines()
+        table_header = "| Generated | Task | Lane | Label | Commit | Changed | Validation | Artifacts |"
+        header_index = lines.index(table_header)
+        row_lines = [line for line in lines[header_index + 2 :]]
+
+        self.assertEqual(len(row_lines), 1)
+        row = row_lines[0]
+        self.assertNotIn("\r", row)
+        self.assertIn("task with newline and carriage", row)
+        self.assertIn("row\\|with\\|pipes", row)
+        self.assertIn("abc 123", row)
+        self.assertIn("path/with return.txt", row)
+        self.assertIn("ok all good", row)
+
     def test_cli_writes_output_and_prints_stdout(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

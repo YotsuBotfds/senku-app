@@ -477,6 +477,9 @@ Action:
 - Bench artifact indexing now summarizes small JSONL files under the existing
   size cap with line/object/malformed counts and bounded type counts, without
   retaining raw prompt/body content.
+- Run-manifest Markdown rendering now strips carriage returns and newlines from
+  table cells before pipe escaping, preventing manifest-derived text from
+  injecting extra table rows.
 
 Validation:
 
@@ -491,6 +494,8 @@ Validation:
   explicit failure-on-missing and bounded retention.
 - `tests.test_index_bench_artifacts` covers the JSONL summary path, large-JSONL
   skip behavior, and Markdown formatting for the exposed counts.
+- `tests.test_summarize_run_manifest` covers newline/carriage-return sanitation
+  in generated Markdown table rows.
 
 Deferred unless evidenced:
 

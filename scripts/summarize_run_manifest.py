@@ -35,7 +35,7 @@ def _compact_list(value: Any, *, limit: int = 2) -> str:
 
 
 def _escape_markdown(value: object) -> str:
-    text = str(value).replace("\n", " ")
+    text = str(value).replace("\r\n", "\n").replace("\r", " ").replace("\n", " ")
     return text.replace("|", "\\|")
 
 
