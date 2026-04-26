@@ -114,6 +114,36 @@ Recovered from markdown.
         self.assertEqual(rows[0]["cited_guide_ids"], "GD-001")
         self.assertEqual(rows[0]["top_retrieved_guide_ids"], "GD-001,GD-002")
 
+    def test_build_eval_rows_sanitizes_guide_id_lists(self):
+        root = self.make_tmpdir()
+        json_path = root / "bench_sample.json"
+        json_path.write_text(
+            json.dumps(
+                {
+                    "config": {},
+                    "summary": {"total_prompts": 1},
+                    "results": [
+                        {
+                            "index": 1,
+                            "section": "Core Regression",
+                            "question": "What now?",
+                            "cited_guide_ids": [" GD-001 ", None, 42, ""],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": [" GD-002 ", None, 43, ""]
+                            },
+                            "response_text": "Answer.",
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_eval_rows([json_path])
+
+        self.assertEqual(rows[0]["cited_guide_ids"], "GD-001,42")
+        self.assertEqual(rows[0]["top_retrieved_guide_ids"], "GD-002,43")
+
     def test_build_eval_rows_supports_standalone_markdown_artifact(self):
         root = self.make_tmpdir()
         md_path = root / "bench_sample.md"

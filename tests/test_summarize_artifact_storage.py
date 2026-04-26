@@ -116,6 +116,34 @@ class SummarizeArtifactStorageTests(unittest.TestCase):
         self.assertIn("Suffix counts:", text)
         self.assertIn("summary.json", text)
 
+    def test_render_text_sanitizes_blank_counts_and_multiline_values(self):
+        summary = {
+            "root": "artifacts",
+            "exists": True,
+            "total_bytes": "",
+            "file_count": 1,
+            "dir_count": 1,
+            "largest_files": [{"path": "bench\r\nsummary.json", "bytes": ""}],
+            "largest_dirs": [],
+            "suffix_counts": [{"suffix": ".json", "count": "", "bytes": None}],
+            "generated_dirs": [{"path": "tmp\nreports", "bytes": "", "files": "", "markers": ["tmp\nprefix"]}],
+            "duplicate_basename_families": [
+                {
+                    "basename": "summary\n.json",
+                    "count": "",
+                    "bytes": "",
+                    "examples": [{"path": "bench\rsummary.json"}],
+                }
+            ],
+        }
+
+        text = render_text(summary)
+
+        self.assertIn("Total: 0 B across 1 files, 1 dirs", text)
+        self.assertIn("path=bench  summary.json  bytes=0 B", text)
+        self.assertIn("path=tmp reports  bytes=0 B  files=  markers=tmp prefix", text)
+        self.assertIn("basename=summary .json  count=  bytes=0 B  examples=bench summary.json", text)
+
     def test_main_emits_json(self):
         root = self.make_tmpdir()
         self.write_bytes(root / "bench" / "summary.json", 4)

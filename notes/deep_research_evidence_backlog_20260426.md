@@ -470,6 +470,13 @@ Action:
   analyzer labels now normalize benign casing/whitespace/hyphen variants before
   gate/status/root-cause/safety-surface counting, and profile comparisons
   normalize guide-id/status row shapes before summary aggregation.
+- Hardened additional evidence surfaces against malformed or hostile artifact
+  shapes: artifact-storage text summaries sanitize multiline values and
+  malformed byte counts, bench artifact eval rows sanitize list fields,
+  compare-bench CLI output strips control characters, RAG trace direct writes
+  sanitize single-event mappings, diagnostic filters normalize padded/case
+  variants, and startup snapshots render malformed metadata-audit counts as
+  unavailable instead of leaking raw structures.
 
 Validation:
 
@@ -763,6 +770,12 @@ Validation:
 - `tests.test_analyze_rag_bench_failures` and
   `tests.test_compare_retrieval_profiles` cover analyzer category
   normalization plus retrieval-profile guide/status row-shape normalization.
+- `tests.test_summarize_artifact_storage`,
+  `tests.test_bench_artifact_tools`, `tests.test_compare_bench_artifacts`,
+  `tests.test_rag_trace`, `tests.test_query_rag_diagnostics`, and
+  `tests.test_agent_context_snapshot` cover the malformed evidence-surface
+  hardening batch across text rendering, eval-row extraction, CLI Markdown,
+  trace events, diagnostics filters, and startup snapshot signals.
 
 Deferred unless evidenced:
 

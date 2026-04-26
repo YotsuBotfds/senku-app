@@ -147,6 +147,44 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual([row["prompt_id"] for row in expected_match], ["P1"])
         self.assertEqual([row["prompt_id"] for row in cited_match], ["P2"])
 
+    def test_filter_rows_tolerates_filter_case_and_whitespace_variants(self):
+        rows = [
+            {
+                "prompt_id": " P1 ",
+                "suspected_failure_bucket": " Ranking_Miss ",
+                "expected_guide_ids": " gd-001 | GD-002 ",
+                "answer_card_status": " Pass ",
+                "app_acceptance_status": " Strong_Supported ",
+                "app_acceptance_root_cause": " Supported ",
+                "safety_surface_status": " Not_Safety_Critical ",
+                "ui_surface_bucket": " Standard ",
+            },
+            {
+                "prompt_id": "P2",
+                "suspected_failure_bucket": "retrieval_miss",
+                "expected_guide_ids": "GD-010",
+                "answer_card_status": "fail",
+                "app_acceptance_status": "needs_evidence_owner",
+                "app_acceptance_root_cause": "evidence_owner",
+                "safety_surface_status": "emergency_first_supported",
+                "ui_surface_bucket": "emergency_first",
+            },
+        ]
+
+        matches = self.module.filter_rows(
+            rows,
+            buckets=[" ranking_miss "],
+            guide_ids=["GD-001"],
+            prompt_ids=["p1"],
+            card_statuses=["pass"],
+            app_acceptance_statuses=["strong_supported"],
+            acceptance_root_causes=["supported"],
+            safety_surface_statuses=["not_safety_critical"],
+            ui_surface_buckets=["standard"],
+        )
+
+        self.assertEqual([row["prompt_id"] for row in matches], [" P1 "])
+
     def test_render_markdown_escapes_pipes(self):
         markdown = self.module.render_markdown(
             [

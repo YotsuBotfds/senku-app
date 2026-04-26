@@ -237,12 +237,29 @@ def _metadata_audit_signal_lines(records: list[dict]) -> list[str]:
     signal_bits: list[str] = []
     for key in ("malformed_frontmatter_count",):
         if key in metric:
-            signal_bits.append(f"{key}={metric[key]}")
+            signal_bits.append(f"{key}={_format_count_signal(metric[key])}")
     if not signal_bits:
         return []
 
     label = latest_audit_record.get("label") or latest_audit_record.get("lane") or "metadata-audit"
-    return [f"- Metadata-audit signal ({label}): " + ", ".join(signal_bits)]
+    return [f"- Metadata-audit signal ({_escape_md(label)}): " + ", ".join(signal_bits)]
+
+
+def _format_count_signal(value: object) -> str:
+    if isinstance(value, bool):
+        return "unavailable"
+    try:
+        if isinstance(value, float):
+            if not value.is_integer():
+                return "unavailable"
+            count = int(value)
+        else:
+            count = int(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError, OverflowError):
+        return "unavailable"
+    if count < 0:
+        return "unavailable"
+    return str(count)
 
 
 def _strict_retrieval_workflow_signal(repo_root: Path) -> list[str]:

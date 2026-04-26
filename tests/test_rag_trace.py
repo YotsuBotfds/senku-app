@@ -168,6 +168,35 @@ class RAGTraceTests(unittest.TestCase):
         self.assertNotIn("raw question text", payload)
         self.assertNotIn("raw prompt text", payload)
 
+    def test_direct_write_normalizes_single_event_mapping_before_redaction(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "trace.jsonl"
+            with RAGTraceWriter(path) as writer:
+                writer.write(
+                    {
+                        "name": "manual",
+                        "events": {
+                            "name": "input",
+                            "attributes": {
+                                "question_text": "raw question text",
+                                "prompt_id": "P-1",
+                            },
+                        },
+                    }
+                )
+
+            rows = read_jsonl(path)
+
+        payload = json.dumps(rows[0])
+        self.assertIsInstance(rows[0]["events"], list)
+        self.assertEqual(rows[0]["events"][0]["name"], "input")
+        self.assertEqual(
+            rows[0]["events"][0]["attributes"]["question_text"],
+            "[redacted]",
+        )
+        self.assertEqual(rows[0]["events"][0]["attributes"]["prompt_id"], "P-1")
+        self.assertNotIn("raw question text", payload)
+
     def test_otel_mapping_and_iterator_are_deterministic(self):
         record = {
             "name": "retrieve",

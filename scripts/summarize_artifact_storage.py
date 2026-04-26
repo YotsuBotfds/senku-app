@@ -196,8 +196,8 @@ def _append_table(lines: list[str], title: str, rows: list[dict[str, Any]], colu
             if column == "bytes":
                 value = _format_bytes(value)
             if isinstance(value, list):
-                value = ",".join(str(item) for item in value)
-            parts.append(f"{column}={value}")
+                value = ",".join(_inline_text(item) for item in value)
+            parts.append(f"{column}={_inline_text(value)}")
         lines.append("  " + "  ".join(parts))
 
 
@@ -207,16 +207,23 @@ def _append_duplicates(lines: list[str], rows: list[dict[str, Any]]) -> None:
         lines.append("  (none)")
         return
     for row in rows:
-        examples = ", ".join(example["path"] for example in row["examples"])
+        examples = ", ".join(_inline_text(example["path"]) for example in row["examples"])
         lines.append(
-            f"  basename={row['basename']}  count={row['count']}  "
+            f"  basename={_inline_text(row['basename'])}  count={_inline_text(row['count'])}  "
             f"bytes={_format_bytes(row['bytes'])}  examples={examples}"
         )
 
 
-def _format_bytes(size: int) -> str:
+def _inline_text(value: Any) -> str:
+    return str(value).replace("\r", " ").replace("\n", " ")
+
+
+def _format_bytes(size: Any) -> str:
     units = ("B", "KiB", "MiB", "GiB")
-    value = float(size)
+    try:
+        value = float(size)
+    except (TypeError, ValueError):
+        value = 0.0
     for unit in units:
         if value < 1024 or unit == units[-1]:
             if unit == "B":

@@ -2,6 +2,7 @@
 """Compare two bench artifacts and report prompt-level deltas."""
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -13,6 +14,14 @@ if str(REPO_ROOT) not in sys.path:
 from bench_artifact_tools import compare_artifacts, render_artifact_comparison_markdown  # noqa: E402
 
 
+MARKDOWN_CONTROL_CHAR_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+
+
+def sanitize_markdown_output(markdown):
+    """Remove terminal/control bytes that can corrupt CLI or markdown output."""
+    return MARKDOWN_CONTROL_CHAR_RE.sub("?", markdown)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", help="Baseline bench JSON or markdown artifact")
@@ -21,7 +30,7 @@ def main():
     args = parser.parse_args()
 
     comparison = compare_artifacts(args.baseline, args.candidate)
-    rendered = render_artifact_comparison_markdown(comparison)
+    rendered = sanitize_markdown_output(render_artifact_comparison_markdown(comparison))
     if args.output:
         Path(args.output).write_text(rendered, encoding="utf-8")
     else:

@@ -132,10 +132,24 @@ def _split_ids(value: Any) -> set[str]:
     if value is None:
         return set()
     if isinstance(value, str):
-        return {part.strip() for part in value.split("|") if part.strip()}
+        return {
+            _normalize_filter_value(part) for part in value.split("|") if part.strip()
+        }
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return {str(part).strip() for part in value if str(part).strip()}
-    return {str(value).strip()} if str(value).strip() else set()
+        return {_normalize_filter_value(part) for part in value if str(part).strip()}
+    return {_normalize_filter_value(value)} if str(value).strip() else set()
+
+
+def _normalize_filter_value(value: Any) -> str:
+    return str(value).strip().casefold()
+
+
+def _filter_set(values: Sequence[str]) -> set[str]:
+    return {_normalize_filter_value(value) for value in values if str(value).strip()}
+
+
+def _matches_filter(value: Any, allowed: set[str]) -> bool:
+    return not allowed or _normalize_filter_value(value or "") in allowed
 
 
 def _truthy_diagnostic(value: Any) -> bool:
@@ -170,48 +184,32 @@ def filter_rows(
     safety_surface_statuses: Sequence[str] = (),
     ui_surface_buckets: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
-    bucket_set = {bucket.strip() for bucket in buckets if bucket.strip()}
-    guide_id_set = {guide_id.strip() for guide_id in guide_ids if guide_id.strip()}
-    prompt_id_set = {prompt_id.strip() for prompt_id in prompt_ids if prompt_id.strip()}
-    card_status_set = {status.strip() for status in card_statuses if status.strip()}
-    app_acceptance_status_set = {
-        status.strip() for status in app_acceptance_statuses if status.strip()
-    }
-    root_cause_set = {
-        root_cause.strip()
-        for root_cause in acceptance_root_causes
-        if root_cause.strip()
-    }
-    safety_surface_set = {
-        status.strip() for status in safety_surface_statuses if status.strip()
-    }
-    ui_surface_set = {bucket.strip() for bucket in ui_surface_buckets if bucket.strip()}
+    bucket_set = _filter_set(buckets)
+    guide_id_set = _filter_set(guide_ids)
+    prompt_id_set = _filter_set(prompt_ids)
+    card_status_set = _filter_set(card_statuses)
+    app_acceptance_status_set = _filter_set(app_acceptance_statuses)
+    root_cause_set = _filter_set(acceptance_root_causes)
+    safety_surface_set = _filter_set(safety_surface_statuses)
+    ui_surface_set = _filter_set(ui_surface_buckets)
 
     matches: list[dict[str, Any]] = []
     for row in rows:
-        if bucket_set and str(row.get("suspected_failure_bucket") or "") not in bucket_set:
+        if not _matches_filter(row.get("suspected_failure_bucket"), bucket_set):
             continue
-        if prompt_id_set and str(row.get("prompt_id") or "") not in prompt_id_set:
+        if not _matches_filter(row.get("prompt_id"), prompt_id_set):
             continue
-        if card_status_set and str(row.get("answer_card_status") or "") not in card_status_set:
+        if not _matches_filter(row.get("answer_card_status"), card_status_set):
             continue
-        if (
-            app_acceptance_status_set
-            and str(row.get("app_acceptance_status") or "")
-            not in app_acceptance_status_set
+        if not _matches_filter(
+            row.get("app_acceptance_status"), app_acceptance_status_set
         ):
             continue
-        if (
-            root_cause_set
-            and str(row.get("app_acceptance_root_cause") or "") not in root_cause_set
-        ):
+        if not _matches_filter(row.get("app_acceptance_root_cause"), root_cause_set):
             continue
-        if (
-            safety_surface_set
-            and str(row.get("safety_surface_status") or "") not in safety_surface_set
-        ):
+        if not _matches_filter(row.get("safety_surface_status"), safety_surface_set):
             continue
-        if ui_surface_set and str(row.get("ui_surface_bucket") or "") not in ui_surface_set:
+        if not _matches_filter(row.get("ui_surface_bucket"), ui_surface_set):
             continue
         if top1_unresolved_partial and not _truthy_diagnostic(
             row.get("top1_has_unresolved_partial")

@@ -179,7 +179,7 @@ def build_eval_rows(paths):
                 "decision_path": result.get("decision_path"),
                 "decision_detail": result.get("decision_detail"),
                 "source_mode": result.get("source_mode"),
-                "cited_guide_ids": ",".join(result.get("cited_guide_ids", [])),
+                "cited_guide_ids": _join_sanitized_values(result.get("cited_guide_ids")),
                 "citation_count": result.get("citation_count"),
                 "duplicate_citation_count": result.get("duplicate_citation_count"),
                 "generation_time": result.get("generation_time"),
@@ -189,12 +189,25 @@ def build_eval_rows(paths):
                 "completion_cap_hit": result.get("completion_cap_hit"),
                 "completion_retry_count": result.get("completion_retry_count"),
                 "retrieval_metadata_summary": result.get("retrieval_metadata_summary"),
-                "top_retrieved_guide_ids": ",".join(top_retrieved_guide_ids),
+                "top_retrieved_guide_ids": _join_sanitized_values(top_retrieved_guide_ids),
                 "response_length": result.get("response_length"),
                 "server": result.get("server"),
                 "worker": result.get("worker"),
             })
     return rows
+
+
+def _join_sanitized_values(values):
+    """Return a stable comma-separated representation for artifact list fields."""
+    if not values:
+        return ""
+    if isinstance(values, (str, bytes)):
+        values = [values]
+    return ",".join(
+        str(value).strip()
+        for value in values
+        if value is not None and str(value).strip()
+    )
 
 
 def eval_rows_to_jsonl(rows):

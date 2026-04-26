@@ -211,6 +211,49 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("allow_retrieval_warnings=false", markdown)
         self.assertIn("retrieval_index_flavor=full", markdown)
 
+    def test_metadata_audit_signal_handles_malformed_count_value(self):
+        root = self.make_tmpdir()
+        dispatch = root / "notes" / "dispatch"
+        dispatch.mkdir(parents=True)
+
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text(
+            json.dumps(
+                {
+                    "generated_at": "2026-04-26T09:00:00+00:00",
+                    "task": "RAG-META1",
+                    "lane": "metadata-audit",
+                    "label": "bad|label\nnext-line",
+                    "commit": "abc1234",
+                    "metric": {
+                        "malformed_frontmatter_count": {
+                            "unexpected": "raw|value\nshould not render"
+                        }
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        bench = root / "artifacts" / "bench"
+        bench.mkdir(parents=True)
+
+        markdown = build_snapshot(
+            root,
+            dispatch_dir=dispatch,
+            manifest_path=manifest,
+            bench_dir=bench,
+            max_lines=160,
+            runner=fake_runner,
+        )
+
+        self.assertIn("Metadata-audit signal (bad\\|label next-line)", markdown)
+        self.assertIn("malformed_frontmatter_count=unavailable", markdown)
+        self.assertNotIn("raw|value", markdown)
+        self.assertNotIn("should not render", markdown)
+
     def test_strict_retrieval_signal_handles_missing_configuration_keys(self):
         root = self.make_tmpdir()
         dispatch = root / "notes" / "dispatch"

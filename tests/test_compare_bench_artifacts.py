@@ -9,7 +9,13 @@ from unittest.mock import patch
 from scripts import compare_bench_artifacts
 
 
-def write_artifact(path: Path, *, model: str, error: str | None = None) -> Path:
+def write_artifact(
+    path: Path,
+    *,
+    model: str,
+    error: str | None = None,
+    question: str = "What now?",
+) -> Path:
     path.write_text(
         json.dumps(
             {
@@ -19,7 +25,7 @@ def write_artifact(path: Path, *, model: str, error: str | None = None) -> Path:
                     {
                         "index": 1,
                         "section": "Core Regression",
-                        "question": "What now?",
+                        "question": question,
                         "response_text": "Answer",
                         "decision_path": "rag",
                         "source_mode": "cited",
@@ -89,6 +95,32 @@ class CompareBenchArtifactsCliTests(unittest.TestCase):
         self.assertIn("# Bench Artifact Comparison", markdown)
         self.assertIn("Baseline: `baseline.json`", markdown)
         self.assertIn("Candidate: `candidate.json`", markdown)
+
+    def test_main_sanitizes_control_characters_in_rendered_markdown(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            baseline = write_artifact(
+                root / "baseline.json",
+                model="baseline",
+                question="What \x1b[31mnow?",
+            )
+            candidate = write_artifact(
+                root / "candidate.json",
+                model="candidate",
+                error="boom",
+                question="What \x1b[31mnow?",
+            )
+
+            output = io.StringIO()
+            with patch(
+                "sys.argv",
+                ["compare_bench_artifacts.py", str(baseline), str(candidate)],
+            ), redirect_stdout(output):
+                compare_bench_artifacts.main()
+
+        markdown = output.getvalue()
+        self.assertNotIn("\x1b", markdown)
+        self.assertIn("What ?[31mnow?", markdown)
 
 
 if __name__ == "__main__":

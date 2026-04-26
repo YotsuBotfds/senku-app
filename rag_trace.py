@@ -260,7 +260,11 @@ def _sanitize_value(value: Any, *, key: str | None = None) -> Any:
     return _json_safe(value)
 
 
-def sanitize_events(events: Sequence[Any]) -> list[Any]:
+def sanitize_events(events: Any) -> list[Any]:
+    if isinstance(events, Mapping):
+        events = [events]
+    if isinstance(events, (str, bytes, bytearray)) or not isinstance(events, Sequence):
+        events = [events]
     sanitized = []
     for event in events:
         if not isinstance(event, Mapping):
@@ -279,10 +283,7 @@ def _sanitize_record(record: Mapping[str, Any]) -> dict[str, Any]:
     sanitized = dict(record)
     if isinstance(sanitized.get("attributes"), Mapping):
         sanitized["attributes"] = sanitize_attributes(sanitized["attributes"])
-    if isinstance(sanitized.get("events"), Sequence) and not isinstance(
-        sanitized.get("events"),
-        (str, bytes, bytearray),
-    ):
+    if "events" in sanitized:
         sanitized["events"] = sanitize_events(sanitized["events"])
     return _json_safe(sanitized)
 
