@@ -104,6 +104,54 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
 
         self.assertEqual(records[0]["contexts"], ["GD-010", "GD-011"])
 
+    def test_split_guide_ids_deduplicates_nested_and_comma_values(self):
+        self.assertEqual(
+            exporter.split_guide_ids(
+                {
+                    "primary": ["GD-010, GD-011", {"fallback": "GD-010|unknown"}],
+                    "secondary": "GD-012",
+                }
+            ),
+            ["GD-010", "GD-011", "GD-012"],
+        )
+
+    def test_diagnostics_metadata_normalizes_nested_guide_id_values(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            diagnostics = Path(tmpdir) / "diagnostics.json"
+            diagnostics.write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "artifact_name": "diag_only.json",
+                                "prompt_index": 4,
+                                "prompt_text": "Normalize nested ids?",
+                                "cited_guide_ids": [
+                                    " GD-001 ",
+                                    "unknown",
+                                    {"extra": "GD-002, GD-001"},
+                                ],
+                                "top_retrieved_guide_ids": "GD-003| none |GD-004,GD-003",
+                                "expected_guide_ids": {
+                                    "primary": ["GD-005", "null", "GD-006|GD-005"]
+                                },
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            records = exporter.build_records(
+                bench_paths=[],
+                diagnostics_paths=[diagnostics],
+            )
+
+        metadata = records[0]["metadata"]
+        self.assertEqual(metadata["cited_guide_ids"], ["GD-001", "GD-002"])
+        self.assertEqual(metadata["top_retrieved_guide_ids"], ["GD-003", "GD-004"])
+        self.assertEqual(metadata["expected_guide_ids"], ["GD-005", "GD-006"])
+
     def test_diagnostics_enriches_bench_row_with_bucket_and_status_metadata(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -283,6 +331,53 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
         self.assertEqual(trace["error_phases"], ["generate"])
         self.assertEqual(trace["duration_ms_by_phase"], {"generate": 5.0, "retrieve": 2.0})
         self.assertEqual([span["phase"] for span in trace["spans"]], ["retrieve", "generate"])
+
+    def test_trace_summary_uses_name_phase_and_top_level_identity(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            bench = root / "trace_run.json"
+            trace_path = root / "trace.jsonl"
+            bench.write_text(
+                json.dumps(
+                    {
+                        "results": [
+                            {
+                                "index": 1,
+                                "question": "trace?",
+                                "response_text": "answer",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            trace_path.write_text(
+                json.dumps(
+                    {
+                        "name": "rag.retrieve",
+                        "artifact_name": "trace_run.json",
+                        "prompt_index": 1,
+                        "duration_ms": "2.3456",
+                        "status": "FAIL",
+                        "trace_id": "t1",
+                        "span_id": "s1",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            records = exporter.build_records(
+                bench_paths=[bench],
+                diagnostics_paths=[],
+                trace_paths=[trace_path],
+            )
+
+        trace = records[0]["metadata"]["trace"]
+        self.assertEqual(trace["error_phases"], ["retrieve"])
+        self.assertEqual(trace["duration_ms_by_phase"], {"retrieve": 2.346})
+        self.assertEqual(trace["spans"][0]["phase"], "retrieve")
+        self.assertEqual(trace["spans"][0]["duration_ms"], 2.346)
 
     def test_cli_writes_jsonl(self):
         with tempfile.TemporaryDirectory() as tmpdir:

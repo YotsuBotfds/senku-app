@@ -360,9 +360,12 @@ def summarize_trace_spans(paths: Sequence[Path]) -> dict[tuple[str, str], dict[s
     grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for path in paths:
         if iter_otel_spans is not None:
-            spans = iter_otel_spans(path)
+            try:
+                spans = list(iter_otel_spans(path))
+            except (TypeError, ValueError):
+                spans = list(_iter_raw_trace_records(path))
         else:
-            spans = _iter_raw_trace_records(path)
+            spans = list(_iter_raw_trace_records(path))
         for span in spans:
             if not isinstance(span, Mapping):
                 continue

@@ -271,6 +271,11 @@ Action:
 - Added RAG trend coverage proving top-1 marker risk, bridge, and unresolved
   partial overlays fall back to row-level diagnostics when summary counts are
   absent.
+- Added RAG eval exporter coverage for nested, comma-delimited, and duplicate
+  guide-id normalization so exported metadata stays stable across artifact
+  shapes.
+- Added RAG eval trace coverage proving top-level trace identity and name-based
+  phase fallback still attach spans and error phases to exported rows.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
