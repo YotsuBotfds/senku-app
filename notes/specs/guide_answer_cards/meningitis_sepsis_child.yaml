@@ -105,6 +105,7 @@ source_invariants:
     must_not_match:
       - "non-blanching[^\\n]{0,120}(reassure|benign|routine rash)"
 review_status: pilot_reviewed
+runtime_citation_policy: reviewed_source_family
 notes: >
   Primary guide is sepsis-recognition for emergency ownership; infant-child-care
   corroborates the child-facing rash and meningitis warning language. Public

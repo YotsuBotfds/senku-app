@@ -807,6 +807,19 @@ class GuideAnswerCardContractTests(unittest.TestCase):
 
         self.assertEqual(result["status"], "pass")
 
+    def test_meningitis_sepsis_child_can_cite_reviewed_source_family(self):
+        card = find_cards_for_guides("GD-589", cards=self.cards)[0]
+
+        child_care_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-284"])
+        pediatric_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-298"])
+
+        self.assertEqual(card["runtime_citation_policy"], "reviewed_source_family")
+        self.assertEqual(child_care_plan["cited_guide_ids"], ["GD-284"])
+        self.assertIn("[GD-284]", child_care_plan["answer_text"])
+        self.assertNotIn("[GD-589]", child_care_plan["answer_text"])
+        self.assertEqual(pediatric_plan["cited_guide_ids"], ["GD-298"])
+        self.assertIn("[GD-298]", pediatric_plan["answer_text"])
+
     def test_meningitis_sepsis_framing_enforces_first_hour_language(self):
         cards = find_cards_for_guides("GD-589", cards=self.cards)
         answer = """

@@ -3954,6 +3954,26 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertEqual(plan["card_ids"], ["newborn_danger_sepsis"])
         self.assertEqual(plan["cited_guide_ids"], ["GD-492"])
 
+    def test_card_backed_runtime_answer_allows_meningitis_connectivity_prompt_via_source_family(self):
+        prompt = (
+            "The internet is down, cell service is weak, and a child has a "
+            "stiff neck with a purple rash. Should I troubleshoot the router "
+            "first or start moving toward help?"
+        )
+        results = {"metadatas": [[{"guide_id": "GD-284"}, {"guide_id": "GD-298"}]]}
+
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(prompt, results)
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["meningitis_sepsis_child"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-284"])
+        self.assertIn("suspected meningitis or meningococcemia", plan["answer_text"])
+        self.assertIn("Escalate urgently", plan["answer_text"])
+
     def test_card_backed_runtime_answer_rejects_allowed_guide_mismatch(self):
         results = {"metadatas": [[{"guide_id": "GD-301"}]]}
         card = {
