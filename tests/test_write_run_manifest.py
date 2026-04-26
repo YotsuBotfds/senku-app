@@ -314,6 +314,66 @@ class WriteRunManifestTests(unittest.TestCase):
             },
         )
 
+    def test_absolute_repo_artifact_path_records_portable_relative_path(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            report_path = root / "artifacts" / "bench" / "absolute" / "report.md"
+            report_path.parent.mkdir(parents=True)
+            report_path.write_text("ok\n", encoding="utf-8")
+            manifest_path = root / "manifest.jsonl"
+
+            payload = _run_script(
+                [
+                    "--task",
+                    "absolute-artifact",
+                    "--lane",
+                    "tooling",
+                    "--output",
+                    str(report_path),
+                    "--manifest-path",
+                    str(manifest_path),
+                ],
+                cwd=tmpdir,
+            )
+
+        self.assertEqual(payload["artifact_path"], ["artifacts/bench/absolute/report.md"])
+        self.assertEqual(payload["artifact_path_missing"], [])
+        evidence = payload["artifact_path_evidence"][0]
+        self.assertEqual(evidence["path"], "artifacts/bench/absolute/report.md")
+        self.assertIs(evidence["exists"], True)
+        self.assertEqual(evidence["kind"], "file")
+
+    def test_artifact_paths_dedupe_backslash_and_forward_slash_equivalents(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            report_path = root / "artifacts" / "bench" / "dedupe" / "report.md"
+            report_path.parent.mkdir(parents=True)
+            report_path.write_text("ok\n", encoding="utf-8")
+            manifest_path = root / "manifest.jsonl"
+
+            payload = _run_script(
+                [
+                    "--task",
+                    "artifact-dedupe",
+                    "--lane",
+                    "tooling",
+                    "--output",
+                    "artifacts/bench/dedupe/report.md",
+                    "--output",
+                    "artifacts\\bench\\dedupe\\report.md",
+                    "--manifest-path",
+                    str(manifest_path),
+                ],
+                cwd=tmpdir,
+            )
+
+        self.assertEqual(payload["artifact_path"], ["artifacts/bench/dedupe/report.md"])
+        self.assertEqual(payload["artifact_path_count"], 1)
+        self.assertFalse(payload["artifact_path_truncated"])
+        self.assertEqual(payload["artifact_path_missing"], [])
+        self.assertEqual(len(payload["artifact_path_evidence"]), 1)
+        self.assertIs(payload["artifact_path_evidence"][0]["exists"], True)
+
     def test_artifact_path_evidence_records_directory_outputs(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

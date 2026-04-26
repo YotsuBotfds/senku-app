@@ -192,6 +192,13 @@ def get_git_diff_stat(git_runner: GitRunner = run_git) -> str | None:
     return result.stdout
 
 
+def get_repo_root(git_runner: GitRunner = run_git) -> Path:
+    value = _clean_git_value(_safe_git(git_runner, ["rev-parse", "--show-toplevel"]))
+    if value:
+        return Path(value)
+    return Path.cwd()
+
+
 def collect_git_state(
     *,
     changed_file_limit: int = DEFAULT_CHANGED_FILE_LIMIT,
@@ -252,27 +259,62 @@ def _is_artifact_path(value: str) -> bool:
     return normalized == "artifacts" or normalized.startswith("artifacts/") or "/artifacts/" in normalized
 
 
+def _portable_path(path: Path) -> str:
+    return path.as_posix()
+
+
+def _normalize_artifact_path(value: str, repo_root: Path) -> tuple[str, Path] | None:
+    raw_path = value.strip()
+    if not raw_path:
+        return None
+
+    portable_raw_path = raw_path.replace("\\", "/")
+    real_path = Path(raw_path)
+    if not real_path.is_absolute():
+        real_path = repo_root.joinpath(*portable_raw_path.split("/"))
+
+    record_path = portable_raw_path
+    try:
+        relative_path = real_path.resolve(strict=False).relative_to(
+            repo_root.resolve(strict=False)
+        )
+    except ValueError:
+        pass
+    else:
+        record_path = _portable_path(relative_path)
+
+    if not _is_artifact_path(record_path):
+        return None
+    return record_path, real_path
+
+
 def collect_artifact_paths(
     values: Sequence[str],
     *,
     limit: int = DEFAULT_ARTIFACT_PATH_LIMIT,
+    repo_root: Path | None = None,
 ) -> dict[str, object]:
     paths: list[str] = []
+    evidence_paths: dict[str, Path] = {}
     seen: set[str] = set()
     total_unique = 0
+    root = repo_root or Path.cwd()
     for value in values:
-        normalized = value.replace("\\", "/").strip()
-        if not _is_artifact_path(normalized):
+        normalized = _normalize_artifact_path(value, root)
+        if normalized is None:
             continue
-        if normalized in seen:
+        record_path, real_path = normalized
+        if record_path in seen:
             continue
-        seen.add(normalized)
+        seen.add(record_path)
+        evidence_paths[record_path] = real_path
         total_unique += 1
         if len(paths) >= limit:
             continue
-        paths.append(normalized)
+        paths.append(record_path)
     return {
         "paths": paths,
+        "evidence_paths": evidence_paths,
         "count": total_unique,
         "truncated": total_unique > len(paths),
     }
@@ -295,11 +337,17 @@ def _format_mtime(path: Path) -> str | None:
         return None
 
 
-def collect_artifact_path_evidence(paths: Sequence[str]) -> dict[str, object]:
+def collect_artifact_path_evidence(
+    paths: Sequence[str],
+    *,
+    evidence_paths: dict[str, Path] | None = None,
+    repo_root: Path | None = None,
+) -> dict[str, object]:
     entries: list[dict[str, object]] = []
     missing: list[str] = []
+    root = repo_root or Path.cwd()
     for value in paths:
-        path = Path(value)
+        path = (evidence_paths or {}).get(value, root / Path(value))
         try:
             exists = path.exists()
         except OSError as exc:
@@ -337,6 +385,7 @@ def build_record(
     *,
     git_runner: GitRunner = run_git,
 ) -> dict[str, object]:
+    repo_root = get_repo_root(git_runner)
     git_state = collect_git_state(
         changed_file_limit=args.changed_file_limit,
         status_limit=args.status_limit,
@@ -353,8 +402,13 @@ def build_record(
     artifact_summary = collect_artifact_paths(
         [*args.input, *args.output, *changed_files],
         limit=args.artifact_path_limit,
+        repo_root=repo_root,
     )
-    artifact_evidence = collect_artifact_path_evidence(artifact_summary["paths"])
+    artifact_evidence = collect_artifact_path_evidence(
+        artifact_summary["paths"],
+        evidence_paths=artifact_summary["evidence_paths"],
+        repo_root=repo_root,
+    )
     generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     return {
         "task": args.task,

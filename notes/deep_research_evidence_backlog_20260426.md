@@ -252,6 +252,9 @@ Action:
 - Added run-manifest artifact evidence coverage for directory outputs, proving
   directory artifacts are recorded as existing `directory` entries with
   modification timestamps rather than being treated as missing files.
+- Normalized run-manifest artifact paths so absolute repo-local outputs and
+  backslash/forward-slash equivalents record one portable repo-relative path
+  while still probing the real filesystem path for evidence.
 - Added compare-bench CLI wrapper coverage for both stdout rendering and
   `--output` file writing, pinning the operator path around the existing
   artifact comparison engine.
