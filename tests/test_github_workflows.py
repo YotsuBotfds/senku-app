@@ -231,6 +231,13 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertNotIn("paths", push)
         self.assertNotIn("paths-ignore", push)
         self.assertIn("workflow_dispatch", triggers)
+        self.assertEqual(
+            {
+                "group": "${{ github.workflow }}-${{ github.ref }}",
+                "cancel-in-progress": True,
+            },
+            workflow["concurrency"],
+        )
 
         jobs = workflow["jobs"]
         self.assertEqual(["generated-head-health"], list(jobs))

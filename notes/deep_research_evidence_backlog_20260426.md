@@ -253,6 +253,9 @@ Action:
   filter so dependency scan health becomes visible on relevant HEAD updates.
 - Added an explicit no-path-filter guard for the `Master Head Health` workflow:
   it must run on every `master` push, not only selected path changes.
+- Added `Master Head Health` concurrency keyed by workflow/ref with
+  cancel-in-progress, so rapid `master` pushes keep the latest Generated-mode
+  no-FastEmbed signal instead of stacking duplicate head-health runs.
 - Added a strict-priority live-overlap guard for deterministic special cases:
   current overlap fixtures must resolve by priority, with no live dependence
   on lexical-signature or first-defined tie-breaks.
