@@ -213,6 +213,8 @@ Action:
 - Extended row-level diagnostics queries with safety/UI surfacing filters:
   `--safety-surface-status` and `--ui-surface-bucket` now let triage isolate
   emergency-first or non-safety rows without opening the raw artifact.
+- Added a Markdown-mode CLI proof for the same diagnostics filters, pinning the
+  default operator path in addition to JSON output.
 - Preserved safety/UI diagnostic facets in RAG eval dataset metadata so
   exported rows retain `safety_surface_status` and `ui_surface_bucket`
   alongside acceptance/root-cause fields.
@@ -224,6 +226,9 @@ Action:
   retrieval packs, prompt expectation validation, and FastEmbed. Also added a
   generic workflow artifact policy check for short retention and missing-file
   errors on every upload step.
+- Added a Generated-mode step-summary proof for the same no-retrieval/no-FastEmbed
+  contract, so `GITHUB_STEP_SUMMARY` preserves the cheap head-health command
+  shape in `-WhatIf` runs.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

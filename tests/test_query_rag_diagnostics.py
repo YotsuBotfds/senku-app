@@ -156,6 +156,49 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(len(payload), 1)
         self.assertEqual(payload[0]["prompt_id"], "P2")
 
+    def test_main_markdown_filters_diagnostic_triage_facets(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            write_diagnostics(
+                root / self.module.DIAGNOSTICS_FILENAME,
+                [
+                    {
+                        "prompt_id": "P1",
+                        "suspected_failure_bucket": "ranking_miss",
+                        "app_acceptance_root_cause": "supported",
+                        "safety_surface_status": "not_safety_critical",
+                        "ui_surface_bucket": "standard",
+                    },
+                    {
+                        "prompt_id": "P2",
+                        "suspected_failure_bucket": "retrieval_miss",
+                        "app_acceptance_root_cause": "evidence_owner",
+                        "safety_surface_status": "emergency_first_supported",
+                        "ui_surface_bucket": "emergency_first",
+                    },
+                ],
+            )
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                self.module.main(
+                    [
+                        str(root),
+                        "--acceptance-root-cause",
+                        "evidence_owner",
+                        "--safety-surface-status",
+                        "emergency_first_supported",
+                        "--ui-surface-bucket",
+                        "emergency_first",
+                    ]
+                )
+            markdown = output.getvalue()
+
+        self.assertIn("| P2 | retrieval_miss |", markdown)
+        self.assertIn("evidence_owner", markdown)
+        self.assertIn("emergency_first_supported", markdown)
+        self.assertNotIn("| P1 | ranking_miss |", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

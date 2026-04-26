@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import tempfile
@@ -128,6 +129,49 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
             result.stdout,
         )
         self.assertNotIn("FastEmbed", result.stdout)
+
+    def test_generated_mode_whatif_summary_omits_fast_retrieval_commands(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            summary_path = Path(tmpdir) / "summary.md"
+            env = {"GITHUB_STEP_SUMMARY": str(summary_path)}
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-Mode",
+                    "Generated",
+                    "-Label",
+                    "unit_label",
+                    "-GeneratedBenchJson",
+                    "tests\\fixtures\\non_android_generated\\candidate.json",
+                    "-GeneratedBaselineDiag",
+                    "tests\\fixtures\\non_android_generated\\baseline_diag",
+                    "-FailOnGeneratedRegression",
+                    "-WhatIf",
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=REPO_ROOT,
+                env={**os.environ, **env},
+            )
+
+            summary = summary_path.read_text(encoding="utf-8")
+
+        self.assertIn("Non-Android regression gate dry run. Label: unit_label", result.stdout)
+        self.assertIn("- Status: what-if", summary)
+        self.assertIn("- Mode: `Generated`", summary)
+        self.assertIn("- `Generated.failure_analysis`", summary)
+        self.assertIn("- `Generated.regression_gate`", summary)
+        self.assertNotIn("PartialRouter", summary)
+        self.assertNotIn("Eval9Primary", summary)
+        self.assertNotIn("evaluate_retrieval_pack.py", summary)
+        self.assertNotIn("validate_prompt_expectations.py", summary)
+        self.assertNotIn("FastEmbed", summary)
 
     def test_generated_fixture_chain_passes_analysis_and_regression_gate(self):
         with tempfile.TemporaryDirectory() as tmpdir:
