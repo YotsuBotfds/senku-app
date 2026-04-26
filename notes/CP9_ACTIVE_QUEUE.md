@@ -4,7 +4,13 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-23 - D11, D12, D13, D15, D16, D17, D18, D19, D20, D23, D24, D25, D26, D27, D28, D29, D30, D31, D32, D33, D34, D35, and D36 are landed, no slices are currently in flight, `notes/ROOT_RETENTION_TRIAGE_20260423.md` and `notes/ROOT_SCREENSHOT_REVIEW_20260423.md` now hold the repo-root retention/screenshot decision record, the historical four-screen mockup bundle now lives at `notes/reviews/senku_mobile_mockups.md` plus `notes/reviews/assets/senku_mobile_mockups/`, the two residual repo-root model-status screenshot delete-candidates are gone after D17, `guides.zip` is gone after D18 while `4-13guidearchive.zip` remains intentionally local-only as the fuller fallback, D36 tracked the current `guides/` corpus as-is with no guide-content edits, the two orphan encoding helper scripts are gone after D19 so the Rule-18 orphan `.py` branch is closed, D20 passed the narrow Rule-2b / HARD-STOP prepass on the non-destructive Android follow-up core and tracked `run_android_detail_followup.ps1`, `run_android_followup_suite.ps1`, `run_android_gap_pack.ps1`, and `run_android_session_batch.ps1`, D23 passed the narrow Rule-2b / HARD-STOP prepass on `scripts/push_litert_model_to_android.ps1`, tracked the helper unchanged as the existing tmp-staging path, D24 passed the narrow Rule-2b / HARD-STOP prepass on the logged/matrix Android wrapper tranche and tracked `scripts/run_android_prompt_logged.ps1`, `scripts/run_android_detail_followup_logged.ps1`, `scripts/run_android_followup_matrix.ps1`, and `scripts/run_android_detail_followup_matrix.ps1` unchanged, D25 passed the narrow Rule-2b / HARD-STOP prepass on the Qwen scout trio and tracked `scripts/invoke_qwen27_scout.ps1`, `scripts/invoke_qwen_scout.ps1`, and `scripts/run_qwen27_scout_job_worker.ps1` unchanged, D26 passed the narrow Rule-2b / HARD-STOP prepass on the Android sanity-helper tranche and tracked `scripts/android_fts5_probe.ps1`, `scripts/launch_debug_detail_state.ps1`, `scripts/post_rebuild_sanity_check.ps1`, and `scripts/validate_mobile_pack_deterministic_parity.ps1` unchanged, D27 passed the narrow Rule-2b / HARD-STOP prepass on the Android orchestration runner tranche and tracked `scripts/run_android_harness_matrix.ps1`, `scripts/run_android_prompt_batch.ps1`, `scripts/run_e2b_e4b_diff.ps1`, and `scripts/start_android_detail_followup_lane.ps1` unchanged, D28 confirmed the current-checkout missing-loop dependency behind the overnight launcher path, added `notes/OVERNIGHT_LAUNCHER_MISSING_LOOP_INVESTIGATION_20260423.md`, and bannered the stale historical overnight notes, D29 passed the narrow Rule-2b / HARD-STOP prepass on `scripts/start_fastembed_server.ps1` and tracked the launcher unchanged while keeping `scripts/start_litert_host_server.ps1` and the recursive-delete/process-control bucket as separate follow-up branches, D30 audited `scripts/start_litert_host_server.ps1` read-only, added `notes/LITERT_HOST_LAUNCHER_BOOTSTRAP_INVESTIGATION_20260423.md`, and made explicit that the launcher is a separate LiteRT host/bootstrap runtime follow-up because it bundles binary download, DLL-copy assumptions, model auto-discovery, and Python host launch behavior, D31 passed the narrow Rule-2b / HARD-STOP prepass on `scripts/stop_android_harness_orphans.ps1` and tracked the helper unchanged while keeping the broader process-control bucket open, D32 audited `scripts/stop_android_harness_runs.ps1` read-only, added `notes/STOP_ANDROID_HARNESS_RUNS_INVESTIGATION_20260423.md`, and made explicit that the helper is a mixed host-stop/device-reset follow-up rather than a routine host-only tracker candidate, D33 audited `scripts/stop_android_device_processes_safe.ps1` read-only, added `notes/STOP_ANDROID_DEVICE_PROCESSES_SAFE_INVESTIGATION_20260423.md`, and made explicit that the helper is a global Android device/emulator cleanup follow-up rather than a routine tracker candidate, D34 audited `scripts/cleanup_android_harness_artifacts.ps1` read-only, added `notes/CLEANUP_ANDROID_HARNESS_ARTIFACTS_INVESTIGATION_20260423.md`, and made explicit that the helper is a recursive-delete/path-safety follow-up rather than a routine tracker candidate, D35 reconfirmed the D33 findings and retired the untracked global Android device cleanup helper instead of tracking or repairing it, and D23 repaired the stale direct-stream transport truth in the methodology/tracker/queue surfaces around D22; the Wave C closeout canary remains recorded at `artifacts/bench/low_coverage_canary_probe_20260423/`, `low_coverage_route` remained absent across the four-prompt canary set, so Wave C is closed through `W-C-4` and `W-C-5` is not warranted on current evidence.
+- Last updated: 2026-04-25 - Queue/status reconciliation landed. CP9,
+  Wave C, the paused deterministic `D52+` continuation, RAG-S1 through
+  RAG-S22, RAG-EVAL, RAG-TOOL, RAG-META/CARD, and policy/runbook waves are
+  historical unless a fresh regression artifact reopens one. Current
+  non-Android baseline is the FA/FB/FD/FE runtime-card-id-filter panel plus
+  the partial/router `gd397_expectation_cleanup` proof; Android remains a
+  separate lane and is not reopened by this queue note.
 
 2026-04-24 RAG-method pivot: the durable plan is now
 `notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md`. The active guide-answering
@@ -42,7 +48,30 @@ No slices currently in flight. `W-C-1a` fixed and verified the runtime final-mod
 
 2026-04-24 desktop guide-validation addendum: the no-emulator morning pass is summarized in `notes/PLANNER_HANDOFF_2026-04-24_MORNING.md`. `EK` through `EV` are green under the deterministic desktop workflow. Fresh `EX` through `FE` baselines are recorded in that handoff.
 
-2026-04-24 RAG-next-level addendum: pause the implied `D52`+ deterministic continuation and make `RAG-S1` the next active execution slice. `D48` through `D51` remain valid parked safety-gate slices (`EW` urgent nosebleed, `EX` choking / food obstruction, `EY` meningitis, `EZ` newborn sepsis), but do not automatically continue into `FA` through `FD` unless a human explicitly selects another safety gate. `FE` already validated as deterministic `6/6` with no generation workload.
+2026-04-25 RAG status reconciliation: the RAG-S/RAG-T/RAG-EVAL/RAG-TOOL wave
+recorded below is landed history, not the current active queue. The current
+non-Android behavior baselines are:
+
+- FA/FB/FD/FE runtime-card panel:
+  `artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter/`
+  with `0` retrieval/ranking/generation/safety misses and
+  `strong_supported:23|uncertain_fit_accepted:1`.
+- Partial/router held-out pack:
+  `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md`
+  with `19` expected-supported rows, `2` accepted `uncertain_fit` rows, and
+  `0` retrieval/ranking/generation/artifact misses. Earlier `post_fixes`,
+  `metadata_visible`, and `contextual_index` partial/router artifacts are
+  historical waypoints.
+- The RAG tooling wave, including `RAG-TOOL6` incremental ingest planner, is
+  landed. Use those tools instead of redrafting planner commands by hand.
+
+2026-04-24 RAG-next-level addendum, now historical: pause the implied `D52`+
+deterministic continuation and make `RAG-S1` the next active execution slice.
+`D48` through `D51` remain valid parked safety-gate slices (`EW` urgent
+nosebleed, `EX` choking / food obstruction, `EY` meningitis, `EZ` newborn
+sepsis), but do not automatically continue into `FA` through `FD` unless a
+human explicitly selects another safety gate. `FE` already validated as
+deterministic `6/6` with no generation workload.
 
 RAG-S1 result:
 
@@ -93,7 +122,7 @@ RAG-S1 result:
 - Planner read: continue with app acceptance metrics, answer-card/evidence-owner contracts, and claim/action support. Next slices should focus on card-contract/content phrasing and generated answer structure, not retrieval/ranking expansion or automatic deterministic `D52`+ work.
 - Latest focused validation: expanded desktop safety/RAG/runtime suite passed `266` tests; `scripts/validate_special_cases.py` validated `173` deterministic rules; `scripts/validate_guide_answer_cards.py` validated `6` cards. The edited pediatric emergency guide was re-ingested earlier with `44` chunks. Focused Android JVM validation is currently available from this shell and passed the answer-surface and pack-manifest/install checks; emulator/instrumentation validation remains a separate device-lane concern.
 
-Active RAG lane:
+Landed RAG lane ledger (historical; not the current active queue):
 
 - `RAG-S4` - `notes/dispatch/RAG-S4_adaptive_retrieval_and_rerank_policy.md`
   - `S4b/S4c` status: target EX/EY/EZ/FC retrieval/ranking is clear in the 14:10 proof; use this lane only for narrow owner/rerank regressions if a future artifact reopens them.

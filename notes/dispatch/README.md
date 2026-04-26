@@ -35,10 +35,28 @@ CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 `W-C-4`, and the desktop deterministic guide wave is paused after the
 2026-04-24 method review.
 
-Current active family:
+Current RAG status:
 
-- `RAG-S1` through `RAG-S18` are the current RAG-next-level dispatches.
-- `RAG-S1` has produced the first diagnostic result at
+- The RAG-S/RAG-T/RAG-EVAL/RAG-TOOL wave recorded below is landed history,
+  not an active queue. `RAG-S1` through `RAG-S22`, `RAG-T12`, the
+  RAG-EVAL partial/router cleanup, and the RAG-TOOL utilities are closed unless
+  a fresh regression artifact reopens one.
+- Current non-Android baseline is
+  `artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter/`
+  for FA/FB/FD/FE and
+  `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md`
+  for partial/router held-outs. The latter supersedes the earlier
+  `post_fixes`, `metadata_visible`, and `contextual_index` partial/router
+  waypoints.
+- `RAG-EVAL3`, `RAG-EVAL5`, GD-024/GD-029/GD-035/GD-052/GD-397/GD-646/
+  GD-648/GD-649 source packaging, bridge metadata routing for
+  GD-634/GD-635/GD-636, and `RAG-TOOL6` incremental ingest planning are landed.
+- Android reviewed-card/runtime work remains a separate lane; do not infer
+  Android implementation work from this non-Android status reconciliation.
+
+Historical landed ledger:
+
+- `RAG-S1` produced the first diagnostic result at
   `notes/RAG_S1_DIAGNOSTIC_RESULT_20260424.md`.
 - `RAG-S1b` observability has landed in the same work block.
 - `RAG-S4` foundation, `S4b`, and `RAG-S2` pilot cards now exist; the latest
