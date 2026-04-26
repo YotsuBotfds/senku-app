@@ -271,6 +271,11 @@ Action:
 - Pinned legacy ingest-manifest compatibility: basename-keyed entries and
   renamed legacy keys with matching SHA remain fresh, while unmatched keys with
   unknown SHA stay blocking stale evidence.
+- Hardened RAG trace privacy: direct trace writes and OTel event conversion now
+  sanitize prompt/question attributes just like normal span attributes.
+- Added run-manifest artifact evidence: capped artifact paths now record
+  present/missing status, kind, modified timestamp for present paths, and a
+  missing-path count so stale or absent proof files are visible in manifests.
 
 Validation:
 

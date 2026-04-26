@@ -135,6 +135,39 @@ class RAGTraceTests(unittest.TestCase):
         self.assertEqual(len(rows), 20)
         self.assertEqual({row["worker"] for row in rows}, set(range(20)))
 
+    def test_direct_write_redacts_sensitive_attributes_and_events(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "trace.jsonl"
+            with RAGTraceWriter(path) as writer:
+                writer.write(
+                    {
+                        "name": "manual",
+                        "attributes": {
+                            "question": "raw question text",
+                            "prompt_hash": "safe-hash",
+                        },
+                        "events": [
+                            {
+                                "name": "input",
+                                "attributes": {
+                                    "prompt_text": "raw prompt text",
+                                    "prompt_id": "P-1",
+                                },
+                            }
+                        ],
+                    }
+                )
+
+            rows = read_jsonl(path)
+
+        payload = json.dumps(rows[0])
+        self.assertEqual(rows[0]["attributes"]["question"], "[redacted]")
+        self.assertEqual(rows[0]["attributes"]["prompt_hash"], "safe-hash")
+        self.assertEqual(rows[0]["events"][0]["attributes"]["prompt_text"], "[redacted]")
+        self.assertEqual(rows[0]["events"][0]["attributes"]["prompt_id"], "P-1")
+        self.assertNotIn("raw question text", payload)
+        self.assertNotIn("raw prompt text", payload)
+
     def test_otel_mapping_and_iterator_are_deterministic(self):
         record = {
             "name": "retrieve",
@@ -145,6 +178,7 @@ class RAGTraceTests(unittest.TestCase):
             "end_time_unix_nano": 200,
             "status": {"code": "OK"},
             "attributes": {"question": "raw?", "k": 5},
+            "events": [{"name": "input", "attributes": {"prompt": "raw prompt"}}],
         }
 
         mapped = to_otel_span(record)
@@ -164,7 +198,7 @@ class RAGTraceTests(unittest.TestCase):
                 "end_time_unix_nano": 200,
                 "status": {"status_code": "OK", "description": ""},
                 "attributes": {"k": 5, "question": "[redacted]"},
-                "events": [],
+                "events": [{"name": "input", "attributes": {"prompt": "[redacted]"}}],
             },
         )
 

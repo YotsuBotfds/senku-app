@@ -278,6 +278,60 @@ def collect_artifact_paths(
     }
 
 
+def _artifact_kind(path: Path) -> str:
+    if path.is_file():
+        return "file"
+    if path.is_dir():
+        return "directory"
+    return "other"
+
+
+def _format_mtime(path: Path) -> str | None:
+    try:
+        return datetime.fromtimestamp(path.stat().st_mtime, timezone.utc).isoformat(
+            timespec="seconds"
+        )
+    except OSError:
+        return None
+
+
+def collect_artifact_path_evidence(paths: Sequence[str]) -> dict[str, object]:
+    entries: list[dict[str, object]] = []
+    missing: list[str] = []
+    for value in paths:
+        path = Path(value)
+        try:
+            exists = path.exists()
+        except OSError as exc:
+            entries.append(
+                {
+                    "path": value,
+                    "exists": False,
+                    "kind": "unknown",
+                    "error": exc.__class__.__name__,
+                }
+            )
+            missing.append(value)
+            continue
+
+        entry: dict[str, object] = {
+            "path": value,
+            "exists": exists,
+            "kind": _artifact_kind(path) if exists else "missing",
+        }
+        if exists:
+            entry["modified_at"] = _format_mtime(path)
+        else:
+            missing.append(value)
+        entries.append(entry)
+
+    return {
+        "entries": entries,
+        "missing": missing,
+        "missing_count": len(missing),
+    }
+
+
 def build_record(
     args: argparse.Namespace,
     *,
@@ -300,6 +354,8 @@ def build_record(
         [*args.input, *args.output, *changed_files],
         limit=args.artifact_path_limit,
     )
+    artifact_evidence = collect_artifact_path_evidence(artifact_summary["paths"])
+    generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     return {
         "task": args.task,
         "lane": args.lane,
@@ -331,7 +387,7 @@ def build_record(
         "commit": args.commit if args.commit is not None else git_state["head_short"],
         "git_head": git_state["head"],
         "git_branch": git_state["branch"],
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generated_at": generated_at,
         "cwd": str(Path.cwd()),
         "git_status_short": git_state["status_short"],
         "git_status_short_truncated": git_state["status_short_truncated"],
@@ -344,6 +400,9 @@ def build_record(
         "artifact_path": artifact_summary["paths"],
         "artifact_path_count": artifact_summary["count"],
         "artifact_path_truncated": artifact_summary["truncated"],
+        "artifact_path_evidence": artifact_evidence["entries"],
+        "artifact_path_missing": artifact_evidence["missing"],
+        "artifact_path_missing_count": artifact_evidence["missing_count"],
     }
 
 

@@ -53,7 +53,7 @@ def to_otel_span(record: Mapping[str, Any]) -> dict[str, Any]:
             "description": str(status.get("message") or ""),
         },
         "attributes": sanitize_attributes(dict(record.get("attributes") or {})),
-        "events": list(record.get("events") or []),
+        "events": sanitize_events(record.get("events") or []),
     }
 
 
@@ -115,7 +115,7 @@ class RAGTraceWriter:
             if self._handle is None:
                 raise ValueError("trace writer is closed")
             self._handle.write(
-                json.dumps(_json_safe(dict(record)), sort_keys=True, separators=(",", ":"))
+                json.dumps(_sanitize_record(record), sort_keys=True, separators=(",", ":"))
                 + "\n"
             )
             self._handle.flush()
@@ -249,6 +249,33 @@ def _sanitize_value(value: Any, *, key: str | None = None) -> Any:
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         return [_sanitize_value(item) for item in value]
     return _json_safe(value)
+
+
+def sanitize_events(events: Sequence[Any]) -> list[Any]:
+    sanitized = []
+    for event in events:
+        if not isinstance(event, Mapping):
+            sanitized.append(_json_safe(event))
+            continue
+        event_copy = dict(event)
+        if isinstance(event_copy.get("attributes"), Mapping):
+            event_copy["attributes"] = sanitize_attributes(event_copy["attributes"])
+        else:
+            event_copy["attributes"] = _json_safe(event_copy.get("attributes", {}))
+        sanitized.append(_json_safe(event_copy))
+    return sanitized
+
+
+def _sanitize_record(record: Mapping[str, Any]) -> dict[str, Any]:
+    sanitized = dict(record)
+    if isinstance(sanitized.get("attributes"), Mapping):
+        sanitized["attributes"] = sanitize_attributes(sanitized["attributes"])
+    if isinstance(sanitized.get("events"), Sequence) and not isinstance(
+        sanitized.get("events"),
+        (str, bytes, bytearray),
+    ):
+        sanitized["events"] = sanitize_events(sanitized["events"])
+    return _json_safe(sanitized)
 
 
 def _is_sensitive_key(key: str) -> bool:
