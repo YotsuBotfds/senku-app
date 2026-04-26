@@ -1,14 +1,18 @@
 # Deep Research Evidence Backlog - 2026-04-26
 
-Scope: backlog note only. No code, guide, artifact, or protected
-`PLANNER_HANDOFF` files were edited.
+Scope: running deep-research evidence backlog. Early sections preserve the
+initial triage context; later bullets record continuation fixes and validation.
+Do not treat historical proof runs as current HEAD health without checking the
+latest `git log -1` and `gh run list` output.
 
 ## Evidence Read
 
 - `notes/deep_research_report_triage_20260426.md`
 - `C:\Users\tateb\Downloads\deep-research-report.md`
-- Current local git history: `eb71a3c` through `36d306b`, including CI,
-  FastEmbed, ingest freshness, and retrieval-index cache commits.
+- Initial local git history inspected when this backlog was opened:
+  `eb71a3c` through `36d306b`, including CI, FastEmbed, ingest freshness, and
+  retrieval-index cache commits. Later continuation commits are recorded in the
+  action/validation bullets below.
 - Current notes: `notes/AGENT_TOOLING_UPGRADES_20260426.md`,
   `notes/high_liability_smoke_coverage_inventory_20260426.md`,
   `notes/artifact_retention_cleanup_proposal_20260426.md`,
@@ -39,17 +43,19 @@ Evidence:
 
 Action:
 
-- Current proof is complete: `Non-Android Regression Gate` run `24957922497`
-  passed on head `eb71a3c` in `Fast` mode after the compact cache-miss smoke
-  index path was added. Follow-up run `24958108279` passed on head `4926d93`
-  with retrieval index cache hit, proving the compact cache-hit policy too.
-- Generated mode proof is complete: run `24958353451` passed on head
+- Historical compact Fast proof is complete: `Non-Android Regression Gate` run
+  `24957922497` passed on head `eb71a3c` in `Fast` mode after the compact
+  cache-miss smoke index path was added. Follow-up run `24958108279` passed on
+  head `4926d93` with retrieval index cache hit, proving the compact cache-hit
+  policy too.
+- Historical Generated mode proof is complete: run `24958353451` passed on head
   `1d3832f` using the committed generated fixture and baseline diagnostics.
   Follow-up run `24958386310` passed on head `379181a` with FastEmbed model
   cache and retrieval-index cache steps skipped, proving Generated mode no-DB
   behavior and the skip-FastEmbed optimization.
 - Keep the original CI-health claim scoped to the old failing run; current
-  behavior is now proven separately by run `24957922497`.
+  behavior must be checked against the latest head-health run for the current
+  commit train.
 
 Validation:
 
