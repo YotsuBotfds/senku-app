@@ -233,6 +233,9 @@ Action:
   comma-separated `-Path` lists from `powershell -File`, and tests pin a
   wrapper-only dry run/parser pass that excludes Android, emulator, and ADB
   scripts while staying free of FastEmbed/retrieval commands.
+- Added high-liability holdout-pack hygiene coverage across EVAL7/EVAL8/EVAL9:
+  prompt IDs and prompt text must remain unique across packs, and
+  `primary_expected_guides` must stay a subset of `expected_guides`.
 
 Validation:
 

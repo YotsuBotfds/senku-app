@@ -10,6 +10,11 @@ from scripts import validate_prompt_expectations as validator
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "validate_prompt_expectations.py"
+HIGH_LIABILITY_HOLDOUT_PACKS = (
+    REPO_ROOT / "artifacts" / "prompts" / "adhoc" / "rag_eval7_red_team_boundary_holdouts_20260425.jsonl",
+    REPO_ROOT / "artifacts" / "prompts" / "adhoc" / "rag_eval8_compound_boundary_holdouts_20260425.jsonl",
+    REPO_ROOT / "artifacts" / "prompts" / "adhoc" / "rag_eval9_high_liability_compound_holdouts_20260426.jsonl",
+)
 
 
 class PromptExpectationValidatorTests(unittest.TestCase):
@@ -30,6 +35,35 @@ class PromptExpectationValidatorTests(unittest.TestCase):
             "Body.\n",
             encoding="utf-8",
         )
+
+    def test_high_liability_holdout_packs_keep_unique_ids_and_prompts(self):
+        seen_ids: dict[str, str] = {}
+        seen_prompts: dict[str, str] = {}
+        row_count = 0
+
+        for pack in HIGH_LIABILITY_HOLDOUT_PACKS:
+            with self.subTest(pack=pack.name):
+                rows = [
+                    json.loads(line)
+                    for line in pack.read_text(encoding="utf-8").splitlines()
+                    if line.strip()
+                ]
+                self.assertGreater(len(rows), 0)
+                for row in rows:
+                    row_count += 1
+                    prompt_id = row["id"]
+                    prompt_text = row["prompt"].strip().lower()
+                    expected_guides = set(row.get("expected_guides") or [])
+                    primary_guides = set(row.get("primary_expected_guides") or [])
+
+                    self.assertNotIn(prompt_id, seen_ids)
+                    self.assertNotIn(prompt_text, seen_prompts)
+                    self.assertTrue(primary_guides)
+                    self.assertTrue(primary_guides.issubset(expected_guides))
+                    seen_ids[prompt_id] = pack.name
+                    seen_prompts[prompt_text] = prompt_id
+
+        self.assertEqual(row_count, 28)
 
     def test_jsonl_and_csv_validate_known_guides_and_unique_prompt_ids(self):
         root = self.make_tmpdir()
