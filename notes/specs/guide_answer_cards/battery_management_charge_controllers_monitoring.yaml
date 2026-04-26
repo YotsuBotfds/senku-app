@@ -1,0 +1,191 @@
+card_id: battery_management_charge_controllers_monitoring
+guide_id: GD-582
+slug: battery-management-charge-controllers
+title: Battery Management Systems & Charge Controllers
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks how to monitor a battery bank, charge controller, or battery monitor without changing settings or doing electrical work.
+  - A user needs a battery-bank condition inventory, red-flag checklist, routine log template, ventilation/location check, or owner-routing handoff.
+  - The prompt is about recognizing when to stop routine monitoring and route to the system owner, installer, electrician, manufacturer, recycler, emergency services, or local authority.
+required_first_actions:
+  - Start with non-invasive observation only: do not open packs, remove covers, touch terminals, alter settings, disconnect equipment, bypass protection, or work on live conductors.
+  - Identify the battery bank location, owner or maintainer, labels, installed controller or monitor, visible condition, ventilation path, alarms, odors, heat, leaks, swelling, corrosion, water exposure, and recent trend records.
+  - Screen for red flags before routine logging; if present, stop routine advice and route to qualified help or emergency response.
+  - Hand off charging setpoints, balancing, revival, BMS wiring, cell configuration, chemistry-specific procedures, calculations, repair, bypassing protection, live electrical work, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - smoke
+      - fire
+      - hissing
+      - popping
+      - rotten egg
+      - solvent smell
+      - acid leak
+      - swollen
+      - hot battery
+      - sparking
+    required_actions:
+      - Treat as a red-flag escalation, not routine monitoring; keep people away from the hazard area when appropriate and route to emergency services, system owner, installer, manufacturer, or qualified electrical/battery support.
+  - trigger_terms:
+      - setpoint
+      - equalize
+      - balance
+      - revive
+      - desulfate
+      - BMS wiring
+      - cell configuration
+      - bypass
+      - repair
+    required_actions:
+      - Give a boundary and do not provide procedural settings, wiring, balancing, revival, repair, bypass, or chemistry-specific instructions from this card.
+first_actions:
+  - Build a battery-bank inventory with bank identifier, date, observer, location, owner or maintainer, battery count as labeled, chemistry only if already labeled, controller or monitor model if visible, and current alarm/status messages.
+  - Check the surrounding location for blocked ventilation, batteries in living space without safe venting, water exposure, standing water, nearby ignition sources, flammable storage, damaged enclosure, missing labels, or unclear ownership.
+  - Record visible condition from outside protected areas: swelling, case damage, leakage, corrosion, melted insulation, exposed conductor, unusual heat, odor, smoke, hissing, popping, or controller/BMS shutdowns.
+  - Keep a log of date, status, alarms, recent outages, ventilation concerns, visible changes, who was notified, and what handoff was requested.
+  - Route unresolved alerts, unknown chemistry, missing labels, repeated shutdowns, damage, odor, heat, leaks, or unsafe location concerns to the owner, installer, electrician, manufacturer, recycler, emergency services, or local authority.
+urgent_red_flags:
+  - Smoke, fire, hissing, popping, sparking, strong rotten-egg or solvent-like odor, or any battery that is hot, swollen, leaking, or visibly damaged.
+  - Melted insulation, exposed conductor, flooded or wet equipment, standing water near electrical gear, blocked ventilation, or batteries placed in living space without safe venting.
+  - Repeated BMS or charge-controller shutdown, unknown battery chemistry, missing labels, unclear ownership, or any request to bypass a protection device.
+  - A user asks for live electrical work, opening packs, repair, revival, balancing, rewiring, settings changes, or safety certification.
+forbidden_advice:
+  - Do not provide charging setpoints, equalization instructions, balancing steps, revival/desulfation procedures, or chemistry-specific charging procedures.
+  - Do not provide BMS wiring, cell configuration, battery-pack opening, repair, bypass, or protection-defeat instructions.
+  - Do not provide capacity sizing, cable sizing, charge-current calculations, or other electrical calculations.
+  - Do not instruct users to touch terminals, work on live conductors, disconnect equipment, remove covers, or diagnose inside protected enclosures.
+  - Do not certify a battery bank, charger, controller, enclosure, ventilation system, or installation as safe, code-compliant, or professionally approved.
+do_not:
+  - Do not convert a monitoring request into instructions for changing controller settings.
+  - Do not treat odors, heat, swelling, smoke, leaks, sparking, wet equipment, or repeated shutdowns as routine log entries only.
+  - Do not infer battery chemistry when labels are missing or unclear.
+  - Do not tell a user to bypass a BMS, fuse, disconnect, controller alarm, or other protection device.
+routine_boundary: >
+  Routine GD-582 reviewed-card answers are limited to non-invasive condition
+  inventory, red-flag recognition, monitoring logs, ventilation and location
+  checks, and owner-routing handoffs. If the prompt asks for charging settings,
+  balancing, revival, BMS wiring, cell configuration, chemistry-specific
+  procedures, calculations, repair, bypassing protection, live electrical work,
+  or safety certification, give a boundary and route away from this card.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but appears to involve battery-bank monitoring,
+  give a conservative observation-and-log checklist, ask for labels, alarms,
+  location, visible condition, ventilation, and ownership, and preserve handoff
+  language for electrical, repair, chemistry-specific, emergency, and
+  certification issues.
+clarifying_questions:
+  - What are you trying to do: inventory the bank, log controller or monitor status, check ventilation/location, document an alarm, or route a red flag?
+  - What is visible without touching live equipment: labels, controller or monitor messages, odor, swelling, leakage, corrosion, heat, water exposure, blocked ventilation, or missing owner information?
+  - Who owns or maintains the system: household owner, site manager, installer, electrician, manufacturer, recycler, or emergency authority?
+applicability:
+  owner: battery bank monitoring, logging, red-flag recognition, and owner-routing handoff
+  use_when:
+    - battery_bank_condition_inventory
+    - charge_controller_or_battery_monitor_logging
+    - battery_red_flag_recognition
+    - ventilation_and_location_check
+    - owner_installer_electrician_manufacturer_handoff
+  do_not_use_when:
+    - charging_settings_or_equalization
+    - balancing_revival_or_desulfation
+    - bms_wiring_or_cell_configuration
+    - chemistry_specific_procedure
+    - electrical_calculation_or_repair
+    - bypassing_protection_or_live_electrical_work
+    - safety_certification
+actions:
+  required:
+    - classify the request as inventory, log review, red-flag recognition, ventilation/location check, or handoff planning
+    - begin with non-invasive observation and owner identification
+    - screen red flags before routine monitoring
+    - hand off procedural charging, wiring, repair, calculation, bypass, live-work, and certification requests
+  standard:
+    - provide a date-based log template
+    - include visible condition, labels, alarms, ventilation, location, recent outages, and owner-notification fields
+    - name the appropriate handoff owner for unresolved or unsafe findings
+forbidden:
+  - charging setpoints, equalization, balancing, revival, desulfation, or chemistry-specific procedures
+  - BMS wiring, cell configuration, pack opening, repair, bypass, or protection defeat
+  - capacity, cable, charge-current, or safety calculations
+  - live electrical work or terminal-contact instructions
+  - safety, code, or certification claims
+fallback:
+  - If a prompt mixes monitoring with a settings or repair request, answer only the monitoring/logging part and route settings or repair to qualified support.
+  - If labels or chemistry are unknown, document that uncertainty and route before any chemistry-specific action.
+  - If smoke, fire, odor, heat, swelling, leaks, sparking, wet equipment, or exposed conductors are present, stop routine monitoring and escalate.
+output:
+  required:
+    - monitoring category
+    - non-invasive inventory fields
+    - red-flag screen
+    - ventilation and location check
+    - log fields
+    - owner or specialist handoff
+  prohibited:
+    - charging setting
+    - balancing or revival procedure
+    - BMS wiring or cell configuration
+    - electrical calculation
+    - repair, bypass, or live-work instruction
+    - safety certification
+routing_tests:
+  positive:
+    - prompt: "Make a weekly battery bank inspection log for visible condition, controller alarms, and who to notify."
+      expect: battery_management_charge_controllers_monitoring
+    - prompt: "What should we record before asking the installer about repeated BMS shutdowns?"
+      expect: battery_management_charge_controllers_monitoring
+  near_miss:
+    - prompt: "What voltage should I set for equalizing this lead-acid bank?"
+      expect_handoff: charger_settings_or_qualified_installer
+    - prompt: "Show me how to bypass the BMS so the pack runs again."
+      expect_handoff: protection_bypass_refusal
+    - prompt: "Calculate cable size and charge current for a new bank."
+      expect_handoff: electrical_design_or_engineering_support
+  boundary:
+    - prompt: "A battery is hot, swollen, and smells like rotten eggs. Should I keep logging it?"
+      expect: red_flag_escalation_not_routine_monitoring
+    - prompt: "Can you certify this battery room is safe?"
+      expect: inspection_or_certification_handoff_not_card
+citation_ids:
+  - gd-582-reviewed-card-boundary
+  - gd-582-monitoring-log
+  - gd-582-red-flags
+  - gd-582-ventilation-location
+  - gd-582-owner-handoff
+source_sections:
+  - guide: GD-582
+    slug: battery-management-charge-controllers
+    title: Battery Management Systems & Charge Controllers
+    sections:
+      - "Reviewed Answer-Card Boundary: Monitoring, Logs, and Handoffs"
+      - Safety: Acid Handling, Hydrogen Venting, Fire Prevention
+      - Summary: Battery Management Checklist
+source_invariants:
+  - name: reviewed_card_boundary_remains
+    guide: GD-582
+    must_include:
+      - "This is the reviewed answer-card surface for GD-582."
+      - "Use it only for non-invasive battery-bank condition inventory, red-flag recognition, monitoring logs, ventilation and location checks, and owner-routing handoffs."
+      - "Do not use this reviewed card for charging setpoints, equalization, balancing, revival, desulfation, BMS wiring, cell configuration, chemistry-specific procedures, capacity or cable calculations, repair steps, opening packs, bypassing protection, live electrical work, or safety certification."
+  - name: monitoring_log_fields_remain
+    guide: GD-582
+    must_include:
+      - "record the battery bank identifier, date, observer, location, battery count as labeled"
+      - "installed controller or monitor status, alarm messages"
+      - "the owner or maintainer responsible for follow-up"
+  - name: ventilation_and_red_flags_remain
+    guide: GD-582
+    must_include:
+      - "Ensure battery enclosure has passive or active venting to outdoors"
+      - "No smoking, sparks, or open flames near charging batteries"
+      - "blocked ventilation, batteries in living space without safe venting"
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-582 as a monitoring/logging/owner-routing card only.
+  It owns non-invasive condition inventory, red-flag recognition, log structure,
+  ventilation and location checks, and handoff triggers. It deliberately
+  excludes charging settings, balancing, revival, BMS wiring, cell
+  configuration, chemistry-specific procedures, calculations, repair, bypassing
+  protection, live electrical work, and safety certification.

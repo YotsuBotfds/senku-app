@@ -8,6 +8,25 @@ tags:
   - power-generation
   - electricity
   - industrial-systems
+aliases:
+  - power factor
+  - power factor correction
+  - reactive power
+  - poor power factor symptoms
+  - lagging load
+  - leading load
+  - utility bill power factor
+  - generator capacity reactive loads
+routing_cues:
+  - Use for conceptual explanations of lagging and leading AC loads, reactive power symptoms, utility-bill context, generator-capacity context, and owner-routing handoff for power-factor concerns.
+  - Do not use for capacitor sizing, capacitor-bank design, installation, wiring, live electrical measurements, panel work, motor repair, harmonics engineering, electrical calculations, code compliance, or safety certification.
+applicability: >
+  Conceptual and planning-level power-factor triage only: explain lagging and
+  leading loads qualitatively, inventory likely symptoms and site context, note
+  utility-bill or generator-capacity clues, and route capacitor sizing,
+  electrical measurements, installation, panel work, motor repair, harmonics,
+  calculations, code, and safety-certification questions to qualified electrical
+  owners.
 icon: ⚡
 description: Real vs. reactive vs. apparent power differentiation, power factor calculation and significance, why poor power factor wastes generator capacity, measurement methods without instruments, capacitor bank sizing for correction, capacitor construction from salvaged materials, harmonic filtering basics, automatic PF correction circuits, and motor load correction techniques.
 related:
@@ -27,6 +46,16 @@ custom_css: |
   .capacitor-table th { background-color: var(--card); border-bottom: 2px solid var(--accent); padding: 12px; text-align: left; font-weight: bold; }
   .capacitor-table td { padding: 10px; border-bottom: 1px solid var(--border); }
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: power_factor_correction_conceptual
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for conceptual/planning
+  answers about lagging or leading load behavior, symptom inventory,
+  utility-bill or generator-capacity context, and owner handoff. Do not cite it
+  as reviewed support for capacitor sizing, installation, wiring, live
+  measurements, panel work, motor repair, harmonics engineering, electrical
+  calculations, code claims, or safety certification.
 ---
 :::tip
 Power factor correction is often overlooked in off-grid microgrids, but poor power factor wastes ~10–30% of generator capacity. For resource-limited communities, correcting PF can mean the difference between being able to power essential loads and needing a larger, more expensive generator.
@@ -35,6 +64,18 @@ Power factor correction is often overlooked in off-grid microgrids, but poor pow
 :::danger
 **Electrical fire and equipment failure from uncontrolled reactive power:** Undersized wiring, improper capacitor sizing, or resonance can cause cables to overheat and start fires. Uncontrolled reactive power damages generator windings and motor insulation. Capacitor banks can explode if not properly designed. Always size capacitors for the actual load, never over-correct. Use experienced electrical installers for high-power corrections. A single miscalculation can burn down a facility.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-623. Use it only for conceptual and planning-level power-factor questions: explaining that inductive loads such as motors and transformers tend to make current lag voltage, capacitive loads tend to make current lead voltage, and poor power factor can make a generator or service deliver more current for the same useful work.
+
+Start with a non-procedural inventory. Ask what large motors, pumps, welders, transformers, variable-speed drives, capacitor banks, or utility-bill power-factor charges are present; what symptoms are being seen, such as voltage sag, dimming lights, nuisance trips, hot equipment, humming transformers, poor motor starting, generator strain, or unexplained demand charges; and whether the user is trying to understand a bill, plan an owner handoff, or decide what information to collect for an electrician.
+
+Keep the answer qualitative. You may describe why lagging motor-heavy loads can waste generator or service capacity and why leading over-correction can also be a problem, but do not provide capacitor sizing, installation, wiring, live electrical measurements, panel work, motor repair, harmonics engineering, electrical calculations, code-compliance claims, or safety certification. Hand off those requests to a qualified electrician, power-quality engineer, utility representative, generator technician, or site electrical owner as appropriate.
+
+</section>
 
 <section id="overview">
 
@@ -543,4 +584,3 @@ If C = 50 µF: L ≈ 32 µH (very small; impractical)
 :::
 
 </section>
-

@@ -21,6 +21,21 @@ routing_cues:
   - Use for post-storm electrical bootstrap questions about prioritizing loads, isolating damaged sections, staged temporary restoration, batteries, charging, and microgrid or load planning.
   - Pair with electrical-safety for shock, fire, live-wire, grounding, and damaged-wiring hazards.
 applicability: Community or shelter electrical bootstrap planning after outages when limited generation, batteries, or partial power must be triaged into a safe temporary restoration sequence.
+reviewed_applicability:
+  - Safe when needed: staged load triage, outage owner logs, temporary-state documentation, de-energized planning, safe-source assumptions, and handoff triggers after partial outage restoration.
+  - Not safe for: wiring procedures, live testing, generator backfeed instructions, battery charging settings, transfer-switch installation, electrical calculations, repair steps, code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: electrical_system_bootstrap_load_triage
+answer_card:
+  - electrical_system_bootstrap_load_triage
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for planning-level staged
+  load triage, outage owner logs, temporary-state documentation, de-energized
+  planning, and handoff triggers during partial electrical restoration. Do not
+  use the reviewed card for wiring procedures, live testing, generator
+  backfeed, battery charging settings, transfer-switch how-to, code compliance,
+  electrical calculations, repairs, or safety certification.
 icon: ⚡
 description: Progressive path from hand-crank generators through stored battery systems to renewable energy and community microgrids. Includes load planning, storage calculations, and troubleshooting.
 related:
@@ -47,6 +62,18 @@ This guide is part of the **Electrical Systems Series**. Recommended reading ord
 - [Electrical Wiring](../electrical-wiring.html) — Distribution and wiring systems
 - [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) — Safety throughout all electrical work
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-649. Use it only for planning-level partial electrical restoration after an outage: staged load triage, outage owner logs, temporary-state documentation, de-energized planning assumptions, and handoff triggers before specialist work.
+
+Start by naming the temporary power owner, confirming damaged, wet, unknown, or suspect areas stay de-energized, listing must-have loads before optional loads, and documenting what is energized, what is intentionally off, what source feeds it, who checked it, and when the next review is due.
+
+Do not use this card for wiring procedures, live testing, generator backfeed instructions, battery charging settings, transfer-switch installation or operation how-to, code compliance claims, electrical calculations, repair steps, or safety certification. If a prompt asks for those, answer only the planning/logging portion that is in scope and hand off to the appropriate qualified electrical, utility, battery, generator, transfer-switch, safety, or emergency owner.
+
+</section>
 
 ## Introduction: The Electrical Bootstrap Sequence
 

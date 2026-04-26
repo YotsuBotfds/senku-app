@@ -10,6 +10,18 @@ tags:
   - power-systems
 icon: ⚡
 description: Design stand-alone or grid-tied microgrids for communities. Load assessment, generation sizing, battery bank design, distribution wiring, protection systems (fuses, breakers, grounding), metering, and multi-source integration.
+aliases:
+  - microgrid planning
+  - microgrid load grouping
+  - community power resilience planning
+  - off-grid power distribution planning
+  - microgrid outage log
+  - microgrid expansion priorities
+  - microgrid ownership handoff
+  - village power load priority plan
+routing_cues:
+  - Use for planning-level microgrid questions about grouping loads, resilience goals, ownership roles, outage and maintenance logs, expansion priorities, and handoffs before technical design.
+  - Route wiring diagrams, protection coordination, breaker or fuse sizing, grounding, inverter hookups, interconnection, live work, construction engineering, legal/code claims, and safety certification away from this reviewed card.
 related:
   - community-microgrid-economics
   - electrical-generation
@@ -21,6 +33,23 @@ word_count: 3800
 last_updated: '2026-02-20'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: microgrid_design_distribution_planning
+citations_required: true
+applicability: >
+  Use GD-471 for planning-level microgrid design and distribution scoping:
+  load grouping, critical-service priority, resilience goals, ownership and
+  operator handoffs, outage and maintenance logs, expansion priorities, and
+  routing to qualified technical owners. Do not use its reviewed card for wiring
+  diagrams, protection coordination, breaker or fuse sizing, grounding design,
+  inverter hookups, grid interconnection, live work, construction engineering,
+  legal/code claims, or safety certification.
+citation_policy: >
+  Cite this guide and its reviewed answer card only for planning-level microgrid
+  scoping, load grouping, resilience goals, ownership roles, outage logs,
+  expansion priority decisions, and safety handoff boundaries. Do not cite the
+  reviewed card as authority for electrical construction, code compliance,
+  equipment sizing, interconnection approval, energized work, or certification.
 ---
 <section id="overview">
 
@@ -29,6 +58,18 @@ liability_level: high
 A **microgrid** is a localized, self-contained electrical system serving a community, village, or industrial site. Microgrids can operate independently (islanding) or interconnect with larger grids. Modern microgrids blend multiple generation sources (solar, wind, hydro, generator), energy storage (batteries), and intelligent controls to balance supply and demand.
 
 This guide covers planning and design for a 20–500 kW microgrid serving 30–100 homes or a small industrial site. Scaling principles extend to larger systems.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-471. Use it for planning-level microgrid distribution scoping: group loads, name critical services, set resilience goals, assign owner/operator responsibilities, define outage and maintenance logs, rank expansion priorities, and identify safety or engineering handoffs.
+
+Start by listing who and what the microgrid must serve: homes, clinic, water pumping, cold storage, communications, workshops, schools, and standby loads. Group them into essential, productive, household-basic, and discretionary tiers; set the desired outage tolerance for each tier; and record who owns policy decisions, daily operation, logs, maintenance coordination, and escalation.
+
+Do not use this reviewed card for wiring diagrams, protection coordination, breaker or fuse sizing, grounding design, inverter hookups, grid interconnection, live work, construction engineering, legal or code claims, or safety certification. If the prompt asks for those, answer only the planning observation that is in scope and hand off to the appropriate qualified electrical, construction, utility, legal, or safety owner.
 
 </section>
 

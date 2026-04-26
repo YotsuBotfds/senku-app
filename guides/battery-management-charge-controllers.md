@@ -20,10 +20,46 @@ word_count: 5100
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+aliases:
+  - battery bank monitoring
+  - battery condition inventory
+  - charge controller logging
+  - battery ventilation check
+  - battery owner handoff
+  - battery red flag checklist
+routing_cues:
+  - Use this guide's reviewed answer card only for battery-bank condition inventory, red-flag recognition, monitoring logs, ventilation and location checks, and owner or specialist handoff planning.
+  - Keep routine answers focused on visible condition, location, ventilation, installed monitor/controller alerts, dates, trends, labels, documentation, and escalation triggers.
+  - Route charging setpoints, balancing, revival, BMS wiring, cell configuration, chemistry-specific procedures, calculations, repair, bypassing protection, live electrical work, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-582 answer card for battery condition inventory, monitoring/logging, ventilation/location checks, red flags, and owner-routing handoffs only; do not use it for charging settings, balancing, revival, BMS wiring, cell configuration, chemistry-specific procedures, calculations, repair, bypassing protection, live electrical work, or safety certification.
+applicability: >
+  Use for monitoring-first battery management questions: non-invasive battery
+  bank condition inventory, charge-controller or battery-monitor log review,
+  visible red flags, ventilation and location checks, and routing the issue to
+  the system owner, electrician, installer, manufacturer, recycler, emergency
+  services, or other qualified support. Do not use for changing charge
+  settings, balancing, revival, BMS wiring, cell configuration,
+  chemistry-specific procedures, sizing calculations, repairs, bypassing
+  protection, live electrical work, or certifying safety.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: battery_management_charge_controllers_monitoring
+answer_card:
+  - battery_management_charge_controllers_monitoring
 ---
 ## Overview
 
 In off-grid systems, batteries are your energy storage backbone. Improper management destroys them rapidly; proper care extends lifespan from 3–5 years to 10–15 years. This guide covers lead-acid chemistry, lithium BMS principles, charge controller architectures, and protection strategies for standalone power systems.
+
+## Reviewed Answer-Card Boundary: Monitoring, Logs, and Handoffs
+
+This is the reviewed answer-card surface for GD-582. Use it only for non-invasive battery-bank condition inventory, red-flag recognition, monitoring logs, ventilation and location checks, and owner-routing handoffs. Start with what can be observed without opening equipment or touching live conductors: battery bank location, enclosure condition, ventilation path, labels, visible damage, odors, heat, leaks, swelling, corrosion, standing water, nearby ignition sources, controller or monitor alarms, dates, and trend records.
+
+For routine monitoring, record the battery bank identifier, date, observer, location, battery count as labeled, chemistry only if already labeled, installed controller or monitor status, alarm messages, recent outages, temperature or ventilation concerns, visible corrosion, case swelling, leakage, odor, unusual heat, cable or terminal damage visible from outside the protected area, and the owner or maintainer responsible for follow-up.
+
+Red flags require stopping routine monitoring and routing to qualified help: smoke, fire, hissing, popping, strong rotten-egg or solvent-like odor, acid leak, swollen or hot battery case, melted insulation, exposed conductor, sparking, flooded or wet equipment, repeated BMS or controller shutdown, unknown battery chemistry, missing labels, blocked ventilation, batteries in living space without safe venting, or any request to bypass a protection device.
+
+Do not use this reviewed card for charging setpoints, equalization, balancing, revival, desulfation, BMS wiring, cell configuration, chemistry-specific procedures, capacity or cable calculations, repair steps, opening packs, bypassing protection, live electrical work, or safety certification. Hand off those requests to the system owner, qualified electrician or installer, manufacturer documentation, certified inspector, battery recycler, emergency services, or local authority as appropriate.
 
 ## Lead-Acid Battery Chemistry & Cell Structure
 

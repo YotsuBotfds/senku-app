@@ -9,6 +9,35 @@ tags:
   - practical
 icon: 🔌
 description: Component identification, color codes, desoldering/resoldering, multimeter use, signal tracing, and PCB reverse engineering
+aliases:
+  - electronics repair intake
+  - broken device triage
+  - device visible damage log
+  - do not power on electronics
+  - de-energized electronics inspection
+routing_cues:
+  - Use for device intake, visible damage documentation, de-energized low-risk inspection, repair-log setup, and routing to the correct parts or electrical owner.
+  - Route here when the user needs a safe first-pass triage checklist before deciding whether a device should be powered, opened, salvaged, quarantined, or handed off.
+  - Do not route here for circuit repair procedures, soldering steps, capacitor discharge instructions, live testing, mains work, battery pack repair, energized diagnostic measurements, component substitutions, or safety certification.
+applicability: >
+  Electronics repair triage and logging only: device intake, visible damage
+  checks, documentation, de-energized low-risk inspection, parts-owner routing,
+  and do-not-power-on triggers. This metadata surface is not a procedural repair,
+  live-testing, mains-work, battery-pack-repair, soldering, capacitor-discharge,
+  component-substitution, or safety-certification owner.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for electronics repair intake,
+  visible damage checks, documentation, de-energized low-risk inspection,
+  repair-log setup, parts-owner routing, and do-not-power-on handoffs only. Do
+  not use the reviewed card for circuit repair procedures, soldering steps,
+  capacitor discharge instructions, live testing, mains work, battery pack
+  repair, energized diagnostic measurements, component substitutions, or safety
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: electronics_repair_fundamentals_triage
+answer_card:
+  - electronics_repair_fundamentals_triage
 related:
   - building-materials-salvage
   - electricity
@@ -25,6 +54,22 @@ custom_css: |
   .component-card { border: 1px solid var(--border); padding: 12px; border-radius: 4px; background: var(--card); }
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Triage, Logging, and Safe Handoff
+
+This is the reviewed answer-card surface for GD-322. Use it only for electronics repair intake, visible damage checks, documentation, de-energized low-risk inspection, parts-owner routing, and do-not-power-on decisions before any repair attempt.
+
+Start by keeping the device disconnected from all power sources. Record the device identity, owner, symptoms, incident history, power source, accessories, labels, photos, smells, sounds, liquid exposure, heat damage, cracked casing, corrosion, loose parts, missing covers, damaged cords, swollen batteries, or signs that someone already attempted repair.
+
+Do not power on a device with water exposure, smoke, burning smell, heat damage, swollen or leaking batteries, damaged mains cord, exposed conductors, cracked power supply, missing protective covers, unknown prior modifications, loose metal debris, or any sign of short circuit or fire. Tag it, isolate it from use, and route it to the proper owner instead of trying to confirm the fault by energizing it.
+
+Low-risk inspection in this card means external and clearly de-energized work only: photograph, label, separate accessories, note visible damage, keep screws and parts with the device, and decide whether the next owner is electrical safety, battery handling, parts inventory, data salvage, or a qualified repair technician.
+
+Do not use this card for circuit repair procedures, soldering steps, capacitor discharge instructions, live testing, mains work, battery pack repair, diagnostic measurements on energized devices, component substitutions, or safety certification.
+
+</section>
 
 <section id="overview">
 

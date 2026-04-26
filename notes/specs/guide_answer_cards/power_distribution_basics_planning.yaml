@@ -1,0 +1,183 @@
+card_id: power_distribution_basics_planning
+guide_id: GD-555
+slug: power-distribution-basics
+title: Power Distribution and Electrical Basics
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Planning-only card for power-distribution orientation: source/load inventory,
+  essential-load prioritization, owner and handoff mapping, terminology,
+  source/load separation, inspection logs, outage records, and maintenance
+  routing. It is not a procedural card for wiring, breaker or fuse sizing, live
+  testing, grounding or bonding, generator backfeed, code compliance, electrical
+  calculations, repairs, or safety certification.
+applies_when:
+  - A user needs a map of power sources, distribution points, loads, owners, and handoff paths.
+  - A user asks how to prioritize essential electrical loads without sizing wires, breakers, fuses, or generation equipment.
+  - A user needs basic terminology for voltage, current, power, source, load, branch, circuit, distribution point, and inspection log boundaries.
+  - A user asks how to separate source-side questions from load-side questions before routing to electrical, generation, fuel, building, or emergency owners.
+  - A user needs routine visible-inspection and logging prompts that do not require touching, opening, testing, repairing, or energizing equipment.
+required_first_actions:
+  - Separate routine planning from active hazards: shock, exposed conductors, wet panels, sparking, smoke, burning smell, downed lines, damaged batteries, generator fumes, or unknown energized equipment override planning.
+  - Split the system map into sources, distribution points, and loads before giving recommendations; do not blur generation, storage, wiring, and end-use equipment into one owner.
+  - Identify essential loads by consequence of loss: water, medical or refrigeration support, communications, lighting, heating or cooling, food safety, and critical workshop functions.
+  - Assign each source, distribution point, and critical load a named owner, last-check date, next-check date, visible condition note, known weak point, and handoff trigger.
+  - Keep all guidance at terminology, inventory, inspection-from-a-safe-distance, logging, prioritization, and owner-routing level.
+first_actions:
+  - Create a source/load table with source name, load served, priority, owner, backup source, last outage, visible concern, and next handoff trigger.
+  - Mark source-side issues separately from load-side issues so generation, fuel, battery, wiring, building, and safety owners receive the right handoff.
+  - Record visible warning signs without touching equipment: damage, missing labels, water exposure, blocked access, odor, heat marks, corrosion, loose covers, improvised cords, or unowned equipment.
+  - Use logs to track outages, flicker or dimming reports, repeated trips, equipment complaints, fuel or battery constraints, inspection dates, and owner decisions.
+  - Prefer load reduction, scheduling, and continuity planning before any request for new capacity, rewiring, or equipment changes.
+  - Route procedural work to the proper owner instead of turning planning notes into installation, repair, testing, sizing, grounding, bonding, backfeed, or compliance instructions.
+urgent_red_flags:
+  - Electrical shock, collapse near equipment, cannot-let-go contact, exposed conductors, downed line, wet panel, standing water near electrical equipment, sparking, smoke, flame, or burning plastic smell.
+  - Generator or combustion equipment linked to indoor fumes, headache, dizziness, confusion, fainting, vomiting, or multiple people ill.
+  - Battery swelling, heat, hissing, venting, leaking, acid exposure, or damaged battery cases.
+  - Pressure to continue cleanup, repair, salvage, wiring, testing, or generator hookup before the electrical status and owner handoff are clear.
+  - Essential load failure for water, medical support, refrigeration, heat or cooling, or communications without a documented backup owner.
+forbidden_advice:
+  - Do not provide wiring procedures, wiring diagrams, conductor selection, wire-gauge advice, outlet, panel, transfer-switch, inverter, or distribution installation steps.
+  - Do not provide breaker sizing, fuse sizing, protection-device selection, grounding installation, bonding instructions, or ground-rod specifications.
+  - Do not provide live testing, meter probing, continuity testing, load testing, fault tracing, troubleshooting steps, or instructions to open energized equipment.
+  - Do not provide generator backfeed, interconnection, anti-islanding, transfer-switch wiring, or utility/grid tie instructions.
+  - Do not provide electrical calculations for current, voltage drop, phase balance, transformer sizing, short-circuit current, arc flash, load capacity, or safety margins.
+  - Do not provide repair steps for wiring, generators, batteries, inverters, breakers, fuses, panels, outlets, grounding systems, or transformers.
+  - Do not make code compliance, legal approval, inspection-pass, safe-to-use, safe-to-energize, or safety certification claims.
+do_not:
+  - Do not convert the source guide's formulas, wire examples, fuse examples, grounding passages, or troubleshooting list into reviewed answer-card instructions.
+  - Do not answer procedural "how do I wire, size, test, ground, bond, backfeed, repair, or certify" prompts as if they were planning questions.
+  - Do not normalize active electrical hazards as routine maintenance or inspection.
+  - Do not cite this card as authority for doing electrical work.
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+routine_boundary: >
+  This card owns only the planning lane for GD-555: source/load separation,
+  terminology, essential-load mapping, owner assignment, visible inspection logs,
+  outage records, and handoff routing. It must hand off active hazards and all
+  wiring, sizing, testing, grounding, bonding, backfeed, code, calculation,
+  repair, or certification requests.
+acceptable_uncertain_fit: >
+  If details are incomplete, provide a conservative source/load inventory and
+  owner-routing checklist, name missing information, and avoid calculations or
+  procedural instructions. If any active hazard is plausible, lead with
+  stop-work, keep-back, isolation or emergency handoff as appropriate before
+  continuing planning.
+clarifying_questions:
+  - Is there any shock, exposed conductor, wet panel, sparking, smoke, burning smell, downed line, damaged battery, generator fume, or unknown energized-equipment concern?
+  - Which sources are present: generator, solar, wind, hydro, batteries, inverter, utility, or other supply?
+  - Which loads are essential this week: water, medical or refrigeration support, communications, lighting, heating or cooling, food safety, or workshop operations?
+  - Who owns each source, distribution point, critical load, inspection log, outage log, and handoff decision?
+fallback:
+  - If shock, wet electrical equipment, exposed conductors, sparking, smoke, downed lines, or unknown energized equipment are present, stop routine planning and hand off to the electrical safety hazard owner, emergency services, utility, or trained electrical responder.
+  - If the user asks for wiring, breaker or fuse sizing, grounding, bonding, live testing, repair, backfeed, interconnection, code compliance, calculations, or safety certification, decline procedural detail and keep only source/load map, owner, and handoff notes.
+  - If generator fumes, fuel odor, or combustion symptoms are present, route to fuel, carbon-monoxide, fire, or generator owners before distribution planning.
+  - If batteries are hot, swollen, leaking, venting, or damaged, route to the battery hazard owner before distribution planning.
+  - If an essential load is failing, provide continuity prioritization and owner handoff without sizing or repair steps.
+fallback_handoff_language:
+  - "This is a power-distribution planning question only while it stays at source/load mapping, owners, logs, and handoffs."
+  - "I can help map sources, loads, priorities, and owners; I cannot provide wiring, sizing, testing, grounding, bonding, backfeed, repair, code, calculation, or certification instructions."
+  - "Treat shock, wet panels, exposed conductors, sparking, smoke, downed lines, damaged batteries, and generator fumes as handoff triggers before continuing the plan."
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  include_source_load_inventory: true
+  include_owner_mapping: true
+  include_inspection_logging: true
+  include_handoff_routing: true
+  include_terminology_boundary: true
+  forbid_technical_procedures: true
+routing_tests:
+  positive:
+    - prompt: "Help us map generator, solar, battery, and clinic fridge loads with owners and inspection logs."
+      expect: power_distribution_basics_planning
+    - prompt: "Explain source versus load and make a handoff checklist for our settlement power map."
+      expect: power_distribution_basics_planning
+  near_miss:
+    - prompt: "What wire gauge and breaker size should I use for a 50 meter run?"
+      expect_handoff: electrical_power_owner
+    - prompt: "How do I ground and bond this panel?"
+      expect_handoff: qualified_electrical_owner
+    - prompt: "Show me how to backfeed my house from a generator."
+      expect_handoff: electrical_safety_hazard_owner
+    - prompt: "Calculate voltage drop and transformer size for our feeder."
+      expect_handoff: electrical_engineering_owner
+  boundary:
+    - prompt: "The panel got wet and sparks when the pump starts."
+      expect: electrical_safety_hazard_handoff_before_planning
+    - prompt: "Nobody owns the freezer load and our outage log is blank."
+      expect: critical_load_owner_mapping_and_log_plan
+citation_ids:
+  - gd-555-reviewed-answer-card-boundary
+  - gd-555-overview-source-load-planning
+  - gd-555-electrical-terminology
+  - gd-555-system-design-load-priority-context
+  - gd-555-power-sources-integration-context
+  - gd-555-maintenance-logging-boundary
+source_sections:
+  - guide: GD-555
+    slug: power-distribution-basics
+    title: Power Distribution and Electrical Basics
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#electrical-basics"
+      - "#system-design"
+      - "#power-sources"
+      - "#maintenance"
+source_invariants:
+  - name: reviewed planning boundary
+    guide: GD-555
+    must_include:
+      - "This is the reviewed answer-card surface for GD-555."
+      - "Use it for planning-level power-distribution work only"
+      - "source and load inventory"
+      - "Do not use this card for wiring procedures, breaker or fuse sizing, live testing, grounding or bonding instructions, generator backfeed, code compliance, electrical calculations, repair steps, or safety certification."
+  - name: overview and essential loads context
+    guide: GD-555
+    must_include:
+      - "Electrical power distribution"
+      - "homes and equipment"
+      - "lighting, water pumps, refrigeration, workshops"
+  - name: terminology context exists
+    guide: GD-555
+    must_include:
+      - "Voltage"
+      - "Current"
+      - "Resistance"
+      - "Power"
+  - name: source and load planning context exists
+    guide: GD-555
+    must_include:
+      - "Power Distribution System Design"
+      - "Determining Power Requirements"
+      - "Common Power Sources and Integration"
+      - "Generator-Based Systems"
+  - name: maintenance context exists but is not procedural owner
+    guide: GD-555
+    must_include:
+      - "Maintenance and Troubleshooting"
+      - "Regular Inspection"
+      - "Inspect all visible wiring for damage"
+      - "Professional electrical inspection"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-555 as a power-distribution planning, terminology,
+  owner-mapping, inspection/logging, and handoff card only. It intentionally
+  excludes wiring procedures, breaker/fuse sizing, live testing, grounding or
+  bonding instructions, generator backfeed, code compliance, electrical
+  calculations, repair steps, and safety certification. READY_FOR_PARENT_CLOSE.

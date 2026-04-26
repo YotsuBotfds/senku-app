@@ -9,8 +9,20 @@ tags:
   - power
   - wiring
   - safety
+aliases:
+  - power distribution planning
+  - electrical load map
+  - electrical source and load inventory
+  - settlement power map
+  - generator load planning
+  - community electrical planning
+  - electrical inspection log
+  - power handoff checklist
+routing_cues:
+  - Use for planning-only source/load inventories, owner mapping, essential-load prioritization, inspection logs, terminology, and handoff routing for power distribution.
+  - Route wiring procedures, breaker or fuse sizing, grounding or bonding instructions, live testing, generator backfeed, code compliance, calculations, repair steps, and safety certification away from this reviewed card.
 icon: ⚙️
-description: Electrical wiring principles, safe distribution of electrical power from generators or renewable sources, load balancing, safety systems (fuses, grounding), grid design for community-scale power distribution, and maintenance of electrical infrastructure.
+description: Planning-only power-distribution basics for source/load separation, owner and load mapping, terminology, inspection logs, and handoff boundaries without wiring procedures, breaker or fuse sizing, grounding instructions, live testing, backfeed guidance, code claims, calculations, repairs, or safety certification.
 related:
   - fuel-storage-handling
   - emergency-power-bootstrap
@@ -20,7 +32,40 @@ word_count: 3100
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: power_distribution_basics_planning
+citations_required: true
+applicability: >
+  Use GD-555 only for planning-level power-distribution orientation:
+  source/load inventory, essential-load prioritization, owner mapping,
+  terminology, source/load separation, inspection and logging routines, and
+  handoff triggers. Do not use the reviewed answer card for wiring procedures,
+  breaker or fuse sizing, live testing, grounding or bonding instructions,
+  generator backfeed, code compliance, electrical calculations, repair steps,
+  or safety certification.
+citation_policy: >
+  Cite this guide and its reviewed answer card only for planning-level
+  power-distribution mapping, terminology, source/load separation, inspection
+  logs, and owner handoffs. Pair active shock, wet panel, sparking, exposed
+  conductor, smoke, or downed-line concerns with the electrical-safety hazard
+  owner; do not cite GD-555 as authority for performing wiring, sizing,
+  grounding, testing, backfeed, repair, compliance, calculation, or
+  certification work.
+answer_card:
+  - power_distribution_basics_planning
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-555. Use it for planning-level power-distribution work only: source and load inventory, essential-load priority mapping, naming owners, separating sources from loads, explaining basic terminology, keeping inspection and outage logs, and deciding when to hand off to electrical, generation, fuel, building, or emergency owners.
+
+Start by separating source-side questions from load-side questions. List each source, each load, who owns it, what it supports, what is visible without touching energized equipment, when it was last checked, and what handoff trigger is already present. Keep any answer at map, log, terminology, and owner-routing level.
+
+Do not use this card for wiring procedures, breaker or fuse sizing, live testing, grounding or bonding instructions, generator backfeed, code compliance, electrical calculations, repair steps, or safety certification. If a prompt includes shock, wet electrical equipment, exposed conductors, sparking, smoke, downed lines, damaged batteries, generator fumes, or pressure to work around unknown energized equipment, stop routine planning and hand off before continuing.
+
+</section>
 
 <section id="overview">
 
