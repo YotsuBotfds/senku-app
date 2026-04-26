@@ -9806,6 +9806,37 @@ def _metadata_rerank_delta(question, meta):
             elif category == "medical":
                 apply_delta("stroke_cardiac_overlap_medical_nontriage", 0.03)
 
+        if _is_classic_stroke_fast_special_case(question):
+            if guide_id == "GD-232" and _text_has_marker(
+                meta_text,
+                {
+                    "first aid",
+                    "first-aid",
+                    "emergency response",
+                    "stroke",
+                    "fast",
+                    "transient ischemic attack",
+                    "tia",
+                    "last known normal",
+                    "last-known-normal",
+                },
+            ):
+                apply_delta("classic_stroke_fast_first_aid_owner", -0.18)
+            elif category == "medical" and not _text_has_marker(
+                meta_text,
+                {
+                    "first aid",
+                    "first-aid",
+                    "emergency",
+                    "stroke",
+                    "transient ischemic attack",
+                    "tia",
+                    "neurologic",
+                    "triage",
+                },
+            ):
+                apply_delta("classic_stroke_fast_medical_distractor", 0.025)
+
         if _is_household_chemical_hazard_query(question):
             if category not in {"medical", "survival"}:
                 apply_delta("household_chemical_nonmedical", 0.06)
@@ -11071,6 +11102,12 @@ def rerank_results(question, results, top_k, scenario_frame=None):
 
     selected = selected[:top_k]
     selected.sort(key=lambda row: (row["adjusted"], row["distance"]))
+    if _is_classic_stroke_fast_special_case(question):
+        for index, row in enumerate(selected):
+            if row["meta"].get("guide_id") == "GD-232":
+                if index > 2:
+                    selected.insert(2, selected.pop(index))
+                break
     coverage = _finalize_objective_coverage(selected, objectives)
     rerank_timing = _build_rerank_timing_payload(
         time.perf_counter() - rerank_started_at,

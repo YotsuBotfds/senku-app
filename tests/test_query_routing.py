@@ -225,10 +225,12 @@ class QueryRoutingTests(unittest.TestCase):
 
     def test_classic_stroke_fast_rerank_preserves_first_aid_owner(self):
         results = {
-            "ids": [["elder", "headache", "first-aid"]],
+            "ids": [["elder", "headache", "respiratory", "rash", "first-aid"]],
             "documents": [[
                 "Urgent evaluation note for slurred speech.",
                 "Headache red flags.",
+                "Breathing and chronic respiratory urgent evaluation.",
+                "Rash care red flags and home monitoring.",
                 "Stroke recognition and first aid emergency response.",
             ]],
             "metadatas": [[
@@ -245,6 +247,18 @@ class QueryRoutingTests(unittest.TestCase):
                     "category": "medical",
                 },
                 {
+                    "guide_id": "GD-733",
+                    "guide_title": "Respiratory Symptom Triage",
+                    "section_heading": "Urgent Evaluation",
+                    "category": "medical",
+                },
+                {
+                    "guide_id": "GD-949",
+                    "guide_title": "Poison Ivy, Poison Oak & Contact Rash Care",
+                    "section_heading": "Urgent Warning Signs That Need Evaluation",
+                    "category": "medical",
+                },
+                {
                     "guide_id": "GD-232",
                     "guide_title": "First Aid & Emergency Response",
                     "section_heading": "Stroke recognition - act within minutes",
@@ -252,7 +266,7 @@ class QueryRoutingTests(unittest.TestCase):
                     "category": "medical",
                 },
             ]],
-            "distances": [[0.18, 0.19, 0.42]],
+            "distances": [[0.18, 0.19, 0.2, 0.21, 0.34]],
         }
 
         prompt = (
@@ -262,12 +276,47 @@ class QueryRoutingTests(unittest.TestCase):
         reranked = query.rerank_results(
             prompt,
             results,
-            2,
+            3,
             scenario_frame=query.build_scenario_frame(prompt),
         )
 
         guide_ids = [meta["guide_id"] for meta in reranked["metadatas"][0]]
         self.assertIn("GD-232", guide_ids)
+        self.assertLessEqual(guide_ids.index("GD-232"), 2)
+
+    def test_classic_stroke_fast_metadata_boost_stays_out_of_mixed_cardiac_overlap(self):
+        prompt = (
+            "My face drooped and my speech was slurred for a few minutes, "
+            "but it improved. Can I sleep and monitor it at home?"
+        )
+        first_aid_meta = {
+            "guide_id": "GD-232",
+            "guide_title": "First Aid & Emergency Response",
+            "section_heading": "Stroke recognition - act within minutes",
+            "slug": "first-aid",
+            "category": "medical",
+            "description": "FAST stroke TIA last known normal emergency first aid.",
+        }
+        headache_meta = {
+            "guide_id": "GD-949",
+            "guide_title": "Headaches: Basic Care",
+            "section_heading": "Red Flags",
+            "category": "medical",
+            "description": "Headache red flags and home monitoring.",
+        }
+
+        self.assertTrue(query._is_classic_stroke_fast_special_case(prompt))
+        self.assertLess(
+            query._metadata_rerank_delta(prompt, first_aid_meta),
+            query._metadata_rerank_delta(prompt, headache_meta),
+        )
+
+        mixed_prompt = (
+            "My face drooped and my speech was slurred, and now I have chest "
+            "pressure. What should I do?"
+        )
+        self.assertFalse(query._is_classic_stroke_fast_special_case(mixed_prompt))
+        self.assertTrue(query._is_noncollapse_stroke_cardiac_overlap_query(mixed_prompt))
 
     def test_rag_eval_unresolved_partial_rerank_owner_hints(self):
         cases = [
