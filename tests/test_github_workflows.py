@@ -226,6 +226,52 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("python -m pip install zizmor==1.24.1", install_script)
         self.assertNotIn("python -m pip install zizmor\n", install_script)
 
+    def test_powershell_quality_workflow_runs_existing_gate(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "powershell_quality.yml").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual({"contents": "read"}, workflow.get("permissions"))
+        triggers = workflow.get("on", workflow.get(True, {}))
+        self.assertIn("pull_request", triggers)
+        self.assertIn("workflow_dispatch", triggers)
+        self.assertNotIn("pull_request_target", triggers)
+        self.assertEqual(
+            [
+                ".github/workflows/powershell_quality.yml",
+                "PSScriptAnalyzerSettings.psd1",
+                "scripts/**/*.ps1",
+                "scripts/**/*.psm1",
+                "scripts/**/*.psd1",
+                "tests/powershell/**/*.ps1",
+            ],
+            triggers["pull_request"]["paths"],
+        )
+
+        jobs = workflow["jobs"]
+        self.assertEqual(["powershell-quality"], list(jobs))
+        job = jobs["powershell-quality"]
+        self.assertEqual("windows-latest", job["runs-on"])
+
+        steps = job["steps"]
+        names = [step.get("name") for step in steps]
+
+        install_step = steps[names.index("Install PowerShell quality modules")]
+        self.assertEqual("powershell", install_step.get("shell"))
+        install_script = install_step.get("run", "")
+        self.assertIn(
+            "Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.24.0",
+            install_script,
+        )
+        self.assertIn("Install-Module -Name Pester -RequiredVersion 5.7.1", install_script)
+
+        gate_step = steps[names.index("Run PowerShell quality gate")]
+        self.assertEqual("powershell", gate_step.get("shell"))
+        self.assertIn(
+            r"powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_powershell_quality_gate.ps1 -SkipAnalyzer -RequirePester",
+            gate_step.get("run", ""),
+        )
+
     def test_codeowners_covers_github_configuration(self):
         content = CODEOWNERS_PATH.read_text(encoding="utf-8")
         self.assertIn(".github/ @YotsuBotfds", content)
