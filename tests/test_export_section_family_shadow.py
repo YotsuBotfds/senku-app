@@ -91,6 +91,21 @@ class ExportSectionFamilyShadowTests(unittest.TestCase):
         self.assertEqual(groups[2]["section_family"], "GD-100:02")
         self.assertEqual(groups[2]["metadata"]["section_ids"], "section_three")
 
+    def test_build_records_treats_none_section_fields_as_empty(self):
+        chunk = _chunk(None, None, None, None)
+
+        records = build_section_family_records([chunk], family_window=1)
+
+        self.assertEqual(len(records), 1)
+        record = records[0]
+        self.assertEqual(record["section_ids"], [""])
+        self.assertEqual(record["section_headings"], [""])
+        self.assertEqual(record["metadata"]["section_ids"], "")
+        self.assertEqual(record["metadata"]["section_headings"], "")
+        self.assertEqual(record["metadata"]["source_chunk_count"], "0")
+        self.assertEqual(record["metadata"]["source_chunk_ids"], "")
+        self.assertNotIn("None", record["document"])
+
     def test_parse_args_defaults_stride_to_window_size(self):
         args = parse_args(["--out", "section_family.jsonl", "--family-window", "3"])
 

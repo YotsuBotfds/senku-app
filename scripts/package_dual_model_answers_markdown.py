@@ -80,6 +80,8 @@ def _clean_prompt_row(row):
 
 
 def prompt_key(entry):
+    if not isinstance(entry, dict):
+        return ("question", "")
     prompt_id = (entry.get("prompt_id") or "").strip()
     if prompt_id:
         return ("prompt_id", prompt_id)
@@ -97,6 +99,8 @@ def load_bundle(paths):
         artifact_names.append(artifact_name)
         artifact_model = artifact_data.get("config", {}).get("model")
         for result in artifact_data.get("results", []):
+            if not isinstance(result, dict):
+                continue
             key = prompt_key(result)
             if key in rows:
                 duplicates.append((key, artifact_name))

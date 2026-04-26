@@ -39,6 +39,8 @@ def _normalize_related_refs(value):
 
     refs = []
     for raw_value in raw_values:
+        if isinstance(raw_value, (list, tuple, set, dict)):
+            continue
         normalized = str(raw_value or "").strip()
         if normalized:
             refs.append(normalized)

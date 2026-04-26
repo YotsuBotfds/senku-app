@@ -68,14 +68,21 @@ def to_otel_span(record: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def iter_otel_spans(path: str | Path) -> Iterator[dict[str, Any]]:
-    """Yield OTel-shaped spans from a JSONL trace file."""
+    """Yield OTel-shaped spans from a JSONL trace file.
+
+    Malformed JSONL rows are ignored so one partial/corrupt trace event does
+    not prevent later valid spans from being exported.
+    """
     trace_path = Path(path)
     with trace_path.open("r", encoding="utf-8") as handle:
         for line in handle:
             stripped = line.strip()
             if not stripped:
                 continue
-            payload = json.loads(stripped)
+            try:
+                payload = json.loads(stripped)
+            except json.JSONDecodeError:
+                continue
             if isinstance(payload, Mapping):
                 yield to_otel_span(payload)
 

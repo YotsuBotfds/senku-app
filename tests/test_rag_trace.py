@@ -258,6 +258,40 @@ class RAGTraceTests(unittest.TestCase):
         self.assertEqual(mapped["attributes"]["prompt_index"], 3)
         self.assertEqual(mapped["duration_ms"], "2.3456")
 
+    def test_otel_iterator_skips_malformed_jsonl_rows(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "trace.jsonl"
+            path.write_text(
+                "\n".join(
+                    [
+                        json.dumps(
+                            {
+                                "name": "first",
+                                "trace_id": "trace-1",
+                                "span_id": "span-1",
+                            }
+                        ),
+                        "{not valid json",
+                        json.dumps(["not", "a", "span"]),
+                        json.dumps(
+                            {
+                                "name": "second",
+                                "trace_id": "trace-2",
+                                "span_id": "span-2",
+                            }
+                        ),
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            spans = list(iter_otel_spans(path))
+
+        self.assertEqual([span["name"] for span in spans], ["first", "second"])
+        self.assertEqual(spans[0]["context"]["trace_id"], "trace-1")
+        self.assertEqual(spans[1]["context"]["trace_id"], "trace-2")
+
     def test_sanitize_attributes_handles_non_json_values(self):
         attrs = sanitize_attributes({"tags": {"a", "b"}, "safe": True})
 

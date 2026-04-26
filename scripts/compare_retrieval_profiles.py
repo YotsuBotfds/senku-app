@@ -66,7 +66,13 @@ def _coerce_status_value(value: Any) -> str:
     return "yes" if any(token in STATUS_TRUE_VALUES for token in _status_tokens(value)) else "no"
 
 
-def _normalize_summary_row(row: Mapping[str, Any]) -> dict[str, Any]:
+def _normalize_summary_row(row: Any) -> dict[str, Any]:
+    if not isinstance(row, Mapping):
+        return {
+            "error": f"malformed profile row: {type(row).__name__}",
+            "expected_guide_ids": [],
+            "primary_expected_guide_ids": [],
+        }
     normalized = dict(row)
     for field in GUIDE_ID_FIELD_NAMES:
         if field in normalized:

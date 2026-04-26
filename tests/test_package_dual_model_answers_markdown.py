@@ -160,6 +160,31 @@ class PackageDualModelAnswersMarkdownTests(unittest.TestCase):
         self.assertEqual("result-model", record["result_model"])
         self.assertEqual(0, record["duplicate_citation_count"])
 
+    def test_load_bundle_skips_malformed_result_rows(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = write_json(
+                Path(temp_dir) / "artifact.json",
+                {
+                    "config": {"model": "artifact-model"},
+                    "results": [
+                        ["not", "a", "row"],
+                        "also not a row",
+                        {
+                            "prompt_id": "P-004B",
+                            "question": "Question B",
+                            "response_text": " Kept answer ",
+                        },
+                    ],
+                },
+            )
+
+            rows, artifact_names, duplicates = packager.load_bundle([path])
+
+        self.assertEqual(["artifact.json"], artifact_names)
+        self.assertEqual([], duplicates)
+        self.assertEqual(["Kept answer"], [row["response_text"] for row in rows.values()])
+        self.assertIn(("prompt_id", "P-004B"), rows)
+
     def test_render_model_block_handles_missing_error_blank_and_zero_dup_count(self):
         self.assertIn(
             "_Missing from selected artifacts._",

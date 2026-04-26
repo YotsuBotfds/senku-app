@@ -144,6 +144,28 @@ class MetadataValidationTests(unittest.TestCase):
         self.assertIn("<unknown> (<missing-id>): missing", text)
         self.assertIn("guide_id", text)
 
+    def test_format_validation_errors_skips_malformed_error_entries(self):
+        report = {
+            "status": "fail",
+            "scope": "unit",
+            "summary": {"guide_errors": 2, "errors_truncated": True},
+            "errors": [
+                "malformed",
+                {
+                    "source_file": ["bad"],
+                    "record_id": {"bad": "id"},
+                    "missing_fields": ["slug", 7, [], "title"],
+                },
+            ],
+        }
+
+        text = mv.format_validation_errors(report)
+
+        self.assertIn("scope=unit", text)
+        self.assertIn("guide_errors=2", text)
+        self.assertIn("<unknown> (<missing-id>): missing slug, 7, title", text)
+        self.assertIn("additional errors omitted from report output", text)
+
     def test_write_validation_report_creates_parent_and_json(self):
         report = mv.validate_guide_records(
             [

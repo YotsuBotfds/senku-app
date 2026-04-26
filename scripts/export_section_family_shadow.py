@@ -55,6 +55,10 @@ def _clean_fragment(text: str) -> str:
     return text
 
 
+def _optional_str(value: Any) -> str:
+    return "" if value is None else str(value)
+
+
 def extract_section_fragments(
     texts: list[str],
     *,
@@ -118,10 +122,10 @@ def section_blocks_from_chunks(chunks: list[dict[str, Any]]) -> list[dict[str, A
     for chunk in chunks:
         metadata = chunk.get("metadata") or {}
         key = (
-            str(metadata.get("source_file", "")),
-            str(metadata.get("guide_id", "")),
-            str(metadata.get("section_id", "")),
-            str(metadata.get("section_heading", "")),
+            _optional_str(metadata.get("source_file", "")),
+            _optional_str(metadata.get("guide_id", "")),
+            _optional_str(metadata.get("section_id", "")),
+            _optional_str(metadata.get("section_heading", "")),
         )
         block = blocks.setdefault(
             key,
@@ -131,8 +135,8 @@ def section_blocks_from_chunks(chunks: list[dict[str, Any]]) -> list[dict[str, A
                 "source_chunk_ids": [],
             },
         )
-        block["texts"].append(str(chunk.get("text", "")))
-        block["source_chunk_ids"].append(str(chunk.get("chunk_id", "")))
+        block["texts"].append(_optional_str(chunk.get("text", "")))
+        block["source_chunk_ids"].append(_optional_str(chunk.get("chunk_id", "")))
     return list(blocks.values())
 
 
@@ -154,8 +158,8 @@ def group_chunks_by_section_family(
     for block in section_blocks_from_chunks(chunks):
         metadata = block.get("metadata") or {}
         guide_key = (
-            str(metadata.get("source_file", "")),
-            str(metadata.get("guide_id", "")),
+            _optional_str(metadata.get("source_file", "")),
+            _optional_str(metadata.get("guide_id", "")),
         )
         guide_blocks.setdefault(guide_key, []).append(block)
 
@@ -164,16 +168,16 @@ def group_chunks_by_section_family(
         for family_index, start in enumerate(range(0, len(blocks), family_stride)):
             family_blocks = blocks[start : start + family_window]
             first_metadata = dict(family_blocks[0].get("metadata") or {})
-            guide_id = str(first_metadata.get("guide_id", ""))
-            source_file = str(first_metadata.get("source_file", ""))
+            guide_id = _optional_str(first_metadata.get("guide_id", ""))
+            source_file = _optional_str(first_metadata.get("source_file", ""))
             family_prefix = guide_id or source_file or "guide"
             section_family = f"{family_prefix}:{family_index:02d}"
             section_ids = [
-                str((block.get("metadata") or {}).get("section_id", ""))
+                _optional_str((block.get("metadata") or {}).get("section_id", ""))
                 for block in family_blocks
             ]
             section_headings = [
-                str((block.get("metadata") or {}).get("section_heading", ""))
+                _optional_str((block.get("metadata") or {}).get("section_heading", ""))
                 for block in family_blocks
             ]
             first_metadata.update(

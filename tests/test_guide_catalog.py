@@ -271,6 +271,37 @@ title: Three
 
         self.assertEqual({"GD-002"}, reciprocal)
 
+    def test_related_links_skip_container_shaped_entries(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "one.md").write_text(
+                """---
+id: GD-001
+slug: guide-one
+title: One
+related:
+  - guide-two
+  - nested: value
+---
+""",
+                encoding="utf-8",
+            )
+            (root / "two.md").write_text(
+                """---
+id: GD-002
+slug: guide-two
+title: Two
+---
+""",
+                encoding="utf-8",
+            )
+
+            by_id, _ = load_guide_catalog(str(root))
+            weights = get_anchor_related_link_weights("GD-001", str(root))
+
+        self.assertEqual(("guide-two",), by_id["GD-001"].related_refs)
+        self.assertEqual({"GD-002": 0.3}, weights)
+
 
 if __name__ == "__main__":
     unittest.main()

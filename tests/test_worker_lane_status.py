@@ -86,6 +86,29 @@ class WorkerLaneStatusTests(unittest.TestCase):
         self.assertEqual(lane["dirty"]["changed"], 1)
         self.assertIn(("git", "worktree", "list", "--porcelain"), [call[0] for call in calls])
 
+    def test_collect_status_marks_worktrees_missing_paths_without_dirty_check(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            calls = []
+
+            def fake_runner(command, cwd):
+                calls.append(tuple(command))
+                if tuple(command) == ("git", "worktree", "list", "--porcelain"):
+                    return subprocess.CompletedProcess(
+                        command,
+                        0,
+                        "HEAD abc1234\nbranch refs/heads/worker/missing-path\n",
+                        "",
+                    )
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            status = worker_lane_status.collect_status(root, runner=fake_runner)
+
+        self.assertEqual(len(status["worktrees"]), 1)
+        self.assertTrue(status["worktrees"][0]["missing_path"])
+        self.assertNotIn("dirty", status["worktrees"][0])
+        self.assertEqual(calls, [("git", "worktree", "list", "--porcelain")])
+
     def test_dirty_summary_adds_structured_details_and_status_counts(self):
         status_text = "\n".join(
             [

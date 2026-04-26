@@ -231,6 +231,8 @@ def collect_status(
             worktree["lane"] = ""
         if include_dirty and path:
             worktree["dirty"] = _dirty_summary(Path(path), runner)
+        if not path:
+            worktree["missing_path"] = True
 
     leased_paths = {_norm_path(str(item.get("worktree", ""))) for item in worktrees}
     orphan_leases = [

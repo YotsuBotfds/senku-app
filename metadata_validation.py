@@ -123,9 +123,14 @@ def format_validation_errors(report: Mapping) -> str:
         f"guide_errors={summary.get('guide_errors', 0)}",
     ]
     for error in (report.get("errors") or [])[:10]:
+        if not isinstance(error, Mapping):
+            continue
         source_file = _safe_text(error.get("source_file")) or "<unknown>"
         record_id = _safe_text(error.get("record_id")) or "<missing-id>"
-        missing = ", ".join(error.get("missing_fields") or [])
+        missing_fields = [
+            _safe_text(field) for field in (error.get("missing_fields") or [])
+        ]
+        missing = ", ".join(field for field in missing_fields if field)
         lines.append(f"{source_file} ({record_id}): missing {missing}")
     if summary.get("errors_truncated"):
         lines.append("additional errors omitted from report output")

@@ -154,6 +154,51 @@ class CompareRetrievalProfilesTests(unittest.TestCase):
         self.assertEqual(summary["top1_bridge_rows"], 1)
         self.assertEqual(summary["top1_unresolved_partial_rows"], 1)
 
+    def test_compare_profiles_marks_malformed_rows_as_retrieval_errors(self):
+        original_load_prompt_pack = self.module.eval_pack.load_prompt_pack
+        original_evaluate_pack = self.module.eval_pack.evaluate_pack
+
+        def fake_load_prompt_pack(path):
+            return [{"prompt": "q", "expected_guide_ids": ["GD-1"]}]
+
+        def fake_evaluate_pack(prompt_rows, *, retrieval_profile_override, **kwargs):
+            return [
+                ["not", "a", "mapping"],
+                {
+                    "expected_guide_ids": ["GD-1"],
+                    "expected_hit_at_1": True,
+                    "expected_hit_at_3": True,
+                    "expected_hit_at_k": True,
+                    "expected_owner_best_rank": 1,
+                    "expected_owner_count": 1,
+                    "retrieved_count": 1,
+                    "owner_share": 1.0,
+                    "retrieval_elapsed_ms": 5.0,
+                    "top_distractor_guide_ids": [],
+                },
+            ]
+
+        self.module.eval_pack.load_prompt_pack = fake_load_prompt_pack
+        self.module.eval_pack.evaluate_pack = fake_evaluate_pack
+        try:
+            payload = self.module.compare_profiles(
+                Path("pack.jsonl"),
+                ["baseline"],
+                collection=object(),
+                top_k=8,
+            )
+        finally:
+            self.module.eval_pack.load_prompt_pack = original_load_prompt_pack
+            self.module.eval_pack.evaluate_pack = original_evaluate_pack
+
+        rows = payload["runs"][0]["rows"]
+        summary = payload["runs"][0]["summary"]
+        self.assertEqual(rows[0]["error"], "malformed profile row: list")
+        self.assertEqual(summary["total_prompts"], 2)
+        self.assertEqual(summary["retrieval_error_rows"], 1)
+        self.assertEqual(summary["expected_owner_rows"], 1)
+        self.assertEqual(payload["profile_rows"][0]["retrieval_error_rows"], 1)
+
     def test_render_markdown_includes_profile_latency_and_marker_columns(self):
         payload = {
             "prompt_pack": "pack.jsonl",

@@ -598,6 +598,13 @@ Action:
   scans reject malformed success reports, worktree summaries treat all current
   protected planner handoffs as benign, and deterministic overlap matrix
   rendering now fails cleanly for malformed overlap metadata.
+- Hardened catalog/profile/export/trace surfaces: guide catalog related links
+  skip container-shaped entries, metadata error formatting tolerates malformed
+  entries, retrieval profile comparison counts non-mapping rows as retrieval
+  errors, section-family export suppresses literal `None` pollution, dual-model
+  packaging skips malformed result rows, RAG trace iteration skips corrupt JSONL
+  rows, and worker-lane status reports missing worktree paths without dirty
+  checks.
 
 Validation:
 
@@ -636,6 +643,11 @@ Validation:
   `tests.test_scan_mojibake`, `tests.test_summarize_worktree_delta`,
   `tests.test_validate_special_cases_output`, and `tests.test_registry_overlap`
   cover the additional report/validation edge hardening batch.
+- `tests.test_compare_retrieval_profiles`,
+  `tests.test_export_section_family_shadow`, `tests.test_guide_catalog`,
+  `tests.test_metadata_validation`, `tests.test_package_dual_model_answers_markdown`,
+  `tests.test_rag_trace`, and `tests.test_worker_lane_status` cover the
+  catalog/profile/export/trace hardening batch.
 
 Deferred unless evidenced:
 
