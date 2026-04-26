@@ -424,14 +424,16 @@ def _normalize_artifact_path_evidence(
     item: Mapping[str, Any], inherited_fields: Mapping[str, Any]
 ) -> dict[str, Any]:
     normalized = dict(item)
-    if normalized.get("status") is None and isinstance(
+    status = normalized.get("status")
+    if (status is None or (isinstance(status, str) and not status.strip())) and isinstance(
         normalized.get("exists"), bool
     ):
         normalized["status"] = (
             "present" if normalized.get("exists") else "missing"
         )
+    path = normalized.get("path")
     if (
-        normalized.get("path") is None
+        (path is None or (isinstance(path, str) and not path.strip()))
         and isinstance(normalized.get("artifact_path"), str)
         and normalized["artifact_path"].strip()
     ):

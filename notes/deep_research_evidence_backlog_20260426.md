@@ -515,6 +515,9 @@ Action:
 - Bench metrics-lake ingestion now normalizes run-manifest
   `artifact_path_evidence` rows by deriving missing `status` from boolean
   `exists` and backing up missing `path` from legacy `artifact_path`.
+- Bench metrics-lake artifact evidence normalization now treats blank status
+  and path strings as missing values, so boolean `exists` and legacy
+  `artifact_path` still produce canonical SQL fields.
 - Retrieval-pack evaluation now dedupes expected and primary expected guide IDs
   before scoring/rendering, and uses a display-only `primary_guide_ids` Markdown
   column so blank generated report cells do not masquerade as explicit primary
@@ -619,6 +622,8 @@ Validation:
   artifact-looking paths outside the repository root.
 - `tests.test_bench_metrics_lake` covers malformed/scalar JSONL lines plus
   normalized `artifact_path_evidence` status/path preservation.
+- `tests.test_bench_metrics_lake` covers blank artifact-evidence status/path
+  normalization from `exists` and legacy `artifact_path`.
 - `tests.test_evaluate_retrieval_pack` covers duplicate primary-owner metadata
   normalization and generated Markdown reparse behavior for blank primary rows.
 - `tests.test_compare_contextual_shadow_retrieval` covers primary-owner subset
