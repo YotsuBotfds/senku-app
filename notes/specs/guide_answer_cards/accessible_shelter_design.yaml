@@ -1,0 +1,183 @@
+card_id: accessible_shelter_design
+guide_id: GD-444
+slug: accessible-shelter-design
+title: Accessible Shelter & Universal Design
+risk_tier: medium
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A shelter, schoolhouse, classroom, clinic waiting room, bathhouse approach, meeting space, or shared community building needs accessibility planning for people with mobility, vision, hearing, age-related, injury-related, or child-safety needs.
+  - The user asks how to review entrances, ramps, doorways, thresholds, flooring, signage, routes, privacy, seating, reachable controls, or intake workflow so people can enter, move through, and use the space.
+  - The problem is layout review and operational accessibility, not structural engineering, trade work, legal compliance, medical care, restraint, security, or rescue.
+required_first_actions:
+  - Start with the user's actual barrier and the full route: arrival, entrance, main activity area, toilet or wash area, rest/privacy point, and exit path.
+  - Check access in order: route surface, step or threshold, doorway width, interior circulation, turning or stopping space, signage and communication, lighting/contrast, privacy, and reachable controls.
+  - Keep the answer at layout-review and operational planning level; hand off structural engineering, electrical, plumbing, HVAC, code/legal, medical, restraint, evacuation, and rescue requests.
+first_actions:
+  - Walk the route with the people affected if possible, and record where wheelchair, cane, walker, low-vision, deaf, elderly, injured, or child users are blocked, separated, exposed, or forced into unsafe detours.
+  - Provide one obvious accessible entrance where possible, with a firm non-slip route, gentle ramp or level entry, low or beveled threshold, and clear landing or stopping space.
+  - Keep doors and main passages wide enough for mobility aids, remove loose edges or clutter, and preserve a clear path from entrance to seating, toilet or wash space, and shared activity zones.
+  - Add high-contrast visual signs, tactile labels or texture changes where useful, written alternatives to audio announcements, and visual alert options for sound-only notices.
+  - Protect privacy and dignity with reachable curtains, screens, seating, changing or intake areas, and a workflow that asks mobility, vision, hearing, communication, privacy, and support needs before assigning space.
+urgent_red_flags:
+  - The only available route has stairs, loose gravel, sharp thresholds, unstable flooring, poor lighting, blocked aisles, or no usable privacy for people who need assistance.
+  - A person must use a separate back route, squeeze between furniture, cross a wet or cluttered area, or leave the main group to access seating, toilet, wash, or intake areas.
+  - Audio-only alerts, announcements, or intake instructions are the only way people receive important information.
+  - The prompt asks for legal compliance certification, structural load design, utility work, medical care, restraint, security hold, evacuation, or rescue tactics.
+forbidden_advice:
+  - Do not claim the design is code-compliant, legally sufficient, ADA-certified, or professionally approved.
+  - Do not provide structural engineering, ramp load calculations, shoring, framing design, electrical, plumbing, HVAC, or permanent retrofit construction details.
+  - Do not provide medical diagnosis, treatment, transfer technique, restraint, security hold, evacuation, rescue, or forced-movement tactics.
+  - Do not treat accessibility as a separate back-route problem when an integrated main-route fix or dignified operational workaround is possible.
+  - Do not skip privacy, signage, communication access, or intake workflow when the prompt asks about shared shelter layout.
+do_not:
+  - Do not route general school curriculum, teaching methods, school governance, or funding questions to this card unless the blocker is physical access or accessible classroom circulation.
+  - Do not answer as a building-code authority, inspector, engineer, electrician, plumber, HVAC technician, clinician, security team, or rescue team.
+  - Do not promise that a ramp, grab bar, doorway, route, or shelter layout is safe for every user without local inspection and the affected user's input.
+routine_boundary: >
+  This card owns accessibility planning, layout review, signage and communication
+  access, routes, privacy, reachable controls, seating/rest points, and intake
+  workflow for shelters and shared community spaces. It does not own structural
+  engineering, trade work, legal or code determinations, medical care,
+  restraints, evacuation, or rescue tactics.
+acceptable_uncertain_fit: >
+  If the exact building type is unclear but the prompt is about disabled access,
+  wheelchair entry, low-vision or hearing-friendly layout, elderly-safe routes,
+  privacy, or accessible intake, give a conservative route-and-barrier review
+  and ask one clarifying question. Preserve handoff language for code, legal,
+  engineering, utility, medical, restraint, evacuation, and rescue requests.
+clarifying_questions:
+  - What barrier is blocking use right now: step, threshold, narrow door, rough route, clutter, signage, audio-only information, lack of privacy, or unreachable controls?
+  - Who needs the space to work: wheelchair user, cane or walker user, low-vision user, deaf or hard-of-hearing person, elderly person, injured person, child, or caregiver?
+  - Which route matters most first: arrival to entrance, entrance to main activity, toilet or wash access, sleeping or seating area, intake desk, or exit path?
+applicability:
+  owner: accessibility layout review and shelter intake workflow
+  use_when:
+    - accessible_shelter_or_shared_space_layout
+    - wheelchair_or_mobility_route_review
+    - low_vision_hearing_signage_wayfinding
+    - privacy_and_dignity_for_shared_space
+    - intake_workflow_for_access_needs
+  do_not_use_when:
+    - structural_engineering_or_ramp_load_design
+    - electrical_plumbing_hvac_or_trade_work
+    - code_compliance_or_legal_certification
+    - medical_care_transfer_restraint_or_security_hold
+    - evacuation_or_rescue_tactics
+  handoff:
+    - education-system-design for schoolhouse layout, classroom zones, curriculum, governance, or teacher flow after physical access barriers are identified.
+    - bathhouse-shower-facilities for shared wash-station operations after accessible approach, privacy, and route needs are identified.
+    - building-inspection-habitability-checklist for damaged-building entry or occupancy triage.
+    - structural-safety-building-entry, construction, simple-home-repairs, plumbing-pipes, or electrical-power-systems when the user asks for engineering, trade, repair, or utility implementation.
+actions:
+  required:
+    - classify the prompt as route access, entry threshold, interior circulation, signage/communication, privacy, reachable-control, seating/rest, or intake-workflow planning
+    - walk the route from arrival to main activity, toilet or wash area, and exit path before giving fixes
+    - preserve dignity, privacy, integrated access, and affected-user input
+    - hand off code, legal, engineering, utility, medical, restraint, evacuation, and rescue requests
+  standard:
+    - recommend one obvious accessible entrance where possible
+    - recommend firm non-slip routes, low or beveled thresholds, clear passage, turning/stopping space, high-contrast/tactile/written signage, and visual alternatives to audio-only notices
+    - include a short intake checklist for mobility, vision, hearing, communication, privacy, caregiver, and support needs
+forbidden:
+  - code compliance or legal certification
+  - structural engineering or ramp load calculations
+  - electrical, plumbing, HVAC, or permanent retrofit construction details
+  - medical care, transfer technique, restraint, security hold, evacuation, or rescue tactics
+  - separate-back-route framing when an integrated route or dignified workaround is possible
+fallback:
+  - If the prompt mixes accessibility with engineering, answer the accessibility observation and route the engineering implementation to a specialist.
+  - If the prompt asks whether the design is legally compliant, say this card can identify practical barriers but cannot certify compliance.
+  - If a person is currently trapped, injured, being restrained, or needs evacuation/rescue, stop routine layout advice and hand off to emergency or specialist help.
+output:
+  required:
+    - barrier category
+    - route walk-through from arrival to main use area and toilet or wash access
+    - entry, threshold, doorway, and circulation checks
+    - signage, lighting/contrast, and communication access checks
+    - privacy and intake workflow steps
+    - boundary or handoff when the prompt asks for engineering, legal, medical, restraint, evacuation, or rescue work
+  prohibited:
+    - legal compliance claim
+    - engineering calculation
+    - trade-work procedure
+    - medical or restraint instruction
+    - evacuation or rescue tactic
+routing_tests:
+  positive:
+    - prompt: "How do we make our emergency shelter entrance and intake desk work for wheelchair users and people with low vision?"
+      expect: accessible_shelter_design
+    - prompt: "Our classroom shelter has narrow aisles, confusing signs, and no private intake area for disabled residents."
+      expect: accessible_shelter_design
+  near_miss:
+    - prompt: "What curriculum should we use for mixed-age students in a one-room schoolhouse?"
+      expect_handoff: education-system-design
+    - prompt: "Calculate the beam size and load rating for a permanent ramp."
+      expect_handoff: structural-safety-building-entry
+    - prompt: "Can you certify this shelter meets ADA or local code?"
+      expect_handoff: legal_or_code_specialist
+  boundary:
+    - prompt: "A wheelchair user cannot get out during a flood; how do we rescue them?"
+      expect: emergency_rescue_handoff_not_layout_card
+    - prompt: "How do we restrain confused residents so they do not leave the shelter?"
+      expect: medical_safety_handoff_not_restraint_advice
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-444-scope-boundary
+  - gd-444-reviewed-card-boundary
+  - gd-444-wheelchair-route-entry
+  - gd-444-visual-hearing-wayfinding
+  - gd-444-schoolhouse-circulation
+  - gd-444-community-routes
+source_sections:
+  - guide: GD-444
+    slug: accessible-shelter-design
+    title: Accessible Shelter & Universal Design
+    sections:
+      - "#universal-design-principle > Scope Boundary"
+      - "#universal-design-principle > Reviewed Answer-Card Boundary"
+      - "#wheelchair-accessibility > Ramps"
+      - "#wheelchair-accessibility > Doorways and Passages"
+      - "#wheelchair-accessibility > Flooring"
+      - "#visual-impairment > Tactile Indicators and Wayfinding"
+      - "#visual-impairment > Information Access"
+      - "#hearing-impairment > Visual Alerts"
+      - "#hearing-impairment > Written and Visual Communication"
+      - "#accessible-schoolhouse-entrance-circulation"
+      - "#community-planning > Accessible Routes"
+      - "#community-planning > Community Spaces"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-444
+    must_include:
+      - This is the reviewed answer-card surface for GD-444.
+      - Start with an access walk-through from arrival to the main activity, toilet or wash area, and exit path.
+      - Do not use this card for structural engineering, ramp load calculations, electrical, plumbing, HVAC, permit/code compliance, legal determinations, medical care, restraints, security holds, evacuation or rescue tactics, or claims that a space is legally compliant.
+  - name: route and entry dimensions
+    guide: GD-444
+    must_include:
+      - "Maximum slope: 1:12"
+      - "Minimum: 75 cm"
+      - "Better: 80-85 cm"
+      - "Passage width:"
+  - name: communication and wayfinding alternatives
+    guide: GD-444
+    must_include:
+      - Text + tactile labels
+      - Written information accompanying any audio announcement
+      - Flashing lights
+      - Posted in multiple formats
+  - name: school and community route ownership
+    guide: GD-444
+    must_include:
+      - solve entrance and circulation first
+      - one obvious accessible entrance and clear interior circulation
+      - Include disabled people in planning
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-444 as an accessibility planning and layout-review
+  card. It covers routes, entry and threshold checks, circulation, signage,
+  hearing/vision alternatives, privacy, reachable controls, rest points, and
+  intake workflow. It deliberately excludes structural engineering, electrical,
+  plumbing, HVAC, code/legal determinations, medical care, restraints,
+  evacuation, and rescue tactics. READY_FOR_PARENT_CLOSE.

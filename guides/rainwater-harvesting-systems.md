@@ -23,7 +23,7 @@ read_time: 48
 word_count: 5400
 last_updated: '2026-02-22'
 version: '1.0'
-liability_level: low
+liability_level: medium
 aliases:
   - harvest rainwater for drinking
   - rooftop water catchment setup
@@ -49,6 +49,24 @@ aliases:
   - why is my rain barrel overflowing
   - collect roof runoff in tank
   - runoff capture system
+citations_required: true
+applicability: >
+  Use GD-721 for non-potable rainwater catchment planning, roof and gutter
+  source assessment, downspout routing, overflow-path planning, first-flush or
+  debris-control checks, and maintenance scheduling. Do not use the reviewed
+  answer card for potable treatment guarantees, sanitizer or chlorine formulas,
+  tank construction engineering, pressure plumbing, legal/code approval,
+  confined-space tank entry, emergency drinking-water promises, or illness care.
+citation_policy: >
+  Cite GD-721 for rain capture, roof/gutter/source-path assessment, downspout
+  routing, overflow away from foundations and contaminated areas, and catchment
+  maintenance cadence. Route drinking-water safety, treatment formulas,
+  stored-water contamination, rationing duration, plumbing/code, and engineered
+  tank construction to the appropriate specialist owner.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: rainwater_harvesting_catchment_overflow
+answer_card:
+  - rainwater_harvesting_catchment_overflow
 ---
 
 ## Introduction to Rainwater Harvesting

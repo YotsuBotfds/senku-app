@@ -1,0 +1,197 @@
+card_id: rainwater_harvesting_catchment_overflow
+guide_id: GD-721
+slug: rainwater-harvesting-systems
+title: "Rainwater Harvesting Systems Design and Implementation"
+risk_tier: medium
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - User asks how to collect roof runoff, route a downspout, connect gutters to a rain barrel or cistern, or estimate catchment from roof area and rainfall.
+  - User asks why a rain barrel or tank is overflowing, splashing near the house, flooding a foundation, or sending runoff toward an unsafe or inconvenient place.
+  - User asks whether a roof, gutter, downspout, first-flush device, strainer screen, or source path is suitable for non-potable rainwater collection.
+  - User asks for maintenance scheduling for gutters, downspouts, first-flush parts, screens, overflow outlets, visible leaks, corrosion, sediment, or routine tank checks.
+required_first_actions:
+  - Keep the answer in non-potable catchment and overflow planning unless the user explicitly asks for drinking-water safety, which must be handed to purification/testing guidance.
+  - Assess the source path before storage advice: roof material, obvious contamination, gutter debris, downspout blockage, screen condition, and first-flush or pre-storage debris control.
+  - Check overflow routing before routine use: excess water needs a pipe or channel away from foundations, walkways, septic areas, indoor pooling, and erosion-prone paths.
+  - Include a maintenance cadence for catchment parts: monthly overflow/leak/water-level checks, quarterly gutter/downspout/sediment/filter checks, and annual gutter/seal/fitting repair planning.
+  - Use handoff language for potable treatment, sanitizer formulas, tank construction engineering, pressure plumbing, code/legal approval, confined-space entry, and medical or illness claims.
+first_actions:
+  - Identify whether the question is about catchment yield, roof/gutter suitability, downspout routing, overflow routing, first-flush/debris control, or routine maintenance.
+  - For roof/gutter collection, check roof material, debris load, gutter size/slope, downspout count, downspout discharge, and whether screens or first-flush diversion are present.
+  - For overflow, route extra water away from the foundation through a pipe or channel toward a garden, another tank, or a greywater owner when appropriate.
+  - For repeated overflow, consider clogged gutters/downspouts/screens, insufficient overflow path, poorly placed barrel/tank, heavy storm intensity, or storage too small for the capture area.
+  - For maintenance, give monthly, quarterly, and annual checks from the source guide and hand off stored-water condition problems such as algae, slime, stale taste, or sediment cleanup.
+urgent_red_flags:
+  - Overflow or splashback is moving toward a building foundation, indoor area, main walkway, septic system, well, spring, or erosion-prone slope.
+  - Gutters, downspouts, screens, or overflow outlets are blocked enough that water backs up, spills over edges, or drains where it can damage structures.
+  - The user wants to drink harvested rainwater without separate testing, treatment, and storage hygiene guidance.
+  - The user is asking someone to enter a cistern or enclosed tank, climb unstable supports, or repair pressure/plumbing systems beyond simple routing checks.
+  - Collected water has algae, slime, stale odor/taste, visible contamination, animal access, or illness concerns.
+forbidden_advice:
+  - Do not promise harvested rainwater is potable or safe to drink based on roof catchment, first flush, filtration, or clear appearance.
+  - Do not provide sanitizer, chlorine, bleach, iodine, or chemical treatment formulas, contact-time tables, or emergency drinking-water claims.
+  - Do not provide structural tank construction, platform engineering, pressure-system design, permanent plumbing design, or legal/code compliance claims.
+  - Do not advise confined-space entry into a tank or cistern for inspection, cleaning, or repair.
+  - Do not treat overflow toward foundations, septic areas, wells, springs, walkways, or indoor pooling as acceptable routine operation.
+do_not:
+  - Do not merge catchment planning with water rationing, potable treatment, stored-water condition troubleshooting, or graywater system engineering unless handing off to the proper owner.
+  - Do not skip roof/gutter/source assessment when the user asks how much water they can collect or why a barrel is overflowing.
+  - Do not let a larger tank be the only answer when the overflow path itself is unsafe or blocked.
+  - Do not give drinking-water, medical, plumbing-code, or construction-engineering guarantees from this card.
+routine_boundary: >
+  This card owns non-potable rainwater catchment and overflow planning: roof,
+  gutter, downspout, source-path, first-flush/debris-control, overflow routing,
+  and maintenance scheduling. It does not own potable treatment guarantees,
+  sanitizer formulas, tank construction engineering, plumbing/code approval,
+  confined-space entry, emergency drinking-water promises, or illness care.
+acceptable_uncertain_fit: >
+  If the prompt is plausibly about rain capture or overflow but details are
+  incomplete, give conservative source-path and overflow checks first, assume
+  non-potable use, and ask only the clarifying question needed to route away
+  from foundation/septic/well/walkway hazards or drinking-water claims.
+clarifying_questions:
+  - Is the water for irrigation/utility use, or are you trying to make it drinking water?
+  - Where does the overflow go now: away from the foundation, toward a garden/second tank, or toward a foundation, walkway, septic area, well, or indoor space?
+  - What roof material, gutter size/condition, downspout setup, screen, and first-flush or debris control are in place?
+  - Are there algae, slime, stale odor/taste, animal access, visible contamination, or illness concerns with stored water?
+citation_ids:
+  - gd-721-routing-owner-boundary
+  - gd-721-roof-gutter-downspout-assessment
+  - gd-721-first-flush-debris-control
+  - gd-721-overflow-feature-routing
+  - gd-721-maintenance-schedule
+  - gd-721-foundation-overflow-troubleshooting
+source_sections:
+  - guide: GD-721
+    slug: rainwater-harvesting-systems
+    title: "Rainwater Harvesting Systems Design and Implementation"
+    sections:
+      - "#introduction-to-rainwater-harvesting"
+      - "#quick-task-routing"
+      - "#part-two-roof-catchment-design"
+      - "#roof-material-selection-and-improvement"
+      - "#gutter-and-downspout-design"
+      - "#first-flush-diverters"
+      - "#part-three-storage-solutions"
+      - "#tank-placement-and-setup"
+      - "#tank-features"
+      - "#overflow"
+      - "#part-seven-maintenance-and-troubleshooting"
+      - "#regular-maintenance-schedule"
+      - "#troubleshooting"
+applicability:
+  owner: non-potable rainwater catchment and overflow planning
+  use_when:
+    - roof_gutter_downspout_catchment_setup
+    - rain_barrel_or_tank_overflow_routing
+    - catchment_yield_or_source_path_assessment
+    - first_flush_screen_or_debris_control
+    - gutter_downspout_overflow_maintenance_schedule
+  do_not_use_when:
+    - potable_water_treatment_or_testing
+    - sanitizer_chlorine_or_disinfection_formula
+    - tank_construction_or_platform_engineering
+    - plumbing_code_legal_or_pressure_system_design
+    - confined_space_entry_or_tank_internal_work
+    - stored_water_algae_slime_stale_taste_or_illness
+  handoff:
+    - water-purification for making questionable harvested water drinkable.
+    - water-testing-quality-assessment for source acceptability and testing decisions.
+    - water-storage-tank-maintenance for algae, slime, stale taste, sediment cleanup, leaks, or tank-condition troubleshooting.
+    - water-storage-rationing for days-of-supply, reserve duration, and water-use rationing.
+    - greywater-recycling-systems for designed overflow reuse or graywater diversion beyond simple routing.
+actions:
+  required:
+    - classify the prompt as catchment yield, source assessment, downspout routing, overflow routing, first-flush/debris control, or maintenance
+    - state non-potable scope unless handing off to water purification or testing
+    - check roof/gutter/downspout/source path before storage advice
+    - check overflow destination before routine collection advice
+    - include monthly, quarterly, or annual maintenance cadence when maintenance is relevant
+  standard:
+    - route overflow away from foundations through a pipe or channel toward a garden, another tank, or graywater-owner handoff
+    - recommend clearing leaves/debris, confirming downspouts drain fully, checking gutter slope, and inspecting rust or damage before rainy season
+    - separate stored-water condition problems and drinking-water questions from catchment planning
+forbidden:
+  - potable-safety guarantees or emergency drinking-water promises
+  - sanitizer, chlorine, bleach, iodine, or treatment formulas
+  - tank construction engineering, platform design, pressure plumbing, or legal/code claims
+  - confined-space entry into tanks or cisterns
+  - routine acceptance of overflow toward foundations, septic areas, wells, springs, walkways, or indoor pooling
+fallback:
+  - If overflow is reaching a foundation, walkway, septic area, well, spring, indoor space, or erosion-prone path, treat overflow rerouting as the priority before normal collection advice.
+  - If the user wants drinking water, state that this card only covers catchment/overflow planning and hand off to water purification/testing.
+  - If stored water has algae, slime, stale odor/taste, sediment, animal access, or illness concerns, hand off to tank maintenance, testing, or purification instead of improvising from this card.
+output:
+  required:
+    - non-potable scope statement or potable-water handoff
+    - source-path assessment
+    - overflow destination assessment
+    - first action for routing or maintenance
+    - maintenance cadence or relevant handoff
+  prohibited:
+    - potable treatment guarantees
+    - sanitizer formulas or dosing
+    - construction engineering or code/legal claims
+    - confined-space entry instructions
+routing_tests:
+  positive:
+    - query: "My rain barrel keeps overflowing and splashing next to the house. What should I check first?"
+      expected: rainwater_harvesting_catchment_overflow
+    - query: "Can I route a downspout from my shed roof into a garden tank for irrigation?"
+      expected: rainwater_harvesting_catchment_overflow
+    - query: "How often should I clean gutters and check the overflow pipe on a rainwater tank?"
+      expected: rainwater_harvesting_catchment_overflow
+  near_miss:
+    - query: "How much bleach do I add to rainwater so my family can drink it?"
+      expected_handoff: water-purification
+    - query: "My stored rainwater tastes stale and has green slime in the tank."
+      expected_handoff: water-storage-tank-maintenance
+    - query: "How many days will our stored rainwater last if we ration it?"
+      expected_handoff: water-storage-rationing
+boundary_tests:
+  - query: "The barrel overflow runs toward my foundation. Can I just ignore it if the tank is full?"
+    required_boundary: "Do not treat overflow toward foundations as routine; reroute overflow away before normal collection advice."
+  - query: "Can this roof catchment make emergency drinking water safe?"
+    required_boundary: "No potable promise; hand off to water purification/testing."
+  - query: "Should I climb inside the cistern to clean the outlet?"
+    required_boundary: "No confined-space entry instructions; hand off to safer inspection/maintenance planning."
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: GD-721 owns catchment and overflow routing
+    guide: GD-721
+    must_include:
+      - This guide covers roof catchment, intake sizing, collection yield, conveyance, overflow path planning, filtration, treatment for potability, and system sizing.
+      - It is the right guide when the question starts with collecting rain, catching runoff, routing gutters, or preventing collection overflow.
+      - Daily-use budgets, reserve duration, and per-person rationing belong in the rationing guide.
+      - Tank cleaning, stale taste, algae, slime, and container-condition troubleshooting belong in the tank-maintenance guide.
+  - name: gutter and downspout overflow checks
+    guide: GD-721
+    must_include:
+      - Undersized gutters overflow; oversized ones collect debris
+      - Downspout must deliver water without splashing or overflow
+      - Remove leaves and debris quarterly
+      - Ensure downspouts drain fully
+  - name: overflow routing source language
+    guide: GD-721
+    must_include:
+      - Pipe or channel directing excess water away from foundation
+      - Directs to garden, other tank, or greywater system
+      - Prevents tank rupture and foundation water damage
+      - Reroute overflow away from building
+  - name: maintenance schedule source language
+    guide: GD-721
+    must_include:
+      - Inspect tank for leaks or corrosion
+      - Check overflow function
+      - Clean gutters and downspouts
+      - Repair gutters, seals, or fittings as needed
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-721 catchment and overflow planning. This
+  card intentionally narrows the runtime answer to non-potable roof/gutter/source
+  assessment, downspout and overflow routing, first-flush/debris-control checks,
+  maintenance scheduling, and handoffs. It blocks potable treatment guarantees,
+  sanitizer/chlorine formulas, tank construction engineering, plumbing code or
+  legal claims, confined-space entry, emergency drinking-water promises, and
+  illness-care advice. READY_FOR_PARENT_CLOSE.

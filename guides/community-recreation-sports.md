@@ -18,6 +18,29 @@ word_count: 3800
 last_updated: '2026-02-19'
 version: '1.0'
 liability_level: low
+aliases:
+  - community recreation sports
+  - community sports program
+  - recreation program planning
+  - organize community games
+  - inclusive sports activities
+  - tournament scheduling
+routing_cues:
+  - Use this guide for low-risk recreation program planning, supervision, scheduling, inclusive participation, tournament logistics, and basic surface/equipment checks.
+  - Keep answers focused on who is attending, who supervises, schedule, rules, space, simple equipment checks, breaks, and inclusion.
+  - Route injury treatment, heat/cold medical protocols, mental-health intervention, child safeguarding/legal determinations, and equipment construction instructions to the appropriate specialist owner.
+citations_required: true
+citation_policy: cite reviewed GD-341 answer card for community recreation planning, supervision, scheduling, inclusive participation, and basic equipment/surface checks only; do not use it for injury treatment, heat/cold medical protocols, mental-health intervention, legal/safeguarding determinations, or equipment construction.
+applicability: >
+  Use for organizing community recreation, sports days, children's games, friendly
+  matches, tournaments, volunteers, schedules, inclusive participation, and simple
+  pre-play checks of space, surfaces, boundaries, balls, ropes, posts, nets, and
+  protective gear. Do not use for clinical care, injury treatment, heat/cold
+  illness protocols, mental-health intervention, child legal/safeguarding
+  determinations, or how to build equipment.
+answer_card:
+  - community_recreation_sports
+reviewed: true
 ---
 
 <section id="overview">

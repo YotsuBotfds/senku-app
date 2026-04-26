@@ -11,6 +11,34 @@ tags:
   - curriculum
   - apprenticeship
   - learning-progression
+aliases:
+  - age appropriate skill progression
+  - child skill progression plan
+  - youth apprenticeship progression
+  - age band curriculum planning
+  - what skills should children learn by age
+  - supervised youth skill curriculum
+routing_cues:
+  - age appropriate skills for children
+  - plan skill progression by age
+  - youth apprenticeship readiness
+  - curriculum for children and teens
+  - supervised practice by age band
+  - when is a child ready for more independence
+citations_required: true
+applicability: >
+  Safe curriculum and supervision planning for age-banded learning progressions,
+  readiness checks, apprenticeship entry, and pacing. Route active injury,
+  medical or first-aid instruction, legal or child-protection determinations,
+  independent survival training, animal handling, fire/tool procedures, and
+  tactical or rescue tasks to the appropriate specialist guide instead.
+citation_policy: >
+  Cite GD-639 and its reviewed answer-card content for curriculum structure,
+  age-band supervision, readiness signals, and progression planning only. Do not
+  use this guide to teach independent survival, tool, fire, animal, first-aid,
+  medical, legal, or child-protection procedures.
+answer_card:
+  - age_appropriate_skill_progressions
 icon: 📈
 description: Developmental framework for teaching survival skills across age groups (5-7, 8-10, 11-13, 14-16, 17-18), mapped to cognitive abilities and phased skill introduction from safety awareness to apprenticeship readiness.
 related:
@@ -22,10 +50,11 @@ related:
   - infant-child-care
   - pedagogy-curriculum
 read_time: 16
-word_count: 6200
-last_updated: '2026-02-21'
-version: '1.0'
+word_count: 6360
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: low
+reviewed_answer_card: age_appropriate_skill_progressions
 ---
 <section id="framework">
 
@@ -38,6 +67,15 @@ This guide maps core survival skills to developmental stages, preventing both un
 :::warning
 **Critical principle:** Don't skip foundational stages. A child who never learned basic fire safety (ages 5-7) will struggle with advanced fire management (ages 14-16). Progression builds cumulatively—each stage provides foundation for the next.
 :::
+</section>
+
+<section id="answer-card-safe-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-639. Use it for curriculum and supervision planning: matching age bands to learning goals, deciding how much adult oversight is needed, setting readiness checks before more autonomy, pacing learners who need slower or faster progression, and planning apprenticeship entry.
+
+Keep answers at the level of teaching design and supervision structure. Do not use this guide to provide independent survival training, tool-use procedures, fire-making instructions, animal handling steps, first-aid or medical advice, legal conclusions, child-protection determinations, or rescue/tactical procedures. If the prompt asks how a child should perform a hazardous task, reframe to age-appropriate observation, supervised practice, prerequisite readiness, and handoff to the relevant safety owner.
 
 </section>
 
@@ -411,5 +449,3 @@ Not all children progress at age-based pace. Some are ready for advanced skills 
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-
-

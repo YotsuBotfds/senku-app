@@ -18,6 +18,33 @@ related:
   - water-purification
   - first-aid
   - simple-bridge-engineering
+aliases:
+  - severe storm preparedness
+  - hurricane preparedness
+  - tornado shelter checklist
+  - storm watch warning plan
+  - storm cleanup triage
+  - storm communication plan
+routing_cues:
+  - "prepare for severe storms"
+  - "hurricane or tornado preparedness checklist"
+  - "what to do for a storm watch or warning"
+  - "where should we shelter during a tornado warning"
+  - "storm communication plan and supplies"
+  - "post storm cleanup triage"
+citations_required: true
+applicability: >
+  Reviewed preparedness and response-planning lane for hurricanes, tornadoes,
+  severe thunderstorms, storm surge, flooding risk awareness, shelter choice,
+  communication redundancy, supply caching, and cautious post-storm cleanup
+  triage. Route live rescue, medical treatment, structural repair, generator or
+  utility wiring, floodwater traversal, and utility restoration instructions to
+  more specific emergency or specialist lanes.
+reviewed_applicability:
+  - Safe when needed: preparedness checklists, watch/warning response planning, shelter selection, evacuation timing, communication plans, supplies, and post-storm hazard triage.
+  - Not safe for: live rescue tactics, medical treatment, structural repair, generator wiring, floodwater traversal, or utility restoration procedures.
+answer_card:
+  - severe_storm_preparedness
 read_time: 36
 word_count: 5400
 last_updated: '2026-02-22'

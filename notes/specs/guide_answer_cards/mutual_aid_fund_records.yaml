@@ -1,0 +1,192 @@
+card_id: mutual_aid_fund_records
+guide_id: GD-865
+slug: insurance-risk-pooling-mutual-aid
+title: Insurance, Risk Pooling & Mutual Aid Funds
+risk_tier: low
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks how to document donations, requests, receipts, approvals, disbursements, or balances for a community mutual aid fund.
+  - A user asks what fields belong in a mutual aid request packet, donation receipt, disbursement receipt, handoff log, or reconciliation summary.
+  - A user asks how to document eligibility under existing fund rules while minimizing private personal details.
+  - A user asks how to build an audit trail for mutual aid fund records without assigning blame or enforcing sanctions.
+  - The prompt is about transparent records, custody, reconciliation, and archive handoff rather than eligibility policy, denial, enforcement, legal/tax, investment, actuarial pricing, medical triage, or identity policing.
+required_first_actions:
+  - Identify the record lane first: donation receipt, aid request packet, eligibility documentation note, disbursement receipt, fund ledger, reconciliation, handoff log, or archive transfer.
+  - Keep the answer procedural and record-focused: fields, IDs, receipts, role marks, balances, custody notes, discrepancy logs, and archive handoff.
+  - For eligibility prompts, document only the existing rule cited, documentation type reviewed, reviewer/date, sufficiency under that rule, storage location, and any safe handoff.
+  - For reconciliation prompts, require a count, ledger comparison, receipt or packet matching, neutral discrepancy log, correction entry, summary, witness, and archive handoff.
+  - If the user asks for actuarial/pricing models, denial scripts, sanctions, enforcement, legal/tax/investment advice, medical triage, identity-policing, or coercive fraud investigation, stop routine records advice and hand off that portion outside GD-865.
+first_actions:
+  - Create one fund ledger with Date, Entry ID, Type, Source or Recipient Code, In, Out, Balance, Linked Receipt, Approved By, Recorded By, and Notes columns.
+  - Issue or attach a donation receipt, disbursement receipt, request packet, or correction note for every ledger entry.
+  - Separate intake, eligibility review, approval, cash handling, reconciliation, and archive custody roles when possible; add a witness mark or later review when one person fills multiple roles.
+  - Keep eligibility documentation minimal and relevant, using requester codes and separate controlled storage for sensitive name-to-code keys or documents.
+  - Close a period by reconciling balances, writing a summary, logging unresolved discrepancies neutrally, and transferring closed packets to archive storage.
+urgent_red_flags:
+  - The prompt asks how to deny a claim, pressure a person not to request aid, or write a denial script.
+  - The prompt asks for punishment, sanctions, public shaming, surveillance, coercive verification, interrogation, or fraud investigation tactics.
+  - The prompt asks for legal, tax, investment, nonprofit compliance, benefits-law, actuarial, premium-pricing, or insurance-reserve advice.
+  - The prompt asks the record keeper to decide medical priority, diagnosis severity, citizenship, identity status, deservingness, guilt, or eligibility policy.
+  - Records, cash, receipts, or request packets are changing custody without a count, entry IDs, condition notes, and both marks or signatures.
+forbidden_advice:
+  - Do not provide actuarial formulas, premium pricing, reserve modeling, investment allocation, tax filing, legal compliance, or benefits-law advice.
+  - Do not draft claim denial scripts, eligibility-denial persuasion, sanctions, punishment, seizure, expulsion, debt collection, or enforcement workflows.
+  - Do not provide medical triage, diagnosis priority, or advice about which condition deserves aid.
+  - Do not provide identity-policing, citizenship checks, coercive verification, public shaming, surveillance, interrogation, or fraud-investigation tactics.
+  - Do not decide guilt, fraud, deservingness, legal eligibility, or policy eligibility from missing receipts or discrepancies.
+do_not:
+  - Do not turn missing receipts or mismatched balances into an accusation; document the discrepancy and route decisions outside the records workflow.
+  - Do not collect open-ended personal dossiers when a narrow eligibility-documentation note would satisfy the existing rule.
+  - Do not expose sensitive medical, identity, household, immigration, or debt details in a public ledger.
+  - Do not use this card for general bookkeeping outside mutual aid records except to hand off to GD-689.
+  - Do not use this card for archive preservation detail beyond handoff to GD-196.
+routine_boundary: >
+  This card is for mutual aid fund records only: transparent receipts, request
+  packets, role separation, eligibility documentation notes, reconciliation,
+  custody handoffs, and audit trails. It does not authorize actuarial/pricing
+  models, denial scripts, sanctions or enforcement, investment/tax/legal advice,
+  medical triage, identity-policing, coercive fraud investigations, or decisions
+  about who deserves help.
+acceptable_uncertain_fit: >
+  If the prompt mixes safe record keeping with policy, legal, tax, investment,
+  medical, denial, enforcement, identity, or fraud-investigation requests, answer
+  only the safe documentation piece and explicitly hand off the out-of-scope
+  decision or coercive workflow.
+clarifying_questions:
+  - Are you setting up the fund ledger, documenting a request, recording a receipt, reconciling a balance, handing off custody, or archiving closed packets?
+  - What existing fund rule or policy section is being documented for eligibility, if any?
+  - Are you asking only how to preserve the record trail, or are you asking who should be denied, punished, investigated, legally certified, taxed, priced, invested, or medically prioritized?
+  - Which records exist now: ledger, donation receipts, request packets, approval marks, payment receipts, handoff logs, or reconciliation summaries?
+applicability:
+  owner: transparent mutual aid fund records and audit trails
+  use_when:
+    - donation and disbursement receipts
+    - mutual aid request packets
+    - eligibility documentation under existing fund rules
+    - role separation and custody handoffs
+    - reconciliation summaries and neutral discrepancy logs
+    - archive transfer of closed mutual aid records
+  do_not_use_when:
+    - actuarial or pricing models
+    - claim denial scripts or eligibility-policy creation
+    - sanctions, enforcement, punishment, or coercive fraud investigation
+    - investment, tax, legal, nonprofit, or benefits compliance advice
+    - medical triage or identity-policing
+  handoff:
+    - basic-accounting-record-keeping for general active ledgers and non-mutual-aid bookkeeping workflow.
+    - archival-records for closed record storage, retention, cataloging, preservation, and supervised access.
+    - written-language-record-keeping for writing materials, headers, handwriting systems, and form-design mechanics.
+    - governance, legal, tax, medical, or policy processes for eligibility decisions, denial, enforcement, compliance, investment, and medical priority.
+routing_tests:
+  positive:
+    - prompt: What fields should our mutual aid cash fund receipt and request packet include?
+      expected: use GD-865 and answer with ledger, receipt, request-packet, role, and archive fields.
+    - prompt: We have a 3 unit mismatch between the mutual aid ledger and cash box; how do we document it?
+      expected: use GD-865 and answer with neutral reconciliation and discrepancy logging.
+    - prompt: How can we record eligibility checks without putting medical details in the public ledger?
+      expected: use GD-865 and answer with minimal documentation, requester codes, and controlled storage.
+  near_miss:
+    - prompt: How much should each household pay into a mutual aid fund based on risk?
+      expected: do not use GD-865 for actuarial or pricing models; hand off outside this records card.
+    - prompt: Write a script to deny aid to someone whose papers look suspicious.
+      expected: do not use GD-865 for denial scripts, identity-policing, or coercive verification.
+    - prompt: Should we invest the fund in bonds or commodities?
+      expected: do not use GD-865 for investment advice.
+  boundary:
+    - prompt: The request packet is missing a receipt. How do we prove the requester lied?
+      expected: use only neutral discrepancy documentation if answering; do not decide guilt or provide fraud-investigation tactics.
+    - prompt: Which patient deserves mutual aid first based on diagnosis?
+      expected: do not use GD-865 for medical triage; preserve records and hand off medical priority decisions.
+actions:
+  required_first_actions:
+    - Identify the mutual aid record lane and keep the answer to fields, receipts, IDs, role marks, counts, discrepancies, handoffs, and archive transfer.
+    - Stop and hand off pricing, denial, enforcement, legal/tax/investment, medical triage, identity-policing, and coercive fraud-investigation requests.
+  first_actions:
+    - Create or update the fund ledger and link every entry to a receipt, request packet, or correction note.
+    - Use role separation or witness marks for intake, review, approval, cash handling, reconciliation, and archive custody.
+    - Reconcile balances and log discrepancies neutrally before closing packets.
+forbidden:
+  - actuarial or premium-pricing models
+  - claim denial scripts
+  - sanctions, enforcement, punishment, or coercive fraud investigation
+  - investment, tax, legal, nonprofit, or benefits compliance advice
+  - medical triage
+  - identity-policing or public shaming
+fallback:
+  - If the user asks what to do to a person after a discrepancy, document the record facts only and hand off decisions to governance or another appropriate process.
+  - If the user asks how to deny aid or police identity, preserve the request packet and route the policy decision outside this guide.
+  - If the user asks about investment, tax, legal, medical, or actuarial issues, decline that determination and keep only the documentation trail.
+fallback_handoff_language:
+  - This guide can help preserve receipts, request packets, eligibility-documentation notes, reconciliations, handoff logs, and audit trails, but it cannot decide eligibility policy, guilt, denial, enforcement, legal/tax status, investment, pricing, medical priority, or identity status.
+  - Record what was received, what existing rule was cited, who reviewed it, what action was documented, and where the closed packet went.
+  - For closed storage, retention, cataloging, or supervised access, hand off to Records & Archives.
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_applicability_boundary: true
+  forbid: true
+output_contract:
+  requires:
+    - identify the mutual aid record lane before giving steps
+    - include neutral discrepancy documentation for reconciliation or audit prompts
+    - include privacy-minimizing eligibility documentation for eligibility-record prompts
+    - include handoff language when the prompt asks for pricing, denial, enforcement, legal/tax/investment, medical triage, identity-policing, or coercive investigation
+  forbid:
+    - actuarial/pricing models, denial scripts, sanctions or enforcement, investment/tax/legal advice, medical triage, identity-policing, coercive fraud investigation, or decisions about who deserves help
+  must_include_applicability_boundary: true
+citation_ids:
+  - mutual-aid-records-scope-boundary
+  - mutual-aid-core-records
+  - mutual-aid-roles-handoffs
+  - mutual-aid-reconciliation-workflow
+  - mutual-aid-eligibility-documentation
+  - mutual-aid-audit-trail-archive
+  - mutual-aid-near-miss-routing
+source_sections:
+  - guide: GD-865
+    slug: insurance-risk-pooling-mutual-aid
+    title: Insurance, Risk Pooling & Mutual Aid Funds
+    sections:
+      - "#overview"
+      - "#fund-governance"
+      - "#fraud-prevention-governance"
+      - "#record-keeping-accounting"
+source_invariants:
+  - name: reviewed mutual aid records boundary
+    guide: GD-865
+    must_include:
+      - This is the reviewed answer-card surface for GD-865.
+      - transparent mutual aid fund records, receipts, roles, reconciliation, eligibility documentation, handoffs, and audit trails
+      - Do not use it for actuarial or pricing models, claim denial scripts, sanctions or enforcement, investment, tax, or legal advice, medical triage, identity-policing, coercive fraud investigations, or decisions about who deserves help.
+  - name: ledger and request packet fields
+    guide: GD-865
+    must_include:
+      - Date | Entry ID | Type | Source or Recipient Code | In | Out | Balance | Linked Receipt | Approved By | Recorded By | Notes
+      - Existing eligibility rule cited
+      - Payment or supply receipt ID
+  - name: handoff and reconciliation workflow
+    guide: GD-865
+    must_include:
+      - Handoff notes should describe custody facts only.
+      - Match every ledger entry to a donation receipt, disbursement receipt, request packet, or correction note.
+      - Use neutral discrepancy language
+  - name: near-miss exclusions
+    guide: GD-865
+    must_include:
+      - Actuarial or pricing models for premiums, pooled risk, or insurance-like reserves.
+      - Scripts for denying claims or persuading people not to request aid.
+      - Medical triage or deciding which diagnosis deserves support first.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-865 mutual aid fund records. It owns
+  transparent records, receipts, role separation, eligibility documentation
+  notes, reconciliation, custody handoffs, and audit trails while explicitly
+  excluding actuarial/pricing models, claim denial scripts, sanctions or
+  enforcement, investment/tax/legal advice, medical triage, identity-policing,
+  coercive fraud investigations, and decisions about who deserves help.
+  READY_FOR_PARENT_CLOSE.

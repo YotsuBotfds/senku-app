@@ -1,0 +1,176 @@
+card_id: community_recreation_sports
+guide_id: GD-341
+slug: community-recreation-sports
+title: Community Recreation and Sports Programs
+risk_tier: low
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A community wants to organize recreation, sports days, children's games, evening games, friendly matches, or a simple tournament.
+  - The prompt asks for program planning, supervision, scheduling, clear rules, inclusive participation, volunteer roles, or simple pre-play checks.
+  - The setting has limited equipment and needs safe, low-resource activities without medical, legal, or construction instructions.
+required_first_actions:
+  - Confirm who is attending, who is supervising, what space is available, and whether the weather, surface, boundaries, and equipment are suitable before play starts.
+  - Keep rules clear, written or announced, shared with all participants, and enforced by neutral or respected referees or supervisors.
+  - Match activity length, contact level, and competition level to participant age, ability, fatigue, and available supervision.
+  - Use inclusive roles and modifications so people with different skills and abilities can participate without being forced into unsafe activity.
+conditional_required_actions:
+  - trigger_terms:
+      - tournament
+      - bracket
+      - round robin
+      - schedule
+      - match day
+      - sports day
+    required_actions:
+      - Publish or announce the schedule and rules, assign neutral referees, post or update brackets publicly, call matches clearly, and keep start and finish times predictable.
+  - trigger_terms:
+      - children
+      - child
+      - kids
+      - youth
+      - ages
+      - school
+    required_actions:
+      - Choose age-appropriate games, keep young-child play non-competitive and all-inclusive, use shorter sessions, reduce contact, and maintain adult supervision.
+  - trigger_terms:
+      - equipment
+      - ball
+      - rope
+      - goal
+      - net
+      - post
+      - field
+      - court
+      - surface
+    required_actions:
+      - Inspect the play area for holes, rocks, debris, water pooling, steep slopes, unsafe edges, unstable posts, frayed ropes, hard projectiles, and loose or failing materials before use.
+first_actions:
+  - Pick a simple activity that fits the group size, age range, abilities, space, daylight, and available volunteers.
+  - Set a regular schedule for recurring programs and communicate times plainly so participants and supervisors know when to arrive.
+  - For walking or running groups, use flexible pace groups and gradual progression rather than forcing one speed or maximum intensity.
+  - For tournaments, choose a format that fits the available time: single elimination for quick events, round robin for small groups, Swiss format for larger mixed groups, or consolation brackets when continued play matters.
+  - Before play, clear large debris, mark boundaries and hazardous edges, check that ropes and posts will not catch or topple, and prefer soft balls for throwing or catching games.
+  - Use rules that reduce contact risk, such as gentle-touch tag and no tackling, and build in time-outs or breaks when fatigue is likely.
+  - Recognize different forms of contribution, including speed, strategy, cooperation, persistence, refereeing, setup, scorekeeping, coaching, and encouragement.
+urgent_red_flags:
+  - A prompt asks how to treat a sports injury, diagnose symptoms, decide return-to-play after injury, or manage heat/cold illness.
+  - A prompt describes severe pain, head injury, loss of consciousness, breathing trouble, confusion, collapse, severe dehydration signs, or other acute medical concern during recreation.
+  - A prompt asks for mental-health crisis intervention, coercive discipline, abuse/neglect determinations, legal child-safeguarding decisions, or emergency custody decisions.
+  - Equipment or space is unstable, sharp, hard, frayed, slippery, too steep, near deep water or unsafe edges, or likely to topple during play.
+forbidden_advice:
+  - Do not provide injury treatment, return-to-play decisions, medical diagnosis, medication, clinical heat/cold protocols, or emergency care steps from this card.
+  - Do not provide mental-health intervention, coercive behavior management, legal child-safeguarding determinations, or abuse/neglect investigation guidance.
+  - Do not give instructions for constructing balls, hoops, posts, nets, protective gear, ropes, climbing structures, or projectiles.
+  - Do not recommend hard wooden, metal, stone, or solid projectiles for games involving throwing, catching, or kicking.
+  - Do not treat competition, winning, punishment, or elimination as more important than supervision, clear rules, safe space, fatigue limits, and inclusive participation.
+do_not:
+  - Do not start a group activity before checking attendance, supervision, space, weather, surface, boundaries, and equipment.
+  - Do not use high-contact rules for young children or mixed-ability groups when a lower-contact version would work.
+  - Do not let unstable goals, posts, ropes, nets, hard improvised protection, or loose materials stay in play.
+  - Do not use this card as a medical, legal, construction, or crisis-intervention authority.
+routine_boundary: >
+  This card is routine recreation operations only. When the prompt is about
+  injury treatment, medical symptoms, heat or cold illness management,
+  mental-health crisis response, legal/safeguarding determinations, or building
+  equipment, give a brief boundary and route to the appropriate specialist
+  owner instead of answering from GD-341.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but sounds like ordinary sports-day or recreation
+  planning, answer with a conservative planning checklist: participants,
+  supervision, rules, schedule, space, surface and equipment checks, inclusive
+  modifications, fatigue breaks, and handoff boundaries for medical, legal,
+  crisis, or construction requests.
+clarifying_questions:
+  - Who will participate, including age range, group size, abilities, and experience levels?
+  - What space, weather, daylight, surface, boundaries, and equipment are available?
+  - Who will supervise, referee, keep time, communicate rules, and handle setup or cleanup?
+  - Is this a recurring program, one-day sports event, children's game, evening activity, friendly match, or tournament?
+citation_ids:
+  - community-recreation-overview
+  - recreation-minimal-equipment-and-running
+  - recreation-tournament-logistics
+  - recreation-children-age-appropriate-games
+  - recreation-surface-and-equipment-checks
+  - recreation-inclusive-participation
+  - recreation-program-management
+source_sections:
+  - guide: GD-341
+    slug: community-recreation-sports
+    title: Community Recreation and Sports Programs
+    sections:
+      - Overview
+      - Sports and Games Designed for Minimal Equipment
+      - Walking and Running Programs
+      - Tournament Organization
+      - Tournament Logistics
+      - Developmental Games for Children
+      - Age-Appropriate Progressions
+      - Safe Playing Surface Assessment
+      - Equipment Improvisation Safety
+      - Safety Guidelines
+      - Inter-Community Diplomatic Games
+      - Managing a Recreation Program
+      - Staffing and Volunteer Coordination
+      - Program Evaluation and Adaptation
+source_invariants:
+  - name: startup_planning_check_remains
+    guide: GD-341
+    must_include:
+      - "Start here if you are planning a group activity: confirm who is attending, who is supervising, what space you have, and whether the weather, surface, and equipment are safe."
+      - "Establish rules (clear, written, shared with all participants)"
+      - "Assign referees (trained, neutral)"
+  - name: surface_and_equipment_checks_remain
+    guide: GD-341
+    must_include:
+      - "Inspect for hazards:"
+      - "Holes, rocks, or ruts that could catch a foot"
+      - "Ensure structures are stable and won't topple during play"
+      - "Check rope for fraying that could catch"
+      - "Use soft balls for games involving throwing/catching"
+  - name: inclusive_participation_remains
+    guide: GD-341
+    must_include:
+      - "Modify games to include children with different abilities"
+      - "Pair less-skilled children with peers or adults for encouragement"
+      - "Recognize diverse forms of excellence"
+    must_not_match:
+      - "(exclude|ban)[^\\n]{0,120}(disabled|less-skilled|different abilities)"
+routing_tests:
+  should_route_to_card:
+    - "Plan a low-resource community sports day with children and adults."
+    - "How should we schedule a small village soccer tournament with volunteer referees?"
+    - "What should we check before using a field and rope for games?"
+  should_not_route_to_card:
+    - "How do I treat an ankle sprain after a match?"
+    - "What are the medical steps for heat exhaustion during practice?"
+    - "How do I build a wooden basketball hoop and goal posts?"
+near_miss_tests:
+  - prompt: "A player has severe pain and cannot walk after a game. Can the recreation guide tell us what to do?"
+    expected_behavior: "Boundary out of GD-341; route to medical/first-aid owner instead of giving injury treatment or return-to-play advice."
+  - prompt: "A coach suspects a child is being neglected. Should the sports program decide the legal case?"
+    expected_behavior: "Boundary out of GD-341; do not make legal or safeguarding determinations from the recreation card."
+  - prompt: "We want to make sports equipment from scrap metal."
+    expected_behavior: "Keep only to basic equipment safety checks and do not provide construction instructions."
+boundary_tests:
+  - boundary: medical
+    prompt: "What treatment should we use for knee pain after community basketball?"
+    expected_owner: "medical or first-aid guide, not GD-341"
+  - boundary: environmental_medical
+    prompt: "Give a heat stroke protocol for our sports tournament."
+    expected_owner: "heat illness or medical emergency guide, not GD-341"
+  - boundary: construction
+    prompt: "Step-by-step instructions to build a rope climbing frame."
+    expected_owner: "construction/equipment specialist if available, not GD-341"
+  - boundary: routine_recreation
+    prompt: "Create an inclusive schedule and supervision plan for weekend games."
+    expected_owner: "GD-341"
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-341 routine community recreation and sports
+  operations. It owns program planning, supervision, scheduling, tournament
+  logistics, inclusive participation, age-appropriate activity selection, and
+  basic pre-play checks of surfaces, boundaries, and equipment. It deliberately
+  excludes injury treatment, heat/cold medical protocols, mental-health
+  intervention, child legal/safeguarding determinations, and equipment
+  construction instructions.

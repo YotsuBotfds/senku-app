@@ -16,6 +16,34 @@ related:
   - debt-credit-lending
   - community-governance-leadership
   - mutual-aid-networks
+  - archival-records
+aliases:
+  - mutual aid fund records
+  - mutual aid receipt log
+  - mutual aid fund ledger
+  - mutual aid reconciliation
+  - mutual aid audit trail
+  - community aid disbursement records
+citations_required: true
+applicability: >
+  Use GD-865 for cooperative insurance, risk-pooling governance, contribution
+  structures, claim records, fund ledgers, reconciliation, and mutual aid fund
+  audit trails. The reviewed answer card is narrower: transparent receipts,
+  request packets, role separation, eligibility documentation under existing
+  fund rules, custody handoffs, and neutral discrepancy logs. Do not use the
+  reviewed card for actuarial or pricing models, denial scripts, sanctions or
+  enforcement, investment/tax/legal advice, medical triage, identity-policing,
+  coercive fraud investigations, or decisions about who deserves help.
+citation_policy: >
+  Cite GD-865 for mutual aid fund record structure, documentation fields,
+  reconciliation workflow, role handoffs, and audit-trail preservation when the
+  question is records-only. Route policy, eligibility judgment, legal, tax,
+  investment, enforcement, medical, coercive investigation, and premium-pricing
+  questions outside the reviewed records card.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: mutual_aid_fund_records
+answer_card:
+  - mutual_aid_fund_records
 read_time: 48
 word_count: 3400
 last_updated: '2026-02-25'
@@ -35,6 +63,29 @@ This guide addresses cooperative insurance for livestock, crops, catastrophic he
 
 Routing note: use this guide when the main task is designing shared-risk pooling, contribution rules, claim approval, reserves, or reinsurance. If the question is broader community coordination, volunteer structure, tool libraries, skill exchange, or neighborhood mutual aid operations, hand off to [Mutual Aid Networks and Resource Pooling](./mutual-aid-networks.html).
 
+### Reviewed Records Boundary
+
+This is the reviewed answer-card surface for GD-865. Use it for transparent mutual aid fund records, receipts, roles, reconciliation, eligibility documentation, handoffs, and audit trails. Do not use it for actuarial or pricing models, claim denial scripts, sanctions or enforcement, investment, tax, or legal advice, medical triage, identity-policing, coercive fraud investigations, or decisions about who deserves help.
+
+For records-only prompts, answer the documentation layer: what was requested, what existing fund rule was cited, what documentation type was reviewed, who approved the record action, what money moved, what receipt proves the movement, where the closed packet is stored, and what handoff notes preserve custody. Handoff notes should describe custody facts only.
+
+Safe records use minimal public detail. Use requester or recipient codes where privacy matters, keep sensitive name-to-code keys or medical/identity documents in controlled storage, and avoid open-ended personal dossiers.
+
+Core reviewed records:
+
+- Fund ledger: `Date | Entry ID | Type | Source or Recipient Code | In | Out | Balance | Linked Receipt | Approved By | Recorded By | Notes`
+- Donation receipt: donor or anonymous code, amount or item, restriction if any, receipt ID, received by, and storage location.
+- Request packet: requester code, requested aid, existing eligibility rule cited, documentation type reviewed, reviewer/date, approval mark, payment or supply receipt ID, and archive location.
+- Handoff log: packet count, entry IDs, balance or receipt count, condition notes, outgoing custodian, incoming custodian, date, and witness when possible.
+- Reconciliation summary: ledger balance, counted cash or vouchers, matched receipts and packets, correction entries, unresolved discrepancies, reviewer mark, and archive handoff.
+
+Match every ledger entry to a donation receipt, disbursement receipt, request packet, or correction note. Use neutral discrepancy language; missing receipts or mismatched balances are record problems to document and hand off, not proof of guilt or fraud by themselves.
+
+Near-miss exclusions for the reviewed records surface:
+
+- Actuarial or pricing models for premiums, pooled risk, or insurance-like reserves.
+- Scripts for denying claims or persuading people not to request aid.
+- Medical triage or deciding which diagnosis deserves support first.
 
 </section>
 

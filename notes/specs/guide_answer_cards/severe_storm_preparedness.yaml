@@ -1,0 +1,203 @@
+card_id: severe_storm_preparedness
+guide_id: GD-695
+slug: hurricane-severe-storm-preparedness
+title: Hurricane & Severe Storm Preparedness
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applicability: >
+  Use for severe storm preparedness and response planning before or immediately
+  after a storm when the user needs a safe checklist for risk assessment,
+  watch/warning response, evacuation/shelter decisions, communications, supplies,
+  and cautious cleanup triage. Do not use as an operational rescue, medical,
+  structural-repair, floodwater-travel, generator-wiring, or utility-restoration
+  playbook.
+applies_when:
+  - The user asks how to prepare a household, shelter, or community for hurricanes, tornadoes, severe thunderstorms, storm surge, or storm-related flooding.
+  - The user asks what to do during a storm watch or warning, including whether to shelter, evacuate early, or move to a safer interior room.
+  - The user asks for a tornado shelter checklist, storm surge evacuation planning, communication redundancy, weather-radio planning, or supply caching.
+  - The user asks how to triage post-storm hazards before entry, cleanup, water use, or limited debris clearing.
+required_first_actions:
+  - Start with the current condition: if there is an active warning, tornado signs, storm surge order, floodwater, downed lines, gas smell, structural collapse, or injury, prioritize shelter/evacuation/emergency handoff before routine preparation.
+  - For storm surge or evacuation-zone risk, lead with early evacuation before tropical-storm-force winds; do not frame surge-zone sheltering as reliable.
+  - For tornado warning or tornado signs, direct people to an interior room on the lowest floor with no windows and away from large-span rooms.
+  - For post-storm questions, start with hazard triage before cleanup: avoid downed power lines, gas smells, wet electrical systems, contaminated water, unstable structures, and floodwater contact.
+  - Keep the answer in preparedness, sheltering decisions, communications, supplies, and cleanup triage; hand off live rescue, medical care, structural repair, generator wiring, floodwater traversal, and utility restoration.
+conditional_required_actions:
+  - trigger_terms:
+      - tornado warning
+      - funnel cloud
+      - rotating cloud
+      - freight train sound
+      - large hail
+    required_actions:
+      - Move to the identified tornado shelter immediately: lowest floor, interior room, no windows.
+      - Avoid gyms, auditoriums, and other large open-span spaces.
+      - Keep the answer focused on sheltering and official alerts rather than tornado chasing or vehicle tactics.
+  - trigger_terms:
+      - storm surge
+      - evacuation zone
+      - hurricane landfall
+      - coastal flooding
+    required_actions:
+      - State that evacuation is the reliable defense for storm-surge zones.
+      - Emphasize leaving before tropical-force winds make evacuation dangerous.
+      - Do not advise staying in place for extreme surge.
+  - trigger_terms:
+      - after the storm
+      - cleanup
+      - re-enter
+      - debris
+      - flooded house
+      - downed line
+    required_actions:
+      - Begin with hazard assessment from outside or a safer location.
+      - Flag wet electrical systems, gas smell, downed lines, contaminated water, and structural damage before any cleanup steps.
+      - Keep cleanup advice to triage, protective gear, limited debris visibility clearing, and professional/authority handoff.
+first_actions:
+  - Identify local hazards before the season: storm surge zone, flood zone, evacuation route, tornado shelter, and common wind/water failure points.
+  - Prepare a watch/warning plan that names who monitors NOAA/weather alerts, when to shelter, when to leave early, and where household members reunite.
+  - Harden only within preparedness scope: pre-cut/labeled window protection, clear gutters, secure loose exterior items, and keep supplies accessible.
+  - Choose shelter locations in advance: interior lowest-floor rooms without windows for tornadoes, and evacuation destinations outside storm-surge and flood zones when those risks apply.
+  - Build communication redundancy with an out-of-area contact, written phone list, battery or hand-crank radio, NOAA weather radio, and text-first check-ins.
+  - Cache water, food, medications, lighting, sanitation supplies, documents, protective gear, and basic hand tools before storms arrive.
+  - After the storm, triage before cleanup: look for structural damage, wet electrical systems, gas odors, downed power lines, contaminated water, and hazardous debris.
+urgent_red_flags:
+  - Official evacuation order, known storm-surge zone, or tropical-force winds approaching evacuation cutoff.
+  - Tornado warning signs such as rotating/lowering cloud base, large hail, loud roar, swirling debris, or sudden severe wind changes.
+  - Floodwater contacting utilities, fuel tanks, or living areas; roads under water; or any request to drive/walk through floodwater.
+  - Downed power lines, wet electrical panels, gas smell, wall/roof collapse, foundation cracks or shifting, blocked exits, or unstable debris.
+  - Any injury, trapped person, missing person, active fire, chest pain, breathing difficulty, severe bleeding, or other medical emergency.
+forbidden_advice:
+  - Provide live rescue tactics, swiftwater rescue, rope rescue, vehicle rescue, extraction, or directions to enter dangerous floodwater.
+  - Give medical treatment, medication, wound care, trauma stabilization, or first-aid procedure details.
+  - Give structural repair, roof repair, shoring, demolition, engineering calculations, or permanent retrofit instructions.
+  - Give generator wiring, backfeeding, electrical panel repair, gas-line work, water-system restoration, or utility restoration procedures.
+  - Tell users to shelter in place in an extreme storm-surge zone or to delay ordered evacuation until winds rise.
+  - Present post-storm cleanup as safe before checking for downed lines, wet electricity, gas smell, contaminated water, and structural instability.
+do_not:
+  - Do not substitute folk weather signs for official alerts when alerts are available.
+  - Do not advise driving through flooded roads or entering floodwater to inspect damage.
+  - Do not tell users to restore power in a wet or flooded house.
+  - Do not tell users to drink, cook with, or rely on flood-affected water unless authorities have declared it safe.
+  - Do not turn preparedness supply lists into generator-installation, chainsaw, utility, or structural-repair instructions.
+routine_boundary: >
+  This card is for preparedness, watch/warning response planning, evacuation and
+  sheltering decisions, communications, supply caching, and post-storm cleanup
+  triage. It stops before live rescue, medical treatment, structural repair,
+  generator wiring, floodwater traversal, utility restoration, and detailed repair
+  or remediation playbooks.
+acceptable_uncertain_fit: >
+  If the user gives incomplete details, provide a conservative checklist and ask
+  whether the situation is pre-storm planning, active warning/evacuation, or
+  post-storm triage. If any red flag is plausible, lead with emergency/official
+  alert handoff and keep the rest concise.
+clarifying_questions:
+  - Is this pre-storm planning, an active watch/warning, or post-storm cleanup triage?
+  - Are you in a storm-surge, flood, mobile-home, or other evacuation zone, and has an official order been issued?
+  - Is there a tornado warning or any tornado sign such as rotating clouds, large hail, roar, or swirling debris?
+  - After the storm, are there downed lines, gas smells, wet electrical panels, floodwater, structural movement, or injuries?
+  - Who is the out-of-area contact, and what weather-radio or alert source is being monitored?
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - conditional_required_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - first_actions
+  must_include_urgent_handoff: true
+  forbid: true
+fallback_handoff_language:
+  - If the user describes immediate danger, injuries, trapped people, active fire, floodwater traversal, downed lines, gas smell, or collapse, direct them to local emergency services/official alerts before preparedness details.
+  - If the user asks for generator, utility, structural, medical, or rescue procedures, state that GD-695 only owns storm preparedness and triage and route to the appropriate specialist or emergency lane.
+  - If storm surge or an evacuation order is involved, recommend early evacuation before winds rise and avoid shelter-in-place framing for surge exposure.
+routing_tests:
+  - query: "We are under a tornado warning. Where do we shelter in the house?"
+    expect: use_this_card
+    required:
+      - interior room on the lowest floor with no windows
+      - avoid large open areas
+  - query: "How should I prepare my family for hurricane season, alerts, supplies, and contacts?"
+    expect: use_this_card
+    required:
+      - evacuation routes
+      - out-of-area contact
+      - NOAA weather radio
+  - query: "After the storm, what should I check before cleaning up debris?"
+    expect: use_this_card
+    required:
+      - downed power lines
+      - gas smell
+      - contaminated water
+near_miss_tests:
+  - query: "How do I wire a portable generator into my house panel after the hurricane?"
+    expect: do_not_use_this_card
+    route_to: electrical or generator safety specialist lane
+    reason: generator wiring and utility restoration are outside GD-695.
+  - query: "How do I rescue someone from a car in floodwater?"
+    expect: do_not_use_this_card
+    route_to: emergency services or rescue lane
+    reason: live rescue and floodwater traversal are outside GD-695.
+  - query: "How do I repair roof rafters after wind damage?"
+    expect: do_not_use_this_card
+    route_to: structural or roof repair lane
+    reason: structural repair is outside GD-695.
+boundary_tests:
+  - query: "Should I evacuate a storm surge zone or shelter upstairs?"
+    expected_boundary: storm surge evacuation planning is in scope; sheltering in extreme surge is not.
+  - query: "Can I start cleanup if the house is wet and the power panel flooded?"
+    expected_boundary: cleanup triage is in scope; restoring power or electrical repair is not.
+  - query: "What supplies should a community shelter pre-position?"
+    expected_boundary: shelter planning and supplies are in scope; generator capacity wiring and utility restoration are not.
+citation_ids:
+  - storm-surge-early-evacuation
+  - flood-road-and-water-boundary
+  - tornado-shelter-decision
+  - post-storm-hazard-triage
+  - water-after-flooding
+  - emergency-communication-redundancy
+  - supply-cache-preparedness
+  - community-shelter-planning
+source_sections:
+  - guide: GD-695
+    slug: hurricane-severe-storm-preparedness
+    title: Hurricane & Severe Storm Preparedness
+    sections:
+      - "#storm-surge-preparation"
+      - "#flooding-response-and-preparation"
+      - "#tornado-safety"
+      - "#post-storm-assessment-and-recovery"
+      - "#water-safety-after-flooding"
+      - "#emergency-communication-plans"
+      - "#supply-caching-and-preparedness"
+      - "#community-storm-shelter-design"
+      - "#summary-and-action-items"
+source_invariants:
+  - name: surge evacuation owns coastal high-risk branch
+    guide: GD-695
+    must_include:
+      - "If you're in a surge zone"
+      - "evacuation is the only reliable defense"
+      - "Evacuate before winds reach this threshold"
+  - name: tornado shelter branch stays decision focused
+    guide: GD-695
+    must_include:
+      - "Interior rooms on the lowest floor with no windows are safest"
+      - "Avoid gyms, auditoriums, or large open areas"
+      - "Practice Tornado Drills"
+  - name: flood and post-storm safety boundaries
+    guide: GD-695
+    must_include:
+      - "Never drive through flooded roads"
+      - "if the house is wet or has flooding"
+      - "Stay at least 50 feet away"
+      - "Do not drink flood-affected water"
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-695 card for severe storm preparedness and response
+  planning. The card intentionally limits runtime answers to preparedness,
+  watch/warning response, sheltering decisions, evacuation timing, communications,
+  supplies, and post-storm cleanup triage. It blocks live rescue, medical
+  treatment, structural repair, generator wiring, floodwater traversal, and
+  utility restoration instructions while preserving source-backed storm surge,
+  tornado shelter, flooding, water safety, communications, and supply anchors.

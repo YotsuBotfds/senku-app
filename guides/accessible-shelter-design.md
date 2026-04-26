@@ -31,7 +31,7 @@ related:
 read_time: 32
 word_count: 3500
 last_updated: '2026-04-13'
-version: '1.0'
+version: '1.1'
 custom_css: |
   .access-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
   .access-table th { background-color: var(--card); color: var(--accent); padding: 12px; text-align: left; border-bottom: 2px solid var(--accent); }
@@ -41,6 +41,8 @@ custom_css: |
   .design-spec h4 { margin-top: 0; color: var(--accent); }
   .accessibility-box { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin: 12px 0; }
 liability_level: medium
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: accessible_shelter_design
 aliases:
   - accessible shelter
   - wheelchair accessibility
@@ -78,6 +80,14 @@ This guide covers **physical building accessibility**: ramps, doorways, flooring
 - Task: *decide what to teach, organize a school, or train teachers* -> `education-system-design`
 - Task: *improve teaching methods, reading instruction, or classroom discipline* -> `education-teaching`
 - Task: *make the room function as an accessible classroom after entry and circulation are solved* -> this guide first, then `education-system-design` for teacher station, sight lines, and student flow
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-444. Use it when a shelter, schoolhouse, classroom, clinic waiting room, bathhouse approach, meeting space, or shared community building needs accessibility planning: entrance route, doorway and threshold review, interior circulation, turning or stopping space, signage and wayfinding, privacy, reachable controls, seating/rest points, and an intake workflow that asks what barriers people are actually facing.
+
+Start with an access walk-through from arrival to the main activity, toilet or wash area, and exit path. Identify blocked routes, steps, sharp thresholds, narrow doors, loose flooring, poor lighting, confusing signs, audio-only announcements, lack of privacy, or furniture that forces wheelchair, cane, walker, low-vision, deaf, elderly, injured, or child users into a separate or unsafe path. Then give layout-level fixes: one obvious accessible entrance where possible, firm non-slip routes, low or beveled thresholds, clear circulation lanes, turning/stopping space, high-contrast and tactile or written signage, visual alternatives to sound-only notices, privacy screens or curtains where needed, reachable handles and switches, seating or rest spots, and a simple intake checklist for mobility, vision, hearing, cognition, privacy, and support needs.
+
+Do not use this card for structural engineering, ramp load calculations, electrical, plumbing, HVAC, permit/code compliance, legal determinations, medical care, restraints, security holds, evacuation or rescue tactics, or claims that a space is legally compliant. If the prompt asks for those, keep the accessibility observation and route to the correct specialist lane.
 
 ## Universal Design: Serving Everyone
 
