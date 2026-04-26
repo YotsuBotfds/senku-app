@@ -472,6 +472,8 @@ def _normalize_artifact_path_evidence(
 def insert_metrics(conn, artifact_id: int, metrics: Iterable[tuple[str, Any]]) -> int:
     rows = []
     for metric_path, value in metrics:
+        if not isinstance(metric_path, str) or not metric_path.strip():
+            continue
         if not _is_scalar(value):
             continue
         rows.append(

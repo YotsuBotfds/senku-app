@@ -91,7 +91,7 @@ def load_guides(guides_dir: Path) -> tuple[list[dict], dict[str, dict]]:
     for path in sorted(guides_dir.glob("*.md")):
         text = path.read_text(encoding="utf-8")
         meta, body = parse_frontmatter(text)
-        slug = str(meta.get("slug", "")).strip()
+        slug = normalize_slug_reference(meta.get("slug", ""))
         guide_id = str(meta.get("id", "")).strip()
         title = str(meta.get("title", "")).strip()
         category = str(meta.get("category", "")).strip()

@@ -174,6 +174,7 @@ def _answer_card_lookup(cards_dir: Path | None) -> dict[str, list[dict[str, Any]
 
 
 def _malformed_frontmatter_record(path: Path, reason: str, cards_by_guide: dict[str, list[dict[str, Any]]]):
+    cards_by_guide = cards_by_guide or {}
     guide_id = _frontmatter_field(path, "id").strip()
     liability_level = _frontmatter_field(path, "liability_level").strip().lower()
     slug = _frontmatter_field(path, "slug").strip() or path.stem

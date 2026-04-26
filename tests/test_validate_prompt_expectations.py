@@ -616,6 +616,40 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["issues"][0]["code"], "retrieval_missing_expected_owner")
         self.assertEqual(report["issues"][0]["prompt_id"], "RE2-UP-009")
 
+    def test_retrieval_eval_json_reports_parse_location(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "prompt": "Malformed retrieval report should be located.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text('{\n  "rows": [\n', encoding="utf-8")
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+        )
+
+        self.assertEqual(report["status"], "warn")
+        self.assertEqual(report["summary"]["retrieval_eval_rows"], 0)
+        self.assertEqual(len(report["issues"]), 1)
+        issue = report["issues"][0]
+        self.assertEqual(issue["code"], "invalid_retrieval_eval_json")
+        self.assertEqual(issue["line"], 3)
+        self.assertEqual(issue["details"]["column"], 1)
+        self.assertIn("Invalid retrieval eval JSON", issue["message"])
+
     def test_retrieval_eval_without_primary_expectations_is_unchanged(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")

@@ -63,6 +63,12 @@ class RunValidationSliceTests(unittest.TestCase):
         self.assertIn("ToolingContextIndexes.unit", result.stdout)
         self.assertIn("RAGEvalPostFixes.query_retrieval_miss", result.stdout)
 
+    def test_slice_names_allow_outer_whitespace_and_mixed_case(self):
+        result = self.run_script("-Slice", "  toolingcontextindexes  ", "-WhatIf")
+
+        self.assertIn("ToolingContextIndexes.unit", result.stdout)
+        self.assertIn("tests.test_index_bench_artifacts", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -144,6 +144,25 @@ class CompareBenchArtifactsCliTests(unittest.TestCase):
         self.assertEqual(2, raised.exception.code)
         self.assertIn("--output must be a file path, not a directory", stderr.getvalue())
 
+    def test_main_reports_malformed_json_without_traceback(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            baseline = write_artifact(root / "baseline.json", model="baseline")
+            candidate = root / "candidate.json"
+            candidate.write_text('{"results": [', encoding="utf-8")
+            stderr = io.StringIO()
+
+            with patch(
+                "sys.argv",
+                ["compare_bench_artifacts.py", str(baseline), str(candidate)],
+            ), redirect_stderr(stderr):
+                with self.assertRaises(SystemExit) as raised:
+                    compare_bench_artifacts.main()
+
+        self.assertEqual(2, raised.exception.code)
+        self.assertIn("failed to compare artifacts", stderr.getvalue())
+        self.assertNotIn("Traceback", stderr.getvalue())
+
     def test_main_sanitizes_control_characters_in_rendered_markdown(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

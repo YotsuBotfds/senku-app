@@ -576,6 +576,14 @@ Action:
   values and messy whitespace, and token estimation now raises a stable
   `TypeError` for truthy non-string input while preserving falsy-input zeroes;
   runtime profile tests also pin malformed prompt-token limits as fail-closed.
+- Hardened validation/artifact/audit tooling: RAG failure analysis reports
+  malformed result rows instead of crashing, bench artifact comparison and
+  indexing expose malformed JSON cleanly, guide-priority and graph helpers skip
+  malformed metadata shapes, storage summaries tolerate partial dictionaries,
+  metadata audit direct calls tolerate missing answer-card lookups, metrics
+  ingestion skips unusable metric paths, and guide prompt wrappers now keep
+  local/main wave allowlists in parity; answer-card validation now rejects
+  blank required metadata with explicit field errors.
 
 Validation:
 
@@ -593,6 +601,15 @@ Validation:
   fallback from row-level runtime-answer status.
 - Compact RAG diagnostics row-table tests now cover the new acceptance root
   cause, safety surface, and UI surface columns, including Markdown escaping.
+- `tests.test_analyze_rag_bench_failures`,
+  `tests.test_audit_metadata_coverage`, `tests.test_bench_metrics_lake`,
+  `tests.test_build_guide_graph`, `tests.test_compare_bench_artifacts`,
+  `tests.test_index_bench_artifacts`, `tests.test_prioritize_guide_quality_work`,
+  `tests.test_run_guide_prompt_validation_harness`,
+  `tests.test_run_validation_slice`, `tests.test_summarize_artifact_storage`,
+  `tests.test_validate_prompt_expectations`, and
+  `tests.test_citation_validation` cover the validation/artifact/audit tooling
+  hardening batch.
 
 Deferred unless evidenced:
 

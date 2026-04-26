@@ -167,21 +167,32 @@ def _generated_dir_markers(rel_path: str) -> list[str]:
 
 def render_text(summary: dict[str, Any]) -> str:
     """Render a compact human-readable storage report."""
+    exists = bool(summary.get("exists", False))
     lines = [
-        f"Artifact storage report: {summary['root']}",
-        f"Exists: {summary['exists']}",
-        f"Total: {_format_bytes(summary['total_bytes'])} across {summary['file_count']} files, "
-        f"{summary['dir_count']} dirs",
+        f"Artifact storage report: {_inline_text(summary.get('root', ''))}",
+        f"Exists: {exists}",
+        f"Total: {_format_bytes(summary.get('total_bytes', 0))} across "
+        f"{_inline_text(summary.get('file_count', 0))} files, "
+        f"{_inline_text(summary.get('dir_count', 0))} dirs",
     ]
-    if not summary["exists"]:
+    if not exists:
         return "\n".join(lines) + "\n"
 
-    _append_table(lines, "Largest files", summary["largest_files"], ("path", "bytes"))
-    _append_table(lines, "Largest dirs", summary["largest_dirs"], ("path", "bytes", "files"))
-    _append_table(lines, "Suffix counts", summary["suffix_counts"], ("suffix", "count", "bytes"))
-    _append_table(lines, "Generated dirs", summary["generated_dirs"], ("path", "bytes", "files", "markers"))
-    _append_duplicates(lines, summary["duplicate_basename_families"])
+    _append_table(lines, "Largest files", _list_rows(summary.get("largest_files")), ("path", "bytes"))
+    _append_table(lines, "Largest dirs", _list_rows(summary.get("largest_dirs")), ("path", "bytes", "files"))
+    _append_table(lines, "Suffix counts", _list_rows(summary.get("suffix_counts")), ("suffix", "count", "bytes"))
+    _append_table(
+        lines,
+        "Generated dirs",
+        _list_rows(summary.get("generated_dirs")),
+        ("path", "bytes", "files", "markers"),
+    )
+    _append_duplicates(lines, _list_rows(summary.get("duplicate_basename_families")))
     return "\n".join(lines) + "\n"
+
+
+def _list_rows(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
 
 
 def _append_table(lines: list[str], title: str, rows: list[dict[str, Any]], columns: tuple[str, ...]) -> None:

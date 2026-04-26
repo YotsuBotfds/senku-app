@@ -53,7 +53,12 @@ def _metadata_lookup(path: Path | None) -> dict[str, dict[str, Any]]:
         return {}
     payload = _load_json(path)
     lookup = {}
-    for record in payload.get("guides", []):
+    guides = payload.get("guides", [])
+    if not isinstance(guides, list):
+        return lookup
+    for record in guides:
+        if not isinstance(record, dict):
+            continue
         guide_id = str(record.get("guide_id") or "").strip()
         if guide_id:
             lookup[guide_id] = record
@@ -65,7 +70,12 @@ def _marker_lookup(path: Path | None) -> dict[str, dict[str, Any]]:
         return {}
     payload = _load_json(path)
     lookup = {}
-    for record in payload.get("guides", []):
+    guides = payload.get("guides", [])
+    if not isinstance(guides, list):
+        return lookup
+    for record in guides:
+        if not isinstance(record, dict):
+            continue
         guide_id = str(record.get("guide_id") or "").strip()
         if guide_id:
             lookup[guide_id] = record

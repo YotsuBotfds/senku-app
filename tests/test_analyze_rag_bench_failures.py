@@ -1800,6 +1800,55 @@ waves:
         self.assertNotIn("Gate|Policy", report)
         self.assertNotIn("Strong`Supported", report)
 
+    def test_malformed_result_row_is_reported_as_artifact_error(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps({"results": ["not a result object"]}),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+        summary = summarize(rows)
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["prompt_index"], 1)
+        self.assertEqual(rows[0]["error_category"], "malformed_result")
+        self.assertEqual(rows[0]["suspected_failure_bucket"], "artifact_error")
+        self.assertEqual(summary["by_bucket"], {"artifact_error": 1})
+
+    def test_string_cited_guide_ids_remain_whole_ids(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Prompt",
+                            "prompt_metadata": {"expected_guide_ids": "GD-456"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "cited",
+                            "cited_guide_ids": "GD-456",
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-456"],
+                            },
+                            "response_text": "Answer. [GD-456]",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+
+        self.assertEqual(rows[0]["cited_guide_ids"], "GD-456")
+        self.assertEqual(rows[0]["expected_cited"], "yes")
+        self.assertEqual(rows[0]["suspected_failure_bucket"], "expected_supported")
+
     def test_analyze_reports_app_gate_counts_and_writes_csv_columns(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"

@@ -7,6 +7,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 HARNESS_SCRIPT = REPO_ROOT / "scripts" / "run_guide_prompt_validation.ps1"
+LOCAL_HARNESS_SCRIPT = REPO_ROOT / "scripts" / "run_guide_prompt_validation_local.ps1"
 
 
 class GuidePromptValidationHarnessTests(unittest.TestCase):
@@ -74,6 +75,24 @@ class GuidePromptValidationHarnessTests(unittest.TestCase):
         )
 
         self.assertEqual(output, "bench.py|--prompts|pack.json")
+
+    def test_local_wrapper_wave_validate_set_matches_harness(self):
+        output = self.run_powershell(
+            (
+                f"$main = [System.Management.Automation.Language.Parser]::ParseFile('{HARNESS_SCRIPT}', [ref]$null, [ref]$null); "
+                f"$local = [System.Management.Automation.Language.Parser]::ParseFile('{LOCAL_HARNESS_SCRIPT}', [ref]$null, [ref]$null); "
+                "$mainWave = $main.ParamBlock.Parameters | Where-Object { $_.Name.VariablePath.UserPath -eq 'Wave' }; "
+                "$localWave = $local.ParamBlock.Parameters | Where-Object { $_.Name.VariablePath.UserPath -eq 'Wave' }; "
+                "$mainValues = @($mainWave.Attributes | Where-Object { $_.TypeName.GetReflectionType().Name -eq 'ValidateSetAttribute' } | "
+                "ForEach-Object { $_.PositionalArguments } | ForEach-Object { $_.Value }); "
+                "$localValues = @($localWave.Attributes | Where-Object { $_.TypeName.GetReflectionType().Name -eq 'ValidateSetAttribute' } | "
+                "ForEach-Object { $_.PositionalArguments } | ForEach-Object { $_.Value }); "
+                "[pscustomobject]@{ main=$mainValues; local=$localValues } | ConvertTo-Json -Compress"
+            )
+        )
+
+        payload = json.loads(output)
+        self.assertEqual(payload["local"], payload["main"])
 
     def test_detects_litert_http_500_artifact_for_retry(self):
         artifact = {

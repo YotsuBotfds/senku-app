@@ -3,10 +3,38 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.audit_metadata_coverage import audit_guides, render_markdown
+from scripts.audit_metadata_coverage import audit_guide, audit_guides, render_markdown
 
 
 class MetadataCoverageAuditTests(unittest.TestCase):
+    def test_direct_malformed_frontmatter_audit_allows_missing_answer_card_lookup(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guide_path = Path(tmpdir) / "broken-direct-guide.md"
+            guide_path.write_text(
+                """---
+id: GD-201
+slug: broken-direct-guide
+title: Broken Direct Guide
+category: medical
+liability_level: high
+related: [GD-999
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+
+            record = audit_guide(guide_path, frontmatter_issue="frontmatter parse failed")
+
+        self.assertIsNotNone(record)
+        assert record is not None
+        self.assertEqual(record["guide_id"], "GD-201")
+        self.assertEqual(record["answer_card_count"], 0)
+        self.assertEqual(record["reviewed_answer_card_count"], 0)
+        self.assertIn("malformed_frontmatter", record["gaps"])
+        self.assertEqual(record["severity"], "gap")
+
     def test_malformed_high_liability_frontmatter_is_audited_as_gap(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"

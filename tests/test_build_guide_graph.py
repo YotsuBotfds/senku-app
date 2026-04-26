@@ -130,6 +130,40 @@ title: Beta
         )
         self.assertEqual(graph["summary"]["edge_count"], 1)
 
+    def test_malformed_frontmatter_slug_values_are_skipped(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "alpha.md").write_text(
+                """---
+id: GD-001
+slug:
+  - alpha
+title: Alpha
+---
+
+[Beta](./beta.md)
+""",
+                encoding="utf-8",
+            )
+            (root / "beta.md").write_text(
+                """---
+id: GD-002
+slug: beta
+title: Beta
+related:
+  - alpha
+---
+""",
+                encoding="utf-8",
+            )
+
+            graph = module.build_graph(root)
+
+        self.assertEqual([node["slug"] for node in graph["nodes"]], ["beta"])
+        self.assertEqual(graph["edges"], [])
+        self.assertEqual(graph["orphans"], ["beta"])
+
     def test_body_links_normalize_fragments_queries_and_dedupe(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as tmpdir:

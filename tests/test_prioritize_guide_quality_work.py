@@ -157,6 +157,49 @@ class PrioritizeGuideQualityWorkTests(unittest.TestCase):
         self.assertEqual(top["prompt_examples"][0]["bucket"], "expected_supported")
         self.assertEqual(top["prompt_examples"][0]["artifact"], "sample.json")
 
+    def test_prioritizer_ignores_malformed_audit_records(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diagnostics_path = root / "diagnostics.json"
+            metadata_path = root / "metadata.json"
+            markers_path = root / "markers.json"
+            diagnostics_path.write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "artifact_name": "sample.json",
+                                "suspected_failure_bucket": "ranking_miss",
+                                "expected_guide_ids": "GD-100",
+                                "cited_guide_ids": "",
+                                "top_retrieved_guide_ids": "",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            metadata_path.write_text(
+                json.dumps({"guides": ["bad", {"guide_id": ""}, 3]}),
+                encoding="utf-8",
+            )
+            markers_path.write_text(
+                json.dumps({"guides": {"GD-100": {"marker_counts": {}}}}),
+                encoding="utf-8",
+            )
+
+            payload = collect_priorities(
+                [diagnostics_path],
+                metadata_audit_path=metadata_path,
+                corpus_marker_scan_path=markers_path,
+            )
+
+        top = payload["guides"][0]
+        self.assertEqual(top["guide_id"], "GD-100")
+        self.assertEqual(top["metadata_gaps"], [])
+        self.assertEqual(top["marker_types"], [])
+        self.assertEqual(top["candidate_action"], "inspect_diagnostic_failure")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -78,6 +78,8 @@ def validate_card(path: Path, card: object, required_fields: list[str], guides: 
     for field in required_fields:
         if field not in card:
             failures.append(f"{label}: missing required field {field}")
+        elif not is_nonempty(card.get(field)):
+            failures.append(f"{label}: required field {field} must be nonempty")
 
     guide_id = card.get("guide_id")
     guide = guides.get(str(guide_id))

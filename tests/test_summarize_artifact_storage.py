@@ -174,6 +174,15 @@ class SummarizeArtifactStorageTests(unittest.TestCase):
         )
         self.assertIn("basename=  count=  bytes=0 B  examples=", text)
 
+    def test_render_text_tolerates_missing_top_level_metadata(self):
+        text = render_text({"exists": True})
+
+        self.assertIn("Artifact storage report: ", text)
+        self.assertIn("Exists: True", text)
+        self.assertIn("Total: 0 B across 0 files, 0 dirs", text)
+        self.assertIn("Largest files:\n  (none)", text)
+        self.assertIn("Duplicate basename families:\n  (none)", text)
+
     def test_main_emits_json(self):
         root = self.make_tmpdir()
         self.write_bytes(root / "bench" / "summary.json", 4)

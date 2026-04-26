@@ -71,6 +71,20 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(records["run_stdout.log"]["summary"]["skipped"], "log_not_read")
         self.assertEqual(records["screen.png"]["summary"]["skipped"], "binary_not_read")
 
+    def test_malformed_json_summary_renders_error_class(self):
+        root = self.make_tmpdir()
+        output_md = root / "manifest.md"
+        (root / "broken_summary.json").write_text('{"results": [}', encoding="utf-8")
+
+        records = list(iter_bench_artifacts(root))
+        write_markdown(records, output_md)
+
+        self.assertEqual(records[0]["summary"]["skipped"], "json_unreadable")
+        self.assertEqual(records[0]["summary"]["error"], "JSONDecodeError")
+        markdown = output_md.read_text(encoding="utf-8")
+        self.assertIn("broken_summary.json", markdown)
+        self.assertIn("skipped=json_unreadable; error=JSONDecodeError", markdown)
+
     def test_iter_bench_artifacts_records_stat_errors_without_aborting(self):
         root = self.make_tmpdir()
         (root / "broken.json").write_text("{}", encoding="utf-8")

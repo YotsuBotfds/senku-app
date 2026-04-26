@@ -337,6 +337,8 @@ def _format_summary(summary):
                 parts.append(f"{count_key}={formatted_counts}")
     if "skipped" in summary:
         parts.append(f"skipped={summary['skipped']}")
+    if "error" in summary:
+        parts.append(f"error={summary['error']}")
     if not parts and "json_type" in summary:
         parts.append(f"json_type={summary['json_type']}")
     return "; ".join(parts)

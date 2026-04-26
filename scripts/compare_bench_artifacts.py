@@ -2,6 +2,7 @@
 """Compare two bench artifacts and report prompt-level deltas."""
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -29,8 +30,11 @@ def main():
     parser.add_argument("--output", help="Write markdown comparison to a file instead of stdout")
     args = parser.parse_args()
 
-    comparison = compare_artifacts(args.baseline, args.candidate)
-    rendered = sanitize_markdown_output(render_artifact_comparison_markdown(comparison))
+    try:
+        comparison = compare_artifacts(args.baseline, args.candidate)
+        rendered = sanitize_markdown_output(render_artifact_comparison_markdown(comparison))
+    except (OSError, json.JSONDecodeError, TypeError, AttributeError, KeyError) as exc:
+        parser.error(f"failed to compare artifacts: {exc}")
     if args.output:
         output_path = Path(args.output)
         if output_path.exists() and output_path.is_dir():

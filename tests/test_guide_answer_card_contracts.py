@@ -1,4 +1,7 @@
+import importlib.util
+import tempfile
 import unittest
+from pathlib import Path
 
 import query
 from guide_answer_card_contracts import (
@@ -10,6 +13,19 @@ from guide_answer_card_contracts import (
     load_answer_cards,
 )
 from rag_claim_support import diagnose_claim_support
+
+
+def load_card_validator():
+    module_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "validate_guide_answer_cards.py"
+    )
+    spec = importlib.util.spec_from_file_location("validate_guide_answer_cards", module_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
 
 
 class GuideAnswerCardContractTests(unittest.TestCase):
@@ -43,6 +59,66 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         self.assertEqual(
             card["source_invariants"][0]["name"],
             "no blind finger sweeps in pediatric airway support",
+        )
+
+    def test_card_validator_reports_empty_required_metadata_fields(self):
+        module = load_card_validator()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            schema_path = root / "schema.yaml"
+            cards_dir = root / "cards"
+            guides_dir = root / "guides"
+            cards_dir.mkdir()
+            guides_dir.mkdir()
+            schema_path.write_text(
+                """
+card:
+  required_fields:
+    - card_id
+    - guide_id
+    - slug
+    - title
+    - risk_tier
+    - citation_ids
+    - source_sections
+""".lstrip(),
+                encoding="utf-8",
+            )
+            (guides_dir / "alpha.md").write_text(
+                """---
+id: GD-001
+slug: alpha
+title: Alpha Guide
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+            (cards_dir / "alpha.yaml").write_text(
+                """
+card_id: ""
+guide_id: GD-001
+slug: alpha
+title: Alpha Guide
+risk_tier: critical
+citation_ids: []
+source_sections:
+  - "#overview"
+""".lstrip(),
+                encoding="utf-8",
+            )
+
+            failures, card_count = module.validate(schema_path, cards_dir, guides_dir)
+
+        self.assertEqual(card_count, 1)
+        self.assertIn(
+            "alpha.yaml: required field card_id must be nonempty",
+            failures,
+        )
+        self.assertIn(
+            "alpha.yaml: required field citation_ids must be nonempty",
+            failures,
         )
 
     def test_compose_evidence_units_returns_active_card_fields(self):

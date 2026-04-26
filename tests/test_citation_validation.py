@@ -20,6 +20,18 @@ class CitationValidationTests(unittest.TestCase):
             any("citation_hallucination" in entry for entry in captured.output)
         )
 
+    def test_malformed_duplicate_citation_variants_normalize_stably(self):
+        valid_guide_id = sorted(all_guide_ids())[0]
+        guide_number = int(valid_guide_id.removeprefix("GD-"))
+        fixture = (
+            "Boil the water first "
+            f"[GD/{guide_number}, {valid_guide_id}, GD-{guide_number}]."
+        )
+
+        normalized = query.normalize_response_text(fixture)
+
+        self.assertEqual(normalized, f"Boil the water first [{valid_guide_id}].")
+
     def test_forbidden_retrieval_phrases_are_scrubbed(self):
         valid_guide_id = sorted(all_guide_ids())[0]
         fixtures = (

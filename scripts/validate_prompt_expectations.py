@@ -647,6 +647,8 @@ def load_retrieval_eval_json(path: Path, *, root: Path) -> tuple[list[dict[str, 
                 "invalid_retrieval_eval_json",
                 f"Invalid retrieval eval JSON: {exc.msg}",
                 path=_display_path(path, root),
+                line=exc.lineno,
+                details={"column": exc.colno, "position": exc.pos},
             )
         ]
     rows = rows_from_json_payload(data)

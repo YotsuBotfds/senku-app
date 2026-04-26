@@ -547,6 +547,8 @@ def extract_candidate_guide_ids(
     guide_lookup: dict[str, dict[str, str]],
 ) -> list[str]:
     metadata = result.get("retrieval_metadata") or {}
+    if not isinstance(metadata, dict):
+        metadata = {}
     for key in (
         "top_retrieved_guide_ids",
         "retrieved_guide_ids",
@@ -782,6 +784,8 @@ def classify_bucket(
 ) -> tuple[str, str]:
     decision_path = str(result.get("decision_path") or "")
     retrieval_meta = result.get("retrieval_metadata") or {}
+    if not isinstance(retrieval_meta, dict):
+        retrieval_meta = {}
     answer_mode = normalize_category_value(
         result.get("answer_mode") or retrieval_meta.get("answer_mode") or ""
     )
@@ -889,9 +893,24 @@ def build_rows(
         manifest_expected_ids, manifest_expected_family = expected_from_manifest(
             path, expectations, guide_lookup
         )
-        for result in data.get("results", []):
+        results = data.get("results", []) if isinstance(data, dict) else []
+        if not isinstance(results, list):
+            results = [
+                {
+                    "index": "",
+                    "error": "artifact results field is not a list",
+                    "error_category": "malformed_results",
+                }
+            ]
+        for result_offset, result in enumerate(results, start=1):
+            if not isinstance(result, dict):
+                result = {
+                    "index": result_offset,
+                    "error": f"result row is {type(result).__name__}, expected object",
+                    "error_category": "malformed_result",
+                }
             prompt_index = result.get("index")
-            cited_ids = list(dict.fromkeys(result.get("cited_guide_ids") or []))
+            cited_ids = parse_guide_ids(result.get("cited_guide_ids"))
             markdown_source_lines = markdown_sources.get(prompt_index, [])
             candidate_ids = extract_candidate_guide_ids(
                 result, markdown_source_lines, guide_lookup

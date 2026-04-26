@@ -200,6 +200,42 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_insert_metrics_skips_missing_or_blank_metric_paths(self):
+        root = self.make_tmpdir()
+        output = root / "lake.sqlite"
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        artifact_id = self.module._insert_artifact(
+            conn,
+            run_id="run-test",
+            path="bench_run.json",
+            absolute_path=str(root / "bench_run.json"),
+            kind="json",
+            suffix=".json",
+            size_bytes=0,
+            mtime_utc="2026-04-26T00:00:00+00:00",
+            paired_markdown_path=None,
+        )
+
+        inserted = self.module.insert_metrics(
+            conn,
+            artifact_id,
+            [
+                (None, 1),
+                ("", 2),
+                ("   ", 3),
+                ("summary.total_prompts", 4),
+            ],
+        )
+        conn.commit()
+
+        self.assertEqual(inserted, 1)
+        rows = conn.execute(
+            "SELECT metric_path, metric_value, metric_number FROM metrics"
+        ).fetchall()
+        conn.close()
+        self.assertEqual(rows, [("summary.total_prompts", "4", 4.0)])
+
     def test_artifact_disappears_between_discovery_and_stat(self):
         root = self.make_tmpdir()
         good_path = root / "good.json"
