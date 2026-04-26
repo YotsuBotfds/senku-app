@@ -364,6 +364,8 @@ Action:
 - Added `Master Head Health` concurrency keyed by workflow/ref with
   cancel-in-progress, so rapid `master` pushes keep the latest Generated-mode
   no-FastEmbed signal instead of stacking duplicate head-health runs.
+- Added a reusable non-Android workflow input mirror guard so manual-dispatch
+  inputs and workflow-call inputs keep compatible defaults and types.
 - Added a strict-priority live-overlap guard for deterministic special cases:
   current overlap fixtures must resolve by priority, with no live dependence
   on lexical-signature or first-defined tie-breaks.

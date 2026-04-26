@@ -223,6 +223,37 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         )
         self.assertIn("finally", gate_script)
 
+    def test_non_android_regression_dispatch_and_call_inputs_stay_mirrored(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")
+        )
+        triggers = workflow.get("on", workflow.get(True, {}))
+        dispatch_inputs = triggers["workflow_dispatch"]["inputs"]
+        call_inputs = triggers["workflow_call"]["inputs"]
+        mirrored = {
+            "mode",
+            "label",
+            "include_safety_critical",
+            "allow_retrieval_warnings",
+            "retrieval_index_flavor",
+            "generated_bench_json",
+            "generated_baseline_diag",
+            "fail_on_generated_regression",
+        }
+
+        self.assertEqual(mirrored, set(dispatch_inputs) & mirrored)
+        self.assertEqual(mirrored, set(call_inputs) & mirrored)
+        for name in sorted(mirrored):
+            with self.subTest(input=name):
+                dispatch = dispatch_inputs[name]
+                called = call_inputs[name]
+                self.assertEqual(dispatch.get("default", ""), called.get("default", ""))
+                if dispatch.get("type") == "choice":
+                    self.assertEqual("string", called.get("type"))
+                    self.assertIn(called.get("default"), dispatch.get("options", []))
+                else:
+                    self.assertEqual(dispatch.get("type"), called.get("type"))
+
     def test_master_head_health_runs_generated_smoke_on_every_master_push(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "master_head_health.yml").read_text(encoding="utf-8")
