@@ -237,6 +237,8 @@ Action:
 - Added a Generated-mode step-summary proof for the same no-retrieval/no-FastEmbed
   contract, so `GITHUB_STEP_SUMMARY` preserves the cheap head-health command
   shape in `-WhatIf` runs.
+- Added PowerShell non-Android gate wrapper contract coverage for blank
+  generated-baseline diagnostics and `-Mode All` dry-run command composition.
 - Hardened the runtime endpoint preflight used by guide prompt validation:
   malformed `/v1/models` JSON is now reported as a failed endpoint check
   instead of escaping as an uncaught parser exception.
@@ -675,6 +677,8 @@ Validation:
   head health and strict retrieval head health workflows.
 - `tests.test_github_workflows` covers exact reusable non-Android workflow input
   parity, preventing extra manual-dispatch or workflow-call-only inputs.
+- `tests.test_run_non_android_regression_gate` covers generated-baseline
+  fail-loud behavior and `-Mode All` dry-run command composition.
 - `tests.test_plan_artifact_retention` covers ignored untracked planner
   handoffs and tracked planner handoffs that protect referenced artifacts.
 - `tests.test_bench_metrics_lake` covers direct SQL access to artifact evidence

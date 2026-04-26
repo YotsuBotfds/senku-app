@@ -81,6 +81,23 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("GeneratedBenchJson", result.stderr)
 
+    def test_generated_mode_requires_baseline_diag_when_blank(self):
+        result = self.run_script(
+            "-Mode",
+            "Generated",
+            "-Label",
+            "unit_label",
+            "-GeneratedBenchJson",
+            "tests\\fixtures\\non_android_generated\\candidate.json",
+            "-GeneratedBaselineDiag",
+            "",
+            "-WhatIf",
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("GeneratedBaselineDiag", result.stderr)
+
     def test_generated_mode_prints_analysis_and_gate_commands(self):
         result = self.run_script(
             "-Mode",
@@ -100,6 +117,25 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertIn("Generated.regression_gate", result.stdout)
         self.assertIn("tests\\fixtures\\non_android_generated\\baseline_diag", result.stdout)
         self.assertIn("--fail-on-regression", result.stdout)
+
+    def test_all_mode_whatif_prints_fast_and_generated_commands_without_safety_by_default(self):
+        result = self.run_script(
+            "-Mode",
+            "All",
+            "-Label",
+            "unit_label",
+            "-GeneratedBenchJson",
+            "tests\\fixtures\\non_android_generated\\candidate.json",
+            "-GeneratedBaselineDiag",
+            "tests\\fixtures\\non_android_generated\\baseline_diag",
+            "-WhatIf",
+        )
+
+        self.assertIn("PartialRouter.prompt_expectations", result.stdout)
+        self.assertIn("Eval9Primary.prompt_expectations", result.stdout)
+        self.assertIn("Generated.failure_analysis", result.stdout)
+        self.assertIn("Generated.regression_gate", result.stdout)
+        self.assertNotIn("SafetyCritical.prompt_expectations", result.stdout)
 
     def test_generated_mode_whatif_omits_fast_retrieval_commands(self):
         result = self.run_script(
