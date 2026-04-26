@@ -44,6 +44,13 @@ def base_summary() -> dict:
             "moderate_supported": 2,
             "uncertain_fit_accepted": 1,
         },
+        "app_acceptance_root_cause_counts": {
+            "supported": 7,
+            "evidence_owner": 2,
+            "card_contract": 1,
+            "safety_surface": 3,
+            "gate_policy": 1,
+        },
         "answer_card_counts": {"pass": 3, "partial": 4, "fail": 5},
         "claim_support_counts": {"pass": 10},
         "generated_shadow_card_gap_rows": 2,
@@ -84,6 +91,11 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(row["strong_supported"], 5)
         self.assertEqual(row["moderate_supported"], 2)
         self.assertEqual(row["uncertain_fit_accepted"], 1)
+        self.assertEqual(row["root_supported"], 7)
+        self.assertEqual(row["root_evidence_owner"], 2)
+        self.assertEqual(row["root_card_contract"], 1)
+        self.assertEqual(row["root_safety_surface"], 3)
+        self.assertEqual(row["root_gate_policy"], 1)
         self.assertEqual(row["card_pass"], 3)
         self.assertEqual(row["card_partial"], 4)
         self.assertEqual(row["card_fail"], 5)
@@ -113,7 +125,9 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
                 markdown,
             )
             self.assertIn("reviewed_card_runtime_enabled", markdown)
+            self.assertIn("root_evidence_owner", markdown)
             self.assertIn("| dir_a |  | 24 | 24 | 7 | 0.875 |", markdown)
+            self.assertIn("| 5 | 2 | 1 | 7 | 2 | 1 | 3 | 1 | 3 |", markdown)
             self.assertIn("| 6 | 7 | 8 | 16 | 11 |", markdown)
 
             json_output = io.StringIO()
