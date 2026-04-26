@@ -255,6 +255,8 @@ Action:
 - Added compare-bench CLI wrapper coverage for both stdout rendering and
   `--output` file writing, pinning the operator path around the existing
   artifact comparison engine.
+- Tightened the `Master Head Health` workflow contract test around generated
+  fixture inputs, head-health label shape, and compact retrieval-index flavor.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

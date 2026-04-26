@@ -252,13 +252,19 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             job["permissions"],
         )
         self.assertEqual("Generated", job["with"]["mode"])
+        self.assertEqual("head_health_${{ github.sha }}", job["with"]["label"])
         self.assertEqual(
             "tests\\fixtures\\non_android_generated\\candidate.json",
             job["with"]["generated_bench_json"],
         )
+        self.assertEqual(
+            "tests\\fixtures\\non_android_generated\\baseline_diag",
+            job["with"]["generated_baseline_diag"],
+        )
         self.assertTrue(job["with"]["fail_on_generated_regression"])
         self.assertFalse(job["with"]["allow_retrieval_warnings"])
         self.assertFalse(job["with"]["include_safety_critical"])
+        self.assertEqual("compact", job["with"]["retrieval_index_flavor"])
 
     def test_non_android_regression_uploads_failure_logs(self):
         workflow = yaml.safe_load(
