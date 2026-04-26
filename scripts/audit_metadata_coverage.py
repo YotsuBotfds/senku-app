@@ -57,18 +57,21 @@ def _as_list(value: Any) -> list[str]:
 
 
 def _has_any_key(metadata: dict[str, Any], keys: tuple[str, ...]) -> bool:
-    for key in keys:
-        value = metadata.get(key)
+    def has_meaningful_value(value: Any) -> bool:
         if isinstance(value, bool):
-            if value:
-                return True
-            continue
+            return value
         if isinstance(value, str):
-            if value.strip().lower() in {"", "false", "0", "no", "none"}:
-                continue
+            return value.strip().lower() not in {"", "false", "0", "no", "none"}
         if isinstance(value, (int, float)) and not value:
-            continue
-        if value not in (None, "", [], {}):
+            return False
+        if isinstance(value, list):
+            return any(has_meaningful_value(item) for item in value)
+        if isinstance(value, dict):
+            return any(has_meaningful_value(item) for item in value.values())
+        return value not in (None, "", [], {})
+
+    for key in keys:
+        if has_meaningful_value(metadata.get(key)):
             return True
     return False
 

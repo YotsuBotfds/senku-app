@@ -35,6 +35,20 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertEqual(len(summary["entries"]), 2)
         self.assertTrue(summary["truncated"])
 
+    def test_parse_git_status_short_ignores_branch_header_metadata(self):
+        module = load_module()
+
+        summary = module.parse_git_status_short(
+            "## main...origin/main [ahead 1]\n M query.py\n",
+        )
+
+        self.assertFalse(summary["clean"])
+        self.assertEqual(summary["total_changed"], 1)
+        self.assertEqual(summary["raw_total_changed"], 1)
+        self.assertEqual(summary["status_counts"], {" M": 1})
+        self.assertEqual(summary["raw_status_counts"], {" M": 1})
+        self.assertEqual(summary["entries"], [{"status": " M", "path": "query.py"}])
+
     def test_parse_git_status_short_splits_benign_untracked_paths(self):
         module = load_module()
 

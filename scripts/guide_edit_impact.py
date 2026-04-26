@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -43,6 +44,9 @@ PROTECTED_BENIGN_UNTRACKED = {
     "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
     "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
 }
+PROTECTED_HANDOFF_PATTERN = re.compile(
+    r"^notes/PLANNER_HANDOFF_\d{4}-\d{2}-\d{2}_[A-Z0-9_]+\.md$"
+)
 
 
 @dataclass(frozen=True)
@@ -65,6 +69,12 @@ def path_exists(path: str) -> bool:
     return (REPO_ROOT / path).exists()
 
 
+def is_protected_benign_untracked(path: str) -> bool:
+    return path in PROTECTED_BENIGN_UNTRACKED or bool(
+        PROTECTED_HANDOFF_PATTERN.fullmatch(path)
+    )
+
+
 def read_git_status_paths() -> list[str]:
     result = subprocess.run(
         ["git", "status", "--short"],
@@ -82,7 +92,7 @@ def read_git_status_paths() -> list[str]:
         if " -> " in payload:
             payload = payload.split(" -> ", 1)[1]
         normalized = normalize_path(payload)
-        if line[:2] == "??" and normalized in PROTECTED_BENIGN_UNTRACKED:
+        if line[:2] == "??" and is_protected_benign_untracked(normalized):
             continue
         paths.append(normalized)
     return paths

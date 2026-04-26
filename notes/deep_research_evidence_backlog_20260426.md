@@ -477,6 +477,11 @@ Action:
   sanitize single-event mappings, diagnostic filters normalize padded/case
   variants, and startup snapshots render malformed metadata-audit counts as
   unavailable instead of leaking raw structures.
+- Hardened queue/metadata planning helpers: live queue monitor ignores
+  `git status --short --branch` metadata lines, guide edit impact planning
+  recognizes newly named protected planner handoffs as benign only when
+  untracked, and metadata coverage treats list/dict citation policy values as
+  present only when they contain a meaningful truthy value.
 
 Validation:
 
@@ -776,6 +781,10 @@ Validation:
   `tests.test_agent_context_snapshot` cover the malformed evidence-surface
   hardening batch across text rendering, eval-row extraction, CLI Markdown,
   trace events, diagnostics filters, and startup snapshot signals.
+- `tests.test_live_queue_monitor`, `tests.test_guide_edit_impact`, and
+  `tests.test_audit_metadata_coverage` cover branch-header status parsing,
+  pattern-based protected planner handoff handling, and list-shaped false-like
+  citation metadata.
 
 Deferred unless evidenced:
 

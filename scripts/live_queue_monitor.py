@@ -104,6 +104,8 @@ def parse_git_status_short(
     for raw_line in status_text.splitlines():
         if not raw_line.strip():
             continue
+        if raw_line.startswith("## "):
+            continue
         total += 1
         status = raw_line[:2]
         path = (raw_line[3:].strip() if len(raw_line) > 3 else "").replace("\\", "/")

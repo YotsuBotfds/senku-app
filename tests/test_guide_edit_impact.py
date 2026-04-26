@@ -115,6 +115,7 @@ class GuideEditImpactTests(unittest.TestCase):
                 "R  guides/old.md -> guides/new.md\n"
                 "?? notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md\n"
                 "?? notes\\PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md\n"
+                "?? notes/PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md\n"
                 "?? notes/new-note.md\n"
             ),
             stderr="",
