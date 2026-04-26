@@ -64,6 +64,52 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertEqual(row["action"], "keep_protected")
         self.assertIn(notes.as_posix() + "/RAG-X.md", row["protection_sources"])
 
+    def test_planner_handoff_reference_notes_are_ignored(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        notes = root / "notes"
+
+        self.write_text(
+            artifacts / "bench" / "handoff_run" / "report.md",
+            "# proof\n",
+            age_days=80,
+        )
+        self.write_text(
+            artifacts / "bench" / "ordinary_run" / "report.md",
+            "# proof\n",
+            age_days=80,
+        )
+        self.write_text(
+            notes / "PLANNER_HANDOFF_2026-04-26_TEST.md",
+            "Handoff artifact: `artifacts/bench/handoff_run/report.md`\n",
+        )
+        self.write_text(
+            notes / "notes_index.md",
+            "Current artifact: `artifacts/bench/ordinary_run/report.md`\n",
+        )
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[notes],
+            manifest_paths=[],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
+
+        families = {row["path"]: row for row in plan["families"]}
+        handoff_row = families["bench/handoff_run"]
+        ordinary_row = families["bench/ordinary_run"]
+        self.assertFalse(handoff_row["protected"])
+        self.assertNotIn(notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md", handoff_row["protection_sources"])
+        self.assertTrue(ordinary_row["protected"])
+        self.assertIn(notes.as_posix() + "/notes_index.md", ordinary_row["protection_sources"])
+        self.assertIn(notes.as_posix() + "/notes_index.md", plan["references"]["sources"])
+        self.assertNotIn(
+            notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md",
+            plan["references"]["sources"],
+        )
+
     def test_explicit_protect_path_and_glob_are_honored(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"

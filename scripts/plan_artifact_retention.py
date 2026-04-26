@@ -87,6 +87,7 @@ ARCHIVE_NAME_PATTERNS = (
     "smoke",
     "validation",
 )
+PROTECTED_REFERENCE_FILE_PATTERNS = ("PLANNER_HANDOFF*.md",)
 
 ARTIFACT_REF_RE = re.compile(r"(?:^|[\s`'\"(])((?:[A-Za-z]:)?[^`'\"\s)]*artifacts/[^\s`'\")]+)")
 DATE_TOKEN_RE = re.compile(r"([_-])20\d{6}(?:[_-]\d{4,6})?(?:[_-]\d{3,6})?")
@@ -233,6 +234,8 @@ def collect_protection_references(
         files = [root_path] if root_path.is_file() else sorted(root_path.rglob("*"))
         for path in files:
             if not path.is_file():
+                continue
+            if _is_protected_reference_file(path):
                 continue
             if path.suffix.lower() not in {".md", ".txt", ".json", ".jsonl"}:
                 continue
@@ -539,6 +542,14 @@ def _collect_refs_from_manifest(
             if rel:
                 paths[rel].add(source)
                 sources.add(source)
+
+
+def _is_protected_reference_file(path: Path) -> bool:
+    path_name = path.name
+    for pattern in PROTECTED_REFERENCE_FILE_PATTERNS:
+        if fnmatch.fnmatch(path_name.upper(), pattern.upper()):
+            return True
+    return False
 
 
 def _extract_artifact_refs(text: str) -> list[str]:

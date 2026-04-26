@@ -480,6 +480,9 @@ Action:
 - Run-manifest Markdown rendering now strips carriage returns and newlines from
   table cells before pipe escaping, preventing manifest-derived text from
   injecting extra table rows.
+- Artifact-retention reference scans now ignore protected local
+  `PLANNER_HANDOFF*.md` notes, so continuation handoffs do not accidentally
+  protect generated artifact families.
 
 Validation:
 
@@ -496,6 +499,8 @@ Validation:
   skip behavior, and Markdown formatting for the exposed counts.
 - `tests.test_summarize_run_manifest` covers newline/carriage-return sanitation
   in generated Markdown table rows.
+- `tests.test_plan_artifact_retention` covers ignored planner handoff refs while
+  preserving ordinary note-based artifact protection.
 
 Deferred unless evidenced:
 
