@@ -114,6 +114,50 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertEqual(row["action"], "keep_protected")
         self.assertIn(manifest.as_posix(), row["protection_sources"])
 
+    def test_run_manifest_artifact_path_evidence_protects_artifact_family(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        self.write_bytes(
+            artifacts / "bench" / "evidence_run" / "summary.json",
+            7,
+            age_days=90,
+        )
+        self.write_text(
+            manifest,
+            json.dumps(
+                {
+                    "artifact_path_evidence": [
+                        {
+                            "path": "artifacts/bench/evidence_run",
+                            "exists": True,
+                            "kind": "directory",
+                        },
+                        {
+                            "path": "artifacts/bench/missing_run/report.md",
+                            "exists": False,
+                            "kind": "missing",
+                        },
+                    ],
+                }
+            )
+            + "\n",
+        )
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[],
+            manifest_paths=[manifest],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
+
+        row = {row["path"]: row for row in plan["families"]}["bench/evidence_run"]
+        self.assertTrue(row["protected"])
+        self.assertEqual(row["action"], "keep_protected")
+        self.assertIn(manifest.as_posix(), row["protection_sources"])
+
     def test_groups_generated_families_by_timestamp_normalized_name(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"
