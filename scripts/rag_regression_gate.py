@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from collections import Counter
 from datetime import datetime, timezone
@@ -57,15 +58,17 @@ def _as_number(value: Any) -> float | None:
     if isinstance(value, bool):
         return float(int(value))
     if isinstance(value, (int, float)):
-        return float(value)
+        number = float(value)
+        return number if math.isfinite(number) else None
     if isinstance(value, str):
         text = value.strip()
         if not text or text.lower() in {"unknown", "n/a", "na"}:
             return None
         try:
-            return float(text)
+            number = float(text)
         except ValueError:
             return None
+        return number if math.isfinite(number) else None
     return None
 
 

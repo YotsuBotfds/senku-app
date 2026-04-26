@@ -96,6 +96,11 @@ class QueryCompletionHardeningExtractionTests(unittest.TestCase):
 
         self.assertTrue(hardening._is_valid_crisis_retry_response(complete))
         self.assertFalse(hardening._is_valid_crisis_retry_response(complete + "\n5. Extra."))
+        self.assertFalse(
+            hardening._is_valid_crisis_retry_response(
+                complete.replace("[GD-101]", "GD-101", 1)
+            )
+        )
 
 
 if __name__ == "__main__":

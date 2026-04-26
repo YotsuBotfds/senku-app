@@ -95,6 +95,26 @@ class AnchorPriorTests(unittest.TestCase):
 
         self.assertEqual(["GD-999", "GD-444"], _guide_ids(merged))
 
+    def test_malformed_anchor_turn_metadata_skips_anchor_prior(self):
+        result_sets = [
+            _result_set("lexical", ["GD-999", "GD-444"]),
+            _result_set("vector", ["GD-999", "GD-444"]),
+        ]
+        session_state = _anchor_state()
+        session_state["anchor_turn_index"] = "not-a-turn"
+
+        with patch.object(query, "ENABLE_ANCHOR_PRIOR", True), patch(
+            "query.get_anchor_related_link_weights", return_value={}
+        ):
+            merged = query.merge_results(
+                result_sets,
+                2,
+                question="what should I do next?",
+                session_state=session_state,
+            )
+
+        self.assertEqual(["GD-999", "GD-444"], _guide_ids(merged))
+
     def test_explicit_reset_keyword_skips_anchor_prior(self):
         result_sets = [
             _result_set("lexical", ["GD-999", "GD-444"]),

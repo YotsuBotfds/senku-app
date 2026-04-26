@@ -154,6 +154,21 @@ class RAGRegressionGateTests(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
         self.assertEqual(report["exit_code"], 0)
 
+    def test_allow_regression_rejects_non_finite_number(self):
+        with self.assertRaisesRegex(ValueError, "non-negative number"):
+            self.module.parse_allowances(["expected_supported=nan"])
+
+    def test_non_finite_metric_values_are_reported_unavailable(self):
+        comparison = self.module.compare_metrics(
+            {"expected_supported": "nan"},
+            {"expected_supported": 1},
+            {"expected_supported": "down"},
+        )[0]
+
+        self.assertFalse(comparison["available"])
+        self.assertFalse(comparison["regressed"])
+        self.assertIsNone(comparison["delta"])
+
     def test_accepts_diagnostics_json_file_and_emits_json(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

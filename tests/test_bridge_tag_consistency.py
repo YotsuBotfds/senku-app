@@ -55,6 +55,24 @@ class BridgeTagConsistencyTests(unittest.TestCase):
 
         self.assertEqual(warnings, [])
 
+    def test_malformed_nested_tags_are_ignored_for_consistency_check(self):
+        warnings = ingest._bridge_tag_consistency_warnings(
+            [
+                {
+                    "guide_id": "GD-malformed-tags",
+                    "bridge": True,
+                    "tags": [
+                        {"name": "bridge-guide"},
+                        ["bridge-guide"],
+                        ("bridge-guide",),
+                        {"bridge-guide"},
+                    ],
+                }
+            ]
+        )
+
+        self.assertEqual(warnings, [])
+
     def test_corpus_has_no_bridge_tag_inconsistencies(self):
         warnings = self._collect_corpus_warnings()
         self.assertEqual([], warnings, "\n".join(warnings))

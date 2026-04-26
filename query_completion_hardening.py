@@ -142,6 +142,9 @@ def _is_valid_crisis_retry_response(text, *, normalize_response_text_fn=None):
         return False
     if re.search(r"(?m)^\s*(?:Step\s*)?[5-9][\)\.\:-]", cleaned_text):
         return False
+    step_lines = re.findall(r"(?m)^\s*(?:Step\s*)?[1-4][\)\.\:-].*$", cleaned_text)
+    if any(not re.search(r"\[GD-\d+\]", line) for line in step_lines):
+        return False
     return True
 
 

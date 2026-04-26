@@ -3,10 +3,19 @@
 import re
 
 
+def _normalize_text(value):
+    if not isinstance(value, str):
+        return ""
+    return value.casefold()
+
+
 def text_has_marker(text, markers):
     """Return True if any marker appears in text."""
-    lower = (text or "").lower()
+    lower = _normalize_text(text)
     for marker in markers:
+        marker = _normalize_text(marker)
+        if not marker:
+            continue
         if " " in marker:
             if marker in lower:
                 return True

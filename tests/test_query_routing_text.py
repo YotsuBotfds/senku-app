@@ -33,6 +33,12 @@ class QueryRoutingTextTests(unittest.TestCase):
                 {"stiff neck"},
             )
         )
+        self.assertTrue(
+            routing_text.text_has_marker(
+                "The child has a stiff neck today.",
+                {"STIFF NECK"},
+            )
+        )
 
     def test_single_word_markers_require_word_boundaries(self):
         self.assertTrue(routing_text.text_has_marker("Use a clean jar.", {"jar"}))
@@ -41,10 +47,21 @@ class QueryRoutingTextTests(unittest.TestCase):
         self.assertFalse(routing_text.text_has_marker("Use clean jars.", {"ar"}))
         self.assertFalse(routing_text.text_has_marker("The target is starch.", {"tar"}))
 
+    def test_single_word_markers_casefold_before_boundary_check(self):
+        self.assertTrue(routing_text.text_has_marker("Keep STRASSE clear.", {"stra\u00dfe"}))
+        self.assertFalse(routing_text.text_has_marker("Keep STRASSEWAY clear.", {"stra\u00dfe"}))
+
     def test_empty_text_and_missing_markers_are_false(self):
         self.assertFalse(routing_text.text_has_marker("", {"water"}))
         self.assertFalse(routing_text.text_has_marker(None, {"water"}))
         self.assertFalse(routing_text.text_has_marker("filter water", set()))
+
+    def test_malformed_marker_values_are_ignored(self):
+        self.assertFalse(routing_text.text_has_marker("filter water", {None, ""}))
+        self.assertTrue(routing_text.text_has_marker("filter water", {None, "WATER"}))
+
+    def test_malformed_text_values_are_false(self):
+        self.assertFalse(routing_text.text_has_marker(12345, {"12345"}))
 
     def test_legacy_private_alias_points_to_public_helper(self):
         self.assertIs(routing_text._text_has_marker, routing_text.text_has_marker)

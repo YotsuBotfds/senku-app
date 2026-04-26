@@ -633,6 +633,11 @@ Action:
   groups, scenario-frame updates ignore malformed objectives, claim-support
   classification skips non-dict card rows, and confidence/uncertain-fit tests
   pin stable public label and safety-gate boundaries.
+- Hardened routing/regression helper edges: anchor-prior coverage pins malformed
+  turn metadata skipping, bridge-tag consistency ignores nested tag containers,
+  crisis retry validation requires closed guide citations, routing-text matching
+  case-folds markers and ignores malformed inputs, and RAG regression gates
+  treat non-finite numeric values as unavailable.
 
 Validation:
 
@@ -700,6 +705,10 @@ Validation:
   `tests.test_confidence_label`, `tests.test_query_confidence_label`,
   `tests.test_rag_claim_support`, and `tests.test_uncertain_fit` cover the
   policy/normalization helper hardening batch.
+- `tests.test_anchor_prior`, `tests.test_bridge_tag_consistency`,
+  `tests.test_query_completion_hardening`, `tests.test_query_routing_text`, and
+  `tests.test_rag_regression_gate` cover the routing/regression helper edge
+  batch.
 
 Deferred unless evidenced:
 
