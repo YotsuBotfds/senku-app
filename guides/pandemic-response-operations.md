@@ -38,6 +38,23 @@ aliases:
   - quarantine setup
   - contact tracing at scale
   - outbreak-response
+routing_cues:
+  - Use for boundary-only pandemic response operations prompts that need intake, symptom/event count logs, staffing/supply/space communication records, voluntary risk-reduction planning, privacy-aware reporting prompts, sanitation handoff, or public-health handoff.
+  - Route diagnosis, treatment, vaccine or medication guidance, enforcement or quarantine orders, coercive isolation, private-data contact tracing tactics, lab sampling, outbreak declarations, legal/regulatory claims, and safety certification outside this reviewed card.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: pandemic_response_operations_boundary
+answer_card:
+  - pandemic_response_operations_boundary
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for boundary-level pandemic
+  response operations: operations intake, symptom/event count logs,
+  staffing/supply/space communication records, voluntary risk-reduction
+  planning, privacy-aware reporting prompts, sanitation handoff, and
+  public-health handoff. Do not cite it as authority for diagnosis, treatment,
+  vaccine or medication guidance, enforcement or quarantine orders, coercive
+  isolation, contact tracing tactics that expose private data, lab sampling,
+  outbreak declarations, legal/regulatory claims, or safety certification.
 ---
 :::tip
 **Quick routing for ambiguous outbreak asks**
@@ -51,6 +68,20 @@ aliases:
 :::danger
 **Pandemic Scale:** This guide covers response to pandemics affecting 10+ percent of community population, with surge demands overwhelming normal healthcare capacity. It assumes austere conditions or severely resource-constrained settings. Professional epidemiologists and public health experts should direct response when available.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-565. Use it only for boundary-level pandemic response operations: operations intake, symptom and event count logs, staffing, supply, and space communication records, voluntary risk-reduction planning, privacy-aware reporting prompts, sanitation handoff, and public-health handoff.
+
+Start with what is already known operationally: the setting, current symptom or event count, dates or trend if known, space constraints, staffing status, supply burn rate or shortage concern, sanitation concern, communication need, and which public-health owner or incident lead should receive the handoff. Keep records factual and minimal. Use aggregate or need-to-know labels where possible, avoid exposing names, household details, private contact networks, or personally identifying health details in community-facing communication, and separate confirmed reports from rumor.
+
+The answer may recommend a dated operations log, consistent symptom or event definitions, a staffing/supply/space status board, voluntary risk-reduction measures, clearer public communication, and a concise sanitation or public-health handoff. It may ask reporting prompts that preserve privacy and uncertainty. If the prompt suggests severe illness, fast growth, sanitation failure, supply exhaustion, or staffing collapse, frame the output as an urgent handoff to the responsible public-health, medical, sanitation, water, infection-control, logistics, or incident-command owner.
+
+Do not use this card for diagnosis, treatment, vaccine or medication guidance, enforcement or quarantine orders, coercive isolation, contact tracing tactics that expose private data, lab sampling, outbreak declarations, legal/regulatory claims, or safety certification. If a prompt asks for those, provide only the boundary-level operational facts that are safe to collect and hand off to the appropriate qualified owner.
+
+</section>
 
 <section id="overview">
 

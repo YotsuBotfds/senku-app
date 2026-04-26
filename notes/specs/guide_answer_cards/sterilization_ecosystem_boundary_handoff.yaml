@@ -1,0 +1,180 @@
+card_id: sterilization_ecosystem_boundary_handoff
+guide_id: GD-646
+slug: sterilization-ecosystem
+title: "Sterilization Ecosystem - Water Testing to Medical Application"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks a sterilization, disinfection, cleaning, water, food-contact, lab, or medical-adjacent question before the correct owner is clear.
+  - User needs source/use-case intake, uncertainty logging, clean/dirty separation, escalation flags, or qualified owner handoff.
+  - User asks whether an item, surface, container, water source, batch, tool, or space can move from dirty or unknown status into clean, food, medical, lab, or shared use.
+  - User asks for safety certification, potability, sterility, surgical or dental readiness, medical instrument reuse, lab clearance, or pathogen kill and needs a boundary refusal plus handoff.
+required_first_actions:
+  - Classify the intended use before discussing any method: water, routine cleaning, food-contact, medical-adjacent, clinical, dental, laboratory, shared facility, or unknown.
+  - Capture uncertainty explicitly: source, prior use, contamination clues, exposed people, clean/dirty crossover, and missing owner decision.
+  - Preserve clean/dirty separation immediately by labeling unknown or dirty items and keeping them out of clean storage, food-contact, drinking-water, wound-care, clinical, dental, and lab areas.
+  - Screen for escalation flags involving medical, dental, wound, patient-contact, food, drinking water, lab, sewage, chemical, body-fluid, floodwater, public-use, or vulnerable-person exposure.
+  - Hand off to the qualified owner for the intended use instead of giving procedural sterilization, disinfection, treatment, lab, medical, food-safety, or certification advice.
+first_actions:
+  - State that this card is boundary-only and does not certify safety or provide sterilization parameters.
+  - Identify the source or item, intended use, exposure group, contamination type, and current clean/dirty status.
+  - If details are unknown, keep the item or source out of use and build a short uncertainty log.
+  - Separate dirty, unknown, splashed, wet, reused, or exposed items from clean paths and label their status.
+  - Name the likely owner: water-quality/public-health, food-safety/facility manager, clinical infection-control/sterile-processing, lab safety/biosafety/chemical-safety/waste, or site/public-health/sanitation owner.
+  - Provide only handoff facts and stop-use boundaries when an escalation flag is present.
+urgent_red_flags:
+  - Medical care, dental care, wound contact, injections, invasive procedures, patient-contact equipment, or reusable instruments.
+  - Drinking water, cooking water, food-contact surfaces, shared meals, shelters, clinics, schools, elder care, or public distribution.
+  - Laboratory samples, cultures, unknown biological material, sharps, chemicals, solvents, fuels, pesticides, or unlabeled residues.
+  - Sewage, floodwater, body fluids, animal waste, clinical waste, rotten odor, unknown storage history, or mixed clean/dirty batches.
+  - Any request to certify safety, prove sterility, declare potability, clear a surgical or dental setup, or guarantee pathogen kill.
+forbidden_advice:
+  - Do not provide treatment guarantees, sterility guarantees, pathogen kill claims, or safe-to-use certification.
+  - Do not provide sterilization parameters, temperatures, times, pressure settings, contact times, concentration targets, dosing tables, or chemical recipes.
+  - Do not provide medical instrument processing, reusable instrument clearance, autoclave operation, sterile-field procedure, surgical readiness, or dental readiness.
+  - Do not provide water-potability certification, lab testing protocols, culture handling, specimen collection, or chemical test procedures.
+  - Do not provide legal, code, compliance, inspection-pass, public-distribution, or safety-certification claims.
+do_not:
+  - Do not convert an unknown source or unknown prior use into a routine treatment plan.
+  - Do not let clean and dirty paths cross without logging the crossover and downgrading the status to uncertain.
+  - Do not tell the user that a surface, item, batch, tool, instrument, water source, or facility is safe for medical, dental, food, lab, public, or drinking use.
+  - Do not answer a procedural request from this card when the safe action is owner handoff.
+routine_boundary: >
+  This card owns only boundary-level sterilization ecosystem triage: source and
+  use-case intake across water, cleaning, food, laboratory, and
+  medical-adjacent contexts; uncertainty logs; clean/dirty separation;
+  escalation flags; and qualified owner handoff. It does not own treatment,
+  sterilization, disinfection, laboratory, medical, dental, food-safety,
+  water-potability, legal, or certification decisions.
+acceptable_uncertain_fit: >
+  If the prompt partially fits but details are missing, give a conservative
+  boundary answer: keep the source or item out of high-consequence use, separate
+  clean and dirty paths, log what is known and unknown, name the escalation
+  flags, and hand off to the likely qualified owner. Ask at most one clarifying
+  question after those safeguards.
+clarifying_questions:
+  - What is the intended use: drinking/cooking water, routine cleaning, food-contact, medical or dental care, laboratory work, public/shared use, or something else?
+  - What is the source or item, and what contamination or prior-use history is known?
+  - Has anything dirty, unknown, wet, splashed, or exposed crossed into the clean area or clean storage?
+  - Are patients, wounds, vulnerable people, food recipients, lab workers, or the public involved?
+citation_ids:
+  - gd-646-reviewed-boundary
+  - gd-646-intake-before-method
+  - gd-646-uncertainty-log
+  - gd-646-clean-dirty-separation
+  - gd-646-escalation-flags
+  - gd-646-qualified-owner-handoff
+  - gd-646-not-covered
+source_sections:
+  - guide: GD-646
+    slug: sterilization-ecosystem
+    title: "Sterilization Ecosystem - Water Testing to Medical Application"
+    sections:
+      - "#overview"
+      - "#reviewed-answer-card-boundary"
+      - "#intake-before-method"
+      - "#uncertainty-log"
+      - "#clean-dirty-separation"
+      - "#escalation-flags"
+      - "#handoff-owners"
+      - "#not-covered"
+      - "#answer-template"
+applicability:
+  owner: sterilization ecosystem boundary and qualified owner handoff
+  use_when:
+    - source_or_use_case_intake_before_method_selection
+    - uncertainty_log_for_unknown_source_prior_use_or_exposure
+    - clean_dirty_separation_and_labeling
+    - escalation_flags_for_medical_lab_food_water_or_public_use
+    - qualified_owner_handoff
+  do_not_use_when:
+    - treatment_guarantee_or_pathogen_kill_claim
+    - sterilization_parameters_or_chemical_recipe
+    - medical_instrument_processing_or_autoclave_operation
+    - water_potability_certification
+    - lab_testing_protocol_or_specimen_handling
+    - surgical_or_dental_readiness
+    - legal_code_or_safety_certification
+  handoff:
+    - water-testing-quality-assessment or water-purification for water owner review after source-risk classification.
+    - hygiene-disease-prevention-basics or infection-control for general hygiene and infection-control boundaries.
+    - food-safety owner or responsible facility manager for food-contact use.
+    - licensed clinical infection-control or sterile-processing owner for medical, dental, wound, patient-contact, or reusable-instrument use.
+    - laboratory safety, biosafety, chemical-safety, or waste owner for lab material, cultures, sharps, chemicals, solvents, fuels, pesticides, or unknown residues.
+actions:
+  required:
+    - classify intended use before method discussion
+    - build uncertainty log
+    - preserve clean_dirty separation
+    - screen escalation flags
+    - hand off to qualified owner
+  standard:
+    - label dirty_clean_unknown_do_not_use_or_owner_review_pending
+    - keep high-consequence uses stopped until owner decision
+    - avoid procedural parameters and certification language
+forbidden:
+  - treatment guarantees
+  - sterilization parameters
+  - chemical recipes or concentrations
+  - medical instrument processing
+  - autoclave operation
+  - water-potability certification
+  - lab testing protocols
+  - surgical or dental readiness
+  - pathogen kill claims
+  - legal or code claims
+  - safety certification
+fallback:
+  - If the intended use is unknown, keep the answer in intake mode and do not provide a method.
+  - If contamination or prior use is unknown, keep the item or source out of medical, dental, food, drinking-water, lab, public, and vulnerable-person use pending owner review.
+  - If an escalation flag is present, stop at separation, uncertainty log, and qualified owner handoff.
+output:
+  required:
+    - intended use classification
+    - known and unknown source facts
+    - clean_dirty separation status
+    - escalation flags present or absent
+    - qualified owner handoff
+    - explicit no-certification/no-procedure boundary
+  prohibited:
+    - procedural sterilization or disinfection instructions
+    - chemical concentrations, dosing, or contact-time values
+    - medical, dental, lab, food, or water safety clearance
+    - pathogen kill or legal compliance claims
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: boundary_surface
+    guide: GD-646
+    must_include:
+      - "boundary-level source and use-case intake"
+      - "uncertainty logs"
+      - "qualified owner handoff"
+  - name: clean_dirty_and_uncertainty
+    guide: GD-646
+    must_include:
+      - "If intended use or contamination is unknown, keep the answer in intake mode"
+      - "If clean and dirty paths have crossed, log the crossover"
+      - "Uncertainty is a stop-and-sort condition"
+  - name: escalation_and_handoff
+    guide: GD-646
+    must_include:
+      - "Escalate instead of giving routine cleaning advice"
+      - "Choose the owner by intended use"
+      - "The handoff should preserve the uncertainty log"
+  - name: procedure_exclusions
+    guide: GD-646
+    must_not_match:
+      - "\\b\\d+\\s*(minutes?|hours?|psi|ppm|mg|ml|%|degrees?|c|f)\\b"
+      - "rolling boil"
+      - "autoclave cycle"
+      - "kills? all pathogens"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only answer-card closure for GD-646 sterilization ecosystem.
+  The card owns source/use-case intake across water, cleaning, food, lab, and
+  medical-adjacent contexts; uncertainty logs; clean/dirty separation;
+  escalation flags; and qualified owner handoff. It explicitly excludes
+  treatment guarantees, sterilization parameters, chemical recipes or
+  concentrations, medical instrument processing, autoclave operation,
+  water-potability certification, lab testing protocols, surgical/dental
+  readiness, pathogen kill claims, legal/code claims, and safety certification.

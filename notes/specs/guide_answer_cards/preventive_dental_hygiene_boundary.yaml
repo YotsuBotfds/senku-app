@@ -1,0 +1,160 @@
+card_id: preventive_dental_hygiene_boundary
+guide_id: GD-939
+slug: preventive-dental-hygiene
+title: "Preventive Dental Hygiene & Everyday Mouth Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about routine oral hygiene, daily brushing, cleaning teeth without a toothbrush or toothpaste, cleaning between teeth, rinsing after meals, bad breath from poor cleaning, mild bleeding gums without swelling, or mild tooth sensitivity without escalation.
+  - User needs a limited-tool mouth-care plan using clean water, clean cloth, safe chew stick or floss substitute, salt for mild rinsing, and supply storage.
+  - User asks when a routine dental hygiene issue should stop being handled as preventive care and shift to dental or medical help.
+required_first_actions:
+  - Screen first for pain, swelling, fever, pus, trauma, uncontrolled bleeding, trouble swallowing, trouble breathing, spreading infection signs, possible poisoning exposure, or rapidly worsening symptoms.
+  - Keep routine guidance limited to gentle brushing or wiping, cleaning between teeth, rinsing with clean water or mild salt water, reducing frequent sugar exposure, and monitoring.
+  - Route to dental or medical care if red flags are present; route possible swallowed chemicals, unknown pills, or cleaner exposures away from dental hygiene guidance.
+conditional_required_actions:
+  - trigger_terms:
+      - toothache
+      - pain
+      - throbbing
+      - wakes
+      - night
+      - biting
+    required_actions:
+      - For tooth pain, stay in this card only when pain is mild, non-worsening, no swelling is present, and the person can eat and sleep; escalate if pain is constant, worsening, night-waking, feverish, or linked to swelling, pus, trouble opening the mouth, or worsening biting pain.
+  - trigger_terms:
+      - chipped
+      - broken
+      - crack
+      - knocked
+      - loose
+      - trauma
+    required_actions:
+      - For chipped or broken teeth, routine monitoring applies only when there is no pain, swelling, looseness, sharp cutting edge, large missing piece, darkening tooth, or trauma-related displacement; otherwise hand off to emergency dental care.
+  - trigger_terms:
+      - denture
+      - retainer
+      - mouthguard
+      - appliance
+    required_actions:
+      - For oral appliances, limit this card to hygiene and cleaning support; use the dental-prosthetics guide for fit, rubbing, looseness, fabrication, or adjustment problems.
+  - trigger_terms:
+      - swallowed
+      - cleaner
+      - chemical
+      - pills
+      - poison
+      - drooling
+    required_actions:
+      - If ingestion, poisoning, chemical exposure, drooling after cleaner exposure, or chest symptoms after mixed cleaners is possible, leave dental hygiene guidance and route to poisoning or chemical-safety owners.
+first_actions:
+  - Build a simple twice-daily mouth-care routine with gentle brushing or wiping of teeth and gumline, cleaning between teeth once daily if possible, and rinsing with clean water after meals when brushing is not possible.
+  - If a normal toothbrush is unavailable, use a clean soft cloth wrapped around a finger or a safe non-toxic frayed twig or chewing stick, moisten with clean water, clean gently, and rinse afterward.
+  - Use plain clean water for routine rinsing; mild salt water can be used for a sore or irritated mouth, mixed weak enough to taste mildly salty and spat out rather than swallowed in large amounts.
+  - Keep the plan conservative by avoiding abrasive powders, ash, sand, metal picks, hard scraping, harsh acidic rinses, and scrubbing hard enough to injure gums.
+  - Reduce frequent sugar exposure by avoiding all-day sipping or constant sticky snacks, rinsing after sweet foods, and choosing water when possible.
+  - Keep supplies clean, replace frayed or dirty brushes and cloths, and store oral appliances or care tools in a clean container when available.
+urgent_red_flags:
+  - Facial, jaw, gum, tongue, or under-jaw swelling.
+  - Fever, pus, foul drainage, bad taste from a tooth or gum, or spreading redness or infection signs.
+  - Trouble swallowing, trouble breathing, trouble opening the mouth, or swelling that is spreading quickly.
+  - Severe, constant, worsening, throbbing, night-waking, or stronger biting-related tooth pain.
+  - Tooth knocked loose or out, tooth displacement after injury, uncontrolled bleeding after dental trauma, numbness after injury, or a broken tooth with sharp edges cutting the tongue, cheek, or lip.
+  - Mouth sore that does not heal, bleeds, grows, or looks infected.
+  - Possible swallowed cleaner, unknown pills, chemical exposure, or chest tightness after mixing cleaners.
+forbidden_advice:
+  - Do not diagnose cavities, gum disease, abscesses, oral infection, appliance injury, or trauma from this card.
+  - Do not recommend extraction, drilling, filling, drainage, filing, splinting, reimplantation, antibiotics, abscess treatment, or dental procedures.
+  - Do not provide pain-medicine dosing, antibiotic selection or dosing, pediatric fluoride dosing, or medication changes.
+  - Do not advise appliance fabrication, retainer or denture adjustment, bite correction, or safety certification of any oral device.
+  - Do not keep routine hygiene as the main answer when swelling, fever, pus, trouble swallowing, trouble breathing, trauma, uncontrolled bleeding, spreading infection signs, or severe or worsening pain is present.
+  - Do not make legal, fitness-for-work, return-to-play, return-to-duty, or safety-certification claims.
+do_not:
+  - Do not use abrasive powders, ash, sand, metal picks, hard objects, or harsh scraping on teeth or gums.
+  - Do not assume whitening means healthy teeth.
+  - Do not treat worsening mouth infection as a hygiene problem.
+  - Do not use this card as the owner for emergency dental care, poisoning, chemical exposure, or airway emergencies.
+routine_boundary: >
+  Routine preventive dental hygiene is appropriate only for daily mouth-care
+  planning, brushing or wiping, cleaning between teeth, rinsing with clean
+  water or mild salt water, reducing sugar exposure, limited-tool supply notes,
+  and mild non-escalating gum irritation or sensitivity after red flags are
+  absent. Pain that is constant, worsening, night-waking, feverish, trauma
+  related, or associated with swelling, pus, drainage, swallowing trouble,
+  breathing trouble, or uncontrolled bleeding is outside this card.
+acceptable_uncertain_fit: >
+  If the prompt may fit routine hygiene but pain severity, swelling, fever,
+  drainage, trauma, swallowing or breathing status, possible poisoning, or
+  appliance fit is unclear, lead with the red-flag screen and give only
+  low-risk cleaning and rinsing steps that do not delay dental or medical
+  handoff.
+clarifying_questions:
+  - Is there facial, jaw, gum, tongue, or under-jaw swelling, fever, pus, foul drainage, or a bad taste from one tooth or gum area?
+  - Is the pain mild and coming and going, or is it constant, worsening, throbbing, waking the person at night, or worse with biting?
+  - Was there an injury, knocked-loose tooth, uncontrolled bleeding, sharp broken edge, numbness, or a large missing piece of tooth?
+  - Is there trouble swallowing, trouble breathing, trouble opening the mouth, or swelling spreading quickly?
+  - Is there any chance of swallowed cleaner, unknown pills, chemical exposure, or chest tightness after mixed cleaners?
+  - Is this about cleaning an appliance, or about fit, rubbing, looseness, fabrication, or adjustment?
+citation_ids:
+  - preventive-dental-overview-boundary
+  - brushing-and-limited-tools
+  - cleaning-between-teeth-and-rinsing
+  - gum-care-and-mild-tooth-pain-boundary
+  - broken-tooth-monitoring-boundary
+  - urgent-dental-red-flags
+source_sections:
+  - guide: GD-939
+    slug: preventive-dental-hygiene
+    title: "Preventive Dental Hygiene & Everyday Mouth Care"
+    sections:
+      - "#overview"
+      - "#daily-routine"
+      - "#brushing"
+      - "#floss-alternatives"
+      - "#rinsing"
+      - "#diet"
+      - "#gum-care"
+      - "#non-emergency-tooth-pain"
+      - "#appliances"
+      - "#limited-tools"
+      - "#broken-tooth-monitoring"
+      - "#red-flags"
+      - "#quick-reference"
+source_invariants:
+  - name: routine dental hygiene boundary remains red-flag first
+    guide: GD-939
+    must_include:
+      - Do not stay in this guide if the complaint is really pain, swelling, injury, infection, or poisoning exposure.
+      - If swelling, fever, pus, trouble swallowing, trouble breathing, or rapidly worsening pain appears, stop preventive care and move to `emergency-dental`.
+      - Preventive care stops working when the problem has become an infection, injury, or serious inflammation.
+    must_not_match:
+      - "swelling[^\\n]{0,160}(keep|continue|stay)[^\\n]{0,80}(preventive|hygiene|routine)"
+  - name: limited-tool cleaning remains gentle and non-abrasive
+    guide: GD-939
+    must_include:
+      - Use a clean soft cloth wrapped around a finger.
+      - Use water to loosen debris first.
+      - Do not scrub with ash, sand, or gritty powders.
+      - Do not use metal picks or hard objects on the teeth.
+  - name: mild tooth pain route does not become procedure or dosing owner
+    guide: GD-939
+    must_include:
+      - Move from preventive care to `emergency-dental` if the pain becomes constant, gets worse each day, wakes you from sleep, comes with swelling, fever, pus, trouble opening the mouth, or pain when biting that is getting stronger.
+      - Use over-the-counter pain medicine only if it is normally safe for you and you can follow the label.
+    must_not_match:
+      - "(ibuprofen|acetaminophen|paracetamol)[^\\n]{0,80}\\b\\d+\\s*(mg|milligram)"
+  - name: appliance guidance stays hygiene only
+    guide: GD-939
+    must_include:
+      - Any removable appliance can collect bacteria, fungus, and food debris. Clean it every day.
+      - Take the appliance out, clean it, and inspect the mouth.
+      - A sore that does not improve, bleeds, or looks infected needs medical or dental attention.
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary card for GD-939. It supports routine oral hygiene intake,
+  brushing/flossing/rinsing planning, limited-tool and safe-water notes, and
+  red-flag dental or medical handoff only. It intentionally excludes diagnosis,
+  dental procedures, extraction, drilling, filling, antibiotics, pain-medication
+  dosing, abscess treatment, pediatric fluoride dosing, appliance fabrication
+  or adjustment, airway emergency management, legal or fitness claims, and
+  safety certification.

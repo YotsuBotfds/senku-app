@@ -41,6 +41,41 @@ word_count: 2800
 last_updated: '2026-04-06'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: smoke_carbon_monoxide_fire_gas_exposure_boundary
+aliases:
+  - smoke inhalation
+  - carbon monoxide exposure
+  - CO exposure
+  - fire gas exposure
+  - generator exhaust indoors
+  - charcoal indoors
+  - heater making everyone dizzy
+  - headache near stove
+  - smoke smell indoors with symptoms
+  - enclosed fire smoke exposure
+  - everyone in the room has a headache
+  - smoky room cough and headache
+  - burning fuel smell with dizziness
+  - blocked ventilation carbon monoxide concern
+  - do we ventilate first or get out first
+routing_cues:
+  - Use for active or recent smoke, carbon monoxide, generator exhaust, charcoal indoors, enclosed-fire smoke, or fire-gas exposure with symptoms.
+  - Route here before stove, heater, ventilation, fire-suppression, or repair guidance when headache, cough, dizziness, nausea, confusion, sleepiness, shortness of breath, collapse, hoarseness, soot, facial burns, or airway concern is present.
+  - Ask exposure location, timing, source, number of people or pets affected, symptoms, pregnancy, child, elderly, and whether anyone is still inside only to support emergency handoff.
+  - Keep advice to leave-source, fresh air, safe source shutoff, safe ventilation only if it does not delay leaving, symptom logging, red flags, and handoff to emergency services, poison control, clinicians, or fire service.
+  - Do not answer as diagnosis, oxygen or medical treatment protocol, medication/dosing, rescue-entry instruction, fire suppression, generator or heater repair, ventilation engineering, re-entry clearance, return-to-work clearance, legal claim, or safety certification.
+citation_policy: cite this guide for active smoke, CO, or fire-gas exposure boundary triage; cite stove, ventilation, heat, fire-safety, toxicology, or airway guides only after scene-safety and exposure-handoff needs are separated.
+applicability: active or recent smoke, carbon monoxide, generator exhaust, charcoal indoors, enclosed-fire smoke, or fire-gas exposure where first-hop triage, fresh-air movement, red-flag recognition, symptom logs, vulnerable-person risk, and emergency/poison-control/clinician/fire-service handoff are needed.
+not_for:
+  - oxygen or medical treatment protocols
+  - medication or dosing guidance
+  - rescue entry into smoke or gas
+  - fire suppression tactics
+  - generator, chimney, stove, or heater repair
+  - ventilation engineering or re-entry clearance
+  - return-to-work clearance
+  - legal claims or safety certification
 ---
 
 :::danger

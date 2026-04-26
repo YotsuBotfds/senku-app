@@ -1,0 +1,108 @@
+card_id: smoke_carbon_monoxide_fire_gas_exposure_boundary
+guide_id: GD-899
+slug: smoke-inhalation-carbon-monoxide-fire-gas-exposure
+title: "Smoke Inhalation, Carbon Monoxide & Fire-Gas Exposure"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A person has active or recent smoke, carbon monoxide, generator exhaust, charcoal indoors, enclosed-fire smoke, or fire-gas exposure.
+  - Symptoms such as headache, cough, dizziness, nausea, confusion, unusual sleepiness, shortness of breath, collapse, hoarseness, soot, facial burns, or airway concern occur near a stove, heater, generator, charcoal, fire, or smoky room.
+  - Multiple people or pets in the same enclosed space develop headache, dizziness, nausea, confusion, sleepiness, breathing symptoms, or collapse.
+required_first_actions:
+  - Get everyone out of the exposure area to fresh air immediately.
+  - Do not delay leaving to troubleshoot the stove, heater, generator, chimney, or ventilation.
+  - Shut off the source or ventilate only if it can be done safely and does not delay escape.
+  - Use emergency services, poison control, the fastest available clinician, or the fire service for symptomatic, enclosed-space, vulnerable-person, airway, or collapse concerns.
+first_actions:
+  - Ask where the exposure happened, when it started, whether the source is still active, and whether anyone is still inside.
+  - Ask who is affected, including children, pregnant people, elderly people, and pets.
+  - Log symptoms and changes over time, including headache, cough, dizziness, nausea, confusion, sleepiness, shortness of breath, hoarseness, soot, facial burns, collapse, and whether symptoms improve outside.
+  - Keep people at rest in fresh air and continue handoff monitoring while arranging help.
+urgent_red_flags:
+  - Loss of consciousness, collapse, confusion, unusual sleepiness, seizure, chest pain, or shortness of breath.
+  - Hoarseness, stridor, increasing work of breathing, soot in the mouth, burns inside the mouth, progressive facial swelling, or repeated coughing with exhaustion.
+  - Multiple people or pets affected in the same enclosed environment.
+  - Pregnancy, child, elderly person, significant enclosed-space exposure, persistent cough, or symptoms returning after initial improvement.
+forbidden_advice:
+  - Do not tell people to stay inside to test the air, open windows, troubleshoot, tune, or repair the combustion source before leaving.
+  - Do not advise rescue entry into smoke, gas, or an enclosed fire area.
+  - Do not use this card as an oxygen, medication, antidote, airway-procedure, or medical-treatment protocol.
+  - Do not provide fire-suppression, generator repair, heater repair, ventilation-engineering, re-entry clearance, return-to-work clearance, legal-claim, or safety-certification advice.
+do_not:
+  - Do not reassure based on a person looking fine immediately after meaningful smoke or CO exposure.
+  - Do not rely on smell or cherry-red skin to rule out carbon monoxide exposure.
+  - Do not merge active symptomatic exposure into routine stove, heating, or ventilation troubleshooting.
+routine_boundary: >
+  Active or recent symptomatic smoke, CO, generator exhaust, charcoal indoors,
+  enclosed-fire smoke, or fire-gas exposure is exposure triage first. Routine
+  stove, heater, chimney, ventilation, fire-suppression, repair, re-entry,
+  work-clearance, legal, or certification advice belongs elsewhere after people
+  are out of danger and emergency handoff needs are separated.
+acceptable_uncertain_fit: >
+  If details are incomplete but symptoms, shared-room illness, enclosed
+  combustion, smoke, fire gas, generator exhaust, charcoal indoors, pregnancy,
+  child, elder, airway signs, or collapse are plausible, preserve fresh-air and
+  emergency-handoff framing while asking exposure location, timing, source,
+  who is affected, and whether anyone is still inside.
+clarifying_questions:
+  - Where did the exposure happen, when did it start, and is the source still active?
+  - Is anyone still inside or unable to get to fresh air?
+  - Who is affected, and are any of them children, pregnant, elderly, or pets?
+  - What symptoms are present now, and did they improve after getting outside?
+citation_ids:
+  - smoke-co-overview
+  - smoke-co-scene-extraction
+  - smoke-co-recognition
+  - smoke-co-airway-danger
+  - smoke-co-delayed-monitoring
+  - smoke-co-field-summary
+source_sections:
+  - guide: GD-899
+    slug: smoke-inhalation-carbon-monoxide-fire-gas-exposure
+    title: "Smoke Inhalation, Carbon Monoxide & Fire-Gas Exposure"
+    sections:
+      - "#overview"
+      - "#scene-extraction"
+      - "#recognition"
+      - "#airway-danger"
+      - "#delayed-deterioration"
+      - "#common-errors"
+      - "#field-summary"
+source_invariants:
+  - name: fresh air before troubleshooting
+    guide: GD-899
+    must_include:
+      - get out to fresh air and stay with this guide
+      - get people out first; ventilate only if it does not delay leaving
+      - leave the exposure area and get fresh air
+    must_not_match:
+      - "stay\\s+inside[^\\n]{0,120}(test|troubleshoot|repair|tune)"
+      - "open\\s+windows[^\\n]{0,120}before\\s+leaving"
+  - name: carbon monoxide pattern and red flags
+    guide: GD-899
+    must_include:
+      - Multiple people with headache, dizziness, nausea, or confusion at the same time
+      - Do **not** rely on "cherry red skin."
+      - any loss of consciousness
+      - pregnancy
+    must_not_match:
+      - "cherry red skin[^\\n]{0,120}(?:is reliable|rules out|rule out)"
+      - "carbon monoxide[^\\n]{0,120}(smell|odor)[^\\n]{0,120}safe"
+  - name: no rescue entry framing
+    guide: GD-899
+    must_include:
+      - Do not re-enter a smoke-filled space without a plan, backup, and a clear exit.
+      - Do not create a second victim
+    must_not_match:
+      - "re-enter[^\\n]{0,120}(?:is safe|go back in|to rescue)[^\\n]{0,120}without"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Boundary-only reviewed card for GD-899. It covers exposure/location/timing
+  intake, leave-source and fresh-air priorities, safe ventilation only when it
+  does not delay escape, symptom logs, CO/smoke/fire-gas red flags,
+  child/pregnancy/elder risk, and handoff to emergency services, poison
+  control, clinicians, or fire service. It intentionally excludes diagnosis,
+  oxygen or medical treatment protocols, medication/dosing, rescue entry, fire
+  suppression, generator/heater repair, ventilation engineering, re-entry
+  clearance, return-to-work clearance, legal claims, and safety certification.

@@ -8,6 +8,40 @@ tags:
   - critical
 icon: 🧪
 description: Techniques for achieving sterility in medical instruments and supplies in resource-limited and field environments
+aliases:
+  - sterilization method boundary
+  - sterile equipment handoff
+  - contaminated instrument intake
+  - dirty clean workflow separation
+  - uncertain sterile status
+  - questionable sterilized supplies
+  - discard contaminated medical supplies
+  - infection control sterilization owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level item and use-context intake, contamination uncertainty, separate clean/dirty workflow notes, discard-or-handoff triggers, vulnerable-use flags, and qualified infection-control, medical, lab, or food-safety owner handoff.
+  - Keep reviewed-card answers focused on what item is involved, whether it is clean, dirty, stored, damaged, visibly contaminated, unlabeled, unknown-history, or intended for a vulnerable person or high-consequence use.
+  - Route sterilization recipes, method parameters, times, temperatures, pressures, chemical concentrations, instrument reprocessing procedures, autoclave operation, validation testing, readiness claims, pathogen guarantees, medical procedures, legal/code claims, and safety certification away from this card.
+citations_required: true
+citation_policy: >
+  Cite GD-250 and its reviewed answer card only for boundary-level sterile-item
+  intake, contamination uncertainty, clean/dirty workflow separation,
+  discard-or-handoff triggers, vulnerable-use flags, and qualified
+  infection-control, medical, lab, or food-safety owner handoff. Do not cite it
+  for sterilization recipes, method parameters, times, temperatures, pressures,
+  chemical concentrations, instrument reprocessing procedures, autoclave
+  operation, surgical/dental/lab readiness claims, validation testing, pathogen
+  guarantees, medical procedures, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only sterile supply and contamination-control questions:
+  identifying the item, intended use context, dirty/clean status, visible
+  contamination, storage uncertainty, labeling gaps, vulnerable-use flags, and
+  when to discard, quarantine, or hand off to a qualified infection-control,
+  medical, laboratory, food-safety, or responsible-site owner. Do not use as a
+  procedural sterilization or instrument-reprocessing guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: sterilization_methods_boundary_handoff
+answer_card:
+  - sterilization_methods_boundary_handoff
 related:
   - alkali-production
   - chlorine-bleach-production
@@ -30,6 +64,18 @@ liability_level: high
 <section id="overview">
 
 ## Overview: Sterilization in Survival and Resource-Limited Settings
+
+## Reviewed Answer-Card Boundary: Sterile-Item Intake, Contamination Uncertainty, and Handoffs
+
+This is the reviewed answer-card surface for GD-250. Use it only for boundary-level item and use-context intake, contamination uncertainty, separate clean/dirty workflow notes, discard-or-handoff triggers, vulnerable-use flags, and handoff to a qualified infection-control, medical, laboratory, food-safety, or responsible-site owner.
+
+For routine boundary intake, record the item type, intended use, whether it will contact intact skin, mucous membranes, food-contact surfaces, a wound, blood, a sterile body area, a laboratory sample, a dental or surgical setting, or a vulnerable person. Separately record whether the item is dirty, cleaned, processed, stored, sealed, unlabeled, unknown-history, wet, dusty, rusty, cracked, single-use, visibly contaminated with blood, tissue, pus, soil, food residue, mold, animal contact, chemical residue, or damaged packaging.
+
+Keep dirty and clean workflow notes separate. Dirty intake covers used items, visible soil, unknown source, contaminated storage, transport, waste, and items needing quarantine or discard. Clean workflow notes cover only labeled, protected, undamaged, dry, and controlled items that still need a qualified owner to decide whether they are fit for the intended use. When status is uncertain, do not call the item sterile, safe, ready for surgery, ready for dental use, ready for laboratory use, ready for food service, or safe for vulnerable people.
+
+Treat these as discard-or-handoff triggers before routine use: visible blood, tissue, pus, soil, food residue, mold, wet storage, dust exposure, animal or pest contact, torn or unsealed packaging, missing labels, unknown processing history, failed or missing quality records, rust, cracks, pitting, damaged single-use items, chemical residue, mixed clean and dirty zones, intended use on infants, pregnancy, immunocompromised people, open wounds, invasive care, dental or surgical work, lab samples, shared clinic equipment, or public food service. Hand off those decisions to the qualified infection-control, medical, laboratory, food-safety, facility, or responsible program owner.
+
+Do not use this reviewed card for sterilization recipes, method parameters, times, temperatures, pressures, chemical concentrations, instrument reprocessing procedures, autoclave operation, surgical, dental, laboratory, or food-service readiness claims, validation testing, pathogen guarantees, medical procedures, legal or code claims, or safety certification.
 
 Sterilization forms the foundation of safe medical practice. In survival scenarios without access to commercial medical facilities, understanding multiple sterilization methods and their appropriate applications can mean the difference between successful treatment and life-threatening infection. This guide covers 11 proven sterilization and high-level disinfection methods, from simple boiling to pressure cooker sterilization, with detailed procedural guidance, troubleshooting, and decision trees for method selection.
 
@@ -713,4 +759,3 @@ Boiling remains gold standard when resources limited (no electricity, limited fu
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the methods discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

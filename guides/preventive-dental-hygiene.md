@@ -39,6 +39,41 @@ word_count: 2800
 last_updated: '2026-04-13'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: preventive_dental_hygiene_boundary
+answer_card:
+  - preventive_dental_hygiene_boundary
+aliases:
+  - routine oral hygiene
+  - everyday mouth care
+  - brushing without toothpaste
+  - floss substitute
+  - rinsing after meals
+  - bleeding gums without swelling
+  - mild tooth sensitivity without swelling
+  - mild toothache no swelling
+  - clean teeth without toothbrush
+routing_cues:
+  - plan routine brushing flossing and rinsing
+  - clean teeth when supplies are limited
+  - gums bleed a little when brushing but no swelling
+  - mild tooth sensitivity with no fever or swelling
+  - when routine dental care becomes urgent
+citations_required: true
+applicability: >
+  Boundary-only support for routine oral hygiene intake, brushing, cleaning
+  between teeth, rinsing after meals, limited-tool supply planning, safe-water
+  notes, mild non-escalating gum irritation or tooth sensitivity, and red-flag
+  handoff. Route dental diagnosis, procedures, medications, abscess treatment,
+  trauma, infection, airway danger, and dental appliance fabrication or
+  adjustment to the appropriate dental, medical, poisoning, or emergency guide.
+citation_policy: >
+  Cite GD-939 and its reviewed answer card for routine preventive mouth-care
+  planning and red-flag boundaries only. Do not use this guide to support
+  diagnosis, drilling, filling, extraction, antibiotics, pain-medicine dosing,
+  abscess treatment, pediatric fluoride dosing, appliance fabrication or
+  adjustment, emergency airway care, legal or fitness claims, or safety
+  certification.
 ---
 
 :::warning

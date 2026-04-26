@@ -1,0 +1,111 @@
+card_id: pandemic_response_operations_boundary
+guide_id: GD-565
+slug: pandemic-response-operations
+title: "Pandemic Response & Large-Scale Quarantine Operations"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A community, shelter, clinic, school, workplace, or incident team needs pandemic operations intake, symptom/event count logs, or a concise status handoff.
+  - The prompt asks how to track staffing, supply burn rate, space pressure, sanitation concerns, communication needs, or voluntary risk-reduction steps during a contagious-disease surge.
+  - The user needs privacy-aware reporting prompts or a public-health/sanitation handoff without asking for diagnosis, treatment, enforcement, lab work, or outbreak declaration.
+required_first_actions:
+  - Keep the answer at boundary-level pandemic response operations, not diagnosis, treatment, enforcement, coercive isolation, legal/regulatory action, or certification.
+  - Start by collecting operational facts already known: setting, symptom or event count, dates or trend, staffing status, supply burn rate or shortage, space constraints, sanitation concern, communication need, and handoff owner.
+  - Protect privacy by using aggregate or need-to-know records and avoiding unnecessary disclosure of names, household details, private contact networks, or personally identifying health details.
+  - Treat severe illness, fast growth, sanitation failure, supply exhaustion, staffing collapse, or unclear authority as prompts for urgent handoff to public-health, medical, sanitation, water, infection-control, logistics, or incident-command owners.
+first_actions:
+  - Make a dated operations log with consistent symptom or event definitions, counts, dates, coarse location or unit, trend, severity count if known, and confirmed-versus-rumor status.
+  - Maintain a staffing, supply, and space status board that records available staff, essential gaps, PPE or key-supply burn rate, projected shortage date, usable rooms/areas, and communication needs.
+  - Use voluntary risk-reduction planning such as clear public messaging, spacing, hygiene reminders, reduced unnecessary contacts, and support for food, rest, communication, and morale.
+  - Prepare concise handoffs for public-health, sanitation, water, infection-control, logistics, or incident-command owners when counts rise, supplies run low, staffing fails, or sanitation concerns appear.
+  - Keep community-facing reporting prompts privacy-aware: ask for counts, dates, symptom pattern, coarse place or event, and urgent needs, not public names or private contact networks.
+urgent_red_flags:
+  - Severe illness, death cluster, rapidly rising symptom or event counts, or a pattern that overwhelms routine staffing or space.
+  - PPE or critical supply duration is short, burn rate is rising, or projected exhaustion is approaching.
+  - Sanitation, laundry, waste, ventilation, food delivery, water, or crowded-space problems may increase spread or basic-care failure.
+  - The prompt asks for diagnosis, treatment, medication, vaccine, enforcement, quarantine order, coercive isolation, identifiable contact tracing, lab sampling, outbreak declaration, legal/regulatory claim, or safety certification.
+forbidden_advice:
+  - Do not diagnose the disease, identify a definitive cause, or provide treatment, medication, vaccine, antibiotic, antiviral, prophylaxis, or clinical triage guidance from this card.
+  - Do not issue enforcement orders, quarantine orders, coercive isolation instructions, legal/regulatory determinations, or safety certifications.
+  - Do not ask for, publish, or operationalize private contact lists, names, household details, identifiable exposure networks, or public-shaming tactics.
+  - Do not provide lab sampling, specimen handling, test interpretation, outbreak declaration, or safety-clearance instructions from this card.
+  - Do not present voluntary risk-reduction planning as mandatory detention, policing, or punishment.
+do_not:
+  - Do not turn symptom/event counts or reporting thresholds into an outbreak declaration.
+  - Do not replace public-health authorities, clinicians, sanitation leads, water leads, infection-control owners, logistics leads, legal authorities, or incident command.
+  - Do not expose patient names, household identities, private contacts, or personally identifying health details in community-facing communication.
+  - Do not reassure that a space, event, workplace, or group is safe when counts, authority, disease status, sanitation, staffing, or supplies are uncertain.
+routine_boundary: >
+  Routine pandemic operations support is appropriate only for intake, aggregate
+  symptom/event count logging, staffing/supply/space communication records,
+  voluntary risk-reduction planning, privacy-aware reporting prompts,
+  sanitation handoff, and public-health handoff. It stops before diagnosis,
+  treatment, vaccines, medications, enforcement, coercive isolation, private-data
+  tracing, lab sampling, outbreak declarations, legal/regulatory claims, or
+  safety certification.
+acceptable_uncertain_fit: >
+  If the prompt is plausibly about pandemic operations but details are
+  incomplete, preserve uncertainty, ask for counts, dates, trend, staffing,
+  supply, space, sanitation, and communication facts, recommend a minimal dated
+  operations log, and hand off to the relevant owner instead of declaring a
+  cause, ordering restrictions, or certifying safety.
+clarifying_questions:
+  - What setting is this for, how many people or events are being counted, and when did the reports start?
+  - Are counts rising, stable, or uncertain, and are there severe illnesses, deaths, or urgent care needs?
+  - What is the current staffing, supply burn rate or shortage, usable space, sanitation concern, and communication gap?
+  - Who is the responsible public-health, sanitation, infection-control, logistics, or incident-command owner for handoff?
+citation_ids:
+  - gd-565-reviewed-boundary
+  - gd-565-response-phase-operations
+  - gd-565-facility-intake-space
+  - gd-565-supply-burn-rate
+  - gd-565-staffing-communication
+  - gd-565-community-health-handoff
+source_sections:
+  - guide: GD-565
+    slug: pandemic-response-operations
+    title: "Pandemic Response & Large-Scale Quarantine Operations"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#response-phases > Phase 1: Early Detection"
+      - "#response-phases > Phase 2: Exponential Growth"
+      - "#quarantine-facilities > Facility Needs Assessment"
+      - "#quarantine-facilities > Facility Layout & Organization"
+      - "#ppe-conservation > PPE Consumption Monitoring"
+      - "#healthcare-worker-protection > Healthcare Worker Triage & Role Assignment"
+      - "#healthcare-worker-protection > Psychological Support for Healthcare Workers"
+      - "#community-health > Psychological Resilience"
+      - "#resource-summary"
+source_invariants:
+  - name: reviewed boundary preserves operations-only scope
+    guide: GD-565
+    must_include:
+      - This is the reviewed answer-card surface for GD-565.
+      - operations intake, symptom and event count logs
+      - staffing, supply, and space communication records
+      - voluntary risk-reduction planning
+      - privacy-aware reporting prompts
+      - Do not use this card for diagnosis, treatment, vaccine or medication guidance
+      - contact tracing tactics that expose private data
+      - outbreak declarations, legal/regulatory claims, or safety certification
+  - name: source guide supports operational logs and handoff
+    guide: GD-565
+    must_include:
+      - Health Officer activates surveillance (daily case reporting)
+      - Assess PPE supply
+      - Track consumption daily
+      - Project supply exhaustion date
+      - Public communication emphasizes precautions
+      - Regular public communication
+review_status: pilot_reviewed
+runtime_citation_policy: reviewed_source_family
+notes: >
+  Reviewed boundary-only GD-565 card for pandemic response operations intake,
+  symptom/event count logs, staffing/supply/space communication records,
+  voluntary risk-reduction planning, privacy-aware reporting prompts,
+  sanitation handoff, and public-health handoff. It deliberately excludes
+  diagnosis, treatment, vaccine or medication guidance, enforcement/quarantine
+  orders, coercive isolation, identifiable contact-tracing tactics, lab
+  sampling, outbreak declarations, legal/regulatory claims, and safety
+  certification. READY_FOR_PARENT_CLOSE.

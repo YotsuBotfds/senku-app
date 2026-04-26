@@ -6,8 +6,17 @@ category: medical
 difficulty: intermediate
 tags:
   - critical
+aliases:
+  - sick household isolation checklist
+  - fever cough diarrhea exposure log
+  - infectious disease boundary handoff
+  - illness symptom timeline intake
+  - household spread reduction prompts
 icon: 🦠
 description: Isolation protocols, epidemic response, contact tracing, quarantine, vector control, and antibiotic stewardship.
+routing_cues:
+  - Use for boundary-only infectious-disease intake: symptom, exposure, and timeline logs; isolation and support logs; hydration, rest, sanitation, and household spread-reduction prompts; red-flag screening; and clinician or public-health handoff.
+  - Route diagnosis, antibiotic, antiviral, antiparasitic treatment, dosing, vaccine guidance, lab testing or sampling instructions, quarantine/enforcement orders, return-to-work or school clearance, legal claims, and safety certification outside this reviewed card.
 related:
   - infection-control
   - first-aid
@@ -20,6 +29,19 @@ word_count: 4993
 last_updated: '2026-02-16'
 version: '1.2'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: infectious_disease_boundary_handoff
+answer_card:
+  - infectious_disease_boundary_handoff
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for boundary-level
+  infectious-disease intake, isolation/support logs, hydration/rest/sanitation
+  reminders, household/community spread-reduction prompts, red-flag screening,
+  and clinician or public-health handoff. Do not use this card for diagnosis,
+  antibiotic/antiviral/antiparasitic treatment, dosing, vaccine guidance, lab
+  testing or sampling instructions, quarantine or enforcement orders,
+  return-to-work or school clearance, legal claims, or safety certification.
 ---
 
 :::danger
@@ -29,6 +51,22 @@ liability_level: high
 :::warning
 **IMPORTANT:** Antibiotic selection should be determined by healthcare professionals based on clinical assessment and, when possible, culture and sensitivity results. Incorrect antibiotic use promotes resistant organisms, can mask serious conditions, and may cause severe adverse reactions including anaphylaxis. Dosing information in this guide is for emergency reference only.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-053. Use it only for boundary-level infectious-disease support: symptom, exposure, and timeline intake; isolation and support logs; hydration, rest, and sanitation reminders; household or community spread-reduction prompts; severe red-flag screening; and clinician or public-health handoff.
+
+Start with what is already known: main symptoms, onset date and time if known, fever pattern, cough or breathing symptoms, vomiting or diarrhea, rash description, hydration and urine output, age group, pregnancy status, immune compromise or chronic illness, recent sick contacts, shared food or water exposure, animal or vector exposure, travel or event exposure, current isolation setup, caregiver/support needs, sanitation steps already taken, and whether the situation is getting better, worse, or unclear. Keep the log factual and separate known observations from guesses.
+
+Routine support may include keeping the sick person away from shared food, dishes, sleeping spaces, and high-contact areas when feasible; assigning a caregiver; logging fluids, urine, fever pattern, symptoms, and contacts; supporting rest and safe hydration; increasing handwashing; cleaning high-touch surfaces; handling laundry, waste, and dishes as contaminated until cleaned; and preparing a concise handoff for a clinician, public-health owner, sanitation lead, water lead, or community response lead.
+
+Red flags override routine support: severe or persistent high fever, respiratory distress, confusion, lethargy, seizure, fainting, severe dehydration or little/no urine, non-blanching or rapidly spreading rash, shock signs, severe headache with neck stiffness, infant illness, pregnancy, immunocompromised status, rapidly worsening symptoms, or a growing cluster. Do not wait for a complete log before urgent clinician or public-health handoff when these appear.
+
+Do not use this reviewed card for diagnosis, antibiotic/antiviral/antiparasitic treatment, dosing, vaccine guidance, lab testing or sampling instructions, quarantine or enforcement orders, return-to-work or school clearance, legal claims, or safety certification. If a prompt asks for those, answer only the safe intake, spread-reduction, red-flag, and handoff portion and route the rest to the appropriate qualified owner.
+
+</section>
 
 <section id="overview">
 

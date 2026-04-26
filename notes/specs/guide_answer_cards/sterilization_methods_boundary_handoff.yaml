@@ -1,0 +1,105 @@
+card_id: sterilization_methods_boundary_handoff
+guide_id: GD-250
+slug: sterilization-methods
+title: Sterilization Methods
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether an item, instrument, surface-contact supply, lab item, dental item, clinic supply, or food-contact item can be treated as sterile, clean, or ready to use.
+  - The prompt involves visible contamination, unlabeled or unknown processing history, mixed clean and dirty workflow, damaged packaging, wet or dusty storage, rusty or cracked instruments, or questionable sterile status.
+  - The answer needs boundary-only contamination intake and qualified-owner handoff without teaching sterilization recipes, parameters, operation, validation, or medical procedures.
+required_first_actions:
+  - Start with item and use-context intake before any method discussion: what the item is, what it would touch, who would use it, and whether the use is medical, dental, laboratory, food-contact, wound, invasive, or vulnerable-person related.
+  - Keep dirty intake and clean workflow notes separate; do not mix used, visibly contaminated, unknown-history, or waste items with protected, labeled, dry, undamaged clean items.
+  - If sterile status is uncertain, do not call the item sterile, safe, procedure-ready, lab-ready, food-service-ready, or suitable for vulnerable people.
+  - Quarantine, discard, or hand off when there is visible blood, tissue, pus, soil, food residue, mold, chemical residue, wet storage, damaged packaging, missing labels, unknown processing history, rust, cracks, pitting, single-use damage, or mixed clean/dirty zones.
+  - Hand off high-consequence decisions to a qualified infection-control, medical, laboratory, food-safety, facility, or responsible program owner.
+first_actions:
+  - Record whether the item will contact intact skin, mucous membranes, food-contact surfaces, wounds, blood, sterile body areas, dental or surgical settings, laboratory samples, shared clinic equipment, public food service, infants, pregnancy, immunocompromised people, or other vulnerable users.
+  - Record the item condition separately from intended use: dirty, cleaned, processed, stored, sealed, unlabeled, unknown-history, wet, dusty, rusty, cracked, single-use, visibly contaminated, chemically exposed, or damaged packaging.
+  - Preserve conservative contamination language when history is uncertain; describe what is known, what is unknown, what should be isolated, and which qualified owner must decide next.
+  - Treat failed indicators, missing quality records, visible contamination after storage, damaged items, or repeated process failures as stop-use and owner-handoff triggers.
+urgent_red_flags:
+  - Intended use on infants, pregnancy, immunocompromised people, open wounds, invasive care, surgical or dental work, laboratory samples, shared clinic equipment, or public food service.
+  - Visible blood, tissue, pus, soil, food residue, mold, animal or pest contact, wet storage, dust exposure, chemical residue, torn or unsealed packaging, or missing labels.
+  - Unknown processing history, failed or missing quality records, mixed clean and dirty zones, rust, cracks, pitting, damaged single-use items, or any request to certify sterile or safe status.
+forbidden_advice:
+  - Do not provide sterilization recipes, process parameters, times, temperatures, pressures, chemical concentrations, instrument reprocessing procedures, or autoclave operation instructions from this card.
+  - Do not claim an item is sterile, safe, surgical-ready, dental-ready, lab-ready, food-service-ready, pathogen-free, validated, legally compliant, or safety-certified.
+  - Do not tell the user to use questionable, visibly contaminated, unlabeled, damaged, wet-stored, rusty, cracked, or unknown-history items for high-consequence or vulnerable-person uses.
+  - Do not provide medical procedures, instrument-use instructions, validation testing instructions, pathogen guarantees, legal/code claims, or safety certification.
+do_not:
+  - Do not convert GD-250's method tables, equipment sections, timing language, temperature language, pressure language, chemical language, or validation sections into reviewed-card instructions.
+  - Do not collapse dirty and clean workflows into one handling lane.
+  - Do not treat scarcity, urgency, or resource limits as permission to lower the uncertainty boundary for vulnerable-person, invasive, dental, surgical, laboratory, or public food-service use.
+routine_boundary: >
+  Routine handling is unsuitable when sterile status, item history, packaging,
+  storage, contamination, single-use status, or intended use is uncertain. Keep
+  the answer at intake, isolation, discard-or-handoff, vulnerable-use flags, and
+  owner routing instead of procedural sterilization.
+acceptable_uncertain_fit: >
+  If the prompt is plausibly about sterile supplies but lacks item, use-context,
+  or contamination details, ask concise intake questions while preserving the
+  conservative boundary: unknown status is not sterile status, dirty and clean
+  workflows stay separate, and high-consequence or vulnerable uses require a
+  qualified owner decision.
+clarifying_questions:
+  - What is the item, and what would it touch: intact skin, food, a wound, blood, sterile body areas, dental/surgical fields, or lab samples?
+  - Is the item visibly contaminated, wet, dusty, rusty, cracked, single-use, unlabeled, damaged, chemically exposed, or unknown-history?
+  - Is this for an infant, pregnant person, immunocompromised person, open wound, invasive care, shared clinic equipment, public food service, or laboratory use?
+  - Who is the qualified infection-control, medical, laboratory, food-safety, facility, or responsible-site owner for the final decision?
+citation_ids:
+  - sterilization-boundary-intake
+  - sterilization-contamination-uncertainty
+  - sterilization-clean-dirty-separation
+  - sterilization-discard-handoff-triggers
+  - sterilization-vulnerable-use-flags
+source_sections:
+  - guide: GD-250
+    slug: sterilization-methods
+    title: Sterilization Methods
+    sections:
+      - "#overview > Reviewed Answer-Card Boundary: Sterile-Item Intake, Contamination Uncertainty, and Handoffs"
+      - "#assessment > Identifying When Sterilization Required"
+      - "#assessment > Assessing Environmental Cleanliness"
+      - "#equipment > Pre-Cleaning Equipment (Critical Phase)"
+      - "#storage-of-sterilized-equipment-and-environmental-challenges > Sterile Storage Conditions"
+      - "#complications-when-to-stop-sterilization-attempts > Quality Failures & When to Restart Sterilization"
+      - "#failure-modes-troubleshooting > Recontamination During Cooling"
+      - "#common-mistakes-and-prevention-strategies > Mistake 4: Using Contaminated Water or Inadequate Pre-Cleaning"
+      - "#community > Small Clinic Setup (5-50 Patients/Week)"
+source_invariants:
+  - name: boundary_surface_limits
+    guide: GD-250
+    must_include:
+      - This is the reviewed answer-card surface for GD-250.
+      - Use it only for boundary-level item and use-context intake
+      - Do not use this reviewed card for sterilization recipes
+      - safety certification.
+  - name: visible_contamination_restart_boundary
+    guide: GD-250
+    must_include:
+      - Any visible blood or tissue on instruments indicates failed pre-cleaning.
+      - Do not proceed with sterilization
+      - Organic material protects organisms from sterilizing agents
+  - name: uncertainty_and_storage_boundary
+    guide: GD-250
+    must_include:
+      - visual inspection (any dust, discoloration, or contamination visible = assume recontaminated, re-sterilize)
+      - if sealed storage suspected good but uncertain, re-sterilize before use
+      - Visual contamination
+      - do not use sterilized items
+  - name: clean_dirty_workflow_separation
+    guide: GD-250
+    must_include:
+      - Dirty area (receives used instruments, pre-cleaning occurs here with water/soap/brush).
+      - Staging area (instruments arranged, wrapped if necessary).
+      - Cooling/drying area (clean surface, covered or enclosed).
+      - Storage area (sealed containers, organized by instrument type/date).
+review_status: pilot_reviewed
+notes: >
+  This card closes the GD-250 metadata/card audit gap as a boundary-only
+  sterile-item intake and owner-handoff surface. It intentionally excludes the
+  source guide's procedural sterilization methods, parameters, validation
+  testing, equipment operation, medical/dental/lab readiness claims, pathogen
+  guarantees, legal/code claims, and safety certification.
