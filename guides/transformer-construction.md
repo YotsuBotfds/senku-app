@@ -16,6 +16,43 @@ related:
   - electrical-generation
   - electricity-basics-for-beginners
   - electrical-wiring
+aliases:
+  - transformer condition inventory
+  - transformer red flag checklist
+  - damaged transformer handoff
+  - transformer do not energize
+  - transformer labeling isolation checklist
+  - qualified electrical owner transformer handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level transformer condition and intake inventory, visible high-voltage or stored-energy red flags, labeling/isolation documentation, do-not-energize triggers, and qualified electrical owner handoff.
+  - Keep answers focused on non-invasive facts: location, owner, labels, nameplate text if readable from a safe distance, enclosure condition, access control, water or impact exposure, unusual heat, odor, smoke, oil leak, buzzing, arcing, repeated trips, missing covers, exposed conductors, and notification status.
+  - Route transformer construction, winding calculations, core lamination, insulation procedures, testing procedures, energized work, step-up/down wiring, high-voltage handling, repair, mounting instructions, code/legal claims, and safety certification away from this card.
+routing_support:
+  - electrical-safety-hazard-prevention for active electrical hazards, shock, exposed live conductors, arcing, smoke, wet equipment, emergency isolation, and scene safety.
+  - power-distribution for non-invasive distribution equipment condition inventory, public-access controls, and qualified electrician or authority handoff.
+  - electrical-wiring for wiring project boundary triage and qualified-electrician handoff when transformer-adjacent wiring work is proposed.
+citations_required: true
+citation_policy: >
+  Cite GD-508 and its reviewed answer card only for transformer condition/intake
+  inventory, visible high-voltage or stored-energy red flags, labeling and
+  isolation documentation, do-not-energize triggers, and qualified electrical
+  owner handoff. Do not use it for transformer construction, winding
+  calculations, core lamination, insulation procedures, testing procedures,
+  energized work, step-up/down wiring, high-voltage handling, repair, mounting
+  instructions, code/legal claims, or safety certification.
+applicability: >
+  Use for boundary-only transformer questions: non-invasive condition/intake
+  inventory, visible hazard triage, labeling or isolation documentation,
+  do-not-energize screening, access control, and routing to the responsible
+  electrical owner, qualified electrician, utility, manufacturer, inspector,
+  emergency services, or local authority. Do not use for construction,
+  calculation, winding, insulation, testing, energizing, wiring, high-voltage
+  handling, repair, mounting, legal/code determinations, or declaring a
+  transformer safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: transformer_construction_condition_inventory_handoff
+answer_card:
+  - transformer_construction_condition_inventory_handoff
 read_time: 8
 word_count: 3000
 last_updated: '2026-02-20'
@@ -38,6 +75,16 @@ This guide covers salvaging and rebuilding transformers, core lamination, windin
 :::
 
 </section>
+
+## Reviewed Answer-Card Boundary: Transformer Inventory and Handoff
+
+This is the reviewed answer-card surface for GD-508. Use it only for transformer condition and intake inventory, visible high-voltage or stored-energy red flags, labeling and isolation documentation, do-not-energize triggers, access control, and handoff to the responsible electrical owner, qualified electrician, utility, manufacturer, inspector, emergency services, or local authority.
+
+Start with what can be observed without opening equipment, touching conductors, operating switches, probing, testing, disassembling, lifting, mounting, repairing, wiring, or approaching restricted electrical spaces: location, owner or maintainer, labels or nameplate text readable from a safe distance, enclosure condition, barriers, public access, water or flood exposure, impact damage, corrosion, oil leak, swelling, unusual heat, buzzing, smoke, burning smell, arcing, exposed conductors, missing covers, repeated protective-device trips, unknown power status, and who was notified.
+
+Do-not-energize triggers include shock or injury, arcing, smoke, burning smell, visible damage, exposed or suspected live conductors, wet or flooded transformer equipment, oil leaks, missing covers, damaged barriers, repeated trips, unknown ownership, unknown isolation status, or pressure to test, connect, repair, move, mount, or energize the transformer before qualified review. Keep people back from possible high-voltage or stored-energy hazards and hand off before any routine work.
+
+Do not provide transformer construction, winding calculations, core lamination, insulation procedures, testing procedures, energized work, step-up/down wiring, high-voltage handling, repair, mounting instructions, code or legal claims, safe-to-energize statements, or safety certification from this reviewed card.
 
 <section id="transformer-principles">
 

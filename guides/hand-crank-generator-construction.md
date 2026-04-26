@@ -33,6 +33,31 @@ custom_css: |-
   .gen-type { background-color: #3a3020; padding: 15px; border-radius: 4px; border-top: 3px solid #7dd4cc; }
   .gen-power { color: #4ecdc4; font-weight: bold; font-size: 1.1em; margin-bottom: 8px; }
 liability_level: high
+aliases:
+  - hand crank generator load inventory
+  - portable generator project boundary
+  - pedal generator hazard checklist
+  - human powered generator battery red flags
+  - hand crank generator owner handoff
+  - low power load triage for manual generator
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level portable human-powered generator scoping, low-power load inventory, visible mechanical and electrical hazard recognition, battery or charging red flags, stop-work conditions, and qualified electrical owner handoff.
+  - Keep routine answers focused on non-invasive planning: intended loads, duration expectations, visible guards and rotating parts, exposed wiring, damaged insulation, battery condition concerns, unclear ownership, documentation, and handoff triggers.
+  - Route generator construction, coil winding, magnet selection, wiring diagrams, charging settings, battery revival or repair, voltage/current formulas as instructions, live testing, bicycle or mechanical drive build steps, code/legal claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-504 answer card for portable generator project scoping, low-power load inventory, visible mechanical/electrical hazards, battery or charging red flags, stop-work conditions, and qualified electrical owner handoff only; do not use it for generator construction, coil winding, magnet selection, wiring diagrams, charging settings, battery revival or repair, voltage/current formulas as instructions, live testing, bicycle or mechanical drive build steps, code/legal claims, or safety certification.
+applicability: >
+  Use for boundary-only scoping, low-power load inventory, visible hazard
+  recognition, stop-work triggers, documentation, and qualified electrical owner
+  handoff for portable hand-crank, pedal, or bicycle generator projects. Do not
+  use for generator construction, coil winding, magnet selection, wiring
+  diagrams, charging settings, battery revival or repair, voltage/current
+  formulas as instructions, live testing, bicycle or mechanical drive build
+  steps, code/legal claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: hand_crank_generator_boundary_load_inventory
+answer_card:
+  - hand_crank_generator_boundary_load_inventory
 ---
 
 ## Start Here

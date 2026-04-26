@@ -18,7 +18,54 @@ word_count: 3800
 last_updated: '2026-02-20'
 version: '1.0'
 liability_level: high
+aliases:
+  - flywheel condition inventory
+  - flywheel containment red flags
+  - flywheel access control checklist
+  - flywheel visible damage handoff
+  - flywheel stop use triggers
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level flywheel condition inventory, containment and access-control red flags, visible damage, owner or engineer handoff, and stop-use trigger recognition for existing flywheel installations.
+  - Keep routine answers focused on non-invasive observation: current access status, ownership, operating status, containment condition, guards, barriers, warning labels, visible cracks, deformation, corrosion, loose parts, unusual noise or vibration, heat, odors, impact history, and maintenance-record gaps.
+  - Route flywheel design, dimensions, mass or speed calculations, material strength calculations, balancing procedures, bearing construction or repair, containment design, spin-up or testing procedures, generator coupling, live operation, safe RPM claims, code or legal claims, and safety certification away from this card.
+routing_support:
+  - The guide describes flywheel energy storage, materials, bearings, containment hazards, operating context, applications, historical examples, and safety-critical failure concerns.
+  - The reviewed surface narrows that material to condition inventory, visible red flags, access control, stop-use triggers, and owner or qualified engineer handoff only; design, calculation, testing, operation, repair, and certification content remains out of the answer-card lane.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for flywheel condition inventory,
+  containment or access-control red flags, visible damage, stop-use triggers,
+  and owner or qualified engineer handoff only. Do not use it for flywheel
+  design, dimensions, mass or speed calculations, material strength
+  calculations, balancing procedures, bearing construction or repair,
+  containment design, spin-up or testing procedures, generator coupling, live
+  operation, safe RPM claims, code or legal claims, or safety certification.
+applicability: >
+  Use for boundary-only observation and handoff questions about existing
+  flywheel installations: non-invasive condition inventory, containment and
+  access-control concerns, visible damage, unusual noise or vibration, heat,
+  odors, impact history, missing guards, missing labels, maintenance-record
+  gaps, stop-use triggers, and owner or qualified engineer handoff. Do not use
+  for design, calculations, balancing, bearing or containment repair, spin-up,
+  testing, generator coupling, live operation, safe RPM claims, legal/code
+  claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: flywheel_energy_storage_condition_inventory_handoff
+answer_card:
+  - flywheel_energy_storage_condition_inventory_handoff
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-430. Use it only for non-invasive flywheel condition inventory, containment and access-control red flags, visible damage, owner or qualified engineer handoff, and stop-use trigger recognition for existing flywheel installations.
+
+Start with observation from outside the operating or restricted area. Record the site or equipment identity, owner or maintainer, current operating and access status, date, observer, containment or guard condition, warning labels, barriers, visible cracks, deformation, corrosion, loose parts, unusual noise or vibration, heat, odor, impact history, recent changes, maintenance records, and who was notified. If the flywheel is operating, accessible to unqualified people, visibly damaged, unguarded, poorly contained, unusually noisy, vibrating, hot, recently impacted, undocumented, or associated with uncertain ownership, stop routine use advice and route to the owner, operator, qualified engineer, qualified maintenance lead, manufacturer, site authority, or emergency authority.
+
+Do not use this reviewed card for flywheel design, dimensions, mass or speed calculations, material strength calculations, balancing procedures, bearing construction or repair, containment design, spin-up or testing procedures, generator coupling, live operation, safe RPM claims, code or legal claims, or safety certification. If a prompt asks for those, give only the relevant observation and handoff boundary.
+
+</section>
 
 <section id="overview">
 
@@ -320,4 +367,3 @@ Before electricity, flywheels were used in industrial machinery to smooth the po
 - [ ] Conduct dynamic load test before full commissioning
 
 </section>
-

@@ -4,7 +4,9 @@ slug: electric-motor-rewinding
 title: Electric Motor Rewinding
 category: power-generation
 difficulty: intermediate
-tags: []
+tags:
+  - repair
+  - electrical
 icon: ⚡
 description: Motor diagnosis, winding data recording, slot insulation, hand winding, varnishing, and alternator conversion.
 related:
@@ -14,6 +16,43 @@ related:
   - induction-motor-troubleshooting
   - small-engines
   - solar-technology
+aliases:
+  - electric motor rewinding boundary
+  - motor condition intake checklist
+  - damaged motor do not power on
+  - motor nameplate facts handoff
+  - burned motor visible damage triage
+  - qualified motor repair handoff
+  - motor electrical owner routing
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level motor condition intake, visible damage screening, do-not-power-on triggers, nameplate or labelplate fact gathering, isolation from use, and qualified motor or electrical owner handoff.
+  - Keep answers focused on facts a responsible owner needs before deciding whether a motor should be inspected: motor identity, nameplate values, power source, symptoms, incident history, visible damage, odor, heat, water exposure, corrosion, damaged terminals or leads, missing guards or covers, and who owns the decision.
+  - Route rewinding steps, winding counts, wire gauge selection, insulation varnish or cure, disassembly or assembly, live testing, capacitor work, bearing repair, motor sizing or calculations, energized work, return-to-service claims, code or legal claims, and safety certification away from this card.
+routing_support:
+  - electrical-safety-hazard-prevention for shock, exposed live conductors, wet energized equipment, sparking, smoke, burning smell, emergency isolation, or scene safety.
+  - electrical-wiring for wiring-project boundary triage, qualified-electrician handoff, and stop-work wiring red flags.
+  - electronics-repair-fundamentals for device intake, do-not-power-on screening, and repair-owner routing outside motor-specific questions.
+  - induction-motor-troubleshooting for non-procedural owner-level symptom vocabulary after active hazards are controlled.
+citations_required: true
+citation_policy: >
+  Cite GD-356 and its reviewed answer card only for motor condition intake,
+  visible damage screening, do-not-power-on triggers, nameplate or labelplate
+  fact gathering, isolation from use, and qualified motor or electrical owner
+  routing. Do not use it for rewinding steps, winding counts, wire gauge
+  selection, insulation varnish or cure, disassembly or assembly, live testing,
+  capacitor work, bearing repair, motor sizing or calculations, energized work,
+  return-to-service claims, code or legal claims, or safety certification.
+applicability: >
+  Use for boundary-only questions about whether a motor should stay isolated,
+  what visible condition and nameplate facts should be documented, what
+  do-not-power-on triggers are present, and which qualified motor or electrical
+  owner should decide the next step. Do not use for motor rewinding procedure,
+  repair procedure, testing procedure, sizing, energized troubleshooting,
+  capacitor work, bearing repair, or declaring a motor safe to operate.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: electric_motor_rewinding_condition_boundary
+answer_card:
+  - electric_motor_rewinding_condition_boundary
 read_time: 40
 word_count: 8700
 last_updated: '2026-02-21'
@@ -25,6 +64,16 @@ custom_css: |-
   .conn-circle { fill: #1565c0; stroke: #64b5f6; stroke-width: 2; } .conn-line { stroke: #64b5f6; stroke-width: 2; fill: none; } .conn-text { fill: #90caf9; font-family: Arial; font-size: 13px; } .conn-label { fill: #64b5f6; font-family: Arial; font-size: 12px; font-weight: bold; }
 liability_level: high
 ---
+## Reviewed Answer-Card Boundary: Motor Condition Intake and Handoff
+
+This is the reviewed answer-card surface for GD-356. Use it only for motor condition intake, visible damage screening, do-not-power-on triggers, labelplate or nameplate fact gathering, isolation from use, and qualified motor or electrical owner routing.
+
+Start with whether anyone was shocked, whether the motor is connected to power, whether there is smoke, sparking, burning odor, unusual heat, water exposure, damaged leads or terminals, missing covers or guards, corrosion, scorch marks, melted insulation, prior failed start attempts, repeated breaker or fuse trips, unknown modifications, or pressure to energize the motor. If any of these are present or the power status is uncertain, keep the motor out of service, prevent re-energizing, document visible facts from a safe distance, and hand off to the responsible motor owner, qualified electrical worker, motor repair shop, equipment manufacturer, utility, or emergency responder as appropriate.
+
+For routine handoff, record only non-invasive facts: motor location, owner, driven equipment, power source if known, nameplate or labelplate values, symptoms, incident history, visible damage, odor, water or heat exposure, terminal-box or lead condition visible without opening energized equipment, photos from safe positions if allowed, current isolation status, and who is responsible for the next decision.
+
+Do not use this reviewed card for rewinding steps, winding counts, wire gauge selection, slot insulation, varnish or cure instructions, disassembly or assembly, megger or live testing procedure, capacitor work, bearing repair, motor sizing or calculations, energized work, return-to-service claims, code or legal claims, or safety certification.
+
 <section id="why">
 
 ## Why Motor Rewinding Matters

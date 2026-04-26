@@ -1,0 +1,205 @@
+card_id: micro_hydro_turbine_site_observation_boundary
+guide_id: GD-337
+slug: micro-hydro-turbine
+title: Micro-Hydro Turbine Systems
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user needs boundary-level site observation, access-control awareness, water-hazard red flags, rough intake of already-known facts, maintenance-log review, or owner handoff for an existing or proposed micro-hydro site.
+  - The question is about visible hazards, public access, high or fast water, unstable banks, blocked intake screens, damaged barriers, exposed wiring, damaged or leaking components, unusual noise or vibration, storm damage, debris, owner records, or maintenance-log gaps.
+  - The problem is observation, documentation, keep-back recognition, and handoff, not measurement, calculation, design, construction, trenching, in-water work, electrical work, water-control manipulation, permitting advice, or safety certification.
+required_first_actions:
+  - Start from a safe public or authorized vantage point; do not enter closed, posted, flooded, fast-water, unstable-bank, intake, penstock, turbine, generator, electrical, excavation, dam, spillway, sluice, or in-water areas.
+  - Classify the prompt as micro-hydro site observation, access hazard, water hazard, intake-screen observation, maintenance-log review, known-facts intake, or owner/engineer/environmental handoff before giving advice.
+  - Look first for red flags that require keeping people back or routing to the owner, operator, qualified engineer, environmental or waterway authority, electrician, emergency manager, inspector, or local authority before routine logging.
+  - Keep the answer at site-observation, access-control, water-hazard, maintenance-log, rough-known-facts, and handoff level.
+first_actions:
+  - Record the site name or location, date, observer, current public access status, owner or operator if known, and recent storm, flood, freeze, debris, landslide, construction, or maintenance history.
+  - From a safe location, note visible high or fast water, floodwater, unstable banks, erosion, damaged barriers, exposed wiring, wet electrical equipment, damaged or leaking components, unusual vibration or noise, blocked intake screens, debris buildup, and posted restrictions.
+  - Capture already-known facts from existing owner records, maintenance logs, site photos, water-level records, prior inspection notes, environmental notices, or operator reports without adding measurement procedures or engineering calculations.
+  - Preserve a handoff log with what changed, when it was first noticed, whether it is worsening, photos from safe locations if allowed, access-control status, weather and water conditions, record gaps, and the named owner or qualified decision maker.
+  - If people are near fast water, high water, floodwater, unstable banks, excavation, intake structures, penstocks, turbines, generators, exposed wiring, dams, spillways, sluices, or damaged barriers, prioritize keeping them back and routing to the responsible authority before documentation detail.
+urgent_red_flags:
+  - People entering or working near fast water, high water, floodwater, unstable banks, eroded areas, excavations, intake structures, penstocks, turbines, generators, dams, spillways, sluices, or other restricted areas.
+  - Posted closure, damaged barriers, missing guards, damaged access controls, public access to intake, penstock, turbine, generator, electrical, excavation, dam, spillway, or sluice areas, or uncertainty about safe public access.
+  - Exposed wiring, wet electrical equipment, damaged generator equipment, missing covers, burned smell, heat, sparking, recent lightning damage, or any request for wiring, grounding, energizing, load control, or grid-tie work.
+  - Damaged or leaking components, unusual vibration or noise, visible movement, erosion, scour, undermining, bank collapse, blocked water paths, debris impact, flooding, diversion, or sudden change in water conditions.
+  - Missing, obsolete, contradictory, or unresolved owner, maintenance, inspection, environmental, or waterway records while access, construction, or operation is continuing.
+forbidden_advice:
+  - Do not provide head or flow measurement procedures, weir or float methods, bucket timing, survey methods, power calculations, sizing formulas, efficiency calculations, turbine selection, turbine construction, or generator coupling instructions.
+  - Do not provide penstock, intake, trash-rack, settling-basin, tailrace, trenching, excavation, anchoring, pipe sizing, pressure, hydraulic, or civil design instructions.
+  - Do not provide load-controller, dump-load, battery, inverter, grid-tie, grounding, breaker, fuse, wiring, energizing, testing, troubleshooting, or electrical interconnection procedures.
+  - Do not provide in-water work, dam, diversion, sluice, gate, valve, spillway, bypass, storage pond, or other water-control manipulation instructions.
+  - Do not provide legal/permitting claims, water-rights advice, environmental compliance conclusions, safe-to-use declarations, safe-to-reopen declarations, or safety certification.
+do_not:
+  - Do not convert the source guide's measurement, calculation, turbine, penstock, intake, construction, electrical, load-control, grid-tie, or water-control passages into reviewed-card instructions.
+  - Do not minimize high water, fast water, public access, unstable banks, exposed wiring, damaged components, unusual vibration, blocked water paths, or missing logs because the system has not failed yet.
+  - Do not delay keep-back, stop-work, owner handoff, or emergency handoff to complete a full checklist when red flags are already present.
+routine_boundary: >
+  This card owns only the reviewed boundary lane for GD-337: micro-hydro
+  site observation, access-control awareness, water-hazard red flags, rough
+  intake of already-known facts, maintenance-log review, and owner, engineer,
+  environmental, waterway, electrical-hazard, emergency-manager, inspector, or
+  local-authority handoff. It does not own head or flow measurement procedures,
+  power calculations, turbine selection or construction, penstock or intake
+  design, trenching or excavation, generator coupling, load controllers,
+  grid-tie, electrical wiring, in-water work, dam or water-control manipulation,
+  legal/permitting claims, or safety certification.
+acceptable_uncertain_fit: >
+  If the exact site condition or severity is unclear but the prompt reports
+  visible hazard, access, water, electrical, intake, storm, debris, unstable-bank,
+  component-damage, or maintenance-log concerns, give a conservative observation
+  and handoff answer. Default to keeping people back when public access, water,
+  electrical exposure, bank stability, component condition, or records are
+  uncertain, and ask one clarifying question only after the immediate keep-back
+  or handoff step.
+clarifying_questions:
+  - What part of the site is involved: intake, screen, channel, penstock, turbine area, generator area, access path, bank, dam, spillway, sluice, or downstream area?
+  - What changed recently: high water, fast water, flood, storm, freeze, debris impact, erosion, unstable bank, damaged barrier, exposed wiring, leak, vibration, unusual sound, blocked screen, posted restriction, or maintenance-log finding?
+  - Are people currently trying to enter, work near, enter the water, bypass a closure, touch equipment, operate the system, dig, trench, or manipulate a valve, gate, dam, sluice, or intake?
+  - Who owns or operates the site, and is there a recent maintenance log, inspection note, environmental notice, water-level record, owner photo, or qualified engineer report?
+applicability:
+  owner: micro-hydro site-observation boundary and owner handoff only
+  use_when:
+    - micro_hydro_site_observation
+    - micro_hydro_access_hazard_red_flags
+    - micro_hydro_water_hazard_keep_back
+    - intake_screen_visible_blockage_log
+    - micro_hydro_maintenance_log_review
+    - rough_known_facts_intake_for_owner_handoff
+    - owner_engineer_environmental_handoff
+  do_not_use_when:
+    - head_or_flow_measurement_procedure
+    - power_calculation_or_system_sizing
+    - turbine_selection_construction_or_generator_coupling
+    - penstock_intake_trash_rack_or_civil_design
+    - trenching_excavation_or_in_water_work
+    - load_controller_grid_tie_or_electrical_wiring
+    - dam_sluice_valve_spillway_or_water_control_manipulation
+    - legal_permitting_claim_or_safety_certification
+  handoff:
+    - water-mills-windmills for broader fixed-site waterwheel, mill, windmill, turbine, rotating-equipment, or public-access observations outside the micro-hydro site lane.
+    - bridges-dams for dam, spillway, retaining-wall, scour, seepage, overtopping, or infrastructure visible-distress concerns.
+    - energy-systems for planning-level energy-needs inventory, source comparison, resilience planning, and maintenance-owner logs without hydro design or electrical procedures.
+    - electrical-safety-hazard-prevention or power-distribution-basics for electrical hazard recognition and owner routing, not wiring procedures.
+    - owner/operator, qualified civil or hydraulic engineer, environmental or waterway authority, electrician, inspector, emergency manager, rescue authority, or local jurisdiction for red flags, access decisions, operation, repair, permitting, legal, or certification requests.
+actions:
+  required:
+    - identify site area and current public-access status
+    - lead with keep-back or emergency/owner handoff if red flags are present
+    - document visible water, access, bank, intake-screen, component, electrical, weather, debris, and maintenance-log facts from safe public or authorized vantage points only
+    - capture already-known facts from existing owner records without adding measurement procedures or calculations
+    - route measurement, calculation, design, construction, trenching, in-water work, electrical, load-control, grid-tie, water-control, legal, permitting, operation, repair, or certification decisions to the responsible owner or qualified authority
+  standard:
+    - create a short handoff log with location, date, observer, recent weather or water event, visible changes, posted restrictions, access-control status, known owner facts, record gaps, and owner or qualified authority contact path
+    - separate access, water, bank, intake, component, electrical, environmental, and maintenance-record observations so the receiving owner or qualified authority can triage quickly
+forbidden:
+  - head or flow measurement procedures, weir or float methods, bucket timing, survey methods, power calculations, sizing formulas, efficiency calculations, turbine selection, turbine construction, or generator coupling instructions
+  - penstock, intake, trash-rack, settling-basin, tailrace, trenching, excavation, anchoring, pipe sizing, pressure, hydraulic, or civil design instructions
+  - load-controller, dump-load, battery, inverter, grid-tie, grounding, breaker, fuse, wiring, energizing, testing, troubleshooting, or electrical interconnection procedures
+  - in-water work, dam, diversion, sluice, gate, valve, spillway, bypass, storage pond, or other water-control manipulation instructions
+  - legal/permitting claims, water-rights advice, environmental compliance conclusions, safe-to-use declarations, safe-to-reopen declarations, or safety certification
+fallback_handoff_language:
+  - If a red flag is present, keep people back and route the observation to the owner/operator, qualified engineer, environmental or waterway authority, electrician, inspector, emergency manager, rescue authority, or local jurisdiction before routine logging.
+  - If the user asks for measurement, calculations, turbine selection, construction, penstock or intake design, trenching, in-water work, wiring, load controllers, grid-tie, water-control manipulation, legal/permitting claims, operation, repair, or certification, explain that this card can organize visible observations and records for handoff but cannot make those decisions.
+  - If someone is injured, trapped, in fast water, in floodwater, in an excavation, near exposed wiring, near moving equipment, or near a failing bank or water-control structure, stop site-observation advice and route to emergency/rescue authorities without giving rescue tactics.
+output:
+  required:
+    - site area and current access status
+    - keep-back, stop-work, or emergency/owner handoff trigger screen
+    - visible water, bank, access, intake-screen, component, electrical, weather, debris, and environmental observations from safe vantage points
+    - already-known owner facts and maintenance-log, inspection-note, environmental-notice, water-level-record, storm-record, or repair-record status
+    - owner, operator, qualified engineer, environmental or waterway authority, electrician, inspector, emergency-manager, rescue-authority, or local-jurisdiction handoff
+    - explicit boundary against measurement procedures, calculations, design, construction, trenching, in-water work, electrical procedures, grid-tie, load controllers, water-control manipulation, legal/permitting claims, operation, repair, and safety certification
+  prohibited:
+    - safe-to-use or safe-to-reopen declaration
+    - head or flow measurement procedure
+    - power, sizing, pressure, hydraulic, electrical, or structural calculation as a decision
+    - turbine, penstock, intake, trenching, excavation, wiring, load-control, grid-tie, testing, repair, or operation procedure
+    - dam, sluice, gate, valve, spillway, bypass, storage pond, or water-control instruction
+    - legal/permitting or safety certification claim
+routing_tests:
+  positive:
+    - prompt: "The micro-hydro intake screen looks blocked after a flood and people can walk down to fast water. What should we log and who gets the handoff?"
+      expect: micro_hydro_turbine_site_observation_boundary
+    - prompt: "There is exposed wiring near the small hydro generator shed and the maintenance records are missing. Help me make a safe observation log."
+      expect: micro_hydro_turbine_site_observation_boundary
+    - prompt: "We only know the owner photos, recent storm history, and visible leaks at a micro-hydro penstock. Can you organize known facts for an engineer handoff?"
+      expect: micro_hydro_turbine_site_observation_boundary
+  near_miss:
+    - prompt: "Show me how to measure head and flow and calculate the power output."
+      expect_handoff: qualified_hydro_or_civil_engineer
+    - prompt: "Design the intake, penstock, and turbine for this stream."
+      expect_handoff: qualified_hydro_or_civil_engineer
+    - prompt: "Wire the generator to batteries and connect it to the grid."
+      expect_handoff: qualified_electrician_or_interconnection_authority
+    - prompt: "Tell me how to open the sluice and divert more water into the intake."
+      expect_handoff: owner_operator_or_waterway_authority
+  boundary:
+    - prompt: "Can you certify this micro-hydro installation is safe and permitted?"
+      expect: legal_permitting_certification_handoff_not_card_answer
+    - prompt: "Someone slipped into fast water near the intake; how do we get them out?"
+      expect: emergency_rescue_handoff_not_rescue_tactics
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-337-scope-boundary
+  - gd-337-reviewed-card-boundary
+  - gd-337-maintenance-monitoring
+  - gd-337-environmental-regulatory-considerations
+source_sections:
+  - guide: GD-337
+    slug: micro-hydro-turbine
+    title: Micro-Hydro Turbine Systems
+    sections:
+      - "#scope-boundary"
+      - "#reviewed-answer-card-boundary-site-observation-logs-and-handoffs"
+      - "#maintenance"
+      - "#environmental"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-337
+    must_include:
+      - This is the reviewed answer-card surface for GD-337.
+      - Start from a safe public or authorized vantage point
+      - Do not use the reviewed card for head or flow measurement procedures
+      - safety certification
+  - name: visible hazard observations remain
+    guide: GD-337
+    must_include:
+      - high or fast water
+      - unstable banks
+      - exposed wiring
+      - damaged or leaking components
+      - blocked intake screens
+  - name: maintenance and record keeping remain
+    guide: GD-337
+    must_include:
+      - Keep detailed operating logs
+      - maintenance records
+      - unusual vibration
+  - name: environmental handoff context remains
+    guide: GD-337
+    must_include:
+      - Consult local environmental regulations before developing a site.
+      - local water authority
+      - environmental agency
+  - name: forbidden runtime domains remain
+    guide: GD-337
+    must_include:
+      - head or flow measurement procedures
+      - power calculations
+      - turbine selection or construction
+      - penstock or intake design
+      - electrical wiring
+      - dam or water-control manipulation
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-337 as a boundary-only micro-hydro site observation,
+  access-control, water-hazard, rough-known-facts, maintenance-log, and
+  owner/engineer/environmental handoff card. It deliberately excludes head and
+  flow measurement procedures, power calculations, turbine selection or
+  construction, penstock or intake design, trenching or excavation, generator
+  coupling, load controllers, grid-tie, electrical wiring, in-water work, dam or
+  water-control manipulation, legal/permitting claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.

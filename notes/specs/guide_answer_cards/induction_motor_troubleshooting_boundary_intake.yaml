@@ -1,0 +1,193 @@
+card_id: induction_motor_troubleshooting_boundary_intake
+guide_id: GD-609
+slug: induction-motor-troubleshooting
+title: Induction Motor Troubleshooting & Single-Phase Conversion
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applicability: >
+  Boundary-only card for induction motor symptom intake and handoff: use it to
+  collect visible/smell/heat/noise/vibration observations, screen
+  do-not-power-on triggers, keep people away from electrical and moving-part
+  hazards, record nameplate facts, control access, and prepare a qualified
+  electrical or motor owner handoff. It is not a powered troubleshooting, live
+  testing, capacitor, wiring, megger/testing, bearing repair, rewinding, repair,
+  reset/restart, code/legal, or safety-certification card.
+applies_when:
+  - A user reports an induction motor that smells burned, overheated, smoked, sparked, hummed, ground, squealed, vibrated, leaked oil, got wet, tripped protection, failed to start, stalled, seized, or behaved abnormally.
+  - A user asks what to document before a qualified electrical or motor owner inspects a motor.
+  - A user needs a safe first-pass checklist for whether a motor should remain isolated, tagged out of service, access-controlled, or handed off.
+  - A user has nameplate information or visible symptoms but is not asking for live testing, repair steps, wiring, capacitor work, or restart instructions.
+required_first_actions:
+  - Start with do-not-power-on screening before symptom collection or handoff notes.
+  - Keep people away from rotating parts, belts, couplings, fans, exposed conductors, wet electrical equipment, hot surfaces, smoke, sparks, and unknown electrical status.
+  - Do not power, reset, restart, or test the motor during intake when smoke, sparks, burning electrical smell, shock, water exposure, missing covers or guards, exposed conductors, seized or locked shaft, grinding, severe vibration, overheating, repeated trips, unknown wiring changes, capacitor damage, or uncertain isolation is present.
+  - Tag the motor out of service, control access, and route unsafe or uncertain cases to a qualified electrical or motor owner.
+  - Gather only handoff facts: motor identity, owner, location, connected equipment, known power source, nameplate data, last normal operation, symptoms, photos from a safe distance, visible damage, smell, heat, noise, vibration, leaks, water exposure, smoke, sparks, shock history, missing guards or covers, and access-control status.
+conditional_required_actions:
+  - trigger_terms:
+      - smoke
+      - sparks
+      - burning smell
+      - electrical smell
+      - shock
+      - wet
+      - water exposure
+      - exposed conductor
+    required_actions:
+      - Treat as an active electrical safety handoff; keep people back, do not energize or test, control access, and route to the electrical safety or qualified electrical owner.
+  - trigger_terms:
+      - grinding
+      - seized
+      - locked shaft
+      - severe vibration
+      - overheating
+      - very hot
+      - repeated trips
+    required_actions:
+      - Treat as a do-not-power-on motor handoff condition; document symptoms and keep the motor tagged out until the qualified owner decides next steps.
+  - trigger_terms:
+      - capacitor
+      - single phase conversion
+      - wiring
+      - megger
+      - resistance
+      - test with meter
+      - live test
+    required_actions:
+      - Do not provide capacitor, wiring, powered troubleshooting, megger, resistance, or live-testing steps; answer only with intake, isolation, and qualified-owner handoff.
+first_actions:
+  - Ask whether there is shock, smoke, sparks, burning electrical smell, water exposure, exposed conductors, missing covers or guards, severe vibration, grinding, overheating, repeated trips, seized shaft, or pressure to restart.
+  - Record motor identity and owner, location, connected equipment, known power source, and nameplate facts such as manufacturer, model, voltage, phase, horsepower or kW, speed, service factor, enclosure, and connected load.
+  - Log symptoms without energizing the motor: visible damage, smell, heat, noise, vibration, oil or fluid leakage, water exposure, smoke, sparks, shock history, missing guards or covers, and last normal operation.
+  - Photograph labels, damaged areas, guards, covers, mounting area, connected equipment, and access-control status from a safe distance if doing so does not require touching electrical or moving equipment.
+  - Tag the motor out of service, prevent use or restart, and name the responsible handoff owner: qualified electrician, motor repair shop, maintenance lead, equipment owner, electrical safety owner, or emergency responder.
+urgent_red_flags:
+  - Shock, collapse near equipment, exposed or suspected live conductors, wet electrical equipment, standing water near the motor or controls, smoke, sparks, flame, or burning electrical smell.
+  - Missing guards or covers around moving parts, belts, couplings, fans, terminals, controls, or capacitors.
+  - Grinding, seized or locked shaft, severe vibration, overheating, repeated trips, sudden stall, or pressure to reset/restart before owner review.
+  - Unknown wiring changes, damaged capacitor or capacitor enclosure, improvised controls, unknown power status, or inaccessible disconnect/owner information.
+forbidden_advice:
+  - Do not provide powered troubleshooting procedures, instructions to run the motor, reset it, restart it, bump it, test under load, or listen/feel while operating.
+  - Do not provide live testing, meter probing, resistance measurement, megger or insulation testing steps, current measurement, phase-balance checks, or verification of de-energized status.
+  - Do not provide capacitor handling, capacitor sizing, discharge, wiring, conversion, contactor, relay, terminal, phase-conversion, or single-phase adaptation instructions.
+  - Do not provide bearing removal, bearing installation, lubrication, alignment repair, rewinding, drying, cleaning inside electrical compartments, or other repair procedures.
+  - Do not diagnose the fault with certainty, declare the motor safe, certify return to service, or make code, legal, permit, inspection-pass, or safety-certification claims.
+do_not:
+  - Do not convert GD-609's diagnostic, bearing replacement, capacitor conversion, braking, alignment, vibration measurement, insulation testing, or troubleshooting checklist sections into reviewed answer-card instructions.
+  - Do not tell the user to power the motor to confirm a symptom.
+  - Do not tell the user to open, wire, discharge, test, repair, rewind, bake, lubricate, align, reset, restart, or return the motor to service.
+  - Do not treat active electrical hazards or moving-part hazards as routine maintenance.
+routine_boundary: >
+  This card owns only the GD-609 motor intake and handoff lane: symptom
+  documentation, do-not-power-on screening, safe-distance visible observations,
+  smell/heat/noise/vibration logging, isolation and access control, nameplate
+  fact collection, and qualified electrical or motor owner handoff. It must hand
+  off all powered diagnostics, live testing, capacitor handling, wiring,
+  megger/testing steps, repair, reset/restart, fault certainty, code/legal, and
+  safety-certification requests.
+acceptable_uncertain_fit: >
+  If the motor type, power status, symptom history, water exposure, guard
+  status, or owner is unclear, answer conservatively: keep people back, do not
+  energize or restart, document visible facts from a safe distance, ask one
+  targeted clarification, and route to the qualified electrical or motor owner.
+clarifying_questions:
+  - Is there any shock, smoke, sparks, burning electrical smell, water exposure, exposed conductor, missing guard or cover, severe vibration, grinding, overheating, repeated trip, seized shaft, or pressure to restart?
+  - What does the nameplate say for manufacturer, model, voltage, phase, horsepower or kW, speed, service factor, and enclosure?
+  - What equipment is the motor connected to, who owns it, and when did it last operate normally?
+  - What visible damage, smell, heat, noise, vibration, leakage, water exposure, missing cover, or access-control gap should be included in the handoff?
+  - Who is the qualified electrical or motor owner responsible for deciding the next step?
+fallback_handoff_language:
+  - "I can help make a motor symptom intake and handoff checklist, but I cannot provide powered troubleshooting, live testing, capacitor, wiring, megger, bearing repair, rewinding, reset/restart, code, or certification instructions."
+  - "If there is shock, smoke, sparks, burning electrical smell, water exposure, exposed conductors, missing guards, severe vibration, grinding, overheating, repeated trips, or a seized shaft, keep it out of service and hand off before anyone tries to power it."
+  - "Document the motor identity, nameplate facts, connected equipment, symptoms, visible damage, smell, heat, noise, vibration, leakage, access control, and responsible owner for the qualified electrical or motor handoff."
+handoff:
+  - electrical-safety-hazard-prevention for shock, exposed live conductors, wet electrical equipment, smoke, sparking, downed lines, emergency isolation, and scene safety.
+  - electrical-wiring for wiring-project boundary triage and qualified-electrician handoff without wiring instructions.
+  - power-distribution-basics for source/load inventory, owner mapping, outage logs, and planning-level power-distribution terminology.
+  - electrical-motors or qualified motor owner for motor-specific inspection, diagnostics, repair decisions, and return-to-service decisions.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  must_include_stop_work_screen: true
+  must_include_do_not_power_on_screen: true
+  must_include_nameplate_facts: true
+  must_include_symptom_logging: true
+  must_include_qualified_owner_handoff: true
+  forbid_powered_troubleshooting: true
+routing_tests:
+  positive:
+    - prompt: "A pump motor smelled burned and hummed yesterday. What should we log before calling someone?"
+      expect: induction_motor_troubleshooting_boundary_intake
+    - prompt: "Make a do-not-power-on checklist for a wet induction motor with missing guard covers."
+      expect: induction_motor_troubleshooting_boundary_intake
+  near_miss:
+    - prompt: "How do I megger this motor and interpret the readings?"
+      expect_handoff: qualified_electrical_or_motor_owner
+    - prompt: "What capacitor should I wire to run this 3-phase motor on single phase?"
+      expect_handoff: qualified_electrical_or_motor_owner
+    - prompt: "Walk me through replacing the bearings and restarting the motor."
+      expect_handoff: qualified_motor_repair_owner
+    - prompt: "Can I reset the breaker and test whether the motor still runs?"
+      expect_handoff: do_not_power_on_screen_before_qualified_owner
+  boundary:
+    - prompt: "The motor has grinding, severe vibration, and tripped twice."
+      expect: do_not_power_on_and_qualified_motor_handoff
+    - prompt: "No smoke or shock, but we need nameplate and symptom notes for the maintenance lead."
+      expect: induction_motor_troubleshooting_boundary_intake
+citation_ids:
+  - gd-609-reviewed-answer-card-boundary
+  - gd-609-common-failures-symptoms
+  - gd-609-listen-feel-smell-look
+  - gd-609-bearing-do-not-restart-warning
+  - gd-609-summary-document-condition-context
+source_sections:
+  - guide: GD-609
+    slug: induction-motor-troubleshooting
+    title: Induction Motor Troubleshooting & Single-Phase Conversion
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#common-induction-motor-failures"
+      - "#diagnostic-techniques-listen-feel-smell-look"
+      - "bearing failure warning block"
+      - "#summary-motor-troubleshooting-checklist"
+source_invariants:
+  - name: reviewed motor intake boundary remains non-procedural
+    guide: GD-609
+    must_include:
+      - "This is the reviewed answer-card surface for GD-609."
+      - "Use it only for induction motor symptom intake"
+      - "do-not-power-on screening"
+      - "qualified electrical or motor owner handoff"
+      - "does not provide powered troubleshooting, live testing, capacitor handling, wiring, megger or resistance testing steps, bearing repair, rewinding, repair instructions, reset/restart instructions, code/legal claims, or safety certification."
+  - name: do not power on and handoff triggers remain present
+    guide: GD-609
+    must_include:
+      - "Do not power on or restart a motor after smoke, sparks, burning electrical smell, shock, water exposure, missing covers or guards, exposed conductors, seized or locked shaft, grinding, severe vibration, overheating, repeated trips, unknown wiring changes, capacitor damage, or uncertainty about whether it is safely isolated."
+      - "Tag it out of service, control access, and route it to a qualified electrical or motor owner"
+  - name: source symptom observation context exists
+    guide: GD-609
+    must_include:
+      - "Diagnostic Techniques: Listen, Feel, Smell, Look"
+      - "Electrical smell"
+      - "Heat radiating from bearing locations"
+      - "Excessive vibration"
+  - name: source bearing warning context remains present
+    guide: GD-609
+    must_include:
+      - "Once a bearing begins grinding, do not continue operating the motor."
+      - "Shaft lock"
+      - "do not attempt to restart"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-609 as a boundary-only induction motor symptom intake,
+  do-not-power-on screening, logging, isolation, nameplate fact collection, and
+  qualified-owner handoff card. The source guide contains powered diagnostics,
+  capacitor conversion, bearing replacement, vibration measurement, insulation
+  testing, and repair content, but this reviewed card intentionally carries only
+  the safety-bounded intake and handoff surface. READY_FOR_PARENT_CLOSE.

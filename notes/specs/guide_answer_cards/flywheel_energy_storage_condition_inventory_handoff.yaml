@@ -1,0 +1,176 @@
+card_id: flywheel_energy_storage_condition_inventory_handoff
+guide_id: GD-430
+slug: flywheel-energy-storage
+title: Flywheel Energy Storage
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user needs boundary-level flywheel condition inventory, containment or access-control red flag recognition, stop-use trigger screening, or owner or qualified engineer handoff for an existing flywheel installation.
+  - The question is about visible damage, guard or containment condition, public or unqualified access, unusual noise or vibration, heat, odor, impact history, loose parts, corrosion, warning labels, barriers, operating status, ownership, or maintenance-record gaps.
+  - The problem is observation, documentation, red-flag recognition, and handoff, not flywheel design, dimensions, mass or speed calculations, material strength calculations, balancing, bearing construction or repair, containment design, spin-up or testing, generator coupling, live operation, safe RPM claims, legal/code advice, or safety certification.
+required_first_actions:
+  - Start with non-invasive observation only; do not enter restricted areas, open containment, remove guards, touch moving or hot parts, spin, test, balance, repair, adjust, couple, calculate, or operate the flywheel.
+  - Classify the prompt as condition inventory, containment concern, access-control concern, visible damage log, stop-use trigger, maintenance-record review, or owner or qualified engineer handoff.
+  - Screen for red flags before routine logging; if present, recommend pausing routine use or access when appropriate and routing to the owner, operator, qualified engineer, qualified maintenance lead, manufacturer, site authority, or emergency authority.
+  - Keep the answer at observation, logging, access-control awareness, stop-use trigger, and qualified handoff level.
+first_actions:
+  - Record the site or equipment identity, owner or maintainer, current operating status, current access status, date, observer, known recent changes, impact history, and available maintenance or inspection records.
+  - From outside the operating or restricted area, note containment or guard condition, barrier condition, warning labels, access-control gaps, visible cracks, deformation, corrosion, loose parts, rubbing marks, unusual noise, vibration, heat, odor, debris, and whether symptoms are worsening.
+  - Separate visible facts from suspected causes so the owner or qualified engineer can triage containment, access control, rotor condition, bearing concern, prior impact, maintenance gap, or operating status.
+  - Preserve a handoff log with what changed, when it was first noticed, whether operation or access is continuing, photos from safe locations if allowed, maintenance-record gaps, and the owner or qualified decision maker notified.
+  - If people are near an operating, damaged, unguarded, poorly contained, undocumented, hot, vibrating, noisy, or restricted flywheel area, prioritize keep-back and qualified handoff before routine documentation detail.
+urgent_red_flags:
+  - Operating flywheel with unqualified public access, missing guards, damaged barriers, missing warning labels, unknown owner, unclear shutdown or access authority, or unresolved maintenance-record gaps.
+  - Visible cracks, deformation, corrosion, missing pieces, loose fasteners or parts, rubbing marks, debris, impact damage, damaged containment, damaged access panels, or evidence that parts have contacted the enclosure.
+  - Unusual noise, worsening vibration, wobble concern, heat, odor, smoke, bearing distress signs, sudden change in sound or motion, or any indication the flywheel may be damaged while use continues.
+  - Any request for flywheel design, dimensions, mass or speed calculations, material strength calculations, balancing, bearing construction or repair, containment design, spin-up or testing, generator coupling, live operation, safe RPM claims, return-to-service approval, legal/code claims, or safety certification.
+forbidden_advice:
+  - Do not provide flywheel design, rotor dimensions, material selection as a design decision, energy storage sizing, mass calculations, speed calculations, moment-of-inertia calculations, material strength calculations, safe RPM claims, or operating-limit approvals.
+  - Do not provide balancing procedures, spin-up procedures, testing procedures, commissioning steps, live operation guidance, overspeed handling, generator coupling, clutching, braking, or load connection instructions.
+  - Do not provide bearing construction, bearing repair, shaft repair, containment design, shroud sizing, wall spacing, material thickness, access-panel design, or repair instructions as actionable advice.
+  - Do not certify a flywheel, containment system, repair, inspection, installation, operating condition, access plan, or maintenance decision as safe, code-compliant, ready for service, or professionally approved.
+do_not:
+  - Do not convert the source guide's design, materials, bearings, containment, charging, discharge, coupling, testing, commissioning, or checklist passages into reviewed-card instructions.
+  - Do not minimize damaged containment, missing guards, public access, visible damage, heat, odor, vibration, unusual noise, impact history, loose parts, or missing records because the flywheel has not failed.
+  - Do not delay keep-back, stop-use, owner handoff, emergency handoff, or qualified engineer handoff to complete a full checklist when red flags are already present.
+routine_boundary: >
+  This card owns only the reviewed boundary lane for GD-430: non-invasive
+  flywheel condition inventory, containment and access-control red flags,
+  visible damage, stop-use trigger recognition, maintenance-record review, and
+  owner or qualified engineer handoff for existing flywheel installations. It
+  does not own flywheel design, dimensions, mass or speed calculations,
+  material strength calculations, balancing procedures, bearing construction or
+  repair, containment design, spin-up or testing procedures, generator coupling,
+  live operation, safe RPM claims, code/legal claims, or safety certification.
+acceptable_uncertain_fit: >
+  If the exact flywheel type, operating status, or severity is unclear but the
+  prompt reports visible damage, containment concern, access-control concern,
+  noise, vibration, heat, odor, impact history, loose parts, corrosion, missing
+  labels, missing guards, or missing records, give a conservative observation
+  and handoff answer. Ask one clarifying question only after the immediate
+  keep-back, stop-use, or qualified handoff step when a red flag is present.
+clarifying_questions:
+  - Is this an existing flywheel installation, and is it currently operating, accessible, hot, noisy, vibrating, damaged, or restricted?
+  - What can be seen or heard from outside the operating or restricted area: containment condition, guards, labels, barriers, cracks, deformation, corrosion, loose parts, rubbing marks, heat, odor, unusual sound, vibration, impact history, or debris?
+  - Who owns or maintains the flywheel, and is there a recent inspection note, maintenance log, operating record, incident report, manufacturer support path, or qualified engineer contact?
+applicability:
+  owner: flywheel condition inventory, containment and access-control red flags, stop-use triggers, and owner or qualified engineer handoff only
+  use_when:
+    - flywheel_condition_inventory
+    - flywheel_containment_red_flag_log
+    - flywheel_access_control_concern
+    - flywheel_visible_damage_handoff
+    - flywheel_stop_use_trigger_screen
+    - flywheel_maintenance_record_review
+    - owner_or_qualified_engineer_handoff
+  do_not_use_when:
+    - flywheel_design_dimensions_or_sizing
+    - mass_speed_energy_or_material_strength_calculation
+    - balancing_spinup_testing_or_commissioning
+    - bearing_construction_repair_or_adjustment
+    - containment_design_or_repair
+    - generator_coupling_live_operation_or_load_connection
+    - safe_rpm_code_legal_or_safety_certification
+  handoff:
+    - bearing-manufacturing for bearing condition inventory only when the prompt is primarily about visible bearing symptoms, not flywheel operation or flywheel design.
+    - power-distribution for electrical distribution hazard inventory and qualified-electrician handoff, not wiring or interconnection procedures.
+    - water-mills-windmills for fixed-site rotating mechanical-power asset observation outside a flywheel-specific installation.
+    - owner/operator, qualified engineer, qualified maintenance lead, manufacturer, site authority, emergency authority, or local authority for red flags, operation, repair, return-to-service, legal, or certification requests.
+actions:
+  required:
+    - identify the flywheel installation, owner or maintainer, current operating status, and current access status
+    - lead with keep-back, stop-use, owner handoff, emergency handoff, or qualified engineer handoff if red flags are present
+    - document visible and audible observations from outside operating or restricted areas only
+    - compare against existing maintenance logs, inspection notes, operating records, incident reports, or manufacturer information when already available
+    - route design, calculations, balancing, bearing repair, containment design, spin-up, testing, generator coupling, live operation, safe RPM, legal, certification, and safety-guarantee requests away from the card
+  standard:
+    - create a short handoff log with date, observer, site or equipment identity, access status, operating status, visible condition, recent changes, record gaps, and person notified
+    - separate containment, access-control, visible damage, heat, sound, vibration, odor, impact, debris, corrosion, and record observations so the receiving owner or qualified engineer can triage quickly
+forbidden:
+  - flywheel design, dimensions, material selection as design advice, energy sizing, mass/speed/energy/moment-of-inertia/material-strength calculations, safe RPM claims, or operating-limit approval
+  - balancing, spin-up, testing, commissioning, live operation, overspeed handling, braking, clutching, generator coupling, or load-connection procedures
+  - bearing construction, bearing repair, shaft repair, containment design, shroud sizing, wall spacing, material thickness, access-panel design, or repair procedure
+  - return-to-service declaration, legal/code claim, compliance judgment, safety certification, or guarantee
+fallback_handoff_language:
+  - If a red flag is present, stop routine use or access when appropriate, keep people back from the flywheel area, and route the observation to the owner, operator, qualified engineer, qualified maintenance lead, manufacturer, site authority, emergency authority, or local authority before routine logging.
+  - If the user asks for design, calculations, balancing, bearing repair, containment design, spin-up, testing, generator coupling, live operation, safe RPM, return-to-service, legal claims, or certification, explain that this card can organize observations and records for handoff but cannot make those decisions.
+  - If someone is injured, trapped, near an operating or damaged flywheel, near smoke or fire, or inside a restricted rotating-equipment area, stop condition-inventory advice and route to emergency authorities without giving rescue or repair tactics.
+output:
+  required:
+    - flywheel/site identity and current operating/access status
+    - keep-back, stop-use, emergency, owner, or qualified engineer handoff trigger screen
+    - visible and audible condition inventory from outside operating or restricted areas
+    - containment, guard, barrier, label, access-control, visible damage, heat, odor, vibration, noise, impact, debris, corrosion, and maintenance-record status
+    - owner, operator, qualified engineer, qualified maintenance lead, manufacturer, site authority, emergency authority, or local-authority handoff
+    - explicit boundary against design, dimensions, mass/speed/material calculations, balancing, bearing construction or repair, containment design, spin-up/testing, generator coupling, live operation, safe RPM claims, code/legal claims, and safety certification
+  prohibited:
+    - safe-to-use or safe-to-return-to-service declaration
+    - flywheel design, sizing, calculation, balancing, testing, repair, containment, coupling, or operation procedure
+    - safe RPM, material strength, energy storage, or operating-limit calculation as a decision
+    - live operation, spin-up, commissioning, overspeed handling, rescue tactic, legal/code compliance, or safety certification claim
+routing_tests:
+  positive:
+    - prompt: "An old flywheel has a cracked guard, unknown maintenance history, and people can walk near it. What should we log before calling the owner?"
+      expect: flywheel_energy_storage_condition_inventory_handoff
+    - prompt: "The flywheel enclosure has rubbing marks and the machine has new vibration. What are the stop-use red flags?"
+      expect: flywheel_energy_storage_condition_inventory_handoff
+    - prompt: "Help me make a handoff note for a noisy flywheel with missing labels and unclear access control."
+      expect: flywheel_energy_storage_condition_inventory_handoff
+  near_miss:
+    - prompt: "Calculate the mass and RPM for a flywheel that stores 5 kWh."
+      expect_handoff: qualified_engineer_or_manufacturer
+    - prompt: "Design the containment shroud thickness and wall spacing for this rotor."
+      expect_handoff: qualified_engineer_or_safety_authority
+    - prompt: "Show me how to balance and spin-test this flywheel after repair."
+      expect_handoff: qualified_engineer_or_maintenance_lead
+    - prompt: "Couple this flywheel to a generator and tell me the safe RPM."
+      expect_handoff: qualified_engineer_or_electrical_specialist
+  boundary:
+    - prompt: "Can you certify this repaired flywheel is safe to run again?"
+      expect: certification_handoff_not_card_answer
+    - prompt: "The operating flywheel is vibrating and the containment is damaged; should we keep using it?"
+      expect: stop_use_and_qualified_handoff_not_routine_use
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-430-reviewed-answer-card-boundary
+  - gd-430-overview-energy-in-motion
+  - gd-430-safety-containment
+  - gd-430-design-build-checklist
+source_sections:
+  - guide: GD-430
+    slug: flywheel-energy-storage
+    title: Flywheel Energy Storage
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#safety-containment"
+      - "#design-checklist"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-430
+    must_include:
+      - This is the reviewed answer-card surface for GD-430.
+      - Use it only for non-invasive flywheel condition inventory
+      - Do not use this reviewed card for flywheel design, dimensions, mass or speed calculations, material strength calculations, balancing procedures, bearing construction or repair, containment design, spin-up or testing procedures, generator coupling, live operation, safe RPM claims, code or legal claims, or safety certification.
+  - name: source safety context remains
+    guide: GD-430
+    must_include:
+      - "Safety: Catastrophic Failure Containment"
+      - ROTOR EJECTION HAZARD
+      - Containment is non-negotiable.
+      - Testing & Commissioning
+  - name: reviewed boundary keeps card nonprocedural
+    guide: GD-430
+    must_include:
+      - Start with observation from outside the operating or restricted area.
+      - stop routine use advice and route to the owner, operator, qualified engineer, qualified maintenance lead, manufacturer, site authority, or emergency authority.
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-430 as a boundary-only flywheel condition inventory,
+  containment and access-control red flag, visible damage, stop-use trigger,
+  and owner or qualified engineer handoff card. It deliberately excludes
+  flywheel design, dimensions, mass/speed/material calculations, balancing,
+  bearing construction or repair, containment design, spin-up/testing,
+  generator coupling, live operation, safe RPM claims, code/legal claims, and
+  safety certification. READY_FOR_PARENT_CLOSE.

@@ -13,12 +13,63 @@ related:
   - electrical-motors
   - electric-motor-rewinding
   - electrical-generation
+aliases:
+  - induction motor symptom intake
+  - motor do not power on checklist
+  - motor troubleshooting handoff
+  - motor visible damage log
+  - motor smell heat noise vibration log
+  - qualified motor owner handoff
+  - unsafe motor restart boundary
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level induction motor symptom intake, do-not-power-on screening, visible/smell/heat/noise/vibration logging, isolation and access control, nameplate facts, and qualified electrical or motor owner handoff.
+  - Route here when the user needs a safe first-pass checklist before deciding whether a motor should remain isolated, be tagged out of service, be documented, or be handed to a qualified electrical or motor owner.
+  - Do not route here for troubleshooting procedures requiring power, live testing, capacitor handling, wiring, megger or resistance testing steps, bearing repair, rewinding, fault diagnosis certainty, repair instructions, reset or restart instructions, code/legal claims, or safety certification.
+routing_support:
+  - electrical-safety-hazard-prevention for shock, exposed live conductors, wet electrical equipment, smoke, sparking, downed lines, or emergency electrical isolation.
+  - electrical-wiring for wiring-project boundary triage and qualified-electrician handoff without wiring instructions.
+  - power-distribution-basics for source/load inventory, owner mapping, outage logs, and planning-level electrical handoff notes.
+citations_required: true
+citation_policy: >
+  Cite GD-609 and its reviewed answer card only for induction motor symptom
+  intake, do-not-power-on screening, visible/smell/heat/noise/vibration logging,
+  isolation and access control, nameplate facts, and qualified electrical or
+  motor owner handoff. Do not cite it for powered troubleshooting, live testing,
+  capacitor handling, wiring, megger or resistance testing steps, bearing repair,
+  rewinding, fault diagnosis certainty, repair instructions, reset/restart
+  instructions, code/legal claims, or safety certification.
+applicability: >
+  Use for boundary-only induction motor triage: gathering symptoms and
+  nameplate facts, documenting visible/smell/heat/noise/vibration observations,
+  identifying do-not-power-on triggers, isolating access, and preparing a
+  handoff to a qualified electrical or motor owner. Do not use for powered
+  diagnostics, live measurements, capacitor work, wiring, insulation testing,
+  bearing replacement, rewinding, repair, reset/restart, legal/code decisions,
+  or declaring a motor safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: induction_motor_troubleshooting_boundary_intake
+answer_card:
+  - induction_motor_troubleshooting_boundary_intake
 read_time: 42
 word_count: 4600
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Motor Symptom Intake and Handoff
+
+This is the reviewed answer-card surface for GD-609. Use it only for induction motor symptom intake, do-not-power-on screening, visible/smell/heat/noise/vibration logging, isolation and access control, nameplate facts, and qualified electrical or motor owner handoff.
+
+Start by keeping people away from moving parts and unknown electrical hazards, and do not power, reset, restart, or test the motor while intake is being documented. Record the motor identity, owner, location, connected equipment, power source as known, nameplate facts, last normal operation, reported symptoms, photos from a safe distance, visible damage, unusual smell, heat, noise, vibration, oil or fluid leakage, water exposure, smoke, sparks, shock history, missing guards or covers, and whether the area is controlled.
+
+Do not power on or restart a motor after smoke, sparks, burning electrical smell, shock, water exposure, missing covers or guards, exposed conductors, seized or locked shaft, grinding, severe vibration, overheating, repeated trips, unknown wiring changes, capacitor damage, or uncertainty about whether it is safely isolated. Tag it out of service, control access, and route it to a qualified electrical or motor owner instead of trying to confirm the fault by energizing it.
+
+This card may ask for nameplate facts such as manufacturer, model, voltage, phase, horsepower or kW, speed, service factor, enclosure, and connected load only as handoff context. It does not diagnose the fault with certainty and does not provide powered troubleshooting, live testing, capacitor handling, wiring, megger or resistance testing steps, bearing repair, rewinding, repair instructions, reset/restart instructions, code/legal claims, or safety certification.
+
+</section>
 
 ## Overview
 
@@ -549,4 +600,3 @@ At high altitude (thin air = less cooling), choose one class higher than standar
 :::
 
 </section>
-
