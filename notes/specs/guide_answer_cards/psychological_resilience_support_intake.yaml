@@ -1,0 +1,109 @@
+card_id: psychological_resilience_support_intake
+guide_id: GD-576
+slug: psychological-resilience
+title: "Psychological Resilience"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for practical coping, resilience, or support planning for routine stress, overwhelm, worry, tiredness, isolation, or difficult periods.
+  - User wants a non-diagnostic intake to decide whether routine stress support is appropriate or whether a trusted person, clinician, crisis line, emergency service, or community mental-health resource should take over.
+  - User asks for basic reminders about social support, sleep, food, hydration, rest, movement, grounding, or reducing constant stress exposure.
+required_first_actions:
+  - Start with a boundary intake for self-harm or suicide, harming someone else, violence or immediate danger, hallucinations, paranoia, severe confusion, days of little or no sleep with extreme energy or reckless behavior, inability to stay safe, inability to eat or drink, and medical instability.
+  - If any red flag is present, stop routine coping advice and route to crisis support, emergency services, a clinician, or a trusted person who can stay with the person now.
+  - Keep the answer non-diagnostic and focused on coping support, practical self-care reminders, social connection, and owner handoff.
+first_actions:
+  - Name routine stress signs such as rapid heartbeat, shallow breathing, muscle tension, headache, stomach upset, sleep disruption, fatigue, irritability, anxiety, sadness, difficulty concentrating, feeling overwhelmed, or loss of interest.
+  - Lower stimulation and use one grounding or breathing step, such as orienting to the room, longer exhale breathing, 5-4-3-2-1 senses grounding, or a short walk or stretch.
+  - Cover basics: drink water, eat something tolerable, rest, protect sleep timing, move gently, and take breaks from constant stress media.
+  - Ask who can provide support now: friend, family member, mentor, peer group, clinician, crisis line, emergency service, or community mental-health resource depending on risk.
+  - Build a simple resilience toolkit with supportive people, calming activities, soothing places, meaningful activities, and accessible crisis or community support contacts.
+urgent_red_flags:
+  - Thoughts of self-harm, suicide, or harming someone else.
+  - Violence, immediate danger, inability to stay safe, unsafe abuse situation, or medical instability.
+  - Hallucinations, paranoia, severe confusion, or inability to reorient.
+  - Days of little or no sleep with extreme energy, reckless behavior, nonstop talking, grandiosity, or feeling invincible.
+  - Inability to eat or drink, inability to function, worsening substance use, frequent panic attacks, constant unmanageable anxiety, or hopelessness for an extended period.
+forbidden_advice:
+  - Do not diagnose anxiety, depression, PTSD, bipolar disorder, psychosis, or any other mental-health condition from this card.
+  - Do not provide therapy protocols, trauma-processing steps, exposure therapy, medication advice or changes, restraint, coercion, suicide-risk clearance, legal or work-fitness claims, or safety certification.
+  - Do not tell a person to manage self-harm, violence, psychosis, mania or acute activation, abuse danger, or medical instability with routine self-care alone.
+  - Do not promise that coping steps, grounding, social support, sleep, food, hydration, or rest will keep someone safe in crisis.
+do_not:
+  - Do not delay crisis escalation to continue breathing, grounding, journaling, rest, or routine resilience work.
+  - Do not make yourself the only support or imply the user must handle everything alone.
+  - Do not force trauma details, exposure work, or emotional processing steps.
+  - Do not certify that someone is safe, fit for work, legally cleared, or no longer at risk.
+routine_boundary: >
+  Routine resilience support is appropriate only for non-diagnostic coping,
+  support intake, routine stress signs, social connection, sleep, food,
+  hydration, rest, grounding, and practical handoff planning after red flags are
+  excluded. It is out of bounds for diagnosis, therapy protocols, medication
+  advice, self-harm, violence, psychosis, mania or acute activation, abuse
+  danger, medical instability, suicide-risk clearance, legal or work-fitness
+  claims, and safety certification.
+acceptable_uncertain_fit: >
+  If the situation may be routine stress but risk is unclear, ask brief safety
+  questions about self-harm, harm to others, immediate danger, psychosis,
+  severe confusion, days without sleep plus activation, ability to eat or
+  drink, and ability to stay safe. Offer only low-risk grounding, hydration,
+  food, rest, and trusted-person contact steps while preserving escalation.
+clarifying_questions:
+  - Are there thoughts of self-harm, suicide, harming someone else, violence, immediate danger, or inability to stay safe?
+  - Are there hallucinations, paranoia, severe confusion, or days of little or no sleep with extreme energy, nonstop talking, grandiosity, or reckless behavior?
+  - Can the person eat, drink, rest, and do basic self-care, or is functioning breaking down?
+  - Who can be contacted now: a trusted person, clinician, crisis line, emergency service, peer group, or community mental-health resource?
+citation_ids:
+  - resilience-reviewed-boundary
+  - resilience-stress-signs
+  - resilience-social-connection
+  - resilience-self-care-basics
+  - resilience-coping-grounding
+  - resilience-more-help-crisis
+  - resilience-community-support
+source_sections:
+  - guide: GD-576
+    slug: psychological-resilience
+    title: "Psychological Resilience"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#stress-understanding > Physical Signs of Stress"
+      - "#stress-understanding > Emotional Signs of Stress"
+      - "#resilience-factors > Social Connection"
+      - "#resilience-factors > Self-Care Basics"
+      - "#coping-strategies > When Stressed"
+      - "#coping-strategies > During Difficult Periods"
+      - "#building-toolkit"
+      - "#recognizing-limits"
+      - "#recognizing-limits > Community Mental Health Support"
+      - "#resilience-practices"
+source_invariants:
+  - name: reviewed boundary excludes crisis and clinical claims
+    guide: GD-576
+    must_include:
+      - Use it for non-diagnostic resilience and coping support
+      - Start with a boundary intake
+      - stop routine coping advice and route to crisis support
+      - Do not use this card for diagnosis, therapy protocols, trauma-processing steps, exposure therapy, medication advice or changes
+  - name: stress signs are routine observation not diagnosis
+    guide: GD-576
+    must_include:
+      - Physical Signs of Stress
+      - Emotional Signs of Stress
+      - Rapid heartbeat
+      - Feeling overwhelmed
+  - name: help escalation remains source-backed
+    guide: GD-576
+    must_include:
+      - You're having thoughts of harming yourself
+      - In crisis:** Call crisis line, go to emergency room, call emergency services
+      - If you or someone else is in immediate danger, call emergency services
+review_status: pilot_reviewed
+notes: >
+  Reviewed support-intake card for GD-576 only. Scope is routine resilience,
+  coping, stress-sign recognition, basic self-care reminders, social support,
+  and trusted-person, clinician, crisis, emergency, or community mental-health
+  handoff. It intentionally excludes diagnosis, therapy protocols,
+  trauma-processing, exposure therapy, medication advice, restraint or
+  coercion, suicide-risk clearance, legal or work-fitness claims, and safety
+  certification.

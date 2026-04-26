@@ -39,6 +39,35 @@ aliases:
   - blistering sunburn
   - after sun care
   - sun damage prevention
+routing_cues:
+  - sunburn intake and routine cooling hydration shade rest prompts
+  - mild sunburn care after red flags are screened
+  - blistering sunburn extent logging and escalation
+  - sunburn with dehydration heat illness infant or elder red flags
+  - sun exposure sun protection shade clothing timing hydration
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for sun exposure and
+  sunburn intake, routine cooling, hydration, shade, rest, burn-extent and
+  blister/red-flag logging, heat illness or dehydration red flags, infant or
+  elder escalation boundaries, and clinician or emergency handoff. Do not use it
+  for burn-depth diagnosis, medication or dosing advice, blister draining, wound
+  procedures, heat-stroke treatment protocols, return-to-work clearance, cancer
+  screening or diagnosis, legal claims, or safety certification.
+applicability: >
+  Boundary-only support for common sunburn and sun-exposure questions:
+  documenting exposure, checking burn extent and blistering, moving out of sun,
+  cooling skin with cool water or damp cloths, hydration and rest prompts,
+  shade/clothing/timing prevention, and escalation for heat illness,
+  dehydration, infants, elders, extensive blistering, eye symptoms, severe
+  swelling, confusion, fainting, vomiting, trouble breathing, or clinician and
+  emergency handoff. Excludes burn-depth diagnosis, medication/dosing, blister
+  draining, wound procedures, heat-stroke protocols, work clearance, cancer
+  screening/diagnosis, legal claims, and safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: sunburn_sun_protection_boundary
+answer_card:
+  - sunburn_sun_protection_boundary
 icon: sun
 description: "Practical prevention and home care for sunburn and sun exposure: shade, clothing, timing, hydration overlap, mild burn care, lip and eye protection, blister cautions, and red flags for heat illness or severe burns."
 related:
@@ -52,12 +81,24 @@ related:
   - common-ailments-recognition-care
   - allergic-reactions-anaphylaxis
   - thermal-injuries
-read_time: 12
+read_time: 13
 word_count: 2100
-last_updated: '2026-04-13'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-946. Use it only for boundary-level sun exposure and sunburn intake, routine cooling, hydration, shade, rest prompts, burn extent and blister/red-flag logging, heat illness and dehydration screening, infant or elder escalation boundaries, and clinician or emergency handoff.
+
+Start by asking what sun or UV exposure occurred, when symptoms began, which body areas are burned, whether blistering is present, whether the burn covers a large area or sensitive area, whether there is eye pain or vision change, and whether the person has confusion, fainting, repeated vomiting, trouble breathing, severe swelling, high fever, hot dry skin, dizziness, weakness, cramps, dry mouth, dark urine, poor fluid intake, or worsening pain. For routine support only after red flags are absent, keep care to getting out of sun, shade or indoors, cool water or cool damp cloths, fluids, rest, loose clothing, and avoiding more sun while healing.
+
+Do not use this reviewed card for burn-depth diagnosis, medication or dosing advice, blister draining, wound procedures, heat-stroke treatment protocols, return-to-work clearance, cancer screening or diagnosis, legal claims, or safety certification. If a prompt asks for those, provide only the relevant exposure log, red-flag screen, routine cooling/hydration boundary when safe, and handoff to a clinician, emergency services, or the appropriate specialist owner.
+
+</section>
 
 :::warning
 This guide is for common sunburn and routine sun protection. It is not a substitute for medical care if the person has blistering over a large area, confusion, fainting, trouble breathing, severe swelling, eye injury, or signs of heat stroke.

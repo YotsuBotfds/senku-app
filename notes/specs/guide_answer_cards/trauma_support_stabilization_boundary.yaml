@@ -1,0 +1,102 @@
+card_id: trauma_support_stabilization_boundary
+guide_id: GD-578
+slug: ptsd-trauma-management
+title: "PTSD and Trauma Management"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks how to support someone after trauma, a violent event, disaster, accident, assault, sudden loss, or overwhelming experience.
+  - A prompt asks for grounding, present-moment orientation, stabilizing environment basics, or help with flashback-like distress after trauma.
+  - A prompt asks for practical support, sleep space, safety planning, social support, or when to involve crisis or clinical help after trauma.
+required_first_actions:
+  - Check current safety, injuries, self-harm, harm-to-others risk, severe dissociation, psychosis, manic activation, substance danger, and unsafe setting.
+  - Hand off first to crisis, emergency, medical, or qualified clinical support when any red flag is present.
+  - Do not pressure the person to recount the trauma.
+first_actions:
+  - Move away from ongoing danger if that can be done safely, reduce stimulation, use a calm voice, and keep supportive presence without crowding.
+  - Help the person orient to the present by naming the room, date, time, or one nearby object; feeling feet on the floor; touching a cold or textured object; or using the 5-4-3-2-1 senses exercise.
+  - Offer practical support such as shelter, warmth, meals, water, a sleep space, transport, childcare, help contacting safe people, and help arranging medical or clinician follow-up.
+  - Support sleep and recovery basics with predictable meals, a safer resting place, reduced substances, gentle activity when tolerated, and connection with safe people.
+  - Encourage professional help when symptoms interfere with daily functioning, worsen, persist, or include depression, anxiety, substance use, self-harm risk, or inability to function.
+urgent_red_flags:
+  - Suicidal thoughts, self-harm urges, a plan to hurt self, or inability to stay safe.
+  - Threats or risk of violence toward others, weapons access with intent, or unsafe agitation.
+  - Severe dissociation, flashback, or inability to reorient to the present.
+  - Hallucinations, paranoia, severe confusion, or psychosis-like symptoms.
+  - Little or no sleep for days with extreme energy, grandiosity, recklessness, nonstop talking, or feeling invincible.
+  - Heavy substance use, overdose concern, withdrawal danger, intoxication that prevents safety, or unsafe mixing of substances.
+  - Current abuse, coercion, stalking, unsafe home setting, serious injury, medical instability, or immediate physical danger.
+forbidden_advice:
+  - Do not diagnose PTSD or claim the person does or does not have PTSD from this card.
+  - Do not instruct the person to process trauma, relive details, perform exposure therapy, EMDR, or any protocol therapy.
+  - Do not recommend medication, dosing, supplements, sedatives, alcohol, or substance use to manage trauma symptoms.
+  - Do not force disclosure, require recounting the event, interrogate details, or imply the person must talk to heal.
+  - Do not recommend coercive restraint, isolation, punishment, confrontation, legal claims, fitness-for-duty decisions, or safety certification.
+do_not:
+  - Do not present grounding or peer support as enough when self-harm, violence, psychosis, mania-like activation, severe dissociation, substance danger, medical instability, or unsafe setting is present.
+  - Do not guarantee that a calm environment, grounding, social support, or sleep support will keep someone safe in crisis.
+  - Do not convert long-term therapy descriptions in the guide into a do-it-yourself protocol.
+routine_boundary: >
+  Routine trauma-support advice is limited to intake, immediate stabilization,
+  grounding, practical support, sleep and social support basics, and clinician
+  or crisis handoff. It is out of bounds for PTSD diagnosis, trauma-processing,
+  exposure therapy, EMDR/protocol therapy, medication or dosing, forced
+  disclosure, coercive restraint, legal or fitness claims, and safety
+  certification.
+acceptable_uncertain_fit: >
+  If the prompt may involve trauma distress but lacks enough detail, lead with
+  red-flag screening and immediate safety, ask brief clarifying questions that
+  do not delay urgent help, and offer only low-risk grounding and practical
+  support while preserving clinician or crisis handoff.
+clarifying_questions:
+  - Is the person physically safe right now, and are there injuries or medical symptoms needing urgent care?
+  - Are there suicidal thoughts, self-harm urges, threats toward anyone else, weapons access with intent, or inability to stay safe?
+  - Are they dissociated or unable to reorient, hallucinating, paranoid, severely confused, or barely sleeping for days with extreme energy or recklessness?
+  - Is substance use, withdrawal, overdose concern, current abuse, coercion, or an unsafe setting part of the situation?
+  - What practical support is needed first: a safer place, warmth, food, water, sleep space, transport, childcare, or a safe person to contact?
+citation_ids:
+  - trauma-reviewed-boundary
+  - trauma-immediate-support
+  - trauma-triggers-grounding
+  - trauma-support-survivors
+  - trauma-red-flag-handoff
+source_sections:
+  - guide: GD-578
+    slug: ptsd-trauma-management
+    title: "PTSD and Trauma Management"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#acute-response"
+      - "#trauma-triggers"
+      - "#helping-others"
+      - "#secondary-trauma"
+      - "#next-steps"
+source_invariants:
+  - name: trauma support card stays boundary-only
+    guide: GD-578
+    must_include:
+      - Use it only for boundary-level trauma-support intake, grounding, stabilizing environment basics, practical support, sleep and social support planning, red-flag recognition, and crisis or clinician handoff.
+      - If any of those are present, treat the situation as crisis, emergency, or clinician handoff first.
+      - Do not use this reviewed card for PTSD diagnosis, trauma-processing instructions, exposure therapy, EMDR or other protocol therapy, medication or dosing, forced disclosure, coercive restraint, legal or fitness claims, or safety certification.
+  - name: acute support avoids forced disclosure
+    guide: GD-578
+    must_include:
+      - Be physically safe (away from ongoing danger)
+      - Stay present (trauma survivors need companionship)
+      - Avoid pressuring them to talk (only if they want to)
+      - Force them to recount trauma (re-traumatizing)
+  - name: grounding and professional help boundaries exist
+    guide: GD-578
+    must_include:
+      - 5-4-3-2-1 technique
+      - Physical grounding (feet on ground, touching cold object)
+      - Risk of self-harm
+      - Substance use is increasing
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-578 card for boundary-only trauma-support stabilization.
+  It intentionally excludes PTSD diagnosis, trauma processing, exposure/EMDR
+  or other protocol therapy, medication/dosing, forced disclosure, coercive
+  restraint, legal/fitness claims, and safety certification. The source guide
+  contains broader therapy and diagnosis discussion; this card cites only the
+  immediate support, grounding, helper, and handoff surfaces.

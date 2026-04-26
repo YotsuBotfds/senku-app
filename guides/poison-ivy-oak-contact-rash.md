@@ -18,11 +18,43 @@ related:
   - hazardous-plants-avoidance-identification
   - medications
   - infection-control
+aliases:
+  - poison ivy rash
+  - poison oak rash
+  - poison sumac rash
+  - urushiol exposure
+  - contact rash after poison ivy
+  - itchy blister rash after yard work
+  - rash spreading after poison ivy
+  - wash poison ivy off skin
+  - contaminated poison ivy clothes
+  - poison ivy on tools or shoes
+routing_cues:
+  - Use for known or suspected poison ivy, poison oak, poison sumac, or urushiol contact when the user needs exposure intake, washing, contaminated clothing or tool separation, itch/blister routine care boundaries, or red-flag escalation.
+  - Use when a rash seems to be spreading after plant contact and the answer should explain delayed reaction or remaining oil on skin, clothing, tools, pets, or surfaces.
+  - Hand off to hazardous plant identification guidance when the user is trying to identify a plant, confirm plant toxicity, choose herbicide, or prevent future exposure before anyone has a rash or contact exposure.
+  - Hand off to allergy/anaphylaxis or emergency care when breathing trouble, throat tightness, mouth swelling, or severe face/eye/genital swelling is present.
+citations_required: true
+applicability: >
+  Applies to first-aid support after known or suspected urushiol contact and
+  poison ivy, poison oak, or poison sumac rash: exposure/rash intake, washing
+  skin, separating and cleaning contaminated clothes/tools/pets, avoiding
+  scratching, logging spread/red flags, and deciding when to contact a
+  clinician, poison control, or emergency care. Not for plant identification
+  certainty, herbicide selection, prescription or steroid dosing, wound
+  procedures, diagnosing infection, anaphylaxis treatment details, work
+  clearance, legal claims, or safety certification.
 read_time: 11
 word_count: 1475
 last_updated: '2026-04-13'
-version: '1.0'
+version: '1.1'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: poison_ivy_oak_contact_rash
+answer_card:
+  card_id: poison_ivy_oak_contact_rash
+  scope: boundary-only exposure, wash, contamination separation, rash logging, and red-flag handoff
+  runtime_citation_policy: reviewed_source_family
 ---
 
 :::danger

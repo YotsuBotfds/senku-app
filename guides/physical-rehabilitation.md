@@ -8,6 +8,25 @@ tags:
   - practical
   - medical
   - recovery
+aliases:
+  - rehab support intake
+  - physical rehabilitation red flags
+  - activity tolerance log
+  - rehab comfort aids
+  - stop activity triggers
+  - rehab clinician handoff
+  - non diagnostic rehab support
+  - pain swelling weakness rehab log
+  - fall risk during rehab
+  - occupational therapy support log
+routing_cues:
+  - "what should i track before my rehab appointment"
+  - "how do i log pain swelling weakness or falls during recovery"
+  - "when should we stop a rehab activity and call the clinician"
+  - "what comfort or accessibility aids can support daily rehab tasks"
+  - "how do i prepare a handoff note for a physical therapist"
+  - "non diagnostic intake for physical rehabilitation support"
+  - "activity tolerance log after injury without exercise prescription"
 icon: 🏥
 description: Post-injury recovery protocols, joint mobilization, contracture prevention, adaptive techniques for permanent disabilities, and improvised physical therapy equipment
 related:
@@ -20,11 +39,37 @@ word_count: 9500
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: physical_rehabilitation_support_intake
+applicability:
+  owner: non-diagnostic rehabilitation support intake, activity tolerance logging, red-flag screening, comfort/accessibility aids, stop-activity triggers, and clinician or rehab-owner handoff
+  use_when:
+    - rehab_support_intake
+    - activity_tolerance_log
+    - pain_swelling_weakness_fall_risk_screen
+    - comfort_accessibility_aids
+    - clinician_rehab_owner_handoff
+  do_not_use_when:
+    - exercise_prescription_or_progression
+    - manipulation_or_gait_training_protocol
+    - return_to_work_or_sport_clearance
+    - fracture_or_neurologic_diagnosis
+    - wound_care_or_medication_dosing
+    - device_fabrication_or_safety_certification
+citation_policy: cite the reviewed GD-650 answer card and its source sections for support-intake answers; hand off specialist domains rather than expanding beyond the card boundary
 ---
 
 # Physical Rehabilitation & Occupational Therapy
 
 Physical rehabilitation is the systematic process of restoring function, strength, and independence after injury, illness, or disability. In resource-constrained environments without specialized equipment or professional therapists, rehabilitation relies on understanding fundamental movement principles, creative use of available materials, and consistent patient engagement.
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-650. Use it for non-diagnostic rehabilitation support intake: what changed, current pain/swelling/weakness, fall risk, activity tolerance, comfort and accessibility aids, stop-activity triggers, and a concise handoff to the clinician, physical therapist, occupational therapist, or other rehab owner.
+
+Start by asking what injury, illness, or disability the person is recovering from; what activity they are trying to tolerate; baseline pain, swelling, weakness, balance, fatigue, and falls; what makes symptoms better or worse; what aids or environmental supports are already used; and who owns the rehab plan. A safe answer may help the user keep an activity tolerance log, note comfort and accessibility adjustments, identify red flags, stop or reduce an activity when symptoms worsen, and prepare a handoff note for the rehab owner.
+
+Do not use this card to prescribe exercises, progressions, manipulation, gait training, return-to-work or return-to-sport clearance, fracture or neurologic diagnosis, wound care, medication or dosing, device fabrication, legal or disability determinations, or claims that an activity, aid, home setup, or device is safe. Stop routine support and hand off urgently for new or worsening severe pain, sudden swelling, warmth, redness, calf tenderness, new numbness or tingling, new or worsening weakness, instability, repeated falls, loss of bowel or bladder control, fever or infection signs, chest pain, shortness of breath, fainting, confusion, or any clinician-provided stop instruction.
 
 <section id="principles-of-rehabilitation">
 

@@ -12,6 +12,31 @@ tags:
   - intermediate
 icon: 💔
 description: Understanding trauma responses, recognizing PTSD, immediate support techniques, and long-term recovery strategies for trauma survivors and supporters.
+aliases:
+  - trauma support
+  - after trauma grounding
+  - flashback grounding support
+  - trauma survivor practical support
+  - trauma response sleep support
+  - dissociation after trauma
+  - helping someone after trauma
+routing_cues:
+  - Use for boundary-level support after a traumatic event when the user needs immediate intake, grounding, stabilizing environment basics, practical support, sleep/safety/social support planning, and red-flag handoff.
+  - Hand off to crisis, emergency, or clinician support first when there are suicidal thoughts, self-harm urges, violence risk, severe dissociation that does not reorient, hallucinations, paranoia, severe confusion, manic activation, dangerous substance use, medical instability, or current abuse/unsafe setting.
+  - Do not use this guide's reviewed answer card for PTSD diagnosis, trauma-processing instructions, exposure therapy, EMDR or protocol therapy, medication or dosing, forced disclosure, coercive restraint, legal or fitness claims, or safety certification.
+citations_required: true
+applicability: >
+  Boundary-level trauma-support intake, grounding, stabilizing environment
+  basics, practical support, sleep/safety/social supports, red-flag recognition,
+  and crisis or clinician handoff. Not for diagnosing PTSD, conducting trauma
+  processing, exposure therapy, EMDR or other protocol therapy, medication or
+  dosing, forced disclosure, coercive restraint, legal or fitness claims, or
+  safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: trauma_support_stabilization_boundary
+answer_card:
+  - Use only for immediate trauma-support stabilization, grounding, practical support, sleep and social support planning, red-flag recognition, and handoff.
+  - Keep the answer boundary-only; do not diagnose PTSD, direct trauma-processing, prescribe therapy protocols, recommend medication/dosing, force disclosure, restrain coercively, or claim safety/legal/fitness clearance.
 related:
   - disaster-psychology-children
   - first-aid
@@ -28,6 +53,20 @@ liability_level: high
 ---
 
 Trauma is a deeply distressing experience that overwhelms a person's ability to cope. While everyone can experience trauma differently, understanding trauma responses and recovery pathways helps survivors heal and helpers support effectively. This guide covers recognizing trauma, supporting those affected, and recovery strategies.
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-578. Use it only for boundary-level trauma-support intake, grounding, stabilizing environment basics, practical support, sleep and social support planning, red-flag recognition, and crisis or clinician handoff.
+
+Start with current safety and orientation: whether the person is physically safe, injured, at risk of self-harm or harm to others, dissociated or unable to reorient, hallucinating, paranoid, severely confused, dangerously activated with little or no sleep, intoxicated or in substance danger, or unsafe because of abuse, coercion, violence, or an unsafe setting. If any of those are present, treat the situation as crisis, emergency, or clinician handoff first.
+
+For non-emergency trauma support, reduce stimulation, use a calm voice, offer choice and control, help the person orient to the present, and avoid forcing a trauma story. Grounding can include naming the room, date, or one nearby object; feeling feet on the floor; touching a cold or textured object; using slow breathing if it does not increase distress; or using the 5-4-3-2-1 senses exercise. Practical support includes shelter, warmth, meals, sleep space, transport, childcare, connection with safe people, and help arranging medical, crisis, or clinician support.
+
+Do not use this reviewed card for PTSD diagnosis, trauma-processing instructions, exposure therapy, EMDR or other protocol therapy, medication or dosing, forced disclosure, coercive restraint, legal or fitness claims, or safety certification. If a prompt asks for those, give only the immediate stabilization boundary, red flags, and handoff to crisis, emergency, or qualified clinical support.
+
+</section>
 
 <section id="trauma-definition">
 

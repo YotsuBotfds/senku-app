@@ -1,0 +1,183 @@
+card_id: physical_rehabilitation_support_intake
+guide_id: GD-650
+slug: physical-rehabilitation
+title: "Physical Rehabilitation & Occupational Therapy"
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - The user asks what to track before or between physical therapy, occupational therapy, clinician, or rehab-owner visits.
+  - The prompt is about non-diagnostic rehabilitation support intake, activity tolerance logs, pain/swelling/weakness/fall-risk red flags, comfort or accessibility aids, stop-activity triggers, or preparing a handoff note.
+  - The user wants support for daily function and symptom observation without asking for exercise prescriptions, gait training, manipulation, clearance, diagnosis, wound care, medication, fabrication, legal determination, or safety certification.
+required_first_actions:
+  - Keep the answer at non-diagnostic support-intake, logging, comfort, accessibility, stop-trigger, and rehab-owner handoff level.
+  - Start by identifying the recovery context, the activity the person is trying to tolerate, baseline pain/swelling/weakness/balance/fatigue/falls, current aids, and who owns the rehab plan.
+  - Screen for red flags before routine support, and stop routine advice when severe or worsening symptoms, fall risk, neurologic symptoms, infection signs, cardiopulmonary symptoms, or clinician stop instructions appear.
+  - Hand off exercise prescription, manipulation, gait training protocols, return-to-work or sport clearance, fracture or neurologic diagnosis, wound care, medication/dosing, device fabrication, legal/disability determinations, and safety certification.
+first_actions:
+  - Create an activity tolerance log with date, activity, duration, assistive aids used, pain before/during/after, swelling change, weakness or fatigue, balance issues, falls or near falls, and what helped or worsened symptoms.
+  - Ask whether pain is sharp, severe, rapidly worsening, or lasting for hours after activity, and whether swelling, warmth, redness, calf tenderness, numbness, tingling, weakness, instability, or falls are new or worsening.
+  - Use comfort and accessibility supports that do not change the rehab plan: supportive positioning, rest breaks, clear walking paths, stable seating, reachable supplies, lighting, nonslip surfaces, and help with setup or transport.
+  - Stop or reduce the activity and contact the rehab owner when symptoms escalate, balance becomes unsafe, the person cannot complete normal tasks afterward, or a clinician-provided limit is reached.
+  - Prepare a handoff note summarizing the log, red flags, current aids, barriers at home or work, questions for the clinician or therapist, and the exact activity goal.
+urgent_red_flags:
+  - New or worsening severe pain, sharp pain, pain that worsens for hours after activity, sudden swelling, warmth, redness, calf tenderness, or marked swelling increase.
+  - New numbness, tingling, weakness, instability, foot drop, loss of bowel or bladder control, confusion, or any neurologic change.
+  - Fall, repeated falls, near falls with unsafe balance, inability to bear weight when that is new, or a device or environment that makes activity unsafe.
+  - Fever, spreading redness, drainage, wound opening, foul odor, or other infection signs.
+  - Chest pain, shortness of breath, fainting, severe dizziness, or clinician instructions to stop the activity.
+forbidden_advice:
+  - Do not prescribe exercises, sets, repetitions, resistance, progression schedules, manipulation, stretching treatment, or gait training protocols.
+  - Do not clear a person for work, sport, driving, stairs, lifting, weight-bearing, or independent mobility.
+  - Do not diagnose fractures, neurologic injury, stroke, spinal cord injury, nerve damage, DVT, infection, or other medical conditions.
+  - Do not provide wound care, medication or dosing advice, device fabrication, splinting or orthotic construction, legal/disability determinations, or safety certification.
+  - Do not tell the user to push through red flags, repeated falls, worsening weakness, severe pain, swelling, cardiopulmonary symptoms, or a clinician stop instruction.
+do_not:
+  - Do not convert the source guide's exercise examples into an individualized home program.
+  - Do not treat activity tolerance logging as permission to continue an unsafe or worsening activity.
+  - Do not claim that an aid, device, activity, route, workplace, sport, or home setup is safe or approved.
+routine_boundary: >
+  This card owns non-diagnostic rehabilitation support intake, activity
+  tolerance logging, red-flag screening, comfort/accessibility aids,
+  stop-activity triggers, and clinician or rehab-owner handoff. It does not own
+  exercise prescriptions, manipulation, gait training protocols, return-to-work
+  or sport clearance, fracture or neurologic diagnosis, wound care, medication
+  or dosing, device fabrication, legal or disability determinations, or safety
+  certification.
+acceptable_uncertain_fit: >
+  If the prompt could be routine rehab support but the diagnosis, restrictions,
+  or red-flag status is unclear, give only conservative logging, comfort, and
+  handoff guidance; ask about red flags and existing clinician restrictions;
+  and avoid prescribing activity changes beyond stopping or reducing activity
+  when symptoms worsen.
+clarifying_questions:
+  - What injury, illness, surgery, or disability is the person recovering from, and who owns the rehab plan?
+  - What activity are they trying to tolerate, and what happens before, during, and after it?
+  - Are there new or worsening severe pain, swelling, warmth, redness, calf tenderness, numbness, tingling, weakness, instability, falls, fever, chest pain, shortness of breath, fainting, or clinician stop instructions?
+  - What aids, supports, route changes, seating, lighting, rest breaks, or helper setup are already being used?
+applicability:
+  owner: rehabilitation support intake, activity tolerance logs, comfort and accessibility aids, stop-activity triggers, and rehab-owner handoff
+  use_when:
+    - rehab_support_intake
+    - activity_tolerance_log
+    - pain_swelling_weakness_fall_risk_screen
+    - comfort_accessibility_aids
+    - clinician_rehab_owner_handoff
+  do_not_use_when:
+    - exercise_prescription_or_progression
+    - manipulation_or_gait_training_protocol
+    - return_to_work_or_sport_clearance
+    - fracture_or_neurologic_diagnosis
+    - wound_care_or_medication_dosing
+    - device_fabrication_or_safety_certification
+    - legal_disability_determination
+  handoff:
+    - orthopedics-fractures for fracture evaluation, weight-bearing decisions, immobilization, or bone-healing questions.
+    - back-pain-musculoskeletal-self-care for routine low-back strain self-care after red flags are excluded.
+    - prosthetics-adaptive for prosthetic or adaptive-device comfort logs, fit questions, and device maintenance handoff.
+    - wound-hygiene-infection-prevention or wound-care-chronic for wound opening, drainage, spreading redness, or pressure injury.
+actions:
+  required:
+    - classify the request as support intake, activity log, red-flag screen, comfort aid, stop trigger, or handoff note
+    - screen for pain, swelling, weakness, neurologic symptoms, falls, infection signs, cardiopulmonary symptoms, and clinician restrictions
+    - preserve the clinician or rehab owner as the decision-maker for therapy changes
+  standard:
+    - build an activity tolerance log
+    - list comfort and accessibility supports that do not alter the therapy plan
+    - prepare a concise clinician or therapist handoff
+forbidden:
+  - individualized exercise prescription or progression
+  - manipulation or gait training protocol
+  - return-to-work, sport, driving, lifting, stair, or weight-bearing clearance
+  - fracture or neurologic diagnosis
+  - wound care, medication, or dosing
+  - device fabrication, legal determination, or safety certification
+fallback:
+  - If red flags are unknown, ask about them and give only logging and handoff guidance.
+  - If the user requests a therapy plan, explain that this card can prepare observations for the rehab owner but cannot prescribe the plan.
+  - If the prompt mixes comfort aids with device fabrication or safety certification, separate basic accessibility observations from qualified professional review.
+output:
+  required:
+    - recovery context and current rehab owner
+    - red-flag screen
+    - activity tolerance log fields
+    - comfort/accessibility supports within existing restrictions
+    - stop-activity triggers
+    - clinician or rehab-owner handoff note
+    - boundary or handoff for prescription, diagnosis, wound, medication, fabrication, legal, clearance, or safety-certification requests
+  prohibited:
+    - exercise prescription
+    - gait training or manipulation protocol
+    - return-to-work or sport clearance
+    - medical diagnosis or treatment
+    - wound care or medication dosing
+    - device fabrication or safety certification
+routing_tests:
+  positive:
+    - prompt: "What should I track in a rehab log before my PT visit if my ankle swells after chores?"
+      expect: physical_rehabilitation_support_intake
+    - prompt: "My parent gets weak and almost falls during daily recovery tasks. What should we stop and tell the therapist?"
+      expect: physical_rehabilitation_support_intake
+    - prompt: "How can we make a handoff note about pain, swelling, rest breaks, and accessibility aids for occupational therapy?"
+      expect: physical_rehabilitation_support_intake
+  near_miss:
+    - prompt: "Give me a week-by-week exercise program with sets and reps after a fracture."
+      expect_handoff: clinician_or_physical_therapist
+    - prompt: "Can I return to work and full sport after my knee injury?"
+      expect_handoff: clinician_clearance
+    - prompt: "Diagnose whether this new foot drop is a nerve injury or stroke."
+      expect_handoff: urgent_medical_evaluation
+    - prompt: "How do I build a custom brace and certify it is safe?"
+      expect_handoff: qualified_device_professional
+  boundary:
+    - prompt: "There is calf swelling, warmth, redness, and tenderness after rehab activity."
+      expect: stop_activity_and_urgent_medical_handoff
+    - prompt: "The exercise hurts sharply for hours afterward but I was told to push harder."
+      expect: stop_activity_and_rehab_owner_handoff
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-650-reviewed-card-boundary
+  - gd-650-pain-guided-progression
+  - gd-650-documentation-tracking
+  - gd-650-adl-accessibility-support
+  - gd-650-push-rest-red-flags
+source_sections:
+  - guide: GD-650
+    slug: physical-rehabilitation
+    title: "Physical Rehabilitation & Occupational Therapy"
+    sections:
+      - "# Reviewed Answer-Card Boundary"
+      - "#principles-of-rehabilitation"
+      - "#occupational-therapy-adl"
+      - "#pain-management-rehabilitation > Pain Assessment"
+      - "#documentation-tracking"
+      - "#when-to-push-and-when-to-rest"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-650
+    must_include:
+      - This is the reviewed answer-card surface for GD-650.
+      - Use it for non-diagnostic rehabilitation support intake
+      - Do not use this card to prescribe exercises, progressions, manipulation, gait training, return-to-work or return-to-sport clearance, fracture or neurologic diagnosis, wound care, medication or dosing, device fabrication, legal or disability determinations, or claims that an activity, aid, home setup, or device is safe.
+  - name: pain and stop-activity source boundaries
+    guide: GD-650
+    must_include:
+      - Pain is a signal.
+      - Sharp pain or pain that worsens for hours after exercise suggests over-aggression.
+      - "Red flag: Sudden increase in swelling, warmth, redness, or calf tenderness suggests deep vein thrombosis (DVT)."
+      - Stop exercise and seek medical evaluation immediately
+  - name: tracking source content
+    guide: GD-650
+    must_include:
+      - Record pain levels before, during, and after exercise
+      - Weekly Progress Notes
+      - Pain changes.
+      - Swelling changes.
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-650 as a boundary-only rehabilitation support-intake
+  card. It covers non-diagnostic logs, red-flag screening, comfort and
+  accessibility aids, stop triggers, and rehab-owner handoff while excluding
+  exercise prescription, manipulation, gait training, clearance, diagnosis,
+  wound care, medication or dosing, device fabrication, legal/disability
+  determinations, and safety certification. READY_FOR_PARENT_CLOSE.

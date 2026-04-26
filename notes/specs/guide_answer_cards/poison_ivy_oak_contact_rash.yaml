@@ -1,0 +1,94 @@
+card_id: poison_ivy_oak_contact_rash
+guide_id: GD-929
+slug: poison-ivy-oak-contact-rash
+title: "Poison Ivy, Poison Oak & Contact Rash Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Known or suspected poison ivy, poison oak, poison sumac, or urushiol contact with a new itchy, red, bumpy, streaked, blistering, or swollen rash.
+  - User asks what to do after touching poison ivy or poison oak, especially how to wash skin, clothes, tools, shoes, pets, or gear.
+  - User worries the rash is spreading and needs safe explanation, contamination separation, spread logging, and red-flag escalation boundaries.
+required_first_actions:
+  - Ask what touched the plant or oil, when exposure happened, where the rash is, whether the face, eyes, mouth, genitals, breathing, or severe swelling are involved, and what clothing, tools, shoes, pets, or surfaces may still be contaminated.
+  - Wash exposed skin now with lukewarm water and soap, including hands and under fingernails; if soap is unavailable, rinse with water anyway.
+  - Remove and separate contaminated clothing, gloves, shoes, tools, and gear until they can be cleaned.
+  - Treat trouble breathing, wheezing, throat tightness, mouth swelling, or severe face/eye/genital swelling as urgent red flags that need emergency or clinician evaluation rather than routine home care.
+first_actions:
+  - Explain that new patches usually come from delayed reaction or remaining urushiol on skin, nails, clothing, pets, tools, shoes, or surfaces, not blister fluid once the oil is removed.
+  - Keep contaminated laundry separate and wash it separately with detergent; clean tools, shoes, phone cases, watch bands, collars, harnesses, bedding, and other touched surfaces before reuse.
+  - Use routine itch and rash comfort steps only when no urgent red flags are present, such as cool compresses, oatmeal soaks, calamine, loose breathable clothing, and short fingernails to reduce scratching injury.
+  - Log whether redness, pain, swelling, pus, fever, eye/face/genital involvement, breathing symptoms, sleep disruption, or widespread rash is worsening, and hand off to a clinician or poison control when those concerns appear.
+urgent_red_flags:
+  - Trouble breathing, wheezing, throat tightness, or mouth swelling.
+  - Rash involving the eyes, eyelids, lips, face, or genitals.
+  - Severe swelling that limits opening the eyes or moving a hand or foot.
+  - Rash covering a large area, severe itching or swelling that disrupts sleep, eating, or daily function, or rash not improving after about 1 to 2 weeks.
+  - Possible infection signs such as pus, fever, worsening pain, warmth, or spreading redness.
+forbidden_advice:
+  - Do not provide plant identification certainty or tell the user a plant is definitely poison ivy, oak, or sumac from limited description.
+  - Do not recommend chemical herbicides, burning plant material, bleach, gasoline, harsh solvents, or other harsh chemicals on skin.
+  - Do not give prescription steroid dosing, antibiotic dosing, infection diagnosis, wound procedures, blister popping instructions, anaphylaxis treatment details, work clearance, legal claims, or safety certification.
+  - Do not reassure face, eye, genital, breathing, throat, mouth, severe swelling, fever, pus, or worsening pain symptoms as routine home care.
+do_not:
+  - Do not scratch, scrub hard, pop blisters, reuse contaminated clothing or gloves without washing, or forget pets, car seats, tools, shoes, and laces as possible oil sources.
+  - Do not assume blister fluid spreads poison ivy once urushiol oil is removed.
+  - Do not burn poison ivy, poison oak, or poison sumac.
+routine_boundary: >
+  Routine rash care is appropriate only when exposure is consistent with
+  urushiol contact and there are no urgent red flags. Plant identification,
+  herbicide choices, prescription treatment, infection diagnosis, wound
+  procedures, anaphylaxis care, work clearance, legal claims, and safety
+  certification are outside this card.
+acceptable_uncertain_fit: >
+  If the plant or rash cause is uncertain but urushiol contact is plausible,
+  keep the answer boundary-only: wash exposed skin, separate and clean likely
+  contaminated items, avoid scratching, track spread and red flags, and hand off
+  for plant identification, poison control, clinician evaluation, or emergency
+  care when the scenario moves outside routine contact-rash support.
+clarifying_questions:
+  - When did the exposure happen, and what parts of the body touched the plant, oil, clothing, tools, shoes, pets, or gear?
+  - Where is the rash now, and is it near the eyes, face, mouth, lips, genitals, hands, or feet?
+  - Is there trouble breathing, wheezing, throat tightness, mouth swelling, fever, pus, worsening pain, severe swelling, or a rash covering a large area?
+  - What clothing, gloves, shoes, tools, phone cases, watches, pets, collars, harnesses, bedding, or surfaces still need to be separated or cleaned?
+citation_ids:
+  - poison-ivy-overview
+  - poison-ivy-after-exposure
+  - poison-ivy-spreading
+  - poison-ivy-contaminated-clothes-tools
+  - poison-ivy-red-flags
+source_sections:
+  - guide: GD-929
+    slug: poison-ivy-oak-contact-rash
+    title: "Poison Ivy, Poison Oak & Contact Rash Care"
+    sections:
+      - "#overview"
+      - "#after-exposure"
+      - "#spreading"
+      - "#clothes-tools"
+      - "#itch-relief"
+      - "#blisters"
+      - "#what-not-to-do"
+      - "#red-flags"
+      - "#quick-answers"
+source_invariants:
+  - name: poison ivy wash and contamination boundary
+    guide: GD-929
+    must_include:
+      - "Wash skin with **lukewarm water and soap** as soon as possible."
+      - "The short answer is: **remove the oil source**."
+      - "Once urushiol is off the skin, **blister fluid does not spread poison ivy to other people**."
+      - "Do not pop them"
+      - "Get medical evaluation if any of the following apply:"
+    must_not_match:
+      - "(bleach|gasoline|harsh solvents)[^\\n]{0,120}on skin[^\\n]{0,120}(recommended|safe|use)"
+      - "burn poison ivy[^\\n]{0,120}(safe|recommended)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Boundary-only reviewed card for GD-929. It supports exposure/rash intake,
+  washing, contaminated item separation, routine itch/blister care boundaries,
+  spread/red-flag logging, and clinician/poison-control/emergency handoff. It
+  deliberately excludes plant identification certainty, herbicide advice,
+  prescription or steroid dosing, wound procedures, infection diagnosis,
+  anaphylaxis treatment details, work clearance, legal claims, and safety
+  certification.

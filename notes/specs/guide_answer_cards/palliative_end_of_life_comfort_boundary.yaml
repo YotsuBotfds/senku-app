@@ -1,0 +1,180 @@
+card_id: palliative_end_of_life_comfort_boundary
+guide_id: GD-654
+slug: palliative-end-of-life-care
+title: "Palliative & End-of-Life Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Reviewed boundary-only comfort-support card for GD-654. It covers
+  comfort-goals intake, caregiver coordination, symptoms to report,
+  dignity/privacy, hydration, mouth care, position comfort, crisis red flags,
+  and clinician, hospice, or community care-owner handoff. It is not a
+  prognosis, diagnosis, medication or opioid dosing, sedation, withholding or
+  withdrawing treatment decision, euthanasia or assisted-death, invasive
+  procedure, legal declaration, substitute-decision-making, or safety
+  certification card.
+applies_when:
+  - A user asks how to organize comfort-focused palliative or end-of-life care without asking for prognosis, diagnosis, dosing, sedation, legal decisions, or treatment-withholding decisions.
+  - A user needs a caregiver coordination checklist for who is present, who is resting, who records symptoms, and who owns the clinician, hospice, or community handoff.
+  - A user asks what symptoms or changes should be reported to a clinician, hospice team, or trusted community care owner.
+  - A user needs dignity, privacy, mouth-care, hydration-comfort, or position-comfort prompts for a seriously ill or dying person.
+  - A user asks for crisis red flags and handoff wording while staying outside medication, opioid, sedation, prognosis, legal, invasive, or assisted-death decisions.
+required_first_actions:
+  - State that this card is for boundary-level palliative comfort intake, caregiver coordination, dignity/privacy support, hydration and mouth-care prompts, position comfort, symptom-reporting red flags, and clinician, hospice, or community care-owner handoff only.
+  - Start with a comfort-goals intake before advice: what comfort means today, who is coordinating care, who can stay with the person, what symptoms changed, what dignity or privacy needs matter, what fluids or mouth care are comfortable, what positions reduce distress, and who owns the next handoff.
+  - Keep first support practical and non-procedural: calm presence, listening, quiet room, welcomed gentle touch, respectful hygiene, mouth moistening, small sips only if comfortable and safe, pillows or repositioning for comfort, caregiver rotation, and a concise symptom-and-handoff note.
+  - Treat severe or suddenly worsening breathlessness, uncontrolled pain or distress, new confusion or agitation, repeated vomiting, choking or unsafe swallowing, bleeding, fever or suspected infection, fall or injury, pressure injury breakdown, caregiver exhaustion with no safe supervision, conflict or coercion around care, or excluded decision requests as stop-and-handoff triggers.
+  - Hand off excluded or crisis issues to the appropriate clinician, hospice team, mental-health or crisis resource, public-health owner, legal authority, or trusted community care owner instead of resolving them inside the card.
+first_actions:
+  - Ask the patient, family, or caregiver to name the comfort goal for the next few hours, such as less distress, privacy, rest, family presence, mouth comfort, easier breathing posture, or a calmer room.
+  - Assign one caregiver coordinator for updates, symptom notes, rest rotation, supplies, privacy boundaries, and clinician/hospice/community owner contact.
+  - Make a symptom-to-report note covering pain or distress, breathlessness, nausea or vomiting, confusion or agitation, fever or infection concern, bleeding, falls, pressure-sore changes, swallowing trouble, hydration comfort, and caregiver safety.
+  - Protect dignity with consent-aware touch, privacy during hygiene, clean bedding or clothing when possible, limited unnecessary audience, and language that respects the person's values.
+  - Offer non-dosing comfort prompts: moisten lips and mouth, offer small sips only if the person is awake and swallowing comfortably, avoid forcing food or fluid, support with pillows, reposition gently, reduce noise and overstimulation, and keep the room calm.
+urgent_red_flags:
+  - Severe or suddenly worsening breathlessness, choking, inability to swallow safely, blue/gray color, collapse, or inability to wake.
+  - Uncontrolled pain or distress, new confusion, agitation, hallucination-like distress, panic, or behavior that makes supervision unsafe.
+  - Repeated vomiting, bleeding, fever or suspected infection, fall or injury, pressure injury breakdown, or rapid deterioration that caregivers cannot manage safely.
+  - Caregiver exhaustion with no reliable supervision, conflict, coercion, privacy violation, suspected abuse, or pressure on the patient or caregiver around care decisions.
+  - Any request for prognosis, diagnosis, medication or opioid dosing, sedation, withholding or withdrawing treatment, euthanasia or assisted death, invasive procedures, legal declarations, substitute decision-making, or safety certification.
+forbidden_advice:
+  - Do not provide prognosis, life-expectancy estimates, diagnosis, medication instructions, opioid dosing, sedative dosing, or medication escalation plans.
+  - Do not advise on palliative sedation, withholding or withdrawing treatment, do-not-resuscitate decisions, feeding-tube or ventilator decisions, euthanasia, assisted death, or other treatment-ending decisions.
+  - Do not provide invasive procedure instructions, death certification, legal declarations, advance-directive drafting, substitute-decision-maker rulings, or safety certification.
+  - Do not tell caregivers to force food or fluids, ignore unsafe swallowing, continue without supervision when crisis red flags are present, or manage coercion/conflict privately without handoff.
+  - Do not convert the broader source guide's medication, opioid, prognosis, advance-care-planning, death-management, legal, or ethics sections into reviewed-card authority.
+do_not:
+  - Do not use this card to decide whether a person is dying, how long they have, what illness they have, or what medication dose they should receive.
+  - Do not let comfort language become permission for sedation, assisted death, withholding/withdrawing treatment, legal declarations, substitute decision-making, or invasive procedures.
+  - Do not present the card as a safety certification that home care is safe when caregiver supervision, symptoms, or conflict red flags are unresolved.
+  - Do not delay clinician, hospice, mental-health/crisis, public-health, legal, or community-owner handoff when red flags or excluded decisions appear.
+routine_boundary: >
+  This card owns only the reviewed palliative comfort boundary lane for GD-654:
+  comfort-goals intake, caregiver coordination, symptoms to report,
+  dignity/privacy, hydration and mouth care, position comfort, crisis red
+  flags, and clinician, hospice, or community care-owner handoff. It exits for
+  prognosis, diagnosis, medication or opioid dosing, sedation, withholding or
+  withdrawing treatment decisions, euthanasia or assisted death, invasive
+  procedures, legal declarations, substitute decision-making, and safety
+  certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt appears to be about end-of-life
+  comfort support, answer with a conservative comfort-goals intake, caregiver
+  coordination, dignity/privacy, mouth-care, hydration-comfort,
+  position-comfort, symptom-reporting, red-flag, and handoff checklist while
+  avoiding prognosis, diagnosis, medication, opioid, sedation, legal,
+  invasive, assisted-death, treatment-withholding, substitute-decision, or
+  safety-certification advice.
+clarifying_questions:
+  - What comfort goal matters most right now, and has the patient expressed a preference about privacy, touch, visitors, room noise, or position?
+  - Who is coordinating care, who can stay with the person, and who can relieve the primary caregiver?
+  - What symptoms have changed: breathing, pain or distress, vomiting, swallowing, fever, bleeding, confusion, agitation, falls, skin breakdown, or hydration/mouth comfort?
+  - Is a clinician, hospice team, mental-health or crisis resource, public-health owner, legal authority, or trusted community care owner already involved?
+  - Is there any conflict, coercion, caregiver exhaustion, unsafe supervision, or request for prognosis, dosing, sedation, treatment-ending, legal, or invasive decisions?
+fallback:
+  - If a crisis red flag is present, keep the person supervised and comfortable, document the symptom change, and hand off to the appropriate clinician, hospice team, emergency/crisis resource, or community care owner.
+  - If the prompt asks for prognosis, diagnosis, medication or opioid dosing, sedation, withholding/withdrawing treatment, euthanasia or assisted death, invasive procedures, legal declarations, substitute decision-making, or safety certification, decline that scope and provide only comfort intake, red-flag recognition, and handoff support.
+  - If caregiver burden or conflict is present, name one coordinator, rotate rest, limit audience, preserve privacy, document concerns, and involve the relevant care owner rather than forcing a private family resolution.
+fallback_handoff_language:
+  - "This reviewed card can help with comfort-goals intake, caregiver coordination, dignity/privacy, mouth care, hydration comfort, position comfort, symptoms to report, crisis red flags, and care-owner handoff."
+  - "I cannot use this card for prognosis, diagnosis, medication or opioid dosing, sedation, withholding or withdrawing treatment, euthanasia or assisted death, invasive procedures, legal declarations, substitute decision-making, or safety certification."
+  - "Keep the person supervised and as comfortable as possible, write down the symptom change and caregiver concern, and hand off to the clinician, hospice team, crisis resource, public-health owner, legal authority, or trusted community care owner."
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  include_comfort_goals_intake: true
+  include_caregiver_coordination: true
+  include_symptoms_to_report: true
+  include_dignity_privacy: true
+  include_hydration_mouth_care_position_comfort: true
+  include_crisis_red_flags_and_care_owner_handoff: true
+  forbid_prognosis_diagnosis_dosing_sedation_treatment_withdrawal_assisted_death_invasive_legal_substitute_safety_certification: true
+routing_tests:
+  positive:
+    - prompt: "Help me make a comfort goals and caregiver coordination checklist for end-of-life care at home."
+      expect: palliative_end_of_life_comfort_boundary
+    - prompt: "What symptoms should we report to hospice, and how do we keep her mouth, privacy, and position comfortable?"
+      expect: palliative_end_of_life_comfort_boundary
+    - prompt: "Give me a palliative care-owner handoff note for breathlessness, caregiver exhaustion, and dignity concerns without medication dosing."
+      expect: palliative_end_of_life_comfort_boundary
+  near_miss:
+    - prompt: "How long does he have left?"
+      expect_handoff: prognosis_owner_not_this_card
+    - prompt: "What morphine dose should I give for end-of-life breathing?"
+      expect_handoff: medication_or_opioid_dosing_owner_not_this_card
+    - prompt: "Should we withdraw the feeding tube or use sedation?"
+      expect_handoff: treatment_decision_or_sedation_owner_not_this_card
+    - prompt: "Write a legal declaration naming who decides for her."
+      expect_handoff: legal_or_substitute_decision_owner_not_this_card
+  boundary:
+    - prompt: "The caregiver is exhausted and no one can safely stay overnight."
+      expect: caregiver_safety_red_flag_and_care_owner_handoff
+    - prompt: "He is coughing with sips and the family is forcing fluids."
+      expect: unsafe_swallowing_red_flag_and_mouth_care_handoff
+citation_ids:
+  - gd-654-reviewed-comfort-boundary
+  - gd-654-family-caregiver-support
+  - gd-654-symptom-management
+  - gd-654-psychosocial-spiritual-support
+  - gd-654-caregiver-burnout
+source_sections:
+  - guide: GD-654
+    slug: palliative-end-of-life-care
+    title: "Palliative & End-of-Life Care"
+    sections:
+      - "#reviewed-boundary-comfort-goals-intake-and-care-owner-handoff"
+      - "#family-caregiver-support"
+      - "#symptom-management"
+      - "#psychosocial-spiritual-support"
+      - "#caregiver-burnout"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-654
+    must_include:
+      - "Use it only for boundary-level comfort support"
+      - "comfort-goals intake, caregiver coordination, symptoms to report"
+      - "hydration and mouth-care prompts, position-comfort prompts, crisis red flags"
+      - "prognosis, diagnosis, medication or opioid dosing, sedation"
+      - "withholding or withdrawing treatment, euthanasia or assisted death"
+  - name: caregiver_coordination_context_remains
+    guide: GD-654
+    must_include:
+      - "Families often provide 24/7 care with minimal training."
+      - "Positioning and movement: how to reposition frequently without hurting patient or self."
+      - "Nutrition and hydration: hand-feeding, sips of water or tea, managing loss of appetite."
+      - "Arrange for others to provide care for a few hours so the primary caregiver can rest."
+  - name: symptom_and_breathlessness_context_remains
+    guide: GD-654
+    must_include:
+      - "Advanced illness causes multiple distressing symptoms."
+      - "Position upright (sitting or semi-reclined)."
+      - "Reassurance and calm presence (anxiety worsens dyspnea)."
+  - name: dignity_and_caregiver_burnout_context_remains
+    guide: GD-654
+    must_include:
+      - "Medical symptom relief is necessary but insufficient for a good death."
+      - "Social connection is profound medicine."
+      - "Caregiver Burnout Prevention"
+      - "Family meetings to share responsibilities."
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed closure for GD-654 as a boundary-only comfort support card. It
+  closes the metadata/card audit gap without endorsing prognosis, diagnosis,
+  medication or opioid dosing, sedation, withholding/withdrawing treatment,
+  euthanasia or assisted death, invasive procedures, legal declarations,
+  substitute decision-making, or safety certification. READY_FOR_PARENT_CLOSE.

@@ -24,6 +24,22 @@ routing_cues:
   - "panic attack what to do right now"
   - "how to calm down when anxious"
   - "stress is too much I need help coping"
+citations_required: true
+applicability: >
+  Non-diagnostic coping and support intake for routine stress signs,
+  social connection, basic sleep, food, hydration, rest, grounding, and
+  trusted-person, clinician, or community mental-health handoff. Route
+  self-harm, violence, psychosis, mania or acute activation, inability to
+  stay safe, medical instability, abuse danger, diagnosis requests, therapy
+  protocols, medication advice, restraint or coercion, suicide-risk clearance,
+  legal or work-fitness claims, and safety certification outside this guide.
+citation_policy: >
+  Cite GD-576 and its reviewed answer-card content for routine resilience
+  support, coping intake, practical self-care reminders, social support, and
+  owner handoff only. Do not use this guide to diagnose, clear risk, prescribe
+  therapy or medication, certify safety or fitness, or manage acute crisis.
+answer_card:
+  - psychological_resilience_support_intake
 icon: 🧠
 description: Building mental resilience, managing stress, coping strategies, self-care practices, and recognizing when to seek help.
 related:
@@ -39,8 +55,24 @@ word_count: 3000
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: psychological_resilience_support_intake
 ---
 Resilience is the ability to handle stress, recover from difficulties, and adapt to challenges. It's not something you're born with—it's a skill you can develop. This guide covers practical strategies for building mental strength, managing stress, and maintaining psychological health during difficult times.
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-576. Use it for non-diagnostic resilience and coping support when someone is stressed, overwhelmed, worried, tired, isolated, or trying to build a simple support plan but does not describe immediate danger or severe mental-health red flags.
+
+Start with a boundary intake: ask whether there are thoughts of self-harm or suicide, thoughts of harming someone else, violence or immediate danger, hallucinations, paranoia, severe confusion, days of little or no sleep with extreme energy or reckless behavior, inability to stay safe, inability to eat or drink, or medical instability. If any are present, stop routine coping advice and route to crisis support, emergency services, a clinician, or a trusted person who can stay with the person now.
+
+For routine stress support after red flags are excluded, keep the advice practical: name common stress signs, lower stimulation, use a grounding or breathing exercise, drink water, eat something tolerable, rest, protect sleep timing, take a short walk or stretch, reduce constant stress media, and contact a supportive friend, family member, mentor, peer group, clinician, or community mental-health resource. The owner handoff is a trusted person, clinician, crisis line, emergency service, or community mental-health support depending on risk and local availability.
+
+Do not use this card for diagnosis, therapy protocols, trauma-processing steps, exposure therapy, medication advice or changes, restraint, coercion, suicide-risk clearance, legal or work-fitness claims, safety certification, or promises that coping steps will keep someone safe. Do not tell a person to manage self-harm, violence, psychosis, mania or acute activation, abuse danger, or medical instability with routine self-care alone.
+
+</section>
 
 <section id="what-is-resilience">
 

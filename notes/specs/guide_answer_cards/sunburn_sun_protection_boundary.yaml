@@ -1,0 +1,106 @@
+card_id: sunburn_sun_protection_boundary
+guide_id: GD-946
+slug: sunburn-sun-protection
+title: "Sunburn, Sun Protection & Heat-Skin Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks what to do for routine sunburn, sun exposure, after-sun care, sunburn relief, peeling skin, sun rash, or mild blister concern.
+  - The answer can stay at boundary-level intake, cooling, hydration, shade, rest, burn extent and blister logging, and red-flag screening.
+  - The prompt asks when sunburn needs clinician, urgent, or emergency handoff, especially with heat illness, dehydration, infant, elder, eye, swelling, or extensive blistering concerns.
+required_first_actions:
+  - Screen for emergency red flags before routine sunburn care, including confusion, collapse, fainting, severe weakness, high fever, hot dry skin, repeated vomiting, trouble breathing, severe face, lip, or tongue swelling, signs of heat stroke, major blistering over a large area, eye pain or vision change, or severe pain not manageable at home.
+  - Check for dehydration or heat illness overlap when sunburn occurs with dizziness, weakness, cramps, headache, nausea, dry mouth, dark urine, poor fluid intake, or vomiting.
+  - Keep routine care limited to getting out of sun, shade or indoors, cooling skin with cool water or cool damp cloths, drinking fluids, resting, loose clothing, and avoiding more sun while healing.
+  - Escalate to clinician or emergency handoff for infants, elders, extensive blistering, burns on sensitive areas, eye symptoms, severe swelling, trouble drinking, infection signs, or any heat illness or dehydration red flags.
+first_actions:
+  - Log the exposure timing, body areas involved, burn extent, blistering, eye symptoms, swelling, fluid intake, urination, dizziness, weakness, cramps, nausea, vomiting, and whether the person is an infant, elder, or otherwise fragile.
+  - Move the person out of direct sun and into shade or indoors, and stop additional UV exposure while the skin is healing.
+  - Cool burned skin with cool water, cool baths or showers, or cool damp cloths; avoid ice directly on skin, scrubbing, butter, grease, oil, and harsh soap.
+  - Encourage fluids and rest when the person is alert, able to drink, and not vomiting or showing emergency signs.
+  - Protect blistered skin from friction, keep it clean, do not pop blisters, and watch for redness, pus, smell, increasing pain, or worsening swelling.
+urgent_red_flags:
+  - Confusion, collapse, fainting, severe weakness, high fever, hot dry skin, repeated vomiting, trouble breathing, or signs of heat stroke.
+  - Dry mouth, dark urine, dizziness, weakness, muscle cramps, headache, nausea, trouble drinking, or poor fluid intake with sunburn.
+  - Major blistering over a large area, blisters on the face, hands, genitals, or near the eyes, or severe pain that is not manageable at home.
+  - Eye pain, vision change, very red or light-sensitive eyes, or chemical-like eye injury from sunscreen or another product.
+  - Severe swelling of the face, lips, or tongue, white, gray, leathery, or charred skin, or redness, pus, smell, drainage, or increasing pain suggesting infection.
+forbidden_advice:
+  - Do not diagnose burn depth, grade, or degree from this card.
+  - Do not provide medication names, medication dosing, or medication-first instructions.
+  - Do not advise popping, draining, cutting, debriding, or otherwise opening blisters.
+  - Do not provide wound procedures, heat-stroke treatment protocols, return-to-work clearance, cancer screening or diagnosis, legal claims, or safety certification.
+  - Do not reassure confusion, collapse, fainting, repeated vomiting, trouble breathing, eye symptoms, severe swelling, major blistering, infants, elders, dehydration, or heat illness signs as routine sunburn.
+do_not:
+  - Do not rely on homemade sunscreen, oils, butter, grease, or food oils for UV protection or burn treatment.
+  - Do not place ice directly on burned skin.
+  - Do not scrub, peel loose skin by force, or keep sunburned skin in strong sun while healing.
+  - Do not confuse a large blistering burn or sun injury with confusion or collapse with simple redness.
+routine_boundary: >
+  Routine sunburn care is only appropriate after red flags are absent and the
+  person is alert, breathing normally, able to drink, not repeatedly vomiting,
+  not severely weak or fainting, and not showing heat illness, dehydration, eye,
+  severe swelling, extensive blistering, infection, infant, or elder danger
+  signs. Those concerns require clinician, urgent, or emergency handoff.
+acceptable_uncertain_fit: >
+  If severity, burn extent, blistering, age, hydration, heat symptoms, eye
+  symptoms, swelling, or exposure history is unclear, lead with the red-flag
+  screen and conservative interim steps: leave sun, rest in shade or indoors,
+  cool the skin gently, offer fluids only if alert and able to drink, and
+  arrange urgent help if any danger sign is present.
+clarifying_questions:
+  - When did the sun or UV exposure happen, and which body areas are burned?
+  - Are there blisters, and do they cover a large area or involve the face, hands, genitals, or eyes?
+  - Is there confusion, fainting, severe weakness, repeated vomiting, trouble breathing, severe swelling, high fever, hot dry skin, eye pain, or vision change?
+  - Is the person an infant, elder, or unable to drink normally, and are there dehydration signs such as dry mouth, dark urine, dizziness, cramps, or weakness?
+citation_ids:
+  - sunburn-reviewed-boundary
+  - sunburn-heat-illness-overlap
+  - mild-sunburn-care
+  - blister-boundary
+  - sunburn-emergency-red-flags
+  - sun-protection-prevention
+source_sections:
+  - guide: GD-946
+    slug: sunburn-sun-protection
+    title: "Sunburn, Sun Protection & Heat-Skin Care"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#sunburn-versus-heat-illness"
+      - "#hydration-overlap"
+      - "#mild-sunburn-care"
+      - "#blisters"
+      - "#when-sunburn-is-an-emergency"
+      - "#best-sun-protection-shade-clothing-timing"
+      - "#how-to-protect-lips-and-eyes"
+source_invariants:
+  - name: sunburn boundary-only card scope
+    guide: GD-946
+    must_include:
+      - This is the reviewed answer-card surface for GD-946.
+      - Use it only for boundary-level sun exposure and sunburn intake, routine cooling, hydration, shade, rest prompts, burn extent and blister/red-flag logging, heat illness and dehydration screening, infant or elder escalation boundaries, and clinician or emergency handoff.
+      - Do not use this reviewed card for burn-depth diagnosis, medication or dosing advice, blister draining, wound procedures, heat-stroke treatment protocols, return-to-work clearance, cancer screening or diagnosis, legal claims, or safety certification.
+  - name: routine sunburn care and red flags
+    guide: GD-946
+    must_include:
+      - Get out of the sun.
+      - Cool the skin with cool water or a cool damp cloth.
+      - Drink fluids.
+      - Do not pop blisters if you can avoid it.
+      - Confusion, collapse, fainting, or severe weakness
+      - Repeated vomiting
+      - Eye pain, vision change, or a chemical-like eye injury from a sunscreen or product
+    must_not_match:
+      - "(advise|recommend|tell|instruct)[^\\n]{0,80}(pop|drain|cut|open)[^\\n]{0,80}blister"
+      - "(return to work|safe to work|work clearance)[^\\n]{0,120}sunburn"
+      - "(diagnose|classify)[^\\n]{0,80}(degree|depth)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed GD-946 boundary-only card for routine sun exposure and sunburn
+  intake, cooling, hydration, shade/rest prompts, burn extent and blister/red
+  flag logging, heat illness/dehydration screening, infant/elder escalation,
+  and clinician or emergency handoff. It intentionally excludes medication and
+  dosing advice, burn-depth diagnosis, blister draining, wound procedures,
+  heat-stroke treatment protocols, return-to-work clearance, cancer
+  screening/diagnosis, legal claims, and safety certification.

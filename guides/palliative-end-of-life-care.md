@@ -8,6 +8,38 @@ tags:
   - practical
   - medical
   - care
+aliases:
+  - palliative comfort goals intake
+  - end of life caregiver coordination
+  - hospice handoff red flags
+  - mouth care hydration comfort
+  - dignity privacy end of life care
+routing_cues:
+  - palliative end-of-life comfort goals intake caregiver coordination dignity privacy symptoms to report
+  - hospice clinician community care owner handoff mouth care hydration positioning comfort crisis red flags
+  - boundary-only comfort care no prognosis diagnosis medication opioid dosing sedation treatment withdrawal assisted death legal declaration
+citations_required: true
+citation_policy: >
+  Cite the reviewed GD-654 answer card only for boundary-level palliative and
+  end-of-life comfort intake, caregiver coordination, symptoms to report,
+  dignity and privacy, hydration/mouth-care/position-comfort prompts, crisis
+  red flags, and clinician, hospice, or community care-owner handoff. Do not
+  use it for prognosis, diagnosis, medication or opioid dosing, sedation,
+  withholding or withdrawing treatment decisions, euthanasia or assisted death,
+  invasive procedures, legal declarations, substitute decision-making, or safety
+  certification.
+applicability: >
+  Boundary-only palliative comfort-support card for comfort-goals intake,
+  caregiver coordination, symptoms to report, dignity/privacy, hydration,
+  mouth care, position comfort, crisis red flags, and clinician, hospice, or
+  community care-owner handoff. It is not a prognosis, diagnosis, medication,
+  opioid-dosing, sedation, treatment-withholding/withdrawal, euthanasia,
+  invasive-procedure, legal-declaration, substitute-decision, or
+  safety-certification guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: palliative_end_of_life_comfort_boundary
+answer_card:
+  - palliative_end_of_life_comfort_boundary
 icon: 🏥
 description: Pain management with limited medications, prognosis communication, family support, death management protocols, and community grief support in resource-constrained environments
 related:
@@ -24,6 +56,16 @@ liability_level: high
 # Palliative & End-of-Life Care
 
 Palliative care focuses on comfort and quality of life for patients with advanced, incurable illness. It is not about cure but about dignity, symptom relief, and supporting patients and families through the dying process. In resource-limited environments where advanced medical interventions are unavailable, palliative care becomes the primary framework for meaningful end-of-life support.
+
+:::danger
+## Reviewed Boundary: Comfort Goals Intake and Care-Owner Handoff
+
+This is the reviewed answer-card surface for GD-654. Use it only for boundary-level comfort support: comfort-goals intake, caregiver coordination, symptoms to report, dignity and privacy, hydration and mouth-care prompts, position-comfort prompts, crisis red flags, and clinician, hospice, or community care-owner handoff.
+
+Start by asking what comfort means to the patient or family today, who is coordinating care, who can stay with the person, what symptoms have changed, what privacy or dignity needs matter most, whether fluids and mouth care are comfortable, what positions reduce distress, and who owns the next clinician, hospice, or community support handoff. Keep the response practical and non-procedural: listening, quiet room, gentle touch if welcomed, respectful hygiene, moistening the mouth, small sips only if comfortable and safe, pillows or repositioning for comfort, caregiver rotation, and a concise symptom-and-handoff note.
+
+Use severe or suddenly worsening breathlessness, uncontrolled pain or distress, new confusion or agitation, repeated vomiting, choking or inability to swallow safely, bleeding, fever or suspected infection, fall or injury, pressure injury breakdown, caregiver exhaustion with no safe supervision, conflict or coercion around care, or any request for prognosis, diagnosis, medication or opioid dosing, sedation, withholding or withdrawing treatment, euthanasia or assisted death, invasive procedures, legal declarations, substitute decision-making, or safety certification as stop-and-handoff triggers. Hand off to the appropriate clinician, hospice team, mental-health/crisis resource, public-health owner, legal authority, or trusted community care owner instead of trying to resolve those decisions inside this card.
+:::
 
 <section id="philosophy-palliative-care">
 
@@ -705,4 +747,3 @@ Respect patients' informed choices, even if they differ from what clinicians con
 ## Summary
 
 Palliative and end-of-life care in resource-limited environments prioritizes comfort, dignity, and relationship over cure. Pain management, symptom control, honest communication, and psychosocial support enable meaningful final chapters. Families become primary caregivers and require education and support. Anticipation of death, preparation for practical and emotional tasks, and community rituals facilitate healthy grieving. With limited pharmaceutical resources, creative use of herbal remedies, non-pharmacological approaches, and human connection—the most powerful medicine—sustain quality of life and enable good deaths.
-
