@@ -87,6 +87,28 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual([row["prompt_id"] for row in bridge_rows], ["P1"])
         self.assertEqual([row["prompt_id"] for row in unresolved_rows], ["P2"])
 
+    def test_filter_rows_matches_guide_ids_from_list_fields(self):
+        rows = [
+            {
+                "prompt_id": "P1",
+                "expected_guide_ids": ["GD-001", " GD-002 "],
+                "top_retrieved_guide_ids": [],
+                "cited_guide_ids": [],
+            },
+            {
+                "prompt_id": "P2",
+                "expected_guide_ids": [],
+                "top_retrieved_guide_ids": ["GD-010"],
+                "cited_guide_ids": [" GD-011 "],
+            },
+        ]
+
+        expected_match = self.module.filter_rows(rows, guide_ids=["GD-002"])
+        cited_match = self.module.filter_rows(rows, guide_ids=["GD-011"])
+
+        self.assertEqual([row["prompt_id"] for row in expected_match], ["P1"])
+        self.assertEqual([row["prompt_id"] for row in cited_match], ["P2"])
+
     def test_render_markdown_escapes_pipes(self):
         markdown = self.module.render_markdown(
             [

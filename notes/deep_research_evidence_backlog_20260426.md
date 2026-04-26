@@ -246,6 +246,9 @@ Action:
 - Added direct dual-model answer package coverage for CSV/JSONL prompt loading,
   prompt-key matching, duplicate artifact keys, missing/error/blank model
   blocks, zero duplicate-citation rendering, and Markdown output shape.
+- Added diagnostics triage coverage proving `--guide-id` style filtering still
+  matches guide IDs when diagnostic artifacts store expected, retrieved, or
+  cited guide fields as JSON lists rather than pipe-delimited strings.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
