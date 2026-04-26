@@ -22,6 +22,44 @@ related:
   - non-ferrous-metalworking
   - steel-connections-design
   - structural-design-basics-stability
+aliases:
+  - welding planning boundary
+  - weld defect red flags
+  - welding material identity checklist
+  - welding fume and fire handoff
+  - qualified welder engineer handoff
+  - weld repair safety boundary
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level welding and metallurgy planning: material identity questions, visible weld or heat-affected-zone defect red flags, fume/fire/confined-space awareness, and qualified welder, welding inspector, materials engineer, or responsible owner handoff.
+  - Keep routine answers focused on what material or weld is involved, how it is labeled or identified, visible cracks, holes, undercut, lack of fusion, distortion, corrosion, unknown prior repairs, coating or contamination concerns, ventilation/fire-watch/access concerns, and who owns the decision.
+  - Route welding procedures, amperage or machine settings, joint design, filler selection, preheat or postheat temperatures, structural repair, pressure-vessel repair, vehicle repair, live work, code or legal claims, inspection-pass decisions, and safety certification away from this card.
+routing_support:
+  - steel-connections-design for qualified structural connection design ownership rather than weld procedure instructions.
+  - structural-design-basics-stability for planning-level structural risk language and engineer handoff when load path or public safety is involved.
+  - engineering-repair for general repair triage and owner mapping when the work is not specifically welding-procedure advice.
+citations_required: true
+citation_policy: >
+  Cite GD-421 and its reviewed answer card only for welding/metallurgy planning
+  boundaries, material identity scoping, visible defect red flags,
+  fume/fire/confined-space awareness, and qualified welder, inspector,
+  engineer, or responsible-owner handoff. Do not use it for welding
+  procedures, amperage or machine settings, joint design, filler selection,
+  preheat or postheat temperatures, structural repair instructions,
+  pressure-vessel or vehicle advice, live work, code/legal claims, inspection
+  pass/fail decisions, or safety certification.
+applicability: >
+  Use for boundary-only welding and metallurgy planning questions: identifying
+  the material or weld context, logging visible weld or heat-affected-zone
+  defects, spotting fume, fire, confined-space, coating, contamination, and
+  access-control concerns, and preparing a handoff for a qualified welder,
+  welding inspector, materials engineer, structural engineer, equipment owner,
+  or safety owner. Do not use for procedural welding, settings, filler or joint
+  design, heat-treatment parameters, structural repair instructions, pressure
+  vessels, vehicles, live work, code/legal claims, or certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: welding_metallurgy_boundary_handoff
+answer_card:
+  - welding_metallurgy_boundary_handoff
 read_time: 18
 word_count: 3450
 last_updated: '2026-02-20'
@@ -35,6 +73,16 @@ liability_level: high
 Joining two pieces of metal requires understanding heat, pressure, and metallurgical compatibility. This guide covers the science of fusion welding, brazing, soldering, and the testing methods used to ensure joint integrity in survival and industrial applications.
 
 ![Welding metallurgy and joint integrity reference diagram](../assets/svgs/welding-metallurgy-1.svg)
+
+## Reviewed Answer-Card Boundary: Welding Planning, Defect Red Flags, and Handoffs
+
+This is the reviewed answer-card surface for GD-421. Use it only for boundary-level welding and metallurgy planning, material identity scoping, visible weld and heat-affected-zone defect red flags, fume/fire/confined-space awareness, and qualified welder, welding inspector, materials engineer, structural engineer, equipment owner, or safety-owner handoff.
+
+For routine planning, record the material or weld identifier, source or label if known, base metal family if known, coating or contamination concerns, current service context, whether the item is load-bearing or pressure/vehicle/critical equipment, visible cracks, holes, undercut, lack of fusion, distortion, corrosion, porosity, unknown prior repairs, heat discoloration, access control, fire exposure, nearby combustibles, ventilation, and whether any work would occur in a confined or poorly ventilated space.
+
+Treat these as handoff triggers before routine planning: visible cracks in the weld or heat-affected zone, holes, lack of fusion, severe undercut, major distortion, unknown material in critical service, galvanized or coated metal, stainless or alloy uncertainty, fumes, smoke, fire risk, confined-space work, fuel or chemical residue, pressurized equipment, vehicle or lifting equipment, structural load paths, public or shared occupancy, or any request to declare a weld safe.
+
+Do not use this reviewed card for welding procedures, machine setup, amperage or settings, joint design, filler selection, preheat or postheat temperatures, heat-treatment procedures, structural repair instructions, pressure-vessel repair, vehicle repair, live work, code or legal claims, inspection-pass statements, or safety certification. Hand off those requests to the responsible owner, qualified welder, welding inspector, materials engineer, structural engineer, equipment specialist, emergency services, or local authority as appropriate.
 
 <section id="metallurgy-of-welding">
 
@@ -377,4 +425,3 @@ After a weld cools completely, heating and slow cooling can improve ductility an
 :::
 
 </section>
-

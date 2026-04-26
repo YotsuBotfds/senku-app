@@ -1,0 +1,188 @@
+card_id: bearing_manufacturing_condition_inventory_handoff
+guide_id: GD-172
+slug: bearing-manufacturing
+title: Bearing Manufacturing
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user needs boundary-level bearing condition inventory, failure symptom recognition, contamination or lubrication questions, stop-use trigger screening, or qualified maintenance handoff for an existing bearing.
+  - The question is about heat, noise, vibration, binding, roughness, wobble, visible pits, discoloration, damaged seals, lubricant darkening, particles, water contamination, corrosion, leaking oil or grease, or maintenance-record gaps.
+  - The problem is observation, documentation, red-flag recognition, and handoff, not manufacturing, machining, grinding, lapping, hardening, fitting, removal, live repair, engineering calculations, return-to-service certification, legal/code advice, or safety guarantees.
+required_first_actions:
+  - Start with non-invasive observation only; do not open guards, reach into moving equipment, touch hot or moving parts, remove bearings, press parts, adjust clearances, add formulas, or work on a live machine.
+  - Classify the prompt as condition inventory, failure symptom log, contamination or lubrication question, stop-use trigger, maintenance-record review, or qualified handoff.
+  - Screen for red flags before routine logging; if present, recommend stopping routine use of the affected equipment path and routing to the owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, or site authority.
+  - Keep the answer at observation, logging, stop-use trigger, and qualified handoff level.
+first_actions:
+  - Record the machine or component, bearing location if known, date, observer, current access status, owner or maintainer, recent operating changes, and available maintenance records.
+  - From a safe non-invasive vantage point, note heat, odor, lubricant darkening, visible particles, water contamination, corrosion, damaged seals, leaking oil or grease, noise, vibration, binding, roughness, wobble, visible pits, discoloration, and whether symptoms are worsening.
+  - Separate symptoms from suspected causes so the maintainer can triage heat, lubrication, contamination, seal damage, wear, corrosion, runout, or possible internal bearing damage.
+  - Preserve a handoff log with what changed, when it was first noticed, whether operation is continuing, photos from safe locations if allowed, maintenance-record gaps, and the qualified person or owner notified.
+  - If people are near moving equipment, hot surfaces, grinding or binding bearings, wobbling shafts, leaking lubricant, contaminated lubricant, or unguarded machine areas, prioritize keep-back and qualified handoff before routine documentation detail.
+urgent_red_flags:
+  - Bearing hot to touch, overheating indications, lubricant oxidizing or darkening, smoke, odor, or rapidly increasing temperature.
+  - Audible grinding, growling, rumbling, popping, clicking, rattling, intermittent binding, rough rotation, or worsening vibration.
+  - Visible pits, missing chunks, dents, discoloration, corrosion, reddish oxide dust, damaged seals, leaking oil or grease, water contamination, dirt particles, or metal particles in lubricant.
+  - Shaft wobble, runout concern, bearing loose on shaft or in housing, visible misalignment, or symptoms that worsen during operation.
+  - Missing, obsolete, contradictory, or unresolved maintenance records while use or operation is continuing.
+  - Any request for live machine repair, bearing removal, press-fit work, clearance adjustment, machining, grinding, hardening, load/speed calculation, return-to-service approval, legal/code claim, or safety certification.
+forbidden_advice:
+  - Do not provide machining, grinding, lapping, hardening, heat treatment, bearing fabrication, or production workflow instructions.
+  - Do not provide tolerances, clearances, fits, press-fit/removal procedures, re-boring, shaft straightening, alignment correction, or bearing replacement steps as actionable instructions.
+  - Do not provide lubricant formulas, viscosity selection as a guarantee, grease-making, oil production, or additive instructions.
+  - Do not provide live machine repair, guard bypass, lockout/tagout procedure details, load or speed calculations, life calculations, or operating-limit approvals.
+  - Do not certify a bearing, machine, repair, installation, lubricant choice, or operating condition as safe, code-compliant, ready for service, or professionally approved.
+do_not:
+  - Do not convert the source guide's manufacturing, fitting, lubrication-production, tolerancing, testing, or remediation passages into reviewed-card instructions.
+  - Do not minimize heat, grinding, binding, wobble, visible damage, contamination, damaged seals, corrosion, leaking lubricant, or missing records because the bearing has not yet failed.
+  - Do not delay stop-use, keep-back, owner handoff, or qualified maintenance handoff to complete a full checklist when red flags are already present.
+routine_boundary: >
+  This card owns only the reviewed boundary lane for GD-172: non-invasive
+  bearing condition inventory, visible or audible failure symptoms,
+  contamination and lubrication questions, stop-use trigger recognition,
+  maintenance-record review, and qualified maintenance handoff for existing
+  bearings. It does not own machining, grinding, lapping, heat treatment,
+  bearing fabrication, tolerances or clearances, lubricant formulas,
+  press-fit/removal procedures, live machine repair, load/speed calculations,
+  return-to-service certification, legal/code claims, or safety guarantees.
+acceptable_uncertain_fit: >
+  If the exact bearing type, equipment, or severity is unclear but the prompt
+  reports heat, unusual sound, vibration, roughness, binding, wobble, seal
+  damage, lubricant contamination, corrosion, visible damage, or missing records,
+  give a conservative observation and handoff answer. Ask one clarifying question
+  only after the immediate stop-use or qualified handoff step when a red flag is
+  present.
+clarifying_questions:
+  - What bearing or equipment is involved, and is it currently operating or accessible to people?
+  - What changed recently: heat, odor, grinding, rumbling, clicking, vibration, binding, roughness, wobble, leaking lubricant, water contamination, particles, corrosion, visible pits, damaged seal, impact, overload, or missing maintenance record?
+  - What can be seen or heard without touching moving or hot parts, opening guards, removing the bearing, or changing the machine?
+  - Who owns or maintains the equipment, and is there a recent inspection note, lubrication log, repair record, or manufacturer support path?
+applicability:
+  owner: bearing condition inventory, red-flag recognition, and qualified maintenance handoff only
+  use_when:
+    - bearing_condition_inventory
+    - bearing_failure_symptom_log
+    - bearing_lubrication_contamination_question
+    - bearing_stop_use_trigger_screen
+    - bearing_maintenance_record_review
+    - qualified_maintenance_handoff
+  do_not_use_when:
+    - bearing_machining_grinding_lapping_or_fabrication
+    - heat_treatment_or_hardening
+    - tolerances_clearances_fits_or_press_work
+    - lubricant_formula_or_production
+    - live_machine_repair_or_guard_bypass
+    - load_speed_life_or_operating_limit_calculation
+    - return_to_service_legal_code_or_safety_certification
+  handoff:
+    - machine-tools for tool-specific machine operation or fabrication questions outside the condition-inventory lane.
+    - workshop-organization for layout, labeling, storage, walking-path, and inspection checklist questions not specific to bearing condition.
+    - water-mills-windmills for fixed-site mill or waterwheel visible-hazard and owner-handoff questions beyond bearing-only observations.
+    - automotive-alternator-repurposing for alternator-system monitoring and owner handoff when the prompt is primarily about alternator operation rather than bearing condition.
+    - owner/operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, or emergency authority for red flags, repair, operation, return-to-service, legal, or certification requests.
+actions:
+  required:
+    - identify the equipment, bearing location if known, current operating/access status, and owner or maintainer
+    - lead with keep-back, stop-use, or qualified handoff if red flags are present
+    - document visible and audible symptoms from safe non-invasive vantage points only
+    - compare against existing maintenance logs, lubrication records, inspection notes, repair records, or manufacturer information when already available
+    - route manufacturing, machining, heat treatment, tolerancing, press work, lubricant formulation, live repair, calculations, legal, certification, and safety-guarantee requests away from the card
+  standard:
+    - create a short handoff log with date, observer, equipment, bearing location, symptoms, recent changes, operating status, maintenance-record gaps, and person notified
+    - separate heat, sound, vibration, motion, visible damage, lubricant, seal, contamination, corrosion, and record observations so the receiving maintainer can triage quickly
+forbidden:
+  - machining, grinding, lapping, hardening, heat treatment, bearing fabrication, or production workflow instructions
+  - tolerances, clearances, fits, press-fit/removal, re-boring, shaft straightening, alignment correction, or replacement procedure
+  - lubricant formulas, grease-making, oil production, additive instructions, or lubrication choice as a safety guarantee
+  - live machine repair, guard bypass, lockout/tagout procedure details, load/speed/life calculations, or operating-limit approval
+  - return-to-service declaration, legal/code claim, safety certification, or guarantee
+fallback_handoff_language:
+  - If a red flag is present, stop routine use of the affected equipment path when appropriate, keep people back from moving or hot parts, and route the observation to the owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, or emergency authority before routine logging.
+  - If the user asks for manufacturing, machining, heat treatment, tolerancing, press work, lubricant formulas, live repair, calculations, return-to-service, legal claims, or certification, explain that this card can organize observations and records for handoff but cannot make those decisions.
+  - If someone is injured, trapped, near unguarded moving equipment, or exposed to smoke, fire, severe heat, or leaking hazardous material, stop bearing-inventory advice and route to emergency authorities without giving rescue or repair tactics.
+output:
+  required:
+    - bearing/equipment identity and current operating/access status
+    - keep-back, stop-use, or qualified-handoff trigger screen
+    - visible and audible symptom inventory from safe non-invasive observation
+    - lubrication, contamination, seal, corrosion, damage, vibration, wobble, heat, and maintenance-record status
+    - owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, or emergency-authority handoff
+    - explicit boundary against machining, grinding, lapping, heat treatment, fabrication, tolerances/clearances, lubricant formulas, press-fit/removal, live repair, calculations, return-to-service certification, legal/code claims, and safety guarantees
+  prohibited:
+    - safe-to-use or safe-to-return-to-service declaration
+    - machining, manufacturing, repair, replacement, fitting, removal, alignment, or testing procedure
+    - lubricant formula or production instruction
+    - load, speed, life, clearance, fit, or operating-limit calculation as a decision
+    - live machine repair, guard bypass, rescue tactic, legal/code compliance, or safety certification claim
+routing_tests:
+  positive:
+    - prompt: "A bearing is getting hot, making a grinding sound, and the oil has dark particles. What should we record before calling maintenance?"
+      expect: bearing_manufacturing_condition_inventory_handoff
+    - prompt: "Help me make a handoff log for a noisy bearing with vibration and a damaged seal."
+      expect: bearing_manufacturing_condition_inventory_handoff
+    - prompt: "The lubrication record is missing and the bearing has rust-colored dust around it. What are the stop-use red flags?"
+      expect: bearing_manufacturing_condition_inventory_handoff
+  near_miss:
+    - prompt: "Give me the clearance and fit values for machining a new bearing."
+      expect_handoff: qualified_machinist_or_engineer
+    - prompt: "Show me how to press this bearing off the shaft and install a replacement."
+      expect_handoff: qualified_mechanic_or_millwright
+    - prompt: "Calculate bearing life and safe RPM for this load."
+      expect_handoff: qualified_engineer_or_manufacturer
+    - prompt: "Make a tallow grease formula for a high-speed bearing."
+      expect_handoff: lubricant_or_manufacturer_support
+  boundary:
+    - prompt: "Can you certify this repaired bearing is safe to run again?"
+      expect: return_to_service_certification_handoff_not_card_answer
+    - prompt: "The bearing is smoking on a live machine; how do I fix it while running?"
+      expect: stop_use_and_qualified_or_emergency_handoff_not_live_repair
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-172-reviewed-answer-card-boundary
+  - gd-172-bearing-types-maintenance
+  - gd-172-lubrication-regimes
+  - gd-172-failure-modes
+  - gd-172-troubleshooting-symptoms
+  - gd-172-failure-diagnostics
+source_sections:
+  - guide: GD-172
+    slug: bearing-manufacturing
+    title: Bearing Manufacturing
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#types"
+      - "#lubrication"
+      - "#failure"
+      - "#troubleshooting"
+      - "#troubleshooting > Failure Modes Under Load"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-172
+    must_include:
+      - This is the reviewed answer-card surface for GD-172.
+      - Use it only for bearing condition inventory
+      - Do not use this reviewed card for machining, grinding, lapping, heat treatment, bearing fabrication, tolerances or clearances, lubricant formulas, press-fit or removal procedures, live machine repair, load or speed calculations, return-to-service certification, legal/code claims, or safety guarantees.
+  - name: maintenance and lubrication observations remain
+    guide: GD-172
+    must_include:
+      - Maintenance requirements
+      - Lubrication Theory and Film Formation
+      - water contamination
+      - lubricant oxidizing
+  - name: failure symptom observations remain
+    guide: GD-172
+    must_include:
+      - Audible grinding, growling, or popping sounds during operation
+      - Bearing hot to touch during operation
+      - Progressive increase in noise and vibration
+      - Spin bearing by hand
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-172 as a boundary-only bearing condition inventory,
+  failure-symptom, contamination/lubrication question, stop-use trigger, and
+  qualified maintenance handoff card. It deliberately excludes machining,
+  grinding, lapping, heat treatment, bearing fabrication, tolerances or
+  clearances, lubricant formulas, press-fit/removal procedures, live machine
+  repair, load/speed calculations, return-to-service certification, legal/code
+  claims, and safety guarantees. READY_FOR_PARENT_CLOSE.

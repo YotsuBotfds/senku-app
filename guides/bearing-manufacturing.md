@@ -24,8 +24,54 @@ custom_css: |
   .bearing-spec-table th { background: var(--card); padding: 8px; }
   .lubrication-chart { font-size: 0.9em; }
 liability_level: high
+aliases:
+  - bearing condition inventory
+  - bearing failure symptom log
+  - bearing lubrication contamination questions
+  - bearing stop use triggers
+  - bearing qualified maintenance handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level bearing condition inventory, visible or audible failure symptoms, contamination and lubrication questions, stop-use trigger recognition, and qualified maintenance handoff for existing bearings.
+  - Keep routine answers focused on non-invasive observation: heat, noise, vibration, binding, roughness, wobble, visible pits, discoloration, damaged seals, lubricant darkening, particles, water contamination, corrosion, and maintenance-record gaps.
+  - Route machining, grinding, lapping, heat treatment, bearing fabrication, tolerances or clearances, lubricant formulas, press-fit or removal procedures, live machine repair, load or speed calculations, return-to-service certification, legal/code claims, and safety guarantees away from this card.
+routing_support:
+  - The guide describes bearing types, lubrication regimes, failure modes, troubleshooting symptoms, temperature concerns, contamination, and visual inspection findings.
+  - The reviewed surface narrows that material to condition inventory and handoff only; manufacturing, repair, calculation, and certification content remains out of the answer-card lane.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for bearing condition inventory,
+  failure symptoms, contamination or lubrication questions, stop-use triggers,
+  and qualified maintenance handoff only. Do not use it for machining, grinding,
+  lapping, heat treatment, bearing fabrication, tolerances or clearances,
+  lubricant formulas, press-fit or removal procedures, live machine repair,
+  load or speed calculations, return-to-service certification, legal/code
+  claims, or safety guarantees.
+applicability: >
+  Use for boundary-only observation and handoff questions about existing bearing
+  condition, failure symptoms, contamination, lubrication concerns, overheating,
+  unusual noise, vibration, binding, roughness, wobble, damaged seals, lubricant
+  changes, and maintenance-record gaps. Do not use for manufacturing, machining,
+  grinding, lapping, hardening, fitting, removal, live repair, engineering
+  calculations, return-to-service decisions, legal/code claims, or safety
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: bearing_manufacturing_condition_inventory_handoff
+answer_card:
+  - bearing_manufacturing_condition_inventory_handoff
 ---
 <!-- SVG-TODO: Cross-section of ball bearing showing races and balls, plain bearing with oil grooves diagram, hardness comparison chart for bearing steels, lubrication regimes hydrodynamic vs boundary -->
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-172. Use it only for bearing condition inventory, failure-symptom recognition, contamination and lubrication questions, stop-use trigger recognition, and qualified maintenance handoff for existing bearings.
+
+Start with non-invasive observation and record the machine or component, bearing location if known, date, observer, current access status, recent changes, maintenance records, visible heat damage, lubricant color or particles, water contamination, corrosion, damaged seals, noise, vibration, binding, roughness, wobble, visible pits, discoloration, and whether operation is continuing. If the bearing is hot, binding, grinding, rumbling, rattling, visibly damaged, leaking, contaminated, corroded, wobbling, worsening, or associated with uncertain ownership or missing maintenance records, stop routine use advice and route to the owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, or site authority.
+
+Do not use this reviewed card for machining, grinding, lapping, heat treatment, bearing fabrication, tolerances or clearances, lubricant formulas, press-fit or removal procedures, live machine repair, load or speed calculations, return-to-service certification, legal/code claims, or safety guarantees. If a prompt asks for those, give only the relevant observation and handoff boundary.
+
+</section>
 
 <section id="introduction">
 

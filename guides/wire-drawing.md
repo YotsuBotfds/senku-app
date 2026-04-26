@@ -17,6 +17,43 @@ related:
   - plumbing-pipes
   - steel-making
   - water-distribution-systems
+aliases:
+  - wire drawing safety boundary
+  - draw plate pinch hazard checklist
+  - wire snap back red flags
+  - cable production stop use triggers
+  - wire drawing owner handoff
+  - material identification before wire drawing
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level wire drawing and cable-production safety triage: material identification, equipment and guarding observation, pinch or entanglement hazards, snap-back red flags, stop-use triggers, and owner or expert handoff.
+  - Keep answers focused on visible facts a responsible owner or qualified metalworking/equipment expert needs before deciding whether work can proceed: material identity uncertainty, draw plate and pulling equipment condition, guards or shields, tension status, snag points, loose clothing exposure, prior breakage, burrs, access control, and who owns the decision.
+  - Route die selection, draw ratios, annealing or heat schedules, lubrication formulas, machine setup, pulling procedures, insulation recipes, fuse-wire testing, electrical wire ratings, structural cable or load claims, calculations, legal or code claims, and safety certification away from this card.
+routing_support:
+  - metalworking for general metal-shop ownership and non-procedural handoff context.
+  - steel-making for material provenance questions that exceed visual identification.
+  - electrical-safety-hazard-prevention for active electrical hazards, fuse-wire use, energized testing, exposed conductors, or electrical-rating claims.
+citations_required: true
+citation_policy: >
+  Cite GD-173 and its reviewed answer card only for boundary-level wire drawing
+  and cable-production safety triage: material identification uncertainty,
+  equipment and guarding observation, pinch/entanglement and snap-back red
+  flags, stop-use triggers, access control, and owner or expert handoff. Do not
+  use it for die selection, draw ratios, annealing or heat schedules,
+  lubrication formulas, machine setup, pulling procedures, insulation recipes,
+  fuse-wire testing, electrical wire rating claims, structural cable/load
+  claims, calculations, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only questions about whether wire drawing or cable-production
+  work should stop, what visible hazards should be documented, what material or
+  equipment uncertainty needs owner review, and when to hand off to a qualified
+  metalworking, equipment, electrical, or structural owner. Do not use for
+  production instructions, machine setup, process parameters, formulas, testing,
+  ratings, calculations, compliance, or declaring wire, cable, equipment, or
+  operations safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: wire_drawing_safety_boundary
+answer_card:
+  - wire_drawing_safety_boundary
 read_time: 5
 word_count: 4165
 last_updated: '2026-02-15'

@@ -32,6 +32,36 @@ last_updated: '2026-04-06'
 version: '1.0'
 custom_css: 'nav{background-color:var(--surface);padding:1rem;position:sticky;top:100px;z-index:99;border-bottom:2px solid var(--border);overflow-x:auto}nav ul{display:flex;list-style:none;gap:0;max-width:100%;flex-wrap:wrap}nav a{display:block;padding:.8rem 1.2rem;color:var(--text);text-decoration:none;border-right:1px solid var(--border);transition:all .3s ease;font-size:.95rem;white-space:nowrap}nav a:hover{background-color:var(--card);color:var(--accent2);padding-left:1.5rem}nav li:last-child a{border-right:0}.spec-table{width:100%;border-collapse:collapse;margin:1.5rem 0;background-color:var(--surface);border-radius:4px;overflow:hidden}.spec-table thead{background-color:var(--card)}.spec-table th{padding:1rem;text-align:left;color:var(--accent2);font-weight:600;border-bottom:2px solid var(--border)}.spec-table td{padding:.8rem 1rem;border-bottom:1px solid var(--border);color:var(--text)}.spec-table tbody tr:hover{background-color:var(--card)}.svg-container{background-color:var(--surface);border:2px solid var(--border);border-radius:8px;padding:2rem;margin:2rem 0;text-align:center}.svg-container h4{text-align:left;margin-bottom:1.5rem}svg{max-width:100%;height:auto;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))}.project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin:2rem 0}.project-card{background-color:var(--card);border:2px solid var(--border);padding:1.5rem;border-radius:8px;transition:all .3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.3)}.project-card:hover{border-color:var(--accent2);transform:translateY(-4px);box-shadow:0 6px 16px rgba(0,0,0,0.4)}.project-card h4{color:var(--accent2);margin-top:0}.project-card p{font-size:.95rem;color:var(--muted)}.code-block{background-color:var(--surface);border:1px solid var(--border);padding:1.5rem;border-radius:4px;overflow-x:auto;margin:1.5rem 0;font-family:''Courier New'',monospace;color:var(--accent2);font-size:.9rem;line-height:1.5}.safety-box{background-color:rgba(255,107,107,0.1);border-left:5px solid #ff6b6b;padding:1.5rem;margin:1.5rem 0;border-radius:4px}.safety-box h4{color:#ff6b6b;margin-top:0}.responsive-table{overflow-x:auto;margin:1.5rem 0}'
 liability_level: high
+aliases:
+  - foundry area readiness
+  - metal casting hazard screen
+  - foundry no-go checklist
+  - casting material source labels
+  - molten metal owner handoff
+  - foundry visible hazard log
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.
+  - Keep routine answers focused on the work area, owner, current activity status, visible moisture, combustibles, ventilation concern, CO or fume concern, cracked crucibles, tool or mold dryness uncertainty, unclear material source, bystander access, burn or fire history, and who must decide follow-up.
+  - Route mold making, melt schedules, temperatures, alloy or flux recipes, furnace setup, pouring technique, gating or riser design, sand chemistry, PPE guarantees, calculations, legal or environmental claims, and safety certification away from this card.
+routing_support:
+  - GD-132 is high-liability and contains procedural foundry content, but the reviewed answer-card surface is deliberately narrower than the full guide.
+  - Prefer the reviewed card for pre-work screening, visible no-go cues, labeling/logging, and handoff framing before any casting activity.
+  - Pair with chemical-safety or emergency-care owners when chemical exposure, fire, burn, inhalation, or medical symptoms dominate the prompt.
+citations_required: true
+citation_policy: cite reviewed GD-132 answer card for foundry-area readiness, visible hazard screening, material/source labeling, no-go triggers, and expert/owner handoff only; do not use it for mold making, melt schedules, temperatures, alloy or flux recipes, furnace setup, pouring technique, gating/riser design, sand chemistry, PPE guarantees, calculations, legal/environmental claims, or safety certification.
+applicability: >
+  Use for boundary-only foundry and casting readiness questions: non-invasive
+  work-area inventory, visible hazard screen, material/source labels, no-go
+  triggers, access-control notes, and routing to the responsible foundry owner,
+  experienced foundry operator, qualified fire-safety owner, chemical-safety
+  owner, emergency services, or local authority. Do not use for mold making,
+  melt schedules, temperatures, alloy or flux recipes, furnace setup, pouring
+  technique, gating or riser design, sand chemistry, PPE guarantees,
+  calculations, legal or environmental claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: foundry_casting_area_readiness_boundary
+answer_card:
+  - foundry_casting_area_readiness_boundary
 ---
 
 :::danger
@@ -41,6 +71,14 @@ liability_level: high
 :::warning
 **Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety.html) in full.
 :::
+
+## Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs
+
+This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status, who owns the foundry area, whether molten metal work is planned or active, what can be observed without touching hot equipment, and whether any no-go trigger is already visible.
+
+For routine boundary screening, record the work area, owner or responsible operator, date, bystander access, ventilation or fume concern, CO concern, fire perimeter status, visible combustibles, wet floor or weather exposure, mold or tool dryness uncertainty, cracked or suspect crucibles, questionable tongs or lifting tools, unknown metal or scrap source, unlabeled flux or chemical containers, burn or spill history, and who has authority to pause work.
+
+Do not use this reviewed card for mold making, melt schedules, temperatures, alloy or flux recipes, furnace setup, pouring technique, gating or riser design, sand chemistry, PPE guarantees, calculations, legal or environmental claims, or safety certification. If moisture, cracked crucibles, tool or mold dryness uncertainty, active smoke or fire, CO or fume symptoms, unlabeled materials, unclear ownership, untrained bystanders, burn injuries, or pressure to proceed despite a concern appears, pause routine planning and route to the responsible foundry owner, experienced operator, fire-safety owner, chemical-safety owner, emergency services, or local authority.
 
 <section id="foundry-safety-quickstart">
 

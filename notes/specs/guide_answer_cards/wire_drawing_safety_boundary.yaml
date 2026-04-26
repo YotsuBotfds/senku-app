@@ -1,0 +1,212 @@
+card_id: wire_drawing_safety_boundary
+guide_id: GD-173
+slug: wire-drawing
+title: Wire Drawing & Cable Production
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks whether wire drawing, draw-plate work, hand pulling, windlass pulling, or cable-production work is unsafe to continue.
+  - A user needs a non-procedural checklist for visible hazards, material uncertainty, guarding, access control, or owner handoff before wire drawing or cable work.
+  - A user reports warning signs around wire drawing: unknown material, damaged draw plate, missing shield, loose clothing near moving wire, pinch or entanglement exposure, tensioned wire, prior wire break, snap-back risk, burrs, slivers, or injuries.
+  - A user asks what to document for a responsible shop owner, metalworking expert, equipment maintainer, electrical owner, structural owner, or medical responder without asking for production steps.
+required_first_actions:
+  - Start with stop-use screening before any routine planning or documentation.
+  - If the wire is under tension, equipment is moving, guards or shields are missing, clothing or hair can snag, hands are near pinch points, a wire has broken or may snap back, material identity is unknown for the intended use, or anyone is injured, stop the task and hand off.
+  - Keep people out of the pulling line and away from pinch, entanglement, burr, sliver, and snap-back zones until the responsible owner or qualified expert decides the next step.
+  - Gather only non-invasive handoff facts: material identity or uncertainty, equipment type, draw plate and pulling equipment condition, guarding or shield status, tension status, access control, visible damage, prior breaks, burrs or splinters, injuries, and decision owner.
+  - State that die selection, draw ratios, annealing or heat schedules, lubrication formulas, machine setup, pulling procedures, insulation recipes, fuse-wire testing, electrical ratings, structural cable/load claims, calculations, legal/code claims, and safety certification require the qualified owner rather than this card.
+conditional_required_actions:
+  - trigger_terms:
+      - snap back
+      - snapped
+      - broke under tension
+      - whip
+      - wire broke
+      - tensioned wire
+      - pulling line
+    required_actions:
+      - Treat as a stop-use snap-back hazard; keep people out of line with the wire, avoid approaching until tension is resolved by the responsible owner, and route to qualified equipment or shop oversight.
+  - trigger_terms:
+      - pinch
+      - crushed finger
+      - caught
+      - entangled
+      - loose sleeve
+      - hair
+      - windlass
+      - capstan
+      - roller
+    required_actions:
+      - Treat pinch, crush, and entanglement exposure as stop-use conditions; document the visible hazard and hand off before any equipment operation or adjustment.
+  - trigger_terms:
+      - unknown metal
+      - mystery wire
+      - salvage wire
+      - electrical rating
+      - load rating
+      - structural cable
+      - fuse wire
+    required_actions:
+      - Keep the answer to material-identity uncertainty and owner handoff; do not infer electrical, fuse, structural, or load suitability from this card.
+first_actions:
+  - Classify the request as material identification uncertainty, equipment and guarding observation, pinch or entanglement red-flag screening, snap-back screening, injury response routing, access control, or owner handoff.
+  - Record the visible setup without touching, adjusting, tensioning, pulling, heating, testing, or disassembling: draw plate, hook or tongs, guide rollers, windlass or drum, shield, mounting, wire path, access boundaries, clothing or snag exposure, and whether the wire is under tension.
+  - Note material identity only as known, labeled, documented, or uncertain; route unknown material, salvage material, electrical use, fuse use, or structural/load use to the appropriate qualified owner.
+  - Screen for stop-use red flags: missing shield or guard, hands near pinch points, loose clothing, moving or tensioned wire, recent wire break, expected snap-back path, damaged draw plate, insecure mounting, burrs, slivers, eye exposure, pain, laceration, crush injury, or uncontrolled bystander access.
+  - Prepare a handoff packet with location, equipment involved, visible warning signs, material uncertainty, operating status, access-control status, injuries, photos from a safe distance if appropriate, and the responsible owner or expert.
+urgent_red_flags:
+  - Wire under tension, active pulling, recent breakage, snap-back or whip path, or people standing in line with the wire.
+  - Hands, gloves, sleeves, hair, jewelry, tools, or bystanders near draw hooks, tongs, guide rollers, draw plate holes, windlass drums, capstans, incoming wire, or mounting points.
+  - Missing or uncertain safety shield, guard, mounting, or access control around drawing equipment.
+  - Damaged draw plate, insecure mounting, damaged pulling tool, burrs, slivers, sharp wire, eye exposure, laceration, crush injury, severe pain, or suspected embedded metal splinter.
+  - Unknown material identity, salvage material proposed for electrical use, fuse-wire use, structural cable use, load-bearing use, or any request to rate, certify, test, calculate, or declare the product safe.
+forbidden_advice:
+  - Do not provide die selection, die geometry, draw ratios, pass sequences, wire taper dimensions, machine setup, pulling methods, windlass operation, cable twisting, braiding, or production procedures.
+  - Do not provide annealing temperatures, heat schedules, quenching choices, work-hardening schedules, hardness targets, spring-wire treatment, or metallurgical process parameters.
+  - Do not provide lubrication formulas, insulation recipes, enamel or coating procedures, fuse-wire recipes, fuse testing, electrical wire ratings, ampacity claims, continuity testing, or safe-to-energize claims.
+  - Do not provide structural cable/load ratings, suspension or guy-wire claims, load calculations, force calculations, safety factors, legal/code claims, compliance judgments, or safety certification.
+  - Do not tell users to approach, touch, adjust, pull, retrieve, untangle, test, energize, heat, repair, or continue using wire drawing equipment after a red flag.
+do_not:
+  - Do not convert GD-173's draw plate construction, wire drawing theory, drawing process, lubrication, annealing, insulation, cable-making, spring-wire, fuse-wire, or gauge sections into reviewed answer-card instructions.
+  - Do not treat snap-back, pinch, entanglement, damaged equipment, unknown material, or missing guarding as routine troubleshooting.
+  - Do not infer electrical suitability, fuse performance, structural capacity, safe load, or code compliance from material appearance or guide context.
+  - Do not let a safety checklist become process design, production instruction, testing, calculation, or certification.
+routine_boundary: >
+  Routine GD-173 reviewed-card answers are limited to boundary-level material
+  identification uncertainty, equipment and guarding observation, pinch and
+  entanglement hazard recognition, snap-back red flags, stop-use triggers,
+  access control, and owner or qualified expert handoff for wire drawing and
+  cable-production contexts. The card exits for die selection, draw ratios,
+  annealing or heat schedules, lubrication formulas, machine setup, pulling
+  procedures, insulation recipes, fuse-wire testing, electrical rating claims,
+  structural cable or load claims, calculations, legal or code claims, and
+  safety certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt appears to involve wire drawing,
+  draw plates, pulling equipment, tensioned wire, or cable production, provide a
+  conservative observation and handoff checklist, ask only for visible
+  non-invasive facts, preserve stop-use language for red flags, and avoid all
+  production, testing, rating, calculation, legal, or certification advice.
+clarifying_questions:
+  - Is the wire currently under tension, moving, recently broken, or in a position where it could snap back toward someone?
+  - What equipment is visible: draw plate, hook, tongs, guide rollers, windlass, drum, capstan, shield, guard, mounting, or unknown pulling setup?
+  - Is the material labeled and documented, or is it salvage or unknown material proposed for electrical, fuse, structural, or load-bearing use?
+  - Are there missing guards, loose clothing or hair exposure, bystanders, burrs, slivers, damaged parts, injuries, or uncontrolled access?
+  - Who owns the decision: shop owner, equipment maintainer, qualified metalworker, electrical owner, structural owner, medical responder, or another responsible expert?
+applicability:
+  owner: wire drawing and cable-production safety boundary, visible hazard triage, stop-use screening, and owner handoff
+  use_when:
+    - wire_drawing_safety_triage
+    - draw_plate_or_pulling_equipment_observation
+    - material_identification_uncertainty
+    - pinch_entanglement_or_snap_back_red_flags
+    - access_control_or_owner_expert_handoff
+  do_not_use_when:
+    - die_selection_or_draw_ratio
+    - annealing_heat_schedule_or_lubrication_formula
+    - machine_setup_or_pulling_procedure
+    - insulation_recipe_or_cable_production_steps
+    - fuse_wire_testing_or_electrical_rating
+    - structural_cable_load_claim_or_calculation
+    - code_legal_claim_or_safety_certification
+actions:
+  required:
+    - classify the request as material uncertainty, visible equipment observation, red-flag screening, access control, injury routing, or owner handoff
+    - begin with stop-use screening and non-invasive observation
+    - hand off production, testing, rating, calculation, legal, code, and certification requests
+  standard:
+    - provide a visible condition and handoff checklist
+    - include material identity or uncertainty, equipment involved, guarding or shield status, tension status, pinch and snap-back zones, access control, injuries, and decision owner
+    - name the qualified shop, equipment, electrical, structural, or medical handoff when red flags or ownership uncertainty appear
+forbidden:
+  - die selection, draw ratios, pass sequences, machine setup, pulling procedure, cable twisting, or braiding steps
+  - annealing temperatures, heat schedules, metallurgical process parameters, or lubrication formulas
+  - insulation recipes, fuse-wire testing, electrical ratings, ampacity, continuity testing, or safe-to-energize claims
+  - structural cable/load ratings, force calculations, safety factors, code/legal claims, compliance judgments, or safety certification
+fallback:
+  - If a prompt mixes safety triage with production steps, answer only the stop-use, observation, documentation, and handoff part.
+  - If material identity, equipment condition, guarding, tension status, or owner is unknown, document that uncertainty and route before use.
+  - If tensioned wire, recent breakage, pinch exposure, entanglement risk, missing guards, damaged equipment, burrs, slivers, injuries, or uncontrolled access is present, stop routine planning and escalate.
+output:
+  required:
+    - safety category
+    - non-invasive observation fields
+    - stop-use red-flag screen
+    - material identity or uncertainty note
+    - access-control note
+    - owner or qualified expert handoff
+  prohibited:
+    - production procedure
+    - process parameter
+    - formula or calculation
+    - electrical or fuse rating
+    - structural load claim
+    - legal, code, or safety-certification claim
+routing_tests:
+  positive:
+    - prompt: "Make a safety handoff checklist for an old wire drawing bench with a windlass and no shield."
+      expect: wire_drawing_safety_boundary
+    - prompt: "What should we document before deciding whether this salvage wire drawing setup is unsafe?"
+      expect: wire_drawing_safety_boundary
+  near_miss:
+    - prompt: "What die size and draw ratio should I use for copper wire?"
+      expect_handoff: qualified_metalworking_owner
+    - prompt: "Give the annealing schedule and lubricant recipe for steel wire drawing."
+      expect_handoff: qualified_metalworking_owner
+    - prompt: "How do I test and rate homemade fuse wire?"
+      expect_handoff: qualified_electrical_owner
+    - prompt: "What load can this stranded cable safely hold?"
+      expect_handoff: qualified_structural_owner
+  boundary:
+    - prompt: "The wire snapped under tension and someone wants to grab the loose end."
+      expect: stop_use_snap_back_handoff
+    - prompt: "Can you certify this homemade cable is safe for lifting?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-173-safety-hazards
+  - gd-173-pinch-crush-hazards
+  - gd-173-snap-back-whip-hazard
+  - gd-173-metal-splinter-injuries
+  - gd-173-common-mistakes-boundary-context
+source_sections:
+  - guide: GD-173
+    slug: wire-drawing
+    title: Wire Drawing & Cable Production
+    sections:
+      - "#safety > Safety Hazards in Wire Drawing"
+      - "#safety > Pinch/Crush Injuries from Tension Equipment & Draw Plate"
+      - "#safety > Wire Snap-Back & Whip Hazard"
+      - "#safety > Metal Splinter Injuries"
+      - "#mistakes > Common Mistakes & Solutions"
+source_invariants:
+  - name: safety_hazard_context_remains
+    guide: GD-173
+    must_include:
+      - "Wire drawing involves significant mechanical hazards from tension and pinch-point equipment."
+      - "Wire drawing equipment generates extreme tension and creates multiple hazard zones."
+      - "Operators must understand and avoid all pinch points and snap-back dangers."
+  - name: pinch_and_entanglement_context_remains
+    guide: GD-173
+    must_include:
+      - "Fingers, hands, and clothing can be caught between wire and equipment during pulling"
+      - "Draw plates and capstans create pinch points"
+      - "Never adjust or reposition wire while equipment is under tension"
+  - name: snap_back_context_remains
+    guide: GD-173
+    must_include:
+      - "If wire breaks under tension during drawing, the free end snaps back at high velocity"
+      - "Tension energy stored in wire and equipment releases suddenly and violently"
+      - "If wire breaks, do not attempt to retrieve it immediately"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-173 as a boundary-only wire drawing and
+  cable-production safety card. It owns material identification uncertainty,
+  equipment and guarding observation, pinch and entanglement red flags,
+  snap-back stop-use triggers, burr and sliver hazard recognition, access
+  control, and owner or qualified expert handoff. It deliberately excludes die
+  selection, draw ratios, annealing or heat schedules, lubrication formulas,
+  machine setup, pulling procedures, insulation recipes, fuse-wire testing,
+  electrical wire rating claims, structural cable/load claims, calculations,
+  legal/code claims, and safety certification. READY_FOR_PARENT_CLOSE.

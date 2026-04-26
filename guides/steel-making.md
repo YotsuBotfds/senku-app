@@ -6,6 +6,22 @@ category: metalworking
 difficulty: advanced
 tags:
   - rebuild
+aliases:
+  - steelmaking safety boundary
+  - steel making hazard recognition
+  - steel furnace planning handoff
+  - steel raw material inventory
+  - steelmaking process owner handoff
+  - smelting boundary checklist
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level steelmaking planning, raw-material and documentation logs, shop hazard recognition, stop-work cues, access control, and owner or qualified metallurgical/foundry specialist handoff.
+  - Keep routine answers non-procedural: identify the site, process category, owner, raw-material records, current operating status, access controls, visible hazards, documentation gaps, and who can authorize qualified review.
+  - Route furnace construction, smelting or refining steps, alloy recipes, temperatures, flux or chemical handling, fuel or combustion procedures, molten-metal handling, PPE guarantees, calculations, environmental or legal claims, and safety certification away from this card.
+routing_support:
+  - metallurgy-basics for non-procedural material identification concepts and solid-stock sorting questions before any furnace-side decision.
+  - blacksmithing for solid-stock forging, shaping, welding, or finished-piece work after the smelt/refine boundary is out of scope.
+  - foundry-casting for casting-shop ownership and qualified foundry handoff when molten-metal handling or mold work is requested.
+  - charcoal-fuels for fuel ownership and storage handoff without giving furnace firing or combustion procedures.
 icon: ⚙️
 description: Bloomery and blast furnace practice, wrought vs cast iron, crucible steel, heat treatment, alloy selection, and steelmaking safety with carbon monoxide, slag splash, ventilation, eye protection, burns, and fire-perimeter control.
 related:
@@ -33,7 +49,34 @@ custom_css: |
   .crucible-temps th { background: var(--card); }
   .alloy-table th { background: var(--card); }
 liability_level: high
+citations_required: true
+citation_policy: cite reviewed GD-119 answer card only for boundary-level steelmaking planning, raw-material and documentation logs, shop hazard recognition, stop-work cues, access control, and owner or qualified metallurgical/foundry specialist handoff; do not use it for furnace construction, smelting/refining steps, alloy recipes, temperatures, flux/chemical handling, fuel/combustion procedures, molten-metal handling, PPE guarantees, calculations, environmental/legal claims, or safety certification.
+applicability: >
+  Use for boundary-only steelmaking questions: material/process planning,
+  raw-material and logging boundaries, visible shop hazard recognition,
+  stop-work cues, access control, documentation gaps, and owner or qualified
+  expert handoff. Do not use for furnace construction, smelting or refining
+  procedures, alloy recipes, process temperatures, flux or chemical handling,
+  fuel or combustion procedures, molten-metal handling instructions, PPE
+  guarantees, calculations, environmental or legal determinations, or declaring
+  a process safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: steel_making_process_boundary
+answer_card:
+  - steel_making_process_boundary
 ---
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-119. Use it only for boundary-level steelmaking planning, raw-material and documentation logs, shop hazard recognition, stop-work cues, access control, and owner or qualified metallurgical/foundry specialist handoff.
+
+Start by recording the site or shop, the intended process category, the responsible owner, whether any furnace or hot-work activity is active, what raw materials or scrap are present, what logs or labels exist, what visible hazards are present, whether bystanders can access the area, and who can authorize qualified review. Keep answers at observation, documentation, red-flag, and handoff level.
+
+Do not use this card for furnace construction, smelting or refining steps, alloy recipes, process temperatures, flux or chemical handling, fuel or combustion procedures, molten-metal handling instructions, PPE guarantees, calculations, environmental or legal claims, or safety certification. If a prompt includes active smelting, molten metal, slag, fuel firing, carbon monoxide concern, unknown scrap or chemicals, undocumented material sources, damaged furnace equipment, uncontrolled access, symptoms of exposure, fire, burn injury, spill, or pressure to proceed before review, stop routine planning and hand off to the responsible owner, qualified metallurgical or foundry specialist, emergency service, environmental authority, or local authority as appropriate.
+
+</section>
+
 :::danger
 **DO NOT ATTEMPT in enclosed spaces.** Steel-making processes produce large quantities of carbon monoxide (CO), a deadly, colorless, odorless gas. ALL smelting and steel-making operations MUST occur outdoors or in purpose-built facilities with forced ventilation. Never work alone — require a safety observer present at all times.
 

@@ -4,6 +4,21 @@ slug: tool-hardening-edges
 title: Tool Hardening & Edge Maintenance
 category: metalworking
 difficulty: advanced
+aliases:
+  - tool edge safety screening
+  - hardened tool red flags
+  - cracked edge quarantine
+  - heat treated tool handoff
+  - tool condition label checklist
+  - brittle blade warning signs
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level tool condition screening, intended-use questions, heat or source hazard flags, brittle or cracked edge red flags, labeling or quarantine, and expert handoff.
+  - Keep routine answers non-procedural: identify the tool, intended use, source history, visible cracks, chips, deformation, prior overheating, uncertain material, labeling status, quarantine status, and who can review it.
+  - Route hardening or tempering steps, temperatures, quench media, recipes, torch or furnace operation, grinding or sharpening procedures, metallurgical calculations, PPE guarantees, legal claims, and safety certification away from this card.
+routing_support:
+  - workshop-organization for labeling, storage, quarantine bins, and non-procedural shop access controls.
+  - welding-metallurgy for expert metallurgical review context when material history or heat exposure is uncertain, without using this card for calculations or procedures.
+  - simple-home-repairs for non-procedural owner handoff when a damaged household tool should be removed from use.
 tags:
   - metalworking
   - tool-making
@@ -26,7 +41,33 @@ custom_css: |
   .tool-angles table { width: 100%; margin: 1rem 0; }
   .tool-angles th, .tool-angles td { text-align: left; padding: 10px; }
 liability_level: high
+citations_required: true
+citation_policy: cite reviewed GD-420 answer card only for boundary-level tool condition screening, intended-use questions, heat/source hazard flags, brittle or cracked edge red flags, labeling or quarantine, and expert handoff; do not use it for hardening or tempering steps, temperatures, quench media, recipes, torch or furnace operation, grinding or sharpening procedures, metallurgical calculations, PPE guarantees, legal claims, or safety certification.
+applicability: >
+  Use for boundary-only tool-hardening and edge-maintenance questions:
+  condition screening, intended-use questions, source or prior heat exposure
+  uncertainty, brittle or cracked edge red flags, visible damage logs,
+  labeling, quarantine, and routing to a qualified toolmaker, metallurgist,
+  safety owner, or responsible shop lead. Do not use for heat-treatment
+  procedures, hardening or tempering parameters, quench choices, grinding or
+  sharpening instructions, calculations, legal claims, or declaring a tool safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: tool_hardening_edges_boundary_handoff
+answer_card:
+  - tool_hardening_edges_boundary_handoff
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-420. Use it only for boundary-level tool condition screening, intended-use questions, heat or source hazard flags, brittle or cracked edge red flags, labeling or quarantine, and expert handoff.
+
+Start by identifying the tool type, intended use, source or material history if known, whether the tool was overheated or modified, who owns the decision, and what can be seen without testing, grinding, heating, sharpening, or destructive inspection. Record visible cracks, chips, missing edge segments, bends, deformation, loose handles, uncertain prior heat exposure, unknown steel or salvage source, poor labeling, public access, and whether the tool has been removed from service.
+
+Do not use this reviewed card for hardening or tempering steps, temperatures, quench media, recipes, torch or furnace operation, grinding or sharpening procedures, metallurgical calculations, PPE guarantees, legal claims, or safety certification. If a prompt includes cracked, chipped, brittle, overheated, unlabeled, unknown-source, modified, or high-consequence tools, keep the answer to stop-use screening, labeling or quarantine, documentation, and handoff to a qualified toolmaker, metallurgist, safety owner, or responsible shop lead.
+
+</section>
 
 Tool hardening transforms soft iron or medium-carbon steel into durable implements capable of holding a sharp edge and resisting deformation. This guide covers the science and field methods of hardening tool edges, testing hardness, and maintaining peak performance in low-infrastructure environments.
 
@@ -331,4 +372,3 @@ Never heat a hardened tool and allow it to cool slowly in air. It will become so
 11. **Finish:** Clean, dry, and oil. The edge should hold a sharp finish for weeks of hard use.
 
 </section>
-

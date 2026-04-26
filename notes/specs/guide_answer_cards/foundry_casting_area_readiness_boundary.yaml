@@ -1,0 +1,223 @@
+card_id: foundry_casting_area_readiness_boundary
+guide_id: GD-132
+slug: foundry-casting
+title: Foundry & Metal Casting
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for a foundry or metal-casting readiness checklist without asking how to make molds, melt metal, build or run a furnace, or pour.
+  - A user needs visible hazard screening for a casting area, crucibles, tools, molds, ventilation, CO or fumes, fire perimeter, moisture, bystander access, or owner handoff.
+  - A user needs material or source labels for scrap, ingots, fluxes, chemicals, molds, tools, or foundry supplies before deciding who owns follow-up.
+  - A prompt is about no-go triggers, pausing work, access control, or routing a foundry concern to an experienced operator, fire-safety owner, chemical-safety owner, emergency service, or local authority.
+required_first_actions:
+  - Start with boundary-only readiness and non-invasive observation; do not provide casting procedure, setup, recipe, schedule, temperature, calculation, or safety-certification advice.
+  - Identify the activity status, foundry-area owner, responsible operator, access control, material/source labels, visible hazards, and whether work is already paused.
+  - Screen no-go triggers before routine planning; if present, stop routine advice and route to the responsible owner, experienced foundry operator, fire-safety owner, chemical-safety owner, emergency services, or local authority.
+  - Hand off mold making, melt schedules, temperatures, alloy or flux recipes, furnace setup, pouring technique, gating/riser design, sand chemistry, PPE guarantees, calculations, legal/environmental claims, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - water
+      - wet
+      - damp
+      - rain
+      - moisture
+      - cracked crucible
+      - crack in crucible
+      - unknown scrap
+      - unlabeled flux
+      - smoke
+      - fumes
+      - carbon monoxide
+      - CO symptoms
+      - burn
+      - spill
+      - bystanders
+    required_actions:
+      - Treat as a no-go or owner-handoff screen, not routine readiness.
+      - Keep the answer limited to access control, visible condition logging, material/source labeling, and expert or emergency routing.
+  - trigger_terms:
+      - mold making
+      - melt schedule
+      - melting temperature
+      - alloy recipe
+      - flux recipe
+      - furnace setup
+      - pouring technique
+      - gating
+      - riser
+      - sand chemistry
+      - calculate
+      - certify
+    required_actions:
+      - Give a boundary and do not provide procedural casting, furnace, mold, material recipe, design, calculation, legal, environmental, PPE-guarantee, or certification instructions from this card.
+first_actions:
+  - Make a foundry-area inventory with location, owner or responsible operator, current activity status, access status, date, observer, and whether work is paused.
+  - Record visible readiness from a safe, non-invasive vantage point: ventilation or fume concern, CO concern, smoke, fire perimeter, combustibles, wet surfaces, rain exposure, water containers, mold or tool dryness uncertainty, cracked or suspect crucibles, questionable tongs or lifting tools, and blocked retreat paths.
+  - Record material and source labeling status: metal or scrap identity if already labeled, source, unknown or mixed scrap, flux or chemical labels, storage separation, and who is responsible for verifying uncertain materials.
+  - Note no-go triggers and handoff facts: who can restrict access, who can pause work, what red flags were observed, what material labels are missing, and what expert or owner review is pending.
+  - End with foundry owner, experienced operator, fire-safety owner, chemical-safety owner, emergency service, or local-authority routing whenever hazards, labels, ownership, readiness, or authority are uncertain.
+urgent_red_flags:
+  - Any moisture, wet mold or tool uncertainty, wet floor, rain exposure, water near molten-metal work, or pressure to proceed despite dryness uncertainty.
+  - Cracked or suspect crucibles, questionable tongs or lifting tools, blocked retreat paths, visible combustibles in the work area, active smoke, active fire, spill history, or uncontrolled bystander access.
+  - CO or fume concern, ventilation uncertainty, symptoms during foundry work, unlabeled fluxes or chemicals, unknown or mixed scrap, or unclear material source.
+  - Burns, molten-metal spill, inhalation symptoms, fire spread, chemical exposure, or any request to certify that a foundry area, procedure, PPE, material, or casting operation is safe.
+forbidden_advice:
+  - Do not provide mold-making steps, sand preparation, sand chemistry, investment casting steps, core making, pattern changes, or mold-drying procedures.
+  - Do not provide melt schedules, metal temperatures, color-temperature targets, alloy recipes, flux recipes, charge preparation, furnace setup, fuel/air settings, or furnace operation instructions.
+  - Do not provide pouring technique, crucible handling technique, gating or riser design, sprue sizing, vent sizing, defect troubleshooting procedures, or finishing process instructions.
+  - Do not provide PPE guarantees, burn-treatment instructions, CO treatment, chemical handling procedures, fire-extinguishing tactics, calculations, legal or environmental claims, code claims, or safety certification.
+  - Do not tell users to continue, restart, approach, touch, lift, pour, melt, mix, dry, test, repair, or certify foundry work after a no-go trigger.
+do_not:
+  - Do not convert the source guide's furnace, crucible, mold, metal, pouring, defect, or finishing passages into reviewed-card instructions.
+  - Do not treat moisture, cracked crucibles, uncertain tool or mold dryness, unknown scrap, unlabeled chemicals, CO or fume concern, fire, burns, or uncontrolled access as routine checklist items only.
+  - Do not infer material identity, readiness, PPE adequacy, furnace safety, crucible fitness, ventilation adequacy, environmental compliance, or legal status from appearance.
+  - Do not let readiness support become casting technique, design, recipe, calculation, troubleshooting, legal advice, environmental advice, or certification.
+routine_boundary: >
+  Routine GD-132 reviewed-card answers are limited to foundry-area readiness,
+  visible hazard screening, material and source labeling, no-go triggers, access
+  control, and expert or owner handoff. If the prompt asks for mold making, melt
+  schedules, temperatures, alloy or flux recipes, furnace setup, pouring
+  technique, gating/riser design, sand chemistry, PPE guarantees, calculations,
+  legal/environmental claims, or safety certification, give a boundary and route
+  away from this card.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but appears to involve foundry readiness or a
+  casting-area safety decision, provide a conservative observation, labeling,
+  no-go, and handoff checklist; ask for owner, current activity status, access
+  control, visible hazards, material labels, and no-go triggers; and avoid any
+  procedural casting, recipe, setup, calculation, legal, environmental, PPE
+  guarantee, or certification advice.
+clarifying_questions:
+  - Are you trying to inventory readiness, document visible hazards, label materials and sources, decide whether to pause work, or identify the owner for handoff?
+  - Is any molten-metal work planned or active, and who is the responsible foundry owner or experienced operator?
+  - What is visible without touching hot equipment: moisture, wet floor, rain exposure, combustibles, smoke, fumes, cracked crucible, questionable tools, blocked retreat path, bystanders, or missing labels?
+  - Are the metal, scrap, fluxes, chemicals, molds, and tools labeled by source and owner, or are any materials unknown or mixed?
+  - Is anyone asking for mold making, melting, furnace setup, pouring, recipes, calculations, legal/environmental claims, PPE guarantees, or certification?
+applicability:
+  owner: foundry-area readiness, visible hazard screening, material/source labeling, no-go triggers, access control, and expert or owner handoff
+  use_when:
+    - foundry_area_readiness_inventory
+    - casting_visible_hazard_screen
+    - material_source_labeling
+    - no_go_trigger_or_pause_work_decision
+    - owner_expert_emergency_handoff
+  do_not_use_when:
+    - mold_making_or_sand_chemistry
+    - melt_schedule_or_temperature
+    - alloy_or_flux_recipe
+    - furnace_setup_or_operation
+    - pouring_technique_or_crucible_handling
+    - gating_riser_or_defect_troubleshooting
+    - calculation_legal_environmental_or_safety_certification
+actions:
+  required:
+    - classify the request as readiness inventory, visible hazard screen, material/source labeling, no-go decision, access control, or owner handoff
+    - begin with non-invasive observation and owner identification
+    - screen no-go triggers before routine readiness planning
+    - hand off procedural casting, recipes, setup, design, calculations, legal/environmental claims, PPE guarantees, and certification requests
+  standard:
+    - provide a foundry-area inventory and visible hazard log template
+    - include material/source labels, access control, visible no-go triggers, owner authority, and pending expert review
+    - name responsible foundry owner, experienced operator, fire-safety owner, chemical-safety owner, emergency service, or local authority handoff when red flags or uncertainty appear
+forbidden:
+  - mold making, sand chemistry, investment casting, core making, or mold-drying procedures
+  - melt schedules, temperatures, alloy recipes, flux recipes, furnace setup, fuel/air settings, or furnace operation
+  - pouring technique, crucible handling technique, gating/riser design, sprue or vent sizing, defect troubleshooting, or finishing instructions
+  - PPE guarantees, burn/CO/chemical treatment, fire tactics, calculations, legal/environmental claims, code claims, or safety certification
+fallback:
+  - If a prompt mixes readiness with casting procedure, answer only the readiness, no-go, labeling, and handoff part.
+  - If material identity, source, owner, activity status, ventilation, tool or mold dryness, crucible condition, or access control is unknown, document that uncertainty and route before work proceeds.
+  - If moisture, cracked crucibles, tool or mold dryness uncertainty, smoke, fire, fumes, CO concern, burns, unlabeled chemicals, unknown scrap, blocked retreat paths, or uncontrolled bystanders are present, stop routine readiness framing and escalate.
+output:
+  required:
+    - readiness category
+    - non-invasive foundry-area inventory
+    - visible hazard screen
+    - material and source label fields
+    - no-go trigger screen
+    - access-control note
+    - owner, expert, emergency, or authority handoff
+  prohibited:
+    - mold-making instruction
+    - melt schedule or temperature
+    - alloy or flux recipe
+    - furnace setup or operation
+    - pouring or crucible-handling technique
+    - gating, riser, sand chemistry, or defect procedure
+    - calculation, legal/environmental claim, PPE guarantee, or safety certification
+routing_tests:
+  positive:
+    - prompt: "Make a pre-work foundry readiness log for visible hazards, labels, access control, and who can pause work."
+      expect: foundry_casting_area_readiness_boundary
+    - prompt: "What should we record about wet floors, cracked crucibles, unknown scrap, ventilation concerns, and owner handoff before casting?"
+      expect: foundry_casting_area_readiness_boundary
+  near_miss:
+    - prompt: "Give me a bronze melt schedule and pouring temperature."
+      expect_handoff: experienced_foundry_operator_or_material_process_owner
+    - prompt: "Show me how to set up the furnace and tune the air blast."
+      expect_handoff: furnace_setup_or_operation_owner
+    - prompt: "Design the gating and risers for my mold."
+      expect_handoff: casting_design_or_process_owner
+    - prompt: "What flux recipe should I use for this alloy?"
+      expect_handoff: alloy_or_flux_process_owner
+  boundary:
+    - prompt: "The mold may be damp and the crucible has a visible crack, but people want to pour anyway."
+      expect: no_go_owner_handoff_not_routine_readiness
+    - prompt: "Can you certify this foundry setup and PPE are safe for a class demonstration?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-132-reviewed-answer-card-boundary
+  - gd-132-danger-moisture-crucible-warning
+  - gd-132-foundry-safety-quickstart
+  - gd-132-crucible-safety
+  - gd-132-pouring-and-molten-metal-safety
+  - gd-132-emergency-and-fire-safety
+source_sections:
+  - guide: GD-132
+    slug: foundry-casting
+    title: Foundry & Metal Casting
+    sections:
+      - "Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs"
+      - "Foundry Safety Quickstart"
+      - "Crucible Safety"
+      - "Pouring & Safety"
+      - "Molten Metal Safety"
+      - "Emergency Procedures"
+      - "Fire Safety"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-132
+    must_include:
+      - "This is the reviewed answer-card surface for GD-132."
+      - "Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff."
+      - "Do not use this reviewed card for mold making, melt schedules, temperatures, alloy or flux recipes, furnace setup, pouring technique, gating or riser design, sand chemistry, PPE guarantees, calculations, legal or environmental claims, or safety certification."
+  - name: moisture_and_crucible_hazard_warning_remains
+    guide: GD-132
+    must_include:
+      - "A single drop of water contacting molten metal causes a violent steam explosion"
+      - "Inspect crucibles for cracks before every use"
+      - "Never cast alone"
+  - name: quickstart_readiness_context_remains
+    guide: GD-132
+    must_include:
+      - "Every melt starts with a foundry safety check, not with metal charge"
+      - "Ventilation"
+      - "Fire perimeter"
+      - "Dry mold and tool rule"
+  - name: molten_metal_safety_context_remains
+    guide: GD-132
+    must_include:
+      - "Steam Explosions"
+      - "Crucible Failure"
+      - "Fire Safety"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-132 as a boundary-only foundry-area readiness,
+  visible hazard screening, material/source labeling, no-go trigger,
+  access-control, and expert/owner handoff card. It deliberately excludes mold
+  making, melt schedules, temperatures, alloy or flux recipes, furnace setup,
+  pouring technique, gating/riser design, sand chemistry, PPE guarantees,
+  calculations, legal/environmental claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.
