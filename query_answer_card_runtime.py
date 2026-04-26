@@ -196,6 +196,7 @@ def _prioritized_answer_card_ids_for_question(
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
     is_infected_wound_card_query=lambda question: False,
+    is_food_system_outage_illness_boundary_card_query=None,
     is_community_kitchen_illness_control_card_query=None,
     is_anaphylaxis_red_zone_card_query=None,
 ):
@@ -205,6 +206,10 @@ def _prioritized_answer_card_ids_for_question(
     if is_community_kitchen_illness_control_card_query is None:
         is_community_kitchen_illness_control_card_query = (
             _is_community_kitchen_illness_control_card_query
+        )
+    if is_food_system_outage_illness_boundary_card_query is None:
+        is_food_system_outage_illness_boundary_card_query = (
+            _is_food_system_outage_illness_boundary_card_query
         )
     if is_anaphylaxis_red_zone_card_query is None:
         is_anaphylaxis_red_zone_card_query = _is_anaphylaxis_red_zone_card_query
@@ -218,6 +223,8 @@ def _prioritized_answer_card_ids_for_question(
         prioritized.append("newborn_danger_sepsis")
     if is_meningitis_rash_emergency_query(question):
         prioritized.append("meningitis_sepsis_child")
+    if is_food_system_outage_illness_boundary_card_query(question):
+        prioritized.append("food_system_outage_illness_boundary")
     if is_community_kitchen_illness_control_card_query(question):
         prioritized.append("community_kitchen_illness_control")
     if is_poisoning_unknown_ingestion_card_query(question):
@@ -237,6 +244,7 @@ def _answer_card_matches_question(
     is_meningitis_rash_emergency_query,
     is_poisoning_unknown_ingestion_card_query=lambda question: False,
     is_infected_wound_card_query=lambda question: False,
+    is_food_system_outage_illness_boundary_card_query=None,
     is_community_kitchen_illness_control_card_query=None,
     is_anaphylaxis_red_zone_card_query=None,
 ):
@@ -246,6 +254,10 @@ def _answer_card_matches_question(
     if is_community_kitchen_illness_control_card_query is None:
         is_community_kitchen_illness_control_card_query = (
             _is_community_kitchen_illness_control_card_query
+        )
+    if is_food_system_outage_illness_boundary_card_query is None:
+        is_food_system_outage_illness_boundary_card_query = (
+            _is_food_system_outage_illness_boundary_card_query
         )
     if is_anaphylaxis_red_zone_card_query is None:
         is_anaphylaxis_red_zone_card_query = _is_anaphylaxis_red_zone_card_query
@@ -263,6 +275,8 @@ def _answer_card_matches_question(
         return is_poisoning_unknown_ingestion_card_query(question)
     if card_id == "infected_wound_spreading_infection":
         return is_infected_wound_card_query(question)
+    if card_id == "food_system_outage_illness_boundary":
+        return is_food_system_outage_illness_boundary_card_query(question)
     if card_id == "community_kitchen_illness_control":
         return is_community_kitchen_illness_control_card_query(question)
     return True
@@ -608,6 +622,107 @@ def _has_community_kitchen_meal_service_link(text):
     return bool(
         re.search(
             r"\bafter\b.{0,48}\b(?:food|meal|breakfast|lunch|dinner|supper)\b",
+            text,
+        )
+    )
+
+
+_FOOD_SYSTEM_OUTAGE_TERMS = {
+    "blackout",
+    "electricity is out",
+    "fridge outage",
+    "fridge power outage",
+    "lost power",
+    "no power",
+    "power failure",
+    "power is out",
+    "power outage",
+    "refrigeration outage",
+    "refrigerator outage",
+    "refrigerator power outage",
+}
+_FOOD_SYSTEM_PERISHABLE_TERMS = {
+    "chilled food",
+    "cold food",
+    "dairy",
+    "fresh food",
+    "frozen food",
+    "meat",
+    "perishable",
+    "perishables",
+    "refrigerated food",
+    "short shelf life",
+    "short-shelf-life",
+    "short shelf-life",
+    "thawed food",
+}
+_FOOD_SYSTEM_GROUP_CONTEXT_TERMS = {
+    "community",
+    "families",
+    "family",
+    "households",
+    "neighborhood",
+    "people",
+    "residents",
+}
+_FOOD_SYSTEM_CLUSTER_ILLNESS_TERMS = {
+    "diarrhea",
+    "diarrhoea",
+    "food poisoning",
+    "foodborne",
+    "food-borne",
+    "reporting stomach illness",
+    "stomach bug",
+    "stomach illness",
+    "stomach sickness",
+    "throwing up",
+    "vomiting",
+}
+_FOOD_SYSTEM_FEEDING_PRESSURE_TERMS = {
+    "feed families",
+    "feed people",
+    "food access",
+    "keep everyone fed",
+    "keep families fed",
+    "keep people fed",
+    "keep the neighborhood fed",
+    "keep them fed",
+    "keep us fed",
+    "keeping people fed",
+    "meals",
+    "need calories",
+    "people fed",
+    "without spreading sickness",
+}
+
+
+def _is_food_system_outage_illness_boundary_card_query(question):
+    """Detect food-system outage prompts where feeding pressure meets illness risk."""
+    lower = str(question or "").lower()
+    if not lower:
+        return False
+
+    has_outage = _text_has_any(lower, _FOOD_SYSTEM_OUTAGE_TERMS) or (
+        "outage" in lower and _text_has_any(lower, {"fridge", "refrigerator", "refrigeration"})
+    )
+    if not has_outage:
+        return False
+    if not _text_has_any(lower, _FOOD_SYSTEM_PERISHABLE_TERMS):
+        return False
+    if not _has_food_system_group_illness_cluster(lower):
+        return False
+    return _text_has_any(lower, _FOOD_SYSTEM_FEEDING_PRESSURE_TERMS)
+
+
+def _has_food_system_group_illness_cluster(text):
+    if not _text_has_any(text, _FOOD_SYSTEM_CLUSTER_ILLNESS_TERMS):
+        return False
+    if _text_has_any(text, _FOOD_SYSTEM_GROUP_CONTEXT_TERMS):
+        return True
+    return bool(
+        re.search(
+            r"\b(?:several|multiple|many|two|three|four|five|six|[2-9]|[1-9]\d+)\b"
+            r".{0,56}\b(?:families|households|people|residents)\b",
             text,
         )
     )

@@ -11730,6 +11730,7 @@ def _retrieval_profile_for_question(question, frame=None):
         or _is_possible_spinal_injury_movement_query(question)
         or _is_infected_wound_boundary_query(question)
         or _is_poisoning_unknown_ingestion_card_query(question)
+        or _is_food_system_outage_illness_boundary_query(question)
         or _is_gi_bleed_emergency_query(question)
         or _is_electrical_hazard_query(question)
         or _is_cardiac_first_query(question)
@@ -11906,6 +11907,42 @@ def _supplemental_retrieval_specs(
                     "category": "medical",
                     "limit": supplemental_limit,
                 }
+            )
+        if _is_food_system_outage_illness_boundary_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": (
+                            f"{question} food-system-resilience community food "
+                            "system continuity refrigerator outage short shelf-life "
+                            "perishable food keep families fed replacement food "
+                            "safe staples storage preservation calorie verification"
+                        ),
+                        "category": "agriculture",
+                        "where": {"slug": "food-system-resilience"},
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            f"{question} food-safety-contamination-prevention "
+                            "refrigerated food power outage temperature danger zone "
+                            "foodborne illness stomach illness discard suspect food "
+                            "do not serve questionable food hand hygiene"
+                        ),
+                        "category": "agriculture",
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            f"{question} emergency-food-rationing hygiene disease "
+                            "prevention keep people fed fair rationing priority "
+                            "children elders pregnant nursing sick people handwashing "
+                            "safe food distribution"
+                        ),
+                        "category": "agriculture",
+                        "limit": supplemental_limit,
+                    },
+                ]
             )
         if _is_classic_stroke_fast_special_case(question):
             specs.append(
@@ -14997,6 +15034,12 @@ def _is_poisoning_unknown_ingestion_card_query(question):
     return explicit_poisoning or (route and source and danger)
 
 
+def _is_food_system_outage_illness_boundary_query(question):
+    return _answer_card_runtime._is_food_system_outage_illness_boundary_card_query(
+        question
+    )
+
+
 def _prioritized_answer_card_ids_for_question(question):
     return _answer_card_runtime._prioritized_answer_card_ids_for_question(
         question,
@@ -15006,6 +15049,9 @@ def _prioritized_answer_card_ids_for_question(question):
         is_meningitis_rash_emergency_query=_is_meningitis_rash_retrieval_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
         is_infected_wound_card_query=_is_infected_wound_boundary_query,
+        is_food_system_outage_illness_boundary_card_query=(
+            _is_food_system_outage_illness_boundary_query
+        ),
         is_community_kitchen_illness_control_card_query=(
             _answer_card_runtime._is_community_kitchen_illness_control_card_query
         ),
@@ -15022,6 +15068,9 @@ def _answer_card_matches_question(card, question):
         is_meningitis_rash_emergency_query=_is_meningitis_rash_retrieval_query,
         is_poisoning_unknown_ingestion_card_query=_is_poisoning_unknown_ingestion_card_query,
         is_infected_wound_card_query=_is_infected_wound_boundary_query,
+        is_food_system_outage_illness_boundary_card_query=(
+            _is_food_system_outage_illness_boundary_query
+        ),
         is_community_kitchen_illness_control_card_query=(
             _answer_card_runtime._is_community_kitchen_illness_control_card_query
         ),

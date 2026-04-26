@@ -1,0 +1,131 @@
+card_id: food_system_outage_illness_boundary
+guide_id: GD-634
+slug: food-system-resilience
+title: "Food System Resilience"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A neighborhood, household cluster, or community food system has a refrigerator or power outage affecting short-shelf-life, fresh, chilled, frozen, or other perishable food.
+  - Several families or people are reporting stomach illness, vomiting, diarrhea, food poisoning, or foodborne illness while the group still needs to keep people fed.
+  - The planner must separate safe feeding continuity from suspect food, sick handlers, and unsafe distribution pressure.
+required_first_actions:
+  - Keep people fed without serving suspect refrigerated, thawed, temperature-abused, or short-shelf-life food until food-safety discard decisions are separated from the feeding plan.
+  - Separate the work into illness control, suspect-food hold or discard decisions, and replacement procurement or rationing so food access pressure does not spread sickness.
+  - Keep sick people and anyone cleaning vomit, stool, or sick-care areas out of food handling, packing, distribution, water, and dishwashing roles.
+  - Use clean hand hygiene, clean utensils, and safe water at food packing, pickup, delivery, and eating points before expanding distribution.
+first_actions:
+  - Inventory what is definitely shelf-stable, still frozen or cold, already suspect, and ready to cook now; discard or hold questionable foods instead of taste-testing or stretching them.
+  - Feed households from shelf-stable staples, safe cooked batches served promptly, intact canned or dry goods, and fair emergency rations while replacing lost perishables.
+  - Prioritize children, pregnant or nursing people, elders, ill or recovering people, and heavy laborers when safe food is scarce.
+  - Use small, low-contact distribution crews with one-way flow, no shared serving utensils, and records of what foods went to which households.
+urgent_red_flags:
+  - Several families develop vomiting, diarrhea, fever, or stomach cramps after shared food, a shared pickup site, or the same refrigerated/perishable batch.
+  - Food has been above refrigerator temperature, thawed at room temperature, smells off, is slimy, leaking, moldy, bulging, or otherwise suspect.
+  - Bloody diarrhea, repeated vomiting, confusion, little or no urine, severe dehydration, high fever, neurologic symptoms, or illness in young children, elders, pregnant people, or immunocompromised people.
+forbidden_advice:
+  - Serve questionable refrigerated food because people need calories.
+  - Prioritize zero waste over illness prevention.
+  - Let sick volunteers or sick family members handle food distribution, packing, water, dishes, or childcare food.
+  - Taste-test suspect food, use smell as proof of safety, or keep temperature-abused food to stretch supplies.
+do_not:
+  - Do not treat a refrigerator outage as a routine rationing problem when multiple households are already reporting stomach illness.
+  - Do not mix suspect-food sorting, sick-care cleanup, and clean food distribution in the same crew or workspace.
+  - Do not let food-system continuity planning erase food-safety, hand hygiene, and illness-control boundaries.
+routine_boundary: >
+  A refrigerator outage plus short-shelf-life food and a multi-family stomach
+  illness cluster is food-system continuity with an illness-control boundary,
+  not ordinary spoilage triage, routine rationing, or community-kitchen
+  throughput.
+acceptable_uncertain_fit: >
+  If the source of illness is unclear but multiple families are sick while
+  perishable food was temperature-abused, preserve the conservative sequence:
+  hold or discard suspect foods, separate sick people from food work, feed from
+  safe shelf-stable or freshly cooked sources, and ration fairly until safe
+  replacement food arrives.
+clarifying_questions:
+  - Which foods lost refrigeration, for how long, and were any still frozen, below 40°F, or clearly shelf-stable?
+  - Which families are sick, what symptoms do they have, and did they share a pickup site, meal, refrigerated batch, water source, or food handler?
+  - What safe shelf-stable foods, clean water, cooking fuel, delivery crews, and high-risk households need priority today?
+citation_ids:
+  - food-system-disruption-continuity
+  - emergency-rationing-priority-allocation
+  - food-safety-temperature-danger-zone
+  - hygiene-critical-handwashing
+source_sections:
+  - guide: GD-634
+    slug: food-system-resilience
+    title: "Food System Resilience"
+    sections:
+      - "#overview"
+      - "#tier-4-food-preservationclosing-the-harvest-to-winter-gap"
+      - "#tier-5-nutritional-verificationare-you-actually-eating-enough"
+      - "#quick-reference-foods-that-store-12-months"
+  - guide: GD-591
+    slug: emergency-food-rationing
+    title: "Emergency Food Rationing for Communities"
+    sections:
+      - "#overview"
+      - "#part-1-caloric-minimums-by-activity-level"
+      - "#part-4-at-risk-populations-priority-allocation"
+      - "#part-5-inventory-management-distribution"
+  - guide: GD-666
+    slug: food-safety-contamination-prevention
+    title: "Food Safety & Contamination Prevention"
+    sections:
+      - "#the-temperature-danger-zone"
+      - "#cross-contamination-prevention"
+      - "#foodborne-illness-recognition-response"
+      - "#kitchen-hygiene-in-austere-conditions"
+  - guide: GD-732
+    slug: hygiene-disease-prevention-basics
+    title: "Hygiene Practices & Disease Prevention Basics"
+    sections:
+      - "#overview"
+      - "#hand-washing"
+      - "#hand-washing > When to Wash Hands"
+      - "#hand-washing > Waterless Cleaning (When Water Is Scarce)"
+  - guide: GD-961
+    slug: community-kitchen-mess-hall-operations
+    title: "Community Kitchen & Mess Hall Operations"
+    sections:
+      - "#overview"
+      - "#core-rules"
+      - "#meal-planning"
+      - "#outbreak-aware"
+source_invariants:
+  - name: food-system continuity through safe stored and preserved sources
+    guide: GD-634
+    must_include:
+      - Use this guide for community food-system continuity after bad weather or short shelf-life disruption
+      - Production is worthless if food spoils before you eat it.
+      - Having food and having *complete nutrition* are different.
+      - Grains (intact seeds)
+  - name: emergency rationing protects vulnerable people
+    guide: GD-591
+    must_include:
+      - Do NOT reduce rations for infants or young children
+      - Daily Inventory Ledger
+      - pregnant women
+  - name: food safety before scarcity shortcuts
+    guide: GD-666
+    must_include:
+      - Food in the 40°F–140°F zone
+      - In survival, when in doubt, discard if you have alternatives.
+      - isolate sick persons
+      - Do not use tasting to rescue suspect food.
+  - name: hygiene breaks food and contact transmission
+    guide: GD-732
+    must_include:
+      - before preparing or eating food
+      - after using the toilet or latrine
+      - prioritize the moments with highest disease transmission risk
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-634 because the prompt asks how a neighborhood food
+  system keeps people fed under short-shelf-life disruption. GD-591 supports
+  fair rationing and priority allocation after unsafe food is removed. GD-666
+  and GD-732 are required safety boundaries for foodborne illness prevention,
+  temperature-abused food, and hand hygiene. GD-961 is source-family support
+  for group food-flow controls without broadening the separate
+  community_kitchen_illness_control card.

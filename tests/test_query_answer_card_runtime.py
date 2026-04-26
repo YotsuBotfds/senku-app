@@ -417,6 +417,147 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
                     )
                 )
 
+    def test_food_system_outage_illness_boundary_prioritized_for_eval8_prompt(self):
+        prompt = (
+            "A neighborhood food system has a refrigerator outage, "
+            "short-shelf-life food, and several families reporting stomach "
+            "illness. How do we keep people fed without spreading sickness?"
+        )
+        prioritized = runtime._prioritized_answer_card_ids_for_question(
+            prompt,
+            is_airway_obstruction_rag_query=lambda question: False,
+            has_allergy_or_anaphylaxis_trigger=lambda question: False,
+            is_newborn_sepsis_danger_query=lambda question: False,
+            is_meningitis_rash_emergency_query=lambda question: False,
+        )
+
+        self.assertIn("food_system_outage_illness_boundary", prioritized)
+        self.assertNotIn("community_kitchen_illness_control", prioritized)
+
+        food_system_card = {
+            "card_id": "food_system_outage_illness_boundary",
+            "guide_id": "GD-634",
+            "review_status": "approved",
+        }
+        kitchen_card = {
+            "card_id": "community_kitchen_illness_control",
+            "guide_id": "GD-961",
+            "review_status": "approved",
+        }
+        self.assertTrue(
+            runtime._answer_card_matches_question(
+                food_system_card,
+                prompt,
+                is_airway_obstruction_rag_query=lambda question: False,
+                has_allergy_or_anaphylaxis_trigger=lambda question: False,
+                is_newborn_sepsis_danger_query=lambda question: False,
+                is_meningitis_rash_emergency_query=lambda question: False,
+            )
+        )
+        self.assertFalse(
+            runtime._answer_card_matches_question(
+                kitchen_card,
+                prompt,
+                is_airway_obstruction_rag_query=lambda question: False,
+                has_allergy_or_anaphylaxis_trigger=lambda question: False,
+                is_newborn_sepsis_danger_query=lambda question: False,
+                is_meningitis_rash_emergency_query=lambda question: False,
+            )
+        )
+
+    def test_food_system_outage_illness_boundary_can_match_source_family(self):
+        unrelated_card = {
+            "card_id": "ordinary_rationing",
+            "guide_id": "GD-591",
+            "review_status": "approved",
+        }
+        food_system_card = {
+            "card_id": "food_system_outage_illness_boundary",
+            "guide_id": "GD-634",
+            "review_status": "approved",
+            "source_sections": [
+                {"guide": "GD-591"},
+                {"guide": "GD-666"},
+                {"guide": "GD-732"},
+                {"guide": "GD-961"},
+            ],
+        }
+        prompt = (
+            "A neighborhood food system has a refrigerator outage, "
+            "short-shelf-life food, and several families reporting stomach "
+            "illness. How do we keep people fed without spreading sickness?"
+        )
+
+        cards = runtime._answer_cards_for_results(
+            {
+                "metadatas": [[
+                    {"guide_id": "GD-591"},
+                    {"guide_id": "GD-666"},
+                    {"guide_id": "GD-732"},
+                ]]
+            },
+            question=prompt,
+            max_cards=1,
+            max_source_ids=1,
+            runtime_answer_cards=lambda: [unrelated_card, food_system_card],
+            citation_allowlist_from_results=lambda results: [
+                "GD-591",
+                "GD-666",
+                "GD-732",
+            ],
+            prioritized_answer_card_ids_for_question=(
+                lambda question: runtime._prioritized_answer_card_ids_for_question(
+                    question,
+                    is_airway_obstruction_rag_query=lambda text: False,
+                    has_allergy_or_anaphylaxis_trigger=lambda text: False,
+                    is_newborn_sepsis_danger_query=lambda text: False,
+                    is_meningitis_rash_emergency_query=lambda text: False,
+                )
+            ),
+            answer_card_matches_question=(
+                lambda card, question: runtime._answer_card_matches_question(
+                    card,
+                    question,
+                    is_airway_obstruction_rag_query=lambda text: False,
+                    has_allergy_or_anaphylaxis_trigger=lambda text: False,
+                    is_newborn_sepsis_danger_query=lambda text: False,
+                    is_meningitis_rash_emergency_query=lambda text: False,
+                )
+            ),
+            card_source_guide_ids=runtime._card_source_guide_ids,
+        )
+
+        self.assertEqual(
+            [card["card_id"] for card in cards],
+            ["food_system_outage_illness_boundary"],
+        )
+
+    def test_food_system_outage_illness_boundary_rejects_near_misses(self):
+        card = {
+            "card_id": "food_system_outage_illness_boundary",
+            "guide_id": "GD-634",
+            "review_status": "approved",
+        }
+        prompts = [
+            "The neighborhood fridge failed during an outage. Which perishables should we cook first?",
+            "Several families have stomach illness. What hygiene steps stop spread at home?",
+            "A refrigerator outage spoiled short-shelf-life food, but nobody is sick. How do we keep people fed?",
+            "Several families are vomiting after a picnic, but there is no food shortage or outage pressure.",
+        ]
+
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertFalse(
+                    runtime._answer_card_matches_question(
+                        card,
+                        prompt,
+                        is_airway_obstruction_rag_query=lambda question: False,
+                        has_allergy_or_anaphylaxis_trigger=lambda question: False,
+                        is_newborn_sepsis_danger_query=lambda question: False,
+                        is_meningitis_rash_emergency_query=lambda question: False,
+                    )
+                )
+
     def test_card_backed_runtime_answer_plan_uses_injected_composer(self):
         selected_card = {
             "card_id": "newborn_danger_sepsis",

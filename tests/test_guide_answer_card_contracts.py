@@ -553,6 +553,107 @@ class GuideAnswerCardContractTests(unittest.TestCase):
         )
         self.assertTrue(any("Skipping handwashing" in phrase for phrase in hit_phrases))
 
+    def test_load_answer_cards_includes_food_system_outage_illness_boundary(self):
+        card = next(
+            card
+            for card in self.cards
+            if card["card_id"] == "food_system_outage_illness_boundary"
+        )
+
+        self.assertEqual(card["guide_id"], "GD-634")
+        self.assertEqual(card["slug"], "food-system-resilience")
+        self.assertEqual(card["risk_tier"], "high")
+        self.assertEqual(card["runtime_citation_policy"], "reviewed_source_family")
+        self.assertIn("required_first_actions", card)
+        self.assertIn("forbidden_advice", card)
+        self.assertIn("source_sections", card)
+
+    def test_food_system_outage_illness_boundary_evidence_sources(self):
+        card = find_cards_for_guides("GD-634", cards=self.cards)[0]
+
+        unit = compose_evidence_units([card])[0]
+
+        self.assertEqual(unit["unit_id"], "food_system_outage_illness_boundary")
+        self.assertIn("food-system-disruption-continuity", unit["citation_ids"])
+        self.assertEqual(unit["source_guide_ids"][0], "GD-634")
+        self.assertIn("GD-591", unit["source_guide_ids"])
+        self.assertIn("GD-666", unit["source_guide_ids"])
+        self.assertIn("GD-732", unit["source_guide_ids"])
+        self.assertIn("GD-961", unit["source_guide_ids"])
+        self.assertTrue(unit["support_phrases"])
+
+    def test_food_system_outage_illness_boundary_composes_and_passes_contract(self):
+        card = find_cards_for_guides("GD-634", cards=self.cards)[0]
+
+        plan = compose_card_backed_answer(
+            [card],
+            allowed_guide_ids=["GD-634"],
+            question_text=(
+                "A neighborhood food system has a refrigerator outage, "
+                "short-shelf-life food, and several families reporting stomach "
+                "illness. How do we keep people fed without spreading sickness?"
+            ),
+        )
+
+        self.assertEqual(plan["status"], "ready")
+        self.assertEqual(plan["card_ids"], ["food_system_outage_illness_boundary"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-634"])
+        self.assertEqual(plan["lines"][0]["kind"], "required_first_action")
+        self.assertIn("Keep people fed without serving suspect refrigerated", plan["answer_text"])
+        self.assertIn("Separate the work into illness control", plan["answer_text"])
+        self.assertIn("Keep sick people", plan["answer_text"])
+        self.assertIn("Use clean hand hygiene", plan["answer_text"])
+        self.assertIn("[GD-634]", plan["answer_text"])
+
+        contract = evaluate_answer_card_contract(
+            plan["answer_text"],
+            [card],
+            question_text=(
+                "A neighborhood food system has a refrigerator outage, "
+                "short-shelf-life food, and several families reporting stomach "
+                "illness. How do we keep people fed without spreading sickness?"
+            ),
+        )
+        self.assertEqual(contract["status"], "pass")
+        self.assertEqual(contract["forbidden_advice_hits"], [])
+        claim = diagnose_claim_support(
+            plan["answer_text"],
+            [card],
+            cited_guide_ids=plan["cited_guide_ids"],
+            expected_guide_ids=["GD-634"],
+        )
+        self.assertEqual(claim["status"], "pass")
+        self.assertEqual(claim["forbidden_count"], 0)
+
+    def test_food_system_outage_illness_boundary_can_cite_reviewed_source_family(self):
+        card = find_cards_for_guides("GD-634", cards=self.cards)[0]
+
+        rationing_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-591"])
+        safety_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-666"])
+        hygiene_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-732"])
+
+        self.assertEqual(rationing_plan["cited_guide_ids"], ["GD-591"])
+        self.assertIn("[GD-591]", rationing_plan["answer_text"])
+        self.assertEqual(safety_plan["cited_guide_ids"], ["GD-666"])
+        self.assertIn("[GD-666]", safety_plan["answer_text"])
+        self.assertEqual(hygiene_plan["cited_guide_ids"], ["GD-732"])
+        self.assertIn("[GD-732]", hygiene_plan["answer_text"])
+
+    def test_food_system_outage_illness_boundary_flags_unsafe_serving_advice(self):
+        card = find_cards_for_guides("GD-634", cards=self.cards)[0]
+        answer = """
+        Serve questionable refrigerated food because people need calories.
+        Prioritize zero waste over illness prevention.
+        Let sick volunteers handle food distribution.
+        """
+
+        result = evaluate_answer_card_contract(answer, [card])
+
+        self.assertEqual(result["status"], "fail")
+        hit_phrases = [record["phrase"] for record in result["forbidden_advice_hits"]]
+        self.assertTrue(any("Serve questionable refrigerated food" in phrase for phrase in hit_phrases))
+        self.assertTrue(any("Prioritize zero waste" in phrase for phrase in hit_phrases))
+
     def test_compose_card_backed_answer_does_not_cite_unallowed_backup_owner(self):
         card = [
             candidate

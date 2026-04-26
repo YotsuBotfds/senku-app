@@ -3505,6 +3505,66 @@ class QueryRoutingTests(unittest.TestCase):
             [],
         )
 
+    def test_food_system_outage_illness_card_priority_and_near_misses(self):
+        eval8_prompt = (
+            "A neighborhood food system has a refrigerator outage, "
+            "short-shelf-life food, and several families reporting stomach "
+            "illness. How do we keep people fed without spreading sickness?"
+        )
+        results = {
+            "documents": [["Food continuity and safety context."]],
+            "metadatas": [[
+                {"guide_id": "GD-591"},
+                {"guide_id": "GD-666"},
+                {"guide_id": "GD-732"},
+            ]],
+        }
+
+        self.assertTrue(query._is_food_system_outage_illness_boundary_query(eval8_prompt))
+        self.assertFalse(
+            query._answer_card_runtime._is_community_kitchen_illness_control_card_query(
+                eval8_prompt
+            )
+        )
+        self.assertEqual(
+            query._retrieval_profile_for_question(eval8_prompt),
+            "safety_triage",
+        )
+        specs = query._supplemental_retrieval_specs(eval8_prompt, 8)
+        self.assertTrue(
+            any(
+                spec.get("where") == {"slug": "food-system-resilience"}
+                for spec in specs
+            )
+        )
+
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(eval8_prompt, results)
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["food_system_outage_illness_boundary"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-591"])
+        self.assertIn("Keep people fed without serving suspect refrigerated", plan["answer_text"])
+
+        near_misses = [
+            "The neighborhood fridge failed during an outage. Which perishables should we cook first?",
+            "Several families have stomach illness. What hygiene steps stop spread at home?",
+        ]
+        for prompt in near_misses:
+            with self.subTest(prompt=prompt):
+                self.assertFalse(query._is_food_system_outage_illness_boundary_query(prompt))
+                self.assertEqual(
+                    query._answer_cards_for_results(
+                        {"metadatas": [[{"guide_id": "GD-634"}]]},
+                        question=prompt,
+                        max_cards=1,
+                    ),
+                    [],
+                )
+
     def test_card_backed_runtime_answer_uses_question_only_for_conditionals(self):
         results = {
             "documents": [[
