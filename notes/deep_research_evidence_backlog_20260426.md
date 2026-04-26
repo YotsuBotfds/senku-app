@@ -261,6 +261,9 @@ Action:
 - Normalized run-manifest artifact paths so absolute repo-local outputs and
   backslash/forward-slash equivalents record one portable repo-relative path
   while still probing the real filesystem path for evidence.
+- Run-manifest artifact path collection now rejects absolute paths outside the
+  repository even when they contain an `artifacts/` segment, preventing
+  unrelated external files from inflating artifact evidence.
 - Added compare-bench CLI wrapper coverage for both stdout rendering and
   `--output` file writing, pinning the operator path around the existing
   artifact comparison engine.
@@ -609,6 +612,8 @@ Validation:
   metadata as a missing high-liability policy signal.
 - `tests.test_write_run_manifest` covers canonical artifact path dedupe and
   zero-limit library behavior for artifact collection.
+- `tests.test_write_run_manifest` covers rejection of external absolute
+  artifact-looking paths outside the repository root.
 - `tests.test_bench_metrics_lake` covers malformed/scalar JSONL lines plus
   normalized `artifact_path_evidence` status/path preservation.
 - `tests.test_evaluate_retrieval_pack` covers duplicate primary-owner metadata

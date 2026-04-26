@@ -344,6 +344,24 @@ class WriteRunManifestTests(unittest.TestCase):
         self.assertIs(evidence["exists"], True)
         self.assertEqual(evidence["kind"], "file")
 
+    def test_collect_artifact_paths_rejects_external_artifact_paths(self):
+        with tempfile.TemporaryDirectory() as tmpdir, tempfile.TemporaryDirectory() as external_tmpdir:
+            root = Path(tmpdir)
+            external_artifact = (
+                Path(external_tmpdir) / "artifacts" / "bench" / "external.json"
+            )
+
+            paths = collect_artifact_paths(
+                [str(external_artifact)],
+                limit=3,
+                repo_root=root,
+            )
+
+        self.assertEqual(paths["paths"], [])
+        self.assertEqual(paths["evidence_paths"], {})
+        self.assertEqual(paths["count"], 0)
+        self.assertFalse(paths["truncated"])
+
     def test_artifact_paths_dedupe_backslash_and_forward_slash_equivalents(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

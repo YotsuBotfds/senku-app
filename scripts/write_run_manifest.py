@@ -274,13 +274,12 @@ def _normalize_artifact_path(value: str, repo_root: Path) -> tuple[str, Path] | 
     if not real_path.is_absolute():
         real_path = repo_root.joinpath(*portable_raw_path.split("/"))
 
-    record_path = portable_raw_path
     try:
         relative_path = real_path.resolve(strict=False).relative_to(
             repo_root.resolve(strict=False)
         )
     except ValueError:
-        pass
+        return None
     else:
         record_path = _portable_path(relative_path)
 
