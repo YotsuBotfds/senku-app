@@ -374,7 +374,7 @@ def collect_artifact_path_evidence(
         path = (evidence_paths or {}).get(value, root / Path(value))
         try:
             exists = path.exists()
-        except OSError as exc:
+        except (OSError, ValueError) as exc:
             if entry_limit is None or len(entries) < entry_limit:
                 entries.append(
                     {

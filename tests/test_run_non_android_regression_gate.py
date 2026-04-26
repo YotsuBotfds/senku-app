@@ -118,6 +118,22 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertIn("tests\\fixtures\\non_android_generated\\baseline_diag", result.stdout)
         self.assertIn("--fail-on-regression", result.stdout)
 
+    def test_generated_mode_whatif_quotes_display_paths_with_spaces_and_apostrophes(self):
+        result = self.run_script(
+            "-Mode",
+            "Generated",
+            "-Label",
+            "unit_label",
+            "-GeneratedBenchJson",
+            "tests\\fixtures\\non android\\candidate's.json",
+            "-GeneratedBaselineDiag",
+            "tests\\fixtures\\non android\\baseline diag",
+            "-WhatIf",
+        )
+
+        self.assertIn("'tests\\fixtures\\non android\\candidate''s.json'", result.stdout)
+        self.assertIn("'tests\\fixtures\\non android\\baseline diag'", result.stdout)
+
     def test_all_mode_whatif_prints_fast_and_generated_commands_without_safety_by_default(self):
         result = self.run_script(
             "-Mode",

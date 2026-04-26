@@ -366,6 +366,14 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertIn("const items = asArray(values);", rendered)
         self.assertIn("if (!isRecord(item)) {", rendered)
 
+    def test_render_html_page_guards_malformed_status_payloads(self):
+        module = load_module()
+
+        rendered = module.render_html_page(refresh_seconds=20)
+
+        self.assertIn("data = isRecord(data) ? data : {};", rendered)
+        self.assertIn("const benign = asArray(status.benign_untracked);", rendered)
+
     def test_status_endpoint_returns_json_monitor_state(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as tmpdir:

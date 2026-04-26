@@ -622,6 +622,12 @@ Action:
   summaries coerce non-finite counts to zero, RAG diagnostic summary fallbacks
   count mixed-case statuses, and run-manifest health only treats literal booleans
   as dirty/truncated flags.
+- Hardened manifest/PowerShell/queue tooling: run-manifest evidence records
+  malformed artifact paths as unknown instead of failing, non-Android gate
+  dry-run quoting is pinned for spaces/apostrophes, Windows validation tests pin
+  call-operator invocation rather than `Invoke-Expression`, overnight queue
+  wrappers reject directory queue notes before reading, and live queue monitor
+  rendering guards malformed status payloads.
 
 Validation:
 
@@ -680,11 +686,19 @@ Validation:
   `tests.test_summarize_rag_diagnostics`, and
   `tests.test_summarize_run_manifest` cover the manifest/diagnostics export
   hardening batch.
+- `tests.test_write_run_manifest`, `tests.test_live_queue_monitor`,
+  `tests.test_powershell_quality_gate`, `tests.test_run_non_android_regression_gate`,
+  plus `tests/powershell/Run-OvernightQueueWrapperTests.ps1` and the focused
+  PowerShell parser gate cover the manifest/PowerShell/queue tooling batch.
 
 Deferred unless evidenced:
 
 - Claims that diagnostics currently mask unsafe behavior. The inventory found
   partial coverage, not a proven unsafe app response.
+- Generated deterministic registry refresh. A focused worker found
+  `scripts/regenerate_deterministic_registry.py --check` currently reports the
+  checked-in registry is out of date; no generated registry refresh was included
+  in this tranche.
 
 ### DR-ART-APPROVE - Keep Artifact Retention Approval-Only
 

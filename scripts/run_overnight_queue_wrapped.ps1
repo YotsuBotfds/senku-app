@@ -367,7 +367,7 @@ if ($trackerRows.ExitCode -ne 0) {
 
 Add-PreflightStep -Number 6 -Title "State Log row validator" -Status "pass" -Details @($trackerRows.Text)
 
-if (-not (Test-Path $queueNotePath)) {
+if (-not (Test-Path -LiteralPath $queueNotePath -PathType Leaf)) {
     Add-PreflightStep -Number 7 -Title "Queue note present and well-formed" -Status "fail" -Details @("Queue note not found: $queueNotePath")
     Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Queue note was missing."
     exit 1

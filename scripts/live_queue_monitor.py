@@ -686,6 +686,7 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
       }});
     }};
     function render(data) {{
+      data = isRecord(data) ? data : {{}};
       el('repo-root').textContent = data.repo_root || '';
       el('snapshot-time').textContent = data.timestamp || '';
       el('browser-time').textContent = new Date().toLocaleTimeString();
@@ -701,7 +702,7 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
         ? `Git status unavailable: ${{status.error}}`
         : `${{status.clean ? 'Clean' : `${{status.total_changed || 0}} changed`}} on ${{branch}} ${{head}}`;
       statusBox.appendChild(line);
-      const benign = status.benign_untracked || [];
+      const benign = asArray(status.benign_untracked);
       if (benign.length) {{
         const detail = document.createElement('div');
         detail.className = 'meta';

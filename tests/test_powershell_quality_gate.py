@@ -5,6 +5,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
+WINDOWS_VALIDATION_PATH = REPO_ROOT / "scripts" / "run_windows_validation.ps1"
 WRAPPER_SLICE_PATHS = (
     "scripts\\run_powershell_quality_gate.ps1",
     "scripts\\run_windows_validation.ps1",
@@ -119,6 +120,16 @@ class PowerShellQualityGateTests(unittest.TestCase):
         if result.returncode == 0:
             self.skipTest("PSScriptAnalyzer is installed in this environment")
         self.assertIn("PSScriptAnalyzer is not installed", result.stderr + result.stdout)
+
+    def test_windows_validation_uses_call_operator_for_dynamic_commands(self):
+        script = WINDOWS_VALIDATION_PATH.read_text(encoding="utf-8")
+
+        self.assertNotIn("Invoke-Expression", script)
+        self.assertIn("& $pythonPath -m py_compile query.py ingest.py bench.py", script)
+        self.assertIn("& $pythonPath -m unittest discover -s tests -v", script)
+        self.assertIn("& $pythonPath ingest.py --stats", script)
+        self.assertIn("& $guideScript", script)
+        self.assertIn("-ExtraBenchArgs $ExtraBenchArgs", script)
 
 
 if __name__ == "__main__":

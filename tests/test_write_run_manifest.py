@@ -9,6 +9,7 @@ from pathlib import Path
 from scripts.write_run_manifest import (
     CommandResult,
     build_record,
+    collect_artifact_path_evidence,
     collect_artifact_paths,
     parse_git_status_short,
     parse_metric,
@@ -486,6 +487,33 @@ class WriteRunManifestTests(unittest.TestCase):
         self.assertIs(directory_evidence["exists"], True)
         self.assertEqual(directory_evidence["kind"], "directory")
         self.assertIsInstance(directory_evidence["modified_at"], str)
+
+    def test_artifact_path_evidence_records_malformed_paths(self):
+        class MalformedPath:
+            def exists(self):
+                raise ValueError("embedded null byte")
+
+        evidence = collect_artifact_path_evidence(
+            ["artifacts/bench/bad-path.json"],
+            evidence_paths={
+                "artifacts/bench/bad-path.json": MalformedPath()
+            },
+            repo_root=Path.cwd(),
+        )
+
+        self.assertEqual(
+            evidence["entries"],
+            [
+                {
+                    "path": "artifacts/bench/bad-path.json",
+                    "exists": False,
+                    "kind": "unknown",
+                    "error": "ValueError",
+                }
+            ],
+        )
+        self.assertEqual(evidence["missing"], ["artifacts/bench/bad-path.json"])
+        self.assertEqual(evidence["missing_count"], 1)
 
     def test_auto_enrichment_caps_changed_files_status_and_artifacts(self):
         status_text = "\n".join(
