@@ -285,6 +285,9 @@ Action:
   without dropping valid object rows or scalar-line metrics from the same file.
 - Added artifact tooling coverage for default text-mode storage summaries and
   bench-artifact JSONL indexing that intentionally records `jsonl_not_read`.
+- Added live-queue monitor coverage proving today's protected
+  `PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md` note is treated as
+  benign even when Windows-style backslashes appear in `git status --short`.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
