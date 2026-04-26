@@ -283,6 +283,8 @@ Action:
   frontmatter for that specific support signal.
 - Added bench metrics-lake coverage proving JSONL parse errors are recorded
   without dropping valid object rows or scalar-line metrics from the same file.
+- Added artifact tooling coverage for default text-mode storage summaries and
+  bench-artifact JSONL indexing that intentionally records `jsonl_not_read`.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

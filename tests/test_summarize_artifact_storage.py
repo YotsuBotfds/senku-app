@@ -115,6 +115,20 @@ class SummarizeArtifactStorageTests(unittest.TestCase):
         self.assertEqual(payload["total_bytes"], 4)
         self.assertEqual(payload["largest_files"], [{"path": "bench/summary.json", "bytes": 4}])
 
+    def test_main_emits_text_by_default(self):
+        root = self.make_tmpdir()
+        self.write_bytes(root / "bench" / "summary.json", 4)
+        stdout = StringIO()
+
+        with redirect_stdout(stdout):
+            rc = main(["--root", str(root), "--limit", "1"])
+
+        self.assertEqual(rc, 0)
+        output = stdout.getvalue()
+        self.assertIn("Artifact storage report:", output)
+        self.assertIn("Largest files:", output)
+        self.assertIn("bench/summary.json", output)
+
 
 if __name__ == "__main__":
     unittest.main()

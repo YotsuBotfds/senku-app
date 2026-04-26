@@ -68,6 +68,16 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(records["run_stdout.log"]["summary"]["skipped"], "log_not_read")
         self.assertEqual(records["screen.png"]["summary"]["skipped"], "binary_not_read")
 
+    def test_iter_bench_artifacts_marks_jsonl_as_not_read(self):
+        root = self.make_tmpdir()
+        (root / "records.jsonl").write_text(json.dumps({"id": "r1"}) + "\n", encoding="utf-8")
+
+        records = list(iter_bench_artifacts(root))
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["kind"], "jsonl")
+        self.assertEqual(records[0]["summary"], {"skipped": "jsonl_not_read"})
+
     def test_main_writes_jsonl_and_markdown(self):
         root = self.make_tmpdir()
         output_jsonl = root / "out" / "manifest.jsonl"
