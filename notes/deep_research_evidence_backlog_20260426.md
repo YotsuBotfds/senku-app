@@ -1135,6 +1135,14 @@ Validation:
   emergency airway management, and `GD-526` thermal injuries. The guide-card
   validator now validates `24` cards, focused guide-card/audit tests pass, and
   metadata audit reports no remaining gaps for those five guide IDs.
+- Added reviewed answer cards for the final five near-finished card-only
+  blockers: `GD-054` toxicology, `GD-492` postpartum mother/infant care,
+  `GD-602` toxidromes field poisoning, `GD-858` psychological first aid/peer
+  support, and `GD-918` anxiety/stress self-care. The guide-card validator now
+  validates `29` cards, focused guide-card/audit tests pass, and metadata audit
+  reports no remaining gaps for those five guide IDs. The dangerous-activation
+  boundary test now preserves the `GD-859` support-source invariant while
+  recognizing the new dedicated `GD-858` and `GD-918` cards.
 
 Deferred unless evidenced:
 

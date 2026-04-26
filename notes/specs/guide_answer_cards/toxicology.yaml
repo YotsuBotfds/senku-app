@@ -1,0 +1,131 @@
+card_id: toxicology
+guide_id: GD-054
+slug: toxicology
+title: Toxicology & Poison Management
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Poisoning or toxic exposure is suspected from an unknown substance, plant, animal, chemical, fumes, medication, pesticide, venom, or contaminated food or water.
+  - Symptoms after exposure include respiratory distress, altered consciousness, arrhythmia, severe gastrointestinal bleeding or fluid loss, seizures, drooling, burns, muscle twitching, or shock.
+  - Prompt asks how to assess exposure route, amount, timing, toxidrome pattern, decontamination, activated charcoal boundaries, antidote availability, or deterioration after a toxic exposure.
+required_first_actions:
+  - Treat unknown poison identity as life-threatening, stop ongoing exposure, and make the scene safe before routine advice.
+  - Assess airway, breathing, and circulation immediately.
+  - If chemical exposure is possible, remove contaminated clothing carefully and wash exposed skin or eyes with clean water when safe.
+  - Do not induce vomiting.
+first_actions:
+  - If unconscious but breathing, position the patient on the left side for drainage if vomiting occurs.
+  - If respiratory distress is present, prepare for manual ventilation and oxygen if available.
+  - Identify the poison only if it can be done safely by checking labels, containers, witnesses, appearance, smell, route, amount, and time of exposure.
+  - Record baseline vital signs, pupil size, skin findings, targeted symptoms, medical history, medications, allergies, and pregnancy status.
+  - Save any remaining substance sample or container separately if safe, and document the exposure and intervention timeline.
+conditional_required_actions:
+  - trigger_terms:
+      - corrosive
+      - acid
+      - base
+      - caustic
+      - burning mouth
+      - vomiting blood
+    required_actions:
+      - For corrosive acid or base ingestion, do not induce vomiting, dilute only with small sips of water or milk if conscious, do not neutralize, and seek urgent professional care.
+  - trigger_terms:
+      - carbon monoxide
+      - co exposure
+      - generator fumes
+      - smoke inhalation
+      - exhaust
+    required_actions:
+      - For suspected carbon monoxide exposure, move to fresh air immediately and provide high-flow oxygen if available.
+  - trigger_terms:
+      - cyanide
+      - fire smoke
+      - industrial accident
+      - pesticide
+    required_actions:
+      - For suspected cyanide exposure, remove from the source immediately, give oxygen if available, and prepare for rapid deterioration or cardiac arrest.
+  - trigger_terms:
+      - activated charcoal
+      - charcoal
+    required_actions:
+      - Use activated charcoal only for appropriate ingested toxins when the patient is conscious and able to protect the airway; do not use it for corrosives, metals, or altered consciousness.
+urgent_red_flags:
+  - Respiratory distress, slow breathing, bronchospasm, hypoxemia, blue lips, or need for manual ventilation.
+  - Altered consciousness, coma, seizure, paralysis, absent reflexes, or recurrent worsening after initial improvement.
+  - Cardiac arrhythmias, shock, severe hypotension, severe hypertension with stimulant signs, or chest pain.
+  - Burning mouth or throat, difficulty swallowing, drooling, vomiting blood, or suspected corrosive exposure.
+  - Fever with cough or difficulty breathing, persistent shortness of breath, dark or diminished urine, jaundice, right upper quadrant pain, pale stools, or recurring symptoms during recovery.
+forbidden_advice:
+  - Do not induce vomiting.
+  - Do not neutralize acids or bases with the opposite chemical.
+  - Do not use activated charcoal if consciousness is altered or the patient cannot swallow safely.
+  - Do not use activated charcoal for corrosives, metals, methanol, ethylene glycol, iron, or lithium.
+  - Do not cut or suck snake bites.
+  - Do not return contaminated clothing to regular laundry.
+do_not:
+  - Do not approach a contaminated scene without protecting rescuers from ongoing exposure.
+  - Do not delay airway and breathing support while trying to identify the exact poison.
+  - Do not assume a single antidote dose is enough; reassess after treatment intervals and watch for recurrence.
+  - Do not rely on anticholinergic plants as an organophosphate substitute; the guide describes them as dangerous and not recommended.
+  - Do not frame toxic exposure with red flags as routine stomach upset, rash, cleaning advice, or watchful waiting.
+routine_boundary: >
+  Toxic exposure with unknown identity, airway risk, altered consciousness,
+  severe gastrointestinal injury, cardiac or neurologic signs, suspected
+  corrosive exposure, chemical fumes, pesticide exposure, venom, or worsening
+  delayed symptoms is emergency toxicology management, not routine home care.
+acceptable_uncertain_fit: >
+  If the exact poison is unknown, answer from the symptom-based toxicology
+  lane: scene safety, ABCs, decontamination when safe, exposure history,
+  close monitoring, no vomiting, and no toxin-specific antidote or charcoal
+  claim unless the guide's conditions are met.
+clarifying_questions:
+  - What substance, plant, animal, chemical, medication, fumes, or container might be involved?
+  - When did exposure happen, by what route, and about how much was involved?
+  - Is the patient awake, breathing normally, able to swallow, or having seizures, drooling, burns, chest pain, or trouble breathing?
+  - Are there labels, witnesses, remaining samples, medications, allergies, pregnancy, kidney disease, or liver disease that affect risk?
+citation_ids:
+  - toxicology-emergency-overview
+  - toxicology-exposure-assessment
+  - toxicology-management-protocol
+  - toxicology-charcoal-vomiting-boundaries
+  - toxicology-decontamination
+  - toxicology-safety-warnings
+source_sections:
+  - guide: GD-054
+    slug: toxicology
+    title: Toxicology & Poison Management
+    sections:
+      - "#overview"
+      - "#assessment"
+      - "#procedure"
+      - "#management"
+      - "#decontamination"
+      - "#complications"
+      - "#recovery"
+      - "#safety"
+source_invariants:
+  - name: toxicology emergency and airway first
+    guide: GD-054
+    must_include:
+      - Unknown poison identity = assume life-threatening.
+      - Assess airway patency, breathing effort, circulation
+      - Do NOT induce vomiting
+  - name: toxicology charcoal boundaries
+    guide: GD-054
+    must_include:
+      - Do NOT use if altered consciousness
+      - Ineffective for
+      - corrosives
+      - metals
+  - name: toxicology decontamination and corrosive boundaries
+    guide: GD-054
+    must_include:
+      - remove contaminated clothing
+      - do not return to regular laundry
+      - Do NOT neutralize
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-054 only. It preserves emergency-first toxicology
+  triage, exposure assessment, decontamination, no-vomiting, and activated
+  charcoal boundaries without adding new antidotes, doses, treatment windows,
+  diagnostic thresholds, or exposure thresholds beyond the source guide.

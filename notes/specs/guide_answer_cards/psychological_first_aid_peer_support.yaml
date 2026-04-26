@@ -1,0 +1,105 @@
+card_id: psychological_first_aid_peer_support
+guide_id: GD-858
+slug: psychological-first-aid-peer-support
+title: "Psychological First Aid & Peer Support"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A person is panicked, shocked, grieving, overwhelmed, numb, dissociating, or flashing back after a stressful or traumatic event.
+  - User asks how to provide non-professional psychological first aid, grounding, calming, connection, or practical peer support.
+  - User asks how to run a peer-led support group, community debrief, or immediate post-incident support without professional therapy.
+required_first_actions:
+  - Start with immediate physical and emotional safety; move the person away from threats and reduce noise, crowding, and questioning.
+  - Use PFA as humane, practical first-response support, not therapy, diagnosis, treatment, or crisis intervention.
+  - Hand off first when there is immediate danger, a specific suicide plan, violence, medical instability, acute activation with little sleep and grandiosity or recklessness, or abuse/safety danger.
+first_actions:
+  - Provide a calm, quiet space and meet basic needs such as food, water, first aid, shelter, and communication with loved ones.
+  - Help the person calm with simple grounding, breathing, 5-4-3-2-1 senses work, progressive muscle relaxation, or a textured object.
+  - Normalize distress without minimizing it, listen more than you talk, and avoid forcing details of the traumatic event.
+  - Restore agency by asking what they did to survive and what can be done together, then solve practical problems in small steps.
+  - Facilitate connection to family, friends, a buddy, a group, other helpers, medical care, community support, or spiritual support if desired.
+urgent_red_flags:
+  - Immediate danger, specific suicide plan, violence, or medical instability.
+  - Suicidal ideation with a specific plan, homicidal ideation or threats, severe intoxication or overdose, abuse, or safety concerns.
+  - Days of little sleep with grandiosity, recklessness, nonstop talking, invincible-seeming behavior, or impossible-to-slow behavior.
+  - Coercive control, stalking or phone tracking, blocked exit or taken phone, suicide threats used to control someone, unsafe home for a child, sexual assault injuries needing urgent help, or "the abuser is in the house right now."
+  - Dissociation or flashbacks where the person cannot reorient, becomes unsafe, or needs urgent medical help.
+forbidden_advice:
+  - Do not present PFA as therapy, diagnosis, treatment, or a substitute for crisis, medical, domestic violence, sexual assault, or child-protection response.
+  - Do not ask people to repeatedly recount trauma details in the acute phase or use Critical Incident Stress Debriefing.
+  - Do not send a person back to the same unsafe person or place when abuse or immediate physical danger is present.
+  - Do not treat suicidal intent, violence, medical instability, psychosis-like danger, or acute activation as routine calming or peer-support-only situations.
+do_not:
+  - Do not dismiss, minimize, interrupt, pressure someone to share, or give unsolicited advice.
+  - Do not make yourself the only support; help the person build connections to others and resources.
+  - Do not claim you can fix, cure, diagnose, or be responsible for the person's recovery.
+  - Do not delay escalation in order to keep doing breathing, grounding, or group support.
+routine_boundary: >
+  Routine PFA, grounding, support-group, and peer-listening advice is out of
+  bounds until immediate danger, suicidal or homicidal intent, violence, medical
+  instability, acute manic-style activation, severe intoxication or overdose,
+  abuse danger, or urgent safety threats have been routed first.
+acceptable_uncertain_fit: >
+  If the situation sounds like acute distress but risk is unclear, ask brief
+  safety questions about danger, self-harm, harm to others, medical instability,
+  unsafe home or abuse, and sleep/activation signs while still starting with
+  safety, reduced stimulation, calm presence, and practical support.
+clarifying_questions:
+  - Is the person safe right now, away from immediate threats, and medically stable?
+  - Are they talking about suicide, harming someone, being unsafe at home, severe intoxication, or not sleeping for days with reckless or grandiose behavior?
+  - Are they dissociating or flashing back, and can they orient to where they are now?
+  - What practical need would reduce the load first: shelter, water, food, first aid, contact with loved ones, a buddy, or a quiet place?
+citation_ids:
+  - pfa-routing-boundaries
+  - pfa-five-elements
+  - dissociation-flashback-grounding
+  - counseling-skills-boundaries
+  - peer-support-group-structure
+source_sections:
+  - guide: GD-858
+    slug: psychological-first-aid-peer-support
+    title: "Psychological First Aid & Peer Support"
+    sections:
+      - "#routing-note-start-here-for-acute-distress-crisis-aftercare-and-peer-support"
+      - "#pfa > The Five Elements of Psychological First Aid"
+      - "#pfa > Immediate First Response for Dissociation or Flashbacks"
+      - "#pfa > What NOT to Do in PFA"
+      - "#pfa > Core PFA Principles"
+      - "#pfa > What PFA IS NOT"
+      - "#counseling-skills"
+      - "#counseling-skills > Boundaries: You Are Not Responsible for Fixing Them"
+      - "#counseling-skills > When to Refer or Get More Help"
+      - "#group-therapy > How to Run a Support Group"
+      - "#group-therapy > Debriefing After Critical Incidents"
+source_invariants:
+  - name: pfa_is_not_clinical_treatment
+    guide: GD-858
+    must_include:
+      - Psychological First Aid (PFA) is not therapy.
+      - What PFA IS NOT
+      - It is not therapy, diagnosis, treatment, or crisis intervention.
+  - name: acute_crisis_handoff_first
+    guide: GD-858
+    must_include:
+      - If the person is in immediate danger, has a specific suicide plan, is violent, or is medically unstable, move to the acute crisis/medical lane first.
+      - move to the acute crisis/medical lane first
+      - PFA can support after handoff
+  - name: abuse_safety_boundary
+    guide: GD-858
+    must_include:
+      - stop PFA here
+      - get the person to immediate physical safety
+      - Do not send them back to the same person.
+  - name: no_forced_trauma_recounting
+    guide: GD-858
+    must_include:
+      - Do NOT use Critical Incident Stress Debriefing
+      - Asking people to repeatedly recount trauma details in the acute phase retraumatizes them
+      - We do not need to talk about details.
+review_status: pilot_reviewed
+notes: >
+  Reviewed card for GD-858 only. Scope is immediate non-professional PFA,
+  grounding, listening, practical support, connection, and peer-group structure.
+  It intentionally preserves the guide's crisis, medical, acute activation, and
+  abuse/safety handoff boundaries and does not add diagnosis, treatment claims,
+  or crisis-resolution promises beyond the source guide.

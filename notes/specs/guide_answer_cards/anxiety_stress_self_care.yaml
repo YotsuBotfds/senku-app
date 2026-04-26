@@ -1,0 +1,106 @@
+card_id: anxiety_stress_self_care
+guide_id: GD-918
+slug: anxiety-stress-self-care
+title: "Anxiety, Stress & Daily Self-Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about persistent anxiety, worry, stress overload, overwhelm, racing thoughts, grounding, breathing, or building a daily self-care routine.
+  - User describes panic-like breathing, tingling, trembling, or dread after urgent medical red flags have been excluded.
+  - User wants practical daily habits for lowering stress load and making the day feel more structured.
+required_first_actions:
+  - First exclude urgent medical and mental-health red flags before framing the problem as routine anxiety or stress self-care.
+  - If chest pressure or tightness, exertional worsening, jaw, arm, or back pain, cold sweat, fainting, blue lips, severe shortness of breath, dread with chest symptoms, or a new "something feels very wrong" feeling is present, treat it as possible medical or cardiac distress and seek urgent help.
+  - If suicidal thoughts, self-harm thoughts, hallucinations, paranoia, severe confusion, inability to stay safe, or days of little or no sleep with extreme energy, nonstop talking, grandiosity, feeling invincible, or reckless agitation are present, get immediate crisis help.
+first_actions:
+  - For an anxiety spike without red flags, put both feet on the floor, drop the shoulders, unclench the jaw, orient to the room, and name the date, time, or one nearby object out loud.
+  - Slow the breath with a longer exhale than inhale, such as inhaling for 4 counts and exhaling slowly for 6 counts, repeating 5 to 10 times.
+  - Ground with senses using 5 things seen, 4 things felt, 3 things heard, 2 things smelled, and 1 thing tasted; in public, use a smaller 3-2-1 version.
+  - Add one physical cue such as holding a cold drink, washing the face with cool water, pressing feet into the floor, walking slowly for one minute, or holding a textured object.
+  - Use one short script, such as not needing to solve everything right now or focusing on getting through the next five minutes.
+  - Build baseline support with regular sleep-wake timing, predictable meals and water, less continuous input, daily movement, daylight or fresh air, small reliable routines, and human contact.
+urgent_red_flags:
+  - Thoughts of suicide or self-harm.
+  - A plan to hurt yourself or someone else.
+  - Hallucinations, paranoia, or confusion.
+  - Little or no sleep for days with extreme energy, nonstop talking, grandiosity, feeling invincible, or reckless agitation.
+  - Chest pain, fainting, blue lips, or severe trouble breathing.
+  - Inability to eat, drink, or function.
+  - Being in danger from abuse, violence, or coercion.
+  - Panic symptoms that are new, severe, or feel medically different from usual.
+forbidden_advice:
+  - Do not label chest pressure, exertional worsening, jaw, arm, or back pain, cold sweat, fainting, blue lips, severe shortness of breath, dread with chest symptoms, or a new "something feels very wrong" feeling as panic without urgent medical assessment.
+  - Do not present self-care as enough for suicidal thoughts, self-harm, psychosis, severe confusion, acute manic activation, heavy substance use, trauma flashbacks taking over the day, or a possible medical problem.
+  - Do not force a breathing exercise or routine anxiety framing when medical or cardiac distress is possible.
+  - Do not guarantee that grounding, breathing, routines, or social support will eliminate anxiety or keep someone safe in crisis.
+do_not:
+  - Do not make mental-health diagnoses from the card.
+  - Do not recommend medication changes, therapy protocols, or crisis guarantees beyond the source guide.
+  - Do not delay urgent help to continue routine self-care when red flags are present.
+routine_boundary: >
+  Routine anxiety and stress self-care is appropriate only for non-emergency
+  anxiety, stress, overwhelm, grounding, breathing, and daily self-care planning
+  after urgent medical and mental-health red flags are excluded. It is out of
+  bounds for chest pain, severe shortness of breath, self-harm risk, psychosis,
+  acute manic activation, heavy substance use, or other crisis patterns.
+acceptable_uncertain_fit: >
+  If the fit is plausible but incomplete, answer with the red-flag boundary
+  first, ask brief clarifying questions about medical danger signs, self-harm,
+  psychosis, acute activation, substance use, and ability to function, and offer
+  only low-risk grounding or daily-structure steps that do not delay urgent help.
+clarifying_questions:
+  - Are there any chest symptoms, fainting, blue lips, severe shortness of breath, or a new feeling that something is medically very wrong?
+  - Are there suicidal thoughts, self-harm thoughts, hallucinations, paranoia, severe confusion, or inability to stay safe?
+  - Has there been little or no sleep for days with extreme energy, nonstop talking, grandiosity, feeling invincible, or reckless agitation?
+  - Is the anxiety lasting most days for weeks or months, causing repeated panic episodes, making sleep nearly impossible, or interfering with work, study, or self-care?
+citation_ids:
+  - anxiety-self-care-overview-boundaries
+  - anxiety-spike-two-minute-reset
+  - anxiety-daily-baseline-habits
+  - anxiety-routine-and-worry-structure
+  - anxiety-support-and-professional-help
+  - anxiety-crisis-red-flags
+source_sections:
+  - guide: GD-918
+    slug: anxiety-stress-self-care
+    title: "Anxiety, Stress & Daily Self-Care"
+    sections:
+      - "#overview"
+      - "#overview > What This Guide Helps With"
+      - "#overview > What This Guide Is Not For"
+      - "#calm-spike"
+      - "#daily-habits"
+      - "#routine"
+      - "#thinking"
+      - "#support"
+      - "#when-to-get-help"
+      - "#crisis-red-flags"
+      - "#seven-day-reset"
+      - "#closing"
+source_invariants:
+  - name: anxiety self-care excludes medical and crisis red flags
+    guide: GD-918
+    must_include:
+      - Use for non-emergency anxiety, stress, overwhelm, grounding, breathing, and
+      - Not for chest pain, severe shortness of breath,
+      - self-harm risk, psychosis, acute manic activation, heavy substance use, or
+  - name: anxiety spike does not override cardiac distress
+    guide: GD-918
+    must_include:
+      - do not force a breathing exercise or label it panic
+      - Treat it as possible medical/cardiac distress and seek urgent help instead.
+    must_not_match:
+      - "chest pressure[^\\n]{0,160}label it panic"
+  - name: crisis red flags require immediate help
+    guide: GD-918
+    must_include:
+      - "Do not wait for self-care to work if any of these are happening:"
+      - Call or text **988** for 24/7 crisis support.
+      - Call **911** or go to the nearest emergency room if there is immediate danger or a medical emergency.
+      - treat that as a crisis rather than everyday anxiety
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-918. This card carries non-emergency anxiety/stress
+  self-care only after medical, self-harm, psychosis, dangerous activation, and
+  other crisis exclusions are checked. It intentionally avoids diagnosis,
+  medication claims, therapy protocols, and crisis guarantees beyond the guide.

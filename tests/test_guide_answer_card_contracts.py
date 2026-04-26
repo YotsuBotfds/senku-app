@@ -449,8 +449,10 @@ source_sections:
         self.assertIn("GD-858", unit["source_guide_ids"])
         self.assertIn("GD-918", unit["source_guide_ids"])
         self.assertEqual(source_roles, {"GD-858": "boundary-support", "GD-918": "boundary-support"})
-        self.assertFalse(find_cards_for_guides("GD-858", cards=self.cards))
-        self.assertFalse(find_cards_for_guides("GD-918", cards=self.cards))
+        gd858_cards = find_cards_for_guides("GD-858", cards=self.cards)
+        gd918_cards = find_cards_for_guides("GD-918", cards=self.cards)
+        self.assertEqual([card["card_id"] for card in gd858_cards], ["psychological_first_aid_peer_support"])
+        self.assertEqual([card["card_id"] for card in gd918_cards], ["anxiety_stress_self_care"])
 
         gd858_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-858"])
         gd918_plan = compose_card_backed_answer([card], allowed_guide_ids=["GD-918"])

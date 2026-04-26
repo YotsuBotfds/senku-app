@@ -1,0 +1,94 @@
+card_id: toxidromes_field_poisoning
+guide_id: GD-602
+slug: toxidromes-field-poisoning
+title: "Toxidromes & Specific Antidotes for Field Poisoning"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Poisoning symptoms form a toxidrome pattern with pupil changes, slow breathing, sweating or dry skin, twitching, clonus, rigidity, fever, confusion, severe agitation, secretions, seizures, or repeat sleepiness after naloxone.
+  - The prompt asks about pinpoint pupils with slow breathing, dilated pupils with dry skin and confusion, sweating and twitching after chemical exposure, opioid overdose, cholinergic crisis, anticholinergic toxicity, sympathomimetic toxicity, or serotonin syndrome.
+  - Field poisoning pattern recognition or antidote triage is needed when laboratory confirmation is unavailable.
+required_first_actions:
+  - Treat hard-to-wake, slow breathing, or repeat sleepiness after naloxone as an overdose or airway emergency first.
+  - Escalate poisoning patterns to Poison Control, EMS, or trained medical direction rather than routine home-care advice.
+  - For suspected organophosphate, pesticide, or chemical-agent exposure, protect rescuers with gloves or protective equipment before touching contaminated skin.
+  - For suspected serotonin syndrome from a medication change, interaction, or overdose, do not take another dose of the suspected serotonergic medicine or source while contacting Poison Control, EMS, or a clinician.
+first_actions:
+  - Use the presenting pattern to sort the likely toxidrome: anticholinergic is hot, dry, flushed, dilated pupils, and delirious; cholinergic is wet with secretions, pinpoint pupils, GI symptoms, twitching or weakness; opioid is slow breathing, altered mental status, and pinpoint pupils; sympathomimetic is tachycardia, hypertension, agitation, sweating, tremor, seizures, hyperthermia, and dilated pupils.
+  - Prioritize airway, breathing, suctioning or respiratory support, cooling for hyperthermia, seizure precautions, and decontamination when the source guide calls for them.
+  - Remove contaminated clothing and wash exposed skin with soap and water for pesticide or chemical exposure.
+  - For plant or mushroom poisoning, obtain a specimen or photograph if safe, consult poison control when possible, and assume mushroom poisoning can be dangerous until proven otherwise.
+urgent_red_flags:
+  - Slow, shallow breathing, apnea, hard-to-wake state, coma, or repeat sedation after naloxone.
+  - Excessive secretions, wheezing, bronchospasm, bronchorrhea, muscle weakness, paralysis, seizures, or suspected organophosphate or nerve-agent exposure.
+  - Hyperthermia, severe agitation, hallucinations, psychosis, seizures, arrhythmias, chest pain, severe hypertension, focal neurologic deficit, or dark urine after stimulant-type exposure.
+  - Medication-triggered shaking, sweating, diarrhea, clonus, rigidity, fever, confusion, overheating, severe restlessness, leg jerking, or "cannot stop moving."
+  - Mushroom ingestion with a symptom-free lag phase, severe gastrointestinal symptoms followed by apparent improvement, jaundice, kidney failure signs, or encephalopathy.
+forbidden_advice:
+  - Do not route medication-triggered serotonin patterns first to panic, flu, menopause, routine gastrointestinal illness, dehydration-first diarrhea care, anticholinergic-first routing, or generic anxiety.
+  - Do not tell the user to stop all medicines or all serotonergic medications; use the source guide's narrower wording about not taking another dose of the suspected serotonergic medicine or source while contacting Poison Control, EMS, or a clinician.
+  - Do not treat hard-to-wake, slow-breathing, or repeat-sedation overdose as routine observation.
+  - Do not touch contaminated skin from suspected organophosphate, pesticide, or chemical-agent exposure without rescuer protection.
+  - Do not be reassured by a symptom-free period after mushroom ingestion.
+do_not:
+  - Do not invent antidotes, doses, treatments, diagnostic rules, or toxidrome thresholds beyond the cited guide.
+  - Do not use this card as a stand-alone medication dosing protocol.
+  - Do not delay airway or breathing support while trying to identify the toxin.
+  - Do not route symptom-only flu, diarrhea, overheating, or anxiety to serotonin syndrome without a medication trigger, medication mix, overdose, or serotonergic source phrase.
+routine_boundary: >
+  This card is for poisoning-pattern recognition and emergency toxicology
+  escalation. It is not routine flu, panic, heat-illness, diarrhea, plant
+  identification, or home observation guidance when there is no poisoning
+  exposure, medication trigger, toxidrome pattern, or emergency red flag.
+acceptable_uncertain_fit: >
+  If a toxidrome is plausible but incomplete, preserve poisoning-first safety:
+  address airway and breathing, contact Poison Control/EMS/medical direction,
+  avoid overconfident toxidrome labeling, and ask focused exposure and symptom
+  questions without delaying escalation.
+clarifying_questions:
+  - What substance, medicine, plant, mushroom, pesticide, or chemical might be involved?
+  - When did the exposure happen, and how have symptoms changed over time?
+  - Are the pupils pinpoint or dilated, and is the skin dry or sweaty?
+  - Is breathing slow, noisy, difficult, or normal?
+  - Was there a recent antidepressant, cough/cold medicine, tramadol, linezolid, MAOI, or medication change?
+citation_ids:
+  - toxidrome-overview
+  - anticholinergic-toxidrome
+  - cholinergic-crisis
+  - opioid-toxidrome
+  - sympathomimetic-crisis
+  - serotonin-routing
+  - plant-mushroom-poisoning
+  - decontamination-supportive-care
+  - antidotes-summary
+source_sections:
+  - guide: GD-602
+    slug: toxidromes-field-poisoning
+    title: "Toxidromes & Specific Antidotes for Field Poisoning"
+    sections:
+      - "#overview"
+      - "#anticholinergic"
+      - "#cholinergic"
+      - "#opioid"
+      - "#sympathomimetic"
+      - "#serotonin-syndrome-routing"
+      - "#plant-mushroom"
+      - "#decontamination-general"
+      - "#antidotes"
+source_invariants:
+  - name: toxidrome emergency and serotonin routing boundaries
+    guide: GD-602
+    must_include:
+      - Poisoning is a medical emergency with diverse presentations and outcomes.
+      - If the immediate problem is hard to wake, slow breathing, or repeat sleepiness after naloxone, treat that as an overdose or airway emergency first
+      - Say "do not take another dose of the suspected serotonergic medicine/source while contacting Poison Control, EMS, or a clinician"
+      - Rescuer must wear gloves/protective equipment.
+      - Do NOT be fooled by symptom-free period
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-602 for toxidrome recognition and field poisoning
+  antidote-support context. This card intentionally avoids adding unlisted
+  antidotes, doses, thresholds, or diagnostic rules and preserves source
+  boundaries around serotonin routing, contaminated-skin rescuer protection,
+  airway-first overdose framing, and mushroom lag-phase danger.
