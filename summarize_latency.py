@@ -42,9 +42,11 @@ def _first_number(mapping: dict, keys: Iterable[str]) -> float | None:
         if key not in mapping:
             continue
         try:
-            return float(mapping[key])
+            value = float(mapping[key])
         except (TypeError, ValueError):
-            return None
+            continue
+        if math.isfinite(value):
+            return value
     return None
 
 

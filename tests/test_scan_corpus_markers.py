@@ -149,6 +149,41 @@ Use ordinary text.
         self.assertIn("L4 template_marker Use {{ bad.shape }} safely.", markdown)
         self.assertNotIn("{'bad': 'shape'}", markdown)
 
+    def test_render_markdown_tolerates_missing_hit_sort_fields(self):
+        scan = {
+            "summary": {
+                "generated_at": "2026-04-26T12:00:00",
+                "guides_scanned": 1,
+                "guides_with_markers": 1,
+                "marker_counts": {"template_marker": 1},
+                "severity_counts": {"warn": 1},
+                "guide_counts_by_marker": {"template_marker": 1},
+            },
+            "guides": [
+                {
+                    "source_file": "malformed-row.md",
+                    "guide_id": "GD-201",
+                    "category": "utility",
+                    "liability_level": "",
+                    "bridge": False,
+                    "marker_counts": {"template_marker": 1},
+                    "severity_counts": {"warn": 1},
+                    "hits": [
+                        {
+                            "type": "template_marker",
+                            "marker": "missing.sort.fields",
+                            "example": "Use {{ missing.sort.fields }} safely.",
+                        }
+                    ],
+                }
+            ],
+        }
+
+        markdown = render_markdown(scan)
+
+        self.assertIn("GD-201", markdown)
+        self.assertIn("L? template_marker missing.sort.fields", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

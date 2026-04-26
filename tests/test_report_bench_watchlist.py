@@ -59,6 +59,28 @@ class ReportBenchWatchlistTests(unittest.TestCase):
         self.assertEqual({}, bad_summary)
         self.assertEqual([], bad_summary_rows)
 
+    def test_load_rows_handles_malformed_results_container(self):
+        malformed_results_values = [None, {"question": "not a list"}, "not a list"]
+
+        for value in malformed_results_values:
+            with self.subTest(value=value):
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    artifact = Path(tmpdir) / "bench.json"
+                    artifact.write_text(
+                        json.dumps(
+                            {
+                                "summary": {"total_prompts": 1},
+                                "results": value,
+                            }
+                        ),
+                        encoding="utf-8",
+                    )
+
+                    summary, rows = report_bench_watchlist.load_rows(artifact)
+
+                self.assertEqual({"total_prompts": 1}, summary)
+                self.assertEqual([], rows)
+
     def test_print_markdown_sanitizes_row_breaking_text(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             artifact = Path(tmpdir) / "bench.json"

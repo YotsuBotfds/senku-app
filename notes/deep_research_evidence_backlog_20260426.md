@@ -1104,6 +1104,11 @@ Validation:
   `tests.test_write_run_manifest` cover non-finite metric coercion,
   zero-valued prompt indexes, compact markdown artifact titles, UTF-8 BOM
   manifest reads, and append repair for manifests missing a trailing newline.
+- `tests.test_audit_metadata_coverage`, `tests.test_report_bench_watchlist`,
+  `tests.test_scan_corpus_markers`, `tests.test_scan_mojibake`, and
+  `tests.test_summarize_latency` cover non-scalar card policy fields,
+  malformed bench `results` containers, malformed corpus-marker hit rows,
+  malformed mojibake report rows, and non-finite latency values.
 
 Deferred unless evidenced:
 

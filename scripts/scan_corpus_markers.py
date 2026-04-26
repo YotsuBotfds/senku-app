@@ -210,6 +210,16 @@ def _format_example(hit: dict[str, Any]) -> str:
     return f"L{hit.get('line', '?')} {hit.get('type', 'unknown')} {detail}"
 
 
+def _hit_severity_rank(hit: dict[str, Any]) -> int:
+    severity_order = {"fail": 0, "warn": 1, "info": 2}
+    return severity_order.get(hit.get("severity"), 99)
+
+
+def _hit_line_number(hit: dict[str, Any]) -> int:
+    line = hit.get("line")
+    return line if isinstance(line, int) else sys.maxsize
+
+
 def render_markdown(scan: dict[str, Any]) -> str:
     summary = scan["summary"]
     lines = [
@@ -237,13 +247,12 @@ def render_markdown(scan: dict[str, Any]) -> str:
             "| --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
-    severity_order = {"fail": 0, "warn": 1, "info": 2}
     for record in sorted(
         scan["guides"],
         key=lambda item: (
-            min(severity_order.get(hit["severity"], 99) for hit in item["hits"]),
-            item["guide_id"],
-            item["source_file"],
+            min((_hit_severity_rank(hit) for hit in item.get("hits", [])), default=99),
+            item.get("guide_id", ""),
+            item.get("source_file", ""),
         ),
     ):
         severities = ",".join(sorted(record["severity_counts"]))
@@ -252,7 +261,7 @@ def render_markdown(scan: dict[str, Any]) -> str:
         )
         example_hits = sorted(
             record["hits"],
-            key=lambda hit: (severity_order.get(hit["severity"], 99), hit["line"]),
+            key=lambda hit: (_hit_severity_rank(hit), _hit_line_number(hit)),
         )
         examples = "; ".join(
             _format_example(hit) for hit in example_hits[:3]

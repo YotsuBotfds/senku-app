@@ -40,7 +40,10 @@ def load_rows(path):
     if not isinstance(summary, dict):
         summary = {}
     rows = []
-    for result in data.get("results", []):
+    results = data.get("results", [])
+    if not isinstance(results, list):
+        results = []
+    for result in results:
         if not isinstance(result, dict):
             continue
         rows.append(

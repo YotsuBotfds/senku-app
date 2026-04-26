@@ -366,6 +366,54 @@ Body.
         self.assertIn("missing_applicability", record["gaps"])
         self.assertEqual(record["severity"], "gap")
 
+    def test_non_scalar_answer_card_policy_fields_do_not_satisfy_coverage(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides_dir = root / "guides"
+            cards_dir = root / "cards"
+            guides_dir.mkdir()
+            cards_dir.mkdir()
+            (guides_dir / "non-scalar-card-guide.md").write_text(
+                """---
+id: GD-109
+slug: non-scalar-card-guide
+title: Non Scalar Card Guide
+category: medical
+description: A high risk guide.
+liability_level: high
+tags: [medical]
+aliases: [danger help]
+routing_cues: [danger triage]
+related: [GD-101]
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+            (cards_dir / "non-scalar-card-guide.yaml").write_text(
+                """card_id: non_scalar_card_guide
+guide_id: GD-109
+review_status: pilot_reviewed
+runtime_citation_policy:
+  required: false
+routine_boundary: ["none"]
+acceptable_uncertain_fit:
+  note: false
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir, cards_dir=cards_dir)
+
+        record = audit["guides"][0]
+        self.assertFalse(record["has_citation_policy"])
+        self.assertFalse(record["has_applicability"])
+        self.assertIn("missing_citation_policy", record["gaps"])
+        self.assertIn("missing_applicability", record["gaps"])
+        self.assertNotIn("missing_reviewed_answer_card", record["gaps"])
+        self.assertEqual(record["severity"], "gap")
+
     def test_low_liability_metadata_gaps_are_not_counted_as_high_liability_gaps(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"

@@ -9,6 +9,7 @@ import posixpath
 import re
 import subprocess
 from collections import Counter
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Sequence
@@ -334,7 +335,10 @@ def render_markdown(report: dict[str, Any], *, limit: int = 200) -> str:
     if top_files:
         for row in top_files:
             lines.append(
-                f"| `{_escape_md(row.get('path', ''))}` | {_escape_md(row.get('findings', 0))} |"
+                "| `{path}` | {findings} |".format(
+                    path=_escape_md(_row_get(row, "path", "")),
+                    findings=_escape_md(_row_get(row, "findings", 0)),
+                )
             )
     else:
         lines.append("| `none` | 0 |")
@@ -350,18 +354,22 @@ def render_markdown(report: dict[str, Any], *, limit: int = 200) -> str:
         ]
     )
     for finding in findings[:limit]:
-        line = finding.get("line") or "-"
+        line = _row_get(finding, "line") or "-"
         lines.append(
             "| `{path}` | {line} | `{kind}` | {snippet} |".format(
-                path=_escape_md(finding.get("path", "")),
+                path=_escape_md(_row_get(finding, "path", "")),
                 line=line,
-                kind=_escape_md(finding.get("kind", "")),
-                snippet=_escape_md(finding.get("snippet", "")),
+                kind=_escape_md(_row_get(finding, "kind", "")),
+                snippet=_escape_md(_row_get(finding, "snippet", "")),
             )
         )
     if len(findings) > limit:
         lines.append(f"| ... | ... | ... | {len(findings) - limit} more findings omitted |")
     return "\n".join(lines) + "\n"
+
+
+def _row_get(row: object, key: str, default: object = "") -> object:
+    return row.get(key, default) if isinstance(row, Mapping) else default
 
 
 def _escape_md(value: object) -> str:

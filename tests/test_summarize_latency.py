@@ -124,6 +124,33 @@ class SummarizeLatencyTests(unittest.TestCase):
         self.assertEqual(15.0, rows[0]["retrieval"])
         self.assertEqual(55.0, rows[0]["total"])
 
+    def test_iter_latency_rows_ignores_bad_and_non_finite_timing_values(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "answer_runs.jsonl"
+            path.write_text(
+                json.dumps(
+                    {
+                        "latency_breakdown": {
+                            "retrievalMs": "nan",
+                            "retrieval_ms": 17,
+                            "rerank_ms": "inf",
+                            "prompt_build_ms": object(),
+                            "total_ms": 60,
+                        }
+                    },
+                    default=str,
+                ),
+                encoding="utf-8",
+            )
+
+            rows = list(summarize_latency.iter_latency_rows([path]))
+
+        self.assertEqual(1, len(rows))
+        self.assertEqual(17.0, rows[0]["retrieval"])
+        self.assertEqual(0.0, rows[0]["rerank"])
+        self.assertEqual(0.0, rows[0]["prompt_build"])
+        self.assertEqual(60.0, rows[0]["total"])
+
     def test_render_summary_table_uses_expected_headers(self):
         summary = [
             {"stage": "retrieval", "count": 2, "p50_ms": 15.0, "p95_ms": 19.5, "max_ms": 20.0}

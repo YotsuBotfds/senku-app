@@ -80,6 +80,12 @@ def _as_list(value: Any) -> list[str]:
     ]
 
 
+def _has_meaningful_scalar_text(value: Any) -> bool:
+    if _is_false_like_metadata_value(value) or isinstance(value, (Mapping, list, tuple, set)):
+        return False
+    return bool(str(value).strip())
+
+
 def _has_any_key(metadata: dict[str, Any], keys: tuple[str, ...]) -> bool:
     def has_meaningful_value(value: Any) -> bool:
         if _is_false_like_metadata_value(value):
@@ -267,11 +273,12 @@ def audit_guide(
     ]
     has_reviewed_answer_card = bool(reviewed_cards)
     has_card_citation_policy = any(
-        str(card.get("runtime_citation_policy") or "").strip() for card in cards
+        _has_meaningful_scalar_text(card.get("runtime_citation_policy"))
+        for card in cards
     )
     has_card_applicability = any(
-        str(card.get("routine_boundary") or "").strip()
-        or str(card.get("acceptable_uncertain_fit") or "").strip()
+        _has_meaningful_scalar_text(card.get("routine_boundary"))
+        or _has_meaningful_scalar_text(card.get("acceptable_uncertain_fit"))
         for card in cards
     )
     has_citation_policy = _has_any_key(metadata, CITATION_POLICY_KEYS) or has_card_citation_policy
