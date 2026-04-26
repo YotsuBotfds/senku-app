@@ -260,6 +260,8 @@ Action:
 - Surfaced missing artifact path names in run-manifest summaries, capped through
   the existing compact-list rendering, so stale proof artifacts are identifiable
   without opening raw JSONL records.
+- Added opt-in run-manifest summary failure gates for selected records with
+  explicit missing artifact evidence and for malformed manifest lines.
 - Added artifact-retention coverage proving newer run-manifest
   `artifact_path_evidence` entries protect referenced artifact families from
   archive/delete recommendations.

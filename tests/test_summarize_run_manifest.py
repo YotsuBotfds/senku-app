@@ -174,6 +174,75 @@ class SummarizeRunManifestTests(unittest.TestCase):
             self.assertIn("manifest-summary", completed.stdout)
             self.assertEqual(output_text, completed.stdout)
 
+    def test_cli_can_fail_on_selected_missing_artifacts_and_malformed_lines(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            manifest_path = root / "manifest.jsonl"
+            _write_manifest(
+                manifest_path,
+                [
+                    {
+                        "task": "legacy",
+                        "lane": "tooling",
+                        "label": "old",
+                    },
+                    {
+                        "task": "selected",
+                        "lane": "tooling",
+                        "label": "missing",
+                        "artifact_path_count": 2,
+                        "artifact_path_missing_count": 1,
+                    },
+                ],
+                malformed=True,
+            )
+
+            legacy = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--manifest",
+                    str(manifest_path),
+                    "--task",
+                    "legacy",
+                    "--fail-on-missing-artifacts",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            missing = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--manifest",
+                    str(manifest_path),
+                    "--task",
+                    "selected",
+                    "--fail-on-missing-artifacts",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            malformed = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--manifest",
+                    str(manifest_path),
+                    "--task",
+                    "legacy",
+                    "--fail-on-malformed",
+                ],
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(legacy.returncode, 0, legacy.stderr)
+            self.assertEqual(missing.returncode, 1, missing.stdout)
+            self.assertIn("paths=2; missing=1", missing.stdout)
+            self.assertEqual(malformed.returncode, 1, malformed.stdout)
+            self.assertIn("Malformed lines skipped: 2", malformed.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

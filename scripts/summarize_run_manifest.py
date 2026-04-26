@@ -76,6 +76,33 @@ def filter_records(
     return selected
 
 
+def select_records(
+    records: list[dict[str, Any]],
+    *,
+    task: str | None = None,
+    lane: str | None = None,
+    limit: int | None = None,
+) -> list[dict[str, Any]]:
+    selected = filter_records(records, task=task, lane=lane)
+    if limit is not None:
+        selected = selected[-limit:]
+    return selected
+
+
+def count_records_with_missing_artifacts(records: list[dict[str, Any]]) -> int:
+    count = 0
+    for record in records:
+        if "artifact_path_missing_count" not in record:
+            continue
+        try:
+            missing = int(record.get("artifact_path_missing_count") or 0)
+        except (TypeError, ValueError):
+            missing = 0
+        if missing > 0:
+            count += 1
+    return count
+
+
 def render_markdown(
     records: list[dict[str, Any]],
     *,
@@ -84,9 +111,7 @@ def render_markdown(
     task: str | None = None,
     lane: str | None = None,
 ) -> str:
-    selected = filter_records(records, task=task, lane=lane)
-    if limit is not None:
-        selected = selected[-limit:]
+    selected = select_records(records, task=task, lane=lane, limit=limit)
     newest_first = list(reversed(selected))
 
     lines = [
@@ -165,6 +190,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--task", help="Only include records for this task.")
     parser.add_argument("--lane", help="Only include records for this lane.")
     parser.add_argument("--output-md", help="Optional Markdown output path.")
+    parser.add_argument(
+        "--fail-on-missing-artifacts",
+        action="store_true",
+        help="Exit nonzero when selected records explicitly report missing artifacts.",
+    )
+    parser.add_argument(
+        "--fail-on-malformed",
+        action="store_true",
+        help="Exit nonzero when malformed manifest lines were skipped.",
+    )
     return parser.parse_args(argv)
 
 
@@ -186,6 +221,11 @@ def main(argv: list[str] | None = None) -> int:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(markdown, encoding="utf-8")
     print(markdown, end="")
+    selected = select_records(records, task=args.task, lane=args.lane, limit=args.limit)
+    if args.fail_on_malformed and malformed:
+        return 1
+    if args.fail_on_missing_artifacts and count_records_with_missing_artifacts(selected):
+        return 1
     return 0
 
 
