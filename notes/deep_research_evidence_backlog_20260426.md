@@ -276,6 +276,8 @@ Action:
   shapes.
 - Added RAG eval trace coverage proving top-level trace identity and name-based
   phase fallback still attach spans and error phases to exported rows.
+- Hardened the RAG trace OTel adapter for raw string status values so trace
+  consumers do not fail before they can summarize mixed trace shapes.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

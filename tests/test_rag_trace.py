@@ -209,6 +209,25 @@ class RAGTraceTests(unittest.TestCase):
 
         self.assertEqual(spans, [mapped])
 
+    def test_otel_mapping_accepts_string_status(self):
+        record = {
+            "name": "retrieve",
+            "trace_id": "trace-1",
+            "span_id": "span-1",
+            "status": "FAIL",
+            "artifact_name": "run.json",
+            "prompt_index": 3,
+            "duration_ms": "2.3456",
+        }
+
+        mapped = to_otel_span(record)
+
+        self.assertEqual(mapped["status"]["status_code"], "FAIL")
+        self.assertEqual(mapped["status"]["description"], "")
+        self.assertEqual(mapped["attributes"]["artifact_name"], "run.json")
+        self.assertEqual(mapped["attributes"]["prompt_index"], 3)
+        self.assertEqual(mapped["duration_ms"], "2.3456")
+
     def test_sanitize_attributes_handles_non_json_values(self):
         attrs = sanitize_attributes({"tags": {"a", "b"}, "safe": True})
 

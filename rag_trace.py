@@ -34,10 +34,16 @@ def to_otel_span(record: Mapping[str, Any]) -> dict[str, Any]:
     """Map one internal JSONL record into a deterministic OTel-shaped span."""
     trace_id = str(record.get("trace_id") or "")
     span_id = str(record.get("span_id") or "")
-    status = dict(record.get("status") or {})
+    raw_status = record.get("status")
+    status = dict(raw_status) if isinstance(raw_status, Mapping) else {}
+    status_code = raw_status if raw_status and not isinstance(raw_status, Mapping) else status.get("code")
     parent_span_id = record.get("parent_span_id")
+    attributes = dict(record.get("attributes") or {})
+    for key in ("artifact_name", "prompt_index"):
+        if key in record and key not in attributes:
+            attributes[key] = record.get(key)
 
-    return {
+    span = {
         "name": str(record.get("name") or ""),
         "context": {
             "trace_id": trace_id,
@@ -49,12 +55,15 @@ def to_otel_span(record: Mapping[str, Any]) -> dict[str, Any]:
         "start_time_unix_nano": int(record.get("start_time_unix_nano") or 0),
         "end_time_unix_nano": int(record.get("end_time_unix_nano") or 0),
         "status": {
-            "status_code": str(status.get("code") or "UNSET"),
+            "status_code": str(status_code or "UNSET"),
             "description": str(status.get("message") or ""),
         },
-        "attributes": sanitize_attributes(dict(record.get("attributes") or {})),
+        "attributes": sanitize_attributes(attributes),
         "events": sanitize_events(record.get("events") or []),
     }
+    if "duration_ms" in record:
+        span["duration_ms"] = record.get("duration_ms")
+    return span
 
 
 def iter_otel_spans(path: str | Path) -> Iterator[dict[str, Any]]:
