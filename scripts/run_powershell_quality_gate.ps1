@@ -78,7 +78,14 @@ function Get-PowerShellFiles {
 
     $files = New-Object System.Collections.Generic.List[object]
     $seen = @{}
-    foreach ($item in $InputPaths) {
+    $expandedInputPaths = @(
+        foreach ($rawItem in $InputPaths) {
+            foreach ($item in ([string]$rawItem).Split(',', [System.StringSplitOptions]::RemoveEmptyEntries)) {
+                $item.Trim()
+            }
+        }
+    )
+    foreach ($item in $expandedInputPaths) {
         if ([string]::IsNullOrWhiteSpace($item)) {
             throw "-Path entries must not be empty."
         }

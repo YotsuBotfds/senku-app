@@ -450,6 +450,9 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             gate_step.get("run", ""),
         )
         self.assertNotIn("-SkipAnalyzer", gate_step.get("run", ""))
+        self.assertNotIn("fastembed", gate_step.get("run", "").lower())
+        self.assertNotIn("ingest.py --rebuild", gate_step.get("run", ""))
+        self.assertNotIn("evaluate_retrieval_pack.py", gate_step.get("run", ""))
 
     def test_codeowners_covers_github_configuration(self):
         content = CODEOWNERS_PATH.read_text(encoding="utf-8")

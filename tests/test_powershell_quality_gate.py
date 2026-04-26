@@ -5,6 +5,13 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
+WRAPPER_SLICE_PATHS = (
+    "scripts\\run_powershell_quality_gate.ps1",
+    "scripts\\run_windows_validation.ps1",
+    "scripts\\run_validation_slice.ps1",
+    "scripts\\run_non_android_regression_gate.ps1",
+    "tests\\powershell",
+)
 
 
 def run_gate(*args: str) -> subprocess.CompletedProcess[str]:
@@ -54,6 +61,29 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("PowerShell quality gate dry run.", result.stdout)
         self.assertIn("scripts\\run_powershell_quality_gate.ps1", result.stdout)
+
+    def test_wrapper_slice_whatif_excludes_android_scripts(self):
+        result = run_gate("-Path", ",".join(WRAPPER_SLICE_PATHS), "-WhatIf")
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("PowerShell quality gate dry run.", result.stdout)
+        for selected_path in WRAPPER_SLICE_PATHS:
+            self.assertIn(selected_path, result.stdout)
+        self.assertNotIn("scripts\\android", result.stdout.lower())
+        self.assertNotIn("android-app", result.stdout.lower())
+        self.assertNotIn("emulator", result.stdout.lower())
+        self.assertNotIn("adb", result.stdout.lower())
+
+    def test_wrapper_slice_parser_passes_without_optional_modules(self):
+        result = run_gate(
+            "-Path",
+            ",".join(WRAPPER_SLICE_PATHS),
+            "-SkipAnalyzer",
+            "-SkipPester",
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("Parser gate passed", result.stdout)
 
     def test_require_analyzer_fails_cleanly_when_missing(self):
         result = run_gate(

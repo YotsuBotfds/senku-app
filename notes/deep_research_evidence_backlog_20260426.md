@@ -229,6 +229,10 @@ Action:
 - Added a `master` push trigger to the PowerShell quality workflow for
   PowerShell/config path changes, matching its pull-request path filter so the
   analyzer/Pester lane becomes a commit-level signal when relevant files move.
+- Added a no-Android PowerShell quality wrapper slice: the gate now accepts
+  comma-separated `-Path` lists from `powershell -File`, and tests pin a
+  wrapper-only dry run/parser pass that excludes Android, emulator, and ADB
+  scripts while staying free of FastEmbed/retrieval commands.
 
 Validation:
 
