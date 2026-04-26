@@ -1,0 +1,139 @@
+card_id: elder_dementia_home_safety_support
+guide_id: GD-930
+slug: elder-dementia-home-safety
+title: "Elder Dementia Home Safety & Caregiver Communication"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Caregiver asks how to keep an elder with dementia safe at home day to day.
+  - Prompt involves wandering, sundowning, repeated questions, falls more often, missed meals, poor fluid intake, medication reminders, or resistance to care in a known dementia/supportive-care context.
+  - Caregiver needs communication phrases or routine changes to reduce agitation without medication dosing or medication changes.
+required_first_actions:
+  - Start by checking whether this is a routine baseline dementia-safety issue or a sudden/worsening change that needs urgent evaluation.
+  - If there is immediate danger, move the person away from doors, stairs, water, heat, tools, traffic, or medications while keeping communication calm and simple.
+  - Use short reassurance, one-step directions, and redirection instead of arguing, shaming, or forcing a memory correction.
+  - Escalate urgently for overdose or poisoning concern, stroke signs, head injury, dehydration, severe agitation, severe injury, acute delirium, inability to keep safe, or wandering/lost into traffic.
+conditional_required_actions:
+  - trigger_terms:
+      - sudden confusion
+      - acutely confused
+      - delirium
+      - much worse
+      - not baseline
+      - new confusion
+    required_actions:
+      - State that sudden or much-worse confusion is not just dementia and needs urgent medical evaluation.
+      - Screen for infection, dehydration, stroke signs, head injury/fall, medication error, poisoning, low blood sugar, or other acute illness without diagnosing.
+  - trigger_terms:
+      - wandering
+      - lost
+      - traffic
+      - left the house
+      - trying to go home
+      - door
+    required_actions:
+      - Prioritize supervised redirection, exit alarms/locks, recent photo/ID planning, and immediate emergency help if the person is lost, in traffic, or cannot be safely redirected.
+  - trigger_terms:
+      - medication
+      - pills
+      - dose
+      - double dose
+      - missed dose
+      - naloxone
+      - sleepy after pills
+    required_actions:
+      - Keep advice to caregiver-owned reminder systems and secure storage.
+      - Do not provide medication dosing or medication changes.
+      - If extra dose, overdose, poisoning signs, hard-to-wake state, slow breathing, pinpoint pupils, vomiting, collapse, or sleepy again after naloxone is present, route to poisoning/first-aid emergency triage.
+first_actions:
+  - Reduce hazards first: secure exits if wandering is a risk, improve lighting, clear walkways, remove loose rugs/cords/clutter, and store knives, tools, chemicals, and medications out of reach.
+  - Stabilize routine: consistent wake time, meals, fluids, medications, bathroom, quiet evening wind-down, and bedtime.
+  - Use orientation cues: visible clock/calendar, labels, familiar photos, clear pathways, night lights, and consistent furniture placement.
+  - For sundowning or confused-after-dark patterns, lower stimulation early, keep rooms well lit, reduce noise/shadows, and simplify choices.
+  - For meals and fluids, offer familiar foods and visible drinks regularly, watch for dry mouth, dark urine, weakness, dizziness, constipation, reduced urination, or not finishing meals.
+  - For medication reminders, use a caregiver-managed pill organizer, written log, alarms for the caregiver, secure storage, and current medication list; do not assume self-management when confusion is present.
+urgent_red_flags:
+  - Sudden confusion or sudden major change from baseline, including acute delirium.
+  - Suspected overdose, poisoning, accidental double dose with symptoms, hard to wake after medicine, slow breathing, pinpoint pupils, collapse, or sleepy again after naloxone.
+  - Stroke signs such as new slurred speech, facial droop, or one-sided weakness.
+  - Fall with head injury, fainting, severe injury, new weakness, seizure, collapse, or loss of consciousness.
+  - Repeated vomiting, inability to keep fluids down, severe diarrhea, very little urine, extreme thirst, or other dehydration signs.
+  - Severe agitation, hallucinations, paranoia, or unsafe behavior that makes the person or caregiver unable to keep safe.
+  - Wandering into traffic, getting lost, leaving home unsafely, or inability to recognize home.
+  - Trouble breathing, chest pain, blue lips, fever, cough, burning urine, or other signs of infection with worsening confusion.
+forbidden_advice:
+  - Do not normalize sudden or much-worse confusion as just dementia.
+  - Do not provide medication dosing, medication changes, sedative advice, antidote instructions, or restraint protocols.
+  - Do not treat overdose, poisoning, head injury, stroke signs, severe dehydration, severe agitation, severe injury, acute delirium, inability to keep safe, or wandering into traffic as routine home care.
+  - Do not tell caregivers to argue, shame, corner, or force memory correction.
+do_not:
+  - Do not assume the elder can self-manage medications if they are confused, double-dosing, or missing doses.
+  - Do not delay urgent handoff while trying routine reminders when danger signs are present.
+  - Do not give complex multi-step instructions to a confused person when one-step directions would be safer.
+  - Do not leave access to exits, vehicles, stove controls, knives, chemicals, tools, or medications unsecured when risk is known.
+routine_boundary: >
+  Routine dementia home-safety guidance applies only when the person is at or
+  near their known baseline and can be kept safe with supervision, routine,
+  environmental changes, communication support, hydration/meals, and
+  caregiver-owned reminder systems. Sudden confusion, injury, poisoning,
+  dehydration, severe agitation, stroke signs, or unsafe wandering override
+  routine advice.
+acceptable_uncertain_fit: >
+  If dementia is possible but the change sounds sudden, answer with the
+  urgent-change boundary first, then give only low-risk supportive steps such
+  as calm supervision, removing hazards, fluids if safe to swallow, and
+  preparing a medication/event timeline for clinicians.
+clarifying_questions:
+  - Is this their usual baseline, or did the confusion change suddenly over hours or a day?
+  - Are there signs of fall, head strike, new weakness, slurred speech, fever, dehydration, poisoning, or medication error?
+  - Are they trying to leave, lost, near traffic, or unable to be kept safe right now?
+  - What routines, meals, fluids, medications, and evening triggers changed today?
+citation_ids:
+  - dementia-home-safety-overview
+  - dementia-first-response
+  - dementia-caregiver-communication
+  - dementia-routine-orientation
+  - dementia-home-modifications
+  - dementia-hydration-medication-reminders
+  - dementia-wandering-prevention
+  - dementia-urgent-red-flags
+source_sections:
+  - guide: GD-930
+    slug: elder-dementia-home-safety
+    title: "Elder Dementia Home Safety & Caregiver Communication"
+    sections:
+      - "#overview"
+      - "#first-response"
+      - "#communication"
+      - "#routine"
+      - "#home-safety"
+      - "#hydration-medications"
+      - "#wandering-prevention"
+      - "#urgent-red-flags"
+source_invariants:
+  - name: sudden confusion and emergency boundary
+    guide: GD-930
+    must_include:
+      - sudden changes in confusion as a medical warning
+      - sudden confusion is not something to dismiss as "just dementia."
+      - overdose or poisoning concern
+    must_not_include:
+      - sudden confusion is just dementia
+      - sudden confusion is normal dementia
+    must_not_match:
+      - "(?:give|increase|decrease|start|stop)[^\\n]{0,80}(?:sedative|antipsychotic|benzodiazepine|haloperidol|quetiapine|donepezil|memantine)"
+  - name: medication reminders stay non-dosing
+    guide: GD-930
+    must_include:
+      - one caregiver gives meds at the same times daily
+      - pill organizer with clearly separated doses
+      - written medication log
+      - alarms or phone reminders for the caregiver
+    must_not_match:
+      - "\\b\\d+(?:\\.\\d+)?\\s*(?:mg|mcg|g|ml)\\b"
+review_status: pilot_reviewed
+notes: >
+  Reviewed-card scope is day-to-day dementia home safety and supportive
+  caregiver communication. It intentionally excludes medication dosing/changes,
+  diagnostic certainty, overdose/poisoning management, stroke/head-injury
+  protocols, and sedating or restraint advice.

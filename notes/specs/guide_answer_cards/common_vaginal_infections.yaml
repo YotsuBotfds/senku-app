@@ -1,0 +1,142 @@
+card_id: common_vaginal_infections
+guide_id: GD-925
+slug: common-vaginal-infections
+title: "Common Vaginal Infections, Itching & Discharge"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about vaginal itching, discharge change, odor, vulvar irritation, yeast-like recurrence, BV-like symptoms, STI-discharge concern, or mild self-care boundaries.
+  - Prompt is asking for non-diagnostic triage, red-flag screening, hygiene and irritation reduction, comfort measures, or whether OTC yeast treatment is reasonable after a prior clinician-confirmed yeast infection.
+  - No red flag is already present, or the answer can lead with evaluation for any stated red flag before giving only safe boundary advice.
+required_first_actions:
+  - State that vaginal symptoms are not a diagnosis and symptoms alone cannot diagnose yeast, BV, trichomoniasis, or another STI.
+  - Screen for red flags before routine vaginal itching, discharge, odor, or irritation self-care.
+  - Escalate for pregnancy, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, or STI exposure.
+conditional_required_actions:
+  - trigger_terms:
+      - pregnant
+      - pregnancy
+      - pelvic pain
+      - lower belly pain
+      - fever
+      - chills
+      - sores
+      - blisters
+      - ulcers
+      - bleeding
+      - foul odor
+      - bad smell
+      - green discharge
+      - frothy discharge
+      - severe swelling
+      - recurrent
+      - keeps coming back
+      - STI
+      - STD
+      - new partner
+      - exposure
+    required_actions:
+      - Treat the prompt as needing medical evaluation rather than routine self-care when pregnancy, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, or STI exposure is present.
+  - trigger_terms:
+      - yeast
+      - yeast infection
+      - antifungal
+      - over the counter
+      - OTC
+      - recurrence
+    required_actions:
+      - Limit OTC vaginal antifungal advice to following package directions for a prior clinician-confirmed yeast-like recurrence with no red flags.
+first_actions:
+  - If no red flags are present and symptoms are mild or clearly linked to irritation, reduce irritants by avoiding douching, scented products, perfumes, wipes, bubble baths, deodorant sprays, harsh soaps, and continued exposure to a product that worsens symptoms.
+  - Wash the vulva gently with plain water or an unscented mild cleanser, rinse after sweating or urinating if helpful, pat dry instead of rubbing, and keep the area dry with loose breathable underwear.
+  - For mostly external discomfort, use a cool compress briefly, a plain-water sitz bath, or a thin external barrier such as petroleum jelly or zinc oxide on raw outer skin; do not put barriers inside the vagina.
+  - If symptoms are mild, very similar to a prior clinician-confirmed yeast episode, and no red flags are present, an OTC vaginal antifungal may be reasonable only by following package directions.
+  - Get evaluated when the pattern is new, severe, unclear, recurrent, different from prior episodes, or not improving with gentle care.
+urgent_red_flags:
+  - Pregnancy with new itching, discharge, bleeding, or pain.
+  - Pelvic pain, lower abdominal pain, significant pain during sex, fever, or chills.
+  - Sores, blisters, ulcers, severe swelling, rash, or skin cracking.
+  - New vaginal bleeding not explained by a period.
+  - Foul odor, strong fishy odor, green discharge, yellow-green discharge, frothy discharge, or bloody discharge.
+  - Symptoms after a new sexual partner or possible STI exposure.
+  - Symptoms that do not improve after a few days of gentle care or recurrent symptoms that keep coming back.
+forbidden_advice:
+  - Do not diagnose yeast infection, BV, trichomoniasis, or STI from symptoms alone.
+  - Do not provide prescription antifungal, antibiotic, STI regimen, or dosing advice.
+  - Do not recommend OTC vaginal antifungal treatment unless it is limited to package directions for a prior clinician-confirmed yeast-like recurrence with no red flags.
+  - Do not provide routine self-care reassurance when pregnancy, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, or STI exposure is present.
+  - Do not recommend inserting garlic, vinegar, yogurt, essential oils, douches, steam, harsh soaps, or other home remedies into the vagina.
+do_not:
+  - Do not call thick white discharge, odor, green/frothy discharge, sores, or STI exposure diagnostic of a specific infection.
+  - Do not advise treating a new, severe, recurrent, pregnancy-associated, STI-exposure-associated, painful, febrile, foul-smelling, bleeding, sore, or severely swollen presentation at home.
+  - Do not name prescription medication options or doses.
+  - Do not insert home remedies, garlic, vinegar, essential oils, yogurt, or other unproven substances.
+routine_boundary: >
+  Routine self-care is limited to non-diagnostic vaginal symptom triage,
+  hygiene and irritation reduction, external comfort measures, and narrow OTC
+  vaginal antifungal package-direction advice only for prior clinician-confirmed
+  yeast-like recurrence with no red flags. Pregnancy, pelvic pain, fever,
+  sores, bleeding, foul odor, green or frothy discharge, severe swelling,
+  recurrent symptoms, STI exposure, new or unclear symptoms, and non-improving
+  symptoms require evaluation rather than diagnosis or treatment selection.
+acceptable_uncertain_fit: >
+  If cause, pregnancy status, STI exposure, recurrence pattern, discharge
+  features, pain, fever, sores, swelling, bleeding, or odor are unclear, lead
+  with the red-flag screen and say symptoms alone are not a diagnosis. Offer
+  only gentle irritation-reduction measures that are safe across causes, and
+  recommend evaluation if any red flag is present or cannot be ruled out.
+clarifying_questions:
+  - Is there pregnancy, pelvic or lower belly pain, fever, chills, sores, blisters, ulcers, bleeding, foul odor, green or frothy discharge, severe swelling, or STI exposure?
+  - Is this the first episode, a recurrent pattern, different from prior episodes, or not improving after gentle care?
+  - Has a clinician confirmed yeast before, and do these symptoms feel very similar to that prior episode?
+  - Is there a new soap, wipe, scented product, pad, lubricant, condom, laundry product, sweat, tight clothing, or friction trigger?
+  - Are symptoms mostly external irritation, or is there internal pain, pelvic pain, odor, bleeding, or discharge change?
+citation_ids:
+  - vaginal-symptoms-not-diagnosis
+  - vaginal-red-flags-evaluation
+  - vaginal-irritation-reduction
+  - yeast-like-otc-package-boundary
+  - vaginal-home-remedy-negatives
+source_sections:
+  - guide: GD-925
+    slug: common-vaginal-infections
+    title: "Common Vaginal Infections, Itching & Discharge"
+    sections:
+      - "#overview"
+      - "#recognition"
+      - "#self-care"
+      - "#when-to-seek-care"
+      - "#quick-answers"
+source_invariants:
+  - name: symptoms remain non-diagnostic
+    guide: GD-925
+    must_include:
+      - itching and discharge are symptoms, not a diagnosis
+      - symptoms alone are not a diagnosis
+      - Keep answers symptom-based and do not diagnose yeast, BV, trichomoniasis, or STI from symptoms alone.
+    must_not_match:
+      - "diagnose (yeast|bv|trichomoniasis|sti) from symptoms"
+      - "definitely (yeast|bv|trichomoniasis|an sti)"
+  - name: red flags require evaluation
+    guide: GD-925
+    must_include:
+      - pregnancy concern, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, or STI exposure
+      - Pregnancy with new itching, discharge, bleeding, or pain
+      - Symptoms after a new sexual partner or possible STI exposure
+  - name: OTC antifungal boundary and home remedy negatives remain
+    guide: GD-925
+    must_include:
+      - prior clinician-confirmed yeast-like recurrence
+      - Follow the package directions.
+      - Do not insert home remedies, garlic, vinegar, essential oils, yogurt, or other unproven substances.
+    must_not_match:
+      - "(fluconazole|metronidazole|clindamycin|azithromycin|doxycycline|ceftriaxone)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-925 non-diagnostic vaginal symptom triage and
+  self-care boundaries. The card forbids diagnosis of yeast, BV,
+  trichomoniasis, or STI from symptoms alone; forbids prescription antifungal,
+  antibiotic, STI regimen, or dose advice; requires red-flag evaluation; and
+  limits OTC vaginal antifungal discussion to package directions for prior
+  clinician-confirmed yeast-like recurrence with no red flags.

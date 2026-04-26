@@ -1,0 +1,112 @@
+card_id: camp_dysentery_outbreak_operations
+guide_id: GD-902
+slug: camp-outbreak-dysentery-operations
+title: "Camp Outbreak & Dysentery Operations Quickstart"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Multiple people in a camp, shelter, or settlement have diarrhea, bloody diarrhea, or suspected dysentery over the same day or two.
+  - A responder needs first-hour operations to slow fecal-oral spread while people are being rehydrated and monitored.
+  - The question is about sick/clean workflow separation, removing sick workers from duties, handwashing enforcement, water/latrine/kitchen checks, or case tracking during a diarrhea outbreak.
+required_first_actions:
+  - Treat multiple related diarrhea cases as a real cluster until proven otherwise.
+  - Separate the response into sick, care, and clean zones before moving people or supplies around.
+  - Remove sick people from food, water, dishwashing, and childcare duties immediately.
+  - Enforce handwashing after toilet use, after sick care or cleanup, before food handling, and before feeding children.
+  - Check water sources, latrines, and the kitchen for active transmission routes.
+  - Start written case tracking so spread, severity, and household clusters are visible.
+  - Escalate urgently for dehydration, shock signs, blood in stool with weakness, confusion, inability to drink, very little urine, or repeated vomiting preventing intake.
+first_actions:
+  - Put symptomatic people in the sick zone; keep ORS, cleaning supplies, and caregivers in the care zone; protect food prep, treated water, and unaffected sleeping areas as the clean zone.
+  - Keep shared cups, bowls, bedding, stool, vomit, and dirty cleanup workflows out of the clean zone until cleaned.
+  - Use the safest available backup water source or intensify treatment while handing detailed water treatment choices to the water-purification guide.
+  - Inspect latrines for overflow, flies, missing handwashing stations, runoff toward water, and children defecating outside designated areas.
+  - Inspect kitchen workflows for sick workers, shared utensils, raw-food handling, suspect leftovers, and clean/dirty crossover.
+  - Track at minimum person or tent, age, onset time, stool frequency, blood, vomiting, ability to drink, urine today, and outcome.
+urgent_red_flags:
+  - Confusion, lethargy, inability to drink, or reduced alertness.
+  - Little or no urine, rapid dehydration, or repeated vomiting that prevents oral fluids.
+  - Shock signs, collapse, severe weakness, or worsening despite oral rehydration.
+  - Blood in stool with weakness or rapid worsening.
+  - Infants, frail elders, or pregnant patients with rapid dehydration.
+  - A growing cluster, spread across multiple zones, or unclear source after the first pass.
+forbidden_advice:
+  - Do not provide antibiotic selection, dosing, timing, or medication protocols.
+  - Do not turn this card into lab diagnosis, stool testing interpretation, or disease-specific treatment for cholera, shigella, giardia, typhoid, or other named pathogens.
+  - Do not provide detailed chlorination math or improvised water-treatment calculations; route water treatment details to the water-purification guide.
+  - Do not advise legal quarantine, public-health authority procedure, or broad pandemic governance from this camp operations card.
+  - Do not leave sick people in food, water, dishwashing, or childcare duties.
+  - Do not frame handwashing as optional during a diarrhea outbreak.
+do_not:
+  - Do not route a single person's diarrhea, without a cluster or operational spread concern, to this outbreak card.
+  - Do not use this card for routine kitchen cleanup, ordinary hygiene education, generalized pandemic planning, or medication/antibiotic questions.
+  - Do not wait for a diagnosis, stool testing, or a completed investigation before separating zones, enforcing handwashing, removing sick workers, checking water/latrines/kitchen, tracking cases, and escalating red flags.
+routine_boundary: >
+  This card is for camp-level diarrhea or dysentery outbreak operations, not
+  routine individual diarrhea care. A single sick person, ordinary cleanup,
+  general hygiene reminders, broad pandemic planning, or medication questions
+  should route elsewhere unless multiple related cases or camp transmission
+  concerns are present.
+acceptable_uncertain_fit: >
+  If the source is unclear but several people have diarrhea in the same camp or
+  over the same day or two, preserve the conservative operations sequence:
+  separate sick/care/clean zones, remove sick people from food/water/childcare
+  duties, enforce handwashing, check water/latrines/kitchen, track cases, and
+  escalate dehydration, shock, blood, confusion, or inability to drink. Avoid
+  diagnosis, antibiotic, and detailed water-treatment calculations.
+clarifying_questions:
+  - How many people have diarrhea or bloody diarrhea, and when did symptoms start?
+  - Are any sick people handling food, water, dishes, or childcare right now?
+  - What water source, latrine area, kitchen shift, meal, or tent cluster do the cases share?
+  - Does anyone have blood in stool, confusion, little or no urine, repeated vomiting, shock signs, or inability to drink?
+citation_ids:
+  - camp-outbreak-first-hour
+  - sick-care-clean-zones
+  - outbreak-handwashing-enforcement
+  - water-latrine-kitchen-checks
+  - outbreak-case-tracking
+  - dehydration-blood-shock-escalation
+source_sections:
+  - guide: GD-902
+    slug: camp-outbreak-dysentery-operations
+    title: "Camp Outbreak & Dysentery Operations Quickstart"
+    sections:
+      - "#first-hour"
+      - "#isolation"
+      - "#water-source-checks"
+      - "#latrine-inspection"
+      - "#handwashing-enforcement"
+      - "#food-service-restrictions"
+      - "#case-tracking"
+      - "#red-flags"
+source_invariants:
+  - name: camp diarrhea outbreak operations core
+    guide: GD-902
+    must_include:
+      - Stop sick people from food, water, and childcare duties immediately.
+      - Create sick, care, and clean zones before moving anyone around.
+      - Do not leave handwashing as a suggestion during a diarrhea outbreak.
+      - Track at minimum
+    must_not_match:
+      - "(azithromycin|ciprofloxacin|metronidazole|ceftriaxone|doxycycline)[^\\n]{0,80}(dose|dosing|mg)"
+      - "chlorin(e|ation)[^\\n]{0,80}[0-9]+\\s*(mg|ppm|drops)"
+  - name: outbreak red flags and diagnosis boundary
+    guide: GD-902
+    must_include:
+      - do not wait for stool testing, perfect diagnosis, or a completed investigation if these are present
+      - blood in stool plus weakness
+      - little or no urine
+      - confusion or lethargy
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-902 camp diarrhea/dysentery outbreak
+  operations only. It preserves first-hour containment, sick/care/clean zone
+  separation, removal of sick people from food/water/childcare duties,
+  mandatory handwashing, water/latrine/kitchen checks, case tracking, and
+  dehydration/shock/blood/confusion escalation. It intentionally excludes
+  antibiotic selection or dosing, lab diagnosis, disease-specific treatment
+  protocols, detailed chlorination calculations beyond routing to
+  water-purification, public-health authority/legal quarantine detail, and near
+  misses such as one-person diarrhea, routine kitchen cleanup, ordinary
+  hygiene, generalized pandemic planning, or medication questions.

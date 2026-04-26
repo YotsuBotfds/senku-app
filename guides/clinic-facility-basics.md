@@ -16,8 +16,15 @@ tags:
   - health-post
   - field-clinic
   - aid-station
+bridge: true
 icon: clinic
 description: Low-resource clinic layout and operations for off-grid and rebuild settings, focused on patient flow, separation, ventilation, storage, records, waste handling, and starting small safely.
+citations_required: true
+applicability: Layout and daily operations hygiene for a small clinic, medical tent, or health post, including one-room patient flow, waiting/triage separation, clean and dirty zones, waste flow, records, privacy, and an isolation corner.
+routing_cues:
+  - Use when the ask is how to lay out or operate a small clinic, medical tent, health post, aid station, or one-room patient-flow space.
+  - Keep answers to facility layout, patient routing, hygiene points, waste movement, records placement, privacy, storage, and isolation-corner setup.
+  - Route diagnosis, treatment protocols, emergency stabilization, outbreak quarantine policy, and staffing authority questions to the relevant medical, epidemic, or governance guides.
 related:
   - community-governance-leadership
   - settlement-layout-growth-planning

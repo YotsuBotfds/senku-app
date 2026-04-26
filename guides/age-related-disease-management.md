@@ -1,4 +1,4 @@
-﻿---
+---
 id: GD-700
 slug: age-related-disease-management
 title: Age-Related Disease Management
@@ -19,20 +19,60 @@ tags:
   - grandparent keeps falling
   - old person joints hurt
   - elderly can't walk anymore
+  - elderly chronic disease
+  - older adult suddenly worse
+  - elderly chest pain
+  - elderly shortness of breath
+  - elderly dehydration confusion
+  - elderly diabetic foot wound
+  - elderly severe weakness
+aliases:
+  - elderly chronic disease triage
+  - older adult chronic illness support
+  - elderly parent suddenly worse
+  - aging parent chronic disease
+  - elder disease management
+  - elderly diabetic support
+  - elderly heart disease support
+  - elder arthritis diabetes heart disease
+routing_cues:
+  - Use for older-adult chronic disease support after screening for sudden change, chest pain, stroke signs, severe shortness of breath, dehydration/confusion, vomiting, foot wounds, severe weakness, or fall injury.
+  - Route acute BP crisis or shock to blood-pressure-management and diabetic glucose emergency to diabetes-management-remote.
+  - Route dementia wandering, unsafe behaviors, or sudden confusion safety planning to elder-dementia-home-safety and daily caregiving burden to elder-care.
+citations_required: true
+citation_policy: cite GD-700 only for elder chronic-disease triage/support boundaries, and cite more specific emergency, diabetes, blood-pressure, dementia-safety, or elder-care sources when those acute or daily-care patterns dominate
 icon: 🧓
 description: Arthritis management through exercises and heat therapy, vision and hearing loss accommodation, cardiovascular health maintenance, cognitive decline recognition, osteoporosis prevention, chronic pain management, diabetes care with limited resources, maintaining independence and dignity in aging.
 related:
+  - acute-coronary-cardiac-emergencies
+  - blood-pressure-management
   - cognitive-disability-accommodation
   - elder-care
   - elder-dementia-home-safety
+  - diabetes-management-remote
   - herbalism
   - nutritional-planning-deficiency-prevention
   - palliative-end-of-life-care
   - psychological-first-aid-peer-support
+  - wound-care-chronic
+applicability:
+  owner: chronic-disease-triage-support
+  use_when:
+    - Older-adult question names chronic disease support, disease progression, arthritis, diabetes, heart disease, osteoporosis, vision/hearing loss, chronic pain, or chronic-disease complications.
+    - User needs first-pass triage boundaries for an older adult with chronic illness before routine support advice.
+  do_not_use_when:
+    - The question asks for medication, insulin, or antihypertensive dose changes.
+    - The problem is an acute blood-pressure crisis, diabetic glucose emergency, stroke/heart attack presentation, dementia home-safety crisis, or routine daily caregiving plan.
+  handoff:
+    - acute-coronary-cardiac-emergencies for chest pain, stroke signs, or severe shortness of breath.
+    - blood-pressure-management for acute BP crisis or shock boundary.
+    - diabetes-management-remote for diabetic glucose emergency.
+    - elder-dementia-home-safety for wandering, unsafe behaviors, or dementia-specific safety.
+    - elder-care for daily-care workload, transfers, hygiene, feeding, supervision, and caregiver burden.
 read_time: 30
 word_count: 5400
 last_updated: '2026-02-22'
-version: '1.0'
+version: '1.1'
 liability_level: high
 custom_css: |
   .condition-section { background-color: var(--surface); padding: 15px; margin: 15px 0; border-left: 4px solid var(--accent); border-radius: 4px; }
@@ -47,8 +87,15 @@ custom_css: |
 **Medical Disclaimer:** Aging brings increased health complexity. Chronic diseases in older adults require individual assessment and ongoing monitoring. This guide provides general management strategies for resource-limited settings when medical care is limited or unavailable. Where professional care exists, use it. Where it doesn't, these strategies can support quality of life and slow disease progression. Older adults with sudden changes in health, severe symptoms, or signs of acute illness need urgent evaluation if possible.
 :::
 
+:::danger
+**First screen for sudden decline:** In an older adult with chronic disease, do not start with routine disease-management advice if there is sudden change from baseline, chest pain, stroke signs, severe shortness of breath, dehydration with confusion, repeated vomiting, a foot wound or diabetic foot sore, severe weakness, or a fall with possible injury. Treat these as urgent triage problems and seek emergency help, transport, or the fastest available clinician. This guide does not diagnose the cause and does not provide emergency medication, insulin, blood-pressure, or herbal treatment protocols.
+:::
+
 :::tip
 Quick routing:
+- First screen for urgent change: sudden worsening, chest pain, stroke signs, severe shortness of breath, dehydration with confusion, repeated vomiting, foot wound/diabetic foot sore, severe weakness, or fall with injury -> emergency help/transport or the fastest available clinician before routine chronic-disease support
+- Acute BP crisis or shock signs -> [Blood Pressure Management](../blood-pressure-management.html), not this guide's routine hypertension support
+- Diabetic glucose emergency symptoms or insulin/diabetes medication changes -> [Diabetes Management in Resource-Poor Settings](../diabetes-management-remote.html), not this guide's limited-resource diabetes maintenance section
 - Start with [Elder Care](../elder-care.html) if the complaint is routine-support-first: "needs more help at home," "harder to bathe/feed/transfer," "caregiver is overwhelmed," "getting weaker," "won't get out of bed," or "how do I take care of my aging parent day to day"
 - "My parent keeps forgetting things" -> [Cognitive Decline and Dementia](#cognitive-decline) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
 - "Falls more often" or "elderly falling" -> [Osteoporosis Prevention](#osteoporosis) (fall prevention) and [Arthritis Management](#arthritis-management); if the falls are new, repeated, or tied to confusion, also see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
@@ -80,6 +127,8 @@ This guide covers the most common age-related conditions: arthritis, cardiovascu
 **Key principle:** Older adults are not one group. A 65-year-old and 85-year-old differ profoundly in capacity, health status, and needs. Individualize all recommendations.
 
 This guide is for disease-centered complaints: named diagnoses, symptom patterns that suggest a chronic illness, or questions about progression, complications, and condition-specific management. If the user is mainly asking how to supervise, transfer, bathe, feed, toilet, calm, or safely support an older adult day to day, route first to [Elder Care](../elder-care.html) and pull this guide in only when a chronic disease pattern is clearly driving the problem.
+
+This guide supports triage and chronic-disease support boundaries only. It cannot confirm a diagnosis, change medication or insulin dosing, provide antihypertensive crisis protocols, treat emergencies with herbs, or replace a daily elder-care plan. When an acute emergency-specific card exists, use that card first and return here only after immediate danger has been addressed.
 
 </section>
 

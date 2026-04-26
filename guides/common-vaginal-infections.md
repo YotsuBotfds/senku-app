@@ -15,6 +15,27 @@ tags:
   - yeast infection
   - vaginal discharge not normal
 icon: 🩺
+aliases:
+  - vaginal itching
+  - vaginal discharge
+  - yeast infection symptoms
+  - BV symptoms
+  - STI discharge concern
+  - vaginal odor
+  - vulvar irritation
+routing_cues:
+  - Use for non-diagnostic triage of vaginal itching, discharge change, odor, irritation, or yeast-like recurrence questions.
+  - Screen for pregnancy, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, and STI exposure before self-care.
+  - Keep answers symptom-based and do not diagnose yeast, BV, trichomoniasis, or STI from symptoms alone.
+  - Limit OTC antifungal advice to package directions for a prior clinician-confirmed yeast-like recurrence with no red flags.
+citations_required: true
+applicability:
+  - Non-diagnostic vaginal symptom triage and gentle irritation-reduction self-care.
+  - Prior clinician-confirmed yeast-like recurrence without red flags, where OTC vaginal antifungal use is discussed only as following package directions.
+not_for:
+  - Diagnosing yeast infection, BV, trichomoniasis, or STI from symptoms alone.
+  - Prescription antifungal, antibiotic, STI regimen, or dosing advice.
+  - Pregnancy, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, or STI exposure.
 description: Practical recognition of common yeast infection and vaginitis questions, everyday causes of vaginal itching and discharge changes, irritation reduction, comfort measures, and red flags that need medical evaluation.
 related:
   - gynecological-emergencies-womens-health
@@ -50,16 +71,16 @@ People often search for things like "I think I have a yeast infection," "what ca
 
 The most common possibilities include:
 
-- **Yeast infection:** Often intense itching, redness, and thick white discharge
-- **Bacterial vaginosis (BV):** Often thin gray or white discharge with a strong fishy smell
-- **Trichomoniasis or other STI:** May cause irritation, yellow-green or frothy discharge, odor, or pain
+- **Yeast infection:** Can be one cause of intense itching, redness, and thick white discharge
+- **Bacterial vaginosis (BV):** Can be one cause of thin gray or white discharge with a strong fishy smell
+- **Trichomoniasis or other STI:** Can cause irritation, yellow-green or frothy discharge, odor, or pain
 - **Skin or chemical irritation:** Soaps, wipes, pads, lubricants, condoms, laundry products, sweat, or friction
 - **Urinary infection or external skin infection:** Burning, tenderness, or nearby rash can overlap
 
 What matters most is the **pattern**:
 
-- **Itching with little odor and thick white discharge** often suggests yeast, but not always
-- **Strong odor** more often points away from yeast and toward BV or another infection
+- **Itching with little odor and thick white discharge** can be yeast-like, but symptoms alone are not a diagnosis
+- **Strong odor** is a reason to get evaluated instead of assuming yeast
 - **Pain, fever, sores, bleeding, or pelvic pain** are not "just irritation" and need evaluation
 
 :::tip
@@ -101,9 +122,9 @@ Common vaginitis symptoms:
 
 | Discharge pattern | Common possibilities | What it suggests |
 |---|---|---|
-| Thick, white, clumpy | Yeast | Often yeast, especially if itching is strong |
-| Thin, gray-white | BV | Often BV, especially if odor is strong |
-| Yellow-green, frothy, or very foul-smelling | Trichomoniasis or other infection | Needs medical evaluation |
+| Thick, white, clumpy | Yeast can be one possibility | Yeast-like pattern, but not diagnostic |
+| Thin, gray-white | BV can be one possibility | Needs evaluation if odor or symptoms are new |
+| Yellow-green, frothy, or very foul-smelling | Trichomoniasis, STI, or other infection can be possible | Needs medical evaluation |
 | Clear or white, little odor, varies with cycle | Normal physiologic discharge | Often normal if no pain, odor, or itching |
 | Blood-tinged when not menstruating | Irritation, infection, cervix problem, pregnancy-related issue, or other cause | Needs evaluation if unexplained |
 
@@ -217,13 +238,13 @@ If the discomfort is mostly external:
 
 ### If Yeast Seems Likely
 
-If symptoms are mild, typical for a known yeast infection, and there are no red flags, an over-the-counter vaginal antifungal may help. Follow the package directions.
+If symptoms are mild, typical for a prior clinician-confirmed yeast-like recurrence, and there are no red flags, an over-the-counter vaginal antifungal may be reasonable. Follow the package directions.
 
 This is most reasonable when:
 
 - The person has had a clinician-confirmed yeast infection before
 - Symptoms feel very similar to prior yeast episodes
-- There is no fever, pelvic pain, pregnancy concern, or STI concern
+- There is no pregnancy concern, pelvic pain, fever, sores, bleeding, foul odor, green or frothy discharge, severe swelling, recurrent symptoms, or STI exposure
 
 If you are not sure, or if the pattern is new, it is safer to get evaluated than to keep treating the wrong cause.
 

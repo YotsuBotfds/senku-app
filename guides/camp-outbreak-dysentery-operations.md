@@ -22,6 +22,15 @@ tags:
   - sanitation
   - outbreak-response
   - diarrhea
+routing_cues:
+  - diarrhea spreading through camp
+  - multiple people with diarrhea or dysentery
+  - camp outbreak first actions
+  - sick food water or childcare workers
+  - water latrine kitchen outbreak check
+  - diarrhea case tracking
+citation_policy: cite this reviewed GD-902 camp outbreak operations guide and its reviewed answer card for camp-level diarrhea or dysentery outbreak containment; pair with water-purification, latrine, kitchen, or surveillance guides only for those specific subproblems
+applicability: Camp or settlement diarrhea/dysentery outbreak operations when multiple people are ill or transmission is suspected; not for one-person diarrhea care, routine kitchen cleanup, ordinary hygiene reminders, generalized pandemic planning, medication choice, drug quantities, lab diagnosis, or disease-specific treatment protocols.
 icon: 🚰
 description: Immediate camp-response checklist for dysentery, diarrhea outbreaks, and suspected waterborne disease, front-loading containment, sanitation sequencing, ORS workflow, food-service restrictions, handwashing enforcement, escalation, and case tracking.
 related:

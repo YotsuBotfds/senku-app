@@ -1,0 +1,115 @@
+card_id: epidemic_response_operations_boundary
+guide_id: GD-667
+slug: epidemic-pandemic-response
+title: "Epidemic & Pandemic Response"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks for first steps to coordinate an epidemic, pandemic, outbreak, illness cluster, or suspected community transmission when cases exceed normal baseline.
+  - The answer should organize activation, roles, records, privacy, isolation/quarantine concepts, and controlled entry or one-way flow without becoming a disease-specific protocol.
+  - The setting is community-level or facility-adjacent coordination rather than bedside treatment, camp diarrhea containment, mass-casualty triage, PPE fabrication, or decontamination.
+required_first_actions:
+  - Activate coordination when similar illness clusters exceed the expected baseline for the place and season, or when unusual severe illness or deaths cluster.
+  - Assign named leads for decision-making, medical review, logistics, communications, and records/contact follow-up.
+  - Keep simple case and contact records with local identifiers, symptoms, onset or report dates, locations, exposure links, status, and next check date.
+  - Protect contact privacy by limiting lists to response staff who need them and sharing public updates as counts, trends, and actions rather than names.
+  - Separate isolation for people who are sick or suspected infectious from quarantine or monitoring for exposed people who are not currently sick.
+  - Set controlled entry and one-way movement for triage, sick-care, supply, record, and exit areas so clean and dirty flows do not cross.
+first_actions:
+  - Compare new reports to the local baseline and map clusters by place, time, and symptom pattern.
+  - Hold a short daily coordination check covering new cases, contacts needing follow-up, supply gaps, privacy-sensitive records, rumors, and next-day priorities.
+  - Use plain public messaging that explains what is known, what is unknown, what people should do now, and where sick or exposed people should report.
+  - If the problem is camp diarrhea, dysentery, watery diarrhea, or suspected waterborne spread, route first to GD-902 before using this broader coordination card.
+urgent_red_flags:
+  - Two or more similar suspected cases in the same location or social cluster above normal baseline.
+  - Unusual excess deaths, severe illness, rapidly spreading symptoms, or illness among health workers, food workers, water handlers, or caregivers.
+  - Contact names, exposure details, or household status are being posted publicly, announced broadly, or used for stigma or punishment.
+  - Sick-care, triage, food/water distribution, records, waste, staff entry, and exits are crossing through the same uncontrolled space.
+forbidden_advice:
+  - Give disease-specific isolation durations or release criteria.
+  - Give bleach percentages, disinfectant dilution recipes, or decontamination procedures.
+  - Provide PPE construction, fit-testing, donning/doffing, or improvised equipment instructions.
+  - Recommend medications, antibiotics, antivirals, vaccines, post-exposure prophylaxis, or dosing.
+  - Recommend enforced quarantine tactics, coercive detention, punishment, threats, or violence.
+  - Provide mass-casualty triage, disaster decontamination, or body-handling procedures.
+do_not:
+  - Do not turn a coordination-first prompt into a generic epidemic protocol or disease-specific clinical plan.
+  - Do not publish contact names, household lists, or exposure histories as a community warning.
+  - Do not merge sick isolation and exposed-person quarantine into one concept.
+  - Do not keep routing diarrhea-spreading-through-camp prompts in GD-667 when GD-902 is the first owner.
+routine_boundary: >
+  This card covers only the early operations boundary for epidemic/pandemic
+  coordination: activation above baseline, role assignment, simple case/contact
+  records, privacy, isolation/quarantine distinction, and controlled entry or
+  one-way flow.
+acceptable_uncertain_fit: >
+  If the pathogen, transmission route, or diagnosis is unclear but illness is
+  clustering above baseline, give the conservative coordination sequence:
+  activate roles, keep minimal records, protect privacy, distinguish sick from
+  exposed people, control entry/flow, and avoid disease-specific treatment,
+  isolation-duration, disinfectant, PPE-construction, enforcement,
+  mass-casualty, or decontamination advice.
+clarifying_questions:
+  - What symptoms are clustering, how many people are affected, where are they, and what is normal for this season and place?
+  - Who is already assigned to decisions, medical review, logistics, communications, records, and contact follow-up?
+  - Are any contact names or exposure details being shared beyond the response team?
+  - Is this mainly camp diarrhea, dysentery, watery diarrhea, or suspected waterborne spread that should start with GD-902?
+citation_ids:
+  - epidemic-response-operations-boundary
+  - recognizing-an-epidemic
+  - command-structure-low-resource-settings
+  - contact-tracing-without-technology
+  - quarantine-isolation-concepts
+  - isolation-area-controlled-entry-flow
+source_sections:
+  - guide: GD-667
+    slug: epidemic-pandemic-response
+    title: "Epidemic & Pandemic Response"
+    sections:
+      - "#epidemic-response-operations-boundary"
+      - "#1-recognizing-an-epidemic"
+      - "#when-to-activate-response"
+      - "#2-command-structure-for-low-resource-settings"
+      - "#3-contact-tracing-without-technology"
+      - "#4-quarantine--isolation-protocols"
+      - "#setting-up-an-isolation-area"
+  - guide: GD-902
+    slug: camp-outbreak-dysentery-operations
+    title: "Camp Outbreak & Dysentery Operations Quickstart"
+    sections:
+      - "#first-hour"
+      - "#case-log"
+      - "#red-flags"
+source_invariants:
+  - name: epidemic coordination activates above baseline
+    guide: GD-667
+    must_include:
+      - "cases exceed what is normal"
+      - "Activate your command structure"
+      - "Two or more suspected cases"
+      - "Daily briefing"
+  - name: contact records stay private
+    guide: GD-667
+    must_include:
+      - "Create a contact list"
+      - "Assign one person to manage the register"
+      - "Do not allow contact information to spread"
+      - "Keep contact lists confidential"
+    must_not_match:
+      - "(post|publish|announce|share)[^\\n]{0,100}(contact names|contact list|household names|exposure details)"
+  - name: isolation and quarantine remain distinct
+    guide: GD-667
+    must_include:
+      - "isolation is for people who are sick or suspected to be infectious"
+      - "quarantine or monitoring is for people exposed but not currently sick"
+      - "Person is well but potentially infected"
+      - "Person is sick and infectious"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Boundary-only reviewed card for GD-667. It covers epidemic/pandemic
+  coordination first steps and deliberately excludes disease-specific isolation
+  durations, bleach percentages or dilutions, PPE construction, medication/PEP,
+  enforced quarantine tactics, mass-casualty triage, and decontamination.
+  GD-902 is cited only as the first-owner handoff for camp diarrhea or
+  dysentery operations.

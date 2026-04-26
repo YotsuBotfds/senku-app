@@ -1,0 +1,129 @@
+card_id: clinic_facility_basics
+guide_id: GD-965
+slug: clinic-facility-basics
+title: Clinic Facility Basics
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A small clinic, medical tent, health post, aid station, or one-room medical space needs a safe layout and patient-flow plan.
+  - The prompt asks where to put entrance handwashing, triage/intake, waiting, exam, storage, waste, records, privacy, or isolation areas.
+  - The setting has limited rooms, supplies, staff, water, or privacy and needs practical clean/dirty separation without turning the answer into diagnosis or treatment guidance.
+required_first_actions:
+  - Put a handwashing point at the entrance before patients move deeper into the clinic.
+  - Place triage or intake near the entrance so patients are sorted before entering waiting, exam, storage, or records areas.
+  - Separate waiting from exam and storage areas, using furniture, rope, cloth, chalk marks, or screens if there is only one room.
+  - Mark a clean supply shelf and keep it dry, labeled, off the floor, and away from waste or contaminated items.
+  - Set a dirty waste route that moves contaminated items one way from patient areas to disposal without crossing clean supply flow.
+  - Create a records station where staff can find forms quickly while keeping names and sensitive details out of public view.
+  - Set aside an isolation corner, screened area, tent, or separate room if patients with potentially infectious symptoms are expected.
+first_actions:
+  - Start with one clear entrance, entrance hand hygiene, intake or triage at the front, and a small waiting area that does not block the entrance or waste route.
+  - Keep the main flow simple and one-way: arrival, hand hygiene, check-in or triage, wait or isolate, exam, discharge or referral, waste handling, then cleaning.
+  - In one room, divide clean and dirty zones visibly and keep patients out of storage, waste, and staff transition areas.
+  - Put the cleanest work area at exam or treatment, with a privacy curtain, screen, or low-traffic corner.
+  - Place handwashing where contamination is likely: entrance, triage, exam area, isolation area, waste handling area, and staff exit or transition point when possible.
+  - Keep contaminated dressings, linens, sharps, body-fluid waste, and cleaning waste in a dirty utility or waste zone that can exit without crossing clean flow.
+  - Keep records near staff workflow but out of casual patient reach and out of public view.
+urgent_red_flags:
+  - A patient has fever, cough, vomiting, diarrhea, rash, or other potentially infectious symptoms and is sitting in the main waiting line.
+  - The waiting line crosses the exam space, clean supply shelf, records station, or waste route.
+  - Contaminated waste, dirty linens, sharps, or body-fluid waste are sitting in the waiting area, on the exam table, or beside clean supplies.
+  - Crowding is building indoors, especially when respiratory illness is spreading or airflow is poor.
+forbidden_advice:
+  - Diagnose a condition, choose treatment, provide medication, dosing, procedure, or clinical protocol instructions.
+  - Give emergency stabilization steps, trauma care, airway care, bleeding control, shock treatment, or other first-aid procedures.
+  - Assign clinical authority, staffing hierarchy, credential rules, or governance powers beyond basic records and flow roles.
+  - Create outbreak quarantine policy, camp-wide movement restrictions, or public-health enforcement rules beyond routing potentially infectious patients away from the main waiting line.
+  - Tell users to let waiting, triage, exam, storage, waste, and records share one undifferentiated space with no visual separation.
+  - Put clean supplies beside waste, contaminated linens, sharps, or dirty utility work.
+do_not:
+  - Do not treat the clinic layout guide as a treatment center protocol or hospital design standard.
+  - Do not let patients wander through storage areas or let dirty items move back through clean areas.
+  - Do not store contaminated items with clean dressings or paperwork.
+  - Do not let contaminated waste sit in the waiting area or on the exam table after use.
+  - Do not route shoppers, visitors, deliveries, or other public traffic through the clinic queue or patient flow.
+routine_boundary: >
+  This card is for facility layout and operations hygiene only. If the prompt
+  asks what a patient has, how to treat them, how to stabilize an emergency,
+  who has medical authority, or how to run outbreak quarantine policy, answer
+  with a brief layout-safe boundary and route to the relevant clinical,
+  first-aid, epidemic, or governance owner.
+acceptable_uncertain_fit: >
+  If the prompt is partly about a medical situation but also asks how to set up
+  the space, keep the answer to routing and hygiene: entrance handwashing,
+  front triage/intake, separated waiting/exam/storage, clean supply shelf,
+  one-way dirty waste route, protected records, privacy screen, and an
+  isolation corner for potentially infectious symptoms.
+clarifying_questions:
+  - Is this one room, a tent, a separate health post, or part of a shared public building?
+  - Where are the entrance, exit, handwashing water, waste disposal route, and best airflow right now?
+  - Are patients with fever, cough, vomiting, diarrhea, rash, or other potentially infectious symptoms expected?
+  - Which areas must fit in the same room: waiting, triage, exam, storage, waste, records, and privacy?
+citation_ids:
+  - clinic-scope-and-routing
+  - clinic-limited-space-setup-order
+  - clinic-basic-flow
+  - clinic-zones-waiting-isolation-clean-dirty
+  - clinic-handwashing-cleaning
+  - clinic-storage-records-waste-privacy
+  - clinic-minimum-standard
+source_sections:
+  - guide: GD-965
+    slug: clinic-facility-basics
+    title: Clinic Facility Basics
+    sections:
+      - "Scope of This Guide"
+      - "Quick Routing"
+      - "Set Up Order When Space Is Limited"
+      - "Basic Clinic Flow"
+      - "Zones To Create"
+      - "Arrival and Triage Zone"
+      - "Waiting Zone and Triage Holding"
+      - "Exam and Treatment Zone"
+      - "Isolation Zone"
+      - "Clean Supply Zone"
+      - "Dirty Utility and Waste Zone"
+      - "Handwashing And Cleaning Points"
+      - "Storage Rules"
+      - "Records"
+      - "Waste Flow"
+      - "Privacy"
+      - "What To Build First"
+      - "Practical Minimum Standard"
+source_invariants:
+  - name: clinic_scope_not_treatment
+    guide: GD-965
+    must_include:
+      - "This guide is about clinic layout and daily operations in a low-resource setting."
+      - "It is not a substitute for medical training, diagnosis, or treatment guidance."
+      - "It is not a hospital, and it should not try to behave like one."
+    must_not_match:
+      - "(diagnose|treat|prescribe|dose)[^\\n]{0,120}(from|using) (this|the) (clinic )?(layout|facility) guide"
+  - name: limited_space_first_actions
+    guide: GD-965
+    must_include:
+      - "Handwashing point at the entrance"
+      - "Triage table or chair near the entrance"
+      - "Waiting area that is separate from the exam space"
+      - "Clean supply shelf"
+      - "Dirty waste bin or bag"
+      - "Simple records table"
+      - "Isolation corner or separate room if any infectious patient is expected"
+  - name: clean_dirty_and_waste_flow
+    guide: GD-965
+    must_include:
+      - "Dirty items should not move back through clean areas."
+      - "Keep the waiting area separate from triage, exam, and storage areas."
+      - "Never store contaminated items with clean dressings or paperwork."
+      - "Waste should move one direction only: from patient area to disposal area."
+      - "Never let contaminated waste sit in the waiting area or on the exam table after use."
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-965. This card owns small clinic,
+  medical-tent, health-post, and one-room facility layout/operations hygiene:
+  handwashing at the entrance, front triage/intake, separated waiting/exam/
+  storage, clean and dirty zones, waste flow, records, privacy, and an
+  isolation corner. It deliberately excludes diagnosis, treatment protocols,
+  emergency stabilization, staffing authority beyond records/flow roles, and
+  outbreak quarantine policy beyond routing potentially infectious patients
+  away from the main waiting line.

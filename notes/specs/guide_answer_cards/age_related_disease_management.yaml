@@ -1,0 +1,95 @@
+card_id: age_related_disease_management
+guide_id: GD-700
+slug: age-related-disease-management
+title: Age-Related Disease Management
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Older adult with chronic disease has a new or worsening complaint and the user needs first-pass triage before routine support.
+  - User asks about chronic disease support for an older adult with arthritis, diabetes, heart disease, osteoporosis, chronic pain, vision/hearing loss, or cognitive decline.
+  - Caregiver describes sudden decline, severe weakness, poor intake, vomiting, foot wound, confusion, breathing symptoms, chest pain, stroke signs, or a fall in an older adult.
+required_first_actions:
+  - Screen first for sudden change from baseline, chest pain, stroke signs, severe shortness of breath, dehydration with confusion, repeated vomiting, foot wound or diabetic foot sore, severe weakness, and fall with possible injury.
+  - If any first-screen danger sign is present, seek emergency help, urgent transport, or the fastest available clinician before routine chronic-disease support advice.
+  - State that this card cannot diagnose the cause of decline and cannot provide medication, insulin, antihypertensive, or herbal emergency treatment protocols.
+first_actions:
+  - Compare the current state to the older adult's usual baseline for alertness, breathing, walking, eating/drinking, urination, pain, wounds, and falls.
+  - Keep the person resting and supervised while urgent help or transport is arranged when red flags are present.
+  - Gather medication list, known conditions, allergies, recent falls, recent food/fluid intake, vomiting/diarrhea history, blood pressure or glucose readings if already available, and timeline of change.
+  - For non-urgent chronic disease support, address function, hydration/nutrition support, safe mobility, foot checks for diabetes, adherence to existing prescribed medicines, and handoff to elder daily-care planning when the need is caregiving coverage.
+urgent_red_flags:
+  - Sudden change from baseline, sudden confusion, fainting, collapse, or hard to wake.
+  - Chest pain, pressure, sweating, nausea with chest discomfort, arm/jaw/back pain, or stroke signs such as face droop, one-sided weakness/numbness, speech trouble, or new vision loss.
+  - Severe shortness of breath, blue or gray color, abnormal breathing, or rapidly worsening breathing.
+  - Dehydration with confusion, very poor intake, repeated vomiting, or severe weakness.
+  - Foot wound, diabetic foot sore, infected wound signs, spreading redness, pus, fever, or worsening pain.
+  - Fall with head injury, hip/back/neck pain, inability to stand or walk after the fall, new weakness, or possible fracture.
+forbidden_advice:
+  - Do not claim diagnostic certainty about the cause of sudden decline, confusion, weakness, chest pain, shortness of breath, vomiting, or falls.
+  - Do not recommend medication changes, insulin dose changes, skipped insulin, rescue dosing, or antihypertensive protocols.
+  - Do not provide rapid blood-pressure lowering targets, IV medication instructions, or home crisis-treatment algorithms.
+  - Do not present herbs, supplements, teas, or lifestyle measures as emergency treatment for chest pain, stroke signs, severe shortness of breath, BP crisis, diabetic emergency, dehydration/confusion, or shock.
+  - Do not replace elder daily-care planning, supervision, transfers, hygiene, feeding, or caregiver coverage with this chronic-disease triage card.
+do_not:
+  - Do not reassure sudden confusion or sudden weakness in an older adult as normal aging.
+  - Do not route chest pain, stroke signs, severe shortness of breath, shock signs, acute BP crisis, or diabetic glucose emergency to routine chronic disease maintenance.
+  - Do not use this card as a dementia wandering or home-safety plan; hand off to GD-930.
+  - Do not use this card as the daily elder-care workload plan; hand off to elder-care.
+routine_boundary: >
+  Routine chronic-disease support begins only after sudden decline, cardiopulmonary
+  symptoms, stroke signs, dehydration/confusion, repeated vomiting, serious
+  weakness, diabetic/foot wounds, and fall injury concerns have been screened.
+  Acute BP crisis and diabetic glucose emergency belong to their specific cards;
+  dementia safety belongs to GD-930; daily caregiving burden belongs to
+  elder-care.
+acceptable_uncertain_fit: >
+  If the user gives incomplete details but an older adult with chronic disease
+  may have sudden decline, chest pain, stroke signs, severe shortness of breath,
+  dehydration/confusion, repeated vomiting, a foot wound, severe weakness, or a
+  fall injury, preserve urgent triage and handoff language while asking focused
+  questions. Do not fill gaps with a diagnosis or treatment protocol.
+clarifying_questions:
+  - What changed from the person's usual baseline, and when did it start?
+  - Is there chest pain, stroke signs, severe shortness of breath, confusion, repeated vomiting, severe weakness, a foot wound, or a fall with injury?
+  - What chronic conditions, medications, recent readings, recent intake, and recent falls are known?
+citation_ids:
+  - age-related-first-screen
+  - age-related-routing-boundary
+  - age-related-chronic-support
+source_sections:
+  - guide: GD-700
+    slug: age-related-disease-management
+    title: Age-Related Disease Management
+    sections:
+      - "#overview"
+      - "#cardiovascular-health"
+      - "#cognitive-decline"
+      - "#diabetes-management"
+      - "#maintaining-independence"
+source_invariants:
+  - name: elder sudden decline urgent screen
+    guide: GD-700
+    must_include:
+      - "First screen for sudden decline"
+      - "sudden change from baseline, chest pain, stroke signs, severe shortness of breath, dehydration with confusion, repeated vomiting, a foot wound or diabetic foot sore, severe weakness, or a fall with possible injury"
+      - "This guide does not diagnose the cause and does not provide emergency medication, insulin, blood-pressure, or herbal treatment protocols."
+    must_not_match:
+      - "sudden (?:confusion|weakness|decline)[^\\n]{0,80}(?:is|as) (?:normal aging|routine)"
+      - "change insulin dose"
+      - "rapidly lower blood pressure"
+  - name: elder support handoff boundaries
+    guide: GD-700
+    must_include:
+      - "Acute BP crisis or shock signs"
+      - "Diabetic glucose emergency symptoms or insulin/diabetes medication changes"
+      - "route first to [Elder Care]"
+    must_not_match:
+      - "herb[^\\n]{0,120}emergency treatment"
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-700 elder chronic-disease triage/support
+  boundaries. It screens acute decline and complication red flags first, then
+  limits routine support to non-protocol chronic-disease guidance. It explicitly
+  defers acute BP crisis/shock to the BP card, diabetic glucose emergency and
+  insulin/medication changes to the diabetes-emergency card, dementia safety to
+  GD-930, and daily caregiving burden to elder-care.

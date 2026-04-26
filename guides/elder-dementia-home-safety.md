@@ -33,6 +33,13 @@ aliases:
   - grandparent keeps repeating things
   - old person aggressive all of a sudden
   - elderly suddenly confused
+routing_cues:
+  - Use for day-to-day dementia home safety, wandering prevention, sundowning support, fall-risk reduction, hydration and appetite cues, caregiver medication reminder systems, and calm caregiver communication.
+  - Escalate rather than routine dementia advice when confusion is sudden or much worse than baseline, or when there are stroke signs, head injury, dehydration, severe agitation, severe injury, overdose or poisoning concern, acute delirium, inability to keep safe, or wandering/lost into traffic.
+  - Do not use this guide as a medication dosing, medication change, antidote, sedative, restraint, or diagnostic protocol.
+citations_required: true
+citation_policy: cite reviewed GD-930 dementia home-safety sections and the reviewed GD-930 answer card for day-to-day dementia safety/supportive-care answers and red-flag boundaries
+applicability: Day-to-day dementia home safety, supportive care, wandering/sundowning/fall-risk routines, caregiver communication, hydration/appetite cues, and caregiver medication reminder systems only; not sudden-confusion diagnosis, overdose/poisoning triage, stroke/head-injury triage, sedating medication advice, or medication dosing/changes.
 icon: home
 description: Practical caregiver guidance for a forgetful elder who is confused, wanders, or resists care - with home safety modifications, routine support, hydration, medication reminders, and urgent red flags that need immediate evaluation.
 related:
@@ -52,6 +59,10 @@ liability_level: high
 <section id="overview">
 
 ## 1. Overview: Keeping a Forgetful Elder Safe at Home
+
+This is the reviewed answer-card surface for GD-930. Use it for day-to-day dementia home safety and caregiver communication: reduce hazards, keep routines predictable, use short calm language, support meals and fluids, and set caregiver-owned medication reminder systems. It does not make sudden confusion "just dementia" and it does not provide medication dosing or medication changes.
+
+**Immediate boundary:** if the person may have overdosed or been poisoned, has stroke signs, hit their head, is severely dehydrated, severely agitated, severely injured, acutely delirious, unable to be kept safe, or is lost/wandering into traffic, use urgent medical/emergency handoff rather than routine home-safety advice.
 
 If you are searching for help because "my parent keeps forgetting things and wandering" or because you need to know how to keep an elder with dementia safe, the core answer is this: reduce hazards, simplify choices, make the home predictable, and treat sudden changes in confusion as a medical warning.
 

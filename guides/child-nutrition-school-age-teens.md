@@ -25,6 +25,10 @@ aliases:
   - adolescent diet
   - child weight loss
   - growing child food
+routing_cues:
+  - Use for school-age and teen practical nutrition, meal patterns, picky eating, hydration, active-kid fueling, and protein or iron food basics.
+  - Screen for poor growth, ongoing weight loss, refusal to eat or drink, severe dehydration, fainting, persistent vomiting or diarrhea, edema with wasting, chronic illness, or eating-disorder risk before routine nutrition advice.
+  - Do not use for infant feeding, growth-chart diagnosis, calorie prescriptions, supplement dosing, medication dosing, or emergency dehydration care.
 icon: nutrition
 description: Practical nutrition for school-age children and teenagers, including simple balanced meals, picky eating, appetite and growth patterns, hydration, iron and protein basics, active-kid needs, and warning signs of poor growth or weight loss.
 related:

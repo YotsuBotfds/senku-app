@@ -8,6 +8,18 @@ tags:
   - essential
   - critical
   - medical
+aliases:
+  - epidemic coordination first steps
+  - outbreak coordination boundary
+  - pandemic response first steps
+  - clusters above baseline response
+  - case contact record privacy
+  - isolation quarantine difference
+  - outbreak controlled entry one way flow
+routing_cues:
+  - Use for boundary-only epidemic or pandemic coordination first steps when illness clusters exceed baseline and the answer should cover activation, roles, simple records, privacy, isolation/quarantine concepts, and controlled entry or one-way flow.
+  - Route camp diarrhea, dysentery, watery diarrhea, suspected waterborne outbreaks, or "diarrhea spreading through camp" first to GD-902 Camp Outbreak & Dysentery Operations Quickstart.
+  - Do not use this guide's reviewed answer card for disease-specific isolation durations, bleach percentages or dilutions, PPE construction, medication or post-exposure prophylaxis, enforced quarantine tactics, mass-casualty triage, or decontamination procedures.
 icon: 🦠
 description: Quarantine protocols, contact tracing without technology, field hospital setup, PPE improvisation, epidemic curve analysis, mass casualty triage, decontamination, and community-level disease containment strategies.
 related:
@@ -26,6 +38,8 @@ read_time: 30
 word_count: 9000
 last_updated: '2026-02-22'
 version: '1.0'
+citation_policy: cite the reviewed GD-667 epidemic coordination boundary answer card for safety-critical outbreak coordination first-step answers
+applicability: boundary-only epidemic/pandemic coordination first steps when illness clusters exceed baseline; not disease-specific isolation duration, bleach dilution, PPE construction, medication/PEP, enforced quarantine, mass-casualty, or decontamination protocol
 liability_level: critical
 ---
 ## Introduction
@@ -38,6 +52,25 @@ An epidemic or pandemic can overwhelm medical systems, fragment supply chains, a
 **Quick routing for clinic and outbreak-space questions:**
 - If the question is about building or organizing a low-resource clinic, exam room, isolation corner, storage, or patient flow, see [Clinic Facility Basics](../clinic-facility-basics.html).
 :::
+
+<section id="epidemic-response-operations-boundary">
+
+## Epidemic Response Operations Boundary
+
+This is the reviewed answer-card surface for GD-667. Use it only for early coordination when illness clusters are above normal baseline and the response needs a safe operating boundary, not a full disease-specific protocol.
+
+**First coordination steps:**
+- Activate a simple coordination structure when similar illness clusters exceed the expected baseline for the place and season, or when deaths or severe cases cluster unusually.
+- Assign named roles for decision-making, medical review, logistics, communications, and records so work is not duplicated or improvised under pressure.
+- Keep simple case and contact records with names or local identifiers, symptoms, dates, locations, exposure links, current status, and next check date.
+- Protect privacy: keep contact lists limited to the response team members who need them, never post names publicly, and share community updates as counts and actions rather than personal details.
+- Separate concepts clearly: isolation is for people who are sick or suspected to be infectious; quarantine or monitoring is for people exposed but not currently sick.
+- Use controlled entry and one-way movement for response spaces where possible so sick-care, triage, records, supplies, and exits do not cross back through clean areas.
+- If the presenting problem is camp diarrhea, dysentery, watery diarrhea, or suspected waterborne spread, hand off first to [Camp Outbreak & Dysentery Operations Quickstart](../camp-outbreak-dysentery-operations.html), then return here only for broader coordination.
+
+**Boundary limits:** Do not answer this card with disease-specific isolation durations, bleach percentages or dilution recipes, PPE construction details, medication or post-exposure prophylaxis choices, enforced quarantine tactics, mass-casualty triage, or decontamination procedures.
+
+</section>
 
 ## 1. Recognizing an Epidemic
 

@@ -1,0 +1,180 @@
+card_id: child_nutrition_school_age_teens
+guide_id: GD-954
+slug: child-nutrition-school-age-teens
+title: "Child Nutrition: School-Age Children & Teens"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about supportive nutrition for a school-age child or teenager, roughly age 6 through the teen years.
+  - The question is about meal pattern, balanced meals, picky eating, hydration, active-kid fueling, protein foods, iron foods, appetite swings, growth-spurt eating, or warning signs of poor growth.
+  - No infant-feeding, diagnosis, supplement protocol, calorie prescription, growth-chart interpretation, medication, or dosing request is the main ask.
+required_first_actions:
+  - Screen first for urgent dehydration, confusion, fainting, persistent vomiting or diarrhea, edema or wasting, chronic illness, refusal to eat or drink, and eating-disorder risk.
+  - If red flags are absent, frame care around regular meals, one to three snacks as needed, protein at most meals, starch or grain for energy, fruits or vegetables when available, enough fat, and steady water access.
+  - Keep the answer bounded to supportive nutrition for ages about 6 through teens; route infant feeding, growth-chart interpretation, diagnosis, supplements, calorie prescriptions, medication, and dosing elsewhere.
+conditional_required_actions:
+  - trigger_terms:
+      - dehydration
+      - no urine
+      - dark urine
+      - dry mouth
+      - confusion
+      - fainting
+      - dizzy
+      - lethargic
+      - persistent vomiting
+      - persistent diarrhea
+    required_actions:
+      - Treat severe dehydration, confusion, fainting, very little urine, persistent vomiting, or persistent diarrhea as urgent medical handoff rather than routine nutrition planning.
+  - trigger_terms:
+      - edema
+      - swelling
+      - swollen belly
+      - wasting
+      - thin arms
+      - weight loss
+      - poor growth
+      - chronic illness
+    required_actions:
+      - Escalate edema with wasting, unintentional weight loss, poor growth, chronic vomiting or diarrhea, or nutrition concerns with chronic illness for medical assessment.
+  - trigger_terms:
+      - refuses to eat
+      - refuses to drink
+      - won't eat
+      - won't drink
+      - body image
+      - hiding food
+      - avoiding meals
+      - compulsive exercise
+      - eating disorder
+    required_actions:
+      - Treat refusal to eat or drink and eating-disorder risk signs such as hiding food, avoiding meals, body-image fear, compulsive exercise, or rapid intentional restriction as handoff triggers.
+  - trigger_terms:
+      - infant
+      - baby
+      - newborn
+      - formula
+      - breastfeeding
+      - growth chart
+      - percentile
+      - supplement
+      - calories
+      - dosage
+      - dose
+    required_actions:
+      - Do not answer from this card as the primary owner for infant feeding, growth-chart or percentile interpretation, supplement regimens, calorie prescriptions, medication, or dosing.
+first_actions:
+  - Use a steady pattern of breakfast, lunch, dinner, and one to three snacks when activity, growth spurts, or small appetite make snacks useful.
+  - Build meals from a starch or grain for energy, a protein food, a fruit or vegetable if available, and a little fat for calories and vitamin absorption.
+  - Include practical protein foods such as eggs, milk, yogurt, cheese, beans, lentils, peas, fish, meat, peanut butter, nuts, or seeds when tolerated and available.
+  - Support iron intake with foods such as meat, liver, fish, eggs, beans, lentils, dark leafy greens, or fortified grains; pair plant iron foods with vitamin C foods when possible.
+  - For picky eating, keep meals calm, include one reliable safe food, reoffer new foods without pressure, pair new foods with familiar foods, and avoid force feeding or replacing refused meals with snacks every time.
+  - For hydration, offer water on waking, with meals, before and after activity, after heat exposure, and more often with sweating; watch urine color, regular urination, mouth moisture, energy, and attention.
+  - For active children and teens, plan larger breakfasts, portable snacks, food after hard activity, water before/during/after work or sport, and salt replacement from food when sweating heavily.
+urgent_red_flags:
+  - Severe dehydration signs, very little urine, very dark urine with illness or heat exposure, dry mouth with lethargy, fast heartbeat, confusion, fainting, or inability to keep fluids down.
+  - Persistent vomiting, severe or persistent diarrhea, or vomiting or diarrhea that prevents hydration.
+  - Edema or swelling of the feet or belly with wasting, thin arms, extreme weakness, or visible undernutrition.
+  - Unintentional weight loss, failure to gain expected weight over time, poor linear growth, delayed or absent puberty concern, or repeated illness with poor recovery.
+  - Refusal to eat and drink, a very limited diet with fatigue or weakness, difficulty swallowing, chronic pain with eating, chronic illness, ongoing fever, cough, or infection symptoms.
+  - Eating-disorder risk signs such as hiding food, avoiding meals, body-image fear, compulsive exercise, rapid intentional restriction, or major weight change.
+forbidden_advice:
+  - Do not give infant-feeding, breastfeeding, formula, newborn, or baby feeding guidance from this school-age and teen nutrition card.
+  - Do not interpret growth charts, diagnose anemia, diagnose eating disorders, diagnose gastrointestinal disease, or decide whether growth is medically normal.
+  - Do not prescribe calories, macros, weight-gain targets, supplement regimens, iron pills, vitamins, sports products, medicines, or medication dosing.
+  - Do not reassure severe dehydration, confusion, fainting, persistent vomiting or diarrhea, edema with wasting, chronic illness, refusal to eat or drink, or eating-disorder risk as routine picky eating.
+  - Do not turn meals into force feeding, bribery with sweets, constant special meals for refusal, or conflict-focused eating advice.
+do_not:
+  - Do not skip the red-flag screen when the question mentions weight loss, poor growth, dehydration, vomiting, diarrhea, refusal to eat or drink, or restrictive eating.
+  - Do not make perfect diet quality the goal; the guide emphasizes a practical, consistent pattern from ordinary foods.
+  - Do not route infant feeding, growth percentiles, diagnosis, supplements, calorie prescriptions, medication, or dosing to this card as the primary answer.
+routine_boundary: >
+  Routine supportive nutrition applies to school-age children and teenagers,
+  about age 6 through the teen years, when the concern is practical meal
+  pattern, balanced meals, picky eating, hydration, active-kid fueling, protein
+  foods, iron foods, appetite swings, or growth-spurt eating and urgent red
+  flags are absent. Severe dehydration, confusion, fainting, persistent
+  vomiting or diarrhea, edema or wasting, chronic illness, refusal to eat or
+  drink, eating-disorder risk, infant feeding, growth-chart interpretation,
+  diagnosis, supplements, calorie prescriptions, medication, and dosing exit
+  this routine card.
+acceptable_uncertain_fit: >
+  If age, illness severity, growth status, hydration, or eating-disorder risk
+  is unclear, lead with focused screening questions. Give only conservative
+  supportive steps such as regular meals, a reliable protein food, water with
+  meals and activity, and calm picky-eating structure while advising urgent or
+  professional evaluation for any red flag.
+clarifying_questions:
+  - How old is the child, and is this about a school-age child or teenager rather than an infant or toddler?
+  - Are there severe dehydration signs, confusion, fainting, very little urine, persistent vomiting or diarrhea, edema, wasting, extreme weakness, or refusal to eat or drink?
+  - Has there been unintentional weight loss, poor growth, delayed puberty concern, chronic illness, chronic pain with eating, or repeated illness with poor recovery?
+  - Are there eating-disorder risk signs such as hiding food, avoiding meals, body-image fear, compulsive exercise, rapid intentional restriction, or major weight change?
+  - What does a normal day of meals, snacks, water, activity, and reliable accepted foods look like?
+citation_ids:
+  - child-nutrition-overview-age-scope
+  - child-nutrition-balanced-meals-simple-plate
+  - child-nutrition-picky-eating-support
+  - child-nutrition-hydration-signs
+  - child-nutrition-protein-iron-basics
+  - child-nutrition-active-kid-fueling
+  - child-nutrition-growth-red-flags
+source_sections:
+  - guide: GD-954
+    slug: child-nutrition-school-age-teens
+    title: "Child Nutrition: School-Age Children & Teens"
+    sections:
+      - "#overview"
+      - "#what-changes-with-age"
+      - "#building-balanced-meals-from-simple-foods"
+      - "#picky-eating"
+      - "#hydration"
+      - "#protein-and-iron-basics"
+      - "#active-kids-doing-physical-work"
+      - "#growth-appetite-and-normal-variation"
+      - "#red-flags-for-weight-loss-or-poor-growth"
+      - "#a-simple-daily-routine"
+source_invariants:
+  - name: school-age and teen supportive scope
+    guide: GD-954
+    must_include:
+      - This guide focuses on practical nutrition from about age 6 through the teenage years
+      - simple balanced meals from ordinary foods
+      - picky eating without turning meals into battles
+      - hydration in hot weather, sports, and physical work
+      - protein and iron basics
+    must_not_match:
+      - "(infant|newborn|breastfeeding|formula)[^\\n]{0,160}(primary|routine|main goal|this guide focuses)"
+  - name: meal pattern and picky eating stay practical
+    guide: GD-954
+    must_include:
+      - A starch or grain for energy.
+      - A protein food.
+      - A fruit or vegetable if available.
+      - A little fat for calories and vitamin absorption.
+      - use the "one safe food" rule
+      - do not argue about finishing the plate
+  - name: hydration and urgent dehydration boundaries
+    guide: GD-954
+    must_include:
+      - Offer water
+      - with every meal
+      - before and after activity
+      - confusion
+      - Severe dehydration is a medical problem, especially in smaller children.
+    must_not_match:
+      - "(confusion|fainting|severe dehydration|persistent vomiting|severe diarrhea)[^\\n]{0,160}(watch at home|just picky eating|not urgent)"
+  - name: weight loss poor growth and eating disorder red flags hand off
+    guide: GD-954
+    must_include:
+      - unintentional weight loss
+      - swelling of feet or belly with thin arms
+      - signs of eating-disorder behavior such as hiding food, avoiding meals, body-image fear, compulsive exercise, or rapid intentional restriction
+      - refusal to eat and drink
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-954 supportive nutrition for school-age children
+  and teens only. It covers practical meal pattern, picky eating, hydration,
+  balanced meals, active-kid fueling, protein and iron foods, and red-flag
+  handoffs while keeping infant feeding, growth-chart interpretation, diagnosis,
+  supplements, calorie prescriptions, medication, and dosing out of scope.
