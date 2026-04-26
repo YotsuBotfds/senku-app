@@ -292,7 +292,7 @@ jobs:
 
       - name: Upload non-Android failure logs
         if: failure() && steps.failure_logs.outputs.log_dir != ''
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: non-android-regression-failure-logs
           path: ${{ steps.failure_logs.outputs.log_dir }}
@@ -345,7 +345,7 @@ jobs:
       - name: Upload bench bundle
         id: upload_bench_bundle
         if: always() && steps.bench_bundle.outputs.bundle_zip != ''
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: non-android-regression-bench-bundle
           path: ${{ steps.bench_bundle.outputs.bundle_zip }}
