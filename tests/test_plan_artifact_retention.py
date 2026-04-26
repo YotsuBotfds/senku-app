@@ -204,6 +204,58 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertEqual(row["action"], "keep_protected")
         self.assertIn(manifest.as_posix(), row["protection_sources"])
 
+    def test_malformed_manifest_lines_do_not_abort_retention_planning(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        self.write_bytes(
+            artifacts / "bench" / "evidence_run" / "summary.json",
+            7,
+            age_days=90,
+        )
+        self.write_bytes(
+            artifacts / "bench" / "reference_run" / "summary.json",
+            7,
+            age_days=90,
+        )
+
+        manifest_lines = [
+            "{not valid json",  # malformed, no artifact refs
+            json.dumps(
+                {
+                    "artifact_path_evidence": [
+                        {
+                            "path": "artifacts/bench/evidence_run",
+                            "exists": True,
+                            "kind": "directory",
+                        },
+                    ]
+                }
+            ),
+            json.dumps({"output": ["artifacts/bench/reference_run/summary.json"]}),
+            "{",  # malformed, no artifact refs
+        ]
+        self.write_text(manifest, "\n".join(manifest_lines))
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[],
+            manifest_paths=[manifest],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
+
+        families = {row["path"]: row for row in plan["families"]}
+        self.assertTrue(families["bench/evidence_run"]["protected"])
+        self.assertEqual(families["bench/evidence_run"]["action"], "keep_protected")
+        self.assertIn(manifest.as_posix(), families["bench/evidence_run"]["protection_sources"])
+        self.assertTrue(families["bench/reference_run"]["protected"])
+        self.assertEqual(families["bench/reference_run"]["action"], "keep_protected")
+        self.assertIn(manifest.as_posix(), families["bench/reference_run"]["protection_sources"])
+        self.assertIn(manifest.as_posix(), plan["references"]["sources"])
+        self.assertEqual(plan["summary"]["reference_count"], 2)
+
     def test_groups_generated_families_by_timestamp_normalized_name(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"

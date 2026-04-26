@@ -483,6 +483,9 @@ Action:
 - Artifact-retention reference scans now ignore protected local
   `PLANNER_HANDOFF*.md` notes, so continuation handoffs do not accidentally
   protect generated artifact families.
+- Artifact-retention manifest coverage now proves malformed JSONL lines do not
+  abort planning while valid `artifact_path_evidence` and output references in
+  the same manifest still protect families.
 - Guide edit impact planning now suggests focused sibling tests for root runtime
   modules such as `guide_catalog.py`, not only `scripts/*.py` helpers.
 
@@ -503,6 +506,8 @@ Validation:
   in generated Markdown table rows.
 - `tests.test_plan_artifact_retention` covers ignored planner handoff refs while
   preserving ordinary note-based artifact protection.
+- `tests.test_plan_artifact_retention` also covers malformed manifest lines
+  alongside valid manifest references.
 - `tests.test_guide_edit_impact` covers root runtime sibling test discovery and
   no-op behavior when no sibling test exists.
 
