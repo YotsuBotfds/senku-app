@@ -2447,6 +2447,39 @@ _ELECTRICAL_HAZARD_QUERY_MARKERS = {
     "before touching anything",
 }
 
+_WET_PUMP_ROOM_SYSTEM_MARKERS = {
+    "small water system",
+    "water system",
+    "water-system",
+    "pump room",
+    "pump-room",
+}
+
+_WET_PUMP_ROOM_WATER_MARKERS = {
+    "pump room floor is wet",
+    "pump-room floor is wet",
+    "wet pump room",
+    "wet pump-room",
+    "floor is wet",
+    "wet floor",
+    "standing water",
+    "flooded",
+    "floodwater",
+}
+
+_WET_PUMP_ROOM_RESTART_MARKERS = {
+    "restart the pump",
+    "restart pump",
+    "start the pump",
+    "start pump",
+    "turn the pump back on",
+    "turn pump back on",
+    "fill tanks",
+    "tanks filled",
+    "minimum operations sequence",
+    "safe minimum operations",
+}
+
 _DOWNED_POWER_LINE_QUERY_MARKERS = {
     "downed power line",
     "downed line",
@@ -5531,7 +5564,19 @@ def _is_surgical_abdomen_emergency_query(question):
 def _is_electrical_hazard_query(question):
     """Detect electrical danger prompts that should route to hazard-first guidance."""
     lower = question.lower()
-    return _text_has_marker(lower, _ELECTRICAL_HAZARD_QUERY_MARKERS)
+    return _text_has_marker(
+        lower, _ELECTRICAL_HAZARD_QUERY_MARKERS
+    ) or _is_wet_pump_room_electrical_hazard_query(question)
+
+
+def _is_wet_pump_room_electrical_hazard_query(question):
+    """Detect wet pump-room restart prompts as electrical hazards."""
+    lower = question.lower()
+    return (
+        _text_has_marker(lower, _WET_PUMP_ROOM_SYSTEM_MARKERS)
+        and _text_has_marker(lower, _WET_PUMP_ROOM_WATER_MARKERS)
+        and _text_has_marker(lower, _WET_PUMP_ROOM_RESTART_MARKERS)
+    )
 
 
 def _is_downed_power_line_query(question):

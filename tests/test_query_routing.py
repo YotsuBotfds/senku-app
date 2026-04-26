@@ -599,6 +599,10 @@ class QueryRoutingTests(unittest.TestCase):
             "Our small water system needs tanks filled, but the pump room floor "
             "is wet. What safe minimum operations sequence lets us restart the pump?"
         )
+        exact_re8_question = (
+            "Our flooded water-system needs tanks filled, but the pump-room floor "
+            "is wet. What safe minimum operations sequence lets us restart the pump?"
+        )
         electrical_meta = {
             "guide_id": "GD-513",
             "guide_title": "Electrical Safety & Hazard Prevention",
@@ -618,6 +622,23 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertLess(
             query._metadata_rerank_delta(question, electrical_meta),
             query._metadata_rerank_delta(question, water_meta),
+        )
+        self.assertTrue(query._is_electrical_hazard_query(exact_re8_question))
+        self.assertEqual(
+            query._retrieval_profile_for_question(exact_re8_question),
+            "safety_triage",
+        )
+        exact_re8_specs = query._supplemental_retrieval_specs(exact_re8_question, 8)
+        self.assertTrue(
+            any(
+                "electrical safety hazard prevention" in spec["text"]
+                for spec in exact_re8_specs
+            ),
+            [spec["text"] for spec in exact_re8_specs],
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(exact_re8_question, electrical_meta),
+            query._metadata_rerank_delta(exact_re8_question, water_meta),
         )
 
         broad_questions = [
@@ -1245,6 +1266,7 @@ class QueryRoutingTests(unittest.TestCase):
             "Can we patch the roof now if there may be electrical damage inside and standing water near the panel?",
             "After the storm the roof leak got outlets wet. Can I restart power?",
             "During storm cleanup someone got shocked by wet electricity under a roof leak and collapsed. Restart power?",
+            "Our flooded water-system needs tanks filled, but the pump-room floor is wet. What safe minimum operations sequence lets us restart the pump?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
