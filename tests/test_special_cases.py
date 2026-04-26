@@ -1466,6 +1466,7 @@ class SpecialCaseTests(unittest.TestCase):
             "I wake up with a bad headache near the stove, but it gets better outside. What matters first?",
             "We feel weak and nauseated near the heater, but the room does not look smoky. What do I do first?",
             "After a generator was moved into an attached garage, two people have headaches and dizziness and a child is very sleepy. What comes first?",
+            "A generator ran in the garage during a storm, people woke with headache and nausea, and there are wet basement outlets. Should we check the breaker or open windows first?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -1480,6 +1481,15 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("do not wait to see visible smoke or decide whether it is flu", response)
         self.assertNotIn("simple headache", response.lower())
         self.assertNotIn("heat illness", response.lower())
+
+        exact_row_response = query.build_special_case_response(prompts[-1])
+        exact_row_opening = exact_row_response.split("1.", 1)[0].lower()
+        self.assertIn("possible carbon monoxide or fire-gas exposure", exact_row_response)
+        self.assertIn("Get everyone out to fresh air immediately", exact_row_response)
+        self.assertIn("Call emergency help or poison control now", exact_row_response)
+        self.assertIn("[GD-899]", exact_row_response)
+        self.assertNotIn("breaker", exact_row_opening)
+        self.assertNotIn("outlet", exact_row_opening)
 
         self.assertEqual(
             query.classify_special_case("How do I build a charcoal sand water filter?"),
@@ -1811,6 +1821,7 @@ class SpecialCaseTests(unittest.TestCase):
             "Should I give milk or water after a child got into cleaner? What do I do first?",
             "A child may have gotten into caustic cleaner and seems fine so far, but some is missing. What matters first?",
             "The child may have swallowed something from under the sink and now has mouth pain. What do I do first?",
+            "A child tasted an unlabeled cleaner while we are treating flood water, and their mouth is burning. Can we give lots of water or make them vomit before calling?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -1824,6 +1835,16 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("Do not make the child vomit", response)
         self.assertIn("milk", response)
         self.assertIn("Save the bottle", response)
+
+        exact_row_response = query.build_special_case_response(prompts[-1])
+        exact_row_opening = exact_row_response.split("1.", 1)[0].lower()
+        self.assertIn("Treat this as a poison exposure now", exact_row_response)
+        self.assertIn("Poison Control", exact_row_response)
+        self.assertIn("Do not make the child vomit", exact_row_response)
+        self.assertIn("do not force anything to drink", exact_row_response)
+        self.assertIn("[GD-898]", exact_row_response)
+        self.assertNotIn("flood", exact_row_opening)
+        self.assertNotIn("water treatment", exact_row_opening)
 
     def test_hydrocarbon_ingestion_aspiration_ds_prompts_route(self):
         prompts = [

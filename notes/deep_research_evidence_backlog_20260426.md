@@ -197,6 +197,10 @@ Action:
 - Added exact `RE9-AN-001` deterministic route proof. The anaphylaxis test now
   includes the beekeeper / flooded-road / antihistamine lure prompt and asserts
   epinephrine plus emergency help stay ahead of flood-route logistics.
+- Added exact `RE9-SM-001` and `RE9-PO-001` deterministic route proofs in the
+  existing carbon-monoxide and child-cleaner tests. The new prompts pin
+  emergency-first CO evacuation and Poison Control/vomiting guidance ahead of
+  storm breaker, wet outlet, flood-water, and forced-fluid distractors.
 
 Validation:
 
