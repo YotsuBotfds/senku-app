@@ -197,6 +197,147 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["issues"][0]["code"], "retrieval_missing_expected_owner")
         self.assertEqual(report["issues"][0]["prompt_id"], "RE2-UP-009")
 
+    def test_retrieval_eval_without_primary_expectations_is_unchanged(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "prompt": "Broad owner only.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text(
+            json.dumps(
+                {
+                    "rows": [
+                        {
+                            "prompt_id": "P-1",
+                            "expected_guide_ids": ["GD-120"],
+                            "top_retrieved_guide_ids": ["GD-397", "GD-120"],
+                            "primary_hit_at_k": False,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["issues"], [])
+
+    def test_retrieval_eval_json_flags_primary_expected_owner_miss(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120", "GD-397"],
+                    "primary_expected_guide_ids": ["GD-397"],
+                    "prompt": "Broad hit, primary miss.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text(
+            json.dumps(
+                {
+                    "rows": [
+                        {
+                            "prompt_id": "P-1",
+                            "expected_guide_ids": ["GD-120", "GD-397"],
+                            "primary_expected_guide_ids": ["GD-397"],
+                            "top_retrieved_guide_ids": ["GD-120"],
+                            "expected_hit_at_k": True,
+                            "primary_hit_at_k": False,
+                            "primary_best_rank": None,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+        )
+
+        self.assertEqual(report["status"], "warn")
+        self.assertEqual(len(report["issues"]), 1)
+        self.assertEqual(report["issues"][0]["code"], "retrieval_missing_primary_expected_owner")
+        self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
+
+    def test_retrieval_eval_json_accepts_primary_expected_owner_hit(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120", "GD-397"],
+                    "primary_expected_guide_ids": ["GD-397"],
+                    "prompt": "Primary hit.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text(
+            json.dumps(
+                {
+                    "rows": [
+                        {
+                            "prompt_id": "P-1",
+                            "expected_guide_ids": ["GD-120", "GD-397"],
+                            "primary_expected_guide_ids": ["GD-397"],
+                            "top_retrieved_guide_ids": ["GD-397", "GD-120"],
+                            "primary_hit_at_1": True,
+                            "primary_hit_at_3": True,
+                            "primary_hit_at_k": True,
+                            "primary_owner_best_rank": 1,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+            retrieval_top_k=1,
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["issues"], [])
+
     def test_retrieval_eval_markdown_parses_escaped_pipe_lists(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-397", "tool-sharpening-maintenance")

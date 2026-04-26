@@ -44,6 +44,14 @@ RETRIEVED_GUIDE_KEYS = (
     "source_candidates",
     "retrieved",
 )
+PRIMARY_EXPECTED_GUIDE_KEYS = (
+    "primary_expected_guide_ids",
+    "primary_expected_guides",
+)
+PRIMARY_HIT_KEYS_BY_TOP_K = {
+    1: "primary_hit_at_1",
+    3: "primary_hit_at_3",
+}
 
 
 @dataclass(frozen=True)
@@ -329,6 +337,15 @@ def expected_ids_from_record(record: Mapping[str, Any]) -> list[str]:
     ids: list[str] = []
     for value in expected_field_ids(record).values():
         ids.extend(value)
+    return dedupe(ids)
+
+
+def primary_expected_ids_from_record(record: Mapping[str, Any]) -> list[str]:
+    ids: list[str] = []
+    lowered = {str(key).lower(): value for key, value in record.items()}
+    for key in PRIMARY_EXPECTED_GUIDE_KEYS:
+        extracted, _malformed = extract_guide_ids(lowered.get(key))
+        ids.extend(extracted)
     return dedupe(ids)
 
 
@@ -666,14 +683,19 @@ def retrieval_eval_issues(
     eval_rows: Sequence[Mapping[str, Any]],
     *,
     prompt_expectations: Mapping[str, Sequence[str]],
+    prompt_primary_expectations: Mapping[str, Sequence[str]] | None = None,
     top_k: int | None = None,
 ) -> list[dict[str, Any]]:
     issues: list[dict[str, Any]] = []
+    prompt_primary_expectations = prompt_primary_expectations or {}
     for index, row in enumerate(eval_rows, start=1):
         prompt_id = first_present(row, ("prompt_id", "id", "case_id", "label"))
         expected = expected_ids_from_record(row)
         if not expected and prompt_id:
             expected = list(prompt_expectations.get(prompt_id) or [])
+        primary_expected = primary_expected_ids_from_record(row)
+        if not primary_expected and row_has_primary_expectation_metadata(row) and prompt_id:
+            primary_expected = list(prompt_primary_expectations.get(prompt_id) or [])
         retrieved = retrieved_ids_from_row(row)
         if top_k is not None and top_k >= 0:
             retrieved = retrieved[:top_k]
@@ -716,7 +738,86 @@ def retrieval_eval_issues(
                     details={"top_retrieved_guide_ids": retrieved},
                 )
             )
+        issues.extend(
+            primary_retrieval_eval_issues(
+                row,
+                row_index=index,
+                prompt_id=prompt_id,
+                primary_expected=primary_expected,
+                retrieved=retrieved,
+                top_k=top_k,
+            )
+        )
     return issues
+
+
+def row_has_primary_expectation_metadata(row: Mapping[str, Any]) -> bool:
+    return any(str(key).lower() in PRIMARY_EXPECTED_GUIDE_KEYS for key in row)
+
+
+def primary_retrieval_eval_issues(
+    row: Mapping[str, Any],
+    *,
+    row_index: int,
+    prompt_id: str,
+    primary_expected: Sequence[str],
+    retrieved: Sequence[str],
+    top_k: int | None,
+) -> list[dict[str, Any]]:
+    if not primary_expected:
+        return []
+
+    hit_key = primary_hit_key(top_k)
+    reported_hit = bool_from_row_value(row.get(hit_key))
+    if reported_hit is True:
+        return []
+
+    if reported_hit is None and retrieved and set(primary_expected) & set(retrieved):
+        return []
+
+    details: dict[str, Any] = {
+        "top_retrieved_guide_ids": list(retrieved),
+        "primary_hit_field": hit_key,
+    }
+    for key in ("primary_best_rank", "primary_owner_best_rank"):
+        if key in row:
+            details[key] = row.get(key)
+    if reported_hit is not None:
+        details["reported_primary_hit"] = reported_hit
+
+    return [
+        issue(
+            "warning",
+            "retrieval_missing_primary_expected_owner",
+            "Primary expected guide owner never appears in retrieved top-k.",
+            path=_clean_text(row.get("_eval_path")),
+            line=row_index,
+            prompt_id=prompt_id,
+            guide_ids=primary_expected,
+            details=details,
+        )
+    ]
+
+
+def primary_hit_key(top_k: int | None) -> str:
+    if top_k is not None:
+        return PRIMARY_HIT_KEYS_BY_TOP_K.get(top_k, "primary_hit_at_k")
+    return "primary_hit_at_k"
+
+
+def bool_from_row_value(value: Any) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    text = _clean_text(value).lower()
+    if not text:
+        return None
+    if text in {"1", "true", "t", "yes", "y"}:
+        return True
+    if text in {"0", "false", "f", "no", "n"}:
+        return False
+    return None
 
 
 def retrieved_ids_from_row(row: Mapping[str, Any]) -> list[str]:
@@ -779,9 +880,11 @@ def validate(
     issues.extend(validate_prompt_records(records, guide_catalog=catalog))
 
     prompt_expectations: dict[str, list[str]] = {}
+    prompt_primary_expectations: dict[str, list[str]] = {}
     for record in records:
         if record.prompt_id:
             prompt_expectations[record.prompt_id] = expected_ids_from_record(record.data)
+            prompt_primary_expectations[record.prompt_id] = primary_expected_ids_from_record(record.data)
 
     eval_rows: list[dict[str, Any]] = []
     for path in retrieval_eval_paths:
@@ -792,6 +895,7 @@ def validate(
         retrieval_eval_issues(
             eval_rows,
             prompt_expectations=prompt_expectations,
+            prompt_primary_expectations=prompt_primary_expectations,
             top_k=retrieval_top_k,
         )
     )
