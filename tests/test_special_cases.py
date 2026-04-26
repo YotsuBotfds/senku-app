@@ -1654,6 +1654,7 @@ class SpecialCaseTests(unittest.TestCase):
             "Lots of stings on the head and neck and now feeling faint.",
             "Sting reaction or panic because voice sounds strange and breathing feels off.",
             "Whole body hives and weakness after a sting on the arm.",
+            "A beekeeper's lips are swelling and they are wheezing after a sting. The road is partly flooded, and someone wants to try antihistamines while we check the route. What comes first?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -1663,8 +1664,15 @@ class SpecialCaseTests(unittest.TestCase):
                 )
 
         response = query.build_special_case_response(prompts[-1])
+        opening = response.split("1.", 1)[0].lower()
+        self.assertIn("Treat this as possible anaphylaxis now", response)
         self.assertIn("Give epinephrine immediately", response)
+        self.assertIn("Do not wait for antihistamines", response)
+        self.assertIn("Call emergency help now", response)
+        self.assertIn("[GD-400]", response)
         self.assertIn("rescue inhaler can be used only as an adjunct", response)
+        self.assertNotIn("flood", opening)
+        self.assertNotIn("route", opening)
 
         self.assertEqual(
             query.classify_special_case("My rescue inhaler is not helping and I am panicking. What matters first?"),

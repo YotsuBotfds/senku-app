@@ -194,6 +194,9 @@ Action:
   no-sleep/activation crisis test now includes the wildfire evacuation /
   animal-trailer prompt and asserts `GD-859` safety-first response text stays
   ahead of logistics.
+- Added exact `RE9-AN-001` deterministic route proof. The anaphylaxis test now
+  includes the beekeeper / flooded-road / antihistamine lure prompt and asserts
+  epinephrine plus emergency help stay ahead of flood-route logistics.
 
 Validation:
 
