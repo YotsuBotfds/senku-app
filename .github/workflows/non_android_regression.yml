@@ -124,7 +124,7 @@ jobs:
           path: db
           key: retrieval-index-${{ runner.os }}-${{ inputs.mode }}-${{ inputs.include_safety_critical }}-${{ inputs.retrieval_index_flavor }}-${{ hashFiles('requirements.lock.txt', 'ingest.py', 'ingest_freshness.py', 'config.py', 'metadata_helpers.py', 'metadata_validation.py', 'token_estimation.py', 'scripts/select_prompt_pack_guides.py', 'guides/**/*.md', 'artifacts/prompts/**/*.jsonl') }}
           restore-keys: |
-            retrieval-index-${{ runner.os }}-
+            retrieval-index-${{ runner.os }}-${{ inputs.mode }}-${{ inputs.include_safety_critical }}-${{ inputs.retrieval_index_flavor }}-
 
       - name: Install validation dependencies
         shell: pwsh

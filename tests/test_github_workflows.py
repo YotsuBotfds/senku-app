@@ -118,6 +118,18 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("inputs.retrieval_index_flavor", retrieval_cache_step["with"]["key"])
         self.assertIn("guides/**/*.md", retrieval_cache_step["with"]["key"])
         self.assertIn("ingest_freshness.py", retrieval_cache_step["with"]["key"])
+        retrieval_restore_keys = [
+            line.strip()
+            for line in retrieval_cache_step["with"]["restore-keys"].splitlines()
+            if line.strip()
+        ]
+        self.assertEqual(
+            retrieval_restore_keys,
+            [
+                "retrieval-index-${{ runner.os }}-${{ inputs.mode }}-${{ inputs.include_safety_critical }}-${{ inputs.retrieval_index_flavor }}-"
+            ],
+        )
+        self.assertNotIn("retrieval-index-${{ runner.os }}-", retrieval_restore_keys)
         self.assertIn(
             "scripts/select_prompt_pack_guides.py",
             retrieval_cache_step["with"]["key"],

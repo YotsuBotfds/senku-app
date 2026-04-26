@@ -219,12 +219,17 @@ Action:
 - If approved later, generate a fresh dry run first, archive only unprotected
   generated families, preserve relative paths/checksums/manifests, and exclude
   Android/emulator-heavy candidates unless that lane approves.
+- Cache hygiene guard added: the Non-Android retrieval-index cache restore key
+  is scoped by mode, safety-critical flag, and `retrieval_index_flavor`, so a
+  broad Windows-only restore cannot hydrate a DB from the wrong retrieval lane.
 
 Validation:
 
 - Protected proof artifacts and current CI failure evidence remain in place;
   a post-action dry run can prove preserved protected totals and archived byte
   counts.
+- `tests.test_github_workflows` asserts the retrieval cache key and restore
+  prefix carry the same mode/safety/flavor dimensions.
 
 Deferred unless evidenced:
 
