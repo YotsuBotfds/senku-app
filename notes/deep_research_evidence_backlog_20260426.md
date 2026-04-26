@@ -488,6 +488,9 @@ Action:
   the same manifest still protect families.
 - Guide edit impact planning now suggests focused sibling tests for root runtime
   modules such as `guide_catalog.py`, not only `scripts/*.py` helpers.
+- Prompt expectation validation now fails explicit retrieval primary-owner
+  fields that are blank or malformed, including Markdown `primary` aliases,
+  instead of silently falling back to prompt-pack metadata.
 
 Validation:
 
@@ -510,6 +513,8 @@ Validation:
   alongside valid manifest references.
 - `tests.test_guide_edit_impact` covers root runtime sibling test discovery and
   no-op behavior when no sibling test exists.
+- `tests.test_validate_prompt_expectations` covers blank and malformed Markdown
+  primary-owner fields as validation failures.
 
 Deferred unless evidenced:
 

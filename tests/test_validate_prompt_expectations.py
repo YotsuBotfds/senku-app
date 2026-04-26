@@ -826,6 +826,78 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["issues"][0]["code"], "retrieval_missing_primary_expected_owner")
         self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
 
+    def test_retrieval_eval_markdown_flags_empty_primary_expected_owner_field(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "prompt": "Primary expectation intentionally blank in markdown.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        md = root / "retrieval.md"
+        md.write_text(
+            "| id | expected | primary | top retrieved |\n"
+            "| --- | --- | --- | --- |\n"
+            "| P-1 | GD-120 |  | GD-120 |\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[md],
+        )
+
+        self.assertEqual(report["status"], "fail")
+        self.assertIn(
+            "retrieval_primary_expected_guide_field_without_guide_id",
+            {item["code"] for item in report["issues"]},
+        )
+
+    def test_retrieval_eval_markdown_flags_malformed_primary_expected_owner_field(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "prompt": "Malformed primary expectation in markdown.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        md = root / "retrieval.md"
+        md.write_text(
+            "| id | expected | primary | top retrieved |\n"
+            "| --- | --- | --- | --- |\n"
+            "| P-1 | GD-120 | GD-12x | GD-120 |\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[md],
+        )
+
+        self.assertEqual(report["status"], "fail")
+        self.assertIn(
+            "malformed_retrieval_primary_expected_guide_id",
+            {item["code"] for item in report["issues"]},
+        )
+
     def test_retrieval_eval_markdown_primary_alias_accepts_primary_expected_owner_hit(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")

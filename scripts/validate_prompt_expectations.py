@@ -736,10 +736,21 @@ def retrieval_eval_issues(
     prompt_primary_expectations = prompt_primary_expectations or {}
     for index, row in enumerate(eval_rows, start=1):
         prompt_id = first_present(row, ("prompt_id", "id", "case_id", "label"))
+        eval_path = _clean_text(row.get("_eval_path"))
         expected = expected_ids_from_record(row)
         if not expected and prompt_id:
             expected = list(prompt_expectations.get(prompt_id) or [])
-        primary_expected = primary_expected_ids_from_record(row)
+        explicit_primary_metadata = row_has_primary_expectation_metadata(row)
+        if explicit_primary_metadata:
+            primary_expected, explicit_issues = explicit_primary_expectation_issues(
+                row,
+                prompt_id=prompt_id,
+                path=eval_path,
+                row_index=index,
+            )
+            issues.extend(explicit_issues)
+        else:
+            primary_expected = primary_expected_ids_from_record(row)
         if not primary_expected and prompt_id:
             primary_expected = list(prompt_primary_expectations.get(prompt_id) or [])
         retrieved = retrieved_ids_from_row(row)
@@ -751,7 +762,7 @@ def retrieval_eval_issues(
                     "warning",
                     "retrieval_eval_missing_prompt_id",
                     "Retrieval eval row has no prompt id; expected-owner drift cannot be matched to a prompt.",
-                    path=_clean_text(row.get("_eval_path")),
+                    path=eval_path,
                     line=index,
                 )
             )
@@ -764,7 +775,7 @@ def retrieval_eval_issues(
                     "warning",
                     "retrieval_eval_missing_top_k",
                     "Retrieval eval row has expected owner metadata but no retrieved top-k guide ids.",
-                    path=_clean_text(row.get("_eval_path")),
+                    path=eval_path,
                     line=index,
                     prompt_id=prompt_id,
                     guide_ids=expected,
@@ -777,7 +788,7 @@ def retrieval_eval_issues(
                     "warning",
                     "retrieval_missing_expected_owner",
                     "Expected guide owner never appears in retrieved top-k.",
-                    path=_clean_text(row.get("_eval_path")),
+                    path=eval_path,
                     line=index,
                     prompt_id=prompt_id,
                     guide_ids=expected,
@@ -799,6 +810,52 @@ def retrieval_eval_issues(
 
 def row_has_primary_expectation_metadata(row: Mapping[str, Any]) -> bool:
     return any(str(key).lower() in PRIMARY_EXPECTED_GUIDE_KEYS for key in row)
+
+
+def explicit_primary_expectation_issues(
+    row: Mapping[str, Any],
+    *,
+    prompt_id: str,
+    path: str,
+    row_index: int,
+) -> tuple[list[str], list[dict[str, Any]]]:
+    ids: list[str] = []
+    issues: list[dict[str, Any]] = []
+    for key, value in row.items():
+        if str(key).lower() not in PRIMARY_EXPECTED_GUIDE_KEYS:
+            continue
+        extracted, malformed = extract_guide_ids(value)
+        ids.extend(extracted)
+        if malformed:
+            issues.append(
+                issue(
+                    "error",
+                    "malformed_retrieval_primary_expected_guide_id",
+                    (
+                        f"Primary expected-guide field {key!r} contains malformed guide id(s): "
+                        f"{', '.join(malformed)}."
+                    ),
+                    path=path,
+                    line=row_index,
+                    prompt_id=prompt_id,
+                    guide_ids=malformed,
+                    field=str(key),
+                )
+            )
+            continue
+        if not extracted:
+            issues.append(
+                issue(
+                    "error",
+                    "retrieval_primary_expected_guide_field_without_guide_id",
+                    f"Primary expected-guide field {key!r} does not contain a GD-### guide id.",
+                    path=path,
+                    line=row_index,
+                    prompt_id=prompt_id,
+                    field=str(key),
+                )
+            )
+    return dedupe(ids), issues
 
 
 def primary_retrieval_eval_issues(
