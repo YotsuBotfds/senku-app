@@ -1212,6 +1212,7 @@ class SpecialCaseTests(unittest.TestCase):
             "severe headache and vomiting after yard work",
             "muscle cramps turning into weakness and confusion",
             "is this heat exhaustion or heat stroke",
+            "A field worker is confused, very hot, and sweating after spraying chemicals. Shade is limited and our drinking water may be unsafe. What do we do first without mixing up heat illness and poisoning?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -1225,6 +1226,12 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("active cooling", response)
         self.assertIn("Call emergency help", response)
         self.assertIn("do not force fluids", response)
+        compound_response = query.build_special_case_response(prompts[-1])
+        self.assertIn("known-safe water", compound_response)
+        self.assertIn("questionable drinking water", compound_response)
+        self.assertIn("pesticide or chemical spraying", compound_response)
+        self.assertIn("without delaying cooling", compound_response)
+        self.assertIn("poison-control or emergency responders", compound_response)
         self.assertNotIn("weapons", response.lower())
         self.assertNotIn("validate the emotion", response.lower())
 
