@@ -309,6 +309,7 @@ def render_markdown(report: dict[str, Any], *, limit: int = 200) -> str:
         f"- Generated at: `{report['generated_at']}`",
         f"- Files scanned: `{report['files_scanned']}`",
         f"- Findings: `{report['findings_count']}`",
+        f"- Allowed findings: `{report.get('allowed_findings_count', 0)}`",
         f"- Gate findings: `{report.get('gate_findings_count', report['findings_count'])}`",
         "",
         "## Counts By Kind",

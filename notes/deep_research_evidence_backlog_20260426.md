@@ -310,6 +310,8 @@ Action:
 - Hardened bench Markdown response recovery so padded source/context headings
   stop answer extraction instead of leaking source bullets into fallback
   response text.
+- Surfaced allowed mojibake finding counts in Markdown reports so report-only
+  and allowlisted scans visibly separate total findings from gate findings.
 - Added compact Markdown report summaries to the bench artifact index, including
   title, line count, and heading count under the existing size guard.
 - Added retrieval-eval Markdown parsing for a `primary` column so Markdown

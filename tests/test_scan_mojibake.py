@@ -42,6 +42,31 @@ class MojibakeScanTests(unittest.TestCase):
             any(finding["path"] == "guides/damaged.md" for finding in report["findings"])
         )
 
+    def test_render_markdown_shows_allowed_and_gate_findings_counts(self):
+        report = {
+            "generated_at": "2026-04-26T00:00:00+00:00",
+            "files_scanned": 1,
+            "findings_count": 2,
+            "allowed_findings_count": 1,
+            "gate_findings_count": 1,
+            "counts_by_kind": {"replacement_character": 2},
+            "top_files": [{"path": "notes/example.md", "findings": 2}],
+            "findings": [
+                {
+                    "path": "notes/example.md",
+                    "line": 3,
+                    "kind": "replacement_character",
+                    "snippet": "Bad \ufffd",
+                }
+            ],
+        }
+
+        markdown = scan_mojibake.render_markdown(report)
+
+        self.assertIn("- Findings: `2`", markdown)
+        self.assertIn("- Allowed findings: `1`", markdown)
+        self.assertIn("- Gate findings: `1`", markdown)
+
     def test_cli_writes_json_and_markdown_reports(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -225,7 +250,13 @@ class MojibakeScanTests(unittest.TestCase):
 
             self.assertEqual(allowed.returncode, 0, allowed.stderr)
             self.assertEqual(allowed_report["findings_count"], 2)
+            self.assertEqual(allowed_report["allowed_findings_count"], 2)
             self.assertEqual(allowed_report["gate_findings_count"], 0)
+            self.assertEqual(len(allowed_report["findings"]), 2)
+            self.assertIn(
+                "- Allowed findings: `2`",
+                (root / "allowed.md").read_text(encoding="utf-8"),
+            )
 
 
 if __name__ == "__main__":
