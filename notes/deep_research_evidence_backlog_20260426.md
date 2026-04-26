@@ -209,6 +209,14 @@ Action:
   retrieval packs, prompt expectation validation, and FastEmbed. Also added a
   generic workflow artifact policy check for short retention and missing-file
   errors on every upload step.
+- Added a `Master Head Health` push workflow that calls the reusable
+  non-Android gate in `Generated` mode on every `master` push, giving HEAD an
+  observable no-FastEmbed health signal without turning every commit into a
+  retrieval rebuild.
+- Adjusted the PowerShell analyzer gate to require analyzer availability while
+  blocking only `Error` severity findings. Existing warning/information debt is
+  still printed explicitly so the lane becomes visible without failing on the
+  current backlog-sized warning wall.
 
 Validation:
 

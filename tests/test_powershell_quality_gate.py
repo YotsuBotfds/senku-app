@@ -26,6 +26,13 @@ def run_gate(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 class PowerShellQualityGateTests(unittest.TestCase):
+    def test_analyzer_gate_blocks_errors_but_reports_warning_debt(self):
+        script = SCRIPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("$blockingFindings = @($findings | Where-Object { $_.Severity -eq 'Error' })", script)
+        self.assertIn("error finding(s)", script)
+        self.assertIn("non-blocking warning/information finding(s)", script)
+
     def test_quality_gate_parses_selected_script(self):
         result = run_gate(
             "-Path",

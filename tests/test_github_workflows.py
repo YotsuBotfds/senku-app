@@ -219,6 +219,37 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         )
         self.assertIn("finally", gate_script)
 
+    def test_master_head_health_runs_generated_smoke_on_every_master_push(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "master_head_health.yml").read_text(encoding="utf-8")
+        )
+
+        triggers = workflow.get("on", workflow.get(True, {}))
+        self.assertIn("push", triggers)
+        self.assertEqual(["master"], triggers["push"]["branches"])
+        self.assertIn("workflow_dispatch", triggers)
+
+        jobs = workflow["jobs"]
+        self.assertEqual(["generated-head-health"], list(jobs))
+        job = jobs["generated-head-health"]
+        self.assertEqual("./.github/workflows/non_android_regression.yml", job["uses"])
+        self.assertEqual(
+            {
+                "contents": "read",
+                "id-token": "write",
+                "attestations": "write",
+            },
+            job["permissions"],
+        )
+        self.assertEqual("Generated", job["with"]["mode"])
+        self.assertEqual(
+            "tests\\fixtures\\non_android_generated\\candidate.json",
+            job["with"]["generated_bench_json"],
+        )
+        self.assertTrue(job["with"]["fail_on_generated_regression"])
+        self.assertFalse(job["with"]["allow_retrieval_warnings"])
+        self.assertFalse(job["with"]["include_safety_critical"])
+
     def test_non_android_regression_uploads_failure_logs(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")

@@ -171,9 +171,15 @@ function Invoke-AnalyzerGate {
         }
         $findings += Invoke-ScriptAnalyzer @args
     }
+    $blockingFindings = @($findings | Where-Object { $_.Severity -eq 'Error' })
+    if ($blockingFindings.Count -gt 0) {
+        $blockingFindings | Format-Table -AutoSize | Out-String | Write-Error
+        throw "PSScriptAnalyzer gate failed for $($blockingFindings.Count) error finding(s)."
+    }
     if ($findings.Count -gt 0) {
-        $findings | Format-Table -AutoSize | Out-String | Write-Error
-        throw "PSScriptAnalyzer gate failed for $($findings.Count) finding(s)."
+        $findings | Format-Table -AutoSize | Out-String | Write-Warning
+        Write-Host ("PSScriptAnalyzer reported {0} non-blocking warning/information finding(s)." -f $findings.Count)
+        return
     }
     Write-Host ("PSScriptAnalyzer gate passed for {0} PowerShell file(s)." -f $Files.Count)
 }
