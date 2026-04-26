@@ -2,7 +2,8 @@ param(
     [Parameter(Mandatory = $true)][string]$QueueNote,
     [string]$Branch = "main",
     [int]$PerTaskTimeoutMinutes = 30,
-    [string]$RunLogDir = ""
+    [string]$RunLogDir = "",
+    [switch]$SkipBaselineChecks
 )
 
 $ErrorActionPreference = "Stop"
@@ -233,6 +234,7 @@ Set-Content -Path $script:RunLogPath -Encoding UTF8 -Value @(
 $python = Get-PythonCommand
 $shellExe = Get-ShellExecutable
 $queueNotePath = Resolve-RepoPath -Path $QueueNote
+$loopScript = Join-Path $repoRoot "scripts/overnight_continue_loop.ps1"
 
 $step1Status = "pass"
 $step1Details = @()
@@ -309,28 +311,43 @@ if (-not $branchOk) {
 
 Add-PreflightStep -Number 3 -Title "HEAD sanity" -Status "pass" -Details $branchDetails
 
-$unitTests = Invoke-NativeCommand -FilePath $python -Arguments @("-m", "unittest", "discover", "-s", "tests", "-v")
-$validator = Invoke-NativeCommand -FilePath $python -Arguments @("scripts/validate_special_cases.py")
-$unitTestCount = ""
-if ($unitTests.Text -match "Ran (\d+) tests") {
-    $unitTestCount = $matches[1]
-}
-$unitTestCountSuffix = if ($unitTestCount) { " count=$unitTestCount" } else { "" }
-$unitTestPassSuffix = if ($unitTestCount) { " ($unitTestCount tests)" } else { "" }
-
-if ($unitTests.ExitCode -ne 0 -or $validator.ExitCode -ne 0) {
-    Add-PreflightStep -Number 4 -Title "Baseline tests green" -Status "fail" -Details @(
-        "$python -m unittest discover -s tests -v exit=$($unitTests.ExitCode)$unitTestCountSuffix",
-        "$python scripts/validate_special_cases.py exit=$($validator.ExitCode)"
-    )
-    Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Baseline tests were not green."
+if (-not (Test-Path -LiteralPath $loopScript -PathType Leaf)) {
+    Add-PreflightStep -Number 4 -Title "Continuation loop present" -Status "fail" -Details @("Loop script not found: $loopScript")
+    Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Required overnight continuation loop script was missing."
     exit 1
 }
 
-Add-PreflightStep -Number 4 -Title "Baseline tests green" -Status "pass" -Details @(
-    "$python -m unittest discover -s tests -v passed$unitTestPassSuffix.",
-    "$python scripts/validate_special_cases.py passed."
-)
+Add-PreflightStep -Number 4 -Title "Continuation loop present" -Status "pass" -Details @("Loop script: $loopScript")
+
+if ($SkipBaselineChecks) {
+    Add-PreflightStep -Number 5 -Title "Baseline tests green" -Status "skipped" -Details @(
+        "Skipped by -SkipBaselineChecks."
+    )
+}
+else {
+    $unitTests = Invoke-NativeCommand -FilePath $python -Arguments @("-m", "unittest", "discover", "-s", "tests", "-v")
+    $validator = Invoke-NativeCommand -FilePath $python -Arguments @("scripts/validate_special_cases.py")
+    $unitTestCount = ""
+    if ($unitTests.Text -match "Ran (\d+) tests") {
+        $unitTestCount = $matches[1]
+    }
+    $unitTestCountSuffix = if ($unitTestCount) { " count=$unitTestCount" } else { "" }
+    $unitTestPassSuffix = if ($unitTestCount) { " ($unitTestCount tests)" } else { "" }
+
+    if ($unitTests.ExitCode -ne 0 -or $validator.ExitCode -ne 0) {
+        Add-PreflightStep -Number 5 -Title "Baseline tests green" -Status "fail" -Details @(
+            "$python -m unittest discover -s tests -v exit=$($unitTests.ExitCode)$unitTestCountSuffix",
+            "$python scripts/validate_special_cases.py exit=$($validator.ExitCode)"
+        )
+        Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Baseline tests were not green."
+        exit 1
+    }
+
+    Add-PreflightStep -Number 5 -Title "Baseline tests green" -Status "pass" -Details @(
+        "$python -m unittest discover -s tests -v passed$unitTestPassSuffix.",
+        "$python scripts/validate_special_cases.py passed."
+    )
+}
 
 $validatorScript = @"
 text = open('reviewer_backend_tasks.md', encoding='utf-8').read()
@@ -343,15 +360,15 @@ print(f'{len(rows)} rows validated')
 "@
 $trackerRows = Invoke-NativeCommand -FilePath $python -Arguments @("-c", $validatorScript)
 if ($trackerRows.ExitCode -ne 0) {
-    Add-PreflightStep -Number 5 -Title "State Log row validator" -Status "fail" -Details @($trackerRows.Text)
+    Add-PreflightStep -Number 6 -Title "State Log row validator" -Status "fail" -Details @($trackerRows.Text)
     Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "State Log row validation failed."
     exit 1
 }
 
-Add-PreflightStep -Number 5 -Title "State Log row validator" -Status "pass" -Details @($trackerRows.Text)
+Add-PreflightStep -Number 6 -Title "State Log row validator" -Status "pass" -Details @($trackerRows.Text)
 
 if (-not (Test-Path $queueNotePath)) {
-    Add-PreflightStep -Number 6 -Title "Queue note present and well-formed" -Status "fail" -Details @("Queue note not found: $queueNotePath")
+    Add-PreflightStep -Number 7 -Title "Queue note present and well-formed" -Status "fail" -Details @("Queue note not found: $queueNotePath")
     Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Queue note was missing."
     exit 1
 }
@@ -359,7 +376,7 @@ if (-not (Test-Path $queueNotePath)) {
 $queueText = Get-Content -Raw -Path $queueNotePath
 $taskIds = Get-QueueTaskIds -QueueText $queueText
 if ($taskIds.Count -eq 0) {
-    Add-PreflightStep -Number 6 -Title "Queue note present and well-formed" -Status "fail" -Details @("Queue note does not contain any ## Task sections: $queueNotePath")
+    Add-PreflightStep -Number 7 -Title "Queue note present and well-formed" -Status "fail" -Details @("Queue note does not contain any ## Task sections: $queueNotePath")
     Add-ExitSection -Heading "Wrapper Exit" -Status "failed" -ExitCode 1 -Notes "Queue note was malformed."
     exit 1
 }
@@ -370,7 +387,7 @@ foreach ($taskStatus in $taskStatuses) {
     $taskStatusSummary += "$($taskStatus.TaskId): $($taskStatus.Source)"
 }
 
-Add-PreflightStep -Number 6 -Title "Queue note present and well-formed" -Status "pass" -Details @(
+Add-PreflightStep -Number 7 -Title "Queue note present and well-formed" -Status "pass" -Details @(
     "Queue note: $queueNotePath",
     "Task ids: $($taskIds -join ', ')",
     "Queue status: $($taskStatusSummary -join '; ')"
@@ -378,17 +395,17 @@ Add-PreflightStep -Number 6 -Title "Queue note present and well-formed" -Status 
 
 $staleProcesses = Get-StaleProcesses
 if ($staleProcesses.Count -eq 0) {
-    Add-PreflightStep -Number 7 -Title "Stale process sweep (advisory)" -Status "pass" -Details @("No git, python, or PowerShell processes older than one hour were found.")
+    Add-PreflightStep -Number 8 -Title "Stale process sweep (advisory)" -Status "pass" -Details @("No git, python, or PowerShell processes older than one hour were found.")
 }
 else {
     $details = @()
     foreach ($process in $staleProcesses) {
         $details += "$($process.Name) pid=$($process.Id) started=$($process.StartedAt.ToString('o'))"
     }
-    Add-PreflightStep -Number 7 -Title "Stale process sweep (advisory)" -Status "pass" -Details $details
+    Add-PreflightStep -Number 8 -Title "Stale process sweep (advisory)" -Status "pass" -Details $details
 }
 
-Add-PreflightStep -Number 8 -Title "Run log directory prep" -Status "pass" -Details @(
+Add-PreflightStep -Number 9 -Title "Run log directory prep" -Status "pass" -Details @(
     "Run log directory: $RunLogDir",
     "Run log path: $script:RunLogPath"
 )
@@ -410,7 +427,6 @@ if ($null -eq $seedMarker) {
 
 $statusPath = Join-Path $RunLogDir "overnight_status.md"
 $statePath = Join-Path $RunLogDir "OVERNIGHT_CONTINUATION_STATE.json"
-$loopScript = Join-Path $repoRoot "scripts/overnight_continue_loop.ps1"
 $child = Start-Process -FilePath $shellExe -WorkingDirectory $repoRoot -WindowStyle Hidden -ArgumentList @(
     "-NoProfile",
     "-ExecutionPolicy",
