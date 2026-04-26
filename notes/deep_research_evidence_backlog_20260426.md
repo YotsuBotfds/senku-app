@@ -268,6 +268,9 @@ Action:
 - Promoted the primary-owner subset rule into prompt expectation validation:
   `primary_expected_guides` / `primary_expected_guide_ids` now fail when they
   name guides outside the broader expected-guide metadata.
+- Pinned legacy ingest-manifest compatibility: basename-keyed entries and
+  renamed legacy keys with matching SHA remain fresh, while unmatched keys with
+  unknown SHA stay blocking stale evidence.
 
 Validation:
 

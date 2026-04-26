@@ -63,6 +63,77 @@ class IngestFreshnessTests(unittest.TestCase):
 
         self.assertEqual(report.status, FRESH)
 
+    def test_legacy_basename_manifest_key_matching_sha_is_fresh(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            write_guide(guides / "one.md", "GD-001", "One")
+            info = collect_guide_file_info(str(guides))["GD-001"]
+            manifest = root / "db" / "ingest_manifest.json"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps({"one.md": {"sha256": info["sha256"]}}, indent=2),
+                encoding="utf-8",
+            )
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, FRESH)
+
+    def test_legacy_unmatched_manifest_key_matching_sha_is_fresh(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            write_guide(guides / "renamed.md", "GD-001", "Renamed")
+            info = collect_guide_file_info(str(guides))["GD-001"]
+            manifest = root / "db" / "ingest_manifest.json"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps(
+                    {"old-guide-name.md": {"source_file": "old-guide-name.md", "sha256": info["sha256"]}},
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, FRESH)
+
+    def test_unmatched_legacy_manifest_key_with_unknown_sha_is_stale(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            write_guide(guides / "one.md", "GD-001", "One")
+            manifest = root / "db" / "ingest_manifest.json"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps(
+                    {"old-guide-name.md": {"source_file": "old-guide-name.md", "sha256": "0" * 64}},
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, STALE)
+        self.assertEqual(report.missing_guide_ids, ("GD-001",))
+        self.assertEqual(report.extra_manifest_keys, ("old-guide-name.md",))
+        self.assertTrue(report.is_blocking)
+
     def test_complete_manifest_changed_sha_is_stale(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
