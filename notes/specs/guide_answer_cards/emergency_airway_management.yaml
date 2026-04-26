@@ -1,0 +1,135 @@
+card_id: emergency_airway_management
+guide_id: GD-579
+slug: emergency-airway-management
+title: "Emergency Airway Management & Respiratory Distress Protocols"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Airway failure, respiratory distress, cannot-intubate/cannot-oxygenate risk, apnea, agonal respirations, cyanosis, or inability to speak is present.
+  - Facial burns, soot, singed hair, voice change, coughing, stridor, or respiratory distress after smoke exposure raises concern for airway injury.
+  - Severe obstruction, foreign body airway concern, failed ventilation, tension pneumothorax signs, or advanced airway decisions require high-liability airway source support.
+required_first_actions:
+  - Treat severe respiratory distress, apnea, agonal respirations, cyanosis, inability to speak, altered mental status from hypoxia, gasping, or oxygen saturation below 80% as an airway emergency requiring immediate action.
+  - Position the patient upright when possible, begin rescue breaths or bag-valve-mask ventilation, call for help, and prepare for evacuation.
+  - If airway injury cues follow smoke exposure or burns, keep the answer in airway-risk framing and pair airway support with burn and smoke-inhalation source support.
+  - For trained advanced providers, prepare for intubation or surgical airway only when the source indications are met and a backup plan is available.
+conditional_required_actions:
+  - trigger_terms:
+      - choking
+      - food stuck
+      - foreign body
+      - cannot cough
+      - cannot speak
+      - obstruction
+    required_actions:
+      - For partial obstruction, encourage coughing and prepare for escalation if it worsens; for complete obstruction, use age-appropriate choking rescue and do not perform blind finger sweeps.
+  - trigger_terms:
+      - tension pneumothorax
+      - unilateral breath sounds
+      - distended neck veins
+      - shock
+      - hypotension
+      - trauma
+    required_actions:
+      - If tension pneumothorax is clinically suspected with shock features, do not wait for imaging or late tracheal deviation before decompression by a trained provider.
+  - trigger_terms:
+      - cannot intubate
+      - cannot oxygenate
+      - failed intubation
+      - failed ventilation
+      - cricothyrotomy
+      - surgical airway
+    required_actions:
+      - If intubation fails and the patient is apneic or in severe distress, move to emergency cricothyrotomy rather than repeating failed airway attempts.
+first_actions:
+  - Assess severity using breathing rate, ability to speak, accessory muscle use, cyanosis, mental status, positioning, gasping, and oxygen saturation if available.
+  - Use BVM ventilation to keep the patient oxygenated while preparing for intubation or surgical airway; use slow, steady breaths that produce visible chest rise.
+  - Before RSI, confirm the ability to ventilate by BVM, working suction, optimized positioning, cervical-spine precautions when trauma is possible, airway equipment, and a backup plan.
+  - Confirm any advanced airway by bilateral breath sounds, chest rise, tube condensation, and capnography when available, then secure the tube and reassess.
+urgent_red_flags:
+  - Respiratory rate greater than 40/min or less than 10/min.
+  - Inability to speak, stridor or silent airway, cyanosis, gasping, or agonal respirations.
+  - Altered mental status, confusion, combativeness, tripoding, or inability to maintain position.
+  - Oxygen saturation below 80% if available.
+  - Facial burns, soot, singed hair, voice change, coughing, stridor, or respiratory distress after smoke exposure.
+  - Hypotension with distended neck veins, unilateral absent breath sounds, hyperresonance, shock, or sudden decompensation after trauma or ventilation.
+forbidden_advice:
+  - Do not frame severe respiratory distress, cyanosis, apnea, agonal respirations, or inability to speak as routine monitoring or home care.
+  - Do not delay help, ventilation, airway preparation, or evacuation to ask clarifying questions first.
+  - Do not advise RSI, intubation, cricothyrotomy, or decompression as casual untrained self-care.
+  - Do not induce paralysis for RSI when BVM ventilation is not possible or there is no airway backup plan.
+  - Do not do blind finger sweeps for airway foreign bodies.
+do_not:
+  - Do not treat burn plus smoke airway cues as cookstove troubleshooting, childproofing, or ordinary minor burn care.
+  - Do not wait for tracheal deviation or imaging when trained clinical assessment indicates tension pneumothorax with decompensation.
+  - Do not keep attempting intubation after repeated failure while the patient remains apneic or severely distressed.
+  - Do not bag too fast or use excessive pressure; the guide warns this increases gastric inflation and aspiration risk.
+routine_boundary: >
+  Any apnea, agonal respirations, cyanosis, inability to speak, altered mental
+  status from hypoxia, severe distress, smoke/burn airway cue, failed
+  ventilation, or suspected tension pneumothorax is outside routine advice and
+  must be handled as an emergency escalation problem.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but airway failure, severe distress, smoke/burn
+  airway injury, complete obstruction, failed ventilation, or tension
+  pneumothorax is plausible, lead with emergency positioning, ventilation/help,
+  and evacuation while asking only questions that do not delay those actions.
+clarifying_questions:
+  - Can the person speak, cough, or breathe, and are they turning blue?
+  - Is there smoke exposure, facial burn, soot, singed hair, voice change, coughing, stridor, or respiratory distress?
+  - Are they awake and protecting their airway, or are there apnea, agonal respirations, gasping, or altered mental status?
+  - Is this a trained-provider setting with BVM, suction, oxygen, airway equipment, and an evacuation plan available?
+citation_ids:
+  - airway-emergency-recognition
+  - respiratory-distress-severity
+  - bvm-first-rescue
+  - rsi-backup-plan
+  - cricothyrotomy-emergency-airway
+  - tension-pneumothorax-decompression
+  - aspiration-foreign-body
+source_sections:
+  - guide: GD-579
+    slug: emergency-airway-management
+    title: "Emergency Airway Management & Respiratory Distress Protocols"
+    sections:
+      - "#overview"
+      - "#assessment"
+      - "#bvm"
+      - "#intubation"
+      - "#cricothyrotomy"
+      - "#tension-pneumothorax"
+      - "#aspiration-airway-foreign-body"
+source_invariants:
+  - name: severe airway emergency indicators
+    guide: GD-579
+    must_include:
+      - Respiratory rate >40/min OR <10/min
+      - Inability to speak (stridor or silent); cyanosis
+      - Begin rescue breaths or BVM ventilation
+      - Call for help; prepare for evacuation
+    must_not_match:
+      - "severe respiratory distress[^\\n]{0,120}(routine|home care|watch and wait)"
+      - "(cyanosis|agonal respirations|apnea)[^\\n]{0,120}(routine|home care)"
+  - name: advanced airway backup boundaries
+    guide: GD-579
+    must_include:
+      - Can you ventilate by bag-valve-mask? (If NO
+      - do NOT induce
+      - If >2 failed attempts, move to cricothyrotomy
+      - do NOT do blind finger sweeps
+    must_not_match:
+      - "perform blind finger sweeps"
+      - "paralyze[^\\n]{0,120}no backup"
+  - name: tension pneumothorax no imaging delay
+    guide: GD-579
+    must_include:
+      - Do NOT wait for tracheal deviation or imaging
+      - decompress immediately
+      - Needle decompression FIRST
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-579 card focuses on emergency recognition, immediate
+  positioning/ventilation/help/evacuation, and source-backed boundaries for
+  trained-provider advanced airway actions. It deliberately avoids expanding
+  device instructions, medication dosing, or escalation criteria beyond the
+  source guide text.

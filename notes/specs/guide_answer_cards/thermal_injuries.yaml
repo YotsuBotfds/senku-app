@@ -1,0 +1,145 @@
+card_id: thermal_injuries
+guide_id: GD-526
+slug: thermal-injuries
+title: "Thermal Injuries: Hypothermia & Heat Stroke"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Heat exposure is followed by confusion, aggression, hallucinations, seizures, collapse, little or no sweating, very hot skin, or core temperature around 104 F or higher.
+  - Heat exposure causes heavy sweating with weakness, dizziness, nausea, headache, cramps, cool clammy skin, dark urine, or symptoms that may be progressing toward heat stroke.
+  - Cold, wet, windy, immersion, exhaustion, or moderate-temperature exposure is followed by shivering, clumsiness, confusion, slurred speech, poor coordination, apathy, drowsiness, stopped shivering, unconsciousness, or minimal vital signs.
+  - The answer needs field-first cooling, rewarming, evacuation, fluid-safety, or prevention boundaries for heat stroke, heat exhaustion, or hypothermia.
+required_first_actions:
+  - Treat altered mental status, seizure, unconsciousness, collapse, or very hot skin after heat exposure as heat stroke until proven otherwise; begin cooling immediately and seek definitive care.
+  - Treat stopped shivering, unconsciousness, minimal vital signs, severe confusion, or absent pulse after prolonged cold exposure as moderate-to-severe hypothermia requiring gentle handling and emergency evacuation.
+  - Move the person away from the heat or cold stressor, protect airway and breathing, and prioritize cooling or heat-loss prevention before background explanation.
+  - Do not force fluids on a confused or unconscious person.
+conditional_required_actions:
+  - trigger_terms:
+      - heat stroke
+      - confused in heat
+      - hot and dry
+      - seizure in heat
+      - collapse in heat
+      - 104
+    required_actions:
+      - Cool rapidly with cold water immersion if available, or continuous cold water, ice or cold packs to neck/armpits/groin, and fan-plus-misting if immersion is unavailable.
+      - Move to shade, remove clothing to maximize skin exposure, use recovery position if unconscious, monitor temperature if possible, and continue aggressive cooling until core temperature drops below 102 F before stopping.
+      - Seek definitive care because heat stroke can cause organ complications even after field cooling.
+  - trigger_terms:
+      - heat exhaustion
+      - heavy sweating
+      - cramps
+      - cool clammy
+      - dark urine
+    required_actions:
+      - Move to a cooler location, give cool water or oral rehydration solution if conscious and able to drink, cool the body with wet cloths and fanning, and rest with legs elevated.
+      - Escalate to emergency care if symptoms do not improve within 30 minutes, vomiting prevents fluids, mental status changes, core temperature exceeds 103 F, or significant heart or kidney conditions are present.
+  - trigger_terms:
+      - hypothermia
+      - cold exposure
+      - shivering stopped
+      - wet cold
+      - unconscious cold
+      - umbles
+    required_actions:
+      - For a conscious, shivering person, move to shelter, remove wet clothing, wrap in insulation, insulate from the ground, give warm sweet drinks if able, and apply gentle trunk heat sources.
+      - For an unconscious, not-shivering, or severely impaired person, handle extremely gently, call for emergency evacuation, prevent further heat loss, use passive rewarming only, and check for a pulse for 60 seconds before starting CPR if no pulse is detected.
+first_actions:
+  - Separate likely heat exhaustion from heat stroke by mental status, skin feel, sweating pattern, pulse, temperature, vomiting, and ability to drink safely.
+  - Separate mild hypothermia from moderate or severe hypothermia by shivering, consciousness, coordination, speech, drowsiness, muscle rigidity, and detectable vital signs.
+  - For heat illness prevention, use acclimatization, hydration planning with electrolyte replacement during prolonged heat exposure, work-rest cycles, shade, loose clothing, and buddy monitoring.
+  - For hypothermia prevention, apply the COLD principle, use layered wool or synthetic clothing, stay dry, avoid overexertion and alcohol, and treat wet-windy moderate temperatures as high risk.
+urgent_red_flags:
+  - Confusion, aggression, hallucinations, seizures, unconsciousness, collapse, or rapid shallow breathing after heat exposure.
+  - Core temperature 104 F or higher, very hot skin, strong fast pulse, or little/no sweating in heat, while remembering exertional heat stroke may still have sweating.
+  - Heat exhaustion symptoms that do not improve within 30 minutes, vomiting, mental status change, core temperature above 103 F, or pre-existing heart or kidney conditions.
+  - Shivering that stops without warming, severe confusion, slurred speech, inability to stand, drowsiness, paradoxical undressing, unconsciousness, minimal vital signs, or very slow/irregular heartbeat after cold exposure.
+  - Two or more "umbles" after cold exposure: fumbles, stumbles, mumbles, grumbles, or tumbles.
+forbidden_advice:
+  - Delay cooling a likely heat stroke patient while waiting for emergency services, background assessment, or perfect equipment.
+  - Force fluids on a confused or unconscious heat illness patient.
+  - Treat heat stroke as resolved after field cooling without definitive care.
+  - Roughly move, jostle, quickly roll, vertically lift, rub, massage, or rapidly rewarm a moderate-to-severe hypothermia patient.
+  - Give hot drinks to an unconscious hypothermia patient or alcohol to any hypothermia patient.
+  - Add burn treatment, cooling duration, rewarming, immersion, or evacuation rules beyond what GD-526 states.
+do_not:
+  - Do not assume stopped sweating is required for exertional heat stroke; the guide says exertional heat stroke patients may still be sweating.
+  - Do not use plain-water-only advice for prolonged heavy sweating when the guide calls out electrolyte replacement and hyponatremia danger.
+  - Do not heat the extremities first, immerse a hypothermic patient in hot water, or rub extremities.
+  - Do not stop resuscitation for a severely hypothermic patient solely because vital signs are hard to detect.
+  - Do not make this card the primary owner for frostbite, smoke inhalation, or burn care beyond the burn-degree classification diagram in GD-526.
+routine_boundary: >
+  Confusion, collapse, seizure, unconsciousness, very hot skin, core temperature
+  near heat-stroke range, stopped shivering, severe cold-exposure impairment, or
+  minimal vital signs is not routine comfort, hydration, exercise recovery, or
+  camping advice; preserve emergency cooling, gentle hypothermia handling,
+  airway/fluid precautions, and evacuation framing.
+acceptable_uncertain_fit: >
+  If details are incomplete but heat exposure with altered mental status or
+  cold/wet exposure with stopped shivering, confusion, poor coordination, or
+  reduced alertness is plausible, answer from the dangerous thermal-injury
+  branch first while asking about exposure, consciousness, sweating, skin feel,
+  shivering, temperature if known, ability to drink, and available cooling or
+  insulation.
+clarifying_questions:
+  - What exposure happened: heat exertion, prolonged heat, cold/wet/windy exposure, immersion, exhaustion, or another cause?
+  - Is the person alert and coherent, confused, seizing, unconscious, vomiting, shivering, or no longer shivering?
+  - What cooling, shade, shelter, dry insulation, thermometer, and emergency evacuation options are available right now?
+citation_ids:
+  - thermal-heat-exhaustion-recognition-treatment
+  - thermal-heat-stroke-emergency-cooling
+  - thermal-hypothermia-stages-treatment
+  - thermal-field-assessment-quick-reference
+  - thermal-prevention-fluid-electrolyte-cold
+source_sections:
+  - guide: GD-526
+    slug: thermal-injuries
+    title: "Thermal Injuries: Hypothermia & Heat Stroke"
+    sections:
+      - "#heat-exhaustion"
+      - "#heat-stroke"
+      - "#heat-prevention"
+      - "#hypothermia-overview"
+      - "#hypothermia-treatment"
+      - "#hypothermia-prevention"
+      - "#field-assessment"
+      - "#reference"
+source_invariants:
+  - name: heat stroke immediate cooling and fluid boundary
+    guide: GD-526
+    must_include:
+      - Begin cooling immediately
+      - is the gold standard
+      - Do NOT force fluids
+      - Seek definitive care
+    must_not_match:
+      - "heat stroke[^\\n]{0,120}wait for emergency services"
+      - "confused[^\\n]{0,120}force fluids"
+  - name: heat exhaustion escalation boundaries
+    guide: GD-526
+    must_include:
+      - Symptoms do not improve within 30 minutes of treatment
+      - Patient cannot keep fluids down
+      - Mental status changes
+      - Core temperature exceeds 103
+  - name: hypothermia gentle handling and rewarming boundary
+    guide: GD-526
+    must_include:
+      - Handle with extreme gentleness
+      - Call for emergency evacuation
+      - Do NOT attempt rapid rewarming
+      - Do NOT give hot drinks
+    must_not_match:
+      - "hypothermia[^\\n]{0,120}(rub|massage)[^\\n]{0,80}extremities"
+      - "moderate[^\\n]{0,120}hot water"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-526 for heat exhaustion, heat stroke, hypothermia
+  recognition, first field actions, prevention, and field assessment. The card
+  intentionally does not become a burn-care protocol; GD-526 only includes a
+  burn-degree classification diagram and does not provide sourced burn cooling,
+  dressing, pain-control, or evacuation instructions. Cooling durations,
+  rewarming rules, and evacuation triggers are limited to the cited GD-526
+  sections.

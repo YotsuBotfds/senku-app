@@ -1129,6 +1129,12 @@ Validation:
   tree. `scripts/validate_guide_answer_cards.py` validates `19` cards, focused
   guide-card tests pass, and metadata audit reports no remaining gaps for those
   five guide IDs.
+- Added reviewed answer cards for five medical near-finished card-only
+  blockers: `GD-298` pediatric emergency medicine, `GD-617` pediatric
+  emergencies field, `GD-635` healthcare capability assessment, `GD-579`
+  emergency airway management, and `GD-526` thermal injuries. The guide-card
+  validator now validates `24` cards, focused guide-card/audit tests pass, and
+  metadata audit reports no remaining gaps for those five guide IDs.
 
 Deferred unless evidenced:
 

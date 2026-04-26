@@ -27,7 +27,8 @@ the `Master Head Health` run for that HEAD was green.
    - No profile comparison needed unless later changes reopen weak EVAL9 rows.
 2. Metadata/card surfacing:
    - Completed in this slice: reviewed answer cards for `GD-666`, `GD-732`, `GD-035`, `GD-024`, and `GD-636`; metadata audit now reports no gaps for those five guides.
-   - Remaining near-finished card-only blockers: `GD-298`, `GD-617`, `GD-635`, `GD-054`, `GD-492`, `GD-526`, `GD-579`, `GD-602`, `GD-858`, `GD-918`.
+   - Completed in follow-up medical slice: reviewed answer cards for `GD-298`, `GD-617`, `GD-635`, `GD-579`, and `GD-526`; metadata audit now reports no gaps for those five guides.
+   - Remaining near-finished card-only blockers: `GD-054`, `GD-492`, `GD-602`, `GD-858`, `GD-918`.
    - Broad critical metadata/card gaps start with `GD-037`, `GD-039`, `GD-044`, `GD-045`, `GD-051`, `GD-058`, `GD-059`, `GD-227`, `GD-133`, `GD-152`, `GD-025`, `GD-396`, `GD-584`, and `GD-935`.
 3. Corpus/content hygiene:
    - `51` unresolved partials remain actionable, with critical/high guides first.

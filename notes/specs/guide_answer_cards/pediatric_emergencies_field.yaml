@@ -1,0 +1,133 @@
+card_id: pediatric_emergencies_field
+guide_id: GD-617
+slug: pediatric-emergencies-field
+title: "Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Infant or child is breathing fast for age, struggling to breathe, cyanotic, grunting, retracting, or has stridor.
+  - Child is too sleepy, floppy, weak-crying, poorly interactive, or has altered mental status.
+  - Poor feeding or refusal to drink is paired with fever, vomiting, reduced urine, dehydration signs, gray or mottled skin, or blue-tinged skin.
+  - Suspected pediatric sepsis, severe dehydration, septic shock, respiratory distress, epiglottitis, foreign body aspiration, or neonatal danger signs in field conditions.
+required_first_actions:
+  - Treat fast breathing for age, lethargy, floppy behavior, poor feeding with systemic illness, gray or mottled skin, or blue-tinged skin as an emergency screen before routine care.
+  - Escalate urgently to higher-level or antibiotic-capable care when septic shock, severe respiratory distress, epiglottitis, unresponsiveness, cyanosis, or neonatal sepsis risk is present.
+conditional_required_actions:
+  - trigger_terms:
+      - choking
+      - foreign body
+      - aspirated
+      - cannot cough
+      - cannot cry
+      - cannot breathe
+      - object stuck
+    required_actions:
+      - If complete obstruction is present, use age-appropriate choking rescue; if the child becomes unresponsive, start CPR and remove only a clearly visible object.
+  - trigger_terms:
+      - epiglottitis
+      - drooling
+      - cannot swallow
+      - tripod
+      - toxic
+      - stridor
+    required_actions:
+      - If epiglottitis is possible, do not examine the throat; give urgent escalation priority for antibiotics and advanced airway management.
+  - trigger_terms:
+      - newborn
+      - neonate
+      - birth
+      - 28 days
+      - meconium
+      - no cry
+      - gasping
+      - apneic
+    required_actions:
+      - For a newborn who is apneic, gasping, or has no cry, start ventilation after drying, warming, positioning, suctioning, and stimulation.
+first_actions:
+  - Assess age-based vital sign danger patterns, mental status, perfusion, capillary refill time, urine output if known, and skin color.
+  - For suspected sepsis, obtain IV or IO access for fluids or medications if possible, reassess perfusion after fluid treatment, start antibiotics within the first hour if available, and monitor for fluid overload.
+  - For dehydration, classify severity by mental status, eyes, mucous membranes, tears, skin turgor, capillary refill, urine output, and thirst; use oral rehydration for mild cases and IV or nasogastric rehydration for worse cases according to the source guide.
+  - For respiratory distress, look for retractions, nasal flaring, grunting, stridor, wheeze, cyanosis, and altered mental status; give oxygen if available and treat the underlying cause while preparing escalation for severe distress.
+  - For difficult IV access in shock, severe dehydration, cardiac arrest, failed IV attempts, or an unresponsive child, consider IO access as temporary emergency access.
+urgent_red_flags:
+  - Fast breathing for age, respiratory rate falling after severe distress, grunting, severe retractions, nasal flaring, stridor at rest, cyanosis, or altered mental status.
+  - Lethargy, weak cry, poor interaction, unusual sleepiness, unresponsiveness, floppy behavior, or poor feeding with fever, vomiting, or reduced urine.
+  - Gray, mottled, or blue-tinged skin; capillary refill time over 3 seconds; decreased or absent urine output; hypotension; or shock signs.
+  - Epiglottitis pattern of sudden drooling, dysphagia, tripod positioning, toxic appearance, fever, or stridor.
+  - Foreign body aspiration with complete obstruction, inability to cough, speak, cry, or breathe, cyanosis, or collapse.
+  - Newborn apneic, gasping, no cry, suspected infection or sepsis, or neonatal respiratory distress after birth.
+forbidden_advice:
+  - Do not frame fast breathing, lethargy, floppy behavior, cyanosis, poor feeding with systemic illness, or gray or mottled skin as routine comfort care.
+  - Do not delay escalation for septic shock, severe respiratory distress, epiglottitis, unresponsiveness, cyanosis, or neonatal danger signs.
+  - Do not examine the throat when epiglottitis is suspected.
+  - Do not perform a blind finger sweep for suspected foreign body aspiration.
+  - Do not invent pediatric doses, fluid thresholds, medication choices, or diagnostic rules beyond the cited guide.
+do_not:
+  - Do not actively cool a febrile child in the sepsis pathway; keep the child warm with blankets.
+  - Do not delay antibiotics for imaging when epiglottitis is suspected.
+  - Do not delay sterile-perfect IO preparation when emergency access is needed and only limited prep is possible.
+  - Do not treat neonatal sepsis risk as routine newborn fussiness or routine feeding trouble.
+routine_boundary: >
+  Routine infant care, discomfort care, fever care, or home observation is out
+  of bounds when the child has fast breathing for age, lethargy, weak cry, poor
+  interaction, poor feeding with fever/vomiting/reduced urine, gray or mottled
+  skin, blue-tinged skin, shock signs, severe dehydration, respiratory distress,
+  or neonatal danger signs.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but includes possible pediatric emergency signals,
+  keep the emergency-screen framing, ask focused questions about age, breathing,
+  mental status, urine output, temperature, skin color, feeding, and choking or
+  infection clues, and do not let those questions delay urgent escalation when
+  red flags are already present.
+clarifying_questions:
+  - How old is the child, and what is their estimated weight if known?
+  - What are the breathing rate, heart rate, temperature, capillary refill time, urine output, and skin color?
+  - Is the child alert and interacting normally, or lethargic, floppy, unusually sleepy, weak-crying, or hard to wake?
+  - Is there fever, vomiting, diarrhea, poor drinking or feeding, cough, stridor, wheeze, choking event, drooling, or inability to swallow?
+citation_ids:
+  - pediatric-emergency-screen
+  - pediatric-sepsis-shock-response
+  - pediatric-dehydration-respiratory-triage
+  - pediatric-airway-io-neonatal-field
+source_sections:
+  - guide: GD-617
+    slug: pediatric-emergencies-field
+    title: "Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress"
+    sections:
+      - "#rapid-breathing-lethargy-wont-eat-emergency-check"
+      - "#pediatric-assessment-fundamentals"
+      - "#pediatric-sepsis-recognition-treatment"
+      - "#severe-dehydration-assessment-rehydration"
+      - "#respiratory-distress-triage"
+      - "#intraosseous-io-access-in-children"
+      - "#neonatal-emergencies-birth-28-days"
+      - "#documentation-continuity-of-care"
+source_invariants:
+  - name: pediatric emergency screen precedes routine care
+    guide: GD-617
+    must_include:
+      - treat this as an emergency screen first, not routine comfort-care
+      - fast breathing for age
+      - gray, mottled, or blue-tinged skin
+    must_not_match:
+      - "fast breathing[^\\n]{0,120}(routine comfort|watch at home|reassure)"
+  - name: epiglottitis and foreign body negatives
+    guide: GD-617
+    must_include:
+      - DO NOT examine throat
+      - do not perform a blind finger sweep
+      - If the child becomes unresponsive
+    must_not_match:
+      - "epiglottitis[^\\n]{0,120}(examine throat|inspect throat)"
+  - name: shock and neonatal escalation remain emergency framed
+    guide: GD-617
+    must_include:
+      - escalate to higher level of care urgently
+      - If apneic, gasping, or no cry
+      - Start ventilation.
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card derived only from GD-617. It intentionally preserves
+  emergency recognition, escalation, negative airway instructions, and broad
+  assessment structure while avoiding new dose calculations, treatment
+  thresholds, or diagnostic rules beyond the source guide.

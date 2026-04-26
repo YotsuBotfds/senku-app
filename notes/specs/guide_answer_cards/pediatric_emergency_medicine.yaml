@@ -1,0 +1,175 @@
+card_id: pediatric_emergency_medicine
+guide_id: GD-298
+slug: pediatric-emergency-medicine
+title: "Pediatric Emergency Medicine"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Pediatric emergency assessment depends on age, weight, airway anatomy, vital-sign ranges, shock signs, dehydration category, seizure duration, or weight-based medication calculation.
+  - Child has fever with seizure, prolonged or recurrent seizure, altered mental status, respiratory distress, dehydration with shock signs, severe croup, epiglottitis features, suspected meningitis, severe burn, DKA features, or neonatal emergency signs.
+  - Caregiver asks whether a child or infant with fast breathing, lethargy, poor perfusion, poor feeding, cyanosis, vomiting, rash, seizure, or hard-to-wake behavior needs urgent escalation.
+required_first_actions:
+  - In any acute pediatric emergency, call professional emergency services immediately or begin the fastest available evacuation.
+  - Lead with airway, breathing, circulation, mental status, and age or weight because pediatric airway risk, vital signs, fluids, and drug dosing change with age and weight.
+  - Use actual weight when known; when unknown, use source-guide age-based estimation or length-based Broselow method rather than adult assumptions.
+conditional_required_actions:
+  - trigger_terms:
+      - seizure
+      - febrile seizure
+      - convulsion
+      - status epilepticus
+      - recurrent seizures
+    required_actions:
+      - Time the seizure, protect the airway, position the child side-lying or with head turned to the side, and do not force anything into the mouth.
+      - If a seizure lasts more than 5 minutes or recurs without return to baseline, treat as status epilepticus, give oxygen if available, use source-guide benzodiazepine dosing if trained and available, and evacuate urgently.
+  - trigger_terms:
+      - dehydration
+      - shock
+      - delayed capillary refill
+      - cool extremities
+      - mottled
+      - no urine
+      - low blood pressure
+      - lethargic
+    required_actions:
+      - Treat tachycardia with delayed capillary refill and cool extremities as shock until proven otherwise; do not wait for hypotension.
+      - For uncompensated or decompensated shock, initiate IV fluid bolus per the guide if trained and equipped, reassess perfusion, and evacuate immediately.
+  - trigger_terms:
+      - fast breathing
+      - retractions
+      - grunting
+      - nasal flaring
+      - head bobbing
+      - stridor
+      - respiratory distress
+      - blue
+      - cyanotic
+    required_actions:
+      - Assess respiratory rate and work of breathing; increased respiratory rate plus retractions warrants supplemental oxygen and airway support.
+      - For epiglottitis features such as drooling, difficulty swallowing, tripod positioning, or stridor, keep the child calm and upright, avoid throat examination or unnecessary airway manipulation, prepare for emergency airway management, and evacuate immediately.
+  - trigger_terms:
+      - meningitis
+      - stiff neck
+      - petechial
+      - non-blanching
+      - purple rash
+      - severe headache
+      - altered consciousness
+    required_actions:
+      - Treat fever with neck stiffness, petechial non-blanching rash, altered consciousness, seizure, or severe headache with fever as a meningitis emergency.
+      - Do not delay high-dose antibiotics for diagnostics when bacterial meningitis is suspected and antibiotic-capable care is available; evacuate urgently for lumbar puncture and ICU care.
+  - trigger_terms:
+      - newborn
+      - neonate
+      - birth
+      - apneic
+      - gasping
+      - limp
+      - poor feeding
+      - hypothermia
+      - bradycardic
+    required_actions:
+      - For neonatal emergencies, keep the infant warm, position the head neutrally, monitor breathing and heart rate, and escalate immediately when apnea, gasping, limp tone, cyanosis, bradycardia, seizure activity, fever, hypothermia, or poor feeding is present.
+first_actions:
+  - Estimate weight before drug or fluid dosing; use Broselow tape when available, otherwise use the guide's age-based ranges or formulas.
+  - Open the airway according to situation: jaw thrust for suspected cervical spine injury; head tilt-chin lift for non-trauma patients.
+  - For infants with large occiput, use a shoulder roll under the shoulders to align the airway when supine.
+  - Compare heart rate, respiratory rate, and blood pressure with pediatric age ranges; tachycardia can be the first shock sign before blood pressure drops.
+  - Categorize dehydration by behavior, capillary refill, eyes, tears, fontanelle, skin turgor, mucous membranes, extremities, urine output, and systolic blood pressure.
+  - For respiratory distress, check retractions, grunting, nasal flaring, head bobbing, and accessory muscle use.
+urgent_red_flags:
+  - Seizure lasting more than 5 minutes or recurrent seizures without return to baseline consciousness.
+  - Altered mental status, severe lethargy, unresponsiveness, weak or barely palpable pulses, cold mottled skin, or cyanosis.
+  - Tachycardia plus delayed capillary refill and cool extremities, even if blood pressure is still normal.
+  - Systolic blood pressure below the guide's late-shock thresholds for age: infant under 70 mmHg, toddler under 80 mmHg, school age under 90 mmHg, or adolescent under 100 mmHg.
+  - Increased respiratory rate with retractions, grunting, nasal flaring, head bobbing, or accessory muscle use.
+  - Drooling, difficulty swallowing, tripod positioning, or stridor suggesting epiglottitis.
+  - Fever with neck stiffness, petechial non-blanching rash, altered consciousness, seizure, or severe headache.
+  - Severe dehydration signs such as lethargy, altered mental status, capillary refill over 3 seconds, markedly sunken eyes or fontanelle, cold mottled extremities, minimal or absent urine output, or low systolic blood pressure.
+  - DKA features with altered mental status, lethargy, coma, Kussmaul respirations, tachycardia, or hypotension.
+  - Neonatal apnea, gasping, cyanosis, pallor, limp tone, bradycardia, seizure activity, fever, hypothermia, or poor feeding.
+forbidden_advice:
+  - Do not treat children as small adults for airway positioning, vital-sign interpretation, medication dosing, fluid resuscitation, or shock recognition.
+  - Do not wait for hypotension before acting on pediatric shock when tachycardia, delayed capillary refill, and cool extremities are present.
+  - Do not force anything into a child's mouth during a seizure.
+  - Do not examine the throat or manipulate the airway unnecessarily when epiglottitis is suspected.
+  - Do not perform blind finger sweeps for airway foreign body obstruction; only remove visible objects.
+  - Do not perform abdominal thrusts in infants with airway foreign body obstruction.
+  - Do not use antimotility agents in children under 2 years or in bloody diarrhea.
+  - Do not use prophylactic or general anti-inflammatory dexamethasone without a specific medical indication.
+  - Do not use overly rapid glucose correction or excessive hypotonic fluids in pediatric DKA.
+do_not:
+  - Do not give adult-range assumptions when the prompt asks about a child, infant, neonate, pediatric vital signs, weight-based dosing, fluids, seizure treatment, or airway equipment.
+  - Do not frame shock, epiglottitis, suspected meningitis, DKA, neonatal resuscitation, severe respiratory distress, or severe dehydration as routine home care.
+  - Do not present medication or fluid doses without tying them to weight-based source-guide dosing and maximums where the source provides them.
+routine_boundary: >
+  Routine pediatric advice is out of bounds when the child has airway compromise,
+  respiratory distress, prolonged or recurrent seizure, shock signs, severe
+  dehydration, suspected meningitis, suspected epiglottitis, DKA features, major
+  burn-transfer thresholds, or neonatal danger signs. Use emergency escalation
+  and source-guide pediatric assessment before comfort-care framing.
+acceptable_uncertain_fit: >
+  If age, weight, exact temperature, seizure duration, rash description, or vital
+  signs are missing, ask targeted clarifying questions while preserving immediate
+  airway, breathing, circulation, seizure-timing, shock, and evacuation actions
+  when red flags are plausible.
+clarifying_questions:
+  - What is the child's age and actual weight, or best weight estimate?
+  - Is the child breathing normally, and are there retractions, grunting, nasal flaring, head bobbing, stridor, blue color, or trouble staying awake?
+  - How long has any seizure lasted, and has the child returned to baseline?
+  - What are the heart rate, respiratory rate, blood pressure, capillary refill, urine output, and temperature if known?
+  - Are there fever with stiff neck, severe headache, non-blanching rash, altered consciousness, severe dehydration signs, or newborn danger signs?
+citation_ids:
+  - pediatric-overview-emergency-disclaimer
+  - pediatric-weight-dosing
+  - pediatric-airway-anatomy
+  - febrile-seizure-management
+  - dehydration-shock-assessment
+  - pediatric-vital-signs-shock
+  - common-pediatric-emergencies
+  - pediatric-fluid-resuscitation
+  - neonatal-emergencies
+source_sections:
+  - guide: GD-298
+    slug: pediatric-emergency-medicine
+    title: "Pediatric Emergency Medicine"
+    sections:
+      - "#overview"
+      - "#weight-estimation"
+      - "#airway-anatomy"
+      - "#febrile-seizure-management"
+      - "#dehydration-assessment"
+      - "#vital-sign-ranges"
+      - "#pediatric-shock-recognition"
+      - "#common-pediatric-emergencies"
+      - "#pediatric-fluid-resuscitation"
+      - "#neonatal-emergencies"
+source_invariants:
+  - name: pediatric emergency escalation and weight based dosing
+    guide: GD-298
+    must_include:
+      - In any acute emergency, call professional emergency services immediately.
+      - Accurate weight is essential for all pediatric drug dosing.
+      - Children are not small adults.
+    must_not_match:
+      - "children are small adults"
+  - name: shock hypotension delay guard
+    guide: GD-298
+    must_include:
+      - Do NOT wait for hypotension to initiate resuscitation.
+      - Tachycardia + delayed capillary refill + cool extremities = shock until proven otherwise.
+  - name: seizure and airway negative instructions
+    guide: GD-298
+    must_include:
+      - do not force anything into the mouth.
+      - Do NOT examine the throat or manipulate the airway unnecessarily.
+      - Do NOT perform blind finger sweeps.
+      - abdominal thrusts** in infants
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-298 for pediatric emergency medicine prompts where age,
+  weight, airway anatomy, pediatric vital signs, seizure duration, dehydration,
+  shock, respiratory distress, common pediatric emergencies, fluid resuscitation,
+  or neonatal emergency physiology drives the answer. This card preserves the
+  source guide's educational/austere-setting boundary and does not add dosing,
+  treatments, diagnostic rules, or emergency thresholds beyond GD-298.
