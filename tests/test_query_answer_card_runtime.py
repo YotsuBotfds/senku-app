@@ -152,7 +152,7 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
 
         self.assertEqual(
             [card["card_id"] for card in cards],
-            ["anaphylaxis_red_zone", "first_unrelated"],
+            ["first_unrelated", "anaphylaxis_red_zone"],
         )
 
     def test_anaphylaxis_red_zone_is_prioritized_for_allergen_airway_prompt(self):

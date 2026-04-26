@@ -141,15 +141,6 @@ def _answer_cards_for_results(
                 seen_card_ids.add(str(card.get("card_id") or "").strip())
                 cards.append(card)
                 return cards
-        else:
-            for card in prioritized_cards:
-                card_id = str(card.get("card_id") or "").strip()
-                if card_id in seen_card_ids:
-                    continue
-                seen_card_ids.add(card_id)
-                cards.append(card)
-                if len(cards) >= max_cards:
-                    return cards
     for guide_id in guide_ids:
         guide_cards = cards_by_guide_id.get(guide_id, [])
         if prioritized_card_ids:
@@ -165,6 +156,21 @@ def _answer_cards_for_results(
             if card_id in seen_card_ids:
                 continue
             if not answer_card_matches_question(card, question):
+                continue
+            pending_prioritized = [
+                prioritized_card
+                for prioritized_card in prioritized_cards
+                if str(prioritized_card.get("card_id") or "").strip()
+                not in seen_card_ids
+            ] if prioritized_card_ids else []
+            is_prioritized_card = card_id in prioritized_card_ids
+            remaining_slots = max_cards - len(cards)
+            if (
+                prioritized_card_ids
+                and pending_prioritized
+                and not is_prioritized_card
+                and remaining_slots <= len(pending_prioritized)
+            ):
                 continue
             seen_card_ids.add(card_id)
             cards.append(card)
