@@ -64,6 +64,8 @@ def answer_has_emergency_contract(answer: str) -> bool:
 def compact_match_phrases(matches: list[dict[str, str]]) -> str:
     phrases = []
     for match in matches:
+        if not isinstance(match, dict):
+            continue
         phrase = str(match.get("phrase") or "").strip()
         if phrase:
             phrases.append(phrase)
@@ -73,6 +75,7 @@ def compact_match_phrases(matches: list[dict[str, str]]) -> str:
 def compact_claim_basis(actions: list[dict]) -> str:
     basis_counts = Counter(
         str(action.get("support_basis") or "unknown") for action in actions
+        if isinstance(action, dict)
     )
     return "|".join(
         f"{basis}:{count}" for basis, count in sorted(basis_counts.items())

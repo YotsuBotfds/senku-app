@@ -674,11 +674,20 @@ def _build_generation_time_summary(results_map, total_time, prompt_count):
     """Return bench timing metrics without mixing failed generations into success-only averages."""
     success_count = 0
     successful_generation_time = 0.0
-    for _, _, _, meta in results_map.values():
+    for row in results_map.values():
+        if not isinstance(row, (list, tuple)) or len(row) < 4:
+            continue
+        meta = row[3]
+        if not isinstance(meta, dict):
+            continue
         if meta.get("error"):
             continue
         success_count += 1
-        successful_generation_time += meta.get("generation_time", 0) or 0
+        generation_time = meta.get("generation_time", 0) or 0
+        try:
+            successful_generation_time += float(generation_time)
+        except (TypeError, ValueError):
+            pass
 
     return {
         "success_count": success_count,
@@ -1530,8 +1539,11 @@ def format_sources(results, response_text, retrieval_meta=None):
     category_counts = Counter()
     guide_families = set()
     metadatas = results.get("metadatas", [[]])[0] if isinstance(results, dict) else []
+    if not isinstance(metadatas, list):
+        metadatas = []
 
-    for meta in metadatas:
+    for raw_meta in metadatas:
+        meta = _coerce_mapping(raw_meta)
         category = meta.get("category", "unknown")
         category_counts[category] += 1
         guide_family = meta.get("guide_id") or meta.get("guide_title") or meta.get("source_file")

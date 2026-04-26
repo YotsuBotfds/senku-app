@@ -96,6 +96,17 @@ class BenchRuntimeTests(unittest.TestCase):
         self.assertTrue(source_info["safety_critical"])
         self.assertEqual(source_info["support_strength"], "moderate")
 
+    def test_format_sources_ignores_malformed_metadata_entries(self):
+        source_info = bench.format_sources(
+            {"metadatas": [[None, "bad row", {"guide_id": "GD-232"}]]},
+            "answer",
+            {"retrieval_profile": "standard"},
+        )
+
+        self.assertEqual(source_info["source_mode"], "retrieved")
+        self.assertEqual(source_info["source_candidate_guide_ids"], ["GD-232"])
+        self.assertIn("categories=unknown=3", source_info["metadata_summary"])
+
     @patch("bench._card_backed_runtime_answer_plan", return_value=None)
     @patch("bench._should_abstain", return_value=(False, ["weak match"]))
     @patch("bench.retrieve_chunks")

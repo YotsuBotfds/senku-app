@@ -41,6 +41,8 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
             {"phrase": None},
             {"phrase": "Call 911"},
             {"phrase": "Do not wait"},
+            None,
+            "malformed",
             {},
         ]
 
@@ -55,6 +57,8 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
             {"support_basis": "answer_card"},
             {"support_basis": "card_required_action"},
             {"support_basis": ""},
+            None,
+            "malformed",
             {},
         ]
 

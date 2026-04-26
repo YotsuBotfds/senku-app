@@ -46,6 +46,16 @@ class BenchConfigTests(unittest.TestCase):
             ["http://127.0.0.1:1234/v1"],
         )
 
+    def test_url_list_empty_string_falls_back_to_default_url(self):
+        self.assertEqual(
+            bench_config.parse_url_list(" , ", "http://127.0.0.1:1234/v1"),
+            ["http://127.0.0.1:1234/v1"],
+        )
+        self.assertEqual(
+            bench._parse_url_list("", "http://127.0.0.1:1234/v1"),
+            ["http://127.0.0.1:1234/v1"],
+        )
+
     @patch("bench.retrieve_chunks")
     def test_prepare_prompt_uses_embed_url_without_mutating_global_config(self, mock_retrieve_chunks):
         original_url = config.LM_STUDIO_URL

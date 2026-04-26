@@ -605,6 +605,11 @@ Action:
   packaging skips malformed result rows, RAG trace iteration skips corrupt JSONL
   rows, and worker-lane status reports missing worktree paths without dirty
   checks.
+- Hardened runtime-adjacent helpers: empty URL-list strings fall back to bench
+  defaults, empty provided runtime profiles fail closed instead of invoking the
+  getter, bench timing/source summaries tolerate malformed rows and metadata,
+  citation owner-priority sorting ignores malformed allowlist entries, and RAG
+  answer-diagnostic compactors skip malformed non-dict entries.
 
 Validation:
 
@@ -648,6 +653,10 @@ Validation:
   `tests.test_metadata_validation`, `tests.test_package_dual_model_answers_markdown`,
   `tests.test_rag_trace`, and `tests.test_worker_lane_status` cover the
   catalog/profile/export/trace hardening batch.
+- `tests.test_bench`, `tests.test_bench_config`, `tests.test_bench_runtime`,
+  `tests.test_query_citation_policy`, `tests.test_query_prompt_runtime`, and
+  `tests.test_rag_bench_answer_diagnostics` cover the runtime-adjacent helper
+  hardening batch.
 
 Deferred unless evidenced:
 

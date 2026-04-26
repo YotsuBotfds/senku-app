@@ -3,6 +3,13 @@
 from __future__ import annotations
 
 
+def _guide_id_in(guide_id, guide_ids):
+    try:
+        return guide_id in guide_ids
+    except TypeError:
+        return False
+
+
 def _prioritized_citation_allowlist_for_question(
     question,
     guide_ids,
@@ -32,15 +39,19 @@ def _prioritized_citation_allowlist_for_question(
         return guide_ids
 
     priority_index = {guide_id: index for index, guide_id in enumerate(owner_priority)}
-    original_index = {guide_id: index for index, guide_id in enumerate(guide_ids)}
-    return sorted(
-        guide_ids,
-        key=lambda guide_id: (
-            0 if guide_id in priority_index else 1,
-            priority_index.get(guide_id, original_index[guide_id]),
-            original_index[guide_id],
+    guide_ids_with_index = list(enumerate(guide_ids))
+
+    ordered_guide_ids_with_index = sorted(
+        guide_ids_with_index,
+        key=lambda guide_id_with_index: (
+            0 if _guide_id_in(guide_id_with_index[1], priority_index) else 1,
+            priority_index.get(guide_id_with_index[1], guide_id_with_index[0])
+            if _guide_id_in(guide_id_with_index[1], priority_index)
+            else guide_id_with_index[0],
+            guide_id_with_index[0],
         ),
     )
+    return [guide_id for _index, guide_id in ordered_guide_ids_with_index]
 
 
 def _citation_guide_ids_for_question(
@@ -68,7 +79,7 @@ def _citation_guide_ids_for_question(
         airway_allowed_ids = airway_obstruction_allowed_guide_ids_from_results(results)
         if not airway_allowed_ids:
             airway_allowed_ids = [
-                guide_id for guide_id in allowed_guide_ids if guide_id in airway_owner_ids
+                guide_id for guide_id in allowed_guide_ids if _guide_id_in(guide_id, airway_owner_ids)
             ]
         if airway_allowed_ids:
             allowed_guide_ids = airway_allowed_ids
@@ -79,7 +90,9 @@ def _citation_guide_ids_for_question(
     ):
         meningitis_compare_owner_ids = {"GD-589", "GD-284", "GD-232", "GD-235", "GD-268"}
         owner_allowed_ids = [
-            guide_id for guide_id in allowed_guide_ids if guide_id in meningitis_compare_owner_ids
+            guide_id
+            for guide_id in allowed_guide_ids
+            if _guide_id_in(guide_id, meningitis_compare_owner_ids)
         ]
         if owner_allowed_ids:
             allowed_guide_ids = owner_allowed_ids

@@ -43,6 +43,22 @@ class QueryCitationPolicyTests(unittest.TestCase):
 
         self.assertEqual(allowlist, ["GD-232", "GD-579", "GD-898", "GD-911"])
 
+    def test_owner_priority_tolerates_unhashable_allowlist_entries(self):
+        malformed_entry = {"guide_id": "GD-898"}
+        unhashable_entry = ["GD-579"]
+
+        allowlist = citation_policy._prioritized_citation_allowlist_for_question(
+            "drooling and cannot swallow after a bite of food",
+            [malformed_entry, "GD-911", "GD-232", unhashable_entry],
+            is_airway_obstruction_rag_query=lambda question: True,
+            is_meningitis_rash_emergency_query=_false,
+            is_meningitis_vs_viral_query=_false,
+            is_newborn_sepsis_danger_query=_false,
+            is_abdominal_trauma_danger_query=_false,
+        )
+
+        self.assertEqual(allowlist, ["GD-232", malformed_entry, "GD-911", unhashable_entry])
+
     def test_newborn_owner_priority_uses_reviewed_owner_family_order(self):
         allowlist = citation_policy._prioritized_citation_allowlist_for_question(
             "baby has fever or low temperature and is acting weak",

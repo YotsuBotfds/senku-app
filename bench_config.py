@@ -13,6 +13,8 @@ def parse_url_list(value, default_url=None, *, dedupe=False):
     """Parse configured bench URLs without treating malformed scalars as iterables."""
     if isinstance(value, str):
         urls = _split_csv(value)
+        if not urls and default_url:
+            urls = [default_url]
     elif value is None or value is False:
         urls = [default_url] if default_url else []
     elif isinstance(value, Mapping) or not isinstance(value, Iterable):
@@ -32,4 +34,3 @@ def parse_url_list(value, default_url=None, *, dedupe=False):
         seen.add(normalized)
         unique_urls.append(url)
     return unique_urls
-

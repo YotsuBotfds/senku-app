@@ -23,7 +23,11 @@ def prompt_token_limit_from_runtime_profile(
     runtime_profile_getter,
 ):
     """Return the prompt-window limit from a provided or resolved runtime profile."""
-    profile = runtime_profile or runtime_profile_getter(gen_model, gen_url)
+    profile = (
+        runtime_profile
+        if runtime_profile is not None
+        else runtime_profile_getter(gen_model, gen_url)
+    )
     configured = profile.get("prompt_token_limit")
     if configured is None:
         raise ValueError(

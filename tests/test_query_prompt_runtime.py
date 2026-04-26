@@ -75,6 +75,18 @@ class QueryPromptRuntimeTests(unittest.TestCase):
                 },
             )
 
+    def test_prompt_token_limit_from_runtime_profile_rejects_empty_provided_profile(self):
+        import query_prompt_runtime
+
+        def unexpected_getter(gen_model, gen_url):
+            raise AssertionError("runtime_profile_getter should not be called")
+
+        with self.assertRaisesRegex(ValueError, "missing required prompt_token_limit"):
+            query_prompt_runtime.prompt_token_limit_from_runtime_profile(
+                runtime_profile={},
+                runtime_profile_getter=unexpected_getter,
+            )
+
     def test_safe_prompt_token_limit_reserves_margin(self):
         import query_prompt_runtime
 
