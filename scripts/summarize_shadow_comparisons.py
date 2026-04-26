@@ -150,7 +150,13 @@ def _format_cell(value: Any) -> str:
 
 
 def _escape_table_cell(value: Any) -> str:
-    return _format_cell(value).replace("|", "\\|")
+    return (
+        _format_cell(value)
+        .replace("\r\n", "\n")
+        .replace("\r", "\n")
+        .replace("\n", "<br>")
+        .replace("|", "\\|")
+    )
 
 
 def summarize_comparison(directory: Path, *, label: str | None = None) -> dict[str, Any]:

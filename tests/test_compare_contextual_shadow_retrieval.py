@@ -1,4 +1,5 @@
 import json
+import math
 import tempfile
 import unittest
 from pathlib import Path
@@ -313,6 +314,39 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertIn("baseline", loaded_summary)
         self.assertIn("shadow", loaded_summary)
         self.assertIn("hit_at_1", loaded_summary["deltas"])
+
+    def test_outputs_sanitize_non_finite_values_as_null(self):
+        rows = [
+            {
+                **compare_retrieval_row(
+                    artifact_path="guide_wave_fc_20260424_093011.json",
+                    prompt_index=1,
+                    question="non finite metric",
+                    expected_guide_ids=["GD-380"],
+                    baseline_top_guide_ids=["GD-111"],
+                    shadow_top_guide_ids=["GD-380"],
+                ),
+                "top_k_overlap_jaccard": math.nan,
+            }
+        ]
+        summary = {
+            "row_count": 1,
+            "mean_top_k_overlap_jaccard": math.inf,
+            "nested": {"negative": -math.inf},
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            outputs = write_outputs(rows, summary, tmpdir)
+            rows_text = Path(outputs["rows_jsonl"]).read_text(encoding="utf-8")
+            summary_text = Path(outputs["summary_json"]).read_text(encoding="utf-8")
+            loaded_rows = [json.loads(line) for line in rows_text.splitlines()]
+            loaded_summary = json.loads(summary_text)
+
+        self.assertNotIn("NaN", rows_text)
+        self.assertNotIn("Infinity", summary_text)
+        self.assertIsNone(loaded_rows[0]["top_k_overlap_jaccard"])
+        self.assertIsNone(loaded_summary["mean_top_k_overlap_jaccard"])
+        self.assertIsNone(loaded_summary["nested"]["negative"])
 
 
 if __name__ == "__main__":

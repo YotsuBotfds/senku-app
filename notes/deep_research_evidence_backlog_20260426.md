@@ -494,6 +494,11 @@ Action:
   references before de-duping, section-family shadow file selection distinguishes
   basename requests from path-shaped wrong-directory requests, and metadata
   validation preserves false-like scalar guide IDs instead of falling back.
+- Hardened trend/metrics/shadow evidence outputs: contextual-shadow artifacts
+  now serialize non-finite values as strict JSON `null`, shadow-comparison
+  Markdown table cells flatten newlines before pipe escaping, RAG trend row
+  fallback ignores structured status values instead of stringifying them, and
+  metrics-lake run-manifest ingestion accepts a single artifact-evidence object.
 
 Validation:
 
@@ -805,6 +810,11 @@ Validation:
   `tests.test_export_section_family_shadow`, and
   `tests.test_metadata_validation` cover the prompt/guide lineage hardening
   batch.
+- `tests.test_compare_contextual_shadow_retrieval`,
+  `tests.test_summarize_shadow_comparisons`, `tests.test_rag_trend`, and
+  `tests.test_bench_metrics_lake` cover strict JSON sanitation, shadow
+  Markdown cell sanitation, row-status trend fallback, and single-object
+  artifact-evidence ingestion.
 
 Deferred unless evidenced:
 

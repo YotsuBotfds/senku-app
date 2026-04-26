@@ -107,6 +107,24 @@ class SummarizeShadowComparisonsTests(unittest.TestCase):
         )
         self.assertIn("Custom A", rendered)
 
+    def test_render_markdown_table_sanitizes_newlines_inside_cells(self):
+        module = load_module()
+
+        rendered = module.render_markdown_table(
+            [
+                {
+                    "label": "Line one\nLine two",
+                    "row_count": 1,
+                    "hit_at_1_net": "gain\r\nwith | pipe",
+                }
+            ],
+            columns=["label", "row_count", "hit_at_1_net"],
+        )
+
+        self.assertEqual(len(rendered.splitlines()), 3)
+        self.assertIn("Line one<br>Line two", rendered)
+        self.assertIn("gain<br>with \\| pipe", rendered)
+
     def test_main_json_output_is_machine_readable(self):
         module = load_module()
 

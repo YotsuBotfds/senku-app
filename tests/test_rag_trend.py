@@ -159,6 +159,48 @@ class RAGTrendTests(unittest.TestCase):
         )
         self.assertEqual(rows[0]["ui_surface"], "emergency_first:1|standard:2")
 
+    def test_row_status_counts_ignore_structured_values_and_normalize_strings(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_malformed_status_rows"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=3)
+            payload["summary"].pop("app_acceptance_counts")
+            payload["summary"].pop("answer_card_counts")
+            payload["summary"].pop("claim_support_counts")
+            payload["summary"].pop("evidence_nugget_counts", None)
+            payload["summary"].pop("evidence_nugget_totals", None)
+            payload["rows"] = [
+                {
+                    "generated": "yes",
+                    "app_acceptance_status": " Strong_Supported ",
+                    "answer_card_status": " PASS ",
+                    "claim_support_status": "Pass",
+                    "evidence_nugget_status": " Pass ",
+                    "evidence_nugget_total": 1,
+                    "evidence_nugget_supported": 1,
+                },
+                {
+                    "generated": "yes",
+                    "app_acceptance_status": ["moderate_supported"],
+                    "answer_card_status": {"status": "partial"},
+                    "claim_support_status": ["partial"],
+                    "evidence_nugget_status": {"status": "partial"},
+                    "evidence_nugget_total": 1,
+                    "evidence_nugget_supported": 0,
+                },
+            ]
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["app_acceptance"], "strong_supported:1")
+        self.assertEqual(rows[0]["answer_cards"], "pass:1")
+        self.assertEqual(rows[0]["claim_support"], "pass:1")
+        self.assertEqual(rows[0]["evidence_nugget_statuses"], {"pass": 1})
+        self.assertNotIn("[", rows[0]["evidence_nuggets"])
+        self.assertNotIn("{", rows[0]["evidence_nuggets"])
+
     def test_collect_summaries_includes_top1_marker_overlay_from_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

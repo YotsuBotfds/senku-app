@@ -139,10 +139,17 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 def _status_counts(rows: Sequence[Mapping[str, Any]], field: str) -> Counter[str]:
     counter: Counter[str] = Counter()
     for row in rows:
-        value = str(row.get(field) or "").strip()
+        value = _status_value(row.get(field))
         if value:
             counter[value] += 1
     return counter
+
+
+def _status_value(value: Any) -> str | None:
+    if not isinstance(value, str):
+        return None
+    status = value.strip().lower()
+    return status or None
 
 
 def _is_reviewed_uncertain_fit(row: Mapping[str, Any]) -> bool:

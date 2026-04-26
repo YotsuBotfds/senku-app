@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import os
 import re
 import sys
@@ -683,6 +684,19 @@ def _csv_value(value: Any) -> str:
     return str(value)
 
 
+def _sanitize_output_value(value: Any) -> Any:
+    """Keep JSON/CSV artifacts portable when upstream values are non-finite."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {str(key): _sanitize_output_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_sanitize_output_value(item) for item in value]
+    if isinstance(value, tuple):
+        return [_sanitize_output_value(item) for item in value]
+    return value
+
+
 def write_outputs(
     rows: list[dict[str, Any]], summary: dict[str, Any], out_dir: os.PathLike[str] | str
 ) -> dict[str, str]:
@@ -691,20 +705,29 @@ def write_outputs(
     rows_path = out_path / ROWS_FILENAME
     summary_path = out_path / SUMMARY_FILENAME
     csv_path = out_path / CSV_FILENAME
+    sanitized_rows = [_sanitize_output_value(row) for row in rows]
+    sanitized_summary = _sanitize_output_value(summary)
 
     with rows_path.open("w", encoding="utf-8") as handle:
-        for row in rows:
-            json.dump(row, handle, ensure_ascii=False, sort_keys=True)
+        for row in sanitized_rows:
+            json.dump(row, handle, allow_nan=False, ensure_ascii=False, sort_keys=True)
             handle.write("\n")
 
     with summary_path.open("w", encoding="utf-8") as handle:
-        json.dump(summary, handle, indent=2, ensure_ascii=False, sort_keys=True)
+        json.dump(
+            sanitized_summary,
+            handle,
+            allow_nan=False,
+            indent=2,
+            ensure_ascii=False,
+            sort_keys=True,
+        )
         handle.write("\n")
 
     with csv_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=CSV_FIELDS)
         writer.writeheader()
-        for row in rows:
+        for row in sanitized_rows:
             writer.writerow({field: _csv_value(row.get(field)) for field in CSV_FIELDS})
 
     return {

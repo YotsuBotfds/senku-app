@@ -412,12 +412,16 @@ def _artifact_path_evidence_rows(
     record: Mapping[str, Any], start_index: int
 ) -> list[tuple[str, int, Mapping[str, Any]]]:
     evidence = record.get("artifact_path_evidence")
-    if not isinstance(evidence, list):
+    if isinstance(evidence, Mapping):
+        evidence_items = [evidence]
+    elif isinstance(evidence, list):
+        evidence_items = evidence
+    else:
         return []
 
     rows: list[tuple[str, int, Mapping[str, Any]]] = []
     inherited_fields = _artifact_path_evidence_parent_fields(record)
-    for evidence_index, item in enumerate(evidence):
+    for evidence_index, item in enumerate(evidence_items):
         if isinstance(item, Mapping):
             rows.append(
                 (
