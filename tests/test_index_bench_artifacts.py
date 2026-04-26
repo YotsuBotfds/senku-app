@@ -193,6 +193,31 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertIn("wave_report.md", markdown)
         self.assertIn("title=Wave Report; line_count=6; heading_count=2", markdown)
 
+    def test_markdown_output_escapes_carriage_returns(self):
+        root = self.make_tmpdir()
+        output_md = root / "manifest.md"
+
+        write_markdown(
+            [
+                {
+                    "path": "wave_report.md",
+                    "kind": "markdown_report",
+                    "size": 42,
+                    "mtime": "2026-04-25T12:00:00+00:00",
+                    "summary": {
+                        "title": "Wave\rReport",
+                        "line_count": 6,
+                    },
+                }
+            ],
+            output_md,
+        )
+
+        markdown = output_md.read_text(encoding="utf-8")
+        self.assertNotIn("\r", markdown)
+        self.assertIn("title=Wave Report; line_count=6", markdown)
+        self.assertEqual(len([line for line in markdown.splitlines() if "wave_report.md" in line]), 1)
+
     def test_jsonl_summary_formatting_exposes_counts(self):
         summary = {
             "line_count": 4,

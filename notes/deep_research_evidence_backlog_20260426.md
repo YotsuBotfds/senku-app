@@ -531,6 +531,8 @@ Action:
 - Bench artifact JSONL summaries now count non-object lines separately,
   truncate long type values deterministically, and preserve frequency order in
   formatted type-count summaries.
+- Bench artifact Markdown index rendering now strips carriage returns from
+  escaped cells so copied titles or summaries cannot warp table rows.
 - Audit follow-up tightened CI semantics after the 50-commit review: compact
   retrieval warnings are no longer auto-waived, `-AllowRetrievalWarnings` is
   passed only by explicit input, and Master Head Health is named/scoped as a
@@ -621,6 +623,8 @@ Validation:
   primary metric summary behavior.
 - `tests.test_index_bench_artifacts` covers JSONL non-object counts, long type
   truncation, and count-order formatting.
+- `tests.test_index_bench_artifacts` covers carriage-return sanitation in
+  rendered Markdown index rows.
 - `tests.test_github_workflows` covers explicit retrieval-warning opt-in and
   generated-fixture head-health workflow semantics.
 - `tests.test_guide_catalog` covers malformed frontmatter reporting while

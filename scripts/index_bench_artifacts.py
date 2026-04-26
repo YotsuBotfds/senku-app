@@ -323,7 +323,7 @@ def _format_summary(summary):
 
 
 def _escape_md(value):
-    return str(value).replace("|", "\\|").replace("\n", " ")
+    return str(value).replace("\r\n", "\n").replace("\r", " ").replace("|", "\\|").replace("\n", " ")
 
 
 def parse_args(argv=None):
