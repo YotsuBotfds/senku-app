@@ -19,6 +19,7 @@ DEFAULT_COLUMNS = (
     "top1_is_bridge",
     "top1_has_unresolved_partial",
     "answer_card_status",
+    "app_acceptance_status",
     "app_acceptance_root_cause",
     "safety_surface_status",
     "ui_surface_bucket",
@@ -80,6 +81,12 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         action="append",
         default=[],
         help="Filter by app_acceptance_root_cause. Repeat to include multiple causes.",
+    )
+    parser.add_argument(
+        "--app-acceptance-status",
+        action="append",
+        default=[],
+        help="Filter by app_acceptance_status. Repeat to include multiple statuses.",
     )
     parser.add_argument(
         "--safety-surface-status",
@@ -158,6 +165,7 @@ def filter_rows(
     top1_unresolved_partial: bool = False,
     top1_bridge: bool = False,
     card_statuses: Sequence[str] = (),
+    app_acceptance_statuses: Sequence[str] = (),
     acceptance_root_causes: Sequence[str] = (),
     safety_surface_statuses: Sequence[str] = (),
     ui_surface_buckets: Sequence[str] = (),
@@ -166,6 +174,9 @@ def filter_rows(
     guide_id_set = {guide_id.strip() for guide_id in guide_ids if guide_id.strip()}
     prompt_id_set = {prompt_id.strip() for prompt_id in prompt_ids if prompt_id.strip()}
     card_status_set = {status.strip() for status in card_statuses if status.strip()}
+    app_acceptance_status_set = {
+        status.strip() for status in app_acceptance_statuses if status.strip()
+    }
     root_cause_set = {
         root_cause.strip()
         for root_cause in acceptance_root_causes
@@ -183,6 +194,12 @@ def filter_rows(
         if prompt_id_set and str(row.get("prompt_id") or "") not in prompt_id_set:
             continue
         if card_status_set and str(row.get("answer_card_status") or "") not in card_status_set:
+            continue
+        if (
+            app_acceptance_status_set
+            and str(row.get("app_acceptance_status") or "")
+            not in app_acceptance_status_set
+        ):
             continue
         if (
             root_cause_set
@@ -241,6 +258,7 @@ def query_diagnostics(path: Path, args: argparse.Namespace) -> list[dict[str, An
         top1_unresolved_partial=args.top1_unresolved_partial,
         top1_bridge=args.top1_bridge,
         card_statuses=args.card_status,
+        app_acceptance_statuses=args.app_acceptance_status,
         acceptance_root_causes=args.acceptance_root_cause,
         safety_surface_statuses=args.safety_surface_status,
         ui_surface_buckets=args.ui_surface_bucket,

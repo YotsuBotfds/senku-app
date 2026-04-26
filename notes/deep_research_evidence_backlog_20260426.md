@@ -222,6 +222,10 @@ Action:
 - Extended row-level diagnostics queries with safety/UI surfacing filters:
   `--safety-surface-status` and `--ui-surface-bucket` now let triage isolate
   emergency-first or non-safety rows without opening the raw artifact.
+- Extended row-level diagnostics queries with a repeatable
+  `--app-acceptance-status` filter so operators can compose acceptance and
+  safety-surface allowlists without collapsing legitimate non-safety strong
+  rows into emergency-first requirements.
 - Added a Markdown-mode CLI proof for the same diagnostics filters, pinning the
   default operator path in addition to JSON output.
 - Preserved safety/UI diagnostic facets in RAG eval dataset metadata so
@@ -669,6 +673,8 @@ Validation:
   artifact signals alongside benign protected handoff context.
 - `tests.test_validate_prompt_expectations` covers the generated
   `primary_guide_ids` display column contract.
+- `tests.test_query_rag_diagnostics` covers app-acceptance status filtering
+  composed with safety-surface allowlists.
 - `tests.test_summarize_shadow_comparisons` covers optional/zero-denominator
   primary metric summary behavior.
 - `tests.test_summarize_shadow_comparisons` covers blank CSV row-count fallback

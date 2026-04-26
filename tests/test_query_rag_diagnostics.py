@@ -48,6 +48,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                 "top1_is_bridge": "yes",
                 "top1_has_unresolved_partial": "no",
                 "answer_card_status": "pass",
+                "app_acceptance_status": "strong_supported",
                 "app_acceptance_root_cause": "supported",
                 "safety_surface_status": "not_safety_critical",
                 "ui_surface_bucket": "standard",
@@ -61,6 +62,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                 "top1_is_bridge": "no",
                 "top1_has_unresolved_partial": "yes",
                 "answer_card_status": "fail",
+                "app_acceptance_status": "needs_evidence_owner",
                 "app_acceptance_root_cause": "evidence_owner",
                 "safety_surface_status": "emergency_first_supported",
                 "ui_surface_bucket": "emergency_first",
@@ -73,6 +75,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
             guide_ids=["GD-003"],
             top1_bridge=True,
             card_statuses=["pass"],
+            app_acceptance_statuses=["strong_supported"],
         )
         unresolved_rows = self.module.filter_rows(
             rows,
@@ -86,6 +89,41 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
 
         self.assertEqual([row["prompt_id"] for row in bridge_rows], ["P1"])
         self.assertEqual([row["prompt_id"] for row in unresolved_rows], ["P2"])
+
+    def test_filter_rows_combines_acceptance_and_safety_allowlists(self):
+        rows = [
+            {
+                "prompt_id": "P1",
+                "app_acceptance_status": "strong_supported",
+                "safety_surface_status": "not_safety_critical",
+            },
+            {
+                "prompt_id": "P2",
+                "app_acceptance_status": "strong_supported",
+                "safety_surface_status": "emergency_first_supported",
+            },
+            {
+                "prompt_id": "P3",
+                "app_acceptance_status": "strong_supported",
+                "safety_surface_status": "emergency_first_missing",
+            },
+            {
+                "prompt_id": "P4",
+                "app_acceptance_status": "needs_evidence_owner",
+                "safety_surface_status": "emergency_first_supported",
+            },
+        ]
+
+        matches = self.module.filter_rows(
+            rows,
+            app_acceptance_statuses=["strong_supported"],
+            safety_surface_statuses=[
+                "not_safety_critical",
+                "emergency_first_supported",
+            ],
+        )
+
+        self.assertEqual([row["prompt_id"] for row in matches], ["P1", "P2"])
 
     def test_filter_rows_matches_guide_ids_from_list_fields(self):
         rows = [
@@ -143,6 +181,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                     {
                         "prompt_id": "P1",
                         "suspected_failure_bucket": "ranking_miss",
+                        "app_acceptance_status": "strong_supported",
                         "app_acceptance_root_cause": "supported",
                         "safety_surface_status": "not_safety_critical",
                         "ui_surface_bucket": "standard",
@@ -150,6 +189,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                     {
                         "prompt_id": "P2",
                         "suspected_failure_bucket": "retrieval_miss",
+                        "app_acceptance_status": "unsafe_or_overconfident",
                         "app_acceptance_root_cause": "gate_policy",
                         "safety_surface_status": "emergency_first_supported",
                         "ui_surface_bucket": "emergency_first",
@@ -164,6 +204,8 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                         str(root),
                         "--bucket",
                         "retrieval_miss",
+                        "--app-acceptance-status",
+                        "unsafe_or_overconfident",
                         "--acceptance-root-cause",
                         "gate_policy",
                         "--safety-surface-status",
@@ -187,6 +229,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                     {
                         "prompt_id": "P1",
                         "suspected_failure_bucket": "ranking_miss",
+                        "app_acceptance_status": "strong_supported",
                         "app_acceptance_root_cause": "supported",
                         "safety_surface_status": "not_safety_critical",
                         "ui_surface_bucket": "standard",
@@ -194,6 +237,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                     {
                         "prompt_id": "P2",
                         "suspected_failure_bucket": "retrieval_miss",
+                        "app_acceptance_status": "needs_evidence_owner",
                         "app_acceptance_root_cause": "evidence_owner",
                         "safety_surface_status": "emergency_first_supported",
                         "ui_surface_bucket": "emergency_first",
@@ -217,6 +261,7 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
             markdown = output.getvalue()
 
         self.assertIn("| P2 | retrieval_miss |", markdown)
+        self.assertIn("needs_evidence_owner", markdown)
         self.assertIn("evidence_owner", markdown)
         self.assertIn("emergency_first_supported", markdown)
         self.assertNotIn("| P1 | ranking_miss |", markdown)
