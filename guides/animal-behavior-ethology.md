@@ -72,7 +72,7 @@ Key principles:
 ### Major Behavioral Drives
 
 **Feeding behavior:**
-- Herbivores spend 6â€“8 hours daily foraging
+- Herbivores spend 6-8 hours daily foraging
 - Carnivores hunt intermittently; rest between kills
 - Omnivores combine both strategies
 - Hunger drives are powerful; food can be used to modify behavior
@@ -255,7 +255,7 @@ Domestication is the process of selective breeding for behavioral and morphologi
 
 **Successful domestications (last 10,000 years):**
 - Cattle, sheep, goats, pigs, horses, chickens, ducks
-- Dogs (15,000â€“40,000 years ago; likely first domesticated animal)
+- Dogs (15,000-40,000 years ago; likely first domesticated animal)
 - Cats (only partially domesticated; self-domesticated by human association)
 
 **Failed domestications (despite attempts):**
@@ -276,7 +276,7 @@ Domestication is the process of selective breeding for behavioral and morphologi
 **Application in survival:** 
 - Selecting docile animals (reduced aggression) for breeding accelerates domestication
 - Breeding animals that tolerate human proximity and food from humans
-- Within 5â€“10 generations, morphological and behavioral changes are visible
+- Within 5-10 generations, morphological and behavioral changes are visible
 
 :::tip
 **Fox domestication experiment:** Soviet researchers selectively bred foxes for tameness alone. Within ~50 years, foxes developed floppy ears, varied coat colors, curled tails, and other domestic traits without direct selection for them. This shows that behavioral selection for tameness inadvertently selects for morphological changes.
@@ -353,21 +353,21 @@ Domestication is the process of selective breeding for behavioral and morphologi
 :::affiliate
 **If you're studying animal behavior for livestock management or wildlife coexistence,** field guides and references accelerate learning:
 
-- [Animal Behavior Field Guide (Peterson Series or Audubon)](https://www.amazon.com/dp/0547943989?tag=offlinecompen-20) â€” Photo-based identification of behavioral patterns; covers mammals, birds, and reptiles in your region
-- [Livestock Handling and Behavior Manual](https://www.amazon.com/dp/0875964044?tag=offlinecompen-20) â€” Explains how domestic animals respond to movement, noise, and fear; optimizes handling without injury
-- [Predator Identification and Deterrence Guide](https://www.amazon.com/dp/B001UZHBLU?tag=offlinecompen-20) â€” Recognize predator species and tailor defense strategies; behavior patterns predict hunting times and targets
-- [Live Animal Trapping and Behavior Reference](https://www.amazon.com/dp/1580174213?tag=offlinecompen-20) â€” Understanding animal behavior enables humane capture, relocation, or control of problem wildlife
+- [Animal Behavior Field Guide (Peterson Series or Audubon)](https://www.amazon.com/dp/0547943989?tag=offlinecompen-20) - Photo-based identification of behavioral patterns; covers mammals, birds, and reptiles in your region
+- [Livestock Handling and Behavior Manual](https://www.amazon.com/dp/0875964044?tag=offlinecompen-20) - Explains how domestic animals respond to movement, noise, and fear; optimizes handling without injury
+- [Predator Identification and Deterrence Guide](https://www.amazon.com/dp/B001UZHBLU?tag=offlinecompen-20) - Recognize predator species and tailor defense strategies; behavior patterns predict hunting times and targets
+- [Live Animal Trapping and Behavior Reference](https://www.amazon.com/dp/1580174213?tag=offlinecompen-20) - Understanding animal behavior enables humane capture, relocation, or control of problem wildlife
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the references discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the references discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 ## See Also
 
 <section id="see-also">
 
-- <a href="../ecology-ecosystem-management.html">Ecology and Ecosystem Management</a> â€” Manage animals within ecosystems
-- <a href="../zoology-animal-husbandry.html">Zoology and Animal Husbandry</a> â€” Apply behavior knowledge to livestock
-- <a href="../survival-basics.html">Survival Basics</a> â€” Integrate animal behavior understanding into survival
+- <a href="../ecology-ecosystem-management.html">Ecology and Ecosystem Management</a> - Manage animals within ecosystems
+- <a href="../zoology-animal-husbandry.html">Zoology and Animal Husbandry</a> - Apply behavior knowledge to livestock
+- <a href="../survival-basics.html">Survival Basics</a> - Integrate animal behavior understanding into survival
 
 </section>
 
