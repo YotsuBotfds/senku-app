@@ -21,22 +21,22 @@ liability_level: low
 
 Semaphore flag signaling is one of the most accessible long-distance communication systems available. Unlike radio, satellite, or telephone infrastructure, flag signaling requires **zero power, zero batteries, and minimal equipment**. Two colored flags and knowledge of the alphabet are enough to send messages across kilometers of open terrain.
 
-This system predates electronic communications by centuries. Navies used flag signals to coordinate fleets across entire battle lines. Military forces still train operators in flag semaphore as backup communication when electronic systems fail. In low-connectivity environments, disaster zones, or wilderness areas, semaphore fills the critical gap between line-of-sight shouting (50â€“100 meters) and distance-dependent radio (5â€“50 km depending on equipment and terrain).
+This system predates electronic communications by centuries. Navies used flag signals to coordinate fleets across entire battle lines. Military forces still train operators in flag semaphore as backup communication when electronic systems fail. In low-connectivity environments, disaster zones, or wilderness areas, semaphore fills the critical gap between line-of-sight shouting (50-100 meters) and distance-dependent radio (5-50 km depending on equipment and terrain).
 
 ### Range and Visibility
 
-- **Naked eye:** 1â€“2 km under good daylight conditions with clear contrast between flags and sky
-- **Binoculars (standard 7Ã—50):** 5 km with practiced operators
+- **Naked eye:** 1-2 km under good daylight conditions with clear contrast between flags and sky
+- **Binoculars (standard 7x50):** 5 km with practiced operators
 - **High-contrast flags in bright sunlight:** can extend effective range to 5+ km without optics
-- **Degraded visibility (haze, dusk, rain):** reduces effective range to 500â€“800 meters
-- **At night:** switch to lantern signals (Morse code format, not semaphore positionsâ€”see Night Signaling section)
+- **Degraded visibility (haze, dusk, rain):** reduces effective range to 500-800 meters
+- **At night:** switch to lantern signals (Morse code format, not semaphore positions - see Night Signaling section)
 
 ### Communication Speed
 
-- **Trained military operators:** 8â€“12 words per minute (WPM)
-- **Practiced amateur operators:** 4â€“6 WPM
-- **Beginners:** 2â€“3 WPM with a reference chart
-- **Relay chains (3+ stations):** 1â€“2 WPM due to acknowledgment overhead and error checking
+- **Trained military operators:** 8-12 words per minute (WPM)
+- **Practiced amateur operators:** 4-6 WPM
+- **Beginners:** 2-3 WPM with a reference chart
+- **Relay chains (3+ stations):** 1-2 WPM due to acknowledgment overhead and error checking
 
 Speed depends on operator skill, weather conditions, distance, and whether binoculars are required. Relay operations are deliberately slower to ensure accuracy across multiple hops.
 
@@ -49,7 +49,7 @@ In scenarios where radio is unavailable, jammed, or too risky to use (stealth/se
 - Repeatable training without special tools
 - Integration with other visual signals (mirrors, smoke, fire) and audio signals (whistles, horns)
 
-Semaphore integrates naturally with broader <a href="../visual-audio-signal-systems.html">visual-audio signal systems</a> used for group coordination in emergencies. In search-and-rescue situations, flag signaling provides a no-power backup for directing rescue aircraft and coordinating with ground SAR teams when radio is unavailable. Improvised flags can be made rapidly from clothing, tent fabric, or any contrasting cloth â€” making this one of the fastest emergency signaling methods to deploy with scavenged materials.
+Semaphore integrates naturally with broader <a href="../visual-audio-signal-systems.html">visual-audio signal systems</a> used for group coordination in emergencies. In search-and-rescue situations, flag signaling provides a no-power backup for directing rescue aircraft and coordinating with ground SAR teams when radio is unavailable. Improvised flags can be made rapidly from clothing, tent fabric, or any contrasting cloth - making this one of the fastest emergency signaling methods to deploy with scavenged materials.
 
 </section>
 
@@ -60,7 +60,7 @@ Semaphore integrates naturally with broader <a href="../visual-audio-signal-syst
 Flag semaphore uses a standardized two-flag system where each letter is represented by the position of the left and right arms. Positions are described using clock notation, where 12 o'clock is straight up, 3 o'clock is horizontal to the right, 6 o'clock is straight down, and 9 o'clock is horizontal to the left. This is the authoritative clock-notation reference; the [Visual & Audio Signal Systems](../visual-audio-signal-systems.html) guide provides a simplified quick-reference alongside integration with other signal methods.
 
 :::info-box
-**System Overview:** Semaphore is a visual language of 26 letters (Aâ€“Z), 10 numerals (0â€“9), and special signals. Each position holds for 0.5â€“1 second before transitioning to the next position. The sender's perspective (facing the receiver) determines arm positions; the receiver sees a mirror image and must learn to interpret reversed positions.
+**System Overview:** Semaphore is a visual language of 26 letters (A-Z), 10 numerals (0-9), and special signals. Each position holds for 0.5-1 second before transitioning to the next position. The sender's perspective (facing the receiver) determines arm positions; the receiver sees a mirror image and must learn to interpret reversed positions.
 :::
 
 ### Complete Semaphore Position Reference
@@ -138,16 +138,16 @@ Effective semaphore signaling requires flags large and visible enough to be seen
 
 ### Minimum Flag Specifications
 
-- **Size:** 45 cm Ã— 45 cm square minimum (larger is better for distance; 60 cm Ã— 60 cm is ideal for ranges >2 km)
-- **Weight:** light enough to wave for extended periods (100â€“150 grams per flag)
+- **Size:** 45 cm x 45 cm square minimum (larger is better for distance; 60 cm x 60 cm is ideal for ranges >2 km)
+- **Weight:** light enough to wave for extended periods (100-150 grams per flag)
 - **Material:** cotton, linen, nylon, or other durable cloth that does not tear easily when handled repeatedly
-- **Color:** high contrast against sky. Traditional semaphore uses red and yellow flags (red is more visible in haze), but any two distinct colors workâ€”white and black, white and blue, orange and white. Avoid colors that blend with typical sky (light blue, gray).
+- **Color:** high contrast against sky. Traditional semaphore uses red and yellow flags (red is more visible in haze), but any two distinct colors work - white and black, white and blue, orange and white. Avoid colors that blend with typical sky (light blue, gray).
 
 ### Improvised Flag Assembly
 
 **From fabric scraps:**
-1. Cut two 45â€“60 cm squares from colored cloth (old clothing, bed sheets, curtains, flags, or tarps can be repurposed)
-2. Use a stick, dowel, tent pole, or sturdy branch 50â€“60 cm long as the handle
+1. Cut two 45-60 cm squares from colored cloth (old clothing, bed sheets, curtains, flags, or tarps can be repurposed)
+2. Use a stick, dowel, tent pole, or sturdy branch 50-60 cm long as the handle
 3. Fold one edge of the fabric over the handle and secure with:
    - Nails driven through the folded edge, then the flag wrapped around the nail head (secure and proven)
    - Stitching with heavy thread in a sleeve around the handle
@@ -201,7 +201,7 @@ Before sending any message, the receiver must be alert and focused on you:
 3. Once acknowledged, immediately move to the first letter of your message
 
 :::tip
-**In crowded areas:** Hold attention signal longer (5â€“10 seconds minimum) to ensure you have the right receiver's attention. Multiple operators in the same location must pre-establish which flags they will use (different colors, unique markings on handles).
+**In crowded areas:** Hold attention signal longer (5-10 seconds minimum) to ensure you have the right receiver's attention. Multiple operators in the same location must pre-establish which flags they will use (different colors, unique markings on handles).
 :::
 
 ### Letter-by-Letter Transmission
@@ -209,9 +209,9 @@ Before sending any message, the receiver must be alert and focused on you:
 Once attention is acknowledged:
 
 1. Move both arms into the position for the first letter
-2. Hold the position for 0.5â€“1 second (allow the receiver to register the letter)
+2. Hold the position for 0.5-1 second (allow the receiver to register the letter)
 3. Drop both arms to neutral (at sides, flags hanging naturally)
-4. Wait 0.5â€“1 second (brief pause between letters)
+4. Wait 0.5-1 second (brief pause between letters)
 5. Move to the next letter position
 6. Repeat for all letters in the word
 
@@ -220,7 +220,7 @@ Once attention is acknowledged:
 ### Word Breaks and Spacing
 
 - **Between letters in a word:** brief 0.5-second pause (described above)
-- **Between words:** cross both arms overhead in an X shape, then drop both arms to neutral. This distinctive signal provides a clear visual break (approximately 1â€“2 seconds total)
+- **Between words:** cross both arms overhead in an X shape, then drop both arms to neutral. This distinctive signal provides a clear visual break (approximately 1-2 seconds total)
 - **End of complete message:** cross both arms overhead slowly and deliberately, hold for 2 seconds, then lower arms fully. This signals "transmission complete."
 
 ### Error Correction
@@ -248,7 +248,7 @@ For speed, operators often pre-establish abbreviations:
 Spell abbreviations one letter at a time; the receiver understands the convention.
 
 :::info-box
-**Speed Progression:** Week 1 operators should expect 1â€“2 WPM with a reference chart. By week 3, 3â€“5 WPM is achievable with practice. Military training requires 8â€“12 WPM, which takes weeks of daily drilling. Do not rush speed; accuracy is always more important than velocity.
+**Speed Progression:** Week 1 operators should expect 1-2 WPM with a reference chart. By week 3, 3-5 WPM is achievable with practice. Military training requires 8-12 WPM, which takes weeks of daily drilling. Do not rush speed; accuracy is always more important than velocity.
 :::
 
 </section>
@@ -276,7 +276,7 @@ This is the key challenge for receivers. When the sender raises their left arm t
 - The sender's right arm is on your left
 - Flip the positions in your mind and compare to the alphabet chart
 
-With practice (usually 2â€“3 weeks of daily 15-minute sessions), this reversal becomes unconscious. Advanced operators do not explicitly reverse; they perceive the positions directly.
+With practice (usually 2-3 weeks of daily 15-minute sessions), this reversal becomes unconscious. Advanced operators do not explicitly reverse; they perceive the positions directly.
 
 ### Recording Messages
 
@@ -298,7 +298,7 @@ When in doubt about a letter, jot a **?** and ask for repetition later. Do not i
 - **After complete message:** Cross arms overhead in X, then drop (mirrors the sender's end-of-message signal)
 - **Meaning:** "Message fully received and understood."
 
-**Binoculars note:** The receiver with binoculars should maintain a clear line of sight throughout. Brief binocular fatigue (arms tired from holding up binoculars) is normal; rotate spotters or lower binoculars for 10â€“20 seconds if needed. Always maintain visual lock on the sender's position.
+**Binoculars note:** The receiver with binoculars should maintain a clear line of sight throughout. Brief binocular fatigue (arms tired from holding up binoculars) is normal; rotate spotters or lower binoculars for 10-20 seconds if needed. Always maintain visual lock on the sender's position.
 
 ### Common Reception Errors
 
@@ -307,7 +307,7 @@ When in doubt about a letter, jot a **?** and ask for repetition later. Do not i
 | Confusing similar letters (H/U, M/O) | Insufficient lighting or distance too far | Move closer, use binoculars, request repetition |
 | Reversing arms (mirror error) | Incomplete mental reversal habit | Train from receiver perspective; drill 20+ messages |
 | Skipping letters | Sender too fast or receiver distracted | Establish slower pace (1 letter/second); minimize distractions |
-| Seeing letters that were not sent | Fatigue or anticipation error | Take breaks every 15â€“20 minutes; focus only on actual positions |
+| Seeing letters that were not sent | Fatigue or anticipation error | Take breaks every 15-20 minutes; focus only on actual positions |
 
 </section>
 
@@ -315,7 +315,7 @@ When in doubt about a letter, jot a **?** and ask for repetition later. Do not i
 
 ## Tower-to-Tower Relay
 
-Long-distance communication across hilly terrain or obstacles relies on relay stationsâ€”intermediate points where messages are received and immediately re-transmitted to the next station. Relay operations are slower and demand higher accuracy to prevent error accumulation.
+Long-distance communication across hilly terrain or obstacles relies on relay stations - intermediate points where messages are received and immediately re-transmitted to the next station. Relay operations are slower and demand higher accuracy to prevent error accumulation.
 
 ### Relay Station Placement
 
@@ -332,8 +332,8 @@ Stations must be positioned for line-of-sight continuity:
 
 Each relay station requires:
 
-- Two flags (sender role) and two flags (receiver role) â€” same station alternates between roles
-- A flagpole or mounting structure (8â€“15 feet high minimum; higher improves range)
+- Two flags (sender role) and two flags (receiver role) - same station alternates between roles
+- A flagpole or mounting structure (8-15 feet high minimum; higher improves range)
 - A notebook and pencil for recording messages
 - Two operators (primary and backup) so one rests while the other works
 - Optional: binoculars for increased range, a weather log (wind speed, visibility), a duty roster
@@ -371,9 +371,9 @@ Each relay station must acknowledge receipt **before** re-transmitting:
 
 Relay transmission is deliberately slow:
 
-- **Single hop (two stations):** expect 5â€“8 WPM
-- **Two-hop relay (three stations):** expect 3â€“5 WPM
-- **Three+ hop relay:** expect 1â€“3 WPM
+- **Single hop (two stations):** expect 5-8 WPM
+- **Two-hop relay (three stations):** expect 3-5 WPM
+- **Three+ hop relay:** expect 1-3 WPM
 
 Each relay adds overhead: acknowledgment time, message recording time, mental preparation to re-transmit, and error-checking. **Critical constraint:** Do not rush relay operations. The most accurate messages are those sent slowly and confirmed at each step.
 
@@ -392,14 +392,14 @@ Each relay adds overhead: acknowledgment time, message recording time, mental pr
 
 ## Night Signaling
 
-Flag semaphore is impractical in darkness because the receiver cannot distinguish arm positions. For night emergency signaling, switch to **Morse code transmitted with lanterns or torches** â€” a simpler system for nighttime distress signaling and search-and-rescue coordination.
+Flag semaphore is impractical in darkness because the receiver cannot distinguish arm positions. For night emergency signaling, switch to **Morse code transmitted with lanterns or torches** - a simpler system for nighttime distress signaling and search-and-rescue coordination.
 
 ### Morse Code via Lantern
 
 Replace flags with a lantern or torch in each hand (or a single lantern with a shutter):
 
-- **Dot (dit):** Brief flash (0.1â€“0.2 seconds)
-- **Dash (dah):** Long flash (0.3â€“0.5 seconds)
+- **Dot (dit):** Brief flash (0.1-0.2 seconds)
+- **Dash (dah):** Long flash (0.3-0.5 seconds)
 - **Letter space:** 0.5-second darkness between letters
 - **Word space:** 2-second darkness between words
 
@@ -448,10 +448,10 @@ This concentrates the signal beam in one direction, making it invisible from the
 
 | Factor | Semaphore (Flags) | Morse (Lantern) |
 |--------|-------------------|-----------------|
-| Visibility in darkness | Poor/impossible | Good (0.5â€“3 km) |
+| Visibility in darkness | Poor/impossible | Good (0.5-3 km) |
 | Directional control | Medium (flags scatter light) | Excellent (shutter concentrates beam) |
-| Speed | 3â€“8 WPM (trained) | 2â€“5 WPM (trained) |
-| Training time | 3â€“4 weeks | 2â€“3 weeks |
+| Speed | 3-8 WPM (trained) | 2-5 WPM (trained) |
+| Training time | 3-4 weeks | 2-3 weeks |
 | Equipment | Flags, handles | Lanterns, optional shutter |
 | Stealth | Moderate (visible at distance) | Poor without shutter (broadcast visible) |
 
@@ -469,20 +469,20 @@ Becoming proficient at flag signaling requires structured, progressive practice.
 
 **Goal:** Memorize all 26 letters and 10 numerals; be able to reference a chart in <5 seconds.
 
-- **Mondayâ€“Tuesday:** Drill alphabet with a printed chart. Read each letter aloud, then hold the position for 2 seconds. Do 5 complete alphabet passes, resting between passes.
-- **Wednesdayâ€“Thursday:** Speed up to 1 letter per second (moving from one letter to the next without resting). Use a chart nearby if stuck. Aim for 1 complete alphabet in ~30 seconds.
-- **Fridayâ€“Saturday:** Drill special signals (Attention, Error, End of Message). Practice transitions: Attention â†’ A â†’ B â†’ C â†’ End of Word â†’ D â†’ E â†’ F â†’ End of Message. Do 10 complete sequences.
+- **Monday-Tuesday:** Drill alphabet with a printed chart. Read each letter aloud, then hold the position for 2 seconds. Do 5 complete alphabet passes, resting between passes.
+- **Wednesday-Thursday:** Speed up to 1 letter per second (moving from one letter to the next without resting). Use a chart nearby if stuck. Aim for 1 complete alphabet in ~30 seconds.
+- **Friday-Saturday:** Drill special signals (Attention, Error, End of Message). Practice transitions: Attention -> A -> B -> C -> End of Word -> D -> E -> F -> End of Message. Do 10 complete sequences.
 - **Sunday:** Full alphabet drill without consulting chart. Record any letters that trip you up; drill those specifically the next week.
 
-**Measurement:** By end of week 1, you should complete the full alphabet Aâ€“Z without the chart, without errors, in ~40â€“50 seconds.
+**Measurement:** By end of week 1, you should complete the full alphabet A-Z without the chart, without errors, in ~40-50 seconds.
 
 ### Week 2: Sending Simple Messages
 
 **Goal:** Transmit real words at a readable pace. Establish rhythm and reduce reliance on conscious arm positioning.
 
-- **Mondayâ€“Tuesday:** Drill 5-letter words (WATER, LIGHT, BEACH, STORM, NORTH). Use a chart as reference. Pause 1 full second between each letter. Record yourself on video if possible and review for jerky transitions or unclear positions.
-- **Wednesdayâ€“Thursday:** Move to 10-letter words (COORDINATE, VISIBILITY, UNDERSTAND). Increase pace to 0.5-second pauses between letters. Begin timing yourself: aim for 2 WPM (10 seconds per 5 letters).
-- **Fridayâ€“Saturday:** Transmit short sentences (3â€“5 words). Example: **"STORM APPROACHING SEEK SHELTER"** or **"WATER SUPPLY LOW CONSERVE"**. Maintain 2 WPM pace.
+- **Monday-Tuesday:** Drill 5-letter words (WATER, LIGHT, BEACH, STORM, NORTH). Use a chart as reference. Pause 1 full second between each letter. Record yourself on video if possible and review for jerky transitions or unclear positions.
+- **Wednesday-Thursday:** Move to 10-letter words (COORDINATE, VISIBILITY, UNDERSTAND). Increase pace to 0.5-second pauses between letters. Begin timing yourself: aim for 2 WPM (10 seconds per 5 letters).
+- **Friday-Saturday:** Transmit short sentences (3-5 words). Example: **"STORM APPROACHING SEEK SHELTER"** or **"WATER SUPPLY LOW CONSERVE"**. Maintain 2 WPM pace.
 - **Sunday:** Drill any weak letters again. Practice transitioning between common letter pairs (like TH, ING, ER) at normal speed.
 
 **Measurement:** By end of week 2, transmit a 20-letter message (4 words) error-free at 2 WPM without chart reference.
@@ -491,31 +491,31 @@ Becoming proficient at flag signaling requires structured, progressive practice.
 
 **Goal:** Practice with a partner (one sender, one receiver). Begin decoding messages from another person's perspective and start receiving at readable speeds.
 
-- **Mondayâ€“Tuesday:** Partner role-reversal drills. One person sends simple words (5 letters) at 2 WPM from 20 feet away. The receiver notes down the letters, then both compare notes. Swap roles. Do 10 words each role.
-- **Wednesdayâ€“Thursday:** Increase distance to 50 feet (or use binoculars at 200 feet). Partner sends 10-letter words. Receiver practices mental reversal (mirror image correction). Record any letters misread for targeted practice.
-- **Fridayâ€“Saturday:** Full message exchange: Sender transmits a 3-sentence message (Attention â†’ word â†’ word â†’ word â†’ End of Message). Receiver decodes and writes down the message, then reads it back to confirm accuracy. Exchange roles. Do 5 messages each direction.
+- **Monday-Tuesday:** Partner role-reversal drills. One person sends simple words (5 letters) at 2 WPM from 20 feet away. The receiver notes down the letters, then both compare notes. Swap roles. Do 10 words each role.
+- **Wednesday-Thursday:** Increase distance to 50 feet (or use binoculars at 200 feet). Partner sends 10-letter words. Receiver practices mental reversal (mirror image correction). Record any letters misread for targeted practice.
+- **Friday-Saturday:** Full message exchange: Sender transmits a 3-sentence message (Attention -> word -> word -> word -> End of Message). Receiver decodes and writes down the message, then reads it back to confirm accuracy. Exchange roles. Do 5 messages each direction.
 - **Sunday:** Final assessment: Both partners send a known message to each other without conferring. Grade for accuracy and speed. Identify remaining weak areas for ongoing practice.
 
 **Measurement:** By end of week 3, send and receive a 25-word message (5 words) at 3 WPM with 95%+ accuracy.
 
 ### Post-Training: Field Exercises and Speed Building
 
-**Weeks 4â€“6:** Conduct field exercises at increasing distances:
-- Week 4: Practice at 100â€“200 meters in clear daylight
+**Weeks 4-6:** Conduct field exercises at increasing distances:
+- Week 4: Practice at 100-200 meters in clear daylight
 - Week 5: Practice at 500 meters to 1 km using binoculars
 - Week 6: Relay practice (three stations, two hops); longer messages with acknowledgments
 
-Continue drills 3â€“4 times per week; speed will naturally increase to 4â€“6 WPM by week 6.
+Continue drills 3-4 times per week; speed will naturally increase to 4-6 WPM by week 6.
 
 ### Speed Benchmarks by Week
 
 | Milestone | WPM | Letters/Sec | Typical Message Time |
 |-----------|-----|-------------|----------------------|
-| End of Week 1 | 0.5â€“1 | 0.3 | 20 sec for "HELLO" |
+| End of Week 1 | 0.5-1 | 0.3 | 20 sec for "HELLO" |
 | End of Week 2 | 2 | 0.6 | 8 sec for "HELLO" |
-| End of Week 3 | 3â€“4 | 0.9 | 5 sec for "HELLO" |
-| Weeks 4â€“6 | 4â€“6 | 1.3 | 3 sec for "HELLO" |
-| Trained military | 8â€“12 | 2.5+ | 2 sec for "HELLO" |
+| End of Week 3 | 3-4 | 0.9 | 5 sec for "HELLO" |
+| Weeks 4-6 | 4-6 | 1.3 | 3 sec for "HELLO" |
+| Trained military | 8-12 | 2.5+ | 2 sec for "HELLO" |
 
 :::tip
 **Deliberate practice:** The key to speed is not pressure but *consistent, focused practice*. 20 minutes of focused, slow drilling beats 2 hours of distracted, fast waving. Use a metronome (or a ticking clock) to develop rhythm. The alphabet should become as automatic as speaking; your conscious mind should focus on the message content, not the arm positions.
@@ -527,12 +527,12 @@ Continue drills 3â€“4 times per week; speed will naturally increase to 4â�
 
 ## See Also
 
-- <a href="../visual-audio-signal-systems.html">Visual & Audio Signal Systems</a> â€” Integration with mirrors, smoke, fire, and audio signaling
-- <a href="../morse-code-fundamentals.html">Morse Code Fundamentals</a> â€” For nighttime lantern signaling and radio backup
-- <a href="../search-rescue.html">Search & Rescue Operations</a> â€” SAR coordination, ground-to-air signals, and rescue team communication protocols
-- <a href="../written-communication-protocols.html">Written Communication Protocols</a> â€” Message formatting, addressing, and priority systems
-- <a href="../oral-comms-protocols.html">Oral Communications Protocols</a> â€” Voice discipline and radio procedures applicable to flag relay
-- <a href="../dead-reckoning-navigation.html">Dead Reckoning Navigation</a> â€” Navigation techniques to pinpoint relay station locations without GPS
+- <a href="../visual-audio-signal-systems.html">Visual & Audio Signal Systems</a> - Integration with mirrors, smoke, fire, and audio signaling
+- <a href="../morse-code-fundamentals.html">Morse Code Fundamentals</a> - For nighttime lantern signaling and radio backup
+- <a href="../search-rescue.html">Search & Rescue Operations</a> - SAR coordination, ground-to-air signals, and rescue team communication protocols
+- <a href="../written-communication-protocols.html">Written Communication Protocols</a> - Message formatting, addressing, and priority systems
+- <a href="../oral-comms-protocols.html">Oral Communications Protocols</a> - Voice discipline and radio procedures applicable to flag relay
+- <a href="../dead-reckoning-navigation.html">Dead Reckoning Navigation</a> - Navigation techniques to pinpoint relay station locations without GPS
 
 </section>
 
@@ -548,7 +548,7 @@ Continue drills 3â€“4 times per week; speed will naturally increase to 4â�
 | Relay stations cannot see each other | Line-of-sight blocked by terrain or obstacles | Relocate relay to higher ground, clear line-of-sight obstacles, add intermediate relay station, or use Morse via lantern if range allows |
 | Flags tear during use | Excessive wind or rough handling | Check flag seams and handle attachment before use, use larger flags in high-wind areas, reduce signaling duration if gusts exceed 20 mph |
 | Binocular fatigue during long-distance reception | Arms tired from holding binoculars | Stabilize binoculars on monopod or wall rest, rotate spotters every 15 minutes, take 30-second breaks every 10 minutes |
-| Unable to match drill speed targets | Insufficient practice or unrealistic expectations | Dedicate 20â€“30 minutes daily to focused drills; accept slower progression (Week 2 at 1 WPM is acceptable); increase volume of practice, not intensity |
+| Unable to match drill speed targets | Insufficient practice or unrealistic expectations | Dedicate 20-30 minutes daily to focused drills; accept slower progression (Week 2 at 1 WPM is acceptable); increase volume of practice, not intensity |
 | Relay chain breaks due to fog or weather | Weather reduces visibility; line-of-sight lost | Pre-stage backup relays on alternate routes; establish clear-weather communication windows; fall back to Morse via lantern if flag signaling impossible |
 
 </section>
@@ -560,15 +560,15 @@ Continue drills 3â€“4 times per week; speed will naturally increase to 4â�
 The following products support effective flag signaling:
 
 :::affiliate
-- **Signal Flags Kit (2-pack, red/yellow)** â€” [B09BQXKFYT](https://www.amazon.com/dp/B09BQXKFYT?tag=offlinecompen-20) â€” Pre-made semaphore flags with handles, high-visibility fabric, UV-resistant dyes. Replaces homemade flags for operators who prefer ready-to-use equipment. Cost-effective for training groups.
+- **Signal Flags Kit (2-pack, red/yellow)** - [B09BQXKFYT](https://www.amazon.com/dp/B09BQXKFYT?tag=offlinecompen-20) - Pre-made semaphore flags with handles, high-visibility fabric, UV-resistant dyes. Replaces homemade flags for operators who prefer ready-to-use equipment. Cost-effective for training groups.
 
-- **Compact Binoculars (7Ã—50 magnification)** â€” [B00004TBLW](https://www.amazon.com/dp/B00004TBLW?tag=offlinecompen-20) â€” Essential for long-distance flag reception (2â€“5 km range). Look for weather-sealed, nitrogen-filled models for fog/rain durability. Prioritize eye relief for comfortable extended viewing.
+- **Compact Binoculars (7x50 magnification)** - [B00004TBLW](https://www.amazon.com/dp/B00004TBLW?tag=offlinecompen-20) - Essential for long-distance flag reception (2-5 km range). Look for weather-sealed, nitrogen-filled models for fog/rain durability. Prioritize eye relief for comfortable extended viewing.
 
-- **3M Reflective Tape (1-inch silver)** â€” [B007ND3LMK](https://www.amazon.com/dp/B007ND3LMK?tag=offlinecompen-20) â€” Upgrade flags or handles for night signaling, low-light conditions, or emergency visibility. Self-adhesive; applies cleanly to fabric and wood.
+- **3M Reflective Tape (1-inch silver)** - [B007ND3LMK](https://www.amazon.com/dp/B007ND3LMK?tag=offlinecompen-20) - Upgrade flags or handles for night signaling, low-light conditions, or emergency visibility. Self-adhesive; applies cleanly to fabric and wood.
 
-- **Waterproof Laminating Pouches (100-pack, letter size)** â€” [B07D7PDLZQ](https://www.amazon.com/dp/B07D7PDLZQ?tag=offlinecompen-20) â€” Laminate semaphore reference charts and Morse code cards to preserve them in field use. Enables field reference without destroying paper guides.
+- **Waterproof Laminating Pouches (100-pack, letter size)** - [B07D7PDLZQ](https://www.amazon.com/dp/B07D7PDLZQ?tag=offlinecompen-20) - Laminate semaphore reference charts and Morse code cards to preserve them in field use. Enables field reference without destroying paper guides.
 
-These products are optionalâ€”the core semaphore system requires only cloth and handlesâ€”but they accelerate learning and extend operational range.
+These products are optional - the core semaphore system requires only cloth and handles - but they accelerate learning and extend operational range.
 
 :::
 
