@@ -54,7 +54,7 @@ custom_css: |
 
 ## Sepsis: The Hidden Killer
 
-**Sepsis** is the body's severe inflammatory response to infection, characterized by organ dysfunction and shock. It kills one person every 3â€“4 seconds globally, even in hospitals.
+**Sepsis** is the body's severe inflammatory response to infection, characterized by organ dysfunction and shock. It kills one person every 3-4 seconds globally, even in hospitals.
 
 ## Confused + Fever + Fast Heartbeat - Could Be Sepsis
 
@@ -80,14 +80,14 @@ Use this guide for immediate sepsis screening and first-hour priorities.
 2. **Progression is rapid.** Compensation lasts hours; once BP drops, organ failure accelerates
 3. **Delayed antibiotics = higher mortality.** Every hour of delay increases mortality risk
 4. **Multiple organ failure develops silently.** Kidneys, lungs, heart, liver all fail simultaneously
-5. **Austere settings lack key diagnostics.** No blood cultures, no lactate, no imaging â†’ diagnosis must be clinical
+5. **Austere settings lack key diagnostics.** No blood cultures, no lactate, no imaging -> diagnosis must be clinical
 
 ### The Mortality Clock
 
 - **Antibiotics within 1 hour:** 80% survival
 - **Antibiotics within 3 hours:** 70% survival
 - **Antibiotics after 6 hours:** 50% survival
-- **Septic shock at presentation:** 30â€“40% mortality even in ICU
+- **Septic shock at presentation:** 30-40% mortality even in ICU
 
 **The lesson:** When you suspect sepsis, start antibiotics immediately. Waiting for confirmation = waiting for death.
 
@@ -105,10 +105,10 @@ SIRS captures the inflammatory state; any **2 of 4** criteria suggest systemic i
 
 **SIRS Criteria:**
 
-1. **Temperature:** >38.3Â°C (101Â°F) OR <36Â°C (96.8Â°F)
+1. **Temperature:** >38.3°C (101°F) OR <36°C (96.8°F)
 2. **Heart rate:** >90 bpm
-3. **Respiratory rate:** >20/min OR PaCOâ‚‚ <32 mmHg (or COâ‚‚ level low if capnography)
-4. **WBC count:** >12,000 OR <4,000 per Î¼L (if lab available; or shift to left = immature neutrophils)
+3. **Respiratory rate:** >20/min OR PaCO₂ <32 mmHg (or CO₂ level low if capnography)
+4. **WBC count:** >12,000 OR <4,000 per μL (if lab available; or shift to left = immature neutrophils)
 
 **Limitation:** SIRS is sensitive but NOT specific. Many non-infected conditions trigger SIRS (trauma, pancreatitis, burns). SIRS + infection = sepsis.
 
@@ -118,18 +118,18 @@ SIRS captures the inflammatory state; any **2 of 4** criteria suggest systemic i
 
 qSOFA is simpler and predicts poor outcomes better than SIRS:
 
-**qSOFA (Quick Sequential Organ Failure Assessment) â€” Score 1 point for each:**
+**qSOFA (Quick Sequential Organ Failure Assessment) - Score 1 point for each:**
 
-1. **Altered mental status** (confusion, lethargy, disorientation â€” NOT baseline)
-2. **Systolic BP â‰¤100 mmHg**
-3. **Respiratory rate â‰¥22/min**
+1. **Altered mental status** (confusion, lethargy, disorientation - NOT baseline)
+2. **Systolic BP ≤100 mmHg**
+3. **Respiratory rate ≥22/min**
 
 **Interpretation:**
-- **qSOFA â‰¥2:** High risk for sepsis-related mortality; begin aggressive resuscitation + antibiotics immediately
+- **qSOFA ≥2:** High risk for sepsis-related mortality; begin aggressive resuscitation + antibiotics immediately
 - **qSOFA <2 but source of infection present:** Still treat as sepsis until proven otherwise
 
 :::tip
-**In austere settings, if you see fever + source of infection (cough, dysuria, wound pus, abdominal peritoneal signs) + any one qSOFA criterion â†’ start antibiotics immediately.** Do not wait for confirmatory tests.
+**In austere settings, if you see fever + source of infection (cough, dysuria, wound pus, abdominal peritoneal signs) + any one qSOFA criterion -> start antibiotics immediately.** Do not wait for confirmatory tests.
 :::
 
 ### Clinical Assessment: Where Is the Infection?
@@ -180,11 +180,11 @@ qSOFA is simpler and predicts poor outcomes better than SIRS:
 | Antibiotic | Dose | Notes |
 |---|---|---|
 | **Ceftriaxone** | 2 g IV q12h | OR Cefotaxime 1 g IV q8h |
-| **PLUS Gentamicin** | 5â€“7 mg/kg IV once daily (renal dosing adjust) | Covers gram-negatives; synergistic with beta-lactams |
+| **PLUS Gentamicin** | 5-7 mg/kg IV once daily (renal dosing adjust) | Covers gram-negatives; synergistic with beta-lactams |
 
 **Alternative:**
-- Fluoroquinolone (Ciprofloxacin 400 mg IV q12h) â€” but risk of resistance if overused
-- Piperacillin-Tazobactam 4.5 g IV q6â€“8h (if available; covers extended-spectrum beta-lactamase producers)
+- Fluoroquinolone (Ciprofloxacin 400 mg IV q12h) - but risk of resistance if overused
+- Piperacillin-Tazobactam 4.5 g IV q6-8h (if available; covers extended-spectrum beta-lactamase producers)
 
 ### Intra-Abdominal Sepsis (Peritonitis, Perforated Viscus, Diverticulitis)
 
@@ -200,7 +200,7 @@ qSOFA is simpler and predicts poor outcomes better than SIRS:
 | **PLUS Metronidazole** | 500 mg IV q8h (or 1 g if severe) | Covers anaerobes; do NOT use alone |
 
 **OR single agent option:**
-- **Piperacillin-Tazobactam** 4.5 g IV q6â€“8h (covers gram-negatives + anaerobes in one drug)
+- **Piperacillin-Tazobactam** 4.5 g IV q6-8h (covers gram-negatives + anaerobes in one drug)
 
 **Alternative if cephalosporin allergy:**
 - Fluoroquinolone (Ciprofloxacin 400 mg IV q12h) PLUS Clindamycin (600 mg IV q8h)
@@ -219,7 +219,7 @@ qSOFA is simpler and predicts poor outcomes better than SIRS:
 - Ceftriaxone 2 g IV q12h (add gram-negative coverage)
 
 **Alternative if severe/possible MRSA:**
-- Vancomycin 15â€“20 mg/kg IV q8â€“12h (renal dosing adjust) PLUS Ceftriaxone
+- Vancomycin 15-20 mg/kg IV q8-12h (renal dosing adjust) PLUS Ceftriaxone
 
 ### Unknown Source Sepsis
 
@@ -230,7 +230,7 @@ When you cannot identify the source despite clinical assessment:
 | Antibiotic | Dose | Notes |
 |---|---|---|
 | **Ceftriaxone** | 2 g IV q12h | Covers most common bacteria |
-| **PLUS Gentamicin or Tobramycin** | 5â€“7 mg/kg IV once daily | Gram-negative coverage, synergy |
+| **PLUS Gentamicin or Tobramycin** | 5-7 mg/kg IV once daily | Gram-negative coverage, synergy |
 | **PLUS Metronidazole** | 500 mg IV q8h | Anaerobic coverage (in case intra-abdominal) |
 
 **This triple therapy covers:** Gram-positives, gram-negatives, anaerobes. Once source identified, narrow to two drugs.
@@ -243,8 +243,8 @@ When you cannot identify the source despite clinical assessment:
 
 | Antibiotic | Dose | Notes |
 |---|---|---|
-| **Ceftriaxone** | 2 g IV q4â€“6h (high-dose for CNS) | OR Cefotaxime 2 g IV q4h |
-| **PLUS Vancomycin** | 15â€“20 mg/kg IV q8â€“12h | For penicillin resistance |
+| **Ceftriaxone** | 2 g IV q4-6h (high-dose for CNS) | OR Cefotaxime 2 g IV q4h |
+| **PLUS Vancomycin** | 15-20 mg/kg IV q8-12h | For penicillin resistance |
 | **PLUS Ampicillin** | 2 g IV q4h | Covers Group B Strep if neonatal concern |
 
 **IMPORTANT:** Meningitis is rapidly fatal without treatment. Give antibiotics within 30 minutes of suspicion.
@@ -275,7 +275,7 @@ You can give all the antibiotics in the world, but if the source is NOT controll
 
 | Source | Control Method | Timeline |
 |---|---|---|
-| **Pneumonia** | Antibiotics primarily; drainage if empyema (rare field situation) | Antibiotics only; observe for improvement over 48â€“72 hrs |
+| **Pneumonia** | Antibiotics primarily; drainage if empyema (rare field situation) | Antibiotics only; observe for improvement over 48-72 hrs |
 | **UTI/simple pyelonephritis** | Antibiotics; remove catheter if present | Antibiotics only; monitor urine output |
 | **Intra-abdominal perforation** | **SURGERY to repair/resect** | Within 6 hours if possible; delay = increased mortality |
 | **Intra-abdominal abscess** | Percutaneous or surgical drainage | Drain urgently; can attempt needle drain first if skilled |
@@ -294,9 +294,9 @@ You can give all the antibiotics in the world, but if the source is NOT controll
 - Often follows minor trauma or puncture wound
 
 **Immediate action:**
-1. Broad-spectrum antibiotics immediately (Ceftriaxone + Clindamycin Â± Vancomycin)
+1. Broad-spectrum antibiotics immediately (Ceftriaxone + Clindamycin ± Vancomycin)
 2. **Aggressive surgical debridement** (amputate if necessary to save life)
-3. Repeat debridement every 24â€“48 hrs until all necrotic tissue removed
+3. Repeat debridement every 24-48 hrs until all necrotic tissue removed
 4. If no surgery available: antibiotics + supportive care (will likely progress to death; prepare family)
 
 </section>
@@ -330,8 +330,8 @@ You can give all the antibiotics in the world, but if the source is NOT controll
    - Goal: reduce lactate by 10% per hour with fluids + vasopressors
 
 6. **Apply vasopressor if systolic BP still <90 after fluids:**
-   - Norepinephrine preferred (0.05â€“0.5 mcg/kg/min IV titrated to target BP >90)
-   - Target mean arterial pressure â‰¥65
+   - Norepinephrine preferred (0.05-0.5 mcg/kg/min IV titrated to target BP >90)
+   - Target mean arterial pressure ≥65
 
 7. **Source control assessment:**
    - Can you drain this abscess now?
@@ -339,7 +339,7 @@ You can give all the antibiotics in the world, but if the source is NOT controll
    - Can the source be controlled in field or does the patient need rapid evacuation?
 
 8. **Supportive care:**
-   - Oxygen to maintain SpOâ‚‚ >90%
+   - Oxygen to maintain SpO₂ >90%
    - Analgesia (morphine safe in sepsis)
    - Reposition frequently (turn patient to prevent pressure ulcers; prone positioning helps lungs)
 
@@ -358,31 +358,31 @@ You can give all the antibiotics in the world, but if the source is NOT controll
 **Protocol:**
 - **Give 30 mL/kg bolus** over 1 hour
 - Assess response after 1 hour:
-  - Systolic BP >90? Mental status improving? Skin perfusion better? â†’ GOOD response; continue gentler fluids
-  - Still hypotensive? Still confused? Skin still mottled? â†’ More fluid needed OR vasopressor needed
+  - Systolic BP >90? Mental status improving? Skin perfusion better? -> GOOD response; continue gentler fluids
+  - Still hypotensive? Still confused? Skin still mottled? -> More fluid needed OR vasopressor needed
 
 ### Reassessment After Initial Bolus
 
 **Signs of adequate perfusion:**
-- Systolic BP â‰¥90
-- Urine output â‰¥0.5 mL/kg/hr (requires bladder catheter to measure; estimate ~1 mL per kg per hour if uncertain)
+- Systolic BP ≥90
+- Urine output ≥0.5 mL/kg/hr (requires bladder catheter to measure; estimate ~1 mL per kg per hour if uncertain)
 - Mental status clear
 - Warm extremities; capillary refill <2 seconds
 
 **Signs of inadequate perfusion despite 2+ liters of fluid:**
-- Systolic BP still <90 â†’ Start vasopressor (norepinephrine)
-- No urine output â†’ Continue fluids + vasopressor; assess kidneys
+- Systolic BP still <90 -> Start vasopressor (norepinephrine)
+- No urine output -> Continue fluids + vasopressor; assess kidneys
 
 **Signs of fluid overload:**
-- New crackles on lung exam â†’ Slow fluid rate; may need diuretic (furosemide 20â€“40 mg IV)
-- Worsening hypoxemia â†’ Elevate head; consider PEEP if intubated
+- New crackles on lung exam -> Slow fluid rate; may need diuretic (furosemide 20-40 mg IV)
+- Worsening hypoxemia -> Elevate head; consider PEEP if intubated
 
 ### Ongoing Fluid Management (First 24 Hours)
 
 - **Maintenance fluids:** Give enough to match urine output + insensible losses
-- **Typical rate:** 50â€“100 mL/hr depending on urine output
+- **Typical rate:** 50-100 mL/hr depending on urine output
 - **Do NOT force fluid aggressively** once patient stabilized; excess fluid worsens outcomes
-- **Monitor daily weight if possible** (goal: no weight gain >2â€“3 kg in first 48 hrs)
+- **Monitor daily weight if possible** (goal: no weight gain >2-3 kg in first 48 hrs)
 
 </section>
 
@@ -392,7 +392,7 @@ You can give all the antibiotics in the world, but if the source is NOT controll
 
 In austere settings, you may lack lactate, blood gas, or other labs. Use clinical signs instead:
 
-### Signs of Improvement (First 24â€“48 Hours)
+### Signs of Improvement (First 24-48 Hours)
 
 - **Mental status:** Patient more alert, less confused
 - **Skin:** Warmer; pink; normal capillary refill
@@ -405,19 +405,19 @@ In austere settings, you may lack lactate, blood gas, or other labs. Use clinica
 
 ### Signs of Deterioration (Red Flags)
 
-- **Worsening mental status despite fluids** â†’ Septic encephalopathy; poor prognosis
-- **New purple/black skin spots** â†’ Meningococcemia or disseminated intravascular coagulation (DIC); high mortality
-- **Rapid breathing + cyanosis** â†’ ARDS developing; consider intubation if possible
-- **Loss of urine output** â†’ Acute kidney injury; poor prognosis
-- **Hypothermia + bradycardia + hypotension** â†’ Terminal sepsis; death likely imminent
-- **Uncontrolled source** â†’ Abscess not draining, perforation not closed; need surgery
+- **Worsening mental status despite fluids** -> Septic encephalopathy; poor prognosis
+- **New purple/black skin spots** -> Meningococcemia or disseminated intravascular coagulation (DIC); high mortality
+- **Rapid breathing + cyanosis** -> ARDS developing; consider intubation if possible
+- **Loss of urine output** -> Acute kidney injury; poor prognosis
+- **Hypothermia + bradycardia + hypotension** -> Terminal sepsis; death likely imminent
+- **Uncontrolled source** -> Abscess not draining, perforation not closed; need surgery
 
 **Action:** Escalate care, aggressive fluids + vasopressors, source control urgently
 
 ### Response to Antibiotics: What to Expect
 
-- **Good response (most common):** Fever breaks within 24â€“48 hrs; mental status improves; vitals normalize
-- **Partial response:** Slow improvement; may take 3â€“5 days; patient stabilizes
+- **Good response (most common):** Fever breaks within 24-48 hrs; mental status improves; vitals normalize
+- **Partial response:** Slow improvement; may take 3-5 days; patient stabilizes
 - **No response at 24 hrs:** Reassess antibiotic choice (wrong agent for organism?), reassess source control (is there undrained pus?), consider broader coverage
 
 </section>
@@ -435,7 +435,7 @@ In austere settings, you may lack lactate, blood gas, or other labs. Use clinica
 2. Broad-spectrum antibiotics NOW
 3. Start norepinephrine if systolic <90 after fluids
 4. Source control: surgical drainage? abscess? evacuate?
-5. Mortality 40â€“60% even in hospital
+5. Mortality 40-60% even in hospital
 
 ### Sepsis in Pregnancy
 
@@ -454,7 +454,7 @@ In austere settings, you may lack lactate, blood gas, or other labs. Use clinica
 - May lack elevated WBC
 - Confusion may be only sign
 
-**Management:** Lower threshold for antibiotics; if any sign of infection in elderly + any risk factor â†’ start antibiotics
+**Management:** Lower threshold for antibiotics; if any sign of infection in elderly + any risk factor -> start antibiotics
 
 ### Fungal Sepsis (Rare in Austere Settings Unless Endemic)
 
@@ -462,7 +462,7 @@ In austere settings, you may lack lactate, blood gas, or other labs. Use clinica
 
 **Clues:** Subacute illness; respiratory symptoms; skin lesions (sometimes); immunocompromised patient
 
-**Initial empiric:** Cannot differentiate fungal from bacterial in field. Start antibacterial antibiotics; if no response at 48â€“72 hrs + suspicion high, consider antifungal (fluconazole if available)
+**Initial empiric:** Cannot differentiate fungal from bacterial in field. Start antibacterial antibiotics; if no response at 48-72 hrs + suspicion high, consider antifungal (fluconazole if available)
 
 </section>
 
@@ -471,20 +471,20 @@ In austere settings, you may lack lactate, blood gas, or other labs. Use clinica
 ## Austere Sepsis Management Kit
 
 **Essential equipment:**
-- IV access: Large-bore catheters (18, 16 gauge) Ã— 4
-- IV fluids: Ringer's Lactate 5â€“10 liters minimum
+- IV access: Large-bore catheters (18, 16 gauge) × 4
+- IV fluids: Ringer's Lactate 5-10 liters minimum
 - Blood culture bottles (if available; empty vials for cultures acceptable)
 
 **Antibiotics (stock multiple agents):**
-- Ceftriaxone 1 g (reconstitute) vials Ã— 10
-- Cefotaxime 1 g vials Ã— 5 (alternative to ceftriaxone)
-- Gentamicin 40 mg/mL Ã— 10 mL vials Ã— 5
-- Vancomycin 500 mg vials Ã— 5 (for resistant Staph)
-- Metronidazole 500 mg Ã— 10 vials
-- Clindamycin 600 mg Ã— 10 vials
-- Azithromycin 500 mg Ã— 5 vials
-- Fluoroquinolone (Ciprofloxacin 400 mg) Ã— 5 vials
-- Ampicillin 1 g Ã— 5 vials (for meningitis if B Strep suspected)
+- Ceftriaxone 1 g (reconstitute) vials × 10
+- Cefotaxime 1 g vials × 5 (alternative to ceftriaxone)
+- Gentamicin 40 mg/mL × 10 mL vials × 5
+- Vancomycin 500 mg vials × 5 (for resistant Staph)
+- Metronidazole 500 mg × 10 vials
+- Clindamycin 600 mg × 10 vials
+- Azithromycin 500 mg × 5 vials
+- Fluoroquinolone (Ciprofloxacin 400 mg) × 5 vials
+- Ampicillin 1 g × 5 vials (for meningitis if B Strep suspected)
 
 **Vasopressors:**
 - Norepinephrine (0.5 mg/mL) for infusion
@@ -505,23 +505,23 @@ In austere settings, you may lack lactate, blood gas, or other labs. Use clinica
 :::affiliate
 **If you're building medical capacity for sepsis management,** these clinical tools support rapid assessment and treatment:
 
-- [Portable Vital Signs Monitor](https://www.amazon.com/dp/B0B3QXVNLM?tag=offlinecompen-20) â€” Blood pressure cuff, thermometer, and pulse oximeter for rapid assessment
-- [Antibiotic Reference Manual](https://www.amazon.com/dp/B0B6KVXWPM?tag=offlinecompen-20) â€” Quick-reference guide for empiric antibiotic selection by infection source
-- [IV Fluid Administration Kit](https://www.amazon.com/dp/B0B2XQNMVL?tag=offlinecompen-20) â€” Fluids, tubing, and needles for rapid resuscitation
-- [Sepsis Clinical Assessment Cards](https://www.amazon.com/dp/B0B4MNPQXK?tag=offlinecompen-20) â€” Laminated cards for qSOFA and SIRS criteria at bedside
+- [Portable Vital Signs Monitor](https://www.amazon.com/dp/B0B3QXVNLM?tag=offlinecompen-20) - Blood pressure cuff, thermometer, and pulse oximeter for rapid assessment
+- [Antibiotic Reference Manual](https://www.amazon.com/dp/B0B6KVXWPM?tag=offlinecompen-20) - Quick-reference guide for empiric antibiotic selection by infection source
+- [IV Fluid Administration Kit](https://www.amazon.com/dp/B0B2XQNMVL?tag=offlinecompen-20) - Fluids, tubing, and needles for rapid resuscitation
+- [Sepsis Clinical Assessment Cards](https://www.amazon.com/dp/B0B4MNPQXK?tag=offlinecompen-20) - Laminated cards for qSOFA and SIRS criteria at bedside
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 ## See Also
 
-- <a href="../infant-child-care.html">Infant & Child Care (Birth to Age 5)</a> â€” Early recognition of childhood illness before progression to sepsis
-- <a href="../pediatric-emergencies-field.html">Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress</a> â€” Pediatric-specific field assessment and emergency management for septic children
-- <a href="../pediatric-emergency-medicine.html">Pediatric Emergency Medicine</a> â€” Comprehensive pediatric assessment and emergency management in septic children
-- <a href="../wound-hygiene-infection-prevention.html">Wound Hygiene & Infection Prevention</a> â€” Infection prevention in trauma patients to prevent sepsis
+- <a href="../infant-child-care.html">Infant & Child Care (Birth to Age 5)</a> - Early recognition of childhood illness before progression to sepsis
+- <a href="../pediatric-emergencies-field.html">Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress</a> - Pediatric-specific field assessment and emergency management for septic children
+- <a href="../pediatric-emergency-medicine.html">Pediatric Emergency Medicine</a> - Comprehensive pediatric assessment and emergency management in septic children
+- <a href="../wound-hygiene-infection-prevention.html">Wound Hygiene & Infection Prevention</a> - Infection prevention in trauma patients to prevent sepsis
 
-- <a href="../shock-recognition-resuscitation.html">Hemorrhagic Shock & Emergency Resuscitation</a> â€” Septic shock management and fluid resuscitation
-- <a href="../infection-control.html">Infection Control</a> â€” Community infection prevention strategies
+- <a href="../shock-recognition-resuscitation.html">Hemorrhagic Shock & Emergency Resuscitation</a> - Septic shock management and fluid resuscitation
+- <a href="../infection-control.html">Infection Control</a> - Community infection prevention strategies
 
 </section>
 
