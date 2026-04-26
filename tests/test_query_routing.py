@@ -519,6 +519,7 @@ class QueryRoutingTests(unittest.TestCase):
             "GD-637",
             "GD-601",
             "GD-513",
+            "GD-513",
         ]
         rules = query._load_rag_owner_rerank_hints()
         self.assertEqual([rule["guide_id"] for rule in rules], expected_guide_ids)
@@ -570,6 +571,47 @@ class QueryRoutingTests(unittest.TestCase):
             "A storm damaged the roof and water is coming in.",
             "Some outlets got wet. What is safe to do first?",
             "How should I repair a roof leak after a storm?",
+        ]
+        for broad_question in broad_questions:
+            with self.subTest(question=broad_question):
+                applied = []
+                query._apply_rag_owner_rerank_hints(
+                    broad_question.lower(),
+                    electrical_meta["guide_id"],
+                    lambda branch, delta: applied.append((branch, delta)),
+                )
+                self.assertEqual(applied, [])
+
+    def test_rag_eval_wet_electrical_pump_room_owner_hint_is_strict(self):
+        question = (
+            "Our small water system needs tanks filled, but the pump room floor "
+            "is wet. What safe minimum operations sequence lets us restart the pump?"
+        )
+        electrical_meta = {
+            "guide_id": "GD-513",
+            "guide_title": "Electrical Safety & Hazard Prevention",
+        }
+        water_meta = {
+            "guide_id": "GD-648",
+            "guide_title": "Water System Operations",
+        }
+
+        applied = []
+        query._apply_rag_owner_rerank_hints(
+            question.lower(),
+            electrical_meta["guide_id"],
+            lambda branch, delta: applied.append((branch, delta)),
+        )
+        self.assertEqual(applied, [("wet_electrical_pump_room_owner", -0.16)])
+        self.assertLess(
+            query._metadata_rerank_delta(question, electrical_meta),
+            query._metadata_rerank_delta(question, water_meta),
+        )
+
+        broad_questions = [
+            "Our small water system needs tanks filled. What is the sequence?",
+            "The pump room floor is wet. How do we clean it?",
+            "How do we restart a pump after maintenance?",
         ]
         for broad_question in broad_questions:
             with self.subTest(question=broad_question):

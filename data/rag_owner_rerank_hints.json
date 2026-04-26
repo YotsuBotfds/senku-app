@@ -314,6 +314,33 @@
           "water through outlet"
         ]
       ]
+    },
+    {
+      "guide_id": "GD-513",
+      "branch": "wet_electrical_pump_room_owner",
+      "delta": -0.16,
+      "question_marker_groups": [
+        [
+          "small water system",
+          "water system",
+          "pump room",
+          "pump-room"
+        ],
+        [
+          "pump room floor is wet",
+          "wet pump room",
+          "pump-room floor is wet",
+          "floor is wet",
+          "standing water"
+        ],
+        [
+          "restart the pump",
+          "restart pump",
+          "fill tanks",
+          "minimum operations sequence",
+          "safe minimum operations"
+        ]
+      ]
     }
   ]
 }
