@@ -7,6 +7,7 @@ import argparse
 import json
 from collections import Counter, defaultdict
 from pathlib import Path
+from typing import Any
 
 
 GENERATED_DIR_MARKERS = {
@@ -26,13 +27,25 @@ GENERATED_DIR_MARKERS = {
     "tmp",
 }
 
+GENERATED_DIR_SUFFIX_MARKERS = (
+    "_diag",
+    "_diagnostic",
+    "_diagnostics",
+    "_output",
+    "_outputs",
+    "_report",
+    "_reports",
+)
 
-def summarize_storage(root, limit=20):
+
+def summarize_storage(root: str | Path, limit: int = 20) -> dict[str, Any]:
     """Return a read-only storage summary for files below root."""
     root_path = Path(root)
     limit = max(0, int(limit))
     files = []
     dir_sizes = defaultdict(int)
+    dir_file_counts = defaultdict(int)
+    dir_paths = set()
     suffix_counts = defaultdict(lambda: {"count": 0, "bytes": 0})
     basename_groups = defaultdict(list)
 
@@ -52,12 +65,16 @@ def summarize_storage(root, limit=20):
 
     for path in sorted(root_path.rglob("*")):
         try:
+            if path.is_dir():
+                dir_paths.add(path.relative_to(root_path).as_posix())
+                continue
             if not path.is_file():
                 continue
-            size = path.stat().st_size
+            stat = path.stat()
         except OSError:
             continue
 
+        size = stat.st_size
         rel_path = path.relative_to(root_path).as_posix()
         files.append({"path": rel_path, "bytes": size})
 
@@ -70,21 +87,30 @@ def summarize_storage(root, limit=20):
         while True:
             dir_rel = "." if parent == root_path else parent.relative_to(root_path).as_posix()
             dir_sizes[dir_rel] += size
+            dir_file_counts[dir_rel] += 1
             if parent == root_path:
                 break
+            dir_paths.add(dir_rel)
             parent = parent.parent
 
-    dir_paths = [p for p in root_path.rglob("*") if p.is_dir()]
     largest_dirs = [
-        {"path": path, "bytes": size}
-        for path, size in sorted(dir_sizes.items(), key=lambda item: (-item[1], item[0]))
-        if path != "."
+        {
+            "path": path,
+            "bytes": dir_sizes[path],
+            "files": dir_file_counts[path],
+        }
+        for path in sorted(dir_paths, key=lambda item: (-dir_sizes[item], item))
     ][:limit]
 
     generated_dirs = [
-        {"path": path, "bytes": size}
-        for path, size in sorted(dir_sizes.items(), key=lambda item: (-item[1], item[0]))
-        if path != "." and _looks_generated_dir(path)
+        {
+            "path": path,
+            "bytes": dir_sizes[path],
+            "files": dir_file_counts[path],
+            "markers": _generated_dir_markers(path),
+        }
+        for path in sorted(dir_paths, key=lambda item: (-dir_sizes[item], item))
+        if _generated_dir_markers(path)
     ][:limit]
 
     duplicates = []
@@ -117,7 +143,7 @@ def summarize_storage(root, limit=20):
     }
 
 
-def _sort_suffix_counts(suffix_counts):
+def _sort_suffix_counts(suffix_counts: dict[str, dict[str, int]]) -> list[dict[str, int | str]]:
     rows = [
         {"suffix": suffix, "count": values["count"], "bytes": values["bytes"]}
         for suffix, values in suffix_counts.items()
@@ -125,12 +151,21 @@ def _sort_suffix_counts(suffix_counts):
     return sorted(rows, key=lambda item: (-item["bytes"], item["suffix"]))
 
 
-def _looks_generated_dir(rel_path):
-    parts = {part.lower() for part in Path(rel_path).parts}
-    return any(part in GENERATED_DIR_MARKERS for part in parts)
+def _generated_dir_markers(rel_path: str) -> list[str]:
+    markers = []
+    for part in Path(rel_path).parts:
+        lowered = part.lower()
+        if lowered in GENERATED_DIR_MARKERS:
+            markers.append(lowered)
+        if lowered.startswith(("tmp", "temp")) and lowered not in markers:
+            markers.append("tmp-prefix")
+        for suffix in GENERATED_DIR_SUFFIX_MARKERS:
+            if lowered.endswith(suffix) and suffix not in markers:
+                markers.append(suffix)
+    return sorted(markers)
 
 
-def render_text(summary):
+def render_text(summary: dict[str, Any]) -> str:
     """Render a compact human-readable storage report."""
     lines = [
         f"Artifact storage report: {summary['root']}",
@@ -142,14 +177,14 @@ def render_text(summary):
         return "\n".join(lines) + "\n"
 
     _append_table(lines, "Largest files", summary["largest_files"], ("path", "bytes"))
-    _append_table(lines, "Largest dirs", summary["largest_dirs"], ("path", "bytes"))
+    _append_table(lines, "Largest dirs", summary["largest_dirs"], ("path", "bytes", "files"))
     _append_table(lines, "Suffix counts", summary["suffix_counts"], ("suffix", "count", "bytes"))
-    _append_table(lines, "Generated dirs", summary["generated_dirs"], ("path", "bytes"))
+    _append_table(lines, "Generated dirs", summary["generated_dirs"], ("path", "bytes", "files", "markers"))
     _append_duplicates(lines, summary["duplicate_basename_families"])
     return "\n".join(lines) + "\n"
 
 
-def _append_table(lines, title, rows, columns):
+def _append_table(lines: list[str], title: str, rows: list[dict[str, Any]], columns: tuple[str, ...]) -> None:
     lines.extend(["", title + ":"])
     if not rows:
         lines.append("  (none)")
@@ -160,11 +195,13 @@ def _append_table(lines, title, rows, columns):
             value = row[column]
             if column == "bytes":
                 value = _format_bytes(value)
+            if isinstance(value, list):
+                value = ",".join(str(item) for item in value)
             parts.append(f"{column}={value}")
         lines.append("  " + "  ".join(parts))
 
 
-def _append_duplicates(lines, rows):
+def _append_duplicates(lines: list[str], rows: list[dict[str, Any]]) -> None:
     lines.extend(["", "Duplicate basename families:"])
     if not rows:
         lines.append("  (none)")
@@ -177,7 +214,7 @@ def _append_duplicates(lines, rows):
         )
 
 
-def _format_bytes(size):
+def _format_bytes(size: int) -> str:
     units = ("B", "KiB", "MiB", "GiB")
     value = float(size)
     for unit in units:

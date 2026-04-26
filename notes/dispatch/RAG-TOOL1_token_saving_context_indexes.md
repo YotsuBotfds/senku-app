@@ -85,6 +85,73 @@ Non-goal for this queue: do not reopen high-liability card families that now
 show `0/0` frontmatter/card gaps unless a fresh behavior panel exposes a real
 miss.
 
+## 2026-04-25 RAG Lineage Reporter Proof
+
+Implemented `scripts/rag_experiment_lineage.py`, a stdlib reporter that
+discovers related `*_diag` directories by stem, filters focused partial probes
+out of default discovered lineages, summarizes run-level diagnostic counts, and
+prints prompt-level bucket/citation transitions between full-pack runs.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_rag_experiment_lineage -v
+```
+
+Smoke:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\rag_experiment_lineage.py --bench-dir artifacts\bench --stem rag_eval_partial_router_holdouts_20260425 --limit 8 --output-json artifacts\bench\rag_eval_partial_router_holdouts_20260425_lineage.json --output-md artifacts\bench\rag_eval_partial_router_holdouts_20260425_lineage.md
+```
+
+Current output shows the full-pack progression from `primary_source_labels`
+through `gd035_gd649_packaging`: expected-supported rows moved from `11` to
+`17`, ranking misses moved from `2` to `0`, and expected-owner cited moved from
+`12/21` to `18/21`. The reverted `primary_source_labels` dip remains visible
+when the lineage includes the earlier `citation_priority` baseline.
+
+After the `GD-029` packaging pass, the same lineage command shows the current
+full-pack floor at `18` expected-supported rows, `0` generation misses, `0`
+ranking misses, `1` known expectation-drift retrieval miss, and expected-owner
+cited `19/21`.
+
+## 2026-04-25 Retrieval-only Evaluator Proof
+
+Implemented `scripts/evaluate_retrieval_pack.py`, a generation-free prompt-pack
+retrieval evaluator. It loads JSONL prompt packs, extracts expected owner guide
+IDs, calls the existing repo retrieval wrapper, and reports hit@1, hit@3,
+hit@k, best rank, simple owner share, and top distractor guide IDs.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_evaluate_retrieval_pack -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile scripts\evaluate_retrieval_pack.py tests\test_evaluate_retrieval_pack.py
+```
+
+Sample:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\evaluate_retrieval_pack.py artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl --top-k 24 --embed-url http://127.0.0.1:1234/v1 --output-json artifacts\bench\retrieval_pack_eval.json --output-md artifacts\bench\retrieval_pack_eval.md --progress
+```
+
+## 2026-04-25 Artifact Storage Reporter Proof
+
+Updated `scripts/summarize_artifact_storage.py` and fixture coverage so storage
+triage can use path/stat metadata only. The reporter summarizes total
+bytes/files/dirs, largest files, largest dirs, suffix counts, generated-dir
+candidates, and duplicate basename families.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_summarize_artifact_storage -v
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\summarize_artifact_storage.py --root artifacts --limit 3
+```
+
+Current real smoke reported about `63.5 GiB`, `90673` files, and `69099`
+directories under `artifacts`.
+
 ## Landed proof
 
 Commits:
