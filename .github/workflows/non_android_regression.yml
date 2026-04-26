@@ -257,16 +257,17 @@ jobs:
               $selectedGuides = @()
             }
 
+            if ($selectedGuides.Count -gt 0 -and $args -notcontains '-AllowRetrievalWarnings') {
+              Write-Host "Compact retrieval smoke index selected; allowing retrieval warnings for this run."
+              $args += '-AllowRetrievalWarnings'
+            }
+
             if ($env:RETRIEVAL_INDEX_CACHE_HIT -eq 'true') {
               Write-Host "Retrieval index cache hit; validating existing db with ingest.py --stats."
               python -B ingest.py --stats
             } elseif ($selectedGuides.Count -gt 0) {
               Write-Host "Retrieval index cache miss; rebuilding compact scoped CI retrieval db."
               python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 1 --files @selectedGuides
-              if ($args -notcontains '-AllowRetrievalWarnings') {
-                Write-Host "Compact cache-miss smoke index: allowing retrieval warnings for this run."
-                $args += '-AllowRetrievalWarnings'
-              }
             } else {
               Write-Host "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild."
             }

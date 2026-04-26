@@ -129,10 +129,14 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             gate_script,
         )
         self.assertIn(
-            "Compact cache-miss smoke index: allowing retrieval warnings for this run.",
+            "Compact retrieval smoke index selected; allowing retrieval warnings for this run.",
             gate_script,
         )
         self.assertIn("$args += '-AllowRetrievalWarnings'", gate_script)
+        self.assertLess(
+            gate_script.index("Compact retrieval smoke index selected"),
+            gate_script.index("RETRIEVAL_INDEX_CACHE_HIT"),
+        )
         self.assertIn(
             "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild.",
             gate_script,
