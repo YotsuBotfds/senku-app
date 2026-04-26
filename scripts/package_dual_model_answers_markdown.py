@@ -44,10 +44,11 @@ def _prompt_text(row):
 
 def _clean_prompt_row(row):
     question = _prompt_text(row)
+    section = (row.get("section") or "").strip() or "Unsectioned"
     return {
         "prompt_id": (row.get("id") or row.get("prompt_id") or "").strip(),
         "lane": (row.get("lane") or "").strip(),
-        "section": (row.get("section") or "Unsectioned").strip(),
+        "section": section,
         "style": (row.get("style") or "").strip(),
         "target_behavior": (row.get("target_behavior") or "").strip(),
         "what_it_tests": (row.get("what_it_tests") or "").strip(),
@@ -121,7 +122,7 @@ def render_model_block(label, record):
 def render_markdown(prompt_entries, left_label, left_bundle, left_artifacts, right_label, right_bundle, right_artifacts):
     lane_counts = Counter(entry.get("lane") or "unlabeled" for entry in prompt_entries)
     lines = [
-        f"# Senku Full Answer Package — {left_label} vs {right_label}",
+        f"# Senku Full Answer Package - {left_label} vs {right_label}",
         "",
         f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         f"Total prompts: {len(prompt_entries)}",

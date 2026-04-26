@@ -243,6 +243,9 @@ Action:
 - Added direct metadata validation coverage for guide-record coercion, legacy
   `id` fallback, error truncation, report error detection, formatted failures,
   and JSON report writing.
+- Added direct dual-model answer package coverage for CSV/JSONL prompt loading,
+  prompt-key matching, duplicate artifact keys, missing/error/blank model
+  blocks, zero duplicate-citation rendering, and Markdown output shape.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
