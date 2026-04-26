@@ -46,6 +46,26 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
                         self.assertNotIn(ref, {"main", "master"})
                         self.assertRegex(ref, COMMIT_SHA_RE)
 
+    def test_attestation_jobs_have_scoped_permissions(self):
+        for path, workflow in _workflow_docs():
+            jobs = workflow.get("jobs", {})
+            for job_name, job in jobs.items():
+                uses_attest = any(
+                    str(step.get("uses", "")).startswith("actions/attest@")
+                    for step in job.get("steps", [])
+                )
+                if not uses_attest:
+                    continue
+                with self.subTest(path=path.name, job=job_name):
+                    self.assertEqual(
+                        {
+                            "contents": "read",
+                            "id-token": "write",
+                            "attestations": "write",
+                        },
+                        job.get("permissions"),
+                    )
+
     def test_codeowners_covers_github_configuration(self):
         content = CODEOWNERS_PATH.read_text(encoding="utf-8")
         self.assertIn(".github/ @YotsuBotfds", content)
