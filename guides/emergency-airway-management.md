@@ -8,8 +8,22 @@ tags:
   - essential
   - medical
   - airway
+  - choking
+  - severe-airway-obstruction
+  - food-bolus
 icon: 🫁
+aliases:
+  - adult has food stuck and cannot speak
+  - food stuck cannot speak turning blue
+  - severe airway obstruction from food
+  - choking rescue for adult food bolus
+  - abdominal thrusts for severe choking
+  - do not give water to choking person
+  - cannot speak and turning blue after food
 description: Field intubation, needle cricothyrotomy, emergency tracheostomy, bag-valve-mask ventilation, tension pneumothorax decompression, ARDS management. Assessment algorithms, equipment improvisation, step-by-step procedures for austere environments.
+routing_cues:
+  - Use as an airway companion source for severe adult choking, food bolus, food stuck, cannot speak, cannot cough, cannot breathe, cyanosis or turning blue, and severe airway obstruction.
+  - Keep first aid as the practical choking-rescue owner for abdominal thrusts and do-not-give-water lures; use this guide for airway failure, respiratory distress, and escalation context.
 related:
   - surgery-field
   - first-aid

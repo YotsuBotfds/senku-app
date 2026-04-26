@@ -11031,6 +11031,20 @@ def rerank_results(question, results, top_k, scenario_frame=None):
             family_counts[chosen["family"]] += 1
             section_counts[chosen["section_key"]] += 1
 
+    if _is_classic_stroke_fast_special_case(question):
+        owner_candidates = [
+            row
+            for row in rows
+            if row["meta"].get("guide_id") == "GD-232"
+            and row["id"] not in selected_ids
+        ]
+        if owner_candidates:
+            chosen = owner_candidates[0]
+            selected.append(chosen)
+            selected_ids.add(chosen["id"])
+            family_counts[chosen["family"]] += 1
+            section_counts[chosen["section_key"]] += 1
+
     overflow_rows = []
     for row in rows:
         if row["id"] in selected_ids:
@@ -11105,9 +11119,10 @@ def _retrieval_candidate_limit(top_k):
     )
 
 
-def _append_retrieval_spec(specs, seen, *, text, category, limit):
+def _append_retrieval_spec(specs, seen, *, text, category, limit, where=None):
     """Add a retrieval spec unless the text/category pair is already present."""
-    key = (text, category or "")
+    where_key = json.dumps(where or {}, sort_keys=True)
+    key = (text, category or "", where_key)
     if key in seen:
         return
     seen.add(key)
@@ -11115,6 +11130,7 @@ def _append_retrieval_spec(specs, seen, *, text, category, limit):
         {
             "text": text,
             "category": category,
+            "where": where,
             "limit": limit,
         }
     )
@@ -11252,8 +11268,8 @@ def _has_young_infant_age_context(question):
     lower = question.lower()
     return bool(
         re.search(
-            r"\b(?:[0-3])\s*(?:week|weeks|wk|wks)(?:\s*old)?\b"
-            r"|\b(?:[0-9]|1[0-9]|2[0-7])\s*(?:day|days)(?:\s*old)?\b"
+            r"\b(?:[0-3])[\s-]*(?:week|weeks|wk|wks)(?:[\s-]*old)?\b"
+            r"|\b(?:[0-9]|1[0-9]|2[0-7])[\s-]*(?:day|days)(?:[\s-]*old)?\b"
             r"|\b(?:under|less than|younger than)\s*(?:4|four)\s*(?:week|weeks|wk|wks)\b"
             r"|\b(?:under|less than|younger than)\s*(?:28|twenty eight)\s*(?:day|days)\b",
             lower,
@@ -11280,6 +11296,8 @@ def _is_newborn_sepsis_danger_retrieval_query(question):
             "feeding poorly",
             "not taking feeds",
             "not nursing well",
+            "has not fed much",
+            "not fed much",
         },
     )
     abnormal_responsiveness = _text_has_marker(
@@ -11386,6 +11404,7 @@ def _retrieval_profile_for_question(question, frame=None):
         or _is_gi_bleed_emergency_query(question)
         or _is_electrical_hazard_query(question)
         or _is_cardiac_first_query(question)
+        or _is_classic_stroke_fast_special_case(question)
         or _scenario_frame_is_safety_critical(frame or build_scenario_frame(question))
     ):
         if has_urgent_boundary:
@@ -11524,6 +11543,21 @@ def _supplemental_retrieval_specs(
                         "breathing no oral remedies"
                     ),
                     "category": "medical",
+                    "limit": supplemental_limit,
+                }
+            )
+        if _is_classic_stroke_fast_special_case(question):
+            specs.append(
+                {
+                    "text": (
+                        f"{question} First Aid Emergency Response stroke "
+                        "recognition act within minutes FAST face droop arm "
+                        "weakness slurred speech transient neurologic deficit "
+                        "possible TIA symptoms improved do not wait last known "
+                        "normal time no food water pills urgent evacuation"
+                    ),
+                    "category": "medical",
+                    "where": {"slug": "first-aid"},
                     "limit": supplemental_limit,
                 }
             )
@@ -13874,6 +13908,8 @@ def retrieve_results(
     candidate_limit = _retrieval_candidate_limit(top_k)
     if _is_salt_jars_hot_humid_setup_query(question):
         candidate_limit = max(candidate_limit, 30)
+    if _is_classic_stroke_fast_special_case(question):
+        candidate_limit = max(candidate_limit, 80)
     retrieval_profile = _retrieval_profile_for_question(question, scenario_frame)
     specs = []
     seen = set()
@@ -13896,6 +13932,7 @@ def retrieve_results(
             text=spec["text"],
             category=spec["category"],
             limit=spec["limit"],
+            where=spec.get("where"),
         )
 
     embeddings = embed_batch([spec["text"] for spec in specs], base_url=lm_studio_url)
@@ -13912,6 +13949,12 @@ def retrieve_results(
         }
         if spec["category"]:
             query_kwargs["where"] = {"category": spec["category"]}
+        if spec.get("where"):
+            query_kwargs["where"] = (
+                {"$and": [query_kwargs["where"], spec["where"]]}
+                if query_kwargs.get("where")
+                else spec["where"]
+            )
         vector_results = collection.query(**query_kwargs)
         vector_results["_retrieval_kind"] = "vector"
         result_sets.append(vector_results)

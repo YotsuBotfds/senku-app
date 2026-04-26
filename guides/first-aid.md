@@ -54,11 +54,19 @@ aliases:
   - spine precautions
   - cold exposure while immobilized
   - keep warm without moving spine
-icon: Ã°Å¸Å¡Â¨
+  - adult has food stuck and cannot speak
+  - food stuck cannot speak turning blue
+  - choking rescue for adult food bolus
+  - abdominal thrusts for severe choking
+  - do not give water to choking person
+  - severe airway obstruction from food
+icon: 🚨
 routing_cues:
   - Use for immediate emergency stabilization, CPR, severe bleeding, shock, severe burns, fractures, poisoning, stroke signs, chest pain, trouble breathing, collapse, and first actions before specialist guide handoff.
   - For infected wounds with spreading redness, red streaking, pus plus fever, weakness, or worsening pain, use first aid for emergency stabilization while handing off to wound infection and sepsis guidance.
   - For possible spinal injury, neck or back trauma, or an immobilized injured person in cold or wet conditions, use first aid for stabilization, minimize movement, support head and neck, keep warm without unsafe movement, and hand off to orthopedics or spine guidance.
+  - For adult choking or food bolus with food stuck, cannot speak, cannot cough, cannot breathe, turning blue, or severe airway obstruction, use first aid choking rescue and do not route to food safety, digestion, or water advice.
+  - For choking wrong-action lures such as wanting water, waiting a minute, or asking for a drink, keep first aid as the emergency owner; severe choking uses abdominal thrusts or age/body-size appropriate choking rescue.
 citations_required: true
 description: "Severe chest pain, one-sided weakness, slurred speech, trouble breathing, uncontrolled bleeding, someone collapsed, not breathing, severe burn, broken bone, snakebite, poisoning, shock. Essential first aid procedures including CPR, wound care, burns, fractures, bleeding control, shock treatment, and emergency stabilization techniques."
 related:

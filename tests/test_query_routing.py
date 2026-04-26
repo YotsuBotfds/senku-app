@@ -119,6 +119,36 @@ class QueryRoutingTests(unittest.TestCase):
             any("newborn sepsis neonatal fever" in spec["text"] for spec in newborn_holdout_specs)
         )
 
+        stroke_prompt = (
+            "My face drooped and my speech was slurred for a few minutes, "
+            "but it improved. Can I sleep and monitor it at home?"
+        )
+        stroke_specs = query._supplemental_retrieval_specs(stroke_prompt, 8)
+        self.assertEqual(
+            query._retrieval_profile_for_question(stroke_prompt),
+            "safety_triage",
+        )
+        self.assertTrue(
+            any(
+                "First Aid Emergency Response stroke recognition" in spec["text"]
+                and "possible TIA symptoms improved do not wait" in spec["text"]
+                and spec.get("where") == {"slug": "first-aid"}
+                for spec in stroke_specs
+            )
+        )
+
+        mixed_stroke_cardiac_specs = query._supplemental_retrieval_specs(
+            "My face drooped and my speech was slurred, and now I have chest pressure. What should I do?",
+            8,
+        )
+        self.assertFalse(
+            any(
+                "First Aid Emergency Response stroke recognition" in spec["text"]
+                and "possible TIA symptoms improved do not wait" in spec["text"]
+                for spec in mixed_stroke_cardiac_specs
+            )
+        )
+
         abdomen_specs = query._supplemental_retrieval_specs(
             "child fell and now has belly pain", 8
         )
@@ -148,6 +178,9 @@ class QueryRoutingTests(unittest.TestCase):
             "The baby is 3 weeks old, harder to wake than usual, and the house is dropping below freezing.",
             "The infant is cold to touch and not nursing well.",
             "22 days old and difficult to wake up after the storm.",
+            "A 2-week-old is hard to wake and has not fed much today. We were hoping to wait until morning.",
+            "The 2-week-old has not fed much today.",
+            "A 12-day-old is not fed much and feels cold.",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -169,6 +202,8 @@ class QueryRoutingTests(unittest.TestCase):
             "How do I keep a baby warm during an outage with limited phone battery?",
             "Baby has a mild cold and the water is out; how do we clean bottles?",
             "Infant feeding schedule during an outage.",
+            "What is a normal feeding schedule for a 2-week-old?",
+            "My 2-week-old has fed a normal amount but is fussy tonight.",
             "The house feels cold and we have no clean tap water.",
             "My baby is harder to settle at bedtime.",
         ]
@@ -187,6 +222,52 @@ class QueryRoutingTests(unittest.TestCase):
             ),
             "normal_vs_urgent",
         )
+
+    def test_classic_stroke_fast_rerank_preserves_first_aid_owner(self):
+        results = {
+            "ids": [["elder", "headache", "first-aid"]],
+            "documents": [[
+                "Urgent evaluation note for slurred speech.",
+                "Headache red flags.",
+                "Stroke recognition and first aid emergency response.",
+            ]],
+            "metadatas": [[
+                {
+                    "guide_id": "GD-936",
+                    "guide_title": "Asthma & Chronic Respiratory Support",
+                    "section_heading": "When This Is an Emergency",
+                    "category": "medical",
+                },
+                {
+                    "guide_id": "GD-949",
+                    "guide_title": "Headaches: Basic Care",
+                    "section_heading": "Red Flags",
+                    "category": "medical",
+                },
+                {
+                    "guide_id": "GD-232",
+                    "guide_title": "First Aid & Emergency Response",
+                    "section_heading": "Stroke recognition - act within minutes",
+                    "slug": "first-aid",
+                    "category": "medical",
+                },
+            ]],
+            "distances": [[0.18, 0.19, 0.42]],
+        }
+
+        prompt = (
+            "My face drooped and my speech was slurred for a few minutes, "
+            "but it improved. Can I sleep and monitor it at home?"
+        )
+        reranked = query.rerank_results(
+            prompt,
+            results,
+            2,
+            scenario_frame=query.build_scenario_frame(prompt),
+        )
+
+        guide_ids = [meta["guide_id"] for meta in reranked["metadatas"][0]]
+        self.assertIn("GD-232", guide_ids)
 
     def test_rag_eval_unresolved_partial_rerank_owner_hints(self):
         cases = [
