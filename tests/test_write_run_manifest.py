@@ -3,9 +3,16 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from argparse import Namespace
 from pathlib import Path
 
-from scripts.write_run_manifest import parse_metric, parse_metric_value
+from scripts.write_run_manifest import (
+    CommandResult,
+    build_record,
+    parse_git_status_short,
+    parse_metric,
+    parse_metric_value,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +28,47 @@ def _run_script(args: list[str], *, cwd: str | None = None) -> dict:
         cwd=cwd,
     )
     return json.loads(completed.stdout.strip())
+
+
+def _args(**overrides) -> Namespace:
+    values = {
+        "task": "task-a",
+        "lane": "tooling",
+        "role": None,
+        "model": None,
+        "label": None,
+        "command": [],
+        "input": [],
+        "output": [],
+        "changed_file": [],
+        "validation": [],
+        "metric": {},
+        "note": [],
+        "commit": None,
+        "diff_stat": None,
+        "changed_file_limit": 40,
+        "status_limit": 80,
+        "artifact_path_limit": 20,
+    }
+    values.update(overrides)
+    return Namespace(**values)
+
+
+def _fake_git_runner(status_text: str = ""):
+    def runner(args):
+        if args[:2] == ["status", "--short"]:
+            return CommandResult(stdout=status_text)
+        if args[:2] == ["branch", "--show-current"]:
+            return CommandResult(stdout="main\n")
+        if args[:3] == ["rev-parse", "--short", "HEAD"]:
+            return CommandResult(stdout="abc1234\n")
+        if args[:2] == ["rev-parse", "HEAD"]:
+            return CommandResult(stdout="abc1234def5678\n")
+        if args[:2] == ["diff", "--stat"]:
+            return CommandResult(stdout=" scripts/write_run_manifest.py | 8 ++++++++\n")
+        return CommandResult(stdout="")
+
+    return runner
 
 
 class WriteRunManifestTests(unittest.TestCase):
@@ -136,6 +184,147 @@ class WriteRunManifestTests(unittest.TestCase):
         self.assertEqual(parse_metric_value("hello"), "hello")
         self.assertEqual(parse_metric("k=9"), ("k", 9))
 
+    def test_parse_git_status_short_counts_and_caps(self):
+        summary = parse_git_status_short(
+            " M scripts/write_run_manifest.py\n"
+            "A  tests/test_write_run_manifest.py\n"
+            "?? artifacts/bench/new-run/report.md\n"
+            "R  old.py -> scripts/new.py\n",
+            entry_limit=2,
+            changed_file_limit=3,
+        )
+
+        self.assertFalse(summary["clean"])
+        self.assertEqual(summary["total_changed"], 4)
+        self.assertEqual(summary["tracked_changed"], 3)
+        self.assertEqual(summary["untracked_changed"], 1)
+        self.assertEqual(summary["staged_changed"], 2)
+        self.assertEqual(summary["unstaged_changed"], 1)
+        self.assertEqual(len(summary["entries"]), 2)
+        self.assertEqual(
+            summary["changed_files"],
+            [
+                "scripts/write_run_manifest.py",
+                "tests/test_write_run_manifest.py",
+                "artifacts/bench/new-run/report.md",
+            ],
+        )
+        self.assertTrue(summary["truncated"])
+        self.assertTrue(summary["changed_file_truncated"])
+
+    def test_auto_enrichment_uses_git_when_changed_files_omitted(self):
+        record = build_record(
+            _args(
+                output=["artifacts/bench/new-run/report.md"],
+                changed_file_limit=10,
+                status_limit=10,
+            ),
+            git_runner=_fake_git_runner(
+                " M scripts/write_run_manifest.py\n"
+                "?? artifacts/bench/new-run/report.md\n"
+            ),
+        )
+
+        self.assertEqual(record["commit"], "abc1234")
+        self.assertEqual(record["git_head"], "abc1234def5678")
+        self.assertEqual(record["git_branch"], "main")
+        self.assertEqual(record["changed_file_source"], "git_status")
+        self.assertEqual(
+            record["changed_file"],
+            [
+                "scripts/write_run_manifest.py",
+                "artifacts/bench/new-run/report.md",
+            ],
+        )
+        self.assertEqual(record["changed_file_count"], 2)
+        self.assertFalse(record["changed_file_truncated"])
+        self.assertTrue(record["dirty"])
+        self.assertEqual(record["git_status_summary"]["untracked_changed"], 1)
+        self.assertEqual(
+            record["artifact_path"],
+            ["artifacts/bench/new-run/report.md"],
+        )
+
+    def test_explicit_changed_files_win_over_git_enrichment(self):
+        record = build_record(
+            _args(
+                changed_file=["scripts/explicit.py"],
+                output=["artifacts/bench/a.json", "artifacts/bench/a.json"],
+            ),
+            git_runner=_fake_git_runner(" M scripts/from-git.py\n"),
+        )
+
+        self.assertEqual(record["changed_file"], ["scripts/explicit.py"])
+        self.assertEqual(record["changed_file_source"], "explicit")
+        self.assertEqual(record["changed_file_count"], 1)
+        self.assertFalse(record["changed_file_truncated"])
+        self.assertEqual(record["artifact_path"], ["artifacts/bench/a.json"])
+        self.assertEqual(record["artifact_path_count"], 1)
+        self.assertFalse(record["artifact_path_truncated"])
+
+    def test_auto_enrichment_caps_changed_files_status_and_artifacts(self):
+        status_text = "\n".join(
+            [
+                " M scripts/a.py",
+                " M scripts/b.py",
+                " M artifacts/bench/c.json",
+                "?? artifacts/bench/d.json",
+                "?? notes/e.md",
+            ]
+        )
+        record = build_record(
+            _args(
+                output=[
+                    "artifacts/bench/c.json",
+                    "artifacts/bench/d.json",
+                    "artifacts/bench/e.json",
+                ],
+                changed_file_limit=2,
+                status_limit=3,
+                artifact_path_limit=2,
+            ),
+            git_runner=_fake_git_runner(status_text),
+        )
+
+        self.assertEqual(record["changed_file"], ["scripts/a.py", "scripts/b.py"])
+        self.assertEqual(record["changed_file_count"], 5)
+        self.assertTrue(record["changed_file_truncated"])
+        self.assertTrue(record["git_status_short_truncated"])
+        self.assertEqual(len(record["git_status_summary"]["entries"]), 3)
+        self.assertEqual(
+            record["artifact_path"],
+            ["artifacts/bench/c.json", "artifacts/bench/d.json"],
+        )
+        self.assertEqual(record["artifact_path_count"], 3)
+        self.assertTrue(record["artifact_path_truncated"])
+
+    def test_git_failure_is_graceful(self):
+        def failing_runner(args):
+            return CommandResult(stdout="", stderr="not a git repository", returncode=128)
+
+        record = build_record(_args(), git_runner=failing_runner)
+
+        self.assertIsNone(record["commit"])
+        self.assertIsNone(record["git_head"])
+        self.assertIsNone(record["git_branch"])
+        self.assertIsNone(record["git_status_short"])
+        self.assertEqual(record["changed_file"], [])
+        self.assertEqual(record["changed_file_source"], "none")
+        self.assertFalse(record["dirty"])
+        self.assertIn("error", record["git_status_summary"])
+
+    def test_git_unavailable_exception_is_graceful(self):
+        def missing_git_runner(args):
+            raise OSError("git not found")
+
+        record = build_record(_args(), git_runner=missing_git_runner)
+
+        self.assertIsNone(record["commit"])
+        self.assertIsNone(record["git_head"])
+        self.assertEqual(record["changed_file"], [])
+        self.assertFalse(record["dirty"])
+        self.assertEqual(record["git_status_summary"]["error"], "OSError")
+
     def test_parent_directory_creation_for_manifest_path(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             manifest_path = Path(tmpdir) / "nested" / "one" / "deep" / "run_manifest.jsonl"
@@ -154,6 +343,26 @@ class WriteRunManifestTests(unittest.TestCase):
             self.assertTrue(manifest_path.parent.exists())
             self.assertEqual(payload["commit"], "feedface")
             self.assertEqual(manifest_path.read_text(encoding="utf-8").count("\n"), 1)
+
+    def test_cli_runs_outside_git(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            manifest_path = Path(tmpdir) / "manifest.jsonl"
+            payload = _run_script(
+                [
+                    "--task",
+                    "outside-git",
+                    "--lane",
+                    "tooling",
+                    "--manifest-path",
+                    str(manifest_path),
+                ],
+                cwd=tmpdir,
+            )
+
+            self.assertIsNone(payload["commit"])
+            self.assertEqual(payload["changed_file"], [])
+            self.assertEqual(payload["changed_file_source"], "none")
+            self.assertFalse(payload["dirty"])
 
 
 if __name__ == "__main__":

@@ -81,3 +81,27 @@ Result:
 Next cleanup should be a separate reviewed slice. Start with frontmatter/icon
 lines or clearly mechanical punctuation ranges; do not batch-rewrite guide
 bodies without content review.
+
+## 2026-04-25 Touched-File Gate Update
+
+Extended the scanner with an opt-in touched-file mode for cheap preflight
+checks on changed files:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\scan_mojibake.py --touched --touched-paths guides notes scripts tests --fail-on-findings
+```
+
+Behavior:
+
+- Uses git diff for staged/unstaged tracked files and git ls-files for
+  untracked files.
+- Scans only known text suffixes under the `--touched-paths` allowlist.
+- Reports allowlisted finding paths without letting them fail the gate via
+  `--allow-finding-paths`.
+- Keeps the original report-only default; `--fail-on-findings` makes it a gate.
+- `--report-only` is explicit for CI/jobs that should publish reports without
+  blocking.
+
+Focused validation added in `tests/test_scan_mojibake.py` covers path
+allowlisting, Windows-style path separators, tracked modified files, untracked
+files, allowed finding paths, fail-on-findings, and report-only behavior.

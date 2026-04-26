@@ -6,17 +6,38 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, Sequence
 
 
 DEFAULT_PATHS = ("guides", "notes")
+DEFAULT_TOUCHED_PATHS = (
+    "guides",
+    "notes",
+    "scripts",
+    "tests",
+    "android-app/app/src/main",
+    "android-app/app/src/test",
+    "android-app/app/src/androidTest",
+)
 TEXT_SUFFIXES = {
     ".md",
     ".markdown",
     ".txt",
+    ".py",
+    ".ps1",
+    ".java",
+    ".kt",
+    ".kts",
+    ".xml",
+    ".toml",
+    ".ini",
+    ".cfg",
+    ".properties",
+    ".gradle",
     ".yaml",
     ".yml",
     ".json",
@@ -24,6 +45,8 @@ TEXT_SUFFIXES = {
     ".csv",
     ".html",
 }
+
+GitRunner = Callable[[Sequence[str], Path], str]
 
 MOJIBAKE_PATTERNS = [
     (
@@ -72,6 +95,114 @@ def iter_text_files(paths: list[Path]) -> list[Path]:
             seen.add(resolved)
             files.append(candidate)
     return sorted(files, key=lambda item: str(item).lower())
+
+
+def _run_git(args: Sequence[str], cwd: Path) -> str:
+    completed = subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.returncode != 0:
+        stderr = completed.stderr.decode("utf-8", errors="replace").strip()
+        command = "git " + " ".join(args)
+        raise RuntimeError(f"{command} failed: {stderr}")
+    return completed.stdout.decode("utf-8", errors="surrogateescape")
+
+
+def git_repo_root(cwd: Path, *, git_runner: GitRunner = _run_git) -> Path:
+    output = git_runner(["rev-parse", "--show-toplevel"], cwd)
+    root_text = output.strip().rstrip("\0")
+    if not root_text:
+        raise RuntimeError("git rev-parse --show-toplevel returned no path")
+    return Path(root_text).resolve()
+
+
+def _split_nul_paths(output: str) -> list[str]:
+    return [item for item in output.split("\0") if item]
+
+
+def changed_git_paths(root: Path, *, git_runner: GitRunner = _run_git) -> list[str]:
+    outputs = [
+        git_runner(["diff", "--name-only", "-z", "--diff-filter=ACMRTUXB", "--cached", "--"], root),
+        git_runner(["diff", "--name-only", "-z", "--diff-filter=ACMRTUXB", "--"], root),
+        git_runner(["ls-files", "--others", "--exclude-standard", "-z"], root),
+    ]
+
+    paths: list[str] = []
+    seen: set[str] = set()
+    for output in outputs:
+        for rel_path in _split_nul_paths(output):
+            normalized = rel_path.replace("\\", "/").strip("/")
+            key = normalized.casefold()
+            if not normalized or key in seen:
+                continue
+            seen.add(key)
+            paths.append(normalized)
+    return paths
+
+
+def _normalize_allowed_path(value: str, *, root: Path) -> str:
+    text = value.strip()
+    if text in {"", "."}:
+        return "."
+
+    path = Path(text)
+    if path.is_absolute():
+        try:
+            text = path.resolve().relative_to(root).as_posix()
+        except ValueError:
+            text = path.as_posix()
+    else:
+        text = text.replace("\\", "/")
+
+    normalized = text.strip("/")
+    return normalized.casefold() if normalized else "."
+
+
+def _path_is_allowed(
+    rel_path: str,
+    allowed_paths: Sequence[str],
+    *,
+    root: Path,
+    empty_matches_all: bool = True,
+) -> bool:
+    normalized = rel_path.replace("\\", "/").strip("/").casefold()
+    allowed = [_normalize_allowed_path(item, root=root) for item in allowed_paths]
+    if not allowed:
+        return empty_matches_all
+    if "." in allowed:
+        return True
+    return any(normalized == item or normalized.startswith(item + "/") for item in allowed)
+
+
+def touched_text_files(
+    *,
+    root: Path,
+    allowed_paths: Sequence[str] = DEFAULT_TOUCHED_PATHS,
+    git_runner: GitRunner = _run_git,
+) -> list[Path]:
+    files: list[Path] = []
+    seen: set[Path] = set()
+    for rel_path in changed_git_paths(root, git_runner=git_runner):
+        if not _path_is_allowed(rel_path, allowed_paths, root=root):
+            continue
+        path = (root / rel_path).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError:
+            continue
+        if path.suffix.lower() not in TEXT_SUFFIXES:
+            continue
+        if not path.is_file():
+            continue
+        if path in seen:
+            continue
+        seen.add(path)
+        files.append(path)
+    return sorted(files, key=lambda item: _display_path(item, root).lower())
 
 
 def _line_snippet(line: str, *, max_chars: int) -> str:
@@ -123,7 +254,15 @@ def _display_path(path: Path, root: Path) -> str:
     return display.as_posix()
 
 
-def scan_paths(paths: list[Path], *, root: Path, max_snippet_chars: int = 160) -> dict[str, Any]:
+def scan_paths(
+    paths: list[Path],
+    *,
+    root: Path,
+    max_snippet_chars: int = 160,
+    mode: str = "paths",
+    touched_allowlist: Sequence[str] | None = None,
+    allowed_finding_paths: Sequence[str] | None = None,
+) -> dict[str, Any]:
     files = iter_text_files(paths)
     findings: list[dict[str, Any]] = []
     for path in files:
@@ -131,11 +270,29 @@ def scan_paths(paths: list[Path], *, root: Path, max_snippet_chars: int = 160) -
 
     by_kind = Counter(finding["kind"] for finding in findings)
     by_path = Counter(finding["path"] for finding in findings)
+    gate_findings = [
+        finding
+        for finding in findings
+        if not _path_is_allowed(
+            str(finding.get("path", "")),
+            allowed_finding_paths or [],
+            root=root,
+            empty_matches_all=False,
+        )
+    ]
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "paths": [str(path) for path in paths],
+        "mode": mode,
+        "paths": [
+            _display_path(path.resolve(), root) if path.exists() else path.as_posix()
+            for path in paths
+        ],
+        "touched_path_allowlist": list(touched_allowlist or []),
+        "allowed_finding_paths": list(allowed_finding_paths or []),
         "files_scanned": len(files),
         "findings_count": len(findings),
+        "allowed_findings_count": len(findings) - len(gate_findings),
+        "gate_findings_count": len(gate_findings),
         "counts_by_kind": dict(sorted(by_kind.items())),
         "top_files": [
             {"path": path, "findings": count}
@@ -152,6 +309,7 @@ def render_markdown(report: dict[str, Any], *, limit: int = 200) -> str:
         f"- Generated at: `{report['generated_at']}`",
         f"- Files scanned: `{report['files_scanned']}`",
         f"- Findings: `{report['findings_count']}`",
+        f"- Gate findings: `{report.get('gate_findings_count', report['findings_count'])}`",
         "",
         "## Counts By Kind",
         "",
@@ -218,6 +376,29 @@ def main(argv: list[str] | None = None) -> int:
         help="Files or directories to scan.",
     )
     parser.add_argument(
+        "--touched",
+        action="store_true",
+        help="Scan only changed tracked and untracked text files reported by git.",
+    )
+    parser.add_argument(
+        "--touched-paths",
+        nargs="+",
+        default=list(DEFAULT_TOUCHED_PATHS),
+        help=(
+            "Path prefixes allowed in --touched mode. Use '.' to include all changed "
+            "text files."
+        ),
+    )
+    parser.add_argument(
+        "--allow-finding-paths",
+        nargs="+",
+        default=[],
+        help=(
+            "Path prefixes whose findings are reported but ignored by "
+            "--fail-on-findings."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         default="artifacts/text_quality",
         help="Directory for JSON and Markdown reports.",
@@ -226,19 +407,36 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--md-output", help="Explicit Markdown report path.")
     parser.add_argument("--max-snippet-chars", type=int, default=160)
     parser.add_argument("--markdown-limit", type=int, default=200)
-    parser.add_argument(
+    failure_group = parser.add_mutually_exclusive_group()
+    failure_group.add_argument(
         "--fail-on-findings",
         action="store_true",
         help="Exit 1 when any likely mojibake is found.",
     )
+    failure_group.add_argument(
+        "--report-only",
+        action="store_true",
+        help="Always exit 0; this is the default behavior.",
+    )
     args = parser.parse_args(argv)
 
-    root = Path.cwd().resolve()
-    scan_targets = [Path(path) for path in args.paths]
+    cwd = Path.cwd().resolve()
+    try:
+        root = git_repo_root(cwd) if args.touched else cwd
+        scan_targets = (
+            touched_text_files(root=root, allowed_paths=args.touched_paths)
+            if args.touched
+            else [Path(path) for path in args.paths]
+        )
+    except RuntimeError as exc:
+        parser.error(str(exc))
     report = scan_paths(
         scan_targets,
         root=root,
         max_snippet_chars=max(40, args.max_snippet_chars),
+        mode="touched" if args.touched else "paths",
+        touched_allowlist=args.touched_paths if args.touched else None,
+        allowed_finding_paths=args.allow_finding_paths,
     )
 
     output_dir = Path(args.output_dir)
@@ -264,13 +462,14 @@ def main(argv: list[str] | None = None) -> int:
             {
                 "files_scanned": report["files_scanned"],
                 "findings_count": report["findings_count"],
+                "gate_findings_count": report["gate_findings_count"],
                 "json_output": str(json_path),
                 "md_output": str(md_path),
             },
             ensure_ascii=True,
         )
     )
-    return 1 if args.fail_on_findings and report["findings_count"] else 0
+    return 1 if args.fail_on_findings and report["gate_findings_count"] else 0
 
 
 if __name__ == "__main__":

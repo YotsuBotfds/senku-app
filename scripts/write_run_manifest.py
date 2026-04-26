@@ -6,11 +6,27 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Callable, Sequence
 
 
 DEFAULT_MANIFEST_PATH = Path("artifacts/runs/run_manifest.jsonl")
+DEFAULT_CHANGED_FILE_LIMIT = 40
+DEFAULT_STATUS_LIMIT = 80
+DEFAULT_ARTIFACT_PATH_LIMIT = 20
+
+
+@dataclass(frozen=True)
+class CommandResult:
+    stdout: str
+    stderr: str = ""
+    returncode: int = 0
+    error: str | None = None
+
+
+GitRunner = Callable[[Sequence[str]], CommandResult]
 
 
 def parse_metric(raw: str) -> tuple[str, object]:
@@ -42,57 +58,248 @@ def parse_metric_value(value: str) -> object:
         return value
 
 
-def get_short_commit_value(override: str | None) -> str | None:
+def run_git(args: Sequence[str]) -> CommandResult:
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return CommandResult(stdout="", stderr="", returncode=1, error=exc.__class__.__name__)
+    return CommandResult(
+        stdout=result.stdout,
+        stderr=result.stderr,
+        returncode=result.returncode,
+    )
+
+
+def _safe_git(git_runner: GitRunner, args: Sequence[str]) -> CommandResult:
+    try:
+        return git_runner(args)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return CommandResult(stdout="", stderr="", returncode=1, error=exc.__class__.__name__)
+
+
+def _git_error(result: CommandResult) -> str | None:
+    if result.error:
+        return result.error
+    if result.returncode:
+        return (result.stderr or result.stdout or f"git exited {result.returncode}").strip()
+    return None
+
+
+def _clean_git_value(result: CommandResult) -> str | None:
+    if _git_error(result):
+        return None
+    value = result.stdout.strip()
+    return value or None
+
+
+def _cap_lines(text: str, limit: int) -> tuple[str, bool]:
+    lines = text.splitlines()
+    if len(lines) <= limit:
+        return text, False
+    return "\n".join(lines[:limit]) + "\n", True
+
+
+def _normalize_status_path(raw_path: str) -> str:
+    path = raw_path.strip()
+    if " -> " in path:
+        path = path.split(" -> ", 1)[1].strip()
+    if len(path) >= 2 and path[0] == path[-1] == '"':
+        path = path[1:-1]
+    return path.replace("\\", "/")
+
+
+def parse_git_status_short(
+    status_text: str,
+    *,
+    entry_limit: int = DEFAULT_STATUS_LIMIT,
+    changed_file_limit: int = DEFAULT_CHANGED_FILE_LIMIT,
+) -> dict[str, object]:
+    counts: dict[str, int] = {}
+    entries: list[dict[str, str]] = []
+    changed_files: list[str] = []
+    total = 0
+    tracked = 0
+    untracked = 0
+    staged = 0
+    unstaged = 0
+
+    for raw_line in status_text.splitlines():
+        if not raw_line.strip():
+            continue
+        total += 1
+        status = raw_line[:2] if len(raw_line) >= 2 else raw_line.strip()
+        path = _normalize_status_path(raw_line[3:] if len(raw_line) > 3 else "")
+        kind = "untracked" if status == "??" else "tracked"
+        counts[status] = counts.get(status, 0) + 1
+        if kind == "untracked":
+            untracked += 1
+        else:
+            tracked += 1
+        if status[:1] not in {" ", "?"}:
+            staged += 1
+        if len(status) > 1 and status[1:2] not in {" ", "?"}:
+            unstaged += 1
+        if path and len(changed_files) < changed_file_limit:
+            changed_files.append(path)
+        if len(entries) < entry_limit:
+            entries.append({"status": status, "path": path, "kind": kind})
+
+    return {
+        "clean": total == 0,
+        "total_changed": total,
+        "tracked_changed": tracked,
+        "untracked_changed": untracked,
+        "staged_changed": staged,
+        "unstaged_changed": unstaged,
+        "status_counts": counts,
+        "entries": entries,
+        "truncated": total > len(entries),
+        "changed_files": changed_files,
+        "changed_file_count": total,
+        "changed_file_truncated": total > len(changed_files),
+    }
+
+
+def get_short_commit_value(
+    override: str | None,
+    git_runner: GitRunner = run_git,
+) -> str | None:
     if override is not None:
         return override
+    return _clean_git_value(_safe_git(git_runner, ["rev-parse", "--short", "HEAD"]))
 
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            return None
-        value = result.stdout.strip()
-        return value or None
-    except OSError:
+
+def get_git_status_short(
+    git_runner: GitRunner = run_git,
+    *,
+    limit: int = DEFAULT_STATUS_LIMIT,
+) -> str | None:
+    result = _safe_git(git_runner, ["status", "--short", "--untracked-files=all"])
+    if _git_error(result):
         return None
+    return _cap_lines(result.stdout, limit)[0]
 
 
-def get_git_status_short() -> str | None:
-    try:
-        result = subprocess.run(
-            ["git", "status", "--short"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            return None
-        return result.stdout
-    except OSError:
+def get_git_diff_stat(git_runner: GitRunner = run_git) -> str | None:
+    result = _safe_git(git_runner, ["diff", "--stat"])
+    if _git_error(result):
         return None
+    return result.stdout
 
 
-def get_git_diff_stat() -> str | None:
-    try:
-        result = subprocess.run(
-            ["git", "diff", "--stat"],
-            capture_output=True,
-            text=True,
-            check=False,
+def collect_git_state(
+    *,
+    changed_file_limit: int = DEFAULT_CHANGED_FILE_LIMIT,
+    status_limit: int = DEFAULT_STATUS_LIMIT,
+    git_runner: GitRunner = run_git,
+) -> dict[str, object]:
+    status_result = _safe_git(git_runner, ["status", "--short", "--untracked-files=all"])
+    branch_result = _safe_git(git_runner, ["branch", "--show-current"])
+    head_short_result = _safe_git(git_runner, ["rev-parse", "--short", "HEAD"])
+    head_full_result = _safe_git(git_runner, ["rev-parse", "HEAD"])
+    diff_stat_result = _safe_git(git_runner, ["diff", "--stat"])
+
+    status_error = _git_error(status_result)
+    if status_error:
+        status_summary: dict[str, object] = {
+            "clean": False,
+            "total_changed": 0,
+            "tracked_changed": 0,
+            "untracked_changed": 0,
+            "staged_changed": 0,
+            "unstaged_changed": 0,
+            "status_counts": {},
+            "entries": [],
+            "truncated": False,
+            "changed_files": [],
+            "changed_file_count": 0,
+            "changed_file_truncated": False,
+            "error": status_error,
+        }
+        status_text = None
+        status_truncated = False
+    else:
+        status_summary = parse_git_status_short(
+            status_result.stdout,
+            entry_limit=status_limit,
+            changed_file_limit=changed_file_limit,
         )
-        if result.returncode != 0:
-            return None
-        return result.stdout
-    except OSError:
-        return None
+        status_text, status_truncated = _cap_lines(status_result.stdout, status_limit)
+
+    return {
+        "head_short": _clean_git_value(head_short_result),
+        "head": _clean_git_value(head_full_result),
+        "branch": _clean_git_value(branch_result),
+        "status_short": status_text,
+        "status_short_truncated": status_truncated,
+        "status_summary": status_summary,
+        "diff_stat": _clean_git_value(diff_stat_result)
+        if _clean_git_value(diff_stat_result)
+        else (None if _git_error(diff_stat_result) else diff_stat_result.stdout),
+        "error": status_error,
+    }
 
 
-def build_record(args: argparse.Namespace) -> dict[str, object]:
-    status = get_git_status_short()
+def _is_artifact_path(value: str) -> bool:
+    normalized = value.replace("\\", "/").strip()
+    if not normalized:
+        return False
+    return normalized == "artifacts" or normalized.startswith("artifacts/") or "/artifacts/" in normalized
+
+
+def collect_artifact_paths(
+    values: Sequence[str],
+    *,
+    limit: int = DEFAULT_ARTIFACT_PATH_LIMIT,
+) -> dict[str, object]:
+    paths: list[str] = []
+    seen: set[str] = set()
+    total_unique = 0
+    for value in values:
+        normalized = value.replace("\\", "/").strip()
+        if not _is_artifact_path(normalized):
+            continue
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        total_unique += 1
+        if len(paths) >= limit:
+            continue
+        paths.append(normalized)
+    return {
+        "paths": paths,
+        "count": total_unique,
+        "truncated": total_unique > len(paths),
+    }
+
+
+def build_record(
+    args: argparse.Namespace,
+    *,
+    git_runner: GitRunner = run_git,
+) -> dict[str, object]:
+    git_state = collect_git_state(
+        changed_file_limit=args.changed_file_limit,
+        status_limit=args.status_limit,
+        git_runner=git_runner,
+    )
+    status_summary = git_state["status_summary"]
+    auto_changed_files = (
+        list(status_summary.get("changed_files", []))
+        if isinstance(status_summary, dict)
+        else []
+    )
+    changed_files = args.changed_file or auto_changed_files
+    changed_file_source = "explicit" if args.changed_file else ("git_status" if auto_changed_files else "none")
+    artifact_summary = collect_artifact_paths(
+        [*args.input, *args.output, *changed_files],
+        limit=args.artifact_path_limit,
+    )
     return {
         "task": args.task,
         "lane": args.lane,
@@ -102,16 +309,41 @@ def build_record(args: argparse.Namespace) -> dict[str, object]:
         "command": args.command,
         "input": args.input,
         "output": args.output,
-        "changed_file": args.changed_file,
+        "changed_file": changed_files,
+        "changed_file_source": changed_file_source,
+        "changed_file_count": len(args.changed_file)
+        if args.changed_file
+        else (
+            int(status_summary.get("changed_file_count", 0))
+            if isinstance(status_summary, dict)
+            else 0
+        ),
+        "changed_file_truncated": False
+        if args.changed_file
+        else (
+            bool(status_summary.get("changed_file_truncated", False))
+            if isinstance(status_summary, dict)
+            else False
+        ),
         "validation": args.validation,
         "metric": args.metric,
         "note": args.note,
-        "commit": get_short_commit_value(args.commit),
+        "commit": args.commit if args.commit is not None else git_state["head_short"],
+        "git_head": git_state["head"],
+        "git_branch": git_state["branch"],
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "cwd": str(Path.cwd()),
-        "git_status_short": status,
-        "git_diff_stat": args.diff_stat if args.diff_stat is not None else get_git_diff_stat(),
-        "dirty": bool(status and status.strip()),
+        "git_status_short": git_state["status_short"],
+        "git_status_short_truncated": git_state["status_short_truncated"],
+        "git_status_summary": status_summary,
+        "git_diff_stat": args.diff_stat if args.diff_stat is not None else git_state["diff_stat"],
+        "dirty": bool(
+            isinstance(status_summary, dict)
+            and int(status_summary.get("total_changed", 0)) > 0
+        ),
+        "artifact_path": artifact_summary["paths"],
+        "artifact_path_count": artifact_summary["count"],
+        "artifact_path_truncated": artifact_summary["truncated"],
     }
 
 
@@ -174,6 +406,24 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Diff stat override. Defaults to best-effort `git diff --stat`.",
     )
     parser.add_argument(
+        "--changed-file-limit",
+        type=int,
+        default=DEFAULT_CHANGED_FILE_LIMIT,
+        help=f"Maximum auto-detected changed files to record (default: {DEFAULT_CHANGED_FILE_LIMIT}).",
+    )
+    parser.add_argument(
+        "--status-limit",
+        type=int,
+        default=DEFAULT_STATUS_LIMIT,
+        help=f"Maximum git status lines to record (default: {DEFAULT_STATUS_LIMIT}).",
+    )
+    parser.add_argument(
+        "--artifact-path-limit",
+        type=int,
+        default=DEFAULT_ARTIFACT_PATH_LIMIT,
+        help=f"Maximum relevant artifact paths to record (default: {DEFAULT_ARTIFACT_PATH_LIMIT}).",
+    )
+    parser.add_argument(
         "--manifest-path",
         default=str(DEFAULT_MANIFEST_PATH),
         help="JSONL manifest path (default: artifacts/runs/run_manifest.jsonl).",
@@ -190,6 +440,12 @@ def normalize_metrics(raw_metrics: list[tuple[str, object]]) -> dict[str, object
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.changed_file_limit < 1:
+        raise SystemExit("--changed-file-limit must be at least 1.")
+    if args.status_limit < 1:
+        raise SystemExit("--status-limit must be at least 1.")
+    if args.artifact_path_limit < 1:
+        raise SystemExit("--artifact-path-limit must be at least 1.")
     args.metric = normalize_metrics(args.metric)
     manifest_path = Path(args.manifest_path)
     manifest_path.parent.mkdir(parents=True, exist_ok=True)

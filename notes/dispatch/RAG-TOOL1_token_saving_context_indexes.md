@@ -135,6 +135,36 @@ Sample:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\evaluate_retrieval_pack.py artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl --top-k 24 --embed-url http://127.0.0.1:1234/v1 --output-json artifacts\bench\retrieval_pack_eval.json --output-md artifacts\bench\retrieval_pack_eval.md --progress
 ```
 
+## 2026-04-25 RAG Regression Gate Proof
+
+Implemented `scripts/rag_regression_gate.py`, a stdlib diagnostics comparator
+for CI/report usage. It accepts diagnostic directories or direct
+`diagnostics.json` files, compares baseline/current bucket, owner-hit,
+expected-citation, and top-1 marker metrics, and remains report-only unless
+`--fail-on-regression` is passed.
+
+Default checks catch expected-supported drops, retrieval/ranking/generation
+miss increases, expected-owner hit/share drops, expected-cited drops, and
+top-1 marker risk increases. Callers can tune behavior with `--check`,
+`--ignore-metric`, `--allow-regression`, and `--no-default-checks`, and emit
+Markdown, text, or JSON.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_rag_regression_gate -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_rag_trend tests.test_rag_regression_gate -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile scripts\rag_regression_gate.py tests\test_rag_regression_gate.py
+```
+
+Smoke:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\rag_regression_gate.py artifacts\bench\rag_eval_partial_router_holdouts_20260425_gd029_gd035_gd649_packaging_diag artifacts\bench\rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag --format text
+```
+
+The smoke reported `PASS` with `0` regressions.
+
 ## 2026-04-25 Artifact Storage Reporter Proof
 
 Updated `scripts/summarize_artifact_storage.py` and fixture coverage so storage
@@ -151,6 +181,22 @@ Validation:
 
 Current real smoke reported about `63.5 GiB`, `90673` files, and `69099`
 directories under `artifacts`.
+
+## 2026-04-25 Run Manifest Auto-Enrichment Proof
+
+Updated `scripts/write_run_manifest.py` so records auto-capture capped git
+state when callers omit explicit fields: branch, full/short head, capped status
+summary, auto-derived changed tracked/untracked files, dirty state, diff stat,
+and relevant artifact paths from supplied inputs/outputs/changed files.
+Explicit `--changed-file`, `--commit`, and `--diff-stat` arguments still win.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_write_run_manifest -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile scripts\write_run_manifest.py tests\test_write_run_manifest.py
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\write_run_manifest.py --task RAG-TOOL1 --lane tooling --role worker-c --label auto-enrichment-smoke --output artifacts\bench\run_manifest_auto_enrichment_smoke --manifest-path artifacts\tmp\run_manifest_auto_enrichment_smoke.jsonl --changed-file-limit 12 --status-limit 12
+```
 
 ## Landed proof
 
