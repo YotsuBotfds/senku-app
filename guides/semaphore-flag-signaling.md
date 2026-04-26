@@ -5,7 +5,7 @@ title: Semaphore & Flag Signaling
 category: communications
 difficulty: beginner
 tags: [essential, communications, signaling, visual, emergency, distress, day-night, rescue]
-icon: "ðŸš©"
+icon: "🚩"
 description: "Flag semaphore alphabet and number system for emergency distress signaling and day-and-night visual communication. Covers naval and military flag signaling, improvised flag construction from salvaged materials, tower-to-tower relay, lantern-based night emergency signaling, and integration with search-and-rescue aircraft and ground-to-air visual signal networks."
 related: [visual-audio-signal-systems, morse-code-fundamentals, search-rescue, written-communication-protocols, oral-comms-protocols, dead-reckoning-navigation]
 read_time: 9

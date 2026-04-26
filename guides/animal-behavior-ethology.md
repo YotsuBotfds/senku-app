@@ -9,7 +9,7 @@ tags:
   - ethology
   - domestication
   - wildlife management
-icon: ðŸ¦Œ
+icon: 🦌
 description: Animal behavioral patterns, domestication, habituation, wildlife management, and human-wildlife coexistence
 related:
   - animal-husbandry

@@ -19,7 +19,7 @@ tags:
   - grandparent keeps falling
   - old person joints hurt
   - elderly can't walk anymore
-icon: ðŸ§“
+icon: 🧓
 description: Arthritis management through exercises and heat therapy, vision and hearing loss accommodation, cardiovascular health maintenance, cognitive decline recognition, osteoporosis prevention, chronic pain management, diabetes care with limited resources, maintaining independence and dignity in aging.
 related:
   - cognitive-disability-accommodation

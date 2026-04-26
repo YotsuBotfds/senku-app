@@ -23,7 +23,7 @@ aliases:
   - caregiver hygiene
   - prevent family illness
   - sick room ventilation
-icon: ðŸ§¼
+icon: 🧼
 description: Practical home-care guidance for caring for a sick family member without spreading illness through the household, including handwashing moments, room setup, ventilation, bedding changes, vomit cleanup, laundry separation, dishes, waste handling, and caregiver protection.
 related:
   - common-ailments-recognition-care

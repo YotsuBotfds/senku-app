@@ -69,6 +69,33 @@ Targeted scanner counts:
 
 No guide files were edited in this slice.
 
+### Guide Frontmatter Icon Proof
+
+First guide-frontmatter icon tranche completed on the listed `icon:` lines only.
+No guide body prose, safety content, formulas, thresholds, or procedural text
+was edited.
+
+Targeted scanner after the icon repair:
+
+- Files scanned: `17`.
+- Icon-line findings: `0`.
+- Remaining findings outside icon lines: `712`.
+- Remaining findings are deferred guide-body/frontmatter prose findings in
+  `age-related-disease-management.md`, `animal-behavior-ethology.md`,
+  `animal-salvage-butchery.md`, `community-bulletin-notice-systems.md`,
+  `education-teaching.md`, `elder-care.md`,
+  `insurance-risk-pooling-mutual-aid.md`, `semaphore-flag-signaling.md`,
+  `sepsis-recognition-antibiotic-protocols.md`,
+  `tool-sharpening-maintenance.md`, `trapping-snares.md`,
+  `underground-shelter-bunker.md`, and `veterinary-parasitology.md`.
+
+Dry-run incremental ingest planner emitted:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --files guides\age-related-disease-management.md guides\animal-behavior-ethology.md guides\animal-salvage-butchery.md guides\community-bulletin-notice-systems.md guides\dentistry.md guides\education-teaching.md guides\elder-care.md guides\hand-pump-repair-maintenance.md guides\home-sick-care-hygiene.md guides\insurance-risk-pooling-mutual-aid.md guides\menstrual-pain-management.md guides\semaphore-flag-signaling.md guides\sepsis-recognition-antibiotic-protocols.md guides\tool-sharpening-maintenance.md guides\trapping-snares.md guides\underground-shelter-bunker.md guides\veterinary-parasitology.md
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --stats
+```
+
 ## Defer To Reviewed Guide-Body Passes
 
 Do not batch-fix guide body text in the first cleanup. Most remaining hits are

@@ -6,7 +6,7 @@ category: medical
 difficulty: intermediate
 tags:
   - essential
-icon: ðŸ”¬
+icon: 🔬
 description: McMaster fecal egg counts, FAMACHA scoring, dewormer classes, pasture rotation, and dip tank construction.
 related:
   - veterinary

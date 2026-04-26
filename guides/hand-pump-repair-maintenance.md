@@ -4,7 +4,7 @@ slug: hand-pump-repair-maintenance
 title: Hand Pump Repair and Maintenance
 category: building
 difficulty: intermediate
-icon: "ðŸ”§"
+icon: "🔧"
 description: Practical repair guide for common hand pump failures, including loss of prime, worn leather seals, stuck check valves, clogged screens, frozen lines, improvised gaskets, troubleshooting steps, and preventive maintenance.
 related:
   - simple-home-repairs

@@ -22,7 +22,7 @@ aliases:
   - rash does not fade when pressed
   - little purple dots with fever
   - purple spots on legs fever
-icon: ðŸ”¥
+icon: 🔥
 routing_cues:
   - Use for suspected sepsis, fever with confusion, fast breathing, rapid pulse, shaking chills, hard-to-wake illness, infection with systemic symptoms, or red-flag wound infection that may be spreading beyond local care.
   - Use for fever plus stiff neck, severe headache with vomiting, unusual sleepiness, or non-blanching purple/dark rash as meningitis, meningococcemia, or sepsis emergency.

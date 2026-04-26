@@ -4,7 +4,7 @@ slug: underground-shelter-bunker
 title: Underground Shelter & Bunker Construction
 category: building
 difficulty: advanced
-icon: ðŸ”¨
+icon: 🔨
 tags:
   - rebuild
   - defense

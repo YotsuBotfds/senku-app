@@ -6,7 +6,7 @@ category: medical
 difficulty: intermediate
 tags:
   - critical
-icon: ðŸ¦·
+icon: 🦷
 description: Thin router for dental topics. Send routine hygiene to preventive-dental-hygiene, urgent swelling/infection/trauma to emergency-dental, anatomy questions to anatomy-oral, and denture/fit questions to dental-prosthetics.
 related:
   - anatomy-oral

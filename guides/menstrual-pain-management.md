@@ -14,7 +14,7 @@ tags:
   - cramp relief
   - menstrual cramps
   - bad period pain
-icon: ðŸŒ¸
+icon: 🌸
 description: Menstrual cramp relief, heat methods without electricity, hydration, gentle movement, rest positioning, symptom tracking, common cycle discomforts, and red flags for heavy bleeding or more serious problems.
 related:
   - menstruation-reproductive-health

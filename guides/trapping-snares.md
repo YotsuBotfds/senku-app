@@ -9,7 +9,7 @@ tags:
   - rabbit-snares
   - trail-snaring
   - legal-trapping
-icon: ðŸª¤
+icon: 🪤
 description: Trap design, snare construction, animal behavior, baiting, trap placement, ethics, and harvest techniques.
 related:
   - desert-survival

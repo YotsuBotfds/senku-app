@@ -13,7 +13,7 @@ tags:
   - literacy-instruction
   - classroom-discipline
   - everyday-teaching
-icon: ðŸ“š
+icon: 📚
 description: Teaching methods, literacy programs, apprenticeship systems, curriculum design, libraries, and preserving knowledge. If the real question is room layout, entrances, ramps, or accessibility, route to the dedicated facility guides.
 aliases:
   - how to teach

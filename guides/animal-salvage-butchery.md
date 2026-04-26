@@ -8,7 +8,7 @@ tags:
   - practical
   - food-production
   - salvage
-icon: ðŸ¥©
+icon: 🥩
 description: Recover livestock after disasters, manage feral animals, perform emergency slaughter, conduct field butchery, preserve meat under duress, assess disease risk in stressed animals, and improvise cold chain methods.
 related:
   - butchering

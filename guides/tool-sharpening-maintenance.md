@@ -30,7 +30,7 @@ aliases:
   - touch up a knife edge
   - hone a chisel
   - sharpen a clean axe
-icon: ðŸ”ª
+icon: 🔪
 description: Abrasive types (natural vs synthetic stones), sharpening angles by tool type, flat grinding vs hollow grinding, stropping, axe sharpening, saw sharpening and setting, chisel sharpening, knife maintenance, field-expedient sharpening (river stones, ceramic).
 related:
   - tool-maintenance-repair

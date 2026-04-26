@@ -8,7 +8,7 @@ tags:
   - rebuild
   - economics
   - community
-icon: ðŸ“¦
+icon: 📦
 description: "Cooperative insurance fundamentals, risk assessment and pooling mathematics, mutual aid fund governance, historical models, and record-keeping for community risk management."
 related:
   - basic-accounting-record-keeping

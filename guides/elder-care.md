@@ -24,7 +24,7 @@ tags:
   - grandparent keeps falling
   - elderly suddenly confused
   - old person not eating
-icon: ðŸ‘´
+icon: 👴
 description: Caring for elderly community members without modern medical infrastructure, including chronic condition management, mobility, cognitive decline, and end-of-life care.
 related:
   - age-related-disease-management

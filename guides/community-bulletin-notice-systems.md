@@ -9,7 +9,7 @@ tags:
   - administration
   - public-information
   - governance
-icon: ðŸ“‹
+icon: 📋
 description: Physical bulletin board construction and placement, town crier protocols, community meeting announcements, standardized notice formats, emergency alert systems, pictographic/visual notices for low literacy, message prioritization, record-keeping of posted notices, and community feedback mechanisms.
 aliases:
   - bulletin board
