@@ -40,7 +40,7 @@ Use this guide when the animal is already sick, injured, behaving abnormally, or
 
 ### Vital Signs Reference Table
 
-<table><thead><tr><th scope="col">Animal</th><th scope="col">Temperature (Â°F)</th><th scope="col">Pulse (bpm)</th><th scope="col">Respiration (bpm)</th><th scope="col">Rumen Movements/min</th></tr></thead><tbody><tr><td>Horse</td><td>99-101</td><td>30-40</td><td>12-20</td><td>N/A</td></tr><tr><td>Cow</td><td>101-102</td><td>40-60</td><td>20-30</td><td>1-3</td></tr><tr><td>Goat/Sheep</td><td>101-103</td><td>70-90</td><td>20-30</td><td>1-2</td></tr><tr><td>Pig</td><td>101-102</td><td>60-80</td><td>20-40</td><td>N/A</td></tr><tr><td>Chicken</td><td>104-106</td><td>200-300</td><td>20-30</td><td>N/A</td></tr><tr><td>Dog</td><td>101-102</td><td>60-100</td><td>20-30</td><td>N/A</td></tr></tbody></table>
+<table><thead><tr><th scope="col">Animal</th><th scope="col">Temperature (°F)</th><th scope="col">Pulse (bpm)</th><th scope="col">Respiration (bpm)</th><th scope="col">Rumen Movements/min</th></tr></thead><tbody><tr><td>Horse</td><td>99-101</td><td>30-40</td><td>12-20</td><td>N/A</td></tr><tr><td>Cow</td><td>101-102</td><td>40-60</td><td>20-30</td><td>1-3</td></tr><tr><td>Goat/Sheep</td><td>101-103</td><td>70-90</td><td>20-30</td><td>1-2</td></tr><tr><td>Pig</td><td>101-102</td><td>60-80</td><td>20-40</td><td>N/A</td></tr><tr><td>Chicken</td><td>104-106</td><td>200-300</td><td>20-30</td><td>N/A</td></tr><tr><td>Dog</td><td>101-102</td><td>60-100</td><td>20-30</td><td>N/A</td></tr></tbody></table>
 
 ### Body Condition Scoring
 
@@ -54,7 +54,7 @@ Use this guide when the animal is already sick, injured, behaving abnormally, or
 
 ### Illness Indicators
 
--   **Fever:** Temperature >102Â°F (horse/dog); >103Â°F (ruminants)
+-   **Fever:** Temperature >102°F (horse/dog); >103°F (ruminants)
 -   **Dehydration:** Skin tenting (pinch test >2 seconds return), dry mucous membranes, sunken eyes
 -   **Lethargy:** Lack of appetite, depression, standing apart from herd/flock
 -   **Abnormal Discharge:** Nasal, ocular, or genital discharge; foul-smelling urine/feces
@@ -63,7 +63,7 @@ Use this guide when the animal is already sick, injured, behaving abnormally, or
 -   **Diarrhea/Constipation:** Abnormal consistency, frequency changes, dehydration risk
 
 :::info-box
-**Assessment Protocol:** Record all vital signs in same order each exam. Note baseline for individual animalsâ€”normal varies by breed and age. Repeat assessment after 30-60 minutes to track changes.
+**Assessment Protocol:** Record all vital signs in same order each exam. Note baseline for individual animals--normal varies by breed and age. Repeat assessment after 30-60 minutes to track changes.
 :::
 
 ## Equipment & Materials
@@ -73,7 +73,7 @@ Before treating animals, gather essential supplies for common procedures:
 <table><thead><tr><th scope="col">Category</th><th scope="col">Items</th><th scope="col">Purpose</th></tr></thead><tbody><tr><td>Examination</td><td>Thermometer, stethoscope, hoof tester, speculum</td><td>Basic vital sign assessment</td></tr><tr><td>Wound Care</td><td>Sterile gauze, antibiotic ointment, bandages, sutures, scissors</td><td>Cleaning and closure</td></tr><tr><td>Restraint</td><td>Halter, lead rope, twitch, chute</td><td>Safe handling during treatment</td></tr><tr><td>Injection</td><td>Syringes (3ml, 10ml, 60ml), needles (18-25 gauge), disinfectant</td><td>Drug administration</td></tr><tr><td>Parasite Control</td><td>Dewormer (oral/injectable), pour-on, dip tank supplies</td><td>Internal/external parasite treatment</td></tr></tbody></table>
 
 :::tip
-Store medications in cool, dry conditions (50-70Â°F ideal). Keep detailed inventory with expiration dates. Rotate stock using FIFO (first in, first out) principle.
+Store medications in cool, dry conditions (50-70°F ideal). Keep detailed inventory with expiration dates. Rotate stock using FIFO (first in, first out) principle.
 :::
 
 ## Common Diseases by Species
@@ -109,7 +109,7 @@ Store medications in cool, dry conditions (50-70Â°F ideal). Keep detailed inve
 
 -   **Cause:** Anaerobic bacteria (Fusobacterium); wet/muddy conditions
 -   **Signs:** Severe lameness, hoof tissue necrosis, foul odor, swollen interdigital space
--   **Treatment:** Trim diseased tissue aggressively; foot bath in 5% CuSOâ‚„ solution (or 10% zinc sulfate) for 5-10 min daily; dry housing; foot bandaging
+-   **Treatment:** Trim diseased tissue aggressively; foot bath in 5% CuSO₄ solution (or 10% zinc sulfate) for 5-10 min daily; dry housing; foot bandaging
 
 ### Horses
 
@@ -162,7 +162,7 @@ Store medications in cool, dry conditions (50-70Â°F ideal). Keep detailed inve
 
 -   **Cause:** Anaerobic bacteria in moist hoof environment
 -   **Signs:** Lameness, hoof tissue breakdown, foul odor
--   **Treatment:** Trim affected tissue; CuSOâ‚„ or zinc sulfate foot baths daily; dry bedding; isolation from flock
+-   **Treatment:** Trim affected tissue; CuSO₄ or zinc sulfate foot baths daily; dry bedding; isolation from flock
 
 ### Pigs
 
@@ -244,14 +244,14 @@ Store medications in cool, dry conditions (50-70Â°F ideal). Keep detailed inve
 6.  **Interpret:** <100 EPG = low (no treatment needed), 100-500 = moderate (consider deworming), >500 = high (immediate deworming required)
 
 :::warning
-High fecal counts indicate parasite load that impairs productivity and health. Do not delay deworming in high-count animalsâ€”prioritize treatment.
+High fecal counts indicate parasite load that impairs productivity and health. Do not delay deworming in high-count animals--prioritize treatment.
 :::
 
 ### Rotational Grazing Strategy
 
 -   **Principle:** Move animals to clean pasture before parasite reinfection (14-21 days)
 -   **Timing:** Leave pasture 3-4 weeks for larvae die-off; shorter rotation for high-risk animals
--   **Species Rotation:** Rotate cattle â†’ sheep â†’ cattle; breaks many parasites' life cycles
+-   **Species Rotation:** Rotate cattle -> sheep -> cattle; breaks many parasites' life cycles
 -   **Benefits:** Reduces chemical dewormer use, improves pasture quality, lower infection pressure
 
 ### Natural Dewormers
@@ -266,7 +266,7 @@ High fecal counts indicate parasite load that impairs productivity and health. D
 
 ### Chemical Dewormer Rotation
 
-Alternate drug classes to prevent resistance: Benzimidazoles (fenbendazole) â†’ Macrocyclics (ivermectin) â†’ Imidazothiazoles (levamisole).
+Alternate drug classes to prevent resistance: Benzimidazoles (fenbendazole) -> Macrocyclics (ivermectin) -> Imidazothiazoles (levamisole).
 
 -   Treat at seasonal peaks (spring/fall) or based on FEC results
 -   Include all animals in group treatment to reduce reinfection
@@ -275,7 +275,7 @@ Alternate drug classes to prevent resistance: Benzimidazoles (fenbendazole) â�
 ## Complications & When to Stop Treatment
 
 :::danger
-**Seek Advanced Care If:** Signs worsen after 3-5 days of treatment, fever exceeds 104Â°F in cattle/sheep, animal refuses to stand/move, severe discharge or odor suggests sepsis, or you suspect organ involvement (hard abdomen, blood in feces).
+**Seek Advanced Care If:** Signs worsen after 3-5 days of treatment, fever exceeds 104°F in cattle/sheep, animal refuses to stand/move, severe discharge or odor suggests sepsis, or you suspect organ involvement (hard abdomen, blood in feces).
 :::
 
 :::danger
@@ -386,11 +386,11 @@ After treatment, recovery monitoring is critical:
 -   **Immediate:** Clear nasal passages; dry calf; ensure breathing (stimulate if needed)
 -   **Colostrum:** CRITICAL: Feed within 2 hours, 5-10% body weight; repeat at 12 and 24 hours
 -   **Navel Dipping:** 7% iodine solution on umbilical stump; reduces infection risk
--   **Temperature:** Hypothermia common; keep dry, warm bedding, heat lamp if <95Â°F
+-   **Temperature:** Hypothermia common; keep dry, warm bedding, heat lamp if <95°F
 -   **Bonding:** Allow dam to lick/bond if possible (1+ hour)
 
 :::tip
-**Post-Parturition Monitoring:** Observe for retained placenta, excessive bleeding, behavioral changes, or signs of sepsis. Fever >103Â°F after parturition may indicate uterine infectionâ€”provide antibiotics immediately.
+**Post-Parturition Monitoring:** Observe for retained placenta, excessive bleeding, behavioral changes, or signs of sepsis. Fever >103°F after parturition may indicate uterine infection--provide antibiotics immediately.
 :::
 
 ## Troubleshooting Common Birthing Problems
@@ -416,7 +416,7 @@ After treatment, recovery monitoring is critical:
 
 1.  **Restraint:** Secure animal; local anesthesia optional (2% lidocaine)
 2.  **Tissue Removal:** Carefully cut away ALL diseased (black/soft) tissue; expose healthy pink tissue
-3.  **CuSOâ‚„ Bath:** 5% copper sulfate solution; soak affected hoof 5-10 min daily for 5-7 days
+3.  **CuSO₄ Bath:** 5% copper sulfate solution; soak affected hoof 5-10 min daily for 5-7 days
 4.  **Alternative:** 10% zinc sulfate foot bath (gentler on tissue)
 5.  **Bandaging:** Sterile wrap after bath; keep as dry as possible
 6.  **Housing:** Dry straw/bedding; isolate if possible; improve drainage
@@ -476,7 +476,7 @@ After treatment, recovery monitoring is critical:
 #### Hot Iron Dehorning
 
 -   **Timing:** 2-12 weeks old optimal
--   **Temperature:** 400-500Â°C iron
+-   **Temperature:** 400-500°C iron
 -   **Technique:** Apply to horn bud 5-10 seconds; burn must be complete around circumference
 -   **Aftercare:** Watch for infection; may require topical antibiotics
 
@@ -545,10 +545,10 @@ After treatment, recovery monitoring is critical:
 
 ### Heat Stroke
 
--   **Signs:** Temp >104Â°F, excess salivation, weakness, staggering, collapse
+-   **Signs:** Temp >104°F, excess salivation, weakness, staggering, collapse
 -   **Immediate:** Move to shade; apply cold water (especially ears, neck, legs); increase air circulation
 -   **Hydration:** Offer small amounts of cool (not ice) water; electrolyte solution; IV fluids if severely dehydrated
--   **Recovery:** Monitor closely; permanent neurological damage if temp >106Â°F
+-   **Recovery:** Monitor closely; permanent neurological damage if temp >106°F
 
 ## Dosage & Medication Reference
 
@@ -619,7 +619,7 @@ After treatment, recovery monitoring is critical:
 -   **Echinacea (Immune Boost):** Tincture 5-10ml daily; respiratory support during early illness
 
 :::warning
-**Medication Storage:** Antibiotics degrade rapidly in heat or humidity. Store in cool (50-70Â°F), dark place. Injectable medications kept in refrigerator (35-45Â°F) last longer. Discard expired medications safely (bury or burn)â€”do not feed to animals.
+**Medication Storage:** Antibiotics degrade rapidly in heat or humidity. Store in cool (50-70°F), dark place. Injectable medications kept in refrigerator (35-45°F) last longer. Discard expired medications safely (bury or burn)--do not feed to animals.
 :::
 
 ## Preventive Medicine
@@ -730,16 +730,16 @@ In resource-limited environments, adaptation and improvisation are essential:
 
 ## Common Mistakes
 
-1. **Overdosing antibiotics in hopes of faster cure** â€“ Leads to resistance; follow dosage protocols
-2. **Ignoring early signs of illness** â€“ Treatment is easiest when disease is caught early; delayed treatment reduces recovery chance
-3. **Mixing dewormer drug classes without rest period** â€“ Causes toxicity and resistance development
-4. **Not securing animals properly during procedures** â€“ Results in injury to animal and handler; take time to restrain safely
-5. **Failing to isolate sick animals** â€“ Allows disease spread through herd; quarantine immediately upon suspicion
-6. **Not keeping records** â€“ Prevents pattern recognition and herd health trends; always document treatments and outcomes
-7. **Pulling too hard during birthing** â€“ Causes internal injuries and fetal death; pull WITH contractions only, use patience
-8. **Bandaging too tight** â€“ Cuts off circulation; bandages should be snug but allow blood flow
-9. **Attempting complex surgery without training** â€“ Results in infection/death; know your limits and provide supportive care instead
-10. **Neglecting colostrum in neonates** â€“ Neonatal immunity depends entirely on colostrum; prioritize this above all else
+1. **Overdosing antibiotics in hopes of faster cure** - Leads to resistance; follow dosage protocols
+2. **Ignoring early signs of illness** - Treatment is easiest when disease is caught early; delayed treatment reduces recovery chance
+3. **Mixing dewormer drug classes without rest period** - Causes toxicity and resistance development
+4. **Not securing animals properly during procedures** - Results in injury to animal and handler; take time to restrain safely
+5. **Failing to isolate sick animals** - Allows disease spread through herd; quarantine immediately upon suspicion
+6. **Not keeping records** - Prevents pattern recognition and herd health trends; always document treatments and outcomes
+7. **Pulling too hard during birthing** - Causes internal injuries and fetal death; pull WITH contractions only, use patience
+8. **Bandaging too tight** - Cuts off circulation; bandages should be snug but allow blood flow
+9. **Attempting complex surgery without training** - Results in infection/death; know your limits and provide supportive care instead
+10. **Neglecting colostrum in neonates** - Neonatal immunity depends entirely on colostrum; prioritize this above all else
 
 ## Zoonotic Disease Transmission & Prevention
 
@@ -758,9 +758,9 @@ Zoonotic diseases are infections transmissible from animals to humans. In post-c
 
 #### Leptospirosis (Leptospira bacteria)
 
--   **Transmission:** Contaminated water (urine from infected animalsâ€”rats, cattle, pigs, wildlife). Exposure through cuts/abraded skin or mucous membranes. Most common in wet environments (flooded pastures, contaminated water sources).
+-   **Transmission:** Contaminated water (urine from infected animals--rats, cattle, pigs, wildlife). Exposure through cuts/abraded skin or mucous membranes. Most common in wet environments (flooded pastures, contaminated water sources).
 -   **Signs in Animals:** Cattle: reduced milk production, abortion, hemolytic anemia (jaundice). Pigs: abdominal pain, reproductive failure. Dogs: fever, joint pain, lethargy, severe kidney damage.
--   **Human Signs:** Fever, muscle aches, headache (often biphasicâ€”improves then worsens), jaundice, kidney dysfunction, sometimes fatal. Incubation 2-30 days.
+-   **Human Signs:** Fever, muscle aches, headache (often biphasic--improves then worsens), jaundice, kidney dysfunction, sometimes fatal. Incubation 2-30 days.
 -   **Prevention:** Vaccinate livestock against serovar-specific strains (protection duration 1 year, requires annual booster). Rodent control in facilities. Drain standing water. Protective equipment (gloves, boots) when handling potentially contaminated water or urine-exposed animals. Vaccination protection wanes; booster required.
 -   **Treatment:** Doxycycline (early stage, 100mg 2x daily for 7 days) effective if started within first week. Later stages require more aggressive therapy if available.
 
@@ -816,7 +816,7 @@ In post-collapse contexts, centralized meat inspection disappears. Individual bu
 -   **Surface Appearance:** Meat should be red (fresh cattle/game) or pink (pork/poultry). Brown, gray, or green discoloration suggests spoilage or disease.
 -   **Texture & Consistency:** Firm, not slippery or disintegrating.
 -   **Odor:** Fresh meat has minimal odor. Sour, putrid, or unusual odor = discard.
--   **Temperature Chain:** After butchering, rapidly cool meat (below 40Â°F/4Â°C within 2 hours). Lack of cooling allows bacterial multiplication.
+-   **Temperature Chain:** After butchering, rapidly cool meat (below 40°F/4°C within 2 hours). Lack of cooling allows bacterial multiplication.
 
 ### Surveillance & Reporting Requirements
 
@@ -838,7 +838,7 @@ Even in post-collapse contexts, disease surveillance protects community health. 
 -   **Swine:** Erysipelas (annual), Leptospirosis (if endemic), Rabies (if predation risk).
 -   **Poultry:** Marek's disease (hatch vaccination mandatory to prevent losses). Newcastle disease, bronchitis (if flock raising used).
 
-**Post-Collapse Strategy:** Prioritize vaccines for diseases most likely in your region, most transmissible, most severe. Rabies, brucellosis, and anthrax are priorities due to human health risk. Store vaccines in cool conditions (2-8Â°C, refrigeration critical). Rotate stock (FIFO principle). Once supply exhausted, implement strict biosecurity to compensate.
+**Post-Collapse Strategy:** Prioritize vaccines for diseases most likely in your region, most transmissible, most severe. Rabies, brucellosis, and anthrax are priorities due to human health risk. Store vaccines in cool conditions (2-8°C, refrigeration critical). Rotate stock (FIFO principle). Once supply exhausted, implement strict biosecurity to compensate.
 :::
 
 ### Personal Protective Equipment for Handlers
@@ -853,23 +853,23 @@ Even in post-collapse contexts, disease surveillance protects community health. 
 :::affiliate
 **If you're preparing in advance,** veterinary medicine references and equipment enable farmers to diagnose and treat common livestock diseases effectively:
 
-- [Ettinger's Textbook of Veterinary Internal Medicine](https://www.amazon.com/dp/032377931X?tag=offlinecompen-20) â€” Comprehensive reference covering disease recognition, differential diagnosis, and treatment for livestock and companion animals
-- [McCurnin's Clinical Textbook for Veterinary Technicians](https://www.amazon.com/dp/0323722008?tag=offlinecompen-20) â€” Practical clinical guide for animal assessment, common diseases, diagnostic procedures, and treatment protocols
-- [Veterinary Medicine: Diseases of Cattle, Horses, Sheep, and Goats](https://www.amazon.com/dp/0702052469?tag=offlinecompen-20) â€” Comprehensive textbook covering disease recognition and management for major farm animals
-- [Large Animal Medicine for Veterinary Technicians Reference](https://www.amazon.com/dp/1118346718?tag=offlinecompen-20) â€” Practical field guide to caring for large animals and managing common medical emergencies
+- [Ettinger's Textbook of Veterinary Internal Medicine](https://www.amazon.com/dp/032377931X?tag=offlinecompen-20) - Comprehensive reference covering disease recognition, differential diagnosis, and treatment for livestock and companion animals
+- [McCurnin's Clinical Textbook for Veterinary Technicians](https://www.amazon.com/dp/0323722008?tag=offlinecompen-20) - Practical clinical guide for animal assessment, common diseases, diagnostic procedures, and treatment protocols
+- [Veterinary Medicine: Diseases of Cattle, Horses, Sheep, and Goats](https://www.amazon.com/dp/0702052469?tag=offlinecompen-20) - Comprehensive textbook covering disease recognition and management for major farm animals
+- [Large Animal Medicine for Veterinary Technicians Reference](https://www.amazon.com/dp/1118346718?tag=offlinecompen-20) - Practical field guide to caring for large animals and managing common medical emergencies
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 :::affiliate
 **If you're preparing in advance,** veterinary references and supplies enable communities to manage animal health and prevent livestock losses:
 
-- [Veterinary Medicine Handbook: Diagnosis and Treatment Protocols](https://www.amazon.com/dp/0723430993?tag=offlinecompen-20) â€” Comprehensive guide to animal disease recognition, diagnosis, and treatment for common livestock and companion animal conditions
-- [Veterinary Injectable Medications and Antibiotics Kit](https://www.amazon.com/dp/B001CCGY64?tag=offlinecompen-20) â€” Common veterinary pharmaceuticals including antibiotics, antiparasitics, and pain management for animals
-- [Veterinary Surgical Instruments and Emergency Supplies](https://www.amazon.com/dp/3131279516?tag=offlinecompen-20) â€” Instruments and supplies for emergency veterinary procedures, castration, and wound management
-- [Animal Anatomy and Physiology Reference](https://www.amazon.com/dp/B00YMSLT88?tag=offlinecompen-20) â€” Illustrated reference to animal anatomy, vital signs, and normal parameters for accurate health assessment
+- [Veterinary Medicine Handbook: Diagnosis and Treatment Protocols](https://www.amazon.com/dp/0723430993?tag=offlinecompen-20) - Comprehensive guide to animal disease recognition, diagnosis, and treatment for common livestock and companion animal conditions
+- [Veterinary Injectable Medications and Antibiotics Kit](https://www.amazon.com/dp/B001CCGY64?tag=offlinecompen-20) - Common veterinary pharmaceuticals including antibiotics, antiparasitics, and pain management for animals
+- [Veterinary Surgical Instruments and Emergency Supplies](https://www.amazon.com/dp/3131279516?tag=offlinecompen-20) - Instruments and supplies for emergency veterinary procedures, castration, and wound management
+- [Animal Anatomy and Physiology Reference](https://www.amazon.com/dp/B00YMSLT88?tag=offlinecompen-20) - Illustrated reference to animal anatomy, vital signs, and normal parameters for accurate health assessment
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 ### Related Guides in This Compendium
@@ -882,7 +882,7 @@ Even in post-collapse contexts, disease surveillance protects community health. 
 
 :::note
 :::note
-My Notes â–¼
+My Notes ▼
 :::
 
 :::note
