@@ -445,6 +445,14 @@ def has_newborn_danger_prompt(question_text: str) -> bool:
             "infant",
             "cord stump",
         )
+    ) or bool(
+        re.search(
+            r"\b(?:[0-3])[\s-]*(?:week|weeks|wk|wks)(?:[\s-]*old)?\b"
+            r"|\b(?:[0-9]|1[0-9]|2[0-7])[\s-]*(?:day|days)(?:[\s-]*old)?\b"
+            r"|\b(?:under|less than|younger than)\s*(?:4|four)\s*(?:week|weeks|wk|wks)\b"
+            r"|\b(?:under|less than|younger than)\s*(?:28|twenty eight)\s*(?:day|days)\b",
+            lower,
+        )
     )
     has_danger_context = any(
         marker in lower

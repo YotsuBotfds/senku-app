@@ -238,6 +238,11 @@ class QueryRoutingTests(unittest.TestCase):
                 "A newborn is not feeding well and feels cold during an outage."
             )
         )
+        self.assertTrue(
+            query._is_newborn_sepsis_danger_query(
+                "A 2-week-old is hard to wake and has not fed much today. We were hoping to wait until morning."
+            )
+        )
 
     def test_newborn_danger_phrase_normalization_guards_routine_baby_prompts(self):
         prompts = [
@@ -4102,6 +4107,31 @@ class QueryRoutingTests(unittest.TestCase):
             generated=True,
         )
         self.assertEqual(claim_result["status"], "pass")
+
+    def test_card_backed_runtime_answer_allows_young_infant_age_context(self):
+        results = {
+            "metadatas": [[
+                {"guide_id": "GD-298"},
+                {"guide_id": "GD-617"},
+                {"guide_id": "GD-284"},
+            ]],
+        }
+        question = (
+            "A 2-week-old is hard to wake and has not fed much today. "
+            "We were hoping to wait until morning. What should we do tonight?"
+        )
+
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(question, results)
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["newborn_danger_sepsis"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-284"])
+        self.assertIn("Keep the newborn warm", plan["answer_text"])
+        self.assertIn("immediate escalation", plan["answer_text"])
 
     def test_card_backed_runtime_answer_allows_newborn_reviewed_source_family_without_primary_owner(self):
         results = {"metadatas": [[{"guide_id": "GD-492"}, {"guide_id": "GD-298"}]]}

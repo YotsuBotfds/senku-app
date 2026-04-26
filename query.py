@@ -5198,6 +5198,32 @@ def _is_cardiac_first_query(question):
     )
 
 
+def _is_acute_coronary_reviewed_card_query(question):
+    """Detect cardiac red-flag prompts safe for the reviewed GD-601 card."""
+    lower = (question or "").lower()
+    if not _is_cardiac_first_query(question or ""):
+        return False
+    return _text_has_marker(
+        lower,
+        {
+            "chest pain",
+            "chest pressure",
+            "chest tightness",
+            "pressure in my chest",
+            "tightness in my chest",
+            "heart attack",
+            "jaw pain",
+            "arm pain",
+            "left arm",
+            "left-arm",
+            "pain going into the arm",
+            "pain going into the left arm",
+            "exertion",
+            "exertional",
+        },
+    )
+
+
 def _is_acute_overlap_collapse_query(question):
     """Detect collapse prompts that also mention stroke/TIA signs or chest pain."""
     lower = question.lower()
@@ -11725,7 +11751,9 @@ def _is_food_bolus_airway_query(question):
 def _is_newborn_sepsis_danger_query(question):
     """Detect sick-newborn phrasing that needs sepsis-first retrieval."""
     lower = question.lower()
-    newborn_context = _text_has_marker(lower, {"newborn", "baby", "infant"})
+    newborn_context = _text_has_marker(
+        lower, {"newborn", "baby", "infant"}
+    ) or _has_young_infant_age_context(lower)
     danger = _text_has_marker(
         lower,
         {
@@ -12841,6 +12869,16 @@ def _supplemental_retrieval_specs(
     if _is_cardiac_first_query(question):
         specs.extend(
             [
+                {
+                    "text": (
+                        f"{question} Acute Coronary Syndrome Cardiac Emergencies "
+                        "chest pain chest pressure left arm jaw pain heart attack "
+                        "emergency evacuation now road flood animals logistics"
+                    ),
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                    "where": {"slug": "acute-coronary-cardiac-emergencies"},
+                },
                 {
                     "text": (
                         "acute coronary cardiac emergencies chest pressure chest "
@@ -15436,7 +15474,7 @@ def _is_food_system_outage_illness_boundary_query(question):
 
 
 def _prioritized_answer_card_ids_for_question(question):
-    return _answer_card_runtime._prioritized_answer_card_ids_for_question(
+    prioritized = list(_answer_card_runtime._prioritized_answer_card_ids_for_question(
         question,
         is_airway_obstruction_rag_query=_is_airway_obstruction_rag_query,
         has_allergy_or_anaphylaxis_trigger=_has_allergy_or_anaphylaxis_trigger,
@@ -15450,10 +15488,19 @@ def _prioritized_answer_card_ids_for_question(question):
         is_community_kitchen_illness_control_card_query=(
             _answer_card_runtime._is_community_kitchen_illness_control_card_query
         ),
-    )
+    ))
+    if (
+        _is_acute_coronary_reviewed_card_query(question)
+        and "acute_coronary_stroke_overlap" not in prioritized
+    ):
+        prioritized.append("acute_coronary_stroke_overlap")
+    return prioritized
 
 
 def _answer_card_matches_question(card, question):
+    card_id = str((card or {}).get("card_id") or "").strip()
+    if card_id == "acute_coronary_stroke_overlap":
+        return _is_acute_coronary_reviewed_card_query(question)
     return _answer_card_runtime._answer_card_matches_question(
         card,
         question,

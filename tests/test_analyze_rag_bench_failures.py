@@ -1191,6 +1191,53 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         self.assertEqual(rows[0]["answer_card_status"], "pass")
         self.assertEqual(rows[0]["answer_card_ids"], "newborn_danger_sepsis")
 
+    def test_newborn_age_prompt_keeps_newborn_card_applicable(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": (
+                                "A 2-week-old is hard to wake and has not fed much "
+                                "today. We were hoping to wait until morning."
+                            ),
+                            "prompt_metadata": {"expected_guide_ids": "GD-284"},
+                            "decision_path": "card_backed_runtime",
+                            "answer_provenance": "reviewed_card_runtime",
+                            "cited_guide_ids": ["GD-284"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-284", "GD-041"]
+                            },
+                            "response_text": (
+                                "Seek urgent medical evaluation immediately. Keep "
+                                "the newborn warm while arranging help. [GD-284]"
+                            ),
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        cards = [
+            {
+                "card_id": "newborn_danger_sepsis",
+                "guide_id": "GD-284",
+                "risk_tier": "critical",
+                "required_first_actions": ["Keep the newborn warm"],
+                "forbidden_advice": ["wait until morning"],
+            },
+        ]
+
+        rows = build_rows([artifact], answer_cards=cards)
+
+        self.assertEqual(rows[0]["answer_card_status"], "pass")
+        self.assertEqual(rows[0]["answer_card_ids"], "newborn_danger_sepsis")
+        self.assertNotEqual(rows[0]["answer_card_status"], "not_applicable_prompt")
+        self.assertNotEqual(rows[0]["app_acceptance_status"], "card_contract_gap")
+
     def test_answer_card_diagnostics_pass_prompt_text_for_conditional_branches(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"
