@@ -474,6 +474,149 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_initialize_schema_backfills_evidence_columns_in_legacy_detail_rows(self):
+        root = self.make_tmpdir()
+        output = root / "legacy_lake.sqlite"
+
+        legacy_conn = sqlite3.connect(output)
+        try:
+            legacy_conn.executescript(
+                """
+                CREATE TABLE ingest_runs (
+                    run_id TEXT PRIMARY KEY,
+                    source_label TEXT,
+                    ingested_at TEXT NOT NULL,
+                    backend TEXT NOT NULL
+                );
+                CREATE TABLE artifacts (
+                    artifact_id INTEGER PRIMARY KEY,
+                    run_id TEXT NOT NULL,
+                    path TEXT NOT NULL,
+                    absolute_path TEXT NOT NULL,
+                    kind TEXT NOT NULL,
+                    suffix TEXT NOT NULL,
+                    size_bytes INTEGER NOT NULL,
+                    mtime_utc TEXT NOT NULL,
+                    paired_markdown_path TEXT,
+                    json_type TEXT,
+                    top_level_keys_json TEXT,
+                    error TEXT
+                );
+                CREATE TABLE metrics (
+                    artifact_id INTEGER NOT NULL,
+                    metric_path TEXT NOT NULL,
+                    metric_value TEXT,
+                    metric_number DOUBLE,
+                    metric_type TEXT NOT NULL
+                );
+                CREATE TABLE detail_rows (
+                    artifact_id INTEGER NOT NULL,
+                    row_kind TEXT NOT NULL,
+                    row_index INTEGER NOT NULL,
+                    entity_id TEXT,
+                    section TEXT,
+                    lane TEXT,
+                    style TEXT,
+                    status TEXT,
+                    question TEXT,
+                    error TEXT,
+                    generation_time DOUBLE,
+                    prompt_tokens DOUBLE,
+                    completion_tokens DOUBLE,
+                    chunks_retrieved DOUBLE,
+                    server TEXT,
+                    model TEXT,
+                    raw_json TEXT NOT NULL
+                );
+                CREATE TABLE markdown_reports (
+                    artifact_id INTEGER NOT NULL,
+                    title TEXT,
+                    line_count INTEGER NOT NULL,
+                    heading_count INTEGER NOT NULL
+                );
+                """
+            )
+            legacy_conn.commit()
+
+            self.module.initialize_schema(legacy_conn)
+            columns = self.module._detail_rows_columns(legacy_conn)
+            self.assertIn("evidence_record_type", columns)
+            self.assertIn("evidence_task", columns)
+            self.assertIn("evidence_lane", columns)
+            self.assertIn("evidence_label", columns)
+            self.assertIn("evidence_commit", columns)
+            self.assertIn("evidence_generated_at", columns)
+
+            jsonl_path = root / "run_manifest.jsonl"
+            jsonl_path.write_text(
+                json.dumps(
+                    {
+                        "record_type": "run_manifest",
+                        "task": "task_legacy",
+                        "lane": "lane_smoke",
+                        "label": "legacy",
+                        "commit": "abc123",
+                        "generated_at": "2026-04-26T10:00:00Z",
+                        "artifact_path_evidence": [
+                            {
+                                "status": "present",
+                                "path": "artifacts/bench/run.json",
+                                "kind": "bench_json",
+                            },
+                        ],
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            summary = self.module.ingest_artifacts(
+                legacy_conn,
+                [jsonl_path],
+                base_dir=root,
+                backend="sqlite",
+                source_label="test",
+            )
+            self.assertEqual(summary["artifacts"], 1)
+            self.assertEqual(summary["detail_rows"], 2)
+
+            row_kinds = legacy_conn.execute(
+                "SELECT row_kind, COUNT(*) FROM detail_rows GROUP BY row_kind ORDER BY row_kind"
+            ).fetchall()
+            self.assertEqual(row_kinds, [("artifact_path_evidence", 1), ("jsonl", 1)])
+
+            row = legacy_conn.execute(
+                """
+                SELECT
+                    evidence_record_type,
+                    evidence_task,
+                    evidence_lane,
+                    evidence_label,
+                    evidence_commit,
+                    evidence_generated_at,
+                    row_kind,
+                    entity_id
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                """
+            ).fetchone()
+            self.assertEqual(
+                row,
+                (
+                    "run_manifest",
+                    "task_legacy",
+                    "lane_smoke",
+                    "legacy",
+                    "abc123",
+                    "2026-04-26T10:00:00Z",
+                    "artifact_path_evidence",
+                    "artifacts/bench/run.json",
+                ),
+            )
+        finally:
+            legacy_conn.close()
+
     def test_jsonl_artifact_path_evidence_preserves_missing_fields(self):
         root = self.make_tmpdir()
         jsonl_path = root / "manifest.jsonl"
