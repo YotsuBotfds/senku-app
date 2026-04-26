@@ -2,7 +2,7 @@ import io
 import json
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
@@ -120,6 +120,29 @@ class CompareBenchArtifactsCliTests(unittest.TestCase):
 
         self.assertEqual("", output.getvalue())
         self.assertIn("# Bench Artifact Comparison", markdown)
+
+    def test_main_rejects_directory_output_path(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            baseline = write_artifact(root / "baseline.json", model="baseline")
+            candidate = write_artifact(root / "candidate.json", model="candidate")
+            stderr = io.StringIO()
+
+            with patch(
+                "sys.argv",
+                [
+                    "compare_bench_artifacts.py",
+                    str(baseline),
+                    str(candidate),
+                    "--output",
+                    str(root),
+                ],
+            ), redirect_stderr(stderr):
+                with self.assertRaises(SystemExit) as raised:
+                    compare_bench_artifacts.main()
+
+        self.assertEqual(2, raised.exception.code)
+        self.assertIn("--output must be a file path, not a directory", stderr.getvalue())
 
     def test_main_sanitizes_control_characters_in_rendered_markdown(self):
         with tempfile.TemporaryDirectory() as temp_dir:

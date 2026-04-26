@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -30,6 +31,7 @@ GUIDE_ID_FIELDS = (
     "top_retrieved_guide_ids",
     "cited_guide_ids",
 )
+CELL_WHITESPACE_RE = re.compile(r"\s+")
 
 
 def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -230,7 +232,8 @@ def _format_cell(value: Any) -> str:
         text = "true" if value else "false"
     else:
         text = str(value)
-    return text.replace("|", "\\|").replace("\n", " ").strip()
+    text = CELL_WHITESPACE_RE.sub(" ", text).strip()
+    return text.replace("|", "\\|")
 
 
 def render_markdown(rows: Sequence[Mapping[str, Any]]) -> str:

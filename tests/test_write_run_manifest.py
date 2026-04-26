@@ -393,6 +393,36 @@ class WriteRunManifestTests(unittest.TestCase):
         self.assertEqual(len(payload["artifact_path_evidence"]), 1)
         self.assertIs(payload["artifact_path_evidence"][0]["exists"], True)
 
+    def test_quoted_artifact_paths_are_normalized(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            report_path = root / "artifacts" / "bench" / "quoted path" / "report.md"
+            report_path.parent.mkdir(parents=True)
+            report_path.write_text("ok\n", encoding="utf-8")
+            manifest_path = root / "manifest.jsonl"
+
+            payload = _run_script(
+                [
+                    "--task",
+                    "quoted-artifact",
+                    "--lane",
+                    "tooling",
+                    "--output",
+                    '"artifacts/bench/quoted path/report.md"',
+                    "--input",
+                    "'artifacts/bench/quoted path/report.md'",
+                    "--manifest-path",
+                    str(manifest_path),
+                ],
+                cwd=tmpdir,
+            )
+
+        self.assertEqual(payload["artifact_path"], ["artifacts/bench/quoted path/report.md"])
+        self.assertEqual(payload["artifact_path_count"], 1)
+        self.assertEqual(payload["artifact_path_missing"], [])
+        self.assertEqual(len(payload["artifact_path_evidence"]), 1)
+        self.assertIs(payload["artifact_path_evidence"][0]["exists"], True)
+
     def test_collect_artifact_paths_limits_guard_and_path_key_dedupe(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

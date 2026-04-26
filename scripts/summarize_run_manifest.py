@@ -38,7 +38,7 @@ def _compact_list(value: Any, *, limit: int = 2) -> str:
 
 def _escape_markdown(value: object) -> str:
     text = str(value).replace("\r\n", "\n").replace("\r", " ").replace("\n", " ")
-    return text.replace("|", "\\|")
+    return text.replace("|", "\\|").replace("`", "\\`")
 
 
 def _count_from_evidence(value: Any) -> int:
@@ -153,9 +153,9 @@ def render_markdown(
         f"- Malformed lines skipped: {malformed_lines}",
     ]
     if task:
-        lines.append(f"- Task filter: `{task}`")
+        lines.append(f"- Task filter: `{_escape_markdown(task)}`")
     if lane:
-        lines.append(f"- Lane filter: `{lane}`")
+        lines.append(f"- Lane filter: `{_escape_markdown(lane)}`")
 
     lines.extend(
         [

@@ -33,6 +33,8 @@ def main():
     rendered = sanitize_markdown_output(render_artifact_comparison_markdown(comparison))
     if args.output:
         output_path = Path(args.output)
+        if output_path.exists() and output_path.is_dir():
+            parser.error(f"--output must be a file path, not a directory: {output_path}")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(rendered, encoding="utf-8")
     else:

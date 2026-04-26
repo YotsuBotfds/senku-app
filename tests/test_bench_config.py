@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 import bench
+import bench_config
 import config
 
 
@@ -18,6 +19,32 @@ class BenchConfigTests(unittest.TestCase):
                 bench._parse_url_list(None, bench._default_embedding_url()),
                 ["http://127.0.0.1:8888/v1"],
             )
+
+    def test_url_list_malformed_scalar_falls_back_to_default_url(self):
+        self.assertEqual(
+            bench_config.parse_url_list(1234, "http://127.0.0.1:1234/v1"),
+            ["http://127.0.0.1:1234/v1"],
+        )
+        self.assertEqual(
+            bench._parse_url_list(1234, "http://127.0.0.1:1234/v1"),
+            ["http://127.0.0.1:1234/v1"],
+        )
+
+    def test_url_list_malformed_mapping_falls_back_to_default_url(self):
+        self.assertEqual(
+            bench_config.parse_url_list(
+                {"url": "http://bad-shape/v1"},
+                "http://127.0.0.1:1234/v1",
+            ),
+            ["http://127.0.0.1:1234/v1"],
+        )
+        self.assertEqual(
+            bench._parse_url_list(
+                {"url": "http://bad-shape/v1"},
+                "http://127.0.0.1:1234/v1",
+            ),
+            ["http://127.0.0.1:1234/v1"],
+        )
 
     @patch("bench.retrieve_chunks")
     def test_prepare_prompt_uses_embed_url_without_mutating_global_config(self, mock_retrieve_chunks):

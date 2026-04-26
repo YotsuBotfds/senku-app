@@ -262,6 +262,9 @@ def _count_jsonl_type_value(counter, value):
 def _normalize_jsonl_type_value(value):
     if not isinstance(value, str) or not value:
         return None
+    value = " ".join(value.split())
+    if not value:
+        return None
     if len(value) <= JSONL_TYPE_VALUE_MAX_LEN:
         return value
     if JSONL_TYPE_VALUE_MAX_LEN <= 3:

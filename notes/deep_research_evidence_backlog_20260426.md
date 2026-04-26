@@ -505,6 +505,11 @@ Action:
   artifact refs, guide invariant and audit-hotspot reports use safe code spans
   for backtick labels, retrieval-profile Markdown tolerates mixed marker labels,
   and compare-bench output creates missing parent directories.
+- Hardened bench and diagnostics reporting helpers: structured prompt loading
+  now rejects duplicate nonblank prompt IDs, malformed bench URL config values
+  fall back to the intended default URL instead of iterating arbitrary shapes,
+  compact/query diagnostics Markdown collapses row-breaking whitespace, and
+  compare-bench rejects directory `--output` targets with a clean CLI error.
 
 Validation:
 
@@ -673,6 +678,10 @@ Action:
 - Run-manifest summaries now treat `artifact_path_missing` evidence as missing
   artifact proof even when no count field is present, and report total matched
   records before applying the display limit.
+- Bench/manifest artifact helpers now normalize embedded JSONL type whitespace,
+  strip surrounding quotes from manifest artifact paths, and escape filter
+  summary values in run-manifest Markdown so copied shell-style paths or labels
+  cannot distort artifact evidence reports.
 
 Validation:
 
@@ -785,6 +794,10 @@ Validation:
   boolean, fractional-float, and negative artifact-count inputs.
 - `tests.test_summarize_run_manifest` covers missing-path-only artifact
   evidence and pre-limit `Records matched` reporting.
+- `tests.test_index_bench_artifacts`, `tests.test_write_run_manifest`, and
+  `tests.test_summarize_run_manifest` cover JSONL type-label whitespace
+  normalization, quoted artifact path normalization, and filter summary
+  escaping in manifest reports.
 - `tests.test_summarize_rag_diagnostics`,
   `tests.test_prioritize_guide_quality_work`,
   `tests.test_prioritize_high_liability_families`,
@@ -828,6 +841,11 @@ Validation:
   `tests.test_compare_retrieval_profiles`, and
   `tests.test_compare_bench_artifacts` cover the Markdown/path/report helper
   hardening batch.
+- `tests.test_bench_config`, `tests.test_bench_prompt_loading`,
+  `tests.test_compact_rag_context`, `tests.test_query_rag_diagnostics`, and
+  `tests.test_compare_bench_artifacts` cover malformed bench URL config,
+  duplicate structured prompt IDs, row-breaking Markdown whitespace, and
+  directory output rejection.
 
 Deferred unless evidenced:
 

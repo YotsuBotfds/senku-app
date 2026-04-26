@@ -64,7 +64,7 @@ def pipe_list(value: Any, limit: int = 5) -> str:
 
 
 def table_escape(value: Any) -> str:
-    return str(value or "").replace("|", "\\|").replace("\n", " ")
+    return str(value or "").replace("\r", " ").replace("\n", " ").replace("|", "\\|")
 
 
 def counter_from_rows(rows: list[dict[str, Any]], field: str) -> Counter[str]:

@@ -27,6 +27,7 @@ import chromadb
 import requests
 
 import config
+from bench_config import parse_url_list
 import query_prompt_runtime as _prompt_runtime
 from lmstudio_utils import classify_lm_request_error, normalize_lm_studio_url
 from query import (
@@ -181,6 +182,7 @@ def _first_present(mapping, keys):
 def _load_structured_prompt_entries(rows, prompt_path):
     """Load CSV/JSONL prompt rows while keeping metadata available for reports."""
     prompts = []
+    seen_prompt_ids = {}
     for index, row in enumerate(rows, start=1):
         if not isinstance(row, dict):
             raise ValueError(
@@ -196,6 +198,14 @@ def _load_structured_prompt_entries(rows, prompt_path):
         section_key, section = _first_present(row, ("section",))
         section = section or "Core Regression"
         prompt_id_key, prompt_id = _first_present(row, ("id", "prompt_id"))
+        if prompt_id is not None:
+            first_index = seen_prompt_ids.get(prompt_id)
+            if first_index is not None:
+                raise ValueError(
+                    f"Duplicate structured prompt ID `{prompt_id}` at {prompt_path} "
+                    f"row {index}; first seen at row {first_index}"
+                )
+            seen_prompt_ids[prompt_id] = index
 
         excluded_keys = {key for key in (prompt_key, section_key, prompt_id_key) if key}
         metadata = {
@@ -313,25 +323,7 @@ def build_worker_targets(gen_urls, gen_models=None):
 
 def _parse_url_list(value, default_url=None, *, dedupe=False):
     """Parse a comma-separated URL string or iterable into a clean URL list."""
-    if isinstance(value, str):
-        urls = [item.strip() for item in value.split(",") if item.strip()]
-    elif value:
-        urls = [str(item).strip() for item in value if str(item).strip()]
-    else:
-        urls = [default_url] if default_url else []
-
-    if not dedupe:
-        return urls
-
-    seen = set()
-    unique_urls = []
-    for url in urls:
-        normalized = normalize_lm_studio_url(url) or url
-        if normalized in seen:
-            continue
-        seen.add(normalized)
-        unique_urls.append(url)
-    return unique_urls
+    return parse_url_list(value, default_url, dedupe=dedupe)
 
 
 def _default_generation_url():

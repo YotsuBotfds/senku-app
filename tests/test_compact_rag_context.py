@@ -161,6 +161,18 @@ class CompactRagContextTests(unittest.TestCase):
 
         self.assertIn("- App acceptance root causes: `evidence_owner`: 2, `supported`: 1", markdown)
 
+    def test_table_cells_sanitize_carriage_returns_in_malformed_row_values(self):
+        data = self.sample_data()
+        bad_row = data["rows"][0]
+        bad_row["prompt_id"] = "P-001\rBROKEN"
+        bad_row["safety_surface_status"] = "needs_review\runsafe|followup"
+
+        markdown = render_markdown(data, Path("diag"), max_rows=10, text_limit=80)
+
+        self.assertNotIn("\r", markdown)
+        self.assertIn("P-001 BROKEN", markdown)
+        self.assertIn("needs_review unsafe\\|followup", markdown)
+
     def test_write_context_accepts_directory_and_adds_artifact_links(self):
         root = self.make_tmpdir()
         self.write_diagnostics(root, self.sample_data())

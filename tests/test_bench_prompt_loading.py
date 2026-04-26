@@ -105,6 +105,21 @@ class BenchPromptLoadingTests(unittest.TestCase):
         self.assertEqual(prompt_entries[0]["target_behavior"], "clarify-or-bound")
         self.assertEqual(prompt_entries[0]["what_it_tests"], "meta-control")
 
+    def test_load_prompts_jsonl_rejects_duplicate_prompt_ids(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            prompt_path = Path(tmpdir) / "prompts.jsonl"
+            prompt_path.write_text(
+                json.dumps({"id": "SP-003", "prompt": "first"}) + "\n"
+                + json.dumps({"prompt_id": "SP-003", "prompt": "second"}) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(
+                ValueError,
+                r"Duplicate structured prompt ID `SP-003` at .* row 2; first seen at row 1",
+            ):
+                bench.load_prompts(str(prompt_path))
+
     def test_apply_prompt_filters_matches_structured_fields(self):
         prompt_entries = [
             bench._build_prompt_entry(

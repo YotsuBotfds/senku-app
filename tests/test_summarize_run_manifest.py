@@ -97,6 +97,30 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertIn("new", markdown)
         self.assertNotIn("middle", markdown)
 
+    def test_render_markdown_sanitizes_filter_values_in_summary_lines(self):
+        records = [
+            {
+                "task": "A|B`\n- injected",
+                "lane": "tooling|qa`\r\n- also injected",
+                "label": "selected",
+            }
+        ]
+
+        markdown = render_markdown(
+            records,
+            task="A|B`\n- injected",
+            lane="tooling|qa`\r\n- also injected",
+            limit=1,
+        )
+
+        lines = markdown.splitlines()
+
+        self.assertIn("- Records shown: 1", markdown)
+        self.assertIn("- Task filter: `A\\|B\\` - injected`", lines)
+        self.assertIn("- Lane filter: `tooling\\|qa\\` - also injected`", lines)
+        self.assertNotIn("- injected", lines)
+        self.assertNotIn("- also injected", lines)
+
     def test_artifact_health_is_na_when_evidence_fields_absent(self):
         records = [
             {

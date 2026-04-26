@@ -264,8 +264,15 @@ def _portable_path(path: Path) -> str:
     return path.as_posix()
 
 
+def _strip_surrounding_quotes(value: str) -> str:
+    stripped = value.strip()
+    if len(stripped) >= 2 and stripped[0] == stripped[-1] and stripped[0] in {"'", '"'}:
+        return stripped[1:-1].strip()
+    return stripped
+
+
 def _normalize_artifact_path(value: str, repo_root: Path) -> tuple[str, Path] | None:
-    raw_path = value.strip()
+    raw_path = _strip_surrounding_quotes(value)
     if not raw_path:
         return None
 

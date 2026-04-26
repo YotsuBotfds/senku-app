@@ -210,6 +210,21 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
         self.assertIn("emergency_first", markdown)
         self.assertIn("expected \\| cited", markdown)
 
+    def test_render_markdown_collapses_cell_whitespace(self):
+        markdown = self.module.render_markdown(
+            [
+                {
+                    "prompt_id": "P1",
+                    "suspected_failure_bucket": "ranking_miss",
+                    "short_reason": "first line\r\n\tsecond   line | cited",
+                }
+            ]
+        )
+
+        self.assertIn("first line second line \\| cited", markdown)
+        self.assertNotIn("\r", markdown)
+        self.assertNotIn("\t", markdown)
+
     def test_main_emits_json(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

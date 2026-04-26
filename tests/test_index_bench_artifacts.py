@@ -160,6 +160,28 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(summary["record_type_counts"][truncated], 1)
         self.assertNotIn(long_type, summary["record_type_counts"])
 
+    def test_iter_bench_artifacts_sanitizes_jsonl_type_labels(self):
+        root = self.make_tmpdir()
+        (root / "records.jsonl").write_text(
+            "\n".join(
+                [
+                    json.dumps({"record_type": " result\nretry\t ", "report_type": "\r routing\n"}),
+                    json.dumps({"record_type": "\t\n", "report_type": "routing"}),
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        summary = list(iter_bench_artifacts(root))[0]["summary"]
+        formatted = _format_summary(summary)
+
+        self.assertEqual(summary["record_type_counts"], {"result retry": 1})
+        self.assertEqual(summary["report_type_counts"], {"routing": 2})
+        self.assertNotIn("\n", json.dumps(summary))
+        self.assertIn("record_type_counts=result retry:1", formatted)
+        self.assertIn("report_type_counts=routing:2", formatted)
+
     def test_iter_bench_artifacts_skips_large_jsonl(self):
         root = self.make_tmpdir()
         (root / "large.jsonl").write_text(json.dumps({"record_type": "result"}) + "\n", encoding="utf-8")
