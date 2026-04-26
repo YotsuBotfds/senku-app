@@ -438,7 +438,7 @@ def evaluate_pack(
         }
         if progress:
             label = row["prompt_id"] or f"line {row['line_number']}"
-            print(f"[{index}/{len(prompt_rows)}] retrieving {label}", file=sys.stderr)
+            print(f"[{index}/{len(prompt_rows)}] retrieving {label}", file=sys.stderr, flush=True)
         try:
             start = time.perf_counter()
             retrieved_ids, meta = retrieve_for_prompt(

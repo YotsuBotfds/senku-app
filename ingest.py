@@ -1193,12 +1193,14 @@ def main():
 
     # Embed and store in batches
     BATCH_SIZE = 64
+    total_batches = (len(all_chunks) + BATCH_SIZE - 1) // BATCH_SIZE
     for i in range(0, len(all_chunks), BATCH_SIZE):
         batch = all_chunks[i : i + BATCH_SIZE]
         texts = [c["text"] for c in batch]
         retrieval_texts = [build_contextual_retrieval_text(c) for c in batch]
         metadatas = [c["metadata"] for c in batch]
         batch_no = i // BATCH_SIZE + 1
+        console.print(f"  Embedding batch {batch_no}/{total_batches} ({len(batch)} chunks)")
 
         try:
             embeddings = embed_batch_with_retry(retrieval_texts, batch_no)
@@ -1271,7 +1273,7 @@ def main():
                 embedded_chunks_by_guide_id[guide_id] += 1
         console.print(
             f"  Embedded batch {batch_no}"
-            f"/{(len(all_chunks) + BATCH_SIZE - 1) // BATCH_SIZE}"
+            f"/{total_batches}"
             f" ({total_chunks}/{len(all_chunks)} chunks)"
         )
 

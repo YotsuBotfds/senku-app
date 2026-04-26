@@ -211,9 +211,22 @@ function Invoke-GateCommand {
     Write-Host ("=== {0} ===" -f $Command.Name)
     Write-Host $Command.Display
 
-    & $Command.Executable @($Command.Arguments)
-    if ($LASTEXITCODE -ne 0) {
-        throw "Regression gate command '$($Command.Name)' failed with exit code $LASTEXITCODE."
+    $commandStartedAt = Get-Date
+    $exitCode = $null
+    try {
+        & $Command.Executable @($Command.Arguments)
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $elapsed = New-TimeSpan -Start $commandStartedAt -End (Get-Date)
+        if ($null -ne $exitCode) {
+            Write-Host ("Command {0} finished in {1:n1}s with exit code {2}." -f $Command.Name, $elapsed.TotalSeconds, $exitCode)
+        } else {
+            Write-Host ("Command {0} stopped after {1:n1}s before reporting an exit code." -f $Command.Name, $elapsed.TotalSeconds)
+        }
+    }
+
+    if ($exitCode -ne 0) {
+        throw "Regression gate command '$($Command.Name)' failed with exit code $exitCode."
     }
 }
 

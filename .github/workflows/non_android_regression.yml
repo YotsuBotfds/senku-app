@@ -133,9 +133,51 @@ jobs:
           $cacheDir = Join-Path $env:RUNNER_TEMP 'fastembed-cache'
           $stdoutLog = Join-Path $env:RUNNER_TEMP 'fastembed-stdout.log'
           $stderrLog = Join-Path $env:RUNNER_TEMP 'fastembed-stderr.log'
+          $env:PYTHONUNBUFFERED = '1'
+
+          function Write-FastEmbedLogTail {
+            param(
+              [Parameter(Mandatory)]
+              [string]$Label,
+
+              [Parameter(Mandatory)]
+              [string]$Path,
+
+              [int]$LineCount = 40
+            )
+
+            if (-not (Test-Path -LiteralPath $Path)) {
+              Write-Host "FastEmbed $Label log is not present yet: $Path"
+              return
+            }
+
+            $lines = Get-Content -LiteralPath $Path -Tail $LineCount -ErrorAction SilentlyContinue
+            if ($lines) {
+              Write-Host "FastEmbed $Label (last $LineCount lines):"
+              $lines | Write-Host
+            } else {
+              Write-Host "FastEmbed $Label log is empty."
+            }
+          }
+
+          function Assert-FastEmbedProcessRunning {
+            param(
+              [Parameter(Mandatory)]
+              [System.Diagnostics.Process]$Process
+            )
+
+            if ($Process.HasExited) {
+              Write-Host "FastEmbed process exited before readiness with exit code $($Process.ExitCode)."
+              Write-FastEmbedLogTail -Label 'stdout' -Path $stdoutLog
+              Write-FastEmbedLogTail -Label 'stderr' -Path $stderrLog
+              throw "FastEmbed service exited before readiness."
+            }
+          }
+
           $process = Start-Process `
             -FilePath python `
             -ArgumentList @(
+              '-u',
               'scripts\fastembed_openai_server.py',
               '--host', '127.0.0.1',
               '--port', '8801',
@@ -148,12 +190,29 @@ jobs:
             -RedirectStandardError $stderrLog
 
           try {
+            $readinessBody = @{
+              input = 'senku readiness probe'
+            } | ConvertTo-Json -Compress
+
             for ($attempt = 1; $attempt -le 30; $attempt++) {
+              Assert-FastEmbedProcessRunning -Process $process
+              Write-Host "FastEmbed readiness attempt $attempt/30: POST /v1/embeddings"
               try {
-                Invoke-RestMethod -Uri 'http://127.0.0.1:8801/v1/models' -TimeoutSec 5 | Out-Null
-                Write-Host "FastEmbed service is ready."
+                Invoke-RestMethod `
+                  -Uri 'http://127.0.0.1:8801/v1/embeddings' `
+                  -Method Post `
+                  -ContentType 'application/json' `
+                  -Body $readinessBody `
+                  -TimeoutSec 30 | Out-Null
+                Write-Host "FastEmbed service is ready after attempt $attempt."
                 break
               } catch {
+                Write-Host "FastEmbed readiness attempt $attempt/30 failed: $($_.Exception.Message)"
+                Assert-FastEmbedProcessRunning -Process $process
+                if ($attempt -eq 1 -or $attempt % 5 -eq 0 -or $attempt -eq 30) {
+                  Write-FastEmbedLogTail -Label 'stdout' -Path $stdoutLog -LineCount 30
+                  Write-FastEmbedLogTail -Label 'stderr' -Path $stderrLog -LineCount 30
+                }
                 if ($attempt -eq 30) { throw }
                 Start-Sleep -Seconds 2
               }
@@ -162,14 +221,13 @@ jobs:
             python -B ingest.py --rebuild
             powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args
           } finally {
-            Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
-            if (Test-Path -LiteralPath $stderrLog) {
-              $stderr = Get-Content -LiteralPath $stderrLog
-              if ($stderr) {
-                Write-Host "FastEmbed stderr:"
-                $stderr | Write-Host
-              }
+            if ($process -and -not $process.HasExited) {
+              Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+            } elseif ($process) {
+              Write-Host "FastEmbed process had already exited with code $($process.ExitCode)."
             }
+            Write-FastEmbedLogTail -Label 'stdout' -Path $stdoutLog
+            Write-FastEmbedLogTail -Label 'stderr' -Path $stderrLog
           }
 
       - name: Build attested bench bundle

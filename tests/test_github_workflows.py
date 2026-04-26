@@ -78,7 +78,13 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         gate_step = steps[names.index("Run non-Android regression gate")]
         gate_script = gate_step.get("run", "")
         self.assertIn("scripts\\fastembed_openai_server.py", gate_script)
+        self.assertIn("'-u'", gate_script)
         self.assertIn("$env:SENKU_EMBED_URL = 'http://127.0.0.1:8801/v1'", gate_script)
+        self.assertIn("POST /v1/embeddings", gate_script)
+        self.assertIn("Invoke-RestMethod `", gate_script)
+        self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
+        self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
+        self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
         self.assertLess(
             gate_script.index("python -B ingest.py --rebuild"),
             gate_script.index("run_non_android_regression_gate.ps1"),
