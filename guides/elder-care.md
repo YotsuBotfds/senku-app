@@ -45,17 +45,17 @@ liability_level: high
 :::tip
 Quick routing:
 - Start here for complaint-first caregiving questions: "my elderly parent is harder to care for," "needs more help lately," "I can't keep up with bathing/dressing/toileting/eating," "won't get out of bed," or "how do I care for an old person at home" -> [Maintaining Independence and Dignity](#maintaining-independence), [Caregiver Support and Burnout Prevention](#caregiver-support), and [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment) if the change is sudden
-- "My parent keeps forgetting things" â†’ [Cognitive Decline and Memory Loss](#geriatric-conditions) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
-- "Wandering at night", "trying to leave", or "confused after dark" â†’ [Cognitive Decline and Memory Loss](#geriatric-conditions) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html#wandering-prevention)
-- "Falls more often" or new unexplained falls â†’ [Fall Prevention and Environmental Safety](#fall-prevention) and [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment) if there is injury, dizziness, or a sudden change
-- "Won't eat" â†’ [Nutrition for the Elderly](#nutrition-elderly) and [Hydration Emphasis](#nutrition-elderly)
-- "Old person confused" or sudden behavior change â†’ [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment); if this is sudden or much worse than baseline, treat it as urgent
-- "Caring for elderly" overview â†’ start here for daily caregiving, supervision, routines, mobility help, hygiene, feeding, and caregiver backup; add [Age-Related Disease Management](../age-related-disease-management.html) only when the complaint is mainly about a named chronic disease or disease pattern
+- "My parent keeps forgetting things" -> [Cognitive Decline and Memory Loss](#geriatric-conditions) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
+- "Wandering at night", "trying to leave", or "confused after dark" -> [Cognitive Decline and Memory Loss](#geriatric-conditions) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html#wandering-prevention)
+- "Falls more often" or new unexplained falls -> [Fall Prevention and Environmental Safety](#fall-prevention) and [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment) if there is injury, dizziness, or a sudden change
+- "Won't eat" -> [Nutrition for the Elderly](#nutrition-elderly) and [Hydration Emphasis](#nutrition-elderly)
+- "Old person confused" or sudden behavior change -> [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment); if this is sudden or much worse than baseline, treat it as urgent
+- "Caring for elderly" overview -> start here for daily caregiving, supervision, routines, mobility help, hygiene, feeding, and caregiver backup; add [Age-Related Disease Management](../age-related-disease-management.html) only when the complaint is mainly about a named chronic disease or disease pattern
 - "Getting weaker", "declining", "slowing down", or needs help with bathing/dressing/toileting/eating -> [Maintaining Independence and Dignity](#maintaining-independence); if the decline is tied to chest pain, stroke signs, severe shortness of breath, diabetes problems, or another named disease pattern, also see [Age-Related Disease Management](../age-related-disease-management.html)
 - "Can't get around like before" or "stopped walking" -> [Fall Prevention and Environmental Safety](#fall-prevention) and [Maintaining Independence and Dignity](#maintaining-independence)
-- "Grandparent keeps falling" â†’ [Fall Prevention and Environmental Safety](#fall-prevention) and [Elder Dementia Home Safety](../elder-dementia-home-safety.html) if falls are tied to confusion or wandering
-- "Elderly suddenly confused" (not their baseline) â†’ [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment)
-- "Old person not eating" â†’ [Nutrition for the Elderly](#nutrition-elderly) and [Hydration Emphasis](#nutrition-elderly)
+- "Grandparent keeps falling" -> [Fall Prevention and Environmental Safety](#fall-prevention) and [Elder Dementia Home Safety](../elder-dementia-home-safety.html) if falls are tied to confusion or wandering
+- "Elderly suddenly confused" (not their baseline) -> [Recognition & Assessment of Common Geriatric Crises](#recognition-assessment)
+- "Old person not eating" -> [Nutrition for the Elderly](#nutrition-elderly) and [Hydration Emphasis](#nutrition-elderly)
 - If the wording is disease-first rather than caregiving-first, such as "arthritis is getting worse," "heart failure symptoms," "diabetes foot problem," or "dementia progression," hand off to [Age-Related Disease Management](../age-related-disease-management.html) and use this guide for the hands-on care layer
 :::
 
@@ -103,10 +103,10 @@ Before modern record-keeping systems fail completely, develop a formal oral hist
 
 Arthritis affects most people over 60 and causes chronic pain, stiffness, and reduced mobility. Without pharmaceutical anti-inflammatories, manage with herbal remedies and physical approaches. Willow bark contains salicin, a natural precursor to aspirin; simmer dried bark 5-10 minutes and drink the tea 1-3 times daily for pain relief. Turmeric, with its active compound curcumin, reduces inflammation effectively; cook it into food or brew as tea with black pepper, which increases absorption.
 
-Hot applications reduce stiffnessâ€”warm water immersion, heated herb packs, or sitting near fire. Gentle stretching and slow movement maintain joint function better than complete rest. Provide assistive devices: canes, handrails, and ramps that reduce stress on affected joints and improve independence.
+Hot applications reduce stiffness - warm water immersion, heated herb packs, or sitting near fire. Gentle stretching and slow movement maintain joint function better than complete rest. Provide assistive devices: canes, handrails, and ramps that reduce stress on affected joints and improve independence.
 
 :::tip
-**Tip:** Combine willow bark and turmeric in a warming tea with honey and ginger for synergistic pain relief. Consistency matters more than dosageâ€”daily use shows better results than sporadic administration.
+**Tip:** Combine willow bark and turmeric in a warming tea with honey and ginger for synergistic pain relief. Consistency matters more than dosage - daily use shows better results than sporadic administration.
 :::
 
 ### Cardiovascular Conditions
@@ -117,7 +117,7 @@ Watch for signs of heart stress: chest pain, shortness of breath, extreme fatigu
 
 ### Diabetes Management
 
-Type 2 diabetes dominates in elderly populations and requires careful dietary control without pharmaceutical insulin. Prioritize low-glycemic foods: legumes, whole grains, non-starchy vegetables, and limited fruit. Encourage regular gentle activity which improves insulin sensitivity. Cinnamon shows modest benefit for glucose controlâ€”add to foods or brew as tea. Fenugreek seeds, used in traditional medicine, improve insulin response; soak overnight and drink the water or eat the softened seeds.
+Type 2 diabetes dominates in elderly populations and requires careful dietary control without pharmaceutical insulin. Prioritize low-glycemic foods: legumes, whole grains, non-starchy vegetables, and limited fruit. Encourage regular gentle activity which improves insulin sensitivity. Cinnamon shows modest benefit for glucose control - add to foods or brew as tea. Fenugreek seeds, used in traditional medicine, improve insulin response; soak overnight and drink the water or eat the softened seeds.
 
 Monitor for complications: foot numbness (neuropathy), vision changes, and slow-healing wounds. Elderly diabetics are prone to infections; inspect feet daily and treat minor cuts immediately. Poor wound healing increases infection risk, so practice scrupulous hygiene and wound care.
 
@@ -125,13 +125,13 @@ Monitor for complications: foot numbness (neuropathy), vision changes, and slow-
 
 Most people over 70 experience some degree of vision and hearing decline. Rather than treating these as purely medical problems, adapt the environment. Ensure adequate lighting, use large print for important documents, speak clearly and face the person when talking, and repeat information as needed. Hearing aids work poorly in high-noise environments, so reduce background noise during important conversations.
 
-Herbal support remains minimal for age-related sensory loss, but bilberry (a type of blueberry) contains anthocyanins that may slow vision declineâ€”include in diet when available. Ensure adequate B-vitamins and antioxidants through diverse food sources to support nerve health.
+Herbal support remains minimal for age-related sensory loss, but bilberry (a type of blueberry) contains anthocyanins that may slow vision decline - include in diet when available. Ensure adequate B-vitamins and antioxidants through diverse food sources to support nerve health.
 
 ### Cognitive Decline and Memory Loss
 
 Normal aging includes some memory decline; dementia represents more severe cognitive loss. Support cognitive function through mental engagement, social interaction, and structured routine. Regular conversation, memory games, storytelling, and teaching keep minds active. Physical activity improves blood flow to the brain and slows cognitive decline.
 
-If dementia develops, create a safe environment with clear pathways, labeled rooms, and consistent daily routines. Confused elders may wander; establish community awareness and safe places they naturally gravitate toward. Maintain patience and avoid confronting false memoriesâ€”redirecting conversation works better than correction. Involve family members regularly to provide continuity and emotional support.
+If dementia develops, create a safe environment with clear pathways, labeled rooms, and consistent daily routines. Confused elders may wander; establish community awareness and safe places they naturally gravitate toward. Maintain patience and avoid confronting false memories - redirecting conversation works better than correction. Involve family members regularly to provide continuity and emotional support.
 
 If the caregiver's question is mainly "how do I safely live with and support this person every day," stay in this guide and also use [Elder Dementia Home Safety](../elder-dementia-home-safety.html). If the question is mainly whether a disease process is progressing, what condition may be causing the decline, or how to manage dementia alongside other chronic illnesses, add [Age-Related Disease Management](../age-related-disease-management.html).
 
@@ -313,7 +313,7 @@ Complaint-first caregiving problems belong elsewhere in this guide until they cr
 <tr>
 <td><strong>Severe Infection / Sepsis</strong></td>
 <td>Fever, chills, increased confusion, rapid breathing, warm/flushed skin</td>
-<td>High fever (103Â°F+), extreme confusion, rapid weak pulse, pale/cold extremities, difficulty breathing</td>
+<td>High fever (103°F+), extreme confusion, rapid weak pulse, pale/cold extremities, difficulty breathing</td>
 <td>Sponge with cool water to reduce fever. Give fluids frequently. Identify source (wound, UTI, respiratory). Start antimicrobial herbs immediately.</td>
 <td>Aggressive wound care if present. Frequent monitoring of temperature, breathing. Continue herbal antimicrobials 3-7 days after fever breaks.</td>
 </tr>
@@ -375,7 +375,7 @@ Begin with honest assessment of current function: Can the person walk independen
 
 ### Specific Device Categories
 
-**Canes and walking sticks:** Lightweight, requires minimal training, easily improvised if unavailable. Use for pain relief, balance support, and confidence. Proper height is criticalâ€”the top should reach wrist level when standing. Worn rubber tips need replacement when slippery; attach leather or cloth wrapping for better grip.
+**Canes and walking sticks:** Lightweight, requires minimal training, easily improvised if unavailable. Use for pain relief, balance support, and confidence. Proper height is critical - the top should reach wrist level when standing. Worn rubber tips need replacement when slippery; attach leather or cloth wrapping for better grip.
 
 **Walkers and rollators:** Provide significant stability and reduced fall risk for those with severe balance problems. Two-wheeled, three-wheeled, and four-wheeled versions exist; four-wheeled is most stable but harder to navigate narrow spaces. Users need adequate upper body strength to operate safely. Regular inspection prevents wheel failure or structural damage.
 
@@ -385,7 +385,7 @@ Begin with honest assessment of current function: Can the person walk independen
 
 ### Maintenance and Repair Schedules
 
-Establish a monthly inspection routine: check cane tips for wear, walker wheels for damage, handrails for loose fasteners, and footwear for worn soles. Worn tips, cracked wheels, or loose rails become suddenly dangerous. Repair or replace compromised parts immediatelyâ€”a delayed repair means a fall risk.
+Establish a monthly inspection routine: check cane tips for wear, walker wheels for damage, handrails for loose fasteners, and footwear for worn soles. Worn tips, cracked wheels, or loose rails become suddenly dangerous. Repair or replace compromised parts immediately - a delayed repair means a fall risk.
 
 :::warning
 **Warning:** Never attempt to use assistive devices with damaged components. A walker with failing wheels, cane with worn tip, or loose handrail creates more danger than no assistance. Prioritize maintenance over continued use of compromised equipment.
@@ -413,10 +413,10 @@ The key difference from pharmaceutical dosing is that herbal remedies work throu
 
 ### Storage and Preservation
 
-Dry herbs in well-ventilated spaces, store in airtight containers away from light and moisture. Label everything with collection date and herb name. Dried herbs lose potency over timeâ€”expect reduced effectiveness after 1-2 years. Rotate stock regularly and prioritize fresh or recently-dried herbs. Preserve berries and fruits through drying or fermentation.
+Dry herbs in well-ventilated spaces, store in airtight containers away from light and moisture. Label everything with collection date and herb name. Dried herbs lose potency over time - expect reduced effectiveness after 1-2 years. Rotate stock regularly and prioritize fresh or recently-dried herbs. Preserve berries and fruits through drying or fermentation.
 
 :::warning
-**Storage Hazard:** Improperly stored herbs develop mold or insect contamination. Check dried herbs regularly for white fuzz (mold), webbing (insects), or musty smell. Discard contaminated batches immediatelyâ€”moldy herbs can cause serious illness.
+**Storage Hazard:** Improperly stored herbs develop mold or insect contamination. Check dried herbs regularly for white fuzz (mold), webbing (insects), or musty smell. Discard contaminated batches immediately - moldy herbs can cause serious illness.
 :::
 
 ### Identification and Accuracy
@@ -424,7 +424,7 @@ Dry herbs in well-ventilated spaces, store in airtight containers away from ligh
 Misidentification of medicinal plants can be dangerous. Until you have reliable identification expertise in your community, stick to easily-identifiable plants with narrow safety margins: willow bark, turmeric, garlic, ginger. Avoid exotic herbs you can't reliably source or dangerous ones with narrow therapeutic windows until proper expertise develops.
 
 :::tip
-**Tip:** Create physical reference specimensâ€”dried examples of each medicinal plant kept in a labeled, preserved condition. New members learning plant identification can compare fresh plants against these standards, reducing dangerous errors.
+**Tip:** Create physical reference specimens - dried examples of each medicinal plant kept in a labeled, preserved condition. New members learning plant identification can compare fresh plants against these standards, reducing dangerous errors.
 :::
 
 </section>
@@ -435,7 +435,7 @@ Misidentification of medicinal plants can be dangerous. Until you have reliable 
 
 ### Caloric and Protein Needs
 
-While total caloric needs may decrease slightly with age, protein requirements increase because older bodies are less efficient at protein synthesis. Aim for 1.2-1.5 grams of protein per kilogram of body weight dailyâ€”higher than younger adults' recommendations. Include diverse protein sources: fish, legumes, eggs, nuts, seeds, and meat when available. Adequate protein maintains muscle mass, strength, and immune function.
+While total caloric needs may decrease slightly with age, protein requirements increase because older bodies are less efficient at protein synthesis. Aim for 1.2-1.5 grams of protein per kilogram of body weight daily - higher than younger adults' recommendations. Include diverse protein sources: fish, legumes, eggs, nuts, seeds, and meat when available. Adequate protein maintains muscle mass, strength, and immune function.
 
 ### Dental Considerations and Food Adaptation
 
@@ -443,7 +443,7 @@ Missing or damaged teeth make eating difficult. Provide soft, nutrient-dense foo
 
 ### Hydration Emphasis
 
-Elderly people have reduced thirst sensation and are prone to dehydration. Encourage drinking regularly even if not thirstyâ€”aim for 6-8 cups daily. Offer water with meals, prepare herbal teas, and include water-rich foods like soup, vegetables, and fruits. Dehydration causes confusion, weakness, and falls; it's a common overlooked factor in elderly health decline.
+Elderly people have reduced thirst sensation and are prone to dehydration. Encourage drinking regularly even if not thirsty - aim for 6-8 cups daily. Offer water with meals, prepare herbal teas, and include water-rich foods like soup, vegetables, and fruits. Dehydration causes confusion, weakness, and falls; it's a common overlooked factor in elderly health decline.
 
 ### Priority Nutrients
 
@@ -478,13 +478,13 @@ Bedridden or chair-bound elders develop pressure ulcers within days without prev
 
 ### Minor Wound Care
 
-For small cuts or abrasions: clean with clean water, remove any debris, pat dry, and apply clean cloth. If bleeding continues, apply gentle pressure. For minor infections, keep wound clean and exposed to air when possible; apply honey (antimicrobial), plantain leaf poultice, or turmeric paste. Monitor for spreading redness, warmth, or swellingâ€”these indicate serious infection.
+For small cuts or abrasions: clean with clean water, remove any debris, pat dry, and apply clean cloth. If bleeding continues, apply gentle pressure. For minor infections, keep wound clean and exposed to air when possible; apply honey (antimicrobial), plantain leaf poultice, or turmeric paste. Monitor for spreading redness, warmth, or swelling - these indicate serious infection.
 
 ### Serious Wound Management
 
 Wounds that don't heal within a few days, show spreading infection, have foul odor, or produce pus require intensive care. Keep scrupulously clean, change dressing daily, monitor for fever or systemic illness, and consider the possibility that the wound will not heal without amputation or specialized care not available.
 
-Diabetic elders particularly need aggressive wound careâ€”their wounds progress rapidly from minor to serious. Daily foot inspection, immediate cleaning of any lesion, and treatment with antimicrobial herbs or honey are essential.
+Diabetic elders particularly need aggressive wound care - their wounds progress rapidly from minor to serious. Daily foot inspection, immediate cleaning of any lesion, and treatment with antimicrobial herbs or honey are essential.
 
 </section>
 
@@ -504,7 +504,7 @@ When cognitive decline becomes severe, the focus shifts to safety, dignity, and 
 
 ### Behavioral Changes and Crisis Management
 
-Sudden behavioral changesâ€”aggression, paranoia, or severe agitationâ€”often indicate medical problems: pain, infection, dehydration, constipation, or medication effects. Address the physical cause first. Only if no medical cause is evident consider that the behavior reflects cognitive decline or emotional distress.
+Sudden behavioral changes - aggression, paranoia, or severe agitation - often indicate medical problems: pain, infection, dehydration, constipation, or medication effects. Address the physical cause first. Only if no medical cause is evident consider that the behavior reflects cognitive decline or emotional distress.
 
 ### Meaningful Activity and Purpose
 
@@ -518,7 +518,7 @@ Cognitive and emotional health improve with purposeful activity. Even severely c
 
 ### Understanding Fall Risk
 
-Falls are the leading cause of injury and disability in elderly people. Most falls occur at home in familiar environments, often from causes that seem trivialâ€”stepping over a rug, reaching for something, or standing too quickly. The goal is not to eliminate all risk (which is impossible) but to reduce preventable falls and mitigate injury when falls occur.
+Falls are the leading cause of injury and disability in elderly people. Most falls occur at home in familiar environments, often from causes that seem trivial - stepping over a rug, reaching for something, or standing too quickly. The goal is not to eliminate all risk (which is impossible) but to reduce preventable falls and mitigate injury when falls occur.
 
 ### Fall Risk Assessment Diagram
 
@@ -532,7 +532,7 @@ Bathrooms are particularly dangerous. Install grab bars that support full body w
 
 ### Footwear and Balance
 
-Proper footwear prevents falls more effectively than any medical intervention. Shoes should be low-heeled, supportive, with good traction and a secure fit. Avoid slippers that slip easily. Check vision regularly because poor eyesight causes falls. Balance exercisesâ€”standing on one leg, walking heel-to-toe, gentle yogaâ€”strengthen stabilizer muscles and improve confidence.
+Proper footwear prevents falls more effectively than any medical intervention. Shoes should be low-heeled, supportive, with good traction and a secure fit. Avoid slippers that slip easily. Check vision regularly because poor eyesight causes falls. Balance exercises - standing on one leg, walking heel-to-toe, gentle yoga - strengthen stabilizer muscles and improve confidence.
 
 ### Mitigation if Falls Occur
 
@@ -561,7 +561,7 @@ As death approaches, appetite naturally decreases and the ability to swallow dec
 Common end-of-life symptoms and comfort measures: pain (herbal remedies, gentle touch, massage), nausea (ginger tea, peppermint, small frequent meals), constipation (warm fluids, mild laxatives, abdominal massage), and breathing difficulty (elevated position, calm presence, oxygen if available). Focus on what provides comfort to the individual rather than pursuing treatments that prolong dying.
 
 :::danger
-**Forced Feeding Danger:** A dying person losing appetite is normal and natural. Forcing food or fluids into a declining person causes aspiration pneumonia, choking, and distress. Small sips if they request, lips moistened with water, and attention to comfortâ€”not nutritionâ€”are appropriate as death approaches.
+**Forced Feeding Danger:** A dying person losing appetite is normal and natural. Forcing food or fluids into a declining person causes aspiration pneumonia, choking, and distress. Small sips if they request, lips moistened with water, and attention to comfort - not nutrition - are appropriate as death approaches.
 :::
 
 ### Companionship and Presence
@@ -588,7 +588,7 @@ Prepare the community for death protocols before they're needed. Decisions about
 
 ### Managing Caregiver Burnout
 
-Elder care is physically and emotionally demanding. Burnout is a serious risk when caregivers work too many hours without breaks. Establish strict limits: no caregiver works more than 2 consecutive days or more than 4 days per week. Mandatory respite periods are not luxuriesâ€”they're essential to preventing caregiver breakdown and dangerous care errors.
+Elder care is physically and emotionally demanding. Burnout is a serious risk when caregivers work too many hours without breaks. Establish strict limits: no caregiver works more than 2 consecutive days or more than 4 days per week. Mandatory respite periods are not luxuries - they're essential to preventing caregiver breakdown and dangerous care errors.
 
 Symptoms of caregiver burnout include resentment toward the elder, exhaustion, emotional withdrawal, reduced care quality, and health problems in the caregiver. If a caregiver shows these signs, immediately increase their respite time or reduce their load. A burned-out caregiver can't safely care for anyone.
 
@@ -598,7 +598,7 @@ Rotate caregiving tasks across the team: medication administration, meal prepara
 
 ### Backup Planning and Emergency Protocols
 
-For every primary caregiver, identify a trained backup. Maintain current contact information and ensure the backup person has practice with all regular tasks. During emergenciesâ€”illness, injury, or death in the caregiver's familyâ€”the backup takes over without requiring last-minute training or crisis management.
+For every primary caregiver, identify a trained backup. Maintain current contact information and ensure the backup person has practice with all regular tasks. During emergencies - illness, injury, or death in the caregiver's family - the backup takes over without requiring last-minute training or crisis management.
 
 :::warning
 **Warning:** Caregiver absence without backup planning forces remaining caregivers into excessive hours, creating dangerous situations for both caregiver and elder. Never rely on a single caregiver for any essential function. Always maintain redundancy.
@@ -624,7 +624,7 @@ If an elder with critical knowledge dies unexpectedly, document what knowledge y
 
 ### Decline in Elder Mobility or Cognitive Function
 
-Prepare for increases in care demands as elders decline. Identify when movement to lower-demand housing (fewer stairs, closer to caregivers) becomes necessary. Recognize when cognitive decline affects safety and implement restrictions before tragedy occursâ€”such as limiting access to dangerous equipment or preventing wandering.
+Prepare for increases in care demands as elders decline. Identify when movement to lower-demand housing (fewer stairs, closer to caregivers) becomes necessary. Recognize when cognitive decline affects safety and implement restrictions before tragedy occurs - such as limiting access to dangerous equipment or preventing wandering.
 If the complaint starts as a disease-specific problem, hand off to [Age-Related Disease Management](../age-related-disease-management.html) for the chronic-condition piece and use this guide for the daily care, safety, and support layer.
 
 ### End-Stage Illness and Dying Process
@@ -639,7 +639,7 @@ Plan for the practical and emotional demands of caring for someone at end of lif
 
 ### Winter Hazards and Support
 
-Cold weather increases risks for elderly people: hypothermia, falls on ice, respiratory infections, and reduced mobility from stiffness. Ensure adequate heating, sufficient calories for heat production, and warm bedding. Winter is hardest on caregiversâ€”reduced daylight and difficult travel make visits challenging. Plan for increased need for supplies and support before winter arrives. Monitor for seasonal depression in both elders and caregivers.
+Cold weather increases risks for elderly people: hypothermia, falls on ice, respiratory infections, and reduced mobility from stiffness. Ensure adequate heating, sufficient calories for heat production, and warm bedding. Winter is hardest on caregivers - reduced daylight and difficult travel make visits challenging. Plan for increased need for supplies and support before winter arrives. Monitor for seasonal depression in both elders and caregivers.
 
 ### Summer Heat and Hydration
 
@@ -647,11 +647,11 @@ Heat stress is dangerous for elderly people, who have reduced sweating capacity 
 
 ### Spring and Fall Transitions
 
-Seasonal transitionsâ€”when temperatures fluctuate rapidlyâ€”are dangerous for people with cardiovascular disease. Layer clothing to adapt quickly to changing conditions. Respiratory infections are more common during transitions; practice respiratory hygiene and monitor for signs of infection.
+Seasonal transitions - when temperatures fluctuate rapidly - are dangerous for people with cardiovascular disease. Layer clothing to adapt quickly to changing conditions. Respiratory infections are more common during transitions; practice respiratory hygiene and monitor for signs of infection.
 
 ### Harvest and Planting Seasons
 
-Periods of intensive agricultural activity make it harder to maintain consistent caregiver schedules. Plan ahead during slower seasons to build reserves of prepared food, dried herbs, and preserved supplies. Some elder care tasks can shift to accommodate seasonal labor demandsâ€”for example, bathing can move to cooler morning hours during intense harvest season.
+Periods of intensive agricultural activity make it harder to maintain consistent caregiver schedules. Plan ahead during slower seasons to build reserves of prepared food, dried herbs, and preserved supplies. Some elder care tasks can shift to accommodate seasonal labor demands - for example, bathing can move to cooler morning hours during intense harvest season.
 
 </section>
 
@@ -661,11 +661,11 @@ Periods of intensive agricultural activity make it harder to maintain consistent
 
 ### Establishing the Elder Council
 
-A formalized elder council transforms individual elders from dependents into decision-makers. This council addresses: major community decisions, conflict resolution, enforcement of traditions, mentoring and teaching assignments, and coordination of elder care resources. Members are chosen for wisdom, health stability, and community respect, not strict ageâ€”some 60-year-olds have more capacity than 80-year-olds.
+A formalized elder council transforms individual elders from dependents into decision-makers. This council addresses: major community decisions, conflict resolution, enforcement of traditions, mentoring and teaching assignments, and coordination of elder care resources. Members are chosen for wisdom, health stability, and community respect, not strict age - some 60-year-olds have more capacity than 80-year-olds.
 
 ### Responsibilities and Authority
 
-The council advises on major decisions but doesn't have absolute veto powerâ€”they guide through wisdom rather than dictate through authority. Specific roles might include: reviewing major resource allocation decisions, mentoring younger leaders, maintaining historical records, resolving disputes, and ensuring traditional practices continue. Some councils maintain weather records, plant varieties in the seed library, or document local medicinal plant locations.
+The council advises on major decisions but doesn't have absolute veto power - they guide through wisdom rather than dictate through authority. Specific roles might include: reviewing major resource allocation decisions, mentoring younger leaders, maintaining historical records, resolving disputes, and ensuring traditional practices continue. Some councils maintain weather records, plant varieties in the seed library, or document local medicinal plant locations.
 
 ### Compensation and Recognition
 
@@ -697,7 +697,7 @@ Understanding these frequent errors helps prevent avoidable suffering and deaths
 
 **Mistake:** Accepting that elderly people "just hurt" and not investigating pain sources.
 
-**Reality:** Pain always indicates somethingâ€”arthritis, infection, constipation, kidney stones, or fracture. Untreated pain prevents movement, worsens other conditions, and leads to dangerous complications. Always investigate new pain.
+**Reality:** Pain always indicates something - arthritis, infection, constipation, kidney stones, or fracture. Untreated pain prevents movement, worsens other conditions, and leads to dangerous complications. Always investigate new pain.
 
 :::tip
 **Tip:** Create a pain diary for 1-2 weeks when new pain emerges. Note time of day, location, what makes it worse/better, and severity (1-10 scale if communication is possible). This pattern often identifies the cause (e.g., pain worse after meals suggests digestive issues; worse at night suggests inflammation).
@@ -713,13 +713,13 @@ Understanding these frequent errors helps prevent avoidable suffering and deaths
 
 **Mistake:** Attempting aggressive treatment for conditions that are simply part of aging, exhausting the elder without benefit.
 
-**Acceptance:** Some conditionsâ€”hearing loss, vision decline, reduced energyâ€”are normal aging. Rather than fighting these with treatments that don't work, adapt the environment and expectations. An 85-year-old walking slowly is not a failure requiring "intervention."
+**Acceptance:** Some conditions - hearing loss, vision decline, reduced energy - are normal aging. Rather than fighting these with treatments that don't work, adapt the environment and expectations. An 85-year-old walking slowly is not a failure requiring "intervention."
 
 ### Inadequate Hydration Support
 
 **Mistake:** Not recognizing that elderly people don't feel thirst reliably and thus don't drink enough, leading to chronic dehydration.
 
-**Prevention:** Offer fluids regularly on a schedule (every 2 hours while awake), not just when the person asks. Include water-rich foods. Monitor urine colorâ€”pale urine indicates adequate hydration; dark urine suggests dehydration.
+**Prevention:** Offer fluids regularly on a schedule (every 2 hours while awake), not just when the person asks. Include water-rich foods. Monitor urine color - pale urine indicates adequate hydration; dark urine suggests dehydration.
 
 :::danger
 **Dehydration Alert:** Dehydration causes confusion that looks like dementia, weakness, dizziness, and falls. It's the most preventable and underrecognized problem in elderly care. Ensuring adequate fluid intake prevents numerous downstream complications.
@@ -756,7 +756,7 @@ When standard care supplies are unavailable, adapt using available materials whi
 - **Bed modification:** Blocks under bed legs to raise height for easier standing; firm mattress prevents pain
 
 :::tip
-**Tip:** Test all improvised equipment with full body weight BEFORE an elder relies on it. Failure of a handmade device is worse than no deviceâ€”it creates sudden falls and injuries.
+**Tip:** Test all improvised equipment with full body weight BEFORE an elder relies on it. Failure of a handmade device is worse than no device - it creates sudden falls and injuries.
 :::
 
 ### Pain Management Without Pharmaceuticals
@@ -941,7 +941,7 @@ This table consolidates essential care schedules and monitoring intervals into o
 :::affiliate
 **If you're preparing in advance,** elder care in austere settings requires monitoring equipment and mobility aids:
 
-- [Automatic Blood Pressure Machine (Large Color Screen)](https://www.amazon.com/dp/B0DP7VS72Z?tag=offlinecompen-20) â€” portable unit with large easy-to-read display for elderly users
+- [Automatic Blood Pressure Machine (Large Color Screen)](https://www.amazon.com/dp/B0DP7VS72Z?tag=offlinecompen-20) - portable unit with large easy-to-read display for elderly users
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
