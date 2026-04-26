@@ -564,7 +564,7 @@ def _is_committed_reference_file(path: Path) -> bool:
 
     try:
         result = subprocess.run(
-            ["git", "-C", str(repository_root), "ls-files", "--error-unmatch", relative],
+            ["git", "-C", str(repository_root), "cat-file", "-e", f"HEAD:{relative}"],
             check=False,
             capture_output=True,
             text=True,

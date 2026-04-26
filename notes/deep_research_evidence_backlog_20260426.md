@@ -555,6 +555,9 @@ Action:
 - Artifact retention now distinguishes local/untracked `PLANNER_HANDOFF*.md`
   notes from committed durable handoffs: local handoff noise stays ignored, but
   tracked handoff references can protect artifact families.
+- Artifact retention now treats protected handoff references as durable only
+  when they exist in `HEAD`; staged-but-uncommitted handoffs remain local noise
+  and cannot suppress retention candidates.
 - Metrics-lake detail rows now expose artifact evidence parent context in
   dedicated SQL columns (`evidence_task`, `evidence_lane`, `evidence_label`,
   `evidence_commit`, `evidence_generated_at`, and `evidence_record_type`) while
@@ -649,6 +652,8 @@ Validation:
   evidence-context columns.
 - `tests.test_plan_artifact_retention` now exercises real `git ls-files`
   detection for tracked planner handoff refs when git is available.
+- `tests.test_plan_artifact_retention` covers staged-but-uncommitted planner
+  handoff refs staying unprotected even when present in the git index.
 - `tests.test_audit_metadata_coverage` covers malformed-frontmatter summary
   counts and Markdown reporting.
 - `tests.test_agent_context_snapshot` covers metadata-audit and strict

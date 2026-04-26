@@ -204,6 +204,47 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
             plan["references"]["sources"],
         )
 
+    @unittest.skipIf(shutil.which("git") is None, "git is required for staged handoff retention regression")
+    def test_staged_planner_handoff_reference_notes_remain_unprotected(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        notes = root / "notes"
+        handoff_file = notes / "PLANNER_HANDOFF_2026-04-26_STAGED.md"
+
+        self.write_text(
+            artifacts / "bench" / "staged_handoff_run" / "report.md",
+            "# proof\n",
+            age_days=80,
+        )
+        self.write_text(
+            handoff_file,
+            "Staged handoff artifact: `artifacts/bench/staged_handoff_run/report.md`\n",
+        )
+
+        self._init_temporary_git_repo(root)
+        subprocess.run(
+            ["git", "add", "notes/PLANNER_HANDOFF_2026-04-26_STAGED.md"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[notes],
+            manifest_paths=[],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
+
+        row = {row["path"]: row for row in plan["families"]}["bench/staged_handoff_run"]
+        self.assertFalse(row["protected"])
+        self.assertNotEqual(row["action"], "keep_protected")
+        self.assertNotIn(handoff_file.as_posix(), row["protection_sources"])
+        self.assertNotIn(handoff_file.as_posix(), plan["references"]["sources"])
+
     def test_explicit_protect_path_and_glob_are_honored(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"
