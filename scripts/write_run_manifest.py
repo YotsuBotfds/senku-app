@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -288,12 +289,27 @@ def _normalize_artifact_path(value: str, repo_root: Path) -> tuple[str, Path] | 
     return record_path, real_path
 
 
+def _artifact_path_key(path: Path) -> str:
+    normalized = _portable_path(path.resolve(strict=False))
+    if os.name == "nt":
+        return normalized.casefold()
+    return normalized
+
+
 def collect_artifact_paths(
     values: Sequence[str],
     *,
     limit: int = DEFAULT_ARTIFACT_PATH_LIMIT,
     repo_root: Path | None = None,
 ) -> dict[str, object]:
+    if limit < 1:
+        return {
+            "paths": [],
+            "evidence_paths": {},
+            "count": 0,
+            "truncated": False,
+        }
+
     paths: list[str] = []
     evidence_paths: dict[str, Path] = {}
     seen: set[str] = set()
@@ -304,9 +320,10 @@ def collect_artifact_paths(
         if normalized is None:
             continue
         record_path, real_path = normalized
-        if record_path in seen:
+        key = _artifact_path_key(real_path)
+        if key in seen:
             continue
-        seen.add(record_path)
+        seen.add(key)
         evidence_paths[record_path] = real_path
         total_unique += 1
         if len(paths) >= limit:

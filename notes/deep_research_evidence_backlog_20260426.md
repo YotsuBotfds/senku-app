@@ -497,6 +497,9 @@ Action:
 - Metadata coverage auditing now treats false-like strings such as `"false"`,
   `"0"`, `"no"`, and `"none"` as absent policy metadata, matching boolean
   false semantics for high-liability citation-policy checks.
+- Run-manifest artifact collection now dedupes equivalent artifact paths by
+  canonical real path and returns an empty summary for non-positive library
+  limits while preserving the CLI's fail-closed limit validation.
 
 Validation:
 
@@ -525,6 +528,8 @@ Validation:
   flowing through monitor data and HTML rendering.
 - `tests.test_audit_metadata_coverage` covers quoted false citation-policy
   metadata as a missing high-liability policy signal.
+- `tests.test_write_run_manifest` covers canonical artifact path dedupe and
+  zero-limit library behavior for artifact collection.
 
 Deferred unless evidenced:
 

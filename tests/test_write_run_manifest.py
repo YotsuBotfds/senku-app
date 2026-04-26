@@ -9,6 +9,7 @@ from pathlib import Path
 from scripts.write_run_manifest import (
     CommandResult,
     build_record,
+    collect_artifact_paths,
     parse_git_status_short,
     parse_metric,
     parse_metric_value,
@@ -373,6 +374,40 @@ class WriteRunManifestTests(unittest.TestCase):
         self.assertEqual(payload["artifact_path_missing"], [])
         self.assertEqual(len(payload["artifact_path_evidence"]), 1)
         self.assertIs(payload["artifact_path_evidence"][0]["exists"], True)
+
+    def test_collect_artifact_paths_limits_guard_and_path_key_dedupe(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            report_path = root / "artifacts" / "bench" / "canonical" / "report.md"
+            report_path.parent.mkdir(parents=True, exist_ok=True)
+            report_path.write_text("ok\n", encoding="utf-8")
+
+            limited = collect_artifact_paths(
+                ["artifacts/bench/canonical/../canonical/report.md"],
+                limit=0,
+                repo_root=root,
+            )
+            self.assertEqual(limited["paths"], [])
+            self.assertEqual(limited["evidence_paths"], {})
+            self.assertEqual(limited["count"], 0)
+            self.assertFalse(limited["truncated"])
+
+            paths = collect_artifact_paths(
+                [
+                    "artifacts/bench/canonical/report.md",
+                    str(report_path),
+                    "artifacts\\bench\\canonical\\./report.md",
+                ],
+                limit=3,
+                repo_root=root,
+            )
+            self.assertEqual(paths["paths"], ["artifacts/bench/canonical/report.md"])
+            self.assertEqual(paths["count"], 1)
+            self.assertFalse(paths["truncated"])
+            self.assertEqual(
+                paths["evidence_paths"]["artifacts/bench/canonical/report.md"],
+                report_path,
+            )
 
     def test_artifact_path_evidence_records_directory_outputs(self):
         with tempfile.TemporaryDirectory() as tmpdir:
