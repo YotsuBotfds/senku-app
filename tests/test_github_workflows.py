@@ -76,6 +76,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         install_step = steps[names.index("Install validation dependencies")]
         setup_step = steps[names.index("Set up Python")]
         fastembed_cache_step = steps[names.index("Cache FastEmbed model files")]
+        retrieval_cache_step = steps[names.index("Cache retrieval index")]
         self.assertEqual("pip", setup_step["with"]["cache"])
         self.assertEqual("requirements.lock.txt", setup_step["with"]["cache-dependency-path"])
         self.assertEqual(
@@ -88,6 +89,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             "scripts/fastembed_openai_server.py",
             fastembed_cache_step["with"]["key"],
         )
+        self.assertEqual("retrieval_index_cache", retrieval_cache_step["id"])
+        self.assertEqual("db", retrieval_cache_step["with"]["path"])
+        self.assertIn("guides/**/*.md", retrieval_cache_step["with"]["key"])
+        self.assertIn("ingest_freshness.py", retrieval_cache_step["with"]["key"])
         self.assertIn(
             "python -m pip install --require-hashes -r requirements.lock.txt",
             install_step.get("run", ""),
@@ -104,13 +109,15 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("POST /v1/embeddings", gate_script)
         self.assertIn("Invoke-RestMethod `", gate_script)
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
-        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 8", gate_script)
+        self.assertIn("RETRIEVAL_INDEX_CACHE_HIT", gate_step.get("env", {}))
+        self.assertIn("python -B ingest.py --stats", gate_script)
+        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 16", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDERR_LOG=$stderrLog", gate_script)
         self.assertLess(
-            gate_script.index("python -B ingest.py --rebuild"),
+            gate_script.index("python -B ingest.py --stats"),
             gate_script.index("run_non_android_regression_gate.ps1"),
         )
         self.assertIn("finally", gate_script)
