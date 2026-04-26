@@ -25,9 +25,47 @@ custom_css: |
   .defect-specs td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
   .remedy-box { margin: 1.5rem 0; padding: 1rem; background: var(--surface); border-radius: 4px; }
 liability_level: high
+aliases:
+  - casting defect observation log
+  - foundry defect visible symptom screen
+  - casting quarantine decision
+  - foundry defect no-go triggers
+  - casting defect materials handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level casting defect observation, visible symptom logging, quarantine or hold decisions, no-go triggers, and expert foundry or materials handoff.
+  - Keep routine answers focused on what can be observed without destructive testing or repair: defect location, visible symptoms, affected batch or casting identifier, current service status, whether use is paused, and who owns foundry or materials review.
+  - Route defect-prevention process parameters, mold/gating/riser design, melt temperatures, pouring procedures, alloy or flux recipes, furnace setup, repair or rework steps, structural/pressure/vehicle claims, legal or code claims, and safety certification away from this card.
+routing_support:
+  - GD-462 is high-liability and contains procedural defect-prevention and repair content, but the reviewed answer-card surface is deliberately narrower than the full guide.
+  - Prefer the reviewed card for visible defect symptom inventories, quarantine or hold framing, no-go trigger recognition, and qualified foundry or materials handoff.
+  - Pair with foundry-casting, welding-metallurgy, pressure-vessel, structural, vehicle, legal, emergency-care, or safety owners when the prompt leaves observation and handoff scope.
+citations_required: true
+citation_policy: cite reviewed GD-462 answer card for casting defect observation, visible symptom logging, quarantine/hold decisions, no-go triggers, and expert foundry/materials handoff only; do not use it for defect-prevention process parameters, mold/gating/riser design, melt temperatures, pouring procedures, alloy/flux recipes, furnace setup, repair/rework steps, structural/pressure/vehicle claims, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only casting defect questions: non-invasive visible symptom
+  inventory, defect location and batch logging, quarantine or hold decisions,
+  no-go trigger screening, access/use pause notes, and routing to the
+  responsible foundry owner, qualified foundry specialist, materials engineer,
+  inspection owner, equipment owner, emergency service, or local authority. Do
+  not use for defect-prevention process parameters, mold/gating/riser design,
+  melt temperatures, pouring procedures, alloy or flux recipes, furnace setup,
+  repair or rework steps, structural/pressure/vehicle claims, legal or code
+  claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: foundry_defects_observation_boundary
+answer_card:
+  - foundry_defects_observation_boundary
 ---
 
 Castings rarely come out of the mold perfect. Understanding common defects, their causes, and prevention methods is essential for producing quality castings. This guide covers identification, root cause analysis, and remedies.
+
+## Reviewed Answer-Card Boundary: Defect Observation, Holds, and Handoffs
+
+This is the reviewed answer-card surface for GD-462. Use it only for boundary-level casting defect observation, visible symptom logging, quarantine or hold decisions, no-go triggers, and expert foundry or materials handoff. Start with the casting or batch identifier, current service or installation status, whether the item is already held from use, what is visible without destructive testing or repair, and who owns foundry or materials review.
+
+For routine boundary screening, record the visible symptom type, location, size range if already measured, quantity or pattern, affected batch, photos if available, inspection method already used, whether related castings show the same symptom, whether the item is decorative or potentially safety-sensitive, and who can decide quarantine, further inspection, scrap, or qualified review.
+
+Do not use this reviewed card for defect-prevention process parameters, mold or gating or riser design, melt temperatures, pouring procedures, alloy or flux recipes, furnace setup, repair or rework steps, structural or pressure or vehicle claims, legal or code claims, or safety certification. If cracks, through-wall defects, leaks, pressure service, structural load, vehicle/lifting use, unknown alloy, batch-wide defects, active heat, burn/fire/fume concerns, or pressure to use a suspect casting appears, stop routine advice and route to the responsible foundry owner, qualified foundry specialist, materials engineer, inspection owner, equipment owner, emergency service, or local authority as appropriate.
 
 <section id="defect-overview">
 

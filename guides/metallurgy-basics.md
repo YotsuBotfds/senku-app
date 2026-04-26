@@ -44,6 +44,33 @@ related:
   - charcoal-fuels
   - tool-restoration-salvage
   - blacksmithing
+aliases:
+  - metallurgy material identification boundary
+  - unknown metal condition log
+  - scrap metal uncertainty handoff
+  - material identity planning checklist
+  - visible metal condition record
+  - qualified metallurgist shop owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level metallurgy planning: material identification context, visible condition logging, uncertainty boundaries, labeling, access control, and qualified materials specialist or shop-owner handoff.
+  - Keep routine answers focused on what the item is, where it came from, how it is labeled, what can be observed without destructive testing or heating, what remains uncertain, whether the item is safety-critical, and who owns follow-up.
+  - Route heat-treatment instructions, alloy recipes, smelting, casting, forging, phase-diagram calculations, destructive testing, repair decisions, structural/vehicle/pressure claims, legal/code claims, and safety certification away from this card.
+routing_support:
+  - Use blacksmithing or scrap-metal-identification only for first-pass nonprocedural sorting context; do not use this reviewed card for heating, forging, or field-test procedures.
+  - Use foundry-casting, steel-making, welding-metallurgy, or tool-hardening-edges only when their reviewed boundary cards are the better owner for foundry readiness, steelmaking process boundaries, weld condition handoff, or hardened-tool quarantine.
+  - Pair with the responsible shop owner, qualified materials specialist, metallurgist, engineer, or safety owner when material identity, service context, or consequences of failure are uncertain.
+citations_required: true
+citation_policy: cite reviewed GD-240 answer card for conceptual material-identification planning, visible condition logging, uncertainty boundaries, and qualified materials/shop owner handoff only; do not use it for heat-treatment instructions, alloy recipes, smelting/casting/forging procedures, phase-diagram calculations, destructive testing, repair decisions, structural/vehicle/pressure claims, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only metallurgy fundamentals questions where the safe answer
+  is to scope material identity, source labels, visible condition, uncertainty,
+  current service, and owner handoff. Do not use for heat treatment, alloy
+  formulation, smelting, casting, forging, destructive tests, repair approval,
+  structural, vehicle, pressure, legal/code, or certification decisions.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: metallurgy_basics_material_identification_boundary
+answer_card:
+  - metallurgy_basics_material_identification_boundary
 read_time: 12
 word_count: 9450
 last_updated: '2026-02-19'

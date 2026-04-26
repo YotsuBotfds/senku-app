@@ -23,6 +23,38 @@ word_count: 5833
 last_updated: '2026-02-18'
 version: '1.1'
 liability_level: high
+aliases:
+  - non-ferrous metal inventory
+  - copper brass aluminum scrap sorting
+  - non-ferrous visible hazard screen
+  - lead zinc fume red flags
+  - mixed non-ferrous scrap labels
+  - non-ferrous owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level non-ferrous material inventory, visible contamination, corrosion, fume, and fire red flags, intended-use questions, sorting and labeling, and owner handoff.
+  - Keep routine answers non-procedural: identify the material or scrap category if already known, source labels, intended use, visible contamination or corrosion, lead or zinc concern, fume or fire red flags, storage separation, and who owns follow-up.
+  - Route melting, casting, annealing, forging, alloy recipes, flux or chemical handling, temperatures, furnace or torch operation, electrical, structural, pressure, food-contact, calculation, legal/environmental, and safety-certification claims away from this card.
+routing_support:
+  - scrap-metal-identification for broader non-procedural scrap recognition and sorting before any use decision.
+  - foundry-casting for casting-shop ownership and qualified foundry handoff when molten-metal work, molds, pouring, or foundry readiness are requested.
+  - welding-metallurgy for weldability or joined-metal process ownership when the prompt asks about welding metallurgy rather than inventory.
+  - chemical-safety or emergency-care owners when lead, zinc, fumes, fire, burns, chemical exposure, or symptoms dominate the prompt.
+citations_required: true
+citation_policy: cite reviewed GD-281 answer card only for boundary-level non-ferrous material inventory, visible contamination/corrosion/fume/fire red flags, intended-use questions, sorting/labeling, and owner handoff; do not use it for melting, casting, annealing, forging, alloy recipes, flux/chemical handling, temperatures, furnace/torch operation, electrical/structural/pressure/food-contact claims, calculations, legal/environmental claims, or safety certification.
+applicability: >
+  Use for boundary-only non-ferrous metal questions: material inventory,
+  intended-use questions, visible contamination or corrosion screening, lead,
+  zinc, fume, and fire red flags, sorting and labeling, storage separation, and
+  routing to the responsible material owner, qualified metalworking owner,
+  chemical-safety owner, fire-safety owner, emergency services, or local
+  authority. Do not use for melting, casting, annealing, forging, alloy
+  recipes, flux or chemical handling, temperatures, furnace or torch operation,
+  electrical, structural, pressure, or food-contact determinations,
+  calculations, legal or environmental claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: non_ferrous_metalworking_inventory_boundary
+answer_card:
+  - non_ferrous_metalworking_inventory_boundary
 ---
 
 ## Overview
@@ -34,6 +66,16 @@ Non-ferrous metals—copper, tin, bronze, brass, lead, and aluminum—are invalu
 :::
 
 Non-ferrous metals resist oxidation better than iron, making them ideal for vessels, pipes, and maritime applications. In post-industrial settings, salvaged copper, brass, and aluminum are abundant, providing raw material without mining.
+
+---
+
+## Reviewed Answer-Card Boundary: Inventory, Red Flags, and Handoffs
+
+This is the reviewed answer-card surface for GD-281. Use it only for boundary-level non-ferrous material inventory, visible contamination, corrosion, fume, and fire red flags, intended-use questions, sorting and labeling, and owner handoff.
+
+Start by recording what material or scrap category is claimed or labeled, the source and owner, the intended use, storage or separation status, visible contamination or corrosion, missing labels, lead or zinc concern, fume or fire red flags, and who can authorize qualified review. Keep answers at observation, documentation, sorting, labeling, red-flag, and handoff level.
+
+Do not use this card for melting, casting, annealing, forging, alloy recipes, flux or chemical handling, temperatures, furnace or torch operation, electrical, structural, pressure, or food-contact claims, calculations, legal or environmental claims, or safety certification. If a prompt includes unknown or mixed scrap, suspected lead contamination, zinc or brass fume concern, active fumes or fire, chemical residue, corrosion that affects intended use, missing source labels, pressure to use material before review, symptoms of exposure, burn injury, or a request to declare material safe for a specific engineered or food-contact use, stop routine sorting and hand off to the responsible material owner, qualified metalworking owner, chemical-safety owner, fire-safety owner, emergency services, or local authority as appropriate.
 
 ---
 
@@ -1242,4 +1284,3 @@ Without thermometers, metal color indicates temperature. Learn these visual cues
 :::
 
 </section>
-

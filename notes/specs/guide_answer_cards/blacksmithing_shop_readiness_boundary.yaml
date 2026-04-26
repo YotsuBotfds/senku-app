@@ -1,0 +1,237 @@
+card_id: blacksmithing_shop_readiness_boundary
+guide_id: GD-224
+slug: blacksmithing
+title: Blacksmithing
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for blacksmith-shop readiness, forge-area hazard screening, access control, material labeling, tool or workpiece condition notes, or owner handoff before blacksmithing work.
+  - A user reports visible hazards around a forge or hot-work area: smoke, fumes, carbon monoxide concern, active fire, burn history, combustibles, damaged tools, cracked workpieces, unknown scrap, coatings, plating, chemical labels, residue, or bystander access.
+  - A user needs a non-procedural stop-work or handoff checklist for a responsible shop owner, experienced blacksmith, qualified metalworking expert, fire-safety owner, chemical-safety owner, emergency service, or local authority.
+  - The question is about observation, documentation, red-flag recognition, labeling, access control, and handoff, not forging technique or process design.
+required_first_actions:
+  - Start with boundary-only readiness and non-invasive observation; do not provide forging steps, heat colors or temperatures, quenching or tempering instructions, forge operation, hammering technique, tooling construction, welding, repair procedures, calculations, or certification advice.
+  - Identify the shop area, responsible owner or experienced blacksmith, current hot-work status, bystander access, material/source labels, visible hazards, tool and workpiece condition, and whether work is already paused.
+  - Screen no-go triggers before routine planning; if present, stop routine advice and route to the responsible shop owner, experienced blacksmith, qualified metalworking expert, fire-safety owner, chemical-safety owner, emergency service, or local authority.
+  - Hand off forging steps, heat colors or temperatures, quenching or tempering, fuel or forge operation, hammering technique, tooling construction, welding, repair procedures, PPE guarantees, calculations, legal/code claims, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - carbon monoxide
+      - CO symptoms
+      - headache
+      - dizziness
+      - nausea
+      - confusion
+      - smoke
+      - fumes
+      - poor ventilation
+    required_actions:
+      - Treat as a fume or carbon-monoxide red-flag screen; stop routine shop-readiness advice and route to fresh-air, responsible-owner, emergency, or fire-safety handoff without giving forge-operation guidance.
+  - trigger_terms:
+      - unknown scrap
+      - unlabeled scrap
+      - mystery metal
+      - coating
+      - plated
+      - paint
+      - chemical label
+      - residue
+      - battery
+      - cast iron
+    required_actions:
+      - Keep the answer to material/source labeling, do-not-heat screening, segregation, and qualified material-owner handoff; do not infer forgeability or provide heating, testing, or forging steps.
+  - trigger_terms:
+      - cracked tongs
+      - damaged tongs
+      - loose hammer
+      - cracked handle
+      - mushroomed hammer
+      - cracked workpiece
+      - brittle
+      - sparks from work
+      - burn
+      - bystanders
+    required_actions:
+      - Treat as stop-work or owner-handoff territory; document the visible condition, restrict access, and route to responsible shop or emergency ownership before any continuation decision.
+first_actions:
+  - Classify the request as shop readiness, visible hazard screen, tool/workpiece condition inventory, heat/fire/fume red-flag screen, material labeling, access control, or owner/expert handoff.
+  - Record the shop area, date, observer, owner or responsible blacksmith, current hot-work status, whether work is paused, bystander access, fire perimeter status, ventilation or fume concern, and who can authorize review.
+  - From a safe non-invasive vantage point, note smoke, fumes, CO concern, active fire, combustibles, burn history, hot-work activity, blocked paths, damaged or suspect tongs, loose or cracked hammer handles, mushroomed hammer heads, cracked or suspect workpieces, and unlabeled or unknown materials.
+  - Record material and source labeling status: known stock, unknown scrap, coated, painted, plated, chemical-labeled, battery-like, residue-contaminated, cast or brittle-looking pieces, and who is responsible for verifying uncertain stock before any heat decision.
+  - End with owner, experienced blacksmith, qualified metalworking expert, fire-safety owner, chemical-safety owner, emergency service, or local-authority routing whenever hazards, labels, ownership, access control, or readiness are uncertain.
+urgent_red_flags:
+  - Carbon monoxide concern, smoke or fume buildup, poor ventilation, headache, dizziness, nausea, confusion, loss of consciousness, or any inhalation symptom during forge work.
+  - Active fire outside the intended work area, visible combustibles near hot work, blocked movement path, burn injury, uncontrolled bystanders, or unclear authority to pause work.
+  - Unknown, unlabeled, coated, painted, plated, chemical-labeled, battery-like, residue-contaminated, cast, brittle, or unverified scrap proposed for heating.
+  - Damaged or suspect tongs, loose hammer head, cracked hammer handle, mushroomed hammer, cracked workpiece, brittle-looking workpiece, or evidence that a workpiece was overheated or is sparking.
+  - Any request to certify that a forge area, material, tool, PPE, procedure, repair, or finished work is safe, code-compliant, or ready for use.
+forbidden_advice:
+  - Do not provide forging steps, drawing, upsetting, bending, twisting, punching, drifting, striking sequences, hammering technique, or work rhythm.
+  - Do not provide heat colors, process temperatures, heat-treatment procedures, quenching or tempering steps, annealing steps, spark-test procedure, hardness testing, weld testing, or metallurgical process parameters.
+  - Do not provide fuel selection, forge construction, forge dimensions, airflow, bellows, blower, fire-pot operation, fuel/air settings, charcoal production, fire management, or forge operation instructions.
+  - Do not provide tooling construction, hammer or chisel forging, forge welding, repair procedures, material recipes, calculations, legal/code claims, PPE guarantees, safety guarantees, or safety certification.
+  - Do not tell users to continue, restart, heat, quench, temper, strike, weld, repair, test, certify, or use a tool or workpiece after a red flag.
+do_not:
+  - Do not convert the source guide's forge construction, airflow, temperature, forging, welding, heat-treatment, testing, troubleshooting, or tool-manufacturing passages into reviewed-card instructions.
+  - Do not treat CO symptoms, smoke or fume concern, uncontrolled fire, burns, unknown scrap, unlabeled materials, damaged tools, cracked workpieces, or uncontrolled access as routine checklist items only.
+  - Do not infer material identity, tool fitness, forge readiness, PPE adequacy, ventilation adequacy, legal compliance, or safe-to-use status from appearance.
+  - Do not let readiness support become blacksmithing technique, process setup, repair instruction, calculation, legal advice, code advice, or certification.
+routine_boundary: >
+  Routine GD-224 reviewed-card answers are limited to blacksmith-shop
+  readiness, visible hazard screening, tool and workpiece condition notes,
+  heat/fire/fume red flags, material/source labeling, access control,
+  stop-work cues, and owner or expert handoff. The card exits for forging
+  steps, heat colors or temperatures, quenching or tempering, fuel or forge
+  operation, hammering technique, tooling construction, welding, repair
+  procedures, PPE guarantees, calculations, legal/code claims, and safety
+  certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but appears to involve blacksmith-shop readiness
+  or a forge-area safety decision, provide a conservative observation,
+  labeling, access-control, no-go, and handoff checklist; ask for owner,
+  current hot-work status, bystander access, visible hazards, material labels,
+  and no-go triggers; and avoid all forging, heat-treatment, forge-operation,
+  repair, calculation, legal, code, PPE-guarantee, or certification advice.
+clarifying_questions:
+  - Are you trying to inventory readiness, document visible hazards, label materials, decide whether to pause work, restrict access, or identify the owner for handoff?
+  - Is any forge or hot-work activity planned or active, and who is the responsible shop owner or experienced blacksmith?
+  - What is visible without touching tools, stock, hot metal, or forge equipment: smoke, fumes, CO concern, active fire, combustibles, damaged tools, cracked workpieces, bystanders, blocked paths, or missing labels?
+  - Are all stock pieces labeled by source and material, or are any unknown, coated, painted, plated, chemical-labeled, battery-like, residue-contaminated, cast, brittle, or unverified?
+  - Is anyone asking for forging steps, heat colors or temperatures, quenching, tempering, forge operation, hammering, welding, repair, calculations, PPE guarantees, legal/code claims, or certification?
+applicability:
+  owner: blacksmith-shop readiness, visible hazard screening, tool/workpiece condition, material labeling, access control, and owner or expert handoff
+  use_when:
+    - blacksmith_shop_readiness_inventory
+    - forge_area_visible_hazard_screen
+    - tool_or_workpiece_condition_log
+    - heat_fire_fume_red_flag_screen
+    - material_source_labeling
+    - access_control_or_owner_expert_handoff
+  do_not_use_when:
+    - forging_steps_or_hammering_technique
+    - heat_colors_temperatures_or_heat_treatment
+    - quenching_tempering_or_annealing
+    - fuel_forge_airflow_or_bellows_operation
+    - tooling_construction_or_forge_welding
+    - repair_procedure_or_quality_testing
+    - calculation_legal_code_ppe_guarantee_or_safety_certification
+  handoff:
+    - metallurgy-basics for non-procedural material identification uncertainty and unknown, coated, plated, cast, or unlabeled stock.
+    - foundry-casting for molten-metal, casting, mold, crucible, or pouring-area concerns.
+    - tool-hardening-edges for finished-tool condition, brittle-edge, prior overheating, and stop-use questions.
+    - chemical-safety, fire-safety owner, emergency services, local authority, responsible shop owner, experienced blacksmith, or qualified metalworking expert for exposure, fire, injury, ownership, legal, or certification questions.
+actions:
+  required:
+    - classify the request as readiness inventory, visible hazard screen, tool/workpiece condition, material labeling, access control, stop-work decision, or owner handoff
+    - begin with non-invasive observation, current hot-work status, and owner identification
+    - screen no-go triggers before routine readiness planning
+    - hand off forging, heat-treatment, forge operation, tooling construction, welding, repair, calculation, legal/code, PPE-guarantee, and certification requests
+  standard:
+    - provide a shop readiness and visible hazard log template
+    - include material/source labels, tool and workpiece condition, ventilation/fume/fire concerns, bystander access, stop-work authority, and pending expert review
+    - name responsible shop owner, experienced blacksmith, qualified metalworking expert, fire-safety owner, chemical-safety owner, emergency service, or local authority when red flags or uncertainty appear
+forbidden:
+  - forging steps, hammering technique, work rhythm, drawing, upsetting, bending, twisting, punching, drifting, or shaping procedure
+  - heat colors, temperatures, heat-treatment parameters, quenching, tempering, annealing, spark testing, hardness testing, or weld testing
+  - fuel choice, forge construction, forge dimensions, airflow, bellows, blower, fire-pot, fuel/air, charcoal production, fire management, or forge operation
+  - tooling construction, forge welding, repair procedure, material recipe, calculation, legal/code claim, PPE guarantee, safety guarantee, or safety certification
+fallback:
+  - If a prompt mixes readiness with blacksmithing procedure, answer only the readiness, red-flag, labeling, access-control, and handoff part.
+  - If material identity, source, owner, hot-work status, ventilation, tool condition, workpiece condition, fire perimeter, or access control is unknown, document that uncertainty and route before work proceeds.
+  - If CO or fume concern, smoke, fire, burns, unknown scrap, unlabeled materials, damaged tools, cracked workpieces, uncontrolled bystanders, or pressure to continue is present, stop routine readiness framing and escalate.
+output:
+  required:
+    - readiness category
+    - non-invasive shop-area inventory
+    - visible hazard screen
+    - tool and workpiece condition fields
+    - material and source label fields
+    - heat, fire, and fume red-flag screen
+    - access-control note
+    - owner, expert, emergency, or authority handoff
+  prohibited:
+    - forging instruction
+    - heat color or temperature guidance
+    - quenching, tempering, or heat-treatment procedure
+    - fuel, forge, airflow, bellows, or fire operation instruction
+    - hammering, welding, tooling construction, repair, or testing procedure
+    - calculation, legal/code claim, PPE guarantee, or safety certification
+routing_tests:
+  positive:
+    - prompt: "Make a blacksmith shop readiness log for visible hazards, material labels, damaged tools, bystander access, and who can pause work."
+      expect: blacksmithing_shop_readiness_boundary
+    - prompt: "What should we document before deciding whether to stop forge work because of fumes, unknown scrap, a loose hammer head, and bystanders?"
+      expect: blacksmithing_shop_readiness_boundary
+  near_miss:
+    - prompt: "Show me the steps and heat color for drawing out a taper."
+      expect_handoff: experienced_blacksmith_or_metalworking_process_owner
+    - prompt: "What quench and temper colors should I use for a chisel?"
+      expect_handoff: qualified_toolmaker_or_heat_treatment_owner
+    - prompt: "Design a side-blast forge and tell me how to run the airflow."
+      expect_handoff: qualified_forge_or_fire_safety_owner
+    - prompt: "Teach me forge welding technique for two bars."
+      expect_handoff: experienced_blacksmith_or_welding_process_owner
+  boundary:
+    - prompt: "People want to heat unlabeled painted scrap while the shop has smoke buildup and no clear owner."
+      expect: stop_work_owner_handoff_not_routine_readiness
+    - prompt: "Can you certify this forge setup, PPE, and repaired hammer are safe for beginners?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-224-reviewed-answer-card-boundary
+  - gd-224-co-danger-warning
+  - gd-224-mystery-scrap-routing
+  - gd-224-field-sort-triage
+  - gd-224-symptom-first-recognition
+  - gd-224-hand-positions-and-safety
+  - gd-224-safety-protocols
+source_sections:
+  - guide: GD-224
+    slug: blacksmithing
+    title: Blacksmithing
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "Carbon Monoxide (CO) Poisoning Hazard"
+      - "Mystery scrap, forgeability question, or \"what metal is this?\" Start here."
+      - "#overview > Field-sort triage (3-step first pass)"
+      - "#overview > Quick routing: complaint-first / task-first checklist"
+      - "#overview > Symptom-first recognition: in-progress problems"
+      - "#hand-positions-safety > Hand Positions & Safety"
+      - "#safety > Safety Protocols & Hazard Management"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-224
+    must_include:
+      - "This is the reviewed answer-card surface for GD-224."
+      - "Use it only for boundary-level blacksmith-shop readiness, visible hazard screening, tool and workpiece condition, heat/fire/fume red flags, access control, labeling, and owner or expert handoff."
+      - "Do not use this reviewed card for forging steps, heat colors or temperatures, quenching or tempering, fuel or forge operation, hammering technique, tooling construction, welding, repair procedures, PPE guarantees, calculations, legal or code claims, or safety certification."
+  - name: co_warning_context_remains
+    guide: GD-224
+    must_include:
+      - "Carbon monoxide (CO) is produced by incomplete combustion in forges."
+      - "CO is odorless and colorless."
+      - "If anyone shows symptoms, move to fresh air immediately."
+  - name: mystery_scrap_boundary_context_remains
+    guide: GD-224
+    must_include:
+      - "Mystery scrap, forgeability question, or \"what metal is this?\" Start here."
+      - "before touching it with tongs or putting it in a forge"
+      - "If any are present"
+      - "do not heat; set aside"
+  - name: tool_and_fume_safety_context_remains
+    guide: GD-224
+    must_include:
+      - "Check handle for cracks before each use"
+      - "Coal smoke toxic"
+      - "Fume sources"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-224 as a boundary-only blacksmith-shop readiness,
+  visible hazard screening, tool/workpiece condition, heat/fire/fume red flag,
+  material/source labeling, access-control, and owner or expert handoff card.
+  It deliberately excludes forging steps, heat colors or temperatures,
+  quenching or tempering, fuel or forge operation, hammering technique,
+  tooling construction, welding, repair procedures, PPE guarantees,
+  calculations, legal/code claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.

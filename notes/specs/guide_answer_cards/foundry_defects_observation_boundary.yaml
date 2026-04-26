@@ -1,0 +1,228 @@
+card_id: foundry_defects_observation_boundary
+guide_id: GD-462
+slug: foundry-defects-prevention
+title: Foundry Defect Analysis
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks how to document visible casting defects before deciding whether a casting, batch, or related equipment should be held from use or reviewed.
+  - A prompt concerns visible symptoms such as porosity, shrinkage voids, cold shuts, misruns, cracks, surface defects, sand inclusions, metal penetration, dimensional mismatch, leaks, or repeated defects across a batch.
+  - A user needs a non-procedural defect observation log, quarantine or hold decision frame, no-go trigger screen, or expert foundry or materials handoff.
+  - A user asks who should inspect or own follow-up for a suspect casting without asking for prevention parameters, process design, repair, certification, or return-to-service approval.
+required_first_actions:
+  - Start with boundary-level observation only; do not provide defect-prevention process parameters, mold/gating/riser design, melt temperatures, pouring procedures, alloy or flux recipes, furnace setup, repair or rework steps, structural/pressure/vehicle claims, legal/code claims, or safety certification.
+  - Identify the casting or batch, owner, current service or installation status, whether use is paused, visible symptoms, inspection method already used, related-batch observations, and who can authorize qualified review.
+  - Screen no-go triggers before routine logging; if present, stop routine advice and route to the responsible foundry owner, qualified foundry specialist, materials engineer, inspection owner, equipment owner, emergency service, or local authority.
+  - Hand off process troubleshooting, prevention changes, repair/rework, destructive testing, pressure or structural acceptance, vehicle/lifting use, code/legal decisions, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - crack
+      - cracked
+      - leak
+      - leaking
+      - through wall
+      - pressure
+      - hydraulic
+      - pneumatic
+      - structural
+      - load bearing
+      - vehicle
+      - lifting
+      - crane
+      - unknown alloy
+      - batch
+      - repeated
+      - certify
+    required_actions:
+      - Treat as a no-go or qualified-review screen, not routine defect discussion.
+      - Keep the answer limited to visible symptom logging, hold/quarantine status, affected item identification, access/use control, and qualified owner handoff.
+  - trigger_terms:
+      - prevent
+      - fix the process
+      - pouring temperature
+      - melt temperature
+      - gating
+      - riser
+      - sprue
+      - vent
+      - mold design
+      - flux
+      - alloy recipe
+      - degas
+      - furnace setup
+      - repair
+      - weld
+      - plug
+      - impregnate
+      - pressure test
+    required_actions:
+      - Give a boundary and do not provide prevention parameters, casting process design, recipes, furnace setup, repair/rework, testing procedure, acceptance, legal/code, or certification instructions from this card.
+first_actions:
+  - Build a casting defect observation log with casting identifier, batch or heat identifier if known, date, observer, owner or maintainer, current service or installation status, and whether the item or batch is held from use.
+  - Record visible symptoms from a safe, non-invasive vantage point: surface holes, rounded porosity, irregular voids, cracks, seams or cold-shut lines, incomplete fill or misrun areas, rough sand inclusions, metal penetration, dimensional mismatch, discoloration, leak evidence, repeated pattern, and affected location.
+  - Record context without process advice: inspection method already used, photos or sketches, approximate size if already measured, quantity, whether related castings show the same symptom, known material label or unknown alloy status, and any prior repair or heat exposure history.
+  - Identify no-go triggers and ownership: pressure service, structural load path, vehicle or lifting use, public/shared occupancy, through-wall defect, active leak, cracks, batch-wide recurrence, unknown material, burn/fire/fume concern, or pressure to use a suspect casting.
+  - End with the responsible foundry owner, qualified foundry specialist, materials engineer, inspection owner, equipment owner, emergency service, or local authority when defects, service context, ownership, or acceptance are uncertain.
+urgent_red_flags:
+  - Cracks, through-wall defects, active leaks, suspected cold shuts in service areas, large voids, missing sections, severe distortion, or repeated defects across a batch.
+  - Any suspect casting in pressure, hydraulic, pneumatic, structural, vehicle, lifting, fuel, public/shared occupancy, or other safety-sensitive service.
+  - Unknown alloy, undocumented heat or batch, unknown prior repair, visible repair over a defect, material identity uncertainty, or missing owner documentation.
+  - Active heat, burn injury, fire, fumes, chemical exposure, or uncontrolled access around foundry inspection or handling.
+  - Any request to approve use, return a casting to service, repair/rework it, pressure-test it, load-test it, certify it, or make legal/code/pass-fail claims.
+forbidden_advice:
+  - Do not provide defect-prevention process parameters, process troubleshooting steps, mold design, gating, riser, sprue, vent sizing, chills, sand chemistry, cooling-rate controls, melt temperatures, pouring procedures, or furnace setup.
+  - Do not provide alloy recipes, flux recipes, degassing steps, charge preparation, material substitutions, heat-treatment parameters, or acceptance thresholds.
+  - Do not provide repair or rework steps such as welding, grinding out defects, plugging, drilling, impregnation, machining, pressure sealing, heat treatment, or return-to-service preparation.
+  - Do not provide structural, pressure-vessel, hydraulic, pneumatic, vehicle, lifting, code/legal, compliance, inspection-pass, safe-to-use, or safety-certification claims.
+  - Do not tell users to continue using, install, pressurize, load, drive, lift with, repair, rework, test destructively, or certify a suspect casting after a no-go trigger.
+do_not:
+  - Do not convert the source guide's prevention strategy, root-cause analysis, pouring, riser, cooling, sand, metal temperature, or repair passages into reviewed-card instructions.
+  - Do not treat cracks, leaks, pressure service, structural load, vehicle/lifting use, unknown alloy, or batch-wide defects as routine cosmetic issues.
+  - Do not infer casting soundness, material identity, pressure tightness, load capacity, roadworthiness, code compliance, repair adequacy, or safety from appearance.
+  - Do not let observation support become process troubleshooting, defect prevention, repair guidance, acceptance testing, legal advice, or certification.
+routine_boundary: >
+  Routine GD-462 reviewed-card answers are limited to casting defect
+  observation, visible symptom logging, quarantine or hold decisions, no-go
+  trigger screening, access/use pause notes, and expert foundry or materials
+  handoff. The card exits for defect-prevention process parameters,
+  mold/gating/riser design, melt temperatures, pouring procedures, alloy or
+  flux recipes, furnace setup, repair or rework steps, structural/pressure/
+  vehicle claims, legal or code claims, and safety certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt appears to involve a suspect casting
+  or casting defect, provide a conservative visible symptom and hold/handoff
+  checklist; ask for casting or batch identity, service status, visible
+  symptoms, known material labels, whether use is paused, and who owns qualified
+  review; and avoid process parameters, repair, acceptance, legal/code, and
+  certification advice.
+clarifying_questions:
+  - What casting or batch is involved, who owns it, and is it already held from use?
+  - Is the casting decorative, noncritical, or in pressure, structural, vehicle, lifting, fuel, public/shared, or other safety-sensitive service?
+  - What is visible without destructive testing or repair: holes, rounded porosity, irregular voids, cracks, cold-shut seams, incomplete fill, rough inclusions, metal penetration, dimensional mismatch, leak evidence, or repeated pattern?
+  - What material identity, batch or heat information, prior repair history, inspection method, photos, and related-casting observations are available?
+  - Are you asking for an observation and handoff log, or for prevention parameters, mold/gating/riser design, temperatures, pouring steps, recipes, furnace setup, repair/rework, acceptance, legal/code, or certification advice?
+fallback:
+  - If the prompt mixes defect observation with process troubleshooting, answer only the visible symptom logging, hold/quarantine, no-go, and handoff part.
+  - If ownership, service status, material identity, batch identity, inspection method, or acceptance authority is unknown, document that uncertainty and route before use.
+  - If cracks, leaks, through-wall defects, pressure/structural/vehicle/lifting service, unknown alloy, batch-wide recurrence, burn/fire/fume concern, or pressure to proceed appears, stop routine logging and escalate.
+fallback_handoff_language:
+  - "This GD-462 reviewed card can help log visible casting defects, identify no-go triggers, decide what should stay on hold, and prepare a handoff."
+  - "It cannot provide defect-prevention process parameters, mold/gating/riser design, melt temperatures, pouring procedures, alloy or flux recipes, furnace setup, repair or rework steps, structural/pressure/vehicle claims, legal/code claims, or certification."
+  - "When a casting has cracks, leaks, through-wall defects, unknown material, batch-wide recurrence, or safety-sensitive service, treat this as a hold record for a qualified foundry specialist, materials engineer, inspection owner, equipment owner, or local authority."
+applicability:
+  owner: casting defect observation, visible symptom logging, quarantine/hold decisions, no-go triggers, and expert foundry/materials handoff
+  use_when:
+    - casting_defect_visible_symptom_log
+    - suspect_casting_quarantine_or_hold
+    - batch_defect_observation_inventory
+    - casting_no_go_trigger_screen
+    - foundry_materials_inspection_owner_handoff
+  do_not_use_when:
+    - defect_prevention_process_parameters
+    - mold_gating_riser_or_pouring_design
+    - melt_temperature_alloy_flux_or_furnace_setup
+    - repair_rework_or_return_to_service
+    - structural_pressure_vehicle_legal_code_or_certification_claim
+actions:
+  required:
+    - classify the request as visible symptom logging, defect inventory, quarantine/hold decision, no-go trigger screen, access/use control, or qualified-owner handoff
+    - begin with current service status, owner, and whether use is paused
+    - document visible symptoms and material/batch uncertainty without process troubleshooting or repair instructions
+    - hand off prevention, design, recipe, furnace, repair, acceptance, structural, pressure, vehicle, legal/code, and certification requests
+  standard:
+    - provide a casting defect observation and hold log template
+    - include casting identifier, batch, owner, service status, visible symptoms, location, related castings, material labels, no-go triggers, and handoff owner
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_visible_defect_log: true
+  include_quarantine_hold_decision_frame: true
+  include_material_batch_fields: true
+  include_expert_handoff: true
+  forbid_process_prevention_or_repair: true
+routing_tests:
+  positive:
+    - prompt: "Make an observation log for a casting with visible porosity, cracks, batch ID, and whether it should stay on hold before a materials engineer reviews it."
+      expect: foundry_defects_observation_boundary
+    - prompt: "What should I document about repeated sand inclusions and cold-shut seams before handing this batch to the foundry owner?"
+      expect: foundry_defects_observation_boundary
+    - prompt: "We found a leak stain and surface voids on a cast housing; give me a no-go and handoff checklist, not repair steps."
+      expect: foundry_defects_observation_boundary
+  near_miss:
+    - prompt: "Design the gates and risers so I do not get shrinkage porosity."
+      expect_handoff: qualified_casting_process_owner
+    - prompt: "What pouring temperature and flux should I use to prevent gas porosity?"
+      expect_handoff: qualified_foundry_process_owner
+    - prompt: "Show me how to weld and plug a leaking casting."
+      expect_handoff: qualified_repair_or_materials_owner
+    - prompt: "Can this cast pressure part pass inspection?"
+      expect_handoff: pressure_equipment_inspection_owner
+  boundary:
+    - prompt: "The casting has cracks and a through-wall leak, but people want to install it in a hydraulic system."
+      expect: no_go_hold_and_qualified_handoff_not_card_approval
+    - prompt: "Can you certify this vehicle bracket casting is safe to use?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-462-reviewed-answer-card-boundary
+  - gd-462-defect-overview
+  - gd-462-visual-inspection
+  - gd-462-root-cause-analysis-process
+  - gd-462-repair-of-castings
+  - gd-462-conclusion
+source_sections:
+  - guide: GD-462
+    slug: foundry-defects-prevention
+    title: Foundry Defect Analysis
+    sections:
+      - "#reviewed-answer-card-boundary-defect-observation-holds-and-handoffs"
+      - "#defect-overview"
+      - "#inspection-detection > Visual Inspection"
+      - "#defect-analysis"
+      - "#repair"
+      - "#conclusion"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-462
+    must_include:
+      - "This is the reviewed answer-card surface for GD-462."
+      - "Use it only for boundary-level casting defect observation"
+      - "visible symptom logging"
+      - "quarantine or hold decisions"
+      - "Do not use this reviewed card for defect-prevention process parameters"
+      - "safety certification"
+  - name: visual_defect_context_remains
+    guide: GD-462
+    must_include:
+      - "Foundry Defects Overview"
+      - "Gas porosity"
+      - "Shrinkage porosity"
+      - "Cold shuts"
+      - "Surface defects"
+      - "Visual Inspection"
+  - name: source_procedural_content_is_not_reviewed_card_authority
+    guide: GD-462
+    must_include:
+      - "Prevention strategy"
+      - "Root Cause Analysis Process"
+      - "Repair of Castings"
+      - "Prevention Summary"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-462 as a boundary-only foundry defect observation
+  card. It owns visible symptom logging, casting or batch quarantine/hold
+  decisions, no-go trigger screening, access/use pause notes, and expert foundry
+  or materials handoff. It deliberately excludes defect-prevention process
+  parameters, mold/gating/riser design, melt temperatures, pouring procedures,
+  alloy or flux recipes, furnace setup, repair or rework steps, structural,
+  pressure, or vehicle claims, legal or code claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.

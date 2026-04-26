@@ -16,6 +16,21 @@ related:
   - construction
   - metallurgy-basics
   - steel-making
+aliases:
+  - microstructure interpretation boundary
+  - phase diagram orientation checklist
+  - material record questions
+  - metallurgical uncertainty handoff
+  - steel phase red flags
+  - materials owner review
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level microstructure and phase-diagram orientation, material record questions, uncertainty language, and qualified materials owner handoff.
+  - Keep routine answers focused on what material or alloy record exists, whether composition and service history are known, what diagram or phase term the user is trying to understand, visible/documented failure concerns, and who owns the material decision.
+  - Route heat-treatment schedules, phase-fraction calculations as operational guidance, alloy design, furnace/quench procedures, destructive testing, structural/pressure/vehicle repair decisions, code/legal claims, and safety certification away from this card.
+routing_support:
+  - welding-metallurgy for weld, heat-affected-zone, fume/fire, and qualified welding-owner handoff concerns.
+  - steel-making for raw-material, furnace, molten-metal, steelmaking process, and foundry-style owner handoff concerns.
+  - tool-hardening-edges for hardened tool condition screening, brittle edge red flags, labeling, quarantine, and qualified toolmaker or metallurgist handoff.
 read_time: 16
 word_count: 3400
 last_updated: '2026-02-20'
@@ -25,7 +40,41 @@ custom_css: |
   .phase-specs td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
   .transformation-box { margin: 1.5rem 0; padding: 1rem; background: var(--surface); border-radius: 4px; }
 liability_level: high
+citations_required: true
+citation_policy: >
+  Cite GD-461 and its reviewed answer card only for conceptual
+  microstructure/phase-diagram orientation, material record questions,
+  uncertainty language, and qualified materials owner handoff. Do not use it
+  for heat-treatment schedules, phase-fraction calculations as operational
+  guidance, alloy design, furnace or quench procedures, destructive testing,
+  structural, pressure, or vehicle repair decisions, code/legal claims, or
+  safety certification.
+applicability: >
+  Use for boundary-only microstructure and phase-diagram orientation: naming
+  phases at a conceptual level, asking for composition, alloy standard, heat
+  history, service history, records, labels, uncertainty flags, and identifying
+  the qualified materials owner or metallurgist who should decide next steps.
+  Do not use for heat-treatment schedules, operational phase-fraction
+  calculations, alloy design, furnace/quench procedures, destructive testing,
+  structural/pressure/vehicle repair decisions, code/legal claims, or
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: microstructure_phase_diagrams_boundary_handoff
+answer_card:
+  - microstructure_phase_diagrams_boundary_handoff
 ---
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-461. Use it only for boundary-level microstructure and phase-diagram orientation, material record questions, uncertainty language, and qualified materials owner handoff.
+
+Start by identifying the material or alloy family if known, any grade or standard marking, carbon or alloy composition record, heat or service history, current use, owner or decision maker, the phase diagram or microstructure term being discussed, and what decision is pending. If records are missing, source history is uncertain, failure has occurred, or the part is structural, pressure-bearing, vehicle-related, lifting-related, public-facing, or otherwise high-consequence, keep the answer to documentation, uncertainty notes, use-status questions, and handoff to a qualified metallurgist, materials engineer, responsible equipment owner, or safety owner.
+
+Do not use this reviewed card for heat-treatment schedules, phase-fraction calculations as operational guidance, alloy design, furnace or quench procedures, destructive testing, structural, pressure, or vehicle repair decisions, code/legal claims, safe-to-use claims, or safety certification. If a prompt asks for those, answer only the conceptual orientation and handoff portion.
+
+</section>
+
 :::danger
 **Brittle material failure and structural collapse:** Incorrect heat treatment (over-hardening, inadequate tempering) produces brittle steel that shatters under impact instead of bending. A brittle axle breaks without warning; a brittle tool explodes when struck. Over-hardened springs lose elasticity and snap. Always follow precise temperature/time protocols. Verify hardness with file tests. A single over-hardened component can cause catastrophic failure of an entire machine or structure.
 :::

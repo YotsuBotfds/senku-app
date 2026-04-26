@@ -47,6 +47,37 @@ word_count: 5452
 last_updated: '2026-02-24'
 version: '1.1'
 liability_level: high
+aliases:
+  - blacksmith shop readiness
+  - forge area hazard screen
+  - blacksmithing stop work checklist
+  - hot work access control
+  - unknown scrap do not heat
+  - forge owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level blacksmith-shop readiness, visible hazard screening, tool and workpiece condition, heat/fire/fume red flags, access control, labeling, and owner or expert handoff.
+  - Keep routine answers non-procedural: identify the shop area, responsible owner, current hot-work status, visible hazards, material labels, tool or workpiece damage, bystander access, and who can pause or review the work.
+  - Route forging steps, heat colors or temperatures, quenching or tempering, fuel or forge operation, hammering technique, tooling construction, welding, repair procedures, PPE guarantees, calculations, legal/code claims, and safety certification away from this card.
+routing_support:
+  - metallurgy-basics for non-procedural material identity questions when unknown, coated, plated, cast, non-ferrous, or unlabeled stock is present.
+  - foundry-casting for molten-metal, casting, mold, crucible, or pour-area ownership and handoff.
+  - tool-hardening-edges for tool condition, brittle-edge, prior overheating, and stop-use handoff questions that are primarily about a finished tool.
+citations_required: true
+citation_policy: cite reviewed GD-224 answer card only for boundary-level blacksmith-shop readiness, visible hazard screening, tool/workpiece condition, heat/fire/fume red flags, access control, labeling, and owner or expert handoff; do not use it for forging steps, heat colors or temperatures, quenching or tempering, fuel or forge operation, hammering technique, tooling construction, welding, repair procedures, PPE guarantees, calculations, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only blacksmithing readiness questions: shop inventory,
+  visible hazard screening, tool and workpiece condition notes, heat/fire/fume
+  red flags, material labeling, access control, stop-work cues, and routing to
+  the responsible shop owner, experienced blacksmith, qualified metalworking
+  expert, fire-safety owner, chemical-safety owner, emergency service, or local
+  authority. Do not use for forging steps, heat colors or temperatures,
+  quenching or tempering, fuel or forge operation, hammering technique, tooling
+  construction, welding, repair procedures, PPE guarantees, calculations,
+  legal/code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: blacksmithing_shop_readiness_boundary
+answer_card:
+  - blacksmithing_shop_readiness_boundary
 ---
 
 :::danger
@@ -60,6 +91,18 @@ liability_level: high
 :::info-box
 **Mystery scrap, forgeability question, or "what metal is this?" Start here.** This is the first-stop scrap-ID and first-sort doorway for the blacksmithing, metallurgy, and steel-making family. Use this guide for solid-stock forging, welding, shaping, tempering, and heat treatment; if the job is fuel-making, charcoal/coke production, or ore-to-metal refining, hand off to <a href="../charcoal-fuels.html">Charcoal & Fuels</a> or <a href="../steel-making.html">Steel Making</a>. Run the cold-safe triage below before any heat, then keep the answer in the craft family: forgeable steel stays here, while cast iron, non-ferrous, plated, coated, or unidentifiable scrap hands off to <a href="../metallurgy-basics.html">Metallurgy Fundamentals</a>, <a href="../non-ferrous-metalworking.html">Non-Ferrous Metalworking</a>, or <a href="../foundry-casting.html">Foundry Casting</a>. If the piece belongs in steel-making rather than direct forging, see <a href="../steel-making.html">Steel Making</a>.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-224. Use it only for boundary-level blacksmith-shop readiness, visible hazard screening, tool and workpiece condition, heat/fire/fume red flags, access control, labeling, and owner or expert handoff.
+
+Start by recording the shop area, responsible owner or experienced blacksmith, current hot-work status, bystander access, material and source labels, visible tool and workpiece condition, ventilation or fume concern, fire perimeter status, and who has authority to pause work. Keep answers at observation, documentation, stop-work cue, access-control, and handoff level.
+
+Do not use this reviewed card for forging steps, heat colors or temperatures, quenching or tempering, fuel or forge operation, hammering technique, tooling construction, welding, repair procedures, PPE guarantees, calculations, legal or code claims, or safety certification. If a prompt includes unknown or unlabeled scrap, coatings, plating, chemical labels, residue, cracked workpieces, damaged tongs or hammers, active fire, smoke, fumes, carbon monoxide concern, burn injury, uncontrolled bystanders, unclear ownership, or pressure to continue despite a red flag, stop routine planning and hand off to the responsible shop owner, experienced blacksmith, qualified metalworking expert, fire-safety owner, chemical-safety owner, emergency service, or local authority as appropriate.
+
+</section>
 
 <section id="overview">
 

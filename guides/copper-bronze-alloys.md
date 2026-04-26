@@ -11,6 +11,22 @@ tags:
   - alloys
   - scrap
   - foundry
+aliases:
+  - copper alloy material screening
+  - bronze scrap source label checklist
+  - non ferrous alloy red flags
+  - copper bronze contamination handoff
+  - brass bronze identity boundary
+  - alloy intended use owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level copper, bronze, brass, or non-ferrous alloy material identity, scrap/source labeling, contamination or red-flag screening, intended-use questions, and qualified materials owner handoff.
+  - Keep routine answers non-procedural: identify the material or uncertainty, source labels, scrap history, visible contamination, intended use, public or critical exposure, documentation gaps, and who can authorize qualified review.
+  - Route alloy recipes or percentages, melting or casting steps, flux or chemical handling, temperatures, furnace or crucible operation, machining or corrosion-treatment procedures, potable-water, food-contact, electrical, structural, legal, code, and safety-certification claims away from this card.
+routing_support:
+  - metallurgy-basics for non-procedural metal identification concepts and uncertainty framing before material-use decisions.
+  - non-ferrous-metalworking for scrap sorting and shop-owner handoff boundaries without alloying, melting, or casting procedures.
+  - foundry-casting for qualified foundry ownership and handoff when molten-metal handling, molds, pouring, or casting procedures are requested.
+  - corrosion-chemistry-prevention for corrosion or patina questions that stay non-procedural and do not make service-life, potable-water, structural, or safety claims.
 icon: 🥉
 description: Copper smelting, scrap-driven alloy selection, bronze alloys, brass, casting, and corrosion protection
 related:
@@ -31,7 +47,34 @@ custom_css: |
   .alloy-table th, .alloy-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
   .ore-source table { width: 100%; margin: 1rem 0; }
 liability_level: high
+citations_required: true
+citation_policy: cite reviewed GD-422 answer card only for boundary-level copper, bronze, brass, or non-ferrous alloy material identity, scrap/source labeling, contamination or red-flag screening, intended-use questions, and qualified materials owner handoff; do not use it for alloy recipes or percentages, melting/casting steps, flux or chemical handling, temperatures, furnace/crucible operation, machining/corrosion-treatment procedures, potable-water/food-contact/electrical/structural claims, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only copper, bronze, brass, and non-ferrous alloy questions:
+  material identity uncertainty, scrap/source labels, visible contamination or
+  red-flag screening, intended-use questions, documentation gaps, and routing
+  to a qualified materials owner, metallurgist, foundry specialist, safety
+  owner, or responsible shop lead. Do not use for alloy recipes, percentages,
+  melting or casting procedures, flux or chemical handling, temperatures,
+  furnace or crucible operation, machining or corrosion-treatment procedures,
+  service claims, legal/code claims, or declaring a material safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: copper_bronze_alloys_material_boundary
+answer_card:
+  - copper_bronze_alloys_material_boundary
 ---
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-422. Use it only for boundary-level copper, bronze, brass, or non-ferrous alloy material identity, scrap/source labeling, contamination or red-flag screening, intended-use questions, and qualified materials owner handoff.
+
+Start by identifying the item or material, known or unknown alloy family, source or scrap history, labels and documentation, intended use, current access or use status, visible contamination, corrosion, mixed scrap, coating, plating, lead concern, fume or dust concern, and who owns the decision to accept, quarantine, test, or route the material. Keep answers at observation, documentation, red-flag, labeling, quarantine, and handoff level.
+
+Do not use this reviewed card for alloy recipes or percentages, melting or casting steps, flux or chemical handling, temperatures, furnace or crucible operation, machining or corrosion-treatment procedures, potable-water, food-contact, electrical, structural, legal, code, or safety-certification claims. If a prompt includes unknown scrap, mixed or unlabeled alloys, suspected lead, cadmium, beryllium, plated or coated material, active heating, fumes, dust, critical service use, public exposure, or pressure to declare the material safe before review, keep the answer to stop-use screening, labeling or quarantine, documentation, and handoff to a qualified materials owner, metallurgist, foundry specialist, safety owner, or responsible shop lead.
+
+</section>
+
 Copper, bronze, and brass are non-ferrous metals prized for corrosion resistance, ductility, and electrical conductivity. This guide covers smelting, alloy selection, casting, and finishing techniques for non-ferrous work in survival and smithing contexts.
 
 ## Practical Entry Points
@@ -306,4 +349,3 @@ In survival contexts, understanding non-ferrous working extends your tool-making
 The resulting tool head can be hafted onto a wooden handle and used for generations with proper maintenance.
 
 </section>
-
