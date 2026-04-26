@@ -289,6 +289,8 @@ Action:
 - Hardened metadata-audit citation-policy semantics so
   `citations_required: false` does not satisfy high-liability citation-policy
   coverage.
+- Hardened guide-catalog loading so malformed YAML frontmatter is ignored like
+  non-mapping frontmatter, allowing valid sibling guides to load.
 - Added bench metrics-lake coverage proving JSONL parse errors are recorded
   without dropping valid object rows or scalar-line metrics from the same file.
 - Added metrics-lake ingestion for run-manifest `artifact_path_evidence`

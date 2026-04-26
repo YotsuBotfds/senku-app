@@ -50,7 +50,10 @@ def _parse_frontmatter(path):
             break
     if closing_index is None:
         return {}
-    parsed = yaml.safe_load("\n".join(lines[1:closing_index])) or {}
+    try:
+        parsed = yaml.safe_load("\n".join(lines[1:closing_index])) or {}
+    except yaml.YAMLError:
+        return {}
     return parsed if isinstance(parsed, dict) else {}
 
 

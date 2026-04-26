@@ -40,6 +40,37 @@ Body text
         self.assertEqual(set(by_id), {"GD-001"})
         self.assertEqual(set(by_slug), {"good-guide"})
 
+    def test_malformed_frontmatter_is_ignored(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "bad.md").write_text(
+                """---
+id: [unterminated
+slug: bad-guide
+title: Bad Guide
+---
+
+Body text
+""",
+                encoding="utf-8",
+            )
+            (root / "good.md").write_text(
+                """---
+id: GD-001
+slug: good-guide
+title: Good Guide
+---
+
+Body text
+""",
+                encoding="utf-8",
+            )
+
+            by_id, by_slug = load_guide_catalog(str(root))
+
+        self.assertEqual(set(by_id), {"GD-001"})
+        self.assertEqual(set(by_slug), {"good-guide"})
+
     def test_duplicate_guide_id_raises_clear_error(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
