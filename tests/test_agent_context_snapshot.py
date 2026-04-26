@@ -147,6 +147,65 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("Benign untracked", markdown)
         self.assertIn("PLANNER_HANDOFF_2026-04-25_FAST_MODE.md", markdown)
 
+    def test_run_manifest_summary_surfaces_metadata_audit_and_strict_retrieval_signals(self):
+        root = self.make_tmpdir()
+        dispatch = root / "notes" / "dispatch"
+        dispatch.mkdir(parents=True)
+
+        workflow = root / ".github" / "workflows"
+        workflow.mkdir(parents=True, exist_ok=True)
+        (workflow / "strict_retrieval_head_health.yml").write_text(
+            "\n".join(
+                [
+                    "name: Strict Retrieval Head Health",
+                    "on:",
+                    "  schedule:",
+                    "    - cron: '0 7 * * *'",
+                    "  workflow_dispatch:",
+                    "jobs:",
+                    "  strict-retrieval-head-health:",
+                    "    with:",
+                    "      mode: Fast",
+                    "      allow_retrieval_warnings: false",
+                    "      retrieval_index_flavor: full",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text(
+            json.dumps(
+                {
+                    "generated_at": "2026-04-26T09:00:00+00:00",
+                    "task": "RAG-META1",
+                    "lane": "metadata-audit",
+                    "label": "high-liability-metadata-audit",
+                    "commit": "abc1234",
+                    "metric": {"malformed_frontmatter_count": 3},
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        bench = root / "artifacts" / "bench"
+        bench.mkdir(parents=True)
+
+        markdown = build_snapshot(
+            root,
+            dispatch_dir=dispatch,
+            manifest_path=manifest,
+            bench_dir=bench,
+            max_lines=160,
+            runner=fake_runner,
+        )
+
+        self.assertIn("Metadata-audit signal", markdown)
+        self.assertIn("malformed_frontmatter_count=3", markdown)
+        self.assertIn("Strict-retrieval head-health workflow configured", markdown)
+
     def test_git_summary_treats_only_protected_handoffs_as_actionable_clean(self):
         root = self.make_tmpdir()
 

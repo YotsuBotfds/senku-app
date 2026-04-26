@@ -554,6 +554,9 @@ Action:
 - Metadata coverage Markdown now includes a malformed-frontmatter summary and
   table with source file plus parser reason so operators can see malformed guide
   evidence without opening JSON.
+- Agent startup snapshots now surface the latest metadata-audit malformed
+  frontmatter count and strict retrieval workflow mode/warning/index-flavor
+  settings in the Recent Run Manifest section.
 
 Validation:
 
@@ -619,6 +622,8 @@ Validation:
   detection for tracked planner handoff refs when git is available.
 - `tests.test_audit_metadata_coverage` covers malformed-frontmatter summary
   counts and Markdown reporting.
+- `tests.test_agent_context_snapshot` covers metadata-audit and strict
+  retrieval workflow signals in the startup snapshot.
 
 Deferred unless evidenced:
 

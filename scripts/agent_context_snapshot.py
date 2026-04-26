@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -24,6 +25,7 @@ DEFAULT_MAX_LINES = 120
 DEFAULT_DISPATCH_LIMIT = 8
 DEFAULT_MANIFEST_LIMIT = 5
 DEFAULT_ARTIFACT_LIMIT = 10
+STRICT_RETRIEVAL_WORKFLOW = Path(".github/workflows/strict_retrieval_head_health.yml")
 PROTECTED_BENIGN_UNTRACKED = {
     "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
     "notes/PLANNER_HANDOFF_2026-04-25_POST_CLI_TERMINATION.md",
@@ -152,15 +154,82 @@ def collect_dispatch_summary(dispatch_dir: Path, *, limit: int = DEFAULT_DISPATC
     return lines
 
 
+def _extract_yaml_scalar(yaml_text: str, key: str) -> str | None:
+    pattern = rf"(?m)^\s*{re.escape(key)}:\s*([^\n#]+)\s*(?:#.*)?$"
+    match = re.search(pattern, yaml_text)
+    if not match:
+        return None
+    return match.group(1).strip().strip('"').strip("'")
+
+
+def _metadata_audit_signal_lines(records: list[dict]) -> list[str]:
+    latest_audit_record = None
+    for record in reversed(records):
+        if record.get("lane") != "metadata-audit":
+            continue
+        metric = record.get("metric")
+        if isinstance(metric, dict) and metric:
+            latest_audit_record = record
+            break
+    if latest_audit_record is None:
+        return []
+
+    metric = latest_audit_record.get("metric", {})
+    signal_bits: list[str] = []
+    for key in ("malformed_frontmatter_count",):
+        if key in metric:
+            signal_bits.append(f"{key}={metric[key]}")
+    if not signal_bits:
+        return []
+
+    label = latest_audit_record.get("label") or latest_audit_record.get("lane") or "metadata-audit"
+    return [f"- Metadata-audit signal ({label}): " + ", ".join(signal_bits)]
+
+
+def _strict_retrieval_workflow_signal(repo_root: Path) -> list[str]:
+    workflow_path = repo_root / STRICT_RETRIEVAL_WORKFLOW
+    if not workflow_path.exists():
+        return []
+    text = workflow_path.read_text(encoding="utf-8")
+    if "strict-retrieval-head-health" not in text:
+        return []
+
+    mode = _extract_yaml_scalar(text, "mode")
+    allow_retrieval_warnings = _extract_yaml_scalar(text, "allow_retrieval_warnings")
+    retrieval_index_flavor = _extract_yaml_scalar(text, "retrieval_index_flavor")
+    if not any((mode, allow_retrieval_warnings, retrieval_index_flavor)):
+        return ["- Strict-retrieval workflow file present (status details unavailable)."]
+
+    pieces = []
+    if mode is not None:
+        pieces.append(f"mode={mode}")
+    if allow_retrieval_warnings is not None:
+        pieces.append(f"allow_retrieval_warnings={allow_retrieval_warnings}")
+    if retrieval_index_flavor is not None:
+        pieces.append(f"retrieval_index_flavor={retrieval_index_flavor}")
+    return ["- Strict-retrieval head-health workflow configured: " + ", ".join(pieces)]
+
+
 def collect_manifest_summary(
-    manifest_path: Path, *, limit: int = DEFAULT_MANIFEST_LIMIT
+    manifest_path: Path,
+    *,
+    limit: int = DEFAULT_MANIFEST_LIMIT,
+    repo_root: Path | None = None,
 ) -> list[str]:
     records, malformed = load_manifest(manifest_path)
     if not records and not manifest_path.exists():
         return [f"- Run manifest not found: `{manifest_path}`"]
     markdown = render_manifest(records, malformed_lines=malformed, limit=limit)
     lines = markdown.splitlines()
-    return lines[2:] if lines[:1] == ["# Run Manifest Summary"] else lines
+    output = lines[2:] if lines[:1] == ["# Run Manifest Summary"] else lines
+    root = repo_root or manifest_path.parent.parent.parent
+    metadata_signal = _metadata_audit_signal_lines(records)
+    strict_signal = _strict_retrieval_workflow_signal(root.resolve())
+    if metadata_signal:
+        output.extend(["", *metadata_signal])
+    if strict_signal:
+        output.extend(["", *strict_signal])
+    return output
 
 
 def collect_artifact_summary(
@@ -239,7 +308,10 @@ def build_snapshot(
     lines.extend(_section("Git", collect_git_summary(repo_root, runner)))
     lines.extend(_section("Worker Lanes", collect_worker_lane_summary(repo_root, runner)))
     lines.extend(_section("Recent Dispatch Notes", collect_dispatch_summary(dispatch_dir)))
-    lines.extend(_section("Recent Run Manifest", collect_manifest_summary(manifest_path)))
+    lines.extend(_section(
+        "Recent Run Manifest",
+        collect_manifest_summary(manifest_path, repo_root=repo_root),
+    ))
     lines.extend(_section("Latest Bench Artifact Pointers", collect_artifact_summary(bench_dir)))
     return cap_markdown_lines("\n".join(lines), max_lines)
 
