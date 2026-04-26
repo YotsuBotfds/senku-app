@@ -38,6 +38,11 @@ on:
         description: Bench JSON path for Generated or All mode.
         required: false
         type: string
+      generated_baseline_diag:
+        description: Baseline diagnostics path for Generated or All mode.
+        required: false
+        default: tests\fixtures\non_android_generated\baseline_diag
+        type: string
       fail_on_generated_regression:
         description: Fail when generated regression gate detects regression.
         required: false
@@ -68,6 +73,10 @@ on:
       generated_bench_json:
         required: false
         default: ""
+        type: string
+      generated_baseline_diag:
+        required: false
+        default: tests\fixtures\non_android_generated\baseline_diag
         type: string
       fail_on_generated_regression:
         required: false
@@ -126,6 +135,7 @@ jobs:
         shell: pwsh
         env:
           INPUT_ALLOW_RETRIEVAL_WARNINGS: ${{ inputs.allow_retrieval_warnings }}
+          INPUT_GENERATED_BASELINE_DIAG: ${{ inputs.generated_baseline_diag }}
           INPUT_FAIL_ON_GENERATED_REGRESSION: ${{ inputs.fail_on_generated_regression }}
           INPUT_GENERATED_BENCH_JSON: ${{ inputs.generated_bench_json }}
           INPUT_INCLUDE_SAFETY_CRITICAL: ${{ inputs.include_safety_critical }}
@@ -153,6 +163,9 @@ jobs:
           }
           if (-not [string]::IsNullOrWhiteSpace($env:INPUT_GENERATED_BENCH_JSON)) {
             $args += @('-GeneratedBenchJson', $env:INPUT_GENERATED_BENCH_JSON)
+          }
+          if (-not [string]::IsNullOrWhiteSpace($env:INPUT_GENERATED_BASELINE_DIAG)) {
+            $args += @('-GeneratedBaselineDiag', $env:INPUT_GENERATED_BASELINE_DIAG)
           }
           if ($env:INPUT_FAIL_ON_GENERATED_REGRESSION -eq 'true') {
             $args += '-FailOnGeneratedRegression'

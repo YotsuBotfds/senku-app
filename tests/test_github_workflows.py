@@ -101,6 +101,12 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             "retrieval_index_flavor",
             triggers["workflow_call"]["inputs"],
         )
+        self.assertIn("generated_baseline_diag", triggers["workflow_dispatch"]["inputs"])
+        self.assertEqual(
+            "tests\\fixtures\\non_android_generated\\baseline_diag",
+            triggers["workflow_dispatch"]["inputs"]["generated_baseline_diag"]["default"],
+        )
+        self.assertIn("generated_baseline_diag", triggers["workflow_call"]["inputs"])
         self.assertIn("inputs.retrieval_index_flavor", retrieval_cache_step["with"]["key"])
         self.assertIn("guides/**/*.md", retrieval_cache_step["with"]["key"])
         self.assertIn("ingest_freshness.py", retrieval_cache_step["with"]["key"])
@@ -130,6 +136,8 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
         self.assertIn("RETRIEVAL_INDEX_CACHE_HIT", gate_step.get("env", {}))
         self.assertIn("INPUT_RETRIEVAL_INDEX_FLAVOR", gate_step.get("env", {}))
+        self.assertIn("INPUT_GENERATED_BASELINE_DIAG", gate_step.get("env", {}))
+        self.assertIn("-GeneratedBaselineDiag", gate_script)
         self.assertIn("Unsupported retrieval_index_flavor", gate_script)
         self.assertIn("scripts\\select_prompt_pack_guides.py", gate_script)
         self.assertIn("--include-related-depth 0", gate_script)

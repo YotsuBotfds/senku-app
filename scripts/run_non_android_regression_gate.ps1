@@ -17,6 +17,8 @@ param(
 
     [string]$GeneratedBenchJson = "",
 
+    [string]$GeneratedBaselineDiag = "tests\fixtures\non_android_generated\baseline_diag",
+
     [switch]$FailOnGeneratedRegression,
 
     [switch]$WhatIf
@@ -161,6 +163,8 @@ function Add-GeneratedGateCommands {
 
         [string]$BenchJson,
 
+        [string]$BaselineDiag,
+
         [Parameter(Mandatory)]
         [bool]$FailOnRegression
     )
@@ -169,7 +173,10 @@ function Add-GeneratedGateCommands {
         throw "-GeneratedBenchJson is required when -Mode Generated or -Mode All is selected."
     }
 
-    $baselineDiag = "artifacts\bench\rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag"
+    if ([string]::IsNullOrWhiteSpace($BaselineDiag)) {
+        throw "-GeneratedBaselineDiag is required when -Mode Generated or -Mode All is selected."
+    }
+
     $candidateDiag = "artifacts\bench\rag_eval_partial_router_holdouts_20260425_${RunLabel}_diag"
 
     [void]$Commands.Add((New-GateCommand `
@@ -186,7 +193,7 @@ function Add-GeneratedGateCommands {
     $gateArgs = @(
         '-B',
         'scripts\rag_regression_gate.py',
-        $baselineDiag,
+        $BaselineDiag,
         $candidateDiag,
         '--format',
         'text'
@@ -352,6 +359,7 @@ if ($Mode -in @('Generated', 'All')) {
         -PythonPath $pythonPath `
         -RunLabel $runLabel `
         -BenchJson $GeneratedBenchJson `
+        -BaselineDiag $GeneratedBaselineDiag `
         -FailOnRegression $FailOnGeneratedRegression
 }
 

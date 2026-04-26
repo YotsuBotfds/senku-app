@@ -1,10 +1,13 @@
 import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_non_android_regression_gate.ps1"
+GENERATED_FIXTURE_DIR = REPO_ROOT / "tests" / "fixtures" / "non_android_generated"
 
 
 class RunNonAndroidRegressionGateTests(unittest.TestCase):
@@ -84,7 +87,9 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
             "-Label",
             "unit_label",
             "-GeneratedBenchJson",
-            "artifacts\\bench\\candidate.json",
+            "tests\\fixtures\\non_android_generated\\candidate.json",
+            "-GeneratedBaselineDiag",
+            "tests\\fixtures\\non_android_generated\\baseline_diag",
             "-FailOnGeneratedRegression",
             "-WhatIf",
         )
@@ -92,7 +97,45 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertIn("Generated.failure_analysis", result.stdout)
         self.assertIn("scripts\\analyze_rag_bench_failures.py", result.stdout)
         self.assertIn("Generated.regression_gate", result.stdout)
+        self.assertIn("tests\\fixtures\\non_android_generated\\baseline_diag", result.stdout)
         self.assertIn("--fail-on-regression", result.stdout)
+
+    def test_generated_fixture_chain_passes_analysis_and_regression_gate(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_dir = Path(tmpdir) / "diag"
+            analyze = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    "scripts\\analyze_rag_bench_failures.py",
+                    str(GENERATED_FIXTURE_DIR / "candidate.json"),
+                    "--output-dir",
+                    str(output_dir),
+                ],
+                capture_output=True,
+                text=True,
+                cwd=REPO_ROOT,
+                check=True,
+            )
+            self.assertIn("expected_supported", analyze.stdout)
+
+            gate = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    "scripts\\rag_regression_gate.py",
+                    str(GENERATED_FIXTURE_DIR / "baseline_diag"),
+                    str(output_dir),
+                    "--format",
+                    "text",
+                    "--fail-on-regression",
+                ],
+                capture_output=True,
+                text=True,
+                cwd=REPO_ROOT,
+                check=True,
+            )
+            self.assertIn("RAG regression gate: PASS", gate.stdout)
 
     def test_invalid_label_fails_before_running(self):
         result = self.run_script("-Label", "bad label", "-WhatIf", check=False)

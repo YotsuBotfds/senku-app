@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "index": 1,
+      "question": "What should I do first if someone may have swallowed a poison?",
+      "prompt_metadata": {
+        "expected_guide_id": "GD-111"
+      },
+      "decision_path": "rag",
+      "generation_time": 1.0,
+      "source_mode": "cited",
+      "cited_guide_ids": ["GD-111"],
+      "retrieval_metadata": {
+        "top_retrieved_guide_ids": ["GD-111"]
+      },
+      "response_text": "Call poison control now and follow emergency guidance. [GD-111]"
+    }
+  ]
+}

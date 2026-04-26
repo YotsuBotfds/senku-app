@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-04-26T00:00:00Z",
+  "summary": {
+    "total_rows": 1,
+    "by_bucket": {
+      "expected_supported": 1,
+      "retrieval_miss": 0,
+      "ranking_miss": 0,
+      "generation_miss": 0,
+      "unsupported_or_truncated_answer": 0,
+      "safety_contract_miss": 0,
+      "artifact_error": 0,
+      "abstain_or_clarify_needed": 0
+    },
+    "expected_owner_rows": 1,
+    "expected_owner_top3_count": "1/1 (100.0%)",
+    "expected_owner_topk_count": "1/1 (100.0%)",
+    "expected_owner_top3_share": "0.3333",
+    "expected_owner_topk_share": "1.0000",
+    "expected_cited": "1/1 (100.0%)",
+    "top1_marker_risk_counts": {
+      "fail": 0,
+      "warn": 0,
+      "none": 1
+    },
+    "top1_bridge_rows": 0,
+    "top1_unresolved_partial_rows": 0
+  },
+  "rows": []
+}
