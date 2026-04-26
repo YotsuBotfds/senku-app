@@ -422,8 +422,8 @@ def evaluate_pack(
     corpus_marker_lookup = corpus_marker_lookup or {}
     for index, entry in enumerate(prompt_rows, start=1):
         prompt = str(entry["prompt"])
-        expected_ids = list(entry.get("expected_guide_ids") or [])
-        primary_ids = list(entry.get("primary_expected_guide_ids") or [])
+        expected_ids = _dedupe(entry.get("expected_guide_ids") or [])
+        primary_ids = _dedupe(entry.get("primary_expected_guide_ids") or [])
         row = {
             "prompt_index": index,
             "line_number": entry.get("line_number"),
@@ -513,13 +513,13 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
             "",
             "## Rows",
             "",
-            "| # | id | expected | primary | top retrieved | hit@1 | hit@3 | hit@k | best rank | primary hit@1 | primary hit@3 | primary hit@k | primary best rank | owner share | error |",
+            "| # | id | expected | primary_guide_ids | top retrieved | hit@1 | hit@3 | hit@k | best rank | primary hit@1 | primary hit@3 | primary hit@k | primary best rank | owner share | error |",
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in payload["rows"]:
-        expected = "|".join(row.get("expected_guide_ids") or [])
-        primary = "|".join(row.get("primary_expected_guide_ids") or [])
+        expected = "|".join(_dedupe(row.get("expected_guide_ids") or []))
+        primary = "|".join(_dedupe(row.get("primary_expected_guide_ids") or []))
         retrieved = "|".join((row.get("top_retrieved_guide_ids") or [])[: config["top_k"]])
         lines.append(
             "| {idx} | {pid} | {expected} | {primary} | {retrieved} | {hit1} | {hit3} | "

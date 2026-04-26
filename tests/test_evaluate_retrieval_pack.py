@@ -59,6 +59,33 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertEqual(rows[0]["primary_expected_guide_ids"], ["GD-024"])
         self.assertEqual(rows[0]["prompt"], "How should we stay warm tonight?")
 
+    def test_load_prompt_pack_normalizes_primary_expected_guide_ids_with_duplicates_and_blank_noise(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "pack.jsonl"
+            path.write_text(
+                json.dumps(
+                    {
+                        "id": "CASE-003",
+                        "prompt": "Noise should be ignored in primary expectations.",
+                        "primary_expected_guides": [
+                            "GD-024",
+                            "gd-024",
+                            "",
+                            "   ",
+                            "GD-12x",
+                            {"guide_id": "gd-120"},
+                        ],
+                        "primary_expected_guide_id": "gd-120",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            rows = self.module.load_prompt_pack(path)
+
+        self.assertEqual(rows[0]["primary_expected_guide_ids"], ["GD-120", "GD-024"])
+
     def test_primary_expected_guides_do_not_replace_expected_guides(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "pack.jsonl"
@@ -348,6 +375,107 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertIn("| primary hit@1 | 1/1 (100.0%) |", markdown)
         self.assertIn("primary best rank", markdown)
         self.assertIn("GD-380", markdown)
+
+    def test_render_markdown_does_not_export_primary_alias_for_blank_primary_rows(self):
+        payload = {
+            "prompt_pack": "pack.jsonl",
+            "generated_at": "2026-04-26T10:00:00",
+            "config": {
+                "top_k": 3,
+                "category": None,
+                "embed_url": None,
+                "retrieval_profile_override": None,
+            },
+            "summary": {
+                "total_prompts": 1,
+                "expected_owner_rows": 1,
+                "primary_expected_rows": 0,
+                "retrieval_error_rows": 0,
+                "expected_hit_at_1": {"text": "1/1 (100.0%)"},
+                "expected_hit_at_3": {"text": "1/1 (100.0%)"},
+                "expected_hit_at_k": {"text": "1/1 (100.0%)"},
+                "expected_owner_best_rank": "1.00",
+                "primary_hit_at_1": {"text": "unknown"},
+                "primary_hit_at_3": {"text": "unknown"},
+                "primary_hit_at_k": {"text": "unknown"},
+                "primary_best_rank": "unknown",
+                "simple_owner_share": {"text": "1/1 (100.0%)"},
+                "retrieval_latency_ms": {"mean": 1.0, "p95": 1.0},
+                "top_distractor_guide_ids": [],
+            },
+            "rows": [
+                {
+                    "prompt_index": 1,
+                    "prompt_id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "primary_expected_guide_ids": [],
+                    "top_retrieved_guide_ids": ["GD-120"],
+                    "expected_hit_at_1": True,
+                    "expected_hit_at_3": True,
+                    "expected_hit_at_k": True,
+                    "expected_owner_best_rank": 1,
+                    "owner_share": 1.0,
+                }
+            ],
+        }
+
+        markdown = self.module.render_markdown(payload)
+        import scripts.validate_prompt_expectations as validator
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            md_path = Path(tmpdir) / "retrieval.md"
+            md_path.write_text(markdown, encoding="utf-8")
+            rows, _ = validator.load_retrieval_eval_markdown(
+                md_path, root=Path(tmpdir)
+            )
+        self.assertEqual(rows[0].get("primary_expected_guide_ids"), None)
+        self.assertEqual(rows[0].get("primary"), None)
+
+        # Keep markdown readable but avoid emitting the primary alias that
+        # validator parses as an explicit expectation field.
+        self.assertIn("| # | id | expected | primary_guide_ids | top retrieved | hit@1", markdown)
+
+    def test_evaluate_pack_deduplicates_expected_and_primary_ids(self):
+        calls = []
+
+        original = self.module.retrieve_for_prompt
+
+        def fake_retrieve(
+            prompt,
+            collection,
+            *,
+            top_k,
+            category,
+            embed_url,
+            retrieval_profile_override=None,
+        ):
+            calls.append(True)
+            return ["GD-380"], {"retrieval_meta": {"fake": True}}
+
+        self.module.retrieve_for_prompt = fake_retrieve
+        try:
+            rows = self.module.evaluate_pack(
+                [
+                    {
+                        "line_number": 1,
+                        "prompt_id": "P-1",
+                        "section": "Section",
+                        "prompt": "question?",
+                        "expected_guide_ids": ["gd-024", "GD-024", "GD-120"],
+                        "primary_expected_guide_ids": ["GD-380", "gd-380", "gd-381", "GD-381", "gd-381"],
+                    }
+                ],
+                collection="fake-collection",
+                top_k=3,
+                category=None,
+                embed_url=None,
+            )
+        finally:
+            self.module.retrieve_for_prompt = original
+
+        self.assertEqual(calls, [True])
+        self.assertEqual(rows[0]["expected_guide_ids"], ["GD-024", "GD-120"])
+        self.assertEqual(rows[0]["primary_expected_guide_ids"], ["GD-380", "GD-381"])
 
     def test_retrieve_for_prompt_profile_override_is_scoped(self):
         import bench
