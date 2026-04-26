@@ -46,16 +46,16 @@ Sheep breeds vary dramatically in wool quality, meat production, hardiness, and 
 
 ### Meat Production
 
-- **Katahdin, Dorper** â€” Hair sheep (no wool); easy maintenance; excellent meat
-- **Rambouillet** â€” Fine wool + decent meat; cold-hardy
+- **Katahdin, Dorper** — Hair sheep (no wool); easy maintenance; excellent meat
+- **Rambouillet** — Fine wool + decent meat; cold-hardy
 
 ### Dual-Purpose (Meat + Wool)
 
-- **Corriedale, Columbia, Polypay** â€” Good wool and meat balance
+- **Corriedale, Columbia, Polypay** — Good wool and meat balance
 
 ### Milk Production
 
-- **East Friesian, Lacaune** â€” High-volume milk for cheese; require good nutrition and management
+- **East Friesian, Lacaune** — High-volume milk for cheese; require good nutrition and management
 
 :::tip
 For beginners in temperate climates without strong market orientation, Corriedale or Romney are excellent choices. They're hardy, produce usable wool, have good meat potential, and are forgiving of management mistakes.
@@ -64,11 +64,11 @@ For beginners in temperate climates without strong market orientation, Corriedal
 ### Flock Composition
 
 A healthy flock typically runs:
-- 1 ram per 25â€“40 ewes (breed-dependent)
+- 1 ram per 25–40 ewes (breed-dependent)
 - Lambs: born in spring, sold or kept for breeding by fall
-- Replacement ewes: keep best young ewes; cull older ones (productive lifespan 4â€“6 years)
+- Replacement ewes: keep best young ewes; cull older ones (productive lifespan 4–6 years)
 
-Start small: 5â€“10 ewes allows you to learn before investing heavily.
+Start small: 5–10 ewes allows you to learn before investing heavily.
 
 </section>
 
@@ -81,12 +81,12 @@ Start small: 5â€“10 ewes allows you to learn before investing heavily.
 Sheep are strong and clever escapers despite seeming docile.
 
 **Wire fencing (most common):**
-- **Woven wire:** 48â€“52 inches high; contains lambs and adult sheep
-- **Welded wire:** 4â€“6 inch spacing, no smaller (sheep's head gets caught)
+- **Woven wire:** 48–52 inches high; contains lambs and adult sheep
+- **Welded wire:** 4–6 inch spacing, no smaller (sheep's head gets caught)
 - **Electric fencing:** Works well; sheep learn quickly to respect it; lower cost than woven
 
 **Installation:**
-- Posts 10â€“15 feet apart (woven), 15â€“20 feet (electric)
+- Posts 10–15 feet apart (woven), 15–20 feet (electric)
 - Extend fencing 6 inches below ground (prevents digging by predators)
 - Bury or extend outward 12 inches at base (deters tunneling by coyotes)
 - Sagging fencing is an escape route; keep it tight
@@ -105,10 +105,10 @@ Predator-proof fencing is critical. Woven wire excludes foxes, coyotes, and dogs
 Sheep are hardy and don't require elaborate housing, but protection from extreme weather is essential.
 
 - **Three-sided shelter (run-in shed):** Provides wind and rain protection without full enclosure
-- **Size:** Minimum 15â€“20 sq ft per sheep (bigger is better)
+- **Size:** Minimum 15–20 sq ft per sheep (bigger is better)
 - **Orientation:** Open side faces south (winter sun); blocks north wind
 - **Bedding:** Straw or shavings, removed weekly (ammonia accumulation is unhealthy)
-- **Ventilation:** Important â€” moisture and ammonia buildup cause respiratory disease
+- **Ventilation:** Important — moisture and ammonia buildup cause respiratory disease
 - **Predator protection:** Close at night or surround with fencing and guard animals
 
 **Winter housing:**
@@ -138,15 +138,15 @@ Sheep are ruminants and efficient grazers; they're designed to eat pasture.
 
 ### Pasture Management
 
-- **Rotation grazing:** Move flock to fresh pasture every 3â€“7 days (prevents parasite buildup and soil degradation)
-- **Stocking rate:** 4â€“8 sheep per acre depending on pasture quality and climate
+- **Rotation grazing:** Move flock to fresh pasture every 3–7 days (prevents parasite buildup and soil degradation)
+- **Stocking rate:** 4–8 sheep per acre depending on pasture quality and climate
 - **Legumes:** Clover, alfalfa are high-protein and improve soil; include in pasture mix
 - **Supplemental browse:** Sheep thrive on bushes, brambles, leaves; let them clean up overgrown areas
 
 ### Hay (Winter Feeding)
 
 - **Quality:** Leafy, green hay (not brown, dust-filled)
-- **Quantity:** Roughly 4â€“5 pounds hay per sheep per day in winter
+- **Quantity:** Roughly 4–5 pounds hay per sheep per day in winter
 - **Storage:** Waterproof, well-ventilated location; mold is dangerous
 - **Legume hay:** Alfalfa or clover hay has higher protein; reduces grain supplementation
 
@@ -154,9 +154,9 @@ Sheep are ruminants and efficient grazers; they're designed to eat pasture.
 
 Most sheep do well on pasture + hay alone if pasture is good quality. Supplemental grain is needed:
 
-- **During late pregnancy:** 0.5â€“1 lb per ewe per day (last 6 weeks before lambing)
-- **During lactation:** 0.5â€“1.5 lbs per ewe per day (depending on milk production demands)
-- **Growing lambs:** 1â€“2 lbs per day until market weight
+- **During late pregnancy:** 0.5–1 lb per ewe per day (last 6 weeks before lambing)
+- **During lactation:** 0.5–1.5 lbs per ewe per day (depending on milk production demands)
+- **Growing lambs:** 1–2 lbs per day until market weight
 - **Wool growth:** Protein-rich grain (oats, barley, legume meal blend) supports fleece quality
 
 **Grain mix (example):**
@@ -169,7 +169,7 @@ Most sheep do well on pasture + hay alone if pasture is good quality. Supplement
 
 - Constant access to clean, fresh water
 - Winter: heated waterer prevents freezing
-- Daily volume: 1â€“1.5 gallons per adult sheep (doubles in summer or with lactation)
+- Daily volume: 1–1.5 gallons per adult sheep (doubles in summer or with lactation)
 
 ### Minerals and Vitamins
 
@@ -237,28 +237,28 @@ Market wool based on micron (fiber diameter) and staple length. Merino wool is f
 ### Breeding Cycle
 
 - **Ewe heat cycle:** 17 days (visible signs: tail flagging, restlessness, swollen vulva)
-- **Breeding season:** Fall (naturally short day) in most breeds; ewes cycle Septemberâ€“November
-- **Gestation:** 145â€“150 days (roughly 5 months)
-- **Lambing season:** Spring (Marchâ€“May in northern hemisphere)
+- **Breeding season:** Fall (naturally short day) in most breeds; ewes cycle September–November
+- **Gestation:** 145–150 days (roughly 5 months)
+- **Lambing season:** Spring (March–May in northern hemisphere)
 - **Fertility:** Rams can breed year-round; ewes are seasonal breeders
 
 ### Pre-Lambing Preparation
 
 **6 weeks before lambing:**
 - Increase nutrition (see Feeding section)
-- Vaccinate for clostridial diseases (CDT vaccine) â€” protects lambs passively through colostrum
+- Vaccinate for clostridial diseases (CDT vaccine) — protects lambs passively through colostrum
 - Trim feet
 - Dagg wool from hindquarters for cleanliness during birth
 
 **Lambing facilities:**
 - Separate pens (jugs) for each ewe-lamb pair; allows bonding and monitoring
-- Heat lamp for lambs in cold weather (keep shed >50Â°F)
+- Heat lamp for lambs in cold weather (keep shed >50°F)
 - Bedding changed daily (cleanliness reduces disease)
 
 ### Lambing Management
 
 **Normal labor and birth:**
-- Restlessness, tail twitching, straining for 30 minutesâ€“2 hours before birth
+- Restlessness, tail twitching, straining for 30 minutes–2 hours before birth
 - Amniotic sac appears first (water bag)
 - Lamb born nose-first, followed by front legs, then back
 - Ewe usually stands immediately and turns to lick lamb
@@ -271,7 +271,7 @@ Market wool based on micron (fiber diameter) and staple length. Merino wool is f
 **Post-birth care:**
 - Remove amniotic membrane from lamb's face; ensure breathing
 - Allow ewe and lamb to bond (lick and nuzzle)
-- Lamb nurses within 1â€“2 hours
+- Lamb nurses within 1–2 hours
 - If lamb weak or ewe won't nurse, bottle-feed colostrum (first milk) immediately
 - Umbilical cord disinfection (iodine dip) prevents navel ill
 
@@ -279,8 +279,8 @@ Market wool based on micron (fiber diameter) and staple length. Merino wool is f
 
 - **Colostrum:** First 24 hours essential (provides immunity antibodies)
 - **Lamb milk replacer:** From 24 hours onward (cow's milk is inadequate; too low fat and lactose)
-- **Feeding schedule:** 4x daily first week, then 3x daily, weaning by 6â€“8 weeks
-- **Volume:** 10â€“20% of body weight per day in divided feedings
+- **Feeding schedule:** 4x daily first week, then 3x daily, weaning by 6–8 weeks
+- **Volume:** 10–20% of body weight per day in divided feedings
 
 :::warning
 Lambs rejected by ewes are often weak or sickly. Before investing in bottle-feeding, assess whether the lamb is likely to thrive. Culling weak lambs is humane and economically necessary on farms.
@@ -356,10 +356,10 @@ Sheep hooves are cloven (two toes) and grow continuously. Without wear from hard
 
 ### Trimming
 
-- **Frequency:** Every 4â€“8 weeks, depending on pasture wear
+- **Frequency:** Every 4–8 weeks, depending on pasture wear
 - **Tools:** Hoof knife or pruners
 - **Technique:** Trim dead sole/wall material; maintain horizontal surface and slight point at toe. Do not cut too short (bleeding = infection risk).
-- **Angle:** View from side â€” foot should have a 50-degree angle from fetlock to ground
+- **Angle:** View from side — foot should have a 50-degree angle from fetlock to ground
 - **Frequency:** Less often on hard ground (natural wear), more on soft pasture
 
 ### Foot Rot
@@ -372,7 +372,7 @@ Sheep hooves are cloven (two toes) and grow continuously. Without wear from hard
 - Trim foot, removing all diseased tissue (may be painful)
 - Disinfect with antibiotic or foot bath (copper sulfate, zinc sulfate solutions, or commercial foot trims)
 - Isolate affected sheep
-- Repeat treatment in 1â€“2 weeks
+- Repeat treatment in 1–2 weeks
 - In severe cases, systemic antibiotics
 
 **Prevention:**
@@ -432,22 +432,22 @@ The combination of guardian animals + fencing + vigilant management is most effe
 
 ### Costs (per ewe per year, approximate)
 
-- Pasture/hay: $40â€“80
-- Grain/minerals: $20â€“40
-- Veterinary/vaccines: $10â€“20
-- Fencing/facilities (amortized): $20â€“40
-- Other (shearing, handling, mortality loss): $30â€“50
+- Pasture/hay: $40–80
+- Grain/minerals: $20–40
+- Veterinary/vaccines: $10–20
+- Fencing/facilities (amortized): $20–40
+- Other (shearing, handling, mortality loss): $30–50
 
-**Total:** Roughly $120â€“230 per ewe per year
+**Total:** Roughly $120–230 per ewe per year
 
 ### Revenue (per ewe per year)
 
-- Wool: $30â€“100 (varies by quality, market)
-- Lamb (1.5 lambs per ewe Ã— 50â€“100 lbs Ã— $1.50â€“2.50/lb): $100â€“375
-- Milk or cheese: $100â€“200 (if dairy operation)
-- Meat (cull ewes): $30â€“60
+- Wool: $30–100 (varies by quality, market)
+- Lamb (1.5 lambs per ewe × 50–100 lbs × $1.50–2.50/lb): $100–375
+- Milk or cheese: $100–200 (if dairy operation)
+- Meat (cull ewes): $30–60
 
-**Typical revenue:** $160â€“500 per ewe per year (highly variable by market and management)
+**Typical revenue:** $160–500 per ewe per year (highly variable by market and management)
 
 Small flocks often lose money initially. Profitability improves with scale, direct marketing (farm store, farmers market), and value-added products (processed wool, cheese, prepared meat).
 
@@ -457,15 +457,15 @@ Small flocks often lose money initially. Profitability improves with scale, dire
 
 ## Conclusion
 
-Sheep are rewarding livestock for small-scale farming. They're hardy, convert poor pasture to valuable products (wool, meat, milk), and require moderate labor and facilities. Start small, invest in quality genetics and fencing, and learn as you grow. A well-managed flock of 10â€“20 ewes can provide household fiber, meat, and significant income while improving land health through rotational grazing.
+Sheep are rewarding livestock for small-scale farming. They're hardy, convert poor pasture to valuable products (wool, meat, milk), and require moderate labor and facilities. Start small, invest in quality genetics and fencing, and learn as you grow. A well-managed flock of 10–20 ewes can provide household fiber, meat, and significant income while improving land health through rotational grazing.
 
 </section>
 
 :::affiliate
 **If you're preparing in advance,** have these tools for monitoring sheep health and pasture quality:
 
-- [Drip Irrigation Kit](https://www.amazon.com/dp/B007JAGBB6?tag=offlinecompen-20) â€” Ensure reliable water supply for sheep during dry periods
+- [Drip Irrigation Kit](https://www.amazon.com/dp/B007JAGBB6?tag=offlinecompen-20) — Ensure reliable water supply for sheep during dry periods
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
