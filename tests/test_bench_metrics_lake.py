@@ -141,7 +141,12 @@ class BenchMetricsLakeTests(unittest.TestCase):
         verify = sqlite3.connect(output)
         try:
             row_kinds = verify.execute(
-                "SELECT row_kind, COUNT(*) FROM detail_rows GROUP BY row_kind"
+                """
+                SELECT row_kind, COUNT(*)
+                FROM detail_rows
+                GROUP BY row_kind
+                ORDER BY row_kind
+                """
             ).fetchall()
             self.assertEqual(row_kinds, [("jsonl", 2)])
             markdown = verify.execute(
@@ -192,6 +197,84 @@ class BenchMetricsLakeTests(unittest.TestCase):
                 """
             ).fetchone()
             self.assertEqual(metric, ("7", 7.0))
+        finally:
+            verify.close()
+
+    def test_jsonl_manifest_artifact_path_evidence_adds_detail_rows(self):
+        root = self.make_tmpdir()
+        jsonl_path = root / "run_manifest.jsonl"
+        manifest_record = {
+            "record_type": "run_manifest",
+            "run_id": "run-1",
+            "artifact_path_evidence": [
+                {
+                    "status": "present",
+                    "kind": "bench_json",
+                    "path": "artifacts/bench/run.json",
+                },
+                {
+                    "status": "missing",
+                    "kind": "markdown_report",
+                    "path": "artifacts/bench/run.md",
+                },
+            ],
+        }
+        jsonl_path.write_text(
+            json.dumps(manifest_record) + "\n"
+            + json.dumps({"id": "plain-row", "status": "ok"}) + "\n",
+            encoding="utf-8",
+        )
+        output = root / "lake.sqlite"
+
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        summary = self.module.ingest_artifacts(
+            conn,
+            [jsonl_path],
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        self.assertEqual(summary["artifacts"], 1)
+        self.assertEqual(summary["detail_rows"], 4)
+        verify = sqlite3.connect(output)
+        try:
+            row_kinds = verify.execute(
+                """
+                SELECT row_kind, COUNT(*)
+                FROM detail_rows
+                GROUP BY row_kind
+                ORDER BY row_kind
+                """
+            ).fetchall()
+            self.assertEqual(row_kinds, [("artifact_path_evidence", 2), ("jsonl", 2)])
+            evidence = verify.execute(
+                """
+                SELECT status, raw_json
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                ORDER BY row_index
+                """
+            ).fetchall()
+            self.assertEqual([row[0] for row in evidence], ["present", "missing"])
+            evidence_json = [json.loads(row[1]) for row in evidence]
+            self.assertEqual(
+                evidence_json,
+                [
+                    {
+                        "kind": "bench_json",
+                        "path": "artifacts/bench/run.json",
+                        "status": "present",
+                    },
+                    {
+                        "kind": "markdown_report",
+                        "path": "artifacts/bench/run.md",
+                        "status": "missing",
+                    },
+                ],
+            )
         finally:
             verify.close()
 

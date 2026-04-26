@@ -283,6 +283,9 @@ Action:
   frontmatter for that specific support signal.
 - Added bench metrics-lake coverage proving JSONL parse errors are recorded
   without dropping valid object rows or scalar-line metrics from the same file.
+- Added metrics-lake ingestion for run-manifest `artifact_path_evidence`
+  entries so present/missing artifact proof rows are queryable alongside the
+  original JSONL records.
 - Added artifact tooling coverage for default text-mode storage summaries and
   bench-artifact JSONL indexing that intentionally records `jsonl_not_read`.
 - Added live-queue monitor coverage proving today's protected

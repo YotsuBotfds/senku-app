@@ -290,6 +290,7 @@ def ingest_jsonl_artifact(conn, artifact_id: int, path: Path) -> dict[str, int]:
     rows: list[tuple[str, int, Mapping[str, Any]]] = []
     metrics: list[tuple[str, Any]] = []
     errors: list[str] = []
+    evidence_row_index = 0
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
@@ -309,6 +310,9 @@ def ingest_jsonl_artifact(conn, artifact_id: int, path: Path) -> dict[str, int]:
             continue
         if isinstance(value, Mapping):
             rows.append(("jsonl", index, value))
+            evidence_rows = _artifact_path_evidence_rows(value, evidence_row_index)
+            evidence_row_index += len(evidence_rows)
+            rows.extend(evidence_rows)
         else:
             metrics.append((f"jsonl.scalar_line.{index}", value))
 
@@ -380,6 +384,20 @@ def extract_detail_rows(data: Any) -> list[tuple[str, int, Mapping[str, Any]]]:
                 for index, row in enumerate(value)
                 if isinstance(row, Mapping)
             )
+    return rows
+
+
+def _artifact_path_evidence_rows(
+    record: Mapping[str, Any], start_index: int
+) -> list[tuple[str, int, Mapping[str, Any]]]:
+    evidence = record.get("artifact_path_evidence")
+    if not isinstance(evidence, list):
+        return []
+
+    rows: list[tuple[str, int, Mapping[str, Any]]] = []
+    for evidence_index, item in enumerate(evidence):
+        if isinstance(item, Mapping):
+            rows.append(("artifact_path_evidence", start_index + evidence_index, item))
     return rows
 
 
