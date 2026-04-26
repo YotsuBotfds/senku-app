@@ -42,7 +42,7 @@ Trapping is one of the most efficient food procurement methods in a survival or 
 ### Core Advantages
 
 -   **Zero Active Energy Cost:** Once set, a trap requires no further effort until checked. You gain protein while doing other work.
--   **Nocturnal & Crepuscular Animals:** Traps catch prey active when hunting is difficultâ€”deer at night, rabbits at dusk, predators under cover of darkness.
+-   **Nocturnal & Crepuscular Animals:** Traps catch prey active when hunting is difficult—deer at night, rabbits at dusk, predators under cover of darkness.
 -   **Wary Animals:** Foxes, bobcats, and coyotes avoid human presence; traps bypass their avoidance behavior entirely.
 -   **Low Skill Barrier:** Trap placement is learnable; execution is more forgiving than marksmanship.
 -   **Scalability:** Multiple traps = multiple chances of success, spreading risk across a larger area.
@@ -51,16 +51,16 @@ Trapping is one of the most efficient food procurement methods in a survival or 
 ### Legal Context (Historical)
 
 :::warning
-**Modern Legality:** In contemporary society, trapping is heavily regulated by season, location, species, and trap type. Many regions prohibit snares, leg-hold traps, or certain deadfalls outright. In a post-collapse scenario, these regulations cease to apply, but understanding the \*why\* behind themâ€”ethical dispatch, prevention of suffering, sustainable population managementâ€”remains relevant to responsible practice.
+**Modern Legality:** In contemporary society, trapping is heavily regulated by season, location, species, and trap type. Many regions prohibit snares, leg-hold traps, or certain deadfalls outright. In a post-collapse scenario, these regulations cease to apply, but understanding the \*why\* behind them—ethical dispatch, prevention of suffering, sustainable population management—remains relevant to responsible practice.
 :::
 
 In a functional legal system, trapping requires licenses, adherence to trap types, and daily checking (usually within 24 hours). In a survival context, these safeguards become your own moral framework.
 
 ### Efficiency Metrics
 
--   **Return on Time:** 2â€“5 minutes to set a snare can yield 0.5â€“2 kg of meat over 24 hours.
--   **Caloric Output:** A rabbit trap line of 10 snares may produce 5â€“15 kg of meat per week (2,500â€“7,500 kcal).
--   **Scalability:** A trap line of 50â€“100 sets across a 5 km circuit yields sustained protein throughout the year.
+-   **Return on Time:** 2–5 minutes to set a snare can yield 0.5–2 kg of meat over 24 hours.
+-   **Caloric Output:** A rabbit trap line of 10 snares may produce 5–15 kg of meat per week (2,500–7,500 kcal).
+-   **Scalability:** A trap line of 50–100 sets across a 5 km circuit yields sustained protein throughout the year.
 
 ## Snares: Wire & Cordage Sets
 
@@ -73,19 +73,19 @@ Snares are the simplest and most effective traps for small to medium game. A sna
 The most basic snare: a loop of wire or cordage set at animal head height on a trail. No mechanical advantage. Effective for rabbits, hares, and young deer.
 
 -   **Construction:** Wire gauge depends on target species (see below). Tie a fixed loop at one end; anchor the running loop to a staked peg.
--   **Placement:** On game trails, at the narrowest point of a funnel (e.g., between two rocks), or just above snow/ground level (rabbit snares sit 2â€“3 inches above ground).
+-   **Placement:** On game trails, at the narrowest point of a funnel (e.g., between two rocks), or just above snow/ground level (rabbit snares sit 2–3 inches above ground).
 -   **Advantage:** Extremely fast to set; nearly invisible when camouflaged with grass or leaves.
 -   **Disadvantage:** Relies on animal struggling to tighten the loop; can fail if the snare is too loose or if the animal escapes sideways.
 
-#### 2\. Spring Snare (Activeâ€”Lifts Catch)
+#### 2\. Spring Snare (Active—Lifts Catch)
 
 A loop snare powered by a bent sapling or spring mechanism. When the animal triggers the snare, the spring releases and lifts the animal off the ground, preventing scavengers from accessing it before you check the trap.
 
--   **Construction:** Bend a young sapling (2â€“5 cm diameter) over a trigger stick arrangement. Attach cordage with the snare loop to the sapling. When the trigger releases, the sapling snaps upright, lifting the loop.
+-   **Construction:** Bend a young sapling (2–5 cm diameter) over a trigger stick arrangement. Attach cordage with the snare loop to the sapling. When the trigger releases, the sapling snaps upright, lifting the loop.
 -   **Advantage:** Catch is suspended, protecting it from foxes, coyotes, and scavengers. Animal hangs quickly, reducing suffering. Preserved meat; no ground contact = less contamination.
 -   **Disadvantage:** More complex to set; requires suitable saplings and a trigger mechanism (usually a figure-4 trigger).
 
-![âš¡ Trapping, Snares &amp; Pest Control diagram 1](../assets/svgs/trapping-snares-1.svg)
+![⚡ Trapping, Snares &amp; Pest Control diagram 1](../assets/svgs/trapping-snares-1.svg)
 
 Spring Snare with Figure-4 Trigger (Compressed State)
 
@@ -93,13 +93,13 @@ Spring Snare with Figure-4 Trigger (Compressed State)
 
 A snare loop attached to a heavy log or weighted drag. When the animal is caught, it pulls the drag behind it, causing exhaustion and eventual immobilization.
 
--   **Construction:** Attach a snare loop to a 3â€“5 kg log or bundle of stones via cordage. Anchor the loop setup on the trail; the animal pulls the drag when caught.
+-   **Construction:** Attach a snare loop to a 3–5 kg log or bundle of stones via cordage. Anchor the loop setup on the trail; the animal pulls the drag when caught.
 -   **Advantage:** No permanent anchor needed; works in areas where you cannot drive stakes. Drag slows animal, allowing recapture over distance.
 -   **Disadvantage:** Animal may drag the weight far from the trap site, requiring tracking. Higher injury/suffering risk if animal fights the drag for extended time.
 
 ### Wire Specifications by Species
 
-<table><thead><tr><th scope="row">Species</th><th scope="row">Wire Gauge / Material</th><th scope="row">Loop Diameter</th><th scope="row">Height Above Ground</th></tr></thead><tbody><tr><td>Rabbit / Hare</td><td>20â€“22 gauge wire or twisted cord</td><td>4 inches (10 cm)</td><td>2â€“3 inches (5â€“7.5 cm)</td></tr><tr><td>Squirrel / Marten</td><td>18â€“20 gauge</td><td>3 inches (7.5 cm)</td><td>4â€“6 inches (10â€“15 cm)</td></tr><tr><td>Raccoon / Opossum</td><td>14â€“16 gauge or cable</td><td>6â€“7 inches (15â€“18 cm)</td><td>6â€“12 inches (15â€“30 cm)</td></tr><tr><td>Fox / Coyote</td><td>3/32" aircraft cable or 10 gauge</td><td>8â€“10 inches (20â€“25 cm)</td><td>12â€“18 inches (30â€“45 cm)</td></tr><tr><td>Deer (large)</td><td>1/8" aircraft cable</td><td>12 inches (30 cm)</td><td>18â€“24 inches (45â€“60 cm)</td></tr></tbody></table>
+<table><thead><tr><th scope="row">Species</th><th scope="row">Wire Gauge / Material</th><th scope="row">Loop Diameter</th><th scope="row">Height Above Ground</th></tr></thead><tbody><tr><td>Rabbit / Hare</td><td>20–22 gauge wire or twisted cord</td><td>4 inches (10 cm)</td><td>2–3 inches (5–7.5 cm)</td></tr><tr><td>Squirrel / Marten</td><td>18–20 gauge</td><td>3 inches (7.5 cm)</td><td>4–6 inches (10–15 cm)</td></tr><tr><td>Raccoon / Opossum</td><td>14–16 gauge or cable</td><td>6–7 inches (15–18 cm)</td><td>6–12 inches (15–30 cm)</td></tr><tr><td>Fox / Coyote</td><td>3/32" aircraft cable or 10 gauge</td><td>8–10 inches (20–25 cm)</td><td>12–18 inches (30–45 cm)</td></tr><tr><td>Deer (large)</td><td>1/8" aircraft cable</td><td>12 inches (30 cm)</td><td>18–24 inches (45–60 cm)</td></tr></tbody></table>
 
 ### Snare Placement Sets
 
@@ -122,11 +122,11 @@ Placed at the edge of a stream or water hole. Animals must pass through the snar
 ### Snare Construction Tips
 
 :::tip
-**Boil & Scent Removal:** New wire carries human scent and shiny appearance. Boil in bark water (oak, pine, or alder bark simmered for hours) or bury in earth for 1â€“2 weeks. Use gloves when handling; avoid touching the loop with bare hands.
+**Boil & Scent Removal:** New wire carries human scent and shiny appearance. Boil in bark water (oak, pine, or alder bark simmered for hours) or bury in earth for 1–2 weeks. Use gloves when handling; avoid touching the loop with bare hands.
 :::
 
 :::tip
-**Anchor Point:** Anchor must be immovableâ€”a thick stake driven deep, a rock embedded in earth, or a tree. Test by pulling hard; if it moves, reinforce it.
+**Anchor Point:** Anchor must be immovable—a thick stake driven deep, a rock embedded in earth, or a tree. Test by pulling hard; if it moves, reinforce it.
 :::
 
 :::tip
@@ -145,10 +145,10 @@ A deadfall is a heavy weight (rock, log) that falls on an animal when a trigger 
 
 The weight must be heavy enough to kill instantly or immobilize the target. A general rule: **rock weight should be at least 5 times the animal's body weight.**
 
--   **Rabbit (1.5â€“2 kg):** 8â€“15 kg rock (roughly 12â€“20 inches across)
--   **Raccoon (4â€“6 kg):** 25â€“35 kg rock
--   **Beaver (15â€“25 kg):** 75â€“150 kg rock or heavy log
--   **Deer (30â€“150 kg):** 150â€“300+ kg rock or balanced log trap
+-   **Rabbit (1.5–2 kg):** 8–15 kg rock (roughly 12–20 inches across)
+-   **Raccoon (4–6 kg):** 25–35 kg rock
+-   **Beaver (15–25 kg):** 75–150 kg rock or heavy log
+-   **Deer (30–150 kg):** 150–300+ kg rock or balanced log trap
 
 ### Figure-4 Trigger (Most Versatile)
 
@@ -168,9 +168,9 @@ The figure-4 is the most reliable trigger mechanism. It consists of three wooden
 4.  Position bait stick C so its free end protrudes slightly from the trigger assembly (where bait is attached).
 5.  Lash bait stick C to bar B using a figure-4 lashing with thin cordage, adjusted so slight pressure on the bait stick causes release.
 
-![âš¡ Trapping, Snares &amp; Pest Control diagram 2](../assets/svgs/trapping-snares-2.svg)
+![⚡ Trapping, Snares &amp; Pest Control diagram 2](../assets/svgs/trapping-snares-2.svg)
 
-Figure-4 Deadfall Trigger â€“ Components & Assembly
+Figure-4 Deadfall Trigger – Components & Assembly
 
 ### How the Figure-4 Works
 
@@ -182,7 +182,7 @@ Figure-4 Deadfall Trigger â€“ Components & Assembly
 
 ### Paiute Deadfall (Hair Trigger)
 
-A simpler, faster-setting deadfall that relies on a single bait stick balanced under a rock. Extremely sensitiveâ€”the slightest vibration or bite triggers the fall.
+A simpler, faster-setting deadfall that relies on a single bait stick balanced under a rock. Extremely sensitive—the slightest vibration or bite triggers the fall.
 
 -   **Construction:** A horizontal stick (bait stick) propped under one edge of the rock with a vertical post supporting the other side. The bait stick is notched so the rock rests in a shallow groove; pulling the bait stick causes the rock to fall.
 -   **Advantage:** Faster to set than figure-4; minimal lashing required.
@@ -193,7 +193,7 @@ A simpler, faster-setting deadfall that relies on a single bait stick balanced u
 **Bait Options:** Nuts, seeds, dried fruit, carrot/root vegetables, or meat scraps. For carnivores, fresh or aged meat. For herbivores, fruits and nuts attract better than meat.
 
 -   **Trail Placement:** Set directly on an active game trail; the trigger assembly must be visible and accessible to the target animal.
--   **Rock Stability:** Ensure the rock is balanced but unstable under the triggerâ€”if it falls prematurely, adjust the trigger sensitivity by increasing or decreasing bait stick angle.
+-   **Rock Stability:** Ensure the rock is balanced but unstable under the trigger—if it falls prematurely, adjust the trigger sensitivity by increasing or decreasing bait stick angle.
 -   **Approach Path:** Orient the trap so the animal approaches from a direction that leads it naturally to the bait stick (usually from upwind).
 
 ### Deadfall Advantages & Disadvantages
@@ -212,8 +212,8 @@ A wooden or woven box with a one-way entrance. The animal enters through a sprin
 
 #### Construction (Rabbit Box)
 
--   **Box body:** 30 cm long Ã— 15 cm wide Ã— 15 cm tall (hardwood or woven withes)
--   **Entrance hole:** 8â€“10 cm diameter, positioned 5 cm above the bottom to prevent escape
+-   **Box body:** 30 cm long × 15 cm wide × 15 cm tall (hardwood or woven withes)
+-   **Entrance hole:** 8–10 cm diameter, positioned 5 cm above the bottom to prevent escape
 -   **One-way gate:** Spring-loaded or gravity-hinged flap that allows entry but not exit
 -   **Bait:** Vegetables, clover, or hay placed inside or leading into the entrance
 
@@ -228,7 +228,7 @@ A wooden or woven box with a one-way entrance. The animal enters through a sprin
 
 A rectangular wire or wooden cage with a trigger-activated drop door. Baited with fish, eggs, or meat scraps.
 
-**Dimensions:** 60 cm long Ã— 30 cm wide Ã— 30 cm tall (approximately). Two-section trap: one section is the cage; one section is the bait chamber with the trigger door.
+**Dimensions:** 60 cm long × 30 cm wide × 30 cm tall (approximately). Two-section trap: one section is the cage; one section is the bait chamber with the trigger door.
 
 -   **Door trigger:** Animal enters the bait chamber, presses a treadle, and the door drops, trapping it in the cage section.
 -   **Bait:** Fish, eggs, canned cat food, or meat placed in the bait chamber to lure the animal in.
@@ -241,9 +241,9 @@ A rectangular wire or wooden cage with a trigger-activated drop door. Baited wit
 
 A cone-shaped woven trap with a small opening on the wide end and a narrower opening on the pointed end. Fish enter through the wide opening, navigate the funnel, and become trapped in the narrow chamber.
 
-![âš¡ Trapping, Snares &amp; Pest Control diagram 3](../assets/svgs/trapping-snares-3.svg)
+![⚡ Trapping, Snares &amp; Pest Control diagram 3](../assets/svgs/trapping-snares-3.svg)
 
-Fish Basket Trap â€“ Cross-Section View
+Fish Basket Trap – Cross-Section View
 
 #### Construction:
 
@@ -280,7 +280,7 @@ Similar to fish funnels but scaled for small birds. Woven cone-shaped trap with 
 
 ## Leg-Hold & Body-Grip Traps
 
-Steel trapsâ€”manufactured or field-madeâ€”are highly effective but require care in handling, anchoring, and animal dispatch. Modern leg-hold and body-grip traps are regulated in many jurisdictions; in a survival context, improvised versions can be constructed.
+Steel traps—manufactured or field-made—are highly effective but require care in handling, anchoring, and animal dispatch. Modern leg-hold and body-grip traps are regulated in many jurisdictions; in a survival context, improvised versions can be constructed.
 
 ### Leg-Hold Traps (Steel Jaws)
 
@@ -288,14 +288,14 @@ A spring-loaded trap with two metal jaws that close around an animal's leg when 
 
 #### Standard Sizes
 
-<table><thead><tr><th scope="row">Size</th><th scope="row">Target Animal</th><th scope="row">Jaw Spread</th><th scope="row">Spring Tension</th></tr></thead><tbody><tr><td>#0</td><td>Muskrat, mink</td><td>5â€“6 inches (12â€“15 cm)</td><td>Light</td></tr><tr><td>#1</td><td>Fox, raccoon</td><td>5.5â€“6.5 inches (14â€“16 cm)</td><td>Medium</td></tr><tr><td>#2</td><td>Beaver, small coyote</td><td>6â€“7 inches (15â€“18 cm)</td><td>Medium-heavy</td></tr><tr><td>#3â€“#4</td><td>Large coyote, mountain lion</td><td>7â€“8 inches (18â€“20 cm)</td><td>Heavy</td></tr></tbody></table>
+<table><thead><tr><th scope="row">Size</th><th scope="row">Target Animal</th><th scope="row">Jaw Spread</th><th scope="row">Spring Tension</th></tr></thead><tbody><tr><td>#0</td><td>Muskrat, mink</td><td>5–6 inches (12–15 cm)</td><td>Light</td></tr><tr><td>#1</td><td>Fox, raccoon</td><td>5.5–6.5 inches (14–16 cm)</td><td>Medium</td></tr><tr><td>#2</td><td>Beaver, small coyote</td><td>6–7 inches (15–18 cm)</td><td>Medium-heavy</td></tr><tr><td>#3–#4</td><td>Large coyote, mountain lion</td><td>7–8 inches (18–20 cm)</td><td>Heavy</td></tr></tbody></table>
 
 #### Trap Setup
 
 -   **Bedding:** Trap must rest on stable ground or a buried metal pan (prevents animal from pulling the trap upward). Dig a shallow depression, pack firm earth, and position the trap so the pan is level and sensitive.
--   **Anchoring:** Anchor via stake driven deep (at least 60 cm) or a drag log (10â€“30 kg). The anchor must be immovable; test by pulling hard.
--   **Pan Tension:** Adjust the trigger pan so it releases with minimal pressure (5â€“10 lbs for smaller game, 20â€“30 lbs for large game). Test by pressing gently; trap should snap shut with light force.
--   **Camouflage:** Cover the trap with natural materialâ€”dead leaves, soil, grassâ€”without interfering with the pan mechanism.
+-   **Anchoring:** Anchor via stake driven deep (at least 60 cm) or a drag log (10–30 kg). The anchor must be immovable; test by pulling hard.
+-   **Pan Tension:** Adjust the trigger pan so it releases with minimal pressure (5–10 lbs for smaller game, 20–30 lbs for large game). Test by pressing gently; trap should snap shut with light force.
+-   **Camouflage:** Cover the trap with natural material—dead leaves, soil, grass—without interfering with the pan mechanism.
 
 ### Body-Grip Traps (Conibear-Style)
 
@@ -303,7 +303,7 @@ A square steel trap with two folding jaws that snap shut in a scissor-like motio
 
 #### Sizes & Specifications
 
-<table><thead><tr><th scope="row">Size</th><th scope="row">Target Animal</th><th scope="row">Opening</th><th scope="row">Spring Tension</th></tr></thead><tbody><tr><td>110 (Small)</td><td>Squirrel, marten, mink</td><td>2.5Ã—2.5 inches (6Ã—6 cm)</td><td>Light</td></tr><tr><td>120 (Medium)</td><td>Raccoon, fox</td><td>3.5Ã—3.5 inches (9Ã—9 cm)</td><td>Medium</td></tr><tr><td>220 (Large)</td><td>Beaver, coyote</td><td>4.5Ã—4.5 inches (11Ã—11 cm)</td><td>Heavy</td></tr><tr><td>330 (Extra Large)</td><td>Mountain lion, large beaver</td><td>5.5Ã—5.5 inches (14Ã—14 cm)</td><td>Very heavy</td></tr></tbody></table>
+<table><thead><tr><th scope="row">Size</th><th scope="row">Target Animal</th><th scope="row">Opening</th><th scope="row">Spring Tension</th></tr></thead><tbody><tr><td>110 (Small)</td><td>Squirrel, marten, mink</td><td>2.5×2.5 inches (6×6 cm)</td><td>Light</td></tr><tr><td>120 (Medium)</td><td>Raccoon, fox</td><td>3.5×3.5 inches (9×9 cm)</td><td>Medium</td></tr><tr><td>220 (Large)</td><td>Beaver, coyote</td><td>4.5×4.5 inches (11×11 cm)</td><td>Heavy</td></tr><tr><td>330 (Extra Large)</td><td>Mountain lion, large beaver</td><td>5.5×5.5 inches (14×14 cm)</td><td>Very heavy</td></tr></tbody></table>
 
 #### Advantages & Disadvantages
 
@@ -325,18 +325,18 @@ A square steel trap with two folding jaws that snap shut in a scissor-like motio
 -   **Captive bolt (if available):** A mechanical device that fires a bolt into the brain. Humane, but requires a captive bolt gun (rare in survival scenario).
 
 :::tip
-**Pelt Preservation:** If you intend to preserve the pelt (fur, hide), dispatch via exsanguination (bleeding) is preferableâ€”minimal trauma to hide, and blood is drained before skinning.
+**Pelt Preservation:** If you intend to preserve the pelt (fur, hide), dispatch via exsanguination (bleeding) is preferable—minimal trauma to hide, and blood is drained before skinning.
 :::
 
 ## Trap Line Management
 
-A productive trap line requires planning, consistency, and adaptation. A trap line is a circuit of traps checked daily or every other day, covering a defined territory (typically 3â€“10 km depending on trap density).
+A productive trap line requires planning, consistency, and adaptation. A trap line is a circuit of traps checked daily or every other day, covering a defined territory (typically 3–10 km depending on trap density).
 
 ### Route Planning
 
 -   **Follow Water:** Most animals use water sources daily. Streams, ponds, and springs are travel corridors. Plan your route to check sets along water.
 -   **Elevation Changes:** Animal populations shift with season and elevation. In winter, concentrate traps in valleys and dense cover. In warmer months, higher elevations and open areas.
--   **Distance & Time:** A 5 km circuit with 20â€“30 traps should take 45 minutes to 1.5 hours to check, depending on terrain.
+-   **Distance & Time:** A 5 km circuit with 20–30 traps should take 45 minutes to 1.5 hours to check, depending on terrain.
 -   **Safety Margins:** Never plan a trap line so remote that checking requires a full-day hike in bad weather. Frostbite or hypothermia are risks if you're stranded.
 
 ### Daily Checks
@@ -344,7 +344,7 @@ A productive trap line requires planning, consistency, and adaptation. A trap li
 In a modern legal context, traps are checked within 24 hours (often daily) to prevent unnecessary suffering and to prevent scavengers from destroying the catch. In a survival context, daily checks prevent meat spoilage and scavenger interference.
 
 :::tip
-**Check Timing:** Early morning is idealâ€”you avoid diurnal scavengers and can dispatch any catch before it's stressed by heat. In winter, morning checks reduce the risk of overnight predator activity damaging a fresh kill.
+**Check Timing:** Early morning is ideal—you avoid diurnal scavengers and can dispatch any catch before it's stressed by heat. In winter, morning checks reduce the risk of overnight predator activity damaging a fresh kill.
 :::
 
 ### Scent Elimination
@@ -353,8 +353,8 @@ Animals have keen olfactory senses. Human scent on traps reduces effectiveness.
 
 #### Pre-Treatment:
 
--   **Boil in Bark Water:** Simmer new wire, traps, or metal components in water infused with oak, pine, or alder bark for 2â€“4 hours. The tannins neutralize metallic scent and add a natural odor.
--   **Bury in Earth:** Bury traps and wire in moist earth for 1â€“2 weeks. Natural decomposition and soil bacteria reduce scent.
+-   **Boil in Bark Water:** Simmer new wire, traps, or metal components in water infused with oak, pine, or alder bark for 2–4 hours. The tannins neutralize metallic scent and add a natural odor.
+-   **Bury in Earth:** Bury traps and wire in moist earth for 1–2 weeks. Natural decomposition and soil bacteria reduce scent.
 -   **Smoke in Fire:** Expose traps to smoke from a smoldering fire (pine, cedar, or juniper). Animals associate this scent with natural hazard, not human presence.
 
 #### During Placement:
@@ -384,16 +384,16 @@ Example: "2024-11-15 | T5 | North creek funnel | Rabbit | Yes (live) | Good cond
 
 ### Trap Rotation & Preventing Trap-Shyness
 
-Animals learn. If a trap has not produced a catch in 1â€“2 weeks, it may have been discovered and avoided by local animals.
+Animals learn. If a trap has not produced a catch in 1–2 weeks, it may have been discovered and avoided by local animals.
 
--   **Rotate trap locations:** Move traps every 2â€“3 weeks to fresh trails or areas.
+-   **Rotate trap locations:** Move traps every 2–3 weeks to fresh trails or areas.
 -   **Refresh the area:** If a location has produced well, clear away old debris and rebait to reinvigorate it.
--   **Move sets after a catch:** An animal caught at a location often triggers other animals to avoid that spot. Move the trap 5â€“10 meters away or to a different trail.
+-   **Move sets after a catch:** An animal caught at a location often triggers other animals to avoid that spot. Move the trap 5–10 meters away or to a different trail.
 -   **Seasonal patterns:** Shift trap lines with seasonal animal movements (higher elevations in summer, valleys in winter).
 
 ## Fur & Pelt Processing
 
-A fur-bearing animal is valuable beyond meatâ€”the pelt can be tanned into leather, the fur used for warmth or trade. Proper processing preserves the hide and maintains pelt quality.
+A fur-bearing animal is valuable beyond meat—the pelt can be tanned into leather, the fur used for warmth or trade. Proper processing preserves the hide and maintains pelt quality.
 
 ### Skinning Techniques
 
@@ -426,7 +426,7 @@ After removal, the raw hide must be cleaned of meat, fat, and connective tissue.
 #### Fleshing Beam:
 
 -   **Construction:** A log or wooden beam, slightly curved, positioned at a 45-degree angle. The hide is draped over the beam, fur-side down.
--   **Tools:** Fleshing knife (a dull-edged, blunt bladeâ€”never sharp, as sharp blades cut the hide). Scrape downward using body weight; do not slash.
+-   **Tools:** Fleshing knife (a dull-edged, blunt blade—never sharp, as sharp blades cut the hide). Scrape downward using body weight; do not slash.
 -   **Process:** Work methodically across the entire hide, removing all meat, fat, and tissue until the hide surface is clean and pale.
 
 :::tip
@@ -445,9 +445,9 @@ After fleshing, the hide must be stretched and dried to prevent shrinkage and pr
 
 #### Drying Conditions
 
--   **Temperature:** Cool (below 20Â°C is ideal). Heat causes hide to become brittle and fur to slip.
+-   **Temperature:** Cool (below 20°C is ideal). Heat causes hide to become brittle and fur to slip.
 -   **Ventilation:** Good air circulation is essential. Hang in a well-ventilated shed, basement, or outdoor shelter protected from rain and direct sun.
--   **Time:** Drying takes 2â€“4 weeks depending on size and humidity. Hide should be stiff and paper-like when fully dry.
+-   **Time:** Drying takes 2–4 weeks depending on size and humidity. Hide should be stiff and paper-like when fully dry.
 -   **Protection:** Keep away from insects (especially flies and beetles). Cover with cheesecloth if needed; allow air movement.
 
 ### Storage & Tanning Referral
@@ -458,7 +458,7 @@ Once fully dried, hides can be stored indefinitely in a cool, dry place. For use
 
 ## Pest Trapping & Control
 
-Beyond food procurement, trapping addresses pestsâ€”rodents raiding grain stores, moles destroying garden beds, gophers killing crops. Effective pest control combines trapping with exclusion and environmental management.
+Beyond food procurement, trapping addresses pests—rodents raiding grain stores, moles destroying garden beds, gophers killing crops. Effective pest control combines trapping with exclusion and environmental management.
 
 ### Rats & Mice
 
@@ -515,7 +515,7 @@ Prevent rodent infestation of grain stores by combining physical barriers with n
 #### Natural Repellents:
 
 -   **Diatomaceous earth (food-grade):** Dust around and within grain containers. Diatoms are sharp-edged microscopic shells that damage insects' and small mammals' exoskeletons. Non-toxic to humans; effective against rodents and grain pests.
--   **Bay leaves:** Scatter throughout grain stores. Rodents dislike the smell and taste. Replace every 2â€“3 months.
+-   **Bay leaves:** Scatter throughout grain stores. Rodents dislike the smell and taste. Replace every 2–3 months.
 -   **Essential oils:** Peppermint, cedar, and clove oils on cotton balls placed in and around grain stores. Repel rodents via smell.
 
 ### Garden Pest Fencing & Exclusion
@@ -527,7 +527,7 @@ Prevent rodent infestation of grain stores by combining physical barriers with n
 
 ## Fishing Traps & Passive Fish Procurement
 
-Like land traps, fishing methods can be passiveâ€”lines and nets that work while you attend other tasks. Trotlines, limb lines, and jug fishing are ancient techniques requiring no electricity or active skill once deployed.
+Like land traps, fishing methods can be passive—lines and nets that work while you attend other tasks. Trotlines, limb lines, and jug fishing are ancient techniques requiring no electricity or active skill once deployed.
 
 ### Trotlines (Main Line with Baited Hooks)
 
@@ -535,15 +535,15 @@ A long mainline anchored at both ends, with multiple shorter lines (dropper line
 
 #### Construction:
 
--   **Mainline:** Strong cordage (3â€“5 mm diameter) or light rope, 20â€“50 meters long depending on water width and desired fishing density.
--   **Dropper lines:** Shorter lines (20â€“40 cm) tied at 1â€“2 meter intervals along the mainline. Tie using a clove hitch or surgeon's knot.
+-   **Mainline:** Strong cordage (3–5 mm diameter) or light rope, 20–50 meters long depending on water width and desired fishing density.
+-   **Dropper lines:** Shorter lines (20–40 cm) tied at 1–2 meter intervals along the mainline. Tie using a clove hitch or surgeon's knot.
 -   **Hooks:** Size #4 to #8 (depending on fish species). Tie using a clinch knot or improved clinch knot.
 -   **Anchors:** Heavy rocks, stakes, or weighted bags at both ends. Ensure the mainline is taut but allows for water current movement.
 
 #### Baiting & Checking:
 
--   **Bait:** Small fish, worms, crayfish, insects, or bloody meat. Change bait every 12â€“24 hours to maintain effectiveness.
--   **Checking:** Check every 12â€“24 hours. Caught fish deteriorate quickly; daily checks minimize spoilage.
+-   **Bait:** Small fish, worms, crayfish, insects, or bloody meat. Change bait every 12–24 hours to maintain effectiveness.
+-   **Checking:** Check every 12–24 hours. Caught fish deteriorate quickly; daily checks minimize spoilage.
 -   **Maintenance:** Remove caught fish, rebait hooks, and inspect the line for damage or tangling.
 
 ### Limb Lines (Single Hooks on Overhanging Branches)
@@ -552,7 +552,7 @@ Individual baited hooks suspended from overhanging branches above deep water hol
 
 #### Setup:
 
-1.  Tie a length of cordage (30â€“50 cm) to a branch or exposed root hanging over water.
+1.  Tie a length of cordage (30–50 cm) to a branch or exposed root hanging over water.
 2.  Tie a hook to the free end of the cordage.
 3.  Bait the hook with small fish, worms, or meat.
 4.  The hook hangs just above (or touching) the water surface.
@@ -572,7 +572,7 @@ Baited hooks attached to floating jugs. The jugs drift or are anchored in a fish
 -   **Float:** Empty plastic jug, sealed beer bottle, or wooden float (carved from cork or light wood).
 -   **Anchor line:** Heavy cordage from jug to bottom (anchoring the jug in place) or allowing drift.
 -   **Dropper lines:** Shorter lines tied to the jug's side, each with a baited hook.
--   **Spacing:** Hooks spaced 30â€“60 cm apart to avoid tangling.
+-   **Spacing:** Hooks spaced 30–60 cm apart to avoid tangling.
 
 #### Advantages & Challenges:
 
@@ -585,19 +585,19 @@ A gill net is a mesh wall suspended in water. Fish swim into the net and become 
 
 #### Mesh Size by Species
 
-<table><thead><tr><th scope="row">Species / Size</th><th scope="row">Mesh Size (Opening)</th><th scope="row">Net Depth (Height)</th></tr></thead><tbody><tr><td>Small fish (minnow, trout fingerling)</td><td>0.5â€“1 inch (12â€“25 mm)</td><td>1â€“2 meters</td></tr><tr><td>Medium fish (bluegill, trout)</td><td>1.5â€“2 inches (38â€“50 mm)</td><td>2â€“3 meters</td></tr><tr><td>Large fish (pike, catfish)</td><td>2.5â€“3.5 inches (65â€“90 mm)</td><td>3â€“4 meters</td></tr><tr><td>Shad, herring (thin-bodied)</td><td>1â€“1.5 inches (25â€“38 mm)</td><td>2â€“3 meters</td></tr></tbody></table>
+<table><thead><tr><th scope="row">Species / Size</th><th scope="row">Mesh Size (Opening)</th><th scope="row">Net Depth (Height)</th></tr></thead><tbody><tr><td>Small fish (minnow, trout fingerling)</td><td>0.5–1 inch (12–25 mm)</td><td>1–2 meters</td></tr><tr><td>Medium fish (bluegill, trout)</td><td>1.5–2 inches (38–50 mm)</td><td>2–3 meters</td></tr><tr><td>Large fish (pike, catfish)</td><td>2.5–3.5 inches (65–90 mm)</td><td>3–4 meters</td></tr><tr><td>Shad, herring (thin-bodied)</td><td>1–1.5 inches (25–38 mm)</td><td>2–3 meters</td></tr></tbody></table>
 
 #### Homemade Gill Net (Hand-Knotted):
 
 -   **Materials:** Strong, thin cordage (waxed linen, nylon, or plant-based twine). Minimum 20 meters for a useful net.
 -   **Frame:** Anchor line (top and bottom) and side lines, creating a rectangular frame. Mesh is knotted within the frame.
 -   **Knot method:** Use sheet bend or surgeon's knot to create uniform mesh. Spacing determines mesh size.
--   **Time:** A 10Ã—3 meter net by hand takes 20â€“40 hours of knotting. Pre-made nets are preferable if available.
+-   **Time:** A 10×3 meter net by hand takes 20–40 hours of knotting. Pre-made nets are preferable if available.
 
 #### Deployment & Checking:
 
 -   Set net perpendicular to water flow, anchored at top and bottom.
--   Check every 6â€“12 hours. Fish in the net deteriorate quickly; long intervals result in spoilage and lost meat.
+-   Check every 6–12 hours. Fish in the net deteriorate quickly; long intervals result in spoilage and lost meat.
 -   Carefully extract fish by backing them out of the mesh (pushing tail-first through the opening, following the direction they entered).
 
 :::warning
@@ -621,17 +621,17 @@ For complementary skills and knowledge, explore these related documents:
 :::affiliate
 **If you're preparing in advance,** having quality trapping equipment and reference materials ensures efficient food procurement and pest management:
 
-- [Montree Shop Support Wire #11 Snares](https://www.amazon.com/dp/B07NKYBXT2?tag=offlinecompen-20) â€” 3.5 pounds of 11-gauge soft black wire ideal for constructing snares, drowners, and securing traps
-- [Snare Trap Wire 2 Pack Heavy Duty Kit](https://www.amazon.com/dp/B0FVX4LML3?tag=offlinecompen-20) â€” Ready-to-use snare traps with adjustable knobs and hooks for immediate deployment on game trails
-- [The Trapper's Bible: Traps, Snares & Pathguards](https://www.amazon.com/dp/0873644069?tag=offlinecompen-20) â€” Classic field reference by Dale Martin with detailed instructions and illustrations for constructing traps and snares
-- [Montree Shop 100 Aluminum Cable Stops Sleeves](https://www.amazon.com/dp/B07PP1CZRJ?tag=offlinecompen-20) â€” Quality cable stops for constructing reliable snare assemblies and securing trap components
+- [Montree Shop Support Wire #11 Snares](https://www.amazon.com/dp/B07NKYBXT2?tag=offlinecompen-20) — 3.5 pounds of 11-gauge soft black wire ideal for constructing snares, drowners, and securing traps
+- [Snare Trap Wire 2 Pack Heavy Duty Kit](https://www.amazon.com/dp/B0FVX4LML3?tag=offlinecompen-20) — Ready-to-use snare traps with adjustable knobs and hooks for immediate deployment on game trails
+- [The Trapper's Bible: Traps, Snares & Pathguards](https://www.amazon.com/dp/0873644069?tag=offlinecompen-20) — Classic field reference by Dale Martin with detailed instructions and illustrations for constructing traps and snares
+- [Montree Shop 100 Aluminum Cable Stops Sleeves](https://www.amazon.com/dp/B07PP1CZRJ?tag=offlinecompen-20) — Quality cable stops for constructing reliable snare assemblies and securing trap components
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 :::note
 :::note
-My Notes â–¼
+My Notes ▼
 :::
 
 :::note
