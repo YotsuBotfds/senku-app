@@ -32,6 +32,14 @@ EXPECTED_GUIDE_KEYS = (
     "guide_id",
     "guide_ids",
 )
+PRIMARY_EXPECTED_GUIDE_KEYS = (
+    "primary_expected_guide_id",
+    "primary_expected_guide_ids",
+    "primary_expected_guides",
+    "primary_target_guide_id",
+    "primary_target_guide_ids",
+    "primary_target_guides",
+)
 PROMPT_KEYS = ("prompt", "question")
 
 
@@ -83,6 +91,15 @@ def expected_guide_ids(record: Mapping[str, Any]) -> list[str]:
     return _dedupe(values)
 
 
+def primary_expected_guide_ids(record: Mapping[str, Any]) -> list[str]:
+    """Return primary expected guide IDs from prompt-pack metadata."""
+    values = []
+    for key in PRIMARY_EXPECTED_GUIDE_KEYS:
+        if key in record:
+            values.extend(extract_guide_ids(record.get(key)))
+    return _dedupe(values)
+
+
 def load_prompt_pack(path: Path) -> list[dict[str, Any]]:
     """Load a JSONL prompt pack while preserving all metadata fields."""
     rows: list[dict[str, Any]] = []
@@ -113,6 +130,7 @@ def load_prompt_pack(path: Path) -> list[dict[str, Any]]:
                     "prompt": prompt,
                     "record": record,
                     "expected_guide_ids": expected_guide_ids(record),
+                    "primary_expected_guide_ids": primary_expected_guide_ids(record),
                 }
             )
     return rows
@@ -186,6 +204,23 @@ def row_metrics(
     }
 
 
+def primary_row_metrics(
+    primary_ids: Sequence[str],
+    retrieved_ids: Sequence[str],
+    *,
+    top_k: int | None = None,
+) -> dict[str, Any]:
+    """Compute primary-owner metrics for one prompt."""
+    metrics = row_metrics(primary_ids, retrieved_ids, top_k=top_k)
+    return {
+        "primary_hit_at_1": metrics["expected_hit_at_1"],
+        "primary_hit_at_3": metrics["expected_hit_at_3"],
+        "primary_hit_at_k": metrics["expected_hit_at_k"],
+        "primary_best_rank": metrics["expected_owner_best_rank"],
+        "primary_owner_best_rank": metrics["expected_owner_best_rank"],
+    }
+
+
 def summarize_rows(rows: Sequence[Mapping[str, Any]], *, distractor_limit: int = 10) -> dict[str, Any]:
     expected_rows = [
         row
@@ -194,10 +229,21 @@ def summarize_rows(rows: Sequence[Mapping[str, Any]], *, distractor_limit: int =
     ]
     error_count = sum(1 for row in rows if row.get("error"))
     denominator = len(expected_rows)
+    primary_rows = [
+        row
+        for row in rows
+        if row.get("primary_expected_guide_ids") and not row.get("error")
+    ]
+    primary_denominator = len(primary_rows)
     best_ranks = [
         int(row["expected_owner_best_rank"])
         for row in expected_rows
         if row.get("expected_owner_best_rank") is not None
+    ]
+    primary_best_ranks = [
+        int(row["primary_owner_best_rank"])
+        for row in primary_rows
+        if row.get("primary_owner_best_rank") is not None
     ]
     owner_slots = sum(int(row.get("expected_owner_count") or 0) for row in expected_rows)
     retrieved_slots = sum(int(row.get("retrieved_count") or 0) for row in expected_rows)
@@ -241,6 +287,30 @@ def summarize_rows(rows: Sequence[Mapping[str, Any]], *, distractor_limit: int =
             f"{(sum(best_ranks) / len(best_ranks)):.2f}" if best_ranks else "unknown"
         ),
         "expected_owner_ranked_rows": len(best_ranks),
+        "primary_expected_rows": primary_denominator,
+        "primary_hit_at_1": ratio_summary(
+            sum(1 for row in primary_rows if row.get("primary_hit_at_1")),
+            primary_denominator,
+        ),
+        "primary_hit_at_3": ratio_summary(
+            sum(1 for row in primary_rows if row.get("primary_hit_at_3")),
+            primary_denominator,
+        ),
+        "primary_hit_at_k": ratio_summary(
+            sum(1 for row in primary_rows if row.get("primary_hit_at_k")),
+            primary_denominator,
+        ),
+        "primary_owner_best_rank": (
+            f"{(sum(primary_best_ranks) / len(primary_best_ranks)):.2f}"
+            if primary_best_ranks
+            else "unknown"
+        ),
+        "primary_best_rank": (
+            f"{(sum(primary_best_ranks) / len(primary_best_ranks)):.2f}"
+            if primary_best_ranks
+            else "unknown"
+        ),
+        "primary_owner_ranked_rows": len(primary_best_ranks),
         "simple_owner_share": ratio_summary(owner_slots, retrieved_slots),
         "retrieval_latency_ms": latency_summary(latencies),
         "top1_marker_risk_counts": dict(marker_risks),
@@ -353,6 +423,7 @@ def evaluate_pack(
     for index, entry in enumerate(prompt_rows, start=1):
         prompt = str(entry["prompt"])
         expected_ids = list(entry.get("expected_guide_ids") or [])
+        primary_ids = list(entry.get("primary_expected_guide_ids") or [])
         row = {
             "prompt_index": index,
             "line_number": entry.get("line_number"),
@@ -363,6 +434,7 @@ def evaluate_pack(
             "target_behavior": entry.get("target_behavior") or "",
             "prompt": prompt,
             "expected_guide_ids": expected_ids,
+            "primary_expected_guide_ids": primary_ids,
         }
         if progress:
             label = row["prompt_id"] or f"line {row['line_number']}"
@@ -380,6 +452,8 @@ def evaluate_pack(
             row["retrieval_elapsed_ms"] = round((time.perf_counter() - start) * 1000, 3)
             row["top_retrieved_guide_ids"] = retrieved_ids
             row.update(row_metrics(expected_ids, retrieved_ids, top_k=top_k))
+            if primary_ids:
+                row.update(primary_row_metrics(primary_ids, retrieved_ids, top_k=top_k))
             if corpus_marker_lookup:
                 from scripts.analyze_rag_bench_failures import top1_marker_fields
 
@@ -406,6 +480,7 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
         f"- retrieval_profile_override: `{config.get('retrieval_profile_override') or ''}`",
         f"- total_prompts: {summary['total_prompts']}",
         f"- expected_owner_rows: {summary['expected_owner_rows']}",
+        f"- primary_expected_rows: {summary['primary_expected_rows']}",
         f"- retrieval_error_rows: {summary['retrieval_error_rows']}",
         "",
         "| metric | value |",
@@ -414,6 +489,10 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
         f"| expected hit@3 | {summary['expected_hit_at_3']['text']} |",
         f"| expected hit@k | {summary['expected_hit_at_k']['text']} |",
         f"| expected owner best rank | {summary['expected_owner_best_rank']} |",
+        f"| primary hit@1 | {summary['primary_hit_at_1']['text']} |",
+        f"| primary hit@3 | {summary['primary_hit_at_3']['text']} |",
+        f"| primary hit@k | {summary['primary_hit_at_k']['text']} |",
+        f"| primary best rank | {summary['primary_best_rank']} |",
         f"| simple owner share | {summary['simple_owner_share']['text']} |",
         f"| retrieval latency mean ms | {summary['retrieval_latency_ms']['mean'] or ''} |",
         f"| retrieval latency p95 ms | {summary['retrieval_latency_ms']['p95'] or ''} |",
@@ -434,24 +513,33 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
             "",
             "## Rows",
             "",
-            "| # | id | expected | top retrieved | hit@1 | hit@3 | hit@k | best rank | owner share | error |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| # | id | expected | primary | top retrieved | hit@1 | hit@3 | hit@k | best rank | primary hit@1 | primary hit@3 | primary hit@k | primary best rank | owner share | error |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in payload["rows"]:
         expected = "|".join(row.get("expected_guide_ids") or [])
+        primary = "|".join(row.get("primary_expected_guide_ids") or [])
         retrieved = "|".join((row.get("top_retrieved_guide_ids") or [])[: config["top_k"]])
         lines.append(
-            "| {idx} | {pid} | {expected} | {retrieved} | {hit1} | {hit3} | "
-            "{hitk} | {rank} | {share:.4f} | {error} |".format(
+            "| {idx} | {pid} | {expected} | {primary} | {retrieved} | {hit1} | {hit3} | "
+            "{hitk} | {rank} | {primary_hit1} | {primary_hit3} | {primary_hitk} | "
+            "{primary_rank} | {share:.4f} | {error} |".format(
                 idx=row.get("prompt_index"),
                 pid=_md_cell(row.get("prompt_id") or ""),
                 expected=_md_cell(expected),
+                primary=_md_cell(primary),
                 retrieved=_md_cell(retrieved),
                 hit1="yes" if row.get("expected_hit_at_1") else "no",
                 hit3="yes" if row.get("expected_hit_at_3") else "no",
                 hitk="yes" if row.get("expected_hit_at_k") else "no",
                 rank=row.get("expected_owner_best_rank") or "",
+                primary_hit1=_yes_no_blank(row.get("primary_hit_at_1")),
+                primary_hit3=_yes_no_blank(row.get("primary_hit_at_3")),
+                primary_hitk=_yes_no_blank(row.get("primary_hit_at_k")),
+                primary_rank=row.get("primary_best_rank")
+                or row.get("primary_owner_best_rank")
+                or "",
                 share=float(row.get("owner_share") or 0.0),
                 error=_md_cell(row.get("error") or ""),
             )
@@ -461,6 +549,12 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
 
 def _md_cell(value: Any) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ").strip()
+
+
+def _yes_no_blank(value: Any) -> str:
+    if value is None:
+        return ""
+    return "yes" if value else "no"
 
 
 def build_payload(

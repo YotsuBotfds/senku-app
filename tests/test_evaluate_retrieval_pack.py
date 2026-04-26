@@ -42,6 +42,7 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
                         "lane": "rag-eval",
                         "section": "Owner checks",
                         "guide_id": "GD-024",
+                        "primary_expected_guides": ["GD-024"],
                         "prompt": "How should we stay warm tonight?",
                     }
                 )
@@ -55,7 +56,29 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertEqual(rows[0]["lane"], "rag-eval")
         self.assertEqual(rows[0]["section"], "Owner checks")
         self.assertEqual(rows[0]["expected_guide_ids"], ["GD-024"])
+        self.assertEqual(rows[0]["primary_expected_guide_ids"], ["GD-024"])
         self.assertEqual(rows[0]["prompt"], "How should we stay warm tonight?")
+
+    def test_primary_expected_guides_do_not_replace_expected_guides(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "pack.jsonl"
+            path.write_text(
+                json.dumps(
+                    {
+                        "id": "CASE-002",
+                        "expected_guides": ["GD-380", "GD-232"],
+                        "primary_expected_guides": [{"guide_id": "GD-380"}],
+                        "prompt": "My kid was hit in the belly and looks faint.",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            rows = self.module.load_prompt_pack(path)
+
+        self.assertEqual(rows[0]["expected_guide_ids"], ["GD-380", "GD-232"])
+        self.assertEqual(rows[0]["primary_expected_guide_ids"], ["GD-380"])
 
     def test_row_metrics_reports_owner_hits_share_rank_and_distractors(self):
         metrics = self.module.row_metrics(
@@ -79,14 +102,37 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             ],
         )
 
+    def test_primary_row_metrics_reports_primary_hits_and_rank_only(self):
+        metrics = self.module.primary_row_metrics(
+            ["GD-380"],
+            ["GD-232", "GD-380", "GD-584"],
+            top_k=3,
+        )
+
+        self.assertEqual(
+            metrics,
+            {
+                "primary_hit_at_1": False,
+                "primary_hit_at_3": True,
+                "primary_hit_at_k": True,
+                "primary_best_rank": 2,
+                "primary_owner_best_rank": 2,
+            },
+        )
+
     def test_summarize_rows_aggregates_expected_owner_metrics(self):
         rows = [
             {
                 "expected_guide_ids": ["GD-111"],
+                "primary_expected_guide_ids": ["GD-111"],
                 "expected_hit_at_1": True,
                 "expected_hit_at_3": True,
                 "expected_hit_at_k": True,
                 "expected_owner_best_rank": 1,
+                "primary_hit_at_1": True,
+                "primary_hit_at_3": True,
+                "primary_hit_at_k": True,
+                "primary_owner_best_rank": 1,
                 "expected_owner_count": 1,
                 "retrieved_count": 3,
                 "retrieval_elapsed_ms": 12.0,
@@ -99,10 +145,15 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             },
             {
                 "expected_guide_ids": ["GD-333"],
+                "primary_expected_guide_ids": ["GD-444"],
                 "expected_hit_at_1": False,
                 "expected_hit_at_3": False,
                 "expected_hit_at_k": False,
                 "expected_owner_best_rank": None,
+                "primary_hit_at_1": False,
+                "primary_hit_at_3": True,
+                "primary_hit_at_k": True,
+                "primary_owner_best_rank": 2,
                 "expected_owner_count": 0,
                 "retrieved_count": 2,
                 "retrieval_elapsed_ms": 4.0,
@@ -116,6 +167,7 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             },
             {
                 "expected_guide_ids": ["GD-555"],
+                "primary_expected_guide_ids": ["GD-555"],
                 "error": "RuntimeError: embed unavailable",
             },
             {
@@ -133,6 +185,13 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertEqual(summary["expected_hit_at_3"]["text"], "1/2 (50.0%)")
         self.assertEqual(summary["expected_hit_at_k"]["text"], "1/2 (50.0%)")
         self.assertEqual(summary["expected_owner_best_rank"], "1.00")
+        self.assertEqual(summary["primary_expected_rows"], 2)
+        self.assertEqual(summary["primary_hit_at_1"]["text"], "1/2 (50.0%)")
+        self.assertEqual(summary["primary_hit_at_3"]["text"], "2/2 (100.0%)")
+        self.assertEqual(summary["primary_hit_at_k"]["text"], "2/2 (100.0%)")
+        self.assertEqual(summary["primary_best_rank"], "1.50")
+        self.assertEqual(summary["primary_owner_best_rank"], "1.50")
+        self.assertEqual(summary["primary_owner_ranked_rows"], 2)
         self.assertEqual(summary["simple_owner_share"]["text"], "1/5 (20.0%)")
         self.assertEqual(summary["retrieval_latency_ms"], {"count": 2, "mean": 8.0, "p95": 12.0})
         self.assertEqual(summary["top1_marker_risk_counts"], {"warn": 1, "none": 1})
@@ -196,6 +255,7 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
                         "section": "Section",
                         "prompt": "question?",
                         "expected_guide_ids": ["GD-123"],
+                        "primary_expected_guide_ids": ["GD-123"],
                     }
                 ],
                 collection="fake-collection",
@@ -222,11 +282,72 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         self.assertEqual(calls[0]["retrieval_profile_override"], "safety_triage")
         self.assertEqual(rows[0]["top_retrieved_guide_ids"], ["GD-999", "GD-123"])
         self.assertEqual(rows[0]["expected_owner_best_rank"], 2)
+        self.assertEqual(rows[0]["primary_expected_guide_ids"], ["GD-123"])
+        self.assertFalse(rows[0]["primary_hit_at_1"])
+        self.assertTrue(rows[0]["primary_hit_at_3"])
+        self.assertTrue(rows[0]["primary_hit_at_k"])
+        self.assertEqual(rows[0]["primary_best_rank"], 2)
+        self.assertEqual(rows[0]["primary_owner_best_rank"], 2)
         self.assertEqual(rows[0]["top1_marker_risk"], "warn")
         self.assertEqual(rows[0]["top1_is_bridge"], "yes")
         self.assertEqual(rows[0]["top1_has_unresolved_partial"], "yes")
         self.assertIsInstance(rows[0]["retrieval_elapsed_ms"], float)
         self.assertTrue(rows[0]["retrieval_meta"]["fake"])
+
+    def test_render_markdown_includes_primary_metrics_and_row_columns(self):
+        payload = {
+            "prompt_pack": "pack.jsonl",
+            "generated_at": "2026-04-26T10:00:00",
+            "config": {
+                "top_k": 3,
+                "category": None,
+                "embed_url": None,
+                "retrieval_profile_override": None,
+            },
+            "summary": {
+                "total_prompts": 1,
+                "expected_owner_rows": 1,
+                "primary_expected_rows": 1,
+                "retrieval_error_rows": 0,
+                "expected_hit_at_1": {"text": "0/1 (0.0%)"},
+                "expected_hit_at_3": {"text": "1/1 (100.0%)"},
+                "expected_hit_at_k": {"text": "1/1 (100.0%)"},
+                "expected_owner_best_rank": "2.00",
+                "primary_hit_at_1": {"text": "1/1 (100.0%)"},
+                "primary_hit_at_3": {"text": "1/1 (100.0%)"},
+                "primary_hit_at_k": {"text": "1/1 (100.0%)"},
+                "primary_best_rank": "1.00",
+                "primary_owner_best_rank": "1.00",
+                "simple_owner_share": {"text": "1/3 (33.3%)"},
+                "retrieval_latency_ms": {"mean": 1.0, "p95": 1.0},
+                "top_distractor_guide_ids": [],
+            },
+            "rows": [
+                {
+                    "prompt_index": 1,
+                    "prompt_id": "P-1",
+                    "expected_guide_ids": ["GD-380", "GD-232"],
+                    "primary_expected_guide_ids": ["GD-380"],
+                    "top_retrieved_guide_ids": ["GD-380", "GD-232", "GD-584"],
+                    "expected_hit_at_1": True,
+                    "expected_hit_at_3": True,
+                    "expected_hit_at_k": True,
+                    "expected_owner_best_rank": 1,
+                    "primary_hit_at_1": True,
+                    "primary_hit_at_3": True,
+                    "primary_hit_at_k": True,
+                    "primary_owner_best_rank": 1,
+                    "owner_share": 0.6667,
+                }
+            ],
+        }
+
+        markdown = self.module.render_markdown(payload)
+
+        self.assertIn("- primary_expected_rows: 1", markdown)
+        self.assertIn("| primary hit@1 | 1/1 (100.0%) |", markdown)
+        self.assertIn("primary best rank", markdown)
+        self.assertIn("GD-380", markdown)
 
     def test_retrieve_for_prompt_profile_override_is_scoped(self):
         import bench
