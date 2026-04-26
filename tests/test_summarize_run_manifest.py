@@ -79,6 +79,35 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertNotIn("old", markdown)
         self.assertNotIn("other", markdown)
 
+    def test_artifact_health_is_na_when_evidence_fields_absent(self):
+        records = [
+            {
+                "task": "legacy",
+                "lane": "tooling",
+                "label": "old-record",
+                "dirty": True,
+            }
+        ]
+
+        markdown = render_markdown(records)
+
+        self.assertIn("paths=n/a; dirty", markdown)
+        self.assertNotIn("paths=0; missing=0", markdown)
+
+    def test_artifact_health_preserves_defaults_when_evidence_field_exists(self):
+        records = [
+            {
+                "task": "partial",
+                "lane": "tooling",
+                "label": "partial-evidence",
+                "artifact_path_missing_count": 2,
+            }
+        ]
+
+        markdown = render_markdown(records)
+
+        self.assertIn("paths=0; missing=2", markdown)
+
     def test_cli_writes_output_and_prints_stdout(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

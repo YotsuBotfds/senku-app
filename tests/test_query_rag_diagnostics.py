@@ -49,6 +49,8 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                 "top1_has_unresolved_partial": "no",
                 "answer_card_status": "pass",
                 "app_acceptance_root_cause": "supported",
+                "safety_surface_status": "not_safety_critical",
+                "ui_surface_bucket": "standard",
             },
             {
                 "prompt_id": "P2",
@@ -60,6 +62,8 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                 "top1_has_unresolved_partial": "yes",
                 "answer_card_status": "fail",
                 "app_acceptance_root_cause": "evidence_owner",
+                "safety_surface_status": "emergency_first_supported",
+                "ui_surface_bucket": "emergency_first",
             },
         ]
 
@@ -76,6 +80,8 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
             prompt_ids=["P2"],
             top1_unresolved_partial=True,
             acceptance_root_causes=["evidence_owner"],
+            safety_surface_statuses=["emergency_first_supported"],
+            ui_surface_buckets=["emergency_first"],
         )
 
         self.assertEqual([row["prompt_id"] for row in bridge_rows], ["P1"])
@@ -89,6 +95,8 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                     "suspected_failure_bucket": "ranking_miss",
                     "expected_guide_ids": "GD-001|GD-002",
                     "app_acceptance_root_cause": "evidence_owner",
+                    "safety_surface_status": "emergency_first_supported",
+                    "ui_surface_bucket": "emergency_first",
                     "short_reason": "expected | cited",
                 }
             ]
@@ -96,8 +104,12 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
 
         self.assertIn("| prompt_id | suspected_failure_bucket |", markdown)
         self.assertIn("app_acceptance_root_cause", markdown)
+        self.assertIn("safety_surface_status", markdown)
+        self.assertIn("ui_surface_bucket", markdown)
         self.assertIn("GD-001\\|GD-002", markdown)
         self.assertIn("evidence_owner", markdown)
+        self.assertIn("emergency_first_supported", markdown)
+        self.assertIn("emergency_first", markdown)
         self.assertIn("expected \\| cited", markdown)
 
     def test_main_emits_json(self):
@@ -110,11 +122,15 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                         "prompt_id": "P1",
                         "suspected_failure_bucket": "ranking_miss",
                         "app_acceptance_root_cause": "supported",
+                        "safety_surface_status": "not_safety_critical",
+                        "ui_surface_bucket": "standard",
                     },
                     {
                         "prompt_id": "P2",
                         "suspected_failure_bucket": "retrieval_miss",
                         "app_acceptance_root_cause": "gate_policy",
+                        "safety_surface_status": "emergency_first_supported",
+                        "ui_surface_bucket": "emergency_first",
                     },
                 ],
             )
@@ -128,6 +144,10 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
                         "retrieval_miss",
                         "--acceptance-root-cause",
                         "gate_policy",
+                        "--safety-surface-status",
+                        "emergency_first_supported",
+                        "--ui-surface-bucket",
+                        "emergency_first",
                         "--json",
                     ]
                 )

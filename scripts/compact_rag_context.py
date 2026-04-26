@@ -76,6 +76,18 @@ def counter_from_rows(rows: list[dict[str, Any]], field: str) -> Counter[str]:
     return counter
 
 
+def counter_from_summary_or_rows(
+    summary: dict[str, Any],
+    summary_field: str,
+    rows: list[dict[str, Any]],
+    row_field: str,
+) -> dict[str, Any] | Counter[str]:
+    value = summary.get(summary_field)
+    if isinstance(value, dict):
+        return value
+    return counter_from_rows(rows, row_field)
+
+
 def format_counter(counter: dict[str, Any] | Counter[str]) -> str:
     if not counter:
         return "`none`"
@@ -154,6 +166,7 @@ def render_markdown(
         "## App/Card/Claim/Evidence",
         "",
         f"- App acceptance: {format_counter(summary.get('app_acceptance_counts') or counter_from_rows(rows, 'app_acceptance_status'))}",
+        f"- App acceptance root causes: {format_counter(counter_from_summary_or_rows(summary, 'app_acceptance_root_cause_counts', rows, 'app_acceptance_root_cause'))}",
         f"- Evidence owner: {format_counter(summary.get('evidence_owner_counts') or counter_from_rows(rows, 'evidence_owner_status'))}",
         f"- Answer cards: {format_counter(summary.get('answer_card_counts') or counter_from_rows(rows, 'answer_card_status'))}",
         f"- Evidence nuggets: {format_counter(summary.get('evidence_nugget_counts') or counter_from_rows(rows, 'evidence_nugget_status'))}",

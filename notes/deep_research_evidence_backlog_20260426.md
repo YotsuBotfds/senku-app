@@ -210,6 +210,9 @@ Action:
 - Added row-level acceptance-root-cause plumbing to diagnostics triage tools:
   `query_rag_diagnostics.py` can filter by `--acceptance-root-cause`, and RAG
   eval dataset exports preserve `app_acceptance_root_cause` in metadata.
+- Extended row-level diagnostics queries with safety/UI surfacing filters:
+  `--safety-surface-status` and `--ui-surface-bucket` now let triage isolate
+  emergency-first or non-safety rows without opening the raw artifact.
 - Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
   the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
   security installs pinned `uv==0.11.7` before checking the generated lock.
@@ -290,6 +293,9 @@ Action:
   missing-path count so stale or absent proof files are visible in manifests.
 - Surfaced run-manifest artifact health in the Markdown summary table, including
   artifact path count, missing count, truncation, and dirty-worktree status.
+- Preserved legacy run-manifest summary semantics by rendering records with no
+  artifact evidence fields as `paths=n/a` instead of implying
+  `paths=0; missing=0`; partial evidence records keep the existing defaults.
 - Added PowerShell quality-gate flag validation: `-RequireAnalyzer` cannot be
   paired with `-SkipAnalyzer`, and `-RequirePester` cannot be paired with
   `-SkipPester`.
@@ -309,6 +315,8 @@ Validation:
   produced `app_acceptance_status=strong_supported`,
   `safety_surface_status=emergency_first_supported`, and
   `ui_surface_bucket=emergency_first`.
+- Run-manifest Markdown summary tests now cover legacy no-evidence records and
+  partial artifact-evidence records.
 
 Deferred unless evidenced:
 

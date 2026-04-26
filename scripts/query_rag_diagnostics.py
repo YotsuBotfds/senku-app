@@ -20,6 +20,8 @@ DEFAULT_COLUMNS = (
     "top1_has_unresolved_partial",
     "answer_card_status",
     "app_acceptance_root_cause",
+    "safety_surface_status",
+    "ui_surface_bucket",
     "short_reason",
 )
 GUIDE_ID_FIELDS = (
@@ -78,6 +80,18 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         action="append",
         default=[],
         help="Filter by app_acceptance_root_cause. Repeat to include multiple causes.",
+    )
+    parser.add_argument(
+        "--safety-surface-status",
+        action="append",
+        default=[],
+        help="Filter by safety_surface_status. Repeat to include multiple statuses.",
+    )
+    parser.add_argument(
+        "--ui-surface-bucket",
+        action="append",
+        default=[],
+        help="Filter by ui_surface_bucket. Repeat to include multiple buckets.",
     )
     parser.add_argument(
         "--json",
@@ -145,6 +159,8 @@ def filter_rows(
     top1_bridge: bool = False,
     card_statuses: Sequence[str] = (),
     acceptance_root_causes: Sequence[str] = (),
+    safety_surface_statuses: Sequence[str] = (),
+    ui_surface_buckets: Sequence[str] = (),
 ) -> list[dict[str, Any]]:
     bucket_set = {bucket.strip() for bucket in buckets if bucket.strip()}
     guide_id_set = {guide_id.strip() for guide_id in guide_ids if guide_id.strip()}
@@ -155,6 +171,10 @@ def filter_rows(
         for root_cause in acceptance_root_causes
         if root_cause.strip()
     }
+    safety_surface_set = {
+        status.strip() for status in safety_surface_statuses if status.strip()
+    }
+    ui_surface_set = {bucket.strip() for bucket in ui_surface_buckets if bucket.strip()}
 
     matches: list[dict[str, Any]] = []
     for row in rows:
@@ -168,6 +188,13 @@ def filter_rows(
             root_cause_set
             and str(row.get("app_acceptance_root_cause") or "") not in root_cause_set
         ):
+            continue
+        if (
+            safety_surface_set
+            and str(row.get("safety_surface_status") or "") not in safety_surface_set
+        ):
+            continue
+        if ui_surface_set and str(row.get("ui_surface_bucket") or "") not in ui_surface_set:
             continue
         if top1_unresolved_partial and not _truthy_diagnostic(
             row.get("top1_has_unresolved_partial")
@@ -215,6 +242,8 @@ def query_diagnostics(path: Path, args: argparse.Namespace) -> list[dict[str, An
         top1_bridge=args.top1_bridge,
         card_statuses=args.card_status,
         acceptance_root_causes=args.acceptance_root_cause,
+        safety_surface_statuses=args.safety_surface_status,
+        ui_surface_buckets=args.ui_surface_bucket,
     )
 
 

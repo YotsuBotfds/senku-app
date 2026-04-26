@@ -10,6 +10,11 @@ from typing import Any
 
 
 DEFAULT_MANIFEST_PATH = Path("artifacts/runs/run_manifest.jsonl")
+ARTIFACT_EVIDENCE_FIELDS = (
+    "artifact_path_count",
+    "artifact_path_missing_count",
+    "artifact_path_truncated",
+)
 
 
 def _as_list(value: Any) -> list[Any]:
@@ -121,14 +126,19 @@ def render_markdown(
 
 
 def _artifact_health(record: dict[str, Any]) -> str:
-    artifact_count = record.get("artifact_path_count", 0)
-    missing_count = record.get("artifact_path_missing_count", 0)
-    truncated = record.get("artifact_path_truncated", False)
     dirty = record.get("dirty", False)
 
-    parts = [f"paths={artifact_count}", f"missing={missing_count}"]
-    if truncated:
-        parts.append("truncated")
+    if any(field in record for field in ARTIFACT_EVIDENCE_FIELDS):
+        artifact_count = record.get("artifact_path_count", 0)
+        missing_count = record.get("artifact_path_missing_count", 0)
+        truncated = record.get("artifact_path_truncated", False)
+
+        parts = [f"paths={artifact_count}", f"missing={missing_count}"]
+        if truncated:
+            parts.append("truncated")
+    else:
+        parts = ["paths=n/a"]
+
     if dirty:
         parts.append("dirty")
     return _escape_markdown("; ".join(parts))

@@ -44,6 +44,10 @@ class CompactRagContextTests(unittest.TestCase):
                     "moderate_supported": 1,
                     "needs_evidence_owner": 2,
                 },
+                "app_acceptance_root_cause_counts": {
+                    "evidence_owner": 2,
+                    "supported": 1,
+                },
                 "evidence_owner_counts": {"expected_owner_cited": 1},
                 "answer_card_counts": {"no_cards": 3},
                 "evidence_nugget_counts": {"no_cards": 3},
@@ -56,6 +60,7 @@ class CompactRagContextTests(unittest.TestCase):
                     "prompt_text": "A bad row with a long enough prompt to be capped cleanly.",
                     "suspected_failure_bucket": "artifact_error",
                     "app_acceptance_status": "needs_evidence_owner",
+                    "app_acceptance_root_cause": "evidence_owner",
                     "answer_card_status": "no_cards",
                     "claim_support_status": "no_generated_answer",
                     "evidence_nugget_status": "no_cards",
@@ -74,6 +79,7 @@ class CompactRagContextTests(unittest.TestCase):
                     "prompt_text": "Supported row.",
                     "suspected_failure_bucket": "expected_supported",
                     "app_acceptance_status": "moderate_supported",
+                    "app_acceptance_root_cause": "supported",
                     "answer_card_status": "no_cards",
                     "claim_support_status": "no_cards",
                     "evidence_nugget_status": "no_cards",
@@ -90,6 +96,7 @@ class CompactRagContextTests(unittest.TestCase):
                     "prompt_text": "Missed row.",
                     "suspected_failure_bucket": "retrieval_miss",
                     "app_acceptance_status": "needs_evidence_owner",
+                    "app_acceptance_root_cause": "evidence_owner",
                     "answer_card_status": "no_cards",
                     "claim_support_status": "no_cards",
                     "evidence_nugget_status": "no_cards",
@@ -115,10 +122,28 @@ class CompactRagContextTests(unittest.TestCase):
         self.assertIn("- Marker risk counts: `none`: 2, `warn`: 1", markdown)
         self.assertIn("- Top-1 unresolved-partial rows: `1`", markdown)
         self.assertIn("- App acceptance: `moderate_supported`: 1, `needs_evidence_owner`: 2", markdown)
+        self.assertIn("- App acceptance root causes: `evidence_owner`: 2, `supported`: 1", markdown)
         self.assertIn("| 1 | P-001 | artifact_error |", markdown)
         self.assertIn("| 3 | P-003 | retrieval_miss |", markdown)
         self.assertNotIn("| 2 | P-002 | expected_supported |", markdown)
         self.assertIn("A bad row with a long...", markdown)
+
+    def test_app_acceptance_root_cause_counts_use_summary_when_present(self):
+        data = self.sample_data()
+        data["summary"]["app_acceptance_root_cause_counts"] = {"gate_policy": 3}
+
+        markdown = render_markdown(data, Path("diag"), max_rows=10, text_limit=80)
+
+        self.assertIn("- App acceptance root causes: `gate_policy`: 3", markdown)
+        self.assertNotIn("- App acceptance root causes: `evidence_owner`: 2, `supported`: 1", markdown)
+
+    def test_app_acceptance_root_cause_counts_fall_back_to_rows_when_summary_absent(self):
+        data = self.sample_data()
+        data["summary"].pop("app_acceptance_root_cause_counts")
+
+        markdown = render_markdown(data, Path("diag"), max_rows=10, text_limit=80)
+
+        self.assertIn("- App acceptance root causes: `evidence_owner`: 2, `supported`: 1", markdown)
 
     def test_write_context_accepts_directory_and_adds_artifact_links(self):
         root = self.make_tmpdir()
