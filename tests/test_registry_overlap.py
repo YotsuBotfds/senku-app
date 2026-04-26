@@ -1,7 +1,15 @@
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
+from pathlib import Path
 
 import query
 from scripts.validate_special_cases import build_overlap_matrix_rows
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 class RegistryOverlapTests(unittest.TestCase):
@@ -142,6 +150,43 @@ class RegistryOverlapTests(unittest.TestCase):
         self.assertEqual(
             winner_rows[0]["winner_rule_ids"],
             ["child_under_sink_cleaner_ingestion"],
+        )
+
+    def test_validator_writes_overlap_matrix_artifact(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "overlap_matrix.json"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    "scripts\\validate_special_cases.py",
+                    "--overlap-matrix-json",
+                    str(output_path),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+
+            self.assertIn("overlap", result.stdout)
+            rows = json.loads(output_path.read_text(encoding="utf-8"))
+
+        self.assertGreater(len(rows), 0)
+        winner_rows = [row for row in rows if row["is_winner"]]
+        self.assertGreater(len(winner_rows), 0)
+        self.assertTrue(
+            {
+                "source_rule_id",
+                "sample_prompt",
+                "matched_rule_id",
+                "matched_priority",
+                "matched_lexical_signature_size",
+                "matched_promotion_status",
+                "winner_rule_ids",
+                "winner_reason",
+                "is_winner",
+            }.issubset(rows[0])
         )
 
     def test_child_unknown_pill_overlap_prefers_child_ingestion_rule(self):

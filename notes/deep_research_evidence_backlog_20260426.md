@@ -217,6 +217,10 @@ Action:
   blocking only `Error` severity findings. Existing warning/information debt is
   still printed explicitly so the lane becomes visible without failing on the
   current backlog-sized warning wall.
+- Added a CLI proof for the deterministic overlap matrix artifact:
+  `validate_special_cases.py --overlap-matrix-json` now has test coverage that
+  the generated rows include winner, priority, lexical-signature, and promotion
+  metadata.
 
 Validation:
 
