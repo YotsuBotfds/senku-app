@@ -124,8 +124,15 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("rag_eval9_high_liability_compound_holdouts_20260426.jsonl", gate_script)
         self.assertIn("--files @selectedGuides", gate_script)
         self.assertIn("python -B ingest.py --stats", gate_script)
-        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 32 --files @selectedGuides", gate_script)
-        self.assertIn("python -B ingest.py --rebuild --embedding-batch-size 16", gate_script)
+        self.assertIn(
+            "python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 16 --files @selectedGuides",
+            gate_script,
+        )
+        self.assertIn(
+            "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild.",
+            gate_script,
+        )
+        self.assertNotIn("python -B ingest.py --rebuild --embedding-batch-size 16", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog", gate_script)

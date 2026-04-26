@@ -581,6 +581,118 @@ Second guide content.
             gc.collect()
             shutil.rmtree(tmpdir, ignore_errors=True)
 
+    def test_guide_summary_index_builds_one_rich_chunk_per_guide(self):
+        tmpdir = Path(tempfile.mkdtemp())
+        try:
+            guides_dir = tmpdir / "guides"
+            guides_dir.mkdir()
+            guide = guides_dir / "summary-guide.md"
+            guide.write_text(
+                """---
+id: GD-908
+slug: summary-guide
+title: Summary Guide
+category: utility
+description: Summary test guide.
+aliases:
+  - compact smoke route
+routing_cues:
+  - Use for compact CI retrieval.
+---
+
+## First
+
+First guide content.
+
+## Second
+
+Second guide content.
+""",
+                encoding="utf-8",
+            )
+
+            meta, chunks = ingest_module.process_file(
+                guide,
+                guide_summary_index=True,
+            )
+
+            self.assertEqual(meta["id"], "GD-908")
+            self.assertEqual(len(chunks), 1)
+            self.assertEqual(chunks[0]["metadata"]["section_id"], "guide-summary")
+            self.assertIn("Summary Guide", chunks[0]["text"])
+            self.assertIn("compact smoke route", chunks[0]["text"])
+            self.assertIn("Headings: First; Second", chunks[0]["text"])
+        finally:
+            gc.collect()
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
+    def test_rebuild_with_guide_summary_index_embeds_one_chunk_per_file(self):
+        tmpdir = Path(tempfile.mkdtemp())
+        try:
+            root = tmpdir
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            for guide_id, stem in (("GD-909", "first"), ("GD-910", "second")):
+                (guides_dir / f"{stem}.md").write_text(
+                    f"""---
+id: {guide_id}
+slug: {stem}
+title: {stem}
+category: utility
+description: Test guide.
+---
+
+## First
+
+First content.
+
+## Second
+
+Second content.
+""",
+                    encoding="utf-8",
+                )
+
+            db_dir = root / "db"
+            lexical_path = db_dir / "senku_lexical.sqlite3"
+            manifest_path = db_dir / "ingest_manifest.json"
+            report_path = db_dir / "metadata_validation_report.json"
+
+            with (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(ingest_module.config, "CHROMA_DB_DIR", str(db_dir)),
+                patch.object(ingest_module.config, "LEXICAL_DB_PATH", str(lexical_path)),
+                patch.object(ingest_module, "MANIFEST_PATH", str(manifest_path)),
+                patch.object(ingest_module, "METADATA_VALIDATION_REPORT_PATH", str(report_path)),
+                patch.object(ingest_module.requests, "get", return_value=object()),
+                patch.object(
+                    ingest_module,
+                    "embed_batch_with_retry",
+                    side_effect=lambda texts, batch_no: [[0.0, 1.0, 2.0] for _ in texts],
+                ) as embed_mock,
+                patch.object(ingest_module, "print_stats", return_value=None),
+                patch.object(
+                    sys,
+                    "argv",
+                    ["ingest.py", "--rebuild", "--guide-summary-index"],
+                ),
+            ):
+                ingest_module.main()
+
+            self.assertEqual(len(embed_mock.call_args_list), 1)
+            self.assertEqual(len(embed_mock.call_args_list[0].args[0]), 2)
+            with closing(sqlite3.connect(lexical_path)) as conn:
+                rows = conn.execute(
+                    "SELECT guide_id, section_id FROM lexical_chunk_meta ORDER BY guide_id"
+                ).fetchall()
+            self.assertEqual(
+                rows,
+                [("GD-909", "guide-summary"), ("GD-910", "guide-summary")],
+            )
+        finally:
+            gc.collect()
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
     def test_fresh_rebuild_populates_poisoning_guides_in_lexical_db(self):
         repo_root = Path(__file__).resolve().parents[1]
         source_guides_dir = repo_root / "guides"

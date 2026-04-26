@@ -44,6 +44,9 @@ METADATA_VALIDATION_REPORT_PATH = os.path.join(
 )
 DEFAULT_EMBEDDING_BATCH_SIZE = 64
 EMBEDDING_BATCH_SIZE_ENV = "SENKU_INGEST_EMBED_BATCH_SIZE"
+GUIDE_SUMMARY_FIELD_CHARS = 600
+GUIDE_SUMMARY_HEADINGS_CHARS = 800
+GUIDE_SUMMARY_BODY_EXCERPT_CHARS = 800
 
 
 def create_lexical_index(path):
@@ -395,6 +398,66 @@ def _frontmatter_text(value):
             if str(part).strip()
         )
     return str(value).strip()
+
+
+def _truncate_summary_text(value, limit):
+    text = str(value or "").strip()
+    if len(text) <= limit:
+        return text
+    return text[:limit].rstrip() + " ..."
+
+
+def guide_summary_index_text(meta, body):
+    """Build a compact one-vector guide summary for fast CI retrieval smoke checks."""
+    lines = []
+    for label, key in (
+        ("Guide", "title"),
+        ("ID", "id"),
+        ("Slug", "slug"),
+        ("Description", "description"),
+        ("Category", "category"),
+        ("Difficulty", "difficulty"),
+        ("Liability", "liability_level"),
+    ):
+        value = _truncate_summary_text(
+            _frontmatter_text(meta.get(key)),
+            GUIDE_SUMMARY_FIELD_CHARS,
+        )
+        if value:
+            lines.append(f"{label}: {value}")
+
+    for label, key in (
+        ("Tags", "tags"),
+        ("Aliases", "aliases"),
+        ("Routing cues", "routing_cues"),
+        ("Applicability", "applicability"),
+        ("Related", "related"),
+    ):
+        value = _truncate_summary_text(
+            _frontmatter_text(meta.get(key)),
+            GUIDE_SUMMARY_FIELD_CHARS,
+        )
+        if value:
+            lines.append(f"{label}: {value}")
+
+    headings = []
+    for match in re.finditer(r"^#{2,3}\s+(.+)$", body, flags=re.MULTILINE):
+        heading = match.group(1).strip()
+        if heading:
+            headings.append(heading)
+    if headings:
+        lines.append(
+            "Headings: "
+            + _truncate_summary_text(
+                "; ".join(headings),
+                GUIDE_SUMMARY_HEADINGS_CHARS,
+            )
+        )
+
+    body_excerpt = clean_chunk_text(body)[:GUIDE_SUMMARY_BODY_EXCERPT_CHARS].strip()
+    if body_excerpt:
+        lines.extend(["", body_excerpt])
+    return "\n".join(lines).strip()
 
 
 def contextual_shadow_record(chunk, index):
@@ -834,7 +897,7 @@ def _bridge_tag_consistency_warnings(guide_records):
     return warnings
 
 
-def process_file(filepath):
+def process_file(filepath, *, guide_summary_index=False):
     """Parse a single markdown guide into chunks with metadata."""
     with open(filepath, "r", encoding="utf-8") as f:
         text = f.read()
@@ -883,6 +946,21 @@ def process_file(filepath):
 
     sections = split_sections(body)
     chunks = []
+
+    if guide_summary_index:
+        metadata = dict(common_metadata)
+        metadata.update(
+            {
+                "section_id": "guide-summary",
+                "section_heading": "Guide Summary",
+            }
+        )
+        return meta, [
+            {
+                "text": guide_summary_index_text(meta, body),
+                "metadata": metadata,
+            }
+        ]
 
     for section_id, section_text in sections:
         heading = extract_heading(section_text)
@@ -996,6 +1074,14 @@ def main():
             f"${EMBEDDING_BATCH_SIZE_ENV} or {DEFAULT_EMBEDDING_BATCH_SIZE}."
         ),
     )
+    parser.add_argument(
+        "--guide-summary-index",
+        action="store_true",
+        help=(
+            "Index one compact guide-summary chunk per guide. Intended for "
+            "fast CI retrieval smoke indexes, not production-quality retrieval."
+        ),
+    )
     args = parser.parse_args()
 
     if args.force_files and not args.files:
@@ -1003,6 +1089,9 @@ def main():
 
     if args.contextual_shadow_only and not args.contextual_shadow_jsonl:
         parser.error("--contextual-shadow-only requires --contextual-shadow-jsonl")
+
+    if args.guide_summary_index and not args.rebuild:
+        parser.error("--guide-summary-index requires --rebuild")
 
     all_md_files = collect_markdown_files()
     selected_md_files = (
@@ -1099,7 +1188,10 @@ def main():
 
     for filepath in md_files:
         try:
-            meta, chunks = process_file(filepath)
+            meta, chunks = process_file(
+                filepath,
+                guide_summary_index=args.guide_summary_index,
+            )
             basename = os.path.basename(filepath)
             if meta is None:
                 errors.append(

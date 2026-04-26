@@ -261,11 +261,10 @@ jobs:
               Write-Host "Retrieval index cache hit; validating existing db with ingest.py --stats."
               python -B ingest.py --stats
             } elseif ($selectedGuides.Count -gt 0) {
-              Write-Host "Retrieval index cache miss; rebuilding scoped CI retrieval db."
-              python -B ingest.py --rebuild --embedding-batch-size 32 --files @selectedGuides
+              Write-Host "Retrieval index cache miss; rebuilding compact scoped CI retrieval db."
+              python -B ingest.py --rebuild --guide-summary-index --embedding-batch-size 16 --files @selectedGuides
             } else {
-              Write-Host "Retrieval index cache miss and no fast prompt packs selected; rebuilding full db."
-              python -B ingest.py --rebuild --embedding-batch-size 16
+              Write-Host "Retrieval index cache miss and no retrieval prompt packs selected; skipping db rebuild."
             }
             powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args
           } finally {
