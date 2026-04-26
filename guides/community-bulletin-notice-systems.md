@@ -53,7 +53,7 @@ liability_level: low
 
 ## Overview: Information Distribution at Community Scale
 
-In low-infrastructure environments, public notices distributed through bulletin boards and town criers remain the backbone of community communication. These systems inform citizens of meetings, laws, market dates, safety alerts, and governance decisionsâ€”ensuring everyone can access critical information regardless of reading ability or resource access.
+In low-infrastructure environments, public notices distributed through bulletin boards and town criers remain the backbone of community communication. These systems inform citizens of meetings, laws, market dates, safety alerts, and governance decisions--ensuring everyone can access critical information regardless of reading ability or resource access.
 
 This guide covers designing bulletin systems that reach diverse audiences, training criers for consistency, and establishing protocols that balance public information access with message integrity.
 
@@ -62,7 +62,7 @@ This guide covers designing bulletin systems that reach diverse audiences, train
 :::tip
 **This guide owns:** broad public bulletin boards, town crier protocols, notice formats, emergency alerts, pictographic/low-literacy notices, message prioritization, notice record-keeping, and public market announcements. For notices inside a market footprint--entry boards, stall-assignment signs, lane-turn notices, loading-edge signs, and rules posted where shoppers move--hand off to `marketplace-trade-space-basics`. For the underlying tax, trade, or pricing rule itself, hand off to `taxation-revenue-systems`, `trade-standards-exchange`, or `economics-trade`.
 
-**Quick routing â€” what problem do you have?**
+**Quick routing -- what problem do you have?**
 
 - "Complaint-first: people missed the notice or the message is being spread badly" -> this guide
 - "Complaint-first: where should the community bulletin board be placed, or how should public notices be distributed across town?" -> this guide
@@ -85,27 +85,27 @@ This guide covers designing bulletin systems that reach diverse audiences, train
 **Standard community bulletin board:**
 
 <div class="board-spec">
-**Size:** 1.2 m wide Ã— 1.5 m tall (large enough to hold ~50 notices, visible from 3 meters away)
+**Size:** 1.2 m wide x 1.5 m tall (large enough to hold ~50 notices, visible from 3 meters away)
 **Material:** Wood (pine or oak frame, cork or wood panel backing)
 **Surface:** Cork board or soft wood (allows tacking; gentle on paper)
 **Backing:** Painted frame with weather-sealed exterior (paint repels water, extends board life)
-**Posts:** Sturdy wooden posts (10 cm Ã— 10 cm), sunk 0.5 m into ground or concrete
+**Posts:** Sturdy wooden posts (10 cm x 10 cm), sunk 0.5 m into ground or concrete
 **Height:** Bottom edge at 1 meter height (accessible to standing adults, children can reach with effort)
 </div>
 
 **Construction sequence:**
 
-1. **Frame:** Construct wooden frame (1.2 m wide Ã— 1.5 m tall) from 5 cm Ã— 10 cm lumber
+1. **Frame:** Construct wooden frame (1.2 m wide x 1.5 m tall) from 5 cm x 10 cm lumber
 2. **Backing:** Attach cork board or soft-wood panel to frame
-3. **Protective border:** Wooden trim (2 cm Ã— 5 cm) on all sides (protects edges, improves appearance)
+3. **Protective border:** Wooden trim (2 cm x 5 cm) on all sides (protects edges, improves appearance)
 4. **Finish:** Paint frame and trim weatherproof paint (two coats); leave cork/backing natural or seal lightly
 5. **Mounting:** Attach to posts at 1 meter height; ensure stable (wind resistance)
-6. **Roof (optional):** Angled roof overhang (30 cm Ã— 1.3 m) protects notices from rain; improves visibility
+6. **Roof (optional):** Angled roof overhang (30 cm x 1.3 m) protects notices from rain; improves visibility
 
 **Cost estimate (simple design):**
-- Materials: 40â€“80 shillings (lumber, cork, nails, paint)
-- Labor: 16â€“24 hours (can be community work day)
-- Lifespan: 5â€“10 years with maintenance
+- Materials: 40-80 shillings (lumber, cork, nails, paint)
+- Labor: 16-24 hours (can be community work day)
+- Lifespan: 5-10 years with maintenance
 
 ### Board Location and Placement
 
@@ -161,7 +161,7 @@ Appoint a "board keeper" (paid or volunteer) responsible for daily maintenance. 
 
 For communities with 500+ people or spread over 5+ km:
 
-**Establish 3â€“4 boards:**
+**Establish 3-4 boards:**
 - Primary board (marketplace): All critical notices
 - Secondary board (meeting hall): Meeting times, governance
 - Tertiary board (outlying area): Local announcements for that district
@@ -243,12 +243,12 @@ Use colored paper to enable quick scanning:
 
 **Example: Clear vs. Unclear**
 
-âŒ Poor:
+X Poor:
 "By ordinance of the Council, all residents are hereby directed to refrain from maintenance activities on the roadway adjacent to the marketplace between the 15th and 22nd inst. Failure to comply may result in assessment of penalties."
 
-âœ“ Clear:
+✓ Clear:
 "ROAD WORK NOTICE
-Do not work on the Market Road from March 15â€“22.
+Do not work on the Market Road from March 15-22.
 Road repair in progress.
 Questions: Ask the Road Master at Town Hall."
 
@@ -266,39 +266,39 @@ Many community members may not read. Pictographic notices ensure information rea
 
 | Symbol | Meaning |
 |---|---|
-| ðŸ”” Bell | Meeting or gathering time |
-| ðŸš¨ Alert flag | Danger or emergency |
-| ðŸ“… Calendar | Date or time |
-| ðŸ“ Location mark | Place or direction |
-| ðŸ›‘ Stop sign | Prohibition (do not) |
-| âœ“ Checkmark | Approval, allowed |
-| ðŸ’¼ Work/tools | Work needed or job opportunity |
-| ðŸŽ Marketplace | Market or trade |
-| ðŸ› Building | Community building or governance |
-| ðŸš« X or crossed line | Forbidden or closed |
-| âš  Warning triangle | Caution or hazard |
-| ðŸ”¥ Fire | Danger from fire or fire-related |
-| ðŸ’§ Water | Water issue, well, flooding |
-| ðŸ´ Animal | Animal-related (grazing, livestock) |
-| â˜  Skull | Serious danger, death risk |
-| ðŸ˜· Sickness | Disease, plague, health issue |
-| ðŸŒ™ Moon | Evening or night time |
-| â˜€ Sun | Daytime or morning |
+| 🔔 Bell | Meeting or gathering time |
+| 🚨 Alert flag | Danger or emergency |
+| 📅 Calendar | Date or time |
+| 📍 Location mark | Place or direction |
+| 🛑 Stop sign | Prohibition (do not) |
+| ✓ Checkmark | Approval, allowed |
+| 💼 Work/tools | Work needed or job opportunity |
+| 🍎 Marketplace | Market or trade |
+| 🏛 Building | Community building or governance |
+| 🚫 X or crossed line | Forbidden or closed |
+| ⚠ Warning triangle | Caution or hazard |
+| 🔥 Fire | Danger from fire or fire-related |
+| 💧 Water | Water issue, well, flooding |
+| 🐴 Animal | Animal-related (grazing, livestock) |
+| ☠ Skull | Serious danger, death risk |
+| 😷 Sickness | Disease, plague, health issue |
+| 🌙 Moon | Evening or night time |
+| ☀ Sun | Daytime or morning |
 
 ### Pictographic Notice Example
 
 ```
 MARKET DAY NOTICE
 
-[ðŸ“…] Next market: [Drawing of 3 suns = 3 days]
+[📅] Next market: [Drawing of 3 suns = 3 days]
 
-[ðŸ“] PLACE: Market Square
+[📍] PLACE: Market Square
 
-[â˜€] TIME: Sunrise to noon
+[☀] TIME: Sunrise to noon
 
-[ðŸŽ] SELL: Grain, cloth, tools
+[🍎] SELL: Grain, cloth, tools
 
-[ðŸ’°] COST: See attached price board
+[💰] COST: See attached price board
 
 Questions? Ask at Town Hall
 [Drawn arrow pointing to building]
@@ -306,7 +306,7 @@ Questions? Ask at Town Hall
 
 **Design principles:**
 - One concept per icon
-- Icons large and clear (3â€“5 cm)
+- Icons large and clear (3-5 cm)
 - Combine icons with simple text for clarity
 - Use color to code (red alert = danger, green = allowed)
 - Sequence icons left-to-right or top-to-bottom (natural reading flow)
@@ -326,7 +326,7 @@ Questions? Ask at Town Hall
 4. Give example notice using the symbol
 5. Practice together
 
-Within 2â€“3 months, most people recognize basic symbol set.
+Within 2-3 months, most people recognize basic symbol set.
 
 </section>
 
@@ -356,9 +356,9 @@ For public announcements reaching those who don't read boards (working in fields
 
 **Standard calling schedule:**
 
-- **Early morning (6â€“7 am):** Announce day's events for people starting work
+- **Early morning (6-7 am):** Announce day's events for people starting work
 - **Noon (12 pm):** Market hours, weather announcements, urgent updates
-- **Evening (5â€“6 pm):** Gather workers returning from fields; announce next day's events
+- **Evening (5-6 pm):** Gather workers returning from fields; announce next day's events
 
 **Equipment:**
 - Bell or hand-rung gong (carries 500 meters in calm weather)
@@ -403,12 +403,12 @@ RING BELL (2 times)
 
 ### Training the Crier
 
-**Week 1â€“2: Observation**
+**Week 1-2: Observation**
 - Crier shadows current crier (if one exists)
 - Learns calling times, locations, and routines
 - Learns how to ring bell loudly without hurting ears
 
-**Week 3â€“4: Supervised practice**
+**Week 3-4: Supervised practice**
 - Crier reads announcements from board while supervisor listens
 - Practices volume and clarity (must be heard from 100 meters)
 - Learns to engage with questions (answer patiently, refer complex questions to authorities)
@@ -454,7 +454,7 @@ Not all notices are equally urgent. Clear prioritization ensures critical inform
 **LEVEL 4: ROUTINE (Green/Yellow notices)**
 - Standard announcements (market hours, volunteer opportunities)
 - No urgent action required
-- Posted on bulletin board, announced 1â€“2 times per week
+- Posted on bulletin board, announced 1-2 times per week
 - Reaches people within 2 weeks
 - Examples: Weekly market schedule, community event, volunteer request
 
@@ -467,18 +467,18 @@ Arrange notices to emphasize priority:
 ```
 BULLETIN BOARD LAYOUT
 
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚ [RED EMERGENCY NOTICES] â”‚ â† Top position, large font
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ [ORANGE URGENT]    [...] â”‚ â† Second tier, prominent
-â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-â”‚ [BLUE IMPORTANT]   [....] â”‚ â† Third tier
-â”‚ [GREEN ROUTINE]    [...] â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+┌─────────────────────────┐
+│ [RED EMERGENCY NOTICES] │ ← Top position, large font
+├─────────────────────────┤
+│ [ORANGE URGENT]    [...] │ ← Second tier, prominent
+├─────────────────────────┤
+│ [BLUE IMPORTANT]   [....] │ ← Third tier
+│ [GREEN ROUTINE]    [...] │
+└─────────────────────────┘
 ```
 
 **Implementation:**
-- Emergency and urgent notices at eye level (1â€“1.3 m high)
+- Emergency and urgent notices at eye level (1-1.3 m high)
 - Important notices below
 - Routine notices at bottom (still visible, but secondary)
 - New notices overlap old ones at same level (most recent visible first)
@@ -510,7 +510,7 @@ Time 5 min: Bells ring continuously
 Time 15 min: Crier reads: "FLOOD WARNING - Water level rising rapidly. Be ready to evacuate. Go to high ground if water enters your home."
 Time 45 min: Notice posted on board with detailed location of safe areas
 Time 90 min: Couriers take notices to outlying farms
-Time 6 hr: Continue crier announcements every 1â€“2 hours
+Time 6 hr: Continue crier announcements every 1-2 hours
 ```
 
 ### Message Content for Emergency Alerts
@@ -525,10 +525,10 @@ Emergency notices must convey:
 **Example emergency notice:**
 
 ```
-â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—
-â•‘  EMERGENCY NOTICE             â•‘
-â•‘  FLOOD WARNING                â•‘
-â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+╔═══════════════════════════════╗
+║  EMERGENCY NOTICE             ║
+║  FLOOD WARNING                ║
+╚═══════════════════════════════╝
 
 Issued: 22 Feb 2026, 3 PM
 Authority: Town Council
@@ -624,7 +624,7 @@ Community feedback improves notice effectiveness over time. Don't see it as crit
 
 ## Supporting Low-Literacy Communities
 
-Many people may not readâ€”ensure they still access critical information.
+Many people may not read--ensure they still access critical information.
 
 ### Community Readers Program
 
@@ -636,7 +636,7 @@ Designated literate community members assist in reading:
 - Clarify that role is reading to others, not interpreting (reader reports exactly what notice says)
 
 **Reader duties:**
-- Station at bulletin board 2â€“3 hours per day (morning and evening)
+- Station at bulletin board 2-3 hours per day (morning and evening)
 - Read notices aloud to anyone who asks
 - Answer basic questions ("What does this notice say?")
 - Refer complex questions to authorities
@@ -661,7 +661,7 @@ For cultures with strong oral traditions:
 
 Instead of: "Market will be open Saturday at sunrise"
 
-Tell as: "When the first light touches the eastern hill, the market drums will sound. Bring your best goodsâ€”traders from the Valley will come with fresh cloth and metal tools. The Market Master will ensure fair weights, as always..."
+Tell as: "When the first light touches the eastern hill, the market drums will sound. Bring your best goods--traders from the Valley will come with fresh cloth and metal tools. The Market Master will ensure fair weights, as always..."
 
 ### Writing System Supports
 
@@ -677,12 +677,12 @@ For communities with limited literacy:
 :::affiliate
 **If you're establishing community communication infrastructure,** prepare these supplies:
 
-- [Bulletin Board Kit (1.2m x 1.5m)](https://www.amazon.com/dp/B08FZR2LPY?tag=offlinecompen-20) â€” Pre-made wood frame with cork backing for notice posting
-- [Heavy-Duty Laminator Machine](https://www.amazon.com/dp/B08P1KLQZX?tag=offlinecompen-20) â€” Preserve printed notices from weather damage
-- [Permanent Marker Assortment Set](https://www.amazon.com/dp/B07X84FHLY?tag=offlinecompen-20) â€” Write clear, legible notices on poster board
-- [Weather-Resistant Poster Sleeves](https://www.amazon.com/dp/B08QZLPL8M?tag=offlinecompen-20) â€” Protect posted notices from rain and UV damage
+- [Bulletin Board Kit (1.2m x 1.5m)](https://www.amazon.com/dp/B08FZR2LPY?tag=offlinecompen-20) -- Pre-made wood frame with cork backing for notice posting
+- [Heavy-Duty Laminator Machine](https://www.amazon.com/dp/B08P1KLQZX?tag=offlinecompen-20) -- Preserve printed notices from weather damage
+- [Permanent Marker Assortment Set](https://www.amazon.com/dp/B07X84FHLY?tag=offlinecompen-20) -- Write clear, legible notices on poster board
+- [Weather-Resistant Poster Sleeves](https://www.amazon.com/dp/B08QZLPL8M?tag=offlinecompen-20) -- Protect posted notices from rain and UV damage
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide -- see the gear page for full pros/cons.</span>
 :::
 
 <section id="governance-integration">
@@ -694,8 +694,8 @@ Bulletin systems are formal communication arm of governance.
 ### Authority and Approval
 
 **Notice approval authority:**
-- Mayor or council must approve all Level 1â€“2 (Emergency/Urgent) notices before posting
-- Department heads may post Level 3â€“4 (Routine/Important) notices under delegation
+- Mayor or council must approve all Level 1-2 (Emergency/Urgent) notices before posting
+- Department heads may post Level 3-4 (Routine/Important) notices under delegation
 - Any notice changing law or governance must be approved by council
 - Public inspection right: Anyone can ask "Who approved this notice?" and receive answer
 
@@ -723,7 +723,7 @@ PROPOSED LAW: New market tax
 This proposed law will take effect 1 March 2026.
 Read the full text posted at Town Hall.
 
-COMMUNITY INPUT PERIOD: 15 Feb â€“ 22 Feb 2026
+COMMUNITY INPUT PERIOD: 15 Feb - 22 Feb 2026
 
 Attend Town Council on Friday 24 Feb to voice support or concerns.
 Cannot attend? Write your thoughts, seal in envelope, leave at Town Hall.
