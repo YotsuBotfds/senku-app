@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stdout
 from io import StringIO
+from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -64,7 +65,7 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertEqual(row["action"], "keep_protected")
         self.assertIn(notes.as_posix() + "/RAG-X.md", row["protection_sources"])
 
-    def test_planner_handoff_reference_notes_are_ignored(self):
+    def test_planner_handoff_reference_notes_are_ignored_when_untracked(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"
         notes = root / "notes"
@@ -109,6 +110,42 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
             notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md",
             plan["references"]["sources"],
         )
+
+    def test_tracked_planner_handoff_reference_notes_can_protect_artifacts(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        notes = root / "notes"
+        handoff_file = notes / "PLANNER_HANDOFF_2026-04-26_TEST.md"
+
+        self.write_text(
+            artifacts / "bench" / "handoff_run" / "report.md",
+            "# proof\n",
+            age_days=80,
+        )
+        self.write_text(
+            handoff_file,
+            "Handoff artifact: `artifacts/bench/handoff_run/report.md`\n",
+        )
+
+        with patch(
+            "scripts.plan_artifact_retention._is_committed_reference_file",
+            side_effect=lambda path: path == handoff_file,
+        ):
+            plan = plan_artifact_retention(
+                artifacts,
+                reference_roots=[notes],
+                manifest_paths=[],
+                archive_after_days=1,
+                delete_after_days=1,
+                now=NOW,
+            )
+
+        families = {row["path"]: row for row in plan["families"]}
+        handoff_row = families["bench/handoff_run"]
+        self.assertTrue(handoff_row["protected"])
+        self.assertEqual(handoff_row["action"], "keep_protected")
+        self.assertIn(notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md", handoff_row["protection_sources"])
+        self.assertIn(notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md", plan["references"]["sources"])
 
     def test_explicit_protect_path_and_glob_are_honored(self):
         root = self.make_tmpdir()

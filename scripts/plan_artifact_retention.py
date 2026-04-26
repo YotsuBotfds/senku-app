@@ -7,6 +7,7 @@ import argparse
 import fnmatch
 import json
 import re
+import subprocess
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -235,7 +236,7 @@ def collect_protection_references(
         for path in files:
             if not path.is_file():
                 continue
-            if _is_protected_reference_file(path):
+            if _is_protected_reference_file(path) and not _is_committed_reference_file(path):
                 continue
             if path.suffix.lower() not in {".md", ".txt", ".json", ".jsonl"}:
                 continue
@@ -550,6 +551,35 @@ def _is_protected_reference_file(path: Path) -> bool:
         if fnmatch.fnmatch(path_name.upper(), pattern.upper()):
             return True
     return False
+
+
+def _is_committed_reference_file(path: Path) -> bool:
+    repository_root = _find_git_repository_root(path)
+    if repository_root is None:
+        return False
+    try:
+        relative = path.resolve().relative_to(repository_root.resolve()).as_posix()
+    except ValueError:
+        return False
+
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(repository_root), "ls-files", "--error-unmatch", relative],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except OSError:
+        return False
+    return result.returncode == 0
+
+
+def _find_git_repository_root(path: Path) -> Path | None:
+    candidate = path.resolve()
+    for parent in (candidate, *candidate.parents):
+        if (parent / ".git").exists():
+            return parent
+    return None
 
 
 def _extract_artifact_refs(text: str) -> list[str]:

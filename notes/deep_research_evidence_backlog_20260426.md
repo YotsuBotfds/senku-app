@@ -538,6 +538,9 @@ Action:
 - Added a separate Strict Retrieval Head Health workflow that runs on schedule
   or manual dispatch only, uses the reusable non-Android Fast gate with full
   retrieval index flavor, and keeps retrieval warnings fail-closed by default.
+- Artifact retention now distinguishes local/untracked `PLANNER_HANDOFF*.md`
+  notes from committed durable handoffs: local handoff noise stays ignored, but
+  tracked handoff references can protect artifact families.
 
 Validation:
 
@@ -593,6 +596,8 @@ Validation:
 - `tests.test_github_workflows` covers the strict retrieval health workflow's
   manual/scheduled triggers, no push trigger, full index flavor, and
   fail-on-warning defaults.
+- `tests.test_plan_artifact_retention` covers ignored untracked planner
+  handoffs and tracked planner handoffs that protect referenced artifacts.
 
 Deferred unless evidenced:
 
