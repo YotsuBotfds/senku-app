@@ -4,8 +4,11 @@ Purpose: near-top queue items that reduce overnight friction, worker collision,
 runtime drift, and local-only proof loss. This is based on the xhigh tooling
 research scout plus local repo context.
 
-Status update, 2026-04-26 overnight: the top tooling queue has landed through
-the retrieval-profile comparison slice. Current pushed commits:
+Status update, 2026-04-26 overnight: the GitHub repository has been created and
+pushed at `https://github.com/YotsuBotfds/senku-app.git`. Local `master` tracks
+`origin/master`; pushed head is `b37c427` (`suppress accepted partial router drift`).
+The top tooling queue has landed through the retrieval-profile comparison slice.
+Current pushed commits:
 
 - `4e172d9` runtime endpoint preflight
 - `1cd7110` non-Android GitHub regression gate
@@ -18,6 +21,9 @@ the retrieval-profile comparison slice. Current pushed commits:
 - `dc7805f` PowerShell quality gate
 - `9085dd9` optional RAG eval dataset export
 - `cb8ffac` retrieval-profile comparison tooling
+- `c1ae983` tooling queue completion status
+- `b37c427` accepted partial-router drift allowlist for the strict
+  non-Android regression gate
 
 ## Tonight Top 3
 

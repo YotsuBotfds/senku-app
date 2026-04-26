@@ -35,6 +35,16 @@ CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 `W-C-4`, and the desktop deterministic guide wave is paused after the
 2026-04-24 method review.
 
+GitHub/tooling status, 2026-04-26: the repository has been created and pushed
+to `https://github.com/YotsuBotfds/senku-app.git`; local `master` tracks
+`origin/master` at pushed head `b37c427`. The 2026-04-26 tooling run is landed
+through retrieval-profile comparison: non-Android GitHub regression gate,
+Actions security lint, workflow attestation bundle, bench metrics lake, RAG
+trace diagnostics and bench spans, PowerShell quality gate, optional RAG eval
+dataset exporter, retrieval-profile comparison tooling, and the accepted
+partial-router drift allowlist for strict gate runs are closed unless a new
+regression artifact reopens them.
+
 Current RAG status:
 
 - The RAG-S/RAG-T/RAG-EVAL/RAG-TOOL wave recorded below is landed history,
@@ -51,6 +61,13 @@ Current RAG status:
 - `RAG-EVAL3`, `RAG-EVAL5`, GD-024/GD-029/GD-035/GD-052/GD-397/GD-646/
   GD-648/GD-649 source packaging, bridge metadata routing for
   GD-634/GD-635/GD-636, and `RAG-TOOL6` incremental ingest planning are landed.
+- `notes/AGENT_TOOLING_UPGRADES_20260426.md` is now a completed tooling
+  status note through runtime endpoint preflight, worker worktree lanes,
+  non-Android GitHub regression workflow, Actions security lint, attested
+  non-Android regression bundle, bench metrics lake, RAG trace core/bench
+  spans, PowerShell quality gate, RAG eval dataset export, and
+  retrieval-profile comparison tooling plus the accepted partial-router drift
+  allowlist for strict gate runs.
 - Android reviewed-card/runtime work remains a separate lane; do not infer
   Android implementation work from this non-Android status reconciliation.
 

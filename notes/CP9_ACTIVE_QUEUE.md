@@ -4,13 +4,17 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
-- Last updated: 2026-04-25 - Queue/status reconciliation landed. CP9,
-  Wave C, the paused deterministic `D52+` continuation, RAG-S1 through
-  RAG-S22, RAG-EVAL, RAG-TOOL, RAG-META/CARD, and policy/runbook waves are
-  historical unless a fresh regression artifact reopens one. Current
-  non-Android baseline is the FA/FB/FD/FE runtime-card-id-filter panel plus
-  the partial/router `gd397_expectation_cleanup` proof; Android remains a
-  separate lane and is not reopened by this queue note.
+- Last updated: 2026-04-26 - GitHub repo creation/push and tooling queue
+  completion reconciled. `origin` is
+  `https://github.com/YotsuBotfds/senku-app.git`, `master` tracks
+  `origin/master`, and the pushed head is `b37c427`. CP9, Wave C, the paused
+  deterministic `D52+` continuation, RAG-S1 through RAG-S22, RAG-EVAL,
+  RAG-TOOL, RAG-META/CARD, policy/runbook waves, and the 2026-04-26 tooling
+  run through retrieval-profile comparison are historical unless a fresh
+  regression artifact reopens one. Current non-Android baseline is the
+  FA/FB/FD/FE runtime-card-id-filter panel plus the partial/router
+  `gd397_expectation_cleanup` proof; Android remains a separate lane and is
+  not reopened by this queue note.
 
 2026-04-24 RAG-method pivot: the durable plan is now
 `notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md`. The active guide-answering
@@ -64,6 +68,17 @@ non-Android behavior baselines are:
   historical waypoints.
 - The RAG tooling wave, including `RAG-TOOL6` incremental ingest planner, is
   landed. Use those tools instead of redrafting planner commands by hand.
+
+2026-04-26 tooling/GitHub reconciliation: the GitHub repository has been
+created and pushed at `https://github.com/YotsuBotfds/senku-app.git`; local
+`master` tracks `origin/master` at `b37c427`. The tooling queue in
+`notes/AGENT_TOOLING_UPGRADES_20260426.md` has landed through retrieval-profile
+comparison, including the non-Android GitHub regression gate, Actions security
+lint, attested non-Android regression bundle, bench metrics lake, RAG trace
+diagnostics plus bench spans, PowerShell quality gate, optional RAG eval
+dataset exporter, retrieval-profile comparison tooling, and the accepted
+partial-router drift allowlist for the strict gate. Treat those items as closed
+tooling infrastructure, not active queue work.
 
 2026-04-24 RAG-next-level addendum, now historical: pause the implied `D52`+
 deterministic continuation and make `RAG-S1` the next active execution slice.
