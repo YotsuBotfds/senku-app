@@ -11336,6 +11336,16 @@ def rerank_results(question, results, top_k, scenario_frame=None):
     family_counts = Counter()
     section_counts = Counter()
     preserved_objectives = []
+
+    def promote_selected_owner_rows(owner_ids):
+        insertion_index = 0
+        for owner_id in owner_ids:
+            for index in range(insertion_index, len(selected)):
+                if selected[index]["meta"].get("guide_id") == owner_id:
+                    selected.insert(insertion_index, selected.pop(index))
+                    insertion_index += 1
+                    break
+
     for index, objective in enumerate(objectives):
         candidates = [
             row
@@ -11354,6 +11364,21 @@ def rerank_results(question, results, top_k, scenario_frame=None):
 
     if _is_salt_jars_hot_humid_setup_query(question):
         for owner_id in ("GD-065", "GD-966"):
+            owner_candidates = [
+                row
+                for row in rows
+                if row["meta"].get("guide_id") == owner_id and row["id"] not in selected_ids
+            ]
+            if not owner_candidates:
+                continue
+            chosen = owner_candidates[0]
+            selected.append(chosen)
+            selected_ids.add(chosen["id"])
+            family_counts[chosen["family"]] += 1
+            section_counts[chosen["section_key"]] += 1
+
+    if _is_chemical_spill_sick_exposure_query(question):
+        for owner_id in ("GD-696", "GD-054"):
             owner_candidates = [
                 row
                 for row in rows
@@ -11405,6 +11430,9 @@ def rerank_results(question, results, top_k, scenario_frame=None):
         selected.append(row)
         selected_ids.add(row["id"])
 
+    if _is_chemical_spill_sick_exposure_query(question):
+        promote_selected_owner_rows(("GD-696", "GD-054"))
+
     selected = selected[:top_k]
     selected.sort(key=lambda row: (row["adjusted"], row["distance"]))
     if _is_classic_stroke_fast_special_case(question):
@@ -11413,6 +11441,8 @@ def rerank_results(question, results, top_k, scenario_frame=None):
                 if index > 2:
                     selected.insert(2, selected.pop(index))
                 break
+    if _is_chemical_spill_sick_exposure_query(question):
+        promote_selected_owner_rows(("GD-696", "GD-054"))
     coverage = _finalize_objective_coverage(selected, objectives)
     rerank_timing = _build_rerank_timing_payload(
         time.perf_counter() - rerank_started_at,

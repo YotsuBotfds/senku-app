@@ -1728,6 +1728,59 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(pesticide_spill_question, toxicology_meta),
             query._metadata_rerank_delta(pesticide_spill_question, water_meta),
         )
+        reranked_spill = query.rerank_results(
+            pesticide_spill_question,
+            {
+                "ids": [["chem-safety-1", "chem-safety-2", "industrial", "toxicology"]],
+                "documents": [[
+                    "Chemical spill response, isolate the area, avoid fumes, and use limited water carefully.",
+                    "Chemical safety and ventilation for chemical spills near a house.",
+                    "Industrial accident response for pesticide spill fumes: move upwind, isolate, evacuate, and decontaminate.",
+                    "Toxicology response for pesticide exposure with vomiting and confusion.",
+                ]],
+                "metadatas": [[
+                    {
+                        "guide_id": "GD-227",
+                        "guide_title": "Chemical Safety",
+                        "section_heading": "Spill Response",
+                        "slug": "chemical-safety",
+                        "description": "Chemical safety and spill response.",
+                        "category": "chemistry",
+                    },
+                    {
+                        "guide_id": "GD-227",
+                        "guide_title": "Chemical Safety",
+                        "section_heading": "Ventilation",
+                        "slug": "chemical-safety",
+                        "description": "Chemical safety and ventilation.",
+                        "category": "chemistry",
+                    },
+                    {
+                        "guide_id": "GD-696",
+                        "guide_title": "Chemical & Industrial Accident Response",
+                        "section_heading": "Pesticide Spill",
+                        "slug": "chemical-industrial-accident-response",
+                        "description": "Chemical spills, industrial accidents, wind, evacuation, decontamination.",
+                        "category": "defense",
+                    },
+                    {
+                        "guide_id": "GD-054",
+                        "guide_title": "Toxicology & Poison Management",
+                        "section_heading": "Pesticide Exposure",
+                        "slug": "toxicology",
+                        "description": "Emergency toxic exposure, pesticide and organophosphate exposure.",
+                        "category": "medical",
+                    },
+                ]],
+                "distances": [[0.01, 0.02, 0.40, 0.42]],
+            },
+            top_k=2,
+            scenario_frame=query.build_scenario_frame(pesticide_spill_question),
+        )
+        self.assertEqual(
+            ["GD-696", "GD-054"],
+            [meta["guide_id"] for meta in reranked_spill["metadatas"][0]],
+        )
 
         feedstock_exposure_question = (
             "Is this a precursor/feedstock question, or is it really a poisoning "
