@@ -263,6 +263,9 @@ Action:
 - Added artifact-retention coverage proving newer run-manifest
   `artifact_path_evidence` entries protect referenced artifact families from
   archive/delete recommendations.
+- Added allowed-drift suppression coverage proving prompt expectation
+  suppressions can be scoped to an exact artifact path without hiding the same
+  issue in other artifacts.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

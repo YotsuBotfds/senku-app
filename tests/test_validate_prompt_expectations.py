@@ -462,6 +462,37 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["summary"]["suppressed_issues"], 1)
         self.assertEqual(report["suppressed_issues"][0]["suppression_reason"], "fixture suppression")
 
+    def test_allowed_drift_suppression_can_be_scoped_to_path(self):
+        issues = [
+            {
+                "prompt_id": "P-1",
+                "code": "retrieval_missing_expected_owner",
+                "guide_ids": ["GD-120"],
+                "path": "artifacts/bench/current.json",
+            },
+            {
+                "prompt_id": "P-1",
+                "code": "retrieval_missing_expected_owner",
+                "guide_ids": ["GD-120"],
+                "path": "artifacts/bench/other.json",
+            },
+        ]
+        suppressions = [
+            {
+                "prompt_id": "P-1",
+                "issue_codes": ["retrieval_missing_expected_owner"],
+                "guide_ids": ["GD-120"],
+                "path": "artifacts/bench/current.json",
+                "reason": "known current artifact drift",
+            }
+        ]
+
+        active, suppressed = validator.apply_suppressions(issues, suppressions)
+
+        self.assertEqual(["artifacts/bench/other.json"], [item["path"] for item in active])
+        self.assertEqual(["artifacts/bench/current.json"], [item["path"] for item in suppressed])
+        self.assertEqual("known current artifact drift", suppressed[0]["suppression_reason"])
+
     def test_retrieval_eval_json_flags_expected_owner_absent_from_top_k(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")
