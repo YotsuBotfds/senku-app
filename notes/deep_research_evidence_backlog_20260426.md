@@ -95,6 +95,10 @@ Action:
   `tests.test_ingest_freshness.test_changed_guide_is_blocking_until_manifest_sha_refreshes`
   edits a temporary guide, observes `stale` plus `is_blocking`, refreshes the
   manifest, and observes `fresh` plus non-blocking status.
+- Added deleted-guide coverage:
+  `tests.test_ingest_freshness.test_deleted_guide_leaves_blocking_extra_manifest_key`
+  proves an extra manifest key from a removed guide is also blocking stale
+  state, matching the incremental-ingest planner's rebuild-required policy.
 
 Validation:
 

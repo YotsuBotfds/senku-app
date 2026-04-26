@@ -127,6 +127,27 @@ class IngestFreshnessTests(unittest.TestCase):
         self.assertEqual(report.status, STALE)
         self.assertEqual(report.missing_guide_ids, ("GD-002",))
 
+    def test_deleted_guide_leaves_blocking_extra_manifest_key(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            stale_guide = guides / "one.md"
+            write_guide(stale_guide, "GD-001", "One")
+            write_guide(guides / "two.md", "GD-002", "Two")
+            manifest = root / "db" / "ingest_manifest.json"
+            write_manifest(manifest, guides)
+            stale_guide.unlink()
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, STALE)
+        self.assertEqual(report.extra_manifest_keys, ("GD-001",))
+        self.assertTrue(report.is_blocking)
+
     def test_truncated_manifest_is_incomplete_untrusted(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
