@@ -84,6 +84,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             fastembed_cache_step["uses"],
         )
         self.assertEqual(".ci-cache/fastembed", fastembed_cache_step["with"]["path"])
+        self.assertEqual(
+            "${{ inputs.mode == 'Fast' || inputs.mode == 'All' }}",
+            fastembed_cache_step["if"],
+        )
         self.assertIn("requirements.lock.txt", fastembed_cache_step["with"]["key"])
         self.assertIn(
             "scripts/fastembed_openai_server.py",
@@ -91,6 +95,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         )
         self.assertEqual("retrieval_index_cache", retrieval_cache_step["id"])
         self.assertEqual("db", retrieval_cache_step["with"]["path"])
+        self.assertEqual(
+            "${{ inputs.mode == 'Fast' || inputs.mode == 'All' }}",
+            retrieval_cache_step["if"],
+        )
         triggers = workflow.get("on", workflow.get(True, {}))
         self.assertIn("retrieval_index_flavor", triggers["workflow_dispatch"]["inputs"])
         self.assertEqual(
@@ -138,7 +146,15 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("INPUT_RETRIEVAL_INDEX_FLAVOR", gate_step.get("env", {}))
         self.assertIn("INPUT_GENERATED_BASELINE_DIAG", gate_step.get("env", {}))
         self.assertIn("-GeneratedBaselineDiag", gate_script)
+        self.assertIn(
+            "does not require FastEmbed or retrieval index; skipping FastEmbed startup and db cache/rebuild",
+            gate_script,
+        )
         self.assertIn("Unsupported retrieval_index_flavor", gate_script)
+        self.assertLess(
+            gate_script.index("$needsRetrievalIndex = $env:INPUT_MODE -in @('Fast', 'All')"),
+            gate_script.index("scripts\\fastembed_openai_server.py"),
+        )
         self.assertIn("scripts\\select_prompt_pack_guides.py", gate_script)
         self.assertIn("--include-related-depth 0", gate_script)
         self.assertIn("rag_eval_partial_router_holdouts_20260425.jsonl", gate_script)
@@ -169,9 +185,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog", gate_script)
         self.assertIn("SENKU_FASTEMBED_STDERR_LOG=$stderrLog", gate_script)
+        stats_index = gate_script.index("python -B ingest.py --stats")
         self.assertLess(
-            gate_script.index("python -B ingest.py --stats"),
-            gate_script.index("run_non_android_regression_gate.ps1"),
+            stats_index,
+            gate_script.index("run_non_android_regression_gate.ps1", stats_index),
         )
         self.assertIn("finally", gate_script)
 
