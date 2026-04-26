@@ -27,7 +27,7 @@ liability_level: low
 
 Mutual aid networks are formal or informal systems in which community members exchange resources, labor, and skills based on reciprocal commitment rather than monetary transaction. Unlike charity (one-directional giving) or traditional commerce (direct payment), mutual aid operates on the principle that everyone contributes what they can and receives what they need. This guide covers network structures (core-periphery and distributed), resource pooling mechanisms, skill and time-based exchange systems, tool and equipment libraries, inter-community protocols, conflict resolution, and practical templates for launching a network.
 
-Mutual aid networks thrive in contexts where monetary exchange is limited or unavailableÃ¢â‚¬â€during economic downturns, wars, natural disasters, or in communities with low cash income and high social cohesion. Even in well-functioning economies, mutual aid reduces transaction costs, builds social bonds, and improves community resilience.
+Mutual aid networks thrive in contexts where monetary exchange is limited or unavailable - during economic downturns, wars, natural disasters, or in communities with low cash income and high social cohesion. Even in well-functioning economies, mutual aid reduces transaction costs, builds social bonds, and improves community resilience.
 
 Routing note: use this guide when the core problem is building the support network itself, such as organizing volunteers, coordinating shared resources, or designing member-to-member exchange. If the main question is shared-risk pooling, premiums, claims, reserves, or cooperative coverage rules, hand off to [Insurance, Risk Pooling & Mutual Aid Funds](./insurance-risk-pooling-mutual-aid.html).
 
@@ -42,14 +42,14 @@ Routing note: use this guide when the core problem is building the support netwo
 
 The most common structure for mutual aid has a small core of committed organizers and a broader periphery of participants.
 
-**Core (5Ã¢â‚¬â€œ15 people):**
+**Core (5-15 people):**
 - Coordinates requests and offers (maintains the ledger)
 - Resolves disputes
 - Organizes group projects (food processing, repairs, childcare swaps)
 - Meets weekly or bi-weekly to review operations
 - Typically unpaid; members benefit equally from the network alongside their coordination role
 
-**Periphery (20Ã¢â‚¬â€œ200+ people):**
+**Periphery (20-200+ people):**
 - Participate as their circumstances allow
 - Some are net contributors (give more than they take), others are net receivers (take more than they give)
 - No expectation of equal participation; the network accommodates variation
@@ -104,11 +104,11 @@ Members grow food and contribute surplus to a common pool. Distribution is based
 Common resources (tools, equipment, seeds) are owned by the network and borrowed by members on a sign-out/sign-in basis.
 
 **Implementation:**
-- Designate a librarian (1Ã¢â‚¬â€œ2 people) responsible for inventory and condition checks
+- Designate a librarian (1-2 people) responsible for inventory and condition checks
 - Create a physical inventory list (spreadsheet) with columns: item, quantity, condition, last borrower, return date
 - Use an index card or digital log for sign-out/sign-in (borrower name, date out, expected return date)
 - Establish rules: maximum borrow time (e.g., 2 weeks), liability (who pays for damage), late fees (if any)
-- Collect small fees ($0.50Ã¢â‚¬â€œ2 per borrow) to fund replacement and maintenance
+- Collect small fees ($0.50-2 per borrow) to fund replacement and maintenance
 - Store items in a dedicated shed or rotating member's garage
 
 **Example inventory for a 30-person network:**
@@ -134,9 +134,9 @@ Members pool money to buy food directly from farms or suppliers in bulk, then di
 5. Divides and distributes within a week
 6. Records the total cost per person to ensure future pricing is fair
 
-**Scale:** Works best for groups of 20Ã¢â‚¬â€œ100 people. Smaller groups lack bulk discounts; larger groups struggle with logistics.
+**Scale:** Works best for groups of 20-100 people. Smaller groups lack bulk discounts; larger groups struggle with logistics.
 
-**Benefit:** 20Ã¢â‚¬â€œ40% savings compared to retail prices
+**Benefit:** 20-40% savings compared to retail prices
 
 </section>
 
@@ -163,8 +163,8 @@ Members record skills they offer and skills they need. Exchanges are tracked in 
    - Share ledger with core team and periodically with all members (transparency builds trust)
 
 **Example ledger entry:**
-- Jan 15: Alice teaches Bob cooking for 2 hours Ã¢â€ â€™ Bob owes network 2 credits
-- Jan 20: Bob repairs network's fence (3 hours) Ã¢â€ â€™ Bob repays 3 credits, leaving him with 1 credit
+- Jan 15: Alice teaches Bob cooking for 2 hours -> Bob owes network 2 credits
+- Jan 20: Bob repairs network's fence (3 hours) -> Bob repays 3 credits, leaving him with 1 credit
 - Feb 5: Bob redeems 1 credit for a ride to the doctor (1 hour driver time)
 
 **Notes:**
@@ -187,7 +187,7 @@ A time bank treats all labor as equal: one hour of doctor's work = one hour of g
 
 **Variant:** Service-weighted time banking
 - Standard labor: 1 hour = 1 credit (gardening, childcare, cooking)
-- Skilled labor: 1 hour = 2Ã¢â‚¬â€œ3 credits (medical advice, electrical work, legal consultation)
+- Skilled labor: 1 hour = 2-3 credits (medical advice, electrical work, legal consultation)
 - Rates set by core team based on training and risk
 
 </section>
@@ -208,7 +208,7 @@ Two networks agree to exchange goods or services without monetary payment.
 
 **Structure:**
 - Negotiate annual or seasonal quotas
-- Designate traders (1Ã¢â‚¬â€œ2 people per network) authorized to negotiate and execute trades
+- Designate traders (1-2 people per network) authorized to negotiate and execute trades
 - Document each trade (date, items, quantities, conditions)
 - Resolve imbalances annually (if one network owes more than expected, adjust next round)
 
@@ -223,7 +223,7 @@ Multiple mutual aid networks join a larger organization that coordinates inter-n
 - Standard-setting (agree on quality standards for traded goods)
 
 **Governance:**
-- Each member network sends 1Ã¢â‚¬â€œ2 representatives to a quarterly assembly
+- Each member network sends 1-2 representatives to a quarterly assembly
 - Major decisions (budgets, admission of new networks) made by consensus or majority vote
 - Day-to-day operations handled by a small coordination team (elected or rotating)
 
@@ -261,7 +261,7 @@ If this fails, escalate.
 
 ### Mediation by Core Team
 
-1. Both parties meet with 1Ã¢â‚¬â€œ2 mediators (neutral core team members)
+1. Both parties meet with 1-2 mediators (neutral core team members)
 2. Mediators listen to both sides without judgment
 3. Mediators help identify common ground and propose solutions
 4. Agreement is written down and signed by both parties
@@ -289,7 +289,7 @@ Expulsion must be handled carefully to avoid legal liability (wrongful terminati
 
 ## Reputation and Trust Systems
 
-Mutual aid networks depend on trust: members must believe that others will reciprocate, that records are accurate, and that the system is fair. As networks grow from small (10Ã¢â‚¬â€œ20 people) to larger (100+ people), informal reputation (everyone knows each other) breaks down. Formal reputation systems prevent free-riding and maintain cooperation.
+Mutual aid networks depend on trust: members must believe that others will reciprocate, that records are accurate, and that the system is fair. As networks grow from small (10-20 people) to larger (100+ people), informal reputation (everyone knows each other) breaks down. Formal reputation systems prevent free-riding and maintain cooperation.
 
 ### Simple Point-Based Contribution Tracking
 
@@ -298,9 +298,9 @@ The simplest reputation system assigns points for contributions and tracks cumul
 **Implementation:**
 
 1. Define contribution categories with point values:
-   - Giving food/resources: 1Ã¢â‚¬â€œ5 points per item (based on value)
+   - Giving food/resources: 1-5 points per item (based on value)
    - Labor (unskilled): 1 point per hour
-   - Labor (skilled): 2Ã¢â‚¬â€œ3 points per hour
+   - Labor (skilled): 2-3 points per hour
    - Organizing/coordination: 2 points per hour
    - Taking resources/services: subtract equal points
 
@@ -309,7 +309,7 @@ The simplest reputation system assigns points for contributions and tracks cumul
    - Column B: Cumulative points (running total)
    - Column C: Last update date
 
-3. Goal: Keep all members within Ã‚Â±10 points of zero (balanced contribution/consumption)
+3. Goal: Keep all members within +/-10 points of zero (balanced contribution/consumption)
    - Members with negative points (takers) are gently reminded to contribute
    - Members with positive points (givers) can claim services/food as rewards
 
@@ -336,8 +336,8 @@ In this system, all labor is valued equally: 1 hour of work = 1 credit, regardle
 4. Exchange rate is fixed: 1 hour labor = 1 credit (no negotiation)
 
 **Example ledger entry:**
-- Jan 10: Alice offers 3 hours carpentry Ã¢â€ â€™ Alice earns 3 credits
-- Jan 12: Bob requests 2 hours carpentry help from Alice Ã¢â€ â€™ Bob pays 2 credits; Alice receives payment
+- Jan 10: Alice offers 3 hours carpentry -> Alice earns 3 credits
+- Jan 12: Bob requests 2 hours carpentry help from Alice -> Bob pays 2 credits; Alice receives payment
 - Jan 15: Alice pays 1 credit for 1 hour of cooking help from Carol
 
 **Advantages:**
@@ -382,8 +382,8 @@ This system tracks skill-sharing separate from labor exchange. Members exchange 
 
 **Example:**
 - Alice (experienced gardener) teaches Bob composting over 3 hours
-- Alice's passport: "Taught composting to Bob, 3 hours, Jan 15Ã¢â‚¬â€œ17"
-- Bob's passport: "Learned composting from Alice, 3 hours, Jan 15Ã¢â‚¬â€œ17"
+- Alice's passport: "Taught composting to Bob, 3 hours, Jan 15-17"
+- Bob's passport: "Learned composting from Alice, 3 hours, Jan 15-17"
 - Alice earns 6 credits (2 per hour teaching)
 
 **Advantages:**
@@ -428,22 +428,22 @@ As networks grow, some members inevitably try to consume without contributing. R
 
 ---
 
-### Scaling Trust from Small (10Ã¢â‚¬â€œ20) to Large (100+) Networks
+### Scaling Trust from Small (10-20) to Large (100+) Networks
 
-**Small networks (10Ã¢â‚¬â€œ20 people):**
+**Small networks (10-20 people):**
 - Everyone knows everyone; reputation is informal and personal
 - Simple ledger (spreadsheet) for basic tracking
 - Disputes are rare; resolved by group conversation
 - No formal rules needed; norms are enforced socially
 
-**Transition zone (20Ã¢â‚¬â€œ50 people):**
+**Transition zone (20-50 people):**
 - Informal reputation breaks down; strangers join
 - Introduce formal point-based ledger
 - Document basic policies (contribution expectations, dispute resolution)
-- Form a 3Ã¢â‚¬â€œ5 person core team to manage logistics
+- Form a 3-5 person core team to manage logistics
 
-**Large networks (50Ã¢â‚¬â€œ100+ people):**
-- Split into sub-groups (10Ã¢â‚¬â€œ20 each) with local leaders
+**Large networks (50-100+ people):**
+- Split into sub-groups (10-20 each) with local leaders
 - Each sub-group maintains its own ledger; coordinates with hub on bulk purchases
 - Formal written policies required (bylaws, dispute resolution, expulsion)
 - Track reputation more carefully (higher stakes when strangers are involved)
@@ -453,8 +453,8 @@ As networks grow, some members inevitably try to consume without contributing. R
 
 Assign trust levels based on track record:
 
-- **Level 1 (New):** Just joined; 0Ã¢â‚¬â€œ30 days
-- **Level 2 (Provisional):** 30Ã¢â‚¬â€œ90 days; positive balance; no violations
+- **Level 1 (New):** Just joined; 0-30 days
+- **Level 2 (Provisional):** 30-90 days; positive balance; no violations
 - **Level 3 (Full):** 90+ days; positive balance; 5+ contributions; zero violations
 - **Level 4 (Trusted):** 1+ year; net-positive balance; 10+ contributions; zero violations (eligible for core team)
 
@@ -512,23 +512,23 @@ Example: "Jan 20 dispute: Alice claims she taught Bob gardening on Jan 10 (2 hou
 
 ### Launch Checklist
 
-**Weeks 1Ã¢â‚¬â€œ2: Core Team Formation**
-- [ ] 3Ã¢â‚¬â€œ5 founding members meet and discuss vision
+**Weeks 1-2: Core Team Formation**
+- [ ] 3-5 founding members meet and discuss vision
 - [ ] Draft agreement document
 - [ ] Identify community partners (churches, nonprofits, community centers for meeting space)
 
-**Weeks 3Ã¢â‚¬â€œ4: Community Outreach**
+**Weeks 3-4: Community Outreach**
 - [ ] Design flyer or social media post
 - [ ] Post at community centers, local businesses, online groups
-- [ ] Host a founding meeting (30Ã¢â‚¬â€œ60 minutes, explain concept and listen to feedback)
+- [ ] Host a founding meeting (30-60 minutes, explain concept and listen to feedback)
 
-**Weeks 5Ã¢â‚¬â€œ8: Onboarding and Skills Inventory**
+**Weeks 5-8: Onboarding and Skills Inventory**
 - [ ] Enroll founding members (collect names, contact info, skills, needs)
 - [ ] Create skills inventory and resource list
 - [ ] Choose a meeting schedule (weekly, bi-weekly, or monthly)
 - [ ] Set up a simple ledger (spreadsheet, Google Sheets, or free tool like Airtable)
 
-**Weeks 9Ã¢â‚¬â€œ12: Launch**
+**Weeks 9-12: Launch**
 - [ ] First resource exchange (small, to build momentum)
 - [ ] First conflict or challenge resolved successfully (builds credibility)
 - [ ] Second recruitment round (word-of-mouth grows the network)
@@ -547,10 +547,10 @@ Example: "Jan 20 dispute: Alice claims she taught Bob gardening on Jan 10 (2 hou
 
 ### Example 1: Urban Neighborhood Food Network
 
-**Context:** 45 households in a dense urban neighborhood (apartments and small homes). Limited space for gardening; most households spend 30Ã¢â‚¬â€œ50% of income on food.
+**Context:** 45 households in a dense urban neighborhood (apartments and small homes). Limited space for gardening; most households spend 30-50% of income on food.
 
 **Structure:**
-- Weekly food pooling: Members contribute whatever produce they've grown or preserved (typically $10Ã¢â‚¬â€œ30 value per week)
+- Weekly food pooling: Members contribute whatever produce they've grown or preserved (typically $10-30 value per week)
 - Monthly bulk purchasing: Core team buys rice, beans, oil, flour in 25 kg bags from a farmers' co-op, divides into portions
 - Skill exchange: Cooking, food preservation, meal prep teaching
 
@@ -560,14 +560,14 @@ Example: "Jan 20 dispute: Alice claims she taught Bob gardening on Jan 10 (2 hou
 - Thursday/Friday: Members pick up their share
 - Monthly: Canning class hosted by a member (exchange: teacher gets 3 credits for 2 hours of work)
 
-**Result:** Members report 20Ã¢â‚¬â€œ30% reduction in food spending; increased social connection; reliable food supply even when personal harvest is low.
+**Result:** Members report 20-30% reduction in food spending; increased social connection; reliable food supply even when personal harvest is low.
 
 ### Example 2: Rural Multi-Network Hub
 
-**Context:** Three small rural towns (populations 2000Ã¢â‚¬â€œ3000 each) share a cooperative. Limited job opportunities; strong farming tradition.
+**Context:** Three small rural towns (populations 2000-3000 each) share a cooperative. Limited job opportunities; strong farming tradition.
 
 **Structure:**
-- Each town has its own 25Ã¢â‚¬â€œ35 member network with a local core team
+- Each town has its own 25-35 member network with a local core team
 - Regional hub meets quarterly (6 people total: 2 from each town)
 - Hub coordinates bulk tool purchasing, seed sharing across towns, and training
 
@@ -615,12 +615,12 @@ For shared-risk pooling, claims governance, and cooperative coverage math, use t
 :::affiliate
 **If you're preparing in advance,** these resources support mutual aid and cooperative networks:
 
-- [The Art of Community: How Successful Entrepreneurs Build Networks](https://www.amazon.com/dp/0596100590?tag=offlinecompen-20) Ã¢â‚¬â€ Building and sustaining community networks around shared values
-- [Emergent Strategy: Shaping Change, Changing Worlds](https://www.amazon.com/dp/1583949614?tag=offlinecompen-20) Ã¢â‚¬â€ Frameworks for collective action and mutual support
-- [Debt: The First 5,000 Years](https://www.amazon.com/dp/1612194192?tag=offlinecompen-20) Ã¢â‚¬â€ History of gift economies, reciprocity, and alternatives to market systems
-- [Cooperation Jackson: Community Networks for Self-Determination](https://www.amazon.com/dp/B089HNL1TV?tag=offlinecompen-20) Ã¢â‚¬â€ Case studies of successful cooperative networks serving communities
+- [The Art of Community: How Successful Entrepreneurs Build Networks](https://www.amazon.com/dp/0596100590?tag=offlinecompen-20) - Building and sustaining community networks around shared values
+- [Emergent Strategy: Shaping Change, Changing Worlds](https://www.amazon.com/dp/1583949614?tag=offlinecompen-20) - Frameworks for collective action and mutual support
+- [Debt: The First 5,000 Years](https://www.amazon.com/dp/1612194192?tag=offlinecompen-20) - History of gift economies, reciprocity, and alternatives to market systems
+- [Cooperation Jackson: Community Networks for Self-Determination](https://www.amazon.com/dp/B089HNL1TV?tag=offlinecompen-20) - Case studies of successful cooperative networks serving communities
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide Ã¢â‚¬â€ see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 </section>
