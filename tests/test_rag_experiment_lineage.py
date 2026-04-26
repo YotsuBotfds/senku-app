@@ -195,6 +195,33 @@ class RAGExperimentLineageTests(unittest.TestCase):
         self.assertEqual(parsed["transitions"][0]["after"]["expected_owner_best_rank"], 1)
         self.assertEqual(parsed["transitions"][0]["kind"], "improved")
 
+    def test_nonfinite_summary_counts_are_treated_as_zero(self):
+        module = load_module()
+        run = module.DiagnosticRun(
+            label="candidate",
+            path=Path("candidate_diag"),
+            generated_at="2026-04-25T12:00:00",
+            mtime=1000,
+            summary={
+                "total_rows": math.nan,
+                "by_bucket": {
+                    "expected_supported": math.inf,
+                    "generation_miss": "-Infinity",
+                    "ranking_miss": "2 rows",
+                },
+            },
+            rows=[],
+        )
+
+        summarized = module.summarize_run(run)
+        rendered_json = json.dumps(module.build_lineage([run]), allow_nan=False)
+
+        self.assertEqual(summarized["total_rows"], 0)
+        self.assertEqual(summarized["expected_supported"], 0)
+        self.assertEqual(summarized["generation_miss"], 0)
+        self.assertEqual(summarized["ranking_miss"], 2)
+        self.assertIn('"expected_supported": 0', rendered_json)
+
 
 if __name__ == "__main__":
     unittest.main()

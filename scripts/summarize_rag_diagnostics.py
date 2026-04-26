@@ -197,7 +197,7 @@ def _count(mapping: Mapping[str, Any], rows: list[dict[str, Any]], *path: str) -
                 1
                 for row in rows
                 if isinstance(row, Mapping)
-                and str(row.get(status_field) or "").strip() == path[-1]
+                and str(row.get(status_field) or "").strip().lower() == path[-1]
             )
         if len(path) == 1:
             key = path[0]
@@ -206,7 +206,7 @@ def _count(mapping: Mapping[str, Any], rows: list[dict[str, Any]], *path: str) -
                     1
                     for row in rows
                     if isinstance(row, Mapping)
-                    and str(row.get(key) or "").strip() == "yes"
+                    and str(row.get(key) or "").strip().lower() == "yes"
                 )
 
     return 0

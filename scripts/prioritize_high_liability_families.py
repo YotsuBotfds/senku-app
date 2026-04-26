@@ -102,6 +102,7 @@ def _metadata_lookup(path: Path | None) -> dict[str, dict[str, Any]]:
     return {
         str(record.get("guide_id") or "").strip(): record
         for record in payload.get("guides", [])
+        if isinstance(record, dict)
         if str(record.get("guide_id") or "").strip()
     }
 
@@ -113,6 +114,7 @@ def _marker_lookup(path: Path | None) -> dict[str, dict[str, Any]]:
     return {
         str(record.get("guide_id") or "").strip(): record
         for record in payload.get("guides", [])
+        if isinstance(record, dict)
         if str(record.get("guide_id") or "").strip()
     }
 

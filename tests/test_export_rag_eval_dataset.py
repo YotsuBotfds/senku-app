@@ -390,6 +390,50 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
         self.assertEqual(trace["spans"][0]["phase"], "retrieve")
         self.assertEqual(trace["spans"][0]["duration_ms"], 2.346)
 
+    def test_malformed_raw_trace_jsonl_lines_do_not_abort_export(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            bench = root / "trace_run.json"
+            trace_path = root / "trace.jsonl"
+            bench.write_text(
+                json.dumps(
+                    {
+                        "results": [
+                            {
+                                "index": 1,
+                                "question": "trace?",
+                                "response_text": "answer",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            trace_path.write_text(
+                "{not-json}\n"
+                + json.dumps(
+                    {
+                        "name": "rag.retrieve",
+                        "artifact_name": "trace_run.json",
+                        "prompt_index": 1,
+                        "duration_ms": 4,
+                        "status": "OK",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            records = exporter.build_records(
+                bench_paths=[bench],
+                diagnostics_paths=[],
+                trace_paths=[trace_path],
+            )
+
+        trace = records[0]["metadata"]["trace"]
+        self.assertEqual(trace["span_count"], 1)
+        self.assertEqual(trace["duration_ms_by_phase"], {"retrieve": 4.0})
+
     def test_cli_writes_jsonl(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

@@ -616,6 +616,12 @@ Action:
   safely, retrieval-pack distractor ties sort deterministically, latency scans
   skip malformed JSON files, and final-mode telemetry tests pin stable count
   table ordering.
+- Hardened manifest/diagnostics export helpers: RAG eval export skips malformed
+  trace JSONL lines, high-liability prioritization ignores malformed sidecar
+  guide rows, diagnostics filtering ignores null guide IDs in lists, lineage
+  summaries coerce non-finite counts to zero, RAG diagnostic summary fallbacks
+  count mixed-case statuses, and run-manifest health only treats literal booleans
+  as dirty/truncated flags.
 
 Validation:
 
@@ -668,6 +674,12 @@ Validation:
   `tests.test_compare_contextual_shadow_retrieval`,
   `tests.test_evaluate_retrieval_pack`, and `tests.test_summarize_latency`
   cover the report/eval helper hardening batch.
+- `tests.test_export_rag_eval_dataset`,
+  `tests.test_prioritize_high_liability_families`,
+  `tests.test_query_rag_diagnostics`, `tests.test_rag_experiment_lineage`,
+  `tests.test_summarize_rag_diagnostics`, and
+  `tests.test_summarize_run_manifest` cover the manifest/diagnostics export
+  hardening batch.
 
 Deferred unless evidenced:
 

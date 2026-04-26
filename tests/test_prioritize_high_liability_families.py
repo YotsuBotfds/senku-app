@@ -421,6 +421,76 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
         self.assertEqual(family["recurring_distractor_ids"], ["GD-923"])
         self.assertNotIn("GD-SHOULD-NOT-LEAK", family["expected_guide_ids"])
 
+    def test_malformed_metadata_and_marker_guide_rows_are_ignored(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diag_dir = root / "diag"
+            diag_dir.mkdir()
+            metadata_path = root / "metadata.json"
+            markers_path = root / "markers.json"
+            (diag_dir / "diagnostics.json").write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "expected_guide_family": "malformed_sidecar_family",
+                                "expected_guide_ids": "GD-930",
+                                "cited_guide_ids": "GD-930",
+                                "top_retrieved_guide_ids": "GD-930",
+                                "suspected_failure_bucket": "expected_supported",
+                                "app_acceptance_status": "strong_supported",
+                                "answer_card_status": "pass",
+                                "decision_path": "rag",
+                                "generated": "yes",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            metadata_path.write_text(
+                json.dumps(
+                    {
+                        "guides": [
+                            "not-a-guide-record",
+                            None,
+                            {
+                                "guide_id": "GD-930",
+                                "gaps": ["missing_citation_policy"],
+                                "has_reviewed_answer_card": False,
+                            },
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            markers_path.write_text(
+                json.dumps(
+                    {
+                        "guides": [
+                            42,
+                            [],
+                            {
+                                "guide_id": "GD-930",
+                                "marker_counts": {"unresolved_partial": 1},
+                            },
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            payload = collect_family_priorities(
+                [diag_dir],
+                metadata_audit_path=metadata_path,
+                corpus_marker_scan_path=markers_path,
+            )
+
+        family = payload["families"][0]
+        self.assertEqual(family["expected_guide_family"], "malformed_sidecar_family")
+        self.assertEqual(family["metadata_gap_guide_count"], 1)
+        self.assertEqual(family["corpus_unresolved_partial_guides"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

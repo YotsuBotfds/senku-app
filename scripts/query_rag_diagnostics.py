@@ -138,7 +138,11 @@ def _split_ids(value: Any) -> set[str]:
             _normalize_filter_value(part) for part in value.split("|") if part.strip()
         }
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return {_normalize_filter_value(part) for part in value if str(part).strip()}
+        return {
+            _normalize_filter_value(part)
+            for part in value
+            if part is not None and str(part).strip()
+        }
     return {_normalize_filter_value(value)} if str(value).strip() else set()
 
 

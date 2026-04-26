@@ -66,6 +66,10 @@ def _coerce_artifact_count(value: Any, *, evidence_list: Any) -> int:
     return count
 
 
+def _is_true_flag(value: Any) -> bool:
+    return value is True
+
+
 def load_manifest(path: Path) -> tuple[list[dict[str, Any]], int]:
     records: list[dict[str, Any]] = []
     malformed = 0
@@ -182,7 +186,7 @@ def render_markdown(
 
 
 def _artifact_health(record: dict[str, Any]) -> str:
-    dirty = record.get("dirty", False)
+    dirty = _is_true_flag(record.get("dirty", False))
 
     if any(field in record for field in ARTIFACT_EVIDENCE_FIELDS):
         artifact_count = _coerce_artifact_count(
@@ -193,7 +197,7 @@ def _artifact_health(record: dict[str, Any]) -> str:
             record.get("artifact_path_missing_count"),
             evidence_list=record.get("artifact_path_missing", []),
         )
-        truncated = record.get("artifact_path_truncated", False)
+        truncated = _is_true_flag(record.get("artifact_path_truncated", False))
 
         parts = [f"paths={artifact_count}", f"missing={missing_count}"]
         missing_paths = _compact_list(record.get("artifact_path_missing"))

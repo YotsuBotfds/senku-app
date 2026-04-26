@@ -423,7 +423,10 @@ def _iter_raw_trace_records(path: Path):
         for line in handle:
             stripped = line.strip()
             if stripped:
-                yield json.loads(stripped)
+                try:
+                    yield json.loads(stripped)
+                except json.JSONDecodeError:
+                    continue
 
 
 def build_records(

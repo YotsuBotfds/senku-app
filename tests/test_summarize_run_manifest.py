@@ -188,6 +188,24 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertIn("missing_paths=artifacts/bench/missing.md", markdown)
         self.assertIn("paths=2; missing=1", markdown)
 
+    def test_artifact_health_ignores_malformed_boolean_flags(self):
+        records = [
+            {
+                "task": "partial",
+                "lane": "tooling",
+                "artifact_path_count": 1,
+                "artifact_path_missing_count": 0,
+                "artifact_path_truncated": "false",
+                "dirty": "false",
+            }
+        ]
+
+        markdown = render_markdown(records)
+
+        self.assertIn("paths=1; missing=0", markdown)
+        self.assertNotIn("truncated", markdown)
+        self.assertNotIn("dirty", markdown)
+
     def test_count_records_with_missing_artifacts_uses_evidence_for_invalid_or_negative_counts(self):
         records = [
             {

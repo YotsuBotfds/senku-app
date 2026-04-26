@@ -38,6 +38,8 @@ def _as_int(value: Any) -> int:
     if isinstance(value, int):
         return value
     if isinstance(value, float):
+        if not math.isfinite(value):
+            return 0
         return int(value)
     if isinstance(value, str):
         match = re.match(r"\s*(\d+)", value)

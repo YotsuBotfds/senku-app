@@ -258,6 +258,38 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(rows[0]["card_partial"], 1)
         self.assertEqual(rows[0]["generated_shadow_card_gap_rows"], 1)
 
+    def test_collect_summaries_row_fallback_status_values_are_case_insensitive(self):
+        payload = base_summary()
+        payload.pop("app_acceptance_counts")
+        payload.pop("answer_card_counts")
+        payload["generated_shadow_card_gap_rows"] = None
+        payload["rows"] = [
+            {
+                "app_acceptance_status": "Strong_Supported",
+                "answer_card_status": "PASS",
+                "generated_shadow_card_gap_rows": "YES",
+            },
+            {
+                "app_acceptance_status": "UNCERTAIN_FIT_ACCEPTED",
+                "answer_card_status": "Fail",
+                "generated_shadow_card_gap_rows": "No",
+            },
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            dir_a = root / "dir_a"
+            dir_a.mkdir()
+            write_diagnostics(dir_a / self.module.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([dir_a])
+
+        self.assertEqual(rows[0]["strong_supported"], 1)
+        self.assertEqual(rows[0]["uncertain_fit_accepted"], 1)
+        self.assertEqual(rows[0]["card_pass"], 1)
+        self.assertEqual(rows[0]["card_fail"], 1)
+        self.assertEqual(rows[0]["generated_shadow_card_gap_rows"], 1)
+
     def test_parse_rate_handles_multiple_formats(self):
         self.assertAlmostEqual(self.module._parse_rate("21/24 (87.5%)"), 0.875)
         self.assertAlmostEqual(self.module._parse_rate("100%"), 1.0)

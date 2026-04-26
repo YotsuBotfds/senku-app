@@ -147,6 +147,22 @@ class QueryRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual([row["prompt_id"] for row in expected_match], ["P1"])
         self.assertEqual([row["prompt_id"] for row in cited_match], ["P2"])
 
+    def test_filter_rows_ignores_null_guide_ids_in_list_fields(self):
+        rows = [
+            {
+                "prompt_id": "P1",
+                "expected_guide_ids": [None, " ", "GD-001"],
+                "top_retrieved_guide_ids": [],
+                "cited_guide_ids": [],
+            }
+        ]
+
+        null_match = self.module.filter_rows(rows, guide_ids=["none"])
+        valid_match = self.module.filter_rows(rows, guide_ids=["GD-001"])
+
+        self.assertEqual(null_match, [])
+        self.assertEqual([row["prompt_id"] for row in valid_match], ["P1"])
+
     def test_filter_rows_tolerates_filter_case_and_whitespace_variants(self):
         rows = [
             {
