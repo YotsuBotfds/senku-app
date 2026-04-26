@@ -88,16 +88,36 @@ def _count_jsonl_rows(path: Path) -> int:
 def _count_csv_rows(path: Path) -> int:
     with path.open("r", encoding="utf-8", newline="") as handle:
         reader = csv.reader(handle)
-        rows = list(reader)
-    if not rows:
-        return 0
-    return max(len(rows) - 1, 0)
+        try:
+            next(reader)
+        except StopIteration:
+            return 0
+        return sum(
+            1
+            for row in reader
+            if any(cell.strip() for cell in row if isinstance(cell, str))
+        )
+
+
+def _coerce_positive_int(value: Any) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if value > 0 else None
+    if isinstance(value, str):
+        try:
+            value = int(value.strip())
+        except ValueError:
+            return None
+        return value if value > 0 else None
+    return None
 
 
 def _infer_row_count(summary: Mapping[str, Any], output_dir: Path) -> int | None:
     row_count = _safe_get(summary, "row_count")
-    if isinstance(row_count, int):
-        return row_count
+    resolved_row_count = _coerce_positive_int(row_count)
+    if resolved_row_count is not None:
+        return resolved_row_count
 
     candidate_files = []
     for row_name in ROW_COUNT_FILES:

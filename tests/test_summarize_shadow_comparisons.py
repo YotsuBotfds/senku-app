@@ -168,6 +168,98 @@ class SummarizeShadowComparisonsTests(unittest.TestCase):
 
         self.assertEqual(rows[0]["row_count"], 3)
 
+    def test_count_csv_rows_ignores_blank_rows(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            rows_csv = root / "rows.csv"
+            rows_csv.write_text(
+                "query,answer\n"
+                "q1,a1\n"
+                "\n"
+                ",\n"
+                "q2,a2\n",
+                encoding="utf-8",
+            )
+
+            count = module._count_csv_rows(rows_csv)
+
+        self.assertEqual(count, 2)
+
+    def test_infer_row_count_accepts_numeric_string_and_falls_back_on_invalid(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            good_dir = root / "good"
+            bad_dir = root / "bad"
+            no_positive_dir = root / "no_positive"
+            for directory in (good_dir, bad_dir, no_positive_dir):
+                directory.mkdir()
+
+            write_summary(
+                good_dir / module.SUMMARY_FILENAME,
+                {
+                    "row_count": "4",
+                    "deltas": {
+                        "hit_at_1": {"comparable_rows": 0, "net_improved": 0},
+                        "hit_at_3": {"net_improved": 0},
+                        "hit_at_k": {"net_improved": 0},
+                    },
+                    "baseline": {"hit_at_1": {"rate": 0.0}},
+                    "shadow": {"hit_at_1": {"rate": 0.0}},
+                    "mean_top_k_overlap_jaccard": 0.0,
+                },
+            )
+            rows = module.collect_summaries([good_dir])
+
+            write_summary(
+                bad_dir / module.SUMMARY_FILENAME,
+                {
+                    "row_count": "not-a-number",
+                    "deltas": {
+                        "hit_at_1": {"comparable_rows": 0, "net_improved": 0},
+                        "hit_at_3": {"net_improved": 0},
+                        "hit_at_k": {"net_improved": 0},
+                    },
+                    "baseline": {"hit_at_1": {"rate": 0.0}},
+                    "shadow": {"hit_at_1": {"rate": 0.0}},
+                    "mean_top_k_overlap_jaccard": 0.0,
+                },
+            )
+            (bad_dir / "compare_contextual_shadow_retrieval_rows.csv").write_text(
+                "query,answer\n"
+                "q1,a1\n"
+                "\n"
+                ",,\n"
+                "q2,a2\n",
+                encoding="utf-8",
+            )
+            fallback_rows = module.collect_summaries([bad_dir])
+
+            write_summary(
+                no_positive_dir / module.SUMMARY_FILENAME,
+                {
+                    "row_count": 0,
+                    "deltas": {
+                        "hit_at_1": {"comparable_rows": 0, "net_improved": 0},
+                        "hit_at_3": {"net_improved": 0},
+                        "hit_at_k": {"net_improved": 0},
+                    },
+                    "baseline": {"hit_at_1": {"rate": 0.0}},
+                    "shadow": {"hit_at_1": {"rate": 0.0}},
+                    "mean_top_k_overlap_jaccard": 0.0,
+                },
+            )
+            (no_positive_dir / "compare_contextual_shadow_retrieval_rows.jsonl").write_text(
+                '{"a": 1}\n{"a": 2}\n',
+                encoding="utf-8",
+            )
+            fallback_zero_rows = module.collect_summaries([no_positive_dir])
+
+        self.assertEqual(rows[0]["row_count"], 4)
+        self.assertEqual(fallback_rows[0]["row_count"], 2)
+        self.assertEqual(fallback_zero_rows[0]["row_count"], 2)
+
     def test_primary_fields_are_optional_and_stay_stable_when_missing(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as tmpdir:

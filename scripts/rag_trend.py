@@ -362,7 +362,7 @@ def _collect_owner_metrics(
         row
         for row in rows
         if isinstance(row, Mapping)
-        and row.get("expected_guide_ids") not in {"", None, "unknown"}
+        and _split_ids(row.get("expected_guide_ids"))
     ]
     if not owner_rows:
         return {

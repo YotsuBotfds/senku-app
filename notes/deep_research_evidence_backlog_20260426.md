@@ -285,6 +285,9 @@ Action:
 - Added RAG trend coverage proving top-1 marker risk, bridge, and unresolved
   partial overlays fall back to row-level diagnostics when summary counts are
   absent.
+- RAG trend owner-metric fallback now normalizes list-backed
+  `expected_guide_ids` before row selection, preventing list-shaped diagnostic
+  rows from crashing trend collection.
 - Added RAG eval exporter coverage for nested, comma-delimited, and duplicate
   guide-id normalization so exported metadata stays stable across artifact
   shapes.
@@ -541,6 +544,8 @@ Action:
 - Shadow-comparison summaries now have regression coverage for missing
   primary-owner blocks and zero-denominator primary metrics, keeping optional
   primary fields stable when absent.
+- Shadow-comparison summaries now skip blank CSV rows in row-count fallback and
+  accept positive numeric-string `row_count` values from summary JSON.
 - Bench artifact JSONL summaries now count non-object lines separately,
   truncate long type values deterministically, and preserve frequency order in
   formatted type-count summaries.
@@ -641,12 +646,16 @@ Validation:
   normalization and generated Markdown reparse behavior for blank primary rows.
 - `tests.test_compare_contextual_shadow_retrieval` covers primary-owner subset
   alignment in both expectation extraction and row comparison.
+- `tests.test_rag_trend` covers row-level owner-metric fallback for list-backed
+  `expected_guide_ids`.
 - `tests.test_agent_context_snapshot` covers malformed manifest and missing
   artifact signals alongside benign protected handoff context.
 - `tests.test_validate_prompt_expectations` covers the generated
   `primary_guide_ids` display column contract.
 - `tests.test_summarize_shadow_comparisons` covers optional/zero-denominator
   primary metric summary behavior.
+- `tests.test_summarize_shadow_comparisons` covers blank CSV row-count fallback
+  and numeric-string summary `row_count` coercion.
 - `tests.test_index_bench_artifacts` covers JSONL non-object counts, long type
   truncation, and count-order formatting.
 - `tests.test_index_bench_artifacts` covers carriage-return sanitation in
