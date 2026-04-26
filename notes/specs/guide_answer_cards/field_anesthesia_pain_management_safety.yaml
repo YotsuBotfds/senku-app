@@ -1,0 +1,111 @@
+card_id: field_anesthesia_pain_management_safety
+guide_id: GD-058
+slug: ether-chloroform-synthesis
+title: "Field Anesthesia & Pain Management"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks about field anesthesia, improvised sedation, historical ether or chloroform, or pain control where safety boundaries and escalation are needed.
+  - The prompt includes anesthesia or sedation plus slow breathing, airway obstruction, cyanosis, vomiting or aspiration risk, shock, overdose concern, allergy/anaphylaxis, unconsciousness, or absent monitoring.
+  - The answer needs GD-058's warning that historical anesthetics are educational reference only and general anesthesia is unsafe without trained airway support, equipment, and continuous monitoring.
+required_first_actions:
+  - Treat general anesthesia or deep sedation outside trained, equipped care as a high-liability airway and shock risk; do not frame it as routine self-care.
+  - State that ether and chloroform content is historical and educational, and do not provide synthesis, procurement, dosing, open-drop, nerve-block, or procedural anesthesia instructions.
+  - If breathing is slow, absent, obstructed, noisy, gasping, blue/cyanotic, or the person cannot protect their airway, stop the exposure or sedating agent if applicable, prioritize airway/breathing support by trained help, and escalate immediately.
+  - If shock, severe hypotension, aspiration, suspected overdose, anaphylaxis, or rapid deterioration is present, stop and escalate rather than continuing any procedure or pain-control plan.
+first_actions:
+  - Keep the answer at safety boundaries, monitoring, stopping criteria, and escalation red flags before any comfort discussion.
+  - Emphasize that one dedicated monitor should continuously watch breathing, pulse, color, pupil response, muscle tone, and ability to protect the airway until the person is fully awake.
+  - Use non-drug comfort measures only at a high level when supported by the guide, such as calming communication, positioning for comfort, immobilization, compression/elevation, and cold therapy on intact skin with frostbite precautions.
+  - Route airway failure, poisoning/overdose, shock, anaphylaxis, aspiration, and surgical decisions to their more specific emergency owners when those risks dominate the prompt.
+urgent_red_flags:
+  - Absent or severely depressed breathing, gasping, gurgling, noisy breathing, irregular breathing, cyanosis, or oxygen saturation below 92 percent if available.
+  - Airway obstruction, loss of protective airway reflexes, vomiting while unconscious, suspected aspiration, or inability to protect the airway.
+  - Severe hypotension, shock signs, weak pulse, pallor, mottled skin, collapse, or trauma with blood loss.
+  - Suspected overdose, unarousable state, seizure, cardiac arrest, or signs of too-deep anesthesia.
+  - Rapid allergic reaction or anaphylaxis concern after anesthetic exposure, including airway swelling, hypotension, laryngospasm, or sudden deterioration.
+forbidden_advice:
+  - Do not provide anesthetic synthesis, purification, procurement, concentration, open-drop setup, dosing, titration, redosing, injection, block, or procedural anesthesia instructions.
+  - Do not tell an untrained person to attempt general anesthesia, deep sedation, intubation, surgical airway, nerve blocks, or drug-based pain control.
+  - Do not reassure respiratory depression, cyanosis, aspiration, shock, overdose, or anaphylaxis as routine observation.
+  - Do not continue a procedure or anesthetic exposure when breathing, airway, circulation, shock, overdose, aspiration, or allergic red flags appear.
+do_not:
+  - Do not convert historical ether/chloroform material into actionable synthesis or use guidance.
+  - Do not quote or reproduce the guide's medication dose tables, block techniques, or troubleshooting steps as answer-card output.
+  - Do not substitute herbal or sedative suggestions for emergency airway, breathing, shock, overdose, aspiration, or anaphylaxis escalation.
+  - Do not imply monitoring is optional; GD-058 says continuous monitoring and a dedicated monitor are non-negotiable for sedated patients.
+routine_boundary: >
+  This is not a routine pain-relief card. It applies when anesthesia or sedation
+  creates airway, breathing, circulation, aspiration, overdose, anaphylaxis, or
+  monitoring risks, and it should keep answers at warning, stop, monitor, and
+  escalate boundaries.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but anesthesia, sedative exposure, historical
+  ether/chloroform, impaired breathing, aspiration, shock, overdose, or allergic
+  reaction is plausible, lead with the conservative safety boundary and ask only
+  questions that do not delay emergency escalation.
+clarifying_questions:
+  - Is the person awake, breathing normally, and able to protect their airway?
+  - Are there signs of cyanosis, noisy or slow breathing, vomiting, aspiration, shock, overdose, or allergic reaction?
+  - Is any trained airway-capable clinician present with monitoring, ventilation support, suction, and an evacuation plan?
+  - Is the request about historical understanding and safety boundaries, or about attempting anesthesia, drug dosing, blocks, or synthesis?
+citation_ids:
+  - historical-ether-chloroform-warning
+  - general-anesthesia-training-airway-boundary
+  - anesthesia-respiratory-airway-shock-risks
+  - continuous-monitoring-dedicated-monitor
+  - overdose-aspiration-anaphylaxis-red-flags
+  - non-drug-comfort-boundary
+source_sections:
+  - guide: GD-058
+    slug: ether-chloroform-synthesis
+    title: "Field Anesthesia & Pain Management"
+    sections:
+      - "LEGAL AND SAFETY WARNING"
+      - "#overview"
+      - "#safety"
+      - "#history"
+      - "#non-chemical"
+      - "#historical-anesthetics"
+      - "#monitoring"
+      - "#fatal-mistakes"
+source_invariants:
+  - name: historical_warning_no_synthesis
+    guide: GD-058
+    must_include:
+      - This guide is provided as historical reference only. DO NOT ATTEMPT synthesis.
+      - This section is educational reference—synthesis of these agents is outside the scope of this guide and illegal in most jurisdictions.
+      - Do not attempt open-drop anesthesia.
+  - name: trained_airway_general_anesthesia_boundary
+    guide: GD-058
+    must_include:
+      - Only trained anesthesiologists, nurse anesthetists, and physicians with formal anesthesia training should administer general anesthetics.
+      - In true field conditions without trained personnel, do not attempt general anesthesia.
+      - Provider is trained in airway management and has equipment
+  - name: respiratory_airway_shock_core_risks
+    guide: GD-058
+    must_include:
+      - All general anesthetics suppress breathing.
+      - Loss of protective airway reflexes allows aspiration of saliva, blood, vomit, or stomach contents.
+      - Patients with trauma, blood loss, or shock are at extreme risk of cardiac arrest.
+  - name: continuous_monitoring_and_stop_escalate
+    guide: GD-058
+    must_include:
+      - Continuous monitoring is non-negotiable for any sedated patient
+      - One provider should be dedicated to monitoring and should do nothing else during procedure.
+      - Continuous Assessment
+      - EMERGENCY—manage airway, increase oxygen.
+  - name: overdose_aspiration_anaphylaxis_red_flags
+    guide: GD-058
+    must_include:
+      - The margin between effective anesthesia and toxic overdose is narrow.
+      - If aspiration occurs
+      - Anaphylaxis during anesthesia is catastrophic
+      - death can occur within minutes.
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-058 card for high-liability metadata/card audit closure. It
+  intentionally carries only safety-boundary, monitoring, stop/escalate, and
+  red-flag guidance. It excludes anesthetic synthesis, procurement, dosing,
+  regional blocks, procedural anesthesia instructions, and reproduction of
+  medication tables.

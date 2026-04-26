@@ -8,6 +8,26 @@ tags:
   - important
 icon: 🔧
 description: Barrel making, lock mechanisms, stock fitting, ammunition, maintenance, repair, and blackpowder firearms construction.
+aliases:
+  - firearm safety check
+  - gunsmithing safety
+  - unsafe firearm inspection
+  - old gun safe to fire
+  - unknown chamber do not fire
+  - failed firearm safety
+  - cracked receiver
+  - firearm storage ammunition separate
+routing_cues:
+  - Use only for source-backed safety boundaries around existing legal firearms: legal warnings, safe handling, maintenance framing, storage separation, corrosion checks, unloaded functional checks, and unsafe-firearm condemnation.
+  - Use when a firearm has unknown chambering, unknown history, questionable headspace, failed safety function, structural cracks, bulged barrel, severe corrosion, or another do-not-fire red flag.
+  - Do not use to provide firearm manufacture, ammunition making, improvised firearm, tactical use, weapon optimization, or procedural repair instructions.
+citations_required: true
+applicability: >
+  Safety-boundary guidance for existing legal firearms when the user needs
+  cited warnings about legality, unloaded/safe-direction checks, storage and
+  ammunition separation, corrosion or long-storage red flags, unknown chamber or
+  headspace do-not-fire decisions, failed safety function, structural cracks,
+  and when to condemn rather than repair or fire a firearm.
 related:
   - metalworking
   - blacksmithing

@@ -31,7 +31,10 @@ the `Master Head Health` run for that HEAD was green.
    - Completed in final near-finished slice: reviewed answer cards for `GD-054`, `GD-492`, `GD-602`, `GD-858`, and `GD-918`; metadata audit now reports no gaps for those five guides.
    - No near-finished card-only blockers remain; next card work should move to broad critical metadata/card gaps or safety-reviewed unresolved partials.
    - Completed first broad critical application slice: frontmatter metadata plus reviewed cards for `GD-037`, `GD-051`, `GD-396`, `GD-584`, and `GD-935`; focused card/audit/routing tests pass and metadata audit reports no gaps for those five guides.
-   - Remaining broad critical metadata/card gaps start with `GD-039`, `GD-044`, `GD-045`, `GD-058`, `GD-059`, `GD-227`, `GD-133`, `GD-152`, and `GD-025`. Treat pharma/manufacturing/weapons/explosives lanes as deliberate safety-review work, not quick card churn.
+   - Completed second broad critical application slice: frontmatter metadata plus reviewed cards for `GD-025`, `GD-039`, and `GD-227`; focused card/audit/routing tests pass and metadata audit reports no gaps for those three guides.
+   - Completed narrow safety-review closures for `GD-058` and `GD-133`: both are boundary-only reviewed cards that avoid anesthesia synthesis/dosing/procedure detail and firearm manufacture/ammunition/procedural repair detail.
+   - Safety-reviewed deferrals from the broad critical queue: `GD-044`, `GD-045`, `GD-059`, and `GD-152`. Do not quick-close these with metadata/card churn; route them to deliberate safety-review or source-boundary work because the guide bodies are procedure-dense and could make vaccine/pharma/insulin/explosive manufacture or dosing more actionable.
+   - Remaining broad critical metadata/card gaps should be selected after excluding the explicit deferrals above. Treat pharma/manufacturing/weapons/explosives lanes as deliberate safety-review work, not quick card churn.
 3. Corpus/content hygiene:
    - `51` unresolved partials remain actionable, with critical/high guides first.
    - Guide-body edits require safety review and re-ingest before retrieval claims.

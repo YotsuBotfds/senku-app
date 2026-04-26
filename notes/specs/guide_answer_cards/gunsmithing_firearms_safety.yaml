@@ -1,0 +1,149 @@
+card_id: gunsmithing_firearms_safety
+guide_id: GD-133
+slug: gunsmithing
+title: Gunsmithing & Firearms
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether an existing legal firearm is safe to handle, inspect, store, maintain, or return to use after storage, corrosion, age, unknown history, or visible damage.
+  - The question involves legal safety boundaries for firearms, including avoiding manufacture, avoiding unserialized or improvised firearms, and keeping work limited to existing licensed firearms.
+  - A firearm has unknown chambering, unknown headspace, a failed safety, unusual resistance, severe corrosion, a cracked receiver or action, a bulged or dented barrel, or other do-not-fire warning signs.
+required_first_actions:
+  - State the guide's legal boundary first: construction, possession, and use are regulated, unauthorized manufacture is a federal crime, and the guide is limited to legal repair and maintenance of existing licensed firearms only.
+  - Keep any handling or inspection framed around a completely unloaded firearm pointed in a safe direction; verify unloaded status before checks, disassembly, cleaning, storage, or transport.
+  - For old, stored, corroded, damaged, unknown-history, unknown-chamber, or questionable-headspace firearms, tell the user not to fire until the firearm is professionally inspected or verified with proper gauges where the guide requires them.
+  - If safety function fails, the action binds, resistance is unusual, severe corrosion is present, or structural damage is visible, label the firearm unsafe, keep it unloaded and locked, and condemn it rather than attempting field repair.
+  - For storage questions, separate ammunition from firearms, keep both secured from unauthorized access, use dry corrosion-controlled storage, and discard visibly corroded or suspect ammunition.
+conditional_required_actions:
+  - trigger_terms:
+      - unknown chamber
+      - unknown caliber
+      - unknown history
+      - old gun
+      - inherited firearm
+      - headspace
+    required_actions:
+      - State that unknown chamber dimensions, unknown bore size, or uncertain headspace are do-not-fire conditions; firing can rupture a case or cause catastrophic failure.
+      - Direct the user to keep the firearm unloaded and obtain proper headspace/chamber verification by a qualified professional before any firing.
+  - trigger_terms:
+      - safety failed
+      - safety does not work
+      - trigger moves on safe
+      - action binds
+      - unusual resistance
+    required_actions:
+      - Treat a failed safety, binding, or unusual resistance during unloaded checks as an unsafe-firearm finding, not a minor adjustment.
+      - Keep the firearm unloaded, pointed safely during handling, locked away from ammunition, and out of use pending professional inspection.
+  - trigger_terms:
+      - cracked receiver
+      - cracked action
+      - bulged barrel
+      - dented barrel
+      - deep corrosion
+      - severe rust
+    required_actions:
+      - State that cracked receivers or actions, bulged or dented barrels, and severe corrosion are structural red flags with injury risk.
+      - Condemn the firearm under the guide's rule when major structural work would be required and proper tools or skills are unavailable.
+first_actions:
+  - Separate safety-boundary questions from construction, ammunition fabrication, improvised firearm, tactical, and repair-procedure requests; answer only the safety-boundary portion.
+  - Start with legal compliance and existing-legal-firearm-only scope before any maintenance, storage, or inspection guidance.
+  - For functional checks, preserve the guide's constraints: completely unloaded firearm, safe direction, and no assumption that a mechanical safety cannot fail.
+  - For storage, emphasize locked firearm storage, ammunition stored separately in a locked container, dry corrosion prevention, periodic inspection, and visible ammunition corrosion as a discard sign.
+urgent_red_flags:
+  - Unknown chamber dimensions, unknown bore size, unknown caliber, unfamiliar firearm history, or questionable headspace before firing.
+  - Failed safety function, trigger movement while safety is applied, binding action, sticky trigger or action that persists, or unusual resistance during unloaded cycling.
+  - Cracked receiver or action, bulged or dented barrel, severe deep corrosion, holes in barrel or action, structural weakness, or major structural repair need.
+  - Visible corrosion on ammunition cases, off powder smell, or ammunition stored with moisture or corrosion signs.
+forbidden_advice:
+  - Do not provide firearm manufacture, barrel making, rifling, lock construction, receiver work, improvised firearm, pipe gun, ghost-gun, or unserialized-firearm instructions.
+  - Do not provide ammunition making, reloading steps, powder-charge guidance, primer-compound guidance, black-powder ammunition assembly, or casting procedures.
+  - Do not provide procedural repair instructions, welding, boring, reaming, structural repair, firing-pin improvisation, tactical use, aiming, defensive deployment, or performance optimization.
+  - Do not tell the user to test-fire an unknown, damaged, corroded, failed-safety, unknown-chamber, or questionable-headspace firearm.
+  - Do not treat a failed safety, cracked receiver/action, bulged barrel, or deep corrosion as routine maintenance.
+do_not:
+  - Do not skip unloaded verification before inspection, cleaning, storage, or any functional check.
+  - Do not handle, clean, or transport a firearm near loose ammunition when the guide calls for ammunition separation.
+  - Do not rely on the safety lever as proof that a firearm cannot discharge.
+  - Do not fire or advise firing a firearm with unknown chambering, questionable headspace, structural cracks, failed safety, bulged barrel, or severe corrosion.
+routine_boundary: >
+  This card supports only safety-boundary answers for existing legal firearms:
+  legal scope, unloaded/safe-direction checks, storage separation, corrosion and
+  ammunition discard boundaries, headspace or unknown-chamber do-not-fire
+  decisions, failed safety findings, and unsafe-firearm condemnation. It is not
+  a card for building, ammunition making, improvised weapons, tactical use, or
+  repair procedure.
+acceptable_uncertain_fit: >
+  If firearm legality, unloaded status, chambering, headspace, structural
+  integrity, safety function, ammunition condition, or storage history is
+  uncertain, choose the conservative boundary: verify unloaded, keep pointed in
+  a safe direction, separate and secure ammunition, do not fire, and get
+  qualified inspection before use.
+clarifying_questions:
+  - Is the firearm confirmed completely unloaded, with ammunition removed from the area?
+  - Is the firearm an existing legal firearm, and are you asking only about safety, storage, maintenance boundaries, or whether it should not be fired?
+  - Are the chambering, caliber, and history known, and has headspace been checked with proper gauges if the firearm is unfamiliar?
+  - Are there any failed safety checks, binding, unusual resistance, deep corrosion, cracks, a bulged or dented barrel, or visibly corroded ammunition?
+citation_ids:
+  - gunsmithing-legal-existing-firearms-only
+  - gunsmithing-storage-corrosion-ammunition-separation
+  - gunsmithing-unloaded-functional-checks
+  - gunsmithing-headspace-unknown-chamber-do-not-fire
+  - gunsmithing-condemn-unsafe-firearms
+  - gunsmithing-safe-handling-storage
+source_sections:
+  - guide: GD-133
+    slug: gunsmithing
+    title: Gunsmithing & Firearms
+    sections:
+      - "#federal-firearms-warning"
+      - "#legal-disclaimer"
+      - "#cleaning-maintenance"
+      - "#long-term-storage-corrosion-prevention"
+      - "#systematic-firearm-inspection-diagnosis"
+      - "#headspace-measurement-advanced"
+      - "#when-not-to-repair-condemning-unsafe-firearms"
+      - "#safe-handling-and-storage"
+source_invariants:
+  - name: legal_existing_firearms_only
+    guide: GD-133
+    must_include:
+      - Manufacturing firearms requires a Federal Firearms License (FFL) from the ATF.
+      - This guide is intended as a reference for legal repair and maintenance of existing licensed firearms only.
+      - Unauthorized manufacture of firearms is a federal crime.
+  - name: unloaded_safe_direction_functional_checks
+    guide: GD-133
+    must_include:
+      - Perform these tests on an **completely unloaded** firearm in a safe direction
+      - Failed safety = firearm is unsafe to use.
+      - All functional tests must be performed with firearm UNLOADED and pointed in safe direction.
+      - Treat every firearm as if it will discharge.
+  - name: storage_corrosion_ammunition_separation
+    guide: GD-133
+    must_include:
+      - Proper storage is critical for preserving firearms across decades or centuries.
+      - Visible corrosion on cases = discard.
+      - "Ammunition storage: cool/dry location, separate from firearms"
+      - "Ammunition storage:** Separate from firearm; stored in locked container"
+  - name: headspace_unknown_chamber_do_not_fire
+    guide: GD-133
+    must_include:
+      - Excessive headspace is dangerous (can cause case rupture and injury).
+      - Always verify headspace with proper gauges before shooting unfamiliar firearms.
+      - If uncertain, do not fire.
+      - Chamber dimensions unknown
+  - name: condemn_structural_red_flags
+    guide: GD-133
+    must_include:
+      - Cracked receiver/action
+      - Bulged or dented barrel
+      - Deep corrosion (severe)
+      - condemn the firearm (store unloaded and locked, clearly labeled "UNSAFE")
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card derived only from GD-133 safety-boundary passages. It is
+  intentionally scoped away from the guide's manufacture, ammunition-making,
+  improvised-firearm, tactical, sighting, and repair-procedure content. Use it
+  to support refusal-safe answers that preserve legal warnings, unloaded checks,
+  storage separation, corrosion and ammunition discard limits, headspace or
+  unknown-chamber do-not-fire decisions, failed-safety findings, structural red
+  flags, and condemnation of unsafe firearms.

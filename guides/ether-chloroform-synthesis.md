@@ -8,6 +8,28 @@ tags:
   - critical
 icon: ⚗️
 description: Historical anesthetic methods, nerve blocks, herbal analgesics, patient monitoring, and non-chemical pain management for field surgery.
+aliases:
+  - field anesthesia safety
+  - improvised anesthesia risk
+  - anesthesia without monitoring
+  - ether chloroform warning
+  - pain control during field surgery
+  - sedation breathing risk
+  - anesthesia aspiration risk
+  - anesthesia overdose signs
+  - anaphylaxis during anesthesia
+routing_cues:
+  - Use for safety-boundary questions about field anesthesia, improvised sedation, historical ether or chloroform, and pain-control risk where the answer must warn against general anesthesia without trained airway support, monitoring, and escalation capability.
+  - Use when a prompt mentions anesthesia plus slow or obstructed breathing, cyanosis, vomiting or aspiration risk, shock, overdose, allergic reaction, anaphylaxis, unconsciousness, or lack of monitoring equipment.
+  - Use only for source-backed safety boundaries, monitoring and escalation red flags, and non-drug comfort framing; do not route here to provide anesthetic synthesis, dosing, nerve blocks, or procedural anesthesia instructions.
+citations_required: true
+applicability: >
+  Field anesthesia and pain-management safety boundary guidance when historical
+  anesthetics, improvised sedation, respiratory depression, airway obstruction,
+  aspiration, shock, overdose, anaphylaxis, or inadequate monitoring are part of
+  the question. This metadata supports warnings, monitoring/escalation framing,
+  and non-drug comfort boundaries, not anesthetic synthesis, dosing, blocks, or
+  procedural anesthesia instruction.
 related:
   - alkali-production
   - chemistry-fundamentals
