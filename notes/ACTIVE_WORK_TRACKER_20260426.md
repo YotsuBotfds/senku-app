@@ -4,9 +4,9 @@ Purpose: one durable queue surface for planner handoffs. This file separates
 active execution from parked dispatches and historical notes so agents do not
 re-triage `notes/dispatch/` every session.
 
-Last checked: 2026-04-26 12:19 -05:00. Latest pushed HEAD at that check:
-`0b9fa29` (`normalize evidence parser categories`). Latest `Master Head
-Health` run for that HEAD was green.
+Last checked before this tracker slice: 2026-04-26 12:19 -05:00. Latest pushed
+HEAD at that check was `0b9fa29` (`normalize evidence parser categories`), and
+the `Master Head Health` run for that HEAD was green.
 
 ## Active Queue
 
@@ -63,9 +63,9 @@ have superseded assumptions.
 - Older `D*`, `W-C*`, `A1`, `P5`, and probe notes are superseded, completed,
   cancelled, or stale records unless reselected deliberately.
 
-## Notes To Refresh When Time Allows
+## Refreshes Applied In This Slice
 
-- Add a short banner to `notes/dispatch/README.md` pointing here.
-- Add a short banner to `notes/CP9_ACTIVE_QUEUE.md` pointing here.
-- Mark `RAG-CARD5`'s `RE8-TR-001` breadcrumb as superseded.
-- Mark `RAG-TOOL8`'s "next active/now-running tranche" wording as stale.
+- `notes/dispatch/README.md` now points here.
+- `notes/CP9_ACTIVE_QUEUE.md` now points here.
+- `RAG-CARD5`'s `RE8-TR-001` breadcrumb is marked superseded.
+- `RAG-TOOL8`'s "next active/now-running tranche" wording is marked stale.
