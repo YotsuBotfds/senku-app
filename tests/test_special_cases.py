@@ -2020,6 +2020,7 @@ class SpecialCaseTests(unittest.TestCase):
                 "not sure if this is stress or a crisis because he will not stop moving, is acting invincible, and will not let anyone slow him down",
                 "my partner has changed fast this week, is spending recklessly, not sleeping, and says they have a special mission tonight",
                 "something is very wrong because she is barely eating, has not really slept, keeps pacing, and is making unsafe choices like she cannot be hurt",
+                "During wildfire evacuation, someone has not slept for days, says they are invincible, grabbed the truck keys, and wants to lead the animal trailer out. How do we keep everyone safe?",
             ]
         )
         for prompt in prompts:
@@ -2036,6 +2037,18 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("urgent mental-health or emergency medical evaluation", response)
         self.assertNotIn("sleep hygiene", response.split("1.", 1)[0].lower())
         self.assertNotIn("routine anxiety", response.lower().split(".", 1)[-1])
+
+        eval9_response = query.build_special_case_response(prompts[-1])
+        eval9_opening = eval9_response.split("1.", 1)[0].lower()
+        self.assertIn("[GD-859]", eval9_response)
+        self.assertIn("mental-health crisis pattern", eval9_response)
+        self.assertIn("Do not leave them alone", eval9_response)
+        self.assertIn("secure keys", eval9_response)
+        self.assertIn("urgent mental-health or emergency medical evaluation", eval9_response)
+        self.assertNotIn("sleep hygiene", eval9_opening)
+        self.assertNotIn("animal trailer", eval9_opening)
+        self.assertNotIn("wildfire evacuation", eval9_opening)
+        self.assertNotIn("let them drive", eval9_response.lower())
 
         near_misses = [
             "I'm very stressed and anxious, haven't slept because of this stress, but there is nothing risky or unsafe.",

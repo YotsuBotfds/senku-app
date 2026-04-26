@@ -190,6 +190,10 @@ Action:
   animal logistics prompt stays out of deterministic special cases, gets human
   triage supplemental retrieval specs, and prefers `GD-029` over animal/route
   support owners.
+- Added exact `RE9-MH-001` deterministic route proof. The existing
+  no-sleep/activation crisis test now includes the wildfire evacuation /
+  animal-trailer prompt and asserts `GD-859` safety-first response text stays
+  ahead of logistics.
 
 Validation:
 
@@ -227,6 +231,9 @@ Action:
 - Cache hygiene guard added: the Non-Android retrieval-index cache restore key
   is scoped by mode, safety-critical flag, and `retrieval_index_flavor`, so a
   broad Windows-only restore cannot hydrate a DB from the wrong retrieval lane.
+- Bench bundle artifact guard added: workflow tests now pin the bench-bundle
+  build step, upload path, `if-no-files-found: error`, 14-day retention, and
+  public-repository attestation subject path.
 
 Validation:
 
@@ -235,6 +242,8 @@ Validation:
   counts.
 - `tests.test_github_workflows` asserts the retrieval cache key and restore
   prefix carry the same mode/safety/flavor dimensions.
+- `tests.test_github_workflows` also asserts the bench-bundle upload and
+  attestation stay tied to `steps.bench_bundle.outputs.bundle_zip`.
 
 Deferred unless evidenced:
 

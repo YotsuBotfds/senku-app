@@ -241,6 +241,42 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertEqual("error", upload_step["with"]["if-no-files-found"])
         self.assertEqual(14, upload_step["with"]["retention-days"])
 
+    def test_non_android_regression_uploads_and_attests_bench_bundle(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")
+        )
+        steps = workflow["jobs"]["non-android-regression"]["steps"]
+        names = [step.get("name") for step in steps]
+
+        build_step = steps[names.index("Build attested bench bundle")]
+        self.assertEqual("bench_bundle", build_step.get("id"))
+        self.assertEqual("always()", build_step.get("if"))
+        build_script = build_step.get("run", "")
+        self.assertIn("senku-bench-bundle", build_script)
+        self.assertIn("senku.ci_bench_bundle.v1", build_script)
+        self.assertIn("bundle_zip=$bundleZip", build_script)
+
+        upload_step = steps[names.index("Upload bench bundle")]
+        self.assertEqual("upload_bench_bundle", upload_step.get("id"))
+        self.assertEqual(
+            "always() && steps.bench_bundle.outputs.bundle_zip != ''",
+            upload_step.get("if"),
+        )
+        self.assertTrue(str(upload_step.get("uses", "")).startswith("actions/upload-artifact@"))
+        self.assertEqual("non-android-regression-bench-bundle", upload_step["with"]["name"])
+        self.assertEqual("${{ steps.bench_bundle.outputs.bundle_zip }}", upload_step["with"]["path"])
+        self.assertEqual("error", upload_step["with"]["if-no-files-found"])
+        self.assertEqual(14, upload_step["with"]["retention-days"])
+
+        attest_step = steps[names.index("Attest bench bundle provenance")]
+        self.assertIn("steps.bench_bundle.outputs.bundle_zip != ''", attest_step.get("if", ""))
+        self.assertIn("github.event.repository.private == false", attest_step.get("if", ""))
+        self.assertTrue(str(attest_step.get("uses", "")).startswith("actions/attest@"))
+        self.assertEqual(
+            "${{ steps.bench_bundle.outputs.bundle_zip }}",
+            attest_step["with"]["subject-path"],
+        )
+
     def test_private_repositories_skip_attestation_step(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")
