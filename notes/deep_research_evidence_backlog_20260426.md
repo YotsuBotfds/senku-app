@@ -535,6 +535,9 @@ Action:
 - Metrics-lake `artifact_path_evidence` detail rows now inherit parent
   run-manifest context (`task`, `lane`, `label`, `commit`, `generated_at`, and
   `record_type`) in raw JSON for easier provenance joins.
+- Added a separate Strict Retrieval Head Health workflow that runs on schedule
+  or manual dispatch only, uses the reusable non-Android Fast gate with full
+  retrieval index flavor, and keeps retrieval warnings fail-closed by default.
 
 Validation:
 
@@ -587,6 +590,9 @@ Validation:
   frontmatter gap surfacing and structured-vs-body routing semantics.
 - `tests.test_bench_metrics_lake` covers inherited parent manifest context on
   artifact evidence rows.
+- `tests.test_github_workflows` covers the strict retrieval health workflow's
+  manual/scheduled triggers, no push trigger, full index flavor, and
+  fail-on-warning defaults.
 
 Deferred unless evidenced:
 

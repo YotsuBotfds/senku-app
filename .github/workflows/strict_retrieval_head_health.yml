@@ -1,0 +1,29 @@
+name: Strict Retrieval Head Health
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  strict-retrieval-head-health:
+    name: Strict Retrieval Head Health
+    uses: ./.github/workflows/non_android_regression.yml
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    with:
+      mode: Fast
+      label: head_health_${{ github.sha }}_strict_retrieval
+      allow_retrieval_warnings: false
+      fail_on_generated_regression: false
+      include_safety_critical: false
+      retrieval_index_flavor: full

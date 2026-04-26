@@ -322,6 +322,53 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertFalse(job["with"]["include_safety_critical"])
         self.assertEqual("compact", job["with"]["retrieval_index_flavor"])
 
+    def test_strict_retrieval_head_health_runs_full_strict_retrieval_on_schedule_or_manual(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "strict_retrieval_head_health.yml").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        triggers = workflow.get("on", workflow.get(True, {}))
+        self.assertIn("workflow_dispatch", triggers)
+        self.assertIn("schedule", triggers)
+        self.assertNotIn("push", triggers)
+        self.assertNotIn("pull_request", triggers)
+        self.assertEqual(
+            [{"cron": "0 7 * * *"}],
+            triggers["schedule"],
+        )
+
+        self.assertEqual(
+            {"group": "${{ github.workflow }}-${{ github.ref }}", "cancel-in-progress": True},
+            workflow["concurrency"],
+        )
+        self.assertEqual({"contents": "read"}, workflow.get("permissions"))
+
+        jobs = workflow["jobs"]
+        self.assertEqual(["strict-retrieval-head-health"], list(jobs))
+        job = jobs["strict-retrieval-head-health"]
+        self.assertEqual("./.github/workflows/non_android_regression.yml", job["uses"])
+        self.assertEqual(
+            {
+                "contents": "read",
+                "id-token": "write",
+                "attestations": "write",
+            },
+            job["permissions"],
+        )
+        self.assertEqual("Fast", job["with"]["mode"])
+        self.assertFalse(job["with"]["allow_retrieval_warnings"])
+        self.assertEqual("full", job["with"]["retrieval_index_flavor"])
+        self.assertFalse(job["with"]["include_safety_critical"])
+        self.assertEqual(
+            "head_health_${{ github.sha }}_strict_retrieval",
+            job["with"]["label"],
+        )
+        self.assertFalse(job["with"]["fail_on_generated_regression"])
+        self.assertNotIn("generated_bench_json", job["with"])
+        self.assertNotIn("generated_baseline_diag", job["with"])
+
     def test_non_android_regression_uploads_failure_logs(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")
