@@ -684,6 +684,8 @@ def load_retrieval_eval_markdown(path: Path, *, root: Path) -> tuple[list[dict[s
                 row["top_retrieved_guide_ids"] = row["top_retrieved"]
             if "expected" in row and "expected_guide_ids" not in row:
                 row["expected_guide_ids"] = row["expected"]
+            if "primary" in row and "primary_expected_guide_ids" not in row:
+                row["primary_expected_guide_ids"] = row["primary"]
             row["_eval_path"] = display
             rows.append(row)
     return rows, []

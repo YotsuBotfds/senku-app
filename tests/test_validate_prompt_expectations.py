@@ -750,6 +750,76 @@ class PromptExpectationValidatorTests(unittest.TestCase):
 
         self.assertEqual(report["status"], "pass")
 
+    def test_retrieval_eval_markdown_primary_alias_flags_primary_expected_owner_miss(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120", "GD-397"],
+                    "prompt": "Markdown primary metadata is the source of truth.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        md = root / "retrieval.md"
+        md.write_text(
+            "| id | expected | primary | top retrieved | primary hit at k |\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| P-1 | GD-120, GD-397 | GD-397 | GD-120 | false |\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[md],
+        )
+
+        self.assertEqual(report["status"], "warn")
+        self.assertEqual(len(report["issues"]), 1)
+        self.assertEqual(report["issues"][0]["code"], "retrieval_missing_primary_expected_owner")
+        self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
+
+    def test_retrieval_eval_markdown_primary_alias_accepts_primary_expected_owner_hit(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120", "GD-397"],
+                    "prompt": "Markdown primary metadata is the source of truth.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        md = root / "retrieval.md"
+        md.write_text(
+            "| id | expected | primary | top retrieved | primary hit at k |\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| P-1 | GD-120, GD-397 | GD-397 | GD-397, GD-120 | true |\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[md],
+        )
+
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["issues"], [])
+
     def test_cli_writes_json_and_markdown_and_fail_flags_gate_exit(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
