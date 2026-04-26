@@ -29,6 +29,38 @@ custom_css: |
   .cycle-table td { padding: 10px; border-bottom: 1px solid var(--border); }
   .product-box { background-color: var(--card); border-left: 4px solid var(--accent2); padding: 15px; margin: 15px 0; border-radius: 4px; }
 liability_level: high
+aliases:
+  - menstrual cycle tracking
+  - period log
+  - menstrual bleeding log
+  - reusable menstrual supplies
+  - period hygiene off grid
+  - menstrual privacy and dignity
+  - missed period red flags
+  - heavy period bleeding red flags
+routing_cues:
+  - Use for routine menstrual-cycle and support intake, period/bleeding/pain logs, hygiene and supply planning, privacy and dignity support, and red-flag handoff.
+  - Route pregnancy management, possible ectopic pregnancy, severe bleeding, infection symptoms, severe pelvic pain, postpartum bleeding, contraception, fertility treatment, abortion guidance, medication/dosing, procedures, diagnosis, and legal decisions outside this reviewed card.
+citations_required: true
+applicability: >
+  Use GD-405 reviewed-card coverage only for routine menstrual-cycle support,
+  bleeding and pain logs, hygiene or supply planning, privacy/dignity support,
+  and clinician, midwife, or public-health handoff when pregnancy/ectopic,
+  infection, severe pain, or heavy-bleeding red flags are present. Do not use
+  the reviewed card for diagnosis, contraception or fertility treatment,
+  abortion guidance, medication or dosing, procedures, infection treatment,
+  pregnancy management, legal/reproductive-rights decisions, return-to-work or
+  school clearance, or safety certification.
+citation_policy: >
+  Cite this reviewed GD-405 card for boundary-only menstrual support intake,
+  logs, hygiene/supply planning, privacy/dignity support, and red-flag handoff.
+  Escalate urgent pregnancy/ectopic, infection, severe pain, heavy bleeding,
+  shock, postpartum, trauma, or assault patterns to clinician, midwife, public
+  health, or emergency pathways instead of routine menstrual guidance.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: menstruation_reproductive_health_boundary_support
+answer_card:
+  - menstruation_reproductive_health_boundary_support
 ---
 :::tip
 Menstrual health is indicator of overall health. Irregular cycles, excessive bleeding, or absence of menses often signal underlying health issues. Understanding reproductive physiology empowers women to recognize problems early and advocate for themselves in austere healthcare settings.
@@ -37,6 +69,22 @@ Menstrual health is indicator of overall health. Irregular cycles, excessive ble
 :::warning
 **Infection risk from improper hygiene:** Reusable pads and menstrual products in austere conditions risk bacterial infection if not cleaned thoroughly with safe water. Menstrual cup insertion by untrained hands can cause tissue tears or toxic shock syndrome (TSS). Prolonged use of any internal product without cleaning causes TSS (fever, shock, organ failure—potentially fatal). Always clean hands and equipment thoroughly before insertion. Never leave products in longer than manufacturer guidance.
 :::
+
+<section id="reviewed-boundary-card">
+
+## Reviewed Boundary Card
+
+Use this reviewed answer-card boundary for routine menstrual support only: cycle intake, dated bleeding and pain logs, hygiene and supply planning, privacy and dignity support, and handoff preparation.
+
+Start by asking what is routine for this person: cycle day or last period, usual cycle length, bleeding duration, current bleeding rate, pain location and severity, fever or discharge symptoms, possible pregnancy or missed period, postpartum status, recent trauma or assault, product access, safe water access, privacy needs, and whether symptoms are new or worsening.
+
+For routine support with no danger signs, keep actions practical and non-diagnostic: make a dated log of bleeding rate, clots, pain location, pain severity, fever or discharge, dizziness or fainting, products used, fluid access, and what changed from baseline; plan enough clean dry pads, underwear, storage bags, soap, and safe water; change menstrual products regularly; wash hands before and after changing products; wash externally only; dry reusable products fully before storage; and preserve privacy, disposal access, and nonjudgmental support.
+
+Do not use this card for diagnosis, contraception or fertility treatment, abortion guidance, medication or dosing, procedures, infection treatment, pregnancy management, legal or reproductive-rights decisions, return-to-work or school clearance, or safety certification.
+
+Handoff urgently to a clinician, midwife, emergency service, or public-health contact when there is possible pregnancy with pelvic or one-sided pain, shoulder-tip pain, fainting, severe or worsening pelvic pain, heavy bleeding, repeated large clots, weakness, pallor, cold skin, confusion, fever, chills, foul-smelling discharge, pelvic tenderness, postpartum bleeding or pain, trauma or assault, or symptoms that are new, severe, recurrent, or not improving.
+
+</section>
 
 <section id="menstrual-physiology">
 

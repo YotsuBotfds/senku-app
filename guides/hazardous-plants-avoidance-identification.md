@@ -31,11 +31,36 @@ word_count: 1890
 last_updated: '2026-04-13'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: hazardous_plants_avoidance_identification
+aliases:
+  - hazardous plant exposure
+  - dangerous plant avoidance
+  - unknown plant contact
+  - poisonous plant prevention
+  - child ate unknown berries
+  - pet exposed to toxic plant
+  - plant sap on clothing
+  - plant exposure red flags
+routing_cues:
+  - Use for boundary-level hazardous plant exposure intake, location and appearance logging, avoidance, do-not-touch guidance, clothing or tool separation, child/pet exposure flags, and poison-control/clinician/veterinarian/local expert handoff.
+  - Pair with unknown-ingestion-child-poisoning-triage or toxicology-poisoning-response when any plant material may have been swallowed, chewed, tasted, or put in a child's mouth.
+  - Pair with poison-ivy-oak-contact-rash for established urushiol rash care; do not use this guide to certify plant identity, edibility, disposal safety, herbicide control, burn safety, or legal land-use decisions.
+citations_required: true
+applicability: Boundary-only hazardous plant prevention and exposure-response intake when the safe answer is to avoid contact, separate contaminated items, log symptoms and exposure context, flag child/pet risk, and hand off to Poison Control, a clinician/veterinarian, or a qualified local plant expert.
 ---
 
 :::danger
 This guide is for prevention and first-step response when a plant may be hazardous. It is not a definitive identification manual and it should not be used to decide that an unknown plant is safe to eat, touch, or feed to animals.
 :::
+
+## Reviewed Answer Card Boundary
+
+Use this reviewed card only for boundary-level hazardous plant avoidance and exposure intake: where the plant was found, what it looked like, who may have touched, chewed, or swallowed it, what clothing, tools, pets, or feed may be contaminated, what symptoms or red flags are present, and who should be contacted next.
+
+Safe reviewed-card answers may say to avoid touching or tasting the plant, keep children, pets, and livestock away, separate contaminated clothing or tools, wash exposed skin, flush eyes with clean water or saline, preserve a photo or sample only if it can be done without more contact, log symptoms and timing, and contact Poison Control, EMS, a clinician, a veterinarian, or a qualified local plant expert.
+
+Do not use this reviewed card for plant identification certainty, foraging or edibility decisions, ingestion treatment beyond rinse-and-handoff basics, medication or dosing, inducing vomiting, chemical herbicide control, burn or disposal procedures, legal land-use claims, or safety certification.
 
 ## Overview: Use Caution First, Identification Second
 

@@ -1,0 +1,151 @@
+card_id: menstruation_reproductive_health_boundary_support
+guide_id: GD-405
+slug: menstruation-reproductive-health
+title: "Menstruation & Reproductive Health Off-Grid"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for routine menstrual-cycle support intake, period tracking, bleeding or pain logs, menstrual hygiene planning, reusable supply planning, privacy/dignity support, or what information to hand off to a clinician, midwife, or public-health contact.
+  - The prompt is about routine menstruation support rather than diagnosis, treatment selection, pregnancy management, contraception, fertility treatment, abortion guidance, procedures, medication/dosing, legal decisions, clearance, or certification.
+  - The answer can lead with red-flag screening before giving non-diagnostic routine support.
+required_first_actions:
+  - Screen first for urgent red flags before routine menstrual support, especially possible pregnancy with pelvic or one-sided pain, shoulder-tip pain, fainting, heavy bleeding, severe or worsening pelvic pain, fever, chills, foul-smelling discharge, postpartum bleeding or pain, trauma, or assault.
+  - If any urgent red flag is present or cannot be ruled out, hand off to a clinician, midwife, emergency service, or public-health contact rather than giving routine menstrual guidance.
+  - Keep routine support boundary-only and non-diagnostic: intake questions, dated logs, hygiene and supply planning, privacy/dignity support, and factual handoff preparation.
+conditional_required_actions:
+  - trigger_terms:
+      - pregnant
+      - pregnancy
+      - missed period
+      - late period
+      - ectopic
+      - one-sided pain
+      - shoulder-tip pain
+      - fainting
+      - dizzy
+    required_actions:
+      - Treat possible pregnancy with pelvic pain, one-sided pain, shoulder-tip pain, dizziness, or fainting as urgent handoff rather than routine menstrual support.
+  - trigger_terms:
+      - heavy bleeding
+      - soaking
+      - clots
+      - pale
+      - weak
+      - cold skin
+      - confused
+      - shock
+    required_actions:
+      - Treat heavy bleeding with weakness, pallor, cold skin, confusion, fainting, repeated large clots, or shock signs as urgent medical handoff.
+  - trigger_terms:
+      - fever
+      - chills
+      - foul smell
+      - foul-smelling discharge
+      - pelvic tenderness
+      - infection
+    required_actions:
+      - Treat fever, chills, foul-smelling discharge, pelvic tenderness, or infection concern as clinician or public-health handoff rather than infection treatment advice.
+first_actions:
+  - Ask what is routine for this person, including cycle day or last period, usual cycle length, bleeding duration, current bleeding rate, pain location and severity, fever or discharge symptoms, possible pregnancy or missed period, postpartum status, recent trauma or assault, product access, safe water access, privacy needs, and whether symptoms are new or worsening.
+  - Make a dated log of bleeding rate, clots, pain location, pain severity, fever or discharge, dizziness or fainting, products used, fluid access, and what changed from baseline.
+  - Plan enough clean dry pads, underwear, storage bags, soap, and safe water for the expected cycle and wash/dry rotation.
+  - Change menstrual products regularly, wash hands before and after changing products, wash externally only, and dry reusable products fully before storage.
+  - Preserve privacy, disposal access, nonjudgmental language, and dignity when arranging supplies or asking for help.
+  - Prepare a factual handoff summary for a clinician, midwife, emergency service, or public-health contact when red flags, unclear severe symptoms, or infection/public-health concerns are present.
+urgent_red_flags:
+  - Possible pregnancy or missed period with pelvic pain, one-sided pain, shoulder-tip pain, dizziness, or fainting.
+  - Severe, worsening, or new pelvic pain, especially one-sided pain.
+  - Heavy bleeding, rapidly soaking products, repeated large clots, weakness, pallor, cold skin, confusion, fainting, or shock signs.
+  - Fever, chills, foul-smelling discharge, pelvic tenderness, or symptoms suggesting infection.
+  - Postpartum bleeding or pain.
+  - Bleeding or pain after trauma or assault.
+  - Symptoms that are new, severe, recurrent, not improving, or substantially different from baseline.
+forbidden_advice:
+  - Do not diagnose pregnancy, ectopic pregnancy, miscarriage, pelvic infection, endometriosis, fibroids, PCOS, thyroid disease, menopause, STI, or any other condition from symptoms alone.
+  - Do not provide contraception or fertility treatment guidance, conception timing instructions, abortion guidance, pregnancy management, or legal/reproductive-rights decision advice.
+  - Do not provide medication names, dosing, timing schedules, herbal dosing, antibiotic treatment, antifungal treatment, STI treatment, hormone therapy, or pain-medication regimens.
+  - Do not describe or recommend procedures, pelvic exams, internal exams, device insertion troubleshooting, uterine massage, tissue removal, or invasive care.
+  - Do not frame pregnancy/ectopic clues, heavy bleeding, shock signs, infection signs, postpartum symptoms, trauma, or assault as routine menstruation.
+  - Do not provide return-to-work or school clearance, safety certification, or guarantees that a menstrual product, facility, or plan is medically safe.
+do_not:
+  - Do not skip red-flag screening before routine menstrual-cycle, hygiene, or supply advice.
+  - Do not reassure new, severe, one-sided, worsening, pregnancy-associated, postpartum, trauma-associated, febrile, foul-smelling, or heavy-bleeding patterns as normal periods.
+  - Do not turn a routine log or supply checklist into diagnosis, treatment selection, medication dosing, pregnancy management, contraception, fertility, abortion, legal, clearance, or certification advice.
+routine_boundary: >
+  Routine GD-405 reviewed-card support is limited to menstrual-cycle intake,
+  dated bleeding and pain logs, hygiene and supply planning, privacy/dignity
+  support, and factual handoff preparation. Possible pregnancy/ectopic,
+  infection, severe or worsening pain, heavy bleeding, shock signs, postpartum
+  symptoms, trauma, assault, unclear severe symptoms, and non-improving
+  symptoms require clinician, midwife, emergency, or public-health handoff.
+acceptable_uncertain_fit: >
+  If symptom severity, pregnancy status, postpartum status, infection signs,
+  trauma/assault context, bleeding amount, pain location, or baseline pattern is
+  unclear, lead with the red-flag screen and offer only safe logging, hygiene,
+  supply, privacy, and handoff-preparation steps while preserving urgent
+  escalation for any stated danger sign.
+clarifying_questions:
+  - Is there possible pregnancy, a missed or late period, one-sided pelvic pain, shoulder-tip pain, dizziness, or fainting?
+  - How much bleeding is happening now, are there repeated large clots, and is there weakness, pallor, cold skin, confusion, or fainting?
+  - Is there fever, chills, foul-smelling discharge, pelvic tenderness, severe worsening pain, postpartum status, trauma, or assault?
+  - What is the person's usual cycle length, bleeding duration, pain pattern, product use, safe water access, and privacy or supply need?
+  - What changed from baseline, and what facts should be logged for clinician, midwife, emergency, or public-health handoff?
+must:
+  - Lead with red-flag screening and handoff language before routine support.
+  - Keep routine actions to intake, logs, hygiene/supply planning, privacy/dignity support, and factual handoff preparation.
+  - Preserve privacy, dignity, and nonjudgmental language.
+must_not:
+  - Provide diagnosis, medication/dosing, procedures, infection treatment, pregnancy management, contraception/fertility/abortion guidance, legal advice, clearance, or certification.
+  - Treat possible pregnancy/ectopic, heavy bleeding, infection, postpartum, trauma, assault, or shock patterns as routine menstruation.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - first_actions
+  must_include_urgent_handoff: true
+  forbid: true
+fallback_handoff_language:
+  - If pregnancy/ectopic, heavy bleeding, infection, severe pain, postpartum, trauma, assault, or shock signs are present or uncertain, use urgent clinician, midwife, emergency-service, or public-health handoff language before routine support.
+  - Include "urgent medical evaluation" or equivalent when severe bleeding, possible ectopic pregnancy, infection signs, shock signs, postpartum symptoms, or trauma/assault are present.
+citation_ids:
+  - menstruation-boundary-routine-scope
+  - menstruation-intake-log
+  - menstruation-hygiene-supplies-privacy
+  - menstruation-red-flag-handoff
+  - menstruation-exclusions
+source_sections:
+  - guide: GD-405
+    slug: menstruation-reproductive-health
+    title: "Menstruation & Reproductive Health Off-Grid"
+    sections:
+      - "#reviewed-boundary-card"
+      - "#hygiene-austere"
+      - "#irregular-cycles"
+      - "#education"
+source_invariants:
+  - name: reviewed boundary remains routine support only
+    guide: GD-405
+    must_include:
+      - Use this reviewed answer-card boundary for routine menstrual support only
+      - cycle intake, dated bleeding and pain logs, hygiene and supply planning, privacy and dignity support, and handoff preparation
+      - keep actions practical and non-diagnostic
+  - name: reviewed boundary excludes treatment and decisions outside scope
+    guide: GD-405
+    must_include:
+      - Do not use this card for diagnosis, contraception or fertility treatment, abortion guidance, medication or dosing, procedures, infection treatment, pregnancy management, legal or reproductive-rights decisions, return-to-work or school clearance, or safety certification.
+  - name: reviewed boundary requires urgent handoff for reproductive danger signs
+    guide: GD-405
+    must_include:
+      - Handoff urgently to a clinician, midwife, emergency service, or public-health contact
+      - possible pregnancy with pelvic or one-sided pain
+      - heavy bleeding
+      - fever, chills, foul-smelling discharge
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed boundary card for GD-405. It intentionally covers only routine
+  menstrual support intake, logs, hygiene/supply planning, privacy/dignity
+  support, and handoff preparation. It excludes diagnosis, contraception or
+  fertility treatment, abortion guidance, medication/dosing, procedures,
+  infection treatment, pregnancy management, legal/reproductive-rights
+  decisions, return-to-work/school clearance, and safety certification.

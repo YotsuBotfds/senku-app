@@ -1,0 +1,246 @@
+card_id: zoonotic_disease_exposure_boundary_handoff
+guide_id: GD-057
+slug: zoonotic-disease
+title: Zoonotic Disease Control
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks what to document after animal exposure, a bite, scratch, saliva contact, sick animal contact, carcass contact, floodwater/animal-waste exposure, or possible rabies-risk contact.
+  - A prompt needs a bite/scratch/sick-animal/contact log, separation and avoidance prompts, hygiene prompts, reporting prompts, or a handoff plan.
+  - A user needs boundary language that routes diagnosis, treatment, antibiotic/vaccine/PEP decisions, animal control actions, lab sampling, legal reporting decisions, and safety certification away from the reviewed card.
+required_first_actions:
+  - Keep the answer boundary-only: animal exposure intake, bite/scratch/sick-animal/contact log, separation and avoidance, hygiene/reporting prompts, red-flag screen, and veterinary, clinician, public-health, animal-control, or responsible-owner handoff.
+  - Start with species or animal type, owned/domestic/wild/unknown status, sick/dead/abnormal/unavailable animal status, date, location, exposure route, wound location if present, fever or neurologic symptoms, other exposed people or animals, separation/avoidance steps, hygiene already done, and who has been notified.
+  - Screen red flags before routine logging: fever after animal or floodwater exposure, confusion, agitation, hallucinations, difficulty swallowing, excessive salivation, weakness or paralysis, worsening bite/scratch infection signs, bat or high-risk wildlife exposure, unprovoked bite, or unavailable/ill/dead biting animal.
+  - Hand off diagnosis, treatment, antibiotic selection, vaccine schedules, rabies immunoglobulin, PEP instructions, dose calculations, animal capture/culling, quarantine or enforcement orders, lab sampling/specimen collection, legal reporting decisions, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - bite
+      - scratch
+      - saliva
+      - mucous membrane
+      - bat
+      - raccoon
+      - skunk
+      - fox
+      - coyote
+      - unprovoked
+      - rabies
+      - unavailable animal
+      - sick animal
+      - dead animal
+    required_actions:
+      - Treat the prompt as a red-flag exposure intake and handoff screen, not routine animal-contact advice.
+      - Include animal status, exposure route, wound location if present, separation/avoidance, hygiene already done, and clinician/veterinary/public-health handoff.
+  - trigger_terms:
+      - fever
+      - confused
+      - agitation
+      - hallucination
+      - difficulty swallowing
+      - excessive salivation
+      - weakness
+      - paralysis
+      - red streak
+      - pus
+      - worsening swelling
+      - floodwater
+      - animal urine
+    required_actions:
+      - Put urgent clinician or public-health handoff ahead of completing routine documentation.
+      - Preserve symptoms and exposure timing in the log without diagnosing or recommending treatment.
+  - trigger_terms:
+      - antibiotic
+      - vaccine
+      - PEP
+      - immunoglobulin
+      - dose
+      - capture
+      - cull
+      - quarantine order
+      - specimen
+      - lab sample
+      - legal report
+      - certify
+    required_actions:
+      - Give a boundary and do not provide diagnosis, treatment, antibiotic/vaccine/post-exposure protocol, animal-control, lab-sampling, legal-reporting, or certification instructions from this card.
+first_actions:
+  - Build an exposure record with date, time if known, location, observer, exposed person or animal, species/type, owned/domestic/wild/unknown status, animal behavior or illness signs, and whether the animal is available, isolated by its owner, missing, sick, dead, or unknown.
+  - Record exposure route and context: bite, scratch, saliva or mucous membrane contact, carcass or tissue contact, sick-animal handling, animal urine/feces, floodwater or contaminated water, shared living area, food or dairy exposure, or other contact.
+  - Record immediate safety and hygiene facts without turning them into treatment instructions: people kept away, animal contact stopped, wound or skin contact noted, handwashing or cleaning already done, contaminated clothing/equipment held aside, and who was notified.
+  - Separate known facts from uncertainty: unknown animal identity, unknown bite circumstances, unclear wound timing, missing symptoms, unavailable animal, unclear ownership, uncertain public-health authority, or uncertain decision owner.
+  - End with the appropriate handoff owner: clinician or emergency care for exposed-person symptoms or bite infection concern, veterinarian for sick/domestic animal assessment, public-health authority for community exposure concerns, animal-control authority or site owner for animal-location/access concerns, and food/water/sanitation owner for environmental exposure concerns.
+urgent_red_flags:
+  - Fever after animal exposure, animal urine/feces exposure, floodwater exposure, contaminated water exposure, or sick-animal/carcass contact.
+  - Confusion, agitation, hallucinations, difficulty swallowing, excessive salivation, unusual fear of swallowing/water, weakness, paralysis, severe headache, or other neurologic concern after animal exposure.
+  - Worsening bite or scratch redness, swelling, warmth, pus, red streaks, severe pain, spreading rash, or systemic illness after a bite or scratch.
+  - Bat exposure, high-risk wildlife exposure, unprovoked bite, bite to face/neck/hands/genitals, deep puncture, immunocompromised or pregnant exposed person, or a biting animal that is unavailable, ill, dead, acting abnormally, or unknown.
+forbidden_advice:
+  - Do not diagnose rabies, leptospirosis, brucellosis, anthrax, tick-borne illness, avian influenza, bite infection, or any other disease from this card.
+  - Do not provide treatment, antibiotic selection, antiviral advice, vaccine schedules, rabies immunoglobulin instructions, PEP instructions, dosing, substitutions, or supply-rationing advice.
+  - Do not give animal capture, trapping, restraint, culling, euthanasia, quarantine-zone, movement-control, enforcement-order, or escape-response instructions.
+  - Do not provide lab sampling, specimen collection, testing procedures, carcass sampling, chain-of-custody instructions, legal reporting decisions, compliance judgments, public-sale decisions, or safety certification.
+do_not:
+  - Do not convert the source guide's PEP, treatment, quarantine, euthanasia, carcass disposal, lab sampling, or detailed procedural sections into reviewed-card instructions.
+  - Do not reassure that an exposure is safe because the animal looked normal, is familiar, is domestic, is young, is owned, or ran away.
+  - Do not delay urgent clinician, veterinary, or public-health handoff while gathering a complete log.
+routine_boundary: >
+  Routine GD-057 reviewed-card answers are limited to animal exposure intake,
+  bite/scratch/sick-animal/contact logs, separation and avoidance, hygiene and
+  reporting prompts, red flags for fever, neurologic signs, bite infection, or
+  rabies-risk concern, and veterinary, clinician, public-health, animal-control,
+  or responsible-owner handoff. The card exits for diagnosis, treatment,
+  antibiotic/vaccine/post-exposure protocols, animal capture/culling,
+  quarantine or enforcement orders, lab sampling, legal reporting decisions,
+  and safety certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt plausibly involves animal exposure
+  intake or zoonotic contact logging, provide a conservative exposure-log and
+  handoff checklist, ask for animal type/status, exposure route, timing,
+  symptoms, other exposed people or animals, separation/hygiene already done,
+  and notification owner, and avoid diagnosis, treatment, protocols, animal
+  control actions, lab sampling, legal decisions, and certification.
+clarifying_questions:
+  - What animal or animal material was involved, and was it domestic/owned, wild, sick, dead, acting abnormally, unavailable, or unknown?
+  - What was the exposure route and timing: bite, scratch, saliva or mucous membrane contact, sick-animal handling, carcass/tissue contact, urine/feces, floodwater, food/dairy, or another contact?
+  - Does the exposed person have fever, neurologic symptoms, difficulty swallowing, excessive salivation, weakness/paralysis, or worsening bite/scratch infection signs?
+  - Who else or what other animals were exposed, what separation/avoidance and hygiene steps have already happened, and who has been notified?
+  - Are you asking only for an exposure log and handoff, or for diagnosis, treatment, PEP, animal control, lab sampling, legal reporting, or certification?
+fallback:
+  - If a prompt mixes exposure intake with diagnosis, treatment, PEP, animal-control action, lab sampling, legal reporting, or certification, answer only the exposure-log, separation/avoidance, hygiene/reporting prompt, red-flag screen, and handoff portion.
+  - If animal identity, exposure route, timing, symptoms, ownership, authority, or decision owner is unknown, preserve that uncertainty in the log and route before concluding.
+  - If fever, neurologic signs, bite infection signs, bat/high-risk wildlife exposure, unprovoked bite, or an unavailable/ill/dead biting animal appears, stop routine logging and prioritize clinician, veterinary, or public-health handoff.
+fallback_handoff_language:
+  - "This GD-057 reviewed card can help build an animal exposure record, separate known facts from uncertainty, prompt separation/avoidance and hygiene documentation, screen red flags, and prepare veterinary, clinician, or public-health handoff."
+  - "It cannot diagnose disease, choose treatment, give antibiotic/vaccine/PEP protocols, direct animal capture or culling, issue quarantine or enforcement orders, collect lab samples, decide legal reporting, or certify safety."
+  - "If fever, neurologic signs, bite infection signs, bat/high-risk wildlife exposure, an unprovoked bite, or an unavailable/ill/dead biting animal is involved, do not wait for a complete log before urgent clinician, veterinary, or public-health handoff."
+applicability:
+  owner: zoonotic exposure intake, bite/scratch/sick-animal/contact logging, separation/avoidance, hygiene/reporting prompts, red-flag screening, and veterinary/clinician/public-health handoff
+  use_when:
+    - animal_exposure_intake
+    - bite_scratch_contact_log
+    - sick_animal_or_carcass_contact_log
+    - separation_avoidance_hygiene_reporting_prompt
+    - zoonotic_red_flag_handoff
+    - veterinary_clinician_public_health_handoff
+  do_not_use_when:
+    - diagnosis_or_treatment_decision
+    - antibiotic_vaccine_pep_or_immunoglobulin_protocol
+    - animal_capture_culling_quarantine_or_enforcement_order
+    - lab_sampling_specimen_collection_or_testing_protocol
+    - legal_reporting_decision_or_safety_certification
+actions:
+  required:
+    - classify the request as exposure intake, contact logging, separation/avoidance, hygiene/reporting prompt, red-flag screen, or handoff planning
+    - begin with animal type/status, exposure route, timing, symptoms, other exposed people or animals, separation/hygiene already done, and notification owner
+    - screen red flags before routine logging and route urgent findings to clinician, veterinary, or public-health owners
+    - hand off diagnosis, treatment, antibiotic/vaccine/PEP, animal-control, quarantine/enforcement, lab-sampling, legal-reporting, and certification requests
+  standard:
+    - provide a zoonotic exposure log template
+    - include known facts, uncertainty, red flags, separation/avoidance, hygiene/reporting prompts, and handoff owner
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_exposure_intake_log: true
+  include_bite_scratch_sick_animal_contact_fields: true
+  include_separation_avoidance_and_hygiene_prompts: true
+  include_reporting_prompt_and_handoff_owner: true
+  include_red_flag_screen: true
+  forbid_diagnosis_treatment_protocols_animal_control_lab_legal_or_certification: true
+routing_tests:
+  positive:
+    - prompt: "Make an animal exposure intake log after a sick stray dog scratched someone, with hygiene notes and who to notify."
+      expect: zoonotic_disease_exposure_boundary_handoff
+    - prompt: "What should we document after contact with a dead raccoon, without diagnosis or treatment advice?"
+      expect: zoonotic_disease_exposure_boundary_handoff
+    - prompt: "Create a bite contact log and handoff checklist for possible rabies concern."
+      expect: zoonotic_disease_exposure_boundary_handoff
+  near_miss:
+    - prompt: "What rabies vaccine and immunoglobulin schedule should I use?"
+      expect_handoff: clinician_or_public_health_owner
+    - prompt: "How do I capture and cull the animal after the bite?"
+      expect_handoff: animal_control_or_responsible_authority
+    - prompt: "Which lab sample should I collect from the carcass?"
+      expect_handoff: qualified_lab_veterinary_or_public_health_owner
+    - prompt: "Am I legally required to report this, and can you certify the area safe?"
+      expect_handoff: public_health_legal_or_safety_authority
+  boundary:
+    - prompt: "A bat was in the room and the person now has fever and trouble swallowing. Should I finish the log first?"
+      expect: urgent_clinician_public_health_handoff_before_complete_log
+    - prompt: "A child has pus and red streaks after a cat bite; make a handoff note, not antibiotics."
+      expect: bite_infection_red_flag_handoff_not_treatment
+citation_ids:
+  - gd-057-reviewed-answer-card-boundary
+  - gd-057-rabies-animal-assessment
+  - gd-057-recognition-exposure-history
+  - gd-057-surveillance-reporting-triggers
+  - gd-057-animal-contact-precautions
+  - gd-057-post-exposure-immediate-actions
+  - gd-057-quick-reference-exposure-response
+source_sections:
+  - guide: GD-057
+    slug: zoonotic-disease
+    title: Zoonotic Disease Control
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#rabies > Animal Assessment"
+      - "#recognition > Clinical Assessment Protocol"
+      - "Disease Surveillance Methods > Animal Monitoring"
+      - "Disease Surveillance Methods > Reporting and Response Triggers"
+      - "Prevention Strategies > Animal Contact Precautions"
+      - "Post-Exposure Response Protocol > Immediate Actions After Exposure"
+      - "Quick Reference Card: Zoonotic Disease Response Protocol"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-057
+    must_include:
+      - "This is the reviewed answer-card surface for GD-057."
+      - "Use it only for animal exposure intake, bite/scratch/sick-animal/contact logs"
+      - "red flags for fever, neurologic signs, bite infection, or rabies-risk concern"
+      - "Do not use this reviewed card for diagnosis, treatment, antibiotic selection, vaccine schedules"
+      - "lab sampling or specimen collection, legal reporting decisions, or safety certification"
+  - name: exposure_record_and_handoff_fields_remain
+    guide: GD-057
+    must_include:
+      - "Start with a bounded exposure record"
+      - "species or animal type, owned/domestic/wild/unknown status"
+      - "bite/scratch/saliva/mucous-membrane/contact details"
+      - "current separation/avoidance steps, hygiene already done, and who has been notified"
+  - name: red_flags_remain
+    guide: GD-057
+    must_include:
+      - "Treat fever after animal or floodwater exposure"
+      - "confusion, agitation, hallucinations, difficulty swallowing, excessive salivation"
+      - "worsening redness/swelling/pus/red streaks around a bite or scratch"
+      - "an unavailable/ill/dead biting animal as red flags for urgent clinician, veterinary, or public-health handoff"
+  - name: source_procedural_content_is_not_reviewed_card_authority
+    guide: GD-057
+    must_include:
+      - "Post-Exposure Prophylaxis (PEP)"
+      - "Diagnosis and Treatment"
+      - "Quick Reference: Zoonotic Disease Treatment Dosages"
+      - "Sample Collection and Testing"
+      - "Safe Animal Restraint"
+      - "Euthanasia Decisions and Methods"
+      - "Detailed Procedures"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-057 as a boundary-only zoonotic exposure intake and
+  handoff card. It owns animal exposure history, bite/scratch/sick-animal/contact
+  logs, separation/avoidance, hygiene and reporting prompts, red flags for fever,
+  neurologic signs, bite infection, or rabies-risk concern, and veterinary,
+  clinician, public-health, animal-control, or responsible-owner handoff. It
+  deliberately excludes diagnosis, treatment, antibiotic/vaccine/post-exposure
+  protocols, animal capture/culling, quarantine or enforcement orders, lab
+  sampling, legal reporting decisions, and safety certification.
+  READY_FOR_PARENT_CLOSE.

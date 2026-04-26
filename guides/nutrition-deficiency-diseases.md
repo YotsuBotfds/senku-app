@@ -1,11 +1,21 @@
 ---
 id: GD-243
 slug: nutrition-deficiency-diseases
+aliases:
+  - nutrition deficiency diseases
+  - deficiency disease symptom log
+  - malnutrition red flag handoff
+  - food pattern deficiency log
+  - vulnerable nutrition screening
 title: Nutrition Science & Deficiency Diseases
 category: medical
 difficulty: intermediate
 tags:
   - important
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level food-pattern and symptom-intake logs, vulnerable-person flags, routine food-diversity support, severe malnutrition/refeeding/dehydration/neurologic red flags, and clinician, nutrition, or public-health handoff.
+  - Route diagnosis, supplement or dosing regimens, refeeding protocols, starvation treatment, lab interpretation, pregnancy or infant medical plans, forced feeding, legal or fitness claims, and safety certification outside this reviewed card.
+  - Use GD-493 for food-first deficiency risk screening and GD-668 for routine nutritional planning when those narrower reviewed cards are a better fit.
 icon: 🍎
 description: Off-Grid Civilization Compendium
 related:
@@ -23,7 +33,36 @@ word_count: 6271
 last_updated: '2026-02-15'
 version: '1.0'
 liability_level: high
+citation_policy: cite reviewed GD-243 answer-card content only for nutrition-deficiency boundary intake, logs, red-flag recognition, routine food-diversity support, and clinician/nutrition/public-health handoff; do not cite it for diagnosis, dosing, refeeding, starvation treatment, labs, pregnancy/infant medical plans, forced feeding, legal/fitness claims, or safety certification
+applicability: boundary-level deficiency concern intake and handoff only; not diagnosis, supplement dosing, therapeutic nutrition, refeeding protocol, starvation treatment, lab interpretation, pregnancy/infant medical plan, forced feeding, legal/fitness claim, or safety certification
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: nutrition_deficiency_diseases_boundary_handoff
+answer_card:
+  card_id: nutrition_deficiency_diseases_boundary_handoff
+  scope: boundary_intake_handoff
+  source_sections:
+    - reviewed-answer-card-boundary
+    - seasonal
+    - master-table
+    - deficiency-diagnosis
+    - intervention
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer Card Boundary
+
+This is the reviewed answer-card surface for GD-243. Use it only for boundary-level food-pattern and symptom-intake logs, vulnerable-person flags, routine food-diversity support, red-flag recognition, and clinician, nutrition, or public-health handoff.
+
+Start with a plain log rather than a diagnosis: what the person or group has eaten over the last week, whether the diet is dominated by one staple, whether there are reliable protein, fat, vitamin C, iodine, iron-rich, calcium-rich, and fresh or fermented food sources, which symptoms are present, when they began, whether several people share the pattern, and whether the person is a child, older adult, pregnant or postpartum person, chronically ill person, or someone with very low intake.
+
+Routine support stays food-pattern based: improve diversity with available staples plus legumes, vegetables, fruits or fermented foods, fats, animal foods or carefully planned alternatives, and preserved micronutrient sources while arranging a qualified nutrition, clinician, or public-health review when symptoms, vulnerable-person flags, or a community cluster are present.
+
+Red flags are not routine nutrition-planning questions: severe wasting, edema, inability to eat or drink, severe dehydration, fainting, confusion, seizure, new neurologic symptoms, severe weakness, breathing distress, rapid decline, suspected severe malnutrition, or refeeding risk after prolonged low intake needs clinician or emergency assessment when available.
+
+Do not use this reviewed card to diagnose a deficiency, interpret labs, prescribe supplements or doses, provide refeeding or starvation-treatment protocols, create pregnancy or infant medical plans, force feeding, make legal or fitness claims, certify safety, or replace clinician, registered-dietitian/nutrition, or public-health judgment.
+
+</section>
 
 <section id="macronutrients">
 

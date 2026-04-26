@@ -1,0 +1,104 @@
+card_id: long_term_mental_health_recovery_support_boundary
+guide_id: GD-860
+slug: long-term-mental-health-recovery
+title: "Long-Term Mental Health Recovery & Community Healing"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks how to support longer-term recovery after an acute mental-health crisis without seeking diagnosis or treatment instructions.
+  - User wants a practical recovery check-in plan, routine support structure, community connection, or relapse warning-sign monitoring.
+  - User asks what to log or watch for during recovery, including sleep, food, hydration, activity, mood, social contact, substance use, or decline.
+required_first_actions:
+  - First check for current crisis, emergency, or clinician handoff needs before giving routine recovery support.
+  - If suicidal thoughts, self-harm thoughts, thoughts of harming someone else, hallucinations, paranoia, severe confusion, dangerous activation with little or no sleep, severe substance danger, medical instability, inability to meet basic needs, or unsafe coercive or violent conditions are present, route to crisis, emergency, clinician, or trusted community mental-health support first.
+  - Keep the answer non-diagnostic and recovery-support only; do not provide therapy protocols, trauma processing, medication advice, forced treatment, restraint or coercion, risk clearance, legal/work/parenting fitness claims, or safety certification.
+first_actions:
+  - Identify one or two reliable support contacts and a predictable check-in rhythm such as daily early recovery contact or weekly/biweekly check-ins as recovery stabilizes.
+  - Build routine around sleep and wake timing, regular meals, hydration, daylight or gentle movement, small achievable tasks, and participation in safe community activities.
+  - Use a simple log for sleep, food, water, activity, mood, social contact, substance use if relevant, and warning signs; use it to notice trends rather than judge the person.
+  - Reduce isolation by inviting the person to meals, work teams, peer support, rituals, or low-pressure community contact.
+  - Escalate promptly if the log or check-ins show decline in sleep, nutrition, energy, social engagement, mood, substance control, safety, relationships, or purpose.
+urgent_red_flags:
+  - Suicidal thoughts, self-harm thoughts, plan, intent, or inability to stay safe.
+  - Thoughts of harming someone else or unsafe agitation.
+  - Hallucinations, paranoia, severe confusion, disorientation, or inability to reorient.
+  - Days of little or no sleep with extreme energy, nonstop talking, grandiosity, feeling invincible, or reckless agitation.
+  - Severe substance danger, escalating substance use after crisis, intoxication that prevents safety, or withdrawal danger.
+  - Medical instability, inability to eat, drink, sleep, or perform basic self-care.
+  - Abuse, violence, coercion, or an unsafe setting.
+forbidden_advice:
+  - Do not diagnose depression, PTSD, complicated grief, addiction, personality disorders, mania, psychosis, or any other mental-health condition from this card.
+  - Do not provide therapy protocols, exposure work, trauma processing steps, EMDR, clinical treatment plans, or medication or supplement advice.
+  - Do not frame community support, logs, routines, or peer check-ins as enough when crisis red flags are present.
+  - Do not recommend forced treatment, restraint, coercion, confinement, punishment, or isolation as recovery support.
+  - Do not clear someone as safe, fit for work, fit for parenting, legally competent, low risk, recovered, or safe to supervise others.
+do_not:
+  - Do not ask the person to retell trauma details or process grief as a condition of receiving support.
+  - Do not use logs to surveil, shame, punish, certify, or make legal or fitness decisions.
+  - Do not delay crisis, emergency, clinician, or trusted community mental-health handoff to complete a routine recovery plan.
+routine_boundary: >
+  Routine GD-860 reviewed-card answers are limited to non-diagnostic recovery
+  support: intake, routine supports, community connection, sleep/food/hydration/
+  activity logs, relapse or red-flag recognition, and crisis, clinician, or
+  community mental-health handoff. Diagnosis, treatment protocols, trauma
+  processing, medication advice, coercive management, risk clearance, legal or
+  fitness claims, and safety certification are outside this card.
+acceptable_uncertain_fit: >
+  If the prompt may be routine recovery support but crisis status is unclear,
+  lead with the red-flag screen, ask only brief clarifying questions that do not
+  delay urgent help, and offer low-risk routine supports such as check-ins,
+  meals, hydration, sleep structure, community contact, and trend logs.
+clarifying_questions:
+  - Is there any current suicidal thought, self-harm thought, harm-to-others thought, hallucination, paranoia, severe confusion, or inability to stay safe?
+  - Has the person gone days with little or no sleep plus extreme energy, nonstop talking, grandiosity, feeling invincible, or reckless agitation?
+  - Are they eating, drinking, sleeping at all, medically stable, and in a physically safe setting?
+  - What supports are already reliable: one trusted person, shared meals, a check-in buddy, peer group, clinician, crisis line, or community mental-health helper?
+  - What has changed recently in sleep, food, hydration, movement, substance use, social contact, mood, relationships, or sense of purpose?
+citation_ids:
+  - reviewed-answer-card-boundary
+  - recovery-aftercare-stabilization
+  - aftercare-monitoring-checklist
+  - social-connection-purpose
+  - community-resilience-shared-meals
+  - caregiver-burnout-red-flags
+source_sections:
+  - guide: GD-860
+    slug: long-term-mental-health-recovery
+    title: "Long-Term Mental Health Recovery & Community Healing"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#recovery-aftercare"
+      - "#recovery-aftercare > Post-Crisis Stabilization (Days 1-14)"
+      - "#recovery-aftercare > Intermediate Recovery (Weeks 2-8)"
+      - "#recovery-aftercare > Aftercare Monitoring Checklist"
+      - "#community-resilience"
+      - "#burnout-helpers"
+source_invariants:
+  - name: reviewed boundary limits card scope
+    guide: GD-860
+    must_include:
+      - This is the reviewed answer-card surface for GD-860.
+      - Use it only for non-diagnostic recovery-support intake
+      - Do not use this reviewed card for diagnosis, therapy protocols, trauma processing, medication advice, forced treatment, restraint or coercion, risk clearance, legal, work, or parenting fitness claims, or safety certification.
+  - name: aftercare monitoring supports routine trend checks
+    guide: GD-860
+    must_include:
+      - "Use this regularly to assess recovery trajectory:"
+      - "Improved? Stable? Nightmares reduced?"
+      - "Eating regular meals? Weight stable?"
+      - "Intervention needed. Do not assume person will self-report or reach out for help."
+  - name: social connection and routine are core supports
+    guide: GD-860
+    must_include:
+      - "Regular sleep/wake times, mealtimes, work, community participation."
+      - "Increase time in group settings. Reduce isolation."
+      - "Social isolation. Removing person from community or them withdrawing from community increases relapse risk."
+    must_not_match:
+      - "reviewed answer-card surface[^\\n]{0,400}(?:diagnose|therapy protocols|medication advice)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only card for GD-860 metadata/card audit closure. It uses
+  the guide's aftercare, monitoring, social connection, community resilience,
+  and caregiver-support material while excluding diagnosis, therapy protocols,
+  trauma processing, medication advice, coercive management, risk clearance,
+  legal/work/parenting fitness claims, and safety certification.

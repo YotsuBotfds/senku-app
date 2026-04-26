@@ -1,0 +1,114 @@
+card_id: hazardous_plants_avoidance_identification
+guide_id: GD-960
+slug: hazardous-plants-avoidance-identification
+title: Hazardous Plants Avoidance & Exposure Response
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A plant may be hazardous and the user needs conservative avoidance, exposure intake, or first-step response without definitive plant identification.
+  - A person, child, pet, livestock animal, clothing, tools, feed, or gear may have contacted plant sap, leaves, hairs, thorns, berries, seeds, roots, bulbs, smoke, or plant debris.
+  - The prompt asks what to log, separate, wash, avoid touching, or hand off after uncertain plant contact, tasting, chewing, or possible exposure.
+required_first_actions:
+  - Treat an uncertain plant as hazardous until proven otherwise by a reliable regional source or qualified local expert.
+  - Stop contact, move away from the plant or contaminated area, and keep children, pets, and livestock away.
+  - Separate contaminated clothing, gloves, shoes, tools, harnesses, feed, or pet/livestock contact surfaces so residue is not spread.
+  - For possible mouth exposure, rinse and spit, do not induce vomiting, and contact Poison Control, EMS, a clinician, or a veterinarian promptly when symptoms, child exposure, animal exposure, or uncertainty is present.
+first_actions:
+  - Record where the plant was found, what parts were contacted, who may have touched, tasted, chewed, or swallowed it, and when exposure happened.
+  - Note appearance only as intake data: leaf shape, berries, sap, hairs, thorns, flower or seed parts, growth location, and any safe photo, without claiming certainty from one trait.
+  - Wash exposed skin with soap or detergent and cool or lukewarm water, including nails, wrists, ankles, and belt lines.
+  - Flush eyes with clean water or saline right away if sap or plant dust reached the eye, and do not rub the eye.
+  - Save a sample or clear photo only if it can be done safely without more contact; otherwise preserve location notes for Poison Control, a clinician, veterinarian, or local expert.
+  - Log symptoms and timing, including rash, swelling, breathing trouble, swallowing trouble, drooling, confusion, collapse, eye pain, vision change, agitation, tremor, colic, wobbling, feed refusal, or sudden animal behavior change.
+urgent_red_flags:
+  - Trouble breathing, wheezing, throat tightness, drooling, or trouble swallowing.
+  - Eye pain, vision change, or inability to keep the eye open after plant sap or dust exposure.
+  - Collapse, confusion, severe drowsiness, seizure, severe agitation, tremor, wobbling, or other neurologic signs.
+  - Rapidly worsening rash, facial swelling, or symptoms after plant smoke exposure.
+  - A child or animal may have swallowed, chewed, or mouthed berries, seeds, bulbs, leaves, roots, or other unknown plant material.
+  - Livestock or pets have sudden drooling, colic, wobbling, tremors, feed refusal, or other concerning signs after browsing.
+forbidden_advice:
+  - Do not identify the plant with certainty from one photo, one trait, local rumor, smell, berry color, sap color, thorns, or leaf shape.
+  - Do not decide that an unknown plant is safe to eat, taste, touch, forage, feed to animals, or use medicinally.
+  - Do not induce vomiting, give food, milk, alcohol, or home remedies to neutralize the plant, or provide medication or dosing advice.
+  - Do not give chemical herbicide control, burning, disposal, or land-clearing procedures from this card.
+  - Do not make legal land-use, liability, safety-certification, or safe-to-handle claims.
+do_not:
+  - Do not rub an unknown plant on skin, taste it, burn it, handle it bare-handed, or let children, pets, or livestock browse it.
+  - Do not keep contaminated clothing, gloves, tools, shoes, harnesses, or pet fur in normal contact pathways before separating and cleaning them.
+  - Do not wait for symptoms when breathing, swallowing, eye pain, confusion, collapse, child ingestion, or animal ingestion may be involved.
+routine_boundary: >
+  Routine hazardous-plant answers are limited to exposure/location/appearance
+  intake, conservative avoidance, do-not-touch guidance, clothing/tool
+  separation, symptom and red-flag logging, child/pet/livestock exposure
+  flags, and handoff to Poison Control, EMS, a clinician, veterinarian, or
+  qualified local plant expert. They are not plant identification, foraging,
+  ingestion treatment, medication, herbicide, burn/disposal, legal, or safety
+  certification answers.
+acceptable_uncertain_fit: >
+  If the plant or exposure route is uncertain, answer from the prevention and
+  handoff lane: avoid contact, separate contaminated items, record exposure
+  details and symptoms, flag child and animal risk, preserve a photo or sample
+  only if safe, and contact Poison Control, a clinician/veterinarian, EMS, or
+  a local expert as appropriate. Do not convert uncertainty into plant identity
+  or edibility.
+clarifying_questions:
+  - Who may have touched, tasted, chewed, swallowed, or inhaled smoke from the plant, and when?
+  - Was the exposed person a child, pregnant person, older adult, or someone with breathing, swallowing, eye, neurologic, or severe rash symptoms?
+  - Are pets or livestock involved, and are they drooling, colicky, wobbling, trembling, refusing feed, or acting suddenly abnormal?
+  - What part of the plant was involved, where was it growing, and can you safely take a photo without touching it again?
+  - What clothing, gloves, shoes, tools, harnesses, feed, or surfaces may be contaminated?
+citation_ids:
+  - hazardous-plants-reviewed-boundary
+  - hazardous-plants-uncertain-field-rules
+  - hazardous-plants-exposure-patterns
+  - hazardous-plants-child-livestock-prevention
+  - hazardous-plants-immediate-steps
+  - hazardous-plants-escalation
+source_sections:
+  - guide: GD-960
+    slug: hazardous-plants-avoidance-identification
+    title: Hazardous Plants Avoidance & Exposure Response
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview-use-caution-first-identification-second"
+      - "#field-rules-when-you-are-uncertain"
+      - "#common-dangerous-plant-exposure-patterns"
+      - "#poison-ivy-poison-oak-and-poison-sumac-context"
+      - "#child-and-livestock-prevention"
+      - "#immediate-first-steps-after-exposure"
+      - "#when-to-escalate"
+source_invariants:
+  - name: hazardous plant card remains boundary only
+    guide: GD-960
+    must_include:
+      - Use this reviewed card only for boundary-level hazardous plant avoidance and exposure intake
+      - Do not use this reviewed card for plant identification certainty
+      - chemical herbicide control
+      - burn or disposal procedures
+      - legal land-use claims
+      - safety certification
+  - name: uncertainty means avoid and hand off
+    guide: GD-960
+    must_include:
+      - if you cannot confidently name the plant from multiple features and a reliable regional source, treat it as hazardous
+      - Do not taste it.
+      - Do not rub it on skin to test it.
+      - Do not let children, pets, or livestock browse it.
+      - Do not burn it.
+  - name: immediate exposure actions and escalation
+    guide: GD-960
+    must_include:
+      - Remove contaminated items. Clothing, gloves, shoes, and harnesses may keep spreading sap or residue.
+      - do not make the person or animal vomit
+      - Poison control, EMS, a clinician, or a veterinarian can help sooner than guesswork can.
+      - a child or animal may have swallowed berries, seeds, bulbs, leaves, or unknown plant material
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-960 card for conservative hazardous-plant avoidance and
+  exposure-intake closure. It intentionally keeps plant appearance as logging
+  data only and excludes plant identification certainty, foraging or edibility
+  decisions, ingestion treatment beyond rinse/no-vomiting/handoff basics,
+  medication or dosing, induced vomiting, chemical herbicide control,
+  burn/disposal procedures, legal land-use claims, and safety certification.

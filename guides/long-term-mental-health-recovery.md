@@ -8,6 +8,31 @@ tags:
   - important
 icon: 💚
 description: Recovery support, community healing, grief counseling, ongoing care structures. Long-term trauma processing, memorials, addiction recovery, and building resilient communities.
+aliases:
+  - long term mental health recovery
+  - recovery support after crisis
+  - mental health aftercare
+  - community healing support
+  - relapse warning signs
+  - recovery check in plan
+  - caregiver recovery support
+routing_cues:
+  - Use for boundary-level mental-health recovery support after an acute crisis when the user needs intake, routine supports, community connection, sleep/food/hydration/activity logs, relapse or red-flag recognition, and crisis, clinician, or community mental-health handoff.
+  - Hand off to crisis, emergency, or clinician support first when there are suicidal thoughts, self-harm risk, harm-to-others risk, hallucinations, paranoia, severe confusion, dangerous manic activation, severe substance danger, medical instability, inability to meet basic needs, or unsafe coercive/violent conditions.
+  - Do not use this guide's reviewed answer card for diagnosis, therapy protocols, trauma processing, medication advice, forced treatment, restraint or coercion, risk clearance, legal/work/parenting fitness claims, or safety certification.
+citations_required: true
+applicability: >
+  Boundary-level recovery-support intake, routine supports, community
+  connection, sleep/food/hydration/activity logs, relapse and red-flag
+  recognition, and crisis, clinician, or community mental-health handoff. Not
+  for diagnosis, therapy protocols, trauma processing, medication advice,
+  forced treatment, restraint or coercion, risk clearance, legal/work/parenting
+  fitness claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: long_term_mental_health_recovery_support_boundary
+answer_card:
+  - Use only for non-diagnostic recovery-support intake, routine support planning, community connection, basic daily logs, relapse or red-flag recognition, and handoff.
+  - Keep the answer boundary-only; do not diagnose, provide therapy protocols or trauma processing, advise on medication, endorse forced treatment/restraint/coercion, clear risk, make legal/work/parenting fitness claims, or certify safety.
 related:
   - psychological-first-aid-peer-support
   - recognizing-mental-health-crises
@@ -43,6 +68,20 @@ custom_css: |
   .symptom-table td{padding:10px;border-bottom:1px solid var(--border)}
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-860. Use it only for non-diagnostic recovery-support intake, routine supports, community connection, sleep, food, hydration, and activity logs, relapse or red-flag recognition, and crisis, clinician, or community mental-health handoff.
+
+Start with current safety and basic function: whether the person has suicidal thoughts, self-harm thoughts, thoughts of harming someone else, hallucinations, paranoia, severe confusion, days of little or no sleep with extreme energy or reckless agitation, severe substance danger, medical instability, inability to eat, drink, sleep, or stay safe, or an unsafe coercive or violent setting. If any are present, treat the situation as crisis, emergency, clinician, or trusted community mental-health handoff first.
+
+For non-emergency recovery support, keep the plan practical and observable. Help the person identify one or two reliable contacts, a predictable check-in rhythm, a simple daily routine, shared meals or group participation, small meaningful tasks, and a low-burden log for sleep, food, water, movement, substance use if relevant, mood, social contact, and warning signs. Use logs to notice decline early, not to judge or diagnose.
+
+Do not use this reviewed card for diagnosis, therapy protocols, trauma processing, medication advice, forced treatment, restraint or coercion, risk clearance, legal, work, or parenting fitness claims, or safety certification. If a prompt asks for those, give only the recovery-support boundary, red flags, and handoff to crisis, emergency, qualified clinical support, or trusted community mental-health support.
+
+</section>
 
 ## 1. Grief & Loss in Collapse Contexts
 

@@ -1,0 +1,140 @@
+card_id: nutrition_deficiency_diseases_boundary_handoff
+guide_id: GD-243
+slug: nutrition-deficiency-diseases
+title: "Nutrition Science & Deficiency Diseases"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks how to organize observations for possible nutrition deficiency, malnutrition, or deficiency-disease concern without asking for a diagnosis or treatment protocol.
+  - The user needs a food-pattern and symptom-intake log for one person, a vulnerable person, or a group with possible shared diet-related symptoms.
+  - The useful answer is routine food-diversity support plus red-flag screening and handoff to a clinician, nutrition owner, or public-health owner.
+required_first_actions:
+  - Keep the answer boundary-only: collect food-pattern history, symptom timing, shared-diet context, vulnerable-person flags, and red flags before any routine food-diversity support.
+  - State that the card does not diagnose a deficiency or provide supplement dosing, refeeding, starvation-treatment, lab-interpretation, pregnancy/infant medical, forced-feeding, legal/fitness, or safety-certification advice.
+  - Route severe malnutrition, refeeding risk, severe dehydration, neurologic symptoms, rapid decline, inability to eat or drink, breathing distress, edema, or severe wasting to clinician or emergency assessment when available.
+conditional_required_actions:
+  - trigger_terms:
+      - one staple
+      - single food
+      - only rice
+      - only corn
+      - only cassava
+      - no variety
+      - monotonous diet
+    required_actions:
+      - Log staple dependence as a food-pattern risk and suggest routine diversity with legumes, vegetables, fruits or fermented foods, fats, and animal foods or carefully planned alternatives.
+  - trigger_terms:
+      - child
+      - infant
+      - pregnant
+      - postpartum
+      - elderly
+      - older adult
+      - chronically ill
+      - very low intake
+    required_actions:
+      - Flag the person as vulnerable and hand off to clinician, nutrition, or public-health review instead of making a home diagnosis or medical plan.
+  - trigger_terms:
+      - several people
+      - multiple people
+      - cluster
+      - whole camp
+      - community
+      - shared ration
+    required_actions:
+      - Treat shared symptoms as a possible food-system or public-health issue; review the shared menu, stores, ration rules, preservation gaps, and distribution pattern.
+first_actions:
+  - Record what the person or group ate over the last week, including staples, legumes, vegetables, fruits or fermented foods, fats, animal foods or alternatives, preserved micronutrient sources, iodine sources, and reliable vitamin C sources.
+  - Log symptoms without naming a diagnosis: onset date, progression, energy level, weakness, mouth or gum changes, rash, diarrhea, swelling, wasting, intake tolerance, hydration concerns, neurologic symptoms, and whether others share the pattern.
+  - Mark vulnerable-person flags such as child, older adult, pregnant or postpartum person, chronically ill person, or prolonged very low intake.
+  - For routine support while arranging review, improve food diversity with available staples plus legumes, vegetables, fruits or fermented foods, fats, animal foods or carefully planned alternatives, and preserved micronutrient sources.
+  - Hand off symptomatic, vulnerable-person, or community-cluster concerns to a clinician, registered-dietitian or nutrition owner, or public-health owner.
+urgent_red_flags:
+  - Severe wasting, edema, suspected severe malnutrition, or rapid functional decline.
+  - Prolonged very low intake followed by planned renewed feeding, or any other refeeding-risk concern.
+  - Inability to eat or drink, severe dehydration, fainting, breathing distress, or rapid decline.
+  - Confusion, seizure, new neurologic symptoms, severe weakness, inability to walk normally, or altered mental status.
+  - Any pregnancy, infant, or young-child concern that needs a medical plan rather than general food-pattern support.
+forbidden_advice:
+  - Do not diagnose scurvy, pellagra, beriberi, rickets, anemia, goiter, kwashiorkor, marasmus, B12 deficiency, vitamin A deficiency, or another deficiency as certain from this card.
+  - Do not provide supplement doses, vitamin or mineral dosing, medication regimens, injections, therapeutic nutrient regimens, or maximum daily dosing.
+  - Do not provide refeeding protocols, starvation-treatment protocols, forced-feeding instructions, ORS administration, IV fluids, or severe-malnutrition treatment.
+  - Do not interpret lab results or turn field observations into lab-based decisions.
+  - Do not provide pregnancy-specific, postpartum-specific, infant, or pediatric medical plans from this card.
+  - Do not make legal, employment, school, athletic, fitness-for-duty, return-to-work, safety-certification, or compliance claims.
+do_not:
+  - Do not use disease tables, timeline sections, or nutrient requirement numbers as a reviewed treatment protocol.
+  - Do not reassure red flags as routine nutrition planning or home-only food adjustment.
+  - Do not collapse this boundary card into GD-493 deficiency-risk prevention or GD-668 routine meal planning when those narrower reviewed cards fit better.
+  - Do not force or coerce feeding; route refusal, inability to eat, or high-risk feeding situations to qualified care.
+routine_boundary: >
+  Routine GD-243 reviewed-card use is limited to food-pattern and symptom
+  intake, vulnerable-person flagging, routine food-diversity support, red-flag
+  recognition, and clinician/nutrition/public-health handoff. Diagnosis,
+  supplement or dosing regimens, refeeding protocols, starvation treatment,
+  lab interpretation, pregnancy or infant medical plans, forced feeding,
+  legal or fitness claims, and safety certification are outside this card.
+acceptable_uncertain_fit: >
+  If symptom severity, age, pregnancy/postpartum status, intake duration, or
+  shared-diet exposure is unclear, ask brief intake questions, offer only
+  routine food-diversity support, and route any red flag or vulnerable-person
+  concern for qualified assessment when available.
+clarifying_questions:
+  - What did the person or group eat over the last week, and is the diet dominated by one staple?
+  - Which symptoms are present, when did they start, and are they improving, stable, or worsening?
+  - Is this one person or are several people with the same rations showing similar signs?
+  - Is the person a child, older adult, pregnant or postpartum, chronically ill, or recovering from prolonged very low intake?
+  - Are there red flags such as severe wasting, edema, inability to eat or drink, severe dehydration, confusion, seizure, new neurologic symptoms, severe weakness, breathing distress, or rapid decline?
+citation_ids:
+  - reviewed-answer-card-boundary
+  - food-pattern-symptom-intake-log
+  - vulnerable-person-flags
+  - routine-food-diversity-support
+  - malnutrition-refeeding-dehydration-neurologic-red-flags
+  - clinician-nutrition-public-health-handoff
+source_sections:
+  - guide: GD-243
+    slug: nutrition-deficiency-diseases
+    title: "Nutrition Science & Deficiency Diseases"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#seasonal"
+      - "#master-table"
+      - "#deficiency-diagnosis"
+      - "#intervention"
+source_invariants:
+  - name: GD-243 reviewed card stays boundary-only
+    guide: GD-243
+    must_include:
+      - This is the reviewed answer-card surface for GD-243.
+      - boundary-level food-pattern and symptom-intake logs
+      - vulnerable-person flags
+      - routine food-diversity support
+      - clinician, nutrition, or public-health handoff
+  - name: GD-243 red flags require handoff
+    guide: GD-243
+    must_include:
+      - severe wasting, edema, inability to eat or drink, severe dehydration
+      - confusion, seizure, new neurologic symptoms
+      - suspected severe malnutrition, or refeeding risk after prolonged low intake
+      - clinician or emergency assessment when available
+  - name: GD-243 forbidden medical plan boundary remains explicit
+    guide: GD-243
+    must_include:
+      - Do not use this reviewed card to diagnose a deficiency
+      - interpret labs
+      - prescribe supplements or doses
+      - provide refeeding or starvation-treatment protocols
+      - create pregnancy or infant medical plans
+      - force feeding
+      - legal or fitness claims
+      - certify safety
+    must_not_match:
+      - "(diagnose|prescribe|refeeding|starvation-treatment|interpret labs|force feeding)[^\\n]{0,160}(from this reviewed card|using this reviewed card|safe for routine)"
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed boundary card for GD-243. It closes the metadata/card audit
+  gap without adopting the broader source guide's diagnosis, dosing, treatment,
+  or disease-table content as reviewed-card authority. Use it for logs,
+  vulnerable-person flags, routine food-diversity support, red flags, and
+  clinician/nutrition/public-health handoff only.

@@ -8,6 +8,36 @@ tags:
   - medical
   - women-health
   - aging
+aliases:
+  - menopause support
+  - perimenopause symptoms
+  - hot flashes
+  - night sweats
+  - midlife mood changes
+  - menopause bleeding tracking
+routing_cues:
+  - "hot flashes are disrupting my sleep"
+  - "perimenopause symptoms what should I track"
+  - "midlife mood changes and night sweats"
+  - "bleeding after menopause"
+  - "menopause symptom log for my clinician"
+citations_required: true
+applicability: >
+  Boundary-only routine support intake for menopause or perimenopause symptoms:
+  hot flash, sleep, mood, and bleeding logs; lifestyle comfort prompts; red-flag
+  screening for postmenopausal bleeding, chest pain, stroke symptoms, severe
+  depression, or suicidality; and clinician handoff. Excludes diagnosis,
+  hormone-therapy decisions, medication or dosing advice, cancer/cardiac/stroke
+  evaluation, mental-health clearance, procedures, legal or fitness claims, and
+  safety certification.
+citation_policy: >
+  Cite GD-448 and its reviewed answer-card content only for routine menopause
+  symptom/support intake, comfort tracking, red-flag screening, and clinician
+  handoff. Do not cite this guide as authority for diagnosis, hormone-therapy
+  eligibility, medication selection or dosing, cancer/cardiac/stroke evaluation,
+  mental-health clearance, procedures, or safety/fitness certification.
+answer_card:
+  - menopause_midlife_health_support_intake
 icon: 🌸
 description: Perimenopause symptoms, hot flash management, bone density preservation, cardiovascular risk, hormone-free management, herbal remedies, and mental health during midlife transition.
 related:
@@ -27,9 +57,25 @@ custom_css: |
   .hormone-table th { background: var(--card); font-weight: 600; }
   .timeline-phase { margin: 1rem 0; padding: 0.75rem; border-left: 4px solid var(--accent); }
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: menopause_midlife_health_support_intake
 ---
 
 Menopause marks a natural transition in women's health, typically occurring in the late 40s to early 50s. Understanding the physiological changes, symptoms, and evidence-based management strategies — both pharmaceutical and natural — can help you navigate this phase with greater comfort and confidence.
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-448. Use it only for routine menopause or perimenopause support intake: symptom logging, hot flash and night-sweat comfort steps, sleep and mood tracking, bleeding-pattern logs, lifestyle support prompts, and preparing a concise clinician handoff.
+
+Start with red-flag screening. Bleeding after 12 months without a period, chest pain, pressure, shortness of breath, one-sided weakness, facial droop, speech trouble, sudden severe headache, severe depression, suicidal thoughts, or inability to stay safe are not routine menopause-support questions. Route those to urgent medical care, emergency services, crisis support, or the fastest available clinician instead of routine tracking or lifestyle advice.
+
+For routine support after red flags are excluded, keep the answer non-diagnostic and practical: log symptom timing, triggers, sleep disruption, mood pattern, bleeding date/flow/duration, and what helps; use cooling layers, a cool sleep environment, breathable bedding, hydration, trigger observation, gentle movement, stress-reduction practices, and social support; and help the user summarize patterns for a clinician.
+
+Do not use this card for diagnosis, hormone therapy decisions, medication or supplement dosing, cancer evaluation, cardiac or stroke evaluation, mental-health clearance, procedures, legal or work-fitness claims, safety certification, or reassurance that symptoms are safe without clinician review when red flags or uncertainty are present.
+
+</section>
 
 <section id="quick-symptom-triage">
 

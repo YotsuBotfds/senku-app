@@ -1,0 +1,105 @@
+card_id: menopause_midlife_health_support_intake
+guide_id: GD-448
+slug: menopause-midlife-health
+title: "Menopause & Midlife Women's Health"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for routine menopause or perimenopause symptom support, hot flash or night-sweat comfort, sleep or mood tracking, bleeding logs, lifestyle prompts, or help preparing a clinician handoff.
+  - The prompt is about support intake and monitoring rather than diagnosis, hormone therapy decisions, medication choice, dosing, procedures, or safety clearance.
+  - The answer can screen for urgent red flags before giving only routine tracking and comfort support.
+required_first_actions:
+  - Screen for urgent red flags first, especially bleeding after 12 months without a period, chest pain or pressure, shortness of breath, stroke symptoms, severe depression, suicidal thoughts, or inability to stay safe.
+  - If any urgent red flag is present or uncertain, route to urgent medical care, emergency services, crisis support, or the fastest available clinician instead of routine menopause self-care.
+  - Keep routine guidance non-diagnostic and limited to symptom logs, comfort measures, lifestyle support prompts, and clinician handoff preparation.
+first_actions:
+  - Track hot flashes, night sweats, sleep disruption, mood pattern, bleeding date, bleeding flow, bleeding duration, triggers, and what improves or worsens symptoms.
+  - For hot flashes or night sweats, use cooling layers, a cool sleep environment, breathable bedding, hydration, and trigger observation.
+  - For sleep disruption, note night-sweat timing, wake times, caffeine or alcohol triggers, bedroom temperature, and whether symptoms persist enough to discuss with a clinician.
+  - For mood or brain-fog concerns, track duration, sleep disruption, stressors, support needs, and whether low mood or anxiety is present most days.
+  - Prepare a clinician handoff with symptom timeline, bleeding pattern, severity, sleep impact, mood impact, medical history, current medications or supplements, and questions for evaluation.
+urgent_red_flags:
+  - Bleeding after 12 months without a period.
+  - Heavy bleeding that soaks a pad or tampon hourly for 2 or more hours, bleeding lasting more than 7 days, or bleeding with faintness, weakness, pallor, confusion, or cold skin.
+  - Chest pain, chest pressure, shortness of breath, pain spreading to arm, jaw, back, or neck, fainting, or severe sudden weakness.
+  - One-sided weakness or numbness, facial droop, trouble speaking, confusion, sudden vision loss, trouble walking, or sudden severe headache.
+  - Severe depression, suicidal thoughts, thoughts of self-harm, or inability to stay safe.
+forbidden_advice:
+  - Do not diagnose menopause, cancer, heart attack, stroke, depression, anxiety disorder, thyroid disease, or another condition from symptoms alone.
+  - Do not decide whether hormone therapy is appropriate, safer, unsafe, contraindicated, or required.
+  - Do not recommend medication, supplement, hormone, herbal product, dose, timing schedule, substitution, taper, or discontinuation.
+  - Do not evaluate or clear cancer, cardiac, stroke, or severe mental-health risk.
+  - Do not provide procedures, pelvic exam instructions, diagnostic testing decisions, legal or work-fitness claims, safety certification, or reassurance that red-flag symptoms are routine.
+do_not:
+  - Do not treat postmenopausal bleeding as routine tracking-only support.
+  - Do not route chest pain, stroke symptoms, severe depression, suicidality, or inability to stay safe into lifestyle comfort advice.
+  - Do not use the guide's broader treatment sections to generate hormone therapy, prescription, herbal, supplement, or dosing recommendations.
+  - Do not promise that tracking, cooling steps, movement, diet, or social support will rule out serious disease.
+routine_boundary: >
+  Routine support is limited to menopause/perimenopause symptom intake,
+  hot flash, sleep, mood, and bleeding logs, lifestyle comfort/support prompts,
+  and clinician handoff. Postmenopausal bleeding, heavy bleeding with systemic
+  symptoms, chest pain, stroke symptoms, severe depression, suicidal thoughts,
+  inability to stay safe, diagnosis requests, hormone therapy decisions,
+  medication or dosing requests, cancer/cardiac/stroke evaluation, procedures,
+  legal or fitness claims, and safety certification are outside routine scope.
+acceptable_uncertain_fit: >
+  If menopause status, bleeding timing, cardiac or neurologic symptoms, mood
+  severity, medication context, or diagnosis intent is unclear, lead with a
+  red-flag screen and recommend clinician handoff for uncertainty. Offer only
+  symptom tracking, comfort measures, and a concise handoff script while avoiding
+  diagnosis, treatment selection, dosing, and clearance language.
+clarifying_questions:
+  - Has there been any bleeding after 12 months without a period, unusually heavy bleeding, or bleeding with faintness, weakness, confusion, or cold skin?
+  - Are there chest pain, pressure, shortness of breath, one-sided weakness, facial droop, speech trouble, vision loss, trouble walking, or sudden severe headache?
+  - Are there severe depression symptoms, suicidal thoughts, thoughts of self-harm, or any concern that you cannot stay safe?
+  - What symptoms are you tracking: hot flashes, night sweats, sleep disruption, mood changes, brain fog, bleeding, vaginal or urinary symptoms, or something else?
+  - What timing, triggers, severity, sleep impact, mood impact, and current medications or supplements should be included in a clinician handoff?
+citation_ids:
+  - menopause-boundary-intake
+  - menopause-red-flags-handoff
+  - menopause-hot-flash-sleep-log
+  - menopause-mood-bleeding-log
+  - menopause-clinician-handoff
+source_sections:
+  - guide: GD-448
+    slug: menopause-midlife-health
+    title: "Menopause & Midlife Women's Health"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#quick-symptom-triage"
+      - "#menopause-definitions"
+      - "#symptoms-management"
+      - "#mental-health"
+source_invariants:
+  - name: reviewed boundary remains support intake only
+    guide: GD-448
+    must_include:
+      - Use it only for routine menopause or perimenopause support intake
+      - symptom logging
+      - clinician handoff
+      - Do not use this card for diagnosis
+  - name: red flags remain urgent handoff
+    guide: GD-448
+    must_include:
+      - Bleeding after 12 months without a period
+      - chest pain
+      - one-sided weakness
+      - suicidal thoughts
+      - Route those to urgent medical care, emergency services, crisis support, or the fastest available clinician
+  - name: routine comfort and logs remain non-diagnostic
+    guide: GD-448
+    must_include:
+      - log symptom timing, triggers, sleep disruption, mood pattern, bleeding date/flow/duration
+      - cooling layers
+      - cool sleep environment
+      - stress-reduction practices
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only card for GD-448 menopause and midlife-health support
+  intake. The card deliberately excludes diagnosis, hormone therapy decisions,
+  medication/supplement/herbal dosing, cancer/cardiac/stroke evaluation,
+  mental-health clearance, procedures, legal or fitness claims, and safety
+  certification. It is for symptom logs, comfort prompts, red-flag screening,
+  and clinician handoff only.
