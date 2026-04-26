@@ -15,6 +15,7 @@ from ingest import (
     build_contextual_retrieval_text,
     clean_chunk_text,
     collect_manifest_file_info,
+    normalize_selected_files,
     parse_frontmatter,
     process_file,
     resolve_embedding_batch_size,
@@ -53,6 +54,27 @@ Content.
 
         self.assertEqual(info["GD-910"]["basename"], "manifest-guide.md")
         self.assertEqual(len(info["GD-910"]["sha256"]), 64)
+
+    def test_normalize_selected_files_rejects_paths_outside_compendium(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            guide_path = guides_dir / "inside.md"
+            outside_path = root / "outside.md"
+            guide_path.write_text("# Inside\n", encoding="utf-8")
+            outside_path.write_text("# Outside\n", encoding="utf-8")
+
+            with patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)):
+                resolved = normalize_selected_files(
+                    [
+                        str(outside_path),
+                        os.path.join("..", "outside.md"),
+                        "inside.md",
+                    ]
+                )
+
+        self.assertEqual(resolved, [str(guide_path)])
 
     def test_parse_frontmatter_only_from_leading_fence(self):
         meta, body = parse_frontmatter(

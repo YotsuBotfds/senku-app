@@ -271,6 +271,16 @@ def collect_markdown_files():
     return sorted(md_files)
 
 
+def _is_under_compendium(path):
+    """Return whether path resolves inside the configured guide directory."""
+    try:
+        compendium = os.path.abspath(config.COMPENDIUM_DIR)
+        candidate = os.path.abspath(path)
+        return os.path.commonpath([compendium, candidate]) == compendium
+    except ValueError:
+        return False
+
+
 def normalize_selected_files(selected):
     """Resolve user-specified guide paths or basenames to absolute paths."""
     all_files = collect_markdown_files()
@@ -279,15 +289,21 @@ def normalize_selected_files(selected):
     resolved = []
     for request in selected:
         candidate = os.path.normpath(request)
-        if os.path.isabs(candidate) and os.path.isfile(candidate):
+        if (
+            os.path.isabs(candidate)
+            and os.path.isfile(candidate)
+            and _is_under_compendium(candidate)
+        ):
             resolved.append(os.path.abspath(candidate))
             continue
-        if os.path.isfile(candidate):
+        if os.path.isfile(candidate) and _is_under_compendium(candidate):
             resolved.append(os.path.abspath(candidate))
             continue
 
         direct_compendium = os.path.join(config.COMPENDIUM_DIR, candidate)
-        if os.path.isfile(direct_compendium):
+        if os.path.isfile(direct_compendium) and _is_under_compendium(
+            direct_compendium
+        ):
             resolved.append(os.path.abspath(direct_compendium))
             continue
 

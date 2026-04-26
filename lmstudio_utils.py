@@ -59,6 +59,8 @@ def normalize_lm_studio_url(base_url):
     """Normalize a configured LM Studio base URL."""
     if base_url is None:
         return ""
+    if isinstance(base_url, bytes):
+        base_url = base_url.decode("utf-8", errors="replace")
     return str(base_url).strip().rstrip("/")
 
 

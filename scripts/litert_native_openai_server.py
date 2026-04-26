@@ -89,6 +89,16 @@ def prompt_from_messages(messages):
     return "\n\n".join(part for part in prompt_parts if part).strip()
 
 
+def parse_request_payload(raw_body):
+    try:
+        payload = json.loads((raw_body or b"{}").decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ValueError("Malformed JSON request body") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("Request body must be a JSON object")
+    return payload
+
+
 def parse_answer(stdout_text, prompt_text=""):
     text = (stdout_text or "").replace("\r\n", "\n")
     if not text.strip():
@@ -291,7 +301,12 @@ class RequestHandler(BaseHTTPRequestHandler):
                 flush=True,
             )
             raw_body = self.rfile.read(length) if length > 0 else b"{}"
-            payload = json.loads(raw_body.decode("utf-8"))
+            try:
+                payload = parse_request_payload(raw_body)
+            except ValueError as exc:
+                print(f"[litert-host] bad request: {exc}", flush=True)
+                self._write_json(400, {"error": {"message": str(exc)}})
+                return
             messages = payload.get("messages") or []
             prompt = prompt_from_messages(messages)
             result = self.server.runner.generate(prompt)

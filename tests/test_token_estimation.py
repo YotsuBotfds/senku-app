@@ -29,6 +29,12 @@ class TokenEstimationTests(unittest.TestCase):
             self.assertEqual(token_estimation.estimate_tokens("hello, world!"), 3)
         encoder.encode.assert_called_once_with("hello, world!")
 
+    def test_encoder_failure_uses_stable_fallback(self):
+        encoder = Mock()
+        encoder.encode.side_effect = ValueError("tokenizer rejected input")
+        with patch.object(token_estimation, "_ENCODER", encoder):
+            self.assertEqual(token_estimation.estimate_tokens("hello, world!"), 4)
+
 
 if __name__ == "__main__":
     unittest.main()

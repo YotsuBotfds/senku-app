@@ -156,6 +156,24 @@ source_sections: []
         self.assertIn("alpha.yaml: citation_ids must be nonempty", failures)
         self.assertIn("alpha.yaml: source_sections must be nonempty", failures)
 
+    def test_validate_reports_non_mapping_card_yaml(self):
+        module = load_module()
+        root = self.make_root()
+        schema_path, cards_dir, guides_dir = self.write_fixture(root)
+        (cards_dir / "alpha.yaml").write_text(
+            """
+- not
+- a
+- mapping
+""".lstrip(),
+            encoding="utf-8",
+        )
+
+        failures, card_count = module.validate(schema_path, cards_dir, guides_dir)
+
+        self.assertEqual(card_count, 1)
+        self.assertEqual(failures, ["alpha.yaml: card YAML must be a mapping"])
+
     def test_validate_reports_malformed_conditional_required_actions(self):
         module = load_module()
         root = self.make_root()

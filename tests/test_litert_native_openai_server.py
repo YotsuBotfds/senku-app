@@ -30,6 +30,14 @@ class LiteRtNativeOpenAiServerTest(unittest.TestCase):
         )
         self.assertEqual("gemma-4-e2b-it-litert", model_id)
 
+    def test_parse_request_payload_rejects_malformed_json(self):
+        with self.assertRaisesRegex(ValueError, "Malformed JSON request body"):
+            self.module.parse_request_payload(b'{"messages": [')
+
+    def test_parse_request_payload_rejects_non_object_json(self):
+        with self.assertRaisesRegex(ValueError, "Request body must be a JSON object"):
+            self.module.parse_request_payload(b'["not", "an", "object"]')
+
 
 if __name__ == "__main__":
     unittest.main()

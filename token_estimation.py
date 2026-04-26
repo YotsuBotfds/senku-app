@@ -24,7 +24,10 @@ def estimate_tokens(text):
         raise TypeError("estimate_tokens expects a string or falsy empty input")
 
     if _ENCODER is not None:
-        return len(_ENCODER.encode(text))
+        try:
+            return len(_ENCODER.encode(text))
+        except Exception:
+            pass
 
     # Fallback: count word/punctuation pieces plus a small character floor so
     # dense technical strings and abbreviations do not undercount badly.

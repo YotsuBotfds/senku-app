@@ -55,6 +55,12 @@ class MetadataHelperTests(unittest.TestCase):
             ),
         )
 
+    def test_normalize_tags_sorts_set_input_for_stable_output(self):
+        self.assertEqual(
+            ["long-term", "planning", "water-storage"],
+            normalize_tags({"Water Storage", "planning", "long term"}),
+        )
+
     def test_derive_bridge_metadata_filters_stale_bridge_tag_from_tags(self):
         bridge_metadata = derive_bridge_metadata(["planning", BRIDGE_GUIDE_TAG])
 

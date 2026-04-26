@@ -43,6 +43,12 @@ class LMStudioUtilsTests(unittest.TestCase):
         )
         self.assertEqual(normalize_lm_studio_url(1234), "1234")
 
+    def test_url_normalization_decodes_bytes_before_stripping(self):
+        self.assertEqual(
+            normalize_lm_studio_url(b"  http://localhost:1234/v1///  "),
+            "http://localhost:1234/v1",
+        )
+
     def test_embedding_fallback_only_on_known_model_load_400s(self):
         response = Mock(status_code=400, text="failed to load model")
         err = requests.HTTPError(response=response)

@@ -1093,6 +1093,12 @@ Validation:
   `tests.test_token_estimation`, plus `tests.test_runtime_profiles`, cover
   retry-slot, LM Studio utility, token estimation, and runtime-profile
   robustness.
+- `tests.test_guide_answer_cards`, `tests.test_ingest`,
+  `tests.test_litert_native_openai_server`, `tests.test_lmstudio_utils`,
+  `tests.test_metadata_helpers`, and `tests.test_token_estimation` cover
+  non-mapping card YAML reporting, compendium-bounded ingest file selection,
+  LiteRT JSON request rejection, byte-valued LM Studio URLs, stable set tag
+  ordering, and tokenizer fallback robustness.
 
 Deferred unless evidenced:
 

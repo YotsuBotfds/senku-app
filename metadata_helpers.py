@@ -31,7 +31,9 @@ def normalize_tags(tags):
     """Return de-duplicated normalized tags from list or CSV-ish metadata."""
     if isinstance(tags, str):
         raw_tags = re.split(r"[\r\n,]+", tags)
-    elif isinstance(tags, (list, tuple, set)):
+    elif isinstance(tags, set):
+        raw_tags = sorted(tags, key=normalize_metadata_tag)
+    elif isinstance(tags, (list, tuple)):
         raw_tags = tags
     else:
         raw_tags = []
