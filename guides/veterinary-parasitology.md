@@ -38,7 +38,7 @@ custom_css: |-
 
 Parasites are among the most economically damaging health issues in survival livestock systems. A single untreated Haemonchus infection can kill a young animal within 4-6 weeks through anemia and blood loss. Across temperate regions, 70-90% of grazing animals carry detectable parasite loads; in tropical zones, year-round transmission maintains parasite pressure at 95%+. This guide provides practical diagnosis, treatment, and prevention strategies for herds operating without immediate veterinary access.
 
-The fundamental principle: **interrupt the parasite lifecycle through management rather than relying solely on drugs.** Rotation grazing, sanitation, and selective treatment can reduce parasite burden by 50-80% without pharmaceutical inputs. Understanding parasite biology â€” how long they survive on pasture (typically 3-12 weeks for roundworms), when they're most infectious (larvae peak at 5-10 days in warm conditions), and which animals are most vulnerable (young 3-12 months, pregnant, immunocompromised) â€” enables targeted interventions.
+The fundamental principle: **interrupt the parasite lifecycle through management rather than relying solely on drugs.** Rotation grazing, sanitation, and selective treatment can reduce parasite burden by 50-80% without pharmaceutical inputs. Understanding parasite biology — how long they survive on pasture (typically 3-12 weeks for roundworms), when they're most infectious (larvae peak at 5-10 days in warm conditions), and which animals are most vulnerable (young 3-12 months, pregnant, immunocompromised) — enables targeted interventions.
 
 :::info-box
 **Key metrics:** Target 70-95% egg reduction 2 weeks post-treatment. EPG <100 = controlled. >500 = severe. Most untreated herds peak at 1,000-5,000 EPG during high transmission season.
@@ -75,7 +75,7 @@ Heavy burden causes anemia, weight loss, stress, potential paralysis. Removal: g
 
 ### Fly Infestation
 
-**Botflies:** Skin lesions from larval migration. **Screwworms:** Flesh-eating in open wounds (high mortality). **Other flies:** Blood-feeders causing stress, reduced production. Treatment: eliminate breeding sites, proper manure management (>60Â°C for 3+ weeks kills larvae). Ivermectin 0.2mg/kg covers some parasites. Prevention: maintain sanitation.
+**Botflies:** Skin lesions from larval migration. **Screwworms:** Flesh-eating in open wounds (high mortality). **Other flies:** Blood-feeders causing stress, reduced production. Treatment: eliminate breeding sites, proper manure management (>60°C for 3+ weeks kills larvae). Ivermectin 0.2mg/kg covers some parasites. Prevention: maintain sanitation.
 
 </section>
 
@@ -121,7 +121,7 @@ Return to older methods: herbal dips, pasture rotation, selective grazing. Focus
 
 ### Temperature and Moisture Effects on Development
 
-Parasite larvae develop fastest at 15-25Â°C (59-77Â°F). Below 5Â°C, development halts; above 35Â°C, many larvae die. Moisture is critical: wet conditions (rain, dew) allow larvae to migrate from feces to herbage; dry conditions desiccate larvae in 2-5 days. Cold/dry climates therefore naturally suppress parasites, while warm/wet climates enable year-round transmission.
+Parasite larvae develop fastest at 15-25°C (59-77°F). Below 5°C, development halts; above 35°C, many larvae die. Moisture is critical: wet conditions (rain, dew) allow larvae to migrate from feces to herbage; dry conditions desiccate larvae in 2-5 days. Cold/dry climates therefore naturally suppress parasites, while warm/wet climates enable year-round transmission.
 
 **Practical implications:** Temperate climates (cool winters, dry summers) have 4-6 month high-risk season (spring/early summer). Tropical climates have 12-month transmission. High-altitude/cold regions may see only 6-8 weeks of peak transmission (assume June-July only).
 
@@ -131,10 +131,10 @@ Parasite larvae develop fastest at 15-25Â°C (59-77Â°F). Below 5Â°C, develo
 
 ### Regional Parasite Prevalence Patterns
 
-**Wet tropical regions:** Liver flukes endemic; coccidiosis severe; year-round treatment needed. **Temperate:** Primarily GI nematodes, seasonal coccidiosis. **Arid:** Low parasite load baseline; disease driven by water source contamination or overstocking. **Coastal areas:** High snail populations â†’ fluke risk. **High altitude:** Short transmission season; winter housing concentrates risk.
+**Wet tropical regions:** Liver flukes endemic; coccidiosis severe; year-round treatment needed. **Temperate:** Primarily GI nematodes, seasonal coccidiosis. **Arid:** Low parasite load baseline; disease driven by water source contamination or overstocking. **Coastal areas:** High snail populations → fluke risk. **High altitude:** Short transmission season; winter housing concentrates risk.
 
 :::warning
-**Water sources:** Streams, ponds, and wet pastures are parasite reservoirs. Flukes, giardia, and crypto cannot be eliminated from water by herding alone â€” fencing or alternative water sources is essential in endemic areas.
+**Water sources:** Streams, ponds, and wet pastures are parasite reservoirs. Flukes, giardia, and crypto cannot be eliminated from water by herding alone — fencing or alternative water sources is essential in endemic areas.
 :::
 
 </section>
@@ -147,7 +147,7 @@ Parasite larvae develop fastest at 15-25Â°C (59-77Â°F). Below 5Â°C, develo
 
 ![Roundworm direct life cycle diagram with host and environmental stages](../assets/svgs/veterinary-parasitology-1.svg)
 
-**Key Point:** Direct life cycle means no intermediate host required. Infected animal sheds eggs â†’ environmental development (5+ days on pasture) â†’ ingestion by new host. Pasture rotation breaks cycle: move animals before larvae mature (3-4 week rotation) or spell pasture for 8+ weeks (larvae die without host).
+**Key Point:** Direct life cycle means no intermediate host required. Infected animal sheds eggs → environmental development (5+ days on pasture) → ingestion by new host. Pasture rotation breaks cycle: move animals before larvae mature (3-4 week rotation) or spell pasture for 8+ weeks (larvae die without host).
 
 ### Indirect Life Cycle Example: Liver Fluke (Fasciola)
 
@@ -236,12 +236,12 @@ Suggestive symptoms: diarrhea, weight loss, anemia, reduced production, poor coa
 </tr></tbody></table>
 
 :::warning
-**Resistance develops with single-drug overuse.** Benzimidazoles in continuous use for 5-10 years at high frequency will lose efficacy. Rotate classes annually (benzimidazole â†’ levamisole â†’ ivermectin â†’ repeat) to extend drug life to 10-20+ years.
+**Resistance develops with single-drug overuse.** Benzimidazoles in continuous use for 5-10 years at high frequency will lose efficacy. Rotate classes annually (benzimidazole → levamisole → ivermectin → repeat) to extend drug life to 10-20+ years.
 :::
 
 ### Dosing Considerations and Accuracy
 
-Weight-based dosing critical: under-dosing = failure + resistance. Over-dosing = toxicity (especially levamisole, narrow margin). Accurate weighing essential; estimate if needed (visual Â±20-40%). Fatting animals: recalculate as weight increases. Young animals: may need higher mg/kg. Pregnant: verify drug safety (levamisole contraindicated, morantel safe). Liver/kidney disease: may need adjustment.
+Weight-based dosing critical: under-dosing = failure + resistance. Over-dosing = toxicity (especially levamisole, narrow margin). Accurate weighing essential; estimate if needed (visual ±20-40%). Fatting animals: recalculate as weight increases. Young animals: may need higher mg/kg. Pregnant: verify drug safety (levamisole contraindicated, morantel safe). Liver/kidney disease: may need adjustment.
 
 ### Treatment Timing, Frequency, and Monitoring
 
@@ -273,11 +273,11 @@ Assess condition: powder lumping, liquid separation indicate degradation. Check 
 
 ### Precision Dosing Without Commercial Scales
 
-Weight estimation: body weight tapes, palpate ribs (normal/over/underweight), measure height + length. Estimate Â±10-20%. Example: 50kg animal, levamisole 7mg/kg = 350mg. 10% solution (100mg/mL) = 3.5mL. Double-check: weight Ã— dose Ã· concentration = volume. Round conservatively for narrow-margin drugs (levamisole), round up for broad-safety drugs.
+Weight estimation: body weight tapes, palpate ribs (normal/over/underweight), measure height + length. Estimate ±10-20%. Example: 50kg animal, levamisole 7mg/kg = 350mg. 10% solution (100mg/mL) = 3.5mL. Double-check: weight × dose ÷ concentration = volume. Round conservatively for narrow-margin drugs (levamisole), round up for broad-safety drugs.
 
 ### Storage and Preservation of Anthelmintics
 
-Store cool (<15Â°C), dark, dry. Keep powders sealed (add desiccant). Keep injectables in original packaging. Label: drug, dose, expiration, storage date. Use oldest first. Shelf life: powders 5-7 years, liquids 3-5 years, injectables 2-4 years. Don't freeze.
+Store cool (<15°C), dark, dry. Keep powders sealed (add desiccant). Keep injectables in original packaging. Label: drug, dose, expiration, storage date. Use oldest first. Shelf life: powders 5-7 years, liquids 3-5 years, injectables 2-4 years. Don't freeze.
 
 </section>
 
@@ -306,14 +306,14 @@ Track drug, date, animals, parasite type. Observe post-treatment efficacy (count
 ### Pasture Management Systems
 
 -   **Rotation grazing:** Move before larvae mature (3-4 weeks min). Don't return until 4-8 weeks. Optimal: 7+ paddocks (2-3 weeks graze, 4-6 weeks rest)
--   **Alternate species:** Different species have different parasites. Cattle â†’ sheep rotation. Poultry post-grazing pecks larvae
+-   **Alternate species:** Different species have different parasites. Cattle → sheep rotation. Poultry post-grazing pecks larvae
 -   **Spelling:** >8-12 weeks for complete kill; 4-6 weeks for 50-80%. Use for young stock
 -   **Clean pastures:** Young animals on uncontaminated pasture (8+ weeks rested)
 -   **Avoid wet areas:** Drain where possible, fence from marshes during wet season
 
 ### Sanitation Protocols
 
-**Separate water from feces:** Move troughs away from high-traffic areas. **Clean feeders/waterers:** monthly, scrub or sun-dry. **Isolate treated animals:** 2-3 weeks (prevent shedding). **Compost manure:** >60Â°C for 2-3 weeks. **Bedding:** change weekly if possible, compost used bedding.
+**Separate water from feces:** Move troughs away from high-traffic areas. **Clean feeders/waterers:** monthly, scrub or sun-dry. **Isolate treated animals:** 2-3 weeks (prevent shedding). **Compost manure:** >60°C for 2-3 weeks. **Bedding:** change weekly if possible, compost used bedding.
 
 ### Nutrition and Immunity Support
 
@@ -356,7 +356,7 @@ Not all need treatment. Treat high-risk: young (3-12 mo), pregnant/lactating, im
 
 ### McMaster Counting Method
 
-**Equipment:** McMaster chamber, microscope (40x min), fecal sample, flotation solution (SG 1.20). **Procedure:** 1) Mix 1g feces + 29mL solution (1:29). 2) Load chambers. 3) Settle 2-3 min. 4) Count eggs at 10x. 5) Calculate: (eggs / 0.6mL) Ã— 50 = EPG. **Interpretation:** <100 = light, 100-500 = moderate, >500 = heavy. Trending important (70%+ reduction post-treatment goal).
+**Equipment:** McMaster chamber, microscope (40x min), fecal sample, flotation solution (SG 1.20). **Procedure:** 1) Mix 1g feces + 29mL solution (1:29). 2) Load chambers. 3) Settle 2-3 min. 4) Count eggs at 10x. 5) Calculate: (eggs / 0.6mL) × 50 = EPG. **Interpretation:** <100 = light, 100-500 = moderate, >500 = heavy. Trending important (70%+ reduction post-treatment goal).
 
 ### Simplified Counting (Without McMaster Chamber)
 
@@ -394,11 +394,11 @@ Improve drainage in wet areas (eliminates snail habitat, reduces nematode surviv
 
 ### Ruminants (Cattle, Sheep, Goats)
 
-**Primary:** GI nematodes. Haemonchus (blood-feeder): anemia. Coccidiosis: young 3-12 weeks post-weaning. Flukes: wet areas. Lice: housed animals. Dosing: weight Ã— dose/kg. **Young:** Treat monthly during grazing season or use hay + selective pasture. **Pregnant:** Treat before breeding, repeat if clinical signs.
+**Primary:** GI nematodes. Haemonchus (blood-feeder): anemia. Coccidiosis: young 3-12 weeks post-weaning. Flukes: wet areas. Lice: housed animals. Dosing: weight × dose/kg. **Young:** Treat monthly during grazing season or use hay + selective pasture. **Pregnant:** Treat before breeding, repeat if clinical signs.
 
 ### Poultry
 
-**Internal:** Roundworms, tapeworms, cecal worms. **Coccidiosis:** 90%+ mortality if untreated (chicks 3-8 weeks). Stress triggers disease. **External:** Lice, mites. **Treatment:** Add to water/feed (flock). **Sanitation:** Change litter frequently, compost >60Â°C. Move pens regularly, avoid crowding.
+**Internal:** Roundworms, tapeworms, cecal worms. **Coccidiosis:** 90%+ mortality if untreated (chicks 3-8 weeks). Stress triggers disease. **External:** Lice, mites. **Treatment:** Add to water/feed (flock). **Sanitation:** Change litter frequently, compost >60°C. Move pens regularly, avoid crowding.
 
 ### Dogs and Cats
 
@@ -454,7 +454,7 @@ Heavy parasitism reduces conception rates by 20-30%, extends lactation recovery 
 
 ### Hygiene Practices to Reduce Human Risk
 
-**Handling:** Wear gloves, wash hands (5+ min) with soap/hot water, don't touch face before washing, disinfect surfaces (bleach 1:10). **PPE:** Gloves, animal-specific boots, wash station. **Food:** Cook thoroughly (165Â°F, 15 min), wash/cook vegetables from manured soil. **Children:** Supervise, teach hand washing. Higher risk in children/pregnant/immunocompromised.
+**Handling:** Wear gloves, wash hands (5+ min) with soap/hot water, don't touch face before washing, disinfect surfaces (bleach 1:10). **PPE:** Gloves, animal-specific boots, wash station. **Food:** Cook thoroughly (165°F, 15 min), wash/cook vegetables from manured soil. **Children:** Supervise, teach hand washing. Higher risk in children/pregnant/immunocompromised.
 
 </section>
 
@@ -464,10 +464,10 @@ Heavy parasitism reduces conception rates by 20-30%, extends lactation recovery 
 
 ### Underdosing Due to Weight Estimation Errors
 
-The most frequent cause of treatment failure. Herders often underestimate weight (animals look smaller than actual weight). A 60kg animal estimated at 50kg receives 17% under-dose, reducing efficacy by 40-60%. Solution: 1) Use weight tape (Â±5%). 2) Compare to known reference weights. 3) Err slightly on heavy side for broad-safety drugs. 4) Weigh animals pre-treatment if possible on portable scale.
+The most frequent cause of treatment failure. Herders often underestimate weight (animals look smaller than actual weight). A 60kg animal estimated at 50kg receives 17% under-dose, reducing efficacy by 40-60%. Solution: 1) Use weight tape (±5%). 2) Compare to known reference weights. 3) Err slightly on heavy side for broad-safety drugs. 4) Weigh animals pre-treatment if possible on portable scale.
 
 :::warning
-**Critical:** Under-dose by >20% is worse than not treating at all â€” it selects for resistance while failing to cure the infection. Always verify weight twice; when in doubt, consult weight tape or ask more experienced herders.
+**Critical:** Under-dose by >20% is worse than not treating at all — it selects for resistance while failing to cure the infection. Always verify weight twice; when in doubt, consult weight tape or ask more experienced herders.
 :::
 
 ### Treating Without Diagnosis
@@ -532,7 +532,7 @@ Without documentation, herders cannot track which drugs were used, when resistan
 
 ## Climate-Specific Parasite Management Adaptations
 
-### Temperate (Cool/Wet) Regions â€” 4-6 Month Season
+### Temperate (Cool/Wet) Regions — 4-6 Month Season
 
 **Challenge:** Spring/early summer nematode peak followed by summer coccidiosis in wet years. **Strategy:** 1) Drench all young animals pre-spring (March-April). 2) Move to clean/hay-fed pasture April-May. 3) Summer: monthly fecal exams, treat if >100 EPG. 4) Fall treatment before housing (lice control). 5) Winter: monitor housed animals, change litter weekly. **Rotation:** 4-6 paddocks sufficient; spell 4-6 weeks minimum. **Dosing:** Standard. **Drug choice:** Benzimidazole (Feb-April), rotate to levamisole (June-July), ivermectin (Sept).
 
@@ -542,7 +542,7 @@ Without documentation, herders cannot track which drugs were used, when resistan
 
 ### Tropical/Subtropical (Year-Round Transmission)
 
-**Challenge:** Continuous infection, no seasonal relief. **Strategy:** 1) Treat all young <12 months monthly (every 4 weeks). 2) Treat adults quarterly. 3) Pasture rotation essential but insufficient â€” must combine with treatment. 4) Water source control critical (snails, crypto). 5) Intensive sanitation (change feeders weekly, manure >60Â°C). **Rotation:** 10+ paddocks minimum, 2 week graze, 6-8 week spell. **Drug choice:** Rotate classes every 3 months to prevent resistance (benzimidazole/levamisole/ivermectin/combination).
+**Challenge:** Continuous infection, no seasonal relief. **Strategy:** 1) Treat all young <12 months monthly (every 4 weeks). 2) Treat adults quarterly. 3) Pasture rotation essential but insufficient — must combine with treatment. 4) Water source control critical (snails, crypto). 5) Intensive sanitation (change feeders weekly, manure >60°C). **Rotation:** 10+ paddocks minimum, 2 week graze, 6-8 week spell. **Drug choice:** Rotate classes every 3 months to prevent resistance (benzimidazole/levamisole/ivermectin/combination).
 
 ### Arid/Dry Climates (Short Season, Fast Die-Off)
 
@@ -687,12 +687,12 @@ Without documentation, herders cannot track which drugs were used, when resistan
 :::affiliate
 **If you're setting up veterinary parasite management,** these tools support diagnosis and treatment:
 
-- [Veterinary Microscope & Fecal Analysis Kit](https://www.amazon.com/dp/B0B2KQVLPX?tag=offlinecompen-20) â€” Complete setup for McMaster egg counts and parasite identification
-- [Fecal Test Slides & Coverslips](https://www.amazon.com/dp/B0B4PXVMLQ?tag=offlinecompen-20) â€” Prepared slides for standardized examination and trending
-- [Dewormer Paste & Injectable Assortment](https://www.amazon.com/dp/B0B5JMXNVL?tag=offlinecompen-20) â€” Ivermectin, albendazole, and other broad-spectrum anthelmintics
-- [Veterinary Parasitology Reference Manual](https://www.amazon.com/dp/B0B1XWPQMN?tag=offlinecompen-20) â€” Life cycle identification and treatment protocols by parasite species
+- [Veterinary Microscope & Fecal Analysis Kit](https://www.amazon.com/dp/B0B2KQVLPX?tag=offlinecompen-20) — Complete setup for McMaster egg counts and parasite identification
+- [Fecal Test Slides & Coverslips](https://www.amazon.com/dp/B0B4PXVMLQ?tag=offlinecompen-20) — Prepared slides for standardized examination and trending
+- [Dewormer Paste & Injectable Assortment](https://www.amazon.com/dp/B0B5JMXNVL?tag=offlinecompen-20) — Ivermectin, albendazole, and other broad-spectrum anthelmintics
+- [Veterinary Parasitology Reference Manual](https://www.amazon.com/dp/B0B1XWPQMN?tag=offlinecompen-20) — Life cycle identification and treatment protocols by parasite species
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 </section>
