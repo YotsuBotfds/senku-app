@@ -170,11 +170,21 @@ Action:
 - Add one compact end-to-end evidence row only where route, owner,
   reviewed-card/runtime or deterministic decision, emergency-first surface, and
   diagnostic bucket are all intended to be asserted together.
+- Implemented `DR-DIAG-ACCEPT-001`: deterministic emergency answers with
+  explicit emergency-first text can now surface `emergency_first_supported`
+  and `ui_surface_bucket=emergency_first` without changing the acceptance
+  status. The unit proof uses the `RE9-SM-001` carbon-monoxide/storm pattern
+  and keeps `app_acceptance_status=strong_supported`.
 
 Validation:
 
 - Acceptance gates remain pinned to stable behavior; diagnostic taxonomy can be
   adjusted without silently changing pass/fail meaning.
+- Artifact-level analyzer proof against
+  `artifacts\bench\RE9-SM-001_proof_20260426_20260426_062328_bench.json`
+  produced `app_acceptance_status=strong_supported`,
+  `safety_surface_status=emergency_first_supported`, and
+  `ui_surface_bucket=emergency_first`.
 
 Deferred unless evidenced:
 

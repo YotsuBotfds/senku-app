@@ -659,8 +659,19 @@ def app_acceptance_diagnostics(
         evidence_owner_status = "unknown"
 
     answer_text = str(result.get("response_text") or "")
-    safety_critical = _truthy(app_gate_fields.get("safety_critical")) or safety_prompt_detector(
-        result.get("question") or ""
+    deterministic_emergency_surface = (
+        bucket == "deterministic_pass"
+        and generated != "yes"
+        and (
+            result.get("decision_path") == "deterministic"
+            or result.get("answer_provenance") == "deterministic_rule"
+        )
+        and emergency_contract_detector(answer_text)
+    )
+    safety_critical = (
+        _truthy(app_gate_fields.get("safety_critical"))
+        or safety_prompt_detector(result.get("question") or "")
+        or deterministic_emergency_surface
     )
     if not safety_critical:
         safety_surface_status = "not_safety_critical"

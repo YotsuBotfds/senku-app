@@ -243,6 +243,39 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_supported")
         self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
 
+    def test_deterministic_emergency_surface_does_not_change_acceptance_status(self):
+        diagnostics = app_acceptance_diagnostics(
+            {
+                "question": (
+                    "After a generator was moved into an attached garage, two people "
+                    "have headaches and a child is very sleepy. What comes first?"
+                ),
+                "decision_path": "deterministic",
+                "decision_detail": "indoor_combustion_co_exposure",
+                "answer_provenance": "deterministic_rule",
+                "response_text": (
+                    "Get everyone out to fresh air immediately. Call emergency help "
+                    "or poison control now if anyone has headache or unusual sleepiness. [GD-899]"
+                ),
+            },
+            bucket="deterministic_pass",
+            expected_ids=["GD-899"],
+            candidate_ids=["GD-899"],
+            cited_ids=["GD-899"],
+            app_gate_fields={"safety_critical": "False"},
+            answer_card_fields={"answer_card_status": "no_generated_answer"},
+            claim_support_fields={"claim_support_status": "not_applicable_prompt"},
+            generated="no",
+            safety_prompt_detector=lambda _question: False,
+            emergency_contract_detector=lambda answer: "emergency help" in answer,
+        )
+
+        self.assertEqual(diagnostics["app_acceptance_status"], "strong_supported")
+        self.assertEqual(diagnostics["evidence_owner_status"], "expected_owner_cited")
+        self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_supported")
+        self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
+        self.assertIn("bucket_deterministic_pass", diagnostics["app_acceptance_reason"])
+
     def test_app_acceptance_classifies_generated_expected_owner_missing(self):
         diagnostics = app_acceptance_diagnostics(
             {"question": "Can this wait?", "response_text": "Call 911 now. [GD-2]"},

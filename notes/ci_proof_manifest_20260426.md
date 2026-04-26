@@ -5,6 +5,17 @@ artifacts are retained for a bounded period.
 
 ## Current Green Head
 
+- Head: `c7c9270` (`add freshness and overlap backlog proofs`)
+- Non-Android Regression Gate: run `24958459769`
+- Result: success
+- URL: `https://github.com/YotsuBotfds/senku-app/actions/runs/24958459769`
+- Mode: `Generated`
+- Label: `github_c7c9270_generated_fixture_current_head_20260426`
+- Speed proof: `Cache FastEmbed model files` and `Cache retrieval index` were
+  both skipped; generated analyzer/regression gate completed green.
+
+## Previous Green Generated Head
+
 - Head: `379181a` (`skip fastembed for generated ci`)
 - Non-Android Regression Gate: run `24958386310`
 - Result: success
