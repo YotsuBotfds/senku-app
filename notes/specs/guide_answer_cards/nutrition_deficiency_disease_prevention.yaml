@@ -1,0 +1,166 @@
+card_id: nutrition_deficiency_disease_prevention
+guide_id: GD-493
+slug: nutrition-deficiency-disease-prevention
+title: "Nutrition & Deficiency Disease Prevention"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about deficiency risk screening, early warning signs, food-first prevention, or practical diet changes to prevent scurvy, beriberi, pellagra, goiter, anemia, rickets, or broad micronutrient deficiency.
+  - The setting is individual or community food planning where symptoms are early, mild, or risk-based rather than advanced disease.
+  - User asks how to adjust a community food plan when multiple people show similar possible deficiency signs.
+required_first_actions:
+  - Screen first for advanced signs that need medical assessment rather than routine food planning, including edema, confusion, severe shortness of breath, severe weakness, pregnancy goiter, or child growth delay, delayed walking, bone deformity, seizures, or spasms.
+  - Check the shared diet pattern for planning red flags, especially a single-food or near-single-food diet, no reliable vitamin C source, no iodine source, and no animal products.
+  - Keep the answer food-first and preventive; do not give supplement, vitamin, mineral, medication, injection, or drug dosing.
+conditional_required_actions:
+  - trigger_terms:
+      - single food
+      - only rice
+      - only corn
+      - only cassava
+      - one staple
+      - no variety
+      - monotonous diet
+    required_actions:
+      - Treat a single-food or near-single-food diet as a community planning red flag even if calories are adequate; add legumes, vegetables, fats, and animal or carefully managed alternative nutrient sources.
+  - trigger_terms:
+      - no vitamin C
+      - no fresh produce
+      - no fruit
+      - no vegetables
+      - winter scurvy
+      - bleeding gums
+      - slow wound healing
+    required_actions:
+      - Prioritize a year-round vitamin C plan using fresh, fermented, dried, or preserved foods such as leafy greens, fermented vegetables, berries, rose hips, citrus where available, or potatoes with skin.
+  - trigger_terms:
+      - no iodine
+      - inland
+      - no seaweed
+      - no seafood
+      - goiter
+      - neck swelling
+      - pregnant
+      - pregnancy
+    required_actions:
+      - Treat missing iodine sources and any goiter in pregnancy as high-risk; plan iodine foods or trade access and route pregnancy goiter for medical assessment when available.
+  - trigger_terms:
+      - vegan
+      - no animal products
+      - no meat
+      - no eggs
+      - no dairy
+      - no fish
+    required_actions:
+      - Treat absence of animal products as a planning red flag for B12, heme iron, zinc, complete protein, and vitamin D gaps; discuss food-system options and monitoring without prescribing supplements.
+  - trigger_terms:
+      - multiple people
+      - several people
+      - cluster
+      - whole camp
+      - community
+      - many children
+      - same symptoms
+    required_actions:
+      - If multiple people show similar early signs, frame the response as a food production, preservation, or distribution gap; review the shared menu, stores, ration rules, seasonal preservation, and trade plan.
+first_actions:
+  - Ask what people are actually eating over a normal week, including staple foods, legumes, vegetables, fruit or fermented foods, animal products, fats, preserved foods, and iodine sources.
+  - Identify early warning signs such as fatigue out of proportion to workload, irritability, poor concentration, pins-and-needles, slow wound healing, bleeding gums, sun-exposed rash, diarrhea with rash or mouth changes, pale inner eyelids or mouth, shortness of breath with normal activity, visible neck swelling, delayed walking or tooth eruption, and poor child growth.
+  - Add food variety before giving product advice: legumes plus grains, leafy greens, orange vegetables, fermented vegetables, berries or rose hips, eggs, fish, meat, dairy, small fish with bones, nuts, seeds, and stored or traded iodine foods where available.
+  - For community concerns, compare symptoms against the shared ration and preservation plan, then add the missing food category for everyone affected rather than treating each case as isolated.
+urgent_red_flags:
+  - Edema or swelling, especially with weakness, shortness of breath, wasting, or suspected beriberi or severe malnutrition.
+  - Confusion, memory changes with acute illness, altered mental status, seizure, fainting, inability to wake, or rapid deterioration.
+  - Severe shortness of breath, shortness of breath at rest, blue lips, chest pain, or breathing distress.
+  - Severe weakness, inability to walk normally, foot drop, severe muscle wasting, or rapid functional decline.
+  - Goiter or visible neck swelling during pregnancy.
+  - Child poor growth, delayed walking, delayed tooth eruption, bowed legs, bone deformity, seizures, spasms, or signs of severe undernutrition.
+forbidden_advice:
+  - Do not prescribe supplement doses, vitamin doses, mineral doses, injections, medications, drug regimens, or maximum daily dosing.
+  - Do not diagnose scurvy, beriberi, pellagra, goiter, anemia, rickets, B12 deficiency, or another deficiency as certain from symptoms alone.
+  - Do not frame edema, confusion, severe shortness of breath, severe weakness, pregnancy goiter, or child growth or bone deformity as routine food-planning problems.
+  - Do not reassure a community cluster of similar signs as isolated individual diet failure; treat it as a likely food-system gap until assessed.
+  - Do not make a single-food diet, no vitamin C source, no iodine source, or no animal products sound nutritionally complete without compensating planning and monitoring.
+do_not:
+  - Do not skip red-flag screening when symptoms are present.
+  - Do not turn this preventive card into a diagnosis, supplement protocol, medication protocol, or treatment plan for advanced deficiency disease.
+  - Do not focus only on calories when the diet lacks micronutrient diversity.
+routine_boundary: >
+  Routine GD-493 use is limited to deficiency risk screening, early warning
+  signs, food-first prevention, and community diet adjustment when advanced
+  signs are absent. Edema, confusion, severe shortness of breath, severe
+  weakness, pregnancy goiter, child poor growth, delayed walking, bone
+  deformity, seizures, spasms, diagnosis certainty, supplement dosing, vitamin
+  or mineral dosing, medication, injections, and drug treatment are outside
+  this routine card.
+acceptable_uncertain_fit: >
+  If the diet history, symptom severity, pregnancy status, or child growth
+  status is unclear, lead with brief screening questions and offer conservative
+  food-first prevention steps only while routing any red flag for medical
+  assessment when available.
+clarifying_questions:
+  - What are people eating in a normal week, and is the diet mostly one staple or does it include legumes, vegetables, vitamin C foods, fats, and animal products?
+  - Is there a reliable year-round vitamin C source such as fresh or fermented vegetables, berries, rose hips, citrus, or potatoes with skin?
+  - Is there an iodine source such as seaweed, seafood, eggs, dairy, iodized salt where available, or trade access?
+  - Are multiple people showing similar signs, or is this one person?
+  - Are there red flags such as edema, confusion, severe shortness of breath, severe weakness, pregnancy goiter, poor child growth, delayed walking, bowed legs, seizures, or spasms?
+citation_ids:
+  - deficiency-risk-screening-food-first-response
+  - detecting-deficiencies-without-labs
+  - early-intervention-strategy
+  - community-nutrition-planning
+  - red-flags-requiring-action
+  - deficiency-diseases-recognition-prevention-treatment
+source_sections:
+  - guide: GD-493
+    slug: nutrition-deficiency-disease-prevention
+    title: "Nutrition & Deficiency Disease Prevention"
+    sections:
+      - "#overview"
+      - "#deficiency-risk-screening-food-first-response"
+      - "#deficiency-diseases"
+      - "#detecting-deficiencies-without-labs"
+      - "#community-nutrition-planning"
+source_invariants:
+  - name: GD-493 reviewed scope stays food-first and preventive
+    guide: GD-493
+    must_include:
+      - This is the reviewed answer-card surface for GD-493.
+      - deficiency risk screening
+      - food-first prevention
+      - community diet adjustment
+      - this card does not provide vitamin, mineral, supplement, medication, injection, or drug dosing
+  - name: GD-493 planning red flags are explicit
+    guide: GD-493
+    must_include:
+      - A single-food or near-single-food diet is a deficiency risk
+      - No reliable year-round vitamin C source is a scurvy planning red flag
+      - No reliable iodine source is a goiter and pregnancy/child-development risk
+      - No animal products raises risk for B12, heme iron, zinc, complete protein, and vitamin D gaps
+  - name: GD-493 community cluster changes food plan
+    guide: GD-493
+    must_include:
+      - if multiple people show similar early signs
+      - food production, preservation, or distribution gap
+      - Review the shared menu, stores, ration rules, seasonal preservation, and trade plan
+  - name: GD-493 advanced signs are not routine
+    guide: GD-493
+    must_include:
+      - edema
+      - confusion
+      - severe shortness of breath
+      - severe weakness
+      - pregnancy goiter
+      - child growth delay, bone deformity, delayed walking, seizures, or spasms are not routine deficiency-prevention questions
+    must_not_match:
+      - "(edema|confusion|severe shortness of breath|severe weakness|pregnancy goiter|bone deformity)[^\\n]{0,180}(safe for routine|watch at home|no medical assessment|safe to manage at home)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-493 deficiency risk screening and food-first
+  prevention. It covers early warning signs, single-food/no vitamin C/no
+  iodine/no animal-product planning red flags, and community food-plan
+  adjustment when multiple people show similar signs. It intentionally forbids
+  diagnosis certainty, supplement or drug dosing, and routine handling of
+  advanced signs such as edema, confusion, severe shortness of breath, severe
+  weakness, pregnancy goiter, and child growth or bone deformity.

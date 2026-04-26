@@ -1,0 +1,119 @@
+card_id: menstrual_pain_routine_support
+guide_id: GD-912
+slug: menstrual-pain-management
+title: "Menstrual Pain Management & Cramps Relief"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for routine menstrual cramps/cramp pain relief, heat strategies, hydration, gentle movement, rest, or symptom tracking for period-related discomfort.
+  - The question is about familiar cycle pain rather than a clearly emergency reproductive or trauma pattern.
+  - The user asks for practical first steps while screening or excluding immediate danger signs.
+required_first_actions:
+  - Screen for urgent red flags first, especially possible pregnancy/ectopic clues, heavy bleeding with shock signs, fever/chills/foul discharge, severe one-sided pelvic pain, shoulder-tip pain, fainting, postpartum pain, or trauma/assault-associated pain.
+  - If any urgent red flag is present, route to urgent medical care or gynecologic-emergency pathways immediately rather than routine self-care.
+  - Keep routine guidance limited to non-prescriptive support: heat, hydration, gentle movement, rest positioning, and symptom tracking.
+first_actions:
+  - Use heat for 15 to 20 minutes for lower abdomen/lower back using a wrapped, protected source; avoid direct heat skin contact and heat that burns.
+  - Rehydrate with small frequent fluids while watching for worsening thirst, dry mouth, weakness, or repeated vomiting.
+  - Move gently for a few minutes if pain allows, and stop if motion sharpens pain.
+  - Prioritize rest in supported side-lying knees-bent or back-with-knees-support positions; avoid overexertion or heavy lifting.
+  - Track cycle day, pain severity, pain side/location, bleeding rate, clots, triggers, and what improves symptoms.
+  - Ask what changed from usual cycle pattern before continuing routine measures.
+urgent_red_flags:
+  - Missed or late period with pelvic pain, possible pregnancy, one-sided lower-belly pain, shoulder-tip pain, or dizziness/fainting.
+  - Severe one-sided pelvic pain, new pain pattern, or pain that is much worse than usual.
+  - Heavy bleeding that rapidly soaks pads or tampon use, repeated large clots, pallor, weakness, fainting, confusion, cold skin, or signs of shock.
+  - Fever, chills, foul-smelling discharge, or persistent vomiting with pelvic pain.
+  - Postpartum pelvic pain or vaginal bleeding after delivery.
+  - Pain after assault, force, or other trauma with new bleeding, shock, or severe pelvic pain.
+  - Signs compatible with pelvic infection, possible ectopic pregnancy, or miscarriage pattern.
+forbidden_advice:
+  - Do not provide medication dosing, timing schedules, or specific dose conversions for cramps.
+  - Do not diagnose endometriosis, fibroids, PID, ectopic pregnancy, miscarriage, ovarian torsion, or other gynecologic disease from symptom description.
+  - Do not treat ectopic pregnancy, miscarriage, severe pelvic infection, gynecologic shock/bleeding, postpartum hemorrhage, or post-trauma pain as routine cramps.
+  - Do not give invasive treatment guidance, pelvic manipulation suggestions, uterine massage, or internal examination direction for routine cramps.
+  - Do not provide fertility, contraception, menstrual-cycle suppression, hormonal, or pregnancy-maintenance/loss counseling.
+  - Do not route heavy bleeding, shock, fainting, or pregnancy-related pain into routine pain-home-care framing.
+do_not:
+  - Do not skip urgent red-flag screening for possible pregnancy/ectopic, bleeding/shock, infection, one-sided severe pain, shoulder-tip pain, or trauma clues.
+  - Do not reassure users if pain is new, worsening, unilateral, or function-limiting after prior routine care.
+  - Do not claim symptoms like vaginal discharge, severe bloating, chest/shoulder pain, or fever are always normal period variation.
+routine_boundary: >
+  Routine support is limited to familiar menstrual cramps with a stable routine
+  pattern and no urgent red flags. Possible pregnancy, one-sided or new severe
+  pain, heavy bleeding with pallor/weakness/dizziness/fainting, fever/chills/foul
+  discharge, shoulder-tip pain, signs of shock, postpartum pain, and trauma/assault
+  associated pain are not routine and must be handed off for urgent evaluation.
+acceptable_uncertain_fit: >
+  If symptom severity, timing, or pregnancy/trauma context is unclear, begin with
+  a red-flag screen and a brief monitoring script: call for urgent help first for
+  any suspected danger signs; if none are present, offer only heat, fluids, gentle
+  movement, rest, and tracking while reassessing.
+clarifying_questions:
+  - Are you currently pregnant, recently had possible pregnancy, or had a delayed/missed period?
+  - Is this pain one-sided, new, or much worse than your usual cramps, and is it getting worse over minutes to hours?
+  - Are you soaking through pads/tampons quickly, passing large clots, feeling faint, weak, cold, or confused?
+  - Do you have fever, chills, foul-smelling discharge, shoulder-tip pain, or pain after an injury/assault?
+  - Are you postpartum, or was there a recent injury/abdominal impact before the pain started?
+must:
+  - Screen urgent-pattern symptoms before giving routine cramps support.
+  - Include heat, hydration, gentle movement limits, rest, and symptom tracking as first response for routine cases.
+  - Route any emergency-boundary pattern away from routine advice and include handoff language.
+must_not:
+  - Provide medication dose instructions or timing schedules.
+  - Diagnose underlying gynecologic disease (including endometriosis, fibroids, PID, ectopic, or miscarriage) from symptoms alone.
+  - Give invasive or procedural treatment guidance in routine care framing.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - first_actions
+  must_include_urgent_handoff: true
+  forbid: true
+fallback_handoff_language:
+  - If any urgent flag is present or uncertain, use immediate gynecologic emergency/medical escalation language before routine care.
+  - Include "urgent medical evaluation now" or equivalent and avoid delaying transfer to emergency care.
+citation_ids:
+  - menstrual-pain-overview
+  - menstrual-pain-heat-hydration
+  - menstrual-pain-movement-rest
+  - menstrual-pain-tracking
+  - menstrual-pain-danger-boundary
+source_sections:
+  - guide: GD-912
+    slug: menstrual-pain-management
+    title: "Menstrual Pain Management & Cramps Relief"
+    sections:
+      - "#quick-relief"
+      - "#heat-methods"
+      - "#hydration-movement"
+      - "#tracking"
+      - "#danger"
+      - "#summary"
+      - "#reviewed-routine-boundary"
+source_invariants:
+  - name: routine scope excludes emergency-boundary scenarios
+    guide: GD-912
+    must_include:
+      - This cramp-relief guide is for familiar period pain after emergency signs are excluded.
+      - heavy bleeding with severe pelvic pain
+      - possible ectopic pregnancy
+      - one-sided pelvic pain
+      - shoulder-tip pain
+    must_not_match:
+      - "watch at home[^\\n]{0,120}(possible pregnancy|heavy bleeding|shoulder-tip pain|ectopic)"
+  - name: routine comfort methods remain non-medication
+    guide: GD-912
+    must_include:
+      - Use heat, fluids, gentle movement, and supported rest first.
+      - "Track what the pain feels like"
+      - "Do not apply vaginal direct pressure"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed safety closure for GD-912 routine menstrual pain support. The card is
+  limited to non-prescriptive heat/hydration/movement/rest/tracking care after
+  red-flag exclusion. It explicitly excludes diagnosis of endometriosis/fibroids/PID/ectopic/miscarriage, medication dosing/schedule advice,
+  fertility or contraception guidance, invasive procedures, and claims that heavy
+  bleeding or pregnancy-related danger patterns are routine cramps.

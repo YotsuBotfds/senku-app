@@ -1,0 +1,109 @@
+card_id: nutritional_planning_deficiency_prevention
+guide_id: GD-668
+slug: nutritional-planning-deficiency-prevention
+title: "Nutritional Planning & Deficiency Prevention"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks how to plan meals, rations, pantry rotation, or food production to prevent nutrition gaps over weeks or seasons.
+  - The main need is macro or micronutrient balancing across available food sources, not recognition or treatment of a deficiency disease.
+  - The user asks about seasonal or hungry-gap nutrition planning, food-source optimization, preservation effects on nutrients, food-first prevention, or community screening.
+required_first_actions:
+  - Keep the answer in the food-first planning lane: calories, protein, fat, carbohydrates, fiber, micronutrient food sources, preservation choices, and seasonal coverage.
+  - Route suspected deficiency disease recognition, symptom timelines, disease tables, or treatment decisions to GD-493 Nutrition & Deficiency Disease Prevention.
+  - Begin by inventorying available staples, legumes, animal foods, fats, vegetables, fruits, fermented foods, preserved foods, salt or sea foods, and seasonal production gaps.
+  - Build variety around recurring meals rather than a single staple; combine grains with legumes or seeds, include fat for fat-soluble vitamins, include vitamin C foods with plant iron, and preserve fresh-food sources before the hungry gap.
+  - Treat community screening as surveillance and escalation support, not diagnosis or treatment.
+first_actions:
+  - Estimate energy needs by activity, cold exposure, age group, and workload, then check whether stored and seasonal foods can meet those needs without exhausting one nutrient-dense category.
+  - Map macronutrients from practical food groups; staples and roots for carbohydrates, legumes or animal foods for protein, nuts, seeds, oils, dairy, eggs, fish, or rendered fats for fat.
+  - Map micronutrient coverage from food sources for vitamin C, vitamin A, vitamin D, B vitamins, B12, iron, iodine, calcium, zinc, and magnesium.
+  - Use preservation methods with nutrient effects in mind; fresh when possible, fermented vegetables for winter diversity, frozen if available, dried foods for storage, and careful cooking to limit vitamin loss.
+  - Plan seasonal buffers for the hungry gap, especially vitamin C sources, protein, fats, whole grains or legumes, iodine sources, and fresh or fermented vegetables.
+  - For a group, monitor trends in food access, weight, diet monotony, visible wasting, edema, and functional decline, and escalate concerning findings to medical review.
+urgent_red_flags:
+  - Suspected scurvy, pellagra, beriberi, rickets, osteomalacia, goiter, anemia, B12 deficiency, vitamin A deficiency, or any deficiency disease recognition question.
+  - Edema, severe wasting, rapid weight loss, inability to eat or drink, altered mental status, severe dehydration, or suspected severe malnutrition.
+  - Infant feeding, pediatric emergency symptoms, pregnancy-specific nutrition concern, or lactation-specific care.
+  - Diarrhea requiring ORS administration, rehydration protocol, dysentery management, or outbreak response.
+  - Requests for diagnosis, supplement dosing, therapeutic regimens, deficiency treatment tables, refeeding plans, or emergency medical treatment.
+forbidden_advice:
+  - Provide supplement dosing, supplement regimens, or therapeutic nutrient doses.
+  - Turn deficiency treatment tables into action plans or tell the user to treat a suspected deficiency from this card.
+  - Provide ORS administration instructions, rehydration protocols, IV fluids, zinc dosing, or diarrhea treatment.
+  - Provide severe malnutrition, therapeutic feeding, or refeeding protocols.
+  - Diagnose a deficiency disease or determine that symptoms are caused by a specific nutrient deficiency.
+  - Provide pediatric emergency, infant feeding, pregnancy-specific, or lactation-specific care from this card.
+  - Use this card for emergency treatment, medication choices, or clinical protocols.
+do_not:
+  - Do not present food-first prevention as treatment for symptomatic deficiency disease.
+  - Do not reassure a symptomatic person that meal planning alone is enough.
+  - Do not collapse GD-668 and GD-493; planning and prevention stay here, while recognition and disease framing route to GD-493.
+  - Do not answer ORS, severe diarrhea, severe malnutrition, refeeding, infant, pediatric emergency, or pregnancy-specific prompts from this card.
+routine_boundary: >
+  Routine GD-668 use is limited to food-first prevention and planning before a
+  deficiency disease or emergency is suspected. Once the prompt is about
+  symptoms, diagnosis, treatment, ORS, refeeding, infants, pediatric
+  emergencies, or pregnancy-specific care, this card should hand off instead of
+  supplying an action protocol.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt is clearly about planning, give a
+  conservative food-first planning framework, ask what foods and seasons are
+  available, and state the handoff boundary for symptoms or treatment. If the
+  prompt includes symptoms or asks what deficiency someone has, route to GD-493
+  rather than answering from GD-668.
+clarifying_questions:
+  - What staple foods, legumes, animal foods, fats, fruits, vegetables, preserved foods, salt, and seasonal harvests are available?
+  - How many people are being planned for, what workloads or cold exposure are expected, and how long is the hungry gap?
+  - Are there reliable food sources for vitamin C, vitamin A, vitamin D, B vitamins, B12, iron, iodine, calcium, zinc, and healthy fats?
+  - Is anyone already showing symptoms such as edema, severe wasting, bleeding gums, night blindness, neuropathy, severe fatigue, confusion, or rapid weight loss?
+citation_ids:
+  - nutritional-planning-boundary
+  - macronutrient-planning
+  - micronutrient-food-sources
+  - seasonal-hungry-gap-planning
+  - preservation-nutrient-impact
+  - community-screening-surveillance
+source_sections:
+  - guide: GD-668
+    slug: nutritional-planning-deficiency-prevention
+    title: "Nutritional Planning & Deficiency Prevention"
+    sections:
+      - "#nutritional-planning-answer-card-boundary"
+      - "#macronutrients"
+      - "#essential-micronutrients"
+      - "#seasonal-meal-planning"
+      - "#food-source-optimization"
+      - "#food-preservation-and-nutritional-impact"
+      - "#community-nutrition-assessment"
+      - "#practical-implementation-creating-a-nutritional-survival-plan"
+source_invariants:
+  - name: reviewed card boundary routes recognition and treatment away
+    guide: GD-668
+    must_include:
+      - "Use it for food-first planning before deficiency disease is suspected"
+      - "Route suspected deficiency disease recognition"
+      - "Do not answer this card with supplement dosing or regimens"
+      - "deficiency treatment tables as action plans"
+  - name: original routing note keeps planning separate
+    guide: GD-668
+    must_include:
+      - "keep this guide focused on planning, balancing, and prevention"
+      - "For deficiency recognition and disease framing, use `nutrition-deficiency-disease-prevention`"
+  - name: community assessment is surveillance
+    guide: GD-668
+    must_include:
+      - "simple surveillance identifies emerging malnutrition"
+      - "Weight tracking"
+      - "Mid-upper arm circumference"
+      - "edema"
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed card for GD-668. It is intentionally bounded to meal
+  planning, macro/micronutrient balancing, seasonal and hungry-gap planning,
+  food-source optimization, food-first prevention, preservation choices, and
+  community screening. It routes deficiency disease recognition and treatment
+  framing to GD-493 and excludes supplement dosing/regimens, treatment tables
+  as actions, ORS administration, severe malnutrition/refeeding, diagnosis,
+  pediatric emergencies, infant feeding, pregnancy-specific care, and emergency
+  treatment.

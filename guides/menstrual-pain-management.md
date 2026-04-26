@@ -4,6 +4,16 @@ slug: menstrual-pain-management
 title: Menstrual Pain Management & Cramps Relief
 category: medical
 difficulty: beginner
+aliases:
+  - period cramps
+  - menstrual cramps
+  - painful period
+  - bad period pain
+  - cramps without medicine
+  - period pain relief
+routing_cues:
+  - Use for familiar routine menstrual cramps when possible pregnancy, severe one-sided pelvic pain, heavy bleeding, fainting, fever, foul discharge, postpartum pain, trauma, assault, and new or worsening severe pelvic pain are excluded.
+  - Keep answers to heat, hydration, gentle movement, rest, and symptom tracking; route diagnosis, medication dosing, fertility, contraception, ectopic pregnancy, miscarriage, PID, endometriosis, fibroids, or gynecological emergency signs to more specific care.
 tags:
   - essential
   - medical
@@ -16,6 +26,15 @@ tags:
   - bad period pain
 icon: 🌸
 description: Menstrual cramp relief, heat methods without electricity, hydration, gentle movement, rest positioning, symptom tracking, common cycle discomforts, and red flags for heavy bleeding or more serious problems.
+citations_required: true
+citation_policy: cite GD-912 only for familiar routine menstrual-cramp support after urgent gynecological, pregnancy-related, infection, trauma, and shock-pattern red flags are excluded
+applicability: >
+  Routine menstrual cramp/support after emergency exclusion only. Use heat,
+  hydration, gentle movement, rest positioning, and symptom tracking for familiar
+  period pain. Route for possible pregnancy/ectopic, possible shock, severe
+  one-sided pelvic pain, heavy bleeding with weakness or fainting, postpartum pain,
+  pelvic infection signals (fever, foul discharge), trauma/assault pain, or new
+  severe pelvic pain instead to gynecological-emergency pathways.
 related:
   - menstruation-reproductive-health
   - gynecological-emergencies-womens-health
@@ -253,5 +272,17 @@ For heavy bleeding with severe pelvic pain or bleeding in early pregnancy with d
 - Track pain, bleeding, clots, and triggers so patterns are obvious.
 - Expect cramps, bloating, fatigue, mood changes, and other common cycle symptoms.
 - Treat heavy bleeding, fever, one-sided pain, fainting, or pregnancy-related pain as urgent.
+
+</section>
+
+<section id="reviewed-routine-boundary">
+
+## Reviewed Routine Boundary
+
+This guide is reviewed for routine menstrual pain support when pain is the
+usual menstrual pattern and no urgent red flags are present. Urgent handoff is
+required for possible pregnancy/ectopic patterns, one-sided or new severe pelvic
+pain, heavy bleeding with dizziness/fainting/shock signs, fever with foul discharge,
+shoulder-tip pain, postpartum pain, or pain associated with assault/trauma.
 
 </section>

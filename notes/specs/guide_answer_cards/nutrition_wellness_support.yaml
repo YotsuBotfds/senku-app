@@ -1,0 +1,180 @@
+card_id: nutrition_wellness_support
+guide_id: GD-735
+slug: nutrition-wellness-eating-for-health
+title: "Nutrition, Food & Wellness: Eating for Health"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for general supportive nutrition, healthy eating basics, balanced meals, or meal patterning from foods already available.
+  - The question is about protein/starch/fat/fruit-or-vegetable meal structure, deficiency warning signs, hydration checks, or basic food-group balance.
+  - No ration allocation, school-age child-specific nutrition, diagnosis, supplement regimen, calorie prescription, eating-disorder reassurance, pregnancy/child-growth care, or disease-specific diet treatment is the main ask.
+required_first_actions:
+  - Screen first for severe dehydration, confusion, fainting, persistent vomiting or diarrhea, edema or wasting, rapid or unexplained weight loss, suspected deficiency disease, pregnancy/lactation concerns, child growth problems, chronic disease, refusal to eat or drink, and eating-disorder risk.
+  - If red flags are absent, frame the answer as general supportive nutrition built from available foods: starch or grain for energy, protein food for repair, fruit or vegetable if available, a small amount of fat, and steady water access.
+  - Keep the answer bounded to meal pattern, hydration checks, and deficiency red flags; route ration allocation to GD-089 and school-age child/teen specifics to GD-954.
+conditional_required_actions:
+  - trigger_terms:
+      - no urine
+      - dark urine
+      - severe dehydration
+      - confused
+      - confusion
+      - fainting
+      - dizzy
+      - persistent vomiting
+      - persistent diarrhea
+      - cannot keep fluids down
+    required_actions:
+      - Treat severe dehydration, confusion, fainting, very little urine, persistent vomiting, persistent diarrhea, or inability to keep fluids down as urgent medical handoff rather than routine meal planning.
+  - trigger_terms:
+      - weight loss
+      - wasting
+      - swollen feet
+      - swollen belly
+      - edema
+      - severe weakness
+      - shortness of breath
+      - bleeding gums
+      - loose teeth
+      - numbness
+      - tingling
+      - poor wound healing
+      - deficiency
+    required_actions:
+      - Treat unexplained weight loss, edema or wasting, bleeding gums or loose teeth, severe weakness, shortness of breath, numbness or tingling, poor wound healing, or suspected deficiency disease as a professional-care trigger.
+  - trigger_terms:
+      - ration
+      - rations
+      - rationing
+      - allocate
+      - allocation
+      - food supply
+      - days of food
+      - stretch supplies
+    required_actions:
+      - Do not answer ration allocation from this card; route portioning, calorie budgeting, and supply-duration decisions to GD-089.
+  - trigger_terms:
+      - child
+      - teen
+      - teenager
+      - school-age
+      - growth chart
+      - percentile
+      - pregnant
+      - pregnancy
+      - breastfeeding
+      - lactating
+      - diabetes
+      - kidney disease
+      - heart failure
+      - eating disorder
+      - calories
+      - supplement
+      - dose
+      - dosage
+    required_actions:
+      - Do not use this card as the primary owner for school-age specifics, growth assessment, pregnancy or lactation care, chronic disease diets, eating-disorder reassurance, calorie prescriptions, supplement regimens, medication, or dosing.
+first_actions:
+  - Build most meals from a starch or grain for energy, a protein food, a fruit or vegetable if available, and a small amount of fat when available.
+  - Use practical starches such as rice, oats, corn, bread, pasta, potatoes, or other tubers.
+  - Use practical protein foods such as beans, lentils, peas, eggs, fish, meat, dairy, nuts, seeds, or grain-legume combinations.
+  - Prioritize leafy greens, orange vegetables, potatoes with skin, fermented vegetables, fresh produce, or any available fruit or vegetable for micronutrients.
+  - Include some fat when available to support calories and absorption of fat-soluble vitamins.
+  - Check hydration with urine color and frequency, thirst, mouth moisture, weakness, dizziness, confusion, heat exposure, labor, fever, vomiting, and diarrhea.
+  - Watch for deficiency red flags such as bleeding gums, loose teeth, slow wound healing, severe weakness, shortness of breath, pale skin, numbness or tingling, confusion, skin changes, diarrhea, or bone/growth concerns.
+urgent_red_flags:
+  - Severe dehydration signs, little or no urine, very dark urine, dizziness even lying down, mental confusion, fainting, persistent vomiting or diarrhea, or inability to keep fluids down.
+  - Unexplained weight loss, edema or swelling of feet or belly with wasting, extreme weakness, or visible undernutrition.
+  - Suspected deficiency disease signs including bleeding gums, loose teeth, skin hemorrhages, slow wound healing, severe weakness, shortness of breath, pale mucous membranes, numbness or tingling, confusion, skin changes, diarrhea, or bone deformity concerns.
+  - Refusal to eat or drink, eating-disorder risk, rapid intentional restriction, compulsive exercise, or major weight change.
+  - Nutrition concerns during pregnancy, lactation, child growth, chronic disease, ongoing fever or infection, or poor recovery from illness or wounds.
+forbidden_advice:
+  - Do not allocate scarce rations, set group portions, calculate supply duration, or prescribe survival calorie budgets from this card.
+  - Do not answer school-age child or teen nutrition specifics from this general adult/family nutrition card when GD-954 is the better owner.
+  - Do not diagnose anemia, scurvy, pellagra, beriberi, rickets, eating disorders, chronic disease, gastrointestinal disease, or any deficiency as certain.
+  - Do not prescribe calories or macros for weight loss, weight gain, body recomposition, or weight manipulation.
+  - Do not recommend supplement dosing, vitamin regimens, mineral regimens, medicines, medication dosing, detoxes, fasting protocols, or disease-specific treatment diets.
+  - Do not reassure severe dehydration, confusion, fainting, persistent vomiting or diarrhea, edema with wasting, rapid weight loss, refusal to eat or drink, eating-disorder risk, pregnancy/lactation concerns, child growth problems, or chronic disease as routine nutrition.
+do_not:
+  - Do not skip red-flag screening when the prompt mentions weight loss, weakness, dehydration, vomiting, diarrhea, swelling, poor wound healing, pregnancy, child growth, chronic disease, or restrictive eating.
+  - Do not make perfect diet quality the goal; use ordinary available foods and a repeatable meal pattern.
+  - Do not turn general nutrition support into ration allocation, diagnosis, eating-disorder reassurance, supplement dosing, calorie prescription, or disease-specific diet treatment.
+routine_boundary: >
+  Routine GD-735 nutrition support applies when the user needs general meal
+  patterning from available foods, hydration checks, and deficiency red-flag
+  awareness and there are no urgent red flags. Ration allocation, school-age
+  specifics, diagnosis, eating-disorder reassurance, calorie prescriptions for
+  weight manipulation, supplement regimens, disease-specific diet treatment,
+  chronic disease diet care, pregnancy/lactation care, infant feeding, and
+  child-growth assessment are outside this routine card.
+acceptable_uncertain_fit: >
+  If severity, age, pregnancy/lactation status, chronic disease, growth concern,
+  rationing need, or eating-disorder risk is unclear, lead with focused
+  screening questions. Give only conservative support such as the
+  starch/protein/fruit-or-vegetable/fat pattern and hydration checks while
+  advising professional evaluation for any red flag.
+clarifying_questions:
+  - Is this about general meal planning, or is it about ration allocation, a school-age child or teen, pregnancy/lactation, chronic disease, or growth concerns?
+  - Are there severe dehydration signs, confusion, fainting, very little urine, persistent vomiting or diarrhea, edema, wasting, rapid weight loss, or refusal to eat or drink?
+  - Are there deficiency warning signs such as bleeding gums, loose teeth, slow wound healing, severe weakness, shortness of breath, numbness or tingling, confusion, skin changes, diarrhea, or bone concerns?
+  - What starches, proteins, fats, fruits, vegetables, and safe water are actually available?
+citation_ids:
+  - nutrition-simple-balanced-meal-pattern
+  - nutrition-food-groups-protein-starch-fat-produce
+  - nutrition-deficiency-red-flags
+  - nutrition-hydration-checks
+  - nutrition-professional-care-boundary
+source_sections:
+  - guide: GD-735
+    slug: nutrition-wellness-eating-for-health
+    title: "Nutrition, Food & Wellness: Eating for Health"
+    sections:
+      - "#overview"
+      - "#food-groups"
+      - "#deficiency-diseases"
+      - "#meal-planning > Simple Balanced-Meal Pattern"
+      - "#water-and-hydration"
+      - "#when-to-seek-help"
+source_invariants:
+  - name: general meal pattern stays food based
+    guide: GD-735
+    must_include:
+      - "For routine general nutrition when no urgent red flags are present, build most meals from available foods rather than aiming for a perfect menu"
+      - "A **starch or grain** for energy"
+      - "A **protein food**"
+      - "A **fruit or vegetable if available**"
+      - "A **small amount of fat** when available"
+      - "Water with meals and between meals"
+      - "If food is scarce enough that portions must be allocated across people or days, use the rationing guide instead of this general meal-pattern guide."
+  - name: hydration signs and severe dehydration boundary
+    guide: GD-735
+    must_include:
+      - "Adequate:** Pale yellow urine, normal thirst"
+      - "Mild dehydration:** Dark urine, increased thirst, mild weakness"
+      - "Moderate dehydration:** Very dark urine, no urination for hours, weakness, dizziness"
+      - "Severe dehydration:** Little/no urine, dizziness even lying down, mental confusion"
+  - name: deficiency and professional care red flags
+    guide: GD-735
+    must_include:
+      - "Bleeding gums, loose teeth"
+      - "Slow wound healing"
+      - "Fatigue, weakness"
+      - "Shortness of breath"
+      - "Numbness/tingling in extremities"
+      - "Unexplained weight loss"
+      - "Suspected deficiency disease symptoms"
+      - "Growth problems in children"
+      - "Pregnancy/lactation"
+      - "Chronic disease"
+    must_not_match:
+      - "(severe dehydration|mental confusion|persistent vomiting|persistent diarrhea|edema|wasting|eating-disorder)[^\\n]{0,180}(routine meal planning|safe to watch|reassure)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-735 general nutrition support. It covers practical
+  balanced meals from available foods, the starch/protein/fruit-or-vegetable/fat
+  pattern, hydration checks, deficiency red flags, and professional-care
+  boundaries. It intentionally excludes ration allocation, school-age-specific
+  nutrition, diagnosis, eating-disorder reassurance, calorie prescriptions for
+  weight manipulation, supplement dosing/regimens, disease-specific diet
+  treatment, and replacement for chronic disease, pregnancy/lactation, infant
+  feeding, or child-growth care.

@@ -10,6 +10,19 @@ tags:
   - food-health
   - preventive-health
   - essential
+aliases:
+  - balanced meals
+  - healthy eating basics
+  - simple meal pattern
+  - eating from available foods
+  - protein starch fat fruit vegetable
+  - deficiency signs
+  - hydration checks
+  - general nutrition support
+routing_cues:
+  - Use for general supportive nutrition, balanced meals from available foods, deficiency red-flag awareness, hydration checks, and protein/starch/fat/fruit-or-vegetable meal pattern advice.
+  - Screen for severe dehydration, confusion, fainting, persistent vomiting or diarrhea, edema or wasting, unexplained weight loss, suspected deficiency disease, eating-disorder risk, pregnancy/lactation, child growth concerns, and chronic disease before routine meal-pattern advice.
+  - Do not use as the owner for ration allocation, school-age child specifics, diagnosis, eating-disorder reassurance, calorie prescriptions for weight manipulation, supplement dosing, disease-specific diet treatment, or replacement for chronic disease, pregnancy, or child-growth care.
 icon: 🥗
 description: Nutritional needs, food groups, basic meal planning for health, identifying nutrient deficiency signs, and wellness through diet. Macronutrients, micronutrients, and food as preventive medicine.
 related:
@@ -23,6 +36,8 @@ word_count: 4000
 last_updated: '2026-02-23'
 version: '1.0'
 liability_level: critical
+citation_policy: cite GD-735 only for general supportive nutrition and deficiency/hydration red-flag boundaries; use GD-089 for ration allocation and GD-954 for school-age child and teen nutrition specifics
+applicability: General meal-pattern and nutrition-support guidance when the user needs balanced meals from available foods, protein/starch/fat/fruit-or-vegetable patterning, hydration checks, and deficiency warning signs; not diagnosis, calorie prescriptions for weight manipulation, supplement regimens, eating-disorder reassurance, disease-specific diet treatment, ration allocation, school-age specifics, or replacement for chronic disease, pregnancy, lactation, infant feeding, or child-growth care.
 custom_css: |
   .nutrient-box { background-color: var(--card); border-left: 4px solid var(--accent); padding: 15px; margin: 15px 0; border-radius: 4px; }
   .deficiency-sign { background-color: var(--surface); padding: 12px; margin: 10px 0; border-left: 3px solid #e94560; border-radius: 4px; }
@@ -390,6 +405,22 @@ Without food diversity, specific deficiency diseases emerge.
 ## Basic Meal Planning for Austere Settings
 
 With limited resources, plan to maximize nutrition:
+
+### Simple Balanced-Meal Pattern
+
+For routine general nutrition when no urgent red flags are present, build most meals from available foods rather than aiming for a perfect menu:
+
+- A **starch or grain** for energy, such as rice, oats, corn, bread, pasta, potatoes, or other tubers
+- A **protein food**, such as beans, lentils, peas, eggs, fish, meat, dairy, nuts, seeds, or a grain-legume combination
+- A **fruit or vegetable if available**, especially leafy greens, orange vegetables, potatoes with skin, fermented vegetables, or any fresh produce that supplies vitamins and minerals
+- A **small amount of fat** when available, such as cooking oil, rendered animal fat, nuts, seeds, dairy, eggs, or fatty fish
+- **Water with meals and between meals**, with extra attention during heat, labor, fever, vomiting, or diarrhea
+
+This pattern supports energy, repair, vitamin absorption, fiber, and micronutrients without requiring calorie counting. If one part is missing at a meal, try to include it later in the day. If food is scarce enough that portions must be allocated across people or days, use the rationing guide instead of this general meal-pattern guide.
+
+:::warning
+Do not treat routine meal planning as enough when there are danger signs: severe dehydration, confusion, fainting, persistent vomiting or diarrhea, swelling of the feet or belly with wasting, rapid or unexplained weight loss, bleeding gums, loose teeth, severe weakness, shortness of breath, numbness or tingling, poor wound healing, pregnancy/lactation concerns, child growth problems, chronic disease, refusal to eat or drink, or eating-disorder risk. Those need professional medical or nutrition assessment when available.
+:::
 
 ### Sample Daily Meal Structure (Moderate Activity)
 

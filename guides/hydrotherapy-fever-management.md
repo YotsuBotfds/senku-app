@@ -28,6 +28,21 @@ routing_cues:
   - "contrast bath for inflammation or joint pain"
   - "fever staging and when cooling is needed"
   - "delirium or seizure risk from very high fever"
+citations_required: true
+applicability: >
+  Stable fever support and hydrotherapy basics only when severe infection,
+  toxic exposure, neurologic deterioration, neonatal danger signs, heat illness,
+  and major burns are reasonably excluded.
+not_for:
+  - Meningitis, sepsis/meningococcemia, severe confusion, new seizures, or shock-pattern fever.
+  - Newborn or very young infant fever.
+  - Poisoning or toxic ingestion questions.
+  - Heat stroke, severe hypothermia, or major burn-treatment protocols.
+  - Situations requiring airway, trauma, or immediate emergency escalation.
+citation_policy: >
+  Cite this reviewed GD-302 pathway only for stable fever comfort/support and simple hydrotherapy
+  techniques. Escalate to emergency-appropriate sources when newborn fever, meningitis/sepsis,
+  heat illness, poisoning, major burns, or neurological deterioration is present.
 icon: 🌡️
 description: Temperature regulation techniques, tepid sponging, fever staging and decision trees, burn cooling with water temperature control, contrast therapy for inflammation, delirium prevention in high fever.
 related:
@@ -635,6 +650,22 @@ Fever increases metabolic rate; combined with fluid loss via sweating, dehydrati
 - Persistent vomiting (risk of dehydration)
 - Fever lasting >7 days without improvement
 - Very young infant (< 3 months) with any fever
+
+</section>
+
+<section id="answer-card-safe-boundary">
+
+## Reviewed Safety Boundary for Fever Support
+
+This guide supports stable fever comfort and supportive care only after emergency signs are excluded.
+
+For routine fever care, use light clothing, a cooler room, small frequent fluids, rest in a calm setting, tepid sponging/cool compresses, and regular temperature checks.
+
+Avoid routine-use escalation: do not add medication dose schedules, do not use aggressive cooling, and do not apply this guide as the primary route for newborn fever, confusion or neurologic deterioration, suspected meningitis/sepsis, heat stroke, poisoning suspicion, or major-burn management.
+
+Stop active cooling if shivering, new confusion, worsening breathing trouble, persistent vomiting, or inability to keep fluids occurs.
+
+Hand off to newborn fever and pediatric emergency care, sepsis/meningitis pathways, thermal-injury/heat illness care, poisoning guidance, burn-treatment support, or emergency care when those concerns are present.
 
 </section>
 

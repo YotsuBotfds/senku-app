@@ -1,0 +1,113 @@
+card_id: disaster_psychology_children_pfa_support
+guide_id: GD-354
+slug: disaster-psychology-children
+title: Pediatric Psychological First Aid
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A child or adolescent needs psychological first aid support after disaster, displacement, evacuation, sheltering, frightening exposure, or separation from caregivers.
+  - The user asks how to calm a frightened child, explain what happened, restore routine, set up play or child-safe space, support sleep or meals, or rotate caregivers after disaster.
+  - The prompt concerns child disaster distress but does not require diagnosis, therapy planning, medication, or specialized abuse, suicide, violence, or medical emergency management.
+required_first_actions:
+  - Lead with immediate physical safety, basic needs, and calm adult presence before emotional processing.
+  - Reunite separated children with parents, attachment figures, siblings, or familiar caregivers as soon as safely possible, and keep caregiver changes predictable.
+  - Use short, age-appropriate explanations and reassurance; avoid scary detail with young children and answer repeated questions patiently.
+  - Restore small routines first, especially sleep location or bedtime ritual, shared meals, water and food, rest periods, play, and predictable daily sequence.
+  - Escalate immediately when self-harm or harm statements, abuse or sexual trauma indicators, severe violence, medical instability, caregiver inability to keep the child safe, or worsening distress appears.
+first_actions:
+  - Give the child a safe place away from active danger, graphic injury, chaotic rescue activity, and unnecessary transitions.
+  - Keep a calm familiar adult nearby, use a steady voice, offer physical comfort when welcome, and explain what is happening in simple terms.
+  - Support free play, drawing, movement, music, cultural games, and low-demand activities without analyzing the child or forcing meaning from the play.
+  - Protect sleep and meals with predictable rituals, shared eating, comfort items, and reassurance that an adult will remain available.
+  - Rotate caregivers or add staff before burnout compromises calm presence, attention, supervision, or child safety.
+urgent_red_flags:
+  - Any self-harm statement, suicidal talk, harm-to-others statement, hopelessness about living, or plan to hurt self or others.
+  - Abuse, assault, exploitation, or sexual trauma indicators, including sudden inappropriate sexual behavior or excessive sexual knowledge for age.
+  - Severe or escalating violence toward people or animals, uncontrolled aggression, or behavior that cannot be kept safe with calm supervision.
+  - Medical instability, injury, dehydration, refusal of basic needs, altered consciousness, severe dissociation, or complete non-engagement with eating, speaking, or safety.
+  - Caregiver is too impaired, exhausted, absent, unsafe, or overwhelmed to supervise and protect the child.
+  - Any support attempt causes increased fear, withdrawal, re-traumatization, isolation, or harm.
+forbidden_advice:
+  - Do not diagnose PTSD, trauma disorder, depression, or another mental-health condition from the guide.
+  - Do not prescribe therapy methods, trauma-processing protocols, exposure exercises, medication, sedatives, or psychiatric treatment plans.
+  - Do not force children to recount what happened, answer repeated direct trauma questions, participate in group trauma sharing, or explain play content.
+  - Do not separate children from attachment figures unless medically necessary or required for immediate safety.
+  - Do not treat professional mental-health, medical, child-protection, or emergency support as optional when red flags are present.
+do_not:
+  - Do not use routine reassurance alone when the child expresses self-harm, harm to others, suicidal ideation, abuse indicators, sexual trauma indicators, severe violence, or medical instability.
+  - Do not punish regression, clinginess, sleep disruption, appetite changes, withdrawal, or outbursts as misbehavior without first reducing fear and restoring structure.
+  - Do not move children between caregivers, spaces, or routines without explanation when avoidable.
+  - Do not present play support as play therapy delivered by an untrained helper; keep it framed as safe, normal developmental play and connection.
+  - Do not keep using an intervention that is increasing fear, withdrawal, re-traumatization, isolation, or harm.
+routine_boundary: >
+  This card is for pediatric disaster psychological first aid and support
+  routines, not diagnosis, psychotherapy, medication selection, abuse
+  investigation, violence containment, medical triage, or suicide intervention.
+  Red flags require immediate higher-level safety, medical, mental-health, or
+  child-protection help when available.
+acceptable_uncertain_fit: >
+  If it is unclear whether the child needs routine support or urgent help, use
+  the conservative support-first sequence: make the child physically safe, keep
+  a calm familiar adult present, reunite and document caregivers, meet food,
+  water, sleep, and play needs, avoid forced recounting, observe closely, and
+  escalate any red flag or worsening response.
+clarifying_questions:
+  - Is the child physically safe now, medically stable, and with a parent, sibling, or familiar caregiver?
+  - What age is the child, what happened recently, and what do they understand about it?
+  - Are they eating, sleeping, playing, accepting comfort, speaking, and staying safe compared with their usual baseline?
+  - Are there self-harm or harm statements, suicidal talk, abuse or sexual trauma concerns, severe violence, medical concerns, or signs that current support is making distress worse?
+citation_ids:
+  - pediatric-pfa-pillars-and-language
+  - age-specific-explanation-reunification
+  - play-routine-sleep-meals-support
+  - caregiver-rotation-burnout-safety
+  - escalation-and-intervention-halt
+source_sections:
+  - guide: GD-354
+    slug: disaster-psychology-children
+    title: Pediatric Psychological First Aid
+    sections:
+      - "#principles-pfa"
+      - "#age-specific"
+      - "#play-processing"
+      - "#routine-restoration"
+      - "#caregiver-care"
+      - "#failure-modes"
+      - "#when-to-seek-help"
+      - "#immediate-response-protocol"
+      - "#emergency-response"
+source_invariants:
+  - name: reunification_and_safety_first
+    guide: GD-354
+    must_include:
+      - "Ensure physical safety of the child and caregiver"
+      - "Do not separate child from attachment figure unless medically necessary"
+      - "Reunite separated children with caregivers immediately"
+  - name: no_forced_recounting
+    guide: GD-354
+    must_include:
+      - "Don't force details or ask directly about trauma"
+      - "Do not force narrative; let child initiate when ready"
+      - "Let them initiate trauma narrative."
+  - name: routine_play_sleep_meals_support
+    guide: GD-354
+    must_include:
+      - "Establish only sleep routine and basic meals"
+      - "Provide access to play materials and safe space for free play"
+      - "Eating together signals normalcy and safety."
+  - name: escalation_and_stop_worsening_interventions
+    guide: GD-354
+    must_include:
+      - "Self-harm or harm statements"
+      - "Sexual behavior changes"
+      - "Stop an intervention immediately if it causes"
+      - "increased fear or withdrawal"
+review_status: pilot_reviewed
+notes: >
+  Reviewed support-only card for GD-354. It is intentionally bounded to
+  pediatric disaster psychological first aid: safety, reunification, calm
+  familiar adult presence, age-appropriate explanation, predictable routine,
+  play, sleep, meals, caregiver rotation, observation, and escalation. It does
+  not authorize PTSD diagnosis, therapy protocols, medication advice, forced
+  trauma recounting, abuse investigation, or replacement of professional
+  mental-health, medical, emergency, or child-protection support.

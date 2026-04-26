@@ -1,0 +1,154 @@
+card_id: food_rationing_safe_planning
+guide_id: GD-089
+slug: food-rationing
+title: "Food Rationing & Nutrition"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A household, camp, shelter, or community has limited food and needs to stretch known-safe supplies fairly without making people sick.
+  - The user asks how to inventory food, estimate days of supply, set transparent portions, protect vulnerable people, or preserve nutrient diversity during shortage.
+  - Food scarcity overlaps with questionable food, unsafe water, limited cooking fuel, illness, or possible outbreak and the answer must separate safe ration planning from handoff risks.
+required_first_actions:
+  - Start with inventory of foods that are clearly safe to use; do not count suspect, spoiled, temperature-abused, water-contaminated, bulging, leaking, moldy, slimy, or illness-linked food as available calories.
+  - Estimate duration with transparent math: total known-safe food supply divided by planned daily use for the number of people being fed.
+  - Protect children, pregnant people, nursing parents, ill or injured people, elders, and people doing necessary heavy work before reducing portions.
+  - Preserve nutrient diversity where possible: staples for energy, protein foods, fats, fruits or vegetables when available, and iodized salt rather than calorie-only rationing.
+  - Route unsafe water, contaminated food-contact water, vomiting or diarrhea clusters, severe dehydration, and suspect food to the appropriate safety or illness guidance before continuing ordinary ration planning.
+conditional_required_actions:
+  - trigger_terms:
+      - unsafe water
+      - questionable water
+      - contaminated well
+      - floodwater
+      - dirty water
+      - water for cooking
+      - wash produce
+      - wash dishes
+    required_actions:
+      - Do not treat unsafe water as a routine rationing detail; require drinking-quality water for food contact or hand off to water safety before food preparation continues.
+  - trigger_terms:
+      - vomiting
+      - diarrhea
+      - stomach illness
+      - food poisoning
+      - outbreak
+      - many people sick
+      - same meal
+    required_actions:
+      - Stop routine ration planning long enough to separate sick people from food work, stop serving suspect meals, and route to foodborne illness or outbreak guidance.
+  - trigger_terms:
+      - mold
+      - bulging
+      - leaking
+      - slimy
+      - smells off
+      - left out
+      - thawed
+      - spoiled
+      - questionable food
+      - suspect food
+    required_actions:
+      - Exclude suspect food from supply-duration calculations and route discard-versus-salvage decisions to food safety or shelf-life guidance.
+first_actions:
+  - Make a written list of available safe foods by category: shelf-stable staples, protein foods, fats, fruits or vegetables, special-diet foods, infant or child foods, and perishable items that are still safe.
+  - Calculate a simple days-of-supply estimate using current safe inventory, number of people, and planned daily ration; update the estimate as food is used or added.
+  - Consume safe perishables before shelf-stable foods, while preserving shelf-stable staples for later shortage periods.
+  - Use a transparent ration log or card system so people can see the math, the distribution rules, and the priority protections.
+  - Reduce adults with lower needs before cutting children, pregnancy or nursing needs, illness recovery needs, elders who need soft or nutrient-dense foods, or necessary heavy-labor rations.
+  - Build meals from mixed foods when possible so the plan includes energy, protein, fat, some produce or preserved produce, and iodized salt.
+  - Keep cooking, serving, dishwashing, and food storage separate from sick-care cleanup and suspect-food sorting.
+urgent_red_flags:
+  - Multiple people develop vomiting, diarrhea, fever, or stomach cramps after the same meal, pickup site, water source, or food-handling workflow.
+  - Bloody diarrhea, repeated vomiting, confusion, fainting, very little or no urine, severe dehydration signs, high fever, neurologic symptoms, or illness in young children, elders, pregnant people, or immunocompromised people.
+  - Food is moldy, slimy, bulging, leaking, gas-producing, rotten-smelling, visibly contaminated, temperature-abused, contaminated by unsafe water, or linked to illness.
+  - A child, pregnant or nursing person, ill or injured person, elder, or person with chronic disease is not getting enough safe food or fluids.
+  - Someone may be severely malnourished, unable to keep fluids down, confused, fainting, or showing weakness beyond ordinary hunger.
+forbidden_advice:
+  - Do not serve suspect, spoiled, temperature-abused, unsafe-water-contaminated, moldy, bulging, leaking, slimy, or illness-linked food because supplies are scarce.
+  - Do not provide starvation timelines, refeeding schedules, 1000-calorie or other severe-restriction action plans, or weight-loss framing.
+  - Do not diagnose deficiency disease, prescribe supplement dosing, or present vitamin or mineral doses as the rationing answer.
+  - Do not reduce children's, pregnant people's, nursing parents', ill people's, elders', or disabled people's food as punishment or because they are less able to work.
+  - Do not let limited cooking fuel justify undercooking high-risk foods or using unsafe water for food contact.
+do_not:
+  - Do not count questionable food in the inventory just to make the supply estimate look better.
+  - Do not optimize for calories alone while ignoring protein foods, fats, produce or preserved produce, salt, hydration, and special needs.
+  - Do not answer illness clusters, unsafe water, or suspect-food decisions as ordinary ration math.
+  - Do not use the guide's starvation, severe minimum-ration, refeeding, supplement-dose, or deficiency-diagnosis passages as runtime source for this card.
+routine_boundary: >
+  Routine food-rationing planning applies only after the food being counted is
+  clearly safe and the immediate water, foodborne-illness, and outbreak risks
+  have been separated. The routine answer may inventory safe food, estimate
+  days of supply, set transparent fair portions, preserve nutrient variety, and
+  protect vulnerable people. Suspect food, unsafe water, illness clusters,
+  severe dehydration, severe malnutrition, refeeding, deficiency diagnosis,
+  supplement dosing, weight-loss framing, and punitive rationing exit this card.
+acceptable_uncertain_fit: >
+  If the food, water, or illness status is unclear, lead with conservative
+  separation: count only clearly safe food, ask what foods and water are
+  suspect, protect vulnerable people, and route illness, unsafe water, or
+  discard decisions before giving detailed ration math.
+clarifying_questions:
+  - How many people are being fed, including children, pregnant or nursing people, ill or injured people, elders, and heavy laborers?
+  - What foods are clearly safe and shelf-stable, what safe perishables should be used soon, and what food is questionable or already linked to illness?
+  - How much safe drinking-quality water and cooking fuel are available for cooking, washing produce, handwashing, and dishwashing?
+  - Are any people vomiting, having diarrhea, fever, severe dehydration signs, confusion, fainting, or symptoms after the same meal?
+  - Is there a known end date for the shortage, or should the plan be updated daily from the inventory log?
+citation_ids:
+  - food-rationing-safe-planning-boundary
+  - food-rationing-inventory-duration
+  - food-rationing-vulnerable-priority
+  - food-rationing-nutrient-diversity
+  - food-rationing-food-safety-handoff
+source_sections:
+  - guide: GD-089
+    slug: food-rationing
+    title: "Food Rationing & Nutrition"
+    sections:
+      - "#safe-planning-boundary"
+      - "#inventory"
+      - "#systems"
+      - "#children"
+      - "#fair-distribution"
+      - "#food-safety-scale"
+source_invariants:
+  - name: safe planning boundary excludes high-risk runtime sources
+    guide: GD-089
+    must_include:
+      - "Inventory only food that is clearly safe to use."
+      - "Remove suspect food from the ration plan"
+      - "This safe-planning lane does not provide starvation timelines"
+      - "punitive ration reductions"
+    must_not_match:
+      - "This safe-planning lane[^\\n]{0,200}(starvation timelines|refeeding schedules|severe calorie-restriction plans)[^\\n]{0,200}(provide|recommend)"
+  - name: inventory duration math stays transparent
+    guide: GD-089
+    must_include:
+      - "List all available foods"
+      - "Calculate calories per item"
+      - "Total available calories"
+      - "Divide by daily ration"
+      - "Maintain simple spreadsheet or written log"
+  - name: vulnerable groups protected
+    guide: GD-089
+    must_include:
+      - "Never cut children's rations first."
+      - "Prioritize pregnant women for nutrient-dense foods"
+      - "Prioritize for milk quality and quantity"
+      - "Elderly (65+ years)"
+  - name: food safety handoff before scarcity pressure
+    guide: GD-089
+    must_include:
+      - "Discard any produce with visible mold, rot, or insect damage."
+      - "Multiple people (3+) experiencing same gastrointestinal symptoms"
+      - "Immediately cease serving suspected food."
+    must_not_match:
+      - "(serve|use|eat)[^\\n]{0,120}(suspect|spoiled|questionable|moldy|bulging|leaking)[^\\n]{0,120}(scarce|shortage|ration)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-089 safe food-rationing planning only. It owns
+  inventory-first supply-duration math, transparent fair allocation, vulnerable
+  group protection, nutrient-diversity preservation, and safety handoffs. It
+  intentionally excludes the guide's starvation timeline, refeeding schedule,
+  severe-restriction examples, supplement dosing, deficiency diagnosis,
+  weight-loss framing, serving suspect food under scarcity pressure, and
+  punitive ration reductions from runtime/card source use.

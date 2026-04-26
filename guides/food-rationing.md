@@ -15,6 +15,12 @@ aliases:
 routing_cues:
   - Use for portioning, calorie budgeting, and supply duration after immediate food and water safety risks are separated.
   - When the question asks how to stretch supplies without making people sick, coordinate with food safety and water safety owners.
+answer_card:
+  - food_rationing_safe_planning
+reviewed_applicability:
+  - Safe planning only: inventory first, estimate days of supply, divide known-safe food fairly, protect vulnerable people, preserve nutrient variety, and hand off unsafe food, unsafe water, illness, or outbreak signs.
+  - Do not use starvation timelines, refeeding schedules, severe-restriction examples, deficiency diagnosis, supplement dosing, or weight-loss framing as runtime answer-card source material.
+citation_policy: cite GD-089 only for safe ration planning after unsafe food, unsafe water, outbreak illness, severe malnutrition, and emergency medical signs are excluded; use food safety, water safety, public-health, or medical emergency owners for those handoffs
 description: Calorie budgeting, nutrient optimization, rationing systems, deficiency disease prevention, and supply duration.
 related:
   - agriculture
@@ -44,6 +50,22 @@ liability_level: high
 - **"We need to stretch supplies with wild foods or gardens."** See Extended Rationing.
 - **"We need to preserve food for storage."** See `drying-dehydration-techniques.md` and `fermentation-pickling.md`.
 :::
+<section id="safe-planning-boundary">
+
+## Safe Planning Boundary
+
+Use this guide for fair, conservative planning after immediate food safety and water safety risks are separated. The safe sequence is:
+
+1. Inventory only food that is clearly safe to use.
+2. Estimate supply duration from the current known-safe inventory.
+3. Set transparent portions that protect children, pregnant people, nursing parents, ill or injured people, elders, and people doing necessary heavy work.
+4. Preserve variety across staples, protein foods, fats, fruits or vegetables when available, and iodized salt rather than optimizing calories alone.
+5. Remove suspect food from the ration plan and route it to food safety or spoilage assessment instead of serving it because supplies are scarce.
+6. Hand off vomiting or diarrhea clusters, severe dehydration, unsafe water, or contaminated food-contact water before continuing ration planning.
+
+This safe-planning lane does not provide starvation timelines, refeeding schedules, severe calorie-restriction plans, weight-loss advice, supplement dosing, diagnosis of deficiency disease, or punitive ration reductions. If a person may already be severely malnourished, unable to keep fluids down, confused, fainting, or showing outbreak-linked illness, treat that as a medical or public-health handoff rather than routine ration math.
+
+</section>
 <section id="caloric">
 
 ## Caloric Needs Assessment

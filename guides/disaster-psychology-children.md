@@ -4,6 +4,28 @@ slug: disaster-psychology-children
 title: Pediatric Psychological First Aid
 category: medical
 difficulty: intermediate
+aliases:
+  - pediatric psychological first aid
+  - child disaster psychological support
+  - children scared after disaster
+  - child safe space after disaster
+  - separated child reunification support
+  - child nightmares after disaster
+  - caregiver rotation child disaster support
+  - disaster routine play sleep meals child
+routing_cues:
+  - Use for pediatric disaster psychological first aid support after disaster, displacement, evacuation, sheltering, or family separation.
+  - Lead with physical safety, caregiver reunification, calm familiar adult presence, age-appropriate explanation, predictable routine, play, sleep, meals, and caregiver rotation.
+  - Escalate immediately for self-harm or harm statements, suicidal talk, abuse or sexual trauma indicators, severe violence, medical instability, inability of a caregiver to keep the child safe, or interventions that worsen distress.
+  - Do not diagnose PTSD, prescribe therapy methods or medication, force trauma recounting, or replace professional mental-health care when concerning signs are present.
+citations_required: true
+applicability: >
+  Pediatric disaster psychological first aid support only: safety,
+  reunification, calm adult presence, age-appropriate explanation, routine,
+  play, sleep and meals, caregiver rotation, observation, and escalation.
+  Not a PTSD diagnosis, therapy protocol, medication guide, forced trauma
+  recounting script, or substitute for professional mental-health or medical
+  support when red flags are present.
 tags:
   - medical
   - psychology

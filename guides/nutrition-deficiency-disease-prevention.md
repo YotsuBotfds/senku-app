@@ -4,6 +4,12 @@ slug: nutrition-deficiency-disease-prevention
 aliases:
   - nutrition deficiency disease prevention
   - deficiency disease prevention
+routing_cues:
+  - Use for deficiency risk screening, early warning signs, food-first prevention, and community diet adjustment when multiple people show similar deficiency signs.
+  - Treat single-food diets, no year-round vitamin C source, no iodine source, and no animal products as planning red flags that require food-system changes.
+  - Do not use for supplement or drug dosing, diagnosis certainty, or routine management of advanced signs such as edema, confusion, severe shortness of breath, severe weakness, pregnancy goiter, or child growth/bone deformity.
+citation_policy: cite reviewed GD-493 deficiency-risk screening and community food-plan sections for food-first deficiency prevention answers; route advanced symptoms, diagnosis, supplement dosing, and drug treatment outside this card
+applicability: deficiency risk screening and food-first prevention only; not a diagnosis, supplement dosing, medication, or advanced-symptom treatment protocol
 title: Nutrition & Deficiency Disease Prevention
 category: medical
 difficulty: beginner
@@ -49,6 +55,30 @@ This guide equips you with:
 Canonical routing note: use `nutritional-planning-deficiency-prevention` for calorie planning, macro/micronutrient tables, and mixed-basis comparisons. Use `pharmacy-compounding` for the shared ORS recipe wording.
 
 Deficiency diseases develop over weeks to months of inadequate intake. Early recognition and intervention—long before clinical symptoms emerge—is crucial.
+
+</section>
+
+<section id="deficiency-risk-screening-food-first-response">
+
+## Deficiency Risk Screening & Food-First Response
+
+This is the reviewed answer-card surface for GD-493. Use it for deficiency risk screening, early warning signs, food-first prevention, and community diet adjustment before advanced disease or diagnostic certainty is required.
+
+**Screen diet pattern first:**
+- A single-food or near-single-food diet is a deficiency risk even if calories seem adequate.
+- No reliable year-round vitamin C source is a scurvy planning red flag; add fresh, fermented, or preserved vitamin C foods before symptoms appear.
+- No reliable iodine source is a goiter and pregnancy/child-development risk; plan seaweed, fish, eggs, dairy, iodized salt where available, or trade routes.
+- No animal products raises risk for B12, heme iron, zinc, complete protein, and vitamin D gaps; plan eggs, dairy, fish, meat, or carefully managed plant-based alternatives and monitoring.
+
+**Early warning signs to take seriously:** fatigue out of proportion to workload, irritability or mood changes, poor concentration, pins-and-needles in hands or feet, slow wound healing, bleeding gums, sun-exposed rash, diarrhea with rash or mouth changes, pale inner eyelids or mouth, shortness of breath with normal activity, visible neck swelling, delayed walking or tooth eruption, and poor child growth compared with peers.
+
+**Food-first response:** adjust meals toward variety before giving supplement or drug advice. Add legumes plus grains for protein, leafy greens and orange vegetables for vitamins and minerals, fermented vegetables or berries for vitamin C, eggs/fish/meat/dairy where available for B vitamins, iron, zinc, iodine, and vitamin D, and small fish with bones or leafy greens for calcium.
+
+**Community trigger:** if multiple people show similar early signs, treat it as a food production, preservation, or distribution gap. Do not only advise individual diet changes. Review the shared menu, stores, ration rules, seasonal preservation, and trade plan, then add the missing food category community-wide.
+
+**Escalation boundary:** edema, confusion, severe shortness of breath, severe weakness, pregnancy goiter, or child growth delay, bone deformity, delayed walking, seizures, or spasms are not routine deficiency-prevention questions. Escalate for medical assessment when available and avoid confident diagnosis or home-only reassurance.
+
+**Dosing boundary:** this card does not provide vitamin, mineral, supplement, medication, injection, or drug dosing. Keep answers food-first and safety-screened unless another reviewed medication or clinician-facing source is explicitly in scope.
 
 </section>
 

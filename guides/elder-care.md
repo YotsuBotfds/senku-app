@@ -1,4 +1,4 @@
-﻿---
+---
 id: GD-355
 slug: elder-care
 title: Elder Care & Geriatric Medicine
@@ -24,6 +24,24 @@ tags:
   - grandparent keeps falling
   - elderly suddenly confused
   - old person not eating
+aliases:
+  - daily elder care support
+  - how do I care for an elderly parent at home
+  - caregiver burden elder care
+  - elder mobility and fall prevention
+  - help bathing older parent
+  - elder not drinking enough
+  - elder hygiene and skin checks
+  - caregiver backup plan
+  - routine supervision for older adult
+  - elder care without medication advice
+routing_cues:
+  - Use for day-to-day elder support, caregiver workload, mobility help, fall-prevention basics, meals, hydration, hygiene, skin checks, supervision routines, and caregiver backup planning.
+  - Escalate rather than routine daily-care advice for sudden decline, chest pain or stroke signs, severe shortness of breath, dehydration with confusion, serious fall or head injury, infected wound signs, overdose or medication error, or unsafe dementia wandering.
+  - Do not use as a diagnostic, medication, insulin, antihypertensive, herbal dosing, antimicrobial-herb, hawthorn, St. John's wort, or medication-substitution protocol.
+citations_required: true
+citation_policy: cite reviewed GD-355 daily elder-care sections and the reviewed GD-355 answer card for routine caregiver support, mobility/fall-prevention basics, nutrition/hydration support, hygiene/skin checks, supervision routines, caregiver burden, and caregiver backup boundaries
+applicability: Daily elder-care support and caregiver planning for older adults; not diagnosis, medication changes, herbal dosing, antimicrobial herbs, hawthorn, St. John's wort, insulin substitutions, acute chest-pain/stroke/SOB triage, dehydration/confusion crisis care, serious fall/head-injury management, infected-wound treatment, overdose/medication-error triage, or unsafe dementia wandering management.
 icon: 👴
 description: Caring for elderly community members without modern medical infrastructure, including chronic condition management, mobility, cognitive decline, and end-of-life care.
 related:
@@ -62,6 +80,10 @@ Quick routing:
 <section id="historical-context">
 
 ## Historical Context of Geriatric Care
+
+Reviewed daily-support scope for GD-355: use this guide for routine elder-care workload, mobility and fall-prevention basics, nutrition and hydration support, hygiene and skin checks, supervision routines, caregiver burden, and caregiver backup planning. Keep advice practical, non-diagnostic, and non-medication: do not provide herbal dosing, medication substitutions, insulin substitutions, antimicrobial-herb protocols, hawthorn advice, or St. John's wort advice from this daily-support surface.
+
+Routine daily elder-care advice stops when there is sudden decline, chest pain or stroke signs, severe shortness of breath, dehydration with confusion, a serious fall or head injury, infected wound signs, overdose or medication error, or unsafe dementia wandering. In those cases, arrange urgent help, urgent transport, or the fastest available clinician before returning to routine care planning.
 
 Modern geriatric medicine emerged only in the 20th century as life expectancy increased dramatically. Before industrialization, the elderly were cared for within family units and communities, with practices developed over centuries. Understanding historical approaches reveals sustainable methods that don't depend on pharmaceutical interventions or medical infrastructure.
 

@@ -4,6 +4,11 @@ slug: nutritional-planning-deficiency-prevention
 aliases:
   - nutrition planning deficiency prevention
   - nutritional planning
+  - food first deficiency prevention
+  - hungry gap nutrition planning
+  - seasonal nutrition planning
+  - community nutrition screening
+  - micronutrient meal planning
 title: Nutritional Planning & Deficiency Prevention
 category: medical
 difficulty: intermediate
@@ -11,6 +16,10 @@ tags:
   - essential
   - medical
   - food-safety
+routing_cues:
+  - Use for meal planning, macro and micronutrient balancing, seasonal or hungry-gap planning, food-source optimization, food-first deficiency prevention, and community nutrition screening.
+  - Route deficiency disease recognition, symptom timelines, disease tables, and deficiency treatment framing to GD-493 Nutrition & Deficiency Disease Prevention.
+  - Do not use this guide's reviewed answer card for supplement dosing or regimens, deficiency treatment tables as actions, ORS administration, severe malnutrition or refeeding, diagnosis, pediatric emergencies, infant feeding, pregnancy-specific care, or emergency treatment.
 icon: 🥗
 description: Macro and micronutrient planning, seasonal balancing, deficiency prevention, caloric needs by activity level, special population nutrition, and food source optimization for long-term health.
 related:
@@ -32,6 +41,8 @@ read_time: 25
 word_count: 8000
 last_updated: '2026-02-22'
 version: '1.0'
+citation_policy: cite the reviewed GD-668 nutritional planning answer card for food-first meal planning, seasonal/hungry-gap nutrition planning, food-source optimization, and community nutrition screening; route deficiency disease recognition to GD-493
+applicability: food-first nutrition planning and prevention only; not supplement dosing, deficiency treatment tables, ORS administration, refeeding, diagnosis, pediatric emergencies, infant feeding, pregnancy-specific care, or emergency treatment
 liability_level: high
 ---
 
@@ -56,6 +67,24 @@ The difference between calories and nutrition is the difference between staying 
 Routing note: keep this guide focused on planning, balancing, and prevention. For deficiency recognition and disease framing, use `nutrition-deficiency-disease-prevention`. For ORS wording, defer to `pharmacy-compounding`.
 
 ---
+
+<section id="nutritional-planning-answer-card-boundary">
+
+## Nutritional Planning Answer Card Boundary
+
+This is the reviewed answer-card surface for GD-668. Use it for food-first planning before deficiency disease is suspected: meal planning, macro and micronutrient balance, seasonal or hungry-gap planning, food-source optimization, preservation choices, and community screening.
+
+**First planning steps:**
+- Start with available staple calories, protein sources, fat sources, fresh or preserved produce, mineral sources, and likely seasonal gaps.
+- Balance each recurring meal pattern across calories, protein, fats, carbohydrates, fiber, and key micronutrient sources rather than relying on one staple food.
+- Plan the hungry gap before it arrives: preserve vitamin C sources, maintain legume or animal protein access, protect fat sources, and identify iodine, iron, vitamin A, vitamin D, B-vitamin, calcium, and zinc food sources.
+- Prefer food-first prevention: diversify staples, combine legumes with grains or seeds, preserve vegetables through fermentation or other nutrient-aware methods, use whole grains when possible, and pair plant iron with vitamin C foods.
+- Use community screening as surveillance, not diagnosis: track weight trends, food access, visible wasting, edema, fatigue patterns, and diet monotony, then escalate concerning findings to medical or deficiency-recognition guidance.
+- Route suspected deficiency disease recognition, symptom timelines, disease-specific framing, and treatment decisions to [Nutrition & Deficiency Disease Prevention](../nutrition-deficiency-disease-prevention.html).
+
+**Boundary limits:** Do not answer this card with supplement dosing or regimens, deficiency treatment tables as action plans, ORS administration, severe malnutrition or refeeding protocols, diagnosis, pediatric emergency decisions, infant feeding, pregnancy-specific care, or emergency treatment.
+
+</section>
 
 ## Macronutrients
 

@@ -1,0 +1,155 @@
+card_id: fever_hydrotherapy_support
+guide_id: GD-302
+slug: hydrotherapy-fever-management
+title: "Hydrotherapy and Fever Management"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks for fever comfort actions with water, sponging, tepid cooling, cool compresses, burn-related cooling questions, or temperature monitoring.
+  - The scenario is stable fever support (no immediate severe respiratory, neurological, neonatal, toxic, major burn, or heat-illness instability reported).
+  - The goal is home or field comfort care, not diagnostic workup or aggressive emergency routing.
+required_first_actions:
+  - Screen for urgent danger patterns first; if confusion, seizure, stiff neck, non-blanching rash, major dehydration, newborn status, suspected poisoning, heat-stroke pattern, or major burn deterioration is present, escalate immediately.
+  - State clearly that this card is routine fever-support only and does not replace emergency evaluation.
+  - Start with safe, low-load supportive actions: cooler room, light removable clothing, minimal bedding, fluids in small frequent sips, and quiet rest.
+  - If still needed and tolerated, begin gentle tepid external cooling (sponging/compresses) and continue with frequent reassessment.
+  - Stop active cooling when shivering, worsening confusion, breathing trouble, persistent vomiting, or inability to keep fluids occurs, and escalate care.
+conditional_required_actions:
+  - trigger_terms:
+      - newborn
+      - "newborn fever"
+      - "3 months"
+      - "first 3 months"
+      - "first 28 days"
+      - "infant under"
+    required_actions:
+      - Handoff to newborn fever pathways (infant danger-sign frameworks and pediatric emergency support) before routine hydrotherapy instructions.
+  - trigger_terms:
+      - meningitis
+      - stiff neck
+      - non-blanching
+      - petechial
+      - petechiae
+      - purple rash
+      - sepsis
+      - confusion
+      - delirium
+      - seizure
+    required_actions:
+      - Route to meningitis/sepsis emergency pathways and urgent care rather than routine fever comfort.
+  - trigger_terms:
+      - heat stroke
+      - heat illness
+      - overheating
+      - collapse
+      - not sweating
+      - hot and dry
+      - shivering stopped
+    required_actions:
+      - Route to thermal injury and heat-illness care with emergency cooling priorities; do not continue this routine fever routine script.
+  - trigger_terms:
+      - poisoning
+      - poison
+      - toxic
+      - ingestion
+      - exposed
+      - exposure
+    required_actions:
+      - Route to poisoning/ toxicology triage first; do not center the answer on routine fever cooling while ingestion is unresolved.
+  - trigger_terms:
+      - burn
+      - scald
+      - blister
+      - skin burn
+      - burned
+      - major burn
+    required_actions:
+      - Handoff burn-management questions (extent, depth, dressings, large-burn fluids, pain plan) to burn-specific guidance; this card remains routine fever-support only.
+  - trigger_terms:
+      - unable to drink
+      - severe headache
+      - breathing trouble
+      - chest pain
+      - low blood pressure
+      - not urinating
+      - very young infant (< 3 months) with fever
+    required_actions:
+      - Escalate as urgent or emergency support; keep hydrotherapy as low-priority until danger is controlled.
+first_actions:
+  - Use tepid sponging/cool compresses on trunk and proximal limbs only, with warm hands and short contact cycles to avoid chilling.
+  - Keep monitoring simple and frequent: temperature trend, mental status, breathing effort, urine output proxy, and hydration.
+  - Maintain hydration with small, frequent cool fluids and oral rehydration as tolerated.
+  - Keep patient in a calm, low-stimulation environment and prioritize rest.
+  - Use clear escalation instructions when any red flag appears instead of adding additional interventions.
+urgent_red_flags:
+  - New confusion, agitation, altered awareness, seizure, or new behavioral collapse.
+  - Stiff neck, severe headache with vomiting, purplish or non-blanching rash.
+  - Worsening breathing trouble, persistent vomiting, chest pain, or new cyanosis.
+  - Fever greater than 41 C, no measurable improvement after measured supportive care, persistent fever longer than 7 days.
+  - Newborn status with fever, suspected heat stroke, severe hypothermia pattern, suspected poisoning, or major burn deterioration.
+forbidden_advice:
+  - Do not provide antipyretic dose schedules or specific mg/mg-per-kilogram timing guidance.
+  - Do not apply ice baths, prolonged very cold immersion, or aggressive cooling as routine routine fever management.
+  - Do not use alcohol-based rubs, alcohol ingestion, or other nonmedical topical coolants.
+  - Do not continue active cooling once shivering or worsening confusion appears.
+  - Do not route pediatric fever, meningitis/sepsis, heat-stroke, poisoning, or major-burn presentations to this routine-care script.
+do_not:
+  - Do not delay escalation for confusion, persistent deterioration, severe rash, seizures, poor intake, or suspected poisoning.
+  - Do not include medication dosing, repeat dose timing tables, or treatment substitution for antibiotics or antidotes.
+  - Do not use large-burn treatment plans, cooling duration tables, or burn-depth management as routine fever closure.
+routine_boundary: >
+  Routine fever comfort applies only when danger signs are absent. Newborn fever,
+  sepsis/meningitis patterns, heat-illness collapse, toxic ingestion, major burns,
+  neurologic change, or shock-pattern signs exit this routine card and move to urgent care,
+  pediatric, toxicology, thermal injury, burn, or first-aid emergency pathways.
+acceptable_uncertain_fit: >
+  With incomplete input, answer with explicit danger screening and a short
+  supportive bridge (cool environment, fluids, light clothing, tepid cooling only if
+  stable) while prioritizing escalation questions. Do not normalize uncertain severe
+  danger patterns as routine fever.
+clarifying_questions:
+  - What is the patient age, and is this a newborn or very young infant?
+  - Are there confusion, stiff neck, non-blanching rash, breathing trouble, seizures, or reduced urination?
+  - Is there known heat stress, toxic exposure, or a burn that needs separate triage?
+  - What are the current temperature reading, trend, and ability to keep small amounts of fluid down?
+citation_ids:
+  - fever-hydrotherapy-review-boundary
+  - fever-hydrotherapy-core-support
+  - fever-hydrotherapy-cooling-basics
+  - fever-hydrotherapy-monitoring-escalation
+  - fever-hydrotherapy-handoff-boundaries
+source_sections:
+  - guide: GD-302
+    slug: hydrotherapy-fever-management
+    title: "Hydrotherapy and Fever Management"
+    sections:
+      - "#monitoring"
+      - "#fever-assessment"
+      - "#tepid-sponging"
+      - "#fluids-and-nutrition"
+      - "#fever-management-ladder"
+      - "#answer-card-safe-boundary"
+source_invariants:
+  - name: stable-fever-support-boundary
+    guide: GD-302
+    must_include:
+      - this guide supports stable fever comfort and supportive care only after emergency signs are excluded
+      - light clothing
+      - small frequent fluids
+      - regular temperature checks
+      - stop active cooling if shivering
+  - name: escalation-hand-off-boundary
+    guide: GD-302
+    must_include:
+      - hand off to newborn fever and pediatric emergency care
+      - sepsis/meningitis pathways
+      - thermal-injury/heat illness care
+      - poisoning guidance
+      - burn-treatment support
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed card closure for GD-302 focuses on stable fever comfort support and hydrotherapy
+  basics only. It excludes antipyretic dosing, aggressive cooling, alcohol rub cooling,
+  poisoning bypass, burn management expansion, and delayed escalation when confusion,
+  meningitis/sepsis, heat illness, newborn status, or deterioration is present.
