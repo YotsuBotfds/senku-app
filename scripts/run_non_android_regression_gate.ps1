@@ -310,6 +310,16 @@ if ($Mode -in @('Fast', 'All')) {
         -StrictWarnings $strictWarnings `
         -AllowedDriftManifest $AllowedDriftManifest
 
+    Add-FastGateCommands `
+        -Commands $commandsToRun `
+        -PythonPath $pythonPath `
+        -PackPath 'artifacts\prompts\adhoc\rag_eval9_high_liability_compound_holdouts_20260426.jsonl' `
+        -BenchStem 'rag_eval9_high_liability_compound_holdouts_20260426' `
+        -CommandPrefix 'Eval9Primary' `
+        -RunLabel $runLabel `
+        -RetrievalTopK $TopK `
+        -StrictWarnings $strictWarnings
+
     if ($IncludeSafetyCritical) {
         Add-FastGateCommands `
             -Commands $commandsToRun `
