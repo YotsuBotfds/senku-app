@@ -31,11 +31,11 @@ liability_level: medium
 ---
 
 If the problem is actually livestock, game, or a disaster carcass, switch to [Animal Salvage & Butchery from Ruins](./animal-salvage-butchery.md) instead.`r`n`r`n:::info-box
-**Quick triage Ã¢â‚¬â€ common questions:**
+**Quick triage - common questions:**
 - **How do I clean a fish?** -> [How To Clean a Fish](#cleaning): chill first, scale if keeping skin, gut from vent to gills (don't puncture organs), rinse briefly, pat dry. If you are handling livestock, game, or a disaster carcass, use [Animal Salvage & Butchery from Ruins](./animal-salvage-butchery.md) instead.
-- **My fish smells bad Ã¢â‚¬â€ is it still good?** Ã¢â€ â€™ [Odor Management](#odor): fresh fish smells mild and clean. Sour, ammonia-like, rotten, or strongly rancid odor means spoilage. If the smell persists after rinsing and trimming, discard the fish.
-- **Can I eat this fish?** Ã¢â€ â€™ [What Parts Are Safe](#safe-parts): safest default is firm muscle meat only. Discard gills, guts, gallbladder, and any bile-stained flesh. From unknown water, keep only the meat.
-- **How do I fillet a fish?** Ã¢â€ â€™ [How To Fillet](#filleting): cut behind gill plate to backbone, slide knife along spine toward tail, work over rib cage, flip and repeat. Pull pin bones with tweezers.
+- **My fish smells bad - is it still good?** -> [Odor Management](#odor): fresh fish smells mild and clean. Sour, ammonia-like, rotten, or strongly rancid odor means spoilage. If the smell persists after rinsing and trimming, discard the fish.
+- **Can I eat this fish?** -> [What Parts Are Safe](#safe-parts): safest default is firm muscle meat only. Discard gills, guts, gallbladder, and any bile-stained flesh. From unknown water, keep only the meat.
+- **How do I fillet a fish?** -> [How To Fillet](#filleting): cut behind gill plate to backbone, slide knife along spine toward tail, work over rib cage, flip and repeat. Pull pin bones with tweezers.
 :::
 
 <section id="overview">
