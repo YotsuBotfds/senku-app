@@ -1057,6 +1057,40 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(question, airway_meta),
             query._metadata_rerank_delta(question, child_safety_meta),
         )
+        prompt = query.build_prompt(
+            question,
+            {
+                "documents": [["Burn and smoke first-aid excerpt."]],
+                "metadatas": [[{
+                    "guide_title": "Burn Treatment & Management",
+                    "guide_id": "GD-052",
+                    "section_heading": "Inhalation Injury",
+                    "category": "medical",
+                    "difficulty": "intermediate",
+                    "description": "Burns, smoke exposure, and airway risk.",
+                }]],
+                "distances": [[0.05]],
+                "_senku": {
+                    "scenario_frame": {
+                        "objectives": [],
+                        "assets": [],
+                        "constraints": [],
+                        "hazards": [],
+                        "people": [],
+                    },
+                    "objective_coverage": [],
+                    "result_annotations": [
+                        {"support_signal": "direct", "matched_objectives": []}
+                    ],
+                },
+            },
+        )
+        self.assertIn(
+            "Thermal burn plus smoke/facial/child risk: answer emergency-first",
+            prompt,
+        )
+        self.assertIn("call emergency services/EMS now", prompt)
+        self.assertIn("Do not lead with tap-water safety", prompt)
 
     def test_child_face_hand_burn_smoke_predicate_stays_narrow(self):
         near_misses = [
@@ -4400,6 +4434,58 @@ class QueryRoutingTests(unittest.TestCase):
         with patch("query.embed_batch", return_value=[]):
             with self.assertRaisesRegex(RuntimeError, "Embedding response count mismatch"):
                 query.retrieve_results("how do i build a house", DummyCollection(), 5)
+
+    def test_pediatric_dehydration_retrieval_uses_deeper_candidate_pool(self):
+        question = (
+            "Several kids at a shelter have diarrhea, and one toddler is very sleepy "
+            "and cannot keep fluids down. Handwashing water is limited and the "
+            "kitchen still needs to serve dinner. What should the lead separate first?"
+        )
+        requested_limits = []
+
+        class DummyCollection:
+            def query(self, **kwargs):
+                requested_limits.append(kwargs.get("n_results"))
+                return {
+                    "ids": [[]],
+                    "documents": [[]],
+                    "metadatas": [[]],
+                    "distances": [[]],
+                }
+
+        with patch(
+            "query.embed_batch",
+            side_effect=lambda texts, *args, **kwargs: [[0.0] for _ in texts],
+        ):
+            query.retrieve_results(question, DummyCollection(), 8)
+
+        self.assertTrue(requested_limits)
+        self.assertGreaterEqual(max(requested_limits), 80, requested_limits)
+
+        near_miss_limits = []
+
+        class NearMissCollection:
+            def query(self, **kwargs):
+                near_miss_limits.append(kwargs.get("n_results"))
+                return {
+                    "ids": [[]],
+                    "documents": [[]],
+                    "metadatas": [[]],
+                    "distances": [[]],
+                }
+
+        with patch(
+            "query.embed_batch",
+            side_effect=lambda texts, *args, **kwargs: [[0.0] for _ in texts],
+        ):
+            query.retrieve_results(
+                "Several kids at a shelter have mild diarrhea but are playful and drinking.",
+                NearMissCollection(),
+                8,
+            )
+
+        self.assertTrue(near_miss_limits)
+        self.assertTrue(all(limit < 80 for limit in near_miss_limits), near_miss_limits)
 
 
 if __name__ == "__main__":

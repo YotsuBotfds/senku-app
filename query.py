@@ -14733,6 +14733,8 @@ def retrieve_results(
         candidate_limit = max(candidate_limit, 80)
     if _is_thermal_burn_smoke_airway_query(question):
         candidate_limit = max(candidate_limit, 80)
+    if _is_pediatric_dehydration_danger_query(question):
+        candidate_limit = max(candidate_limit, 80)
     retrieval_profile = _retrieval_profile_for_question(question, scenario_frame)
     specs = []
     seen = set()
@@ -14919,6 +14921,16 @@ def _prompt_mode_notes(mode, review, question=None):
             "distention and no stool/gas: keep them NPO/nothing by mouth if surgery "
             "or obstruction is possible, monitor shock/airway, and arrange urgent "
             "medical help."
+        )
+    if _is_thermal_burn_smoke_airway_query(question or ""):
+        notes.append(
+            "- Thermal burn plus smoke/facial/child risk: answer emergency-first. "
+            "The first sentence must include this exact action: call emergency "
+            "services/EMS now. In that same opening, get the child out to fresh "
+            "air, then monitor airway and breathing, then cool the burns with "
+            "clean cool running water if safely available. Do not lead with "
+            "tap-water safety or water-purification uncertainty, and do not "
+            "downgrade this to watchful waiting."
         )
     if _is_gyn_emergency_query(question or ""):
         notes.append(
