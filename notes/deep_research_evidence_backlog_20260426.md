@@ -281,6 +281,8 @@ Action:
 - Added metadata-audit coverage proving body routing markers count as
   high-liability routing support without requiring explicit alias/routing-cue
   frontmatter for that specific support signal.
+- Added bench metrics-lake coverage proving JSONL parse errors are recorded
+  without dropping valid object rows or scalar-line metrics from the same file.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

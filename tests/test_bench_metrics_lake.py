@@ -151,6 +151,50 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_jsonl_records_parse_errors_without_dropping_valid_rows(self):
+        root = self.make_tmpdir()
+        jsonl_path = root / "mixed.jsonl"
+        jsonl_path.write_text(
+            json.dumps({"id": "r1", "status": "pass"}) + "\n"
+            "{not-json\n"
+            "7\n",
+            encoding="utf-8",
+        )
+        output = root / "lake.sqlite"
+
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        summary = self.module.ingest_artifacts(
+            conn,
+            [jsonl_path],
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        self.assertEqual(summary["artifacts"], 1)
+        self.assertEqual(summary["detail_rows"], 1)
+        self.assertEqual(summary["metrics"], 1)
+        verify = sqlite3.connect(output)
+        try:
+            artifact = verify.execute(
+                "SELECT json_type, error FROM artifacts WHERE path = ?",
+                ("mixed.jsonl",),
+            ).fetchone()
+            self.assertEqual(artifact[0], "jsonl")
+            self.assertIn("line 2: JSONDecodeError", artifact[1])
+            metric = verify.execute(
+                """
+                SELECT metric_value, metric_number
+                FROM metrics
+                WHERE metric_path = 'jsonl.scalar_line.2'
+                """
+            ).fetchone()
+            self.assertEqual(metric, ("7", 7.0))
+        finally:
+            verify.close()
+
     def test_main_auto_falls_back_to_sqlite_when_duckdb_is_unavailable(self):
         if self.module.resolve_backend("auto") != "sqlite":
             self.skipTest("duckdb is installed in this environment")
