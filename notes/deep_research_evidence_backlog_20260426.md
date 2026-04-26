@@ -541,6 +541,10 @@ Action:
 - Artifact retention now distinguishes local/untracked `PLANNER_HANDOFF*.md`
   notes from committed durable handoffs: local handoff noise stays ignored, but
   tracked handoff references can protect artifact families.
+- Metrics-lake detail rows now expose artifact evidence parent context in
+  dedicated SQL columns (`evidence_task`, `evidence_lane`, `evidence_label`,
+  `evidence_commit`, `evidence_generated_at`, and `evidence_record_type`) while
+  preserving raw JSON as canonical evidence.
 
 Validation:
 
@@ -598,6 +602,8 @@ Validation:
   fail-on-warning defaults.
 - `tests.test_plan_artifact_retention` covers ignored untracked planner
   handoffs and tracked planner handoffs that protect referenced artifacts.
+- `tests.test_bench_metrics_lake` covers direct SQL access to artifact evidence
+  parent context columns and entity-id path joinability.
 
 Deferred unless evidenced:
 

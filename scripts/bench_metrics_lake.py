@@ -215,6 +215,7 @@ def initialize_schema(conn) -> None:
     ]
     for statement in statements:
         conn.execute(statement)
+    _ensure_detail_rows_evidence_context_columns(conn)
     conn.commit()
 
 
@@ -472,10 +473,49 @@ def insert_detail_rows(
     artifact_id: int,
     rows: Iterable[tuple[str, int, Mapping[str, Any]]],
 ) -> int:
+    available_columns = _detail_rows_columns(conn)
     values = []
     for row_kind, row_index, row in rows:
-        values.append(
-            (
+        row_json = json.dumps(row, sort_keys=True)
+        entity_id = None
+        if row_kind == "artifact_path_evidence":
+            entity_id = _first_text(row, "path", "artifact_path")
+
+        if row_kind == "artifact_path_evidence":
+            row_values = (
+                artifact_id,
+                row_kind,
+                row_index,
+                entity_id,
+                _first_text(row, "section", "category"),
+                _first_text(row, "lane"),
+                _first_text(row, "style"),
+                _first_text(
+                    row,
+                    "app_acceptance_status",
+                    "answer_card_status",
+                    "claim_support_status",
+                    "status",
+                    "candidate_action",
+                ),
+                _first_text(row, "question", "prompt"),
+                _first_text(row, "error"),
+                _number_value(row.get("generation_time")),
+                _number_value(row.get("prompt_tokens")),
+                _number_value(row.get("completion_tokens")),
+                _number_value(row.get("chunks_retrieved")),
+                _first_text(row, "server", "worker"),
+                _first_text(row, "model"),
+                row_json,
+                _first_text(row, "record_type"),
+                _first_text(row, "task"),
+                _first_text(row, "lane"),
+                _first_text(row, "label"),
+                _first_text(row, "commit"),
+                _first_text(row, "generated_at"),
+            )
+        else:
+            row_values = (
                 artifact_id,
                 row_kind,
                 row_index,
@@ -499,22 +539,88 @@ def insert_detail_rows(
                 _number_value(row.get("chunks_retrieved")),
                 _first_text(row, "server", "worker"),
                 _first_text(row, "model"),
-                json.dumps(row, sort_keys=True),
+                row_json,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
             )
+        values.append(row_values)
+
+    if not values:
+        return 0
+
+    columns = (
+        "artifact_id",
+        "row_kind",
+        "row_index",
+        "entity_id",
+        "section",
+        "lane",
+        "style",
+        "status",
+        "question",
+        "error",
+        "generation_time",
+        "prompt_tokens",
+        "completion_tokens",
+        "chunks_retrieved",
+        "server",
+        "model",
+        "raw_json",
+        "evidence_record_type",
+        "evidence_task",
+        "evidence_lane",
+        "evidence_label",
+        "evidence_commit",
+        "evidence_generated_at",
+    )
+    insert_columns = tuple(column for column in columns if column in available_columns)
+    insert_values = [
+        tuple(
+            value[index]
+            for index, column in enumerate(columns)
+            if column in insert_columns
         )
-    if values:
-        conn.executemany(
-            """
-            INSERT INTO detail_rows(
-                artifact_id, row_kind, row_index, entity_id, section, lane, style,
-                status, question, error, generation_time, prompt_tokens,
-                completion_tokens, chunks_retrieved, server, model, raw_json
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            values,
-        )
+        for value in values
+    ]
+    conn.executemany(
+        """
+        INSERT INTO detail_rows(
+            {insert_columns}
+        ) VALUES ({placeholders})
+        """.format(
+            insert_columns=", ".join(insert_columns),
+            placeholders=", ".join("?" for _ in insert_columns),
+        ),
+        insert_values,
+    )
     return len(values)
+
+
+def _detail_rows_columns(conn) -> set[str]:
+    return {
+        str(row[1]).lower()
+        for row in conn.execute("PRAGMA table_info(detail_rows)").fetchall()
+    }
+
+
+def _ensure_detail_rows_evidence_context_columns(conn) -> None:
+    evidence_columns = (
+        "evidence_record_type",
+        "evidence_task",
+        "evidence_lane",
+        "evidence_label",
+        "evidence_commit",
+        "evidence_generated_at",
+    )
+    existing = _detail_rows_columns(conn)
+    for column in evidence_columns:
+        if column not in existing:
+            conn.execute(f"ALTER TABLE detail_rows ADD COLUMN {column} TEXT")
+    return None
 
 
 def fetch_summary_rows(conn, limit: int) -> list[tuple[Any, ...]]:

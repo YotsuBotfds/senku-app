@@ -295,6 +295,72 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_jsonl_artifact_path_evidence_exposes_parent_context_columns(self):
+        root = self.make_tmpdir()
+        jsonl_path = root / "run_manifest.jsonl"
+        jsonl_path.write_text(
+            json.dumps(
+                {
+                    "record_type": "run_manifest",
+                    "task": "task_001",
+                    "lane": "lane_smoke",
+                    "label": "baseline",
+                    "commit": "abc123",
+                    "generated_at": "2026-04-26T10:00:00Z",
+                    "artifact_path_evidence": [
+                        {"status": "present", "path": "artifacts/bench/run.json"},
+                    ],
+                },
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        output = root / "lake.sqlite"
+
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        self.module.ingest_artifacts(
+            conn,
+            [jsonl_path],
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        verify = sqlite3.connect(output)
+        try:
+            row = verify.execute(
+                """
+                SELECT
+                    evidence_record_type,
+                    evidence_task,
+                    evidence_lane,
+                    evidence_label,
+                    evidence_commit,
+                    evidence_generated_at,
+                    row_kind,
+                    entity_id
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                """
+            ).fetchone()
+            self.assertEqual(
+                row,
+                (
+                    "run_manifest",
+                    "task_001",
+                    "lane_smoke",
+                    "baseline",
+                    "abc123",
+                    "2026-04-26T10:00:00Z",
+                    "artifact_path_evidence",
+                    "artifacts/bench/run.json",
+                ),
+            )
+        finally:
+            verify.close()
+
     def test_jsonl_artifact_path_evidence_with_malformed_and_scalar_lines(self):
         root = self.make_tmpdir()
         jsonl_path = root / "manifest.jsonl"
