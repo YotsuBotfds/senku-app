@@ -30,6 +30,8 @@ aliases:
 routing_cues:
   - Use when scarcity or rationing pressure intersects with foodborne illness prevention, stored grain, limited cooking fuel, or questionable water for food preparation.
   - Keep food safety first; do not recommend spoilage, taste-testing, or unsafe-water shortcuts to stretch supplies.
+citations_required: true
+applicability: Food-safety decisions for individual or group meals when contamination, spoilage, raw-food handling, unsafe water, limited fuel, foodborne illness, or pressure to keep serving could spread disease or make people sick.
 tags:
   - essential
   - critical

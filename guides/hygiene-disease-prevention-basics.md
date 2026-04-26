@@ -46,6 +46,12 @@ aliases:
   - what do I wash today to keep germs down
   - what do I clean first after illness or contamination
   - what should I clean today for illness prevention
+routing_cues:
+  - Use for basic disease-prevention questions about hand hygiene, no-soap hygiene, cleaning priorities, sick-room cleanup, laundry or bedding after illness, and breaking food, water, contact, waste, or respiratory transmission chains.
+  - Pair with food-safety-contamination-prevention or community-kitchen-mess-hall-operations when hygiene failures affect group meals, kitchen staff, shared serving lines, limited handwashing water, or suspected foodborne illness.
+  - Pair with sanitation, water-purification, infection-control, or epidemic-pandemic-response when the question moves from daily hygiene into waste disposal, unsafe water, wound infection control, or outbreak operations.
+citations_required: true
+applicability: Low-resource hygiene and disease-prevention basics when handwashing, cleaning, contaminated surfaces, sick-room routines, laundry, bedding, waste contact, or no-soap constraints could affect illness spread in homes, clinics, kitchens, camps, or shared shelters.
 read_time: 13
 word_count: 3800
 last_updated: '2026-04-13'
