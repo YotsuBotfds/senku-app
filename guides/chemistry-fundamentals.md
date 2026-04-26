@@ -131,13 +131,13 @@ An **atom** is the smallest unit of an element. Atoms are made of:
 
 A **molecule** is two or more atoms bonded together. Examples:
 
-- **Hâ‚‚** = Hydrogen molecule (two hydrogen atoms bonded)
-- **Oâ‚‚** = Oxygen molecule (two oxygen atoms bonded)
-- **Hâ‚‚O** = Water (two hydrogen atoms + one oxygen atom)
-- **COâ‚‚** = Carbon dioxide (one carbon atom + two oxygen atoms)
+- **H₂** = Hydrogen molecule (two hydrogen atoms bonded)
+- **O₂** = Oxygen molecule (two oxygen atoms bonded)
+- **H₂O** = Water (two hydrogen atoms + one oxygen atom)
+- **CO₂** = Carbon dioxide (one carbon atom + two oxygen atoms)
 - **NaCl** = Salt (one sodium atom + one chlorine atom)
 
-**Subscripts (small numbers)** indicate how many atoms of each element. Hâ‚‚O means two hydrogens and one oxygen. COâ‚‚ means one carbon and two oxygens.
+**Subscripts (small numbers)** indicate how many atoms of each element. H₂O means two hydrogens and one oxygen. CO₂ means one carbon and two oxygens.
 
 ### Compounds
 
@@ -162,28 +162,28 @@ A **chemical reaction** is a rearrangement of atoms and molecules. Atoms break a
 
 Chemical equations show what happens:
 
-**Reactants â†’ Products**
+**Reactants → Products**
 
-Example: `2Hâ‚‚ + Oâ‚‚ â†’ 2Hâ‚‚O`
+Example: `2H₂ + O₂ → 2H₂O`
 
 This means: Two molecules of hydrogen gas plus one molecule of oxygen gas produces two molecules of water.
 
 ### Types of Reactions
 
 **Combination (Synthesis):** Two substances combine to form one:
-- `2Hâ‚‚ + Oâ‚‚ â†’ 2Hâ‚‚O` (hydrogen and oxygen make water)
-- `C + Oâ‚‚ â†’ COâ‚‚` (carbon and oxygen make carbon dioxide)
+- `2H₂ + O₂ → 2H₂O` (hydrogen and oxygen make water)
+- `C + O₂ → CO₂` (carbon and oxygen make carbon dioxide)
 
 **Decomposition:** One substance breaks into two or more:
-- `2Hâ‚‚O â†’ 2Hâ‚‚ + Oâ‚‚` (water breaks down into hydrogen and oxygen)
-- `2CaCOâ‚ƒ â†’ 2CaO + COâ‚‚` (limestone breaks down into calcium oxide and carbon dioxide)
+- `2H₂O → 2H₂ + O₂` (water breaks down into hydrogen and oxygen)
+- `2CaCO₃ → 2CaO + CO₂` (limestone breaks down into calcium oxide and carbon dioxide)
 
 **Combustion (Burning):** A substance reacts with oxygen, releasing heat and light:
-- `CHâ‚„ + 2Oâ‚‚ â†’ COâ‚‚ + 2Hâ‚‚O` (methane burns in oxygen)
-- `2C + Oâ‚‚ â†’ 2CO` (carbon burns, making carbon monoxide)
+- `CH₄ + 2O₂ → CO₂ + 2H₂O` (methane burns in oxygen)
+- `2C + O₂ → 2CO` (carbon burns, making carbon monoxide)
 
 **Acid-Base (Neutralization):** An acid and base react to form salt and water:
-- `HCl + NaOH â†’ NaCl + Hâ‚‚O` (hydrochloric acid + sodium hydroxide â†’ salt + water)
+- `HCl + NaOH → NaCl + H₂O` (hydrochloric acid + sodium hydroxide → salt + water)
 
 **Redox (Oxidation-Reduction):** Electrons are transferred from one substance to another (see section below).
 
@@ -268,7 +268,7 @@ An **acid** is a substance that:
 
 **Industrial chemistry — strong acids and industrial precursors:** For sulfuric acid (H2SO4) production, battery acid salvage, acid concentration, and all industrial-scale acid chemistry, see [`sulfuric-acid.md`](sulfuric-acid.md).
 
-**pH scale for acids:** 0â€“6 (lower numbers = more acidic = stronger)
+**pH scale for acids:** 0–6 (lower numbers = more acidic = stronger)
 
 **Handling:** Dilute acids are often safe; concentrated acids require care. Always dilute acids by adding acid to water (never water to acid, which splatters).
 
@@ -286,7 +286,7 @@ A **base** is a substance that:
 - Lye/caustic soda (sodium hydroxide) - strong, VERY caustic
 - Lime (calcium hydroxide) - medium strength, caustic
 
-**pH scale for bases:** 8â€“14 (higher numbers = more basic = stronger)
+**pH scale for bases:** 8–14 (higher numbers = more basic = stronger)
 
 **Handling:** Bases are less famous for causing acid burns, but they're just as dangerous. They cause "base burns" that are sometimes worse than acid burns because they penetrate deeper.
 
@@ -302,10 +302,10 @@ A **base** is a substance that:
 
 ### pH
 
-**pH** is a measure of acidity or basicity on a scale of 0â€“14:
-- 0â€“6: Acidic
+**pH** is a measure of acidity or basicity on a scale of 0–14:
+- 0–6: Acidic
 - 7: Neutral (pure water)
-- 8â€“14: Basic (alkaline)
+- 8–14: Basic (alkaline)
 
 Each step is 10 times more (or less) acidic or basic than the previous step.
 
@@ -313,9 +313,9 @@ Each step is 10 times more (or less) acidic or basic than the previous step.
 - Pure water: pH 7
 - Vinegar: pH 3 (acidic)
 - Lemon juice: pH 2 (acidic)
-- Stomach acid: pH 1â€“2 (very acidic)
-- Baking soda solution: pH 8â€“9 (basic)
-- Ammonia: pH 11â€“13 (very basic)
+- Stomach acid: pH 1–2 (very acidic)
+- Baking soda solution: pH 8–9 (basic)
+- Ammonia: pH 11–13 (very basic)
 
 ![pH scale from 0 to 14 showing acidic, neutral, and basic ranges with examples of common substances at each pH level](../assets/svgs/chemistry-fundamentals-2.svg)
 
@@ -353,13 +353,13 @@ Matter exists in four states:
 
 ### State Changes
 
-- **Melting:** Solid â†’ Liquid (add heat)
-- **Freezing:** Liquid â†’ Solid (remove heat)
-- **Evaporation:** Liquid â†’ Gas (add heat)
-- **Condensation:** Gas â†’ Liquid (remove heat)
-- **Sublimation:** Solid â†’ Gas (add heat directly; skip liquid phase)
+- **Melting:** Solid → Liquid (add heat)
+- **Freezing:** Liquid → Solid (remove heat)
+- **Evaporation:** Liquid → Gas (add heat)
+- **Condensation:** Gas → Liquid (remove heat)
+- **Sublimation:** Solid → Gas (add heat directly; skip liquid phase)
 
-**Practical example:** Water boils at 100Â°C at sea level. If you're at high altitude, boiling point is lower (less air pressure). If you pressurize the container, boiling point is higher.
+**Practical example:** Water boils at 100°C at sea level. If you're at high altitude, boiling point is lower (less air pressure). If you pressurize the container, boiling point is higher.
 
 </section>
 
@@ -476,7 +476,7 @@ You can observe and perform basic chemistry with safe, household substances:
 4. Cold water flowing through the condenser cools the vapor back to liquid
 5. Pure distillate collects in the receiving flask
 
-This works because different liquids have different boiling points. For example, you can separate salt water by distilling itâ€”pure water evaporates, leaving salt behind.
+This works because different liquids have different boiling points. For example, you can separate salt water by distilling it—pure water evaporates, leaving salt behind.
 
 ### Creating a Simple Battery (Voltaic Cell)
 
@@ -487,7 +487,7 @@ You can create a simple battery using copper and zinc strips in acidic solution 
 1. Place a zinc strip (anode, negative) and copper strip (cathode, positive) in dilute acid
 2. Electrons flow from zinc to copper (external circuit)
 3. Ions flow through the solution to complete the circuit
-4. Voltage output: Single cell â‰ˆ 0.5â€“1.0 V
+4. Voltage output: Single cell ≈ 0.5–1.0 V
 5. Stack multiple cells in series for higher voltage
 
 This is the principle behind early batteries and demonstrates redox reactions in action.
@@ -498,7 +498,7 @@ This is the principle behind early batteries and demonstrates redox reactions in
 1. Pour vinegar into a container
 2. Add baking soda
 3. Observe: Vigorous reaction, fizzing, bubble production
-4. Why: Acid (vinegar) + base (baking soda) â†’ salt (sodium acetate) + water + carbon dioxide (bubbles)
+4. Why: Acid (vinegar) + base (baking soda) → salt (sodium acetate) + water + carbon dioxide (bubbles)
 
 ### Oxidation
 
@@ -562,7 +562,7 @@ Understanding this tree helps you appreciate industrial chemistry's role in civi
 
 4. **Oxidation and reduction happen together:** One substance loses electrons; another gains them. Combustion is a type of oxidation.
 
-5. **Acids and bases are opposites:** They neutralize each other, but carefullyâ€”the reaction releases heat.
+5. **Acids and bases are opposites:** They neutralize each other, but carefully—the reaction releases heat.
 
 6. **Safety is always first:** Respect chemicals. Use protection. Have a plan for accidents.
 
@@ -596,12 +596,12 @@ Once you understand basic chemistry, you can synthesize useful compounds from av
 
 Sodium carbonate is a powerful degreaser and water softener, essential for soap-making and laundry.
 
-**Starting material:** Hardwood ash (oak, maple, hickoryâ€”not softwood)
+**Starting material:** Hardwood ash (oak, maple, hickory—not softwood)
 
 **Process:**
 
 1. Collect clean wood ash (avoid ash from pressure-treated wood or coal)
-2. Place ash in a container and pour water through itâ€”this is "lixiviation" (making lye water)
+2. Place ash in a container and pour water through it—this is "lixiviation" (making lye water)
 3. The water extracts soluble alkaline compounds from the ash
 4. Catch the liquid in a container below
 5. Test the liquid with a simple soap test: if it forms a slick coating, you have lye (sodium hydroxide)
@@ -610,9 +610,9 @@ Sodium carbonate is a powerful degreaser and water softener, essential for soap-
 8. Continue boiling until the liquid is completely evaporated
 9. White crystals of sodium carbonate remain
 
-**Practical use:** Add 1â€“2 teaspoons to laundry water to soften hard water and boost detergent effectiveness. Use in soap-making as an alternative to commercial lye.
+**Practical use:** Add 1–2 teaspoons to laundry water to soften hard water and boost detergent effectiveness. Use in soap-making as an alternative to commercial lye.
 
-**Time commitment:** 2â€“3 hours of active boiling, plus ash collection and preparation
+**Time commitment:** 2–3 hours of active boiling, plus ash collection and preparation
 
 ### Making Lime Water (Calcium Hydroxide) from Limestone
 
@@ -622,13 +622,13 @@ Lime water is useful for water purification, mortar-making, and as a weak base f
 
 **Process:**
 
-1. Heat limestone to high temperature (800Â°C+) in a forge or strong fire. The heat drives off carbon dioxide gas.
-2. The remaining white powder is quicklime (calcium oxide)â€”very caustic and reactive
-3. Carefully add water to the cooled quicklime. The reaction is exothermic (releases heat) and caustic smoke formsâ€”work outdoors
-4. Mix slowly: quicklime + water â†’ calcium hydroxide (slaked lime) + heat
+1. Heat limestone to high temperature (800°C+) in a forge or strong fire. The heat drives off carbon dioxide gas.
+2. The remaining white powder is quicklime (calcium oxide)—very caustic and reactive
+3. Carefully add water to the cooled quicklime. The reaction is exothermic (releases heat) and caustic smoke forms—work outdoors
+4. Mix slowly: quicklime + water → calcium hydroxide (slaked lime) + heat
 5. Allow solids to settle, then pour the clear liquid (lime water) into a clean container
 6. Strain through cloth to remove particles
-7. Store in sealed containers; it will absorb COâ‚‚ from air and gradually become less effective
+7. Store in sealed containers; it will absorb CO₂ from air and gradually become less effective
 
 **Practical uses:**
 - Water purification: Lime water neutralizes acidity and helps precipitate iron and other contaminants
@@ -637,7 +637,7 @@ Lime water is useful for water purification, mortar-making, and as a weak base f
 
 :::warning
 **Quicklime Safety:**
-- Quicklime is extremely causticâ€”it burns skin instantly
+- Quicklime is extremely caustic—it burns skin instantly
 - Never touch quicklime with bare hands
 - Wear gloves, long sleeves, and eye protection
 - The reaction with water produces steam and caustic vapor
@@ -653,10 +653,10 @@ Charcoal is essential for forges, water purification, and many industrial proces
 
 1. Build a hot fire in an enclosed space (pit, metal barrel, or enclosed forge)
 2. Add cut wood pieces as the fire burns
-3. The goal is to heat the wood without letting it fully combustâ€”partial burning under low-oxygen conditions
+3. The goal is to heat the wood without letting it fully combust—partial burning under low-oxygen conditions
 4. Stack wood loosely to allow some air flow but prevent complete combustion
 5. Cover with ashes or dirt to reduce oxygen
-6. After hours of careful burning, you have charcoalâ€”light, mostly black, and breaks easily
+6. After hours of careful burning, you have charcoal—light, mostly black, and breaks easily
 7. Cool completely before handling
 
 **Activated charcoal (better filtering ability):**
@@ -675,20 +675,20 @@ Charcoal is essential for forges, water purification, and many industrial proces
 Soap is made from fat (lye + heat). This is one of chemistry's oldest and most practical reactions.
 
 **Materials needed:**
-- Rendered animal fat (lard, tallowâ€”see the Animal Husbandry guide for rendering)
+- Rendered animal fat (lard, tallow—see the Animal Husbandry guide for rendering)
 - Wood ash lye (made as described in sodium carbonate section above)
 - Salt (optional, for finishing)
 - Heat source and stirring equipment
 
 **Process:**
 
-1. **Prepare lye:** Make wood ash lye water as described above. Test its strength by floating an eggâ€”if the egg floats just at the surface, it's the right concentration. Lye that's too weak won't saponify; too strong is dangerous and produces rough soap.
+1. **Prepare lye:** Make wood ash lye water as described above. Test its strength by floating an egg—if the egg floats just at the surface, it's the right concentration. Lye that's too weak won't saponify; too strong is dangerous and produces rough soap.
 
-2. **Heat the fat:** Gently warm the rendered fat to body temperature (~37Â°C). Too hot and the saponification reaction races out of control; too cold and the reaction stalls.
+2. **Heat the fat:** Gently warm the rendered fat to body temperature (~37°C). Too hot and the saponification reaction races out of control; too cold and the reaction stalls.
 
-3. **Mix fat and lye:** Slowly pour lye water into the fat while stirring constantly. Do this very slowlyâ€”the reaction is exothermic and can boil over if rushed.
+3. **Mix fat and lye:** Slowly pour lye water into the fat while stirring constantly. Do this very slowly—the reaction is exothermic and can boil over if rushed.
 
-4. **Saponification:** Continue stirring for 30â€“60 minutes. The mixture goes through stages:
+4. **Saponification:** Continue stirring for 30–60 minutes. The mixture goes through stages:
    - Thin and separated
    - Gradually thickens
    - Looks like thin pudding (trace)
@@ -700,23 +700,23 @@ Soap is made from fat (lye + heat). This is one of chemistry's oldest and most p
 
 7. **Cutting:** After 24 hours, cut into bars or chunks.
 
-8. **Curing:** Store the soap in a dry place for 2â€“4 weeks. During this time, remaining lye is neutralized and the soap hardens further.
+8. **Curing:** Store the soap in a dry place for 2–4 weeks. During this time, remaining lye is neutralized and the soap hardens further.
 
 **Result:** Functional, albeit rough, soap. Improves with aging.
 
 :::warning
 **Soap-Making Safety:**
-- Lye is causticâ€”never let it splash on skin
+- Lye is caustic—never let it splash on skin
 - Wear gloves, long sleeves, and eye protection
 - Work outdoors or in very well-ventilated areas
 - Fumes are sharp and irritating
 - Have vinegar nearby to neutralize accidental splashes
-- Never pour lye and fat together rapidlyâ€”the reaction is violent
+- Never pour lye and fat together rapidly—the reaction is violent
 :::
 
 ### Making Vinegar from Alcohol or Fruit Juice
 
-Vinegar is acetic acidâ€”useful for cleaning, food preservation, and many chemical processes.
+Vinegar is acetic acid—useful for cleaning, food preservation, and many chemical processes.
 
 **Fastest method (starting from alcohol):**
 
@@ -724,7 +724,7 @@ Vinegar is acetic acidâ€”useful for cleaning, food preservation, and many c
 2. Cover with cloth (allows air in, keeps debris out)
 3. Leave at room temperature in a warm place
 4. Bacteria in the air (Acetobacter) convert alcohol to acetic acid
-5. After 2â€“4 weeks, you smell vinegar (acetic acid). Taste-test: it should taste sharp and acidic
+5. After 2–4 weeks, you smell vinegar (acetic acid). Taste-test: it should taste sharp and acidic
 6. Bottle and store
 
 **Method from fruit juice (slower but works with just fruit):**
@@ -732,7 +732,7 @@ Vinegar is acetic acidâ€”useful for cleaning, food preservation, and many c
 1. Crush or juice fruit (apples, grapes, berries)
 2. Place juice in a container with cloth cover
 3. The natural yeast and bacteria ferment the juice to alcohol, then to acetic acid
-4. Takes 6â€“12 weeks
+4. Takes 6–12 weeks
 5. Result: Cider vinegar or wine vinegar
 
 **Uses:** Food preservation (pickling), cleaning, cooking, chemical reactions, and water treatment.
@@ -743,7 +743,7 @@ Vinegar is acetic acidâ€”useful for cleaning, food preservation, and many c
 
 ## Basic Analytical Chemistry: Testing and Identification
 
-Analytical chemistry is the art of identifying what's in a substance. You don't need a labâ€”simple tests can tell you a lot about unknown materials.
+Analytical chemistry is the art of identifying what's in a substance. You don't need a lab—simple tests can tell you a lot about unknown materials.
 
 ### Testing for pH (Acidity/Basicity)
 
@@ -758,11 +758,11 @@ Analytical chemistry is the art of identifying what's in a substance. You don't 
 - Beet juice: Similar color changes to cabbage
 
 **pH scale applications:**
-- Very acidic (pH 1â€“3): Strong acids (sulfuric, hydrochloric)
-- Acidic (pH 4â€“6): Weak acids, vinegar, lemon juice
+- Very acidic (pH 1–3): Strong acids (sulfuric, hydrochloric)
+- Acidic (pH 4–6): Weak acids, vinegar, lemon juice
 - Neutral (pH 7): Pure water
-- Basic (pH 8â€“10): Weak bases, baking soda, ammonia
-- Very basic (pH 11â€“14): Strong bases (lye, drain cleaner)
+- Basic (pH 8–10): Weak bases, baking soda, ammonia
+- Very basic (pH 11–14): Strong bases (lye, drain cleaner)
 
 ### Metal Identification Tests
 
@@ -787,14 +787,14 @@ Analytical chemistry is the art of identifying what's in a substance. You don't 
 - Appearance: Heavy, dull gray metal
 - Weight: Extremely heavy for its size
 - Magnet test: Not attracted
-- Melting point: Low (~327Â°C)â€”melts easily in a hot forge
-- Toxicity: Dust and fumes are poisonousâ€”avoid sanding or heating
+- Melting point: Low (~327°C)—melts easily in a hot forge
+- Toxicity: Dust and fumes are poisonous—avoid sanding or heating
 
 **Aluminum:**
 - Appearance: Silver, very light
 - Weight: Very light for its size
 - Magnet test: Not attracted
-- Heating: Oxidizes rapidly to white powder; very difficult to work with in forge (melts at ~660Â°C)
+- Heating: Oxidizes rapidly to white powder; very difficult to work with in forge (melts at ~660°C)
 
 ### Water Quality Tests
 
@@ -818,7 +818,7 @@ Analytical chemistry is the art of identifying what's in a substance. You don't 
 
 **Alkalinity test:**
 - Use pH testing method above
-- Most natural waters are pH 6â€“8
+- Most natural waters are pH 6–8
 - Very acidic water (pH < 5) is corrosive and may leach metals from pipes
 - Very alkaline water (pH > 8) forms mineral deposits
 
@@ -866,7 +866,7 @@ Beyond the Four Rules mentioned earlier, here are specific procedures for safe c
 1. Start with ice baths or cool water to absorb generated heat
 2. Mix reactants slowly
 3. Stir constantly to distribute heat evenly
-4. Never seal containersâ€”pressure builds as heat increases
+4. Never seal containers—pressure builds as heat increases
 5. If the reaction gets too vigorous, add more cool water or ice to dilute and cool
 6. Remove heat source if temperature becomes uncontrollable
 
@@ -878,7 +878,7 @@ Beyond the Four Rules mentioned earlier, here are specific procedures for safe c
 
 ### Ventilation and Inhalation Safety
 
-**Toxic or irritating gases:** Hydrogen sulfide, chlorine, ammonia, carbon monoxideâ€”these kill or damage lungs.
+**Toxic or irritating gases:** Hydrogen sulfide, chlorine, ammonia, carbon monoxide—these kill or damage lungs.
 
 **Adequate ventilation means:**
 - Working outdoors in open air (safest)
@@ -929,24 +929,24 @@ For field protocols when smoke, carbon monoxide, or fire-gas exposure has alread
 :::affiliate
 **If you're preparing in advance,** stock quality glassware, safety equipment, and reference materials to support hands-on chemistry learning and experimentation:
 
-- [EISCO Laboratory Glassware Set](https://www.amazon.com/dp/B086BFY24N?tag=offlinecompen-20) â€” 9-piece borosilicate glass set with beakers, flasks, and graduated cylinders for reliable chemistry work
-- [AMANEEST Safety Glasses ANSI Z87+ Lab Goggles](https://www.amazon.com/dp/B0DGV6LJSQ?tag=offlinecompen-20) â€” Double anti-fog coating for continuous wear during chemical experiments
-- [Safe Health Nitrile Exam Gloves Chemical Resistant](https://www.amazon.com/dp/B0BRCYL93M?tag=offlinecompen-20) â€” Chemo-rated 3.5 mil gloves for protecting hands during acid and base handling
-- [VIVOSUN Digital pH and TDS Meter Kit](https://www.amazon.com/dp/B0DW2PYVZ8?tag=offlinecompen-20) â€” 0.01 pH accuracy for testing acidity and alkalinity of solutions
+- [EISCO Laboratory Glassware Set](https://www.amazon.com/dp/B086BFY24N?tag=offlinecompen-20) — 9-piece borosilicate glass set with beakers, flasks, and graduated cylinders for reliable chemistry work
+- [AMANEEST Safety Glasses ANSI Z87+ Lab Goggles](https://www.amazon.com/dp/B0DGV6LJSQ?tag=offlinecompen-20) — Double anti-fog coating for continuous wear during chemical experiments
+- [Safe Health Nitrile Exam Gloves Chemical Resistant](https://www.amazon.com/dp/B0BRCYL93M?tag=offlinecompen-20) — Chemo-rated 3.5 mil gloves for protecting hands during acid and base handling
+- [VIVOSUN Digital pH and TDS Meter Kit](https://www.amazon.com/dp/B0DW2PYVZ8?tag=offlinecompen-20) — 0.01 pH accuracy for testing acidity and alkalinity of solutions
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 ## See Also
 
 <section id="see-also">
 
-- <a href="../everyday-compounds-production.html">Everyday Compounds Production</a> â€” Make useful chemicals
-- <a href="#acids-and-bases">Acids, Bases, and pH</a> â€” Understand acidity and alkalinity
-- <a href="../water-purification.html">Water Purification</a> â€” Apply chemistry to water treatment
-- <a href="../corrosion-chemistry-prevention.html">Corrosion and Oxidation</a> â€” Understand rust and degradation
-- <a href="../fuel-storage-handling.html">Fuel Storage and Handling</a> â€” Safe fuel storage and inventory management
-- <a href="../smoke-inhalation-carbon-monoxide-fire-gas-exposure.html">Smoke Inhalation &amp; Carbon Monoxide</a> â€” Field protocol for fire-gas exposure
+- <a href="../everyday-compounds-production.html">Everyday Compounds Production</a> — Make useful chemicals
+- <a href="#acids-and-bases">Acids, Bases, and pH</a> — Understand acidity and alkalinity
+- <a href="../water-purification.html">Water Purification</a> — Apply chemistry to water treatment
+- <a href="../corrosion-chemistry-prevention.html">Corrosion and Oxidation</a> — Understand rust and degradation
+- <a href="../fuel-storage-handling.html">Fuel Storage and Handling</a> — Safe fuel storage and inventory management
+- <a href="../smoke-inhalation-carbon-monoxide-fire-gas-exposure.html">Smoke Inhalation &amp; Carbon Monoxide</a> — Field protocol for fire-gas exposure
 
 </section>
 
