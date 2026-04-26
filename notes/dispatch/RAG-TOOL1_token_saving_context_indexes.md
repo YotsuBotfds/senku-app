@@ -216,6 +216,45 @@ Validation:
 The retrieval-only smoke preserved the latest held-out-pack shape:
 expected-owner hit@1/top3/top-k `20/21`, best rank `1.00`.
 
+## 2026-04-25 Artifact Retention Planner Proof
+
+Added `scripts/plan_artifact_retention.py`, a stdlib dry-run planner that
+groups generated artifact families, protects paths referenced by dispatch/spec
+notes or run manifests, and emits JSON/Markdown archive/delete candidates
+without deleting, moving, or rewriting artifacts.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_plan_artifact_retention -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile scripts\plan_artifact_retention.py tests\test_plan_artifact_retention.py
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\plan_artifact_retention.py --root artifacts --limit 8 --output-json artifacts\bench\artifact_retention_plan_20260425.json --output-md artifacts\bench\artifact_retention_plan_20260425.md --json
+```
+
+The real smoke completed as a report-only scan over `artifacts`.
+
+## 2026-04-25 Prompt Expectation Validator Proof
+
+Added `scripts/validate_prompt_expectations.py`, a stdlib linter for JSONL/CSV
+prompt packs. It validates expected-guide ID shape and existence, prompt ID
+uniqueness for expectation-bearing rows, field overlap between `guide_id` and
+explicit expectation fields, optional allowed-drift suppressions, and optional
+retrieval-eval owner-hit warnings.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_validate_prompt_expectations -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile scripts\validate_prompt_expectations.py tests\test_validate_prompt_expectations.py
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\validate_prompt_expectations.py artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl --fail-on-errors
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\validate_prompt_expectations.py --prompts-dir artifacts\prompts --fail-on-errors
+```
+
+The focused held-out pack and broad prompt discovery both pass with `0`
+errors. With retrieval-eval input, `RE2-UP-011` reports a warning because it is
+an accepted clarify path whose expected owner is absent from top-k; keep
+`--fail-on-warnings` for strict retrieval-only gates.
+
 ## Landed proof
 
 Commits:
