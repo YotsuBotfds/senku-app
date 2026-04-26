@@ -35,6 +35,14 @@ class LMStudioUtilsTests(unittest.TestCase):
             "http://localhost:1234/v1",
         )
 
+    def test_url_normalization_handles_non_string_config_without_endpoint_rewrite(self):
+        self.assertEqual(normalize_lm_studio_url(None), "")
+        self.assertEqual(
+            normalize_lm_studio_url("  http://localhost:1234/v1///  "),
+            "http://localhost:1234/v1",
+        )
+        self.assertEqual(normalize_lm_studio_url(1234), "1234")
+
     def test_embedding_fallback_only_on_known_model_load_400s(self):
         response = Mock(status_code=400, text="failed to load model")
         err = requests.HTTPError(response=response)
@@ -69,6 +77,24 @@ class LMStudioUtilsTests(unittest.TestCase):
         info = classify_lm_request_error(error)
         self.assertEqual(info["category"], "context_pressure")
         self.assertFalse(info["retryable"])
+
+    def test_error_text_normalization_handles_bytes_and_whitespace(self):
+        error = requests.HTTPError(
+            response=Mock(
+                status_code=400,
+                text=b"request\nexceeds\tcontext length   ",
+            )
+        )
+        info = classify_lm_request_error(error)
+        self.assertEqual(info["category"], "context_pressure")
+        self.assertEqual(info["message"], "request exceeds context length")
+        self.assertFalse(info["retryable"])
+
+    def test_error_text_normalization_handles_non_string_text(self):
+        error = requests.HTTPError(response=Mock(status_code=400, text={"error": "malformed"}))
+        info = classify_lm_request_error(error)
+        self.assertEqual(info["category"], "bad_request")
+        self.assertIn("malformed", info["message"])
 
     def test_litert_context_overflow_500_is_classified_non_retryable(self):
         error = requests.HTTPError(

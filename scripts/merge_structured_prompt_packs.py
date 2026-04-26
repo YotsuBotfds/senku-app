@@ -37,7 +37,16 @@ def load_structured_rows(path):
     suffix = input_path.suffix.lower()
     if suffix == ".csv":
         with input_path.open("r", encoding="utf-8", newline="") as handle:
-            return [dict(row) for row in csv.DictReader(handle)]
+            rows = []
+            reader = csv.DictReader(handle)
+            for row in reader:
+                if None in row:
+                    raise ValueError(
+                        f"Malformed CSV row in {input_path} at row {reader.line_num}: "
+                        f"unexpected extra fields {row[None]!r}"
+                    )
+                rows.append(dict(row))
+            return rows
     if suffix == ".jsonl":
         rows = []
         for line_number, raw_line in enumerate(input_path.read_text(encoding="utf-8").splitlines(), start=1):

@@ -10,7 +10,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 
 import requests
 
@@ -22,6 +22,7 @@ import config
 
 
 DEFAULT_REGISTRY_PATH = Path("data/runtime_targets.json")
+MAX_ERROR_CHARS = 240
 
 
 @dataclass(frozen=True)
@@ -49,8 +50,18 @@ def normalize_base_url(value: str) -> str:
     return text.rstrip("/") + "/"
 
 
+def validate_base_url(value: str) -> str:
+    text = normalize_base_url(value)
+    if not text:
+        return ""
+    parsed = urlsplit(text)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError("endpoint URL must include http(s) scheme and host")
+    return text
+
+
 def models_url(base_url: str) -> str:
-    return urljoin(normalize_base_url(base_url), "models")
+    return urljoin(validate_base_url(base_url), "models")
 
 
 def normalize_model_name(value: str) -> str:
@@ -100,6 +111,12 @@ def parse_models(payload: Any) -> tuple[str, ...]:
     return tuple(dict.fromkeys(models))
 
 
+def sanitize_error(value: Any, limit: int = MAX_ERROR_CHARS) -> str:
+    text = str(value or "")
+    clean = "".join(char if char.isprintable() else " " for char in text)
+    return " ".join(clean.split())[:limit]
+
+
 def check_endpoint(
     *,
     role: str,
@@ -109,13 +126,13 @@ def check_endpoint(
     session: requests.Session | None = None,
 ) -> EndpointCheck:
     session = session or requests.Session()
-    endpoint = models_url(url)
     try:
-        response = session.get(endpoint, timeout=timeout)
-    except requests.RequestException as exc:
+        endpoint_url = validate_base_url(url)
+        endpoint = urljoin(endpoint_url, "models")
+    except ValueError as exc:
         return EndpointCheck(
             role=role,
-            url=url,
+            url=normalize_base_url(url),
             expected_model=expected_model,
             ok=False,
             status_code=None,
@@ -124,28 +141,41 @@ def check_endpoint(
         )
 
     try:
+        response = session.get(endpoint, timeout=timeout)
+    except requests.RequestException as exc:
+        return EndpointCheck(
+            role=role,
+            url=endpoint_url,
+            expected_model=expected_model,
+            ok=False,
+            status_code=None,
+            models=(),
+            error=sanitize_error(exc),
+        )
+
+    try:
         payload = response.json() if response.ok else {}
     except ValueError as exc:
         return EndpointCheck(
             role=role,
-            url=url,
+            url=endpoint_url,
             expected_model=expected_model,
             ok=False,
             status_code=response.status_code,
             models=(),
-            error=f"invalid /models JSON: {exc}",
+            error=f"invalid /models JSON: {sanitize_error(exc)}",
         )
 
     models = parse_models(payload)
     ok = response.ok and bool(models)
     return EndpointCheck(
         role=role,
-        url=url,
+        url=endpoint_url,
         expected_model=expected_model,
         ok=ok,
         status_code=response.status_code,
         models=models,
-        error="" if ok else response.text[:240],
+        error="" if ok else sanitize_error(response.text),
     )
 
 

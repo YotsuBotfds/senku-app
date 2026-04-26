@@ -165,6 +165,17 @@ class RuntimeProfileTests(unittest.TestCase):
                 runtime_profile={"name": "broken"},
             )
 
+    def test_bench_prompt_token_limit_rejects_malformed_profile_limit(self):
+        with self.assertRaises(ValueError):
+            bench._prompt_token_limit(
+                "broken-model",
+                "http://localhost:1234/v1",
+                runtime_profile={
+                    "name": "broken",
+                    "prompt_token_limit": "not-a-number",
+                },
+            )
+
     def test_query_prompt_token_limit_is_loud_when_profile_is_missing_limit(self):
         with patch.object(
             query.config,

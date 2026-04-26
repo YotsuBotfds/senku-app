@@ -20,6 +20,8 @@ def estimate_tokens(text):
     """Estimate token count, preferring a real tokenizer when available."""
     if not text:
         return 0
+    if not isinstance(text, str):
+        raise TypeError("estimate_tokens expects a string or falsy empty input")
 
     if _ENCODER is not None:
         return len(_ENCODER.encode(text))

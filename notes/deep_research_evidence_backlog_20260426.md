@@ -562,6 +562,20 @@ Action:
   malformed JSONL rows, live queue monitor rendering tolerates malformed
   worker/status payloads, and invariant-conflict loading ignores malformed
   invariant rows without changing ranking semantics.
+- Hardened bench retry-slot proofing: duplicate-URL worker retry validation now
+  reports explicit errors instead of relying on bare assertions, while the
+  success CLI path remains unchanged.
+- Hardened runtime/export/prompt-pack utility scripts: runtime endpoint checks
+  validate URL schemes and sanitize request/HTTP error text, eval bundle export
+  creates output parents and rejects directory outputs, delta and carryforward
+  prompt builders sanitize control characters and malformed rows, structured
+  prompt pack merging rejects ragged CSV rows, and agent-state validation
+  rejects control-character paths without crashing path probes.
+- Hardened runtime utility helpers: bench retry-slot validation reports
+  explicit errors, LM Studio URL/error normalization tolerates non-string
+  values and messy whitespace, and token estimation now raises a stable
+  `TypeError` for truthy non-string input while preserving falsy-input zeroes;
+  runtime profile tests also pin malformed prompt-token limits as fail-closed.
 
 Validation:
 
@@ -949,6 +963,16 @@ Validation:
   `tests.test_summarize_latency`, `tests.test_live_queue_monitor`, and
   `tests.test_find_invariant_conflict_candidates` cover the
   queue/scan/watchlist hardening batch.
+- `tests.test_validate_bench_retry_slots` covers duplicate-URL worker label
+  proofing and clean CLI success for the retry-slot validator.
+- `tests.test_runtime_endpoint_preflight`, `tests.test_export_eval_bundle`,
+  `tests.test_delta_prompt_scripts`, `tests.test_build_carryforward_prompt_pack`,
+  and `tests.test_validate_agent_state` cover the runtime/export/prompt-pack
+  utility hardening batch.
+- `tests.test_validate_bench_retry_slots`, `tests.test_lmstudio_utils`, and
+  `tests.test_token_estimation`, plus `tests.test_runtime_profiles`, cover
+  retry-slot, LM Studio utility, token estimation, and runtime-profile
+  robustness.
 
 Deferred unless evidenced:
 

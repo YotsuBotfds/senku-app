@@ -8,6 +8,11 @@ class TokenEstimationTests(unittest.TestCase):
     def test_empty_input_counts_zero(self):
         self.assertEqual(token_estimation.estimate_tokens(""), 0)
         self.assertEqual(token_estimation.estimate_tokens(None), 0)
+        self.assertEqual(token_estimation.estimate_tokens([]), 0)
+
+    def test_truthy_non_string_input_raises_type_error(self):
+        with self.assertRaisesRegex(TypeError, "expects a string"):
+            token_estimation.estimate_tokens(["hello"])
 
     def test_fallback_counts_words_and_punctuation(self):
         with patch.object(token_estimation, "_ENCODER", None):

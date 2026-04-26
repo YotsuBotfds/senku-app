@@ -32,7 +32,11 @@ def main():
     rows = build_eval_rows(args.artifacts)
     rendered = eval_rows_to_jsonl(rows) if args.format == "jsonl" else eval_rows_to_csv(rows)
     if args.output:
-        Path(args.output).write_text(rendered + ("" if rendered.endswith("\n") else "\n"), encoding="utf-8")
+        output_path = Path(args.output)
+        if output_path.exists() and output_path.is_dir():
+            parser.error(f"--output must be a file path, not a directory: {output_path}")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(rendered + ("" if rendered.endswith("\n") else "\n"), encoding="utf-8")
     else:
         print(rendered)
 

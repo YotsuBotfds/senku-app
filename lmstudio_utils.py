@@ -57,7 +57,20 @@ EMBED_MODEL_FALLBACKS = {
 
 def normalize_lm_studio_url(base_url):
     """Normalize a configured LM Studio base URL."""
-    return (base_url or "").rstrip("/")
+    if base_url is None:
+        return ""
+    return str(base_url).strip().rstrip("/")
+
+
+def _normalize_error_text(value):
+    """Return response/error text as a compact string for matching and display."""
+    if value is None:
+        return ""
+    if isinstance(value, bytes):
+        value = value.decode("utf-8", errors="replace")
+    elif not isinstance(value, str):
+        value = str(value)
+    return " ".join(value.split())
 
 
 def embedding_models_to_try(model):
@@ -78,7 +91,7 @@ def should_try_embedding_fallback(exc):
     if getattr(response, "status_code", None) != 400:
         return False
 
-    message = (getattr(response, "text", "") or "").lower()
+    message = _normalize_error_text(getattr(response, "text", "")).lower()
     return any(marker in message for marker in LM_STUDIO_MODEL_LOAD_400_MARKERS) or any(
         marker in message for marker in LM_STUDIO_MODEL_ALIAS_400_MARKERS
     )
@@ -105,7 +118,7 @@ def classify_lm_request_error(exc):
     if isinstance(exc, requests.HTTPError):
         response = getattr(exc, "response", None)
         status_code = getattr(response, "status_code", None)
-        message = (getattr(response, "text", "") or "").strip()
+        message = _normalize_error_text(getattr(response, "text", ""))
         message_lower = message.lower()
 
         if status_code == 400:

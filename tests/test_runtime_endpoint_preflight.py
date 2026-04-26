@@ -20,6 +20,23 @@ class RuntimeEndpointPreflightTests(unittest.TestCase):
             "http://127.0.0.1:1235/v1/models",
         )
 
+    def test_check_endpoint_rejects_malformed_url_without_request(self):
+        session = Mock()
+
+        check = preflight.check_endpoint(
+            role="generation",
+            url="127.0.0.1:1235/v1",
+            expected_model="gemma-4-e2b-it-litert",
+            timeout=1.0,
+            session=session,
+        )
+
+        self.assertFalse(check.ok)
+        self.assertFalse(check.model_found)
+        self.assertIsNone(check.status_code)
+        self.assertIn("http(s) scheme and host", check.error)
+        session.get.assert_not_called()
+
     def test_parse_models_accepts_openai_compatible_payload(self):
         self.assertEqual(
             preflight.parse_models(
@@ -79,6 +96,42 @@ class RuntimeEndpointPreflightTests(unittest.TestCase):
         self.assertFalse(check.model_found)
         self.assertEqual(check.status_code, 200)
         self.assertIn("invalid /models JSON", check.error)
+
+    def test_check_endpoint_sanitizes_request_exception_text(self):
+        session = Mock()
+        session.get.side_effect = preflight.requests.RequestException(
+            "boom\nwith\tcontrol"
+        )
+
+        check = preflight.check_endpoint(
+            role="generation",
+            url="http://127.0.0.1:1235/v1",
+            expected_model="gemma-4-e2b-it-litert",
+            timeout=1.0,
+            session=session,
+        )
+
+        self.assertFalse(check.ok)
+        self.assertEqual(check.error, "boom with control")
+
+    def test_check_endpoint_sanitizes_failed_response_text(self):
+        response = Mock()
+        response.ok = False
+        response.status_code = 500
+        response.text = "bad\nresponse\tbody"
+        session = Mock()
+        session.get.return_value = response
+
+        check = preflight.check_endpoint(
+            role="generation",
+            url="http://127.0.0.1:1235/v1",
+            expected_model="gemma-4-e2b-it-litert",
+            timeout=1.0,
+            session=session,
+        )
+
+        self.assertFalse(check.ok)
+        self.assertEqual(check.error, "bad response body")
 
     def test_resolve_targets_prefers_explicit_args_over_registry(self):
         parser = preflight.build_arg_parser()

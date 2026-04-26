@@ -37,6 +37,10 @@ REQUIRED_CHECKPOINT = {
 }
 
 
+def _has_control_character(value: str) -> bool:
+    return any(ord(char) < 32 or ord(char) == 127 for char in value)
+
+
 def _expect(mapping: dict, key: str, expected_type: type, errors: list[str], scope: str) -> None:
     value = mapping.get(key)
     if value is None:
@@ -46,6 +50,19 @@ def _expect(mapping: dict, key: str, expected_type: type, errors: list[str], sco
         errors.append(
             f"expected {scope}.{key} to be {expected_type.__name__}, got {type(value).__name__}"
         )
+
+
+def _validate_existing_path(value: str, errors: list[str], scope: str, missing_message: str) -> None:
+    if _has_control_character(value):
+        errors.append(f"path contains control character: {scope}")
+        return
+    try:
+        exists = Path(value).exists()
+    except (OSError, ValueError) as exc:
+        errors.append(f"invalid path: {scope}={value!r} ({exc})")
+        return
+    if not exists:
+        errors.append(missing_message)
 
 
 def validate_state(path: Path) -> tuple[dict | None, list[str]]:
@@ -81,11 +98,13 @@ def validate_state(path: Path) -> tuple[dict | None, list[str]]:
                         f"expected latest_validated_checkpoint.artifacts.{artifact_key} to be str"
                     )
                     continue
-                artifact_path = Path(artifact_value)
-                if not artifact_path.exists():
-                    errors.append(
-                        f"artifact path does not exist: latest_validated_checkpoint.artifacts.{artifact_key}={artifact_value}"
-                    )
+                artifact_scope = f"latest_validated_checkpoint.artifacts.{artifact_key}"
+                _validate_existing_path(
+                    artifact_value,
+                    errors,
+                    artifact_scope,
+                    f"artifact path does not exist: {artifact_scope}={artifact_value}",
+                )
 
     notes_refs = data.get("notes_refs")
     if isinstance(notes_refs, dict):
@@ -93,8 +112,13 @@ def validate_state(path: Path) -> tuple[dict | None, list[str]]:
             if not isinstance(value, str):
                 errors.append(f"expected notes_refs.{key} to be str")
                 continue
-            if not Path(value).exists():
-                errors.append(f"notes ref does not exist: notes_refs.{key}={value}")
+            notes_scope = f"notes_refs.{key}"
+            _validate_existing_path(
+                value,
+                errors,
+                notes_scope,
+                f"notes ref does not exist: {notes_scope}={value}",
+            )
 
     return data, errors
 

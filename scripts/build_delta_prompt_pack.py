@@ -11,6 +11,8 @@ from pathlib import Path
 
 
 SECTION_PREFIX_RE = re.compile(r"^\d+\.\s*")
+CONTROL_CHARS_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+WHITESPACE_RE = re.compile(r"\s+")
 
 SECTION_METADATA = {
     "triage_paraphrase_regressions": {
@@ -92,7 +94,9 @@ def parse_args():
 def clean_text(value):
     if value is None:
         return ""
-    return str(value).strip()
+    text = str(value).replace("\ufeff", "")
+    text = CONTROL_CHARS_RE.sub(" ", text)
+    return WHITESPACE_RE.sub(" ", text).strip()
 
 
 def canonical_section_key(raw_header):
@@ -106,6 +110,7 @@ def parse_delta_prompt_entries(path, *, lane="delta", id_prefix="DX"):
     rows = []
     current_section_key = None
     current_metadata = None
+    seen_prompts = set()
     source_path = Path(path)
 
     for raw_line in source_path.read_text(encoding="utf-8").splitlines():
@@ -127,6 +132,9 @@ def parse_delta_prompt_entries(path, *, lane="delta", id_prefix="DX"):
         # Allow freeform intro notes ahead of the first numbered section.
         if current_metadata is None:
             continue
+        if line in seen_prompts:
+            continue
+        seen_prompts.add(line)
 
         row_index = len(rows) + 1
         rows.append(

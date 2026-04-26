@@ -4,14 +4,16 @@
 import argparse
 import csv
 import json
+import re
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CANONICAL = REPO_ROOT / "test_prompts.txt"
+CONTROL_TEXT_RE = re.compile(r"[ \t]*[\x00-\x1f\x7f]+[ \t]*")
 
 
-def parse_args():
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(
         description="Append exact canonical test_prompts entries to a structured prompt pack"
     )
@@ -30,25 +32,39 @@ def parse_args():
         required=True,
         help="Output prefix without extension; writes .txt, .csv, and .jsonl",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def clean_text(value):
     if value is None:
         return ""
-    return str(value).strip()
+    return CONTROL_TEXT_RE.sub(" ", str(value)).strip()
+
+
+def clean_row_value(value):
+    if isinstance(value, str) or value is None:
+        return clean_text(value)
+    return value
 
 
 def load_structured_rows(path):
     input_path = Path(path)
     suffix = input_path.suffix.lower()
     if suffix == ".csv":
-        with input_path.open("r", encoding="utf-8", newline="") as f:
-            return [dict(row) for row in csv.DictReader(f)]
+        with input_path.open("r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            rows = []
+            for row in reader:
+                if None in row:
+                    raise ValueError(
+                        f"Unexpected extra columns in {input_path} at line {reader.line_num}"
+                    )
+                rows.append(dict(row))
+            return rows
     if suffix == ".jsonl":
         rows = []
         for line_number, raw_line in enumerate(
-            input_path.read_text(encoding="utf-8").splitlines(),
+            input_path.read_text(encoding="utf-8-sig").splitlines(),
             start=1,
         ):
             line = raw_line.strip()
@@ -67,8 +83,8 @@ def load_structured_rows(path):
 def load_canonical_entries(path):
     entries = []
     current_section = "Core Regression"
-    for raw_line in Path(path).read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
+    for raw_line in Path(path).read_text(encoding="utf-8-sig").splitlines():
+        line = clean_text(raw_line)
         if not line:
             continue
         if line.startswith("#"):
@@ -157,17 +173,18 @@ def write_csv(rows, output_path):
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
-            writer.writerow(row)
+            writer.writerow({key: clean_row_value(value) for key, value in row.items()})
 
 
 def write_jsonl(rows, output_path):
     with output_path.open("w", encoding="utf-8") as f:
         for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            cleaned_row = {key: clean_row_value(value) for key, value in row.items()}
+            f.write(json.dumps(cleaned_row, ensure_ascii=False) + "\n")
 
 
-def main():
-    args = parse_args()
+def main(argv=None):
+    args = parse_args(argv)
     structured_rows = load_structured_rows(args.structured_pack)
     canonical_entries = load_canonical_entries(args.canonical_prompts)
     combined_rows, appended_rows = append_carryforward_rows(
@@ -192,6 +209,7 @@ def main():
     print(f"Wrote {txt_path}")
     print(f"Wrote {csv_path}")
     print(f"Wrote {jsonl_path}")
+    return 0
 
 
 if __name__ == "__main__":
