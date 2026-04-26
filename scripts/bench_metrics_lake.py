@@ -397,8 +397,27 @@ def _artifact_path_evidence_rows(
     rows: list[tuple[str, int, Mapping[str, Any]]] = []
     for evidence_index, item in enumerate(evidence):
         if isinstance(item, Mapping):
-            rows.append(("artifact_path_evidence", start_index + evidence_index, item))
+            rows.append(
+                ("artifact_path_evidence", start_index + evidence_index, _normalize_artifact_path_evidence(item))
+            )
     return rows
+
+
+def _normalize_artifact_path_evidence(item: Mapping[str, Any]) -> dict[str, Any]:
+    normalized = dict(item)
+    if normalized.get("status") is None and isinstance(
+        normalized.get("exists"), bool
+    ):
+        normalized["status"] = (
+            "present" if normalized.get("exists") else "missing"
+        )
+    if (
+        normalized.get("path") is None
+        and isinstance(normalized.get("artifact_path"), str)
+        and normalized["artifact_path"].strip()
+    ):
+        normalized["path"] = normalized["artifact_path"]
+    return normalized
 
 
 def insert_metrics(conn, artifact_id: int, metrics: Iterable[tuple[str, Any]]) -> int:

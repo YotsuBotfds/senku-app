@@ -278,6 +278,141 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_jsonl_artifact_path_evidence_with_malformed_and_scalar_lines(self):
+        root = self.make_tmpdir()
+        jsonl_path = root / "manifest.jsonl"
+        jsonl_path.write_text(
+            json.dumps(
+                {
+                    "record_type": "run_manifest",
+                    "artifact_path_evidence": [
+                        {"path": "artifacts/bench/primary.json", "status": "present"}
+                    ],
+                }
+            )
+            + "\n"
+            + "{not-json\n"
+            + "7\n"
+            + json.dumps(
+                {
+                    "record_type": "run_manifest",
+                    "artifact_path_evidence": [
+                        {"path": "artifacts/bench/secondary.json", "exists": False}
+                    ],
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        output = root / "lake.sqlite"
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        summary = self.module.ingest_artifacts(
+            conn,
+            [jsonl_path],
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        self.assertEqual(summary["artifacts"], 1)
+        self.assertEqual(summary["detail_rows"], 4)
+        self.assertEqual(summary["metrics"], 1)
+        verify = sqlite3.connect(output)
+        try:
+            artifact = verify.execute(
+                "SELECT json_type, error FROM artifacts WHERE path = ?",
+                ("manifest.jsonl",),
+            ).fetchone()
+            self.assertEqual(artifact[0], "jsonl")
+            self.assertIn("line 2: JSONDecodeError", artifact[1])
+
+            evidence = verify.execute(
+                """
+                SELECT row_index, status, raw_json
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                ORDER BY row_index
+                """
+            ).fetchall()
+            evidence_rows = [
+                (row_index, status, json.loads(raw_json))
+                for row_index, status, raw_json in evidence
+            ]
+            self.assertEqual([item[0] for item in evidence_rows], [0, 1])
+            self.assertEqual([item[1] for item in evidence_rows], ["present", "missing"])
+            self.assertEqual(
+                [item[2]["path"] for item in evidence_rows],
+                ["artifacts/bench/primary.json", "artifacts/bench/secondary.json"],
+            )
+
+            duplicate_indexes = verify.execute(
+                """
+                SELECT row_index, COUNT(*)
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                GROUP BY row_index
+                HAVING COUNT(*) > 1
+                """
+            ).fetchall()
+            self.assertEqual(duplicate_indexes, [])
+        finally:
+            verify.close()
+
+    def test_jsonl_artifact_path_evidence_preserves_missing_fields(self):
+        root = self.make_tmpdir()
+        jsonl_path = root / "manifest.jsonl"
+        jsonl_path.write_text(
+            json.dumps(
+                {
+                    "artifact_path_evidence": [
+                        {"kind": "bench_json"},
+                        {"path": "artifacts/bench/run.md", "status": "missing"},
+                        {
+                            "artifact_path": "artifacts/bench/legacy.json",
+                            "status": "present",
+                            "kind": "file",
+                        },
+                    ]
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        output = root / "lake.sqlite"
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        summary = self.module.ingest_artifacts(
+            conn,
+            [jsonl_path],
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        self.assertEqual(summary["artifacts"], 1)
+        self.assertEqual(summary["detail_rows"], 4)
+        verify = sqlite3.connect(output)
+        try:
+            evidence = verify.execute(
+                """
+                SELECT row_index, status, raw_json
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                ORDER BY row_index
+                """
+            ).fetchall()
+            self.assertEqual([item[0] for item in evidence], [0, 1, 2])
+            self.assertEqual([item[1] for item in evidence], [None, "missing", "present"])
+
+            row_three = json.loads(evidence[2][2])
+            self.assertEqual(row_three["artifact_path"], "artifacts/bench/legacy.json")
+            self.assertEqual(row_three["kind"], "file")
+        finally:
+            verify.close()
+
     def test_main_auto_falls_back_to_sqlite_when_duckdb_is_unavailable(self):
         if self.module.resolve_backend("auto") != "sqlite":
             self.skipTest("duckdb is installed in this environment")

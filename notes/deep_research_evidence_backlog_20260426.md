@@ -500,6 +500,9 @@ Action:
 - Run-manifest artifact collection now dedupes equivalent artifact paths by
   canonical real path and returns an empty summary for non-positive library
   limits while preserving the CLI's fail-closed limit validation.
+- Bench metrics-lake ingestion now normalizes run-manifest
+  `artifact_path_evidence` rows by deriving missing `status` from boolean
+  `exists` and backing up missing `path` from legacy `artifact_path`.
 
 Validation:
 
@@ -530,6 +533,8 @@ Validation:
   metadata as a missing high-liability policy signal.
 - `tests.test_write_run_manifest` covers canonical artifact path dedupe and
   zero-limit library behavior for artifact collection.
+- `tests.test_bench_metrics_lake` covers malformed/scalar JSONL lines plus
+  normalized `artifact_path_evidence` status/path preservation.
 
 Deferred unless evidenced:
 
