@@ -8,7 +8,9 @@ from pathlib import Path
 from scripts.analyze_rag_bench_failures import (
     analyze,
     build_rows,
+    load_trace_index,
     load_expectations,
+    parse_args,
     summarize,
     write_markdown,
 )
@@ -1248,6 +1250,180 @@ Answer.
         self.assertEqual(row["expected_owner_topk_count"], "unknown")
         self.assertEqual(row["expected_owner_top3_share"], "unknown")
         self.assertEqual(row["expected_owner_topk_share"], "unknown")
+
+    def test_trace_index_adds_phase_durations_to_rows(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Prompt",
+                            "prompt_metadata": {"expected_guide_id": "GD-777"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": [],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-111"]
+                            },
+                            "response_text": "Answer.",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        trace = root / "trace.jsonl"
+        trace.write_text(
+            "\n".join(
+                [
+                    json.dumps(
+                        {
+                            "artifact_name": "sample.json",
+                            "prompt_index": 1,
+                            "phase": "retrieve",
+                            "status": "ok",
+                            "duration_ms": 12.5,
+                        }
+                    ),
+                    json.dumps(
+                        {
+                            "artifact_name": "sample.json",
+                            "prompt_index": 1,
+                            "phase": "generate",
+                            "status": "error",
+                            "duration_ms": 33,
+                        }
+                    ),
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact], trace_index=load_trace_index([trace]))
+
+        self.assertEqual(rows[0]["trace_phase_count"], 2)
+        self.assertEqual(rows[0]["trace_error_phases"], "generate")
+        self.assertEqual(rows[0]["retrieve_ms"], 12.5)
+        self.assertEqual(rows[0]["generate_ms"], 33.0)
+        self.assertEqual(rows[0]["rerank_ms"], 0.0)
+
+    def test_trace_index_accepts_rag_trace_writer_shape(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 3,
+                            "question": "Prompt",
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "retrieval_metadata": {},
+                            "response_text": "Answer.",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        trace = root / "trace.jsonl"
+        trace.write_text(
+            json.dumps(
+                {
+                    "name": "rag.retrieve",
+                    "status": {"code": "OK"},
+                    "duration_ms": 4.25,
+                    "attributes": {
+                        "artifact_name": "sample.json",
+                        "prompt_index": 3,
+                        "phase": "retrieve",
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact], trace_index=load_trace_index([trace]))
+
+        self.assertEqual(rows[0]["trace_phase_count"], 1)
+        self.assertEqual(rows[0]["trace_error_phases"], "")
+        self.assertEqual(rows[0]["retrieve_ms"], 4.25)
+
+    def test_analyze_writes_trace_columns_when_trace_jsonl_supplied(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        output_dir = root / "diag"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 2,
+                            "question": "Prompt",
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "retrieval_metadata": {},
+                            "response_text": "Answer.",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        trace = root / "trace.jsonl"
+        trace.write_text(
+            json.dumps(
+                {
+                    "artifact_name": "sample.json",
+                    "prompt_index": 2,
+                    "phase": "verify",
+                    "duration_ms": 7,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        rows, summary = analyze([artifact], output_dir, trace_jsonl_paths=[trace])
+
+        self.assertEqual(summary["total_rows"], 1)
+        self.assertEqual(rows[0]["verify_ms"], 7.0)
+        with (output_dir / "diagnostics.csv").open("r", encoding="utf-8") as handle:
+            csv_row = next(csv.DictReader(handle))
+        self.assertEqual(csv_row["trace_phase_count"], "1")
+        self.assertEqual(csv_row["verify_ms"], "7.0")
+
+    def test_parse_args_accepts_repeatable_trace_jsonl(self):
+        import sys
+        from unittest.mock import patch
+
+        with patch.object(
+            sys,
+            "argv",
+            [
+                "analyze",
+                "artifact.json",
+                "--trace-jsonl",
+                "trace-a.jsonl",
+                "--trace-jsonl",
+                "trace-b.jsonl",
+            ],
+        ):
+            args = parse_args()
+
+        self.assertEqual(
+            args.trace_jsonl,
+            [Path("trace-a.jsonl"), Path("trace-b.jsonl")],
+        )
 
     def test_expected_supported_bucket_separates_success_from_unknown(self):
         root = self.make_tmpdir()

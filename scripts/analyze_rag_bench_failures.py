@@ -145,16 +145,127 @@ CSV_FIELDS = (
     "cap_hit",
     "retry_count",
     "completion_safety_trimmed",
+    "trace_phase_count",
+    "trace_error_phases",
+    "retrieve_ms",
+    "rerank_ms",
+    "compose_ms",
+    "generate_ms",
+    "verify_ms",
     "error",
     "error_category",
     "suspected_failure_bucket",
     "short_reason",
 )
 
+TRACE_PHASES = ("retrieve", "rerank", "compose", "generate", "verify")
+TRACE_DURATION_FIELDS = {
+    phase: f"{phase}_ms"
+    for phase in TRACE_PHASES
+}
+
 
 def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def _trace_prompt_key(artifact_name: object, prompt_index: object) -> tuple[str, str] | None:
+    artifact_text = str(artifact_name or "").strip()
+    if not artifact_text or prompt_index in (None, ""):
+        return None
+    return artifact_text, str(prompt_index)
+
+
+def _trace_duration_ms(record: dict) -> float | None:
+    value = record.get("duration_ms")
+    if value is None:
+        start = record.get("start_time_unix_nano")
+        end = record.get("end_time_unix_nano")
+        try:
+            value = (float(end) - float(start)) / 1_000_000
+        except (TypeError, ValueError):
+            return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def load_trace_index(paths: list[Path] | None) -> dict[tuple[str, str], dict[str, object]]:
+    if not paths:
+        return {}
+    index: dict[tuple[str, str], dict[str, object]] = {}
+    for path in paths:
+        with path.open("r", encoding="utf-8") as handle:
+            for line_number, line in enumerate(handle, start=1):
+                if not line.strip():
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    raise SystemExit(f"Invalid trace JSONL at {path}:{line_number}: {exc}") from exc
+                if not isinstance(record, dict):
+                    continue
+                attributes = record.get("attributes")
+                if not isinstance(attributes, dict):
+                    attributes = {}
+                key = _trace_prompt_key(
+                    record.get("artifact_name") or attributes.get("artifact_name"),
+                    record.get("prompt_index") or attributes.get("prompt_index"),
+                )
+                if key is None:
+                    continue
+                phase = str(
+                    record.get("phase")
+                    or attributes.get("phase")
+                    or str(record.get("name") or "").rsplit(".", 1)[-1]
+                ).strip().lower()
+                summary = index.setdefault(
+                    key,
+                    {
+                        "trace_phase_count": 0,
+                        "trace_error_phases": set(),
+                        **{field: 0.0 for field in TRACE_DURATION_FIELDS.values()},
+                    },
+                )
+                summary["trace_phase_count"] = int(summary["trace_phase_count"]) + 1
+                status = record.get("status") or "ok"
+                if isinstance(status, dict):
+                    status = status.get("code") or status.get("status_code") or "ok"
+                if str(status).lower() not in {"ok", "success", "unset"}:
+                    cast_errors = summary["trace_error_phases"]
+                    if isinstance(cast_errors, set) and phase:
+                        cast_errors.add(phase)
+                duration_ms = _trace_duration_ms(record)
+                field = TRACE_DURATION_FIELDS.get(phase)
+                if field and duration_ms is not None:
+                    summary[field] = round(float(summary[field]) + duration_ms, 3)
+    for summary in index.values():
+        errors = summary.get("trace_error_phases")
+        if isinstance(errors, set):
+            summary["trace_error_phases"] = "|".join(sorted(errors))
+    return index
+
+
+def trace_fields_for_row(
+    trace_index: dict[tuple[str, str], dict[str, object]],
+    artifact_name: str,
+    prompt_index: object,
+) -> dict[str, object]:
+    fields = {
+        "trace_phase_count": 0,
+        "trace_error_phases": "",
+        **{field: "" for field in TRACE_DURATION_FIELDS.values()},
+    }
+    key = _trace_prompt_key(artifact_name, prompt_index)
+    if key is None:
+        return fields
+    summary = trace_index.get(key)
+    if not summary:
+        return fields
+    fields.update(summary)
+    return fields
 
 
 def artifact_reviewed_card_runtime_answers(data: dict) -> str:
@@ -751,6 +862,7 @@ def build_rows(
     guide_lookup: dict[str, dict[str, str]] | None = None,
     answer_cards: list[dict] | None = None,
     corpus_marker_lookup: dict[str, dict] | None = None,
+    trace_index: dict[tuple[str, str], dict[str, object]] | None = None,
 ) -> list[dict]:
     rows = []
     expectations = expectations or {}
@@ -758,6 +870,7 @@ def build_rows(
     if answer_cards is None:
         answer_cards = load_answer_cards()
     corpus_marker_lookup = corpus_marker_lookup or {}
+    trace_index = trace_index or {}
     for path in paths:
         data = load_json(path)
         runtime_answer_setting = artifact_reviewed_card_runtime_answers(data)
@@ -866,6 +979,7 @@ def build_rows(
             )
             ranks = [f"{rank}:{guide_id}" for rank, guide_id in enumerate(candidate_ids, start=1)]
             top1_marker = top1_marker_fields(candidate_ids, corpus_marker_lookup)
+            trace_fields = trace_fields_for_row(trace_index, path.name, prompt_index)
             rows.append(
                 {
                     "artifact_path": str(path),
@@ -912,6 +1026,7 @@ def build_rows(
                     "completion_safety_trimmed": _truthy(
                         metadata_value(result, "completion_safety_trimmed")
                     ),
+                    **trace_fields,
                     "error": result.get("error") or "",
                     "error_category": result.get("error_category") or "",
                     "suspected_failure_bucket": bucket,
@@ -1499,13 +1614,16 @@ def analyze(
     output_dir: Path,
     expectations_path: Path | None = None,
     corpus_marker_scan_path: Path | None = None,
+    trace_jsonl_paths: list[Path] | None = None,
 ) -> tuple[list[dict], dict]:
     expectations = load_expectations(expectations_path) if expectations_path else {}
     corpus_marker_lookup = load_corpus_marker_lookup(corpus_marker_scan_path)
+    trace_index = load_trace_index(trace_jsonl_paths)
     rows = build_rows(
         paths,
         expectations=expectations,
         corpus_marker_lookup=corpus_marker_lookup,
+        trace_index=trace_index,
     )
     summary = summarize(rows)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1543,6 +1661,13 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional JSON output from scripts/scan_corpus_markers.py",
     )
+    parser.add_argument(
+        "--trace-jsonl",
+        type=Path,
+        action="append",
+        default=[],
+        help="Optional RAG trace JSONL file; repeatable.",
+    )
     return parser.parse_args()
 
 
@@ -1559,6 +1684,7 @@ def main() -> int:
         output_dir,
         expectations_path=expectations_path,
         corpus_marker_scan_path=args.corpus_marker_scan,
+        trace_jsonl_paths=args.trace_jsonl,
     )
     print(f"Wrote {len(rows)} diagnostic rows to {output_dir}")
     print("Bucket counts:")
