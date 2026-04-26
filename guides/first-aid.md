@@ -232,7 +232,7 @@ Severe chest pain is the classic signal, but not every heart attack looks the sa
 First aid encompasses the immediate, life-preserving interventions provided in the first minutes to hours after injury or sudden illness. In survival scenarios, professional emergency services may be unavailable for hours or days, making these skills essential for preventing unnecessary death. First aid priorities are simple: maintain airway patency, ensure adequate breathing, restore and maintain circulation, and prevent deterioration until professional care is reached or the patient stabilizes. Early intervention in the "golden hour" (first 60 minutes after trauma or onset of acute illness) dramatically improves survival odds. This guide covers recognition, assessment, and field management of life-threatening emergencies using principles that work with or without equipment.
 
 :::info-box
-**Critical Fact:** Approximately 40% of trauma deaths occur within the first 24 hoursÃ¢â‚¬â€most within the first 4 hours. Rapid assessment and decisive action during this window save lives. In wilderness or disaster settings with no evacuation available, maintaining the patient's ABCs while preventing infection and secondary shock is the entire medical role.
+**Critical Fact:** Approximately 40% of trauma deaths occur within the first 24 hours - most within the first 4 hours. Rapid assessment and decisive action during this window save lives. In wilderness or disaster settings with no evacuation available, maintaining the patient's ABCs while preventing infection and secondary shock is the entire medical role.
 :::
 
 ### Quick symptom routing
@@ -261,11 +261,11 @@ If the problem is mainly a common symptom rather than a true emergency, route to
 
 Rapid, systematic assessment is the foundation of effective first aid. Use the ABCDE approach:
 
-- **A - Airway** Ã¢â‚¬â€ Is the airway patent? Can the patient speak or cry?
-- **B - Breathing** Ã¢â‚¬â€ Is the patient breathing? Are breath sounds present bilaterally?
-- **C - Circulation** Ã¢â‚¬â€ Is there a pulse? Is there severe bleeding?
-- **D - Disability** Ã¢â‚¬â€ What is the patient's mental status? Can they respond to commands?
-- **E - Exposure** Ã¢â‚¬â€ Full assessment of all injuries; assess for hypothermia, hidden wounds.
+- **A - Airway** - Is the airway patent? Can the patient speak or cry?
+- **B - Breathing** - Is the patient breathing? Are breath sounds present bilaterally?
+- **C - Circulation** - Is there a pulse? Is there severe bleeding?
+- **D - Disability** - What is the patient's mental status? Can they respond to commands?
+- **E - Exposure** - Full assessment of all injuries; assess for hypothermia, hidden wounds.
 
 Take only 60-90 seconds for primary assessment. Treat immediately identified threats (airway obstruction, apnea, cardiac arrest, severe hemorrhage) before moving to secondary assessment. Document what you find; if multiple casualties, re-triage periodically as conditions change.
 
@@ -287,8 +287,8 @@ Take only 60-90 seconds for primary assessment. Treat immediately identified thr
 - Hemostatic gauze (Combat Gauze or equivalent): 3-4 packs
 - Tourniquet (CAT or SOFT-W): 2 each
 - Elastic bandages (ACE or equivalent): 3 rolls in various widths
-- Triangular bandages (or cloth strips 36" Ãƒâ€” 36"): 6 pieces
-- Sterile gauze pads (4Ãƒâ€”4" and 2Ãƒâ€”2"): 20+ pads
+- Triangular bandages (or cloth strips 36" x 36"): 6 pieces
+- Sterile gauze pads (4x4" and 2x2"): 20+ pads
 - Non-adherent dressing (Telfa, Mepitel): 10 pads
 - Adhesive tape (1" width): 1 roll
 - Antiseptic wipes or alcohol pads: 20 pads
@@ -321,7 +321,7 @@ Without commercial supplies, adapt: clean cloth strips for pressure and elevatio
 
 ### Scene Safety First
 
-Before approaching victim: identify hazards (traffic, fire, chemical, electrical, water). Ensure personal safety firstÃ¢â‚¬â€injured rescuer becomes additional casualty. Establish perimeter. Don appropriate PPE (gloves, eye protection). Call for emergency services if available. Position yourself upwind of hazardous materials.
+Before approaching victim: identify hazards (traffic, fire, chemical, electrical, water). Ensure personal safety first - injured rescuer becomes additional casualty. Establish perimeter. Don appropriate PPE (gloves, eye protection). Call for emergency services if available. Position yourself upwind of hazardous materials.
 
 ### Triage Categories
 
@@ -417,7 +417,7 @@ For severe limb hemorrhage uncontrolled by pressure (amputation, massive lacerat
 1.  Place tourniquet 2-3 inches above the wound (between wound and heart)
 2.  If wound is on hand/foot, place just above ankle or wrist
 3.  Tighten until bleeding completely stops and pulse below tourniquet is no longer palpable
-4.  Mark tourniquet with time applied (write directly on the tourniquet or on tape attached to it Ã¢â‚¬â€ critical for surgical handoff)
+4.  Mark tourniquet with time applied (write directly on the tourniquet or on tape attached to it - critical for surgical handoff)
 5.  **Do NOT loosen or remove the tourniquet in the field.** Once applied, leave it in place until the patient reaches surgical care
 6.  Monitor the patient for signs of shock and prepare for evacuation to surgical care
 
@@ -464,7 +464,7 @@ Head: 9%, each arm: 9%, chest: 18%, abdomen: 18%, each leg: 18%, genitals: 1%. B
 3.  Assess: determine depth percentage, estimate % of body surface area
 4.  Cover: use clean, dry cloth; prevents contamination and reduces heat loss
 5.  Pain control: NSAIDs, opioids if available and patient can swallow
-6.  Fluids: for >20% burns, replace volume (Parkland formula: 4mL Ãƒâ€” %TBSA Ãƒâ€” body weight in kg in first 24 hours, half in first 8 hours)
+6.  Fluids: for >20% burns, replace volume (Parkland formula: 4mL x %TBSA x body weight in kg in first 24 hours, half in first 8 hours)
 7.  Prevent infection: change dressing daily, watch for infection signs
 
 ### Burn Wound Care
@@ -472,7 +472,7 @@ Head: 9%, each arm: 9%, chest: 18%, abdomen: 18%, each leg: 18%, genitals: 1%. B
 Daily cleaning: remove loose tissue gently, apply antibiotic ointment (Silvadene if available), cover with non-adherent dressing. Watch for eschar (dead tissue) that may restrict breathing/circulation on circumferential burns. Monitor for compartment syndrome. Elevate burned limbs. Encourage movement to prevent contractures.
 
 :::tip
-**Parkland Formula for Large Burns:** For any burn >20% TBSA, fluid resuscitation is critical. Formula: 4 mL Ãƒâ€” % TBSA Ãƒâ€” body weight (kg). Give half over first 8 hours, remainder over next 16 hours. Example: 40 kg patient with 30% burn = 4 Ãƒâ€” 30 Ãƒâ€” 40 = 4,800 mL total; give 2,400 mL in first 8 hours, then 300 mL/hour for next 16 hours. Titrate to urine output (0.5 mL/kg/hour adult, 1 mL/kg/hour child).
+**Parkland Formula for Large Burns:** For any burn >20% TBSA, fluid resuscitation is critical. Formula: 4 mL x % TBSA x body weight (kg). Give half over first 8 hours, remainder over next 16 hours. Example: 40 kg patient with 30% burn = 4 x 30 x 40 = 4,800 mL total; give 2,400 mL in first 8 hours, then 300 mL/hour for next 16 hours. Titrate to urine output (0.5 mL/kg/hour adult, 1 mL/kg/hour child).
 :::
 
 </section>
@@ -599,11 +599,11 @@ After 30 compressions: pinch nose, create seal with mouth, blow for 1 second unt
 For unconscious, breathing patient: place on side with head tilted back to maintain airway. Left arm under head, right arm across chest. Right knee bent. This position allows drainage, prevents aspiration. Check airway frequently. Monitor breathing and pulse continuously.
 
 :::danger
-**When to Stop CPR:** CPR may be discontinued if: (1) ROSC achieved (return of spontaneous circulationÃ¢â‚¬â€pulse returns); (2) advanced life support assumed; (3) rescuer exhaustion/danger to self; (4) obvious death (rigor mortis, decomposition, decapitation); (5) do-not-resuscitate order present. In wilderness settings with no access to medical care, CPR may continue for 30-60 minutes if patient is normothermic and hypothermia is ruled out.
+**When to Stop CPR:** CPR may be discontinued if: (1) ROSC achieved (return of spontaneous circulation - pulse returns); (2) advanced life support assumed; (3) rescuer exhaustion/danger to self; (4) obvious death (rigor mortis, decomposition, decapitation); (5) do-not-resuscitate order present. In wilderness settings with no access to medical care, CPR may continue for 30-60 minutes if patient is normothermic and hypothermia is ruled out.
 :::
 
 :::warning
-**CPR Complications:** Rib fractures occur in ~25% of CPR recipients; this is normal and not a reason to stop. Never pause compressions >10 seconds. In cold-water drowning, patient is "not dead until warm and dead"Ã¢â‚¬â€continue resuscitation until body temperature >30Ã‚Â°C or lifeless for >3 hours.
+**CPR Complications:** Rib fractures occur in ~25% of CPR recipients; this is normal and not a reason to stop. Never pause compressions >10 seconds. In cold-water drowning, patient is "not dead until warm and dead" - continue resuscitation until body temperature >30 degrees C or lifeless for >3 hours.
 :::
 
 </section>
@@ -736,7 +736,7 @@ For wounds with continuous drainage: change dressing daily or when soaked throug
 :::
 
 :::info-box
-**Antibiotic Dosing for Common Wound Infections:** Amoxicillin 500mg three times daily Ãƒâ€” 7 days; Cephalexin 500mg four times daily Ãƒâ€” 7 days; Clindamycin 300-450mg four times daily Ãƒâ€” 7 days (covers MRSA). Dosing assumes normal renal function. If infection suspected with fever/systemic signs, increase vigilance and begin evacuating patient.
+**Antibiotic Dosing for Common Wound Infections:** Amoxicillin 500mg three times daily x 7 days; Cephalexin 500mg four times daily x 7 days; Clindamycin 300-450mg four times daily x 7 days (covers MRSA). Dosing assumes normal renal function. If infection suspected with fever/systemic signs, increase vigilance and begin evacuating patient.
 :::
 
 ### Advanced Wound Cleaning
@@ -846,8 +846,8 @@ Assess the patient's overall condition before examining the wound in detail.
 - **Level of consciousness:** Alert, confused, or unresponsive?
 - **Skin perfusion:** Is skin color normal, pale, or bluish? (indicates shock if pale)
 - **Bleeding severity:** Is there uncontrolled bleeding? (life-threatening, address immediately)
-  - If yes Ã¢â€ â€™ go to Step 2 (Hemorrhage Control) immediately
-  - If no or controlled Ã¢â€ â€™ continue to Step 3
+  - If yes -> go to Step 2 (Hemorrhage Control) immediately
+  - If no or controlled -> continue to Step 3
 
 **Step 2: Bleeding Control (If Active Severe Bleeding, 1-5 minutes)**
 
@@ -864,7 +864,7 @@ If any present: STOP and apply direct pressure or tourniquet before wound classi
 
 Management:
 - Apply firm direct pressure with clean cloth for 10-15 minutes without lifting to check
-- If bleeding continues: apply tourniquet above wound (2 inches proximal, tighten until distal pulse is absent and bleeding stops completelyÃ¢â‚¬â€complete arterial occlusion is required)
+- If bleeding continues: apply tourniquet above wound (2 inches proximal, tighten until distal pulse is absent and bleeding stops completely - complete arterial occlusion is required)
 - Elevate wound above heart if possible
 - Once bleeding controlled, proceed to Step 3
 
@@ -912,41 +912,41 @@ e) **Burn (thermal injury)**
 Determine how dirty/contaminated the wound is.
 
 Is the wound **clean** (from sharp clean object, minimal delay in care)?
-- Yes Ã¢â€ â€™ **Minor contamination risk.** Standard cleaning and suturing acceptable.
-- No Ã¢â€ â€™ Is it **contaminated** (dirt, animal bite, delayed care >6-12 hours)?
-  - Yes Ã¢â€ â€™ **Significant infection risk.** Extended antibiotics likely needed; suturing may be deferred to allow drainage.
-  - No Ã¢â€ â€™ Is it **dirty/infected** (visible debris, animal/human bite, soil/rust exposure)?
-    - Yes Ã¢â€ â€™ **High infection risk.** Do not suture; aggressive cleaning and antibiotics essential; may need surgical debridement.
+- Yes -> **Minor contamination risk.** Standard cleaning and suturing acceptable.
+- No -> Is it **contaminated** (dirt, animal bite, delayed care >6-12 hours)?
+  - Yes -> **Significant infection risk.** Extended antibiotics likely needed; suturing may be deferred to allow drainage.
+  - No -> Is it **dirty/infected** (visible debris, animal/human bite, soil/rust exposure)?
+    - Yes -> **High infection risk.** Do not suture; aggressive cleaning and antibiotics essential; may need surgical debridement.
 
 **Tetanus status check:**
 - Wound is contaminated/dirty AND patient's last tetanus vaccine >5 years ago?
-  - Yes Ã¢â€ â€™ Give tetanus booster if available, or provide prophylaxis course
-  - No Ã¢â€ â€™ Continue to Step 5
+  - Yes -> Give tetanus booster if available, or provide prophylaxis course
+  - No -> Continue to Step 5
 
 **Step 5: Treatment Decision (Based on Wound Size, Depth, Contamination)**
 
 **Decision tree:**
 
-a) **Small (<1 cm), clean laceration, minimal contamination Ã¢â€ â€™ CLOSE (suture/butterfly/steri-strip)**
+a) **Small (<1 cm), clean laceration, minimal contamination -> CLOSE (suture/butterfly/steri-strip)**
    - Irrigate with clean water, remove debris
    - Close with sutures or strips if edges approximate well
    - Bandage, monitor for infection
    - Outcome: faster healing, minimal scar
 
-b) **Medium (1-5 cm), clean edges, low contamination Ã¢â€ â€™ CLOSE WITH PRECAUTION**
+b) **Medium (1-5 cm), clean edges, low contamination -> CLOSE WITH PRECAUTION**
    - Irrigate extensively
    - Close wound but monitor closely for infection
    - Plan suture removal in 7-10 days
    - Outcome: good cosmetic result if infection avoided
 
-c) **Large (>5 cm), or deep, or significant contamination Ã¢â€ â€™ CLEAN EXTENSIVELY, DEFER CLOSURE**
+c) **Large (>5 cm), or deep, or significant contamination -> CLEAN EXTENSIVELY, DEFER CLOSURE**
    - Do NOT suture immediately
    - Irrigate repeatedly over hours/days (2-3 times daily if possible)
    - Allow wound to drain and heal from depth outward
    - After 48-72 hours without infection signs: may close secondarily
    - Outcome: lower infection risk, but slower healing and worse scar
 
-d) **Human contaminated puncture wound Ã¢â€ â€™ IRRIGATE, ANTIBIOTICS, OBSERVE**
+d) **Human contaminated puncture wound -> IRRIGATE, ANTIBIOTICS, OBSERVE**
    - Difficult to clean internally
    - Do not probe, widen, or suture the tract in the field
    - Systemic antibiotics essential
@@ -954,7 +954,7 @@ d) **Human contaminated puncture wound Ã¢â€ â€™ IRRIGATE, ANTIBIOTICS
    - May need imaging (ultrasound/x-ray) to rule out foreign body
    - Outcome: observe for delayed infection
 
-e) **Animal or human bite Ã¢â€ â€™ LEAVE OPEN, AGGRESSIVE ANTIBIOTICS**
+e) **Animal or human bite -> LEAVE OPEN, AGGRESSIVE ANTIBIOTICS**
    - High risk of infection (polymicrobial, including anaerobes)
    - Do NOT close; let drain
    - Tetanus booster essential
@@ -1216,14 +1216,14 @@ e) **Animal or human bite Ã¢â€ â€™ LEAVE OPEN, AGGRESSIVE ANTIBIOTICS
 
 ## Environmental Emergencies
 
-### Hypothermia (Core Temperature Below 95Ã‚Â°F/35Ã‚Â°C)
+### Hypothermia (Core Temperature Below 95 degrees F/35 degrees C)
 
 **Hypothermia Stages and Treatment:**
 
-1.  **Mild (90-95Ã‚Â°F):** Shivering, confusion, slurred speech. Warm gradually (blankets, warm drinks), avoid rapid rewarming
-2.  **Moderate (82-90Ã‚Â°F):** Shivering stops, drowsiness, poor coordination, possible irregular heartbeat. Handle gently (rough movement can cause cardiac arrhythmia). Insulate from ground, apply heat packs to groin, armpits, neck
-3.  **Severe (68-82Ã‚Â°F):** Unconscious, barely perceptible pulse/breathing, possible rigid muscles. Do NOT attempt to rewarm in field - could cause afterdrop (further cooling when peripheral blood returns to cold core). Insulate, monitor vitals, get to professional help with care
-4.  **Profound (<68Ã‚Â°F):** Appears dead (no pulse, no breathing, rigid). Do NOT give up - with proper rewarming, people can recover from severe hypothermia. Transport carefully, gentle rewarming only in hospital with ECMO capability if available
+1.  **Mild (90-95 degrees F):** Shivering, confusion, slurred speech. Warm gradually (blankets, warm drinks), avoid rapid rewarming
+2.  **Moderate (82-90 degrees F):** Shivering stops, drowsiness, poor coordination, possible irregular heartbeat. Handle gently (rough movement can cause cardiac arrhythmia). Insulate from ground, apply heat packs to groin, armpits, neck
+3.  **Severe (68-82 degrees F):** Unconscious, barely perceptible pulse/breathing, possible rigid muscles. Do NOT attempt to rewarm in field - could cause afterdrop (further cooling when peripheral blood returns to cold core). Insulate, monitor vitals, get to professional help with care
+4.  **Profound (<68 degrees F):** Appears dead (no pulse, no breathing, rigid). Do NOT give up - with proper rewarming, people can recover from severe hypothermia. Transport carefully, gentle rewarming only in hospital with ECMO capability if available
 
 **Rewarming Procedure (Mild to Moderate):**
 
@@ -1243,7 +1243,7 @@ e) **Animal or human bite Ã¢â€ â€™ LEAVE OPEN, AGGRESSIVE ANTIBIOTICS
 ### Heat Stroke and Heat Exhaustion
 
 :::note
-**Heat Exhaustion (Core Temp 98.6-104Ã‚Â°F):**
+**Heat Exhaustion (Core Temp 98.6-104 degrees F):**
 
 - **Symptoms:** Heavy sweating, weakness, dizziness, nausea, fast pulse, cool/clammy skin, muscle cramps
 - **Treatment:** Move to cool area, drink water, cool body with wet cloths, elevate legs
@@ -1251,7 +1251,7 @@ e) **Animal or human bite Ã¢â€ â€™ LEAVE OPEN, AGGRESSIVE ANTIBIOTICS
 :::
 
 :::note
-**Heat Stroke (Core Temp >104Ã‚Â°F) - MEDICAL EMERGENCY:**
+**Heat Stroke (Core Temp >104 degrees F) - MEDICAL EMERGENCY:**
 
 - **Symptoms:** No sweating, hot/dry skin, severe weakness, confusion, possible seizures, altered consciousness
 - **Difference from heat exhaustion:** Lack of sweating and altered mental status are key - body's cooling system has failed
@@ -1420,7 +1420,7 @@ In resource-limited settings, resuscitation is terminated when:
 1. ROSC achieved (return of spontaneous circulation)
 2. Obvious death (rigor mortis, dependent lividity, decapitation, decomposition, immersion in ice >6 hours)
 3. Resuscitation ongoing for >30-60 minutes with no signs of life (normothermic patient)
-4. Patient hypothermic but unrecovered after passive external rewarming and >3 hours no vital signs (or until core temperature >30Ã‚Â°C)
+4. Patient hypothermic but unrecovered after passive external rewarming and >3 hours no vital signs (or until core temperature >30 degrees C)
 5. Rescuer safety threatened or rescuer exhaustion prevents effective CPR
 6. Signed DNR (do-not-resuscitate) order present
 
@@ -1468,11 +1468,11 @@ Immediate post-trauma period is high-risk. Monitor for delayed deterioration:
 Infection risk is highest days 2-10 post-injury. Daily assessment protocol:
 
 - **Appearance:** Redness extending >2 cm from wound edges, yellow/green/foul drainage, black discoloration (necrosis), increasing warmth
-- **Systemic signs:** Temperature >38.5Ã‚Â°C (101Ã‚Â°F), chills, malaise, headache, lymphadenopathy (swollen nodes in draining direction)
+- **Systemic signs:** Temperature >38.5 degrees C (101 degrees F), chills, malaise, headache, lymphadenopathy (swollen nodes in draining direction)
 - **Action if suspected:** Start antibiotics immediately (if available), increase dressing frequency to 2x daily, elevate, monitor closely for progression to sepsis
 
 :::warning
-**Sepsis Warning Signs (Medical Emergency):** Fever >39Ã‚Â°C (102Ã‚Â°F), shaking chills, rapid heart rate >120, rapid breathing >20, confusion, low blood pressure, decreased urine output. If suspected, patient requires evacuation urgently. While awaiting evacuation: aggressive fluid replacement (3-4 L/day if conscious and tolerating oral), antibiotics if available, cooling measures for fever.
+**Sepsis Warning Signs (Medical Emergency):** Fever >39 degrees C (102 degrees F), shaking chills, rapid heart rate >120, rapid breathing >20, confusion, low blood pressure, decreased urine output. If suspected, patient requires evacuation urgently. While awaiting evacuation: aggressive fluid replacement (3-4 L/day if conscious and tolerating oral), antibiotics if available, cooling measures for fever.
 :::
 
 </section>
@@ -1558,7 +1558,7 @@ Hemostatic agents accelerate clotting. Without them: clean gauze, any cloth, eve
 
 ### Fluid Resuscitation in Dehydrated Patient with No IV Access
 
-- Oral rehydration solution (1 L boiled water + 6 teaspoons sugar + Ã‚Â½ teaspoon salt)
+- Oral rehydration solution (1 L boiled water + 6 teaspoons sugar + 1/2 teaspoon salt)
 - Small frequent sips (every 5 minutes, 30 mL per sip) better tolerated than large volumes
 - If patient vomiting: wait 10 minutes, try again more slowly
 - Target: 2-3 L over 24 hours if conscious and tolerating oral (equivalent to modest IV resuscitation)
@@ -1604,7 +1604,7 @@ Hemostatic agents accelerate clotting. Without them: clean gauze, any cloth, eve
 
 ## Common First Aid Errors
 
-1. **Tourniquet hesitation:** Applying too late results in permanent disability or loss of limb; apply early for severe limb bleeding. Consequence: tissue death, amputation. *Fix: If arterial bleeding, don't wait for pressure to failÃ¢â‚¬â€apply tourniquet promptly.*
+1. **Tourniquet hesitation:** Applying too late results in permanent disability or loss of limb; apply early for severe limb bleeding. Consequence: tissue death, amputation. *Fix: If arterial bleeding, don't wait for pressure to fail - apply tourniquet promptly.*
 
 2. **Ineffective CPR:** Shallow compressions (pressing <2 inches or <100 bpm) fail to generate adequate perfusion. Consequence: brain death despite continued CPR. *Fix: Press hard (2-2.4 inches), push fast (100-120 bpm), allow full recoil between compressions.*
 
@@ -1614,7 +1614,7 @@ Hemostatic agents accelerate clotting. Without them: clean gauze, any cloth, eve
 
 5. **Shock underestimation:** Waiting for shock to appear before intervening wastes critical time. Consequence: progression to Class IV shock, death. *Fix: Anticipate shock; begin interventions (elevation, bleeding control, fluids) immediately upon injury.*
 
-6. **Over-tightening tourniquets:** Excessive tightness can crush remaining soft tissue. Consequence: tissue damage beyond the original injury. *Fix: Tighten until bleeding stops completely, then stopÃ¢â‚¬â€tight is good, crushing is not.*
+6. **Over-tightening tourniquets:** Excessive tightness can crush remaining soft tissue. Consequence: tissue damage beyond the original injury. *Fix: Tighten until bleeding stops completely, then stop - tight is good, crushing is not.*
 
 7. **Ignoring subtle signs:** Mild tachycardia, anxiety, mild confusion early in shock are often dismissed. Consequence: shock progression missed. *Fix: Take vital signs systematically; recognize early compensation as sign of blood loss.*
 
@@ -1627,16 +1627,16 @@ Hemostatic agents accelerate clotting. Without them: clean gauze, any cloth, eve
 :::affiliate
 **If you're preparing in advance,** assemble comprehensive first-aid supplies covering trauma response:
 
-- [RHINO RESCUE IFAK Trauma Kit](https://www.amazon.com/dp/B0DRXVJX1F?tag=offlinecompen-20) Ã¢â‚¬â€ Tactical kit with tourniquet, Israeli bandage, gauze, and MOLLE pouch
-- [ifory CPR Face Shield 50-Pack](https://www.amazon.com/dp/B09SHQ6B8Z?tag=offlinecompen-20) Ã¢â‚¬â€ Disposable one-way valve barriers with keychain for grab-and-go access
-- [Mart Cobra Emergency Blankets 100-Pack](https://www.amazon.com/dp/B0BZX1276P?tag=offlinecompen-20) Ã¢â‚¬â€ Reflective mylar retains 90% body heat, compact for mass-casualty kits
-- [MEUUT Trauma Shears 8-Inch 2-Pack](https://www.amazon.com/dp/B0BP26SMLJ?tag=offlinecompen-20) Ã¢â‚¬â€ Fluoride-coated non-stick blades for cutting clothing and bandages
-- [Emergency First Aid Kit with Tourniquet](https://www.amazon.com/dp/B08P8N7MHF?tag=offlinecompen-20) Ã¢â‚¬â€ Pre-assembled with sterile gauze, bandages, and essential items
-- [SAM Splint (Compact)](https://www.amazon.com/dp/B00DNYQBPG?tag=offlinecompen-20) Ã¢â‚¬â€ Lightweight, reusable splint for fracture stabilization
-- [Tactical Combat Tourniquet](https://www.amazon.com/dp/B0BLX4CJQJ?tag=offlinecompen-20) Ã¢â‚¬â€ Rapid hemorrhage control for limb injuries
-- [EMT Trauma Shears](https://www.amazon.com/dp/B0851QZQLX?tag=offlinecompen-20) Ã¢â‚¬â€ Cut through thick materials and clothing quickly
+- [RHINO RESCUE IFAK Trauma Kit](https://www.amazon.com/dp/B0DRXVJX1F?tag=offlinecompen-20) - Tactical kit with tourniquet, Israeli bandage, gauze, and MOLLE pouch
+- [ifory CPR Face Shield 50-Pack](https://www.amazon.com/dp/B09SHQ6B8Z?tag=offlinecompen-20) - Disposable one-way valve barriers with keychain for grab-and-go access
+- [Mart Cobra Emergency Blankets 100-Pack](https://www.amazon.com/dp/B0BZX1276P?tag=offlinecompen-20) - Reflective mylar retains 90% body heat, compact for mass-casualty kits
+- [MEUUT Trauma Shears 8-Inch 2-Pack](https://www.amazon.com/dp/B0BP26SMLJ?tag=offlinecompen-20) - Fluoride-coated non-stick blades for cutting clothing and bandages
+- [Emergency First Aid Kit with Tourniquet](https://www.amazon.com/dp/B08P8N7MHF?tag=offlinecompen-20) - Pre-assembled with sterile gauze, bandages, and essential items
+- [SAM Splint (Compact)](https://www.amazon.com/dp/B00DNYQBPG?tag=offlinecompen-20) - Lightweight, reusable splint for fracture stabilization
+- [Tactical Combat Tourniquet](https://www.amazon.com/dp/B0BLX4CJQJ?tag=offlinecompen-20) - Rapid hemorrhage control for limb injuries
+- [EMT Trauma Shears](https://www.amazon.com/dp/B0851QZQLX?tag=offlinecompen-20) - Cut through thick materials and clothing quickly
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide Ã¢â‚¬â€ see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 ## See Also
