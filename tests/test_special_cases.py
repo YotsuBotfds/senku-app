@@ -1297,6 +1297,8 @@ class SpecialCaseTests(unittest.TestCase):
             "touched live wiring and now have chest pain and trouble catching my breath",
             "shocked through one hand and out the other and now feel weak shaky and nauseated",
             "During storm cleanup, someone collapsed after touching a wet breaker box and the roof is still leaking. Should we turn the breaker off and move them somewhere dry?",
+            "During storm cleanup someone got shocked by wet electricity under a roof leak and collapsed. Restart power?",
+            "During storm cleanup someone got an electrical shock near a roof leak and is not breathing normally. Should we restart power?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -1309,6 +1311,8 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("serious electrical injury", response)
         self.assertIn("Make the scene safe before touching anyone", response)
         self.assertIn("dangerous heart rhythms", response)
+        self.assertIn("GD-232", response)
+        self.assertIn("GD-513", response)
         self.assertIn("not routine shock care or a minor burn", response)
 
         near_misses = [

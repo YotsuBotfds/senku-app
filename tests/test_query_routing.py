@@ -566,6 +566,18 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(question, electrical_meta),
             query._metadata_rerank_delta(question, roof_meta),
         )
+        restart_question = "After the storm the roof leak got outlets wet. Can I restart power?"
+        applied = []
+        query._apply_rag_owner_rerank_hints(
+            restart_question.lower(),
+            electrical_meta["guide_id"],
+            lambda branch, delta: applied.append((branch, delta)),
+        )
+        self.assertEqual(applied, [("wet_electrical_roof_intrusion_owner", -0.16)])
+        self.assertLess(
+            query._metadata_rerank_delta(restart_question, electrical_meta),
+            query._metadata_rerank_delta(restart_question, roof_meta),
+        )
 
         broad_questions = [
             "A storm damaged the roof and water is coming in.",
@@ -1231,6 +1243,8 @@ class QueryRoutingTests(unittest.TestCase):
         prompts = [
             "A storm damaged the roof, water is coming in, and some outlets got wet. What is safe to do first?",
             "Can we patch the roof now if there may be electrical damage inside and standing water near the panel?",
+            "After the storm the roof leak got outlets wet. Can I restart power?",
+            "During storm cleanup someone got shocked by wet electricity under a roof leak and collapsed. Restart power?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -1259,6 +1273,11 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(question, electrical_meta),
             query._metadata_rerank_delta(question, roof_meta),
         )
+        bootstrap_question = (
+            "After a storm, the electrical system is partially alive. "
+            "What is a safe sequence for load triage and temporary restoration?"
+        )
+        self.assertFalse(query._is_electrical_hazard_query(bootstrap_question))
 
     def test_market_tax_and_building_habitability_prompts_get_guardrails(self):
         basic_results = {

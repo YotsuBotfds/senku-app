@@ -308,10 +308,17 @@
         [
           "outlets got wet",
           "outlet got wet",
+          "outlets wet",
+          "outlet wet",
+          "water got into outlets",
+          "water got into outlet",
           "wet outlets",
           "wet outlet",
+          "wet electricity",
           "water near outlet",
-          "water through outlet"
+          "water through outlet",
+          "breaker box wet",
+          "breaker panel wet"
         ]
       ]
     },

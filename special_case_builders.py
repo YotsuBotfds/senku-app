@@ -5344,7 +5344,7 @@ def _build_active_electrical_odor_outlet_response():
 def _is_electrical_injury_red_flag_special_case(question):
     """Detect electrical shock victims with symptoms that make small-burn framing unsafe."""
     lower = question.lower()
-    if any(term in lower for term in ("burning plastic smell", "outlet smells", "roof leak", "breaker box got wet", "battery acid")):
+    if any(term in lower for term in ("burning plastic smell", "outlet smells", "battery acid")):
         return False
 
     electrical_context = any(
@@ -5361,6 +5361,8 @@ def _is_electrical_injury_red_flag_special_case(question):
             "wet electrical panel",
             "touching a wet breaker",
             "touched a wet breaker",
+            "breaker box got wet",
+            "wet electricity",
             "house current",
             "grabbed a wire",
             "touched wiring",
@@ -5390,6 +5392,8 @@ def _is_electrical_injury_red_flag_special_case(question):
         "confused",
         "muscle pain",
         "muscle contraction",
+        "not breathing",
+        "not breathing normally",
         "skin mark is tiny",
         "small burn",
         "hand burned",
