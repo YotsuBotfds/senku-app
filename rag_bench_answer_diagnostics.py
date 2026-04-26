@@ -194,9 +194,10 @@ def answer_card_diagnostics(
         }
 
     question_text = str(result.get("question") or result.get("prompt_text") or "")
-    if strict_card_not_applicable_to_compare_prompt(question_text, cards):
+    not_applicable_status = strict_card_not_applicable_to_prompt(question_text, cards)
+    if not_applicable_status:
         return {
-            "answer_card_status": "not_applicable_compare",
+            "answer_card_status": not_applicable_status,
             "answer_card_ids": "|".join(card_ids),
             "answer_card_required_hits": "",
             "answer_card_missing_required": "",
@@ -253,8 +254,12 @@ def evidence_nugget_diagnostics(
         return {**empty_fields, "evidence_nugget_status": "no_evaluable_answer"}
 
     question_text = str(result.get("question") or result.get("prompt_text") or "")
-    if strict_card_not_applicable_to_compare_prompt(question_text, selected_cards):
-        return {**empty_fields, "evidence_nugget_status": "not_applicable_compare"}
+    not_applicable_status = strict_card_not_applicable_to_prompt(
+        question_text,
+        selected_cards,
+    )
+    if not_applicable_status:
+        return {**empty_fields, "evidence_nugget_status": not_applicable_status}
 
     evaluation = evaluate_answer_card_contract(
         answer_text,
@@ -342,6 +347,63 @@ def strict_card_not_applicable_to_compare_prompt(question_text: str, cards: list
         "meningitis_sepsis_child" in card_ids
         and is_bare_meningitis_vs_viral_compare(question_text)
     )
+
+
+def strict_card_not_applicable_to_prompt(question_text: str, cards: list[dict]) -> str:
+    if strict_card_not_applicable_to_compare_prompt(question_text, cards):
+        return "not_applicable_compare"
+
+    card_ids = {
+        str(card.get("card_id") or "").strip()
+        for card in cards or []
+        if str(card.get("card_id") or "").strip()
+    }
+    if (
+        card_ids
+        and card_ids <= {"choking_airway_obstruction"}
+        and not has_choking_airway_prompt(question_text)
+    ):
+        return "not_applicable_prompt"
+
+    return ""
+
+
+def has_choking_airway_prompt(question_text: str) -> bool:
+    lower = str(question_text or "").lower()
+    markers = (
+        "choking",
+        "choke",
+        "food stuck",
+        "object stuck",
+        "object in throat",
+        "foreign body",
+        "airway obstruction",
+        "blocked airway",
+        "throat blocked",
+        "cannot speak",
+        "can't speak",
+        "can not speak",
+        "cannot cough",
+        "can't cough",
+        "can not cough",
+        "cannot breathe",
+        "can't breathe",
+        "can not breathe",
+        "not breathing",
+        "blue lips",
+        "turning blue",
+        "cyanosis",
+        "infant cannot cry",
+        "infant can't cry",
+        "baby cannot cry",
+        "baby can't cry",
+        "back blows",
+        "abdominal thrust",
+        "heimlich",
+        "gagging",
+        "drooling",
+    )
+    return any(marker in lower for marker in markers)
 
 
 def is_bare_meningitis_vs_viral_compare(question_text: str) -> bool:
@@ -524,13 +586,16 @@ def app_acceptance_diagnostics(
     elif (
         bucket in {"deterministic_pass", "expected_supported"}
         and evidence_owner_status == "expected_owner_cited"
-        and (card_status in {"pass", "no_generated_answer", "not_applicable_compare", ""})
+        and (
+            card_status
+            in {"pass", "no_generated_answer", "not_applicable_compare", "not_applicable_prompt", ""}
+        )
         and (claim_status in {"pass", "no_generated_answer", ""})
     ):
         app_status = "strong_supported"
     elif (
         evidence_owner_status == "expected_owner_cited"
-        and card_status in {"pass", "partial", "not_applicable_compare", ""}
+        and card_status in {"pass", "partial", "not_applicable_compare", "not_applicable_prompt", ""}
         and claim_status in {"pass", "partial", ""}
     ):
         app_status = "moderate_supported"

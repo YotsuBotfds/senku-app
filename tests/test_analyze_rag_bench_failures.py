@@ -388,6 +388,67 @@ class AnalyzeRagBenchFailuresTests(unittest.TestCase):
         self.assertEqual(rows[0]["app_acceptance_status"], "strong_supported")
         self.assertEqual(summary["generated_shadow_card_gap_rows"], 0)
 
+    def test_non_choking_prompt_does_not_shadow_gap_choking_card(self):
+        root = self.make_tmpdir()
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": (
+                                "During wildfire evacuation, one adult is confused after a "
+                                "fall, another has minor scrapes, and a third is handling "
+                                "animal carriers. Who gets attention first and what can be "
+                                "delegated while we evacuate?"
+                            ),
+                            "prompt_metadata": {
+                                "expected_guide_ids": "GD-029|GD-232",
+                                "expected_guide_family": "evacuation triage",
+                            },
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "cited",
+                            "cited_guide_ids": ["GD-029", "GD-558"],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-029", "GD-232"],
+                            },
+                            "response_text": (
+                                "Give first attention to the confused adult after the fall, "
+                                "then delegate minor scrapes and animal carriers to others. "
+                                "[GD-029] [GD-558]"
+                            ),
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+        cards = [
+            {
+                "card_id": "choking_airway_obstruction",
+                "guide_id": "GD-232",
+                "risk_tier": "critical",
+                "required_first_actions": [
+                    "Start back blows",
+                    "Use abdominal thrusts",
+                ],
+                "first_actions": [],
+                "urgent_red_flags": ["Cannot speak or cough"],
+                "forbidden_advice": [],
+            }
+        ]
+
+        rows = build_rows([artifact], answer_cards=cards)
+        summary = summarize(rows)
+
+        self.assertEqual(rows[0]["answer_card_status"], "not_applicable_prompt")
+        self.assertEqual(rows[0]["evidence_nugget_status"], "not_applicable_prompt")
+        self.assertEqual(rows[0]["answer_card_missing_required"], "")
+        self.assertNotEqual(rows[0]["app_acceptance_status"], "card_contract_gap")
+        self.assertEqual(summary["generated_shadow_card_gap_rows"], 0)
+
     def test_red_flag_meningitis_prompt_still_uses_strict_emergency_card(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"
