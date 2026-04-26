@@ -69,8 +69,15 @@ function Test-PythonModule {
         [string]$ModuleName
     )
 
-    & $PythonExecutable -c "import $ModuleName" 2>$null
-    return ($LASTEXITCODE -eq 0)
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & $PythonExecutable -c "import $ModuleName" *> $null
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    return ($exitCode -eq 0)
 }
 
 function New-PipAuditCommand {

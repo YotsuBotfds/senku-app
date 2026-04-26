@@ -45,6 +45,8 @@ class DependencySecurityScanScriptTests(unittest.TestCase):
         self.assertIn("pip install pip-audit", content)
         self.assertIn("pip-audit is unavailable", content)
         self.assertIn("SkipIfUnavailable", content)
+        self.assertIn("$previousErrorActionPreference = $ErrorActionPreference", content)
+        self.assertIn("*> $null", content)
 
     def test_scan_script_has_safe_static_defaults(self):
         content = SCAN_SCRIPT_PATH.read_text(encoding="utf-8")
