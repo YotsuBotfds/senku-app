@@ -61,7 +61,7 @@ liability_level: low
 
 ## Why Education is Survival
 
-In an off-grid civilization, knowledge is the most valuable resource. When specialized knowledge exists in only one person, the entire community is vulnerable. The accidental death of a master farmer, healer, or engineer could set your community back years or decades. Education is not a luxuryâ€”it is infrastructure as essential as water systems or food storage.
+In an off-grid civilization, knowledge is the most valuable resource. When specialized knowledge exists in only one person, the entire community is vulnerable. The accidental death of a master farmer, healer, or engineer could set your community back years or decades. Education is not a luxury—it is infrastructure as essential as water systems or food storage.
 
 A functioning civilization depends on the **continuous transfer of knowledge** across generations and across current members. Unlike agricultural or manufacturing skills that produce immediate tangible goods, education compounds over time. A generation educated in basic literacy and numeracy can then educate the next generation more effectively. A community that invests in teaching medical skills doesn't just improve immediate health outcomes; it creates redundancy and resilience. Consider the stakes: without literacy, written instructions and technical knowledge are lost. Without numeracy, you cannot manage stores, predict harvests, or allocate resources fairly. Without practical training in critical skills, each trade dies with its practitioner.
 
@@ -100,7 +100,7 @@ Establishing education requires:
 
 ## Scope Boundary
 
-This guide covers **teaching methods, literacy instruction, numeracy, classroom management, apprenticeship, and knowledge preservation**. It does **not** cover physical building accessibility (ramps, doorway widths, grab bars) â€” that belongs in `accessible-shelter-design`. It does not cover school system structure, curriculum sequencing by age tier, teacher cascade training, school governance, room layout, or funding â€” those belong in `education-system-design`.
+This guide covers **teaching methods, literacy instruction, numeracy, classroom management, apprenticeship, and knowledge preservation**. It does **not** cover physical building accessibility (ramps, doorway widths, grab bars) — that belongs in `accessible-shelter-design`. It does not cover school system structure, curriculum sequencing by age tier, teacher cascade training, school governance, room layout, or funding — those belong in `education-system-design`.
 
 - Symptom: *need to build or modify a physical space so someone can enter or move through it* -> route to `accessible-shelter-design`
 - Symptom: *need schoolhouse or shared community building entrance/accessibility/layout guidance rather than teaching method guidance* -> route to `accessible-shelter-design` and `education-system-design`
@@ -183,14 +183,14 @@ A typical school schedule runs 4-5 hours daily, 5-6 days a week. Morning focuses
 
 ### Ages 13-17: Specialization & Advanced Skills
 
-By early adolescence, children should be developing their own specializations based on aptitude, interest, and community need. Continue general education while deepening trade skills and developing leadership capacity. Motivation becomes more intrinsicâ€”adolescents learning because they see direct relevance.
+By early adolescence, children should be developing their own specializations based on aptitude, interest, and community need. Continue general education while deepening trade skills and developing leadership capacity. Motivation becomes more intrinsic—adolescents learning because they see direct relevance.
 
 -   **Reading and writing:** Focused on reading for understanding technical and practical texts. Writing develops into explanation, argumentation, and documentation. Read literature from diverse cultures and periods.
 -   **Numeracy:** Algebra, geometry, measurement for practical projects, accounting and record-keeping, and basic statistics for community record analysis.
 -   **Specialized training:** Intensive apprenticeship in chosen or assigned trade (medical practice, engineering, advanced agriculture, governance, metalworking, etc.). Apprenticeship becomes primary educational focus.
 -   **Leadership:** Gradually take on teaching roles with younger children. Participate in community decisions. Mentor younger apprentices in their own trade.
 -   **Science inquiry:** More independent investigation. Conducting experiments, record-keeping, and understanding scientific reasoning.
--   **Advanced electives:** Based on aptitude and community needâ€”advanced agriculture, engineering, medical specialization, philosophy, history, or governance.
+-   **Advanced electives:** Based on aptitude and community need—advanced agriculture, engineering, medical specialization, philosophy, history, or governance.
 
 By age 13-14, most formal classroom instruction ends. Students spend 50%+ of time in apprenticeship, 25% in continued academic study (mathematics, reading, writing), and 25% in community work. This allows specialization while maintaining core skills. Some students may continue academic focus (future teachers, engineers, healers) while others focus primarily on trade.
 
@@ -208,7 +208,7 @@ Literacy is the foundation for all other learning. Teaching reading and writing 
 
 ### Phonics-Based Reading Instruction
 
-Phonicsâ€”teaching the relationship between letters and soundsâ€”is the most effective method for teaching reading. Children learn by understanding how letters represent sounds, which they can then blend into words. This approach is faster, more reliable, and creates better readers than whole-word or sight-word methods.
+Phonics—teaching the relationship between letters and sounds—is the most effective method for teaching reading. Children learn by understanding how letters represent sounds, which they can then blend into words. This approach is faster, more reliable, and creates better readers than whole-word or sight-word methods.
 
 #### Phonics Instruction Sequence
 
@@ -245,7 +245,7 @@ In small off-grid communities, you may have children of various reading levels i
 -   **Phonics instruction:** Teach phonics in small groups by level, not age. All early readers (regardless of age) benefit from systematic phonics.
 -   **Shared reading:** Read aloud to the whole group from interesting books slightly above independent reading level. This builds vocabulary and listening comprehension.
 -   **Independent reading:** Each student reads material at their own level for fluency practice. No child reads material that's frustratingly hard or too easy.
--   **Buddy reading:** Older fluent readers read aloud to younger children. Both benefitâ€”the reader practices, the listener hears fluent reading and enjoys stories.
+-   **Buddy reading:** Older fluent readers read aloud to younger children. Both benefit—the reader practices, the listener hears fluent reading and enjoys stories.
 
 ### Writing Development
 
@@ -279,7 +279,7 @@ If community members lack literacy, systematic adult instruction is possible. Ad
 
 ## Numeracy & Practical Mathematics Teaching
 
-Mathematical thinking is critical for survival and community function. More than arithmetic, numeracy encompasses understanding quantity, proportion, pattern, and logical reasoning. Mathematics should be taught through concrete materials, practical applications, and gamesâ€”not abstract symbol manipulation alone.
+Mathematical thinking is critical for survival and community function. More than arithmetic, numeracy encompasses understanding quantity, proportion, pattern, and logical reasoning. Mathematics should be taught through concrete materials, practical applications, and games—not abstract symbol manipulation alone.
 
 ### Mathematical Developmental Progression
 
@@ -340,7 +340,7 @@ Connect mathematics to practical domains:
 
 ## Apprenticeship Systems & Trade Education
 
-The master-apprentice model is time-tested and works exceptionally well for off-grid communities. This system combines productive work with skill transfer while creating economic value. Unlike modern schooling focused on classroom instruction, apprenticeship integrates learning with doingâ€”the most effective way to develop practical competence.
+The master-apprentice model is time-tested and works exceptionally well for off-grid communities. This system combines productive work with skill transfer while creating economic value. Unlike modern schooling focused on classroom instruction, apprenticeship integrates learning with doing—the most effective way to develop practical competence.
 
 ### The Three-Tier Apprenticeship Structure
 
@@ -361,7 +361,7 @@ Effective apprenticeships require formal structure:
 -   **Certification:** Successful apprentices receive documented recognition (could be as simple as signed statement by master). This allows journeymen to seek work elsewhere, knowing their credentials.
 
 :::note
-**Documentation matters:** Even in small communities, written apprenticeship contracts and curriculum outlines prevent misunderstandings and ensure consistent quality. They also become institutional knowledgeâ€”when one master retires, the next has a documented apprenticeship pathway to follow.
+**Documentation matters:** Even in small communities, written apprenticeship contracts and curriculum outlines prevent misunderstandings and ensure consistent quality. They also become institutional knowledge—when one master retires, the next has a documented apprenticeship pathway to follow.
 :::
 
 ### Trades Requiring Formal Apprenticeship
@@ -380,7 +380,7 @@ In off-grid communities, these essential trades should have structured apprentic
 -   Governance and record-keeping (2-3 years)
 
 :::info-box
-**Core strengths of apprenticeship:** Combines formal learning with productive work. The community gets goods and services while the apprentice learns practical skills and earns their keep. It's self-sustaining economically and educationally. It creates strong bonds between teachers and learners. Most importantly, it produces highly competent practitionersâ€”people who can actually do the work, not just talk about it.
+**Core strengths of apprenticeship:** Combines formal learning with productive work. The community gets goods and services while the apprentice learns practical skills and earns their keep. It's self-sustaining economically and educationally. It creates strong bonds between teachers and learners. Most importantly, it produces highly competent practitioners—people who can actually do the work, not just talk about it.
 :::
 
 ### Special Consideration: Multiple Apprentices and Masters
@@ -411,7 +411,7 @@ Rather than time-based progression ("you've been an apprentice 3 years, so you'r
 
 **Clear competency rubrics (for each skill):**
 
-Example â€” Carpentry: Joint Construction (Mortise and Tenon)
+Example — Carpentry: Joint Construction (Mortise and Tenon)
 - **Beginning:** Mortise and tenon loosely fit; gaps visible; joint would fail under stress
 - **Developing:** Joint fits reasonably; minor gaps; could support light load
 - **Competent:** Joint fits precisely; no visible gaps; strong; joint would last years under normal stress
@@ -518,10 +518,10 @@ Some skills require prior skills. Map these prerequisites:
 
 **Example prerequisite chain for metalworking:**
 1. **Foundation:** Safety, tool knowledge, basic fire management (3 months)
-2. **Basics:** Nail forging, simple metal shaping (6 months) â€” *prerequisite for anything more complex*
-3. **Intermediate:** Bladed tools (swords, axes), iron working (12 months) â€” *prerequisite: Basics*
-4. **Advanced:** Specialized metalwork (armor, locks, mechanisms) (6+ months) â€” *prerequisite: Intermediate*
-5. **Master:** Innovation, complex designs, teaching (continuing) â€” *prerequisite: Advanced + 2+ years journeyman*
+2. **Basics:** Nail forging, simple metal shaping (6 months) — *prerequisite for anything more complex*
+3. **Intermediate:** Bladed tools (swords, axes), iron working (12 months) — *prerequisite: Basics*
+4. **Advanced:** Specialized metalwork (armor, locks, mechanisms) (6+ months) — *prerequisite: Intermediate*
+5. **Master:** Innovation, complex designs, teaching (continuing) — *prerequisite: Advanced + 2+ years journeyman*
 
 Without foundational safety and basics, apprentices cannot progress. This prevents injury and poor-quality learning.
 
@@ -535,15 +535,15 @@ Apprentice: Thomas, age 14
 Master: John Carpenter
 Start Date: Year 3, Month 4
 
-Month 3: âœ“ Tool safety basics, wood identification
-Month 6: âœ“ Sawing straight cuts, measuring accurately
-Month 9: âœ“ Simple joinery (butt joints) â€” Ready for test
-Month 10: âœ“ TEST: Create simple shelf â†’ PASS
-Month 13: âœ“ Intermediate joinery (mortise/tenon), finishing
-Month 18: âœ“ TEST: Build functional table â†’ PASS (minor grain mismatch)
-Month 24: âœ“ Complex joinery, design work, mentoring apprentice Mary
-Month 30: âœ“ TEST: Build masterwork chair â†’ PASS (excellent craftsmanship)
-Status: Advanced Apprentice â†’ Ready for Journeyman status
+Month 3: ✓ Tool safety basics, wood identification
+Month 6: ✓ Sawing straight cuts, measuring accurately
+Month 9: ✓ Simple joinery (butt joints) — Ready for test
+Month 10: ✓ TEST: Create simple shelf → PASS
+Month 13: ✓ Intermediate joinery (mortise/tenon), finishing
+Month 18: ✓ TEST: Build functional table → PASS (minor grain mismatch)
+Month 24: ✓ Complex joinery, design work, mentoring apprentice Mary
+Month 30: ✓ TEST: Build masterwork chair → PASS (excellent craftsmanship)
+Status: Advanced Apprentice → Ready for Journeyman status
 ```
 
 This document travels with apprentices (if they change masters) and serves as a reference for employment.
@@ -558,7 +558,7 @@ This document travels with apprentices (if they change masters) and serves as a 
 
 ## Science Education Through Hands-On Experiments
 
-Science is not a subject learned from booksâ€”it's a way of understanding the world through observation and experimentation. Off-grid communities have natural laboratories everywhere: plants, animals, weather, soil, water. Teaching science means helping children ask questions and design ways to answer them.
+Science is not a subject learned from books—it's a way of understanding the world through observation and experimentation. Off-grid communities have natural laboratories everywhere: plants, animals, weather, soil, water. Teaching science means helping children ask questions and design ways to answer them.
 
 ### Scientific Method for All Ages
 
@@ -589,7 +589,7 @@ Even young children can use the scientific method:
 -   **Science journals:** Each student keeps detailed records of observations, drawings, questions, and results. Over time, these become valuable reference documents.
 -   **Regular observation:** Choose a study plot and observe it weekly throughout a year. Detailed observation of one area teaches more than scattered observations.
 -   **Community experiments:** Some experiments benefit whole community: water quality testing, weather monitoring, crop yield records, health observations. Involving everyone makes science relevant.
--   **Failure as learning:** Many experiments "fail"â€”results don't match predictions. This is valuable! Unexpected results teach more than expected ones.
+-   **Failure as learning:** Many experiments "fail"—results don't match predictions. This is valuable! Unexpected results teach more than expected ones.
 
 :::callout
 **Science outdoors:** Most science happens outside your classroom. Make natural exploration a regular practice. A walk where students observe plants, insects, geology, weather, and animal signs teaches more than lectures. Bring nature indoors when needed for detailed study.
@@ -601,7 +601,7 @@ Even young children can use the scientific method:
 
 ## Classroom Management & Discipline
 
-A productive learning environment requires structure, clear expectations, and consistent discipline. This doesn't mean harsh punishmentâ€”it means creating conditions where learning happens. Off-grid teachers must maintain discipline often without modern technology (no sending students to office, no calling parents by phone).
+A productive learning environment requires structure, clear expectations, and consistent discipline. This doesn't mean harsh punishment—it means creating conditions where learning happens. Off-grid teachers must maintain discipline often without modern technology (no sending students to office, no calling parents by phone).
 
 ### Establishing Expectations and Routines
 
@@ -622,7 +622,7 @@ A productive learning environment requires structure, clear expectations, and co
 **Problem-solving:** When behavioral issues arise, meet with the child to understand the underlying cause. Is the work too hard? Is something happening at home? Is there a conflict with peers? Address the cause, not just the symptom.
 
 :::warning
-**Avoid these discipline mistakes:** Don't shame children publiclyâ€”it builds resentment, not responsibility. Don't use harsh physical punishmentâ€”it teaches fear and violence, not self-control. Don't give up on struggling studentsâ€”they need more support, not less. Don't ignore misbehaviorâ€”small issues escalate if unaddressed. Consistent, calm, respectful discipline is far more effective than reactive anger.
+**Avoid these discipline mistakes:** Don't shame children publicly—it builds resentment, not responsibility. Don't use harsh physical punishment—it teaches fear and violence, not self-control. Don't give up on struggling students—they need more support, not less. Don't ignore misbehavior—small issues escalate if unaddressed. Consistent, calm, respectful discipline is far more effective than reactive anger.
 :::
 
 ### Handling Specific Challenges
@@ -641,7 +641,7 @@ A productive learning environment requires structure, clear expectations, and co
 
 **Ages 7-12:** Children understand fairness and rules better. Explain reasons for rules. Natural consequences make sense. Peer consequences become important ("If you take turns, others want to play with you").
 
-**Ages 13+:** Adolescents respond better to reason and respect than authority. Explain the logic of rules. Involve them in setting classroom expectations. Restorative approaches work especially wellâ€”addressing what they've harmed and how to repair it.
+**Ages 13+:** Adolescents respond better to reason and respect than authority. Explain the logic of rules. Involve them in setting classroom expectations. Restorative approaches work especially well—addressing what they've harmed and how to repair it.
 
 :::info-box
 **Community discipline:** In off-grid communities, teachers don't discipline in isolation. Parents are involved early when issues arise. Community leaders help solve persistent problems. The goal is bringing the child back into community good standing, not exile.
@@ -653,7 +653,7 @@ A productive learning environment requires structure, clear expectations, and co
 
 ## Knowledge Preservation & Oral Tradition
 
-Knowledge preservation has multiple overlapping strategies; the best communities use all of them simultaneously for maximum resilience. No single method is sufficientâ€”you need redundancy.
+Knowledge preservation has multiple overlapping strategies; the best communities use all of them simultaneously for maximum resilience. No single method is sufficient—you need redundancy.
 
 ### Oral Tradition as Living Knowledge
 
@@ -661,17 +661,17 @@ Stories, techniques, history, and practical knowledge can be preserved through o
 
 -   **Community storytelling:** Regular gatherings where skilled storytellers share stories. These can be entertainment and education simultaneously.
 -   **Teaching by telling:** Masters teaching apprentices using explanation alongside demonstration. The verbal instruction embeds itself through repetition and association with practice.
--   **Song and rhythm:** Encode information in songs or rhythmic chants, which are far more memorable than spoken information alone. Multiplication facts, historical events, medical proceduresâ€”all embed better when rhythmic.
+-   **Song and rhythm:** Encode information in songs or rhythmic chants, which are far more memorable than spoken information alone. Multiplication facts, historical events, medical procedures—all embed better when rhythmic.
 -   **Mnemonic devices:** Memory palaces, acronyms, and visual associations help information stick without writing.
 -   **Performance and repetition:** Stories performed regularly are remembered reliably. Have children retell stories. Have community members narrate history and important events.
 
 ### Apprenticeship as Knowledge Transfer
 
-Direct training from master to apprentice preserves hands-on knowledge. This works beautifully for practical skills but requires living transmissionâ€”the knowledge dies if an apprenticeship chain breaks. That's why having multiple apprentices per master is critical.
+Direct training from master to apprentice preserves hands-on knowledge. This works beautifully for practical skills but requires living transmission—the knowledge dies if an apprenticeship chain breaks. That's why having multiple apprentices per master is critical.
 
 ### Written Documentation
 
-Written documentation preserves knowledge independent of living people. Create manuals, textbooks, recipes, medical procedures, laws, and technical information. The disadvantages: written knowledge requires literacy to access, and writing requires time and materials. Written knowledge also becomes fixedâ€”harder to adapt to changing conditions. Still, critical knowledge should be documented in writing.
+Written documentation preserves knowledge independent of living people. Create manuals, textbooks, recipes, medical procedures, laws, and technical information. The disadvantages: written knowledge requires literacy to access, and writing requires time and materials. Written knowledge also becomes fixed—harder to adapt to changing conditions. Still, critical knowledge should be documented in writing.
 
 ### Redundancy and Cross-Training
 
@@ -685,7 +685,7 @@ The ultimate insurance: never let critical knowledge exist in only one person. E
 
 ### The Ideal: Quadruple Redundancy
 
-A critical piece of knowledgeâ€”complex medical procedure, advanced metallurgical technique, or community lawâ€”should be preserved in four ways:
+A critical piece of knowledge—complex medical procedure, advanced metallurgical technique, or community law—should be preserved in four ways:
 
 1.  **Oral:** Master teaches apprentices regularly with emphasis on understanding, not just memorization
 2.  **Written:** Step-by-step documented procedure with diagrams and reasoning, stored carefully
@@ -704,7 +704,7 @@ This ensures that even if one copy of the manual burns, even if one practitioner
 
 ## Library Building & Book Care
 
-A community library is a repository of knowledge and a center of learning. It prevents loss of written knowledge and provides a reference resource available to all. Even a small libraryâ€”50-100 booksâ€”is infinitely valuable compared to none.
+A community library is a repository of knowledge and a center of learning. It prevents loss of written knowledge and provides a reference resource available to all. Even a small library—50-100 books—is infinitely valuable compared to none.
 
 ### Physical Library Space
 
@@ -712,7 +712,7 @@ Designate a dry, secure space for the library. This might be part of a larger co
 
 -   **Protection from water:** Raised floor or elevated shelving. Roof that doesn't leak. Gutters to direct rain away.
 -   **Protection from pests:** Sealed containers or elevated shelving that pests can't access. Regular inspection for signs of damage. Don't keep food in library.
--   **Climate control:** If possible, consistent temperature and humidity. Fluctuations cause deterioration. If climate control unavailable, damp conditions are worstâ€”ensure ventilation.
+-   **Climate control:** If possible, consistent temperature and humidity. Fluctuations cause deterioration. If climate control unavailable, damp conditions are worst—ensure ventilation.
 -   **Lighting:** Windows for reading. Candles or lanterns for evening. Direct sunlight causes fading, so no direct sun on shelves.
 -   **Organization:** Shelving, containers, or hanging storage. Space efficient and accessible.
 
@@ -728,7 +728,7 @@ A consistent cataloging system is essential. Choose and commit to one approach:
 -   **Alphabetical by author:** More systematic. Works if you have a written catalog.
 -   **Numerical code:** Assign each book a number, keep a written index. Flexible and organized.
 
-Maintain a written catalog (kept in duplicate or triplicate) that lists: title, author, subject, location, condition, and acquisition date. Update whenever new items arrive or are lost. This catalog itself becomes valuableâ€”you can't remember what you have without it.
+Maintain a written catalog (kept in duplicate or triplicate) that lists: title, author, subject, location, condition, and acquisition date. Update whenever new items arrive or are lost. This catalog itself becomes valuable—you can't remember what you have without it.
 
 ### Lending System
 
@@ -789,7 +789,7 @@ Beyond transmitting knowledge, education should develop people who can think, re
 
 **Present problems without solutions:** "We have 100 pounds of grain. It needs to last 6 months. How should we ration?" Let children propose and evaluate solutions. This teaches realistic problem-solving.
 
-**Analyze sources and evidence:** When learning history or science, ask: "How do we know this?" "What's the evidence?" "Could another explanation fit the evidence?" This teaches skeptical thinkingâ€”belief based on evidence, not authority.
+**Analyze sources and evidence:** When learning history or science, ask: "How do we know this?" "What's the evidence?" "Could another explanation fit the evidence?" This teaches skeptical thinking—belief based on evidence, not authority.
 
 **Consider multiple perspectives:** In history, politics, or decisions: "What was this person thinking?" "What would someone from a different culture think?" This develops empathy and recognition that perspectives vary based on experience.
 
@@ -807,7 +807,7 @@ Teach a structured approach to novel problems:
 6.  **Reflect:** Did it work? What would we do differently?
 
 :::note
-**Make problem-solving explicit:** Children aren't born knowing this framework. Teach it directly, model it repeatedly, and coach students through problems. Over time, they internalize the process and apply it independently. Problem-solving skills transfer to any domainâ€”the process is universal.
+**Make problem-solving explicit:** Children aren't born knowing this framework. Teach it directly, model it repeatedly, and coach students through problems. Over time, they internalize the process and apply it independently. Problem-solving skills transfer to any domain—the process is universal.
 :::
 
 ### Teaching Creativity and Innovation
@@ -888,7 +888,7 @@ Off-grid communities have no standardized tests. Yet teachers must know whether 
 
 **Project completion:** Students demonstrate learning through projects: building something, growing something, writing something, creating something. Completed project shows what was learned.
 
-**Apprenticeship assessment:** The real test for tradesâ€”can they do the work competently? Master's evaluation of apprentice's demonstrated skill is most meaningful assessment.
+**Apprenticeship assessment:** The real test for trades—can they do the work competently? Master's evaluation of apprentice's demonstrated skill is most meaningful assessment.
 
 ### Mastery-Based Progression
 
@@ -921,7 +921,7 @@ Don't move children forward based on age. Move them forward when they demonstrat
 
 ## Teaching Without Textbooks or Electricity
 
-Paper and bound books are luxury items in off-grid communities. Yet teaching and learning must continue. Innovative methods work without written materialsâ€”many of humanity's greatest civilizations functioned this way. These techniques are timeless and effective.
+Paper and bound books are luxury items in off-grid communities. Yet teaching and learning must continue. Innovative methods work without written materials—many of humanity's greatest civilizations functioned this way. These techniques are timeless and effective.
 
 ### Sand Drawing and Ephemeral Diagrams
 
@@ -1050,7 +1050,7 @@ The documentation and structure you create become your institution's permanent c
 
 ## Record-Keeping & Documentation Systems
 
-In pre-literate societies, communities relied on designated record-keepers and oral traditions. In transitional off-grid communities, written records become crucial infrastructure. Someone must track births, deaths, decisions, knowledge, and community history. This is not bureaucracyâ€”it is memory preservation.
+In pre-literate societies, communities relied on designated record-keepers and oral traditions. In transitional off-grid communities, written records become crucial infrastructure. Someone must track births, deaths, decisions, knowledge, and community history. This is not bureaucracy—it is memory preservation.
 
 ### Essential Community Records to Maintain
 
@@ -1081,14 +1081,14 @@ Records are only valuable if preserved and accessible:
 
 -   **Physical protection:** Store in dry location, not damp basement. Use waterproof storage (sealed containers, raised shelving). Protect from pests and rodents.
 -   **Material durability:** Use quality paper (if available) or durable alternatives (cloth, slate, clay). Ink should be permanent (not pencil which fades). Consider iron gall ink for most critical documents.
--   **Organization system:** File by year, by topic, or by personâ€”but be consistent. Organization should be intuitive so others can find information without assistance.
+-   **Organization system:** File by year, by topic, or by person—but be consistent. Organization should be intuitive so others can find information without assistance.
 -   **Backup copies:** Maintain duplicate copies of critical records in separate locations (fire/flood protection). If very important, maintain three copies.
--   **Designated keeper:** One person (or two for critical records) responsible for maintaining archives and training successor. This is a valued roleâ€”the keeper is living memory.
+-   **Designated keeper:** One person (or two for critical records) responsible for maintaining archives and training successor. This is a valued role—the keeper is living memory.
 -   **Regular review:** Community should review records periodically (annual gathering, seasonal gathering). This refreshes collective knowledge and demonstrates record importance.
 -   **Accessibility:** Make sure multiple people can read records and understand the system. Knowledge locked in one person's head is vulnerable.
 
 :::callout
-**Records as power:** Keeping records is a form of powerâ€”the keeper controls narrative and history. Elect honest, respected people. Ensure multiple people can read records (not secret knowledge). Consider having important records maintained by 2-3 people independently to prevent manipulation or loss.
+**Records as power:** Keeping records is a form of power—the keeper controls narrative and history. Elect honest, respected people. Ensure multiple people can read records (not secret knowledge). Consider having important records maintained by 2-3 people independently to prevent manipulation or loss.
 :::
 
 </section>
@@ -1097,7 +1097,7 @@ Records are only valuable if preserved and accessible:
 
 ## Adult Education & Continuous Learning
 
-Education doesn't stop at adulthood. Off-grid communities need systems for adults to learn new skills, improve existing ones, and share knowledge. Adults bring motivation, purpose, and responsibility to learningâ€”often more than children do.
+Education doesn't stop at adulthood. Off-grid communities need systems for adults to learn new skills, improve existing ones, and share knowledge. Adults bring motivation, purpose, and responsibility to learning—often more than children do.
 
 ### Adult Literacy Programs
 
@@ -1122,7 +1122,7 @@ As off-grid community develops, needs change. Adults may need to learn new trade
 
 -   **Formal apprenticeship:** An adult can take apprenticeship in a new trade, though usually shorter (2-3 years instead of 5-7) due to faster learning and maturity.
 -   **Skill transfer projects:** When a new member joins with expertise in something valuable (metalworking, medicine, engineering), formal teaching slots create knowledge transfer for community members interested in learning.
--   **Seasonal training:** Intense skill-focused periods. Example: "July is herbal medicine monthâ€”everyone interested attends daily classes."
+-   **Seasonal training:** Intense skill-focused periods. Example: "July is herbal medicine month—everyone interested attends daily classes."
 -   **Cross-training:** Intentional teaching of backup skills. Every medical practitioner should have basic carpentry. Every farmer should know basic first aid.
 -   **Specialist continuing education:** Masters and practitioners continue learning. Specialized books, visiting experts (if contact with outside communities), and innovation projects.
 
@@ -1186,7 +1186,7 @@ Use only the minimum room-organization detail needed to support teaching flow.
 
 **Art supplies:** Natural materials (charcoal, colored earth, plant dyes) for drawing and painting. Paper or cloth. Weaving materials. These support creativity and motor skill development.
 
-**Tools and equipment:** Depending on what you teachâ€”measuring tools, magnifying glasses, containers for observation, seeds for planting, fabric for weaving, wood for building projects.
+**Tools and equipment:** Depending on what you teach—measuring tools, magnifying glasses, containers for observation, seeds for planting, fabric for weaving, wood for building projects.
 
 ### Classroom Atmosphere and Culture
 
@@ -1262,7 +1262,7 @@ For education to endure through generations, it must become embedded in communit
 
 **Elder knowledge preservation:** Ensure elders with deep knowledge are systematically recorded and taught. Don't lose their expertise when they pass. Have young people apprentice intensively with elders before they die.
 
-**Intergenerational projects:** Projects bringing multiple generations togetherâ€”building projects, preservation work, documentation projectsâ€”create learning and bonding across ages.
+**Intergenerational projects:** Projects bringing multiple generations together—building projects, preservation work, documentation projects—create learning and bonding across ages.
 
 **Storytelling and history preservation:** Regular community gatherings where elders share stories and history. Young people learn cultural knowledge while recording it for future generations.
 
@@ -1282,7 +1282,7 @@ How do you know if your education system is working? Not through test scores, bu
 -   **Satisfaction:** Do people report that education is serving them? Does it help them do their work? Do they feel equipped for challenges?
 -   **Succession:** Is there a pipeline of new teachers? Are young people becoming practitioners and teachers? Will education continue after current teachers retire?
 
-These measures are observable and locally meaningful, unlike standardized test scores that measure irrelevant skills. A community with high literacy, functioning apprenticeships, continuous innovation, and strong teaching pipeline is succeeding educationallyâ€”even without any standardized tests.
+These measures are observable and locally meaningful, unlike standardized test scores that measure irrelevant skills. A community with high literacy, functioning apprenticeships, continuous innovation, and strong teaching pipeline is succeeding educationally—even without any standardized tests.
 
 </section>
 
@@ -1296,19 +1296,19 @@ In off-grid communities with diverse populations, adult literacy programs and sy
 
 Adult learners have different motivations, time constraints, and prior experience than children, requiring adapted pedagogical approaches:
 
--   **Assessment and motivation:** Before starting, identify why adults want to read: record-keeping (merchants), religious texts (faith communities), personal documents (correspondence). Tailor curriculum to immediate practical relevance. Adults motivated by concrete, visible outcomes learn 2-3Ã— faster than those in abstract programs. Start with materials immediately relevant (family names, important signs, basic contract terms).
+-   **Assessment and motivation:** Before starting, identify why adults want to read: record-keeping (merchants), religious texts (faith communities), personal documents (correspondence). Tailor curriculum to immediate practical relevance. Adults motivated by concrete, visible outcomes learn 2-3× faster than those in abstract programs. Start with materials immediately relevant (family names, important signs, basic contract terms).
 -   **Program structure:** Evening or weekend sessions (2-3 hours, 3-4 days weekly) accommodate working schedules. Total commitment: 100-150 hours over 6-12 months yields functional literacy. Smaller classes (5-15 people maximum) allow individual attention. Group adults by similar motivation and background to build peer support. Separate classes for men and women if cultural norms require; co-education works better if community permits.
 -   **Teaching materials and resources:** Use locally relevant texts: community records, religious texts, practical instructions. Avoid abstract or foreign materials that don't connect to daily life. Create simple primers (20-40 pages) with 50-100 of the most common words in local language, illustrated with recognizable objects and situations. Reusable materials (slate boards, reusable pages) cost less than paper.
 -   **Teacher recruitment and training:** Ideal teachers: literate community members with respect and patience. Secondary school education usually sufficient (not required to be formally trained). Training teachers: 5-10 day intensive on pedagogy, plus apprenticeship teaching under experienced mentor. Pay teachers: small amount (local crops, goods, or currency) sustains commitment. Part-time teaching (10-15 hours/week) is typical in off-grid communities.
--   **Certification and incentives:** Graduates who demonstrate basic literacy (read 50-word passage with <3 errors, write name and simple sentence) receive certificateâ€”valuable for social status and employment. Consider graduations events, community celebration of achievements. Post-literacy: reading level maintenance requires continued access to texts; establish lending library or reading circle.
+-   **Certification and incentives:** Graduates who demonstrate basic literacy (read 50-word passage with <3 errors, write name and simple sentence) receive certificate—valuable for social status and employment. Consider graduations events, community celebration of achievements. Post-literacy: reading level maintenance requires continued access to texts; establish lending library or reading circle.
 
 ### Teaching Reading to Non-Literate Adults
 
 Adult learners need efficient, confidence-building methods adapted to their cognition:
 
 -   **Alphabetic vs. whole-word methods:** Alphabetic (phonics): teach letter sounds first, then blend into words. Slower initial progress but builds ability to sound out new words independently. Whole-word (sight): teach 100-200 high-frequency words by shape/memorization. Faster early progress but limited to memorized words. Hybrid approach works best: teach 20-30 letters/phonemes first (4-6 weeks), then combine into words.
--   **Phoneme awareness:** Many non-literate adults never consciously separated sounds in words. Pre-literacy exercise: say word aloud, have learners identify first/last sound. "Dog"â€”first sound? "D". Last sound? "G". Do 10-20 examples weekly. Develops auditory discrimination necessary for decoding.
--   **Decoding with high-frequency words:** Teach most common 50-100 words of local language first (the, and, is, a, to, water, food, work, home, etc.). These words form 50-70% of practical texts. Learn these by sight (don't try to sound outâ€”irregular patterns). Then teach 20 phonetically regular words. Adults can read simple 20-50 word sentences after 20-30 hours combining high-frequency words and phonetic patterns.
+-   **Phoneme awareness:** Many non-literate adults never consciously separated sounds in words. Pre-literacy exercise: say word aloud, have learners identify first/last sound. "Dog"—first sound? "D". Last sound? "G". Do 10-20 examples weekly. Develops auditory discrimination necessary for decoding.
+-   **Decoding with high-frequency words:** Teach most common 50-100 words of local language first (the, and, is, a, to, water, food, work, home, etc.). These words form 50-70% of practical texts. Learn these by sight (don't try to sound out—irregular patterns). Then teach 20 phonetically regular words. Adults can read simple 20-50 word sentences after 20-30 hours combining high-frequency words and phonetic patterns.
 -   **Building confidence and pacing:** Success breeds motivation. First 2 weeks: focus only on recognizing letters, writing name, reading name and 5-10 known words. Visible progress is critical. Do not introduce too many new concepts weekly. Typical pace: 5 new phonemes per week, 3-5 new sight words daily. By week 8-12, adults should read simple sentences.
 -   **Writing development:** Writing typically lags reading by 2-4 weeks. Start with drawing, then tracing letters, then copying simple words. Handwriting practice: 10-15 minutes weekly, focus on basic legibility not penmanship. Adults writing name and basic words within 8-12 weeks.
 -   **Addressing learner frustration:** Non-literacy carries shame in many cultures; adults may have experienced mocking or stigma. Normalize learning as natural skill. Celebrate small progress frequently. Create safe, non-competitive environment (no comparison to others). Expect 10-20% dropout initially (fear, schedule); consistent encouragement brings many back.
@@ -1345,19 +1345,19 @@ For complex technical or medical knowledge, translation requires specialized voc
 Oral traditions and demonstration-based learning work across language barriers:
 
 -   **Demonstration and hands-on learning:** Master craftsperson shows skill without extensive verbal explanation. Learner observes, imitates, practices. Language aids understanding but isn't primary. Effective for: metalwork, agriculture, animal husbandry, tool use. Time required: proportional to skill complexity. Simple skills (rope-making): 1-4 weeks with daily practice. Complex skills (blacksmithing): 1-3 years. Multi-language community often excels at technical skill transmission because demonstration transcends language.
--   **Linguistic borrowing and code-switching:** In multi-language communities, speakers naturally borrow technical terms from languages where the concept originated. Blacksmith's terminology in iron-workingâ€”borrow from the region's iron-working tradition. Fishing terms from fishing cultures. Over time, borrowed vocabulary becomes fully integrated. This process is natural and necessary; don't resist it.
+-   **Linguistic borrowing and code-switching:** In multi-language communities, speakers naturally borrow technical terms from languages where the concept originated. Blacksmith's terminology in iron-working—borrow from the region's iron-working tradition. Fishing terms from fishing cultures. Over time, borrowed vocabulary becomes fully integrated. This process is natural and necessary; don't resist it.
 
 A community of 1000 people with three major language groups can achieve functional communication through: 1) common 500-word pidgin (6 months to teach), 2) bilingual children (one generation), 3) market-driven multilingualism (trade incentives). Literacy in heritage languages + official language + reading pidgin creates cognitively capable, economically integrated population. Total educational investment: 200-400 person-years of teaching over 5-10 year period to reach 70% adult literacy across all groups.
 
 :::affiliate
 **If you're preparing in advance,** these resources support teaching, literacy, and knowledge transfer:
 
-- [Teach Your Own: The John Holt Book of Homeschooling](https://www.amazon.com/dp/0738211311?tag=offlinecompen-20) â€” Philosophy and practical methods for community-based education without institutional infrastructure
-- [The Art and Science of Teaching: Research-Based Strategies](https://www.amazon.com/dp/1879639556?tag=offlinecompen-20) â€” Evidence-based methods for effective instruction in any setting
-- [Adult Literacy: A Source Book and Manual](https://www.amazon.com/dp/0374107831?tag=offlinecompen-20) â€” Comprehensive guide to teaching reading and writing to non-literate adults
-- [The Alphabetic Principle: How Phonemic Awareness Relates to Literacy](https://www.amazon.com/dp/0929895010?tag=offlinecompen-20) â€” Phonetics and language learning foundations for all ages
+- [Teach Your Own: The John Holt Book of Homeschooling](https://www.amazon.com/dp/0738211311?tag=offlinecompen-20) — Philosophy and practical methods for community-based education without institutional infrastructure
+- [The Art and Science of Teaching: Research-Based Strategies](https://www.amazon.com/dp/1879639556?tag=offlinecompen-20) — Evidence-based methods for effective instruction in any setting
+- [Adult Literacy: A Source Book and Manual](https://www.amazon.com/dp/0374107831?tag=offlinecompen-20) — Comprehensive guide to teaching reading and writing to non-literate adults
+- [The Alphabetic Principle: How Phonemic Awareness Relates to Literacy](https://www.amazon.com/dp/0929895010?tag=offlinecompen-20) — Phonetics and language learning foundations for all ages
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 </section>
