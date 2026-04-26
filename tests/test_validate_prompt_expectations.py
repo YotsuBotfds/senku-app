@@ -629,6 +629,53 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["issues"][0]["code"], "retrieval_missing_primary_expected_owner")
         self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
 
+    def test_retrieval_eval_json_uses_prompt_primary_expectations_when_eval_row_omits_primary_guides(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120", "GD-397"],
+                    "primary_expected_guide_ids": ["GD-397"],
+                    "prompt": "Primary owner should come from prompt metadata.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        retrieval = root / "retrieval.json"
+        retrieval.write_text(
+            json.dumps(
+                {
+                    "rows": [
+                        {
+                            "prompt_id": "P-1",
+                            "expected_guide_ids": ["GD-120", "GD-397"],
+                            "top_retrieved_guide_ids": ["GD-120"],
+                            "expected_hit_at_k": True,
+                            "primary_hit_at_k": False,
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[retrieval],
+        )
+
+        self.assertEqual(report["status"], "warn")
+        self.assertEqual(len(report["issues"]), 1)
+        self.assertEqual(report["issues"][0]["code"], "retrieval_missing_primary_expected_owner")
+        self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
+
     def test_retrieval_eval_json_accepts_primary_expected_owner_hit(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")

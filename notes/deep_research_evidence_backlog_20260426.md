@@ -266,6 +266,8 @@ Action:
 - Added allowed-drift suppression coverage proving prompt expectation
   suppressions can be scoped to an exact artifact path without hiding the same
   issue in other artifacts.
+- Added retrieval-eval coverage proving prompt-pack primary expected owners are
+  applied when a retrieval artifact omits its row-level primary owner fields.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

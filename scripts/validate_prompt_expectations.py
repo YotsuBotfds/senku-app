@@ -738,7 +738,7 @@ def retrieval_eval_issues(
         if not expected and prompt_id:
             expected = list(prompt_expectations.get(prompt_id) or [])
         primary_expected = primary_expected_ids_from_record(row)
-        if not primary_expected and row_has_primary_expectation_metadata(row) and prompt_id:
+        if not primary_expected and prompt_id:
             primary_expected = list(prompt_primary_expectations.get(prompt_id) or [])
         retrieved = retrieved_ids_from_row(row)
         if top_k is not None and top_k >= 0:
