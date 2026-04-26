@@ -53,11 +53,11 @@ liability_level: low
 
 :::warning
 **Laceration and Grinding Hazard**
-Sharpening produces extremely keen edges and generates fine metal particles. A freshly sharpened blade can cause deep cuts with minimal pressure. Grinding wheels can shatter at high RPM, sending fragments at lethal velocity â€” never exceed rated speed, never use a cracked or chipped wheel, and always wear eye protection and a face shield. Secure the workpiece firmly; loose items can catch and throw. Keep fingers clear of the grinding surface. Metal dust from dry grinding is an inhalation hazard and potential fire risk â€” use wet grinding methods when possible. Never test edge sharpness on skin. Store sharpened tools with edge guards.
+Sharpening produces extremely keen edges and generates fine metal particles. A freshly sharpened blade can cause deep cuts with minimal pressure. Grinding wheels can shatter at high RPM, sending fragments at lethal velocity — never exceed rated speed, never use a cracked or chipped wheel, and always wear eye protection and a face shield. Secure the workpiece firmly; loose items can catch and throw. Keep fingers clear of the grinding surface. Metal dust from dry grinding is an inhalation hazard and potential fire risk — use wet grinding methods when possible. Never test edge sharpness on skin. Store sharpened tools with edge guards.
 :::
 
 :::tip
-Sharp tools are safer, more efficient, and less fatiguing to use. A sharp axe requires less force than a dull oneâ€”reducing injury risk. Proper sharpening extends tool life decades or centuries. Master these skills before crisis requires them.
+Sharp tools are safer, more efficient, and less fatiguing to use. A sharp axe requires less force than a dull one—reducing injury risk. Proper sharpening extends tool life decades or centuries. Master these skills before crisis requires them.
 :::
 
 :::tip
@@ -90,10 +90,10 @@ This guide owns routine edge care: "my knife is dull," "the axe just needs a tou
 
 A sharp blade:
 - **Cuts cleanly** with minimal pressure.
-- **Reduces fatigue** â€” Less force required; hand/arm strain decreases.
-- **Increases safety** â€” Tool is controllable; slipping less likely.
-- **Extends tool life** â€” Proper technique prevents damage and dulling.
-- **Improves output** â€” Faster work, better quality finish.
+- **Reduces fatigue** — Less force required; hand/arm strain decreases.
+- **Increases safety** — Tool is controllable; slipping less likely.
+- **Extends tool life** — Proper technique prevents damage and dulling.
+- **Improves output** — Faster work, better quality finish.
 
 Dull tools demand excessive force, slip unpredictably, and risk hand/foot injuries. In survival situations, injury from tool failure can be fatal. Sharpness is survival.
 
@@ -107,7 +107,7 @@ Dull tools demand excessive force, slip unpredictably, and risk hand/foot injuri
 
 **Whetstones (water stones, oil stones):**
 - Source: Mined natural deposits (aluminum oxide, silica).
-- Grading: Measured in grit size (coarse 800â€“2000, medium 4000â€“8000, fine 10000+).
+- Grading: Measured in grit size (coarse 800–2000, medium 4000–8000, fine 10000+).
 - Lower number = coarser abrasive = faster material removal.
 - Higher number = finer abrasive = polished edge, slower removal.
 - **Pros:** Durable, long-lasting, pleasant texture, improves over time as surface abrasion creates micro-particles.
@@ -125,7 +125,7 @@ Dull tools demand excessive force, slip unpredictably, and risk hand/foot injuri
 - Silicon carbide: Even faster cutting; used for very dull tools.
 - Diamond plates: Extremely fast; expensive. Suitable for coarse sharpening only.
 
-**Grits:** 120 (very coarse) â†’ 1000 (coarse) â†’ 4000â€“8000 (fine) â†’ 10000+ (polishing).
+**Grits:** 120 (very coarse) → 1000 (coarse) → 4000–8000 (fine) → 10000+ (polishing).
 
 **Pros:** Inexpensive, consistent quality, fast cutting, portable.
 **Cons:** Wear quickly on coarse grits; can generate heat on fast-grinding tools.
@@ -156,31 +156,31 @@ The angle between blade and stone determines edge geometry:
 <tbody>
 <tr>
 <td><strong>Razor, scalpel</strong></td>
-<td>10â€“15Â°</td>
+<td>10–15°</td>
 <td>Very acute; fragile</td>
 <td>Fine cutting (skin, paper). Chips easily on hard material.</td>
 </tr>
 <tr>
 <td><strong>Kitchen knife, hunting knife</strong></td>
-<td>15â€“20Â°</td>
+<td>15–20°</td>
 <td>Acute, resilient</td>
 <td>Food prep, game processing. Balance of sharpness and durability.</td>
 </tr>
 <tr>
 <td><strong>General-purpose knife</strong></td>
-<td>20â€“25Â°</td>
+<td>20–25°</td>
 <td>Balanced</td>
 <td>Utility, batoning, general field use.</td>
 </tr>
 <tr>
 <td><strong>Axe, hatchet</strong></td>
-<td>25â€“35Â°</td>
+<td>25–35°</td>
 <td>Robust, wedge-shaped</td>
 <td>Chopping wood. Acute angle chips easily; blunt angle requires excessive force.</td>
 </tr>
 <tr>
 <td><strong>Chisel, plane</strong></td>
-<td>20â€“30Â°</td>
+<td>20–30°</td>
 <td>Bevel edge</td>
 <td>Woodworking. Back of chisel remains flat; beveled front only.</td>
 </tr>
@@ -192,7 +192,7 @@ The angle between blade and stone determines edge geometry:
 </tr>
 <tr>
 <td><strong>Axe blade (splitting)</strong></td>
-<td>35â€“40Â°</td>
+<td>35–40°</td>
 <td>Very blunt; wedge-optimized</td>
 <td>Splitting logs. Prevents binding; force is vertical, not cutting.</td>
 </tr>
@@ -201,7 +201,7 @@ The angle between blade and stone determines edge geometry:
 
 ### Measuring Angle
 
-**Angle guide method:** Most stones sold with simple guides (clips, blocks) that hold blade at fixed angle (usually 20Â°). Reliable for novices.
+**Angle guide method:** Most stones sold with simple guides (clips, blocks) that hold blade at fixed angle (usually 20°). Reliable for novices.
 
 **Freehand (advanced):** Experienced sharpeners develop "feel" for angle through practice. Extremely variable and requires 100+ repetitions to master.
 
@@ -258,21 +258,21 @@ Typical for kitchen knives and many field knives. One beveled edge; back flat.
 
 **Setup:**
 1. **Secure stone** on work surface (clamp or wet cloth beneath).
-2. **Prepare stone** â€” Wet with water or light oil.
-3. **Position blade:** Spine elevated to achieve target angle (usually 20Â° for kitchen knife).
+2. **Prepare stone** — Wet with water or light oil.
+3. **Position blade:** Spine elevated to achieve target angle (usually 20° for kitchen knife).
 
 **Sharpening stroke:**
-1. **Draw blade backward** at 45Â° angle to stone length (not straight back; diagonal motion).
+1. **Draw blade backward** at 45° angle to stone length (not straight back; diagonal motion).
 2. **Maintain angle** throughout stroke (most critical step).
-3. **Light pressure** on blade â€” Let stone do work.
+3. **Light pressure** on blade — Let stone do work.
 4. **Full strokes:** From handle end to blade tip.
-5. **Repeat 10â€“20 strokes** until burr (microscopic roll of metal) forms on back of blade.
+5. **Repeat 10–20 strokes** until burr (microscopic roll of metal) forms on back of blade.
 
 **Burr formation:** Run thumb along flat back of blade (opposite edge). You'll feel tiny ridge of metal. This indicates sharpening is working.
 
 **Flip and finish:**
 1. **Place flat back of blade on stone** (no angle).
-2. **Make 5â€“10 very light strokes** to remove burr.
+2. **Make 5–10 very light strokes** to remove burr.
 3. **Strop** (see stropping section) to refine edge.
 
 ### Double-Bevel Knife (Both Sides Sharp)
@@ -282,9 +282,9 @@ Typical for axes, general-purpose knives.
 **Setup:** Same as above.
 
 **Sharpening:**
-1. **Sharpen one side** â€” 10â€“20 strokes at target angle, form burr.
-2. **Flip knife** â€” Sharpen other side at same angle.
-3. **Alternate sides** â€” 5 strokes one side, 5 other, repeat 3â€“5 times as edge develops.
+1. **Sharpen one side** — 10–20 strokes at target angle, form burr.
+2. **Flip knife** — Sharpen other side at same angle.
+3. **Alternate sides** — 5 strokes one side, 5 other, repeat 3–5 times as edge develops.
 4. **Finish:** Alternate light strokes until burr gone.
 
 </section>
@@ -297,7 +297,7 @@ Stropping removes burr and refines edge to mirror-like finish. Requires stroppin
 
 ### Stropping Materials
 
-**Leather:** Vegetable-tanned leather, 2â€“3 mm thick. Often mounted on wooden board. Canvas side can be used for compound application; smooth leather side for stropping.
+**Leather:** Vegetable-tanned leather, 2–3 mm thick. Often mounted on wooden board. Canvas side can be used for compound application; smooth leather side for stropping.
 
 **Stropping compound (rouge):** Chromium oxide (green), aluminum oxide (red), or jeweler's rouge (finest). Creates abrasive paste on leather.
 
@@ -305,11 +305,11 @@ Stropping removes burr and refines edge to mirror-like finish. Requires stroppin
 
 ### Stropping Technique
 
-1. **Apply compound** â€” Rub rouge stick along leather surface, creating thin coating.
+1. **Apply compound** — Rub rouge stick along leather surface, creating thin coating.
 2. **Spine-leading stroke:** Place blade's spine on leather, angle at sharpening angle.
 3. **Draw blade away** (always draw spine-first; never lead with edge, which digs into leather).
 4. **Reverse blade** (flip spine to opposite side), return to starting position.
-5. **Repeat 20â€“50 strokes** until edge mirror-like.
+5. **Repeat 20–50 strokes** until edge mirror-like.
 
 **Key principle:** Always draw spine-first. Never push edge forward into leather (damages edge and leather).
 
@@ -329,7 +329,7 @@ If the axe bit is deeply rust-pitted, rolled, bent, or missing chunks from negle
 
 1. **Secure axe** in vice, or have assistant hold.
 2. **Use mill file or oil stone** (not water stone; too soft for repeated axe sharpening).
-3. **Angle:** 25â€“35Â° depending on use (splitting more blunt; chopping more acute).
+3. **Angle:** 25–35° depending on use (splitting more blunt; chopping more acute).
 4. **File stroke:** Smooth, even strokes from spine to edge on one side.
 5. **Count strokes:** Make equal number on each side to maintain symmetry. (e.g., 20 on right, 20 on left).
 6. **Form burr:** Continue until burr forms on back side.
@@ -339,7 +339,7 @@ If the axe bit is deeply rust-pitted, rolled, bent, or missing chunks from negle
 
 **Hatchets:** Same technique but smaller scale. Can sharpen on fine whetstone. Easier maintenance due to size.
 
-**Splitting maul:** Blunter edge (35â€“40Â°) prevents binding in logs. Over-sharpening wastes effort.
+**Splitting maul:** Blunter edge (35–40°) prevents binding in logs. Over-sharpening wastes effort.
 
 ### Field Sharpening (No Tools)
 
@@ -347,8 +347,8 @@ Use river stone or ceramic tile:
 1. **Find smooth stone** (rounded, fine-grit).
 2. **Wet stone** with water or saliva.
 3. **Maintain angle** (hand-eye coordination).
-4. **Short light strokes** â€” 10â€“20 per side.
-5. **Check progress** â€” Run thumb along edge to feel sharpness increase.
+4. **Short light strokes** — 10–20 per side.
+5. **Check progress** — Run thumb along edge to feel sharpness increase.
 
 </section>
 
@@ -368,11 +368,11 @@ Saws are not sharpened on stones (teeth are too hard). Sharpening requires speci
 
 1. **Secure saw** in vice, teeth pointing up.
 2. **Use triangular file** sized to fit between teeth without touching sides.
-3. **File each tooth individually** at correct angle (usually 45Â° for crosscut saws, 90Â° for ripsaws).
+3. **File each tooth individually** at correct angle (usually 45° for crosscut saws, 90° for ripsaws).
 4. **Equal pressure:** Same number of strokes per tooth ensures consistent edge.
 5. **Replace set:** After sharpening, re-bend teeth using saw set tool (dial tool that clamps teeth and bends them outward).
 
-**Time estimate:** 20â€“30 minutes for a typical 50 cm handsaw.
+**Time estimate:** 20–30 minutes for a typical 50 cm handsaw.
 
 ### Field-Expedient Saw Maintenance
 
@@ -394,9 +394,9 @@ If a chisel back is deeply pitted, the edge has rust-eaten voids, or the tool ca
 
 1. **Back must be flat.** Check regularly using straightedge. If dished, flatten on coarse stone first.
 2. **Secure chisel** in vise with bevel accessible.
-3. **Sharpen bevel only:** Make strokes on beveled face, maintaining angle (usually 25â€“30Â°).
+3. **Sharpen bevel only:** Make strokes on beveled face, maintaining angle (usually 25–30°).
 4. **Form burr** on flat back (opposite side).
-5. **Remove burr:** Lay flat back on stone, make 2â€“3 very light strokes (do NOT rub hard; flat back must remain flat).
+5. **Remove burr:** Lay flat back on stone, make 2–3 very light strokes (do NOT rub hard; flat back must remain flat).
 6. **Strop** for final polish.
 
 ### Woodworking Chisels vs. Cold Chisels
@@ -426,7 +426,7 @@ In austere conditions, improvise sharpening surfaces:
 1. **Use unglazed bottom** of ceramic (plate, tile, porcelain toilet top).
 2. **Unglazed surface has grit** suitable for sharpening.
 3. **Wet slightly** for better contact.
-4. **Stroke blade** at 20Â° angle, same as whetstone.
+4. **Stroke blade** at 20° angle, same as whetstone.
 
 ### Leather and Fine Dust (Stropping Only)
 
@@ -439,8 +439,8 @@ In austere conditions, improvise sharpening surfaces:
 ### Emergency Edge: Concrete or Cinder Block
 
 1. **Dry concrete curb or cinder block** has mild abrasive properties.
-2. **Very slow process** â€” suitable only for gentle maintenance.
-3. **Risk of gouging** â€” Use lightly and sparingly.
+2. **Very slow process** — suitable only for gentle maintenance.
+3. **Risk of gouging** — Use lightly and sparingly.
 4. **Not recommended** for fine tools; useful only when alternatives exhausted.
 
 </section>
@@ -490,12 +490,12 @@ Sharp tools require caution during maintenance:
 :::affiliate
 **If you're preparing in advance,** a quality stone set covers everything from restoring chipped edges to razor-fine honing:
 
-- [Sharp Pebble 1000/6000 Whetstone with Built-In Angle Guides](https://www.amazon.com/dp/B0B181PBP8?tag=offlinecompen-20) â€” Built-in 15Â°/17Â°/20Â°/22Â° angle guides help beginners maintain consistent bevel, dual-grit handles sharpening through polishing
-- [YeopAsda 4-Grit Sharpening Stone Set (400/1000/3000/8000)](https://www.amazon.com/dp/B09DZ2S9ZQ?tag=offlinecompen-20) â€” Complete system from coarse repair to mirror polish, includes bamboo base, leather strop, honing guide, and flattening stone
-- [KNIFEPLANET Premium Sharpening Stone Set (400/1000 + 3000/8000)](https://www.amazon.com/dp/B074X7VB62?tag=offlinecompen-20) â€” Dense water stones with flattening stone and dual non-slip bamboo bases for stable, safe sharpening sessions
-- [Finew Professional Whetstone Set with Leather Strop](https://www.amazon.com/dp/B07S19MD44?tag=offlinecompen-20) â€” Four grits, angle guide, bamboo base, and leather strop with polishing compound for the final stropping pass
+- [Sharp Pebble 1000/6000 Whetstone with Built-In Angle Guides](https://www.amazon.com/dp/B0B181PBP8?tag=offlinecompen-20) — Built-in 15°/17°/20°/22° angle guides help beginners maintain consistent bevel, dual-grit handles sharpening through polishing
+- [YeopAsda 4-Grit Sharpening Stone Set (400/1000/3000/8000)](https://www.amazon.com/dp/B09DZ2S9ZQ?tag=offlinecompen-20) — Complete system from coarse repair to mirror polish, includes bamboo base, leather strop, honing guide, and flattening stone
+- [KNIFEPLANET Premium Sharpening Stone Set (400/1000 + 3000/8000)](https://www.amazon.com/dp/B074X7VB62?tag=offlinecompen-20) — Dense water stones with flattening stone and dual non-slip bamboo bases for stable, safe sharpening sessions
+- [Finew Professional Whetstone Set with Leather Strop](https://www.amazon.com/dp/B07S19MD44?tag=offlinecompen-20) — Four grits, angle guide, bamboo base, and leather strop with polishing compound for the final stropping pass
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. Recommendations are based on the methods covered in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. Recommendations are based on the methods covered in this guide — see the gear page for full pros/cons.</span>
 :::
 
 
