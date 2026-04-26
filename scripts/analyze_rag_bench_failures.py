@@ -94,6 +94,7 @@ CSV_FIELDS = (
     "retrieval_profile",
     "app_gate_status",
     "app_acceptance_status",
+    "app_acceptance_root_cause",
     "app_acceptance_reason",
     "evidence_owner_status",
     "safety_surface_status",
@@ -1047,6 +1048,7 @@ def summarize(rows: list[dict]) -> dict:
     distractors = Counter()
     app_gate_counts = Counter()
     app_acceptance_counts = Counter()
+    app_acceptance_root_cause_counts = Counter()
     answer_provenance_counts = Counter()
     answer_surface_label_counts = Counter()
     artifact_runtime_counts = Counter()
@@ -1151,6 +1153,7 @@ def summarize(rows: list[dict]) -> dict:
             app_gate_counts[gate_status] += 1
         for key, counter in (
             ("app_acceptance_status", app_acceptance_counts),
+            ("app_acceptance_root_cause", app_acceptance_root_cause_counts),
             ("evidence_owner_status", evidence_owner_counts),
             ("safety_surface_status", safety_surface_counts),
             ("ui_surface_bucket", ui_surface_counts),
@@ -1302,6 +1305,7 @@ def summarize(rows: list[dict]) -> dict:
         "top1_unresolved_partial_rows": top1_unresolved_partial_count,
         "reviewed_card_backed_rows": reviewed_card_backed,
         "app_acceptance_counts": dict(app_acceptance_counts),
+        "app_acceptance_root_cause_counts": dict(app_acceptance_root_cause_counts),
         "evidence_owner_counts": dict(evidence_owner_counts),
         "safety_surface_counts": dict(safety_surface_counts),
         "ui_surface_counts": dict(ui_surface_counts),
@@ -1449,6 +1453,7 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
     lines.extend(["", "## App Acceptance", ""])
     for title, key in (
         ("acceptance", "app_acceptance_counts"),
+        ("root cause", "app_acceptance_root_cause_counts"),
         ("evidence owner", "evidence_owner_counts"),
         ("safety surface", "safety_surface_counts"),
         ("ui surface", "ui_surface_counts"),

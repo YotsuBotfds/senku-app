@@ -262,6 +262,9 @@ Action:
   a single machine-checkable cause tag (`gate_policy`, `safety_surface`,
   `evidence_owner`, `card_contract`, or `supported`) separate from the richer
   diagnostic reason string.
+- Surfaced `app_acceptance_root_cause` through the bench-failure analyzer CSV,
+  JSON summary counts, and Markdown App Acceptance section so root-cause
+  distribution is visible in generated diagnostics artifacts.
 
 Validation:
 

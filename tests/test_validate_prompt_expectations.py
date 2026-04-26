@@ -1,4 +1,5 @@
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -26,6 +27,85 @@ PARTIAL_ROUTER_PACK = (
 PARTIAL_ROUTER_ALLOWED_DRIFT = (
     REPO_ROOT / "notes" / "specs" / "partial_router_allowed_drift_20260426.json"
 )
+PROMPT_SIMILARITY_STOPWORDS = {
+    "about",
+    "after",
+    "and",
+    "another",
+    "are",
+    "because",
+    "before",
+    "but",
+    "can",
+    "could",
+    "does",
+    "down",
+    "first",
+    "for",
+    "from",
+    "has",
+    "have",
+    "how",
+    "into",
+    "may",
+    "not",
+    "now",
+    "off",
+    "only",
+    "our",
+    "out",
+    "over",
+    "right",
+    "should",
+    "some",
+    "someone",
+    "still",
+    "that",
+    "the",
+    "their",
+    "them",
+    "they",
+    "this",
+    "through",
+    "until",
+    "want",
+    "wants",
+    "what",
+    "when",
+    "while",
+    "with",
+    "without",
+}
+
+
+def high_liability_holdout_rows() -> list[tuple[Path, dict]]:
+    rows = []
+    for pack in HIGH_LIABILITY_HOLDOUT_PACKS:
+        rows.extend(
+            (pack, json.loads(line))
+            for line in pack.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        )
+    return rows
+
+
+def prompt_hygiene_tokens(text: str) -> set[str]:
+    tokens = set()
+    for raw_token in re.findall(r"[a-z0-9]+", text.lower()):
+        if len(raw_token) < 3 or raw_token in PROMPT_SIMILARITY_STOPWORDS:
+            continue
+        tokens.add(raw_token)
+        if raw_token.endswith("ies") and len(raw_token) > 4:
+            tokens.add(f"{raw_token[:-3]}y")
+        elif raw_token.endswith("s") and len(raw_token) > 4:
+            tokens.add(raw_token[:-1])
+    return tokens
+
+
+def token_jaccard(left: set[str], right: set[str]) -> float:
+    if not left and not right:
+        return 1.0
+    return len(left & right) / len(left | right)
 
 
 class PromptExpectationValidatorTests(unittest.TestCase):
@@ -144,6 +224,46 @@ class PromptExpectationValidatorTests(unittest.TestCase):
                         self.assertEqual(len(normalized), len(set(normalized)), row["id"])
 
         self.assertEqual(row_count, 28)
+
+    def test_high_liability_holdout_packs_keep_negative_control_prompt_hygiene(self):
+        rows = high_liability_holdout_rows()
+        prompt_tokens_by_id = {}
+
+        for pack, row in rows:
+            with self.subTest(pack=pack.name, prompt_id=row["id"]):
+                context_tokens = prompt_hygiene_tokens(
+                    " ".join(
+                        (
+                            row["prompt"],
+                            row.get("what_it_tests", ""),
+                            row.get("scenario_family", ""),
+                        )
+                    )
+                )
+                forbidden_hits = [
+                    forbidden
+                    for forbidden in row["forbidden_or_suspicious"]
+                    if context_tokens & prompt_hygiene_tokens(forbidden)
+                ]
+
+                self.assertTrue(
+                    forbidden_hits,
+                    f"{row['id']} does not expose a forbidden/suspicious cue in prompt context",
+                )
+                prompt_tokens_by_id[row["id"]] = prompt_hygiene_tokens(row["prompt"])
+
+        prompt_ids = sorted(prompt_tokens_by_id)
+        for index, prompt_id in enumerate(prompt_ids):
+            for other_prompt_id in prompt_ids[index + 1 :]:
+                similarity = token_jaccard(
+                    prompt_tokens_by_id[prompt_id],
+                    prompt_tokens_by_id[other_prompt_id],
+                )
+                self.assertLess(
+                    similarity,
+                    0.45,
+                    f"{prompt_id} and {other_prompt_id} look like near-duplicate paraphrases",
+                )
 
     def test_partial_router_allowed_drift_targets_real_expected_guides(self):
         prompt_rows = {}

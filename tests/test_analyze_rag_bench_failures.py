@@ -1739,6 +1739,8 @@ waves:
         self.assertIn("## App Gates", report)
         self.assertIn("## App Acceptance", report)
         self.assertIn("`abstain`: 1", report)
+        self.assertIn("- root cause:", report)
+        self.assertIn("`gate_policy`: 1", report)
         with (output_dir / "diagnostics.csv").open(encoding="utf-8", newline="") as handle:
             csv_row = next(csv.DictReader(handle))
         self.assertEqual(csv_row["answer_mode"], "abstain")
@@ -1746,6 +1748,7 @@ waves:
         self.assertEqual(csv_row["answer_surface_label"], "abstain")
         self.assertEqual(csv_row["app_gate_status"], "abstain")
         self.assertEqual(csv_row["app_acceptance_status"], "abstain_accepted")
+        self.assertEqual(csv_row["app_acceptance_root_cause"], "gate_policy")
         self.assertEqual(csv_row["ui_surface_bucket"], "abstain")
         self.assertIn("answer_card_status", csv_row)
         self.assertIn("evidence_nugget_status", csv_row)
@@ -1884,16 +1887,24 @@ waves:
         ]
 
         rows = build_rows([artifact], answer_cards=cards)
+        summary = summarize(rows)
 
         self.assertEqual(rows[0]["evidence_owner_status"], "expected_owner_retrieved_not_cited")
         self.assertEqual(rows[0]["app_acceptance_status"], "needs_evidence_owner")
+        self.assertEqual(rows[0]["app_acceptance_root_cause"], "evidence_owner")
         self.assertEqual(rows[0]["safety_surface_status"], "emergency_first_supported")
         self.assertEqual(rows[1]["evidence_owner_status"], "expected_owner_cited")
         self.assertEqual(rows[1]["app_acceptance_status"], "card_contract_gap")
+        self.assertEqual(rows[1]["app_acceptance_root_cause"], "card_contract")
         self.assertEqual(rows[1]["ui_surface_bucket"], "emergency_first")
         self.assertEqual(rows[2]["suspected_failure_bucket"], "ranking_miss")
         self.assertEqual(rows[2]["app_acceptance_status"], "moderate_supported")
+        self.assertEqual(rows[2]["app_acceptance_root_cause"], "supported")
         self.assertEqual(rows[2]["evidence_owner_status"], "expected_owner_cited")
+        self.assertEqual(
+            summary["app_acceptance_root_cause_counts"],
+            {"card_contract": 1, "evidence_owner": 1, "supported": 1},
+        )
 
     def test_analyze_writes_markdown_csv_and_json(self):
         root = self.make_tmpdir()
