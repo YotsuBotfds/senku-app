@@ -371,6 +371,54 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertNotIn("generated_bench_json", job["with"])
         self.assertNotIn("generated_baseline_diag", job["with"])
 
+    def test_head_health_jobs_keep_narrow_reusable_workflow_contracts(self):
+        expectations = {
+            "master_head_health.yml": (
+                "generated-fixture-head-health",
+                {
+                    "mode",
+                    "label",
+                    "generated_bench_json",
+                    "generated_baseline_diag",
+                    "fail_on_generated_regression",
+                    "allow_retrieval_warnings",
+                    "include_safety_critical",
+                    "retrieval_index_flavor",
+                },
+            ),
+            "strict_retrieval_head_health.yml": (
+                "strict-retrieval-head-health",
+                {
+                    "mode",
+                    "label",
+                    "fail_on_generated_regression",
+                    "allow_retrieval_warnings",
+                    "include_safety_critical",
+                    "retrieval_index_flavor",
+                },
+            ),
+        }
+
+        for workflow_name, (job_name, expected_with_keys) in expectations.items():
+            with self.subTest(workflow=workflow_name):
+                workflow = yaml.safe_load(
+                    (WORKFLOW_DIR / workflow_name).read_text(encoding="utf-8")
+                )
+                job = workflow["jobs"][job_name]
+
+                self.assertEqual(
+                    {"name", "uses", "permissions", "with"},
+                    set(job),
+                )
+                self.assertEqual(
+                    "./.github/workflows/non_android_regression.yml",
+                    job["uses"],
+                )
+                self.assertEqual(expected_with_keys, set(job["with"]))
+                self.assertNotIn("runs-on", job)
+                self.assertNotIn("steps", job)
+                self.assertNotIn("strategy", job)
+
     def test_non_android_regression_uploads_failure_logs(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")

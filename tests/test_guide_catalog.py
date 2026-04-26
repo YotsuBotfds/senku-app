@@ -80,6 +80,71 @@ Body text
         self.assertEqual(issues[0]["source_file"], "bad.md")
         self.assertIn("invalid frontmatter YAML", issues[0]["reason"])
 
+    def test_non_scalar_required_metadata_is_ignored_without_blocking_siblings(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "bad-id.md").write_text(
+                """---
+id:
+  - GD-001
+slug: bad-id
+title: Bad ID
+---
+""",
+                encoding="utf-8",
+            )
+            (root / "bad-slug.md").write_text(
+                """---
+id: GD-002
+slug:
+  nested: value
+title: Bad Slug
+---
+""",
+                encoding="utf-8",
+            )
+            (root / "good.md").write_text(
+                """---
+id: GD-003
+slug: good-guide
+title: Good Guide
+---
+""",
+                encoding="utf-8",
+            )
+
+            by_id, by_slug = load_guide_catalog(str(root))
+
+        self.assertEqual(set(by_id), {"GD-003"})
+        self.assertEqual(set(by_slug), {"good-guide"})
+
+    def test_null_required_metadata_is_ignored_without_stringifying_none(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "null-id.md").write_text(
+                """---
+id:
+slug: null-id
+title: Null ID
+---
+""",
+                encoding="utf-8",
+            )
+            (root / "null-slug.md").write_text(
+                """---
+id: GD-002
+slug:
+title: Null Slug
+---
+""",
+                encoding="utf-8",
+            )
+
+            by_id, by_slug = load_guide_catalog(str(root))
+
+        self.assertEqual({}, by_id)
+        self.assertEqual({}, by_slug)
+
     def test_duplicate_guide_id_raises_clear_error(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

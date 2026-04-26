@@ -10,6 +10,7 @@ from ingest_freshness import (
     STALE,
     collect_guide_file_info,
     evaluate_ingest_freshness,
+    normalize_manifest,
 )
 
 
@@ -83,6 +84,71 @@ class IngestFreshnessTests(unittest.TestCase):
             )
 
         self.assertEqual(report.status, FRESH)
+
+    def test_manifest_source_file_path_matches_by_basename(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            write_guide(guides / "one.md", "GD-001", "One")
+            info = collect_guide_file_info(str(guides))["GD-001"]
+            manifest = root / "db" / "ingest_manifest.json"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "legacy-key": {
+                            "source_file": r"archive\guides\one.md",
+                            "sha256": info["sha256"],
+                        }
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, FRESH)
+        self.assertEqual(report.extra_manifest_keys, ())
+
+    def test_manifest_key_path_matches_by_basename(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            write_guide(guides / "one.md", "GD-001", "One")
+            info = collect_guide_file_info(str(guides))["GD-001"]
+            manifest = root / "db" / "ingest_manifest.json"
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(
+                json.dumps({"archive/guides/one.md": {"sha256": info["sha256"]}}, indent=2),
+                encoding="utf-8",
+            )
+
+            report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(report.status, FRESH)
+        self.assertEqual(report.extra_manifest_keys, ())
+
+    def test_normalize_manifest_stringifies_malformed_keys_for_reporting(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            write_guide(guides / "one.md", "GD-001", "One")
+            info = collect_guide_file_info(str(guides))
+
+            normalized, extra_keys = normalize_manifest({17: {"sha256": "0" * 64}}, info)
+
+        self.assertEqual(normalized, {})
+        self.assertEqual(extra_keys, ("17",))
 
     def test_legacy_unmatched_manifest_key_matching_sha_is_fresh(self):
         with tempfile.TemporaryDirectory() as tmpdir:

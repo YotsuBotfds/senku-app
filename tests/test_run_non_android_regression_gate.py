@@ -303,6 +303,36 @@ class RunNonAndroidRegressionGateTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Label", result.stderr)
 
+    def test_zero_top_k_fails_before_dry_run_command_output(self):
+        result = self.run_script(
+            "-Label",
+            "unit_label",
+            "-TopK",
+            "0",
+            "-WhatIf",
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("TopK", result.stderr)
+        self.assertNotIn("Non-Android regression gate dry run", result.stdout)
+        self.assertNotIn("PartialRouter.prompt_expectations", result.stdout)
+
+    def test_negative_top_k_fails_before_dry_run_command_output(self):
+        result = self.run_script(
+            "-Label",
+            "unit_label",
+            "-TopK",
+            "-3",
+            "-WhatIf",
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("TopK", result.stderr)
+        self.assertNotIn("Non-Android regression gate dry run", result.stdout)
+        self.assertNotIn("PartialRouter.prompt_expectations", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

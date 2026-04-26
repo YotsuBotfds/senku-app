@@ -93,6 +93,26 @@ class IndexDispatchNotesTests(unittest.TestCase):
         self.assertIn("RAG-S14", rendered)
         self.assertIn("scripts/analyze_rag_bench_failures.py", rendered)
 
+    def test_render_markdown_flattens_row_breaking_cell_fields(self):
+        module = load_module()
+        note = module.DispatchNote(
+            slice_id="A1\rBROKEN",
+            title="Title\nwith row break",
+            path="notes\\dispatch\\A1.md",
+            status="active",
+            headings=[],
+            linked_paths=[],
+            proof_lines=[],
+            mtime="2026-04-26T12:00:00",
+        )
+
+        rendered = module.render_markdown([note])
+
+        self.assertIn("A1 BROKEN", rendered)
+        self.assertIn("Title with row break", rendered)
+        self.assertNotIn("A1\rBROKEN", rendered)
+        self.assertNotIn("Title\nwith row break", rendered)
+
     def test_main_writes_markdown_and_json(self):
         module = load_module()
         with tempfile.TemporaryDirectory() as tmpdir:

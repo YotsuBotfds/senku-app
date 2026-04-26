@@ -519,6 +519,23 @@ Action:
   analyzer categories sanitize unsafe labels, and contextual shadow report text
   fields stringify malformed structures deterministically without changing
   scoring semantics.
+- Hardened workflow and metadata guardrails: metadata tag normalization ignores
+  nested malformed list/dict values instead of inventing fake tags, dispatch
+  note indexes flatten carriage returns in table cells, non-Android regression
+  gate preflight rejects non-positive `TopK`, dependency security checks treat
+  a missing Python executable as unavailable tooling, and head-health workflow
+  tests pin the narrow reusable-workflow contract.
+- Hardened deterministic and freshness proof helpers: special-case overlap
+  matrix output now reports write failures as clean exit-code-2 CLI errors, and
+  ingest freshness normalization matches manifest `source_file` values or keys
+  by normalized basename, including Windows-style relative paths, while
+  preserving stale/extra-key policy semantics.
+- Hardened planning/catalog report helpers: guide catalog loading now ignores
+  non-scalar required frontmatter fields instead of stringifying accidental IDs,
+  incremental ingest planning rejects control-character paths from generated
+  commands while surfacing escaped malformed-path evidence, and artifact
+  retention dry-run Markdown renders path/family cells as escaped code text
+  without changing approval-only retention behavior.
 
 Validation:
 
@@ -873,6 +890,20 @@ Validation:
   `tests.test_aggregate_final_mode_telemetry`, and
   `tests.test_summarize_shadow_comparisons` cover the evidence-tool sanitation
   and row-shape hardening batch.
+- `tests.test_metadata_helpers`, `tests.test_index_dispatch_notes`,
+  `tests.test_run_non_android_regression_gate`,
+  `tests.test_dependency_security_scan`, and `tests.test_github_workflows`
+  cover malformed metadata tag shapes, dispatch Markdown row breaks,
+  non-positive `TopK` preflight, missing Python-path tooling semantics, and
+  head-health workflow call-shape contracts.
+- `tests.test_validate_special_cases_output`, `tests.test_registry_overlap`,
+  and `tests.test_ingest_freshness` cover clean overlap-matrix write failures,
+  unchanged overlap validation, and basename-normalized ingest manifest
+  matching/reporting.
+- `tests.test_guide_catalog`, `tests.test_plan_incremental_ingest`, and
+  `tests.test_plan_artifact_retention` cover scalar-only catalog frontmatter,
+  malformed-path incremental-ingest reporting, and retention dry-run Markdown
+  escaping.
 
 Deferred unless evidenced:
 

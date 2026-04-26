@@ -141,6 +141,63 @@ class DependencySecurityScanScriptTests(unittest.TestCase):
         self.assertIn("pip-audit is unavailable", result.stdout + result.stderr)
         self.assertFalse(report_exists)
 
+    def test_scan_script_treats_missing_python_path_as_unavailable_tooling(self):
+        powershell = shutil.which("powershell")
+        self.assertIsNotNone(powershell)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            requirements_path = temp_path / "requirements.txt"
+            report_path = temp_path / "pip_audit.json"
+            missing_python_path = temp_path / "missing-python.cmd"
+            fake_git_path = temp_path / "git.cmd"
+
+            requirements_path.write_text("", encoding="utf-8")
+            fake_git_path.write_text(
+                (
+                    "@echo off\r\n"
+                    'if "%1"=="rev-parse" if "%2"=="--show-toplevel" '
+                    f"(echo {REPO_ROOT}& exit /b 0)\r\n"
+                    "exit /b 1\r\n"
+                ),
+                encoding="utf-8",
+            )
+
+            env = os.environ.copy()
+            env["PATH"] = str(temp_path)
+            env["PATHEXT"] = ".COM;.EXE;.BAT;.CMD"
+
+            command = [
+                powershell,
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(SCAN_SCRIPT_PATH),
+                "-RequirementsPath",
+                str(requirements_path),
+                "-PythonPath",
+                str(missing_python_path),
+                "-OutputJson",
+                str(report_path),
+                "-WhatIf",
+            ]
+            result = subprocess.run(
+                command,
+                cwd=REPO_ROOT,
+                env=env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            report_exists = report_path.exists()
+
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("pip-audit is unavailable", result.stdout + result.stderr)
+        self.assertNotIn("Dependency security scan dry run.", result.stdout + result.stderr)
+        self.assertFalse(report_exists)
+
     def test_scan_script_skips_when_tool_unavailable_and_skip_if_unavailable(self):
         powershell = shutil.which("powershell")
         self.assertIsNotNone(powershell)

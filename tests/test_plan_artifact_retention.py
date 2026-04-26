@@ -521,6 +521,52 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertIn("bench/old_run", markdown)
         self.assertIn("never deletes", render_markdown(payload))
 
+    def test_markdown_report_sanitizes_malformed_path_cells(self):
+        plan = {
+            "dry_run": True,
+            "root": "artifacts",
+            "exists": True,
+            "generated_at": NOW.isoformat(timespec="seconds"),
+            "config": {"report_limit": 10},
+            "summary": {
+                "family_count": 1,
+                "total_bytes": 1,
+                "protected_bytes": 0,
+                "candidate_bytes": 1,
+                "action_counts": {"archive_candidate": 1},
+                "reference_count": 0,
+                "reference_source_count": 0,
+            },
+            "references": {"paths": {}, "sources": []},
+            "families": [
+                {
+                    "action": "archive_candidate",
+                    "path": "bench/bad`<path>",
+                    "family_group": "bench/bad`<group>",
+                    "bytes": 1,
+                    "files": 1,
+                    "dirs": 0,
+                    "oldest_mtime": None,
+                    "newest_mtime": None,
+                    "age_days": 99,
+                    "markers": [],
+                    "examples": [],
+                    "protected": False,
+                    "protection_sources": [],
+                    "reasons": ["archive_name_pattern:report|pipe", "line\rbreak"],
+                }
+            ],
+            "candidates": [],
+        }
+        plan["candidates"] = plan["families"]
+
+        markdown = render_markdown(plan)
+
+        self.assertIn("<code>bench/bad`&lt;path&gt;</code>", markdown)
+        self.assertIn("<code>bench/bad`&lt;group&gt;</code>", markdown)
+        self.assertIn("archive_name_pattern:report\\|pipe", markdown)
+        self.assertNotIn("`bench/bad`<path>`", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()

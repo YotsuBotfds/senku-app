@@ -76,6 +76,20 @@ class IncrementalIngestPlannerTests(unittest.TestCase):
         )
         self.assertTrue(any("Deleted or missing guide" in warning for warning in plan["warnings"]))
 
+    def test_malformed_paths_with_control_chars_are_ignored(self):
+        root = self.make_root()
+        (root / "guides" / "water.md").write_text("# guide\n", encoding="utf-8")
+
+        plan = build_plan(["guides/water.md", "guides/bad\nname.md"], root=root)
+        text = render_plan(plan)
+
+        self.assertEqual(plan["guide_files"], ["guides/water.md"])
+        self.assertEqual(plan["malformed_paths"], ["guides/bad\nname.md"])
+        self.assertNotIn("bad\nname", "\n".join(plan["commands"]))
+        self.assertIn(r"guides/bad\x0aname.md", text)
+        self.assertIn("Malformed paths", text)
+        self.assertTrue(any("Malformed paths" in warning for warning in plan["warnings"]))
+
     def test_collect_git_changes_includes_renames_and_untracked_paths(self):
         root = self.make_root()
 

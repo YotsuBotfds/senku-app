@@ -99,6 +99,10 @@ def load_manifest(path: str) -> tuple[dict[str, Any] | None, str]:
     return data, ""
 
 
+def _manifest_path_basename(value: Any) -> str:
+    return os.path.basename(str(value).replace("\\", "/"))
+
+
 def normalize_manifest(
     manifest: dict[str, Any],
     file_info_by_guide_id: dict[str, dict[str, str]],
@@ -115,20 +119,25 @@ def normalize_manifest(
             sha_to_guide_ids.setdefault(sha, []).append(guide_id)
 
     for key, raw_entry in manifest.items():
-        if key.startswith("_"):
+        key_text = str(key)
+        if key_text.startswith("_"):
             continue
         entry = raw_entry if isinstance(raw_entry, dict) else {"sha256": str(raw_entry)}
         sha = str(entry.get("sha256", ""))
+        source_basename = _manifest_path_basename(entry.get("source_file") or key_text)
+        key_basename = _manifest_path_basename(key_text)
         guide_id = ""
-        if key in file_info_by_guide_id:
-            guide_id = key
-        elif key in basename_to_guide_id:
-            guide_id = basename_to_guide_id[key]
+        if key_text in file_info_by_guide_id:
+            guide_id = key_text
+        elif source_basename in basename_to_guide_id:
+            guide_id = basename_to_guide_id[source_basename]
+        elif key_basename in basename_to_guide_id:
+            guide_id = basename_to_guide_id[key_basename]
         elif sha and sha_to_guide_ids.get(sha):
             guide_id = sha_to_guide_ids[sha].pop(0)
 
         if not guide_id:
-            unmatched.append(key)
+            unmatched.append(key_text)
             continue
 
         info = file_info_by_guide_id[guide_id]

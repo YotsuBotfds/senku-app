@@ -41,6 +41,20 @@ class MetadataHelperTests(unittest.TestCase):
             normalize_tags("Water Storage, planning, long term, water_storage"),
         )
 
+    def test_normalize_tags_ignores_nested_malformed_values(self):
+        self.assertEqual(
+            ["planning", "water-storage"],
+            normalize_tags(
+                [
+                    "planning",
+                    {"tag": "bridge-guide"},
+                    ["nested"],
+                    ("tuple",),
+                    "water storage",
+                ]
+            ),
+        )
+
     def test_derive_bridge_metadata_filters_stale_bridge_tag_from_tags(self):
         bridge_metadata = derive_bridge_metadata(["planning", BRIDGE_GUIDE_TAG])
 

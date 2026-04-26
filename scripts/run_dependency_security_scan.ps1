@@ -69,8 +69,14 @@ function Test-PythonModule {
         [string]$ModuleName
     )
 
+    $pythonCommand = Get-Command $PythonExecutable -ErrorAction SilentlyContinue
+    if ($null -eq $pythonCommand) {
+        return $false
+    }
+
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
+    $exitCode = 1
     try {
         & $PythonExecutable -c "import $ModuleName" *> $null
         $exitCode = $LASTEXITCODE

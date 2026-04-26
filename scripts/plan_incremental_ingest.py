@@ -71,6 +71,17 @@ def _dedupe_sorted(paths):
     return sorted(dict.fromkeys(path for path in paths if path))
 
 
+def _has_control_chars(value: str) -> bool:
+    return any(ord(char) < 32 or ord(char) == 127 for char in value)
+
+
+def _display_path(value: str) -> str:
+    return "".join(
+        char if ord(char) >= 32 and ord(char) != 127 else f"\\x{ord(char):02x}"
+        for char in value
+    )
+
+
 def _git(args, cwd: Path) -> str:
     completed = subprocess.run(
         ["git", *args],
@@ -127,10 +138,14 @@ def build_plan(
     spec_files = []
     deleted_spec_files = []
     other_files = []
+    malformed_paths = []
 
     for change in raw_changes:
         rel_path = normalize_requested_path(change.path, root)
         if not rel_path:
+            continue
+        if _has_control_chars(rel_path):
+            malformed_paths.append(rel_path)
             continue
         file_exists = (root / rel_path).is_file()
         deleted = change.status == "D" or (explicit_paths and not file_exists)
@@ -152,8 +167,14 @@ def build_plan(
     spec_files = _dedupe_sorted(spec_files)
     deleted_spec_files = _dedupe_sorted(deleted_spec_files)
     other_files = _dedupe_sorted(other_files)
+    malformed_paths = _dedupe_sorted(malformed_paths)
 
     warnings = []
+    if malformed_paths:
+        warnings.append(
+            "Malformed paths containing control characters were ignored; "
+            "fix the path input before planning ingest."
+        )
     if deleted_guide_files:
         warnings.append(
             "Deleted or missing guide markdown cannot be removed by "
@@ -186,6 +207,7 @@ def build_plan(
         "spec_files": spec_files,
         "deleted_spec_files": deleted_spec_files,
         "other_files": other_files,
+        "malformed_paths": malformed_paths,
         "warnings": warnings,
         "commands": commands,
     }
@@ -221,7 +243,7 @@ def _render_list(lines, title, values):
     lines.append(title)
     if values:
         for value in values:
-            lines.append(f"  - {value}")
+            lines.append(f"  - {_display_path(value)}")
     else:
         lines.append("  - none")
 
@@ -240,6 +262,7 @@ def render_plan(plan):
     _render_list(lines, "Spec files detected:", plan["spec_files"])
     _render_list(lines, "Deleted or missing spec files:", plan["deleted_spec_files"])
     _render_list(lines, "Other files detected:", plan["other_files"])
+    _render_list(lines, "Malformed paths ignored:", plan.get("malformed_paths", []))
 
     lines.append("")
     _render_list(lines, "Warnings:", plan["warnings"])

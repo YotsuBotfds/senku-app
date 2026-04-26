@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import html
 import json
 import re
 import subprocess
@@ -698,14 +699,19 @@ def _format_family_row(row: dict[str, Any]) -> str:
         reasons += f" (+{len(row['reasons']) - 5})"
     protected = "yes" if row["protected"] else "no"
     return (
-        f"| {_escape_md(row['action'])} | `{_escape_md(row['path'])}` | "
-        f"`{_escape_md(row['family_group'])}` | {row['bytes']} | {row['files']} | "
+        f"| {_escape_md(row['action'])} | {_format_md_code(row['path'])} | "
+        f"{_format_md_code(row['family_group'])} | {row['bytes']} | {row['files']} | "
         f"{row['age_days']} | {_escape_md(reasons or '-')} | {protected} |"
     )
 
 
 def _escape_md(value: object) -> str:
-    return str(value).replace("|", "\\|").replace("\n", " ")
+    return str(value).replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
+def _format_md_code(value: object) -> str:
+    text = _escape_md(value)
+    return f"<code>{html.escape(text, quote=False)}</code>"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

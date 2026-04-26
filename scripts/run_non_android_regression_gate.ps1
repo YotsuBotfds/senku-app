@@ -334,6 +334,9 @@ if ([string]::IsNullOrWhiteSpace($runLabel)) {
 if ($runLabel -notmatch '^[A-Za-z0-9_.-]+$') {
     throw "-Label must contain only letters, numbers, underscore, dot, or dash."
 }
+if ($TopK -lt 1) {
+    throw "-TopK must be greater than or equal to 1."
+}
 
 $commandsToRun = [System.Collections.ArrayList]::new()
 $strictWarnings = -not $AllowRetrievalWarnings

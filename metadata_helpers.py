@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Mapping
 
 BRIDGE_GUIDE_TAG = "bridge-guide"
 
@@ -38,6 +39,8 @@ def normalize_tags(tags):
     normalized = []
     seen = set()
     for tag in raw_tags:
+        if isinstance(tag, (Mapping, list, tuple, set)):
+            continue
         normalized_tag = normalize_metadata_tag(tag)
         if not normalized_tag or normalized_tag in seen:
             continue

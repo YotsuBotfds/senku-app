@@ -45,6 +45,13 @@ def _normalize_related_refs(value):
     return tuple(refs)
 
 
+def _normalize_frontmatter_text(value) -> str:
+    """Return a stripped scalar frontmatter value, or empty for missing/non-scalar values."""
+    if value is None or isinstance(value, (list, tuple, set, dict)):
+        return ""
+    return str(value).strip()
+
+
 def _parse_frontmatter(path) -> tuple[dict[str, Any], str | None]:
     """Parse YAML frontmatter from a guide file."""
     text = path.read_text(encoding="utf-8-sig")
@@ -88,9 +95,9 @@ def load_guide_catalog(guides_dir=None):
 
     for path in sorted(base_dir.glob("*.md")):
         meta, _ = _parse_frontmatter(path)
-        guide_id = str(meta.get("id", "")).strip()
-        slug = str(meta.get("slug", "")).strip()
-        title = str(meta.get("title", "")).strip()
+        guide_id = _normalize_frontmatter_text(meta.get("id"))
+        slug = _normalize_frontmatter_text(meta.get("slug"))
+        title = _normalize_frontmatter_text(meta.get("title"))
         if not guide_id or not slug:
             continue
 

@@ -37,6 +37,18 @@ def build_overlap_matrix_rows(overlaps):
     return rows
 
 
+def write_overlap_matrix_json(path, rows):
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps(rows, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        return f"failed to write --overlap-matrix-json {path}: {exc}"
+    return None
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
         description="Validate deterministic special-case routing.",
@@ -60,11 +72,13 @@ def main(argv=None):
     promotion_counts = {}
 
     if args.overlap_matrix_json:
-        args.overlap_matrix_json.parent.mkdir(parents=True, exist_ok=True)
-        args.overlap_matrix_json.write_text(
-            json.dumps(overlap_matrix_rows, indent=2, sort_keys=True),
-            encoding="utf-8",
+        write_error = write_overlap_matrix_json(
+            args.overlap_matrix_json,
+            overlap_matrix_rows,
         )
+        if write_error:
+            print(write_error, file=sys.stderr)
+            return 2
 
     for overlap in overlaps:
         if len(overlap["winner_rule_ids"]) != 1:

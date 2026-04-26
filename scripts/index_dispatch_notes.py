@@ -233,7 +233,7 @@ def build_index(dispatch_dir: Path, *, include_completed: bool = False) -> list[
 
 
 def _escape_table_cell(value: str) -> str:
-    return value.replace("|", "\\|").replace("\n", " ")
+    return value.replace("|", "\\|").replace("\r", " ").replace("\n", " ")
 
 
 def _format_list(values: Sequence[str], *, limit: int = 3) -> str:
