@@ -194,7 +194,7 @@ def write_outputs(candidates: list[dict], output_dir: Path) -> tuple[Path, Path]
     json_path = output_dir / "guide_conflict_candidates.json"
     md_path = output_dir / "guide_conflict_candidates.md"
 
-    json_path.write_text(json.dumps(candidates[:250], indent=2), encoding="utf-8")
+    json_path.write_text(json.dumps(candidates[:250], indent=2, sort_keys=True), encoding="utf-8")
 
     lines = [
         "# Guide Conflict Candidates",

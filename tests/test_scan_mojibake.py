@@ -93,6 +93,26 @@ class MojibakeScanTests(unittest.TestCase):
         self.assertNotIn("\x07", markdown)
         self.assertNotIn("\x1b", markdown)
 
+    def test_render_markdown_tolerates_malformed_top_file_rows(self):
+        report = {
+            "generated_at": "2026-04-26T00:00:00+00:00",
+            "files_scanned": 1,
+            "findings_count": 1,
+            "allowed_findings_count": 0,
+            "gate_findings_count": 1,
+            "counts_by_kind": {"replacement_character": 1},
+            "top_files": [
+                {"path": "notes/bad|name.md"},
+                {"findings": "2|escaped"},
+            ],
+            "findings": [],
+        }
+
+        markdown = scan_mojibake.render_markdown(report)
+
+        self.assertIn("| `notes/bad\\|name.md` | 0 |", markdown)
+        self.assertIn("| `` | 2\\|escaped |", markdown)
+
     def test_cli_writes_json_and_markdown_reports(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

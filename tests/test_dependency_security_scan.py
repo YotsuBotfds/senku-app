@@ -256,6 +256,78 @@ class DependencySecurityScanScriptTests(unittest.TestCase):
         self.assertIn("WARNING: pip-audit is unavailable", result.stdout + result.stderr)
         self.assertFalse(report_exists)
 
+    def test_scan_script_rejects_malformed_json_report_from_successful_tool(self):
+        powershell = shutil.which("powershell")
+        self.assertIsNotNone(powershell)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            requirements_path = temp_path / "requirements.txt"
+            report_path = temp_path / "pip_audit.json"
+            fake_uvx_path = temp_path / "uvx.cmd"
+            fake_git_path = temp_path / "git.cmd"
+
+            requirements_path.write_text("", encoding="utf-8")
+            fake_uvx_path.write_text(
+                (
+                    "@echo off\r\n"
+                    "set out=\r\n"
+                    ":loop\r\n"
+                    "if \"%~1\"==\"\" goto done\r\n"
+                    "if \"%~1\"==\"--output\" (\r\n"
+                    "  set out=%~2\r\n"
+                    "  shift\r\n"
+                    ")\r\n"
+                    "shift\r\n"
+                    "goto loop\r\n"
+                    ":done\r\n"
+                    "if not \"%out%\"==\"\" echo {not-json>\"%out%\"\r\n"
+                    "exit /b 0\r\n"
+                ),
+                encoding="utf-8",
+            )
+            fake_git_path.write_text(
+                (
+                    "@echo off\r\n"
+                    'if "%1"=="rev-parse" if "%2"=="--show-toplevel" '
+                    f"(echo {REPO_ROOT}& exit /b 0)\r\n"
+                    "exit /b 1\r\n"
+                ),
+                encoding="utf-8",
+            )
+
+            env = os.environ.copy()
+            env["PATH"] = str(temp_path)
+            env["PATHEXT"] = ".COM;.EXE;.BAT;.CMD"
+
+            command = [
+                powershell,
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(SCAN_SCRIPT_PATH),
+                "-RequirementsPath",
+                str(requirements_path),
+                "-PythonPath",
+                "python",
+                "-OutputJson",
+                str(report_path),
+            ]
+            result = subprocess.run(
+                command,
+                cwd=REPO_ROOT,
+                env=env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("malformed JSON", result.stdout + result.stderr)
+        self.assertNotIn("Dependency security scan passed.", result.stdout + result.stderr)
+
 
 class PythonDependencyLockScriptTests(unittest.TestCase):
     def test_lock_script_uses_uv_compile_with_windows_python313_defaults(self):

@@ -157,6 +157,7 @@ def parse_csv_pack(path: Path, errors: list[str]) -> list[PromptRecord]:
     records: list[PromptRecord] = []
     try:
         reader = csv.DictReader(read_text(path).splitlines())
+        report_malformed_csv_headers(reader.fieldnames, errors)
         for line_number, row in enumerate(reader, start=2):
             if row.get(None):
                 errors.append(f"line {line_number}: extra_columns")
@@ -167,6 +168,17 @@ def parse_csv_pack(path: Path, errors: list[str]) -> list[PromptRecord]:
     except csv.Error as exc:
         errors.append(f"csv_error:{exc.__class__.__name__}")
     return records
+
+
+def report_malformed_csv_headers(fieldnames: Sequence[str] | None, errors: list[str]) -> None:
+    if not fieldnames:
+        return
+    normalized = [sanitize_text_field(fieldname).lower() for fieldname in fieldnames]
+    if any(not fieldname for fieldname in normalized):
+        errors.append("csv_error:empty_header")
+    duplicates_seen = duplicates(fieldname for fieldname in normalized if fieldname)
+    for fieldname in duplicates_seen:
+        errors.append(f"csv_error:duplicate_header:{fieldname}")
 
 
 def parse_json_pack(path: Path, errors: list[str]) -> list[PromptRecord]:

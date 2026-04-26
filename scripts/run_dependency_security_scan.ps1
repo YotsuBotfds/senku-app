@@ -173,6 +173,28 @@ function Format-CommandLine {
     return ($quoted -join ' ')
 }
 
+function Test-DependencyScanReport {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ReportPath
+    )
+
+    if (-not (Test-Path -LiteralPath $ReportPath -PathType Leaf)) {
+        throw "Dependency security scan did not create a report: $ReportPath"
+    }
+
+    $reportContent = Get-Content -LiteralPath $ReportPath -Raw -Encoding UTF8
+    if ([string]::IsNullOrWhiteSpace($reportContent)) {
+        throw "Dependency security scan produced an empty report: $ReportPath"
+    }
+
+    try {
+        $reportContent | ConvertFrom-Json | Out-Null
+    } catch {
+        throw "Dependency security scan produced malformed JSON: $ReportPath"
+    }
+}
+
 $repoRoot = Get-RepoRoot
 $requirementsFile = Resolve-RepoPath -RepoRoot $repoRoot -Path $RequirementsPath
 $reportPath = Resolve-RepoPath -RepoRoot $repoRoot -Path $OutputJson
@@ -214,6 +236,7 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw "Dependency security scan failed with exit code $LASTEXITCODE."
     }
+    Test-DependencyScanReport -ReportPath $reportPath
     Write-Host ("Dependency security scan passed. Report: {0}" -f $OutputJson)
 } finally {
     Pop-Location

@@ -188,6 +188,30 @@ class FindInvariantConflictCandidateTests(unittest.TestCase):
         self.assertEqual(candidate["guide_a_numbers"], ["10"])
         self.assertEqual(candidate["guide_b_numbers"], ["20"])
 
+    def test_write_outputs_sorts_json_keys_for_stable_report_rendering(self):
+        module = load_module()
+        candidates = [
+            {
+                "score": 4,
+                "unit_family": "pressure",
+                "heading": "system pressure",
+                "guide_b": "water-pressure-b",
+                "guide_a": "water-pressure-a",
+                "shared_keywords": ["pressure", "testing", "valve"],
+                "guide_a_numbers": ["10"],
+                "guide_b_numbers": ["20"],
+            }
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            json_path, md_path = module.write_outputs(candidates, Path(tmpdir))
+            rendered_json = json_path.read_text(encoding="utf-8")
+            rendered_md = md_path.read_text(encoding="utf-8")
+
+        self.assertLess(rendered_json.index('"guide_a"'), rendered_json.index('"guide_b"'))
+        self.assertLess(rendered_json.index('"heading"'), rendered_json.index('"score"'))
+        self.assertIn("keywords=pressure,testing,valve", rendered_md)
+
 
 if __name__ == "__main__":
     unittest.main()

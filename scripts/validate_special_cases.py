@@ -16,11 +16,47 @@ from deterministic_special_case_registry import VALID_PROMOTION_STATUSES
 import query
 
 
+OVERLAP_REQUIRED_FIELDS = {
+    "source_rule_id",
+    "sample_prompt",
+    "matches",
+    "winner_rule_ids",
+    "winner_reason",
+}
+
+OVERLAP_MATCH_REQUIRED_FIELDS = {
+    "rule_id",
+    "priority",
+    "lexical_signature_size",
+    "promotion_status",
+}
+
+
+def _missing_fields(record, required_fields):
+    return sorted(field for field in required_fields if field not in record)
+
+
 def build_overlap_matrix_rows(overlaps):
     rows = []
-    for overlap in overlaps:
+    for overlap_index, overlap in enumerate(overlaps):
+        missing_overlap_fields = _missing_fields(overlap, OVERLAP_REQUIRED_FIELDS)
+        if missing_overlap_fields:
+            raise ValueError(
+                "malformed overlap record "
+                f"{overlap_index}: missing {', '.join(missing_overlap_fields)}"
+            )
+
         winner_rule_ids = list(overlap["winner_rule_ids"])
-        for match in overlap["matches"]:
+        for match_index, match in enumerate(overlap["matches"]):
+            missing_match_fields = _missing_fields(match, OVERLAP_MATCH_REQUIRED_FIELDS)
+            if missing_match_fields:
+                source_rule_id = overlap["source_rule_id"]
+                raise ValueError(
+                    "malformed overlap match "
+                    f"{overlap_index}.{match_index} for {source_rule_id}: "
+                    f"missing {', '.join(missing_match_fields)}"
+                )
+
             rows.append(
                 {
                     "source_rule_id": overlap["source_rule_id"],
@@ -68,7 +104,11 @@ def main(argv=None):
     seen_rule_ids = set()
     valid_guide_ids = all_guide_ids()
     overlaps = query.get_deterministic_special_case_overlaps()
-    overlap_matrix_rows = build_overlap_matrix_rows(overlaps)
+    try:
+        overlap_matrix_rows = build_overlap_matrix_rows(overlaps)
+    except ValueError as exc:
+        print(f"failed to build overlap matrix rows: {exc}", file=sys.stderr)
+        return 2
     promotion_counts = {}
 
     if args.overlap_matrix_json:

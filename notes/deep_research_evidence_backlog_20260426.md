@@ -592,6 +592,12 @@ Action:
   missing, invariant/watchlist/corpus-marker Markdown reports tolerate malformed
   summary rows, and prompt-pack loading/selection tests pin fail-closed
   non-object rows plus stable mixed-case guide-id normalization.
+- Hardened additional report/validation edges: mojibake Markdown tolerates
+  malformed top-file rows, invariant-conflict JSON output uses stable key
+  ordering, prompt-pack indexing reports malformed CSV headers, dependency
+  scans reject malformed success reports, worktree summaries treat all current
+  protected planner handoffs as benign, and deterministic overlap matrix
+  rendering now fails cleanly for malformed overlap metadata.
 
 Validation:
 
@@ -625,6 +631,11 @@ Validation:
   `tests.test_scan_corpus_markers`, and
   `tests.test_select_prompt_pack_guides` cover the planner/snapshot/report
   hardening batch.
+- `tests.test_dependency_security_scan`,
+  `tests.test_find_invariant_conflict_candidates`, `tests.test_index_prompt_packs`,
+  `tests.test_scan_mojibake`, `tests.test_summarize_worktree_delta`,
+  `tests.test_validate_special_cases_output`, and `tests.test_registry_overlap`
+  cover the additional report/validation edge hardening batch.
 
 Deferred unless evidenced:
 

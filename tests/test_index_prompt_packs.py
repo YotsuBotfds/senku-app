@@ -70,6 +70,24 @@ class IndexPromptPacksTests(unittest.TestCase):
         self.assertEqual(record.ids_count, 2)
         self.assertEqual(record.errors, ["line 2: extra_columns"])
 
+    def test_index_csv_reports_malformed_headers_without_dropping_prompt(self):
+        root = self.make_tmpdir()
+        pack = root / "pack.csv"
+        pack.write_text(
+            "id,prompt,prompt,\n"
+            "A,Lost prompt,Usable prompt,ignored blank header\n",
+            encoding="utf-8",
+        )
+
+        record = index_prompt_pack(pack, base_dir=root)
+
+        self.assertEqual(record.prompt_count, 1)
+        self.assertEqual(record.ids_count, 1)
+        self.assertEqual(
+            record.errors,
+            ["csv_error:empty_header", "csv_error:duplicate_header:prompt"],
+        )
+
     def test_index_jsonl_reports_malformed_row_without_dropping_valid_rows(self):
         root = self.make_tmpdir()
         pack = root / "pack.jsonl"

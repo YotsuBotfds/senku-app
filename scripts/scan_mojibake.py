@@ -333,7 +333,9 @@ def render_markdown(report: dict[str, Any], *, limit: int = 200) -> str:
     top_files = report.get("top_files") or []
     if top_files:
         for row in top_files:
-            lines.append(f"| `{_escape_md(row['path'])}` | {row['findings']} |")
+            lines.append(
+                f"| `{_escape_md(row.get('path', ''))}` | {_escape_md(row.get('findings', 0))} |"
+            )
     else:
         lines.append("| `none` | 0 |")
 
