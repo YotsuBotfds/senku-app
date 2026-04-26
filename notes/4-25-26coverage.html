@@ -130,9 +130,9 @@
       <h1>Current RAG coverage and remaining guide work</h1>
       <p class="lede">A static status page for the high-liability guide families, reviewed-card runtime coverage, validation artifacts, and dispatch/backlog posture that matter to the current RAG/guide lane.</p>
       <div class="chips" aria-label="Primary sources">
-        <span class="chip">Latest behavior proof: <code>rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel</code></span>
+        <span class="chip">Latest behavior proof: <code>rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag</code></span>
         <span class="chip">Latest family selector: <code>high_liability_family_priorities_20260425_1720_wound_support_cards</code></span>
-        <span class="chip">Holdout eval: <code>rag_eval_partial_router_holdouts_20260425_diag</code></span>
+        <span class="chip">Holdout eval: <code>19 expected-supported / 2 accepted clarify</code></span>
       </div>
     </div>
   </header>
@@ -250,9 +250,9 @@
             <h3>Owner retrieval is visible</h3>
             <p>Expected-owner top-k is 24/24, cited is 23/24, and expected-owner best rank is 1.42. Rank concentration remains a signal even when reviewed-card rows pass.</p>
           </div>
-          <div class="note" style="border-left-color: var(--amber);">
-            <h3>Holdouts are not solved</h3>
-            <p>The partial-router holdout pack has 8 retrieval misses, 4 ranking misses, 4 artifact errors, 2 top-1 unresolved-partial rows, and 1 top-1 bridge row.</p>
+          <div class="note" style="border-left-color: var(--green);">
+            <h3>Partial/router holdout is green</h3>
+            <p>The latest held-out pack has 19 expected-supported rows, 2 accepted abstain/clarify rows, and 0 retrieval, ranking, generation, safety, or artifact misses after the GD-397 expectation cleanup.</p>
           </div>
           <div class="note" style="border-left-color: var(--violet);">
             <h3>Android remains gated</h3>
@@ -269,7 +269,8 @@
         <article class="slice"><span class="tag">Family selector</span><h3>Observed family closure</h3><p><code>high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>: dangerous activation remains 0/2; wound, stroke/cardiac, and poisoning are 0/0 regression-monitor families.</p></article>
         <article class="slice"><span class="tag">Metadata audit</span><h3>Broad audit remains sparse</h3><p><code>metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>: 754 guides scanned, 249 high-liability, 240 high-liability guides with at least one audit gap.</p></article>
         <article class="slice"><span class="tag">Corpus markers</span><h3>Partial markers reduced</h3><p><code>corpus_marker_scan_20260425_1622_gd585_repair.md</code>: GD-585 repair dropped unresolved partials to 54 across 54 guides; 329 guides still have some marker class.</p></article>
-        <article class="slice"><span class="tag">Holdout eval</span><h3>Partial/router stress remains</h3><p><code>rag_eval_partial_router_holdouts_20260425_diag/report.md</code>: top-k expected-owner hit rate is 10/21 and cited is 5/21, identifying real retrieval/ranking backlog outside the clean FA/FB/FD/FE panel.</p></article>
+        <article class="slice"><span class="tag">Holdout eval</span><h3>Partial/router pack closed</h3><p><code>rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code>: expected-supported is 19/21, the other 2 rows are accepted clarify paths, and retrieval/ranking/generation misses are all 0.</p></article>
+        <article class="slice"><span class="tag">Tooling gates</span><h3>Future drift checks added</h3><p><code>rag_regression_gate.py</code>, touched-file <code>scan_mojibake.py</code>, and enriched <code>write_run_manifest.py</code> now make regression, encoding, and run-context checks cheaper for future queue work.</p></article>
         <article class="slice"><span class="tag">Android</span><h3>Six-card pilot complete</h3><p>Android A11a-e plus A13/A14a-c prove the bundled six-card pilot path, forbidden-label guards, and pack parity. A14d explicitly defers product enablement.</p></article>
       </div>
       <div class="timeline" aria-label="Recent coverage timeline">
@@ -277,7 +278,7 @@
         <div class="step" style="--step: var(--green);"><strong>RAG-CARD1-4</strong><span>Reviewed-card contracts added for crisis, stroke/cardiac, poisoning, wound support.</span></div>
         <div class="step" style="--step: var(--teal);"><strong>RAG-T12</strong><span>Analyzer evaluates actual reviewed-card runtime IDs.</span></div>
         <div class="step" style="--step: var(--green);"><strong>Post-wound panel</strong><span>FA/FB/FD/FE reaches 0 bad diagnostic buckets.</span></div>
-        <div class="step" style="--step: var(--amber);"><strong>RAG-EVAL2</strong><span>Held-out partial/router pack exposes retrieval/ranking backlog.</span></div>
+        <div class="step" style="--step: var(--green);"><strong>RAG-EVAL2</strong><span>Held-out partial/router pack is green after owner packaging and GD-397 expectation cleanup.</span></div>
         <div class="step" style="--step: var(--violet);"><strong>A14d</strong><span>Android reviewed-card runtime remains developer/test-only.</span></div>
       </div>
     </section>
@@ -286,7 +287,7 @@
       <h2 id="gap-heading">Known Gaps And Backlog</h2>
       <div class="gap-grid">
         <article class="gap"><span class="tag">Open</span><h3>Dangerous activation support cards</h3><p>GD-858 and GD-918 remain reviewed-card gaps in the observed family selector. Treat them as candidate card-contract work only if a behavior panel shows a real answer need.</p></article>
-        <article class="gap"><span class="tag">Open</span><h3>Partial/router retrieval</h3><p>RAG-EVAL2 is the sharpest current backlog signal: 8 retrieval misses, 4 ranking misses, and weak top-k/cited rates on held-out bridge-thin and unresolved-partial prompts.</p></article>
+        <article class="gap"><span class="tag">Monitor</span><h3>Partial/router retrieval</h3><p>RAG-EVAL2 now has 0 retrieval, ranking, generation, safety, and artifact misses. Keep it as a regression gate because it still stresses bridge-thin and unresolved-partial surfaces.</p></article>
         <article class="gap"><span class="tag">Open</span><h3>Broad high-liability audit</h3><p>Corpus-wide metadata/card coverage remains sparse, but observed passing families should not receive routine churn just to reduce broad counters.</p></article>
         <article class="gap"><span class="tag">Deferred</span><h3>Android product exposure</h3><p>Runtime is real and harnessed, yet A14d chooses Option A: keep it hidden/developer scoped until support language, layout, and product policy are proven together.</p></article>
         <article class="gap"><span class="tag">Operations</span><h3>Release discipline</h3><p>RAG-OPS1, RAG-REL1, RAG-TRUST2, and RAG-PRIV1 define release gates, rollback, red-team checks, and privacy/artifact hygiene for future high-liability changes.</p></article>
@@ -305,7 +306,7 @@
           <tr><td>Missing reviewed answer-card metadata</td><td class="num">239</td><td>Audit count from the latest metadata scan; use observed behavior to prioritize.</td></tr>
           <tr><td>Unresolved partial markers</td><td class="num">54</td><td>After GD-585 repair, down from 55.</td></tr>
           <tr><td>Clean runtime-panel prompt rows</td><td class="num">24</td><td>FA/FB/FD/FE post-wound proof has 0 retrieval/ranking/generation/safety misses.</td></tr>
-          <tr><td>Holdout expected-owner top-k</td><td class="num">10/21</td><td>Partial-router holdout pack remains the clearest retrieval backlog.</td></tr>
+          <tr><td>Holdout expected-owner top-k</td><td class="num">20/21</td><td>Latest partial-router cleanup has 19 expected-supported rows and 2 accepted clarify paths.</td></tr>
           <tr><td>Android shipped pilot cards</td><td class="num">6</td><td>Bundled and tested, but developer/test-only and default off.</td></tr>
         </tbody>
       </table>
@@ -314,7 +315,7 @@
 
   <footer>
     <div class="wrap">
-      Sources used: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>notes/ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>, <code>artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/report.md</code>, <code>artifacts/bench/metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>, <code>artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md</code>, and <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_diag/report.md</code>.
+      Sources used: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>notes/ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>, <code>artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/report.md</code>, <code>artifacts/bench/metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>, <code>artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md</code>, <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code>, and <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_retrieval_only.md</code>.
     </div>
   </footer>
 
