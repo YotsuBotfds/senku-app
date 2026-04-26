@@ -104,7 +104,7 @@ Grocery stores, convenience stores, and specialty food shops contain vast quanti
 
 ### Wholesale Clubs
 
-Costco, Sam's Club, and similar bulk retailers contain enormous quantities of food. Member access areas limit scavenger competition. Focus on sealed, packaged items. Time yield is excellent (high-volume containers). Transportation is criticalÃ¢â‚¬â€weight and volume are substantial.
+Costco, Sam's Club, and similar bulk retailers contain enormous quantities of food. Member access areas limit scavenger competition. Focus on sealed, packaged items. Time yield is excellent (high-volume containers). Transportation is critical—weight and volume are substantial.
 
 ### Restaurants and Commercial Kitchens
 
@@ -116,7 +116,7 @@ Commercial storage facilities hold food destined for retail. Conditions are typi
 
 ### Pantries and Emergency Shelters
 
-Government emergency shelters, schools with pantry programs, and religious institutions maintain food caches. These locations may contain pre-packaged emergency rations, MREs, and bulk shelf-stable foods. Access depends on political/social situation; may be protected or community resources. Salvage ethicallyÃ¢â‚¬â€these may sustain vulnerable populations.
+Government emergency shelters, schools with pantry programs, and religious institutions maintain food caches. These locations may contain pre-packaged emergency rations, MREs, and bulk shelf-stable foods. Access depends on political/social situation; may be protected or community resources. Salvage ethically—these may sustain vulnerable populations.
 
 ### Farms and Agricultural Sites
 
@@ -169,13 +169,13 @@ Determining which foods to prioritize during salvage operations maximizes calori
 
 ## Canned Goods Assessment
 
-Canned goods represent some of the most valuable salvage itemsÃ¢â‚¬â€commercially canned food can remain safe and nutritious for decades if the seal remains intact. Your first assessment step is determining whether a can is still sound.
+Canned goods represent some of the most valuable salvage items—commercially canned food can remain safe and nutritious for decades if the seal remains intact. Your first assessment step is determining whether a can is still sound.
 
 ### Visual Inspection Protocol
 
-Begin by examining the entire can surface under good light. Look for bulging on either endÃ¢â‚¬â€this indicates bacterial gas production inside, making the contents unsafe regardless of appearance or smell. Never open a bulging or leaking can; discard it immediately. The contents may be pressurized or contaminated and likely contain pathogens.
+Begin by examining the entire can surface under good light. Look for bulging on either end—this indicates bacterial gas production inside, making the contents unsafe regardless of appearance or smell. Never open a bulging or leaking can; discard it immediately. The contents may be pressurized or contaminated and likely contain pathogens.
 
-Rust requires nuanced assessment. Surface rust (orange discoloration on the exterior) is primarily cosmetic and does not compromise safety. However, deep rust that creates pits in the metal can eventually create holes. Run your finger over rusty areas; if it flakes away easily or you feel sharp edges, the integrity is compromised. Seam rustÃ¢â‚¬â€rust appearing along the sealed edges of the canÃ¢â‚¬â€is more concerning than body rust, as seams are the critical pressure-holding component.
+Rust requires nuanced assessment. Surface rust (orange discoloration on the exterior) is primarily cosmetic and does not compromise safety. However, deep rust that creates pits in the metal can eventually create holes. Run your finger over rusty areas; if it flakes away easily or you feel sharp edges, the integrity is compromised. Seam rust—rust appearing along the sealed edges of the can—is more concerning than body rust, as seams are the critical pressure-holding component.
 
 Dents demand careful evaluation. Small dents on flat surfaces (the sides) are generally acceptable if the dent is minor and doesn't create sharp edges that could cut your hand. The critical concern is whether the dent compromised the seal or created a structural weakness. Seam dents (along the top or bottom rim where the can was sealed) are more dangerous than body dents, as they may have compromised the seal itself. Deep dents that create sharp angles or affect the structural integrity should be rejected.
 
@@ -183,7 +183,7 @@ Dents demand careful evaluation. Small dents on flat surfaces (the sides) are ge
 
 After visual inspection, press firmly on the ends of the can (top and bottom). They should be rigid and not give under pressure. If an end flexes inward or outward when pressed, the seal has likely failed and pressure has been lost. Discard such cans. The flexibility indicates the can is no longer holding a protective seal.
 
-Shake the can gently near your ear. You should hear the expected contents (liquid sloshing, beans rattling). If you hear unusual soundsÃ¢â‚¬â€excessive liquid where there shouldn't be, metal-on-metal sounds suggesting interior corrosionÃ¢â‚¬â€the can's interior may be compromised.
+Shake the can gently near your ear. You should hear the expected contents (liquid sloshing, beans rattling). If you hear unusual sounds—excessive liquid where there shouldn't be, metal-on-metal sounds suggesting interior corrosion—the can's interior may be compromised.
 
 ### Acidic vs. Low-Acid Foods
 
@@ -195,7 +195,7 @@ Most commercial cans display Julian codes (three-digit date codes where 001 = Ja
 
 ### Home-Canned Goods
 
-Salvaged home-canned goods require extra caution. Home canning has stricter safety margins than commercial canning because home processes are less controlled. Botulism risk exists with improper sealing or processing. Inspect the seal carefully: the lid should be slightly concave (curved inward), indicating a proper seal. If the lid flexes or pops when pressed, the seal has failed. Discard any home-canned good from an unknown source unless you're certain the person followed proper procedures (pressure-canning for low-acid foods, boiling water bath for acidic foods). When in doubt, reject home-canned goodsÃ¢â‚¬â€botulism is not worth the risk.
+Salvaged home-canned goods require extra caution. Home canning has stricter safety margins than commercial canning because home processes are less controlled. Botulism risk exists with improper sealing or processing. Inspect the seal carefully: the lid should be slightly concave (curved inward), indicating a proper seal. If the lid flexes or pops when pressed, the seal has failed. Discard any home-canned good from an unknown source unless you're certain the person followed proper procedures (pressure-canning for low-acid foods, boiling water bath for acidic foods). When in doubt, reject home-canned goods—botulism is not worth the risk.
 
 </section>
 
@@ -207,7 +207,7 @@ Dry goods form the backbone of salvaged food supplies because they store for ext
 
 ### Flour and Grain Products
 
-Flour under normal conditions (room temperature, exposed to air) remains viable for 6-12 months. However, properly sealed flour lasts yearsÃ¢â‚¬â€some salvagers have successfully used 10-year-old flour from sealed containers. The limiting factor is rancidity; flour contains oils that oxidize over time. Store flour in airtight containers or freezer bags to dramatically extend shelf life. Whole wheat flour goes rancid faster than white flour due to the bran's higher oil content. Signs of spoilage: rancid or musty odor, discoloration, clumping due to moisture absorption.
+Flour under normal conditions (room temperature, exposed to air) remains viable for 6-12 months. However, properly sealed flour lasts years—some salvagers have successfully used 10-year-old flour from sealed containers. The limiting factor is rancidity; flour contains oils that oxidize over time. Store flour in airtight containers or freezer bags to dramatically extend shelf life. Whole wheat flour goes rancid faster than white flour due to the bran's higher oil content. Signs of spoilage: rancid or musty odor, discoloration, clumping due to moisture absorption.
 
 ### Rice Longevity
 
@@ -219,15 +219,15 @@ Dried pasta lasts for years if kept dry and protected from insects. The primary 
 
 ### Sugar and Salt
 
-Sugar lasts indefinitely if kept dry. Clumping occurs with moisture exposure but doesn't affect safety or functionalityÃ¢â‚¬â€break up clumps or dissolve in liquid. Salt lasts indefinitely under virtually any conditions. It's one of the most shelf-stable foods available. Iodized salt may lose iodine potency over many years, but the salt itself remains safe and effective as a preservative.
+Sugar lasts indefinitely if kept dry. Clumping occurs with moisture exposure but doesn't affect safety or functionality—break up clumps or dissolve in liquid. Salt lasts indefinitely under virtually any conditions. It's one of the most shelf-stable foods available. Iodized salt may lose iodine potency over many years, but the salt itself remains safe and effective as a preservative.
 
 ### Baking Soda and Baking Powder
 
-Baking soda (sodium bicarbonate) is indefinite in storage but loses potency if exposed to moisture or acidic vapors. Test a small amount: mix with vinegar or lemon juice. A vigorous fizz reaction indicates full potency. No reaction suggests degradation; discard. Baking powder degrades faster, especially the double-acting variety. Test similarly by mixing with warm waterÃ¢â‚¬â€look for vigorous fizzing. Expired baking powder may still work but produce less rise.
+Baking soda (sodium bicarbonate) is indefinite in storage but loses potency if exposed to moisture or acidic vapors. Test a small amount: mix with vinegar or lemon juice. A vigorous fizz reaction indicates full potency. No reaction suggests degradation; discard. Baking powder degrades faster, especially the double-acting variety. Test similarly by mixing with warm water—look for vigorous fizzing. Expired baking powder may still work but produce less rise.
 
 ### Dried Beans and Legumes
 
-Dried beans remain technically edible for years but become increasingly difficult to rehydrate and cook. Storage time is critical; beans older than 2-3 years may require extended cooking times (several hours vs. 1-2 hours). They won't become unsafe, but they become less practical. Store in airtight containers to prevent insect infestation. Pressure cooking is your ally with older beansÃ¢â‚¬â€it breaks down the hardened outer layer more effectively than boiling.
+Dried beans remain technically edible for years but become increasingly difficult to rehydrate and cook. Storage time is critical; beans older than 2-3 years may require extended cooking times (several hours vs. 1-2 hours). They won't become unsafe, but they become less practical. Store in airtight containers to prevent insect infestation. Pressure cooking is your ally with older beans—it breaks down the hardened outer layer more effectively than boiling.
 
 ### Oats and Cereals
 
@@ -243,15 +243,15 @@ Frozen food represents an emergency resource with a finite shelf life once power
 
 ### Freezer Stability Without Power
 
-A full freezer maintains safe temperatures for approximately 48 hours if unopened. A half-full freezer maintains safe conditions for about 24 hours. The insulation of the freezer itself protects the contents. Once the freezer temperature reaches 40Ã‚Â°F (4Ã‚Â°C)Ã¢â‚¬â€the danger zone boundaryÃ¢â‚¬â€bacterial growth accelerates rapidly. During the 48-hour window, inspect frozen items for signs of thawing: ice crystals, weeping liquid, unusual softness. Items that thaw will need immediate attention.
+A full freezer maintains safe temperatures for approximately 48 hours if unopened. A half-full freezer maintains safe conditions for about 24 hours. The insulation of the freezer itself protects the contents. Once the freezer temperature reaches 40°F (4°C)—the danger zone boundary—bacterial growth accelerates rapidly. During the 48-hour window, inspect frozen items for signs of thawing: ice crystals, weeping liquid, unusual softness. Items that thaw will need immediate attention.
 
 ### Post-Thaw Safety Rules
 
-Once thawed, meat becomes unsafe after two hours at room temperature (above 40Ã‚Â°F / 4Ã‚Â°C). Poultry and ground meats are more vulnerable; whole cuts may last slightly longer. Vegetables and fruits can thaw for longer periods without safety risk but degrade in quality. Bread, baked goods, and prepared meals also tolerate longer thaw times. Never leave thawed meat at room temperature expecting to refreeze it laterÃ¢â‚¬â€this creates ideal conditions for bacterial multiplication.
+Once thawed, meat becomes unsafe after two hours at room temperature (above 40°F / 4°C). Poultry and ground meats are more vulnerable; whole cuts may last slightly longer. Vegetables and fruits can thaw for longer periods without safety risk but degrade in quality. Bread, baked goods, and prepared meals also tolerate longer thaw times. Never leave thawed meat at room temperature expecting to refreeze it later—this creates ideal conditions for bacterial multiplication.
 
 ### Refreezing Rules
 
-Thawed items can be refrozen if they still contain ice crystals (indicating incomplete thawing) or if they were thawed in the refrigerator. If meat thawed at room temperature for one hour, refreezing is safe but not idealÃ¢â‚¬â€thaw it again and cook immediately. The quality degrades with each freeze-thaw cycle, but safety isn't compromised if thawing occurred safely. If you must refreeze, do so as quickly as possible.
+Thawed items can be refrozen if they still contain ice crystals (indicating incomplete thawing) or if they were thawed in the refrigerator. If meat thawed at room temperature for one hour, refreezing is safe but not ideal—thaw it again and cook immediately. The quality degrades with each freeze-thaw cycle, but safety isn't compromised if thawing occurred safely. If you must refreeze, do so as quickly as possible.
 
 ### Identifying Thaw-and-Refreeze Damage
 
@@ -259,7 +259,7 @@ Look for evidence that food was thawed and refrozen before you acquired it: larg
 
 ### Freeze-Dried vs. Frozen
 
-Freeze-dried foods (common in camping and emergency supplies) differ fundamentally from frozen foods. Freeze-dried items have had water removed via sublimation, leaving shelf-stable products that don't require refrigeration. These last years if stored in sealed containers. Reconstitute with water before eating. Value freeze-dried foods highly in salvageÃ¢â‚¬â€they combine shelf stability with reasonable nutrition and flavor.
+Freeze-dried foods (common in camping and emergency supplies) differ fundamentally from frozen foods. Freeze-dried items have had water removed via sublimation, leaving shelf-stable products that don't require refrigeration. These last years if stored in sealed containers. Reconstitute with water before eating. Value freeze-dried foods highly in salvage—they combine shelf stability with reasonable nutrition and flavor.
 
 </section>
 
@@ -271,7 +271,7 @@ Condiments and spices offer disproportionate value in survival situations, far e
 
 ### Spices for Nutrition and Preservation
 
-Many spices contain surprising micronutrients. Paprika provides vitamin C (crucial in survival situations where fresh vegetables are scarce). Oregano, thyme, and sage possess antimicrobial properties that can extend food shelf life naturally. Turmeric contains curcumin, a potent anti-inflammatory compound. Garlic and onion powders offer both flavor and documented antimicrobial benefits. In survival contexts, these aren't mere flavoringsÃ¢â‚¬â€they're functional medicines and nutrition supplements.
+Many spices contain surprising micronutrients. Paprika provides vitamin C (crucial in survival situations where fresh vegetables are scarce). Oregano, thyme, and sage possess antimicrobial properties that can extend food shelf life naturally. Turmeric contains curcumin, a potent anti-inflammatory compound. Garlic and onion powders offer both flavor and documented antimicrobial benefits. In survival contexts, these aren't mere flavorings—they're functional medicines and nutrition supplements.
 
 Salvage spices aggressively. They store indefinitely (though potency decreases over time), take minimal space, and have high morale impact. A can of excellent spice might make the difference between eating and actually enjoying food when calories are scarce.
 
@@ -285,11 +285,11 @@ Honey is indefinite in storage. Crystallization is completely normal and doesn't
 
 ### Oils and Fat Degradation
 
-Cooking oils go rancid over time, especially at room temperature or in light. Olive oil, canola oil, and other unsaturated oils degrade faster than saturated fats (lard, coconut oil). Rancid oil tastes bitter and unpleasant and can cause digestive upset. Smell is your primary indicatorÃ¢â‚¬â€rancid oil smells unpleasantly sharp or off. Discard rancid oils. Unopened, high-quality oil lasts 1-2 years; opened bottles degrade faster. Store in cool, dark places in sealed containers.
+Cooking oils go rancid over time, especially at room temperature or in light. Olive oil, canola oil, and other unsaturated oils degrade faster than saturated fats (lard, coconut oil). Rancid oil tastes bitter and unpleasant and can cause digestive upset. Smell is your primary indicator—rancid oil smells unpleasantly sharp or off. Discard rancid oils. Unopened, high-quality oil lasts 1-2 years; opened bottles degrade faster. Store in cool, dark places in sealed containers.
 
 ### Soy Sauce and Fish Sauce
 
-These fermented products have very long shelf livesÃ¢â‚¬â€years even when opened. The high salt content and fermentation process preserve them. They may separate or develop a white film (salt crystals), which is cosmetic. If unopened, they're essentially indefinite. These are invaluable salvage items for flavor impact on bland emergency foods.
+These fermented products have very long shelf lives—years even when opened. The high salt content and fermentation process preserve them. They may separate or develop a white film (salt crystals), which is cosmetic. If unopened, they're essentially indefinite. These are invaluable salvage items for flavor impact on bland emergency foods.
 
 </section>
 
@@ -317,7 +317,7 @@ Canned wet pet food is assessed like any canned goods: check for bulging, rust, 
 
 ### Alternative Uses
 
-If you're unable to overcome the psychological barrier to consuming pet food directly, use it as livestock feed (for chickens, pigs, or goats if you're raising animals) or as fish feed in aquaculture systems. You convert pet food calories to animal calories, then consume the animalsÃ¢â‚¬â€a more psychologically acceptable pathway.
+If you're unable to overcome the psychological barrier to consuming pet food directly, use it as livestock feed (for chickens, pigs, or goats if you're raising animals) or as fish feed in aquaculture systems. You convert pet food calories to animal calories, then consume the animals—a more psychologically acceptable pathway.
 
 </section>
 
@@ -333,11 +333,11 @@ Multivitamins lose potency over time but rarely become harmful. The active compo
 
 ### Vitamin C Instability
 
-Vitamin C (ascorbic acid) is the most unstable vitamin supplement. It oxidizes rapidly when exposed to air, light, or moisture. A sealed bottle of vitamin C from 3-5 years ago might be 20% potency. However, salvage it anywayÃ¢â‚¬â€even reduced potency helps in a scenario where fresh citrus is unavailable. Vitamin C deficiency leads to scurvy, a serious problem in long-term survival. Any amount of vitamin C is better than none.
+Vitamin C (ascorbic acid) is the most unstable vitamin supplement. It oxidizes rapidly when exposed to air, light, or moisture. A sealed bottle of vitamin C from 3-5 years ago might be 20% potency. However, salvage it anyway—even reduced potency helps in a scenario where fresh citrus is unavailable. Vitamin C deficiency leads to scurvy, a serious problem in long-term survival. Any amount of vitamin C is better than none.
 
 ### Fish Oil and Omega-3 Capsules
 
-Fish oil capsules contain unsaturated fats that go rancid. Rancid fish oil tastes fishy and unpleasant and can cause nausea or digestive upset. Open a capsuleÃ¢â‚¬â€if the oil smells strongly fishy or off, discard it. Fresh fish oil has a fishy smell but not an unpleasant one; rancid oil is unambiguous. Salvage only fresh-smelling fish oil. Oxidized fish oil may not provide the omega-3 benefits, but it won't poison you.
+Fish oil capsules contain unsaturated fats that go rancid. Rancid fish oil tastes fishy and unpleasant and can cause nausea or digestive upset. Open a capsule—if the oil smells strongly fishy or off, discard it. Fresh fish oil has a fishy smell but not an unpleasant one; rancid oil is unambiguous. Salvage only fresh-smelling fish oil. Oxidized fish oil may not provide the omega-3 benefits, but it won't poison you.
 
 ### Iron Supplements
 
@@ -345,7 +345,7 @@ Iron supplements are highly valuable in survival situations. Iron deficiency is 
 
 ### Electrolyte Powders
 
-Powdered electrolyte supplements (sodium, potassium, magnesium) remain viable for years if kept sealed and dry. Caking or clumping indicates moisture exposure but doesn't make them unusableÃ¢â‚¬â€dissolve and drink. Electrolyte powders are extremely valuable in survival situations, especially if dehydration is a risk (hot climates, illness, or extreme exertion). Salvage all electrolyte products.
+Powdered electrolyte supplements (sodium, potassium, magnesium) remain viable for years if kept sealed and dry. Caking or clumping indicates moisture exposure but doesn't make them unusable—dissolve and drink. Electrolyte powders are extremely valuable in survival situations, especially if dehydration is a risk (hot climates, illness, or extreme exertion). Salvage all electrolyte products.
 
 </section>
 
@@ -357,9 +357,9 @@ Military and civilian emergency rations represent engineered survival food with 
 
 ### Military MRE Identification
 
-Meals, Ready to Eat (MREs) are U.S. military rations recognized by their tan/brown vacuum-sealed pouches. Each MRE contains an entrÃƒÂ©e, side dish, dessert, crackers, spread, and accessories (salt, pepper, gum, instant coffee, sugar). MREs are manufactured by multiple contractors but share similar packaging. Military MREs are designed for consumption without cooking, though heating improves palatability (included flameless heater or hot water).
+Meals, Ready to Eat (MREs) are U.S. military rations recognized by their tan/brown vacuum-sealed pouches. Each MRE contains an entrée, side dish, dessert, crackers, spread, and accessories (salt, pepper, gum, instant coffee, sugar). MREs are manufactured by multiple contractors but share similar packaging. Military MREs are designed for consumption without cooking, though heating improves palatability (included flameless heater or hot water).
 
-MREs have a printed production date and shelf life. Most are designed for 3-year shelf life at ambient temperature (70Ã‚Â°F / 21Ã‚Â°C), with extended life at cooler temperatures. An MRE from 2015 stored in cool conditions remains safe; it may taste less fresh, but it's nutritionally complete and safe. Never discard an MRE based solely on date; assess the storage conditions.
+MREs have a printed production date and shelf life. Most are designed for 3-year shelf life at ambient temperature (70°F / 21°C), with extended life at cooler temperatures. An MRE from 2015 stored in cool conditions remains safe; it may taste less fresh, but it's nutritionally complete and safe. Never discard an MRE based solely on date; assess the storage conditions.
 
 ### Civilian Emergency Rations
 
@@ -371,7 +371,7 @@ Salvaging from vessels or maritime sources may yield ship's rations, canned prov
 
 ### MRE Component Salvaging
 
-Individual MRE components can be separated and used independently. The included caffeine tablets, sugar packets, and salt are valuable. The main entrÃƒÂ©e can be consumed cold, though it's more pleasant heated. MRE crackers, often hard and bland, can be softened in water or soup. Even the packaging is usefulÃ¢â‚¬â€MRE pouches can serve as cooking vessels for boiling water. Don't waste any component; salvage everything.
+Individual MRE components can be separated and used independently. The included caffeine tablets, sugar packets, and salt are valuable. The main entrée can be consumed cold, though it's more pleasant heated. MRE crackers, often hard and bland, can be softened in water or soup. Even the packaging is useful—MRE pouches can serve as cooking vessels for boiling water. Don't waste any component; salvage everything.
 
 </section>
 
@@ -383,7 +383,7 @@ Recognizing contamination and spoilage indicators prevents food-borne illness.
 
 ### Botulism Risk Factors
 
-Botulism is caused by Clostridium botulinum toxin produced under anaerobic (no-oxygen) conditions. The toxin is deadly at microgram quantities and destroys the nervous system. Home-canned low-acid foods (meats, vegetables) without pressure-canning are primary sources. Commercial canning is controlled and safe. Botulism indicators: bulging cans (gas production), hissing when opened (explosive pressure), off-odors (though toxin may be odorless), visible mold growth. Any suspicious signs = rejection. Cooking to 212Ã‚Â°F for 10 minutes inactivates botulism toxin but doesn't eliminate the risk if you can't verify proper heating. When in doubt, don't tasteÃ¢â‚¬â€reject home-canned goods from unknown sources.
+Botulism is caused by Clostridium botulinum toxin produced under anaerobic (no-oxygen) conditions. The toxin is deadly at microgram quantities and destroys the nervous system. Home-canned low-acid foods (meats, vegetables) without pressure-canning are primary sources. Commercial canning is controlled and safe. Botulism indicators: bulging cans (gas production), hissing when opened (explosive pressure), off-odors (though toxin may be odorless), visible mold growth. Any suspicious signs = rejection. Cooking to 212°F for 10 minutes inactivates botulism toxin but doesn't eliminate the risk if you can't verify proper heating. When in doubt, don't taste—reject home-canned goods from unknown sources.
 
 :::danger
 Botulism is 100% fatal if untreated and very difficult to treat even with medical care. Never taste questionable canned goods to assess safety. Visual and smell assessment only. When in doubt, reject.
@@ -391,19 +391,19 @@ Botulism is 100% fatal if untreated and very difficult to treat even with medica
 
 ### Pathogens in Raw and Undercooked Food
 
-Salmonella (poultry, eggs, reptiles), E. coli (beef, contaminated vegetables), Listeria (dairy, ready-to-eat meats), and Campylobacter (poultry) all cause severe food poisoning. Raw foods must be cooked to specific temperatures: poultry 165Ã‚Â°F, beef 160Ã‚Â°F, fish 145Ã‚Â°F. Avoid raw salvaged foods unless you're certain of cooking capability. Frozen raw foods are only safe if still frozen or thawed in refrigeration; room-temperature thawed meat becomes unsafe within 2 hours.
+Salmonella (poultry, eggs, reptiles), E. coli (beef, contaminated vegetables), Listeria (dairy, ready-to-eat meats), and Campylobacter (poultry) all cause severe food poisoning. Raw foods must be cooked to specific temperatures: poultry 165°F, beef 160°F, fish 145°F. Avoid raw salvaged foods unless you're certain of cooking capability. Frozen raw foods are only safe if still frozen or thawed in refrigeration; room-temperature thawed meat becomes unsafe within 2 hours.
 
 ### Mold and Mycotoxins
 
-Mold on food indicates fungal contamination and possible mycotoxin production (fungal toxins). Some molds are non-toxic; many are poisonous. Never assume moldy food is safeÃ¢â‚¬â€you cannot visually distinguish safe molds from toxic ones. Reject all visibly moldy foods. Exception: hard cheeses can sometimes be salvaged by cutting away mold. Do not scrape or skim mold, lid growth, rim growth, or surface film off jams, jellies, sugary preserves, or fruit spreads; discard them.
+Mold on food indicates fungal contamination and possible mycotoxin production (fungal toxins). Some molds are non-toxic; many are poisonous. Never assume moldy food is safe—you cannot visually distinguish safe molds from toxic ones. Reject all visibly moldy foods. Exception: hard cheeses can sometimes be salvaged by cutting away mold. Do not scrape or skim mold, lid growth, rim growth, or surface film off jams, jellies, sugary preserves, or fruit spreads; discard them.
 
 ### Insect and Pest Contamination
 
-Living insects in food indicate infestation. Dead insects indicate historical infestation. Insect feces appear as small dark specks in grain or flour. Light infestation (few insects) can be sifted or picked out; heavy infestation means food is waste. Rodent contamination (droppings, chewing damage) requires immediate rejectionÃ¢â‚¬â€rodent feces transmit hantavirus and other serious pathogens.
+Living insects in food indicate infestation. Dead insects indicate historical infestation. Insect feces appear as small dark specks in grain or flour. Light infestation (few insects) can be sifted or picked out; heavy infestation means food is waste. Rodent contamination (droppings, chewing damage) requires immediate rejection—rodent feces transmit hantavirus and other serious pathogens.
 
 ### Rancidity in Fats and Oils
 
-Rancid oils and fats smell unpleasant (sharp, chemical, off-smell) and taste bitter. Rancidity indicates fat oxidation and potential formation of harmful compounds. Rancid oil can cause digestive upset. When in doubt, smell is the indicatorÃ¢â‚¬â€rancid smells obviously wrong. Reject.
+Rancid oils and fats smell unpleasant (sharp, chemical, off-smell) and taste bitter. Rancidity indicates fat oxidation and potential formation of harmful compounds. Rancid oil can cause digestive upset. When in doubt, smell is the indicator—rancid smells obviously wrong. Reject.
 
 ### Freezer Burn
 
@@ -421,11 +421,11 @@ Solution: Use the conservative rule: if bulging or leaking, reject unopened. If 
 
 ### Problem: Dry Goods Have Insect Infestation
 
-Solution: (1) Light infestationÃ¢â‚¬â€sift through cloth or screen to remove insects; (2) Heavy infestationÃ¢â‚¬â€freeze items for 2+ weeks (if freezer available) to kill insects and eggs, or seal in airtight container for 1-2 months to suffocate insects; (3) As last resort, use infested items in cooking where insects are unnoticeable (soups, stews). Never eat heavy infestation raw.
+Solution: (1) Light infestation—sift through cloth or screen to remove insects; (2) Heavy infestation—freeze items for 2+ weeks (if freezer available) to kill insects and eggs, or seal in airtight container for 1-2 months to suffocate insects; (3) As last resort, use infested items in cooking where insects are unnoticeable (soups, stews). Never eat heavy infestation raw.
 
 ### Problem: Frozen Food is Still Partially Thawed
 
-Solution: If ice crystals remain and thawing occurred in cool conditions (below 40Ã‚Â°F), refreezing is safe. If thawed at room temperature for more than 2 hours, discard meat; vegetables tolerate longer thaw times. If food is still frozen but partially soft, it's safe to refreeze.
+Solution: If ice crystals remain and thawing occurred in cool conditions (below 40°F), refreezing is safe. If thawed at room temperature for more than 2 hours, discard meat; vegetables tolerate longer thaw times. If food is still frozen but partially soft, it's safe to refreeze.
 
 ### Problem: Food Smells Off But You're Not Sure
 
@@ -438,12 +438,12 @@ Solution: Surface rust on outside is cosmetic and acceptable. Seam rust (rust al
 :::affiliate
 **If you're preparing in advance,** equipment for properly assessing and storing salvaged food can prevent illness and extend your supply:
 
-- [FoodSaver VS2150 Vacuum Sealing System](https://www.amazon.com/dp/B099NTSWD9?tag=offlinecompen-20) Ã¢â‚¬â€ Removes air to extend shelf life and prevents freezer burn on salvaged perishables
-- [100 Pack Mylar Bags with Oxygen Absorbers](https://www.amazon.com/dp/B09XMRTCJR?tag=offlinecompen-20) Ã¢â‚¬â€ Long-term storage for dry goods salvage with multiple size options
-- [Oxy-Sorb 300cc Oxygen Absorbers (100 Packets)](https://www.amazon.com/dp/B097NCXL3S?tag=offlinecompen-20) Ã¢â‚¬â€ Individually wrapped packets to remove residual oxygen from sealed containers
-- [Amazon Basics Digital Kitchen Scale (11 lb capacity)](https://www.amazon.com/dp/B06X9NQ8GX?tag=offlinecompen-20) Ã¢â‚¬â€ Track portion sizes and inventory weight of salvaged foods
+- [FoodSaver VS2150 Vacuum Sealing System](https://www.amazon.com/dp/B099NTSWD9?tag=offlinecompen-20) — Removes air to extend shelf life and prevents freezer burn on salvaged perishables
+- [100 Pack Mylar Bags with Oxygen Absorbers](https://www.amazon.com/dp/B09XMRTCJR?tag=offlinecompen-20) — Long-term storage for dry goods salvage with multiple size options
+- [Oxy-Sorb 300cc Oxygen Absorbers (100 Packets)](https://www.amazon.com/dp/B097NCXL3S?tag=offlinecompen-20) — Individually wrapped packets to remove residual oxygen from sealed containers
+- [Amazon Basics Digital Kitchen Scale (11 lb capacity)](https://www.amazon.com/dp/B06X9NQ8GX?tag=offlinecompen-20) — Track portion sizes and inventory weight of salvaged foods
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide Ã¢â‚¬â€ see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 
@@ -490,11 +490,11 @@ Food poisoning from salmonella or other pathogens causes severe dehydration in s
 
 ### Safe Food Preparation from Salvage
 
-Cook salvaged meat to proper internal temperatures (use meat thermometer if available). Bring broth-based soups to rolling boil before serving. Avoid eating raw vegetables unless you're certain of water source safety (salvaged vegetables may have been watered with contaminated water). Store leftover cooked food in cool conditions (<40Ã‚Â°F) and consume within 2 hours at room temperature, up to 3-4 days in cool storage.
+Cook salvaged meat to proper internal temperatures (use meat thermometer if available). Bring broth-based soups to rolling boil before serving. Avoid eating raw vegetables unless you're certain of water source safety (salvaged vegetables may have been watered with contaminated water). Store leftover cooked food in cool conditions (<40°F) and consume within 2 hours at room temperature, up to 3-4 days in cool storage.
 
 ### Freezer Loss Protocol
 
-If power loss to freezer occurs: (1) Don't open freezerÃ¢â‚¬â€leave closed to maintain temperature as long as possible; (2) Full freezer maintains safe temps ~48 hours; half-full lasts ~24 hours; (3) Once temperature rises above 40Ã‚Â°F, meat becomes unsafe; (4) Begin consuming frozen items in priority order (meats first, vegetables last); (5) Don't refreeze thawed meat unless still partially frozen or thawed in refrigeration.
+If power loss to freezer occurs: (1) Don't open freezer—leave closed to maintain temperature as long as possible; (2) Full freezer maintains safe temps ~48 hours; half-full lasts ~24 hours; (3) Once temperature rises above 40°F, meat becomes unsafe; (4) Begin consuming frozen items in priority order (meats first, vegetables last); (5) Don't refreeze thawed meat unless still partially frozen or thawed in refrigeration.
 
 <table><thead><tr><th scope="row">Food Category</th><th scope="row">Shelf Life (Sealed, Ideal Conditions)</th><th scope="row">Shelf Life (Opened or Poor Conditions)</th><th scope="row">Primary Safety Indicator</th></tr></thead><tbody><tr><td>Canned low-acid (vegetables, meat)</td><td>5-30+ years</td><td>3-5 days (after opening)</td><td>Bulging, rust, seal integrity</td></tr><tr><td>Canned acidic (tomatoes, fruit)</td><td>12-18+ months</td><td>5-7 days (after opening)</td><td>Bulging, seal integrity</td></tr><tr><td>Dry pasta, rice, beans</td><td>5-10 years</td><td>1-2 years (opened, sealed)</td><td>Insects, moisture, musty smell</td></tr><tr><td>Flour, grains</td><td>6-12 months (sealed)</td><td>2-4 weeks (opened)</td><td>Rancid smell, insects, moisture</td></tr><tr><td>Frozen meat (power loss)</td><td>Indefinite (with power)</td><td>2 hours at room temp</td><td>Temperature, ice crystals</td></tr><tr><td>MREs and rations</td><td>3-20 years depending</td><td>Once opened, eat same day</td><td>Packaging integrity, storage temp</td></tr><tr><td>Pet food (kibble)</td><td>1-2 years (sealed)</td><td>2-4 weeks (opened)</td><td>Rancid smell, insect activity</td></tr><tr><td>Condiments (oil, honey)</td><td>Indefinite (honey), 1-2 years (oil)</td><td>Same as sealed</td><td>Rancidity, crystallization, separation</td></tr></tbody></table>
 
