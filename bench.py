@@ -8,6 +8,8 @@ Usage:
 """
 
 import argparse
+import atexit
+from contextlib import nullcontext
 import csv
 import json
 import math
@@ -51,6 +53,7 @@ from query_completion_hardening import (
     _is_valid_crisis_retry_response as _hardening_is_valid_crisis_retry_response,
     _trim_incomplete_final_safety_line as _hardening_trim_incomplete_final_safety_line,
 )
+from rag_trace import RAGTraceWriter
 from token_estimation import estimate_tokens
 
 DEFAULT_PROMPTS = os.path.join(os.path.dirname(__file__), "test_prompts.txt")
@@ -869,6 +872,21 @@ def empty_results():
     }
 
 
+def _bench_trace_span(trace_writer, artifact_name, prompt_index, phase, name):
+    """Return an optional per-prompt bench trace span."""
+    if trace_writer is None:
+        return nullcontext()
+    return trace_writer.span(
+        name,
+        attributes={
+            "artifact_name": artifact_name,
+            "prompt_index": prompt_index + 1,
+            "phase": phase,
+            "name": name,
+        },
+    )
+
+
 def generate_response(
     prompt_text,
     gen_url,
@@ -1002,6 +1020,8 @@ def prepare_prompt(
     mode="default",
     embed_url=None,
     prompt_token_limit=None,
+    trace_writer=None,
+    trace_artifact_name=None,
 ):
     """Retrieve context and build the prompt before distributed generation."""
     reviewed_card_plan = {}
@@ -1009,81 +1029,109 @@ def prepare_prompt(
     special_case_response = build_special_case_response(question) if use_rag else None
     confidence_label = None
     if special_case_response:
-        results = empty_results()
-        sub_queries = [question]
-        retrieval_meta = {
-            "special_case": special_case_detail or special_case_path or "deterministic",
-            "decision_path": special_case_path or "deterministic",
-            "decision_detail": special_case_detail,
-        }
-        prompt_text = ""
-        decision_path = special_case_path or "deterministic"
-        decision_detail = special_case_detail
-        confidence_label = "high"
-    elif use_rag:
-        results, sub_queries, retrieval_meta = retrieve_chunks(
-            question,
-            collection,
-            top_k,
-            category,
-            embed_url=embed_url,
-        )
-        should_abstain, match_labels = _should_abstain(results, question)
-        confidence_label = retrieval_meta.get("confidence_label") or _confidence_label(
-            results,
-            retrieval_meta.get("scenario_frame", {"question": question}),
-        )
-        if should_abstain:
+        with _bench_trace_span(
+            trace_writer,
+            trace_artifact_name,
+            index,
+            "compose",
+            "bench.compose",
+        ):
+            results = empty_results()
+            sub_queries = [question]
+            retrieval_meta = {
+                "special_case": special_case_detail or special_case_path or "deterministic",
+                "decision_path": special_case_path or "deterministic",
+                "decision_detail": special_case_detail,
+            }
             prompt_text = ""
-            special_case_response = build_abstain_response(
+            decision_path = special_case_path or "deterministic"
+            decision_detail = special_case_detail
+            confidence_label = "high"
+    elif use_rag:
+        with _bench_trace_span(
+            trace_writer,
+            trace_artifact_name,
+            index,
+            "retrieve",
+            "bench.retrieve",
+        ):
+            results, sub_queries, retrieval_meta = retrieve_chunks(
                 question,
-                results,
-                match_labels,
-                scenario_frame=retrieval_meta.get("scenario_frame", {"question": question}),
+                collection,
+                top_k,
+                category,
+                embed_url=embed_url,
             )
-            decision_path = "abstain"
-            decision_detail = None
-            confidence_label = "low"
-        else:
-            reviewed_card_plan = _card_backed_runtime_answer_plan(question, results) or {}
-            card_backed_response = str(reviewed_card_plan.get("answer_text") or "").strip()
-            if card_backed_response:
+        with _bench_trace_span(
+            trace_writer,
+            trace_artifact_name,
+            index,
+            "compose",
+            "bench.compose",
+        ):
+            should_abstain, match_labels = _should_abstain(results, question)
+            confidence_label = retrieval_meta.get("confidence_label") or _confidence_label(
+                results,
+                retrieval_meta.get("scenario_frame", {"question": question}),
+            )
+            if should_abstain:
                 prompt_text = ""
-                special_case_response = card_backed_response
-                decision_path = "card_backed_runtime"
-            elif retrieval_meta.get("answer_mode") == "uncertain_fit":
-                prompt_text = ""
-                scenario_frame = retrieval_meta.get("scenario_frame", {"question": question})
-                if retrieval_meta.get("safety_critical") and isinstance(scenario_frame, dict):
-                    scenario_frame = {**scenario_frame, "safety_critical": True}
-                special_case_response = _build_uncertain_fit_body(
+                special_case_response = build_abstain_response(
                     question,
                     results,
-                    confidence_label,
-                    scenario_frame=scenario_frame,
                     match_labels=match_labels,
+                    scenario_frame=retrieval_meta.get("scenario_frame", {"question": question}),
                 )
-                decision_path = "uncertain_fit"
+                decision_path = "abstain"
+                decision_detail = None
+                confidence_label = "low"
             else:
-                prompt_text = (
-                    build_prompt(
+                reviewed_card_plan = _card_backed_runtime_answer_plan(question, results) or {}
+                card_backed_response = str(reviewed_card_plan.get("answer_text") or "").strip()
+                if card_backed_response:
+                    prompt_text = ""
+                    special_case_response = card_backed_response
+                    decision_path = "card_backed_runtime"
+                elif retrieval_meta.get("answer_mode") == "uncertain_fit":
+                    prompt_text = ""
+                    scenario_frame = retrieval_meta.get("scenario_frame", {"question": question})
+                    if retrieval_meta.get("safety_critical") and isinstance(scenario_frame, dict):
+                        scenario_frame = {**scenario_frame, "safety_critical": True}
+                    special_case_response = _build_uncertain_fit_body(
                         question,
                         results,
-                        mode=mode,
-                        prompt_token_limit=prompt_token_limit,
+                        confidence_label,
+                        scenario_frame=scenario_frame,
+                        match_labels=match_labels,
                     )
-                    if results["documents"][0]
-                    else ""
-                )
-                decision_path = "rag" if prompt_text else "rag-empty"
-            decision_detail = None
+                    decision_path = "uncertain_fit"
+                else:
+                    prompt_text = (
+                        build_prompt(
+                            question,
+                            results,
+                            mode=mode,
+                            prompt_token_limit=prompt_token_limit,
+                        )
+                        if results["documents"][0]
+                        else ""
+                    )
+                    decision_path = "rag" if prompt_text else "rag-empty"
+                decision_detail = None
     else:
-        results = empty_results()
-        sub_queries = [question]
-        retrieval_meta = {}
-        prompt_text = question
-        decision_path = "no-rag"
-        decision_detail = None
+        with _bench_trace_span(
+            trace_writer,
+            trace_artifact_name,
+            index,
+            "compose",
+            "bench.compose",
+        ):
+            results = empty_results()
+            sub_queries = [question]
+            retrieval_meta = {}
+            prompt_text = question
+            decision_path = "no-rag"
+            decision_detail = None
 
     if isinstance(retrieval_meta, dict) and confidence_label:
         retrieval_meta["confidence_label"] = confidence_label
@@ -1688,6 +1736,12 @@ def main():
                         help="Skip retrieval/context building and send raw prompts directly to the model")
     parser.add_argument("--no-system-prompt", action="store_true",
                         help="Omit Senku's system prompt during generation")
+    parser.add_argument(
+        "--trace-jsonl",
+        type=str,
+        default=None,
+        help="Optional safe per-prompt RAG trace JSONL output",
+    )
     args = parser.parse_args()
     config.GEN_MODEL = args.model
 
@@ -1823,6 +1877,11 @@ def main():
     # Output file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_path = args.output or f"bench_{timestamp}.md"
+    json_path = output_path.replace(".md", ".json")
+    trace_artifact_name = os.path.basename(json_path)
+    trace_writer = RAGTraceWriter(args.trace_jsonl) if args.trace_jsonl else None
+    if trace_writer is not None:
+        atexit.register(trace_writer.close)
 
     # Progress log — written incrementally so progress can be monitored
     progress_path = output_path.replace(".md", "_progress.log")
@@ -1909,17 +1968,24 @@ def main():
                     if first_generation_start[0] is None:
                         first_generation_start[0] = time.time()
                 try:
-                    idx, question, response, results, meta = process_prepared_prompt(
-                        prepared_prompt,
-                        args.temperature,
-                        gen_url,
-                        gen_model=gen_model,
-                        gen_worker=worker_label,
-                        use_system_prompt=not args.no_system_prompt,
-                        mode=args.mode,
-                        max_completion_tokens=args.max_completion_tokens,
-                        runtime_profile=runtime_profile,
-                    )
+                    with _bench_trace_span(
+                        trace_writer,
+                        trace_artifact_name,
+                        prepared_prompt[0],
+                        "generate",
+                        "bench.generate",
+                    ):
+                        idx, question, response, results, meta = process_prepared_prompt(
+                            prepared_prompt,
+                            args.temperature,
+                            gen_url,
+                            gen_model=gen_model,
+                            gen_worker=worker_label,
+                            use_system_prompt=not args.no_system_prompt,
+                            mode=args.mode,
+                            max_completion_tokens=args.max_completion_tokens,
+                            runtime_profile=runtime_profile,
+                        )
                 finally:
                     with metrics_lock:
                         active_generations[0] = max(active_generations[0] - 1, 0)
@@ -2016,6 +2082,8 @@ def main():
                     mode=args.mode,
                     embed_url=prep_embed_url,
                     prompt_token_limit=prepare_prompt_token_limit,
+                    trace_writer=trace_writer,
+                    trace_artifact_name=trace_artifact_name,
                 )
                 if prepared_prompt[2]:
                     work_queue.put({
@@ -2368,7 +2436,6 @@ def main():
         f.write("\n".join(report))
 
     # Write machine-readable JSON alongside the markdown report
-    json_path = output_path.replace(".md", ".json")
     json_results = []
     for i in range(len(prompts)):
         if i not in results_map:
@@ -2390,7 +2457,14 @@ def main():
 
         prompt_entry = prompt_entries[i]
         question, response, results, meta = results_map[i]
-        source_info = format_sources(results, response, meta.get("retrieval_metadata"))
+        with _bench_trace_span(
+            trace_writer,
+            trace_artifact_name,
+            i,
+            "verify",
+            "bench.verify",
+        ):
+            source_info = format_sources(results, response, meta.get("retrieval_metadata"))
         json_results.append({
             "index": i + 1,
             "question": question,
@@ -2572,6 +2646,8 @@ def main():
 
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_output, f, indent=2, ensure_ascii=False)
+    if trace_writer is not None:
+        trace_writer.close()
 
     log_progress(f"\nReport saved to {output_path}")
     log_progress(f"JSON data saved to {json_path}")

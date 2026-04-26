@@ -1,8 +1,12 @@
+import json
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import bench
 import query
+from scripts.analyze_rag_bench_failures import load_trace_index
 
 
 SMALL_MODEL_PROFILE = {
@@ -304,6 +308,63 @@ class BenchRuntimeTests(unittest.TestCase):
         self.assertEqual(meta["answer_provenance"], "generated_model")
         self.assertFalse(meta["reviewed_card_backed"])
         self.assertEqual(meta["reviewed_card_ids"], [])
+
+    def test_prepare_prompt_trace_jsonl_is_safe_and_analyzer_compatible(self):
+        results = {
+            "documents": [["Strong retrieved guide context."]],
+            "metadatas": [[{"guide_id": "GD-232"}]],
+            "distances": [[0.05]],
+        }
+        retrieval_meta = {
+            "answer_mode": "confident",
+            "confidence_label": "high",
+            "support_signals": {"direct": 1},
+            "scenario_frame": {"question": "sensitive raw prompt"},
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            trace_path = Path(tmpdir) / "trace.jsonl"
+            writer = bench.RAGTraceWriter(trace_path)
+            with patch("bench.classify_special_case", return_value=(None, None)), patch(
+                "bench.build_special_case_response", return_value=None
+            ), patch(
+                "bench.retrieve_chunks",
+                return_value=(results, ["sensitive raw prompt"], retrieval_meta),
+            ), patch("bench._should_abstain", return_value=(False, [])), patch(
+                "bench._card_backed_runtime_answer_plan", return_value=None
+            ), patch("bench.build_prompt", return_value="Prompt with guide context."):
+                bench.prepare_prompt(
+                    0,
+                    "sensitive raw prompt",
+                    collection=object(),
+                    top_k=8,
+                    category=None,
+                    trace_writer=writer,
+                    trace_artifact_name="bench_trace_test.json",
+                )
+            writer.close()
+
+            raw_trace = trace_path.read_text(encoding="utf-8")
+            self.assertNotIn("sensitive raw prompt", raw_trace)
+            records = [
+                json.loads(line)
+                for line in raw_trace.splitlines()
+                if line.strip()
+            ]
+            self.assertEqual(
+                [record["attributes"]["phase"] for record in records],
+                ["retrieve", "compose"],
+            )
+            for record in records:
+                self.assertEqual(record["attributes"]["artifact_name"], "bench_trace_test.json")
+                self.assertEqual(record["attributes"]["prompt_index"], 1)
+                self.assertIn("duration_ms", record)
+
+            trace_index = load_trace_index([trace_path])
+            summary = trace_index[("bench_trace_test.json", "1")]
+            self.assertEqual(summary["trace_phase_count"], 2)
+            self.assertIsInstance(summary["retrieve_ms"], float)
+            self.assertIsInstance(summary["compose_ms"], float)
 
     def test_generation_time_summary_excludes_error_prompts_from_success_only_metrics(self):
         results_map = {
