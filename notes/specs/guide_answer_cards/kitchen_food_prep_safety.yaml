@@ -1,0 +1,108 @@
+card_id: kitchen_food_prep_safety
+guide_id: GD-919
+slug: kitchen-food-prep-safety
+title: Kitchen Food Prep Safety
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - The prompt is about contamination prevention during raw meat handling, board or knife handoff, dishwashing without running water, or reheating leftovers in low-resource kitchens.
+  - The user asks how to keep ready-to-eat food from touching raw meat juices, cleaning tools, or dirty cloths.
+  - The request needs a sequence for low-resource cleanup, sanitation checkpoints, and what to do first.
+required_first_actions:
+  - Separate raw prep from ready-to-eat prep, and keep cooked food out of raw juice zones.
+  - Wash hands, tools, boards, and sinkware after raw meat contact before any clean-food handling resumes.
+  - Use the cleanest food-contact water you can find, then air-dry cleaned food-contact items.
+  - Use a conservative contamination-first order: clean/prepare food first, raw meat last, then clean everything that touched raw meat.
+  - Hand off to spoilage or medical/illness guides immediately if food is already questionable or people are getting sick after shared meals.
+first_actions:
+  - For raw meat handling, isolate raw prep and follow no-cross-contact order: cut vegetables first, raw meat later, then wash and clean surfaces and tools.
+  - Clean boards and knives with hot water, soap, friction, and thorough rinse before reuse; sanitize only after cleaning when the item may return to ready-to-eat food.
+  - If no sanitizer is available, keep the sequence strict: clean well with soap and clean water, dry fully, and avoid using dirty cloths as transfer points.
+  - For dishwashing without running water, use a wash-rinse-sanitize-dry sequence with separate tubs where possible and the least-dirty items first.
+  - Reheat leftovers until steaming hot throughout; stir mixed foods, reheat only what will be eaten now, and avoid prolonged warm holding.
+  - If contamination has moved through hands, tools, and surfaces, reset the area before service and avoid reusing uncertain cloths or sponges.
+urgent_red_flags:
+  - User asks about suspected food poisoning, severe vomiting/diarrhea patterns, neurologic symptoms, or other illness escalation.
+  - The user reports possible contamination in multiple people after a shared meal.
+  - The user says food is already visibly moldy, foul, leaking, bulging, or cannot be cleaned effectively after cleaning.
+  - Clean water is unavailable for safe minimal wash and hand-contact control.
+forbidden_advice:
+  - Do not give bleach concentrations, parts-per-million targets, or home chemistry dosing formulas.
+  - Do not suggest that rinsing food or rinsing a board makes it safe or ready to reuse.
+  - Do not claim sanitizing guarantees zero germs or complete elimination.
+  - Do not advise mixing cleaning chemicals.
+  - Do not recommend using the same cloth or sponge across raw and ready-to-eat workflows.
+  - Do not continue serving food if contamination signs are clear without a reset sequence and reinspection.
+do_not:
+  - Do not use sanitizer as a substitute for thorough cleaning and friction.
+  - Do not guess dilution, contact time, or product compatibility without label instructions.
+  - Do not recommend dishwashing by dipping everything in one dirty bucket.
+  - Do not include unsupported cooking chemistry or food-treatment claims beyond the guide’s scope.
+routine_boundary: >
+  This card is for routine contamination prevention and low-resource kitchen sanitation.
+  It should hand off when food is already questionable, when several people are ill after shared food,
+  when decontamination chemistry and chemical dosing are being asked in detail, or when medical
+  illness treatment is the core user intent.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete, start with conservative no-cross-contamination actions: separate raw from clean,
+  clean immediately, sanitize if returning to food contact, and reheat leftovers safely.
+  Ask one clarifier about raw/ready-to-eat separation and water availability, then hand off if spoilage,
+  outbreak, or treatment boundaries are triggered.
+clarifying_questions:
+  - Are you asking about raw meat handling, board/knife cleanup, dishwashing without running water, or reheating?
+  - Has any food in question already shown odor, slime, mold, bulging, leaking, or other obvious spoilage?
+  - Do you have separate clean containers and one item that can act as a clean rinse source for dishes?
+  - Is the question about routine kitchen control, or does it include people becoming sick after eating?
+  - Do you already have a sanitizer label, or should the answer avoid sanitizer details entirely?
+citation_ids:
+  - kitchen-kitchen-routines-cross-contamination
+  - kitchen-raw-meat-handling
+  - kitchen-cutting-board-cleaning
+  - kitchen-no-running-water-dishwashing
+  - kitchen-safe-reheating
+source_sections:
+  - guide: GD-919
+    slug: kitchen-food-prep-safety
+    title: Kitchen Food Prep Safety
+    sections:
+      - "#what-this-guide-covers"
+      - "#core-rules"
+      - "#what-not-to-do"
+      - "#handling-raw-meat-safely"
+      - "#handling-raw-meat-safely > What not to do"
+      - "#can-i-use-the-same-knife-for-meat-and-vegetables"
+      - "#how-do-i-clean-a-cutting-board"
+      - "#for-wood-boards"
+      - "#how-do-i-sanitize-a-cutting-board"
+      - "#simple-sanitation-steps"
+      - "#how-do-i-clean-knives-and-utensils"
+      - "#how-do-i-wash-dishes-without-running-water"
+      - "#safe-reheating"
+      - "#keeping-a-low-resource-cooking-area-sanitary"
+      - "#quick-answers"
+source_invariants:
+  - name: contamination-prevention boundaries
+    guide: GD-919
+    must_include:
+      - "Do not rinse raw chicken, meat, or fish just to \"clean\" it"
+      - "raw meat, its packaging, and its juices away from cooked food and fresh produce"
+      - "If a board, cloth, or sponge cannot be cleaned well, stop using it for food prep"
+      - "Clean first, then sanitize if the item will touch ready-to-eat food."
+  - name: safety workflow and handoff boundary
+    guide: GD-919
+    must_include:
+      - "If your real question is whether food smells off, has spoiled, or should be discarded, use `food-spoilage-assessment.md`"
+      - "If you only have one or two containers"
+  - name: sanitizer constraints
+    guide: GD-919
+    must_not_include:
+      - "3 parts"
+      - "1 tablespoon"
+      - "thirty"
+      - "at least 1 full minute"
+review_status: pilot_reviewed
+notes: >
+  Safety-first card for routine kitchen preparation and recovery in low-resource settings.
+  Scope excludes treatment of foodborne illness, sanitizer formula engineering, medical
+  triage, and decontamination guarantees. When those boundaries are crossed, route to spoilage
+  and sickness/medical guides.

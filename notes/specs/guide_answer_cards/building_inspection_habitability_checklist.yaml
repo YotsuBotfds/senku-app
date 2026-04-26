@@ -1,0 +1,126 @@
+card_id: building_inspection_habitability_checklist
+guide_id: GD-964
+slug: building-inspection-habitability-checklist
+title: Building Inspection and Habitability Checklist
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A person asks whether it is safe to enter a visibly damaged building, or whether only short salvage, storage, or occupancy is possible.
+  - The question asks for a practical "outside-first" triage lane and a do-not-enter / short-salvage / use-after-repair / occupancy check decision.
+  - The user reports cracks, sagging, soft floors, gas or smell clues, fire/water damage, major moisture, blocked exits, or unstable signs and needs the next action class first.
+required_first_actions:
+  - Start with outside-first assessment; do not begin with room-by-room interior wandering when visible risk clues are present.
+  - Classify the building into one of the four levels: do not enter, enter only for short salvage, use after repair, or reasonable for occupancy after checks.
+  - If any do-not-enter red flag appears, tell the user to stay out and route outward to safer next steps before any repair planning.
+  - Include storage safety only after occupancy-like decisions if the user asks about storing belongings.
+first_actions:
+  - Ask for the four-step ladder before adding recommendations: "Can I enter? can I be there briefly? can I repair known issues and use? can occupancy be safe?"
+  - Record the decision in plain terms matching the guide levels, with a short reason tied to movement, moisture, exits, gas/fire/smoke, structural, and storage criteria.
+  - If the answer is uncertain, default to the safer category and ask the minimal clarifying question set.
+urgent_red_flags:
+  - Active collapse, major sagging, gas odor, heavy fire damage, soft/bouncy/spongy floors, major movement, major water saturation, or likely blocked exits.
+  - Major roof displacement with interior signs of unstable structure, sewage backup, severe rot at load-bearing points, structural cracking that is still growing, or hidden smoldering signs.
+  - Any uncertainty with no clear safe exit path or one-way exit risk while people are already inside.
+forbidden_advice:
+  - Give structural reinforcement, shoring, structural engineering calculation, demolition, or engineering load-path repair instructions.
+  - Provide extraction/rescue tactics, interior confined-space rescue, or life-safety rescue techniques.
+  - Give roof repair, utility repair, electrical repair, plumbing repair, generator/power work, or full how-to home repair playbooks as if immediate use is now safe.
+  - Give procedural guidance for demolition clearance, stabilization construction, or permanent retrofit design.
+do_not:
+  - Do not treat this as a full repair manual, remediation plan, roofing procedure, or utility fix guide.
+  - Do not recommend long-form occupancy use when practical red flags in the do-not-enter layer are present.
+  - Do not route the user into routine restoration steps without a clear safety decision and exit strategy.
+routine_boundary: >
+  This card is for decision triage only. Use it for outside-first checks and
+  practical category assignment first; do not use it as the primary owner for
+  structural reinforcement, extraction/rescue, engineering repair sequencing,
+  demolition, utility repair, roof reconstruction, or permit-level rehabilitation.
+acceptable_uncertain_fit: >
+  If the user cannot fully describe damage but reports visible risk cues, preserve
+  the safest category and provide a concise outside-first ladder with the handoff
+  to the correct specialist lane when structural movement, gas, major moisture,
+  blocked exits, or fire concerns are plausible.
+clarifying_questions:
+  - Is the building showing active movement, new cracks, soft spots, smells of gas, heat/smoke, standing water, or blocked/single exit?
+  - Is the floor solid at entry points and are at least two reliable ways out available?
+  - What is the main decision needed: temporary entry for salvage, short-term storage, or occupancy?
+  - Is the space dry, ventilatable, and free of active mold odor, sewage, fire residues, and severe structural warning signs?
+applicability:
+  owner: building habitability triage only
+  use_when:
+    - triage_entry_and_habitability_decision
+    - short_safeguarded_survey_or_storage_decisions
+    - practical_repair_readiness_question
+  do_not_use_when:
+    - structural_engineering_repair_design
+    - extraction_or_rescue
+    - demolition_planning
+    - utility_repair
+    - full_routine_remediation_or_roof_work
+  handoff:
+    - structural-safety-building-entry for first-entry collapse and unstable movement questions.
+    - simple-home-repairs only after triage lands on use-after-repair.
+    - roof-leak-emergency-repair for immediate roof-leak stabilization.
+    - mold-prevention-remediation for active contamination and removal sequencing.
+    - construction for new build, major reconstruction, or permanent rehab planning.
+runtime_citation_policy: reviewed_source_family
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid: true
+fallback_handoff_language:
+  - If a do-not-enter red flag is present, instruct immediate stop/keep-out and route to structural safety, emergency, or utility rescue authorities before repair ideas.
+  - If storage intent is unsafe, redirect to safe relocation and ask about safer alternative spaces.
+  - Do not give repair or utility procedures until the decision category and hazard handoff are clear.
+citation_ids:
+  - habitability-decision-ladder
+  - outside-first-inspection
+  - do-not-enter-boundary
+  - practical-red-flags-overrule
+  - short-salvage-and-storage-boundary
+  - occupancy-after-checks
+source_sections:
+  - guide: GD-964
+    slug: building-inspection-habitability-checklist
+    title: Building Inspection and Habitability Checklist
+    sections:
+      - "#1-the-four-decision-levels"
+      - "#2-what-to-check-from-outside-first"
+      - "#4-do-not-enter"
+      - "#5-enter-only-for-short-salvage"
+      - "#6-use-after-repair"
+      - "#7-reasonable-for-occupancy-after-checks"
+      - "#10-a-simple-storage-test"
+      - "#11-practical-red-flags-that-overrule-everything"
+source_invariants:
+  - name: outside-first safety lane
+    guide: GD-964
+    must_include:
+      - Never start by wandering room to room.
+      - Use the four levels below before you do anything else.
+  - name: decision ladder structure
+    guide: GD-964
+    must_include:
+      - Do not enter
+      - Enter only for short salvage
+      - Use after repair
+      - Reasonable for occupancy after checks
+  - name: red-flag priority
+    guide: GD-964
+    must_include:
+      - A building can look "mostly fine" and still be unsafe
+      - Active collapse, major sagging, strong gas smell, heavy fire damage, sewage backup, or a floor that feels soft or bouncy
+      - Leave and reassess from outside.
+review_status: pilot_reviewed
+notes: >
+  Reviewed for safe triage-only closure on GD-964. This card keeps decisions in a
+  do-not-enter / short salvage / use-after-repair / occupancy-after-checks
+  lane, enforces outside-first assessment, and blocks rescue, extraction,
+  structural engineering, demolition, utility repair, and roof-work playbook
+  details. It includes explicit storage-only branch notes and routing handoffs for
+  specialist domains.

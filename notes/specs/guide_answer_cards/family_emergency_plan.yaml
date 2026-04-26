@@ -1,0 +1,128 @@
+card_id: family_emergency_plan
+guide_id: GD-374
+slug: family-emergency-plan
+title: Family Emergency Plan
+risk_tier: low
+evidence_owner: guide-corpus
+applicability: >
+  Use when the question asks for practical family preparedness planning in advance:
+  communication trees, contact trees, meeting points, school pickup coordination,
+  neighbor mutual-aid preparation, local hazard checklists, and readiness
+  implementation steps. Do not use for injury triage, medical treatment, rescue
+  operations, evacuation order interpretation, law-enforcement tactics, or severe
+  event response instructions.
+applies_when:
+  - The user asks for a family communication tree, out-of-state hub, or check-in cadence.
+  - The user asks for primary/secondary/tertiary meeting points, where to wait first, or how to pre-plan fallback locations.
+  - The user asks about school pickup contingencies, who can pick up children, or walking-home contingencies.
+  - The user asks how to organize neighbor help, neighbor contact lists, or emergency resource maps.
+  - The user asks for local risk or seasonal hazard checklists and a staged family implementation plan.
+required_first_actions:
+  - Start with scope triage: if current messages describe active injury, severe distress, medical instability, entrapped/unsafe conditions, active fire/flood/water rescue, missing-person crisis, or law-enforcement/security actions, route to higher-severity emergency support before routine planning.
+  - Keep answers on preparedness planning only: define who contacts whom, where families reunite, what the authorized pickup path is, and how neighbor support is used for logistics/support.
+  - Provide a short closure: "This is a planning lane; if danger is immediate, call local emergency services and use official alerts first."
+  - Include concrete planning templates (contact order, meeting points, pickup authorization, and at least one readiness checklist).
+  - Mention age-appropriate steps for kids for consistency with the source guide without adding medical rescue steps.
+first_actions:
+  - Build one communication plan that covers out-of-state hub, backup contacts, and memorized contact numbers, then define check-in times.
+  - Define three-tier meeting points: home, nearby landmark, and an out-of-area fallback with address/time-to-reach notes.
+  - Document school pickup authority list and alternate pickup path when roads are blocked or normal route is unsafe.
+  - Create a neighbor network map with named contacts, verified availability, and available capabilities for non-medical logistics and check-ins.
+  - Add a local-risk worksheet for the user's region and map one-quarter and annual preparation cadence to maintain readiness.
+urgent_red_flags:
+  - Any sign of active injury, bleeding, severe pain, breathing problems, chest pain, confusion, seizure, collapse, or other medical instability.
+  - Active fire, flood, severe weather with immediate life-threatening conditions, missing persons during a declared incident, or imminent violent/security threats.
+  - Requests for tactical rescue methods, law-enforcement strategy, evacuation order interpretation, or legal/compliance instructions by geography.
+  - School pickup questions involving assault risk, abduction suspicion, or inability to verify authorized adults.
+forbidden_advice:
+  - Provide tactical rescue instructions (water/rope/fire/vehicle operations), self-rescue claims, or "how to perform" rescue actions.
+  - Give injury triage, first-aid treatment, medication, or wound/injury stabilization guidance.
+  - Promise emergency-response efficacy, speed, or success rates for specific counties/states.
+  - Advise on law-enforcement tactics, incident command command flow, or evacuation mandates beyond referral language.
+  - Give severe event response commands (immediate storm/lockdown/crowd-control directives) as the card's primary answer path.
+  - Reframe a dangerous incident as routine planning or delay emergency service contact during red-flag scenarios.
+do_not:
+  - Do not include operational rescue procedure details or road-clearing, extraction, or shelter-entry tactics.
+  - Do not include medical triage pathways, medication dosing, or treatment suggestions inside this card.
+  - Do not provide false certainty about which authorities will respond fastest by geography.
+  - Do not present neighbor planning as a substitute for emergency services during active danger.
+  - Do not skip handoff statements when red flags are present.
+routine_boundary: >
+  The card is for stable-family planning before or immediately after a separation
+  where no acute injury/safety collapse is described. It does not own rescue,
+  incident-command sequencing, active evacuation compliance, medical triage,
+  traffic-operations, or law-enforcement coordination. Those concerns are
+  routine outside this card and must be handed off to higher-severity lanes.
+acceptable_uncertain_fit: >
+  If details are incomplete, give a conservative planning template and ask which
+  contacts and child/school variables are already known. If medical, rescue, or
+  active danger terms appear, include explicit handoff language first and do not
+  continue with routine plan details as a replacement.
+clarifying_questions:
+  - Is this request for proactive planning, or is someone currently in immediate danger and being harmed?
+  - Who is the confirmed out-of-state anchor and are all members expected to know that number?
+  - What is the primary/safe meeting point, and what is the next available backup location?
+  - Who is on the current authorized school pickup list, and which route is blocked?
+  - Which neighbors are in the local map, and what non-medical support can they reliably provide?
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - first_actions
+  must_include_urgent_handoff: true
+  forbid: true
+fallback_handoff_language:
+  - If any red-flag condition exists, route the user to emergency services and ask for the nearest emergency lane (911/112/appropriate local emergency number) before continuing.
+  - Use explicit escalation language: "Do not wait for this planning template if anyone is injured, in medical danger, or in immediate hazardous conditions."
+  - For uncertain high-risk signals, state that this card is a preparedness lane and confirm the need for local emergency responders.
+citation_ids:
+  - family-emergency-communication-tree
+  - family-emergency-meeting-points
+  - family-emergency-school-pickup
+  - family-emergency-neighbor-network
+  - family-emergency-local-risks
+  - family-emergency-implementation-checklist
+source_sections:
+  - guide: GD-374
+    slug: family-emergency-plan
+    title: Family Emergency Plan
+    sections:
+      - "#communication-tree"
+      - "#meeting-points"
+      - "#school-pickup"
+      - "#neighbor-network"
+      - "#local-risks-checklist"
+      - "#implementation-checklist"
+source_invariants:
+  - name: communication-tree-contacts
+    guide: GD-374
+    must_include:
+      - "A communication tree is a checklist of people, in order, that every family member contacts"
+      - "out-of-state contact"
+      - "text format (keep it short)"
+  - name: meeting and pickup planning
+    guide: GD-374
+    must_include:
+      - "Primary Meeting Point"
+      - "Secondary Meeting Point"
+      - "tertiary meeting point"
+      - "authorized pickup list"
+      - "Children should know"
+  - name: neighbor-network-and-local-risks
+    guide: GD-374
+    must_include:
+      - "\"knowing your neighbors\" is vague and useless"
+      - "Offer specific help"
+      - "Know your local risks"
+      - "Disaster-Specific Checklist"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed safe-lane closure card for GD-374. It constrains runtime answers to
+  family preparedness planning: communication tree design, meeting-point structure,
+  school pickup contingencies, neighbor mutual-aid planning, local risk checklists,
+  and implementation routines. It explicitly routes injury/medical danger, active
+  rescue/severe response, evacuation legal/tactical questions, and law-enforcement
+  topics to higher-severity lanes.
+

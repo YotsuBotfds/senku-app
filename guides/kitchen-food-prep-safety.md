@@ -4,6 +4,20 @@ slug: kitchen-food-prep-safety
 title: Kitchen Food Prep Safety
 category: agriculture
 difficulty: beginner
+routing_cues:
+  - Use this guide when raw meat, cutting boards, knives, or dishwashing routines could transfer contamination to ready-to-eat food in kitchens with limited supplies.
+  - Use routine contamination-prevention advice for food-contact cleanup order, dishwashing without running water, board/knife cleaning, and safe reheating.
+  - Route questions about questionable food appearance, smell, leaks, bulging, mold, or severe temperature-abuse history to food-spoilage-assessment.
+citations_required: true
+applicability: >
+  Routine low-resource kitchen safety for raw-meat handling, cutting-board and knife cleanup,
+  dishwashing without running water, safe reheating, and basic sanitation sequencing.
+  Do not use this guide for food-poisoning treatment or decontamination chemical formulation questions.
+citation_policy: >
+  Cite this guide and its reviewed answer card for contamination-prevention and
+  kitchen-routine advice. Route questionable food, outbreak clusters, severe
+  illness, and emergency medical concerns to the matching higher-liability
+  illness, water, or spoilage guides.
 aliases:
   - kitchen sanitation
   - raw meat handling
@@ -40,6 +54,8 @@ related:
   - butchering
   - composting-systems
   - sterilization-methods
+answer_card:
+  - kitchen_food_prep_safety
 read_time: 12
 word_count: 3400
 last_updated: '2026-04-13'
@@ -83,6 +99,13 @@ If your real question is whether food smells off, has spoiled, or should be disc
 - Keep separate zones for raw prep, cooked food, and trash.
 - Air-dry clean items instead of wiping them with a dirty towel.
 - If a board, cloth, or sponge cannot be cleaned well, stop using it for food prep.
+
+## What Not to Do
+
+- Do not use sanitizer as a substitute for thorough washing and drying.
+- Do not use dosing instructions from memory for bleach or other cleaners.
+- Do not rely on a quick rinse as evidence food is safe or clean.
+- Do not keep serving food after it has moved through a clear contamination route without reset cleaning.
 
 ## Handling Raw Meat Safely
 
@@ -175,21 +198,21 @@ If the board will touch ready-to-eat food after raw meat, sanitation is worth do
 ### Avoid mistakes
 
 - Do not mix bleach with ammonia, vinegar, or other cleaners.
-- Do not guess at sanitizer strength if you do not know the label instructions.
+- Do not guess at sanitizer strength or contact time if you do not know the label instructions.
 - Do not wipe a freshly sanitized board with a dirty cloth.
 
 ### Emergency bleach sanitizing solution
 
-For unscented household bleach (roughly 5–6 % sodium hypochlorite):
+If your sanitizer says it is approved for food-contact surfaces:
 
-- Mix 1 tablespoon bleach per 1 gallon of clean water, or 1 teaspoon per quart.
-- Keep the surface wet for at least 1 full minute.
-- Let it air-dry. Do not rinse off.
+- Follow the product label exactly.
+- Use the label’s contact time and dilution.
+- Let the surface air-dry. Do not rinse off unless the label says to rinse.
 
 ### Boiling-water sanitizing
 
 - Pour water at a full rolling boil over the clean surface.
-- Keep the surface wet with boiling water for at least 30 seconds.
+- Keep the surface continuously wet with boiling water.
 - Only use this on items that tolerate boiling water without warping or cracking.
 
 If you have no sanitizer, use a thorough wash with soap and clean water, then dry well. That is better than a quick wipe with dirty water.
@@ -352,7 +375,7 @@ Yes, if you wash it well with soap and clean water, and sanitize it before it to
 
 ### How do I sanitize a cutting board?
 
-Wash it with soap and water, rinse it, then sanitize. For bleach: 1 tablespoon unscented household bleach per gallon of water, keep wet 1 minute, air-dry. For boiling water: pour at a full rolling boil, keep wet 30 seconds. Replace the board if it is deeply grooved, cracked, or smells bad after cleaning.
+Wash it with soap and water, rinse it, then sanitize if needed. If using a sanitizer, follow its label. For boiling-water sanitation, keep the board wet with fresh boiling water while rinsing, then air-dry. Replace the board if it is deeply grooved, cracked, or smells bad after cleaning.
 
 ### How do I wash dishes without running water?
 

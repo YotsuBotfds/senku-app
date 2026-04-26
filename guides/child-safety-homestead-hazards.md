@@ -20,6 +20,13 @@ aliases:
   - toddler getting into everything
   - childproofing a homestead
   - child gets into hazards
+  - childproofing home hazards
+  - toddler safety checklist
+  - fire stove safety childproofing
+  - home water access toddler safety
+  - animal safety for kids
+  - farm child safety
+  - childproofing tools storage
 icon: child
 description: Practical childproofing for homesteads, including fire and stove hazards, water and drowning risks, tool storage, poisons and chemicals, animal risks, climbing and fall hazards, sleep-space safety, supervision systems, and age-appropriate home rules.
 routing_cues:
@@ -27,6 +34,22 @@ routing_cues:
   - "toddler getting into everything childproofing homestead"
   - "my child keeps reaching for fire stove tools chemicals or water"
   - "how to childproof a homestead home hazards kids"
+  - "fire and stove safety childproofing for toddlers"
+  - "child reaches chemicals medications lye bleach bleach and fuel"
+  - "home supervision system for toddlers and school-age children"
+  - "practical childproofing order for home and yard"
+  - "when to escalate a child safety incident now"
+citations_required: true
+applicability: >
+  Use for prevention-focused child safety planning around fire, stove, water,
+  tools, chemicals, animals, climbing/falls, sleep-space, and supervision systems
+  on farms, homesteads, cabins, and shared family spaces. If there is evidence of
+  actual poisoning, serious burn, serious fall, drowning risk, severe bleeding,
+  suspected abuse/neglect workflow, animal attack, or trauma, hand off
+  immediately.
+citation_policy: cite reviewed GD-941 sections for prevention and hazard handoff rules; route ingestion/poisoning, severe burns, falls with altered behavior, near-drowning, severe breathing problems, animal attack, and suspected abuse/neglect to the matching high-liability triage owners and emergency response
+answer_card:
+  - child_safety_homestead_hazards
 related:
   - family-emergency-plan
   - drowning-prevention-water-safety
@@ -57,6 +80,8 @@ liability_level: high
 Young children do not recognize danger the way adults do. A child can climb, touch, taste, or wander into trouble faster than a caregiver can react. On a homestead, the main job is not to explain danger after the fact. It is to arrange the home so that common hazards are hard to reach, easy to notice, and simple to supervise.
 :::
 
+<section id="scope">
+
 ## Scope
 
 ### My Child Keeps Getting Into Things
@@ -86,6 +111,8 @@ If a child has already been exposed to fire, poison, drowning, electricity, or a
 - Abuse, neglect, guardianship, or rights questions: <a href="../child-protection-youth-rights.html">Child Protection & Youth Rights</a>.
 :::
 
+</section>
+
 ## The Main Principle
 
 Children are safest when three things are true:
@@ -95,6 +122,8 @@ Children are safest when three things are true:
 3. The child has simple rules that match their age and ability.
 
 If any one of those three fails, the risk rises sharply. If two fail, the home is not safely childproofed.
+
+<section id="highest-risk-hazards">
 
 ## Highest-Risk Hazards
 
@@ -362,6 +391,10 @@ Do not decide by age alone. Decide by:
 If a task involves open water, fire, knives, ladders, chemicals, livestock, engines, or electricity, use direct adult supervision until the child has both the skill and the judgment to stop when something changes.
 - Help with supervision, but do not replace adult responsibility.
 
+</section>
+
+<section id="when-to-escalate-right-away">
+
 ## When To Escalate Right Away
 
 Treat these as urgent:
@@ -376,6 +409,10 @@ Treat these as urgent:
 
 If you are unsure, act early. Children can worsen quickly after a hazard exposure.
 
+</section>
+
+<section id="a-practical-childproofing-order">
+
 ## A Practical Childproofing Order
 
 If you can only fix a few things today, do them in this order:
@@ -386,6 +423,8 @@ If you can only fix a few things today, do them in this order:
 4. Secure animal areas and keep children out of feed and handling zones.
 5. Remove climbing opportunities near windows, roofs, and stored materials.
 6. Write down the home rules and make sure every caregiver uses the same ones.
+
+</section>
 
 ## Final Rule
 

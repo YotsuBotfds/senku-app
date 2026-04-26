@@ -42,6 +42,23 @@ aliases:
   - mold after water damage
   - water near electrical outlet
   - wall out of square after storm
+routing_cues:
+  - Routine or uncertain minor repair questions about doors, windows, wall holes, minor drainage, and jammed valves where the user is asking what to check first.
+  - Active water from above, wet ceilings, structural movement, exposed wiring,
+    electrical-near-water conditions, gas odor, or staircase instability.
+  - Requests to force, pry, or rebuild structural/utility components beyond routine patching.
+citations_required: true
+applicability: >
+  Routine triage and low-risk corrective steps only for sticking doors, loose or
+  jammed latches/valves, drafty windows, broken/patched windows, small wall holes/cracks,
+  and minor drainage pooling. Exclude active roof leaks, active wet ceilings, structural
+  movement, exposed wiring/electrical-near-water conditions, gas odors, staircase
+  instability, invasive/construction-grade methods, and utility/engineering repair plans.
+citation_policy: cite GD-940 only for routine minor repair triage where the complaint
+  is not active roof entry, structural movement, utility/electrical hazards, gas odor,
+  or full utility-system repair.
+answer_card:
+  - simple_home_repairs
 icon: 🛠️
 description: Practical triage and repair steps for sticking doors, broken window panes, small wall holes, drafty windows, minor drainage problems, and jammed valves or latches. If the complaint is active water from above, a wet ceiling, or rain coming through the roof, route to the dedicated Roof Leak Emergency Repair guide first.
 related:
@@ -351,6 +368,12 @@ Stop and get help if you see:
 
 :::danger
 Do not keep "making it work" if the building is shifting, settling suddenly, or failing after water damage, impact, or fire. Patching over structural movement can hide a serious hazard.
+
+**Reviewed scope for generated answers:** This guide only supports routine minor
+repair triage and temporary maintenance actions. If a prompt indicates active
+water entry, structural movement, exposed wiring near water, gas smell, unsafe force,
+stair instability, or utility-system restoration, stop and use handoff language
+instead of construction-grade or invasive instructions.
 :::
 
 </section>

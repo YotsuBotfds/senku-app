@@ -1,0 +1,123 @@
+card_id: simple_home_repairs
+guide_id: GD-940
+slug: simple-home-repairs
+title: Simple Home Repairs & Emergency Household Fixes
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks about sticking doors, loose latches, jammed valves, drafty windows, small wall holes/cracks, or minor drainage pooling and wants immediate triage steps.
+  - The user asks what to check first, where to begin, or whether the issue can be handled as a small home repair.
+  - The prompt is a low-risk homefix question without active structural movement, gas risk, exposed wiring near water, unsafe force, or utility-system repair context.
+required_first_actions:
+  - Ask for urgency and hazard cues before giving fix steps: active water entry, exposed wiring near water, gas smell, structural shifting, stair instability, or large area movement.
+  - If a red-flag cue is present, stop routine repair framing and hand off to the correct safety lane before giving detailed steps.
+  - For routine prompts, route directly to the most relevant anchor: doors, windows, walls, drainage, or valves.
+first_actions:
+  - Lead with triage: identify failure mode (door/window/valve/wall/drainage), confirm immediate risk, and choose the smallest repair.
+  - Give a short sequence from the guide sections: safety hold-off checks, then one lane-specific check list, then a minimal fix sequence.
+  - If the user says "what to check first," start with the triage questions and escalate triggers.
+urgent_red_flags:
+  - Active water dripping, soaked materials, wet ceiling, or water entry from above.
+  - Structural movement signs: bowing, sagging, stair instability, sudden out-of-square openings, soft bounce, repeated settling clues.
+  - Exposed wiring/electrical damage near water, metal fixtures, or water sources.
+  - Gas smell, fuel/utility odor near the fault area, or failed shutoff/hard-to-control utility systems.
+  - Jammed parts that twist, crack, pull out, or suggest forcing is required to make function.
+forbidden_advice:
+  - Do not provide structural reinforcement, shoring, load-path repair, rebuilding, or engineering-style reconstruction guidance.
+  - Do not provide invasive construction-grade methods, major wall/frame cutting, full roof-repair methods, plumbing line work, or electrical repair steps.
+  - Do not instruct forceful extraction or extra leverage on jammed valves, latches, hinges, or other moving parts.
+  - Do not claim fixed outcomes when signs of instability or utility hazards are still present.
+do_not:
+  - Do not continue patching once structural movement, gas risk, electrical hazard, or active roof entry is reported.
+  - Do not provide utility restoration procedures for pumps, shutoff systems, or mains unless another reviewed guide already owns that lane.
+  - Do not recommend safety-critical actions only after delays for cosmetic cleanup.
+routine_boundary: >
+  This card is for routine minor repair triage and temporary non-constructive fixes.
+  If any structural, gas, electrical, or utility hazard is suspected, it should stop and route
+  to the safety or specialist guide branch, rather than provide further routine steps.
+acceptable_uncertain_fit: >
+  When a prompt is ambiguous, answer the triage safely: ask the quick hazard check first,
+  provide only a short, reversible routine step if no red flag is present, and explicitly
+  withhold deeper repair instructions when uncertainty overlaps with movement or utility risk.
+clarifying_questions:
+  - Is there active water entry, a wet ceiling, or ongoing dripping from above?
+  - Is the problem near stairs, a known framing area, exposed wiring, or a gas smell?
+  - Is the component moving, twisting, cracking, or being blocked by force required to operate?
+  - Are you asking for emergency triage only, or do you need a full repair plan?
+applicability:
+  owner: routine simple home repair triage only
+  use_when:
+    - triage for doors, windows, small wall damage, minor drainage, jammed valves/latches
+    - deciding the first action before selecting a small repair sequence
+    - evaluating whether a safety handoff is needed before continuing
+  do_not_use_when:
+    - structural movement or major settlement cases
+    - exposed wiring/electrical work near water or active roof leaks
+    - gas odor or utility-system reconstruction scenarios
+  handoff:
+    - roof-leak-emergency-repair if active water entry is present
+    - field or professional structural evaluation for movement/sagging/bow/bounce
+    - hand-pump-repair-maintenance when the stuck part is a hand pump or shutoff
+    - building-inspection-habitability-checklist if multiple systems are jointly unsafe
+citation_ids:
+  - simple-repairs-triage
+  - simple-repairs-door-lane
+  - simple-repairs-window-lane
+  - simple-repairs-wall-hole-lane
+  - simple-repairs-drainage-lane
+  - simple-repairs-valve-lane
+  - simple-repairs-unsafe-stop
+fallback_handoff_language:
+  - If there is active water entry, structural movement, exposed wiring near water, gas smell, unsafe force, stair instability, or utility-system repair need, stop routine repair guidance and direct to the matching safety or utility lane first.
+  - For active water from above or wet ceiling, route to Roof Leak Emergency Repair.
+  - For structural movement, severe instability, or stair issues, route to builder/engineer-level assessment before repair work.
+  - For exposed wiring or gas odor, stop work, secure area, and escalate to utility safety response before any touching.
+output_contract:
+  requires:
+    - triage first, then a narrow repair lane
+    - include urgent red-flag handoff when risk cues appear
+    - avoid force or construction-grade methods in normal flow
+  forbid:
+    - forceful workarounds, structural repair, utility repair, or engineering reconstruction
+    - hidden escalation when active hazards are present
+  must_include_urgent_handoff: true
+  must_include_applicability_boundary: true
+source_sections:
+  - guide: GD-940
+    slug: simple-home-repairs
+    title: Simple Home Repairs & Emergency Household Fixes
+    sections:
+      - "#triage"
+      - "#doors"
+      - "#windows"
+      - "#walls"
+      - "#drainage"
+      - "#valves"
+      - "#unsafe"
+source_invariants:
+  - name: triage-first safety checks
+    guide: GD-940
+    must_include:
+      - first-check
+      - active water dripping, soaked materials, or a wet ceiling
+      - Do not keep "making it work" if the building is shifting
+  - name: non-forceful minor-repair posture
+    guide: GD-940
+    must_include:
+      - do not force a corroded valve with a long handle or extra leverage
+      - do not keep patching blindly
+      - tighten hinge screws
+  - name: small-hole and drain routing
+    guide: GD-940
+    must_include:
+      - Water should move away from the house, not toward it.
+      - Small wall damage is common and usually easy to fix
+      - If water is repeatedly entering the same area
+review_status: pilot_reviewed
+notes: >
+  Reviewed for safe closure on GD-940 routine triage only. The card enforces a
+  "first check, then lane" pattern for doors, windows, walls, drainage, and
+  valves, while blocking structural, electrical, gas, utility-repair, or forcing-based
+  instructions when risk cues are present. It adds explicit handoff branches for
+  Roof Leak Emergency Repair and structural or utility safety routing before routine
+  repair detail.

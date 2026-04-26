@@ -49,6 +49,34 @@ aliases:
   - can we store things here
   - safe to occupy
   - safe to use
+routing_cues:
+  - Use this guide when someone asks whether to enter, make a short-salvage visit, store goods, or occupy a building after visible damage or a first outside check.
+  - Start with outside-first inspection and the four-decision ladder before repair, roof, utility, or reconstruction details.
+  - If immediate hazards indicate collapse, gas, major water saturation, or fire danger, use the do-not-enter branch and route outward immediately.
+  - Hand off extraction/rescue, structural-engineering reinforcement, demolition planning, utility repair sequencing, and detailed roof work to specialist guides.
+citations_required: true
+citation_policy: cite GD-964 and its reviewed answer card for habitability triage and do-not-enter/short-salvage/repair/occupancy routing only
+applicability:
+  owner: habitability-triage
+  use_when:
+    - The user asks about deciding whether a building is safe to enter, inspect briefly, store in, or occupy after visible damage or a first inspection.
+    - The user asks for a practical red-flag-first safety lane before repair advice.
+    - The request mentions cracks, sagging, soft floors, gas smell, fire damage, floods, major moisture, blocked exits, or sudden movement and asks for a practical class.
+  do_not_use_when:
+    - The question is for engineering reinforcement/shoring calculations, extraction/rescue planning, demolition sequencing, utility repair procedure, or detailed roof work.
+    - The request is for full renovation, design, permit planning, or long-form construction methodology.
+  handoff:
+    - structural-safety-building-entry for collapse or first-entry mechanics.
+    - simple-home-repairs only after this guide has already landed on use-after-repair.
+    - roof-leak-emergency-repair for immediate roof leak triage only.
+    - mold-prevention-remediation when active mold contamination is the dominant limiter.
+    - questionable-water-assessment-clarification when standing water or foul water patterns dominate.
+    - fire-safety-compartmentalization when ongoing fire ignition/compartment risk dominates.
+reviewed_applicability:
+  - Safe when needed: outside-first inspection, do-not-enter classification, short salvage, use-after-repair, occupancy after checks, and storage-only red-flag boundaries.
+  - Not safe for: structural reinforcement, extraction/rescue instructions, demolition sequencing, utility repair, full repair playbooks, or roof-works procedures.
+answer_card:
+  - building_inspection_habitability_checklist
 read_time: 18
 word_count: 4200
 last_updated: '2026-04-13'
@@ -66,6 +94,10 @@ This guide helps you decide whether a building is:
 - **Enter only for short salvage**
 - **Use after repair**
 - **Reasonable for occupancy after checks**
+
+This is a reviewed triage-only lane for safety closure. It intentionally stops at decision
+classification and routing, and does not provide structural reinforcement, extraction/rescue
+steps, engineering repair instructions, demolition, utility repair, or roof repair playbooks.
 
 If the answer is unclear, choose the safer category.
 

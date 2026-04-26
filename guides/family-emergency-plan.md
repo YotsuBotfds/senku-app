@@ -16,12 +16,37 @@ aliases:
   - where are we in a storm
   - school pickup emergency plan
   - who to call first
+  - emergency communication tree
+  - family safety plan
+  - neighbor contact plan
+  - neighborhood mutual aid
+  - meeting point plan
 routing_cues:
   - "create a family emergency plan"
   - "who do we call first in an emergency"
   - "school pickup plan when roads close"
   - "out-of-state contact for emergencies"
   - "meetings points and neighbor contacts"
+  - "family communication tree and backup contacts"
+  - "what do we do if separated from family"
+  - "kids pickup when school cannot be reached"
+  - "authorized adult list for school pickup"
+  - "neighbor support network for outage or severe weather"
+  - "local emergency risks and preparedness checklist"
+citations_required: true
+applicability: >
+  Safe planning for family preparedness, communication trees, meeting points,
+  school pickup procedures, and neighbor mutual-aid planning for non-emergency,
+  non-triage situations. Route injury care, medical distress, severe-event
+  rescue, evacuation orders, law-enforcement strategy, or tactical response
+  questions to higher-severity emergency owners.
+citation_policy: >
+  Cite GD-374 and this guide's reviewed answer-card content for routine family
+  planning instructions only. Do not provide tactical rescue, injury treatment,
+  law-enforcement tactics, evacuation-order compliance claims, or severe
+  incident coordination advice from this guide.
+answer_card:
+  - family_emergency_plan
 icon: 👨‍👩‍👧‍👦
 description: Communication trees, meeting points, school protocols, neighbor networks, and Minnesota-specific risk planning. Costs nothing to implement, arguably the most important preparedness step.
 related:
@@ -55,6 +80,8 @@ This guide walks you through building a plan that works for your specific househ
 :::warning
 **This guide assumes your family has a working phone and can add a contact to your phone's memory or write it on paper.** If internet is down or cell networks are jammed, you will rely on the communication tree, not group chats or social media. Test this plan in writing, not just in conversation.
 :::
+
+<section id="communication-tree">
 
 ## Section 1: The Communication Tree – The Spine of Your Plan
 
@@ -171,6 +198,10 @@ Everyone in the family should have this list written down (or memorized, if poss
 
 ---
 
+</section>
+
+<section id="meeting-points">
+
 ## Section 2: Meeting Points – The Physical Anchors
 
 When you're separated from family, knowing where to go is as important as knowing who to call. A good meeting point system has three tiers, each activated depending on the scale of the emergency.
@@ -254,6 +285,10 @@ Write all three points on a card, laminate it, and keep one copy:
 - Shared with your out-of-state contact
 
 ---
+
+</section>
+
+<section id="school-pickup">
 
 ## Section 3: School Pickup Protocols
 
@@ -370,6 +405,10 @@ Worst-case conditions (ice, deep snow): stay at school, wait for pickup
 :::
 
 ---
+
+</section>
+
+<section id="neighbor-network">
 
 ## Section 4: Neighbor Network – Your Local Lifeline
 
@@ -504,6 +543,10 @@ Why this matters: This is a shelter if you get trapped somewhere near your home 
 ```
 
 ---
+
+</section>
+
+<section id="local-risks-checklist">
 
 ## Section 5: Know Your Local Risks – Minnesota-Specific Threats
 
@@ -798,6 +841,10 @@ MY FAMILY'S TOP THREE RISKS (in order of likelihood)
 
 ---
 
+</section>
+
+<section id="implementation-checklist">
+
 ## Section 7: Implementation Checklist – Do This Now
 
 A plan that exists only in your head is useless. Do these things in order:
@@ -831,6 +878,8 @@ A plan that exists only in your head is useless. Do these things in order:
 - [ ] Update meeting points if any are no longer accessible (construction, etc.)
 
 ---
+
+</section>
 
 ## Section 8: Teaching Kids About the Plan
 

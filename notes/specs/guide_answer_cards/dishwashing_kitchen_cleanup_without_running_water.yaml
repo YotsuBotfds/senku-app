@@ -1,0 +1,203 @@
+card_id: dishwashing_kitchen_cleanup_without_running_water
+guide_id: GD-955
+slug: dishwashing-kitchen-cleanup-without-running-water
+title: Dishwashing & Kitchen Cleanup Without Running Water
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks for practical dishwashing without running water, including scraping, wash, rinse, sanitize, dry, and storage steps.
+  - The user asks about greasy pots with scarce water, cutting-board cleanup after raw meat, or workflow for dirty and clean separation in a kitchen.
+  - The user asks where to store dishes after drying and how to keep low-water cleanup safer.
+required_first_actions:
+  - Identify the item type and contamination level, then separate dirty from clean items before starting cleaning.
+  - Start with a scrape-first step and remove visible food scraps, grease, or liquid residue before any water use.
+  - Reserve the cleanest water for a final rinse and the most food-contact items first.
+  - Ask a quick contamination boundary question before normal routine steps if visible stool, blood, heavy vomit/stool contact, chemical residue, or a multi-person illness pattern is present.
+  - Keep a simple one-way flow: dirty zone -> wash/rinse zone -> dry storage zone.
+conditional_required_actions:
+  - trigger_terms:
+      - blood
+      - stool
+      - vomit
+      - chemical
+      - bleach
+      - disinfectant
+      - contamination
+      - outbreak
+    required_actions:
+      - Do not continue routine dishwashing language; separate contaminated items, isolate them from food work, and hand off to GD-732, GD-666, GD-961, and GD-955 sibling boundaries as applicable.
+      - Ask for symptoms/workflow facts only to the extent needed before directing to the sibling owner.
+  - trigger_terms:
+      - greasy
+      - sticky
+      - cast-iron
+      - burnt
+      - pot
+      - pan
+    required_actions:
+      - Remove loose grease first, use pre-soak or hot soapy wash for heavy soil, then rinse and dry immediately to prevent rust or stale film.
+  - trigger_terms:
+      - cutting board
+      - raw meat
+      - knife
+      - board
+      - utensil
+    required_actions:
+      - Prioritize boards and knives used with raw meat with immediate wash, rinse, and drying before they return to prep flow.
+first_actions:
+  - Set up at least three zones: a place for dirty items, a wash container, and a protected drying/storage point.
+  - Use the sequence: scrape -> wash with soap and friction -> rinse with the cleanest available water -> sanitize when indicated -> air-dry completely -> store away from floor, trash, pests, and raw-food zones.
+  - For one-basin setups, cycle water by batch: clean lightware first, replace water when cloudy/greasy, and reserve a final batch for the riskiest items.
+  - For two-basin setups, keep wash and rinse separate and avoid combining rinse water with heavily greasy first-pass batches.
+  - Keep dirty cloths, brush handles, and wash water from touching cleaned items; reuse wash water only when it has not become cloudy, greasy, or contaminated.
+  - If there is visible risk overlap with illness or bodily fluids, keep routine cleanup separate and route to the boundary owners before continuing.
+urgent_red_flags:
+  - Visible blood, stool, concentrated vomit, chemical splash, or pesticide/cleaner residue where routine item cleaning is unsafe.
+  - Several people ill after a shared meal, shared serving line, or shared cleanup failure.
+  - Greasy tubs or cloths that are foul-smelling, dirty, or repeatedly reused before full drying.
+  - Pests, damp floor storage, or re-dampened surfaces that will recontaminate dried dishes.
+forbidden_advice:
+  - Invent exact sanitizer formulas or chemical dosing by memory.
+  - Treat visible blood, stool, chemical residue, or body-fluid contamination as routine low-resource dishwashing.
+  - Mix bleach with ammonia, bleach with vinegar, or other household chemicals as cleaning shortcuts.
+  - Give medical diagnosis, dosing, rehydration, antidote, or emergency-care instructions.
+  - Promise full decontamination guarantees for unknown chemical or high-volume body-fluid contamination.
+  - Route diarrhea outbreaks or foodborne illness clusters into ordinary rinse-sanitize-dry sequence without triage.
+do_not:
+  - Do not skip separation of dirty and clean zones.
+  - Do not dry or store wet items in a shared rack near trash or raw cooking spaces.
+  - Do not reuse heavily soiled wash water for final rinse or high-risk items.
+  - Do not imply one-step sanitizer shortcuts for uncertain contamination cases.
+  - Do not give routine cleaning instructions as the complete answer when sick-room or outbreak boundaries are hit.
+routine_boundary: >
+  This card owns everyday low-resource cleanup. It is not the runtime owner for
+  body-fluid outbreaks, concentrated chemical decontamination, widespread
+  foodborne-illness workflow, emergency medical signs, or clinical advice.
+acceptable_uncertain_fit: >
+  If contamination details are unclear but dishwashing is still the likely need,
+  preserve the scrape-wash-rinse-dry sequence, ask a single clarifying question,
+  and add an immediate boundary statement: use normal cleanup only when body-fluid
+  or outbreak risk is not present.
+clarifying_questions:
+  - Are any items contaminated by visible stool, blood, vomit, or chemical runoff?
+  - Is this one person's kitchen, a group kitchen with service, or a shared dish return flow?
+  - Is the item a high-risk food-contact surface from raw meat work?
+  - How much clean water is available for a dedicated final rinse?
+  - Can dishes be fully air-dried without touching dirty cloths or trash flow?
+citation_ids:
+  - gd-955-overview-core-order
+  - gd-955-setup-layout-zoning
+  - gd-955-workflow-scrape-wash-rinse-sanitize
+  - gd-955-cuts-and-boards-after-raw-meat
+  - gd-955-greasy-pots-routines
+  - gd-955-illness-boundary
+  - gd-955-low-water-water-saving
+  - gd-955-dry-store-safe
+applicability:
+  owner: low-resource routine dishwashing and kitchen cleanup
+  use_when:
+    - low-water or no-sink dishwashing sequences
+    - greasy cookware cleanup with minimal wash water
+    - cutting-board and knife cleanup after raw meat prep
+    - storage-first cleanup routing for shared dish stacks
+  do_not_use_when:
+    - suspected concentrated chemical contamination requiring hazardous cleanup
+    - visible stool, blood, vomit spread, or group illness clusters requiring hygiene/illness lanes
+    - medical treatment decisions or clinical rehydration workflows
+  handoff:
+    - community-kitchen-mess-hall-operations for outbreak-aware or shared-service illness cases.
+    - hygiene-disease-prevention-basics for sick-room boundaries and hand hygiene prioritization.
+    - food-safety-contamination-prevention for foodborne contamination control and handoff to food safety.
+    - chemical-safety for unknown chemicals and concentrated cleaner residue handling.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_output_handoff: true
+  avoid_medical_chemicals: true
+fallback_handoff_language:
+  - If body-fluid contamination, severe chemical residue, or vomiting/stool spread is present, stop routine dish sequence and route to hygiene-disease-prevention-basics plus food-safety boundaries first.
+  - If many people become ill after shared meal/service contact, route to community-kitchen-mess-hall-operations before detailed dishwork continues.
+  - If user asks for sanitizer concentrations or clinical treatment, state that GD-955 does not provide those formulas or medical dosing; hand off to chemical-safety or medical guides.
+source_sections:
+  - guide: GD-955
+    slug: dishwashing-kitchen-cleanup-without-running-water
+    title: Dishwashing & Kitchen Cleanup Without Running Water
+    sections:
+      - "#overview"
+      - "#core-rules"
+      - "#setup"
+      - "#setup > Basic supplies"
+      - "#setup > Helpful layout"
+      - "#setup > Water order"
+      - "#workflow"
+      - "#workflow > 1. Scrape"
+      - "#workflow > 2. Wash"
+      - "#workflow > 3. Rinse"
+      - "#workflow > 4. Sanitize if needed"
+      - "#cutting-boards"
+      - "#cutting-boards > Best practice"
+      - "#greasy-pots"
+      - "#illness-boundaries"
+      - "#low-water"
+      - "#drying-storage"
+      - "#what-not-to-do"
+  - guide: GD-666
+    slug: food-safety-contamination-prevention
+    title: Food Safety & Contamination Prevention
+    sections:
+      - "#cross-contamination-prevention"
+      - "#cross-contamination-prevention > Raw Meat Handling"
+      - "#kitchen-hygiene-in-austere-conditions"
+      - "#kitchen-hygiene-in-austere-conditions > Clean vs. Sanitized"
+      - "#foodborne-illness-recognition-response"
+      - "#safe-water-for-food-preparation"
+  - guide: GD-732
+    slug: hygiene-disease-prevention-basics
+    title: Hygiene Practices & Disease Prevention Basics
+    sections:
+      - "#hand-washing"
+      - "#hand-washing > When to Wash Hands"
+      - "#hand-washing > Waterless Cleaning (When Water Is Scarce)"
+      - "#food-handling-safety"
+      - "#breaking-the-chain-of-infection-in-groups"
+  - guide: GD-961
+    slug: community-kitchen-mess-hall-operations
+    title: Community Kitchen & Mess Hall Operations
+    sections:
+      - "#dishwashing"
+      - "#dishwashing > Illness boundary"
+      - "#outbreak-aware"
+      - "#outbreak-aware > Immediate actions when illness appears"
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: safe low-water sequence
+    guide: GD-955
+    must_include:
+      - "Scrape first, wash second, rinse third, sanitize last"
+      - "clean items separate from dirty items"
+      - "Air-dry items instead of wiping them with a dirty towel"
+  - name: illness boundary
+    guide: GD-955
+    must_include:
+      - "If a dish, cloth, or utensil has visible vomit, stool, blood, or sewage on it"
+      - "keep it out of the normal dish stack"
+      - "do not wash sick-room cloths in the same basin as clean dishes"
+  - name: food-safety boundary support
+    guide: GD-732
+    must_include:
+      - "After using the latrine"
+      - "Waterless Cleaning (When Water Is Scarce)"
+      - "Do NOT reuse water for hand washing if it's contaminated."
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-955 routine low-resource dishwashing. It owns
+  the scrape-wash-rinse-sanitize-dry-storage lane and keeps sanitizing chemistry,
+  outbreak coordination, body-fluid cleanup, and medical/decontamination
+  guidance at the boundary. In body-fluid, chemical, or multi-person illness
+  cases, generation should route to hygiene-disease-prevention-basics, food
+  safety contamination prevention, community-kitchen-mess-hall-operations, and
+  chemical-safety according to the contamination driver.

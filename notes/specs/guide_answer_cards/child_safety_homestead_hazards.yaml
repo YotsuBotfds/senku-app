@@ -1,0 +1,168 @@
+card_id: child_safety_homestead_hazards
+guide_id: GD-941
+slug: child-safety-homestead-hazards
+title: "Child Safety, Childproofing & Homestead Hazards"
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Use for prevention-focused home and homestead safety planning for children:
+  blocked hazards, supervision systems, and room-to-yard routing for fire, stove,
+  water, tools, chemicals, animals, falls, and sleep-space risks. Route confirmed
+  poisoning exposures, near-drowning, severe burns, major falls/injury, severe
+  animal injury, breathing danger, suspected abuse/neglect workflow, and trauma
+  scenarios to urgent owners before routine prevention coaching.
+applies_when:
+  - A user asks how to childproof a home, farm, or cabin where children enter
+    tool, chemical, water, stove, animal, or climbing risk areas.
+  - A user asks about practical child supervision systems, zones, checklists, or
+    age-appropriate hazard rules for children.
+  - A user asks where to prioritize quick household fixes after one of these risks
+    is identified.
+  - A user is unsure whether a situation is prevention-only versus urgent escalation
+    for a possible child exposure or injury event.
+required_first_actions:
+  - Confirm if this is an actual exposure/injury or an active danger sign. If a child is missing near water, has breathing trouble, has a possible poisoning/burn/bite/fall incident, or cannot be safely watched, treat as escalation-first and include urgent handoff language.
+  - Separate prevention from treatment: start with immediate risk-control moves (remove child from hazard, block access, keep them supervised, gather the hazard container if exposure is suspected, and alert urgent support when indicated).
+  - If no active emergency is confirmed, give a short prevention playbook: block hazards, assign visible supervision zones, and remove one obvious high-risk chain.
+conditional_required_actions:
+  - trigger_terms:
+      - swallowed
+      - chemical
+      - poison
+      - poison-control
+      - fuel
+      - bleach
+      - medicine
+    required_actions:
+      - Move the child out of exposure contact, preserve the container/label, and
+        hand off to active ingestion/triage guidance immediately.
+      - Do not provide medical dosing, antidote selection, active-emesis guidance,
+        or detailed post-exposure treatment in this prevention card output.
+  - trigger_terms:
+      - bitten
+      - bite
+      - near-drowning
+      - could not find
+      - cannot find
+      - not waking
+      - difficult to wake
+    required_actions:
+      - Treat this as urgent supervision-and-escape-risk escalation and handoff to
+        the matching emergency owner before routine childproofing details continue.
+first_actions:
+  - Start with 1-2 highest-risk prevention fixes today: lock/relocate poisons, block stove/fire zones, secure climbing access, and close obvious exits to water and tool areas.
+  - Keep children under active adult sight or hearing in high-risk contexts (kitchen, well/tank points, tool sheds, barns, yards, ladders, roofs, animal pens, roads, and work zones).
+  - Run a simple daily check at minimum: tools and chemicals, open hazards, water access, sleep-space checks, and supervision handoff map.
+  - Assign named adults or clear rotating watch roles (water watch, stove watch, yard watch), then require explicit check-ins before children enter or leave zones.
+urgent_red_flags:
+  - Child missing near water, open fall edge, stove/fire area, road, or animal
+    zone.
+  - Child may have swallowed chemical, medicine, bleach, fuel, lye, solvent, or
+    another unknown substance.
+  - Child has breathing trouble, confusion, unusual sleepiness, repeated vomiting,
+    drooling, burns, signs of shock, or seizure after a hazard incident.
+  - Child has severe bites, deep bleeding wounds, head-impact risk, or hard-to-wake
+    behavior after any fall, fire, chemical, or animal incident.
+  - Sleep-space hazard with blocked exits, exposed heat sources, or entrapment risk
+    where rescue would be delayed.
+forbidden_advice:
+  - Do not provide medication dosing, antidote selection, or drug-dose style
+    guidance.
+  - Do not provide trauma-care treatment steps (including wound-care procedures,
+    stabilization details, or resuscitation detail) as routine prevention advice.
+  - Do not include child protection investigation workflow, legal reporting process,
+    or abuse-legal custody escalation instructions.
+  - Do not provide animal handling/taming techniques or tactical response steps to
+    adult conflict with animals.
+  - Do not include security or weapon tactics for home defense or restraint
+    during animal-related incidents.
+  - Do not treat confirmed poisonings, serious burns, major falls, severe bites,
+    drowning risk, or near-drowning as routine childproofing.
+do_not:
+  - Do not delay escalation language when red flags are present.
+  - Do not route actual exposure/injury patterns into only childproofing checklist
+    tone without urgent transfer.
+  - Do not advise forcing vomiting, blind home remedies, or improvised medication
+    protocols.
+  - Do not give detailed conflict-law workflow for suspected child abuse scenarios.
+routine_boundary: >
+  Routine prevention guidance is appropriate only when the child can be kept safe
+  with immediate supervision and there is no active injury, poisoning, drowning
+  risk, severe breathing change, serious bite, or major fall concern. Confirmed
+  acute events, actual exposures, persistent altered behavior, shock signs, or
+  severe animal conflict should be handed off as urgent actions first.
+acceptable_uncertain_fit: >
+  If urgency is unclear, ask one fast triage question, then prioritize the highest
+  risk prevention fix and urgent handoff checks. Do not let normalizing language
+  replace escalation when red flags are present.
+clarifying_questions:
+  - Is there an active exposure, injury event, unusual sleepiness, breathing
+    change, severe vomiting, or missing child scenario right now?
+  - Where is the child right now and who is actively watching them?
+  - Is access to stoves, chemicals, tools, ladders, wells/tanks, or farm animals
+    already controlled?
+  - Have there been any bite, bite-depth, fall, or near-drowning signs since the
+    event started?
+  - How many adults are available to hold zones and rotate direct watch in the next
+    hour?
+fallback_handoff_language:
+  - If urgent signs are present, shift to emergency support now and use explicit
+    transfer language such as "treat this as urgent and seek immediate help" before
+    routine prevention steps.
+  - Route suspected swallowing/chemical exposure to the unknown ingestion/poisoning
+    triage path immediately.
+  - Route drowning/near-drowning or respiratory distress to the water-incident and
+    emergency escalation owners immediately.
+  - Route severe burns/falls/trauma clues to urgent burn/trauma owners or emergency
+    response; keep this card at prevention boundaries.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - first_actions
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - child-safety-overview
+  - child-safety-hazard-priority
+  - child-safety-supervision
+  - child-safety-escalation
+  - child-safety-practical-order
+source_sections:
+  - guide: GD-941
+    slug: child-safety-homestead-hazards
+    title: "Child Safety, Childproofing & Homestead Hazards"
+    sections:
+      - "#scope"
+      - "#highest-risk-hazards"
+      - "#when-to-escalate-right-away"
+      - "#a-practical-childproofing-order"
+      - "#daily-quick-checks"
+      - "#supervision-systems-that-work"
+source_invariants:
+  - name: prevention-first framing
+    guide: GD-941
+    must_include:
+      - "3. The child has simple rules that match their age and ability."
+      - "Use it when you need answers to questions like"
+      - "Run this short check every morning and again before bed"
+  - name: urgent escalation boundary is explicit
+    guide: GD-941
+    must_include:
+      - "If you are unsure, act early. Children can worsen quickly after a hazard exposure."
+      - "Treat these as urgent"
+      - "A child may have swallowed a chemical, fuel, or medicine"
+  - name: do not normalize confirmed emergency events
+    guide: GD-941
+    must_not_match:
+      - "(?i)treat.*(as routine|as normal|as routine prevention).*(poison|burn|bite|near-drowning|fall|breathing)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  This card is strictly for prevention-only child-safe layout and supervision
+  guidance on high-liability homestead hazards. It is not a medical dosing,
+  trauma-treatment, legal process, weapon-security, or animal-handling card.
+  Any active exposure, breathing danger, injury, severe bite, or near-drowning
+  condition should route to urgent triage or emergency support with immediate
+  transfer language.

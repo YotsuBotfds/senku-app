@@ -4,6 +4,39 @@ slug: dishwashing-kitchen-cleanup-without-running-water
 title: Dishwashing & Kitchen Cleanup Without Running Water
 category: resource-management
 difficulty: beginner
+aliases:
+  - dishwashing without running water
+  - no running water dishwashing
+  - low-resource dishwashing
+  - wash dishes without a sink
+  - cut board cleanup after raw meat
+  - greasy pot cleanup
+  - kitchen cleanup with one basin
+  - dish drying and storage
+  - household sinkless dishwashing
+routing_cues:
+  - Use this guide for ordinary dishwashing, cutting-board cleanup, and greasy cookware cleanup when running water is unavailable.
+  - Use this guide when user asks for a safe low-water sequence: scrape, wash, rinse, sanitize, dry, and store.
+  - Route to illness/decontamination or outbreak guides when visible blood, stool, vomit, concentrated chemical residue, or widespread sickness changes the risk class.
+citations_required: true
+citation_policy: cite this reviewed GD-955 answer card for low-resource dishwashing and cleaning order; hand off blood/stool/vomit/chemical contamination and group illness service-flow cases to the sibling hygiene, food-safety, and community kitchen guides.
+applicability:
+  owner: low-resource kitchen cleanup and dishwashing workflow
+  use_when:
+    - The user needs practical dishwashing and dish-surface cleanup without running water.
+    - The user needs a sequence for greasy pots, raw-meat cutting boards, low-water wash setups, or drying and storage.
+    - The answer can stay in routine kitchen cleanup lane and does not already require medical escalation, outbreak protocol, or hazardous chemical cleanup.
+  do_not_use_when:
+    - Heavily contaminated body-fluid or chemical-contamination cases should move to home-sick-care-hygiene, chemical-safety, or outbreak operational owners.
+    - Group illness and foodborne outbreak workflow cases should move to community-kitchen-mess-hall-operations.
+    - Illness assessment or treatment questions should move to acute symptom or dehydration workflows first.
+  handoff:
+    - chemical-safety for hazardous residue, concentrated disinfectant, and poison-contact handling.
+    - home-sick-care-hygiene for blood, stool, vomit, or severe sick-room contamination handling.
+    - food-safety-contamination-prevention for foodborne contamination questions and illness-linked cleanup.
+    - community-kitchen-mess-hall-operations for group meal and outbreak-safety service flow.
+answer_card:
+  - dishwashing_kitchen_cleanup_without_running_water
 tags:
   - essential
   - practical
