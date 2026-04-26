@@ -462,3 +462,33 @@ Result:
 - only remaining retrieval miss is accepted expectation drift:
   `RE2-UP-009` expects `GD-120`, but the prompt asks to sharpen a dull field
   blade and retrieves/cites `GD-397` Tool Sharpening.
+
+## 2026-04-25 RE2-UP-009 Expectation Drift Cleanup
+
+`RE2-UP-009` now expects `GD-397` instead of `GD-120`. The prompt asks for a
+safe routine to sharpen a dull field blade, and repeated proof runs retrieved
+and cited `GD-397` Tool Sharpening as the correct owner. `GD-120` would only be
+appropriate if the prompt were rewritten toward forging, reshaping, material
+repair, or heat treatment.
+
+Fresh full-pack proof should verify that the prior single retrieval miss is
+resolved without guide churn.
+
+Fresh proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_retrieval_only.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `19`
+- retrieval misses: `0`
+- ranking misses: `0`
+- generation/citation misses: `0`
+- accepted abstain/clarify rows: `2`
+- expected-owner cited: `20/21`
+- retrieval-only hit@1/hit@3/hit@k: `20/21`
+- `RE2-UP-009` now retrieves `GD-397` at rank 1 and cites `GD-397`.
