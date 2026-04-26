@@ -548,6 +548,9 @@ Action:
 - Metrics-lake schema initialization now has legacy-DB regression coverage
   proving old `detail_rows` tables are backfilled with the new evidence-context
   columns before artifact evidence inserts.
+- Retention planner now has an integration-style temporary-git regression
+  proving tracked planner handoffs protect artifacts while untracked planner
+  handoffs remain ignored as local noise.
 
 Validation:
 
@@ -609,6 +612,8 @@ Validation:
   parent context columns and entity-id path joinability.
 - `tests.test_bench_metrics_lake` also covers legacy SQLite schema upgrade for
   evidence-context columns.
+- `tests.test_plan_artifact_retention` now exercises real `git ls-files`
+  detection for tracked planner handoff refs when git is available.
 
 Deferred unless evidenced:
 

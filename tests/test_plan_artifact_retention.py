@@ -1,10 +1,11 @@
 import json
 import os
+import shutil
 import tempfile
+import subprocess
 import unittest
 from contextlib import redirect_stdout
 from io import StringIO
-from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,6 +22,29 @@ NOW = datetime(2026, 4, 25, 12, 0, tzinfo=timezone.utc)
 
 
 class ArtifactRetentionPlannerTests(unittest.TestCase):
+    def _init_temporary_git_repo(self, root: Path) -> None:
+        subprocess.run(
+            ["git", "init"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            ["git", "config", "user.email", "retention-tester@example.test"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            ["git", "config", "user.name", "Retention Tester"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
     def make_tmpdir(self):
         tmpdir = tempfile.TemporaryDirectory()
         self.addCleanup(tmpdir.cleanup)
@@ -111,11 +135,13 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
             plan["references"]["sources"],
         )
 
+    @unittest.skipIf(shutil.which("git") is None, "git is required for committed handoff retention regression")
     def test_tracked_planner_handoff_reference_notes_can_protect_artifacts(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"
         notes = root / "notes"
         handoff_file = notes / "PLANNER_HANDOFF_2026-04-26_TEST.md"
+        untracked_handoff = notes / "PLANNER_HANDOFF_2026-04-26_UNTRACKED.md"
 
         self.write_text(
             artifacts / "bench" / "handoff_run" / "report.md",
@@ -123,29 +149,60 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
             age_days=80,
         )
         self.write_text(
+            artifacts / "bench" / "untracked_handoff_run" / "report.md",
+            "# proof\n",
+            age_days=80,
+        )
+        self.write_text(
             handoff_file,
             "Handoff artifact: `artifacts/bench/handoff_run/report.md`\n",
         )
+        self.write_text(
+            untracked_handoff,
+            "Handoff artifact: `artifacts/bench/untracked_handoff_run/report.md`\n",
+        )
 
-        with patch(
-            "scripts.plan_artifact_retention._is_committed_reference_file",
-            side_effect=lambda path: path == handoff_file,
-        ):
-            plan = plan_artifact_retention(
-                artifacts,
-                reference_roots=[notes],
-                manifest_paths=[],
-                archive_after_days=1,
-                delete_after_days=1,
-                now=NOW,
-            )
+        self._init_temporary_git_repo(root)
+        subprocess.run(
+            ["git", "add", "notes/PLANNER_HANDOFF_2026-04-26_TEST.md"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "Seed tracked planner handoff"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[notes],
+            manifest_paths=[],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
 
         families = {row["path"]: row for row in plan["families"]}
         handoff_row = families["bench/handoff_run"]
+        untracked_handoff_row = families["bench/untracked_handoff_run"]
         self.assertTrue(handoff_row["protected"])
         self.assertEqual(handoff_row["action"], "keep_protected")
         self.assertIn(notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md", handoff_row["protection_sources"])
         self.assertIn(notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_TEST.md", plan["references"]["sources"])
+        self.assertFalse(untracked_handoff_row["protected"])
+        self.assertNotIn(
+            notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_UNTRACKED.md",
+            untracked_handoff_row["protection_sources"],
+        )
+        self.assertNotIn(
+            notes.as_posix() + "/PLANNER_HANDOFF_2026-04-26_UNTRACKED.md",
+            plan["references"]["sources"],
+        )
 
     def test_explicit_protect_path_and_glob_are_honored(self):
         root = self.make_tmpdir()
