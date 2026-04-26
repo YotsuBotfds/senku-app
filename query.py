@@ -2141,6 +2141,40 @@ _MENINGITIS_RASH_DISTRACTOR_METADATA_MARKERS = {
     "measles",
 }
 
+_SPINAL_INJURY_POSITIVE_METADATA_MARKERS = {
+    "orthopedics & fracture management",
+    "orthopedics-fractures",
+    "fracture identification",
+    "spinal precautions",
+    "possible spinal injury",
+    "may have a spinal injury",
+    "do not move neck injury",
+    "support head and neck",
+    "spine precautions",
+    "keep warm without moving spine",
+    "first aid & emergency response",
+    "first-aid",
+    "emergency stabilization",
+}
+
+_SPINAL_INJURY_DISTRACTOR_METADATA_MARKERS = {
+    "back pain & musculoskeletal self-care",
+    "back-pain-musculoskeletal-self-care",
+    "common musculoskeletal back pain",
+    "simple muscle strain",
+    "stiff neck",
+    "routine rest",
+    "water purification",
+    "questionable water",
+    "contaminated water",
+    "search and rescue",
+    "communications",
+    "router",
+    "offline search",
+    "cabin",
+    "shelter construction",
+}
+
 _AIRWAY_OBSTRUCTION_POSITIVE_METADATA_MARKERS = {
     "first aid & emergency response",
     "first-aid",
@@ -5696,6 +5730,32 @@ def _is_meningitis_rash_emergency_query(question):
         has_child_context and has_plain_rash and has_hard_to_wake
     ) or (
         has_danger_rash and has_severe_sick_appearance
+    )
+
+
+def _is_meningitis_rash_retrieval_query(question):
+    """Detect retrieval-only child stiff-neck plus dangerous-rash variants."""
+    if _is_meningitis_rash_emergency_query(question):
+        return True
+    lower = question.lower()
+    has_child_context = _text_has_marker(
+        lower, {"child", "kid", "toddler", "infant", "baby"}
+    )
+    has_neck_stiffness = _text_has_marker(
+        lower,
+        {
+            "stiff neck",
+            "neck is stiff",
+            "rigid neck",
+            "neck is rigid",
+            "neck stiffness",
+            "neck rigidity",
+        },
+    )
+    return (
+        has_child_context
+        and has_neck_stiffness
+        and _text_has_marker(lower, _MENINGITIS_RASH_DANGER_MARKERS)
     )
 
 
@@ -9570,11 +9630,27 @@ def _metadata_rerank_delta(question, meta):
         if _text_has_marker(meta_text, _SEROTONIN_DISTRACTOR_METADATA_MARKERS):
             apply_delta("serotonin_syndrome_distractor_metadata", 0.20)
 
-    if _is_meningitis_rash_emergency_query(question):
+    if _is_meningitis_rash_retrieval_query(question):
         if _text_has_marker(meta_text, _MENINGITIS_RASH_POSITIVE_METADATA_MARKERS):
             apply_delta("meningitis_rash_positive_metadata", -0.14)
         if _text_has_marker(meta_text, _MENINGITIS_RASH_DISTRACTOR_METADATA_MARKERS):
             apply_delta("meningitis_rash_distractor_metadata", 0.20)
+
+    if _is_possible_spinal_injury_movement_query(question):
+        if guide_id == "GD-049":
+            apply_delta("spinal_injury_orthopedics_owner_id", -0.22)
+        elif guide_id == "GD-232":
+            apply_delta("spinal_injury_first_aid_owner_id", -0.18)
+        has_spinal_owner_metadata = _text_has_marker(
+            meta_text, _SPINAL_INJURY_POSITIVE_METADATA_MARKERS
+        )
+        if has_spinal_owner_metadata:
+            apply_delta("spinal_injury_owner_metadata", -0.12)
+        if (
+            not has_spinal_owner_metadata
+            and _text_has_marker(meta_text, _SPINAL_INJURY_DISTRACTOR_METADATA_MARKERS)
+        ):
+            apply_delta("spinal_injury_distractor_metadata", 0.14)
 
     if _is_meningitis_vs_viral_query(question):
         if guide_id == "GD-589":
@@ -11381,6 +11457,78 @@ def _is_abdominal_trauma_danger_query(question):
     return abdomen and (trauma or danger)
 
 
+def _is_possible_spinal_injury_movement_query(question):
+    """Detect trauma plus neuro symptoms where movement/carrying is the unsafe boundary."""
+    lower = question.lower()
+    has_trauma = _text_has_marker(
+        lower,
+        {
+            "fall",
+            "fell",
+            "fallen",
+            "slipped",
+            "crash",
+            "accident",
+            "hit",
+            "impact",
+            "landed",
+            "after a fall",
+            "creek bank",
+        },
+    )
+    has_neck_or_back = _text_has_marker(
+        lower,
+        {
+            "neck hurts",
+            "neck pain",
+            "neck injury",
+            "back hurts",
+            "back pain",
+            "spine",
+            "spinal",
+        },
+    )
+    has_neuro_symptom = _text_has_marker(
+        lower,
+        {
+            "numb",
+            "numbness",
+            "feel numb",
+            "feels numb",
+            "tingling",
+            "tingle",
+            "pins and needles",
+            "weakness",
+            "clumsy",
+        },
+    )
+    has_movement_pressure = _text_has_marker(
+        lower,
+        {
+            "carry",
+            "carrying",
+            "drag",
+            "dragging",
+            "move them",
+            "move him",
+            "move her",
+            "move inside",
+            "transport",
+            "walk them",
+            "walk him",
+            "walk her",
+            "stand them",
+            "truck",
+            "cabin",
+            "inside",
+            "get them warm",
+            "get him warm",
+            "get her warm",
+        },
+    )
+    return has_trauma and has_neck_or_back and has_neuro_symptom and has_movement_pressure
+
+
 def _is_handlebar_abdominal_trauma_query(question):
     lower = question.lower()
     return "handlebar" in lower and _text_has_marker(
@@ -11433,9 +11581,10 @@ def _retrieval_profile_for_question(question, frame=None):
     )
     if (
         _is_airway_obstruction_rag_query(question)
-        or _is_meningitis_rash_emergency_query(question)
+        or _is_meningitis_rash_retrieval_query(question)
         or _is_newborn_sepsis_danger_retrieval_query(question)
         or _is_abdominal_trauma_danger_query(question)
+        or _is_possible_spinal_injury_movement_query(question)
         or _is_infected_wound_boundary_query(question)
         or _is_poisoning_unknown_ingestion_card_query(question)
         or _is_gi_bleed_emergency_query(question)
@@ -11557,6 +11706,38 @@ def _supplemental_retrieval_specs(
                         "limit": supplemental_limit,
                     }
                 )
+        if _is_possible_spinal_injury_movement_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": (
+                            f"{question} orthopedics-fractures First Aid Emergency "
+                            "Response possible spinal injury neck back trauma after "
+                            "fall numbness tingling weakness do not move carry drag "
+                            "walk transport support head and neck keep spine neutral "
+                            "keep warm without unsafe movement"
+                        ),
+                        "category": "medical",
+                        "where": {
+                            "$or": [
+                                {"slug": "orthopedics-fractures"},
+                                {"slug": "first-aid"},
+                            ]
+                        },
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            f"{question} spinal precautions suspected spine injury "
+                            "neck pain with arm hand numbness tingling after fall "
+                            "avoid casual movement carry only if immediate danger "
+                            "immobilize support head neck emergency help"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    },
+                ]
+            )
         if _is_infected_wound_boundary_query(question):
             specs.append(
                 {
@@ -12414,7 +12595,7 @@ def _supplemental_retrieval_specs(
             ]
         )
 
-    if _is_meningitis_rash_emergency_query(question):
+    if _is_meningitis_rash_retrieval_query(question):
         specs.extend(
             [
                 {
@@ -14190,10 +14371,11 @@ def _prompt_mode_notes(mode, review, question=None):
             "cyproheptadine/benzodiazepines on their own. Frame medication holds, "
             "sedation, and antidotes as Poison Control, EMS, clinician, or trained-care decisions."
         )
-    if _is_meningitis_rash_emergency_query(question or ""):
+    if _is_meningitis_rash_retrieval_query(question or ""):
         notes.append(
-            "- Fever plus confusion, hard-to-wake behavior, stiff neck, severe headache, "
-            "vomiting, or a purple/dark/bruise-like/non-blanching rash: treat as possible "
+            "- Fever, confusion, hard-to-wake behavior, stiff neck, severe headache, "
+            "vomiting, or a purple/dark/bruise-like/non-blanching rash in a concerning "
+            "cluster: treat as possible "
             "meningitis or meningococcemia. The first numbered instruction "
             "must explicitly be to call EMS, go to emergency care, or seek emergency "
             "medical care immediately; do not lead with routine flu/rash care, antipyretic "
@@ -14907,8 +15089,9 @@ def build_prompt(
         or _is_surgical_abdomen_emergency_query(question)
         or _is_gyn_emergency_query(question)
         or _is_crush_compartment_query(question)
+        or _is_possible_spinal_injury_movement_query(question)
         or _is_serotonin_syndrome_query(question)
-        or _is_meningitis_rash_emergency_query(question)
+        or _is_meningitis_rash_retrieval_query(question)
         or _is_eye_globe_injury_query(question)
         or _is_electrical_hazard_query(question)
         or _is_drowning_cold_water_query(question)
@@ -16041,7 +16224,7 @@ def _scenario_frame_is_safety_critical(frame):
         or _is_gyn_emergency_query(question)
         or _is_crush_compartment_query(question)
         or _is_serotonin_syndrome_query(question)
-        or _is_meningitis_rash_emergency_query(question)
+        or _is_meningitis_rash_retrieval_query(question)
         or _is_eye_globe_injury_query(question)
         or (
             ("medical" in domains or hazards & {"bleeding", "poisoning", "seizure", "unconscious patient"})

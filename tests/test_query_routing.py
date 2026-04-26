@@ -1695,6 +1695,16 @@ class QueryRoutingTests(unittest.TestCase):
                 "stiff neck throwing up and sleepy with little purple dots"
             )
         )
+        self.assertFalse(
+            query._is_meningitis_rash_emergency_query(
+                "The internet is down and a child has a stiff neck with a purple rash."
+            )
+        )
+        self.assertTrue(
+            query._is_meningitis_rash_retrieval_query(
+                "The internet is down and a child has a stiff neck with a purple rash."
+            )
+        )
         self.assertTrue(
             query._is_meningitis_rash_emergency_query(
                 "child is hard to wake and has a rash"
@@ -1775,6 +1785,20 @@ class QueryRoutingTests(unittest.TestCase):
                 "drooling and cannot swallow after a bite of food"
             )
         )
+        for prompt in [
+            "Someone fell near a contaminated creek and says their neck hurts with tingling in one arm. Should we carry them to the cabin now?",
+            "A person slipped on a creek bank, has neck pain and numb fingers, and is shivering. Is it okay to drag them to the truck?",
+            "After a fall by a dirty creek, my friend's neck hurts and both hands feel numb. Should two of us carry them inside?",
+        ]:
+            with self.subTest(prompt=prompt):
+                self.assertTrue(query._is_possible_spinal_injury_movement_query(prompt))
+        for boundary in [
+            "My neck is stiff after sleeping wrong and I want stretches.",
+            "My back hurts from lifting firewood but there is no numbness.",
+            "I fell near a creek and scraped my knee. Should I walk to the cabin?",
+        ]:
+            with self.subTest(prompt=boundary):
+                self.assertFalse(query._is_possible_spinal_injury_movement_query(boundary))
         self.assertFalse(
             query._is_mental_health_crisis_query(
                 "Is this a panic attack or heart attack if I have chest pressure and shortness of breath?"
@@ -1836,8 +1860,20 @@ class QueryRoutingTests(unittest.TestCase):
                 "meningitis meningococcemia sepsis emergency",
             ),
             (
+                "The internet is down, cell service is weak, and a child has a stiff neck with a purple rash. Should I troubleshoot the router first or start moving toward help?",
+                "meningitis meningococcemia sepsis emergency",
+            ),
+            (
                 "vomiting with fever and neck stiffness",
                 "meningitis meningococcemia sepsis emergency",
+            ),
+            (
+                "Someone fell near a contaminated creek and says their neck hurts with tingling in one arm. They are getting cold. Should we carry them to the cabin now?",
+                "possible spinal injury neck back trauma",
+            ),
+            (
+                "After a fall by a dirty creek, my friend's neck hurts and both hands feel numb. The cabin is close but the ground is slick. Should two of us carry them inside?",
+                "spinal precautions suspected spine injury",
             ),
             (
                 "metal chip flew into my eye while grinding and it still feels stuck",
@@ -1892,6 +1928,11 @@ class QueryRoutingTests(unittest.TestCase):
                     any(expected in spec["text"] for spec in specs),
                     [spec["text"] for spec in specs],
                 )
+                if "spinal injury" in expected:
+                    self.assertEqual(
+                        query._retrieval_profile_for_question(question),
+                        "safety_triage",
+                    )
 
     def test_poisoning_ingestion_boundary_uses_safety_profile(self):
         for question in (
@@ -2080,6 +2121,26 @@ class QueryRoutingTests(unittest.TestCase):
                 meningitis_rigid_neck_question, common_ailments_meta
             ),
         )
+        meningitis_no_fever_connectivity_question = (
+            "The internet is down, cell service is weak, and a child has a stiff neck "
+            "with a purple rash. Should I troubleshoot the router first or start moving "
+            "toward help?"
+        )
+        router_meta = {
+            "guide_title": "Offline Network Troubleshooting",
+            "section_heading": "Router and Cell Service Basics",
+            "slug": "offline-network-troubleshooting",
+            "description": "Router troubleshooting, communications, weak signal, and offline search.",
+            "category": "communications",
+        }
+        self.assertLess(
+            query._metadata_rerank_delta(
+                meningitis_no_fever_connectivity_question, sepsis_meta
+            ),
+            query._metadata_rerank_delta(
+                meningitis_no_fever_connectivity_question, router_meta
+            ),
+        )
         meningitis_vs_viral_question = "is this meningitis or a viral illness"
         headache_meta = {
             "guide_id": "GD-949",
@@ -2112,6 +2173,52 @@ class QueryRoutingTests(unittest.TestCase):
             query._metadata_rerank_delta(
                 meningitis_vs_viral_question, public_health_surveillance_meta
             ),
+        )
+
+        spinal_question = (
+            "Someone fell near a contaminated creek and says their neck hurts with "
+            "tingling in one arm. They are getting cold. Should we carry them to the "
+            "cabin now?"
+        )
+        orthopedics_meta = {
+            "guide_id": "GD-049",
+            "guide_title": "Orthopedics & Fracture Management",
+            "section_heading": "Spinal Precautions",
+            "slug": "orthopedics-fractures",
+            "description": "Fractures, nerve injury, spinal precautions, numbness, tingling, and immobilization.",
+            "category": "medical",
+        }
+        first_aid_spine_meta = {
+            "guide_id": "GD-232",
+            "guide_title": "First Aid & Emergency Response",
+            "section_heading": "Possible Spinal Injury",
+            "slug": "first-aid",
+            "description": "Possible spinal injury, do not move neck injury, support head and neck, keep warm without moving spine.",
+            "category": "medical",
+        }
+        routine_back_meta = {
+            "guide_id": "GD-915",
+            "guide_title": "Back Pain & Musculoskeletal Self-Care",
+            "section_heading": "How to treat a stiff neck",
+            "slug": "back-pain-musculoskeletal-self-care",
+            "description": "Common musculoskeletal back pain, simple muscle strain, stiff neck, routine rest.",
+            "category": "medical",
+        }
+        cabin_meta = {
+            "guide_id": "GD-345",
+            "guide_title": "Primitive Shelter Construction Techniques",
+            "section_heading": "Cabin Site Approach",
+            "slug": "primitive-shelter-construction",
+            "description": "Cabin, shelter construction, and carrying materials.",
+            "category": "building",
+        }
+        self.assertLess(
+            query._metadata_rerank_delta(spinal_question, orthopedics_meta),
+            query._metadata_rerank_delta(spinal_question, routine_back_meta),
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(spinal_question, first_aid_spine_meta),
+            query._metadata_rerank_delta(spinal_question, cabin_meta),
         )
 
         choking_question = "child is choking on a grape"
