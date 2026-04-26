@@ -41,15 +41,18 @@ Action:
 
 - Current proof is complete: `Non-Android Regression Gate` run `24957922497`
   passed on head `eb71a3c` in `Fast` mode after the compact cache-miss smoke
-  index path was added.
+  index path was added. Follow-up run `24958108279` passed on head `4926d93`
+  with retrieval index cache hit, proving the compact cache-hit policy too.
 - Keep the original CI-health claim scoped to the old failing run; current
   behavior is now proven separately by run `24957922497`.
 
 Validation:
 
-- Run `24957922497` completed green on `2026-04-26`; run `24957798681`
-  previously proved compact ingest finished and exposed only a strict-warning
-  mismatch, not FastEmbed service lifetime/index rebuild budget.
+- Run `24957922497` completed green on `2026-04-26`; run `24958108279`
+  completed green on `2026-04-26` after restoring the retrieval index cache.
+  Run `24957798681` previously proved compact ingest finished and exposed only
+  a strict-warning mismatch, not FastEmbed service lifetime/index rebuild
+  budget.
 
 Deferred unless evidenced:
 

@@ -5,6 +5,24 @@ artifacts are retained for a bounded period.
 
 ## Current Green Head
 
+- Head: `4926d93` (`record ci proof backlog notes`)
+- Non-Android Regression Gate: run `24958108279`
+- Result: success
+- URL: `https://github.com/YotsuBotfds/senku-app/actions/runs/24958108279`
+- Mode: `Fast`
+- Label: `github_4926d93_cachehit_smoke_20260426`
+- Cache state: retrieval index cache hit; restored key
+  `retrieval-index-Windows-Fast-false-3654458045aabc5aa590f8788f7ffdd8e2b843e2e50f04cc63b1db60f7097e48`.
+- Validation shape: selected `43` guide files, validated existing compact DB
+  with `ingest.py --stats`, and did not rebuild.
+- Retrieval expectation policy: compact smoke index allowed retrieval warnings
+  before the cache hit/miss branch, so cache-hit and cache-miss compact runs
+  now share the same policy.
+- Warnings observed: `RE9-MH-001` retrieval owner warnings in Eval9 compact
+  smoke retrieval; accepted for compact smoke only.
+
+## Previous Green Cache-Miss Proof
+
 - Head: `eb71a3c` (`relax compact smoke retrieval warnings`)
 - Non-Android Regression Gate: run `24957922497`
 - Result: success
@@ -16,8 +34,8 @@ artifacts are retained for a bounded period.
 - FastEmbed shape: `43` single-chunk embedding batches.
 - Retrieval expectation policy: compact smoke index allowed retrieval warnings;
   prompt expectation errors remained hard failures.
-- Bench bundle artifact: uploaded by the run; artifact reported by follow-up scan
-  as `6647805324`, expiring `2026-05-10T13:39:07Z`.
+- Bench bundle artifact: uploaded by the run; artifact reported by follow-up
+  scan as `6647805324`, expiring `2026-05-10T13:39:07Z`.
 
 ## Superseded Runs
 
@@ -32,8 +50,6 @@ artifacts are retained for a bounded period.
 
 ## Remaining CI Follow-Ups
 
-- Prove cache-hit behavior on the compact smoke index after the warning-policy
-  branch was moved before cache hit/miss handling.
 - Keep compact smoke and full-index validation separate. The green run proves
   fast CI wiring, prompt checks, artifact upload, and compact retrieval smoke;
   it is not full-corpus retrieval evidence.
