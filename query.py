@@ -2649,6 +2649,15 @@ _MAJOR_BLOOD_LOSS_SHOCK_BLOOD_MARKERS = {
     "after blood loss",
     "bled a lot",
     "lost a lot of blood",
+    "will not stop bleeding",
+    "won't stop bleeding",
+    "wont stop bleeding",
+    "does not stop bleeding",
+    "doesn't stop bleeding",
+    "cannot stop bleeding",
+    "can't stop bleeding",
+    "bleeding will not stop",
+    "bleeding won't stop",
     "bleeding slowed",
     "bleeding slowed but",
     "heavy bleeding",
@@ -3153,7 +3162,15 @@ _PUNCTURE_SPECIAL_CASE_EXCLUSION_MARKERS = {
 _SEVERE_BLEED_QUERY_MARKERS = {
     "severe bleeding",
     "uncontrolled bleeding",
+    "will not stop bleeding",
     "won't stop bleeding",
+    "wont stop bleeding",
+    "does not stop bleeding",
+    "doesn't stop bleeding",
+    "cannot stop bleeding",
+    "can't stop bleeding",
+    "bleeding will not stop",
+    "bleeding won't stop",
     "spurting",
     "gushing",
     "arterial",
@@ -5673,9 +5690,58 @@ def _is_major_blood_loss_shock_query(question):
     lower = question.lower()
     if _is_urgent_nosebleed_query(lower):
         return False
+    if _is_uncontrolled_external_bleeding_query(lower):
+        return True
     has_blood_loss = _text_has_marker(lower, _MAJOR_BLOOD_LOSS_SHOCK_BLOOD_MARKERS)
     has_shock = _text_has_marker(lower, _MAJOR_BLOOD_LOSS_SHOCK_MARKERS)
     return has_blood_loss and has_shock
+
+
+def _is_uncontrolled_external_bleeding_query(question):
+    """Detect visible wound or limb bleeding that will not stop."""
+    lower = question.lower()
+    if (
+        _is_urgent_nosebleed_query(lower)
+        or _is_gi_bleed_emergency_query(lower)
+        or _is_gyn_emergency_query(lower)
+    ):
+        return False
+    has_external_site = _text_has_marker(
+        lower,
+        {
+            "wound",
+            "leg wound",
+            "arm wound",
+            "cut",
+            "laceration",
+            "gash",
+            "injury",
+            "injured",
+            "bleeding from the leg",
+            "bleeding from his leg",
+            "bleeding from her leg",
+            "bleeding from my leg",
+        },
+    )
+    has_uncontrolled_bleeding = _text_has_marker(
+        lower,
+        {
+            "will not stop bleeding",
+            "won't stop bleeding",
+            "wont stop bleeding",
+            "does not stop bleeding",
+            "doesn't stop bleeding",
+            "cannot stop bleeding",
+            "can't stop bleeding",
+            "bleeding will not stop",
+            "bleeding won't stop",
+            "uncontrolled bleeding",
+            "severe bleeding",
+            "gushing",
+            "spurting",
+        },
+    )
+    return has_external_site and has_uncontrolled_bleeding
 
 
 def _is_gyn_emergency_query(question):
@@ -11942,6 +12008,7 @@ def _retrieval_profile_for_question(question, frame=None):
         or _is_chemical_spill_sick_exposure_query(question)
         or _is_indoor_combustion_co_smoke_query(question)
         or _is_gi_bleed_emergency_query(question)
+        or _is_major_blood_loss_shock_query(question)
         or _is_electrical_hazard_query(question)
         or _is_cardiac_first_query(question)
         or _is_classic_stroke_fast_special_case(question)
@@ -12800,8 +12867,9 @@ def _supplemental_retrieval_specs(
                 {
                     "text": (
                         f"{question} hemorrhagic shock blood loss pale dizzy "
-                        "clammy weak control bleeding keep flat warm urgent "
-                        "evacuation trauma hemorrhage control"
+                        "clammy weak uncontrolled limb wound bleeding control "
+                        "bleeding keep flat warm urgent evacuation trauma "
+                        "hemorrhage control"
                     ),
                     "category": "medical",
                     "limit": supplemental_limit,
@@ -12809,8 +12877,9 @@ def _supplemental_retrieval_specs(
                 {
                     "text": (
                         f"{question} trauma hemorrhage control major bleeding "
-                        "direct pressure tourniquet wound packing impaled object "
-                        "shock recognition resuscitation"
+                        "direct pressure tourniquet wound packing uncontrolled "
+                        "external wound bleeding impaled object shock recognition "
+                        "resuscitation"
                     ),
                     "category": "medical",
                     "limit": supplemental_limit,
@@ -12818,8 +12887,8 @@ def _supplemental_retrieval_specs(
                 {
                     "text": (
                         f"{question} shock bleeding trauma stabilization "
-                        "hemorrhage control decision tree pale dizzy after blood "
-                        "loss not nosebleed care"
+                        "hemorrhage control decision tree uncontrolled bleeding "
+                        "pale dizzy after blood loss not nosebleed care"
                     ),
                     "category": "survival",
                     "limit": supplemental_limit,

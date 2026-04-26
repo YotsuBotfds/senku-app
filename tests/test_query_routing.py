@@ -422,6 +422,12 @@ class QueryRoutingTests(unittest.TestCase):
                 {"guide_id": "GD-695", "guide_title": "Storm Preparedness and Recovery"},
                 -0.22,
             ),
+            (
+                "A leg wound will not stop bleeding, the group is wet and cold, and the only water nearby is a muddy creek. What should different people do first?",
+                {"guide_id": "GD-584", "guide_title": "Shock, Bleeding & Trauma Stabilization"},
+                {"guide_id": "GD-029", "guide_title": "Disaster Triage & MCI"},
+                -0.18,
+            ),
         ]
 
         rule_by_guide = {
@@ -518,6 +524,7 @@ class QueryRoutingTests(unittest.TestCase):
             "GD-646",
             "GD-637",
             "GD-601",
+            "GD-584",
             "GD-513",
             "GD-513",
         ]
@@ -2192,6 +2199,24 @@ class QueryRoutingTests(unittest.TestCase):
             )
         )
         self.assertTrue(
+            query._is_uncontrolled_external_bleeding_query(
+                "A leg wound will not stop bleeding, the group is wet and cold, and the only water nearby is a muddy creek. What should different people do first?"
+            )
+        )
+        self.assertTrue(
+            query._is_major_blood_loss_shock_query(
+                "A leg wound will not stop bleeding, the group is wet and cold, and the only water nearby is a muddy creek. What should different people do first?"
+            )
+        )
+        for boundary in [
+            "The group is wet and cold and the only water nearby is a muddy creek. What should different people do first?",
+            "The nosebleed will not stop after 20 minutes and blood is going down the throat.",
+            "There is black stool and vomiting blood, and they are dizzy.",
+            "There is heavy vaginal bleeding and pelvic pain.",
+        ]:
+            with self.subTest(boundary=boundary):
+                self.assertFalse(query._is_uncontrolled_external_bleeding_query(boundary))
+        self.assertTrue(
             query._is_generic_choking_help_special_case(
                 "drooling and cannot swallow after a bite of food"
             )
@@ -2321,6 +2346,10 @@ class QueryRoutingTests(unittest.TestCase):
             (
                 "During storm evacuation, an adult has chest pressure, arm tingling, and wants to drive themself while we also handle animals and water.",
                 "acute coronary cardiac emergencies chest pressure",
+            ),
+            (
+                "A leg wound will not stop bleeding, the group is wet and cold, and the only water nearby is a muddy creek. What should different people do first?",
+                "trauma hemorrhage control major bleeding",
             ),
             (
                 "During evacuation prep, one person fell and is confused and dizzy, another has minor scrapes, goats are loose, and the road may flood. Who gets attention first and what gets delegated?",
@@ -2947,6 +2976,33 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(
             any("hemorrhagic shock blood loss" in spec["text"] for spec in blood_loss_specs),
             blood_loss_specs,
+        )
+
+        re9_bleeding_question = (
+            "A leg wound will not stop bleeding, the group is wet and cold, "
+            "and the only water nearby is a muddy creek. What should different people do first?"
+        )
+        re9_bleeding_meta = {
+            "guide_id": "GD-584",
+            "guide_title": "Shock, Bleeding & Trauma Stabilization",
+            "slug": "shock-bleeding-trauma-stabilization",
+            "description": "Uncontrolled bleeding, direct pressure, tourniquet, wound packing, and shock prevention.",
+            "category": "survival",
+        }
+        triage_meta = {
+            "guide_id": "GD-029",
+            "guide_title": "Disaster Triage & MCI",
+            "slug": "disaster-triage-mci",
+            "description": "Multiple patient disaster triage priorities field care.",
+            "category": "medical",
+        }
+        self.assertEqual(
+            query._retrieval_profile_for_question(re9_bleeding_question),
+            "safety_triage",
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(re9_bleeding_question, re9_bleeding_meta),
+            query._metadata_rerank_delta(re9_bleeding_question, triage_meta),
         )
 
         cardiac_question = "Chest tightness after stress but worse with exertion, is this panic?"

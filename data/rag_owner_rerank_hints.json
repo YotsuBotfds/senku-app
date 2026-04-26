@@ -290,6 +290,38 @@
       ]
     },
     {
+      "guide_id": "GD-584",
+      "branch": "uncontrolled_limb_bleeding_cold_water_owner",
+      "delta": -0.18,
+      "question_marker_groups": [
+        [
+          "wound",
+          "leg wound",
+          "arm wound",
+          "bleeding from the leg",
+          "bleeding from his leg",
+          "bleeding from her leg"
+        ],
+        [
+          "will not stop bleeding",
+          "won't stop bleeding",
+          "wont stop bleeding",
+          "does not stop bleeding",
+          "bleeding will not stop",
+          "uncontrolled bleeding"
+        ],
+        [
+          "wet and cold",
+          "cold",
+          "muddy creek",
+          "water nearby",
+          "different people",
+          "what should different people do first",
+          "group"
+        ]
+      ]
+    },
+    {
       "guide_id": "GD-513",
       "branch": "wet_electrical_roof_intrusion_owner",
       "delta": -0.16,
