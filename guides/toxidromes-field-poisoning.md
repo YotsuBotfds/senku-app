@@ -134,10 +134,10 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 
 1. **Supportive care:** IV fluids, cooling measures for hyperthermia
 2. **Airway protection:** If altered mental status, consider intubation
-3. **Benzodiazepines:** For agitation/seizures (diazepam 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mg IV; repeat q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 min as needed)
+3. **Benzodiazepines:** For agitation/seizures (diazepam 5-10 mg IV; repeat q5-15 min as needed)
 4. **Physostigmine (if available):** **SPECIFIC ANTIDOTE**
-   - Dose: 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg IV push slowly over 1 min
-   - Onset: 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 minutes
+   - Dose: 1-2 mg IV push slowly over 1 min
+   - Onset: 5-15 minutes
    - Effect reverses anticholinergic signs
    - **Risk:** Can cause cholinergic crisis if overdosed
    - **Caution:** Do NOT use if tricyclic antidepressant poisoning (risk of arrhythmias); use supportive care instead
@@ -190,18 +190,18 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 2. **Airway:** Be ready to intubate; cholinergic patients aspirate easily (excessive secretions)
 
 3. **Atropine (FIRST-LINE ANTIDOTE):**
-   - **Dose:** 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg IV push; repeat every 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 min until signs of atropinization (dry mouth, dilated pupils)
+   - **Dose:** 2-5 mg IV push; repeat every 5-10 min until signs of atropinization (dry mouth, dilated pupils)
    - **Goal:** Titrate to dry airway + clear lungs (no wheezing)
    - **Can give high doses** (up to 50 mg total if needed)
    - **Mechanism:** Blocks muscarinic effects; does NOT affect nicotinic (muscle weakness)
 
-4. **Pralidoxime (2-PAM) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â if available:**
-   - **Dose:** 600ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1200 mg IV bolus (or 600 mg IM if no IV access)
+4. **Pralidoxime (2-PAM) - if available:**
+   - **Dose:** 600-1200 mg IV bolus (or 600 mg IM if no IV access)
    - **Mechanism:** Reactivates acetylcholinesterase enzyme; removes phosphate group from enzyme
    - **Window:** Must be given within hours of exposure (preferably <24 hrs; older exposures less responsive)
    - **Use with atropine:** 2-PAM does NOT replace atropine; must use BOTH
 
-5. **Seizure control:** Benzodiazepines (diazepam 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mg IV; repeat q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 min)
+5. **Seizure control:** Benzodiazepines (diazepam 5-10 mg IV; repeat q5-15 min)
 
 6. **Supportive care:**
    - Suctioning of airway (excessive secretions)
@@ -261,8 +261,8 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 
 **Naloxone (Narcan):**
 - **Mechanism:** Competitive mu receptor antagonist; reverses opioid effects rapidly
-- **Onset:** 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 minutes (IV); 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 minutes (IM)
-- **Duration:** 30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90 minutes (shorter than most opioids; patient may re-sedate)
+- **Onset:** 1-3 minutes (IV); 2-5 minutes (IM)
+- **Duration:** 30-90 minutes (shorter than most opioids; patient may re-sedate)
 
 <div class="antidote-regimen">
 
@@ -270,19 +270,19 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 
 | Route | Dose | Notes |
 |---|---|---|
-| **IV (preferred)** | 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg IV push | Fastest; can repeat q2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 min if no response |
-| **IM** | 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg IM | If no IV access; slightly slower onset |
+| **IV (preferred)** | 0.4-2 mg IV push | Fastest; can repeat q2-3 min if no response |
+| **IM** | 0.4-2 mg IM | If no IV access; slightly slower onset |
 | **Intranasal (if spray available)** | 4 mg per nostril | Public health access; convenient |
-| **Repeat dosing** | Re-dose q2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 min if still unresponsive | May need multiple doses for potent opioids (fentanyl) |
+| **Repeat dosing** | Re-dose q2-3 min if still unresponsive | May need multiple doses for potent opioids (fentanyl) |
 
 **Management protocol:**
 1. Establish airway; prepare for intubation
 2. Give naloxone IV/IM
-3. Reassess after 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 minutes:
+3. Reassess after 2-3 minutes:
    - **Good response:** Patient breathing spontaneously, opening eyes, alert
    - **Poor response:** Respiratory depression persists; repeat naloxone
-4. **Important:** Naloxone duration is SHORT (30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90 min). Opioids last longer. Patient will re-sedate. Options:
-   - **Naloxone drip:** 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.8 mg IV dissolved in 100 mL saline, infused at rate to maintain wakefulness
+4. **Important:** Naloxone duration is SHORT (30-90 min). Opioids last longer. Patient will re-sedate. Options:
+   - **Naloxone drip:** 0.4-0.8 mg IV dissolved in 100 mL saline, infused at rate to maintain wakefulness
    - **Observation + repeat dosing:** Give naloxone, observe closely, re-dose if re-sedation occurs
 5. **Caution:** Naloxone can precipitate acute withdrawal (agitation, sweating, anxiety); prepare patient
 
@@ -337,10 +337,10 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 **GI:** Nausea, vomiting, abdominal pain
 
 **Severe presentation:**
-- Uncontrolled hypertension ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ stroke, cardiac ischemia
-- Severe hyperthermia ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ rhabdomyolysis, acute kidney injury
-- Arrhythmias ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ sudden cardiac death
-- Seizures ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ status epilepticus
+- Uncontrolled hypertension -> stroke, cardiac ischemia
+- Severe hyperthermia -> rhabdomyolysis, acute kidney injury
+- Arrhythmias -> sudden cardiac death
+- Seizures -> status epilepticus
 
 </div>
 
@@ -349,16 +349,16 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 **No single specific antidote;** treatment is supportive + symptom control.
 
 1. **Benzodiazepines (FIRST-LINE for agitation/seizures):**
-   - **Diazepam:** 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mg IV; repeat q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 min as needed
-   - **Lorazepam:** 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 mg IV; repeat q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 min
+   - **Diazepam:** 5-10 mg IV; repeat q5-15 min as needed
+   - **Lorazepam:** 2-4 mg IV; repeat q5-15 min
    - **Goal:** Control agitation, prevent seizures, reduce sympathetic overdrive
    - Can give HIGH doses (up to 50 mg or more if needed)
 
 2. **Antihypertensive agents (if hypertensive crisis):**
-   - **Nitroprusside (if available):** 0.5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mcg/kg/min IV (immediate onset; careful titration)
-   - **Labetalol:** 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 mg IV; can repeat q10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min (combined alpha/beta blockade)
-   - **Esmolol:** 500 mcg/kg IV bolus; then 50ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“300 mcg/kg/min infusion (beta-blocker; fast-acting)
-   - **Nifedipine:** 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 mg sublingual or chewed (calcium channel blocker; slower)
+   - **Nitroprusside (if available):** 0.5-10 mcg/kg/min IV (immediate onset; careful titration)
+   - **Labetalol:** 10-20 mg IV; can repeat q10-20 min (combined alpha/beta blockade)
+   - **Esmolol:** 500 mcg/kg IV bolus; then 50-300 mcg/kg/min infusion (beta-blocker; fast-acting)
+   - **Nifedipine:** 10-20 mg sublingual or chewed (calcium channel blocker; slower)
    - **Avoid:** Pure beta-blockers without alpha blockade (can cause unopposed alpha = paradoxical hypertension)
 
 3. **Arrhythmia management:**
@@ -368,7 +368,7 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 
 4. **Hyperthermia control:**
    - Active cooling: Ice packs, cold water immersion, fans
-   - Aggressive fluid resuscitation (goal: urine output 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 mL/kg/hr to prevent rhabdomyolysis)
+   - Aggressive fluid resuscitation (goal: urine output 2-3 mL/kg/hr to prevent rhabdomyolysis)
    - Monitor for rhabdomyolysis: Dark urine, elevated CPK, acute kidney injury
    - Alkalinize urine with sodium bicarbonate (if available) to prevent myoglobin precipitation in kidneys
 
@@ -379,8 +379,8 @@ Medication-triggered serotonin patterns that should be indexable as first-choice
 ### Cocaine-Specific Considerations
 
 **Crack cocaine vs. powder cocaine:**
-- Crack: Smoked; rapid onset; short duration (5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 min)
-- Powder: Snorted/injected; slower onset; longer duration (30 minÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 hrs)
+- Crack: Smoked; rapid onset; short duration (5-30 min)
+- Powder: Snorted/injected; slower onset; longer duration (30 min-2 hrs)
 
 **Cocaine-induced MI:**
 - Can occur even in young, healthy individuals
@@ -415,10 +415,10 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 
 <div class="mushroom-dangerous">
 
-**Amanita phalloides (Death Cap) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â THE MOST LETHAL**
+**Amanita phalloides (Death Cap) - THE MOST LETHAL**
 
 **Appearance:**
-- Cap: White, greenish, or tan; 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 cm diameter
+- Cap: White, greenish, or tan; 5-15 cm diameter
 - Ring (skirt) below cap: Present
 - Cup-like structure at base (volva): Present
 - Gills: White, free (not attached to stem)
@@ -427,15 +427,15 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 **Toxin:** Amatoxins (alpha-amanitin); destroy liver + kidneys
 
 **Timeline:**
-- **Lag phase (0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hrs):** Few to no symptoms ("deceptive silence")
-- **Gastrointestinal phase (24ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“72 hrs):** Severe vomiting, diarrhea, abdominal pain
-- **Apparent recovery phase (3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 days):** Patient seems to improve; appears to be getting better
-- **Hepatorenal failure phase (5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“7 days):** Jaundice, elevated liver enzymes, kidney failure, encephalopathy, death
+- **Lag phase (0-24 hrs):** Few to no symptoms ("deceptive silence")
+- **Gastrointestinal phase (24-72 hrs):** Severe vomiting, diarrhea, abdominal pain
+- **Apparent recovery phase (3-5 days):** Patient seems to improve; appears to be getting better
+- **Hepatorenal failure phase (5-7 days):** Jaundice, elevated liver enzymes, kidney failure, encephalopathy, death
 
 **Management:**
 - Activated charcoal (50 g PO) if available AND within 2 hrs of ingestion
 - **Supportive care only:** IV fluids, monitoring liver/kidney function (if labs available)
-- Silymarin (milk thistle) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â controversial; may have some benefit
+- Silymarin (milk thistle) - controversial; may have some benefit
 - **No antidote exists.** Focus on supportive care and liver protection
 - **Prognosis:** 50% mortality even in hospitals with advanced care; higher in austere settings
 
@@ -460,10 +460,10 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 
 | Mushroom | Toxin | Onset | Symptoms | Outcome |
 |---|---|---|---|---|
-| **Galerina marginata** | Amatoxins (like Death Cap) | 6ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hrs | GI symptoms, then liver failure | Lethal |
+| **Galerina marginata** | Amatoxins (like Death Cap) | 6-24 hrs | GI symptoms, then liver failure | Lethal |
 | **Cortinarius rubellus** (Webcap) | Orellanine (kidney toxin) | Days to weeks | Kidney failure | Often fatal |
-| **Lepiota brunneoincarnata** (False Parasol) | Amatoxins | 6ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hrs | GI, then liver failure | Lethal |
-| **Psilocybe spp.** (Magic Mushrooms) | Psilocybin (hallucinogen) | 30 minÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 hrs | Hallucinations, euphoria, anxiety | Rarely fatal |
+| **Lepiota brunneoincarnata** (False Parasol) | Amatoxins | 6-24 hrs | GI, then liver failure | Lethal |
+| **Psilocybe spp.** (Magic Mushrooms) | Psilocybin (hallucinogen) | 30 min-2 hrs | Hallucinations, euphoria, anxiety | Rarely fatal |
 
 ### Toxic Plants
 
@@ -511,7 +511,7 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 
 2. **Decontamination:**
    - **Skin exposure:** Wash thoroughly with soap/water
-   - **Ingestion:** Activated charcoal 50 g PO (if within 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 hrs; some toxins not well absorbed by charcoal)
+   - **Ingestion:** Activated charcoal 50 g PO (if within 1-2 hrs; some toxins not well absorbed by charcoal)
 
 3. **Supportive care:**
    - IV fluids (most plant poisonings cause vomiting/diarrhea)
@@ -522,10 +522,10 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 4. **Specific interventions:**
    - Anticholinergic toxin (belladonna, jimsonweed, foxglove): Benzodiazepines, airway protection, cooling
    - Cholinergic toxin (hemlock): Atropine if needed, respiratory support
-   - Unknown toxin: Observe closely; most resolve with supportive care over 24ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“72 hrs
+   - Unknown toxin: Observe closely; most resolve with supportive care over 24-72 hrs
 
 5. **Red flags suggesting mushroom = Amanita phalloides:**
-   - Lag phase of symptom-free period (0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hrs)
+   - Lag phase of symptom-free period (0-24 hrs)
    - Severe GI symptoms followed by apparent improvement
    - Liver failure developing (jaundice, elevated enzymes)
    - **Assumption:** Any mushroom poisoning in lag phase = potential Death Cap; treat with extreme caution
@@ -546,7 +546,7 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 
 ### Activated Charcoal (For Ingested Toxins)
 
-**Indications:** Recent ingestion (<1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 hrs) of toxin; not yet absorbed
+**Indications:** Recent ingestion (<1-2 hrs) of toxin; not yet absorbed
 
 **Dose:** 50 g PO as slurry in water
 
@@ -559,12 +559,12 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 - Acids/bases (caustic ingestions)
 - Already vomiting (risk of aspiration)
 
-**Note:** Activated charcoal is non-specific and works best within 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 hrs. In austere settings with delayed presentation, benefit is limited.
+**Note:** Activated charcoal is non-specific and works best within 1-2 hrs. In austere settings with delayed presentation, benefit is limited.
 
 ### IV Fluids & Supportive Care
 
 - **Fluids:** Most toxins cause GI symptoms (vomiting, diarrhea). Isotonic crystalloid IV fluids maintain perfusion
-- **Electrolytes:** Many toxins affect kidney function; monitor urine output (goal 0.5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 mL/kg/hr)
+- **Electrolytes:** Many toxins affect kidney function; monitor urine output (goal 0.5-1 mL/kg/hr)
 - **Airway:** If altered mental status, prepare for intubation
 - **Monitoring:** Temperature, vital signs, mental status, urine output
 
@@ -576,11 +576,11 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 
 | Poison | Antidote | Dose | Route |
 |---|---|---|---|
-| **Anticholinergic** | Physostigmine | 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg | IV over 1 min |
-| **Cholinergic** | Atropine | 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg; repeat q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 min | IV |
-| **Cholinergic** | Pralidoxime (2-PAM) | 600ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1200 mg | IV or IM |
-| **Opioid** | Naloxone | 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg; repeat q2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 min | IV, IM, or intranasal |
-| **Cyanide** | Hydroxocobalamin (if available) | 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 g | IV |
+| **Anticholinergic** | Physostigmine | 1-2 mg | IV over 1 min |
+| **Cholinergic** | Atropine | 2-5 mg; repeat q5-10 min | IV |
+| **Cholinergic** | Pralidoxime (2-PAM) | 600-1200 mg | IV or IM |
+| **Opioid** | Naloxone | 0.4-2 mg; repeat q2-3 min | IV, IM, or intranasal |
+| **Cyanide** | Hydroxocobalamin (if available) | 5-10 g | IV |
 | **Cyanide** | Sodium thiosulfate (if available) | 12.5 g | IV |
 | **Methanol/Ethylene glycol** | Fomepizole (if available) | 15 mg/kg loading | IV |
 | **Acetaminophen** | N-acetylcysteine | 150 mg/kg loading | IV or PO |
@@ -601,8 +601,8 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 - **Airway equipment:** Intubation supplies, oxygen
 
 **Medications:**
-- **Naloxone (Narcan):** Multiple 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg vials
-- **Atropine:** 1 mg/mL ÃƒÆ’Ã¢â‚¬â€ 10 mL vials (for cholinergic crisis)
+- **Naloxone (Narcan):** Multiple 0.4-2 mg vials
+- **Atropine:** 1 mg/mL x 10 mL vials (for cholinergic crisis)
 - **Pralidoxime (2-PAM) (if available):** 600 mg vials
 - **Benzodiazepines:** Diazepam 5 mg/mL, Lorazepam 2 mg/mL (for seizures, agitation)
 - **Antihypertensives:** Labetalol 5 mg/mL, Nifedipine (for sympathomimetic hypertension)
@@ -616,12 +616,12 @@ Use this as a toxicology routing pattern when the complaint starts with a medica
 :::affiliate
 **If you're building poisoning treatment capacity,** these supplies support toxidrome recognition and management:
 
-- [Activated Charcoal Treatment Kit](https://www.amazon.com/dp/B0B3XVPNLQ?tag=offlinecompen-20) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Pre-measured charcoal doses for early poisoning intervention
-- [Toxidrome Recognition Cards](https://www.amazon.com/dp/B0B5MVXWRL?tag=offlinecompen-20) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Laminated cards for rapid symptom pattern identification at bedside
-- [Poison Reference Manual](https://www.amazon.com/dp/B0B2KNQMVX?tag=offlinecompen-20) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Comprehensive guide to plant, mushroom, and chemical poisonings
-- [Field Antidote Kit](https://www.amazon.com/dp/B0B4JXLMVV?tag=offlinecompen-20) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Naloxone, atropine, and supportive medications for common toxidromes
+- [Activated Charcoal Treatment Kit](https://www.amazon.com/dp/B0B3XVPNLQ?tag=offlinecompen-20) - Pre-measured charcoal doses for early poisoning intervention
+- [Toxidrome Recognition Cards](https://www.amazon.com/dp/B0B5MVXWRL?tag=offlinecompen-20) - Laminated cards for rapid symptom pattern identification at bedside
+- [Poison Reference Manual](https://www.amazon.com/dp/B0B2KNQMVX?tag=offlinecompen-20) - Comprehensive guide to plant, mushroom, and chemical poisonings
+- [Field Antidote Kit](https://www.amazon.com/dp/B0B4JXLMVV?tag=offlinecompen-20) - Naloxone, atropine, and supportive medications for common toxidromes
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
 
 </section>
