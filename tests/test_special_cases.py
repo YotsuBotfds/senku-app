@@ -1296,6 +1296,7 @@ class SpecialCaseTests(unittest.TestCase):
             "electrical shock with muscle pain and confusion even though the skin mark is tiny",
             "touched live wiring and now have chest pain and trouble catching my breath",
             "shocked through one hand and out the other and now feel weak shaky and nauseated",
+            "During storm cleanup, someone collapsed after touching a wet breaker box and the roof is still leaking. Should we turn the breaker off and move them somewhere dry?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
