@@ -126,10 +126,10 @@ In rebuilding communities, accessibility design costs little more than inaccessi
 
 ### Who Accessibility Serves
 
-- **Wheelchair users:** ~2Ã¢â‚¬â€œ3% of population; also temporarily injured people
-- **Blind or low vision:** ~1Ã¢â‚¬â€œ2%; also aging people
-- **Deaf or hard of hearing:** ~1Ã¢â‚¬â€œ2%; also people in noisy environments
-- **Elderly:** ~10Ã¢â‚¬â€œ20% depending on population age
+- **Wheelchair users:** ~2-3% of population; also temporarily injured people
+- **Blind or low vision:** ~1-2%; also aging people
+- **Deaf or hard of hearing:** ~1-2%; also people in noisy environments
+- **Elderly:** ~10-20% depending on population age
 - **Children:** Different proportions and needs
 - **Able-bodied:** Benefit from accessible design's usability
 
@@ -152,7 +152,7 @@ Wheelchairs require unobstructed, relatively smooth surfaces and adequate maneuv
 
 **Width:**
 - Minimum: 1 meter (single wheelchair, barely fits)
-- Better: 1.2Ã¢â‚¬â€œ1.5 meters (allows passing, some flexibility)
+- Better: 1.2-1.5 meters (allows passing, some flexibility)
 - Width measured clear of railings/edges
 
 **Surface:**
@@ -163,12 +163,12 @@ Wheelchairs require unobstructed, relatively smooth surfaces and adequate maneuv
 
 **Railings:**
 - Both sides recommended
-- Height: 85Ã¢â‚¬â€œ95 cm from ramp surface
-- Diameter: 3Ã¢â‚¬â€œ4 cm (hand-grip size)
+- Height: 85-95 cm from ramp surface
+- Diameter: 3-4 cm (hand-grip size)
 - Graspable material (wood, metal, not slippery plastic)
 
 **Landings:**
-- At top and bottom of ramp: flat area at least 1 meter Ãƒâ€” 1 meter
+- At top and bottom of ramp: flat area at least 1 meter x 1 meter
 - Between long ramps: rest landing every 9 meters
 - Prevents momentum loss, allows turning
 
@@ -180,12 +180,12 @@ Manual wheelchair users expend significant energy on ramps. Minimize ramp length
 
 **Door width:**
 - Minimum: 75 cm (single wheelchair, tight fit)
-- Better: 80Ã¢â‚¬â€œ85 cm (comfortable, clear passage)
+- Better: 80-85 cm (comfortable, clear passage)
 - Measured clear of door swing and frame
 
 **Door handles:**
 - Type: Lever handles (not round knobs, not complex mechanisms)
-- Height: 80Ã¢â‚¬â€œ110 cm
+- Height: 80-110 cm
 - Accessible to one hand without gripping hard
 - Avoid push-button doors (can't operate while holding mobility aid)
 
@@ -208,8 +208,8 @@ Manual wheelchair users expend significant energy on ramps. Minimize ramp length
 
 ### Bathroom Accessibility
 
-- **Turning space:** Clear floor area 1.5 m Ãƒâ€” 1.5 m (for turning wheelchair)
-- **Toilet height:** 45Ã¢â‚¬â€œ50 cm (standard wheelchair transfer height)
+- **Turning space:** Clear floor area 1.5 m x 1.5 m (for turning wheelchair)
+- **Toilet height:** 45-50 cm (standard wheelchair transfer height)
 - **Grab bars:** Around toilet, next to tub/shower (installed into solid framing, supports 150+ kg weight)
 - **Sink clearance:** Knee space underneath (60 cm minimum) for wheelchair user to position close
 - **Shower:** Zero-threshold entry (no lip) or beveled threshold (<1 cm)
@@ -259,7 +259,7 @@ Blind and low-vision people navigate using non-visual cues: touch, sound, scent,
 ### Lighting and Contrast
 
 **General lighting:**
-- Brighter is better for low-vision users (4Ã¢â‚¬â€œ5x normal office brightness helpful)
+- Brighter is better for low-vision users (4-5x normal office brightness helpful)
 - Even lighting (no dark shadows, not too bright to glare)
 - Avoid flicker (causes discomfort, seizures)
 
@@ -362,7 +362,7 @@ Aging brings reduced strength, flexibility, balance, and reaction time. Design c
 **Avoid when possible:** Long-term aging, people cannot climb multiple flights.
 
 **If stairs necessary:**
-- Even step height (7Ã¢â‚¬â€œ20 cm, ideally uniform)
+- Even step height (7-20 cm, ideally uniform)
 - Non-slip surface
 - Handrails both sides, continuous grip
 - Light-colored edges (visible to low-vision users)
@@ -436,7 +436,7 @@ People with one hand due to injury, amputation, or arthritis need accessible con
 
 - **Type:** Lever handles (not round knobs requiring twist/rotation)
 - **Force:** Minimal pressure required (<5 N / 0.5 kg weight)
-- **Height:** 80Ã¢â‚¬â€œ110 cm (accessible whether standing or seated)
+- **Height:** 80-110 cm (accessible whether standing or seated)
 - **Placement:** Clear of obstacles; easy to reach
 
 ### Controls and Switches
@@ -508,14 +508,14 @@ Physical support prevents falls and allows independent living for people with mo
 ### Bathroom Installation
 
 **Toilet area:**
-- Bars on both sides of toilet (85Ã¢â‚¬â€œ95 cm high)
+- Bars on both sides of toilet (85-95 cm high)
 - 60 cm from front edge of toilet
 - Supports 150+ kg (installed into studs, not drywall alone)
 
 **Shower/tub:**
 - Vertical bars at tub entrance (stability entering/exiting)
 - Horizontal bar along tub edge (security while bathing)
-- Placement: 75Ã¢â‚¬â€œ95 cm high (for reaching while standing)
+- Placement: 75-95 cm high (for reaching while standing)
 
 **Overall bathroom:**
 - Continuous handrails from toilet to tub/shower
@@ -526,13 +526,13 @@ Physical support prevents falls and allows independent living for people with mo
 
 - **Mounting:** Into wooden studs or solid backing; not into hollow drywall alone
 - **Materials:** Stainless steel or coated metal (not slippery; rust-resistant)
-- **Diameter:** 2.5Ã¢â‚¬â€œ3 cm (hand-grip size)
+- **Diameter:** 2.5-3 cm (hand-grip size)
 - **Weight:** Support minimum 150 kg (supports falling weight, not just standing)
 - **Spacing:** 60 cm centers for wall-mounted bars
 
 ### Non-Bathroom Applications
 
-- **Stairs:** Railings on both sides (85Ã¢â‚¬â€œ95 cm high)
+- **Stairs:** Railings on both sides (85-95 cm high)
 - **Ramps:** Railings if steep
 - **Hallways:** Rails along walls in narrow passages
 - **Entrances:** Support at door threshold if slight step present
@@ -552,7 +552,7 @@ Accessibility is most effective when planned at community scale, not just buildi
 ### Accessible Routes
 
 **Sidewalks and pathways:**
-- Smooth, level surface (1Ã¢â‚¬â€œ1.5 meters wide)
+- Smooth, level surface (1-1.5 meters wide)
 - Curb ramps at street crossings (1:12 slope, beveled edges)
 - No obstacles (parked vehicles, overhanging branches, street furniture blocking path)
 - Regular maintenance (avoid potholes, uneven settling)
@@ -607,11 +607,11 @@ Accessible design requires:
 :::affiliate
 **If you're preparing in advance,** consider these accessibility aids to retrofit existing shelters for elderly, disabled, or mobility-limited occupants:
 
-- [EZ-ACCESS PATHWAY 3G Portable Ramp 3ft](https://www.amazon.com/dp/B005TXGDOO?tag=offlinecompen-20) Ã¢â‚¬â€ Portable folding wheelchair accessible ramp Ã¢â‚¬â€ essential for creating level entry to shelters
-- [Deltana Heavy Duty Door Hinge 4.5" Wide Clearance](https://www.amazon.com/dp/B07C88HJML?tag=offlinecompen-20) Ã¢â‚¬â€ Heavy-duty hinge for wide doorways and wheelchairs Ã¢â‚¬â€ allows wider passage and easier maneuverability
-- [Drive Medical Adjustable Bed Assist Handle](https://www.amazon.com/dp/B002VWK0NM?tag=offlinecompen-20) Ã¢â‚¬â€ Adjustable grab handle for bed entry Ã¢â‚¬â€ reduces mobility strain for elderly or disabled occupants
-- [AmazonBasics Stainless Steel Grab Bar 18"](https://www.amazon.com/dp/B00S7H7DZ4?tag=offlinecompen-20) Ã¢â‚¬â€ Durable grab bar for bathrooms and hallways Ã¢â‚¬â€ prevents falls in accessible shelter layouts
+- [EZ-ACCESS PATHWAY 3G Portable Ramp 3ft](https://www.amazon.com/dp/B005TXGDOO?tag=offlinecompen-20) - Portable folding wheelchair accessible ramp - essential for creating level entry to shelters
+- [Deltana Heavy Duty Door Hinge 4.5" Wide Clearance](https://www.amazon.com/dp/B07C88HJML?tag=offlinecompen-20) - Heavy-duty hinge for wide doorways and wheelchairs - allows wider passage and easier maneuverability
+- [Drive Medical Adjustable Bed Assist Handle](https://www.amazon.com/dp/B002VWK0NM?tag=offlinecompen-20) - Adjustable grab handle for bed entry - reduces mobility strain for elderly or disabled occupants
+- [AmazonBasics Stainless Steel Grab Bar 18"](https://www.amazon.com/dp/B00S7H7DZ4?tag=offlinecompen-20) - Durable grab bar for bathrooms and hallways - prevents falls in accessible shelter layouts
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. Recommendations are based on the methods covered in this guide Ã¢â‚¬â€ see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. Recommendations are based on the methods covered in this guide - see the gear page for full pros/cons.</span>
 :::
 
