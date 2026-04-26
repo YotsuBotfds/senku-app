@@ -24,7 +24,7 @@ latest `git log -1` and `gh run list` output.
 
 ## Backlog
 
-### DR-CI-VERIFY - Prove Current Non-Android Gate Health
+### DR-CI-VERIFY - Track Current Non-Android Gate Health
 
 Priority: high.
 
@@ -43,28 +43,28 @@ Evidence:
 
 Action:
 
-- Historical compact Fast proof is complete: `Non-Android Regression Gate` run
-  `24957922497` passed on head `eb71a3c` in `Fast` mode after the compact
+- Historical compact Fast evidence includes `Non-Android Regression Gate` run
+  `24957922497` on head `eb71a3c` in `Fast` mode after the compact
   cache-miss smoke index path was added. Follow-up run `24958108279` passed on
-  head `4926d93` with retrieval index cache hit, proving the compact cache-hit
-  policy too.
-- Historical Generated mode proof is complete: run `24958353451` passed on head
-  `1d3832f` using the committed generated fixture and baseline diagnostics.
-  Follow-up run `24958386310` passed on head `379181a` with FastEmbed model
-  cache and retrieval-index cache steps skipped, proving Generated mode no-DB
-  behavior and the skip-FastEmbed optimization.
+  head `4926d93` with retrieval index cache hit, and also covered the compact
+  cache-hit policy.
+- Historical Generated mode evidence includes run `24958353451` on head `1d3832f`
+  using the committed generated fixture and baseline diagnostics. Follow-up run
+  `24958386310` on head `379181a` passed with FastEmbed model cache and
+  retrieval-index cache steps skipped, covering Generated mode no-DB behavior and
+  the skip-FastEmbed optimization.
 - Keep the original CI-health claim scoped to the old failing run; current
   behavior must be checked against the latest head-health run for the current
   commit train.
 
 Validation:
 
-- Run `24957922497` completed green on `2026-04-26`; run `24958108279`
-  completed green on `2026-04-26` after restoring the retrieval index cache.
-  Runs `24958353451` and `24958386310` completed green on `2026-04-26` for
-  the Generated fixture path. Run `24957798681` previously proved compact
-  ingest finished and exposed only a strict-warning mismatch, not FastEmbed
-  service lifetime/index rebuild budget.
+- Historical run `24957922497` completed green on `2026-04-26`; historical run
+  `24958108279` completed green on `2026-04-26` after restoring the retrieval
+  index cache. Historical runs `24958353451` and `24958386310` completed green
+  on `2026-04-26` for the Generated fixture path. Run `24957798681` showed
+  compact ingest finished and exposed only a strict-warning mismatch, not
+  FastEmbed service lifetime/index rebuild budget.
 
 Deferred unless evidenced:
 
@@ -569,7 +569,7 @@ Action:
 
 Validation:
 
-- Protected proof artifacts and current CI failure evidence remain in place;
+- Protected proof artifacts and historical CI failure evidence remain in place;
   a post-action dry run can prove preserved protected totals and archived byte
   counts.
 - `tests.test_github_workflows` asserts the retrieval cache key and restore
