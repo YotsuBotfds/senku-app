@@ -191,6 +191,30 @@ class QueryRoutingTests(unittest.TestCase):
             )
         )
 
+        cardiac_logistics_prompt = (
+            "The road might flood, animals are loose, and one adult has chest "
+            "pain going into the left arm. What should the plan prioritize?"
+        )
+        cardiac_logistics_specs = query._supplemental_retrieval_specs(
+            cardiac_logistics_prompt,
+            8,
+        )
+        self.assertTrue(query._is_cardiac_first_query(cardiac_logistics_prompt))
+        self.assertTrue(
+            query._is_acute_coronary_reviewed_card_query(cardiac_logistics_prompt)
+        )
+        self.assertEqual(
+            query._retrieval_profile_for_question(cardiac_logistics_prompt),
+            "safety_triage",
+        )
+        self.assertTrue(
+            any(
+                spec.get("where") == {"slug": "acute-coronary-cardiac-emergencies"}
+                and "road flood animals logistics" in spec["text"]
+                for spec in cardiac_logistics_specs
+            )
+        )
+
         abdomen_specs = query._supplemental_retrieval_specs(
             "child fell and now has belly pain", 8
         )
@@ -425,6 +449,12 @@ class QueryRoutingTests(unittest.TestCase):
                 "During storm evacuation, an adult has chest pressure, arm tingling, and wants to drive themself while we also handle animals and water.",
                 {"guide_id": "GD-601", "guide_title": "Acute Coronary Syndrome & Cardiac Emergencies"},
                 {"guide_id": "GD-695", "guide_title": "Storm Preparedness and Recovery"},
+                -0.22,
+            ),
+            (
+                "The road might flood, animals are loose, and one adult has chest pain going into the left arm. What should the plan prioritize?",
+                {"guide_id": "GD-601", "guide_title": "Acute Coronary Syndrome & Cardiac Emergencies"},
+                {"guide_id": "GD-950", "guide_title": "Evacuation Route Planning"},
                 -0.22,
             ),
             (
@@ -4132,6 +4162,35 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertEqual(plan["cited_guide_ids"], ["GD-284"])
         self.assertIn("Keep the newborn warm", plan["answer_text"])
         self.assertIn("immediate escalation", plan["answer_text"])
+
+    def test_card_backed_runtime_answer_allows_acute_coronary_card_rank_drift(self):
+        results = {
+            "metadatas": [[
+                {"guide_id": "GD-950"},
+                {"guide_id": "GD-936"},
+                {"guide_id": "GD-601"},
+            ]],
+        }
+        question = (
+            "The road might flood, animals are loose, and one adult has chest "
+            "pain going into the left arm. What should the plan prioritize?"
+        )
+
+        self.assertEqual(
+            query._prioritized_answer_card_ids_for_question(question),
+            ["acute_coronary_stroke_overlap"],
+        )
+        with patch.dict(
+            query.os.environ,
+            {"SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS": "1"},
+        ):
+            plan = query._card_backed_runtime_answer_plan(question, results)
+
+        self.assertIsNotNone(plan)
+        self.assertEqual(plan["card_ids"], ["acute_coronary_stroke_overlap"])
+        self.assertEqual(plan["cited_guide_ids"], ["GD-601"])
+        self.assertIn("cardiac emergency", plan["answer_text"])
+        self.assertIn("fastest available evacuation", plan["answer_text"])
 
     def test_card_backed_runtime_answer_allows_newborn_reviewed_source_family_without_primary_owner(self):
         results = {"metadatas": [[{"guide_id": "GD-492"}, {"guide_id": "GD-298"}]]}
