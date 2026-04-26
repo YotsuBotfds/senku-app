@@ -145,6 +145,26 @@ class PackageDualModelAnswersMarkdownTests(unittest.TestCase):
         self.assertIn("dup_cites=0", blank)
         self.assertIn("_No response text captured._", blank)
 
+    def test_render_model_block_coerces_malformed_artifact_values(self):
+        rendered = packager.render_model_block(
+            "Left",
+            {
+                "response_text": {"answer": ["structured", 7]},
+                "result_model": 42,
+                "decision_path": ["rag", "fallback"],
+                "source_mode": {"mode": "cited"},
+            },
+        )
+
+        self.assertEqual("**Left**", rendered[0])
+        self.assertIn("model=`42`", rendered[1])
+        self.assertIn('path=["rag", "fallback"]', rendered[1])
+        self.assertIn('source={"mode": "cited"}', rendered[1])
+        self.assertEqual('{"answer": ["structured", 7]}', rendered[2])
+
+        error = packager.render_model_block("Right", {"error": {"kind": "timeout"}})
+        self.assertEqual(["**Right**", '**ERROR:** {"kind": "timeout"}'], error)
+
     def test_render_markdown_matches_prompt_id_and_question_keys(self):
         prompts = [
             {

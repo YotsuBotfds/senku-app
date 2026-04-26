@@ -1,4 +1,5 @@
 import importlib.util
+import tempfile
 import unittest
 
 
@@ -37,6 +38,40 @@ class FindGuideAuditHotspotsTests(unittest.TestCase):
         self.assertEqual(pair["score"], 30)
         self.assertEqual(pair["direction_count"], 2)
         self.assertEqual(pair["edge_types"], ["frontmatter_related", "html_link"])
+
+    def test_markdown_output_uses_safe_code_spans_for_backticks(self):
+        module = load_module()
+        hotspots = {
+            "top_guides": [
+                {
+                    "guide_id": "GD`001",
+                    "slug": "alpha`guide",
+                    "invariant_count": 1,
+                    "in_neighbors": 0,
+                    "out_neighbors": 1,
+                    "combined_surface": 2,
+                }
+            ],
+            "top_pairs": [
+                {
+                    "guide_a": "alpha`guide",
+                    "guide_b": "beta``guide",
+                    "guide_a_invariants": 1,
+                    "guide_b_invariants": 2,
+                    "score": 3,
+                    "edge_types": ["front`matter", "html``link"],
+                    "direction_count": 1,
+                }
+            ],
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            _, md_path = module.write_outputs(hotspots, module.Path(temp_dir))
+            markdown = md_path.read_text(encoding="utf-8")
+
+        self.assertIn("`` GD`001 `` `` alpha`guide ``", markdown)
+        self.assertIn("`` alpha`guide `` <-> ``` beta``guide ```", markdown)
+        self.assertIn("types=`` front`matter ``,``` html``link ```", markdown)
 
 
 if __name__ == "__main__":

@@ -17,8 +17,8 @@ DEFAULT_OUTPUT = ROOT / "artifacts" / "guide_graph"
 
 
 FRONTMATTER_BOUNDARY = re.compile(r"^---\s*$", re.MULTILINE)
-HREF_HTML_RE = re.compile(r'href="(?:\.\./|\.?/)?([a-z0-9-]+)\.html"', re.IGNORECASE)
-HREF_MD_RE = re.compile(r"\((?:\.\./|\.?/)?([a-z0-9-]+)\.md\)", re.IGNORECASE)
+HREF_HTML_RE = re.compile(r'href="([^"]+\.html(?:[?#][^"]*)?)"', re.IGNORECASE)
+HREF_MD_RE = re.compile(r"\(([^)\s]+\.md(?:[?#][^)]*)?)\)", re.IGNORECASE)
 INLINE_MD_FILENAME_RE = re.compile(r"`([a-z0-9-]+)\.md`", re.IGNORECASE)
 SLUG_FILE_RE = re.compile(r"^([a-z0-9-]+)(?:\.(?:md|html))?$", re.IGNORECASE)
 
@@ -69,6 +69,7 @@ def normalize_slug_reference(value) -> str:
     if not cleaned:
         return ""
     cleaned = cleaned.replace("\\", "/").rstrip("/")
+    cleaned = re.split(r"[?#]", cleaned, maxsplit=1)[0]
     filename = cleaned.rsplit("/", 1)[-1].strip()
     match = SLUG_FILE_RE.match(filename)
     if not match:
@@ -111,12 +112,12 @@ def extract_body_links(body: str, valid_slugs: set[str]) -> dict[str, set[str]]:
     edges = defaultdict(set)
 
     for match in HREF_HTML_RE.finditer(body):
-        slug = match.group(1).strip().lower()
+        slug = normalize_slug_reference(match.group(1))
         if slug in valid_slugs:
             edges["html_link"].add(slug)
 
     for match in HREF_MD_RE.finditer(body):
-        slug = match.group(1).strip().lower()
+        slug = normalize_slug_reference(match.group(1))
         if slug in valid_slugs:
             edges["markdown_link"].add(slug)
 

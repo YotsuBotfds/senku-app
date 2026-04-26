@@ -129,6 +129,52 @@ title: Beta
         )
         self.assertEqual(graph["summary"]["edge_count"], 1)
 
+    def test_body_links_normalize_fragments_queries_and_dedupe(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "alpha.md").write_text(
+                """---
+id: GD-001
+slug: alpha
+title: Alpha
+---
+
+Alpha links [Beta](../beta.md#dose-table), [Beta again](./beta.md?view=full),
+and <a href="../gamma.html#section">Gamma</a> plus <a href="./gamma.html?print=1">Gamma again</a>.
+""",
+                encoding="utf-8",
+            )
+            (root / "beta.md").write_text(
+                """---
+id: GD-002
+slug: beta
+title: Beta
+---
+""",
+                encoding="utf-8",
+            )
+            (root / "gamma.md").write_text(
+                """---
+id: GD-003
+slug: gamma
+title: Gamma
+---
+""",
+                encoding="utf-8",
+            )
+
+            graph = module.build_graph(root)
+
+        self.assertEqual(
+            graph["edges"],
+            [
+                {"source": "alpha", "target": "gamma", "type": "html_link"},
+                {"source": "alpha", "target": "beta", "type": "markdown_link"},
+            ],
+        )
+        self.assertEqual(graph["summary"]["edge_count"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

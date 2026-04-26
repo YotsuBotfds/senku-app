@@ -32,7 +32,9 @@ def main():
     comparison = compare_artifacts(args.baseline, args.candidate)
     rendered = sanitize_markdown_output(render_artifact_comparison_markdown(comparison))
     if args.output:
-        Path(args.output).write_text(rendered, encoding="utf-8")
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(rendered, encoding="utf-8")
     else:
         print(rendered)
 

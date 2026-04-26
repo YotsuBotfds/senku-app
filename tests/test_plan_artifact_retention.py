@@ -391,6 +391,35 @@ class ArtifactRetentionPlannerTests(unittest.TestCase):
         self.assertIn(manifest.as_posix(), plan["references"]["sources"])
         self.assertEqual(plan["summary"]["reference_count"], 2)
 
+    def test_manifest_reference_with_parent_traversal_does_not_protect_prefix_family(self):
+        root = self.make_tmpdir()
+        artifacts = root / "artifacts"
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        self.write_bytes(
+            artifacts / "bench" / "old_run" / "summary.json",
+            7,
+            age_days=90,
+        )
+        self.write_text(
+            manifest,
+            json.dumps({"output": ["artifacts/bench/old_run/../new_run/summary.json"]}) + "\n",
+        )
+
+        plan = plan_artifact_retention(
+            artifacts,
+            reference_roots=[],
+            manifest_paths=[manifest],
+            archive_after_days=1,
+            delete_after_days=1,
+            now=NOW,
+        )
+
+        row = {row["path"]: row for row in plan["families"]}["bench/old_run"]
+        self.assertFalse(row["protected"])
+        self.assertNotEqual(row["action"], "keep_protected")
+        self.assertNotIn(manifest.as_posix(), row["protection_sources"])
+        self.assertEqual(plan["summary"]["reference_count"], 0)
+
     def test_groups_generated_families_by_timestamp_normalized_name(self):
         root = self.make_tmpdir()
         artifacts = root / "artifacts"

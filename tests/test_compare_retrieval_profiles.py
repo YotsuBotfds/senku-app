@@ -179,6 +179,37 @@ class CompareRetrievalProfilesTests(unittest.TestCase):
         self.assertIn("| profile | hit@1 | hit@3 | hit@k | owner share | mean ms | p95 ms | marker risks |", markdown)
         self.assertIn("| baseline | 0.5 | 1 | 1 | 0.25 | 12.3 | 20.1 | warn:1 |", markdown)
 
+    def test_render_markdown_handles_mixed_marker_label_shapes(self):
+        payload = {
+            "prompt_pack": "pack.jsonl",
+            "generated_at": "2026-04-26T00:00:00",
+            "config": {"top_k": 8},
+            "profile_rows": [
+                {
+                    "profile": "candidate|profile",
+                    "hit_at_1_rate": None,
+                    "hit_at_3_rate": None,
+                    "hit_at_k_rate": None,
+                    "mean_owner_share": None,
+                    "mean_latency_ms": None,
+                    "p95_latency_ms": None,
+                    "top1_marker_risk_counts": {
+                        3: 1,
+                        "pipe|label": 2,
+                        "line\nlabel": 4,
+                    },
+                }
+            ],
+            "deltas_vs_baseline": [],
+        }
+
+        markdown = self.module.render_markdown(payload)
+
+        self.assertIn("candidate\\|profile", markdown)
+        self.assertIn("3:1", markdown)
+        self.assertIn("line label:4", markdown)
+        self.assertIn("pipe\\|label:2", markdown)
+
     def test_cli_parse_accepts_profiles_and_outputs(self):
         args = self.module.parse_args(
             [

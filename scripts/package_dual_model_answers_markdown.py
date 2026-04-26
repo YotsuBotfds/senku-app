@@ -19,6 +19,17 @@ if str(REPO_ROOT) not in sys.path:
 from bench_artifact_tools import load_bench_artifact  # noqa: E402
 
 
+def markdown_value(value):
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value.strip()
+    try:
+        return json.dumps(value, ensure_ascii=True, sort_keys=True).strip()
+    except TypeError:
+        return str(value).strip()
+
+
 def load_structured_prompt_pack(path):
     prompt_path = Path(path)
     suffix = prompt_path.suffix.lower()
@@ -98,23 +109,26 @@ def render_model_block(label, record):
         return lines
 
     details = []
-    model_name = record.get("result_model") or record.get("artifact_model")
+    model_name = markdown_value(record.get("result_model") or record.get("artifact_model"))
     if model_name:
         details.append(f"model=`{model_name}`")
-    if record.get("decision_path"):
-        details.append(f"path={record['decision_path']}")
-    if record.get("source_mode"):
-        details.append(f"source={record['source_mode']}")
+    decision_path = markdown_value(record.get("decision_path"))
+    if decision_path:
+        details.append(f"path={decision_path}")
+    source_mode = markdown_value(record.get("source_mode"))
+    if source_mode:
+        details.append(f"source={source_mode}")
     if record.get("duplicate_citation_count") is not None:
         details.append(f"dup_cites={record['duplicate_citation_count']}")
     if details:
         lines.append(f"*{' | '.join(details)}*")
 
-    if record.get("error"):
-        lines.append(f"**ERROR:** {record['error']}")
+    error = markdown_value(record.get("error"))
+    if error:
+        lines.append(f"**ERROR:** {error}")
         return lines
 
-    response_text = (record.get("response_text") or "").strip()
+    response_text = markdown_value(record.get("response_text"))
     lines.append(response_text or "_No response text captured._")
     return lines
 

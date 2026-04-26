@@ -43,6 +43,28 @@ Wait 5 minutes and recheck.
         self.assertEqual(records[1]["section_heading"], "Timing")
         self.assertIn("5 minutes", records[1]["text"])
 
+    def test_summary_uses_safe_code_spans_for_backticks(self):
+        module = load_module()
+        records = [
+            {
+                "slug": "guide`one",
+                "section_heading": "Dose `limits`",
+            },
+            {
+                "slug": "guide``two",
+                "section_heading": "Dose ``limits``",
+            },
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            _, summary_path = module.write_outputs(records, Path(tmpdir))
+            summary = summary_path.read_text(encoding="utf-8")
+
+        self.assertIn("- `` guide`one ``: 1", summary)
+        self.assertIn("- ``` guide``two ```: 1", summary)
+        self.assertIn("- `` Dose `limits` ``: 1", summary)
+        self.assertIn("- ``` Dose ``limits`` ```: 1", summary)
+
 
 if __name__ == "__main__":
     unittest.main()

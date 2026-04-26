@@ -31,6 +31,14 @@ NUMBER_UNIT_RE = re.compile(
 )
 
 
+def markdown_code_span(value: object) -> str:
+    text = str(value).replace("\r", " ").replace("\n", " ")
+    longest_tick_run = max((len(match.group(0)) for match in re.finditer(r"`+", text)), default=0)
+    fence = "`" * (longest_tick_run + 1)
+    padding = " " if "`" in text else ""
+    return f"{fence}{padding}{text}{padding}{fence}"
+
+
 def parse_frontmatter(text: str) -> tuple[dict, str]:
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
@@ -111,11 +119,11 @@ def write_outputs(records: list[dict], output_dir: Path) -> tuple[Path, Path]:
         "",
     ]
     for slug, count in by_guide.most_common(25):
-        lines.append(f"- `{slug}`: {count}")
+        lines.append(f"- {markdown_code_span(slug)}: {count}")
 
     lines.extend(["", "## Common Sections", ""])
     for heading, count in by_section.most_common(25):
-        lines.append(f"- `{heading}`: {count}")
+        lines.append(f"- {markdown_code_span(heading)}: {count}")
 
     summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return jsonl_path, summary_path

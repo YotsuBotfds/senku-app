@@ -96,6 +96,31 @@ class CompareBenchArtifactsCliTests(unittest.TestCase):
         self.assertIn("Baseline: `baseline.json`", markdown)
         self.assertIn("Candidate: `candidate.json`", markdown)
 
+    def test_main_creates_parent_directories_for_output_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            baseline = write_artifact(root / "baseline.json", model="baseline")
+            candidate = write_artifact(root / "candidate.json", model="candidate")
+            output_path = root / "nested" / "reports" / "comparison.md"
+
+            output = io.StringIO()
+            with patch(
+                "sys.argv",
+                [
+                    "compare_bench_artifacts.py",
+                    str(baseline),
+                    str(candidate),
+                    "--output",
+                    str(output_path),
+                ],
+            ), redirect_stdout(output):
+                compare_bench_artifacts.main()
+
+            markdown = output_path.read_text(encoding="utf-8")
+
+        self.assertEqual("", output.getvalue())
+        self.assertIn("# Bench Artifact Comparison", markdown)
+
     def test_main_sanitizes_control_characters_in_rendered_markdown(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

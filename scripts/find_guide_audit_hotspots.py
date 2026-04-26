@@ -92,6 +92,22 @@ def build_hotspots(graph: dict, invariant_counts: Counter) -> dict:
     }
 
 
+def markdown_code(value: object) -> str:
+    text = str(value)
+    tick_count = 1
+    current_ticks = 0
+    for char in text:
+        if char == "`":
+            current_ticks += 1
+            tick_count = max(tick_count, current_ticks + 1)
+        else:
+            current_ticks = 0
+    fence = "`" * tick_count
+    if "`" in text:
+        return f"{fence} {text} {fence}"
+    return f"{fence}{text}{fence}"
+
+
 def write_outputs(hotspots: dict, output_dir: Path) -> tuple[Path, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = output_dir / "guide_audit_hotspots.json"
@@ -107,7 +123,7 @@ def write_outputs(hotspots: dict, output_dir: Path) -> tuple[Path, Path]:
     ]
     for item in hotspots["top_guides"][:25]:
         lines.append(
-            f"- `{item['guide_id']}` `{item['slug']}`: "
+            f"- {markdown_code(item['guide_id'])} {markdown_code(item['slug'])}: "
             f"invariants={item['invariant_count']}, in_neighbors={item['in_neighbors']}, "
             f"out_neighbors={item['out_neighbors']}, combined_surface={item['combined_surface']}"
         )
@@ -115,10 +131,11 @@ def write_outputs(hotspots: dict, output_dir: Path) -> tuple[Path, Path]:
     lines.extend(["", "## Top Connected Pair Hotspots", ""])
     for item in hotspots["top_pairs"][:40]:
         lines.append(
-            f"- `{item['guide_a']}` <-> `{item['guide_b']}`: "
+            f"- {markdown_code(item['guide_a'])} <-> {markdown_code(item['guide_b'])}: "
             f"score={item['score']} "
             f"[{item['guide_a_invariants']} + {item['guide_b_invariants']}] "
-            f"types={','.join(item['edge_types'])} directions={item['direction_count']}"
+            f"types={','.join(markdown_code(edge_type) for edge_type in item['edge_types'])} "
+            f"directions={item['direction_count']}"
         )
 
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")

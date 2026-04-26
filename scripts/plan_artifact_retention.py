@@ -623,6 +623,8 @@ def _normalize_artifact_ref(value: str, artifact_root: Path) -> str | None:
     text = text.strip("/")
     if not text or text == root_name:
         return None
+    if any(part == ".." for part in text.split("/")):
+        return None
     if not _looks_like_artifact_relative_path(text):
         return None
     return text

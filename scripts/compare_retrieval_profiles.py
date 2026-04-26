@@ -205,6 +205,15 @@ def _md_value(value: Any) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
 
 
+def _marker_risk_text(marker_risks: Mapping[Any, Any] | None) -> str:
+    if not marker_risks:
+        return ""
+    return ", ".join(
+        f"{str(key)}:{value}"
+        for key, value in sorted(marker_risks.items(), key=lambda item: str(item[0]))
+    )
+
+
 def render_markdown(payload: Mapping[str, Any]) -> str:
     lines = [
         "# Retrieval Profile Comparison",
@@ -217,10 +226,7 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
         "| --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in payload["profile_rows"]:
-        marker_risks = ", ".join(
-            f"{key}:{value}"
-            for key, value in sorted((row.get("top1_marker_risk_counts") or {}).items())
-        )
+        marker_risks = _marker_risk_text(row.get("top1_marker_risk_counts") or {})
         lines.append(
             "| {profile} | {hit1} | {hit3} | {hitk} | {share} | {mean} | {p95} | {risks} |".format(
                 profile=_md_value(row["profile"]),

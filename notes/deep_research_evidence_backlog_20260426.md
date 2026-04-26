@@ -499,6 +499,12 @@ Action:
   Markdown table cells flatten newlines before pipe escaping, RAG trend row
   fallback ignores structured status values instead of stringifying them, and
   metrics-lake run-manifest ingestion accepts a single artifact-evidence object.
+- Hardened Markdown/path/report helpers: guide graph body links normalize query
+  and fragment suffixes, dual-model answer packages stringify structured model
+  fields deterministically, artifact retention ignores parent-traversal
+  artifact refs, guide invariant and audit-hotspot reports use safe code spans
+  for backtick labels, retrieval-profile Markdown tolerates mixed marker labels,
+  and compare-bench output creates missing parent directories.
 
 Validation:
 
@@ -815,6 +821,13 @@ Validation:
   `tests.test_bench_metrics_lake` cover strict JSON sanitation, shadow
   Markdown cell sanitation, row-status trend fallback, and single-object
   artifact-evidence ingestion.
+- `tests.test_build_guide_graph`,
+  `tests.test_package_dual_model_answers_markdown`,
+  `tests.test_plan_artifact_retention`, `tests.test_extract_guide_invariants`,
+  `tests.test_find_guide_audit_hotspots`,
+  `tests.test_compare_retrieval_profiles`, and
+  `tests.test_compare_bench_artifacts` cover the Markdown/path/report helper
+  hardening batch.
 
 Deferred unless evidenced:
 
