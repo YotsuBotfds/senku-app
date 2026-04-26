@@ -1,6 +1,7 @@
 import json
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from scripts.index_bench_artifacts import (
@@ -69,6 +70,28 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(records["large.json"]["summary"]["skipped"], "json_too_large")
         self.assertEqual(records["run_stdout.log"]["summary"]["skipped"], "log_not_read")
         self.assertEqual(records["screen.png"]["summary"]["skipped"], "binary_not_read")
+
+    def test_iter_bench_artifacts_records_stat_errors_without_aborting(self):
+        root = self.make_tmpdir()
+        (root / "broken.json").write_text("{}", encoding="utf-8")
+        (root / "ok.json").write_text('{"results": []}', encoding="utf-8")
+
+        def fake_stat(path):
+            if path.name == "broken.json":
+                raise OSError("stat failed")
+            return path.stat()
+
+        with mock.patch("scripts.index_bench_artifacts._stat_path", side_effect=fake_stat):
+            records = {record["path"]: record for record in iter_bench_artifacts(root)}
+
+        self.assertEqual(records["broken.json"]["kind"], "json")
+        self.assertEqual(records["broken.json"]["size"], 0)
+        self.assertEqual(records["broken.json"]["mtime"], "")
+        self.assertEqual(
+            records["broken.json"]["summary"],
+            {"skipped": "stat_unreadable", "error": "OSError"},
+        )
+        self.assertEqual(records["ok.json"]["summary"]["results_count"], 0)
 
     def test_iter_bench_artifacts_summarizes_small_jsonl(self):
         root = self.make_tmpdir()

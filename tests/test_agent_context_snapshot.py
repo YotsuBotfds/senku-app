@@ -207,6 +207,9 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("Metadata-audit signal", markdown)
         self.assertIn("malformed_frontmatter_count=3", markdown)
         self.assertIn("Strict-retrieval head-health workflow configured", markdown)
+        self.assertIn("mode=Fast", markdown)
+        self.assertIn("allow_retrieval_warnings=false", markdown)
+        self.assertIn("retrieval_index_flavor=full", markdown)
 
     def test_strict_retrieval_signal_handles_missing_configuration_keys(self):
         root = self.make_tmpdir()

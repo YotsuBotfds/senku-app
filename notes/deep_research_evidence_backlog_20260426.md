@@ -401,6 +401,9 @@ Action:
 - Made the Dependency Security Scan fail closed for missing scanner tooling in
   CI by removing `-SkipIfUnavailable`; a focused test proves the script already
   exits nonzero by default when no audit tool is available.
+- Dependency security scan tests now also pin the explicit
+  `-SkipIfUnavailable` escape hatch as non-failing and report-free when scanner
+  tooling is unavailable.
 - Added a stable `app_acceptance_root_cause` field so acceptance outcomes carry
   a single machine-checkable cause tag (`gate_policy`, `safety_surface`,
   `evidence_owner`, `card_contract`, or `supported`) separate from the richer
@@ -551,6 +554,8 @@ Action:
 - Bench artifact JSONL summaries now count non-object lines separately,
   truncate long type values deterministically, and preserve frequency order in
   formatted type-count summaries.
+- Bench artifact indexing now records per-file stat failures as
+  `stat_unreadable` summary rows instead of aborting the entire index pass.
 - Bench artifact Markdown index rendering now strips carriage returns from
   escaped cells so copied titles or summaries cannot warp table rows.
 - Audit follow-up tightened CI semantics after the 50-commit review: compact
@@ -594,6 +599,8 @@ Action:
 - Agent startup snapshots now surface the latest metadata-audit malformed
   frontmatter count and strict retrieval workflow mode/warning/index-flavor
   settings in the Recent Run Manifest section.
+- Agent startup snapshot tests now assert the exact strict retrieval workflow
+  config values surfaced in the summary line.
 - Run-manifest summaries now derive artifact and missing-artifact counts from
   evidence lists when malformed count scalars are present, preventing bad
   manifest values from hiding missing artifact evidence.
@@ -660,6 +667,8 @@ Validation:
   and numeric-string summary `row_count` coercion.
 - `tests.test_index_bench_artifacts` covers JSONL non-object counts, long type
   truncation, and count-order formatting.
+- `tests.test_index_bench_artifacts` covers per-file stat failures remaining
+  visible without aborting bench artifact indexing.
 - `tests.test_index_bench_artifacts` covers carriage-return sanitation in
   rendered Markdown index rows.
 - `tests.test_github_workflows` covers explicit retrieval-warning opt-in and
@@ -673,6 +682,9 @@ Validation:
 - `tests.test_github_workflows` covers the strict retrieval health workflow's
   manual/scheduled triggers, no push trigger, full index flavor, and
   fail-on-warning defaults.
+- `tests.test_dependency_security_scan` covers the explicit
+  `-SkipIfUnavailable` scanner-unavailable path staying non-failing without
+  creating a report.
 - `tests.test_github_workflows` covers input-less manual dispatch for generated
   head health and strict retrieval head health workflows.
 - `tests.test_github_workflows` covers exact reusable non-Android workflow input
@@ -693,6 +705,8 @@ Validation:
   counts and Markdown reporting.
 - `tests.test_agent_context_snapshot` covers metadata-audit and strict
   retrieval workflow signals in the startup snapshot.
+- `tests.test_agent_context_snapshot` covers exact strict retrieval workflow
+  signal values in the startup snapshot.
 - `tests.test_summarize_run_manifest` covers malformed artifact-count scalar
   fallback to `artifact_path` and `artifact_path_missing` evidence lists.
 - `tests.test_summarize_run_manifest` also covers scalar evidence fallback plus

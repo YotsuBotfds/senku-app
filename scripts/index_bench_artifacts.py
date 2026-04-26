@@ -31,8 +31,21 @@ def iter_bench_artifacts(bench_dir, max_json_bytes=DEFAULT_MAX_JSON_BYTES):
     """Yield compact manifest records for files below bench_dir."""
     root = Path(bench_dir)
     for path in sorted(p for p in root.rglob("*") if p.is_file()):
-        stat = path.stat()
         rel_path = path.relative_to(root).as_posix()
+        try:
+            stat = _stat_path(path)
+        except OSError as exc:
+            yield {
+                "path": rel_path,
+                "size": 0,
+                "mtime": "",
+                "kind": infer_artifact_kind(path),
+                "summary": {
+                    "skipped": "stat_unreadable",
+                    "error": exc.__class__.__name__,
+                },
+            }
+            continue
         record = {
             "path": rel_path,
             "size": stat.st_size,
@@ -46,6 +59,10 @@ def iter_bench_artifacts(bench_dir, max_json_bytes=DEFAULT_MAX_JSON_BYTES):
         if summary:
             record["summary"] = summary
         yield record
+
+
+def _stat_path(path):
+    return path.stat()
 
 
 def infer_artifact_kind(path):
