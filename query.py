@@ -32,6 +32,12 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 
 import config
+from ingest_freshness import (
+    ABSENT_OR_INVALID,
+    INCOMPLETE_UNTRUSTED,
+    STALE,
+    evaluate_ingest_freshness,
+)
 import special_case_builders
 import query_abstain_policy as _abstain_policy
 import query_completion_hardening as _completion_hardening
@@ -17271,6 +17277,11 @@ def main():
         default=0.11,
         help="LLM temperature (default: 0.11)",
     )
+    parser.add_argument(
+        "--allow-stale-ingest",
+        action="store_true",
+        help="Continue even when a trusted ingest manifest shows stale guide embeddings.",
+    )
     args = parser.parse_args()
     config.GEN_MODEL = args.model
     config.GEN_URL = normalize_lm_studio_url(args.gen_url)
@@ -17304,6 +17315,22 @@ def main():
     except Exception:
         console.print("[red]No collection found. Run ingest.py first.[/red]")
         sys.exit(1)
+
+    freshness = evaluate_ingest_freshness()
+    if freshness.status == STALE and not args.allow_stale_ingest:
+        console.print(
+            f"[red]{freshness.message} Run ingest.py --rebuild before querying, "
+            "or pass --allow-stale-ingest for an unsafe diagnostic run.[/red]"
+        )
+        sys.exit(1)
+    if freshness.status == STALE:
+        console.print(
+            f"[yellow]{freshness.message} Continuing because --allow-stale-ingest was set.[/yellow]"
+        )
+    elif freshness.status in (INCOMPLETE_UNTRUSTED, ABSENT_OR_INVALID):
+        console.print(
+            f"[yellow]{freshness.message} Run ingest.py --rebuild to enable strict freshness checks.[/yellow]"
+        )
 
     console.print(
         Panel(
