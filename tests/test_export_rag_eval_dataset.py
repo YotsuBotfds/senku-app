@@ -104,6 +104,56 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
 
         self.assertEqual(records[0]["contexts"], ["GD-010", "GD-011"])
 
+    def test_zero_prompt_index_is_not_dropped_from_identity_or_metadata(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            bench = root / "zero_index.json"
+            diagnostics = root / "diagnostics.json"
+            bench.write_text(
+                json.dumps(
+                    {
+                        "results": [
+                            {
+                                "index": 0,
+                                "question": "zero?",
+                                "response_text": "bench answer",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            diagnostics.write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "artifact_name": "zero_index.json",
+                                "prompt_index": 0,
+                                "prompt_text": "zero from diagnostics?",
+                                "response_text": "diagnostic answer",
+                                "suspected_failure_bucket": "zero_index",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            records = exporter.build_records(
+                bench_paths=[bench],
+                diagnostics_paths=[diagnostics],
+            )
+
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["question"], "zero from diagnostics?")
+        self.assertEqual(records[0]["answer"], "bench answer")
+        self.assertEqual(records[0]["metadata"]["prompt_index"], 0)
+        self.assertEqual(
+            records[0]["metadata"]["suspected_failure_bucket"],
+            "zero_index",
+        )
+
     def test_split_guide_ids_deduplicates_nested_and_comma_values(self):
         self.assertEqual(
             exporter.split_guide_ids(

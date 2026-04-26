@@ -40,6 +40,19 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertEqual(malformed, 2)
         self.assertEqual(records[0]["task"], "A")
 
+    def test_load_manifest_accepts_utf8_bom_on_first_line(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            manifest_path = Path(tmpdir) / "manifest.jsonl"
+            manifest_path.write_text(
+                "\ufeff" + json.dumps({"task": "A", "lane": "tooling"}) + "\n",
+                encoding="utf-8",
+            )
+
+            records, malformed = load_manifest(manifest_path)
+
+        self.assertEqual(malformed, 0)
+        self.assertEqual(records, [{"task": "A", "lane": "tooling"}])
+
     def test_render_markdown_filters_and_limits_newest_first(self):
         records = [
             {

@@ -631,6 +631,34 @@ class WriteRunManifestTests(unittest.TestCase):
             self.assertEqual(payload["commit"], "feedface")
             self.assertEqual(manifest_path.read_text(encoding="utf-8").count("\n"), 1)
 
+    def test_append_repairs_manifest_missing_trailing_newline(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            manifest_path = Path(tmpdir) / "run_manifest.jsonl"
+            manifest_path.write_text(
+                json.dumps({"task": "existing", "lane": "tooling"}),
+                encoding="utf-8",
+            )
+
+            payload = _run_script(
+                [
+                    "--task",
+                    "newline-repair",
+                    "--lane",
+                    "tooling",
+                    "--manifest-path",
+                    str(manifest_path),
+                    "--commit",
+                    "abc123",
+                ],
+            )
+
+            lines = manifest_path.read_text(encoding="utf-8").splitlines()
+
+        self.assertEqual(payload["task"], "newline-repair")
+        self.assertEqual(len(lines), 2)
+        self.assertEqual(json.loads(lines[0])["task"], "existing")
+        self.assertEqual(json.loads(lines[1])["task"], "newline-repair")
+
     def test_cli_runs_outside_git(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             manifest_path = Path(tmpdir) / "manifest.jsonl"

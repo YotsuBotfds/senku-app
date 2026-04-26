@@ -1099,6 +1099,11 @@ Validation:
   non-mapping card YAML reporting, compendium-bounded ingest file selection,
   LiteRT JSON request rejection, byte-valued LM Studio URLs, stable set tag
   ordering, and tokenizer fallback robustness.
+- `tests.test_bench_metrics_lake`, `tests.test_export_rag_eval_dataset`,
+  `tests.test_index_bench_artifacts`, `tests.test_summarize_run_manifest`, and
+  `tests.test_write_run_manifest` cover non-finite metric coercion,
+  zero-valued prompt indexes, compact markdown artifact titles, UTF-8 BOM
+  manifest reads, and append repair for manifests missing a trailing newline.
 
 Deferred unless evidenced:
 

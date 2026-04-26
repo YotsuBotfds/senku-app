@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sqlite3
 import sys
 from datetime import datetime, timezone
@@ -792,11 +793,13 @@ def _number_value(value: Any) -> float | None:
     if isinstance(value, bool) or value is None:
         return None
     if isinstance(value, (int, float)):
-        return float(value)
+        number = float(value)
+        return number if math.isfinite(number) else None
     try:
-        return float(str(value).strip())
+        number = float(str(value).strip())
     except (TypeError, ValueError):
         return None
+    return number if math.isfinite(number) else None
 
 
 def _metric_type(value: Any) -> str:

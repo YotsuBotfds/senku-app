@@ -236,6 +236,54 @@ class BenchMetricsLakeTests(unittest.TestCase):
         conn.close()
         self.assertEqual(rows, [("summary.total_prompts", "4", 4.0)])
 
+    def test_insert_metrics_keeps_non_finite_numbers_out_of_numeric_column(self):
+        root = self.make_tmpdir()
+        output = root / "lake.sqlite"
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        artifact_id = self.module._insert_artifact(
+            conn,
+            run_id="run-test",
+            path="bench_run.json",
+            absolute_path=str(root / "bench_run.json"),
+            kind="json",
+            suffix=".json",
+            size_bytes=0,
+            mtime_utc="2026-04-26T00:00:00+00:00",
+            paired_markdown_path=None,
+        )
+
+        inserted = self.module.insert_metrics(
+            conn,
+            artifact_id,
+            [
+                ("summary.nan_text", "nan"),
+                ("summary.inf_text", "inf"),
+                ("summary.nan_float", float("nan")),
+                ("summary.ok", "4.5"),
+            ],
+        )
+        conn.commit()
+
+        self.assertEqual(inserted, 4)
+        rows = conn.execute(
+            """
+            SELECT metric_path, metric_value, metric_number
+            FROM metrics
+            ORDER BY metric_path
+            """
+        ).fetchall()
+        conn.close()
+        self.assertEqual(
+            rows,
+            [
+                ("summary.inf_text", "inf", None),
+                ("summary.nan_float", "nan", None),
+                ("summary.nan_text", "nan", None),
+                ("summary.ok", "4.5", 4.5),
+            ],
+        )
+
     def test_artifact_disappears_between_discovery_and_stat(self):
         root = self.make_tmpdir()
         good_path = root / "good.json"

@@ -12,6 +12,7 @@ from pathlib import Path
 DEFAULT_MAX_JSON_BYTES = 256 * 1024
 LOG_SUFFIXES = {".log", ".out", ".err"}
 JSONL_TYPE_VALUE_MAX_LEN = 80
+MARKDOWN_TITLE_MAX_LEN = 120
 BINARY_SUFFIXES = {
     ".apk",
     ".bin",
@@ -225,7 +226,7 @@ def summarize_markdown_file(path):
         if 1 <= len(marker) <= 6 and set(marker) == {"#"}:
             summary["heading_count"] += 1
             if "title" not in summary and title.strip():
-                summary["title"] = title.strip()
+                summary["title"] = _normalize_markdown_title(title)
     return summary
 
 
@@ -270,6 +271,15 @@ def _normalize_jsonl_type_value(value):
     if JSONL_TYPE_VALUE_MAX_LEN <= 3:
         return value[:JSONL_TYPE_VALUE_MAX_LEN]
     return f"{value[:JSONL_TYPE_VALUE_MAX_LEN - 3]}..."
+
+
+def _normalize_markdown_title(value):
+    value = " ".join(value.split())
+    if len(value) <= MARKDOWN_TITLE_MAX_LEN:
+        return value
+    if MARKDOWN_TITLE_MAX_LEN <= 3:
+        return value[:MARKDOWN_TITLE_MAX_LEN]
+    return f"{value[:MARKDOWN_TITLE_MAX_LEN - 3]}..."
 
 
 def write_jsonl(records, output_path):

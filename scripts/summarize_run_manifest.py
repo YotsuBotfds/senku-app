@@ -76,7 +76,7 @@ def load_manifest(path: Path) -> tuple[list[dict[str, Any]], int]:
     if not path.exists():
         return records, malformed
 
-    with path.open("r", encoding="utf-8") as handle:
+    with path.open("r", encoding="utf-8-sig") as handle:
         for line in handle:
             stripped = line.strip()
             if not stripped:

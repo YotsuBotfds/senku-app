@@ -222,6 +222,21 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(record["summary"]["line_count"], 6)
         self.assertEqual(record["summary"]["heading_count"], 2)
 
+    def test_iter_bench_artifacts_compacts_long_markdown_title(self):
+        root = self.make_tmpdir()
+        title = "Wave\tReport " + ("section " * 30)
+        (root / "wave_report.md").write_text(f"# {title}\n\nbody\n", encoding="utf-8")
+
+        summary = list(iter_bench_artifacts(root))[0]["summary"]
+        formatted = _format_summary(summary)
+
+        self.assertEqual(summary["heading_count"], 1)
+        self.assertLessEqual(len(summary["title"]), 120)
+        self.assertTrue(summary["title"].endswith("..."))
+        self.assertNotIn("\t", summary["title"])
+        self.assertIn("title=Wave Report section", formatted)
+        self.assertNotIn("\t", formatted)
+
     def test_markdown_summary_formatting_and_rendering_exposes_metadata(self):
         root = self.make_tmpdir()
         output_md = root / "manifest.md"

@@ -578,6 +578,17 @@ def normalize_metrics(raw_metrics: list[tuple[str, object]]) -> dict[str, object
     return metrics
 
 
+def _manifest_needs_leading_newline(manifest_path: Path) -> bool:
+    try:
+        if manifest_path.stat().st_size == 0:
+            return False
+        with manifest_path.open("rb") as handle:
+            handle.seek(-1, os.SEEK_END)
+            return handle.read(1) not in {b"\n", b"\r"}
+    except FileNotFoundError:
+        return False
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.changed_file_limit < 1:
@@ -593,6 +604,8 @@ def main(argv: list[str] | None = None) -> int:
     record = build_record(args)
     line = json.dumps(record)
     with manifest_path.open("a", encoding="utf-8") as handle:
+        if _manifest_needs_leading_newline(manifest_path):
+            handle.write("\n")
         handle.write(line + "\n")
 
     print(line)

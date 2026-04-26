@@ -97,11 +97,18 @@ def split_guide_ids(value: Any) -> list[str]:
 
 
 def normalize_key(artifact_name: Any, prompt_index: Any) -> tuple[str, str] | None:
-    artifact = str(artifact_name or "").strip()
-    index = str(prompt_index or "").strip()
+    artifact = "" if artifact_name is None else str(artifact_name).strip()
+    index = "" if prompt_index is None else str(prompt_index).strip()
     if not artifact or not index:
         return None
     return artifact, index
+
+
+def first_present(*values: Any) -> Any:
+    for value in values:
+        if value is not None and value != "":
+            return value
+    return ""
 
 
 def row_identity_from_bench(path: Path, result: Mapping[str, Any]) -> tuple[str, str] | None:
@@ -224,7 +231,7 @@ def metadata_from_sources(
         or (bench_path.name if bench_path else ""),
         "artifact_path": diagnostics.get("artifact_path")
         or (str(bench_path) if bench_path else ""),
-        "prompt_index": diagnostics.get("prompt_index") or result.get("index") or "",
+        "prompt_index": first_present(diagnostics.get("prompt_index"), result.get("index")),
         "prompt_id": diagnostics.get("prompt_id") or result.get("prompt_id") or "",
         "section": diagnostics.get("section") or result.get("section") or "",
         "decision_path": diagnostics.get("decision_path") or result.get("decision_path") or "",
