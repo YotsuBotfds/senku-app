@@ -507,6 +507,8 @@ Action:
   before scoring/rendering, and uses a display-only `primary_guide_ids` Markdown
   column so blank generated report cells do not masquerade as explicit primary
   expectations.
+- Contextual shadow comparison now aligns primary expected owners to the
+  broader expected-owner set and dedupes them before primary-hit scoring.
 
 Validation:
 
@@ -541,6 +543,8 @@ Validation:
   normalized `artifact_path_evidence` status/path preservation.
 - `tests.test_evaluate_retrieval_pack` covers duplicate primary-owner metadata
   normalization and generated Markdown reparse behavior for blank primary rows.
+- `tests.test_compare_contextual_shadow_retrieval` covers primary-owner subset
+  alignment in both expectation extraction and row comparison.
 
 Deferred unless evidenced:
 

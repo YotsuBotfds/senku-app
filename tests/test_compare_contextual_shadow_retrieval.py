@@ -8,6 +8,7 @@ from scripts.compare_contextual_shadow_retrieval import (
     SUMMARY_FILENAME,
     aggregate_comparison_rows,
     compare_retrieval_row,
+    extract_expected_guides,
     extract_expected_guides_from_wave_manifest,
     load_contextual_shadow_jsonl,
     load_expectations,
@@ -80,6 +81,43 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertEqual(info["expected_guide_ids"], ["GD-380", "GD-297", "GD-232"])
         self.assertEqual(info["primary_expected_guide_ids"], ["GD-380"])
         self.assertEqual(info["backup_expected_guide_ids"], ["GD-297", "GD-232"])
+
+    def test_extract_expected_guides_filters_primary_ids_to_expected_subset_and_dedupes(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            expectations = {}
+            row = {
+                "prompt_id": "P-1",
+                "expected_guide_ids": ["GD-100", "GD-200", "GD-100"],
+                "primary_expected_guide_ids": ["GD-200", "GD-200", "GD-300"],
+                "prompt": "check subset semantics",
+            }
+
+            expected = extract_expected_guides(
+                row,
+                Path(tmpdir) / "guide_wave_fc_20260424_000000.json",
+                expectations,
+            )
+
+        self.assertEqual(expected["expected_guide_ids"], ["GD-100", "GD-200"])
+        self.assertEqual(expected["primary_expected_guide_ids"], ["GD-200"])
+        self.assertEqual(expected["backup_expected_guide_ids"], ["GD-100"])
+
+    def test_compare_row_filters_out_primary_expectations_outside_expected_set(self):
+        row = compare_retrieval_row(
+            artifact_path="guide_wave_fc_20260424_093011.json",
+            prompt_index=1,
+            question="primary expectations outside expected set",
+            expected_guide_ids=["GD-100"],
+            primary_expected_guide_ids=["GD-200", "GD-200"],
+            baseline_top_guide_ids=["GD-200"],
+            shadow_top_guide_ids=["GD-100"],
+        )
+        summary = aggregate_comparison_rows([row])
+
+        self.assertEqual(row["primary_expected_guide_ids"], [])
+        self.assertIsNone(row["baseline_primary_hit_at_k"])
+        self.assertIsNone(row["shadow_primary_hit_at_k"])
+        self.assertEqual(summary["primary_expected_row_count"], 0)
 
     def test_owner_family_concentration_scores_primary_owner_share(self):
         self.assertEqual(

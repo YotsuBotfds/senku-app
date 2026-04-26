@@ -167,6 +167,17 @@ def _dedupe(items: list[str]) -> list[str]:
     return deduped
 
 
+def _align_primary_expected_guide_ids(
+    expected_guide_ids: list[str], primary_expected_guide_ids: list[str]
+) -> list[str]:
+    """Keep primary IDs aligned to expected-owner expectations and deduplicated."""
+    primary_expected_guide_ids = _dedupe(primary_expected_guide_ids)
+    if not expected_guide_ids:
+        return primary_expected_guide_ids
+    expected_set = set(expected_guide_ids)
+    return [guide_id for guide_id in primary_expected_guide_ids if guide_id in expected_set]
+
+
 def _exclude_ids(items: list[str], excluded: list[str]) -> list[str]:
     excluded_set = set(excluded)
     return [item for item in items if item not in excluded_set]
@@ -272,9 +283,22 @@ def extract_expected_guides(
     manifest_info = extract_expected_guides_from_wave_manifest(
         artifact_path, expectations, guide_lookup
     )
-    manifest_primary = manifest_info.get("primary_expected_guide_ids") or []
+    manifest_expected = manifest_info.get("expected_guide_ids") or []
+    manifest_primary = _align_primary_expected_guide_ids(
+        manifest_expected, manifest_info.get("primary_expected_guide_ids") or []
+    )
+    manifest_info = {
+        **manifest_info,
+        "primary_expected_guide_ids": manifest_primary,
+        "backup_expected_guide_ids": _exclude_ids(
+            manifest_expected, manifest_primary
+        ),
+    }
     if row_expected:
-        primary_expected = _dedupe(row_primary_expected) or manifest_primary
+        primary_expected = _align_primary_expected_guide_ids(
+            _dedupe(row_expected) or manifest_expected,
+            _dedupe(row_primary_expected) or manifest_primary,
+        )
         expected_guide_ids = _dedupe(row_expected)
         return {
             **manifest_info,
@@ -421,10 +445,13 @@ def compare_retrieval_row(
 ) -> dict[str, Any]:
     baseline_rank = expected_rank(baseline_top_guide_ids, expected_guide_ids)
     shadow_rank = expected_rank(shadow_top_guide_ids, expected_guide_ids)
-    primary_expected_guide_ids = primary_expected_guide_ids or []
-    backup_expected_guide_ids = backup_expected_guide_ids or _exclude_ids(
-        expected_guide_ids, primary_expected_guide_ids
+    primary_expected_guide_ids = _align_primary_expected_guide_ids(
+        expected_guide_ids, primary_expected_guide_ids or []
     )
+    if backup_expected_guide_ids is None:
+        backup_expected_guide_ids = _exclude_ids(
+            expected_guide_ids, primary_expected_guide_ids
+        )
     baseline_hits = hit_flags(
         baseline_rank, baseline_top_guide_ids, expected_guide_ids
     )
