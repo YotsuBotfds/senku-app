@@ -12,7 +12,26 @@ tags:
   - lethargic baby
   - wont eat child
 icon: warning
+aliases:
+  - child fast breathing
+  - baby breathing fast
+  - lethargic baby
+  - child wont drink
+  - child wont eat emergency
+  - infant poor feeding emergency
+  - pediatric sepsis
+  - pediatric dehydration emergency
+  - child respiratory distress
+  - blue lips child
+  - floppy baby fever
+  - newborn danger signs emergency
 description: Pediatric-specific assessment and treatment protocols for sepsis, severe dehydration, and respiratory emergencies in field conditions. Includes age-based dosing, intraosseous access, respiratory distress triage, and neonatal emergency management.
+routing_cues:
+  - Use for field pediatric emergencies with fast breathing for age, lethargy, weak cry, poor feeding, poor drinking, reduced urine, gray mottled or blue skin, dehydration, sepsis concern, or respiratory distress.
+  - Route babies or children who are hard to wake, floppy, cyanotic, breathing fast, vomiting with dehydration, or refusing feeds here before routine infant care or comfort-care guides.
+  - Pair with pediatric-emergency-medicine for weight-based dosing, vital sign norms, airway anatomy, seizures, and medication calculations; pair with first aid for immediate ABC stabilization.
+citations_required: true
+applicability: Field triage and stabilization for infants and children with suspected sepsis, severe dehydration, respiratory distress, neonatal danger signs, poor feeding with systemic illness, cyanosis, or rapid deterioration in low-resource settings.
 related:
   - infant-child-care
   - pediatric-emergency-medicine

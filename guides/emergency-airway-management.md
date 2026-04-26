@@ -24,6 +24,8 @@ description: Field intubation, needle cricothyrotomy, emergency tracheostomy, ba
 routing_cues:
   - Use as an airway companion source for severe adult choking, food bolus, food stuck, cannot speak, cannot cough, cannot breathe, cyanosis or turning blue, and severe airway obstruction.
   - Keep first aid as the practical choking-rescue owner for abdominal thrusts and do-not-give-water lures; use this guide for airway failure, respiratory distress, and escalation context.
+citations_required: true
+applicability: Field airway and respiratory-distress escalation when airway failure, failed ventilation, cannot-intubate/cannot-oxygenate risk, cyanosis, severe obstruction, or advanced airway decisions require high-liability source support alongside first aid stabilization.
 related:
   - surgery-field
   - first-aid

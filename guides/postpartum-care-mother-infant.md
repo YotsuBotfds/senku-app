@@ -8,7 +8,25 @@ tags:
   - essential
   - medical
 icon: 👩‍🍼
+aliases:
+  - postpartum mother and newborn
+  - newborn after delivery assessment
+  - newborn danger signs postpartum
+  - baby not breathing after birth
+  - newborn breathing trouble
+  - postpartum infant fever
+  - postpartum newborn jaundice
+  - postpartum hemorrhage
+  - mother bleeding after birth
+  - infant poor feeding after birth
+  - first week newborn emergency
 description: 'Comprehensive postpartum protocols for mother and newborn in low-resource settings: hemorrhage prevention, infection monitoring, breastfeeding support, neonatal assessment, jaundice detection, and umbilical care.'
+routing_cues:
+  - Use for immediate postpartum mother-infant monitoring, postpartum hemorrhage warning signs, maternal infection checks, newborn viability, first-week newborn danger signs, jaundice, umbilical care, and breastfeeding support after delivery.
+  - Route newborn breathing trouble, poor feeding, fever, lethargy, blue color, jaundice, or abnormal first-week behavior here as postpartum context, then pair with pediatric emergency sources for escalation.
+  - Pair with pediatric-emergencies-field or pediatric-emergency-medicine when newborn or infant danger signs become sepsis, dehydration, respiratory distress, dosing, airway, or urgent pediatric triage questions.
+citations_required: true
+applicability: Postpartum care for the mother and newborn during the first hours, days, and weeks after delivery when hemorrhage, infection, breastfeeding, newborn assessment, jaundice, umbilical care, or newborn danger signs need high-liability guidance.
 related:
   - obstetric-labor-delivery-practice
   - pregnancy-nutrition-maternal

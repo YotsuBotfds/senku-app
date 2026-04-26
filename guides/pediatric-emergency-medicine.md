@@ -8,7 +8,26 @@ tags:
   - essential
   - medical
 icon: 👶
+aliases:
+  - pediatric emergency
+  - child emergency medicine
+  - child weight based dosing
+  - pediatric airway anatomy
+  - pediatric vital signs by age
+  - child shock signs
+  - child febrile seizure
+  - child fever stiff neck purple rash
+  - child hard to wake fever rash
+  - child fast breathing lethargic
+  - child dehydration emergency
+  - infant emergency dosing
 description: Weight-based drug dosing, pediatric airway anatomy, febrile seizure management, dehydration assessment, vital sign ranges by age, common pediatric emergencies.
+routing_cues:
+  - Use for pediatric emergency assessment when weight-based dosing, airway anatomy, vital sign ranges by age, shock recognition, febrile seizure care, or pediatric medication calculations are central.
+  - Route child fever with stiff neck, vomiting, confusion, hard-to-wake behavior, non-blanching purple rash, fast breathing, lethargy, or dehydration toward pediatric emergency sources and sepsis support before routine child-care guidance.
+  - Pair with pediatric-emergencies-field for field triage of sepsis, dehydration, respiratory distress, poor feeding, cyanosis, or rapidly worsening infants and children.
+citations_required: true
+applicability: Pediatric emergency medicine for infants, children, and adolescents when age or weight changes triage, airway risk, vital signs, dosing, seizure response, dehydration assessment, or shock/sepsis escalation.
 related:
   - allergic-reactions-anaphylaxis
   - diabetes-management-remote
