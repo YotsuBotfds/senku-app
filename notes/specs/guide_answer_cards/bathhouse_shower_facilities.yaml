@@ -1,0 +1,176 @@
+card_id: bathhouse_shower_facilities
+guide_id: GD-945
+slug: bathhouse-shower-facilities
+title: "Bathhouse, Shower & Washing Facilities"
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - User asks how to set up, operate, or troubleshoot a shared bathhouse, shower stall, bucket shower, gravity shower, wash corner, or community washing facility.
+  - The question is about clean/dirty flow, privacy, towel and soap handling, wet/dry zones, drainage checks, slip prevention, scald prevention, or routine cleaning and maintenance.
+  - User reports pooled water, sewer-like smell, backflow, runoff toward wells or walkways, slippery floors, overheated water, moldy surfaces, or shared-facility confusion.
+required_first_actions:
+  - Keep the answer operational and safety-focused: separate clean and dirty areas, define dry and wet zones, and keep toilet waste separate from bathhouse graywater.
+  - Check drainage before routine use; stop use if graywater backs up, smells sewer-like, pools repeatedly, freezes into indoor pooling, or runs toward wells, springs, foundations, or main walkways.
+  - Address privacy, clean clothes/towel placement, soap drainage, shared touch points, slip hazards, and hot-water testing before giving layout or use steps.
+  - Use handoff language for plumbing design, hot-water construction, sanitizer chemistry, medical treatment, or decontamination guarantees.
+first_actions:
+  - Set a one-way flow: entry and dirty clothing, wash/rinse area, drying area, then clean clothing without crossing back through the wet zone.
+  - Keep clean towels, clean clothing, dirty laundry, used washcloths, shoes, drains, and toilet areas separated.
+  - Use a simple drainage path with a drain pan, floor drain, bucket, soak area, or graywater line that keeps standing water away from floors, walls, foot traffic, and drinking-water sources.
+  - Keep soap on a draining tray, hang towels to dry fully, wipe shared handles/benches/curtain edges, and remove hair or solids from screens before clogs build.
+  - Prevent slips with textured surfaces, clean walking paths, good lighting, no hoses or buckets in foot paths, and immediate cleanup of soap residue or spills.
+  - Prevent scalds by testing warm water before use, keeping hot containers out of walking paths, warning children, and mixing water down before anyone enters.
+urgent_red_flags:
+  - Graywater backs up into the wash area or a frozen/clogged line forces water to pool indoors.
+  - Sewer-like or rotten drain smell, recurring sour smell after cleaning, or visible backflow.
+  - Runoff is moving toward a well, spring, foundation, food storage, or main walkway.
+  - Chronic pooling under floors, along wall bases, or in walking paths.
+  - Slippery floors, poor lighting, loose hoses/buckets, or repeated falls/near-falls.
+  - Water feels painfully hot on the hand or forearm, or a child/elder/reduced-sensation user may be exposed to overheated water.
+forbidden_advice:
+  - Do not provide plumbing engineering, drain sizing, code-compliant piping design, pump design, or permanent wastewater construction instructions.
+  - Do not provide hot-water heater construction, boiler design, pressure-system design, or fuel-burning appliance instructions.
+  - Do not provide sanitizer chemistry, chemical concentration formulas, mixing ratios, contact-time tables, or bleach/cleaner dosing.
+  - Do not provide medical treatment for burns, infections, falls, mold exposure, or waterborne illness.
+  - Do not promise decontamination, sterilization, pathogen elimination, or guaranteed safety after unknown sewage, chemical, or body-fluid contamination.
+  - Do not keep a shared facility operating through sewer smell, backflow, runoff toward wells, chronic pooling, scald risk, or slip/fall hazards.
+do_not:
+  - Do not merge toilet waste with bathhouse graywater in routine bathhouse advice.
+  - Do not put clean towels or clean clothing in the wet or dirty zone.
+  - Do not let standing graywater, damp towel piles, or wet porous mats become the normal operating condition.
+  - Do not answer as a construction manual when the user is asking about engineering, plumbing, heaters, or treatment systems.
+routine_boundary: >
+  This card owns shared bathhouse and wash-station operations: layout flow,
+  drainage stop-use checks, privacy, towel/soap handling, slip/scald prevention,
+  cleaning, maintenance, and shared-use rules. It does not own plumbing
+  engineering, hot-water system construction, sanitizer chemistry, medical care,
+  or decontamination guarantees.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt is about a bathhouse or washing
+  facility, give conservative operational steps and ask one clarifying question
+  only when needed. If any drainage, scald, slip, sewage, runoff, or chronic
+  pooling red flag is plausible, default to stop-use and handoff before routine
+  operating advice.
+clarifying_questions:
+  - Is water pooling, backing up, smelling sewer-like, or running toward a well, spring, foundation, or walkway?
+  - Is this a one-person wash corner, household shower, or shared community bathhouse?
+  - Are users reporting slips, painfully hot water, lack of privacy, or towels/clean clothes getting wet or dirty?
+  - Is the user asking for operations and layout, or for plumbing/heater/treatment-system design?
+citation_ids:
+  - gd-945-good-bathhouse-needs
+  - gd-945-drainage-graywater-stop-use
+  - gd-945-clean-dirty-flow
+  - gd-945-soap-towels-shared-surfaces
+  - gd-945-heat-slip-safety
+  - gd-945-cleaning-maintenance
+  - gd-945-shared-facility-rules
+source_sections:
+  - guide: GD-945
+    slug: bathhouse-shower-facilities
+    title: "Bathhouse, Shower & Washing Facilities"
+    sections:
+      - "#what-a-good-bathhouse-needs"
+      - "#what-a-good-bathhouse-needs > Good site choices"
+      - "#what-a-good-bathhouse-needs > Bad site choices"
+      - "#simple-layouts > 3. Two-Zone Shared Bathhouse"
+      - "#simple-layouts > 4. Small Community Bathhouse"
+      - "#low-tech-shower-setups > Bucket Shower"
+      - "#low-tech-shower-setups > Gravity Shower"
+      - "#drainage-and-graywater"
+      - "#drainage-and-graywater > Stop-Use Thresholds"
+      - "#clean-and-dirty-flow"
+      - "#soap-towels-and-shared-surfaces"
+      - "#privacy-and-comfort"
+      - "#safety-around-heat-and-slips"
+      - "#cleaning-and-maintenance"
+      - "#shared-facility-rules"
+applicability:
+  owner: shared bathhouse and wash-station operations
+  use_when:
+    - clean_dirty_flow_and_wet_dry_zone_setup
+    - low_tech_shower_or_bucket_shower_operations
+    - graywater_drainage_stop_use_checks
+    - privacy_towels_soap_shared_surfaces
+    - slip_scald_cleaning_maintenance_rules
+  do_not_use_when:
+    - plumbing_engineering_or_code_design
+    - hot_water_system_construction
+    - sanitizer_or_disinfectant_chemistry
+    - medical_treatment_or_injury_care
+    - sewage_chemical_or_body_fluid_decontamination_guarantees
+  handoff:
+    - greywater-recycling-systems for graywater-system design beyond simple operational routing.
+    - plumbing-pipes for plumbing repair or pipe design.
+    - hot-water-systems-bathing-cleaning for heater/system selection and hot-water operation outside this facility card.
+    - hygiene-disease-prevention-basics for disease-control hygiene boundaries.
+    - sanitation-waste-management and sewage-treatment-safe-disposal for sewage or blackwater concerns.
+actions:
+  required:
+    - classify the prompt as layout, routine operation, drainage concern, shared-use hygiene, cleaning, slip hazard, or scald hazard
+    - check stop-use red flags before normal operating steps
+    - preserve clean-to-dirty and wet-to-dry separation
+    - give concise shared-facility rules and maintenance steps
+  standard:
+    - recommend privacy, reachable hooks, protected clean-clothes storage, towel drying, soap drainage, and touch-point cleaning
+    - recommend traction, lighting, clear walking paths, water-temperature testing, and supervised child use around hot water
+    - route engineering, chemistry, decontamination, and medical requests to the proper owner instead of improvising
+forbidden:
+  - plumbing engineering or drain sizing
+  - hot-water construction or pressure/fuel appliance instructions
+  - sanitizer dosing, chemical formulas, or cleaner mixing recipes
+  - medical treatment for burns, falls, infection, mold exposure, or waterborne illness
+  - decontamination guarantees for sewage, chemical, or body-fluid contamination
+  - continued use through sewer smell, backflow, well-directed runoff, chronic pooling, scald hazard, or slip hazard
+fallback:
+  - If sewer smell, backflow, runoff toward wells/springs/foundations/walkways, chronic pooling, painful hot water, or repeated slips are present, stop use and hand off before routine bathhouse operation.
+  - If the user asks for plumbing, heater, or treatment-system construction, state this card covers safe operation only and route to the relevant specialist guide.
+  - If contamination type is unknown or sewage/chemical/body-fluid exposure is present, do not promise cleanup success; isolate the area from routine use and route to sanitation, hygiene, or chemical-safety owners.
+output:
+  required:
+    - immediate use status: routine use, use with fixes, or stop-use/handoff
+    - clean/dirty and wet/dry flow steps
+    - drainage and runoff check
+    - privacy, towel, soap, and shared-surface handling
+    - slip/scald prevention step
+    - cleaning or maintenance cadence
+  prohibited:
+    - engineering specifications
+    - heater construction steps
+    - sanitizer formulas or dosing
+    - medical treatment
+    - guaranteed decontamination claims
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: minimum bathhouse functions
+    guide: GD-945
+    must_include:
+      - "A way to move used water away from the floor"
+      - "A place to hang or set clean clothes and towels"
+      - "A cleaning routine that keeps soap scum, mold, and odors from building up"
+  - name: drainage stop-use thresholds
+    guide: GD-945
+    must_include:
+      - "Stop using the bathhouse until the drainage problem is corrected if"
+      - "Graywater backs up into the wash area"
+      - "Runoff is moving toward a well, spring, foundation, or main walkway"
+  - name: clean dirty separation
+    guide: GD-945
+    must_include:
+      - "A bathhouse should have a clear flow from dirty to clean"
+      - "Dirty shoes and clean towels"
+      - "Toilet area and bathing area"
+  - name: heat and slip controls
+    guide: GD-945
+    must_include:
+      - "Use textured flooring, mats, or a rough surface where feet land"
+      - "Test the temperature before use"
+      - "Never let someone step into very hot water"
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-945 shared bathhouse and wash-station
+  operations. It owns layout flow, drainage stop-use checks, privacy, towel/soap
+  handling, slip/scald prevention, cleaning, maintenance, and shared-use rules.
+  It blocks plumbing engineering, hot-water construction, sanitizer chemistry,
+  medical treatment, and decontamination guarantees, with explicit stop-use and
+  handoff language for sewer smell, backflow, runoff toward wells, chronic
+  pooling, scald hazards, and slip hazards. READY_FOR_PARENT_CLOSE.

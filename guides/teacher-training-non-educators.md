@@ -23,9 +23,10 @@ related:
   - pedagogy-curriculum
 read_time: 14
 word_count: 5400
-last_updated: '2026-02-21'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: low
+reviewed_answer_card: teacher_training_non_educators
 ---
 <section id="intro">
 
@@ -58,6 +59,18 @@ Post-collapse communities cannot afford professional teacher educators. You must
 :::warning
 **Critical distinction:** Knowing how to do something ≠ knowing how to teach it. A master carpenter can build anything but might assume "just watch and copy" is sufficient instruction. Effective teaching requires intentional methodology: explaining reasoning, breaking complexity into steps, checking understanding, adjusting when learners struggle.
 :::
+
+</section>
+
+<section id="answer-card-safe-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-640. Use it when a subject-matter expert needs coaching on how to teach safely: lesson planning, pacing, assessment, feedback, classroom expectations, group variation, and simple documentation.
+
+Keep answers inside teaching-process support. Start by clarifying the learning goal, learner level, setting, time available, safety hazards in the skill being taught, and how understanding will be checked. Then give a small teaching plan: demonstrate slowly, explain the reason for each step, let learners practice with supervision, check understanding, give specific feedback, adjust pacing, and record what to teach next.
+
+Do not use this guide to diagnose learning disabilities, decide child-protection or legal processes, prescribe coercive discipline, provide medical or trauma teaching content beyond handoff, or replace trained educators, safeguarding leads, clinicians, or other required specialists. If the prompt includes suspected abuse, active trauma, medical crisis, unsafe workshop conditions, or a learner who may need formal evaluation or accommodations, hand off to the correct safety or specialist lane before continuing with routine teaching advice.
 
 </section>
 

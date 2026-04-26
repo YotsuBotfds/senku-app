@@ -1,0 +1,148 @@
+card_id: temporary_toilet_solutions
+guide_id: GD-926
+slug: temporary-toilet-solutions
+title: Temporary Toilet Solutions
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - A user needs an immediate temporary toilet during a water outage, sewer or septic repair, construction site, camp, off-grid build, flood disruption, or winter access problem.
+  - The user asks how to set up or operate a covered bucket toilet, bag-lined toilet, privacy area, handwashing station, or short-term waste handling routine.
+  - The user asks about smell, flies, spills, leaks, freezing, people avoiding the toilet, or how to transition from temporary use back to permanent sanitation.
+required_first_actions:
+  - State the containment goal first; keep feces and urine away from hands, drinking water, food, insects, children, animals, and living space.
+  - Set up a stable covered container with a tight lid, seat or stable top, dry absorbent cover material, and a nearby handwashing station with soap.
+  - Keep the toilet private, reachable, level, sheltered from flooding, and away from food preparation and drinking-water sources.
+  - Put on gloves before moving or emptying waste, keep the lid closed during transport, and empty only into an approved disposal or treatment system.
+  - For spills or leaks, stop use, replace or double-contain the container, clean visible contamination with soap and safe water, and wash hands immediately.
+first_actions:
+  - Choose a sturdy bucket or similar container, add dry absorbent material, fit a seat or stable top, and keep the lid closed after every use.
+  - Keep extra cover material beside the toilet and cover solid waste after each use to reduce odor, flies, and later handling problems.
+  - Add a privacy screen, light, and clear route so users do not avoid the toilet or improvise in unsafe places.
+  - Set a scheduled emptying routine before the container becomes full, heavy, smelly, frozen, or likely to spill.
+  - Keep cleaning supplies, gloves, and waste tools dedicated to toilet work and separate from food, water, and household cleaning items.
+  - Keep the temporary toilet operating only until permanent sanitation or serviced portable sanitation is restored.
+urgent_red_flags:
+  - Waste is leaking, spilled, overflowing, freezing solid in the container, or being carried uncovered through shared living or food areas.
+  - Waste is near wells, springs, surface water, flood paths, drainage channels, kitchens, food storage, children, or animals.
+  - Users cannot wash hands after toilet use or after handling the waste container.
+  - The user is asking for permanent latrine siting, pit design, sewage repair, compost processing, chemical treatment, or medical care instead of stopgap operations.
+forbidden_advice:
+  - Provide permanent latrine siting, setback, pit design, or build instructions.
+  - Claim bucket toilet contents are composted, treated, pathogen-safe, or safe for soil or food use because cover material was added.
+  - Provide composting-toilet processing timelines, pathogen-kill claims, compost use advice, or decontamination guarantees.
+  - Provide chemical treatment formulas, mixing instructions, dosing, or improvised disinfectant treatment for human waste.
+  - Provide sewage-system repair instructions or tell the user to pour waste into storm drains, open ground, waterways, or unapproved locations.
+  - Provide medical diagnosis, medication, rehydration, or disease treatment advice.
+do_not:
+  - Do not leave an open bucket uncovered indoors.
+  - Do not let the bucket overflow or wait until smell, flies, freezing, or weight makes handling unsafe.
+  - Do not carry uncovered waste or store it where children or animals can reach it.
+  - Do not mix toilet equipment with food, water, or general cleaning supplies.
+  - Do not turn an immediate stopgap answer into long-term sanitation design.
+routine_boundary: >
+  This card owns short-term temporary toilet setup and operations during an
+  outage or repair. It does not own permanent sanitation design, composting
+  processing, sewage-system repair, chemical treatment, clinical care, or
+  guarantees that contaminated surfaces or waste are decontaminated.
+acceptable_uncertain_fit: >
+  If the user likely needs immediate toilet access but details are incomplete,
+  give the covered-container, handwashing, containment, and approved-disposal
+  steps first. Ask one clarifying question about location, users, water access,
+  or disposal access only after the immediate containment routine is clear.
+clarifying_questions:
+  - Is this for a household, camp, worksite, or repair site, and how many people will use it?
+  - Do you have a sturdy container with a tight lid, dry cover material, soap, gloves, and an approved disposal option?
+  - Is the proposed location away from food areas, drinking-water sources, flood paths, children, and animals?
+  - Is the problem setup, odor, flies, leaking, freezing, handwashing, or disposal?
+citation_ids:
+  - gd-926-immediate-containment-goal
+  - gd-926-bucket-toilet-basics
+  - gd-926-privacy-placement
+  - gd-926-waste-handling-approved-disposal
+  - gd-926-handwashing-station
+  - gd-926-troubleshooting-spills-leaks
+  - gd-926-transition-boundary
+applicability:
+  owner: temporary toilet stopgap setup and operations
+  use_when:
+    - immediate toilet access during outage, repair, camp, worksite, or off-grid temporary use
+    - covered bucket or bag-lined toilet setup, privacy, lighting, and placement
+    - handwashing station setup and waste handling with approved disposal
+    - odor, flies, spills, leaks, freezing, and user-avoidance troubleshooting
+  do_not_use_when:
+    - permanent latrine siting, setbacks, pit design, or build instructions
+    - composting-toilet processing, compost use, or pathogen-kill claims
+    - chemical waste treatment formulas, sewage-system repair, medical treatment, or decontamination guarantees
+  handoff:
+    - latrine-sanitation-design for permanent latrine siting, setbacks, pit design, and build planning.
+    - composting-toilets for long-term composting toilet system selection and maintenance boundaries.
+    - sanitation-waste-management or community-waste-disposal for larger group disposal logistics and approved systems.
+    - hygiene-disease-prevention-basics or water-purification when disease prevention or drinking-water contamination dominates.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_output_handoff: true
+  disposal_only_into_approved_systems: true
+  avoid_medical_chemical_and_decontamination_claims: true
+fallback_handoff_language:
+  - If the user asks where to build a permanent latrine, how far from a well, or how to size/design a pit, stop temporary-toilet instructions and route to latrine-sanitation-design.
+  - If the user asks whether bucket contents are composted, pathogen-safe, or usable on soil or food crops, state that this card does not make composting or treatment claims and route to composting-toilets or sanitation-waste-management.
+  - If sewage repair, chemical treatment, illness treatment, or decontamination guarantees are requested, state that GD-926 only covers containment, handwashing, spill control, and approved disposal during temporary use.
+source_sections:
+  - guide: GD-926
+    slug: temporary-toilet-solutions
+    title: Temporary Toilet Solutions
+    sections:
+      - "#introduction"
+      - "#what-makes-a-good-temporary-toilet"
+      - "#bucket-toilet-basics"
+      - "#bucket-toilet-basics > Materials"
+      - "#bucket-toilet-basics > Setup"
+      - "#bucket-toilet-basics > Use"
+      - "#privacy-and-placement"
+      - "#privacy-and-placement > Placement rules"
+      - "#waste-handling-and-disposal"
+      - "#waste-handling-and-disposal > Safe handling workflow"
+      - "#waste-handling-and-disposal > Do not do this"
+      - "#handwashing-station"
+      - "#cold-weather-and-winter-use"
+      - "#transition-to-a-better-system"
+      - "#troubleshooting"
+      - "#troubleshooting > Spills or leaks"
+      - "#quick-start-checklist"
+source_invariants:
+  - name: temporary containment goal
+    guide: GD-926
+    must_include:
+      - "keep feces and urine away from hands, water, food, insects, and living space"
+      - "Hold waste safely without leaking"
+      - "Support handwashing every time"
+  - name: approved disposal and handling
+    guide: GD-926
+    must_include:
+      - "Empty only into an approved disposal or treatment system."
+      - "Never let waste contact drinking water, food, cooking areas, or bare hands."
+      - "Do not empty into storm drains"
+  - name: permanent sanitation boundary
+    guide: GD-926
+    must_include:
+      - "If you are choosing where to put a new permanent latrine"
+      - "use [Latrine & Sanitation Design](./latrine-sanitation-design.md)"
+      - "Temporary toilets should not become permanent by accident."
+  - name: no compost or chemical treatment claims
+    guide: GD-926
+    must_include:
+      - "Do not claim that bucket contents are composted, treated, or safe for soil use because cover material was added"
+      - "Do not mix chemicals into the bucket or give improvised treatment formulas"
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-926 immediate temporary toilet setup and
+  operations. The card intentionally stays inside covered-container setup,
+  privacy, handwashing, containment, approved disposal, spill/leak handling, and
+  transition back to permanent sanitation. It forbids permanent latrine design,
+  composting or pathogen-kill claims, chemical formulas, sewage repair, medical
+  treatment, and decontamination guarantees.

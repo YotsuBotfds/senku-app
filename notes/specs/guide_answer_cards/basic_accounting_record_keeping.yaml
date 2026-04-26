@@ -1,0 +1,160 @@
+card_id: basic_accounting_record_keeping
+guide_id: GD-689
+slug: basic-accounting-record-keeping
+title: Basic Accounting & Record-Keeping
+risk_tier: low
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks how to start or maintain a simple active ledger for goods, labor, storage, trade, or production records.
+  - A user asks for an inventory count form, stock count workflow, or ledger-to-physical-count reconciliation.
+  - A user asks how to standardize routine paper forms so records can be checked consistently.
+  - A user asks for a simple month-end audit or discrepancy review workflow for active community records.
+  - The prompt is about bookkeeping process, transparency, and error correction rather than enforcement, law, tax, rationing, or punishment.
+required_first_actions:
+  - Identify the record lane first: single-entry ledger, inventory count, standardized form, reconciliation, or audit workflow.
+  - Keep the answer procedural and record-focused: columns, fields, counts, comparison, signatures or marks, discrepancy notes, and handoff to archives after closure.
+  - For inventory or reconciliation prompts, require a physical count, ledger comparison, difference entry, reason note, and verifier/witness mark.
+  - For audit prompts, check completeness, recalculate balances, compare source forms to the ledger, document discrepancies, and summarize findings without assigning punishment.
+  - If the user asks for enforcement, legal/tax, rationing, punitive fraud response, or compliance claims, stop routine bookkeeping advice and route to the appropriate governance, legal, rationing, or specialist lane.
+first_actions:
+  - Set up one active ledger per category or storage location with Date, Item, In, Out, Balance, and Notes columns.
+  - Enter changes immediately or at day end, recalculate the running balance, and record the reason for each movement.
+  - Use inventory count forms with item, location, manager, count date, counted-by, verified-by, physical count, condition, ledger balance, difference, reason, action taken, and signature or mark.
+  - Standardize frequently used forms, pilot them briefly, train users, then file source forms chronologically or by category with clear labels.
+  - Close the period by reconciling active ledgers, checking source forms, writing a short audit summary, and transferring closed records to archive storage.
+urgent_red_flags:
+  - The user asks how to collect, enforce, seize collateral, shame, punish, or adjudicate debts based on records.
+  - The user asks for tax, legal, regulatory, ownership, land-title, or compliance advice.
+  - The user asks to calculate food rations, starvation timelines, or allocation formulas from the ledger.
+  - The user asks to accuse, punish, surveil, or coerce people for suspected fraud or shortages.
+  - Missing source forms, missing signatures, changed ledger values, or unexplained physical-count differences are being treated as proof of guilt rather than as discrepancies to document and review.
+forbidden_advice:
+  - Do not provide debt enforcement, coercive collection, collateral seizure, or legal judgment instructions.
+  - Do not provide tax, legal, regulatory, permit, or compliance determinations.
+  - Do not provide ration formulas, starvation planning, or allocation math beyond recording what moved.
+  - Do not provide punitive fraud handling, accusation scripts, surveillance practices, or punishment procedures.
+  - Do not claim that a ledger, form, audit, or signature proves compliance or legal validity.
+do_not:
+  - Do not turn record keeping into a debt collection or punishment workflow.
+  - Do not decide who is guilty when records and physical counts disagree; document the discrepancy and route to governance if needed.
+  - Do not answer archive-storage, retention, or preservation questions from this card except to hand off closed records.
+  - Do not answer handwriting-system, form-header design, or writing-material questions from this card except to hand off to the writing systems guide.
+routine_boundary: >
+  This card is for active bookkeeping and review workflow only: ledger setup,
+  inventory count forms, reconciliation, standardized forms, and month-end audit
+  summaries. It does not authorize enforcement, legal/tax advice, rationing,
+  punishment, compliance claims, or long-term archive/preservation methods.
+acceptable_uncertain_fit: >
+  If the prompt mixes routine bookkeeping with enforcement, legal/tax, rationing,
+  fraud punishment, or archive-preservation requests, answer only the safe record
+  workflow piece and explicitly hand off the unsafe or out-of-scope portion.
+clarifying_questions:
+  - Are you setting up a ledger, counting inventory, reconciling a difference, standardizing a form, or closing the month?
+  - What item or account is being tracked, and is there a physical count to compare against the ledger balance?
+  - Are you asking only how to document the discrepancy, or are you asking for enforcement, legal, tax, rationing, or punishment advice?
+applicability:
+  owner: active community bookkeeping and audit workflow
+  use_when:
+    - single-entry ledger setup and daily entries
+    - inventory count forms and stock-management review
+    - ledger-to-physical-count reconciliation
+    - standardized forms for recurring operations
+    - month-end audit completeness and discrepancy summaries
+  do_not_use_when:
+    - debt enforcement, coercive collection, or legal judgment
+    - tax, regulatory, ownership, or compliance advice
+    - rationing formulas or food-allocation calculations
+    - punitive fraud handling or surveillance
+    - long-term archival storage or writing-system design
+  handoff:
+    - archival-records for closed record storage, retention, preservation, indexing, and long-term access.
+    - written-language-record-keeping for writing materials, headers, handwriting systems, and form-design mechanics.
+    - governance or dispute-resolution guides for community decisions after records show a discrepancy.
+    - emergency-food-rationing or food-rationing guides for ration policy rather than ledger documentation.
+actions:
+  required_first_actions:
+    - Identify ledger, inventory, forms, reconciliation, or audit lane.
+    - Keep guidance to fields, counts, comparisons, signatures or marks, notes, and closure workflow.
+    - Stop and hand off enforcement, legal/tax, rationing, punitive, or compliance requests.
+  first_actions:
+    - Create the narrowest ledger or form that captures the active record need.
+    - Recalculate balances and compare source forms to ledgers before summarizing.
+    - Record discrepancies neutrally and route decisions outside bookkeeping.
+forbidden:
+  - debt enforcement or coercive collection
+  - legal judgments, tax advice, or compliance claims
+  - ration formulas or allocation policy
+  - punitive fraud handling, surveillance, or accusation workflow
+  - archive-preservation detail beyond handoff
+fallback:
+  - If the user asks what to do about a person after a discrepancy, document the record facts only and hand off to governance or dispute-resolution.
+  - If the user asks how much food people should receive, hand off to rationing guides and keep this card limited to recording movements.
+  - If the user asks whether records are legally valid or tax-compliant, refuse the determination and recommend qualified local legal/tax review where available.
+fallback_handoff_language:
+  - This guide can help document entries, counts, differences, and audit summaries, but it cannot decide guilt, enforce debts, calculate rations, or certify legal/tax compliance.
+  - For closed records, retention, storage, indexing, or preservation, hand off to Records & Archives.
+  - For writing materials, form headers, handwriting, or record notation systems, hand off to Written Language & Record-Keeping Systems.
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_applicability_boundary: true
+  forbid: true
+output_contract:
+  requires:
+    - identify the active record lane before giving steps
+    - include neutral discrepancy documentation for reconciliation or audit prompts
+    - include handoff language when the prompt asks for enforcement, legal/tax, rationing, punishment, compliance, archives, or writing systems
+  forbid:
+    - debt enforcement, legal judgments, ration formulas, punitive fraud handling, tax/legal advice, coercive collection, or compliance claims
+  must_include_applicability_boundary: true
+citation_ids:
+  - basic-accounting-active-scope
+  - single-entry-ledger-setup
+  - inventory-count-form
+  - standardized-forms-workflow
+  - audit-reconciliation-workflow
+source_sections:
+  - guide: GD-689
+    slug: basic-accounting-record-keeping
+    title: Basic Accounting & Record-Keeping
+    sections:
+      - "#single-entry-ledger"
+      - "#inventory-tracking"
+      - "#standardized-forms"
+      - "#auditing"
+source_invariants:
+  - name: active-record reviewed boundary
+    guide: GD-689
+    must_include:
+      - This is the reviewed answer-card surface for GD-689.
+      - active ledgers, inventory count forms, standardized forms, reconciliations, and month-end audit workflow
+      - Do not use it to enforce debts, make legal judgments, calculate rations, punish fraud, give tax or legal advice, coerce collection, or claim regulatory compliance.
+  - name: ledger setup and reconciliation fields
+    guide: GD-689
+    must_include:
+      - "List columns: Date | Item | In | Out | Balance | Notes"
+      - Count physical items (grain, tools, etc.)
+      - Compare count to ledger balance
+  - name: inventory count form fields
+    guide: GD-689
+    must_include:
+      - INVENTORY FORM
+      - Ledger balance last entry
+      - SIGNATURE (or mark)
+  - name: audit workflow
+    guide: GD-689
+    must_include:
+      - Are there entries for every transaction?
+      - Compare ledger to original forms
+      - Write simple summary
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-689 routine active bookkeeping. It owns
+  active ledger setup, inventory count forms, reconciliation, standardized forms,
+  and month-end audit workflow while explicitly excluding debt enforcement, legal
+  judgments, ration formulas, punitive fraud handling, tax/legal advice,
+  coercive collection, and compliance claims. READY_FOR_PARENT_CLOSE.

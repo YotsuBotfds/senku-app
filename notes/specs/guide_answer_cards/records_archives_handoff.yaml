@@ -1,0 +1,156 @@
+card_id: records_archives_handoff
+guide_id: GD-196
+slug: archival-records
+title: Records & Archives
+risk_tier: low
+evidence_owner: guide-corpus
+applicability: >
+  Safe archival records-management guidance for closing completed records,
+  cataloging them, creating backup copies, preserving storage conditions,
+  supervising access or lending, and handing records from active use into an
+  archive. This card does not provide legal advice, property-right decisions,
+  contract enforcement, crime classification, coercive governance, identity
+  adjudication, or dispute resolution.
+applies_when:
+  - A user asks how to close a completed record, ledger, source document, meeting record, or archive file.
+  - A user asks what to catalog during archive handoff: record type, subject, dates, location, transfer date, box number, or retention class.
+  - A user asks how to store, back up, copy, lend, or provide supervised access to original records.
+  - A user asks for safe archive procedure without asking the archivist to decide legal rights or settle a dispute.
+actions:
+  required_first_actions:
+    - Treat the task as records management: preserve, label, catalog, store, copy, and control access to completed records.
+    - Keep drafts, working notes, and scratch copies separate from the final record before transfer.
+    - Verify dates, signatures, references, category, date range, transfer date, box number, and retention class before archival handoff.
+    - Store originals in cool, dry, pest-free, light-protected, fire-protected conditions, and keep backup copies separate from the primary archive.
+    - If the user asks who owns something, whether a contract is enforceable, whether a crime occurred, or who is right in a dispute, preserve the record and route the judgment outside this card.
+  first_actions:
+    - Move closed books, signed source documents, and reconciled summaries out of active files and into the archive by category and date range.
+    - Use a hybrid catalog: major subject category first, then date order, with a master catalog entry for record type, subject, date range, and storage location.
+    - Mark backup copies as copies and record their location in the master catalog or a controlled locator list.
+    - Keep originals in the archive for supervised viewing; provide marked copies instead of lending originals whenever possible.
+    - Log access and transfer actions so custody is visible without turning the archivist into a judge or enforcer.
+required_first_actions:
+  - Treat the task as records management: preserve, label, catalog, store, copy, and control access to completed records.
+  - Keep drafts, working notes, and scratch copies separate from the final record before transfer.
+  - Verify dates, signatures, references, category, date range, transfer date, box number, and retention class before archival handoff.
+  - Store originals in cool, dry, pest-free, light-protected, fire-protected conditions, and keep backup copies separate from the primary archive.
+  - If the user asks who owns something, whether a contract is enforceable, whether a crime occurred, or who is right in a dispute, preserve the record and route the judgment outside this card.
+first_actions:
+  - Move closed books, signed source documents, and reconciled summaries out of active files and into the archive by category and date range.
+  - Use a hybrid catalog: major subject category first, then date order, with a master catalog entry for record type, subject, date range, and storage location.
+  - Mark backup copies as copies and record their location in the master catalog or a controlled locator list.
+  - Keep originals in the archive for supervised viewing; provide marked copies instead of lending originals whenever possible.
+  - Log access and transfer actions so custody is visible without turning the archivist into a judge or enforcer.
+urgent_red_flags:
+  - The prompt asks the archive process to decide property ownership, identity, criminal status, contractual enforceability, or who wins a dispute.
+  - The user wants original records removed from the archive for a conflict, enforcement action, or unsupervised lending.
+  - The only copy of a critical record is exposed to fire, flood, moisture, pests, or loss.
+  - Drafts, scratch copies, and final originals are mixed together without labels.
+forbidden_advice:
+  - Do not provide legal advice, property-right determinations, contract enforcement instructions, crime categories, or dispute-resolution rulings.
+  - Do not adjudicate identity, family status, inheritance, land title, ownership, membership, or voting rights from archived records.
+  - Do not recommend coercive governance, punishment, seizure, expulsion, surveillance, or enforcement based on archive handling.
+  - Do not tell users to lend original records unsupervised when a marked copy or supervised viewing would protect the archive.
+  - Do not present a catalog entry as a legal finding unless the source record itself is already a separate decision record.
+forbidden:
+  - legal advice
+  - property-right determinations
+  - contract enforcement
+  - crime classification
+  - coercive governance
+  - identity adjudication
+  - dispute resolution
+  - unsupervised original-record removal
+do_not:
+  - Do not decide the underlying claim while cataloging the document.
+  - Do not merge drafts, notes, scratch copies, and final records into one unlabeled file.
+  - Do not store every copy in one location when critical records need a separate backup.
+  - Do not continue routine lending guidance when the user is asking for enforcement, punishment, or adjudication.
+routine_boundary: >
+  This card is for the archive handoff and preservation workflow after a record
+  is complete. It can explain how to close, label, catalog, store, copy, and
+  supervise access to records, but it cannot decide the rights, obligations,
+  guilt, identity, or dispute outcome described by those records.
+acceptable_uncertain_fit: >
+  If the prompt mixes archive procedure with a legal or conflict question,
+  answer only the preservation side: secure the final record, separate drafts,
+  catalog metadata, protect originals, provide supervised access or marked
+  copies, and state that judgment or enforcement must be handled outside the
+  archive workflow.
+clarifying_questions:
+  - Is the record final, or are drafts and working notes still mixed with it?
+  - What category, date range, box/location, transfer date, and retention class should be recorded in the catalog?
+  - Is there already a backup copy stored away from the primary archive?
+  - Does the request involve access to the record only, or is someone asking the archivist to decide a right, claim, or dispute?
+fallback:
+  - If legal, property, contract, criminal, identity, or dispute questions appear, preserve the record and route the judgment to the appropriate non-archival authority.
+  - If storage conditions are unsafe, prioritize moving originals to cool, dry, pest-free, light-protected, fire-protected storage and making separate backup copies.
+  - If originals are requested for removal, provide supervised viewing or marked copies unless a separate authority has a documented custody process.
+fallback_handoff_language:
+  - Preserve and catalog the record, but do not use the archive process to decide legal rights, enforcement, crime status, identity, or the winner of a dispute.
+  - For conflict requests, provide supervised access or a marked copy according to access rules and route the decision itself outside the archive workflow.
+  - For preservation risk, secure the original first, then make or confirm a separate backup copy.
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: false
+  forbid: true
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_applicability_boundary: true
+  forbid: true
+citation_ids:
+  - records-closure-transfer
+  - cataloging-hybrid-master-catalog
+  - storage-conditions-backup-copies
+  - lending-access-originals
+  - archive-boundary-no-adjudication
+source_sections:
+  - guide: GD-196
+    slug: archival-records
+    title: Records & Archives
+    sections:
+      - "#implementation-steps-establishing-a-records-system"
+      - "#step-6-create-cataloging-system"
+      - "#step-7-close-and-transfer-records"
+      - "#cataloging-systems"
+      - "#physical-storage-conditions"
+      - "#storage-conditions"
+      - "#lending-rules"
+      - "#challenge-degrading-original-records"
+source_invariants:
+  - name: close and transfer handoff
+    guide: GD-196
+    must_include:
+      - Keep drafts, working notes, and scratch copies separate from the final record.
+      - Record the transfer date, box number, and retention class in the master catalog.
+      - preserve the record and route the judgment elsewhere
+  - name: cataloging stays descriptive
+    guide: GD-196
+    must_include:
+      - "Create a catalog that lists: record type, subject, date range, location in storage."
+      - Catalog entries should describe the record, not decide the underlying claim.
+      - the catalog should not announce that a disputed boundary is legally settled
+  - name: storage and access protect originals
+    guide: GD-196
+    must_include:
+      - Store in a location with stable humidity (ideally 30-50%).
+      - Keep records away from cooking fires and store some copies in a separate secure location as backup against total loss.
+      - Original documents should rarely if ever leave the archive.
+review_status: pilot_reviewed
+notes: >
+  Reviewed for safe closure on GD-196 archival records management only. The card
+  supports closure, transfer, cataloging, backup copies, storage conditions,
+  supervised access, and lending/copy boundaries while explicitly excluding
+  legal advice, property-right determinations, contract enforcement, crime
+  categories, coercive governance, identity adjudication, and dispute resolution.
+  READY_FOR_PARENT_CLOSE.

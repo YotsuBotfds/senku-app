@@ -43,6 +43,29 @@ aliases:
   - people won't use the toilet
   - how to empty a bucket toilet
   - no running water toilet
+routing_cues:
+  - Use this guide for immediate stopgap toilet setup during a water outage, sewer/septic repair, camp, worksite, or temporary household sanitation gap.
+  - Keep answers focused on covered bucket or bag-lined temporary toilets, privacy, handwashing, waste containment, spill/leak cleanup, and transition back to permanent sanitation.
+  - Do not use this guide for permanent latrine siting/build design, composting-toilet processing claims, sewage-system repair, chemical treatment formulas, medical diagnosis/treatment, or decontamination guarantees.
+citations_required: true
+citation_policy: cite this reviewed GD-926 answer card for temporary toilet stopgap setup and operations; hand off permanent siting/building to latrine-sanitation-design and composting-system questions to composting-toilets without making processing or treatment claims.
+applicability:
+  owner: immediate temporary toilet setup and operations during outage or repair
+  use_when:
+    - The user needs a toilet today during a sewer, septic, water, repair, worksite, camp, or off-grid temporary sanitation gap.
+    - The user asks how to set up or operate a covered bucket toilet, bag-lined toilet, privacy area, handwashing station, or waste handling routine.
+    - The answer can stay within containment, handwashing, approved disposal, spill/leak control, and transition back to permanent sanitation.
+  do_not_use_when:
+    - The user is choosing permanent latrine location, setbacks, pit design, or long-term sanitation infrastructure.
+    - The user wants composting-toilet processing, treatment timelines, pathogen-kill guarantees, or compost use advice.
+    - The user wants sewage-system repair, chemical treatment formulas, medical diagnosis/treatment, or decontamination guarantees.
+  handoff:
+    - latrine-sanitation-design for permanent latrine siting, setbacks, pit design, and build planning.
+    - composting-toilets for long-term composting toilet system selection and maintenance boundaries.
+    - sanitation-waste-management or community-waste-disposal for larger-scale waste logistics and approved disposal planning.
+    - water-purification or hygiene-disease-prevention-basics when drinking-water contamination or disease-prevention workflow dominates.
+answer_card:
+  - temporary_toilet_solutions
 icon: 🚽
 description: Emergency and improvised toilet setups for short-term use while building or repairing sanitation systems. Use this when you need a toilet now, a stopgap during a sewer or septic failure, or a temporary bathroom while the permanent system is still being built. Fix smells, flies, leaks, and freezing problems with bucket toilets, bag-lined toilets, and handwashing stations. Waste handling and contamination control for households, camps, and repair sites.
 related:
@@ -54,10 +77,16 @@ related:
   - water-purification
 read_time: 14
 word_count: 3200
-last_updated: '2026-04-16'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: medium
 ---
+
+:::warning
+This is the reviewed answer-card surface for GD-926. Use it for immediate temporary toilet setup and operations only: covered bucket or bag-lined toilet, privacy, handwashing, waste containment, spills/leaks, approved disposal, and transition back to permanent sanitation.
+
+Do not use this guide to give permanent latrine siting or build instructions, composting-toilet processing claims, sewage repair, chemical treatment formulas, medical diagnosis or treatment, or decontamination guarantees.
+:::
 
 ## Introduction
 
@@ -114,6 +143,7 @@ If a setup cannot do those things, it is not a toilet, just a contamination prob
 - Any setup near wells, surface water, or drainage channels
 - Open containers with no cover
 - Any plan that depends on "we'll figure out the waste later"
+- Any plan that treats a temporary toilet as permanent sanitation
 
 ## Temporary Toilet Options
 
@@ -213,6 +243,8 @@ Avoid dumping loose food scraps, liquids, or wet trash into the toilet. They inc
 - Do not pour raw waste onto soil where people walk or where runoff can carry it away
 - Do not empty into storm drains
 - Do not store waste where children or animals can reach it
+- Do not claim that bucket contents are composted, treated, or safe for soil use because cover material was added
+- Do not mix chemicals into the bucket or give improvised treatment formulas
 
 If you are in a camp or repair site, set a single clear waste handling point so every user does the same thing.
 

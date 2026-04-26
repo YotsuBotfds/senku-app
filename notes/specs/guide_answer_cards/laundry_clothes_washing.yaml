@@ -1,0 +1,129 @@
+card_id: laundry_clothes_washing
+guide_id: GD-942
+slug: laundry-clothes-washing
+title: Laundry & Clothes Washing Without Machines
+risk_tier: low
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks how to wash clothes by hand, wash clothes without a machine, rinse laundry, dry laundry, or prevent damp and musty smells.
+  - A user asks for low-water laundry steps, spot cleaning, airing clothes, or what to prioritize when water or soap is scarce.
+  - A user asks about ordinary work clothes, bedding, towels, grease smells, sweat smells, separating dirty and clean laundry, or storage after washing.
+required_first_actions:
+  - Confirm the question is routine laundry before giving ordinary washing steps.
+  - If blood, vomit, stool, sewage, chemical residue, lice, scabies, spreading skin infection, or sick-room contamination is present, route to the relevant hygiene, parasite, or chemical-safety owner before routine laundry.
+  - For routine laundry, lead with sorting dirty from clean items, using a small amount of soap, rinsing well, and drying fully before storage or reuse.
+first_actions:
+  - Sort laundry by dirty or clean status, color or dirt level when possible, ordinary clothes, work clothes, bedding and towels, and sick-room or parasite concern.
+  - For basic hand washing, soak briefly, agitate by hand, scrub collars/armpits/cuffs/socks/underwear/waistbands/knees/seat areas, drain dirty water, rinse until not slippery, wring, and dry fully.
+  - For low-water laundry, use two basins when available, wash a few items at a time with one basin, spot clean mostly clean garments, wipe-and-air stale garments, and prioritize underwear and socks.
+  - Rinse until water is mostly clear and fabric no longer feels slippery, with extra care for underwear, socks, baby clothes, bedding, towels, and sensitive-skin items.
+  - Dry in sun, wind, or a warm airy place, spacing garments so seams, cuffs, pockets, and waistbands dry completely before storage.
+urgent_red_flags:
+  - Clothing or bedding contaminated with blood, vomit, stool, sewage, wound drainage, or sick-room body fluids.
+  - Lice, scabies, bed bugs, fleas, or a contagious or spreading skin rash involving clothing, towels, bedding, hats, scarves, or close-body fabric.
+  - Fuel, solvent, pesticide, cleaner, unknown chemical, or other chemical residue on fabric.
+  - Damp clothes repeatedly becoming musty after rewashing and full drying, suggesting a storage or room moisture problem.
+forbidden_advice:
+  - Do not provide disinfectant formulas, sanitizer chemistry, bleach ratios, medical treatment, parasite treatment, or guaranteed decontamination.
+  - Do not treat blood, vomit, stool, sewage, sick-room contamination, spreading skin infection, lice, scabies, bed bugs, fleas, or chemical residue as ordinary laundry.
+  - Do not say sunlight, airing, soap, or routine hand washing guarantees disinfection or parasite eradication.
+  - Do not mix heavily contaminated, chemical-exposed, sick-room, or parasite laundry into clean or ordinary laundry without routing first.
+do_not:
+  - Do not skip sorting when contamination or chemical residue is possible.
+  - Do not leave damp clothes balled up, pack them before fully dry, or store clean laundry against damp walls or muddy floors.
+  - Do not overuse soap in a way that makes rinsing difficult or leaves irritating residue.
+  - Do not give ordinary mold cleanup advice when the issue is room moisture, damp closets, wall mold, or recurring musty odor after proper rewashing and drying.
+routine_boundary: >
+  This card is for routine hand laundry, low-water laundry, sorting, rinsing,
+  drying, damp/musty prevention, ordinary work clothes, and bedding. It stops
+  at ordinary washing and does not own hygiene decontamination, chemical residue,
+  parasite control, spreading skin infection, or sick-room contamination.
+acceptable_uncertain_fit: >
+  If the prompt may involve contamination, answer the boundary first: separate
+  the item, avoid mixing with clean laundry, and route to hygiene, parasite, or
+  chemical safety before ordinary washing. If no red flags are present, give the
+  short sort-wash-rinse-dry routine.
+clarifying_questions:
+  - Is this ordinary sweat, mud, grease, food, or stale odor, or was there blood, vomit, stool, sewage, illness, parasites, skin infection, or chemical residue?
+  - What do you have available: basin, bucket, soap, clean rinse water, sunlight, wind, or indoor drying space?
+  - Are these ordinary clothes, work clothes, bedding, towels, underwear, socks, baby clothes, or items used by someone sick?
+  - Is the problem a one-time musty smell, or does the smell return after rewashing and full drying?
+applicability:
+  owner: routine laundry only
+  use_when:
+    - routine hand washing, low-water washing, rinsing, drying, storage, and musty-smell prevention
+    - ordinary work clothes, bedding, towels, underwear, socks, and daily wear
+    - grease, mud, ash, sweat, food stains, stale odor, and ordinary dirt without contamination red flags
+  do_not_use_when:
+    - blood, vomit, stool, sewage, sick-room body fluids, or spreading skin infection is involved
+    - lice, scabies, bed bugs, fleas, or parasite control is involved
+    - fuel, solvent, pesticide, cleaner, or unknown chemical residue is involved
+    - recurring musty odor points to damp storage, damp rooms, wall mold, or moisture intrusion
+  handoff:
+    - hygiene-disease-prevention-basics for body-fluid, sewage, infection-spread, or contamination-control questions
+    - home-sick-care-hygiene for sick-room laundry and illness-care hygiene
+    - ectoparasites-lice-scabies-bed-bugs-fleas for lice, scabies, bed bugs, or fleas
+    - chemical-safety for fuel, solvent, pesticide, cleaner, or unknown chemical residue on clothing
+    - mold-prevention-remediation for recurring musty odor after rewashing and full drying or moisture in rooms/closets
+citation_ids:
+  - laundry-routing-boundary
+  - laundry-sorting
+  - laundry-basic-hand-wash
+  - laundry-low-water
+  - laundry-rinsing
+  - laundry-drying
+  - laundry-sick-room-boundary
+fallback_handoff_language:
+  - For blood, vomit, stool, sewage, sick-room contamination, or spreading skin infection, treat this as a hygiene or sick-care question before ordinary laundry.
+  - For lice, scabies, bed bugs, or fleas, route to the parasite guide before ordinary laundry steps.
+  - For fuel, solvent, pesticide, cleaner, or unknown chemical residue, isolate the item and route to chemical safety before washing with ordinary laundry.
+  - For musty smells that return after rewashing and full drying, route to mold or moisture-source assessment.
+output_contract:
+  requires:
+    - state the routine-laundry boundary before ordinary steps when contamination terms appear
+    - include sorting, small soap use, thorough rinsing, full drying, and dry storage for routine laundry
+    - include low-water prioritization when water scarcity is part of the prompt
+  forbid:
+    - disinfectant formulas, sanitizer chemistry, medical treatment, parasite treatment, or guaranteed decontamination
+    - ordinary-laundry framing for blood, vomit, stool, sewage, chemical residue, parasite, spreading skin infection, or sick-room contamination prompts
+  must_include_urgent_handoff: true
+  must_include_applicability_boundary: true
+source_sections:
+  - guide: GD-942
+    slug: laundry-clothes-washing
+    title: Laundry & Clothes Washing Without Machines
+    sections:
+      - "#overview"
+      - "#sorting"
+      - "#basic-hand-wash"
+      - "#low-water"
+      - "#rinsing"
+      - "#drying"
+      - "#illness-parasites"
+source_invariants:
+  - name: routine laundry boundary and contamination routing
+    guide: GD-942
+    must_include:
+      - This guide is for everyday clothes washing and low-water laundry routines.
+      - blood, vomit, stool, sewage, spreading skin infection, or sick-room contamination
+      - chemical residue
+  - name: hand wash rinse dry core
+    guide: GD-942
+    must_include:
+      - Use less soap than you think you need.
+      - Rinse until the water runs mostly clear and the fabric no longer feels slippery.
+      - Dry clothes fully before storage or rewearing.
+  - name: low water and musty prevention
+    guide: GD-942
+    must_include:
+      - Prioritize washing underwear and socks first when you do get water.
+      - Do not rewear damp or sweaty clothes.
+      - If the musty smell returns after rewashing and full drying
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure card for GD-942 routine laundry. It preserves practical hand
+  washing, low-water, rinsing, drying, work-clothes, bedding, and storage advice
+  while routing body-fluid, sewage, chemical, parasite, spreading skin infection,
+  and sick-room contamination to the relevant safety owners. It intentionally
+  excludes disinfectant formulas, sanitizer chemistry, medical treatment,
+  parasite treatment, and guaranteed decontamination claims.

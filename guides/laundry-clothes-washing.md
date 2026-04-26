@@ -38,6 +38,21 @@ aliases:
   - wash clothes with almost no water
   - laundry with no soap
   - freshen clothes without washing them
+routing_cues:
+  - Routine hand laundry, low-water clothes washing, sorting, rinsing, drying, work clothes, bedding, and damp or musty laundry prevention.
+  - Blood, vomit, stool, sewage, chemical residue, lice, scabies, spreading skin infection, or sick-room contamination that needs hygiene, parasite, or chemical-safety routing before ordinary laundry.
+citations_required: true
+applicability: >
+  Routine laundry guidance for ordinary clothes, bedding, work clothes, hand washing,
+  low-water washing, rinsing, drying, storage, and damp/musty prevention. Exclude
+  blood, vomit, stool, sewage, chemical residue, lice/scabies, spreading skin
+  infection, and sick-room contamination until the relevant hygiene, parasite, or
+  chemical-safety owner has been consulted.
+citation_policy: cite GD-942 for routine laundry process and boundaries only; route
+  contaminated, parasite-related, chemical, or sick-room decontamination claims to
+  the relevant reviewed owner guide before giving ordinary laundry steps.
+answer_card:
+  - laundry_clothes_washing
 icon: "🧺"
 description: Hand washing clothes, rinsing, drying, stain handling, work clothes, musty and grease smells, separating dirty and clean items, low-water laundry methods, and when laundry hygiene matters for illness or parasites.
 related:
@@ -57,8 +72,8 @@ related:
   - sanitation-waste-management
 read_time: 14
 word_count: 3300
-last_updated: '2026-04-13'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: low
 ---
 
@@ -102,6 +117,9 @@ If the question is really about one of these, route it directly:
 - mold on walls, closets, bathrooms, or room surfaces: `mold-prevention-remediation.md`
 - damp closet, humid room, or condensation on walls: `mold-prevention-remediation.md`
 - musty smell comes back after rewashing and full drying: `mold-prevention-remediation.md`
+- blood, vomit, stool, sewage, spreading skin infection, or sick-room contamination: `hygiene-disease-prevention-basics.md` or `home-sick-care-hygiene.md`
+- lice, scabies, bed bugs, or fleas: `ectoparasites-lice-scabies-bed-bugs-fleas.md`
+- fuel, solvent, pesticide, cleaner, or other chemical residue on clothing: `chemical-safety.md`
 
 </section>
 
@@ -321,7 +339,7 @@ The faster you treat a stain, the easier it is to remove.
 ### Common stain types
 
 - **Mud:** Let dry, brush off, then wash.
-- **Blood:** Rinse in cool water first. Hot water can set blood stains.
+- **Blood, vomit, stool, or sewage:** Treat as a hygiene contamination question first, not routine stain removal. Route to the hygiene or sick-care guide before ordinary laundry steps.
 - **Grease or oil:** Rub in soap, then wash.
 - **Food or drink:** Rinse quickly, then soap and wash.
 - **Smoke or ash:** Shake out first, then wash with a little extra soap.
@@ -384,6 +402,8 @@ If work clothes still smell after washing:
 Laundry becomes a health task when someone is sick, has a skin infection, or has parasites.
 
 ### Sick-room laundry
+
+For blood, vomit, stool, sewage, spreading skin infection, or sick-room contamination, use the hygiene or sick-care guide first. This laundry guide can support ordinary sorting, washing, rinsing, and full drying after that handoff, but it does not provide disinfectant formulas, sanitizer chemistry, medical treatment, or guaranteed decontamination.
 
 Wash separately when possible:
 - Bedding used by a sick person

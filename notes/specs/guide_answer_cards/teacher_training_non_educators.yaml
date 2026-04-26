@@ -1,0 +1,133 @@
+card_id: teacher_training_non_educators
+guide_id: GD-640
+slug: teacher-training-non-educators
+title: Teacher Training for Non-Educators
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - A subject-matter expert knows a skill but needs help teaching it to beginners.
+  - A user asks how to plan, pace, assess, document, or give feedback during practical lessons.
+  - A user asks how to handle mixed learner speeds, questions, classroom expectations, or group variation without formal teacher training.
+applicability:
+  owner: teaching-process coaching for non-educator subject-matter experts
+  use_when:
+    - lesson planning, demonstration structure, guided practice, and closing checks
+    - pacing fast, average, and slower learners without shaming or coercion
+    - assessment, feedback, expectations, group management, and simple progress notes
+  do_not_use_when:
+    - diagnosis of dyslexia, attention disorders, trauma, disability, or medical conditions
+    - child-protection, abuse, guardianship, legal reporting, or safeguarding process decisions
+    - emergency care, clinical teaching content, trauma treatment, or medical protocol instruction
+    - replacing trained educators, safeguarding leads, clinicians, or required specialists
+  handoff:
+    - education-teaching-methods when the user needs a lesson content method rather than teacher coaching
+    - pedagogy-curriculum for broad curriculum design or mixed-age school structure
+    - child-protection-youth-rights for suspected abuse, neglect, coercion, or rights/legal concerns
+    - medical, trauma, or safeguarding owners when learner safety or clinical content is the main issue
+required_first_actions:
+  - Confirm the teaching context first: skill/topic, learner level, group size, time available, setting hazards, and what success should look like.
+  - Keep the answer inside teaching-process coaching unless the user asks for content owned by another safety or specialist guide.
+  - If the prompt includes suspected abuse, medical crisis, trauma, formal disability diagnosis, or coercive discipline, hand off before giving routine teaching advice.
+first_actions:
+  - Turn the skill into one objective, a short introduction, a slow demonstration, supervised guided practice, and a closing assessment.
+  - Match pacing to learner progress: add challenge for fast learners, normal support for average learners, and smaller steps or different methods for slower learners.
+  - Use observation, demonstration, verbal questioning, and learner explanation to check understanding.
+  - Give feedback that is specific, immediate, actionable, balanced, and about the skill rather than the person.
+  - Set clear expectations, keep the learning space physically safe, structure time, and manage behavior by addressing boredom, confusion, frustration, discomfort, or conflict.
+  - Keep simple notes on skill practiced, competency level, observed gaps, and the next teaching step.
+urgent_red_flags:
+  - The prompt asks for diagnosing a learning disability, mental health condition, trauma response, or medical limitation.
+  - The prompt involves suspected abuse, neglect, coercion, threats, legal reporting, guardianship, or child-protection decisions.
+  - The teaching setting has active physical hazards, dangerous tools without safety control, severe injury, medical crisis, or trauma content.
+  - The user wants punishment, humiliation, isolation, threats, or coercive discipline framed as classroom management.
+  - The user asks the non-educator to replace trained educators, safeguarding staff, clinicians, or specialists where those roles are required.
+forbidden_advice:
+  - Do not diagnose learning disabilities, attention disorders, trauma, medical limitations, or mental health conditions.
+  - Do not give child-protection legal process, investigative instructions, custody/guardianship decisions, or mandatory-reporting scripts.
+  - Do not recommend coercive discipline, humiliation, threats, deprivation, forced compliance, or unsafe isolation.
+  - Do not provide medical, trauma, clinical, or emergency teaching protocols beyond handoff to the correct owner.
+  - Do not present subject-matter experts as replacements for trained educators, safeguarding leads, clinicians, or required specialists.
+do_not:
+  - Do not shame slower learners or treat slower learning as inability.
+  - Do not continue routine lesson-planning guidance when the prompt is primarily medical, legal, safeguarding, or emergency safety.
+  - Do not invent accommodations as diagnosis; describe observable teaching adjustments and recommend specialist support when needed.
+routine_boundary: >
+  This card is for coaching subject-matter experts on safe teaching process:
+  planning, pacing, assessment, feedback, expectations, group variation, and
+  documentation. It is not a diagnosis, legal, safeguarding, emergency medical,
+  trauma-treatment, or credential-replacement guide.
+acceptable_uncertain_fit: >
+  If the prompt is ambiguous, answer with a brief context check and a safe
+  teaching-process starter plan. Withhold diagnosis, legal/safeguarding process,
+  coercive discipline, and clinical protocol detail until the correct specialist
+  lane is identified.
+clarifying_questions:
+  - What skill or topic is being taught, and what should learners be able to do by the end?
+  - How old or experienced are the learners, how large is the group, and how much time is available?
+  - Are there physical hazards, safeguarding concerns, medical/trauma issues, or formal accommodation needs involved?
+  - What evidence will show the learner can do it, explain it, or teach it safely to someone else?
+citation_ids:
+  - teacher-training-safe-boundary
+  - teacher-training-lesson-planning
+  - teacher-training-assessment
+  - teacher-training-pacing
+  - teacher-training-classroom-management
+  - teacher-training-feedback
+  - teacher-training-documentation
+source_sections:
+  - guide: GD-640
+    slug: teacher-training-non-educators
+    title: Teacher Training for Non-Educators
+    sections:
+      - "#answer-card-safe-boundary"
+      - "#lesson-planning"
+      - "#assessment"
+      - "#pacing"
+      - "#classroom-management"
+      - "#feedback"
+      - "#documentation"
+      - "#teaching-skills"
+source_invariants:
+  - name: reviewed boundary forbids diagnosis and legal/medical substitution
+    guide: GD-640
+    must_include:
+      - This is the reviewed answer-card surface for GD-640.
+      - Do not use this guide to diagnose learning disabilities
+      - replace trained educators, safeguarding leads, clinicians, or other required specialists
+  - name: core lesson plan and assessment remain present
+    guide: GD-640
+    must_include:
+      - LESSON PLAN TEMPLATE
+      - Demonstration
+      - Guided practice
+      - Assessment methods
+  - name: non-shaming pacing and feedback remain present
+    guide: GD-640
+    must_include:
+      - Don't confuse slower learning with inability
+      - Feedback is about skill, not person
+      - Never shame
+fallback_handoff_language:
+  - This is outside routine teacher-coaching. Hand off to the correct safeguarding, medical, legal, trauma, or specialist education owner before continuing.
+  - For suspected abuse, neglect, threats, coercion, or guardianship/legal concerns, route to child-protection and rights guidance instead of classroom-management advice.
+  - For medical crisis, trauma treatment, severe injury, or clinical teaching protocols, route to medical or trauma owners and keep this card to teaching-process support only.
+  - For possible disability or accommodation needs, describe observed learning barriers and safe teaching adjustments, then involve trained education or clinical specialists where available.
+output_contract:
+  requires:
+    - context check before advice
+    - a bounded lesson, pacing, assessment, feedback, or documentation action
+    - explicit handoff when the prompt crosses diagnosis, legal, safeguarding, coercive discipline, medical, trauma, or credential-replacement boundaries
+  forbid:
+    - diagnosis of learning disabilities or medical/trauma conditions
+    - child-protection/legal process instructions
+    - coercive discipline or humiliation
+    - replacing trained educators, safeguarding leads, clinicians, or specialists
+  must_include_applicability_boundary: true
+  must_include_urgent_handoff: true
+review_status: pilot_reviewed
+notes: >
+  Reviewed for safe closure on GD-640 teacher-coaching prompts. The card keeps
+  answers in lesson planning, pacing, assessment, feedback, expectations, group
+  variation, and documentation, while blocking diagnosis, child-protection/legal
+  process, coercive discipline, medical/trauma protocol content, and replacement
+  of trained educators or safeguarding/specialist roles.

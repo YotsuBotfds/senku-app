@@ -21,10 +21,21 @@ related:
   - double-entry-bookkeeping
   - papermaking
   - written-language-record-keeping
+citations_required: true
+applicability: >
+  Active community bookkeeping only: single-entry ledger setup, inventory count
+  forms, reconciliations, standardized operating forms, and month-end audit
+  workflow. Do not use this guide as authority for debt enforcement, legal
+  judgments, ration formulas, punitive fraud handling, tax/legal advice,
+  coercive collection, or compliance claims.
+citation_policy: cite GD-689 only for routine active ledger, inventory, form,
+  reconciliation, and audit-workflow answers within the reviewed boundary.
+answer_card:
+  - basic_accounting_record_keeping
 read_time: 12
 word_count: 5200
-last_updated: '2026-04-16'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 custom_css: |
   .ledger-example { background-color: var(--surface); padding: 15px; margin: 15px 0; border-left: 4px solid var(--accent); border-radius: 4px; font-family: monospace; font-size: 0.9em; }
   .accounting-step { background-color: var(--card); padding: 12px; margin: 10px 0; border-left: 3px solid var(--accent2); border-radius: 3px; }
@@ -40,6 +51,8 @@ liability_level: low
 :::
 
 Use this guide for active records: transaction entry, ledgers, inventory counts, labor logs, reconciliations, and month-end cleanup. If the question is about long-term storage, indexing, retention, or preserving closed records, hand off to [Records & Archives](archival-records.html). If the question is about headers, form templates, handwriting, or writing materials, hand off to [Written Language & Record-Keeping Systems](written-language-record-keeping.html).
+
+This is the reviewed answer-card surface for GD-689. Use it for practical setup and maintenance of active ledgers, inventory count forms, standardized forms, reconciliations, and month-end audit workflow. Do not use it to enforce debts, make legal judgments, calculate rations, punish fraud, give tax or legal advice, coerce collection, or claim regulatory compliance.
 
 <section id="why-records-matter">
 

@@ -27,8 +27,22 @@ related:
   - written-language-record-keeping
 read_time: 8
 word_count: 6090
-last_updated: '2026-04-16'
-version: '1.1'
+last_updated: '2026-04-26'
+version: '1.2'
+citations_required: true
+applicability: >
+  Safe records-management guidance for closing completed records, cataloging,
+  backup copies, storage conditions, supervised access, lending/copy rules, and
+  archive handoff. Do not use this guide to determine legal rights, enforce
+  contracts, classify crimes, adjudicate identity, coerce governance decisions,
+  or resolve disputes.
+citation_policy: >
+  Cite GD-196 and this guide's reviewed answer-card content for archival
+  closure, cataloging, storage, backup, access, and handoff practices only.
+  Route legal, property-right, contract-enforcement, criminal, identity, or
+  dispute-resolution questions to the appropriate non-archival authority.
+answer_card:
+  - records_archives_handoff
 custom_css: |
   .subtitle{font-size:1.1em;color:#a0a0a0;font-style:italic}.highlight-box{background-color:#2d2d2d;border-left:4px
   solid #d4a574;padding:20px;margin:20px 0;border-radius:3px}.highlight-box
@@ -306,6 +320,10 @@ Once a record is complete, move it out of the active file and into the archive w
 - Record the transfer date, box number, and retention class in the master catalog.
 - Keep the active file lean so current work does not get mixed with preserved records.
 
+Use this closure step only for records-management decisions: what is final, where it is stored, how it is labeled, and who received it. The archive handoff does not decide who owns property, whether a contract is enforceable, whether a crime occurred, or which party is right in a dispute. If those questions arise, preserve the record and route the judgment elsewhere.
+
+Before transfer, make the preservation copy plan explicit. Critical records should have at least one backup copy kept in a separate secure location; routine records should be copied on a predictable schedule before ink, paper, bindings, or storage containers begin to fail. Mark copies as copies so they cannot be confused with the original.
+
 ## Roles & Responsibilities
 
 ### Community Archivist
@@ -468,6 +486,8 @@ Records only serve their purpose if they can be found and read. Archive manageme
 
 **Best Practice:** Use a hybrid system. Divide records into major subject categories (land, trade, vital records, governance). Within each category, arrange by date. Create a catalog that lists: record type, subject, date range, location in storage. This allows retrieval by any of these approaches.
 
+Catalog entries should describe the record, not decide the underlying claim. A land deed can be cataloged as a land record with parties, date range, and box location; the catalog should not announce that a disputed boundary is legally settled unless a separate competent decision record already says so.
+
 #### Physical Storage Conditions
 
 The physical environment profoundly affects how long records survive. Follow these principles:
@@ -484,6 +504,8 @@ The physical environment profoundly affects how long records survive. Follow the
 
 An ideal archive might be built into a basement (cool, dry) or underground chamber, with thick stone or earth walls providing insulation and protection from fire. Wooden shelving should be used (not iron, which can rust and stain), and records should be stored in wooden boxes with tight-fitting lids.
 
+Separate backup copies protect against total loss. Keep critical copies far enough from the primary archive that one fire, flood, pest event, or theft does not destroy both sets, and record the backup location in the master catalog or a controlled locator list.
+
 #### Lending Rules
 
 If records are held in a community archive, rules should govern who can access them and under what conditions:
@@ -493,6 +515,8 @@ If records are held in a community archive, rules should govern who can access t
 - **Copying:** Making handwritten copies from originals may be allowed, but it takes time and allows for error. If many people need the same information, it may be more efficient to maintain copies.
 - **Removal from Archive:** Original documents should rarely if ever leave the archive. In disputes, make a temporary copy for the disputant rather than removing the original.
 - **Damage Prevention:** Establish rules: no eating or drinking near records, careful handling, no marking or annotating originals.
+
+Access and lending rules protect records; they do not decide rights. When a request involves a conflict, provide supervised access or a marked copy according to the rules, log the request, and avoid turning the archivist into a judge, enforcer, investigator, or identity authority.
 
 ### Oral History & Witness Documentation
 

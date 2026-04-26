@@ -39,8 +39,9 @@ related:
 read_time: 16
 word_count: 3600
 last_updated: '2026-04-13'
-version: '1.0'
+version: '1.1'
 liability_level: medium
+answer_card_review_status: pilot_reviewed
 ---
 
 :::tip Quick routing for operational prompts
