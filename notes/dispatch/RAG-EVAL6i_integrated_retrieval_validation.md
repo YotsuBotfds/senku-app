@@ -50,3 +50,23 @@ Integrated retrieval metrics:
   only at rank 5 or 8; likely need route-family source packaging.
 - Keep the integrated retrieval artifact as a local bench proof unless the
   artifact policy changes; the prompt pack and notes are the tracked contract.
+
+## 2026-04-25 Wet-Electrical Runtime Follow-Up
+
+After adding narrow wet-electrical hazard detection for storm/roof leak prompts,
+the retrieval-only proof
+`artifacts/bench/rag_eval_high_liability_compound_holdouts_20260425_wet_electrical_runtime_retrieval_only.md`
+improved to:
+
+| metric | result |
+| --- | --- |
+| expected hit@1 | 8/14 |
+| expected hit@3 | 11/14 |
+| expected hit@8 | 14/14 |
+| expected owner best rank | 2.29 |
+| simple owner share | 55/112 |
+
+`RE6-SH-003` now retrieves `GD-513` at rank 1. `RE6-SH-001` still starts with
+roof-leak support owners, but `GD-513` moved into top 8 at ranks 5-8. Prompt
+expectation validation against this retrieval artifact passed with 0 errors and
+0 warnings.

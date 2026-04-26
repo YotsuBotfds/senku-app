@@ -26,8 +26,9 @@ the only untracked file.
 & .\.venvs\senku-validate\Scripts\python.exe scripts\live_queue_monitor.py --host 127.0.0.1 --port 8765
 ```
 
-Use `http://127.0.0.1:8765/status.json` for machine-readable status or
-`http://127.0.0.1:8765/` for the browser view. The useful fields are:
+Use `http://127.0.0.1:8765/status` or
+`http://127.0.0.1:8765/status.json` for machine-readable monitor state. The UI
+remains at `http://127.0.0.1:8765/` for the browser view. The useful fields are:
 
 - `git.head` / `git.head_full`: current commit anchor.
 - `git.status.clean`: actionable worktree cleanliness after protected benign

@@ -789,6 +789,39 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertIn("Do not tell the user to climb onto a wet roof", roof_prompt)
         self.assertIn("durable patching waits for dry, stable conditions", roof_prompt)
 
+    def test_wet_roof_electrical_prompts_route_to_hazard_first_retrieval(self):
+        prompts = [
+            "A storm damaged the roof, water is coming in, and some outlets got wet. What is safe to do first?",
+            "Can we patch the roof now if there may be electrical damage inside and standing water near the panel?",
+        ]
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertTrue(query._is_electrical_hazard_query(prompt))
+                self.assertEqual(query._retrieval_profile_for_question(prompt), "safety_triage")
+                specs = query._supplemental_retrieval_specs(prompt, 8)
+                self.assertTrue(
+                    any("electrical safety hazard prevention" in spec["text"] for spec in specs),
+                    [spec["text"] for spec in specs],
+                )
+
+        electrical_meta = {
+            "guide_title": "Electrical Safety & Hazard Prevention",
+            "slug": "electrical-safety-hazard-prevention",
+            "description": "electrical safety wet outlet standing water near panel de-energize do not touch",
+            "category": "power-generation",
+        }
+        roof_meta = {
+            "guide_title": "Roof Leak Emergency Repair",
+            "slug": "roof-leak-emergency-repair",
+            "description": "storm damage roof patch temporary repair active roof leak",
+            "category": "building",
+        }
+        question = prompts[1]
+        self.assertLess(
+            query._metadata_rerank_delta(question, electrical_meta),
+            query._metadata_rerank_delta(question, roof_meta),
+        )
+
     def test_market_tax_and_building_habitability_prompts_get_guardrails(self):
         basic_results = {
             "documents": [["Focused planning note."]],

@@ -648,7 +648,7 @@ def make_handler(repo_root: Path, refresh_seconds: int) -> type[BaseHTTPRequestH
                     "text/html; charset=utf-8",
                 )
                 return
-            if route == "/status.json":
+            if route in {"/status", "/status.json"}:
                 self._send(
                     json_response(collect_monitor_data(repo_root)),
                     "application/json; charset=utf-8",

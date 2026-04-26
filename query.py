@@ -2380,6 +2380,21 @@ _ELECTRICAL_HAZARD_QUERY_MARKERS = {
     "wire across driveway",
     "sparking outlet",
     "outlet sparked",
+    "wet outlet",
+    "wet outlets",
+    "outlet got wet",
+    "outlets got wet",
+    "water through outlet",
+    "water through outlets",
+    "water through light fixture",
+    "water through fixtures",
+    "water near outlet",
+    "water near outlets",
+    "standing water near panel",
+    "standing water near breaker",
+    "standing water near breaker box",
+    "electrical damage inside",
+    "electrical hazard before roof repair",
     "wet breaker box",
     "breaker box after flood",
     "before touching anything",
@@ -2401,6 +2416,13 @@ _ELECTRICAL_HAZARD_POSITIVE_METADATA_MARKERS = {
     "live wire",
     "downed power line",
     "wet breaker",
+    "wet outlet",
+    "outlet got wet",
+    "outlets got wet",
+    "water through outlet",
+    "water through light fixture",
+    "standing water near panel",
+    "electrical damage inside",
     "sparking outlet",
     "de-energize",
     "do not touch",
@@ -2412,6 +2434,9 @@ _ELECTRICAL_HAZARD_DISTRACTOR_METADATA_MARKERS = {
     "home repair",
     "simple home repairs",
     "storm damage",
+    "roof leak emergency repair",
+    "roof patch",
+    "patch roof",
     "seismic",
     "earthquake",
     "wiring project",
@@ -11359,6 +11384,7 @@ def _retrieval_profile_for_question(question, frame=None):
         or _is_infected_wound_boundary_query(question)
         or _is_poisoning_unknown_ingestion_card_query(question)
         or _is_gi_bleed_emergency_query(question)
+        or _is_electrical_hazard_query(question)
         or _is_cardiac_first_query(question)
         or _scenario_frame_is_safety_critical(frame or build_scenario_frame(question))
     ):

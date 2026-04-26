@@ -1,9 +1,13 @@
 import importlib.util
+import json
 import os
 import sys
 import tempfile
+import threading
 import unittest
+from http.server import ThreadingHTTPServer
 from pathlib import Path
+from urllib.request import urlopen
 
 
 def load_module():
@@ -231,6 +235,37 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertIn("setInterval(refresh, REFRESH_MS)", rendered)
         self.assertIn("Polling every <code>20s</code>", rendered)
         self.assertIn("CP9 / RAG Queue", rendered)
+
+    def test_status_endpoint_returns_json_monitor_state(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "notes" / "dispatch").mkdir(parents=True)
+            (root / "artifacts" / "bench").mkdir(parents=True)
+            server = ThreadingHTTPServer(
+                ("127.0.0.1", 0),
+                module.make_handler(root, refresh_seconds=20),
+            )
+            thread = threading.Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                host, port = server.server_address
+                with urlopen(f"http://{host}:{port}/status", timeout=5) as response:
+                    body = response.read()
+                    content_type = response.headers.get("Content-Type")
+                    cache_control = response.headers.get("Cache-Control")
+            finally:
+                server.shutdown()
+                thread.join(timeout=5)
+                server.server_close()
+
+        data = json.loads(body.decode("utf-8"))
+
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(cache_control, "no-store")
+        self.assertIn("timestamp", data)
+        self.assertIn("git", data)
+        self.assertIn("queues", data)
 
 
 if __name__ == "__main__":
