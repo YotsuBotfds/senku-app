@@ -17,7 +17,9 @@ param(
 
     [string[]]$ExtraBenchArgs = @(),
 
-    [switch]$EnableCardBackedRuntimeAnswers
+    [switch]$EnableCardBackedRuntimeAnswers,
+
+    [switch]$SkipRuntimePreflight
 )
 
 $ErrorActionPreference = 'Stop'
@@ -519,10 +521,26 @@ function Invoke-GuidePromptValidation {
         [int]$TopK,
         [string]$OutputDir,
         [string[]]$ExtraBenchArgs,
-        [switch]$EnableCardBackedRuntimeAnswers
+        [switch]$EnableCardBackedRuntimeAnswers,
+        [switch]$SkipRuntimePreflight
     )
 
     New-Item -ItemType Directory -Force -Path $outputRoot | Out-Null
+
+    $runtimePreflightPath = Join-Path $repoRoot 'scripts\check_runtime_endpoints.py'
+    if (-not $SkipRuntimePreflight) {
+        if (-not (Test-Path -LiteralPath $runtimePreflightPath)) {
+            throw "Runtime endpoint preflight script not found at: $runtimePreflightPath"
+        }
+        Write-Host "Running runtime endpoint preflight..."
+        & $PythonPath -B $runtimePreflightPath `
+            --gen-url $GenerationUrl `
+            --gen-model $GenerationModel `
+            --embed-url $EmbedUrl
+        if ($LASTEXITCODE -ne 0) {
+            throw "Runtime endpoint preflight failed with exit code $LASTEXITCODE"
+        }
+    }
 
     $wavesToRun = if ($Wave -eq 'all') { @('w', 'x', 'xx', 'y', 'z', 'af', 'ag', 'ah', 'ai', 'aj', 'ak', 'al', 'am', 'an', 'ao', 'ap', 'aq', 'ar', 'as', 'at', 'au', 'av', 'aw', 'ax', 'ay', 'az', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bk', 'bl', 'bm', 'bn', 'bo', 'bp', 'bq', 'br', 'bs', 'bt', 'bu', 'bv', 'bw', 'bx', 'by', 'bz', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'cg', 'ch', 'ci', 'cj', 'ck', 'cl', 'cm', 'cn', 'co', 'cp', 'cq', 'cr', 'cs', 'ct', 'cu', 'cv', 'cw', 'cx', 'cy', 'cz', 'da', 'db', 'dc', 'dd', 'de', 'df', 'dg', 'dh', 'di', 'dj', 'dk', 'dl', 'dm', 'dn', 'do', 'dp', 'dq', 'dr', 'ds', 'dt', 'du', 'dv', 'dw', 'dx', 'dy', 'dz', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'eg', 'eh', 'ei', 'ej', 'ek', 'el', 'em', 'en', 'eo', 'ep', 'eq', 'er', 'es', 'et', 'eu', 'ev', 'ew', 'ex', 'ey', 'ez', 'fa', 'fb', 'fc', 'fd', 'fe') } else { @($Wave) }
     $timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
@@ -618,5 +636,6 @@ if ($MyInvocation.InvocationName -ne '.') {
         -TopK $TopK `
         -OutputDir $OutputDir `
         -ExtraBenchArgs $ExtraBenchArgs `
-        -EnableCardBackedRuntimeAnswers:$EnableCardBackedRuntimeAnswers
+        -EnableCardBackedRuntimeAnswers:$EnableCardBackedRuntimeAnswers `
+        -SkipRuntimePreflight:$SkipRuntimePreflight
 }

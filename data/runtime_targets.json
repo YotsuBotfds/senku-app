@@ -1,0 +1,31 @@
+{
+  "default_profile": "local_split_litert",
+  "profiles": {
+    "local_split_litert": {
+      "description": "Default local split runtime: LiteRT-compatible generation on 1235 and embedding service on 1234.",
+      "generation": {
+        "url": "http://127.0.0.1:1235/v1",
+        "model": "gemma-4-e2b-it-litert",
+        "role": "generation"
+      },
+      "embedding": {
+        "url": "http://127.0.0.1:1234/v1",
+        "model": "nomic-ai/text-embedding-nomic-embed-text-v1.5",
+        "role": "embedding"
+      }
+    },
+    "local_broad_quality": {
+      "description": "Higher-quality local generation target with the same embedding service.",
+      "generation": {
+        "url": "http://127.0.0.1:1235/v1",
+        "model": "google/gemma-4-26b-a4b",
+        "role": "generation"
+      },
+      "embedding": {
+        "url": "http://127.0.0.1:1234/v1",
+        "model": "nomic-ai/text-embedding-nomic-embed-text-v1.5",
+        "role": "embedding"
+      }
+    }
+  }
+}
