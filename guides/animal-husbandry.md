@@ -57,15 +57,15 @@ liability_level: low
 
 This is a **hub guide** covering foundational animal husbandry and basic veterinary care. For specialized knowledge, explore these focused sub-guides:
 
-- **[Veterinary](veterinary.html)** â€” First aid, disease diagnosis, common treatments
-- **[Veterinary Obstetrics](veterinary-obstetrics.html)** â€” Breeding, pregnancy, and parturition care
-- **[Veterinary Parasitology](veterinary-parasitology.html)** â€” Internal and external parasite control
-- **[Dairy Processing](dairy-processing.html)** â€” Milk, cheese, butter, and dairy product safety
-- **[Beekeeping](beekeeping.html)** â€” Hive management and honey production
-- **[Draft Animals](draft-animals.html)** â€” Working with horses, oxen, and pack animals
-- **[Animal Husbandry for Transportation](animal-husbandry-transportation.html)** â€” Loading, hauling, pack fit, hitching, and transport stress
-- **[Hoof Care & Farriery](hoof-care-farriery.html)** â€” Hoof trimming, horseshoes, and maintenance
-- **[Poultry Keeping](poultry-keeping-detailed.html)** â€” Chicken, duck, and waterfowl husbandry
+- **[Veterinary](veterinary.html)** — First aid, disease diagnosis, common treatments
+- **[Veterinary Obstetrics](veterinary-obstetrics.html)** — Breeding, pregnancy, and parturition care
+- **[Veterinary Parasitology](veterinary-parasitology.html)** — Internal and external parasite control
+- **[Dairy Processing](dairy-processing.html)** — Milk, cheese, butter, and dairy product safety
+- **[Beekeeping](beekeeping.html)** — Hive management and honey production
+- **[Draft Animals](draft-animals.html)** — Working with horses, oxen, and pack animals
+- **[Animal Husbandry for Transportation](animal-husbandry-transportation.html)** — Loading, hauling, pack fit, hitching, and transport stress
+- **[Hoof Care & Farriery](hoof-care-farriery.html)** — Hoof trimming, horseshoes, and maintenance
+- **[Poultry Keeping](poultry-keeping-detailed.html)** — Chicken, duck, and waterfowl husbandry
 
 Each sub-guide provides advanced techniques, health management, and specialized procedures.
 :::
@@ -118,7 +118,7 @@ A well-designed coop provides protection from predators, adequate ventilation, r
 
 ### Egg Collection & Storage
 
-Collect eggs daily to prevent brooding and reduce breakage. Store in cool (55-65Â°F), humid location. Don't wash eggs if they'll be stored long-term (protective bloom is removed). Shelf life: 3-4 weeks unwashed, 2-3 weeks washed refrigerated.
+Collect eggs daily to prevent brooding and reduce breakage. Store in cool (55-65°F), humid location. Don't wash eggs if they'll be stored long-term (protective bloom is removed). Shelf life: 3-4 weeks unwashed, 2-3 weeks washed refrigerated.
 
 ### Chicken Sexing at Day One
 
@@ -129,7 +129,7 @@ Determining chick sex at one day old allows separation of males (for meat) from 
 -   **Timing:** Perform within 24 hours of hatch while chick is still wet
 -   **Holding:** Cradle chick gently in palm, ventral side (belly) up
 -   **Locate vent:** The cloaca (vent) is the opening at rear of chick through which all body systems drain
--   **Examination:** Gently evert the vent with thumb to look inside (small amount of pressureâ€”do not damage tissue)
+-   **Examination:** Gently evert the vent with thumb to look inside (small amount of pressure—do not damage tissue)
 -   **Identification:** Male chicks have a small bump/projection (rudimentary penis) inside vent; females have no bump (smooth opening)
 -   **Accuracy:** Requires practice; achieve 80-90% accuracy with training (some error margin is normal)
 -   **Experience:** Hatchery staff do this by touch/feel; farmers develop skill through repeated practice
@@ -156,7 +156,7 @@ Egg production costs depend on feed prices and flock efficiency. At current feed
 :::
 
 :::info-box
-**Artificial Incubation:** Incubator maintains 99.5Â°F (forced air) or 101-102Â°F (still air). Turn eggs 5-7 times daily for 18 days. Stop turning last 3 days (lockdown). Humidity: 40-50% days 1-18, 75% days 19-21.
+**Artificial Incubation:** Incubator maintains 99.5°F (forced air) or 101-102°F (still air). Turn eggs 5-7 times daily for 18 days. Stop turning last 3 days (lockdown). Humidity: 40-50% days 1-18, 75% days 19-21.
 :::
 
 ### Butchering Basics
@@ -164,7 +164,7 @@ Egg production costs depend on feed prices and flock efficiency. At current feed
 1.  Select bird at 12-16 weeks old for meat breeds (roasting) or spent layers (stewing)
 2.  Withhold feed 8-12 hours before processing to clean intestines
 3.  Bleed-out: Stun with blow to head; sever carotid arteries. Allow 1-2 minutes full drain
-4.  Scald: 140-142Â°F for 30 seconds (removes feathers easier)
+4.  Scald: 140-142°F for 30 seconds (removes feathers easier)
 5.  Pluck: Remove feathers quickly while warm
 6.  Eviscerate: Remove organs cleanly; save liver, heart, gizzard if not damaged
 7.  Cool: Chill in ice bath immediately. Rest 12-24 hours before cooking
@@ -209,7 +209,7 @@ Dairy goats are milked 1-2 times daily (twice daily produces more milk). Establi
 3.  Pre-dip teat with iodine or sanitizing solution
 4.  Milk by hand or machine (5-10 minutes)
 5.  Post-dip teat immediately after milking
-6.  Cool milk to 50Â°F or below within 1 hour
+6.  Cool milk to 50°F or below within 1 hour
 7.  Store in food-grade containers; consume within 10 days or freeze
 
 ### Goat Health Warnings
@@ -237,13 +237,13 @@ Infected herds cannot be cleared; animals must be culled or isolated permanently
 
 ### Making Cheese from Goat Milk
 
-#### Simple Fresh Goat Cheese (ChÃ¨vre)
+#### Simple Fresh Goat Cheese (Chèvre)
 
 **Ingredients:** 1 gallon fresh goat milk, 1/4 tsp liquid rennet diluted in 1/4 cup cool water, 1/4 tsp salt.
 
 **Steps:**
 
-1.  Heat milk to 72Â°F (room temperature)
+1.  Heat milk to 72°F (room temperature)
 2.  Add diluted rennet; stir gently 1 minute
 3.  Let sit undisturbed 12-24 hours at room temperature
 4.  Line colander with butter muslin; pour curds and whey
@@ -276,7 +276,7 @@ Infected herds cannot be cleared; animals must be culled or isolated permanently
 
 **Grass-fed systems produce different meat composition than grain-finished cattle:**
 - Higher omega-3 fatty acids (grass contains alpha-linolenic acid)
-- Higher conjugated linoleic acid (CLA) â€” a beneficial fatty acid
+- Higher conjugated linoleic acid (CLA) — a beneficial fatty acid
 - Lower overall fat content but higher proportional of beneficial fats
 - Improved vitamin/mineral profile (higher vitamin E, beta-carotene)
 
@@ -288,7 +288,7 @@ Pasture-based production costs less (minimal grain input) while producing nutrit
 -   Milk using machine or by hand (hand-milking 4-8 lbs/day is possible but labor-intensive)
 -   Pre-dip teats; strip foremilk to check for abnormalities
 -   Post-dip teats with iodine solution
--   Cool milk to 40Â°F immediately; store in stainless containers
+-   Cool milk to 40°F immediately; store in stainless containers
 -   Test milk composition: fat %, protein %, somatic cell count
 
 ### Calving & Care
@@ -344,12 +344,12 @@ Proper vetting of food waste sources prevents disease outbreaks. Never source wa
 Provide quiet farrowing house with bedded nest area. Piglets arrive over 2-4 hours. Most arrive head-first in amniotic sac. Piglets nurse within 30 minutes of birth. Colostrum critical (2-3 ounces per piglet within 4 hours).
 
 :::info-box
-**Piglet Mortality Prevention:** Maintain warmth (85-90Â°F for newborn piglets with heat lamp), ensure colostrum intake, prevent crushing (piglets huddle under heat, away from sow's body weight), monitor for weak piglets, practice early intervention with bottle feeding if needed.
+**Piglet Mortality Prevention:** Maintain warmth (85-90°F for newborn piglets with heat lamp), ensure colostrum intake, prevent crushing (piglets huddle under heat, away from sow's body weight), monitor for weak piglets, practice early intervention with bottle feeding if needed.
 :::
 
 ### Processing/Butchering
 
-Pigs are typically butchered at 250-280 lbs (6-7 months old). Stunning (electrical or percussion), exsanguination (bleeding), scalding (140Â°F, 1-2 minutes), scraping hair, evisceration, and cutting into primals. Yields ~65-75% usable meat. Fat renders well for lard. Bones make excellent stock. Hide/skin has uses in tanning.
+Pigs are typically butchered at 250-280 lbs (6-7 months old). Stunning (electrical or percussion), exsanguination (bleeding), scalding (140°F, 1-2 minutes), scraping hair, evisceration, and cutting into primals. Yields ~65-75% usable meat. Fat renders well for lard. Bones make excellent stock. Hide/skin has uses in tanning.
 
 </section>
 
@@ -402,7 +402,7 @@ Sheep require 0.5-1 acre per head (varies by forage quality). Rotational grazing
 -   **Queen:** Lays eggs; colony backbone. Lives 3-5 years. Lays ~2000 eggs/day during active season
 -   **Worker (Female):** Sterile females perform all tasks: nursing, cleaning, guarding, foraging. Live 6 weeks (summer) or 4-6 months (winter)
 -   **Drone (Male):** Mate with queen. 20-40 per hive. Expendable; evicted in fall to conserve resources
--   **Brood Cycle:** Egg â†’ larva (5 days) â†’ pupa (12 days) = 21 days to worker bee, 24 days to drone
+-   **Brood Cycle:** Egg → larva (5 days) → pupa (12 days) = 21 days to worker bee, 24 days to drone
 
 ### Swarming
 
@@ -505,8 +505,8 @@ Dogs have worked alongside humans for 15,000+ years. In post-collapse scenarios,
 #### Suitable Breeds
 
 -   **Cattle herding:** Border Collie, Australian Cattle Dog, Heeler. Intense focus, quick reflexes. Nip heels to move cattle (instinctive behavior).
--   **Sheep herding:** Border Collie, Australian Shepherd, Old English Sheepdog. Responsive to subtle commands. Gentle controlâ€”sheep easily injured by overly aggressive herding.
--   **Goat herding:** Similar to sheep breeds. Spanish dogs (MastÃ­n, Perro de Presa) also effective.
+-   **Sheep herding:** Border Collie, Australian Shepherd, Old English Sheepdog. Responsive to subtle commands. Gentle control—sheep easily injured by overly aggressive herding.
+-   **Goat herding:** Similar to sheep breeds. Spanish dogs (Mastín, Perro de Presa) also effective.
 
 #### Training: Basic Commands
 
@@ -570,7 +570,7 @@ Dogs have worked alongside humans for 15,000+ years. In post-collapse scenarios,
 #### Working Dog Wound Care (Veterinary)
 
 -   **Caused by:** Animal bites (livestock, predators, other dogs), barbed wire, horn pokes, and other small deep wounds during herding/hunting.
--   **Assessment:** Clean the animal wound with water. Examine depthâ€”small deep animal wounds easily become infected (bacteria-filled). Bleeding wounds need pressure to stop flow. This section is veterinary care for dogs/livestock, not human wound treatment.
+-   **Assessment:** Clean the animal wound with water. Examine depth—small deep animal wounds easily become infected (bacteria-filled). Bleeding wounds need pressure to stop flow. This section is veterinary care for dogs/livestock, not human wound treatment.
 -   **Treatment:** Cleanse the dog or livestock wound with saline/clean water. Remove hair around wound (easier to keep clean). Apply antibiotic ointment if available. Cover if in dirty environment (loose bandage; allow air circulation).
 -   **Infection signs:** Swelling, discharge (pus), foul smell, heat around wound, fever. Herbal treatment (plantain, turmeric) if antibiotics unavailable. Systemic infection (fever, lethargy) requires serious intervention.
 
@@ -690,7 +690,7 @@ Regular hoof care prevents lameness, infection, and deformity. Trim every 6-8 we
 
 **Line Breeding:** Breeding related animals (closely but not directly) to concentrate desirable traits. Risk: inbreeding depression (reduced vigor, birth defects, disease susceptibility) if taken too far. Used to establish breed characteristics. Coefficient of inbreeding should stay under 10% ideally.
 
-**Crossbreeding:** Breeding two different breeds or purebred lines. First generation (F1) shows hybrid vigor: stronger, faster growth, disease resistance. Examples: Angus Ã— Hereford for beef cattle, Spanish goat Ã— dairy goat for hardiness + production.
+**Crossbreeding:** Breeding two different breeds or purebred lines. First generation (F1) shows hybrid vigor: stronger, faster growth, disease resistance. Examples: Angus × Hereford for beef cattle, Spanish goat × dairy goat for hardiness + production.
 
 ### Selecting for Traits
 
@@ -773,10 +773,10 @@ Most homesteads can produce 70-80% of annual feed needs through strategic planni
 **On-Farm Feed Production:**
 
 -   **Legume Hay:** Grow alfalfa, clover, or vetch fields; cut at peak nutrition (early bloom stage). Legume hay provides protein-rich forage, reducing grain dependency. 1 acre legume hay supports 1-2 mature cattle year-round (supplemented with pasture when available).
--   **Grass Hay:** Timothy, orchard grass, brome; cut at boot stage (before seed). Grass hay sustains animals during winter but lacks proteinâ€”must be supplemented with legumes or grain for production animals.
+-   **Grass Hay:** Timothy, orchard grass, brome; cut at boot stage (before seed). Grass hay sustains animals during winter but lacks protein—must be supplemented with legumes or grain for production animals.
 -   **Rotating Pasture:** Divide pasture into 4-8 paddocks; move animals every 3-7 days. Each paddock rests 30-60 days before regrazing. This system maximizes forage availability throughout season, reducing purchased feed.
 -   **Grain Crops:** Corn, barley, oats grow on marginal land. Grain provides concentrated energy for finishing/production demands. Small plots (0.5-2 acres) produce 500-1000 lbs grain, supplementing base forage diet.
--   **Root Crops:** Turnips, mangels, beets grow in cool climates; store through winter. Root crops provide water + carbohydrates; valuable winter feed (avoid sole dietâ€”need hay fiber).
+-   **Root Crops:** Turnips, mangels, beets grow in cool climates; store through winter. Root crops provide water + carbohydrates; valuable winter feed (avoid sole diet—need hay fiber).
 -   **Garden/Orchard Waste:** Vegetable trimmings, windfall fruit, kitchen scraps feed all livestock; fermentation/preservation extends season.
 
 **Expected Production:**
@@ -816,7 +816,7 @@ Store grains in cool, dry location. Moisture below 13% prevents mold. Metal bins
 -   Daily hay requirement: 2% body weight = 10 lbs/day
 -   Grain supplement: 0.5 lbs/day (variable, depends on production level)
 -   Total daily dry matter: 10.5 lbs
--   120-day winter needs: 10.5 Ã— 120 = 1,260 lbs hay + 60 lbs grain
+-   120-day winter needs: 10.5 × 120 = 1,260 lbs hay + 60 lbs grain
 
 **Adjust based on:** Body condition (poor = more feed needed), production (lactating/pregnant = more), weather (cold = more), forage quality (poor = more needed).
 
@@ -855,7 +855,7 @@ Effective livestock shelter doesn't require expensive construction. Several prov
 
 **Mobile Shelters:** Lightweight structures on runners/wheels; moved with rotational grazing. Cost: $500-1500 per unit. Concentrate manure on pasture (improves fertility), prevent predation, reduce parasite burden by moving animals daily/weekly. Suits poultry, rabbits, small ruminants.
 
-**Underground/Passive Housing:** In extreme climates, partially buried structures maintain stable temperature. Earth berming, underground tunnels, or sunken designs leverage geothermal stability (55Â°F year-round). Cost: $500-2000 (site-dependent). Excellent for cold/hot climates; requires good drainage and ventilation.
+**Underground/Passive Housing:** In extreme climates, partially buried structures maintain stable temperature. Earth berming, underground tunnels, or sunken designs leverage geothermal stability (55°F year-round). Cost: $500-2000 (site-dependent). Excellent for cold/hot climates; requires good drainage and ventilation.
 
 ### Ventilation Critical
 
@@ -877,7 +877,7 @@ A cold, well-ventilated barn outperforms a warm, humid one. Invest in ventilatio
 
 ### Butchering Basics
 
-**Hanging and Aging:** Carcass is hung for 7-14 days at 35-40Â°F (cold room or cooler). Aging allows enzymes to break down connective tissue, tenderizing meat. Don't skip this step - improves meat quality significantly.
+**Hanging and Aging:** Carcass is hung for 7-14 days at 35-40°F (cold room or cooler). Aging allows enzymes to break down connective tissue, tenderizing meat. Don't skip this step - improves meat quality significantly.
 
 ### Meat Cuts (Beef Example)
 
@@ -898,7 +898,7 @@ A cold, well-ventilated barn outperforms a warm, humid one. Invest in ventilatio
 
 1.  Cut fresh fat into small cubes (1-2 inches)
 2.  Heat in heavy pot on LOW heat (overcooking burns lard, turns it brown and bitter)
-3.  Stir occasionally as fat melts. Temperature should stay below 250Â°F
+3.  Stir occasionally as fat melts. Temperature should stay below 250°F
 4.  Continue until solids (cracklings) sink and fat is clear (2-4 hours)
 5.  Strain through cheesecloth into clean jars
 6.  Cool at room temperature, then refrigerate
@@ -925,7 +925,7 @@ See the <a href="../fiber-to-fabric-pipeline.html">Fiber to Fabric Pipeline</a> 
 
 Don't waste organ meat! High in nutrients.
 
--   **Liver:** Rich in iron, vitamin A; best fresh (sautÃ©, pan-fry, or grind for pÃ¢tÃ©)
+-   **Liver:** Rich in iron, vitamin A; best fresh (sauté, pan-fry, or grind for pâté)
 -   **Heart:** Lean, flavorful; braise or grind
 -   **Kidneys:** Distinctive flavor; braise or slow-cook
 -   **Tongue:** Tender when cooked low-and-slow; excellent sliced
@@ -934,7 +934,7 @@ Don't waste organ meat! High in nutrients.
 ### Food Safety in Processing
 
 :::warning
-**Cleanliness is Critical:** Sanitize all equipment before and after use. Keep meat cold (below 40Â°F). Work in clean environment. Avoid cross-contamination (separate cutting boards for meat). Cook to safe internal temperatures: 160Â°F ground meat, 165Â°F poultry, 145Â°F beef/pork whole cuts.
+**Cleanliness is Critical:** Sanitize all equipment before and after use. Keep meat cold (below 40°F). Work in clean environment. Avoid cross-contamination (separate cutting boards for meat). Cook to safe internal temperatures: 160°F ground meat, 165°F poultry, 145°F beef/pork whole cuts.
 :::
 
 </section>
@@ -990,7 +990,7 @@ Don't waste organ meat! High in nutrients.
 -   Restlessness, isolation from herd, mucus discharge from vulva
 -   Contractions visible: flanks sink, sides "hug" (1-2 hours before active pushing)
 
-**Normal Calving:** Most cows calve unassisted if healthy. Active labor: cow lies down, strains, front feet and nose visible (anterior presentation). Second stage (pushing) takes 30 minâ€“2 hours. Calf born, umbilical cord breaks; cow licks calf clean, stimulating breathing. Placenta passes within 3-8 hours (retained placenta if longer = infection risk).
+**Normal Calving:** Most cows calve unassisted if healthy. Active labor: cow lies down, strains, front feet and nose visible (anterior presentation). Second stage (pushing) takes 30 min–2 hours. Calf born, umbilical cord breaks; cow licks calf clean, stimulating breathing. Placenta passes within 3-8 hours (retained placenta if longer = infection risk).
 
 **Assisted Birth:** If no progress in 2 hours of active labor, presentation is wrong (breech, sideways), or calf is too large, ASSIST. Wash perineal area; use clean chains or straps on calf's front legs at fetlock; pull at angle downward then toward cow's hocks in synchronized rhythm with her contractions. Excessive force causes trauma; call veterinarian if calf doesn't deliver with gentle traction in 30 minutes.
 
@@ -1046,7 +1046,7 @@ Don't waste organ meat! High in nutrients.
 -   **Dorper:** Brown/white; meat quality excellent, short glossy coat requires less maintenance. Hardy, good foragers. Heat-tolerant; excellent in southern climates.
 -   **Hampshire:** Dark brown/black; large frame, rapid growth, high meat yield.
 
-**Hair Sheep (Primitive Breedsâ€”No Shearing Needed):**
+**Hair Sheep (Primitive Breeds—No Shearing Needed):**
 
 -   **Katahdin:** American breed; hair coat, excellent mothers, high fertility, good foragers. No shearing needed; hair naturally sheds or can be plucked.
 -   **St. Croix:** Caribbean heritage; fine hair, hardy, parasite resistance, maternal instinct strong. Excellent dual-purpose.
@@ -1076,7 +1076,7 @@ Don't waste organ meat! High in nutrients.
 
 **Jug Pens (Bonding Pens):** Small pen (8x8 ft) for dam + offspring immediately after birth. Keeps family unit together, prevents lamb/kid from getting separated in large flock. After 3-7 days (bonding complete, dam/baby recognize each other), move to larger paddock. Prevents mis-mothering and orphaning.
 
-**Weak Lambs/Kidsâ€”Tube Feeding:** If lamb/kid doesn't nurse within 2 hours or appears weak, assist with bottle feeding. Use clean feeding tube (not forcing milk into lungs). Warm colostrum or milk replacer to 104Â°F. Feed 2-3 oz per feeding, 4-6 times daily initially. Esophageal feeder (tube passes through mouth, down esophagus to stomach) safer than bottle if inexperienced. Transition to bottle over days, then to creep-feeding (solid food available ad-lib).
+**Weak Lambs/Kids—Tube Feeding:** If lamb/kid doesn't nurse within 2 hours or appears weak, assist with bottle feeding. Use clean feeding tube (not forcing milk into lungs). Warm colostrum or milk replacer to 104°F. Feed 2-3 oz per feeding, 4-6 times daily initially. Esophageal feeder (tube passes through mouth, down esophagus to stomach) safer than bottle if inexperienced. Transition to bottle over days, then to creep-feeding (solid food available ad-lib).
 
 ### Shearing & Fleece Handling
 
@@ -1102,7 +1102,7 @@ Don't waste organ meat! High in nutrients.
 
 ### Fencing
 
-**Sheep:** 48-inch woven wire (no bottom gapsâ€”lambs squeeze through). Bottom 6 inches should be closer spacing to prevent lamb escape. Electric fencing for rotational paddocks. Predator protection essential: guardian dogs, night shelter.
+**Sheep:** 48-inch woven wire (no bottom gaps—lambs squeeze through). Bottom 6 inches should be closer spacing to prevent lamb escape. Electric fencing for rotational paddocks. Predator protection essential: guardian dogs, night shelter.
 
 **Goats (Notorious Escape Artists):** 4.5-5 ft minimum height fencing. Woven wire or high-tensile electric preferred. Goats jump; climb; test every fence. Corner reinforcement critical. Goats also lean on/climb fencing; sturdy posts 4-6 ft apart essential. Electric fencing works if properly trained (touch fence as kid, learn respect). Top line 48", bottom line 12" high effective for most goats.
 
@@ -1127,7 +1127,7 @@ Don't waste organ meat! High in nutrients.
 
 ### Housing & Environment
 
-**Shade is Critical:** Pigs lack functional sweat glands; sunburn and heat stress kill pigs above 85-90Â°F. Provide solid shade structures or wallow (shallow muddy area). If muddy area unavailable, wet wallows (spray system) critical in summer.
+**Shade is Critical:** Pigs lack functional sweat glands; sunburn and heat stress kill pigs above 85-90°F. Provide solid shade structures or wallow (shallow muddy area). If muddy area unavailable, wet wallows (spray system) critical in summer.
 
 **Space Requirements:** Minimum 8 sq ft/pig indoor (more humane: 12-15 sq ft). Pigs in groups less than 8 sq ft fight/stress. Outdoor space: 500-1000 sq ft per pig on pasture (rotated). Overcrowding causes tail-biting, disease outbreaks.
 
@@ -1149,7 +1149,7 @@ Don't waste organ meat! High in nutrients.
 
 **Gestation:** "3 months, 3 weeks, 3 days" = 114 days. Sows cycle every 21 days. Breed at 6-8 months old (first heat); farrow at 12-14 months (ideal size for first litter). Average litter: 8-14 piglets (Kunekune smaller litters, 4-8).
 
-**Farrowing Setup:** Farrowing crate (metal enclosure, sow lies down without crushing piglets) or farrowing pen with guards (rails preventing sow from crushing piglets in corners). Piglets must be able to move freely. Heat lamp for piglets (90-95Â°F), separate from sow area.
+**Farrowing Setup:** Farrowing crate (metal enclosure, sow lies down without crushing piglets) or farrowing pen with guards (rails preventing sow from crushing piglets in corners). Piglets must be able to move freely. Heat lamp for piglets (90-95°F), separate from sow area.
 
 **Piglet Survival:** Iron injection (200 mg iron dextran IM) at 3 days old critical (prevent anemia); OR provide access to clean soil (naturally iron-rich, pigs root and consume). Without iron, piglets become pale, weak, die at 2-3 weeks.
 
@@ -1161,7 +1161,7 @@ Don't waste organ meat! High in nutrients.
 
 **Scalding & Scraping vs. Skinning:**
 
--   **Scalding/Scraping (Traditional):** Hot water 145-150Â°F for 30-60 seconds loosens hair. Scrape with scalper or blade to remove hair (easier after scalding). Retains skin; higher meat quality. Labor-intensive.
+-   **Scalding/Scraping (Traditional):** Hot water 145-150°F for 30-60 seconds loosens hair. Scrape with scalper or blade to remove hair (easier after scalding). Retains skin; higher meat quality. Labor-intensive.
 -   **Skinning (Fast):** Remove skin with knife; faster than scraping. Exposed meat dries out if not processed immediately; meat doesn't keep as well.
 
 </section>
@@ -1190,7 +1190,7 @@ Don't waste organ meat! High in nutrients.
 
 **Cage Specifications:** Wire-bottom cage (good drainage; 1/4" wire prevents foot problems) minimum 2.5 sq ft per rabbit (18x24"). Larger is better; does nest in corner. Nesting box 12x6" for pregnant does.
 
-**Ventilation & Location:** Elevated cages (off ground) for air circulation. Protect from rain/direct sun. Ideal temperature 55-70Â°F. CRITICAL: Rabbits die rapidly above 90Â°F (no sweat glands). Shade, ventilation, or cooling system essential in hot climates.
+**Ventilation & Location:** Elevated cages (off ground) for air circulation. Protect from rain/direct sun. Ideal temperature 55-70°F. CRITICAL: Rabbits die rapidly above 90°F (no sweat glands). Shade, ventilation, or cooling system essential in hot climates.
 
 **Hutches (Outdoor):** Solid-sided, partially enclosed for predator/weather protection. Ventilation essential; wire-front. Nest boxes for breeding does. Predator-proof (raccoons, foxes, hawks).
 
@@ -1270,21 +1270,21 @@ For small-scale homestead production with limited space and feed resources, rabb
 
 ### Brooding Chicks
 
-**Temperature Management:** Start 95Â°F week 1; decrease 5Â°F per week until feathered (week 5-6, ambient temperature). Chicks pile under heat lamp if cold (and smother); scatter if too hot. Manual brooding: heat lamp, thermometer, daily monitoring. Broody hen: safer, easier (hen regulates temperature, teaches socialization), takes 3 weeks.
+**Temperature Management:** Start 95°F week 1; decrease 5°F per week until feathered (week 5-6, ambient temperature). Chicks pile under heat lamp if cold (and smother); scatter if too hot. Manual brooding: heat lamp, thermometer, daily monitoring. Broody hen: safer, easier (hen regulates temperature, teaches socialization), takes 3 weeks.
 
-**Equipment:** Brooder (large box/container with heat lamp), feeders/waterers, bedding (wood shavings NOT cedar/pine initiallyâ€”toxic). Chick starter feed 24% protein (medicated or unmedicated). Electrolytes in water first 48 hours prevent stress dehydration.
+**Equipment:** Brooder (large box/container with heat lamp), feeders/waterers, bedding (wood shavings NOT cedar/pine initially—toxic). Chick starter feed 24% protein (medicated or unmedicated). Electrolytes in water first 48 hours prevent stress dehydration.
 
 ### Butchering Poultry
 
 **Timing:** Cornish Cross 8 weeks (5-6 lbs); heritage breeds 16-20 weeks (4-5 lbs); layer culls any age (tougher meat). Ducks butcher at 7-8 weeks (5-6 lbs); geese 12-16 weeks (10-12 lbs).
 
-**Scalding & Plucking:** Hot water 145-150Â°F for 30-60 seconds loosens feathers (heating speeds plucking). Mechanical plucker (drum with rubber fingers) or hand-plucking. Eviscerate (remove organs via belly incision or through vent). Ice-chill immediately.
+**Scalding & Plucking:** Hot water 145-150°F for 30-60 seconds loosens feathers (heating speeds plucking). Mechanical plucker (drum with rubber fingers) or hand-plucking. Eviscerate (remove organs via belly incision or through vent). Ice-chill immediately.
 
 **Aging:** Hang carcass 2-4 hours before processing (muscle relaxation, easier butchering). Chill 24 hours before freezing (improves tenderness).
 
 ### Ducks & Geese
 
-**Ducks:** Hardier than chickens; excellent foragers (aquatic insects, slugs, snails). Duck eggs richer than chicken (more yolk, more fat) â€” excellent for baking; richer flavor. Pekin (white) standard meat breed; Khaki Campbell (layer). Require water source (pond, kiddie pool) for health. Quieter than chickens/geese. 7-8 week butcher = 5-6 lbs. Eggs 300/year (Khaki Campbell).
+**Ducks:** Hardier than chickens; excellent foragers (aquatic insects, slugs, snails). Duck eggs richer than chicken (more yolk, more fat) — excellent for baking; richer flavor. Pekin (white) standard meat breed; Khaki Campbell (layer). Require water source (pond, kiddie pool) for health. Quieter than chickens/geese. 7-8 week butcher = 5-6 lbs. Eggs 300/year (Khaki Campbell).
 
 **Geese:** Guard animals (loud, protective); excellent foragers on pasture (eat more grass than any poultry). Need water (breeding behavior, feather maintenance). Loud hissing deters predators. Eggs 30-40/year. 12-16 week butcher = 10-12 lbs. Slow-growing but long-lived (15-20 years). Meat darker, richer than chicken.
 
@@ -1321,7 +1321,7 @@ For small-scale homestead production with limited space and feed resources, rabb
 
 **Breeds:**
 
--   **Border Collie:** Small-medium (30-55 lbs), high intelligence, intense focus ("eye"â€”stare at sheep). Best herding dog. Require 2+ hours exercise/training daily. Can become neurotic without work.
+-   **Border Collie:** Small-medium (30-55 lbs), high intelligence, intense focus ("eye"—stare at sheep). Best herding dog. Require 2+ hours exercise/training daily. Can become neurotic without work.
 -   **Australian Shepherd:** Medium (40-65 lbs), energetic, intelligent. Good herders; more versatile than Border Collie. Excellent family dogs with work.
 -   **Old English Sheepdog:** Large, gentler herding; historical "drover" dog. Good for calm movement of livestock.
 
@@ -1361,7 +1361,7 @@ For small-scale homestead production with limited space and feed resources, rabb
 
 ## Cattle: Comprehensive Species Guide
 
-Cattle are among the most valuable livestockâ€”providing milk, meat, manure, and labor. The key is matching breed to purpose and environment.
+Cattle are among the most valuable livestock—providing milk, meat, manure, and labor. The key is matching breed to purpose and environment.
 
 ### Dairy Cattle Breeds
 
@@ -1393,7 +1393,7 @@ Cattle are among the most valuable livestockâ€”providing milk, meat, manure
 
 **Gestation:** 283 days (~9.5 months). Plan breedings to calve in spring (for grass) or fall (for stable conditions).
 
-**Nursing calves:** Calves nurse 6-8 months. Wean at 6-8 months; calves ready for independent grazing. Weaned calves are vulnerableâ€”shelter and clean water critical.
+**Nursing calves:** Calves nurse 6-8 months. Wean at 6-8 months; calves ready for independent grazing. Weaned calves are vulnerable—shelter and clean water critical.
 
 **Breeding calendar example:** If you want spring calves, breed cows in late fall (November-December). Fall calves come from late spring breeding (May-June).
 
@@ -1403,7 +1403,7 @@ Cattle are among the most valuable livestockâ€”providing milk, meat, manure
 
 **Mastitis (udder infection):** Affects dairy cattle primarily. Signs: Hot, swollen udder; fever; sick-looking cow. Caused by bacterial contamination during milking. Prevention: Clean udder before milking; use clean towels; wash hands. Treat early with antibiotics if available, otherwise apply hot compresses and hand-milk affected quarter frequently.
 
-**Bloat (frothy bloat or feedlot bloat):** Rumen gas buildup from eating fresh legumes or grain quickly. Signs: Sudden lethargy, distended left side, labored breathing. Can be fatal within hours. Prevention: Don't turn cattle onto lush pasture suddenly; let them adjust. Treatment: Drench with mineral oil (via tube down throat by experienced person), exercise animal, or in emergency, trocar puncture (needle into rumen to release gasâ€”risky).
+**Bloat (frothy bloat or feedlot bloat):** Rumen gas buildup from eating fresh legumes or grain quickly. Signs: Sudden lethargy, distended left side, labored breathing. Can be fatal within hours. Prevention: Don't turn cattle onto lush pasture suddenly; let them adjust. Treatment: Drench with mineral oil (via tube down throat by experienced person), exercise animal, or in emergency, trocar puncture (needle into rumen to release gas—risky).
 
 **Shipping fever (bovine respiratory disease):** Upper respiratory infection from stress and shipping. Signs: Fever, cough, nasal discharge. Prevention: Minimize stress, maintain good ventilation in housing. Treat with antibiotics early.
 
@@ -1431,7 +1431,7 @@ Cattle are among the most valuable livestockâ€”providing milk, meat, manure
 
 **Line breeding (breeding related animals):** Can fix desirable traits but risks inbreeding depression (reduced vigor, genetic problems). Keep detailed records. Avoid breeding animals that share both parents.
 
-**Crossbreeding:** Mixing breed types produces hybrid vigorâ€”calves often larger and hardier than either parent. Commercial beef production relies heavily on crossbreeding.
+**Crossbreeding:** Mixing breed types produces hybrid vigor—calves often larger and hardier than either parent. Commercial beef production relies heavily on crossbreeding.
 
 **Selecting breeding stock:** Cows with good feet/legs, proper body condition, easy temperament, history of good milk (dairy) or growth (beef). Avoid family history of major genetic defects.
 
@@ -1553,8 +1553,8 @@ Pigs are excellent foragers, convert feed to meat efficiently, and produce excel
 
 **Outdoor systems (best welfare):**
 - Huts or shelters (predator/weather-proof)
-- Rooting area (pigs will digâ€”allow 100+ sq ft per animal)
-- Access to wallows (mud/waterâ€”pigs lack efficient sweat glands; mud prevents sunburn)
+- Rooting area (pigs will dig—allow 100+ sq ft per animal)
+- Access to wallows (mud/water—pigs lack efficient sweat glands; mud prevents sunburn)
 - Water 24/7
 
 **Winter considerations:** Deep bedding (straw), insulated shelter, extra feed (cold increases caloric needs).
@@ -1589,7 +1589,7 @@ Pigs are excellent foragers, convert feed to meat efficiently, and produce excel
 
 **Age to slaughter:** Conventionally, 250-280 lbs (6-7 months of age). Older pigs develop darker, firmer meat. Growing period can extend to 12+ months for heritage breeds with superior meat quality.
 
-**Meat cuts:** Different from cattle. Main wholesale cuts are: picnic ham (front leg), Boston butt (shoulder), loin (back), belly (pork bellyâ€”cured for bacon), and ham (back leg).
+**Meat cuts:** Different from cattle. Main wholesale cuts are: picnic ham (front leg), Boston butt (shoulder), loin (back), belly (pork belly—cured for bacon), and ham (back leg).
 
 **Curing and processing:** Pork is excellent for curing (salt, smoke). Ham, bacon, sausage, and lard are traditional products.
 
@@ -1599,7 +1599,7 @@ Pigs are excellent foragers, convert feed to meat efficiently, and produce excel
 
 ## Rabbits: Efficient Protein Production
 
-Rabbits convert feed to meat more efficiently than any other livestockâ€”an excellent choice for small spaces and protein production.
+Rabbits convert feed to meat more efficiently than any other livestock—an excellent choice for small spaces and protein production.
 
 ### Rabbit Breed Overview
 
@@ -1623,7 +1623,7 @@ Rabbits convert feed to meat more efficiently than any other livestockâ€”an
 
 **Essentials:**
 - Protection from predators (hawks, foxes, snakes)
-- Shade in summer (rabbits sensitive to heat over 75Â°F)
+- Shade in summer (rabbits sensitive to heat over 75°F)
 - Ventilation but no drafts
 - Dry surface (wire or slats to allow urine drainage)
 - Nesting boxes for does (especially during pregnancy and after kindling)
@@ -1632,7 +1632,7 @@ Rabbits convert feed to meat more efficiently than any other livestockâ€”an
 
 **Age to breeding:** Does (females) at 5-6 months, bucks (males) at 3-4 months.
 
-**Breeding cycle:** Rabbits don't cycle like mammalsâ€”does are induced ovulators (ovulate when mated). Can breed any month.
+**Breeding cycle:** Rabbits don't cycle like mammals—does are induced ovulators (ovulate when mated). Can breed any month.
 
 **Gestation:** 31-32 days.
 
@@ -1684,7 +1684,7 @@ Beyond chickens, other poultry offer unique advantages.
 
 ### Geese
 
-**Breeds:** Toulouse (large, dark), Embden (large, white, productive), Chinese (small, elegant, loudâ€”excellent "watchdog" birds).
+**Breeds:** Toulouse (large, dark), Embden (large, white, productive), Chinese (small, elegant, loud—excellent "watchdog" birds).
 
 **Advantages:** Excellent grazers (live entirely on pasture in season), produce eggs (40-60 per year), long-lived (15+ years), excellent mothers, extremely hardy, minimal predation (large, fierce).
 
@@ -1711,12 +1711,12 @@ Beyond chickens, other poultry offer unique advantages.
 :::affiliate
 **If you're preparing livestock systems in advance,** quality feeders and water troughs are essential for daily animal care and herd health:
 
-- [BUYYAH Livestock Water Trough, 39" Long with Adjustable Stand](https://www.amazon.com/dp/B0DG89Z6L1?tag=offlinecompen-20) â€” Durable galvanized steel trough with reinforced stand, fits goats, sheep, horses, and cattle
-- [Large Livestock Watering & Feeding Trough with Adjustable Height Stand](https://www.amazon.com/dp/B0D9PYG7VJ?tag=offlinecompen-20) â€” 2-pack portable troughs with 3-level adjustable height stand for multiple species
-- [Automatic Float Valve Water Trough for Livestock](https://www.amazon.com/dp/B0BN1438XB?tag=offlinecompen-20) â€” Regulates water level automatically, reducing daily management labor and waste
-- [Livestock Mineral Salt Block Holder](https://www.amazon.com/dp/B0DTHPP2ZX?tag=offlinecompen-20) â€” Prevents waste and ensures consistent mineral supplementation for all livestock types
+- [BUYYAH Livestock Water Trough, 39" Long with Adjustable Stand](https://www.amazon.com/dp/B0DG89Z6L1?tag=offlinecompen-20) — Durable galvanized steel trough with reinforced stand, fits goats, sheep, horses, and cattle
+- [Large Livestock Watering & Feeding Trough with Adjustable Height Stand](https://www.amazon.com/dp/B0D9PYG7VJ?tag=offlinecompen-20) — 2-pack portable troughs with 3-level adjustable height stand for multiple species
+- [Automatic Float Valve Water Trough for Livestock](https://www.amazon.com/dp/B0BN1438XB?tag=offlinecompen-20) — Regulates water level automatically, reducing daily management labor and waste
+- [Livestock Mineral Salt Block Holder](https://www.amazon.com/dp/B0DTHPP2ZX?tag=offlinecompen-20) — Prevents waste and ensures consistent mineral supplementation for all livestock types
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the systems discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the systems discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 </section>
