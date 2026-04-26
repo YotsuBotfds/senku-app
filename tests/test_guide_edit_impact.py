@@ -66,6 +66,35 @@ class GuideEditImpactTests(unittest.TestCase):
             commands,
         )
 
+    def test_build_plan_suggests_root_runtime_sibling_test(self):
+        module = load_module()
+
+        plan = module.build_plan(["guide_catalog.py"])
+        commands = [item["command"] for item in plan["commands"]]
+
+        self.assertIn(
+            "& .\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_guide_catalog -v",
+            commands,
+        )
+
+    def test_focused_test_for_script_skips_non_script_path_without_root_test_sibling(self):
+        module = load_module()
+
+        with mock.patch.object(
+            module,
+            "RUNTIME_PREFIXES",
+            module.RUNTIME_PREFIXES + ("orphan_runtime.py",),
+        ):
+            self.assertIsNone(module.focused_test_for_script("orphan_runtime.py"))
+
+    def test_focused_test_for_root_runtime_uses_nearby_sibling_test(self):
+        module = load_module()
+
+        self.assertEqual(
+            module.focused_test_for_script("guide_catalog.py"),
+            "& .\\.venvs\\senku-validate\\Scripts\\python.exe -B -m unittest tests.test_guide_catalog -v",
+        )
+
     def test_json_cli_output_is_parseable(self):
         module = load_module()
 

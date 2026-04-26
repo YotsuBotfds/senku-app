@@ -133,9 +133,13 @@ def is_high_liability_guide(path: str) -> bool:
 
 
 def focused_test_for_script(path: str) -> str | None:
-    if not path.startswith("scripts/") or not path.endswith(".py"):
+    normalized = normalize_path(path)
+    if not normalized.endswith(".py"):
         return None
-    test_path = Path("tests") / f"test_{Path(path).stem}.py"
+    if not (normalized.startswith("scripts/") or normalized in RUNTIME_PREFIXES):
+        return None
+
+    test_path = Path("tests") / f"test_{Path(normalized).stem}.py"
     if (REPO_ROOT / test_path).exists():
         return f"& {PYTHON} -B -m unittest {test_path.as_posix().replace('/', '.')[:-3]} -v"
     return None
