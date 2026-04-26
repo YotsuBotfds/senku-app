@@ -11,6 +11,18 @@ tags:
   - physics
 icon: 🌡️
 description: Conduction, convection, radiation, thermal conductivity, insulation, heat exchangers, applications
+aliases:
+  - thermodynamics planning
+  - heat transfer planning
+  - conduction convection radiation
+  - heat loss reasoning
+  - insulation heat loss check
+  - thermal mass concept
+  - qualitative heat transfer
+  - heat exchanger concept only
+routing_cues:
+  - Use for conceptual heat-transfer questions about conduction, convection, radiation, thermal mass, insulation gaps, observation checklists, and qualitative heat-loss reasoning.
+  - Route boilers, pressure vessels, steam sizing, combustion tuning, electrical heating work, HVAC repair, refrigerants, hazardous materials, industrial process design, quantitative guarantees, and safety certification away from this reviewed card.
 related:
   - heat-management
   - insulation-weatherproofing
@@ -24,11 +36,43 @@ custom_css: |
   .thermo-table th, .thermo-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
   .formula-box { margin: 1rem 0; padding: 1rem; background: var(--surface); border-left: 4px solid var(--accent); font-family: monospace; }
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: thermodynamics_heat_transfer_conceptual_planning
+citations_required: true
+applicability: >
+  Use GD-427 for conceptual thermodynamics and heat-transfer planning:
+  identifying likely heat-transfer mechanisms, building observation checklists,
+  reasoning qualitatively about heat loss, comparing insulation approaches at a
+  high level, and deciding when a specialist handoff is needed. Do not use its
+  reviewed card for boiler or pressure-vessel design, steam-system sizing,
+  combustion tuning, electrical heating work, HVAC repair, refrigerant handling,
+  hazardous-material handling, industrial process design, food or water safety
+  guarantees, structural fireproofing certification, or claims that an
+  improvised setup is safe.
+citation_policy: >
+  Cite this guide and its reviewed answer card for conceptual thermodynamics,
+  heat-transfer mechanisms, observation checklists, heat-loss and insulation
+  reasoning, thermal-mass planning, and specialist handoffs only. Do not use the
+  reviewed card for boiler or pressure-vessel design, combustion tuning,
+  electrical work, HVAC repair, hazardous-material handling, industrial process
+  design, quantitative engineering guarantees, or safety certification.
 ---
 
 Heat transfer is the movement of thermal energy from hot to cold regions. Understanding thermodynamics enables better furnace design, insulation strategies, cooking efficiency, and energy generation. This guide covers the three heat transfer mechanisms and practical calculations.
 
 ![Thermodynamics and heat transfer reference diagram](../assets/svgs/thermodynamics-heat-transfer-1.svg)
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-427. Use it for conceptual thermodynamics and heat-transfer planning: naming whether conduction, convection, radiation, thermal mass, or insulation gaps are the main issue; making observation checklists; reasoning qualitatively about heat loss; comparing insulation approaches at a high level; and deciding what specialist handoff is needed before work becomes design, repair, or safety-critical operation.
+
+Start by identifying the object or space, the heat source, the heat sink, the likely heat-transfer path, the available observations, and whether people, animals, pressure, fuel, electricity, industrial equipment, or hazardous material are involved. Then keep advice at the level of inspection, planning, monitoring, and conservative handoff: look for missing insulation, air leaks, wind exposure, wet or compressed insulation, radiant exposure, hot surfaces, poor ventilation, uneven heating, and places where thermal mass is helping or slowing temperature change.
+
+Do not use this card for boiler or pressure-vessel design, steam-system sizing, combustion tuning, burner or chimney modification, electrical heating work, HVAC repair, refrigerant handling, hazardous-material handling, industrial process design, food or water safety guarantees, structural fireproofing certification, or claims that an improvised insulation or heat-transfer setup is safe. If the prompt asks for those, explain the relevant heat-transfer concept briefly and hand off to a qualified technician, engineer, authority, or emergency service as appropriate.
+
+</section>
 
 <section id="heat-transfer-mechanisms">
 
@@ -408,4 +452,3 @@ Distillation separates components based on boiling points. Heat vaporizes the li
 :::
 
 </section>
-

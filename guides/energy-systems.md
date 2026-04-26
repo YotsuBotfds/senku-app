@@ -44,7 +44,53 @@ custom_css: |-
    .ts-warning { background:rgba(255,179,71,0.1); padding:12px; border-radius:4px; margin-top:15px; color:var(--muted); border-left:3px solid var(--warning); }
    .ts-heading { color:var(--accent); font-size:1.3em; margin-bottom:15px; }
 liability_level: high
+aliases:
+  - off-grid energy planning
+  - emergency power inventory
+  - energy source comparison
+  - power needs prioritization
+  - backup energy resilience plan
+  - generator and battery handoff planning
+  - energy maintenance log
+  - settlement energy owner routing
+  - micro hydro wind solar fuel comparison
+  - what energy system should we prioritize
+routing_cues:
+  - Use for planning-level energy-needs inventory, source comparison, essential-load prioritization, resilience planning, maintenance logs, backup ownership, and handoff routing across solar, wind, hydro, fuel, battery, generator, and mechanical-power options.
+  - Route wiring, generator repair, fuel production, pressure or steam systems, battery charging instructions, calculations, live electrical work, construction engineering, and legal or code claims away from this reviewed card.
+citations_required: true
+applicability: >
+  Use GD-096 for energy-needs inventory, source comparison, prioritization,
+  resilience planning, maintenance/log handoffs, and owner routing across
+  water, wind, solar, fuel, battery, generator, and mechanical-power options.
+  Do not use its reviewed answer card for wiring, generator repair, fuel
+  production, pressure/steam systems, battery charging instructions,
+  electrical calculations, live electrical work, code/legal claims, or
+  construction engineering.
+citation_policy: >
+  Cite GD-096 and its reviewed answer card for planning-level energy system
+  comparison, essential-load prioritization, fuel/source diversity, continuity
+  planning, maintenance logs, and routing to the appropriate owner. Route
+  procedural electrical, battery-charging, generator, fuel-production,
+  pressure/steam, construction, and legal/code questions away without adding
+  step-by-step technical instructions.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: energy_systems_resilience_planning
+answer_card:
+  - energy_systems_resilience_planning
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-096. Use it for planning-level energy systems work: inventorying essential energy needs, comparing available sources, prioritizing loads, planning resilience across more than one source, assigning maintenance and log handoffs, and routing each technical owner to the right specialist lane.
+
+Start by separating routine planning from active hazards or technical work. Identify the essential uses first: water treatment or pumping, communication and lighting, medical or refrigeration support, cooking and heat, workshop or food production, and emergency reserve. Compare sources by availability, seasonality, reliability, maintenance burden, storage need, site dependence, and owner skill. Prioritize conservation and critical services before convenience loads. Keep a written energy log with source, intended use, responsible owner, fuel or storage condition, maintenance date, outage history, spare parts, and next check date. Build resilience by pairing steady sources with backups, preserving emergency reserve, and writing handoff triggers for weather, fuel shortage, mechanical failure, smoke or carbon-monoxide concerns, damaged equipment, and uncertain ownership.
+
+Do not use this card for wiring, generator repair, fuel production, pressure or steam systems, battery charging instructions, electrical calculations, live electrical work, code or legal claims, or construction engineering. If the prompt asks for those, keep only the planning observation and route to the appropriate electrical, mechanical, fuel, pressure-system, construction, or local-authority owner.
+
+</section>
 
 <section id="water-wheels">
 

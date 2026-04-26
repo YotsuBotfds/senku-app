@@ -1,0 +1,179 @@
+card_id: energy_systems_resilience_planning
+guide_id: GD-096
+slug: energy-systems
+title: Energy Systems
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Planning-only card for energy-needs inventory, source comparison, essential-load
+  prioritization, resilience planning, maintenance/log handoffs, and owner routing.
+  It is not a procedural card for electrical work, generator repair, fuel
+  production, pressure/steam systems, battery charging, calculations, legal/code
+  approval, or construction engineering.
+applies_when:
+  - A user asks which off-grid energy sources to prioritize for a home, clinic, workshop, farm, or settlement.
+  - A user asks for an inventory of essential energy needs before choosing solar, wind, hydro, fuel, battery, generator, or mechanical power.
+  - A user asks how to compare energy sources by reliability, seasonality, maintenance burden, storage, site dependence, or owner skill.
+  - A user asks for a resilience plan with backup sources, emergency reserve, maintenance logs, outage records, and handoff owners.
+  - A user asks how to route energy-system questions without giving wiring, repair, fuel-production, pressure-system, or construction instructions.
+required_first_actions:
+  - Separate routine planning from active hazards, live electrical work, generator faults, fuel fumes, smoke, carbon-monoxide symptoms, damaged batteries, steam or pressure equipment, and unstable structures.
+  - Inventory essential uses before selecting sources: water treatment or pumping, communication and lighting, medical or refrigeration support, cooking and heat, workshop or food production, and emergency reserve.
+  - Rank loads by consequence of loss, not convenience; protect life-safety, water, communications, food safety, heat/cooling, and medical continuity first.
+  - Compare sources at planning level by local availability, seasonality, reliability, maintenance burden, storage need, site dependence, fuel continuity, and owner skill.
+  - Assign a named owner and log for each source, with check dates, condition notes, outage history, spare parts, fuel or storage status, and next handoff trigger.
+first_actions:
+  - Build a simple table with each energy need, required continuity window, current source, backup source, responsible owner, known weak point, and next check date.
+  - Prefer conservation and load reduction before adding more generation capacity.
+  - Use the guide's comparison sections to shortlist options that match local water, wind, sun, fuel, mechanical skill, and maintenance capacity.
+  - Pair steady sources with backups so one weather pattern, fuel shortage, or equipment failure does not remove all critical power.
+  - Keep emergency reserve separate from routine working stock and document when reserve use requires replenishment or conservation.
+  - Schedule routine checks for intakes, moving parts, screens, exposed equipment condition, fuel/storage condition, ventilation concerns, and log completeness without giving repair procedures.
+  - Route technical execution to the right owner: electrical power, batteries, generators or small engines, fuel storage, fuel production, pressure/steam specialists, water works, building or civil works, and local authority where applicable.
+urgent_red_flags:
+  - Shock risk, live wiring, damaged panels, burned insulation, sparking, battery swelling, battery heat, acid leak, or unknown electrical fault.
+  - Generator, gasifier, charcoal, stove, biogas, or combustion equipment associated with indoor fumes, smoke, headache, dizziness, confusion, fainting, vomiting, or multiple people ill.
+  - Steam, boiler, pressure vessel, hydraulic, penstock, or stored-pressure equipment with leaks, unknown condition, damaged fittings, abnormal noise, or untrained operators.
+  - Fuel leak, strong fuel odor, spill exposure, fire, explosion risk, fuel near ignition sources, or fuel stored in living/sleeping areas.
+  - Essential energy for water, medical support, refrigeration, heat/cooling, or communications is failing without a working backup or owner handoff.
+forbidden_advice:
+  - Do not provide wiring diagrams, wire sizing, breaker/fuse sizing, grounding, inverter hookup, transfer-switch, panel, live-circuit, or electrical-code instructions.
+  - Do not provide battery charging settings, balancing, revival, chemistry-specific charging procedures, or electrical calculations.
+  - Do not provide generator repair, alternator modification, engine tuning, carburetor, rectifier, governor, or fuel-air adjustment procedures.
+  - Do not provide fuel production, wood gasifier, biogas, biodiesel, ethanol, charcoal, gas scrubbing, ignition, combustion optimization, or fuel-transfer instructions.
+  - Do not provide boiler, steam, pressure vessel, pressure piping, penstock engineering, hydraulic calculations, or pressure-system operation instructions.
+  - Do not provide construction engineering, structural design, civil works, tower design, dam/diversion design, legal/code claims, or declarations that a system is safe or compliant.
+do_not:
+  - Do not turn source-comparison content into build, repair, charging, wiring, pressure, fuel-production, or construction steps.
+  - Do not answer "how much wire, battery, fuse, generator, pressure, head, flow, or fuel mixture" as an engineering calculation.
+  - Do not normalize active electrical faults, CO symptoms, fuel fumes, damaged batteries, or pressure-system concerns as routine energy planning.
+  - Do not cite this card as authority for performing technical work; use it to assign owners and boundaries.
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+routine_boundary: >
+  This card owns planning-level energy resilience: needs inventory, source
+  comparison, prioritization, backup planning, maintenance/log handoffs, and owner
+  routing. It must hand off all procedural wiring, generator repair, fuel
+  production, battery charging, pressure/steam systems, electrical calculations,
+  live electrical work, legal/code claims, and construction engineering.
+acceptable_uncertain_fit: >
+  If the source, load, site, or equipment details are incomplete, provide a
+  conservative inventory and routing checklist, name the missing information, and
+  avoid calculations or procedural instructions. If any active hazard is plausible,
+  lead with isolation/evacuation/handoff before planning.
+clarifying_questions:
+  - Which essential uses must stay available: water, communications, lighting, medical or refrigeration support, cooking, heat/cooling, workshop or food production, or emergency reserve?
+  - What sources are already present, and which have failed recently: solar, wind, hydro, batteries, generator, fuel, animal/human power, or mechanical systems?
+  - Is there any active shock risk, sparking, smoke, fumes, CO symptoms, fuel leak, battery damage, pressure equipment concern, or structural damage?
+  - Who currently owns checks, logs, fuel/storage inventory, maintenance dates, spare parts, and outage handoffs?
+fallback:
+  - If active electrical, combustion, fuel, battery, pressure, or structural hazards are present, stop routine planning and advise isolation, evacuation where appropriate, and trained-owner handoff.
+  - If the user asks for wiring or electrical calculations, hand off to an electrical-power owner and keep only load-priority and continuity planning.
+  - If the user asks for generator repair or engine conversion, hand off to small-engine or generator specialists and keep only source-availability and maintenance-log planning.
+  - If the user asks for fuel production, gasification, biogas, biodiesel, ethanol, charcoal, or fuel transfer, hand off to fuel-specific owners and retain only storage, reserve, and hazard-tripwire planning.
+  - If the user asks for steam, boiler, pressure, penstock, tower, dam, building, or civil construction design, hand off to the relevant pressure-system or construction owner.
+fallback_handoff_language:
+  - "This is an energy planning question until it becomes wiring, fuel production, generator repair, pressure equipment, or construction work."
+  - "I can help inventory critical needs, compare sources, and assign owners; I cannot provide technical build, repair, charging, wiring, pressure, or fuel-production steps."
+  - "Treat shock, fumes, CO symptoms, damaged batteries, fuel leaks, smoke, or pressure-system concerns as handoff triggers before continuing the plan."
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  include_energy_needs_inventory: true
+  include_source_comparison: true
+  include_prioritization: true
+  include_resilience_planning: true
+  include_maintenance_log_handoffs: true
+  include_owner_routing: true
+  forbid_technical_procedures: true
+routing_tests:
+  positive:
+    - prompt: "Help us choose which off-grid energy sources to prioritize for water, radios, clinic refrigeration, cooking, and winter heat."
+      expect: energy_systems_resilience_planning
+    - prompt: "Make a maintenance and owner log for our solar, micro-hydro, fuel, and backup generator setup without repair details."
+      expect: energy_systems_resilience_planning
+  near_miss:
+    - prompt: "What wire gauge, breaker size, and inverter hookup should I use?"
+      expect_handoff: electrical_power_owner
+    - prompt: "How do I repair the generator carburetor and adjust the governor?"
+      expect_handoff: generator_or_small_engine_owner
+    - prompt: "Give me steps to build a wood gasifier and tune the gas mixture."
+      expect_handoff: fuel_production_owner
+    - prompt: "Calculate penstock pressure and pipe dimensions for my hydro system."
+      expect_handoff: pressure_or_civil_engineering_owner
+  boundary:
+    - prompt: "The battery bank is hot and one case is bulging, but we need lights."
+      expect: hazard_handoff_before_energy_planning
+    - prompt: "Our clinic fridge power failed and nobody owns the generator log."
+      expect: critical_load_owner_handoff_and_resilience_plan
+citation_ids:
+  - gd-096-reviewed-answer-card-boundary
+  - gd-096-source-comparison
+  - gd-096-fuel-energy-density-comparison
+  - gd-096-maintenance-troubleshooting-boundary
+  - gd-096-water-wind-hydro-planning-context
+  - gd-096-safety-exclusions-owner-routing
+source_sections:
+  - guide: GD-096
+    slug: energy-systems
+    title: Energy Systems
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#water-wheels"
+      - "#windmills"
+      - "#micro-hydro"
+      - "#fuel-comparison"
+      - "#energy-comparison"
+      - "#troubleshooter-energy"
+source_invariants:
+  - name: reviewed planning boundary
+    guide: GD-096
+    must_include:
+      - "This is the reviewed answer-card surface for GD-096."
+      - "Use it for planning-level energy systems work"
+      - "inventorying essential energy needs"
+      - "maintenance and log handoffs"
+      - "Do not use this card for wiring, generator repair, fuel production, pressure or steam systems, battery charging instructions, electrical calculations, live electrical work, code or legal claims, or construction engineering."
+  - name: energy comparison options exist
+    guide: GD-096
+    must_include:
+      - "Energy Systems Comparison"
+      - "Micro Hydro"
+      - "Wind Turbine"
+      - "Water Wheel"
+      - "Hand/Pedal Generator"
+  - name: source and fuel comparison context
+    guide: GD-096
+    must_include:
+      - "Choosing the right fuel for off-grid systems depends on local availability, storage stability, conversion efficiency, and application."
+      - "A resilient off-grid system layers multiple fuels"
+      - "Diversification ensures continuity when one source fails seasonally or unexpectedly."
+  - name: troubleshooting exists but is not procedural owner
+    guide: GD-096
+    must_include:
+      - "No Power Output Troubleshooter"
+      - "Battery Not Charging"
+      - "Wind/Water Turbine - No Output"
+      - "Warning:"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-096 as an energy-systems planning and owner-routing
+  card. It intentionally narrows the broad source guide to inventory, comparison,
+  prioritization, resilience, maintenance logs, and handoffs. It excludes wiring,
+  generator repair, fuel production, pressure/steam systems, battery charging,
+  electrical calculations, live electrical work, code/legal claims, and construction
+  engineering. READY_FOR_PARENT_CLOSE.

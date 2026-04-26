@@ -19,10 +19,54 @@ word_count: 3274
 last_updated: '2026-02-24'
 version: '1.1'
 liability_level: high
+aliases:
+  - sewage treatment monitoring
+  - septic system red flags
+  - sewage odor overflow
+  - drain field wet spots
+  - sewage system maintenance records
+  - septic maintenance schedule
+  - sewage near well
+  - wastewater handoff notes
+routing_cues:
+  - Use for monitoring existing sewage treatment systems, odor or overflow red flags, separation from drinking water, routine maintenance scheduling, recordkeeping, and handoffs.
+  - Route plant design, excavation or construction, chemical dosing or disinfection formulas, pathogen kill guarantees, confined-space entry, legal permit claims, wastewater sampling safety details, and illness treatment outside this reviewed card.
+citations_required: true
+applicability: >
+  Use GD-117 for sewage treatment system monitoring, odor and overflow triage,
+  drinking-water separation checks, maintenance scheduling, recordkeeping, and
+  handoff notes for septic, constructed wetland, composting-toilet, greywater,
+  and related wastewater systems. Do not use the reviewed answer card for plant
+  design, excavation or construction, chemical dosing or disinfection formulas,
+  pathogen kill guarantees, confined-space entry, legal permit claims,
+  wastewater sampling safety details, or illness treatment.
+citation_policy: >
+  Cite this reviewed GD-117 answer card for monitoring, odor/overflow red
+  flags, drinking-water separation, routine maintenance scheduling,
+  recordkeeping, and handoffs. Route design, construction, chemical treatment,
+  pathogen-safety guarantees, confined-space entry, permit/legal questions,
+  sampling safety, and illness care to the appropriate specialist owner or
+  professional authority.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: sewage_treatment_systems_monitoring
+answer_card:
+  - sewage_treatment_systems_monitoring
 ---
 :::danger
 **LETHAL CONFINED SPACE HAZARD:** NEVER enter a septic tank or enclosed sewage treatment structure. Hydrogen sulfide (H₂S) accumulates in sewage systems and causes death within minutes — victims often lose consciousness in a single breath without warning. Multiple fatalities commonly occur when rescuers enter to save the first victim. All septic/sewage work must be performed from outside the structure or with professional confined-space entry equipment and rescue teams.
 :::
+
+<section id="answer-card-safe-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-117. Use it for monitoring existing sewage treatment systems, checking odor or overflow red flags, keeping wastewater separated from drinking-water sources, scheduling routine maintenance, recording observations, and preparing concise handoff notes for qualified help.
+
+Start with contact prevention and drinking-water separation. Treat sewage backups, surfacing effluent, wet spots, standing water, sewer or sulfur odors, slow drains across multiple fixtures, unusually green drain-field growth, nearby well or spring risk, and any request to enter a tank or enclosed sewage structure as red flags before routine troubleshooting.
+
+Keep routine answers observational: what changed, where water is going, what smells or backs up, what maintenance was last done, and what should be documented for the next responsible person. Do not provide plant design, excavation or construction instructions, chemical dosing or disinfection formulas, pathogen kill guarantees, confined-space entry steps, legal permit claims, wastewater sampling safety details, or illness treatment from this card.
+
+</section>
 
 <section id="overview">
 

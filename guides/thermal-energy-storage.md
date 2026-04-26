@@ -8,6 +8,18 @@ tags:
   - rebuild
 icon: 🌡️
 description: Capturing, storing, and using heat for off-grid living
+aliases:
+  - thermal storage planning
+  - heat storage planning
+  - thermal mass planning
+  - passive heat storage
+  - greenhouse heat buffer
+  - root cellar thermal buffer
+  - retained heat cooking
+  - hot water heat storage safety boundary
+routing_cues:
+  - Use for planning-level questions about heat storage use cases, storage-family comparison, insulation condition, location risks, monitoring logs, and maintenance handoffs.
+  - Route pressure vessels, steam, molten salt, phase-change recipes, combustion integration, electrical integration, structural loads, confined-space work, burns, and performance guarantees away from this reviewed card.
 related:
   - batteries
   - battery-restoration
@@ -19,7 +31,38 @@ word_count: 9758
 last_updated: '2026-02-16'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: thermal_energy_storage_planning
+citations_required: true
+applicability: >
+  Use GD-253 for planning-level thermal energy storage use-case selection,
+  broad storage-family comparison, insulation and location checks, monitoring
+  logs, maintenance handoffs, and owner routing. Do not use its reviewed card
+  for pressure vessels, steam, molten-salt or phase-change chemistry recipes,
+  combustion systems, electrical integration, structural calculations,
+  confined-space work, burn treatment, or promised heat-duration, efficiency,
+  crop-yield, safety, or cost performance.
+citation_policy: >
+  Cite this guide and its reviewed answer card for planning-level thermal
+  storage use-case selection, insulation and location checks, monitoring logs,
+  maintenance handoffs, and owner routing only. Do not use the reviewed answer
+  card for pressure vessels, molten-salt or phase-change chemistry recipes,
+  combustion-system design, electrical integration, structural load
+  calculations, confined-space work, scald or burn treatment, or performance
+  guarantees.
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-253. Use it for planning-level thermal energy storage decisions: choosing a practical use case, comparing broad storage families, checking insulation and location risks, setting up simple monitoring logs, naming maintenance handoffs, and routing specialist-owned work.
+
+Start by identifying the intended use case: space heating buffer, greenhouse temperature moderation, retained-heat cooking, passive building thermal mass, root-cellar or cool-room support, ice/cool storage, or community-scale planning. Then check climate, available storage material, wet or freeze-prone locations, insulation condition, drainage, access for inspection, and whether the request belongs to another owner before giving recommendations.
+
+Do not use this card for pressure-vessel design or relief sizing, molten salt or phase-change chemistry recipes, combustion-system design, electrical integration, structural load calculations, confined-space entry or work, scald or burn treatment, or promised heat duration, efficiency, crop yield, safety, or cost performance. If the prompt asks for those, answer only the planning observation that is in scope and hand off to the appropriate specialist.
+
+</section>
 
 <section id="principles">
 

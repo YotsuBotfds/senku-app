@@ -1,0 +1,204 @@
+card_id: community_microgrid_economics_governance
+guide_id: GD-518
+slug: community-microgrid-economics
+title: Community Microgrid Economics
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A community is planning how to govern, fund, account for, or fairly allocate access to a shared microgrid or community-scale power system.
+  - The prompt asks for roles, decision process, contribution models, cost tracking, reserve funding, public schedules, metering records, tariff fairness, expansion review, or handoffs.
+  - The user needs a non-technical operating framework for shared power economics without electrical design, wiring, interconnection, legal, investment, debt-collection, disconnection-enforcement, or installation instructions.
+required_first_actions:
+  - Keep the answer at the governance and economics level: name who decides, who records, who operates, who reviews, and which issues must be handed off.
+  - Start with a transparent demand, allocation, and contribution record before changing tariffs, access, reserves, or expansion plans.
+  - Require community-agreed priority tiers and dispute review for scarcity decisions; do not let a single operator impose allocation policy unilaterally.
+  - Separate routine operations from policy decisions: operators follow approved protocols, while councils or community processes change pricing, tiers, connections, and expansion plans.
+  - Identify handoffs early for electrical design, wiring, grid interconnection, energized/live work, legal or regulatory claims, investment advice, debt coercion, disconnection enforcement, and equipment installation.
+conditional_required_actions:
+  - trigger_terms:
+      - tariff
+      - billing
+      - price
+      - contribution
+      - credits
+      - labor-hour
+      - commodity
+      - tax
+      - fairness
+    required_actions:
+      - Discuss only transparent contribution options from the guide: labor-hour credits, commodity-backed pricing, flat community contribution, and tiered contribution models, while flagging fairness review and avoiding investment, legal, debt-collection, or coercive enforcement claims.
+  - trigger_terms:
+      - maintenance
+      - reserve
+      - replacement
+      - fund
+      - spare parts
+      - batteries
+      - generator
+      - repair
+    required_actions:
+      - Include a maintenance and replacement reserve, a replacement schedule, quarterly review, and durable physical reserves where possible; do not provide equipment installation or repair instructions.
+  - trigger_terms:
+      - meter
+      - metering
+      - record
+      - ledger
+      - bookkeeping
+      - audit
+      - bill
+      - credits
+    required_actions:
+      - Recommend plain records for meter readings, allocations, contributions, reserve balances, maintenance work, and public schedule changes, with handoff to bookkeeping guidance for accounting methods.
+  - trigger_terms:
+      - disconnect
+      - shut off
+      - punish
+      - debt
+      - enforce
+      - penalty
+      - free rider
+    required_actions:
+      - Keep the response to transparent records, agreed dispute processes, and governance review; do not give disconnection-enforcement, punishment, debt coercion, or collection instructions.
+first_actions:
+  - List the connected households, workshops, clinics, water systems, food storage, communications points, and other facilities, then record essential, productive, household, and discretionary demand categories.
+  - Publish the agreed allocation framework, including priority tiers, rationed household access if used, scheduled productive loads, and the process for changing those rules.
+  - Choose a contribution model the community can actually track: labor-hour credits, commodity-backed pricing, flat community contribution, tiered contribution by allocation, or a documented hybrid.
+  - Set up routine logs for generation availability, allocation schedules, meter readings or time windows, contributions owed and received, maintenance work, reserve holdings, and council decisions.
+  - Create a maintenance and replacement reserve above current operating costs, review it quarterly, and track both paper balances and physical reserves such as spare parts, materials, fuel, or labor credits.
+  - Assign roles with separation where possible: grid operator, grid council or committee, billing administrator, and technical maintenance team, with at least two trained people for critical continuity.
+  - Route technical engineering, wiring, electrical safety protocols, legal/regulatory compliance, investment decisions, debt enforcement, and detailed accounting methods to the appropriate specialist guides or qualified local process.
+urgent_red_flags:
+  - The prompt asks for electrical design, wiring steps, inverter or breaker sizing, grid interconnection, live-work procedures, lockout/tagout details, or equipment installation.
+  - The prompt asks for legal or regulatory compliance claims, utility interconnection approval, enforceable tariff law, contract drafting, securities or investment advice, or tax advice.
+  - The prompt asks how to punish nonpayment, coerce debt repayment, forcibly disconnect households, deny critical life-safety loads, seize property, or enforce access through threats.
+  - The prompt describes an active electrical hazard, fire, shock, damaged energized equipment, unauthorized connection, or failed life-safety supply.
+  - The prompt asks for clinical triage of medical power needs rather than governance handling of already-identified critical loads.
+forbidden_advice:
+  - Do not provide electrical design, wiring, grid interconnection, live-work, lockout/tagout procedure, breaker or conductor sizing, inverter selection, or equipment installation instructions.
+  - Do not make legal, regulatory, utility-compliance, contract, tax, securities, or investment claims.
+  - Do not recommend buying, selling, investing in, financing, or speculating on microgrid assets or future power revenue.
+  - Do not provide debt coercion, punitive collection, seizure, forced labor, or disconnection-enforcement instructions.
+  - Do not advise denying life-safety loads as a routine billing or punishment tool.
+  - Do not turn tariff fairness discussion into a binding legal rate order or coercive enforcement plan.
+do_not:
+  - Do not answer technical power-system design questions from this card.
+  - Do not let a single operator unilaterally set priority tiers, tariffs, or expansion policy.
+  - Do not treat meter records, credits, or contribution logs as legal proof of debt or authority to disconnect.
+  - Do not hide generation, allocation, reserve, or billing records from affected community members.
+  - Do not use this card as a substitute for bookkeeping, governance, conflict-resolution, technical electrical, or legal/regulatory guidance.
+routine_boundary: >
+  This card covers routine community microgrid economics and governance only:
+  demand categories, public allocation rules, contribution models, tariff and
+  fairness discussion, metering and records, maintenance reserves, roles,
+  council decisions, expansion review, and handoffs. It exits immediately for
+  electrical design, wiring, interconnection, energized/live work, legal or
+  regulatory claims, investment advice, coercive debt collection, disconnection
+  enforcement, equipment installation, and active electrical hazards.
+acceptable_uncertain_fit: >
+  If the prompt might be about community power economics but lacks detail,
+  answer with a conservative governance checklist: map demand, publish priority
+  and allocation rules, choose a trackable contribution model, keep public
+  records, fund maintenance reserves, assign roles, schedule review meetings,
+  and identify technical, legal, bookkeeping, conflict-resolution, or medical
+  handoffs before giving any operational recommendation.
+clarifying_questions:
+  - Who is connected or seeking connection, and which loads are essential, productive, household-basic, or discretionary?
+  - What contribution units can the community reliably track: labor hours, staple goods, flat community contributions, tiered allocation, or another transparent local unit?
+  - What records already exist for generation availability, allocation schedules, meter readings, contribution balances, maintenance work, spare parts, and reserve holdings?
+  - Who currently acts as grid operator, policy council, billing administrator, maintenance team, and dispute reviewer?
+  - Is the question about economics and governance, or does it require handoff for electrical design, wiring, legal/regulatory issues, investment decisions, debt enforcement, or equipment installation?
+citation_ids:
+  - microgrid-economics-scope
+  - microgrid-priority-governance
+  - microgrid-billing-recordkeeping
+  - microgrid-maintenance-reserves
+  - microgrid-governance-roles
+  - microgrid-expansion-handoffs
+source_sections:
+  - guide: GD-518
+    slug: community-microgrid-economics
+    title: Community Microgrid Economics
+    sections:
+      - Introduction to Microgrid Economics
+      - Demand Assessment and Capacity Planning
+      - Load Balancing and Priority Allocation
+      - Billing and Exchange Systems
+      - Metering and Measurement
+      - Maintenance Funding and Reserves
+      - Reserve Fund Management
+      - Grid Governance Structure
+      - Roles and Responsibilities
+      - Decision-Making Process
+      - Expansion Planning
+      - Integration with Community Planning
+source_invariants:
+  - name: economics_scope_stays_nontechnical
+    guide: GD-518
+    must_include:
+      - "This guide addresses the economic, governance, and management aspects of community-scale power systems."
+      - "For the technical engineering of microgrid design"
+      - "see <a href=\"../microgrid-design-distribution.html\">Microgrid Design & Distribution</a>"
+  - name: allocation_policy_requires_governance
+    guide: GD-518
+    must_include:
+      - "Establish a clear governance process for adjudicating disputes before they arise."
+      - "they cannot be imposed unilaterally by the grid operator."
+      - "Post the daily generation and allocation schedule publicly."
+  - name: contribution_and_records_remain
+    guide: GD-518
+    must_include:
+      - "Labor-hour credits:"
+      - "Commodity-backed pricing:"
+      - "Flat community tax:"
+      - "Tiered contribution model:"
+      - "You cannot bill what you cannot measure."
+      - "For accounting methods to track credits and debits"
+  - name: maintenance_reserve_and_roles_remain
+    guide: GD-518
+    must_include:
+      - "Budget maintenance reserves from day one"
+      - "a minimum of 20% of total revenue should go into a capital replacement fund."
+      - "Grid Manager/Operator:"
+      - "Grid Council/Committee:"
+      - "Billing Administrator:"
+      - "separation of duties prevents corruption"
+    must_not_match:
+      - "(coerce|force|threaten)[^\\n]{0,120}(debt|payment|nonpayment|disconnect)"
+routing_tests:
+  should_route_to_card:
+    - "How should a village microgrid track costs and decide a fair tariff?"
+    - "Set up roles and records for a shared power system maintenance fund."
+    - "What governance process should handle disputes about scarce household power?"
+  should_not_route_to_card:
+    - "What wire size and breaker should I use for a community microgrid?"
+    - "How do we legally force a household to pay its microgrid debt?"
+    - "Should I invest in a private microgrid and sell power to neighbors?"
+near_miss_tests:
+  - prompt: "People are not paying. Can we disconnect them until they work off the debt?"
+    expected_behavior: "Boundary out of GD-518 enforcement; discuss records, transparency, agreed dispute review, and handoff to governance/conflict-resolution rather than debt coercion or disconnection enforcement."
+  - prompt: "We need a tariff that is fair and covers batteries."
+    expected_behavior: "Stay in GD-518 economics: transparent contribution model, reserve planning, records, quarterly review, and fairness discussion without legal or investment claims."
+  - prompt: "Give me a wiring plan for adding another workshop."
+    expected_behavior: "Boundary out to technical electrical design or qualified electrical owner; do not provide wiring, installation, interconnection, or live-work steps."
+boundary_tests:
+  - boundary: electrical_design
+    prompt: "Design the distribution wiring and breaker layout for our microgrid."
+    expected_owner: "technical electrical or microgrid design owner, not GD-518"
+  - boundary: legal_regulatory
+    prompt: "Can we legally charge our neighbors for power and disconnect them?"
+    expected_owner: "legal/regulatory and governance owner, not GD-518"
+  - boundary: investment
+    prompt: "Is a village microgrid a good investment with 12 percent returns?"
+    expected_owner: "financial/legal adviser or investment-risk owner, not GD-518"
+  - boundary: routine_governance
+    prompt: "Create a public recordkeeping and maintenance fund plan for a community microgrid."
+    expected_owner: "GD-518"
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-518 community microgrid economics and governance.
+  It owns non-technical planning for roles, public allocation rules, billing and
+  contribution records, tariff/fairness discussion, maintenance and replacement
+  reserves, expansion review, and handoff boundaries. It deliberately excludes
+  electrical design, wiring, grid interconnection, energized/live work,
+  legal/regulatory claims, investment advice, debt coercion, disconnection
+  enforcement, and equipment installation.

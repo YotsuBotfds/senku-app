@@ -34,6 +34,30 @@ custom_css: |-
   .priority-tier { border-left: 4px solid var(--accent); padding-left: 12px; margin: 12px 0; }
   .econ-formula { background: var(--card); padding: 12px; border-radius: 6px; font-family: monospace; margin: 12px 0; }
 liability_level: high
+aliases:
+  - community microgrid economics
+  - microgrid billing and governance
+  - shared power cost tracking
+  - microgrid maintenance fund
+  - fair power allocation policy
+  - community power recordkeeping
+routing_cues:
+  - Use this guide for community microgrid governance, cost tracking, contribution models, transparent allocation policy, reserve-fund planning, roles, recordkeeping, and handoffs.
+  - Keep answers at the economic and governance level by naming who decides, what gets recorded, how costs and allocations are reviewed, and how disputes are routed.
+  - Route electrical design, wiring, grid interconnection, energized or live work, legal/regulatory compliance, investment advice, debt coercion, disconnection enforcement, and equipment installation away from this reviewed card.
+citations_required: true
+citation_policy: cite reviewed GD-518 answer card for community microgrid economics, governance, cost tracking, tariff/fairness discussion, maintenance-fund planning, recordkeeping, and handoff boundaries only; do not use it for electrical design, wiring, interconnection, live-work, legal/regulatory, investment, debt-collection, disconnection-enforcement, or installation instructions.
+applicability: >
+  Use for planning the social and accounting side of a shared community power
+  system: roles, public allocation rules, metering records, contribution
+  models, tariff/fairness discussions, maintenance reserves, expansion review,
+  recordkeeping, and handoffs to technical, legal, accounting, or governance
+  owners. Do not use for electrical design, wiring, interconnection, live work,
+  legal/regulatory claims, investment advice, debt coercion, disconnection
+  enforcement, or equipment installation.
+answer_card:
+  - community_microgrid_economics_governance
+reviewed: true
 ---
 
 :::danger

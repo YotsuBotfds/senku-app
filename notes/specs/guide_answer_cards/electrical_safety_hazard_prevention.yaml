@@ -1,0 +1,167 @@
+card_id: electrical_safety_hazard_prevention
+guide_id: GD-513
+slug: electrical-safety-hazard-prevention
+title: Electrical Safety & Hazard Prevention
+risk_tier: critical
+evidence_owner: guide-corpus
+applicability: >
+  Use for electrical hazard recognition and immediate safety boundaries:
+  electrical shock or cannot-let-go contact, collapse near electrical equipment,
+  exposed conductors, downed lines, wet breaker boxes, sparking outlets, smoke,
+  water-damaged electrical systems, and pre-repair stop-work planning. Keep the
+  card limited to isolation, keep-back, signage/checklist, emergency handoff,
+  and routing. Do not use it for wiring, repair procedures, live-circuit testing,
+  arc-flash calculations, generator backfeeding, code compliance, or injury
+  treatment.
+applies_when:
+  - A person was shocked, cannot let go, collapsed near electrical equipment, or may still be connected to a live source.
+  - A user reports exposed wires, bare conductors, downed lines, wet outlets, water through fixtures, standing water near a panel, sparking outlets, smoke, or electrical fire risk.
+  - A repair, roof leak, storm cleanup, flood cleanup, salvage, or troubleshooting question includes possible electrical damage or energized equipment.
+  - A user needs a high-level de-energized work boundary, signage/isolation checklist, or safe handoff before anyone touches equipment.
+required_first_actions:
+  - Treat electrical shock, cannot-let-go contact, collapse near electrical equipment, exposed live wires, downed lines, wet panels, sparking outlets, smoke, or unknown electrical hazards as stop-work conditions before repair, cleanup, or troubleshooting.
+  - Do not touch a shocked person, exposed conductor, wet panel, standing water, metal equipment, or downed line; keep people, vehicles, animals, fences, puddles, and wet ground away.
+  - Shut off power only from a dry, safe location if it can be done without approaching the hazard; if it cannot, keep everyone back and hand off to emergency services, the utility, or a trained electrical responder.
+  - After a person is safely clear and the scene is de-energized, hand off to emergency medical response or first-aid guidance for breathing checks, CPR/AED, burns, falls, and monitoring.
+conditional_required_actions:
+  - trigger_terms:
+      - cannot let go
+      - won't let go
+      - shocked and collapsed
+      - collapsed near electrical
+      - stuck to wire
+      - electric shock victim
+    required_actions:
+      - Say not to touch the person while they may be energized; isolate power first from a dry safe location if possible.
+      - If power cannot be isolated safely, keep everyone back and wait for emergency services, the utility, or a trained electrical responder when possible.
+      - Once safely clear and de-energized, route to emergency medical care or first aid for CPR/AED and injury management rather than treating the injury inside this card.
+  - trigger_terms:
+      - downed line
+      - power line down
+      - utility line
+      - wire in street
+      - live line
+    required_actions:
+      - Treat any downed utility line as energized; do not approach, test, move, or try to separate it from anything.
+      - Keep people, vehicles, animals, fences, puddles, wet ground, and cleanup activity away until the utility or trained electrical responder de-energizes and grounds it.
+  - trigger_terms:
+      - wet breaker
+      - wet panel
+      - standing water
+      - water through outlet
+      - water through light
+      - roof leak electrical
+      - flood
+      - storm cleanup
+    required_actions:
+      - Stop cleanup, roof work, salvage, or repair activity around the electrical hazard until power is isolated from a dry safe location.
+      - Keep people out of standing water and away from wet electrical equipment, nearby metal, and surfaces that may be energized.
+first_actions:
+  - Name the hazard first, then give a stop-work boundary before any repair or troubleshooting response.
+  - Establish a keep-back perimeter using plain barriers, signs, and a person assigned to warn others when available.
+  - If safe, isolate power from a dry location using an upstream breaker, disconnect, plug, or source; otherwise hand off without approaching.
+  - Mark the equipment or area as unsafe and do not re-energize until a qualified electrical owner has inspected the hazard and the work area is clear.
+  - Route the next step to the correct owner: emergency services or utility for live/downed/energized hazards, first aid after safe access, electrical wiring only after hazard isolation, and generation/battery owners for non-emergency system planning.
+urgent_red_flags:
+  - A person cannot let go, collapsed, was thrown, lost consciousness, has abnormal breathing, or may still be connected to a live source.
+  - Exposed or bare conductors, downed utility lines, wet panels, standing water near electrical equipment, water through outlets or fixtures, sparking, smoke, flame, or hot electrical smell.
+  - Unknown power status, assumed-dead circuits, backfeed possibility, energized metal, wet ground, or any condition where safe isolation cannot be confirmed from a dry location.
+  - Work pressure to continue roof repair, cleanup, salvage, or troubleshooting before electrical isolation and handoff are complete.
+forbidden_advice:
+  - Do not provide wiring instructions, circuit repair steps, panel work, outlet repair, breaker replacement, grounding installation, or equipment repair procedures.
+  - Do not instruct the user to test, probe, troubleshoot, or work on live circuits.
+  - Do not provide lockout/tagout procedure details beyond high-level de-energize, label, keep locked/isolated, and hand off to a qualified owner.
+  - Do not provide code compliance claims, arc-flash calculations, PPE rating calculations, generator backfeeding instructions, transfer-switch wiring, or building-code determinations.
+  - Do not provide injury treatment beyond scene safety and emergency/first-aid handoff; do not replace medical care after shock, collapse, burns, abnormal breathing, or loss of consciousness.
+do_not:
+  - Do not touch a person who may still be energized.
+  - Do not touch exposed conductors, wet panels, standing water, nearby metal, or a downed line.
+  - Do not approach, move, test, or use an object on a downed utility line.
+  - Do not throw water on an electrical fire.
+  - Do not continue repair, cleanup, salvage, or troubleshooting until the electrical hazard is isolated and handed off.
+routine_boundary: >
+  This card is not routine wiring or repair advice. Use it only to stop unsafe
+  activity, identify electrical hazards, isolate from a dry safe location when
+  possible, set keep-back/signage boundaries, hand off emergencies, and route
+  non-emergency work to the proper owner after the hazard is no longer active.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but could involve live electricity, water plus
+  electrical equipment, shock, collapse, sparks, smoke, or a downed line, choose
+  the conservative hazard-first answer: stop work, keep back, isolate only from
+  a dry safe location, mark the area unsafe, and hand off before asking detailed
+  troubleshooting questions.
+clarifying_questions:
+  - Is anyone currently touching the equipment, unable to let go, collapsed, or not breathing normally?
+  - Is there standing water, wet flooring, rain intrusion, or water coming through a fixture, outlet, or panel?
+  - Can power be shut off from a dry safe location without approaching exposed conductors, wet equipment, or a downed line?
+  - Is this a downed utility line, building wiring, generator/battery equipment, or unknown source?
+  - Has the area been kept clear and marked so nobody enters while the hazard is unresolved?
+fallback_handoff_language:
+  - If a person may still be energized, say not to touch them; isolate power from a dry safe location if possible, otherwise keep everyone back and call emergency services, the utility, or a trained electrical responder.
+  - If the hazard is a downed line, wet panel, exposed live conductor, smoke, sparking, or uncertain energized metal, route to utility/emergency/trained electrical response and do not provide repair steps.
+  - If the user wants wiring, repair, generation, battery, or medical instructions, route to the relevant owner only after this card's stop-work and isolation boundary is satisfied.
+handoff:
+  - first-aid for CPR/AED, burns, falls, spinal concerns, and medical monitoring after the scene is safe.
+  - electrical-wiring for non-emergency wiring methods only after isolation and inspection boundaries are satisfied.
+  - electrical-generation for non-emergency generator planning without backfeeding instructions.
+  - electrical-system-bootstrap for community restoration planning after active hazards are controlled.
+  - batteries for battery heat, swelling, venting, leaking, or storage hazards.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - electrical-step-one-hazard-triage
+  - electrical-shock-do-not-touch
+  - electrical-wet-downed-exposed-keep-back
+  - electrical-deenergized-work-boundary
+  - electrical-arc-flash-stop-work
+  - electrical-emergency-handoff
+source_sections:
+  - guide: GD-513
+    slug: electrical-safety-hazard-prevention
+    title: Electrical Safety & Hazard Prevention
+    sections:
+      - "#step-1-what-is-your-electrical-safety-problem-right-now"
+      - "#insulation"
+      - "#lockout-tagout"
+      - "#electrocution-scenarios"
+      - "#arc-flash"
+      - "#emergency-response"
+source_invariants:
+  - name: shock_victim_do_not_touch
+    guide: GD-513
+    must_include:
+      - Do NOT touch a person who is in contact with an energized conductor.
+      - Call emergency services if available and de-energize the source FIRST from a dry, safe location.
+      - If you cannot de-energize, keep everyone back and wait for the utility or a trained electrical responder when possible.
+  - name: exposed_wet_downed_hazard_first
+    guide: GD-513
+    must_include:
+      - Treat this as a hazard before repair, flood cleanup, or generic troubleshooting.
+      - Keep people back, do not touch exposed conductors, wet panels, standing water, or metal equipment
+      - For a downed utility line, do not approach, do not try to test or move it
+  - name: deenergize_before_work_boundary
+    guide: GD-513
+    must_include:
+      - De-energize before working
+      - Lockout/tagout (LOTO) prevents the unexpected energization of equipment during maintenance or repair.
+      - attach a written tag stating
+  - name: electrical_fire_no_water
+    guide: GD-513
+    must_include:
+      - Do not throw water on an electrical fire.
+      - If smoke or flame is spreading, evacuate first.
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card derived only from GD-513 hazard-first and emergency
+  boundary passages. It intentionally narrows the source guide away from wiring,
+  repair, live testing, detailed lockout/tagout steps, arc-flash calculations,
+  generator backfeeding, code compliance, and injury treatment. Use it for
+  hazard recognition, stop-work boundaries, dry-safe-location isolation,
+  signage/keep-back planning, emergency handoffs, and safe owner routing.

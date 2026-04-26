@@ -54,6 +54,32 @@ aliases:
 routing_cues:
   - Use when storm, roof leak, flood, or cleanup prompts include wet outlets, fixtures, breaker panels, standing water near electrical equipment, or possible electrical damage inside.
   - Route repair, patching, and cleanup questions to hazard isolation first when water and electrical systems may interact; do not provide repair steps until power is isolated from a dry safe location.
+citations_required: true
+citation_policy: >
+  Cite GD-513 and its reviewed answer card for electrical hazard recognition,
+  stop-work boundaries, de-energized planning, signage or isolation checklists,
+  emergency handoffs, and safe owner routing only. Do not use it as wiring,
+  live-testing, repair, generator backfeed, arc-flash calculation, code
+  compliance, or injury-treatment procedure authority.
+applicability:
+  owner: electrical-hazard-safety-boundary
+  use_when:
+    - The user asks what to do first around electrical shock, cannot-let-go contact, collapse near electrical equipment, exposed conductors, downed lines, wet panels, sparking outlets, smoke, or uncertain electrical hazards.
+    - The user needs a stop-work, keep-back, isolate-from-a-dry-safe-location, signage, and handoff checklist before cleanup, roof repair, salvage, or routine troubleshooting.
+    - The user asks how to plan de-energized work boundaries or safe owner routing without needing wiring, repair, live-circuit testing, calculations, or code compliance.
+  do_not_use_when:
+    - The request asks for wiring instructions, repair steps, circuit design, code compliance determinations, arc-flash calculations, generator backfeeding, or testing live circuits.
+    - The request asks for medical treatment of electrical injury beyond scene safety, emergency handoff, CPR/AED handoff, and urgent evaluation routing.
+  handoff:
+    - first-aid for CPR/AED and injury care after the scene is safe and power is isolated.
+    - electrical-wiring for wiring methods only after the hazard has been isolated and the request is not safety-critical.
+    - electrical-generation or electrical-system-bootstrap for generation and restoration planning without immediate electrical hazard.
+    - batteries for battery-specific heat, swelling, venting, leaking, or storage hazards.
+reviewed_applicability:
+  - Safe when needed: hazard recognition, do-not-touch/keep-back boundaries, dry-safe-location de-energizing, emergency handoff, signage/isolation planning, and owner routing before repair or cleanup.
+  - Not safe for: wiring or repair procedures, live-circuit testing, code compliance claims, arc-flash calculations, generator backfeeding, detailed lockout/tagout procedure, or injury treatment.
+answer_card:
+  - electrical_safety_hazard_prevention
 icon: ⚡
 description: Hazard-first electrical safety for electrical shock victims, cannot-let-go contact, shocked-and-collapsed emergencies, collapse near electrical equipment, exposed live wires, downed lines, wet breaker boxes, sparking outlets, grounding, insulation testing, lockout/tagout, arc flash awareness, and emergency response to electrical injuries before repair, CPR, or troubleshooting.
 related:

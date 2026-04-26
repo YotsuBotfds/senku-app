@@ -1,0 +1,104 @@
+card_id: thermodynamics_heat_transfer_conceptual_planning
+guide_id: GD-427
+slug: thermodynamics-heat-transfer
+title: Thermodynamics & Heat Transfer
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks why something is gaining, losing, storing, or transferring heat and needs a conceptual explanation of conduction, convection, radiation, thermal mass, or insulation behavior.
+  - A user needs an observation or planning checklist for heat loss, insulation gaps, radiant exposure, air movement, wet or compressed insulation, hot surfaces, or thermal buffering.
+  - The request can be answered as qualitative heat-loss and insulation reasoning without designing equipment, tuning combustion, repairing utilities, handling hazardous materials, or promising safety/performance.
+required_first_actions:
+  - Identify the object or space, heat source, heat sink, likely heat-transfer path, and available observations before recommending changes.
+  - Classify the dominant mechanism as conduction, convection, radiation, thermal mass, or insulation/air-leak behavior, and keep the explanation conceptual.
+  - Screen for pressure, steam, combustion, electricity, HVAC/refrigerant systems, industrial equipment, hazardous materials, occupied-space exposure, burns, fire, or animal/person safety concerns, and hand those off instead of giving design or repair instructions.
+first_actions:
+  - Ask what is hot or cold, what it touches, where air is moving, what surfaces face radiant heat or sun, what insulation is present, whether it is wet/compressed/gapped, and how temperature changes over time.
+  - For conduction, look for direct solid contact paths, metal bridges, thin barriers, damp materials, and compressed insulation.
+  - For convection, look for drafts, vents, gaps, wind exposure, fan or pump effects, open lids, chimney/flue movement, and moving water or air.
+  - For radiation, look for line-of-sight exposure to sun, flame, hot metal, stoves, dark surfaces, shiny reflectors, or people/animals near radiant heat.
+  - For thermal mass, explain whether water, stone, earth, masonry, or other mass is slowing temperature swings, absorbing daytime heat, or delaying cooling.
+  - End with a conservative handoff when the user needs equipment design, code compliance, repair, pressure/steam decisions, combustion changes, electrical work, hazardous-material handling, industrial process control, or a safety guarantee.
+urgent_red_flags:
+  - The request involves a boiler, pressure vessel, steam system, sealed heated container, refrigerant system, fuel burner, chimney modification, electrical heater wiring, or industrial process.
+  - People or animals are exposed to intense radiant heat, hot surfaces, fire risk, smoke, poor ventilation, carbon-monoxide concern, or uncontrolled heating/cooling.
+  - Insulation or heat-transfer changes could trap moisture, block ventilation, contact a hot flue or appliance, cover wiring, or alter combustion air.
+  - The user asks for a guaranteed temperature hold time, structural fire rating, food or water safety assurance, load rating, code compliance, or professionally safe design.
+forbidden_advice:
+  - Do not provide boiler, pressure-vessel, steam-system, combustion, burner, chimney, electrical, HVAC, refrigerant, hazardous-material, or industrial-process design or repair instructions.
+  - Do not calculate or promise exact heat-loss rates, hold times, temperatures, efficiencies, R-value performance, fuel use, burn safety, code compliance, or engineering suitability.
+  - Do not tell the user that an improvised insulation, heater, exchanger, container, shelter, furnace, stove, flue, or thermal storage setup is safe.
+  - Do not advise covering vents, flues, appliances, electrical wiring, hot surfaces, or combustion-air paths with insulation.
+  - Do not give food-safety, water-safety, medical burn-treatment, animal-heating, or hazardous-material handling guidance under this card.
+do_not:
+  - Do not turn the guide's formulas into a design guarantee or certification.
+  - Do not route pressure, steam, combustion, electrical, HVAC, industrial, hazardous-material, or emergency exposure prompts to this card as the final answer owner.
+  - Do not skip the observation checklist and jump directly to a material or equipment recommendation.
+  - Do not present reflective insulation, air gaps, thermal mass, or heat exchangers as universally safe or effective without context and inspection.
+routine_boundary: >
+  This card owns conceptual heat-transfer explanation, observation checklists,
+  qualitative heat-loss and insulation reasoning, thermal-mass planning, and
+  handoffs. It does not own engineering design, repair work, equipment tuning,
+  pressure/steam systems, combustion systems, electrical or HVAC work,
+  hazardous-material handling, industrial processes, food/water safety
+  guarantees, or safety certification.
+acceptable_uncertain_fit: >
+  If the prompt is plausibly about heat-transfer reasoning but equipment type,
+  material condition, or risk context is unclear, give a conservative conceptual
+  explanation, list observations to collect, avoid formulas and guarantees, and
+  ask one clarifying question while preserving handoff language for pressure,
+  combustion, electrical, HVAC, hazardous-material, industrial, or emergency
+  exposure concerns.
+clarifying_questions:
+  - What is the object or space, what is the heat source, and what is the cooler place the heat is moving toward?
+  - Is the main issue direct contact, moving air or water, line-of-sight radiant heat, stored heat in mass, or missing/wet/compressed insulation?
+  - Are pressure, steam, fuel combustion, electricity, HVAC/refrigerant equipment, hazardous materials, industrial equipment, people, animals, smoke, fire, or burn risk involved?
+  - Are you trying to understand observations, plan insulation, compare concepts, or decide what specialist to call?
+citation_ids:
+  - gd-427-reviewed-card-boundary
+  - gd-427-heat-transfer-mechanisms
+  - gd-427-thermal-resistance
+  - gd-427-thermal-mass
+  - gd-427-practical-heat-management
+  - gd-427-worked-example-boundary
+source_sections:
+  - guide: GD-427
+    slug: thermodynamics-heat-transfer
+    title: Thermodynamics & Heat Transfer
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#heat-transfer-mechanisms"
+      - "#thermal-resistance"
+      - "#thermal-mass"
+      - "#heat-management-applications"
+      - "#practical-calculations"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-427
+    must_include:
+      - This is the reviewed answer-card surface for GD-427.
+      - Use it for conceptual thermodynamics and heat-transfer planning
+      - Do not use this card for boiler or pressure-vessel design
+      - claims that an improvised insulation or heat-transfer setup is safe
+  - name: mechanisms stay conceptual
+    guide: GD-427
+    must_include:
+      - Heat transfer is the movement of thermal energy from hot to cold regions.
+      - Heat flows directly through a material without bulk motion
+      - Heat is transferred by the bulk motion of fluids
+      - All objects emit electromagnetic radiation based on their absolute temperature
+  - name: insulation and thermal mass source context
+    guide: GD-427
+    must_include:
+      - Resistance to heat flow through a material or assembly.
+      - Thermal mass is the ability of a material to store heat.
+      - Reflective insulation
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-427 card for conceptual heat-transfer explanation,
+  observation/planning checklists, qualitative heat-loss and insulation
+  reasoning, thermal-mass context, and handoffs. The card deliberately avoids
+  formulas as answer actions and forbids boiler/pressure-vessel design,
+  combustion tuning, electrical work, HVAC repair, hazardous-material handling,
+  industrial process design, quantitative guarantees, and safety certification.
+  READY_FOR_PARENT_CLOSE.
