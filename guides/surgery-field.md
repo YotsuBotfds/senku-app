@@ -4,6 +4,26 @@ slug: surgery-field
 title: Field Surgery & Emergency Procedures
 category: medical
 difficulty: advanced
+aliases:
+  - field surgery triage
+  - improvised surgery warning
+  - when not to operate
+  - stop field surgery
+  - emergency procedure limits
+  - evisceration first aid
+  - post operative infection warning
+  - surgical complication red flags
+  - no professional care surgery decision
+routing_cues:
+  - Use for deciding whether field surgery is even justified, when to stop an improvised procedure, and how to keep escalation/referral first.
+  - Use for evisceration protection, post-operative fever or spreading redness, uncontrolled bleeding during a procedure, unclear anatomy, or pathology beyond the responder's ability.
+  - Route airway failure, major bleeding, shock, eye injury, anesthesia, chronic wound care, and routine first aid to their specific guides first when they are the better owner.
+citations_required: true
+applicability: >
+  High-liability field-surgery triage, stop criteria, escalation limits,
+  evisceration protection, and post-operative danger-sign surfacing where
+  untrained or improvised procedures could cause hemorrhage, infection,
+  organ damage, sepsis, or death.
 tags:
   - critical
 icon: 🩺

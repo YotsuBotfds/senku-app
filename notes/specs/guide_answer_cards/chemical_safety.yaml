@@ -1,0 +1,177 @@
+card_id: chemical_safety
+guide_id: GD-227
+slug: chemical-safety
+title: Chemical Safety
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about household chemical or survival chemistry safety, cleaner compatibility, do-not-mix rules, storage segregation, PPE, labeling, or handling before anyone is hurt.
+  - User reports an unknown spill, leaking container, unlabelled substance, unknown fumes, chemical odor, mixed cleaners, or a spill where scene isolation must come before cleanup.
+  - User reports possible chemical inhalation, skin contact, eye splash, swallowed cleaner, drain opener, solvent vapors, paint thinner fumes, or under-sink chemical exposure and needs first steps before identification or cleanup.
+required_first_actions:
+  - Lead with prevention and exposure control; keep people and pets away from unknown spills or fumes, stop nearby activity, and do not walk through or reach into spilled material.
+  - Ventilate or move outdoors for unknown fumes or inhalation exposure when that can be done without re-entering a contaminated area.
+  - Do not mix, rinse, neutralize, taste, or smell unknown chemicals; containment and escalation come before treatment.
+  - Call poison control or emergency services immediately for swallowed cleaner, skin or eye contact, inhalation symptoms, large spill, uncertainty, or any chemical exposure with symptoms.
+  - For chemical in the eye, begin immediate continuous water or saline flushing for at least 15 minutes before product identification.
+conditional_required_actions:
+  - trigger_terms:
+      - unknown spill
+      - unlabelled spill
+      - unknown fumes
+      - leaking container
+      - chemical smell
+      - do not know what it is
+    required_actions:
+      - Isolate the area, keep people and pets out, ventilate or move outdoors if safe, avoid skin and eye contact, and escalate to emergency services or poison control for uncertainty, symptoms, contact, or a large spill.
+      - Do not add water, bleach, vinegar, baking soda, neutralizers, or any other chemical to an unknown substance.
+  - trigger_terms:
+      - bleach and ammonia
+      - bleach plus ammonia
+      - bleach and vinegar
+      - bleach plus vinegar
+      - mixed cleaners
+      - chloramine
+      - chlorine gas
+    required_actions:
+      - Treat coughing, chest tightness, wheezing, or trouble breathing after mixed cleaners as urgent household chemical inhalation exposure; ventilate, move to fresh air, seek emergency care, and do not wait to see if it improves.
+      - State that bleach must not be mixed with ammonia, ammonium cleaners, vinegar, toilet bowl cleaner, rust remover, or acid cleaners because the guide identifies toxic gas hazards.
+  - trigger_terms:
+      - paint thinner fumes
+      - solvent fumes
+      - mineral spirits
+      - varnish fumes
+      - stain fumes
+      - dizzy from fumes
+      - nausea from fumes
+    required_actions:
+      - Treat solvent or paint-thinner fumes causing headache, nausea, cough, dizziness, or sickness as chemical inhalation exposure; ventilate immediately, move to fresh air, and use poison control or emergency services if symptoms persist or breathing is affected.
+  - trigger_terms:
+      - chemical on skin
+      - burning hands
+      - cleaner on skin
+      - lye burn
+      - drain cleaner on skin
+      - bleach on skin
+    required_actions:
+      - Remove contaminated clothing immediately and flush affected skin with copious water for at least 15 minutes; do not rub or apply ointments or salves.
+  - trigger_terms:
+      - chemical in eye
+      - cleaner in eye
+      - bleach in eye
+      - splash to eye
+    required_actions:
+      - Rinse immediately and continuously with water or saline for 15 minutes, hold the eyelid open, do not rub the eye, remove contact lenses if present, and seek immediate medical care.
+  - trigger_terms:
+      - swallowed cleaner
+      - drank bleach
+      - ingested drain cleaner
+      - detergent pod
+      - under-sink liquid
+    required_actions:
+      - Call poison control immediately, have the container or label ready, rinse the mouth with water only if conscious and swallowing intact, do not induce vomiting unless poison control advises it, and transport with the container if emergency care is needed.
+first_actions:
+  - Sort the prompt first by prevention versus exposure; task-first known-product handling can use storage, PPE, compatibility, and spill-prevention guidance; complaint-first exposure goes to section 13 and toxicology routing.
+  - For storage and compatibility questions, separate incompatible groups, use secondary containment, keep volatile chemicals sealed and ventilated outdoors, and never store or mix bleach with ammonia or acid cleaners.
+  - For known spills, alert people, evacuate non-essential personnel, identify the chemical from the label only if safe, contain spread, absorb, label hazardous waste, and avoid drain disposal.
+  - For unexpected odor, color change, runaway heating, bubbling, or decomposition signs, stop the reaction, cease heating, increase ventilation or move away, and evacuate or call emergency services if control is lost.
+urgent_red_flags:
+  - Coughing, chest tightness, wheezing, difficulty breathing, persistent cough, or symptoms after mixing cleaners or breathing solvent fumes.
+  - Any chemical eye splash or chemical liquid in the eye.
+  - Chemical burn, burning skin, lye or drain cleaner splash, blistering, or affected skin area larger than 4 cm.
+  - Swallowed cleaner, detergent pod, drain opener, corrosive acid or base, unknown under-sink liquid, or any ingestion with trouble swallowing, vomiting, altered consciousness, or seizure.
+  - Unknown spill or unknown fumes with uncertainty, large quantity, skin or eye contact, inhalation symptoms, vapor release, fire, or inability to identify the chemical safely.
+forbidden_advice:
+  - Do not tell the user to mix, rinse, neutralize, smell, taste, or experimentally test an unknown spill or unlabelled chemical.
+  - Do not advise bleach-ammonia, bleach-vinegar, bleach-acid, oxidizer-organic, acid-base, acid-water, or other guide-listed incompatible mixing.
+  - Do not give procedural chemistry steps, quantities, reaction conditions, or neutralization recipes beyond the cited source sections.
+  - Do not route symptomatic mixed-cleaner, solvent-fume, skin, eye, or ingestion exposures to routine cleaning, laundry, dishwashing, home-care, smoke-inhalation, or carbon-monoxide guidance first.
+  - Do not induce vomiting for swallowed chemicals unless poison control advises it.
+  - Do not delay poison control, emergency services, fresh air, or flushing while trying to identify the product.
+do_not:
+  - Do not re-enter a contaminated area without protection.
+  - Do not walk through spilled material, reach into it, or touch it with bare skin.
+  - Do not neutralize chemicals you cannot identify.
+  - Do not rub chemically exposed skin or eyes.
+  - Do not apply ointments or salves to chemical skin burns.
+  - Do not pour hazardous waste down the drain.
+routine_boundary: >
+  Unknown spills, unknown fumes, mixed-cleaner symptoms, solvent-vapor illness,
+  chemical skin or eye contact, swallowed cleaner, corrosive exposure, large
+  spills, vapor releases, or fire are chemical exposure or emergency response
+  problems, not routine cleaning, laundry, storage, home-care, or product-use
+  questions.
+acceptable_uncertain_fit: >
+  If the chemical identity, quantity, exposure route, or symptoms are incomplete,
+  answer from the conservative chemical-safety branch: isolate the area, avoid
+  touching or neutralizing unknowns, ventilate or move to fresh air when safe,
+  flush only for actual skin or eye exposure as described in section 13, and
+  escalate to poison control or emergency services before cleanup details.
+clarifying_questions:
+  - Has anyone inhaled fumes, swallowed anything, or gotten the chemical on skin or in the eye?
+  - What is on the container label, if it can be read without touching or entering the spill area?
+  - What was mixed or spilled, about how much, and is there coughing, chest tightness, burning skin, eye pain, vomiting, confusion, or trouble breathing?
+  - Can the area be isolated and ventilated safely without re-entering fumes or walking through the spill?
+citation_ids:
+  - chemical-safety-overview-exposure-routing
+  - chemical-safety-unknown-spill-isolation
+  - chemical-safety-storage-incompatibilities
+  - chemical-safety-spill-response-boundaries
+  - chemical-safety-common-mistakes-stop-reaction
+  - chemical-safety-exposure-treatment
+  - chemical-safety-emergency-escalation
+source_sections:
+  - guide: GD-227
+    slug: chemical-safety
+    title: Chemical Safety
+    sections:
+      - "#overview"
+      - "#hazard-classification"
+      - "#storage"
+      - "#spill"
+      - "#troubleshooting-common-mistakes"
+      - "#chemical-exposure"
+      - "#emergency"
+source_invariants:
+  - name: exposure prevention and complaint-first routing
+    guide: GD-227
+    must_include:
+      - The cardinal rule of chemical safety
+      - Prevent exposure.
+      - call poison control or emergency services immediately before spending time on cleanup or identification
+      - If the prompt is about an exposure, route by complaint first
+  - name: unknown spill isolation and no unknown treatment
+    guide: GD-227
+    must_include:
+      - Isolate the area.
+      - Do not mix, rinse, or neutralize unknowns.
+      - Contact emergency services or poison control for any skin/eye contact, inhalation symptoms, large spill, or uncertainty.
+  - name: critical cleaner incompatibilities
+    guide: GD-227
+    must_include:
+      - never mix bleach with ammonia
+      - never mix bleach with vinegar or acid cleaners
+      - Consult compatibility chart before combining chemicals.
+  - name: exposure treatment anchors
+    guide: GD-227
+    must_include:
+      - Move person to fresh air immediately
+      - flush affected area with copious water for 15 minutes minimum
+      - rinse immediately and continuously for 15 minutes with water or saline
+      - Call poison control immediately
+      - do NOT induce vomiting unless advised by poison control
+  - name: emergency escalation
+    guide: GD-227
+    must_include:
+      - If the person mixed two or more cleaners and has chest tightness, persistent cough, wheezing, or difficulty breathing
+      - Do not wait to see if it improves.
+      - When in doubt, call emergency services.
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card derived only from GD-227. It keeps the answer shape
+  prevention/exposure-first: isolate unknown spills or fumes, avoid touching or
+  treating unknowns, prioritize poison control or emergency services for
+  exposure, use fresh air and water flushing only where GD-227 section 13 says
+  to use them, and avoid procedural expansion of dangerous chemistry. The card
+  intentionally does not turn the guide's acid dilution, neutralization, or
+  reaction examples into user-facing instructions.

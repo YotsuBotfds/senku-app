@@ -1,0 +1,172 @@
+card_id: foraging_hunting_wild_food_safety
+guide_id: GD-025
+slug: foraging-hunting
+title: "Foraging, Hunting & Fishing"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether an unknown wild plant, berry, mushroom, insect, game animal, or fish is safe to eat.
+  - The prompt involves positive identification, poisonous lookalikes, the universal edibility test, deadly mushrooms, wild-food poisoning, or red flags before eating foraged food.
+  - Wild game, fish, insects, or preserved wild foods need source-backed handling, cooking, drying, smoking, salting, or spoilage-prevention boundaries.
+required_first_actions:
+  - Start with positive identification: prefer known food sources and do not treat an unknown plant, berry, or mushroom as safe because it looks familiar or passed a quick taste/smell check.
+  - Keep the universal edibility test as a last resort only when starvation is immediate, and never apply it to mushrooms or fungi.
+  - For mushrooms, require 100% positive identification before eating; there is no universal mushroom edibility test.
+  - For game, fish, insects, and preserved wild foods, prioritize cleanliness, immediate cooling or thorough cooking where the guide states it, insect protection, and inspection for visible spoilage or damage.
+first_actions:
+  - Check the guide's dangerous plant-family and poisonous-plant warnings before any trial eating, especially nightshade-family and carrot-family lookalikes, umbrella-shaped flower clusters, milky sap, unusual bulbs or tubers, and burning or extreme bitterness.
+  - Reject wild mushrooms that are not positively identified; watch for false morels, Jack O'Lantern lookalikes, destroying angels, death caps, and cup-like structures at the stem base.
+  - If game meat is obtained, field dress promptly, avoid puncturing intestines, keep meat clean, cool the carcass, hang it in a cool shaded place when possible, and protect it from insects.
+  - Inspect liver and organs for spots, unusual color, or damage before use, and cook organ meats where the guide specifically calls for cooking thoroughly.
+  - For edible insects and earthworms, use the guide's cooking or purging steps, avoid pesticide exposure, remove choking-prone legs or wings where directed, and cook carrion-associated larvae well.
+  - For fish preservation, clean and gut fish thoroughly, salt before smoking or drying, and keep preserved foods cool, dark, dry, and inspected before eating.
+conditional_required_actions:
+  - trigger_terms:
+      - mushroom
+      - fungi
+      - morel
+      - chanterelle
+      - puffball
+      - destroying angel
+      - death cap
+    required_actions:
+      - State that mushrooms require 100% positive identification, have no universal edibility test, and should be cooked thoroughly unless the guide's local-species expertise supports an exception.
+  - trigger_terms:
+      - universal edibility test
+      - unknown plant
+      - edible test
+      - taste test plant
+      - starvation
+    required_actions:
+      - State that the universal edibility test is only a last resort when starvation is immediate, does not prove general safety, and must not be used for mushrooms or fungi.
+  - trigger_terms:
+      - game meat
+      - field dressing
+      - carcass
+      - liver
+      - organs
+      - spoilage
+    required_actions:
+      - Lead with field dressing, cleanliness, immediate cooling, insect protection, and discard of damaged or abnormal organs before preservation or eating.
+  - trigger_terms:
+      - insect
+      - crickets
+      - grasshopper
+      - grubs
+      - maggots
+      - earthworms
+      - termites
+    required_actions:
+      - Preserve the guide's safety controls: cook insects or larvae where directed, purge earthworms or maggots where directed, remove wings or legs when listed, and avoid pesticide-exposed insects.
+urgent_red_flags:
+  - Any uncertainty about plant, berry, or mushroom identity when poisonous lookalikes are plausible.
+  - Burning, numbing, tingling, extreme bitterness, rash, itching, nausea, vomiting, cramps, diarrhea, difficulty breathing, or delayed illness after eating a wild food.
+  - Umbrella-shaped flower clusters, shiny three-leaflet plants, unusual or brightly colored bean or pea pods, bulbs or tubers with chemical smell, milky sap, purple blotches on hollow stems, or cup-like structures on mushroom stems.
+  - Game meat that remained warm, was wrapped while warm, was not field dressed promptly, is contaminated with intestinal contents, has insect infestation, or has organs with spots, unusual color, or damage.
+  - Preserved wild food with mold, off-odors, moisture exposure, visible fungal grain contamination, rancid fat, or uncertain drying or smoking completion.
+forbidden_advice:
+  - Tell the user that the universal edibility test makes an unknown plant safe, reliable, or appropriate for mushrooms.
+  - Recommend eating any wild mushroom, plant, berry, insect, fish, organ, or game meat without the guide-supported identification, handling, cooking, or preservation boundary.
+  - Use smell, pleasant taste, animal feeding behavior, or a small sample as proof that a wild mushroom or unknown plant is safe.
+  - Give hunting weapon, snare, trap, hook, spear, or deadfall construction instructions from this safety card.
+  - Tell the user to keep warm game meat wrapped, skip prompt field dressing/cooling, ignore insect exposure, or eat visibly abnormal organs.
+do_not:
+  - Do not collapse mushroom safety into the plant universal-edibility-test process.
+  - Do not broaden the card into general hunting tactics, weapon building, trapping technique, or harvesting productivity advice.
+  - Do not add new cooking temperatures, medical treatments, antidotes, species claims, or preservation shelf-life guarantees beyond the source guide.
+  - Do not frame poisonous-plant or poisonous-mushroom uncertainty as routine meal planning.
+routine_boundary: >
+  Wild-food safety becomes high-liability when identity is uncertain, poisonous
+  plant or mushroom lookalikes are possible, game or fish handling was delayed,
+  insects may be contaminated, or preserved wild food may be moldy, rancid,
+  under-dried, or otherwise spoiled. In those cases, answer conservatively
+  from source-backed safety boundaries rather than routine foraging tips.
+acceptable_uncertain_fit: >
+  If the exact species, handling history, or preservation state is unclear,
+  preserve the conservative answer: do not eat unidentified mushrooms or
+  plants, do not use the universal edibility test except as a starvation
+  last resort for non-fungal plants, field dress and cool game promptly,
+  cook or purge insects where the guide says to, and inspect preserved wild
+  foods before eating.
+clarifying_questions:
+  - What exact plant, mushroom, insect, fish, or game animal is involved, and what features support the identification?
+  - Has anyone already eaten it, and are there burning, numbness, vomiting, diarrhea, breathing trouble, confusion, tremors, or delayed symptoms?
+  - For game or fish, when was it killed or caught, was it gutted, cooled, kept clean, protected from insects, salted, dried, smoked, or stored dry?
+  - For insects or preserved foods, was there pesticide, carrion, mold, off-odor, moisture, rancid fat, or incomplete cooking or drying?
+citation_ids:
+  - wild-food-positive-identification
+  - universal-edibility-last-resort
+  - poisonous-plant-red-flags
+  - mushroom-no-universal-test
+  - game-field-dressing-cooling
+  - insect-cooking-parasite-boundary
+  - wild-food-preservation-inspection
+source_sections:
+  - guide: GD-025
+    slug: foraging-hunting
+    title: "Foraging, Hunting & Fishing"
+    sections:
+      - "#universal-edibility"
+      - "#plant-families > Dangerous Families to Avoid"
+      - "#poisonous-plants"
+      - "#poisonous-plants > Mushroom Safety Rule: When In Doubt, Throw It Out"
+      - "#hunting-safety"
+      - "#seasonal-hunting-calendar > Field Preservation Basics"
+      - "#game-processing"
+      - "#game-processing > Field Dressing (Step by Step)"
+      - "#game-processing > Organ Meats (Highly Nutritious)"
+      - "#insects"
+      - "#insects > Safe Insects to Eat"
+      - "#insects > Insect Preparation Methods"
+      - "#mushroom-foraging"
+      - "#mushroom-foraging > Deadly Look-Alikes to Avoid"
+      - "#mushroom-foraging > General Mushroom Safety Rules"
+      - "#preservation"
+      - "#preservation > Smoking Fish"
+      - "#preservation > Storage Tips"
+source_invariants:
+  - name: universal edibility is a starvation last resort only
+    guide: GD-025
+    must_include:
+      - The Universal Edibility Test is a LAST RESORT only when starvation is immediate.
+      - Always prefer known, positively identified food sources.
+      - Never taste unknown mushrooms or fungi
+      - Nightshade family and Carrot family plants are especially dangerous due to deadly lookalikes.
+  - name: mushroom identification is absolute
+    guide: GD-025
+    must_include:
+      - There is NO universal test for mushroom edibility.
+      - Only eat mushrooms you have 100% positively identified.
+      - Never eat mushrooms you cannot identify with 100% certainty.
+      - Cook wild mushrooms thoroughly. Never eat raw
+  - name: poisonous plant and mushroom warning signs remain visible
+    guide: GD-025
+    must_include:
+      - Umbrella-shaped flower clusters
+      - Milky sap or unusual discharge when stem is broken
+      - Water Hemlock
+      - Destroying Angel
+      - If you see a cup-like structure, do not eat it.
+  - name: game and fish handling require cooling cleanliness and preservation
+    guide: GD-025
+    must_include:
+      - Meat spoils rapidly.
+      - Immediate cooling is essential.
+      - Do not wrap the carcass while it is warm
+      - Clean fish, remove guts thoroughly.
+      - Cold-smoke for 1-2 weeks or hot-smoke for 6-8 hours.
+  - name: insect and preserved-food safety boundaries
+    guide: GD-025
+    must_include:
+      - Kills all parasites and pathogens.
+      - Ensure no pesticide exposure
+      - Risk of pathogenic bacteria (cook well)
+      - Always inspect for mold or off-odors before eating
+review_status: pilot_reviewed
+notes: >
+  Primary owner is GD-025. This card closes the foraging/hunting/fishing
+  high-liability safety surface for wild-food identification, poisonous
+  plant and mushroom boundaries, game/fish handling and preservation, and
+  insect preparation. It intentionally excludes hunting weapon, snare, trap,
+  spear, hook, or deadfall construction detail except to say that those prompts
+  should not be answered from this safety card.

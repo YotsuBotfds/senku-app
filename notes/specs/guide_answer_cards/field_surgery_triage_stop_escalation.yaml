@@ -1,0 +1,109 @@
+card_id: field_surgery_triage_stop_escalation
+guide_id: GD-039
+slug: surgery-field
+title: "Field Surgery & Emergency Procedures"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether to attempt field surgery, continue an improvised procedure, close a wound surgically, or manage a surgical problem when professional care may be unavailable.
+  - The prompt involves uncontrolled bleeding during a procedure, unclear anatomy, unexpected pathology, possible evisceration, post-operative fever or spreading redness, or a surgical red flag that exceeds ordinary first aid.
+  - The answer needs GD-039's decision threshold, stop criteria, evisceration protection, and post-operative danger-sign boundaries without giving procedural instructions.
+required_first_actions:
+  - Seek professional, surgeon-capable, or evacuation care whenever available; do not frame field surgery as routine self-care or a normal first option.
+  - Do not operate unless GD-039's threshold is met: a genuine life-or-death emergency, no professional care exists, the patient will otherwise die, and the responder is within actual training and equipment limits.
+  - Before any surgical commitment, reassess the diagnosis, vital signs, time urgency, alternatives, and whether the patient will die in the next 24-48 hours without surgery.
+  - Stop and escalate or manage supportively if bleeding cannot be controlled, anatomy or pathology is unclear, or the problem goes beyond simple safe closure.
+  - For evisceration, keep exposed organs moist and covered, do not push them back in, keep the patient still, and treat urgent surgeon-capable transport as the source-backed endpoint.
+first_actions:
+  - Put infection prevention, bleeding control, shock recognition, sterile-field discipline, and correct diagnosis ahead of any procedure discussion.
+  - If the issue is airway failure, major hemorrhage, shock, eye injury, anesthesia, chronic wound care, or routine first aid, use the specific guide for that lane before any field-surgery detail.
+  - Watch post-operative patients at least daily for fever, spreading redness, worsening pain, drainage, odor, shock signs, or other deterioration.
+  - Treat a tension pneumothorax, compartment syndrome, burn ischemia, abdominal catastrophe, or evisceration as a red-flag situation requiring trained help rather than routine home care.
+urgent_red_flags:
+  - Uncontrolled bleeding, shock signs, inability to identify the bleeding source, or surgery preventing visualization.
+  - Anatomy or pathology the responder does not recognize, organ perforation, massive infection, or anatomic disruption beyond simple safe closure.
+  - Evisceration, exposed abdominal organs, peritonitis signs, severe abdominal pain with rebound tenderness or guarding, or worsening fever.
+  - Post-operative fever above 101 F, spreading redness, wound drainage, foul odor, worsening pain, or systemic illness.
+  - Severe shortness of breath, inability to speak, chest trauma signs, suspected tension pneumothorax, compartment syndrome signs, burn ischemia, or airway failure.
+forbidden_advice:
+  - Do not provide suturing, incision, needle decompression, cricothyrotomy, fasciotomy, escharotomy, amputation, appendectomy, anesthesia, dosing, instrument-making, or operative step-by-step instructions from this card.
+  - Do not tell an untrained person to operate when professional care or evacuation is available, the diagnosis is uncertain, or the guide's life-or-death threshold is not met.
+  - Do not push exposed organs back into an evisceration.
+  - Do not reassure post-operative fever or spreading redness as routine.
+  - Do not keep operating when bleeding is uncontrolled, anatomy is unclear, or pathology exceeds the responder's skill.
+do_not:
+  - Do not collapse this card into procedural surgery, anesthesia, or dosing advice.
+  - Do not convert GD-039's reference-only abdominal procedure sections into actionable instructions.
+  - Do not route airway obstruction, major bleeding, shock, eye injury, or chronic wound infection away from their more specific emergency owners.
+  - Do not claim this metadata/card closure is a full safety review of every advanced procedure in GD-039.
+routine_boundary: >
+  Field surgery is not routine wound care. This card applies when surgery is
+  being considered, has gone wrong, or red flags suggest a surgical emergency.
+  It keeps the answer at triage, stop, protect, monitor, and escalate rather
+  than teaching procedures.
+acceptable_uncertain_fit: >
+  If the diagnosis, responder training, equipment, sterility, or professional
+  access is unclear, preserve GD-039's conservative threshold: reassess first,
+  defer surgery unless death without surgery is clear, stop if the situation
+  exceeds skill or control, and seek professional or evacuation care whenever
+  available.
+clarifying_questions:
+  - Is professional, surgeon-capable, emergency, or evacuation care available now or reachable soon?
+  - What problem is being considered for surgery, and what vital signs, bleeding, infection, shock, airway, or abdominal findings are present?
+  - Has any procedure already started, and is there uncontrolled bleeding, unclear anatomy, organ exposure, fever, spreading redness, or worsening condition?
+  - What training, sterile supplies, monitoring, pain-control support, and backup help are actually available?
+citation_ids:
+  - field-surgery-life-or-death-threshold
+  - field-surgery-assessment-before-operating
+  - field-surgery-stop-criteria
+  - field-surgery-when-not-to-operate
+  - field-surgery-evisceration-protection
+  - field-surgery-post-op-infection-red-flags
+source_sections:
+  - guide: GD-039
+    slug: surgery-field
+    title: "Field Surgery & Emergency Procedures"
+    sections:
+      - "#overview"
+      - "#section2a"
+      - "#section8a"
+      - "#section8a > When NOT to Operate (Medical Management Instead)"
+      - "#section9 > Tension Pneumothorax (Air in Chest Cavity)"
+      - "#section10"
+      - "#section10 > Evisceration (Intestines Protruding Through Wound)"
+      - "#11-common-mistakes-troubleshooting"
+source_invariants:
+  - name: surgery_is_last_resort
+    guide: GD-039
+    must_include:
+      - Only attempt in genuine life-or-death emergencies where no professional care exists.
+      - The risk of death from attempted surgery by untrained persons may exceed the risk of the underlying condition.
+      - Only attempt surgery when patient will certainly die without intervention.
+  - name: assessment_before_operation
+    guide: GD-039
+    must_include:
+      - DO NOT operate unless you have correctly identified the problem.
+      - The diagnostic decision
+      - Will this patient die in the next 24-48 hours without surgery?
+      - defer surgery and manage medically if possible.
+  - name: stop_criteria_and_limits
+    guide: GD-039
+    must_include:
+      - Know your limits.
+      - STOP OPERATING.
+      - Close what you can safely close and get patient to professional care or manage supportively.
+      - Proceeding blindly causes death.
+  - name: evisceration_and_postop_red_flags
+    guide: GD-039
+    must_include:
+      - Try to push organs back in
+      - Keep organs moist and covered
+      - Urgent transport to surgeon is only appropriate treatment
+      - Any fever >101
+      - Any spreading redness warrants antibiotics immediately.
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card derived only from GD-039. It intentionally closes the
+  metadata/card audit gap as a triage, stop, protect, monitor, and escalation
+  surface. It does not review, reproduce, or expand the guide's advanced
+  operative techniques, anesthesia material, or procedure families.

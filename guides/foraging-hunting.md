@@ -4,6 +4,30 @@ slug: foraging-hunting
 title: Foraging, Hunting & Fishing
 category: survival
 difficulty: intermediate
+aliases:
+  - wild food safety
+  - foraging safety
+  - edible plant identification
+  - positive plant identification
+  - universal edibility test
+  - unknown plant safe to eat
+  - poisonous plant warning signs
+  - deadly mushroom lookalikes
+  - mushroom foraging safety
+  - wild mushrooms safe to eat
+  - game meat handling
+  - field dressing safety
+  - wild game preservation
+  - smoked fish safety
+  - insect eating safety
+  - edible insects cooking
+  - wild food poisoning prevention
+routing_cues:
+  - Use for wild-food safety questions involving positive identification, poisonous plant or mushroom lookalikes, last-resort universal-edibility-test boundaries, wild game or fish handling, insect preparation, and preservation of foraged or hunted foods.
+  - Keep identification uncertainty conservative: unknown plants and mushrooms are not safe food by default, and mushrooms require 100% identification rather than edibility testing.
+  - Route weapon, trap, and hunting-method construction questions away from this safety card unless the answer is only about handling, cooking, preservation, legal/ethical checks, or injury-prevention boundaries.
+citations_required: true
+applicability: Wild-food safety decisions for foraged plants, wild mushrooms, game meat, fish, insects, and preserved wild foods when misidentification, poisonous lookalikes, contamination, spoilage, parasites, undercooking, or unsafe storage could cause poisoning or foodborne illness.
 tags:
   - critical
 icon: 🏹

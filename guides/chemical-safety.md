@@ -4,6 +4,30 @@ slug: chemical-safety
 title: Chemical Safety
 category: chemistry
 difficulty: advanced
+aliases:
+  - household chemical safety
+  - chemical storage safety
+  - chemical spill safety
+  - unknown chemical spill
+  - unknown fumes
+  - mixed cleaner fumes
+  - bleach and ammonia
+  - bleach and vinegar
+  - do not mix cleaners
+  - cleaner splash on skin
+  - chemical in eye
+  - swallowed cleaner
+  - paint thinner fumes
+routing_cues:
+  - Use for prevention-first chemical safety, household cleaner compatibility, do-not-mix questions, storage segregation, known chemical handling, PPE selection, and spill isolation before exposure occurs.
+  - Use for unknown spill or unknown fumes scene safety when the answer must keep people out, ventilate, avoid touching or neutralizing unknowns, and escalate early.
+  - If symptoms or exposure have already occurred, route complaint-first to section 13 plus toxicology or unknown-ingestion triage before cleanup, storage, or identification advice.
+citations_required: true
+applicability: >
+  Chemical safety prevention, storage, compatibility, spill isolation, and
+  first exposure steps for household, workshop, and survival chemistry hazards
+  where dangerous mixing, unknown fumes, skin/eye contact, inhalation, or
+  ingestion could cause poisoning, burns, or toxic gas exposure.
 tags:
   - practical
   - essential
