@@ -102,6 +102,14 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(
             any("emergency-airway-management choking" in spec["text"] for spec in choking_specs)
         )
+        infant_mouth_question = (
+            "A baby has something in their mouth and is coughing hard but still crying. "
+            "Should I sweep their mouth with my finger to get it out?"
+        )
+        self.assertEqual(
+            query._retrieval_profile_for_question(infant_mouth_question),
+            "safety_triage",
+        )
         food_bolus_specs = query._supplemental_retrieval_specs(
             "drooling and cannot swallow after a bite of food", 8
         )

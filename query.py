@@ -7842,6 +7842,17 @@ def _is_generic_choking_help_special_case(question):
             "one bite",
             "choked on",
             "choking on",
+            "something in their mouth",
+            "something in his mouth",
+            "something in her mouth",
+            "something in the mouth",
+            "object in their mouth",
+            "object in his mouth",
+            "object in her mouth",
+            "object in the mouth",
+            "thing in their mouth",
+            "thing in his mouth",
+            "thing in her mouth",
         },
     )
     if not has_choking_context:
@@ -11653,6 +11664,7 @@ def _retrieval_profile_for_question(question, frame=None):
     )
     if (
         _is_airway_obstruction_rag_query(question)
+        or _is_generic_choking_help_special_case(question)
         or _is_meningitis_rash_retrieval_query(question)
         or _is_newborn_sepsis_danger_retrieval_query(question)
         or _is_abdominal_trauma_danger_query(question)

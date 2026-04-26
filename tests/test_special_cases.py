@@ -84,6 +84,7 @@ class SpecialCaseTests(unittest.TestCase):
             "after one bite he is clutching his throat and making weak noises",
             "still breathing a little after choking on bread what do i do first",
             "choking seemed to pass but now drooling and cannot swallow normally",
+            "A baby has something in their mouth and is coughing hard but still crying. Should I sweep their mouth with my finger to get it out?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
@@ -96,6 +97,10 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("Treat choking as an airway emergency", response)
         self.assertIn("give nothing by mouth", response)
         self.assertIn("escalate urgently", response)
+        infant_response = query.build_special_case_response(prompts[-1])
+        self.assertIn("Do not do blind finger sweeps", infant_response)
+        self.assertIn("If the person can cough or talk", infant_response)
+        self.assertIn("Infants under 1 year need the infant choking sequence", infant_response)
         self.assertNotIn("anaphylaxis", response.lower())
         self.assertNotIn("panic", response.lower())
 
