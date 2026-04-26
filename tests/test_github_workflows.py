@@ -161,6 +161,18 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertNotIn("gradle", workflow_text.lower())
         self.assertNotIn("emulator", workflow_text.lower())
 
+    def test_actions_security_workflow_pins_zizmor(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "actions_security.yml").read_text(encoding="utf-8")
+        )
+        steps = workflow["jobs"]["lint-actions"]["steps"]
+        names = [step.get("name") for step in steps]
+
+        install_step = steps[names.index("Install zizmor")]
+        install_script = install_step.get("run", "")
+        self.assertIn("python -m pip install zizmor==1.24.1", install_script)
+        self.assertNotIn("python -m pip install zizmor\n", install_script)
+
     def test_codeowners_covers_github_configuration(self):
         content = CODEOWNERS_PATH.read_text(encoding="utf-8")
         self.assertIn(".github/ @YotsuBotfds", content)
