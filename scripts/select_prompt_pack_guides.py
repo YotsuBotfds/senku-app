@@ -153,7 +153,10 @@ def load_prompt_pack_guide_ids(path: Path) -> list[str]:
         line = raw_line.strip()
         if not line:
             continue
-        record = json.loads(line)
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            continue
         if isinstance(record, Mapping):
             ids.extend(extract_guide_ids(record))
     return dedupe(ids)

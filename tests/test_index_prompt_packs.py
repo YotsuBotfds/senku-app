@@ -51,6 +51,22 @@ class IndexPromptPacksTests(unittest.TestCase):
         self.assertEqual(record.styles, ["direct", "urgent"])
         self.assertEqual(record.target_behaviors, ["target one", "target two"])
 
+    def test_index_csv_reports_extra_columns_without_dropping_prompt(self):
+        root = self.make_tmpdir()
+        pack = root / "pack.csv"
+        pack.write_text(
+            "id,prompt\n"
+            "A,Usable prompt,unexpected trailing cell\n"
+            "B,Second prompt\n",
+            encoding="utf-8",
+        )
+
+        record = index_prompt_pack(pack, base_dir=root)
+
+        self.assertEqual(record.prompt_count, 2)
+        self.assertEqual(record.ids_count, 2)
+        self.assertEqual(record.errors, ["line 2: extra_columns"])
+
     def test_index_json_and_jsonl_pack_variants(self):
         root = self.make_tmpdir()
         json_pack = root / "pack.json"

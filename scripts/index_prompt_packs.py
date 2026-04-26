@@ -157,6 +157,8 @@ def parse_csv_pack(path: Path, errors: list[str]) -> list[PromptRecord]:
     try:
         reader = csv.DictReader(read_text(path).splitlines())
         for line_number, row in enumerate(reader, start=2):
+            if row.get(None):
+                errors.append(f"line {line_number}: extra_columns")
             text = first_nonempty(row, TEXT_KEY_CANDIDATES)
             if not text:
                 continue

@@ -91,6 +91,44 @@ Use `solo.md` and <a href="../solo.html">Solo</a>.
         self.assertEqual(graph["summary"]["edge_count"], 0)
         self.assertEqual(graph["orphans"], ["solo"])
 
+    def test_frontmatter_related_normalizes_file_references_and_dedupes(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "alpha.md").write_text(
+                """---
+id: GD-001
+slug: alpha
+title: Alpha
+related:
+  - Beta.md
+  - ../beta.html
+  - ./ALPHA.md
+  - beta
+  - "bad slug"
+  - ""
+---
+""",
+                encoding="utf-8",
+            )
+            (root / "beta.md").write_text(
+                """---
+id: GD-002
+slug: beta
+title: Beta
+---
+""",
+                encoding="utf-8",
+            )
+
+            graph = module.build_graph(root)
+
+        self.assertEqual(
+            graph["edges"],
+            [{"source": "alpha", "target": "beta", "type": "frontmatter_related"}],
+        )
+        self.assertEqual(graph["summary"]["edge_count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

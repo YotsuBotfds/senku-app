@@ -30,6 +30,19 @@ class MetadataValidationTests(unittest.TestCase):
             mv.coerce_guide_record(record),
         )
 
+    def test_coerce_guide_record_preserves_false_like_guide_id(self):
+        record = {
+            "guide_id": 0,
+            "id": "fallback-id",
+            "slug": "zero-id",
+            "title": "Zero ID",
+            "category": "utility",
+            "description": "False-like scalar id",
+            "source_file": "guides/zero.md",
+        }
+
+        self.assertEqual("0", mv.coerce_guide_record(record)["guide_id"])
+
     def test_coerce_guide_record_accepts_object_attrs(self):
         record = SimpleNamespace(
             guide_id="GD-002",

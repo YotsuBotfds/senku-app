@@ -233,8 +233,12 @@ def build_lineage(runs: Sequence[DiagnosticRun]) -> dict[str, Any]:
     }
 
 
+def _markdown_cell(value: Any) -> str:
+    return str(value).replace("\\", "\\\\").replace("|", "\\|").replace("\n", "<br>")
+
+
 def _table_row(values: Iterable[Any]) -> str:
-    return "| " + " | ".join(str(value) for value in values) + " |"
+    return "| " + " | ".join(_markdown_cell(value) for value in values) + " |"
 
 
 def render_markdown(lineage: Mapping[str, Any]) -> str:

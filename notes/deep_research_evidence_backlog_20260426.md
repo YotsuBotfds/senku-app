@@ -487,6 +487,13 @@ Action:
   flatten newlines and escape pipes, and mojibake touched-path collection
   normalizes Windows separators plus `.`/`..` segments before de-duping and
   allowlist checks.
+- Hardened prompt/guide lineage helpers: prompt-pack indexing now reports
+  recoverable CSV extra-column rows without dropping usable prompts, prompt-pack
+  guide selection skips malformed JSONL rows, lineage Markdown escapes table
+  cell breakers, guide graph frontmatter relations normalize file-like slug
+  references before de-duping, section-family shadow file selection distinguishes
+  basename requests from path-shaped wrong-directory requests, and metadata
+  validation preserves false-like scalar guide IDs instead of falling back.
 
 Validation:
 
@@ -793,6 +800,11 @@ Validation:
 - `tests.test_summarize_worktree_delta`, `tests.test_worker_lane_status`, and
   `tests.test_scan_mojibake` cover branch-header status parsing, worker-lane
   Markdown table sanitation, and normalized touched-path/allowlist handling.
+- `tests.test_index_prompt_packs`, `tests.test_select_prompt_pack_guides`,
+  `tests.test_rag_experiment_lineage`, `tests.test_build_guide_graph`,
+  `tests.test_export_section_family_shadow`, and
+  `tests.test_metadata_validation` cover the prompt/guide lineage hardening
+  batch.
 
 Deferred unless evidenced:
 

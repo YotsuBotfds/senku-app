@@ -50,6 +50,25 @@ class SelectPromptPackGuidesTests(unittest.TestCase):
 
         self.assertEqual(guide_ids, ["GD-001", "GD-002"])
 
+    def test_load_prompt_pack_skips_malformed_jsonl_rows(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pack = Path(tmpdir) / "pack.jsonl"
+            pack.write_text(
+                "\n".join(
+                    [
+                        '{"id": "broken", "expected_guide_ids": ["GD-999"]',
+                        json.dumps({"id": "valid", "expected_guide_ids": ["GD-001"]}),
+                        "not json",
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            guide_ids = load_prompt_pack_guide_ids(pack)
+
+        self.assertEqual(guide_ids, ["GD-001"])
+
     def test_expand_related_includes_one_hop_related_guides(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides = Path(tmpdir) / "guides"

@@ -11,6 +11,7 @@ from scripts.export_section_family_shadow import (
     export_section_family_shadow_jsonl,
     parse_args,
     group_chunks_by_section_family,
+    unresolved_selected_file_requests,
     _positive_int,
 )
 
@@ -112,6 +113,25 @@ class ExportSectionFamilyShadowTests(unittest.TestCase):
         self.assertEqual(_positive_int("2"), 2)
         with self.assertRaises(argparse.ArgumentTypeError):
             _positive_int("0")
+
+    def test_unresolved_selected_file_requests_distinguishes_paths_from_basenames(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guide_path = Path(tmpdir) / "field-guide.md"
+            guide_path.write_text("# Field Guide\n", encoding="utf-8")
+            resolved = [str(guide_path)]
+
+            self.assertEqual(
+                unresolved_selected_file_requests(["field-guide.md"], resolved),
+                [],
+            )
+            self.assertEqual(
+                unresolved_selected_file_requests([str(guide_path)], resolved),
+                [],
+            )
+            self.assertEqual(
+                unresolved_selected_file_requests(["wrong-dir/field-guide.md"], resolved),
+                ["wrong-dir/field-guide.md"],
+            )
 
     def test_build_section_family_records_emit_raptor_lite_shape(self):
         chunks = [

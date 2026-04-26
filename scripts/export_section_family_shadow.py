@@ -339,6 +339,43 @@ def export_section_family_shadow_jsonl(
     return write_section_family_jsonl(records, output_path)
 
 
+def _is_path_like_file_request(request: str) -> bool:
+    normalized = os.path.normpath(request)
+    return (
+        os.path.isabs(normalized)
+        or os.path.dirname(normalized) not in ("", ".")
+        or normalized.startswith("." + os.sep)
+    )
+
+
+def unresolved_selected_file_requests(
+    requests: list[str],
+    resolved_files: list[str],
+) -> list[str]:
+    """Return requested files that were not resolved as the requested target."""
+    resolved_abs = {os.path.abspath(path) for path in resolved_files}
+    resolved_basenames = {os.path.basename(path) for path in resolved_files}
+    missing: list[str] = []
+
+    for request in requests:
+        candidate = os.path.normpath(request)
+        if _is_path_like_file_request(request):
+            candidate_paths = [candidate]
+            if not os.path.isabs(candidate):
+                candidate_paths.append(os.path.join(os.getcwd(), candidate))
+                candidate_paths.append(os.path.join(str(REPO_ROOT), candidate))
+                candidate_paths.append(os.path.join(str(REPO_ROOT), "guides", candidate))
+            candidate_abs = {os.path.abspath(path) for path in candidate_paths}
+            if not candidate_abs.intersection(resolved_abs):
+                missing.append(request)
+            continue
+
+        if os.path.basename(candidate) not in resolved_basenames:
+            missing.append(request)
+
+    return sorted(dict.fromkeys(missing))
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Export section-family shadow records for retrieval experiments."
@@ -378,9 +415,7 @@ def main(argv: list[str] | None = None) -> int:
     all_md_files = collect_markdown_files()
     md_files = normalize_selected_files(args.files) if args.files else all_md_files
     if args.files:
-        requested_basenames = {os.path.basename(req) for req in args.files}
-        resolved_basenames = {os.path.basename(path) for path in md_files}
-        missing = sorted(requested_basenames - resolved_basenames)
+        missing = unresolved_selected_file_requests(args.files, md_files)
         if missing:
             raise SystemExit(
                 "Could not resolve guide file(s): " + ", ".join(missing)

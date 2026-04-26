@@ -20,6 +20,7 @@ FRONTMATTER_BOUNDARY = re.compile(r"^---\s*$", re.MULTILINE)
 HREF_HTML_RE = re.compile(r'href="(?:\.\./|\.?/)?([a-z0-9-]+)\.html"', re.IGNORECASE)
 HREF_MD_RE = re.compile(r"\((?:\.\./|\.?/)?([a-z0-9-]+)\.md\)", re.IGNORECASE)
 INLINE_MD_FILENAME_RE = re.compile(r"`([a-z0-9-]+)\.md`", re.IGNORECASE)
+SLUG_FILE_RE = re.compile(r"^([a-z0-9-]+)(?:\.(?:md|html))?$", re.IGNORECASE)
 
 
 def parse_frontmatter(text: str) -> tuple[dict, str]:
@@ -61,6 +62,18 @@ def normalize_related(value) -> list[str]:
                 items.append(cleaned)
         return items
     return []
+
+
+def normalize_slug_reference(value) -> str:
+    cleaned = str(value).strip()
+    if not cleaned:
+        return ""
+    cleaned = cleaned.replace("\\", "/").rstrip("/")
+    filename = cleaned.rsplit("/", 1)[-1].strip()
+    match = SLUG_FILE_RE.match(filename)
+    if not match:
+        return ""
+    return match.group(1).lower()
 
 
 def load_guides(guides_dir: Path) -> tuple[list[dict], dict[str, dict]]:
@@ -137,7 +150,8 @@ def build_graph(guides_dir: Path) -> dict:
         )
 
         seen = set()
-        for target_slug in guide["related"]:
+        for raw_target_slug in guide["related"]:
+            target_slug = normalize_slug_reference(raw_target_slug)
             if target_slug not in valid_slugs or target_slug == slug:
                 continue
             edge_key = (slug, target_slug, "frontmatter_related")

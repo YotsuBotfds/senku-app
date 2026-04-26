@@ -26,6 +26,14 @@ def _safe_text(value) -> str:
     return "" if value is None else str(value).strip()
 
 
+def _first_nonempty_text(*values) -> str:
+    for value in values:
+        text = _safe_text(value)
+        if text:
+            return text
+    return ""
+
+
 def coerce_guide_record(record) -> dict[str, str]:
     if isinstance(record, Mapping):
         data = dict(record)
@@ -39,7 +47,7 @@ def coerce_guide_record(record) -> dict[str, str]:
             "source_file": getattr(record, "source_file", ""),
         }
     return {
-        "guide_id": _safe_text(data.get("guide_id") or data.get("id")),
+        "guide_id": _first_nonempty_text(data.get("guide_id"), data.get("id")),
         "slug": _safe_text(data.get("slug")),
         "title": _safe_text(data.get("title")),
         "category": _safe_text(data.get("category")),

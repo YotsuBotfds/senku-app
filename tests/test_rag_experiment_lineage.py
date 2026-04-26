@@ -118,6 +118,43 @@ class RAGExperimentLineageTests(unittest.TestCase):
         self.assertIn("`candidate`", rendered)
         self.assertIn("No prompt-level transitions found.", rendered)
 
+    def test_render_markdown_escapes_table_cell_breakers(self):
+        module = load_module()
+        lineage = {
+            "generated_at": "2026-04-25T12:00:00",
+            "run_count": 2,
+            "runs": [
+                {
+                    "label": "candidate|trial",
+                    "expected_supported": 1,
+                    "generation_miss": 0,
+                    "ranking_miss": 0,
+                    "retrieval_miss": 0,
+                    "artifact_error": 0,
+                    "expected_cited": "1/1",
+                    "path": "artifacts/bench/candidate|trial_diag",
+                }
+            ],
+            "transitions": [
+                {
+                    "from": "base|old",
+                    "to": "candidate|trial",
+                    "prompt_id": "RE2|BR|005",
+                    "kind": "citation_change",
+                    "before": {"bucket": "expected_supported", "cited_guide_ids": "GD-646|GD-250"},
+                    "after": {"bucket": "expected_supported\nmanual_check", "cited_guide_ids": "GD-646"},
+                }
+            ],
+        }
+
+        rendered = module.render_markdown(lineage)
+
+        self.assertIn("`candidate\\|trial`", rendered)
+        self.assertIn("`artifacts/bench/candidate\\|trial_diag`", rendered)
+        self.assertIn("`RE2\\|BR\\|005`", rendered)
+        self.assertIn("GD-646\\|GD-250 -> GD-646", rendered)
+        self.assertIn("expected_supported -> expected_supported<br>manual_check", rendered)
+
 
 if __name__ == "__main__":
     unittest.main()
