@@ -204,6 +204,9 @@ Action:
 - Surfaced app-acceptance root-cause counts in compact RAG diagnostics
   summaries so supported/evidence-owner/card-contract/safety/gate-policy
   distribution is visible without opening raw analyzer output.
+- Added row-level fallback for the same compact root-cause summary columns, so
+  older diagnostics without summary-level root-cause counts still expose the
+  distribution from per-row `app_acceptance_root_cause` fields.
 - Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
   the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
   security installs pinned `uv==0.11.7` before checking the generated lock.

@@ -158,6 +158,32 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.module.collect_summaries([dir_a, dir_b], labels=["only_one"])
 
+    def test_collect_summaries_counts_root_causes_from_rows_when_summary_missing(self):
+        payload = base_summary()
+        payload.pop("app_acceptance_root_cause_counts")
+        payload["rows"] = [
+            {"app_acceptance_root_cause": "supported"},
+            {"app_acceptance_root_cause": "supported"},
+            {"app_acceptance_root_cause": "evidence_owner"},
+            {"app_acceptance_root_cause": "card_contract"},
+            {"app_acceptance_root_cause": "safety_surface"},
+            {"app_acceptance_root_cause": "gate_policy"},
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            dir_a = root / "dir_a"
+            dir_a.mkdir()
+            write_diagnostics(dir_a / self.module.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([dir_a])
+
+        self.assertEqual(rows[0]["root_supported"], 2)
+        self.assertEqual(rows[0]["root_evidence_owner"], 1)
+        self.assertEqual(rows[0]["root_card_contract"], 1)
+        self.assertEqual(rows[0]["root_safety_surface"], 1)
+        self.assertEqual(rows[0]["root_gate_policy"], 1)
+
     def test_parse_rate_handles_multiple_formats(self):
         self.assertAlmostEqual(self.module._parse_rate("21/24 (87.5%)"), 0.875)
         self.assertAlmostEqual(self.module._parse_rate("100%"), 1.0)
