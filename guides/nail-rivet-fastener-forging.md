@@ -26,7 +26,55 @@ word_count: 3500
 last_updated: '2026-02-25'
 version: '1.0'
 liability_level: high
+aliases:
+  - fastener condition inventory
+  - nail rivet fastener damage log
+  - questionable fastener quarantine
+  - rivet corrosion handoff
+  - fastener intended use screen
+  - qualified mechanical structural handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level condition inventory, intended-use consequence screening, visible damage or corrosion logging, mismatch documentation, hold or quarantine triggers, and qualified mechanical or structural owner handoff for existing nails, rivets, bolts, screws, and related fasteners.
+  - Keep routine answers non-procedural: identify the fastener, assembly, owner, current use status, visible damage, corrosion, looseness, missing or mismatched parts, unknown history, and whether failure could affect people, structures, vehicles, pressure systems, or critical equipment.
+  - Route forging steps, heating or quenching, rivet setting, fastener fabrication, sizing or calculations, load ratings, structural, vehicle, or pressure-use approval, repair procedures, legal/code claims, and safety certification away from this card.
+routing_support:
+  - The guide describes fastener types, rivets, bolts, screws, specialized fasteners, quality-control visual checks, mechanical testing context, and documentation.
+  - The reviewed surface narrows that material to existing-fastener condition inventory and qualified handoff only; fabrication, installation, repair, calculation, testing, approval, and certification content remains out of the answer-card lane.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for fastener condition
+  inventory, intended-use consequence screening, visible damage, corrosion, or
+  mismatch logging, hold or quarantine triggers, and qualified mechanical or
+  structural owner handoff. Do not use it for forging steps, heating or
+  quenching, rivet setting, fastener fabrication, sizing or calculations, load
+  ratings, structural, vehicle, or pressure-use approval, repair procedures,
+  legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only observation and handoff questions about existing nails,
+  rivets, bolts, screws, and related fasteners: identity, intended use,
+  current use status, visible damage, corrosion, looseness, missing or
+  mismatched parts, unknown history, quarantine or hold decisions, and routing
+  to the responsible mechanical, structural, equipment, or site owner. Do not
+  use for forging, heating, quenching, rivet setting, fabrication, sizing,
+  load ratings, repair, use approval, legal/code claims, or safety
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: nail_rivet_fastener_condition_handoff
+answer_card:
+  - nail_rivet_fastener_condition_handoff
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-869. Use it only for fastener condition inventory, intended-use consequence screening, visible damage, corrosion, or mismatch logging, hold or quarantine triggers, and qualified mechanical or structural owner handoff for existing nails, rivets, bolts, screws, and related fasteners.
+
+Start with non-invasive observation and record the fastener type if known, assembly or location, owner or decision maker, current use status, intended use, whether people or critical equipment depend on it, visible corrosion, cracks, deformation, looseness, missing parts, mismatched parts, unknown material or history, prior modification, and whether it has been held or quarantined. If the fastener is part of a structure, vehicle, pressure system, lifting/support system, public/shared equipment, or any assembly where failure could injure people or cause major damage, keep the answer at documentation and qualified owner handoff.
+
+Do not use this reviewed card for forging steps, heating or quenching, rivet setting, fastener fabrication, sizing or calculations, load ratings, structural, vehicle, or pressure-use approval, repair procedures, legal/code claims, or safety certification. If a prompt asks for those, give only the relevant observation, hold/quarantine, and handoff boundary.
+
+</section>
 
 :::danger
 **Burn Hazard:** Forging involves heating metal to 1000–1300°F (540–700°C). Direct contact with hot metal causes severe burns in seconds. Always wear leather work gloves, apron, and eye protection. Never reach across the forge or touch metal without testing temperature first. Keep water or sand bucket nearby for emergency cooling, but do not immerse hot metal in water (steam explosion risk—cool slowly in air or sand).

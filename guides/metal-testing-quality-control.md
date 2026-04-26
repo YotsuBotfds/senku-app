@@ -25,6 +25,36 @@ related:
   - steel-making
   - tool-hardening-edges
   - welding-metallurgy
+aliases:
+  - metal testing intake log
+  - materials qa observation record
+  - suspect metal hold decision
+  - metal defect logging handoff
+  - quality control quarantine checklist
+  - qualified materials qa owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level material/test record intake, non-destructive observation, visible defect logging, uncertainty language, hold or quarantine decisions, and qualified materials or QA owner handoff.
+  - Keep routine answers focused on item identity, source records, labels, current service, prior test records already available, visible defects, documentation gaps, whether use is paused, and who owns QA review.
+  - Route destructive testing procedures, hardness-test procedures, spark testing, bend tests, load tests, metallurgical calculations, acceptance criteria as certification, structural/pressure/vehicle repair decisions, legal/code claims, and safety certification away from this card.
+routing_support:
+  - GD-525 is high-liability and contains field testing procedures, but the reviewed answer-card surface is deliberately limited to intake, observation, hold/quarantine framing, uncertainty boundaries, and qualified handoff.
+  - Pair with metallurgy-basics, foundry-defects-prevention, welding-metallurgy, tool-hardening-edges, bridges-dams, vehicle, pressure-equipment, legal/code, or safety owners when the prompt leaves observation and handoff scope.
+  - Prefer this reviewed card when a user needs a conservative QA record template for suspect metal, existing test paperwork, visible defects, or unresolved material uncertainty.
+citations_required: true
+citation_policy: cite reviewed GD-525 answer card for material/test record intake, non-destructive observation, visible defect logging, uncertainty language, hold/quarantine decisions, and qualified materials/QA owner handoff only; do not use it for destructive testing procedures, hardness-test procedures, spark testing, bend tests, load tests, metallurgical calculations, acceptance criteria as certification, structural/pressure/vehicle repair decisions, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only metal quality-control questions where the safe answer is
+  to document the item, source records, labels, existing test records, visible
+  defects, uncertainty, current service, hold or quarantine status, and
+  qualified materials or QA owner handoff. Do not use for destructive testing
+  procedures, hardness-test procedures, spark testing, bend tests, load tests,
+  metallurgical calculations, acceptance criteria as certification, structural,
+  pressure, or vehicle repair decisions, legal/code claims, or safety
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: metal_testing_quality_control_boundary_intake
+answer_card:
+  - metal_testing_quality_control_boundary_intake
 read_time: 11
 word_count: 3200
 last_updated: '2026-02-20'
@@ -47,6 +77,14 @@ Field-expedient metal testing uses the five senses plus simple tools to determin
 This guide covers the primary field testing methods, their applications and limitations, and quality control procedures for workshop production. For the underlying metallurgy, see <a href="../metallurgy-basics.html">Metallurgy Basics</a>. For identifying salvaged scrap metal, see <a href="../scrap-metal-identification.html">Scrap Metal Identification</a>. For preventing defects in cast products, see <a href="../foundry-defects-prevention.html">Foundry Defects & Prevention</a>.
 
 </section>
+
+## Reviewed Answer-Card Boundary: QA Intake, Holds, and Handoffs
+
+This is the reviewed answer-card surface for GD-525. Use it only for boundary-level material or test record intake, non-destructive observation, visible defect logging, uncertainty language, hold or quarantine decisions, and qualified materials or QA owner handoff. Start with the item or lot identifier, source and label records, current service or intended use, existing test paperwork if any, visible condition, whether use is already paused, and who owns quality or materials review.
+
+For routine boundary screening, record the known facts separately from uncertainty: material label or grade documentation, supplier or salvage source, heat or batch identifier if available, prior service, prior repair or heating history if known, visible cracks, corrosion, deformation, lamination, porosity, weld defects, coating or residue concerns, missing labels, mismatched records, related items in the same lot, photos, and the current hold/quarantine status.
+
+Do not use this reviewed card for destructive testing procedures, hardness-test procedures, spark testing, bend tests, load tests, metallurgical calculations, acceptance criteria as certification, structural or pressure or vehicle repair decisions, legal or code claims, or safety certification. If the item is in structural, pressure, vehicle, lifting, fuel, chemical, public/shared, or other safety-sensitive service, or if identity, records, visible damage, prior repair, or acceptance authority is uncertain, keep it on hold and route to the responsible materials specialist, QA owner, engineer, inspection owner, equipment owner, or local authority as appropriate.
 
 <section id="spark-testing">
 

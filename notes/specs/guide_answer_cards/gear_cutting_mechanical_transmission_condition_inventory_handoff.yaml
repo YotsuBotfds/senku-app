@@ -1,0 +1,186 @@
+card_id: gear_cutting_mechanical_transmission_condition_inventory_handoff
+guide_id: GD-503
+slug: gear-cutting-mechanical-transmission
+title: Gear Cutting & Mechanical Transmission
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user needs boundary-level gearbox or gear-train condition inventory, visible wear or damage logging, noise or vibration observations, guarding or pinch/entanglement red flag recognition, stop-use trigger screening, or qualified mechanical owner handoff for existing equipment.
+  - The question is about exposed rotating gears, missing or damaged guards, visible tooth damage, cracks, loose parts, rubbing marks, debris in the mesh, unusual grinding/chattering/buzzing, worsening vibration, heat, odor, oil or grease leaks, lubricant contamination, access-control gaps, unclear ownership, or missing maintenance records.
+  - The problem is observation, documentation, red-flag recognition, and handoff, not gear cutting, tooth geometry calculations, ratio design, machine setup, lathe or mill operations, heat treatment, lubricant formulas, live machine troubleshooting, repair steps, load/speed/torque certification, legal/code advice, or safety certification.
+required_first_actions:
+  - Start with non-invasive observation only; do not open guards, reach into moving gears, clear debris from live equipment, touch hot or moving parts, adjust mesh, change lubrication, test-run, repair, calculate, certify, or operate the machine.
+  - Classify the prompt as condition inventory, visible wear/damage log, noise or vibration log, guarding/access-control concern, stop-use trigger, maintenance-record review, or qualified mechanical owner handoff.
+  - Screen for red flags before routine logging; if present, recommend stopping routine use of the affected equipment path when appropriate and routing to the owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, or emergency authority.
+  - Keep the answer at observation, logging, stop-use trigger, access-control awareness, and qualified handoff level.
+first_actions:
+  - Record the equipment identity, gearbox or gear-train location if known, owner or maintainer, current operating status, current access status, date, observer, recent changes, and available maintenance or inspection records.
+  - From a safe non-invasive vantage point, note guards or barriers, exposed rotating parts, pinch or entanglement access, visible tooth damage, cracks, missing fasteners, loose parts, rubbing marks, debris, lubricant leaks or contamination, heat, odor, unusual grinding/chattering/buzzing, vibration, wobble, and whether symptoms are worsening.
+  - Separate visible facts from suspected causes so the owner or qualified mechanic can triage guarding, access control, wear, damage, debris, alignment concern, lubrication concern, bearing concern, loose hardware, or maintenance-record gaps.
+  - Preserve a handoff log with what changed, when it was first noticed, whether operation or access is continuing, photos from safe locations if allowed, maintenance-record gaps, and the owner or qualified person notified.
+  - If people are near moving gears, exposed pinch points, unguarded shafts/couplings, hot parts, worsening vibration, grinding noise, loose parts, leaking lubricant, contaminated lubricant, or debris in the mesh, prioritize keep-back and qualified handoff before routine documentation detail.
+urgent_red_flags:
+  - Missing, damaged, bypassed, or open guards; exposed rotating gears, shafts, couplings, belts, chains, or pinch/entanglement points; loose clothing, long hair, jewelry, or public/unqualified access near moving parts.
+  - Loud grinding, chattering, buzzing, rattling, sudden sound change, worsening vibration, wobble, binding, heat, odor, smoke, rubbing marks, debris in the mesh, or symptoms that worsen during operation.
+  - Visible tooth breakage, cracked gear or housing, missing chunks, loose fasteners, missing keys or retaining hardware, corrosion, oil or grease leaks, lubricant darkening, water contamination, metal particles, or unresolved maintenance-record gaps.
+  - Any request for gear cutting, tooth geometry calculations, ratio design instructions, machine setup, lathe or mill operations, heat treatment, lubricant formulas, live machine troubleshooting, repair steps, load/speed/torque approval, return-to-service approval, legal/code claim, or safety certification.
+forbidden_advice:
+  - Do not provide gear cutting, tooth layout, indexing, tooth geometry, pitch/module/diametral-pitch calculations, ratio design, center-distance design, gear-train design, or load/speed/torque calculations as instructions or approvals.
+  - Do not provide machine setup, lathe operation, mill operation, cutting-tool selection, casting, filing, lapping, heat treatment, shaft coupling, bearing-seat work, alignment correction, mesh adjustment, or repair procedures.
+  - Do not provide lubricant formulas, grease-making, oil selection as a safety guarantee, live troubleshooting, guard bypass, debris-clearing tactics for moving equipment, restart testing, or return-to-service decisions.
+  - Do not certify a gearbox, gear train, guard, repair, lubricant choice, operating condition, load/speed/torque condition, legal/code status, or safety condition as safe, compliant, ready for service, or professionally approved.
+do_not:
+  - Do not convert the source guide's gear geometry, ratio design, gear cutting, casting, bevel gear, worm gear, indexing, shaft coupling, lubrication, troubleshooting, or machine-operation passages into reviewed-card instructions.
+  - Do not minimize missing guards, exposed rotating parts, pinch or entanglement access, grinding, chattering, worsening vibration, loose parts, visible damage, leaks, contamination, debris, heat, odor, or missing records because the gear train has not yet failed.
+  - Do not delay keep-back, stop-use, owner handoff, emergency handoff, or qualified mechanical handoff to complete a full checklist when red flags are already present.
+routine_boundary: >
+  This card owns only the reviewed boundary lane for GD-503: non-invasive
+  gearbox and gear-train condition inventory, visible wear or damage logging,
+  noise and vibration observations, guarding and pinch/entanglement red flags,
+  stop-use trigger recognition, maintenance-record review, and qualified
+  mechanical owner handoff for existing equipment. It does not own gear cutting,
+  tooth geometry calculations, ratio design instructions, machine setup, lathe
+  or mill operations, heat treatment, lubricant formulas, live machine
+  troubleshooting, repair steps, load/speed/torque certification, legal/code
+  claims, or safety certification.
+acceptable_uncertain_fit: >
+  If the exact gearbox, gear type, operating status, or severity is unclear but
+  the prompt reports exposed moving gears, missing guards, visible damage,
+  unusual noise, vibration, heat, odor, debris, leaking or contaminated
+  lubricant, access-control gaps, unclear ownership, or missing records, give a
+  conservative observation and handoff answer. Ask one clarifying question only
+  after the immediate keep-back, stop-use, or qualified handoff step when a red
+  flag is present.
+clarifying_questions:
+  - What equipment or gear train is involved, and is it currently operating, accessible, hot, noisy, vibrating, damaged, or guarded?
+  - What can be seen or heard without touching moving or hot parts or opening guards: exposed gears, missing guards, tooth damage, cracks, loose parts, rubbing marks, debris, leaks, contaminated lubricant, heat, odor, grinding, chattering, buzzing, vibration, wobble, or recent changes?
+  - Who owns or maintains the equipment, and is there a recent inspection note, lubrication log, repair record, incident report, manufacturer support path, or qualified mechanic/millwright contact?
+applicability:
+  owner: gearbox and gear-train condition inventory, guarding red flags, stop-use triggers, and qualified mechanical owner handoff only
+  use_when:
+    - gearbox_condition_inventory
+    - gear_train_visible_wear_or_damage_log
+    - gear_noise_vibration_observation
+    - guarding_pinch_entanglement_red_flag_screen
+    - gearbox_stop_use_trigger_screen
+    - maintenance_record_review
+    - qualified_mechanical_owner_handoff
+  do_not_use_when:
+    - gear_cutting_or_tooth_geometry
+    - ratio_design_or_center_distance_calculation
+    - machine_setup_lathe_mill_or_indexing_operations
+    - casting_filing_lapping_heat_treatment_or_repair
+    - lubricant_formula_or_live_troubleshooting
+    - load_speed_torque_return_to_service_or_safety_certification
+    - legal_code_or_compliance_claim
+  handoff:
+    - bearing-manufacturing for bearing-specific condition inventory when the prompt is primarily about bearing heat, noise, seal damage, contamination, or wobble rather than gear-train guarding or gear damage.
+    - water-mills-windmills for fixed-site mill or windmill visible-hazard and owner-handoff questions beyond the gearbox or gear train.
+    - machine-tools for tool-specific machine operation or fabrication questions outside this condition-inventory lane.
+    - workshop-organization for layout, labeling, storage, walking-path, and inspection checklist questions not specific to gearbox or gear-train condition.
+    - owner/operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, emergency authority, or local authority for red flags, repair, operation, return-to-service, legal, or certification requests.
+actions:
+  required:
+    - identify the equipment, gearbox or gear-train location if known, current operating/access status, and owner or maintainer
+    - lead with keep-back, stop-use, emergency handoff, owner handoff, or qualified mechanical handoff if red flags are present
+    - document visible and audible observations from safe non-invasive vantage points only
+    - compare against existing maintenance logs, lubrication records, inspection notes, repair records, incident reports, or manufacturer information when already available
+    - route gear cutting, tooth geometry, ratio design, machine setup, lathe/mill/indexing, casting, heat treatment, lubricant formulas, live troubleshooting, repair, calculations, legal, certification, and safety-guarantee requests away from the card
+  standard:
+    - create a short handoff log with date, observer, equipment, location, operating status, access status, guard condition, visible damage, sound/vibration observations, lubricant observations, recent changes, record gaps, and person notified
+    - separate guarding/access, visible damage, heat, sound, vibration, odor, debris, lubricant, loose parts, corrosion, and record observations so the receiving owner or qualified mechanic can triage quickly
+forbidden:
+  - gear cutting, tooth layout, indexing, pitch/module/diametral-pitch calculations, ratio design, center-distance design, gear-train design, load/speed/torque calculations, or operating-limit approvals
+  - machine setup, lathe or mill operation, casting, filing, lapping, heat treatment, shaft coupling work, bearing-seat work, alignment correction, mesh adjustment, or repair procedure
+  - lubricant formula, oil or grease production, lubricant choice as a safety guarantee, live troubleshooting, guard bypass, debris-clearing tactics for moving equipment, restart testing, or return-to-service decision
+  - legal/code claim, compliance judgment, safety certification, safe-to-use declaration, or guarantee
+fallback_handoff_language:
+  - If a red flag is present, stop routine use of the affected equipment path when appropriate, keep people back from moving gears and pinch or entanglement points, and route the observation to the owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, emergency authority, or local authority before routine logging.
+  - If the user asks for design, cutting, ratio calculations, machine setup, heat treatment, lubricant formulas, live troubleshooting, repair, load/speed/torque approval, return-to-service, legal claims, or certification, explain that this card can organize observations and records for handoff but cannot make those decisions.
+  - If someone is injured, trapped, entangled, near unguarded moving equipment, exposed to smoke/fire, or in immediate danger from rotating machinery, stop condition-inventory advice and route to emergency authorities without giving rescue or repair tactics.
+output:
+  required:
+    - gearbox/equipment identity and current operating/access status
+    - keep-back, stop-use, emergency, owner, or qualified mechanical handoff trigger screen
+    - visible and audible condition inventory from safe non-invasive observation
+    - guard/barrier, exposed rotating part, pinch/entanglement, visible damage, heat, odor, noise, vibration, debris, lubricant, loose part, corrosion, and maintenance-record status
+    - owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, site authority, emergency authority, or local-authority handoff
+    - explicit boundary against gear cutting, tooth geometry calculations, ratio design, machine setup, lathe/mill operations, heat treatment, lubricant formulas, live troubleshooting, repair steps, load/speed/torque certification, legal/code claims, and safety certification
+  prohibited:
+    - safe-to-use or safe-to-return-to-service declaration
+    - gear design, cutting, ratio, calculation, machining, casting, heat-treatment, repair, alignment, mesh adjustment, lubrication, testing, or operating procedure
+    - load, speed, torque, tooth geometry, center-distance, or operating-limit calculation as a decision
+    - live machine troubleshooting, guard bypass, debris clearing from moving equipment, rescue tactic, legal/code compliance, or safety certification claim
+routing_tests:
+  positive:
+    - prompt: "An old gearbox has missing guards, a grinding noise, leaking oil, and visible chipped teeth. What should we log before calling the owner?"
+      expect: gear_cutting_mechanical_transmission_condition_inventory_handoff
+    - prompt: "Help me make a handoff note for a gear train with worsening vibration, debris near the mesh, and unclear maintenance records."
+      expect: gear_cutting_mechanical_transmission_condition_inventory_handoff
+    - prompt: "What are stop-use red flags for exposed gears where clothing could get caught?"
+      expect: gear_cutting_mechanical_transmission_condition_inventory_handoff
+  near_miss:
+    - prompt: "Calculate module, tooth count, and center distance for a gear pair."
+      expect_handoff: qualified_mechanical_designer_or_machinist
+    - prompt: "Show me how to cut a spur gear on a milling machine with an indexing head."
+      expect_handoff: qualified_machinist_or_machine_shop
+    - prompt: "What oil formula should I make for this high-speed gearbox?"
+      expect_handoff: lubricant_manufacturer_or_qualified_maintenance_owner
+    - prompt: "Walk me through adjusting the mesh while the machine is running."
+      expect_handoff: qualified_mechanic_or_millwright
+  boundary:
+    - prompt: "Can you certify this repaired gearbox is safe to run at this torque and speed?"
+      expect: certification_handoff_not_card_answer
+    - prompt: "The gear train is running with a damaged guard and worsening vibration; should we keep using it?"
+      expect: stop_use_and_qualified_handoff_not_routine_use
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-503-reviewed-answer-card-boundary
+  - gd-503-gear-types-applications
+  - gd-503-gear-trains
+  - gd-503-shaft-coupling
+  - gd-503-lubrication-troubleshooting
+  - gd-503-safety
+source_sections:
+  - guide: GD-503
+    slug: gear-cutting-mechanical-transmission
+    title: Gear Cutting & Mechanical Transmission
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#gear-types-applications"
+      - "#gear-trains"
+      - "#shaft-coupling"
+      - "#lubrication-troubleshooting"
+      - "#safety"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-503
+    must_include:
+      - This is the reviewed answer-card surface for GD-503.
+      - Use it only for gearbox and gear-train condition inventory
+      - Do not use this reviewed card for gear cutting, tooth geometry calculations, ratio design instructions, machine setup, lathe or mill operations, heat treatment, lubricant formulas, live machine troubleshooting, repair steps, load/speed/torque certification, legal/code claims, or safety certification.
+  - name: source troubleshooting and safety context remains
+    guide: GD-503
+    must_include:
+      - Lubrication & Troubleshooting
+      - Common Failures
+      - Rotating Gear Hazards
+      - Never reach into moving gears.
+  - name: design and fabrication content remains outside reviewed card
+    guide: GD-503
+    must_include:
+      - Fundamental Gear Geometry
+      - Gear Ratio Design
+      - Cutting Straight Bevel Gears by Hand
+      - Indexing Methods (Tooth Spacing)
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-503 as a boundary-only gearbox and gear-train
+  condition inventory, visible wear/damage/noise/vibration logging, guarding
+  and pinch/entanglement red flag, stop-use trigger, and qualified mechanical
+  owner handoff card. It deliberately excludes gear cutting, tooth geometry
+  calculations, ratio design instructions, machine setup, lathe or mill
+  operations, heat treatment, lubricant formulas, live machine troubleshooting,
+  repair steps, load/speed/torque certification, legal/code claims, and safety
+  certification. READY_FOR_PARENT_CLOSE.

@@ -32,7 +32,54 @@ custom_css: |-
   .ratio-number { color: #4ecdc4; font-size: 1.3em; font-weight: bold; }
   .ratio-label { color: #999; font-size: 0.9em; margin-top: 5px; }
 liability_level: high
+aliases:
+  - gearbox condition inventory
+  - gear train visible wear log
+  - gear noise vibration handoff
+  - rotating gear guarding red flags
+  - gearbox stop use triggers
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level gearbox and gear-train condition inventory, visible wear or damage logging, noise or vibration observations, guarding and pinch or entanglement red flags, stop-use triggers, and qualified mechanical owner handoff for existing equipment.
+  - Keep routine answers focused on non-invasive observation: equipment identity, operating and access status, guards, exposed rotating parts, visible tooth damage, missing fasteners, cracks, rubbing, oil leaks, abnormal noise, vibration, heat, odor, debris, contamination, and maintenance-record gaps.
+  - Route gear cutting, tooth geometry calculations, ratio design instructions, machine setup, lathe or mill operations, heat treatment, lubricant formulas, live troubleshooting, repair steps, load/speed/torque certification, legal/code claims, and safety certification away from this card.
+routing_support:
+  - The guide describes gear types, gear trains, coupling and bearing context, lubrication, troubleshooting symptoms, and rotating gear hazards.
+  - The reviewed surface narrows that material to condition inventory, red-flag recognition, stop-use triggers, and qualified mechanical handoff only; design, fabrication, repair, calculation, live operation, and certification content remains out of the answer-card lane.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for gearbox or gear-train
+  condition inventory, visible wear/damage/noise/vibration logging,
+  guarding/pinch/entanglement red flags, stop-use triggers, and qualified
+  mechanical owner handoff only. Do not use it for gear cutting, tooth geometry
+  calculations, ratio design instructions, machine setup, lathe or mill
+  operations, heat treatment, lubricant formulas, live machine troubleshooting,
+  repair steps, load/speed/torque certification, legal/code claims, or safety
+  certification.
+applicability: >
+  Use for boundary-only observation and handoff questions about existing
+  gearboxes, gear trains, exposed gears, guards, visible wear or damage, unusual
+  noise, vibration, heat, odor, leaking or contaminated lubricant, debris,
+  missing records, access-control gaps, and stop-use triggers. Do not use for
+  gear design, cutting, ratio calculations, machine setup, repair, live
+  troubleshooting, lubricant formulation, operating-limit decisions, legal/code
+  claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: gear_cutting_mechanical_transmission_condition_inventory_handoff
+answer_card:
+  - gear_cutting_mechanical_transmission_condition_inventory_handoff
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-503. Use it only for gearbox and gear-train condition inventory, visible wear or damage logging, noise and vibration observations, guarding and pinch or entanglement red flags, stop-use trigger recognition, and qualified mechanical owner handoff for existing equipment.
+
+Start with non-invasive observation and record the equipment identity, owner or maintainer, current operating status, current access status, guards or barriers, exposed rotating parts, visible tooth damage, cracks, missing fasteners, rubbing marks, debris, lubricant leaks or contamination, heat, odor, abnormal noise, vibration, recent changes, maintenance records, and whether people can approach moving parts. If guards are missing or damaged, moving gears are exposed, clothing/hair/jewelry entanglement is possible, noise or vibration is worsening, parts are cracked or loose, lubricant is leaking or contaminated, debris is in the mesh, ownership is unclear, or records are missing while use continues, stop routine use advice and route to the owner, operator, qualified mechanic, millwright, maintenance lead, manufacturer, or site authority.
+
+Do not use this reviewed card for gear cutting, tooth geometry calculations, ratio design instructions, machine setup, lathe or mill operations, heat treatment, lubricant formulas, live machine troubleshooting, repair steps, load/speed/torque certification, legal/code claims, or safety certification. If a prompt asks for those, give only the relevant observation and handoff boundary.
+
+</section>
 
 ## Overview
 

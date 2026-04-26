@@ -14,12 +14,61 @@ related:
   - steel-making
   - metallurgy-basics
   - blacksmithing
+aliases:
+  - alloy embrittlement symptom log
+  - brittle metal failure red flags
+  - hydrogen embrittlement history questions
+  - cracked alloy quarantine checklist
+  - unknown brittle failure materials handoff
+  - qualified metallurgist structural owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level brittle or embrittlement-suspected failure symptom logging, material and service history questions, quarantine or stop-use trigger recognition, uncertainty language, and qualified materials or structural owner handoff.
+  - Keep routine answers non-procedural: identify the component, current use, owner, known material or grade, known heat/plating/acid/welding/cold-service history, visible cracks or sudden brittle failure symptoms, missing records, and whether access or use has been paused.
+  - Route heat treatment, alloy redesign, hydrogen bake-out or embrittlement remediation procedures, fracture mechanics calculations, destructive testing, structural/pressure/vehicle return-to-service decisions, legal/code claims, and safety certification away from this card.
+routing_support:
+  - Use metallurgy-basics or microstructure-phase-diagrams for broader material identity, composition, and conceptual phase terminology when those reviewed boundaries are the better fit.
+  - Use welding-metallurgy for weld or heat-affected-zone defect logging and fume/fire/confined-space handoff when welding context dominates.
+  - Pair with the responsible materials engineer, metallurgist, structural engineer, pressure-equipment owner, vehicle specialist, equipment owner, or safety owner when embrittlement suspicion involves high-consequence service or missing records.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for brittle/failure symptom
+  logging, material history questions, quarantine or stop-use triggers,
+  uncertainty language, and qualified materials or structural owner handoff. Do
+  not use it for heat treatment, alloy redesign, hydrogen bake-out or
+  embrittlement remediation procedures, fracture mechanics calculations,
+  destructive testing, structural, pressure, vehicle, or lifting return-to-
+  service decisions, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only questions about suspected alloy embrittlement, sudden
+  brittle fracture, visible cracking, component history gaps, hydrogen exposure
+  history, prior plating, acid cleaning, welding, cold service, heat exposure,
+  quarantine, stop-use screening, uncertainty language, and handoff to a
+  qualified metallurgist, materials engineer, structural engineer, responsible
+  equipment owner, or safety owner. Do not use for remediation, heat-treatment,
+  alloy redesign, calculations, destructive testing, return-to-service approval,
+  legal/code claims, or certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: alloy_embrittlement_failure_symptom_handoff
+answer_card:
+  - alloy_embrittlement_failure_symptom_handoff
 read_time: 26
 word_count: 4480
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-603. Use it only for boundary-level brittle or embrittlement-suspected failure symptom logging, material and service history questions, quarantine or stop-use trigger recognition, uncertainty language, and qualified materials or structural owner handoff.
+
+Start by identifying the component, current use, owner or decision maker, known material or grade, source and maintenance records, prior acid cleaning, plating, welding, cold service, heat exposure, visible cracks, sudden fracture under normal load, little or no deformation before failure, corrosion or pitting, stress-concentration locations, and whether the item has been removed from use or isolated from access. Treat cracked, fractured, unknown-source, hydrogen-exposed, heat-history-uncertain, cold-service, high-strength, safety-critical, pressure, vehicle, lifting, structural, public-facing, or missing-record components as stop-use and qualified-review issues.
+
+Do not use this reviewed card for heat treatment, alloy redesign, hydrogen bake-out or embrittlement remediation procedures, fracture mechanics calculations, destructive testing, structural/pressure/vehicle return-to-service decisions, legal/code claims, or safety certification. If a prompt asks for those, give only the relevant symptom log, uncertainty note, quarantine or stop-use boundary, and handoff to a qualified metallurgist, materials engineer, structural engineer, responsible equipment owner, or safety owner.
+
+</section>
 
 ## Introduction to Alloy Embrittlement
 
@@ -339,5 +388,4 @@ Embrittlement is a hidden failure mode that transforms sound-looking components 
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-
 

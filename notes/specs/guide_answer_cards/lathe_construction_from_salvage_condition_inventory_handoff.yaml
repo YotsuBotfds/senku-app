@@ -1,0 +1,181 @@
+card_id: lathe_construction_from_salvage_condition_inventory_handoff
+guide_id: GD-511
+slug: lathe-construction-from-salvage
+title: Lathe Construction from Salvage
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user needs boundary-level salvaged lathe or machine condition inventory, missing-guard/rotating-part/pinch/entanglement/electrical red-flag recognition, stop-use trigger screening, labeling or quarantine, or qualified machine-owner handoff.
+  - The question is about visible guards, exposed belts or pulleys, chuck or faceplate condition, rotating parts, pinch points, entanglement exposure, loose clothing or hair exposure, damaged wiring, smoke, odor, heat, vibration, wobble, binding, loose parts, unclear ownership, missing labels, or maintenance-record gaps.
+  - The problem is observation, documentation, red-flag recognition, stop-use labeling or quarantine, and handoff, not lathe construction, alignment procedures, spindle or bearing design, motor wiring, cutting operations, toolholding, live testing, repair or rebuild steps, tolerances, calculations, legal/code advice, or safety certification.
+required_first_actions:
+  - Start with non-invasive observation only; do not operate, test, power, adjust, align, repair, rebuild, wire, guard-bypass, touch moving or hot parts, reach near rotating parts, install tooling, mount work, or perform cutting.
+  - Classify the prompt as condition inventory, missing-guard concern, rotating-part/pinch/entanglement concern, electrical red-flag screen, stop-use trigger, labeling or quarantine question, maintenance-record review, or qualified machine-owner handoff.
+  - Screen for red flags before routine logging; if present, recommend stopping routine use or access when appropriate, labeling or quarantining the machine, keeping people back, and routing to the owner, operator, qualified machine maintainer, qualified electrician, manufacturer, site authority, or emergency authority.
+  - Keep the answer at observation, logging, stop-use trigger, labeling/quarantine, and qualified handoff level.
+first_actions:
+  - Record the machine identity, location, owner or responsible decision maker, current operating status, current access status, date, observer, known recent incidents, labels, barriers, and available maintenance or inspection records.
+  - From a safe non-invasive vantage point, note guards, exposed rotating parts, belts, pulleys, chuck or faceplate condition, loose chuck key risk, pinch points, entanglement exposures, loose parts, visible cracks or deformation, corrosion, damaged wiring, exposed conductors, smoke, burning odor, unusual heat, vibration, wobble, binding, and whether symptoms are worsening.
+  - Separate visible facts from suspected causes so the owner or qualified maintainer can triage guarding, access control, electrical condition, rotating-part hazards, spindle or bearing concern, prior impact, maintenance gaps, or operating status.
+  - Preserve a handoff log with what changed, when it was first noticed, whether operation or access is continuing, photos from safe locations if allowed, labels applied or quarantine status, maintenance-record gaps, and the owner or qualified decision maker notified.
+  - If people are near an operating, unguarded, damaged, poorly labeled, undocumented, hot, smoking, vibrating, wobbling, binding, or electrically suspect machine, prioritize keep-back, stop-use labeling or quarantine, and qualified handoff before routine documentation detail.
+urgent_red_flags:
+  - Operating or accessible lathe with missing guards, exposed rotating parts, exposed belts or pulleys, exposed pinch points, loose chuck key risk, unclear barriers, missing warning labels, unknown owner, unclear shutdown or access authority, or unresolved maintenance-record gaps.
+  - Hair, loose clothing, jewelry, fingers, hands, or bystanders near a spinning workpiece, chuck, spindle, belt, pulley, gear, or other rotating or pinch area.
+  - Damaged wiring, exposed conductors, sparking, smoke, burning odor, unusual heat, wet electrical exposure, improvised electrical controls, or any electrical condition while use or access continues.
+  - Visible cracks, deformation, corrosion, missing pieces, loose fasteners or parts, damaged chuck or faceplate, rubbing marks, debris, impact damage, unusual noise, worsening vibration, wobble, binding, or sudden change in sound or motion.
+  - Any request for lathe construction, alignment procedures, spindle or bearing design, motor wiring, cutting operations, toolholding, live testing, repair or rebuild steps, tolerances, calculations, return-to-service approval, legal/code claims, or safety certification.
+forbidden_advice:
+  - Do not provide lathe construction, bed construction, headstock or tailstock alignment, spindle or bearing design, chuck or faceplate fabrication, tool-rest or toolholding setup, cutting operations, first turning projects, or operating technique instructions.
+  - Do not provide motor wiring, pulley sizing, drive mechanism design, live testing, powered troubleshooting, guard bypass, repair, rebuild, adjustment, bearing preload, cleaning, lubrication, or return-to-service procedures.
+  - Do not provide runout, tolerance, speed, load, pulley-ratio, bearing, alignment, or structural calculations as an operating or design decision.
+  - Do not certify a lathe, repair, rebuild, guard, wiring, inspection, operating condition, access plan, or maintenance decision as safe, code-compliant, ready for service, or professionally approved.
+do_not:
+  - Do not convert the source guide's construction, alignment, drive, spindle, toolholding, cutting, troubleshooting, project, or next-step passages into reviewed-card instructions.
+  - Do not minimize missing guards, exposed rotating parts, pinch points, entanglement hazards, damaged wiring, smoke, burning odor, heat, vibration, wobble, binding, loose parts, missing labels, unclear ownership, or missing records because the machine has not yet injured anyone.
+  - Do not delay keep-back, stop-use labeling or quarantine, owner handoff, emergency handoff, qualified machine-maintainer handoff, or qualified electrician handoff to complete a full checklist when red flags are already present.
+routine_boundary: >
+  This card owns only the reviewed boundary lane for GD-511: non-invasive
+  salvaged lathe or machine condition inventory, missing-guard/rotating-part/
+  pinch/entanglement/electrical red flags, stop-use trigger recognition,
+  labeling or quarantine, maintenance-record review, and qualified machine-owner
+  handoff. It does not own lathe construction, alignment procedures, spindle or
+  bearing design, motor wiring, cutting operations, toolholding, live testing,
+  repair or rebuild steps, tolerances, calculations, legal/code claims, or safety
+  certification.
+acceptable_uncertain_fit: >
+  If the exact lathe type, ownership, operating status, or severity is unclear
+  but the prompt reports missing guards, exposed rotating parts, pinch points,
+  entanglement exposure, damaged wiring, smoke, odor, heat, vibration, wobble,
+  binding, loose parts, missing labels, unclear ownership, or missing records,
+  give a conservative observation and handoff answer. Ask one clarifying
+  question only after the immediate keep-back, stop-use, labeling/quarantine,
+  or qualified handoff step when a red flag is present.
+clarifying_questions:
+  - Is this an existing salvaged lathe or machine, and is it currently powered, operating, accessible, hot, smoking, noisy, vibrating, wobbling, binding, damaged, unguarded, or restricted?
+  - What can be seen or heard from outside the operating area: guards, barriers, warning labels, exposed rotating parts, belts, pulleys, chuck or faceplate condition, pinch points, loose parts, damaged wiring, smoke, odor, heat, unusual sound, vibration, wobble, binding, impact history, or debris?
+  - Who owns or controls the machine, and is there a recent inspection note, maintenance log, incident report, manufacturer support path, qualified machine maintainer, qualified electrician, or site authority contact?
+applicability:
+  owner: salvaged lathe or machine condition inventory, red-flag recognition, stop-use labeling or quarantine, and qualified machine-owner handoff only
+  use_when:
+    - salvaged_lathe_condition_inventory
+    - missing_guard_or_barrier_red_flag_log
+    - rotating_part_pinch_entanglement_hazard_screen
+    - damaged_wiring_or_electrical_red_flag_screen
+    - stop_use_labeling_or_quarantine_question
+    - maintenance_record_review
+    - qualified_machine_owner_handoff
+  do_not_use_when:
+    - lathe_construction_or_rebuild
+    - alignment_spindle_bearing_or_toolholding_procedure
+    - motor_wiring_drive_design_or_live_testing
+    - cutting_operation_or_first_turning_project
+    - repair_adjustment_cleaning_or_lubrication_procedure
+    - tolerance_speed_load_ratio_or_structural_calculation
+    - return_to_service_legal_code_or_safety_certification
+  handoff:
+    - machine-tools for general machine-tool operation or fabrication questions outside the condition-inventory lane.
+    - bearing-manufacturing for bearing condition inventory only when the prompt is primarily about visible or audible bearing symptoms, not lathe operation, construction, or return-to-service.
+    - electric-motor-rewinding for motor condition intake, do-not-power-on triggers, nameplate facts, and qualified motor-owner handoff.
+    - electrical-safety-hazard-prevention for exposed live conductors, wet energized equipment, sparking, smoke, burning smell, emergency isolation, or electrical scene safety.
+    - workshop-organization for shop labeling, storage, barriers, access control, and walking-path questions not specific to lathe condition.
+    - owner/operator, qualified machine maintainer, qualified electrician, manufacturer, site authority, emergency authority, or local authority for red flags, operation, repair, return-to-service, legal, or certification requests.
+actions:
+  required:
+    - identify the machine, owner or responsible decision maker, current operating status, and current access status
+    - lead with keep-back, stop-use, labeling/quarantine, owner handoff, emergency handoff, qualified machine-maintainer handoff, or qualified electrician handoff if red flags are present
+    - document visible and audible observations from outside operating or restricted areas only
+    - compare against existing maintenance logs, inspection notes, incident reports, owner records, or manufacturer information when already available
+    - route construction, alignment, spindle or bearing design, motor wiring, cutting, toolholding, live testing, repair, rebuild, tolerances, calculations, legal, certification, and safety-guarantee requests away from the card
+  standard:
+    - create a short handoff log with date, observer, machine identity, access status, operating status, visible condition, recent changes, labels or quarantine status, record gaps, and person notified
+    - separate guard, barrier, rotating-part, pinch-point, entanglement, electrical, heat, smoke, odor, sound, vibration, wobble, binding, loose-part, visible-damage, and record observations so the receiving owner or qualified maintainer can triage quickly
+forbidden:
+  - lathe construction, bed construction, headstock/tailstock alignment, spindle or bearing design, chuck or faceplate fabrication, tool-rest setup, toolholding, cutting operations, or first turning projects
+  - motor wiring, pulley sizing, drive mechanism design, live testing, powered troubleshooting, guard bypass, repair, rebuild, adjustment, bearing preload, cleaning, lubrication, or return-to-service procedure
+  - runout, tolerance, speed, load, pulley-ratio, bearing, alignment, or structural calculation as an operating or design decision
+  - return-to-service declaration, legal/code claim, compliance judgment, safety certification, or guarantee
+fallback_handoff_language:
+  - If a red flag is present, stop routine use or access when appropriate, label or quarantine the machine if that is within the user's authority, keep people back from rotating parts, pinch points, hot surfaces, smoke, and electrical hazards, and route the observation to the owner, operator, qualified machine maintainer, qualified electrician, manufacturer, site authority, emergency authority, or local authority before routine logging.
+  - If the user asks for construction, alignment, spindle or bearing design, motor wiring, cutting, toolholding, live testing, repair, rebuild, tolerances, calculations, return-to-service, legal claims, or certification, explain that this card can organize observations and records for handoff but cannot make those decisions.
+  - If someone is injured, trapped, entangled, near an operating or damaged lathe, near smoke or fire, or exposed to electrical hazards, stop condition-inventory advice and route to emergency authorities without giving rescue or repair tactics.
+output:
+  required:
+    - machine identity and current operating/access status
+    - keep-back, stop-use, labeling/quarantine, emergency, owner, qualified machine-maintainer, or qualified electrician handoff trigger screen
+    - visible and audible condition inventory from outside operating or restricted areas
+    - guard, barrier, label, access-control, rotating-part, pinch-point, entanglement, electrical, heat, smoke, odor, vibration, noise, wobble, binding, loose-part, visible-damage, incident, and maintenance-record status
+    - owner, operator, qualified machine maintainer, qualified electrician, manufacturer, site authority, emergency authority, or local-authority handoff
+    - explicit boundary against lathe construction, alignment procedures, spindle or bearing design, motor wiring, cutting operations, toolholding, live testing, repair or rebuild steps, tolerances, calculations, legal/code claims, and safety certification
+  prohibited:
+    - safe-to-use or safe-to-return-to-service declaration
+    - construction, alignment, wiring, operation, cutting, toolholding, testing, repair, rebuild, adjustment, cleaning, or lubrication procedure
+    - tolerance, runout, speed, load, pulley-ratio, bearing, alignment, or structural calculation as a decision
+    - live operation, guard bypass, rescue tactic, legal/code compliance, or safety certification claim
+routing_tests:
+  positive:
+    - prompt: "We found an old salvaged lathe with missing belt guards and no maintenance record. What should we document before calling the owner?"
+      expect: lathe_construction_from_salvage_condition_inventory_handoff
+    - prompt: "The chuck area is exposed, the machine wobbles, and people can walk close to it. What are the stop-use red flags?"
+      expect: lathe_construction_from_salvage_condition_inventory_handoff
+    - prompt: "Help me make a quarantine label and handoff note for a lathe with damaged wiring and a burning smell."
+      expect: lathe_construction_from_salvage_condition_inventory_handoff
+  near_miss:
+    - prompt: "Show me how to build the headstock and align the spindle bearings."
+      expect_handoff: qualified_machine_designer_or_machinist
+    - prompt: "Wire this salvaged motor to the lathe and tell me how to live test it."
+      expect_handoff: qualified_electrician_or_motor_specialist
+    - prompt: "Calculate pulley ratios and safe spindle speed for cutting steel."
+      expect_handoff: qualified_machinist_or_engineer
+    - prompt: "Give me the runout tolerance and bearing preload adjustment procedure."
+      expect_handoff: qualified_machine_maintainer_or_manufacturer
+  boundary:
+    - prompt: "Can you certify this rebuilt lathe is safe to run again?"
+      expect: certification_handoff_not_card_answer
+    - prompt: "The lathe is running with an exposed belt and someone got clothing near it; how do I keep using it?"
+      expect: stop_use_keep_back_and_qualified_handoff_not_routine_use
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-511-reviewed-answer-card-boundary
+  - gd-511-overview-lathe-types
+  - gd-511-drive-mechanisms
+  - gd-511-safety-troubleshooting
+source_sections:
+  - guide: GD-511
+    slug: lathe-construction-from-salvage
+    title: Lathe Construction from Salvage
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#lathe-types-comparison"
+      - "#drive-mechanisms"
+      - "#safety-and-troubleshooting"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-511
+    must_include:
+      - This is the reviewed answer-card surface for GD-511.
+      - Use it only for salvaged lathe or machine condition inventory
+      - Do not use this reviewed card for lathe construction, alignment procedures, spindle or bearing design, motor wiring, cutting operations, toolholding, live testing, repair or rebuild steps, tolerances, calculations, legal/code claims, or safety certification.
+  - name: source safety context remains
+    guide: GD-511
+    must_include:
+      - Lathe safety is critical. A spinning lathe is lethal.
+      - Never lean over a spinning workpiece.
+      - Never reach into a spinning lathe.
+      - Hair, clothing, and fingers are instantly caught and wound around the spindle.
+  - name: reviewed boundary keeps card nonprocedural
+    guide: GD-511
+    must_include:
+      - Start with non-invasive observation only.
+      - stop routine use advice, label or quarantine the machine when appropriate, keep people back, and route to the owner, operator, qualified machine maintainer, qualified electrician, manufacturer, site authority, or emergency authority.
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-511 as a boundary-only salvaged lathe or machine
+  condition inventory, missing-guard/rotating-part/pinch/entanglement/electrical
+  red-flag, stop-use trigger, labeling/quarantine, and qualified machine-owner
+  handoff card. It deliberately excludes lathe construction, alignment
+  procedures, spindle or bearing design, motor wiring, cutting operations,
+  toolholding, live testing, repair or rebuild steps, tolerances, calculations,
+  legal/code claims, and safety certification. READY_FOR_PARENT_CLOSE.

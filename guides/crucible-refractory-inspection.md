@@ -21,11 +21,50 @@ word_count: 4280
 last_updated: '2026-04-06'
 version: '1.0'
 liability_level: high
+aliases:
+  - crucible condition inspection
+  - refractory visible crack log
+  - crucible spalling contamination moisture screen
+  - refractory quarantine retire triggers
+  - crucible owner handoff
+  - refractory inspection boundary
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level crucible and refractory condition inspection, visible crack/spalling/contamination/moisture logging, quarantine or retire triggers, and heat/fume/melt owner handoff.
+  - Keep routine answers non-invasive and observational: owner, current activity status, cooled/access status, visible cracks, spalling, missing material, adhered metal or slag, contamination, moisture, discoloration, dull ring-test concern if already observed, prior failure history, and who must decide follow-up.
+  - Route crucible making, refractory recipes, drying or firing schedules, furnace operation, molten-metal work, repair or relining steps, thermal calculations, safe-to-use declarations, legal/code claims, and safety certification away from this card.
+routing_support:
+  - GD-604 is high-liability and contains procedural refractory, drying, preheating, repair, and foundry-safety content, but the reviewed answer-card surface is deliberately narrower than the full guide.
+  - Prefer the reviewed card for visible condition logs, no-go/quarantine/retire triggers, and owner handoff before any heat or molten-metal work.
+  - Pair with foundry-casting, chemical-safety, fire-safety, emergency-care, or qualified site owners when molten metal, furnace operation, fumes, burns, fire, symptoms, or active work dominate the prompt.
+citations_required: true
+citation_policy: cite reviewed GD-604 answer card for crucible/refractory condition inspection, visible cracks/spalling/contamination/moisture logging, quarantine/retire triggers, and heat/fume/melt owner handoff only; do not use it for crucible making, refractory recipes, drying/firing schedules, furnace operation, molten-metal work, repair/relining steps, thermal calculations, safe-to-use declarations, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only crucible and refractory condition questions:
+  non-invasive inspection records, visible crack, spalling, missing-material,
+  contamination, adhered metal or slag, moisture, discoloration, ring-test
+  concern if already observed, quarantine or retire triggers, and routing to
+  the responsible foundry, furnace, heat, fume, melt, fire-safety,
+  chemical-safety, emergency, or site owner. Do not use for crucible making,
+  refractory recipes, drying or firing schedules, furnace operation,
+  molten-metal work, repair or relining steps, thermal calculations,
+  safe-to-use declarations, legal or code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: crucible_refractory_condition_inspection_boundary
+answer_card:
+  - crucible_refractory_condition_inspection_boundary
 ---
 
 ## Introduction to Crucible and Refractory Management
 
 Crucibles and furnace refractories are the containers holding molten metal at extreme temperatures (800–1500°C). Their failure is catastrophic: molten metal spills, explosions occur from moisture in the refractory, and severe burns or death result. This guide covers inspection, maintenance, and safe operation of crucibles and furnace linings.
+
+## Reviewed Answer-Card Boundary: Condition Inspection, Quarantine, and Handoffs
+
+This is the reviewed answer-card surface for GD-604. Use it only for boundary-level crucible and refractory condition inspection, visible crack/spalling/contamination/moisture logging, quarantine or retire triggers, and heat/fume/melt owner handoff. Start with the item owner, location, current activity status, whether the equipment is cooled and accessible without touching hot surfaces, what can be observed non-invasively, and who has authority to pause, quarantine, retire, or escalate the item.
+
+For routine boundary screening, record the crucible or refractory location, owner or responsible operator, date, observer, access status, visible cracks, crack growth, spalling, missing refractory, adhered metal or slag, contamination, moisture, discoloration, dull ring-test concern if already observed, prior failure or repair history, nearby fume or heat concern, and whether any work is already paused.
+
+Do not use this reviewed card for crucible making, refractory recipes, drying or firing schedules, furnace operation, molten-metal work, repair or relining steps, thermal calculations, safe-to-use declarations, legal or code claims, or safety certification. If visible cracking, crack growth, spalling, missing material, moisture, contamination, dull or changed ring-test findings, prior failure, active heat or fumes, burn or exposure symptoms, unclear ownership, or pressure to proceed despite uncertainty appears, stop routine condition logging and route to the responsible foundry, furnace, heat, fume, melt, fire-safety, chemical-safety, emergency, or site owner.
 
 ## Pre-Melt Safety Gate
 

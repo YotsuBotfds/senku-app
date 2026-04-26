@@ -1,0 +1,223 @@
+card_id: nail_rivet_fastener_condition_handoff
+guide_id: GD-869
+slug: nail-rivet-fastener-forging
+title: Nail, Rivet & Fastener Forging
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for condition inventory, visible damage logging, corrosion notes, mismatch documentation, intended-use consequence screening, hold or quarantine triggers, or qualified owner handoff for existing nails, rivets, bolts, screws, or related fasteners.
+  - The prompt concerns loose, missing, corroded, cracked, bent, deformed, mismatched, unknown-source, modified, or unlabeled fasteners.
+  - The user needs help documenting observations before routing a questionable fastener or fastened assembly to a qualified mechanical owner, structural owner, equipment owner, maintenance lead, manufacturer, site authority, or other responsible reviewer.
+required_first_actions:
+  - Keep the answer at boundary, non-invasive observation, documentation, hold or quarantine screening, and qualified owner handoff before any forging, heating, quenching, rivet setting, fabrication, sizing, calculation, repair, or approval advice.
+  - Identify the fastener type if known, assembly or location, owner or decision maker, current use status, intended use, whether people or critical equipment depend on it, visible condition, known history, and whether it has been held, tagged, or quarantined.
+  - Screen high-consequence use and visible damage before routine logging; if present, recommend holding use of the affected assembly when appropriate and routing to the qualified owner.
+conditional_required_actions:
+  - trigger_terms:
+      - structure
+      - structural
+      - vehicle
+      - pressure
+      - boiler
+      - tank
+      - lifting
+      - hoist
+      - overhead
+      - public
+    required_actions:
+      - Treat as an intended-use consequence screen and qualified mechanical, structural, equipment, pressure-system, or site-owner handoff.
+      - Do not approve continued use, provide load ratings, or give repair, replacement, sizing, setting, or certification instructions.
+  - trigger_terms:
+      - rust
+      - corrosion
+      - cracked
+      - bent
+      - loose
+      - missing
+      - mismatch
+      - mismatched
+      - unknown
+      - modified
+      - deformed
+      - sheared
+    required_actions:
+      - Treat as a hold/quarantine and visible-condition logging issue rather than routine fastener use.
+      - Keep the answer limited to what is visible, ownership, access control, records, and qualified review.
+first_actions:
+  - Make a fastener condition record with fastener type if known, assembly or location, owner or decision maker, date, observer, current use status, intended use, access status, known source or material history, and whether it is held, tagged, or quarantined.
+  - Record visible condition without removal, testing, loading, tightening, heating, grinding, or repair: corrosion, cracks, bending, deformation, looseness, missing parts, mismatched fasteners, damaged heads, damaged threads, pulled-through material, unusual movement, prior modification, unclear markings, or unknown source.
+  - Ask whether the fastener is part of a structure, vehicle, pressure system, lifting/support system, overhead item, public/shared equipment, or other high-consequence assembly where failure could injure people or cause major damage.
+  - Compare only already-available records: installation notes, inspection logs, maintenance records, manufacturer information, prior repair notes, material/source labels, or owner decisions.
+  - Label or quarantine questionable fasteners or affected assemblies until a qualified mechanical owner, structural owner, equipment owner, maintenance lead, manufacturer, site authority, or other responsible reviewer decides the next step.
+urgent_red_flags:
+  - Fasteners in structural, vehicle, pressure, lifting, overhead, public/shared, rescue, safety-critical, or critical equipment use.
+  - Visible corrosion, cracks, bending, deformation, looseness, missing parts, mismatched fasteners, damaged heads, damaged threads, pulled-through material, unknown source or material, unclear prior modification, or missing labels.
+  - Pressure to keep using, tighten, replace, re-rivet, forge, heat, quench, repair, calculate, load-test, certify, or declare safe a fastener with uncertain history or visible damage.
+  - Missing owner, missing inspection or maintenance records, contradictory records, or uncertainty about who can approve use of the fastened assembly.
+forbidden_advice:
+  - Do not provide forging, drawing, upsetting, heading, pointing, thread cutting, screw cutting, rivet fabrication, bolt fabrication, nail fabrication, or production workflow instructions.
+  - Do not provide heating, heat-color, temperature, quenching, tempering, annealing, hardening, peening, rivet setting, bucking, drilling-out, grinding-out, installation, removal, tightening, torque, repair, replacement, or testing procedures.
+  - Do not provide sizing rules, calculations, load ratings, overlap rules as approval, structural design, vehicle use, pressure-system use, lifting/support use, or return-to-service decisions.
+  - Do not provide legal/code claims, compliance judgments, safe-to-use claims, safe-to-operate claims, safety guarantees, or safety certification.
+do_not:
+  - Do not convert the source guide's forging, rivet installation, bolt or screw fabrication, heat treatment, sizing, production, mechanical testing, or repair-adjacent passages into reviewed-card instructions.
+  - Do not treat corrosion, cracks, looseness, missing parts, mismatched fasteners, unknown material, prior modification, or high-consequence use as routine checklist items only.
+  - Do not infer strength, material identity, adequacy, safe use, load capacity, code compliance, or repairability from appearance.
+routine_boundary: >
+  Routine GD-869 reviewed-card answers are limited to fastener condition
+  inventory, intended-use consequence screening, visible damage, corrosion, or
+  mismatch logging, hold or quarantine triggers, and qualified mechanical or
+  structural owner handoff for existing fasteners. The card exits for forging
+  steps, heating or quenching, rivet setting, fastener fabrication, sizing or
+  calculations, load ratings, structural, vehicle, or pressure-use approval,
+  repair procedures, legal/code claims, and safety certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but appears to involve an existing questionable
+  nail, rivet, bolt, screw, or fastened assembly, provide a conservative
+  condition log, intended-use consequence screen, hold/quarantine cue, and
+  qualified handoff. Ask for fastener identity, assembly, owner, current use,
+  intended use, visible red flags, records, and quarantine status while avoiding
+  all fabrication, setting, repair, sizing, load, legal, code, or certification
+  advice.
+clarifying_questions:
+  - What fastener or assembly is involved, who owns the decision, and is it currently in use?
+  - Is the fastener part of a structure, vehicle, pressure system, lifting/support system, overhead item, public/shared equipment, or critical machine?
+  - What is visible without removing, tightening, testing, loading, heating, or repairing it: corrosion, cracks, bending, deformation, looseness, missing parts, mismatches, damaged heads or threads, pulled-through material, unknown source, or prior modification?
+  - What records exist: installation notes, inspection logs, maintenance records, manufacturer information, material/source labels, prior repair notes, or owner decisions?
+  - Has the questionable fastener or affected assembly been held, tagged, quarantined, or routed to a qualified mechanical, structural, equipment, or site owner?
+applicability:
+  owner: fastener condition inventory, intended-use consequence screen, hold/quarantine, and qualified mechanical or structural handoff
+  use_when:
+    - fastener_condition_inventory
+    - visible_damage_or_corrosion_log
+    - mismatched_missing_or_loose_fastener_screen
+    - intended_use_consequence_screen
+    - hold_quarantine_or_owner_handoff
+    - qualified_mechanical_or_structural_handoff
+  do_not_use_when:
+    - forging_heating_quenching_or_heat_treatment
+    - rivet_setting_peening_or_bucking
+    - fastener_fabrication_thread_cutting_or_production
+    - sizing_calculation_load_rating_or_design_approval
+    - structural_vehicle_pressure_or_lifting_use_approval
+    - repair_replacement_installation_removal_or_testing
+    - legal_code_claim_or_safety_certification
+  handoff:
+    - blacksmithing for forge-area readiness, hot-work hazard screening, material labels, and shop-owner handoff outside existing-fastener condition inventory.
+    - metallurgy-basics for non-procedural material identity uncertainty when unknown, coated, plated, cast, or unlabeled metal is present.
+    - tool-hardening-edges for hardened tool or edge condition, brittle-edge, and tool quarantine questions.
+    - bridges-dams, railroad-tramway-construction, scaffold-shoring, rope-suspension-rigging, or shelter-site-assessment when the prompt is primarily about infrastructure condition rather than a fastener-only log.
+    - qualified mechanical owner, structural owner, equipment owner, maintenance lead, manufacturer, pressure-system owner, site authority, emergency authority, or local authority for high-consequence use, repair, operation, approval, legal, or certification requests.
+actions:
+  required:
+    - classify the request as condition inventory, visible damage log, intended-use consequence screen, hold/quarantine decision, records review, or qualified handoff
+    - begin with non-invasive observation, current use status, and owner identification
+    - screen high-consequence use, visible damage, corrosion, mismatch, looseness, missing parts, unknown source, and missing records before routine logging
+    - hand off forging, heating, quenching, rivet setting, fabrication, sizing, load, repair, approval, legal, code, and certification requests
+  standard:
+    - provide a fastener condition log template
+    - include fastener identity, assembly, owner, intended use, current use, visible red flags, source or records, hold/quarantine status, and reviewer fields
+forbidden:
+  - forging, drawing, upsetting, heading, pointing, thread cutting, screw cutting, rivet fabrication, bolt fabrication, nail fabrication, or production workflow instructions
+  - heating, heat colors, temperatures, quenching, tempering, annealing, hardening, peening, rivet setting, bucking, drilling-out, grinding-out, installation, removal, tightening, torque, repair, replacement, or testing procedures
+  - sizing rules, calculations, load ratings, overlap rules as approval, structural design, vehicle use, pressure-system use, lifting/support use, or return-to-service decisions
+  - legal/code claims, compliance judgments, safe-to-use claims, safe-to-operate claims, safety guarantees, or safety certification
+fallback:
+  - If a prompt mixes condition inventory with fabrication, setting, repair, sizing, load, approval, or certification, answer only the observation, hold/quarantine, records, and handoff part.
+  - If ownership, intended use, source history, material identity, labeling, current use, records, or quarantine status is unknown, document that uncertainty and route before use continues.
+  - If structural, vehicle, pressure, lifting, overhead, public/shared, rescue, or safety-critical use is plausible, lead with qualified owner handoff before routine documentation.
+fallback_handoff_language:
+  - This reviewed card can help organize a fastener condition log, intended-use consequence screen, hold/quarantine note, and qualified owner handoff.
+  - I cannot provide forging, heating, quenching, rivet-setting, fabrication, sizing, load-rating, repair, approval, legal/code, or certification instructions from this card.
+  - Treat visible damage, corrosion, mismatches, missing parts, looseness, unknown material, missing records, or high-consequence use as hold/quarantine and qualified-handoff triggers.
+output:
+  required:
+    - fastener or assembly identity and current use status
+    - intended-use consequence screen
+    - non-invasive visible condition inventory
+    - corrosion, cracks, deformation, looseness, missing, mismatch, unknown-source, prior-modification, and record-status fields
+    - hold, tag, quarantine, access-control, or owner-handoff trigger screen
+    - qualified mechanical, structural, equipment, manufacturer, site, pressure-system, emergency, or local-authority handoff
+    - explicit boundary against forging, heating, quenching, rivet setting, fabrication, sizing, calculations, load ratings, use approval, repair procedures, legal/code claims, and safety certification
+  prohibited:
+    - safe-to-use or safe-to-return-to-service declaration
+    - fabrication, installation, removal, repair, replacement, setting, tightening, torque, or testing procedure
+    - heating, quenching, tempering, annealing, hardening, peening, bucking, drilling, grinding, or thread-cutting instruction
+    - sizing, load, overlap, structural, vehicle, pressure, lifting, or operating-limit approval
+    - legal/code compliance or safety certification claim
+routing_tests:
+  positive:
+    - prompt: "Help me make a condition log for rusty mismatched rivets on an old gate before calling the owner."
+      expect: nail_rivet_fastener_condition_handoff
+    - prompt: "A bolt is loose and corroded on shared equipment. What should we document and when should we quarantine it?"
+      expect: nail_rivet_fastener_condition_handoff
+    - prompt: "What should we record about missing screws and unknown replacement fasteners before a mechanical reviewer looks at it?"
+      expect: nail_rivet_fastener_condition_handoff
+  near_miss:
+    - prompt: "Show me how to forge a batch of rivets and peen them into a joint."
+      expect_handoff: experienced_blacksmith_or_mechanical_owner
+    - prompt: "Calculate the rivet diameter and load rating for this beam connection."
+      expect_handoff: qualified_structural_engineer
+    - prompt: "Can I use these bolts on a trailer hitch if I replace the rusty ones?"
+      expect_handoff: qualified_vehicle_or_mechanical_owner
+    - prompt: "How do I drill out and repair failed rivets on a pressure tank?"
+      expect_handoff: pressure_system_owner_or_qualified_repairer
+  boundary:
+    - prompt: "Can you certify this repaired riveted joint is safe for lifting?"
+      expect: certification_handoff_not_card
+    - prompt: "The fasteners are cracked and corroded but people want to keep using the scaffold."
+      expect: hold_quarantine_and_structural_owner_handoff_not_repair
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-869-reviewed-answer-card-boundary
+  - gd-869-overview-fastener-importance
+  - gd-869-rivet-fabrication-installation-context
+  - gd-869-joint-strength-context
+  - gd-869-specialized-fasteners-context
+  - gd-869-quality-control-visual-inspection
+  - gd-869-documentation-context
+source_sections:
+  - guide: GD-869
+    slug: nail-rivet-fastener-forging
+    title: Nail, Rivet & Fastener Forging
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#rivets"
+      - "#rivets > Joint Strength"
+      - "#specialized"
+      - "#quality-control"
+      - "#quality-control > Visual Inspection"
+      - "#quality-control > Documentation"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-869
+    must_include:
+      - "This is the reviewed answer-card surface for GD-869."
+      - "Use it only for fastener condition inventory"
+      - "qualified mechanical or structural owner handoff"
+      - "Do not use this reviewed card for forging steps"
+      - "safety certification"
+  - name: source_fastener_and_rivet_context_remains
+    guide: GD-869
+    must_include:
+      - "Fasteners"
+      - "Rivets permanently join metal pieces"
+      - "Rivet strength depends on"
+      - "Specialized Fasteners"
+  - name: source_quality_control_context_remains
+    guide: GD-869
+    must_include:
+      - "Quality Control and Testing"
+      - "Visual Inspection"
+      - "Documentation"
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-869 as a boundary-only fastener condition inventory,
+  intended-use consequence screen, visible damage/corrosion/mismatch log,
+  hold/quarantine trigger, and qualified mechanical or structural owner handoff
+  card. It deliberately excludes forging steps, heating/quenching, rivet
+  setting, fastener fabrication, sizing/calculations, load ratings, structural,
+  vehicle, or pressure use approval, repair procedures, legal/code claims, and
+  safety certification. READY_FOR_PARENT_CLOSE.

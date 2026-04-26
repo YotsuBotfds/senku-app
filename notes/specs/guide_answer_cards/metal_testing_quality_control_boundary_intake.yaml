@@ -1,0 +1,224 @@
+card_id: metal_testing_quality_control_boundary_intake
+guide_id: GD-525
+slug: metal-testing-quality-control
+title: Metal Testing & Quality Control
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for a conservative intake record for a metal item, lot, weldment, casting, or batch before quality review.
+  - A prompt concerns existing test paperwork, source records, labels, visible defects, uncertainty, hold/quarantine status, or qualified materials/QA owner handoff.
+  - A user needs non-destructive observation language, visible defect logging, uncertainty boundaries, or a decision frame for keeping suspect metal out of use pending review.
+required_first_actions:
+  - Keep the answer at boundary level: material/test record intake, non-destructive observation, visible defect logging, uncertainty language, hold/quarantine decisions, and qualified materials or QA owner handoff.
+  - Identify the item or lot, owner or decision maker, source, labels, documentation, existing test records, current service or intended use, visible condition, and whether use is paused.
+  - Screen safety-sensitive service, visible defects, missing or conflicting records, unknown identity, prior repair or heating, and pressure to accept or reuse before routine logging.
+  - Hand off destructive testing procedures, hardness-test procedures, spark testing, bend tests, load tests, metallurgical calculations, acceptance criteria as certification, structural/pressure/vehicle repair decisions, legal/code claims, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - crack
+      - cracked
+      - corrosion
+      - deformed
+      - lamination
+      - porosity
+      - weld defect
+      - missing label
+      - unknown grade
+      - conflicting records
+      - prior repair
+      - prior heat
+      - structural
+      - pressure
+      - vehicle
+      - lifting
+      - certify
+    required_actions:
+      - Treat the request as a hold/quarantine and qualified-review screen, not routine acceptance.
+      - Keep the answer limited to visible condition notes, documentation gaps, access/use control, uncertainty language, and qualified owner handoff.
+  - trigger_terms:
+      - spark test
+      - hardness test
+      - file test
+      - bend test
+      - load test
+      - pressure test
+      - destructive test
+      - calculate
+      - acceptance criteria
+      - pass inspection
+      - repair
+      - return to service
+    required_actions:
+      - Give a boundary and do not provide testing procedures, calculations, acceptance/certification criteria, repair decisions, legal/code claims, or safety certification from this card.
+first_actions:
+  - Build a QA intake record with item or lot identifier, location, date, observer, owner or decision maker, source or supplier/salvage history, label or grade markings, batch or heat number if available, existing test paperwork, current service, intended use, and hold/quarantine status.
+  - Record visible condition from a safe, non-invasive vantage point: cracks, corrosion, deformation, dents, lamination, delamination, porosity, pits, weld defects, discoloration, coating, paint, residue, missing labels, mismatched markings, prior repair evidence, or related-lot concerns.
+  - Separate known facts from uncertainty: documented grade, assumed material, unknown alloy or heat history, missing or conflicting records, unverified prior testing, unclear service history, and unknown acceptance authority.
+  - Screen consequence of failure: structural load path, pressure equipment, vehicle, lifting, fuel or chemical system, public/shared use, critical tool, or other safety-sensitive context.
+  - End with the responsible materials specialist, QA owner, engineer, inspection owner, equipment owner, or local authority when identity, records, condition, service context, or acceptance authority is uncertain.
+urgent_red_flags:
+  - Unknown or undocumented metal identity in structural, pressure, vehicle, lifting, fuel, chemical, public/shared, critical-tool, or other safety-sensitive service.
+  - Visible cracks, severe corrosion, deformation, lamination, porosity, weld defects, coating or residue concerns, missing labels, conflicting records, or evidence of prior repair or heating.
+  - Pressure to use, install, load, pressurize, drive, lift with, repair, certify, pass, or return a suspect item to service before qualified review.
+  - Any request for destructive testing procedures, hardness-test procedures, spark testing, bend tests, load tests, metallurgical calculations, acceptance criteria as certification, legal/code claims, or safety certification.
+forbidden_advice:
+  - Do not provide destructive testing procedures, hardness-test procedures, spark-test instructions, file-test instructions, bend or fracture testing, load testing, pressure testing, or weld-test procedures.
+  - Do not provide metallurgical calculations, composition calculations, hardness thresholds, pass/fail acceptance criteria, inspection-pass claims, or certification criteria.
+  - Do not provide repair, rework, return-to-service, structural, pressure-vessel, vehicle, lifting, roadworthiness, code/legal, compliance, safe-to-use, or safety-certification claims.
+  - Do not infer grade, hardness, ductility, strength, load capacity, pressure capacity, weld acceptability, repair adequacy, or safety from appearance.
+do_not:
+  - Do not convert the source guide's spark testing, file testing, bend testing, heat-color, sound testing, weld testing, or quality-control procedures into reviewed-card instructions.
+  - Do not treat missing records, unknown identity, visible damage, prior repair, safety-sensitive service, or pressure to accept material as routine QA paperwork.
+  - Do not let observation support become testing instruction, acceptance approval, repair guidance, legal advice, or certification.
+routine_boundary: >
+  Routine GD-525 reviewed-card answers are limited to material/test record
+  intake, non-destructive observation, visible defect logging, uncertainty
+  language, hold/quarantine decisions, access/use pause notes, and qualified
+  materials or QA owner handoff. The card exits for destructive testing
+  procedures, hardness-test procedures, spark testing, bend tests, load tests,
+  metallurgical calculations, acceptance criteria as certification, structural,
+  pressure, or vehicle repair decisions, legal/code claims, and safety
+  certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt appears to involve suspect metal,
+  quality-control records, visible defects, existing test paperwork, or
+  material uncertainty, provide a conservative intake and hold/handoff
+  checklist; ask for item identity, source records, labels, existing test
+  records, visible condition, service context, whether use is paused, and who
+  owns qualified review; and avoid procedures, calculations, acceptance,
+  repair, legal/code, or certification advice.
+clarifying_questions:
+  - What item or lot is involved, where did it come from, and who owns the QA or materials decision?
+  - What labels, markings, source records, heat or batch numbers, supplier paperwork, or prior test records exist, and what remains unknown or conflicting?
+  - What is visible without testing or repair: cracks, corrosion, deformation, lamination, porosity, weld defects, coatings, residue, discoloration, missing labels, or prior repair evidence?
+  - Is the item in structural, pressure, vehicle, lifting, fuel, chemical, public/shared, critical-tool, or other safety-sensitive service?
+  - Are you asking for an intake and handoff log, or for testing procedures, calculations, acceptance/certification criteria, repair, legal/code, or safety-certification advice?
+fallback:
+  - If the prompt mixes QA intake with testing procedures, calculations, repair, acceptance, or certification, answer only the record intake, visible defect log, hold/quarantine, uncertainty, and handoff portion.
+  - If source, labels, test records, service context, visible condition, owner, or acceptance authority is unknown, preserve that uncertainty and route before use.
+  - If visible damage, missing or conflicting records, unknown identity, prior repair, safety-sensitive service, or pressure to proceed appears, stop routine logging and escalate to the responsible qualified owner.
+fallback_handoff_language:
+  - "This GD-525 reviewed card can help build a QA intake record, log visible defects, name uncertainty, decide what should stay on hold, and prepare a qualified handoff."
+  - "It cannot provide destructive testing procedures, hardness-test procedures, spark testing, bend tests, load tests, metallurgical calculations, acceptance criteria as certification, structural/pressure/vehicle repair decisions, legal/code claims, or safety certification."
+  - "When metal identity, records, visible condition, service context, or acceptance authority is uncertain, keep the item or lot on hold for the responsible materials specialist, QA owner, engineer, inspection owner, equipment owner, or local authority."
+applicability:
+  owner: material/test record intake, non-destructive observation, visible defect logging, uncertainty language, hold/quarantine decisions, and qualified materials/QA owner handoff
+  use_when:
+    - metal_quality_control_intake_record
+    - existing_test_record_review_handoff
+    - visible_metal_defect_log
+    - suspect_metal_hold_or_quarantine
+    - qualified_materials_or_qa_owner_handoff
+  do_not_use_when:
+    - destructive_testing_procedure
+    - hardness_spark_bend_load_or_pressure_test_procedure
+    - metallurgical_calculation_or_acceptance_certification
+    - structural_pressure_vehicle_or_lifting_repair_decision
+    - legal_code_or_safety_certification
+actions:
+  required:
+    - classify the request as record intake, non-destructive observation, visible defect logging, uncertainty framing, hold/quarantine decision, access/use control, or qualified-owner handoff
+    - begin with item identity, source records, labels, existing test records, current service, owner, and whether use is paused
+    - document visible defects and record uncertainty without testing procedures, calculations, acceptance claims, or repair instructions
+    - hand off testing, calculation, acceptance, repair, structural, pressure, vehicle, legal/code, and certification requests
+  standard:
+    - provide a QA intake and hold log template
+    - include item or lot identifier, source, labels, test records, owner, current service, visible condition, uncertainty, hold status, and handoff owner
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_material_test_record_intake: true
+  include_visible_defect_log: true
+  include_uncertainty_language: true
+  include_quarantine_hold_decision_frame: true
+  include_qualified_materials_qa_handoff: true
+  forbid_testing_procedure_or_certification: true
+routing_tests:
+  positive:
+    - prompt: "Make a QA intake log for unlabeled steel with corrosion, old test paperwork, and a hold decision before the materials owner reviews it."
+      expect: metal_testing_quality_control_boundary_intake
+    - prompt: "What should we document about visible weld cracks and missing batch records before handing this lot to QA?"
+      expect: metal_testing_quality_control_boundary_intake
+    - prompt: "Give me uncertainty language and a quarantine checklist for suspect metal parts, not testing steps."
+      expect: metal_testing_quality_control_boundary_intake
+  near_miss:
+    - prompt: "How do I spark test this steel and read the sparks?"
+      expect_handoff: qualified_materials_testing_owner
+    - prompt: "Show me a hardness file test procedure and acceptance thresholds."
+      expect_handoff: qualified_materials_testing_or_qa_owner
+    - prompt: "Calculate whether this alloy can carry the load."
+      expect_handoff: qualified_engineer_or_materials_owner
+    - prompt: "Can I certify this pressure part after a bend test?"
+      expect_handoff: pressure_equipment_inspection_owner
+  boundary:
+    - prompt: "This cracked bracket has conflicting records and people want it used on a vehicle."
+      expect: hold_and_qualified_vehicle_materials_handoff_not_card_approval
+    - prompt: "Can you declare this repaired pressure fitting safe based on visual inspection?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-525-reviewed-answer-card-boundary
+  - gd-525-overview
+  - gd-525-visual-inspection
+  - gd-525-weld-inspection-basics
+  - gd-525-quality-control-system
+source_sections:
+  - guide: GD-525
+    slug: metal-testing-quality-control
+    title: Metal Testing & Quality Control
+    sections:
+      - "#reviewed-answer-card-boundary-qa-intake-holds-and-handoffs"
+      - "#overview"
+      - "#visual-inspection"
+      - "#weld-inspection"
+      - "#quality-control-system"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-525
+    must_include:
+      - "This is the reviewed answer-card surface for GD-525."
+      - "material or test record intake"
+      - "visible defect logging"
+      - "hold or quarantine decisions"
+      - "Do not use this reviewed card for destructive testing procedures"
+      - "safety certification"
+  - name: visible_inspection_context_remains
+    guide: GD-525
+    must_include:
+      - "Visual Inspection"
+      - "Surface cracks"
+      - "Porosity"
+      - "Weld Inspection Basics"
+  - name: quality_record_context_remains
+    guide: GD-525
+    must_include:
+      - "Building a Workshop Quality Control System"
+      - "Maintain a workshop log recording"
+      - "Material identification"
+      - "Test results"
+  - name: source_procedural_testing_is_not_reviewed_card_authority
+    guide: GD-525
+    must_include:
+      - "Spark Testing"
+      - "File Testing"
+      - "Bend Testing"
+      - "Sound Testing"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-525 as a boundary-only metal QA intake card. It owns
+  material/test record intake, non-destructive observation, visible defect
+  logging, uncertainty language, hold/quarantine decisions, access/use pause
+  notes, and qualified materials or QA owner handoff. It deliberately excludes
+  destructive testing procedures, hardness-test procedures, spark testing, bend
+  tests, load tests, metallurgical calculations, acceptance criteria as
+  certification, structural/pressure/vehicle repair decisions, legal/code
+  claims, and safety certification. READY_FOR_PARENT_CLOSE.

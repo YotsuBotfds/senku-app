@@ -1,0 +1,254 @@
+card_id: alloy_embrittlement_failure_symptom_handoff
+guide_id: GD-603
+slug: alloy-embrittlement-failure
+title: Alloy Embrittlement & Failure Prevention
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for a boundary-level symptom log, condition record, uncertainty note, quarantine screen, stop-use trigger list, or handoff checklist for a component suspected of alloy embrittlement or brittle failure.
+  - A prompt reports sudden fracture, cracking, little or no deformation before failure, failure under normal load, pitting, corrosion, cold-service concern, high-strength steel concern, missing material history, or unknown prior acid cleaning, plating, welding, or heat exposure.
+  - A user needs help preparing a non-procedural handoff to a qualified metallurgist, materials engineer, structural engineer, responsible equipment owner, pressure-equipment owner, vehicle specialist, inspector, or safety owner.
+required_first_actions:
+  - Keep the answer at boundary, observation, documentation, quarantine or stop-use screening, uncertainty language, and qualified-owner handoff before any remediation, heat treatment, testing, calculation, design, repair, return-to-service, legal, or certification advice.
+  - Identify the component, location, owner or decision maker, current use status, known material or grade, source records, maintenance records, load or service context, prior acid cleaning, plating, welding, cold service, heat exposure, and visible condition.
+  - Screen high-consequence and embrittlement red flags before routine documentation: cracks, sudden brittle fracture, little or no deformation before failure, failure under normal load, corrosion or pitting, stress-concentration locations, unknown material, missing records, high-strength steel, pressure, vehicle, lifting, structural, public-facing, rescue, medical, or critical machinery use.
+  - Hand off heat treatment, alloy redesign, hydrogen bake-out or embrittlement remediation procedures, fracture mechanics calculations, destructive testing, structural/pressure/vehicle return-to-service decisions, legal/code claims, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - crack
+      - cracked
+      - fracture
+      - fractured
+      - snapped
+      - brittle
+      - no deformation
+      - sudden failure
+      - normal load
+      - pitting
+      - corrosion
+      - stress concentration
+    required_actions:
+      - Treat the prompt as a stop-use and qualified-review issue, not as routine repair or service advice.
+      - Limit the answer to visible symptom logging, service context, uncertainty language, access control, quarantine, and specialist handoff.
+  - trigger_terms:
+      - acid
+      - pickled
+      - plating
+      - electroplated
+      - welded
+      - hydrogen
+      - cold service
+      - low temperature
+      - heat treated
+      - tempered
+      - unknown alloy
+      - missing records
+    required_actions:
+      - Ask history and record questions without supplying remediation or heat-treatment procedures.
+      - Preserve uncertainty and route to a qualified metallurgist, materials engineer, responsible owner, or safety owner when records are incomplete.
+  - trigger_terms:
+      - structural
+      - pressure
+      - pressure vessel
+      - boiler
+      - tank
+      - vehicle
+      - trailer
+      - axle
+      - lifting
+      - crane
+      - load bearing
+      - public
+      - certify
+      - code
+      - safe to use
+      - return to service
+    required_actions:
+      - Decline return-to-service, code/legal, pass/fail, repair approval, and certification advice.
+      - Route to the qualified structural, pressure-equipment, vehicle, lifting-equipment, materials, inspection, or safety owner.
+first_actions:
+  - Build a brittle-failure concern record with component identifier, location, owner or decision maker, current use status, whether use has been paused, material or grade if known, source records, service role, and pending decision.
+  - Record material and service history questions: prior acid cleaning or pickling, plating, welding, heat exposure, cold service, known high-strength steel, prior repairs, maintenance records, visible corrosion or pitting, and known stress-concentration locations such as holes, notches, sharp corners, welds, threads, or fastener locations.
+  - Record visible and reported symptoms without invasive testing: cracks, fracture location, sudden failure under normal load, little or no bending or necking before failure, multiple small cracks, discoloration, corrosion, pitting, cold-exposure context, and whether similar parts are still in service.
+  - Ask whether the component is structural, pressure-bearing, vehicle-related, lifting-related, public-facing, rescue/medical, critical machinery, high-strength, unknown-source, cracked, fractured, already in service, or relied on by people nearby.
+  - End with quarantine, access control, stop-use language, and qualified handoff when red flags, uncertainty, high-consequence service, missing records, or requests for remediation, testing, calculation, return-to-service, code/legal, or certification appear.
+urgent_red_flags:
+  - Cracks, sudden brittle fracture, failure under normal load, little or no deformation before failure, multiple small cracks near a stress concentration, corrosion or pitting, unknown material, unknown heat history, or missing source and maintenance records.
+  - Prior acid cleaning or pickling, plating, welding, high-strength steel, cold-service exposure, heat-treatment uncertainty, prior repair, salvage source, or similar components still in use.
+  - Structural, pressure-bearing, vehicle, lifting, public-facing, rescue, medical, critical machinery, overhead, fastener, spring, rotating equipment, or other high-consequence service.
+  - Any request to remediate embrittlement, bake out hydrogen, choose or redesign an alloy, calculate fracture risk, destructively test, approve repair, return to service, make code/legal claims, declare safe, or certify.
+forbidden_advice:
+  - Do not provide heat-treatment, tempering, annealing, normalizing, stress-relief, hardening, quenching, cooling, or thermal-cycle instructions.
+  - Do not provide hydrogen bake-out, de-embrittlement, re-tempering, remediation, repair, replacement approval, downgrade, or return-to-service procedures.
+  - Do not provide alloy redesign, material substitution, process optimization, fracture mechanics calculations, stress-intensity calculations, fatigue-life calculations, load ratings, or safety factors.
+  - Do not provide destructive testing procedures, impact-test procedures, bend-test procedures, hardness acceptance criteria, pressure testing, load testing, inspection-pass statements, legal/code claims, safe-to-use claims, or safety certification.
+do_not:
+  - Do not convert the source guide's prevention, heat treatment, bake-out, testing, salvage, repair, stress-concentration mitigation, or return-to-service passages into reviewed-card instructions.
+  - Do not infer material identity, hydrogen condition, temper condition, toughness, remaining capacity, pressure capacity, roadworthiness, repair adequacy, or safety from appearance or a single symptom.
+  - Do not treat cracked, fractured, brittle, high-strength, unknown-source, hydrogen-exposed, heat-history-uncertain, cold-service, structural, pressure, vehicle, lifting, public-facing, or missing-record components as routine use questions.
+  - Do not let a symptom-log answer become remediation, heat-treatment, alloy-design, calculation, destructive-testing, repair-approval, legal, or certification advice.
+routine_boundary: >
+  Routine GD-603 reviewed-card answers are limited to boundary-level brittle or
+  embrittlement-suspected failure symptom logging, material and service history
+  questions, uncertainty language, quarantine or stop-use triggers, access
+  control, and qualified materials or structural owner handoff. The card exits
+  for heat treatment, alloy redesign, hydrogen bake-out or embrittlement
+  remediation procedures, fracture mechanics calculations, destructive testing,
+  structural/pressure/vehicle return-to-service decisions, legal/code claims,
+  and safety certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but appears to involve brittle fracture,
+  suspected embrittlement, unknown material history, hydrogen exposure history,
+  heat exposure history, cold-service failure, or high-consequence metal
+  components, provide a conservative symptom-log and handoff checklist, ask for
+  material, source, service, heat/plating/acid/welding/cold-service history,
+  current use, owner, visible red flags, and quarantine status, and avoid all
+  remediation, procedure, calculation, testing, repair, legal, and certification
+  advice.
+clarifying_questions:
+  - What component is involved, where is it located, who owns the decision, and is it currently in use or isolated from access?
+  - What material, alloy, grade, source record, maintenance record, or prior inspection record is known, and what is missing?
+  - Has the component been acid-cleaned or pickled, plated, welded, heat-exposed, cold-serviced, repaired, salvaged, or used in a high-strength or high-stress role?
+  - What is visible or reported without testing: cracks, sudden fracture, failure under normal load, little or no deformation, corrosion, pitting, discoloration, or cracks near holes, threads, welds, notches, or sharp corners?
+  - Is the component structural, pressure-bearing, vehicle-related, lifting-related, public-facing, rescue/medical, critical machinery, overhead, rotating, or otherwise high-consequence?
+applicability:
+  owner: brittle/failure symptom logging, material history questions, quarantine or stop-use screening, uncertainty language, and qualified materials or structural owner handoff
+  use_when:
+    - suspected_embrittlement_symptom_log
+    - brittle_fracture_visible_condition_record
+    - hydrogen_plating_acid_welding_or_cold_service_history_questions
+    - quarantine_stop_use_or_access_control
+    - qualified_materials_structural_owner_handoff
+  do_not_use_when:
+    - heat_treatment_or_embrittlement_remediation_procedure
+    - hydrogen_bake_out_or_de_embrittlement_instruction
+    - alloy_redesign_material_substitution_or_process_optimization
+    - fracture_mechanics_fatigue_or_load_calculation
+    - destructive_testing_or_acceptance_criteria
+    - structural_pressure_vehicle_return_to_service_code_legal_or_certification
+actions:
+  required:
+    - classify the request as symptom logging, history questions, uncertainty documentation, quarantine or stop-use screening, access control, or qualified-owner handoff
+    - begin with component identity, owner, current use status, material/source records, service context, heat/plating/acid/welding/cold-service history, and visible/reportable symptoms
+    - screen high-consequence service, cracking, sudden brittle fracture, missing records, unknown material, and hydrogen/heat/cold exposure history before routine documentation
+    - hand off remediation, heat-treatment, alloy-design, calculation, destructive-testing, repair, return-to-service, legal/code, safe-to-use, and certification requests
+  standard:
+    - provide a brittle-failure concern record template
+    - include material identity, source and maintenance records, exposure history, visible symptoms, similar components in service, quarantine status, access control, uncertainty notes, pending decision, and handoff owner
+    - name a qualified metallurgist, materials engineer, structural engineer, pressure-equipment owner, vehicle specialist, equipment owner, inspector, or safety owner when red flags or uncertainty appear
+forbidden:
+  - heat-treatment, tempering, annealing, normalizing, stress-relief, hardening, quenching, cooling, or thermal-cycle instructions
+  - hydrogen bake-out, de-embrittlement, re-tempering, remediation, repair, replacement approval, downgrade, or return-to-service procedures
+  - alloy redesign, material substitution, process optimization, fracture mechanics calculations, fatigue-life calculations, load ratings, or safety factors
+  - destructive testing procedures, impact-test procedures, bend-test procedures, hardness acceptance criteria, pressure testing, load testing, inspection-pass statements, legal/code claims, safe-to-use claims, or safety certification
+fallback:
+  - If a prompt mixes symptom logging with remediation, heat treatment, alloy design, testing, calculation, repair, return-to-service, legal, or certification requests, answer only the symptom-log, uncertainty, quarantine, and handoff portion.
+  - If material identity, exposure history, service context, ownership, records, or current use status is unknown, document that uncertainty and route before any action.
+  - If cracking, sudden brittle fracture, high-consequence service, hydrogen exposure history, heat-history uncertainty, cold-service failure, similar parts in service, or missing records appear, stop routine framing and escalate to the qualified owner or specialist.
+fallback_handoff_language:
+  - "This GD-603 reviewed card can help scope suspected embrittlement, log brittle-failure symptoms, record material and exposure history, preserve uncertainty, and prepare a qualified-owner handoff."
+  - "It cannot provide heat-treatment, hydrogen bake-out, embrittlement remediation, alloy redesign, fracture mechanics calculations, destructive testing, return-to-service decisions, legal/code claims, or certification."
+  - "When a component is cracked, fractured, high-consequence, unknown-source, hydrogen-exposed, heat-history-uncertain, cold-service, or missing records, treat the answer as a stop-use or quarantine handoff for a qualified materials, structural, equipment, or safety owner."
+output:
+  required:
+    - boundary classification
+    - component and owner fields
+    - material and exposure history questions
+    - visible or reported symptom log
+    - high-consequence red-flag screen
+    - quarantine or stop-use note
+    - uncertainty language
+    - qualified materials or structural owner handoff
+  prohibited:
+    - heat-treatment or remediation procedure
+    - hydrogen bake-out instruction
+    - alloy redesign or substitution
+    - fracture, fatigue, load, or safety-factor calculation
+    - destructive testing or acceptance criteria
+    - return-to-service, code/legal, safe-to-use, or certification claim
+routing_tests:
+  positive:
+    - prompt: "Make a handoff checklist for a high-strength bolt that snapped with no bending after plating."
+      expect: alloy_embrittlement_failure_symptom_handoff
+    - prompt: "What should we log before quarantining cracked unknown alloy parts from cold service?"
+      expect: alloy_embrittlement_failure_symptom_handoff
+    - prompt: "Help me write uncertainty language for a brittle fracture with missing material and heat-treatment records."
+      expect: alloy_embrittlement_failure_symptom_handoff
+  near_miss:
+    - prompt: "Tell me the bake-out time and temperature for hydrogen embrittlement."
+      expect_handoff: qualified_materials_engineer_or_metallurgist
+    - prompt: "Redesign this alloy so it will not become brittle."
+      expect_handoff: qualified_materials_design_owner
+    - prompt: "Calculate the fracture risk and safety factor for this cracked pressure part."
+      expect_handoff: qualified_pressure_or_structural_owner
+  boundary:
+    - prompt: "This load-bearing bracket cracked suddenly and people want to keep using the machine."
+      expect: stop_use_quarantine_qualified_owner_handoff
+    - prompt: "Can you certify this repaired embrittled vehicle part is safe to reinstall?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-603-reviewed-answer-card-boundary
+  - gd-603-introduction-hidden-failure-context
+  - gd-603-hydrogen-embrittlement-recognition
+  - gd-603-temper-brittleness-warning-context
+  - gd-603-impact-transition-temperature-context
+  - gd-603-fatigue-failure-recognition
+  - gd-603-visual-inspection-context
+  - gd-603-salvage-repair-boundary-context
+source_sections:
+  - guide: GD-603
+    slug: alloy-embrittlement-failure
+    title: Alloy Embrittlement & Failure Prevention
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#introduction-to-alloy-embrittlement"
+      - "#hydrogen-embrittlement > Recognition"
+      - danger block in hydrogen embrittlement section
+      - warning block in temper brittleness section
+      - "#impact-transition-temperature"
+      - "#fatigue-failure-recognition"
+      - "#non-destructive-testing-methods > Visual Inspection"
+      - "#salvage-and-repair-of-embrittled-components"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-603
+    must_include:
+      - "This is the reviewed answer-card surface for GD-603."
+      - "Use it only for boundary-level brittle or embrittlement-suspected failure symptom logging"
+      - "Do not use this reviewed card for heat treatment"
+      - "safety certification"
+  - name: source_recognition_context_remains
+    guide: GD-603
+    must_include:
+      - "Sudden brittle fracture with little deformation"
+      - "Fracture occurs under normal loads"
+      - "Multiple small cracks radiating from a stress concentration"
+      - "Failure occurs with no deformation or warning"
+  - name: source_history_context_remains
+    guide: GD-603
+    must_include:
+      - "Acid-pickling"
+      - "Electroplating"
+      - "Welding"
+      - "Impact Transition Temperature"
+  - name: source_procedural_content_is_not_reviewed_card_authority
+    guide: GD-603
+    must_include:
+      - "Heat Treatment Sequences for Maximum Toughness"
+      - "Bake Out"
+      - "Re-Temper"
+      - "Impact Testing"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-603 as a boundary-only brittle/failure symptom
+  logging and qualified-owner handoff card. It owns component condition
+  records, material and exposure history questions, uncertainty language,
+  quarantine or stop-use triggers, access control, and handoff to a qualified
+  metallurgist, materials engineer, structural engineer, pressure-equipment
+  owner, vehicle specialist, equipment owner, inspector, or safety owner. It
+  deliberately excludes heat treatment, alloy redesign, hydrogen bake-out or
+  embrittlement remediation procedures, fracture mechanics calculations,
+  destructive testing, structural/pressure/vehicle return-to-service decisions,
+  legal/code claims, and safety certification. READY_FOR_PARENT_CLOSE.
