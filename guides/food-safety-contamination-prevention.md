@@ -70,7 +70,7 @@ liability_level: critical
 
 ## Why Food Safety Matters in Survival Settings
 
-In normal times, foodborne illness sends you to a hospital for IV fluids and antibiotics. In a survival scenarioâ€”no access to medical care, limited antibiotics, compromised water systems, exhausted immune systemsâ€”a single contaminated meal can be fatal.
+In normal times, foodborne illness sends you to a hospital for IV fluids and antibiotics. In a survival scenario—no access to medical care, limited antibiotics, compromised water systems, exhausted immune systems—a single contaminated meal can be fatal.
 
 ![Temperature danger zone diagram and bacterial growth rates at different temperatures](../assets/svgs/food-safety-contamination-1.svg)
 
@@ -107,44 +107,44 @@ If the question is really about cloudy water, muddy stream water, or stale store
 
 ## The Temperature Danger Zone
 
-Bacteria reproduce through binary fissionâ€”one cell becomes two, two become four, doubling every 20â€“30 minutes under ideal conditions. The **danger zone** is 40Â°Fâ€“140Â°F (4Â°Câ€“60Â°C), where this doubling happens most aggressively.
+Bacteria reproduce through binary fission—one cell becomes two, two become four, doubling every 20–30 minutes under ideal conditions. The **danger zone** is 40°F–140°F (4°C–60°C), where this doubling happens most aggressively.
 
 ### The 2-Hour Rule
 
-- **Food in the 40Â°Fâ€“140Â°F zone:** Safe for 2 hours max (1 hour if above 90Â°F/32Â°C)
+- **Food in the 40°F–140°F zone:** Safe for 2 hours max (1 hour if above 90°F/32°C)
 - **After 2 hours:** Discard, even if it looks fine
 - **Why it matters:** At 8 doublings, 1 bacterium becomes 256. At 20 doublings, it's over 1 million. The *lethal dose* for pathogens like *E. coli* O157:H7 can be fewer than 100 cells.
 
 ### Cooling Hot Foods Safely
 
-Never put a large pot of hot soup directly in a cold cellar or spring houseâ€”the exterior cools first while the center stays warm for hours, creating a prolonged danger zone.
+Never put a large pot of hot soup directly in a cold cellar or spring house—the exterior cools first while the center stays warm for hours, creating a prolonged danger zone.
 
 **Rapid cooling method:**
 1. Transfer hot food to shallow pans (3 inches or less deep)
 2. Set pans in ice water or a flowing cold stream
 3. Stir occasionally to release heat
-4. Goal: Cool from 140Â°F to 70Â°F in under 2 hours, then 70Â°F to 40Â°F in under 4 hours (total 6 hours max)
+4. Goal: Cool from 140°F to 70°F in under 2 hours, then 70°F to 40°F in under 4 hours (total 6 hours max)
 
 **No ice available:** Set pans on stone at night in cool air, covered to prevent contamination. Stir every 15 minutes.
 
 ### Reheating
 
-- Bring leftovers to 165Â°F (74Â°C) for at least 15 seconds to kill reheated pathogens
-- If reheating only once or twice, the 2-hour rule still applies if the food dips below 140Â°F
+- Bring leftovers to 165°F (74°C) for at least 15 seconds to kill reheated pathogens
+- If reheating only once or twice, the 2-hour rule still applies if the food dips below 140°F
 
 ### Temperature Estimation Without a Thermometer
 
 **Wrist test (unreliable but better than nothing):**
 - Hold your wrist 6 inches above the food
-- 5 seconds comfortable: ~375Â°F (hot fire)
-- 10 seconds comfortable: ~250Â°F (warm, not hot)
-- 30 seconds comfortable: ~120Â°F (warm, approaching danger zone)
+- 5 seconds comfortable: ~375°F (hot fire)
+- 10 seconds comfortable: ~250°F (warm, not hot)
+- 30 seconds comfortable: ~120°F (warm, approaching danger zone)
 
-This is crudeâ€”always use a thermometer if available.
+This is crude—always use a thermometer if available.
 
 **Melt test:**
-- A small piece of butter on the surface of meat should sizzle if it's above 130Â°F
-- If the butter just melts slowly: below 120Â°F (danger zone)
+- A small piece of butter on the surface of meat should sizzle if it's above 130°F
+- If the butter just melts slowly: below 120°F (danger zone)
 
 **Visual doneness:**
 - See "Meat & Animal Product Safety" section below for specific tests per food type
@@ -159,19 +159,19 @@ In austere conditions, prioritize cooking foods to *hot* (visibly steaming) rath
 
 | Pathogen | Common Sources | Symptoms | Onset | Duration | Severity | Prevention |
 |----------|---|---|---|---|---|---|
-| **Salmonella** | Raw/undercooked poultry, eggs, dairy, unwashed produce | Diarrhea, fever, cramps, nausea | 6â€“72 hours | 4â€“7 days | Severe dehydration risk in young/elderly | Cook poultry/eggs to 165Â°F; wash hands after raw meat handling |
-| **E. coli O157:H7** | Ground beef, contaminated water, unwashed vegetables | Bloody diarrhea, severe cramps, HUS (kidney failure) | 2â€“8 days | 5â€“10 days | Can cause fatal hemolytic uremic syndrome | Cook beef to 160Â°F; use clean water; separate raw meat prep |
-| **Clostridium botulinum** | Canned foods (especially low-acid), honey, anaerobic conditions | Paralysis (descending), double vision, respiratory failure | 12â€“72 hours | Days to weeks | **Fatal if untreated** â€” respiratory paralysis | Follow pressure canning protocols; discard bulging cans; avoid unsafe home preservation |
-| **Listeria monocytogenes** | Soft cheeses, deli meats, unpasteurized dairy | Flu-like symptoms, meningitis (pregnant women, elderly) | 3â€“70 days | Weeks | High risk for pregnant women, newborns, elderly | Cook deli meats to steaming; avoid soft cheeses in survival; keep raw/cooked foods separate |
-| **Norovirus** | Shellfish, contaminated water, person-to-person | Watery diarrhea, vomiting, cramps | 24â€“48 hours | 1â€“3 days | Extreme dehydration; highly contagious | Boil water; cook shellfish thoroughly; isolate sick persons; hand hygiene critical |
-| **Campylobacter** | Raw/undercooked poultry, contaminated water | Diarrhea (sometimes bloody), fever, cramps | 2â€“5 days | 2â€“10 days | Severe dehydration; can cause Guillain-BarrÃ© syndrome | Cook poultry thoroughly; safe water; separate raw poultry during prep |
+| **Salmonella** | Raw/undercooked poultry, eggs, dairy, unwashed produce | Diarrhea, fever, cramps, nausea | 6–72 hours | 4–7 days | Severe dehydration risk in young/elderly | Cook poultry/eggs to 165°F; wash hands after raw meat handling |
+| **E. coli O157:H7** | Ground beef, contaminated water, unwashed vegetables | Bloody diarrhea, severe cramps, HUS (kidney failure) | 2–8 days | 5–10 days | Can cause fatal hemolytic uremic syndrome | Cook beef to 160°F; use clean water; separate raw meat prep |
+| **Clostridium botulinum** | Canned foods (especially low-acid), honey, anaerobic conditions | Paralysis (descending), double vision, respiratory failure | 12–72 hours | Days to weeks | **Fatal if untreated** — respiratory paralysis | Follow pressure canning protocols; discard bulging cans; avoid unsafe home preservation |
+| **Listeria monocytogenes** | Soft cheeses, deli meats, unpasteurized dairy | Flu-like symptoms, meningitis (pregnant women, elderly) | 3–70 days | Weeks | High risk for pregnant women, newborns, elderly | Cook deli meats to steaming; avoid soft cheeses in survival; keep raw/cooked foods separate |
+| **Norovirus** | Shellfish, contaminated water, person-to-person | Watery diarrhea, vomiting, cramps | 24–48 hours | 1–3 days | Extreme dehydration; highly contagious | Boil water; cook shellfish thoroughly; isolate sick persons; hand hygiene critical |
+| **Campylobacter** | Raw/undercooked poultry, contaminated water | Diarrhea (sometimes bloody), fever, cramps | 2–5 days | 2–10 days | Severe dehydration; can cause Guillain-Barré syndrome | Cook poultry thoroughly; safe water; separate raw poultry during prep |
 
 ### Key Takeaways
 
-- **Thermometer reading or visual doneness is non-negotiable for poultry and ground meat**â€”these carry the highest pathogen loads
-- **Botulism is uniquely dangerous** in survival settings (no antitoxin, progressive paralysis)â€”never guess at canning safety
-- **Norovirus and Campylobacter** spread explosively in close quartersâ€”isolation of sick persons is critical
-- **Listeria** hides in foods that look fine for weeksâ€”avoid questionable soft cheeses and deli meats if possible
+- **Thermometer reading or visual doneness is non-negotiable for poultry and ground meat**—these carry the highest pathogen loads
+- **Botulism is uniquely dangerous** in survival settings (no antitoxin, progressive paralysis)—never guess at canning safety
+- **Norovirus and Campylobacter** spread explosively in close quarters—isolation of sick persons is critical
+- **Listeria** hides in foods that look fine for weeks—avoid questionable soft cheeses and deli meats if possible
 
 ---
 
@@ -189,7 +189,7 @@ Cross-contamination is the #1 preventable cause of foodborne illness in austere 
 - Never let raw meat juices drip onto other foods
 
 **Cleanup procedure:**
-1. Place used utensils/boards in a wash pileâ€”do not set on surfaces with other food
+1. Place used utensils/boards in a wash pile—do not set on surfaces with other food
 2. Wash hands with soap and clean water for 20 seconds (see below)
 3. Wash the cutting board with hot water and soap
 4. If no soap: use hot water alone (less effective but better than nothing) or a weak bleach solution (50 ppm: 1 part household bleach to 100 parts water, 1-minute contact)
@@ -201,11 +201,11 @@ This is non-negotiable in high-disease-risk environments.
 
 **Standard method (with soap):**
 1. Wet hands with clean water (cold or warm)
-2. Apply soapâ€”enough to cover all surfaces
+2. Apply soap—enough to cover all surfaces
 3. Scrub vigorously for 20 seconds:
    - Palms and backs of hands
    - Between fingers
-   - Under fingernails (use a small brush if availableâ€”dirt harbors *E. coli*)
+   - Under fingernails (use a small brush if available—dirt harbors *E. coli*)
    - Wrists and lower forearms
 4. Rinse thoroughly under running water
 5. Dry with a clean cloth (damp cloths are vectors for bacteria)
@@ -235,7 +235,7 @@ This is non-negotiable in high-disease-risk environments.
 For a practical no-running-water dishwashing sequence, including cutting boards, greasy pans, and illness contamination boundaries, see `dishwashing-kitchen-cleanup-without-running-water.md`.
 
 **Chemical sanitizing** (when soap is limited):
-- Diluted bleach: 50â€“100 ppm (parts per million)
+- Diluted bleach: 50–100 ppm (parts per million)
   - 1 part household bleach (5% sodium hypochlorite) to 100 parts water = ~500 ppm
   - 1 part that solution to 5 parts water = ~100 ppm
   - Submerge utensils for 1 minute, rinse with clean water
@@ -256,7 +256,7 @@ Water used to wash vegetables, clean utensils, or prepare food must be as safe a
 
 **Safe water sources:**
 - Boiled and cooled (rolling boil for 1 minute, 3 minutes at high altitude)
-- Treated with bleach (6â€“8 drops per gallon, let sit 30 minutes)
+- Treated with bleach (6–8 drops per gallon, let sit 30 minutes)
 - Treated with iodine (follow tablet/bottle instructions)
 - Filtered and boiled (filtration first removes particles that shield bacteria)
 
@@ -299,23 +299,23 @@ Meat is the highest-risk food category in survival settings. It spoils fast, har
 
 | Meat Type | Minimum Temp | Visual Doneness Indicator |
 |-----------|---|---|
-| **Beef (steaks, roasts)** | 145Â°F (63Â°C) | Brown/gray exterior; red/pink interior ok |
-| **Ground beef** | 160Â°F (71Â°C) | No pink; fully opaque throughout |
-| **Pork** | 145Â°F (63Â°C) | Slightly pink center is safe |
-| **Ground pork** | 160Â°F (71Â°C) | Opaque throughout |
-| **Poultry (whole bird, breasts, thighs)** | 165Â°F (74Â°C) | Juices run clear; no pink at bone |
-| **Poultry (ground)** | 165Â°F (71Â°C) | Opaque; no pink |
-| **Fish/Shellfish** | 145Â°F (63Â°C) | Opaque; flakes easily with fork |
-| **Eggs** | 160Â°F yolk; 165Â°F scrambled | Yolk firm; whites opaque |
-| **Game meat** | 160â€“165Â°F (71â€“74Â°C) | See notes below |
+| **Beef (steaks, roasts)** | 145°F (63°C) | Brown/gray exterior; red/pink interior ok |
+| **Ground beef** | 160°F (71°C) | No pink; fully opaque throughout |
+| **Pork** | 145°F (63°C) | Slightly pink center is safe |
+| **Ground pork** | 160°F (71°C) | Opaque throughout |
+| **Poultry (whole bird, breasts, thighs)** | 165°F (74°C) | Juices run clear; no pink at bone |
+| **Poultry (ground)** | 165°F (71°C) | Opaque; no pink |
+| **Fish/Shellfish** | 145°F (63°C) | Opaque; flakes easily with fork |
+| **Eggs** | 160°F yolk; 165°F scrambled | Yolk firm; whites opaque |
+| **Game meat** | 160–165°F (71–74°C) | See notes below |
 
 ### Judging Doneness Without a Thermometer
 
 **Beef steaks/roasts:**
 - Touch the meat with a clean finger
 - Compare firmness to the fleshy area at the base of your thumb (your hand held relaxed)
-- Rare â‰ˆ soft; Medium â‰ˆ slightly firm; Well-done â‰ˆ very firm
-- This method improves with practiceâ€”for survival, *err toward well-done*
+- Rare ≈ soft; Medium ≈ slightly firm; Well-done ≈ very firm
+- This method improves with practice—for survival, *err toward well-done*
 
 **Poultry:**
 - Pierce the thickest part of the thigh (not touching bone)
@@ -325,7 +325,7 @@ Meat is the highest-risk food category in survival settings. It spoils fast, har
 
 **Ground meat:**
 - Press with a spoon; no pink should remain
-- There's less margin for error with ground meat (pathogens mixed throughout)â€”*always cook thoroughly*
+- There's less margin for error with ground meat (pathogens mixed throughout)—*always cook thoroughly*
 
 **Fish:**
 - Flesh should be opaque and flake apart with light pressure
@@ -337,15 +337,15 @@ Meat is the highest-risk food category in survival settings. It spoils fast, har
 
 ### Thawing Safely
 
-Never thaw meat at room temperatureâ€”bacteria on the surface multiply rapidly while the interior is still frozen.
+Never thaw meat at room temperature—bacteria on the surface multiply rapidly while the interior is still frozen.
 
 **Safe thawing methods:**
-1. **In cool water** (fastest, 1â€“4 hours depending on size)
+1. **In cool water** (fastest, 1–4 hours depending on size)
    - Seal meat in waterproof container
    - Submerge in clean running water, or change water every 30 minutes
    - Begin cooking immediately after thawing
 
-2. **In a cool location** (8â€“24 hours)
+2. **In a cool location** (8–24 hours)
    - Place meat on a rack in a zeer pot, spring house, or cold cellar
    - Let drip; discard any drippings away from other food
    - Cook immediately
@@ -365,13 +365,13 @@ Wild-harvested meat carries unique hazards.
 **Trichinella (parasitic nematode):**
 - Found in pork, wild boar, bear, badger, walrus
 - Symptoms: muscle pain, fever, swelling (can be severe)
-- Prevention: Cook to 160â€“165Â°F (internal temp in thickest part)
+- Prevention: Cook to 160–165°F (internal temp in thickest part)
 - No color-based test is reliable; use thermometer or cook very thoroughly
 
 **Toxoplasma gondii:**
 - Found in pork, lamb, game, undercooked beef
-- Symptoms: flu-like or asymptomatic (dangerous for pregnant womenâ€”can cross placenta)
-- Prevention: Cook to 160â€“165Â°F
+- Symptoms: flu-like or asymptomatic (dangerous for pregnant women—can cross placenta)
+- Prevention: Cook to 160–165°F
 
 **Wild game butchering hygiene:**
 - Clean all tools thoroughly before and after
@@ -414,7 +414,7 @@ Vegetables, fruits, and foraged plants can harbor pathogens from soil, animal fe
 - Cook produce if possible (cooking kills pathogens; raw is higher risk)
 
 :::info-box
-**Manure Safety:** If using manure as fertilizer, it must be *composted* (heated to 140Â°F for â‰¥15 days) or aged for â‰¥6 months before harvest. Fresh or raw manure should not contact food crops.
+**Manure Safety:** If using manure as fertilizer, it must be *composted* (heated to 140°F for ≥15 days) or aged for ≥6 months before harvest. Fresh or raw manure should not contact food crops.
 :::
 
 ### When to Peel
@@ -438,7 +438,7 @@ Sprouts (bean, alfalfa, broccoli) are high-risk because seeds can harbor pathoge
 **Safe sprouting:**
 - Use seeds from known-safe source
 - Soak seeds in clean water for 12 hours
-- Rinse thoroughly under clean running water 2â€“3 times daily
+- Rinse thoroughly under clean running water 2–3 times daily
 - Keep in a clean container (not one that's held raw meat juice or contaminated food)
 - Discard any sprouts that smell sour or off
 - Eat fresh; do not store sprouted seeds for extended periods
@@ -475,7 +475,7 @@ In survival settings, you often can't throw away food without serious consequenc
 - **Harmless surface mold (can remove):** Hard cheeses (cut away 1 inch around/below), salami (wipe surface with clean cloth)
 - **Dangerous mold (discard entirely):** Soft cheeses, yogurt, bread, jams, jellies, sugary preserves, fruit spreads, opened canned fruit, and wet/damp foods. Mold toxins (mycotoxins) can spread invisibly throughout soft foods.
 - **Jam and soft preserves:** Mold on the jam, around the lid or rim, or as a surface film means discard the whole jar. Do not scrape or skim it off, and do not borrow building-mold cleanup rules for food.
-- **Rule of thumb:** If the food is soft and mold is present, discard. If the food is hard and mold is only on the surface, you can cut it away, but it's a riskâ€”if supplies allow, discard to be safe.
+- **Rule of thumb:** If the food is soft and mold is present, discard. If the food is hard and mold is only on the surface, you can cut it away, but it's a risk—if supplies allow, discard to be safe.
 
 **Slime/Discoloration:**
 - Meat: Gray-green, slimy coating = discard (bacterial biofilm)
@@ -534,13 +534,13 @@ When restocking storage:
 - This prevents foods from being "lost" in storage and forgotten until spoiled
 
 :::tip
-**Label everything with the date acquired.** Use a pencil on the container itselfâ€”paper labels can fall off.
+**Label everything with the date acquired.** Use a pencil on the container itself—paper labels can fall off.
 :::
 
 ### Dry Storage (Pantry Items)
 
 **Optimal conditions:**
-- Temperature: Cool (50Â°Fâ€“70Â°F / 10Â°Câ€“21Â°C is ideal; up to 85Â°F acceptable)
+- Temperature: Cool (50°F–70°F / 10°C–21°C is ideal; up to 85°F acceptable)
 - Humidity: Dry (below 15% relative humidity)
 - Light: Dark (away from windows; UV light speeds spoilage)
 - Pest protection: Sealed containers, elevated off the floor
@@ -554,22 +554,22 @@ When restocking storage:
 
 | Food | Shelf Life |
 |------|---|
-| Wheat grain | 5â€“8 years |
-| White rice | 4â€“5 years |
-| Pasta | 2â€“3 years |
-| Flour (white) | 8â€“12 months |
-| Flour (whole wheat) | 3â€“6 months |
+| Wheat grain | 5–8 years |
+| White rice | 4–5 years |
+| Pasta | 2–3 years |
+| Flour (white) | 8–12 months |
+| Flour (whole wheat) | 3–6 months |
 | Sugar | Indefinite |
 | Salt | Indefinite |
-| Beans/legumes (dried) | 2â€“4 years |
-| Lentils (dried) | 2â€“3 years |
-| Oats | 1â€“2 years |
-| Powdered milk | 2â€“10 years (vacuum-sealed) |
+| Beans/legumes (dried) | 2–4 years |
+| Lentils (dried) | 2–3 years |
+| Oats | 1–2 years |
+| Powdered milk | 2–10 years (vacuum-sealed) |
 | Honey | Indefinite |
-| Nuts (in shell) | 1â€“2 years |
-| Peanut butter | 6â€“9 months |
-| Canned goods | 1â€“5 years (varies by type) |
-| Crackers/cereal | 3â€“6 months |
+| Nuts (in shell) | 1–2 years |
+| Peanut butter | 6–9 months |
+| Canned goods | 1–5 years (varies by type) |
+| Crackers/cereal | 3–6 months |
 
 **Pests and spoilage prevention:**
 - Store in sealed containers; food-grade buckets with gamma-seal lids are ideal
@@ -586,8 +586,8 @@ When there's no electricity but you have a cool environment:
 - Fill space between pots with moist sand
 - Line interior with wet cloth
 - Place food inside upper pot, cover with damp cloth
-- Evaporative cooling keeps interior 20â€“30Â°F cooler than ambient
-- Drawback: Requires regular water addition (every 6â€“12 hours)
+- Evaporative cooling keeps interior 20–30°F cooler than ambient
+- Drawback: Requires regular water addition (every 6–12 hours)
 
 **Spring house or cool stream:**
 - Submerse food in a sealed, waterproof container
@@ -595,7 +595,7 @@ When there's no electricity but you have a cool environment:
 - Check regularly for leaks
 
 **Root cellar or basement:**
-- Temperature stable around 50Â°F year-round
+- Temperature stable around 50°F year-round
 - Store in coolest corner (usually northeast)
 - Maintain humidity with damp sand or burlap
 - Separate items to allow air circulation
@@ -620,17 +620,17 @@ Despite all precautions, foodborne illness may occur. Recognizing it early and r
 ### Symptom Timeline & Severity
 
 **Most common signs:**
-- **Nausea and vomiting** (30 minutes to 6 hours onset) â€” *Norovirus, Clostridium botulinum*
-- **Diarrhea** (abdominal cramps, liquid stool) â€” *Salmonella, E. coli, Campylobacter, Norovirus*
-- **Fever** (101Â°F+) â€” *Salmonella, Campylobacter*
-- **Abdominal cramps** (severe) â€” *E. coli O157:H7, botulism*
+- **Nausea and vomiting** (30 minutes to 6 hours onset) — *Norovirus, Clostridium botulinum*
+- **Diarrhea** (abdominal cramps, liquid stool) — *Salmonella, E. coli, Campylobacter, Norovirus*
+- **Fever** (101°F+) — *Salmonella, Campylobacter*
+- **Abdominal cramps** (severe) — *E. coli O157:H7, botulism*
 
 **Serious warning signs (seek medical help if possible; isolate person immediately):**
-- **Bloody diarrhea or stool** â€” Potential *E. coli* O157:H7 (risk of kidney failure); requires medical care
-- **Neurological symptoms** (double vision, weakness, difficulty swallowing, paralysis) â€” *Botulism* (MEDICAL EMERGENCY)
-- **Inability to keep fluids down** (vomiting prevents rehydration) â€” Risk of fatal dehydration
+- **Bloody diarrhea or stool** — Potential *E. coli* O157:H7 (risk of kidney failure); requires medical care
+- **Neurological symptoms** (double vision, weakness, difficulty swallowing, paralysis) — *Botulism* (MEDICAL EMERGENCY)
+- **Inability to keep fluids down** (vomiting prevents rehydration) — Risk of fatal dehydration
 - **Blood in vomit**
-- **High fever (>103Â°F)** â€” Sign of severe systemic infection
+- **High fever (>103°F)** — Sign of severe systemic infection
 - **Confusion or loss of consciousness**
 - **Symptoms lasting >7 days**
 
@@ -643,7 +643,7 @@ Dehydration is the leading cause of death in foodborne illness. Aggressive fluid
 - 6 teaspoons sugar (or honey)
 - 1/2 teaspoon salt
 - Stir until dissolved
-- Give small, frequent sips (25â€“50 mL every 5â€“10 minutes) rather than large gulps (which trigger vomiting)
+- Give small, frequent sips (25–50 mL every 5–10 minutes) rather than large gulps (which trigger vomiting)
 
 **Homemade alternatives if sugar is unavailable:**
 - Mashed banana + salt + water (potassium replacement)
@@ -652,7 +652,7 @@ Dehydration is the leading cause of death in foodborne illness. Aggressive fluid
 **When to give ORS:**
 - Start immediately upon first vomiting or diarrhea
 - Continue even if the person vomits (try small, more frequent sips)
-- Continue for 12â€“24 hours after diarrhea stops (to replenish deficit)
+- Continue for 12–24 hours after diarrhea stops (to replenish deficit)
 
 **Signs of severe dehydration (medical emergency):**
 - Extreme thirst, dry mouth
@@ -666,7 +666,7 @@ If severe dehydration develops and ORS is failing, the person needs IV fluids (m
 
 ### Isolation of Ill Persons
 
-Foodborne illnessesâ€”especially Norovirus and Campylobacterâ€”spread via fecal-oral contamination.
+Foodborne illnesses—especially Norovirus and Campylobacter—spread via fecal-oral contamination.
 
 **Isolation protocol:**
 1. Separate the sick person from food preparation areas
@@ -720,7 +720,7 @@ When water is severely limited:
    - Change water when it becomes cloudy
 
 3. **Basin 3 (Sanitize):** Boiling water or diluted bleach solution
-   - Submerge for 1 minute (boil), or 1â€“2 minutes (bleach solution)
+   - Submerge for 1 minute (boil), or 1–2 minutes (bleach solution)
    - Air-dry on a clean rack
 
 **To minimize water:**
@@ -734,9 +734,9 @@ If boiling is impractical:
 
 **Proper concentration:**
 - Household bleach (5% sodium hypochlorite): 1 part bleach to 9 parts water = ~500 ppm
-- For food contact surfaces: Use 50â€“100 ppm
-  - Dilute the 500 ppm solution 5â€“10Ã— further
-  - Or: 2â€“4 drops of household bleach per liter of water = ~100 ppm
+- For food contact surfaces: Use 50–100 ppm
+  - Dilute the 500 ppm solution 5–10× further
+  - Or: 2–4 drops of household bleach per liter of water = ~100 ppm
 - Contact time: 1 minute minimum
 
 **Verification:**
@@ -817,7 +817,7 @@ Certain groups have weakened immunity or physiological vulnerabilities and requi
 
 ### Pregnant Women
 
-- **Immune suppression during pregnancy:** Listeria risk increases 20Ã—
+- **Immune suppression during pregnancy:** Listeria risk increases 20×
 - **Placental transfer risk:** Some pathogens can affect fetus
 - **Botulism risk:** Some sources suggest higher fetal risk (debated; safer to avoid)
 
@@ -854,11 +854,11 @@ Certain groups have weakened immunity or physiological vulnerabilities and requi
 
 2. **During cooking:**
    - [ ] Cook times are sufficient; thermometer used if available or visual tests applied (no pink poultry, clear juices)
-   - [ ] Hot foods brought to 165Â°F+ minimum
+   - [ ] Hot foods brought to 165°F+ minimum
    - [ ] No cross-contamination between raw/cooked foods
 
 3. **After cooking:**
-   - [ ] Hot foods cooled rapidly to below 40Â°F (shallow pans, cool water bath)
+   - [ ] Hot foods cooled rapidly to below 40°F (shallow pans, cool water bath)
    - [ ] Leftovers stored separately, covered, in cool environment
    - [ ] Leftover cooking containers used only once (3-day max if refrigerated, same day if not)
 
@@ -870,8 +870,8 @@ Certain groups have weakened immunity or physiological vulnerabilities and requi
 
 5. **When serving:**
    - [ ] Visually inspect food for signs of spoilage
-   - [ ] Serve hot foods hot (â‰¥140Â°F), cold foods cold (â‰¤40Â°F)
-   - [ ] Do not leave prepared food in the danger zone >2 hours (1 hour if >90Â°F)
+   - [ ] Serve hot foods hot (≥140°F), cold foods cold (≤40°F)
+   - [ ] Do not leave prepared food in the danger zone >2 hours (1 hour if >90°F)
 
 ---
 
@@ -882,7 +882,7 @@ In a survival scenario, these five rules will prevent 80% of foodborne illnesses
 1. **Handwash for 20 seconds after latrine use.** This single step stops fecal-oral transmission.
 2. **Cook poultry, ground meat, and eggs thoroughly.** No exceptions.
 3. **Separate raw meat from ready-to-eat foods.** Use dedicated equipment if possible.
-4. **Cool hot foods rapidly.** Do not let food linger in the 40â€“140Â°F zone.
+4. **Cool hot foods rapidly.** Do not let food linger in the 40–140°F zone.
 5. **Isolate ill persons** to prevent disease spread.
 
 When in doubt about food safety, discard it. A meal is not worth the risk of untreatable foodborne illness in a no-medicine environment.
@@ -890,10 +890,10 @@ When in doubt about food safety, discard it. A meal is not worth the risk of unt
 :::affiliate
 **If you're establishing food safety protocols,** monitoring and sterilization tools prevent contamination across preparation workflows:
 
-- [pH Test Strips for Food Storage Monitoring](https://www.amazon.com/dp/B07NBTJQ8B?tag=offlinecompen-20) â€” Test fermented foods and canned goods to verify safe pH (<4.0) before consumption
-- [Hand Sanitizer & Food-Safe Antibacterial Soap Combo](https://www.amazon.com/dp/B00PCPK0H8?tag=offlinecompen-20) â€” Establish handwashing stations near food prep areas for critical contamination control
+- [pH Test Strips for Food Storage Monitoring](https://www.amazon.com/dp/B07NBTJQ8B?tag=offlinecompen-20) — Test fermented foods and canned goods to verify safe pH (<4.0) before consumption
+- [Hand Sanitizer & Food-Safe Antibacterial Soap Combo](https://www.amazon.com/dp/B00PCPK0H8?tag=offlinecompen-20) — Establish handwashing stations near food prep areas for critical contamination control
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the equipment discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the equipment discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 ---
@@ -901,11 +901,11 @@ When in doubt about food safety, discard it. A meal is not worth the risk of unt
 ## Further Reading
 
 See also:
-- [Food Preservation](food-preservation) â€” Storage methods to reduce spoilage risk
-- [Pressure Canning for Low-Acid Foods](pressure-canning-low-acid-preservation) â€” Safe home preservation
-- [Water Purification](water-purification) â€” Ensuring safe water for cooking
-- [Infection Control](infection-control) â€” Broader hygiene principles
-- [Butchering & Meat Processing](butchering) â€” Sanitation during animal processing
-- [Fermentation & Baking](fermentation-baking) â€” Safe fermentation practices
-- [Dairy Processing](dairy-processing) â€” Milk safety and preservation
-- [Hunting & Trapping](foraging-hunting) â€” Game animal safety
+- [Food Preservation](food-preservation) — Storage methods to reduce spoilage risk
+- [Pressure Canning for Low-Acid Foods](pressure-canning-low-acid-preservation) — Safe home preservation
+- [Water Purification](water-purification) — Ensuring safe water for cooking
+- [Infection Control](infection-control) — Broader hygiene principles
+- [Butchering & Meat Processing](butchering) — Sanitation during animal processing
+- [Fermentation & Baking](fermentation-baking) — Safe fermentation practices
+- [Dairy Processing](dairy-processing) — Milk safety and preservation
+- [Hunting & Trapping](foraging-hunting) — Game animal safety
