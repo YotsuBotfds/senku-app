@@ -106,6 +106,55 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
 
         self.assertEqual([card["card_id"] for card in cards], ["poisoning_unknown_ingestion"])
 
+    def test_prioritized_answer_cards_keep_slot_when_max_cards_is_two(self):
+        unrelated_first = {
+            "card_id": "first_unrelated",
+            "guide_id": "GD-111",
+            "review_status": "approved",
+        }
+        unrelated_second = {
+            "card_id": "second_unrelated",
+            "guide_id": "GD-222",
+            "review_status": "approved",
+        }
+        anaphylaxis_card = {
+            "card_id": "anaphylaxis_red_zone",
+            "guide_id": "GD-400",
+            "review_status": "pilot_reviewed",
+        }
+
+        cards = runtime._answer_cards_for_results(
+            {
+                "metadatas": [[
+                    {"guide_id": "GD-111"},
+                    {"guide_id": "GD-222"},
+                    {"guide_id": "GD-400"},
+                ]]
+            },
+            question="Bee sting and now throat feels tight",
+            max_cards=2,
+            runtime_answer_cards=lambda: [
+                unrelated_first,
+                unrelated_second,
+                anaphylaxis_card,
+            ],
+            citation_allowlist_from_results=lambda results: [
+                "GD-111",
+                "GD-222",
+                "GD-400",
+            ],
+            prioritized_answer_card_ids_for_question=lambda question: [
+                "anaphylaxis_red_zone"
+            ],
+            answer_card_matches_question=lambda card, question: True,
+            card_source_guide_ids=runtime._card_source_guide_ids,
+        )
+
+        self.assertEqual(
+            [card["card_id"] for card in cards],
+            ["anaphylaxis_red_zone", "first_unrelated"],
+        )
+
     def test_anaphylaxis_red_zone_is_prioritized_for_allergen_airway_prompt(self):
         prioritized = runtime._prioritized_answer_card_ids_for_question(
             "Wheezing and throat swelling right after a bee sting. What matters first?",
@@ -116,6 +165,32 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
         )
 
         self.assertIn("anaphylaxis_red_zone", prioritized)
+
+    def test_anaphylaxis_red_zone_matches_existing_deterministic_red_zone_phrasings(self):
+        anaphylaxis_card = {
+            "card_id": "anaphylaxis_red_zone",
+            "guide_id": "GD-400",
+            "review_status": "pilot_reviewed",
+        }
+        prompts = [
+            "Bee sting and now the throat feels tight. What do I do first?",
+            "My rescue inhaler is not helping after I ate something. What do I do first?",
+            "Stung many times by bees and now vomiting and dizzy.",
+            "Whole body hives and weakness after a sting on the arm.",
+        ]
+
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertTrue(
+                    runtime._answer_card_matches_question(
+                        anaphylaxis_card,
+                        prompt,
+                        is_airway_obstruction_rag_query=lambda question: False,
+                        has_allergy_or_anaphylaxis_trigger=lambda question: True,
+                        is_newborn_sepsis_danger_query=lambda question: False,
+                        is_meningitis_rash_emergency_query=lambda question: False,
+                    )
+                )
 
     def test_anaphylaxis_red_zone_does_not_match_mild_skin_only_hives_prompt(self):
         anaphylaxis_card = {
@@ -159,6 +234,28 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
 
         self.assertEqual(cards, [])
 
+    def test_anaphylaxis_red_zone_does_not_match_isolated_face_swelling(self):
+        anaphylaxis_card = {
+            "card_id": "anaphylaxis_red_zone",
+            "guide_id": "GD-400",
+            "review_status": "pilot_reviewed",
+        }
+        moderate_question = (
+            "Face swelling after a bee sting, but breathing is normal, "
+            "no dizziness, and no hives."
+        )
+
+        self.assertFalse(
+            runtime._answer_card_matches_question(
+                anaphylaxis_card,
+                moderate_question,
+                is_airway_obstruction_rag_query=lambda question: False,
+                has_allergy_or_anaphylaxis_trigger=lambda question: True,
+                is_newborn_sepsis_danger_query=lambda question: False,
+                is_meningitis_rash_emergency_query=lambda question: False,
+            )
+        )
+
     def test_anaphylaxis_red_zone_ignores_negated_airway_and_swelling_terms(self):
         anaphylaxis_card = {
             "card_id": "anaphylaxis_red_zone",
@@ -180,6 +277,23 @@ class QueryAnswerCardRuntimeExtractionTests(unittest.TestCase):
                 is_meningitis_rash_emergency_query=lambda question: False,
             )
         )
+
+        variants = [
+            "After shellfish I have hives but no wheezing, no difficulty breathing, and normal alertness.",
+            "After shellfish I have hives but no wheeze, no swollen lip, and breathing is normal.",
+        ]
+        for prompt in variants:
+            with self.subTest(prompt=prompt):
+                self.assertFalse(
+                    runtime._answer_card_matches_question(
+                        anaphylaxis_card,
+                        prompt,
+                        is_airway_obstruction_rag_query=lambda question: False,
+                        has_allergy_or_anaphylaxis_trigger=lambda question: True,
+                        is_newborn_sepsis_danger_query=lambda question: False,
+                        is_meningitis_rash_emergency_query=lambda question: False,
+                    )
+                )
 
     def test_card_backed_runtime_answer_plan_uses_injected_composer(self):
         selected_card = {

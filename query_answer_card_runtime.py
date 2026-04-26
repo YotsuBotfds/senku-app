@@ -141,6 +141,15 @@ def _answer_cards_for_results(
                 seen_card_ids.add(str(card.get("card_id") or "").strip())
                 cards.append(card)
                 return cards
+        else:
+            for card in prioritized_cards:
+                card_id = str(card.get("card_id") or "").strip()
+                if card_id in seen_card_ids:
+                    continue
+                seen_card_ids.add(card_id)
+                cards.append(card)
+                if len(cards) >= max_cards:
+                    return cards
     for guide_id in guide_ids:
         guide_cards = cards_by_guide_id.get(guide_id, [])
         if prioritized_card_ids:
@@ -269,18 +278,32 @@ _ANAPHYLAXIS_AIRWAY_BREATHING_TERMS = {
     "barely talking",
     "blue lips",
     "breathing trouble",
+    "breathing feels off",
+    "breathing is off",
     "can barely talk",
     "cant breathe",
     "chest tightness",
     "difficulty breathing",
     "gray color",
     "grey color",
+    "harder to swallow",
+    "inhaler is not helping",
+    "inhaler not helping",
+    "mouth swelling",
+    "rescue inhaler is not helping",
+    "rescue inhaler not helping",
     "shortness of breath",
+    "strange voice",
     "stridor",
     "throat closing",
+    "throat feels tight",
+    "throat tight",
+    "tight throat",
     "throat swelling",
     "tongue swelling",
+    "trouble swallowing",
     "trouble breathing",
+    "voice sounds strange",
     "wheeze",
     "wheezing",
 }
@@ -288,18 +311,23 @@ _ANAPHYLAXIS_CIRCULATION_TERMS = {
     "collapse",
     "collapsed",
     "cold clammy",
+    "dizziness",
+    "dizzy",
     "faint",
     "fainted",
     "fainting",
     "faintness",
     "passed out",
+    "weakness",
 }
-_ANAPHYLAXIS_SWELLING_TERMS = {
+_ANAPHYLAXIS_FACE_SWELLING_TERMS = {
     "face swelling",
     "facial swelling",
+    "swollen face",
+}
+_ANAPHYLAXIS_SWELLING_TERMS = {
     "lip swelling",
     "lips swelling",
-    "swollen face",
     "swollen lip",
     "swollen lips",
     "swollen tongue",
@@ -325,24 +353,35 @@ _ANAPHYLAXIS_NEGATED_RED_ZONE_PHRASES = {
     "no breathing trouble",
     "no chest tightness",
     "no collapse",
+    "no difficulty breathing",
     "no dizziness",
+    "no dizzy",
     "no face swelling",
     "no facial swelling",
     "no fainting",
     "no faintness",
     "no gray color",
     "no grey color",
+    "no hives",
     "no lip swelling",
     "no lips swelling",
+    "no rash",
     "no shortness of breath",
     "no stridor",
     "no swollen face",
+    "no swollen lip",
     "no swollen lips",
     "no swollen tongue",
     "no throat closing",
+    "no throat feels tight",
+    "no throat tightness",
     "no throat swelling",
     "no tongue swelling",
     "no trouble breathing",
+    "no welts",
+    "no wheeze",
+    "no wheezing",
+    "no weakness",
     "not faint",
     "not wheezing",
 }
@@ -355,17 +394,25 @@ def _is_anaphylaxis_red_zone_card_query(question):
         return False
 
     has_exposure = _text_has_any(lower, _ANAPHYLAXIS_EXPOSURE_TERMS)
-    has_skin = _text_has_any(lower, _ANAPHYLAXIS_SKIN_TERMS)
     red_zone_text = _without_anaphylaxis_negated_red_zone_phrases(lower)
+    has_skin = _text_has_any(red_zone_text, _ANAPHYLAXIS_SKIN_TERMS)
     has_airway_or_breathing = _text_has_any(
         red_zone_text, _ANAPHYLAXIS_AIRWAY_BREATHING_TERMS
     )
     has_circulation = _text_has_any(red_zone_text, _ANAPHYLAXIS_CIRCULATION_TERMS)
+    has_face_swelling = _text_has_any(
+        red_zone_text, _ANAPHYLAXIS_FACE_SWELLING_TERMS
+    )
     has_swelling = _text_has_any(red_zone_text, _ANAPHYLAXIS_SWELLING_TERMS)
 
     if has_exposure and (has_airway_or_breathing or has_circulation or has_swelling):
         return True
-    if has_skin and (has_airway_or_breathing or has_circulation or has_swelling):
+    if has_skin and (
+        has_airway_or_breathing
+        or has_circulation
+        or has_swelling
+        or has_face_swelling
+    ):
         return True
 
     skin_only_normal = (
