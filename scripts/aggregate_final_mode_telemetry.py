@@ -44,7 +44,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def escape_markdown_cell(value: object) -> str:
-    return str(value).replace("|", r"\|")
+    text = str(value).replace("\r\n", " ").replace("\r", " ").replace("\n", " ").replace("\t", " ")
+    return text.replace("|", r"\|")
 
 
 def sort_counter(counter: Counter[str]) -> list[tuple[str, int]]:

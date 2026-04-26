@@ -142,6 +142,23 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(payload[0]["label"], "dir_a")
         self.assertEqual(payload[0]["bad_buckets"], 7)
 
+    def test_render_markdown_table_sanitizes_row_breaking_cells(self):
+        markdown = self.module.render_markdown_table(
+            [
+                {
+                    "label": "wave|one",
+                    "generated_at": "2026-04-26\r\n12:00",
+                    "total_rows": 1,
+                }
+            ],
+            columns=("label", "generated_at", "total_rows"),
+        )
+
+        lines = markdown.splitlines()
+        self.assertEqual(len(lines), 3)
+        self.assertIn("wave\\|one", lines[2])
+        self.assertIn("2026-04-26  12:00", lines[2])
+
     def test_collect_summaries_rejects_label_mismatch(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

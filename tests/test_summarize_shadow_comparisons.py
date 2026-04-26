@@ -335,6 +335,41 @@ class SummarizeShadowComparisonsTests(unittest.TestCase):
         self.assertEqual(payload[0]["shadow_primary_hit_at_1_rate"], None)
         self.assertEqual(payload[0]["primary_hit_at_1_net"], 0)
 
+    def test_non_finite_summary_values_are_treated_as_missing(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "contextual_shadow_compare_non_finite"
+            root.mkdir()
+            write_summary(
+                root / module.SUMMARY_FILENAME,
+                {
+                    "row_count": 3,
+                    "deltas": {
+                        "hit_at_1": {"comparable_rows": 3, "net_improved": float("inf")},
+                        "hit_at_3": {"net_improved": float("-inf")},
+                        "hit_at_k": {"net_improved": 0},
+                    },
+                    "baseline": {
+                        "scored_rows": 3,
+                        "hit_at_1": {"count": 1, "rate": float("nan")},
+                    },
+                    "shadow": {"scored_rows": 3, "hit_at_1": {"count": 2, "rate": 0.67}},
+                    "mean_top_k_overlap_jaccard": float("nan"),
+                },
+            )
+
+            rows = module.collect_summaries([root])
+            output = module._to_json(rows)
+            payload = json.loads(output)
+
+        self.assertIsNone(rows[0]["baseline_hit_at_1_rate"])
+        self.assertIsNone(rows[0]["hit_at_1_net"])
+        self.assertIsNone(rows[0]["hit_at_3_net"])
+        self.assertIsNone(rows[0]["mean_top_k_overlap_jaccard"])
+        self.assertNotIn("NaN", output)
+        self.assertNotIn("Infinity", output)
+        self.assertIsNone(payload[0]["baseline_hit_at_1_rate"])
+
 
 if __name__ == "__main__":
     unittest.main()

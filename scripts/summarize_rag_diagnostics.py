@@ -298,7 +298,7 @@ def _quality_score_10(row: Mapping[str, Any]) -> float | None:
 
 
 def _escape_table_cell(value: Any) -> str:
-    return _format_cell(value).replace("|", "\\|")
+    return _format_cell(value).replace("\r", " ").replace("\n", " ").replace("|", "\\|")
 
 
 def _summarize_directory(directory: Path, label: str | None = None) -> dict[str, Any]:

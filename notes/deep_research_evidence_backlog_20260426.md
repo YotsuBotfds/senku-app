@@ -510,6 +510,15 @@ Action:
   fall back to the intended default URL instead of iterating arbitrary shapes,
   compact/query diagnostics Markdown collapses row-breaking whitespace, and
   compare-bench rejects directory `--output` targets with a clean CLI error.
+- Hardened evidence-tool report surfaces and row-shape ingestion: startup
+  snapshots now treat `notes/PLANNER_HANDOFF*.md` as benign local handoff
+  context, RAG diagnostics/retrieval-pack/final-mode telemetry Markdown
+  collapses row-breaking whitespace, high-liability and guide-quality
+  prioritizers normalize padded or structured diagnostic cells, prompt
+  expectation validation fails explicit empty primary-owner structures,
+  analyzer categories sanitize unsafe labels, and contextual shadow report text
+  fields stringify malformed structures deterministically without changing
+  scoring semantics.
 
 Validation:
 
@@ -682,6 +691,10 @@ Action:
   strip surrounding quotes from manifest artifact paths, and escape filter
   summary values in run-manifest Markdown so copied shell-style paths or labels
   cannot distort artifact evidence reports.
+- Additional artifact/evidence helper guardrails now validate abstain panel row
+  shape early, skip malformed non-object metrics-lake artifact-evidence items
+  without row-index gaps, and treat non-finite shadow-summary metric values as
+  missing while keeping JSON output strict.
 
 Validation:
 
@@ -798,6 +811,10 @@ Validation:
   `tests.test_summarize_run_manifest` cover JSONL type-label whitespace
   normalization, quoted artifact path normalization, and filter summary
   escaping in manifest reports.
+- `tests.test_abstain_regression_panel`, `tests.test_bench_metrics_lake`, and
+  `tests.test_summarize_shadow_comparisons` cover abstain panel row validation,
+  artifact-evidence index continuity after malformed entries, and strict JSON
+  output for non-finite shadow summary values.
 - `tests.test_summarize_rag_diagnostics`,
   `tests.test_prioritize_guide_quality_work`,
   `tests.test_prioritize_high_liability_families`,
@@ -846,6 +863,16 @@ Validation:
   `tests.test_compare_bench_artifacts` cover malformed bench URL config,
   duplicate structured prompt IDs, row-breaking Markdown whitespace, and
   directory output rejection.
+- `tests.test_agent_context_snapshot`, `tests.test_summarize_rag_diagnostics`,
+  `tests.test_evaluate_retrieval_pack`,
+  `tests.test_prioritize_high_liability_families`,
+  `tests.test_prioritize_guide_quality_work`,
+  `tests.test_validate_prompt_expectations`,
+  `tests.test_analyze_rag_bench_failures`,
+  `tests.test_compare_contextual_shadow_retrieval`,
+  `tests.test_aggregate_final_mode_telemetry`, and
+  `tests.test_summarize_shadow_comparisons` cover the evidence-tool sanitation
+  and row-shape hardening batch.
 
 Deferred unless evidenced:
 

@@ -38,6 +38,10 @@ def _split_ids(value: Any) -> list[str]:
     return []
 
 
+def _clean_cell(value: Any) -> str:
+    return str(value or "").strip()
+
+
 def _diagnostics_json_path(path: Path) -> Path:
     if path.is_dir():
         return path / "diagnostics.json"
@@ -89,9 +93,9 @@ def _add_example(record: dict[str, Any], row: dict[str, Any]) -> None:
         return
     record["prompt_examples"].append(
         {
-            "artifact": row.get("artifact_name") or "",
+            "artifact": _clean_cell(row.get("artifact_name")),
             "prompt_index": row.get("prompt_index") or "",
-            "bucket": row.get("suspected_failure_bucket") or "",
+            "bucket": _clean_cell(row.get("suspected_failure_bucket")),
             "prompt": row.get("prompt_text") or "",
         }
     )
@@ -149,8 +153,8 @@ def collect_priorities(
             cited_ids = _split_ids(row.get("cited_guide_ids"))
             top_ids = _split_ids(row.get("top_retrieved_guide_ids"))
             related_ids = list(dict.fromkeys(expected_ids + cited_ids + top_ids[:3]))
-            bucket = str(row.get("suspected_failure_bucket") or "")
-            app_status = str(row.get("app_acceptance_status") or "")
+            bucket = _clean_cell(row.get("suspected_failure_bucket"))
+            app_status = _clean_cell(row.get("app_acceptance_status"))
             bad = bool(bucket and bucket not in GOOD_BUCKETS)
             for guide_id in related_ids:
                 record = records[guide_id]
@@ -160,7 +164,8 @@ def collect_priorities(
                 record["buckets"][bucket] += 1
                 if app_status:
                     record["app_acceptance"][app_status] += 1
-                record["artifacts"][row.get("artifact_name") or "unknown"] += 1
+                artifact_name = _clean_cell(row.get("artifact_name")) or "unknown"
+                record["artifacts"][artifact_name] += 1
                 if bad:
                     record["bad_rows"] += 1
                 if guide_id in expected_ids:

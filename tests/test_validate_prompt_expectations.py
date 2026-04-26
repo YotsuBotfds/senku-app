@@ -457,6 +457,45 @@ class PromptExpectationValidatorTests(unittest.TestCase):
             {item["code"] for item in report["issues"]},
         )
 
+    def test_flags_structured_blank_prompt_primary_expected_guides(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "primary_expected_guide_ids": [],
+                    "prompt": "Structured blank primary owner should fail loudly.",
+                }
+            )
+            + "\n"
+            + json.dumps(
+                {
+                    "id": "P-2",
+                    "expected_guide_ids": ["GD-120"],
+                    "primary_expected_guides": {},
+                    "prompt": "Empty object primary owner should also fail.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate([pack], guides_dir=root / "guides", root=root)
+
+        self.assertEqual(report["status"], "fail")
+        issues = [
+            item
+            for item in report["issues"]
+            if item["code"] == "expected_guide_field_without_guide_id"
+        ]
+        self.assertEqual(
+            ["primary_expected_guide_ids", "primary_expected_guides"],
+            [item["field"] for item in issues],
+        )
+
     def test_allowed_drift_manifest_suppresses_matching_issue(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")

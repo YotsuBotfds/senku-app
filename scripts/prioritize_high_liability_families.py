@@ -33,9 +33,21 @@ def _split_ids(value: Any) -> list[str]:
     if value in ("", None, "unknown"):
         return []
     if isinstance(value, str):
-        return [item.strip() for item in value.split("|") if item.strip()]
+        return [
+            item.strip()
+            for chunk in value.split("|")
+            for item in chunk.split(",")
+            if item.strip()
+        ]
     if isinstance(value, list):
-        return [str(item).strip() for item in value if str(item).strip()]
+        ids: list[str] = []
+        for item in value:
+            ids.extend(_split_ids(item))
+        return ids
+    if isinstance(value, dict):
+        for key in ("guide_id", "id", "expected_guide_id"):
+            if key in value:
+                return _split_ids(value.get(key))
     return []
 
 

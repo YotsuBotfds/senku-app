@@ -421,15 +421,17 @@ def _artifact_path_evidence_rows(
 
     rows: list[tuple[str, int, Mapping[str, Any]]] = []
     inherited_fields = _artifact_path_evidence_parent_fields(record)
-    for evidence_index, item in enumerate(evidence_items):
+    accepted_index = 0
+    for item in evidence_items:
         if isinstance(item, Mapping):
             rows.append(
                 (
                     "artifact_path_evidence",
-                    start_index + evidence_index,
+                    start_index + accepted_index,
                     _normalize_artifact_path_evidence(item, inherited_fields),
                 )
             )
+            accepted_index += 1
     return rows
 
 

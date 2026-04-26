@@ -55,7 +55,7 @@ def _normalize_panel_payload(panel_path: Path, data) -> tuple[dict, list[dict]]:
     if isinstance(data, list):
         if not data:
             raise ValueError("Panel file must contain at least one query.")
-        return {}, data
+        return {}, _normalize_panel_rows(data)
 
     if not isinstance(data, dict):
         raise ValueError(
@@ -71,7 +71,23 @@ def _normalize_panel_payload(panel_path: Path, data) -> tuple[dict, list[dict]]:
         "title": data.get("title") or "Abstain Regression Panel",
         "description": data.get("description") or "",
     }
-    return panel_metadata, panel
+    return panel_metadata, _normalize_panel_rows(panel)
+
+
+def _normalize_panel_rows(panel: list) -> list[dict]:
+    required_fields = ("id", "question", "bucket", "expected_abstain")
+    normalized = []
+    for index, row in enumerate(panel, start=1):
+        if not isinstance(row, dict):
+            raise ValueError(f"Panel query row {index} must be a mapping.")
+        missing = [field for field in required_fields if field not in row]
+        if missing:
+            raise ValueError(
+                f"Panel query row {index} is missing required field(s): "
+                f"{', '.join(missing)}."
+            )
+        normalized.append(row)
+    return normalized
 
 
 def _load_panel(panel_path: Path) -> tuple[dict, list[dict]]:

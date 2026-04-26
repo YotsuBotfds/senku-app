@@ -184,6 +184,45 @@ def _exclude_ids(items: list[str], excluded: list[str]) -> list[str]:
     return [item for item in items if item not in excluded_set]
 
 
+def _strip_unsafe_text_chars(text: str) -> str:
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    return "".join(
+        char for char in text if char in ("\n", "\t") or ord(char) >= 32
+    ).strip()
+
+
+def _sanitize_text_payload(value: Any) -> Any:
+    if isinstance(value, str):
+        return _strip_unsafe_text_chars(value)
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {str(key): _sanitize_text_payload(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_sanitize_text_payload(item) for item in value]
+    return value
+
+
+def _sanitize_text_field(value: Any) -> str | None:
+    """Normalize malformed artifact scalar fields before writing reports."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        text = _strip_unsafe_text_chars(value)
+    elif isinstance(value, (dict, list, tuple)):
+        text = json.dumps(
+            _sanitize_text_payload(value),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    elif isinstance(value, float) and not math.isfinite(value):
+        text = ""
+    else:
+        text = str(value)
+    return _strip_unsafe_text_chars(text)
+
+
 def _coerce_sequence(value: Any) -> list[Any]:
     if value is None:
         return []
@@ -491,10 +530,10 @@ def compare_retrieval_row(
         "artifact_path": str(artifact_path),
         "artifact_name": Path(artifact_path).name,
         "prompt_index": prompt_index,
-        "prompt_id": prompt_id,
-        "section": section,
-        "question": question,
-        "expected_topic": expected_topic,
+        "prompt_id": _sanitize_text_field(prompt_id),
+        "section": _sanitize_text_field(section),
+        "question": _sanitize_text_field(question) or "",
+        "expected_topic": _sanitize_text_field(expected_topic) or "",
         "expected_guide_ids": expected_guide_ids,
         "primary_expected_guide_ids": primary_expected_guide_ids,
         "backup_expected_guide_ids": backup_expected_guide_ids,

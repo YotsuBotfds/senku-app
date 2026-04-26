@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -78,6 +79,12 @@ def _safe_get(payload: Mapping[str, Any], *keys: str, default: Any = None) -> An
             return default
         current = current[key]
     return current
+
+
+def _summary_value(value: Any) -> Any:
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    return value
 
 
 def _count_jsonl_rows(path: Path) -> int:
@@ -192,29 +199,33 @@ def summarize_comparison(directory: Path, *, label: str | None = None) -> dict[s
 
     result = {
         "label": label or directory.name,
-        "row_count": row_count,
-        "comparable_rows_hit_at_1": comparable_hit_at_1,
-        "baseline_scored_rows": baseline_scored_rows,
-        "shadow_scored_rows": shadow_scored_rows,
-        "baseline_hit_at_1_rate": baseline_hit_at_1_rate,
-        "shadow_hit_at_1_rate": shadow_hit_at_1_rate,
-        "hit_at_1_net": hit_at_1_net,
-        "hit_at_3_net": hit_at_3_net,
-        "hit_at_k_net": hit_at_k_net,
-        "mean_top_k_overlap_jaccard": _safe_get(
-            summary, "mean_top_k_overlap_jaccard"
+        "row_count": _summary_value(row_count),
+        "comparable_rows_hit_at_1": _summary_value(comparable_hit_at_1),
+        "baseline_scored_rows": _summary_value(baseline_scored_rows),
+        "shadow_scored_rows": _summary_value(shadow_scored_rows),
+        "baseline_hit_at_1_rate": _summary_value(baseline_hit_at_1_rate),
+        "shadow_hit_at_1_rate": _summary_value(shadow_hit_at_1_rate),
+        "hit_at_1_net": _summary_value(hit_at_1_net),
+        "hit_at_3_net": _summary_value(hit_at_3_net),
+        "hit_at_k_net": _summary_value(hit_at_k_net),
+        "mean_top_k_overlap_jaccard": _summary_value(
+            _safe_get(summary, "mean_top_k_overlap_jaccard")
         ),
-        "baseline_primary_hit_at_1_rate": baseline_primary_hit_at_1_rate,
-        "shadow_primary_hit_at_1_rate": shadow_primary_hit_at_1_rate,
-        "primary_hit_at_1_net": primary_hit_at_1_net,
-        "mean_baseline_owner_family_concentration": _safe_get(
-            summary, "mean_baseline_owner_family_concentration"
+        "baseline_primary_hit_at_1_rate": _summary_value(
+            baseline_primary_hit_at_1_rate
         ),
-        "mean_shadow_owner_family_concentration": _safe_get(
-            summary, "mean_shadow_owner_family_concentration"
+        "shadow_primary_hit_at_1_rate": _summary_value(
+            shadow_primary_hit_at_1_rate
         ),
-        "mean_owner_family_concentration_delta": _safe_get(
-            summary, "mean_owner_family_concentration_delta"
+        "primary_hit_at_1_net": _summary_value(primary_hit_at_1_net),
+        "mean_baseline_owner_family_concentration": _summary_value(
+            _safe_get(summary, "mean_baseline_owner_family_concentration")
+        ),
+        "mean_shadow_owner_family_concentration": _summary_value(
+            _safe_get(summary, "mean_shadow_owner_family_concentration")
+        ),
+        "mean_owner_family_concentration_delta": _summary_value(
+            _safe_get(summary, "mean_owner_family_concentration_delta")
         ),
     }
     return result
@@ -253,7 +264,7 @@ def render_markdown_table(
 
 
 def _to_json(rows: Sequence[Mapping[str, Any]]) -> str:
-    return json.dumps(list(rows), indent=2, sort_keys=True)
+    return json.dumps(list(rows), allow_nan=False, indent=2, sort_keys=True)
 
 
 def main(argv: Sequence[str] | None = None) -> int:

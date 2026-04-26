@@ -736,6 +736,71 @@ class BenchMetricsLakeTests(unittest.TestCase):
         finally:
             verify.close()
 
+    def test_jsonl_artifact_path_evidence_skips_malformed_items_without_index_gaps(self):
+        root = self.make_tmpdir()
+        jsonl_path = root / "manifest.jsonl"
+        jsonl_path.write_text(
+            json.dumps(
+                {
+                    "record_type": "run_manifest",
+                    "task": "task_one",
+                    "artifact_path_evidence": [
+                        "not-an-object",
+                        {"path": "artifacts/bench/one.json", "status": "present"},
+                    ],
+                }
+            )
+            + "\n"
+            + json.dumps(
+                {
+                    "record_type": "run_manifest",
+                    "task": "task_two",
+                    "artifact_path_evidence": [
+                        None,
+                        {"path": "artifacts/bench/two.json", "status": "missing"},
+                    ],
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        output = root / "lake.sqlite"
+        conn = self.module.connect_database(output, "sqlite")
+        self.module.initialize_schema(conn)
+        summary = self.module.ingest_artifacts(
+            conn,
+            [jsonl_path],
+            base_dir=root,
+            backend="sqlite",
+            source_label="test",
+        )
+        conn.close()
+
+        self.assertEqual(summary["artifacts"], 1)
+        self.assertEqual(summary["detail_rows"], 4)
+        verify = sqlite3.connect(output)
+        try:
+            evidence = verify.execute(
+                """
+                SELECT row_index, entity_id, raw_json
+                FROM detail_rows
+                WHERE row_kind = 'artifact_path_evidence'
+                ORDER BY row_index
+                """
+            ).fetchall()
+        finally:
+            verify.close()
+
+        self.assertEqual([row[0] for row in evidence], [0, 1])
+        self.assertEqual(
+            [row[1] for row in evidence],
+            ["artifacts/bench/one.json", "artifacts/bench/two.json"],
+        )
+        self.assertEqual(
+            [json.loads(row[2])["task"] for row in evidence],
+            ["task_one", "task_two"],
+        )
+
     def test_jsonl_artifact_path_evidence_normalizes_blank_status_and_path(self):
         root = self.make_tmpdir()
         jsonl_path = root / "manifest.jsonl"

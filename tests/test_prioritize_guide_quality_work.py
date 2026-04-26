@@ -122,6 +122,41 @@ class PrioritizeGuideQualityWorkTests(unittest.TestCase):
         self.assertEqual(guides["GD-200"]["top1_rows"], 1)
         self.assertEqual(guides["GD-100"]["topk_rows"], 1)
 
+    def test_prioritizer_trims_status_like_diagnostic_cells(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diagnostics_path = root / "diagnostics.json"
+            diagnostics_path.write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "artifact_name": " sample.json ",
+                                "prompt_text": "Passing row with padded cells",
+                                "suspected_failure_bucket": " expected_supported ",
+                                "app_acceptance_status": " strong_supported ",
+                                "expected_guide_ids": "GD-100",
+                                "cited_guide_ids": "",
+                                "top_retrieved_guide_ids": "",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            payload = collect_priorities([diagnostics_path])
+
+        top = payload["guides"][0]
+        self.assertEqual(top["guide_id"], "GD-100")
+        self.assertEqual(top["score"], 3)
+        self.assertEqual(top["bad_rows"], 0)
+        self.assertEqual(top["buckets"], {"expected_supported": 1})
+        self.assertEqual(top["app_acceptance"], {"strong_supported": 1})
+        self.assertEqual(top["artifacts"], {"sample.json": 1})
+        self.assertEqual(top["prompt_examples"][0]["bucket"], "expected_supported")
+        self.assertEqual(top["prompt_examples"][0]["artifact"], "sample.json")
+
 
 if __name__ == "__main__":
     unittest.main()

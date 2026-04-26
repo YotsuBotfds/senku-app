@@ -554,7 +554,7 @@ def render_markdown(payload: Mapping[str, Any]) -> str:
 
 
 def _md_cell(value: Any) -> str:
-    return str(value).replace("|", "\\|").replace("\n", " ").strip()
+    return str(value).replace("|", "\\|").replace("\r", " ").replace("\n", " ").strip()
 
 
 def _yes_no_blank(value: Any) -> str:

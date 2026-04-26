@@ -489,7 +489,8 @@ def _truthy(value) -> bool:
 
 def normalize_category_value(value) -> str:
     """Normalize categorical artifact labels without inventing new labels."""
-    return re.sub(r"[\s-]+", "_", str(value or "").strip().lower())
+    normalized = re.sub(r"[^a-z0-9]+", "_", str(value or "").strip().lower())
+    return normalized.strip("_")
 
 
 def wave_key_for_artifact(path: Path) -> str:
@@ -1367,6 +1368,9 @@ def write_json(rows: list[dict], summary: dict, path: Path) -> None:
 
 
 def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
+    def category_label(value: object, fallback: str = "none") -> str:
+        return normalize_category_value(value) or fallback
+
     lines = [
         "# RAG Bench Failure Diagnostics",
         "",
@@ -1606,17 +1610,18 @@ def write_markdown(rows: list[dict], summary: dict, path: Path) -> None:
         lines.append(
             "| "
             f"`{row['artifact_name']}` | {row['prompt_index']} | "
-            f"`{row['suspected_failure_bucket']}` | `{row['decision_path']}` | "
-            f"`{row.get('answer_provenance') or 'unknown'}` | "
-            f"`{row.get('app_gate_status') or 'none'}` | "
-            f"`{row.get('app_acceptance_status') or 'none'}` | "
-            f"`{row.get('answer_card_status') or 'none'}` | "
-            f"`{row.get('evidence_nugget_status') or 'none'}:"
+            f"`{category_label(row.get('suspected_failure_bucket'))}` | "
+            f"`{category_label(row.get('decision_path'))}` | "
+            f"`{category_label(row.get('answer_provenance'), 'unknown')}` | "
+            f"`{category_label(row.get('app_gate_status'))}` | "
+            f"`{category_label(row.get('app_acceptance_status'))}` | "
+            f"`{category_label(row.get('answer_card_status'))}` | "
+            f"`{category_label(row.get('evidence_nugget_status'))}:"
             f"{row.get('evidence_nugget_supported') or 0}/"
             f"{row.get('evidence_nugget_total') or 0}` | "
-            f"`{row.get('claim_support_status') or 'none'}:{row.get('claim_action_count') or 0}` | "
-            f"`{row.get('shadow_card_answer_status') or 'none'}/"
-            f"{row.get('shadow_claim_support_status') or 'none'}:"
+            f"`{category_label(row.get('claim_support_status'))}:{row.get('claim_action_count') or 0}` | "
+            f"`{category_label(row.get('shadow_card_answer_status'))}/"
+            f"{category_label(row.get('shadow_claim_support_status'))}:"
             f"{row.get('shadow_claim_action_count') or 0}` | "
             f"`{row['expected_guide_ids']}` | `{row['top_retrieved_guide_ids']}` | "
             f"`{row['cited_guide_ids'] or 'none'}` | {escape_table(row['short_reason'])} |"

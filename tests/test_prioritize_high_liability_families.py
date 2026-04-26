@@ -363,6 +363,64 @@ class PrioritizeHighLiabilityFamiliesTests(unittest.TestCase):
         self.assertEqual(family["metadata_gap_guide_count"], 1)
         self.assertEqual(family["reviewed_answer_card_gap_guide_count"], 1)
 
+    def test_guide_id_cells_accept_comma_delimited_and_record_shapes(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            diag_dir = root / "diag"
+            diag_dir.mkdir()
+            metadata_path = root / "metadata.json"
+            (diag_dir / "diagnostics.json").write_text(
+                json.dumps(
+                    {
+                        "rows": [
+                            {
+                                "expected_guide_family": "",
+                                "expected_guide_ids": [
+                                    {"guide_id": "GD-920"},
+                                    {"id": "GD-921, GD-922"},
+                                    {"unexpected": "GD-SHOULD-NOT-LEAK"},
+                                ],
+                                "cited_guide_ids": [{"guide_id": "GD-923"}],
+                                "top_retrieved_guide_ids": "GD-923, GD-920|GD-921",
+                                "suspected_failure_bucket": "ranking_miss",
+                                "app_acceptance_status": "needs_evidence_owner",
+                                "answer_card_status": "pass",
+                                "decision_path": "rag",
+                                "generated": "yes",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            metadata_path.write_text(
+                json.dumps(
+                    {
+                        "guides": [
+                            {
+                                "guide_id": "GD-920",
+                                "gaps": [],
+                                "has_reviewed_answer_card": True,
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            payload = collect_family_priorities(
+                [diag_dir],
+                metadata_audit_path=metadata_path,
+            )
+
+        family = payload["families"][0]
+        self.assertEqual(family["expected_guide_family"], "GD-920|GD-921|GD-922")
+        self.assertEqual(family["expected_guide_ids"], ["GD-920", "GD-921", "GD-922"])
+        self.assertEqual(family["ranking_drift_rows"], 1)
+        self.assertEqual(family["non_expected_owner_cited_rows"], 1)
+        self.assertEqual(family["recurring_distractor_ids"], ["GD-923"])
+        self.assertNotIn("GD-SHOULD-NOT-LEAK", family["expected_guide_ids"])
+
 
 if __name__ == "__main__":
     unittest.main()

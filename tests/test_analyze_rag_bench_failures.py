@@ -1748,6 +1748,58 @@ waves:
         )
         self.assertEqual(summary["ui_surface_counts"], {"strong_evidence": 1})
 
+    def test_malformed_category_labels_are_sanitized_in_summary_and_markdown(self):
+        root = self.make_tmpdir()
+        report_path = root / "report.md"
+        artifact = root / "sample.json"
+        artifact.write_text(
+            json.dumps(
+                {
+                    "results": [
+                        {
+                            "index": 1,
+                            "question": "Should I answer this?",
+                            "prompt_metadata": {"expected_guide_ids": "GD-456"},
+                            "decision_path": "rag",
+                            "generation_time": 1.0,
+                            "source_mode": "retrieved",
+                            "cited_guide_ids": [],
+                            "retrieval_metadata": {
+                                "top_retrieved_guide_ids": ["GD-456"],
+                            },
+                            "response_text": "I cannot confidently answer this.",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rows = build_rows([artifact])
+        rows[0]["suspected_failure_bucket"] = "Ranking|Miss\nInjected"
+        rows[0]["app_gate_status"] = "Abstain / Clarify"
+        rows[0]["app_acceptance_status"] = "Strong`Supported"
+        rows[0]["app_acceptance_root_cause"] = "Gate|Policy\nExtra"
+        rows[0]["safety_surface_status"] = "Not Safety\tCritical"
+        rows[0]["ui_surface_bucket"] = "Emergency/First"
+        summary = summarize(rows)
+        write_markdown(rows, summary, report_path)
+
+        self.assertEqual(summary["by_bucket"], {"ranking_miss_injected": 1})
+        self.assertEqual(summary["app_gate_counts"], {"abstain_clarify": 1})
+        self.assertEqual(summary["app_acceptance_counts"], {"strong_supported": 1})
+        self.assertEqual(
+            summary["app_acceptance_root_cause_counts"],
+            {"gate_policy_extra": 1},
+        )
+        self.assertEqual(summary["safety_surface_counts"], {"not_safety_critical": 1})
+        self.assertEqual(summary["ui_surface_counts"], {"emergency_first": 1})
+        report = report_path.read_text(encoding="utf-8")
+        self.assertIn("`ranking_miss_injected`: 1", report)
+        self.assertIn("`gate_policy_extra`: 1", report)
+        self.assertNotIn("Gate|Policy", report)
+        self.assertNotIn("Strong`Supported", report)
+
     def test_analyze_reports_app_gate_counts_and_writes_csv_columns(self):
         root = self.make_tmpdir()
         artifact = root / "sample.json"

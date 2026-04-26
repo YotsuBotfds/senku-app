@@ -385,6 +385,12 @@ def validate_prompt_records(
                 and not isinstance(value, (str, bytes, bytearray))
                 and bool(value)
             )
+            empty_structured_primary = (
+                normalized_key in PRIMARY_EXPECTED_GUIDE_KEYS
+                and isinstance(value, (Mapping, Sequence))
+                and not isinstance(value, (str, bytes, bytearray))
+                and not bool(value)
+            )
             if malformed:
                 issues.append(
                     issue(
@@ -398,7 +404,7 @@ def validate_prompt_records(
                         field=str(key),
                     )
                 )
-            if nonempty and not ids:
+            if (nonempty or empty_structured_primary) and not ids:
                 issues.append(
                     issue(
                         "error",

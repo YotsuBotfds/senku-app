@@ -349,6 +349,38 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md", markdown)
         self.assertNotIn("`?? notes", markdown)
 
+    def test_git_summary_treats_planner_handoff_pattern_as_benign(self):
+        root = self.make_tmpdir()
+
+        def runner(command, cwd):
+            joined = " ".join(command)
+            if joined == "git rev-parse --short HEAD":
+                return subprocess.CompletedProcess(command, 0, "abc1234\n", "")
+            if joined == "git log -5 --oneline --decorate":
+                return subprocess.CompletedProcess(command, 0, "abc1234 Latest change\n", "")
+            if joined == "git status --short":
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    "\n".join(
+                        [
+                            "?? notes\\PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md",
+                            "?? notes\\PLANNER_HANDOFF_future_local.md",
+                            "?? notes\\OTHER_HANDOFF.md",
+                        ]
+                    )
+                    + "\n",
+                    "",
+                )
+            return subprocess.CompletedProcess(command, 1, "", "unexpected")
+
+        markdown = "\n".join(collect_git_summary(root, runner))
+
+        self.assertIn("PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md", markdown)
+        self.assertIn("PLANNER_HANDOFF_future_local.md", markdown)
+        self.assertIn("`?? notes/OTHER_HANDOFF.md`", markdown)
+        self.assertNotIn("`?? notes/PLANNER_HANDOFF", markdown)
+
     def test_artifact_summary_excludes_log_body_content(self):
         root = self.make_tmpdir()
         log = root / "secret_progress.log"

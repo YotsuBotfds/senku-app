@@ -195,6 +195,33 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertEqual(summary["primary_family_deltas"]["hit_at_1"]["regressed"], 1)
         self.assertEqual(summary["mean_owner_family_concentration_delta"], -0.3334)
 
+    def test_compare_row_sanitizes_malformed_text_fields_without_changing_scores(self):
+        row = compare_retrieval_row(
+            artifact_path="guide_wave_fc_20260424_093011.json",
+            prompt_index=1,
+            prompt_id={"id": "P-1", "variant": ["a", math.nan]},
+            section=["triage", "overview"],
+            question={"markdown": "First\r\nSecond\x00"},
+            expected_topic={"topic": "abdominal_trauma_emergency"},
+            expected_guide_ids=["GD-380"],
+            baseline_top_guide_ids=["GD-111", "GD-380"],
+            shadow_top_guide_ids=["GD-380", "GD-111"],
+        )
+        summary = aggregate_comparison_rows([row])
+
+        self.assertEqual(row["prompt_id"], '{"id":"P-1","variant":["a",null]}')
+        self.assertEqual(row["section"], '["triage","overview"]')
+        self.assertEqual(row["question"], '{"markdown":"First\\nSecond"}')
+        self.assertEqual(row["expected_topic"], '{"topic":"abdominal_trauma_emergency"}')
+        self.assertFalse(row["baseline_hit_at_1"])
+        self.assertTrue(row["shadow_hit_at_1"])
+        self.assertEqual(row["baseline_expected_rank"], 2)
+        self.assertEqual(row["shadow_expected_rank"], 1)
+        self.assertEqual(
+            summary["expected_topics"],
+            {'{"topic":"abdominal_trauma_emergency"}': 1},
+        )
+
     def test_hit_1_3_k_delta_aggregation(self):
         rows = [
             compare_retrieval_row(

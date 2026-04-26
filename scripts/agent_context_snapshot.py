@@ -30,6 +30,7 @@ PROTECTED_BENIGN_UNTRACKED = {
     "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
     "notes/PLANNER_HANDOFF_2026-04-25_POST_CLI_TERMINATION.md",
     "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md",
     "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
 }
 
@@ -75,11 +76,17 @@ def _split_actionable_status_lines(
         status = line[:2]
         path = (line[3:].strip() if len(line) > 3 else "").replace("\\", "/")
         normalized_line = f"{status} {path}".rstrip()
-        if status == "??" and path in benign_paths:
+        if status == "??" and _is_benign_untracked_path(path, benign_paths):
             benign.append(normalized_line)
         else:
             actionable.append(normalized_line)
     return actionable, benign
+
+
+def _is_benign_untracked_path(path: str, benign_paths: set[str]) -> bool:
+    if path in benign_paths:
+        return True
+    return path.startswith("notes/PLANNER_HANDOFF") and path.endswith(".md")
 
 
 def collect_git_summary(repo_root: Path, runner: CommandRunner = run_command) -> list[str]:

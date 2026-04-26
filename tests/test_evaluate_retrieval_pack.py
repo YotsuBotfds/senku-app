@@ -444,6 +444,60 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
         # validator parses as an explicit expectation field.
         self.assertIn("| # | id | expected | primary_guide_ids | top retrieved | hit@1", markdown)
 
+    def test_render_markdown_sanitizes_row_breaking_cell_text(self):
+        payload = {
+            "prompt_pack": "pack.jsonl",
+            "generated_at": "2026-04-26T10:00:00",
+            "config": {
+                "top_k": 1,
+                "category": None,
+                "embed_url": None,
+                "retrieval_profile_override": None,
+            },
+            "summary": {
+                "total_prompts": 1,
+                "expected_owner_rows": 1,
+                "primary_expected_rows": 0,
+                "retrieval_error_rows": 1,
+                "expected_hit_at_1": {"text": "0/1 (0.0%)"},
+                "expected_hit_at_3": {"text": "0/1 (0.0%)"},
+                "expected_hit_at_k": {"text": "0/1 (0.0%)"},
+                "expected_owner_best_rank": "unknown",
+                "primary_hit_at_1": {"text": "unknown"},
+                "primary_hit_at_3": {"text": "unknown"},
+                "primary_hit_at_k": {"text": "unknown"},
+                "primary_best_rank": "unknown",
+                "simple_owner_share": {"text": "0/0 (0.0%)"},
+                "retrieval_latency_ms": {"mean": None, "p95": None},
+                "top_distractor_guide_ids": [],
+            },
+            "rows": [
+                {
+                    "prompt_index": 1,
+                    "prompt_id": "P-1\r\n| injected |",
+                    "expected_guide_ids": ["GD-120"],
+                    "primary_expected_guide_ids": [],
+                    "top_retrieved_guide_ids": [],
+                    "expected_hit_at_1": False,
+                    "expected_hit_at_3": False,
+                    "expected_hit_at_k": False,
+                    "owner_share": 0.0,
+                    "error": "RuntimeError: bad\r\n| row |",
+                }
+            ],
+        }
+
+        markdown = self.module.render_markdown(payload)
+        row_lines = [
+            line
+            for line in markdown.splitlines()
+            if line.startswith("| 1 |") or "injected" in line or "RuntimeError" in line
+        ]
+
+        self.assertEqual(len(row_lines), 1)
+        self.assertIn("P-1  \\| injected \\|", row_lines[0])
+        self.assertIn("RuntimeError: bad  \\| row \\|", row_lines[0])
+
     def test_evaluate_pack_deduplicates_expected_and_primary_ids(self):
         calls = []
 
