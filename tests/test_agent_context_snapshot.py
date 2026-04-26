@@ -99,6 +99,54 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("run.json", markdown)
         self.assertLessEqual(len(markdown.splitlines()), 80)
 
+    def test_run_manifest_summary_includes_malformed_and_missing_artifact_signals(self):
+        root = self.make_tmpdir()
+        dispatch = root / "notes" / "dispatch"
+        dispatch.mkdir(parents=True)
+
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text(
+            "\n".join(
+                [
+                    json.dumps(
+                        {
+                            "generated_at": "2026-04-26T08:22:43+00:00",
+                            "task": "R8",
+                            "lane": "tooling",
+                            "label": "missing-artifacts",
+                            "commit": "abc1234",
+                            "artifact_path_count": 3,
+                            "artifact_path_missing_count": 1,
+                            "artifact_path_missing": ["artifacts/bench/missing.json"],
+                            "artifact_path_truncated": True,
+                            "validation": ["tests passed"],
+                        }
+                    ),
+                    "{malformed line",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        bench = root / "artifacts" / "bench"
+        bench.mkdir(parents=True)
+
+        markdown = build_snapshot(
+            root,
+            dispatch_dir=dispatch,
+            manifest_path=manifest,
+            bench_dir=bench,
+            max_lines=120,
+            runner=fake_runner,
+        )
+
+        self.assertIn("Malformed lines skipped: 1", markdown)
+        self.assertIn("paths=3; missing=1", markdown)
+        self.assertIn("missing_paths=artifacts/bench/missing.json", markdown)
+        self.assertIn("Benign untracked", markdown)
+        self.assertIn("PLANNER_HANDOFF_2026-04-25_FAST_MODE.md", markdown)
+
     def test_git_summary_treats_only_protected_handoffs_as_actionable_clean(self):
         root = self.make_tmpdir()
 

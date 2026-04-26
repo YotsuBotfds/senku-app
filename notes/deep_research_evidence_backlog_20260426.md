@@ -509,6 +509,9 @@ Action:
   expectations.
 - Contextual shadow comparison now aligns primary expected owners to the
   broader expected-owner set and dedupes them before primary-hit scoring.
+- Agent startup snapshots now have regression coverage proving malformed
+  run-manifest lines, missing artifact health, and benign protected handoff
+  notes surface together in the first-page context.
 
 Validation:
 
@@ -545,6 +548,8 @@ Validation:
   normalization and generated Markdown reparse behavior for blank primary rows.
 - `tests.test_compare_contextual_shadow_retrieval` covers primary-owner subset
   alignment in both expectation extraction and row comparison.
+- `tests.test_agent_context_snapshot` covers malformed manifest and missing
+  artifact signals alongside benign protected handoff context.
 
 Deferred unless evidenced:
 
