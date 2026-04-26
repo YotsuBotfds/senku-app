@@ -251,7 +251,7 @@ class LiveQueueMonitorTests(unittest.TestCase):
                 return module.CommandResult(
                     stdout="worktree C:/repo\nHEAD abc1234\nbranch refs/heads/main\n"
                 )
-            if args[:2] == ["-C", "C:/repo"]:
+            if args[:4] == ["-C", "C:/repo", "status", "--short"]:
                 return module.CommandResult(stdout="")
             if args[:2] == ["branch", "--show-current"]:
                 return module.CommandResult(stdout="main\n")
@@ -283,6 +283,56 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertIn("Polling every <code>20s</code>", rendered)
         self.assertIn("Worker Lanes", rendered)
         self.assertIn("CP9 / RAG Queue", rendered)
+
+    def test_collect_monitor_data_surfaces_worker_lane_dirty_status_counts(self):
+        module = load_module()
+
+        def fake_git_runner(repo_root, args):
+            if args[:3] == ["status", "--short"]:
+                return module.CommandResult(stdout="")
+            if args[:3] == ["worktree", "list", "--porcelain"]:
+                return module.CommandResult(
+                    stdout="worktree C:/repo_worktrees/lane-a\nHEAD abc1234\nbranch refs/heads/worker/lane-a\n"
+                )
+            if args[:3] == ["branch", "--show-current"]:
+                return module.CommandResult(stdout="main\n")
+            if args[:3] == ["rev-parse", "--short", "HEAD"]:
+                return module.CommandResult(stdout="abc1234\n")
+            if args[:2] == ["rev-parse", "HEAD"]:
+                return module.CommandResult(stdout="abc1234def5678\n")
+            if args[:1] == ["-C"] and args[2:4] == ["status", "--short"]:
+                return module.CommandResult(stdout=" M scripts/monitor.py\n?? notes/new-note.md\n")
+            return module.CommandResult(stdout="")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "notes" / "dispatch").mkdir(parents=True)
+            (root / "artifacts" / "bench").mkdir(parents=True)
+            data = module.collect_monitor_data(
+                root,
+                git_runner=fake_git_runner,
+                now=lambda: "2026-04-25T12:34:56-05:00",
+            )
+
+        lane = data["worker_lanes"]["worktrees"][0]
+        self.assertEqual(lane["branch_short"], "worker/lane-a")
+        self.assertFalse(lane["dirty"]["clean"])
+        self.assertEqual(lane["dirty"]["changed"], 2)
+        self.assertEqual(
+            lane["dirty"]["status_counts"],
+            {"modified": 1, "untracked": 1},
+        )
+        self.assertEqual(lane["dirty"]["entry_details"][0]["status"], "modified")
+        self.assertEqual(lane["dirty"]["entry_details"][1]["status"], "untracked")
+
+    def test_render_html_page_formats_dirty_status_counts(self):
+        module = load_module()
+
+        rendered = module.render_html_page(refresh_seconds=20)
+
+        self.assertIn("const formatDirtySummary = (dirty) => {", rendered)
+        self.assertIn("return `${changedLabel} (${summaryParts.join(\", \")})`;", rendered)
+        self.assertIn("const dirty = formatDirtySummary(item.dirty);", rendered)
 
     def test_status_endpoint_returns_json_monitor_state(self):
         module = load_module()

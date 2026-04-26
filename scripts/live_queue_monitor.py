@@ -619,6 +619,37 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
         list.appendChild(item);
       }});
     }};
+    const formatDirtySummary = (dirty) => {{
+      if (!dirty || dirty.error) {{
+        return "dirty unknown";
+      }}
+      if (dirty.clean) {{
+        return "clean";
+      }}
+      const changed = Number(dirty.changed || 0);
+      const counts = dirty.status_counts || {{}};
+      const ordered = [
+        "modified",
+        "added",
+        "deleted",
+        "renamed",
+        "copied",
+        "unmerged",
+        "untracked",
+        "changed",
+      ];
+      const summaryParts = [];
+      for (const status of ordered) {{
+        if (counts[status]) {{
+          summaryParts.push(`${{counts[status]}} ${{status}}`);
+        }}
+      }}
+      const changedLabel = `${{changed}} changed`;
+      if (!summaryParts.length) {{
+        return changedLabel;
+      }}
+      return `${{changedLabel}} (${{summaryParts.join(", ")}})`;
+    }};
     const fillWorkerLanes = (values) => {{
       const list = el('worker-lanes');
       clear(list);
@@ -630,11 +661,7 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
         const li = document.createElement('li');
         const lane = item.lane || '(unleased)';
         const branch = item.branch_short || '(detached)';
-        const dirty = item.dirty && item.dirty.error
-          ? 'dirty unknown'
-          : item.dirty && item.dirty.clean
-            ? 'clean'
-            : `${{item.dirty && item.dirty.changed ? item.dirty.changed : 0}} changed`;
+        const dirty = formatDirtySummary(item.dirty);
         li.appendChild(code(lane));
         li.appendChild(document.createTextNode(` ${{branch}} - ${{dirty}} - ${{item.worktree || ''}}`));
         list.appendChild(li);

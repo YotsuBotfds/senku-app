@@ -491,6 +491,9 @@ Action:
 - Prompt expectation validation now fails explicit retrieval primary-owner
   fields that are blank or malformed, including Markdown `primary` aliases,
   instead of silently falling back to prompt-pack metadata.
+- Live queue monitor output now renders worker-lane dirty status counts
+  (`modified`, `untracked`, and related categories) from the structured worker
+  lane payload instead of only showing a raw changed count.
 
 Validation:
 
@@ -515,6 +518,8 @@ Validation:
   no-op behavior when no sibling test exists.
 - `tests.test_validate_prompt_expectations` covers blank and malformed Markdown
   primary-owner fields as validation failures.
+- `tests.test_live_queue_monitor` covers structured worker-lane dirty counts
+  flowing through monitor data and HTML rendering.
 
 Deferred unless evidenced:
 
