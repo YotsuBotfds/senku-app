@@ -15,6 +15,32 @@ def load_module():
 
 
 class FindGuideAuditHotspotsTests(unittest.TestCase):
+    def test_load_invariant_counts_skips_malformed_slug_rows(self):
+        module = load_module()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = module.Path(temp_dir) / "invariants.jsonl"
+            path.write_text(
+                "\n".join(
+                    [
+                        '{"slug": "alpha", "text": "valid"}',
+                        '{"slug": ""}',
+                        '{"slug": ["alpha"]}',
+                        '{"text": "missing slug"}',
+                        '["not", "an", "object"]',
+                        "{bad json",
+                        '{"slug": "alpha", "text": null}',
+                        '{"slug": "beta", "metadata": {"ok": true}}',
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            counts = module.load_invariant_counts(path)
+
+        self.assertEqual(counts, {"alpha": 2, "beta": 1})
+
     def test_bidirectional_pairs_collapse_into_one_hotspot(self):
         module = load_module()
         graph = {

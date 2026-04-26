@@ -176,6 +176,34 @@ class WorkerLaneStatusTests(unittest.TestCase):
         self.assertIn("worker/lane-a  next", rows[2])
         self.assertIn("C:/repo\\|worktrees/lane-a extra", rows[2])
 
+    def test_render_markdown_sanitizes_table_cell_control_characters(self):
+        markdown = worker_lane_status.render_markdown(
+            {
+                "repo_root": "C:/repo",
+                "lease_dir": "C:/repo/artifacts/runs/worker_lanes",
+                "leases": [{"lane": "lane-a"}],
+                "worktrees": [
+                    {
+                        "lane": "lane-a\x00\x1f\x7f",
+                        "branch_short": "worker/lane-a",
+                        "worktree": "C:/repo_worktrees/lane-a\x0bextra",
+                        "dirty": {"clean": True, "changed": 0},
+                    }
+                ],
+                "malformed_leases": [],
+                "orphan_leases": [],
+            }
+        )
+
+        rows = [line for line in markdown.splitlines() if line.startswith("|")]
+        self.assertEqual(len(rows), 3)
+        self.assertNotIn("\x00", rows[2])
+        self.assertNotIn("\x1f", rows[2])
+        self.assertNotIn("\x7f", rows[2])
+        self.assertNotIn("\x0b", rows[2])
+        self.assertIn("lane-a   ", rows[2])
+        self.assertIn("C:/repo_worktrees/lane-a extra", rows[2])
+
 
 if __name__ == "__main__":
     unittest.main()

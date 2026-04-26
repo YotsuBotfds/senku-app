@@ -116,6 +116,8 @@ def parse_porcelain_status(
         status = raw_line[:2]
         if status == "##":
             continue
+        if len(raw_line) < 4 or raw_line[2] != " ":
+            continue
         rest = raw_line[3:] if len(raw_line) > 3 else ""
         old_path: str | None = None
         path = rest
@@ -123,6 +125,8 @@ def parse_porcelain_status(
             old_path, path = rest.split(" -> ", 1)
             old_path = normalize_path(old_path)
         path = normalize_path(path)
+        if not path:
+            continue
         if status == "??" and path in PROTECTED_BENIGN_UNTRACKED:
             benign_untracked.append(path)
             continue

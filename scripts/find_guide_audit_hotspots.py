@@ -25,8 +25,16 @@ def load_invariant_counts(path: Path) -> Counter:
         for line in handle:
             if not line.strip():
                 continue
-            record = json.loads(line)
-            counts[record["slug"]] += 1
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(record, dict):
+                continue
+            slug = record.get("slug")
+            if not isinstance(slug, str) or not slug.strip():
+                continue
+            counts[slug] += 1
     return counts
 
 

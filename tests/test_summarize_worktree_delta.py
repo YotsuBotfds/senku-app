@@ -95,6 +95,22 @@ class SummarizeWorktreeDeltaTests(unittest.TestCase):
         self.assertEqual("scripts/tooling", summary["lanes"][0]["lane"])
         self.assertEqual("scripts/new_tool.py", summary["lanes"][0]["files"][0]["path"])
 
+    def test_skips_malformed_porcelain_lines_without_paths(self):
+        status = "\n".join(
+            [
+                " M",
+                "??",
+                "A scripts/missing_separator.py",
+                " M scripts/valid_tool.py",
+            ]
+        )
+
+        summary = summarize_worktree_delta(status_text=status)
+
+        self.assertEqual(1, summary["total_changed"])
+        self.assertEqual("scripts/tooling", summary["lanes"][0]["lane"])
+        self.assertEqual("scripts/valid_tool.py", summary["lanes"][0]["files"][0]["path"])
+
     def test_render_markdown_is_compact(self):
         summary = summarize_worktree_delta(status_text=" M scripts/new_tool.py\n")
 

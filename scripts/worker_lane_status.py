@@ -160,7 +160,9 @@ def parse_git_status_short(text: str) -> tuple[list[str], list[dict[str, str]], 
 
 
 def _markdown_table_cell(value: Any) -> str:
-    return str(value or "").replace("\r", " ").replace("\n", " ").replace("|", "\\|")
+    text = str(value or "")
+    text = "".join(" " if ord(char) < 32 or ord(char) == 127 else char for char in text)
+    return text.replace("|", "\\|")
 
 
 def _dirty_summary(path: Path, runner: CommandRunner) -> dict[str, Any]:

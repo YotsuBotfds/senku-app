@@ -551,6 +551,10 @@ Action:
   metadata validation treats collection-shaped required text fields as missing,
   and section-family shadow selection preserves path-shaped request semantics
   even when normalization collapses segments.
+- Hardened worker/status and hotspot helpers: guide-audit hotspot invariant
+  counts now skip malformed/non-object JSONL rows, worktree delta summaries skip
+  malformed porcelain status lines without paths, and worker-lane status tables
+  normalize non-printing ASCII controls before pipe escaping.
 
 Validation:
 
@@ -929,6 +933,10 @@ Validation:
   `tests.test_rag_experiment_lineage`, `tests.test_metadata_validation`, and
   `tests.test_export_section_family_shadow` cover the prompt/lineage/export
   hardening batch.
+- `tests.test_find_guide_audit_hotspots`,
+  `tests.test_summarize_worktree_delta`, and `tests.test_worker_lane_status`
+  cover malformed invariant rows, malformed porcelain status rows, and
+  control-character Markdown sanitation.
 
 Deferred unless evidenced:
 
