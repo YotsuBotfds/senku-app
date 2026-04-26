@@ -115,6 +115,17 @@ class ExportRagEvalDatasetTests(unittest.TestCase):
             ["GD-010", "GD-011", "GD-012"],
         )
 
+    def test_split_guide_ids_normalizes_mixed_whitespace_shapes(self):
+        self.assertEqual(
+            exporter.split_guide_ids(
+                {
+                    "primary": "GD-020\tGD-021\n none",
+                    "secondary": ["GD-022 GD-020", {"extra": "unknown\r\nGD-023"}],
+                }
+            ),
+            ["GD-020", "GD-021", "GD-022", "GD-023"],
+        )
+
     def test_diagnostics_metadata_normalizes_nested_guide_id_values(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             diagnostics = Path(tmpdir) / "diagnostics.json"

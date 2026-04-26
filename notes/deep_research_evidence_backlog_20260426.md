@@ -463,6 +463,9 @@ Action:
   nested/dict guide-id records now feed contextual-shadow comparisons and
   retrieval-pack evaluation, and prompt-expectation validation accepts a
   top-level JSON object that is itself a retrieval-eval row.
+- Hardened RAG eval dataset export guide-id parsing so mixed whitespace,
+  comma, and pipe-delimited diagnostic/retrieval artifact fields normalize
+  through the same de-duplicated guide-id path.
 
 Validation:
 
@@ -751,6 +754,8 @@ Validation:
   `tests.test_validate_prompt_expectations` cover the row-shape normalization
   batch for padded statuses, comma-delimited IDs, dict guide-id records, nested
   retrieval-pack records, and single-object retrieval eval JSON.
+- `tests.test_export_rag_eval_dataset` covers mixed whitespace guide-id
+  normalization across nested dict/list diagnostic metadata shapes.
 
 Deferred unless evidenced:
 

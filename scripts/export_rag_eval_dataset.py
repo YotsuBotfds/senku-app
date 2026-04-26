@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -76,7 +77,7 @@ def split_guide_ids(value: Any) -> list[str]:
         return []
     if isinstance(value, str):
         parts = []
-        for chunk in value.replace(",", GUIDE_JOINER).split(GUIDE_JOINER):
+        for chunk in re.split(r"[,\|\s]+", value):
             text = chunk.strip()
             if text and text.lower() not in UNKNOWN_VALUES:
                 parts.append(text)
