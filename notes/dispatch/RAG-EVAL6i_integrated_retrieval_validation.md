@@ -70,3 +70,23 @@ improved to:
 roof-leak support owners, but `GD-513` moved into top 8 at ranks 5-8. Prompt
 expectation validation against this retrieval artifact passed with 0 errors and
 0 warnings.
+
+## 2026-04-25 Cardiac-Logistics Owner Follow-Up
+
+After adding narrow `GD-601` source packaging plus a manifest owner hint for
+cardiac symptoms inside evacuation/animal/water/self-driving logistics, the
+retrieval-only proof
+`artifacts/bench/rag_eval_high_liability_compound_holdouts_20260425_cardiac_logistics_owner_retrieval_only.md`
+improved to:
+
+| metric | result |
+| --- | --- |
+| expected hit@1 | 8/14 |
+| expected hit@3 | 13/14 |
+| expected hit@8 | 14/14 |
+| expected owner best rank | 1.64 |
+| simple owner share | 63/112 |
+
+`RE6-EV-002` and `RE6-IC-004` now retrieve `GD-601` at rank 2. Prompt
+expectation validation against this retrieval artifact passed with 0 errors and
+0 warnings.

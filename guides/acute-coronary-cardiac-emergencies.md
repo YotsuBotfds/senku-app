@@ -27,9 +27,17 @@ aliases:
   - stroke and chest pain
   - face droop chest pain
   - slurred speech chest pressure
+  - chest pain going into left arm
+  - chest pressure arm tingling
+  - chest pressure during evacuation
+  - chest pain during evacuation
+  - chest symptoms do not drive yourself
+  - heart attack before animal logistics
 routing_cues:
   - Use for chest pressure or heaviness, jaw or arm pain, cold sweat, shortness of breath, nausea with dread, exertional chest tightness, faintness, or suspected heart attack/acute coronary syndrome.
   - Use with first-aid stroke guidance when cardiac signs co-occur with face droop, one-sided weakness or numbness, slurred speech, sudden confusion, transient focal deficits, collapse, or possible TIA.
+  - Use when chest pain, chest pressure, left-arm symptoms, jaw pain, sweating, shortness of breath, or suspected heart attack appears inside evacuation, storm, animal, water, road, or property logistics; human cardiac emergency comes first.
+  - Use when the person with chest symptoms wants to drive themself; route to emergency help and safer transport planning before livestock, route, water, or repair tasks.
 citations_required: true
 applicability: >
   Use for acute coronary syndrome, heart attack, cardiac emergency recognition,

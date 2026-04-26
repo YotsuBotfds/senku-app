@@ -3,123 +3,430 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Senku RAG Coverage Map - 2026-04-25</title>
+  <title>Senku Current Coverage - 2026-04-25</title>
   <style>
     :root {
       color-scheme: light;
-      --ink: #17202d;
-      --muted: #617086;
-      --line: #d9e2e9;
-      --bg: #f4f7f6;
+      --ink: #17212f;
+      --muted: #607087;
+      --line: #d8e2e8;
+      --bg: #f5f7f7;
       --panel: #ffffff;
-      --blue: #2d6f96;
-      --green: #2f7a4f;
-      --teal: #1f8175;
-      --amber: #b86b1f;
-      --red: #b5453f;
-      --violet: #655aa0;
-      --shadow: 0 14px 32px rgba(26, 39, 56, .10);
+      --blue: #286f99;
+      --green: #2f7b57;
+      --teal: #218176;
+      --amber: #b76b20;
+      --red: #b4473f;
+      --violet: #665aa0;
+      --shadow: 0 14px 30px rgba(28, 42, 58, .10);
       --radius: 8px;
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
       color: var(--ink);
       background:
-        linear-gradient(180deg, rgba(45, 111, 150, .12), rgba(244, 247, 246, 0) 340px),
+        linear-gradient(180deg, rgba(40, 111, 153, .13), rgba(245, 247, 247, 0) 330px),
         var(--bg);
       line-height: 1.5;
     }
-    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
     header { padding: 34px 0 20px; }
+
     .eyebrow {
-      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-      color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
     }
-    .dot { width: 8px; height: 8px; border-radius: 99px; background: var(--teal); }
-    h1 { margin: 10px 0 8px; max-width: 940px; font-size: clamp(32px, 5vw, 58px); line-height: 1; letter-spacing: 0; }
-    .lede { margin: 0; max-width: 940px; color: #334257; font-size: clamp(16px, 2vw, 20px); }
-    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-    .chip {
-      display: inline-flex; align-items: center; min-height: 30px; gap: 7px;
-      border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px;
-      background: rgba(255,255,255,.82); color: #334257; font-size: 12px; font-weight: 700;
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--teal);
     }
+
+    h1 {
+      max-width: 980px;
+      margin: 10px 0 8px;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    p { margin: 0; }
+
+    code {
+      font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: .96em;
+    }
+
     main { padding-bottom: 42px; }
     section { margin-top: 22px; }
-    h2 { margin: 0 0 12px; font-size: 20px; letter-spacing: 0; }
-    h3 { margin: 0 0 6px; font-size: 15px; letter-spacing: 0; }
-    p { margin: 0; }
-    code { font-family: Consolas, "Cascadia Mono", monospace; font-size: .96em; }
+
+    .lede {
+      max-width: 970px;
+      margin: 0;
+      color: #334257;
+      font-size: clamp(16px, 2vw, 20px);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      gap: 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: rgba(255, 255, 255, .84);
+      color: #334257;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .grid { display: grid; gap: 14px; }
     .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .metric, .panel, .card, .gap, .slice {
-      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+
+    .metric,
+    .panel,
+    .card,
+    .tile,
+    .slice,
+    .gap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-    .metric { padding: 16px; min-height: 134px; }
-    .label { color: var(--muted); font-size: 13px; font-weight: 700; }
-    .value { margin: 4px 0 8px; font-size: clamp(30px, 4vw, 44px); line-height: 1; font-weight: 850; }
-    .metric p, .card p, .gap p, .slice p, .note p, td { color: #3d4b60; font-size: 13px; }
-    .bar { height: 9px; margin: 12px 0 8px; background: #e6edf2; border-radius: 999px; overflow: hidden; }
-    .fill { height: 100%; width: var(--w); background: var(--c); border-radius: inherit; }
-    .two-col { display: grid; grid-template-columns: 1.35fr .65fr; gap: 14px; align-items: start; }
+
+    .metric {
+      min-height: 134px;
+      padding: 16px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .value {
+      margin: 4px 0 8px;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .metric p,
+    .card p,
+    .tile p,
+    .slice p,
+    .gap p,
+    .note p,
+    td {
+      color: #3e4c61;
+      font-size: 13px;
+    }
+
+    .bar {
+      height: 9px;
+      margin: 12px 0 8px;
+      overflow: hidden;
+      background: #e6edf2;
+      border-radius: 999px;
+    }
+
+    .fill {
+      width: var(--w);
+      height: 100%;
+      background: var(--c);
+      border-radius: inherit;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.34fr .66fr;
+      gap: 14px;
+      align-items: start;
+    }
+
     .panel { padding: 16px; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
     button {
-      appearance: none; border: 1px solid var(--line); border-radius: 6px; background: #fff;
-      color: #27374a; cursor: pointer; font: inherit; font-size: 13px; font-weight: 750; padding: 7px 10px;
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: #27374a;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 10px;
     }
-    button[aria-pressed="true"] { border-color: rgba(31,129,117,.55); background: rgba(31,129,117,.10); color: #135d54; }
+
+    button[aria-pressed="true"] {
+      border-color: rgba(33, 129, 118, .55);
+      background: rgba(33, 129, 118, .10);
+      color: #135d54;
+    }
+
     .cards { display: grid; gap: 10px; }
-    .card { border-left: 5px solid var(--status); padding: 12px; }
-    .card-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
-    .name { font-size: 17px; font-weight: 850; overflow-wrap: anywhere; }
-    .small { color: var(--muted); font-size: 12px; }
+
+    .card {
+      border-left: 5px solid var(--status);
+      padding: 12px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .name {
+      font-size: 17px;
+      font-weight: 850;
+      overflow-wrap: anywhere;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .badge {
-      display: inline-flex; align-items: center; justify-content: center; min-height: 24px;
-      border-radius: 999px; padding: 4px 9px; color: #fff; background: var(--status);
-      font-size: 12px; font-weight: 850; white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      color: #fff;
+      background: var(--status);
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
     }
-    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 10px; }
-    .meta span { border-radius: 6px; background: #eef3f6; color: #425169; padding: 3px 7px; font-size: 12px; font-weight: 700; }
-    .mini-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-    .mini { min-height: 62px; border-radius: 6px; background: #f7f9fb; padding: 8px; }
-    .mini strong { display: block; margin-bottom: 5px; font-size: 17px; line-height: 1; }
-    .mini span { color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 10px;
+    }
+
+    .meta span {
+      border-radius: 6px;
+      background: #eef3f6;
+      color: #425169;
+      padding: 3px 7px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .mini {
+      min-height: 62px;
+      border-radius: 6px;
+      background: #f7f9fb;
+      padding: 8px;
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .mini span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
     .stack { display: grid; gap: 10px; }
-    .note { border-left: 4px solid var(--blue); border-radius: 6px; background: #f7fafc; padding: 11px 12px; }
-    .slice-grid, .gap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .slice, .gap { padding: 13px; }
-    .tag {
-      display: inline-flex; margin-bottom: 9px; border-radius: 999px; padding: 3px 8px;
-      background: #edf4f7; color: #35576b; font-size: 12px; font-weight: 850;
+
+    .note {
+      border-left: 4px solid var(--blue);
+      border-radius: 6px;
+      background: #f7fafc;
+      padding: 11px 12px;
     }
-    .timeline { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-    .step { position: relative; min-height: 94px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: #fff; padding: 10px; }
-    .step::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--step); }
-    .step strong { display: block; margin-bottom: 5px; font-size: 13px; }
-    .step span { color: var(--muted); font-size: 12px; font-weight: 700; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 9px 7px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-    th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
-    .num { text-align: right; font-variant-numeric: tabular-nums; }
-    footer { padding: 16px 0 34px; color: var(--muted); font-size: 12px; }
+
+    .tile-grid,
+    .slice-grid,
+    .gap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tile,
+    .slice,
+    .gap {
+      padding: 13px;
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-bottom: 9px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #edf4f7;
+      color: #35576b;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 96px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .step::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      background: var(--step);
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 9px 7px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    footer {
+      padding: 16px 0 34px;
+      color: var(--muted);
+      font-size: 12px;
+    }
 
     @media (max-width: 920px) {
-      .metrics, .slice-grid, .gap-grid, .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metrics,
+      .tile-grid,
+      .slice-grid,
+      .gap-grid,
+      .timeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .two-col { grid-template-columns: 1fr; }
     }
+
     @media (max-width: 640px) {
       .wrap { width: min(100% - 20px, 1180px); }
       header { padding-top: 24px; }
-      .metrics, .slice-grid, .gap-grid, .timeline, .mini-grid { grid-template-columns: 1fr; }
+      .metrics,
+      .tile-grid,
+      .slice-grid,
+      .gap-grid,
+      .timeline,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
       .card-top { display: block; }
       .badge { margin-top: 8px; }
       .panel { padding: 12px; }
-      table { display: block; overflow-x: auto; white-space: nowrap; }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
     }
   </style>
 </head>
@@ -127,12 +434,12 @@
   <header>
     <div class="wrap">
       <div class="eyebrow"><span class="dot"></span> Senku RAG / guide coverage map <span>Offline snapshot: April 25, 2026</span></div>
-      <h1>Current RAG coverage and remaining guide work</h1>
-      <p class="lede">A static status page for the high-liability guide families, reviewed-card runtime coverage, validation artifacts, and dispatch/backlog posture that matter to the current RAG/guide lane.</p>
-      <div class="chips" aria-label="Primary sources">
-        <span class="chip">Latest behavior proof: <code>rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag</code></span>
-        <span class="chip">Latest family selector: <code>high_liability_family_priorities_20260425_1720_wound_support_cards</code></span>
-        <span class="chip">Holdout eval: <code>19 expected-supported / 2 accepted clarify</code></span>
+      <h1>Current RAG coverage, guide gaps, and next slices</h1>
+      <p class="lede">A self-contained status page for the current non-Android RAG baselines, reviewed-card guide coverage, high-liability family priorities, compound holdout progress, and Android exposure boundary.</p>
+      <div class="chips" aria-label="Primary baselines">
+        <span class="chip">FA/FB/FD/FE: <code>0</code> retrieval/ranking/generation/safety misses</span>
+        <span class="chip">Partial/router: <code>19</code> supported + <code>2</code> accepted clarify</span>
+        <span class="chip">EVAL6 compound retrieval: <code>14/14</code> expected owner top-k</span>
       </div>
     </div>
   </header>
@@ -145,27 +452,90 @@
           <div class="label">Guide corpus scanned</div>
           <div class="value">754</div>
           <div class="bar"><div class="fill" style="--w:100%; --c: var(--blue);"></div></div>
-          <p>Corpus marker scan and metadata audit agree on the current guide count.</p>
+          <p>Current guide count in metadata audit, marker scan, and RAG coverage tooling.</p>
+        </article>
+        <article class="metric">
+          <div class="label">Current runtime panel</div>
+          <div class="value">24</div>
+          <div class="bar"><div class="fill" style="--w:100%; --c: var(--green);"></div></div>
+          <p>FA/FB/FD/FE rows: 18 deterministic, 5 reviewed-card runtime, 1 accepted uncertain-fit.</p>
         </article>
         <article class="metric">
           <div class="label">High-liability guides</div>
           <div class="value">249</div>
           <div class="bar"><div class="fill" style="--w:33%; --c: var(--amber);"></div></div>
-          <p>61 critical and 188 high-liability guides are in the audited corpus.</p>
+          <p>Broad audit still shows 240 high-liability guides with at least one gap.</p>
         </article>
         <article class="metric">
-          <div class="label">Observed families ranked</div>
-          <div class="value">4</div>
-          <div class="bar"><div class="fill" style="--w:100%; --c: var(--green);"></div></div>
-          <p>Current FA/FB/FD/FE behavior panel rolls up to four high-liability families.</p>
-        </article>
-        <article class="metric">
-          <div class="label">Android pilot cards</div>
-          <div class="value">6</div>
-          <div class="bar"><div class="fill" style="--w:66%; --c: var(--violet);"></div></div>
-          <p>Bundled mobile pack has 6 pilot-reviewed cards, 116 clauses, and 19 sources; runtime stays off by default.</p>
+          <div class="label">Compound holdout rows</div>
+          <div class="value">14</div>
+          <div class="bar"><div class="fill" style="--w:100%; --c: var(--teal);"></div></div>
+          <p>EVAL6 integrated retrieval now hits at least one expected owner in top-8 for every row.</p>
         </article>
       </div>
+    </section>
+
+    <section class="two-col" aria-labelledby="baselines-heading">
+      <div class="panel">
+        <h2 id="baselines-heading">Current Non-Android Baselines</h2>
+        <div class="tile-grid">
+          <article class="tile">
+            <span class="tag">Behavior</span>
+            <h3>FA/FB/FD/FE reviewed-card panel</h3>
+            <p><code>rag_diagnostics_20260425_1708_runtime_card_id_filter</code> is the named baseline in the queue; <code>1714_post_wound_cards_runtime_panel</code> confirms the same clean bucket shape after wound support cards.</p>
+            <div class="mini-grid">
+              <div class="mini"><strong>18</strong><span>deterministic</span></div>
+              <div class="mini"><strong>5</strong><span>reviewed-card runtime</span></div>
+              <div class="mini"><strong>1</strong><span>uncertain accepted</span></div>
+              <div class="mini"><strong>0</strong><span>bad buckets</span></div>
+            </div>
+          </article>
+          <article class="tile">
+            <span class="tag">Holdout</span>
+            <h3>Partial/router pack closed</h3>
+            <p><code>rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code> supersedes earlier post-fixes, metadata-visible, and contextual-index waypoints.</p>
+            <div class="mini-grid">
+              <div class="mini"><strong>21</strong><span>rows</span></div>
+              <div class="mini"><strong>19</strong><span>expected supported</span></div>
+              <div class="mini"><strong>2</strong><span>accepted clarify</span></div>
+              <div class="mini"><strong>0</strong><span>misses</span></div>
+            </div>
+          </article>
+          <article class="tile">
+            <span class="tag">Compound</span>
+            <h3>EVAL6 integrated retrieval proof</h3>
+            <p>After newborn normalization, contaminated-well/food packaging, electrical/trauma packaging, and expectation cleanup, the first 14-row compound pack is retrieval-fair.</p>
+            <div class="mini-grid">
+              <div class="mini"><strong>7/14</strong><span>hit@1</span></div>
+              <div class="mini"><strong>10/14</strong><span>hit@3</span></div>
+              <div class="mini"><strong>14/14</strong><span>hit@8</span></div>
+              <div class="mini"><strong>2.79</strong><span>best rank</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <h2>Current Reading</h2>
+        <div class="stack">
+          <div class="note">
+            <h3>Queue is quiet</h3>
+            <p>No slices are currently in flight. RAG-S1 through RAG-S22, RAG-T12, RAG-EVAL partial/router cleanup, RAG-META/CARD, and policy/runbook waves are landed history unless a fresh regression reopens them.</p>
+          </div>
+          <div class="note" style="border-left-color: var(--green);">
+            <h3>Behavior is clean, not complete</h3>
+            <p>The active panels have no bad diagnostic buckets, but broad corpus metadata and reviewed-card coverage remain sparse outside observed families.</p>
+          </div>
+          <div class="note" style="border-left-color: var(--teal);">
+            <h3>Next signal is compound generation</h3>
+            <p>EVAL6 retrieval is now fair enough to graduate selected rows to generation/analyzer checks, with rank concentration still visible for electrical and evacuation rows.</p>
+          </div>
+          <div class="note" style="border-left-color: var(--violet);">
+            <h3>Android remains gated</h3>
+            <p>The six-card mobile pack is bundled and harnessed, but A14d keeps reviewed-card runtime developer/test-only and default off.</p>
+          </div>
+        </div>
+      </aside>
     </section>
 
     <section class="two-col" aria-labelledby="family-heading">
@@ -183,12 +553,12 @@
               <span class="badge">Needs 2 cards</span>
             </div>
             <div class="meta"><span>6 prompts</span><span>score 4</span><span>rank drift 0</span><span>frontmatter/card gaps 0/2</span></div>
-            <p>GD-859 now has a reviewed crisis card. GD-858 and GD-918 are boundary-support source sections, so the current selector keeps them visible as reviewed-card gaps without treating them as metadata churn.</p>
+            <p>GD-859 has a reviewed crisis card. GD-858 and GD-918 remain boundary-support reviewed-card gaps in the observed family selector; do not turn this into broad metadata churn.</p>
             <div class="mini-grid">
               <div class="mini"><strong>0/0/0/6</strong><span>card pass/gap/missing/skipped</span></div>
-              <div class="mini"><strong>1</strong><span>reviewed-card guide</span></div>
+              <div class="mini"><strong>0</strong><span>bad rows</span></div>
               <div class="mini"><strong>0</strong><span>frontmatter gaps</span></div>
-              <div class="mini"><strong>consider</strong><span>reviewed-card work</span></div>
+              <div class="mini"><strong>consider</strong><span>card work</span></div>
             </div>
           </article>
 
@@ -198,12 +568,12 @@
               <span class="badge">Monitor</span>
             </div>
             <div class="meta"><span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span></div>
-            <p>GD-235 and GD-622 support-card contracts closed the wound support gaps. Current action is regression monitoring, not another metadata/card-count pass.</p>
+            <p>GD-235 and GD-622 support-card contracts closed the wound support gaps. Current action is regression monitoring.</p>
             <div class="mini-grid">
               <div class="mini"><strong>1/0/0/5</strong><span>card pass/gap/missing/skipped</span></div>
-              <div class="mini"><strong>5</strong><span>reviewed-card guides</span></div>
-              <div class="mini"><strong>1</strong><span>accepted uncertain-fit row</span></div>
-              <div class="mini"><strong>0</strong><span>bad diagnostic buckets</span></div>
+              <div class="mini"><strong>0</strong><span>bad rows</span></div>
+              <div class="mini"><strong>0</strong><span>top-1 partial</span></div>
+              <div class="mini"><strong>monitor</strong><span>next action</span></div>
             </div>
           </article>
 
@@ -213,12 +583,12 @@
               <span class="badge">Monitor</span>
             </div>
             <div class="meta"><span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span></div>
-            <p>GD-601 acute coronary / stroke overlap coverage is in place. The family is passing in the observed panel and should stay out of mechanical closure work.</p>
+            <p>GD-601 acute coronary / stroke overlap card coverage is in place. The family is passing in the observed panel.</p>
             <div class="mini-grid">
               <div class="mini"><strong>0/0/0/6</strong><span>card pass/gap/missing/skipped</span></div>
-              <div class="mini"><strong>2</strong><span>reviewed-card guides</span></div>
+              <div class="mini"><strong>0</strong><span>bad rows</span></div>
               <div class="mini"><strong>FE</strong><span>deterministic wave</span></div>
-              <div class="mini"><strong>monitor</strong><span>regression only</span></div>
+              <div class="mini"><strong>monitor</strong><span>next action</span></div>
             </div>
           </article>
 
@@ -228,70 +598,100 @@
               <span class="badge">Monitor</span>
             </div>
             <div class="meta"><span>6 prompts</span><span>score 0</span><span>rank drift 0</span><span>frontmatter/card gaps 0/0</span></div>
-            <p>GD-301 toxicology support and GD-898 reviewed source-family alignment close the observed poisoning gap. FA #3 still exposes owner-rank drift in metrics, but no failure bucket remains.</p>
+            <p>GD-301 toxicology support and GD-898 poisoning alignment close the observed poisoning gap. FA still exposes some owner-rank drift, but no failure bucket remains.</p>
             <div class="mini-grid">
               <div class="mini"><strong>4/0/0/2</strong><span>card pass/gap/missing/skipped</span></div>
-              <div class="mini"><strong>3</strong><span>reviewed-card guides</span></div>
+              <div class="mini"><strong>0</strong><span>bad rows</span></div>
               <div class="mini"><strong>FA</strong><span>runtime/card wave</span></div>
-              <div class="mini"><strong>monitor</strong><span>observed family passing</span></div>
+              <div class="mini"><strong>monitor</strong><span>next action</span></div>
             </div>
           </article>
         </div>
       </div>
 
       <aside class="panel">
-        <h2>Current Reading</h2>
-        <div class="stack">
-          <div class="note">
-            <h3>Behavior panel is clean</h3>
-            <p>24 rows: 18 deterministic pass, 5 expected-supported reviewed-card runtime rows, and 1 accepted uncertain-fit row. Retrieval, ranking, generation, safety, and artifact misses are all 0.</p>
-          </div>
-          <div class="note" style="border-left-color: var(--teal);">
-            <h3>Owner retrieval is visible</h3>
-            <p>Expected-owner top-k is 24/24, cited is 23/24, and expected-owner best rank is 1.42. Rank concentration remains a signal even when reviewed-card rows pass.</p>
-          </div>
-          <div class="note" style="border-left-color: var(--green);">
-            <h3>Partial/router holdout is green</h3>
-            <p>The latest held-out pack has 19 expected-supported rows, 2 accepted abstain/clarify rows, and 0 retrieval, ranking, generation, safety, or artifact misses after the GD-397 expectation cleanup.</p>
-          </div>
-          <div class="note" style="border-left-color: var(--violet);">
-            <h3>Android remains gated</h3>
-            <p>The six-card runtime pack is bundled and proven through harnesses, but A14d keeps reviewed-card runtime developer/test-only and default off.</p>
-          </div>
-        </div>
+        <h2>Acceptance Surface</h2>
+        <table>
+          <thead><tr><th>Runtime-panel measure</th><th class="num">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Expected-owner hit@1</td><td class="num">21/24</td></tr>
+            <tr><td>Expected-owner hit@3</td><td class="num">22/24</td></tr>
+            <tr><td>Expected-owner hit@k</td><td class="num">24/24</td></tr>
+            <tr><td>Expected-owner cited</td><td class="num">23/24</td></tr>
+            <tr><td>Strong supported</td><td class="num">23</td></tr>
+            <tr><td>Uncertain-fit accepted</td><td class="num">1</td></tr>
+            <tr><td>Evidence nuggets supported</td><td class="num">19/19</td></tr>
+            <tr><td>Generated prompts</td><td class="num">0</td></tr>
+          </tbody>
+        </table>
       </aside>
+    </section>
+
+    <section aria-labelledby="eval6-heading">
+      <h2 id="eval6-heading">EVAL6 Compound Coverage</h2>
+      <div class="slice-grid">
+        <article class="slice">
+          <span class="tag">Sick child / newborn</span>
+          <h3>Normalization landed</h3>
+          <p>Newborn danger phrasing such as "not feeding well", "feels cold", and "harder to wake" now triggers the right retrieval lane. RE6-SC-002 moved from no owner in top-8 to hit@1; RE6-SC-003 moved to hit@3.</p>
+        </article>
+        <article class="slice">
+          <span class="tag">Water + food</span>
+          <h3>Packaging landed</h3>
+          <p>Contaminated-well, boiling-limit, clear-water-after-flood, children, stored-grain, and fuel-scarce food-safety language was added to the relevant guide surfaces. GD-378 is now expected support for flood-well rows.</p>
+        </article>
+        <article class="slice">
+          <span class="tag">Electrical / trauma</span>
+          <h3>Packaging partially helps</h3>
+          <p>GD-513 now appears in top-8 for wet electrical rows, and RE6-IC-001 moved to hit@1 through GD-049. Roof/repair owners still outrank GD-513, so electrical hazard concentration remains a next-slice candidate.</p>
+        </article>
+        <article class="slice">
+          <span class="tag">Livestock / evacuation</span>
+          <h3>Top-k is fair, rank is weak</h3>
+          <p>RE6-EV-002 and RE6-IC-004 hit expected owners only at rank 5 and rank 8. Route-family source packaging or owner hints may be needed before treating generation failures as model-only defects.</p>
+        </article>
+        <article class="slice">
+          <span class="tag">Expectations</span>
+          <h3>Cleanup landed</h3>
+          <p>RE6-SC-004 now treats GD-284 as primary; RE6-CW-001/004 include GD-378 support; RE6-IC-001 uses GD-049 as the spine primary and removes GD-297 from the row.</p>
+        </article>
+        <article class="slice">
+          <span class="tag">Integrated proof</span>
+          <h3>Retrieval gate is green</h3>
+          <p><code>rag_eval_high_liability_compound_holdouts_20260425_integrated_retrieval_only.md</code>: hit@1 7/14, hit@3 10/14, hit@8 14/14, simple owner share 48/112, validator warnings 0.</p>
+        </article>
+      </div>
     </section>
 
     <section aria-labelledby="validation-heading">
       <h2 id="validation-heading">Recent Validation And Artifacts</h2>
       <div class="slice-grid">
-        <article class="slice"><span class="tag">Runtime panel</span><h3>FA/FB/FD/FE post-wound proof</h3><p><code>rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel</code>: 24 prompt rows, 5 reviewed-card runtime answers, 19/19 evidence nuggets supported, 0 bad diagnostic buckets.</p></article>
+        <article class="slice"><span class="tag">Runtime panel</span><h3>FA/FB/FD/FE proof</h3><p><code>rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/report.md</code>: 24 rows, 5 reviewed-card runtime answers, 19/19 evidence nuggets supported, 0 bad diagnostic buckets.</p></article>
         <article class="slice"><span class="tag">Family selector</span><h3>Observed family closure</h3><p><code>high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>: dangerous activation remains 0/2; wound, stroke/cardiac, and poisoning are 0/0 regression-monitor families.</p></article>
         <article class="slice"><span class="tag">Metadata audit</span><h3>Broad audit remains sparse</h3><p><code>metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>: 754 guides scanned, 249 high-liability, 240 high-liability guides with at least one audit gap.</p></article>
-        <article class="slice"><span class="tag">Corpus markers</span><h3>Partial markers reduced</h3><p><code>corpus_marker_scan_20260425_1622_gd585_repair.md</code>: GD-585 repair dropped unresolved partials to 54 across 54 guides; 329 guides still have some marker class.</p></article>
-        <article class="slice"><span class="tag">Holdout eval</span><h3>Partial/router pack closed</h3><p><code>rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code>: expected-supported is 19/21, the other 2 rows are accepted clarify paths, and retrieval/ranking/generation misses are all 0.</p></article>
-        <article class="slice"><span class="tag">Tooling gates</span><h3>Future drift checks added</h3><p><code>rag_regression_gate.py</code>, touched-file <code>scan_mojibake.py</code>, and enriched <code>write_run_manifest.py</code> now make regression, encoding, and run-context checks cheaper for future queue work.</p></article>
-        <article class="slice"><span class="tag">Android</span><h3>Six-card pilot complete</h3><p>Android A11a-e plus A13/A14a-c prove the bundled six-card pilot path, forbidden-label guards, and pack parity. A14d explicitly defers product enablement.</p></article>
+        <article class="slice"><span class="tag">Corpus markers</span><h3>Partial markers reduced</h3><p><code>corpus_marker_scan_20260425_1738_gd064_gd066_repair.md</code>: unresolved partial markers are down to 52 in 52 guides; 330 guides still have some marker class.</p></article>
+        <article class="slice"><span class="tag">Holdout eval</span><h3>Partial/router pack closed</h3><p><code>rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code>: expected-supported is 19/21, the other 2 rows are accepted clarify paths, and behavior misses are 0.</p></article>
+        <article class="slice"><span class="tag">Tooling gates</span><h3>Future drift checks added</h3><p>The RAG tooling wave adds regression gates, touched-file mojibake checks, storage/retention reports, run manifests, retrieval-only eval, lineage, and compact context exports.</p></article>
       </div>
       <div class="timeline" aria-label="Recent coverage timeline">
-        <div class="step" style="--step: var(--blue);"><strong>RAG-META2-5</strong><span>Targeted metadata for dangerous activation, wound, poisoning, stroke/cardiac.</span></div>
-        <div class="step" style="--step: var(--green);"><strong>RAG-CARD1-4</strong><span>Reviewed-card contracts added for crisis, stroke/cardiac, poisoning, wound support.</span></div>
-        <div class="step" style="--step: var(--teal);"><strong>RAG-T12</strong><span>Analyzer evaluates actual reviewed-card runtime IDs.</span></div>
-        <div class="step" style="--step: var(--green);"><strong>Post-wound panel</strong><span>FA/FB/FD/FE reaches 0 bad diagnostic buckets.</span></div>
-        <div class="step" style="--step: var(--green);"><strong>RAG-EVAL2</strong><span>Held-out partial/router pack is green after owner packaging and GD-397 expectation cleanup.</span></div>
-        <div class="step" style="--step: var(--violet);"><strong>A14d</strong><span>Android reviewed-card runtime remains developer/test-only.</span></div>
+        <div class="step" style="--step: var(--blue);"><strong>RAG-META2-5</strong><span>Targeted metadata for observed dangerous activation, wound, poisoning, and stroke/cardiac families.</span></div>
+        <div class="step" style="--step: var(--green);"><strong>RAG-CARD1-4</strong><span>Reviewed-card contracts added for crisis, stroke/cardiac, poisoning, and wound support.</span></div>
+        <div class="step" style="--step: var(--teal);"><strong>RAG-T12</strong><span>Analyzer evaluates actual reviewed-card runtime IDs rather than every card in the family.</span></div>
+        <div class="step" style="--step: var(--green);"><strong>Post-wound panel</strong><span>FA/FB/FD/FE keeps retrieval/ranking/generation/safety misses at 0.</span></div>
+        <div class="step" style="--step: var(--amber);"><strong>RAG-EVAL6</strong><span>Compound retrieval gate is green, but top-rank concentration still exposes next-slice work.</span></div>
+        <div class="step" style="--step: var(--violet);"><strong>A14d</strong><span>Android reviewed-card runtime remains developer/test-only and default off.</span></div>
       </div>
     </section>
 
     <section aria-labelledby="gap-heading">
-      <h2 id="gap-heading">Known Gaps And Backlog</h2>
+      <h2 id="gap-heading">Weak Spots And Next Slices</h2>
       <div class="gap-grid">
-        <article class="gap"><span class="tag">Open</span><h3>Dangerous activation support cards</h3><p>GD-858 and GD-918 remain reviewed-card gaps in the observed family selector. Treat them as candidate card-contract work only if a behavior panel shows a real answer need.</p></article>
-        <article class="gap"><span class="tag">Monitor</span><h3>Partial/router retrieval</h3><p>RAG-EVAL2 now has 0 retrieval, ranking, generation, safety, and artifact misses. Keep it as a regression gate because it still stresses bridge-thin and unresolved-partial surfaces.</p></article>
-        <article class="gap"><span class="tag">Open</span><h3>Broad high-liability audit</h3><p>Corpus-wide metadata/card coverage remains sparse, but observed passing families should not receive routine churn just to reduce broad counters.</p></article>
-        <article class="gap"><span class="tag">Deferred</span><h3>Android product exposure</h3><p>Runtime is real and harnessed, yet A14d chooses Option A: keep it hidden/developer scoped until support language, layout, and product policy are proven together.</p></article>
-        <article class="gap"><span class="tag">Operations</span><h3>Release discipline</h3><p>RAG-OPS1, RAG-REL1, RAG-TRUST2, and RAG-PRIV1 define release gates, rollback, red-team checks, and privacy/artifact hygiene for future high-liability changes.</p></article>
-        <article class="gap"><span class="tag">Evaluation</span><h3>Compound scenarios</h3><p>RAG-PLAY1 adds multi-lane stress playbooks; use them before assuming clean single-family panels cover outage, contamination, evacuation, shelter, injury, cold, and water interactions.</p></article>
+        <article class="gap"><span class="tag">Next likely</span><h3>EVAL6 generation/analyzer pass</h3><p>Run the 14-row compound pack with reviewed-card runtime enabled where expected, then classify misses as lane collapse, owner rank, citation packaging, deterministic overreach, unsupported generated claim, or correct clarify/abstain.</p></article>
+        <article class="gap"><span class="tag">Targeted</span><h3>Wet electrical rank concentration</h3><p>RE6-SH-001 and RE6-SH-003 retrieve GD-513 only at top-k while roof/repair guides dominate ranks 1-4. A narrow owner hint or stronger electrical hazard packaging is the clean follow-up.</p></article>
+        <article class="gap"><span class="tag">Targeted</span><h3>Evacuation route-family rank</h3><p>RE6-EV-002 and RE6-IC-004 hit expected owners only at rank 5 or 8. Inspect route/storm/livestock packaging before judging generation output too harshly.</p></article>
+        <article class="gap"><span class="tag">Observed</span><h3>Dangerous activation support cards</h3><p>GD-858 and GD-918 remain reviewed-card gaps in the observed family selector. Act only if a behavior panel shows that the support surfaces need card contracts.</p></article>
+        <article class="gap"><span class="tag">Broad</span><h3>High-liability audit gaps</h3><p>240 high-liability guides still have some audit gap and 239 lack reviewed answer-card coverage. Use observed misses and held-out packs to prioritize, not raw counts alone.</p></article>
+        <article class="gap"><span class="tag">Separate lane</span><h3>Android product exposure</h3><p>The six-card pilot is packaged and tested, but product enablement remains explicitly closed behind A14d policy and should not be inferred from desktop RAG proofs.</p></article>
       </div>
     </section>
 
@@ -301,12 +701,13 @@
         <thead><tr><th>Measure</th><th class="num">Count</th><th>Interpretation</th></tr></thead>
         <tbody>
           <tr><td>Guides scanned</td><td class="num">754</td><td>Current corpus size in marker/audit tooling.</td></tr>
-          <tr><td>High-liability guides</td><td class="num">249</td><td>61 critical plus 188 high-liability guides.</td></tr>
+          <tr><td>High-liability guides</td><td class="num">249</td><td>Current broad audit surface.</td></tr>
           <tr><td>High-liability guides with audit gaps</td><td class="num">240</td><td>Broad coverage remains incomplete outside targeted observed families.</td></tr>
-          <tr><td>Missing reviewed answer-card metadata</td><td class="num">239</td><td>Audit count from the latest metadata scan; use observed behavior to prioritize.</td></tr>
-          <tr><td>Unresolved partial markers</td><td class="num">54</td><td>After GD-585 repair, down from 55.</td></tr>
-          <tr><td>Clean runtime-panel prompt rows</td><td class="num">24</td><td>FA/FB/FD/FE post-wound proof has 0 retrieval/ranking/generation/safety misses.</td></tr>
-          <tr><td>Holdout expected-owner top-k</td><td class="num">20/21</td><td>Latest partial-router cleanup has 19 expected-supported rows and 2 accepted clarify paths.</td></tr>
+          <tr><td>Missing reviewed answer-card coverage</td><td class="num">239</td><td>Audit count from the latest metadata scan; use behavior evidence to prioritize.</td></tr>
+          <tr><td>Unresolved partial markers</td><td class="num">52</td><td>After GD-064/GD-066 repair, down from 54 and 55 earlier in the day.</td></tr>
+          <tr><td>Runtime-panel clean rows</td><td class="num">24/24</td><td>FA/FB/FD/FE post-wound proof has 0 retrieval/ranking/generation/safety misses.</td></tr>
+          <tr><td>Partial/router accepted rows</td><td class="num">21/21</td><td>19 expected-supported plus 2 accepted clarify paths.</td></tr>
+          <tr><td>EVAL6 expected owner top-k</td><td class="num">14/14</td><td>Integrated retrieval validation after packaging and expectation updates.</td></tr>
           <tr><td>Android shipped pilot cards</td><td class="num">6</td><td>Bundled and tested, but developer/test-only and default off.</td></tr>
         </tbody>
       </table>
@@ -315,18 +716,23 @@
 
   <footer>
     <div class="wrap">
-      Sources used: <code>notes/AGENT_OPERATING_CONTEXT.md</code>, <code>notes/dispatch/README.md</code>, <code>notes/ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>, <code>artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/report.md</code>, <code>artifacts/bench/metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>, <code>artifacts/bench/corpus_marker_scan_20260425_1622_gd585_repair.md</code>, <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code>, and <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_retrieval_only.md</code>.
+      Sources used: <code>notes/dispatch/README.md</code>, <code>notes/CP9_ACTIVE_QUEUE.md</code>, <code>notes/dispatch/RAG-NEXT_current_backlog_triage_20260425.md</code>, <code>notes/dispatch/RAG-META*.md</code>, <code>notes/dispatch/RAG-EVAL6*.md</code>, <code>artifacts/bench/rag_diagnostics_20260425_1708_runtime_card_id_filter/report.md</code>, <code>artifacts/bench/rag_diagnostics_20260425_1714_post_wound_cards_runtime_panel/report.md</code>, <code>artifacts/bench/high_liability_family_priorities_20260425_1720_wound_support_cards.md</code>, <code>artifacts/bench/metadata_coverage_audit_20260425_1745_bridge_metadata_routing.md</code>, <code>artifacts/bench/corpus_marker_scan_20260425_1738_gd064_gd066_repair.md</code>, <code>artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md</code>, and <code>artifacts/bench/rag_eval_high_liability_compound_holdouts_20260425_integrated_retrieval_only.md</code>.
     </div>
   </footer>
 
   <script>
     const buttons = Array.from(document.querySelectorAll("[data-filter]"));
     const cards = Array.from(document.querySelectorAll(".card"));
+
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
         const filter = button.dataset.filter;
-        buttons.forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
-        cards.forEach((card) => { card.hidden = !(filter === "all" || card.dataset.status === filter); });
+        buttons.forEach((candidate) => {
+          candidate.setAttribute("aria-pressed", String(candidate === button));
+        });
+        cards.forEach((card) => {
+          card.hidden = !(filter === "all" || card.dataset.status === filter);
+        });
       });
     });
   </script>

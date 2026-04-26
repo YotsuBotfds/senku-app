@@ -250,6 +250,33 @@
           "nutrition"
         ]
       ]
+    },
+    {
+      "guide_id": "GD-601",
+      "branch": "cardiac_first_compound_logistics_owner",
+      "delta": -0.22,
+      "question_marker_groups": [
+        [
+          "chest pain",
+          "chest pressure",
+          "left arm",
+          "arm tingling",
+          "jaw pain",
+          "heart attack"
+        ],
+        [
+          "evacuation",
+          "flood",
+          "animals",
+          "livestock",
+          "drive themself",
+          "drive himself",
+          "drive herself",
+          "road",
+          "storm",
+          "water"
+        ]
+      ]
     }
   ]
 }

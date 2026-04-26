@@ -238,6 +238,12 @@ class QueryRoutingTests(unittest.TestCase):
                 {"guide_id": "GD-260", "guide_title": "Food Salvage & Shelf Life"},
                 -0.14,
             ),
+            (
+                "During storm evacuation, an adult has chest pressure, arm tingling, and wants to drive themself while we also handle animals and water.",
+                {"guide_id": "GD-601", "guide_title": "Acute Coronary Syndrome & Cardiac Emergencies"},
+                {"guide_id": "GD-695", "guide_title": "Storm Preparedness and Recovery"},
+                -0.22,
+            ),
         ]
 
         rule_by_guide = {
@@ -333,6 +339,7 @@ class QueryRoutingTests(unittest.TestCase):
             "GD-648",
             "GD-646",
             "GD-637",
+            "GD-601",
         ]
         rules = query._load_rag_owner_rerank_hints()
         self.assertEqual([rule["guide_id"] for rule in rules], expected_guide_ids)
@@ -1690,6 +1697,10 @@ class QueryRoutingTests(unittest.TestCase):
             ),
             (
                 "Is this a panic attack or heart attack if I have chest pressure and shortness of breath?",
+                "acute coronary cardiac emergencies chest pressure",
+            ),
+            (
+                "During storm evacuation, an adult has chest pressure, arm tingling, and wants to drive themself while we also handle animals and water.",
                 "acute coronary cardiac emergencies chest pressure",
             ),
             (
