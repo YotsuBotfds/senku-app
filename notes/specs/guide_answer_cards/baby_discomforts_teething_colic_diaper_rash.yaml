@@ -1,0 +1,132 @@
+card_id: baby_discomforts_teething_colic_diaper_rash
+guide_id: GD-916
+slug: baby-discomforts-teething-colic-diaper-rash
+title: "Baby Discomforts: Teething, Colic, Diaper Rash & Fussiness"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - Caregiver asks about routine infant teething, drooling, chewing, mild fussiness, colic-like evening crying, gas-like discomfort, diaper rash, or cradle cap.
+  - Baby is feeding, peeing, breathing normally, and engaging with caregivers, and no urgent red flags are present.
+  - Prompt asks what comfort measures, diaper-rash barrier care, cradle-cap care, or hydration checks are reasonable while monitoring for danger signs.
+required_first_actions:
+  - Screen for urgent red flags before routine soothing, teething, colic, diaper rash, or cradle-cap advice.
+  - Escalate urgently for fever in a newborn or any infant under 3 months, hard-to-wake behavior, poor feeding, limp or unusually quiet behavior, breathing trouble, seizure, dehydration signs, non-blanching rash, suspected injury or abuse, possible poisoning, foreign body, choking, allergic swelling, or persistent unusual crying.
+  - Keep the answer limited to routine infant discomfort support only when the baby is breathing normally, feeding, making wet diapers, and acting mostly normal.
+conditional_required_actions:
+  - trigger_terms:
+      - newborn
+      - under 3 months
+      - 2 months
+      - 1 month
+      - fever
+      - temperature
+      - hot
+    required_actions:
+      - If the baby may be under 3 months and has fever or abnormal temperature, do not treat this as teething or colic; use urgent newborn or infant evaluation framing.
+  - trigger_terms:
+      - choking
+      - swallowed
+      - foreign body
+      - poison
+      - medicine
+      - chemical
+      - swelling
+      - allergic
+      - lips
+      - tongue
+      - throat
+    required_actions:
+      - If poisoning, foreign body, choking, or allergic swelling is possible, leave routine discomfort care and use the appropriate emergency owner.
+first_actions:
+  - For teething, offer a clean chilled-not-frozen teething ring, cool damp washcloth, gentle gum rubbing with a clean finger, extra soothing, and age-appropriate chilled soft foods only if the baby is already eating solids.
+  - For colic-like crying in an otherwise well baby, check hunger, diaper, burping, temperature, hair tourniquet, tight clothing, reflux or gas discomfort, and illness or injury before using soothing measures.
+  - Use safe soothing such as holding, gentle rocking or walking, white noise, pacifier if accepted, burping, upright holding after feeds, gentle bicycle legs, clockwise tummy massage, and reduced stimulation.
+  - For diaper rash, change promptly, clean gently with warm water and soft cloth, pat dry, allow air time when possible, and apply a thick barrier layer such as petroleum jelly or zinc oxide.
+  - For cradle cap, wash with mild baby shampoo, soften thick scale with a little plain mineral oil or petroleum jelly, gently loosen flakes, avoid picking, and wash out oil buildup.
+  - Recheck hydration using wet diapers, moist mouth, tears, alertness, fontanelle, and feeding interest.
+urgent_red_flags:
+  - Fever in a newborn or any infant under 3 months.
+  - Hard to wake, limp, unusually quiet, floppy, weak, unusually stiff, or not responding normally.
+  - Poor feeding, weak sucking, refusing feeds, repeated vomiting, green vomit, blood in stool, black stool, swollen belly, or cannot maintain wet diapers.
+  - Trouble breathing, pauses in breathing, grunting, blue color, severe work of breathing, or rapid breathing with illness signs.
+  - Seizure or abnormal repeated jerking.
+  - Dehydration signs such as far fewer wet diapers, dark urine, dry mouth, no tears, sunken eyes, sunken soft spot, lethargy, or weak sucking.
+  - Purple, dark, bruise-like, or non-blanching rash, especially with fever or a baby who seems sick.
+  - Suspected injury, fall, rough handling, abuse, poisoning, foreign body, choking, or allergic swelling of the face, lips, tongue, throat, or neck.
+  - Persistent unusual crying that is intense, new, high-pitched, or very different from the baby's usual cry.
+  - Diaper rash with fever, pus, honey-colored crust, spreading redness, swelling, oozing, cracked skin, or rapidly worsening rash.
+  - Cradle cap or scalp rash that becomes very red, oozing, painful, swollen, smelly, or associated with fever.
+forbidden_advice:
+  - Do not reassure newborn fever, infant under 3 months fever, poor feeding, hard-to-wake behavior, limpness, breathing trouble, seizure, dehydration, non-blanching rash, injury or abuse concern, poisoning, foreign body, choking, allergic swelling, or persistent unusual crying as teething, colic, fussiness, or ordinary diaper rash.
+  - Do not let this card become the owner for newborn sepsis, neonatal danger signs, pediatric respiratory distress, poisoning, choking, anaphylaxis, abuse, or trauma.
+  - Do not recommend teething necklaces, amber beads, frozen items that injure gums, numbing gels with benzocaine or lidocaine unless clinician-directed, alcohol, herbal spirits, or pain medicine rubbed directly on gums.
+  - Do not advise powders that can be inhaled, talc, alcohol-based wipes, scrubbing, tight diapers, or home mixtures that sting or burn for diaper rash.
+  - Do not provide medication dosing, diagnosis, or emergency treatment protocols beyond the cited guide.
+do_not:
+  - Do not assume teething causes fever, vomiting, diarrhea, lethargy, poor feeding, breathing trouble, rash beyond mouth or chin irritation, or severe inconsolable crying.
+  - Do not call sudden very unusual crying simple colic without checking for hunger, pain, illness, injury, hair tourniquet, tight clothing, fever, infection, or abdominal warning signs.
+  - Do not keep trying home care when feeding, wet diapers, breathing, alertness, rash, or crying pattern is worsening.
+routine_boundary: >
+  Routine teething, colic, diaper-rash, cradle-cap, fussiness, and hydration
+  support is only appropriate after urgent red flags are absent and the baby is
+  feeding, peeing, breathing normally, and acting mostly normal. Newborn fever,
+  systemic illness signs, dehydration, respiratory distress, seizure, possible
+  poisoning/choking/allergic swelling, injury or abuse concern, non-blanching
+  rash, or persistent unusual crying are outside this card.
+acceptable_uncertain_fit: >
+  If the prompt sounds like routine discomfort but age, temperature, feeding,
+  wet diapers, breathing, alertness, rash appearance, injury/exposure, or crying
+  pattern is unclear, lead with the red-flag screen and ask focused questions.
+  If any red flag is already stated, escalate rather than giving routine
+  soothing as the main answer.
+clarifying_questions:
+  - How old is the baby, and is there any fever or abnormal temperature?
+  - Is the baby feeding normally, making usual wet diapers, and alert between naps?
+  - Is breathing normal, with no grunting, pauses, blue color, or severe work of breathing?
+  - Is the rash blanching, limited to the diaper area or scalp, and free of pus, spreading redness, fever, or swelling?
+  - Did the crying start suddenly or sound very different, and is there any chance of injury, choking, foreign body, poisoning, or allergic swelling?
+citation_ids:
+  - baby-discomforts-red-flags
+  - teething-routine-support
+  - colic-fussiness-checklist
+  - diaper-rash-cradle-cap-care
+  - hydration-checks-boundary
+source_sections:
+  - guide: GD-916
+    slug: baby-discomforts-teething-colic-diaper-rash
+    title: "Baby Discomforts: Teething, Colic, Diaper Rash & Fussiness"
+    sections:
+      - "#overview"
+      - "#teething"
+      - "#colic"
+      - "#diaper-rash"
+      - "#diaper-routine"
+      - "#cradle-cap"
+      - "#comfort"
+      - "#hydration"
+      - "#danger-signs"
+source_invariants:
+  - name: routine baby discomfort red flags remain first
+    guide: GD-916
+    must_include:
+      - Start with red flags before routine soothing.
+      - Fever in a newborn or any infant under 3 months
+      - Possible poisoning, foreign body, choking, or allergic swelling
+      - This guide is for routine infant discomfort only after those danger signs are not present.
+    must_not_match:
+      - "under 3 months[^\\n]{0,120}(teething|colic|routine|watch at home)"
+      - "non-blanching[^\\n]{0,120}(routine|reassure|ordinary)"
+  - name: teething and diaper rash negatives remain conservative
+    guide: GD-916
+    must_include:
+      - Teething can make a baby uncomfortable, but it should **not** cause severe illness.
+      - Numbing gels with benzocaine or lidocaine unless a clinician specifically told you to use them
+      - Powders that can be inhaled
+      - Rashes that keep worsening despite good diaper care need medical evaluation.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer card for GD-916 routine infant discomfort support only. It is
+  deliberately bounded away from newborn sepsis and pediatric emergency owners;
+  red flags must dominate before any teething, colic, diaper rash, cradle-cap,
+  or fussiness comfort advice.

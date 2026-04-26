@@ -35,6 +35,7 @@ aliases:
   - colicky baby
 icon: baby
 description: Practical caregiver guidance for teething, colic, diaper rash, cradle cap, fussiness, comfort measures, hydration checks, and danger signs that need urgent escalation.
+applicability: Routine infant discomfort support for teething, colic, gas-like fussiness, diaper rash, cradle cap, hydration checks, and comfort measures when emergency red flags have been screened first. Do not use as the owner for newborn sepsis, serious infection, poisoning, choking, allergic swelling, trauma, abuse, seizure, breathing distress, dehydration emergency, non-blanching rash, or an infant under 3 months with fever.
 routing_cues:
   - "baby won't stop crying colic teething or fussiness"
   - "baby crying drooling chewing teething discomfort pain"
@@ -48,6 +49,9 @@ routing_cues:
   - "diaper rash how to treat red sore bottom home remedy"
   - "teething pain what helps swollen gums baby chewing"
   - "colicky baby crying more than three hours evening"
+  - "routine baby discomfort after red flags excluded"
+  - "teething or colic support no fever feeding okay"
+  - "simple diaper rash barrier cream baby"
 related:
   - infant-child-care
   - childhood-development-milestones
@@ -72,6 +76,21 @@ custom_css: ''
 <section id="overview">
 
 ## Overview: When a Baby Is Crying, Drooling, or Hard to Soothe
+
+Start with red flags before routine soothing. Seek urgent medical care now if the baby has any of these:
+
+- Fever in a newborn or any infant under 3 months
+- Hard to wake, limp, unusually quiet, or not responding normally
+- Poor feeding, weak sucking, or cannot keep feeds down
+- Trouble breathing, pauses in breathing, grunting, blue color, or severe work of breathing
+- Seizure or abnormal repeated jerking
+- Signs of dehydration, such as far fewer wet diapers, very dry mouth, sunken eyes, sunken soft spot, or weak sucking
+- Purple, dark, bruise-like, or non-blanching rash, especially with fever or illness
+- Suspected injury, fall, rough handling, or abuse
+- Possible poisoning, foreign body, choking, or allergic swelling of the face, lips, tongue, throat, or neck
+- Persistent unusual crying that is intense, different from the baby's normal cry, or cannot be explained by hunger, diaper, tiredness, or ordinary discomfort
+
+This guide is for routine infant discomfort only after those danger signs are not present.
 
 Common infant discomforts are usually caused by normal development, skin irritation, gas, hunger, tiredness, or a mild viral illness. The most useful caregiver skill is not guessing one diagnosis right away, but checking the whole baby:
 
@@ -103,6 +122,7 @@ Key principle: **A baby who is uncomfortable but feeding, peeing, and acting mos
 - Diaper-flow routines, diaper-changing questions, toilet training, daytime accidents, bedwetting, or regression after dryness in older toddlers: <a href="../infant-child-care.html">Infant & Child Care (Birth to Age 5)</a>.
 - Delayed milestones, not walking or talking on schedule, developmental regression, or normal-vs-concerning development: <a href="../childhood-development-milestones.html">Childhood Development & Milestones</a>.
 - Child getting into hazards, climbing, reaching poisons or tools, or home childproofing: <a href="../child-safety-homestead-hazards.html">Child Safety, Childproofing & Homestead Hazards</a>.
+- Newborn fever, poor feeding, hard-to-wake behavior, breathing trouble, limpness, or possible sepsis: <a href="../infant-child-care.html">Infant & Child Care (Birth to Age 5)</a>, <a href="../postpartum-care-mother-infant.html">Postpartum Care: Mother & Infant</a>, or pediatric emergency guidance.
 :::
 
 </section>

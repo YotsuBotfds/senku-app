@@ -1,0 +1,90 @@
+card_id: acute_radiation_syndrome
+guide_id: GD-655
+slug: acute-radiation-syndrome
+title: "Acute Radiation Syndrome Clinical Management"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - Suspected radiation exposure, radioactive contamination, fallout contact, or acute radiation syndrome concern where the user needs immediate danger triage.
+  - Possible radiation exposure followed by vomiting within hours, altered mental status, seizures, bloody diarrhea, shock signs, or rapid deterioration.
+  - Questions asking what to do first after possible radioactive contamination of skin, hair, clothing, shoes, tools, or personal items.
+required_first_actions:
+  - Stop the exposure if it is safe to move; reduce time near the source and increase distance from it.
+  - Use shielding or barriers such as walls, vehicles, earth, or other dense materials while moving away or waiting for organized response.
+  - Remove outer clothing gently and contain it; do not shake, scrub, burn, or incinerate contaminated clothing.
+  - Wash exposed skin and hair gently with soap and lukewarm water; do not abrade the skin or scrub hard.
+  - Isolate contaminated clothing, shoes, towels, and tools in sealed or clearly contained bags away from people and food areas.
+  - Coordinate urgently with emergency medical services, radiation safety, poison center, public health/radiation authority, or incident command as available.
+first_actions:
+  - Treat vomiting within hours, altered mental status, seizures, bloody diarrhea, shock signs, or rapid deterioration after possible exposure as serious danger signs, not as routine stomach illness, panic, or harmless contamination.
+  - Keep potentially contaminated people and items from spreading contamination while preserving warmth, dignity, and airway/breathing/circulation priorities.
+  - Explain that potassium iodide is not a universal radiation antidote; it is only for radioactive iodine thyroid protection when officials or radiation experts identify that risk.
+  - If severe neurologic symptoms and rapid decline suggest likely lethal CNS syndrome after massive exposure, coordinate urgently while shifting the answer toward comfort, dignity, seizure relief, pain/anxiety relief, family presence, and palliative goals rather than cure.
+urgent_red_flags:
+  - Vomiting within hours of possible radiation exposure, especially repeated vomiting or very early onset.
+  - Altered mental status, confusion, delirium, loss of consciousness, or seizures after possible exposure.
+  - Bloody diarrhea, shock signs, collapse, respiratory distress, or rapid deterioration.
+  - Ongoing exposure risk, unknown source, contaminated clothing or objects, or possible spread of radioactive material to other people or clean areas.
+forbidden_advice:
+  - Do not reassure as safe, anxiety-only, food poisoning, or routine stomach illness when vomiting within hours, altered mental status, seizures, bloody diarrhea, shock, or rapid deterioration follows possible radiation exposure.
+  - Do not present potassium iodide as a universal radiation antidote or as treatment for whole-body ARS.
+  - Do not tell users to scrub skin hard, abrade skin, shake contaminated clothing, burn contaminated clothing, or incinerate contaminated clothing.
+  - Do not encode dose-estimation tables, KI dosing tables, chelation protocols, transfusion thresholds, antibiotic regimens, or scarce-resource allocation as answer steps for this card.
+do_not:
+  - Do not delay urgent expert, medical, radiation authority, or incident-command coordination in order to finish home decontamination.
+  - Do not use this card as a medication dosing, dosimetry, chelation, transfusion, antibiotic, or resource-allocation protocol.
+  - Do not promise recovery when rapid neurologic decline suggests likely lethal CNS syndrome.
+routine_boundary: >
+  Routine reassurance or simple hygiene advice is out of bounds when possible
+  radiation exposure is paired with early vomiting, neurologic symptoms, bloody
+  diarrhea, shock, rapid deterioration, ongoing exposure, or contamination spread.
+acceptable_uncertain_fit: >
+  If the source or dose is unknown but radiation exposure or contamination is
+  plausible, preserve exposure-stop, distance/shielding, gentle
+  decontamination, contaminated-item isolation, and urgent expert coordination
+  while asking clarifying questions.
+clarifying_questions:
+  - What happened, where is the suspected source, and is the person still near it?
+  - Is there vomiting within hours, confusion, seizures, bloody diarrhea, shock, trouble breathing, collapse, or rapid worsening?
+  - Are clothing, shoes, hair, skin, tools, or vehicles possibly contaminated?
+  - Have emergency services, radiation safety, public health/radiation authorities, poison center, or incident command been contacted?
+citation_ids:
+  - suspected-radiation-exposure-danger-triage
+  - exposure-decontamination
+  - ars-prodromal-danger-timing
+  - cns-palliative-boundary
+source_sections:
+  - guide: GD-655
+    slug: acute-radiation-syndrome
+    title: "Acute Radiation Syndrome Clinical Management"
+    sections:
+      - "#suspected-radiation-exposure-danger-triage"
+      - "#exposure-decontamination"
+      - "#ars-phases > Phase 1: Prodromal Phase (First Hours to 2 Days)"
+      - "#cns-syndrome"
+      - "#palliative-radiation-casualties"
+source_invariants:
+  - name: suspected radiation exposure first actions and boundaries
+    guide: GD-655
+    must_include:
+      - "Stop the exposure"
+      - "Remove outer clothing gently"
+      - "Wash gently"
+      - "KI is not a universal radiation antidote"
+      - "Do not abrade the skin or scrub hard"
+      - "do not shake, scrub, burn, or incinerate it"
+      - "care may shift toward comfort"
+    must_not_match:
+      - "ki is a universal radiation antidote"
+      - "(scrub hard|abrade)[^\\n]{0,120}(recommended|required|first)"
+      - "(burn|incinerate)[^\\n]{0,120}contaminated clothing"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Bounded closure for GD-655 suspected radiation exposure / ARS danger triage.
+  This card intentionally excludes dose-estimation tables, KI dosing tables,
+  chelation protocols, transfusion thresholds, antibiotic regimens, and
+  scarce-resource allocation from runtime answer steps. Its job is to preserve
+  first actions, expert coordination, symptom-timing danger framing,
+  contaminated-item handling boundaries, KI limitations, and the comfort-care
+  boundary for likely lethal CNS syndrome.

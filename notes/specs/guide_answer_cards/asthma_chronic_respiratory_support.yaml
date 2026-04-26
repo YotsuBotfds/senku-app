@@ -1,0 +1,96 @@
+card_id: asthma_chronic_respiratory_support
+guide_id: GD-936
+slug: asthma-chronic-respiratory-support
+title: Asthma & Chronic Respiratory Support
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A person with known or recurring asthma, wheeze, chest tightness, cough, or chronic respiratory symptoms asks what conservative home support is reasonable.
+  - The person is awake, able to speak in full sentences, not blue or gray, not confused or unusually sleepy, not struggling for every breath, and not rapidly worsening.
+  - The prompt asks how to use an already prescribed rescue inhaler, nebulizer, oxygen, or written action plan while deciding whether to arrange help.
+required_first_actions:
+  - Check for emergency red flags before routine home support.
+  - Keep home support limited to a person who is awake, able to speak in full sentences, not blue or gray, not confused or unusually sleepy, not struggling for every breath, and not worsening.
+  - If there is blue or gray color, confusion, fainting, extreme sleepiness, severe chest pain, trouble speaking, silent chest, weak air movement, exhaustion, or worsening breathing, get emergency help now.
+  - If wheeze, throat tightness, face, lip, or tongue swelling, hives with breathing trouble, blue lips, or trouble talking follows a sting, food, medicine, or likely allergen, treat it as anaphylaxis first and use the allergy/anaphylaxis emergency path.
+first_actions:
+  - Remove or reduce the trigger, especially smoke, dust, fumes, mold, strong odors, cold dry air, pollen, animal dander, or exertion.
+  - Have the person sit upright or lean slightly forward with arms supported, and stop exertion.
+  - Move to the cleanest available air and avoid smoke, strong smells, sprays, fuel fumes, dusty sweeping, and other airway irritants.
+  - Use the person's prescribed rescue inhaler, nebulizer, oxygen, or written action plan exactly as directed while arranging help when symptoms are not clearly mild and improving.
+  - Monitor speech, color, breathing effort, fatigue, wheeze, chest tightness, and whether symptoms are improving, stable, or worsening.
+urgent_red_flags:
+  - Trouble speaking more than a few words at a time, blue or gray lips, severe wheezing with exhaustion, silent chest, or very weak air movement.
+  - Confusion, fainting, extreme drowsiness, slumping, inability to sit up, or looking like they are tiring out.
+  - Severe, new, or crushing chest pain.
+  - Breathing trouble after allergen exposure, bee or wasp sting, food exposure, medicine exposure, or swelling of the face or throat.
+  - Symptoms not clearly improving within several minutes after trigger removal, upright rest, and the person's prescribed rescue treatment, or relief that fades quickly.
+forbidden_advice:
+  - Do not present this guide as diagnosis, medication substitution, or a replacement for a prescribed asthma action plan.
+  - Do not recommend improvised drugs, random herbs, smoke, strong-smell remedies, irritants, forced exercise, or steam as rescue treatment.
+  - Do not frame allergen-triggered wheeze, throat swelling, face swelling, hives with breathing trouble, blue lips, or trouble talking as routine asthma-only care.
+  - Do not keep watching at home when breathing is worsening or emergency red flags are present.
+do_not:
+  - Do not replace prescribed inhalers with random herbs or chemicals.
+  - Do not use smoke, strong smells, or irritants as a remedy.
+  - Do not force exercise during a flare.
+  - Do not rely on steam as a rescue treatment for a serious asthma flare.
+  - Do not assume all wheezing is just asthma if the person is choking, infected, or having an allergic reaction.
+routine_boundary: >
+  Routine home-support framing is only appropriate for stable, awake people who
+  can speak in full sentences and are not blue or gray, confused, unusually
+  sleepy, struggling for every breath, or worsening. Any red flag, unclear
+  deterioration, severe distress, or allergen-triggered airway symptoms should
+  shift the answer to emergency escalation or anaphylaxis-first guidance.
+acceptable_uncertain_fit: >
+  If the fit is plausible but severity is unclear, lead with red-flag screening
+  and arrange urgent help if any danger sign is present. Ask clarifying questions
+  only after preserving escalation, prescribed-plan, and anaphylaxis-first
+  boundaries.
+clarifying_questions:
+  - Can the person speak in full sentences, and are their lips or skin blue or gray?
+  - Are they confused, unusually sleepy, fainting, exhausted, struggling for every breath, or getting worse?
+  - Did symptoms follow a sting, food, medicine, or other likely allergen, and is there throat tightness, face or tongue swelling, or hives with breathing trouble?
+  - Do they have a prescribed rescue inhaler, nebulizer, oxygen, or written action plan, and has it been used exactly as directed?
+citation_ids:
+  - home-support-boundary
+  - emergency-red-flags
+  - allergen-anaphylaxis-first
+  - core-support-plan
+  - medicines-limited-boundary
+source_sections:
+  - guide: GD-936
+    slug: asthma-chronic-respiratory-support
+    title: Asthma & Chronic Respiratory Support
+    sections:
+      - "#when-home-support-is-reasonable"
+      - "#when-this-is-an-emergency"
+      - "#if-wheezing-follows-an-allergen"
+      - "#the-core-support-plan"
+      - "#what-is-reasonable-when-medicines-are-limited"
+      - "#special-note-on-steam-and-home-remedies"
+source_invariants:
+  - name: asthma chronic respiratory support boundaries
+    guide: GD-936
+    must_include:
+      - Can speak in full sentences
+      - Is not turning blue or gray
+      - confused or unusually sleepy
+      - If breathing is getting worse instead of stable, or if there is any doubt, treat it as urgent.
+      - use it exactly as directed while help is arranged
+      - treat it as **anaphylaxis first**
+      - Do not replace prescribed inhalers with random herbs or chemicals
+      - Do not use smoke, strong smells, or irritants as a "remedy"
+      - Do not force exercise during a flare
+      - Do not rely on steam as a rescue treatment for a serious asthma flare.
+    must_not_match:
+      - "use\\s+(smoke|strong smells|irritants)[^\\n]{0,80}as\\s+a\\s+remedy"
+      - "rely\\s+on\\s+steam[^\\n]{0,80}before\\s+(calling|emergency|urgent)"
+      - "exercise\\s+to\\s+(work it out|open the airways)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed GD-936 card for conservative chronic/asthma home support and early
+  escalation. It intentionally avoids diagnosis, medication dosing, and
+  medication substitution, and routes allergen-triggered airway symptoms to the
+  anaphylaxis-first owner before asthma-only support.

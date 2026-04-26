@@ -9,6 +9,21 @@ tags:
   - medical
 icon: 🧠
 description: Alcohol withdrawal, opioid withdrawal, benzodiazepine withdrawal, CIWA and COWS scoring, harm reduction, community support structures.
+aliases:
+  - alcohol withdrawal
+  - delirium tremens
+  - DTs
+  - withdrawal seizure
+  - benzodiazepine withdrawal
+  - benzo withdrawal
+  - sedative withdrawal
+  - opioid overdose
+  - naloxone withdrawal
+routing_cues:
+  - Severe alcohol withdrawal, DTs, withdrawal seizure, confusion, hallucinations, fever, unsafe agitation, or inability to supervise routes to emergency escalation first.
+  - Benzodiazepine or sedative withdrawal with seizure, delirium, confusion, hallucinations, fever, unsafe agitation, or no reliable supervision is emergency care, not home taper advice.
+  - Opioid overdose with slow, absent, noisy, or abnormal breathing routes to naloxone and airway support; opioid withdrawal discomfort is distinct from overdose respiratory danger.
+  - After naloxone, do not give opioids to relieve withdrawal; monitor breathing and seek emergency care because overdose can recur.
 related:
   - medications
   - psychological-first-aid-peer-support
@@ -29,6 +44,20 @@ Substance use disorders affect millions globally. In austere or medical-scarce e
 **Critical disclaimer:** This guide is educational and not a substitute for professional addiction medicine. In severe withdrawal or overdose, seek emergency medical care immediately. These protocols assume access to basic medications (benzodiazepines, comfort medications) but not intensive detoxification centers or medication-assisted treatment (MAT) programs.
 
 The goal of this guide is to reduce harm, prevent life-threatening complications, and support the individual's path toward recovery.
+
+</section>
+
+<section id="severe-withdrawal-overdose-safety-routing">
+
+## Severe Withdrawal and Overdose Safety Routing
+
+This guide's emergency safety surface is narrow: severe alcohol or sedative withdrawal and opioid overdose are escalation problems, not home detox projects.
+
+Treat alcohol withdrawal, benzodiazepine withdrawal, or other sedative withdrawal as an emergency when there is a seizure, delirium tremens, new confusion, disorientation, hallucinations, fever, severe tremor with unstable vital signs, unsafe agitation, collapse, or no reliable sober adult able to supervise continuously. Do not frame severe withdrawal as a home taper, supplement plan, or alcohol-dosing plan; arrange emergency medical care or the fastest available evacuation.
+
+For opioid exposure, separate withdrawal discomfort from overdose danger. Opioid withdrawal can be intensely uncomfortable, but overdose is suggested by slow, absent, noisy, or abnormal breathing, blue or gray color, unresponsiveness, or inability to wake. Give naloxone if available, support airway and breathing, call emergency services, and keep monitoring because symptoms can return after naloxone wears off.
+
+After naloxone, the person may wake in acute withdrawal. Do not re-administer opioids to relieve naloxone-triggered withdrawal; that can restart respiratory depression. Keep the focus on breathing, observation, and emergency evaluation.
 
 </section>
 

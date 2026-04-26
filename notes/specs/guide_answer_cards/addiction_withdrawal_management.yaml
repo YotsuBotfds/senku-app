@@ -1,0 +1,88 @@
+card_id: addiction_withdrawal_management
+guide_id: GD-299
+slug: addiction-withdrawal-management
+title: "Addiction and Withdrawal Management"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks about severe alcohol withdrawal, delirium tremens, DTs, withdrawal seizure, confusion, hallucinations, fever, unsafe agitation, or inability to supervise withdrawal safely.
+  - A prompt asks about benzodiazepine, benzo, sedative, or tranquilizer withdrawal with seizure, delirium, confusion, hallucinations, fever, unsafe agitation, unstable vital signs, collapse, or no reliable supervision.
+  - A prompt asks about opioid overdose, naloxone use, naloxone-triggered withdrawal, or whether to give opioids after naloxone to relieve withdrawal symptoms.
+required_first_actions:
+  - Treat severe alcohol withdrawal, delirium tremens, withdrawal seizure, severe sedative withdrawal, or benzodiazepine withdrawal with red flags as an emergency requiring immediate medical care or the fastest available evacuation.
+  - Escalate immediately for seizure, delirium tremens, new confusion, disorientation, hallucinations, fever, unsafe agitation, collapse, unstable vital signs, or inability to supervise continuously.
+  - For possible opioid overdose, prioritize breathing: give naloxone if available, support airway and breathing, call emergency services, and monitor because overdose symptoms can return.
+  - Distinguish opioid withdrawal discomfort from overdose respiratory danger; slow, absent, noisy, or abnormal breathing is the emergency.
+first_actions:
+  - Keep the answer focused on emergency recognition, supervision limits, naloxone, airway/breathing support, and escalation.
+  - Ask only questions that do not delay emergency action, such as whether the person is breathing normally, awake, supervised, and whether naloxone or emergency help is available.
+  - Use the guide's harm-reduction framing without converting the response into detox, MAT, tapering, supplement, or alcohol-dose instructions.
+urgent_red_flags:
+  - Seizure, repeated seizure, withdrawal seizure, or collapse.
+  - Delirium tremens, new confusion, disorientation, paranoia, hallucinations, or inability to stay oriented.
+  - Fever, severe agitation that is unsafe to the person or others, unstable vital signs, or severe tremor with deterioration.
+  - No reliable sober adult able to observe continuously or unsafe setting for supervision.
+  - Slow, absent, noisy, gasping, or abnormal breathing; blue or gray color; unresponsiveness; or inability to wake after opioid exposure.
+forbidden_advice:
+  - Do not frame severe alcohol withdrawal, DTs, withdrawal seizure, or severe sedative withdrawal as a home taper, supplement plan, sleep-it-off plan, or watch-and-wait routine.
+  - Do not recommend alcohol dosing or drinking alcohol to treat severe alcohol withdrawal.
+  - Do not provide detox, benzodiazepine, sedative, buprenorphine, methadone, clonidine, or MAT dosing as the answer-card output.
+  - Do not re-administer opioids after naloxone to relieve acute withdrawal.
+  - Do not reassure abnormal breathing after opioid exposure as ordinary opioid withdrawal.
+do_not:
+  - Do not substitute vitamins, magnesium, herbal remedies, alcohol, or home observation for emergency escalation when severe withdrawal red flags are present.
+  - Do not treat hallucinations, confusion, fever, unsafe agitation, or inability to supervise as a routine withdrawal course.
+  - Do not blur opioid withdrawal discomfort with overdose respiratory danger.
+routine_boundary: >
+  Mild withdrawal support, long-term recovery, detox planning, and MAT dosing are
+  outside this reviewed card. This card applies to severe withdrawal red flags
+  and opioid overdose/naloxone safety boundaries only.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but severe alcohol/sedative withdrawal or opioid
+  overdose is plausible, preserve emergency escalation and breathing-first
+  framing while asking minimal clarifying questions that do not delay care.
+clarifying_questions:
+  - Is the person awake and breathing normally?
+  - Was there a seizure, confusion, hallucination, fever, unsafe agitation, or collapse?
+  - Is a reliable sober adult able to supervise continuously while emergency help is arranged?
+  - Is naloxone available, and has it already been given?
+citation_ids:
+  - severe-withdrawal-overdose-safety-routing
+  - alcohol-withdrawal-timeline-severity
+  - alcohol-withdrawal-severe-emergency
+  - benzodiazepine-withdrawal-danger
+  - naloxone-opioid-reversal
+source_sections:
+  - guide: GD-299
+    slug: addiction-withdrawal-management
+    title: "Addiction and Withdrawal Management"
+    sections:
+      - "#severe-withdrawal-overdose-safety-routing"
+      - "#alcohol-withdrawal"
+      - "#benzodiazepine-withdrawal"
+      - "#harm-reduction"
+source_invariants:
+  - name: severe_withdrawal_emergency_boundary
+    guide: GD-299
+    must_include:
+      - severe alcohol or sedative withdrawal and opioid overdose are escalation problems, not home detox projects.
+      - Treat alcohol withdrawal, benzodiazepine withdrawal, or other sedative withdrawal as an emergency when there is a seizure, delirium tremens, new confusion, disorientation, hallucinations, fever, severe tremor with unstable vital signs, unsafe agitation, collapse, or no reliable sober adult able to supervise continuously.
+      - Do not frame severe withdrawal as a home taper, supplement plan, or alcohol-dosing plan
+    must_not_match:
+      - "(?:drink|administer|give|dose)[^\\n]{0,80}alcohol[^\\n]{0,120}(?:withdrawal|DT|delirium tremens)"
+      - "treat[^\\n]{0,80}(?:DTs|delirium tremens|withdrawal seizure)[^\\n]{0,120}(?:at home|with supplements)"
+  - name: opioid_overdose_naloxone_boundary
+    guide: GD-299
+    must_include:
+      - Opioid withdrawal can be intensely uncomfortable, but overdose is suggested by slow, absent, noisy, or abnormal breathing, blue or gray color, unresponsiveness, or inability to wake.
+      - Give naloxone if available, support airway and breathing, call emergency services, and keep monitoring because symptoms can return after naloxone wears off.
+      - Do not re-administer opioids to relieve naloxone-triggered withdrawal
+    must_not_match:
+      - "(?:give|take|use)[^\\n]{0,80}opioids[^\\n]{0,120}relieve naloxone"
+      - "ordinary opioid withdrawal[^\\n]{0,120}(?:slow|absent|noisy|abnormal) breathing"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Pilot-reviewed GD-299 card for severe withdrawal and opioid overdose safety
+  surface only. It intentionally excludes detox/MAT dosing and routine
+  withdrawal comfort care, and preserves naloxone breathing-first boundaries.

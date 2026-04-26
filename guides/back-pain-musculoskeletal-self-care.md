@@ -6,26 +6,28 @@ category: medical
 difficulty: intermediate
 tags:
   - back-pain
+  - low-back-strain
   - musculoskeletal
   - self-care
   - lifting
+  - overuse
   - pain
 aliases:
-  - back pain
-  - lower back pain
-  - sore back
-  - stiff neck
-  - sprained ankle
-  - muscle strain
-  - lifting injury
+  - low back strain
+  - lower back strain
+  - lower back pain from lifting
+  - sore low back after work
+  - back strain from lifting
+  - back pain from overuse
+  - work-related low back soreness
 routing_cues:
   - "my back hurts from lifting what should I do"
-  - "how to treat a stiff neck"
-  - "sprained ankle what to do at home"
+  - "low back strain after lifting boxes"
   - "back pain from heavy work"
-  - "sore muscles after working"
+  - "sore lower back after shoveling"
+  - "lower back pain from bending and twisting at work"
 icon: ⚕️
-description: Practical self-care for lower-back pain from labor, sore muscles, lifting habits, heat and cold use, rest versus movement, gentle stretches, work modifications, and red flags for serious injury.
+description: Practical self-care for common lower-back strain from lifting, labor, and overuse after red flags are excluded, including heat and cold use, rest versus movement, gentle stretches, work modifications, and red flags for serious injury or non-muscle causes.
 related:
   - age-related-disease-management
   - first-aid
@@ -50,6 +52,7 @@ liability_level: high
 This guide is for questions like:
 
 - "My back hurts from chopping wood."
+- "My low back hurts after lifting boxes."
 - "What stretches help lower-back pain?"
 - "How do I lift without hurting my back?"
 - "What helps besides pills?"
@@ -64,6 +67,10 @@ It focuses on **lower-back pain from labor, sore muscles, and lifting habits**. 
 - carrying a load on one side only
 
 Most simple strains are uncomfortable but not dangerous. The goal is to reduce pain, keep you moving, and prevent the same injury from happening again.
+
+### Routing boundary
+
+Use this guide for **common low-back strain after lifting, overuse, bending, twisting, or heavy work only after red flags are excluded**. Do not route stiff neck, sprained ankle, broad "general trauma," major injury, abdominal emergency symptoms, or neurologic warning signs here as routine self-care.
 
 ### What this guide is not
 

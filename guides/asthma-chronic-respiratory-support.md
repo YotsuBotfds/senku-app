@@ -1,4 +1,4 @@
-﻿---
+---
 id: GD-936
 slug: asthma-chronic-respiratory-support
 title: Asthma & Chronic Respiratory Support
@@ -11,6 +11,24 @@ tags:
   - respiratory distress
   - home-care
   - safety
+aliases:
+  - asthma home support
+  - chronic respiratory support
+  - wheezing home care
+  - breathing flare action plan
+  - rescue inhaler support
+routing_cues:
+  - asthma flare with awake person who can still speak in full sentences
+  - chronic breathing problem with wheeze or chest tightness and no blue gray confused sleepy or worsening distress
+  - prescribed inhaler nebulizer oxygen or asthma action plan while arranging help
+  - allergen triggered wheeze throat swelling face swelling hives or breathing trouble should route to anaphylaxis first
+citations_required: true
+applicability: >
+  Conservative home support for known asthma or chronic respiratory symptoms
+  only when the person is awake, can speak in full sentences, is not blue or
+  gray, confused, unusually sleepy, struggling for every breath, or worsening;
+  emergency red flags, allergen-triggered airway symptoms, and medication
+  substitution requests require escalation or the anaphylaxis-first route.
 description: Conservative support for asthma and chronic breathing problems when care is delayed or medicines are limited. Focuses on trigger reduction, smoke avoidance, positioning, pacing, air quality, monitoring, and red flags.
 related:
   - cough-cold-sore-throat-home-care

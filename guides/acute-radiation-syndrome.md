@@ -8,6 +8,18 @@ tags:
   - medical
   - emergency
   - nuclear
+aliases:
+  - suspected radiation exposure
+  - acute radiation syndrome
+  - ARS
+  - radioactive contamination
+  - fallout exposure triage
+routing_cues:
+  - Use for suspected radiation exposure or contamination when the immediate answer should focus on stopping exposure, distance/shielding, outer-clothing removal, gentle washing, isolating contaminated items, urgent expert coordination, and red-flag symptom timing.
+  - Use when vomiting within hours, altered mental status, seizures, bloody diarrhea, shock, or rapid deterioration follows possible radiation exposure and reassurance would be unsafe.
+  - Do not use this guide's reviewed answer card as a medication dosing, dose-estimation, chelation, transfusion, antibiotic, or scarce-resource allocation protocol.
+citation_policy: cite reviewed radiation triage sections and the reviewed GD-655 answer card for safety-critical radiation exposure answers
+applicability: suspected radiation exposure / ARS danger triage only; not a standalone clinical protocol for dosimetry, KI dosing, chelation, transfusions, antibiotics, or scarce-resource allocation
 icon: 🏥
 description: 'Clinical response to radiation exposure: fluid management, anti-emetic protocols, radiation burn care, triage by symptom onset timing, lymphocyte-based dose estimation, and palliative management'
 related:
@@ -24,6 +36,28 @@ liability_level: high
 # Acute Radiation Syndrome Clinical Management
 
 Acute radiation syndrome (ARS) is systemic illness caused by exposure to high doses of ionizing radiation over a short period. Unlike external trauma, ARS is invisible—damage occurs at the cellular level in rapidly dividing tissues (bone marrow, GI tract, skin). Successful management requires rapid clinical assessment, aggressive supportive care, and realistic triage when resources are scarce.
+
+<section id="suspected-radiation-exposure-danger-triage">
+
+## Suspected Radiation Exposure Danger Triage
+
+This is the reviewed answer-card surface for GD-655. Use it for first-response triage after suspected radiation exposure or radioactive contamination, before specialist measurement or definitive diagnosis is available.
+
+**Immediate priorities:**
+- **Stop the exposure:** Leave the source area if it is safe to move; reduce time near the source.
+- **Increase distance and shielding:** Put walls, vehicles, earth, or other dense barriers between people and the suspected source when moving farther away is not enough.
+- **Remove outer clothing gently:** Removing outer clothing can remove much surface contamination. Bag or contain it; do not shake, scrub, burn, or incinerate it.
+- **Wash gently:** Use soap and lukewarm water on exposed skin and hair. Do not abrade the skin or scrub hard.
+- **Isolate contaminated items:** Keep clothing, shoes, towels, and tools in sealed or clearly contained bags away from people and food areas.
+- **Coordinate urgently:** Contact emergency medical services, a radiation safety officer, poison center, public health/radiation authority, or incident command as available. Radiation exposure and contamination require expert coordination; home-only reassurance is not appropriate when danger signs are present.
+
+**Danger signs after possible exposure:** vomiting within hours, especially repeated or early vomiting; altered mental status; seizures; bloody diarrhea; shock signs; or rapid deterioration. These findings are concerning for serious exposure or combined injury and should not be framed as routine stomach illness, anxiety, or harmless contamination.
+
+**Potassium iodide boundary:** KI is not a universal radiation antidote. It only protects the thyroid against radioactive iodine when officials or radiation experts identify that risk; it does not treat whole-body radiation injury or other radionuclides.
+
+**Likely lethal CNS syndrome boundary:** If a person rapidly develops severe neurologic symptoms such as altered mental status, repeated seizures, shock, or fast decline after a massive exposure, urgent expert/medical coordination is still appropriate, but answers should acknowledge that care may shift toward comfort, dignity, seizure relief, pain/anxiety relief, family presence, and palliative goals rather than cure.
+
+</section>
 
 <section id="radiation-physics-for-clinicians">
 
@@ -807,4 +841,3 @@ Acute radiation syndrome clinical management in resource-limited environments re
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

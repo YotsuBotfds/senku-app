@@ -9,8 +9,26 @@ tags:
   - medical
   - seizure
   - neurology
+aliases:
+  - adult seizure first aid
+  - seizure field protocol
+  - status epilepticus threshold
+  - convulsion first aid
+routing_cues:
+  - adult seizure
+  - convulsing
+  - shaking or jerking
+  - seizure will not stop
+  - repeated seizures without recovery
+  - first seizure
+citations_required: true
+applicability: >
+  Adult seizure first-aid and status-threshold recognition for field or
+  bystander response. This guide is for timing, injury prevention, recovery
+  positioning, monitoring, and emergency escalation; it is not a medication
+  dosing protocol.
 icon: ⚠️
-description: Immediate field care for an adult having a seizure, including scene safety, timing, recovery position, glucose check, status epilepticus thresholds, benzodiazepine boundaries, and postictal monitoring.
+description: Immediate field care for an adult having a seizure, including scene safety, timing, recovery position, glucose check, status epilepticus thresholds, medication-safety boundaries, and postictal monitoring.
 related:
   - toxidromes-field-poisoning
   - first-aid
@@ -35,7 +53,7 @@ liability_level: high
 1. **Start a timer.** Note the exact time the seizure started.
 2. **Clear the space.** Move hard or sharp objects away. Protect the head with something soft.
 3. **Do not restrain.** Do not put anything in the mouth. Loosen tight clothing at the neck.
-4. **Watch the clock.** If the seizure reaches **5 minutes** or seizures repeat without full recovery between them, this is **status epilepticus** — begin urgent evacuation and give benzodiazepines if trained and equipped.
+4. **Watch the clock.** If the seizure reaches **5 minutes** or seizures repeat without full recovery between them, this is **status epilepticus** — begin urgent emergency escalation. Medication decisions belong only to trained, equipped responders following an approved protocol.
 5. **After the jerking stops:** roll onto side, keep airway clear, check breathing and color, check glucose if possible.
 
 If the patient is pregnant, has a head injury, or this is their first seizure, escalate evacuation regardless of duration.
@@ -151,32 +169,25 @@ Think about alcohol withdrawal, benzodiazepine withdrawal, stimulant overdose, p
 
 </section>
 
-<section id="benzodiazepine-boundaries">
+<section id="medication-boundaries">
 
-## Benzodiazepine Boundaries
+## Medication Boundaries
 
-Benzodiazepines are the main field medication for ongoing seizure activity, but they are not casual comfort drugs.
+This guide is not a benzodiazepine dosing protocol. Medication treatment for ongoing seizure activity belongs only to trained responders who have the correct equipment, airway support capability, and a protocol-approved seizure pathway.
 
-Use benzodiazepines when:
+Medication may be considered only within that trained/equipped/protocol-approved setting when:
 
 - seizure lasts more than 5 minutes
 - repeated seizures occur without recovery
 - obvious convulsions continue
 
-Use them carefully because they can worsen respiratory depression, especially in mixed overdose.
+Seizure medicines can worsen respiratory depression, especially in mixed overdose or when airway support is limited.
 
 If you do **not** already have protocol-approved seizure medication, airway gear, and training, do **not** improvise IV drugs or stack random sedatives from scavenged stock.
 
-If you are trained, common adult field options are:
-
-- **Midazolam** 10 mg IM once, or 5 mg intranasal in each nostril
-- **Diazepam** 10 mg IV or rectal if that route is part of your kit and training
-- **Lorazepam** 2-4 mg IV if available
-
 If breathing worsens after medication, airway support becomes the next priority.
 
-Do **not** keep stacking sedatives blindly without airway monitoring capability.
-Use one appropriate benzodiazepine pathway, then focus on breathing support and evacuation.
+Do **not** keep stacking sedatives blindly without airway monitoring capability. Do **not** improvise IV medications or repurpose sedatives outside a seizure protocol. Focus on timing, injury prevention, breathing support, and evacuation.
 
 </section>
 
@@ -220,7 +231,7 @@ If the patient returns fully to normal after a brief known seizure disorder even
 3. Turn onto the side once the convulsion stops.
 4. Check glucose and breathing as soon as feasible.
 5. Treat seizure beyond 5 minutes as status epilepticus.
-6. Use benzodiazepines for ongoing or repeating seizure activity only within airway-support limits.
+6. Keep medication decisions inside trained, equipped, protocol-approved care with airway-support limits.
 7. Evacuate urgently for any first-time adult seizure, repeated seizure, or seizure beyond 5 minutes.
 
 For toxic causes, see <a href="../toxidromes-field-poisoning.html">Toxidromes & Specific Antidotes for Field Poisoning</a>. For withdrawal-related seizures, see <a href="../addiction-withdrawal-management.html">Addiction & Withdrawal Management</a>.

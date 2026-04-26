@@ -1,0 +1,114 @@
+card_id: back_pain_musculoskeletal_self_care
+guide_id: GD-915
+slug: back-pain-musculoskeletal-self-care
+title: "Back Pain & Musculoskeletal Self-Care"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks about common low-back strain, lower-back soreness, or muscle spasm after lifting, bending, twisting, shoveling, chopping wood, hauling, carrying, or other overuse/work activity.
+  - The user is asking for self-care for low-back pain after red flags have been excluded or are explicitly absent.
+  - The prompt asks how to keep moving, use heat or cold, stretch gently, modify work, or lift more safely after a routine low-back strain.
+required_first_actions:
+  - Screen for red flags before giving routine self-care.
+  - If red flags are absent, frame care as relative rest, gentle movement, avoiding heavy lifting/bending/twisting, and gradual return to activity.
+  - Keep the answer bounded to low-back strain from lifting, labor, or overuse; route stiff neck, sprained ankle, general trauma, neurologic deficits, abdominal symptoms, infection signs, or worsening pain away from routine self-care.
+first_actions:
+  - Back off the triggering task for a few days while continuing short walks and frequent position changes as tolerated.
+  - Avoid heavy lifting, repeated bending or twisting, sudden starts, and testing the back with another heavy lift too soon.
+  - Use cold for a fresh strain or swelling for 10 to 15 minutes at a time with cloth between the cold source and skin.
+  - Use comfortable heat for tight, stiff, or crampy muscles for 15 to 20 minutes; do not sleep on a heating pad.
+  - Stretch only to a mild pull, not sharp pain, and stop stretches that send pain down the leg.
+  - Return to lifting gradually using close, square, brace, and pivot habits.
+urgent_red_flags:
+  - New leg or foot weakness, heaviness, instability, numbness, or pain shooting below the knee with neurologic symptoms.
+  - Numbness in the groin or saddle area.
+  - Loss of bladder or bowel control.
+  - Fever, chills, back pain with illness, or history of cancer, IV drug use, or immune suppression with new back pain.
+  - Severe pain after a fall, crash, direct blow, heavy impact, or other severe trauma.
+  - Back pain with abdominal pain, vomiting, a hard or swollen belly, no stool or gas, fainting, or a pulsing abdomen.
+  - Pain that is getting worse every day instead of gradually improving.
+  - Inability to walk after injury or inability to bear weight.
+forbidden_advice:
+  - Do not present saddle numbness, bladder or bowel loss, leg weakness, fever/chills, cancer/IV-drug-use/immune-suppression history, severe trauma, abdominal pain with vomiting or hard belly, no stool or gas, fainting, pulsing abdomen, or worsening pain as routine self-care.
+  - Do not route stiff neck, sprained ankle, or broad general trauma prompts to this card as the primary owner.
+  - Do not recommend long bed rest for routine low-back strain.
+  - Do not encourage working through sharp pain or repeating the triggering heavy lift to test recovery.
+  - Do not treat possible kidney, abdominal, infection, fracture, spinal cord, or cauda equina symptoms as simple muscle strain.
+do_not:
+  - Do not skip red-flag screening before self-care.
+  - Do not give medication-first guidance as the main answer when movement limits, heat/cold, work modification, and escalation boundaries are the guide's core scope.
+  - Do not generalize this card to neck pain, ankle sprains, whole-body trauma, or non-back musculoskeletal injuries.
+routine_boundary: >
+  Routine self-care applies only to common low-back strain after lifting,
+  bending, twisting, labor, or overuse when red flags are absent. Any saddle
+  numbness, bladder or bowel control change, leg weakness, fever/chills,
+  cancer/IV-drug-use/immune-suppression history, severe trauma, abdominal
+  pain/vomiting/hard belly/no stool or gas/fainting/pulsing abdomen, or
+  worsening pain exits routine self-care and needs urgent or prompt medical
+  evaluation.
+acceptable_uncertain_fit: >
+  If the prompt sounds like routine low-back soreness but does not state whether
+  red flags are absent, ask focused red-flag questions while giving only
+  conservative interim steps: stop heavy lifting, avoid twisting, use a
+  comfortable position, walk gently if able, and seek care if any warning signs
+  are present.
+clarifying_questions:
+  - Did this start after lifting, bending, twisting, heavy work, or overuse?
+  - Is there saddle numbness, bladder or bowel control change, leg weakness, fever or chills, severe trauma, or worsening pain?
+  - Is there abdominal pain, vomiting, a hard or swollen belly, no stool or gas, fainting, or a pulsing abdomen?
+citation_ids:
+  - back-pain-overview-low-back-strain
+  - back-pain-first-48-hours-relative-rest
+  - back-pain-heat-cold
+  - back-pain-gentle-stretches
+  - back-pain-lifting-work-modifications
+  - back-pain-red-flags
+source_sections:
+  - guide: GD-915
+    slug: back-pain-musculoskeletal-self-care
+    title: "Back Pain & Musculoskeletal Self-Care"
+    sections:
+      - "#overview"
+      - "#overview > Routing boundary"
+      - "#how-to-tell"
+      - "#first-48-hours"
+      - "#heat-cold"
+      - "#gentle-stretches"
+      - "#lifting"
+      - "#work-modifications"
+      - "#what-helps-besides-pills"
+      - "#when-to-seek-help"
+      - "#recovery"
+source_invariants:
+  - name: low-back strain scope
+    guide: GD-915
+    must_include:
+      - It focuses on **lower-back pain from labor, sore muscles, and lifting habits**.
+      - Use this guide for **common low-back strain after lifting, overuse, bending, twisting, or heavy work only after red flags are excluded**.
+      - Do not route stiff neck, sprained ankle, broad "general trauma," major injury, abdominal emergency symptoms, or neurologic warning signs here as routine self-care.
+  - name: relative rest and movement
+    guide: GD-915
+    must_include:
+      - Back off the activity that caused the pain.
+      - Keep moving gently.
+      - The best pattern is usually **movement with limits**, not complete bed rest.
+  - name: red flags are not routine self-care
+    guide: GD-915
+    must_include:
+      - numbness in the groin or saddle area
+      - loss of bladder or bowel control
+      - new weakness in a leg or foot
+      - fever, chills, or back pain with illness
+      - history of cancer, IV drug use, or immune suppression with new back pain
+      - severe pain after a fall, crash, or direct blow
+      - back pain with abdominal pain, vomiting, a hard or swollen belly, no stool or gas, fainting, or a pulsing abdomen
+      - pain that is getting worse every day instead of improving
+    must_not_match:
+      - "(saddle numbness|loss of bladder|loss of bowel|leg weakness|pulsing abdomen)[^\\n]{0,120}(routine|watch at home|simple strain)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed GD-915 card for common low-back strain self-care only. The guide
+  metadata was narrowed away from stiff neck, sprained ankle, and broad trauma
+  routing so emergency neurologic, infectious, abdominal, or severe-trauma
+  presentations do not inherit routine self-care framing.

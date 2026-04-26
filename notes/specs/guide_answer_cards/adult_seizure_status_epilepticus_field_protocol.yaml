@@ -1,0 +1,130 @@
+card_id: adult_seizure_status_epilepticus_field_protocol
+guide_id: GD-900
+slug: adult-seizure-status-epilepticus-field-protocol
+title: "Adult Seizure & Status Epilepticus Field Protocol"
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - An adult is having a seizure, convulsing, stiffening, jerking, shaking, or fitting.
+  - A seizure may be lasting too long, will not stop, or seizures are repeating.
+  - A bystander or field responder needs first-aid steps and status epilepticus threshold guidance.
+required_first_actions:
+  - Start timing the seizure immediately and note the start time.
+  - Protect the person from injury by clearing hard or sharp objects and cushioning the head if possible.
+  - Do not restrain the person and do not put anything in their mouth.
+  - Treat seizure activity lasting more than 5 minutes, or repeated seizures without return to normal awareness between them, as status epilepticus requiring urgent emergency escalation.
+  - After the jerking stops and it is safe to move them, place the person on their side, keep the airway clear, and monitor breathing and color.
+conditional_required_actions:
+  - trigger_terms:
+      - first seizure
+      - never had a seizure
+      - new seizure
+    required_actions:
+      - Escalate urgently for any first seizure in an adult, regardless of duration.
+  - trigger_terms:
+      - pregnant
+      - pregnancy
+      - eclampsia
+    required_actions:
+      - Escalate urgently for seizure in pregnancy or possible pregnancy.
+  - trigger_terms:
+      - head injury
+      - trauma
+      - fall
+      - hit head
+    required_actions:
+      - Escalate urgently when seizure is associated with head injury or significant trauma.
+  - trigger_terms:
+      - not breathing
+      - trouble breathing
+      - blue
+      - cyanosis
+      - not waking
+      - unconscious
+    required_actions:
+      - Escalate urgently for persistent breathing problems, cyanosis, or failure to wake after the seizure.
+first_actions:
+  - Keep the scene safe around water, stairs, traffic, machinery, fire, tools, furniture, or other hazards.
+  - Loosen tight clothing around the neck if possible without forcing movement.
+  - Observe duration, breathing, color, visible trauma, and clues to cause such as diabetes, pregnancy, overdose, withdrawal, fever, or head injury.
+  - Check glucose if equipment is available and it is safe; do not give anything by mouth unless the person is awake enough to swallow.
+urgent_red_flags:
+  - First seizure in an adult.
+  - Seizure lasting more than 5 minutes.
+  - Repeated seizures without recovery between them.
+  - Pregnancy or possible eclampsia.
+  - Head injury or significant trauma.
+  - Persistent failure to wake, severe breathing trouble, low oxygen, cyanosis after the event, or suspected overdose.
+forbidden_advice:
+  - Do not advise restraining the person during the seizure.
+  - Do not advise putting anything in the mouth, forcing the jaw open, giving drinks during the seizure, or blind oral maneuvers.
+  - Do not provide benzodiazepine doses or turn this card into a medication protocol.
+  - Do not advise improvised IV drugs, scavenged sedatives, stacking sedatives, or medication use beyond a trained, equipped, protocol-approved setting.
+  - Do not frame seizure over 5 minutes, repeated seizures without recovery, first adult seizure, pregnancy, head injury, or persistent breathing/waking problems as routine home monitoring.
+do_not:
+  - Do not restrain the limbs except for immediate lethal hazard prevention.
+  - Do not put anything in the mouth or try to force the jaw open.
+  - Do not give food, drink, or oral sugar unless the person is awake enough to swallow.
+  - Do not improvise IV medications or stack sedatives without airway monitoring capability.
+routine_boundary: >
+  Seizure lasting more than 5 minutes, repeated seizures without full recovery,
+  first seizure in an adult, pregnancy, head injury, persistent breathing
+  problems, cyanosis, suspected overdose, or persistent failure to wake is an
+  emergency escalation scenario, not routine observation.
+acceptable_uncertain_fit: >
+  If the seizure duration or history is unclear, lead with timing, injury
+  prevention, no restraint, nothing in the mouth, recovery position after
+  jerking stops, breathing checks, and escalation if any status threshold or
+  red flag may be present.
+clarifying_questions:
+  - When did the seizure start, and has it stopped?
+  - Did the person fully wake or return to normal between seizures?
+  - Is this their first seizure, are they pregnant, or was there head injury?
+  - Are they breathing normally and waking after the jerking stopped?
+citation_ids:
+  - adult-seizure-first-minute
+  - status-epilepticus-threshold
+  - recovery-position-postictal-monitoring
+  - seizure-medication-boundaries
+  - seizure-red-flags-escalation
+source_sections:
+  - guide: GD-900
+    slug: adult-seizure-status-epilepticus-field-protocol
+    title: "Adult Seizure & Status Epilepticus Field Protocol"
+    sections:
+      - "#first-minute"
+      - "#during-the-seizure"
+      - "#status-epilepticus"
+      - "#after-the-convulsion"
+      - "#medication-boundaries"
+      - "#red-flags"
+      - "#postictal-care"
+source_invariants:
+  - name: seizure first aid and status threshold
+    guide: GD-900
+    must_include:
+      - Start timing immediately.
+      - Do not restrain the limbs.
+      - Do not put anything in the mouth.
+      - a seizure lasts **more than 5 minutes**
+      - repeated seizures occur **without return to normal awareness between them**
+    must_not_match:
+      - "Midazolam\\*\\* [0-9]"
+      - "Diazepam\\*\\* [0-9]"
+      - "Lorazepam\\*\\* [0-9]"
+  - name: medication boundary is not a dosing protocol
+    guide: GD-900
+    must_include:
+      - This guide is not a benzodiazepine dosing protocol.
+      - do **not** improvise IV drugs or stack random sedatives
+      - trained, equipped responders following an approved protocol
+    must_not_match:
+      - "common adult field options"
+      - "[0-9]+\\s*mg"
+review_status: pilot_reviewed
+notes: >
+  Reviewed bounded answer card for GD-900. The card preserves seizure first aid,
+  the >5 minute or repeated-without-recovery status threshold, recovery-side
+  positioning, and emergency escalation red flags. It intentionally excludes
+  benzodiazepine dosing and any medication protocol beyond trained, equipped,
+  protocol-approved responders.

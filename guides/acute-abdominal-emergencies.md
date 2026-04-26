@@ -34,6 +34,11 @@ aliases:
   - threw up blood after drinking alcohol
   - vomited blood after alcohol
   - stomach pain and vomiting blood
+routing_cues:
+  - abdominal pain with shock signs or collapse
+  - rigid or guarded belly after injury or severe pain
+  - coffee-ground vomit or black tarry stool with weakness
+  - possible ectopic pregnancy with abdominal pain and faintness
 icon: 🏥
 description: Systematic abdominal examination, peritoneal signs, appendicitis, bowel obstruction, perforated viscus, cholecystitis, pancreatitis, hernia emergencies, ectopic pregnancy differential, urinary obstruction, surgical decision matrix, perioperative antibiotics, and post-operative complications.
 related:
@@ -46,6 +51,7 @@ word_count: 4800
 last_updated: '2026-02-20'
 version: '1.0'
 liability_level: high
+citations_required: true
 custom_css: |
   .exam-section { background-color: var(--surface); border-left: 4px solid var(--accent); padding: 15px; margin: 20px 0; border-radius: 4px; }
   .peritoneal-signs { background-color: var(--card); padding: 15px; margin: 20px 0; border: 2px solid var(--accent2); border-radius: 4px; }

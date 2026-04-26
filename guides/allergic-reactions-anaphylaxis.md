@@ -13,6 +13,22 @@ tags:
   - epinephrine
   - allergic-emergency
   - allergen-wheeze
+aliases:
+  - throat swelling after allergen exposure
+  - tongue swelling after food or medicine
+  - lip swelling and wheezing after bee sting
+  - hives with breathing trouble
+  - wheezing right after a sting
+  - rescue inhaler not helping after allergen exposure
+  - blue lips after allergic reaction
+  - fainting after food allergy
+  - anaphylaxis or asthma
+  - epinephrine first allergic reaction
+routing_cues:
+  - allergen-triggered airway swelling or wheeze
+  - hives plus breathing trouble or face swelling
+  - blue or gray color after suspected allergen exposure
+  - epinephrine-first anaphylaxis red-zone
 icon: 🚨
 description: "Emergency triage and red flags for allergic reactions and anaphylaxis: allergen-triggered wheeze after bee/wasp sting, food or medicine exposure, throat swelling, hives with face/lip/tongue swelling, blue lips or cannot talk, rescue inhaler failure after allergen, epinephrine-first protocols, biphasic reactions, antihistamines as adjuncts, allergy identification and avoidance, and anaphylaxis action plans."
 related:
