@@ -343,6 +343,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertEqual({"contents": "read"}, workflow.get("permissions"))
         triggers = workflow.get("on", workflow.get(True, {}))
         self.assertIn("pull_request", triggers)
+        self.assertIn("push", triggers)
         self.assertIn("workflow_dispatch", triggers)
         self.assertNotIn("pull_request_target", triggers)
 
@@ -357,6 +358,9 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             ],
             pull_request["paths"],
         )
+        self.assertEqual(["master"], triggers["push"]["branches"])
+        self.assertEqual(pull_request["paths"], triggers["push"]["paths"])
+        self.assertNotIn("paths-ignore", triggers["push"])
 
         jobs = workflow["jobs"]
         self.assertEqual(["dependency-security"], list(jobs))

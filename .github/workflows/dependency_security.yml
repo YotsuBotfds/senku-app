@@ -8,6 +8,15 @@ on:
       - "requirements.lock.txt"
       - "scripts/compile_python_lock.ps1"
       - "scripts/run_dependency_security_scan.ps1"
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/dependency_security.yml"
+      - "requirements.txt"
+      - "requirements.lock.txt"
+      - "scripts/compile_python_lock.ps1"
+      - "scripts/run_dependency_security_scan.ps1"
   workflow_dispatch:
 
 permissions:

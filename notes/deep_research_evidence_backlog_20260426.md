@@ -236,6 +236,12 @@ Action:
 - Added high-liability holdout-pack hygiene coverage across EVAL7/EVAL8/EVAL9:
   prompt IDs and prompt text must remain unique across packs, and
   `primary_expected_guides` must stay a subset of `expected_guides`.
+- Added a behavior-contract guard for the same high-liability holdout packs:
+  every row now needs target behavior, scenario/risk/fair-test metadata,
+  expected behavior, required concepts, and forbidden/suspicious actions.
+- Added a `master` push trigger to the Dependency Security Scan workflow for
+  dependency/security-tooling path changes, matching the pull-request path
+  filter so dependency scan health becomes visible on relevant HEAD updates.
 
 Validation:
 

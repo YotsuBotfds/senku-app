@@ -65,6 +65,43 @@ class PromptExpectationValidatorTests(unittest.TestCase):
 
         self.assertEqual(row_count, 28)
 
+    def test_high_liability_holdout_packs_keep_behavior_contract_fields(self):
+        required_text_fields = (
+            "target_behavior",
+            "what_it_tests",
+            "scenario_family",
+            "risk_tier",
+            "fair_test_status",
+            "expected_behavior",
+        )
+        required_list_fields = (
+            "required_concepts",
+            "forbidden_or_suspicious",
+        )
+        row_count = 0
+
+        for pack in HIGH_LIABILITY_HOLDOUT_PACKS:
+            with self.subTest(pack=pack.name):
+                rows = [
+                    json.loads(line)
+                    for line in pack.read_text(encoding="utf-8").splitlines()
+                    if line.strip()
+                ]
+                for row in rows:
+                    row_count += 1
+                    for field in required_text_fields:
+                        self.assertTrue(row.get(field), f"{row['id']} missing {field}")
+                    for field in required_list_fields:
+                        values = row.get(field)
+                        self.assertIsInstance(values, list, f"{row['id']} {field}")
+                        self.assertGreaterEqual(len(values), 2, f"{row['id']} {field}")
+                        self.assertTrue(
+                            all(isinstance(value, str) and value.strip() for value in values),
+                            f"{row['id']} {field}",
+                        )
+
+        self.assertEqual(row_count, 28)
+
     def test_jsonl_and_csv_validate_known_guides_and_unique_prompt_ids(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
