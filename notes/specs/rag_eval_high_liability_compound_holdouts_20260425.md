@@ -58,7 +58,7 @@ pack does not use one.
 | RE6-SC-001 | sick_child_during_outage | reviewed-card runtime | ready | GD-589 |
 | RE6-SC-002 | sick_child_during_outage | reviewed-card runtime | ready | GD-284 |
 | RE6-SC-003 | sick_child_during_outage | reviewed-card runtime | ready | GD-284, GD-492 |
-| RE6-SC-004 | sick_child_during_outage | uncertain/clarify | ready | GD-589, GD-284 |
+| RE6-SC-004 | sick_child_during_outage | uncertain/clarify | ready | GD-284 |
 | RE6-CW-001 | contaminated_well_plus_food_shortage | generated evidence | ready | GD-035, GD-931, GD-406 |
 | RE6-CW-002 | contaminated_well_plus_food_shortage | generated evidence | ready | GD-666, GD-906, GD-591, GD-089 |
 | RE6-CW-004 | contaminated_well_plus_food_shortage | uncertain/clarify | ready | GD-035, GD-406, GD-931 |
@@ -66,11 +66,22 @@ pack does not use one.
 | RE6-EV-004 | evacuation_with_livestock | reviewed-card runtime | ready | GD-585 |
 | RE6-SH-001 | storm_damaged_shelter_recovery | generated evidence | ready | GD-513 |
 | RE6-SH-003 | storm_damaged_shelter_recovery | abstain | ready | GD-513 |
-| RE6-IC-001 | injured_cold_questionable_water | abstain | retrieval-smoke-first | GD-232, GD-297 |
+| RE6-IC-001 | injured_cold_questionable_water | abstain | retrieval-smoke-first | GD-049 |
 | RE6-IC-002 | injured_cold_questionable_water | reviewed-card runtime | ready | GD-380 |
 | RE6-IC-004 | injured_cold_questionable_water | reviewed-card runtime | ready | GD-601 |
 
 ## Expected Signal
+
+## 2026-04-25 Expectation Adjustments
+
+- `RE6-SC-004`: keeps `GD-589` as an expected support owner, but narrows the
+  primary owner to `GD-284` because the prompt asks ongoing monitoring rather
+  than acute fever management.
+- `RE6-CW-001` and `RE6-CW-004`: add `GD-378` as an expected support owner for
+  well/source design and remediation context; the primary water-safety owners
+  remain `GD-035`, `GD-931`, and `GD-406`.
+- `RE6-IC-001`: makes `GD-049` the primary owner for the possible-spine-injury
+  branch; first-aid and water owners remain supporting expected guides.
 
 These prompts should surface whether Senku preserves high-liability answer modes
 while keeping compound lanes separated:

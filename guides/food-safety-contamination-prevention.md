@@ -22,6 +22,14 @@ aliases:
   - spit and wait food safety
   - mold on jam
   - mold around jam lid
+  - stored grain questionable water
+  - stretch supplies without making people sick
+  - little cooking fuel food safety
+  - food scarce do not accept spoilage risk
+  - questionable water food preparation
+routing_cues:
+  - Use when scarcity or rationing pressure intersects with foodborne illness prevention, stored grain, limited cooking fuel, or questionable water for food preparation.
+  - Keep food safety first; do not recommend spoilage, taste-testing, or unsafe-water shortcuts to stretch supplies.
 tags:
   - essential
   - critical

@@ -47,10 +47,18 @@ aliases:
   - shocked and collapsed
   - collapsed after shock
   - person stuck to live wire
+  - possible spinal injury
+  - may have a spinal injury
+  - do not move neck injury
+  - support head and neck
+  - spine precautions
+  - cold exposure while immobilized
+  - keep warm without moving spine
 icon: Ã°Å¸Å¡Â¨
 routing_cues:
   - Use for immediate emergency stabilization, CPR, severe bleeding, shock, severe burns, fractures, poisoning, stroke signs, chest pain, trouble breathing, collapse, and first actions before specialist guide handoff.
   - For infected wounds with spreading redness, red streaking, pus plus fever, weakness, or worsening pain, use first aid for emergency stabilization while handing off to wound infection and sepsis guidance.
+  - For possible spinal injury, neck or back trauma, or an immobilized injured person in cold or wet conditions, use first aid for stabilization, minimize movement, support head and neck, keep warm without unsafe movement, and hand off to orthopedics or spine guidance.
 citations_required: true
 description: "Severe chest pain, one-sided weakness, slurred speech, trouble breathing, uncontrolled bleeding, someone collapsed, not breathing, severe burn, broken bone, snakebite, poisoning, shock. Essential first aid procedures including CPR, wound care, burns, fractures, bleeding control, shock treatment, and emergency stabilization techniques."
 related:

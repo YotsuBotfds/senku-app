@@ -7,6 +7,14 @@ difficulty: intermediate
 tags:
   - essential
 icon: 📊
+aliases:
+  - stretch food supplies safely
+  - food scarce but avoid illness
+  - rationing with questionable water
+  - little cooking fuel rationing
+routing_cues:
+  - Use for portioning, calorie budgeting, and supply duration after immediate food and water safety risks are separated.
+  - When the question asks how to stretch supplies without making people sick, coordinate with food safety and water safety owners.
 description: Calorie budgeting, nutrient optimization, rationing systems, deficiency disease prevention, and supply duration.
 related:
   - agriculture

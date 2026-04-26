@@ -41,6 +41,19 @@ aliases:
   - breaker box got wet
   - outlet sparked
   - sparking outlet
+  - wet outlet
+  - outlet got wet
+  - water through light fixture
+  - water through outlet
+  - standing water near panel
+  - standing water near breaker box
+  - roof leak electrical damage
+  - storm electrical damage inside
+  - patch roof near wet electrical
+  - electrical hazard before roof repair
+routing_cues:
+  - Use when storm, roof leak, flood, or cleanup prompts include wet outlets, fixtures, breaker panels, standing water near electrical equipment, or possible electrical damage inside.
+  - Route repair, patching, and cleanup questions to hazard isolation first when water and electrical systems may interact; do not provide repair steps until power is isolated from a dry safe location.
 icon: ⚡
 description: Hazard-first electrical safety for electrical shock victims, cannot-let-go contact, shocked-and-collapsed emergencies, collapse near electrical equipment, exposed live wires, downed lines, wet breaker boxes, sparking outlets, grounding, insulation testing, lockout/tagout, arc flash awareness, and emergency response to electrical injuries before repair, CPR, or troubleshooting.
 related:

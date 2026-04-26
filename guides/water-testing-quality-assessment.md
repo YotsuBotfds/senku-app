@@ -12,6 +12,15 @@ tags:
   - water-safety
 icon: 💧
 description: Test water quality for turbidity, pH, biological contamination, chemical residues, hardness, and dissolved oxygen. Covers stored or stagnant water safety, muddy or sediment-laden stream water assessment, and source evaluation for springs, wells, and surface water. Establish testing schedules for safe irrigation and livestock watering.
+aliases:
+  - test flooded well before drinking
+  - clear well water after flood
+  - children drinking questionable well water
+  - boil once after flood
+  - well contamination testing
+routing_cues:
+  - Use for source assessment and testing of drinking wells after flood, especially when the user asks if clear water or boiling makes it safe.
+  - Use to identify biological versus chemical, fuel, heavy-metal, or sewage concerns before choosing purification.
 related:
   - chemistry-fundamentals
   - questionable-water-assessment-clarification

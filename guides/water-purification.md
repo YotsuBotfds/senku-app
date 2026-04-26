@@ -11,9 +11,17 @@ aliases:
   - cloudy flood water drinking plan
   - debris in water after flooding
   - settle filter disinfect drinking water
+  - well may be contaminated after flooding
+  - clear well water after flood
+  - boil once after flood
+  - boiling limits for flood contaminated water
+  - children drinking questionable well water
+  - testing flooded well before drinking
 routing_cues:
   - Use when floodwater, muddy water, cloudy water, or visible debris requires an immediate drinking-water treatment order.
   - Sequence sediment settling and filtration before disinfection, then store treated water safely.
+  - Use for flooded or questionable drinking wells when the user asks whether clear water or one boil is enough; route through assessment, treatment limits, testing/remediation, and safer source selection before scarcity logistics.
+  - Use when children or high-risk people may drink flood-affected well water; do not treat clear appearance as proof of safety.
 applicability: Field water purification planning when source water may be biologically unsafe, cloudy, muddy, or debris-filled and the user needs a safe order of treatment steps.
 tags:
   - critical
@@ -75,6 +83,7 @@ When wording is ambiguous, start from the most likely section:
 - `how do I disinfect`, `make this drinkable`, or `what treatment works` -> chemical treatment and treatment limitations
 - `can I boil this`, `boil for how long`, or `high altitude boiling` -> boiling section
 - `cloudy water`, `sediment`, or `muddy water` -> filtration + pre-treatment flow before any disinfecting step
+- `flooded well`, `clear after flood`, or `boil once` -> source assessment, treatment limits, testing/remediation, and safer-source selection before routine drinking
 - `chemical smell`, `industrial runoff`, or `brackish water` -> distillation, reverse osmosis, or source change; boiling or bleach alone are not enough
 - `large volume`, `for a family`, or `camp water` -> multi-method flow and storage, not single-batch boiling
 - `water smells bad` or `water is discolored` -> water quality indicators in the safety section

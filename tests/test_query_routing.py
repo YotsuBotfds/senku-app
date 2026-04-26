@@ -105,6 +105,20 @@ class QueryRoutingTests(unittest.TestCase):
             any("newborn sepsis neonatal fever" in spec["text"] for spec in newborn_specs)
         )
 
+        newborn_holdout_specs = query._supplemental_retrieval_specs(
+            "A newborn is not feeding well, feels cold, and we have limited phone battery during an outage.",
+            8,
+        )
+        self.assertEqual(
+            query._retrieval_profile_for_question(
+                "A newborn is not feeding well, feels cold, and we have limited phone battery during an outage."
+            ),
+            "safety_triage",
+        )
+        self.assertTrue(
+            any("newborn sepsis neonatal fever" in spec["text"] for spec in newborn_holdout_specs)
+        )
+
         abdomen_specs = query._supplemental_retrieval_specs(
             "child fell and now has belly pain", 8
         )
@@ -127,6 +141,44 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(
             any("solid organ injury" in spec["text"] for spec in handlebar_specs)
         )
+
+    def test_newborn_danger_phrase_normalization_stays_retrieval_only(self):
+        prompts = [
+            "A newborn is not feeding well and feels cold during an outage.",
+            "The baby is 3 weeks old, harder to wake than usual, and the house is dropping below freezing.",
+            "The infant is cold to touch and not nursing well.",
+            "22 days old and difficult to wake up after the storm.",
+        ]
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertTrue(query._is_newborn_sepsis_danger_retrieval_query(prompt))
+                self.assertEqual(query._retrieval_profile_for_question(prompt), "safety_triage")
+                specs = query._supplemental_retrieval_specs(prompt, 8)
+                self.assertTrue(
+                    any("newborn sepsis neonatal fever" in spec["text"] for spec in specs)
+                )
+
+        self.assertFalse(
+            query._is_newborn_sepsis_danger_query(
+                "A newborn is not feeding well and feels cold during an outage."
+            )
+        )
+
+    def test_newborn_danger_phrase_normalization_guards_routine_baby_prompts(self):
+        prompts = [
+            "How do I keep a baby warm during an outage with limited phone battery?",
+            "Baby has a mild cold and the water is out; how do we clean bottles?",
+            "Infant feeding schedule during an outage.",
+            "The house feels cold and we have no clean tap water.",
+            "My baby is harder to settle at bedtime.",
+        ]
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertFalse(query._is_newborn_sepsis_danger_retrieval_query(prompt))
+                specs = query._supplemental_retrieval_specs(prompt, 8)
+                self.assertFalse(
+                    any("newborn sepsis neonatal fever" in spec["text"] for spec in specs)
+                )
 
     def test_boundary_safety_prompt_uses_normal_vs_urgent_profile(self):
         self.assertEqual(

@@ -9626,7 +9626,7 @@ def _metadata_rerank_delta(question, meta):
         ):
             apply_delta("food_bolus_poisoning_distractor_metadata", 0.28)
 
-    if _is_newborn_sepsis_danger_query(question):
+    if _is_newborn_sepsis_danger_retrieval_query(question):
         has_routine_newborn_metadata = _text_has_marker(
             meta_text,
             {
@@ -11222,6 +11222,59 @@ def _is_newborn_sepsis_danger_query(question):
     return newborn_context and danger
 
 
+def _has_young_infant_age_context(question):
+    """Return True for explicit age-under-4-weeks phrasing."""
+    lower = question.lower()
+    return bool(
+        re.search(
+            r"\b(?:[0-3])\s*(?:week|weeks|wk|wks)(?:\s*old)?\b"
+            r"|\b(?:[0-9]|1[0-9]|2[0-7])\s*(?:day|days)(?:\s*old)?\b"
+            r"|\b(?:under|less than|younger than)\s*(?:4|four)\s*(?:week|weeks|wk|wks)\b"
+            r"|\b(?:under|less than|younger than)\s*(?:28|twenty eight)\s*(?:day|days)\b",
+            lower,
+        )
+    )
+
+
+def _is_newborn_sepsis_danger_retrieval_query(question):
+    """Normalize narrow newborn/young-infant danger variants for retrieval only."""
+    if _is_newborn_sepsis_danger_query(question):
+        return True
+
+    lower = question.lower()
+    newborn_context = _text_has_marker(lower, {"newborn", "baby", "infant"})
+    young_infant_age_context = _has_young_infant_age_context(lower)
+    if not (newborn_context or young_infant_age_context):
+        return False
+
+    poor_feeding = _text_has_marker(
+        lower,
+        {
+            "not feeding well",
+            "not eating well",
+            "feeding poorly",
+            "not taking feeds",
+            "not nursing well",
+        },
+    )
+    abnormal_responsiveness = _text_has_marker(
+        lower,
+        {
+            "harder to wake",
+            "harder to wake up",
+            "difficult to wake",
+            "difficult to wake up",
+            "hard to rouse",
+            "harder to rouse",
+        },
+    )
+    feels_cold = _text_has_marker(
+        lower,
+        {"feels cold", "cold to touch", "cold skin", "cold all over"},
+    )
+    return poor_feeding or abnormal_responsiveness or feels_cold
+
+
 def _is_abdominal_trauma_danger_query(question):
     """Detect abdominal trauma prompts that should retrieve trauma/acute-abdomen owners."""
     lower = question.lower()
@@ -11301,7 +11354,7 @@ def _retrieval_profile_for_question(question, frame=None):
     if (
         _is_airway_obstruction_rag_query(question)
         or _is_meningitis_rash_emergency_query(question)
-        or _is_newborn_sepsis_danger_query(question)
+        or _is_newborn_sepsis_danger_retrieval_query(question)
         or _is_abdominal_trauma_danger_query(question)
         or _is_infected_wound_boundary_query(question)
         or _is_poisoning_unknown_ingestion_card_query(question)
@@ -11373,7 +11426,7 @@ def _supplemental_retrieval_specs(
                         "limit": supplemental_limit,
                     }
                 )
-        if _is_newborn_sepsis_danger_query(question):
+        if _is_newborn_sepsis_danger_retrieval_query(question):
             specs.append(
                 {
                     "text": (

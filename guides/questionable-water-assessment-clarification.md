@@ -32,6 +32,14 @@ aliases:
   - water turned color after sitting
   - muddy water what to do
   - cloudy water before purification
+  - well may be contaminated after flooding
+  - clear well water after flood
+  - boil once after flood
+  - children drinking questionable well water
+  - testing flooded well before drinking
+routing_cues:
+  - Use when the user asks if clear, suspicious, or flood-affected well water is safe, whether one boil is enough, or what to do before children drink questionable water.
+  - Clarify that appearance, settling, or boiling alone may not address chemical, fuel, sewage, or heavy-metal contamination.
 related:
   - water-storage-tank-maintenance
   - water-chemistry-treatment
