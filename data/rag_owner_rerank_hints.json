@@ -277,6 +277,32 @@
           "water"
         ]
       ]
+    },
+    {
+      "guide_id": "GD-513",
+      "branch": "wet_electrical_roof_intrusion_owner",
+      "delta": -0.16,
+      "question_marker_groups": [
+        [
+          "storm",
+          "roof"
+        ],
+        [
+          "water is coming in",
+          "water intrusion",
+          "rain coming in",
+          "roof leak",
+          "leaking"
+        ],
+        [
+          "outlets got wet",
+          "outlet got wet",
+          "wet outlets",
+          "wet outlet",
+          "water near outlet",
+          "water through outlet"
+        ]
+      ]
     }
   ]
 }

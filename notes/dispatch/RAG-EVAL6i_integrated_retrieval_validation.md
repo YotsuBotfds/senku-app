@@ -90,3 +90,25 @@ improved to:
 `RE6-EV-002` and `RE6-IC-004` now retrieve `GD-601` at rank 2. Prompt
 expectation validation against this retrieval artifact passed with 0 errors and
 0 warnings.
+
+## 2026-04-25 Wet-Electrical Owner Hint Follow-Up
+
+After adding a narrow manifest owner hint for storm/roof water intrusion plus
+wet outlets, the retrieval-only proof
+`artifacts/bench/rag_eval_high_liability_compound_holdouts_20260425_wet_electrical_owner_hint_retrieval_only.md`
+improved to:
+
+| metric | result |
+| --- | --- |
+| expected hit@1 | 9/14 |
+| expected hit@3 | 14/14 |
+| expected hit@8 | 14/14 |
+| expected owner best rank | 1.36 |
+| simple owner share | 63/112 |
+
+`RE6-SH-001` moved from `GD-513` rank 5 to rank 1:
+`GD-513, GD-513, GD-513, GD-513, GD-921, GD-921, GD-921, GD-921`.
+Compared with the prior cardiac-logistics retrieval artifact, no other EVAL6
+row changed top retrieved guide order, expected-owner rank, or hit@3 status.
+Prompt expectation validation against this retrieval artifact passed with 0
+errors and 0 warnings.

@@ -340,6 +340,7 @@ class QueryRoutingTests(unittest.TestCase):
             "GD-646",
             "GD-637",
             "GD-601",
+            "GD-513",
         ]
         rules = query._load_rag_owner_rerank_hints()
         self.assertEqual([rule["guide_id"] for rule in rules], expected_guide_ids)
@@ -360,6 +361,47 @@ class QueryRoutingTests(unittest.TestCase):
                         lambda branch, delta: applied.append((branch, delta)),
                     )
                     self.assertEqual(applied, [])
+
+    def test_rag_eval_wet_electrical_roof_intrusion_owner_hint_is_strict(self):
+        question = (
+            "A storm damaged the roof, water is coming in, and some outlets got wet. "
+            "What is safe to do first?"
+        )
+        electrical_meta = {
+            "guide_id": "GD-513",
+            "guide_title": "Electrical Safety & Hazard Prevention",
+        }
+        roof_meta = {
+            "guide_id": "GD-921",
+            "guide_title": "Roof Leak Emergency Repair",
+        }
+
+        applied = []
+        query._apply_rag_owner_rerank_hints(
+            question.lower(),
+            electrical_meta["guide_id"],
+            lambda branch, delta: applied.append((branch, delta)),
+        )
+        self.assertEqual(applied, [("wet_electrical_roof_intrusion_owner", -0.16)])
+        self.assertLess(
+            query._metadata_rerank_delta(question, electrical_meta),
+            query._metadata_rerank_delta(question, roof_meta),
+        )
+
+        broad_questions = [
+            "A storm damaged the roof and water is coming in.",
+            "Some outlets got wet. What is safe to do first?",
+            "How should I repair a roof leak after a storm?",
+        ]
+        for broad_question in broad_questions:
+            with self.subTest(question=broad_question):
+                applied = []
+                query._apply_rag_owner_rerank_hints(
+                    broad_question.lower(),
+                    electrical_meta["guide_id"],
+                    lambda branch, delta: applied.append((branch, delta)),
+                )
+                self.assertEqual(applied, [])
 
     def test_fire_in_rain_and_join_metal_without_welder_get_targeted_specs(self):
         fire_specs = query._supplemental_retrieval_specs("how do i start a fire in rain", 10)
