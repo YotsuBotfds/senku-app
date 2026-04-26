@@ -54,6 +54,16 @@ Energy independence usually seems binary: you either have grid power or you don'
 
 The key insight: you don't need all five technologies at once. Start where you are, add capacity as it becomes economically feasible, and eventually achieve redundancy where single source failure doesn't mean darkness.
 
+### Post-Storm Partial Restoration Sequence
+
+Use this guide when a storm-damaged electrical system is partly alive and the task is load triage or temporary restoration, not broad storm recovery. The safe sequence is:
+
+1. **Stop and isolate hazards first.** If any area is wet, flooded, debris-damaged, sparking, warm, or smells burned, keep it de-energized and route people away. Do not backfeed a generator or battery inverter into building wiring unless the damaged utility feed is positively isolated with a proper transfer switch or equivalent lockout.
+2. **Map what is actually energized.** Treat every conductor as live until tested. Use a multimeter or tester to identify which source, panel, circuit, battery bank, inverter, or generator output is supplying power, then label unsafe, unknown, and usable circuits separately.
+3. **Triage loads before restoring circuits.** Restore only must-have loads first: communication, lighting for safe movement, medical refrigeration or care loads, water pumping, and battery charging. Leave heating elements, large motors, workshop tools, and comfort loads off until source capacity and wiring condition are known.
+4. **Bring temporary power up in small steps.** Energize one known-good branch or extension run at a time through fuses, breakers, GFCI protection where wet conditions are possible, and visible disconnects. Watch voltage, heat, tripping breakers, battery state, and cable strain before adding the next load.
+5. **Log and hand off the temporary state.** Post a simple load schedule and circuit map so nobody assumes normal service has returned. Temporary restoration remains temporary until damaged panels, outlets, cords, and grounding paths are inspected, repaired, and tested.
+
 ## Phase 1: Understanding Electrical Load and Energy Needs
 
 ### What You Need Before Starting

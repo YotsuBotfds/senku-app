@@ -29,6 +29,18 @@ custom_css: '.header-top{display:flex;justify-content:space-between;align-items:
 **Medical Disclaimer:** Triage—the prioritization of patients based on severity and survivability—should only be performed by trained medical professionals when possible. Incorrect triage decisions can result in withholding treatment from salvageable patients. The BLACK (expectant) category should only be applied when medical resources are confirmed to be exhausted and the patient's condition is confirmed non-survivable with available resources. When in doubt, always treat.
 :::
 
+<section id="first-10-minutes-mixed-casualty-sorting">
+
+## First 10 Minutes: Mixed Casualty Sorting
+
+Use START as a rapid 30-60 second triage pass per patient. The first job is sorting priorities, not finishing all treatment on the first person found.
+
+-   **Confused, dizzy, or altered after an accident:** Treat altered mental status, confusion, or dizziness after an accident as RED / immediate assessment until proven otherwise, especially if the person cannot answer simple questions, seems disoriented, may have head injury, shock, or worsening breathing/circulation.
+-   **Minor scrapes or abrasions while walking and following commands:** Treat as GREEN / walking wounded. Move them to a safe holding area. Basic first aid for scrapes and abrasions comes last, after RED and YELLOW patients are sorted and reassessed.
+-   **Mixed scene rule:** Do not let visible but minor bleeding outrank altered mental status. A quiet confused patient can be more urgent than someone with small abrasions.
+
+</section>
+
 <section id="mci-overview">
 
 ## Mass Casualty Incident (MCI) Overview

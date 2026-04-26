@@ -83,6 +83,14 @@ When wording is ambiguous, start from the most likely section:
 **IMPORTANT LIMITATIONS:** No single field water purification method is 100% reliable. Chlorine treatment does NOT kill Cryptosporidium. Chemical treatment does NOT remove chemical contaminants (heavy metals, pesticides, industrial pollutants). Boiling kills pathogens but does not remove chemical contamination. UV treatment requires clear water to be effective. Always use multiple treatment methods when possible, and understand the specific limitations of each method described in this guide.
 :::
 
+<section id="cloudy-floodwater-drinking-plan">
+
+## Cloudy Floodwater Drinking Plan
+
+After flooding, if water is cloudy and has debris, make the immediate drinking-water plan in this order: avoid sources with obvious chemical, fuel, saltwater, or sewage contamination when another source exists; let heavy sediment settle; strain or filter the clearer water; disinfect by boiling, correct chemical treatment, or solar disinfection when the water is clear enough; then store treated water in a clean sealed container without mixing dirty and clean handling.
+
+</section>
+
 <section id="safety-basics">
 
 ## Water Safety Basics

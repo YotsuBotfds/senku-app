@@ -358,3 +358,107 @@ Result:
 - remaining generation/citation miss in this run: `GD-029`
 - remaining ranking misses: `GD-035`, `GD-649`
 - remaining expectation-drift retrieval miss: `GD-120` vs sharpen-a-blade prompt
+
+## 2026-04-25 GD-649 Focused Proof
+
+Worker proof resolved `RE2-BR-004` as a genuine `GD-649` ownership miss, not
+expectation drift. `guides/electrical-system-bootstrap.md` now has a
+`Post-Storm Partial Restoration Sequence` covering hazard isolation,
+energized-state mapping, load triage, staged temporary restoration, and handoff
+logging.
+
+Focused proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_re2_br_004_gd649_fix.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_re2_br_004_gd649_fix_diag/report.md`
+
+Result:
+
+- prompt filter: `RE2-BR-004`
+- expected-supported rows: `1/1`
+- top retrieved guide ids: `GD-649|GD-695|GD-608`
+- cited guide ids: `GD-649`
+
+Next full-pack rerun should verify this holds when all prompts are present.
+
+## 2026-04-25 GD-035 / GD-649 Full-pack Proof
+
+The next full-pack rerun included both source-packaging fixes:
+
+- `guides/water-purification.md`: a dedicated `Cloudy Floodwater Drinking Plan`
+  section for cloudy/debris-filled floodwater drinking-water sequencing.
+- `guides/electrical-system-bootstrap.md`: the `Post-Storm Partial Restoration
+  Sequence` described above.
+
+Fresh proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd035_gd649_packaging.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd035_gd649_packaging_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `17`, up from `15`
+- ranking misses: `0`, down from `2`
+- generation/citation misses: `1`
+- retrieval misses: `1`
+- `RE2-UP-003` / `GD-035` now retrieves `GD-035|GD-378|GD-695` and cites
+  `GD-035|GD-695`
+- `RE2-BR-004` / `GD-649` now retrieves `GD-649|GD-695|GD-608` and cites
+  `GD-649`
+- remaining generation/citation miss: `GD-029`
+- remaining expectation-drift retrieval miss: `GD-120` vs sharpen-a-blade prompt
+
+## 2026-04-25 GD-029 Source-packaging Classification
+
+Read-only classifier verdict: `RE2-UP-002` / `GD-029` is a valid expectation
+and a source-packaging/context-selection issue, not prompt drift. The useful
+`GD-029` START / triage-category passages are not consistently reaching the
+source packet; adjacent guides with explicit confusion, dizziness, minor injury,
+or urgent-red-flag wording can steal citations.
+
+Queue item:
+
+`GD-029` source-packaging repair for `RE2-UP-002`: add or move an early,
+compact "First 10 Minutes: Mixed Casualty Sorting" anchor in Disaster Triage &
+MCI that maps altered mental status/confusion/dizziness after an accident to
+RED/immediate assessment and minor scrapes/abrasions to GREEN/walking
+wounded/basic first aid last, with START 30-60 second triage language.
+Re-ingest `GD-029` and rerun `rag_eval_partial_router_holdouts_20260425`;
+acceptance is `RE2-UP-002` retrieving and citing `GD-029`, not
+`GD-936`/`GD-558`/`GD-930` as sole evidence owners.
+
+## 2026-04-25 GD-029 / GD-035 / GD-649 Full-pack Proof
+
+The final source-packaging pass added:
+
+- `guides/disaster-triage.md`: `First 10 Minutes: Mixed Casualty Sorting`,
+  mapping confusion/dizziness/altered mental status after an accident to
+  RED/immediate assessment and walking minor scrapes/abrasions to GREEN/basic
+  first aid last.
+- `guides/water-purification.md`: `Cloudy Floodwater Drinking Plan`, making
+  the cloudy/debris floodwater sequence an early citable chunk.
+- `guides/electrical-system-bootstrap.md`: `Post-Storm Partial Restoration
+  Sequence`, making temporary restoration/load triage the owner evidence.
+
+Fresh proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd029_gd035_gd649_packaging.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd029_gd035_gd649_packaging_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `18`
+- generation/citation misses: `0`
+- ranking misses: `0`
+- retrieval misses: `1`
+- expected-owner cited: `19/21`
+- `RE2-UP-002` / `GD-029` now cites `GD-029`
+- `RE2-UP-003` / `GD-035` now cites `GD-035|GD-695`
+- `RE2-BR-004` / `GD-649` now cites `GD-649`
+- only remaining retrieval miss is accepted expectation drift:
+  `RE2-UP-009` expects `GD-120`, but the prompt asks to sharpen a dull field
+  blade and retrieves/cites `GD-397` Tool Sharpening.
