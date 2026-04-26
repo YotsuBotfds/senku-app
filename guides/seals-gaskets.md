@@ -6,8 +6,18 @@ category: crafts
 difficulty: intermediate
 tags:
   - practical
+aliases:
+  - seal inspection planning
+  - gasket material selection questions
+  - seal leak symptom log
+  - static dynamic seal identification
+  - gasket maintenance handoff
+  - seal owner routing
+routing_cues:
+  - Use for inspection and planning only: leak symptom description, static versus dynamic seal identification, material compatibility questions, maintenance logs, pressure/heat/chemical red flags, and owner routing.
+  - Route manufacturing steps, torque specs, pressure-system repair, steam, hydraulic, or engine procedures, material formulas, live testing, and safety certification away from this reviewed card.
 icon: 🔩
-description: Creating and maintaining seals for industrial systems
+description: Planning-only seal and gasket inspection support for leak symptoms, static versus dynamic seal identification, material compatibility questions, maintenance logs, red flags, and owner routing without manufacturing, repair, live testing, or certification instructions.
 related:
   - mechanical-advantage-construction
   - pressure-vessels
@@ -19,7 +29,39 @@ word_count: 8315
 last_updated: '2026-02-15'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: seals_gaskets_inspection_planning
+citations_required: true
+applicability: >
+  Use GD-248's reviewed answer card only for inspection and planning-level seal
+  and gasket questions: leak symptoms, static versus dynamic seal
+  identification, material compatibility questions, maintenance records,
+  pressure, heat, or chemical red flags, and owner routing. Do not use the
+  reviewed card for manufacturing steps, torque specifications, pressure-system
+  repair, steam, hydraulic, or engine procedures, material formulas, live
+  testing, or safety certification.
+citation_policy: >
+  Cite this guide and its reviewed answer card only for inspection/material
+  selection planning and handoff: visible leak symptoms, static versus dynamic
+  seal identification, compatibility questions, maintenance logs, red flags,
+  and owner routing. Pair pressure, heat, chemical, steam, hydraulic, engine, or
+  live-test concerns with the appropriate qualified equipment, pressure-system,
+  chemical, engine, or safety owner before any repair or operation decision.
+answer_card:
+  - seals_gaskets_inspection_planning
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-248. Use it for inspection and planning-level seal and gasket questions only: describing leak symptoms, identifying whether the seal is static or dynamic, asking material compatibility questions, checking maintenance logs, naming pressure, heat, or chemical red flags, and routing the issue to the correct owner.
+
+Start by recording what is leaking or staining, where it appears, whether the joint is between still surfaces or around moving parts, what fluid or gas may be involved, what pressure, heat, chemical, steam, hydraulic, or engine context is present, what changed recently, and who owns the equipment and maintenance record. Keep answers at observation, documentation, compatibility-question, and handoff level.
+
+Do not use this card for manufacturing steps, gasket cutting or forming procedures, material formulas, torque specifications, pressure-system repair, steam-system procedures, hydraulic procedures, engine procedures, live pressure or leak testing, or safety certification. If a prompt includes active pressure, high heat, steam, hydraulic fluid injection risk, fuel or chemical exposure, engine operation, unknown fluid, or a request to declare the system safe, stop routine planning and hand off before continuing.
+
+</section>
 
 <section id="section-1">
 

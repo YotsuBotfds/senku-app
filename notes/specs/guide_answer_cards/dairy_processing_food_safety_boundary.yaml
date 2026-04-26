@@ -1,0 +1,166 @@
+card_id: dairy_processing_food_safety_boundary
+guide_id: GD-071
+slug: dairy-processing
+title: Dairy Processing
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks whether milk, cream, butter, yogurt, cheese, or other dairy is safe after raw-milk exposure, poor cooling, abnormal odor or appearance, uncertain storage, or sanitation failure.
+  - A user needs a planning answer for dairy sanitation logs, cold-chain observation, batch labeling, hold/discard decisions, vulnerable-person warnings, or routing to the right owner.
+  - A user asks about pasteurization, culturing, aging, or processing in a way that could become a food-safety claim.
+required_first_actions:
+  - Keep suspect dairy out of service while safety is uncertain; label, separate, and prevent mixing with fresh or known-good batches.
+  - Treat raw milk and raw-milk dairy as high-risk, especially for pregnant people, infants, older adults, and immunocompromised people.
+  - Review collection time, cooling continuity, container sanitation, animal health notes, batch identity, storage conditions, and who consumed the product.
+  - Discard rather than trying to rescue dairy when contamination, temperature abuse, abnormal odor or appearance, illness linkage, or missing records make safety uncertain.
+  - Refer pasteurization to tested procedures and current food-safety authorities; do not invent or restate process parameters from memory.
+first_actions:
+  - Ask what product is involved, whether it was raw or pasteurized, how it was stored, whether the cold chain was continuous, and whether anyone vulnerable or ill is involved.
+  - Separate food-safety triage from production advice; answer hold/discard, observation, and handoff before any routine dairy-processing discussion.
+  - Check sanitation logs for milking container cleaning, equipment cleaning, batch code, storage location, and any mixing of old and fresh milk.
+  - If the product may have been served, identify the batch and stop further service while food-safety or public-health review happens.
+urgent_red_flags:
+  - Pregnant person, infant, older adult, or immunocompromised person consumed raw or suspect dairy.
+  - Vomiting, diarrhea, fever, severe weakness, dehydration signs, neurological symptoms, pregnancy concern, or several people ill after the same dairy batch.
+  - Raw milk, soft cheese, or cultured dairy with uncertain source, uncertain cooling, abnormal odor or appearance, visible contamination, swelling package, mold outside expected product design, or missing sanitation records.
+  - Possible mastitis, blood, clots, pus, sick animal, antibiotic-treated animal, or herd disease concern.
+  - Product intended for public distribution, sale, school, shelter, clinic, or other vulnerable group service.
+forbidden_advice:
+  - Recipes for cheese, yogurt, butter, kefir, cultured cream, or other dairy products.
+  - Processing times, temperatures, holding periods, aging schedules, or starter-culture instructions.
+  - Equipment build steps for pasteurizers, separators, cheese caves, aging rooms, or improvised dairy-processing systems.
+  - Medical diagnosis, treatment, antibiotic advice, rehydration protocols, or reassurance after symptoms.
+  - Claims that smell, taste, culturing, aging, salting, skimming, boiling, or visual inspection guarantees pathogen safety.
+  - Certification that a batch is safe to serve, sell, donate, or feed to a vulnerable person.
+  - Advice to mix suspect milk with fresh milk, process suspect milk into cheese/yogurt/butter to make it safe, or serve dairy while records are missing.
+do_not:
+  - Do not convert a food-safety question into a dairy recipe.
+  - Do not provide pasteurization parameters; name the need for a tested procedure and route to the proper food-safety owner.
+  - Do not reassure vulnerable people that raw or suspect dairy is acceptable.
+  - Do not use aging, culturing, salting, skimming, or cold storage as a pathogen guarantee.
+  - Do not treat public sale, outbreak, medical symptoms, veterinary disease, or refrigeration failure as routine dairy-processing troubleshooting.
+routine_boundary: >
+  This card owns dairy food-safety planning boundaries: raw-milk risk,
+  batch hold/discard logic, sanitation logs, cold-chain observation,
+  vulnerable-person warnings, pasteurization referral, and owner routing. It
+  does not own recipes, process schedules, equipment design, medical treatment,
+  pathogen guarantees, public-sale compliance, or safety certification.
+acceptable_uncertain_fit: >
+  If the user may be asking a recipe question but mentions safety, raw milk,
+  poor cooling, illness, vulnerable people, sanitation failure, or uncertain
+  storage, apply this card first: hold or discard the suspect batch, avoid
+  service, ask only essential triage questions, and route before giving any
+  production advice.
+clarifying_questions:
+  - Is the dairy raw or pasteurized, and what product is it?
+  - Was the batch kept continuously cold, and are collection/storage times and locations logged?
+  - Are there abnormal odors, visible contamination, clots, swelling, unexpected mold, or container sanitation gaps?
+  - Has anyone consumed it, especially a pregnant person, infant, older adult, or immunocompromised person?
+  - Is this for household use, public service, sale, donation, school, shelter, or clinic food?
+citation_ids:
+  - gd-071-raw-milk-warning
+  - gd-071-food-safety-disclaimer
+  - gd-071-reviewed-dairy-boundary
+  - gd-071-milking-hygiene-handling
+  - gd-071-sanitation-cooling
+  - gd-071-milk-quality-assessment
+  - gd-071-batch-accountability
+applicability:
+  owner: dairy food-safety planning and routing boundary
+  use_when:
+    - raw milk or raw-milk dairy risk triage
+    - suspect dairy hold or discard decisions
+    - sanitation log and batch-accountability planning
+    - cold-chain observation and service-stop decisions
+    - vulnerable-person warnings for raw or suspect dairy
+    - pasteurization-as-tested-procedure referral
+  do_not_use_when:
+    - dairy recipes or production schedules are requested without a safety boundary
+    - exact pasteurization, culturing, aging, or storage parameters are requested
+    - medical treatment, foodborne illness management, or outbreak response is needed
+    - regulatory approval, public-sale compliance, or safety certification is requested
+    - equipment design, construction, or process validation is requested
+  handoff:
+    - food-safety-contamination-prevention for general food contamination control and serving decisions.
+    - food-spoilage-assessment for broader questionable-food spoilage triage.
+    - refrigeration-cooling for cold-chain equipment diagnosis and storage-system failure.
+    - veterinary or goat-care-dairy owners for mastitis, herd disease, medication, or animal-health issues.
+    - public-health or medical emergency owners for illness clusters, severe symptoms, pregnancy exposure, or vulnerable-person exposure.
+    - regulatory or local food authority for public sale, donation, school, clinic, shelter, or compliance questions.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_output_handoff: true
+  avoid_medical_recipes_process_parameters: true
+fallback_handoff_language:
+  - Hold the dairy out of service, label and separate the batch, and do not mix it with other milk or products while safety is uncertain.
+  - If vulnerable people consumed raw or suspect dairy, or if anyone has vomiting, diarrhea, fever, weakness, dehydration signs, pregnancy concern, or neurological symptoms, route to medical or public-health help before food-use advice.
+  - For pasteurization, use a current tested procedure from a food-safety authority; this card does not provide process parameters or certify safety.
+  - If sanitation logs, cold-chain records, source identity, or animal-health status are missing, use the conservative hold/discard path and route to food-safety, refrigeration, or veterinary owners as appropriate.
+source_sections:
+  - guide: GD-071
+    slug: dairy-processing
+    title: Dairy Processing
+    sections:
+      - "#raw-milk-and-food-safety-warning"
+      - "#food-safety-disclaimer"
+      - "#reviewed-boundary-dairy-food-safety-routing"
+      - "#2-milking-hygiene-handling"
+      - "#sanitation-cooling"
+      - "#milk-quality-assessment"
+      - "#17-troubleshooting-at-community-scale"
+      - "#batch-accountability"
+  - guide: GD-666
+    slug: food-safety-contamination-prevention
+    title: Food Safety & Contamination Prevention
+    sections:
+      - "#cross-contamination-prevention"
+      - "#foodborne-illness-recognition-response"
+      - "#safe-water-for-food-preparation"
+      - "#illness-response"
+  - guide: GD-919
+    slug: kitchen-food-prep-safety
+    title: Kitchen Food Prep Safety
+    sections:
+      - "#overview"
+      - "#core-rules"
+      - "#contamination-boundaries"
+  - guide: GD-961
+    slug: community-kitchen-mess-hall-operations
+    title: Community Kitchen & Mess Hall Operations
+    sections:
+      - "#outbreak-aware"
+      - "#outbreak-aware > Immediate actions when illness appears"
+      - "#outbreak-aware > When to hold back food"
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: raw milk and vulnerable-person warning
+    guide: GD-071
+    must_include:
+      - Raw (unpasteurized) milk can contain dangerous pathogens
+      - pregnant women, elderly, and immunocompromised individuals
+      - When in doubt, discard suspect food.
+  - name: dairy batch separation and accountability
+    guide: GD-071
+    must_include:
+      - Time-stamp each producer's milk.
+      - Never combine fresh with held milk.
+      - Assign production code
+  - name: reviewed dairy boundary
+    guide: GD-071
+    must_include:
+      - hold the batch out of service
+      - Pasteurization questions should be routed to tested procedures
+      - do not provide recipes, times, temperatures, starter-culture schedules
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-071 metadata/card audit gap. This is a boundary card
+  for dairy food-safety planning and routing, not a dairy-processing recipe
+  card. It intentionally excludes times, temperatures, starter cultures, aging
+  schedules, equipment builds, medical treatment, pathogen guarantees, and
+  safety certification while preserving raw-milk risk, hold/discard, sanitation
+  logs, cold-chain observation, vulnerable-person warnings, pasteurization
+  referral, and handoffs.

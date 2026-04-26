@@ -22,6 +22,32 @@ custom_css: |-
   .svg-title{fill:#d4a574;font-size:16px;font-weight:bold}.svg-label{fill:#b8956a;font-size:12px}.svg-body{fill:#f5f0e8;font-size:11px}.svg-stroke{stroke:#b8956a;stroke-width:2;fill:none}.svg-highlight{stroke:#d4a574;stroke-width:2;fill:none}
   .svg-title{fill:#d4a574;font-size:16px;font-weight:bold}.svg-label{fill:#b8956a;font-size:12px}.svg-body{fill:#f5f0e8;font-size:11px}.svg-stroke{stroke:#b8956a;stroke-width:2;fill:none}
 liability_level: high
+aliases:
+  - rubber material planning
+  - rubber part inventory
+  - rubber storage check
+  - gasket material selection
+  - rubber failure symptoms
+  - rubber owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for rubber-part inventory, visible failure symptoms, environmental and storage checks, nonprocedural material-family comparison, and owner or specialist handoff planning.
+  - Keep routine answers focused on what the part is, where it is used, visible cracking, hardening, tackiness, swelling, loss of elasticity, storage exposure, labels, dates, and who owns follow-up.
+  - Route vulcanization formulas, sulfur or accelerator recipes, heating or curing procedures, tire reclaiming steps, rubber-metal bonding procedure, pressure or vehicle safety claims, chemical handling instructions, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-138 answer card for rubber material inventory, failure-symptom triage, storage/environment checks, high-level material-family comparison, and owner-routing handoffs only; do not use it for vulcanization recipes, curing procedures, tire reclaiming, bonding procedures, pressure or vehicle safety claims, chemical handling, or safety certification.
+applicability: >
+  Use for planning-first rubber material questions: part inventory, observed
+  condition, storage and environmental exposure, nonprocedural comparison of
+  natural, vulcanized, reclaimed, and synthetic rubber families, and routing to
+  the maintenance owner, vehicle or equipment owner, materials specialist,
+  qualified repair shop, manufacturer, recycler, emergency services, or local
+  authority. Do not use for formulas, recipes, heating or curing steps, tire
+  reclaiming, rubber-metal bonding procedure, pressure or vehicle safety
+  claims, chemical handling, or certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: rubber_vulcanization_material_planning
+answer_card:
+  - rubber_vulcanization_material_planning
 ---
 
 :::danger
@@ -31,6 +57,16 @@ liability_level: high
 :::info-box
 **Distinction from Rubber & Latex Extraction Guide:** This guide covers rubber processing, vulcanization chemistry, and rubber product manufacturing. For natural latex extraction, coagulation alternatives, and raw latex material preparation, refer to the <a href="../rubber-latex.html">Rubber & Latex Extraction</a> guide, which focuses on sourcing and preparing raw rubber materials for further processing.
 :::
+
+## Reviewed Answer-Card Boundary: Material Planning, Storage, and Handoffs
+
+This is the reviewed answer-card surface for GD-138. Use it only for rubber part inventory, visible failure-symptom triage, environmental and storage checks, nonprocedural material-family comparison, and owner-routing handoffs. Start with the part's current role, location, owner, age if known, labels or source, whether it is raw rubber, vulcanized rubber, reclaimed rubber, a tire-related part, a gasket or seal, a rubber-metal assembly, or an unknown rubber family, and what visible condition can be observed without cutting, heating, dissolving, pressurizing, driving, or handling chemicals.
+
+For routine material planning, record the part identifier, equipment or system served, owner or maintainer, date inspected, visible cracking, chalking, swelling, softening, tackiness, brittleness, loss of elasticity, flat spots, odor, contamination, oil or solvent contact, heat, sunlight, ozone or electrical-equipment proximity, moisture, storage temperature concerns, and whether the part is critical to pressure, vehicle, lifting, medical, potable-water, electrical, or other safety-sensitive use.
+
+Treat these as handoff triggers before routine material selection: tire sidewall damage, bulges, bead damage, cord exposure, unknown vehicle-roadworthiness implications, pressure-vessel or pressurized-system sealing, fuel or chemical exposure, potable-water or medical contact, structural rubber-metal mounts, load-bearing vibration mounts, severe swelling, sticky degradation, cracking through the part, unknown material family in a critical service, strong fumes, active heat or fire, or any request to certify a part as safe.
+
+Do not use this reviewed card for vulcanization formulas, sulfur or accelerator recipes, heating or curing procedures, tire retreading or reclaiming steps, puncture repair procedures, rubber-metal bonding procedures, solvent or chemical handling instructions, pressure rating calculations, vehicle safety or roadworthiness claims, repair certification, or safety certification. Hand off those requests to the relevant equipment owner, vehicle or tire professional, qualified repair shop, materials specialist, manufacturer documentation, recycler, emergency services, or local authority as appropriate.
 
 <section id="historical">
 

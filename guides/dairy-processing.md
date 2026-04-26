@@ -4,8 +4,42 @@ slug: dairy-processing
 title: Dairy Processing
 category: agriculture
 difficulty: intermediate
+aliases:
+  - dairy food safety
+  - raw milk risk
+  - milk smells off
+  - dairy cold chain
+  - pasteurization safety
+  - dairy sanitation logs
+  - cheese safety question
+  - hold or discard milk
+routing_cues:
+  - Use this guide for dairy-processing planning boundaries, raw-milk risk, cold-chain observation, sanitation logs, and owner-routing when a milk, cream, butter, yogurt, or cheese batch may be unsafe.
+  - Route safety-critical dairy questions to the reviewed food-safety boundary before giving production, fermentation, aging, or equipment instructions.
+  - Treat pasteurization as a tested-procedure referral, not a field-invented time/temperature protocol.
+  - Warn pregnant people, infants, older adults, and immunocompromised people away from raw milk and suspect dairy instead of trying to qualify it as safe.
+citations_required: true
+applicability: >
+  Dairy-processing food-safety triage and planning: raw milk hazards,
+  discard/hold decisions, sanitation and cold-chain observations,
+  pasteurization referral, vulnerable-person warnings, and handoffs to food
+  safety, public health, veterinary, refrigeration, or medical owners. Do not
+  use this reviewed card to provide recipes, processing times/temperatures,
+  starter-culture schedules, cheese-aging directions, equipment-build steps,
+  medical treatment, pathogen guarantees, or safety certification.
+citation_policy: >
+  Cite GD-071 and the reviewed dairy-processing food-safety boundary card only
+  for planning, observation, hold/discard, vulnerable-person warning, and
+  owner-routing answers. For tested pasteurization procedures, illness,
+  outbreak, regulatory sale, equipment design, veterinary disease, or general
+  food-contamination control, cite and route to the more specific owner rather
+  than deriving recipe or certification advice from GD-071.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: dairy_processing_food_safety_boundary
 tags:
   - essential
+  - food-safety
+  - dairy
 icon: 🥛
 description: Milk production, butter making, cheese production, yogurt, cream separation, storage, and dairy herd management.
 related:
@@ -26,6 +60,8 @@ custom_css: |-
   .cave-wall { fill: #5a5a5a; stroke: #e94560; stroke-width: 2; } .cave-shelf { fill: #8B7355; stroke: #b8956a; stroke-width: 2; } .cave-cheese { fill: #f4d4a0; stroke: #e94560; stroke-width: 1; } .cave-label { font-size: 12px; fill: #eee; text-anchor: middle; font-weight: bold; } .cave-desc { font-size: 10px; fill: #aaa; text-anchor: middle; }
   .press-wood { fill: #8B7355; stroke: #e94560; stroke-width: 2; } .press-metal { fill: #c0c0c0; stroke: #b8956a; stroke-width: 2; } .press-mold { fill: #d3d3d3; stroke: #e94560; stroke-width: 2; } .press-label { font-size: 12px; fill: #eee; text-anchor: middle; font-weight: bold; } .press-desc { font-size: 10px; fill: #aaa; text-anchor: middle; }
 liability_level: high
+answer_card:
+  - dairy_processing_food_safety_boundary
 ---
 :::warning
 **RAW MILK AND FOOD SAFETY WARNING:** Raw (unpasteurized) milk can contain dangerous pathogens including Listeria monocytogenes, Salmonella, E. coli O157:H7, and Campylobacter. Listeria is particularly dangerous in soft cheeses aged less than 60 days — it can cause fatal infections especially in pregnant women, elderly, and immunocompromised individuals. Pasteurize all milk before processing. Follow tested recipes and aging times exactly.
@@ -33,6 +69,16 @@ liability_level: high
 
 :::warning
 **Food Safety Disclaimer:** Improper food handling, preservation, or preparation can cause serious illness or death. Follow tested procedures exactly. When in doubt, discard suspect food.
+:::
+
+:::danger
+## Reviewed Boundary: Dairy Food-Safety Routing
+
+Use GD-071 for dairy planning and safety triage only when the answer can stay at the level of risk recognition, batch hold/discard decisions, sanitation records, cold-chain observations, and owner handoff. Raw milk and raw-milk dairy are high-risk foods; do not reassure users that smell, taste, aging, culturing, salting, skimming, or home inspection proves a batch safe. Pregnant people, infants, older adults, and immunocompromised people should avoid raw milk and suspect dairy products.
+
+For suspect milk, cream, butter, yogurt, or cheese, start with: hold the batch out of service, label it, prevent mixing with other batches, review collection/storage/sanitation logs, and discard when safety is uncertain or contamination, temperature abuse, illness linkage, or abnormal appearance/odor is present. Do not provide recipes, times, temperatures, starter-culture schedules, cheese-aging schedules, equipment-build steps, pathogen-kill guarantees, or safety certification from this boundary.
+
+Pasteurization questions should be routed to tested procedures and current food-safety authorities. Illness, outbreak clusters, severe symptoms, vulnerable-person exposure, possible mastitis or herd disease, failed refrigeration, public sale, or regulatory compliance require handoff to the appropriate medical, public-health, veterinary, refrigeration, or food-safety owner.
 :::
 
 :::info-box

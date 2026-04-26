@@ -1,0 +1,183 @@
+card_id: seals_gaskets_inspection_planning
+guide_id: GD-248
+slug: seals-gaskets
+title: Seal & Gasket Manufacturing
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Reviewed inspection and material-selection planning card for GD-248. It covers
+  leak symptom description, static versus dynamic seal identification, material
+  compatibility questions, maintenance logs, pressure, heat, and chemical red
+  flags, and owner routing. It is not a manufacturing, installation, repair,
+  live-testing, pressure-system operation, or safety-certification card.
+applies_when:
+  - A user needs to describe seal or gasket leak symptoms, staining, weeping, odor, residue, or repeated maintenance complaints.
+  - A user asks whether a problem involves a static gasket between non-moving surfaces or a dynamic seal around moving parts.
+  - A user needs material-selection questions for compatibility with heat, pressure, water, oil, fuel, chemicals, steam, hydraulic fluid, or engine service.
+  - A user needs a maintenance log or handoff note for an equipment owner, pressure-system owner, chemical owner, engine owner, or qualified repair owner.
+  - A user asks what red flags should stop routine inspection before repair, testing, or operation.
+required_first_actions:
+  - Keep the answer at inspection, documentation, compatibility-question, and owner-routing level before any repair, fabrication, installation, testing, or operation advice.
+  - Identify whether the seal is static, between non-moving surfaces, or dynamic, around a moving shaft, piston, rod, stem, valve, pump, compressor, or engine part.
+  - Record leak symptoms and context: location, fluid or gas if known, smell, stain, residue, drip or weep pattern, timing, vibration, temperature change, recent maintenance, and whether the system is pressurized, hot, chemical, steam, hydraulic, or engine-related.
+  - Ask material compatibility questions before recommending any material family: fluid or gas, temperature, pressure, movement, exposure to oil, fuel, water, chemicals, sunlight, ozone, vibration, and maintenance history.
+  - Route pressure, heat, chemical, steam, hydraulic, engine, unknown-fluid, live-test, or safety-certification concerns to the appropriate owner instead of giving procedural instructions.
+first_actions:
+  - Make a leak observation log with equipment name, location, suspected seal, static or dynamic classification, visible symptoms, operating state when noticed, and last maintenance date.
+  - Separate static gasket issues from dynamic seal issues because moving shafts, pistons, rods, stems, pumps, compressors, and engines need qualified owner review before repair decisions.
+  - List compatibility questions rather than formulas: What fluid or gas is present? How hot does it get? Is it pressurized? Is there vibration or movement? Is oil, fuel, steam, hydraulic fluid, or an aggressive chemical involved?
+  - Compare broad material families only at planning level: leather, cork, rubber, fiber/paper, and metal have different limits for temperature, pressure, oil, water, fuel, and chemical exposure.
+  - Check maintenance records for repeated leakage, recent disassembly, material substitutions, temperature cycling, vibration, prior tightening, storage age, and unresolved owner decisions.
+  - Prepare a handoff note naming the equipment owner, safety owner, pressure-system owner, chemical owner, engine owner, or qualified repair owner, plus the red flags and unanswered compatibility questions.
+urgent_red_flags:
+  - Active pressure, high heat, steam, hot oil, hydraulic fluid, fuel, aggressive chemicals, unknown fluid or gas, hissing, spray, mist, odor, burn risk, injection risk, or spreading contamination.
+  - Leak symptoms on pressure vessels, boilers, steam equipment, hydraulic systems, engines, fuel systems, compressors, or safety-critical equipment.
+  - Requests to tighten, torque, cut, form, install, repair, test, pressurize, restart, certify, or declare a system safe.
+  - Repeated leakage after maintenance, visible surface damage, corrosion, warping, vibration-related loosening, or chemical swelling/degradation.
+  - Missing maintenance owner, missing pressure/temperature/fluid information, or pressure to keep operating before the owner and hazard status are clear.
+forbidden_advice:
+  - Do not provide manufacturing, cutting, forming, molding, vulcanizing, annealing, lapping, packing, ring-gap, installation, disassembly, or repair steps.
+  - Do not provide torque specifications, tightening procedures, pressure limits as permission to operate, pressure-system repair instructions, or restart instructions.
+  - Do not provide steam, boiler, hydraulic, engine, fuel-system, compressor, valve, pump, or pressure-vessel procedures.
+  - Do not provide material formulas, recipes, ratios, cure conditions, chemical processing instructions, or fabrication methods.
+  - Do not provide live pressure testing, bubble testing, hydrostatic testing, leak-test setup, energized/operating inspection instructions, or troubleshooting procedures that require operation.
+  - Do not make safe-to-use, safe-to-operate, leak-free, compliant, inspection-pass, or safety-certification claims.
+do_not:
+  - Do not convert the source guide's manufacturing, installation, torque, testing, repair, steam, hydraulic, engine, or material-formula passages into reviewed-card instructions.
+  - Do not treat a visible leak in a pressurized, hot, chemical, steam, hydraulic, fuel, or engine system as routine maintenance.
+  - Do not choose a replacement material as a final answer without naming the missing compatibility facts and owner review.
+  - Do not let maintenance-log support become a procedure for working on live or pressurized equipment.
+routine_boundary: >
+  This card owns only the reviewed inspection/material-selection planning lane
+  for GD-248: leak symptom logging, static versus dynamic seal identification,
+  compatibility questions, maintenance history review, red-flag recognition, and
+  owner routing. It exits for manufacturing, installation, torque, repair,
+  pressure-system operation, steam, hydraulic, engine, material-formula,
+  live-testing, or safety-certification requests.
+acceptable_uncertain_fit: >
+  If details are incomplete, provide a conservative observation and handoff
+  checklist, name the missing fluid, pressure, temperature, movement, chemical,
+  and owner facts, and avoid material certainty or procedural repair/testing
+  advice. If any pressure, heat, chemical, steam, hydraulic, engine, or unknown
+  fluid risk is plausible, lead with owner handoff before routine planning.
+clarifying_questions:
+  - Is the leak on a static joint between non-moving surfaces, or around a moving shaft, piston, rod, stem, valve, pump, compressor, or engine part?
+  - What fluid or gas may be involved, and is there pressure, heat, steam, hydraulic fluid, fuel, aggressive chemical exposure, odor, spray, mist, or unknown contamination?
+  - What symptoms are visible: drip, weep, stain, crust, swelling, cracking, hissing, vibration-related leakage, or leakage after temperature cycling?
+  - What maintenance record exists: material used, last service date, recent disassembly, repeated leakage, storage age, and named equipment owner?
+  - Who owns the next decision: equipment operator, maintenance lead, pressure-system owner, chemical safety owner, engine owner, or qualified repair/safety reviewer?
+fallback:
+  - If active pressure, high heat, steam, hot oil, hydraulic fluid, fuel, aggressive chemicals, unknown fluid, hissing, spray, mist, burn risk, or injection risk is present, stop routine inspection framing and hand off to the qualified safety or equipment owner.
+  - If the user asks for manufacturing, cutting, forming, installation, torque, repair, steam, hydraulic, engine, testing, formulas, operation, restart, or certification, decline procedural detail and provide only observation, compatibility questions, log fields, and owner routing.
+  - If material choice is uncertain, list missing compatibility facts and route to the equipment or material owner before selection.
+  - If maintenance logs show repeated leakage, recent substitution, corrosion, surface damage, vibration, or unresolved ownership, prioritize handoff notes over replacement advice.
+fallback_handoff_language:
+  - "This reviewed card can help with seal and gasket inspection planning, compatibility questions, maintenance logs, and owner handoff."
+  - "I cannot provide manufacturing, repair, torque, pressure-system, steam, hydraulic, engine, live-test, material-formula, or certification instructions from this card."
+  - "Treat pressure, heat, steam, hydraulic fluid, fuel, aggressive chemicals, unknown fluids, hissing, spray, or operation requests as owner-handoff triggers before any repair decision."
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  include_leak_symptom_log: true
+  include_static_dynamic_identification: true
+  include_material_compatibility_questions: true
+  include_maintenance_log_review: true
+  include_owner_routing: true
+  forbid_manufacturing_repair_testing_certification: true
+routing_tests:
+  positive:
+    - prompt: "Help me make a leak log and decide who should own a gasket issue on a pump housing."
+      expect: seals_gaskets_inspection_planning
+    - prompt: "What questions should I ask before choosing a gasket material for oil, heat, and vibration?"
+      expect: seals_gaskets_inspection_planning
+    - prompt: "Is this a static or dynamic seal problem, and what should I record for maintenance handoff?"
+      expect: seals_gaskets_inspection_planning
+  near_miss:
+    - prompt: "Show me how to cut and install a new rubber gasket."
+      expect_handoff: qualified_maintenance_owner
+    - prompt: "What torque pattern and torque spec should I use on this flange?"
+      expect_handoff: equipment_or_pressure_system_owner
+    - prompt: "How do I hydrotest this pressure vessel after replacing the gasket?"
+      expect_handoff: pressure_system_safety_owner
+    - prompt: "Give me the vulcanization formula for a hydraulic seal."
+      expect_handoff: materials_or_hydraulic_owner
+  boundary:
+    - prompt: "There is a weeping stain at a cool inspection cover and no pressure is present."
+      expect: inspection_log_material_questions_and_owner_routing
+    - prompt: "A hot hydraulic hose fitting is spraying mist near a moving machine."
+      expect: safety_handoff_before_planning
+citation_ids:
+  - gd-248-reviewed-answer-card-boundary
+  - gd-248-static-dynamic-categories
+  - gd-248-failure-modes
+  - gd-248-material-compatibility-table
+  - gd-248-maintenance-storage-logs
+  - gd-248-common-mistakes-red-flags
+source_sections:
+  - guide: GD-248
+    slug: seals-gaskets
+    title: Seal & Gasket Manufacturing
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#section-1"
+      - "#section-11"
+      - "#section-12"
+      - "#section-13"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-248
+    must_include:
+      - "This is the reviewed answer-card surface for GD-248."
+      - "Use it for inspection and planning-level seal and gasket questions only"
+      - "Do not use this card for manufacturing steps"
+      - "safety certification"
+  - name: static_dynamic_categories_remain
+    guide: GD-248
+    must_include:
+      - "Static seals"
+      - "Dynamic seals"
+      - "prevent leakage"
+      - "moving surfaces"
+  - name: failure_and_material_context_remain
+    guide: GD-248
+    must_include:
+      - "Why They Fail"
+      - "Temperature cycling"
+      - "Chemical attack"
+      - "Mechanical wear"
+  - name: compatibility_table_context_remain
+    guide: GD-248
+    must_include:
+      - "Materials Compatibility Table"
+      - "Temperature and pressure ranges are approximate"
+      - "Chemical Compatibility"
+      - "Key Limitations"
+  - name: maintenance_context_remain
+    guide: GD-248
+    must_include:
+      - "Gasket Storage & Shelf Life"
+      - "Temperature"
+      - "Humidity"
+      - "Chemical exposure"
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-248 as an inspection, material-selection question,
+  maintenance-log, red-flag, and owner-routing card only. It deliberately
+  excludes manufacturing steps, torque specifications, pressure-system repair,
+  steam, hydraulic, and engine procedures, material formulas, live testing, and
+  safety certification. READY_FOR_PARENT_CLOSE.

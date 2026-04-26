@@ -34,11 +34,54 @@ word_count: 19200
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+aliases:
+  - bridge visible distress assessment
+  - dam visible distress assessment
+  - infrastructure keep back checklist
+  - bridge inspection log handoff
+  - dam water level change handoff
+  - infrastructure owner engineer routing
+routing_cues:
+  - Use this guide's reviewed answer card only for non-invasive hazard recognition, visible distress assessment, keep-back or evacuation trigger recognition, inspection-log review, and owner or engineer routing for bridges, dams, retaining walls, aqueducts, and related infrastructure.
+  - Keep routine answers focused on what can be observed from a safe public or authorized vantage point: visible cracking, settlement, scour, leaning, sagging, displaced material, blocked access, posted restrictions, abnormal water levels, seepage, debris, recent storms, inspection records, and named owner or engineer handoff.
+  - Route structural calculations, bridge or dam design, repair procedures, load ratings, construction steps, temporary shoring, flood-control manipulation, rescue tactics, legal/code claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-110 answer card for visible distress assessment, access restrictions, water level changes, evacuation or keep-back triggers, inspection logs, and owner/engineer routing only; do not use it for calculations, design, repair, load ratings, construction, shoring, flood-control manipulation, rescue tactics, legal/code claims, or safety certification.
+applicability: >
+  Use for assessment-first bridge, dam, retaining-wall, aqueduct, and
+  infrastructure questions where the safe answer is to identify visible distress,
+  respect access restrictions, document water-level or site changes, set
+  keep-back or evacuation triggers, review inspection logs, and route the issue
+  to the owner, operator, qualified engineer, emergency manager, inspector, or
+  local authority. Do not use for structural calculations, bridge or dam design,
+  repair procedures, load ratings, construction steps, temporary shoring,
+  flood-control manipulation, rescue tactics, legal/code claims, or safety
+  certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: bridges_dams_infrastructure_assessment
+answer_card:
+  - bridges_dams_infrastructure_assessment
 custom_css: '.subtitle{color:#999;font-size:1.1em;font-style:italic}.section{background-color:#2d2416;padding:25px;margin-bottom:30px;border-radius:8px;border-left:4px solid #4ecdc4}.section-importance{background-color:#2a3a2e;padding:15px;margin:15px 0;border-left:4px solid #7ed321;border-radius:4px}.section-importance strong{color:#7ed321}.svg-container{background-color:#252525;padding:30px;margin:25px 0;border-radius:8px;display:flex;justify-content:center;border:2px solid #4ecdc4}.svg-label{text-align:center;color:#95e1d3;font-style:italic;margin-top:15px;font-size:.95em}.highlight-box{background-color:#1a3a3a;border-left:4px solid #ff6b6b;padding:15px;margin:15px 0;border-radius:4px}.highlight-box strong{color:#ff6b6b}.nav-section{background-color:#2d2416;padding:20px;margin-bottom:30px;border-radius:8px;border-left:4px solid #ff6b6b}.nav-section h3{color:#ff6b6b;margin-top:0}.nav-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}.nav-links a{display:inline-block;padding:10px 15px;background-color:#1a2e1a;color:#4ecdc4;text-decoration:none;border-radius:4px;border:1px solid #4ecdc4;transition:all .3s ease}.nav-links a:hover{background-color:#4ecdc4;color:#1e1e1e}.construction-note{background-color:#3a2e1e;border-left:4px solid #ff9500;padding:15px;margin:15px 0;border-radius:4px;color:#ffb366}.dimension-spec{font-family:''Courier New'',monospace;color:#7ed321;background-color:#252525;padding:8px 12px;border-radius:4px;display:inline-block;margin:5px 5px 5px 0}'
 ---
 :::danger
 **ENGINEERING DISCLAIMER:** Bridge and dam design requires licensed structural/civil engineering review. This guide is for educational reference only. Structural failure of bridges can cause fatal falls; dam failure causes catastrophic downstream flooding that can kill hundreds. Load calculations in this guide are simplified estimates — actual structural design requires professional engineering analysis, soil testing, and safety factors. Do NOT construct load-bearing structures without professional engineering approval.
 :::
+
+## Scope Boundary
+
+This guide contains historical and educational infrastructure material, but its reviewed answer-card surface is assessment and handoff only. Use it to recognize visible distress, access restrictions, abnormal water levels, keep-back or evacuation triggers, inspection-log gaps, and the correct owner or engineer routing for bridges, dams, retaining walls, aqueducts, spillways, piers, abutments, and similar public works.
+
+Do not use the reviewed card for structural calculations, bridge or dam design, repair procedures, load ratings, construction steps, temporary shoring, flood-control manipulation, rescue tactics, legal or code claims, or safety certification. Those requests require the owner or operator, a qualified civil or structural engineer, dam safety official, inspector, emergency manager, or local authority as appropriate.
+
+## Reviewed Answer-Card Boundary: Visible Distress, Logs, and Handoffs
+
+This is the reviewed answer-card surface for GD-110. Start from a safe public or authorized vantage point and do not enter closed, posted, flooded, undermined, or visibly unstable areas. Record what can be observed without loading, climbing, probing, manipulating water controls, entering confined areas, or attempting repair: structure name or location, date and observer, recent storm or impact history, posted restrictions, cracks, sagging, leaning, settlement, scour or undermining, displaced stones or concrete, exposed reinforcement, missing deck or railing parts, blocked flow, debris accumulation, seepage, erosion, unusual sounds, new wet spots, and water level changes.
+
+Routine assessment should preserve a simple handoff log: what changed, when it was first noticed, whether it is worsening, photos from safe locations if allowed, access-control status, inspection or maintenance records already available, and the named owner, operator, engineer, inspector, emergency manager, or authority responsible for decisions.
+
+Red flags require stopping routine assessment and keeping people back or escalating immediately: active collapse or movement, sudden sagging or tilting, rapidly widening cracks, exposed or undermined supports, major scour at piers or abutments, missing or failed railings where people could fall, posted closure or barricade damage, overtopping or rapidly rising water, new seepage or muddy flow through or around a dam, sinkholes, slumps, erosion channels, blocked spillway or outlet, floating debris striking the structure, evacuation notice, or any uncertainty about safe public access.
+
+Do not calculate whether the structure can carry a load, declare it safe, reopen it, rate its capacity, recommend temporary shoring, tell people how to repair it, manipulate gates or spillways, design a bridge or dam, enter restricted areas, perform rescue tactics, or make legal/code compliance claims. Route those questions to the owner/operator and qualified civil or structural engineer, dam safety official, inspector, emergency manager, rescue authority, or local jurisdiction.
 
 ## 1\. Why Water Control
 

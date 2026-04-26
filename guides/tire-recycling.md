@@ -8,6 +8,16 @@ tags:
   - essential
 icon: 🔄
 description: Cutting sandal soles, making buckets, roofing shingles, rubber gaskets, earthship walls, and vulcanized repair patches.
+aliases:
+  - tire reuse safety
+  - tire material screening
+  - old tire project safety
+  - tire contamination check
+  - tire repurposing planning
+  - non structural tire reuse
+routing_cues:
+  - Use for planning-level tire reuse questions about project suitability, tire condition screening, contamination/fume/fire risk, PPE and handoff flags, and non-structural material reuse.
+  - Route cutting procedures, tool instructions, heating or burning, vulcanized patch recipes, structural retaining-wall design, load-bearing claims, chemical processing, food or potable-water claims, and safety certification away from this reviewed card.
 related:
   - building-materials-salvage
   - chemical-fuel-salvage
@@ -20,6 +30,26 @@ last_updated: '2026-02-15'
 version: '1.0'
 custom_css: 'html{scroll-behavior:smooth;color-scheme:dark}body.light-mode{--bg:#f5f5f5;--surface:#fff;--card:#e8f0f7;--accent:#8b6f47;--accent2:#2d9d78;--text:#1a2e1a;--muted:#666;--border:#d0d0d0}@media(max-width:1024px){.container{grid-template-columns:1fr;gap:1rem}.nav-toc{position:sticky;top:200px;max-height:400px;overflow-y:auto}}.nav-toc{background-color:var(--surface);border:2px solid var(--border);border-radius:8px;padding:1.5rem;height:fit-content}.nav-toc h3{color:var(--accent);font-size:1.2rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--accent2)}.nav.nav-toc li{margin:.5rem 0}.nav-toc a{color:var(--text);text-decoration:none;padding:.4rem .8rem;border-radius:4px;display:block;transition:var(--transition);border-left:3px solid transparent}.nav-toc a:hover{background-color:var(--card);border-left-color:var(--accent);color:var(--accent)}.theme-toggle:hover{transform:scale(1.1);background-color:var(--accent2)}main{background-color:var(--surface);border-radius:8px;padding:2rem;border:2px solid var(--border)}section h2{font-size:2rem;color:var(--accent);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:3px solid var(--accent2)}section h3{font-size:1.4rem;color:var(--accent2);margin-top:1.5rem;margin-bottom:.8rem}section h4{font-size:1.1rem;color:var(--text);margin-top:1rem;margin-bottom:.5rem;font-weight:600}thead{background-color:rgba(233,69,96,0.3)}.diagram-container{display:flex;justify-content:center;margin:2rem 0;padding:1.5rem;background-color:var(--card);border-radius:8px;border:2px solid var(--border)}svg{max-width:100%;height:auto;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}.field-notes{background-color:rgba(83,216,168,0.08);border:2px dashed var(--accent2);padding:1.2rem;border-radius:4px;margin:1.5rem 0;font-style:italic;color:var(--text)}.field-notes strong{color:var(--accent2)}.cross-ref{background-color:rgba(233,69,96,0.08);padding:.8rem;border-left:4px solid var(--accent);border-radius:4px;margin:1rem 0}.cross-ref a{color:var(--accent2);text-decoration:none;font-weight:600}.cross-ref a:hover{text-decoration:underline}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}.comparison-item{background-color:var(--card);padding:1rem;border-radius:4px;border:2px solid var(--border)}.comparison-item h4{color:var(--accent);margin-bottom:.8rem}.process-steps{counter-reset:step-counter;margin:1.5rem 0}.step{counter-increment:step-counter;margin:1.2rem 0;padding:1rem;background-color:var(--card);border-left:5px solid var(--accent2);border-radius:4px}.step::before{content:"Step " counter(step-counter) ": ";font-weight:700;color:var(--accent2)}@keyframes slideInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: tire_recycling_material_reuse_safety
+answer_card:
+  - tire_recycling_material_reuse_safety
+citations_required: true
+applicability: >
+  Use GD-213 for planning-level tire material reuse decisions: project
+  suitability, tire condition screening, contamination and fume/fire risk,
+  PPE and handoff flags, and non-structural reuse planning. Do not use its
+  reviewed card for cutting procedures, heating or burning, vulcanized patch
+  recipes, structural retaining-wall design, load-bearing claims, chemical
+  processing, tool instructions, or safety certification.
+citation_policy: >
+  Cite this guide and its reviewed answer card for tire material reuse safety
+  planning, tire condition screening, contamination/fume/fire risk checks,
+  PPE and handoff flags, and non-structural reuse planning only. Do not use the
+  reviewed answer card for cutting procedures, heating or burning tires,
+  vulcanized patch recipes, structural retaining-wall design, load-bearing
+  claims, chemical processing, tool instructions, or certification that a tire
+  project is safe.
 ---
 
 <section id="overview">
@@ -48,6 +78,18 @@ Tire characteristics make them ideal for repurposing: they are durable (designed
 :::
 
 **Related Guides:** See [Shoemaking](shoemaking.html) for detailed footwear construction, [Construction](construction.html) for structural applications, [Rubber Vulcanization](rubber-vulcanization.html) for advanced processing.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-213. Use it for planning-level tire material reuse decisions: choosing non-structural projects, screening tire condition, checking contamination, fume, dust, sharp-wire, and fire risks, naming PPE and handoff flags, and deciding when a tire should be rejected or routed to a specialist.
+
+Start by identifying the intended project and whether it is non-structural: garden edging, raised bed planning, non-potable utility container planning, pathway or flooring material planning, shop matting, draft guards, bumpers, or other low-consequence reuse. Then screen the tire for unknown chemical residue, fuel or oil contamination, mold, heavy rust, exposed or damaged steel belts, embedded foreign objects, severe cracking, burn marks, odor, and prior industrial use before recommending reuse.
+
+Do not use this card for cutting procedures, tool choice or tool instructions, heating, hot-wire work, burning, pyrolysis, chemical processing, vulcanized patch recipes, structural retaining-wall design, load-bearing claims, playground safety certification, food-contact or potable-water safety claims, or certification that a reuse project is safe. If the prompt asks for those, give only the applicable screening or hazard-planning observation and hand off to the appropriate specialist.
 
 </section>
 

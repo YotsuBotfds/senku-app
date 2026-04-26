@@ -22,6 +22,32 @@ word_count: 3100
 last_updated: '2026-02-25'
 version: '1.0'
 liability_level: high
+aliases:
+  - railroad planning boundary
+  - tramway condition inventory
+  - rail condition log
+  - track access control checklist
+  - railroad owner routing
+  - rail stop-use red flags
+routing_cues:
+  - Use this guide's reviewed answer card only for route and service-goal planning, visible track and roadbed condition inventory, access-control checks, maintenance and condition logs, owner routing, and stop-use red flags.
+  - Keep routine answers non-procedural and observation based: record route purpose, known owner or maintainer, visible rail or roadbed condition, access controls, recent maintenance logs, and handoff owner.
+  - Route track laying, switch building, bridge design, rail fabrication, welding, load calculations, live operations, derailment response tactics, construction engineering, legal or code claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-872 answer card for railroad or tramway planning boundaries, visible condition inventories, access-control checks, maintenance logs, owner-routing handoffs, and stop-use red flags only; do not use it for track laying, switch building, bridge design, rail fabrication, welding, load calculations, live operations, derailment response tactics, construction engineering, legal or code claims, or safety certification.
+applicability: >
+  Use for planning-first railroad and tramway questions: defining route and
+  service goals, building a visible track and roadbed condition inventory,
+  checking access controls, organizing maintenance or condition logs, routing
+  issues to the owner or qualified maintainer, and identifying stop-use red
+  flags before any routine use. Do not use for track laying, switch building,
+  bridge design, rail fabrication, welding, load calculations, live operations,
+  derailment response tactics, construction engineering, legal or code claims,
+  or certifying safety.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: railroad_tramway_planning_boundary
+answer_card:
+  - railroad_tramway_planning_boundary
 ---
 
 :::danger
@@ -35,6 +61,20 @@ liability_level: high
 Railroads and tramways revolutionized transport by enabling heavy loads to move faster and more efficiently than any land vehicle. Unlike roads, rail systems consist of precisely engineered tracks and vehicles, allowing standardized operation at scale. A properly built rail system can transport dozens of tons with minimal friction and can operate reliably for decades with regular maintenance.
 
 This guide covers hands-on construction: track fabrication, roadbed preparation, switch and turnout building, bridge engineering, and vehicle construction from hand-cars to steam locomotives. For operations, maintenance schedules, safety protocols, economics, and system-level planning, see the companion guide <a href="../railroads.html">Railroad Construction & Operation</a>.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Planning, Condition Logs, and Handoffs
+
+This is the reviewed answer-card surface for GD-872. Use it only for route and service-goal planning, visible track and roadbed condition inventory, access-control checks, maintenance and condition logs, owner-routing handoffs, and stop-use red flags before routine use. Start with the intended service goal, route segment, known owner or maintainer, access controls, visible rail and roadbed condition, bridge or switch presence as a routing flag, recent inspection or maintenance records, and who can authorize closure or specialist review.
+
+For routine planning or logging, record the segment name, date, observer, access status, owner or maintainer, intended use, current use status, visible rail alignment concerns, loose or missing fasteners, damaged sleepers or ties, ballast washout, drainage problems, vegetation or obstruction, signs of unauthorized access, posted limits, recent repairs, unresolved defects, and the handoff owner responsible for follow-up.
+
+Stop routine use and route to the owner, qualified rail maintainer, civil or structural engineer, emergency service, or local authority when there is derailment, collision, active traffic, uncontrolled access, bridge or trestle damage, washout, sinkhole, rail break, severe misalignment, failed or uncertain switch position, missing restraint, flooding, fire damage, landslide, repeated near miss, unclear ownership, or pressure to operate despite unresolved defects.
+
+Do not use this reviewed card for track laying, switch building, bridge design, rail fabrication, welding, load calculations, live operations, derailment response tactics, construction engineering, legal or code claims, or safety certification. Hand those requests off to the owner, qualified maintainer, licensed engineer, railway authority, emergency service, or other responsible specialist as appropriate.
 
 </section>
 
