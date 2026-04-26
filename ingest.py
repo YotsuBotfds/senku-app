@@ -199,6 +199,28 @@ def normalize_ingest_manifest(manifest, file_info_by_guide_id):
     return normalized
 
 
+def collect_manifest_file_info(md_files):
+    """Collect guide file metadata needed to preserve the ingest manifest."""
+    file_info_by_guide_id = {}
+    for filepath in md_files:
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                meta, _body = parse_frontmatter(f.read())
+        except OSError:
+            continue
+        if not isinstance(meta, dict):
+            continue
+        guide_id = str(meta.get("id", "")).strip()
+        if not guide_id:
+            continue
+        file_info_by_guide_id[guide_id] = {
+            "basename": os.path.basename(filepath),
+            "path": filepath,
+            "sha256": file_sha256(filepath),
+        }
+    return file_info_by_guide_id
+
+
 def delete_lexical_records_by_guide_ids(conn, guide_ids):
     """Delete lexical rows for one or more guide IDs."""
     if not guide_ids:
@@ -1135,7 +1157,12 @@ def main():
             f"{', '.join(duplicate_basenames)}[/yellow]"
         )
 
-    manifest = normalize_ingest_manifest(manifest, file_info_by_guide_id)
+    manifest_file_info = (
+        collect_manifest_file_info(all_md_files)
+        if incremental_mode
+        else file_info_by_guide_id
+    )
+    manifest = normalize_ingest_manifest(manifest, manifest_file_info)
 
     metadata_report = validate_guide_records(
         guide_validation_records,

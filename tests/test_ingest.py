@@ -14,6 +14,7 @@ import ingest as ingest_module
 from ingest import (
     build_contextual_retrieval_text,
     clean_chunk_text,
+    collect_manifest_file_info,
     parse_frontmatter,
     process_file,
     resolve_embedding_batch_size,
@@ -28,6 +29,30 @@ class IngestTests(unittest.TestCase):
     def test_resolve_embedding_batch_size_rejects_non_positive_values(self):
         with self.assertRaises(ValueError):
             resolve_embedding_batch_size(0)
+
+    def test_collect_manifest_file_info_reads_frontmatter_without_chunks(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guide_path = Path(tmpdir) / "manifest-guide.md"
+            guide_path.write_text(
+                """---
+id: GD-910
+slug: manifest-guide
+title: Manifest Guide
+category: utility
+description: Manifest metadata only.
+---
+
+## Body
+
+Content.
+""",
+                encoding="utf-8",
+            )
+
+            info = collect_manifest_file_info([str(guide_path)])
+
+        self.assertEqual(info["GD-910"]["basename"], "manifest-guide.md")
+        self.assertEqual(len(info["GD-910"]["sha256"]), 64)
 
     def test_parse_frontmatter_only_from_leading_fence(self):
         meta, body = parse_frontmatter(
@@ -380,6 +405,104 @@ Second fallback chunk should still align to its shadow record.
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0][0], shadow_records[1]["chunk_id"])
             self.assertEqual(rows[0][1], shadow_records[1]["document"])
+        finally:
+            gc.collect()
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
+    def test_incremental_ingest_preserves_unselected_manifest_entries(self):
+        tmpdir = Path(tempfile.mkdtemp())
+        try:
+            root = tmpdir
+            guides_dir = root / "guides"
+            guides_dir.mkdir()
+            first = guides_dir / "first-guide.md"
+            second = guides_dir / "second-guide.md"
+            first.write_text(
+                """---
+id: GD-904
+slug: first-guide
+title: First Guide
+category: utility
+description: First test guide.
+---
+
+## First
+
+First guide content.
+""",
+                encoding="utf-8",
+            )
+            second.write_text(
+                """---
+id: GD-905
+slug: second-guide
+title: Second Guide
+category: utility
+description: Second test guide.
+---
+
+## Second
+
+Second guide content.
+""",
+                encoding="utf-8",
+            )
+            db_dir = root / "db"
+            lexical_path = db_dir / "senku_lexical.sqlite3"
+            manifest_path = db_dir / "ingest_manifest.json"
+            report_path = db_dir / "metadata_validation_report.json"
+
+            common_patches = (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(ingest_module.config, "CHROMA_DB_DIR", str(db_dir)),
+                patch.object(ingest_module.config, "LEXICAL_DB_PATH", str(lexical_path)),
+                patch.object(ingest_module, "MANIFEST_PATH", str(manifest_path)),
+                patch.object(ingest_module, "METADATA_VALIDATION_REPORT_PATH", str(report_path)),
+                patch.object(ingest_module.requests, "get", return_value=object()),
+                patch.object(
+                    ingest_module,
+                    "embed_batch_with_retry",
+                    side_effect=lambda texts, batch_no: [[0.0, 1.0, 2.0] for _ in texts],
+                ),
+                patch.object(ingest_module, "print_stats", return_value=None),
+            )
+
+            with (
+                common_patches[0],
+                common_patches[1],
+                common_patches[2],
+                common_patches[3],
+                common_patches[4],
+                common_patches[5],
+                common_patches[6],
+                common_patches[7],
+                patch.object(sys, "argv", ["ingest.py", "--rebuild"]),
+            ):
+                ingest_module.main()
+
+            first.write_text(first.read_text(encoding="utf-8") + "\nExtra line.\n", encoding="utf-8")
+
+            with (
+                patch.object(ingest_module.config, "COMPENDIUM_DIR", str(guides_dir)),
+                patch.object(ingest_module.config, "CHROMA_DB_DIR", str(db_dir)),
+                patch.object(ingest_module.config, "LEXICAL_DB_PATH", str(lexical_path)),
+                patch.object(ingest_module, "MANIFEST_PATH", str(manifest_path)),
+                patch.object(ingest_module, "METADATA_VALIDATION_REPORT_PATH", str(report_path)),
+                patch.object(ingest_module.requests, "get", return_value=object()),
+                patch.object(
+                    ingest_module,
+                    "embed_batch_with_retry",
+                    side_effect=lambda texts, batch_no: [[0.0, 1.0, 2.0] for _ in texts],
+                ),
+                patch.object(ingest_module, "print_stats", return_value=None),
+                patch.object(sys, "argv", ["ingest.py", "--files", "first-guide.md"]),
+            ):
+                ingest_module.main()
+
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertIn("GD-904", manifest)
+            self.assertIn("GD-905", manifest)
+            self.assertEqual(manifest["GD-905"]["source_file"], "second-guide.md")
         finally:
             gc.collect()
             shutil.rmtree(tmpdir, ignore_errors=True)
