@@ -237,6 +237,9 @@ Action:
 - Pinned the runtime preflight fail-loud contract: expected-model mismatches
   exit nonzero by default, `--warn-only` is the explicit waiver, and JSON
   evidence still records `model_found=false`.
+- Added direct token-estimation coverage for empty input, fallback word/
+  punctuation splitting, dense-string character floors, and the tokenizer-backed
+  encoder path without requiring the optional tokenizer dependency.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
