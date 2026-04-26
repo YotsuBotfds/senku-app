@@ -379,6 +379,9 @@ Action:
   no-FastEmbed signal instead of stacking duplicate head-health runs.
 - Added a reusable non-Android workflow input mirror guard so manual-dispatch
   inputs and workflow-call inputs keep compatible defaults and types.
+- Tightened the reusable non-Android workflow input mirror guard so
+  `workflow_dispatch` and `workflow_call` cannot grow unreviewed extra inputs
+  on either side of the contract.
 - Added a strict-priority live-overlap guard for deterministic special cases:
   current overlap fixtures must resolve by priority, with no live dependence
   on lexical-signature or first-defined tie-breaks.
@@ -661,6 +664,8 @@ Validation:
   fail-on-warning defaults.
 - `tests.test_github_workflows` covers input-less manual dispatch for generated
   head health and strict retrieval head health workflows.
+- `tests.test_github_workflows` covers exact reusable non-Android workflow input
+  parity, preventing extra manual-dispatch or workflow-call-only inputs.
 - `tests.test_plan_artifact_retention` covers ignored untracked planner
   handoffs and tracked planner handoffs that protect referenced artifacts.
 - `tests.test_bench_metrics_lake` covers direct SQL access to artifact evidence

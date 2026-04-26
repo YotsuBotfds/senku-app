@@ -240,8 +240,8 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             "fail_on_generated_regression",
         }
 
-        self.assertEqual(mirrored, set(dispatch_inputs) & mirrored)
-        self.assertEqual(mirrored, set(call_inputs) & mirrored)
+        self.assertEqual(mirrored, set(dispatch_inputs))
+        self.assertEqual(mirrored, set(call_inputs))
         for name in sorted(mirrored):
             with self.subTest(input=name):
                 dispatch = dispatch_inputs[name]
