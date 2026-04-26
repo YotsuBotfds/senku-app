@@ -327,3 +327,34 @@ Result:
 Note: `GD-029` had passed in earlier citation-priority and GD-648 proof runs,
 so treat its reappearance as a run-to-run citation miss before adding new guide
 churn. `GD-646` remains the next clear source-packaging target.
+
+## 2026-04-25 GD-646 Intro Anchor Proof
+
+The `GD-646` repair moved the reusable-instrument decision path into an early
+exact-match bridge section, `Field Treatment Reusable Instruments Cleaned
+Between Patients`, and added frontmatter aliases/routing/applicability for
+medical instrument reuse with limited fuel or supplies. The first attempt had
+improved the source set but still cited only `GD-250`; the early intro anchor
+made the procedural `GD-646` evidence reach the prompt.
+
+The guide was re-embedded with forced incremental ingest:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B .\ingest.py --files guides\sterilization-ecosystem.md --force-files
+```
+
+Fresh proof:
+
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd646_intro_anchor.json`
+- `artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd646_intro_anchor_diag/report.md`
+
+Result:
+
+- successful prompts: `21/21`
+- artifact errors: `0`
+- expected-supported rows: `15`, up from `14`
+- generation/citation misses: `1`, down from `2`
+- `RE2-BR-005` / `GD-646` now retrieves `GD-646|GD-250` and cites `GD-646`
+- remaining generation/citation miss in this run: `GD-029`
+- remaining ranking misses: `GD-035`, `GD-649`
+- remaining expectation-drift retrieval miss: `GD-120` vs sharpen-a-blade prompt

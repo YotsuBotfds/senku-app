@@ -4,6 +4,20 @@ slug: sterilization-ecosystem
 title: Sterilization Ecosystem - Water Testing to Medical Application
 category: medical
 difficulty: intermediate
+aliases:
+  - reusable instruments between patients
+  - field treatment instrument sterilization
+  - limited fuel sterilization workflow
+  - medical use sterilization decision path
+  - safe instrument cleaning between patients
+routing_cues:
+  - Use for bridge questions that need a safe sterilization workflow for reusable medical instruments between patients, especially with limited fuel or supplies.
+  - Use when the answer must connect cleaning, method choice, instrument boiling, sterile handling, and surgical readiness rather than only naming one sterilization method.
+  - Route detailed standalone boiling or chemical dosing questions to sterilization-methods after the medical-use decision path is covered.
+applicability:
+  - Field treatment, small clinics, wound care, and austere medical settings that reuse instruments and need a safe between-patient workflow.
+  - Questions asking whether limited fuel/supplies are enough for medical instrument reuse.
+  - Not a substitute for surgical technique or sterile-field procedure guides once instrument sterilization and readiness are established.
 tags:
   - sterilization
   - water-testing
@@ -33,6 +47,32 @@ liability_level: high
 Effective medical practice depends on reliable sterilization. This bridge guide connects water testing (determining what contaminants you're fighting) through sterilization method selection (heat, chemistry, or hybrid) to surgical application. Each phase informs the next, and failures cascade—bad testing leads to inappropriate sterilization, which leads to preventable infections.
 
 This guide focuses on field-applicable, electricity-free methods suitable for environments without modern autoclave equipment.
+
+## Field Treatment Reusable Instruments Cleaned Between Patients
+
+When field treatment requires reusable instruments cleaned between patients
+with limited fuel or supplies, use the ecosystem as a chain: reduce the number
+of instruments, clean before sterilizing, prioritize boiling for instruments
+that enter tissue or wounds, and protect the sterile batch after it cools.
+
+1. **Sort by medical risk.** Instruments that enter wounds, touch blood, or
+   contact sterile tissue need high sterilization; general cleaning tools do
+   not justify spending the same fuel.
+2. **Physically clean first.** Scrub off blood, tissue, dirt, and grease before
+   heat or chemical treatment. Sterilization is unreliable through organic
+   material.
+3. **Use boiling as the default for reusable metal instruments.** If fuel is
+   limited, batch instruments in one covered pot and maintain a rolling boil for
+   the full instrument time instead of running several partial cycles.
+4. **Keep chemical methods as backup or support.** Use chemical sterilization
+   only when the instrument material, contamination risk, and contact time make
+   it adequate; do not treat a quick wipe as surgical sterilization.
+5. **Protect the clean batch.** Cool instruments on a clean cloth, avoid bare
+   hand contact, cover them, and re-sterilize anything touched by unclean hands,
+   dirty surfaces, or splash water.
+6. **Stop if you cannot complete the chain.** If you cannot clean first, boil
+   long enough, handle cleanly, and store covered, do not reuse instruments for
+   invasive care unless the alternative is immediately life-threatening.
 
 ## Phase 1: Water Testing and Contamination Assessment
 
