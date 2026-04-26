@@ -105,6 +105,24 @@ class RegistryOverlapTests(unittest.TestCase):
             ),
         )
 
+    def test_live_overlaps_resolve_by_strict_priority(self):
+        for overlap in query.get_deterministic_special_case_overlaps():
+            with self.subTest(source_rule_id=overlap["source_rule_id"]):
+                self.assertEqual("priority", overlap["winner_reason"])
+                self.assertEqual(1, len(overlap["winner_rule_ids"]))
+
+                winner_rule_id = overlap["winner_rule_ids"][0]
+                winner_matches = [
+                    match for match in overlap["matches"] if match["rule_id"] == winner_rule_id
+                ]
+                self.assertEqual(1, len(winner_matches))
+                winner_priority = winner_matches[0]["priority"]
+
+                for match in overlap["matches"]:
+                    if match["rule_id"] == winner_rule_id:
+                        continue
+                    self.assertGreater(winner_priority, match["priority"])
+
     def test_overlap_matrix_winners_match_runtime_classification(self):
         for overlap in query.get_deterministic_special_case_overlaps():
             with self.subTest(source_rule_id=overlap["source_rule_id"]):

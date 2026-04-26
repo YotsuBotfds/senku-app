@@ -226,7 +226,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
 
         triggers = workflow.get("on", workflow.get(True, {}))
         self.assertIn("push", triggers)
-        self.assertEqual(["master"], triggers["push"]["branches"])
+        push = triggers["push"]
+        self.assertEqual(["master"], push["branches"])
+        self.assertNotIn("paths", push)
+        self.assertNotIn("paths-ignore", push)
         self.assertIn("workflow_dispatch", triggers)
 
         jobs = workflow["jobs"]

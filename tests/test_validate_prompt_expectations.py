@@ -15,6 +15,17 @@ HIGH_LIABILITY_HOLDOUT_PACKS = (
     REPO_ROOT / "artifacts" / "prompts" / "adhoc" / "rag_eval8_compound_boundary_holdouts_20260425.jsonl",
     REPO_ROOT / "artifacts" / "prompts" / "adhoc" / "rag_eval9_high_liability_compound_holdouts_20260426.jsonl",
 )
+HIGH_LIABILITY_HOLDOUT_STYLES = {
+    HIGH_LIABILITY_HOLDOUT_PACKS[0]: "red-team-boundary",
+    HIGH_LIABILITY_HOLDOUT_PACKS[1]: "compound-boundary",
+    HIGH_LIABILITY_HOLDOUT_PACKS[2]: "high-liability-compound",
+}
+PARTIAL_ROUTER_PACK = (
+    REPO_ROOT / "artifacts" / "prompts" / "adhoc" / "rag_eval_partial_router_holdouts_20260425.jsonl"
+)
+PARTIAL_ROUTER_ALLOWED_DRIFT = (
+    REPO_ROOT / "notes" / "specs" / "partial_router_allowed_drift_20260426.json"
+)
 
 
 class PromptExpectationValidatorTests(unittest.TestCase):
@@ -101,6 +112,87 @@ class PromptExpectationValidatorTests(unittest.TestCase):
                         )
 
         self.assertEqual(row_count, 28)
+
+    def test_high_liability_holdout_packs_keep_narrow_schema_values(self):
+        allowed_risk_tiers = {
+            "high_liability_boundary",
+            "high_liability_infrastructure",
+            "high_liability_public_health",
+            "high_liability_triage",
+            "red_flag_emergency",
+        }
+        allowed_fair_test_statuses = {"ready", "retrieval-smoke-first"}
+        row_count = 0
+
+        for pack, expected_style in HIGH_LIABILITY_HOLDOUT_STYLES.items():
+            with self.subTest(pack=pack.name):
+                rows = [
+                    json.loads(line)
+                    for line in pack.read_text(encoding="utf-8").splitlines()
+                    if line.strip()
+                ]
+                for row in rows:
+                    row_count += 1
+                    self.assertEqual("rag-eval", row.get("lane"))
+                    self.assertEqual(expected_style, row.get("style"))
+                    self.assertIn(row.get("risk_tier"), allowed_risk_tiers)
+                    self.assertIn(row.get("fair_test_status"), allowed_fair_test_statuses)
+
+                    for field in ("required_concepts", "forbidden_or_suspicious"):
+                        values = row[field]
+                        normalized = [value.strip().lower() for value in values]
+                        self.assertEqual(len(normalized), len(set(normalized)), row["id"])
+
+        self.assertEqual(row_count, 28)
+
+    def test_partial_router_allowed_drift_targets_real_expected_guides(self):
+        prompt_rows = {}
+        for line in PARTIAL_ROUTER_PACK.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            guide_ids = set()
+            for field in (
+                "guide_id",
+                "guide_ids",
+                "expected_guide_id",
+                "expected_guide_ids",
+                "expected_guides",
+                "primary_expected_guide_ids",
+                "primary_expected_guides",
+            ):
+                value = row.get(field)
+                if isinstance(value, str):
+                    guide_ids.add(value)
+                elif isinstance(value, list):
+                    guide_ids.update(item for item in value if isinstance(item, str))
+            prompt_rows[row["id"]] = guide_ids
+
+        manifest = json.loads(PARTIAL_ROUTER_ALLOWED_DRIFT.read_text(encoding="utf-8"))
+        seen_triplets = set()
+        entries = manifest.get("allowed_drift")
+
+        self.assertIsInstance(entries, list)
+        self.assertGreater(len(entries), 0)
+        for entry in entries:
+            prompt_id = entry.get("prompt_id")
+            issue_codes = entry.get("issue_codes")
+            guide_ids = entry.get("guide_ids")
+
+            self.assertIn(prompt_id, prompt_rows)
+            self.assertIsInstance(issue_codes, list)
+            self.assertGreater(len(issue_codes), 0)
+            self.assertIsInstance(guide_ids, list)
+            self.assertGreater(len(guide_ids), 0)
+            self.assertTrue(str(entry.get("reason", "")).strip())
+            self.assertTrue(set(guide_ids) & prompt_rows[prompt_id])
+
+            for issue_code in issue_codes:
+                self.assertTrue(str(issue_code).strip())
+                for guide_id in guide_ids:
+                    triplet = (prompt_id, issue_code, guide_id)
+                    self.assertNotIn(triplet, seen_triplets)
+                    seen_triplets.add(triplet)
 
     def test_jsonl_and_csv_validate_known_guides_and_unique_prompt_ids(self):
         root = self.make_tmpdir()

@@ -242,6 +242,16 @@ Action:
 - Added a `master` push trigger to the Dependency Security Scan workflow for
   dependency/security-tooling path changes, matching the pull-request path
   filter so dependency scan health becomes visible on relevant HEAD updates.
+- Added an explicit no-path-filter guard for the `Master Head Health` workflow:
+  it must run on every `master` push, not only selected path changes.
+- Added a strict-priority live-overlap guard for deterministic special cases:
+  current overlap fixtures must resolve by priority, with no live dependence
+  on lexical-signature or first-defined tie-breaks.
+- Added partial-router allowed-drift manifest hygiene: suppressions must target
+  real prompt rows, carry non-empty issue/guide/reason fields, overlap expected
+  guide metadata, and avoid duplicate prompt/issue/guide triplets.
+- Narrowed the high-liability holdout schema guard: EVAL7/EVAL8/EVAL9 rows now
+  pin lane/style/status/risk vocabularies and unique required/forbidden text.
 
 Validation:
 
