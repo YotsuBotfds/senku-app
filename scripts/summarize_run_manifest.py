@@ -39,6 +39,19 @@ def _escape_markdown(value: object) -> str:
     return text.replace("|", "\\|")
 
 
+def _count_from_evidence(value: Any) -> int:
+    if isinstance(value, list):
+        return len([item for item in value if item not in (None, "")])
+    return 0
+
+
+def _coerce_artifact_count(value: Any, *, evidence_list: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return _count_from_evidence(evidence_list)
+
+
 def load_manifest(path: Path) -> tuple[list[dict[str, Any]], int]:
     records: list[dict[str, Any]] = []
     malformed = 0
@@ -94,10 +107,10 @@ def count_records_with_missing_artifacts(records: list[dict[str, Any]]) -> int:
     for record in records:
         if "artifact_path_missing_count" not in record:
             continue
-        try:
-            missing = int(record.get("artifact_path_missing_count") or 0)
-        except (TypeError, ValueError):
-            missing = 0
+        missing = _coerce_artifact_count(
+            record.get("artifact_path_missing_count", 0),
+            evidence_list=record.get("artifact_path_missing", []),
+        )
         if missing > 0:
             count += 1
     return count
@@ -154,8 +167,14 @@ def _artifact_health(record: dict[str, Any]) -> str:
     dirty = record.get("dirty", False)
 
     if any(field in record for field in ARTIFACT_EVIDENCE_FIELDS):
-        artifact_count = record.get("artifact_path_count", 0)
-        missing_count = record.get("artifact_path_missing_count", 0)
+        artifact_count = _coerce_artifact_count(
+            record.get("artifact_path_count", 0),
+            evidence_list=record.get("artifact_path", []),
+        )
+        missing_count = _coerce_artifact_count(
+            record.get("artifact_path_missing_count", 0),
+            evidence_list=record.get("artifact_path_missing", []),
+        )
         truncated = record.get("artifact_path_truncated", False)
 
         parts = [f"paths={artifact_count}", f"missing={missing_count}"]

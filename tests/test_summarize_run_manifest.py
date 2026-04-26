@@ -5,7 +5,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.summarize_run_manifest import load_manifest, render_markdown
+from scripts.summarize_run_manifest import (
+    count_records_with_missing_artifacts,
+    load_manifest,
+    render_markdown,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +98,32 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertIn("paths=n/a; dirty", markdown)
         self.assertNotIn("paths=0; missing=0", markdown)
 
+    def test_artifact_health_uses_evidence_lists_when_count_fields_are_malformed(self):
+        records = [
+            {
+                "task": "partial",
+                "lane": "tooling",
+                "label": "partial-evidence",
+                "artifact_path_count": "oops",
+                "artifact_path_missing_count": "bad-number",
+                "artifact_path": [
+                    "artifacts/bench/a/report.md",
+                    "artifacts/bench/b/report.md",
+                ],
+                "artifact_path_missing": [
+                    "artifacts/bench/missing-a.md",
+                    "artifacts/bench/missing-b.md",
+                    "artifacts/bench/missing-c.md",
+                ],
+            }
+        ]
+
+        markdown = render_markdown(records)
+
+        self.assertIn("paths=2; missing=3", markdown)
+        self.assertNotIn("paths=oops", markdown)
+        self.assertNotIn("missing=bad-number", markdown)
+
     def test_artifact_health_preserves_defaults_when_evidence_field_exists(self):
         records = [
             {
@@ -107,6 +137,23 @@ class SummarizeRunManifestTests(unittest.TestCase):
         markdown = render_markdown(records)
 
         self.assertIn("paths=0; missing=2", markdown)
+
+    def test_count_records_with_missing_artifacts_uses_missing_evidence_when_count_malformed(self):
+        records = [
+            {
+                "artifact_path_missing_count": "not-a-number",
+                "artifact_path_missing": [
+                    "artifacts/bench/missing-a.md",
+                    "artifacts/bench/missing-b.md",
+                ],
+            },
+            {
+                "artifact_path_missing_count": "invalid",
+                "artifact_path_missing": [],
+            },
+        ]
+
+        self.assertEqual(count_records_with_missing_artifacts(records), 1)
 
     def test_artifact_health_lists_missing_artifact_paths_when_available(self):
         records = [

@@ -557,6 +557,9 @@ Action:
 - Agent startup snapshots now surface the latest metadata-audit malformed
   frontmatter count and strict retrieval workflow mode/warning/index-flavor
   settings in the Recent Run Manifest section.
+- Run-manifest summaries now derive artifact and missing-artifact counts from
+  evidence lists when malformed count scalars are present, preventing bad
+  manifest values from hiding missing artifact evidence.
 
 Validation:
 
@@ -624,6 +627,8 @@ Validation:
   counts and Markdown reporting.
 - `tests.test_agent_context_snapshot` covers metadata-audit and strict
   retrieval workflow signals in the startup snapshot.
+- `tests.test_summarize_run_manifest` covers malformed artifact-count scalar
+  fallback to `artifact_path` and `artifact_path_missing` evidence lists.
 
 Deferred unless evidenced:
 
