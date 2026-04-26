@@ -1511,5 +1511,3 @@ Quick decision matrix for choosing purification methods based on available resou
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. Recommendations are based on the methods covered in this guide — see the gear page for full pros/cons.</span>
 :::
-
-{{> water-purification-troubleshooter }}
