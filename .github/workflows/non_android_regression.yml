@@ -93,48 +93,6 @@ jobs:
           python -m pip install fastembed
           "SENKU_PYTHON_PATH=$((Get-Command python).Source)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Start CI embedding service
-        shell: pwsh
-        run: |
-          $cacheDir = Join-Path $env:RUNNER_TEMP 'fastembed-cache'
-          $stdoutLog = Join-Path $env:RUNNER_TEMP 'fastembed-stdout.log'
-          $stderrLog = Join-Path $env:RUNNER_TEMP 'fastembed-stderr.log'
-          $process = Start-Process `
-            -FilePath python `
-            -ArgumentList @(
-              'scripts\fastembed_openai_server.py',
-              '--host', '127.0.0.1',
-              '--port', '8801',
-              '--cache-dir', $cacheDir,
-              '--threads', '2'
-            ) `
-            -PassThru `
-            -WindowStyle Hidden `
-            -RedirectStandardOutput $stdoutLog `
-            -RedirectStandardError $stderrLog
-
-          "SENKU_FASTEMBED_PID=$($process.Id)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          "SENKU_EMBED_URL=http://127.0.0.1:8801/v1" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-          for ($attempt = 1; $attempt -le 30; $attempt++) {
-            try {
-              Invoke-RestMethod -Uri 'http://127.0.0.1:8801/v1/models' -TimeoutSec 5 | Out-Null
-              Write-Host "FastEmbed service is ready."
-              return
-            } catch {
-              Start-Sleep -Seconds 2
-            }
-          }
-
-          if (Test-Path -LiteralPath $stdoutLog) { Get-Content -LiteralPath $stdoutLog }
-          if (Test-Path -LiteralPath $stderrLog) { Get-Content -LiteralPath $stderrLog }
-          throw "FastEmbed service did not become ready."
-
-      - name: Build guide retrieval index
-        shell: pwsh
-        run: |
-          python -B ingest.py --rebuild
-
       - name: Run non-Android regression gate
         shell: pwsh
         env:
@@ -169,8 +127,50 @@ jobs:
             $args += '-FailOnGeneratedRegression'
           }
 
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args
           "SENKU_GATE_LABEL=$label" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $env:SENKU_EMBED_URL = 'http://127.0.0.1:8801/v1'
+
+          $cacheDir = Join-Path $env:RUNNER_TEMP 'fastembed-cache'
+          $stdoutLog = Join-Path $env:RUNNER_TEMP 'fastembed-stdout.log'
+          $stderrLog = Join-Path $env:RUNNER_TEMP 'fastembed-stderr.log'
+          $process = Start-Process `
+            -FilePath python `
+            -ArgumentList @(
+              'scripts\fastembed_openai_server.py',
+              '--host', '127.0.0.1',
+              '--port', '8801',
+              '--cache-dir', $cacheDir,
+              '--threads', '2'
+            ) `
+            -PassThru `
+            -WindowStyle Hidden `
+            -RedirectStandardOutput $stdoutLog `
+            -RedirectStandardError $stderrLog
+
+          try {
+            for ($attempt = 1; $attempt -le 30; $attempt++) {
+              try {
+                Invoke-RestMethod -Uri 'http://127.0.0.1:8801/v1/models' -TimeoutSec 5 | Out-Null
+                Write-Host "FastEmbed service is ready."
+                break
+              } catch {
+                if ($attempt -eq 30) { throw }
+                Start-Sleep -Seconds 2
+              }
+            }
+
+            python -B ingest.py --rebuild
+            powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_non_android_regression_gate.ps1 @args
+          } finally {
+            Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+            if (Test-Path -LiteralPath $stderrLog) {
+              $stderr = Get-Content -LiteralPath $stderrLog
+              if ($stderr) {
+                Write-Host "FastEmbed stderr:"
+                $stderr | Write-Host
+              }
+            }
+          }
 
       - name: Build attested bench bundle
         id: bench_bundle
@@ -230,9 +230,3 @@ jobs:
         uses: actions/attest@281a49d4cbb0a72c9575a50d18f6deb515a11deb # v4
         with:
           subject-path: ${{ steps.bench_bundle.outputs.bundle_zip }}
-
-      - name: Stop CI embedding service
-        if: always() && env.SENKU_FASTEMBED_PID != ''
-        shell: pwsh
-        run: |
-          Stop-Process -Id $env:SENKU_FASTEMBED_PID -Force -ErrorAction SilentlyContinue

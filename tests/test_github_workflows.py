@@ -73,17 +73,17 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         steps = workflow["jobs"]["non-android-regression"]["steps"]
         names = [step.get("name") for step in steps]
 
-        self.assertLess(
-            names.index("Build guide retrieval index"),
-            names.index("Run non-Android regression gate"),
-        )
         install_step = steps[names.index("Install validation dependencies")]
         self.assertIn("python -m pip install fastembed", install_step.get("run", ""))
-        start_step = steps[names.index("Start CI embedding service")]
-        self.assertIn("scripts\\fastembed_openai_server.py", start_step.get("run", ""))
-        self.assertIn("SENKU_EMBED_URL=http://127.0.0.1:8801/v1", start_step.get("run", ""))
-        ingest_step = steps[names.index("Build guide retrieval index")]
-        self.assertIn("python -B ingest.py --rebuild", ingest_step.get("run", ""))
+        gate_step = steps[names.index("Run non-Android regression gate")]
+        gate_script = gate_step.get("run", "")
+        self.assertIn("scripts\\fastembed_openai_server.py", gate_script)
+        self.assertIn("$env:SENKU_EMBED_URL = 'http://127.0.0.1:8801/v1'", gate_script)
+        self.assertLess(
+            gate_script.index("python -B ingest.py --rebuild"),
+            gate_script.index("run_non_android_regression_gate.ps1"),
+        )
+        self.assertIn("finally", gate_script)
 
     def test_private_repositories_skip_attestation_step(self):
         workflow = yaml.safe_load(
