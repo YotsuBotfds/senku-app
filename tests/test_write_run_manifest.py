@@ -314,6 +314,36 @@ class WriteRunManifestTests(unittest.TestCase):
             },
         )
 
+    def test_artifact_path_evidence_records_directory_outputs(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            directory_path = root / "artifacts" / "bench" / "run-dir"
+            directory_path.mkdir(parents=True)
+            manifest_path = root / "manifest.jsonl"
+
+            payload = _run_script(
+                [
+                    "--task",
+                    "artifact-directory-evidence",
+                    "--lane",
+                    "tooling",
+                    "--output",
+                    "artifacts/bench/run-dir",
+                    "--manifest-path",
+                    str(manifest_path),
+                ],
+                cwd=tmpdir,
+            )
+
+        self.assertEqual(payload["artifact_path"], ["artifacts/bench/run-dir"])
+        self.assertEqual(payload["artifact_path_missing"], [])
+        self.assertEqual(payload["artifact_path_missing_count"], 0)
+        directory_evidence = payload["artifact_path_evidence"][0]
+        self.assertEqual(directory_evidence["path"], "artifacts/bench/run-dir")
+        self.assertIs(directory_evidence["exists"], True)
+        self.assertEqual(directory_evidence["kind"], "directory")
+        self.assertIsInstance(directory_evidence["modified_at"], str)
+
     def test_auto_enrichment_caps_changed_files_status_and_artifacts(self):
         status_text = "\n".join(
             [

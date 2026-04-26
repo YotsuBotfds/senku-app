@@ -249,6 +249,9 @@ Action:
 - Added diagnostics triage coverage proving `--guide-id` style filtering still
   matches guide IDs when diagnostic artifacts store expected, retrieved, or
   cited guide fields as JSON lists rather than pipe-delimited strings.
+- Added run-manifest artifact evidence coverage for directory outputs, proving
+  directory artifacts are recorded as existing `directory` entries with
+  modification timestamps rather than being treated as missing files.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
