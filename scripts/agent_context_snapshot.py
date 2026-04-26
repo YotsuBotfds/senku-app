@@ -155,11 +155,70 @@ def collect_dispatch_summary(dispatch_dir: Path, *, limit: int = DEFAULT_DISPATC
 
 
 def _extract_yaml_scalar(yaml_text: str, key: str) -> str | None:
-    pattern = rf"(?m)^\s*{re.escape(key)}:\s*([^\n#]+)\s*(?:#.*)?$"
-    match = re.search(pattern, yaml_text)
-    if not match:
-        return None
-    return match.group(1).strip().strip('"').strip("'")
+    assignment_pattern = rf"(?m)^(\s*{re.escape(key)}:\s*)(.*)$"
+    for _, value_part in re.findall(assignment_pattern, yaml_text):
+        parsed = _parse_yaml_scalar(value_part)
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def _parse_yaml_scalar(value_text: str) -> str | None:
+    value = value_text.strip()
+    if not value:
+        return ""
+
+    if value[0] == "'":
+        i = 1
+        chunks: list[str] = []
+        while i < len(value):
+            char = value[i]
+            if char == "'":
+                if i + 1 < len(value) and value[i + 1] == "'":
+                    chunks.append("'")
+                    i += 2
+                    continue
+                break
+            chunks.append(char)
+            i += 1
+        return "".join(chunks).strip()
+
+    if value[0] == '"':
+        i = 1
+        chunks: list[str] = []
+        while i < len(value):
+            char = value[i]
+            if char == "\\" and i + 1 < len(value):
+                i += 1
+                escapes = {
+                    "n": "\n",
+                    "r": "\r",
+                    "t": "\t",
+                    '"': '"',
+                    "\\": "\\",
+                    "/": "/",
+                }
+                escaped = value[i]
+                chunks.append(escapes.get(escaped, escaped))
+                i += 1
+                continue
+            if char == '"':
+                break
+            chunks.append(char)
+            i += 1
+        return "".join(chunks).strip()
+
+    # Plain style scalar: strip unescaped inline comment.
+    comment_idx = None
+    for idx, char in enumerate(value):
+        if char == "#":
+            if idx == 0 or value[idx - 1].isspace():
+                comment_idx = idx
+                break
+    if comment_idx is not None:
+        return value[:comment_idx].strip()
+
+    return value.strip()
 
 
 def _metadata_audit_signal_lines(records: list[dict]) -> list[str]:

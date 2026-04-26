@@ -12,6 +12,8 @@ from scripts.agent_context_snapshot import (
     collect_artifact_summary,
     collect_git_summary,
     main,
+    _extract_yaml_scalar,
+    _parse_yaml_scalar,
 )
 
 
@@ -205,6 +207,37 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("Metadata-audit signal", markdown)
         self.assertIn("malformed_frontmatter_count=3", markdown)
         self.assertIn("Strict-retrieval head-health workflow configured", markdown)
+
+    def test_extract_yaml_scalar_handles_quoted_values_and_inline_comments(self):
+        yaml = "\n".join(
+            [
+                "name: Strict Retrieval Head Health",
+                "on: push",
+                "jobs:",
+                "  strict-retrieval-head-health:",
+                "    with:",
+                "      mode: \"Fast\" # with fast mode",
+                "      allow_retrieval_warnings: \"false\" # keep strict",
+                "      retrieval_index_flavor: 'full #special' # quoted hash",
+                "      notes: test # plain inline comment",
+            ]
+        )
+
+        self.assertEqual(_extract_yaml_scalar(yaml, "mode"), "Fast")
+        self.assertEqual(
+            _extract_yaml_scalar(yaml, "allow_retrieval_warnings"), "false"
+        )
+        self.assertEqual(
+            _extract_yaml_scalar(yaml, "retrieval_index_flavor"), "full #special"
+        )
+        self.assertEqual(_extract_yaml_scalar(yaml, "notes"), "test")
+
+    def test_parse_yaml_scalar_handles_escaped_single_quotes(self):
+        self.assertEqual(
+            _parse_yaml_scalar("'can''t stop # this is fine' # inline comment"),
+            "can't stop # this is fine",
+        )
+        self.assertEqual(_parse_yaml_scalar('"quoted \\"hash#sign\\" test"'), 'quoted "hash#sign" test')
 
     def test_git_summary_treats_only_protected_handoffs_as_actionable_clean(self):
         root = self.make_tmpdir()
