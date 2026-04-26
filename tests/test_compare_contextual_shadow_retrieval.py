@@ -1,3 +1,4 @@
+import csv
 import json
 import math
 import tempfile
@@ -374,6 +375,39 @@ class CompareContextualShadowRetrievalTests(unittest.TestCase):
         self.assertIsNone(loaded_rows[0]["top_k_overlap_jaccard"])
         self.assertIsNone(loaded_summary["mean_top_k_overlap_jaccard"])
         self.assertIsNone(loaded_summary["nested"]["negative"])
+
+    def test_csv_output_serializes_nested_values_stably(self):
+        rows = [
+            {
+                **compare_retrieval_row(
+                    artifact_path="guide_wave_fc_20260424_093011.json",
+                    prompt_index=1,
+                    question="nested csv values",
+                    expected_guide_ids=["GD-380"],
+                    baseline_top_guide_ids=["GD-111"],
+                    shadow_top_guide_ids=["GD-380"],
+                ),
+                "baseline_top_guide_ids": [
+                    {"z": math.nan, "a": "GD-111"},
+                    {"b": "GD-222", "a": "GD-333"},
+                ],
+                "shadow_top_guide_ids": ("GD-380", {"z": 2, "a": 1}),
+                "top_k_overlap_jaccard": math.inf,
+            }
+        ]
+        summary = aggregate_comparison_rows(rows)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            outputs = write_outputs(rows, summary, tmpdir)
+            with Path(outputs["rows_csv"]).open("r", encoding="utf-8", newline="") as handle:
+                loaded = next(csv.DictReader(handle))
+
+        self.assertEqual(
+            loaded["baseline_top_guide_ids"],
+            '{"a":"GD-111","z":null}|{"a":"GD-333","b":"GD-222"}',
+        )
+        self.assertEqual(loaded["shadow_top_guide_ids"], 'GD-380|{"a":1,"z":2}')
+        self.assertEqual(loaded["top_k_overlap_jaccard"], "")
 
 
 if __name__ == "__main__":

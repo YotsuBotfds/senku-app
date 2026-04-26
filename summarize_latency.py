@@ -67,7 +67,10 @@ def _extract_latency_breakdown(record: object) -> dict | None:
 
 
 def _iter_records_from_json(path: Path) -> Iterable[dict]:
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return
     if isinstance(payload, list):
         for row in payload:
             if isinstance(row, dict):

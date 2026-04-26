@@ -77,6 +77,38 @@ class AbstainRegressionPanelTests(unittest.TestCase):
                 },
             )
 
+    def test_normalize_panel_payload_rejects_blank_string_fields(self):
+        with self.assertRaisesRegex(
+            ValueError, "row 1 must include non-empty string field\\(s\\): question"
+        ):
+            panel_script._normalize_panel_payload(
+                Path("panel.yaml"),
+                [
+                    {
+                        "id": "AB-004",
+                        "question": "   ",
+                        "bucket": "off_topic",
+                        "expected_abstain": True,
+                    }
+                ],
+            )
+
+    def test_normalize_panel_payload_rejects_non_boolean_expected_abstain(self):
+        with self.assertRaisesRegex(
+            ValueError, "row 1 field expected_abstain must be a boolean"
+        ):
+            panel_script._normalize_panel_payload(
+                Path("panel.yaml"),
+                [
+                    {
+                        "id": "AB-005",
+                        "question": "Valid text.",
+                        "bucket": "off_topic",
+                        "expected_abstain": "true",
+                    }
+                ],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -76,6 +76,7 @@ def _normalize_panel_payload(panel_path: Path, data) -> tuple[dict, list[dict]]:
 
 def _normalize_panel_rows(panel: list) -> list[dict]:
     required_fields = ("id", "question", "bucket", "expected_abstain")
+    string_fields = ("id", "question", "bucket")
     normalized = []
     for index, row in enumerate(panel, start=1):
         if not isinstance(row, dict):
@@ -85,6 +86,20 @@ def _normalize_panel_rows(panel: list) -> list[dict]:
             raise ValueError(
                 f"Panel query row {index} is missing required field(s): "
                 f"{', '.join(missing)}."
+            )
+        invalid_string_fields = [
+            field
+            for field in string_fields
+            if not isinstance(row[field], str) or not row[field].strip()
+        ]
+        if invalid_string_fields:
+            raise ValueError(
+                f"Panel query row {index} must include non-empty string field(s): "
+                f"{', '.join(invalid_string_fields)}."
+            )
+        if not isinstance(row["expected_abstain"], bool):
+            raise ValueError(
+                f"Panel query row {index} field expected_abstain must be a boolean."
             )
         normalized.append(row)
     return normalized

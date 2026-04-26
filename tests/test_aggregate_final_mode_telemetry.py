@@ -89,6 +89,46 @@ class AggregateFinalModeTelemetryTests(unittest.TestCase):
         self.assertIn(r"| bad\|mode | 1 |", markdown)
         self.assertIn(r"| what\|now please | bad\|mode | route\|x | 42 |", markdown)
 
+    def test_main_renders_count_tables_in_stable_sorted_order(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            logcat = root / "logcat.txt"
+            output_dir = root / "out"
+            logcat.write_text(
+                "\n".join(
+                    [
+                        'I ask.generate final_mode=zeta route=route-b query="z" totalElapsedMs=30',
+                        'I ask.generate final_mode=alpha route=route-c query="a" totalElapsedMs=10',
+                        'I ask.generate final_mode=alpha route=route-a query="b" totalElapsedMs=20',
+                        'I ask.generate final_mode=beta route=route-a query="c" totalElapsedMs=40',
+                    ]
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            with patch(
+                "sys.argv",
+                [
+                    "aggregate_final_mode_telemetry.py",
+                    "--logcat-path",
+                    str(logcat),
+                    "--output-dir",
+                    str(output_dir),
+                ],
+            ):
+                self.assertEqual(telemetry.main(), 0)
+
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
+            markdown = (output_dir / "summary.md").read_text(encoding="utf-8")
+
+        self.assertEqual(list(summary["counts_by_final_mode"].items()), [("alpha", 2), ("beta", 1), ("zeta", 1)])
+        self.assertEqual(list(summary["counts_by_route"].items()), [("route-a", 2), ("route-b", 1), ("route-c", 1)])
+        self.assertLess(markdown.index("| alpha | 2 |"), markdown.index("| beta | 1 |"))
+        self.assertLess(markdown.index("| beta | 1 |"), markdown.index("| zeta | 1 |"))
+        self.assertLess(markdown.index("| route-a | 2 |"), markdown.index("| route-b | 1 |"))
+        self.assertLess(markdown.index("| route-b | 1 |"), markdown.index("| route-c | 1 |"))
+
 
 if __name__ == "__main__":
     unittest.main()

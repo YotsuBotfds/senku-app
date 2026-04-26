@@ -205,7 +205,7 @@ def row_metrics(
         "owner_share": (owner_count / retrieved_count) if retrieved_count else 0.0,
         "top_distractor_guide_ids": [
             {"guide_id": guide_id, "count": count}
-            for guide_id, count in distractors.most_common()
+            for guide_id, count in _stable_counter_items(distractors)
         ],
     }
 
@@ -324,10 +324,18 @@ def summarize_rows(rows: Sequence[Mapping[str, Any]], *, distractor_limit: int =
         "top1_unresolved_partial_rows": top1_unresolved_partial_rows,
         "top_distractor_guide_ids": [
             {"guide_id": guide_id, "count": count}
-            for guide_id, count in distractors.most_common(distractor_limit)
+            for guide_id, count in _stable_counter_items(distractors, distractor_limit)
             if guide_id
         ],
     }
+
+
+def _stable_counter_items(
+    counter: Counter[str],
+    limit: int | None = None,
+) -> list[tuple[str, int]]:
+    items = sorted(counter.items(), key=lambda item: (-item[1], item[0]))
+    return items[:limit] if limit is not None else items
 
 
 def latency_summary(values: Sequence[float]) -> dict[str, Any]:

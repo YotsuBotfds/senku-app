@@ -67,9 +67,13 @@ def table_escape(value: Any) -> str:
     return str(value or "").replace("\r", " ").replace("\n", " ").replace("|", "\\|")
 
 
-def counter_from_rows(rows: list[dict[str, Any]], field: str) -> Counter[str]:
+def iter_row_dicts(rows: list[Any]) -> list[dict[str, Any]]:
+    return [row for row in rows if isinstance(row, dict)]
+
+
+def counter_from_rows(rows: list[Any], field: str) -> Counter[str]:
     counter: Counter[str] = Counter()
-    for row in rows:
+    for row in iter_row_dicts(rows):
         value = str(row.get(field) or "").strip()
         if value:
             counter[value] += 1
@@ -79,7 +83,7 @@ def counter_from_rows(rows: list[dict[str, Any]], field: str) -> Counter[str]:
 def counter_from_summary_or_rows(
     summary: dict[str, Any],
     summary_field: str,
-    rows: list[dict[str, Any]],
+    rows: list[Any],
     row_field: str,
 ) -> dict[str, Any] | Counter[str]:
     value = summary.get(summary_field)
@@ -117,11 +121,11 @@ def is_interesting_row(row: dict[str, Any]) -> bool:
 
 
 def compact_rows(
-    rows: list[dict[str, Any]],
+    rows: list[Any],
     max_rows: int,
     text_limit: int,
 ) -> list[dict[str, Any]]:
-    selected = [row for row in rows if is_interesting_row(row)]
+    selected = [row for row in iter_row_dicts(rows) if is_interesting_row(row)]
     return selected[:max_rows]
 
 
@@ -133,11 +137,11 @@ def render_markdown(
     text_limit: int = 180,
 ) -> str:
     summary = data["summary"]
-    rows = [row for row in data["rows"] if isinstance(row, dict)]
+    rows = iter_row_dicts(data["rows"])
     selected_rows = compact_rows(rows, max_rows=max_rows, text_limit=text_limit)
 
     row_bucket_counts = counter_from_rows(rows, "suspected_failure_bucket")
-    summary_bucket_counts = summary.get("by_bucket") or {}
+    summary_bucket_counts = summary.get("by_bucket") or row_bucket_counts
     marker_risk_counts = summary.get("top1_marker_risk_counts") or counter_from_rows(
         rows, "top1_marker_risk"
     )

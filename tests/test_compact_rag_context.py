@@ -173,6 +173,24 @@ class CompactRagContextTests(unittest.TestCase):
         self.assertIn("P-001 BROKEN", markdown)
         self.assertIn("needs_review unsafe\\|followup", markdown)
 
+    def test_malformed_non_object_rows_are_ignored_consistently(self):
+        data = self.sample_data()
+        data["summary"].pop("by_bucket")
+        data["summary"].pop("app_acceptance_counts")
+        data["rows"].insert(0, "not-a-row")
+        data["rows"].append(["also", "not", "a", "row"])
+
+        markdown = render_markdown(data, Path("diag"), max_rows=10, text_limit=80)
+
+        self.assertEqual(
+            [row["prompt_id"] for row in compact_rows(data["rows"], max_rows=10, text_limit=80)],
+            ["P-001", "P-003"],
+        )
+        self.assertIn("- Bucket counts: `artifact_error`: 1, `expected_supported`: 1, `retrieval_miss`: 1", markdown)
+        self.assertIn("- App acceptance: `moderate_supported`: 1, `needs_evidence_owner`: 2", markdown)
+        self.assertIn("- Total rows: `3`", markdown)
+        self.assertNotIn("not-a-row", markdown)
+
     def test_write_context_accepts_directory_and_adds_artifact_links(self):
         root = self.make_tmpdir()
         self.write_diagnostics(root, self.sample_data())

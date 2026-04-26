@@ -138,6 +138,22 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             ],
         )
 
+    def test_row_metrics_sorts_equal_count_distractors_by_guide_id(self):
+        metrics = self.module.row_metrics(
+            ["GD-999"],
+            ["GD-300", "GD-100", "GD-200"],
+            top_k=3,
+        )
+
+        self.assertEqual(
+            metrics["top_distractor_guide_ids"],
+            [
+                {"guide_id": "GD-100", "count": 1},
+                {"guide_id": "GD-200", "count": 1},
+                {"guide_id": "GD-300", "count": 1},
+            ],
+        )
+
     def test_primary_row_metrics_reports_primary_hits_and_rank_only(self):
         metrics = self.module.primary_row_metrics(
             ["GD-380"],
@@ -238,6 +254,31 @@ class EvaluateRetrievalPackTests(unittest.TestCase):
             [
                 {"guide_id": "GD-222", "count": 3},
                 {"guide_id": "GD-444", "count": 1},
+            ],
+        )
+
+    def test_summarize_rows_sorts_equal_count_distractors_by_guide_id(self):
+        rows = [
+            {
+                "expected_guide_ids": ["GD-999"],
+                "expected_owner_count": 0,
+                "retrieved_count": 3,
+                "top_distractor_guide_ids": [
+                    {"guide_id": "GD-300", "count": 1},
+                    {"guide_id": "GD-100", "count": 1},
+                    {"guide_id": "GD-200", "count": 1},
+                ],
+            }
+        ]
+
+        summary = self.module.summarize_rows(rows)
+
+        self.assertEqual(
+            summary["top_distractor_guide_ids"],
+            [
+                {"guide_id": "GD-100", "count": 1},
+                {"guide_id": "GD-200", "count": 1},
+                {"guide_id": "GD-300", "count": 1},
             ],
         )
 

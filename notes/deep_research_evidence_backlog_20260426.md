@@ -610,6 +610,12 @@ Action:
   getter, bench timing/source summaries tolerate malformed rows and metadata,
   citation owner-priority sorting ignores malformed allowlist entries, and RAG
   answer-diagnostic compactors skip malformed non-dict entries.
+- Hardened report/eval helpers: abstain panel rows now reject blank strings and
+  non-boolean expectations, compact RAG context ignores non-object rows
+  consistently, contextual shadow CSV output serializes nested/non-finite values
+  safely, retrieval-pack distractor ties sort deterministically, latency scans
+  skip malformed JSON files, and final-mode telemetry tests pin stable count
+  table ordering.
 
 Validation:
 
@@ -657,6 +663,11 @@ Validation:
   `tests.test_query_citation_policy`, `tests.test_query_prompt_runtime`, and
   `tests.test_rag_bench_answer_diagnostics` cover the runtime-adjacent helper
   hardening batch.
+- `tests.test_abstain_regression_panel`,
+  `tests.test_aggregate_final_mode_telemetry`, `tests.test_compact_rag_context`,
+  `tests.test_compare_contextual_shadow_retrieval`,
+  `tests.test_evaluate_retrieval_pack`, and `tests.test_summarize_latency`
+  cover the report/eval helper hardening batch.
 
 Deferred unless evidenced:
 

@@ -717,8 +717,19 @@ def aggregate_comparison_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 def _csv_value(value: Any) -> str:
     if isinstance(value, list):
-        return "|".join(str(item) for item in value)
+        return "|".join(_csv_value(item) for item in value)
+    if isinstance(value, tuple):
+        return "|".join(_csv_value(item) for item in value)
+    if isinstance(value, dict):
+        return json.dumps(
+            _sanitize_output_value(value),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
     if value is None:
+        return ""
+    if isinstance(value, float) and not math.isfinite(value):
         return ""
     return str(value)
 
