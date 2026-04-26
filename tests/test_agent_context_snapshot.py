@@ -208,6 +208,45 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("malformed_frontmatter_count=3", markdown)
         self.assertIn("Strict-retrieval head-health workflow configured", markdown)
 
+    def test_strict_retrieval_signal_handles_missing_configuration_keys(self):
+        root = self.make_tmpdir()
+        dispatch = root / "notes" / "dispatch"
+        dispatch.mkdir(parents=True)
+
+        workflow = root / ".github" / "workflows"
+        workflow.mkdir(parents=True, exist_ok=True)
+        (workflow / "strict_retrieval_head_health.yml").write_text(
+            "\n".join(
+                [
+                    "name: Strict Retrieval Head Health",
+                    "jobs:",
+                    "  strict-retrieval-head-health:",
+                    "    runs-on: ubuntu-latest",
+                    "    steps:",
+                    "      - run: echo strict",
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        manifest = root / "artifacts" / "runs" / "run_manifest.jsonl"
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text("", encoding="utf-8")
+        bench = root / "artifacts" / "bench"
+        bench.mkdir(parents=True)
+
+        markdown = build_snapshot(
+            root,
+            dispatch_dir=dispatch,
+            manifest_path=manifest,
+            bench_dir=bench,
+            max_lines=160,
+            runner=fake_runner,
+        )
+
+        self.assertIn("Strict-retrieval workflow file present", markdown)
+        self.assertIn("status details unavailable", markdown)
+
     def test_extract_yaml_scalar_handles_quoted_values_and_inline_comments(self):
         yaml = "\n".join(
             [
