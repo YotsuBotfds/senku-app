@@ -27,6 +27,9 @@ DEFAULT_COLUMNS = (
     "total_rows",
     "generated",
     "app_acceptance",
+    "app_acceptance_root_causes",
+    "safety_surface",
+    "ui_surface",
     "reviewed_uncertain_fit",
     "answer_cards",
     "claim_support",
@@ -50,6 +53,28 @@ APP_ACCEPTANCE_ORDER = (
     "needs_evidence_owner",
     "unsafe_or_overconfident",
     "abstain_accepted",
+)
+
+APP_ACCEPTANCE_ROOT_CAUSE_ORDER = (
+    "supported",
+    "evidence_owner",
+    "card_contract",
+    "safety_surface",
+    "gate_policy",
+    "accepted",
+)
+
+SAFETY_SURFACE_ORDER = (
+    "emergency_first_supported",
+    "emergency_first_missing",
+    "not_safety_critical",
+)
+
+UI_SURFACE_ORDER = (
+    "emergency_first",
+    "limited_fit",
+    "abstain",
+    "standard",
 )
 
 ANSWER_CARD_ORDER = (
@@ -502,6 +527,25 @@ def collect_summaries(
             row_counts=_status_counts(parsed_rows, "app_acceptance_status"),
             include_statuses=APP_ACCEPTANCE_ORDER,
         )
+        app_root_cause_counts = _pick_status_counts(
+            summary_counts=base._safe_get(
+                summary,
+                "app_acceptance_root_cause_counts",
+                default=None,
+            ),
+            row_counts=_status_counts(parsed_rows, "app_acceptance_root_cause"),
+            include_statuses=APP_ACCEPTANCE_ROOT_CAUSE_ORDER,
+        )
+        safety_surface_counts = _pick_status_counts(
+            summary_counts=base._safe_get(summary, "safety_surface_counts", default=None),
+            row_counts=_status_counts(parsed_rows, "safety_surface_status"),
+            include_statuses=SAFETY_SURFACE_ORDER,
+        )
+        ui_surface_counts = _pick_status_counts(
+            summary_counts=base._safe_get(summary, "ui_surface_counts", default=None),
+            row_counts=_status_counts(parsed_rows, "ui_surface_bucket"),
+            include_statuses=UI_SURFACE_ORDER,
+        )
         evidence_total, evidence_supported, evidence_status_counts, evidence_rate = (
             _collect_evidence_counts(summary, parsed_rows)
         )
@@ -530,6 +574,18 @@ def collect_summaries(
         )
         row["app_acceptance"] = _compact_status_breakdown(
             app_status_counts, APP_ACCEPTANCE_ORDER
+        )
+        row["app_acceptance_root_causes"] = _compact_status_breakdown(
+            app_root_cause_counts,
+            APP_ACCEPTANCE_ROOT_CAUSE_ORDER,
+        )
+        row["safety_surface"] = _compact_status_breakdown(
+            safety_surface_counts,
+            SAFETY_SURFACE_ORDER,
+        )
+        row["ui_surface"] = _compact_status_breakdown(
+            ui_surface_counts,
+            UI_SURFACE_ORDER,
         )
         row["evidence_nugget_statuses"] = evidence_status_counts
         row["evidence_nugget_total"] = evidence_total

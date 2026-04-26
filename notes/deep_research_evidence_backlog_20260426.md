@@ -218,6 +218,8 @@ Action:
 - Preserved safety/UI diagnostic facets in RAG eval dataset metadata so
   exported rows retain `safety_surface_status` and `ui_surface_bucket`
   alongside acceptance/root-cause fields.
+- Added root-cause and safety/UI facet columns to `rag_trend.py`, with
+  summary-level counts preferred and row-level fallback for older diagnostics.
 - Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
   the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
   security installs pinned `uv==0.11.7` before checking the generated lock.

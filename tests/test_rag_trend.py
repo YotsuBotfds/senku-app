@@ -32,6 +32,9 @@ def base_payload(
             "not_generated": 1,
         },
         "app_acceptance_counts": {"strong_supported": 2, "moderate_supported": 1},
+        "app_acceptance_root_cause_counts": {"supported": 2, "evidence_owner": 1},
+        "safety_surface_counts": {"not_safety_critical": 2, "emergency_first_supported": 1},
+        "ui_surface_counts": {"standard": 2, "emergency_first": 1},
         "answer_card_counts": {"pass": 1, "partial": 1, "fail": 1},
         "claim_support_counts": {"pass": 2, "no_generated_answer": 1},
         "app_gate_counts": {},
@@ -54,6 +57,9 @@ def base_payload(
             "evidence_nugget_status": "pass",
             "evidence_nugget_total": 2,
             "evidence_nugget_supported": 1,
+            "app_acceptance_root_cause": "supported",
+            "safety_surface_status": "not_safety_critical",
+            "ui_surface_bucket": "standard",
         },
         {
             "generated": "yes",
@@ -63,6 +69,9 @@ def base_payload(
             "evidence_nugget_status": "fail",
             "evidence_nugget_total": 1,
             "evidence_nugget_supported": 0,
+            "app_acceptance_root_cause": "supported",
+            "safety_surface_status": "not_safety_critical",
+            "ui_surface_bucket": "standard",
         },
         {
             "generated": "no",
@@ -72,6 +81,9 @@ def base_payload(
             "evidence_nugget_status": "no_evaluable_answer",
             "evidence_nugget_total": 1,
             "evidence_nugget_supported": 0,
+            "app_acceptance_root_cause": "evidence_owner",
+            "safety_surface_status": "emergency_first_supported",
+            "ui_surface_bucket": "emergency_first",
         },
     ]
 
@@ -114,6 +126,7 @@ class RAGTrendTests(unittest.TestCase):
 
         self.assertIn(
             "| label | total_rows | generated | app_acceptance | "
+            "app_acceptance_root_causes | safety_surface | ui_surface | "
             "reviewed_uncertain_fit | answer_cards | claim_support | "
             "evidence_nuggets | top1_marker_risk | top1_bridge | "
             "top1_unresolved_partial | expected_owner_best_rank | "
@@ -122,6 +135,29 @@ class RAGTrendTests(unittest.TestCase):
             markdown,
         )
         self.assertIn("| trend_dir | 3 | 2/3 (66.7%) |", markdown)
+        self.assertIn("supported:2\\|evidence_owner:1", markdown)
+        self.assertIn("emergency_first_supported:1\\|not_safety_critical:2", markdown)
+        self.assertIn("emergency_first:1\\|standard:2", markdown)
+
+    def test_collect_summaries_falls_back_to_rows_for_surface_facets(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            run_dir = root / "trend_surface_rows"
+            run_dir.mkdir()
+            payload = base_payload(total_rows=3)
+            payload["summary"].pop("app_acceptance_root_cause_counts")
+            payload["summary"].pop("safety_surface_counts")
+            payload["summary"].pop("ui_surface_counts")
+            write_diagnostics(run_dir / self.module.base.DIAGNOSTICS_FILENAME, payload)
+
+            rows = self.module.collect_summaries([run_dir])
+
+        self.assertEqual(rows[0]["app_acceptance_root_causes"], "supported:2|evidence_owner:1")
+        self.assertEqual(
+            rows[0]["safety_surface"],
+            "emergency_first_supported:1|not_safety_critical:2",
+        )
+        self.assertEqual(rows[0]["ui_surface"], "emergency_first:1|standard:2")
 
     def test_collect_summaries_includes_top1_marker_overlay_from_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:
