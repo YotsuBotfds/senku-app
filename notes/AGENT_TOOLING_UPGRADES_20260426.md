@@ -4,6 +4,21 @@ Purpose: near-top queue items that reduce overnight friction, worker collision,
 runtime drift, and local-only proof loss. This is based on the xhigh tooling
 research scout plus local repo context.
 
+Status update, 2026-04-26 overnight: the top tooling queue has landed through
+the retrieval-profile comparison slice. Current pushed commits:
+
+- `4e172d9` runtime endpoint preflight
+- `1cd7110` non-Android GitHub regression gate
+- `8dd0c48` worker worktree lanes and status
+- `26f8a15` Actions security lint gate
+- `00f9863` attested non-Android regression bundle
+- `2b89539` bench metrics lake
+- `b117a63` RAG trace diagnostics core/analyzer join
+- `861e758` bench RAG trace spans
+- `dc7805f` PowerShell quality gate
+- `9085dd9` optional RAG eval dataset export
+- `cb8ffac` retrieval-profile comparison tooling
+
 ## Tonight Top 3
 
 1. Runtime endpoint preflight
