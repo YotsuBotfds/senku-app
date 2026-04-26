@@ -221,6 +221,8 @@ Action:
   `validate_special_cases.py --overlap-matrix-json` now has test coverage that
   the generated rows include winner, priority, lexical-signature, and promotion
   metadata.
+- Added a generated round-trip overlap proof that every matrix winner matches
+  the live `classify_special_case()` result for the canonical overlap prompt.
 
 Validation:
 
