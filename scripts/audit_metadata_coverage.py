@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 from datetime import datetime
@@ -16,6 +17,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from ingest import parse_frontmatter
 from guide_answer_card_contracts import load_answer_cards
+from guide_catalog import find_malformed_frontmatter
 from metadata_helpers import derive_bridge_metadata, normalize_tags
 
 
@@ -43,6 +45,7 @@ BODY_ROUTING_PHRASES = (
     "hand off",
     "switch to",
 )
+FRONTMATTER_KEY_VALUE_RE = re.compile(r"^\s*([^:]+)\s*:\s*(.*)$")
 
 
 def _as_list(value: Any) -> list[str]:
@@ -84,6 +87,37 @@ def _frontmatter_lines(path: Path) -> dict[str, int]:
     return found
 
 
+def _frontmatter_field(path: Path, key: str) -> str:
+    """Extract a best-effort raw frontmatter scalar value before parsing."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0].strip() != "---":
+        return ""
+    key_lower = key.lower()
+    for line in lines[1:]:
+        if line.strip() == "---":
+            break
+        if ":" not in line:
+            continue
+        match = FRONTMATTER_KEY_VALUE_RE.match(line)
+        if not match:
+            continue
+        field = match.group(1).strip().lower()
+        if field == key_lower:
+            return match.group(2).strip().strip("'\"")
+    return ""
+
+
+def _frontmatter_body(path: Path) -> str:
+    """Return guide body text even when frontmatter is malformed."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0].strip() != "---":
+        return "\n".join(lines)
+    for index in range(1, len(lines)):
+        if lines[index].strip() == "---":
+            return "\n".join(lines[index + 1 :])
+    return "\n".join(lines)
+
+
 def _body_routing_markers(body: str) -> list[dict[str, Any]]:
     markers = []
     for line_number, line in enumerate(body.splitlines(), start=1):
@@ -114,14 +148,73 @@ def _answer_card_lookup(cards_dir: Path | None) -> dict[str, list[dict[str, Any]
     return lookup
 
 
+def _malformed_frontmatter_record(path: Path, reason: str, cards_by_guide: dict[str, list[dict[str, Any]]]):
+    guide_id = _frontmatter_field(path, "id").strip()
+    liability_level = _frontmatter_field(path, "liability_level").strip().lower()
+    slug = _frontmatter_field(path, "slug").strip() or path.stem
+    title = _frontmatter_field(path, "title").strip()
+    category = _frontmatter_field(path, "category").strip()
+    high_liability = liability_level in HIGH_LIABILITY_LEVELS
+    cards = cards_by_guide.get(guide_id, [])
+    reviewed_cards = [
+        card
+        for card in cards
+        if str(card.get("review_status") or "").strip().lower()
+        in {"pilot_reviewed", "approved"}
+    ]
+    body = _frontmatter_body(path)
+    body_routing_markers = _body_routing_markers(body)
+    gaps = ["malformed_frontmatter"]
+    severity = "warn"
+    if high_liability:
+        severity = "gap"
+    return {
+        "file": str(path),
+        "source_file": path.name,
+        "guide_id": guide_id,
+        "slug": slug,
+        "title": title,
+        "category": category,
+        "liability_level": liability_level,
+        "high_liability": high_liability,
+        "bridge": False,
+        "aliases_count": 0,
+        "routing_cues_count": 0,
+        "has_structured_routing_support": False,
+        "has_body_routing_markers": bool(body_routing_markers),
+        "body_routing_marker_count": len(body_routing_markers),
+        "body_routing_markers": body_routing_markers[:5],
+        "related_count": 0,
+        "tags_count": 0,
+        "has_routing_support": False,
+        "answer_card_count": len(cards),
+        "reviewed_answer_card_count": len(reviewed_cards),
+        "has_answer_card": bool(cards),
+        "has_reviewed_answer_card": bool(reviewed_cards),
+        "has_citation_policy": False,
+        "has_applicability": False,
+        "gaps": gaps,
+        "severity": severity,
+        "field_lines": {"frontmatter_error": reason},
+        "frontmatter_error": reason,
+    }
+
+
 def audit_guide(
     path: Path,
     *,
     answer_cards_by_guide: dict[str, list[dict[str, Any]]] | None = None,
+    frontmatter_issue: str | None = None,
 ) -> dict[str, Any] | None:
     text = path.read_text(encoding="utf-8")
     metadata, body = parse_frontmatter(text)
     if not metadata:
+        if frontmatter_issue is not None:
+            return _malformed_frontmatter_record(
+                path,
+                frontmatter_issue,
+                cards_by_guide=answer_cards_by_guide,
+            )
         return None
 
     answer_cards_by_guide = answer_cards_by_guide or {}
@@ -137,7 +230,8 @@ def audit_guide(
         tags,
         explicit_bridge=metadata.get("bridge", False),
     )["bridge"]
-    has_routing_support = bool(aliases or routing_cues or bridge or body_routing_markers)
+    has_structured_routing_support = bool(aliases or routing_cues or bridge)
+    has_body_routing_markers = bool(body_routing_markers)
     has_answer_card = bool(cards)
     reviewed_cards = [
         card
@@ -166,7 +260,7 @@ def audit_guide(
             gaps.append("missing_aliases")
         if not routing_cues:
             gaps.append("missing_routing_cues")
-        if not has_routing_support:
+        if not has_structured_routing_support:
             gaps.append("missing_routing_support")
         if not has_citation_policy:
             gaps.append("missing_citation_policy")
@@ -202,11 +296,13 @@ def audit_guide(
         "bridge": bool(bridge),
         "aliases_count": len(aliases),
         "routing_cues_count": len(routing_cues),
+        "has_structured_routing_support": has_structured_routing_support,
+        "has_body_routing_markers": has_body_routing_markers,
         "body_routing_marker_count": len(body_routing_markers),
         "body_routing_markers": body_routing_markers[:5],
         "related_count": len(related),
         "tags_count": len(tags),
-        "has_routing_support": has_routing_support,
+        "has_routing_support": has_structured_routing_support,
         "answer_card_count": len(cards),
         "reviewed_answer_card_count": len(reviewed_cards),
         "has_answer_card": has_answer_card,
@@ -225,9 +321,16 @@ def audit_guides(
     cards_dir: Path | None = None,
 ) -> dict[str, Any]:
     answer_cards_by_guide = _answer_card_lookup(cards_dir)
+    malformed_by_source = {
+        issue["source_file"]: issue["reason"] for issue in find_malformed_frontmatter(guides_dir)
+    }
     records = []
     for path in sorted(guides_dir.glob("*.md")):
-        record = audit_guide(path, answer_cards_by_guide=answer_cards_by_guide)
+        record = audit_guide(
+            path,
+            answer_cards_by_guide=answer_cards_by_guide,
+            frontmatter_issue=malformed_by_source.get(path.name),
+        )
         if record is not None:
             records.append(record)
 
@@ -284,8 +387,8 @@ def render_markdown(audit: dict[str, Any]) -> str:
             "",
             "## High-Liability Gaps",
             "",
-            "| severity | guide | category | liability | aliases | routing | related | tags | citation | applicability | gaps |",
-            "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | --- | --- | --- |",
+            "| severity | guide | category | liability | aliases | structured routing | body routing hints | related | tags | citation | applicability | gaps |",
+            "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- | --- |",
         ]
     )
     severity_order = {"gap": 0, "warn": 1, "none": 2}
@@ -310,7 +413,8 @@ def render_markdown(audit: dict[str, Any]) -> str:
             f"{_escape_table(record['category'])} | "
             f"{_escape_table(record['liability_level'])} | "
             f"{record['aliases_count']} | "
-            f"{record['routing_cues_count'] + record['body_routing_marker_count']} | "
+            f"{record['routing_cues_count']} | "
+            f"{record['body_routing_marker_count']} | "
             f"{record['related_count']} | "
             f"{record['tags_count']} | "
             f"{str(record['has_citation_policy']).lower()} | "
@@ -318,7 +422,9 @@ def render_markdown(audit: dict[str, Any]) -> str:
             f"{_escape_table(','.join(record['gaps']))} |"
         )
     if not high_gap_records:
-        lines.append("| none | none | none | none | 0 | 0 | 0 | 0 | true | true | none |")
+        lines.append(
+            "| none | none | none | none | 0 | 0 | 0 | 0 | 0 | true | true | none |"
+        )
     return "\n".join(lines) + "\n"
 
 

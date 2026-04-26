@@ -23,7 +23,8 @@ on:
         default: false
         type: boolean
       allow_retrieval_warnings:
-        description: Allow retrieval expectation warnings.
+        description: Explicitly allow retrieval expectation warnings. Must be
+          intentionally enabled.
         required: false
         default: false
         type: boolean
@@ -162,6 +163,7 @@ jobs:
             $args += '-IncludeSafetyCritical'
           }
           if ($env:INPUT_ALLOW_RETRIEVAL_WARNINGS -eq 'true') {
+            Write-Host "Retrieval warning waiver explicitly requested; passing -AllowRetrievalWarnings."
             $args += '-AllowRetrievalWarnings'
           }
           if (-not [string]::IsNullOrWhiteSpace($env:INPUT_GENERATED_BENCH_JSON)) {
@@ -299,11 +301,6 @@ jobs:
               Write-Host "Selected $($selectedGuides.Count) guide file(s) for CI retrieval smoke index."
             } else {
               $selectedGuides = @()
-            }
-
-            if ($needsRetrievalIndex -and $retrievalIndexFlavor -eq 'compact' -and $args -notcontains '-AllowRetrievalWarnings') {
-              Write-Host "Compact retrieval smoke index selected; allowing retrieval warnings for this run."
-              $args += '-AllowRetrievalWarnings'
             }
 
             if (-not $needsRetrievalIndex) {

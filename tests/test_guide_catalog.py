@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 
 from guide_catalog import (
+    find_malformed_frontmatter,
     get_anchor_related_link_weights,
     get_reciprocal_links,
     load_guide_catalog,
@@ -36,9 +37,13 @@ Body text
             )
 
             by_id, by_slug = load_guide_catalog(str(root))
+            issues = find_malformed_frontmatter(str(root))
 
         self.assertEqual(set(by_id), {"GD-001"})
         self.assertEqual(set(by_slug), {"good-guide"})
+        self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0]["source_file"], "bad.md")
+        self.assertIn("not a mapping", issues[0]["reason"])
 
     def test_malformed_frontmatter_is_ignored(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -67,9 +72,13 @@ Body text
             )
 
             by_id, by_slug = load_guide_catalog(str(root))
+            issues = find_malformed_frontmatter(str(root))
 
         self.assertEqual(set(by_id), {"GD-001"})
         self.assertEqual(set(by_slug), {"good-guide"})
+        self.assertEqual(len(issues), 1)
+        self.assertEqual(issues[0]["source_file"], "bad.md")
+        self.assertIn("invalid frontmatter YAML", issues[0]["reason"])
 
     def test_duplicate_guide_id_raises_clear_error(self):
         with tempfile.TemporaryDirectory() as tmpdir:

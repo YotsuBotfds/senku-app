@@ -205,6 +205,11 @@ class BenchMetricsLakeTests(unittest.TestCase):
         jsonl_path = root / "run_manifest.jsonl"
         manifest_record = {
             "record_type": "run_manifest",
+            "task": "task_001",
+            "lane": "lane_smoke",
+            "label": "baseline",
+            "commit": "abc123",
+            "generated_at": "2026-04-26T10:00:00Z",
             "run_id": "run-1",
             "artifact_path_evidence": [
                 {
@@ -264,11 +269,23 @@ class BenchMetricsLakeTests(unittest.TestCase):
                 evidence_json,
                 [
                     {
+                        "task": "task_001",
+                        "lane": "lane_smoke",
+                        "label": "baseline",
+                        "commit": "abc123",
+                        "generated_at": "2026-04-26T10:00:00Z",
+                        "record_type": "run_manifest",
                         "kind": "bench_json",
                         "path": "artifacts/bench/run.json",
                         "status": "present",
                     },
                     {
+                        "task": "task_001",
+                        "lane": "lane_smoke",
+                        "label": "baseline",
+                        "commit": "abc123",
+                        "generated_at": "2026-04-26T10:00:00Z",
+                        "record_type": "run_manifest",
                         "kind": "markdown_report",
                         "path": "artifacts/bench/run.md",
                         "status": "missing",
@@ -285,6 +302,11 @@ class BenchMetricsLakeTests(unittest.TestCase):
             json.dumps(
                 {
                     "record_type": "run_manifest",
+                    "task": "task_alpha",
+                    "lane": "lane_alpha",
+                    "label": "label_alpha",
+                    "commit": "a1b2c3",
+                    "generated_at": "2026-04-26T08:00:00Z",
                     "artifact_path_evidence": [
                         {"path": "artifacts/bench/primary.json", "status": "present"}
                     ],
@@ -296,6 +318,8 @@ class BenchMetricsLakeTests(unittest.TestCase):
             + json.dumps(
                 {
                     "record_type": "run_manifest",
+                    "task": "task_beta",
+                    "lane": "lane_beta",
                     "artifact_path_evidence": [
                         {"path": "artifacts/bench/secondary.json", "exists": False}
                     ],
@@ -346,6 +370,30 @@ class BenchMetricsLakeTests(unittest.TestCase):
                 [item[2]["path"] for item in evidence_rows],
                 ["artifacts/bench/primary.json", "artifacts/bench/secondary.json"],
             )
+            self.assertEqual(
+                [item[2]["task"] for item in evidence_rows],
+                ["task_alpha", "task_beta"],
+            )
+            self.assertEqual(
+                [item[2]["lane"] for item in evidence_rows],
+                ["lane_alpha", "lane_beta"],
+            )
+            self.assertEqual(
+                [item[2].get("label") for item in evidence_rows],
+                ["label_alpha", None],
+            )
+            self.assertEqual(
+                [item[2].get("record_type") for item in evidence_rows],
+                ["run_manifest", "run_manifest"],
+            )
+            self.assertEqual(
+                [item[2].get("generated_at") for item in evidence_rows],
+                ["2026-04-26T08:00:00Z", None],
+            )
+            self.assertEqual(
+                [item[2].get("commit") for item in evidence_rows],
+                ["a1b2c3", None],
+            )
 
             duplicate_indexes = verify.execute(
                 """
@@ -366,6 +414,12 @@ class BenchMetricsLakeTests(unittest.TestCase):
         jsonl_path.write_text(
             json.dumps(
                 {
+                    "record_type": "run_manifest",
+                    "task": "task_main",
+                    "lane": "lane_main",
+                    "label": "label_main",
+                    "commit": "deadbeef",
+                    "generated_at": "2026-04-26T09:00:00Z",
                     "artifact_path_evidence": [
                         {"kind": "bench_json"},
                         {"path": "artifacts/bench/run.md", "status": "missing"},
@@ -410,6 +464,12 @@ class BenchMetricsLakeTests(unittest.TestCase):
             row_three = json.loads(evidence[2][2])
             self.assertEqual(row_three["artifact_path"], "artifacts/bench/legacy.json")
             self.assertEqual(row_three["kind"], "file")
+            self.assertEqual(row_three["task"], "task_main")
+            self.assertEqual(row_three["lane"], "lane_main")
+            self.assertEqual(row_three["label"], "label_main")
+            self.assertEqual(row_three["commit"], "deadbeef")
+            self.assertEqual(row_three["generated_at"], "2026-04-26T09:00:00Z")
+            self.assertEqual(row_three["record_type"], "run_manifest")
         finally:
             verify.close()
 

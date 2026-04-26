@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  generated-head-health:
-    name: Generated Head Health
+  generated-fixture-head-health:
+    name: Generated Fixture Head Health
     uses: ./.github/workflows/non_android_regression.yml
     permissions:
       contents: read
@@ -23,7 +23,7 @@ jobs:
       attestations: write
     with:
       mode: Generated
-      label: head_health_${{ github.sha }}
+      label: head_health_${{ github.sha }}_generated_fixture
       generated_bench_json: tests\fixtures\non_android_generated\candidate.json
       generated_baseline_diag: tests\fixtures\non_android_generated\baseline_diag
       fail_on_generated_regression: true

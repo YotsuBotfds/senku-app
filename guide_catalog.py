@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -18,6 +19,13 @@ class GuideReference:
     title: str
     source_file: str
     related_refs: tuple[str, ...] = ()
+
+
+def _frontmatter_issue(source_file: str, reason: str) -> dict[str, str]:
+    return {
+        "source_file": source_file,
+        "reason": reason.strip(),
+    }
 
 
 def _normalize_related_refs(value):
@@ -37,24 +45,38 @@ def _normalize_related_refs(value):
     return tuple(refs)
 
 
-def _parse_frontmatter(path):
+def _parse_frontmatter(path) -> tuple[dict[str, Any], str | None]:
     """Parse YAML frontmatter from a guide file."""
     text = path.read_text(encoding="utf-8-sig")
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
-        return {}
+        return {}, None
     closing_index = None
     for index in range(1, len(lines)):
         if lines[index].strip() == "---":
             closing_index = index
             break
     if closing_index is None:
-        return {}
+        return {}, "missing frontmatter closing fence"
     try:
         parsed = yaml.safe_load("\n".join(lines[1:closing_index])) or {}
-    except yaml.YAMLError:
-        return {}
-    return parsed if isinstance(parsed, dict) else {}
+    except yaml.YAMLError as exc:
+        return {}, f"invalid frontmatter YAML: {exc}"
+    if not isinstance(parsed, dict):
+        return {}, "frontmatter is not a mapping"
+    return parsed, None
+
+
+def find_malformed_frontmatter(guides_dir=None):
+    """Return malformed frontmatter findings for markdown files in a guide directory."""
+    base_dir = Path(guides_dir or config.COMPENDIUM_DIR)
+    issues = []
+    for path in sorted(base_dir.glob("*.md")):
+        _, reason = _parse_frontmatter(path)
+        if reason is None:
+            continue
+        issues.append(_frontmatter_issue(path.name, reason))
+    return issues
 
 
 @lru_cache(maxsize=4)
@@ -65,7 +87,7 @@ def load_guide_catalog(guides_dir=None):
     by_slug = {}
 
     for path in sorted(base_dir.glob("*.md")):
-        meta = _parse_frontmatter(path)
+        meta, _ = _parse_frontmatter(path)
         guide_id = str(meta.get("id", "")).strip()
         slug = str(meta.get("slug", "")).strip()
         title = str(meta.get("title", "")).strip()

@@ -7,6 +7,36 @@ from scripts.audit_metadata_coverage import audit_guides, render_markdown
 
 
 class MetadataCoverageAuditTests(unittest.TestCase):
+    def test_malformed_high_liability_frontmatter_is_audited_as_gap(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guides_dir = Path(tmpdir) / "guides"
+            guides_dir.mkdir()
+            (guides_dir / "broken-guide.md").write_text(
+                """---
+id: GD-200
+slug: broken-guide
+title: Broken Guide
+category: medical
+liability_level: critical
+related: [GD-999
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir)
+
+        record = audit["guides"][0]
+        self.assertEqual(audit["summary"]["guides_scanned"], 1)
+        self.assertEqual(audit["summary"]["high_liability_guides"], 1)
+        self.assertEqual(audit["summary"]["high_liability_guides_with_gaps"], 1)
+        self.assertIn("malformed_frontmatter", record["gaps"])
+        self.assertTrue(record["high_liability"])
+        self.assertEqual(record["severity"], "gap")
+        self.assertIn("frontmatter", record["frontmatter_error"].lower())
+
     def test_high_liability_missing_routing_and_policy_is_reported(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"
@@ -85,7 +115,7 @@ acceptable_uncertain_fit: Ask for clarification.
         self.assertEqual(record["severity"], "none")
         self.assertEqual(record["gaps"], [])
 
-    def test_body_routing_marker_counts_as_high_liability_routing_support(self):
+    def test_body_routing_markers_do_not_satisfy_structured_routing_support(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"
             guides_dir.mkdir()
@@ -112,10 +142,13 @@ Use this guide when urgent symptoms are present.
             markdown = render_markdown(audit)
 
         record = audit["guides"][0]
-        self.assertTrue(record["has_routing_support"])
+        self.assertFalse(record["has_routing_support"])
+        self.assertFalse(record["has_structured_routing_support"])
+        self.assertTrue(record["has_body_routing_markers"])
         self.assertEqual(record["body_routing_marker_count"], 1)
-        self.assertNotIn("missing_routing_support", record["gaps"])
-        self.assertEqual(record["severity"], "warn")
+        self.assertIn("missing_routing_support", record["gaps"])
+        self.assertEqual(record["severity"], "gap")
+        self.assertIn("body routing hints", markdown)
         self.assertIn("GD-103", markdown)
 
     def test_high_liability_false_citations_required_does_not_satisfy_policy(self):

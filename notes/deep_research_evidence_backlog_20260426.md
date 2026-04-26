@@ -522,6 +522,19 @@ Action:
 - Bench artifact JSONL summaries now count non-object lines separately,
   truncate long type values deterministically, and preserve frequency order in
   formatted type-count summaries.
+- Audit follow-up tightened CI semantics after the 50-commit review: compact
+  retrieval warnings are no longer auto-waived, `-AllowRetrievalWarnings` is
+  passed only by explicit input, and Master Head Health is named/scoped as a
+  generated-fixture head-health check rather than live retrieval proof.
+- Malformed guide frontmatter now has a loud discovery path:
+  `guide_catalog.find_malformed_frontmatter()` reports malformed files while
+  catalog loading still skips them and keeps valid siblings available.
+- Metadata coverage now audits malformed high-liability frontmatter as a gap,
+  and separates structured routing support from body-only routing hints so
+  broad prose cannot hide missing structured routing cues.
+- Metrics-lake `artifact_path_evidence` detail rows now inherit parent
+  run-manifest context (`task`, `lane`, `label`, `commit`, `generated_at`, and
+  `record_type`) in raw JSON for easier provenance joins.
 
 Validation:
 
@@ -566,6 +579,14 @@ Validation:
   primary metric summary behavior.
 - `tests.test_index_bench_artifacts` covers JSONL non-object counts, long type
   truncation, and count-order formatting.
+- `tests.test_github_workflows` covers explicit retrieval-warning opt-in and
+  generated-fixture head-health workflow semantics.
+- `tests.test_guide_catalog` covers malformed frontmatter reporting while
+  preserving valid sibling catalog loading.
+- `tests.test_audit_metadata_coverage` covers malformed high-liability
+  frontmatter gap surfacing and structured-vs-body routing semantics.
+- `tests.test_bench_metrics_lake` covers inherited parent manifest context on
+  artifact evidence rows.
 
 Deferred unless evidenced:
 

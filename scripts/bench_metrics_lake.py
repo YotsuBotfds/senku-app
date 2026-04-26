@@ -395,15 +395,33 @@ def _artifact_path_evidence_rows(
         return []
 
     rows: list[tuple[str, int, Mapping[str, Any]]] = []
+    inherited_fields = _artifact_path_evidence_parent_fields(record)
     for evidence_index, item in enumerate(evidence):
         if isinstance(item, Mapping):
             rows.append(
-                ("artifact_path_evidence", start_index + evidence_index, _normalize_artifact_path_evidence(item))
+                (
+                    "artifact_path_evidence",
+                    start_index + evidence_index,
+                    _normalize_artifact_path_evidence(item, inherited_fields),
+                )
             )
     return rows
 
 
-def _normalize_artifact_path_evidence(item: Mapping[str, Any]) -> dict[str, Any]:
+def _artifact_path_evidence_parent_fields(
+    record: Mapping[str, Any],
+) -> dict[str, Any]:
+    inherited: dict[str, Any] = {}
+    for key in ("task", "lane", "label", "commit", "generated_at", "record_type"):
+        value = record.get(key)
+        if value is not None and _is_scalar(value):
+            inherited[key] = value
+    return inherited
+
+
+def _normalize_artifact_path_evidence(
+    item: Mapping[str, Any], inherited_fields: Mapping[str, Any]
+) -> dict[str, Any]:
     normalized = dict(item)
     if normalized.get("status") is None and isinstance(
         normalized.get("exists"), bool
@@ -417,6 +435,8 @@ def _normalize_artifact_path_evidence(item: Mapping[str, Any]) -> dict[str, Any]
         and normalized["artifact_path"].strip()
     ):
         normalized["path"] = normalized["artifact_path"]
+    for key, value in inherited_fields.items():
+        normalized.setdefault(key, value)
     return normalized
 
 

@@ -198,13 +198,12 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             gate_script,
         )
         self.assertIn(
-            "Compact retrieval smoke index selected; allowing retrieval warnings for this run.",
+            "Retrieval warning waiver explicitly requested; passing -AllowRetrievalWarnings.",
             gate_script,
         )
-        self.assertIn("$args += '-AllowRetrievalWarnings'", gate_script)
-        self.assertLess(
-            gate_script.index("Compact retrieval smoke index selected"),
-            gate_script.index("RETRIEVAL_INDEX_CACHE_HIT"),
+        self.assertNotIn(
+            "Compact retrieval smoke index selected; allowing retrieval warnings for this run.",
+            gate_script,
         )
         self.assertIn(
             "Mode $env:INPUT_MODE does not require retrieval index; skipping db rebuild.",
@@ -254,7 +253,26 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
                 else:
                     self.assertEqual(dispatch.get("type"), called.get("type"))
 
-    def test_master_head_health_runs_generated_smoke_on_every_master_push(self):
+    def test_non_android_regression_retrieval_warnings_are_opt_in(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")
+        )
+        steps = workflow["jobs"]["non-android-regression"]["steps"]
+        names = [step.get("name") for step in steps]
+
+        gate_step = steps[names.index("Run non-Android regression gate")]
+        gate_script = gate_step.get("run", "")
+        self.assertIn(
+            "if ($env:INPUT_ALLOW_RETRIEVAL_WARNINGS -eq 'true') {",
+            gate_script,
+        )
+        self.assertIn(
+            "Retrieval warning waiver explicitly requested; passing -AllowRetrievalWarnings.",
+            gate_script,
+        )
+        self.assertNotIn("Compact retrieval smoke index selected", gate_script)
+
+    def test_master_head_health_runs_generated_fixture_smoke_on_every_master_push(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "master_head_health.yml").read_text(encoding="utf-8")
         )
@@ -275,8 +293,8 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         )
 
         jobs = workflow["jobs"]
-        self.assertEqual(["generated-head-health"], list(jobs))
-        job = jobs["generated-head-health"]
+        self.assertEqual(["generated-fixture-head-health"], list(jobs))
+        job = jobs["generated-fixture-head-health"]
         self.assertEqual("./.github/workflows/non_android_regression.yml", job["uses"])
         self.assertEqual(
             {
@@ -287,7 +305,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             job["permissions"],
         )
         self.assertEqual("Generated", job["with"]["mode"])
-        self.assertEqual("head_health_${{ github.sha }}", job["with"]["label"])
+        self.assertEqual(
+            "head_health_${{ github.sha }}_generated_fixture",
+            job["with"]["label"],
+        )
         self.assertEqual(
             "tests\\fixtures\\non_android_generated\\candidate.json",
             job["with"]["generated_bench_json"],
