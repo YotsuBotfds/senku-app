@@ -4,6 +4,10 @@ Living document. Rotate freely. `Active` reflects the current CP9 state,
 `Post-RC Tracked` names follow-up slices with known code targets, and the
 completed rolling log keeps the historical record.
 
+Current planner queue source: [`ACTIVE_WORK_TRACKER_20260426.md`](./ACTIVE_WORK_TRACKER_20260426.md).
+Use that tracker before interpreting historical dispatch entries below as
+active work.
+
 - Last updated: 2026-04-26 - GitHub repo creation/push and tooling queue
   completion reconciled. `origin` is
   `https://github.com/YotsuBotfds/senku-app.git`, `master` tracks

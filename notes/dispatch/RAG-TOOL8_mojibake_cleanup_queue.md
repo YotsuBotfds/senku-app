@@ -132,12 +132,15 @@ behavior.
 
 ## Defer To Reviewed Guide-Body Passes
 
+Status note, 2026-04-26: this is a backlog reference, not an active tranche.
+Select a fresh guide-body cleanup explicitly before editing guide prose.
+
 Do not batch-fix guide body text in the first cleanup. Most remaining hits are
 dash/range/arrow/product-list punctuation in body prose, and many occur inside
 safety-critical or measurement-heavy guides. Use separate reviewed passes for:
 
-- Food and storage guides: `food-safety-contamination-prevention.md` is the
-  next active/now-running tranche, then `food-salvage-shelf-life.md`.
+- Food and storage guides: `food-safety-contamination-prevention.md` was the
+  previously suggested next tranche, then `food-salvage-shelf-life.md`.
 - Medical/toxicology guides: `toxicology-poisoning-response.md`,
   `toxidromes-field-poisoning.md`, `first-aid.md`,
   `sepsis-recognition-antibiotic-protocols.md`,

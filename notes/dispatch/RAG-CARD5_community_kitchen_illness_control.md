@@ -42,7 +42,6 @@ Results:
 
 ## Next Queue Item
 
-Rank 2 remains `RE8-TR-001`. Scout verdict: fix as deterministic exclusion plus
-retrieval/rerank work, not a reviewed card. Minimal future write set is
-`query.py`, `data/rag_owner_rerank_hints.json`, `tests/test_special_cases.py`,
-and `tests/test_query_routing.py`.
+Superseded on 2026-04-26. Rank 2 was `RE8-TR-001`; later evidence work added
+route/delegation proof and proof hardening for that row, so do not redispatch
+this breadcrumb without refreshing the current baseline first.

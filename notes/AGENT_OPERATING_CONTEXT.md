@@ -5,6 +5,8 @@ changing operational detail here.
 
 ## Runtime Baseline
 
+- Current planner queue source: [`ACTIVE_WORK_TRACKER_20260426.md`](./ACTIVE_WORK_TRACKER_20260426.md).
+  Use it before interpreting `notes/dispatch/` filenames as active work.
 - Desktop retrieval uses hybrid retrieval plus metadata-aware reranking and structured session state in [`query.py`](../query.py).
 - Android app is the active parity project: retrieval quality, prompt shaping, and chat/session continuity.
 - Mobile targets both `E2B` and `E4B`: `E2B` is the practical floor, `E4B` is the quality tier to keep evaluating.

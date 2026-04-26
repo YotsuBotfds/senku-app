@@ -31,6 +31,10 @@ edit the file, do not let the drift live only in your head.
 
 ## Current Status / Historical Dispatch Ledger
 
+Current planner queue source: [`../ACTIVE_WORK_TRACKER_20260426.md`](../ACTIVE_WORK_TRACKER_20260426.md).
+Treat this dispatch directory as a historical ledger unless that tracker or a
+human explicitly reopens a dispatch lane.
+
 No active non-Android RAG/tooling slices are currently in flight.
 
 CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
