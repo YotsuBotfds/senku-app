@@ -281,6 +281,9 @@ Action:
 - Added PowerShell quality-gate flag validation: `-RequireAnalyzer` cannot be
   paired with `-SkipAnalyzer`, and `-RequirePester` cannot be paired with
   `-SkipPester`.
+- Surfaced reviewed-card runtime visibility in RAG diagnostics summaries:
+  runtime-enabled and runtime-disabled artifact counts now appear in compact
+  Markdown/JSON summary rows.
 
 Validation:
 

@@ -30,6 +30,8 @@ DEFAULT_COLUMNS = (
     "generated_shadow_card_gap_rows",
     "generated_model",
     "reviewed_card_runtime",
+    "reviewed_card_runtime_enabled",
+    "reviewed_card_runtime_disabled",
     "deterministic_rule",
     "quality_score_10",
 )
@@ -340,6 +342,18 @@ def _summarize_directory(directory: Path, label: str | None = None) -> dict[str,
         "generated_shadow_card_gap_rows": _count(summary, parsed_rows, "generated_shadow_card_gap_rows"),
         "generated_model": _count(summary, parsed_rows, "answer_provenance_counts", "generated_model"),
         "reviewed_card_runtime": _count(summary, parsed_rows, "answer_provenance_counts", "reviewed_card_runtime"),
+        "reviewed_card_runtime_enabled": _count(
+            summary,
+            parsed_rows,
+            "artifact_reviewed_card_runtime_answer_counts",
+            "enabled",
+        ),
+        "reviewed_card_runtime_disabled": _count(
+            summary,
+            parsed_rows,
+            "artifact_reviewed_card_runtime_answer_counts",
+            "disabled",
+        ),
         "deterministic_rule": _count(summary, parsed_rows, "answer_provenance_counts", "deterministic_rule"),
     }
     result["quality_score_10"] = _quality_score_10(result)

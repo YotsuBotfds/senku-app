@@ -52,6 +52,10 @@ def base_summary() -> dict:
             "reviewed_card_runtime": 7,
             "deterministic_rule": 11,
         },
+        "artifact_reviewed_card_runtime_answer_counts": {
+            "enabled": 8,
+            "disabled": 16,
+        },
     }
 
 
@@ -87,6 +91,8 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
         self.assertEqual(row["generated_shadow_card_gap_rows"], 2)
         self.assertEqual(row["generated_model"], 6)
         self.assertEqual(row["reviewed_card_runtime"], 7)
+        self.assertEqual(row["reviewed_card_runtime_enabled"], 8)
+        self.assertEqual(row["reviewed_card_runtime_disabled"], 16)
         self.assertEqual(row["deterministic_rule"], 11)
         self.assertAlmostEqual(row["quality_score_10"], 6.55)
 
@@ -106,7 +112,9 @@ class SummarizeRagDiagnosticsTests(unittest.TestCase):
                 "| label | generated_at | total_rows | expected_rows | bad_buckets |",
                 markdown,
             )
+            self.assertIn("reviewed_card_runtime_enabled", markdown)
             self.assertIn("| dir_a |  | 24 | 24 | 7 | 0.875 |", markdown)
+            self.assertIn("| 6 | 7 | 8 | 16 | 11 |", markdown)
 
             json_output = io.StringIO()
             with redirect_stdout(json_output):
