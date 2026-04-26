@@ -48,7 +48,7 @@ jobs:
         shell: pwsh
         run: |
           $env:SENKU_PYTHON_PATH = (Get-Command python).Source
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_dependency_security_scan.ps1 -RequirementsPath requirements.lock.txt -OutputJson artifacts\security\pip_audit_lock.json -SkipIfUnavailable
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_dependency_security_scan.ps1 -RequirementsPath requirements.lock.txt -OutputJson artifacts\security\pip_audit_lock.json
 
       - name: Upload dependency security report
         if: always() && hashFiles('artifacts/security/pip_audit_lock.json') != ''

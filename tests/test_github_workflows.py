@@ -304,6 +304,34 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("senku-bench-bundle", build_script)
         self.assertIn("senku.ci_bench_bundle.v1", build_script)
         self.assertIn("bundle_zip=$bundleZip", build_script)
+        self.assertIn("$benchBundleSizeBudgetBytes = 10485760", build_script)
+        self.assertIn("bundle_size_budget_bytes = $benchBundleSizeBudgetBytes", build_script)
+        self.assertIn("$requiredManifestFields = @(", build_script)
+        for field in (
+            "schema_version",
+            "label",
+            "run_id",
+            "run_attempt",
+            "repository",
+            "sha",
+            "artifact_count",
+            "artifact_names",
+            "bundle_size_budget_bytes",
+            "generated_at",
+        ):
+            self.assertIn(f"'{field}'", build_script)
+        self.assertIn("Bench bundle manifest missing required field", build_script)
+        self.assertIn("$bundleItem = Get-Item -LiteralPath $bundleZip", build_script)
+        self.assertIn("Bench bundle exceeds size budget", build_script)
+        self.assertIn("bundle_size_bytes=$($bundleItem.Length)", build_script)
+        self.assertLess(
+            build_script.index("$manifest | ConvertTo-Json"),
+            build_script.index("Compress-Archive"),
+        )
+        self.assertLess(
+            build_script.index("Compress-Archive"),
+            build_script.index("$bundleItem = Get-Item -LiteralPath $bundleZip"),
+        )
 
         upload_step = steps[names.index("Upload bench bundle")]
         self.assertEqual("upload_bench_bundle", upload_step.get("id"))
@@ -380,9 +408,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         scan_step = steps[names.index("Run dependency security scan")]
         self.assertEqual("pwsh", scan_step.get("shell"))
         self.assertIn(
-            r".\scripts\run_dependency_security_scan.ps1 -RequirementsPath requirements.lock.txt -OutputJson artifacts\security\pip_audit_lock.json -SkipIfUnavailable",
+            r".\scripts\run_dependency_security_scan.ps1 -RequirementsPath requirements.lock.txt -OutputJson artifacts\security\pip_audit_lock.json",
             scan_step.get("run", ""),
         )
+        self.assertNotIn("-SkipIfUnavailable", scan_step.get("run", ""))
 
         upload_step = steps[names.index("Upload dependency security report")]
         self.assertIn("hashFiles('artifacts/security/pip_audit_lock.json')", upload_step["if"])

@@ -252,6 +252,12 @@ Action:
   guide metadata, and avoid duplicate prompt/issue/guide triplets.
 - Narrowed the high-liability holdout schema guard: EVAL7/EVAL8/EVAL9 rows now
   pin lane/style/status/risk vocabularies and unique required/forbidden text.
+- Added a CI bench-bundle size budget: the non-Android workflow records the
+  budget in the manifest, verifies required manifest fields, fails if the zip
+  exceeds 10 MiB, and emits the compressed byte count as step output.
+- Made the Dependency Security Scan fail closed for missing scanner tooling in
+  CI by removing `-SkipIfUnavailable`; a focused test proves the script already
+  exits nonzero by default when no audit tool is available.
 
 Validation:
 

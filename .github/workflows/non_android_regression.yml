@@ -402,6 +402,7 @@ jobs:
         run: |
           $bundleRoot = Join-Path $env:RUNNER_TEMP 'senku-bench-bundle'
           $benchRoot = Join-Path $bundleRoot 'bench'
+          $benchBundleSizeBudgetBytes = 10485760
           New-Item -ItemType Directory -Force -Path $benchRoot | Out-Null
 
           $label = $env:SENKU_GATE_LABEL
@@ -430,13 +431,36 @@ jobs:
             sha = $env:GITHUB_SHA
             artifact_count = @($selected).Count
             artifact_names = @($selected | ForEach-Object { $_.Name } | Sort-Object)
+            bundle_size_budget_bytes = $benchBundleSizeBudgetBytes
             generated_at = (Get-Date).ToUniversalTime().ToString('o')
+          }
+          $requiredManifestFields = @(
+            'schema_version',
+            'label',
+            'run_id',
+            'run_attempt',
+            'repository',
+            'sha',
+            'artifact_count',
+            'artifact_names',
+            'bundle_size_budget_bytes',
+            'generated_at'
+          )
+          foreach ($field in $requiredManifestFields) {
+            if (-not $manifest.ContainsKey($field)) {
+              throw "Bench bundle manifest missing required field: $field"
+            }
           }
           $manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $bundleRoot 'bundle_manifest.json') -Encoding utf8
 
           $bundleZip = Join-Path $env:RUNNER_TEMP ("senku-non-android-regression-{0}-{1}.zip" -f $env:GITHUB_RUN_ID, $env:GITHUB_RUN_ATTEMPT)
           Compress-Archive -Path (Join-Path $bundleRoot '*') -DestinationPath $bundleZip -Force
+          $bundleItem = Get-Item -LiteralPath $bundleZip
+          if ($bundleItem.Length -gt $benchBundleSizeBudgetBytes) {
+            throw "Bench bundle exceeds size budget: $($bundleItem.Length) bytes > $benchBundleSizeBudgetBytes bytes."
+          }
           "bundle_zip=$bundleZip" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "bundle_size_bytes=$($bundleItem.Length)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Upload bench bundle
         id: upload_bench_bundle
