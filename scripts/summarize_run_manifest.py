@@ -99,13 +99,13 @@ def render_markdown(
     lines.extend(
         [
             "",
-            "| Generated | Task | Lane | Label | Commit | Changed | Validation |",
-            "| --- | --- | --- | --- | --- | --- | --- |",
+            "| Generated | Task | Lane | Label | Commit | Changed | Validation | Artifacts |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for record in newest_first:
         lines.append(
-            "| {generated} | {task} | {lane} | {label} | {commit} | {changed} | {validation} |".format(
+            "| {generated} | {task} | {lane} | {label} | {commit} | {changed} | {validation} | {artifacts} |".format(
                 generated=_escape_markdown(record.get("generated_at", "-") or "-"),
                 task=_escape_markdown(record.get("task", "-") or "-"),
                 lane=_escape_markdown(record.get("lane", "-") or "-"),
@@ -113,10 +113,25 @@ def render_markdown(
                 commit=_escape_markdown(record.get("commit", "-") or "-"),
                 changed=_compact_list(record.get("changed_file")),
                 validation=_compact_list(record.get("validation")),
+                artifacts=_artifact_health(record),
             )
         )
 
     return "\n".join(lines) + "\n"
+
+
+def _artifact_health(record: dict[str, Any]) -> str:
+    artifact_count = record.get("artifact_path_count", 0)
+    missing_count = record.get("artifact_path_missing_count", 0)
+    truncated = record.get("artifact_path_truncated", False)
+    dirty = record.get("dirty", False)
+
+    parts = [f"paths={artifact_count}", f"missing={missing_count}"]
+    if truncated:
+        parts.append("truncated")
+    if dirty:
+        parts.append("dirty")
+    return _escape_markdown("; ".join(parts))
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

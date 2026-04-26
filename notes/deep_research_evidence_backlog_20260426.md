@@ -276,6 +276,8 @@ Action:
 - Added run-manifest artifact evidence: capped artifact paths now record
   present/missing status, kind, modified timestamp for present paths, and a
   missing-path count so stale or absent proof files are visible in manifests.
+- Surfaced run-manifest artifact health in the Markdown summary table, including
+  artifact path count, missing count, truncation, and dirty-worktree status.
 
 Validation:
 

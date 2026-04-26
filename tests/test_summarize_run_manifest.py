@@ -55,6 +55,10 @@ class SummarizeRunManifestTests(unittest.TestCase):
                 "generated_at": "2026-04-25T02:00:00+00:00",
                 "changed_file": ["scripts/new.py", "tests/test_new.py", "extra.py"],
                 "validation": ["new ok"],
+                "artifact_path_count": 3,
+                "artifact_path_missing_count": 1,
+                "artifact_path_truncated": True,
+                "dirty": True,
             },
             {
                 "task": "B",
@@ -71,6 +75,7 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertIn("Task filter: `A`", markdown)
         self.assertIn("new", markdown)
         self.assertIn("scripts/new.py<br>tests/test_new.py (+1)", markdown)
+        self.assertIn("paths=3; missing=1; truncated; dirty", markdown)
         self.assertNotIn("old", markdown)
         self.assertNotIn("other", markdown)
 
