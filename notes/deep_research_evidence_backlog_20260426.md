@@ -258,6 +258,10 @@ Action:
 - Made the Dependency Security Scan fail closed for missing scanner tooling in
   CI by removing `-SkipIfUnavailable`; a focused test proves the script already
   exits nonzero by default when no audit tool is available.
+- Added a stable `app_acceptance_root_cause` field so acceptance outcomes carry
+  a single machine-checkable cause tag (`gate_policy`, `safety_surface`,
+  `evidence_owner`, `card_contract`, or `supported`) separate from the richer
+  diagnostic reason string.
 
 Validation:
 

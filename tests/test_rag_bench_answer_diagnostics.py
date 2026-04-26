@@ -197,6 +197,7 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         )
 
         self.assertEqual(diagnostics["app_acceptance_status"], "uncertain_fit_accepted")
+        self.assertEqual(diagnostics["app_acceptance_root_cause"], "gate_policy")
         self.assertEqual(diagnostics["ui_surface_bucket"], "limited_fit")
         self.assertEqual(diagnostics["evidence_owner_status"], "unknown")
 
@@ -239,6 +240,7 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         )
 
         self.assertEqual(diagnostics["app_acceptance_status"], "strong_supported")
+        self.assertEqual(diagnostics["app_acceptance_root_cause"], "supported")
         self.assertEqual(diagnostics["evidence_owner_status"], "expected_owner_cited")
         self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_supported")
         self.assertEqual(diagnostics["ui_surface_bucket"], "emergency_first")
@@ -318,6 +320,7 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         )
 
         self.assertEqual(diagnostics["app_acceptance_status"], "needs_evidence_owner")
+        self.assertEqual(diagnostics["app_acceptance_root_cause"], "evidence_owner")
         self.assertEqual(
             diagnostics["evidence_owner_status"],
             "expected_owner_retrieved_not_cited",
@@ -367,6 +370,7 @@ class RagBenchAnswerDiagnosticsTests(unittest.TestCase):
         )
 
         self.assertEqual(diagnostics["app_acceptance_status"], "unsafe_or_overconfident")
+        self.assertEqual(diagnostics["app_acceptance_root_cause"], "safety_surface")
         self.assertEqual(diagnostics["evidence_owner_status"], "expected_owner_cited")
         self.assertEqual(diagnostics["safety_surface_status"], "emergency_first_missing")
         self.assertEqual(diagnostics["ui_surface_bucket"], "limited_fit")

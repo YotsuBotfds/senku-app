@@ -748,8 +748,22 @@ def app_acceptance_diagnostics(
     if bucket:
         reasons.append(f"bucket_{bucket}")
 
+    if gate_status in {"abstain", "uncertain_fit"}:
+        root_cause = "gate_policy"
+    elif safety_surface_status == "emergency_first_missing":
+        root_cause = "safety_surface"
+    elif app_status == "needs_evidence_owner":
+        root_cause = "evidence_owner"
+    elif app_status == "card_contract_gap":
+        root_cause = "card_contract"
+    elif app_status in {"strong_supported", "moderate_supported"}:
+        root_cause = "supported"
+    else:
+        root_cause = "accepted"
+
     return {
         "app_acceptance_status": app_status,
+        "app_acceptance_root_cause": root_cause,
         "app_acceptance_reason": "|".join(reasons),
         "evidence_owner_status": evidence_owner_status,
         "safety_surface_status": safety_surface_status,
