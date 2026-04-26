@@ -23,7 +23,9 @@ MAX_EMITTED_ERRORS = 100
 
 
 def _safe_text(value) -> str:
-    return "" if value is None else str(value).strip()
+    if value is None or isinstance(value, (Mapping, list, tuple, set)):
+        return ""
+    return str(value).strip()
 
 
 def _first_nonempty_text(*values) -> str:

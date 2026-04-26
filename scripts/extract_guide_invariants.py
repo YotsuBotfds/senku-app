@@ -60,13 +60,22 @@ def parse_frontmatter(text: str) -> tuple[dict, str]:
     return meta, body
 
 
+def _frontmatter_scalar(meta: dict, key: str) -> str:
+    value = meta.get(key, "")
+    if isinstance(value, str):
+        return value.strip()
+    if value is None or isinstance(value, (list, tuple, set, dict)):
+        return ""
+    return str(value).strip()
+
+
 def iter_invariants(guides_dir: Path):
     for path in sorted(guides_dir.glob("*.md")):
         text = path.read_text(encoding="utf-8")
         meta, body = parse_frontmatter(text)
-        slug = str(meta.get("slug", "")).strip()
-        guide_id = str(meta.get("id", "")).strip()
-        title = str(meta.get("title", "")).strip()
+        slug = _frontmatter_scalar(meta, "slug")
+        guide_id = _frontmatter_scalar(meta, "id")
+        title = _frontmatter_scalar(meta, "title")
         if not slug:
             continue
         try:

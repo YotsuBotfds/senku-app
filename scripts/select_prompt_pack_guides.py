@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 from pathlib import Path
@@ -149,6 +150,14 @@ def load_guide_catalog(guides_dir: Path) -> dict[str, dict[str, Any]]:
 
 def load_prompt_pack_guide_ids(path: Path) -> list[str]:
     ids: list[str] = []
+    if path.suffix.lower() == ".csv":
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            for record in csv.DictReader(handle):
+                if None in record:
+                    continue
+                ids.extend(extract_guide_ids(record))
+        return dedupe(ids)
+
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line:

@@ -343,6 +343,8 @@ def _is_path_like_file_request(request: str) -> bool:
     normalized = os.path.normpath(request)
     return (
         os.path.isabs(normalized)
+        or "/" in request
+        or "\\" in request
         or os.path.dirname(normalized) not in ("", ".")
         or normalized.startswith("." + os.sep)
     )

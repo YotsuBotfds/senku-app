@@ -65,6 +65,40 @@ Wait 5 minutes and recheck.
         self.assertIn("- `` Dose `limits` ``: 1", summary)
         self.assertIn("- ``` Dose ``limits`` ```: 1", summary)
 
+    def test_non_scalar_frontmatter_metadata_is_ignored(self):
+        module = load_module()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            (root / "bad.md").write_text(
+                """---
+id: [GD-001]
+slug: [bad-guide]
+title: {bad: title}
+---
+
+Use 5 L of water.
+""",
+                encoding="utf-8",
+            )
+            (root / "good.md").write_text(
+                """---
+id: GD-002
+slug: good-guide
+title: Good Guide
+---
+
+Use 7 L of water.
+""",
+                encoding="utf-8",
+            )
+
+            records = list(module.iter_invariants(root))
+
+        self.assertEqual(1, len(records))
+        self.assertEqual("GD-002", records[0]["guide_id"])
+        self.assertEqual("good-guide", records[0]["slug"])
+        self.assertEqual("Good Guide", records[0]["title"])
+
 
 if __name__ == "__main__":
     unittest.main()

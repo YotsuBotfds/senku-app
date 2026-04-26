@@ -544,6 +544,13 @@ Action:
   malformed rows, retrieval-profile Markdown flattens carriage returns, and
   metadata coverage treats false-like/list-shaped routing and related fields as
   absent.
+- Hardened prompt/lineage/export helpers: invariant extraction ignores
+  non-scalar frontmatter metadata, prompt-pack guide selection supports CSV and
+  skips ragged rows, prompt-pack indexing sanitizes control text without
+  changing counts, lineage JSON output stays strict for non-finite rank values,
+  metadata validation treats collection-shaped required text fields as missing,
+  and section-family shadow selection preserves path-shaped request semantics
+  even when normalization collapses segments.
 
 Validation:
 
@@ -917,6 +924,11 @@ Validation:
   `tests.test_summarize_artifact_storage`,
   `tests.test_compare_retrieval_profiles`, and
   `tests.test_audit_metadata_coverage` cover the report-helper hardening batch.
+- `tests.test_extract_guide_invariants`,
+  `tests.test_select_prompt_pack_guides`, `tests.test_index_prompt_packs`,
+  `tests.test_rag_experiment_lineage`, `tests.test_metadata_validation`, and
+  `tests.test_export_section_family_shadow` cover the prompt/lineage/export
+  hardening batch.
 
 Deferred unless evidenced:
 

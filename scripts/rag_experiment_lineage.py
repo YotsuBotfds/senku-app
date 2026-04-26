@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -126,6 +127,12 @@ def _ratio_text(value: Any) -> str:
     return str(value or "")
 
 
+def _json_safe_value(value: Any) -> Any:
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    return value
+
+
 def summarize_run(run: DiagnosticRun) -> dict[str, Any]:
     return {
         "label": run.label,
@@ -158,7 +165,7 @@ def _row_state(row: Mapping[str, Any]) -> dict[str, Any]:
         "expected_guide_ids": str(row.get("expected_guide_ids") or "").strip(),
         "top_retrieved_guide_ids": str(row.get("top_retrieved_guide_ids") or "").strip(),
         "cited_guide_ids": str(row.get("cited_guide_ids") or "").strip(),
-        "expected_owner_best_rank": row.get("expected_owner_best_rank"),
+        "expected_owner_best_rank": _json_safe_value(row.get("expected_owner_best_rank")),
         "expected_cited": str(row.get("expected_cited") or "").strip(),
         "app_acceptance_status": str(row.get("app_acceptance_status") or "").strip(),
         "short_reason": str(row.get("short_reason") or "").strip(),
@@ -318,7 +325,7 @@ def render_markdown(lineage: Mapping[str, Any]) -> str:
 
 def write_outputs(lineage: Mapping[str, Any], output_json: Path, output_md: Path) -> None:
     output_json.parent.mkdir(parents=True, exist_ok=True)
-    output_json.write_text(json.dumps(lineage, indent=2, sort_keys=True), encoding="utf-8")
+    output_json.write_text(json.dumps(lineage, indent=2, sort_keys=True, allow_nan=False), encoding="utf-8")
     output_md.parent.mkdir(parents=True, exist_ok=True)
     output_md.write_text(render_markdown(lineage), encoding="utf-8")
 
@@ -370,7 +377,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
     if args.json:
-        print(json.dumps(lineage, indent=2, sort_keys=True))
+        print(json.dumps(lineage, indent=2, sort_keys=True, allow_nan=False))
     else:
         print(render_markdown(lineage))
     return 0

@@ -132,6 +132,14 @@ class ExportSectionFamilyShadowTests(unittest.TestCase):
                 unresolved_selected_file_requests(["wrong-dir/field-guide.md"], resolved),
                 ["wrong-dir/field-guide.md"],
             )
+            self.assertEqual(
+                unresolved_selected_file_requests(["wrong-dir/../field-guide.md"], resolved),
+                ["wrong-dir/../field-guide.md"],
+            )
+            self.assertEqual(
+                unresolved_selected_file_requests([r"wrong-dir\..\field-guide.md"], resolved),
+                [r"wrong-dir\..\field-guide.md"],
+            )
 
     def test_build_section_family_records_emit_raptor_lite_shape(self):
         chunks = [

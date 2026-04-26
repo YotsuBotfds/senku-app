@@ -34,6 +34,7 @@ ID_KEY_CANDIDATES = (
 )
 METADATA_KEYS = ("section", "lane", "style", "target_behavior")
 HEADING_PATTERN = re.compile(r"^#{1,6}\s+(.+?)\s*$")
+CONTROL_TEXT_PATTERN = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]+")
 
 
 @dataclass(frozen=True)
@@ -222,10 +223,16 @@ def first_nonempty(data: dict[str, Any], keys: Sequence[str]) -> str | None:
         value = lowered.get(key.lower())
         if value is None:
             continue
-        text = str(value).strip()
+        text = sanitize_text_field(value)
         if text:
             return text
     return None
+
+
+def sanitize_text_field(value: object) -> str:
+    text = str(value).replace("\r\n", "\n").replace("\r", "\n")
+    text = CONTROL_TEXT_PATTERN.sub(" ", text)
+    return text.strip()
 
 
 def summarize_prompt_pack(
@@ -343,7 +350,8 @@ def format_duplicates(record: PromptPackIndex) -> str:
 
 
 def escape_md(value: object) -> str:
-    return str(value).replace("|", "\\|").replace("\n", " ")
+    clean = sanitize_text_field(value).replace("\n", " ")
+    return clean.replace("|", "\\|")
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:

@@ -4,10 +4,13 @@ import unittest
 from pathlib import Path
 
 from scripts.index_prompt_packs import (
+    escape_md,
     index_prompt_pack,
     index_prompt_packs,
     main,
     parse_txt_pack,
+    write_json,
+    write_markdown,
 )
 
 
@@ -66,6 +69,50 @@ class IndexPromptPacksTests(unittest.TestCase):
         self.assertEqual(record.prompt_count, 2)
         self.assertEqual(record.ids_count, 2)
         self.assertEqual(record.errors, ["line 2: extra_columns"])
+
+    def test_index_jsonl_reports_malformed_row_without_dropping_valid_rows(self):
+        root = self.make_tmpdir()
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            '{"id":"A","prompt":"First prompt"}\n'
+            '{"id":"broken","prompt":\n'
+            '{"id":"B","prompt":"Second prompt"}\n',
+            encoding="utf-8",
+        )
+
+        record = index_prompt_pack(pack, base_dir=root)
+
+        self.assertEqual(record.prompt_count, 2)
+        self.assertEqual(record.ids_count, 2)
+        self.assertEqual(record.errors, ["line 2: invalid_json"])
+
+    def test_output_sanitizes_control_text_without_changing_counts(self):
+        root = self.make_tmpdir()
+        pack = root / "pack.jsonl"
+        output_md = root / "out" / "index.md"
+        output_json = root / "out" / "index.json"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "A\x00|B",
+                    "prompt": "Prompt with\x07 bell",
+                    "section": "Water\x0bFilters",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        record = index_prompt_pack(pack, base_dir=root)
+        write_markdown([record], output_md)
+        write_json([record], output_json)
+
+        self.assertEqual(record.prompt_count, 1)
+        self.assertEqual(record.ids_count, 1)
+        self.assertEqual(record.sections, ["Water Filters"])
+        self.assertIn("sections=1", output_md.read_text(encoding="utf-8"))
+        self.assertNotIn("\x00", output_json.read_text(encoding="utf-8"))
+        self.assertEqual(escape_md("A\x00|B\nC"), "A \\|B C")
 
     def test_index_json_and_jsonl_pack_variants(self):
         root = self.make_tmpdir()

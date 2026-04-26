@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import math
 import os
 import sys
 import tempfile
@@ -154,6 +155,45 @@ class RAGExperimentLineageTests(unittest.TestCase):
         self.assertIn("`RE2\\|BR\\|005`", rendered)
         self.assertIn("GD-646\\|GD-250 -> GD-646", rendered)
         self.assertIn("expected_supported -> expected_supported<br>manual_check", rendered)
+
+    def test_nonfinite_row_rank_is_normalized_for_strict_json_output(self):
+        module = load_module()
+        first = module.DiagnosticRun(
+            label="baseline",
+            path=Path("baseline_diag"),
+            generated_at="2026-04-25T12:00:00",
+            mtime=1000,
+            summary={"total_rows": 1},
+            rows=[
+                {
+                    "prompt_id": "RE2-BR-005",
+                    "suspected_failure_bucket": "ranking_miss",
+                    "expected_owner_best_rank": math.nan,
+                }
+            ],
+        )
+        second = module.DiagnosticRun(
+            label="candidate",
+            path=Path("candidate_diag"),
+            generated_at="2026-04-25T12:01:00",
+            mtime=2000,
+            summary={"total_rows": 1},
+            rows=[
+                {
+                    "prompt_id": "RE2-BR-005",
+                    "suspected_failure_bucket": "expected_supported",
+                    "expected_owner_best_rank": 1,
+                }
+            ],
+        )
+
+        lineage = module.build_lineage([first, second])
+        rendered_json = json.dumps(lineage, indent=2, sort_keys=True, allow_nan=False)
+        parsed = json.loads(rendered_json)
+
+        self.assertIsNone(parsed["transitions"][0]["before"]["expected_owner_best_rank"])
+        self.assertEqual(parsed["transitions"][0]["after"]["expected_owner_best_rank"], 1)
+        self.assertEqual(parsed["transitions"][0]["kind"], "improved")
 
 
 if __name__ == "__main__":
