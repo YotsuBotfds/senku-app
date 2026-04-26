@@ -40,16 +40,28 @@ def _escape_markdown(value: object) -> str:
 
 
 def _count_from_evidence(value: Any) -> int:
-    if isinstance(value, list):
-        return len([item for item in value if item not in (None, "")])
-    return 0
+    return len([item for item in _as_list(value) if item not in (None, "")])
 
 
 def _coerce_artifact_count(value: Any, *, evidence_list: Any) -> int:
+    evidence_count = _count_from_evidence(evidence_list)
+
     try:
-        return int(value)
-    except (TypeError, ValueError):
-        return _count_from_evidence(evidence_list)
+        if isinstance(value, bool):
+            raise TypeError("Boolean is not a valid artifact count.")
+        if isinstance(value, float):
+            if not value.is_integer():
+                raise ValueError("Non-integral float is not a valid artifact count.")
+            count = int(value)
+        else:
+            count = int(value)
+    except (TypeError, ValueError, OverflowError):
+        return evidence_count
+
+    if count < 0:
+        return evidence_count or 0
+
+    return count
 
 
 def load_manifest(path: Path) -> tuple[list[dict[str, Any]], int]:

@@ -566,6 +566,9 @@ Action:
 - Run-manifest summaries now derive artifact and missing-artifact counts from
   evidence lists when malformed count scalars are present, preventing bad
   manifest values from hiding missing artifact evidence.
+- Run-manifest count normalization now rejects booleans, non-integral floats,
+  and negative counts as evidence-derived values, including scalar evidence
+  paths recorded by older or partial manifest writers.
 
 Validation:
 
@@ -635,6 +638,8 @@ Validation:
   retrieval workflow signals in the startup snapshot.
 - `tests.test_summarize_run_manifest` covers malformed artifact-count scalar
   fallback to `artifact_path` and `artifact_path_missing` evidence lists.
+- `tests.test_summarize_run_manifest` also covers scalar evidence fallback plus
+  boolean, fractional-float, and negative artifact-count inputs.
 
 Deferred unless evidenced:
 

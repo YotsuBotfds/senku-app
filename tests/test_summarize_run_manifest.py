@@ -124,6 +124,46 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertNotIn("paths=oops", markdown)
         self.assertNotIn("missing=bad-number", markdown)
 
+    def test_artifact_health_uses_scalar_evidence_and_avoids_boolean_float_negative_counts(self):
+        records = [
+            {
+                "task": "partial",
+                "lane": "tooling",
+                "artifact_path_count": 2.5,
+                "artifact_path": "artifacts/bench/report.md",
+                "artifact_path_missing_count": True,
+                "artifact_path_missing": "artifacts/bench/missing.md",
+            },
+            {
+                "task": "negative",
+                "lane": "tooling",
+                "artifact_path_count": -1,
+                "artifact_path": ["artifacts/bench/a.md", "artifacts/bench/b.md"],
+                "artifact_path_missing_count": -1,
+                "artifact_path_missing": ["artifacts/bench/missing.md"],
+            },
+        ]
+
+        markdown = render_markdown(records, limit=2)
+
+        self.assertIn("paths=1; missing=1", markdown)
+        self.assertIn("missing_paths=artifacts/bench/missing.md", markdown)
+        self.assertIn("paths=2; missing=1", markdown)
+
+    def test_count_records_with_missing_artifacts_uses_evidence_for_invalid_or_negative_counts(self):
+        records = [
+            {
+                "artifact_path_missing_count": 0.5,
+                "artifact_path_missing": "artifacts/bench/missing-a.md",
+            },
+            {
+                "artifact_path_missing_count": -2,
+                "artifact_path_missing": ["artifacts/bench/missing-b.md"],
+            },
+        ]
+
+        self.assertEqual(count_records_with_missing_artifacts(records), 2)
+
     def test_artifact_health_preserves_defaults_when_evidence_field_exists(self):
         records = [
             {
