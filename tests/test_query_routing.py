@@ -50,6 +50,40 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(any("water storage systems rationing protocol" in spec["text"] for spec in storage_specs))
         self.assertTrue(any("container selection preparation food grade" in spec["text"] for spec in storage_specs))
 
+    def test_runoff_infant_formula_boundary_gets_uncertainty_guard(self):
+        question = (
+            "The well may be flood-contaminated and we collected roof runoff in a clean barrel. "
+            "Can we boil it for baby formula tonight if no test kit is available?"
+        )
+        self.assertTrue(query._is_runoff_infant_formula_boundary_query(question))
+        specs = query._supplemental_retrieval_specs(question, 8)
+        self.assertTrue(
+            any("rainwater harvesting roof runoff" in spec["text"] for spec in specs),
+            [spec["text"] for spec in specs],
+        )
+        self.assertTrue(
+            any("questionable water assessment flood contaminated well" in spec["text"] for spec in specs),
+            [spec["text"] for spec in specs],
+        )
+
+        basic_results = {
+            "documents": [["Focused water note."]],
+            "metadatas": [[{
+                "guide_title": "Water Guide",
+                "guide_id": "GD-035",
+                "section_heading": "Water Section",
+                "category": "survival",
+                "difficulty": "beginner",
+                "description": "",
+            }]],
+            "distances": [[0.2]],
+        }
+        prompt = query.build_prompt(question, basic_results)
+        self.assertIn("infant/high-risk contamination boundary", prompt)
+        self.assertIn("Do not say boiling makes roof runoff", prompt)
+        self.assertIn("boiling does not prove chemical", prompt)
+        self.assertNotIn("boiling makes it safe", prompt.lower())
+
     def test_generic_puncture_prompt_gets_conservative_medical_specs(self):
         frame = query.build_scenario_frame("what do i do for a deep puncture wound")
         self.assertIn("medical", frame["domains"])

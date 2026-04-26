@@ -1071,6 +1071,12 @@ DETERMINISTIC_SPECIAL_CASE_SPECS = (
         'the well is contaminated, two people are sick, and we have no fuel for boiling',
     ),
     DeterministicSpecialCaseSpec(
+        'runoff_infant_formula_boundary',
+        '_is_runoff_infant_formula_boundary_query',
+        '_build_runoff_infant_formula_boundary_response',
+        'the well may be flood-contaminated and we collected roof runoff in a clean barrel. can we boil it for baby formula tonight if no test kit is available',
+    ),
+    DeterministicSpecialCaseSpec(
         'collapsed_new_well',
         '_is_collapsed_new_well_special_case',
         '_build_collapsed_new_well_response',

@@ -4255,6 +4255,27 @@ def _build_contaminated_well_no_fuel_response():
     )
 
 
+def _build_runoff_infant_formula_boundary_response():
+    """Return a compact high-risk water-boundary answer for infant formula prompts."""
+    return (
+        "For baby formula, treat this as a high-risk contamination boundary, not a normal boil-and-use water problem. A "
+        "flood-affected well and roof runoff in a barrel are uncertain sources for an infant, and boiling does not prove "
+        "chemical, sewage, roof-material, or flood contamination safe. [GD-035, GD-721, GD-931]\n\n"
+        "1. Use the safest known water first: sealed commercial water, officially distributed emergency water, or water from a "
+        "tested safe source if you can get any tonight. Do not use the flood-affected well for formula until it has been "
+        "cleared. [GD-035, GD-931]\n"
+        "2. Treat roof runoff as questionable water, even from a clean barrel. A first-flush diverter, clean catchment, and "
+        "disinfection reduce some risks, but they do not rule out roof chemicals, bird/animal waste, smoke/ash, pesticides, or "
+        "flood splash contamination. [GD-721, GD-035]\n"
+        "3. If there is truly no safer source, make the decision as an emergency risk tradeoff: prefilter cloudy water, disinfect "
+        "only a small measured container with a supported method, and keep seeking tested or official water. Do not present the "
+        "result as verified safe for infant formula. [GD-035, GD-931]\n"
+        "4. Escalate early for the baby: dehydration, poor feeding, vomiting/diarrhea, fever, unusual sleepiness, or fewer wet "
+        "diapers needs urgent medical/public-health help. Ask local emergency management, health department, hospital, clinic, "
+        "or relief site specifically for infant formula water. [GD-284, GD-732]"
+    )
+
+
 def _build_collapsed_new_well_response():
     """Return a compact replacement plan for a collapsed hand-dug well."""
     return (

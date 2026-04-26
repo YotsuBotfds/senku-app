@@ -1313,6 +1313,25 @@ class SpecialCaseTests(unittest.TestCase):
                     ("deterministic", "electrical_injury_red_flag"),
                 )
 
+    def test_runoff_infant_formula_boundary_routes_and_rejects_boiling_reassurance(self):
+        prompt = (
+            "The well may be flood-contaminated and we collected roof runoff in a clean barrel. "
+            "Can we boil it for baby formula tonight if no test kit is available?"
+        )
+        self.assertEqual(
+            query.classify_special_case(prompt),
+            ("deterministic", "runoff_infant_formula_boundary"),
+        )
+
+        response = query.build_special_case_response(prompt)
+        first_sentence = response.split(".", 1)[0].lower()
+        self.assertIn("baby formula", first_sentence)
+        self.assertIn("high-risk contamination boundary", first_sentence)
+        self.assertIn("boiling does not prove", response)
+        self.assertIn("Do not present the result as verified safe for infant formula", response)
+        self.assertNotIn("boiling makes it safe", response.lower())
+        self.assertNotIn("safe because the barrel is clean", response.lower())
+
     def test_chest_trauma_prompts_route_to_breathing_rule(self):
         prompts = [
             "Stab wound to the chest and trouble breathing. What do I do first?",

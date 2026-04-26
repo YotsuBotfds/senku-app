@@ -3821,6 +3821,54 @@ _WATER_PURIFICATION_QUERY_MARKERS = {
     "make water safe to drink",
 }
 
+_RUNOFF_INFANT_FORMULA_INFANT_MARKERS = {
+    "baby",
+    "infant",
+    "newborn",
+    "formula",
+    "baby formula",
+    "infant formula",
+}
+
+_RUNOFF_INFANT_FORMULA_WATER_MARKERS = {
+    "roof runoff",
+    "rainwater",
+    "rain barrel",
+    "clean barrel",
+    "barrel",
+    "flood-contaminated",
+    "flood contaminated",
+    "flood-affected well",
+    "flood affected well",
+    "flooded well",
+    "well may be flood",
+    "well is flood",
+}
+
+_RUNOFF_INFANT_FORMULA_UNCERTAINTY_MARKERS = {
+    "no test kit",
+    "without a test kit",
+    "cant test",
+    "can't test",
+    "cannot test",
+    "may be contaminated",
+    "might be contaminated",
+    "flood-contaminated",
+    "flood contaminated",
+    "flood-affected",
+    "flood affected",
+}
+
+_RUNOFF_INFANT_FORMULA_USE_MARKERS = {
+    "boil",
+    "boiling",
+    "make safe",
+    "safe to use",
+    "use it",
+    "drink",
+    "tonight",
+}
+
 _WATER_PURIFICATION_POSITIVE_METADATA_MARKERS = {
     "water purification",
     "survival water purification selection guide",
@@ -6100,6 +6148,30 @@ def _is_water_storage_query(question):
     """Detect practical prompts about storing water in containers."""
     lower = question.lower()
     return "water" in lower and _text_has_marker(lower, _WATER_STORAGE_QUERY_MARKERS)
+
+
+def _is_runoff_infant_formula_boundary_query(question):
+    """Detect infant-formula prompts involving questionable runoff or flood water."""
+    lower = question.lower()
+    has_infant_formula_context = (
+        "formula" in lower
+        and _text_has_marker(lower, _RUNOFF_INFANT_FORMULA_INFANT_MARKERS)
+    )
+    has_questionable_source = _text_has_marker(
+        lower, _RUNOFF_INFANT_FORMULA_WATER_MARKERS
+    )
+    has_uncertainty = _text_has_marker(
+        lower, _RUNOFF_INFANT_FORMULA_UNCERTAINTY_MARKERS
+    )
+    has_use_pressure = _text_has_marker(lower, _RUNOFF_INFANT_FORMULA_USE_MARKERS)
+    has_water_context = any(term in lower for term in ("water", "well", "runoff", "rain"))
+    return (
+        has_infant_formula_context
+        and has_questionable_source
+        and has_uncertainty
+        and has_use_pressure
+        and has_water_context
+    )
 
 
 def _is_cast_without_foundry_query(question):
@@ -13168,6 +13240,27 @@ def _supplemental_retrieval_specs(
             ]
         )
 
+    if _is_runoff_infant_formula_boundary_query(question_lower):
+        specs.extend(
+            [
+                {
+                    "text": "rainwater harvesting roof runoff first flush roof contamination drinking water limits",
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": "questionable water assessment flood contaminated well chemical contamination uncertain source",
+                    "category": "survival",
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": "infant formula emergency water safe source public health dehydration danger signs",
+                    "category": "medical",
+                    "limit": supplemental_limit,
+                },
+            ]
+        )
+
     if _is_water_storage_query(question_lower):
         specs.extend(
             [
@@ -14489,6 +14582,17 @@ def _prompt_mode_notes(mode, review, question=None):
             "interior damage control and a tarp only from safe ground/ladder access; "
             "durable patching waits for dry, stable conditions."
         )
+    if _is_runoff_infant_formula_boundary_query(question or ""):
+        notes.append(
+            "- Infant formula plus roof runoff or a flood-affected well is a "
+            "high-risk contamination boundary. Lead with the infant/high-risk "
+            "water-source decision: use the safest known or official/tested water "
+            "first, treat the flood-affected well as not cleared, and treat roof "
+            "runoff in a barrel as questionable. Do not say boiling makes roof "
+            "runoff, flood-affected well water, or clean-barrel water safe for baby "
+            "formula; boiling does not prove chemical, sewage, roof-material, or "
+            "flood contamination safe."
+        )
     if _is_market_tax_revenue_query(question or ""):
         notes.append(
             "- If a market prompt says taxes or public revenue, combine marketplace "
@@ -15408,6 +15512,10 @@ def build_prompt(
         )
         prompt_notes.append(
             "- Use exactly 4 short numbered sections: source triage, prefilter, disinfect, safe storage. Do not drift into alkali production, fisheries, irrigation, or broad waterway engineering."
+        )
+    if _is_runoff_infant_formula_boundary_query(question):
+        prompt_notes.append(
+            "- For infant formula with roof runoff or a flood-affected well, do not use the ordinary water-purification template as a reassurance. Lead with the infant/high-risk contamination boundary, prefer the safest known or official/tested water source, and state that boiling does not prove chemical, sewage, roof-material, or flood contamination safe."
         )
     if _is_water_storage_query(question):
         prompt_notes.append(
