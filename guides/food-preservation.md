@@ -63,11 +63,22 @@ routing_cues:
   - Use when sound cooked food must be kept usable for several days during an outage by cooling, drying, salting, smoking, fermentation, or safe storage choices.
   - Route visibly spoiled, moldy, slimy, leaking, or foul-smelling food to food-spoilage-assessment instead of preservation.
 applicability: Short-term and long-term preservation planning for food that is still sound, including cooked-food outage triage, preservation method choice, and storage boundaries.
+citations_required: true
+citation_policy: >
+  Cite GD-065 for safe food-preservation method selection, owner routing, and
+  discard/red-flag boundaries only. Do not use the reviewed answer card for
+  canning times, pressure settings, brine or acid ratios, recipes, processing
+  shortcuts, botulism treatment, sensory-only safety guarantees, or promises
+  that a batch is safe.
 read_time: 8
 word_count: 17096
 last_updated: '2026-02-24'
 version: '1.2'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: food_preservation_method_selection
+answer_card:
+  - food_preservation_method_selection
 custom_css: |-
   .subtitle{color:var(--muted);font-size:1.1em;margin-top:10px}section h2{color:var(--accent2);font-size:2em;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid var(--border)}section h3{color:var(--accent);font-size:1.3em;margin-top:25px;margin-bottom:15px}section h4{color:var(--accent2);font-size:1.1em;margin-top:18px;margin-bottom:10px}.highlight-box{background:var(--card);border-left:4px solid var(--accent);padding:20px;margin:20px 0;border-radius:8px;line-height:1.8}thead{background:var(--accent);color:var(--bg)}tbody tr:hover{background:var(--surface)}tbody li{margin-bottom:10px;color:var(--text)}.equipment-box{background:var(--card);padding:20px;margin:15px 0;border-radius:8px;border:1px solid var(--border)}.equipment-box h4{color:var(--accent2);margin-bottom:12px}.equipment-box ul{margin:0}.ratio-card{background:var(--card);padding:20px;margin:15px 0;border-radius:8px;border-left:4px solid var(--accent)}.ratio-card strong{color:var(--accent);font-size:1.1em}.footer{text-align:center;padding:30px 0;color:var(--muted);border-top:1px solid var(--border);margin-top:50px}.section-id{scroll-margin-top:20px}
   @keyframes highlightRow {
@@ -106,6 +117,20 @@ custom_css: |-
 - **Smell changed after drying or after moving containers?** Use food-spoilage-assessment first. Packaging can explain moisture exposure, but an off smell is a safety assessment before it is a storage optimization.
 - **Not sure which method?** Use this priority: (1) Is it already spoiling? → check food-spoilage-assessment first. (2) Is it still sound and just needs longer storage? → salt-cure, smoke, dry, ferment, or pressure can it. (3) Do you have fuel and a pressure canner? → pressure can (longest shelf life). (4) Do you have sun or dry heat? → dry/dehydrate (lightweight, no containers needed).
 :::
+
+<section id="answer-card-safe-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-065. Use it for safe preservation method selection when the food is still sound and the user needs routing among drying, salting or brining, smoking, fermentation, canning category choice, cold storage, or storage-packaging handoff.
+
+Start by separating already-questionable food from preservation planning. If food is moldy, slimy, leaking, foul-smelling, pressurized, damp after storage, or otherwise suspect, do not try to preserve it; route to `food-spoilage-assessment` and discard anything that fails that safety check. Preservation does not restore spoiled food, and smell or appearance cannot guarantee a preserved batch is safe.
+
+Keep the answer at method-selection level. Name the safer owner and next handoff: `food-spoilage-assessment` for discard decisions, `food-salvage-shelf-life` for age and shelf-life questions, `food-storage-packaging` for sealed dry cool storage and containers after the preservation step is complete, `drying-dehydration-techniques` for drying details, `fermentation-pickling` for fermentation details, `cold-storage-root-cellar` for cellar storage, and pressure-canning guidance for low-acid sealed foods. Do not provide recipes, canning times, pressure settings, brine or acid ratios, botulism treatment, processing shortcuts, sensory-only safety guarantees, or guarantees that a batch is safe.
+
+Use owner routing for common near misses: salt production questions go to `salt-production`; ordinary kitchen cross-contamination goes to `kitchen-food-prep-safety`; group illness after shared food goes to food-safety or community-kitchen illness guidance; and medical symptoms after suspect food are not answered as preservation.
+
+</section>
 
 <section id="water-bath">
 
@@ -2062,4 +2087,3 @@ In hot, dry climates without electricity or ice access, evaporative cooling pass
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the methods discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

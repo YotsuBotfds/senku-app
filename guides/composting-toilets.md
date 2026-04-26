@@ -24,6 +24,40 @@ word_count: 7500
 last_updated: '2026-02-24'
 version: '2.0'
 liability_level: high
+aliases:
+  - composting toilet
+  - compost toilet
+  - composting toilet smells
+  - composting toilet odor
+  - urine diverter clogged
+  - urine diversion toilet smell
+  - sawdust composting toilet
+  - composting toilet wet compost
+  - flies in composting toilet
+  - composting toilet maintenance
+  - toilet compost troubleshooting
+routing_cues:
+  - Use for composting-toilet odor, moisture, fly, urine-diversion, cover-material, ventilation, and routine maintenance troubleshooting.
+  - Route food-crop use, pathogen safety guarantees, permanent latrine siting/building, sewage repair, illness care, chemical treatment formulas, confined-space entry, and construction engineering outside this reviewed card.
+citations_required: true
+applicability: >
+  Use GD-853 for composting-toilet troubleshooting observations, urine/feces
+  flow separation, ventilation and odor checks, cover-material routines,
+  maintenance scheduling, and handoffs. Do not use the reviewed answer card for
+  pathogen kill-time guarantees, humanure food-crop application guidance,
+  legal/code claims, chemical disinfectant formulas, medical illness treatment,
+  confined-space entry, or excavation/construction engineering.
+citation_policy: >
+  Cite this reviewed GD-853 answer card for composting-toilet odor, moisture,
+  fly, urine-diversion, cover-material, ventilation, and maintenance-schedule
+  answers. Route food-crop use, pathogen safety guarantees, permanent latrine
+  siting/building, sewage repair, illness care, chemical treatment formulas,
+  confined-space entry, and construction engineering to the appropriate owner or
+  professional authority.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: composting_toilets_operations_troubleshooting
+answer_card:
+  - composting_toilets_operations_troubleshooting
 ---
 
 ## Introduction

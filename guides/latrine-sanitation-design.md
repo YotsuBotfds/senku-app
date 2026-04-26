@@ -42,11 +42,22 @@ word_count: 4800
 last_updated: '2026-04-16'
 version: '1.0'
 liability_level: medium
+answer_card:
+  status: reviewed
+  card_id: latrine_sanitation_design
+  reviewed: true
+  scope: siting, separation-distance checks, route/handwashing/privacy planning, maintenance inspection, and escalation handoffs
 ---
 
 ## Triage: Start Here
 
 If you need a stopgap toilet right now while a sewer, septic, or permanent latrine is being built or repaired, use [Temporary Toilet Solutions](./temporary-toilet-solutions.md). This guide is for choosing and building the longer-term system.
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-672. Start with latrine siting and separation checks: distance from wells, boreholes, surface water, cooking or eating areas, old latrine pits, animal areas, flood-prone ground, and the likely direction of drainage or groundwater flow. Then plan the user route, privacy screen or door, handwashing point, runoff control, accessibility for children, elders, and disabled users, and a simple inspection routine.
+
+Use this card for planning, inspection, maintenance checks, and handoffs. Do not use it for excavation engineering, pit sizing formulas, slab or lining construction details, pathogen treatment guarantees, waste handling or pit-emptying procedures, chemical disinfectant formulas, groundwater safety guarantees, legal/code claims, or medical illness treatment. If the prompt asks for those details, give the boundary first and route to the appropriate sanitation, water, construction, legal/code, or medical owner.
 
 :::tip
 **Quick routing for everyday questions**

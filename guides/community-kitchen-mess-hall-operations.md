@@ -42,6 +42,12 @@ word_count: 2209
 last_updated: '2026-04-13'
 version: '1.0'
 liability_level: medium
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: community_kitchen_mess_hall_operations
+answer_card:
+  - community_kitchen_mess_hall_operations
+  - community_kitchen_illness_control
+reviewed: true
 ---
 
 :::warning
@@ -64,6 +70,14 @@ This guide is for practical group meal operations:
 - slowing disease spread when illness is present
 
 This guide covers *feeding a group*: layout, staffing, serving flow, leftovers, dishwashing boundaries, and outbreak-aware service. It is not about recipes or fire management.
+
+### Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-961 routine community-kitchen and mess-hall operations. Use it for queue and serving-line flow, handwashing-station placement, dish-return separation, cleaning schedule ownership, volunteer roles, and escalation handoffs when a routine food line has contamination, staffing, water, or illness concerns.
+
+Start with the meal path from arrival to service to dish return: where people queue, where they wash hands, who portions food, where clean utensils stay, where dirty dishes return, and who owns reset and cleaning after the line ends. Keep dirty returns downstream from serving, keep handwashing visible before food handling and eating, assign a lead and named cleanup owner for each shift, and define a handoff point when illness, suspect food, water doubt, failed dishwashing, fuel shortage, or space crowding makes ordinary service unsafe.
+
+Do not use this card for outbreak or diarrhea medical decisions, foodborne illness treatment, sanitizer concentration formulas, cook-time or temperature guarantees, industrial kitchen engineering, electrical, gas, or plumbing work, or legal inspection claims. If the prompt asks for those, keep the operational observation and route to the appropriate specialist guide or authority.
 
 **Route first:**
 - "How do I cook rice / beans / dinner?" → `cooking-meal-preparation.md`

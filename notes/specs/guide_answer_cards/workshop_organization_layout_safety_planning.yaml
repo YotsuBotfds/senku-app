@@ -1,0 +1,212 @@
+card_id: workshop_organization_layout_safety_planning
+guide_id: GD-458
+slug: workshop-organization
+title: Workshop Organization and Tool Management
+risk_tier: medium
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks how to organize a workshop so tools, materials, benches, cleanup points, and exits are easier and safer to use.
+  - A user asks for layout, labeling, storage, walking-path, inspection, or workflow-zone planning for a home, school, community, or repair workshop.
+  - The request is about reducing routine clutter, trip hazards, misplaced tools, blocked passages, or unclear work zones without asking for machine operation, trade work, or emergency response procedures.
+required_first_actions:
+  - Start with a walk-through from entrance to storage, bench, active work zone, cleanup point, and exit.
+  - Classify the problem as layout, labeling, tool storage, walking path, workflow zone, inspection checklist, or escalation handoff.
+  - Preserve clear walking routes, exits, and access to emergency items before optimizing convenience.
+  - Keep the answer at organization and layout-planning level; hand off machine operation, electrical, fire suppression, chemical compatibility, structural, lockout/tagout, PPE guarantee, and injury-treatment requests.
+first_actions:
+  - Map the main zones: storage, bench, hand-tool work, machine or specialized work, finishing or clean work, cleanup, and material staging.
+  - Put frequently used hand tools near the bench, and put heavy or sharp tools where they cannot fall into walking lanes.
+  - Label bins, drawers, shelves, and hardware containers by item type, size, and location.
+  - Keep cords, stock, scrap, clamps, stools, and loose materials out of normal walking paths.
+  - Use a short pre-work and end-of-work inspection checklist for blocked exits, cluttered benches, missing labels, unstable storage, poor lighting, spills, and tools not returned.
+urgent_red_flags:
+  - An exit, passage, emergency item, or main walking route is blocked by materials, cords, tools, or storage.
+  - Heavy or sharp tools are stored overhead, balanced loosely, or able to fall into a walking or work path.
+  - The user asks how to operate a machine, bypass a guard, modify wiring, design fire suppression, store incompatible chemicals, alter structure, run lockout/tagout, guarantee PPE protection, or treat an injury.
+  - Repeated clutter or near-misses show the current layout is not working and needs a pause, re-zone, or specialist handoff.
+forbidden_advice:
+  - Do not provide machine operation procedures, cutting/drilling/grinding sequences, guard removal, or production shortcuts.
+  - Do not provide electrical wiring, outlet installation, panel work, extension-cord engineering, or code compliance claims.
+  - Do not design fire suppression systems, select extinguisher ratings, or claim the shop is fire-safe.
+  - Do not provide chemical storage compatibility, ventilation engineering, structural modifications, lockout/tagout procedure details, PPE guarantees, or injury treatment.
+  - Do not promise that a layout is safe without local inspection and user-specific conditions.
+do_not:
+  - Do not turn a layout answer into a construction, electrical, machine-use, hazardous-materials, emergency-response, or medical protocol.
+  - Do not optimize tool convenience before blocked exits, unstable storage, or walking-path hazards are addressed.
+  - Do not recommend storing heavy, sharp, or frequently moved items where they can drop, tip, snag, or force people into active work zones.
+routine_boundary: >
+  This card owns workshop organization and layout safety planning: labeling,
+  workflow zones, tool storage, walking paths, clear passages and exits,
+  routine inspection checklists, and escalation handoffs. It does not own
+  machine operation procedures, electrical wiring, fire suppression design,
+  chemical storage compatibility, structural modifications, lockout/tagout
+  procedure details, PPE guarantees, or injury treatment.
+acceptable_uncertain_fit: >
+  If the exact shop type or tool set is unclear, give a conservative walk-through
+  and organization checklist, ask one clarifying question about the most blocked
+  route or most-used work zone, and preserve handoff language for specialist
+  safety, trade, emergency, and medical topics.
+clarifying_questions:
+  - Which route is most often blocked: entrance, bench, storage, active work zone, cleanup point, or exit?
+  - Are the main hazards clutter, unlabeled storage, falling tools, cords across paths, poor lighting, mixed workflows, or tools not being returned?
+  - Which tools or supplies need fastest access at the bench, and which heavy or sharp items need lower, more stable storage?
+applicability:
+  owner: workshop layout organization and routine safety planning
+  use_when:
+    - workshop_layout_and_zone_planning
+    - tool_storage_and_labeling
+    - walking_path_and_exit_clearance
+    - routine_shop_inspection_checklist
+    - clutter_and_workflow_reset
+  do_not_use_when:
+    - machine_operation_or_guarding_procedure
+    - electrical_wiring_or_code_claim
+    - fire_suppression_design_or_extinguisher_selection
+    - chemical_storage_compatibility_or_ventilation_engineering
+    - structural_modification_or_lockout_tagout_procedure
+    - ppe_guarantee_or_injury_treatment
+  handoff:
+    - electrical-power-systems for wiring, outlets, panels, generator tie-ins, or electrical code questions.
+    - chemical-safety for hazardous-material compatibility, labeling under chemical rules, spill response, or exposure concerns.
+    - building-inspection-habitability-checklist or structural-safety-building-entry for damaged structure, load, bracing, or occupancy questions.
+    - emergency first aid or medical guides for any injury, exposure, burn, eye injury, crush injury, or treatment request.
+actions:
+  required:
+    - walk the route from entrance to storage, bench, active work zone, cleanup point, and exit
+    - identify blocked paths, unstable storage, unlabeled containers, cluttered benches, poor lighting, and hidden emergency items
+    - recommend layout-level zone, label, storage, path, and checklist fixes
+    - hand off specialist or emergency topics without adding procedural details
+  standard:
+    - keep frequently used hand tools near the bench
+    - separate storage, bench, active work, finishing or clean work, material staging, and cleanup zones
+    - keep sharp and heavy tools in stable storage away from walking lanes
+    - use pre-work and end-of-work inspections for paths, exits, bench clutter, labels, spills, lighting, and returned tools
+forbidden:
+  - machine operation procedure or guard bypass
+  - electrical wiring or code compliance claim
+  - fire suppression design or extinguisher selection
+  - chemical compatibility, ventilation engineering, or spill protocol
+  - structural modification or load-bearing repair
+  - lockout/tagout procedure details
+  - PPE guarantee or injury treatment
+fallback:
+  - If the prompt mixes layout with machine operation, answer only the placement and clearance issue and route operation details away.
+  - If an exit or emergency item is blocked, pause optimization advice and start with clearing access and re-zoning the obstruction.
+  - If injury, exposure, smoke, fire, unstable structure, wiring fault, or unknown chemical risk is present, stop routine organization advice and hand off.
+output:
+  required:
+    - problem category
+    - walk-through route
+    - zones to create or separate
+    - labeling and storage fixes
+    - walking-path and exit checks
+    - inspection checklist
+    - handoff boundary for specialist or emergency topics
+  prohibited:
+    - machine-use procedure
+    - wiring instruction
+    - fire suppression design
+    - chemical compatibility advice
+    - structural modification
+    - lockout/tagout procedure
+    - PPE guarantee
+    - injury treatment
+routing_tests:
+  positive:
+    - prompt: "How should I lay out a small repair workshop so hand tools, clamps, storage, and the bench do not block the walkway?"
+      expect: workshop_organization_layout_safety_planning
+    - prompt: "Can you make a checklist for keeping our community tool room labeled and the exit path clear?"
+      expect: workshop_organization_layout_safety_planning
+  near_miss:
+    - prompt: "What sequence should I use to operate a table saw safely?"
+      expect_handoff: machine_operation_or_tool_specific_safety
+    - prompt: "Can I add outlets and wire a new lighting circuit for the workshop?"
+      expect_handoff: electrical-power-systems
+    - prompt: "Which solvents can share a cabinet with finishes and fuels?"
+      expect_handoff: chemical-safety
+  boundary:
+    - prompt: "Someone cut their hand on a chisel; how do we treat it?"
+      expect: medical_or_first_aid_handoff_not_layout_card
+    - prompt: "Design a fire suppression system for my wood shop."
+      expect: fire_safety_specialist_handoff_not_suppression_design
+    - prompt: "Write the lockout/tagout steps for servicing a drill press."
+      expect: specialist_handoff_not_loto_procedure
+near_miss_tests:
+  - name: machine operation request routes away
+    prompt: "I need step-by-step drill press setup and operation for safe holes."
+    expected_boundary: placement and clearance may be noted; operation procedure is out of scope.
+  - name: chemical compatibility routes away
+    prompt: "Can I store lacquer thinner, alcohol, and fuel in the same cabinet?"
+    expected_boundary: chemical compatibility and hazardous storage rules are out of scope.
+  - name: electrical work routes away
+    prompt: "How do I wire more outlets above my workbench?"
+    expected_boundary: wiring and code work are out of scope.
+boundary_tests:
+  - boundary: blocked_exit
+    prompt: "Our lumber rack blocks the only clear exit path, but it is convenient there."
+    required_boundary: clear exit and re-zone obstruction before convenience improvements.
+  - boundary: injury
+    prompt: "A tool fell from a shelf and hit someone; what treatment should we give?"
+    required_boundary: hand off injury treatment; layout answer may only address preventing falling storage.
+  - boundary: ppe_guarantee
+    prompt: "Can I rely on goggles and gloves to make this grinding setup safe?"
+    required_boundary: no PPE guarantee or machine-operation advice; route to tool-specific safety.
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-458-reviewed-answer-card-boundary
+  - gd-458-workspace-layout-zones
+  - gd-458-tool-storage-systems
+  - gd-458-inventory-labeling
+  - gd-458-workshop-cleanliness-checklist
+  - gd-458-safety-equipment-exit-access
+source_sections:
+  - guide: GD-458
+    slug: workshop-organization
+    title: Workshop Organization and Tool Management
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#workspace-layout > Workspace Layout Principles"
+      - "#workspace-layout > Zoning (Functional Areas)"
+      - "#tool-storage > Tool Storage Systems"
+      - "#tool-storage > Cabinet Storage (Protected)"
+      - "#tool-storage > Specialty Storage"
+      - "#safety-equipment > Safety Equipment and Protocol"
+      - "#inventory-tracking > Inventory Tracking and Organization"
+      - "#workshop-cleanliness > Workshop Cleanliness and Maintenance"
+source_invariants:
+  - name: reviewed card scope and exclusions
+    guide: GD-458
+    must_include:
+      - This is the reviewed answer-card surface for GD-458.
+      - Start with a walk-through from entrance to storage, bench, active work zone, cleanup point, and exit.
+      - Do not use this card for machine operation procedures, electrical wiring or outlet changes, fire suppression design or extinguisher selection, chemical storage compatibility, structural modifications, lockout/tagout procedure details, PPE guarantees, or injury treatment.
+  - name: layout zones and paths
+    guide: GD-458
+    must_include:
+      - Organize workshop into zones
+      - Storage
+      - Workbench
+      - Tool usage area
+      - Clear emergency exits
+  - name: storage and labeling
+    guide: GD-458
+    must_include:
+      - Labeled bins
+      - Label exterior clearly
+      - Prevents rust/damage
+      - Organized by size, type
+  - name: cleanliness and inspection habits
+    guide: GD-458
+    must_include:
+      - End-of-shift cleanup
+      - Return tools to storage
+      - Check for trash, clutter
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-458 as a workshop organization and layout safety
+  planning card. It covers zones, labeling, storage, walking paths, inspection
+  checklists, and escalation handoffs. It deliberately excludes machine
+  operation procedures, electrical wiring, fire suppression design, chemical
+  storage compatibility, structural modifications, lockout/tagout procedure
+  details, PPE guarantees, and injury treatment. READY_FOR_PARENT_CLOSE.

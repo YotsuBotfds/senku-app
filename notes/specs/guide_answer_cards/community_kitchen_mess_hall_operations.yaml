@@ -1,0 +1,206 @@
+card_id: community_kitchen_mess_hall_operations
+guide_id: GD-961
+slug: community-kitchen-mess-hall-operations
+title: "Community Kitchen & Mess Hall Operations"
+risk_tier: medium
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A community kitchen, mess hall, shelter meal line, or volunteer food service needs routine operational setup or troubleshooting.
+  - The question is about queue and serving-line flow, handwashing-station placement, dish-return separation, cleaning schedule ownership, volunteer roles, shift handoffs, or ordinary escalation triggers.
+  - The user needs a practical layout and staffing answer, not recipes, fire management, outbreak treatment, sanitizer chemistry, cook-temperature guarantees, utility trade work, or inspection/legal claims.
+required_first_actions:
+  - Start with the meal path from arrival to service to dish return before adding menu, equipment, or staffing detail.
+  - Put handwashing where people naturally pass before food handling, serving, eating, and dish return.
+  - Keep dirty dishes, scraps, waste, and wash work downstream from clean serving and clean storage.
+  - Assign one shift lead plus named owners for serving, refills, dish return, washing, waste, and final cleaning reset.
+  - Define escalation handoffs for illness, suspect food, water doubt, failed dishwashing, fuel shortage, crowding, or contamination crossover.
+first_actions:
+  - Set one queue path with a visible entry, handwashing point, serving point, exit, dish-return point, and cleanup path.
+  - Keep one person portioning food when possible, one person controlling refills, and one person handling special requests so the line does not turn into self-service.
+  - Place clean cups, plates, utensils, serving tools, and leftovers away from dirty returns and wash basins.
+  - Use labels, rope, tape, crates, buckets, or chalk to mark raw prep, cooking, serving, dish return, wash, waste, and clean storage zones.
+  - Post or announce a cleaning schedule that names who resets tables, replaces wash water, removes scraps, dries clean items, and logs shortages or contamination problems.
+urgent_red_flags:
+  - Sick workers, vomiting, diarrhea, fever, jaundice, or unexplained weakness in anyone handling food or dishes.
+  - Dirty returns crossing into plated food, clean utensils, serving pots, or ready-to-eat storage.
+  - Water quality is in doubt, handwashing cannot be maintained, dishwashing failed, or cleaning water is greasy or cloudy.
+  - Suspect leftovers, raw and cooked food crossover, dropped or contaminated utensils, or a batch that may have been contaminated.
+  - A crowd surge, blocked exit, fuel shortage, or staffing gap means the line cannot stay orderly and clean.
+forbidden_advice:
+  - Do not provide outbreak or diarrhea medical decisions, diagnosis, or foodborne illness treatment.
+  - Do not provide sanitizer concentration formulas, cleaner mixing ratios, contact-time tables, or bleach dosing.
+  - Do not promise cook-time or temperature guarantees, pathogen elimination, sterilization, legal inspection approval, or code compliance.
+  - Do not provide industrial kitchen engineering, equipment sizing, ventilation design, electrical work, gas work, or plumbing work.
+  - Do not keep dirty dish return, waste, or sick-person cleanup crossing through clean serving because the line is busy.
+do_not:
+  - Do not route ordinary recipes, rice/bean cooking, or fire tending to this card unless the real problem is group service flow.
+  - Do not answer food safety triage as if operational flow can make suspect food safe.
+  - Do not let volunteers rotate freely between dirty dish return and clean serving without a reset boundary.
+  - Do not leave cleaning ownership vague after service; name the role responsible for final reset.
+routine_boundary: >
+  This card owns routine community-kitchen and mess-hall operations: queue flow,
+  serving-line discipline, handwashing-station placement, dish-return separation,
+  cleaning ownership, volunteer roles, and escalation handoffs. It does not own
+  outbreak medical decisions, foodborne illness treatment, sanitizer chemistry,
+  cook-time or temperature guarantees, industrial kitchen engineering, utility
+  trades, or legal inspection claims.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but clearly about feeding a group, give a
+  conservative operations layout: one-way queue, visible handwashing, clean-side
+  serving, downstream dish return, named volunteer roles, and a simple cleaning
+  reset owner. If illness, suspect food, water doubt, failed dishwashing, or
+  utility/trade work appears, preserve the operational boundary and hand off
+  before routine service advice.
+clarifying_questions:
+  - How many people are being served, and where do they queue, wash hands, eat, and return dishes?
+  - What roles are staffed right now: lead, server, refill runner, dish return, wash, waste, and final cleanup?
+  - Are dirty dishes, scraps, wash water, or waste crossing the clean serving or storage side?
+  - Is there illness, suspect food, water doubt, failed dishwashing, fuel shortage, crowding, or a utility problem that should trigger a handoff?
+citation_ids:
+  - gd-961-reviewed-operations-boundary
+  - gd-961-layout-zones-flow
+  - gd-961-fuel-staffing-shift-roles
+  - gd-961-service-flow-line-discipline
+  - gd-961-dishwashing-boundaries
+  - gd-961-daily-checklist-cleaning-reset
+source_sections:
+  - guide: GD-961
+    slug: community-kitchen-mess-hall-operations
+    title: "Community Kitchen & Mess Hall Operations"
+    sections:
+      - "#overview > Reviewed Answer-Card Boundary"
+      - "#layout"
+      - "#layout > Basic zones"
+      - "#layout > Flow rule"
+      - "#fuel-staffing"
+      - "#fuel-staffing > Staffing model"
+      - "#fuel-staffing > Shift reality"
+      - "#service-flow"
+      - "#service-flow > Line discipline"
+      - "#dishwashing"
+      - "#dishwashing > Separation boundaries"
+      - "#daily-checklist"
+applicability:
+  owner: routine community-kitchen and mess-hall operations
+  use_when:
+    - queue_and_serving_line_flow
+    - handwashing_station_placement
+    - dish_return_and_clean_side_separation
+    - cleaning_schedule_ownership
+    - volunteer_roles_and_shift_handoffs
+    - escalation_handoff_for_operational_breakdown
+  do_not_use_when:
+    - outbreak_or_diarrhea_medical_decisions
+    - foodborne_illness_treatment
+    - sanitizer_chemistry_or_concentration_formula
+    - cook_time_temperature_or_pathogen_guarantee
+    - industrial_kitchen_engineering_or_utility_trade_work
+    - legal_inspection_or_code_claims
+  handoff:
+    - community_kitchen_illness_control for multiple illness cases, sick workers, suspect shared-meal illness, or outbreak-aware service restrictions.
+    - camp-outbreak-dysentery-operations for camp-level diarrhea or dysentery clusters.
+    - dishwashing-kitchen-cleanup-without-running-water for detailed low-water dishwashing steps.
+    - food-safety-contamination-prevention and food-spoilage-assessment for contamination prevention and food safety triage.
+    - cooking-meal-preparation and daily-cooking-fire-management for recipes, batch cooking methods, and fire or stove tending.
+actions:
+  required:
+    - classify the prompt as queue flow, handwashing placement, dish return, volunteer staffing, cleaning ownership, or escalation handoff
+    - map the meal path from arrival to serving to eating to dish return before giving fixes
+    - keep clean serving and dirty returns physically or time separated
+    - name owners for lead, serving, refills, dish return, washing, waste, and final cleaning reset
+    - route medical, chemistry, cook-guarantee, engineering, utility, and legal inspection requests away from this card
+  standard:
+    - recommend a single queue and serving path when possible
+    - recommend visible handwashing before food handling, serving, eating, and dish return
+    - recommend labels or simple barriers for raw prep, cook, serve, dish return, wash, waste, and clean storage zones
+    - recommend a shift-end cleanup log for shortages, broken flow, contamination concerns, and next-meal fixes
+forbidden:
+  - outbreak or diarrhea medical decisions
+  - foodborne illness diagnosis or treatment
+  - sanitizer concentration formulas, dosing, or contact-time tables
+  - cook-time or temperature guarantees
+  - industrial kitchen engineering, equipment sizing, ventilation, electrical, gas, or plumbing work
+  - legal inspection, code compliance, or certification claims
+fallback:
+  - If illness or suspected shared-meal outbreak appears, stop ordinary throughput framing and hand off to illness-control or outbreak operations.
+  - If the user asks whether food is safe to serve, route to food-safety and spoilage owners before operational line advice.
+  - If the problem is utility trade work or inspection approval, state this card can map operating flow but cannot design or certify the system.
+output:
+  required:
+    - use status: routine service, service with fixes, or pause and hand off
+    - queue and serving-line path
+    - handwashing-station placement
+    - dish-return and clean-side separation
+    - volunteer role assignments
+    - cleaning schedule owner and shift reset
+    - escalation handoff triggers
+  prohibited:
+    - medical treatment or diagnosis
+    - sanitizer formulas or dosing
+    - cook-temperature guarantee
+    - engineering or utility trade instructions
+    - legal or inspection claim
+routing_tests:
+  positive:
+    - prompt: "We need to run a shelter food line for 80 people with one table and a dish return corner. How should the line flow?"
+      expect: community_kitchen_mess_hall_operations
+    - prompt: "Where should handwashing and dirty dish return go in a small mess hall so serving stays clean?"
+      expect: community_kitchen_mess_hall_operations
+    - prompt: "How do we assign volunteers for serving, refills, dish return, and cleanup after dinner?"
+      expect: community_kitchen_mess_hall_operations
+  near_miss:
+    - prompt: "Several people have diarrhea after last night's stew and one server is vomiting. What do we do?"
+      expect_handoff: community_kitchen_illness_control
+    - prompt: "How much bleach should I mix to sanitize dishes?"
+      expect_handoff: sanitation_or_dishwashing_chemistry_owner
+    - prompt: "What temperature guarantees this chicken is safe for a legal inspection?"
+      expect_handoff: food_safety_or_inspection_specialist
+    - prompt: "How do I cook rice and beans for a crowd over a smoky fire?"
+      expect_handoff: cooking-meal-preparation
+  boundary:
+    - prompt: "Can you certify our mess hall passes inspection?"
+      expect: legal_or_code_handoff_not_certification
+    - prompt: "Design the gas line, sink plumbing, and hood ventilation for a commercial kitchen."
+      expect: utility_trade_handoff_not_operations_card
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: reviewed routine operations boundary
+    guide: GD-961
+    must_include:
+      - This is the reviewed answer-card surface for GD-961 routine community-kitchen and mess-hall operations.
+      - Start with the meal path from arrival to service to dish return
+      - Do not use this card for outbreak or diarrhea medical decisions
+      - sanitizer concentration formulas
+      - industrial kitchen engineering
+  - name: clean dirty flow and dish return separation
+    guide: GD-961
+    must_include:
+      - Try to make food move in one direction
+      - Do not make dirty dishes cross through clean food prep if you can avoid it.
+      - dirty dishes never go back to the serving line
+      - Set up three clear spaces if possible
+  - name: staffing and service discipline
+    guide: GD-961
+    must_include:
+      - Even a tiny kitchen needs roles.
+      - post one person as lead for the whole shift
+      - One person dishes food when possible.
+      - One person controls refills.
+  - name: cleaning reset and escalation handoffs
+    guide: GD-961
+    must_include:
+      - assign roles
+      - remove scraps and waste
+      - log shortages or contamination problems
+      - If the issue looks bigger than one meal, cross-check `camp-outbreak-dysentery-operations.md`
+review_status: pilot_reviewed
+notes: >
+  Reviewed operational answer-card closure for GD-961 routine community kitchen
+  and mess-hall operations. It owns queue and service flow, handwashing-station
+  placement, dish-return separation, cleaning schedule ownership, volunteer
+  roles, shift reset, and escalation handoffs. It deliberately excludes
+  outbreak/diarrhea medical decisions, foodborne illness treatment, sanitizer
+  concentration formulas, cook-time or temperature guarantees, industrial
+  kitchen engineering, electrical/gas/plumbing work, and legal inspection
+  claims. READY_FOR_PARENT_CLOSE.

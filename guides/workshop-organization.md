@@ -22,11 +22,33 @@ custom_css: |
   .safety-checklist { line-height: 1.9; margin: 1rem 0; }
   .workbench-specs { margin: 1.5rem 0; padding: 1rem; background: var(--surface); border-radius: 4px; }
 liability_level: low
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: workshop_organization_layout_safety_planning
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for workshop organization,
+  layout safety planning, labeling, workflow zones, tool storage, walking paths,
+  inspection checklists, and escalation handoffs only. Do not use it for machine
+  operation procedures, electrical wiring, fire suppression design, chemical
+  storage compatibility, structural modifications, lockout/tagout procedure
+  details, PPE guarantees, or injury treatment.
 ---
 
 A well-organized workshop increases productivity, reduces tool damage, prevents injuries, and makes projects a pleasure instead of frustration. Workshop design is personal — based on space, tools, projects, and workflow — but principles apply universally.
 
 ![Workshop organization and tool management reference diagram](../assets/svgs/workshop-organization-1.svg)
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-458. Use it for workshop organization and layout safety planning: labeling, workflow zones, tool storage, walking paths, clear exits and passages, inspection checklists, and escalation handoffs when the space or task falls outside routine organization.
+
+Start with a walk-through from entrance to storage, bench, active work zone, cleanup point, and exit. Identify blocked paths, unlabeled shelves or bins, unstable tool storage, cords or materials crossing walking lanes, mixed clean/dirty or hand-tool/machine workflows, poor lighting over routine work areas, trip hazards, cluttered benches, and emergency items that are hidden or inaccessible. Then give layout-level fixes: define zones, keep frequently used hand tools within reach of the bench, label bins and drawers, store sharp or heavy tools where they cannot fall into paths, preserve clear walking routes, return tools after each work session, and use a short inspection checklist before and after work.
+
+Do not use this card for machine operation procedures, electrical wiring or outlet changes, fire suppression design or extinguisher selection, chemical storage compatibility, structural modifications, lockout/tagout procedure details, PPE guarantees, or injury treatment. If the prompt asks for those, give only the relevant layout observation and hand off to the appropriate specialist or local authority.
+
+</section>
 
 <section id="workspace-layout">
 

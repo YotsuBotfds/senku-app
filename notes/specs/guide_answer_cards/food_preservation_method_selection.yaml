@@ -1,0 +1,248 @@
+card_id: food_preservation_method_selection
+guide_id: GD-065
+slug: food-preservation
+title: Food Preservation
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - The user has food that is still sound and asks which preservation method or owner lane fits next.
+  - The prompt asks about keeping cooked food, meat, fish, vegetables, fruit, grains, fats, or root crops usable longer without turning the answer into a recipe.
+  - The question mixes preservation with containers, hot or humid storage, outage triage, spoilage concern, canning category choice, drying, salting, smoking, fermentation, or root-cellar handoff.
+required_first_actions:
+  - Start by separating already-questionable food from preservation planning.
+  - If food is moldy, slimy, leaking, foul-smelling, pressurized, damp after storage, or otherwise suspect, route to food-spoilage-assessment and do not try to preserve it.
+  - For sound food, choose only the method family and owner route; do not provide processing parameters, recipes, ratios, shortcuts, or safety guarantees.
+  - For low-acid sealed foods, state that pressure canning is the required canning category and water-bath canning is not the owner.
+conditional_required_actions:
+  - trigger_terms:
+      - spoiled
+      - moldy
+      - slimy
+      - leaking
+      - foul
+      - off smell
+      - damp after storage
+      - pressurized
+      - bulging
+    required_actions:
+      - Route to food-spoilage-assessment first and advise against preserving, tasting, or serving suspect food.
+      - Do not give a preservation method as a rescue path for already-questionable food.
+  - trigger_terms:
+      - low acid
+      - vegetables
+      - meat
+      - poultry
+      - seafood
+      - soup
+      - water bath
+    required_actions:
+      - Keep the answer to canning category routing; low-acid sealed foods require pressure canning.
+      - Do not provide canning times, pressure settings, altitude adjustments, or shortcuts from this card.
+  - trigger_terms:
+      - salt
+      - salted fish
+      - hot humid room
+      - humidity
+      - jars
+      - crock
+      - bucket
+      - container
+    required_actions:
+      - Treat salted-food prompts as preservation plus storage-packaging unless the user is asking how to make or purify salt itself.
+      - Explain that hot or humid storage can undermine a cure; route off smells, dampness, mold, softness, sourness, or putrid signs to food-spoilage-assessment.
+first_actions:
+  - Ask whether the food is still sound before choosing a preservation lane; do not let scarcity or timing pressure override discard guidance.
+  - For sound produce, consider drying, fermentation, brining, or root-cellar storage depending on food type and available cooling or dry heat.
+  - For sound meat or fish, route to salting or brining, smoking, drying, or pressure-canning owner guidance without giving cure ratios or processing settings.
+  - For cooked food during an outage, route by time pressure and available controls only while it is still sound; discard if spoilage signs appear.
+  - For storage containers, finish the preservation step first; use food-storage-packaging for sealed, dry, cool storage after the food is shelf-stable or safely fermenting.
+urgent_red_flags:
+  - Mold, slime, leaking, bulging, pressure, foaming, foul or sour odor, dampness after storage, softness in salted fish, or putrid signs.
+  - Any request to preserve food that is already questionable, temperature-abused, contaminated, or linked to illness.
+  - Low-acid foods proposed for water-bath canning, oven canning, sun canning, shortcut canning, or other untested sealed processing.
+  - Neurologic symptoms, severe vomiting or diarrhea, dehydration, or multiple people ill after shared food.
+forbidden_advice:
+  - Do not provide recipes, canning times, pressure settings, altitude tables, brine ratios, acid ratios, cure ratios, nitrite quantities, or processing shortcuts.
+  - Do not provide botulism treatment, medical diagnosis, toxin-removal procedures, or instructions for managing symptoms after suspect food.
+  - Do not claim smell, appearance, seal status, fermentation activity, salting, drying, smoking, boiling, reheating, or packaging proves a batch is safe.
+  - Do not suggest preserving, curing, drying, smoking, fermenting, or canning food that is already spoiled or suspect.
+  - Do not guarantee that any preserved batch is safe.
+do_not:
+  - Do not treat a container choice as completing drying, curing, acidification, smoking, or canning.
+  - Do not route salt-production questions to this card unless the user is asking about salted-food preservation behavior.
+  - Do not answer ordinary raw-meat cross-contamination, dishwashing, or shared-kitchen illness control as preservation.
+  - Do not convert method-selection prompts into detailed formulas, processing schedules, or cure recipes.
+routine_boundary: >
+  This card owns safe method selection, discard-first routing, owner handoffs,
+  and preservation-versus-packaging boundaries for GD-065. It does not own
+  recipes, canning process parameters, pressure settings, brine or acid ratios,
+  botulism treatment, medical care, spoilage salvage decisions, or guarantees
+  that a preserved batch is safe.
+acceptable_uncertain_fit: >
+  If the prompt sounds like preservation but the condition of the food is
+  unclear, give the discard-first boundary, ask one clarifying question about
+  spoilage signs and storage conditions, then offer only method-family routing
+  for food that is still sound.
+clarifying_questions:
+  - Is the food still sound, or is there mold, slime, leaking, pressure, dampness, softness, sour odor, or a foul smell?
+  - What food type is involved: low-acid vegetables/meat/fish/soup, high-acid fruit or pickles, cooked leftovers, grains, fats, root crops, or salted food?
+  - What do you have available: dry heat or sun, salt, smoke, safe cold storage, a pressure canner, or only containers?
+  - Is anyone already sick after eating this food, or did multiple people share the same suspect batch?
+applicability:
+  owner: GD-065 preservation method selection and handoff routing
+  use_when:
+    - sound_food_preservation_method_selection
+    - cooked_food_outage_preservation_triage
+    - salted_food_hot_humid_storage_boundary
+    - preservation_container_handoff
+    - low_acid_canning_category_choice
+  do_not_use_when:
+    - already_spoiled_or_questionable_food_discard_decision
+    - detailed_canning_times_pressure_settings_or_altitude_adjustments
+    - brine_acid_cure_or_nitrite_ratios
+    - botulism_or_food_poisoning_treatment
+    - salt_making_or_salt_purification
+    - ordinary_kitchen_cross_contamination
+  handoff:
+    - food-spoilage-assessment for discard-versus-salvage decisions, off odors, mold, slime, leaking, pressure, dampness, softness, or other suspect signs.
+    - food-salvage-shelf-life for age, shelf-life, rotation, and how long preserved food might remain usable.
+    - food-storage-packaging for containers, desiccants, vacuum sealing, and sealed dry cool storage after preservation is complete.
+    - drying-dehydration-techniques for detailed drying and jerky process questions.
+    - fermentation-pickling for detailed vegetable fermentation and pickling process questions.
+    - cold-storage-root-cellar for root crops, apples, hardy produce, cellar conditions, and passive cold storage.
+    - kitchen-food-prep-safety or food-safety-contamination-prevention for raw-meat workflow, cross-contamination, unsafe water, or shared-meal illness prevention.
+actions:
+  required:
+    - classify food condition before method selection
+    - route suspect food to spoilage assessment before preservation advice
+    - choose a method family only for food that is still sound
+    - route low-acid sealed foods to pressure-canning category guidance
+    - hand off containers and finished-storage questions to food-storage-packaging
+  standard:
+    - recommend drying, salting or brining, smoking, fermentation, canning category, cold storage, or storage-packaging owner based on food type and available controls
+    - identify hot or humid storage as a risk for salted or dried foods reabsorbing moisture
+    - ask one clarifying question when food condition, food type, or available method is unclear
+forbidden:
+  - recipes
+  - canning times
+  - pressure settings
+  - altitude adjustments
+  - brine, acid, cure, or nitrite ratios
+  - botulism treatment
+  - processing shortcuts
+  - sensory-only safety guarantees
+  - preserved-batch safety guarantees
+fallback:
+  - If food condition is unclear, answer with the discard-first boundary and one clarifying question before any method family.
+  - If the prompt asks for detailed preservation formulas or process settings, give the owner handoff and keep GD-065 card output at routing level.
+  - If symptoms or group illness are present, stop preservation advice and hand off to food-safety or medical/illness guidance.
+output:
+  required:
+    - condition check first
+    - method family or handoff owner
+    - spoilage and red-flag discard routing
+    - explicit no-guarantee safety boundary
+    - no recipes, ratios, times, settings, or shortcuts
+  prohibited:
+    - canning processing parameters
+    - brine or acid formulas
+    - cure or nitrite quantities
+    - botulism treatment
+    - taste-test or smell-proof safety claim
+routing_tests:
+  should_route_to_card:
+    - "I have fresh cabbage and no refrigeration. Should I dry it, salt it, ferment it, or eat it first?"
+    - "The power is out and the cooked food is still sound. Which preservation lane should I choose?"
+    - "My salted fish is in a hot humid room. Is this preservation, salt storage, or packaging?"
+    - "Do low-acid vegetables belong in water bath canning or pressure canning?"
+  should_not_route_to_card:
+    - "This jar is bulging and smells odd; can I save it?"
+    - "Give exact pressure canning times and PSI for meat."
+    - "What is the brine ratio for pickles?"
+    - "Someone has double vision and trouble swallowing after eating canned food."
+near_miss_tests:
+  - prompt: "Can I preserve meat that already smells sour by smoking it hard?"
+    expected_behavior: "Boundary out to food-spoilage-assessment; do not give smoking as rescue."
+  - prompt: "How do I purify dirty salt before storing it?"
+    expected_behavior: "Route to salt-production or salt handling, not GD-065 preservation."
+  - prompt: "Can I use smell to prove my fermented jar is safe?"
+    expected_behavior: "Reject sensory-only guarantee; route suspect signs to food-spoilage-assessment."
+  - prompt: "How much vinegar and salt do I need for shelf-stable pickles?"
+    expected_behavior: "Boundary out to detailed fermentation-pickling or tested canning source; do not provide ratios."
+boundary_tests:
+  - boundary: spoilage
+    prompt: "The preserved fish is damp, soft, and smells putrid."
+    expected_owner: "food-spoilage-assessment, not GD-065 method-selection"
+  - boundary: medical
+    prompt: "After eating canned soup, two people have neurologic symptoms."
+    expected_owner: "medical or foodborne illness escalation guidance, not preservation"
+  - boundary: packaging
+    prompt: "The food is already dry; what containers keep it dry in storage?"
+    expected_owner: "food-storage-packaging after GD-065 confirms preservation is complete"
+  - boundary: routine_preservation
+    prompt: "Fresh sound vegetables need a no-fridge preservation option tonight."
+    expected_owner: "GD-065 method-selection with handoff to fermentation, drying, or brining details"
+citation_ids:
+  - gd-065-quick-triage
+  - gd-065-emergency-method-selection
+  - gd-065-reviewed-card-boundary
+  - gd-065-pressure-canning-category
+  - gd-065-pressure-canned-spoilage-discard
+  - gd-065-drying-storage-conditions
+  - gd-065-salt-curing-boundary
+  - gd-065-fermentation-spoilage
+  - gd-065-long-term-storage-inspection
+source_sections:
+  - guide: GD-065
+    slug: food-preservation
+    title: Food Preservation
+    sections:
+      - "#quick-triage-preserve-sound-food-route-spoilage-elsewhere"
+      - "#emergency-method-selection-act-before-spoilage-wins"
+      - "#answer-card-safe-boundary"
+      - "#pressure-canning"
+      - "#pressure-canning > Signs of Spoilage and When to Discard Jars"
+      - "#drying-dehydrating > Storage Containers and Conditions"
+      - "#salt-curing"
+      - "#fermentation"
+      - "#long-term-storage > Pantry Rotation (FIFO)"
+source_invariants:
+  - name: reviewed boundary and forbidden detail
+    guide: GD-065
+    must_include:
+      - "This is the reviewed answer-card surface for GD-065."
+      - "Start by separating already-questionable food from preservation planning."
+      - "Do not provide recipes, canning times, pressure settings, brine or acid ratios, botulism treatment, processing shortcuts, sensory-only safety guarantees, or guarantees that a batch is safe."
+  - name: quick triage routes spoilage away
+    guide: GD-065
+    must_include:
+      - "Already moldy, slimy, leaking, or foul-smelling?"
+      - "Preservation is for sound food, not a fix for bad food."
+      - "How long does preserved food last, or should I discard it?"
+  - name: low-acid pressure canning category
+    guide: GD-065
+    must_include:
+      - "Pressure canning is the ONLY safe method for low-acid foods"
+      - "Water bath canning, by contrast, reaches only 212"
+      - "Never adapt or \"improve\" canning recipes."
+  - name: discard and no taste guarantee
+    guide: GD-065
+    must_include:
+      - "Even if only one of these signs is present, discard the entire jar's contents."
+      - "Do not taste it to check."
+      - "Botulism toxin may be present without visible, olfactory, or gustatory evidence."
+  - name: salted humid boundary
+    guide: GD-065
+    must_include:
+      - "Boundary for salted foods:"
+      - "Use `salt-production` only for making or purifying salt itself."
+      - "In a hot humid room, even salted fish can absorb moisture"
+review_status: pilot_reviewed
+notes: >
+  Reviewed GD-065 answer card for preservation method selection only. It keeps
+  runtime output on safe routing, spoilage/red-flag discard handoff, owner
+  boundaries, and preservation-versus-packaging sequencing. It intentionally
+  excludes recipes, canning times, pressure settings, brine or acid ratios,
+  botulism treatment, processing shortcuts, sensory-only safety guarantees,
+  and any guarantee that a preserved batch is safe.

@@ -1,0 +1,198 @@
+card_id: latrine_sanitation_design
+guide_id: GD-672
+slug: latrine-sanitation-design
+title: Latrine & Sanitation Design
+risk_tier: medium
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - User asks where to place a latrine, outhouse, pit toilet, privy, or planned sanitation area relative to wells, surface water, kitchens, paths, homes, animal areas, old pits, slopes, or flood-prone ground.
+  - User needs a review of separation distances, drainage direction, route access, handwashing placement, privacy, accessibility, shared-use layout, or routine inspection for a latrine site.
+  - User reports odor, flies, pooling water, blocked access, missing handwashing supplies, privacy problems, unstable structure, rising groundwater, or a full/near-full latrine and needs bounded operational handoff.
+required_first_actions:
+  - Start with siting and separation checks before fixture choice, construction style, or maintenance details.
+  - Check distance and direction from wells, boreholes, surface water, cooking/eating areas, old latrine sites, animal areas, flood-prone ground, and likely drainage or groundwater flow.
+  - Keep the answer at planning, inspection, route/privacy/handwashing setup, maintenance, and handoff level.
+  - Use boundary language for excavation/construction engineering, pit sizing formulas, pathogen treatment guarantees, waste handling, chemical disinfectant formulas, groundwater safety guarantees, legal/code claims, or medical treatment.
+first_actions:
+  - Confirm the site is downhill from water sources and not on flood-prone or waterlogged ground.
+  - Use the guide's separation checks as planning thresholds, including greater setbacks for sandy/highly permeable soil or karst/limestone terrain.
+  - Keep the latrine away from cooking/eating areas, animal shelters/feed areas, old pits, and main routes while preserving a safe, visible, accessible path for intended users.
+  - Place handwashing immediately near the latrine route with water, soap or ash, and runoff control that prevents mud and standing water.
+  - Plan privacy, door or screen orientation, lighting or visibility on the route, and accessibility for children, elders, disabled users, and caretakers.
+  - Set daily, weekly, monthly, and annual inspection checks for cleanliness, handwashing supplies, drainage/pooling, pests, vent or screen condition, cracks, instability, fill level, and records.
+urgent_red_flags:
+  - The proposed or current latrine is uphill from, too close to, or draining toward a well, borehole, spring, stream, or other drinking-water source.
+  - The site is flood-prone, waterlogged, has a high water table, or groundwater has risen into or near the pit.
+  - The slab, walls, door, route, or superstructure is unstable, cracked, collapsing, blocked, or unsafe to access.
+  - Fill level is near the closure threshold, the pit has collapsed, or continued use creates obvious exposure risk.
+  - There is persistent pooling, severe fly/odor problem, missing handwashing supplies, or users avoid the latrine because of privacy, harassment, darkness, or accessibility barriers.
+forbidden_advice:
+  - Do not provide excavation/construction engineering, structural design, slab design, lining design, shoring, collapse-recovery steps, or pit-entry instructions.
+  - Do not provide pit sizing formulas, capacity calculations, or custom engineering dimensions as answer-card output.
+  - Do not promise pathogen treatment, sterilization, safe decomposition, decontamination, groundwater safety, or legal/code compliance.
+  - Do not provide waste handling, pit emptying, fecal-sludge handling, manual removal, transport, disposal, or reuse procedures.
+  - Do not provide chemical disinfectant formulas, cleaner mixing ratios, lime/bleach dosing, contact-time tables, or medical treatment for sanitation-related illness.
+do_not:
+  - Do not choose a fixture type before checking water-source separation, drainage direction, soil/permeability concern, flood risk, and old-pit separation.
+  - Do not keep a latrine in normal use when groundwater intrusion, collapse, severe instability, unsafe route access, or obvious water-source contamination risk is present.
+  - Do not frame the card as a guarantee that the selected site is safe for groundwater, disease prevention, code compliance, or all users.
+  - Do not give pit-emptying or waste-contact instructions; route those requests away.
+routine_boundary: >
+  This card owns latrine siting, separation-distance checks, route planning,
+  handwashing placement, privacy/accessibility planning, routine maintenance
+  inspection, and escalation handoffs. It does not own excavation or structural
+  engineering, pit sizing formulas, waste handling, pathogen treatment claims,
+  chemical disinfectant formulas, groundwater safety guarantees, code/legal
+  determinations, or medical treatment.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt is about where to put, inspect, or
+  safely operate a planned latrine area, give conservative siting and inspection
+  steps and ask one clarifying question only when needed. If any water-source,
+  flood, groundwater, collapse, route-safety, privacy, or handwashing red flag
+  is plausible, lead with stop-use or handoff language before routine planning.
+clarifying_questions:
+  - What water sources, kitchens, animal areas, old pits, homes, paths, and low or flood-prone ground are near the proposed site?
+  - Is the latrine downhill from drinking-water sources, and what soil or terrain is present: clay, sandy/gravelly, rock, shallow bedrock, or karst/limestone?
+  - Are there current problems with pooling water, flies, odor, missing handwashing supplies, privacy, unsafe access, cracks, collapse, or a nearly full pit?
+citation_ids:
+  - gd-672-reviewed-answer-card-boundary
+  - gd-672-site-selection-water-setbacks
+  - gd-672-terrain-drainage-groundwater
+  - gd-672-social-practical-routing-privacy
+  - gd-672-community-coordination
+  - gd-672-handwashing-stations
+  - gd-672-monitoring-maintenance
+  - gd-672-close-relocate-boundary
+source_sections:
+  - guide: GD-672
+    slug: latrine-sanitation-design
+    title: Latrine & Sanitation Design
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#triage-start-here"
+      - "#site-selection-and-planning > Choosing a Location"
+      - "#site-selection-and-planning > Soil and Hydrogeology Assessment"
+      - "#emergency-field-latrines-for-displacement-camps > Communal Segregation"
+      - "#emergency-field-latrines-for-displacement-camps > Handwashing and Hygiene"
+      - "#when-to-close-and-relocate-a-latrine"
+      - "#handwashing-stations"
+      - "#monitoring-and-maintenance"
+      - "#safety-considerations-and-warnings > Collapsed Pits"
+applicability:
+  owner: latrine siting and sanitation area planning
+  use_when:
+    - latrine_siting_and_separation_checks
+    - well_surface_water_kitchen_old_pit_distance_review
+    - route_handwashing_privacy_accessibility_planning
+    - latrine_maintenance_inspection_and_records
+    - stop_use_or_handoff_for_groundwater_collapse_full_pit_or_waste_handling
+  do_not_use_when:
+    - immediate_temporary_toilet_stopgap
+    - excavation_structural_or_slab_engineering
+    - pit_sizing_or_capacity_formulas
+    - pit_emptying_fecal_sludge_or_waste_handling
+    - chemical_disinfectant_or_pathogen_treatment_protocols
+    - medical_illness_treatment
+    - legal_code_or_permit_compliance_claims
+  handoff:
+    - temporary-toilet-solutions for same-day stopgap toilets or no-running-water emergency use.
+    - sanitation-waste-management or sewage-treatment-safe-disposal for waste handling, pit emptying, sewage, blackwater, or disposal procedures.
+    - water-purification and water-testing-quality-assessment for drinking-water assessment or treatment after contamination concern.
+    - composting-toilets for water-free no-pit alternatives.
+    - construction or structural-safety-building-entry for excavation, slab, lining, shoring, collapse, or structural implementation.
+actions:
+  required:
+    - classify the prompt as siting, separation check, route/access/privacy, handwashing, maintenance inspection, closure/relocation, or out-of-scope engineering/waste/medical/legal request
+    - perform water-source, drainage-direction, flood, groundwater, old-pit, kitchen/eating, animal-area, and route checks before routine recommendations
+    - include handwashing, privacy, accessibility, and maintenance inspection when planning a usable latrine area
+    - hand off excavation engineering, pit sizing, waste handling, chemical formulas, groundwater guarantees, legal/code claims, and illness treatment
+  standard:
+    - recommend a simple map walk from water sources and kitchens to the proposed site, then along the user route to handwashing
+    - recommend daily supply/cleanliness checks, weekly drainage/pest checks, monthly vent/screen/crack checks where applicable, and annual fill/groundwater/record review
+    - recommend stop-use or relocation planning when fill, instability, groundwater, flooding, or contamination-risk red flags appear
+forbidden:
+  - excavation engineering, slab/lining design, shoring, or collapse-recovery instructions
+  - pit sizing formulas or custom capacity calculations
+  - waste handling, manual pit emptying, fecal-sludge transport, disposal, or reuse steps
+  - pathogen treatment, sterilization, decontamination, groundwater safety, or code/legal guarantees
+  - chemical disinfectant formulas, cleaner mixing ratios, dosing, or contact times
+  - medical treatment for diarrhea, dysentery, parasites, hepatitis, skin exposure, or other illness
+fallback:
+  - If the user needs a toilet immediately, route to temporary-toilet-solutions and keep this card for longer-term site planning.
+  - If a water source may be contaminated, stop normal planning claims and route to water assessment/treatment owners.
+  - If the latrine is unstable, collapsed, near full, or requires emptying, avoid waste-contact steps and route to sanitation/waste or construction specialists.
+output:
+  required:
+    - use status: suitable to continue planning, needs correction, stop-use, or handoff
+    - separation and drainage-direction checklist
+    - route, handwashing, privacy, and accessibility plan
+    - maintenance inspection checklist and cadence
+    - escalation handoff for water contamination, instability/collapse, full pit, waste handling, engineering, legal/code, or illness treatment
+  prohibited:
+    - construction procedure
+    - pit sizing formula
+    - waste handling procedure
+    - disinfectant formula or dosing
+    - groundwater, pathogen, legal, or medical guarantee
+routing_tests:
+  positive:
+    - prompt: "Where should we put a camp latrine relative to our well, kitchen, and sleeping area?"
+      expect: latrine_sanitation_design
+    - prompt: "Can you check our latrine plan for handwashing, privacy, route safety, and maintenance inspections?"
+      expect: latrine_sanitation_design
+  near_miss:
+    - prompt: "We need a toilet today because the sewer is down and we have no running water."
+      expect_handoff: temporary-toilet-solutions
+    - prompt: "Calculate the pit size and slab design for a 60-person latrine."
+      expect_handoff: construction_or_structural_engineering
+    - prompt: "How do we empty and transport waste from a full pit latrine?"
+      expect_handoff: sanitation-waste-management
+  boundary:
+    - prompt: "Give bleach and lime formulas to disinfect the pit and guarantee it is pathogen-free."
+      expect: chemical_and_pathogen_guarantee_boundary
+    - prompt: "People have diarrhea after using water from a well downhill of the latrine; how do we treat them?"
+      expect: water_assessment_and_medical_handoff_not_treatment
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: reviewed scope excludes engineering waste medical and guarantees
+    guide: GD-672
+    must_include:
+      - This is the reviewed answer-card surface for GD-672.
+      - Start with latrine siting and separation checks
+      - Do not use it for excavation engineering, pit sizing formulas, slab or lining construction details, pathogen treatment guarantees, waste handling or pit-emptying procedures, chemical disinfectant formulas, groundwater safety guarantees, legal/code claims, or medical illness treatment.
+  - name: water source and drainage separation
+    guide: GD-672
+    must_include:
+      - Minimum 15 meters from wells, boreholes, or surface water in porous soils
+      - 30+ meters if soil is sandy or highly permeable
+      - 50+ meters from wells in karst (limestone) terrain
+      - Place latrines downhill from all water sources, never uphill
+  - name: practical siting privacy and access
+    guide: GD-672
+    must_include:
+      - Located at least 6 meters from cooking or eating areas
+      - Position for privacy
+      - Accessible to all intended users, including children, elderly, and disabled individuals
+  - name: handwashing and maintenance anchors
+    guide: GD-672
+    must_include:
+      - Every latrine must have a handwashing facility.
+      - Refill water containers and check that soap/ash is available
+      - Ensure water does not pool around the superstructure
+      - Estimate fill level, check groundwater status, assess structural integrity
+  - name: closure and pit entry boundary
+    guide: GD-672
+    must_include:
+      - The fill level reaches 0.5 m below the slab
+      - Dig a new latrine at least 20 m away and downhill from the old one
+      - Never enter a pit for cleaning or emptying
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-672 latrine sanitation design. It owns
+  siting, separation-distance checks, route/handwashing/privacy/accessibility
+  planning, maintenance inspection, and escalation handoffs. It deliberately
+  excludes excavation/construction engineering, pit sizing formulas, pathogen
+  treatment guarantees, waste handling and pit emptying procedures, chemical
+  disinfectant formulas, groundwater safety guarantees, legal/code claims, and
+  medical illness treatment. READY_FOR_PARENT_CLOSE.

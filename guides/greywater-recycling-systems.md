@@ -11,6 +11,34 @@ tags:
   - agriculture
   - practical
   - water-systems
+aliases:
+  - greywater recycling systems
+  - graywater recycling systems
+  - greywater reuse
+  - graywater reuse
+  - greywater diversion
+  - household graywater routing
+routing_cues:
+  - Use this guide for low-risk greywater source separation, blackwater boundary checks, short-term diversion, observation, maintenance, storage avoidance, and handoffs.
+  - Keep answers focused on keeping sink, bath, shower, and laundry water separate from toilet waste and on routing greywater to low-contact non-potable uses.
+  - Route plumbing engineering, treatment or disinfection formulas, pathogen guarantees, food-crop safety guarantees, legal/code claims, pump or electrical work, and illness treatment to specialist owners.
+citations_required: true
+applicability: >
+  Use for greywater source separation, blackwater boundary checks, low-risk
+  non-potable routing, storage avoidance, visible and odor observations,
+  routine maintenance, and handoffs for higher-risk design or safety questions.
+  Do not use for plumbing engineering, treatment or disinfection formulas,
+  pathogen safety guarantees, food-crop application guarantees, legal/code
+  claims, pump or electrical work, or illness treatment.
+citation_policy: >
+  Cite GD-673 and its reviewed answer-card content for source separation,
+  blackwater boundary checks, low-risk greywater routing, storage avoidance,
+  observation, maintenance, and handoffs only. Do not cite this guide as a
+  guarantee of potable quality, pathogen elimination, food-crop safety, legal
+  compliance, engineered plumbing design, pump/electrical safety, or illness
+  treatment.
+answer_card:
+  - greywater_recycling_systems
 icon: ♻️
 description: Design and implement greywater systems to recycle household water for irrigation and toilet flushing. Covers system types, soap selection, water quality assessment, treatment methods, and maintenance for reducing freshwater demand by 30-50%.
 related:
@@ -27,6 +55,8 @@ word_count: 8100
 last_updated: '2026-02-26'
 version: '1.1'
 liability_level: medium
+reviewed: true
+reviewed_answer_card: greywater_recycling_systems
 ---
 
 ## Introduction
@@ -53,6 +83,18 @@ Greywater—wastewater from bathing, laundry, dishwashing, and sinks—can reduc
 This guide provides a complete framework: distinguishing greywater from blackwater, assessing water quality, selecting compatible soaps and detergents, designing treatment systems from simple settling tanks to constructed wetlands, and maintaining systems without electricity. Whether implementing a household three-chamber filter or a community-scale reed bed, you'll find practical design examples, troubleshooting solutions, and clear maintenance schedules.
 
 ![Greywater Recycling Systems Overview](../assets/svgs/greywater-recycling-systems-1.svg)
+
+<section id="answer-card-safe-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-673. Use it for source separation, blackwater boundary checks, low-risk non-potable greywater routing, storage avoidance, visible and odor observations, routine maintenance, and handoffs for higher-risk design or safety questions.
+
+Keep answers at the level of separating sources and operating an existing or simple low-risk greywater setup. Start by confirming whether toilet waste, feces, urine, sewage, chemicals, illness, or unknown contamination may be involved; if so, do not treat it as routine greywater. Do not provide plumbing engineering, treatment or disinfection formulas, pathogen safety guarantees, food-crop application guarantees, legal or code claims, pump or electrical work, or illness treatment from this card.
+
+For routine low-risk use, emphasize separate greywater and blackwater paths, avoid storing greywater beyond 24 hours, prevent pooling and mosquito breeding, keep children and animals away from untreated water, watch for sour or sulfurous odors, cloudiness, dark water, slow drainage, overflow, plant stress, or sludge buildup, and hand off when the user needs engineered plumbing, potable treatment, food-crop safety assurance, legal approval, or medical guidance.
+
+</section>
 
 ## Understanding Water Streams
 
