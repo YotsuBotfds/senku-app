@@ -87,6 +87,7 @@ class AgentContextSnapshotTests(unittest.TestCase):
         self.assertIn("## Git", markdown)
         self.assertIn("`abc1234`", markdown)
         self.assertIn("PLANNER_HANDOFF_2026-04-25_FAST_MODE.md", markdown)
+        self.assertIn("## Worker Lanes", markdown)
         self.assertIn("## Recent Dispatch Notes", markdown)
         self.assertIn("Context handoff", markdown)
         self.assertIn("## Recent Run Manifest", markdown)

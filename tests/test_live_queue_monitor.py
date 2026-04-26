@@ -70,6 +70,20 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertEqual(summary["entries"], [])
         self.assertEqual(summary["benign_untracked_count"], 1)
 
+        all_protected = "".join(
+            f"?? {path}\n" for path in sorted(module.PROTECTED_BENIGN_UNTRACKED)
+        )
+        summary = module.parse_git_status_short(
+            all_protected,
+            benign_untracked_paths=module.PROTECTED_BENIGN_UNTRACKED,
+        )
+        self.assertTrue(summary["clean"])
+        self.assertEqual(summary["total_changed"], 0)
+        self.assertEqual(
+            summary["benign_untracked_count"],
+            len(module.PROTECTED_BENIGN_UNTRACKED),
+        )
+
     def test_collect_git_summary_uses_injected_runner(self):
         module = load_module()
         calls = []
@@ -208,6 +222,12 @@ class LiveQueueMonitorTests(unittest.TestCase):
         def fake_git_runner(repo_root, args):
             if args[:2] == ["status", "--short"]:
                 return module.CommandResult(stdout="")
+            if args[:3] == ["worktree", "list", "--porcelain"]:
+                return module.CommandResult(
+                    stdout="worktree C:/repo\nHEAD abc1234\nbranch refs/heads/main\n"
+                )
+            if args[:2] == ["-C", "C:/repo"]:
+                return module.CommandResult(stdout="")
             if args[:2] == ["branch", "--show-current"]:
                 return module.CommandResult(stdout="main\n")
             if args[:3] == ["rev-parse", "--short", "HEAD"]:
@@ -230,10 +250,13 @@ class LiveQueueMonitorTests(unittest.TestCase):
 
         self.assertEqual(data["timestamp"], "2026-04-25T12:34:56-05:00")
         self.assertTrue(data["git"]["status"]["clean"])
+        self.assertIn("worker_lanes", data)
+        self.assertEqual(data["worker_lanes"]["worktrees"][0]["branch_short"], "main")
         self.assertIn("cp9", data)
         self.assertIn("fetch('/status.json?ts='", rendered)
         self.assertIn("setInterval(refresh, REFRESH_MS)", rendered)
         self.assertIn("Polling every <code>20s</code>", rendered)
+        self.assertIn("Worker Lanes", rendered)
         self.assertIn("CP9 / RAG Queue", rendered)
 
     def test_status_endpoint_returns_json_monitor_state(self):
@@ -265,6 +288,7 @@ class LiveQueueMonitorTests(unittest.TestCase):
         self.assertEqual(cache_control, "no-store")
         self.assertIn("timestamp", data)
         self.assertIn("git", data)
+        self.assertIn("worker_lanes", data)
         self.assertIn("queues", data)
 
 

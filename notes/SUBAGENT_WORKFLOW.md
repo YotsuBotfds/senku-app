@@ -111,6 +111,28 @@ delivery mechanism, independent of role):
   `artifacts/opencode/sidecar/index.jsonl` contention — 30-second gap
   between batch submissions is usually sufficient.
 
+## Worktree worker lanes
+
+For implementation workers that need real file ownership, prefer a named git
+worktree lane instead of sharing the main checkout:
+
+```powershell
+.\scripts\start_agent_worktree.ps1 -Lane worker-lanes -Task "tooling slice"
+```
+
+The helper creates a branch named `worker/<lane>` and a sibling worktree under
+`<repo>_worktrees\<lane>`, then writes a lease JSON in
+`artifacts/runs/worker_lanes/`. Check current lanes with:
+
+```powershell
+.\.venvs\senku-validate\Scripts\python.exe -B scripts\worker_lane_status.py --format markdown
+```
+
+The startup snapshot and live queue monitor include the same compact lane
+status. Treat lease files as coordination hints, not proof that a worker is
+done; still check dirty state, handoff notes, and validation output before
+assigning overlapping files.
+
 ## Relationship to the local sidecar ladder
 
 AGENTS.md still lists the local routing ladder

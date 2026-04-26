@@ -16,6 +16,8 @@ if str(REPO_ROOT) not in sys.path:
 from scripts.index_bench_artifacts import _format_summary, iter_bench_artifacts
 from scripts.index_dispatch_notes import build_index as build_dispatch_index
 from scripts.summarize_run_manifest import load_manifest, render_markdown as render_manifest
+from scripts.worker_lane_status import collect_status as collect_worker_lane_status
+from scripts.worker_lane_status import render_markdown as render_worker_lane_markdown
 
 
 DEFAULT_MAX_LINES = 120
@@ -162,6 +164,13 @@ def collect_artifact_summary(
     return lines
 
 
+def collect_worker_lane_summary(repo_root: Path, runner: CommandRunner = run_command) -> list[str]:
+    status = collect_worker_lane_status(repo_root, runner=runner, include_dirty=False)
+    markdown = render_worker_lane_markdown(status, limit=8)
+    lines = markdown.splitlines()
+    return lines[2:] if lines[:1] == ["# Worker Lane Status"] else lines
+
+
 def cap_markdown_lines(markdown: str, max_lines: int) -> str:
     lines = markdown.rstrip("\n").splitlines()
     if len(lines) <= max_lines:
@@ -194,6 +203,7 @@ def build_snapshot(
         "",
     ]
     lines.extend(_section("Git", collect_git_summary(repo_root, runner)))
+    lines.extend(_section("Worker Lanes", collect_worker_lane_summary(repo_root, runner)))
     lines.extend(_section("Recent Dispatch Notes", collect_dispatch_summary(dispatch_dir)))
     lines.extend(_section("Recent Run Manifest", collect_manifest_summary(manifest_path)))
     lines.extend(_section("Latest Bench Artifact Pointers", collect_artifact_summary(bench_dir)))

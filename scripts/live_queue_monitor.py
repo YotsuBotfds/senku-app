@@ -8,6 +8,7 @@ import html
 import json
 import re
 import subprocess
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from http import HTTPStatus
@@ -15,6 +16,12 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Callable, Sequence
 from urllib.parse import urlparse
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from scripts import worker_lane_status
 
 
 DEFAULT_REFRESH_SECONDS = 20
@@ -24,7 +31,11 @@ DEFAULT_COMMIT_LIMIT = 6
 DEFAULT_CP9_SNIPPET_LIMIT = 6
 DEFAULT_CP9_LINE_CHARS = 280
 SKIP_DISPATCH_FILENAMES = {"README.md", "dispatch_index.generated.md"}
-PROTECTED_BENIGN_UNTRACKED = {"notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md"}
+PROTECTED_BENIGN_UNTRACKED = {
+    "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
+    "notes/PLANNER_HANDOFF_2026-04-25_POST_CLI_TERMINATION.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
+}
 
 
 @dataclass(frozen=True)
@@ -396,6 +407,19 @@ def collect_cp9_summary(
     }
 
 
+def collect_worker_lanes(
+    repo_root: Path,
+    *,
+    git_runner: GitRunner = run_git,
+) -> dict[str, Any]:
+    def runner(command: Sequence[str], cwd: Path) -> CommandResult:
+        if command and command[0] == "git":
+            return git_runner(cwd, command[1:])
+        return CommandResult(stdout="", stderr=f"unsupported command: {' '.join(command)}", returncode=1)
+
+    return worker_lane_status.collect_status(repo_root, runner=runner)
+
+
 def collect_monitor_data(
     repo_root: Path,
     *,
@@ -411,6 +435,7 @@ def collect_monitor_data(
         "repo_root": str(root),
         "git": collect_git_summary(root, commit_limit=commit_limit, git_runner=git_runner),
         "queues": collect_dispatch_pointers(root, limit=dispatch_limit),
+        "worker_lanes": collect_worker_lanes(root, git_runner=git_runner),
         "cp9": collect_cp9_summary(root),
         "bench": collect_bench_artifacts(root, limit=bench_limit),
     }
@@ -520,6 +545,10 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
       <ul id="commits"></ul>
     </section>
     <section>
+      <h2>Worker Lanes</h2>
+      <ul id="worker-lanes"></ul>
+    </section>
+    <section>
       <h2>Active Dispatch</h2>
       <ul id="dispatch"></ul>
     </section>
@@ -589,6 +618,27 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
         list.appendChild(item);
       }});
     }};
+    const fillWorkerLanes = (values) => {{
+      const list = el('worker-lanes');
+      clear(list);
+      if (!values || !values.length) {{
+        empty(list, 'No git worktrees found.');
+        return;
+      }}
+      values.forEach((item) => {{
+        const li = document.createElement('li');
+        const lane = item.lane || '(unleased)';
+        const branch = item.branch_short || '(detached)';
+        const dirty = item.dirty && item.dirty.error
+          ? 'dirty unknown'
+          : item.dirty && item.dirty.clean
+            ? 'clean'
+            : `${{item.dirty && item.dirty.changed ? item.dirty.changed : 0}} changed`;
+        li.appendChild(code(lane));
+        li.appendChild(document.createTextNode(` ${{branch}} - ${{dirty}} - ${{item.worktree || ''}}`));
+        list.appendChild(li);
+      }});
+    }};
     function render(data) {{
       el('repo-root').textContent = data.repo_root || '';
       el('snapshot-time').textContent = data.timestamp || '';
@@ -614,6 +664,7 @@ def render_html_page(*, refresh_seconds: int = DEFAULT_REFRESH_SECONDS) -> str:
       }}
       fillList('git-files', status.entries || [], 'No worktree changes.');
       fillList('commits', data.git ? data.git.latest_commits : [], 'No commits found.');
+      fillWorkerLanes(data.worker_lanes ? data.worker_lanes.worktrees : []);
       fillList('dispatch', data.queues ? data.queues.active : [], 'No active dispatch notes found.');
       fillList('tooling', data.queues ? data.queues.tooling : [], 'No tooling notes found.');
       fillTextList('cp9-active', data.cp9 ? data.cp9.active_snippet : [], 'No CP9 active queue snippet found.');
