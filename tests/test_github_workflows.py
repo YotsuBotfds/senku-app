@@ -92,11 +92,50 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stdout'", gate_script)
         self.assertIn("Write-FastEmbedLogTail -Label 'stderr'", gate_script)
+        self.assertIn("SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog", gate_script)
+        self.assertIn("SENKU_FASTEMBED_STDERR_LOG=$stderrLog", gate_script)
         self.assertLess(
             gate_script.index("python -B ingest.py --rebuild"),
             gate_script.index("run_non_android_regression_gate.ps1"),
         )
         self.assertIn("finally", gate_script)
+
+    def test_non_android_regression_uploads_failure_logs(self):
+        workflow = yaml.safe_load(
+            (WORKFLOW_DIR / "non_android_regression.yml").read_text(encoding="utf-8")
+        )
+        steps = workflow["jobs"]["non-android-regression"]["steps"]
+        names = [step.get("name") for step in steps]
+
+        collect_step = steps[names.index("Collect non-Android failure logs")]
+        self.assertEqual("failure_logs", collect_step.get("id"))
+        self.assertEqual("failure()", collect_step.get("if"))
+        self.assertEqual("pwsh", collect_step.get("shell"))
+
+        collect_script = collect_step.get("run", "")
+        self.assertIn("senku-non-android-failure-logs", collect_script)
+        self.assertIn("SENKU_FASTEMBED_STDOUT_LOG", collect_script)
+        self.assertIn("SENKU_FASTEMBED_STDERR_LOG", collect_script)
+        self.assertIn("fastembed-stdout.log", collect_script)
+        self.assertIn("fastembed-stderr.log", collect_script)
+        self.assertIn("senku.ci_failure_logs.v1", collect_script)
+        self.assertIn("failure_manifest.json", collect_script)
+        self.assertIn("log_dir=$logRoot", collect_script)
+        self.assertIn("GITHUB_OUTPUT", collect_script)
+
+        upload_step = steps[names.index("Upload non-Android failure logs")]
+        self.assertEqual(
+            "failure() && steps.failure_logs.outputs.log_dir != ''",
+            upload_step.get("if"),
+        )
+        self.assertTrue(str(upload_step.get("uses", "")).startswith("actions/upload-artifact@"))
+        self.assertEqual(
+            "non-android-regression-failure-logs",
+            upload_step["with"]["name"],
+        )
+        self.assertEqual("${{ steps.failure_logs.outputs.log_dir }}", upload_step["with"]["path"])
+        self.assertEqual("error", upload_step["with"]["if-no-files-found"])
+        self.assertEqual(14, upload_step["with"]["retention-days"])
 
     def test_private_repositories_skip_attestation_step(self):
         workflow = yaml.safe_load(

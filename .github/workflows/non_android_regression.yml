@@ -133,6 +133,8 @@ jobs:
           $cacheDir = Join-Path $env:RUNNER_TEMP 'fastembed-cache'
           $stdoutLog = Join-Path $env:RUNNER_TEMP 'fastembed-stdout.log'
           $stderrLog = Join-Path $env:RUNNER_TEMP 'fastembed-stderr.log'
+          "SENKU_FASTEMBED_STDOUT_LOG=$stdoutLog" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "SENKU_FASTEMBED_STDERR_LOG=$stderrLog" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           $env:PYTHONUNBUFFERED = '1'
 
           function Write-FastEmbedLogTail {
@@ -229,6 +231,73 @@ jobs:
             Write-FastEmbedLogTail -Label 'stdout' -Path $stdoutLog
             Write-FastEmbedLogTail -Label 'stderr' -Path $stderrLog
           }
+
+      - name: Collect non-Android failure logs
+        id: failure_logs
+        if: failure()
+        shell: pwsh
+        run: |
+          $logRoot = Join-Path $env:RUNNER_TEMP 'senku-non-android-failure-logs'
+          New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
+
+          $stdoutLog = $env:SENKU_FASTEMBED_STDOUT_LOG
+          if ([string]::IsNullOrWhiteSpace($stdoutLog)) {
+            $stdoutLog = Join-Path $env:RUNNER_TEMP 'fastembed-stdout.log'
+          }
+          $stderrLog = $env:SENKU_FASTEMBED_STDERR_LOG
+          if ([string]::IsNullOrWhiteSpace($stderrLog)) {
+            $stderrLog = Join-Path $env:RUNNER_TEMP 'fastembed-stderr.log'
+          }
+
+          $logInputs = @(
+            [pscustomobject]@{
+              Name = 'fastembed-stdout.log'
+              Path = $stdoutLog
+            },
+            [pscustomobject]@{
+              Name = 'fastembed-stderr.log'
+              Path = $stderrLog
+            }
+          )
+
+          $copiedLogs = @()
+          foreach ($log in $logInputs) {
+            if (Test-Path -LiteralPath $log.Path) {
+              Copy-Item -LiteralPath $log.Path -Destination (Join-Path $logRoot $log.Name) -Force
+              $item = Get-Item -LiteralPath $log.Path
+              $copiedLogs += [pscustomobject]@{
+                name = $log.Name
+                source = $log.Path
+                size_bytes = $item.Length
+                last_write_time_utc = $item.LastWriteTimeUtc.ToString('o')
+              }
+            }
+          }
+
+          $manifest = @{
+            schema_version = 'senku.ci_failure_logs.v1'
+            run_id = $env:GITHUB_RUN_ID
+            run_attempt = $env:GITHUB_RUN_ATTEMPT
+            job = $env:GITHUB_JOB
+            repository = $env:GITHUB_REPOSITORY
+            sha = $env:GITHUB_SHA
+            gate_label = $env:SENKU_GATE_LABEL
+            copied_log_count = @($copiedLogs).Count
+            copied_logs = @($copiedLogs)
+            generated_at = (Get-Date).ToUniversalTime().ToString('o')
+          }
+          $manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $logRoot 'failure_manifest.json') -Encoding utf8
+
+          "log_dir=$logRoot" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Upload non-Android failure logs
+        if: failure() && steps.failure_logs.outputs.log_dir != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: non-android-regression-failure-logs
+          path: ${{ steps.failure_logs.outputs.log_dir }}
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Build attested bench bundle
         id: bench_bundle

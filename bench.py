@@ -1876,15 +1876,21 @@ def main():
 
     # Output file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_path = args.output or f"bench_{timestamp}.md"
-    json_path = output_path.replace(".md", ".json")
+    requested_output_path = args.output or f"bench_{timestamp}.md"
+    output_root, output_ext = os.path.splitext(requested_output_path)
+    if output_ext.lower() == ".json":
+        output_path = output_root + ".md"
+        json_path = requested_output_path
+    else:
+        output_path = requested_output_path
+        json_path = output_root + ".json"
     trace_artifact_name = os.path.basename(json_path)
     trace_writer = RAGTraceWriter(args.trace_jsonl) if args.trace_jsonl else None
     if trace_writer is not None:
         atexit.register(trace_writer.close)
 
     # Progress log — written incrementally so progress can be monitored
-    progress_path = output_path.replace(".md", "_progress.log")
+    progress_path = output_root + "_progress.log"
     progress_lock = threading.Lock()
     with open(progress_path, "w", encoding="utf-8") as f:
         f.write("")
