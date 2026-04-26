@@ -97,7 +97,7 @@ class PythonDependencyLockScriptTests(unittest.TestCase):
         self.assertIn("--custom-compile-command", content)
         self.assertIn(".\\scripts\\compile_python_lock.ps1", content)
         self.assertIn("[switch]$Check", content)
-        self.assertIn("Get-FileHash -Algorithm SHA256", content)
+        self.assertIn("Get-NormalizedTextFileContent", content)
         self.assertIn("Lock check mode cannot be combined with -Upgrade.", content)
         self.assertIn("[switch]$WhatIf", content)
 

@@ -121,6 +121,16 @@ function New-UvCompileArguments {
     return $args
 }
 
+function Get-NormalizedTextFileContent {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path
+    )
+
+    $content = [System.IO.File]::ReadAllText($Path)
+    return ($content -replace "`r`n", "`n")
+}
+
 $repoRoot = Get-RepoRoot
 $requirementsFile = Resolve-RepoRelativePath -RepoRoot $repoRoot -Path $RequirementsPath
 $outputFile = Resolve-RepoRelativePath -RepoRoot $repoRoot -Path $OutputPath
@@ -177,9 +187,9 @@ try {
     }
 
     if ($Check) {
-        $expectedHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $outputFile).Hash
-        $actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $temporaryOutputFile).Hash
-        if ($expectedHash -ne $actualHash) {
+        $expectedContent = Get-NormalizedTextFileContent -Path $outputFile
+        $actualContent = Get-NormalizedTextFileContent -Path $temporaryOutputFile
+        if ($expectedContent -ne $actualContent) {
             throw "Python dependency lock is stale. Run .\scripts\compile_python_lock.ps1 and commit $OutputPath."
         }
         Write-Host ("Python dependency lock is current: {0}" -f $OutputPath)
