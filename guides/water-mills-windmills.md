@@ -22,6 +22,32 @@ last_updated: '2026-02-16'
 version: '1.0'
 custom_css: '.subtitle{font-size:1.1em;color:#b0d9d3;font-style:italic}li{margin-bottom:10px;line-height:1.7}.content-section{background-color:#252525;padding:30px;margin-bottom:30px;border-radius:6px;border-left:4px solid #4ecdc4;box-shadow:0 2px 4px rgba(0,0,0,0.3)}.diagram-section{background-color:#252525;padding:30px;margin-bottom:30px;border-radius:6px;border-left:4px solid #ff6b9d;box-shadow:0 2px 4px rgba(0,0,0,0.3);text-align:center}.svg-container{background-color:#2d2416;padding:20px;border-radius:6px;margin:20px 0;display:inline-block;border:1px solid #444}.highlight-box{background-color:#3a3020;border-left:4px solid #ff6b9d;padding:20px;margin:20px 0;border-radius:4px}.highlight-box strong{color:#ff6b9d}.formula-box{background-color:#3a3020;border:2px solid #ffd93d;padding:15px;margin:15px 0;border-radius:4px;font-family:''Courier New'',monospace;color:#ffd93d}.comparison-table{margin:20px 0}.section-number{display:inline-block;background-color:#4ecdc4;color:#f5f0e8;width:35px;height:35px;border-radius:50%;text-align:center;line-height:35px;font-weight:bold;margin-right:10px}.section-title{display:flex;align-items:center;margin-bottom:20px}.footer{text-align:center;padding:20px;color:#888;font-size:.9em;margin-top:50px;border-top:1px solid #444}.power-comparison{display:flex;gap:20px;margin:20px 0;flex-wrap:wrap}.power-card{flex:1;min-width:200px;background-color:#3a3020;padding:15px;border-radius:4px;border-left:4px solid #7dd4cc}.power-card h4{color:#4ecdc4;margin-bottom:10px}.power-card .power-value{font-size:1.5em;color:#ff6b9d;font-weight:bold;margin:10px 0}'
 liability_level: high
+aliases:
+  - water mill site observation log
+  - windmill maintenance handoff
+  - waterwheel hazard red flags
+  - windmill public access hazard
+  - mill owner handoff checklist
+  - turbine exposed wiring red flag
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level site observation, maintenance-log review, visible hazard recognition, access-control status, and owner or qualified maintainer handoff for existing water mills, windmills, waterwheels, turbines, mill races, penstocks, sails, blades, towers, and related fixed-site mechanical-power assets.
+  - Keep routine answers focused on what can be observed from a safe public or authorized vantage point: unstable structures, high water, damaged rotating parts, exposed wiring, damaged guards, public access hazards, unusual sounds, vibration, leaks, recent storms, and maintenance-record gaps.
+  - Route turbine, wheel, blade, tower, penstock, dam, water-control, structural, electrical, mechanical-repair, lifting, rigging, working-at-height, live-operation, legal/code, and safety-certification requests away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-113 answer card for site observation, maintenance logs, visible hazard recognition, access-control status, stop-work red flags, and owner/qualified maintainer handoff only; do not use it for turbine/wheel/blade/tower construction, structural calculations, electrical generation wiring, grid/interconnection, mechanical repair procedures, lifting/rigging, working-at-height tactics, dam/water-control manipulation, live operation instructions, code/legal claims, or safety certification.
+applicability: >
+  Use for boundary-only planning, site-observation, maintenance-log, and
+  owner-handoff questions about existing water mills, windmills, waterwheels,
+  turbines, mill races, penstocks, towers, sails, blades, and fixed-site
+  mechanical-power assets. Do not use for turbine, wheel, blade, or tower
+  construction; structural calculations; electrical generation wiring;
+  grid/interconnection; mechanical repair procedures; lifting or rigging;
+  working-at-height tactics; dam or water-control manipulation; live operation;
+  legal/code claims; or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: water_mills_windmills_site_observation_boundary
+answer_card:
+  - water_mills_windmills_site_observation_boundary
 ---
 1
 
@@ -37,6 +63,22 @@ If the task is portable or human-powered instead:
 
 - For hand-crank, pedal, or other person-powered generation, go to <a href="../hand-crank-generator-construction.html">Hand-Crank Generator Construction</a>.
 - If you are trying to charge batteries or run small loads from muscle power without a fixed site, that guide is the better fit.
+
+## Scope Boundary
+
+This guide contains historical and educational material about water mills, windmills, wheels, turbines, gearing, and fixed-site mechanical power, but its reviewed answer-card surface is site observation, maintenance-log review, access-control awareness, and owner handoff only. Use it to recognize visible hazards from a safe public or authorized vantage point, preserve a maintenance or observation log, and route decisions to the owner, operator, qualified millwright, electrician, structural engineer, dam or waterway authority, emergency manager, or local authority as appropriate.
+
+Do not use the reviewed card for turbine, wheel, blade, or tower construction; structural calculations; electrical generation wiring; grid or interconnection work; mechanical repair procedures; lifting or rigging; working-at-height tactics; dam, sluice, penstock, or water-control manipulation; live operation instructions; legal or code claims; or safety certification.
+
+## Reviewed Answer-Card Boundary: Site Observation, Logs, and Handoffs
+
+This is the reviewed answer-card surface for GD-113. Start from a safe public or authorized vantage point and do not enter closed, posted, flooded, undermined, unstable, high-water, tower, wheel-pit, gear-house, turbine, penstock, electrical, or rotating-equipment areas. Record what can be observed without climbing, probing, opening guards, touching rotating parts, manipulating water controls, energizing equipment, operating the mill, or attempting repair: site name or location, date and observer, recent storm, flood, freeze, impact, lightning, or maintenance history, posted restrictions, owner or operator if known, public access status, visible leaning, settlement, rot, cracks, loose or missing guards, damaged sails or blades, damaged wheel buckets, exposed wiring, unusual sounds, vibration, leaks, high water, debris, blocked access, and available maintenance records.
+
+Routine planning should preserve a simple handoff log: what changed, when it was first noticed, whether it is worsening, photos from safe locations if allowed, current access-control status, weather or water conditions, maintenance records already available, and the named owner, operator, qualified maintainer, engineer, electrician, waterway authority, emergency manager, or local authority responsible for decisions.
+
+Red flags require stopping routine observation and keeping people back or escalating immediately: unstable or leaning structures, visible movement, active collapse, high water, fast water, flooding, undermined foundations, damaged or unguarded rotating parts, broken sails or blades, exposed wiring, damaged electrical equipment, public access to a wheel pit, gear train, tower, penstock, sluice, dam, or turbine area, posted closure or damaged barriers, unusual grinding or vibration, recent lightning or storm damage, missing maintenance owner, or any uncertainty about safe public access.
+
+Do not design, build, repair, balance, wire, interconnect, operate, start, stop, drain, open, close, lift, rig, climb, certify, or declare the mill safe. Route those questions to the owner/operator and a qualified millwright, electrician, structural engineer, dam or waterway authority, emergency manager, inspector, or local jurisdiction.
 
 ## Why Mechanical Power
 

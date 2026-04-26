@@ -22,6 +22,39 @@ tags:
   - energy storage
 icon: 🔋
 description: Batteries from scratch, generators, motors, circuits, telegraph, transformers, and basic electronics.
+aliases:
+  - electricity safety orientation
+  - basic electricity hazard recognition
+  - de-energized electrical observation
+  - electrical concepts before repair
+  - electrical owner handoff
+  - electricity theory safety boundary
+routing_cues:
+  - Use for broad electricity and magnetism orientation when the user needs conceptual terms, hazard recognition, de-energized visible observation, and routing to the right electrical owner before any work.
+  - Route active shock, exposed live conductors, downed lines, wet panels, sparking, smoke, burning smell, or collapse near equipment to electrical-safety-hazard-prevention instead of this reviewed card.
+  - Do not route wiring, repair, live testing, capacitor discharge, generator or battery procedures, calculations, component substitution, code/legal claims, shock treatment, or safety certification to this reviewed card.
+routing_support:
+  - This card can support intake questions that ask what electricity terms mean, what hazards to notice from a safe distance, what not to touch, and which guide or qualified electrical owner should handle the next step.
+  - It should defer to specific electrical emergency, electronics triage, power distribution, generation, battery, first-aid, and qualified-electrician owners whenever the request becomes procedural or safety-critical.
+citations_required: true
+citation_policy: >
+  Cite GD-160 and its reviewed answer card for conceptual electricity
+  orientation, non-procedural hazard recognition, de-energized visible
+  observation, and owner or qualified-electrician handoff only. Do not use the
+  reviewed card for wiring, repair, live testing, capacitor discharge,
+  generator or battery procedures, electrical calculations, component
+  substitution, code or legal claims, shock treatment, or safety certification.
+applicability: >
+  Boundary-only electricity orientation: safe concept explanation, recognition
+  of obvious electrical hazards from a distance, de-energized visible
+  observation, stop-before-work cues, and routing to electrical safety,
+  electronics triage, power planning, battery, generation, first-aid, or a
+  qualified electrician. This reviewed card is not a procedural electrical work
+  card and should not crowd out specific emergency cards.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: electricity_conceptual_safety_boundary
+answer_card:
+  - electricity_conceptual_safety_boundary
 related:
   - batteries
   - batteries-energy-storage-basics
@@ -41,6 +74,16 @@ version: '1.0'
 custom_css: .nav-link{display:inline-block;margin-bottom:15px;padding:8px 16px;background-color:var(--accent);color:var(--bg);text-decoration:none;border-radius:4px;font-weight:bold;transition:background-color .3s}.nav-link:hover{background-color:var(--accent2)}.content-block{background-color:var(--card);border-left:3px solid var(--accent2);padding:15px;margin:15px 0;border-radius:4px}.formula-block{background-color:var(--card);border:2px solid var(--accent);padding:20px;margin:15px 0;border-radius:4px;font-family:'Courier New',monospace;font-size:1.1em;text-align:center}.formula-label{color:var(--accent2);font-weight:bold;margin-bottom:10px}.diagram-container{background-color:var(--card);border:2px solid var(--border);padding:20px;margin:20px 0;border-radius:8px;overflow-x:auto;display:flex;justify-content:center}.highlight{color:var(--accent);font-weight:bold}.highlight2{color:var(--accent2);font-weight:bold}.step-list{list-style:none;margin:15px 0}.step-list li{background-color:var(--card);margin:10px 0;padding:15px;border-left:3px solid var(--accent);border-radius:4px}.step-list li:before{content:"→ ";color:var(--accent2);font-weight:bold;margin-right:10px}.two-column{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Conceptual Orientation and Safe Handoff
+
+This is the reviewed answer-card surface for GD-160. Use it only for conceptual electricity and magnetism orientation, broad hazard recognition, de-energized visible observation, stop-before-work cues, and routing to the right owner or qualified electrician.
+
+Use it when someone needs help naming basic terms like voltage, current, resistance, circuit, source, load, conductor, insulation, fuse, transformer, motor, generator, or capacitor at a non-procedural level. It can also help a user notice visible warning signs from a safe distance: heat, smoke, burning smell, sparks, exposed conductors, water near electrical equipment, damaged cords, swollen or leaking batteries, missing covers, unknown power status, or pressure to keep working before the owner is clear.
+
+Do not use this card for wiring instructions, repair steps, live testing, capacitor discharge procedures, generator or battery procedures, shock treatment, calculations, component substitution, code or legal claims, or safety certification. Active shock, cannot-let-go contact, collapse near electrical equipment, exposed live conductors, downed lines, wet panels, sparking, smoke, or burning smell should route first to Electrical Safety & Hazard Prevention and emergency or qualified electrical owners as appropriate.
 
 ## Step 1: First-step electrical safety check
 

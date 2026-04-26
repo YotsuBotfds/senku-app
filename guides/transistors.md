@@ -8,6 +8,47 @@ tags:
   - rebuild
 icon: 🔌
 description: Crystal radios, diode construction, transistor basics, amplifier circuits, simple logic gates, and component salvage techniques
+aliases:
+  - transistor learning boundary
+  - semiconductor learning triage
+  - low voltage transistor basics
+  - small signal electronics intake
+  - bench electronics stop signs
+routing_cues:
+  - Use for conceptual transistor and semiconductor learning, low-voltage bench intake, visible component identification, symptom logging, and stop-or-handoff boundaries.
+  - Route here when the user is learning BJT, FET, MOSFET, diode, small-signal amplifier, simple logic, or radio-detector concepts without asking for build values, substitutions, repair procedures, live testing, soldering, or return-to-service claims.
+  - Do not route here for mains-powered repair, power distribution or wiring, live electrical testing, capacitor discharge, battery-pack repair, soldering procedures, circuit design values, component substitution values, medical or implanted-device repair, code or legal claims, or safety certification.
+routing_support:
+  boundary_owner: low-voltage transistor and semiconductor learning intake
+  handoff_triggers:
+    - mains_powered_equipment
+    - live_testing_or_meter_probe_instructions
+    - capacitor_discharge_or_stored_energy
+    - battery_pack_repair
+    - soldering_or_board_repair_procedure
+    - circuit_design_values_or_component_substitution
+    - medical_implant_or_life_safety_device
+    - code_legal_or_return_to_service_claim
+applicability: >
+  Boundary-only reviewed surface for transistor and semiconductor learning:
+  conceptual explanations, low-voltage/small-signal bench intake, visible
+  component identification, symptom notes, and stop-or-handoff decisions. It
+  is not a repair, design, soldering, live-testing, capacitor-discharge,
+  battery-pack, mains-wiring, medical-device, legal/code, or safety-certifying
+  owner.
+citations_required: true
+citation_policy: >
+  Cite GD-254 and its reviewed answer card only for conceptual transistor and
+  semiconductor learning, low-voltage bench intake, component-identification
+  context, symptom logging, and stop-or-handoff boundaries. Do not use it for
+  mains-powered repair, power distribution or wiring, live testing, capacitor
+  discharge, battery-pack repair, soldering procedures, circuit design values,
+  component substitution values, medical or implanted-device repair, code or
+  legal claims, or return-to-service certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: transistors_semiconductor_learning_boundary
+answer_card:
+  - transistors_semiconductor_learning_boundary
 related:
   - building-materials-salvage
   - electrical-motors
@@ -23,6 +64,20 @@ version: '1.2'
 liability_level: high
 ---
 <!-- SVG-TODO: BJT cross-section with depletion layers and bias regions; Common-emitter amplifier frequency response curve; Oscillator feedback coupling diagram showing resonant tank circuit -->
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Low-Voltage Semiconductor Learning
+
+This is the reviewed answer-card surface for GD-254. Use it only for conceptual transistor and semiconductor learning, low-voltage small-signal bench intake, visible component identification, symptom notes, and stop-or-handoff decisions before any repair, design, or energized work.
+
+Keep the boundary educational and de-energized. A suitable answer may explain transistor families, diode behavior, basic signal-flow concepts, what labels or markings to record, how to separate unknown parts for later review, and which observations make a bench exercise unsafe to continue. It may also ask whether the item is a loose part, a battery-powered learning kit, a low-voltage board, or equipment connected to wall power, a battery pack, an inverter, vehicle power, medical equipment, or an unknown source.
+
+Stop routine guidance and hand off when the request involves mains-powered equipment, power distribution or wiring, live testing, capacitor discharge, battery-pack repair, soldering procedures, circuit design values, component substitution values, medical or implanted devices, life-safety equipment, code or legal claims, or return-to-service certification.
+
+Low-voltage learning in this card means conceptual discussion and intake only. It does not include telling the user what to probe while powered, how to discharge stored energy, how to repair or modify equipment, how to choose replacement ratings, how to solder parts, or whether a device is safe to use again.
+
+</section>
 
 
 <section id="historical-context">

@@ -6,6 +6,21 @@ category: power-generation
 difficulty: advanced
 tags:
   - rebuild
+aliases:
+  - steam engine safety boundary
+  - boiler condition red flags
+  - steam equipment owner handoff
+  - pressure equipment stop use
+  - steam system planning checklist
+  - unknown boiler safety questions
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level steam-engine and boiler planning, visible condition and documentation logs, hazard recognition, stop-use cues, and owner or qualified specialist handoff.
+  - Keep routine answers non-procedural: identify the equipment, owner, intended purpose, known documentation, visible leaks, corrosion, missing safety devices, unknown pressure equipment, operating status, access controls, and who can authorize specialist review.
+  - Route steam-engine construction, pressure-vessel or boiler design, boiler operation, pressure or temperature thresholds, fuel firing, machining, repair, valve settings, live testing, calculations, code or legal claims, and safety certification away from this card.
+routing_support:
+  - pressure-vessels for pressure-equipment ownership and qualified inspection handoff when a pressure vessel is involved.
+  - seals-gaskets for non-procedural leak symptom logs and material compatibility questions before any repair decision.
+  - power-distribution-basics for planning-level load or owner inventory after steam equipment has been deemed out of the reviewed-card safety boundary.
 icon: 🚂
 description: Steam engine design, boiler construction, thermodynamics, power transmission, pump design, and industrial applications.
 related:
@@ -22,7 +37,33 @@ last_updated: '2026-02-15'
 version: '1.0'
 custom_css: section h2{color:var(--accent2);font-size:2rem;margin-bottom:1.5rem;padding-bottom:.5rem;border-bottom:2px solid var(--accent)}section h3{color:var(--accent2);font-size:1.4rem;margin-top:1.5rem;margin-bottom:1rem}li{margin:.5rem 0}.diagram-container{background:var(--surface);padding:2rem;border-radius:8px;margin:2rem 0;border:2px solid var(--border);display:flex;justify-content:center;align-items:center;min-height:300px}.formula{background:var(--surface);padding:1.5rem;border-radius:6px;margin:1.5rem 0;border-left:4px solid var(--accent2);font-family:'Courier New',monospace;overflow-x:auto}.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:1.5rem 0}.spec-box{background:var(--card);padding:1.5rem;border-radius:6px;border-top:3px solid var(--accent2)}.spec-box h4{color:var(--accent2);margin-bottom:1rem}.spec-box p{color:var(--muted);font-size:.95rem;margin:.5rem 0}.step-list{counter-reset:step-counter;list-style:none;padding:0}.step-list li{counter-increment:step-counter;padding-left:3rem;margin:1.5rem 0;position:relative}.step-list li::before{content:counter(step-counter);position:absolute;left:0;top:0;background:var(--accent);color:var(--bg);width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}.guides-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}.guide-link{background:var(--card);padding:1rem;border-radius:6px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:all .3s ease}.guide-link:hover{background:var(--accent);border-color:var(--accent2);color:var(--bg)}.guide-link strong{color:var(--accent2)}.highlight{background:rgba(233,69,96,0.2);padding:.1rem .3rem;border-radius:2px}
 liability_level: high
+citations_required: true
+citation_policy: cite reviewed GD-102 answer card only for boundary-level steam-engine and boiler planning, visible condition logs, hazard recognition, stop-use cues, documentation review, and owner or qualified specialist handoff; do not use it for steam-engine construction, pressure-vessel design, boiler operation procedures, pressure or temperature thresholds, fuel firing, machining, repair steps, valve settings, live testing, calculations, code or legal claims, or safety certification.
+applicability: >
+  Use for boundary-only steam-engine and boiler questions: planning context,
+  visible condition and documentation logs, unknown pressure equipment,
+  missing or questionable safety devices, leaks, corrosion, stop-use cues,
+  access control, and owner or qualified specialist handoff. Do not use for
+  construction, design, operation, firing, machining, repair, valve settings,
+  testing, calculations, legal or code determinations, or declaring equipment
+  safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: steam_engines_boiler_safety_boundary
+answer_card:
+  - steam_engines_boiler_safety_boundary
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-102. Use it only for boundary-level steam-engine and boiler planning, visible condition and documentation logs, hazard recognition, stop-use cues, access control, and owner or qualified specialist handoff.
+
+Start by recording what equipment is involved, whether it is a boiler, engine, pressure vessel, piping, valve, gauge, relief device, drive component, or unknown assembly; who owns it; whether it is currently operating or accessible; what documentation or inspection history exists; and what visible concerns are present, such as leaks, corrosion, damage, missing safety devices, unknown modifications, or unclear pressure-equipment status. Keep answers at observation, documentation, red-flag, and handoff level.
+
+Do not use this card for steam-engine construction, pressure-vessel or boiler design, boiler operation procedures, pressure or temperature thresholds, fuel firing instructions, machining, repair steps, valve settings, live testing, calculations, code or legal claims, or safety certification. If a prompt includes unknown pressure equipment, missing relief devices, leaks, corrosion, damaged gauges or sight glasses, active steam, fire, fuel, carbon monoxide concern, burns, uncontrolled access, or pressure to operate before review, stop routine planning and hand off to the responsible owner, qualified boiler or pressure-system specialist, emergency service, or local authority as appropriate.
+
+</section>
 
 :::danger
 **BOILER EXPLOSION HAZARD:** Boiler explosions are among the most destructive industrial accidents, releasing superheated steam and shrapnel with lethal force. All pressure vessels must comply with ASME Boiler and Pressure Vessel Code. Require hydrostatic testing to 1.5× maximum operating pressure before any operation. Never operate a boiler without a functional pressure relief valve, pressure gauge, and low-water cutoff. Boiler operation requires trained operators.

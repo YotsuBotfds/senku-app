@@ -24,6 +24,32 @@ word_count: 5270
 last_updated: '2026-02-16'
 version: '1.1'
 liability_level: high
+aliases:
+  - power distribution condition inventory
+  - microgrid hazard triage
+  - distribution panel red flag checklist
+  - public access electrical hazard
+  - qualified electrician handoff
+  - damaged panel stop work
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural distribution-system condition inventory, visible hazard triage, public-access controls, documentation, and qualified-electrician or authority handoff.
+  - Keep routine answers focused on observed labels, location, ownership, visible condition, access control, wetness, damage, heat, odor, noise, alarms, exposed conductors, and who was notified.
+  - Route wiring diagrams, breaker or fuse sizing, grounding and bonding steps, transformer work, switching procedures, energized work, generator backfeed, interconnection, calculations, code or legal claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-118 answer card for distribution condition inventory, visible hazard triage, public-access controls, documentation, and qualified-electrician handoffs only; do not use it for wiring diagrams, breaker or fuse sizing, grounding or bonding steps, transformer work, switching procedures, energized work, generator backfeed, interconnection, calculations, code or legal claims, or safety certification.
+applicability: >
+  Use for boundary-only power distribution and microgrid questions: non-invasive
+  condition inventory, visible hazard triage, stop-work triggers, public-access
+  hazard control, documentation, and routing to the system owner, qualified
+  electrician, utility, emergency services, inspector, or local authority. Do
+  not use for design calculations, wiring instructions, protective-device
+  sizing, grounding or bonding procedures, transformer work, switching,
+  energized work, generator backfeed, interconnection, code/legal claims, or
+  certifying safety.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: power_distribution_boundary_inventory_handoff
+answer_card:
+  - power_distribution_boundary_inventory_handoff
 ---
 :::danger
 **ARC FLASH HAZARD:** Arc flash events produce temperatures exceeding 3,000°C (5,400°F) and can cause fatal burns to workers within 3-4 feet. Arc flash PPE (rated clothing, face shield, insulated gloves) is mandatory for any work on energized electrical distribution equipment. Never open or service energized panels or switchgear without proper arc flash PPE and training.
@@ -46,6 +72,16 @@ A **functioning distribution system** means lights stay on, water pumps run, med
 :::
 
 </section>
+
+## Reviewed Answer-Card Boundary: Inventory, Hazards, and Handoffs
+
+This is the reviewed answer-card surface for GD-118. Use it only for non-invasive power-distribution condition inventory, visible hazard triage, public-access controls, documentation, and qualified-electrician or authority handoffs. Start with what can be observed without opening equipment, touching conductors, operating switches, changing settings, or entering restricted electrical spaces: site location, owner or maintainer, panel or equipment labels, enclosure condition, access control, visible damage, water exposure, exposed conductors, heat, smoke, burning smell, buzzing, sparking, alarms, and recent outage or damage history.
+
+For routine inventory, record the site identifier, date, observer, equipment location, ownership or maintainer contact, visible labels and warnings, whether the area is dry and secured from public access, visible enclosure damage, missing covers, scorch marks, corrosion, vegetation or debris around equipment, unusual heat or smell, sounds, alarms, and who was notified for follow-up.
+
+Red flags require stopping routine inventory and keeping people away while routing to qualified help: exposed conductors, missing covers, wet or flooded equipment, unknown or unlabeled panels, storm or impact damage, heat, smoke, burning or chemical smell, buzzing, sparking, repeated trips, public access to electrical gear, fallen or low conductors, damaged service equipment, or any request to open, switch, repair, backfeed, interconnect, calculate, size, certify, or work on energized equipment.
+
+Do not use this reviewed card for wiring diagrams, breaker or fuse sizing, grounding or bonding steps, transformer work, switching procedures, energized work, generator backfeed, interconnection, electrical calculations, code or legal claims, or safety certification. Hand off those requests to the system owner, qualified electrician, utility, emergency services, inspector, equipment manufacturer, or local authority as appropriate.
 
 <section id="site-assessment">
 

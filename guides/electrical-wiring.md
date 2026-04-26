@@ -26,6 +26,42 @@ related:
   - vehicle-conversion
   - electrical-system-bootstrap
   - electrical-safety-hazard-prevention
+aliases:
+  - wiring project safety boundary
+  - unsafe wiring project checklist
+  - before attempting electrical wiring
+  - electrical wiring handoff questions
+  - qualified electrician handoff
+  - wiring permit and inspection boundary
+  - stop work wiring red flags
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level wiring project triage: hazard recognition, whether a wiring project is unsafe to attempt, project scoping facts to gather, permit or inspection prompts, qualified-electrician handoff, and stop-work conditions.
+  - Keep answers focused on facts a qualified owner needs before deciding scope: building or equipment affected, power source, visible damage, water exposure, prior shocks or sparks, repeated trips, improvised wiring, intended load purpose, current access control, and who owns the decision.
+  - Route active shock, downed lines, wet panels, smoke, sparking, exposed live conductors, cannot-let-go contact, generator backfeed, circuit design, breaker or fuse sizing, grounding or bonding, panel work, energized work, testing procedures, code or legal claims, and safety certification away from this card.
+routing_support:
+  - electrical-safety-hazard-prevention for active electrical hazards, shock, exposed live conductors, downed lines, wet panels, sparking, smoke, or emergency handoff.
+  - power-distribution-basics for source/load inventory, owner mapping, outage logs, and planning-level power-distribution terminology.
+  - electrical-system-bootstrap for staged post-outage load triage and temporary restoration planning after active hazards are controlled.
+citations_required: true
+citation_policy: >
+  Cite GD-231 and its reviewed answer card only for wiring project boundary
+  triage, unsafe-to-attempt red flags, scoping questions, permit or inspection
+  prompts, qualified-electrician handoff, and stop-work conditions. Do not use
+  it for wiring how-to, circuit design, breaker or fuse sizing, grounding or
+  bonding steps, panel work, energized work, testing procedures, generator
+  backfeed, code or legal claims, or safety certification.
+applicability: >
+  Use for boundary-only questions about whether an electrical wiring project is
+  unsafe to attempt, what project facts should be gathered for the responsible
+  owner or qualified electrician, whether permit/inspection or specialist
+  handoff is needed, and when to stop work. Do not use for installation,
+  repair, circuit design, conductor selection, overcurrent sizing, grounding or
+  bonding instructions, panel work, energized work, test procedures, generator
+  backfeed, legal/code determinations, or declaring work safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: electrical_wiring_project_boundary
+answer_card:
+  - electrical_wiring_project_boundary
 read_time: 38
 word_count: 7500
 last_updated: '2026-02-24'
@@ -51,6 +87,16 @@ This guide is part of the **Electrical Systems Series**. Recommended reading ord
 :::
 
 **Hazard-first routing:** If the problem is a sparking outlet, exposed live wire, downed line, wet breaker box, shock, or someone cannot let go, do not start with outlet repair or wiring diagrams. Go first to [Electrical Safety & Hazard Prevention](../electrical-safety-hazard-prevention.html) for de-energizing, scene isolation, and injury handoff.
+
+## Reviewed Answer-Card Boundary: Wiring Project Triage and Handoff
+
+This is the reviewed answer-card surface for GD-231. Use it only to decide whether a wiring project is unsafe to attempt, identify stop-work conditions, gather project-scoping facts, prompt permit or inspection review, and hand off to the responsible owner or qualified electrician. Start by asking what building or equipment is involved, what power source is present, whether power is known to be isolated, whether anyone has been shocked, whether there are exposed conductors, water exposure, smoke, sparking, burning odor, repeated trips, improvised wiring, damaged insulation, unknown prior work, or pressure to energize unfinished work, and who owns the final decision.
+
+Stop routine scoping and hand off immediately when there is shock or cannot-let-go contact, collapse near electrical equipment, exposed or suspected live conductors, wet panels or outlets, standing water near electrical equipment, downed lines, smoke, flame, hot electrical smell, repeated breaker/fuse trips, damaged service equipment, generator backfeed risk, unknown power status, or any request to work energized. Keep people back, prevent re-energizing, and route active hazards to emergency services, the utility, or the electrical safety hazard owner before any wiring discussion continues.
+
+For non-emergency project scoping, keep the answer to a handoff packet: location, intended use, source and load owner, visible damage, water or heat history, prior shocks or nuisance trips, photos from a safe distance if allowed, access-control status, whether permits/inspection are required by the local authority, and what decisions must wait for a qualified electrician or responsible electrical owner.
+
+Do not provide wiring how-to, circuit design, wire gauge, breaker or fuse sizing, grounding or bonding steps, panel work, energized work, meter or continuity testing procedures, generator backfeed instructions, code or legal claims, inspection-pass statements, safe-to-energize statements, or safety certification from this reviewed card.
 
 ![Wire ampacity derating, voltage drop charts, three-phase configurations, GFCI/AFCI comparison, off-grid wiring system, and wire gauge selection flowchart](../assets/svgs/electrical-wiring-1.svg)
 
