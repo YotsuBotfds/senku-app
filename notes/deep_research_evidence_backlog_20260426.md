@@ -231,6 +231,9 @@ Action:
 - Added a Generated-mode step-summary proof for the same no-retrieval/no-FastEmbed
   contract, so `GITHUB_STEP_SUMMARY` preserves the cheap head-health command
   shape in `-WhatIf` runs.
+- Hardened the runtime endpoint preflight used by guide prompt validation:
+  malformed `/v1/models` JSON is now reported as a failed endpoint check
+  instead of escaping as an uncaught parser exception.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a

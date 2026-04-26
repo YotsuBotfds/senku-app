@@ -123,7 +123,20 @@ def check_endpoint(
             error=str(exc),
         )
 
-    models = parse_models(response.json() if response.ok else {})
+    try:
+        payload = response.json() if response.ok else {}
+    except ValueError as exc:
+        return EndpointCheck(
+            role=role,
+            url=url,
+            expected_model=expected_model,
+            ok=False,
+            status_code=response.status_code,
+            models=(),
+            error=f"invalid /models JSON: {exc}",
+        )
+
+    models = parse_models(payload)
     ok = response.ok and bool(models)
     return EndpointCheck(
         role=role,

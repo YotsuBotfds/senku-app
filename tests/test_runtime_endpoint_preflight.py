@@ -54,6 +54,27 @@ class RuntimeEndpointPreflightTests(unittest.TestCase):
             timeout=1.0,
         )
 
+    def test_check_endpoint_reports_invalid_models_json_as_failed_check(self):
+        response = Mock()
+        response.ok = True
+        response.status_code = 200
+        response.json.side_effect = ValueError("not json")
+        session = Mock()
+        session.get.return_value = response
+
+        check = preflight.check_endpoint(
+            role="generation",
+            url="http://127.0.0.1:1235/v1",
+            expected_model="gemma-4-e2b-it-litert",
+            timeout=1.0,
+            session=session,
+        )
+
+        self.assertFalse(check.ok)
+        self.assertFalse(check.model_found)
+        self.assertEqual(check.status_code, 200)
+        self.assertIn("invalid /models JSON", check.error)
+
     def test_resolve_targets_prefers_explicit_args_over_registry(self):
         parser = preflight.build_arg_parser()
         args = parser.parse_args(
