@@ -320,7 +320,8 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         steps = job["steps"]
         names = [step.get("name") for step in steps]
         lock_step = steps[names.index("Check generated dependency lock")]
-        self.assertIn("python -m pip install uv", lock_step.get("run", ""))
+        self.assertIn("python -m pip install uv==0.11.7", lock_step.get("run", ""))
+        self.assertNotIn("python -m pip install uv\n", lock_step.get("run", ""))
         self.assertIn(r".\scripts\compile_python_lock.ps1 -Check", lock_step.get("run", ""))
 
         scan_step = steps[names.index("Run dependency security scan")]
@@ -396,9 +397,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         gate_step = steps[names.index("Run PowerShell quality gate")]
         self.assertEqual("powershell", gate_step.get("shell"))
         self.assertIn(
-            r"powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_powershell_quality_gate.ps1 -SkipAnalyzer -RequirePester",
+            r"powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_powershell_quality_gate.ps1 -RequireAnalyzer -RequirePester",
             gate_step.get("run", ""),
         )
+        self.assertNotIn("-SkipAnalyzer", gate_step.get("run", ""))
 
     def test_codeowners_covers_github_configuration(self):
         content = CODEOWNERS_PATH.read_text(encoding="utf-8")

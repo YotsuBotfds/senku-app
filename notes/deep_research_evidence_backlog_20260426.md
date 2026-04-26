@@ -201,6 +201,9 @@ Action:
   existing carbon-monoxide and child-cleaner tests. The new prompts pin
   emergency-first CO evacuation and Poison Control/vomiting guidance ahead of
   storm breaker, wet outlet, flood-water, and forced-fluid distractors.
+- Hardened no-FastEmbed CI surfaces: the PowerShell quality workflow now runs
+  the existing gate with `-RequireAnalyzer -RequirePester`, and dependency
+  security installs pinned `uv==0.11.7` before checking the generated lock.
 
 Validation:
 
