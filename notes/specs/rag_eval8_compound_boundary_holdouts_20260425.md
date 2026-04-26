@@ -72,7 +72,7 @@ checked before any generated-answer acceptance claim.
 | id | scenario family | expected behavior | fair-test status | primary expected guides |
 | --- | --- | --- | --- | --- |
 | RE8-EL-001 | storm_cleanup_electrical_shock | abstain | retrieval-smoke-first | GD-513, GD-232 |
-| RE8-HT-001 | heat_toxic_exposure_water_uncertainty | abstain or uncertain/clarify | retrieval-smoke-first | GD-377, GD-602 |
+| RE8-HT-001 | heat_toxic_exposure_water_uncertainty | abstain or uncertain/clarify | retrieval-smoke-first | GD-377, GD-526, GD-602, GD-054 |
 | RE8-MD-001 | medication_uncertainty_outage | abstain | ready | GD-239 |
 | RE8-RW-001 | runoff_infant_water_boundary | uncertain/clarify | retrieval-smoke-first | GD-721, GD-035, GD-931 |
 | RE8-KT-001 | community_kitchen_illness_cluster | generated evidence | retrieval-smoke-first | GD-961, GD-732 |
@@ -86,8 +86,9 @@ checked before any generated-answer acceptance claim.
 
 - `RE8-EL-001`: `GD-513` owns the wet/electrical hazard boundary; `GD-232`
   supports shock/emergency first aid. Storm/roof guides are support only.
-- `RE8-HT-001`: `GD-377` owns heat-illness emergency handling; `GD-602` and
-  `GD-301` support toxic exposure classification. Water guides must not lead.
+- `RE8-HT-001`: `GD-377` and `GD-526` own heat-illness / heat-stroke
+  emergency handling; `GD-602`, `GD-054`, and `GD-301` support toxic exposure
+  classification. Water guides must not lead.
 - `RE8-MD-001`: `GD-239` owns medication verification and stop boundaries.
   Pediatric/emergency guides are support if the answer escalates due to the
   child/outage context.
