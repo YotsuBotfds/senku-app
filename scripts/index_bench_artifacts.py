@@ -103,6 +103,10 @@ def summarize_artifact(path, size, max_json_bytes):
         if size > max_json_bytes:
             return {"skipped": "json_too_large"}
         return summarize_json_file(path)
+    if suffix == ".md":
+        if size > max_json_bytes:
+            return {"skipped": "markdown_too_large"}
+        return summarize_markdown_file(path)
     if suffix == ".jsonl":
         return {"skipped": "jsonl_not_read"}
     if suffix in LOG_SUFFIXES:
@@ -139,6 +143,28 @@ def summarize_json_file(path):
     if isinstance(data, list):
         return {"json_type": "array", "items_count": len(data)}
     return {"json_type": type(data).__name__}
+
+
+def summarize_markdown_file(path):
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        return {"skipped": "markdown_unreadable", "error": exc.__class__.__name__}
+
+    summary = {
+        "line_count": len(lines),
+        "heading_count": 0,
+    }
+    for line in lines:
+        stripped = line.lstrip()
+        if not stripped.startswith("#"):
+            continue
+        marker, _, title = stripped.partition(" ")
+        if 1 <= len(marker) <= 6 and set(marker) == {"#"}:
+            summary["heading_count"] += 1
+            if "title" not in summary and title.strip():
+                summary["title"] = title.strip()
+    return summary
 
 
 def _is_scalar(value):
@@ -208,6 +234,11 @@ def _format_summary(summary):
     counts = summary.get("counts")
     if isinstance(counts, dict):
         parts.extend(f"{key}={value}" for key, value in sorted(counts.items())[:8])
+    if "title" in summary:
+        parts.append(f"title={summary['title']}")
+    for key in ("line_count", "heading_count"):
+        if key in summary:
+            parts.append(f"{key}={summary[key]}")
     if "skipped" in summary:
         parts.append(f"skipped={summary['skipped']}")
     if not parts and "json_type" in summary:

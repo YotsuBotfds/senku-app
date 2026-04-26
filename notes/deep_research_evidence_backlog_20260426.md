@@ -294,6 +294,8 @@ Action:
 - Hardened bench Markdown response recovery so padded source/context headings
   stop answer extraction instead of leaking source bullets into fallback
   response text.
+- Added compact Markdown report summaries to the bench artifact index, including
+  title, line count, and heading count under the existing size guard.
 - Added a `Structural` mode to the non-Android gate for prompt-expectation-only
   validation of the partial/router and EVAL9 packs, with dry-run coverage
   proving it omits retrieval, generated-analysis, and FastEmbed surfaces.

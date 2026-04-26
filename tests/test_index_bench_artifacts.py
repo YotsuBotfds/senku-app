@@ -4,9 +4,11 @@ import unittest
 from pathlib import Path
 
 from scripts.index_bench_artifacts import (
+    _format_summary,
     infer_artifact_kind,
     iter_bench_artifacts,
     main,
+    write_markdown,
 )
 
 
@@ -77,6 +79,52 @@ class IndexBenchArtifactsTests(unittest.TestCase):
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0]["kind"], "jsonl")
         self.assertEqual(records[0]["summary"], {"skipped": "jsonl_not_read"})
+
+    def test_iter_bench_artifacts_summarizes_markdown_report(self):
+        root = self.make_tmpdir()
+        (root / "wave_report.md").write_text(
+            "# Wave Report\n\nIntro text\n\n## Results\n- ok\n",
+            encoding="utf-8",
+        )
+
+        records = list(iter_bench_artifacts(root))
+
+        self.assertEqual(len(records), 1)
+        record = records[0]
+        self.assertEqual(record["kind"], "markdown_report")
+        self.assertEqual(record["summary"]["title"], "Wave Report")
+        self.assertEqual(record["summary"]["line_count"], 6)
+        self.assertEqual(record["summary"]["heading_count"], 2)
+
+    def test_markdown_summary_formatting_and_rendering_exposes_metadata(self):
+        root = self.make_tmpdir()
+        output_md = root / "manifest.md"
+        summary = {
+            "title": "Wave Report",
+            "line_count": 6,
+            "heading_count": 2,
+        }
+
+        formatted = _format_summary(summary)
+        write_markdown(
+            [
+                {
+                    "path": "wave_report.md",
+                    "kind": "markdown_report",
+                    "size": 42,
+                    "mtime": "2026-04-25T12:00:00+00:00",
+                    "summary": summary,
+                }
+            ],
+            output_md,
+        )
+
+        self.assertIn("title=Wave Report", formatted)
+        self.assertIn("line_count=6", formatted)
+        self.assertIn("heading_count=2", formatted)
+        markdown = output_md.read_text(encoding="utf-8")
+        self.assertIn("wave_report.md", markdown)
+        self.assertIn("title=Wave Report; line_count=6; heading_count=2", markdown)
 
     def test_main_writes_jsonl_and_markdown(self):
         root = self.make_tmpdir()
