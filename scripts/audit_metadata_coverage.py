@@ -57,7 +57,9 @@ def _has_any_key(metadata: dict[str, Any], keys: tuple[str, ...]) -> bool:
     for key in keys:
         value = metadata.get(key)
         if isinstance(value, bool):
-            return True
+            if value:
+                return True
+            continue
         if value not in (None, "", [], {}):
             return True
     return False

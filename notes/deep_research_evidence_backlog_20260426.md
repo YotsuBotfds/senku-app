@@ -283,6 +283,9 @@ Action:
 - Added metadata-audit coverage proving body routing markers count as
   high-liability routing support without requiring explicit alias/routing-cue
   frontmatter for that specific support signal.
+- Hardened metadata-audit citation-policy semantics so
+  `citations_required: false` does not satisfy high-liability citation-policy
+  coverage.
 - Added bench metrics-lake coverage proving JSONL parse errors are recorded
   without dropping valid object rows or scalar-line metrics from the same file.
 - Added metrics-lake ingestion for run-manifest `artifact_path_evidence`

@@ -118,6 +118,38 @@ Use this guide when urgent symptoms are present.
         self.assertEqual(record["severity"], "warn")
         self.assertIn("GD-103", markdown)
 
+    def test_high_liability_false_citations_required_does_not_satisfy_policy(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            guides_dir = Path(tmpdir) / "guides"
+            guides_dir.mkdir()
+            (guides_dir / "false-citation-guide.md").write_text(
+                """---
+id: GD-104
+slug: false-citation-guide
+title: False Citation Guide
+category: medical
+description: A high risk guide.
+liability_level: critical
+tags: [medical]
+aliases: [danger help]
+routing_cues: [danger triage]
+related: [GD-101]
+citations_required: false
+applicability: Emergency field care.
+---
+
+Body.
+""",
+                encoding="utf-8",
+            )
+
+            audit = audit_guides(guides_dir)
+
+        record = audit["guides"][0]
+        self.assertFalse(record["has_citation_policy"])
+        self.assertIn("missing_citation_policy", record["gaps"])
+        self.assertEqual(record["severity"], "gap")
+
     def test_low_liability_metadata_gaps_are_not_counted_as_high_liability_gaps(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             guides_dir = Path(tmpdir) / "guides"
