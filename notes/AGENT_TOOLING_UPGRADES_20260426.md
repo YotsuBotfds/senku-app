@@ -32,6 +32,11 @@ self-indexing fix. Current pushed commits:
 
 ## Near-Top Dependency/Security Queue
 
+- Status update, 2026-04-26: the bounded near-top slice now has Dependabot
+  coverage for GitHub Actions and root Python requirements metadata, plus a
+  local `scripts/run_dependency_security_scan.ps1` lane for `pip-audit`.
+  Android Gradle dependency verification remains a documented follow-on and was
+  not reopened in this slice.
 - Add dependency locking/scanning prep from the completed tooling scout: create
   a reproducible Python dependency lock path (`uv lock` or equivalent), enable
   Dependabot for Python and GitHub Actions, add a local/CI `pip-audit` or OSV
