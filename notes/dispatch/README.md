@@ -29,7 +29,9 @@ edit the file, do not let the drift live only in your head.
   layer defensive code on top of assumptions rather than checking
   authoritative docs (R-ui2 v1->v2->v3 is the cautionary tale).
 
-## Active slices
+## Current Status / Historical Dispatch Ledger
+
+No active non-Android RAG/tooling slices are currently in flight.
 
 CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 `W-C-4`, and the desktop deterministic guide wave is paused after the
@@ -37,12 +39,13 @@ CP9 is closed. RC v5 cut landed 2026-04-20, Wave C is closed through
 
 GitHub/tooling status, 2026-04-26: the repository has been created and pushed
 to `https://github.com/YotsuBotfds/senku-app.git`; local `master` tracks
-`origin/master` at pushed head `b37c427`. The 2026-04-26 tooling run is landed
-through retrieval-profile comparison: non-Android GitHub regression gate,
-Actions security lint, workflow attestation bundle, bench metrics lake, RAG
-trace diagnostics and bench spans, PowerShell quality gate, optional RAG eval
-dataset exporter, retrieval-profile comparison tooling, and the accepted
-partial-router drift allowlist for strict gate runs are closed unless a new
+`origin/master`; the latest tooling-infrastructure proof recorded here is
+`7f8e774`. The 2026-04-26 tooling run is landed through retrieval-profile
+comparison: non-Android GitHub regression gate, Actions security lint, workflow
+attestation bundle, bench metrics lake, RAG trace diagnostics and bench spans,
+PowerShell quality gate, optional RAG eval dataset exporter, retrieval-profile
+comparison tooling, the accepted partial-router drift allowlist for strict gate
+runs, and single-step CI-side retrieval index rebuilds are closed unless a new
 regression artifact reopens them.
 
 Current RAG status:
@@ -244,10 +247,11 @@ Historical landed ledger:
   Quality score is now `9.56`, generated rows remain `0/24`, and app
   acceptance no longer has a `needs_evidence_owner` row. Dispatch note:
   `notes/dispatch/RAG-S22_child_unknown_pill_poisoning_boundary.md`.
-- `RAG-T1` is now a near-future tooling lane, not a someday wishlist. First
-  targets are shadow-comparison summaries, agent run manifests, and RAG trend
-  tables so later retrieval/card/evidence slices spend less time manually
-  opening artifacts. Strategy note:
+- `RAG-T1` and the follow-on tooling utilities are landed; retained dispatch
+  links below are historical. The first targets were shadow-comparison
+  summaries, agent run manifests, and RAG trend tables so later
+  retrieval/card/evidence slices spent less time manually opening artifacts.
+  Strategy note:
   `notes/AGENT_TOOLING_UPGRADES_20260425.md`. First utility dispatch:
   `notes/dispatch/RAG-T1_shadow_comparison_summarizer.md`. Diagnostics trend
   utility dispatch:

@@ -6,9 +6,10 @@ research scout plus local repo context.
 
 Status update, 2026-04-26 overnight: the GitHub repository has been created and
 pushed at `https://github.com/YotsuBotfds/senku-app.git`. Local `master` tracks
-`origin/master`; pushed head is `b37c427` (`suppress accepted partial router drift`).
-The top tooling queue has landed through the retrieval-profile comparison slice.
-Current pushed commits:
+`origin/master`; the latest tooling-infrastructure proof recorded here is
+`7f8e774` (`keep ci embedding service alive for gate`). The top tooling
+queue has landed through the retrieval-profile comparison slice and CI gate
+self-indexing fix. Current pushed commits:
 
 - `4e172d9` runtime endpoint preflight
 - `1cd7110` non-Android GitHub regression gate
@@ -24,6 +25,10 @@ Current pushed commits:
 - `c1ae983` tooling queue completion status
 - `b37c427` accepted partial-router drift allowlist for the strict
   non-Android regression gate
+- `3f37f58` CI-side embedding service, retrieval index rebuild, and private-repo
+  attestation skip for the non-Android regression gate
+- `7f8e774` single-step CI embedding/index/gate execution so the FastEmbed
+  process stays alive for retrieval eval
 
 ## Tonight Top 3
 

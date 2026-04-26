@@ -7,7 +7,8 @@ completed rolling log keeps the historical record.
 - Last updated: 2026-04-26 - GitHub repo creation/push and tooling queue
   completion reconciled. `origin` is
   `https://github.com/YotsuBotfds/senku-app.git`, `master` tracks
-  `origin/master`, and the pushed head is `b37c427`. CP9, Wave C, the paused
+  `origin/master`, and the latest tooling-infrastructure proof recorded here is
+  `7f8e774`. CP9, Wave C, the paused
   deterministic `D52+` continuation, RAG-S1 through RAG-S22, RAG-EVAL,
   RAG-TOOL, RAG-META/CARD, policy/runbook waves, and the 2026-04-26 tooling
   run through retrieval-profile comparison are historical unless a fresh
@@ -16,9 +17,9 @@ completed rolling log keeps the historical record.
   `gd397_expectation_cleanup` proof; Android remains a separate lane and is
   not reopened by this queue note.
 
-2026-04-24 RAG-method pivot: the durable plan is now
-`notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md`. The active guide-answering
-lane moves from indefinite deterministic expansion to a diagnostic loop:
+2026-04-24 RAG-method pivot, now historical: the durable plan is
+`notes/RAG_NEXT_LEVEL_STRATEGY_2026-04-24.md`. The guide-answering lane moved
+from indefinite deterministic expansion to a diagnostic loop:
 expected guide manifest, source candidates, app answer contract, and
 safety-profile gates. General scout/worker subagents should default to
 `gpt-5.5 medium`; reserve high reasoning for delicate safety predicates or
@@ -71,17 +72,22 @@ non-Android behavior baselines are:
 
 2026-04-26 tooling/GitHub reconciliation: the GitHub repository has been
 created and pushed at `https://github.com/YotsuBotfds/senku-app.git`; local
-`master` tracks `origin/master` at `b37c427`. The tooling queue in
+`master` tracks `origin/master`; the latest tooling-infrastructure proof
+recorded here is `7f8e774`. The tooling queue in
 `notes/AGENT_TOOLING_UPGRADES_20260426.md` has landed through retrieval-profile
 comparison, including the non-Android GitHub regression gate, Actions security
 lint, attested non-Android regression bundle, bench metrics lake, RAG trace
 diagnostics plus bench spans, PowerShell quality gate, optional RAG eval
 dataset exporter, retrieval-profile comparison tooling, and the accepted
-partial-router drift allowlist for the strict gate. Treat those items as closed
-tooling infrastructure, not active queue work.
+partial-router drift allowlist for the strict gate. The GitHub gate now starts
+its own CI embedding service, rebuilds the guide retrieval index, and runs
+retrieval eval in one step so the embedding process stays alive. Treat those
+items as closed tooling infrastructure, not active queue work.
 
-2026-04-24 RAG-next-level addendum, now historical: pause the implied `D52`+
-deterministic continuation and make `RAG-S1` the next active execution slice.
+2026-04-24 RAG-next-level addendum, now historical: at that point the implied
+`D52`+ deterministic continuation paused and `RAG-S1` became the next execution
+slice. `RAG-S1` through `RAG-S22` are now landed history unless reopened by a
+fresh regression artifact.
 `D48` through `D51` remain valid parked safety-gate slices (`EW` urgent
 nosebleed, `EX` choking / food obstruction, `EY` meningitis, `EZ` newborn
 sepsis), but do not automatically continue into `FA` through `FD` unless a
@@ -134,16 +140,21 @@ RAG-S1 result:
 - `RAG-A11a` expanded Android reviewed-card runtime coverage beyond poisoning to the `newborn_danger_sepsis` / `GD-284` card while keeping runtime developer/test gated and off by default. Focused JVM/build checks, connected `AnswerCardDaoTest` / `OfflineAnswerEngineAnswerCardRuntimeTest` / `DeveloperPanelRuntimeToggleTest`, and the four-emulator bundled-pack prompt matrix passed on APK SHA `60bb6751d18f04f13dff4a6441c65f2cd59f98195ca243f26e5e591830582b5c`. Trusted prompt artifacts: `artifacts/android_reviewed_card_a11a_newborn_matrix_20260424/clean_matrix_5554/20260424_214842_111/emulator-5554`, `artifacts/android_reviewed_card_a11a_newborn_matrix_20260424/clean_matrix_5556/20260424_214842_109/emulator-5556`, `artifacts/android_reviewed_card_a11a_newborn_matrix_20260424/clean_matrix_5558_landscape/20260424_214914_616/emulator-5558`, and `artifacts/android_reviewed_card_a11a_newborn_matrix_20260424/clean_matrix_5560_landscape/20260424_214914_616/emulator-5560`. The prompt query was `newborn is limp, will not feed, and is hard to wake`; expected metadata was `answer_card:newborn_danger_sepsis`, card guide `GD-284`, review status `pilot_reviewed`, and cited source IDs `GD-284|GD-298|GD-492|GD-617`. Treat these as reinstall/no-pack-push proof, not product enablement or strict clean uninstall proof.
 - `RAG-A11b` expanded Android reviewed-card runtime coverage to the `choking_airway_obstruction` / `GD-232` card while keeping runtime developer/test gated and off by default. Focused JVM/build checks, connected `AnswerCardDaoTest` / `OfflineAnswerEngineAnswerCardRuntimeTest` / `DeveloperPanelRuntimeToggleTest`, and the four-emulator bundled-pack prompt matrix passed on APK SHA `63126e427e21385f1e55e0451b81a32d768eb9ab63cc734b77efca723dd740af`. Trusted prompt artifacts: `artifacts/android_reviewed_card_a11b_choking_matrix_20260424/matrix_5554/20260424_220443_026/emulator-5554`, `artifacts/android_reviewed_card_a11b_choking_matrix_20260424/matrix_5556/20260424_220443_026/emulator-5556`, `artifacts/android_reviewed_card_a11b_choking_matrix_20260424/matrix_5558_landscape/20260424_220443_026/emulator-5558`, and `artifacts/android_reviewed_card_a11b_choking_matrix_20260424/matrix_5560_landscape/20260424_220443_026/emulator-5560`. The prompt query was `baby is choking and cannot cry or cough`; expected metadata was `answer_card:choking_airway_obstruction`, card guide `GD-232`, review status `pilot_reviewed`, and cited source IDs `GD-232|GD-284|GD-298|GD-617`. Body proof asserted age-appropriate choking rescue, 5 back blows / 5 chest thrusts, and no abdominal thrusts on infants. Treat these as reinstall/no-pack-push proof, not product enablement or strict clean uninstall proof.
 - Runtime changes behind the 12:51 proof were narrow: existing choking detector alias coverage for "after a bite" / "bite of food"; blunt abdominal trauma detector aliases for child fell belly pain and left-side handlebar pain; and abdominal trauma owner rerank fix/dedent plus narrow distractor handling. Do not add broad deterministic rules from this result.
-- Planner read: continue with app acceptance metrics, answer-card/evidence-owner contracts, and claim/action support. Next slices should focus on card-contract/content phrasing and generated answer structure, not retrieval/ranking expansion or automatic deterministic `D52`+ work.
+- Historical planner read, superseded by the 2026-04-25/26 reconciliation:
+  continue with app acceptance metrics, answer-card/evidence-owner contracts,
+  and claim/action support. At the time, next slices were expected to focus on
+  card-contract/content phrasing and generated answer structure, not
+  retrieval/ranking expansion or automatic deterministic `D52`+ work. Do not
+  dispatch from this line.
 - Latest focused validation: expanded desktop safety/RAG/runtime suite passed `266` tests; `scripts/validate_special_cases.py` validated `173` deterministic rules; `scripts/validate_guide_answer_cards.py` validated `6` cards. The edited pediatric emergency guide was re-ingested earlier with `44` chunks. Focused Android JVM validation is currently available from this shell and passed the answer-surface and pack-manifest/install checks; emulator/instrumentation validation remains a separate device-lane concern.
 
 Landed RAG lane ledger (historical; not the current active queue):
 
 - `RAG-S4` - `notes/dispatch/RAG-S4_adaptive_retrieval_and_rerank_policy.md`
   - `S4b/S4c` status: target EX/EY/EZ/FC retrieval/ranking is clear in the 14:10 proof; use this lane only for narrow owner/rerank regressions if a future artifact reopens them.
-  - Current next work from the same proof is card-contract/content phrasing, not broad retrieval or deterministic expansion.
+  - Superseded follow-up note: the next work from the same proof was card-contract/content phrasing, not broad retrieval or deterministic expansion.
 - `RAG-S2` - `notes/dispatch/RAG-S2_guide_answer_cards_schema_spike.md`
-  - Schema and 6-card pilot exist; runtime card injection is proven for reviewed first-two owner cards with token guard; next use is card-clause normalization and reviewed expansion, not broad unreviewed extraction.
+  - Schema and 6-card pilot exist; runtime card injection is proven for reviewed first-two owner cards with token guard. Historical follow-up note at the time: card-clause normalization and reviewed expansion, not broad unreviewed extraction.
 - `RAG-S3` - `notes/dispatch/RAG-S3_contextual_chunk_ingest_spike.md`
   - Spike contextual retrieval text at ingest without changing citation display text.
 - `RAG-S5` - `notes/dispatch/RAG-S5_claim_level_support_verifier.md`
@@ -151,13 +162,13 @@ Landed RAG lane ledger (historical; not the current active queue):
 - `RAG-S6` - `notes/dispatch/RAG-S6_app_evidence_and_confidence_surface.md`
   - `S6a` analyzer-only app acceptance fields now exist; latest app acceptance is `15` strong, `7` moderate, `2` uncertain. Use `app_acceptance_status`, `evidence_owner_status`, `safety_surface_status`, and `ui_surface_bucket` as gates before runtime/app UI changes while Android JVM validation remains sandbox-blocked.
 - `RAG-S7` - `notes/dispatch/RAG-S7_source_content_safety_invariants.md`
-  - Initial optional invariant validator exists and choking/airway has the first source-content invariant. Next expansion should add tiny low-false-positive invariants to the remaining critical pilot cards only where the guide text supports them; fix guide/card content and re-ingest before adding prompt bans.
+  - Initial optional invariant validator exists and choking/airway has the first source-content invariant. Superseded follow-up note: add tiny low-false-positive invariants to the remaining critical pilot cards only where the guide text supports them; fix guide/card content and re-ingest before adding prompt bans.
 - `RAG-S8` - `notes/dispatch/RAG-S8_evidence_unit_answer_composer.md`
-  - Initial runtime evidence-unit composer landed and fresh EX/EY/EZ/FC proof preserves clean retrieval/ranking/generation/safety buckets. The malformed generated-stop residual is handled in bench runtime. Next step is composing answer text directly from evidence units or expanding reviewed card coverage; do not broaden retrieval/rerank from this proof.
+  - Initial runtime evidence-unit composer landed and fresh EX/EY/EZ/FC proof preserves clean retrieval/ranking/generation/safety buckets. The malformed generated-stop residual is handled in bench runtime. Superseded follow-up note: compose answer text directly from evidence units or expand reviewed card coverage; do not broaden retrieval/rerank from this proof.
 - `RAG-S9` - `notes/dispatch/RAG-S9_shadow_card_answer_composer.md`
-  - Shadow composer and disabled-by-default runtime hook landed. The analyzer proves reviewed-card composition can satisfy strict card/claim diagnostics on the current proof set; production answers remain unchanged unless `SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS=1` is explicitly set. Runtime conditionals now activate from question text only. Next step is product/UI evidence labeling for reviewed high-risk pilot cards plus continued reviewed-card expansion and generated-answer warmth-line repair.
+  - Shadow composer and disabled-by-default runtime hook landed. The analyzer proves reviewed-card composition can satisfy strict card/claim diagnostics on the current proof set; production answers remain unchanged unless `SENKU_ENABLE_CARD_BACKED_RUNTIME_ANSWERS=1` is explicitly set. Runtime conditionals now activate from question text only. Superseded follow-up note: product/UI evidence labeling for reviewed high-risk pilot cards plus continued reviewed-card expansion and generated-answer warmth-line repair.
 - `RAG-S10` - `notes/dispatch/RAG-S10_answer_provenance_labels.md`
-  - Desktop artifact/analyzer provenance labels landed. Use `answer_provenance`, `reviewed_card_backed`, and `answer_surface_label` to distinguish `reviewed_card_evidence` from `generated_evidence` before touching Android UI. Next behavior work should target the residual EY meningitis and EZ newborn generated-vs-shadow gaps.
+  - Desktop artifact/analyzer provenance labels landed. Use `answer_provenance`, `reviewed_card_backed`, and `answer_surface_label` to distinguish `reviewed_card_evidence` from `generated_evidence` before touching Android UI. Historical follow-up note at the time: target the residual EY meningitis and EZ newborn generated-vs-shadow gaps.
 - `RAG-S11` - `notes/dispatch/RAG-S11_reviewed_source_family_runtime.md`
   - Reviewed source-family runtime coverage landed for newborn danger signs.
     Future expansion should stay opt-in per card after source review. The
@@ -168,7 +179,7 @@ Landed RAG lane ledger (historical; not the current active queue):
     emergency fallback. Use this as the current desktop proof baseline before
     making behavior changes.
 - `RAG-S13` - targeted RAG code-health extraction
-  - Landed as the first behavior-preserving extraction pass. Next code-health
+  - Landed as the first behavior-preserving extraction pass. Superseded follow-up note: code-health
     work should avoid `build_prompt(...)` and broad medical predicate movement
     until a new scoped slice has direct tests and a clean dependency boundary.
     Pure completion-hardening helpers are already extracted; leave emergency
