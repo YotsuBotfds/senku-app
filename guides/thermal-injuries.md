@@ -4,6 +4,20 @@ slug: thermal-injuries
 title: 'Thermal Injuries: Hypothermia & Heat Stroke'
 category: medical
 difficulty: intermediate
+aliases:
+  - heat stroke
+  - heat exhaustion
+  - very hot and confused
+  - heat illness emergency
+  - severe hypothermia
+  - cold exposure confusion
+  - stopped sweating in heat
+  - active cooling heat stroke
+routing_cues:
+  - Use for heat stroke, heat exhaustion, severe hypothermia, wet-cold exposure, altered mental status from temperature stress, stopped sweating with heat exposure, collapse, or field cooling/rewarming decisions.
+  - Pair with heat-illness-dehydration for heat-work triage and oral rehydration boundaries; pair with first aid when airway, breathing, collapse, or CPR monitoring is central.
+citations_required: true
+applicability: Field recognition and first actions for heat stroke, heat exhaustion, severe hypothermia, cold-water or wet-cold exposure, and temperature-related collapse where cooling, rewarming, evacuation, and fluid-safety boundaries must be cited.
 tags:
   - essential
   - emergency

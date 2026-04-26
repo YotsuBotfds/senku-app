@@ -4,6 +4,20 @@ slug: toxidromes-field-poisoning
 title: Toxidromes & Specific Antidotes for Field Poisoning
 category: medical
 difficulty: advanced
+aliases:
+  - toxidrome recognition
+  - pinpoint pupils slow breathing
+  - dilated pupils confusion
+  - cholinergic poisoning
+  - anticholinergic poisoning
+  - opioid overdose toxidrome
+  - serotonin syndrome toxidrome
+  - antidote triage field poisoning
+routing_cues:
+  - Use when poisoning symptoms form a toxidrome pattern: pupil changes, slow breathing, sweating or dry skin, twitching, clonus, rigidity, fever, confusion, severe agitation, secretions, seizures, or repeat sleepiness after naloxone.
+  - Pair with toxicology-poisoning-response or unknown-ingestion-child-poisoning-triage for unknown substances, child ingestion, poison-control-first boundaries, and first aid stabilization before antidote details.
+citations_required: true
+applicability: Field poisoning pattern recognition and antidote triage when clinical signs suggest a toxidrome and laboratory confirmation is unavailable; use for high-liability symptom sorting, escalation, and antidote-support context.
 tags:
   - essential
   - medical

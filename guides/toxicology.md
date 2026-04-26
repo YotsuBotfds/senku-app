@@ -4,6 +4,20 @@ slug: toxicology
 title: Toxicology & Poison Management
 category: medical
 difficulty: intermediate
+aliases:
+  - poison management
+  - toxic exposure
+  - unknown poison symptoms
+  - antidote decision
+  - activated charcoal poisoning
+  - chemical poisoning first aid
+  - plant poisoning emergency
+  - poison exposure assessment
+routing_cues:
+  - Use for poison identification, exposure history, route and amount assessment, antidote selection, activated charcoal boundaries, decontamination, venom, poisonous plants, or toxic exposure with respiratory, cardiac, neurologic, or severe gastrointestinal signs.
+  - Pair with toxicology-poisoning-response for modernized poisoning triage and unknown ingestion guardrails; pair with toxidromes-field-poisoning when symptom clusters point to opioid, cholinergic, anticholinergic, sympathomimetic, serotonin, or other toxidrome patterns.
+citations_required: true
+applicability: Poisoning and toxic-exposure assessment when substance identity, exposure route, symptom pattern, airway risk, antidote timing, decontamination, or activated-charcoal decisions require cited high-liability toxicology support.
 tags:
   - critical
 icon: ☠️

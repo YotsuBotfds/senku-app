@@ -22,6 +22,7 @@ routing_cues:
   - Sequence sediment settling and filtration before disinfection, then store treated water safely.
   - Use for flooded or questionable drinking wells when the user asks whether clear water or one boil is enough; route through assessment, treatment limits, testing/remediation, and safer source selection before scarcity logistics.
   - Use when children or high-risk people may drink flood-affected well water; do not treat clear appearance as proof of safety.
+citations_required: true
 applicability: Field water purification planning when source water may be biologically unsafe, cloudy, muddy, or debris-filled and the user needs a safe order of treatment steps.
 tags:
   - critical
