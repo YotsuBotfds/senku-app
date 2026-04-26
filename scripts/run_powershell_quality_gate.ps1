@@ -19,6 +19,13 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+if ($RequireAnalyzer -and $SkipAnalyzer) {
+    throw "-RequireAnalyzer cannot be combined with -SkipAnalyzer."
+}
+if ($RequirePester -and $SkipPester) {
+    throw "-RequirePester cannot be combined with -SkipPester."
+}
+
 function Get-RepoRoot {
     $root = (& git rev-parse --show-toplevel 2>$null)
     if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($root)) {

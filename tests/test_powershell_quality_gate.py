@@ -85,6 +85,28 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("Parser gate passed", result.stdout)
 
+    def test_require_flags_cannot_be_combined_with_matching_skip_flags(self):
+        cases = [
+            ("-RequireAnalyzer", "-SkipAnalyzer"),
+            ("-RequirePester", "-SkipPester"),
+        ]
+
+        for require_flag, skip_flag in cases:
+            with self.subTest(require_flag=require_flag, skip_flag=skip_flag):
+                result = run_gate(
+                    "-Path",
+                    "scripts\\run_powershell_quality_gate.ps1",
+                    require_flag,
+                    skip_flag,
+                    "-WhatIf",
+                )
+
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(
+                    f"{require_flag} cannot be combined with {skip_flag}",
+                    result.stderr + result.stdout,
+                )
+
     def test_require_analyzer_fails_cleanly_when_missing(self):
         result = run_gate(
             "-Path",

@@ -278,6 +278,9 @@ Action:
   missing-path count so stale or absent proof files are visible in manifests.
 - Surfaced run-manifest artifact health in the Markdown summary table, including
   artifact path count, missing count, truncation, and dirty-worktree status.
+- Added PowerShell quality-gate flag validation: `-RequireAnalyzer` cannot be
+  paired with `-SkipAnalyzer`, and `-RequirePester` cannot be paired with
+  `-SkipPester`.
 
 Validation:
 
