@@ -492,6 +492,14 @@ DETERMINISTIC_SPECIAL_CASE_SPECS = (
         priority=116,
     ),
     DeterministicSpecialCaseSpec(
+        'possible_spinal_injury_movement_pressure',
+        '_is_possible_spinal_injury_movement_pressure_special_case',
+        '_build_possible_spinal_injury_movement_pressure_response',
+        'pulled from cold water after a fall and now neck hurts with one arm tingling should we drag them to the truck to get warm',
+        priority=121,
+        lexical_signature_terms=('neck', 'tingling', 'drag', 'warm'),
+    ),
+    DeterministicSpecialCaseSpec(
         'infected_wound_spreading_emergency',
         '_is_infected_wound_spreading_emergency_special_case',
         '_build_infected_wound_spreading_emergency_response',

@@ -2246,6 +2246,123 @@ def _is_spinal_trauma_neurologic_emergency_special_case(question):
     return spine_context and neurologic_red_flag
 
 
+def _is_possible_spinal_injury_movement_pressure_special_case(question):
+    """Detect suspected spinal injury where cold/exposure creates unsafe movement pressure."""
+    lower = question.lower()
+    active_in_water = any(
+        term in lower
+        for term in (
+            "drowning right now",
+            "someone is drowning",
+            "face down",
+            "silent in the water",
+            "motionless in the water",
+            "went under water",
+            "went underwater",
+            "went under the ice",
+            "under ice",
+        )
+    )
+    has_trauma = any(
+        term in lower
+        for term in (
+            "fall",
+            "fell",
+            "fallen",
+            "slipped",
+            "crash",
+            "accident",
+            "hit",
+            "impact",
+            "landed",
+            "creek bank",
+            "pulled from cold water",
+            "pulled from the water",
+        )
+    )
+    has_neck_or_back = any(
+        term in lower
+        for term in (
+            "neck hurts",
+            "neck pain",
+            "neck injury",
+            "back hurts",
+            "back pain",
+            "spine",
+            "spinal",
+        )
+    )
+    has_neuro_symptom = any(
+        term in lower
+        for term in (
+            "numb",
+            "numbness",
+            "feel numb",
+            "feels numb",
+            "tingling",
+            "tingle",
+            "pins and needles",
+            "weakness",
+            "weak",
+            "clumsy",
+            "cannot move",
+            "can't move",
+        )
+    )
+    has_movement_pressure = any(
+        term in lower
+        for term in (
+            "carry",
+            "carrying",
+            "drag",
+            "dragging",
+            "move them",
+            "move him",
+            "move her",
+            "move inside",
+            "transport",
+            "walk them",
+            "walk him",
+            "walk her",
+            "stand them",
+            "truck",
+            "cabin",
+            "inside",
+            "get them warm",
+            "get him warm",
+            "get her warm",
+            "to get warm",
+        )
+    )
+    return (
+        not active_in_water
+        and has_trauma
+        and has_neck_or_back
+        and has_neuro_symptom
+        and has_movement_pressure
+    )
+
+
+def _build_possible_spinal_injury_movement_pressure_response():
+    """Return spine-first guidance when cold/wet pressure tempts unsafe carrying."""
+    return (
+        "Treat this as a possible spinal injury with an exposure problem, not as a simple cold-water or shelter-moving problem. "
+        "Neck/back pain after a fall, crash, or water-side injury plus numbness, tingling, weakness, or clumsiness means casual "
+        "carrying, dragging, or walking can make harm worse. [GD-049, GD-232]\n\n"
+        "1. Stop unnecessary movement now. Keep the head, neck, and back as aligned and still as possible; do not have them walk, "
+        "stand, twist, or get carried to a cabin or truck just because they are cold. [GD-049, GD-232]\n"
+        "2. Call for emergency help or start urgent evacuation planning. Move them only if staying put is immediately dangerous, "
+        "such as still in water, fire, traffic, falling debris, or an unsafe bank; if movement is unavoidable, use multiple helpers "
+        "and keep the head, neck, and torso moving as one unit. [GD-049, GD-232]\n"
+        "3. Handle cold without rough movement: block wind, insulate under and over them, remove or cut away wet outer layers only "
+        "if you can avoid bending the spine, and add blankets, dry layers, or warm packs to the trunk. Keep them horizontal. "
+        "[GD-024, GD-290]\n"
+        "4. Recheck breathing, alertness, and feeling/movement in both hands and feet. If they vomit or breathing is threatened, "
+        "roll only as a unit with helpers to protect the airway. Do not give food, alcohol, or forced fluids while urgent care or "
+        "spine injury remains possible. [GD-232, GD-049]"
+    )
+
+
 def _build_spinal_trauma_neurologic_emergency_response():
     """Return urgent spinal precautions for trauma plus neurologic red flags."""
     return (

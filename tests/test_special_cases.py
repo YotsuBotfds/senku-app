@@ -742,6 +742,29 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertNotIn("UTI", response)
         self.assertNotIn("range-of-motion", response.lower())
 
+    def test_possible_spinal_injury_movement_pressure_prompts_route(self):
+        prompts = [
+            "Someone fell near a contaminated creek and says their neck hurts with tingling in one arm. Should we carry them to the cabin now?",
+            "A person slipped on a creek bank, has neck pain and numb fingers, and is shivering. Is it okay to drag them to the truck?",
+            "After a fall by a dirty creek, my friend's neck hurts and both hands feel numb. Should two of us carry them inside?",
+            "Pulled from cold water after a fall and now neck hurts with one arm tingling. Should we drag them to the truck to get warm?",
+        ]
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertEqual(
+                    query.classify_special_case(prompt),
+                    ("deterministic", "possible_spinal_injury_movement_pressure"),
+                )
+
+        response = query.build_special_case_response(prompts[-1])
+        self.assertIn("possible spinal injury with an exposure problem", response)
+        self.assertIn("Stop unnecessary movement now", response)
+        self.assertIn("do not have them walk", response)
+        self.assertIn("Handle cold without rough movement", response)
+        self.assertIn("Keep them horizontal", response)
+        self.assertNotIn("routine strain", response.lower())
+        self.assertNotIn("sleep it off", response.lower())
+
     def test_crush_compartment_syndrome_ea_prompts_route(self):
         prompts = [
             "heavy object crushed my lower leg and now the pain is getting worse even when i hold still",
