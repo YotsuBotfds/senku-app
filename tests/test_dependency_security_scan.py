@@ -96,6 +96,9 @@ class PythonDependencyLockScriptTests(unittest.TestCase):
         self.assertIn("--generate-hashes", content)
         self.assertIn("--custom-compile-command", content)
         self.assertIn(".\\scripts\\compile_python_lock.ps1", content)
+        self.assertIn("[switch]$Check", content)
+        self.assertIn("Get-FileHash -Algorithm SHA256", content)
+        self.assertIn("Lock check mode cannot be combined with -Upgrade.", content)
         self.assertIn("[switch]$WhatIf", content)
 
     def test_lock_script_parses_as_powershell(self):

@@ -14,6 +14,8 @@ param(
 
     [switch]$Upgrade,
 
+    [switch]$Check,
+
     [switch]$WhatIf
 )
 
@@ -123,15 +125,33 @@ $repoRoot = Get-RepoRoot
 $requirementsFile = Resolve-RepoRelativePath -RepoRoot $repoRoot -Path $RequirementsPath
 $outputFile = Resolve-RepoRelativePath -RepoRoot $repoRoot -Path $OutputPath
 $uvExecutable = Get-UvExecutable -RequestedUv $UvPath
+$compileOutputPath = $OutputPath
+$temporaryOutputFile = $null
 
 if (-not (Test-Path -LiteralPath $requirementsFile)) {
     throw "Requirements file not found: $RequirementsPath"
 }
+if ($Check -and $Upgrade) {
+    throw "Lock check mode cannot be combined with -Upgrade."
+}
+if ($Check -and -not (Test-Path -LiteralPath $outputFile)) {
+    throw "Lock file not found: $OutputPath"
+}
 
 $outputDirectory = Split-Path -Parent $outputFile
+if ($Check) {
+    $temporaryRoot = if (-not [string]::IsNullOrWhiteSpace($env:RUNNER_TEMP)) {
+        $env:RUNNER_TEMP
+    } else {
+        [System.IO.Path]::GetTempPath()
+    }
+    $temporaryOutputFile = Join-Path $temporaryRoot ("senku-python-lock-{0}.txt" -f ([guid]::NewGuid().ToString("N")))
+    $compileOutputPath = $temporaryOutputFile
+    $outputDirectory = Split-Path -Parent $temporaryOutputFile
+}
 $compileArgs = New-UvCompileArguments `
     -RequirementsFile $RequirementsPath `
-    -OutputFile $OutputPath `
+    -OutputFile $compileOutputPath `
     -PythonVersion $PythonVersion `
     -PythonPlatform $PythonPlatform `
     -NoGenerateHashes:$NoGenerateHashes `
@@ -155,7 +175,21 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw "uv pip compile failed with exit code $LASTEXITCODE."
     }
+
+    if ($Check) {
+        $expectedHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $outputFile).Hash
+        $actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $temporaryOutputFile).Hash
+        if ($expectedHash -ne $actualHash) {
+            throw "Python dependency lock is stale. Run .\scripts\compile_python_lock.ps1 and commit $OutputPath."
+        }
+        Write-Host ("Python dependency lock is current: {0}" -f $OutputPath)
+        return
+    }
+
     Write-Host ("Python dependency lock refreshed: {0}" -f $OutputPath)
 } finally {
+    if ($temporaryOutputFile -and (Test-Path -LiteralPath $temporaryOutputFile)) {
+        Remove-Item -LiteralPath $temporaryOutputFile -Force -ErrorAction SilentlyContinue
+    }
     Pop-Location
 }

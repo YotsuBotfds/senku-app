@@ -1,4 +1,5 @@
 chromadb
+fastembed
 requests
 rich
 pyyaml

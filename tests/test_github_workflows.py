@@ -74,7 +74,14 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         names = [step.get("name") for step in steps]
 
         install_step = steps[names.index("Install validation dependencies")]
-        self.assertIn("python -m pip install fastembed", install_step.get("run", ""))
+        setup_step = steps[names.index("Set up Python")]
+        self.assertEqual("pip", setup_step["with"]["cache"])
+        self.assertEqual("requirements.lock.txt", setup_step["with"]["cache-dependency-path"])
+        self.assertIn(
+            "python -m pip install --require-hashes -r requirements.lock.txt",
+            install_step.get("run", ""),
+        )
+        self.assertNotIn("python -m pip install fastembed", install_step.get("run", ""))
         gate_step = steps[names.index("Run non-Android regression gate")]
         gate_script = gate_step.get("run", "")
         self.assertIn("scripts\\fastembed_openai_server.py", gate_script)
@@ -119,6 +126,8 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             [
                 ".github/workflows/dependency_security.yml",
                 "requirements.txt",
+                "requirements.lock.txt",
+                "scripts/compile_python_lock.ps1",
                 "scripts/run_dependency_security_scan.ps1",
             ],
             pull_request["paths"],
@@ -131,17 +140,21 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
 
         steps = job["steps"]
         names = [step.get("name") for step in steps]
+        lock_step = steps[names.index("Check generated dependency lock")]
+        self.assertIn("python -m pip install uv", lock_step.get("run", ""))
+        self.assertIn(r".\scripts\compile_python_lock.ps1 -Check", lock_step.get("run", ""))
+
         scan_step = steps[names.index("Run dependency security scan")]
         self.assertEqual("pwsh", scan_step.get("shell"))
         self.assertIn(
-            r".\scripts\run_dependency_security_scan.ps1 -SkipIfUnavailable",
+            r".\scripts\run_dependency_security_scan.ps1 -RequirementsPath requirements.lock.txt -OutputJson artifacts\security\pip_audit_lock.json -SkipIfUnavailable",
             scan_step.get("run", ""),
         )
 
         upload_step = steps[names.index("Upload dependency security report")]
-        self.assertIn("hashFiles('artifacts/security/pip_audit.json')", upload_step["if"])
+        self.assertIn("hashFiles('artifacts/security/pip_audit_lock.json')", upload_step["if"])
         self.assertEqual("dependency-security-report", upload_step["with"]["name"])
-        self.assertEqual("artifacts/security/pip_audit.json", upload_step["with"]["path"])
+        self.assertEqual("artifacts/security/pip_audit_lock.json", upload_step["with"]["path"])
 
         workflow_text = (WORKFLOW_DIR / "dependency_security.yml").read_text(encoding="utf-8")
         self.assertNotIn("android", workflow_text.lower())
