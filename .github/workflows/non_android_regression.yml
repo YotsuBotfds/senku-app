@@ -73,10 +73,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.13"
           cache: pip
@@ -90,28 +90,35 @@ jobs:
 
       - name: Run non-Android regression gate
         shell: pwsh
+        env:
+          INPUT_ALLOW_RETRIEVAL_WARNINGS: ${{ inputs.allow_retrieval_warnings }}
+          INPUT_FAIL_ON_GENERATED_REGRESSION: ${{ inputs.fail_on_generated_regression }}
+          INPUT_GENERATED_BENCH_JSON: ${{ inputs.generated_bench_json }}
+          INPUT_INCLUDE_SAFETY_CRITICAL: ${{ inputs.include_safety_critical }}
+          INPUT_LABEL: ${{ inputs.label }}
+          INPUT_MODE: ${{ inputs.mode }}
         run: |
-          $label = '${{ inputs.label }}'
+          $label = $env:INPUT_LABEL
           if ([string]::IsNullOrWhiteSpace($label)) {
             $label = "github_${{ github.run_id }}_${{ github.run_attempt }}"
           }
 
           $args = @(
-            '-Mode', '${{ inputs.mode }}',
+            '-Mode', $env:INPUT_MODE,
             '-Label', $label,
             '-VenvPath', '.venvs\senku-validate'
           )
 
-          if ('${{ inputs.include_safety_critical }}' -eq 'true') {
+          if ($env:INPUT_INCLUDE_SAFETY_CRITICAL -eq 'true') {
             $args += '-IncludeSafetyCritical'
           }
-          if ('${{ inputs.allow_retrieval_warnings }}' -eq 'true') {
+          if ($env:INPUT_ALLOW_RETRIEVAL_WARNINGS -eq 'true') {
             $args += '-AllowRetrievalWarnings'
           }
-          if (-not [string]::IsNullOrWhiteSpace('${{ inputs.generated_bench_json }}')) {
-            $args += @('-GeneratedBenchJson', '${{ inputs.generated_bench_json }}')
+          if (-not [string]::IsNullOrWhiteSpace($env:INPUT_GENERATED_BENCH_JSON)) {
+            $args += @('-GeneratedBenchJson', $env:INPUT_GENERATED_BENCH_JSON)
           }
-          if ('${{ inputs.fail_on_generated_regression }}' -eq 'true') {
+          if ($env:INPUT_FAIL_ON_GENERATED_REGRESSION -eq 'true') {
             $args += '-FailOnGeneratedRegression'
           }
 
@@ -119,7 +126,7 @@ jobs:
 
       - name: Upload bench artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: non-android-regression-bench
           path: |

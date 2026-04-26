@@ -1,0 +1,13 @@
+# Keep automation, safety routing, and guide-answer surfaces reviewed.
+.github/ @YotsuBotfds
+scripts/*.ps1 @YotsuBotfds
+scripts/*.py @YotsuBotfds
+
+data/rag_owner_rerank_hints.json @YotsuBotfds
+deterministic_special_case_registry.py @YotsuBotfds
+special_case_builders.py @YotsuBotfds
+query.py @YotsuBotfds
+query_answer_card_runtime.py @YotsuBotfds
+rag_bench_answer_diagnostics.py @YotsuBotfds
+
+notes/specs/guide_answer_cards/ @YotsuBotfds
