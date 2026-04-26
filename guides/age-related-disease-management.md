@@ -50,16 +50,16 @@ custom_css: |
 :::tip
 Quick routing:
 - Start with [Elder Care](../elder-care.html) if the complaint is routine-support-first: "needs more help at home," "harder to bathe/feed/transfer," "caregiver is overwhelmed," "getting weaker," "won't get out of bed," or "how do I take care of my aging parent day to day"
-- "My parent keeps forgetting things" â†’ [Cognitive Decline and Dementia](#cognitive-decline) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
-- "Falls more often" or "elderly falling" â†’ [Osteoporosis Prevention](#osteoporosis) (fall prevention) and [Arthritis Management](#arthritis-management); if the falls are new, repeated, or tied to confusion, also see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
-- "Old person confused" â†’ [Cognitive Decline and Dementia](#cognitive-decline) and [Cardiovascular Health](#cardiovascular-health); if the change is sudden or safety-related, see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
-- "Won't eat" or appetite loss â†’ [Diabetes Management](#diabetes-management) (dietary guidance) and [Maintaining Independence](#maintaining-independence) (ADL adaptation)
-- "Caring for elderly" with chronic conditions â†’ use this guide when the main question names the disease or complication, then pair with [Elder Care](../elder-care.html) for supervision, transfers, hygiene, feeding, routines, and caregiver coverage
+- "My parent keeps forgetting things" -> [Cognitive Decline and Dementia](#cognitive-decline) and see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
+- "Falls more often" or "elderly falling" -> [Osteoporosis Prevention](#osteoporosis) (fall prevention) and [Arthritis Management](#arthritis-management); if the falls are new, repeated, or tied to confusion, also see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
+- "Old person confused" -> [Cognitive Decline and Dementia](#cognitive-decline) and [Cardiovascular Health](#cardiovascular-health); if the change is sudden or safety-related, see [Elder Dementia Home Safety](../elder-dementia-home-safety.html)
+- "Won't eat" or appetite loss -> [Diabetes Management](#diabetes-management) (dietary guidance) and [Maintaining Independence](#maintaining-independence) (ADL adaptation)
+- "Caring for elderly" with chronic conditions -> use this guide when the main question names the disease or complication, then pair with [Elder Care](../elder-care.html) for supervision, transfers, hygiene, feeding, routines, and caregiver coverage
 - "Getting weaker", "declining", "slowing down", or needs help with bathing/dressing/toileting/eating -> [Elder Care](../elder-care.html#maintaining-independence) for daily-function support and safety planning; stay here only if the wording also points to arthritis, diabetes, heart disease, dementia progression, osteoporosis, or another chronic disease driver
 - "Can't get around like before" or "stopped walking" -> [Elder Care](../elder-care.html#maintaining-independence) and [Elder Care](../elder-care.html#failure-modes) if the loss of function is getting worse
-- "Grandparent keeps falling" â†’ [Osteoporosis Prevention](#osteoporosis) and [Arthritis Management](#arthritis-management)
-- "Old person joints hurt" â†’ [Arthritis Management](#arthritis-management)
-- "Elderly can't walk anymore" â†’ [Osteoporosis Prevention](#osteoporosis) and [Maintaining Independence](#maintaining-independence)
+- "Grandparent keeps falling" -> [Osteoporosis Prevention](#osteoporosis) and [Arthritis Management](#arthritis-management)
+- "Old person joints hurt" -> [Arthritis Management](#arthritis-management)
+- "Elderly can't walk anymore" -> [Osteoporosis Prevention](#osteoporosis) and [Maintaining Independence](#maintaining-independence)
 - Use this guide first for disease-first wording: arthritis flare, diabetes foot problem, recurrent stroke/TIA concerns, heart disease symptoms, osteoporosis fracture risk, progressive dementia, or chronic pain management in an older adult
 :::
 
@@ -107,7 +107,7 @@ Arthritis (joint inflammation) is extremely common in older adults, affecting mo
 
 **Range-of-Motion Exercises (do daily)**
 
-Perform each movement slowly, gently, without forcing. Hold stretches 15â€“30 seconds. Repeat 2â€“3 times per joint.
+Perform each movement slowly, gently, without forcing. Hold stretches 15-30 seconds. Repeat 2-3 times per joint.
 
 **Hands and Wrists:**
 - Make a fist; hold; release (3 reps)
@@ -134,15 +134,15 @@ Perform each movement slowly, gently, without forcing. Hold stretches 15â€“
 </div>
 
 **Applying Heat and Cold:**
-- **Heat therapy:** Reduce stiffness, ease pain. Apply for 15â€“20 minutes before exercise. Methods: warm water soak, warm cloth, hot compress
-- **Cold therapy:** Reduce swelling after activity. Apply for 10â€“15 minutes. Methods: cold cloth, ice (wrapped in cloth, never directly on skin)
+- **Heat therapy:** Reduce stiffness, ease pain. Apply for 15-20 minutes before exercise. Methods: warm water soak, warm cloth, hot compress
+- **Cold therapy:** Reduce swelling after activity. Apply for 10-15 minutes. Methods: cold cloth, ice (wrapped in cloth, never directly on skin)
 - **Pattern:** Heat before activity/exercise; cold after if swelling present
 
 **Strengthening Exercises** (maintain muscle to support joints)
 
 - **Wall push-ups:** Hands on wall, lean in and push back out (10 reps)
 - **Stair step-ups:** Step up and down on lowest step (10 reps each leg)
-- **Wall sits:** Back against wall, slide down to partial squat (hold 10â€“20 seconds; 3 reps)
+- **Wall sits:** Back against wall, slide down to partial squat (hold 10-20 seconds; 3 reps)
 - **Calf raises:** Rise up on toes; hold; lower (10 reps)
 
 **Weight Management:**
@@ -166,7 +166,7 @@ Perform each movement slowly, gently, without forcing. Hold stretches 15â€“
 | Turmeric (curcumin) | Moderate; anti-inflammatory | Mixed with black pepper for absorption; tea or capsules | Works best long-term; warm, safe |
 | Boswellia (frankincense) | Modest evidence for OA | Tea or dried resin | Traditional use; available in many regions |
 | Willow bark | Historical use; salicylate content | Tea | Should NOT use if allergic to aspirin |
-| Capsaicin (chili pepper) | Moderate; pain relief topically | Topical cream on joint (3â€“4 times daily) | Warms; don't touch eyes; builds tolerance |
+| Capsaicin (chili pepper) | Moderate; pain relief topically | Topical cream on joint (3-4 times daily) | Warms; don't touch eyes; builds tolerance |
 
 </section>
 
@@ -264,8 +264,8 @@ Age-related hearing loss (presbycusis) is extremely common and often unrecognize
 ### When Hearing Loss Affects Safety
 
 - Speech discrimination (understanding conversations) more important than volume
-- Difficulty hearing warning sounds (car horn, alarm) â€” requires adaptation
-- Isolation from social interaction â€” major quality-of-life issue
+- Difficulty hearing warning sounds (car horn, alarm) - requires adaptation
+- Isolation from social interaction - major quality-of-life issue
 - Depression common with untreated hearing loss
 
 Professional hearing evaluation (if available) helps identify type of loss and best interventions.
@@ -302,11 +302,11 @@ Heart disease is leading cause of death in older adults. Prevention and manageme
 
 **DASH Diet principles (Dietary Approaches to Stop Hypertension):**
 
-- **Whole grains:** 6â€“8 servings daily (brown rice, whole wheat bread)
-- **Vegetables:** 4â€“5 servings daily (dark leafy greens, broccoli, carrots)
-- **Fruits:** 4â€“5 servings daily (berries, apples, oranges; dried fruit in moderation)
+- **Whole grains:** 6-8 servings daily (brown rice, whole wheat bread)
+- **Vegetables:** 4-5 servings daily (dark leafy greens, broccoli, carrots)
+- **Fruits:** 4-5 servings daily (berries, apples, oranges; dried fruit in moderation)
 - **Lean protein:** 6 servings daily (poultry, fish, beans, nuts)
-- **Dairy:** 2â€“3 servings low-fat (milk, yogurt, cheese)
+- **Dairy:** 2-3 servings low-fat (milk, yogurt, cheese)
 - **Limited sodium:** Reduce salt; avoid processed foods
 - **Limited sugar:** Avoid sugary drinks, desserts
 - **Limited saturated fat:** Use oils instead; choose lean meats
@@ -342,7 +342,7 @@ Heart disease is leading cause of death in older adults. Prevention and manageme
 **Dietary approaches:**
 - **DASH diet:** Most effective non-pharmaceutical approach
 - **Sodium reduction:** Avoid processed foods, canned foods, salt
-- **Weight loss:** 5â€“10 pound loss can reduce BP
+- **Weight loss:** 5-10 pound loss can reduce BP
 - **Alcohol moderation:** Excess alcohol raises BP
 
 **Activity:** Regular exercise lowers BP (medication-sparing effect)
@@ -489,14 +489,14 @@ When the user mainly says "they keep falling" without naming bone disease, weak 
 - Leafy greens (kale, collards, bok choy)
 - Fish with bones (canned salmon, sardines)
 - Fortified plant milks (if dairy unavailable)
-- Goal: 1000â€“1200 mg daily for adults 51+ years
+- Goal: 1000-1200 mg daily for adults 51+ years
 
 **Vitamin D:**
-- Sunlight exposure: 10â€“30 minutes daily helps body make vitamin D
+- Sunlight exposure: 10-30 minutes daily helps body make vitamin D
 - Fatty fish (salmon, mackerel, sardines)
 - Egg yolks
 - Fortified milk
-- If supplementation: 600â€“800 IU daily (higher if deficient; check with provider)
+- If supplementation: 600-800 IU daily (higher if deficient; check with provider)
 
 **Weight-bearing exercise:**
 - Walking, jogging, dancing, climbing stairs
@@ -519,7 +519,7 @@ When the user mainly says "they keep falling" without naming bone disease, weak 
 
 **Nutrition and supplements:**
 - Maintain calcium and vitamin D (above)
-- Protein intake supports bone (aim 1.0â€“1.2 g/kg body weight)
+- Protein intake supports bone (aim 1.0-1.2 g/kg body weight)
 - Avoid excessive sodium (increases calcium excretion)
 
 **Medications:**
@@ -552,7 +552,7 @@ Diabetes is increasingly common in older adults. Two types:
 
 ### Physical Activity
 
-Even 10â€“15 minutes of activity after meals reduces blood sugar spikes significantly.
+Even 10-15 minutes of activity after meals reduces blood sugar spikes significantly.
 
 - Walking (especially after meals)
 - Gardening
@@ -561,7 +561,7 @@ Even 10â€“15 minutes of activity after meals reduces blood sugar spikes sig
 
 ### Weight Management
 
-5â€“10% weight loss significantly improves blood sugar control and reduces medication need.
+5-10% weight loss significantly improves blood sugar control and reduces medication need.
 
 ### Medication Adherence
 
@@ -578,7 +578,7 @@ Without blood glucose meters:
 - **Weight tracking:** Regular gain suggests poor control
 - **Urine changes:** Glucose in urine (sugary-smelling) indicates high blood sugar
 
-**If meters available:** Check fasting glucose (morning before eating) and 2 hours after meals. Target fasting 80â€“130 mg/dL (varies by individual).
+**If meters available:** Check fasting glucose (morning before eating) and 2 hours after meals. Target fasting 80-130 mg/dL (varies by individual).
 
 ### Complication Prevention and Screening
 
@@ -749,9 +749,9 @@ Aging well is possible even with chronic disease. The focus shifts from cure to 
 :::affiliate
 **If you're preparing in advance,** elder care and disease management require vital sign monitoring and specialized equipment:
 
-- [A&D Medical Blood Pressure Monitor (UA-767F)](https://www.amazon.com/dp/B00ZTTAV5Q?tag=offlinecompen-20) â€” automatic monitor with wide cuff for elderly patients
-- [OMRON Iron Blood Pressure Monitor](https://www.amazon.com/dp/B0DN5ZMQ51?tag=offlinecompen-20) â€” clinically validated automatic monitor recommended by doctors
-- [Automatic Blood Pressure Machine (Large Color Screen)](https://www.amazon.com/dp/B0DP7VS72Z?tag=offlinecompen-20) â€” portable unit with easy-to-read display for elderly users
+- [A&D Medical Blood Pressure Monitor (UA-767F)](https://www.amazon.com/dp/B00ZTTAV5Q?tag=offlinecompen-20) - automatic monitor with wide cuff for elderly patients
+- [OMRON Iron Blood Pressure Monitor](https://www.amazon.com/dp/B0DN5ZMQ51?tag=offlinecompen-20) - clinically validated automatic monitor recommended by doctors
+- [Automatic Blood Pressure Machine (Large Color Screen)](https://www.amazon.com/dp/B0DP7VS72Z?tag=offlinecompen-20) - portable unit with easy-to-read display for elderly users
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide â€” see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide - see the gear page for full pros/cons.</span>
 :::
