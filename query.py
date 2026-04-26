@@ -138,6 +138,11 @@ LEXICAL_DISTANCE_FLOOR = 0.90
 LEXICAL_DISTANCE_RANGE = 0.22
 METADATA_RERANK_DELTA_MIN = -0.30
 METADATA_RERANK_DELTA_MAX = 0.30
+RAG_OWNER_RERANK_HINTS_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "data",
+    "rag_owner_rerank_hints.json",
+)
 ENABLE_ANCHOR_PRIOR = True
 ANCHOR_BASE_BONUS = 0.08
 ANCHOR_PRIOR_MAX_BONUS = 0.10
@@ -9018,6 +9023,50 @@ def _apply_metadata_rerank_delta(
     return next_cumulative
 
 
+@lru_cache(maxsize=1)
+def _load_rag_owner_rerank_hints():
+    """Load narrow owner rerank hints from a tracked manifest."""
+    with open(RAG_OWNER_RERANK_HINTS_PATH, "r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    rules = payload.get("rules", [])
+    if not isinstance(rules, list):
+        raise ValueError("rag owner rerank hints manifest must contain a rules list")
+
+    normalized_rules = []
+    for index, rule in enumerate(rules):
+        guide_id = str(rule.get("guide_id") or "").strip().upper()
+        branch = str(rule.get("branch") or "").strip()
+        marker_groups = rule.get("question_marker_groups")
+        if not guide_id or not branch or not isinstance(marker_groups, list):
+            raise ValueError(f"invalid rag owner rerank hint at index {index}")
+        normalized_groups = []
+        for group in marker_groups:
+            if not isinstance(group, list) or not group:
+                raise ValueError(f"invalid marker group for rag owner hint {branch}")
+            normalized_groups.append({str(marker).lower() for marker in group})
+        normalized_rules.append(
+            {
+                "guide_id": guide_id,
+                "branch": branch,
+                "delta": float(rule["delta"]),
+                "question_marker_groups": tuple(normalized_groups),
+            }
+        )
+    return tuple(normalized_rules)
+
+
+def _apply_rag_owner_rerank_hints(question_lower, guide_id, apply_delta):
+    for rule in _load_rag_owner_rerank_hints():
+        if guide_id != rule["guide_id"]:
+            continue
+        if all(
+            _text_has_marker(question_lower, marker_group)
+            for marker_group in rule["question_marker_groups"]
+        ):
+            apply_delta(rule["branch"], rule["delta"])
+
+
 def _metadata_rerank_delta(question, meta):
     """Return a distance adjustment based on prompt intent and metadata."""
     question_lower = question.lower()
@@ -9048,245 +9097,7 @@ def _metadata_rerank_delta(question, meta):
             delta, branch_name, branch_delta, chunk_id, debug_enabled
         )
 
-    if guide_id == "GD-024" and _text_has_marker(
-        question_lower,
-        {
-            "below freezing",
-            "hypothermia",
-            "freezing",
-            "winter",
-            "cold",
-        },
-    ) and _text_has_marker(question_lower, {"shelter", "livable", "tonight"}):
-        apply_delta("winter_shelter_hypothermia_owner", -0.13)
-
-    if guide_id == "GD-029" and _text_has_marker(
-        question_lower,
-        {
-            "sort priorities",
-            "sort priority",
-            "triage",
-            "responder sort",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "first 10 minutes",
-            "first ten minutes",
-            "multiple",
-            "another",
-            "one person",
-        },
-    ):
-        apply_delta("small_incident_triage_owner", -0.14)
-
-    if guide_id == "GD-239" and _text_has_marker(
-        question_lower,
-        {
-            "medicine labels disagree",
-            "medication labels disagree",
-            "patient weight",
-            "weight is uncertain",
-            "verify before giving",
-        },
-    ):
-        apply_delta("medication_label_weight_owner", -0.12)
-
-    if guide_id == "GD-108" and _text_has_marker(
-        question_lower,
-        {
-            "solar panel",
-            "small solar",
-            "charging",
-            "charge",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "limited battery",
-            "battery capacity",
-            "phone alerts",
-            "lights",
-        },
-    ):
-        apply_delta("solar_panel_charging_owner", -0.13)
-
-    if guide_id == "GD-446" and _text_has_marker(
-        question_lower,
-        {
-            "shelter site",
-            "choosing a shelter",
-            "choose a shelter",
-            "site",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "flooding",
-            "flood",
-            "wind exposure",
-            "before nightfall",
-        },
-    ):
-        apply_delta("shelter_site_hazard_owner", -0.13)
-
-    if guide_id == "GD-035" and _text_has_marker(
-        question_lower,
-        {
-            "cloudy",
-            "debris",
-            "flooding",
-            "floodwater",
-            "drinking-water plan",
-            "drinking water plan",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "safest order",
-            "order of steps",
-            "make a drinking",
-            "water",
-        },
-    ):
-        apply_delta("floodwater_purification_owner", -0.22)
-
-    if guide_id == "GD-052" and _text_has_marker(
-        question_lower,
-        {
-            "hot water",
-            "scald",
-            "burned",
-            "burn",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "what should i do first",
-            "what should i not do",
-            "when should i escalate",
-            "blister",
-            "forearm",
-        },
-    ):
-        apply_delta("thermal_burn_first_aid_owner", -0.15)
-
-    if guide_id == "GD-065" and _text_has_marker(
-        question_lower,
-        {
-            "cooked food",
-            "preserve cooked",
-            "next few days",
-            "prolonged outage",
-            "outage",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "preserve",
-            "safely preserve",
-            "food",
-        },
-    ):
-        apply_delta("cooked_food_outage_preservation_owner", -0.14)
-
-    if guide_id == "GD-635" and _text_has_marker(
-        question_lower,
-        {
-            "limited medical supplies",
-            "few trained people",
-            "local team",
-            "shelter",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "safe high-impact decisions",
-            "high-impact decisions",
-            "at once",
-            "medical",
-        },
-    ):
-        apply_delta("healthcare_capability_limited_team_owner", -0.13)
-
-    if guide_id == "GD-649" and _text_has_marker(
-        question_lower,
-        {
-            "storm",
-            "electrical system",
-            "partially alive",
-            "load triage",
-            "temporary restoration",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "safe sequence",
-            "load triage",
-            "temporary restoration",
-            "restoration",
-        },
-    ):
-        apply_delta("electrical_bootstrap_storm_restoration_owner", -0.22)
-
-    if guide_id == "GD-648" and _text_has_marker(
-        question_lower,
-        {
-            "inconsistent water flow",
-            "water flow",
-            "small water system",
-            "water system",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "maintenance tools",
-            "minimum operations",
-            "operations checklist",
-            "stabilize",
-        },
-    ):
-        apply_delta("water_system_lifecycle_ops_owner", -0.13)
-
-    if guide_id == "GD-646" and _text_has_marker(
-        question_lower,
-        {
-            "reusable instruments",
-            "instruments cleaned",
-            "between patients",
-            "sterilization workflow",
-            "sterilize",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "limited fuel",
-            "limited supplies",
-            "field treatment",
-            "patients",
-        },
-    ):
-        apply_delta("sterilization_ecosystem_instruments_owner", -0.14)
-
-    if guide_id == "GD-637" and _text_has_marker(
-        question_lower,
-        {
-            "community kitchen",
-            "understocked",
-            "procurement",
-            "cooking reliability",
-            "next week",
-        },
-    ) and _text_has_marker(
-        question_lower,
-        {
-            "procurement",
-            "storage",
-            "cooking",
-            "nutrition",
-        },
-    ):
-        apply_delta("community_nutrition_pipeline_owner", -0.12)
+    _apply_rag_owner_rerank_hints(question_lower, guide_id, apply_delta)
 
     if _is_bridge_guide_metadata(meta) and _is_bridge_demoted_acute_query(question):
         apply_delta("acute_bridge_guide_uniform", 0.06)

@@ -142,46 +142,69 @@ class QueryRoutingTests(unittest.TestCase):
                 "The lights are out and it is below freezing. What are the most important steps to set up a livable shelter and reduce hypothermia risk tonight with basic materials?",
                 {"guide_id": "GD-024", "guide_title": "Winter Survival Systems"},
                 {"guide_id": "GD-345", "guide_title": "Primitive Shelter Construction Techniques"},
+                -0.13,
             ),
             (
                 "After a small camp accident, one person is confused and dizzy while another has minor scrapes. How should a responder sort priorities in the first 10 minutes?",
                 {"guide_id": "GD-029", "guide_title": "Disaster Triage & MCI"},
                 {"guide_id": "GD-558", "guide_title": "Minor Wound Care"},
+                -0.14,
             ),
             (
                 "Two old medicine labels disagree and the patient weight is uncertain. What can Senku safely verify before giving anything?",
                 {"guide_id": "GD-239", "guide_title": "Medications"},
                 {"guide_id": "GD-056", "guide_title": "Pharmacy Inventory"},
+                -0.12,
             ),
             (
                 "We have one small solar panel and limited battery capacity after power loss. What is the safest setup order to keep charging for lights and phone alerts?",
                 {"guide_id": "GD-108", "guide_title": "Solar Technology"},
                 {"guide_id": "GD-288", "guide_title": "Emergency Power Bootstrap"},
+                -0.13,
             ),
             (
                 "What is a practical checklist for choosing a shelter site to avoid flooding risk and wind exposure before nightfall?",
                 {"guide_id": "GD-446", "guide_title": "Shelter Site Selection & Hazard Assessment"},
                 {"guide_id": "GD-023", "guide_title": "Survival Basics & First 72 Hours"},
+                -0.13,
             ),
             (
                 "After flooding, our water is cloudy and has debris. What is the safest order of steps to make a drinking-water plan immediately?",
                 {"guide_id": "GD-035", "guide_title": "Water Purification"},
                 {"guide_id": "GD-931", "guide_title": "Questionable Water Assessment"},
+                -0.22,
             ),
             (
                 "I got burned on my forearm by hot water. What should I do first, what should I not do, and when should I escalate?",
                 {"guide_id": "GD-052", "guide_title": "Burn Treatment & Management"},
                 {"guide_id": "GD-946", "guide_title": "Sunburn, Sun Protection & Heat-Skin Care"},
+                -0.15,
             ),
             (
                 "How should I safely preserve cooked food for the next few days during a prolonged outage?",
                 {"guide_id": "GD-065", "guide_title": "Food Preservation"},
                 {"guide_id": "GD-260", "guide_title": "Food Salvage & Shelf Life"},
+                -0.14,
             ),
         ]
 
-        for question, owner_meta, distractor_meta in cases:
+        rule_by_guide = {
+            rule["guide_id"]: rule for rule in query._load_rag_owner_rerank_hints()
+        }
+        for question, owner_meta, distractor_meta, expected_delta in cases:
             with self.subTest(owner=owner_meta["guide_id"]):
+                applied = []
+                query._apply_rag_owner_rerank_hints(
+                    question.lower(),
+                    owner_meta["guide_id"],
+                    lambda branch, delta: applied.append((branch, delta)),
+                )
+                self.assertEqual(len(applied), 1)
+                self.assertEqual(
+                    applied[0][0],
+                    rule_by_guide[owner_meta["guide_id"]]["branch"],
+                )
+                self.assertAlmostEqual(applied[0][1], expected_delta)
                 self.assertLess(
                     query._metadata_rerank_delta(question, owner_meta),
                     query._metadata_rerank_delta(question, distractor_meta),
@@ -193,35 +216,91 @@ class QueryRoutingTests(unittest.TestCase):
                 "We have inconsistent water flow and no maintenance tools. What is a safe minimum operations checklist to stabilize a small water system?",
                 {"guide_id": "GD-648", "guide_title": "Water System Lifecycle - Drilling to Troubleshooting"},
                 {"guide_id": "GD-935", "guide_title": "Cold Water Immersion and Drowning Prevention"},
+                -0.13,
             ),
             (
                 "Field treatment needs reusable instruments cleaned between patients. What is a safe sterilization workflow we can do with limited fuel and supplies?",
                 {"guide_id": "GD-646", "guide_title": "Sterilization Ecosystem - Water Testing to Medical Application"},
                 {"guide_id": "GD-250", "guide_title": "Boiling and Water Disinfection"},
+                -0.14,
             ),
             (
                 "A community kitchen is getting understocked. How can we prioritize procurement, storage, and cooking reliability for the next week?",
                 {"guide_id": "GD-637", "guide_title": "Community Nutrition Pipeline"},
                 {"guide_id": "GD-252", "guide_title": "Food Storage Management"},
+                -0.12,
             ),
             (
                 "Our shelter has only limited medical supplies and few trained people. How can a local team make safe, high-impact decisions at once?",
                 {"guide_id": "GD-635", "guide_title": "Healthcare Capability Assessment"},
                 {"guide_id": "GD-667", "guide_title": "Shelter Medical Station Setup"},
+                -0.13,
             ),
             (
                 "After a storm, the electrical system is partially alive. What is a safe sequence for load triage and temporary restoration?",
                 {"guide_id": "GD-649", "guide_title": "Electrical System Bootstrap - Hand-Crank to Microgrid"},
                 {"guide_id": "GD-695", "guide_title": "Storm Preparedness and Recovery"},
+                -0.22,
             ),
         ]
 
-        for question, owner_meta, distractor_meta in cases:
+        rule_by_guide = {
+            rule["guide_id"]: rule for rule in query._load_rag_owner_rerank_hints()
+        }
+        for question, owner_meta, distractor_meta, expected_delta in cases:
             with self.subTest(owner=owner_meta["guide_id"]):
+                applied = []
+                query._apply_rag_owner_rerank_hints(
+                    question.lower(),
+                    owner_meta["guide_id"],
+                    lambda branch, delta: applied.append((branch, delta)),
+                )
+                self.assertEqual(len(applied), 1)
+                self.assertEqual(
+                    applied[0][0],
+                    rule_by_guide[owner_meta["guide_id"]]["branch"],
+                )
+                self.assertAlmostEqual(applied[0][1], expected_delta)
                 self.assertLess(
                     query._metadata_rerank_delta(question, owner_meta),
                     query._metadata_rerank_delta(question, distractor_meta),
                 )
+
+    def test_rag_eval_owner_hint_manifest_scope_is_strict(self):
+        expected_guide_ids = [
+            "GD-024",
+            "GD-029",
+            "GD-239",
+            "GD-108",
+            "GD-446",
+            "GD-035",
+            "GD-052",
+            "GD-065",
+            "GD-635",
+            "GD-649",
+            "GD-648",
+            "GD-646",
+            "GD-637",
+        ]
+        rules = query._load_rag_owner_rerank_hints()
+        self.assertEqual([rule["guide_id"] for rule in rules], expected_guide_ids)
+
+        broad_questions = [
+            "How do I prepare for winter?",
+            "What should I know about water?",
+            "How do I keep food safe?",
+            "How should I plan a shelter?",
+        ]
+        for question in broad_questions:
+            for guide_id in expected_guide_ids:
+                with self.subTest(question=question, guide_id=guide_id):
+                    applied = []
+                    query._apply_rag_owner_rerank_hints(
+                        question.lower(),
+                        guide_id,
+                        lambda branch, delta: applied.append((branch, delta)),
+                    )
+                    self.assertEqual(applied, [])
 
     def test_fire_in_rain_and_join_metal_without_welder_get_targeted_specs(self):
         fire_specs = query._supplemental_retrieval_specs("how do i start a fire in rain", 10)

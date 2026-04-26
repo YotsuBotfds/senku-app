@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "description": "Narrow RAG eval owner rerank hints migrated from query.py. Each rule applies only when guide_id matches and every question_marker_groups entry has at least one marker present.",
+  "rules": [
+    {
+      "guide_id": "GD-024",
+      "branch": "winter_shelter_hypothermia_owner",
+      "delta": -0.13,
+      "question_marker_groups": [
+        [
+          "below freezing",
+          "hypothermia",
+          "freezing",
+          "winter",
+          "cold"
+        ],
+        [
+          "shelter",
+          "livable",
+          "tonight"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-029",
+      "branch": "small_incident_triage_owner",
+      "delta": -0.14,
+      "question_marker_groups": [
+        [
+          "sort priorities",
+          "sort priority",
+          "triage",
+          "responder sort"
+        ],
+        [
+          "first 10 minutes",
+          "first ten minutes",
+          "multiple",
+          "another",
+          "one person"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-239",
+      "branch": "medication_label_weight_owner",
+      "delta": -0.12,
+      "question_marker_groups": [
+        [
+          "medicine labels disagree",
+          "medication labels disagree",
+          "patient weight",
+          "weight is uncertain",
+          "verify before giving"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-108",
+      "branch": "solar_panel_charging_owner",
+      "delta": -0.13,
+      "question_marker_groups": [
+        [
+          "solar panel",
+          "small solar",
+          "charging",
+          "charge"
+        ],
+        [
+          "limited battery",
+          "battery capacity",
+          "phone alerts",
+          "lights"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-446",
+      "branch": "shelter_site_hazard_owner",
+      "delta": -0.13,
+      "question_marker_groups": [
+        [
+          "shelter site",
+          "choosing a shelter",
+          "choose a shelter",
+          "site"
+        ],
+        [
+          "flooding",
+          "flood",
+          "wind exposure",
+          "before nightfall"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-035",
+      "branch": "floodwater_purification_owner",
+      "delta": -0.22,
+      "question_marker_groups": [
+        [
+          "cloudy",
+          "debris",
+          "flooding",
+          "floodwater",
+          "drinking-water plan",
+          "drinking water plan"
+        ],
+        [
+          "safest order",
+          "order of steps",
+          "make a drinking",
+          "water"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-052",
+      "branch": "thermal_burn_first_aid_owner",
+      "delta": -0.15,
+      "question_marker_groups": [
+        [
+          "hot water",
+          "scald",
+          "burned",
+          "burn"
+        ],
+        [
+          "what should i do first",
+          "what should i not do",
+          "when should i escalate",
+          "blister",
+          "forearm"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-065",
+      "branch": "cooked_food_outage_preservation_owner",
+      "delta": -0.14,
+      "question_marker_groups": [
+        [
+          "cooked food",
+          "preserve cooked",
+          "next few days",
+          "prolonged outage",
+          "outage"
+        ],
+        [
+          "preserve",
+          "safely preserve",
+          "food"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-635",
+      "branch": "healthcare_capability_limited_team_owner",
+      "delta": -0.13,
+      "question_marker_groups": [
+        [
+          "limited medical supplies",
+          "few trained people",
+          "local team",
+          "shelter"
+        ],
+        [
+          "safe high-impact decisions",
+          "high-impact decisions",
+          "at once",
+          "medical"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-649",
+      "branch": "electrical_bootstrap_storm_restoration_owner",
+      "delta": -0.22,
+      "question_marker_groups": [
+        [
+          "storm",
+          "electrical system",
+          "partially alive",
+          "load triage",
+          "temporary restoration"
+        ],
+        [
+          "safe sequence",
+          "load triage",
+          "temporary restoration",
+          "restoration"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-648",
+      "branch": "water_system_lifecycle_ops_owner",
+      "delta": -0.13,
+      "question_marker_groups": [
+        [
+          "inconsistent water flow",
+          "water flow",
+          "small water system",
+          "water system"
+        ],
+        [
+          "maintenance tools",
+          "minimum operations",
+          "operations checklist",
+          "stabilize"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-646",
+      "branch": "sterilization_ecosystem_instruments_owner",
+      "delta": -0.14,
+      "question_marker_groups": [
+        [
+          "reusable instruments",
+          "instruments cleaned",
+          "between patients",
+          "sterilization workflow",
+          "sterilize"
+        ],
+        [
+          "limited fuel",
+          "limited supplies",
+          "field treatment",
+          "patients"
+        ]
+      ]
+    },
+    {
+      "guide_id": "GD-637",
+      "branch": "community_nutrition_pipeline_owner",
+      "delta": -0.12,
+      "question_marker_groups": [
+        [
+          "community kitchen",
+          "understocked",
+          "procurement",
+          "cooking reliability",
+          "next week"
+        ],
+        [
+          "procurement",
+          "storage",
+          "cooking",
+          "nutrition"
+        ]
+      ]
+    }
+  ]
+}

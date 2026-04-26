@@ -198,6 +198,24 @@ Validation:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\write_run_manifest.py --task RAG-TOOL1 --lane tooling --role worker-c --label auto-enrichment-smoke --output artifacts\bench\run_manifest_auto_enrichment_smoke --manifest-path artifacts\tmp\run_manifest_auto_enrichment_smoke.jsonl --changed-file-limit 12 --status-limit 12
 ```
 
+## 2026-04-25 Data-backed Owner Hint Proof
+
+Moved the narrow partial/router owner-hint rerank rules out of inline
+`query.py` branches and into `data/rag_owner_rerank_hints.json`. Runtime
+behavior stays conservative: a rule applies only when the retrieved guide ID
+matches and every marker group has at least one phrase present in the question.
+
+Validation:
+
+```powershell
+& .\.venvs\senku-validate\Scripts\python.exe -B -m unittest tests.test_query_routing.QueryRoutingTests.test_rag_eval_unresolved_partial_rerank_owner_hints tests.test_query_routing.QueryRoutingTests.test_rag_eval_bridge_rerank_owner_hints tests.test_query_routing.QueryRoutingTests.test_rag_eval_owner_hint_manifest_scope_is_strict -v
+& .\.venvs\senku-validate\Scripts\python.exe -B -m py_compile query.py tests\test_query_routing.py
+& .\.venvs\senku-validate\Scripts\python.exe -B scripts\evaluate_retrieval_pack.py artifacts\prompts\adhoc\rag_eval_partial_router_holdouts_20260425.jsonl --output-json artifacts\bench\rag_eval_partial_router_holdouts_20260425_data_hints_retrieval_only.json --output-md artifacts\bench\rag_eval_partial_router_holdouts_20260425_data_hints_retrieval_only.md --top-k 8
+```
+
+The retrieval-only smoke preserved the latest held-out-pack shape:
+expected-owner hit@1/top3/top-k `20/21`, best rank `1.00`.
+
 ## Landed proof
 
 Commits:
