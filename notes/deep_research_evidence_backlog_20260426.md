@@ -252,6 +252,9 @@ Action:
 - Added run-manifest artifact evidence coverage for directory outputs, proving
   directory artifacts are recorded as existing `directory` entries with
   modification timestamps rather than being treated as missing files.
+- Added compare-bench CLI wrapper coverage for both stdout rendering and
+  `--output` file writing, pinning the operator path around the existing
+  artifact comparison engine.
 - Added a `Master Head Health` push workflow that calls the reusable
   non-Android gate in `Generated` mode on every `master` push, giving HEAD an
   observable no-FastEmbed health signal without turning every commit into a
