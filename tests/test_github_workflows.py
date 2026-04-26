@@ -75,8 +75,19 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
 
         install_step = steps[names.index("Install validation dependencies")]
         setup_step = steps[names.index("Set up Python")]
+        fastembed_cache_step = steps[names.index("Cache FastEmbed model files")]
         self.assertEqual("pip", setup_step["with"]["cache"])
         self.assertEqual("requirements.lock.txt", setup_step["with"]["cache-dependency-path"])
+        self.assertEqual(
+            "actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830",
+            fastembed_cache_step["uses"],
+        )
+        self.assertEqual(".ci-cache/fastembed", fastembed_cache_step["with"]["path"])
+        self.assertIn("requirements.lock.txt", fastembed_cache_step["with"]["key"])
+        self.assertIn(
+            "scripts/fastembed_openai_server.py",
+            fastembed_cache_step["with"]["key"],
+        )
         self.assertIn(
             "python -m pip install --require-hashes -r requirements.lock.txt",
             install_step.get("run", ""),
@@ -87,6 +98,9 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertIn("scripts\\fastembed_openai_server.py", gate_script)
         self.assertIn("'-u'", gate_script)
         self.assertIn("$env:SENKU_EMBED_URL = 'http://127.0.0.1:8801/v1'", gate_script)
+        self.assertIn("Join-Path $env:GITHUB_WORKSPACE '.ci-cache\\fastembed'", gate_script)
+        self.assertIn("New-Item -ItemType Directory -Force -Path $cacheDir", gate_script)
+        self.assertNotIn("Join-Path $env:RUNNER_TEMP 'fastembed-cache'", gate_script)
         self.assertIn("POST /v1/embeddings", gate_script)
         self.assertIn("Invoke-RestMethod `", gate_script)
         self.assertIn("-Uri 'http://127.0.0.1:8801/v1/embeddings'", gate_script)
