@@ -11,6 +11,8 @@ from typing import Any
 
 DEFAULT_MANIFEST_PATH = Path("artifacts/runs/run_manifest.jsonl")
 ARTIFACT_EVIDENCE_FIELDS = (
+    "artifact_path",
+    "artifact_path_missing",
     "artifact_path_count",
     "artifact_path_missing_count",
     "artifact_path_truncated",
@@ -117,10 +119,13 @@ def select_records(
 def count_records_with_missing_artifacts(records: list[dict[str, Any]]) -> int:
     count = 0
     for record in records:
-        if "artifact_path_missing_count" not in record:
+        if (
+            "artifact_path_missing_count" not in record
+            and "artifact_path_missing" not in record
+        ):
             continue
         missing = _coerce_artifact_count(
-            record.get("artifact_path_missing_count", 0),
+            record.get("artifact_path_missing_count"),
             evidence_list=record.get("artifact_path_missing", []),
         )
         if missing > 0:
@@ -136,14 +141,15 @@ def render_markdown(
     task: str | None = None,
     lane: str | None = None,
 ) -> str:
-    selected = select_records(records, task=task, lane=lane, limit=limit)
+    matched = filter_records(records, task=task, lane=lane)
+    selected = matched[-limit:] if limit is not None else matched
     newest_first = list(reversed(selected))
 
     lines = [
         "# Run Manifest Summary",
         "",
         f"- Records shown: {len(newest_first)}",
-        f"- Records matched: {len(selected)}",
+        f"- Records matched: {len(matched)}",
         f"- Malformed lines skipped: {malformed_lines}",
     ]
     if task:
@@ -180,11 +186,11 @@ def _artifact_health(record: dict[str, Any]) -> str:
 
     if any(field in record for field in ARTIFACT_EVIDENCE_FIELDS):
         artifact_count = _coerce_artifact_count(
-            record.get("artifact_path_count", 0),
+            record.get("artifact_path_count"),
             evidence_list=record.get("artifact_path", []),
         )
         missing_count = _coerce_artifact_count(
-            record.get("artifact_path_missing_count", 0),
+            record.get("artifact_path_missing_count"),
             evidence_list=record.get("artifact_path_missing", []),
         )
         truncated = record.get("artifact_path_truncated", False)

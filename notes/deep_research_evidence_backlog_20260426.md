@@ -569,6 +569,9 @@ Action:
 - Run-manifest count normalization now rejects booleans, non-integral floats,
   and negative counts as evidence-derived values, including scalar evidence
   paths recorded by older or partial manifest writers.
+- Run-manifest summaries now treat `artifact_path_missing` evidence as missing
+  artifact proof even when no count field is present, and report total matched
+  records before applying the display limit.
 
 Validation:
 
@@ -640,6 +643,8 @@ Validation:
   fallback to `artifact_path` and `artifact_path_missing` evidence lists.
 - `tests.test_summarize_run_manifest` also covers scalar evidence fallback plus
   boolean, fractional-float, and negative artifact-count inputs.
+- `tests.test_summarize_run_manifest` covers missing-path-only artifact
+  evidence and pre-limit `Records matched` reporting.
 
 Deferred unless evidenced:
 

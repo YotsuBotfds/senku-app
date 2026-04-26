@@ -83,6 +83,20 @@ class SummarizeRunManifestTests(unittest.TestCase):
         self.assertNotIn("old", markdown)
         self.assertNotIn("other", markdown)
 
+    def test_render_markdown_reports_total_matches_before_limit(self):
+        records = [
+            {"task": "A", "lane": "tooling", "label": "old"},
+            {"task": "A", "lane": "tooling", "label": "middle"},
+            {"task": "A", "lane": "tooling", "label": "new"},
+        ]
+
+        markdown = render_markdown(records, task="A", limit=1)
+
+        self.assertIn("- Records shown: 1", markdown)
+        self.assertIn("- Records matched: 3", markdown)
+        self.assertIn("new", markdown)
+        self.assertNotIn("middle", markdown)
+
     def test_artifact_health_is_na_when_evidence_fields_absent(self):
         records = [
             {
@@ -177,6 +191,21 @@ class SummarizeRunManifestTests(unittest.TestCase):
         markdown = render_markdown(records)
 
         self.assertIn("paths=0; missing=2", markdown)
+
+    def test_artifact_health_uses_missing_paths_even_without_count_fields(self):
+        records = [
+            {
+                "task": "missing-only",
+                "lane": "tooling",
+                "artifact_path_missing": ["artifacts/bench/missing.md"],
+            }
+        ]
+
+        markdown = render_markdown(records)
+
+        self.assertIn("paths=0; missing=1", markdown)
+        self.assertIn("missing_paths=artifacts/bench/missing.md", markdown)
+        self.assertEqual(count_records_with_missing_artifacts(records), 1)
 
     def test_count_records_with_missing_artifacts_uses_missing_evidence_when_count_malformed(self):
         records = [
