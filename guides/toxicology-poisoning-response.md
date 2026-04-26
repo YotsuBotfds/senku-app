@@ -169,8 +169,8 @@ A **toxidrome** is a predictable cluster of symptoms from a specific class of po
 **Additional signs:** Miosis (pinpoint pupils), bradycardia, hypotension, muscle fasciculations, respiratory distress, seizures.
 
 **Management:**
-- **Atropine:** 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg IV bolus; repeat every 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 minutes until signs of atropine effect (dry mouth, dilated pupils, increased heart rate). Titrate to dry patient.
-- **Pralidoxime (2-PAM):** 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 g IV bolus over 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 minutes (reactivates cholinesterase; most effective early). Repeat every 1 hour for up to 24 hours if available.
+- **Atropine:** 2–5 mg IV bolus; repeat every 5–10 minutes until signs of atropine effect (dry mouth, dilated pupils, increased heart rate). Titrate to dry patient.
+- **Pralidoxime (2-PAM):** 1–2 g IV bolus over 5–30 minutes (reactivates cholinesterase; most effective early). Repeat every 1 hour for up to 24 hours if available.
 - **Supportive care:** Aggressive airway management (may need intubation); oxygen; seizure precautions.
 
 ### Anticholinergic (Atropine, Scopolamine, Antihistamines, Antipsychotics)
@@ -186,7 +186,7 @@ A **toxidrome** is a predictable cluster of symptoms from a specific class of po
 **Additional signs:** Tachycardia, dilated pupils (mydriasis), urinary retention, constipation, seizures, arrhythmias.
 
 **Management:**
-- **Physostigmine (if available):** 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg IV/IM; can repeat every 20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 minutes. Crosses blood-brain barrier (treats CNS symptoms).
+- **Physostigmine (if available):** 1–2 mg IV/IM; can repeat every 20–30 minutes. Crosses blood-brain barrier (treats CNS symptoms).
 - **Supportive care:** Cooling measures; seizure precautions; IV fluids; urinary catheterization if retention.
 - **Note:** Benzodiazepines for agitation; avoid further anticholinergic drugs.
 
@@ -202,9 +202,9 @@ A **toxidrome** is a predictable cluster of symptoms from a specific class of po
 **Additional signs:** Bradycardia, hypotension, decreased bowel sounds, pulmonary edema.
 
 **Management:**
-- **Naloxone (Narcan):** 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.8 mg IV/IM; repeat every 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 minutes until responsive. Total dose may need to be 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mg.
+- **Naloxone (Narcan):** 0.4–0.8 mg IV/IM; repeat every 2–3 minutes until responsive. Total dose may need to be 2–10 mg.
 - **Ventilatory support:** Bag-valve-mask (BVM) or intubation if respiratory depression severe
-- **Monitor:** Naloxone wears off in 30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90 minutes; opioid toxins are longer-acting. Patient may re-sedate.
+- **Monitor:** Naloxone wears off in 30–90 minutes; opioid toxins are longer-acting. Patient may re-sedate.
 
 ### Stimulant (Cocaine, Amphetamine, Caffeine, Theophylline)
 
@@ -218,7 +218,7 @@ A **toxidrome** is a predictable cluster of symptoms from a specific class of po
 - Coronary ischemia (chest pain)
 
 **Management:**
-- **Benzodiazepines:** Lorazepam 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 mg IV for agitation, seizures
+- **Benzodiazepines:** Lorazepam 2–4 mg IV for agitation, seizures
 - **Cooling measures:** For hyperthermia
 - **Cardiac monitoring:** Watch for arrhythmias
 - **Beta-blockers:** Cautiously, if hypertension severe; avoid isolated beta-blockade (unopposed alpha activity worsens hypertension)
@@ -274,7 +274,7 @@ A **toxidrome** is a predictable cluster of symptoms from a specific class of po
 ### Ingested Poisons
 
 **Activated charcoal:** Absorbs toxins in the GI tract.
-- **Dose:** 50ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“100 g (1 g/kg for children) as a single dose
+- **Dose:** 50–100 g (1 g/kg for children) as a single dose
 - **When:** Most effective within 1 hour of ingestion; up to 4 hours may still be beneficial
 - **How:** Mix with water to slurry; administer PO or via NG tube
 - **Caution:** Do NOT use if airway is unprotected; aspiration risk
@@ -282,11 +282,11 @@ A **toxidrome** is a predictable cluster of symptoms from a specific class of po
 
 **Whole bowel irrigation:** Polyethylene glycol (GoLYTELY) flushes the GI tract.
 - **Indication:** Iron overdose, sustained-release medications, drug packets
-- **Dose:** 25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“40 mL/kg/hr until stool is clear
+- **Dose:** 25–40 mL/kg/hr until stool is clear
 - **Caution:** Contraindicated in GI obstruction or perforation
 
 **Gastric lavage (stomach pumping):** Mechanical removal of stomach contents.
-- **When:** Within 1 hour of ingestion; limited benefit after 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 hours
+- **When:** Within 1 hour of ingestion; limited benefit after 2–3 hours
 - **How:** Pass large-bore NG tube; aspirate; rinse with normal saline until clear
 - **Caution:** Risk of aspiration, esophageal/gastric perforation; not for caustics (reinjury to esophagus)
 - **Modern trend:** Less commonly used; activated charcoal preferred
@@ -312,7 +312,7 @@ If skin is burning after touching an unknown cleaner or unlabeled bottle, treat 
 
 - **No neutralizers:** Do not apply vinegar, baking soda, lemon juice, or other acids/bases to the skin
 - **Remove contaminated clothing and jewelry:** Safely remove and bag anything that may hold chemical against the skin, including rings or watches.
-- **Wash thoroughly:** Copious water rinse for ÃƒÂ¢Ã¢â‚¬Â°Ã‚Â¥15 minutes; use soap
+- **Wash thoroughly:** Copious water rinse for ≥15 minutes; use soap
 - **Escalate:** Call Poison Control or EMS during or immediately after flushing, especially for persistent burning, blistering, spreading pain, numbness, large-area exposure, face/genital exposure, or any acid/alkali/drain-cleaner/battery-fluid possibility.
 - **Specific agents:**
   - **Caustic chemicals (acid, alkali):** Copious water rinse; neutralization can increase reaction heat, so water is safest
@@ -324,7 +324,7 @@ If skin is burning after touching an unknown cleaner or unlabeled bottle, treat 
 **Routing anchors:** Cleaner in eye, bleach splash in eye, drain cleaner in eye, unknown spray or mist to eye, and eye burning after household chemical use belong here first. Do not delay irrigation to identify the product.
 
 - **No neutralizers:** Do not put vinegar, baking soda, or any other chemical into the eye
-- **Immediate action:** Hold eyelid open; irrigate with water or saline for 15ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 minutes
+- **Immediate action:** Hold eyelid open; irrigate with water or saline for 15–20 minutes
 - **Specific agents:** For alkali burns, prolong irrigation (alkali penetrates deeper than acid)
 
 </section>
@@ -336,21 +336,21 @@ If skin is burning after touching an unknown cleaner or unlabeled bottle, treat 
 | Poison | Antidote | Dose | Notes |
 |--------|----------|------|-------|
 | Acetaminophen (paracetamol) | N-acetylcysteine (NAC) | 150 mg/kg IV loading, then 50 mg/kg, then 100 mg/kg | Most effective if given within 8 hours; prevents liver failure. For acetaminophen dosing limits and liver toxicity signs, see <a href="../medications.html#analgesics">Essential Medications</a> |
-| Anticholinergic | Physostigmine | 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mg IV/IM; repeat q20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 min | Crosses blood-brain barrier |
+| Anticholinergic | Physostigmine | 1–2 mg IV/IM; repeat q20–30 min | Crosses blood-brain barrier |
 | Benzodiazepine | Flumazenil | 0.2 mg IV; repeat q1 min up to 3 mg | Risk of seizures if benzodiazepine-dependent |
-| Beta-blocker (carvedilol, propranolol) | Glucagon | 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mg IV/IM; repeat q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 min | Bypasses beta-receptor |
-| Calcium channel blocker | Calcium chloride or gluconate | 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 mL IV slow; high-dose insulin + glucose | Multiple agents may be needed |
-| Carbon monoxide | Oxygen (high-flow or hyperbaric) | 100% OÃƒÂ¢Ã¢â‚¬Å¡Ã¢â‚¬Å¡; hyperbaric at 2.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 atm | Hyperbaric preferred if available |
-| Cholinergic (organophosphate) | Atropine + pralidoxime | Atropine 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg IV q5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 min; pralidoxime 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 g IV | Both needed for best outcome |
+| Beta-blocker (carvedilol, propranolol) | Glucagon | 5–10 mg IV/IM; repeat q5–10 min | Bypasses beta-receptor |
+| Calcium channel blocker | Calcium chloride or gluconate | 10–20 mL IV slow; high-dose insulin + glucose | Multiple agents may be needed |
+| Carbon monoxide | Oxygen (high-flow or hyperbaric) | 100% O₂; hyperbaric at 2.4–3 atm | Hyperbaric preferred if available |
+| Cholinergic (organophosphate) | Atropine + pralidoxime | Atropine 2–5 mg IV q5–10 min; pralidoxime 1–2 g IV | Both needed for best outcome |
 | Cyanide | Hydroxocobalamin or nitrite/thiosulfate | 5 g IV slowly (hydroxocobalamin) | Hydroxocobalamin preferred (fewer side effects) |
 | Digoxin/digitalis | Digoxin-specific antibody (Digibind/DigiFab) | Dose calculated from serum digoxin level | Specific and effective |
 | Iron | Deferoxamine | 15 mg/kg/hr IV or 10 mg/kg/dose IM | Binds iron; prevents organ damage |
-| Isoniazid | Pyridoxine (vitamin B6) | 1 g IV per 1 g isoniazid ingested (empiric: 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 g) | Prevents seizures |
-| Methanol/ethylene glycol | Fomepizole or ethanol | Fomepizole 15 mg/kg IV bolus, then 10 mg/kg q12h; or ethanol to 100ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“150 mg/dL | Fomepizole preferred; blocks toxic metabolite formation |
-| Opioid | Naloxone | 0.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.8 mg IV/IM; repeat q2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 min | Short duration; monitor for re-sedation |
-| Organophosphate | See cholinergic above | ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â | ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â |
+| Isoniazid | Pyridoxine (vitamin B6) | 1 g IV per 1 g isoniazid ingested (empiric: 5–10 g) | Prevents seizures |
+| Methanol/ethylene glycol | Fomepizole or ethanol | Fomepizole 15 mg/kg IV bolus, then 10 mg/kg q12h; or ethanol to 100–150 mg/dL | Fomepizole preferred; blocks toxic metabolite formation |
+| Opioid | Naloxone | 0.4–0.8 mg IV/IM; repeat q2–3 min | Short duration; monitor for re-sedation |
+| Organophosphate | See cholinergic above | — | — |
 | Strychnine | Supportive care + benzodiazepines | No specific antidote | Seizure control is priority |
-| Tricyclic antidepressant | Sodium bicarbonate | 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mEq/kg IV bolus; titrate to pH 7.45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“7.55 | Alkalinizes serum; prevents arrhythmias |
+| Tricyclic antidepressant | Sodium bicarbonate | 1–2 mEq/kg IV bolus; titrate to pH 7.45–7.55 | Alkalinizes serum; prevents arrhythmias |
 
 </section>
 
@@ -369,17 +369,17 @@ Heavy metals accumulate in tissues and cause organ damage over time. In austere 
 - **Chronic:** Anemia, cognitive decline, peripheral neuropathy, renal dysfunction, hypertension, reproductive harm
 
 **Timeline of effects:**
-- **Initial (hoursÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“days):** GI upset, abdominal pain
-- **WeeksÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“months:** Fatigue, weakness, headache, memory problems
+- **Initial (hours–days):** GI upset, abdominal pain
+- **Weeks–months:** Fatigue, weakness, headache, memory problems
 - **Years:** Irreversible cognitive and kidney damage, especially in children
 
 **Management:**
 - **Remove from source:** Identify and eliminate lead exposure (dietary sources, water pipes, occupational site)
 - **Supportive care:** Iron supplementation if anemic; treat anemia
 - **Chelation therapy (if available):**
-  - **EDTA (ethylenediaminetetraacetate):** 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1.5 g daily IV/IM for 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 days; increases urinary lead excretion
-  - **DMSA (meso-2,3-dimercaptosuccinic acid):** 10 mg/kg orally 3ÃƒÆ’Ã¢â‚¬â€ daily for 5 days; oral alternative
-  - **BAL (British Anti-Lewisite):** 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg/kg IM every 4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“6 hours for 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“7 days (used for severe lead encephalopathy)
+  - **EDTA (ethylenediaminetetraacetate):** 1–1.5 g daily IV/IM for 3–5 days; increases urinary lead excretion
+  - **DMSA (meso-2,3-dimercaptosuccinic acid):** 10 mg/kg orally 3× daily for 5 days; oral alternative
+  - **BAL (British Anti-Lewisite):** 3–5 mg/kg IM every 4–6 hours for 2–7 days (used for severe lead encephalopathy)
 - **Monitor:** Renal function, hemoglobin, lead levels if possible
 
 :::warning
@@ -421,14 +421,14 @@ Organic mercury poisoning causes permanent neurologic damage. Prevention (avoidi
 
 **Sources:** Contaminated groundwater (geothermal regions), occupational exposure (smelting, pesticide manufacturing), intentional poisoning (tasteless, odorless in water).
 
-**Acute poisoning (hoursÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“days):**
+**Acute poisoning (hours–days):**
 - Severe GI hemorrhage, diarrhea ("rice-water" stools similar to cholera)
 - Hypovolemic shock, arrhythmias
 - Altered mental status
 - Pulmonary edema
 - Death from dehydration and shock
 
-**Chronic poisoning (weeksÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“years):**
+**Chronic poisoning (weeks–years):**
 - Skin changes: Hyperpigmentation, hyperkeratosis, warts (Bowen's disease), squamous cell carcinoma
 - Peripheral neuropathy (motor and sensory)
 - Cardiovascular disease
@@ -439,8 +439,8 @@ Organic mercury poisoning causes permanent neurologic damage. Prevention (avoidi
 - **Acute ingestion:** Aggressive fluid and electrolyte resuscitation; treat arrhythmias
 - **Decontamination:** Activated charcoal may absorb arsenic (though not well-bound)
 - **Chelation (if available):**
-  - **BAL:** 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg/kg IM every 4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“6 hours; most effective in acute poisoning
-  - **DMSA:** 10 mg/kg orally 3ÃƒÆ’Ã¢â‚¬â€ daily for 5 days; oral alternative for chronic exposure
+  - **BAL:** 3–5 mg/kg IM every 4–6 hours; most effective in acute poisoning
+  - **DMSA:** 10 mg/kg orally 3× daily for 5 days; oral alternative for chronic exposure
 - **Supportive care:** Monitor for renal failure, arrhythmias, sepsis
 - **Water testing:** In endemic areas, test and treat water supplies (well-water contamination is common in Bangladesh, India, Chile)
 
@@ -493,11 +493,11 @@ Mushroom toxins vary widely by species. Only a few wild mushrooms are universall
 
 **Classic biphasic course (very important for recognition):**
 
-**Phase 1 (0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“12 hours post-ingestion):** Asymptomatic or mild GI upset
+**Phase 1 (0–12 hours post-ingestion):** Asymptomatic or mild GI upset
 - Nausea, vomiting, diarrhea, abdominal cramps
 - Patient may feel better, leading to false reassurance
 
-**Phase 2 (12ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“48 hours): Hepatic and renal failure**
+**Phase 2 (12–48 hours): Hepatic and renal failure**
 - Rising transaminases (ALT, AST)
 - Coagulopathy (rising INR/PT)
 - Jaundice
@@ -506,16 +506,16 @@ Mushroom toxins vary widely by species. Only a few wild mushrooms are universall
 - Acute kidney injury
 - Metabolic acidosis
 
-**Phase 3 (48ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“72 hours+): Fulminant hepatic failure**
+**Phase 3 (48–72 hours+): Fulminant hepatic failure**
 - Coma, seizures
 - Bleeding diathesis
 - Organ failure
-- Death in 50ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90% of untreated cases (even with treatment, mortality is 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20%)
+- Death in 50–90% of untreated cases (even with treatment, mortality is 10–20%)
 
 **Management:**
 
 1. **Immediate decontamination:**
-   - **Activated charcoal:** 50ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“100 g within 2 hours if available; amatoxins are absorbed quickly, so early intervention is crucial
+   - **Activated charcoal:** 50–100 g within 2 hours if available; amatoxins are absorbed quickly, so early intervention is crucial
    - **Gastric lavage:** If within 1 hour, may reduce absorption
    - Do NOT induce vomiting (no benefit; worsens dehydration)
 
@@ -525,9 +525,9 @@ Mushroom toxins vary widely by species. Only a few wild mushrooms are universall
    - **Coagulation support:** Monitor INR/PT; transfuse fresh frozen plasma or vitamin K if bleeding
 
 3. **Specific antidotes (if available):**
-   - **Silibinin (silymarin, milk thistle extract):** 330 mg IV every 6 hours or 20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 mg/kg daily. Strongest evidence for benefit; inhibits amatoxin uptake into hepatocytes
+   - **Silibinin (silymarin, milk thistle extract):** 330 mg IV every 6 hours or 20–30 mg/kg daily. Strongest evidence for benefit; inhibits amatoxin uptake into hepatocytes
    - **High-dose penicillin G:** 1 million units/kg/day (increases renal excretion of amatoxins); used in European centers
-   - **Activated charcoal (multiple doses):** 50 g every 4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“6 hours for 24ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“48 hours. Blocks enterohepatic recirculation of amatoxins
+   - **Activated charcoal (multiple doses):** 50 g every 4–6 hours for 24–48 hours. Blocks enterohepatic recirculation of amatoxins
 
 4. **Liver support:**
    - **N-acetylcysteine (NAC):** 150 mg/kg IV loading, then 50 mg/kg, then 100 mg/kg (similar dosing to acetaminophen overdose); may improve outcomes
@@ -543,7 +543,7 @@ Amatoxin poisoning is a medical emergency requiring ICU-level care and specific 
 ### Other Mushroom Toxins
 
 **Gyromitra (false morel, gyromitrin):**
-- Delayed GI symptoms (4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hours): Nausea, vomiting, diarrhea
+- Delayed GI symptoms (4–24 hours): Nausea, vomiting, diarrhea
 - Hepatotoxicity, hemolysis
 - Seizures, coma
 - **Management:** Activated charcoal, supportive care, benzodiazepines for seizures; no specific antidote
@@ -551,12 +551,12 @@ Amatoxin poisoning is a medical emergency requiring ICU-level care and specific 
 **Muscarine (Inocybe, Clitocybe species):**
 - SLUDGE syndrome (excessive salivation, lacrimation, urination, defecation, GI upset, emesis) similar to organophosphate poisoning
 - Miosis, bradycardia, bronchospasm
-- **Management:** Atropine (2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 mg IV bolus, repeat as needed); supportive care
+- **Management:** Atropine (2–5 mg IV bolus, repeat as needed); supportive care
 
 **Ibotenic acid / muscimol (Amanita muscaria, fly agaric):**
 - Sedation, euphoria, confusion, hallucinations
 - Myoclonus, ataxia
-- Usually self-limited (4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 hours)
+- Usually self-limited (4–10 hours)
 - **Management:** Supportive care; benzodiazepines for agitation; generally not fatal
 
 ### Prevention
@@ -601,7 +601,7 @@ Botulism is a medical emergency. Even with antitoxin and ICU care, recovery take
 
 Carbon monoxide (CO) is a colorless, odorless gas produced by incomplete combustion of carbon-containing fuels. In austere environments, CO poisoning occurs from enclosed or poorly ventilated fires (charcoal burners, wood stoves, generators, vehicle exhausts in caves or tents).
 
-**Mechanism:** CO binds hemoglobin with affinity ~200ÃƒÆ’Ã¢â‚¬â€ higher than oxygen, forming carboxyhemoglobin (COHb). This displaces oxygen and impairs oxygen delivery to tissues.
+**Mechanism:** CO binds hemoglobin with affinity ~200× higher than oxygen, forming carboxyhemoglobin (COHb). This displaces oxygen and impairs oxygen delivery to tissues.
 
 ### Exposure Sources and Risk
 
@@ -614,10 +614,10 @@ Carbon monoxide (CO) is a colorless, odorless gas produced by incomplete combust
 
 | COHb Level | Timeline | Symptoms |
 |-----------|----------|----------|
-| 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20% | 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 hours | Headache, dizziness, weakness |
-| 20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30% | 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 hours | Severe headache, dizziness, nausea, weakness, loss of judgment |
-| 30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“40% | 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1.5 hours | Headache, dizziness, nausea, ataxia, confusion, syncope |
-| 40ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“50% | 1 hour | Severe disorientation, seizures, coma |
+| 10–20% | 2–3 hours | Headache, dizziness, weakness |
+| 20–30% | 1–2 hours | Severe headache, dizziness, nausea, weakness, loss of judgment |
+| 30–40% | 1–1.5 hours | Headache, dizziness, nausea, ataxia, confusion, syncope |
+| 40–50% | 1 hour | Severe disorientation, seizures, coma |
 | 50%+ | Minutes to hours | Rapid loss of consciousness, death |
 
 **Symptoms:**
@@ -633,7 +633,7 @@ Carbon monoxide (CO) is a colorless, odorless gas produced by incomplete combust
 **Atypical presentations:**
 - "Cherry-red" skin (actually rare; cyanosis more common)
 - Confusion or bizarre behavior mistaken for intoxication
-- Delayed neuropsychiatric syndrome (develops daysÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“weeks after acute exposure)
+- Delayed neuropsychiatric syndrome (develops days–weeks after acute exposure)
 
 ### Management
 
@@ -643,11 +643,11 @@ Carbon monoxide (CO) is a colorless, odorless gas produced by incomplete combust
 
 2. **High-flow oxygen:**
    - Provide 100% oxygen via face mask (non-rebreather preferred)
-   - Oxygen accelerates CO clearance by reducing half-life of COHb from ~4 hours (on room air) to ~40 minutes (on 100% OÃƒÂ¢Ã¢â‚¬Å¡Ã¢â‚¬Å¡)
+   - Oxygen accelerates CO clearance by reducing half-life of COHb from ~4 hours (on room air) to ~40 minutes (on 100% O₂)
    - Continue until COHb level <5% (if testing available) or symptoms resolve
 
 3. **Hyperbaric oxygen (if available):**
-   - Compression to 2.4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 atm of 100% oxygen further reduces COHb half-life to ~20 minutes
+   - Compression to 2.4–3 atm of 100% oxygen further reduces COHb half-life to ~20 minutes
    - Preferred for severe poisoning (LOC, seizures, cardiac arrhythmias)
    - May reduce delayed neuropsychiatric sequelae
 
@@ -682,15 +682,15 @@ Both methanol (methyl alcohol) and ethylene glycol are sweet-tasting, colorless 
 **Mechanism:** Methanol is oxidized to formaldehyde, then formic acid, which causes metabolic acidosis and blindness.
 
 **Timeline:**
-- **0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“12 hours:** Ethanol-like intoxication (CNS depression, slurred speech, ataxia)
-- **12ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“48 hours:** Sudden deterioration with metabolic acidosis, visual symptoms, seizures
+- **0–12 hours:** Ethanol-like intoxication (CNS depression, slurred speech, ataxia)
+- **12–48 hours:** Sudden deterioration with metabolic acidosis, visual symptoms, seizures
 - **>48 hours:** Fulminant metabolic acidosis, coma, death
 
 **Symptoms (biphasic):**
 - Early: Intoxication, nausea, vomiting, headache (may be mistaken for ethanol intoxication)
 - Late: Severe metabolic acidosis (Kussmaul respiration, fruity breath odor), visual disturbances (scotomas, blurred vision, blindness due to optic nerve necrosis), seizures, coma
 
-**Classic finding:** Normal mental status with severe anion-gap metabolic acidosis (high osmolar gap: calculated osmolarity ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢ measured osmolarity >10).
+**Classic finding:** Normal mental status with severe anion-gap metabolic acidosis (high osmolar gap: calculated osmolarity − measured osmolarity >10).
 
 **Management:**
 
@@ -698,13 +698,13 @@ Both methanol (methyl alcohol) and ethylene glycol are sweet-tasting, colorless 
    - **Fomepizole:** 15 mg/kg IV bolus, then 10 mg/kg IV every 12 hours for 4 doses, then 15 mg/kg every 12 hours until methanol level <20 mg/dL
      - Inhibits alcohol dehydrogenase; prevents formation of formic acid
      - **PREFERRED** over ethanol (fewer side effects)
-   - **Ethanol (if fomepizole unavailable):** Loading dose 0.6ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.8 g/kg IV to achieve blood ethanol level 100ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“150 mg/dL; maintain with continuous infusion
+   - **Ethanol (if fomepizole unavailable):** Loading dose 0.6–0.8 g/kg IV to achieve blood ethanol level 100–150 mg/dL; maintain with continuous infusion
      - Competes for alcohol dehydrogenase; blocks methanol metabolism
      - Carries risk of hypoglycemia, CNS depression, respiratory depression
 
 2. **Supportive care:**
-   - **Sodium bicarbonate:** 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mEq/kg IV bolus; titrate to maintain pH >7.3 (alkalinization slows formic acid toxicity)
-   - **Folinic acid (leucovorin):** 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“7 mg/kg IV every 4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“6 hours (may help methylate formic acid; evidence weak)
+   - **Sodium bicarbonate:** 1–2 mEq/kg IV bolus; titrate to maintain pH >7.3 (alkalinization slows formic acid toxicity)
+   - **Folinic acid (leucovorin):** 5–7 mg/kg IV every 4–6 hours (may help methylate formic acid; evidence weak)
    - **Glucose monitoring:** Maintain euglycemia; hypoglycemia worsens outcome
 
 3. **Hemodialysis:**
@@ -718,9 +718,9 @@ Both methanol (methyl alcohol) and ethylene glycol are sweet-tasting, colorless 
 **Mechanism:** Ethylene glycol is oxidized to glycoaldehyde, glyoxal, and oxalic acid, causing metabolic acidosis and acute kidney injury (oxalate crystals deposit in renal tubules).
 
 **Timeline:**
-- **0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“12 hours:** Intoxication phase (resembles ethanol intoxication)
-- **12ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hours:** Cardiopulmonary phase (pulmonary edema, myocarditis, arrhythmias)
-- **24ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“72 hours:** Renal phase (oliguria, acute kidney injury, seizures)
+- **0–12 hours:** Intoxication phase (resembles ethanol intoxication)
+- **12–24 hours:** Cardiopulmonary phase (pulmonary edema, myocarditis, arrhythmias)
+- **24–72 hours:** Renal phase (oliguria, acute kidney injury, seizures)
 
 **Symptoms:**
 - Early: Intoxication, nausea, vomiting, headache, ataxia
@@ -733,10 +733,10 @@ Both methanol (methyl alcohol) and ethylene glycol are sweet-tasting, colorless 
 1. **Antidote (if available):**
    - **Fomepizole:** 15 mg/kg IV bolus, then 10 mg/kg every 12 hours for 4 doses, then 15 mg/kg every 12 hours
      - **PREFERRED** (same mechanism as for methanol)
-   - **Ethanol:** Loading dose 0.6ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.8 g/kg to achieve 100ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“150 mg/dL; maintain with infusion (similar risks as above)
+   - **Ethanol:** Loading dose 0.6–0.8 g/kg to achieve 100–150 mg/dL; maintain with infusion (similar risks as above)
 
 2. **Supportive care:**
-   - **Sodium bicarbonate:** 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 mEq/kg IV bolus; maintain pH >7.3
+   - **Sodium bicarbonate:** 1–2 mEq/kg IV bolus; maintain pH >7.3
    - **Calcium supplementation:** Cautiously; monitor for hypocalcemia (oxalate binds calcium)
    - **IV fluids:** Aggressive resuscitation; maintain urine output >200 mL/hr to prevent oxalate precipitation in kidney tubules
 
@@ -752,12 +752,12 @@ In austere settings without lab capabilities, estimate poisoning severity using 
 
 **Calculated osmolarity** = 2(Na) + glucose/18 + BUN/2.8 + ethanol/4 (if known)
 
-**Osmolar gap** = measured osmolarity ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢ calculated osmolarity
+**Osmolar gap** = measured osmolarity − calculated osmolarity
 
 Osmolar gap >10 suggests alcohol (methanol, ethylene glycol, or isopropanol) poisoning.
 
 :::warning
-Both methanol and ethylene glycol initially mimic ethanol intoxication. The critical clue is that the patient worsens after 12+ hours with severe acidosis and organ failure. Do not assume "just drunk"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Âobtain a careful timeline and maintain high suspicion.
+Both methanol and ethylene glycol initially mimic ethanol intoxication. The critical clue is that the patient worsens after 12+ hours with severe acidosis and organ failure. Do not assume "just drunk"—obtain a careful timeline and maintain high suspicion.
 :::
 
 </section>
@@ -777,14 +777,14 @@ In austere environments without access to pharmaceutical antidotes, certain trea
 1. **Source material:** Hardwood (oak, birch, maple) burned completely to charcoal; avoid softwoods or treated wood
 2. **Activation:**
    - Pulverize charcoal to fine powder (mortar and pestle, or wrapped in cloth and crushed with hammer)
-   - Wash powder in water 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 times; discard water (removes ash)
+   - Wash powder in water 3–4 times; discard water (removes ash)
    - Dry thoroughly in sun or by low heat; grind again to ensure fine consistency
-3. **Dose:** Suspend 25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“50 g (roughly 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 tablespoons) in 100ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“200 mL water to form a slurry
+3. **Dose:** Suspend 25–50 g (roughly 2–4 tablespoons) in 100–200 mL water to form a slurry
 4. **Administration:** Mix with juice or water if possible to improve palatability; administer PO or via nasogastric tube
 
 **Cautions:**
 - Activated charcoal is black; patient may vomit from appearance
-- Repeat doses every 4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“6 hours for 24ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“48 hours if toxin absorption ongoing (e.g., some plant toxins)
+- Repeat doses every 4–6 hours for 24–48 hours if toxin absorption ongoing (e.g., some plant toxins)
 - DOES NOT work for metals, alcohols, caustics, or strong acids/bases
 
 ### Oral Rehydration Solution (ORS)
@@ -800,7 +800,7 @@ In austere environments without access to pharmaceutical antidotes, certain trea
 - Boil rice; drink the rice water (natural electrolytes)
 
 **Administration:**
-- Small, frequent sips (30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“60 mL every 30 minutes) to prevent vomiting
+- Small, frequent sips (30–60 mL every 30 minutes) to prevent vomiting
 - Continue until diarrhea stops and patient can drink normally
 
 ### Ethanol for Methanol/Ethylene Glycol Poisoning
@@ -808,9 +808,9 @@ In austere environments without access to pharmaceutical antidotes, certain trea
 **Principle:** Ethanol inhibits alcohol dehydrogenase, blocking conversion of methanol/ethylene glycol to toxic metabolites.
 
 **Dosing (austere approximation, NOT ideal):**
-- **Goal:** Achieve blood ethanol level 100ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“150 mg/dL (difficult without blood tests)
-- **Loading dose:** 0.8 g/kg (roughly 1 mL of 80-proof vodka per kg body weight for 70 kg person ÃƒÂ¢Ã¢â‚¬Â°Ã‹â€  70 mL or ~2.4 oz)
-- **Maintenance:** 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 mL of 80-proof alcohol every 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 hours to maintain level
+- **Goal:** Achieve blood ethanol level 100–150 mg/dL (difficult without blood tests)
+- **Loading dose:** 0.8 g/kg (roughly 1 mL of 80-proof vodka per kg body weight for 70 kg person ≈ 70 mL or ~2.4 oz)
+- **Maintenance:** 10–15 mL of 80-proof alcohol every 2–4 hours to maintain level
 
 **Routes:**
 - **PO:** Dilute alcohol (e.g., vodka, whiskey) in juice or water; small frequent doses
@@ -820,10 +820,10 @@ In austere environments without access to pharmaceutical antidotes, certain trea
 - Ethanol itself causes CNS depression; oversedation worsens outcome
 - Risk of hypoglycemia; give dextrose if available
 - This is a temporizing measure until fomepizole or hospital care available
-- Frequent re-dosing needed (every 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 hours) to maintain levels
+- Frequent re-dosing needed (every 2–4 hours) to maintain levels
 
 :::tip
-If methanol or ethylene glycol poisoning is suspected AND the patient is conscious and can swallow, starting ethanol dosing may slow toxin metabolism and buy time for evacuation. However, this is NOT a cureÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Âhospital-level care with fomepizole is essential.
+If methanol or ethylene glycol poisoning is suspected AND the patient is conscious and can swallow, starting ethanol dosing may slow toxin metabolism and buy time for evacuation. However, this is NOT a cure—hospital-level care with fomepizole is essential.
 :::
 
 ### Sodium Bicarbonate for Acidosis
@@ -861,11 +861,11 @@ Do not assume "natural = safe." Many plant remedies have their own toxins. Stick
 
 ### Dangerous Plants
 
-For a detailed comparison table of medicinal plants versus their toxic lookalikes (with distinguishing leaf, stem, flower, and habitat features), see <a href="../sur-03-herbal-medicine.html#toxic-lookalikes">Herbal Medicine Guide ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Dangerous Plant Lookalikes</a>.
+For a detailed comparison table of medicinal plants versus their toxic lookalikes (with distinguishing leaf, stem, flower, and habitat features), see <a href="../sur-03-herbal-medicine.html#toxic-lookalikes">Herbal Medicine Guide — Dangerous Plant Lookalikes</a>.
 
 | Plant | Toxin | Symptoms | Management |
 |-------|-------|----------|-----------|
-| **Ricin (castor bean)** | Ricin protein | Delayed (12ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“24 hr): GI distress, seizures, organ failure | Supportive care; no specific antidote |
+| **Ricin (castor bean)** | Ricin protein | Delayed (12–24 hr): GI distress, seizures, organ failure | Supportive care; no specific antidote |
 | **Foxglove (digitalis)** | Cardiac glycosides | Nausea, arrhythmias, hyperkalemia | Digoxin-specific antibody; avoid hyperkalemia |
 | **Oleander** | Cardiac glycosides | Nausea, arrhythmias | Similar to foxglove |
 | **Nightshade (belladonna, datura, henbane)** | Tropane alkaloids (atropine) | Anticholinergic toxidrome | Benzodiazepines for agitation; supportive care |
@@ -884,7 +884,7 @@ For a detailed comparison table of medicinal plants versus their toxic lookalike
 1. **Immobilize limb:** Splint; keep below heart if possible
 2. **Remove constrictive items:** Rings, bracelets (reduce swelling complications)
 3. **Reassess distal perfusion:** Check pulse, capillary refill, sensation below bite
-4. **Elevate limb after 24ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“48 hours:** Once risk of systemic venom absorption is lower (paradoxically, initial elevation may increase absorption)
+4. **Elevate limb after 24–48 hours:** Once risk of systemic venom absorption is lower (paradoxically, initial elevation may increase absorption)
 5. **Supportive care:** IV fluids, pain management, monitor for coagulopathy (watch for spontaneous bleeding, hematuria)
 6. **Antivenin (if available):** Specific antivenin for regional snake species
 7. **Evacuate urgently:** Even without antivenin, supportive care at hospital is essential (blood transfusion, clotting factor replacement, possible amputation if necrosis severe)
@@ -904,10 +904,10 @@ For a detailed comparison table of medicinal plants versus their toxic lookalike
 - Monitor for secondary infection
 
 **Anaphylaxis:** Urticaria, angioedema, stridor, hypotension, shock.
-- **Epinephrine IM 0.3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“0.5 mg immediately** (1:1000 solution)
+- **Epinephrine IM 0.3–0.5 mg immediately** (1:1000 solution)
 - **IV access and fluids**
 - **Antihistamine and corticosteroid**
-- Observe for at least 4ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“6 hours (biphasic reactions possible)
+- Observe for at least 4–6 hours (biphasic reactions possible)
 
 </section>
 
@@ -921,7 +921,7 @@ For a detailed comparison table of medicinal plants versus their toxic lookalike
 - **Positioning:** Head of bed elevated to prevent aspiration
 - **NG tube:** If unable to protect airway; useful for activated charcoal or gastric lavage
 - **Intubation:** If respiratory depression, seizures, or inability to protect airway
-- **Ventilatory parameters:** Maintain SaOÃƒÂ¢Ã¢â‚¬Å¡Ã¢â‚¬Å¡ >94%, PaCOÃƒÂ¢Ã¢â‚¬Å¡Ã¢â‚¬Å¡ 35ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“45 mmHg
+- **Ventilatory parameters:** Maintain SaO₂ >94%, PaCO₂ 35–45 mmHg
 
 ### Circulation and Fluids
 
@@ -933,7 +933,7 @@ For a detailed comparison table of medicinal plants versus their toxic lookalike
 
 ### Seizure Management
 
-- **Benzodiazepines first-line:** Lorazepam 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“4 mg IV or diazepam 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 mg IV
+- **Benzodiazepines first-line:** Lorazepam 2–4 mg IV or diazepam 5–10 mg IV
 - **Second-line:** Phenytoin or phenobarbital if seizures continue
 - **Airway protection:** Be prepared for intubation if status epilepticus
 
@@ -941,7 +941,7 @@ For a detailed comparison table of medicinal plants versus their toxic lookalike
 
 - **Cool environment:** Remove excess clothing
 - **Tepid sponging:** Water at room temperature
-- **Ice packs** to groin and axillae if severely hyperthermic (>41Ãƒâ€šÃ‚Â°C)
+- **Ice packs** to groin and axillae if severely hyperthermic (>41°C)
 - **Treat underlying cause:** Cholinergic agents, stimulants, serotonin syndrome
 - **Sedation:** Benzodiazepines reduce muscle activity and heat production
 
@@ -964,10 +964,10 @@ Poisoning management begins with rapid assessment, ABCs, and decontamination. Re
 :::affiliate
 **If you're preparing in advance,** toxicology field kits and comprehensive poison management references enable rapid recognition and treatment of acute poisonings:
 
-- [Toxicology Handbook: Poisoning Recognition and Management](https://www.amazon.com/dp/9780729542241?tag=offlinecompen-20) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Practical evidence-based guide to poisoning assessment, toxidrome recognition, and field management protocols
-- [Field Antidote Kit: Naloxone, Atropine, Benzodiazepines](https://www.amazon.com/dp/1260474992?tag=offlinecompen-20) ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Essential medications for treating opioid overdose, cholinergic poisoning, and seizures from toxic exposures
+- [Toxicology Handbook: Poisoning Recognition and Management](https://www.amazon.com/dp/9780729542241?tag=offlinecompen-20) — Practical evidence-based guide to poisoning assessment, toxidrome recognition, and field management protocols
+- [Field Antidote Kit: Naloxone, Atropine, Benzodiazepines](https://www.amazon.com/dp/1260474992?tag=offlinecompen-20) — Essential medications for treating opioid overdose, cholinergic poisoning, and seizures from toxic exposures
 
-<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â see the gear page for full pros/cons.</span>
+<span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
 </section>
