@@ -426,6 +426,7 @@ def validate_prompt_records(
                     )
 
         issues.extend(expectation_disagreement_issues(record, field_ids))
+        issues.extend(primary_expected_subset_issues(record, field_ids))
 
     for prompt_id, duplicates in sorted(by_prompt_id.items()):
         if len(duplicates) <= 1:
@@ -493,6 +494,49 @@ def expectation_disagreement_issues(
                 )
             )
     return issues
+
+
+def primary_expected_subset_issues(
+    record: PromptRecord,
+    field_ids: Mapping[str, Sequence[str]],
+) -> list[dict[str, Any]]:
+    primary_ids = {
+        guide_id
+        for key, ids in field_ids.items()
+        if key.lower() in PRIMARY_EXPECTED_GUIDE_KEYS
+        for guide_id in ids
+    }
+    if not primary_ids:
+        return []
+
+    broader_expected_ids = {
+        guide_id
+        for key, ids in field_ids.items()
+        if key.lower() not in PRIMARY_EXPECTED_GUIDE_KEYS
+        for guide_id in ids
+    }
+    if not broader_expected_ids or primary_ids.issubset(broader_expected_ids):
+        return []
+
+    missing = sorted(primary_ids - broader_expected_ids)
+    return [
+        issue(
+            "error",
+            "primary_expected_guides_not_subset",
+            (
+                "Primary expected guide ids must also appear in broader expected "
+                f"guide metadata: {', '.join(missing)}."
+            ),
+            path=record.path,
+            line=record.line_number,
+            prompt_id=record.prompt_id,
+            guide_ids=missing,
+            details={
+                "primary_expected_guide_ids": sorted(primary_ids),
+                "expected_guide_ids": sorted(broader_expected_ids),
+            },
+        )
+    ]
 
 
 def load_allowed_drift(path: Path | None) -> list[dict[str, Any]]:

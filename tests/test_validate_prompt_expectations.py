@@ -391,6 +391,32 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertIn("unknown_expected_guide_id", codes)
         self.assertIn("duplicate_prompt_id", codes)
 
+    def test_flags_primary_expected_guides_outside_expected_guide_set(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120"],
+                    "primary_expected_guide_ids": ["GD-397"],
+                    "prompt": "Primary owner is not in the broader owner set.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate([pack], guides_dir=root / "guides", root=root)
+
+        self.assertEqual(report["status"], "fail")
+        self.assertIn(
+            "primary_expected_guides_not_subset",
+            {item["code"] for item in report["issues"]},
+        )
+
     def test_allowed_drift_manifest_suppresses_matching_issue(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-120", "metalworking")

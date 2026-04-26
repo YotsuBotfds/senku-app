@@ -265,6 +265,9 @@ Action:
 - Surfaced `app_acceptance_root_cause` through the bench-failure analyzer CSV,
   JSON summary counts, and Markdown App Acceptance section so root-cause
   distribution is visible in generated diagnostics artifacts.
+- Promoted the primary-owner subset rule into prompt expectation validation:
+  `primary_expected_guides` / `primary_expected_guide_ids` now fail when they
+  name guides outside the broader expected-guide metadata.
 
 Validation:
 
