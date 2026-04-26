@@ -13,6 +13,7 @@ routing_cues:
   - Use for immediate below-freezing, lights-out, or overnight cold exposure priorities where the first job is shelter, dry insulation, wind blocking, and hypothermia watch.
   - Use for cold-weather shelter setup when basic materials must reduce heat loss before comfort, food, or long-term camp construction.
   - Primitive shelter or survival-basics guides may support structure details, but this guide is the winter hypothermia-prevention sequence.
+citations_required: true
 applicability:
   - Below-freezing nights, power outages, stranded groups, collapsed heat, and improvised winter shelter with limited materials.
   - Questions asking what to do first tonight to make a shelter livable and reduce hypothermia risk.
