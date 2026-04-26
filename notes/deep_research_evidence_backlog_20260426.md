@@ -512,6 +512,10 @@ Action:
 - Agent startup snapshots now have regression coverage proving malformed
   run-manifest lines, missing artifact health, and benign protected handoff
   notes surface together in the first-page context.
+- Prompt expectation validation now has explicit coverage that generated
+  retrieval reports' display-only `primary_guide_ids` column does not count as
+  an explicit primary expectation, while prompt-pack primary owners still drive
+  primary-owner retrieval checks.
 
 Validation:
 
@@ -550,6 +554,8 @@ Validation:
   alignment in both expectation extraction and row comparison.
 - `tests.test_agent_context_snapshot` covers malformed manifest and missing
   artifact signals alongside benign protected handoff context.
+- `tests.test_validate_prompt_expectations` covers the generated
+  `primary_guide_ids` display column contract.
 
 Deferred unless evidenced:
 

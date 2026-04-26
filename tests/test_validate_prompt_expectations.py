@@ -932,6 +932,43 @@ class PromptExpectationValidatorTests(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
         self.assertEqual(report["issues"], [])
 
+    def test_retrieval_eval_markdown_display_primary_guide_ids_does_not_validate_as_explicit(self):
+        root = self.make_tmpdir()
+        self.write_guide(root, "GD-120", "metalworking")
+        self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
+        pack = root / "pack.jsonl"
+        pack.write_text(
+            json.dumps(
+                {
+                    "id": "P-1",
+                    "expected_guide_ids": ["GD-120", "GD-397"],
+                    "primary_expected_guide_ids": ["GD-397"],
+                    "prompt": "Generated retrieval markdown primary_guide_ids is display-only.",
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        md = root / "retrieval.md"
+        md.write_text(
+            "| id | expected | primary_guide_ids | top retrieved |\n"
+            "| --- | --- | --- | --- |\n"
+            "| P-1 | GD-120, GD-397 | GD-12x | GD-120 |\n",
+            encoding="utf-8",
+        )
+
+        report = validator.validate(
+            [pack],
+            guides_dir=root / "guides",
+            root=root,
+            retrieval_eval_paths=[md],
+        )
+
+        self.assertEqual(report["status"], "warn")
+        issue_codes = {item["code"] for item in report["issues"]}
+        self.assertEqual(issue_codes, {"retrieval_missing_primary_expected_owner"})
+        self.assertEqual(report["issues"][0]["guide_ids"], ["GD-397"])
+
     def test_cli_writes_json_and_markdown_and_fail_flags_gate_exit(self):
         root = self.make_tmpdir()
         self.write_guide(root, "GD-397", "tool-sharpening-maintenance")
