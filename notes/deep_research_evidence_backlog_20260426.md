@@ -226,6 +226,9 @@ Action:
 - Added a diagnostics/acceptance separation proof: a generated answer with
   emergency-first wording and a `deterministic_pass` diagnostic bucket still
   remains `needs_evidence_owner` when it cites only a non-expected guide.
+- Added a `master` push trigger to the PowerShell quality workflow for
+  PowerShell/config path changes, matching its pull-request path filter so the
+  analyzer/Pester lane becomes a commit-level signal when relevant files move.
 
 Validation:
 

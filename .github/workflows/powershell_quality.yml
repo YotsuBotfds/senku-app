@@ -9,6 +9,16 @@ on:
       - "scripts/**/*.psm1"
       - "scripts/**/*.psd1"
       - "tests/powershell/**/*.ps1"
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/powershell_quality.yml"
+      - "PSScriptAnalyzerSettings.psd1"
+      - "scripts/**/*.ps1"
+      - "scripts/**/*.psm1"
+      - "scripts/**/*.psd1"
+      - "tests/powershell/**/*.ps1"
   workflow_dispatch:
 
 permissions:

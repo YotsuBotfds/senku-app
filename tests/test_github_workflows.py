@@ -422,6 +422,9 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
             ],
             triggers["pull_request"]["paths"],
         )
+        self.assertEqual(["master"], triggers["push"]["branches"])
+        self.assertEqual(triggers["pull_request"]["paths"], triggers["push"]["paths"])
+        self.assertNotIn("paths-ignore", triggers["push"])
 
         jobs = workflow["jobs"]
         self.assertEqual(["powershell-quality"], list(jobs))
