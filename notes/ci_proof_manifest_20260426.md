@@ -5,6 +5,21 @@ artifacts are retained for a bounded period.
 
 ## Current Green Head
 
+- Head: `379181a` (`skip fastembed for generated ci`)
+- Non-Android Regression Gate: run `24958386310`
+- Result: success
+- URL: `https://github.com/YotsuBotfds/senku-app/actions/runs/24958386310`
+- Mode: `Generated`
+- Label: `github_379181a_generated_fixture_skip_fastembed_20260426`
+- Generated fixture: `tests\fixtures\non_android_generated\candidate.json`
+- Baseline diagnostics: `tests\fixtures\non_android_generated\baseline_diag`
+- Speed proof: `Cache FastEmbed model files` and `Cache retrieval index` were
+  both skipped; the gate ran the generated analyzer/regression path directly.
+- Security companion: `Actions Security Lint` run `24958384160` passed on the
+  same head.
+
+## Previous Green Fast Head
+
 - Head: `4926d93` (`record ci proof backlog notes`)
 - Non-Android Regression Gate: run `24958108279`
 - Result: success
@@ -22,6 +37,16 @@ artifacts are retained for a bounded period.
   smoke retrieval; accepted for compact smoke only.
 
 ## Previous Green Cache-Miss Proof
+
+- Head: `1d3832f` (`add generated mode ci fixtures`)
+- Non-Android Regression Gate: run `24958353451`
+- Result: success
+- URL: `https://github.com/YotsuBotfds/senku-app/actions/runs/24958353451`
+- Mode: `Generated`
+- Label: `github_1d3832f_generated_fixture_20260426`
+- Validation shape: tracked generated bench fixture analyzed successfully
+  against tracked baseline diagnostics. This proved Generated mode no-DB
+  behavior before the later FastEmbed/cache skip optimization.
 
 - Head: `eb71a3c` (`relax compact smoke retrieval warnings`)
 - Non-Android Regression Gate: run `24957922497`
@@ -55,5 +80,7 @@ artifacts are retained for a bounded period.
   it is not full-corpus retrieval evidence.
 - Add a separate full-index/manual or scheduled lane before treating GitHub as a
   full retrieval quality oracle.
-- Prove `Generated` mode no-DB behavior once a small committed or stable
-  generated bench fixture exists.
+- Generated mode no-DB behavior is now proven with a committed fixture and a
+  follow-up skip-FastEmbed workflow run. Remaining work is policy only: decide
+  whether this tiny fixture should stay as the permanent CI smoke or be
+  supplemented by a larger scheduled generated bench.

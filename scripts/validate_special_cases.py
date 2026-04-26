@@ -3,6 +3,8 @@
 
 import re
 import sys
+import argparse
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,13 +16,55 @@ from deterministic_special_case_registry import VALID_PROMOTION_STATUSES
 import query
 
 
-def main():
+def build_overlap_matrix_rows(overlaps):
+    rows = []
+    for overlap in overlaps:
+        winner_rule_ids = list(overlap["winner_rule_ids"])
+        for match in overlap["matches"]:
+            rows.append(
+                {
+                    "source_rule_id": overlap["source_rule_id"],
+                    "sample_prompt": overlap["sample_prompt"],
+                    "matched_rule_id": match["rule_id"],
+                    "matched_priority": match["priority"],
+                    "matched_lexical_signature_size": match["lexical_signature_size"],
+                    "matched_promotion_status": match["promotion_status"],
+                    "winner_rule_ids": winner_rule_ids,
+                    "winner_reason": overlap["winner_reason"],
+                    "is_winner": match["rule_id"] in winner_rule_ids,
+                }
+            )
+    return rows
+
+
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Validate deterministic special-case routing.",
+    )
+    parser.add_argument(
+        "--overlap-matrix-json",
+        type=Path,
+        help="Optional path to write flattened deterministic overlap rows as JSON.",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = parse_args(argv)
     failures = []
     rules = query.get_deterministic_special_case_rules()
     seen_rule_ids = set()
     valid_guide_ids = all_guide_ids()
     overlaps = query.get_deterministic_special_case_overlaps()
+    overlap_matrix_rows = build_overlap_matrix_rows(overlaps)
     promotion_counts = {}
+
+    if args.overlap_matrix_json:
+        args.overlap_matrix_json.parent.mkdir(parents=True, exist_ok=True)
+        args.overlap_matrix_json.write_text(
+            json.dumps(overlap_matrix_rows, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
 
     for overlap in overlaps:
         if len(overlap["winner_rule_ids"]) != 1:

@@ -1,6 +1,7 @@
 import unittest
 
 import query
+from scripts.validate_special_cases import build_overlap_matrix_rows
 
 
 class RegistryOverlapTests(unittest.TestCase):
@@ -105,6 +106,41 @@ class RegistryOverlapTests(unittest.TestCase):
         self.assertIsNotNone(cleaner_overlap)
         self.assertEqual(
             cleaner_overlap["winner_rule_ids"],
+            ["child_under_sink_cleaner_ingestion"],
+        )
+
+    def test_overlap_matrix_rows_expose_winner_and_match_metadata(self):
+        rows = build_overlap_matrix_rows(
+            query.get_deterministic_special_case_overlaps()
+        )
+        cleaner_rows = [
+            row
+            for row in rows
+            if row["source_rule_id"] == "child_under_sink_cleaner_ingestion"
+        ]
+
+        self.assertGreaterEqual(len(cleaner_rows), 2)
+        self.assertTrue(
+            {
+                "source_rule_id",
+                "sample_prompt",
+                "matched_rule_id",
+                "matched_priority",
+                "matched_lexical_signature_size",
+                "matched_promotion_status",
+                "winner_rule_ids",
+                "winner_reason",
+                "is_winner",
+            }.issubset(cleaner_rows[0])
+        )
+        winner_rows = [row for row in cleaner_rows if row["is_winner"]]
+        self.assertEqual(len(winner_rows), 1)
+        self.assertEqual(
+            winner_rows[0]["matched_rule_id"],
+            "child_under_sink_cleaner_ingestion",
+        )
+        self.assertEqual(
+            winner_rows[0]["winner_rule_ids"],
             ["child_under_sink_cleaner_ingestion"],
         )
 

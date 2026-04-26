@@ -82,6 +82,33 @@ class IngestFreshnessTests(unittest.TestCase):
         self.assertEqual(report.status, STALE)
         self.assertEqual(report.changed_guide_ids, ("GD-001",))
 
+    def test_changed_guide_is_blocking_until_manifest_sha_refreshes(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            guides = root / "guides"
+            guides.mkdir()
+            guide = guides / "one.md"
+            write_guide(guide, "GD-001", "One")
+            manifest = root / "db" / "ingest_manifest.json"
+            write_manifest(manifest, guides)
+            guide.write_text(guide.read_text(encoding="utf-8") + "\nChanged.\n", encoding="utf-8")
+
+            stale_report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+            write_manifest(manifest, guides)
+            fresh_report = evaluate_ingest_freshness(
+                compendium_dir=str(guides),
+                manifest_path=str(manifest),
+            )
+
+        self.assertEqual(stale_report.status, STALE)
+        self.assertEqual(stale_report.changed_guide_ids, ("GD-001",))
+        self.assertTrue(stale_report.is_blocking)
+        self.assertEqual(fresh_report.status, FRESH)
+        self.assertFalse(fresh_report.is_blocking)
+
     def test_nearly_complete_manifest_missing_new_guide_is_stale(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)

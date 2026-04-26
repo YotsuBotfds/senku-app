@@ -43,6 +43,11 @@ Action:
   passed on head `eb71a3c` in `Fast` mode after the compact cache-miss smoke
   index path was added. Follow-up run `24958108279` passed on head `4926d93`
   with retrieval index cache hit, proving the compact cache-hit policy too.
+- Generated mode proof is complete: run `24958353451` passed on head
+  `1d3832f` using the committed generated fixture and baseline diagnostics.
+  Follow-up run `24958386310` passed on head `379181a` with FastEmbed model
+  cache and retrieval-index cache steps skipped, proving Generated mode no-DB
+  behavior and the skip-FastEmbed optimization.
 - Keep the original CI-health claim scoped to the old failing run; current
   behavior is now proven separately by run `24957922497`.
 
@@ -50,9 +55,10 @@ Validation:
 
 - Run `24957922497` completed green on `2026-04-26`; run `24958108279`
   completed green on `2026-04-26` after restoring the retrieval index cache.
-  Run `24957798681` previously proved compact ingest finished and exposed only
-  a strict-warning mismatch, not FastEmbed service lifetime/index rebuild
-  budget.
+  Runs `24958353451` and `24958386310` completed green on `2026-04-26` for
+  the Generated fixture path. Run `24957798681` previously proved compact
+  ingest finished and exposed only a strict-warning mismatch, not FastEmbed
+  service lifetime/index rebuild budget.
 
 Deferred unless evidenced:
 
@@ -85,6 +91,10 @@ Action:
   whether `incomplete_untrusted` and `absent_or_invalid` should warn or block.
 - Add or run a live smoke that edits a temporary guide fixture, observes stale
   status, then re-ingests and observes fresh status.
+- Implemented executable classifier proof:
+  `tests.test_ingest_freshness.test_changed_guide_is_blocking_until_manifest_sha_refreshes`
+  edits a temporary guide, observes `stale` plus `is_blocking`, refreshes the
+  manifest, and observes `fresh` plus non-blocking status.
 
 Validation:
 
@@ -117,11 +127,19 @@ Action:
 - Next useful increment: generated matrix output that lists rule id, priority,
   lexical signature, promotion status, overlapping prompts, winner, and
   tie-break reason.
+- Implemented low-risk visibility slice: `scripts\validate_special_cases.py`
+  now accepts `--overlap-matrix-json` and writes flattened overlap rows with
+  source rule, sample prompt, matched rule, priority, lexical signature size,
+  promotion status, winner IDs, winner reason, and winner flag. Existing
+  validation semantics are unchanged.
 
 Validation:
 
 - Existing deterministic/routing unit slices plus validator still pass; the
   matrix exposes every overlap and no unresolved pair lacks an explicit winner.
+- Focused validation produced a matrix JSON and still reported `176`
+  deterministic special-case rules, `7` overlap checks, and one winner per
+  overlap.
 
 Deferred unless evidenced:
 
