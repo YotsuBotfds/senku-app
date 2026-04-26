@@ -1,4 +1,4 @@
-﻿# Senku Android UI Direction Audit â€” 2026-04-14
+﻿# Senku Android UI Direction Audit — 2026-04-14
 
 Historical note: This review note was relocated from the repo root into `notes/reviews/` in D13. The substantive audit below is preserved as the original historical snapshot.
 
@@ -6,12 +6,12 @@ Historical note: This review note was relocated from the repo root into `notes/r
 
 **Verdict: Converging strongly. This is clearly becoming a field knowledge hub, not a chatbot.**
 
-The current UI direction is substantively correct and materially ahead of where most retrieval-first apps land. The app now expresses its core architectural identityâ€”route â†’ anchor â†’ evidence â†’ follow-upâ€”through visible UI primitives instead of hiding them behind debug surfaces. The detail screen reads like an answer thread with provenance, not a generic LLM chat bubble. The home screen separates "Find Guides" from "Ask From Guides" and shows the knowledge corpus, not an empty prompt box.
+The current UI direction is substantively correct and materially ahead of where most retrieval-first apps land. The app now expresses its core architectural identity—route → anchor → evidence → follow-up—through visible UI primitives instead of hiding them behind debug surfaces. The detail screen reads like an answer thread with provenance, not a generic LLM chat bubble. The home screen separates "Find Guides" from "Ask From Guides" and shows the knowledge corpus, not an empty prompt box.
 
-The biggest single proof that the direction is right: the trust spine (`route type â€¢ evidence strength â€¢ source count â€¢ turn count`) appears immediately in the compact header on every answer screen, in every posture. That is the product contract. It is visible. It is honest. That alone puts this ahead of most comparable apps.
+The biggest single proof that the direction is right: the trust spine (`route type • evidence strength • source count • turn count`) appears immediately in the compact header on every answer screen, in every posture. That is the product contract. It is visible. It is honest. That alone puts this ahead of most comparable apps.
 
 > [!IMPORTANT]
-> The direction is good. The next moves should deepen trust and readabilityâ€”not add features, not chase polish, and not flatten the hierarchy in the name of simplicity.
+> The direction is good. The next moves should deepen trust and readability—not add features, not chase polish, and not flatten the hierarchy in the name of simplicity.
 
 ---
 
@@ -41,21 +41,21 @@ The remaining small UI opportunity from this pass shifts away from the proof aff
 ### Strength 1: The Trust Spine Is Real and Visible
 
 Every answer screen shows:
-- **Route type** â€” `Instant deterministic` vs `AI answer`
-- **Evidence strength** â€” `Strong evidence` / `Moderate evidence` / `No citations`
-- **Source count** â€” `3 src` / `2 src`
-- **Turn count** â€” `1 turn`
-- **Anchor guide chip** â€” `GD-394` / `Anchor GD-394`
+- **Route type** — `Instant deterministic` vs `AI answer`
+- **Evidence strength** — `Strong evidence` / `Moderate evidence` / `No citations`
+- **Source count** — `3 src` / `2 src`
+- **Turn count** — `1 turn`
+- **Anchor guide chip** — `GD-394` / `Anchor GD-394`
 
-This is *not* metadata for developers. This is the product's trust contract. It appears in the compact header rail on phone, in the station rail title on tablet, and in every orientation. The honesty of the `No citations` / `Anchor unavailable` zero-source state is especially strongâ€”most apps would hide this.
+This is *not* metadata for developers. This is the product's trust contract. It appears in the compact header rail on phone, in the station rail title on tablet, and in every orientation. The honesty of the `No citations` / `Anchor unavailable` zero-source state is especially strong—most apps would hide this.
 
 **Screenshot evidence:** The phone top screenshot shows `AI answer | Moderate evidence | 2 src | 1 turn` immediately below the guide title, with `GD-569` anchor chip to the right. Tablet detail shows `Instant deterministic | Strong evidence | 3 sources | 1 turn` with `Anchor GD-394`.
 
 ### Strength 2: Source Navigation Is First-Class
 
 Sources are not buried. They appear as:
-- **Inline source chips** inside the answer bubble on phone (e.g., `GD-569 anchor`, `Simple Forge Designs (â€¦`)
-- **Indexed source buttons** in the tablet station rail (`1/3 [GD-394]â€¦`, `2/3 [GD-394]â€¦`, `3/3 [GD-024]â€¦`)
+- **Inline source chips** inside the answer bubble on phone (e.g., `GD-569 anchor`, `Simple Forge Designs (…`)
+- **Indexed source buttons** in the tablet station rail (`1/3 [GD-394]…`, `2/3 [GD-394]…`, `3/3 [GD-024]…`)
 - **Provenance preview** on tablet, showing the selected source's cited excerpt before jumping to the full guide
 - **Collapsible proof drawer** on phone, expanding sources in place when tapped
 
@@ -66,10 +66,10 @@ This is exactly right for a survival tool. The user needs to verify before actin
 Four genuinely different layout behaviors are implemented and validated on real emulators:
 - **Phone portrait**: compact drawer model, answer-first, collapsible secondary sections
 - **Phone landscape**: terse header rail, compact follow-up, aggressive density
-- **Tablet station** (landscape): left reading column + right utility rail with why â†’ provenance â†’ sources â†’ helper section
+- **Tablet station** (landscape): left reading column + right utility rail with why → provenance → sources → helper section
 - **Tablet clipboard** (portrait): centered reading column, inline lower support
 
-This is not just resource qualifier duplicationâ€”the tablet station rail genuinely uses side space for evidence inspection, and phone landscape genuinely compacts secondary chrome. The posture model (station vs. clipboard) is a strong conceptual framework.
+This is not just resource qualifier duplication—the tablet station rail genuinely uses side space for evidence inspection, and phone landscape genuinely compacts secondary chrome. The posture model (station vs. clipboard) is a strong conceptual framework.
 
 ---
 
@@ -77,7 +77,7 @@ This is not just resource qualifier duplicationâ€”the tablet station rail g
 
 ### Problem 1: Phone Portrait Answer Body Starts Too Low
 
-On the phone portrait "top" view, the answer body text doesn't start until roughly the 35â€“40% mark of the viewport. Above it sits:
+On the phone portrait "top" view, the answer body text doesn't start until roughly the 35–40% mark of the viewport. Above it sits:
 1. System status bar
 2. Custom top bar (`Back` | `GD-569 | Hardening and Tempering Steel` | anchor chip)
 3. Hero panel with `Offline answer ready in 6.2 s` + `Answer thread` mode chip
@@ -98,15 +98,15 @@ The audit-series screenshots (which seem to show a slightly different build or d
 - `Ask a tighter follow-up without losing context.`
 - A full-width text input + `Send` button
 
-That follow-up section title + subtitle consume vertical space that could let more answer body be visible. The compact version (seen in the density_compact screenshots) is betterâ€”just `Ask follow-up...` + `Go`â€”but it's not clear both versions are converging to the same treatment.
+That follow-up section title + subtitle consume vertical space that could let more answer body be visible. The compact version (seen in the density_compact screenshots) is better—just `Ask follow-up...` + `Go`—but it's not clear both versions are converging to the same treatment.
 
 **Recommendation:** Ensure the compact follow-up composer (`Ask follow-up... | Go`) is the default on phone portrait for answer mode, matching the compact_density screenshots. Reserve the expanded composer with title/subtitle for tablet station or first-time-user contexts only.
 
 ### Problem 3: "Why This Answer" Drawer Is Valuable but Has No Visual Anchor Until Tapped
 
-On phone portrait, `Why this answer | Show` appears as a text-only toggle below the answer body. It's easy to scroll past without noticing. The content inside (route family, evidence basis, retrieval lane) is *exactly* what differentiates this app from a generic chat toolâ€”but it reads like an optional footnote.
+On phone portrait, `Why this answer | Show` appears as a text-only toggle below the answer body. It's easy to scroll past without noticing. The content inside (route family, evidence basis, retrieval lane) is *exactly* what differentiates this app from a generic chat tool—but it reads like an optional footnote.
 
-**Recommendation:** Give the collapsed `Why this answer` row a subtle left-edge accent bar (matching the evidence-panel treatment) so it's visually distinct from surrounding text. Don't expand it by defaultâ€”the current collapsed-drawer model is correctâ€”but make it visually clear that it's an interactive trust surface, not a footer label.
+**Recommendation:** Give the collapsed `Why this answer` row a subtle left-edge accent bar (matching the evidence-panel treatment) so it's visually distinct from surrounding text. Don't expand it by default—the current collapsed-drawer model is correct—but make it visually clear that it's an interactive trust surface, not a footer label.
 
 ---
 
@@ -118,12 +118,12 @@ On phone portrait, `Why this answer | Show` appears as a text-only toggle below 
 - It immediately recovers ~100dp of vertical space on the most constrained and most-used posture
 - It moves the actual survival answer closer to the top of the viewport
 - It has zero risk to the trust spine (the header rail already carries route/evidence/source/turn)
-- The hero panel remains valuable during pending/staged answersâ€”this only collapses it *after* the answer arrives
-- It does not require new IDs, new panels, or layout file changesâ€”it's a `DetailActivity.java` visibility toggle
+- The hero panel remains valuable during pending/staged answers—this only collapses it *after* the answer arrives
+- It does not require new IDs, new panels, or layout file changes—it's a `DetailActivity.java` visibility toggle
 
 **Implementation sketch:**
 1. After `renderAnswerBody()` completes with a real answer, set `detail_hero_panel.setVisibility(View.GONE)` on phone portrait
-2. Keep hero visible during staged reveals (the `Using N guides while Senku builds the answerâ€¦` state)
+2. Keep hero visible during staged reveals (the `Using N guides while Senku builds the answer…` state)
 3. Keep hero visible on tablet, where there's enough viewport for it
 
 **Expected result:** Answer body starts at approximately 25% viewport height instead of 40%, which dramatically improves first-glance readability under stress.
@@ -138,13 +138,13 @@ On phone portrait, `Why this answer | Show` appears as a text-only toggle below 
 
 | Aspect | Assessment |
 |--------|-----------|
-| Trust spine visibility | âœ… Strong â€” immediately visible in header rail |
-| Answer body fold position | âš ï¸ Starts too low due to hero panel (see Problem 1) |
-| Source access | âœ… Inline chips above body, expandable proof drawer |
-| Why panel | âš ï¸ Correct behavior (collapsed drawer), but visually too quiet |
-| Follow-up composer | âœ… Compact `Ask follow-up... | Go` is right |
-| Drawer toggles | âœ… `Show/Hide` interaction model works well |
-| Density | âœ… Good balance â€” not overwhelming, not barren |
+| Trust spine visibility | ✅ Strong — immediately visible in header rail |
+| Answer body fold position | ⚠️ Starts too low due to hero panel (see Problem 1) |
+| Source access | ✅ Inline chips above body, expandable proof drawer |
+| Why panel | ⚠️ Correct behavior (collapsed drawer), but visually too quiet |
+| Follow-up composer | ✅ Compact `Ask follow-up... | Go` is right |
+| Drawer toggles | ✅ `Show/Hide` interaction model works well |
+| Density | ✅ Good balance — not overwhelming, not barren |
 
 **Screenshot reference:** `portrait_phone_density_compact_20260414/top.png` shows the hero panel consuming real estate above the answer.
 
@@ -154,11 +154,11 @@ On phone portrait, `Why this answer | Show` appears as a text-only toggle below 
 
 | Aspect | Assessment |
 |--------|-----------|
-| Header rail | âœ… Terse and effective: `Instant â€¢ Strong evidence â€¢ 3 src â€¢ 1 turn` |
-| Answer density | âœ… Good fold position after hero compaction |
-| Result list density | âœ… Two-line compact rows with 5+ visible rows |
-| Follow-up composer | âœ… Compact strip |
-| Emergency suppression | âœ… Bogus helper chips now suppressed for medical answers |
+| Header rail | ✅ Terse and effective: `Instant • Strong evidence • 3 src • 1 turn` |
+| Answer density | ✅ Good fold position after hero compaction |
+| Result list density | ✅ Two-line compact rows with 5+ visible rows |
+| Follow-up composer | ✅ Compact strip |
+| Emergency suppression | ✅ Bogus helper chips now suppressed for medical answers |
 
 ### Tablet Portrait ("Clipboard")
 
@@ -166,10 +166,10 @@ On phone portrait, `Why this answer | Show` appears as a text-only toggle below 
 
 | Aspect | Assessment |
 |--------|-----------|
-| Reading column | âœ… Centered, calm, readable |
-| Trust spine | âœ… Present in header |
-| Lower support panels | ðŸ”¶ Okay below reading flow, but could benefit from the same collapsed-drawer model as phone |
-| Source provenance | âœ… Provenance preview present |
+| Reading column | ✅ Centered, calm, readable |
+| Trust spine | ✅ Present in header |
+| Lower support panels | 🔶 Okay below reading flow, but could benefit from the same collapsed-drawer model as phone |
+| Source provenance | ✅ Provenance preview present |
 
 ### Tablet Landscape ("Station")
 
@@ -179,13 +179,13 @@ On phone portrait, `Why this answer | Show` appears as a text-only toggle below 
 
 | Aspect | Assessment |
 |--------|-----------|
-| Left reading column | âœ… Clean, answer-focused, no competing utility chips |
-| Right utility rail order | âœ… Guides â†’ Source preview â†’ (helpers collapsed) |
-| Provenance preview | âœ… Selected source shows cited excerpt with `Open full guide` |
-| Source indexed buttons | âœ… `1/3`, `2/3`, `3/3` numbering is clear |
-| Helper section collapse | âœ… `Thread context | Show` is correct subordination |
-| Follow-up | âœ… Full composer with context copy |
-| Why panel | ðŸ”¶ Body text visible but title pill hidden â€” acceptable for now but consider restoring it as a section heading in the rail |
+| Left reading column | ✅ Clean, answer-focused, no competing utility chips |
+| Right utility rail order | ✅ Guides → Source preview → (helpers collapsed) |
+| Provenance preview | ✅ Selected source shows cited excerpt with `Open full guide` |
+| Source indexed buttons | ✅ `1/3`, `2/3`, `3/3` numbering is clear |
+| Helper section collapse | ✅ `Thread context | Show` is correct subordination |
+| Follow-up | ✅ Full composer with context copy |
+| Why panel | 🔶 Body text visible but title pill hidden — acceptable for now but consider restoring it as a section heading in the rail |
 
 ---
 
@@ -193,16 +193,16 @@ On phone portrait, `Why this answer | Show` appears as a text-only toggle below 
 
 | Cue | Phone Portrait | Phone Landscape | Tablet Portrait | Tablet Landscape | Verdict |
 |-----|---------------|-----------------|-----------------|------------------|---------|
-| Route family | âœ… In header rail | âœ… In header rail | âœ… In header rail | âœ… In header rail | **Strong** |
-| Anchor guide | âœ… Chip in header | âœ… Chip in header | âœ… Chip in header | âœ… Chip + `Anchor GD-xxx` | **Strong** |
-| Evidence strength | âœ… In header rail | âœ… In header rail | âœ… In header rail | âœ… In header rail | **Strong** |
-| Source count | âœ… `N src` | âœ… `N src` | âœ… `N sources` | âœ… `N sources` | **Strong** |
-| Source preview / provenance | âœ… Expandable drawer | âš ï¸ Present but space-constrained | âœ… Below reading flow | âœ… Inline rail preview | **Adequate** |
-| Why this answer | âš ï¸ Present but visually quiet | âš ï¸ Compacted, visible | âš ï¸ Present | âœ… In rail | **Adequate, room to strengthen** |
-| No-citation honesty | âœ… Explicit `No citations` + `Anchor unavailable` | âœ… Same | âœ… Same | âœ… Same | **Excellent** |
+| Route family | ✅ In header rail | ✅ In header rail | ✅ In header rail | ✅ In header rail | **Strong** |
+| Anchor guide | ✅ Chip in header | ✅ Chip in header | ✅ Chip in header | ✅ Chip + `Anchor GD-xxx` | **Strong** |
+| Evidence strength | ✅ In header rail | ✅ In header rail | ✅ In header rail | ✅ In header rail | **Strong** |
+| Source count | ✅ `N src` | ✅ `N src` | ✅ `N sources` | ✅ `N sources` | **Strong** |
+| Source preview / provenance | ✅ Expandable drawer | ⚠️ Present but space-constrained | ✅ Below reading flow | ✅ Inline rail preview | **Adequate** |
+| Why this answer | ⚠️ Present but visually quiet | ⚠️ Compacted, visible | ⚠️ Present | ✅ In rail | **Adequate, room to strengthen** |
+| No-citation honesty | ✅ Explicit `No citations` + `Anchor unavailable` | ✅ Same | ✅ Same | ✅ Same | **Excellent** |
 
 > [!TIP]
-> The trust cue system is one of the strongest aspects of this app. The only improvement needed is making the "Why this answer" surface slightly more visually prominent in its collapsed stateâ€”not more content, just a clearer visual affordance that it's there.
+> The trust cue system is one of the strongest aspects of this app. The only improvement needed is making the "Why this answer" surface slightly more visually prominent in its collapsed state—not more content, just a clearer visual affordance that it's there.
 
 ---
 

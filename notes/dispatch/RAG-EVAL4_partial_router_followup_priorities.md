@@ -1,5 +1,16 @@
 # RAG-EVAL4 Partial Router Follow-up Priorities
 
+## Current Baseline
+
+`gd397_expectation_cleanup` supersedes the earlier partial/router waypoints.
+Current proof is
+`artifacts/bench/rag_eval_partial_router_holdouts_20260425_gd397_expectation_cleanup_diag/report.md`:
+`21/21` successful prompts, `19` expected-supported rows, `0` artifact errors,
+`0` retrieval misses, `0` ranking misses, `0` generation/citation misses, `2`
+accepted abstain/clarify rows, and `20/21` expected-owner cited. Earlier
+`post_fixes`, `metadata_visible`, and `contextual_index` artifacts below are
+preserved as historical progression notes, not current targets.
+
 ## Slice
 
 Capture the concrete follow-up queue from the `RAG-EVAL2` held-out pack after
@@ -41,7 +52,7 @@ After any follow-up slice, rerun the held-out pack and marker overlay:
 & .\.venvs\senku-validate\Scripts\python.exe -B scripts\analyze_rag_bench_failures.py artifacts\bench\rag_eval_partial_router_holdouts_20260425_rerun.json --corpus-marker-scan artifacts\bench\corpus_marker_scan_20260425_1622_gd585_repair.json --output-dir artifacts\bench\rag_eval_partial_router_holdouts_20260425_rerun_diag
 ```
 
-## Post-fix proof
+## Historical Waypoint: Post-fix Proof
 
 After `RAG-EVAL5`, the GD-064/GD-066 partial repairs, and the bridge metadata
 pass, a focused rerun wrote:
@@ -106,7 +117,7 @@ Next best slice is retrieval-miss repair, starting with metadata ingestion of
 frontmatter `aliases`, `routing_cues`, and `applicability` into chunk metadata
 before adding more guide-frontmatter churn.
 
-## 2026-04-25 Metadata Visibility Proof
+## Historical Waypoint: 2026-04-25 Metadata Visibility Proof
 
 The next slice preserved frontmatter `aliases`, `routing_cues`, and
 `applicability` in chunk metadata, exposed those fields to contextual retrieval
@@ -140,7 +151,7 @@ incremental ingest instead of another full rebuild:
 unchanged SHA-256 matches from `chroma_db/ingest_manifest.json`, and deletes /
 re-embeds only changed guide IDs in Chroma and the lexical index.
 
-## 2026-04-25 Contextual Index Proof
+## Historical Waypoint: 2026-04-25 Contextual Index Proof
 
 The next slice moved contextual retrieval text from shadow-only evidence into
 candidate selection while preserving raw chunk text as the stored document:

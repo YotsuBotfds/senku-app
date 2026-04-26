@@ -24,6 +24,8 @@ large artifacts, long dispatch notes, and verbose diagnostics.
    `scripts/summarize_worktree_delta.py` - landed.
    Support validation planning, prompt-pack inventory, and quick dirty-tree
    grouping.
+7. `scripts/plan_incremental_ingest.py` - landed.
+   Plan focused guide re-ingest batches from changed guide/catalog inputs.
 
 ## 2026-04-25 Scout Triage Queue
 
@@ -246,6 +248,21 @@ The focused held-out pack and broad prompt discovery both pass with `0`
 errors. With retrieval-eval input, `RE2-UP-011` reports a warning because it is
 an accepted clarify path whose expected owner is absent from top-k; keep
 `--fail-on-warnings` for strict retrieval-only gates.
+
+## 2026-04-25/26 Tooling Queue Visibility
+
+- **RAG-TOOL6 incremental ingest planner - landed.**
+  `scripts/plan_incremental_ingest.py` gives workers a scoped guide ingest plan
+  before trusting retrieval after guide/catalog edits.
+- **RAG-TOOL7 non-Android regression gate recipe - queued.**
+  Capture the desktop-only validation recipe that keeps Android/emulator work
+  out of ordinary RAG/tooling regression gates.
+- **RAG-TOOL8 mojibake cleanup queue - queued.**
+  Track text-encoding cleanup targets through
+  `notes/dispatch/RAG-TOOL8_mojibake_cleanup_queue.md`.
+- **RAG-TOOL9 worker orchestration monitoring - queued.**
+  Track multi-worker status and stale-handoff checks through
+  `notes/dispatch/RAG-TOOL9_worker_orchestration_monitoring.md`.
 
 ## Landed proof
 

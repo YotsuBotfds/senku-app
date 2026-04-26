@@ -3,8 +3,13 @@
 ## Slice
 
 Design the next non-Android held-out eval pack from the compound and
-high-liability backlog. This is a planning artifact only: no guide edits, no
-runtime/rerank changes, no Android work, and no JSONL pack yet.
+high-liability backlog. This began as a planning artifact only: no guide edits,
+no runtime/rerank changes, and no Android work.
+
+Draft first-cut artifacts now exist:
+
+- `artifacts/prompts/adhoc/rag_eval_high_liability_compound_holdouts_20260425.jsonl`
+- `notes/specs/rag_eval_high_liability_compound_holdouts_20260425.md`
 
 ## Sources Read
 
