@@ -4399,9 +4399,15 @@ _TRIAGE_MARKERS = {
     "three people",
     "multiple patients",
     "triage",
+    "who gets attention first",
+    "attention first",
+    "gets attention first",
     "who gets treated first",
+    "what gets delegated",
     "what order",
     "prioritize them",
+    "delegate",
+    "delegated",
 }
 
 _SESSION_CONTEXT_HINTS = (
@@ -8885,10 +8891,63 @@ def _is_head_injury_clear_fluid_special_case(question):
     return has_clear_fluid and has_head_trauma
 
 
+def _is_compound_evacuation_triage_delegation_query(question):
+    """Detect mixed evacuation triage prompts that need retrieval, not one injury template."""
+    lower = question.lower()
+    has_multi_person_signal = _text_has_marker(
+        lower,
+        {
+            "one person",
+            "another",
+            "someone else",
+            "multiple patients",
+            "two people",
+            "minor scrape",
+            "minor scrapes",
+        },
+    )
+    has_triage_or_delegation_signal = _text_has_marker(
+        lower,
+        {
+            "who gets attention first",
+            "attention first",
+            "gets attention first",
+            "what gets delegated",
+            "delegate",
+            "delegated",
+            "sort priorities",
+            "triage",
+        },
+    )
+    has_evacuation_logistics_signal = _text_has_marker(
+        lower,
+        {
+            "evacuation prep",
+            "evacuation",
+            "evacuating",
+            "road may flood",
+            "road might flood",
+            "road could flood",
+            "goats",
+            "livestock",
+            "animals",
+            "road",
+            "flood",
+        },
+    )
+    return (
+        has_multi_person_signal
+        and has_triage_or_delegation_signal
+        and has_evacuation_logistics_signal
+    )
+
+
 def _is_adult_head_injury_red_flag_special_case(question):
     """Detect adult head-injury red flags that need trauma-first ownership."""
     lower = question.lower()
     if _is_head_injury_clear_fluid_special_case(lower):
+        return False
+    if _is_compound_evacuation_triage_delegation_query(lower):
         return False
     has_head_trauma = any(
         marker in lower
@@ -13330,6 +13389,27 @@ def _supplemental_retrieval_specs(
                 "limit": supplemental_limit,
             }
         )
+        if _is_compound_evacuation_triage_delegation_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": (
+                            "disaster triage multiple casualties evacuation delegation "
+                            "first attention minor injuries"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            "first aid red flags after fall confusion dizziness head "
+                            "injury shock urgent evaluation"
+                        ),
+                        "category": "medical",
+                        "limit": supplemental_limit,
+                    },
+                ]
+            )
 
     if _is_supply_conflict_query(question_lower):
         specs.extend(

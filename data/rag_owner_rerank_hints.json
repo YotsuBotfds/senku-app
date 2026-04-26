@@ -30,7 +30,10 @@
           "sort priorities",
           "sort priority",
           "triage",
-          "responder sort"
+          "responder sort",
+          "who gets attention first",
+          "attention first",
+          "gets attention first"
         ],
         [
           "first 10 minutes",
@@ -38,6 +41,14 @@
           "multiple",
           "another",
           "one person"
+        ],
+        [
+          "minor scrapes",
+          "minor scrape",
+          "what gets delegated",
+          "delegated",
+          "delegate",
+          "evacuation prep"
         ]
       ]
     },

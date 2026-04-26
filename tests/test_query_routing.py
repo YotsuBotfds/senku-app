@@ -375,6 +375,12 @@ class QueryRoutingTests(unittest.TestCase):
                 -0.14,
             ),
             (
+                "During evacuation prep, one person fell and is confused and dizzy, another has minor scrapes, goats are loose, and the road may flood. Who gets attention first and what gets delegated?",
+                {"guide_id": "GD-029", "guide_title": "Disaster Triage & MCI"},
+                {"guide_id": "GD-470", "guide_title": "Animal Husbandry Transportation"},
+                -0.14,
+            ),
+            (
                 "Two old medicine labels disagree and the patient weight is uncertain. What can Senku safely verify before giving anything?",
                 {"guide_id": "GD-239", "guide_title": "Medications"},
                 {"guide_id": "GD-056", "guide_title": "Pharmacy Inventory"},
@@ -1952,6 +1958,10 @@ class QueryRoutingTests(unittest.TestCase):
             (
                 "During storm evacuation, an adult has chest pressure, arm tingling, and wants to drive themself while we also handle animals and water.",
                 "acute coronary cardiac emergencies chest pressure",
+            ),
+            (
+                "During evacuation prep, one person fell and is confused and dizzy, another has minor scrapes, goats are loose, and the road may flood. Who gets attention first and what gets delegated?",
+                "disaster triage multiple casualties evacuation delegation first attention minor injuries",
             ),
             (
                 "sleepy after possible medicine ingestion",

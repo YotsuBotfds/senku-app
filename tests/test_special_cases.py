@@ -1241,6 +1241,13 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertNotIn("stroke emergency", response.lower().split(".", 1)[0])
 
     def test_adult_head_injury_red_flags_route_to_head_injury_rule(self):
+        compound_triage_prompt = (
+            "During evacuation prep, one person fell and is confused and dizzy, "
+            "another has minor scrapes, goats are loose, and the road may flood. "
+            "Who gets attention first and what gets delegated?"
+        )
+        self.assertEqual(query.classify_special_case(compound_triage_prompt), (None, None))
+
         prompts = [
             "I hit my head and keep vomiting. What do I do first?",
             "They blacked out after a fall and are still confused. What matters first?",
