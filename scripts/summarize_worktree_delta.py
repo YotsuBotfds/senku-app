@@ -37,6 +37,13 @@ GENERATED_SUFFIXES = (
     ".log",
 )
 
+PROTECTED_BENIGN_UNTRACKED = {
+    "notes/PLANNER_HANDOFF_2026-04-25_FAST_MODE.md",
+    "notes/PLANNER_HANDOFF_2026-04-25_POST_CLI_TERMINATION.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
+    "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
+}
+
 
 @dataclass(frozen=True)
 class WorktreeEntry:
@@ -96,8 +103,13 @@ def is_generated_noise(path: str, status: str = "") -> bool:
     return normalized.startswith(GENERATED_PREFIXES) or normalized.endswith(GENERATED_SUFFIXES)
 
 
-def parse_porcelain_status(status_text: str, *, include_generated: bool = False) -> list[WorktreeEntry]:
+def parse_porcelain_status(
+    status_text: str,
+    *,
+    include_generated: bool = False,
+) -> tuple[list[WorktreeEntry], list[str]]:
     entries: list[WorktreeEntry] = []
+    benign_untracked: list[str] = []
     for raw_line in status_text.splitlines():
         if not raw_line.strip():
             continue
@@ -109,6 +121,9 @@ def parse_porcelain_status(status_text: str, *, include_generated: bool = False)
             old_path, path = rest.split(" -> ", 1)
             old_path = normalize_path(old_path)
         path = normalize_path(path)
+        if status == "??" and path in PROTECTED_BENIGN_UNTRACKED:
+            benign_untracked.append(path)
+            continue
         if not include_generated and is_generated_noise(path, status=status):
             continue
         entries.append(
@@ -119,7 +134,7 @@ def parse_porcelain_status(status_text: str, *, include_generated: bool = False)
                 lane=lane_for_path(path),
             )
         )
-    return entries
+    return entries, benign_untracked
 
 
 def parse_diff_stat(diff_stat_text: str) -> dict[str, str]:
@@ -158,7 +173,10 @@ def summarize_worktree_delta(
     diff_stat_text: str = "",
     include_generated: bool = False,
 ) -> dict[str, Any]:
-    entries = parse_porcelain_status(status_text, include_generated=include_generated)
+    entries, benign_untracked = parse_porcelain_status(
+        status_text,
+        include_generated=include_generated,
+    )
     if diff_stat_text:
         entries = attach_diff_stats(entries, parse_diff_stat(diff_stat_text))
 
@@ -180,6 +198,8 @@ def summarize_worktree_delta(
         "total_changed": sum(lane["count"] for lane in lanes),
         "lanes": lanes,
         "excluded_generated_noise": not include_generated,
+        "excluded_benign_untracked": benign_untracked,
+        "excluded_benign_untracked_count": len(benign_untracked),
     }
 
 
@@ -189,6 +209,7 @@ def render_markdown(summary: dict[str, Any]) -> str:
         "",
         f"- Changed files: {summary['total_changed']}",
         f"- Generated artifact noise excluded: {str(summary['excluded_generated_noise']).lower()}",
+        f"- Benign untracked excluded: {summary.get('excluded_benign_untracked_count', 0)}",
         "",
     ]
     if not summary["lanes"]:

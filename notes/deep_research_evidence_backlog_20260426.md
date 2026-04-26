@@ -291,6 +291,9 @@ Action:
 - Aligned agent startup snapshots with the same actionable-clean semantics,
   keeping protected planner handoff paths visible as benign context instead of
   dirty worktree entries.
+- Aligned worktree-delta summaries with the protected planner handoff policy,
+  excluding those local handoff notes from actionable changed-file counts while
+  reporting the benign exclusion count.
 - Hardened bench Markdown response recovery so padded source/context headings
   stop answer extraction instead of leaking source bullets into fallback
   response text.

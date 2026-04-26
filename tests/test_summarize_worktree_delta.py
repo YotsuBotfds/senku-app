@@ -54,6 +54,26 @@ class SummarizeWorktreeDeltaTests(unittest.TestCase):
         self.assertEqual(2, summary["total_changed"])
         self.assertEqual(2, lanes["artifacts/generated"]["count"])
 
+    def test_excludes_protected_planner_handoffs_from_actionable_delta(self):
+        status = (
+            "?? notes\\PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md\n"
+            " M scripts/tool.py\n"
+        )
+
+        summary = summarize_worktree_delta(status_text=status)
+        lanes = {lane["lane"]: lane for lane in summary["lanes"]}
+        markdown = render_markdown(summary)
+
+        self.assertEqual(1, summary["total_changed"])
+        self.assertEqual(
+            ["notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md"],
+            summary["excluded_benign_untracked"],
+        )
+        self.assertEqual(1, summary["excluded_benign_untracked_count"])
+        self.assertEqual("scripts/tooling", summary["lanes"][0]["lane"])
+        self.assertEqual("scripts/tool.py", lanes["scripts/tooling"]["files"][0]["path"])
+        self.assertIn("Benign untracked excluded: 1", markdown)
+
     def test_renames_and_diff_stat_are_preserved(self):
         status = "R  scripts/old_name.py -> scripts/new_name.py\n"
         diff_stat = " scripts/new_name.py | 12 +++++++-----\n"
