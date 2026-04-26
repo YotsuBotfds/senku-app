@@ -242,6 +242,66 @@ _CHEMICAL_INHALATION_ROUTE_MARKERS = {
     "nauseous",
 }
 
+_THERMAL_BURN_SOURCE_MARKERS = {
+    "boiling water",
+    "hot water",
+    "scald",
+    "scalded",
+    "steam",
+    "camp stove",
+    "stove",
+    "flame",
+    "fire",
+}
+
+_THERMAL_BURN_INJURY_MARKERS = {
+    "burn",
+    "burns",
+    "burned",
+    "blister",
+    "blisters",
+    "blistering",
+}
+
+_BURN_HIGH_RISK_LOCATION_OR_PATIENT_MARKERS = {
+    "child",
+    "kid",
+    "toddler",
+    "infant",
+    "face",
+    "facial",
+    "hand",
+    "hands",
+    "finger",
+    "fingers",
+}
+
+_BURN_SMOKE_AIRWAY_CONTEXT_MARKERS = {
+    "smoke",
+    "smoky",
+    "soot",
+    "singed",
+    "room is smoky",
+    "indoor",
+    "indoors",
+    "inside",
+    "cough",
+    "coughing",
+    "voice change",
+    "voice sounds different",
+    "stridor",
+    "trouble breathing",
+    "difficulty breathing",
+}
+
+_NEGATED_BURN_SMOKE_CONTEXT_MARKERS = {
+    "no smoke",
+    "no smoky",
+    "without smoke",
+    "without any smoke",
+    "not smoky",
+}
+
 _UNKNOWN_LOOSE_CHEMICAL_POWDER_QUERY_UNKNOWN_MARKERS = {
     "unknown",
     "cannot tell",
@@ -506,10 +566,59 @@ def _is_household_chemical_inhalation_query(question):
 def _is_chemical_spill_sick_exposure_query(question):
     """Detect chemical spill plus symptoms prompts as exposure triage, not process design."""
     lower = question.lower()
+    has_source = _text_has_marker(
+        lower,
+        {
+            "chemical",
+            "pesticide",
+            "insecticide",
+            "pesticide container",
+            "insecticide container",
+        },
+    )
+    has_spill = _text_has_marker(
+        lower,
+        {
+            "chemical spill",
+            "spill",
+            "spilled",
+            "spilled chemical",
+            "chemical leaked",
+            "chemical leak",
+            "container spilled",
+            "pesticide container spilled",
+            "spilled in the shed",
+        },
+    )
+    has_context = _text_has_marker(
+        lower,
+        {"workshop", "shop", "garage", "facility", "lab", "room", "area", "shed"},
+    )
+    has_sick_or_fume = _text_has_marker(
+        lower,
+        {
+            "feels sick",
+            "feel sick",
+            "sick",
+            "nausea",
+            "nauseous",
+            "vomiting",
+            "vomit",
+            "dizzy",
+            "headache",
+            "coughing",
+            "trouble breathing",
+            "confused",
+            "confusion",
+            "fume",
+            "fumes",
+        },
+    )
     return (
-        _text_has_marker(lower, {"chemical spill", "spill", "spilled chemical", "chemical leaked", "chemical leak"})
-        and _text_has_marker(lower, {"workshop", "shop", "garage", "facility", "lab", "room", "area"})
-        and _text_has_marker(lower, {"feels sick", "feel sick", "sick", "nausea", "nauseous", "dizzy", "headache", "coughing", "trouble breathing"})
+        has_source
+        and has_spill
+        and has_context
+        and has_sick_or_fume
     )
 
 
@@ -524,9 +633,35 @@ def _is_indoor_combustion_co_smoke_query(question):
     )
     has_source = _text_has_marker(lower, _INDOOR_COMBUSTION_CO_SOURCE_MARKERS)
     has_hazard = _text_has_marker(lower, _INDOOR_COMBUSTION_CO_HAZARD_MARKERS)
-    enclosed = _text_has_marker(lower, {"indoors", "inside", "room", "house", "cabin", "tent", "enclosed"})
+    enclosed = _text_has_marker(
+        lower,
+        {
+            "indoors",
+            "inside",
+            "room",
+            "house",
+            "cabin",
+            "tent",
+            "enclosed",
+            "garage",
+            "attached garage",
+        },
+    )
     return (explicit_co and (blocked_ventilation or has_source or enclosed)) or (
         has_source and has_hazard and enclosed
+    )
+
+
+def _is_thermal_burn_smoke_airway_query(question):
+    """Detect thermal/scald burn prompts where smoke and face/hand/child risk need burn plus airway owners."""
+    lower = question.lower()
+    if _text_has_marker(lower, _NEGATED_BURN_SMOKE_CONTEXT_MARKERS):
+        return False
+    return (
+        _text_has_marker(lower, _THERMAL_BURN_SOURCE_MARKERS)
+        and _text_has_marker(lower, _THERMAL_BURN_INJURY_MARKERS)
+        and _text_has_marker(lower, _BURN_HIGH_RISK_LOCATION_OR_PATIENT_MARKERS)
+        and _text_has_marker(lower, _BURN_SMOKE_AIRWAY_CONTEXT_MARKERS)
     )
 
 

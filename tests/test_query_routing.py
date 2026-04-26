@@ -893,6 +893,17 @@ class QueryRoutingTests(unittest.TestCase):
     def test_indoor_combustion_co_prompt_prefers_smoke_co_owners(self):
         question = "Blocked ventilation and now I'm worried about carbon monoxide. What should I do right now?"
         self.assertTrue(query._is_indoor_combustion_co_smoke_query(question))
+        garage_question = (
+            "After a generator was moved into an attached garage during a storm outage, "
+            "two people have headaches and dizziness and a child is very sleepy. What comes first?"
+        )
+        self.assertTrue(query._is_indoor_combustion_co_smoke_query(garage_question))
+        self.assertEqual(
+            query._retrieval_profile_for_question(
+                garage_question, query.build_scenario_frame(garage_question)
+            ),
+            "safety_triage",
+        )
 
         smoke_meta = {
             "guide_title": "Smoke Inhalation, Carbon Monoxide & Fire-Gas Exposure",
@@ -917,6 +928,164 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(
             any("smoke inhalation carbon monoxide fire-gas exposure" in spec["text"] for spec in specs),
             specs,
+        )
+
+    def test_child_face_hand_burn_with_smoke_gets_burn_and_airway_owners(self):
+        question = (
+            "A child pulled boiling water from an indoor camp stove during an outage, "
+            "has blistering burns on the hand and face, and the room is smoky. "
+            "Our tap water may be unsafe. What first?"
+        )
+        self.assertTrue(query._is_thermal_burn_smoke_airway_query(question))
+        self.assertEqual(
+            query._retrieval_profile_for_question(question, query.build_scenario_frame(question)),
+            "safety_triage",
+        )
+
+        frame = query.build_scenario_frame(question)
+        self.assertIn("medical", frame["domains"])
+        self.assertIn("water", frame["domains"])
+        self.assertTrue(frame["safety_critical"])
+
+        specs = query._supplemental_retrieval_specs(question, 8)
+        self.assertTrue(
+            any(
+                spec.get("where") == {"slug": "burn-treatment"}
+                and "child blistering burns face hand" in spec["text"]
+                for spec in specs
+            ),
+            specs,
+        )
+        self.assertTrue(
+            any(
+                spec.get("where") == {"slug": "emergency-airway-management"}
+                and
+                "emergency-airway-management facial burns smoke exposure" in spec["text"]
+                for spec in specs
+            ),
+            specs,
+        )
+        self.assertTrue(
+            any(
+                spec.get("where") == {
+                    "slug": "smoke-inhalation-carbon-monoxide-fire-gas-exposure"
+                }
+                and "smoke-inhalation-carbon-monoxide-fire-gas exposure" in spec["text"]
+                for spec in specs
+            ),
+            specs,
+        )
+
+        burn_meta = {
+            "guide_id": "GD-052",
+            "guide_title": "Burn Treatment & Management",
+            "slug": "burn-treatment",
+            "description": "Burn classification and treatment.",
+            "category": "medical",
+            "tags": "burns, scalds, blisters",
+        }
+        airway_meta = {
+            "guide_id": "GD-579",
+            "guide_title": "Emergency Airway Management & Respiratory Distress Protocols",
+            "slug": "emergency-airway-management",
+            "description": "Airway failure and respiratory distress.",
+            "category": "medical",
+            "tags": "airway, respiratory distress",
+        }
+        cookstove_meta = {
+            "guide_id": "GD-904",
+            "guide_title": "Cookstoves, Indoor Heating & Safety",
+            "slug": "cookstoves-indoor-heating-safety",
+            "description": "Indoor heating, chimneys, draft troubleshooting, and smoke backflow.",
+            "category": "survival",
+            "tags": "cookstoves, indoor heating, chimney, carbon monoxide",
+        }
+        child_safety_meta = {
+            "guide_id": "GD-941",
+            "guide_title": "Child Safety, Childproofing & Homestead Hazards",
+            "slug": "child-safety-homestead-hazards",
+            "description": "Childproofing and household hazard prevention.",
+            "category": "survival",
+            "tags": "child safety, hot water, stove hazards",
+        }
+
+        self.assertLess(
+            query._metadata_rerank_delta(question, burn_meta),
+            query._metadata_rerank_delta(question, cookstove_meta),
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(question, airway_meta),
+            query._metadata_rerank_delta(question, child_safety_meta),
+        )
+
+    def test_child_face_hand_burn_smoke_predicate_stays_narrow(self):
+        near_misses = [
+            "I got burned on my forearm by hot water. What should I do first?",
+            "A camp stove made the room smoky but nobody is burned. What first?",
+            "A child has a small blister on one finger but no smoke or stove issue.",
+            "Our tap water may be unsafe during an outage. What first?",
+        ]
+        for prompt in near_misses:
+            with self.subTest(prompt=prompt):
+                self.assertFalse(query._is_thermal_burn_smoke_airway_query(prompt))
+
+    def test_sleepy_toddler_diarrhea_gets_pediatric_dehydration_owners(self):
+        question = (
+            "Several kids at a shelter have diarrhea, and one toddler is very sleepy "
+            "and cannot keep fluids down. Handwashing water is limited and the "
+            "kitchen still needs to serve dinner. What should the lead separate first?"
+        )
+        self.assertTrue(query._is_pediatric_dehydration_danger_query(question))
+        self.assertEqual(
+            query._retrieval_profile_for_question(question, query.build_scenario_frame(question)),
+            "safety_triage",
+        )
+        frame = query.build_scenario_frame(question)
+        self.assertIn("medical", frame["domains"])
+        self.assertTrue(frame["safety_critical"])
+
+        specs = query._supplemental_retrieval_specs(question, 8)
+        self.assertTrue(
+            any(spec.get("where") == {"slug": "pediatric-emergencies-field"} for spec in specs),
+            specs,
+        )
+        self.assertTrue(
+            any(
+                spec.get("where") == {"slug": "gastroenteritis-diarrhea-management"}
+                for spec in specs
+            ),
+            specs,
+        )
+
+        pediatric_meta = {
+            "guide_id": "GD-617",
+            "guide_title": "Pediatric Emergencies: Sepsis, Dehydration & Respiratory Distress",
+            "slug": "pediatric-emergencies-field",
+            "description": "Child dehydration danger signs, hard to wake, poor drinking.",
+            "category": "medical",
+        }
+        gi_meta = {
+            "guide_id": "GD-379",
+            "guide_title": "GI Illness, Diarrhea & Dysentery Management",
+            "slug": "gastroenteritis-diarrhea-management",
+            "description": "Diarrhea, vomiting, dehydration red flags, oral rehydration.",
+            "category": "medical",
+        }
+        kitchen_meta = {
+            "guide_id": "GD-902",
+            "guide_title": "Community Kitchen Illness Control",
+            "slug": "community-kitchen-illness-control",
+            "description": "Kitchen meal service, handwashing, and food-service workflow.",
+            "category": "community",
+        }
+
+        self.assertLess(
+            query._metadata_rerank_delta(question, pediatric_meta),
+            query._metadata_rerank_delta(question, kitchen_meta),
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(question, gi_meta),
+            query._metadata_rerank_delta(question, kitchen_meta),
         )
 
     def test_blocked_upstairs_bedroom_exit_routes_to_closed_room_fire(self):
@@ -1481,6 +1650,64 @@ class QueryRoutingTests(unittest.TestCase):
         self.assertTrue(
             any("chemical spill workshop someone feels sick" in spec["text"] for spec in spill_sick_specs),
             [spec["text"] for spec in spill_sick_specs],
+        )
+        pesticide_spill_question = (
+            "A pesticide container spilled in the shed, someone is vomiting and "
+            "confused, our only clean water is low, and the wind is pushing fumes "
+            "toward the house. What do we do first?"
+        )
+        self.assertTrue(query._is_chemical_spill_sick_exposure_query(pesticide_spill_question))
+        self.assertEqual(
+            query._retrieval_profile_for_question(
+                pesticide_spill_question, query.build_scenario_frame(pesticide_spill_question)
+            ),
+            "safety_triage",
+        )
+        pesticide_specs = query._supplemental_retrieval_specs(pesticide_spill_question, 8)
+        self.assertTrue(
+            any(
+                spec.get("category") == "defense"
+                and spec.get("where") == {"slug": "chemical-industrial-accident-response"}
+                for spec in pesticide_specs
+            ),
+            pesticide_specs,
+        )
+        self.assertTrue(
+            any(
+                spec.get("category") == "medical"
+                and "toxicology toxidromes first aid" in spec["text"]
+                for spec in pesticide_specs
+            ),
+            pesticide_specs,
+        )
+        industrial_meta = {
+            "guide_id": "GD-696",
+            "guide_title": "Chemical & Industrial Accident Response",
+            "slug": "chemical-industrial-accident-response",
+            "description": "Wind, upwind/downwind, shelter and decontamination guidance.",
+            "category": "defense",
+        }
+        toxicology_meta = {
+            "guide_id": "GD-054",
+            "guide_title": "Toxicology & Poison Management",
+            "slug": "toxicology",
+            "description": "Emergency toxic exposure, pesticide and organophosphate exposure.",
+            "category": "medical",
+        }
+        water_meta = {
+            "guide_id": "GD-035",
+            "guide_title": "Water Purification",
+            "slug": "water-purification",
+            "description": "Clean water, filtration, and disinfection.",
+            "category": "water",
+        }
+        self.assertLess(
+            query._metadata_rerank_delta(pesticide_spill_question, industrial_meta),
+            query._metadata_rerank_delta(pesticide_spill_question, water_meta),
+        )
+        self.assertLess(
+            query._metadata_rerank_delta(pesticide_spill_question, toxicology_meta),
+            query._metadata_rerank_delta(pesticide_spill_question, water_meta),
         )
 
         feedstock_exposure_question = (

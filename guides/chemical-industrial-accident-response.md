@@ -4,6 +4,12 @@ slug: chemical-industrial-accident-response
 title: Chemical & Industrial Accident Response
 category: defense
 difficulty: advanced
+aliases:
+  - pesticide spill with fumes
+  - insecticide container spilled
+  - chemical spill in shed with vomiting
+  - downwind fumes toward house
+  - chemical accident low water decontamination
 tags:
   - chemical-hazard
   - industrial-accident
@@ -12,6 +18,9 @@ tags:
   - evacuation
 icon: ☣️
 description: Advanced response to chemical spills, industrial accidents, and toxic exposure including recognition, shelter-in-place, evacuation, decontamination, and improvised protection.
+routing_cues:
+  - Use for chemical or pesticide spills with fumes, wind movement, downwind shelter decisions, evacuation/shelter-in-place choices, decontamination constraints, or multi-person exposure.
+  - Pair with toxicology for vomiting, confusion, neurologic symptoms, poisoning assessment, antidote questions, or poison-control escalation after a chemical exposure.
 related:
   - first-aid
   - epidemic-pandemic-response

@@ -118,6 +118,7 @@ from query_routing_predicates import (
     _is_salt_jars_hot_humid_setup_query,
     _is_simple_courier_note_auth_query,
     _is_stretcher_access_query,
+    _is_thermal_burn_smoke_airway_query,
     _is_unknown_chemical_skin_burn_query,
     _is_unknown_leaking_chemical_container_query,
     _is_unknown_loose_chemical_powder_query,
@@ -489,7 +490,11 @@ _HUMAN_MEDICAL_KEYWORDS = {
     "wound",
     "puncture",
     "burn",
+    "burns",
     "burned",
+    "blister",
+    "blisters",
+    "blistering",
     "bite",
     "bleeding",
     "blood in stool",
@@ -580,6 +585,8 @@ _HUMAN_MEDICAL_KEYWORDS = {
 }
 
 _ACUTE_SYMPTOM_MARKERS = {
+    "blistering burn",
+    "blistering burns",
     "chest pain",
     "chest pressure",
     "shortness of breath",
@@ -6788,6 +6795,8 @@ _INDOOR_CO_EXPOSURE_CONTEXT_MARKERS = {
     "house",
     "cabin",
     "tent",
+    "garage",
+    "attached garage",
     "sleeping",
     "slept",
     "woke up",
@@ -9475,7 +9484,25 @@ def _metadata_rerank_delta(question, meta):
         if _text_has_marker(meta_text, _HOT_WATER_HEATING_DISTRACTOR_METADATA_MARKERS):
             apply_delta("indoor_combustion_co_hot_water_distractor", 0.18)
 
+    if _is_thermal_burn_smoke_airway_query(question):
+        if guide_id == "GD-052":
+            apply_delta("thermal_burn_smoke_burn_owner_id", -0.22)
+        elif guide_id == "GD-579":
+            apply_delta("thermal_burn_smoke_airway_owner_id", -0.18)
+        elif guide_id == "GD-899":
+            apply_delta("thermal_burn_smoke_inhalation_support_id", -0.10)
+        elif guide_id == "GD-904":
+            apply_delta("thermal_burn_smoke_cookstove_support_not_owner", 0.08)
+        elif guide_id == "GD-941":
+            apply_delta("thermal_burn_smoke_child_safety_distractor", 0.12)
+
     if _is_chemical_spill_sick_exposure_query(question):
+        if guide_id == "GD-696":
+            apply_delta("chemical_spill_sick_industrial_response_owner_id", -0.22)
+        elif guide_id == "GD-054":
+            apply_delta("chemical_spill_sick_toxicology_owner_id", -0.18)
+        elif guide_id in {"GD-602", "GD-301"}:
+            apply_delta("chemical_spill_sick_toxicology_support_id", -0.10)
         if _text_has_marker(
             meta_text,
             {
@@ -9885,6 +9912,40 @@ def _metadata_rerank_delta(question, meta):
             apply_delta("newborn_sepsis_owner_metadata", -0.16)
         if has_routine_newborn_metadata:
             apply_delta("newborn_sepsis_routine_distractor_metadata", 0.12)
+
+    if _is_pediatric_dehydration_danger_query(question):
+        if guide_id == "GD-617":
+            apply_delta("pediatric_dehydration_pediatric_emergency_owner_id", -0.20)
+        elif guide_id == "GD-379":
+            apply_delta("pediatric_dehydration_gastroenteritis_owner_id", -0.16)
+        elif guide_id in {"GD-284", "GD-902"}:
+            apply_delta("pediatric_dehydration_shelter_support_id", -0.04)
+        if _text_has_marker(
+            meta_text,
+            {
+                "pediatric emergencies",
+                "pediatric-emergencies-field",
+                "dehydration",
+                "gastroenteritis",
+                "diarrhea",
+                "diarrhoea",
+                "oral rehydration",
+                "hard to wake",
+                "lethargic",
+            },
+        ):
+            apply_delta("pediatric_dehydration_positive_metadata", -0.10)
+        if _text_has_marker(
+            meta_text,
+            {
+                "kitchen",
+                "food service",
+                "meal service",
+                "water purification",
+                "water storage",
+            },
+        ):
+            apply_delta("pediatric_dehydration_logistics_distractor", 0.08)
 
     if _is_abdominal_trauma_danger_query(question):
         if _text_has_marker(meta_text, _ABDOMINAL_TRAUMA_POSITIVE_METADATA_MARKERS):
@@ -10718,6 +10779,20 @@ def build_scenario_frame(question):
         domains = set(frame.get("domains") or [])
         domains.add("medical")
         frame["domains"] = sorted(domains)
+        for objective in frame.get("objectives") or []:
+            objective_domains = set(objective.get("domains") or [])
+            objective_domains.add("medical")
+            objective["domains"] = sorted(objective_domains)
+    if (
+        _is_thermal_burn_smoke_airway_query(question or "")
+        or _is_pediatric_dehydration_danger_query(question or "")
+        or _is_chemical_spill_sick_exposure_query(question or "")
+        or _is_indoor_combustion_co_smoke_query(question or "")
+    ):
+        domains = set(frame.get("domains") or [])
+        domains.add("medical")
+        frame["domains"] = sorted(domains)
+        frame["safety_critical"] = True
         for objective in frame.get("objectives") or []:
             objective_domains = set(objective.get("domains") or [])
             objective_domains.add("medical")
@@ -11573,6 +11648,50 @@ def _is_newborn_sepsis_danger_retrieval_query(question):
     return poor_feeding or abnormal_responsiveness or feels_cold
 
 
+def _is_pediatric_dehydration_danger_query(question):
+    """Detect child diarrhea/vomiting prompts with altered or very sleepy behavior."""
+    lower = question.lower()
+    child_context = _text_has_marker(
+        lower,
+        {"child", "children", "kid", "kids", "toddler", "baby", "infant"},
+    )
+    fluid_loss = _text_has_marker(
+        lower,
+        {
+            "diarrhea",
+            "diarrhoea",
+            "vomiting",
+            "vomit",
+            "cannot keep fluids down",
+            "can't keep fluids down",
+            "cannot keep fluid down",
+            "can't keep fluid down",
+            "poor drinking",
+            "will not drink",
+            "won't drink",
+            "reduced urine",
+            "no pee",
+            "not peeing",
+        },
+    )
+    danger = _text_has_marker(
+        lower,
+        {
+            "very sleepy",
+            "sleepy",
+            "lethargic",
+            "hard to wake",
+            "harder to wake",
+            "cannot wake",
+            "can't wake",
+            "altered mental status",
+            "confused",
+            "limp",
+        },
+    )
+    return child_context and fluid_loss and danger
+
+
 def _is_abdominal_trauma_danger_query(question):
     """Detect abdominal trauma prompts that should retrieve trauma/acute-abdomen owners."""
     lower = question.lower()
@@ -11731,6 +11850,10 @@ def _retrieval_profile_for_question(question, frame=None):
         or _is_infected_wound_boundary_query(question)
         or _is_poisoning_unknown_ingestion_card_query(question)
         or _is_food_system_outage_illness_boundary_query(question)
+        or _is_thermal_burn_smoke_airway_query(question)
+        or _is_pediatric_dehydration_danger_query(question)
+        or _is_chemical_spill_sick_exposure_query(question)
+        or _is_indoor_combustion_co_smoke_query(question)
         or _is_gi_bleed_emergency_query(question)
         or _is_electrical_hazard_query(question)
         or _is_cardiac_first_query(question)
@@ -11813,6 +11936,33 @@ def _supplemental_retrieval_specs(
                     "category": "medical",
                     "limit": supplemental_limit,
                 }
+            )
+        if _is_pediatric_dehydration_danger_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": (
+                            f"{question} pediatric-emergencies-field toddler child "
+                            "diarrhea vomiting cannot keep fluids down very sleepy "
+                            "lethargic hard to wake severe dehydration emergency "
+                            "reduced urine urgent assessment ORS IV fluids"
+                        ),
+                        "category": "medical",
+                        "where": {"slug": "pediatric-emergencies-field"},
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            f"{question} gastroenteritis-diarrhea-management child "
+                            "diarrhea vomiting dehydration red flags lethargic very "
+                            "sleepy cannot keep fluids down oral rehydration urgent "
+                            "medical evaluation shelter illness control"
+                        ),
+                        "category": "medical",
+                        "where": {"slug": "gastroenteritis-diarrhea-management"},
+                        "limit": supplemental_limit,
+                    },
+                ]
             )
         if _is_abdominal_trauma_danger_query(question):
             specs.append(
@@ -11907,6 +12057,44 @@ def _supplemental_retrieval_specs(
                     "category": "medical",
                     "limit": supplemental_limit,
                 }
+            )
+        if _is_thermal_burn_smoke_airway_query(question):
+            specs.extend(
+                [
+                    {
+                        "text": (
+                            f"{question} burn-treatment scald burn boiling water "
+                            "child blistering burns face hand cool running water "
+                            "avoid ice home remedies do not pop blisters urgent "
+                            "care face hand child"
+                        ),
+                        "category": "medical",
+                        "where": {"slug": "burn-treatment"},
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            f"{question} emergency-airway-management facial burns "
+                            "smoke exposure possible airway injury coughing voice "
+                            "change stridor respiratory distress fresh air urgent "
+                            "airway assessment"
+                        ),
+                        "category": "medical",
+                        "where": {"slug": "emergency-airway-management"},
+                        "limit": supplemental_limit,
+                    },
+                    {
+                        "text": (
+                            f"{question} smoke-inhalation-carbon-monoxide-fire-gas "
+                            "exposure smoky room indoor stove child facial burns "
+                            "fresh air carbon monoxide fire gas exposure urgent "
+                            "medical evaluation"
+                        ),
+                        "category": "medical",
+                        "where": {"slug": "smoke-inhalation-carbon-monoxide-fire-gas-exposure"},
+                        "limit": supplemental_limit,
+                    },
+                ]
             )
         if _is_food_system_outage_illness_boundary_query(question):
             specs.extend(
@@ -12196,21 +12384,58 @@ def _supplemental_retrieval_specs(
             [
                 {
                     "text": (
+                        f"{question} chemical spill pesticide container shed fumes "
+                        "vomiting confused exposure triage first isolate area move "
+                        "to fresh air if safe identify exposure route poison control "
+                        "toxicology toxidromes first aid"
+                    ),
+                    "category": "medical",
+                    "where": {
+                        "$or": [
+                            {"slug": "toxicology"},
+                            {"slug": "toxicology-poisoning-response"},
+                            {"slug": "toxidromes-field-poisoning"},
+                            {"slug": "unknown-ingestion-child-poisoning-triage"},
+                            {"slug": "first-aid"},
+                        ]
+                    },
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} chemical-industrial-accident-response "
+                        "pesticide spill shed fumes wind upwind downwind shelter "
+                        "decontamination low clean water vomiting confusion avoid "
+                        "further exposure evacuate from fumes"
+                    ),
+                    "category": "defense",
+                    "where": {"slug": "chemical-industrial-accident-response"},
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
+                        f"{question} chemical-safety toxic-gas-identification-detection "
+                        "chemical spill sick person fumes ventilation isolate area "
+                        "do not troubleshoot process avoid inhalation safe distance"
+                    ),
+                    "category": "chemistry",
+                    "where": {
+                        "$or": [
+                            {"slug": "chemical-safety"},
+                            {"slug": "toxic-gas-identification-detection"},
+                        ]
+                    },
+                    "limit": supplemental_limit,
+                },
+                {
+                    "text": (
                         f"{question} chemical spill workshop someone feels sick "
                         "exposure triage first isolate area move to fresh air "
                         "identify exposure route skin eye inhalation ingestion "
                         "chemical safety toxicology first aid"
                     ),
                     "category": "medical",
-                    "where": {
-                        "$or": [
-                            {"slug": "chemical-safety"},
-                            {"slug": "toxicology-poisoning-response"},
-                            {"slug": "chemical-industrial-accident-response"},
-                            {"slug": "unknown-ingestion-child-poisoning-triage"},
-                            {"slug": "first-aid"},
-                        ]
-                    },
+                    "where": {"slug": "toxicology-poisoning-response"},
                     "limit": supplemental_limit,
                 },
                 {
@@ -14350,6 +14575,8 @@ def retrieve_results(
         candidate_limit = max(candidate_limit, 30)
     if _is_classic_stroke_fast_special_case(question):
         candidate_limit = max(candidate_limit, 80)
+    if _is_thermal_burn_smoke_airway_query(question):
+        candidate_limit = max(candidate_limit, 80)
     retrieval_profile = _retrieval_profile_for_question(question, scenario_frame)
     specs = []
     seen = set()
@@ -16481,6 +16708,10 @@ def _scenario_frame_is_safety_critical(frame):
         or _is_serotonin_syndrome_query(question)
         or _is_meningitis_rash_retrieval_query(question)
         or _is_eye_globe_injury_query(question)
+        or _is_thermal_burn_smoke_airway_query(question)
+        or _is_pediatric_dehydration_danger_query(question)
+        or _is_chemical_spill_sick_exposure_query(question)
+        or _is_indoor_combustion_co_smoke_query(question)
         or (
             ("medical" in domains or hazards & {"bleeding", "poisoning", "seizure", "unconscious patient"})
             and any(marker in lower for marker in ("urgent", "emergency"))

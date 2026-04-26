@@ -20,10 +20,14 @@ aliases:
   - abdominal thrusts for severe choking
   - do not give water to choking person
   - cannot speak and turning blue after food
+  - facial burns after smoke exposure airway concern
+  - smoky room with face burns airway risk
+  - burn injury with smoke exposure breathing risk
 description: Field intubation, needle cricothyrotomy, emergency tracheostomy, bag-valve-mask ventilation, tension pneumothorax decompression, ARDS management. Assessment algorithms, equipment improvisation, step-by-step procedures for austere environments.
 routing_cues:
   - Use as an airway companion source for severe adult choking, food bolus, food stuck, cannot speak, cannot cough, cannot breathe, cyanosis or turning blue, and severe airway obstruction.
   - Keep first aid as the practical choking-rescue owner for abdominal thrusts and do-not-give-water lures; use this guide for airway failure, respiratory distress, and escalation context.
+  - Use as airway support when facial burns, smoke exposure, soot, voice change, coughing, stridor, or respiratory distress raise concern for airway injury.
 citations_required: true
 applicability: Field airway and respiratory-distress escalation when airway failure, failed ventilation, cannot-intubate/cannot-oxygenate risk, cyanosis, severe obstruction, or advanced airway decisions require high-liability source support alongside first aid stabilization.
 related:
@@ -52,6 +56,13 @@ custom_css: |
 <section id="overview">
 
 ## Overview: Airway Emergency Recognition
+
+**Burn/smoke airway companion boundary:** Facial burns, soot, singed hair, voice
+change, coughing, stridor, or respiratory distress after smoke exposure are
+airway-risk cues. Pair this guide with `burn-treatment` and
+`smoke-inhalation-carbon-monoxide-fire-gas-exposure` for source support; do not
+treat an injured-person prompt as cookstove troubleshooting or childproofing
+once burn plus smoke injury is present.
 
 **The "Cannot Intubate, Cannot Oxygenate" Crisis** is the most feared scenario in emergency medicine. In austere settings, you may lack anesthesia backup, airway equipment, or rapid access to operating theaters. Early recognition and decisive action save lives.
 
@@ -581,4 +592,3 @@ ARDS is severe acute lung inflammation causing refractory hypoxemia. Mortality i
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

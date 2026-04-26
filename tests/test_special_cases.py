@@ -1431,6 +1431,7 @@ class SpecialCaseTests(unittest.TestCase):
             "The carbon monoxide alarm went off, but it also feels like flu. What do I do first?",
             "I wake up with a bad headache near the stove, but it gets better outside. What matters first?",
             "We feel weak and nauseated near the heater, but the room does not look smoky. What do I do first?",
+            "After a generator was moved into an attached garage, two people have headaches and dizziness and a child is very sleepy. What comes first?",
         ]
         for prompt in prompts:
             with self.subTest(prompt=prompt):
