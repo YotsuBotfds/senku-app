@@ -37,18 +37,38 @@ aliases:
   - boil once after flood
   - children drinking questionable well water
   - testing flooded well before drinking
+  - is cloudy water safe
+  - water question safe to drink
+  - high-risk source water
+  - water has rainbow sheen
+  - sewage in water
 routing_cues:
   - Use when the user asks if clear, suspicious, or flood-affected well water is safe, whether one boil is enough, or what to do before children drink questionable water.
-  - Clarify that appearance, settling, or boiling alone may not address chemical, fuel, sewage, or heavy-metal contamination.
+  - Clarify that appearance, settling, or a single treatment step may not address chemical, fuel, sewage, or heavy-metal contamination.
+  - Use for source-risk triage before purification when the water is muddy, stale-tasting, suspicious in taste/odor/color, or likely exposed to chemicals or wastes.
+  - Handoff to water-purification for treatment-order details and to water-storage-tank-maintenance for container- and biofilm-related contamination.
+citations_required: true
+applicability: >
+  Use this guide for practical source-risk triage and sequencing when users ask
+  whether cloudy, muddy, stale, or suspicious water should be used for drinking.
+  It is about determining trust boundaries and low-risk preparation before
+  purification, then handing off when risk is high.
+citation_policy: >
+  Cite reviewed GD-931 answer-card evidence for risky-source and pre-treatment
+  closure language. Route chemical, sewage, fuel, heavy-metal, or unresolved
+  contamination cases to water-purification or sanitation-aligned owners for
+  treatment-strength decisions.
 related:
   - water-storage-tank-maintenance
   - water-chemistry-treatment
   - water-purification
   - food-safety-contamination-prevention
+answer_card:
+  - questionable_water_assessment_clarification
 read_time: 14
 word_count: 2600
-last_updated: '2026-04-13'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: medium
 ---
 
@@ -102,7 +122,7 @@ If the answer to 1-4 is no, 5 is no, and the water is just dirty, follow the set
 
 </section>
 
-<section id="source-assessment">
+<section id="suspicious-source-assessment">
 
 ## Suspicious Source Assessment
 
@@ -140,7 +160,7 @@ If the answer to any of those is yes, clarification may still help, but you shou
 
 </section>
 
-<section id="settling">
+<section id="sediment-settling">
 
 ## Sediment Settling
 
@@ -178,7 +198,7 @@ If the water stays cloudy after settling, you still need pre-filtering and likel
 
 </section>
 
-<section id="prefiltering">
+<section id="pre-filtering-before-purification">
 
 ## Pre-Filtering Before Purification
 
@@ -246,7 +266,7 @@ Clarification means making water clearer and removing visible particles. Purific
 
 </section>
 
-<section id="too-risky">
+<section id="when-water-is-too-risky-to-trust">
 
 ## When Water Is Too Risky to Trust
 
@@ -275,7 +295,7 @@ If the water looks or smells chemically contaminated, sewage-contaminated, or ot
 
 </section>
 
-<section id="decision-matrix">
+<section id="quick-decision-matrix">
 
 ## Quick Decision Matrix
 

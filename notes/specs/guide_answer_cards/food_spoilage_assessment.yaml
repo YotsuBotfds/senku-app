@@ -1,0 +1,156 @@
+card_id: food_spoilage_assessment
+guide_id: GD-906
+slug: food-spoilage-assessment
+title: Food Spoilage Assessment
+risk_tier: medium
+evidence_owner: guide-corpus
+applies_when:
+  - The user asks whether food is safe to eat, still good, or worth discarding.
+  - The prompt mentions off smell, slime, gas, unusual texture, mold, package failure, can risk, or dry-good infestation.
+  - The user asks whether reheating can "fix" questionable leftovers or whether salvage is reasonable.
+required_first_actions:
+  - Start with a discard-first check for smell, slime, mold spread, texture changes, pressure, gassiness, and packaging failure.
+  - If there are clear spoilage signs, advise discard immediately and avoid further debate.
+  - Never use taste/smell confirmation methods to justify keeping suspicious food.
+first_actions:
+  - Apply the decision boundaries in order: sensory warning signs, packaging integrity, then high-risk item class.
+  - Keep salvage narrow: hard, dry, local, odor-free damage only, with no can failure and no suspected toxin-risk foods.
+  - For any uncertainty about contamination spread, contamination source, or symptoms after eating, prioritize discard and handoff.
+  - If the query is about prevention, medical treatment, or group illness, hand off to the owning sibling guide.
+conditional_required_actions:
+  - trigger_terms:
+      - bulging can
+      - leaking can
+      - leaking jar
+      - broken seal
+      - can spurt
+      - foamy can
+      - dented can
+    required_actions:
+      - Do not open, sniff closely, or taste; treat it as unsafe.
+      - Advise keeping distance from suspect containers and discarding only if sealed failure is visible.
+      - Hand off to packaging-failure-safe handling and disposal guidance.
+  - trigger_terms:
+      - mold on cheese
+      - mold on jam
+      - mold on bread
+      - soft mold
+      - fuzzy film
+    required_actions:
+      - Only hard, dry, surface mold in hard cheese can be considered salvage with wide cut and hard-margin removal.
+      - Discard all soft/mushy/firmly bonded molded foods, moist spreads, and uncertain crust/surface cases.
+  - trigger_terms:
+      - flour
+      - grain
+      - weevils
+      - many insects
+    required_actions:
+      - If infestation is light, food is dry, and odor is normal, allow limited salvage with explicit cleaning/sifting.
+      - Discard if infestation is heavy, wet, clumped, rancid, or moldy.
+  - trigger_terms:
+      - reheat
+      - reheated
+      - re-heated
+      - can this be cooked
+    required_actions:
+      - Do not claim reheating removes spoilage toxins or makes questionable food safe.
+      - If held warm too long or off-signs were already present, keep discard conclusion unless there is clear safe evidence.
+urgent_red_flags:
+  - Off smell (sour, rotten, ferment, rancid), slime, sticky/foamy film, or gas pressure.
+  - Bulging, leaking, swollen, or broken-seal containers, especially for canned goods.
+  - Meat, fish, dairy, rice, pasta, soups, or leftovers with doubtful warm-time history.
+  - Green/sickly potatoes, heavy dry-good infestation, soft mold zones, or wet mold spread.
+forbidden_advice:
+  - Use taste, spit-and-wait, mouth-burn, tiny-sample, or "smell-proof" testing as a safe decision method.
+  - Recommend cure-it, de-toxify, preservation-chemistry, or remediation instructions to make suspicious food safe.
+  - Claim that reheating, boiling, frying, or microwaving can neutralize risk from already-suspect foods.
+  - Encourage serving or sharing questionable food due to scarcity or social pressure.
+  - Provide medical diagnosis, treatment, antidotes, or poisoning management plans for symptoms after ingestion.
+do_not:
+  - Do not give prevention-hygiene process details instead of a discard/salvage conclusion when spoilage evidence is present.
+  - Do not suggest fermented-food style restoration for ordinary spoilage.
+  - Do not expand into prescription-level cooking/decontamination formulas or home chemistry.
+  - Do not delay a discard recommendation when the query is ambiguous and potentially risky.
+routine_boundary: >
+  This card only owns discard-versus-salvage logic for already questionable food.
+  It does not own contamination prevention, medical poisoning diagnosis/treatment,
+  decontamination chemistry, fermentation process design, or scarcity-based
+  triage policy.
+acceptable_uncertain_fit: >
+  If key timing or temperature facts are missing, give a conservative answer:
+  one discard-first ruling, one short clarifying question, and explicit handoff
+  language when prevention, illness clusters, or medical escalation may be needed.
+clarifying_questions:
+  - How long and at what temperature was the food stored or held outside the cold chain?
+  - Did any can or jar bulge, leak, lose vacuum, or feel pressurized?
+  - Is the damage hard/dry/localized, or soft/wet/spread through?
+  - Is anyone already having stomach pain, vomiting, fever, dehydration, or severe symptoms?
+  - Are others in a shared cooking/serving setting at risk?
+citation_ids:
+  - gd-906-overview-core
+  - gd-906-sensory-warning-signs
+  - gd-906-packaging-failure
+  - gd-906-dry-goods
+  - gd-906-reheating-limits
+  - gd-906-discard-salvage
+source_sections:
+  - guide: GD-906
+    slug: food-spoilage-assessment
+    title: Food Spoilage Assessment
+    sections:
+      - "#is-this-safe-to-eat-or-should-i-toss-it"
+      - "#sensory-warning-signs"
+      - "#packaging-failure"
+      - "#mold"
+      - "#leftovers-too-warm"
+      - "#reheating-limits"
+      - "#hard-cases"
+      - "#when-to-discard"
+      - "#salvage-judgment"
+      - "#dry-goods"
+output_contract:
+  required_actions:
+    - "Discard-first decision first; include at least one discard trigger if found."
+    - "State no taste/smell challenge methods are valid safety proofs."
+    - "Constrain salvage to hard-dry-localized and clearly bounded cases."
+  forbidden_advice:
+    - "No cure-it, de-toxify, or scarcity-pressure directives."
+    - "No medical diagnosis or treatment language for ingestion illness."
+    - "No claim that reheating fixes suspect food."
+  fallback_handoff:
+    - If symptoms exist or shared illness is likely, hand off to food-safety-contamination-prevention and care guidance.
+    - If prevention hygiene context dominates, hand off to kitchen-food-prep-safety.
+    - If shared meal illness clustering is present, hand off to community-kitchen-mess-hall-operations.
+    - If canned-food suspicion is the trigger, include packaging-failure-safe handling language.
+  output_contract:
+    - "Return concise rule first, then one conditional salvage example only when safe conditions are met."
+    - "Keep the response conservative and explicitly narrow salvage."
+source_invariants:
+  - name: discard-first warning
+    guide: GD-906
+    must_include:
+      - "if you notice any of these, do not eat it:"
+      - "Hunger pressure does not make spoiled food safe."
+  - name: packaging failure discard policy
+    guide: GD-906
+    must_include:
+      - "Bulging can, leaking jar, broken seal, or foamy spurting"
+      - "Do not open suspect cans indoors"
+  - name: reheating limitation
+    guide: GD-906
+    must_include:
+      - "Reheating is not a magic reset button."
+      - "toxins already formed by spoilage bacteria"
+  - name: forbidden testing
+    guide: GD-906
+    must_include:
+      - "Do not use taste, spit-and-wait, mouth-burn, or \"tiny sample\" checks"
+      - "Do not use taste"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Closed answer-card runtime contract for GD-906 focuses on rapid discard-versus-salvage
+  decisions across sensory warning signs, packaging failure, mold rules, reheating limits,
+  canned food, produce, and dry-good infestation. It intentionally excludes
+  preservation chemistry, food poisoning medical handling, and scarcity-driven
+  serving logic.

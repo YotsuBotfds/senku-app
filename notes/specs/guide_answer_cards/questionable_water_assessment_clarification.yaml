@@ -1,0 +1,147 @@
+card_id: questionable_water_assessment_clarification
+guide_id: GD-931
+slug: questionable-water-assessment-clarification
+title: "Questionable Water Assessment and Clarification"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks if muddy, cloudy, stale-tasting, or oddly colored water can be drunk before full purification.
+  - User asks what to do before purification when the source may have sewage, fuel, chemical, sewage runoff, or heavy-metal risk.
+  - User asks whether one boil, one settling step, or simple filtration is enough for suspicious water.
+  - User asks practical sequencing for children, high-risk groups, or families before treatment decisions.
+required_first_actions:
+  - Lead with source-risk assessment: source origin, nearby contamination paths, container history, and obvious contamination clues.
+  - Distinguish visible debris/turbidity from chemical/fuel/sewage/industrial risk before declaring a water-use plan.
+  - Default that clear appearance is not a safety guarantee; require risk reduction before any drinking-plan.
+  - Route clearly risky water (fuel sheen, sewage pattern, chemical odor, unknown/contaminated source) away from routine use and toward safer source or stronger owner paths.
+  - For ordinary dirty/turbid water, apply settling first, then pre-filter, and move to final purification only after clearer and less loaded water.
+conditional_required_actions:
+  - trigger_terms:
+      - child
+      - infant
+      - newborn
+      - "high-risk person"
+      - "dehydration"
+      - "vomiting"
+    required_actions:
+      - Add immediate caution for vulnerable people and prioritize safer source selection; do not normalize weakly risky water for this group.
+  - trigger_terms:
+      - rainbow sheen
+      - oily film
+      - chemical odor
+      - fuel
+      - sewage
+      - fecal
+      - unknown contamination
+      - pesticides
+    required_actions:
+      - Do not proceed with clarification-only advice; instruct replacement source first and hand off to stronger treatment owners for decision support.
+  - trigger_terms:
+      - tank is slimy
+      - storage container
+      - storage vessel
+      - hand pump tastes
+      - hand pump
+    required_actions:
+      - Redirect first to storage/pump/maintenance lane for container or delivery-path inspection, then return to this risky-source lane only for the remaining source water.
+first_actions:
+  - Start with quick source triage, then list the top 2 most likely hazards before proposing a sequence.
+  - If risk is ordinary turbidity/debris: set a settling step, decant the upper layer, then pre-filter.
+  - If risk is suspicious or unknown: avoid presenting a routine sequence as safe and request safer source confirmation.
+  - Keep clarification language bounded: it improves handling and treatment effectiveness, not direct safety.
+  - Preserve a crisp escalation branch: safer source or stronger-treatment handoff before consumption is needed.
+  - Recheck odor/taste/visual cues after first-pass clarification before final action.
+urgent_red_flags:
+  - Fuel smell, rainbow sheen, oily film, visible chemical sheen, or industrial runoff indicators.
+  - Sewage smell, fecal evidence, floating debris from waste flow, or nearby contamination source not fully controlled.
+  - Water from a container with known chemical/pesticide exposure, slime, or unknown prior use.
+  - Strong unusual color, metallic taste, rotten odor, and ongoing uncertainty after inspection.
+  - Children, sick, or medically vulnerable people in the scenario where normal use is being considered.
+forbidden_advice:
+  - Say that clear-looking water is safe without treatment.
+  - Suggest that one boil, settling alone, or one filter pass is enough to make all suspicious water safe.
+  - Recommend chlorine/iodine/other dosing schedules, exact contact times, or concentration calculations.
+  - Give field chemistry test chemistry steps or procurement instructions for test kits.
+  - Provide medical treatment or dosing instructions as part of water consumption decisions.
+do_not:
+  - Do not present appearance, taste, or settled clarity as proof of safety.
+  - Do not treat "questionable but ordinary-looking" water as safe until risk is explicitly sorted.
+  - Do not delay urgent sourcing or handoff language when red-flag contamination evidence is present.
+routine_boundary: >
+  This card is for pre-treatment source assessment and clarification sequencing only.
+  It is not a replacement for definitive chemical test interpretation, disinfection chemistry,
+  or clinical treatment guidance, and should stop at a clear escalation/hand-off boundary.
+acceptable_uncertain_fit: >
+  When details are limited, return a safety-first triage answer: classify risk from observable
+  clues, describe safe sequencing for ordinary turbidity, and explicitly escalate to safer source
+  or stronger treatment pathways when contamination signs are present or uncertain.
+clarifying_questions:
+  - What is the water source, and has it had exposure to runoff, fuel, sewage, chemicals, or mining/industry?
+  - Does the water have unusual odor, sheen, taste, color, foam, or visible residue?
+  - Has the storage container or transfer route previously held chemicals, pesticides, cleaners, or solvents?
+  - Are children, infants, or medically vulnerable people expected to drink this water?
+  - Is a safer source available right now while clarification happens?
+output_contract:
+  required_actions:
+    - Start with source-risk triage, then sequence settle/pre-filter only for ordinary turbidity.
+    - Never present clarification alone as a safety completion.
+    - Route suspicious, uncertain, or high-risk cases to safer source confirmation or stronger-treatment handoff.
+  forbidden_advice:
+    - Do not state that clear water is safe without explicit treatment and risk review.
+    - Do not provide chemistry dosing, contact-time, or field-test-kit procurement guidance.
+    - Do not suggest medical treatment or dosing as part of this decision point.
+  fallback_handoff:
+    - If red flags are present, instruct users to avoid the source and use an alternate safer source first.
+    - If safety evidence is uncertain, escalate to the relevant purification owner with explicit boundary language.
+    - For vulnerable users (children/sick), prioritize conservative escalation and stronger-treatment routes.
+citation_ids:
+  - questionable-water-risk-boundary
+  - questionable-water-clarification-sequence
+  - questionable-water-risk-screening
+  - questionable-water-handoff-guidance
+  - questionable-water-appearance-not-proof
+source_sections:
+  - guide: GD-931
+    slug: questionable-water-assessment-clarification
+    title: "Questionable Water Assessment and Clarification"
+    sections:
+      - "#overview"
+      - "#suspicious-source-assessment"
+      - "#sediment-settling"
+      - "#pre-filtering-before-purification"
+      - "#clarification-before-purification"
+      - "#when-water-is-too-risky-to-trust"
+      - "#quick-decision-matrix"
+      - "#bottom-line"
+source_invariants:
+  - name: appearance_not_safety-proof
+    guide: GD-931
+    must_include:
+      - clarification is not purification
+      - clear-looking water can still contain
+      - do not confuse clear water with safe water
+  - name: clarification_boundaries
+    guide: GD-931
+    must_include:
+      - do not rely on simple clarification alone
+      - pre-filters remove particles
+      - by themselves make unsafe water safe to drink
+  - name: risk_driven_handoff
+    guide: GD-931
+    must_include:
+      - do not drink
+      - find a safer source
+      - if the source is suspicious enough
+  - name: ordinary_turbidity_path
+    guide: GD-931
+    must_include:
+      - if the water contains visible dirt
+      - settle
+      - pre-filter
+      - then apply the final purification method
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  This reviewed card enforces safe water-source closure for questionable water:
+  source-risk triage first, clarification for handling/dependency only, and explicit
+  handoff when contamination signals are obvious or uncertain.

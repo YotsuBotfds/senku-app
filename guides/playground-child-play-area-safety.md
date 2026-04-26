@@ -4,6 +4,45 @@ slug: playground-child-play-area-safety
 title: Playground & Child Play-Area Safety
 category: survival
 difficulty: beginner
+aliases:
+  - child play area safety
+  - playground safety
+  - playground setup for toddlers
+  - child play area inspection
+  - yard play area setup
+  - backyard play area check
+  - mixed age playground supervision
+  - low-cost playground safety
+  - playground hazard checklist
+routing_cues:
+  - playground safety with toddlers and school-age children
+  - where to put a play area at home or in a yard
+  - play area surfaces and fall zones
+  - low-cost play equipment safety checks
+  - mixed-age play rules for supervision
+  - daily child play space inspection
+  - when to close a play area
+  - child play space too dangerous to supervise
+  - playground setup
+citations_required: true
+citation_policy: cite reviewed GD-957 sections for safe play-site siting, surfacing, low-risk inspection, and supervision structure; route severe injury, suspected abuse/neglect workflow, poisoning/near-fatal exposure, difficult breathing, near-drowning risk, severe trauma, and major burns to sibling urgent owners first
+applicability:
+  owner: home, school, and shared-yard child play-space safety
+  use_when:
+    - choosing or checking a play area inside a home, yard, or shared community space
+    - building low-cost supervision-ready layout for children and mixed-age play
+    - asking for surface, boundary, equipment, daily checks, or closure rules
+  do_not_use_when:
+    - a child has a severe injury, suspected poisoning, severe head impact, major bleeding, near-drowning risk, or active abuse concern
+    - user asks for formal child-protection legal reporting workflow
+    - user asks for clinical treatment beyond immediate boundary and supervision decisions
+  handoff:
+    - child-safety-homestead-hazards for active home-hazard incidents and general hazard expansion
+    - drowning-prevention-water-safety for water-fall and water-risk escalation
+    - child-protection-youth-rights for suspected abuse/neglect workflow questions
+    - traffic-safety-road-rules when route/road-adjacent hazard is primary
+answer_card:
+  - playground_child_play_area_safety
 tags:
   - essential
   - safety
@@ -33,6 +72,7 @@ A safe play area is not "a place where children are left alone." It is a place w
 :::
 
 ## Scope
+<section id="scope">
 
 This guide is for simple, practical play spaces for young children in homes, courtyards, compounds, schools, clinics, shelters, and shared community yards. It focuses on low-cost choices that reduce injury without requiring commercial playground equipment.
 
@@ -52,6 +92,7 @@ If a child has already been exposed to fire, poison, water, traffic, or a seriou
 - If the question is abuse, neglect, supervision rights, or reporting, use <a href="../child-protection-youth-rights.html">Child Protection & Youth Rights</a>.
 - If the child is under 5 and the question is feeding, sleep, dehydration, or illness rather than play, use <a href="../infant-child-care.html">Infant & Child Care (Birth to Age 5)</a>.
 :::
+</section>
 
 ## The Core Rule
 
@@ -64,6 +105,7 @@ A play area is safe only when all four of these are true:
 
 If one of these fails, change the site or close the area.
 
+<section id="best-siting-rules">
 ## Best Siting Rules
 
 Put the play area where adults already spend time, not in a hidden corner.
@@ -87,6 +129,7 @@ Put the play area where adults already spend time, not in a hidden corner.
 :::tip
 If the best supervision spot is also a hazardous work area, the site is wrong. A play area should fit the way adults actually live, not force adults to choose between watching children and doing unsafe work nearby.
 :::
+</section>
 
 ## Layout and Sight Lines
 
@@ -101,6 +144,7 @@ The best layout is open, boring, and easy to understand.
 
 Children should not have to cross through the kitchen, tool zone, animal path, or road to reach the play area.
 
+<section id="surfaces-and-falls">
 ## Surfaces and Falls
 
 Most childhood injuries come from falls, slips, and hard impact. The ground matters.
@@ -136,10 +180,12 @@ Those surfaces are fine for paths, not for the landing area under climbing, swin
 
 Low play is safer than high play.
 
-- Keep climbing low enough that a fall is a bruise, not a major impact
-- If a child can climb higher than the adult can comfortably reach from the ground, the structure is too ambitious for a basic low-resource play area
-- Any raised edge, step, or platform should be simple, stable, and easy to step down from
+ - Keep climbing low enough that a fall is a bruise, not a major impact
+ - If a child can climb higher than the adult can comfortably reach from the ground, the structure is too ambitious for a basic low-resource play area
+ - Any raised edge, step, or platform should be simple, stable, and easy to step down from
+</section>
 
+<section id="equipment-and-home-build-rules">
 ## Equipment and Home-Build Rules
 
 Simple is safer.
@@ -167,6 +213,7 @@ Simple is safer.
 - Loose rope swings tied to weak branches
 - Metal scraps
 - Anything with rust, splinters, or sharp edges
+</section>
 
 ## Mixed-Age Play
 
@@ -186,6 +233,7 @@ If mixed ages must share a space, split the area by activity, not by wishful thi
 - One zone for older children: running, rough games, and more active movement
 - One adult watch point that sees both zones
 
+<section id="supervision-that-works">
 ## Supervision That Works
 
 Good supervision is a system, not a feeling.
@@ -198,7 +246,9 @@ Good supervision is a system, not a feeling.
 - If the caregiver has to split attention between fire, cooking, animals, and play, move the play area or assign another watcher
 
 For the youngest children, supervision should be close enough to stop a dangerous move before it becomes an injury.
+</section>
 
+<section id="daily-inspection-routine">
 ## Daily Inspection Routine
 
 Check the area before children enter it.
@@ -211,6 +261,7 @@ Check the area before children enter it.
 6. Put away ropes, buckets, tools, and loose materials when play ends
 
 After heavy rain, strong wind, or a repair job nearby, inspect again before use.
+</section>
 
 ## Common Mistakes
 
@@ -224,6 +275,7 @@ After heavy rain, strong wind, or a repair job nearby, inspect again before use.
 - Assuming one fence solves every risk
 - Keeping broken equipment in service because it still "mostly works"
 
+<section id="when-to-close-the-area">
 ## When To Close The Area
 
 Close the play area right away if:
@@ -236,6 +288,7 @@ Close the play area right away if:
 - The surface has become hard, slippery, or full of holes
 
 If you cannot supervise the area, it is not a play area.
+</section>
 
 ## Related Guides
 

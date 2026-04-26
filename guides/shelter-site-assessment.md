@@ -37,7 +37,39 @@ custom_css: |
   .hazard-row { border-bottom: 1px solid var(--border); padding: 0.75rem 0; }
   .terrain-table th { background: var(--card); font-weight: 600; }
 liability_level: medium
+aliases:
+  - shelter site assessment
+  - shelter site checklist
+  - choose safe shelter site
+  - safe shelter planning
+  - shelter campsite selection
+  - tent site safety check
+  - terrain and drainage scan
+  - flood plain shelter risk
+  - wind exposure camp site
+  - water source distance
+  - shelter defensibility risk
+  - shelter resource planning
+routing_cues:
+  - Use this guide for planning, comparing, and validating a shelter site before building or long-term occupancy.
+  - Prioritize terrain, drainage, water source safety, wind channels, wildlife and hazard corridors, seasonal pattern checks, and available resources.
+  - If active flood, landslide, storm-channel, structural collapse risk, or severe seasonal mismatch appears, provide stop/move-forward safety guidance and hand off to the specialist owner.
+  - Treat defensibility as awareness only: visibility, predictable egress, and route planning without tactical hardening, weapons, traps, or conflict strategy.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for non-tactical site selection risk scanning.
+  If route-unsafe conditions appear, hand off rather than giving construction, concealment,
+  tactical-defense, or engineering instructions.
+applicability: >
+  Use for pre-build, pre-occupancy shelter-site scouting: terrain, drainage, water proximity
+  and contamination risk, wind/microclimate, natural hazards, seasonal fit, and basic resource
+  availability. Not for tactical defense, security architecture, weapon planning, engineering
+  calculations, forensic-hazard reconstruction, or construction/how-to build instruction.
+answer_card:
+  - shelter_site_assessment
 ---
+
+<section id="retrieval-checklist">
 
 ## Retrieval Checklist
 
@@ -53,6 +85,8 @@ Choosing the right location for a shelter can mean the difference between comfor
 - `avoid bad camp spots` -> hazard assessment and checklist below
 - `how far from water should camp be` -> water proximity section below
 
+</section>
+
 <section id="site-assessment-fundamentals">
 
 ## Site Assessment Fundamentals
@@ -60,8 +94,8 @@ Choosing the right location for a shelter can mean the difference between comfor
 Before committing time and materials to building a shelter, you must evaluate the site thoroughly. A poor location can expose you to disease, injury, animal attacks, flooding, extreme weather, and psychological distress. A good location prioritizes:
 
 1. **Immediate safety** — protection from hazards
-2. **Resource access** — water, firewood, building materials
-3. **Defensibility** — ability to secure the area from intruders or wildlife
+2. **Resource access** — water, firewood, shelter material availability
+3. **Awareness** — visibility, routes, and approach-risk awareness
 4. **Sustainability** — long-term livability without degrading the land
 
 The assessment process involves observing the landscape, understanding local weather patterns, and testing the site under various conditions. Ideally, scout the location across different seasons and times of day.
@@ -118,7 +152,7 @@ Plant species reveal a lot about site conditions:
 
 </section>
 
-<section id="water-proximity">
+<section id="water-proximity-and-quality">
 
 ## Water Proximity and Quality
 
@@ -148,7 +182,7 @@ Never locate shelter directly downwind of stagnant water or swamps. Malaria, den
 
 </section>
 
-<section id="wind-exposure-microclimate">
+<section id="wind-and-microclimate">
 
 ## Wind Exposure and Microclimate
 
@@ -179,7 +213,7 @@ Small-scale variations in temperature and humidity can dramatically affect comfo
 
 </section>
 
-<section id="natural-hazards">
+<section id="identifying-natural-hazards">
 
 ## Identifying Natural Hazards
 
@@ -225,36 +259,35 @@ Never build on slopes steeper than 40 degrees, in narrow valleys prone to avalan
 
 </section>
 
-<section id="defensibility-security">
+<section id="defensibility-and-security">
 
 ## Defensibility and Security
 
-If your shelter situation involves any human conflict or wildlife threats, defensibility matters.
+Use this section for awareness, not tactics. It helps screen for visible risk factors and practical route planning without tactical defense, concealment, or weapon guidance.
 
 ### Wildlife Defense
 
-- **Single exit point** is a liability in wildlife emergencies. Prefer two escape routes.
-- **Visibility and sightlines** to surroundings reduce surprise attacks.
-- **Elevation advantage** makes it harder for predators to access.
+- **Single exit point** is a liability in wildlife movement emergencies. Prefer two workable egress routes.
+- **Visibility and sightlines** to surroundings reduce surprise exposure.
+- **Elevation awareness** improves observation of approach patterns.
 - **Distance from attractant sites** (large game trails, carcasses, garbage) reduces visits.
 
 :::tip
-Position your shelter on a slightly elevated area overlooking approach routes. This gives you warning of animal activity and makes it harder for predators to approach undetected.
+Choose a site that preserves visibility and predictable egress. The goal is safe awareness and planned movement, not tactical posturing.
 :::
 
 ### Human Security
 
-If there's risk of intruders:
+If there is elevated social approach risk:
 
-- Avoid obvious locations or well-traveled routes.
-- Prefer defensible positions (elevated, limited access points).
-- Ensure clear sightlines in multiple directions.
-- Plan escape routes if needed.
-- Avoid advertising the shelter's existence (no cleared paths, visible smoke, noise).
+- Keep the site observable from multiple approach vectors.
+- Keep normal access routes simple, clear, and easy to leave.
+- Avoid turning risk awareness into tactical plans or covert concealment.
+- If intruder-risk patterns are likely, hand off to a dedicated security owner after concise alert routing.
 
 </section>
 
-<section id="resource-proximity">
+<section id="resource-proximity-and-sustainability">
 
 ## Resource Proximity and Sustainability
 
@@ -311,7 +344,7 @@ Aim to visit a potential shelter site in the worst season you'll occupy it. If t
 
 </section>
 
-<section id="assessment-checklist">
+<section id="site-assessment-checklist">
 
 ## Site Assessment Checklist
 
@@ -345,10 +378,10 @@ Use this checklist to evaluate a potential shelter site systematically:
 - [ ] Building materials accessible?
 - [ ] Food sources or gardening potential nearby?
 
-**Defensibility:**
+**Defensibility awareness:**
 - [ ] Good visibility and sightlines?
-- [ ] Multiple escape routes if needed?
-- [ ] Defensible position from wildlife or humans?
+- [ ] Multiple egress routes if needed?
+- [ ] Wildlife approach and approach-risk observed without tactical actions?
 
 **Seasonal:**
 - [ ] Site visited in worst season?

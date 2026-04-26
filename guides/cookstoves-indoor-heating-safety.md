@@ -26,6 +26,35 @@ tags:
   - "safe room heating no electricity"
 icon: 🔥
 description: Simple cookstoves, rocket stoves, basic woodstoves, chimney and flue basics, draft troubleshooting, smoke-back response, overnight room-heating safety, carbon monoxide warnings, ventilation, fuel efficiency, and safe indoor heating for cabins and shelters.
+aliases:
+  - cookstove setup
+  - wood stove draft
+  - smoke rolling into room
+  - chimney check
+  - indoor heating safety
+  - safe woodstove operation
+  - stove smoke smell indoors
+  - carbon monoxide risk from stove
+  - cabin heating stove setup
+  - overnight stove safety
+  - draft troubleshooting
+  - venting and flue checks
+  - safe stove maintenance
+  - stove not drawing
+  - charcoal indoors
+  - smoke in cabin
+routing_cues:
+  - Use this guide for stove/chimney operations like draft failure, smoke-back, ventilation, fuel handling, and overnight heating safety.
+  - Use for practical stove checks after the scene is safe, especially when smoke is entering rooms.
+  - Route to smoke exposure guidance first whenever symptoms or acute smoke exposure signs are reported.
+  - If air feels stale across the building rather than stove-specific, hand off to ventilation-air-systems after initial safety.
+citations_required: true
+citation_policy: cite this reviewed card and this guide for stove setup/troubleshooting, and hand off to GD-899 for active exposure symptoms.
+applicability: >
+  Use for practical stove, flue, draft, and safe ventilation checks for short-term indoor cooking and heating.
+  Do not use this guide as a CO/airway medical protocol, full hardware engineering protocol, bypass-ventilation workaround, or structural repair playbook.
+answer_card:
+  - cookstoves_indoor_heating_safety
 related:
   - clay-bread-oven-construction
   - fire-safety-compartmentalization
@@ -343,8 +372,8 @@ When a stove won't draft, fix the simplest causes first.
 - Leave the room immediately
 - Get everyone outside
 - Do not stay inside to "see if it clears"
-- Seek medical help if anyone has headache, dizziness, nausea, unusual sleepiness, confusion, chest pain, or collapse
-- For medical recognition and treatment of CO exposure, see [`smoke-inhalation-carbon-monoxide-fire-gas-exposure.md`](smoke-inhalation-carbon-monoxide-fire-gas-exposure.md)
+- If symptoms are severe or worsening, prioritize urgent evaluation while staying in fresh air.
+- For exposure escalation and follow-on actions, route to [`smoke-inhalation-carbon-monoxide-fire-gas-exposure.md`](smoke-inhalation-carbon-monoxide-fire-gas-exposure.md)
 
 :::warning
 Smoke-back is not just an annoyance. It can be a warning that carbon monoxide is also building up.

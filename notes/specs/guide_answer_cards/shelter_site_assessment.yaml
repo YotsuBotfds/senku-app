@@ -1,0 +1,139 @@
+card_id: shelter_site_assessment
+guide_id: GD-446
+slug: shelter-site-assessment
+title: Shelter Site Selection & Hazard Assessment
+risk_tier: medium
+evidence_owner: guide-corpus
+applicability: >
+  Use for medium-confidence site selection and risk-scanning questions: where to place
+  a shelter location, how to compare terrain and drainage, where water should be sourced
+  relative to camp, how wind/microclimate affects comfort and safety, what natural
+  hazards to screen, and how seasonal change shifts suitability.
+  Route tactical defense planning, structural construction methods, engineering reinforcement,
+  trap/concealment advice, weapon planning, and detailed build procedures to specialist
+  owners.
+applies_when:
+  - A user asks for a shelter-site planning scan before building or occupying a shelter.
+  - A user asks about balancing terrain, flood risk, drainage, water distance, wind,
+    natural hazards, seasonal tradeoffs, and nearby resources before committing materials.
+  - A user asks for a concise pre-deployment site checklist for tent, lean-to, or
+    temporary shelter use.
+required_first_actions:
+  - Run the core risk scan in sequence: terrain/soil drainage, water distance and quality risk, wind channel behavior and microclimate, natural hazard exposure, seasonal fit, and resource sufficiency.
+  - If flooding, unstable terrain, persistent saturated ground, high-voltage lightning path,
+    or clear seasonal mismatch is present, give immediate stop/handoff language and do not
+    proceed into construction sequencing.
+  - Keep defensibility content strictly observational and non-tactical: visibility, known approach routes, and simple egress awareness only.
+first_actions:
+  - Prioritize floodplain avoidance, slope stability, and drainage path confirmation before comfort features.
+  - Use distance bands and contamination cues to classify water placement and collection burden.
+  - Check wind orientation and sheltered microclimate effects against expected weather and overnight losses.
+  - Screen for natural hazards (landslide signatures, storm channels, rockfall/avalanche context,
+    lightning and seismic context) and seasonal mismatch.
+  - Confirm that nearby resource availability supports only a plan to occupy/reduce exposure, not to start construction.
+urgent_red_flags:
+  - Active or recurring flood signs: saturated test pit, stream migration, debris on trees from past high flows, and occupied flood channels near the site.
+  - Active instability indicators: saturated/greasy ground, major cracks, persistent downslope movement signs, fresh landslide signs, or hazardous rockfall indicators.
+  - Water risk with no safe alternative: unreliable source in dry season, immediate contamination risks, or downwind placement near stagnant water/swamps.
+  - Severe weather mismatch: seasonal pattern makes access, firewood, or habitability unsafe for the full planned duration.
+forbidden_advice:
+  - Do not give tactical defense instructions, weapon recommendations, concealment tactics, trap plans, or conflict strategy.
+  - Do not provide structural engineering calculations, hardening sequences, fortification design, or shelter build procedures.
+  - Do not provide forensic reconstruction of prior incidents, violent-defense playbooks, or legal enforcement guidance for intrusions.
+  - Do not treat natural-hazard triage as a construction quality-control checklist for permanent works.
+do_not:
+  - Do not include construction sequencing, anchoring methods, or structural design details as if this is a build manual.
+  - Do not recommend active defense posture as part of shelter siting.
+  - Do not provide dosing, medicine, or environmental remediation technical plans in this card context.
+routine_boundary: >
+  This card is for planning and risk screening before shelter location selection.
+  It is not a construction-how-to owner, not a tactical-security guide, and not an
+  engineering remediation or forensic-hazard diagnosis workflow.
+acceptable_uncertain_fit: >
+  If the user cannot fully describe terrain, weather, or hazard context, provide a
+  conservative check-list response with explicit "verify before commit" and minimal
+  clarifying questions. Do not skip flood/hazard and seasonal checks when uncertainty is high.
+clarifying_questions:
+  - What is the dominant slope direction, and do you observe persistent drainage flow
+    concentration during rain?
+  - Is the proposed water source reliable year-round and away from obvious contamination sinks?
+  - Are there visible signs of slope instability, landslide gullies, fallen trees, or persistent saturation?
+  - Is this for a brief weather event, one-night use, or long-duration occupation through seasonal transitions?
+  - What are the closest sources for firewood, shelter materials, and food within a manageable route radius?
+fallback_handoff_language:
+  - If floodplain, landslide, severe seasonal mismatch, or active structural instability is confirmed or strongly suspected, advise immediate pause, reduce occupancy, and hand off to higher-liability hazard owners.
+  - If water is in a persistent contamination context, route to water assessment and water-quality owners for source treatment boundaries before committing to the site.
+  - If active threat-context or intruder safety concerns are present, hand off to a dedicated safety/security owner and keep advice at awareness-only level.
+handoff:
+  - underground-shelter-bunker for long-term fortification planning only when scope moves to build design
+  - construction for build sequencing once site is approved
+  - structural-safety-building-entry when active structural movement appears
+  - water-purification for unsafe water behavior and treatment boundaries
+  - seasonal-shelter-adaptation for prolonged occupancy climate transitions
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - site-selection-overview
+  - terrain-drainage-screening
+  - water-proximity-and-quality-rules
+  - wind-microclimate-scan
+  - natural-hazard-priority-rules
+  - defensibility-awareness-boundary
+  - resource-sufficiency-checklist
+  - site-assessment-checklist-order
+source_sections:
+  - guide: GD-446
+    slug: shelter-site-assessment
+    title: Shelter Site Selection & Hazard Assessment
+    sections:
+      - "#retrieval-checklist"
+      - "#site-assessment-fundamentals"
+      - "#terrain-analysis"
+      - "#water-proximity-and-quality"
+      - "#identifying-natural-hazards"
+      - "#defensibility-and-security"
+      - "#resource-proximity-and-sustainability"
+      - "#seasonal-considerations"
+      - "#site-assessment-checklist"
+source_invariants:
+  - name: screening-first workflow
+    guide: GD-446
+    must_include:
+      - Before committing time and materials to building a shelter
+      - Use this section for awareness, not tactics.
+      - Use this section for awareness, not tactics
+  - name: water risk boundaries
+    guide: GD-446
+    must_include:
+      - Never locate shelter directly downwind of stagnant water or swamps.
+      - stagnant water
+      - (ponds, swamps) = high disease organism density.
+      - 1/4 to 1/2 mile
+      - seasonal variation
+  - name: flood and instability warning
+    guide: GD-446
+    must_include:
+      - Never build in a flood plain.
+      - Never build on slopes steeper than 40 degrees
+      - Hummocky or irregular ground
+  - name: non-tactical defensibility boundary
+    guide: GD-446
+    must_include:
+      - Use this section for awareness, not tactics.
+      - The goal is safe awareness and planned movement, not tactical posturing.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed for non-construction shelter siting risk scan. This card keeps scope to
+  terrain, drainage, water placement, wind/microclimate, natural hazards,
+  seasonal fit, and resource sufficiency. It explicitly bans tactical/security
+  architecture, weapons, traps, and construction-how-to instructions and routes
+  those cases to specialist owners.

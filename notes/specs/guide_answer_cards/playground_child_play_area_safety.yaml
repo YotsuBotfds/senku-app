@@ -1,0 +1,144 @@
+card_id: playground_child_play_area_safety
+guide_id: GD-957
+slug: playground-child-play-area-safety
+title: Playground & Child Play-Area Safety
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks where or how to place a child play space in a home, yard, school, shelter, or shared community area.
+  - A user asks about ground surfaces, sight-line layout, or simple low-cost equipment safety for children.
+  - A user asks about daily inspection, zone structure, mixed-age supervision, or when to close a play area.
+  - A user asks to reduce common fall, trip, and boundary risks for toddlers, preschoolers, and older siblings.
+applicability:
+  owner: home and shared-yard child play-space safety
+  use_when:
+    - choosing, setting up, or auditing a daily use play space for children
+    - planning low-cost mixed-age supervision and surface/equipment safety
+    - asking for daily checks or closure criteria before children play
+  do_not_use_when:
+    - severe injury, suspected poisoning, drowning/near-drowning, severe breathing changes, major falls, abuse emergencies, or active trauma is the main issue
+  handoff:
+    - drowning-prevention-water-safety for drowning, near-drowning, or serious water-fall events
+    - unknown-ingestion-child-poisoning-triage for confirmed ingestion/poison concerns
+    - child-protection-youth-rights for suspected abuse/guardianship-critical concerns
+    - trauma/medical pathways for major falls, bleeding, head impact, or altered mental status before routine guidance
+required_first_actions:
+  - Start by checking immediate watchability: if one adult cannot keep the area in quick view or hearing, move to a simpler visible layout and adjust the area now.
+  - Make a one-minute hazard sweep for risk points: roads, wells/ditches/water, tools, animals, fire or fuel points, sharp materials, and unstable ground.
+  - Confirm the surface is safe for expected falls; if not, close or block the play area until repaired.
+  - Confirm no child is currently in active injury danger; if so, switch to urgent escalation routes and do not continue routine checklists.
+conditional_required_actions:
+  - trigger_terms:
+      - child in danger
+      - severe
+      - bleeding
+      - unconscious
+      - cannot wake
+      - cannot breathe
+      - cannot see
+      - lost
+      - submerged
+      - missing near water
+      - smoke
+      - suspected abuse
+      - neglect
+      - threatened
+    required_actions:
+      - Stop routine play-area coaching and route to urgent triage owners now (home and family hazard, drowning/near-drowning, child-protection, trauma/medical escalation).
+      - Use explicit closure language before continuing any play-area setup or routine safety details.
+first_actions:
+  - Keep the play area simple: open line-of-sight layout, one obvious entry/exit, one visible caregiver watch point, and a boundary children can see.
+  - Place play away from roads, water openings, work zones, stove/fire areas, animal movement, and unstable edges.
+  - Keep the surfacing soft, level, free of sharp debris, and dry enough that slips and pooled water are not the likely event.
+  - Choose low, sturdy equipment only; avoid structures that require adult lifting, can tip, or leave dangerous heights that exceed easy adult response.
+  - Run the daily inspection list before use, and again after heavy weather or nearby repair and construction work.
+urgent_red_flags:
+  - A child was injured in the area and the cause is still unresolved.
+  - The adult can no longer see or hear all children from the current watch point.
+  - The play surface is hard, slick, or pocked with holes/puddles after weather.
+  - Water is pooling in the play area or the nearby water access has shifted, and children might access it.
+  - New road, tool, construction, traffic, or animal risks now share the same space.
+  - Any child is repeatedly pushing a boundary because the layout is not working.
+  - Mixed-age supervision is failing because older children are directing younger ones into risky behavior.
+forbidden_advice:
+  - Do not provide trauma treatment, wound care, poisoning treatment, rescue steps, or EMS-level emergency protocols as this card's routine guidance.
+  - Do not advise continuing routine play-area coaching when an urgent red flag is present.
+  - Do not include formal child-protection legal reporting workflows or investigative instructions.
+  - Do not give instructions for building permanent equipment beyond low-resource safety-check framing.
+  - Do not recommend equipment with unknown stability, long drop heights, broken parts, or unstable anchors as acceptable if watched closely.
+do_not:
+  - Do not normalize active drowning, severe injury, breathing trouble, major burns, major falls, or abuse-neglect concerns as routine yard-play checks.
+  - Do not direct medical management, dosage, or first aid treatment beyond immediate supervision and area-control closure guidance.
+  - Do not tell caregivers to keep using a damaged area while repairs are pending.
+  - Do not advise using unsafe play areas because adults are already there or because it is temporary.
+routine_boundary: >
+  Use routine play-area guidance only when no active severe injury, severe fall risk,
+  poisoning risk, near-drowning situation, major burn, breathing change, or active
+  abuse concern is present. If any of these are present, the answer should begin
+  with urgent transfer language and defer this card to boundary support.
+acceptable_uncertain_fit: >
+  If a prompt is incomplete, ask one focused check-in first (who is watching now,
+  where the play area is, and one obvious hazard present), then give the highest-risk
+  non-urgent correction that keeps the area immediately safer. Escalate without delay if
+  any severe or immediate danger signal appears while clarifying.
+clarifying_questions:
+  - Who is actively watching children, and is any child out of sight now?
+  - Is the area next to any road, water opening, work zone, stove/fire, tools, animals, or unstable surface?
+  - Are there standing puddles, loose boards, loose wires, sharp debris, or soft ground that will open on hard movement?
+  - Are toddlers and older children using shared space with one watch point and clear boundary rules?
+  - Has any child already been injured or exposed to a higher-risk event in this area today?
+citation_ids:
+  - playground-siting-and-surveillance
+  - playground-ground-surface-safety
+  - playground-inspection-and-closure
+source_sections:
+  - guide: GD-957
+    slug: playground-child-play-area-safety
+    title: "Playground & Child Play-Area Safety"
+    sections:
+      - "#scope"
+      - "#best-siting-rules"
+      - "#surfaces-and-falls"
+      - "#equipment-and-home-build-rules"
+      - "#supervision-that-works"
+      - "#daily-inspection-routine"
+      - "#when-to-close-the-area"
+source_invariants:
+  - name: visibility and closure boundary is explicit
+    guide: GD-957
+    must_include:
+      - a play area is safe only when all four of these are true
+      - if one of these fails, change the site or close the area
+      - if you cannot supervise the area, it is not a play area
+  - name: safe siting avoids roads, water, and work hazards
+    guide: GD-957
+    must_include:
+      - put the play area where adults already spend time, not in a hidden corner
+      - roads, driveways, cart paths, bicycle lanes, and vehicle loading spots
+      - wells, tanks, ponds, ditches, irrigation channels
+  - name: active emergency is not routine here
+    guide: GD-957
+    must_not_match:
+      - (?i)no need to escalate
+      - (?i)routine checklist.*serious
+fallback_handoff_language:
+  - This is no longer routine setup advice. Treat this as a safety escalation and route to child-safe urgent owners first.
+  - For active water, drowning, severe injury, severe breathing issues, or major head-impact concerns, use the sibling drowning and trauma/medical urgent pathways first.
+  - For suspected abuse or guardianship/safety-legal concerns, route to child-protection and rights guidance before continuing routine checklists.
+  - For confirmed poison exposure or unknown ingestion concerns, route to the urgent ingestion/triage guidance lane immediately.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - first_actions
+  must_include_urgent_handoff: true
+  forbid: true
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  This card is strict routine prevention for low-resource home and shared-yard play
+  spaces: siting, surveillance, surfacing, low-cost equipment checks, daily inspection,
+  and closure criteria. It intentionally avoids clinical treatment, rescue, legal
+  reporting workflows, and construction engineering detail, and it hands off to the
+  sibling urgent owners when active danger is present.

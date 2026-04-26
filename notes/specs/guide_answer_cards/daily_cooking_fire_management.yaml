@@ -1,0 +1,181 @@
+card_id: daily_cooking_fire_management
+guide_id: GD-953
+slug: daily-cooking-fire-management
+title: Daily Cooking Fire Management
+risk_tier: high
+evidence_owner: guide-corpus
+applicability:
+  owner: routine daily off-grid cooking fire safety and efficiency
+  use_when:
+    - fire startup, dry fuel selection, and heat control for cooking tasks
+    - smoke reduction in an active cooking setup with no acute injury signs
+    - ash/ember safety and disposal during routine cleanup
+    - coal banking between meals when site is secure and supervision is available
+  do_not_use_when:
+    - indoor stove, vent, or chimney diagnostics
+    - carbon-monoxide, smoke inhalation, or breathing distress response
+    - burns, injuries, traumatic exposure, or medical escalation
+    - tactical/security decisions, fire-setting misuse, or hardware design questions
+applies_when:
+  - A user asks how to start, adjust, or clean up a daily cooking fire outdoors.
+  - A user asks why a cooking fire smokes, runs too hot/too cool, or won't hold steady heat.
+  - A user asks how to cook with boil/simmer/fry heat control on wood or charcoal.
+  - A user asks how to bank or relight coals safely for the next meal.
+  - A user asks how to judge if ash is cold and safe to dispose of.
+required_first_actions:
+  - "Confirm operating context first; this card applies to outdoor or properly vented cookstove routines. If the setup is indoors or the user reports breathing symptoms, smoke symptoms, loss of consciousness, or burn trauma, stop routine advice and use the routed safety owners."
+  - "Start with immediate hazard checks; clear workspace, keep people and fuel piles
+    away from hot coals, and avoid adding large fuel before tinder and kindling are
+    established."
+  - For smoke-heavy routines, start by improving airflow with dry small fuel and a
+    clear fuel layout before adding larger pieces.
+  - For ash or embers, treat all ash as hot until verified cold, and isolate it away
+    from combustibles during cooling.
+conditional_required_actions:
+  - trigger_terms:
+      - "thick smoke"
+      - "smoking fire"
+      - "gray smoke"
+      - "smoke in my face"
+    required_actions:
+      - Pause loading the fire, switch to smaller dry kindling, open airflow paths, and
+        hold off on adding fuel until flames become bright and active.
+      - Do not smother or force the fire with wet wood, large logs, or more fuel at once.
+      - If smoke is in an enclosed space or someone has breathing symptoms, hand off
+        to the sibling smoke/inhalation guide immediately.
+  - trigger_terms:
+      - embers
+      - ash
+      - disposal
+      - glowing
+    required_actions:
+      - Treat ash and embers as hot; cool in a non-flammable location and verify with
+        distance/heat checks before moving near anything combustible.
+      - If embers cannot be monitored safely, fully extinguish rather than bank.
+      - Route injury-risk overlap to first-aid/trauma support owners.
+  - trigger_terms:
+      - banking
+      - save fire
+      - overnight
+    required_actions:
+      - Bank only at a secure, non-combustible, supervised spot; clear excess ash and
+        keep enough airflow for a controlled ember bed.
+      - Route if windy or unsupervised situations make ember migration likely; fully
+        extinguish instead.
+first_actions:
+  - Use dry fuel first and split it to manageable size before cooking; start with tinder,
+    then kindling, then main fuel only when the fire is actively burning.
+  - Match heat by pot position first, then by fuel; center for boil, edge or reduced bed
+    for simmer, and stable low-medium flame for frying.
+  - Reduce smoke by preventing packed fuel and damp wood use; keep air channels open and
+    avoid adding large fuel before the fire has heat.
+  - Manage ash by stirring only as needed, keeping flow path clear, and separating hot ash
+    from dry materials and storage areas.
+  - Bank coals in a compact controlled bed with room-safe clearance and a return plan for
+    relight.
+urgent_red_flags:
+  - Repeated thick gray/black smoke after startup despite dry fuel and airflow adjustments.
+  - Fire behavior that creates flying embers toward tents, dry grass, cloth, or fuel piles.
+  - Continuous smoke or heat signs from ash/embers after the flame is out.
+  - User asks for actions while reporting burns, breathing symptoms, CO-like symptoms, loss of consciousness, or severe panic/smoke distress.
+  - Fire left unsupervised in wind, with children, or near unprotected combustibles.
+forbidden_advice:
+  - Do not provide indoor stove, flue, chimney, chimney draft, or structural venting diagnostics.
+  - Do not provide carbon-monoxide treatment, medical escalation protocols, or trauma-first-response
+    detail; hand off to the medical/smoke/gas-exposure owners when those signs are present.
+  - Do not advise accelerants (gasoline, kerosene, solvents) or rapid ignition shortcuts.
+  - Do not provide detailed fuel chemistry, emission-control formulas, or hardware design
+    instructions outside routine site-level operation.
+  - Do not provide recipe coaching or meal-planning steps as the primary answer.
+do_not:
+  - Do not leave a fire with hot coals unattended near dry materials.
+  - Do not treat gray ash as fully cold ash.
+  - Do not bank coals where embers can spread.
+  - Do not route confirmed breathing/inhalation events back into routine cooking-fire coaching.
+routine_boundary: >
+  Routine ownership is for daily cooking routines where the user seeks routine setup and
+  operation guidance without active injury, toxic exposure, breathing distress, or structural
+  hardware-fault escalation. If any of those signs are present, shift to non-routine owners and
+  stop routine instructions once handoff language is given.
+acceptable_uncertain_fit: >
+  If fit is unclear, ask one fast safety question (indoor/outdoor, current smoke level,
+  and any breathing symptoms), then continue with the safest minimal sequence above only
+  when no urgent signs are present.
+clarifying_questions:
+  - Is the fire in an outdoor/open setup or a vented indoor setup?
+  - Is the smoke mostly at the cooking surface, at face level, or is anyone feeling
+    light-headed, dizzy, or short of breath?
+  - Is this cleanup after the flame is out for ash and embers, or are you mid-cooking?
+  - Do you need to bank coals for later cooking, and can you supervise the bed overnight?
+fallback_handoff_language:
+  - For any breathing discomfort, repeated heavy smoke in a room, suspected CO/smoke-inhalation signs, or fire trauma, stop routine guidance and transfer to `smoke-inhalation-carbon-monoxide-fire-gas-exposure` plus first-aid/trauma support before continuing.
+  - For indoor stove, flue, chimney, or vent diagnostics, move to `cookstoves-indoor-heating-safety.md`.
+  - For food safety, cooking method selection, or shared-service food workflow questions, route to recipe-level or kitchen owners after fire routine checks are addressed.
+  - For medical treatment, burns, or injury escalation, route to emergency medical channels rather than this routine card.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - do_not
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  avoid_medical_fire: true
+  avoid_hardware_diagnostics: true
+  forbid_harmful_optimizations: true
+citation_ids:
+  - gd-953-fuel-choice
+  - gd-953-lighting-sequence
+  - gd-953-heat-control
+  - gd-953-smoke-reduction
+  - gd-953-ash-ember-safety
+  - gd-953-banking-coals
+  - gd-953-common-mistakes
+  - gd-953-quick-reference
+source_sections:
+  - guide: GD-953
+    slug: daily-cooking-fire-management
+    title: Daily Cooking Fire Management
+    sections:
+      - "#choosing-fuel"
+      - "#lighting-the-cooking-fire"
+      - "#controlling-heat-for-boiling-simmering-and-frying"
+      - "#reducing-smoke"
+      - "#ash-ember-and-cleanup-safety"
+      - "#banking-coals-for-the-next-meal"
+      - "#common-mistakes"
+      - "#quick-reference"
+source_invariants:
+  - name: fuel and startup rhythm
+    guide: GD-953
+    must_include:
+      - "The best cooking fuel is dry, predictable, and easy to split or arrange into the size you need."
+      - "The simplest rule is this: small, dry fuel plus good airflow usually beats a big fire."
+      - "The easiest way to fail at cooking fire management is to try to cook before the fire is ready."
+  - name: smoke reduction boundary
+    guide: GD-953
+    must_include:
+      - "Smoke is often a sign of poor fuel, poor airflow, or a fire that is too cool."
+      - "If the smoke is thick and gray, the fire is usually too cool or too wet."
+      - "Do not smother a cooking fire with too much fuel at once."
+  - name: ash and ember boundary
+    guide: GD-953
+    must_include:
+      - "Ash and embers stay dangerous after the flames look gone."
+      - "Treat all ash as hot until proven otherwise."
+      - "Do not throw hot ash into a trash pile, leaf pile, or wood storage area."
+  - name: coal banking boundary
+    guide: GD-953
+    must_include:
+      - "Banking coals means reducing a fire to a small, controlled bed that can be brought back to cooking heat later."
+      - "If you are unsure, fully extinguish the fire instead of trying to save it."
+      - "in windy conditions that make stray embers likely"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  This card is intentionally bounded to routine cooking-fire control, smoke reduction,
+  ash/ember safety, and coal banking for daily operation. It avoids recipe coaching,
+  indoor stove/chimney diagnostics, carbon-monoxide treatment, and medical-timing
+  protocols. If any red-flag respiratory, exposure, injury, or acute safety signal is
+  present, use explicit handoff language and stop routine coaching.

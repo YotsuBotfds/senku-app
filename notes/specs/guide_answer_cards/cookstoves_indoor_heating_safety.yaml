@@ -1,0 +1,122 @@
+card_id: cookstoves_indoor_heating_safety
+guide_id: GD-904
+slug: cookstoves-indoor-heating-safety
+title: Cookstoves, Indoor Heating & Safety
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about stove setup or operation for indoor cooking/heating safety in cabins, shelters, or huts.
+  - User asks what to do for smoke-back, smoke smell indoors, weak draft, chimney issues, or stale indoor air around a running stove.
+  - User asks about overnight or no-power heating, fuel handling, air delivery, or maintenance checks to reduce smoke and soot.
+required_first_actions:
+  - If any headache, dizziness, confusion, unusual sleepiness, chest pain, shortness of breath, nausea, or other smoke/CO exposure clues are present, instruct immediate fresh-air evacuation and hand off to smoke exposure guidance.
+  - If smoke is currently entering the room, stop adding fuel and move people out first before any adjustment.
+  - If no immediate safety symptoms, start by confirming flue path, room airflow, and fuel dryness before changing burn settings.
+first_actions:
+  - Begin with safety triage: people, smoke movement, then flue/airway conditions.
+  - Check draft fundamentals in order: chimney continuity/height, blockages, flue temperature, room pressure, and make-up air availability.
+  - Validate fuel quality and combustion behavior: dry wood, controlled load size, warm-up before scaling fire size.
+  - Add maintenance and overnight checks: ash, joints, soot/creosote, roof/flue exit clearance, and obvious structural damage to stove/chimney interfaces.
+  - Keep advice bounded to practical stove/air checks and avoid unrelated medical or engineering workflows.
+urgent_red_flags:
+  - Repeated smoke-back despite adjustments, especially after startup.
+  - Multiple people with headache, dizziness, confusion, unusual sleepiness, shortness of breath, nausea, or cough.
+  - Black, shiny, or heavy soot/creosote buildup with weak drafting.
+  - Obvious chimney blockages, damaged flue joints, cracked clay, warped masonry, or leaking outlet.
+  - Persistent building-wide stale air with no safe local correction route.
+forbidden_advice:
+  - Give CO treatment, oxygen, antidote, or any medical dosing direction.
+  - Provide structural engineering calculations, full construction design, or structural-strength verification procedures.
+  - Recommend bypassing ventilation to "hold in heat" or sealing the room for comfort.
+  - Advise testing smoke or exposure risk by staying in the room to "watch and see."
+  - Provide open-fire hardware installation details for permanent retrofit beyond practical source-safe checks.
+do_not:
+  - Do not provide full stove or chimney construction blueprints as first-line responses to smoke-back or exposure symptoms.
+  - Do not continue detailed operation advice when CO/exposure symptoms are present; route to smoke exposure owner.
+  - Do not offer structural repair or rescue playbooks as replacement for stop-check-handoff logic.
+routine_boundary: >
+  This card owns safe stove, chimney, draft, and ventilation checks for practical indoor heating and
+  cooking operations. It is not the owner for CO/airway medical management, structural engineering,
+  rescue tactics, or full building retrofit design.
+acceptable_uncertain_fit: >
+  If details are incomplete, provide one-line safety triage first (evacuation check, smoke visibility, symptoms),
+  then one small clarifying question set before deeper operation recommendations.
+clarifying_questions:
+  - Are there active symptoms such as headache, dizziness, unusual sleepiness, confusion, chest pain, or breathing changes?
+  - Is smoke entering the room now, and does it stop after venting or at startup?
+  - Is the chimney/flue clearly visible and clear of blockages, nests, ice, or collapsed insulation?
+  - Is the fuel damp, oversized, or recently loaded too quickly?
+  - Is anyone sleeping in the same room with this stove?
+fallback_handoff_language:
+  - If any exposure symptoms are present, stop stove-tuning guidance and send people to fresh air, then hand off to `smoke-inhalation-carbon-monoxide-fire-gas-exposure` for exposure-management sequence.
+  - If the building is generally stale without clear stove-local cause, hand off to `ventilation-air-systems` after scene safety.
+  - If the flue or support system is structurally damaged, hand off to fire safety or engineering owners before repair is attempted.
+  - Use decision-rule boundary language: do not continue routine heating if repeated smoke-back remains.
+output_contract:
+  - Prioritize evacuation and fresh-air handoff whenever smoke is observed with symptoms.
+  - For non-urgent cases, return ordered checks only: people first, then flue/air/fuel, then maintenance.
+  - Never include medical treatment detail; include one explicit ownership handoff to GD-899 on exposure concern.
+  - Keep recommendations practical and bounded to source sections: no structural design or bypass-ventilation steps.
+  - Include a hard stop condition: stop/stall stove use until smoke-cleanly and draft are restored.
+source_sections:
+  - guide: GD-904
+    slug: cookstoves-indoor-heating-safety
+    title: Cookstoves, Indoor Heating & Safety
+    sections:
+      - "#overview"
+      - "#simple-stove"
+      - "#woodstoves"
+      - "#chimney-basics"
+      - "#draft-troubleshooting"
+      - "#what-to-do-smoke-back"
+      - "#maintenance"
+      - "#safe-ventilation"
+      - "#decision-rules"
+source_invariants:
+  - name: evacuation_priority
+    guide: GD-904
+    must_include:
+      - "first step: get people out / evacuate immediately"
+      - if smoke is entering the room
+  - name: smoke_back_stop_rule
+    guide: GD-904
+    must_include:
+      - "If smoke rolls into the room, do not normalize it."
+      - "stop using it indoors until"
+  - name: CO_handoff
+    guide: GD-904
+    must_include:
+      - If anyone has CO symptoms
+      - hand off
+      - smoke-inhalation-carbon-monoxide-fire-gas-exposure
+applicability:
+  owner: indoor stove and fireplace operation safety for household heating/cooking in shelters or cabins
+  use_when:
+    - Draft and flue troubleshooting, smoke-back response, and chimney maintenance.
+    - Overnight heating setup checks where occupants are present.
+    - Practical fuel handling and ventilation checks for simple stoves or woodstoves.
+  do_not_use_when:
+    - CO diagnosis/treatment and rescue protocols.
+    - Structural engineering, permanent installation design, or major construction planning.
+    - Rescue, medical airway care, or bypass-ventilation troubleshooting.
+  handoff:
+    - smoke-inhalation-carbon-monoxide-fire-gas-exposure for symptom/exposure escalation.
+    - ventilation-air-systems for broad indoor-air problems without clear stove-local source.
+    - fire-safety-compartmentalization for containment and spread risk questions.
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed card closure for GD-904 covering practical stove safety operations, smoke-back response,
+  and maintenance checks. It enforces symptom-first evacuation and fresh-air handoff, then bounded
+  safe operation guidance for draft, chimney, fuel, and ventilation. It excludes medical CO treatment,
+  structural engineering, and bypassed-ventilation tactics.
+citation_ids:
+  - gd-904-overview
+  - gd-904-simple-stove
+  - gd-904-woodstoves
+  - gd-904-chimney-basics
+  - gd-904-draft-troubleshooting
+  - gd-904-smoke-back
+  - gd-904-safe-ventilation
+  - gd-904-maintenance
+  - gd-904-decision-rules

@@ -16,6 +16,17 @@ aliases:
   - is this safe to eat
   - can I still eat this
   - food gone bad
+  - is this food safe
+  - should I throw this out
+  - should I toss this food
+  - food safety after refrigeration failure
+  - can I still use this food
+  - can I reheat this to make it safe
+  - is this can bulging
+  - can the food be saved
+  - mold on bread and hard cheese
+  - green potatoes in pantry
+  - flour with bugs
   - food spoilage
   - bulging can
   - meat left out overnight
@@ -54,6 +65,30 @@ related:
   - community-kitchen-mess-hall-operations
   - food-salvage-shelf-life
   - food-storage-packaging
+routing_cues:
+  - Use when the user asks "is this food safe to eat" or "should I throw this out" and needs a discard-or-salvage decision.
+  - Use when there are odor, texture, mold, packaging failure, can-spoilage, cold-chain, or reheating-ambiguity questions.
+  - Use for food-risk triage before deciding to serve, salvage, or discard.
+citations_required: true
+citation_policy: cite reviewed GD-906 answer card and this guide for discard/salvage logic; hand off contamination, outbreak, illness-treatment, and fermentation-logic questions to sibling owners.
+applicability:
+  owner: food spoilage and discard-vs-salvage boundary decisions.
+  use_when:
+    - The prompt asks whether food is safe to eat, still good, should be discarded, or limited salvage is possible.
+    - The question includes off odors, slime, mold, package failure, can swelling, hard/soft boundary uncertainty, or post-power-outage handling risk.
+    - The user is asking if reheating can repair an already questionable food condition.
+  do_not_use_when:
+    - The food question is primarily about food poisoning diagnosis, treatment, ongoing diarrhea/vomiting triage, toxic ingestion, or medical escalation.
+    - The user is asking for preservation chemistry, cure/de-toxification, or decontamination formulas.
+    - The question is about fermentation recipe development beyond checking for obvious spoilage.
+  handoff:
+    - food-safety-contamination-prevention for prevention-first or contamination-source prevention workflows.
+    - kitchen-food-prep-safety for raw-meat handling, utensil/board hygiene, and serving-line handling context.
+    - community-kitchen-mess-hall-operations when food poisoning risk appears clustered in group meal settings.
+    - food-system-outage-illness-boundary when refrigeration outage and feeding pressure create broader risk.
+    - suspicious-water-assessment-clarification for questionable water-based cleaning, dilutions, or water testing questions.
+answer_card:
+  - food_spoilage_assessment
 read_time: 12
 word_count: 3100
 last_updated: '2026-04-16'

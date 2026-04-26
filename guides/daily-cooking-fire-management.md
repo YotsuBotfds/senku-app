@@ -10,8 +10,39 @@ tags:
   - fire
   - cooking
   - safety
+aliases:
+  - cooking fire
+  - daily cooking fire
+  - how to start a cooking fire
+  - how to bank coals
+  - how to reduce smoke when cooking
+  - cooking pot heat control
+  - cooking fire smoke
+  - cooking fire ash embers
+  - outdoor cooking fire safety
+  - off-grid cooking fire
 icon: fire
 description: "Beginner-friendly daily off-grid cooking fire management: choosing fuel, lighting and maintaining a cooking fire or wood stove, controlling boil/simmer/fry heat, reducing smoke, handling ash and embers, banking coals overnight, and avoiding common mistakes."
+routing_cues:
+  - how to start a cooking fire
+  - cooking fire keeps smoking
+  - boil and simmer heat control
+  - frying heat is too high
+  - how to bank coals safely
+  - ash and embers cleanup
+  - off-grid cooking fire
+  - fuel choice for daily cooking
+  - dry wood versus wet wood for cooking fire
+citations_required: true
+citation_policy: cite reviewed GD-953 sections for routine cooking-fire setup, heat control, smoke reduction, ash/ember safety, and coal banking; route indoor stove/chimney diagnostics, smoke-inhalation/CO symptoms, injury management, or structural hardware faults to the dedicated sibling guide owners.
+applicability: >
+  This guide is for routine off-grid daily cooking-fire operation in outdoor or properly
+  vented setups: fuel choice, startup, heat control for boil/simmer/fry, smoke
+  reduction, ash/ember safety, and coal banking. Do not use it for recipe coaching,
+  indoor stove/chimney troubleshooting, carbon-monoxide treatment or medical escalation,
+  tactical/security operations, or fire-setting misuse.
+answer_card:
+  - daily_cooking_fire_management
 related:
   - cooking-meal-preparation
   - food-safety-contamination-prevention
