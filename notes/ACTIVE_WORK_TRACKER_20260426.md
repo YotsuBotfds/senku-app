@@ -99,6 +99,12 @@ reports `3` unresolved partial markers, and
      `0` after the `RE8-SP-001` deterministic spinal-boundary citation cleanup.
      `RE7-NB-001` remains intentionally `uncertain_fit_accepted` by gate policy
      while passing reviewed-card, evidence, and claim checks.
+   - Current-head duplicate-citation sweep after the `RE8-SP-001` citation-fix
+     artifact found `duplicate_citation_count=0` for
+     `RE7-NB-001`, `RE7-CP-001`, `RE8-SP-001`, `RE8-KT-001`, and `RE8-FS-001`.
+     The only matching `*current_head*20260426.json` artifact with nonzero
+     duplicate citations is the superseded pre-fix
+     `rag_eval8_re8_sp001_current_head_20260426.json` baseline.
 
 ## Active Operating Rules
 
