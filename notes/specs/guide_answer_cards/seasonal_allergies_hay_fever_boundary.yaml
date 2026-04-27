@@ -1,0 +1,111 @@
+card_id: seasonal_allergies_hay_fever_boundary
+guide_id: GD-948
+slug: seasonal-allergies-hay-fever
+title: "Seasonal Allergies, Hay Fever & Everyday Relief"
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A person asks about routine hay fever or seasonal-allergy symptoms such as sneezing, clear runny nose, stuffy nose, itchy nose/throat/ears/roof of mouth, watery or itchy eyes, or mild cough from throat irritation or post-nasal drip.
+  - The prompt asks for trigger or environment logging around pollen, dust, dust mites, mold, pets, smoke, strong odors, cleaning, mowing, windy days, bedding, windows, outdoor exposure, or bedroom exposure.
+  - The prompt asks for non-drug comfort basics, exposure reduction, red-flag screening, or a concise clinician handoff for stable allergy-like symptoms.
+required_first_actions:
+  - First screen for airway swelling, anaphylaxis patterns, wheeze or severe breathing trouble, fever or infection concern, eye pain or vision change, and severe or one-sided facial pain before giving routine allergy support.
+  - Keep routine advice limited to symptom intake, trigger/environment logs, exposure reduction, non-drug comfort basics, red-flag screening, and clinician handoff.
+  - If lip, tongue, throat, or face swelling; widespread hives with breathing symptoms; vomiting, fainting, dizziness, or fast worsening after a likely allergen is present, route to the anaphylaxis emergency owner.
+  - If wheeze, chest tightness, severe shortness of breath, trouble speaking, blue or gray lips, or extra effort to breathe is present, route to asthma/respiratory or emergency medical guidance rather than routine allergy advice.
+  - If fever, feeling very ill, pus-like or worsening discharge, eye pain, vision change, severe light sensitivity, severe or one-sided facial pain, facial swelling, or symptoms that do not fit a simple allergy pattern are present, route to the appropriate urgent medical, eye-care, sinus/infection, or clinician owner.
+first_actions:
+  - Ask what symptoms are present, when they started, whether they come and go by season or exposure, and whether they improve away from the suspected trigger.
+  - Log likely triggers and settings, including pollen, windy days, mowing, cleaning, dust, dust mites, mold, pets, smoke, strong odors, bedroom exposure, damp rooms, and outdoor clothing or bedding exposure.
+  - Reduce exposure with guide-bounded steps such as closing windows during high pollen, staying indoors during windy high-trigger periods when feasible, showering or rinsing after outdoor exposure, changing clothes after coming inside, and keeping outdoor clothes off beds and couches.
+  - For dust, mold, pet, and indoor irritants, keep the sleeping area cleaner, clean with a damp cloth when possible, avoid shaking bedding or rugs indoors, fix damp areas, and keep pets out of the sleeping area if possible.
+  - Use non-drug comfort basics only: saline or clean-water rinses when appropriate and safe, fluids, warm drinks if soothing, clean bedding, head elevation for nighttime drainage, avoiding eye rubbing, sunglasses for wind or pollen, and avoiding unknown herbs, oils, or homemade mixtures in the eyes or nose.
+urgent_red_flags:
+  - Lip, tongue, throat, or face swelling; throat closing; trouble swallowing; widespread hives with breathing symptoms; vomiting, fainting, dizziness, or fast worsening after a likely allergen.
+  - Wheeze, chest tightness, severe shortness of breath, trouble speaking normally, blue or gray lips, extra effort to breathe, or breathing that is getting worse.
+  - Fever, feeling very ill, thick yellow or green discharge with worsening facial pain or pressure, one-sided severe sinus pain, ongoing one-sided blocked nose or pressure, new bad breath, tooth pain, or worsening facial swelling.
+  - Eye pain, vision change, severe light sensitivity, worsening eyelid or facial swelling, or fever with eye pain or eyelid swelling.
+  - Symptoms that last a long time, occur year-round without a clear trigger pattern, do not improve, or do not fit a simple seasonal pattern.
+forbidden_advice:
+  - Do not diagnose allergic rhinitis, sinus infection, asthma, anaphylaxis, eye infection, or another condition from this reviewed card.
+  - Do not select, compare, start, stop, dose, combine, or substitute antihistamines, steroids, decongestants, inhalers, antibiotics, eye drops, immunotherapy, herbs, supplements, or homemade remedies.
+  - Do not provide pediatric dosing, pregnancy/breastfeeding medication advice, asthma action-plan instructions, anaphylaxis treatment steps, infection treatment, work or school clearance, legal claims, or certification.
+  - Do not reassure airway swelling, wheeze, severe breathing trouble, fever, pus-like discharge, eye pain, vision change, severe facial pain, or fast worsening as routine seasonal allergies.
+do_not:
+  - Do not use this reviewed card as a medication, immunotherapy, diagnosis, asthma, anaphylaxis, infection, pediatric dosing, clearance, legal, or certification surface.
+  - Do not put unknown herbs, oils, or homemade mixtures into the eyes or nose.
+  - Do not let routine allergy comfort advice delay emergency or clinician handoff when red flags are present.
+routine_boundary: >
+  Routine GD-948 reviewed-card answers are limited to stable, allergy-like
+  symptom intake, trigger and environment logging, exposure reduction, non-drug
+  comfort basics, red-flag screening, and concise clinician handoff. Diagnosis,
+  medication choice or dosing, immunotherapy, asthma or anaphylaxis treatment,
+  infection diagnosis or treatment, pediatric dosing, work/school clearance,
+  legal claims, and certification are outside this card.
+acceptable_uncertain_fit: >
+  If the story sounds allergy-like but severity or fit is unclear, lead with the
+  red-flag screen and ask focused questions about airway swelling, breathing,
+  fever, discharge, eye pain/vision change, facial pain or swelling, trigger
+  pattern, and duration. If any danger sign is present, route before routine
+  comfort measures.
+clarifying_questions:
+  - Are there any airway or breathing symptoms: lip/tongue/throat/face swelling, wheeze, chest tightness, trouble speaking, blue or gray lips, or worsening shortness of breath?
+  - Is there fever, feeling very ill, pus-like or worsening discharge, severe or one-sided facial pain, tooth pain, bad breath, facial swelling, eye pain, vision change, or severe light sensitivity?
+  - Which symptoms are present: sneezing, clear runny or stuffy nose, itchy nose/throat/ears/roof of mouth, watery or itchy eyes, or mild cough from throat irritation?
+  - What seems to trigger it: pollen, windy days, mowing, cleaning, dust, mold, pets, smoke, strong odors, damp rooms, bedding, or outdoor clothing?
+  - Do symptoms improve away from the trigger, and do they recur by season or setting?
+citation_ids:
+  - gd-948-reviewed-answer-card-boundary
+  - overview
+  - common-triggers
+  - reduce-exposure
+  - indoor-habits
+  - everyday-comfort-measures
+  - overlap-with-asthma
+  - when-it-may-be-more-than-allergies
+  - when-to-get-help
+source_sections:
+  - guide: GD-948
+    slug: seasonal-allergies-hay-fever
+    title: "Seasonal Allergies, Hay Fever & Everyday Relief"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#common-triggers"
+      - "#reduce-exposure"
+      - "#indoor-habits"
+      - "#everyday-comfort-measures"
+      - "#overlap-with-asthma"
+      - "#when-it-may-be-more-than-allergies"
+      - "#when-to-get-help"
+source_invariants:
+  - name: reviewed card remains routine and non-drug
+    guide: GD-948
+    must_include:
+      - This is the reviewed answer-card surface for GD-948.
+      - Use it only for routine seasonal-allergy support
+      - symptom intake, trigger and environment logs, non-drug comfort basics, exposure reduction, red-flag screening, and concise clinician handoff
+      - Do not use this reviewed card for diagnosis, medication selection or dosing
+      - antihistamines, steroids, decongestants, immunotherapy, asthma or anaphylaxis treatment
+    must_not_match:
+      - "(choose|start|take|dose|combine|switch)[^\\n]{0,120}(antihistamine|steroid|decongestant|immunotherapy)"
+      - "(diagnose|diagnosis)[^\\n]{0,120}(as safe for routine|from this reviewed card|without clinician)"
+  - name: red flags route away from routine allergy support
+    guide: GD-948
+    must_include:
+      - Route lip, tongue, throat, or face swelling
+      - wheeze, chest tightness, severe shortness of breath
+      - fever, feeling very ill, pus-like or worsening discharge, eye pain, vision change
+      - severe or one-sided facial pain
+    must_not_match:
+      - "(airway swelling|throat swelling|wheeze|severe shortness of breath)[^\\n]{0,160}(routine seasonal allergies|watch at home|comfort only)"
+      - "(fever|pus-like discharge|eye pain|vision change)[^\\n]{0,160}(routine seasonal allergies|comfort only|no clinician)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only card for GD-948 metadata/card audit closure. It keeps
+  the usable surface to routine allergy symptom intake, trigger/environment
+  logging, non-drug comfort, exposure reduction, red-flag screening, and
+  clinician handoff while routing airway, breathing, anaphylaxis, fever,
+  pus-like discharge, eye pain, vision change, and severe facial-pain patterns
+  to more specific emergency or clinician-owned surfaces.

@@ -21,7 +21,60 @@ last_updated: '2026-02-15'
 version: '1.0'
 custom_css: text{font-family:Arial,sans-serif}.label{fill:#b8956a;font-size:13px}.heading{fill:#d4a574;font-size:15px;font-weight:bold}.body-text{fill:#f5f0e8;font-size:11px}
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: orthodontics_survival_boundary
+answer_card:
+  - orthodontics_survival_boundary
+aliases:
+  - braces discomfort handoff
+  - aligner retainer problem log
+  - orthodontic wire rubbing
+  - poking wire braces
+  - loose bracket handoff
+  - broken orthodontic appliance
+  - retainer rubbing sore
+routing_cues:
+  - log braces aligner or retainer status for dentist or orthodontist handoff
+  - note rubbing poking loose bracket broken wire or broken retainer without repair instructions
+  - give hygiene soft food and avoid chewing basics while waiting for dental care
+  - screen orthodontic appliance complaints for swelling fever pus airway trauma or swallowing red flags
+  - route infection airway trauma severe pain or swallowed appliance part concerns to emergency dental or clinician owner
+citations_required: true
+applicability: >
+  Boundary-only orthodontic discomfort and appliance-problem intake for people
+  who already have braces, aligners, retainers, bands, brackets, wires, elastics,
+  or similar orthodontic appliances. Use it for status logs, rubbing or poking
+  notes, loose or broken component observations, hygiene and soft-food/avoid-
+  chewing basics, red-flag screening, and dentist, orthodontist, clinician, or
+  emergency-dental handoff. Do not use it for appliance fabrication,
+  adjustment/tightening, cutting wires, rethreading or bending wires, bonding or
+  cementing brackets, tooth-movement planning, diagnosis, pain-medication or
+  antibiotic dosing, return-to-use or chewing clearance, legal claims, or safety
+  certification.
+citation_policy: >
+  Cite GD-244 and its reviewed answer card only for orthodontic appliance
+  discomfort intake, braces/aligner/retainer status logs, rubbing/poking/broken
+  component notes, hygiene and soft-food/avoid-chewing basics, red flags, and
+  dentist, orthodontist, clinician, or emergency-dental handoff. Do not cite it
+  as runtime authority for appliance fabrication, adjustment/tightening, cutting
+  wires, rethreading or bending wires, bonding or cementing, tooth-movement
+  plans, diagnosis, pain-medication or antibiotic dosing, return-to-use or
+  chewing clearance, legal claims, or safety certification.
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-244. Use it only for boundary-level orthodontic discomfort and appliance-problem intake: braces, aligner, retainer, band, bracket, wire, or elastic status logs; rubbing, poking, loose, broken, or missing component notes; conservative hygiene and soft-food/avoid-chewing basics; red-flag screening; and dentist, orthodontist, clinician, or emergency-dental handoff.
+
+Start with what is known and observable: appliance type, current wear status, what changed, when it started, exact area rubbing or poking, whether a wire, bracket, band, retainer, or aligner is loose, broken, sharp, missing, swallowed, or inhaled, whether eating, drinking, speaking, swallowing, or breathing is affected, and whether there is swelling, fever, pus, foul drainage, bleeding, trauma, severe or worsening pain, or trouble opening the mouth.
+
+Routine boundary support is limited to documenting the problem, keeping the mouth and appliance clean when safe, using soft foods and avoiding chewing on painful or unstable areas while awaiting care, and preparing a concise handoff to a dentist or orthodontist. Route swelling, fever, pus, spreading redness, airway or swallowing trouble, major trauma, uncontrolled bleeding, severe or rapidly worsening pain, or possible swallowed or inhaled appliance parts to emergency dental, a clinician, emergency department, EMS, or the local emergency pathway.
+
+Do not use this reviewed card for appliance fabrication, adjustment or tightening, cutting wires, rethreading or bending wires, bonding or cementing brackets or bands, tooth-movement plans, diagnosis, pain-medication or antibiotic dosing, return-to-use or chewing clearance, legal claims, or safety certification.
+
+</section>
 
 <section id="appliance-types">
 

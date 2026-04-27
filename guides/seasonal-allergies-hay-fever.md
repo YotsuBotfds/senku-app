@@ -12,6 +12,29 @@ tags:
   - home-care
   - prevention
 description: Conservative practical help for seasonal allergies and hay fever. Focuses on pollen and dust triggers, reducing exposure, indoor habits, comfort measures, asthma overlap, and red flags that suggest infection or a more serious allergic reaction.
+aliases:
+  - hay fever
+  - seasonal allergies
+  - pollen allergies
+  - allergic rhinitis
+  - routine allergy symptoms
+routing_cues:
+  - Use this guide's reviewed answer card only for routine allergy symptom intake, trigger and environment logs, non-drug comfort basics, exposure reduction, red-flag screening, and clinician handoff.
+  - Do not use the reviewed card for diagnosis, medication selection or dosing, antihistamine/steroid/decongestant choice, immunotherapy, asthma or anaphylaxis treatment, infection diagnosis, pediatric dosing, work or school clearance, legal claims, or certification.
+  - Route airway swelling, wheeze or severe breathing trouble after possible allergen exposure, and anaphylaxis patterns to allergic-reactions-anaphylaxis or asthma-chronic-respiratory-support as appropriate.
+  - Route fever, pus-like discharge, eye pain, vision change, severe facial pain, or infection concern to the relevant urgent medical, eye-care, sinus/infection, or clinician owner instead of this routine card.
+applicability: >
+  Use for boundary-only routine seasonal-allergy support: symptom and trigger
+  intake, pollen/dust/mold/pet/smoke/environment logs, simple exposure
+  reduction, non-drug comfort basics such as saline, fluids, eye rinsing,
+  trigger avoidance, red-flag screening, and concise clinician handoff.
+citation_policy: >
+  Cite GD-948 and its reviewed answer card only for routine allergy symptom
+  intake, trigger/environment logging, exposure reduction, non-drug comfort
+  basics, red-flag screening, and clinician handoff. Do not cite it for
+  diagnosis, medication selection or dosing, immunotherapy, asthma/anaphylaxis
+  treatment, infection diagnosis, pediatric dosing, work/school clearance,
+  legal claims, or certification.
 related:
   - allergic-reactions-anaphylaxis
   - asthma-chronic-respiratory-support
@@ -24,11 +47,30 @@ word_count: 1800
 last_updated: '2026-04-13'
 version: '1.0'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: seasonal_allergies_hay_fever_boundary
+answer_card:
+  - seasonal_allergies_hay_fever_boundary
+citations_required: true
 ---
 
 :::warning
 This guide is for everyday allergy relief and risk reduction. It does not replace medical care, allergy testing, or an asthma action plan. If breathing is getting worse, if the face or throat is swelling, or if the symptoms do not fit a simple seasonal pattern, treat it as urgent.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-948. Use it only for routine seasonal-allergy support: symptom intake, trigger and environment logs, non-drug comfort basics, exposure reduction, red-flag screening, and concise clinician handoff.
+
+Routine answers may ask about sneezing, clear runny or stuffy nose, itchy nose, throat, ears, roof of mouth, watery or itchy eyes, mild cough from throat irritation, seasonality, outdoor pollen, dust, mold, pets, smoke, strong odors, cleaning, mowing, windy days, bedroom exposure, and whether symptoms improve away from the trigger. Keep comfort advice to simple non-drug steps already in this guide: reduce exposure, close windows during high pollen, shower or change clothes after outdoor exposure, keep bedding and sleeping areas cleaner, use saline or clean water rinses when appropriate, drink fluids, avoid rubbing eyes, and avoid unknown herbs, oils, or homemade mixtures in the eyes or nose.
+
+Do not use this reviewed card for diagnosis, medication selection or dosing, antihistamines, steroids, decongestants, immunotherapy, asthma or anaphylaxis treatment, infection diagnosis, pediatric dosing, work or school clearance, legal claims, or certification. If a prompt asks for those, provide only the routine symptom/trigger log, the relevant red-flag screen, and a clinician or emergency handoff.
+
+Route lip, tongue, throat, or face swelling; widespread hives with breathing symptoms; vomiting, fainting, dizziness, or fast worsening after a likely allergen; wheeze, chest tightness, severe shortness of breath, trouble speaking, blue or gray lips, or extra effort to breathe to the allergy/anaphylaxis or asthma emergency owner. Route fever, feeling very ill, pus-like or worsening discharge, eye pain, vision change, severe light sensitivity, severe or one-sided facial pain, facial swelling, or symptoms that do not fit a simple allergy pattern to the appropriate urgent medical, eye-care, sinus/infection, or clinician owner.
+
+</section>
 
 ## Overview
 

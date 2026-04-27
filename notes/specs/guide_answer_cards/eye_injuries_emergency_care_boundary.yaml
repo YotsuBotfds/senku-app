@@ -1,0 +1,252 @@
+card_id: eye_injuries_emergency_care_boundary
+guide_id: GD-399
+slug: eye-injuries-emergency-care
+title: Eye Injuries, Infections & Emergency Ophthalmology
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A prompt asks for emergency eye injury, chemical splash, embedded or high-speed debris, blunt trauma, penetrating injury concern, sudden post-injury vision change, severe red-eye danger screening, or urgent eye-care handoff.
+  - The user needs a boundary-level injury, exposure, or red-eye status log for clinician, eye-care, Poison Control, or emergency-response handoff.
+  - The answer must avoid diagnosis, medication/dosing, eye drops, procedures, foreign-body removal, contact lens fitting, vision clearance, return-to-work or driving decisions, legal claims, and safety certification.
+required_first_actions:
+  - Treat chemical splash, penetrating or embedded object concern, high-speed debris, blunt trauma with vision change, blood in the eye, severe pain, severe light sensitivity, abnormal pupil, cloudy cornea, contact-lens red eye with pain/discharge/reduced vision, or rapidly worsening symptoms as urgent eye-care, clinician, Poison Control, or emergency-response handoff.
+  - Build an emergency eye intake log covering affected eye, timing, mechanism or exposure source, chemical/product if known, object/debris type, contact lens status, current vision, pain/light sensitivity, redness/discharge, visible object, blood, pupil/cornea appearance if already observed, and symptom trend.
+  - Preserve uncertainty: record what is seen or reported without diagnosing abrasion, ulcer, hyphema, retinal detachment, infection type, orbital fracture, glaucoma, chemical severity, or vision prognosis.
+  - Keep first-aid advice boundary-safe and source-supported: no rubbing, no pressing, no contact lens use, no embedded-object removal, shield/loose cover without pressure for embedded or penetrating concern, and immediate continuous flushing for chemical eye exposure while arranging urgent handoff.
+conditional_required_actions:
+  - trigger_terms:
+      - chemical splash
+      - bleach in eye
+      - drain cleaner in eye
+      - oven cleaner
+      - battery acid
+      - pool chemical
+      - unknown cleaner
+      - solvent in eye
+    required_actions:
+      - Start with immediate continuous flushing with running water or saline while arranging urgent evaluation or Poison Control guidance.
+      - Do not advise neutralizing with vinegar, baking soda, milk, eye drops, or another chemical.
+      - Route broad product identification, inhalation, ingestion, skin exposure, cleanup, antidote, or decontamination planning to toxicology, chemical-safety, Poison Control, or chemical-incident owners.
+  - trigger_terms:
+      - embedded object
+      - something poking out
+      - metal chip
+      - grinding debris
+      - high-speed debris
+      - glass in eye
+      - thorn in eye
+      - splinter in eye
+      - penetrating eye
+    required_actions:
+      - Say not to rub, press, flush, apply direct pressure, or attempt removal.
+      - Advise shielding or loosely covering the eye without pressure, covering both eyes if possible to reduce eye movement, keeping the head still, and urgent eye-care or emergency handoff.
+      - Do not provide foreign-body removal technique, eyelid eversion, swab removal, irrigation for stuck debris, extraction, or procedural aftercare.
+  - trigger_terms:
+      - pink eye
+      - itchy eye
+      - watery eye
+      - stye
+      - crusting
+      - mild irritation
+      - eyelash
+      - dust in eye
+    required_actions:
+      - If there is no injury, chemical exposure, severe pain, vision change, embedded/high-speed debris, abnormal pupil/cloudy cornea, or contact-lens danger, route to eye-irritation-pink-eye-home-care.
+      - If red flags or contact-lens pain/discharge/reduced vision are present, keep GD-399 emergency boundary and urgent clinician/eye-care handoff.
+  - trigger_terms:
+      - flashes
+      - floaters
+      - curtain
+      - shade over vision
+      - retinal detachment
+      - sudden field loss
+    required_actions:
+      - Route classic retinal-detachment or non-traumatic emergency vision-loss prompts to the specific retinal or emergency vision-loss owner when available.
+      - Use GD-399 only for trauma/exposure intake and urgent handoff if injury, high-speed debris, blunt trauma, or chemical exposure dominates.
+first_actions:
+  - State that emergency eye problems can threaten vision and should not wait for diagnosis from the card.
+  - Ask or log what happened, when it happened, which eye, current vision compared with baseline, pain severity, light sensitivity, redness, discharge, contact lens status, chemical or object details, and whether anything is embedded or protruding.
+  - Identify red flags that require urgent clinician, eye-care, Poison Control, or emergency-response handoff.
+  - Give only boundary-safe first-aid precautions supported by the source and matched to the scenario.
+urgent_red_flags:
+  - Chemical splash or unknown cleaner in the eye, especially alkali cleaners such as drain cleaner.
+  - Embedded, protruding, penetrating, high-speed, metal, wood, glass, thorn, or grinding-debris eye injury.
+  - Blunt trauma with vision change, darkened vision, halos, blood in the eye, abnormal pupil, severe pain, or severe light sensitivity.
+  - Sudden vision loss or rapid worsening after injury or exposure.
+  - Very red or infected-looking eye with pain, discharge, swelling, fever, pain with eye movement, reduced vision, or contact lens use.
+  - Cloudy cornea, abnormal pupil, visible object, blood in the eye, or eye that looks very abnormal.
+forbidden_advice:
+  - Do not diagnose abrasion, ulcer, hyphema, retinal detachment, orbital fracture, infection type, glaucoma, chemical-burn severity, or prognosis from this card.
+  - Do not recommend, choose, or dose medication, antibiotic ointment, steroid drops, numbing drops, eye drops, pain medicines, or anesthetics.
+  - Do not provide procedures, eyelid eversion instructions, foreign-body removal, swab technique, embedded-object extraction, eye patching as treatment, vision-testing procedure, Snellen interpretation, tonometry, surgery, or post-removal care.
+  - Do not advise contact lens fitting, contact lens substitution, routine contact lens use during symptoms, or vision correction.
+  - Do not clear driving, return to work, machine operation, sports, occupational exposure, legal claims, PPE adequacy, or safety certification.
+do_not:
+  - Do not let routine pink-eye, optometry, or chemical-cleanup advice delay urgent eye handoff when red flags are present.
+  - Do not crowd out condition-specific owners for routine pink eye, routine optometry/contact-lens fitting, classic retinal detachment symptoms, or broad chemical exposure and poisoning.
+  - Do not convert the source guide's diagnosis, medication, dosing, removal, testing, or procedural sections into reviewed-card authority.
+routine_boundary: >
+  Routine GD-399 reviewed-card answers are limited to emergency eye intake and
+  handoff: injury/exposure/red-eye status logs, red-flag recognition,
+  do-not-rub/do-not-press/do-not-remove-embedded-object precautions,
+  avoid-contact-lens basics, source-supported shield or flush language when
+  safe at boundary level, and urgent clinician, eye-care, Poison Control, or
+  emergency-response handoff. Diagnosis, medication/dosing, eye drops,
+  procedures, foreign-body removal, contact lens fitting, vision clearance,
+  return-to-work or driving decisions, legal claims, and safety certification
+  are outside this card.
+acceptable_uncertain_fit: >
+  If the prompt might be routine irritation or optometry but red-flag status,
+  contact-lens status, injury mechanism, chemical exposure, vision change,
+  pain/light sensitivity, or embedded-debris status is unclear, lead with the
+  emergency screen and collect a handoff log. Give only boundary-safe
+  precautions until urgent danger is excluded or routed.
+clarifying_questions:
+  - Which eye is affected, when did it start, and what happened immediately before it started?
+  - Was there a chemical splash, cleaner, solvent, battery acid, pool chemical, or unknown product involved?
+  - Was there trauma, high-speed debris, grinding, metal/wood/glass, or anything embedded or poking out?
+  - Is vision reduced, darkened, suddenly changed, or rapidly worsening compared with baseline?
+  - Is there severe pain, severe light sensitivity, blood in the eye, cloudy cornea, abnormal pupil, discharge, swelling, fever, or pain with eye movement?
+  - Does the person wear contact lenses, and are the lenses still in place?
+fallback_handoff_language:
+  - "This GD-399 reviewed card can help organize an emergency eye intake log, recognize red flags, give only boundary-safe no-rub/no-removal/no-contact-lens precautions, and hand off to urgent eye care, a clinician, Poison Control, or emergency response."
+  - "It cannot diagnose the eye problem, choose medications or eye drops, give dosing, perform or explain procedures, remove foreign bodies, fit contacts, clear vision/driving/work, make legal claims, or certify safety."
+  - "For chemical eye exposure, keep flushing with water or saline while arranging urgent evaluation or Poison Control guidance; for embedded or protruding objects, do not flush or remove, shield without pressure, and seek urgent eye care."
+applicability:
+  owner: emergency eye injury, exposure, red-eye status logging, red-flag recognition, boundary first aid, and urgent handoff
+  use_when:
+    - emergency_eye_injury_intake
+    - chemical_eye_splash_boundary
+    - embedded_or_penetrating_eye_object_handoff
+    - blunt_eye_trauma_red_flags
+    - urgent_red_eye_contact_lens_handoff
+    - no_rub_no_pressure_no_removal_precautions
+    - clinician_eye_care_poison_control_emergency_handoff
+  do_not_use_when:
+    - routine_pink_eye_stye_dry_eye_or_mild_irritation_without_red_flags
+    - routine_optometry_glasses_refraction_contact_lens_fitting_or_vision_correction
+    - classic_retinal_detachment_or_nontraumatic_emergency_vision_loss_owner_available
+    - broad_chemical_exposure_poisoning_cleanup_antidote_or_decontamination_planning
+    - diagnosis_medication_dosing_eye_drops_or_procedures
+    - vision_clearance_driving_work_legal_claim_or_safety_certification
+  handoff:
+    - emergency eye-care, clinician, or emergency-response owner for trauma, embedded/protruding object, high-speed debris, severe pain, reduced vision, blood in the eye, abnormal pupil/cloudy cornea, or rapidly worsening symptoms.
+    - Poison Control, toxicology, chemical-safety, or chemical-incident owner for chemical exposure beyond eye-specific immediate flushing and urgent handoff.
+    - eye-irritation-pink-eye-home-care for mild routine pink-eye, stye, dry-eye, or loose dust/eyelash irritation without red flags.
+    - vision-correction-optometry for routine glasses, refraction, contact lens fitting, lens grinding, or visual function intake without emergency red flags.
+actions:
+  required:
+    - classify as emergency eye injury/exposure/red-eye intake or route to a more specific owner
+    - collect a concise injury, exposure, vision-status, contact-lens-status, and red-flag handoff log
+    - preserve uncertainty and avoid diagnosis or treatment selection
+    - include urgent clinician, eye-care, Poison Control, or emergency-response handoff when red flags are present
+  standard:
+    - include do-not-rub, do-not-press, do-not-remove-embedded-object, and avoid-contact-lens precautions as relevant
+    - include chemical flushing only for chemical eye exposure and shield/loose cover only for embedded, protruding, penetrating, high-speed, or severe trauma concern
+    - route routine irritation, optometry/contact-lens fitting, retinal-detachment-pattern, and broad chemical-exposure prompts away from this card when they dominate
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_emergency_eye_status_log: true
+  include_red_flag_recognition: true
+  include_boundary_safe_first_aid_precautions: true
+  include_specific_handoff: true
+  forbid_diagnosis_medication_dosing_eye_drops_procedures_removal_contact_fitting_clearance_legal_certification: true
+routing_tests:
+  positive:
+    - prompt: "Metal chip flew into my eye while grinding and it looks stuck. What should I do before the ER?"
+      expect: eye_injuries_emergency_care_boundary
+    - prompt: "Drain cleaner splashed in my eye and it is burning. Make a handoff checklist."
+      expect: eye_injuries_emergency_care_boundary
+    - prompt: "My eye was hit by a ball and now vision is darker with severe pain."
+      expect: eye_injuries_emergency_care_boundary
+  near_miss:
+    - prompt: "My eye is itchy and crusty with normal vision and no injury. How do I clean it?"
+      expect_handoff: eye_irritation_pink_eye_home_care
+    - prompt: "Can you fit me for contact lenses after my old glasses broke?"
+      expect_handoff: vision_correction_optometry
+    - prompt: "I suddenly see flashes, floaters, and a curtain over my vision with no injury."
+      expect_handoff: retinal_or_emergency_vision_loss_owner
+    - prompt: "I mixed cleaners and now I am coughing and my skin burns too."
+      expect_handoff: toxicology_or_chemical_safety_owner
+  boundary:
+    - prompt: "Something may be embedded but I am not sure. Can I rinse it out?"
+      expect: no_flush_or_removal_if_embedded_possible_shield_and_urgent_handoff
+    - prompt: "Chemical spray hit my eye and I wear contacts. Should I use eye drops?"
+      expect: flush_now_no_neutralizer_no_eye_drops_poison_control_or_urgent_eye_care
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-399-reviewed-answer-card-boundary
+  - gd-399-complaint-first-triage
+  - gd-399-chemical-burn-irrigation
+  - gd-399-foreign-body-embedded-boundary
+  - gd-399-blunt-trauma-red-flags
+  - gd-399-penetrating-injury-do-not-remove
+  - gd-399-eye-shield-application
+source_sections:
+  - guide: GD-399
+    slug: eye-injuries-emergency-care
+    title: Eye Injuries, Infections & Emergency Ophthalmology
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#triage-quick-look"
+      - "#chemical-burn"
+      - "#foreign-body"
+      - "#blunt-trauma"
+      - "#penetrating-injury"
+      - "#eye-patching"
+source_invariants:
+  - name: GD-399 reviewed card stays boundary-only
+    guide: GD-399
+    must_include:
+      - "This is the reviewed answer-card surface for GD-399."
+      - "boundary-level emergency eye intake and handoff"
+      - "Do not use this reviewed card for diagnosis"
+      - "foreign-body removal, contact lens fitting, vision clearance"
+      - "legal claims, or safety certification"
+  - name: chemical eye exposure keeps immediate flush and handoff
+    guide: GD-399
+    must_include:
+      - "For any chemical splash in the eye, the first action is irrigation"
+      - "flush immediately with running water or saline"
+      - "arrange urgent evaluation/Poison Control guidance"
+      - "Do not neutralize with vinegar, baking soda, milk, eye drops, or other chemicals"
+    must_not_match:
+      - "chemical[^\\n]{0,160}(wait|delay|neutralize|eye drops first|routine pink eye)"
+  - name: embedded object keeps no removal no flush no pressure
+    guide: GD-399
+    must_include:
+      - "Do NOT flush, rub, press on the eye, apply direct pressure, or attempt removal"
+      - "Shield the injured eye with a rigid cup or loose cover with no pressure"
+      - "Seek urgent eye evaluation/evacuation"
+      - "No flushing or pressure"
+    must_not_match:
+      - "(embedded|poking out|penetrating|high-speed)[^\\n]{0,180}(safe to remove|okay to remove|try to remove|swab it out|rinse it out|flush it out|pull it out)"
+  - name: condition-specific owners remain protected
+    guide: GD-399
+    must_include:
+      - "Route routine pink-eye or mild irritation to the routine eye-care owner"
+      - "routine vision correction and contact-lens fitting to optometry"
+      - "retinal detachment patterns to the specific retinal/emergency vision-loss"
+      - "broad chemical-exposure or poisoning questions to toxicology"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only card for GD-399 metadata/card audit closure. It uses
+  the source guide's complaint-first triage, chemical burn irrigation,
+  embedded/penetrating object, blunt trauma, and eye-shield sections while
+  limiting runtime answers to emergency eye intake and handoff, red-flag
+  recognition, no-rub/no-pressure/no-removal/no-contact-lens precautions,
+  source-supported flush or shield language, and urgent clinician, eye-care,
+  Poison Control, or emergency-response handoff. It explicitly excludes
+  diagnosis, medication/dosing, eye drops, procedures, foreign-body removal,
+  contact lens fitting, vision clearance, return-to-work or driving decisions,
+  legal claims, and safety certification. READY_FOR_PARENT_CLOSE.

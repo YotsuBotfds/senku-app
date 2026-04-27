@@ -28,6 +28,8 @@ aliases:
   - chronic wound dressing
   - ulcer dressing change
 routing_cues:
+  - Use the reviewed card only for chronic wound observation/intake, wound location/duration/appearance logs, drainage/odor/pain/swelling/fever trend notes, non-prescriptive pressure/offloading questions, source-safe hygiene/covering basics, red-flag screening, and clinician or wound-care owner handoff.
+  - Do not use the reviewed card for debridement, dressing protocols, pressure injury staging diagnosis, antibiotics, medication, dosing, wound closure, procedure instructions, vascular or diabetes management, treatment decisions, return-to-work or activity clearance, legal claims, or certification.
   - "my bandage is stuck and I cannot get it off"
   - "how often should I change the dressing on a wound that won't heal"
   - "dressing change frequency for chronic wound"
@@ -39,6 +41,30 @@ routing_cues:
   - "leg ulcer keeps draining for weeks"
 icon: 🩹
 description: Chronic wound and ulcer care—pressure ulcer staging, diabetic wound assessment, maggot debridement therapy, negative pressure alternatives, wound bed preparation (TIME), infection vs colonization.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: chronic_wound_care_boundary
+answer_card:
+  - chronic_wound_care_boundary
+citations_required: true
+applicability: >
+  Use GD-300 for boundary-only chronic wound observation/intake and handoff:
+  wound location, duration, appearance, drainage, odor, pain, swelling, fever
+  trend, pressure/offloading question prompts at a non-prescriptive level,
+  hygiene and covering basics only when source-safe, red flags, and clinician
+  or wound-care owner handoff. Do not use its reviewed card for debridement,
+  dressing protocols, pressure injury staging diagnosis, antibiotics,
+  medication or dosing, wound closure, procedure instructions, vascular or
+  diabetes management, treatment decisions, return-to-work or activity
+  clearance, legal claims, or certification.
+citation_policy: >
+  Cite this guide and its reviewed answer card only for chronic wound
+  observation/intake, symptom and trend logging, non-prescriptive
+  pressure/offloading prompts, source-safe hygiene/covering basics, red-flag
+  screening, and clinician or wound-care owner handoff. Do not cite the
+  reviewed card for debridement, dressing protocols, pressure injury staging
+  diagnosis, antibiotics, medication or dosing, wound closure, procedures,
+  vascular or diabetes management, treatment decisions, return-to-work or
+  activity clearance, legal claims, or certification.
 related:
   - alkali-production
   - chlorine-bleach-production
@@ -70,6 +96,24 @@ Chronic wounds are those that fail to heal in the expected timeframe (typically 
 **Critical disclaimer:** This guide is educational. Chronic wounds often require professional wound care, vascular assessment, or surgical intervention. In settings where these are unavailable, focus on preventing infection, promoting healing, and reducing suffering. Seek professional evaluation when possible.
 
 This guide emphasizes the TIME framework (Tissue, Inflammation, Moisture, Epithelialization) and practical approaches using improvised or low-cost materials.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-300. Use it only for chronic wound observation and intake, wound location/duration/appearance logs, drainage/odor/pain/swelling/fever trend notes, non-prescriptive pressure and offloading question prompts, source-safe hygiene and covering basics, red-flag screening, and clinician or wound-care owner handoff.
+
+Start with a bounded wound record: wound location, how long it has been open or recurring, apparent size if already known, appearance of the wound bed and surrounding skin in plain observation language, drainage amount/color/odor trend, pain trend, swelling/warmth/redness trend, fever or systemic symptoms, relevant pressure or rubbing points, current mobility or positioning constraints, what hygiene or covering has already been done, and who owns follow-up. Keep observations separate from diagnosis, staging, or treatment decisions.
+
+For pressure/offloading, ask only non-prescriptive handoff questions: whether the wound is over a bony area, whether the person stays in one position for long periods, whether a shoe, brace, bed, chair, cast, wrap, or device rubs or presses on the area, whether repositioning or pressure relief has already been discussed with a clinician, and who can review fit, mobility, skin protection, and wound-care planning. Do not prescribe offloading devices, weight-bearing restrictions, repositioning schedules, compression, vascular care, or diabetes management from this reviewed card.
+
+Hygiene and covering content stays basic and source-safe: note whether clean hands, clean water or saline, mild soap for surrounding skin, clean dry covering, and keeping the area protected from dirt or contamination are available or already used. Do not turn the guide's dressing-frequency tables, antimicrobial products, debridement, negative-pressure, maggot therapy, antibiotics, wound closure, or other treatment passages into reviewed-card instructions.
+
+Treat spreading redness, warmth, swelling, worsening or severe pain, thick yellow/green drainage, foul or rotten odor with worsening drainage, fever, chills, confusion, rapid heart rate, low blood pressure, red streaking, black tissue/gangrene concern, exposed bone/tendon/deep structure, sudden rapid worsening, or a wound in a person with diabetes, poor circulation, immune compromise, or pressure injury concern as red flags for urgent clinician, wound-care, emergency, vascular, diabetes-care, or surgical owner handoff as appropriate. Infected wound concern with fever, red streaking, confusion, hypotension, fast heartbeat, or other systemic signs routes to emergency medical care.
+
+Do not use this reviewed card for debridement, dressing protocols, pressure injury staging diagnosis, antibiotic selection, medication, dosing, wound closure, procedural instructions, vascular or diabetes management, treatment decisions, return-to-work or activity clearance, legal claims, or certification. If a prompt asks for those, provide only the observation log, red-flag screen, uncertainty language, non-prescriptive pressure/offloading prompts, source-safe hygiene/covering basics, and handoff to the appropriate clinician, wound-care specialist, emergency medical owner, vascular/diabetes owner, surgical owner, or responsible care owner.
 
 </section>
 

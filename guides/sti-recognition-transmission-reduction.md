@@ -13,6 +13,47 @@ tags:
   - prevention
   - barrier-methods
 icon: 🧬
+aliases:
+  - STI symptoms
+  - STD symptoms
+  - possible STI exposure
+  - STI testing after exposure
+  - partner notification STI
+  - safer sex after STI concern
+  - condom broke STI risk
+  - genital sores after sex
+  - discharge after sex
+  - pelvic pain after sex
+  - testicular pain after sex
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level STI concern intake, symptom and exposure timeline logging, asymptomatic-spread reminders, safer-sex harm reduction, high-level partner-notification planning, testing or clinician/public-health handoff, and urgent red-flag routing.
+  - Route pregnancy, possible pregnancy, newborn exposure, sexual assault, known HIV or hepatitis B exposure, blood exposure, severe pelvic or lower abdominal pain, testicular pain or swelling, fever with genital or urinary symptoms, heavy bleeding, spreading rash or systemic illness, confusion, fainting, sepsis signs, and severe throat or swallowing symptoms to prompt clinician, emergency, assault-response, prenatal, newborn, or public-health handoff.
+  - Keep answers non-diagnostic: symptoms do not confirm an STI, lack of symptoms does not rule one out, and testing or clinician evaluation is the safer path after possible exposure.
+  - Do not use this reviewed answer card for diagnosis, test interpretation, antibiotic or antiviral choice, treatment regimens, medication dosing, coercive disclosure or contact tracing, legal reporting decisions, sexual assault investigation, pregnancy management, clearance to resume sex, certification, or legal/safety claims.
+citations_required: true
+applicability: >
+  Boundary-only STI concern intake and harm-reduction support: symptom and
+  exposure timeline collection, asymptomatic-spread reminders, abstain or
+  barrier-use safer-sex reminders, high-level partner-notification planning,
+  testing and clinician/public-health handoff, and pregnancy, assault, severe
+  pelvic/testicular pain, fever, bleeding, newborn, or systemic red-flag routing.
+  Not for diagnosis, treatment selection, medication/dosing, test
+  interpretation, coercive disclosure/contact tracing, legal reporting,
+  sexual-assault investigation, pregnancy management, clearance, or
+  certification.
+citation_policy: >
+  Cite GD-937 and its reviewed answer card only for STI concern intake,
+  symptom/exposure timeline logging, asymptomatic-spread and safer-sex harm
+  reduction, partner-notification planning at a high level, testing or
+  clinician/public-health handoff, and urgent red-flag routing. Do not cite it
+  as authority for diagnosis, antibiotic or antiviral selection or dosing,
+  treatment regimens, test interpretation, coercive disclosure/contact tracing,
+  legal reporting decisions, sexual-assault investigation, pregnancy
+  management, clearance to resume sex, or certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: sti_recognition_transmission_reduction_boundary
+answer_card:
+  - sti_recognition_transmission_reduction_boundary
 description: Conservative public-health guidance for recognizing possible STI symptom patterns, understanding asymptomatic spread, reducing transmission, communicating with partners, protecting pregnancy and newborns, and knowing when not to rely on self-diagnosis.
 related:
   - common-vaginal-infections

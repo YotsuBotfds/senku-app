@@ -20,13 +20,53 @@ related:
   - herbalism
   - midwifery
   - agriculture
+aliases:
+  - family planning goals
+  - reproductive health intake
+  - pregnancy intention discussion
+  - non-coercive family planning
+  - population genetics education
+routing_cues:
+  - non-coercive family planning goals
+  - reproductive health questions for clinician handoff
+  - pregnancy intention discussion prompts
+  - privacy consent and respect boundaries
+  - high-level population genetics education
+  - reproductive health red flags and handoff
+citation_policy: cite reviewed GD-283 answer card only for non-coercive planning/intake, reproductive health questions, pregnancy intention discussion prompts, privacy/consent/respect boundaries, high-level genetics/population education, red flags, and clinician/reproductive-health counselor/public-health handoff; do not use it for contraception selection or prescribing, abortion instructions, fertility treatment, pregnancy management, genetic testing interpretation, coercive population control, legal decisions, dosing, diagnosis, treatment, clearance, or certification.
+applicability: >
+  Boundary-only, non-coercive family-planning and population-education support:
+  family planning goals, reproductive health intake questions, pregnancy
+  intention discussion prompts, privacy/consent/respect boundaries, high-level
+  genetics/population education, red flags, and clinician, reproductive-health
+  counselor, or public-health handoff. Not a contraception selection,
+  prescribing, abortion, fertility-treatment, pregnancy-management, genetic
+  testing interpretation, coercive population-control, legal-decision, dosing,
+  diagnosis, treatment, clearance, or certification guide.
 read_time: 19
 word_count: 4743
 last_updated: '2026-02-19'
 version: '1.0'
 custom_css: ''
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: family_planning_population_boundary
+answer_card:
+  - family_planning_population_boundary
+citations_required: true
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-283. Use it only for boundary-level, non-coercive family-planning and population-education support: family planning goals, reproductive health intake questions, pregnancy intention discussion prompts, privacy, consent, and respect boundaries, high-level genetics or population education, red-flag recognition, and clinician, reproductive-health counselor, or public-health handoff.
+
+Start with voluntary goals and observable context without interpreting or directing the person's choices: who is asking, whether the person is safe and free to decline, pregnancy intention or avoidance goals if they choose to share them, timing questions they want help organizing, privacy needs, consent concerns, current symptoms or pregnancy possibility, available clinical or counseling support, and any uncertainty that needs handoff. Keep community or population planning language separate from any individual's reproductive decision.
+
+Do not use this reviewed card for contraception selection or prescribing, abortion instructions, fertility treatment, pregnancy management, genetic testing interpretation, coercive population control, legal decisions, dosing, diagnosis, treatment, clearance, or certification. When a prompt includes possible pregnancy complications, sexual coercion or reproductive pressure, assault, inability to consent, severe pelvic or abdominal pain, heavy bleeding, fainting, fever, STI exposure concern, suicidal or self-harm risk, or forced community reproductive targets, stop routine planning and route to the appropriate clinician, reproductive-health counselor, emergency-response, safeguarding, legal advocate, or public-health owner.
+
+</section>
 
 <section id="natural-barrier-contraception">
 
