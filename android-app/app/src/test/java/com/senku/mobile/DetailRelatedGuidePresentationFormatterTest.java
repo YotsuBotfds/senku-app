@@ -58,14 +58,14 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "2 linked guides for [GD-214] Water Storage. Preview here. Open full guide when ready.",
+            "2 linked guides for [GD-214] Water Storage. Preview, then open.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
             )
         );
         assertEquals(
-            "1 linked guide for [GD-215] Rainwater Catchment. Preview here. Open full guide when ready.",
+            "1 linked guide for [GD-215] Rainwater Catchment. Preview, then open.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
