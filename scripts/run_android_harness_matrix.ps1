@@ -538,7 +538,7 @@ function New-MatrixPlan {
         for ($index = 0; $index -lt $Runs.Count; $index++) {
             $runnerSpec = New-RunnerSpec -Run $Runs[$index] -Index $index -ResolvedOutputDir $ResolvedOutputDir
             $runnerCommand = ConvertTo-RunnerCommandLine -RunnerSpec $runnerSpec
-            [ordered]@{
+            [pscustomobject][ordered]@{
                 row_index = $index
                 row_number = $index + 1
                 mode = $runnerSpec.mode

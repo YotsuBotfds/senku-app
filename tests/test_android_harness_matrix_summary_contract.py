@@ -159,6 +159,48 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertTrue(summary["rows"][0]["skip_pack_push_if_current"])
         self.assertEqual(summary["rows"][1]["emulator"], "emulator-5558")
         self.assertEqual(summary["rows"][1]["posture"], "tablet_landscape")
+        self.assertEqual(
+            summary["emulator_groups"],
+            [
+                {
+                    "emulator": "emulator-5556",
+                    "posture": "phone_portrait",
+                    "device_role": "phone",
+                    "orientation": "portrait",
+                    "row_count": 1,
+                    "run_labels": ["prompt_case"],
+                },
+                {
+                    "emulator": "emulator-5558",
+                    "posture": "tablet_landscape",
+                    "device_role": "tablet",
+                    "orientation": "landscape",
+                    "row_count": 1,
+                    "run_labels": ["followup_case"],
+                },
+            ],
+        )
+        self.assertEqual(
+            summary["posture_groups"],
+            [
+                {
+                    "posture": "phone_portrait",
+                    "row_count": 1,
+                    "emulators": ["emulator-5556"],
+                    "run_labels": ["prompt_case"],
+                },
+                {
+                    "posture": "tablet_landscape",
+                    "row_count": 1,
+                    "emulators": ["emulator-5558"],
+                    "run_labels": ["followup_case"],
+                },
+            ],
+        )
+        self.assertEqual(
+            summary["migration_checklist_intent"]["posture_groups"],
+            ["phone_portrait", "tablet_landscape"],
+        )
         self.assertIn("-RunLabel", summary["runner_commands"][0])
         self.assertIn("prompt_case", summary["runner_commands"][0])
         self.assertEqual(len(summary["validation_commands"]), 1)
