@@ -1775,7 +1775,8 @@ public final class DetailActivity extends AppCompatActivity {
             followUpComposeView.setVisibility(View.GONE);
             return;
         }
-        boolean showRetry = followUpRetryButton != null && followUpRetryButton.getVisibility() == View.VISIBLE;
+        boolean retryAvailable = followUpRetryButton != null && followUpRetryButton.getVisibility() == View.VISIBLE;
+        boolean showRetry = shouldShowDockedComposerRetry(retryAvailable, isLandscapePhoneLayout());
         String retryLabel = followUpRetryButton == null ? getString(R.string.detail_followup_retry) : safe(followUpRetryButton.getText().toString());
         DockedComposerModel model = new DockedComposerModel(
             safe(followUpInput.getText() == null ? null : followUpInput.getText().toString()),
@@ -1806,7 +1807,7 @@ public final class DetailActivity extends AppCompatActivity {
             || followUpPanel == null
             || followUpPanel.getVisibility() != View.VISIBLE
             // On landscape phones the extra suggestion rail crowds the answer body offscreen.
-            || isLandscapePhoneLayout()
+            || shouldHideFollowUpSuggestionsOnPhoneLandscape(isLandscapePhoneLayout())
             || currentFollowUpSuggestions.isEmpty()) {
             followUpSuggestView.setVisibility(View.GONE);
             return;
@@ -1820,6 +1821,14 @@ public final class DetailActivity extends AppCompatActivity {
             || (isCompactPortraitPhoneLayout() && answerMode)
             || (isTabletPortraitLayout() && answerMode && !pendingGeneration)
             || showUtilityRail();
+    }
+
+    static boolean shouldShowDockedComposerRetry(boolean retryAvailable, boolean landscapePhone) {
+        return retryAvailable && !landscapePhone;
+    }
+
+    static boolean shouldHideFollowUpSuggestionsOnPhoneLandscape(boolean landscapePhone) {
+        return landscapePhone;
     }
 
     private void syncFollowUpDraftFromCompose(String draft) {
