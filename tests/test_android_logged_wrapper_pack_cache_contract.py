@@ -15,8 +15,13 @@ class AndroidLoggedWrapperPackCacheContractTests(unittest.TestCase):
         self.assertIn("[switch]$SkipPackPushIfCurrent", script)
         self.assertIn("[switch]$ForcePackPush", script)
         self.assertIn("$scriptArgs.PushPackDir = $PushPackDir", script)
+        self.assertIn("$pushPackSummaryPath = Join-Path $resolvedOutputDir", script)
+        self.assertIn("$scriptArgs.PushPackSummaryPath = $pushPackSummaryPath", script)
         self.assertIn("$scriptArgs.SkipPackPushIfCurrent = $true", script)
         self.assertIn("$scriptArgs.ForcePackPush = $true", script)
+        self.assertIn("push_pack_summary_path =", script)
+        self.assertIn("push_pack_cache_hit =", script)
+        self.assertIn("push_pack_pushed =", script)
 
     def test_detail_logged_forwards_pack_cache_controls(self):
         script = FOLLOWUP_LOGGED.read_text(encoding="utf-8-sig")
@@ -24,6 +29,8 @@ class AndroidLoggedWrapperPackCacheContractTests(unittest.TestCase):
         self.assertIn("[switch]$SkipPackPushIfCurrent", script)
         self.assertIn("[switch]$ForcePackPush", script)
         self.assertIn("$scriptArgs.PushPackDir = $PushPackDir", script)
+        self.assertIn("$pushPackSummaryPath = Join-Path $resolvedOutputDir", script)
+        self.assertIn("$scriptArgs.PushPackSummaryPath = $pushPackSummaryPath", script)
         self.assertIn("$scriptArgs.SkipPackPushIfCurrent = $true", script)
         self.assertIn("$scriptArgs.ForcePackPush = $true", script)
 

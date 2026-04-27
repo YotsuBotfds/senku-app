@@ -41,6 +41,9 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertIn("posture=$($group.posture)", self.script)
         self.assertIn("$statusGroups = @()", self.script)
         self.assertIn("status_groups = $statusGroups", self.script)
+        self.assertIn("function Convert-ToDateTimeOrNull", self.script)
+        self.assertIn("function Get-RunDurationSeconds", self.script)
+        self.assertIn("duration_seconds =", self.script)
         self.assertIn("$summaryJsonPath = Join-Path $resolvedOutputDir \"summary.json\"", self.script)
         self.assertIn("$summaryMarkdownPath = Join-Path $resolvedOutputDir \"summary.md\"", self.script)
         self.assertIn("$emulatorGroups = @()", self.script)
@@ -54,6 +57,11 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertIn("artifact_paths = $artifactPaths", self.script)
         self.assertIn("summary_jsonl_path = $SummaryJsonlPath", self.script)
         self.assertIn("summary_csv_path = $SummaryCsvPath", self.script)
+        self.assertIn("duration_samples:", self.script)
+        self.assertIn("duration_seconds_min:", self.script)
+        self.assertIn("duration_seconds_max:", self.script)
+        self.assertIn("duration_seconds_avg:", self.script)
+        self.assertIn("duration_seconds_total:", self.script)
 
     def test_matrix_parser_gate_passes(self):
         result = subprocess.run(

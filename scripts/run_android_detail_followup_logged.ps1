@@ -106,6 +106,7 @@ if ([string]::IsNullOrWhiteSpace($RunLabel)) {
 
 $logcatPath = Join-Path $resolvedOutputDir ($RunLabel + ".logcat.txt")
 $manifestPath = Join-Path $resolvedOutputDir ($RunLabel + ".json")
+$pushPackSummaryPath = Join-Path $resolvedOutputDir ($RunLabel + ".pack_push.json")
 $followupScript = Join-Path $PSScriptRoot "run_android_detail_followup.ps1"
 
 if (-not (Test-Path $followupScript)) {
@@ -127,6 +128,7 @@ $scriptArgs = @{
 }
 if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     $scriptArgs.PushPackDir = $PushPackDir
+    $scriptArgs.PushPackSummaryPath = $pushPackSummaryPath
 }
 if ($SkipPackPushIfCurrent) {
     $scriptArgs.SkipPackPushIfCurrent = $true
@@ -172,6 +174,7 @@ if ($null -ne $capturedError -and -not (Test-Path $manifestPath)) {
         initial_query = $InitialQuery
         requested_follow_up = $FollowUpQuery
         warm_start = [bool]$WarmStart
+        push_pack_summary_path = $(if (Test-Path -LiteralPath $pushPackSummaryPath) { $pushPackSummaryPath } else { $null })
         logcat_path = $logcatPath
         error_message = $capturedError.Exception.Message
         started_at = $startedAt

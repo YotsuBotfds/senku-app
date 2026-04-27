@@ -484,6 +484,56 @@ function Get-ResultSubtitle {
     return $null
 }
 
+function Convert-ToDateTimeOrNull {
+    param($Value)
+
+    if ($null -eq $Value) {
+        return $null
+    }
+
+    if ($Value -is [datetime]) {
+        return $Value
+    }
+
+    $text = [string]$Value
+    if ([string]::IsNullOrWhiteSpace($text)) {
+        return $null
+    }
+
+    try {
+        return [datetime]::Parse($text)
+    } catch {
+        return $null
+    }
+}
+
+function Get-RunDurationSeconds {
+    param(
+        $Manifest,
+        $FallbackStartedAt,
+        $FallbackCompletedAt
+    )
+
+    $startedAt = Convert-ToDateTimeOrNull -Value $Manifest.started_at
+    if (-not $startedAt) {
+        $startedAt = Convert-ToDateTimeOrNull -Value $FallbackStartedAt
+    }
+
+    $completedAt = Convert-ToDateTimeOrNull -Value $Manifest.completed_at
+    if (-not $completedAt) {
+        $completedAt = Convert-ToDateTimeOrNull -Value $FallbackCompletedAt
+    }
+
+    if ($null -eq $startedAt -or $null -eq $completedAt) {
+        return $null
+    }
+    if ($completedAt -lt $startedAt) {
+        return $null
+    }
+
+    return [math]::Round(($completedAt - $startedAt).TotalSeconds, 2)
+}
+
 function Receive-CompletedJobs {
     param(
         [System.Collections.ArrayList]$ActiveJobs,
@@ -527,6 +577,7 @@ function Receive-CompletedJobs {
         }
 
         $manifest = Read-RunJson -Path $entry.runner.manifest_path
+        $resultCompletedAt = Get-Date
         $manifestError = $null
         if ($manifest -and ($manifest.PSObject.Properties.Name -contains "error_message")) {
             $manifestError = [string]$manifest.error_message
@@ -537,6 +588,8 @@ function Receive-CompletedJobs {
             $failed = $true
         }
 
+        $durationSeconds = Get-RunDurationSeconds -Manifest $manifest -FallbackStartedAt $entry.runner.started_at -FallbackCompletedAt $resultCompletedAt
+
         $Results.Add([pscustomobject]@{
             mode = $entry.runner.mode
             emulator = $entry.runner.args.Emulator
@@ -546,6 +599,13 @@ function Receive-CompletedJobs {
             posture = $entry.runner.posture
             warm_start = [bool]$entry.runner.args.WarmStart
             push_pack_dir = $(if ($entry.runner.args.Contains("PushPackDir")) { [string]$entry.runner.args.PushPackDir } else { $null })
+            push_pack_summary_path = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_summary_path")) { [string]$manifest.push_pack_summary_path } else { $null })
+            push_pack_cache_hit = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_cache_hit")) { $manifest.push_pack_cache_hit } else { $null })
+            push_pack_pushed = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_pushed")) { $manifest.push_pack_pushed } else { $null })
+            push_pack_state_path = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_state_path")) { [string]$manifest.push_pack_state_path } else { $null })
+            started_at = $entry.runner.started_at
+            completed_at = $resultCompletedAt.ToString("o")
+            duration_seconds = $durationSeconds
             status = if ($failed) { "failed" } else { "completed" }
             job_state = $job.State
             manifest_path = $entry.runner.manifest_path
@@ -583,6 +643,27 @@ function New-MatrixSummary {
         }
     }
 
+    $durationValues = @(
+        foreach ($result in @($Results)) {
+            if (($result.PSObject.Properties.Name -contains "duration_seconds") -and ($null -ne $result.duration_seconds)) {
+                [double]$result.duration_seconds
+            }
+        }
+    )
+    $durationStats = [ordered]@{
+        count = $durationValues.Count
+        min_seconds = $null
+        max_seconds = $null
+        avg_seconds = $null
+        total_seconds = $null
+    }
+    if ($durationValues.Count -gt 0) {
+        $durationStats.min_seconds = [math]::Round(($durationValues | Measure-Object -Minimum).Minimum, 2)
+        $durationStats.max_seconds = [math]::Round(($durationValues | Measure-Object -Maximum).Maximum, 2)
+        $durationStats.avg_seconds = [math]::Round(($durationValues | Measure-Object -Average).Average, 2)
+        $durationStats.total_seconds = [math]::Round(($durationValues | Measure-Object -Sum).Sum, 2)
+    }
+
     $emulatorGroups = @()
     foreach ($group in @($Results | Group-Object -Property emulator | Sort-Object -Property Name)) {
         $emulator = [string]$group.Name
@@ -608,6 +689,9 @@ function New-MatrixSummary {
             completed = $emulatorCompleted.Count
             failed = $emulatorFailed.Count
             warm_start_count = @($emulatorResults | Where-Object { $_.warm_start }).Count
+            duration_count = @($emulatorResults | Where-Object { $null -ne $_.duration_seconds }).Count
+            push_pack_cache_hit_count = @($emulatorResults | Where-Object { $_.push_pack_cache_hit -eq $true }).Count
+            push_pack_pushed_count = @($emulatorResults | Where-Object { $_.push_pack_pushed -eq $true }).Count
             status_groups = $emulatorStatusGroups
         }
     }
@@ -635,6 +719,8 @@ function New-MatrixSummary {
             emulator = $_.emulator
             posture = $_.posture
             warm_start = $_.warm_start
+            push_pack_cache_hit = $_.push_pack_cache_hit
+            push_pack_pushed = $_.push_pack_pushed
             error = $_.error
             artifact_paths = $artifactPaths
         }
@@ -672,6 +758,9 @@ function New-MatrixSummary {
         status_groups = $statusGroups
         emulator_groups = $emulatorGroups
         failed_items = $failedItems
+        duration_seconds = $durationStats
+        push_pack_cache_hit_count = @($Results | Where-Object { $_.push_pack_cache_hit -eq $true }).Count
+        push_pack_pushed_count = @($Results | Where-Object { $_.push_pack_pushed -eq $true }).Count
         artifact_paths = $artifactPaths
         summary_jsonl_path = $SummaryJsonlPath
         summary_csv_path = $SummaryCsvPath
@@ -687,6 +776,9 @@ function ConvertTo-MatrixSummaryMarkdown {
         "- total: $($Summary.total)",
         "- completed: $($Summary.completed)",
         "- failed: $($Summary.failed)",
+        "- duration_samples: $($Summary.duration_seconds.count)",
+        "- push_pack_cache_hit_count: $($Summary.push_pack_cache_hit_count)",
+        "- push_pack_pushed_count: $($Summary.push_pack_pushed_count)",
         "- summary_jsonl_path: $($Summary.summary_jsonl_path)",
         "- summary_csv_path: $($Summary.summary_csv_path)",
         "",
@@ -700,7 +792,7 @@ function ConvertTo-MatrixSummaryMarkdown {
 
     $lines += @("", "## Emulator Groups")
     foreach ($group in $Summary.emulator_groups) {
-        $lines += "- emulator=$($group.emulator) posture=$($group.posture) total=$($group.total) completed=$($group.completed) failed=$($group.failed) warm_start=$($group.warm_start_count)"
+        $lines += "- emulator=$($group.emulator) posture=$($group.posture) total=$($group.total) completed=$($group.completed) failed=$($group.failed) warm_start=$($group.warm_start_count) duration_count=$($group.duration_count) pack_cache_hits=$($group.push_pack_cache_hit_count) pack_pushes=$($group.push_pack_pushed_count)"
         foreach ($statusGroup in $group.status_groups) {
             $runLabels = if ($statusGroup.run_labels.Count -gt 0) { ($statusGroup.run_labels -join ", ") } else { "-" }
             $lines += "  - $($statusGroup.status): $($statusGroup.count) ($runLabels)"
@@ -712,7 +804,7 @@ function ConvertTo-MatrixSummaryMarkdown {
         $lines += "- none"
     } else {
         foreach ($item in $Summary.failed_items) {
-            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) posture=$($item.posture) warm_start=$($item.warm_start) error=$($item.error)"
+            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) posture=$($item.posture) warm_start=$($item.warm_start) pack_cache_hit=$($item.push_pack_cache_hit) pack_pushed=$($item.push_pack_pushed) error=$($item.error)"
             foreach ($path in $item.artifact_paths) {
                 $lines += "  - $($path.kind): $($path.path)"
             }
@@ -732,6 +824,19 @@ function ConvertTo-MatrixSummaryMarkdown {
             $suffix = "$suffix posture=$($artifact.posture)"
         }
         $lines += "- kind=$($artifact.kind)$suffix path=$($artifact.path)"
+    }
+
+    if ($Summary.duration_seconds.count -gt 0) {
+        $lines += @(
+            "",
+            "- duration_seconds_min: $($Summary.duration_seconds.min_seconds)",
+            "- duration_seconds_max: $($Summary.duration_seconds.max_seconds)",
+            "- duration_seconds_avg: $($Summary.duration_seconds.avg_seconds)",
+            "- duration_seconds_total: $($Summary.duration_seconds.total_seconds)"
+        )
+    } else {
+        $lines += ""
+        $lines += "- duration_seconds: unavailable"
     }
 
     return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
@@ -757,6 +862,7 @@ foreach ($runIndex in 0..($runs.Count - 1)) {
     }
 
     $runnerSpec = New-RunnerSpec -Run $run -Index $runIndex -ResolvedOutputDir $resolvedOutputDir
+    $runnerSpec.started_at = (Get-Date).ToString("o")
     $job = Start-HarnessJob -RunnerSpec $runnerSpec
     $activeJobs.Add([pscustomobject]@{
         job = $job

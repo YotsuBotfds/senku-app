@@ -138,6 +138,20 @@ function Get-DumpSummary {
     return [pscustomobject]$record
 }
 
+function Read-JsonFileOrNull {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+
+    try {
+        return (Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json)
+    } catch {
+        return $null
+    }
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 if ((Test-Path $resolvedOutputDir) -and -not (Test-Path $resolvedOutputDir -PathType Container)) {
     throw "OutputDir must be a directory path, but an existing file was found at $resolvedOutputDir"
@@ -154,6 +168,7 @@ if ([string]::IsNullOrWhiteSpace($RunLabel)) {
 $dumpPath = Join-Path $resolvedOutputDir ($RunLabel + ".xml")
 $manifestPath = Join-Path $resolvedOutputDir ($RunLabel + ".json")
 $logcatPath = Join-Path $resolvedOutputDir ($RunLabel + ".logcat.txt")
+$pushPackSummaryPath = Join-Path $resolvedOutputDir ($RunLabel + ".pack_push.json")
 
 $effectiveExpectedTitle = $ExpectedDetailTitle
 if ([string]::IsNullOrWhiteSpace($effectiveExpectedTitle) -and $Ask -and $WaitForCompletion) {
@@ -187,6 +202,7 @@ if (-not [string]::IsNullOrWhiteSpace($effectiveExpectedTitle)) {
 }
 if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     $scriptArgs.PushPackDir = $PushPackDir
+    $scriptArgs.PushPackSummaryPath = $pushPackSummaryPath
 }
 if ($SkipPackPushIfCurrent) {
     $scriptArgs.SkipPackPushIfCurrent = $true
@@ -227,6 +243,7 @@ if (-not [string]::IsNullOrWhiteSpace($effectiveExpectedTitle) -and $dumpSummary
         $detailMismatchMessage = "Detail title mismatch: expected '$effectiveExpectedTitle' but found '$($dumpSummary.detail_title)'"
     }
 }
+$pushPackSummary = Read-JsonFileOrNull -Path $pushPackSummaryPath
 $record = [ordered]@{
     emulator = $Emulator
     inference_mode = $InferenceMode
@@ -237,6 +254,10 @@ $record = [ordered]@{
     ask = [bool]$Ask
     wait_for_completion = [bool]$WaitForCompletion
     expected_detail_title = $effectiveExpectedTitle
+    push_pack_summary_path = $(if (Test-Path -LiteralPath $pushPackSummaryPath) { $pushPackSummaryPath } else { $null })
+    push_pack_cache_hit = $(if ($pushPackSummary) { [bool]$pushPackSummary.cache_hit } else { $null })
+    push_pack_pushed = $(if ($pushPackSummary) { [bool]$pushPackSummary.pushed } else { $null })
+    push_pack_state_path = $(if ($pushPackSummary) { [string]$pushPackSummary.state_path } else { $null })
     dump_path = $dumpPath
     logcat_path = $logcatPath
     detail_detected = $dumpSummary.detail_detected

@@ -5,6 +5,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$FollowUpQuery,
     [string]$PushPackDir,
+    [string]$PushPackSummaryPath = "",
     [switch]$SkipPackPushIfCurrent,
     [switch]$ForcePackPush,
     [switch]$WarmStart,
@@ -78,6 +79,9 @@ if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     if ($ForcePackPush) {
         $pushArgs += "-ForcePush"
     }
+    if (-not [string]::IsNullOrWhiteSpace($PushPackSummaryPath)) {
+        $pushArgs += @("-SummaryPath", $PushPackSummaryPath)
+    }
     & $pushPackScript @pushArgs
 }
 
@@ -98,6 +102,20 @@ function Safe-Text {
         return ""
     }
     return [string]$Text
+}
+
+function Read-JsonFileOrNull {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+
+    try {
+        return (Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json)
+    } catch {
+        return $null
+    }
 }
 
 function New-Slug {
@@ -1573,6 +1591,8 @@ try {
     }
 }
 
+$pushPackSummary = Read-JsonFileOrNull -Path $PushPackSummaryPath
+
 $record = [ordered]@{
     emulator = $Emulator
     inference_mode = $InferenceMode
@@ -1601,6 +1621,10 @@ $record = [ordered]@{
     followup_submission_send_visible = if ($submissionResult) { $submissionResult.send_visible } else { $null }
     followup_submission_primary_signal = if ($submissionResult) { $submissionResult.primary_signal } else { $null }
     followup_submission_advanced_after_submit = if ($submissionResult) { $submissionResult.advanced_after_submit } else { $null }
+    push_pack_summary_path = $(if ([string]::IsNullOrWhiteSpace($PushPackSummaryPath)) { $null } else { $PushPackSummaryPath })
+    push_pack_cache_hit = $(if ($pushPackSummary) { [bool]$pushPackSummary.cache_hit } else { $null })
+    push_pack_pushed = $(if ($pushPackSummary) { [bool]$pushPackSummary.pushed } else { $null })
+    push_pack_state_path = $(if ($pushPackSummary) { [string]$pushPackSummary.state_path } else { $null })
     lower_sources_visible = if ($followupLowerSummary) { $followupLowerSummary.sources_visible } else { $null }
     lower_source_buttons = if ($followupLowerSummary) { @($followupLowerSummary.source_buttons) } else { @() }
     lower_source_button_count = if ($followupLowerSummary) { $followupLowerSummary.source_button_details.Count } else { $null }

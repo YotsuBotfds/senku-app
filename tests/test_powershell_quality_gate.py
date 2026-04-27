@@ -177,11 +177,13 @@ class PowerShellQualityGateTests(unittest.TestCase):
 
         self.assertIn("[switch]$SkipPackPushIfCurrent", script)
         self.assertIn("[switch]$ForcePackPush", script)
+        self.assertIn('[string]$PushPackSummaryPath = ""', script)
         self.assertIn('$pushPackArgs = @(', script)
         self.assertIn('if ($SkipPackPushIfCurrent)', script)
         self.assertIn('$pushPackArgs += "-SkipIfCurrent"', script)
         self.assertIn('if ($ForcePackPush)', script)
         self.assertIn('$pushPackArgs += "-ForcePush"', script)
+        self.assertIn('$pushPackArgs += @("-SummaryPath", $PushPackSummaryPath)', script)
         self.assertIn("& $pushPackScript @pushPackArgs", script)
 
     def test_android_smoke_classifies_platform_anr_dialogs(self):

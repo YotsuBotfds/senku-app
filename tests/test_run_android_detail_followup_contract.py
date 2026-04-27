@@ -16,6 +16,7 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
     def test_exposes_pack_push_cache_control_params(self):
         self.assertIn("[switch]$SkipPackPushIfCurrent", self.script)
         self.assertIn("[switch]$ForcePackPush", self.script)
+        self.assertIn('[string]$PushPackSummaryPath = ""', self.script)
 
     def test_forwards_pack_push_cache_controls_to_push_script(self):
         self.assertIn(
@@ -24,9 +25,12 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
         )
         self.assertIn("-SkipIfCurrent", self.script)
         self.assertIn("-ForcePush", self.script)
+        self.assertIn("-SummaryPath", self.script)
         self.assertIn('if ($SkipPackPushIfCurrent) {', self.script)
         self.assertIn('if ($ForcePackPush) {', self.script)
         self.assertIn('& $pushPackScript @pushArgs', self.script)
+        self.assertIn("push_pack_cache_hit =", self.script)
+        self.assertIn("push_pack_pushed =", self.script)
 
     def test_quality_gate_parser_passes(self):
         result = subprocess.run(
