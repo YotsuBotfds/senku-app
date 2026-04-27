@@ -75,6 +75,10 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertIn("will_touch_emulators = $false", self.script)
         self.assertIn("runner_commands =", self.script)
         self.assertIn("posture_groups = $postureGroups", self.script)
+        self.assertIn('validation_commands', self.script)
+        self.assertIn('validate_android_migration_summary.py', self.script)
+        self.assertIn('PlanOnly validation only; does not start jobs or touch emulators.', self.script)
+        self.assertIn('## Validation Commands', self.script)
 
     def test_plan_only_writes_matrix_plan_without_starting_jobs(self):
         temp_dir = tempfile.TemporaryDirectory()
@@ -157,6 +161,27 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertEqual(summary["rows"][1]["posture"], "tablet_landscape")
         self.assertIn("-RunLabel", summary["runner_commands"][0])
         self.assertIn("prompt_case", summary["runner_commands"][0])
+        self.assertEqual(len(summary["validation_commands"]), 1)
+        validation_command = summary["validation_commands"][0]
+        self.assertEqual(validation_command["name"], "validate_summary_json")
+        self.assertIn("validate_android_migration_summary.py", validation_command["command"])
+        self.assertIn(str(summary_path), validation_command["command"])
+        self.assertEqual(validation_command["validates"], "summary.json")
+        self.assertEqual(Path(validation_command["summary_json_path"]), summary_path)
+        self.assertTrue(validation_command["plan_only"])
+        self.assertFalse(validation_command["will_start_jobs"])
+        self.assertFalse(validation_command["will_touch_emulators"])
+        self.assertIn("does not start jobs or touch emulators", validation_command["note"])
+
+        summary_markdown_path = output_dir / "summary.md"
+        self.assertTrue(summary_markdown_path.exists(), result.stdout)
+        summary_markdown = summary_markdown_path.read_text(encoding="utf-8-sig")
+        self.assertIn("## Validation Commands", summary_markdown)
+        self.assertIn("validate_summary_json:", summary_markdown)
+        self.assertIn("validate_android_migration_summary.py", summary_markdown)
+        self.assertIn("validates: summary.json", summary_markdown)
+        self.assertIn("will_start_jobs: False", summary_markdown)
+        self.assertIn("will_touch_emulators: False", summary_markdown)
 
         validator = REPO_ROOT / "scripts" / "validate_android_migration_summary.py"
         python_path = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"

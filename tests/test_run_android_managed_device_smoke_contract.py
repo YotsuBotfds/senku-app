@@ -246,6 +246,22 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
                 summary["observed_gradle_task_names"],
             )
             self.assertIn("tasks.txt", summary["task_inventory"]["source_path"])
+            summary_md = (output_dir / "out" / "summary.md").read_text(encoding="utf-8-sig")
+            self.assertIn(
+                "- observed_gradle_task_names: :app:senkuPhoneApi30DebugAndroidTest, "
+                ":app:senkuTabletApi30DebugAndroidTest, "
+                ":app:senkuManagedSmokeGroupDebugAndroidTest, "
+                ":app:unrelatedDebugAndroidTest",
+                summary_md,
+            )
+            self.assertIn(
+                "- observed_expected_gradle_task_names: :app:senkuPhoneApi30DebugAndroidTest, "
+                ":app:senkuTabletApi30DebugAndroidTest, "
+                ":app:senkuManagedSmokeGroupDebugAndroidTest",
+                summary_md,
+            )
+            self.assertIn("- task_inventory_source: path", summary_md)
+            self.assertIn("- task_inventory_probe_ran: False", summary_md)
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 

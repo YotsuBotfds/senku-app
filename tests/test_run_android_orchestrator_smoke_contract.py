@@ -138,7 +138,40 @@ class AndroidOrchestratorSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["comparison_baseline"], "fixed_four_emulator_matrix")
             self.assertEqual(summary["primary_evidence"], "fixed_four_emulator_matrix")
             self.assertIn("fixed four-emulator evidence remains primary", summary["stop_line"])
-            self.assertTrue((output_dir / "summary.md").exists())
+            summary_md_path = output_dir / "summary.md"
+            self.assertTrue(summary_md_path.exists())
+            summary_md = summary_md_path.read_text(encoding="utf-8-sig")
+            self.assertIn("# Android Orchestrator Smoke", summary_md)
+            self.assertIn("- non_acceptance_evidence: True", summary_md)
+            self.assertIn("- acceptance_evidence: False", summary_md)
+            self.assertIn(
+                "- exact_gradle_command: `.\\gradlew.bat :app:connectedDebugAndroidTest "
+                "'-Psenku.enableTestOrchestrator=true' "
+                "'-Pandroid.testInstrumentationRunnerArguments.class=com.senku.mobile.ScriptedPromptHarnessContractTest' "
+                "--console=plain`",
+                summary_md,
+            )
+            self.assertIn(
+                "- app_apk: `android-app/app/build/outputs/apk/debug/app-debug.apk`",
+                summary_md,
+            )
+            self.assertIn(
+                "- test_apk: `android-app/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk`",
+                summary_md,
+            )
+            self.assertIn("- clearPackageData: True", summary_md)
+            self.assertIn("- clearPackageData_posture: enabled_by_orchestrator_property", summary_md)
+            self.assertIn(
+                "- results_root: `android-app/app/build/outputs/androidTest-results/connected/debug`",
+                summary_md,
+            )
+            self.assertIn(
+                "- reports_root: `android-app/app/build/reports/androidTests/connected/debug`",
+                summary_md,
+            )
+            self.assertIn("- would_call_am_instrument: False", summary_md)
+            self.assertIn("- would_start_emulators: False", summary_md)
+            self.assertTrue(summary_md.rstrip().endswith(summary["stop_line"]))
 
             validator = subprocess.run(
                 [

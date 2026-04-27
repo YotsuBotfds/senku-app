@@ -330,6 +330,7 @@ function Write-SummaryMarkdown {
         "- planned_task_inventory_command: ``$($Summary.planned_task_inventory_command)``",
         "- expected_gradle_task_names: $($Summary.expected_gradle_task_names -join ', ')",
         "- observed_gradle_task_names: $($Summary.observed_gradle_task_names -join ', ')",
+        "- observed_expected_gradle_task_names: $($Summary.observed_expected_gradle_task_names -join ', ')",
         "- task_inventory_source: $($Summary.task_inventory_source)",
         "- task_inventory_probe_ran: $($Summary.task_inventory_probe_ran)",
         "- comparison_baseline: $($Summary.comparison_baseline)",

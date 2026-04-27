@@ -6,7 +6,11 @@ import unittest
 from pathlib import Path
 
 from scripts.validate_android_capture_summary import validate_capture_summary
-from scripts.write_android_capture_summary import build_capture_summary, write_capture_summary
+from scripts.write_android_capture_summary import (
+    build_capture_summary,
+    markdown_for_capture_summary,
+    write_capture_summary,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -82,11 +86,71 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertEqual(data["installed_pack_metadata"]["answer_cards"], 271)
         self.assertEqual(data["model_identity"]["name"], "gemma-4-e2b-it-litert")
 
+    def test_markdown_summary_includes_reviewer_fields_without_changing_json(self):
+        screenshot = self.write_file("screen.png", b"png bytes")
+        ui_dump = self.write_file("window.xml", b"<hierarchy />")
+        logcat = self.write_file("logcat.txt", b"log line\n")
+        screenrecord = self.write_file("session.mp4", b"mp4 bytes")
+        apk = self.write_file("app.apk", b"apk bytes")
+        metadata = self.write_file(
+            "installed-pack.json",
+            json.dumps(
+                {
+                    "status": "available",
+                    "pack_format": "senku-mobile-pack-v2",
+                    "pack_version": 2,
+                    "answer_cards": 6,
+                }
+            ).encode("utf-8"),
+        )
+
+        summary = build_capture_summary(
+            screenshot=str(screenshot),
+            ui_dump=str(ui_dump),
+            logcat=str(logcat),
+            screenrecord=str(screenrecord),
+            apk=str(apk),
+            installed_pack_metadata=str(metadata),
+            serial="emulator-5556",
+            role="phone_portrait",
+            orientation="portrait",
+            platform_tools_version="36.0.0-13206524",
+            model_name="gemma-4-e2b-it-litert",
+            model_sha256="f" * 64,
+            package_data_cleared_before_capture=False,
+            package_data_restored_after_capture=True,
+            package_data_description="restored from harness snapshot",
+        )
+        before_json = json.dumps(summary, indent=2, sort_keys=True)
+
+        markdown = markdown_for_capture_summary(summary)
+        after_json = json.dumps(summary, indent=2, sort_keys=True)
+
+        self.assertEqual(after_json, before_json)
+        self.assertIn("- serial: `emulator-5556`", markdown)
+        self.assertIn("- role: `phone_portrait`", markdown)
+        self.assertIn("- orientation: `portrait`", markdown)
+        self.assertIn("- non_acceptance_evidence: `true`", markdown)
+        self.assertIn("- acceptance_evidence: `false`", markdown)
+        self.assertIn(f"- screenshot: `{digest(b'png bytes')}`", markdown)
+        self.assertIn(f"- ui_dump: `{digest(b'<hierarchy />')}`", markdown)
+        self.assertIn(f"- logcat: `{digest(b'log line\n')}`", markdown)
+        self.assertIn(f"- screenrecord: `{digest(b'mp4 bytes')}`", markdown)
+        self.assertIn(f"- sha256: `{digest(b'apk bytes')}`", markdown)
+        self.assertIn("- name: `gemma-4-e2b-it-litert`", markdown)
+        self.assertIn("- status: `available`", markdown)
+        self.assertIn("- pack_format: `senku-mobile-pack-v2`", markdown)
+        self.assertIn("- pack_version: `2`", markdown)
+        self.assertIn("- cleared_before_capture: `false`", markdown)
+        self.assertIn("- restored_after_capture: `true`", markdown)
+        self.assertIn("- description: `restored from harness snapshot`", markdown)
+
     def test_cli_writes_summary_that_validator_accepts_without_optional_files(self):
         screenshot = self.write_file("screen.png", b"png bytes")
         ui_dump = self.write_file("window.xml", b"<hierarchy />")
         logcat = self.write_file("logcat.txt", b"log line\n")
         output = self.root / "nested" / "capture_summary.json"
+        markdown_output = self.root / "nested" / "capture_summary.md"
 
         write_result = subprocess.run(
             [
@@ -94,6 +158,8 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
                 str(WRITE_SCRIPT),
                 "--output",
                 str(output),
+                "--markdown-out",
+                str(markdown_output),
                 "--screenshot",
                 str(screenshot),
                 "--ui-dump",
@@ -128,12 +194,20 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
             check=False,
         )
         data = json.loads(output.read_text(encoding="utf-8"))
+        markdown = markdown_output.read_text(encoding="utf-8")
 
         self.assertEqual(validate_result.returncode, 0, validate_result.stdout)
         self.assertIn("android_capture_summary: ok", validate_result.stdout)
         self.assertNotIn("screenrecord", data["artifacts"])
         self.assertEqual(data["apk_sha256"], "not_provided")
         self.assertEqual(data["installed_pack_metadata"]["status"], "not_provided")
+        self.assertIn("- serial: `device-1234`", markdown)
+        self.assertIn("- role: `tablet_landscape`", markdown)
+        self.assertIn("- orientation: `landscape`", markdown)
+        self.assertIn("- screenshot: `", markdown)
+        self.assertNotIn("- screenrecord:", markdown)
+        self.assertIn("- sha256: `not_provided`", markdown)
+        self.assertIn("- status: `not_provided`", markdown)
 
 
 if __name__ == "__main__":

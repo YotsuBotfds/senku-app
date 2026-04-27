@@ -654,6 +654,16 @@ function ConvertTo-MatrixPlanMarkdown {
         $lines += "- posture=$($group.posture) rows=$($group.row_count) emulators=$(($group.emulators) -join ', ')"
     }
 
+    if ($null -ne $Plan.validation_commands -and $Plan.validation_commands.Count -gt 0) {
+        $lines += @("", "## Validation Commands")
+        foreach ($command in $Plan.validation_commands) {
+            $lines += "- $($command.name): $($command.command)"
+            $lines += "  - validates: $($command.validates)"
+            $lines += "  - will_start_jobs: $($command.will_start_jobs)"
+            $lines += "  - will_touch_emulators: $($command.will_touch_emulators)"
+        }
+    }
+
     return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
 }
 
@@ -1090,6 +1100,18 @@ if ($PlanOnly) {
     $plan["plan_markdown_path"] = $planMarkdownPath
     $plan["summary_json_path"] = $summaryJsonPath
     $plan["summary_markdown_path"] = $summaryMarkdownPath
+    $plan["validation_commands"] = @(
+        [ordered]@{
+            name = "validate_summary_json"
+            command = ("& .\.venvs\senku-validate\Scripts\python.exe scripts\validate_android_migration_summary.py " + (ConvertTo-QuotedCliToken -Value $summaryJsonPath))
+            validates = "summary.json"
+            summary_json_path = $summaryJsonPath
+            plan_only = $true
+            will_start_jobs = $false
+            will_touch_emulators = $false
+            note = "PlanOnly validation only; does not start jobs or touch emulators."
+        }
+    )
     ($plan | ConvertTo-Json -Depth 12) | Set-Content -LiteralPath $planJsonPath -Encoding UTF8
     ($plan | ConvertTo-Json -Depth 12) | Set-Content -LiteralPath $summaryJsonPath -Encoding UTF8
     ConvertTo-MatrixPlanMarkdown -Plan $plan | Set-Content -LiteralPath $planMarkdownPath -Encoding UTF8

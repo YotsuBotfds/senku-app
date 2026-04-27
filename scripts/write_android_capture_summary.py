@@ -129,9 +129,89 @@ def write_capture_summary(path: str | Path, summary: dict[str, Any]) -> None:
     )
 
 
+def _bool_text(value: Any) -> str:
+    if isinstance(value, bool):
+        return str(value).lower()
+    return "not_provided" if value is None else str(value)
+
+
+def markdown_for_capture_summary(summary: dict[str, Any]) -> str:
+    artifacts = summary.get("artifacts", {})
+    evidence = summary.get("evidence_posture", {})
+    model = summary.get("model_identity", {})
+    installed_pack = summary.get("installed_pack_metadata", {})
+    package_data = summary.get("package_data_posture", {})
+
+    lines = [
+        "# Android Capture Reviewer Summary",
+        "",
+        "## Capture",
+        "",
+        f"- serial: `{summary.get('serial', 'not_provided')}`",
+        f"- role: `{summary.get('role', 'not_provided')}`",
+        f"- orientation: `{summary.get('orientation', 'not_provided')}`",
+        "",
+        "## Evidence Posture",
+        "",
+        f"- non_acceptance_evidence: `{_bool_text(evidence.get('non_acceptance_evidence'))}`",
+        f"- acceptance_evidence: `{_bool_text(evidence.get('acceptance_evidence'))}`",
+        "",
+        "## Artifact Hashes",
+        "",
+    ]
+    for name in ("screenshot", "ui_dump", "logcat", "screenrecord"):
+        artifact = artifacts.get(name)
+        if artifact:
+            lines.append(f"- {name}: `{artifact.get('sha256', 'not_provided')}`")
+    lines.extend(
+        [
+            "",
+            "## APK",
+            "",
+            f"- sha256: `{summary.get('apk_sha256', 'not_provided')}`",
+            "",
+            "## Model Identity",
+            "",
+            f"- name: `{model.get('name', 'not_provided')}`",
+            f"- sha256: `{model.get('sha256', 'not_provided')}`",
+            "",
+            "## Installed Pack",
+            "",
+            f"- status: `{installed_pack.get('status', 'not_provided')}`",
+            f"- pack_format: `{installed_pack.get('pack_format', 'not_provided')}`",
+            f"- pack_version: `{installed_pack.get('pack_version', 'not_provided')}`",
+        ]
+    )
+    for key in ("source_path", "source_sha256"):
+        if key in installed_pack:
+            lines.append(f"- {key}: `{installed_pack[key]}`")
+    lines.extend(
+        [
+            "",
+            "## Package Data",
+            "",
+            f"- cleared_before_capture: `{_bool_text(package_data.get('cleared_before_capture'))}`",
+            f"- restored_after_capture: `{_bool_text(package_data.get('restored_after_capture'))}`",
+            f"- description: `{package_data.get('description', 'not_provided')}`",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def write_markdown_capture_summary(path: str | Path, summary: dict[str, Any]) -> None:
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(markdown_for_capture_summary(summary), encoding="utf-8")
+
+
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, help="Path to write capture_summary.json.")
+    parser.add_argument(
+        "--markdown-out",
+        help="Optional path to write a concise reviewer Markdown summary.",
+    )
     parser.add_argument("--screenshot", required=True, help="Existing screenshot file path.")
     parser.add_argument("--ui-dump", required=True, help="Existing UI dump XML file path.")
     parser.add_argument("--logcat", required=True, help="Existing logcat file path.")
@@ -197,11 +277,15 @@ def main(argv: list[str] | None = None) -> int:
             package_data_description=args.package_data_description,
         )
         write_capture_summary(args.output, summary)
+        if args.markdown_out:
+            write_markdown_capture_summary(args.markdown_out, summary)
     except (FileNotFoundError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
     print(f"wrote Android capture summary: {args.output}")
+    if args.markdown_out:
+        print(f"wrote Android capture reviewer summary: {args.markdown_out}")
     return 0
 
 
