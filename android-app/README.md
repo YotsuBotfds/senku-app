@@ -45,6 +45,26 @@ powershell -ExecutionPolicy Bypass -File .\scripts\start_senku_emulator_matrix.p
 Notes:
 - default mode is read-only so each emulator session stays disposable
 - app installs, pushed packs, and imported models remain available during the live session, but they do not survive a full emulator restart in read-only mode
+- use `-Headless` for no-window launches, and `-PartitionSizeMb <mb>` only when intentionally starting a large-data AVD lane
+- use `-WhatIf` to review selected lanes and concrete emulator arguments before launching
+
+Before a long four-posture UI state pack, preflight the selected roles and launcher commands without starting jobs:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build_android_ui_state_pack_parallel.ps1 `
+  -PlanOnly `
+  -RoleFilter phone_portrait,tablet_landscape `
+  -SkipBuild `
+  -SkipInstall `
+  -SkipHostStates
+```
+
+Replay the current Android FTS fallback proof without relabeling it as FTS5 runtime evidence:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_fts_fallback_matrix.ps1 `
+  -OutputDir artifacts\bench\android_fts_fallback_matrix_current
+```
 
 ## Build
 
