@@ -179,6 +179,8 @@ function New-FollowupMatrixSummary {
             passed = @($items | Where-Object { $_.status -eq "passed" }).Count
             failed = @($items | Where-Object { $_.status -ne "passed" }).Count
             warm_start_count = @($items | Where-Object { $_.warm_start }).Count
+            push_pack_cache_hit_count = @($items | Where-Object { $_.push_pack_cache_hit -eq $true }).Count
+            push_pack_pushed_count = @($items | Where-Object { $_.push_pack_pushed -eq $true }).Count
             labels = @($items | ForEach-Object { $_.label })
         }
     }
@@ -205,6 +207,8 @@ function New-FollowupMatrixSummary {
         passed = $passed.Count
         failed = $failed.Count
         warm_start_count = @($Records | Where-Object { $_.warm_start }).Count
+        push_pack_cache_hit_count = @($Records | Where-Object { $_.push_pack_cache_hit -eq $true }).Count
+        push_pack_pushed_count = @($Records | Where-Object { $_.push_pack_pushed -eq $true }).Count
         posture_groups = $postureGroups
         emulator_groups = $emulatorGroups
         failed_items = @($failed | ForEach-Object {
@@ -212,6 +216,8 @@ function New-FollowupMatrixSummary {
                 label = $_.label
                 emulator = $_.emulator
                 posture = $_.posture
+                push_pack_cache_hit = $_.push_pack_cache_hit
+                push_pack_pushed = $_.push_pack_pushed
                 error = $_.error
                 output_json = $_.output_json
                 logcat_path = $_.logcat_path
@@ -236,6 +242,8 @@ function ConvertTo-FollowupMatrixSummaryMarkdown {
         "- passed: $($Summary.passed)",
         "- failed: $($Summary.failed)",
         "- warm_start_count: $($Summary.warm_start_count)",
+        "- push_pack_cache_hit_count: $($Summary.push_pack_cache_hit_count)",
+        "- push_pack_pushed_count: $($Summary.push_pack_pushed_count)",
         "- manifest_path: $($Summary.manifest_path)",
         "- summary_csv_path: $($Summary.summary_csv_path)",
         "",
@@ -243,7 +251,7 @@ function ConvertTo-FollowupMatrixSummaryMarkdown {
     )
     foreach ($group in $Summary.emulator_groups) {
         $labels = if ($group.labels.Count -gt 0) { ($group.labels -join ", ") } else { "-" }
-        $lines += "- emulator=$($group.emulator) total=$($group.total) passed=$($group.passed) failed=$($group.failed) warm_start=$($group.warm_start_count) ($labels)"
+        $lines += "- emulator=$($group.emulator) total=$($group.total) passed=$($group.passed) failed=$($group.failed) warm_start=$($group.warm_start_count) pack_cache_hits=$($group.push_pack_cache_hit_count) pack_pushes=$($group.push_pack_pushed_count) ($labels)"
     }
 
     $lines += @("", "## Posture Groups")
@@ -257,7 +265,7 @@ function ConvertTo-FollowupMatrixSummaryMarkdown {
         $lines += "- none"
     } else {
         foreach ($item in $Summary.failed_items) {
-            $lines += "- label=$($item.label) emulator=$($item.emulator) error=$($item.error) output_json=$($item.output_json) logcat=$($item.logcat_path)"
+            $lines += "- label=$($item.label) emulator=$($item.emulator) pack_cache_hit=$($item.push_pack_cache_hit) pack_pushed=$($item.push_pack_pushed) error=$($item.error) output_json=$($item.output_json) logcat=$($item.logcat_path)"
         }
     }
 
@@ -316,6 +324,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     $runLabel = ($labelBase + "_" + $emulator.Replace("-", "_")).Trim("_")
     $jsonPath = Join-Path $resolvedOutputDir ($runLabel + ".json")
     $logcatPath = Join-Path $resolvedOutputDir ($runLabel + ".logcat.txt")
+    $pushPackSummaryPath = Join-Path $resolvedOutputDir ($runLabel + ".pack_push.json")
 
     Write-Host ("[{0}/{1}] {2} on {3}" -f ($index + 1), $cases.Count, $runLabel, $emulator)
 
@@ -343,6 +352,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     }
     if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
         $detailArgs.PushPackDir = $PushPackDir
+        $detailArgs.PushPackSummaryPath = $pushPackSummaryPath
         if ($SkipPackPushIfCurrent) {
             $detailArgs.SkipPackPushIfCurrent = $true
         }
@@ -390,6 +400,10 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
         lower_source_button_count = if ($runJson) { $runJson.lower_source_button_count } else { $null }
         followup_submission_mode = if ($runJson) { $runJson.followup_submission_mode } else { $null }
         warm_start = [bool]$WarmStart
+        push_pack_summary_path = if ($runJson) { $runJson.push_pack_summary_path } else { $null }
+        push_pack_cache_hit = if ($runJson) { $runJson.push_pack_cache_hit } else { $null }
+        push_pack_pushed = if ($runJson) { $runJson.push_pack_pushed } else { $null }
+        push_pack_state_path = if ($runJson) { $runJson.push_pack_state_path } else { $null }
         source_link_verified = if ($runJson) { $runJson.source_link_verified } else { $null }
         error = $errorMessage
     }
