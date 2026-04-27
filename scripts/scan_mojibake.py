@@ -25,6 +25,9 @@ DEFAULT_TOUCHED_PATHS = (
     "android-app/app/src/test",
     "android-app/app/src/androidTest",
 )
+DEFAULT_ALLOWED_FINDING_PATHS = (
+    "notes/dispatch/RAG-TOOL2_mojibake_scanner.md",
+)
 TEXT_SUFFIXES = {
     ".md",
     ".markdown",
@@ -412,10 +415,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--allow-finding-paths",
         nargs="+",
-        default=[],
+        default=list(DEFAULT_ALLOWED_FINDING_PATHS),
         help=(
             "Path prefixes whose findings are reported but ignored by "
-            "--fail-on-findings."
+            "--fail-on-findings. Defaults include scanner documentation that "
+            "intentionally contains mojibake examples."
         ),
     )
     parser.add_argument(

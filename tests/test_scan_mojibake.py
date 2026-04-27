@@ -167,6 +167,39 @@ class MojibakeScanTests(unittest.TestCase):
             self.assertGreaterEqual(payload["findings_count"], 2)
             self.assertIn("# Mojibake Scan", md_path.read_text(encoding="utf-8"))
 
+    def test_cli_allows_scanner_example_dispatch_by_default(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            dispatch = root / "notes" / "dispatch"
+            dispatch.mkdir(parents=True)
+            (dispatch / "RAG-TOOL2_mojibake_scanner.md").write_text(
+                "- replacement characters: `\ufffd`\n"
+                "- UTF-8-decoded-as-CP1252 sequences: `\u00c3\u0192`, `\u00e2\u20ac\u2122`\n",
+                encoding="utf-8",
+            )
+            output = root / "artifacts"
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT_PATH),
+                    "--paths",
+                    "notes",
+                    "--output-dir",
+                    str(output),
+                    "--fail-on-findings",
+                ],
+                check=False,
+                capture_output=True,
+                text=True,
+                cwd=root,
+            )
+            payload = json.loads(completed.stdout)
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertGreaterEqual(payload["findings_count"], 2)
+        self.assertEqual(payload["gate_findings_count"], 0)
+
     def test_touched_text_files_uses_git_paths_and_allowlist(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
