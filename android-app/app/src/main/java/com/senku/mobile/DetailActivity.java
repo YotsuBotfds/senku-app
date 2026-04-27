@@ -1119,7 +1119,7 @@ public final class DetailActivity extends AppCompatActivity {
         scopeChip.setVisibility(answerMode || suppressGuideStateChips ? View.GONE : View.VISIBLE);
         titleView.setTextIsSelectable(answerMode);
         bodyView.setLineSpacing(0f, answerMode ? 1.18f : 1.08f);
-        followUpPanel.setVisibility(answerMode ? View.VISIBLE : View.GONE);
+        followUpPanel.setVisibility(isCurrentAnswerFollowUpEligible() ? View.VISIBLE : View.GONE);
         updateFollowUpMirrorMode();
         if (answerMode && pendingAutoFollowUpQuery.isEmpty()) {
             followUpInput.setText("");
@@ -1770,7 +1770,10 @@ public final class DetailActivity extends AppCompatActivity {
         if (followUpComposeView == null) {
             return;
         }
-        if (!answerMode || followUpPanel == null || followUpPanel.getVisibility() != View.VISIBLE || followUpInput == null) {
+        if (!isCurrentAnswerFollowUpEligible()
+            || followUpPanel == null
+            || followUpPanel.getVisibility() != View.VISIBLE
+            || followUpInput == null) {
             followUpComposerFocused = false;
             followUpComposeView.setLandscapePhoneBudgeted(false);
             followUpComposeView.setVisibility(View.GONE);
@@ -1809,7 +1812,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (followUpSuggestView == null) {
             return;
         }
-        if (!answerMode
+        if (!isCurrentAnswerFollowUpEligible()
             || followUpPanel == null
             || followUpPanel.getVisibility() != View.VISIBLE
             // On landscape phones the extra suggestion rail crowds the answer body offscreen.
@@ -1881,7 +1884,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         followUpComposerFocused = hasFocus;
-        if (hasFocus && isLandscapePhoneLayout()) {
+        if (hasFocus && isLandscapePhoneLayout() && isCurrentAnswerFollowUpEligible()) {
             if (followUpPanel != null) {
                 followUpPanel.setVisibility(View.VISIBLE);
             }
@@ -1894,7 +1897,7 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private void requestLandscapeDockedComposerFocus() {
-        if (!isLandscapePhoneLayout() || !answerMode || followUpComposeView == null) {
+        if (!isLandscapePhoneLayout() || !isCurrentAnswerFollowUpEligible() || followUpComposeView == null) {
             return;
         }
         if (followUpPanel != null && followUpPanel.getVisibility() != View.VISIBLE) {
@@ -1907,7 +1910,7 @@ public final class DetailActivity extends AppCompatActivity {
             return;
         }
         followUpComposeView.post(() -> {
-            if (!isLandscapePhoneLayout() || !answerMode || followUpComposeView == null) {
+            if (!isLandscapePhoneLayout() || !isCurrentAnswerFollowUpEligible() || followUpComposeView == null) {
                 return;
             }
             if (followUpPanel != null && followUpPanel.getVisibility() != View.VISIBLE) {
@@ -4076,6 +4079,26 @@ public final class DetailActivity extends AppCompatActivity {
         boolean showForStatus = statusText != null && statusText.getVisibility() == View.VISIBLE;
         boolean showForProgress = progressBar != null && progressBar.getVisibility() == View.VISIBLE;
         heroPanel.setVisibility((showForGuide || showForStatus || showForProgress) ? View.VISIBLE : View.GONE);
+    }
+
+    private boolean isCurrentAnswerFollowUpEligible() {
+        return shouldShowDetailFollowUpPanel(currentDetailSurfacePosture());
+    }
+
+    private DetailSurfaceContract.Posture currentDetailSurfacePosture() {
+        return DetailSurfaceContract.fromState(
+            answerMode,
+            null,
+            answerModeExtraValue(currentAnswerResponseMode),
+            isDeterministicRoute(),
+            isAbstainRoute(),
+            currentRuleId
+        );
+    }
+
+    static boolean shouldShowDetailFollowUpPanel(DetailSurfaceContract.Posture posture) {
+        return DetailSurfaceContract.shouldShowAnswerFollowUp(posture)
+            && DetailSurfaceContract.isFollowUpEligible(posture);
     }
 
     private boolean isDeterministicRoute() {

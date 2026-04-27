@@ -94,6 +94,27 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void followUpPanelUsesContractEligibilityForAnswerPostures() {
+        assertTrue(DetailActivity.shouldShowDetailFollowUpPanel(
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.GENERATED)
+        ));
+        assertTrue(DetailActivity.shouldShowDetailFollowUpPanel(
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.DETERMINISTIC)
+        ));
+        assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.ABSTAIN)
+        ));
+        assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT)
+        ));
+    }
+
+    @Test
+    public void followUpPanelStaysHiddenForGuidePosture() {
+        assertFalse(DetailActivity.shouldShowDetailFollowUpPanel(DetailSurfaceContract.guide()));
+    }
+
+    @Test
     public void metaStripAppendsFreshnessTokens() {
         ArrayList<MetaItem> items = new ArrayList<>();
         DetailActivity.appendMetaStripTokens(
