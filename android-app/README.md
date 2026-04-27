@@ -75,6 +75,16 @@ $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 .\gradlew.bat assembleDebug
 ```
 
+Dependency resolution is pinned by Gradle verification metadata at
+`gradle/verification-metadata.xml`. Refresh it only when intentionally changing
+Android dependencies:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+.\gradlew.bat --write-verification-metadata sha256 :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest --console=plain
+.\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest --console=plain
+```
+
 ## APK
 
 Latest debug APK output:
