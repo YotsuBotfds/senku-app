@@ -53,6 +53,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_
 Current result: blocked on emulator 36.4.9 because CLI `-partition-size 8192`
 is rejected above the observed `2047` MB maximum. Treat the command as a
 blocked-summary generator until a config-based AVD data-partition path exists.
+After that guarded AVD path is prepared, add `-UsePreparedAvdDataPartition` so
+the real lane starts `5554` without passing the impossible CLI partition-size
+argument.
 
 ## Stop Lines
 

@@ -267,8 +267,10 @@ function Get-SenkuEmulatorLaunchProfileMetadata {
             acceptance_evidence = $false
             headless = $true
             partition_size_mb = 8192
+            data_partition_source = "prepared_avd_config_required"
             cli_partition_size_max_mb = $script:senkuEmulatorCliPartitionSizeMaxMb
             cli_partition_size_supported = $false
+            cli_partition_size_argument_supported = $false
             data_sizing = "large data partition for LiteRT model and pack transport preflight"
             snapshot_cache_posture = "read-only/no snapshot load or save expected"
             expected_role = "tablet_portrait"

@@ -151,6 +151,7 @@ class PrepareSenkuTablet2LargeDataAvdContractTests(unittest.TestCase):
         self.assertFalse(summary["deploy_evidence"])
         self.assertFalse(summary["runtime_evidence"])
         self.assertEqual(summary["required_path"], "config_based_avd_data_partition")
+        self.assertEqual(summary["prepared_lane_flag"], "-UsePreparedAvdDataPartition")
         self.assertEqual(summary["cli_partition_size_max_mb"], 2047)
         self.assertEqual(summary["avd_name"], "Senku_Tablet_2")
         self.assertEqual(summary["expected_serial"], "emulator-5554")
@@ -164,6 +165,7 @@ class PrepareSenkuTablet2LargeDataAvdContractTests(unittest.TestCase):
         planned_items = summary["planned_destructive_actions"]["quarantine_stale_userdata_and_snapshots"]
         self.assertEqual({item["name"] for item in planned_items}, {"userdata-qemu.img.qcow2", "snapshots"})
         self.assertIn("run_android_large_data_litert_tablet_lane.ps1", summary["next_command"])
+        self.assertIn("-UsePreparedAvdDataPartition", summary["next_command"])
         self.assertIn("fixed four-emulator state-pack proof", summary["stop_line"])
         self.assertIn("- acceptance_evidence: False", markdown_path.read_text(encoding="utf-8-sig"))
         self.assertIn(

@@ -57,6 +57,14 @@ REQUIRED_EVIDENCE_POSTURE: dict[str, type | tuple[type, ...]] = {
     "acceptance_evidence": bool,
 }
 
+OPTIONAL_MIGRATION_METADATA: dict[str, type | tuple[type, ...]] = {
+    "status": str,
+    "capture_summary_schema_version": int,
+    "android_layout_change": bool,
+    "large_data_lane_change": bool,
+    "reindex_required": bool,
+}
+
 VALID_ORIENTATIONS = {"portrait", "landscape"}
 OPTIONAL_ARTIFACTS = {"screenrecord"}
 
@@ -136,6 +144,22 @@ def _validate_evidence_posture(evidence_posture: Any, errors: list[str]) -> None
         errors.append("expected evidence_posture.acceptance_evidence to be false")
 
 
+def _validate_migration_metadata(data: dict[str, Any], errors: list[str]) -> None:
+    if "migration_metadata" not in data:
+        return
+
+    scope = "migration_metadata"
+    migration_metadata = data.get("migration_metadata")
+    _validate_required_fields(migration_metadata, OPTIONAL_MIGRATION_METADATA, errors, scope)
+    if not isinstance(migration_metadata, dict):
+        return
+
+    if migration_metadata.get("capture_summary_schema_version") != data.get("schema_version"):
+        errors.append(
+            "expected migration_metadata.capture_summary_schema_version to match root.schema_version"
+        )
+
+
 def validate_capture_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -177,6 +201,7 @@ def validate_capture_summary(path: Path) -> tuple[dict[str, Any] | None, list[st
         errors,
         "installed_pack_metadata",
     )
+    _validate_migration_metadata(data, errors)
     _validate_evidence_posture(data.get("evidence_posture"), errors)
 
     return data, errors

@@ -341,6 +341,7 @@ $summary = [ordered]@{
     runtime_evidence = $false
     evidence_boundary = "AVD maintenance preflight only; not deploy/runtime or UI acceptance evidence"
     required_path = $requiredPath
+    prepared_lane_flag = "-UsePreparedAvdDataPartition"
     cli_partition_size_max_mb = $cliPartitionSizeMaxMb
     confirmation_token = $confirmationToken
     confirmation_matched = [bool]($ConfirmPrepare -eq $confirmationToken)
@@ -376,7 +377,7 @@ $summary = [ordered]@{
     backup_manifest_path = (Convert-ToRepoRelativePath -Path $backupManifestPath)
     quarantine_dir = (Convert-ToRepoRelativePath -Path $quarantineDir)
     quarantined_items = @($quarantinedItems)
-    next_command = "powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_data_litert_tablet_lane.ps1 -Device emulator-5554 -PartitionSizeMb 8192 -RealMode -ConfirmRealMode RUN_EMULATOR_5554_LARGE_LITERT_DATA -StartEmulator"
+    next_command = "powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_data_litert_tablet_lane.ps1 -Device emulator-5554 -PartitionSizeMb 8192 -RealMode -ConfirmRealMode RUN_EMULATOR_5554_LARGE_LITERT_DATA -StartEmulator -UsePreparedAvdDataPartition"
     stop_line = "This prepares AVD data capacity only. It is non-acceptance evidence and does not replace fixed four-emulator state-pack proof."
     generated_utc = [DateTime]::UtcNow.ToString("o")
 }

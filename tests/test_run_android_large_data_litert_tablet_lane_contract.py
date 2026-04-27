@@ -52,6 +52,31 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
             env=env,
         )
 
+    def make_fake_avd_home(self):
+        temp_dir = Path(tempfile.mkdtemp(prefix="large_litert_avd_home_"))
+        self.addCleanup(lambda: shutil.rmtree(temp_dir, ignore_errors=True))
+        avd_home = temp_dir / "avd"
+        avd_root = avd_home / "Senku_Tablet_2.avd"
+        avd_root.mkdir(parents=True)
+        (avd_home / "Senku_Tablet_2.ini").write_text(
+            f"avd.ini.encoding=UTF-8\npath={avd_root}\ntarget=android-36.1\n",
+            encoding="utf-8",
+        )
+        (avd_root / "config.ini").write_text(
+            "\n".join(
+                [
+                    "target=android-36.1",
+                    "abi.type=x86_64",
+                    "hw.lcd.width=1600",
+                    "hw.lcd.height=2560",
+                    "disk.dataPartition.size=20G",
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        return avd_home
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [
@@ -81,6 +106,8 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("$emulatorCliPartitionSizeMaxMb = 2047", self.script)
         self.assertIn('$blockedReason = "emulator_cli_partition_size_max_2047"', self.script)
         self.assertIn("[switch]$RealMode", self.script)
+        self.assertIn("[switch]$UsePreparedAvdDataPartition", self.script)
+        self.assertIn('[string]$PreparedAvdPreflightAvdHome = ""', self.script)
         self.assertIn('[string]$ConfirmRealMode = ""', self.script)
         self.assertIn('$confirmationToken = "RUN_EMULATOR_5554_LARGE_LITERT_DATA"', self.script)
         self.assertIn('if ($Device -ne "emulator-5554")', self.script)
@@ -93,12 +120,17 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
             self.script,
         )
         self.assertIn("push_litert_model_to_android.ps1", self.script)
+        self.assertIn("prepare_senku_tablet_2_large_data_avd.ps1", self.script)
         self.assertIn("run_android_litert_readiness_matrix.ps1", self.script)
         self.assertIn("start_senku_emulator_matrix.ps1", self.script)
         self.assertIn("run_android_instrumented_ui_smoke.ps1", self.script)
         self.assertIn("validate_android_large_data_litert_tablet_lane_summary.py", self.script)
         self.assertIn("validation_commands", self.script)
         self.assertIn("ui_acceptance_evidence = $false", self.script)
+        self.assertIn("use_prepared_avd_data_partition", self.script)
+        self.assertIn("data_partition_source", self.script)
+        self.assertIn("cli_partition_size_argument_used", self.script)
+        self.assertIn('if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitionSizeMaxMb -and -not $UsePreparedAvdDataPartition)', self.script)
         self.assertIn("deploy/runtime evidence only", self.script)
         self.assertIn('status = "blocked"', self.script)
 
@@ -176,12 +208,16 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertEqual(summary["role"], "tablet_portrait")
         self.assertEqual(summary["launch_profile"], "large-litert-data")
         self.assertEqual(summary["partition_size_mb"], 8192)
+        self.assertEqual(summary["data_partition_source"], "emulator_cli_partition_size")
+        self.assertFalse(summary["use_prepared_avd_data_partition"])
+        self.assertFalse(summary["cli_partition_size_argument_used"])
         self.assertEqual(summary["package_name"], "com.example.senku")
         self.assertFalse(summary["start_emulator_requested"])
         self.assertEqual(summary["devices"], ["emulator-5554"])
         self.assertIn("deploy/runtime evidence only", summary["stop_line"])
         self.assertIn("fixed four-emulator UI acceptance evidence remains primary", summary["stop_line"])
         self.assertEqual(summary["child_status"]["launch_profile_preflight_exit_code"], 0)
+        self.assertIsNone(summary["child_status"]["prepared_avd_preflight_exit_code"])
         self.assertEqual(summary["child_status"]["model_push_exit_code"], 0)
         self.assertEqual(summary["child_status"]["litert_readiness_exit_code"], 0)
         self.assertIsNone(summary["child_status"]["model_store_instrumentation_exit_code"])
@@ -239,6 +275,59 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("status: dry_run_only", validator.stdout)
         self.assertIn("evidence: deploy/runtime only, non_acceptance", validator.stdout)
 
+    def test_prepared_avd_dry_run_adds_config_preflight_boundary(self):
+        payload = b"tiny tablet litert model\n"
+
+        with tempfile.TemporaryDirectory(prefix="large_litert_prepared_") as temp_dir:
+            temp_path = Path(temp_dir)
+            model_path = temp_path / "gemma-4-E2B-it.task"
+            model_path.write_bytes(payload)
+            avd_home = self.make_fake_avd_home()
+            output_dir = temp_path / "out"
+
+            result = self.run_with_fake_sdk(
+                "-OutputDir",
+                str(output_dir),
+                "-ModelPath",
+                str(model_path),
+                "-UsePreparedAvdDataPartition",
+                "-PreparedAvdPreflightAvdHome",
+                str(avd_home),
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary_path = output_dir / "summary.json"
+            prepared_summary_path = output_dir / "prepared_avd_preflight_summary.json"
+            self.assertTrue(summary_path.exists())
+            self.assertTrue(prepared_summary_path.exists())
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            prepared = json.loads(prepared_summary_path.read_text(encoding="utf-8-sig"))
+            validator = subprocess.run(
+                [str(VALIDATION_PYTHON), str(SUMMARY_VALIDATOR_SCRIPT), str(summary_path)],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(summary["status"], "dry_run_only")
+        self.assertTrue(summary["dry_run"])
+        self.assertTrue(summary["use_prepared_avd_data_partition"])
+        self.assertEqual(summary["data_partition_source"], "config_based_avd_data_partition")
+        self.assertEqual(summary["required_path"], "config_based_avd_data_partition")
+        self.assertFalse(summary["cli_partition_size_argument_used"])
+        self.assertEqual(summary["child_status"]["prepared_avd_preflight_exit_code"], 0)
+        self.assertEqual(Path(summary["child_artifacts"]["prepared_avd_preflight_summary"]), prepared_summary_path)
+        self.assertEqual(
+            summary["child_summaries"]["prepared_avd_preflight"]["summary_kind"],
+            "senku_tablet_2_large_data_avd_preflight",
+        )
+        self.assertEqual(prepared["status"], "dry_run_only")
+        self.assertEqual(prepared["avd_name"], "Senku_Tablet_2")
+        self.assertFalse(prepared["acceptance_evidence"])
+        self.assertFalse(prepared["deploy_evidence"])
+        self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
+
     def test_real_mode_start_emulator_blocks_impossible_cli_partition_size_with_summary(self):
         payload = b"tiny tablet litert model\n"
 
@@ -282,6 +371,9 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertEqual(summary["blocked_reason"], "emulator_cli_partition_size_max_2047")
         self.assertEqual(summary["required_path"], "config_based_avd_data_partition")
         self.assertEqual(summary["cli_partition_size_max_mb"], 2047)
+        self.assertEqual(summary["data_partition_source"], "emulator_cli_partition_size")
+        self.assertFalse(summary["use_prepared_avd_data_partition"])
+        self.assertTrue(summary["cli_partition_size_argument_used"])
         self.assertTrue(summary["non_acceptance_evidence"])
         self.assertFalse(summary["acceptance_evidence"])
         self.assertFalse(summary["ui_acceptance_evidence"])

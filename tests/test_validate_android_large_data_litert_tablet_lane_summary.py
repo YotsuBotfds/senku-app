@@ -42,6 +42,9 @@ def make_summary(real_mode: bool = False) -> dict:
         "role": "tablet_portrait",
         "launch_profile": "large-litert-data",
         "partition_size_mb": 8192,
+        "data_partition_source": "emulator_cli_partition_size",
+        "use_prepared_avd_data_partition": False,
+        "cli_partition_size_argument_used": False,
         "package_name": "com.senku.mobile",
         "runtime_check": "model_store",
         "start_emulator_requested": False,
@@ -50,6 +53,7 @@ def make_summary(real_mode: bool = False) -> dict:
         "generated_utc": "2026-04-27T12:00:00.0000000Z",
         "child_artifacts": {
             "launch_profile_summary": "C:\\tmp\\launch_profile_summary.json",
+            "prepared_avd_preflight_summary": None,
             "push_summary": "C:\\tmp\\model_push_summary.json" if real_mode else None,
             "push_markdown": "C:\\tmp\\model_push_summary.md" if real_mode else None,
             "readiness_summary": None,
@@ -59,6 +63,7 @@ def make_summary(real_mode: bool = False) -> dict:
         },
         "child_status": {
             "launch_profile_preflight_exit_code": 0,
+            "prepared_avd_preflight_exit_code": None,
             "emulator_start_exit_code": None,
             "model_push_exit_code": 0,
             "litert_readiness_exit_code": 0 if dry_run else None,
@@ -100,6 +105,7 @@ def make_summary(real_mode: bool = False) -> dict:
                     "acceptance_evidence": False,
                 },
             },
+            "prepared_avd_preflight": None,
             "model_push": {
                 "device": "emulator-5554",
                 "package_name": "com.senku.mobile",
@@ -219,6 +225,7 @@ class ValidateAndroidLargeDataLiteRtTabletLaneSummaryTests(unittest.TestCase):
         summary = make_summary(real_mode=True)
         summary["start_emulator_requested"] = True
         summary["status"] = "pass"
+        summary["cli_partition_size_argument_used"] = True
 
         _, errors = validate_large_data_litert_tablet_lane_summary(self.write_summary(summary))
 
@@ -234,6 +241,7 @@ class ValidateAndroidLargeDataLiteRtTabletLaneSummaryTests(unittest.TestCase):
         summary["blocked_reason"] = "emulator_cli_partition_size_max_2047"
         summary["required_path"] = "config_based_avd_data_partition"
         summary["cli_partition_size_max_mb"] = 2047
+        summary["cli_partition_size_argument_used"] = True
         summary["deploy_evidence"] = False
         summary["runtime_evidence"] = False
         summary["child_artifacts"]["push_summary"] = None
@@ -248,6 +256,49 @@ class ValidateAndroidLargeDataLiteRtTabletLaneSummaryTests(unittest.TestCase):
         _, errors = validate_large_data_litert_tablet_lane_summary(self.write_summary(summary))
 
         self.assertEqual(errors, [])
+
+    def test_prepared_avd_real_start_can_exceed_cli_max_without_cli_argument(self):
+        summary = make_summary(real_mode=True)
+        summary["start_emulator_requested"] = True
+        summary["data_partition_source"] = "config_based_avd_data_partition"
+        summary["use_prepared_avd_data_partition"] = True
+        summary["required_path"] = "config_based_avd_data_partition"
+        summary["cli_partition_size_argument_used"] = False
+        summary["child_artifacts"]["prepared_avd_preflight_summary"] = "C:\\tmp\\prepared_avd_preflight_summary.json"
+        summary["child_status"]["prepared_avd_preflight_exit_code"] = 0
+        summary["planned_commands"]["emulator_start"] = "powershell start -Roles tablet_portrait -Mode read_only -Headless"
+        summary["child_summaries"]["prepared_avd_preflight"] = {
+            "summary_kind": "senku_tablet_2_large_data_avd_preflight",
+            "acceptance_evidence": False,
+            "deploy_evidence": False,
+        }
+
+        _, errors = validate_large_data_litert_tablet_lane_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+
+    def test_rejects_prepared_avd_summary_that_still_uses_cli_partition_argument(self):
+        summary = make_summary(real_mode=True)
+        summary["start_emulator_requested"] = True
+        summary["data_partition_source"] = "config_based_avd_data_partition"
+        summary["use_prepared_avd_data_partition"] = True
+        summary["required_path"] = "config_based_avd_data_partition"
+        summary["cli_partition_size_argument_used"] = True
+        summary["child_artifacts"]["prepared_avd_preflight_summary"] = "C:\\tmp\\prepared_avd_preflight_summary.json"
+        summary["child_status"]["prepared_avd_preflight_exit_code"] = 0
+        summary["planned_commands"]["emulator_start"] = "powershell start -Roles tablet_portrait -PartitionSizeMb 8192"
+        summary["child_summaries"]["prepared_avd_preflight"] = {
+            "summary_kind": "senku_tablet_2_large_data_avd_preflight",
+            "acceptance_evidence": False,
+        }
+
+        _, errors = validate_large_data_litert_tablet_lane_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.cli_partition_size_argument_used to be False", errors)
+        self.assertIn(
+            "expected planned_commands.emulator_start to omit -PartitionSizeMb when prepared AVD data partition is used",
+            errors,
+        )
 
     def test_rejects_child_pointer_and_role_drift(self):
         summary = make_summary(real_mode=True)

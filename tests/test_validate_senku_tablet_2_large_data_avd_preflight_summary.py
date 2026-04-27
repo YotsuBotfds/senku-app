@@ -26,6 +26,7 @@ class ValidateSenkuTablet2LargeDataAvdPreflightSummaryTests(unittest.TestCase):
             "runtime_evidence": False,
             "evidence_boundary": "AVD maintenance preflight only; not deploy/runtime or UI acceptance evidence",
             "required_path": "config_based_avd_data_partition",
+            "prepared_lane_flag": "-UsePreparedAvdDataPartition",
             "cli_partition_size_max_mb": 2047,
             "confirmation_token": "PREPARE_SENKU_TABLET_2_LARGE_DATA_AVD",
             "confirmation_matched": False,
@@ -74,7 +75,7 @@ class ValidateSenkuTablet2LargeDataAvdPreflightSummaryTests(unittest.TestCase):
             "backup_manifest_path": None,
             "quarantine_dir": None,
             "quarantined_items": [],
-            "next_command": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run_android_large_data_litert_tablet_lane.ps1 -Device emulator-5554",
+            "next_command": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run_android_large_data_litert_tablet_lane.ps1 -Device emulator-5554 -UsePreparedAvdDataPartition",
             "stop_line": "This prepares AVD data capacity only. It is non-acceptance evidence and does not replace fixed four-emulator state-pack proof.",
             "generated_utc": "2026-04-27T19:30:00Z",
         }

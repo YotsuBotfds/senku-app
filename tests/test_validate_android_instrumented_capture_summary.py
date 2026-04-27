@@ -52,6 +52,13 @@ def make_instrumented_capture_summary() -> dict:
                 "source": "run_android_instrumented_ui_smoke.ps1",
             },
         },
+        "migration_metadata": {
+            "status": "capture_only",
+            "capture_summary_schema_version": 1,
+            "android_layout_change": False,
+            "large_data_lane_change": False,
+            "reindex_required": False,
+        },
         "evidence_posture": {
             "non_acceptance_evidence": True,
             "acceptance_evidence": False,
@@ -109,6 +116,27 @@ class ValidateAndroidInstrumentedCaptureSummaryTests(unittest.TestCase):
 
         self.assertIn("expected evidence_posture.non_acceptance_evidence to be true", errors)
         self.assertIn("expected evidence_posture.acceptance_evidence to be false", errors)
+
+    def test_optional_migration_metadata_is_validated_when_present(self):
+        summary = make_instrumented_capture_summary()
+        del summary["migration_metadata"]["large_data_lane_change"]
+        summary["migration_metadata"]["capture_summary_schema_version"] = 2
+
+        _, errors = validate_instrumented_capture_summary(self.write_summary(summary))
+
+        self.assertIn("missing migration_metadata.large_data_lane_change", errors)
+        self.assertIn(
+            "expected migration_metadata.capture_summary_schema_version to match root.schema_version",
+            errors,
+        )
+
+    def test_legacy_capture_summary_path_without_migration_metadata_still_passes(self):
+        summary = make_instrumented_capture_summary()
+        del summary["migration_metadata"]
+
+        _, errors = validate_instrumented_capture_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
 
     def test_cli_reports_contract_errors_without_emulator(self):
         summary = make_instrumented_capture_summary()

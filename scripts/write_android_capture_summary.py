@@ -19,6 +19,13 @@ DEFAULT_INSTALLED_PACK_METADATA = {
     "pack_format": "not_provided",
     "pack_version": 0,
 }
+DEFAULT_MIGRATION_METADATA = {
+    "status": "capture_only",
+    "capture_summary_schema_version": SCHEMA_VERSION,
+    "android_layout_change": False,
+    "large_data_lane_change": False,
+    "reindex_required": False,
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -113,6 +120,7 @@ def build_capture_summary(
             "sha256": model_sha256,
         },
         "installed_pack_metadata": _load_installed_pack_metadata(installed_pack_metadata),
+        "migration_metadata": dict(DEFAULT_MIGRATION_METADATA),
         "evidence_posture": {
             "non_acceptance_evidence": True,
             "acceptance_evidence": False,
@@ -140,6 +148,7 @@ def markdown_for_capture_summary(summary: dict[str, Any]) -> str:
     evidence = summary.get("evidence_posture", {})
     model = summary.get("model_identity", {})
     installed_pack = summary.get("installed_pack_metadata", {})
+    migration = summary.get("migration_metadata", {})
     package_data = summary.get("package_data_posture", {})
 
     lines = [
@@ -187,6 +196,14 @@ def markdown_for_capture_summary(summary: dict[str, Any]) -> str:
             lines.append(f"- {key}: `{installed_pack[key]}`")
     lines.extend(
         [
+            "",
+            "## Migration Metadata",
+            "",
+            f"- status: `{migration.get('status', 'not_provided')}`",
+            f"- capture_summary_schema_version: `{migration.get('capture_summary_schema_version', 'not_provided')}`",
+            f"- android_layout_change: `{_bool_text(migration.get('android_layout_change'))}`",
+            f"- large_data_lane_change: `{_bool_text(migration.get('large_data_lane_change'))}`",
+            f"- reindex_required: `{_bool_text(migration.get('reindex_required'))}`",
             "",
             "## Package Data",
             "",

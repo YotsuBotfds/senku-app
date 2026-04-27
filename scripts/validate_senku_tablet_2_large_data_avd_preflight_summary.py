@@ -29,6 +29,7 @@ REQUIRED_FIELDS: dict[str, type | tuple[type, ...]] = {
     "runtime_evidence": bool,
     "evidence_boundary": str,
     "required_path": str,
+    "prepared_lane_flag": str,
     "cli_partition_size_max_mb": int,
     "confirmation_token": str,
     "confirmation_matched": bool,
@@ -101,6 +102,8 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
         errors.append(f"expected root.expected_serial to be {EXPECTED_SERIAL!r}")
     if data.get("required_path") != EXPECTED_REQUIRED_PATH:
         errors.append(f"expected root.required_path to be {EXPECTED_REQUIRED_PATH!r}")
+    if data.get("prepared_lane_flag") != "-UsePreparedAvdDataPartition":
+        errors.append("expected root.prepared_lane_flag to be '-UsePreparedAvdDataPartition'")
     if data.get("confirmation_token") != EXPECTED_CONFIRMATION:
         errors.append("unexpected confirmation token")
 
@@ -114,6 +117,8 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
         errors.append("expected root.evidence_boundary to preserve non-acceptance boundary")
     if "fixed four-emulator state-pack proof" not in str(data.get("stop_line", "")):
         errors.append("expected root.stop_line to preserve fixed-four proof boundary")
+    if "-UsePreparedAvdDataPartition" not in str(data.get("next_command", "")):
+        errors.append("expected root.next_command to include -UsePreparedAvdDataPartition")
 
     if data.get("dry_run") is True:
         if data.get("apply") is not False:

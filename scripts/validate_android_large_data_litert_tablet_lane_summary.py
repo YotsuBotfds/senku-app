@@ -37,6 +37,9 @@ REQUIRED_TOP_LEVEL: dict[str, type | tuple[type, ...]] = {
     "role": str,
     "launch_profile": str,
     "partition_size_mb": int,
+    "data_partition_source": str,
+    "use_prepared_avd_data_partition": bool,
+    "cli_partition_size_argument_used": bool,
     "runtime_check": str,
     "selected_roles": list,
     "devices": list,
@@ -125,17 +128,29 @@ def _validate_lane_markers(data: dict[str, Any], errors: list[str]) -> None:
     _expect_value(data, "device", EXPECTED_DEVICE, errors, "root")
     _expect_value(data, "role", EXPECTED_ROLE, errors, "root")
     _expect_value(data, "launch_profile", EXPECTED_PROFILE, errors, "root")
+    data_partition_source = data.get("data_partition_source")
+    use_prepared = data.get("use_prepared_avd_data_partition")
+    if use_prepared is True:
+        _expect_value(data, "data_partition_source", EXPECTED_REQUIRED_PATH, errors, "root")
+        _expect(data, "required_path", str, errors, "root")
+        _expect_value(data, "required_path", EXPECTED_REQUIRED_PATH, errors, "root")
+        _expect_value(data, "cli_partition_size_argument_used", False, errors, "root")
+    elif use_prepared is False:
+        _expect_value(data, "data_partition_source", "emulator_cli_partition_size", errors, "root")
 
     partition_size_mb = data.get("partition_size_mb")
     if isinstance(partition_size_mb, int) and partition_size_mb > CLI_PARTITION_SIZE_MAX_MB:
         if data.get("real_mode") is True and data.get("start_emulator_requested") is True:
-            _expect_value(data, "status", "blocked", errors, "root")
-            _expect(data, "blocked_reason", str, errors, "root")
-            _expect_value(data, "blocked_reason", EXPECTED_BLOCKED_REASON, errors, "root")
-            _expect(data, "required_path", str, errors, "root")
-            _expect_value(data, "required_path", EXPECTED_REQUIRED_PATH, errors, "root")
-            _expect(data, "cli_partition_size_max_mb", int, errors, "root")
-            _expect_value(data, "cli_partition_size_max_mb", CLI_PARTITION_SIZE_MAX_MB, errors, "root")
+            if use_prepared is True and data_partition_source == EXPECTED_REQUIRED_PATH:
+                _expect_value(data, "cli_partition_size_argument_used", False, errors, "root")
+            else:
+                _expect_value(data, "status", "blocked", errors, "root")
+                _expect(data, "blocked_reason", str, errors, "root")
+                _expect_value(data, "blocked_reason", EXPECTED_BLOCKED_REASON, errors, "root")
+                _expect(data, "required_path", str, errors, "root")
+                _expect_value(data, "required_path", EXPECTED_REQUIRED_PATH, errors, "root")
+                _expect(data, "cli_partition_size_max_mb", int, errors, "root")
+                _expect_value(data, "cli_partition_size_max_mb", CLI_PARTITION_SIZE_MAX_MB, errors, "root")
     if isinstance(data.get("evidence_boundary"), str) and "not UI acceptance" not in data["evidence_boundary"]:
         errors.append("expected root.evidence_boundary to state not UI acceptance")
 
@@ -193,6 +208,9 @@ def _validate_child_artifacts(data: dict[str, Any], errors: list[str]) -> None:
 
     if not isinstance(artifacts.get("launch_profile_summary"), str) or not artifacts.get("launch_profile_summary", "").strip():
         errors.append("expected child_artifacts.launch_profile_summary to be a non-empty path")
+    if data.get("use_prepared_avd_data_partition") is True:
+        if not isinstance(artifacts.get("prepared_avd_preflight_summary"), str) or not artifacts.get("prepared_avd_preflight_summary", "").strip():
+            errors.append("expected child_artifacts.prepared_avd_preflight_summary when prepared AVD data partition is used")
 
     if data.get("real_mode") is True and data.get("deploy_evidence") is True:
         if not isinstance(artifacts.get("push_summary"), str) or not artifacts.get("push_summary", "").strip():
@@ -210,6 +228,9 @@ def _validate_child_status(data: dict[str, Any], errors: list[str]) -> None:
 
     if child_status.get("launch_profile_preflight_exit_code") != 0:
         errors.append("expected child_status.launch_profile_preflight_exit_code to be 0")
+    if data.get("use_prepared_avd_data_partition") is True:
+        if child_status.get("prepared_avd_preflight_exit_code") != 0:
+            errors.append("expected child_status.prepared_avd_preflight_exit_code to be 0 when prepared AVD data partition is used")
 
     if data.get("dry_run") is True:
         for key in ("emulator_start_exit_code", "model_store_instrumentation_exit_code"):
@@ -240,6 +261,10 @@ def _validate_planned_commands(data: dict[str, Any], errors: list[str]) -> None:
             errors.append("expected planned_commands.model_store_instrumentation to be empty in dry run")
     if data.get("runtime_check") == "readiness_dry_run":
         _expect_string_contains(planned.get("litert_readiness"), EXPECTED_MATRIX, errors, "planned_commands.litert_readiness")
+    if data.get("use_prepared_avd_data_partition") is True:
+        emulator_start = planned.get("emulator_start")
+        if isinstance(emulator_start, str) and "-PartitionSizeMb" in emulator_start:
+            errors.append("expected planned_commands.emulator_start to omit -PartitionSizeMb when prepared AVD data partition is used")
 
 
 def _validate_launch_profile_child(child: Any, errors: list[str]) -> None:
@@ -330,6 +355,15 @@ def _validate_child_summaries(data: dict[str, Any], errors: list[str]) -> None:
         return
 
     _validate_launch_profile_child(child_summaries.get("launch_profile"), errors)
+    prepared_child = child_summaries.get("prepared_avd_preflight")
+    if data.get("use_prepared_avd_data_partition") is True:
+        if not isinstance(prepared_child, dict):
+            errors.append("expected child_summaries.prepared_avd_preflight when prepared AVD data partition is used")
+        else:
+            if prepared_child.get("summary_kind") != "senku_tablet_2_large_data_avd_preflight":
+                errors.append("expected child_summaries.prepared_avd_preflight.summary_kind to be senku_tablet_2_large_data_avd_preflight")
+            if prepared_child.get("acceptance_evidence") is not False:
+                errors.append("expected child_summaries.prepared_avd_preflight.acceptance_evidence to be false")
     _validate_model_push_child(child_summaries.get("model_push"), data, errors)
     _validate_readiness_child(child_summaries.get("litert_readiness"), data, errors)
     _validate_instrumentation_child(child_summaries.get("model_store_instrumentation"), errors)

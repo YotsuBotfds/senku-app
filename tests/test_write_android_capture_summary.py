@@ -85,6 +85,11 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         )
         self.assertEqual(data["installed_pack_metadata"]["answer_cards"], 271)
         self.assertEqual(data["model_identity"]["name"], "gemma-4-e2b-it-litert")
+        self.assertEqual(data["migration_metadata"]["status"], "capture_only")
+        self.assertEqual(data["migration_metadata"]["capture_summary_schema_version"], 1)
+        self.assertFalse(data["migration_metadata"]["android_layout_change"])
+        self.assertFalse(data["migration_metadata"]["large_data_lane_change"])
+        self.assertFalse(data["migration_metadata"]["reindex_required"])
 
     def test_markdown_summary_includes_reviewer_fields_without_changing_json(self):
         screenshot = self.write_file("screen.png", b"png bytes")
@@ -141,6 +146,11 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertIn("- status: `available`", markdown)
         self.assertIn("- pack_format: `senku-mobile-pack-v2`", markdown)
         self.assertIn("- pack_version: `2`", markdown)
+        self.assertIn("- status: `capture_only`", markdown)
+        self.assertIn("- capture_summary_schema_version: `1`", markdown)
+        self.assertIn("- android_layout_change: `false`", markdown)
+        self.assertIn("- large_data_lane_change: `false`", markdown)
+        self.assertIn("- reindex_required: `false`", markdown)
         self.assertIn("- cleared_before_capture: `false`", markdown)
         self.assertIn("- restored_after_capture: `true`", markdown)
         self.assertIn("- description: `restored from harness snapshot`", markdown)
@@ -201,6 +211,7 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertNotIn("screenrecord", data["artifacts"])
         self.assertEqual(data["apk_sha256"], "not_provided")
         self.assertEqual(data["installed_pack_metadata"]["status"], "not_provided")
+        self.assertEqual(data["migration_metadata"]["status"], "capture_only")
         self.assertIn("- serial: `device-1234`", markdown)
         self.assertIn("- role: `tablet_landscape`", markdown)
         self.assertIn("- orientation: `landscape`", markdown)
@@ -208,6 +219,7 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertNotIn("- screenrecord:", markdown)
         self.assertIn("- sha256: `not_provided`", markdown)
         self.assertIn("- status: `not_provided`", markdown)
+        self.assertIn("- status: `capture_only`", markdown)
 
 
 if __name__ == "__main__":

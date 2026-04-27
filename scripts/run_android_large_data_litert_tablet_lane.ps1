@@ -9,6 +9,8 @@ param(
     [string]$ConfirmRealMode = "",
     [switch]$StartEmulator,
     [switch]$RestartRunning,
+    [switch]$UsePreparedAvdDataPartition,
+    [string]$PreparedAvdPreflightAvdHome = "",
     [switch]$SkipDataSpaceCheck,
     [switch]$PruneExistingModels,
     [switch]$SkipInstall,
@@ -25,6 +27,7 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $launchScript = Join-Path $PSScriptRoot "start_senku_emulator_matrix.ps1"
 $pushScript = Join-Path $PSScriptRoot "push_litert_model_to_android.ps1"
+$prepareAvdScript = Join-Path $PSScriptRoot "prepare_senku_tablet_2_large_data_avd.ps1"
 $readinessScript = Join-Path $PSScriptRoot "run_android_litert_readiness_matrix.ps1"
 $instrumentedSmokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
 $summaryValidatorScript = Join-Path $PSScriptRoot "validate_android_large_data_litert_tablet_lane_summary.py"
@@ -131,12 +134,14 @@ function New-LaneMarkdown {
         "- Role: $($Summary.role)"
         "- Launch profile: $($Summary.launch_profile)"
         "- Partition size MB: $($Summary.partition_size_mb)"
+        "- Data partition source: $(Format-LaneValue -Value $Summary.data_partition_source)"
         "- Package: $($Summary.package_name)"
         "- Runtime check: $($Summary.runtime_check)"
         ""
         "## Child Artifacts"
         ""
         "- Launch profile summary: ``$($Summary.child_artifacts.launch_profile_summary)``"
+        "- Prepared AVD preflight summary: ``$($Summary.child_artifacts.prepared_avd_preflight_summary)``"
         "- Push summary: ``$($Summary.child_artifacts.push_summary)``"
         "- Readiness summary: ``$($Summary.child_artifacts.readiness_summary)``"
         "- Instrumentation summary: ``$($Summary.child_artifacts.instrumentation_summary)``"
@@ -154,6 +159,7 @@ function New-LaneMarkdown {
 
 Assert-RequiredScript -Path $launchScript
 Assert-RequiredScript -Path $pushScript
+Assert-RequiredScript -Path $prepareAvdScript
 Assert-RequiredScript -Path $readinessScript
 Assert-RequiredScript -Path $instrumentedSmokeScript
 Assert-RequiredScript -Path $summaryValidatorScript
@@ -172,6 +178,7 @@ $resolvedOutputDir = Resolve-LanePath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
 $launchSummaryPath = Join-Path $resolvedOutputDir "launch_profile_summary.json"
+$preparedAvdSummaryPath = Join-Path $resolvedOutputDir "prepared_avd_preflight_summary.json"
 $pushSummaryPath = Join-Path $resolvedOutputDir "model_push_summary.json"
 $pushMarkdownPath = Join-Path $resolvedOutputDir "model_push_summary.md"
 $readinessOutputDir = Join-Path $resolvedOutputDir "readiness"
@@ -181,6 +188,21 @@ $summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
 $summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
 
 $childResults = [ordered]@{}
+
+if ($UsePreparedAvdDataPartition) {
+    $preparedAvdArgs = @(
+        "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", $prepareAvdScript,
+        "-OutputDir", (Join-Path $resolvedOutputDir "prepared_avd_preflight")
+    )
+    if (-not [string]::IsNullOrWhiteSpace($PreparedAvdPreflightAvdHome)) {
+        $preparedAvdArgs += @("-AvdHome", $PreparedAvdPreflightAvdHome)
+    }
+    $childResults.prepared_avd_preflight = Invoke-LaneChildPowerShell -Arguments $preparedAvdArgs
+    $preparedAvdChildSummaryPath = Join-Path $resolvedOutputDir "prepared_avd_preflight\summary.json"
+    if (Test-Path -LiteralPath $preparedAvdChildSummaryPath) {
+        Copy-Item -LiteralPath $preparedAvdChildSummaryPath -Destination $preparedAvdSummaryPath -Force
+    }
+}
 
 $launchPreflightArgs = @(
     "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $launchScript,
@@ -194,7 +216,7 @@ $launchPreflightArgs = @(
 )
 $childResults.launch_profile_preflight = Invoke-LaneChildPowerShell -Arguments $launchPreflightArgs
 
-if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitionSizeMaxMb) {
+if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitionSizeMaxMb -and -not $UsePreparedAvdDataPartition) {
     $emulatorStartCommand = "powershell -NoProfile -ExecutionPolicy Bypass -File $launchScript -Roles tablet_portrait -Mode read_only -Headless -PartitionSizeMb $PartitionSizeMb"
     if ($RestartRunning) {
         $emulatorStartCommand += " -RestartRunning"
@@ -227,6 +249,9 @@ if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitio
         role = "tablet_portrait"
         launch_profile = "large-litert-data"
         partition_size_mb = $PartitionSizeMb
+        data_partition_source = "emulator_cli_partition_size"
+        use_prepared_avd_data_partition = $false
+        cli_partition_size_argument_used = $true
         package_name = $PackageName
         runtime_check = $RuntimeCheck
         start_emulator_requested = $true
@@ -247,6 +272,7 @@ if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitio
         )
         child_artifacts = [ordered]@{
             launch_profile_summary = $launchSummaryPath
+            prepared_avd_preflight_summary = $null
             push_summary = $null
             push_markdown = $null
             readiness_summary = $null
@@ -254,6 +280,7 @@ if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitio
         }
         child_status = [ordered]@{
             launch_profile_preflight_exit_code = $childResults.launch_profile_preflight.exit_code
+            prepared_avd_preflight_exit_code = $null
             emulator_start_exit_code = $null
             model_push_exit_code = $null
             litert_readiness_exit_code = $null
@@ -315,13 +342,16 @@ if (-not $RealMode) {
     $childResults.litert_readiness = Invoke-LaneChildPowerShell -Arguments $readinessArgs
 } else {
     if ($StartEmulator) {
+        $startPartitionSizeMb = if ($UsePreparedAvdDataPartition) { 0 } else { $PartitionSizeMb }
         $startArgs = @(
             "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $launchScript,
             "-Roles", "tablet_portrait",
             "-Mode", "read_only",
-            "-Headless",
-            "-PartitionSizeMb", [string]$PartitionSizeMb
+            "-Headless"
         )
+        if ($startPartitionSizeMb -gt 0) {
+            $startArgs += @("-PartitionSizeMb", [string]$startPartitionSizeMb)
+        }
         if ($RestartRunning) {
             $startArgs += "-RestartRunning"
         }
@@ -425,6 +455,10 @@ $summary = [ordered]@{
     role = "tablet_portrait"
     launch_profile = "large-litert-data"
     partition_size_mb = $PartitionSizeMb
+    data_partition_source = $(if ($UsePreparedAvdDataPartition) { $requiredBlockedPath } else { "emulator_cli_partition_size" })
+    use_prepared_avd_data_partition = [bool]$UsePreparedAvdDataPartition
+    required_path = $(if ($UsePreparedAvdDataPartition) { $requiredBlockedPath } else { $null })
+    cli_partition_size_argument_used = [bool]($StartEmulator -and -not $UsePreparedAvdDataPartition)
     package_name = $PackageName
     runtime_check = $RuntimeCheck
     start_emulator_requested = [bool]$StartEmulator
@@ -445,6 +479,7 @@ $summary = [ordered]@{
     )
     child_artifacts = [ordered]@{
         launch_profile_summary = $launchSummaryPath
+        prepared_avd_preflight_summary = $(if (Test-Path -LiteralPath $preparedAvdSummaryPath) { $preparedAvdSummaryPath } else { $null })
         push_summary = $(if (Test-Path -LiteralPath $pushSummaryPath) { $pushSummaryPath } else { $null })
         push_markdown = $(if (Test-Path -LiteralPath $pushMarkdownPath) { $pushMarkdownPath } else { $null })
         readiness_summary = $(if (Test-Path -LiteralPath $readinessSummaryPath) { $readinessSummaryPath } else { $null })
@@ -452,6 +487,7 @@ $summary = [ordered]@{
     }
     child_status = [ordered]@{
         launch_profile_preflight_exit_code = $childResults.launch_profile_preflight.exit_code
+        prepared_avd_preflight_exit_code = $(if ($childResults.Contains("prepared_avd_preflight")) { $childResults.prepared_avd_preflight.exit_code } else { $null })
         emulator_start_exit_code = $(if ($childResults.Contains("emulator_start")) { $childResults.emulator_start.exit_code } else { $null })
         model_push_exit_code = $(if ($childResults.Contains("model_push")) { $childResults.model_push.exit_code } else { $null })
         litert_readiness_exit_code = $(if ($childResults.Contains("litert_readiness")) { $childResults.litert_readiness.exit_code } else { $null })
@@ -466,6 +502,7 @@ $summary = [ordered]@{
     }
     child_summaries = [ordered]@{
         launch_profile = $launchSummary
+        prepared_avd_preflight = (Convert-ToJsonObject -Path $preparedAvdSummaryPath)
         model_push = $pushSummary
         litert_readiness = $readinessSummary
         model_store_instrumentation = $instrumentationSummary
