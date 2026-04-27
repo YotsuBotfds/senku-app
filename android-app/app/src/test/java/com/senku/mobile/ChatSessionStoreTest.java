@@ -111,4 +111,58 @@ public final class ChatSessionStoreTest {
             SessionMemory.setAnchorPriorEnabledForTest(false);
         }
     }
+
+    @Test
+    public void recentConversationPreviewsReturnMostRecentStatefulThreadsFirst() {
+        ChatSessionStore.resetForTest();
+        String firstConversationId = ChatSessionStore.createConversation();
+        String secondConversationId = ChatSessionStore.createConversation();
+        String thirdConversationId = ChatSessionStore.createConversation();
+        recordTurn(firstConversationId, "first question", "GD-001");
+        recordTurn(secondConversationId, "second question", "GD-002");
+        recordTurn(thirdConversationId, "third question", "GD-003");
+
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(null, 2);
+
+        assertEquals(2, previews.size());
+        assertEquals(thirdConversationId, previews.get(0).conversationId);
+        assertEquals(secondConversationId, previews.get(1).conversationId);
+        assertEquals("third question", previews.get(0).latestTurn.question);
+    }
+
+    @Test
+    public void recentConversationPreviewsSuppressNearDuplicateQuestions() {
+        ChatSessionStore.resetForTest();
+        String olderConversationId = ChatSessionStore.createConversation();
+        String newerConversationId = ChatSessionStore.createConversation();
+        recordTurn(olderConversationId, "How do I store water?", "GD-619");
+        recordTurn(newerConversationId, "  how   do i store water?  ", "GD-035");
+
+        List<ChatSessionStore.ConversationPreview> previews =
+            ChatSessionStore.recentConversationPreviews(null, 10);
+
+        assertEquals(1, previews.size());
+        assertEquals(newerConversationId, previews.get(0).conversationId);
+        assertEquals("GD-035", previews.get(0).latestTurn.sourceResults.get(0).guideId);
+    }
+
+    private static void recordTurn(String conversationId, String question, String guideId) {
+        ChatSessionStore.memoryFor(conversationId).recordTurn(
+            question,
+            "Short answer: Keep the thread preview stateful.",
+            List.of(
+                new SearchResult(
+                    "Guide " + guideId,
+                    "",
+                    "",
+                    "",
+                    guideId,
+                    "Preview",
+                    "survival",
+                    "guide-focus"
+                )
+            )
+        );
+    }
 }

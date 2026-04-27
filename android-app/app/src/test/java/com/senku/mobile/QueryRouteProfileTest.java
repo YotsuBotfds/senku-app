@@ -946,4 +946,58 @@ public final class QueryRouteProfileTest {
 
         assertTrue(supported);
     }
+
+    @Test
+    public void genericPuncturePromptStaysOnPunctureFirstAidBoundary() {
+        QueryRouteProfile profile = QueryRouteProfile.fromQuery("what should i do for a puncture wound");
+
+        boolean supported = profile.supportsRouteResult(
+            "first aid & emergency response",
+            "wound assessment and cleaning",
+            "medical",
+            "puncture_wound,wound_hygiene",
+            "puncture wound irrigation, loose dressing, tetanus risk, and infection monitoring",
+            "do not probe a puncture wound; clean around it, irrigate if supported, dress loosely, and watch for infection"
+        );
+
+        assertTrue(profile.isRouteFocused());
+        assertTrue(supported);
+    }
+
+    @Test
+    public void animalBitePromptDoesNotUseGenericPunctureRouting() {
+        QueryRouteProfile profile = QueryRouteProfile.fromQuery("what should i do for a dog bite puncture wound");
+
+        assertFalse(profile.isRouteFocused());
+    }
+
+    @Test
+    public void fireInRainPromptRejectsSuppressionDistractorGuidance() {
+        QueryRouteProfile profile = QueryRouteProfile.fromQuery("how do i start a fire in the rain");
+
+        boolean supported = profile.supportsRouteResult(
+            "fire safety and compartmentalization",
+            "wildland fire suppression",
+            "building",
+            "fire_suppression,wildfire",
+            "firebreak planning, extinguisher placement, and smoke management",
+            "use fire suppression systems and evacuation routes to manage structure fire risk"
+        );
+
+        assertTrue(profile.isRouteFocused());
+        assertFalse(supported);
+    }
+
+    @Test
+    public void noWelderMetalJoinPromptKeepsMetalworkingRouteBoundary() {
+        QueryRouteProfile profile = QueryRouteProfile.fromQuery("how do i join steel without a welder");
+        List<QueryRouteProfile.RouteSearchSpec> specs = profile.routeSearchSpecs("how do i join steel without a welder");
+
+        boolean sawForgeWeldingSpec = specs.stream().anyMatch(
+            spec -> spec.text().contains("forge welding fire welding joint integrity metalworking")
+        );
+
+        assertTrue(profile.isRouteFocused());
+        assertTrue(sawForgeWeldingSpec);
+    }
 }

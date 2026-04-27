@@ -1557,4 +1557,15 @@ public final class QueryMetadataProfileTest {
 
         assertFalse("emergency_shelter".equals(profile.preferredStructureType()));
     }
+
+    @Test
+    public void detectStructureTypeDoesNotRouteEmulatorProfileBoundaryQuery() {
+        QueryMetadataProfile profile = QueryMetadataProfile.fromQuery(
+            "no emulator needed for query metadata profile boundary checks"
+        );
+
+        assertFalse("emergency_shelter".equals(profile.preferredStructureType()));
+        assertFalse("cabin_house".equals(profile.preferredStructureType()));
+        assertFalse(profile.prefersDiversifiedContext());
+    }
 }
