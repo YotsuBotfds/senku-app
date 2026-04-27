@@ -1778,13 +1778,16 @@ public final class DetailActivity extends AppCompatActivity {
         boolean retryAvailable = followUpRetryButton != null && followUpRetryButton.getVisibility() == View.VISIBLE;
         boolean showRetry = shouldShowDockedComposerRetry(retryAvailable, isLandscapePhoneLayout());
         String retryLabel = followUpRetryButton == null ? getString(R.string.detail_followup_retry) : safe(followUpRetryButton.getText().toString());
+        boolean compactFollowUpMode = isCompactFollowUpMode();
+        String fullHint = safe(String.valueOf(followUpInput.getHint()));
+        String compactHint = getString(R.string.detail_followup_hint_compact);
         DockedComposerModel model = new DockedComposerModel(
             safe(followUpInput.getText() == null ? null : followUpInput.getText().toString()),
-            safe(String.valueOf(followUpInput.getHint())),
+            resolveDockedComposerHint(fullHint, compactHint, compactFollowUpMode),
             followUpInput.isEnabled() && followUpSendButton != null && followUpSendButton.isEnabled(),
             showRetry,
             retryLabel,
-            isCompactFollowUpMode()
+            compactFollowUpMode
         );
         followUpComposeView.setVisibility(View.VISIBLE);
         followUpComposeView.updateModel(
@@ -1829,6 +1832,15 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldHideFollowUpSuggestionsOnPhoneLandscape(boolean landscapePhone) {
         return landscapePhone;
+    }
+
+    static String resolveDockedComposerHint(String fullHint, String compactHint, boolean compactFollowUpMode) {
+        String fallback = safe(fullHint).trim();
+        if (!compactFollowUpMode) {
+            return fallback;
+        }
+        String compact = safe(compactHint).trim();
+        return compact.isEmpty() ? fallback : compact;
     }
 
     static boolean shouldRequestLandscapeDockedComposerFocus(
@@ -4753,6 +4765,11 @@ public final class DetailActivity extends AppCompatActivity {
                 evidenceTone(),
                 false
             ));
+            for (String token : splitSerialTokens(buildPackFreshnessMeta(true))) {
+                if (!token.isEmpty()) {
+                    items.add(new MetaItem(token, Tone.Default, false));
+                }
+            }
         } else {
             items.add(new MetaItem(buildGuideModeChipText(), Tone.Accent, false));
             for (String token : splitSerialTokens(buildPackFreshnessMeta(true))) {
