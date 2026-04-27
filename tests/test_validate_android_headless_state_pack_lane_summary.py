@@ -76,8 +76,15 @@ def make_plan(plan_only: bool = True, whatif: bool = False) -> dict:
         "planning_artifacts_are_acceptance": False,
         "commands": {
             "emulator_profile_preflight": "powershell -File scripts/start_senku_emulator_matrix.ps1 -WhatIf",
-            "emulator_real_run": "powershell -File scripts/start_senku_emulator_matrix.ps1",
-            "state_pack_real_run": "powershell -File scripts/build_android_ui_state_pack_parallel.ps1",
+            "emulator_real_run": (
+                "powershell -File scripts/start_senku_emulator_matrix.ps1 "
+                "-Roles all -Mode read_only -Headless"
+            ),
+            "state_pack_real_run": (
+                "powershell -File scripts/build_android_ui_state_pack_parallel.ps1 "
+                "-OutputRoot artifacts/ui_state_pack_headless_lane "
+                "-HostInferenceModel gemma-4-e2b-it-litert"
+            ),
         },
     }
 
@@ -160,6 +167,24 @@ class ValidateAndroidHeadlessStatePackLaneSummaryTests(unittest.TestCase):
         self.assertIn("expected root.non_acceptance_evidence to be True, got False", errors)
         self.assertIn("expected root.will_start_emulators to be False, got True", errors)
         self.assertIn("expected root.will_run_state_pack to be False, got True", errors)
+
+    def test_plan_rejects_real_run_command_drift(self):
+        plan = make_plan()
+        plan["commands"]["emulator_real_run"] = (
+            "powershell -File scripts/start_senku_emulator_matrix.ps1 "
+            "-Roles tablet_portrait -Mode read_only -Headless -WhatIf"
+        )
+        plan["commands"]["state_pack_real_run"] = (
+            "powershell -File scripts/build_android_ui_state_pack_parallel.ps1 "
+            "-OutputRoot artifacts/ui_state_pack_headless_lane -PlanOnly"
+        )
+
+        _, errors = validate_summary(self.write_json(plan, "headless_lane_plan.json"))
+
+        self.assertIn("expected root.commands.emulator_real_run to include '-Roles all'", errors)
+        self.assertIn("expected root.commands.emulator_real_run not to include -WhatIf", errors)
+        self.assertIn("expected root.commands.state_pack_real_run to include -HostInferenceModel", errors)
+        self.assertIn("expected root.commands.state_pack_real_run not to include -PlanOnly", errors)
 
     def test_real_run_acceptance_validates_referenced_fixed_four_pack(self):
         pack_path = "placeholder"

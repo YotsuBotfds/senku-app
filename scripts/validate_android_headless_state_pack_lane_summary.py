@@ -274,6 +274,32 @@ def _validate_plan(data: dict[str, Any], errors: list[str]) -> None:
         preflight = commands.get("emulator_profile_preflight")
         if isinstance(preflight, str) and "-WhatIf" not in preflight:
             errors.append("expected root.commands.emulator_profile_preflight to include -WhatIf")
+        real_run = commands.get("emulator_real_run")
+        if isinstance(real_run, str):
+            if "start_senku_emulator_matrix.ps1" not in real_run:
+                errors.append("expected root.commands.emulator_real_run to call start_senku_emulator_matrix.ps1")
+            if "-Roles all" not in real_run:
+                errors.append("expected root.commands.emulator_real_run to include '-Roles all'")
+            if "-Mode read_only" not in real_run:
+                errors.append("expected root.commands.emulator_real_run to include '-Mode read_only'")
+            if "-Headless" not in real_run:
+                errors.append("expected root.commands.emulator_real_run to include -Headless")
+            if "-WhatIf" in real_run:
+                errors.append("expected root.commands.emulator_real_run not to include -WhatIf")
+            if "-PlanOnly" in real_run:
+                errors.append("expected root.commands.emulator_real_run not to include -PlanOnly")
+        state_pack = commands.get("state_pack_real_run")
+        if isinstance(state_pack, str):
+            if "build_android_ui_state_pack_parallel.ps1" not in state_pack:
+                errors.append("expected root.commands.state_pack_real_run to call build_android_ui_state_pack_parallel.ps1")
+            if "-OutputRoot" not in state_pack:
+                errors.append("expected root.commands.state_pack_real_run to include -OutputRoot")
+            if "-HostInferenceModel" not in state_pack:
+                errors.append("expected root.commands.state_pack_real_run to include -HostInferenceModel")
+            if "-PlanOnly" in state_pack:
+                errors.append("expected root.commands.state_pack_real_run not to include -PlanOnly")
+            if "-WhatIf" in state_pack:
+                errors.append("expected root.commands.state_pack_real_run not to include -WhatIf")
 
 
 def _validate_summary(data: dict[str, Any], path: Path, errors: list[str]) -> None:

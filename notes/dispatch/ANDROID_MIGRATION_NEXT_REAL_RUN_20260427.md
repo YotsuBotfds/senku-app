@@ -15,6 +15,32 @@ validation. This is an execution order note, not acceptance evidence.
    real lane on `emulator-5554` with an enlarged data partition and the required
    real-run confirmation token.
 
+## Commands
+
+No-emulator validation:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_windows_validation.ps1 -Mode android-migration -VenvPath .venvs\senku-validate
+```
+
+Migration preflight bundle:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_migration_preflight_bundle.ps1 -PythonPath .\.venvs\senku-validate\Scripts\python.exe
+```
+
+Headless fixed-four real lane:
+
+```powershell
+powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\run_android_headless_state_pack_lane.ps1 -LaunchProfile clean-headless -HostInferenceUrl http://10.0.2.2:1235/v1 -HostInferenceModel gemma-4-e2b-it-litert -MaxParallelDevices 4 -RealRun
+```
+
+Large-data `5554` LiteRT real lane:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_data_litert_tablet_lane.ps1 -Device emulator-5554 -PartitionSizeMb 8192 -RealMode -ConfirmRealMode RUN_EMULATOR_5554_LARGE_LITERT_DATA -StartEmulator
+```
+
 ## Stop Lines
 
 - Validators and preflights prove shape, command posture, and run intent only.
