@@ -135,6 +135,16 @@ behavior.
 Status note, 2026-04-26: this is a backlog reference, not an active tranche.
 Select a fresh guide-body cleanup explicitly before editing guide prose.
 
+Post-`0dc9f32` evidence: the full mojibake scan over `guides` and `notes`
+now finds only `4` intentional examples in
+`notes/dispatch/RAG-TOOL2_mojibake_scanner.md`. Those examples are allowed by
+the scanner's default allowlist, so `gate_findings_count=0`.
+
+Focused validation:
+
+- `tests.test_scan_mojibake` OK.
+- Full `guides` + `notes` scan with `--fail-on-findings` exits `0`.
+
 Do not batch-fix guide body text in the first cleanup. Most remaining hits are
 dash/range/arrow/product-list punctuation in body prose, and many occur inside
 safety-critical or measurement-heavy guides. Use separate reviewed passes for:

@@ -8,6 +8,16 @@ Last checked before this tracker slice: 2026-04-26 12:19 -05:00. Latest pushed
 HEAD at that check was `0b9fa29` (`normalize evidence parser categories`), and
 the `Master Head Health` run for that HEAD was green.
 
+Current source refresh after the parallel boundary partial backlog:
+`069f51a` (`repair parallel boundary partial backlog`) was pushed and `Master
+Head Health` passed. Current local HEAD is `0dc9f32` (`allow scanner example
+mojibake findings`), and `Master Head Health` passed for that commit too.
+Fresh reconciliation artifacts:
+`artifacts/bench/corpus_marker_scan_current_queue_reconcile_20260426.md`
+reports `3` unresolved partial markers, and
+`artifacts/bench/metadata_audit_current_queue_reconcile_20260426.md` reports
+`6` high-liability guides with gaps.
+
 ## Active Queue
 
 1. `notes/deep_research_evidence_backlog_20260426.md`
@@ -69,10 +79,10 @@ the `Master Head Health` run for that HEAD was green.
    - Completed medical/herbal intake boundary safety-card tranche: metadata/card closure for `GD-034`, `GD-040`, `GD-056`, `GD-060`, `GD-063`, and `GD-239`. Scope notes: herbalism, herbal antibiotics, pharmacy compounding, suture materials, feminine hygiene, and medications stay intake, label/source/identity/strength/expiry/storage uncertainty, symptom/exposure/wound/infection/red-flag logs, child/pregnancy/allergy/immunocompromised/polypharmacy/vulnerable-user flags, hold/do-not-use/stop self-treatment boundaries, cover/protect hygiene basics where source-supported, and clinician/pharmacist/poison-control/public-health/local-expert handoff without plant-ID certainty, foraging edibility decisions, herbal treatment or antibiotic claims, compounding formulas/calculations/substitutions, dosing or dose conversions, medication selection/tapering/interaction clearance, suture production/sterilization/closure technique, menstrual-product production/insertion/device instructions, diagnosis, treatment plans, medication substitution, delay-care reassurance, legal claims, or safety certification.
    - Completed chemistry/lab/material safety boundary-card tranche: metadata/card closure for `GD-131`, `GD-167`, `GD-168`, `GD-169`, `GD-178`, `GD-179`, `GD-180`, `GD-184`, `GD-185`, `GD-186`, `GD-220`, `GD-223`, `GD-262`, `GD-325`, `GD-423`, `GD-424`, `GD-425`, `GD-465`, and `GD-516`. Scope notes: chemistry, lab, solvent, fuel, pigment, water-treatment, fermentation, biogas, acid/alkali/chlorine/electrolysis, abrasives, and salvage cards stay inventory, labels/SDS/source/concentration/use uncertainty, storage/access/segregation logs, exposure/spill/fire/fume/gas/pressure/electrical/dust/food-safety/vulnerable-user red flags, stop-use/isolate/evacuate/avoid-entry/avoid-ignition/avoid-mixing/hold-or-discard boundaries, and emergency/fire-service/hazmat/poison-control/public-health/environmental/food-safety/qualified chemistry/materials/fuel/lab/electrical/wastewater owner handoff without production, synthesis, distillation, electrolysis settings, gas generation/collection, refining, fuel or solvent recovery, neutralization, cleanup chemistry, dilution/concentration/dosing calculations, recipes/formulations, equipment build/repair/operation, transfer procedures, process design, throughput, performance/engine-use/potability/food-safety/legal/code claims, or safety certification.
    - Completed final non-deferred boundary safety-card tranche: metadata/card closure for `GD-150`, `GD-153`, `GD-369`, `GD-390`, and `GD-509`. Scope notes: weapons-defense, archery/crossbows, bow/arrow construction, herbal medicine, and medical salvage cards stay non-instructional intake, inventory, label/source/ownership/storage/access uncertainty, child/unauthorized access or vulnerable-person red flags, injury/symptom/exposure logs, stop-use/secure/do-not-enter/do-not-use boundaries, and emergency/medical/poison-control/pharmacist/infection-control/community-leadership/legal-authority/range/instructor/local-expert handoff without weapon construction/use, tactics, targeting, traps, patrols, fortifications, force advice, pursuit/detention, bow/crossbow construction, stringing, draw weights, shooting, repair, hunting/combat use, plant identification certainty, edibility, dosing, herbal preparation recipes, medication substitution, medical salvage entry, PPE guarantees, salvage priorities, sterilization/decontamination, medication use, device reuse/clearance, legal claims, or safety certification. Fresh metadata audit after this tranche reports only the explicit deferrals as high-liability gaps.
-   - Safety-reviewed deferrals from the broad critical and scout queues: `GD-044`, `GD-045`, `GD-059`, `GD-152`, `GD-447`, and `GD-267`. Do not quick-close these with metadata/card churn; route them to deliberate safety-review or source-boundary work because the guide bodies are procedure-dense, treatment-protocol-heavy, or operationally risky.
-   - Remaining broad critical metadata/card gaps are the explicit deferrals above. Treat pharma/manufacturing/explosives and the deferred salvage lane as deliberate safety-review work, not quick card churn.
+   - Safety-reviewed deferrals from the broad critical and scout queues remain deliberate safety-review/source-boundary work, not quick metadata/card churn.
+   - Current unresolved partial markers are `3`: `GD-045`, `GD-059`, and `GD-211`. `GD-045` and `GD-059` are explicit deferrals; `GD-211` battery restoration is intentionally deferred for safety review.
 3. Corpus/content hygiene:
-   - `51` unresolved partials remain actionable, with critical/high guides first.
+   - `3` unresolved partial markers remain: `GD-045`, `GD-059`, and `GD-211`.
    - Guide-body edits require safety review and re-ingest before retrieval claims.
 4. Runtime/citation behavior:
    - Status: desktop card-backed answer composer now suppresses repeated inline citations for the same source while preserving `cited_guide_ids`.
