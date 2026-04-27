@@ -101,6 +101,15 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void validateVectorInfoRejectsStaleVectorAfterManifestDtypeRefresh() throws Exception {
+        expectVectorInfoRejected(
+            manifestWithVector("int8", 768),
+            vectorInfo("SNKUVEC1", 1, 32, 49841, 768, 1, 0),
+            "dtype mismatch"
+        );
+    }
+
+    @Test
     public void validateVectorInfoAcceptsMatchingInt8ManifestAndHeader() throws Exception {
         PackInstaller.validateVectorInfoForTest(
             manifestWithVector("int8", 768),

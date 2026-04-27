@@ -43,6 +43,49 @@ public final class SearchResultTest {
     }
 
     @Test
+    public void nullMetadataNormalizesToEmptyAndComparesEqual() {
+        SearchResult nullMetadata = new SearchResult(
+            "Guide",
+            "Subtitle",
+            "Snippet",
+            "Body",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        SearchResult emptyMetadata = new SearchResult(
+            "Guide",
+            "Subtitle",
+            "Snippet",
+            "Body",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals("", nullMetadata.guideId);
+        assertEquals("", nullMetadata.sectionHeading);
+        assertEquals("", nullMetadata.category);
+        assertEquals("", nullMetadata.retrievalMode);
+        assertEquals("", nullMetadata.contentRole);
+        assertEquals("", nullMetadata.timeHorizon);
+        assertEquals("", nullMetadata.structureType);
+        assertEquals("", nullMetadata.topicTags);
+        assertEquals(emptyMetadata, nullMetadata);
+        assertEquals(emptyMetadata.hashCode(), nullMetadata.hashCode());
+    }
+
+    @Test
     public void toStringIncludesUsefulSummaryFields() {
         SearchResult result = new SearchResult(
             "Guide",

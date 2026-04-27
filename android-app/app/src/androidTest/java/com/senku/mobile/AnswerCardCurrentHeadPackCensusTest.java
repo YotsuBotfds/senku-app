@@ -143,6 +143,62 @@ public final class AnswerCardCurrentHeadPackCensusTest {
                 )
             );
             assertEquals(
+                "every answer card guide_id must exist in the installed guides table",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) " +
+                        "FROM answer_cards c " +
+                        "LEFT JOIN guides g ON g.guide_id = c.guide_id " +
+                        "WHERE g.guide_id IS NULL"
+                )
+            );
+            assertEquals(
+                "every answer_card_sources.source_guide_id must exist in the installed guides table",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) " +
+                        "FROM answer_card_sources s " +
+                        "LEFT JOIN guides g ON g.guide_id = s.source_guide_id " +
+                        "WHERE g.guide_id IS NULL"
+                )
+            );
+            assertEquals(
+                "answer cards must not duplicate guide ownership rows",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) FROM (" +
+                        "SELECT guide_id FROM answer_cards GROUP BY guide_id HAVING COUNT(*) > 1" +
+                        ")"
+                )
+            );
+            assertEquals(
+                "answer card clause ordinals must be unique per card and clause kind",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) FROM (" +
+                        "SELECT card_id, clause_kind, ordinal " +
+                        "FROM answer_card_clauses " +
+                        "GROUP BY card_id, clause_kind, ordinal HAVING COUNT(*) > 1" +
+                        ")"
+                )
+            );
+            assertEquals(
+                "answer card source rows must be unique per card and source guide",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) FROM (" +
+                        "SELECT card_id, source_guide_id " +
+                        "FROM answer_card_sources " +
+                        "GROUP BY card_id, source_guide_id HAVING COUNT(*) > 1" +
+                        ")"
+                )
+            );
+            assertEquals(
                 "answer cards must use an allowed review_status",
                 0,
                 queryLong(
