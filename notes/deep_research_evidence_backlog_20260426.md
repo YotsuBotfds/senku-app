@@ -709,15 +709,25 @@ Validation:
   `tests.test_query_completion_hardening`, `tests.test_query_routing_text`, and
   `tests.test_rag_regression_gate` cover the routing/regression helper edge
   batch.
+- Generated deterministic registry refresh is now closed by updating the
+  sidecar source, not by hand-editing the generated registry. The stale
+  `--check` state came from three live-tested safety rules that existed in
+  `deterministic_special_case_registry.py` and routing tests but were missing
+  from `notes/specs/deterministic_registry_sidecar.yaml`:
+  `conflicting_medication_labels_child_dose`,
+  `possible_spinal_injury_movement_pressure`, and
+  `runoff_infant_formula_boundary`. The sidecar now includes those rule IDs,
+  priorities, and lexical signatures; regeneration reports no generated-file
+  changes and `scripts/regenerate_deterministic_registry.py --check` is green.
+- Focused validation for the registry refresh: `tests.test_regenerate_deterministic_registry`;
+  `tests.test_special_cases tests.test_registry_overlap
+  tests.test_deterministic_near_miss`; `tests.test_query_routing`; and
+  `scripts/validate_special_cases.py`.
 
 Deferred unless evidenced:
 
 - Claims that diagnostics currently mask unsafe behavior. The inventory found
   partial coverage, not a proven unsafe app response.
-- Generated deterministic registry refresh. A focused worker found
-  `scripts/regenerate_deterministic_registry.py --check` currently reports the
-  checked-in registry is out of date; no generated registry refresh was included
-  in this tranche.
 
 ### DR-ART-APPROVE - Keep Artifact Retention Approval-Only
 

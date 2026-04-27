@@ -8,6 +8,19 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: conflicting_medication_labels_child_dose
+  predicate_name: _is_conflicting_medication_labels_child_dose_special_case
+  builder_name: _build_conflicting_medication_labels_child_dose_response
+  sample_prompt: power is out two old medicine labels disagree and someone wants
+    to give a child an antibiotic dose by flashlight before we can call anyone
+  priority: 103
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - child
+  - antibiotic
+  - labels disagree
 - rule_id: unknown_bottle_ingestion
   predicate_name: _is_unknown_bottle_ingestion_special_case
   builder_name: _build_unknown_bottle_ingestion_response
@@ -656,6 +669,20 @@ rules:
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
     deterministic router.
   lexical_signature_terms: []
+- rule_id: possible_spinal_injury_movement_pressure
+  predicate_name: _is_possible_spinal_injury_movement_pressure_special_case
+  builder_name: _build_possible_spinal_injury_movement_pressure_response
+  sample_prompt: pulled from cold water after a fall and now neck hurts with one
+    arm tingling should we drag them to the truck to get warm
+  priority: 121
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms:
+  - neck
+  - tingling
+  - drag
+  - warm
 - rule_id: infected_wound_spreading_emergency
   predicate_name: _is_infected_wound_spreading_emergency_special_case
   builder_name: _build_infected_wound_spreading_emergency_response
@@ -1516,6 +1543,17 @@ rules:
   builder_name: _build_contaminated_well_no_fuel_response
   sample_prompt: the well is contaminated, two people are sick, and we have no fuel
     for boiling
+  priority: 100
+  promotion_status: inactive
+  promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
+    deterministic router.
+  lexical_signature_terms: []
+- rule_id: runoff_infant_formula_boundary
+  predicate_name: _is_runoff_infant_formula_boundary_query
+  builder_name: _build_runoff_infant_formula_boundary_response
+  sample_prompt: the well may be flood-contaminated and we collected roof runoff
+    in a clean barrel. can we boil it for baby formula tonight if no test kit is
+    available
   priority: 100
   promotion_status: inactive
   promotion_notes: Pack-exported metadata only; not yet promoted to the live Android
