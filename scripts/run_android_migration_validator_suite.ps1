@@ -56,6 +56,7 @@ $testModules = @(
     "tests.test_validate_android_orchestrator_smoke_summary",
     "tests.test_validate_android_harness_matrix_plan",
     "tests.test_validate_android_ui_state_pack_plan",
+    "tests.test_validate_android_capture_summary",
     "tests.test_validate_android_tooling_version_manifest",
     "tests.test_validate_android_headless_state_pack_lane_summary",
     "tests.test_validate_android_instrumented_capture_summary",
@@ -66,6 +67,8 @@ $testModules = @(
     "tests.test_android_followup_matrix_contract",
     "tests.test_android_logged_wrapper_pack_cache_contract",
     "tests.test_run_android_search_log_only_contract",
+    "tests.test_write_android_capture_summary",
+    "tests.test_write_android_tooling_version_manifest",
     "tests.test_stop_android_harness_runs_contract"
 )
 
