@@ -63,6 +63,28 @@ function Sanitize-RunLabel {
     return $slug
 }
 
+function Resolve-MatrixDevicePosture {
+    param([string]$Emulator)
+
+    switch ($Emulator) {
+        "emulator-5556" {
+            return "phone_portrait"
+        }
+        "emulator-5560" {
+            return "phone_landscape"
+        }
+        "emulator-5554" {
+            return "tablet_portrait"
+        }
+        "emulator-5558" {
+            return "tablet_landscape"
+        }
+        default {
+            return "unknown"
+        }
+    }
+}
+
 function Load-SuiteCases {
     param([string]$Path)
 
@@ -161,16 +183,35 @@ function New-FollowupMatrixSummary {
         }
     }
 
+    $postureGroups = @()
+    foreach ($group in @($Records | Group-Object -Property posture | Sort-Object -Property Name)) {
+        $items = @($group.Group)
+        $postureName = [string]$group.Name
+        if ([string]::IsNullOrWhiteSpace($postureName)) {
+            $postureName = "unknown"
+        }
+        $postureGroups += [ordered]@{
+            posture = $postureName
+            total = $items.Count
+            passed = @($items | Where-Object { $_.status -eq "passed" }).Count
+            failed = @($items | Where-Object { $_.status -ne "passed" }).Count
+            warm_start_count = @($items | Where-Object { $_.warm_start }).Count
+            labels = @($items | ForEach-Object { $_.label })
+        }
+    }
+
     return [ordered]@{
         total = $Records.Count
         passed = $passed.Count
         failed = $failed.Count
         warm_start_count = @($Records | Where-Object { $_.warm_start }).Count
+        posture_groups = $postureGroups
         emulator_groups = $emulatorGroups
         failed_items = @($failed | ForEach-Object {
             [ordered]@{
                 label = $_.label
                 emulator = $_.emulator
+                posture = $_.posture
                 error = $_.error
                 output_json = $_.output_json
                 logcat_path = $_.logcat_path
@@ -203,6 +244,12 @@ function ConvertTo-FollowupMatrixSummaryMarkdown {
     foreach ($group in $Summary.emulator_groups) {
         $labels = if ($group.labels.Count -gt 0) { ($group.labels -join ", ") } else { "-" }
         $lines += "- emulator=$($group.emulator) total=$($group.total) passed=$($group.passed) failed=$($group.failed) warm_start=$($group.warm_start_count) ($labels)"
+    }
+
+    $lines += @("", "## Posture Groups")
+    foreach ($group in $Summary.posture_groups) {
+        $labels = if ($group.labels.Count -gt 0) { ($group.labels -join ", ") } else { "-" }
+        $lines += "- posture=$($group.posture) total=$($group.total) passed=$($group.passed) failed=$($group.failed) warm_start=$($group.warm_start_count) ($labels)"
     }
 
     $lines += @("", "## Failed Items")
@@ -265,6 +312,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     } else {
         New-Slug -Text ($initialQuery + "_" + $followUpQuery)
     }
+    $posture = Resolve-MatrixDevicePosture -Emulator $emulator
     $runLabel = ($labelBase + "_" + $emulator.Replace("-", "_")).Trim("_")
     $jsonPath = Join-Path $resolvedOutputDir ($runLabel + ".json")
     $logcatPath = Join-Path $resolvedOutputDir ($runLabel + ".logcat.txt")
@@ -328,6 +376,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     $record = [ordered]@{
         label = $runLabel
         emulator = $emulator
+        posture = $posture
         initial_query = $initialQuery
         follow_up_query = $followUpQuery
         status = $status
