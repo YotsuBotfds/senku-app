@@ -1,4 +1,6 @@
+import os
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -50,6 +52,39 @@ class StartSenkuDeviceMirrorsContractTests(unittest.TestCase):
         self.assertIn("Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue", self.script)
         self.assertIn("Stop-MirrorForDevice -Device $Device", self.script)
         self.assertNotIn("Stop-Process -Name scrcpy", self.script)
+
+    def test_phone_only_tablet_only_conflict_fails_closed(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fake_scrcpy = Path(temp_dir) / "scrcpy.exe"
+            fake_scrcpy.write_bytes(b"")
+            env = {
+                **dict(os.environ),
+                "PATH": f"{temp_dir};{os.environ.get('PATH', '')}",
+            }
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-PhoneOnly",
+                    "-TabletOnly",
+                ],
+                cwd=REPO_ROOT,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "Nothing to launch. Remove -PhoneOnly/-TabletOnly conflict.",
+            result.stderr + result.stdout,
+        )
 
     def test_parser_gate_passes(self):
         result = subprocess.run(

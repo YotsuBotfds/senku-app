@@ -59,6 +59,43 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
         self.assertIn("What if:", output)
         self.assertIn("Start emulator in read_only mode", output)
 
+    def test_whatif_prints_only_selected_role_serials(self):
+        with tempfile.TemporaryDirectory(prefix="fake_android_sdk_") as temp_dir:
+            sdk_root = Path(temp_dir)
+            emulator_dir = sdk_root / "emulator"
+            adb_dir = sdk_root / "platform-tools"
+            emulator_dir.mkdir(parents=True)
+            adb_dir.mkdir(parents=True)
+            (emulator_dir / "emulator.exe").write_text("", encoding="utf-8")
+            (adb_dir / "adb.exe").write_text("", encoding="utf-8")
+
+            env = os.environ.copy()
+            env["ANDROID_SDK_ROOT"] = str(sdk_root)
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-Command",
+                    f"& '{SCRIPT}' -Roles phone_portrait,tablet_landscape -WhatIf",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+                env=env,
+            )
+
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 0, output)
+        self.assertIn("emulator-5556", output)
+        self.assertIn("emulator-5558", output)
+        self.assertNotIn("emulator-5560", output)
+        self.assertNotIn("emulator-5554", output)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [
