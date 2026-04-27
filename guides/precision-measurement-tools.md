@@ -665,4 +665,20 @@ With these tools and principles, you can bootstrap industrial precision from raw
 - <a href="../bloomery-furnace.html">Bloomery Furnace Construction</a> — Raw material (iron) source for precision measurement tool construction
 - <a href="../kiln-construction-designs.html">Kiln Construction: Updraft & Downdraft Designs</a> — Kiln-fired ceramics used for precision gauge blocks and reference surfaces
 
-{{> precision-measurement-tools-custom }}
+<section id="precision-measurement-quick-reference">
+
+## Precision Measurement Quick Reference
+
+| Failure mode | Fix now | Prevent next time |
+| --- | --- | --- |
+| Two tools disagree on the same part | Recheck against the cleanest reference standard available, then mark the uncertain tool for calibration. | Keep a dated calibration log for each measuring tool. |
+| Readings drift during a work session | Let the part and tool return to the same shop temperature before measuring again. | Store tools away from heat, direct sun, and recently handled hot workpieces. |
+| A surface plate or reference face gives inconsistent results | Clean the reference surface and remove grit before repeating the check. | Cover references when not in use and inspect them before each session. |
+| Measurements vary by operator | Use the same measuring force, contact points, and reading method each time. | Train operators on one shop standard before accepting production readings. |
+| A dimension is close to a tolerance boundary | Take a second reading with a different setup or qualified reviewer. | Record boundary cases instead of relying on memory or single readings. |
+
+Treat measurement records as part of the workpiece history. A number without a
+tool, date, reference, and operator is weaker than a slightly less precise
+measurement that can be repeated and checked.
+
+</section>

@@ -960,4 +960,32 @@ The second category of mistakes undermines both transmission and durability:
 
 </section>
 
-{{> knowledge-preservation-custom }}
+<section id="knowledge-preservation-guardrails">
+
+## Knowledge Preservation Guardrails
+
+### What to Preserve
+
+- Core survival, health, food, water, shelter, governance, education, and
+  maintenance knowledge that the community depends on repeatedly.
+- Local adaptations: what worked here, what failed here, and why the local
+  environment changed the method.
+- Names of responsible stewards, revision dates, source lineage, and known
+  uncertainty.
+- Glossaries, diagrams, examples, and translation notes that help future
+  readers reconstruct meaning if language or tools change.
+
+### How to Keep It Durable
+
+| Layer | Update interval | Owner |
+| --- | --- | --- |
+| Working notes and field corrections | As observations happen | The person doing or supervising the work. |
+| Clean reference copy | After review or at a scheduled monthly/seasonal checkpoint | A trained editor, teacher, or guild recorder. |
+| Archive copy | After major revisions and at least yearly | Library, archive, school, or governance steward. |
+| Teaching copy | Before each training cycle | Instructor plus one learner who checks clarity. |
+
+Preservation is strongest when every record has a living owner and every owner
+has a backup. A beautiful archive that no one reviews becomes decoration, not
+memory.
+
+</section>

@@ -853,4 +853,26 @@ Mistake: Allowing critical knowledge to be held by only one person, or failing t
 -   Traditions are intentionally built through repetition and community investment.
 -   Document knowledge; prevent bottlenecks; train multiple people in critical skills.
 
-{{> cultural-practices-cohesion-custom }}
+<section id="community-cohesion-playbook">
+
+## Community Cohesion Playbook
+
+### Quick Responses
+
+- When attendance drops, ask whether meeting times, childcare, transport,
+  language, or status barriers are excluding people before assuming apathy.
+- When conflict repeats, separate the practical dispute from the damaged
+  relationship; both may need repair.
+- When one person becomes the keeper of a ritual, story, or skill, assign a
+  second keeper and document the practice while it is still alive.
+- When a tradition stops helping, change it openly. Explain what is preserved,
+  what is being retired, and who was consulted.
+
+| Issue | Local response | Escalate if |
+| --- | --- | --- |
+| People feel excluded from rituals or work groups | Rotate roles, invite feedback, and name the practical barrier being removed. | Exclusion is tied to coercion, harassment, violence, or denial of basic needs. |
+| A celebration creates resentment over food, labor, or status | Publish the resource plan and share preparation work more broadly. | Disputes threaten safety or target a vulnerable group. |
+| Stories or teachings conflict across families | Record variants respectfully and identify shared lessons before choosing an official version. | The dispute affects legal status, inheritance, custody, or public safety. |
+| A knowledge-holder refuses or forgets to train others | Pair them with apprentices and create a documented handoff schedule. | Essential survival knowledge is being deliberately withheld or exploited. |
+
+</section>

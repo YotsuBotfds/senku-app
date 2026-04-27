@@ -20,7 +20,7 @@ related:
   - surveying-land-management
   - intelligence-scouting
 read_time: 5
-word_count: 2
+word_count: 520
 last_updated: '2026-02-15'
 version: '1.0'
 custom_css: |-
@@ -117,4 +117,33 @@ custom_css: |-
 liability_level: low
 ---
 
-{{> search-custom }}
+<section id="search-guide">
+
+## Search Guide
+
+Use this lookup page when you have a partial clue, alternate wording, or a
+broad task and need to find the right guide family before acting.
+
+### Query Patterns
+
+| If you know... | Search for... | Then check... |
+| --- | --- | --- |
+| A guide title or visible topic | The clearest noun phrase, then a shorter synonym | The guide title, category, and related-guide links. |
+| A symptom, failure, or warning sign | The plain-language symptom plus one context word | Whether the result is a medical, safety, or equipment owner guide. |
+| A material, crop, tool, or process | The material name and common alternate names | Whether the guide is conceptual, operational, or only a routing hub. |
+| A measurement or standard | The unit, tool, or standard name | The surrounding section, not just the highlighted line. |
+| A broad problem | Two or three separate searches using different wording | Recurring guide families across the result set. |
+
+### If Search Fails
+
+1. Try a simpler word: search `water` before `rainwater catchment overflow`.
+2. Search the hazard or desired outcome: `smoke`, `contamination`, `record`,
+   `storage`, `repair`, or `infection`.
+3. Open the closest guide and follow its related-guide links.
+4. If results mix unrelated domains, add one category word such as `medical`,
+   `food`, `power`, `building`, `salvage`, or `governance`.
+5. For urgent safety, medical, chemical, electrical, structural, or violent
+   situations, use the safest emergency or stop-work guide first; do not rely
+   on a generic search result as permission to proceed.
+
+</section>
