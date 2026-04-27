@@ -461,6 +461,7 @@ public final class MainActivity extends AppCompatActivity {
         debugDetailIntentHandled = false;
         applyIntentQuery(intent);
         updateInfoText();
+        applyDeveloperToolsPanelVisibility(isBrowseModeActive(), !items.isEmpty());
         maybeHandleDebugDetailIntent(intent);
         maybeHandleAutomation();
     }
@@ -889,6 +890,26 @@ public final class MainActivity extends AppCompatActivity {
         boolean hasResults
     ) {
         return !productReviewMode && browseMode;
+    }
+
+    private void applyDeveloperToolsPanelVisibility(boolean browseMode, boolean hasResults) {
+        if (developerPanel == null) {
+            return;
+        }
+        boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, browseMode, hasResults);
+        developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
+        if (!showDeveloperPanel) {
+            collapseDeveloperToolsPanel();
+        }
+    }
+
+    private void collapseDeveloperToolsPanel() {
+        if (developerContent != null) {
+            developerContent.setVisibility(View.GONE);
+        }
+        if (developerToggleButton != null) {
+            developerToggleButton.setText(R.string.developer_tools_show);
+        }
     }
 
     private void browseGuides() {
@@ -3061,16 +3082,10 @@ public final class MainActivity extends AppCompatActivity {
             categorySectionContainer.setVisibility(visibility);
         }
         if (developerPanel != null) {
-            boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, show, !items.isEmpty());
-            developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
-            if (!showDeveloperPanel) {
-                developerContent.setVisibility(View.GONE);
-                developerToggleButton.setText(R.string.developer_tools_show);
-            }
+            applyDeveloperToolsPanelVisibility(show, !items.isEmpty());
         }
         if (show) {
-            developerContent.setVisibility(View.GONE);
-            developerToggleButton.setText(R.string.developer_tools_show);
+            collapseDeveloperToolsPanel();
             if (resultsList != null) {
                 resultsList.setVisibility(View.GONE);
             }
@@ -3119,12 +3134,7 @@ public final class MainActivity extends AppCompatActivity {
             resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
         if (developerPanel != null) {
-            boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, browseMode, hasResults);
-            developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
-            if (!showDeveloperPanel) {
-                developerContent.setVisibility(View.GONE);
-                developerToggleButton.setText(R.string.developer_tools_show);
-            }
+            applyDeveloperToolsPanelVisibility(browseMode, hasResults);
         }
     }
 
@@ -3149,12 +3159,7 @@ public final class MainActivity extends AppCompatActivity {
             sessionPanel.setVisibility(View.GONE);
         }
         if (developerPanel != null) {
-            boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, browseMode, hasResults);
-            developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
-            if (!showDeveloperPanel) {
-                developerContent.setVisibility(View.GONE);
-                developerToggleButton.setText(R.string.developer_tools_show);
-            }
+            applyDeveloperToolsPanelVisibility(browseMode, hasResults);
         }
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);

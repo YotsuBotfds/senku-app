@@ -138,6 +138,26 @@ public final class DetailSurfaceContract {
         return answer(classifyAnswerKind(answerMode, deterministic, abstain, ruleId));
     }
 
+    public static boolean isCanonicalGuideReader(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.GUIDE_READER
+            && posture.bodyRole == BodyRole.GUIDE_BODY
+            && posture.trustProvenanceVisibility == TrustProvenanceVisibility.GUIDE_METADATA
+            && posture.followUpVisibility == FollowUpVisibility.HIDDEN;
+    }
+
+    public static boolean shouldShowAnswerEvidence(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && posture.trustProvenanceVisibility != TrustProvenanceVisibility.GUIDE_METADATA;
+    }
+
+    public static boolean shouldShowAnswerFollowUp(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && posture.followUpVisibility == FollowUpVisibility.VISIBLE;
+    }
+
     public static Posture answer(AnswerKind answerKind) {
         AnswerKind kind = answerKind == null ? AnswerKind.GENERATED : answerKind;
         switch (kind) {

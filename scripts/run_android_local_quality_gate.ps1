@@ -85,6 +85,7 @@ $defaultTests = @(
     'com.senku.mobile.DetailSurfaceContractTest',
     'com.senku.mobile.DetailWarningCopySanitizerTest',
     'com.senku.mobile.EmergencySurfacePolicyTest',
+    'com.senku.mobile.MainActivityDeveloperToolsTest',
     'com.senku.mobile.MainActivityPhoneNavigationTest',
     'com.senku.mobile.SearchResultAdapterTest',
     'com.senku.ui.evidence.PureEvidenceModelsTest',

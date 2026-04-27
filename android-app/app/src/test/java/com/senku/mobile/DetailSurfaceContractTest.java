@@ -188,4 +188,47 @@ public final class DetailSurfaceContractTest {
             DetailSurfaceContract.classifyAnswerKind("CONFIDENT", false, false, "")
         );
     }
+
+    @Test
+    public void canonicalGuideReaderHidesAnswerEvidenceAndFollowUp() {
+        DetailSurfaceContract.Posture posture = DetailSurfaceContract.guide();
+
+        assertEquals(true, DetailSurfaceContract.isCanonicalGuideReader(posture));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerEvidence(posture));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(posture));
+    }
+
+    @Test
+    public void answerDetailsShowEvidenceWithFollowUpForActionableAnswers() {
+        DetailSurfaceContract.Posture generated =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.GENERATED);
+        DetailSurfaceContract.Posture deterministic =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.DETERMINISTIC);
+
+        assertEquals(false, DetailSurfaceContract.isCanonicalGuideReader(generated));
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(generated));
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerFollowUp(generated));
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(deterministic));
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerFollowUp(deterministic));
+    }
+
+    @Test
+    public void abstainAndUncertainAnswerDetailsKeepEvidenceButHideFollowUp() {
+        DetailSurfaceContract.Posture abstain =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.ABSTAIN);
+        DetailSurfaceContract.Posture uncertain =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT);
+
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(abstain));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(abstain));
+        assertEquals(true, DetailSurfaceContract.shouldShowAnswerEvidence(uncertain));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(uncertain));
+    }
+
+    @Test
+    public void detailSurfaceHelpersDefaultNullToNoVisibleAnswerChrome() {
+        assertEquals(false, DetailSurfaceContract.isCanonicalGuideReader(null));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerEvidence(null));
+        assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(null));
+    }
 }

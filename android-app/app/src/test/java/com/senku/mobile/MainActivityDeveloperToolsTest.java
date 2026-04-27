@@ -16,6 +16,15 @@ public final class MainActivityDeveloperToolsTest {
     }
 
     @Test
+    public void productReviewModeHidesDeveloperPanelOnEmptyBrowseHome() {
+        assertFalse(MainActivity.shouldShowDeveloperToolsPanel(
+            true,
+            true,
+            false
+        ));
+    }
+
+    @Test
     public void developerPanelRemainsAvailableOutsideProductReviewModeOnBrowseHome() {
         assertTrue(MainActivity.shouldShowDeveloperToolsPanel(
             false,
