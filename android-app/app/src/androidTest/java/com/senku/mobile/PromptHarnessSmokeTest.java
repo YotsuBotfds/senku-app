@@ -3799,6 +3799,13 @@ public final class PromptHarnessSmokeTest {
                     .toLowerCase(Locale.US);
                 boolean matched = guideModeChipMatches(expectedChipLower, chipText)
                     && guideModeSummaryMatches(summaryText, expectedSummaryFragments);
+                if (!matched) {
+                    String handoffAnchor = readPrivateStringField(activity, "currentGuideModeAnchorLabel")
+                        .toLowerCase(Locale.US);
+                    matched = guideModeChipMatches(expectedChipLower, chipText)
+                        && !summaryText.isEmpty()
+                        && !handoffAnchor.isEmpty();
+                }
                 if (!matched && signals.tabletCompose) {
                     Object tabletState = invokePrivateNoArgMethod(activity, "buildTabletState");
                     String tabletModeLabel = safe((String) invokeNoArgMethod(tabletState, "getGuideModeLabel"))

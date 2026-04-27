@@ -151,6 +151,21 @@ Tablet state-pack proof after handoff fix, 2026-04-27 01:08-01:10 CT:
   `artifacts/ui_state_pack_current_head_tablet_after_handoff_fix/tablet_landscape_after_handoff_fix/summary.json`,
   `status=pass`, `10 / 10`, `platform_anr=null`.
 
+Phone-landscape proof after emulator restart and handoff harness fix,
+2026-04-27 01:15-01:21 CT:
+
+- Restarted `emulator-5560`, reinstalled app/test APKs, and re-pushed the
+  current-head pack.
+- Focused home proof:
+  `artifacts/android_phone_landscape_after_restart_home/summary.json`,
+  `status=pass`, `platform_anr=null`.
+- Focused linked-handoff proof:
+  `artifacts/android_phone_landscape_handoff_context_fix_final/summary.json`,
+  `status=pass`, `platform_anr=null`.
+- Full `phone_landscape` state pack:
+  `artifacts/ui_state_pack_current_head_phone_landscape_after_handoff_fix/phone_landscape_after_handoff_fix/summary.json`,
+  `status=pass`, `11 / 11`, `platform_anr=null`.
+
 Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 
 - `newborn_danger_sepsis` / `GD-284`:

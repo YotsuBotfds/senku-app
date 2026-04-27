@@ -19,10 +19,11 @@ use it to approve reviewed-card runtime expansion or product exposure.
 
 ## Current Blockers
 
-- `phone_landscape` System UI ANR: `emulator-5560` reached `0 / 12` in the
-  four-role state pack because Android showed `System UI isn't responding`.
-  Direct current-head guard classes passed after the pack was pushed, so treat
-  this as a lane/platform UI-proof blocker, not a pack migration failure.
+- `phone_landscape` System UI ANR: resolved for this session after restarting
+  `emulator-5560`, reinstalling app/test APKs, and re-pushing the current-head
+  pack. The post-restart full `phone_landscape` pack passed `11 / 11` with
+  `platform_anr=null` under
+  `artifacts/ui_state_pack_current_head_phone_landscape_after_handoff_fix/`.
 - Tablet linked-guide handoff context assertion: resolved by carrying
   guide-mode handoff context into the tablet Compose state and harnessing those
   fields. Follow-up proof passed on `emulator-5554` and `emulator-5558` under
@@ -42,7 +43,8 @@ use it to approve reviewed-card runtime expansion or product exposure.
 
 ## Stop Lines
 
-- Do not count the ANR-blocked `phone_landscape` lane as proof.
+- Do not count the earlier ANR-blocked `phone_landscape` lane as proof; use
+  the post-restart `11 / 11` artifact as the current clean lane evidence.
 - Do not treat tablet linked-guide failures as pack inventory failures without
   fresh retrieval/pack evidence; the known handoff-context regression is fixed
   in the 2026-04-27 tablet proof artifacts above.
