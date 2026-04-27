@@ -60,6 +60,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final String EXTRA_DEBUG_DETAIL_TITLE = "debug_detail_title";
     private static final String EXTRA_DEBUG_DETAIL_SUBTITLE = "debug_detail_subtitle";
     private static final String EXTRA_DEBUG_DETAIL_BODY = "debug_detail_body";
+    private static final String EXTRA_PRODUCT_REVIEW_MODE = "product_review_mode";
     private static final String STATE_CONVERSATION_ID = "conversation_id";
     private static final String STATE_PHONE_TAB = "phone_tab";
     private static final int SEARCH_RESULT_LIMIT = 75;
@@ -167,6 +168,7 @@ public final class MainActivity extends AppCompatActivity {
     private boolean initialSearchFocusApplied;
     private boolean askLaneActive;
     private boolean browseChromeActive = true;
+    private boolean productReviewMode = true;
     private HomeGuideAnchor homeGuideAnchor;
     private int homeRelatedRequestVersion;
     private int resultPreviewBridgeRequestVersion;
@@ -255,6 +257,7 @@ public final class MainActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+        productReviewMode = resolveProductReviewMode(getIntent());
         HostInferenceConfig.applyIntentOverrides(this, getIntent());
 
         initializeConversation(savedInstanceState);
@@ -451,6 +454,7 @@ public final class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        productReviewMode = resolveProductReviewMode(intent);
         HostInferenceConfig.applyIntentOverrides(this, intent);
         autoIntentHandled = false;
         debugDetailIntentHandled = false;
@@ -872,6 +876,18 @@ public final class MainActivity extends AppCompatActivity {
     private boolean hasAutoQuery(Intent intent) {
         String query = intent == null ? null : decodeAutoQuery(intent.getStringExtra(EXTRA_AUTO_QUERY));
         return query != null && !query.trim().isEmpty();
+    }
+
+    private boolean resolveProductReviewMode(Intent intent) {
+        return intent == null || intent.getBooleanExtra(EXTRA_PRODUCT_REVIEW_MODE, true);
+    }
+
+    static boolean shouldShowDeveloperToolsPanel(
+        boolean productReviewMode,
+        boolean browseMode,
+        boolean hasResults
+    ) {
+        return !productReviewMode && browseMode;
     }
 
     private void browseGuides() {
@@ -2581,6 +2597,11 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void toggleDeveloperPanel() {
+        if (developerPanel != null
+            && developerPanel.getVisibility() != View.VISIBLE
+            && !shouldShowDeveloperToolsPanel(productReviewMode, isBrowseModeActive(), !items.isEmpty())) {
+            return;
+        }
         boolean show = developerContent.getVisibility() != View.VISIBLE;
         developerContent.setVisibility(show ? View.VISIBLE : View.GONE);
         developerToggleButton.setText(show ? R.string.developer_tools_hide : R.string.developer_tools_show);
@@ -2981,7 +3002,12 @@ public final class MainActivity extends AppCompatActivity {
             categorySectionContainer.setVisibility(visibility);
         }
         if (developerPanel != null) {
-            developerPanel.setVisibility(visibility);
+            boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, show, !items.isEmpty());
+            developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
+            if (!showDeveloperPanel) {
+                developerContent.setVisibility(View.GONE);
+                developerToggleButton.setText(R.string.developer_tools_show);
+            }
         }
         if (show) {
             developerContent.setVisibility(View.GONE);
@@ -3034,7 +3060,12 @@ public final class MainActivity extends AppCompatActivity {
             resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
         if (developerPanel != null) {
-            developerPanel.setVisibility(browseMode ? View.VISIBLE : View.GONE);
+            boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, browseMode, hasResults);
+            developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
+            if (!showDeveloperPanel) {
+                developerContent.setVisibility(View.GONE);
+                developerToggleButton.setText(R.string.developer_tools_show);
+            }
         }
     }
 
@@ -3058,8 +3089,13 @@ public final class MainActivity extends AppCompatActivity {
         if (sessionPanel != null && !browseMode && hasResults) {
             sessionPanel.setVisibility(View.GONE);
         }
-        if (developerPanel != null && !browseMode && hasResults) {
-            developerPanel.setVisibility(View.GONE);
+        if (developerPanel != null) {
+            boolean showDeveloperPanel = shouldShowDeveloperToolsPanel(productReviewMode, browseMode, hasResults);
+            developerPanel.setVisibility(showDeveloperPanel ? View.VISIBLE : View.GONE);
+            if (!showDeveloperPanel) {
+                developerContent.setVisibility(View.GONE);
+                developerToggleButton.setText(R.string.developer_tools_show);
+            }
         }
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);

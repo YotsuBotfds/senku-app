@@ -264,11 +264,11 @@ fun buildWarmThreadGuideIds(context: Context): Set<String> {
 fun laneLabelForRetrievalMode(retrievalMode: String): String {
     val normalized = retrievalMode.trim().lowercase(Locale.US)
     return when (normalized) {
-        "vector" -> "Vector"
-        "lexical" -> "Lexical"
-        "guide-focus", "guide" -> "Cross-ref"
-        "route-focus", "hybrid" -> "Hybrid"
-        else -> "Hybrid"
+        "vector" -> "Concept match"
+        "lexical" -> "Keyword match"
+        "guide-focus", "guide" -> "Related guide"
+        "route-focus", "hybrid" -> "Best match"
+        else -> "Best match"
     }
 }
 

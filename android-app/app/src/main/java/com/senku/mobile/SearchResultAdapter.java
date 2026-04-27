@@ -482,7 +482,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         String laneLabel = laneLabelForRetrievalMode(safe(result == null ? null : result.retrievalMode));
         int laneColor = colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
-        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Cross-ref" : null;
+        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Related guide" : null;
         String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
             ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
             : null;
@@ -494,8 +494,8 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             laneLabel,
             laneColor,
             showContinueThreadChip,
-            "Continue thread",
-            showContinueThreadChip ? buildContinueThreadContentDescription(result) : "Continue this thread",
+            "Continue conversation",
+            showContinueThreadChip ? buildContinueThreadContentDescription(result) : "Continue this conversation",
             linkedLabel,
             linkedDescription
         );

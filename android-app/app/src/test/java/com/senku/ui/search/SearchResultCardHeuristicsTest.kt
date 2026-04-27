@@ -8,11 +8,13 @@ import org.junit.Test
 class SearchResultCardHeuristicsTest {
     @Test
     fun laneLabelForRetrievalMode_mapsKnownValues() {
-        assertEquals("Hybrid", laneLabelForRetrievalMode("hybrid"))
-        assertEquals("Vector", laneLabelForRetrievalMode("vector"))
-        assertEquals("Lexical", laneLabelForRetrievalMode("lexical"))
-        assertEquals("Cross-ref", laneLabelForRetrievalMode("guide-focus"))
-        assertEquals("Cross-ref", laneLabelForRetrievalMode("guide"))
+        assertEquals("Best match", laneLabelForRetrievalMode("hybrid"))
+        assertEquals("Best match", laneLabelForRetrievalMode("route-focus"))
+        assertEquals("Best match", laneLabelForRetrievalMode(""))
+        assertEquals("Concept match", laneLabelForRetrievalMode("vector"))
+        assertEquals("Keyword match", laneLabelForRetrievalMode("lexical"))
+        assertEquals("Related guide", laneLabelForRetrievalMode("guide-focus"))
+        assertEquals("Related guide", laneLabelForRetrievalMode("guide"))
     }
 
     @Test
