@@ -190,7 +190,7 @@
     <string name="detail_related_guides_preview_panel_description_compare">Field links. Linked guide preview opens here against %1$s. Use Open full guide to open the selected guide page.</string>
     <string name="detail_related_guides_preview_row_behavior">Shows a linked guide preview in the cross-reference rail. Use Open full guide to navigate to the full guide page.</string>
     <string name="detail_related_guides_context_plain">Linked guide</string>
-    <string name="detail_related_guides_context_category">Linked guide | %1$s</string>
+    <string name="detail_related_guides_context_category">%1$s</string>
     <string name="detail_materials_title">Materials in play</string>
     <string name="detail_materials_subtitle">Quick checklist extracted from the answer. Verify critical items against the guide evidence.</string>
     <string name="detail_material_added_to_kit">Added to kit: %1$s</string>

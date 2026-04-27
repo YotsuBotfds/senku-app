@@ -66,7 +66,7 @@ public final class DetailGuideContextPresentationFormatterTest {
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
-            "Preview the selected linked guide here, or open the full guide.",
+            "Preview selected linked guide here. Open full guide when ready.",
             formatter.buildRelatedGuidePreviewCaptionText(state)
         );
         assertEquals(

@@ -988,7 +988,7 @@ public final class DetailActivity extends AppCompatActivity {
         followUpInput.setImeOptions(EditorInfo.IME_ACTION_SEND | EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING);
         followUpInput.setOnFocusChangeListener((v, hasFocus) -> {
             refreshFollowUpInputShell(hasFocus || followUpComposerFocused || hasFollowUpDraft());
-            if (hasFocus) {
+            if (shouldRequestLandscapeDockedComposerFocus(isLandscapePhoneLayout(), answerMode, hasFocus, true)) {
                 requestLandscapeDockedComposerFocus();
             }
             renderDockedComposer();
@@ -1794,7 +1794,7 @@ public final class DetailActivity extends AppCompatActivity {
             showRetry ? this::retryLastFailedQuery : null,
             this::onDockedComposerFocusChanged
         );
-        if (followUpInput.hasFocus()) {
+        if (shouldRequestLandscapeDockedComposerFocus(isLandscapePhoneLayout(), answerMode, followUpInput.hasFocus(), false)) {
             followUpComposeView.post(this::requestLandscapeDockedComposerFocus);
         }
     }
@@ -1829,6 +1829,15 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldHideFollowUpSuggestionsOnPhoneLandscape(boolean landscapePhone) {
         return landscapePhone;
+    }
+
+    static boolean shouldRequestLandscapeDockedComposerFocus(
+        boolean landscapePhone,
+        boolean answerMode,
+        boolean legacyInputFocused,
+        boolean focusChangeEvent
+    ) {
+        return landscapePhone && answerMode && legacyInputFocused && focusChangeEvent;
     }
 
     private void syncFollowUpDraftFromCompose(String draft) {

@@ -22,4 +22,17 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldHideFollowUpSuggestionsOnPhoneLandscape(true));
         assertFalse(DetailActivity.shouldHideFollowUpSuggestionsOnPhoneLandscape(false));
     }
+
+    @Test
+    public void landscapeComposerDoesNotStealFocusFromInitialRenderLegacyFocus() {
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false));
+    }
+
+    @Test
+    public void landscapeComposerPreservesUserLegacyInputFocus() {
+        assertTrue(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, true));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(false, true, true, true));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, false, true, true));
+        assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, false, true));
+    }
 }

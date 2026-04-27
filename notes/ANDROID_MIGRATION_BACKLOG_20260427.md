@@ -93,6 +93,18 @@ use it to approve reviewed-card runtime expansion or product exposure.
   `model=gemma-4-e2b-it-litert`, APK SHA
   `ac25c273b28dc7a7acf77bdc2954d1c8b25230b2d36c179a0bb304b39ca7c24f`,
   and adb `37.0.0-14910828`.
+- Post-`e7f92a6` xref/tablet evidence-lane proof: after `e7f92a6`
+  (`stabilize android xref evidence lanes`), the full fixed-four
+  host-inclusive state pack passed `45 / 45` with `fail_count=0`,
+  `platform_anr_count=0`, `matrix_homogeneous=true`,
+  `matrix_model_name=gemma-4-e2b-it-litert`, installed pack metadata present,
+  matrix APK SHA
+  `373bac28bff01da25395abb6396e09fd9fade8e6c2b9b2174f6aaac82491ae59`, and
+  adb `37.0.0-14910828` at
+  `artifacts/ui_state_pack_xref_tablet_preflight_20260427/20260427_151935/summary.json`.
+  Treat this as screenshot/dump UI acceptance for the xref/tablet evidence
+  polish only; it does not expand reviewed-card runtime, product exposure, or
+  prove FTS5 runtime behavior.
 
 ## Migration-Proof Checklist
 

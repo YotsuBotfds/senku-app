@@ -67,7 +67,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewCaptionText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview the selected linked guide here, or open the full guide.";
+            return "Preview selected linked guide here. Open full guide when ready.";
         }
         if (state.activeGuideContextPanel) {
             return buildRelatedGuidePreviewComparisonCaption(state);

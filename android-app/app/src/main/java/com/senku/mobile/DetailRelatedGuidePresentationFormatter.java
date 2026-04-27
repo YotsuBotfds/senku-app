@@ -89,14 +89,14 @@ final class DetailRelatedGuidePresentationFormatter {
         return formatCountLabel(count, "linked guide", "linked guides")
             + " for "
             + anchorLabel
-            + ". Preview here, or open the full guide.";
+            + ". Preview here. Open full guide when ready.";
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
         return formatCountLabel(count, "linked guide", "linked guides")
             + " for "
             + resolveSourceAnchorLabel(state)
-            + ". Preview here, or open the full guide.";
+            + ". Preview here. Open full guide when ready.";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
