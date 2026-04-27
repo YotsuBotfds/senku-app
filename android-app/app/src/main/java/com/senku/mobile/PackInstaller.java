@@ -78,7 +78,12 @@ public final class PackInstaller {
         if (!manifestFile.isFile() || !sqliteFile.isFile() || !vectorFile.isFile()) {
             return false;
         }
-        PackManifest installed = PackManifest.fromJson(readFileText(manifestFile));
+        PackManifest installed;
+        try {
+            installed = PackManifest.fromJson(readFileText(manifestFile));
+        } catch (JSONException exc) {
+            return false;
+        }
         return sqliteFile.length() == installed.sqliteBytes
             && vectorFile.length() == installed.vectorBytes;
     }

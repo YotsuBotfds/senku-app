@@ -87,6 +87,14 @@ Expected direct proof result:
 
 `OK (3 tests)`
 
+Fresh direct proof, 2026-04-27 00:40 CT:
+
+- `emulator-5556` current-head pack restored.
+- Direct `am instrument` for
+  `AnswerCardCurrentHeadPackCensusTest`,
+  `AnswerCardRuntimeAllowlistCurrentHeadTest`, and
+  `PackMigrationInstallTest` passed: `OK (3 tests)`.
+
 ## Guard Classes
 
 - `AnswerCardCurrentHeadPackCensusTest`: inventory, required fields,
@@ -102,6 +110,10 @@ Expected direct proof result:
 - Do not count skipped current-head tests as proof that a device has the pushed
   current-head pack.
 - Do not use these guards to approve card expansion or product exposure.
+- Do not assume duplicate guide ownership is invalid; duplicate ownership is
+  allowed by current pack semantics.
+- Do not use destructive force-refresh instrumentation; that path was removed
+  from the guard lane.
 - Re-push the pack after any command that reinstalls, clears, or removes the app.
 - Phone-landscape reviewed-card UI proof remains blocked by Android System UI
   ANR until a clean landscape canary runs without `platform_anr`.

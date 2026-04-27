@@ -199,6 +199,27 @@ public final class PackInstallerTest {
         );
     }
 
+    @Test
+    public void shouldInstallFromAssetsRefreshesWhenInstalledManifestIsMalformed() throws Exception {
+        Path tempDir = Files.createTempDirectory("pack-installer");
+        File manifestFile = tempDir.resolve("senku_manifest.json").toFile();
+        File sqliteFile = tempDir.resolve("senku_mobile.sqlite3").toFile();
+        File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
+        Files.write(manifestFile.toPath(), "{ bad manifest".getBytes(StandardCharsets.UTF_8));
+        Files.write(sqliteFile.toPath(), repeatedBytes(123));
+        Files.write(vectorFile.toPath(), repeatedBytes(456));
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestFile,
+                sqliteFile,
+                vectorFile
+            )
+        );
+    }
+
     private static PackInstaller.VectorInfo vectorInfo(
         String magic,
         int version,

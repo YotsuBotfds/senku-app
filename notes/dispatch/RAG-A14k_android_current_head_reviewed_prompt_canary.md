@@ -83,3 +83,56 @@ Artifact root:
 This proves the existing six-card reviewed runtime can compose the poisoning
 pilot from a pushed current-head pack. It does not make the remaining 265 cards
 runtime-ready.
+
+## 2026-04-27 HEAD Rerun
+
+The same reviewed-card prompt canary passed on `emulator-5556` at current
+`HEAD` after the current-head pack guards and pack repair.
+
+Intended artifact root name:
+
+`android_current_head_pack_runtime_canary_head_20260427_5556`
+
+Command:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device emulator-5556 `
+  -TestClass com.senku.mobile.PromptHarnessSmokeTest `
+  -SkipBuild `
+  -SkipInstall `
+  -Orientation portrait `
+  -ScriptedQuery "my child swallowed an unknown cleaner" `
+  -ScriptedAsk `
+  -ScriptedEnableReviewedCardRuntime `
+  -ScriptedExpectedSurface detail `
+  -ScriptedExpectedTitle "my child swallowed an unknown cleaner" `
+  -ScriptedCaptureLabel prompt_detail `
+  -ScriptedExpectedAnswerSurfaceLabel "REVIEWED EVIDENCE" `
+  -ScriptedForbiddenAnswerSurfaceLabels "STRONG EVIDENCE" `
+  -ScriptedExpectedRuleId "answer_card:poisoning_unknown_ingestion" `
+  -ScriptedExpectedSourceGuideId "GD-898" `
+  -ScriptedExpectedReviewedCardId "poisoning_unknown_ingestion" `
+  -ScriptedExpectedReviewedCardGuideId "GD-898" `
+  -ScriptedExpectedReviewedCardReviewStatus "pilot_reviewed" `
+  -ScriptedExpectedReviewedCardSourceGuideIds "GD-898" `
+  -ScriptedAssertRecentThreadReviewedCardMetadata `
+  -ArtifactRoot artifacts/android_current_head_pack_runtime_canary_head_20260427_5556 `
+  -SummaryPath artifacts\android_current_head_pack_runtime_canary_head_20260427_5556\summary.json `
+  -CaptureLogcat `
+  -ClearLogcatBeforeRun
+```
+
+Result:
+
+- `OK (1 test)`
+- wrapper `status=pass`
+- `installed_pack.counts.answer_cards=271`
+- `platform_anr=null`
+- `artifact_expectations_met=true`
+- screenshot count: `1`
+- dump count: `1`
+
+Artifact root:
+
+`artifacts/android_current_head_pack_runtime_canary_head_20260427_5556/20260427_004136_401/emulator-5556`

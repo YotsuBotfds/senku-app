@@ -131,6 +131,18 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("throw $platformAnrEvidence.reason", script)
         self.assertIn("platform_anr = $platformAnrEvidence", script)
 
+    def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
+        script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('[string]$Device = "RFCX607ZM8L"', script)
+        self.assertNotIn("RunAllDevices", script)
+        self.assertNotIn("adb devices", script)
+        self.assertIn('$artifactDir = Join-Path $repoRoot (Join-Path $ArtifactRoot (Join-Path $timestamp $Device))', script)
+        self.assertIn("$defaultSummaryPath = Join-Path $artifactDir \"summary.json\"", script)
+        self.assertIn("device = $Device", script)
+        self.assertIn("artifact_dir = $artifactDir", script)
+        self.assertIn("artifact_expectations_met = [bool]$artifactExpectationsMet", script)
+
     def test_android_prompt_surfaces_instrumentation_summary_failure_evidence(self):
         script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
 
