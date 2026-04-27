@@ -107,6 +107,15 @@ handoffs. It is not Android acceptance evidence.
   parsed `68` PowerShell files successfully, then stopped because
   `PSScriptAnalyzer` is not installed locally and the run required analyzer
   coverage. No source failure was observed before the missing-module stop.
+- `49ef031` made GitHub workflows manual-only to avoid unbounded Actions
+  billing: automatic `push`, `pull_request`, and `schedule` triggers were
+  removed from the workflow set while `workflow_dispatch` remained. Local
+  policy tests (`tests.test_github_workflows`) passed with `19` tests OK, and
+  a low validation worker independently found no automatic workflow triggers.
+- Post-push sanity check after `49ef031` showed no new Actions run for that
+  head in the latest run list. Continue using local low-worker validation after
+  commits; use GitHub run tracking only to confirm the automatic stream stays
+  quiet.
 
 ## Validation Notes
 

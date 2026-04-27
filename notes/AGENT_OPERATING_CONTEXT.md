@@ -16,6 +16,12 @@ changing operational detail here.
 
 ## Validation Lanes
 
+- GitHub Actions billing posture: workflows are intentionally manual-only.
+  Do not reintroduce automatic `push`, `pull_request`, or scheduled triggers
+  without an explicit user request. After pushes, use a low worker for local
+  validation and treat `gh run list` as a sanity check that no new automatic
+  run was started.
+
 - Standard desktop deterministic/routing check:
 
 ```powershell
