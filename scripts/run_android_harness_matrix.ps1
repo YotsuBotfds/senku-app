@@ -6,8 +6,12 @@ param(
     [string]$InferenceMode = "preserve",
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
+    [string]$PushPackDir = "",
     [string[]]$Emulators = @("emulator-5554", "emulator-5556", "emulator-5558", "emulator-5560"),
     [int]$MaxParallel = 3,
+    [switch]$DefaultWarmStart,
+    [switch]$SkipPackPushIfCurrent,
+    [switch]$ForcePackPush,
     [switch]$DefaultPromptAsk,
     [switch]$DefaultPromptWaitForCompletion,
     [switch]$DefaultSkipSourceProbe,
@@ -280,6 +284,8 @@ function New-RunnerSpec {
     $mode = Get-RunMode -Run $Run
     $emulator = Get-AssignedEmulator -Run $Run -Index $Index
     $requestedLabel = Get-RunStringOrDefault -Run $Run -PropertyName "run_label"
+    $warmStart = Get-RunBoolOrDefault -Run $Run -PropertyName "warm_start" -DefaultValue ([bool]$DefaultWarmStart)
+    $runPushPackDir = Get-RunStringOrDefault -Run $Run -PropertyName "push_pack_dir" -DefaultValue $PushPackDir
     $runLabel = if ([string]::IsNullOrWhiteSpace($requestedLabel)) {
         New-DefaultRunLabel -Run $Run -Mode $mode -Emulator $emulator -Index $Index
     } else {
@@ -309,6 +315,18 @@ function New-RunnerSpec {
         }
         if ($waitForCompletion) {
             $args.WaitForCompletion = $true
+        }
+        if ($warmStart) {
+            $args.WarmStart = $true
+        }
+        if (-not [string]::IsNullOrWhiteSpace($runPushPackDir)) {
+            $args.PushPackDir = $runPushPackDir
+        }
+        if ($SkipPackPushIfCurrent) {
+            $args.SkipPackPushIfCurrent = $true
+        }
+        if ($ForcePackPush) {
+            $args.ForcePackPush = $true
         }
         if ([string]::IsNullOrWhiteSpace($expectedDetailTitle) -and $ask -and $waitForCompletion) {
             $expectedDetailTitle = $query
@@ -342,6 +360,18 @@ function New-RunnerSpec {
     }
     if (Get-RunBoolOrDefault -Run $Run -PropertyName "skip_source_probe" -DefaultValue ([bool]$DefaultSkipSourceProbe)) {
         $args.SkipSourceProbe = $true
+    }
+    if ($warmStart) {
+        $args.WarmStart = $true
+    }
+    if (-not [string]::IsNullOrWhiteSpace($runPushPackDir)) {
+        $args.PushPackDir = $runPushPackDir
+    }
+    if ($SkipPackPushIfCurrent) {
+        $args.SkipPackPushIfCurrent = $true
+    }
+    if ($ForcePackPush) {
+        $args.ForcePackPush = $true
     }
 
     return [pscustomobject]@{
@@ -482,6 +512,8 @@ function Receive-CompletedJobs {
             mode = $entry.runner.mode
             emulator = $entry.runner.args.Emulator
             run_label = $entry.runner.run_label
+            warm_start = [bool]$entry.runner.args.WarmStart
+            push_pack_dir = $(if ($entry.runner.args.Contains("PushPackDir")) { [string]$entry.runner.args.PushPackDir } else { $null })
             status = if ($failed) { "failed" } else { "completed" }
             job_state = $job.State
             manifest_path = $entry.runner.manifest_path
@@ -540,6 +572,7 @@ function New-MatrixSummary {
             total = $emulatorResults.Count
             completed = $emulatorCompleted.Count
             failed = $emulatorFailed.Count
+            warm_start_count = @($emulatorResults | Where-Object { $_.warm_start }).Count
             status_groups = $emulatorStatusGroups
         }
     }
@@ -563,6 +596,7 @@ function New-MatrixSummary {
             run_label = $_.run_label
             mode = $_.mode
             emulator = $_.emulator
+            warm_start = $_.warm_start
             error = $_.error
             artifact_paths = $artifactPaths
         }

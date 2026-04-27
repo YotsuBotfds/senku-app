@@ -13,7 +13,10 @@ param(
     [int]$PollSeconds = 5,
     [int]$PauseSeconds = 2,
     [int]$MaxCases = 0,
-    [bool]$CaptureLogcat = $true
+    [bool]$CaptureLogcat = $true,
+    [switch]$WarmStart,
+    [switch]$SkipPackPushIfCurrent,
+    [switch]$ForcePackPush
 )
 
 $ErrorActionPreference = "Stop"
@@ -212,6 +215,15 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     }
     if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
         $detailArgs.PushPackDir = $PushPackDir
+        if ($SkipPackPushIfCurrent) {
+            $detailArgs.SkipPackPushIfCurrent = $true
+        }
+        if ($ForcePackPush) {
+            $detailArgs.ForcePackPush = $true
+        }
+    }
+    if ($WarmStart) {
+        $detailArgs.WarmStart = $true
     }
     try {
         & $detailRunner @detailArgs
@@ -248,6 +260,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
         final_subtitle = if ($runJson) { $runJson.final_detail_subtitle } else { $null }
         lower_source_button_count = if ($runJson) { $runJson.lower_source_button_count } else { $null }
         followup_submission_mode = if ($runJson) { $runJson.followup_submission_mode } else { $null }
+        warm_start = [bool]$WarmStart
         source_link_verified = if ($runJson) { $runJson.source_link_verified } else { $null }
         error = $errorMessage
     }
