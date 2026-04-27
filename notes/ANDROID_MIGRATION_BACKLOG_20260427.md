@@ -19,11 +19,13 @@ use it to approve reviewed-card runtime expansion or product exposure.
 
 ## Current Blockers
 
-- Consolidated state-pack proof: after the fixes below, the four-role
-  current-head UI state pack passed `41 / 41` under
-  `artifacts/ui_state_pack_current_head_20260427_full_after_fixes/20260427_012242/`.
-  Do not treat this as host/generative proof; model identity remains null and
-  the prior host-inclusive comparison matrix had 45 states.
+- Consolidated host-inclusive state-pack proof: after the harness identity
+  fix, the four-role current-head UI state pack passed `45 / 45` under
+  `artifacts/ui_state_pack_current_head_20260427_identity_fixed_full_host/20260427_013639/`.
+  The rollup reports `matrix_homogeneous=true`,
+  `matrix_model_name=gemma-4-e4b-it-litert`, and `identity_missing=false` on
+  all four devices. Treat `matrix_model_sha` as a stable host inference
+  identity key, not a hash of an installed on-device LiteRT model file.
 - `phone_landscape` System UI ANR: resolved for this session after restarting
   `emulator-5560`, reinstalling app/test APKs, and re-pushing the current-head
   pack. The post-restart full `phone_landscape` pack passed `11 / 11` with
@@ -41,10 +43,9 @@ use it to approve reviewed-card runtime expansion or product exposure.
   but visual review found placeholder text clipping and source/path chip
   clipping on the narrow surface. This is polish debt, not a migration proof
   blocker for the current phone portrait lane.
-- Identity/model metadata missing: current artifacts carry APK SHA and pack
-  metadata, but `model_name` and `model_sha` are null and the state-pack
-  summaries report `identity_missing=true`. The visible UI identity surface also
-  lacks the metadata needed for quick proof review.
+- Identity/model metadata missing: resolved for harness/state-pack summaries by
+  recording a host inference identity source plus stable host model key. Visible
+  UI identity polish remains separate from migration proof.
 
 ## Stop Lines
 

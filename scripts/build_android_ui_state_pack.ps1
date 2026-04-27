@@ -219,6 +219,22 @@ function Normalize-IdentityValue {
     return $text.Trim().ToLowerInvariant()
 }
 
+function Get-StableIdentitySha256 {
+    param([string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return $null
+    }
+
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Value)
+        return -join ($sha256.ComputeHash($bytes) | ForEach-Object { $_.ToString("x2") })
+    } finally {
+        $sha256.Dispose()
+    }
+}
+
 function Get-PackIdentityRollup {
     param([object[]]$ResultEntries)
 
@@ -296,12 +312,9 @@ function Get-PackIdentityRollup {
         })
     }
 
-    $deviceSummaryArray = if ($deviceSummaries.Count -gt 0) {
-        [object[]]$deviceSummaries.ToArray()
-    } else {
-        @()
-    }
-    $apkHomogeneous = $deviceSummaryArray.Count -gt 0
+    $deviceSummaryArray = @($deviceSummaries.ToArray())
+    $deviceCount = @($deviceSummaryArray).Count
+    $apkHomogeneous = $deviceCount -gt 0
     if ($apkHomogeneous) {
         $apkHomogeneous = (@($deviceSummaryArray | Where-Object {
                 $_.identity_conflict -or [string]::IsNullOrWhiteSpace([string]$_.apk_sha)
@@ -309,7 +322,7 @@ function Get-PackIdentityRollup {
             (@($deviceSummaryArray | Select-Object -ExpandProperty apk_sha -Unique).Count -eq 1)
     }
 
-    $modelHomogeneous = $deviceSummaryArray.Count -gt 0
+    $modelHomogeneous = $deviceCount -gt 0
     if ($modelHomogeneous) {
         $modelHomogeneous = (@($deviceSummaryArray | Where-Object {
                 $_.identity_conflict -or [string]::IsNullOrWhiteSpace([string]$_.model_sha)
@@ -334,7 +347,7 @@ function Get-PackIdentityRollup {
     }
 
     return [pscustomobject]@{
-        devices = $deviceSummaryArray
+        devices = @($deviceSummaryArray)
         matrix_homogeneous = [bool]$homogeneous
         matrix_apk_sha = $matrixApkSha
         matrix_model_name = $matrixModelName
@@ -570,6 +583,11 @@ if ($FinalizeOnly) {
                     status = $(if ($copiedScreenshots.Count -gt 0 -and $copiedDumps.Count -gt 0) { "pass" } else { "fail" })
                     runner = "detail_followup"
                     artifact_dir = $stateRawDir
+                    host_inference_url = $(if ($state.host) { [string]$followupSummary.host_inference_url } else { $null })
+                    host_inference_model = $(if ($state.host) { [string]$followupSummary.host_inference_model } else { $null })
+                    model_identity_source = $(if ($state.host) { "host_inference" } else { $null })
+                    model_name = $(if ($state.host) { [string]$followupSummary.host_inference_model } else { $null })
+                    model_sha = $(if ($state.host) { Get-StableIdentitySha256 -Value ("host-inference|{0}|{1}" -f [string]$followupSummary.host_inference_url, [string]$followupSummary.host_inference_model) } else { $null })
                     screenshots = @($copiedScreenshots | ForEach-Object { [System.IO.Path]::GetFileName($_) })
                     dumps = @($copiedDumps | ForEach-Object { [System.IO.Path]::GetFileName($_) })
                     manifest_path = $followupManifestPath

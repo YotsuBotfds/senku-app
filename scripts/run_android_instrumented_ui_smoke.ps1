@@ -323,6 +323,22 @@ function Get-RemoteSha256 {
     }
 }
 
+function Get-StableIdentitySha256 {
+    param([string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return $null
+    }
+
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Value)
+        return -join ($sha256.ComputeHash($bytes) | ForEach-Object { $_.ToString("x2") })
+    } finally {
+        $sha256.Dispose()
+    }
+}
+
 function Get-AppModelMetadata {
     $knownNames = @(
         "gemma-4-E4B-it.litertlm",
@@ -533,6 +549,37 @@ function Resolve-InstalledBinaryIdentity {
     } catch {
     }
     return $identityObject
+}
+
+function Resolve-SummaryModelIdentity {
+    param([object]$InstalledIdentity)
+
+    $installedModelName = if ($null -ne $InstalledIdentity) { [string]$InstalledIdentity.model_name } else { "" }
+    $installedModelSha = if ($null -ne $InstalledIdentity) { [string]$InstalledIdentity.model_sha } else { "" }
+    if (-not [string]::IsNullOrWhiteSpace($installedModelSha)) {
+        return [pscustomobject]@{
+            source = "installed_model"
+            name = $(if ([string]::IsNullOrWhiteSpace($installedModelName)) { $null } else { $installedModelName })
+            sha = $installedModelSha
+        }
+    }
+
+    if ($EnableHostInferenceSmoke -and
+        -not [string]::IsNullOrWhiteSpace($EffectiveHostInferenceUrl) -and
+        -not [string]::IsNullOrWhiteSpace($HostInferenceModel)) {
+        $identityInput = "host-inference|$EffectiveHostInferenceUrl|$HostInferenceModel"
+        return [pscustomobject]@{
+            source = "host_inference"
+            name = $HostInferenceModel
+            sha = Get-StableIdentitySha256 -Value $identityInput
+        }
+    }
+
+    return [pscustomobject]@{
+        source = $null
+        name = $null
+        sha = $null
+    }
 }
 
 function Convert-ToProcessArgumentString {
@@ -1407,6 +1454,7 @@ try {
 
         $runStopwatch.Stop()
         $runCompletedUtc = (Get-Date).ToUniversalTime()
+        $summaryModelIdentity = Resolve-SummaryModelIdentity -InstalledIdentity $installedIdentity
         $summaryObject = [pscustomobject]@{
         run_started_utc = $runStartedUtc.ToString("o")
         run_completed_utc = $runCompletedUtc.ToString("o")
@@ -1431,9 +1479,11 @@ try {
         host_inference_smoke = ($EnableHostInferenceSmoke -and -not [string]::IsNullOrWhiteSpace($EffectiveHostInferenceUrl))
         followup_smoke = [bool]$EnableFollowUpSmoke
         host_inference_url = $EffectiveHostInferenceUrl
+        host_inference_model = $(if ([string]::IsNullOrWhiteSpace($HostInferenceModel)) { $null } else { $HostInferenceModel })
         apk_sha = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.apk_sha)) { [string]$installedIdentity.apk_sha } else { $null })
-        model_name = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_name)) { [string]$installedIdentity.model_name } else { $null })
-        model_sha = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_sha)) { [string]$installedIdentity.model_sha } else { $null })
+        model_identity_source = $summaryModelIdentity.source
+        model_name = $summaryModelIdentity.name
+        model_sha = $summaryModelIdentity.sha
         identity_probe_error = $(if ([string]::IsNullOrWhiteSpace($identityProbeError)) { $null } else { $identityProbeError })
         installed_pack = $installedPackMetadata
         platform_anr = $platformAnrEvidence

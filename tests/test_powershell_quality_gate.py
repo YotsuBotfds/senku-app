@@ -126,6 +126,10 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('throw "RoleFilter did not match any device roles."', script)
         self.assertIn('if ($SkipHostStates -and $state.host) {', script)
         self.assertIn('host_states_included = (-not $SkipHostStates)', script)
+        self.assertIn('function Get-StableIdentitySha256', script)
+        self.assertIn('host_inference_model = $(if ($state.host) { [string]$followupSummary.host_inference_model } else { $null })', script)
+        self.assertIn('model_identity_source = $(if ($state.host) { "host_inference" } else { $null })', script)
+        self.assertIn('model_sha = $(if ($state.host) { Get-StableIdentitySha256 -Value ("host-inference|{0}|{1}" -f [string]$followupSummary.host_inference_url, [string]$followupSummary.host_inference_model) } else { $null })', script)
 
     def test_android_ui_state_pack_parallel_forwards_role_slices_and_skip_host_states(self):
         script = ANDROID_UI_STATE_PACK_PARALLEL_PATH.read_text(encoding="utf-8")
@@ -158,6 +162,15 @@ class PowerShellQualityGateTests(unittest.TestCase):
 
         self.assertIn("function Get-PlatformAnrEvidence", script)
         self.assertIn("System UI isn't responding", script)
+
+    def test_android_smoke_records_host_model_identity(self):
+        script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("function Resolve-SummaryModelIdentity", script)
+        self.assertIn('$identityInput = "host-inference|$EffectiveHostInferenceUrl|$HostInferenceModel"', script)
+        self.assertIn("host_inference_model =", script)
+        self.assertIn("model_identity_source = $summaryModelIdentity.source", script)
+        self.assertIn("model_sha = $summaryModelIdentity.sha", script)
         self.assertIn('resource-id="android:id/aerr_wait"', script)
         self.assertIn('resource-id="android:id/aerr_close"', script)
         self.assertIn("throw $platformAnrEvidence.reason", script)

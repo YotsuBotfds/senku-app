@@ -179,6 +179,22 @@ Consolidated four-role UI state-pack proof, 2026-04-27 01:22-01:25 CT:
 - APK SHA:
   `24af2ea76558829f94c973c87f47734ea2ef3c07b5756d0efe0e851f4164c21f`.
 
+Identity-fixed four-role host-inclusive UI state-pack proof,
+2026-04-27 01:36-01:39 CT:
+
+- Artifact:
+  `artifacts/ui_state_pack_current_head_20260427_identity_fixed_full_host/20260427_013639/summary.json`.
+- Result: `status=pass`, `45 / 45`, `host_states_included=true`.
+- Scope: `phone_portrait`, `phone_landscape`, `tablet_portrait`, and
+  `tablet_landscape`, including host/generative states.
+- Identity rollup: `matrix_homogeneous=true`,
+  `matrix_model_name=gemma-4-e4b-it-litert`, and
+  `identity_missing=false` on all four devices. The model SHA is a stable
+  harness identity key derived from the effective host inference URL and model,
+  not a hash of an installed on-device LiteRT model file.
+- APK SHA:
+  `24af2ea76558829f94c973c87f47734ea2ef3c07b5756d0efe0e851f4164c21f`.
+
 Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 
 - `newborn_danger_sepsis` / `GD-284`:
