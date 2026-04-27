@@ -22,6 +22,14 @@ class AndroidFollowupMatrixContractTests(unittest.TestCase):
         self.assertIn("$detailArgs.ForcePackPush = $true", self.script)
         self.assertIn("$detailArgs.WarmStart = $true", self.script)
         self.assertIn("warm_start = [bool]$WarmStart", self.script)
+        self.assertIn("function New-FollowupMatrixSummary", self.script)
+        self.assertIn("function ConvertTo-FollowupMatrixSummaryMarkdown", self.script)
+        self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
+        self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
+        self.assertIn("emulator_groups = $emulatorGroups", self.script)
+        self.assertIn("failed_items = @($failed | ForEach-Object", self.script)
+        self.assertIn("warm_start_count =", self.script)
+        self.assertIn("Matrix summary JSON written to", self.script)
 
     def test_followup_matrix_parser_passes(self):
         result = subprocess.run(

@@ -139,12 +139,92 @@ function Stop-ConflictingHarnessRuns {
     }
 }
 
+function New-FollowupMatrixSummary {
+    param(
+        [object[]]$Records,
+        [string]$ManifestPath,
+        [string]$SummaryCsvPath
+    )
+
+    $passed = @($Records | Where-Object { $_.status -eq "passed" })
+    $failed = @($Records | Where-Object { $_.status -ne "passed" })
+    $emulatorGroups = @()
+    foreach ($group in @($Records | Group-Object -Property emulator | Sort-Object -Property Name)) {
+        $items = @($group.Group)
+        $emulatorGroups += [ordered]@{
+            emulator = [string]$group.Name
+            total = $items.Count
+            passed = @($items | Where-Object { $_.status -eq "passed" }).Count
+            failed = @($items | Where-Object { $_.status -ne "passed" }).Count
+            warm_start_count = @($items | Where-Object { $_.warm_start }).Count
+            labels = @($items | ForEach-Object { $_.label })
+        }
+    }
+
+    return [ordered]@{
+        total = $Records.Count
+        passed = $passed.Count
+        failed = $failed.Count
+        warm_start_count = @($Records | Where-Object { $_.warm_start }).Count
+        emulator_groups = $emulatorGroups
+        failed_items = @($failed | ForEach-Object {
+            [ordered]@{
+                label = $_.label
+                emulator = $_.emulator
+                error = $_.error
+                output_json = $_.output_json
+                logcat_path = $_.logcat_path
+            }
+        })
+        artifact_paths = @(
+            [ordered]@{ kind = "jsonl"; path = $ManifestPath }
+            [ordered]@{ kind = "csv"; path = $SummaryCsvPath }
+        )
+        manifest_path = $ManifestPath
+        summary_csv_path = $SummaryCsvPath
+    }
+}
+
+function ConvertTo-FollowupMatrixSummaryMarkdown {
+    param([object]$Summary)
+
+    $lines = @(
+        "# Android Follow-Up Matrix Summary",
+        "",
+        "- total: $($Summary.total)",
+        "- passed: $($Summary.passed)",
+        "- failed: $($Summary.failed)",
+        "- warm_start_count: $($Summary.warm_start_count)",
+        "- manifest_path: $($Summary.manifest_path)",
+        "- summary_csv_path: $($Summary.summary_csv_path)",
+        "",
+        "## Emulator Groups"
+    )
+    foreach ($group in $Summary.emulator_groups) {
+        $labels = if ($group.labels.Count -gt 0) { ($group.labels -join ", ") } else { "-" }
+        $lines += "- emulator=$($group.emulator) total=$($group.total) passed=$($group.passed) failed=$($group.failed) warm_start=$($group.warm_start_count) ($labels)"
+    }
+
+    $lines += @("", "## Failed Items")
+    if ($Summary.failed_items.Count -eq 0) {
+        $lines += "- none"
+    } else {
+        foreach ($item in $Summary.failed_items) {
+            $lines += "- label=$($item.label) emulator=$($item.emulator) error=$($item.error) output_json=$($item.output_json) logcat=$($item.logcat_path)"
+        }
+    }
+
+    return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $manifestPath = Join-Path $resolvedOutputDir ("followup_matrix_" + $timestamp + ".jsonl")
 $summaryCsvPath = Join-Path $resolvedOutputDir ("followup_matrix_" + $timestamp + ".csv")
+$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
+$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
 
 $cases = @(Load-SuiteCases -Path $SuitePath)
 if ($MaxCases -gt 0) {
@@ -273,5 +353,10 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
 }
 
 $records | Export-Csv -Path $summaryCsvPath -NoTypeInformation -Encoding utf8
+$summary = New-FollowupMatrixSummary -Records @($records) -ManifestPath $manifestPath -SummaryCsvPath $summaryCsvPath
+($summary | ConvertTo-Json -Depth 8) | Set-Content -Path $summaryJsonPath -Encoding UTF8
+ConvertTo-FollowupMatrixSummaryMarkdown -Summary $summary | Set-Content -Path $summaryMarkdownPath -Encoding UTF8
 Write-Host ("Matrix manifest written to " + $manifestPath)
 Write-Host ("Matrix summary written to " + $summaryCsvPath)
+Write-Host ("Matrix summary JSON written to " + $summaryJsonPath)
+Write-Host ("Matrix summary Markdown written to " + $summaryMarkdownPath)
