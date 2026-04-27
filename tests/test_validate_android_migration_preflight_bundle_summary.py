@@ -14,12 +14,32 @@ SCRIPT_PATH = REPO_ROOT / "scripts" / "validate_android_migration_preflight_bund
 
 
 def make_step(name: str) -> dict:
+    commands = {
+        "tooling_version_manifest": "python scripts/write_android_tooling_version_manifest.py --json-out artifacts/bench/android_migration_preflight_bundle/tooling_version_manifest/summary.json --markdown-out artifacts/bench/android_migration_preflight_bundle/tooling_version_manifest/summary.md",
+        "managed_device_smoke_dry_run": "powershell -File scripts/run_android_managed_device_smoke.ps1 -OutputDir artifacts/bench/android_migration_preflight_bundle/managed_device_smoke -DryRun",
+        "litert_readiness_dry_run": "powershell -File scripts/run_android_litert_readiness_matrix.ps1 -OutputDir artifacts/bench/android_migration_preflight_bundle/litert_readiness -DryRun",
+        "senku_tablet_2_large_data_avd_preflight": "powershell -File scripts/prepare_senku_tablet_2_large_data_avd.ps1 -OutputDir artifacts/bench/android_migration_preflight_bundle/senku_tablet_2_large_data_avd_preflight",
+        "orchestrator_smoke_dry_run": "powershell -File scripts/run_android_orchestrator_smoke.ps1 -OutputDir artifacts/bench/android_migration_preflight_bundle/orchestrator_smoke -DryRun",
+        "uiautomator_24_comparison_dry_run": "powershell -File scripts/run_android_uiautomator_24_comparison.ps1 -OutputDir artifacts/bench/android_migration_preflight_bundle/uiautomator_24_comparison -DryRun",
+        "harness_matrix_plan_only": "powershell -File scripts/run_android_harness_matrix.ps1 -OutputDir artifacts/bench/android_migration_preflight_bundle/harness_matrix_plan -PlanOnly",
+        "ui_state_pack_plan_only": "powershell -File scripts/build_android_ui_state_pack_parallel.ps1 -OutputRoot artifacts/bench/android_migration_preflight_bundle/ui_state_pack_plan -PlanOnly",
+    }
+    summary_paths = {
+        "tooling_version_manifest": "artifacts/bench/android_migration_preflight_bundle/tooling_version_manifest/summary.json",
+        "managed_device_smoke_dry_run": "artifacts/bench/android_migration_preflight_bundle/managed_device_smoke/summary.json",
+        "litert_readiness_dry_run": "artifacts/bench/android_migration_preflight_bundle/litert_readiness/summary.json",
+        "senku_tablet_2_large_data_avd_preflight": "artifacts/bench/android_migration_preflight_bundle/senku_tablet_2_large_data_avd_preflight/summary.json",
+        "orchestrator_smoke_dry_run": "artifacts/bench/android_migration_preflight_bundle/orchestrator_smoke/summary.json",
+        "uiautomator_24_comparison_dry_run": "artifacts/bench/android_migration_preflight_bundle/uiautomator_24_comparison/summary.json",
+        "harness_matrix_plan_only": "artifacts/bench/android_migration_preflight_bundle/harness_matrix_plan/summary.json",
+        "ui_state_pack_plan_only": "artifacts/bench/android_migration_preflight_bundle/ui_state_pack_plan/20260427_000000/plan.json",
+    }
     return {
         "name": name,
-        "command": f"run {name}",
+        "command": commands.get(name, f"run {name}"),
         "exit_code": 0,
         "status": "pass",
-        "summary_path": f"artifacts/{name}/summary.json",
+        "summary_path": summary_paths.get(name, f"artifacts/{name}/summary.json"),
         "markdown_path": f"artifacts/{name}/summary.md",
         "stdout_path": f"artifacts/{name}/stdout.txt",
         "started_at_utc": "2026-04-27T00:00:00.0000000Z",
@@ -149,6 +169,27 @@ class ValidateAndroidMigrationPreflightBundleSummaryTests(unittest.TestCase):
         _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
 
         self.assertIn("missing root.steps lane 'litert_readiness_dry_run'", errors)
+
+    def test_rejects_child_lane_command_posture_drift(self):
+        summary = make_summary()
+        for step in summary["steps"]:
+            if step["name"] == "uiautomator_24_comparison_dry_run":
+                step["command"] = step["command"].replace(" -DryRun", " -RealRun")
+
+        _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
+
+        self.assertIn("expected steps[5].command to include '-dryrun'", errors)
+        self.assertIn("expected steps[5].command to omit '-realrun'", errors)
+
+    def test_rejects_child_lane_summary_path_drift(self):
+        summary = make_summary()
+        for step in summary["steps"]:
+            if step["name"] == "harness_matrix_plan_only":
+                step["summary_path"] = "artifacts/bench/android_migration_preflight_bundle/harness_matrix/summary.json"
+
+        _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
+
+        self.assertIn("expected steps[6].summary_path to include 'harness_matrix_plan'", errors)
 
     def test_rejects_missing_validator_lane(self):
         summary = make_summary()

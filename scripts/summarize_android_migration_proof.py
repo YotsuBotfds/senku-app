@@ -44,6 +44,20 @@ COUNT_KEYS = (
     "retrieval_metadata_guides",
 )
 
+FIXED_FOUR_EMULATORS = {
+    "emulator-5554",
+    "emulator-5556",
+    "emulator-5558",
+    "emulator-5560",
+}
+
+FIXED_FOUR_ROLES = {
+    "phone_portrait",
+    "phone_landscape",
+    "tablet_portrait",
+    "tablet_landscape",
+}
+
 
 def load_summary(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8-sig") as handle:
@@ -204,19 +218,82 @@ def _installed_pack_source(installed_pack: dict[str, Any], summary: dict[str, An
 def _evidence_posture(summary: dict[str, Any]) -> str:
     acceptance = summary.get("acceptance_evidence")
     non_acceptance = summary.get("non_acceptance_evidence")
-    if acceptance is True:
-        return "acceptance"
+    explicit_fixed_four_acceptance = _has_explicit_fixed_four_acceptance(summary)
     if non_acceptance is True or acceptance is False:
         return "non-acceptance"
-    if summary.get("metadata_only") is True or summary.get("plan_only") is True:
-        return "non-acceptance"
-    if summary.get("dry_run") is True or summary.get("status") == "dry_run_only":
-        return "non-acceptance"
-    if summary.get("runtime_evidence") is not None:
+    if acceptance is True and explicit_fixed_four_acceptance:
+        return "acceptance"
+    if _has_helper_marker(summary):
+        if explicit_fixed_four_acceptance:
+            return "acceptance"
         return "non-acceptance"
     if summary.get("ui_acceptance_evidence") is False:
         return "non-acceptance"
+    if acceptance is True:
+        return "non-acceptance"
     return "acceptance"
+
+
+def _has_helper_marker(summary: dict[str, Any]) -> bool:
+    if summary.get("metadata_only") is True or summary.get("plan_only") is True:
+        return True
+    if summary.get("preflight_only") is True:
+        return True
+    if summary.get("dry_run") is True or summary.get("status") == "dry_run_only":
+        return True
+    if summary.get("runtime_evidence") is not None:
+        return True
+    intent = summary.get("migration_checklist_intent")
+    return isinstance(intent, dict) and (
+        intent.get("metadata_only") is True
+        or intent.get("plan_only") is True
+        or intent.get("preflight_only") is True
+    )
+
+
+def _has_explicit_fixed_four_acceptance(summary: dict[str, Any]) -> bool:
+    if summary.get("acceptance_evidence") is not True and summary.get("ui_acceptance_evidence") is not True:
+        return False
+    if summary.get("status") not in (None, "pass"):
+        return False
+    if summary.get("fail_count") not in (None, 0):
+        return False
+    if summary.get("platform_anr_count") not in (None, 0):
+        return False
+    if summary.get("matrix_homogeneous") is False:
+        return False
+
+    pass_count = _first_present(summary, "pass_count", "passed_count")
+    total_count = _first_present(summary, "total_states", "total_count", "device_count")
+    if pass_count is not None and total_count is not None and pass_count != total_count:
+        return False
+
+    return _covers_fixed_four_matrix(summary)
+
+
+def _covers_fixed_four_matrix(summary: dict[str, Any]) -> bool:
+    intent = _first_dict(summary.get("migration_checklist_intent"))
+    roles = _string_set(summary.get("selected_roles")) | _string_set(intent.get("selected_roles"))
+    devices = _string_set(summary.get("devices"))
+
+    for device in summary.get("devices", []):
+        if not isinstance(device, dict):
+            continue
+        devices.update(_string_set(device.get("device")))
+        roles.update(_string_set(device.get("role")))
+        roles.update(_string_set(device.get("roles")))
+        roles.update(_string_set(device.get("resolved_role")))
+        roles.update(_string_set(device.get("resolved_roles")))
+
+    return FIXED_FOUR_ROLES.issubset(roles) or FIXED_FOUR_EMULATORS.issubset(devices)
+
+
+def _string_set(value: Any) -> set[str]:
+    if isinstance(value, str) and value.strip():
+        return {value}
+    if isinstance(value, list):
+        return {item for item in value if isinstance(item, str) and item.strip()}
+    return set()
 
 
 def _first_present(source: dict[str, Any], *keys: str) -> Any:

@@ -56,6 +56,24 @@ def run_gate(*args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+def run_windows_validation(*args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            str(WINDOWS_VALIDATION_PATH),
+            *args,
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
 class PowerShellQualityGateTests(unittest.TestCase):
     def test_analyzer_gate_blocks_errors_but_reports_warning_debt(self):
         script = SCRIPT_PATH.read_text(encoding="utf-8")
@@ -432,6 +450,26 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("& $pythonPath ingest.py --stats", script)
         self.assertIn("& $guideScript", script)
         self.assertIn("-ExtraBenchArgs $ExtraBenchArgs", script)
+
+    def test_windows_validation_android_migration_whatif_lists_validator_modules_only(self):
+        result = run_windows_validation("-Mode", "android-migration", "-WhatIf")
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("Android migration validator suite dry run.", result.stdout)
+        self.assertIn("-B -m unittest", result.stdout)
+        self.assertIn("Modules:", result.stdout)
+        self.assertIn("tests.test_validate_android_migration_summary", result.stdout)
+        self.assertIn("tests.test_validate_android_asset_pack_parity_summary", result.stdout)
+        self.assertIn("tests.test_validate_android_fts_fallback_summary", result.stdout)
+        self.assertIn("tests.test_validate_android_harness_matrix_plan", result.stdout)
+        self.assertIn("tests.test_stop_android_harness_runs_contract", result.stdout)
+
+        output_lower = (result.stderr + result.stdout).lower()
+        self.assertNotIn("adb devices", output_lower)
+        self.assertNotIn("am instrument", output_lower)
+        self.assertNotIn("emulator", output_lower)
+        self.assertNotIn("install ", output_lower)
+        self.assertNotIn(" shell ", output_lower)
 
 
 if __name__ == "__main__":

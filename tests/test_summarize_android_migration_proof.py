@@ -110,6 +110,69 @@ class SummarizeAndroidMigrationProofTests(unittest.TestCase):
         )
         self.assertEqual(row["evidence_posture"], "non-acceptance")
 
+    def test_helper_markers_stay_non_acceptance_despite_acceptance_claims(self) -> None:
+        helper_shapes = [
+            {"metadata_only": True, "acceptance_evidence": True},
+            {"plan_only": True, "acceptance_evidence": True},
+            {"preflight_only": True, "acceptance_evidence": True},
+            {"dry_run": True, "acceptance_evidence": True},
+            {"status": "dry_run_only", "acceptance_evidence": True},
+            {"runtime_evidence": "fts4_fallback", "acceptance_evidence": True},
+            {
+                "migration_checklist_intent": {"plan_only": True},
+                "acceptance_evidence": True,
+            },
+        ]
+
+        for summary in helper_shapes:
+            with self.subTest(summary=summary):
+                row = summarize_summary(summary)
+
+                self.assertEqual(row["evidence_posture"], "non-acceptance")
+
+    def test_runtime_evidence_can_only_accept_with_explicit_fixed_four_state_pack(self) -> None:
+        row = summarize_summary(
+            {
+                "status": "pass",
+                "acceptance_evidence": True,
+                "ui_acceptance_evidence": True,
+                "runtime_evidence": "reviewed_card_runtime",
+                "pass_count": 45,
+                "total_states": 45,
+                "fail_count": 0,
+                "platform_anr_count": 0,
+                "matrix_homogeneous": True,
+                "selected_roles": [
+                    "phone_portrait",
+                    "phone_landscape",
+                    "tablet_portrait",
+                    "tablet_landscape",
+                ],
+                "devices": [
+                    {"device": "emulator-5556", "roles": ["phone_portrait"]},
+                    {"device": "emulator-5560", "roles": ["phone_landscape"]},
+                    {"device": "emulator-5554", "roles": ["tablet_portrait"]},
+                    {"device": "emulator-5558", "roles": ["tablet_landscape"]},
+                ],
+            }
+        )
+
+        self.assertEqual(row["evidence_posture"], "acceptance")
+
+    def test_fixed_four_baseline_name_alone_does_not_upgrade_helper_summary(self) -> None:
+        row = summarize_summary(
+            {
+                "status": "pass",
+                "dry_run": False,
+                "runtime_evidence": "fts4_fallback",
+                "acceptance_evidence": True,
+                "primary_evidence": "fixed_four_emulator_matrix",
+                "comparison_baseline": "fixed_four_emulator_matrix",
+            }
+        )
+
+        self.assertEqual(row["evidence_posture"], "non-acceptance")
+
     def test_summarize_file_reads_without_mutating_and_markdown_is_compact(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "summary.json"

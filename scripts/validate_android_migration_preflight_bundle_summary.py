@@ -47,6 +47,49 @@ EXPECTED_VALIDATORS = {
     "validate_ui_state_pack_plan",
 }
 
+STEP_CONTRACTS: dict[str, dict[str, list[str]]] = {
+    "tooling_version_manifest": {
+        "summary_fragments": ["tooling_version_manifest", "summary.json"],
+        "required_command_tokens": ["write_android_tooling_version_manifest.py"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "managed_device_smoke_dry_run": {
+        "summary_fragments": ["managed_device_smoke", "summary.json"],
+        "required_command_tokens": ["run_android_managed_device_smoke.ps1", "-dryrun"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "litert_readiness_dry_run": {
+        "summary_fragments": ["litert_readiness", "summary.json"],
+        "required_command_tokens": ["run_android_litert_readiness_matrix.ps1", "-dryrun"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "senku_tablet_2_large_data_avd_preflight": {
+        "summary_fragments": ["senku_tablet_2_large_data_avd_preflight", "summary.json"],
+        "required_command_tokens": ["prepare_senku_tablet_2_large_data_avd.ps1"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "orchestrator_smoke_dry_run": {
+        "summary_fragments": ["orchestrator_smoke", "summary.json"],
+        "required_command_tokens": ["run_android_orchestrator_smoke.ps1", "-dryrun"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "uiautomator_24_comparison_dry_run": {
+        "summary_fragments": ["uiautomator_24_comparison", "summary.json"],
+        "required_command_tokens": ["run_android_uiautomator_24_comparison.ps1", "-dryrun"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "harness_matrix_plan_only": {
+        "summary_fragments": ["harness_matrix_plan", "summary.json"],
+        "required_command_tokens": ["run_android_harness_matrix.ps1", "-planonly"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+    "ui_state_pack_plan_only": {
+        "summary_fragments": ["ui_state_pack_plan", "plan.json"],
+        "required_command_tokens": ["build_android_ui_state_pack_parallel.ps1", "-planonly"],
+        "forbidden_command_tokens": ["-realrun"],
+    },
+}
+
 REQUIRED_FIXTURES = {
     "tiny_model_path",
     "task_inventory_path",
@@ -116,6 +159,31 @@ def _validate_expected_flags(data: dict[str, Any], errors: list[str]) -> None:
             errors.append(f"expected root.{key} to be {str(expected).lower()}")
 
 
+def _validate_step_contract(
+    step: dict[str, Any],
+    name: str,
+    scope: str,
+    errors: list[str],
+) -> None:
+    contract = STEP_CONTRACTS.get(name)
+    if contract is None:
+        return
+
+    command = str(step.get("command", "")).lower()
+    for token in contract.get("required_command_tokens", []):
+        if token.lower() not in command:
+            errors.append(f"expected {scope}.command to include {token!r}")
+    for token in contract.get("forbidden_command_tokens", []):
+        if token.lower() in command:
+            errors.append(f"expected {scope}.command to omit {token!r}")
+
+    summary_path = step.get("summary_path")
+    summary_text = "" if summary_path is None else str(summary_path).replace("\\", "/").lower()
+    for fragment in contract.get("summary_fragments", []):
+        if fragment.lower() not in summary_text:
+            errors.append(f"expected {scope}.summary_path to include {fragment!r}")
+
+
 def _validate_step(step: Any, index: int, errors: list[str]) -> str | None:
     scope = f"steps[{index}]"
     if not isinstance(step, dict):
@@ -138,6 +206,9 @@ def _validate_step(step: Any, index: int, errors: list[str]) -> str | None:
         _expect_str(step.get("summary_path"), errors, f"{scope}.summary_path")
     if "markdown_path" in step and step.get("markdown_path") is not None:
         _expect_str(step.get("markdown_path"), errors, f"{scope}.markdown_path")
+
+    if isinstance(name, str):
+        _validate_step_contract(step, name, scope, errors)
 
     return name if isinstance(name, str) else None
 
