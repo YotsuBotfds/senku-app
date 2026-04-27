@@ -37,6 +37,9 @@ PROTECTED_BENIGN_UNTRACKED = {
     "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
     "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
 }
+PROTECTED_BENIGN_UNTRACKED_PATTERNS = (
+    re.compile(r"^notes/PLANNER_HANDOFF.*\.md$"),
+)
 
 
 @dataclass(frozen=True)
@@ -111,7 +114,10 @@ def parse_git_status_short(
         path = (raw_line[3:].strip() if len(raw_line) > 3 else "").replace("\\", "/")
         counts[status] = counts.get(status, 0) + 1
         entry = {"status": status, "path": path}
-        if status == "??" and path in benign_paths:
+        is_benign_untracked = path in benign_paths or any(
+            pattern.match(path) for pattern in PROTECTED_BENIGN_UNTRACKED_PATTERNS
+        )
+        if status == "??" and is_benign_untracked:
             benign_untracked.append(entry)
             continue
         actionable_total += 1

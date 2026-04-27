@@ -123,6 +123,35 @@ class LiveQueueMonitorTests(unittest.TestCase):
         )
         self.assertEqual(summary["entries"], [{"status": " M", "path": "query.py"}])
 
+    def test_parse_git_status_short_treats_new_handoff_names_as_benign(self):
+        module = load_module()
+
+        summary = module.parse_git_status_short(
+            "?? notes\\PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md\n"
+            "?? notes/PLANNER_HANDOFF_future_local.md\n"
+            "?? notes/OTHER_HANDOFF.md\n",
+            benign_untracked_paths=module.PROTECTED_BENIGN_UNTRACKED,
+        )
+
+        self.assertFalse(summary["clean"])
+        self.assertEqual(summary["total_changed"], 1)
+        self.assertEqual(summary["raw_total_changed"], 3)
+        self.assertEqual(summary["benign_untracked_count"], 2)
+        self.assertEqual(
+            summary["benign_untracked"],
+            [
+                {
+                    "status": "??",
+                    "path": "notes/PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md",
+                },
+                {
+                    "status": "??",
+                    "path": "notes/PLANNER_HANDOFF_future_local.md",
+                },
+            ],
+        )
+        self.assertEqual(summary["entries"], [{"status": "??", "path": "notes/OTHER_HANDOFF.md"}])
+
     def test_collect_git_summary_uses_injected_runner(self):
         module = load_module()
         calls = []
