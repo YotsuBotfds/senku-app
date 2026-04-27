@@ -664,7 +664,11 @@ Keep detailed notes on temperature, timing, product quantities, and observations
 
 [Food Preservation Techniques](food-preservation.html) - Acetic acid and tar applications in food preservation
 
-{{> wood-distillation-custom }}
+:::note
+For adjacent topics, use the related guides above rather than treating this
+page as a general chemistry or solvent-production router. Keep process-specific
+questions with the guide that owns that process and its safety limits.
+:::
 
 :::affiliate
 **If you're preparing in advance,** retort distillation requires a sealed vessel and condenser — open-fire wood burns release volatiles but cannot capture or condense the useful chemical fractions:

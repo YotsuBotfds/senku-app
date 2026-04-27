@@ -1511,7 +1511,12 @@ Notes saved locally.
 -   [Construction & Settlement](construction.html) — Using soil for foundations, brick, and clay materials
 -   [Irrigation & Water Management](irrigation-water.html) — Integrating soil drainage and irrigation systems
 
-{{> soil-science-remediation-custom }}
+:::note
+This guide's remediation sections are planning and observation aids. For
+contamination, legal clearance, food-safety decisions, or uncertain site
+history, keep records and route decisions to qualified soil, agriculture,
+environmental, or public-health owners instead of improvising a treatment plan.
+:::
 
 :::affiliate
 **If you're preparing in advance,** have these testing tools for soil analysis and remediation:

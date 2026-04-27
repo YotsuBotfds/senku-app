@@ -1412,4 +1412,11 @@ sequence:
 
 [← Back to Index](../index.html)↑ Back to Top
 
-{{> burn-treatment-custom }}
+:::warning
+**Burn-care boundary:** Seek emergency or burn-specialist care for airway or
+inhalation concerns, burns involving the face, hands, genitals, major joints, or
+large/deep areas, circumferential burns, electrical or chemical burns,
+infection signs, worsening pain, shock, or any burn in a very young, elderly, or
+medically fragile person. Do not use this footer as a substitute for the
+protocols and escalation thresholds earlier in the guide.
+:::

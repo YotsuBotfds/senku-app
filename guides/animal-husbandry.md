@@ -601,7 +601,14 @@ Dogs have worked alongside humans for 15,000+ years. In post-collapse scenarios,
 
 ## Veterinary First Aid
 
-{{> livestock-health-diagnostic }}
+:::warning
+**Livestock health boundary:** Use this section to observe, isolate, record,
+and escalate animal health concerns. Sudden collapse, severe pain, labored
+breathing, inability to stand, neurologic signs, suspected rabies, severe
+bleeding, poisoning, heat stress, or rapidly spreading illness needs immediate
+veterinary or experienced livestock-owner help. Do not use this guide to invent
+diagnoses, medication doses, or invasive procedures.
+:::
 
 ### Veterinary Wound Care for Livestock and Working Animals
 
