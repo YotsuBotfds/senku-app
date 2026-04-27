@@ -70,6 +70,8 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
                 [launcher["role"] for launcher in plan["launchers"]],
                 ["phone_portrait", "tablet_landscape"],
             )
+            self.assertEqual(plan["max_parallel_devices"], 4)
+            self.assertEqual(plan["effective_max_parallel_devices"], 4)
             self.assertTrue(
                 all("-SkipFinalize -SkipBuild" in launcher["command"] for launcher in plan["launchers"])
             )
@@ -82,6 +84,46 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             launched_artifacts += list((run_dir / "parallel_logs").glob("*.exitcode.txt"))
             self.assertEqual(launched_artifacts, [])
             self.assertFalse((run_dir / "summary.json").exists())
+
+    def test_plan_only_reports_effective_max_parallel_devices_after_launcher_clamp(self):
+        with tempfile.TemporaryDirectory(
+            prefix="ui_state_pack_plan_",
+            dir=REPO_ROOT / "artifacts",
+        ) as temp_dir:
+            output_root = Path(temp_dir).relative_to(REPO_ROOT)
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT_PATH),
+                    "-OutputRoot",
+                    str(output_root),
+                    "-RoleFilter",
+                    "phone_portrait",
+                    "-MaxParallelDevices",
+                    "0",
+                    "-PlanOnly",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            match = re.search(r"Plan:\s*(?P<path>.+plan\.json)", result.stdout)
+            self.assertIsNotNone(match, result.stdout)
+
+            plan_path = Path(match.group("path").strip())
+            plan = json.loads(plan_path.read_text(encoding="utf-8-sig"))
+
+            self.assertEqual(plan["max_parallel_devices"], 0)
+            self.assertEqual(plan["effective_max_parallel_devices"], 1)
+            self.assertEqual(plan["selected_roles"], ["phone_portrait"])
 
     def test_plan_only_branch_precedes_launch_and_finalize_work(self):
         script = SCRIPT_PATH.read_text(encoding="utf-8-sig")

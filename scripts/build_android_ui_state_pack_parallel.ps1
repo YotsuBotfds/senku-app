@@ -95,6 +95,7 @@ if ($PlanOnly) {
         host_inference_url = $HostInferenceUrl
         host_inference_model = $HostInferenceModel
         max_parallel_devices = [int]$MaxParallelDevices
+        effective_max_parallel_devices = [Math]::Max(1, $MaxParallelDevices)
         plan_only = $true
         launchers = @($roles | ForEach-Object {
             [pscustomobject]@{
