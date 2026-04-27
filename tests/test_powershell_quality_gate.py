@@ -7,6 +7,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 WINDOWS_VALIDATION_PATH = REPO_ROOT / "scripts" / "run_windows_validation.ps1"
 ANDROID_PROMPT_PATH = REPO_ROOT / "scripts" / "run_android_prompt.ps1"
+ANDROID_SMOKE_PATH = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
 WRAPPER_SLICE_PATHS = (
     "scripts\\run_powershell_quality_gate.ps1",
     "scripts\\run_windows_validation.ps1",
@@ -71,6 +72,15 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('[string]$Orientation = ""', script)
         self.assertIn('$preflightArgs += @("-Orientation", $Orientation)', script)
         self.assertIn('$instrumentationArgs += @("-Orientation", $Orientation)', script)
+
+    def test_android_smoke_classifies_platform_anr_dialogs(self):
+        script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("function Get-PlatformAnrEvidence", script)
+        self.assertIn("System UI isn't responding", script)
+        self.assertIn('resource-id="android:id/aerr_wait"', script)
+        self.assertIn('resource-id="android:id/aerr_close"', script)
+        self.assertIn("platform_anr = $platformAnrEvidence", script)
 
     def test_quality_gate_dry_run_lists_selected_files(self):
         result = run_gate(

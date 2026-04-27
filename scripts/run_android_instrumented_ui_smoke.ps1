@@ -746,6 +746,39 @@ function Get-ArtifactExpectationFailures {
     return @($failures)
 }
 
+function Get-PlatformAnrEvidence {
+    param(
+        [string]$DumpDirectory
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DumpDirectory) -or -not (Test-Path -LiteralPath $DumpDirectory)) {
+        return $null
+    }
+
+    foreach ($dump in @(Get-ChildItem -LiteralPath $DumpDirectory -Filter "*.xml" -File -ErrorAction SilentlyContinue | Sort-Object Name)) {
+        $text = ""
+        try {
+            $text = Get-Content -LiteralPath $dump.FullName -Raw -ErrorAction Stop
+        } catch {
+            continue
+        }
+
+        $hasAnrTitle = $text.Contains("System UI isn't responding") -or $text.Contains("System UI isn&apos;t responding")
+        $hasAnrControls = $text.Contains('resource-id="android:id/aerr_wait"') -or $text.Contains('resource-id="android:id/aerr_close"')
+        if ($hasAnrTitle -or $hasAnrControls) {
+            return [pscustomobject]@{
+                detected = $true
+                dump = $dump.Name
+                reason = "Android platform ANR dialog blocked run: System UI isn't responding; dump=$($dump.Name)"
+                has_system_ui_title = [bool]$hasAnrTitle
+                has_anr_controls = [bool]$hasAnrControls
+            }
+        }
+    }
+
+    return $null
+}
+
 function Write-RunPhase {
     param([string]$Phase)
 
@@ -1034,6 +1067,7 @@ $artifactExpectationFailures = @()
 $artifactExpectationsMet = $false
 $installedIdentity = $null
 $identityProbeError = $null
+$platformAnrEvidence = $null
 
 try {
     try {
@@ -1257,8 +1291,12 @@ try {
             Copy-RunAsFile -RemoteRelativePath ("files/test-artifacts/" + $artifactFile) -LocalPath (Join-Path $targetDir $artifactFile)
         }
         Write-RunPhase -Phase "artifact copy complete"
+        $platformAnrEvidence = Get-PlatformAnrEvidence -DumpDirectory $dumpDir
 
         if ($instrumentationLooksFailed) {
+            if ($null -ne $platformAnrEvidence -and $platformAnrEvidence.detected -eq $true) {
+                throw $platformAnrEvidence.reason
+            }
             throw "Instrumentation run failed"
         }
 
@@ -1397,6 +1435,7 @@ try {
         model_sha = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_sha)) { [string]$installedIdentity.model_sha } else { $null })
         identity_probe_error = $(if ([string]::IsNullOrWhiteSpace($identityProbeError)) { $null } else { $identityProbeError })
         installed_pack = $installedPackMetadata
+        platform_anr = $platformAnrEvidence
         artifact_dir = $artifactDir
         device_facts = $deviceFacts
         artifact_facts = [pscustomobject]@{

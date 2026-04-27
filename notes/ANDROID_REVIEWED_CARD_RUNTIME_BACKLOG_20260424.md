@@ -80,6 +80,10 @@ Landed Android sequence:
   app sandbox and proved via `summary.json.installed_pack`. Reviewed prompt
   canary attempts were blocked by Android System UI ANR dialogs and are not
   counted as green runtime proof.
+- `RAG-A14j`: Android instrumented UI smoke summaries now classify copied XML
+  dump artifacts that contain the platform `System UI isn't responding` ANR
+  dialog, preserving the exact blocker in `failure_reason` and `platform_anr`
+  without auto-dismissing or changing app behavior.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
