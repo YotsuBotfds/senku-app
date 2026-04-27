@@ -17,6 +17,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1): parallel four-lane screenshot/dump sweep across the fixed emulator matrix
 - [`ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md`](./ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md): desktop reviewed-card/provenance contract translated into Android work
 - [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1` through `RAG-CH3`, plus test-only `RAG-CH5`
+- [`ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](./ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md): pushed 271-card current-head pack guard runbook
 
 ## Current artifact baseline
 
