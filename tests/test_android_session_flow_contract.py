@@ -52,6 +52,18 @@ class AndroidSessionFlowContractTests(unittest.TestCase):
         self.assertIn("error = $turnError", self.script)
         self.assertIn("session_text = if ($sessionSummary)", self.script)
 
+    def test_manifest_records_host_adb_platform_tools_version(self):
+        self.assertIn('$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"', self.script)
+        self.assertIn("Import-Module $commonHarnessModule -Force -DisableNameChecking", self.script)
+        self.assertIn(
+            "$hostAdbPlatformToolsVersion = Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb",
+            self.script,
+        )
+        self.assertIn(
+            "host_adb_platform_tools_version = $hostAdbPlatformToolsVersion",
+            self.script,
+        )
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [

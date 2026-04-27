@@ -17,10 +17,17 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+if (-not (Test-Path $commonHarnessModule)) {
+    throw "android_harness_common.psm1 not found at $commonHarnessModule"
+}
 if (-not (Test-Path $adb)) {
     throw "adb not found at $adb"
 }
+
+Import-Module $commonHarnessModule -Force -DisableNameChecking
+$hostAdbPlatformToolsVersion = Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb
 
 if ($FollowUpQueries.Count -lt 1) {
     throw "Provide at least one follow-up query with -FollowUpQueries."
@@ -323,6 +330,7 @@ for ($turnIndex = 0; $turnIndex -lt $turns.Count; $turnIndex++) {
     $record = [ordered]@{
         session_label = $label
         emulator = $Emulator
+        host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
         turn_index = $turnIndex + 1
         turn_kind = $turn.Kind
         query = $turn.Query

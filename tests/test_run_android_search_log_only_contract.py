@@ -17,6 +17,31 @@ class AndroidSearchLogOnlyContractTests(unittest.TestCase):
         self.assertIn("[switch]$ForcePackPush", self.script)
         self.assertIn("[string]$PushPackSummaryPath", self.script)
 
+    def test_imports_android_harness_common_and_captures_host_adb_version_after_adb_validation(self):
+        adb_validation = 'throw "adb not found at $adb"'
+        module_import = 'Import-Module $commonHarnessModule -Force -DisableNameChecking'
+        version_capture = "$hostAdbPlatformToolsVersion = Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb"
+
+        self.assertIn('$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"', self.script)
+        self.assertIn('throw "android_harness_common.psm1 not found at $commonHarnessModule"', self.script)
+        self.assertIn(module_import, self.script)
+        self.assertIn(version_capture, self.script)
+        self.assertLess(self.script.index(adb_validation), self.script.index(module_import))
+        self.assertLess(self.script.index(module_import), self.script.index(version_capture))
+
+    def test_emits_compact_metadata_json_after_logcat_save_before_exits(self):
+        save_logcat = "Save-Logcat -Path $LogcatPath"
+        metadata_key = "host_adb_platform_tools_version = $hostAdbPlatformToolsVersion"
+        json_emit = "} | ConvertTo-Json -Compress -Depth 4)"
+        success_exit = "exit 0"
+        failure_exit = "exit 1"
+
+        self.assertIn(metadata_key, self.script)
+        self.assertIn(json_emit, self.script)
+        self.assertLess(self.script.index(save_logcat), self.script.index(metadata_key))
+        self.assertLess(self.script.index(json_emit), self.script.index(success_exit))
+        self.assertLess(self.script.index(json_emit), self.script.index(failure_exit))
+
     def test_forwards_pack_push_cache_flags_to_push_mobile_pack(self):
         self.assertIn('$pushPackArgs = @(', self.script)
         self.assertIn('"-Device", $Emulator,', self.script)

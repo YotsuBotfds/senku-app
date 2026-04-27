@@ -22,6 +22,12 @@ $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
 if (-not (Test-Path $adb)) {
     throw "adb not found at $adb"
 }
+$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
+if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
+    throw "android_harness_common.psm1 not found at $commonHarnessModule"
+}
+Import-Module $commonHarnessModule -Force -DisableNameChecking
+$hostAdbPlatformToolsVersion = Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb
 
 function Quote-AndroidShellArg {
     param([string]$Value)
@@ -193,6 +199,9 @@ while ((Get-Date) -lt $deadline) {
 }
 
 Save-Logcat -Path $LogcatPath
+Write-Output ([pscustomobject]@{
+    host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
+} | ConvertTo-Json -Compress -Depth 4)
 
 $summary = @()
 if ($completed) {

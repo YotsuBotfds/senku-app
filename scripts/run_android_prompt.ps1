@@ -57,6 +57,7 @@ if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
     throw "android_harness_common.psm1 not found at $commonHarnessModule"
 }
 Import-Module $commonHarnessModule -Force -DisableNameChecking
+$hostAdbPlatformToolsVersion = Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb
 New-Item -ItemType Directory -Force -Path $lockRoot | Out-Null
 
 function Acquire-DeviceLock {
@@ -191,6 +192,14 @@ function Remove-ArtifactIfExists {
         } catch {
         }
     }
+}
+
+function Write-RunAndroidPromptMetadata {
+    param([string]$HostAdbPlatformToolsVersion)
+
+    [pscustomobject]@{
+        host_adb_platform_tools_version = $HostAdbPlatformToolsVersion
+    } | ConvertTo-Json -Compress | Write-Output
 }
 
 function Get-InstrumentationSummaryFailureMessage {
@@ -918,6 +927,11 @@ if ($resolvedInstrumentationExecution) {
         if ($LogcatPath -and (Test-Path -LiteralPath $LogcatPath)) {
             Write-Host "Logcat saved to $LogcatPath"
         }
+        $summaryHostAdbPlatformToolsVersion = [string]$summary.host_adb_platform_tools_version
+        if ([string]::IsNullOrWhiteSpace($summaryHostAdbPlatformToolsVersion)) {
+            $summaryHostAdbPlatformToolsVersion = $hostAdbPlatformToolsVersion
+        }
+        Write-RunAndroidPromptMetadata -HostAdbPlatformToolsVersion $summaryHostAdbPlatformToolsVersion
         exit 0
     } finally {
         Remove-ArtifactIfExists -Path $summaryPath
@@ -1132,6 +1146,7 @@ if ($LogcatPath) {
 
 Remove-ArtifactIfExists -Path $completionDump
 
+    Write-RunAndroidPromptMetadata -HostAdbPlatformToolsVersion $hostAdbPlatformToolsVersion
     exit 0
 } finally {
     if ($deviceLock) {

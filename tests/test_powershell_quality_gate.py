@@ -327,6 +327,33 @@ class PowerShellQualityGateTests(unittest.TestCase):
             script,
         )
 
+    def test_android_prompt_emits_host_adb_platform_tools_version_metadata(self):
+        script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "$hostAdbPlatformToolsVersion = Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb",
+            script,
+        )
+        self.assertIn("function Write-RunAndroidPromptMetadata", script)
+        self.assertIn("host_adb_platform_tools_version = $HostAdbPlatformToolsVersion", script)
+        self.assertIn("ConvertTo-Json -Compress | Write-Output", script)
+        self.assertIn(
+            "$summaryHostAdbPlatformToolsVersion = [string]$summary.host_adb_platform_tools_version",
+            script,
+        )
+        self.assertIn(
+            "$summaryHostAdbPlatformToolsVersion = $hostAdbPlatformToolsVersion",
+            script,
+        )
+        self.assertIn(
+            "Write-RunAndroidPromptMetadata -HostAdbPlatformToolsVersion $summaryHostAdbPlatformToolsVersion",
+            script,
+        )
+        self.assertIn(
+            "Write-RunAndroidPromptMetadata -HostAdbPlatformToolsVersion $hostAdbPlatformToolsVersion",
+            script,
+        )
+
     def test_quality_gate_dry_run_lists_selected_files(self):
         result = run_gate(
             "-Path",
