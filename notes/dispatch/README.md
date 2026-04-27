@@ -77,6 +77,13 @@ Current RAG status:
   allowlist for strict gate runs.
 - Android reviewed-card/runtime work remains a separate lane; do not infer
   Android implementation work from this non-Android status reconciliation.
+- Android current-head/pushed-pack guard history is tracked from `RAG-A14e`
+  through `RAG-A15f`; start from [`../ANDROID_INDEX.md`](../ANDROID_INDEX.md),
+  [`../ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](../ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md),
+  and [`../ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](../ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md).
+  The 271-card pushed-pack guards are assumption-gated and skip without that
+  pack, the six pilot cards remain the only runtime-planned cards, and reviewed
+  card runtime remains developer/test-only and default-off.
 
 Historical landed ledger:
 
