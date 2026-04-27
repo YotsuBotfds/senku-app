@@ -66,6 +66,17 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_android_fts_fallback_matr
   -OutputDir artifacts\bench\android_fts_fallback_matrix_current
 ```
 
+Optional Gradle Managed Devices tasks are hidden behind an explicit property
+gate:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+.\gradlew.bat :app:tasks --all '-Psenku.enableManagedDevices=true' --console=plain
+```
+
+This scaffold is only a future parallel smoke lane. It does not replace the
+fixed four-emulator screenshot/state-pack evidence above.
+
 ## Build
 
 From this directory:

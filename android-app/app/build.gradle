@@ -4,6 +4,11 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
 }
 
+def senkuManagedDevicesEnabled = providers.gradleProperty('senku.enableManagedDevices')
+        .map { it.toBoolean() }
+        .orElse(false)
+        .get()
+
 android {
     namespace 'com.senku.mobile'
     compileSdk 34
@@ -20,6 +25,29 @@ android {
     testOptions {
         animationsDisabled true
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
+
+        if (senkuManagedDevicesEnabled) {
+            managedDevices {
+                devices {
+                    senkuPhoneApi30(com.android.build.api.dsl.ManagedVirtualDevice) {
+                        device = 'Pixel 2'
+                        apiLevel = 30
+                        systemImageSource = 'aosp'
+                    }
+                    senkuTabletApi30(com.android.build.api.dsl.ManagedVirtualDevice) {
+                        device = 'Pixel C'
+                        apiLevel = 30
+                        systemImageSource = 'aosp'
+                    }
+                }
+                groups {
+                    senkuManagedSmoke {
+                        targetDevices.add(devices.senkuPhoneApi30)
+                        targetDevices.add(devices.senkuTabletApi30)
+                    }
+                }
+            }
+        }
     }
 
     buildTypes {
