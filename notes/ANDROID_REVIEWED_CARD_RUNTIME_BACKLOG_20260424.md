@@ -62,6 +62,9 @@ Landed Android sequence:
   reviewed-card runtime toggle. Runtime remains developer/test scoped and
   default `off`; four-lane phone/tablet portrait/landscape proof captured
   screenshots and UI dumps through the shared Android artifact harness.
+- `RAG-CH6`: mobile-pack count probe helper landed. It compares Android bundled
+  pack counts against a fresh current-head export while safely reporting
+  unresolved Git LFS pointer assets instead of opening them as SQLite.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
