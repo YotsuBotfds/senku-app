@@ -255,6 +255,28 @@ function Get-AssignedEmulator {
     return "emulator-5554"
 }
 
+function Resolve-MatrixDevicePosture {
+    param([string]$Emulator)
+
+    switch ($Emulator) {
+        "emulator-5556" {
+            return [pscustomobject]@{ role = "phone"; orientation = "portrait"; posture = "phone_portrait" }
+        }
+        "emulator-5560" {
+            return [pscustomobject]@{ role = "phone"; orientation = "landscape"; posture = "phone_landscape" }
+        }
+        "emulator-5554" {
+            return [pscustomobject]@{ role = "tablet"; orientation = "portrait"; posture = "tablet_portrait" }
+        }
+        "emulator-5558" {
+            return [pscustomobject]@{ role = "tablet"; orientation = "landscape"; posture = "tablet_landscape" }
+        }
+        default {
+            return [pscustomobject]@{ role = "unknown"; orientation = "unknown"; posture = "unknown" }
+        }
+    }
+}
+
 function New-DefaultRunLabel {
     param(
         $Run,
@@ -283,6 +305,7 @@ function New-RunnerSpec {
 
     $mode = Get-RunMode -Run $Run
     $emulator = Get-AssignedEmulator -Run $Run -Index $Index
+    $posture = Resolve-MatrixDevicePosture -Emulator $emulator
     $requestedLabel = Get-RunStringOrDefault -Run $Run -PropertyName "run_label"
     $warmStart = Get-RunBoolOrDefault -Run $Run -PropertyName "warm_start" -DefaultValue ([bool]$DefaultWarmStart)
     $runPushPackDir = Get-RunStringOrDefault -Run $Run -PropertyName "push_pack_dir" -DefaultValue $PushPackDir
@@ -339,6 +362,9 @@ function New-RunnerSpec {
             mode = $mode
             runner_path = $promptLoggedScript
             run_label = $runLabel
+            device_role = $posture.role
+            orientation = $posture.orientation
+            posture = $posture.posture
             manifest_path = Join-Path $ResolvedOutputDir ($runLabel + ".json")
             logcat_path = Join-Path $ResolvedOutputDir ($runLabel + ".logcat.txt")
             args = $args
@@ -378,6 +404,9 @@ function New-RunnerSpec {
         mode = $mode
         runner_path = $detailLoggedScript
         run_label = $runLabel
+        device_role = $posture.role
+        orientation = $posture.orientation
+        posture = $posture.posture
         manifest_path = Join-Path $ResolvedOutputDir ($runLabel + ".json")
         logcat_path = Join-Path $ResolvedOutputDir ($runLabel + ".logcat.txt")
         args = $args
@@ -512,6 +541,9 @@ function Receive-CompletedJobs {
             mode = $entry.runner.mode
             emulator = $entry.runner.args.Emulator
             run_label = $entry.runner.run_label
+            device_role = $entry.runner.device_role
+            orientation = $entry.runner.orientation
+            posture = $entry.runner.posture
             warm_start = [bool]$entry.runner.args.WarmStart
             push_pack_dir = $(if ($entry.runner.args.Contains("PushPackDir")) { [string]$entry.runner.args.PushPackDir } else { $null })
             status = if ($failed) { "failed" } else { "completed" }
@@ -569,6 +601,9 @@ function New-MatrixSummary {
 
         $emulatorGroups += [ordered]@{
             emulator = $emulator
+            posture = $(if ($emulatorResults.Count -gt 0) { $emulatorResults[0].posture } else { "unknown" })
+            device_role = $(if ($emulatorResults.Count -gt 0) { $emulatorResults[0].device_role } else { "unknown" })
+            orientation = $(if ($emulatorResults.Count -gt 0) { $emulatorResults[0].orientation } else { "unknown" })
             total = $emulatorResults.Count
             completed = $emulatorCompleted.Count
             failed = $emulatorFailed.Count
@@ -583,12 +618,14 @@ function New-MatrixSummary {
             $artifactPaths += [ordered]@{
                 kind = "manifest_json"
                 path = $_.manifest_path
+                posture = $_.posture
             }
         }
         if (Test-Path -LiteralPath $_.logcat_path) {
             $artifactPaths += [ordered]@{
                 kind = "logcat"
                 path = $_.logcat_path
+                posture = $_.posture
             }
         }
 
@@ -596,6 +633,7 @@ function New-MatrixSummary {
             run_label = $_.run_label
             mode = $_.mode
             emulator = $_.emulator
+            posture = $_.posture
             warm_start = $_.warm_start
             error = $_.error
             artifact_paths = $artifactPaths
@@ -612,6 +650,7 @@ function New-MatrixSummary {
                 kind = "manifest_json"
                 run_label = $result.run_label
                 emulator = $result.emulator
+                posture = $result.posture
                 path = $result.manifest_path
             }
         }
@@ -620,6 +659,7 @@ function New-MatrixSummary {
                 kind = "logcat"
                 run_label = $result.run_label
                 emulator = $result.emulator
+                posture = $result.posture
                 path = $result.logcat_path
             }
         }
@@ -660,7 +700,7 @@ function ConvertTo-MatrixSummaryMarkdown {
 
     $lines += @("", "## Emulator Groups")
     foreach ($group in $Summary.emulator_groups) {
-        $lines += "- emulator=$($group.emulator) total=$($group.total) completed=$($group.completed) failed=$($group.failed)"
+        $lines += "- emulator=$($group.emulator) posture=$($group.posture) total=$($group.total) completed=$($group.completed) failed=$($group.failed) warm_start=$($group.warm_start_count)"
         foreach ($statusGroup in $group.status_groups) {
             $runLabels = if ($statusGroup.run_labels.Count -gt 0) { ($statusGroup.run_labels -join ", ") } else { "-" }
             $lines += "  - $($statusGroup.status): $($statusGroup.count) ($runLabels)"
@@ -672,7 +712,7 @@ function ConvertTo-MatrixSummaryMarkdown {
         $lines += "- none"
     } else {
         foreach ($item in $Summary.failed_items) {
-            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) error=$($item.error)"
+            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) posture=$($item.posture) warm_start=$($item.warm_start) error=$($item.error)"
             foreach ($path in $item.artifact_paths) {
                 $lines += "  - $($path.kind): $($path.path)"
             }
@@ -687,6 +727,9 @@ function ConvertTo-MatrixSummaryMarkdown {
         }
         if ($artifact.PSObject.Properties.Name -contains "emulator") {
             $suffix = "$suffix emulator=$($artifact.emulator)"
+        }
+        if ($artifact.PSObject.Properties.Name -contains "posture") {
+            $suffix = "$suffix posture=$($artifact.posture)"
         }
         $lines += "- kind=$($artifact.kind)$suffix path=$($artifact.path)"
     }
