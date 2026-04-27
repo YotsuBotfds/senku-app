@@ -246,6 +246,7 @@ Use this when validating:
 Helpful harnesses:
 - [`scripts/run_android_session_flow.ps1`](./scripts/run_android_session_flow.ps1): run one grounded prompt plus one or more follow-ups on a single emulator session
 - [`scripts/run_android_session_batch.ps1`](./scripts/run_android_session_batch.ps1): run a small prompt-pair sweep and write structured manifests
+- [`scripts/run_android_followup_suite.ps1`](./scripts/run_android_followup_suite.ps1): replay JSON/JSONL follow-up suites across the fixed emulator set
 - [`scripts/run_android_detail_followup.ps1`](./scripts/run_android_detail_followup.ps1): drive the in-detail follow-up composer, wait for thread-style completion, and write a structured JSON manifest plus UI dumps
 - [`scripts/run_android_gap_pack.ps1`](./scripts/run_android_gap_pack.ps1): replay the compact Android gap-pack JSONL across the suggested emulator lanes for single-turn, follow-up, or combined runs
 - [`scripts/run_android_instrumented_ui_smoke.ps1`](./scripts/run_android_instrumented_ui_smoke.ps1): run the new AndroidX instrumentation smoke lane on a chosen attached device without relying on shell-side XML polling for completion
@@ -500,6 +501,7 @@ Use this as the default validation lane for Spark UI slices that touch:
   - Use `python .\scripts\refresh_mobile_pack_metadata.py <pack_dir>` for an in-place metadata refresh of an existing mobile-pack SQLite bundle.
   - Do not accidentally promote a tiny experimental export in place of the real full pack.
 - If a test run is interrupted, verify there are no orphaned harness processes before retrying.
+- Use `powershell -ExecutionPolicy Bypass -File .\scripts\stop_android_harness_runs.ps1` when a retry needs both host harness cleanup and Senku package force-stops on target devices.
 - Use `powershell -ExecutionPolicy Bypass -File .\scripts\stop_android_harness_orphans.ps1` to clean stale Android prompt/follow-up harness trees before rerunning.
 - For the large debug APK, prefer `adb install --no-streaming -r ...`; streamed or parallel installs can hit transient certificate/parse failures on the emulators.
 - When using `run_android_detail_followup.ps1`, trust the JSON manifest plus paired XML dumps over console timing alone.
