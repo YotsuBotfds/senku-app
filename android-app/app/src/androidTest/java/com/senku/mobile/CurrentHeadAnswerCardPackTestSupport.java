@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 final class CurrentHeadAnswerCardPackTestSupport {
@@ -146,6 +147,32 @@ final class CurrentHeadAnswerCardPackTestSupport {
             manifest.answerCardCount == CURRENT_HEAD_ANSWER_CARD_COUNT
         );
         return manifest;
+    }
+
+    static PackInstaller.InstalledPack installBundledCurrentHeadPack(
+        Context context,
+        String purpose
+    ) throws Exception {
+        PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(context, false);
+        assertTrue("installed mobile pack manifest is absent after bundled install for " + purpose, pack.manifestFile.isFile());
+        assertTrue("installed mobile pack database is absent after bundled install for " + purpose, pack.databaseFile.isFile());
+        assertTrue("installed mobile pack vector file is absent after bundled install for " + purpose, pack.vectorFile.isFile());
+        assertEquals(
+            "bundled install should hydrate the current-head answer-card pack for " + purpose,
+            CURRENT_HEAD_ANSWER_CARD_COUNT,
+            pack.manifest.answerCardCount
+        );
+        assertEquals(
+            "installed current-head database size must match its manifest for " + purpose,
+            pack.manifest.sqliteBytes,
+            pack.databaseFile.length()
+        );
+        assertEquals(
+            "installed current-head vector size must match its manifest for " + purpose,
+            pack.manifest.vectorBytes,
+            pack.vectorFile.length()
+        );
+        return pack;
     }
 
     private static File packRoot(Context context) {

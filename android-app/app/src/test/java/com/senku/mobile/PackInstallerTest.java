@@ -141,12 +141,13 @@ public final class PackInstallerTest {
 
     @Test
     public void shouldInstallFromAssetsPreservesUsableInstalledPackOnNormalInstall() throws Exception {
-        InstalledPackFiles files = installedPackFiles(123, 456, 123, 456);
+        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 123, 456);
 
         assertEquals(
             false,
             PackInstaller.shouldInstallFromAssetsForTest(
                 false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
                 files.manifestFile,
                 files.sqliteFile,
                 files.vectorFile
@@ -156,12 +157,13 @@ public final class PackInstallerTest {
 
     @Test
     public void shouldInstallFromAssetsRefreshesWhenForcedEvenIfInstalledPackIsUsable() throws Exception {
-        InstalledPackFiles files = installedPackFiles(123, 456, 123, 456);
+        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 123, 456);
 
         assertEquals(
             true,
             PackInstaller.shouldInstallFromAssetsForTest(
                 true,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
                 files.manifestFile,
                 files.sqliteFile,
                 files.vectorFile
@@ -177,6 +179,7 @@ public final class PackInstallerTest {
             true,
             PackInstaller.shouldInstallFromAssetsForTest(
                 false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
                 tempDir.resolve("senku_manifest.json").toFile(),
                 tempDir.resolve("senku_mobile.sqlite3").toFile(),
                 tempDir.resolve("senku_vectors.f16").toFile()
@@ -186,12 +189,13 @@ public final class PackInstallerTest {
 
     @Test
     public void shouldInstallFromAssetsRefreshesWhenInstalledSizesDoNotMatchManifest() throws Exception {
-        InstalledPackFiles files = installedPackFiles(123, 456, 122, 456);
+        InstalledPackFiles files = installedPackFiles("2026-04-27T04:21:12.533181+00:00", 271, 123, 456, 122, 456);
 
         assertEquals(
             true,
             PackInstaller.shouldInstallFromAssetsForTest(
                 false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
                 files.manifestFile,
                 files.sqliteFile,
                 files.vectorFile
@@ -213,9 +217,42 @@ public final class PackInstallerTest {
             true,
             PackInstaller.shouldInstallFromAssetsForTest(
                 false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
                 manifestFile,
                 sqliteFile,
                 vectorFile
+            )
+        );
+    }
+
+    @Test
+    public void shouldInstallFromAssetsRefreshesOlderInstalledPackOnNormalInstall() throws Exception {
+        InstalledPackFiles files = installedPackFiles("2026-04-12T19:23:50Z", 6, 123, 456, 123, 456);
+
+        assertEquals(
+            true,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                files.manifestFile,
+                files.sqliteFile,
+                files.vectorFile
+            )
+        );
+    }
+
+    @Test
+    public void shouldInstallFromAssetsPreservesNewerInstalledPackOnNormalInstall() throws Exception {
+        InstalledPackFiles files = installedPackFiles("2026-05-01T00:00:00Z", 300, 123, 456, 123, 456);
+
+        assertEquals(
+            false,
+            PackInstaller.shouldInstallFromAssetsForTest(
+                false,
+                manifestWithGeneratedAtAndAnswerCards("2026-04-27T04:21:12.533181+00:00", 271),
+                files.manifestFile,
+                files.sqliteFile,
+                files.vectorFile
             )
         );
     }
@@ -267,7 +304,13 @@ public final class PackInstallerTest {
         );
     }
 
+    private static PackManifest manifestWithGeneratedAtAndAnswerCards(String generatedAt, int answerCardCount) throws Exception {
+        return PackManifest.fromJson(manifestJson(generatedAt, answerCardCount, 123, 456));
+    }
+
     private static InstalledPackFiles installedPackFiles(
+        String generatedAt,
+        int answerCardCount,
         long manifestSqliteBytes,
         long manifestVectorBytes,
         int actualSqliteBytes,
@@ -279,24 +322,24 @@ public final class PackInstallerTest {
         File vectorFile = tempDir.resolve("senku_vectors.f16").toFile();
         Files.write(
             manifestFile.toPath(),
-            manifestJsonWithFileSizes(manifestSqliteBytes, manifestVectorBytes).getBytes(StandardCharsets.UTF_8)
+            manifestJson(generatedAt, answerCardCount, manifestSqliteBytes, manifestVectorBytes).getBytes(StandardCharsets.UTF_8)
         );
         Files.write(sqliteFile.toPath(), repeatedBytes(actualSqliteBytes));
         Files.write(vectorFile.toPath(), repeatedBytes(actualVectorBytes));
         return new InstalledPackFiles(manifestFile, sqliteFile, vectorFile);
     }
 
-    private static String manifestJsonWithFileSizes(long sqliteBytes, long vectorBytes) {
+    private static String manifestJson(String generatedAt, int answerCardCount, long sqliteBytes, long vectorBytes) {
         return "{\n" +
             "  \"pack_format\": \"senku-mobile-pack-v2\",\n" +
             "  \"pack_version\": 2,\n" +
-            "  \"generated_at\": \"2026-04-12T19:23:50Z\",\n" +
+            "  \"generated_at\": \"" + generatedAt + "\",\n" +
             "  \"counts\": {\n" +
             "    \"guides\": 754,\n" +
             "    \"chunks\": 49841,\n" +
             "    \"deterministic_rules\": 9,\n" +
             "    \"guide_related_links\": 5750,\n" +
-            "    \"answer_cards\": 271\n" +
+            "    \"answer_cards\": " + answerCardCount + "\n" +
             "  },\n" +
             "  \"embedding\": {\n" +
             "    \"model_id\": \"nomic-ai/text-embedding-nomic-embed-text-v1.5\",\n" +

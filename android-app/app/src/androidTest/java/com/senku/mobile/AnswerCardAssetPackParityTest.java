@@ -26,6 +26,9 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public final class AnswerCardAssetPackParityTest {
+    private static final int CURRENT_HEAD_ANSWER_CARD_COUNT = 271;
+    private static final int CURRENT_HEAD_ANSWER_CARD_CLAUSE_COUNT = 6945;
+    private static final int CURRENT_HEAD_ANSWER_CARD_SOURCE_COUNT = 311;
     private static final String PACK_DIR = "mobile_pack";
     private static final String MANIFEST_ASSET = PACK_DIR + "/senku_manifest.json";
     private static final String SQLITE_ASSET = PACK_DIR + "/senku_mobile.sqlite3";
@@ -40,11 +43,11 @@ public final class AnswerCardAssetPackParityTest {
     }
 
     @Test
-    public void shippedAssetPackHasReviewedAnswerCardTablesForProductGate() throws Exception {
+    public void shippedAssetPackHasCurrentHeadReviewedAnswerCardTablesForProductGate() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
 
         PackManifest manifest = PackManifest.fromJson(readAssetText(context, MANIFEST_ASSET));
-        assertEquals(6, manifest.answerCardCount);
+        assertEquals(CURRENT_HEAD_ANSWER_CARD_COUNT, manifest.answerCardCount);
 
         copiedDatabaseFile = copyAssetToCache(context, SQLITE_ASSET, "asset-pack-answer-cards", ".sqlite3");
         try (SQLiteDatabase database = SQLiteDatabase.openDatabase(
@@ -56,13 +59,13 @@ public final class AnswerCardAssetPackParityTest {
             assertTableExists(database, "answer_card_clauses");
             assertTableExists(database, "answer_card_sources");
 
-            assertEquals(6, queryLong(database, "SELECT COUNT(*) FROM answer_cards"));
-            assertEquals(116, queryLong(database, "SELECT COUNT(*) FROM answer_card_clauses"));
-            assertEquals(19, queryLong(database, "SELECT COUNT(*) FROM answer_card_sources"));
+            assertEquals(CURRENT_HEAD_ANSWER_CARD_COUNT, queryLong(database, "SELECT COUNT(*) FROM answer_cards"));
+            assertEquals(CURRENT_HEAD_ANSWER_CARD_CLAUSE_COUNT, queryLong(database, "SELECT COUNT(*) FROM answer_card_clauses"));
+            assertEquals(CURRENT_HEAD_ANSWER_CARD_SOURCE_COUNT, queryLong(database, "SELECT COUNT(*) FROM answer_card_sources"));
 
             if (tableExists(database, "pack_meta")) {
                 assertEquals(
-                    "6",
+                    String.valueOf(CURRENT_HEAD_ANSWER_CARD_COUNT),
                     queryString(
                         database,
                         "SELECT value FROM pack_meta WHERE key = ?",

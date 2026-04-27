@@ -58,7 +58,7 @@ public final class PackManifestTest {
     }
 
     @Test
-    public void bundledManifestLocksCheckedInPilotInventory() throws Exception {
+    public void bundledManifestLocksCheckedInCurrentHeadInventory() throws Exception {
         String jsonText = readManifest();
         PackManifest manifest = PackManifest.fromJson(jsonText);
         JSONObject root = new JSONObject(jsonText);
@@ -68,27 +68,27 @@ public final class PackManifestTest {
 
         assertEquals("senku-mobile-pack-v2", manifest.packFormat);
         assertEquals(2, manifest.packVersion);
-        assertEquals("2026-04-25T00:08:46.459832+00:00", manifest.generatedAt);
+        assertEquals("2026-04-27T04:21:12.533181+00:00", manifest.generatedAt);
         assertEquals(754, manifest.guideCount);
-        assertEquals(49726, manifest.chunkCount);
+        assertEquals(49841, manifest.chunkCount);
         assertEquals(9, manifest.deterministicRuleCount);
-        assertEquals(5743, manifest.relatedLinkCount);
-        assertEquals(6, manifest.answerCardCount);
+        assertEquals(5750, manifest.relatedLinkCount);
+        assertEquals(271, manifest.answerCardCount);
         assertEquals("nomic-ai/text-embedding-nomic-embed-text-v1.5", manifest.embeddingModelId);
         assertEquals(768, manifest.embeddingDimension);
         assertEquals("float16", manifest.vectorDtype);
         assertEquals(10, manifest.mobileTopK);
 
         assertEquals("senku_mobile.sqlite3", sqlite.getString("path"));
-        assertEquals(286695424L, manifest.sqliteBytes);
+        assertEquals(290738176L, manifest.sqliteBytes);
         assertEquals(manifest.sqliteBytes, sqlite.getLong("bytes"));
-        assertEquals("bf2d8e616c2855c63ab52d72c537290ca2e022b967e975368059cce1a3366540", manifest.sqliteSha256);
+        assertEquals("bca1dc3d6de3e8ecd4d2ac585b97e4914974cb6d6889443a313646f295d686c5", manifest.sqliteSha256);
         assertEquals(manifest.sqliteSha256, sqlite.getString("sha256"));
 
         assertEquals("senku_vectors.f16", vectors.getString("path"));
-        assertEquals(76379168L, manifest.vectorBytes);
+        assertEquals(76555808L, manifest.vectorBytes);
         assertEquals(manifest.vectorBytes, vectors.getLong("bytes"));
-        assertEquals("893a7d5704603dd2dfb9645dd90c845e9ede61f4d1f27b5e7fe86bee5df81802", manifest.vectorSha256);
+        assertEquals("5c4decacbf506b31acf8ae1d2568771be24004c46c96944456c8d33b7948eeb1", manifest.vectorSha256);
         assertEquals(manifest.vectorSha256, vectors.getString("sha256"));
     }
 

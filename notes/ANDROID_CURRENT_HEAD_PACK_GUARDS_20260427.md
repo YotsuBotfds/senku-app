@@ -1,14 +1,15 @@
 # Android Current-Head Pack Guards - 2026-04-27
 
-Use this note when running Android guards that require the pushed current-head
-mobile pack, not the checked-in six-card asset pack.
+Use this note when running Android guards that require the current-head mobile
+pack, either from bundled current-head assets or an app-private hydrated pack.
+The `push_mobile_pack_to_android.ps1` lane remains a pre-promotion/dev
+hot-swap path.
 
 ## Boundary
 
-These guards prove Android can read and constrain a pushed 271-card current-head
-pack. They do not replace checked-in Android assets, expand runtime card
-selection, product-enable reviewed-card runtime, or turn the runtime on by
-default.
+These guards prove Android can read and constrain a 271-card current-head pack.
+They do not expand runtime card selection, product-enable reviewed-card
+runtime, or turn the runtime on by default.
 
 Missing or non-current packs intentionally make the current-head tests skip.
 That is expected on clean-install lanes.
@@ -51,7 +52,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_instru
   -SummaryPath artifacts\android_current_head_guard_install_probe_5556\summary.json
 ```
 
-Push the current-head pack:
+Hydrate the current-head pack through the pre-promotion/dev hot-swap path:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\push_mobile_pack_to_android.ps1 `
@@ -64,7 +65,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\push_mobile_pack_t
 ## Run Guards
 
 Matrix run, useful for broad smoke but allowed to skip on lanes without the
-pushed pack:
+current-head pack:
 
 ```powershell
 cd android-app
@@ -74,7 +75,7 @@ $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
   --console=plain
 ```
 
-Direct proof on a lane after pushing the current-head pack:
+Direct proof on a lane after hydrating the current-head pack:
 
 ```powershell
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
@@ -110,7 +111,7 @@ Repaired lane evidence, 2026-04-27 00:48-00:49 CT:
 - `emulator-5560` has an install-probe artifact at
   `artifacts/android_current_head_guard_install_probe_5560/summary.json`, but
   it records `platform_anr` from the Android System UI dialog. After the pack
-  was re-pushed separately, direct current-head guard proof passed:
+  was rehydrated separately, direct current-head guard proof passed:
   `OK (3 tests)`. Do not count this as clean phone-landscape UI proof; it only
   proves the installed pack and guard classes.
 
@@ -154,7 +155,7 @@ Tablet state-pack proof after handoff fix, 2026-04-27 01:08-01:10 CT:
 Phone-landscape proof after emulator restart and handoff harness fix,
 2026-04-27 01:15-01:21 CT:
 
-- Restarted `emulator-5560`, reinstalled app/test APKs, and re-pushed the
+- Restarted `emulator-5560`, reinstalled app/test APKs, and rehydrated the
   current-head pack.
 - Focused home proof:
   `artifacts/android_phone_landscape_after_restart_home/summary.json`,
@@ -222,18 +223,19 @@ Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 - `AnswerCardRuntimeAllowlistCurrentHeadTest`: six pilot runtime cards still
   plan, while deterministic non-pilot current-head samples do not satisfy any
   of the six runtime planner hooks.
-- `PackMigrationInstallTest`: normal app install keeps a usable pushed
-  current-head pack when checked-in app assets are older.
+- `PackMigrationInstallTest`: normal app install keeps a usable app-private
+  hydrated current-head pack when bundled app assets are older.
 
 ## Stop Lines
 
-- Do not count skipped current-head tests as proof that a device has the pushed
-  current-head pack.
+- Do not count skipped current-head tests as proof that a device has the
+  bundled current-head or app-private hydrated pack.
 - Do not use these guards to approve card expansion or product exposure.
 - Do not assume duplicate guide ownership is invalid; duplicate ownership is
   allowed by current pack semantics.
 - Do not use destructive force-refresh instrumentation; that path was removed
   from the guard lane.
-- Re-push the pack after any command that reinstalls, clears, or removes the app.
+- Rehydrate the pack after any command that reinstalls, clears, or removes the
+  app when relying on the pre-promotion/dev hot-swap path.
 - Phone-landscape reviewed-card UI proof remains blocked by Android System UI
   ANR until a clean landscape canary runs without `platform_anr`.

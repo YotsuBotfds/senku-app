@@ -18,6 +18,8 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,7 +57,7 @@ public final class PackInstaller {
         File sqliteFile = new File(rootDir, SQLITE_NAME);
         File vectorFile = new File(rootDir, vectorName);
 
-        boolean installedFromAssets = shouldInstallFromAssetsForTest(force, manifestFile, sqliteFile, vectorFile);
+        boolean installedFromAssets = shouldInstallFromAssetsForTest(force, assetManifest, manifestFile, sqliteFile, vectorFile);
         if (installedFromAssets) {
             copyAsset(assets, assetPath(MANIFEST_NAME), manifestFile);
             copyAsset(assets, assetPath(SQLITE_NAME), sqliteFile);
@@ -70,22 +72,24 @@ public final class PackInstaller {
         return new InstalledPack(rootDir, manifestFile, sqliteFile, vectorFile, installedManifest, vectorInfo);
     }
 
-    private static boolean isInstalledPackUsable(
+    private static PackManifest readUsableInstalledPackManifest(
         File manifestFile,
         File sqliteFile,
         File vectorFile
     ) throws IOException, JSONException {
         if (!manifestFile.isFile() || !sqliteFile.isFile() || !vectorFile.isFile()) {
-            return false;
+            return null;
         }
         PackManifest installed;
         try {
             installed = PackManifest.fromJson(readFileText(manifestFile));
         } catch (JSONException exc) {
-            return false;
+            return null;
         }
-        return sqliteFile.length() == installed.sqliteBytes
-            && vectorFile.length() == installed.vectorBytes;
+        if (sqliteFile.length() != installed.sqliteBytes || vectorFile.length() != installed.vectorBytes) {
+            return null;
+        }
+        return installed;
     }
 
     private static void copyAsset(AssetManager assets, String assetPath, File destination) throws IOException {
@@ -179,13 +183,52 @@ public final class PackInstaller {
 
     static boolean shouldInstallFromAssetsForTest(
         boolean force,
+        PackManifest assetManifest,
         File manifestFile,
         File sqliteFile,
         File vectorFile
     ) throws IOException, JSONException {
-        // Prefer any self-consistent installed pack so dev hot-swaps and future downloaded
-        // packs survive normal app restarts. A force reinstall still refreshes from assets.
-        return force || !isInstalledPackUsable(manifestFile, sqliteFile, vectorFile);
+        if (force) {
+            return true;
+        }
+        PackManifest installedManifest = readUsableInstalledPackManifest(manifestFile, sqliteFile, vectorFile);
+        if (installedManifest == null) {
+            return true;
+        }
+        // Preserve same-or-newer hot-swapped/downloaded packs, but let app upgrades promote
+        // a newer bundled pack over an older private copy.
+        return assetManifestIsNewer(assetManifest, installedManifest);
+    }
+
+    private static boolean assetManifestIsNewer(PackManifest assetManifest, PackManifest installedManifest) {
+        if (assetManifest == null || installedManifest == null) {
+            return false;
+        }
+        if (assetManifest.packVersion != installedManifest.packVersion) {
+            return assetManifest.packVersion > installedManifest.packVersion;
+        }
+        int generatedAtCompare = compareGeneratedAt(assetManifest.generatedAt, installedManifest.generatedAt);
+        if (generatedAtCompare != 0) {
+            return generatedAtCompare > 0;
+        }
+        return assetManifest.answerCardCount > installedManifest.answerCardCount;
+    }
+
+    private static int compareGeneratedAt(String left, String right) {
+        try {
+            return OffsetDateTime.parse(left).toInstant().compareTo(OffsetDateTime.parse(right).toInstant());
+        } catch (DateTimeParseException exc) {
+            if (left == null && right == null) {
+                return 0;
+            }
+            if (left == null) {
+                return -1;
+            }
+            if (right == null) {
+                return 1;
+            }
+            return left.compareTo(right);
+        }
     }
 
     private static void validateVectorInfo(PackManifest manifest, VectorInfo vectorInfo) throws IOException {

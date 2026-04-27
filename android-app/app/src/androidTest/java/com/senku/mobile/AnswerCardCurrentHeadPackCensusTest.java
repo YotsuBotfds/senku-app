@@ -14,9 +14,8 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.CURRENT_HEAD_ANSWER_CARD_COUNT;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.assertTableExists;
-import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.assumeCurrentHeadPack;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.databaseFile;
-import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.manifestFile;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.queryLong;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.queryString;
 
@@ -26,12 +25,10 @@ public final class AnswerCardCurrentHeadPackCensusTest {
     private static final int CURRENT_HEAD_ANSWER_CARD_SOURCE_COUNT = 311;
 
     @Test
-    public void pushedCurrentHeadPackCensusesAnswerCardsWithoutRuntimePlanning() throws Exception {
+    public void bundledCurrentHeadPackCensusesAnswerCardsWithoutRuntimePlanning() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        File manifestFile = manifestFile(context);
+        installBundledCurrentHeadPack(context, "this census");
         File databaseFile = databaseFile(context);
-
-        assumeCurrentHeadPack(manifestFile, databaseFile, "this census");
 
         try (SQLiteDatabase database = SQLiteDatabase.openDatabase(
             databaseFile.getAbsolutePath(),

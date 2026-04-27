@@ -22,9 +22,8 @@ import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.CURRENT_HEAD
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.NON_PILOT_SAMPLE_SIZE;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.PILOT_CARD_IDS;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.SampledCard;
-import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.assumeCurrentHeadPack;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.databaseFile;
-import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.manifestFile;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.installBundledCurrentHeadPack;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.queryLong;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.sampledNonPilotCards;
 
@@ -38,10 +37,8 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
     @Test
     public void currentHeadRuntimeSelectionStaysLimitedToExplicitPilotCards() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        File manifestFile = manifestFile(context);
+        installBundledCurrentHeadPack(context, "runtime allowlist guard");
         File databaseFile = databaseFile(context);
-
-        assumeCurrentHeadPack(manifestFile, databaseFile, "runtime allowlist guard");
 
         try (PackRepository repository = new PackRepository(databaseFile, null);
              SQLiteDatabase database = SQLiteDatabase.openDatabase(

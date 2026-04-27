@@ -70,8 +70,9 @@ use it to approve reviewed-card runtime expansion or product exposure.
   all four devices. Treat `matrix_model_sha` as a stable host inference
   identity key, not a hash of an installed on-device LiteRT model file.
 - `phone_landscape` System UI ANR: resolved for this session after restarting
-  `emulator-5560`, reinstalling app/test APKs, and re-pushing the current-head
-  pack. The post-restart full `phone_landscape` pack passed `11 / 11` with
+  `emulator-5560`, reinstalling app/test APKs, and rehydrating the
+  current-head pack. The post-restart full `phone_landscape` pack passed
+  `11 / 11` with
   `platform_anr=null` under
   `artifacts/ui_state_pack_current_head_phone_landscape_after_handoff_fix/`.
 - Tablet linked-guide handoff context assertion: resolved by carrying

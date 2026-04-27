@@ -19,19 +19,20 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1): parallel four-lane screenshot/dump sweep across the fixed emulator matrix
 - [`ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md`](./ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md): desktop reviewed-card/provenance contract translated into Android work
 - [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1` through `RAG-CH3`, plus test-only `RAG-CH5`
-- [`ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](./ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md): pushed 271-card current-head pack guard runbook
+- [`ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](./ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md): bundled/app-private 271-card current-head pack guard runbook
 - [`ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md`](./ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md): phone-portrait current-head UI state proof plus matrix follow-up findings
 - [`ANDROID_MIGRATION_BACKLOG_20260427.md`](./ANDROID_MIGRATION_BACKLOG_20260427.md): current-head Android migration blockers after matrix proof
 
 ## Current emulator lane repair status - 2026-04-27
 
-- Scout status: `emulator-5556` currently has the pushed 271-card
-  current-head pack present.
+- Scout status: `emulator-5556` currently has the app-private hydrated
+  271-card current-head pack present.
 - Scout status: `emulator-5554`, `emulator-5558`, and `emulator-5560` have
-  the app absent or are missing the pushed current-head pack. Treat
+  the app absent or are missing the app-private hydrated current-head pack. Treat
   current-head guard skips on those lanes as missing-pack state, not proof.
-- Use this exact repair loop to restore app presence, push the current-head
-  pack, and run the direct three-class proof on the missing lanes:
+- Use this exact pre-promotion/dev hot-swap loop to restore app presence,
+  hydrate the current-head pack, and run the direct three-class proof on the
+  missing lanes:
 
 ```powershell
 $devices = @("emulator-5554", "emulator-5558", "emulator-5560")
@@ -228,12 +229,12 @@ foreach ($device in $devices) {
 - Reviewed-card developer-panel toggle proof:
   `artifacts/android_reviewed_card_toggle_20260424_193049/`
   (phone/tablet portrait and landscape screenshots)
-- Reviewed-card prompt-harness proof against the real pushed pack:
+- Reviewed-card prompt-harness proof against the real app-private hydrated pack:
   `artifacts/android_reviewed_card_prompt_harness_20260424/20260424_195737_475/`
   and
   `artifacts/android_reviewed_card_prompt_harness_20260424/20260424_195737_566/`
   (phone/tablet portrait and landscape scripted asks)
-- Reviewed-card metadata/proof harness against the real pushed pack:
+- Reviewed-card metadata/proof harness against the real app-private hydrated pack:
   `artifacts/android_reviewed_card_metadata_harness_20260424/20260424_202123_371/`
   and
   `artifacts/android_reviewed_card_metadata_harness_20260424/20260424_202123_366/`
