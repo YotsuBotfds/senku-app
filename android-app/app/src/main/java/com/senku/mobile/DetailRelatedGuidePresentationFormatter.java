@@ -176,7 +176,7 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean opensPreview
     ) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Connected guide ");
+        builder.append("Cross-reference row ");
         builder.append(index + 1);
         builder.append(" of ");
         builder.append(total);

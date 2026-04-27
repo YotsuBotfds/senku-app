@@ -60,7 +60,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewTitleText(State state) {
         if (state.answerMode || state.activeGuideContextPanel || state.nonRailCrossReferenceCopy) {
-            return context.getString(R.string.detail_related_guides_preview_title_selected);
+            return "Selected linked guide";
         }
         return guideRailLabel(context);
     }

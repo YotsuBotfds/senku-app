@@ -114,7 +114,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(
-            "Connected guide 1 of 2. [GD-215] Rainwater Catchment. Linked from [GD-214] Water Storage. Previews the related guide on this page while staying anchored to the selected source guide. Use Open full guide when ready to switch pages.",
+            "Cross-reference row 1 of 2. [GD-215] Rainwater Catchment. Linked from [GD-214] Water Storage. Previews the related guide on this page while staying anchored to the selected source guide. Use Open full guide when ready to switch pages.",
             formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
         );
     }

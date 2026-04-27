@@ -2101,11 +2101,30 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     static List<BottomTabDestination> buildVisiblePhoneTabDestinations() {
+        return phoneTabSurfaceDestinations(buildPhonePrimaryDestinations());
+    }
+
+    static List<BottomTabDestination> buildPhonePrimaryDestinations() {
         return Arrays.asList(
             BottomTabDestination.HOME,
             BottomTabDestination.ASK,
             BottomTabDestination.PINS
         );
+    }
+
+    static List<BottomTabDestination> phoneTabSurfaceDestinations(
+        List<BottomTabDestination> primaryDestinations
+    ) {
+        if (primaryDestinations == null || primaryDestinations.isEmpty()) {
+            return Collections.emptyList();
+        }
+        ArrayList<BottomTabDestination> destinations = new ArrayList<>(primaryDestinations.size());
+        for (BottomTabDestination destination : primaryDestinations) {
+            if (destination != null) {
+                destinations.add(destination);
+            }
+        }
+        return destinations;
     }
 
     static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {

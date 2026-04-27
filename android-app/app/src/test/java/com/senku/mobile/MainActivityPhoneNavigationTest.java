@@ -25,11 +25,29 @@ public final class MainActivityPhoneNavigationTest {
     }
 
     @Test
+    public void visiblePhoneTabsDelegateToPrimaryProductDestinations() {
+        assertEquals(
+            MainActivity.buildPhonePrimaryDestinations(),
+            MainActivity.buildVisiblePhoneTabDestinations()
+        );
+    }
+
+    @Test
     public void visiblePhoneTabsDoNotReintroduceSearchOrThreads() {
         List<BottomTabDestination> visibleTabs = MainActivity.buildVisiblePhoneTabDestinations();
 
         assertFalse(visibleTabs.contains(BottomTabDestination.SEARCH));
         assertFalse(visibleTabs.contains(BottomTabDestination.THREADS));
+    }
+
+    @Test
+    public void everyVisiblePhoneTabOwnsItsSelectionRole() {
+        for (BottomTabDestination visibleTab : MainActivity.buildVisiblePhoneTabDestinations()) {
+            assertEquals(
+                visibleTab,
+                MainActivity.phoneTabSelectionOwner(visibleTab)
+            );
+        }
     }
 
     @Test

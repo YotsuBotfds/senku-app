@@ -28,6 +28,10 @@ public final class DetailGuideContextPresentationFormatterTest {
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
+            "Selected linked guide",
+            formatter.buildRelatedGuidePreviewTitleText(state)
+        );
+        assertEquals(
             "Selected linked guide preview. Guide cross-reference stays anchored to [GD-214] Water Storage while this preview is open. Use Open full guide to navigate to the selected guide page.",
             formatter.buildRelatedGuidePreviewPanelDescriptionText(state)
         );
@@ -64,6 +68,10 @@ public final class DetailGuideContextPresentationFormatterTest {
         assertEquals(
             "Preview this linked guide here, then use Open full guide when ready.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
+        );
+        assertEquals(
+            "Selected linked guide",
+            formatter.buildRelatedGuidePreviewTitleText(state)
         );
         assertEquals(
             "Preview selected linked guide here. Open full guide when ready.",
