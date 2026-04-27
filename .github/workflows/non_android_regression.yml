@@ -111,7 +111,7 @@ jobs:
 
       - name: Cache FastEmbed model files
         if: ${{ inputs.mode == 'Fast' || inputs.mode == 'All' }}
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: .ci-cache/fastembed
           key: fastembed-${{ runner.os }}-${{ hashFiles('requirements.lock.txt', 'scripts/fastembed_openai_server.py') }}
@@ -121,7 +121,7 @@ jobs:
       - name: Cache retrieval index
         if: ${{ inputs.mode == 'Fast' || inputs.mode == 'All' }}
         id: retrieval_index_cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: db
           key: retrieval-index-${{ runner.os }}-${{ inputs.mode }}-${{ inputs.include_safety_critical }}-${{ inputs.retrieval_index_flavor }}-${{ hashFiles('requirements.lock.txt', 'ingest.py', 'ingest_freshness.py', 'config.py', 'metadata_helpers.py', 'metadata_validation.py', 'token_estimation.py', 'scripts/select_prompt_pack_guides.py', 'guides/**/*.md', 'artifacts/prompts/**/*.jsonl') }}
