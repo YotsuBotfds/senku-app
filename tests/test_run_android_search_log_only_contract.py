@@ -14,6 +14,7 @@ class AndroidSearchLogOnlyContractTests(unittest.TestCase):
     def test_exposes_pack_push_cache_flags(self):
         self.assertIn("[switch]$SkipPackPushIfCurrent", self.script)
         self.assertIn("[switch]$ForcePackPush", self.script)
+        self.assertIn("[string]$PushPackSummaryPath", self.script)
 
     def test_forwards_pack_push_cache_flags_to_push_mobile_pack(self):
         self.assertIn('$pushPackArgs = @(', self.script)
@@ -24,6 +25,8 @@ class AndroidSearchLogOnlyContractTests(unittest.TestCase):
         self.assertIn('"-SkipIfCurrent"', self.script)
         self.assertIn("if ($ForcePackPush) {", self.script)
         self.assertIn('"-ForcePush"', self.script)
+        self.assertIn("if (-not [string]::IsNullOrWhiteSpace($PushPackSummaryPath)) {", self.script)
+        self.assertIn('"-SummaryPath", $PushPackSummaryPath', self.script)
         self.assertIn("& $pushPackScript @pushPackArgs", self.script)
 
 

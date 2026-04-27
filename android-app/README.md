@@ -177,6 +177,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_android_prompt.ps1 `
   -UseInstrumentationPreflight
 ```
 
+For artifact-friendly single-prompt replay, prefer the logged wrapper:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_prompt_logged.ps1 `
+  -Emulator RFCX607ZM8L `
+  -Query "How do I start a fire in rain?" `
+  -Ask `
+  -InferenceMode host `
+  -SkipPackPushIfCurrent
+```
+
+Use `-SkipPackPushIfCurrent` to reuse the current on-device pack when it matches, or `-ForcePackPush` to refresh it explicitly. Each replay emits the prompt `.json`, UI `.xml`, `.logcat.txt`, and `.pack_push.json` artifacts together for pack-cache auditing.
+
 That preflight now uses the fast instrumentation profile automatically:
 - `basic` for normal prompt runs
 - `host` for host-inference prompt runs

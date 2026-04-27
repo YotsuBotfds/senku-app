@@ -3,6 +3,7 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Query,
     [string]$PushPackDir,
+    [string]$PushPackSummaryPath,
     [switch]$SkipPackPushIfCurrent,
     [switch]$ForcePackPush,
     [switch]$WarmStart,
@@ -47,6 +48,9 @@ if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     }
     if ($ForcePackPush) {
         $pushPackArgs += "-ForcePush"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($PushPackSummaryPath)) {
+        $pushPackArgs += @("-SummaryPath", $PushPackSummaryPath)
     }
     & $pushPackScript @pushPackArgs
 }
