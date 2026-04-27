@@ -13,6 +13,8 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/run_android_instrumented_ui_smoke.ps1`](../scripts/run_android_instrumented_ui_smoke.ps1): instrumentation-backed smoke lane with screenshots, dumps, logcat, and `summary.json`
 - [`../scripts/run_android_prompt.ps1`](../scripts/run_android_prompt.ps1): prompt automation harness
 - [`../scripts/run_android_search_log_only.ps1`](../scripts/run_android_search_log_only.ps1): preferred long retrieval harness
+- [`../scripts/run_android_harness_matrix.ps1`](../scripts/run_android_harness_matrix.ps1): mixed prompt/follow-up matrix runner with JSONL/CSV plus `summary.json` and `summary.md`
+- [`../scripts/run_android_followup_matrix.ps1`](../scripts/run_android_followup_matrix.ps1): follow-up-only matrix runner
 - [`../scripts/run_android_ui_validation_pack.ps1`](../scripts/run_android_ui_validation_pack.ps1): deterministic + generative UI smoke pack
 - [`../scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1): parallel four-lane screenshot/dump sweep across the fixed emulator matrix
 - [`ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md`](./ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md): desktop reviewed-card/provenance contract translated into Android work
@@ -47,6 +49,7 @@ foreach ($device in $devices) {
     -Device $device `
     -PackDir artifacts\mobile_pack\senku_current_head_20260426_232032 `
     -ForceStop `
+    -SkipIfCurrent `
     -ShowInstalledManifest
 
   & $adb -s $device shell am instrument -w `
@@ -54,6 +57,25 @@ foreach ($device in $devices) {
     com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner
 }
 ```
+
+## Fast Replay Helpers - 2026-04-27
+
+- `push_mobile_pack_to_android.ps1 -SkipIfCurrent` now compares the local
+  manifest/sqlite/vector fingerprint with
+  `artifacts/harness_state/mobile_pack_push_<device>.json` and verifies the
+  installed file sizes before skipping an upload. Use `-ForcePush` to bypass
+  that cache.
+- Prompt, follow-up, search-log, logged, mixed-matrix, and follow-up-matrix
+  wrappers expose `-SkipPackPushIfCurrent` / `-ForcePackPush` when they invoke
+  the pack hot-swap path.
+- `run_android_harness_matrix.ps1` supports `-DefaultWarmStart`,
+  row-level `warm_start`, `-PushPackDir`, and row-level `push_pack_dir`.
+  Its `summary.json` / `summary.md` include completion counts, emulator
+  groups, posture labels (`phone_portrait`, `phone_landscape`,
+  `tablet_portrait`, `tablet_landscape`), warm-start counts, failures, and
+  artifact paths.
+- `run_android_followup_matrix.ps1` supports `-WarmStart` and records
+  `warm_start` in each JSONL/CSV row.
 
 ## Current artifact baseline
 
