@@ -705,6 +705,46 @@ function Convert-InstalledPackMetadataForCaptureSummary {
     }
 }
 
+function Resolve-CaptureSummaryWindowSizeClass {
+    param([object]$DeviceFacts)
+
+    if ($null -eq $DeviceFacts -or $null -eq $DeviceFacts.smallest_width_dp) {
+        return "not_provided"
+    }
+
+    $smallestWidthDp = [double]$DeviceFacts.smallest_width_dp
+    if ($smallestWidthDp -ge 840.0) {
+        return "expanded"
+    }
+    if ($smallestWidthDp -ge 600.0) {
+        return "medium"
+    }
+    return "compact"
+}
+
+function Convert-CaptureSummaryViewportFacts {
+    param(
+        [object]$DeviceFacts,
+        [object]$ArtifactFacts
+    )
+
+    $dimensions = $null
+    if ($null -ne $ArtifactFacts -and $null -ne $ArtifactFacts.first_screenshot -and $null -ne $ArtifactFacts.first_screenshot.dimensions_px) {
+        $dimensions = $ArtifactFacts.first_screenshot.dimensions_px
+    } elseif ($null -ne $DeviceFacts -and $null -ne $DeviceFacts.physical_size_px) {
+        $dimensions = $DeviceFacts.physical_size_px
+    }
+
+    return [pscustomobject]@{
+        width = $(if ($null -ne $dimensions -and $null -ne $dimensions.width) { [int]$dimensions.width } else { 0 })
+        height = $(if ($null -ne $dimensions -and $null -ne $dimensions.height) { [int]$dimensions.height } else { 0 })
+        density = $(if ($null -ne $DeviceFacts -and $null -ne $DeviceFacts.density_dpi) { [double]$DeviceFacts.density_dpi } else { 0 })
+        font_scale = [double]$FontScale
+        window_size_class = Resolve-CaptureSummaryWindowSizeClass -DeviceFacts $DeviceFacts
+        source = "run_android_instrumented_ui_smoke.ps1"
+    }
+}
+
 function Write-AndroidInstrumentedCaptureSummary {
     param(
         [string]$Path,
@@ -713,6 +753,8 @@ function Write-AndroidInstrumentedCaptureSummary {
         [string]$LogcatFilePath,
         [object]$InstalledPack,
         [object]$ModelIdentity,
+        [object]$DeviceFacts,
+        [object]$ArtifactFacts,
         [string]$ResolvedApkSha
     )
 
@@ -747,6 +789,7 @@ function Write-AndroidInstrumentedCaptureSummary {
             sha256 = $(if ($null -eq $ModelIdentity -or [string]::IsNullOrWhiteSpace([string]$ModelIdentity.sha)) { "not_provided" } else { [string]$ModelIdentity.sha })
         }
         installed_pack_metadata = Convert-InstalledPackMetadataForCaptureSummary -InstalledPack $InstalledPack
+        viewport_facts = Convert-CaptureSummaryViewportFacts -DeviceFacts $DeviceFacts -ArtifactFacts $ArtifactFacts
         evidence_posture = [pscustomobject]@{
             non_acceptance_evidence = $true
             acceptance_evidence = $false
@@ -1746,6 +1789,8 @@ try {
             -LogcatFilePath $(if ($logcatPath -and (Test-Path -LiteralPath $logcatPath -PathType Leaf)) { $logcatPath } else { $null }) `
             -InstalledPack $installedPackMetadata `
             -ModelIdentity $summaryModelIdentity `
+            -DeviceFacts $deviceFacts `
+            -ArtifactFacts $artifactFacts `
             -ResolvedApkSha $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.apk_sha)) { [string]$installedIdentity.apk_sha } else { $null })
         Write-Output $summaryJson
     }

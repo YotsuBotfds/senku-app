@@ -35,6 +35,21 @@ class RunAndroidInstrumentedUiSmokeCaptureSummaryTests(unittest.TestCase):
             'logcat = New-CaptureSummaryArtifact -Name "logcat" -Path $logcatArtifactPath',
             "model_identity = [pscustomobject]@{",
             "installed_pack_metadata = Convert-InstalledPackMetadataForCaptureSummary -InstalledPack $InstalledPack",
+            "viewport_facts = Convert-CaptureSummaryViewportFacts -DeviceFacts $DeviceFacts -ArtifactFacts $ArtifactFacts",
+        ):
+            self.assertIn(expected, self.script)
+
+    def test_capture_summary_maps_viewport_facts_from_existing_run_facts(self):
+        for expected in (
+            "function Convert-CaptureSummaryViewportFacts",
+            "function Resolve-CaptureSummaryWindowSizeClass",
+            "$ArtifactFacts.first_screenshot.dimensions_px",
+            "$DeviceFacts.physical_size_px",
+            "density = $(if ($null -ne $DeviceFacts -and $null -ne $DeviceFacts.density_dpi) { [double]$DeviceFacts.density_dpi } else { 0 })",
+            "font_scale = [double]$FontScale",
+            'source = "run_android_instrumented_ui_smoke.ps1"',
+            "-DeviceFacts $deviceFacts `",
+            "-ArtifactFacts $artifactFacts `",
         ):
             self.assertIn(expected, self.script)
 

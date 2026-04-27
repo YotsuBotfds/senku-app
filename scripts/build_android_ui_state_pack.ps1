@@ -385,6 +385,189 @@ function Add-PackMetadataSetValue {
     }
 }
 
+function Get-PackObjectPropertyValue {
+    param(
+        [object]$InputObject,
+        [string[]]$Names
+    )
+
+    if ($null -eq $InputObject) {
+        return $null
+    }
+
+    foreach ($name in @($Names)) {
+        if ($InputObject.PSObject.Properties.Name -contains $name) {
+            return $InputObject.$name
+        }
+    }
+    return $null
+}
+
+function Convert-PackIntOrNull {
+    param([object]$Value)
+
+    $parsed = 0
+    if ($null -eq $Value) {
+        return $null
+    }
+    if ([int]::TryParse([string]$Value, [ref]$parsed)) {
+        return [int]$parsed
+    }
+    return $null
+}
+
+function Get-PackScreenshotDimensions {
+    param([object]$Summary)
+
+    if ($null -eq $Summary) {
+        return $null
+    }
+
+    $dimensionContainer = Get-PackObjectPropertyValue -InputObject $Summary -Names @(
+        "primary_screenshot_dimensions",
+        "screenshot_dimensions",
+        "captured_dimensions",
+        "display_dimensions"
+    )
+    $width = Get-PackObjectPropertyValue -InputObject $dimensionContainer -Names @("width", "screenshot_width", "display_width")
+    $height = Get-PackObjectPropertyValue -InputObject $dimensionContainer -Names @("height", "screenshot_height", "display_height")
+
+    if ($null -eq $width) {
+        $width = Get-PackObjectPropertyValue -InputObject $Summary -Names @("primary_screenshot_width", "screenshot_width", "display_width")
+    }
+    if ($null -eq $height) {
+        $height = Get-PackObjectPropertyValue -InputObject $Summary -Names @("primary_screenshot_height", "screenshot_height", "display_height")
+    }
+
+    if ($null -eq $width -or $null -eq $height) {
+        $artifactFacts = Get-PackObjectPropertyValue -InputObject $Summary -Names @("artifact_facts")
+        $firstScreenshot = Get-PackObjectPropertyValue -InputObject $artifactFacts -Names @("first_screenshot", "primary_screenshot", "screenshot")
+        $nestedDimensions = Get-PackObjectPropertyValue -InputObject $firstScreenshot -Names @("dimensions_px", "dimensions", "captured_dimensions", "display_dimensions")
+        if ($null -ne $nestedDimensions) {
+            if ($null -eq $width) {
+                $width = Get-PackObjectPropertyValue -InputObject $nestedDimensions -Names @("width", "screenshot_width", "display_width")
+            }
+            if ($null -eq $height) {
+                $height = Get-PackObjectPropertyValue -InputObject $nestedDimensions -Names @("height", "screenshot_height", "display_height")
+            }
+        }
+    }
+
+    $parsedWidth = Convert-PackIntOrNull -Value $width
+    $parsedHeight = Convert-PackIntOrNull -Value $height
+    if ($null -eq $parsedWidth -or $null -eq $parsedHeight) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        width = [int]$parsedWidth
+        height = [int]$parsedHeight
+    }
+}
+
+function Get-PackViewportFactsRollup {
+    param([object[]]$ResultEntries)
+
+    $deviceBuckets = [ordered]@{}
+    foreach ($entry in @($ResultEntries)) {
+        $device = [string]$entry.device
+        if ([string]::IsNullOrWhiteSpace($device)) {
+            continue
+        }
+        if (-not $deviceBuckets.Contains($device)) {
+            $deviceBuckets[$device] = @{
+                roles = New-Object System.Collections.Generic.HashSet[string]
+                orientations = New-Object System.Collections.Generic.HashSet[string]
+                screenshot_sizes = New-Object System.Collections.Generic.HashSet[string]
+                physical_sizes = New-Object System.Collections.Generic.HashSet[string]
+                densities = New-Object System.Collections.Generic.HashSet[string]
+                smallest_widths = New-Object System.Collections.Generic.HashSet[string]
+                resolved_roles = New-Object System.Collections.Generic.HashSet[string]
+                state_count = 0
+                metadata_count = 0
+                screenshot_dimension_count = 0
+                device_facts_count = 0
+                rotation_mismatch_count = 0
+            }
+        }
+
+        $bucket = $deviceBuckets[$device]
+        $null = $bucket.roles.Add([string]$entry.role)
+        Add-PackMetadataSetValue -Set $bucket.orientations -Value $entry.orientation
+        $bucket.state_count += 1
+
+        $summaryPath = [string]$entry.summary_path
+        if ([string]::IsNullOrWhiteSpace($summaryPath) -or -not (Test-Path -LiteralPath $summaryPath)) {
+            continue
+        }
+
+        try {
+            $summary = Get-Content -LiteralPath $summaryPath -Raw | ConvertFrom-Json
+        } catch {
+            continue
+        }
+
+        $bucket.metadata_count += 1
+        $screenshotDimensions = Get-PackScreenshotDimensions -Summary $summary
+        if ($null -ne $screenshotDimensions) {
+            $bucket.screenshot_dimension_count += 1
+            $null = $bucket.screenshot_sizes.Add(("{0}x{1}" -f $screenshotDimensions.width, $screenshotDimensions.height))
+        }
+
+        $deviceFacts = Get-PackObjectPropertyValue -InputObject $summary -Names @("device_facts")
+        if ($null -eq $deviceFacts) {
+            continue
+        }
+        $bucket.device_facts_count += 1
+
+        $physicalSize = Get-PackObjectPropertyValue -InputObject $deviceFacts -Names @("physical_size_px", "physical_size", "display_size_px")
+        $physicalWidth = Get-PackObjectPropertyValue -InputObject $physicalSize -Names @("width", "display_width")
+        $physicalHeight = Get-PackObjectPropertyValue -InputObject $physicalSize -Names @("height", "display_height")
+        $parsedPhysicalWidth = Convert-PackIntOrNull -Value $physicalWidth
+        $parsedPhysicalHeight = Convert-PackIntOrNull -Value $physicalHeight
+        if ($null -ne $parsedPhysicalWidth -and $null -ne $parsedPhysicalHeight) {
+            $null = $bucket.physical_sizes.Add(("{0}x{1}" -f $parsedPhysicalWidth, $parsedPhysicalHeight))
+        }
+
+        Add-PackMetadataSetValue -Set $bucket.densities -Value (Get-PackObjectPropertyValue -InputObject $deviceFacts -Names @("density_dpi"))
+        Add-PackMetadataSetValue -Set $bucket.smallest_widths -Value (Get-PackObjectPropertyValue -InputObject $deviceFacts -Names @("smallest_width_dp"))
+        Add-PackMetadataSetValue -Set $bucket.resolved_roles -Value (Get-PackObjectPropertyValue -InputObject $deviceFacts -Names @("resolved_role"))
+        if ((Get-PackObjectPropertyValue -InputObject $deviceFacts -Names @("rotation_mismatch")) -eq $true) {
+            $bucket.rotation_mismatch_count += 1
+        }
+    }
+
+    $deviceSummaries = New-Object System.Collections.Generic.List[object]
+    foreach ($device in $deviceBuckets.Keys) {
+        $bucket = $deviceBuckets[$device]
+        $deviceSummaries.Add([pscustomobject]@{
+            device = $device
+            roles = @($bucket.roles | Sort-Object)
+            orientations = @($bucket.orientations | Sort-Object)
+            state_count = [int]$bucket.state_count
+            metadata_count = [int]$bucket.metadata_count
+            device_facts_count = [int]$bucket.device_facts_count
+            screenshot_dimension_count = [int]$bucket.screenshot_dimension_count
+            screenshot_sizes = @($bucket.screenshot_sizes | Sort-Object)
+            physical_sizes = @($bucket.physical_sizes | Sort-Object)
+            density_dpi_values = @($bucket.densities | Sort-Object)
+            smallest_width_dp_values = @($bucket.smallest_widths | Sort-Object)
+            resolved_roles = @($bucket.resolved_roles | Sort-Object)
+            rotation_mismatch_count = [int]$bucket.rotation_mismatch_count
+        })
+    }
+
+    $deviceSummaryArray = @($deviceSummaries.ToArray())
+    return [pscustomobject]@{
+        metadata_present = [bool](@($deviceSummaryArray | Where-Object { $_.metadata_count -gt 0 }).Count -gt 0)
+        device_count = [int]@($deviceSummaryArray).Count
+        states_with_device_facts = [int](@($deviceSummaryArray | Measure-Object -Property device_facts_count -Sum).Sum)
+        states_with_screenshot_dimensions = [int](@($deviceSummaryArray | Measure-Object -Property screenshot_dimension_count -Sum).Sum)
+        rotation_mismatch_count = [int](@($deviceSummaryArray | Measure-Object -Property rotation_mismatch_count -Sum).Sum)
+        devices = @($deviceSummaryArray)
+    }
+}
+
 function Get-PackInstalledPackRollup {
     param([object[]]$ResultEntries)
 
@@ -854,6 +1037,7 @@ $hostAdbPlatformToolsVersion = Get-FirstNonEmptyPackMetadataValue -Entries $resu
 $status = if ($failCount -eq 0) { "pass" } elseif ($successCount -gt 0) { "partial" } else { "fail" }
 $identityRollup = Get-PackIdentityRollup -ResultEntries $results
 $installedPackRollup = Get-PackInstalledPackRollup -ResultEntries $results
+$viewportFactsRollup = Get-PackViewportFactsRollup -ResultEntries $results
 
 if ($SkipFinalize) {
     Write-Host ""
@@ -894,6 +1078,7 @@ $summary = [pscustomobject]@{
     matrix_model_sha = $identityRollup.matrix_model_sha
     devices = $identityRollup.devices
     installed_pack = $installedPackRollup
+    viewport_facts = $viewportFactsRollup
     manifest_path = $manifestPath
     readme_path = $readmePath
 }

@@ -33,6 +33,19 @@ class AndroidUiStatePackSummaryContractTests(unittest.TestCase):
                         "apk_sha": "abc123",
                         "model_name": "fixture-model",
                         "model_sha": "def456",
+                        "device_facts": {
+                            "physical_size_px": {"width": 1080, "height": 2400},
+                            "density_dpi": 420,
+                            "smallest_width_dp": 411.43,
+                            "resolved_role": "phone",
+                            "rotation_mismatch": False,
+                        },
+                        "artifact_facts": {
+                            "first_screenshot": {
+                                "dimensions_px": {"width": 1080, "height": 2400},
+                                "actual_orientation": "portrait",
+                            }
+                        },
                         "installed_pack": {
                             "status": "available",
                             "pack_format": "senku-mobile-pack-v2",
@@ -106,6 +119,19 @@ class AndroidUiStatePackSummaryContractTests(unittest.TestCase):
             self.assertEqual(installed_pack["devices"][0]["device"], "emulator-5556")
             self.assertEqual(installed_pack["devices"][0]["available_count"], 1)
             self.assertEqual(installed_pack["devices"][0]["statuses"], ["available"])
+
+            viewport_facts = summary["viewport_facts"]
+            self.assertTrue(viewport_facts["metadata_present"])
+            self.assertEqual(viewport_facts["device_count"], 1)
+            self.assertEqual(viewport_facts["states_with_device_facts"], 1)
+            self.assertEqual(viewport_facts["states_with_screenshot_dimensions"], 1)
+            self.assertEqual(viewport_facts["rotation_mismatch_count"], 0)
+            self.assertEqual(viewport_facts["devices"][0]["device"], "emulator-5556")
+            self.assertEqual(viewport_facts["devices"][0]["screenshot_sizes"], ["1080x2400"])
+            self.assertEqual(viewport_facts["devices"][0]["physical_sizes"], ["1080x2400"])
+            self.assertEqual(viewport_facts["devices"][0]["density_dpi_values"], ["420"])
+            self.assertEqual(viewport_facts["devices"][0]["smallest_width_dp_values"], ["411.43"])
+            self.assertEqual(viewport_facts["devices"][0]["resolved_roles"], ["phone"])
 
     def test_parser_gate_passes_for_state_pack_builder(self):
         result = subprocess.run(
