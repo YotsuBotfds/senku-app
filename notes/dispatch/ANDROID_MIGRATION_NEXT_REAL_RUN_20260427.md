@@ -11,9 +11,12 @@ validation. This is an execution order note, not acceptance evidence.
 2. Run the fixed four headless state-pack real lane across the required
    postures/devices: tablet portrait `5554`, phone portrait `5556`, tablet
    landscape `5558`, and phone landscape `5560`.
-3. Only after the fixed four real lane passes, run the guarded large-data LiteRT
-   real lane on `emulator-5554` with an enlarged data partition and the required
-   real-run confirmation token.
+3. Before retrying `emulator-5554` large-data LiteRT, run the guarded
+   `Senku_Tablet_2` AVD maintenance preflight. Apply it only with the explicit
+   confirmation token, after confirming `emulator-5554` is not running.
+4. Only after the fixed four real lane passes and the `Senku_Tablet_2` data
+   partition is prepared, run the guarded large-data LiteRT real lane on
+   `emulator-5554` with the required real-run confirmation token.
 
 ## Commands
 
@@ -27,6 +30,12 @@ Migration preflight bundle:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_migration_preflight_bundle.ps1 -PythonPath .\.venvs\senku-validate\Scripts\python.exe
+```
+
+`Senku_Tablet_2` large-data AVD preflight:
+
+```powershell
+powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\prepare_senku_tablet_2_large_data_avd.ps1
 ```
 
 Headless fixed-four real lane:

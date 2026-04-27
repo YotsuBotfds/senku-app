@@ -28,6 +28,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
         self.assertIn("write_android_tooling_version_manifest.py", self.script)
         self.assertIn("run_android_managed_device_smoke.ps1", self.script)
         self.assertIn("run_android_litert_readiness_matrix.ps1", self.script)
+        self.assertIn("prepare_senku_tablet_2_large_data_avd.ps1", self.script)
         self.assertIn("run_android_orchestrator_smoke.ps1", self.script)
         self.assertIn("run_android_harness_matrix.ps1", self.script)
         self.assertIn("build_android_ui_state_pack_parallel.ps1", self.script)
@@ -35,6 +36,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
         self.assertIn("validate_android_tooling_version_manifest.py", self.script)
         self.assertIn("validate_android_managed_device_smoke_summary.py", self.script)
         self.assertIn("validate_android_litert_readiness_summary.py", self.script)
+        self.assertIn("validate_senku_tablet_2_large_data_avd_preflight_summary.py", self.script)
         self.assertIn("validate_android_orchestrator_smoke_summary.py", self.script)
         self.assertIn("validate_android_harness_matrix_plan.py", self.script)
         self.assertIn("validate_android_ui_state_pack_plan.py", self.script)
@@ -109,6 +111,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
                 "tooling_version_manifest",
                 "managed_device_smoke_dry_run",
                 "litert_readiness_dry_run",
+                "senku_tablet_2_large_data_avd_preflight",
                 "orchestrator_smoke_dry_run",
                 "harness_matrix_plan_only",
                 "ui_state_pack_plan_only",
@@ -122,6 +125,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
                 "validate_tooling_version_manifest",
                 "validate_managed_device_smoke",
                 "validate_litert_readiness",
+                "validate_senku_tablet_2_large_data_avd_preflight",
                 "validate_orchestrator_smoke",
                 "validate_harness_matrix_plan",
                 "validate_ui_state_pack_plan",
@@ -157,6 +161,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
             self.assertTrue(child_summaries["tooling_version_manifest"].exists())
             self.assertTrue(child_summaries["managed_device_smoke_dry_run"].exists())
             self.assertTrue(child_summaries["litert_readiness_dry_run"].exists())
+            self.assertTrue(child_summaries["senku_tablet_2_large_data_avd_preflight"].exists())
             self.assertTrue(child_summaries["orchestrator_smoke_dry_run"].exists())
             self.assertTrue(child_summaries["harness_matrix_plan_only"].exists())
             self.assertTrue(child_summaries["ui_state_pack_plan_only"].exists())
@@ -164,6 +169,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
             tooling = json.loads(child_summaries["tooling_version_manifest"].read_text(encoding="utf-8-sig"))
             managed = json.loads(child_summaries["managed_device_smoke_dry_run"].read_text(encoding="utf-8-sig"))
             litert = json.loads(child_summaries["litert_readiness_dry_run"].read_text(encoding="utf-8-sig"))
+            tablet_avd = json.loads(child_summaries["senku_tablet_2_large_data_avd_preflight"].read_text(encoding="utf-8-sig"))
             orchestrator = json.loads(child_summaries["orchestrator_smoke_dry_run"].read_text(encoding="utf-8-sig"))
             harness = json.loads(child_summaries["harness_matrix_plan_only"].read_text(encoding="utf-8-sig"))
             ui_plan = json.loads(child_summaries["ui_state_pack_plan_only"].read_text(encoding="utf-8-sig"))
@@ -176,6 +182,10 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
             self.assertTrue(litert["dry_run"])
             self.assertTrue(litert["model"]["exists"])
             self.assertFalse(litert["backend"]["adb_required_in_dry_run"])
+            self.assertTrue(tablet_avd["dry_run"])
+            self.assertEqual(tablet_avd["required_path"], "config_based_avd_data_partition")
+            self.assertFalse(tablet_avd["acceptance_evidence"])
+            self.assertFalse(tablet_avd["deploy_evidence"])
             self.assertTrue(orchestrator["dry_run"])
             self.assertFalse(orchestrator["would_start_emulators"])
             self.assertTrue(harness["plan_only"])

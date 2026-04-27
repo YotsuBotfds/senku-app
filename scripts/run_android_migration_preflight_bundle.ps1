@@ -140,6 +140,23 @@ $taskInventoryPath = Join-Path $fixtureDir "managed_device_tasks.txt"
     "senkuManagedSmokeGroupDebugAndroidTest - Installs and runs instrumentation tests on a group."
 ) | Set-Content -LiteralPath $taskInventoryPath -Encoding UTF8
 
+$fixtureAvdHome = Join-Path $fixtureDir "avd_home"
+$fixtureAvdRoot = Join-Path $fixtureAvdHome "Senku_Tablet_2.avd"
+New-Item -ItemType Directory -Force -Path $fixtureAvdRoot | Out-Null
+@(
+    "avd.ini.encoding=UTF-8",
+    "path=$fixtureAvdRoot",
+    "path.rel=avd/Senku_Tablet_2.avd",
+    "target=android-36.1"
+) | Set-Content -LiteralPath (Join-Path $fixtureAvdHome "Senku_Tablet_2.ini") -Encoding UTF8
+@(
+    "target=android-36.1",
+    "abi.type=x86_64",
+    "hw.lcd.width=1600",
+    "hw.lcd.height=2560",
+    "disk.dataPartition.size=6G"
+) | Set-Content -LiteralPath (Join-Path $fixtureAvdRoot "config.ini") -Encoding UTF8
+
 $runFilePath = Join-Path $fixtureDir "harness_matrix_runs.jsonl"
 @(
     '{"mode":"prompt","query":"How do I purify water?","run_label":"preflight_prompt","ask":true,"wait_for_completion":true}',
@@ -183,6 +200,12 @@ $steps.Add((Invoke-BundleCommand -Name "litert_readiness_dry_run" -Command @(
     "-OutputDir", $litertDir, "-ModelPath", $tinyModelPath, "-DryRun"
 ) -OutputDirectory $litertDir -SummaryPath (Join-Path $litertDir "summary.json") -MarkdownPath (Join-Path $litertDir "summary.md"))) | Out-Null
 
+$tabletAvdDir = Join-Path $resolvedOutputDir "senku_tablet_2_large_data_avd_preflight"
+$steps.Add((Invoke-BundleCommand -Name "senku_tablet_2_large_data_avd_preflight" -Command @(
+    "powershell", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "prepare_senku_tablet_2_large_data_avd.ps1"),
+    "-OutputDir", $tabletAvdDir, "-AvdHome", $fixtureAvdHome
+) -OutputDirectory $tabletAvdDir -SummaryPath (Join-Path $tabletAvdDir "summary.json") -MarkdownPath (Join-Path $tabletAvdDir "summary.md"))) | Out-Null
+
 $orchestratorDir = Join-Path $resolvedOutputDir "orchestrator_smoke"
 $steps.Add((Invoke-BundleCommand -Name "orchestrator_smoke_dry_run" -Command @(
     "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "run_android_orchestrator_smoke.ps1"),
@@ -214,6 +237,7 @@ $validationCommands = @(
     [ordered]@{ name = "validate_tooling_version_manifest"; command = "$($python) scripts\validate_android_tooling_version_manifest.py $toolingJson"; target = (Convert-ToRepoRelativePath -Path $toolingJson) },
     [ordered]@{ name = "validate_managed_device_smoke"; command = "$($python) scripts\validate_android_managed_device_smoke_summary.py $managedDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $managedDir "summary.json")) },
     [ordered]@{ name = "validate_litert_readiness"; command = "$($python) scripts\validate_android_litert_readiness_summary.py $litertDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $litertDir "summary.json")) },
+    [ordered]@{ name = "validate_senku_tablet_2_large_data_avd_preflight"; command = "$($python) scripts\validate_senku_tablet_2_large_data_avd_preflight_summary.py $tabletAvdDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $tabletAvdDir "summary.json")) },
     [ordered]@{ name = "validate_orchestrator_smoke"; command = "$($python) scripts\validate_android_orchestrator_smoke_summary.py $orchestratorDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $orchestratorDir "summary.json")) },
     [ordered]@{ name = "validate_harness_matrix_plan"; command = "$($python) scripts\validate_android_harness_matrix_plan.py $harnessDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $harnessDir "summary.json")) }
 )
@@ -232,6 +256,7 @@ foreach ($validation in @($validationCommands)) {
         "validate_tooling_version_manifest" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_tooling_version_manifest.py"), $toolingJson) }
         "validate_managed_device_smoke" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_managed_device_smoke_summary.py"), (Join-Path $managedDir "summary.json")) }
         "validate_litert_readiness" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_litert_readiness_summary.py"), (Join-Path $litertDir "summary.json")) }
+        "validate_senku_tablet_2_large_data_avd_preflight" { $parts = @($python, (Join-Path $PSScriptRoot "validate_senku_tablet_2_large_data_avd_preflight_summary.py"), (Join-Path $tabletAvdDir "summary.json")) }
         "validate_orchestrator_smoke" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_orchestrator_smoke_summary.py"), (Join-Path $orchestratorDir "summary.json")) }
         "validate_harness_matrix_plan" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_harness_matrix_plan.py"), (Join-Path $harnessDir "summary.json")) }
         "validate_ui_state_pack_plan" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_ui_state_pack_plan.py"), $uiPlanPath.FullName) }

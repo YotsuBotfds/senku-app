@@ -61,6 +61,7 @@ $testModules = @(
     "tests.test_validate_android_headless_state_pack_lane_summary",
     "tests.test_validate_android_instrumented_capture_summary",
     "tests.test_validate_android_large_data_litert_tablet_lane_summary",
+    "tests.test_validate_senku_tablet_2_large_data_avd_preflight_summary",
     "tests.test_validate_android_migration_preflight_bundle_summary",
     "tests.test_summarize_android_migration_proof",
     "tests.test_android_prompt_logged_contract",

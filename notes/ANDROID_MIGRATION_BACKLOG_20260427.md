@@ -336,10 +336,21 @@ Reviewer taxonomy for helper evidence:
   unbounded `adb wait-for-device`. Validate its summary with
   `scripts/validate_android_large_data_litert_tablet_lane_summary.py`; the
   validator does not confer emulator/UI acceptance.
+- `prepare_senku_tablet_2_large_data_avd.ps1` is the guarded maintenance
+  preflight for the required `config_based_avd_data_partition` path. Its default
+  dry run reads `Senku_Tablet_2` config identity and plans the config/state
+  changes without touching adb, emulator data, snapshots, or UI proof. Apply
+  mode requires `-ConfirmPrepare PREPARE_SENKU_TABLET_2_LARGE_DATA_AVD`, checks
+  that `emulator-5554` is not running, backs up `config.ini`, and quarantines
+  stale userdata/snapshot artifacts before a fresh large-data launch. Validate
+  its summary with
+  `scripts/validate_senku_tablet_2_large_data_avd_preflight_summary.py`; it is
+  AVD-maintenance preflight evidence only.
 - `run_android_migration_preflight_bundle.ps1` collects the current migration
   helper preflights into one metadata bundle: tooling versions, managed-device
-  dry run, LiteRT readiness dry run, orchestrator dry run, harness-matrix plan,
-  UI state-pack plan, and validator command references. Its summary is
+  dry run, LiteRT readiness dry run, `Senku_Tablet_2` large-data AVD preflight,
+  orchestrator dry run, harness-matrix plan, UI state-pack plan, and validator
+  command references. Its summary is
   metadata/preflight only with `acceptance_evidence=false`. Validate the bundle
   shape with `scripts/validate_android_migration_preflight_bundle_summary.py`;
   that validation is contract evidence only.
