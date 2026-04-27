@@ -1231,4 +1231,20 @@ Mistakes are inevitable, but most are preventable with forethought. Establish a 
 
 </section>
 
-{{> postal-service-establishment-custom }}
+<section id="postal-reliability-continuity">
+
+## Reliability and Continuity Notes
+
+| Operating issue | Lightweight mitigation |
+| --- | --- |
+| Place names, household names, or route labels are inconsistent | Keep one current naming list at each station; date every revision and retire old copies visibly. |
+| A route is delayed by weather, illness, damaged roads, or animal fatigue | Mark the route as delayed in the dispatch log, notify receiving stations, and use the preapproved alternate route or next scheduled run. |
+| A sender disputes a fee, priority class, or delivery promise | Compare the claim against the posted fee table and receipt copy; record the decision and route unresolved disputes to the postal authority. |
+| A receiving station reports missing or duplicate mail | Reconcile the dispatch log, bag seal notes, receipt book, and carrier handoff record before assigning fault. |
+| Records are at risk from fire, water, pests, or staff turnover | Keep duplicate weekly summaries in a separate location and cross-train at least one backup record keeper. |
+
+Treat postal reliability as a governance and recordkeeping problem, not only a
+transport problem: visible rules, dated logs, and clear appeal paths prevent
+small delivery failures from becoming community disputes.
+
+</section>

@@ -1041,4 +1041,21 @@ Most bookkeeping mistakes are preventable through clear procedures, training, an
 
 </section>
 
-{{> double-entry-bookkeeping-custom }}
+<section id="bookkeeping-troubleshooter">
+
+## Bookkeeping Troubleshooter
+
+| Symptom | Likely cause | Fix at a glance |
+| --- | --- | --- |
+| Trial balance does not balance | One side of an entry was missed, transposed, or posted to the wrong account | Compare journal entries to ledger postings in date order; mark each checked entry once. |
+| Cash on hand differs from the cash account | Missing receipt, unrecorded payment, counting error, or unauthorized withdrawal | Recount cash with two people present, compare against receipts, and document any unresolved difference. |
+| Inventory records and ledger values drift apart | Goods moved without a matching record or were valued inconsistently | Reconcile physical counts to inventory cards, then post an adjusting entry with approval. |
+| The same expense appears under several account names | Staff are inventing categories instead of using the chart of accounts | Freeze new account names until the accounting lead approves and publishes a chart update. |
+| Month-end closing is late every cycle | Source documents arrive late or review responsibilities are unclear | Set a closing calendar, name the reviewer for each record stream, and track missed handoffs. |
+| People distrust the books even when totals balance | Reports are too opaque or corrections are not explained | Publish summary reports, keep correction notes attached, and preserve original entries for audit. |
+
+Escalate repeated unexplained differences, missing cash, or disputed authority
+to the community's governance process before changing balances by judgment
+alone.
+
+</section>

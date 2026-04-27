@@ -1069,4 +1069,29 @@ Health records guide medical resource allocation.
 -   [Basic Accounting & Record-Keeping](basic-accounting-record-keeping.html) - Ledger systems and administrative record management
 -   [Property Rights & Land Law](property-rights-land-law.html) - Legal frameworks that rely on vital records for inheritance
 
-{{> census-vital-records-custom }}
+<section id="records-implementation-checkpoints">
+
+## Practical Next Steps
+
+- Assign one accountable records steward and one backup before the first census
+  round begins. Record who may enter, review, correct, and archive records.
+- Set a minimum review cadence for births, deaths, marriages, household moves,
+  and major status changes. A small community can often review changes monthly;
+  larger communities may need a weekly intake desk.
+- Store working copies separately from long-term archival copies. Keep each
+  correction dated, signed, and linked to the original entry rather than
+  rewriting history silently.
+- Review privacy boundaries whenever records are shared with food, housing,
+  labor, education, governance, or medical planners. Share counts and planning
+  categories when names are not necessary.
+
+### Cross-System Integration Reminders
+
+| System | Records signal to share | Privacy guardrail |
+| --- | --- | --- |
+| Food and ration planning | Household size, age bands, dependency counts | Avoid public lists of individual medical or family details. |
+| Education planning | School-age counts and guardian contacts | Limit access to child records to authorized coordinators. |
+| Health planning | Aggregate vulnerable-population counts and contact pathways | Keep diagnoses and treatment notes in medical custody. |
+| Governance and inheritance | Birth, death, marriage, guardianship, and property-status records | Require correction logs and witness review for contested changes. |
+
+</section>
