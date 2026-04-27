@@ -317,7 +317,21 @@ Cover crops (plants grown primarily to benefit soil, not harvest) integrate seam
 
 ## Planning and Record Keeping
 
-{{> crop-rotation-planner }}
+### Crop Rotation Planner
+
+| Plot | Year 1 | Year 2 | Year 3 | Year 4 |
+| --- | --- | --- | --- | --- |
+| A | Heavy feeders | Legumes | Light feeders or roots | Cover crop or rest |
+| B | Legumes | Light feeders or roots | Cover crop or rest | Heavy feeders |
+| C | Light feeders or roots | Cover crop or rest | Heavy feeders | Legumes |
+| D | Cover crop or rest | Heavy feeders | Legumes | Light feeders or roots |
+
+Use crop-family names in the plan, not only crop names. If disease, pest, or
+soil exhaustion recurs in one plot, extend the break for that crop family and
+mark the reason in the record before reusing the bed.
+
+**Minimum record row:** year, plot, crop family, variety, planting date,
+amendments, observed pest or disease pressure, yield, and next-year restriction.
 
 ### Creating Your Rotation Plan
 

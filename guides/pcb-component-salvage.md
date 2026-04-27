@@ -1575,6 +1575,20 @@ Sample shelving organization for a well-structured component storage system.
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> pcb-component-salvage-custom }}
-:::
-:::
+<section id="pcb-salvage-stock-control">
+
+## Salvage Stock Control Checklist
+
+| Stock issue | Check first | Low-risk response |
+| --- | --- | --- |
+| Component identity is uncertain | Marking, source board, package shape, and any test notes | Store as "unknown" until verified; do not mix with confirmed parts. |
+| Parts from the same board have mixed condition | Heat damage, corrosion, lifted leads, cracked cases, or missing markings | Sort by condition before adding to general stock. |
+| A useful part is hard to find later | Label quality, storage location, and inventory entry | Add a plain-language label and update the paper or digital index immediately. |
+| A component may be static-sensitive | Package type and prior handling | Store in anti-static packaging and avoid unnecessary handling. |
+| A part is safety-critical or power-related | Voltage/current rating evidence and test history | Keep it quarantined unless the rating and condition are confirmed by a qualified electronics owner. |
+
+When in doubt, preserve information before preserving quantity. A smaller stock
+of labeled, condition-checked components is more useful than a large bin of
+unidentified parts.
+
+</section>

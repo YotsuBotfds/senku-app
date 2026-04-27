@@ -894,4 +894,20 @@ Use the space below to record observations from your own plastic remolding work.
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> plastic-remolding-systems-custom }}
+<section id="plastic-remolding-control-log">
+
+## Remolding Control Log
+
+| Control point | What to record | Why it matters |
+| --- | --- | --- |
+| Plastic source and type | Label, source item, visible contamination, and any uncertainty | Mixed or contaminated plastic explains many weak, brittle, or scorched parts. |
+| Heat cycle | Temperature range used, dwell time, and observed smoke, odor, bubbles, or discoloration | Repeatable notes help separate material problems from process problems. |
+| Mold condition | Cleanliness, release method, alignment, damage, and sticking points | Mold problems often look like material failure unless they are logged. |
+| Part outcome | Fill quality, flash, warping, brittleness, fit, and whether the part was accepted or rejected | Outcome notes prevent repeating a failed setup. |
+| Safety stop | Any fumes, overheating, fire risk, burn risk, or unknown plastic | Stop the batch, ventilate, and route uncertain material or equipment issues to a qualified owner. |
+
+Do not treat a successful-looking part as proven for load-bearing, pressure,
+food-contact, electrical, or heat-exposed service unless that use is separately
+validated by the appropriate owner.
+
+</section>

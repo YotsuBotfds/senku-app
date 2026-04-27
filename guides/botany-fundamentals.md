@@ -345,7 +345,24 @@ Plants exhibit characteristic symptoms:
 
 <section id="practical-botany">
 
-{{> plant-hardiness-estimator }}
+### Plant Hardiness Estimator
+
+Use this quick screen before choosing a crop, planting date, or protected
+location:
+
+1. **Match season to life stage:** Germination, flowering, fruiting, and seed
+   maturation often have different temperature sensitivities.
+2. **Check cold risk:** Note the usual first and last frost windows, the plant's
+   dormancy state, and whether young growth has already broken dormancy.
+3. **Check heat risk:** Watch for wilting, leaf scorch, flower drop, stalled
+   growth, or plants that recover only overnight.
+4. **Match water to stress:** Heat stress worsens in dry soil; cold stress
+   worsens in saturated or poorly drained soil.
+5. **Use small tests first:** Trial a few plants in the exposed site before
+   committing seed stock or scarce transplants.
+
+Record the variety, planting date, weather stress, and outcome. Local hardiness
+evidence is often more useful than a generic climate label.
 
 ### Maximizing Plant Growth
 
