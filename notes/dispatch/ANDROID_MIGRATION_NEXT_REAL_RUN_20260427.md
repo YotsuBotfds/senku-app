@@ -59,3 +59,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_
 Capture each real artifact path plus pass counts, `platform_anr_count`,
 `matrix_homogeneous`, model identity source/name, APK SHA, installed-pack
 metadata, and `host_adb_platform_tools_version`.
+
+Reviewer handoff: look for `host_adb_platform_tools_version` in harness
+`summary.json` outputs. Harness and follow-up matrix wrappers also emit it in
+`summary.md`; FTS fallback emits it in `summary.json`; state-pack summaries roll
+the first available child value into the pack `summary.json` / compact matrix
+rollup.
