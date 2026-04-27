@@ -497,6 +497,169 @@ function Receive-CompletedJobs {
     }
 }
 
+function New-MatrixSummary {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object[]]$Results,
+        [Parameter(Mandatory = $true)]
+        [string]$SummaryJsonlPath,
+        [Parameter(Mandatory = $true)]
+        [string]$SummaryCsvPath
+    )
+
+    $completed = @($Results | Where-Object { $_.status -eq "completed" })
+    $failed = @($Results | Where-Object { $_.status -ne "completed" })
+    $statusGroups = @()
+    foreach ($statusName in @("completed", "failed")) {
+        $source = if ($statusName -eq "completed") { $completed } else { $failed }
+        $statusGroups += [ordered]@{
+            status = $statusName
+            count = $source.Count
+            run_labels = @($source | ForEach-Object { $_.run_label })
+        }
+    }
+
+    $emulatorGroups = @()
+    foreach ($group in @($Results | Group-Object -Property emulator | Sort-Object -Property Name)) {
+        $emulator = [string]$group.Name
+        $emulatorResults = @($group.Group)
+        $emulatorCompleted = @($emulatorResults | Where-Object { $_.status -eq "completed" })
+        $emulatorFailed = @($emulatorResults | Where-Object { $_.status -ne "completed" })
+        $emulatorStatusGroups = @()
+        foreach ($statusName in @("completed", "failed")) {
+            $source = if ($statusName -eq "completed") { $emulatorCompleted } else { $emulatorFailed }
+            $emulatorStatusGroups += [ordered]@{
+                status = $statusName
+                count = $source.Count
+                run_labels = @($source | ForEach-Object { $_.run_label })
+            }
+        }
+
+        $emulatorGroups += [ordered]@{
+            emulator = $emulator
+            total = $emulatorResults.Count
+            completed = $emulatorCompleted.Count
+            failed = $emulatorFailed.Count
+            status_groups = $emulatorStatusGroups
+        }
+    }
+
+    $failedItems = @($failed | ForEach-Object {
+        $artifactPaths = @()
+        if (Test-Path -LiteralPath $_.manifest_path) {
+            $artifactPaths += [ordered]@{
+                kind = "manifest_json"
+                path = $_.manifest_path
+            }
+        }
+        if (Test-Path -LiteralPath $_.logcat_path) {
+            $artifactPaths += [ordered]@{
+                kind = "logcat"
+                path = $_.logcat_path
+            }
+        }
+
+        [ordered]@{
+            run_label = $_.run_label
+            mode = $_.mode
+            emulator = $_.emulator
+            error = $_.error
+            artifact_paths = $artifactPaths
+        }
+    })
+
+    $artifactPaths = @(
+        [ordered]@{ kind = "jsonl"; path = $SummaryJsonlPath }
+        [ordered]@{ kind = "csv"; path = $SummaryCsvPath }
+    )
+    foreach ($result in @($Results)) {
+        if (Test-Path -LiteralPath $result.manifest_path) {
+            $artifactPaths += [ordered]@{
+                kind = "manifest_json"
+                run_label = $result.run_label
+                emulator = $result.emulator
+                path = $result.manifest_path
+            }
+        }
+        if (Test-Path -LiteralPath $result.logcat_path) {
+            $artifactPaths += [ordered]@{
+                kind = "logcat"
+                run_label = $result.run_label
+                emulator = $result.emulator
+                path = $result.logcat_path
+            }
+        }
+    }
+
+    return [ordered]@{
+        total = $Results.Count
+        completed = $completed.Count
+        failed = $failed.Count
+        status_groups = $statusGroups
+        emulator_groups = $emulatorGroups
+        failed_items = $failedItems
+        artifact_paths = $artifactPaths
+        summary_jsonl_path = $SummaryJsonlPath
+        summary_csv_path = $SummaryCsvPath
+    }
+}
+
+function ConvertTo-MatrixSummaryMarkdown {
+    param([Parameter(Mandatory = $true)][object]$Summary)
+
+    $lines = @(
+        "# Android Harness Matrix Summary",
+        "",
+        "- total: $($Summary.total)",
+        "- completed: $($Summary.completed)",
+        "- failed: $($Summary.failed)",
+        "- summary_jsonl_path: $($Summary.summary_jsonl_path)",
+        "- summary_csv_path: $($Summary.summary_csv_path)",
+        "",
+        "## Status Groups"
+    )
+
+    foreach ($group in $Summary.status_groups) {
+        $runLabels = if ($group.run_labels.Count -gt 0) { ($group.run_labels -join ", ") } else { "-" }
+        $lines += "- $($group.status): $($group.count) ($runLabels)"
+    }
+
+    $lines += @("", "## Emulator Groups")
+    foreach ($group in $Summary.emulator_groups) {
+        $lines += "- emulator=$($group.emulator) total=$($group.total) completed=$($group.completed) failed=$($group.failed)"
+        foreach ($statusGroup in $group.status_groups) {
+            $runLabels = if ($statusGroup.run_labels.Count -gt 0) { ($statusGroup.run_labels -join ", ") } else { "-" }
+            $lines += "  - $($statusGroup.status): $($statusGroup.count) ($runLabels)"
+        }
+    }
+
+    $lines += @("", "## Failed Items")
+    if ($Summary.failed_items.Count -eq 0) {
+        $lines += "- none"
+    } else {
+        foreach ($item in $Summary.failed_items) {
+            $lines += "- run_label=$($item.run_label) mode=$($item.mode) emulator=$($item.emulator) error=$($item.error)"
+            foreach ($path in $item.artifact_paths) {
+                $lines += "  - $($path.kind): $($path.path)"
+            }
+        }
+    }
+
+    $lines += @("", "## Artifact Paths")
+    foreach ($artifact in $Summary.artifact_paths) {
+        $suffix = ""
+        if ($artifact.PSObject.Properties.Name -contains "run_label") {
+            $suffix = " run_label=$($artifact.run_label)"
+        }
+        if ($artifact.PSObject.Properties.Name -contains "emulator") {
+            $suffix = "$suffix emulator=$($artifact.emulator)"
+        }
+        $lines += "- kind=$($artifact.kind)$suffix path=$($artifact.path)"
+    }
+
+    return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
@@ -535,11 +698,17 @@ while ($activeJobs.Count -gt 0) {
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $summaryJsonlPath = Join-Path $resolvedOutputDir ("android_harness_matrix_" + $timestamp + ".jsonl")
 $summaryCsvPath = Join-Path $resolvedOutputDir ("android_harness_matrix_" + $timestamp + ".csv")
+$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
+$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
 
 foreach ($result in $results) {
     ($result | ConvertTo-Json -Compress) | Add-Content -Path $summaryJsonlPath
 }
 $results | Export-Csv -Path $summaryCsvPath -NoTypeInformation -Encoding utf8
+
+$summary = New-MatrixSummary -Results $results -SummaryJsonlPath $summaryJsonlPath -SummaryCsvPath $summaryCsvPath
+($summary | ConvertTo-Json -Depth 10) | Set-Content -Path $summaryJsonPath -Encoding UTF8
+ConvertTo-MatrixSummaryMarkdown -Summary $summary | Set-Content -Path $summaryMarkdownPath -Encoding UTF8
 
 $failedResults = @($results | Where-Object { $_.status -ne "completed" })
 Write-Host ""
@@ -549,6 +718,8 @@ foreach ($result in $results) {
 }
 Write-Host ("Summary JSONL written to " + $summaryJsonlPath)
 Write-Host ("Summary CSV written to " + $summaryCsvPath)
+Write-Host ("Summary JSON written to " + $summaryJsonPath)
+Write-Host ("Summary Markdown written to " + $summaryMarkdownPath)
 
 if ($failedResults.Count -gt 0 -and $StopOnError) {
     $labels = @($failedResults | ForEach-Object { $_.run_label })
