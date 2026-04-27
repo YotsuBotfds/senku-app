@@ -1,4 +1,5 @@
 import subprocess
+import re
 import unittest
 from pathlib import Path
 
@@ -21,7 +22,23 @@ class StopAndroidHarnessRunsContractTests(unittest.TestCase):
         self.assertIn("function Matches-TargetEmulator", self.script)
         self.assertIn("if (-not $Targets -or $Targets.Count -eq 0)", self.script)
         self.assertIn("[string]::IsNullOrWhiteSpace($target)", self.script)
-        self.assertIn('$CommandLine -like ("*" + $target + "*")', self.script)
+        self.assertIn("$escapedTarget = [regex]::Escape($target.Trim())", self.script)
+        self.assertIn("(?<![A-Za-z0-9_-])", self.script)
+        self.assertIn("(?![A-Za-z0-9_-])", self.script)
+        self.assertIn("$CommandLine -match $targetPattern", self.script)
+        self.assertNotIn('$CommandLine -like ("*" + $target + "*")', self.script)
+
+    def test_target_emulator_match_bounds_exact_device_references(self):
+        target = "emulator-5554"
+        escaped = re.escape(target)
+        pattern = re.compile(rf"(?<![A-Za-z0-9_-]){escaped}(?![A-Za-z0-9_-])")
+
+        self.assertRegex("powershell -File run_android_prompt.ps1 -Emulator emulator-5554 -Query x", pattern)
+        self.assertRegex("powershell -File run_android_prompt.ps1 -Emulator:emulator-5554", pattern)
+        self.assertRegex('powershell -File run_android_prompt.ps1 -Emulator "emulator-5554"', pattern)
+        self.assertRegex("powershell -File run_android_followup_matrix.ps1 -Emulators emulator-5554,emulator-5556", pattern)
+        self.assertNotRegex("powershell -File run_android_prompt.ps1 -Emulator emulator-55540 -Query x", pattern)
+        self.assertNotRegex("powershell -File run_android_prompt.ps1 -Emulator emulator-5554-extra", pattern)
 
     def test_device_resolution_and_package_reset_are_stable(self):
         self.assertIn("function Get-TargetDevices", self.script)

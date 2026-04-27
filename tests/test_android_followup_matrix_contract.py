@@ -1,6 +1,7 @@
 import subprocess
 import unittest
 from pathlib import Path
+import re
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -85,6 +86,25 @@ class AndroidFollowupMatrixContractTests(unittest.TestCase):
         self.assertIn("## Posture Groups", self.script)
         self.assertIn("warm_start_count =", self.script)
         self.assertIn("Matrix summary JSON written to", self.script)
+
+    def test_conflicting_harness_match_bounds_emulator_argument(self):
+        self.assertIn("$emulatorPattern = [regex]::Escape($TargetEmulator)", self.script)
+        self.assertIn("-Emulator(?:\\s+|:)", self.script)
+        self.assertIn("(?=\\s|$)", self.script)
+        self.assertIn("$_.CommandLine -match $pattern", self.script)
+        self.assertNotIn("*-Emulator $TargetEmulator*", self.script)
+        self.assertNotIn("$_.CommandLine -like $pattern", self.script)
+
+        target = "emulator-5554"
+        pattern = (
+            rf"(?i)(?:^|\s)-Emulator(?:\s+|:)"
+            rf"(?:\"{re.escape(target)}\"|'{re.escape(target)}'|{re.escape(target)})(?=\s|$)"
+        )
+        self.assertRegex("powershell -File run_android_detail_followup.ps1 -Emulator emulator-5554 -InitialQuery x", pattern)
+        self.assertRegex("powershell -File run_android_detail_followup.ps1 -Emulator:emulator-5554", pattern)
+        self.assertRegex('powershell -File run_android_detail_followup.ps1 -Emulator "emulator-5554"', pattern)
+        self.assertNotRegex("powershell -File run_android_detail_followup.ps1 -Emulator emulator-55540 -InitialQuery x", pattern)
+        self.assertNotRegex("powershell -File run_android_detail_followup.ps1 -Emulator emulator-5554-extra", pattern)
 
     def test_followup_matrix_parser_passes(self):
         result = subprocess.run(

@@ -77,12 +77,13 @@ function Sanitize-RunLabel {
 function Stop-ConflictingHarnessRuns {
     param([string]$TargetEmulator)
 
-    $pattern = "*-Emulator $TargetEmulator*"
+    $emulatorPattern = [regex]::Escape($TargetEmulator)
+    $pattern = "(?i)(?:^|\s)-Emulator(?:\s+|:)(?:`"$emulatorPattern`"|'$emulatorPattern'|$emulatorPattern)(?=\s|$)"
     $conflicts = Get-CimInstance Win32_Process | Where-Object {
         $_.ProcessId -ne $PID -and
         $_.CommandLine -and
         (($_.CommandLine -like '*run_android_prompt_logged.ps1*') -or ($_.CommandLine -like '*run_android_prompt.ps1*')) -and
-        $_.CommandLine -like $pattern
+        $_.CommandLine -match $pattern
     }
 
     if (-not $conflicts) {

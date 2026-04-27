@@ -21,7 +21,9 @@ function Matches-TargetEmulator {
         if ([string]::IsNullOrWhiteSpace($target)) {
             continue
         }
-        if ($CommandLine -like ("*" + $target + "*")) {
+        $escapedTarget = [regex]::Escape($target.Trim())
+        $targetPattern = "(?<![A-Za-z0-9_-])" + $escapedTarget + "(?![A-Za-z0-9_-])"
+        if ($CommandLine -match $targetPattern) {
             return $true
         }
     }

@@ -219,6 +219,10 @@ Reviewer taxonomy for helper evidence:
   data posture, model identity, installed-pack metadata, and the required
   non-acceptance evidence posture. It validates shape only; it does not perform
   emulator capture or confer acceptance.
+- `run_android_instrumented_ui_smoke.ps1 -CaptureSummaryPath` writes the
+  capture-summary handoff consumed by that validator. Use it for artifact-shape
+  compatibility and migration review; it is non-acceptance evidence unless the
+  same capture is rolled into the fixed four-emulator state-pack proof.
 - Evaluate Gradle Managed Devices as a parallel smoke lane after the fixed
   four-emulator harness remains green. The Android Gradle plugin can define
   named devices, groups, parallel group runs, and managed-device sharding, but
@@ -267,6 +271,10 @@ Reviewer taxonomy for helper evidence:
   `acceptance_evidence=false`, and `migration_checklist_intent` with the
   selected roles, host model identity, host/skip flags, parallelism, and the
   same non-acceptance posture fields.
+- `run_android_headless_state_pack_lane.ps1` wraps the fixed four-emulator
+  state-pack path with headless emulator launch profiles. `-PlanOnly` and
+  `-WhatIf` write non-acceptance plans only; a real run requires `-RealRun` and
+  only counts when the fixed roles all pass through the state-pack summary.
 - Use `run_android_harness_matrix.ps1 -PlanOnly` for prompt/detail matrix
   preflight. It writes a validator-compatible `summary.json` with
   `plan_kind=android_harness_matrix`, `preflight_only=true`,
@@ -295,6 +303,15 @@ Reviewer taxonomy for helper evidence:
   extraction plan, `real_run_status=not_implemented`,
   `primary_evidence=fixed_four_emulator_matrix`, and the stop line that fixed
   four-emulator evidence remains primary.
+- `run_android_large_data_litert_tablet_lane.ps1` is the guarded
+  `emulator-5554` large-data LiteRT lane. Dry runs are preflight only; real mode
+  requires the confirmation token and produces deploy/runtime evidence, not UI
+  acceptance, until it is folded into fixed-four state-pack evidence.
+- `run_android_migration_preflight_bundle.ps1` collects the current migration
+  helper preflights into one metadata bundle: tooling versions, managed-device
+  dry run, LiteRT readiness dry run, orchestrator dry run, harness-matrix plan,
+  UI state-pack plan, and validator command references. Its summary is
+  metadata/preflight only with `acceptance_evidence=false`.
 - Android Gradle dependency verification is enabled and includes the detached
   Android lint tool dependencies, but `:app:lintDebug` is still blocked by
   existing lint/code compatibility findings. Do not treat lint as a green

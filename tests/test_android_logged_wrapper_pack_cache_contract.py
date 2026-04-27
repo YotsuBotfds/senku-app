@@ -1,4 +1,5 @@
 import unittest
+import re
 from pathlib import Path
 
 
@@ -38,6 +39,26 @@ class AndroidLoggedWrapperPackCacheContractTests(unittest.TestCase):
         self.assertIn("push_pack_cache_hit =", script)
         self.assertIn("push_pack_pushed =", script)
         self.assertIn("push_pack_state_path =", script)
+
+    def test_detail_logged_uses_bounded_exact_emulator_conflict_match(self):
+        script = FOLLOWUP_LOGGED.read_text(encoding="utf-8-sig")
+
+        self.assertIn("$emulatorPattern = [regex]::Escape($TargetEmulator)", script)
+        self.assertIn("-Emulator(?:\\s+|:)", script)
+        self.assertIn("$_.CommandLine -match $pattern", script)
+        self.assertNotIn("*-Emulator $TargetEmulator*", script)
+
+        target = "emulator-5554"
+        escaped = re.escape(target)
+        pattern = re.compile(
+            rf"(?i)(?:^|\s)-Emulator(?:\s+|:)"
+            rf"(?:\"{escaped}\"|'{escaped}'|{escaped})(?=\s|$)"
+        )
+        self.assertRegex("powershell -File run_android_detail_followup.ps1 -Emulator emulator-5554 -InitialQuery x", pattern)
+        self.assertRegex("powershell -File run_android_detail_followup.ps1 -Emulator:emulator-5554", pattern)
+        self.assertRegex('powershell -File run_android_detail_followup.ps1 -Emulator "emulator-5554"', pattern)
+        self.assertNotRegex("powershell -File run_android_detail_followup.ps1 -Emulator emulator-55540 -InitialQuery x", pattern)
+        self.assertNotRegex("powershell -File run_android_detail_followup.ps1 -Emulator emulator-5554-extra", pattern)
 
 
 if __name__ == "__main__":

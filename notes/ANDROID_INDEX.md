@@ -12,6 +12,9 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/export_mobile_pack.py`](../scripts/export_mobile_pack.py): mobile pack export entry point
 - [`../scripts/push_mobile_pack_to_android.ps1`](../scripts/push_mobile_pack_to_android.ps1): pre-promotion/dev pack hot-swap path
 - [`../scripts/run_android_instrumented_ui_smoke.ps1`](../scripts/run_android_instrumented_ui_smoke.ps1): instrumentation-backed smoke lane with screenshots, dumps, logcat, and `summary.json`
+- [`../scripts/run_android_headless_state_pack_lane.ps1`](../scripts/run_android_headless_state_pack_lane.ps1): guarded headless fixed-matrix launcher plus state-pack wrapper; `-PlanOnly` / `-WhatIf` are non-acceptance, and only a `-RealRun` fixed four-emulator state-pack pass may become UI acceptance
+- [`../scripts/run_android_large_data_litert_tablet_lane.ps1`](../scripts/run_android_large_data_litert_tablet_lane.ps1): guarded `emulator-5554` large-data LiteRT deploy/readiness lane; evidence is deploy/runtime only until folded into fixed-four UI proof
+- [`../scripts/run_android_migration_preflight_bundle.ps1`](../scripts/run_android_migration_preflight_bundle.ps1): metadata/preflight bundle for Android migration tooling; writes non-acceptance summaries only
 - [`../scripts/run_android_prompt.ps1`](../scripts/run_android_prompt.ps1): prompt automation harness
 - [`../scripts/run_android_search_log_only.ps1`](../scripts/run_android_search_log_only.ps1): preferred long retrieval harness
 - [`../scripts/run_android_prompt_batch.ps1`](../scripts/run_android_prompt_batch.ps1): prompt JSONL batch runner with summary artifacts, guarded by `tests/test_android_prompt_batch_summary_contract.py`
@@ -72,6 +75,9 @@ Use this as the first stop for Android parity and mobile-pack work.
 - Instrumented UI smoke `summary.json` now exposes `installed_pack` metadata
   from the app sandbox manifest/listing probe; use it to audit clean-install,
   no-push, and pushed-pack proof without copying or hashing large pack files.
+- Instrumented UI smoke also supports `-CaptureSummaryPath` for capture-summary
+  shape validation. Treat capture summaries as non-acceptance tooling evidence
+  unless they are part of the fixed four-emulator state-pack acceptance rollup.
 - Host launcher contracts now guard FastEmbed launcher defaults/argument
   forwarding and LiteRT launcher model-path discovery order.
 - Mixed prompt/follow-up and follow-up-only matrix summaries carry
@@ -115,8 +121,9 @@ Use this as the first stop for Android parity and mobile-pack work.
   metadata-only outputs are reviewer context with explicit
   `non_acceptance_evidence=true` / `acceptance_evidence=false` posture where
   they write summaries. Pack evidence proves inventory/identity, FTS fallback
-  evidence proves `runtime_evidence=fts4_fallback`, and only the fixed
-  four-emulator state-pack lane is UI acceptance evidence.
+  evidence proves `runtime_evidence=fts4_fallback`, LiteRT deploy/readiness
+  lanes prove runtime/deploy posture only, and only the fixed four-emulator
+  state-pack lane is UI acceptance evidence.
 
 ## Current artifact baseline
 
