@@ -89,6 +89,15 @@ public final class PromptHarnessSmokeTest {
         "detail_prior_turns_container",
         "detail_thread_container"
     };
+    private static final int[] DETAIL_SURFACE_VIEW_IDS = new int[] {
+        R.id.detail_body,
+        R.id.detail_body_mirror_shell,
+        R.id.detail_answer_card,
+        R.id.tablet_detail_root,
+        R.id.detail_inline_thread_container,
+        R.id.detail_prior_turns_container,
+        R.id.detail_thread_container
+    };
     private static final String[] IME_PACKAGES = new String[] {
         "com.google.android.inputmethod.latin",
         "com.android.inputmethod.latin",
@@ -4637,6 +4646,23 @@ public final class PromptHarnessSmokeTest {
             if (hasVisibleBounds(object)) {
                 return true;
             }
+        }
+        final boolean[] matched = { false };
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (!(activity instanceof DetailActivity)) {
+                return;
+            }
+            for (int resId : DETAIL_SURFACE_VIEW_IDS) {
+                android.view.View view = activity.findViewById(resId);
+                if (isEffectivelyVisible(view)) {
+                    matched[0] = true;
+                    return;
+                }
+            }
+        });
+        if (matched[0]) {
+            return true;
         }
         return false;
     }
