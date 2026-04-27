@@ -166,6 +166,19 @@ Phone-landscape proof after emulator restart and handoff harness fix,
   `artifacts/ui_state_pack_current_head_phone_landscape_after_handoff_fix/phone_landscape_after_handoff_fix/summary.json`,
   `status=pass`, `11 / 11`, `platform_anr=null`.
 
+Consolidated four-role UI state-pack proof, 2026-04-27 01:22-01:25 CT:
+
+- Artifact:
+  `artifacts/ui_state_pack_current_head_20260427_full_after_fixes/20260427_012242/summary.json`.
+- Result: `status=pass`, `41 / 41`.
+- Scope: `phone_portrait`, `phone_landscape`, `tablet_portrait`, and
+  `tablet_landscape`. Host/generative behavior is not proven by this 41-state
+  run; the rollup reports `host_states_included=true`, but model identity
+  remains null and the prior 45-state host-inclusive matrix is the comparison
+  point.
+- APK SHA:
+  `24af2ea76558829f94c973c87f47734ea2ef3c07b5756d0efe0e851f4164c21f`.
+
 Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 
 - `newborn_danger_sepsis` / `GD-284`:

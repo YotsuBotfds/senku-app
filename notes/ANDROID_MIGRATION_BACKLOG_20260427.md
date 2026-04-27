@@ -19,6 +19,11 @@ use it to approve reviewed-card runtime expansion or product exposure.
 
 ## Current Blockers
 
+- Consolidated state-pack proof: after the fixes below, the four-role
+  current-head UI state pack passed `41 / 41` under
+  `artifacts/ui_state_pack_current_head_20260427_full_after_fixes/20260427_012242/`.
+  Do not treat this as host/generative proof; model identity remains null and
+  the prior host-inclusive comparison matrix had 45 states.
 - `phone_landscape` System UI ANR: resolved for this session after restarting
   `emulator-5560`, reinstalling app/test APKs, and re-pushing the current-head
   pack. The post-restart full `phone_landscape` pack passed `11 / 11` with
