@@ -40,6 +40,10 @@ Use this as the first stop for Android parity and mobile-pack work.
 - Repeatable FTS fallback wrapper proof passed `4 / 4` at
   `artifacts/bench/android_fts_fallback_matrix_current_20260427/summary.json`
   with `runtime_evidence=fts4_fallback`.
+- Post-hardening FTS fallback wrapper proof passed `4 / 4` at
+  `artifacts/bench/android_fts_fallback_matrix_adb_version_20260427/summary.json`
+  with `runtime_evidence=fts4_fallback`, `device_lock_used=true`, and
+  `host_adb_platform_tools_version=37.0.0-14910828`.
 
 ## Fast Replay Helpers - 2026-04-27
 
