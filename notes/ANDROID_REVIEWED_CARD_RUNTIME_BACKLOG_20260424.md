@@ -90,6 +90,10 @@ Landed Android sequence:
 - `RAG-A15b`: a pushed current-head 271-card pack now has an Android runtime
   allowlist guard proving the six explicit pilot cards still plan while sampled
   non-pilot current-head cards do not satisfy the runtime planner hooks.
+- `RAG-A14k`: the A14i reviewed-card prompt canary now passes on Android after
+  re-pushing the current-head 271-card pack to `emulator-5556`; the summary
+  shows `status=pass`, `answer_cards=271`, correct poisoning reviewed-card
+  metadata, and `platform_anr=null`.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
