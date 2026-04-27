@@ -8,6 +8,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../TESTING_METHODOLOGY.md`](../TESTING_METHODOLOGY.md): desktop/mobile validation workflow
 - [`CP9_ACTIVE_QUEUE.md`](./CP9_ACTIVE_QUEUE.md): live planner queue and post-RC backlog status
 - [`../scripts/start_senku_emulator_matrix.ps1`](../scripts/start_senku_emulator_matrix.ps1): launch the fixed four-emulator matrix with read-only as the default mode
+- [`../scripts/start_senku_device_mirrors.ps1`](../scripts/start_senku_device_mirrors.ps1): launch physical phone/tablet scrcpy mirrors with device-scoped cleanup
 - [`../scripts/export_mobile_pack.py`](../scripts/export_mobile_pack.py): mobile pack export entry point
 - [`../scripts/push_mobile_pack_to_android.ps1`](../scripts/push_mobile_pack_to_android.ps1): pre-promotion/dev pack hot-swap path
 - [`../scripts/run_android_instrumented_ui_smoke.ps1`](../scripts/run_android_instrumented_ui_smoke.ps1): instrumentation-backed smoke lane with screenshots, dumps, logcat, and `summary.json`
@@ -82,6 +83,9 @@ Use this as the first stop for Android parity and mobile-pack work.
   `-PartitionSizeMb` launch-profile knobs for headless and large-data AVD
   lanes; defaults remain unchanged, and `-WhatIf` output now prints the
   concrete emulator arguments.
+- Launcher helper contracts now guard emulator `-WhatIf` launch arguments plus
+  mirror defaults, scrcpy path fallback resolution, and device-scoped mirror
+  cleanup.
 - `run_android_fts_fallback_matrix.ps1` now uses the resolved SDK adb path,
   records `device_lock_used` plus `host_adb_platform_tools_version`, and
   participates in `stop_android_harness_runs.ps1`.
