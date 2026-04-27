@@ -449,7 +449,7 @@ $commonStates = @(
     (New-StateDefinition -Method "homeGuideIntentShowsGuideConnectionContext"),
     (New-StateDefinition -Method "deterministicAskNavigatesToDetailScreen"),
     (New-StateDefinition -Method "generativeAskWithHostInferenceNavigatesToDetailScreen" -HostBacked),
-    (New-StateDefinition -Name "autoFollowUpWithHostInferenceBuildsInlineThreadHistory" -Method "scriptedSeededFollowUpThreadShowsInlineHistory"),
+    (New-StateDefinition -Method "scriptedSeededFollowUpThreadShowsInlineHistory"),
     (New-StateDefinition -Method "guideDetailShowsRelatedGuideNavigation"),
     (New-StateDefinition -Method "answerModeSourceSelectionKeepsSourceAnchoredCrossReferenceLane"),
     (New-StateDefinition -Method "answerModeProvenanceOpenRemainsNeutral")

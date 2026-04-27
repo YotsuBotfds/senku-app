@@ -40,6 +40,123 @@ function New-Slug {
     return $slug.ToLowerInvariant()
 }
 
+function New-SessionBatchSummary {
+    param(
+        [string]$Label,
+        [string]$Emulator,
+        [string]$ManifestPath,
+        [object[]]$Records
+    )
+
+    $completed = @($Records | Where-Object { [string]::IsNullOrWhiteSpace([string]$_.error) })
+    $failed = @($Records | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_.error) })
+    $timedOut = @($Records | Where-Object { $_.timed_out })
+    $statusGroups = @()
+    foreach ($statusName in @("completed", "failed")) {
+        $source = if ($statusName -eq "completed") { $completed } else { $failed }
+        $statusGroups += [ordered]@{
+            status = $statusName
+            count = @($source).Count
+            scenario_indexes = @($source | ForEach-Object { $_.scenario_index })
+            session_ids = @($source | ForEach-Object { $_.session_id })
+        }
+    }
+
+    return [ordered]@{
+        batch_label = $Label
+        emulator = $Emulator
+        manifest_path = $ManifestPath
+        total = @($Records).Count
+        completed = $completed.Count
+        failed = $failed.Count
+        timed_out = $timedOut.Count
+        status_groups = $statusGroups
+        timed_out_items = @($timedOut | ForEach-Object {
+            [ordered]@{
+                scenario_index = $_.scenario_index
+                session_id = $_.session_id
+                session_manifest_path = $_.session_manifest_path
+            }
+        })
+        failed_items = @($failed | ForEach-Object {
+            [ordered]@{
+                scenario_index = $_.scenario_index
+                session_id = $_.session_id
+                focus = $_.focus
+                error = $_.error
+                timed_out = $_.timed_out
+                turn_count = $_.turn_count
+                session_manifest_path = $_.session_manifest_path
+            }
+        })
+        artifact_paths = @(
+            [ordered]@{
+                kind = "manifest_jsonl"
+                path = $ManifestPath
+            }
+        ) + @($Records | ForEach-Object {
+            [ordered]@{
+                kind = "session_manifest_jsonl"
+                scenario_index = $_.scenario_index
+                session_id = $_.session_id
+                path = $_.session_manifest_path
+            }
+        })
+    }
+}
+
+function ConvertTo-SessionBatchSummaryMarkdown {
+    param([object]$Summary)
+
+    $lines = @(
+        "# Android Session Batch Summary",
+        "",
+        "- batch_label: $($Summary.batch_label)",
+        "- emulator: $($Summary.emulator)",
+        "- total: $($Summary.total)",
+        "- completed: $($Summary.completed)",
+        "- failed: $($Summary.failed)",
+        "- timed_out: $($Summary.timed_out)",
+        "- manifest_path: $($Summary.manifest_path)",
+        "",
+        "## Status Groups"
+    )
+
+    foreach ($group in $Summary.status_groups) {
+        $sessionIds = if ($group.session_ids.Count -gt 0) { ($group.session_ids -join ", ") } else { "-" }
+        $lines += "- $($group.status): $($group.count) ($sessionIds)"
+    }
+
+    $lines += @("", "## Timed Out Items")
+    if ($Summary.timed_out_items.Count -eq 0) {
+        $lines += "- none"
+    } else {
+        foreach ($item in $Summary.timed_out_items) {
+            $lines += "- scenario_index=$($item.scenario_index) session_id=$($item.session_id) session_manifest_path=$($item.session_manifest_path)"
+        }
+    }
+
+    $lines += @("", "## Failed Items")
+    if ($Summary.failed_items.Count -eq 0) {
+        $lines += "- none"
+    } else {
+        foreach ($item in $Summary.failed_items) {
+            $lines += "- scenario_index=$($item.scenario_index) session_id=$($item.session_id) focus=$($item.focus) timed_out=$($item.timed_out) turn_count=$($item.turn_count) error=$($item.error) session_manifest_path=$($item.session_manifest_path)"
+        }
+    }
+
+    $lines += @("", "## Artifact Paths")
+    foreach ($artifact in $Summary.artifact_paths) {
+        $suffix = ""
+        if ($artifact.PSObject.Properties.Name -contains "scenario_index") {
+            $suffix = " scenario_index=$($artifact.scenario_index) session_id=$($artifact.session_id)"
+        }
+        $lines += "- kind=$($artifact.kind)$suffix path=$($artifact.path)"
+    }
+
+    return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
+}
+
 $scenarioPath = Resolve-TargetPath -Path $ScenarioFile
 if (-not (Test-Path $scenarioPath)) {
     throw "Scenario file not found at $scenarioPath"
@@ -77,6 +194,7 @@ $label = if ([string]::IsNullOrWhiteSpace($BatchLabel)) {
     New-Slug -Text $BatchLabel
 }
 $aggregateManifestPath = Join-Path $outputPath "${label}.jsonl"
+$records = @()
 
 for ($index = 0; $index -lt $selected.Count; $index++) {
     $scenario = $selected[$index]
@@ -155,6 +273,7 @@ for ($index = 0; $index -lt $selected.Count; $index++) {
         final_detail_body = if ($lastTurn) { $lastTurn.detail_body } else { $null }
         final_session_text = if ($lastTurn) { $lastTurn.session_text } else { $null }
     }
+    $records += [pscustomobject]$record
     ($record | ConvertTo-Json -Compress -Depth 5) | Add-Content -Path $aggregateManifestPath
 
     if (($scenarioError -or ($lastTurn -and $lastTurn.error)) -and -not $ContinueOnError) {
@@ -165,4 +284,12 @@ for ($index = 0; $index -lt $selected.Count; $index++) {
     }
 }
 
+$summary = New-SessionBatchSummary -Label $label -Emulator $Emulator -ManifestPath $aggregateManifestPath -Records $records
+$summaryJsonPath = Join-Path $outputPath "summary.json"
+$summaryMarkdownPath = Join-Path $outputPath "summary.md"
+($summary | ConvertTo-Json -Depth 6) | Set-Content -Path $summaryJsonPath -Encoding UTF8
+ConvertTo-SessionBatchSummaryMarkdown -Summary $summary | Set-Content -Path $summaryMarkdownPath -Encoding UTF8
+
 Write-Host "Session batch manifest saved to $aggregateManifestPath"
+Write-Host "Session batch summary saved to $summaryJsonPath"
+Write-Host "Session batch summary markdown saved to $summaryMarkdownPath"

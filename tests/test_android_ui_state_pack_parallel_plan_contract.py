@@ -8,6 +8,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack_parallel.ps1"
+BUILD_SCRIPT_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack.ps1"
 
 
 class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
@@ -76,6 +77,19 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             launched_artifacts += list((run_dir / "parallel_logs").glob("*.exitcode.txt"))
             self.assertEqual(launched_artifacts, [])
             self.assertFalse((run_dir / "summary.json").exists())
+
+    def test_followup_state_name_matches_seeded_thread_method(self):
+        build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
+
+        self.assertIn(
+            '(New-StateDefinition -Method "scriptedSeededFollowUpThreadShowsInlineHistory")',
+            build_script,
+        )
+        self.assertNotIn(
+            '-Name "autoFollowUpWithHostInferenceBuildsInlineThreadHistory" '
+            '-Method "scriptedSeededFollowUpThreadShowsInlineHistory"',
+            build_script,
+        )
 
 
 if __name__ == "__main__":

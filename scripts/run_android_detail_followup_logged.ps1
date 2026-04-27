@@ -94,6 +94,20 @@ function Stop-ConflictingHarnessRuns {
     }
 }
 
+function Read-JsonFileOrNull {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+
+    try {
+        return (Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json)
+    } catch {
+        return $null
+    }
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 $startedAt = (Get-Date).ToString("o")
@@ -166,6 +180,7 @@ try {
 }
 
 if ($null -ne $capturedError -and -not (Test-Path $manifestPath)) {
+    $pushPackSummary = Read-JsonFileOrNull -Path $pushPackSummaryPath
     $record = [ordered]@{
         emulator = $Emulator
         inference_mode = $InferenceMode
@@ -175,6 +190,9 @@ if ($null -ne $capturedError -and -not (Test-Path $manifestPath)) {
         requested_follow_up = $FollowUpQuery
         warm_start = [bool]$WarmStart
         push_pack_summary_path = $(if (Test-Path -LiteralPath $pushPackSummaryPath) { $pushPackSummaryPath } else { $null })
+        push_pack_cache_hit = $(if ($pushPackSummary) { [bool]$pushPackSummary.cache_hit } else { $null })
+        push_pack_pushed = $(if ($pushPackSummary) { [bool]$pushPackSummary.pushed } else { $null })
+        push_pack_state_path = $(if ($pushPackSummary) { [string]$pushPackSummary.state_path } else { $null })
         logcat_path = $logcatPath
         error_message = $capturedError.Exception.Message
         started_at = $startedAt

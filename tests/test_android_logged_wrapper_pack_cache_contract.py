@@ -33,6 +33,11 @@ class AndroidLoggedWrapperPackCacheContractTests(unittest.TestCase):
         self.assertIn("$scriptArgs.PushPackSummaryPath = $pushPackSummaryPath", script)
         self.assertIn("$scriptArgs.SkipPackPushIfCurrent = $true", script)
         self.assertIn("$scriptArgs.ForcePackPush = $true", script)
+        self.assertIn("$pushPackSummary = Read-JsonFileOrNull -Path $pushPackSummaryPath", script)
+        self.assertIn("push_pack_summary_path =", script)
+        self.assertIn("push_pack_cache_hit =", script)
+        self.assertIn("push_pack_pushed =", script)
+        self.assertIn("push_pack_state_path =", script)
 
 
 if __name__ == "__main__":

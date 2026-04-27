@@ -201,6 +201,34 @@ function Invoke-Adb {
     return Invoke-NativeCapture -FilePath $adb -Arguments $Arguments
 }
 
+function Get-HostAdbVersionEvidence {
+    $versionResult = Invoke-Adb -Arguments @("version")
+    $versionText = (($versionResult.stdout + [Environment]::NewLine + $versionResult.stderr).Trim())
+    $versionLine = ""
+    $platformToolsVersion = ""
+
+    foreach ($line in ($versionText -split "`r?`n")) {
+        $trimmed = $line.Trim()
+        if ([string]::IsNullOrWhiteSpace($trimmed)) {
+            continue
+        }
+        if ([string]::IsNullOrWhiteSpace($versionLine) -and $trimmed -match "^Android Debug Bridge version\b") {
+            $versionLine = $trimmed
+        }
+        if ([string]::IsNullOrWhiteSpace($platformToolsVersion) -and $trimmed -match "^Version\s+(.+)$") {
+            $platformToolsVersion = $Matches[1].Trim()
+        }
+    }
+
+    return [pscustomobject]@{
+        adb_path = $adb
+        adb_version_exit_code = $versionResult.exit_code
+        adb_version_line = $versionLine
+        adb_platform_tools_version = $platformToolsVersion
+        adb_version_output = $versionText
+    }
+}
+
 function Assert-DeviceReady {
     param(
         [Parameter(Mandatory = $true)]
@@ -668,17 +696,25 @@ function Write-EnvironmentLog {
     param(
         [Parameter(Mandatory = $true)]
         [string]$PrimarySerial,
-        [string]$SecondarySerial
+        [string]$SecondarySerial,
+        [Parameter(Mandatory = $true)]
+        [pscustomobject]$AdbVersionEvidence
     )
 
     $lines = New-Object System.Collections.Generic.List[string]
     $lines.Add("generated_utc=$(Get-NowUtcString)")
     $lines.Add("powershell_version=$($PSVersionTable.PSVersion)")
     $lines.Add("adb_path=$adb")
+    $lines.Add("adb_version_line=$($AdbVersionEvidence.adb_version_line)")
+    $lines.Add("adb_platform_tools_version=$($AdbVersionEvidence.adb_platform_tools_version)")
+    $lines.Add("adb_version_exit_code=$($AdbVersionEvidence.adb_version_exit_code)")
     $lines.Add("primary_serial=$PrimarySerial")
     if (-not [string]::IsNullOrWhiteSpace($SecondarySerial)) {
         $lines.Add("confirm_serial=$SecondarySerial")
     }
+    $lines.Add("")
+    $lines.Add("adb_version:")
+    $lines.Add($AdbVersionEvidence.adb_version_output)
     $lines.Add("")
     $lines.Add("adb_devices:")
     $lines.Add(((& $adb devices) | Out-String).TrimEnd())
@@ -727,7 +763,8 @@ if (-not [string]::IsNullOrWhiteSpace($ConfirmDevice)) {
     Initialize-RemoteDirs -Serial $ConfirmDevice
 }
 
-Write-EnvironmentLog -PrimarySerial $Device -SecondarySerial $ConfirmDevice
+$adbVersionEvidence = Get-HostAdbVersionEvidence
+Write-EnvironmentLog -PrimarySerial $Device -SecondarySerial $ConfirmDevice -AdbVersionEvidence $adbVersionEvidence
 
 $results = New-Object System.Collections.Generic.List[object]
 $primaryMatrix = @(
@@ -762,11 +799,24 @@ if (-not [string]::IsNullOrWhiteSpace($ConfirmDevice)) {
     }
 }
 
-$results | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $artifactResultsPath -Encoding UTF8
-Write-ArtifactSummary -Results $results -Path $artifactSummaryPath
-
 $safeCount = ($results | Where-Object { $_.verdict -eq "safe" }).Count
 $unsafeCount = ($results | Where-Object { $_.verdict -eq "unsafe" }).Count
 $unresolvedCount = ($results | Where-Object { $_.verdict -eq "unresolved" }).Count
+$resultsArtifact = [pscustomobject]@{
+    summary = [pscustomobject]@{
+        generated_utc = Get-NowUtcString
+        adb_path = $adbVersionEvidence.adb_path
+        adb_version_line = $adbVersionEvidence.adb_version_line
+        adb_platform_tools_version = $adbVersionEvidence.adb_platform_tools_version
+        adb_version_exit_code = $adbVersionEvidence.adb_version_exit_code
+        safe_count = $safeCount
+        unsafe_count = $unsafeCount
+        unresolved_count = $unresolvedCount
+    }
+    results = @($results)
+}
+$resultsArtifact | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath $artifactResultsPath -Encoding UTF8
+Write-ArtifactSummary -Results $results -Path $artifactSummaryPath
+
 Write-Host "Probe artifact: $outputRoot"
 Write-Host "safe=$safeCount unsafe=$unsafeCount unresolved=$unresolvedCount"
