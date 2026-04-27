@@ -58,15 +58,7 @@ if (-not [string]::IsNullOrWhiteSpace($PromptPackFile)) {
     }
 }
 
-$normalizedDevices = New-Object System.Collections.Generic.List[string]
-foreach ($deviceEntry in $Devices) {
-    foreach ($split in ($deviceEntry -split ",")) {
-        $trimmed = $split.Trim()
-        if (-not [string]::IsNullOrWhiteSpace($trimmed)) {
-            $normalizedDevices.Add($trimmed)
-        }
-    }
-}
+$normalizedDevices = @(Resolve-AndroidHarnessDeviceList -Devices $Devices)
 if ($normalizedDevices.Count -eq 0) {
     throw "No valid devices provided."
 }

@@ -16,6 +16,21 @@ function Convert-AndroidProcessArgumentString {
     return ($quoted -join " ")
 }
 
+function Resolve-AndroidHarnessDeviceList {
+    param([string[]]$Devices)
+
+    $normalized = New-Object System.Collections.Generic.List[string]
+    foreach ($deviceEntry in @($Devices)) {
+        foreach ($split in ([string]$deviceEntry -split ",")) {
+            $trimmed = $split.Trim()
+            if (-not [string]::IsNullOrWhiteSpace($trimmed)) {
+                $normalized.Add($trimmed)
+            }
+        }
+    }
+    return $normalized.ToArray()
+}
+
 function New-AndroidHarnessDeviceLockHandle {
     param(
         [System.IO.FileStream]$Stream,
@@ -554,4 +569,4 @@ function Write-AndroidHarnessZipBundle {
     return $DestinationZip
 }
 
-Export-ModuleMember -Function Acquire-AndroidHarnessDeviceLock,Get-AndroidCurrentRotation,Get-AndroidDisplayDensity,Get-AndroidPhysicalDisplaySize,Get-AndroidScreenshotDimensions,Get-AndroidScreenshotFacts,Invoke-AndroidAdbCommandCapture,Resolve-AndroidDeviceFacts,Resolve-AndroidDeviceRole,Resolve-AndroidDimensionsOrientation,Resolve-AndroidHostInferenceUrlForDevice,Resolve-AndroidRequestedRotation,Write-AndroidHarnessZipBundle
+Export-ModuleMember -Function Acquire-AndroidHarnessDeviceLock,Get-AndroidCurrentRotation,Get-AndroidDisplayDensity,Get-AndroidPhysicalDisplaySize,Get-AndroidScreenshotDimensions,Get-AndroidScreenshotFacts,Invoke-AndroidAdbCommandCapture,Resolve-AndroidDeviceFacts,Resolve-AndroidDeviceRole,Resolve-AndroidDimensionsOrientation,Resolve-AndroidHarnessDeviceList,Resolve-AndroidHostInferenceUrlForDevice,Resolve-AndroidRequestedRotation,Write-AndroidHarnessZipBundle

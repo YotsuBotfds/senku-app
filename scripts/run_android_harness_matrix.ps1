@@ -25,11 +25,20 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $promptLoggedScript = Join-Path $PSScriptRoot "run_android_prompt_logged.ps1"
 $detailLoggedScript = Join-Path $PSScriptRoot "run_android_detail_followup_logged.ps1"
+$commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 if (-not (Test-Path $promptLoggedScript)) {
     throw "run_android_prompt_logged.ps1 not found at $promptLoggedScript"
 }
 if (-not (Test-Path $detailLoggedScript)) {
     throw "run_android_detail_followup_logged.ps1 not found at $detailLoggedScript"
+}
+if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
+    throw "android_harness_common.psm1 not found at $commonHarnessModule"
+}
+Import-Module $commonHarnessModule -Force -DisableNameChecking
+$Emulators = @(Resolve-AndroidHarnessDeviceList -Devices $Emulators)
+if ($Emulators.Count -eq 0) {
+    throw "No valid emulators provided."
 }
 
 function Resolve-TargetPath {

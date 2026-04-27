@@ -21,6 +21,7 @@ ANDROID_HARNESS_SCRIPT_PATHS = (
     "scripts\\run_android_prompt_logged.ps1",
     "scripts\\run_android_prompt_batch.ps1",
     "scripts\\run_android_harness_matrix.ps1",
+    "scripts\\android_harness_common.psm1",
     "scripts\\run_android_instrumented_ui_smoke.ps1",
     "scripts\\start_senku_emulator_matrix.ps1",
     "scripts\\build_android_ui_state_pack.ps1",
@@ -235,6 +236,18 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('$hostProbe.PSObject.Properties.Name -contains "tables"', script)
         self.assertIn('hostPackContainsFts5Schema = @($hostTables | Where-Object', script)
         self.assertIn('hostPackContainsFts4Schema = @($hostTables | Where-Object', script)
+
+    def test_android_harness_uses_shared_device_normalizer(self):
+        common = (REPO_ROOT / "scripts" / "android_harness_common.psm1").read_text(encoding="utf-8")
+        matrix = (REPO_ROOT / "scripts" / "run_android_harness_matrix.ps1").read_text(encoding="utf-8")
+        validation = (REPO_ROOT / "scripts" / "run_android_ui_validation_pack.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("function Resolve-AndroidHarnessDeviceList", common)
+        self.assertIn('[string]$deviceEntry -split ","', common)
+        self.assertIn("Resolve-AndroidHarnessDeviceList", matrix)
+        self.assertIn("$Emulators = @(Resolve-AndroidHarnessDeviceList -Devices $Emulators)", matrix)
+        self.assertIn("Resolve-AndroidHarnessDeviceList", validation)
+        self.assertIn("$normalizedDevices = @(Resolve-AndroidHarnessDeviceList -Devices $Devices)", validation)
 
     def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
