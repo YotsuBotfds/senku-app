@@ -123,26 +123,7 @@ function Get-HostAdbPlatformToolsVersion {
         return "dry_run"
     }
 
-    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("version") -TimeoutMilliseconds 10000
-    if ($result.exit_code -ne 0 -or [string]::IsNullOrWhiteSpace([string]$result.output)) {
-        return $null
-    }
-
-    $lines = @(([string]$result.output -split "`r?`n") | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
-    $platformToolsLine = @($lines | Where-Object { $_ -match "^Version\s+(.+)$" } | Select-Object -First 1)
-    if ($platformToolsLine.Count -gt 0 -and $platformToolsLine[0] -match "^Version\s+(.+)$") {
-        return $Matches[1]
-    }
-
-    if ($lines.Count -eq 0) {
-        return $null
-    }
-
-    $line = $lines[0]
-    if ($line -match "Android Debug Bridge version\s+([0-9A-Za-z.\-]+)") {
-        return $Matches[1]
-    }
-    return $line
+    return Get-AndroidHostAdbPlatformToolsVersion -AdbPath $adb
 }
 
 function Acquire-DeviceLock {

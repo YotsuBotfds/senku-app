@@ -6,7 +6,7 @@ This Android subproject packages the exported offline Senku mobile pack into the
 
 The app currently:
 
-- bundles the exported pack from `artifacts/mobile_pack/senku_20260410`
+- bundles the 271-card current-head Android asset pack under `app/src/main/assets/mobile_pack`
 - installs the pack into app-local storage on first launch
 - parses the manifest and vector header
 - opens the packaged SQLite database locally
@@ -59,7 +59,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build_android_ui_state_pack_p
   -SkipHostStates
 ```
 
-Replay the current Android FTS fallback proof without relabeling it as FTS5 runtime evidence:
+Replay the current Android FTS4 fallback proof. This is fallback-path emulator evidence, not FTS5 runtime proof:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\run_android_fts_fallback_matrix.ps1 `

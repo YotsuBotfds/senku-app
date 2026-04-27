@@ -141,7 +141,8 @@ use it to approve reviewed-card runtime expansion or product exposure.
   `-PartitionSizeMb` switches for those profiles; defaults remain unchanged.
   `-WhatIf` output now includes the concrete emulator launch arguments, so
   profile changes can be reviewed without launching a lane.
-- Add adb/platform-tools version capture to Android harness artifacts. Android
+- adb/platform-tools version capture has landed in Android harness artifacts.
+  Android
   documents normal `adb push`/`pull`, screenshot, and screenrecord flows, and
   current Platform Tools also document experimental ADB Burst Mode for large
   transfers. That makes host adb version part of the evidence surface for
@@ -170,8 +171,8 @@ use it to approve reviewed-card runtime expansion or product exposure.
   writes a JSON plan with selected roles, device metadata, skip flags, and
   per-role launcher commands without building, installing, starting role jobs,
   or finalizing a pack.
-- Keep `run_android_fts_fallback_matrix.ps1` under the normal harness controls:
-  resolved SDK adb path, per-device locks for real runs, and
+- `run_android_fts_fallback_matrix.ps1` now runs under the normal harness
+  controls: resolved SDK adb path, per-device locks for real runs, and
   `stop_android_harness_runs.ps1` coverage.
 - Android Gradle dependency verification is enabled and includes the detached
   Android lint tool dependencies, but `:app:lintDebug` is still blocked by
