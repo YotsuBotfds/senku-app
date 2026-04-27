@@ -33,6 +33,8 @@ public final class PackInstaller {
     private static final String FTS5_TABLE = "lexical_chunks_fts";
     private static final String FTS4_TABLE = "lexical_chunks_fts4";
     private static final int VECTOR_HEADER_BYTES = 32;
+    private static final int VECTOR_DTYPE_FLOAT16 = 1;
+    private static final int VECTOR_DTYPE_INT8 = 2;
     private static final int ASSET_OPEN_ATTEMPTS = 5;
     private static final long ASSET_OPEN_RETRY_MS = 300L;
 
@@ -66,6 +68,7 @@ public final class PackInstaller {
         String installedManifestText = readFileText(manifestFile);
         PackManifest installedManifest = PackManifest.fromJson(installedManifestText);
         VectorInfo vectorInfo = readVectorInfo(vectorFile);
+        validateVectorInfo(installedManifest, vectorInfo);
         return new InstalledPack(rootDir, manifestFile, sqliteFile, vectorFile, installedManifest, vectorInfo);
     }
 
@@ -165,6 +168,45 @@ public final class PackInstaller {
 
     static String missingRequiredPackTablesForTest(Set<String> tableNames) {
         return missingRequiredPackTables(tableNames);
+    }
+
+    static void validateVectorInfoForTest(PackManifest manifest, VectorInfo vectorInfo) throws IOException {
+        validateVectorInfo(manifest, vectorInfo);
+    }
+
+    private static void validateVectorInfo(PackManifest manifest, VectorInfo vectorInfo) throws IOException {
+        if (!"SNKUVEC1".equals(vectorInfo.magic)) {
+            throw new IOException("Unsupported vector file magic");
+        }
+        if (vectorInfo.version != 1) {
+            throw new IOException("Unsupported vector file version: " + vectorInfo.version);
+        }
+        if (vectorInfo.headerBytes != VECTOR_HEADER_BYTES) {
+            throw new IOException("Unsupported vector header bytes: " + vectorInfo.headerBytes);
+        }
+        if (vectorInfo.dimension != manifest.embeddingDimension) {
+            throw new IOException(
+                "Vector dimension mismatch. Manifest expected " + manifest.embeddingDimension
+                    + " but header found " + vectorInfo.dimension
+            );
+        }
+        int expectedDtypeCode = expectedVectorDtypeCode(manifest.vectorDtype);
+        if (vectorInfo.dtypeCode != expectedDtypeCode) {
+            throw new IOException(
+                "Vector dtype mismatch. Manifest expected " + manifest.vectorDtype
+                    + " but header found code " + vectorInfo.dtypeCode
+            );
+        }
+    }
+
+    private static int expectedVectorDtypeCode(String vectorDtype) throws IOException {
+        if ("float16".equals(vectorDtype)) {
+            return VECTOR_DTYPE_FLOAT16;
+        }
+        if ("int8".equals(vectorDtype)) {
+            return VECTOR_DTYPE_INT8;
+        }
+        throw new IOException("Unsupported manifest vector dtype: " + vectorDtype);
     }
 
     private static void validateInstalledSqliteSchema(File sqliteFile) throws IOException {
