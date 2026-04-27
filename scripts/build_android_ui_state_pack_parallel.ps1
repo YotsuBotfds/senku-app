@@ -82,6 +82,11 @@ if ($PlanOnly) {
     $plan = [pscustomobject]@{
         run_id = $runId
         output_root = $OutputRoot
+        preflight_only = $true
+        will_build = $false
+        will_install = $false
+        will_start_role_jobs = $false
+        will_finalize = $false
         selected_roles = @($roles)
         devices = @($roles | ForEach-Object { $roleInfoByRole[$_] })
         skip_build = [bool]$SkipBuild

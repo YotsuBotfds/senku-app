@@ -48,6 +48,11 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             plan = json.loads(plan_path.read_text(encoding="utf-8-sig"))
 
             self.assertTrue(plan["plan_only"])
+            self.assertTrue(plan["preflight_only"])
+            self.assertFalse(plan["will_build"])
+            self.assertFalse(plan["will_install"])
+            self.assertFalse(plan["will_start_role_jobs"])
+            self.assertFalse(plan["will_finalize"])
             self.assertEqual(plan["output_root"], str(output_root))
             self.assertEqual(
                 plan["selected_roles"],
@@ -77,6 +82,20 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             launched_artifacts += list((run_dir / "parallel_logs").glob("*.exitcode.txt"))
             self.assertEqual(launched_artifacts, [])
             self.assertFalse((run_dir / "summary.json").exists())
+
+    def test_plan_only_branch_precedes_launch_and_finalize_work(self):
+        script = SCRIPT_PATH.read_text(encoding="utf-8-sig")
+
+        plan_only_index = script.index("if ($PlanOnly) {")
+        build_index = script.index("if (-not $SkipBuild) {")
+        logs_index = script.index("New-Item -ItemType Directory -Force -Path $logsDir")
+        launcher_index = script.index("function Start-RoleProcess")
+        finalize_index = script.index("-FinalizeOnly -SkipBuild")
+
+        self.assertLess(plan_only_index, build_index)
+        self.assertLess(plan_only_index, logs_index)
+        self.assertLess(plan_only_index, launcher_index)
+        self.assertLess(plan_only_index, finalize_index)
 
     def test_followup_state_name_matches_seeded_thread_method(self):
         build_script = BUILD_SCRIPT_PATH.read_text(encoding="utf-8-sig")
