@@ -55,9 +55,7 @@ public final class PackInstaller {
         File sqliteFile = new File(rootDir, SQLITE_NAME);
         File vectorFile = new File(rootDir, vectorName);
 
-        // Prefer any self-consistent installed pack so dev hot-swaps and future downloaded
-        // packs survive normal app restarts. A force reinstall still refreshes from assets.
-        boolean installedFromAssets = force || !isInstalledPackUsable(manifestFile, sqliteFile, vectorFile);
+        boolean installedFromAssets = shouldInstallFromAssetsForTest(force, manifestFile, sqliteFile, vectorFile);
         if (installedFromAssets) {
             copyAsset(assets, assetPath(MANIFEST_NAME), manifestFile);
             copyAsset(assets, assetPath(SQLITE_NAME), sqliteFile);
@@ -172,6 +170,17 @@ public final class PackInstaller {
 
     static void validateVectorInfoForTest(PackManifest manifest, VectorInfo vectorInfo) throws IOException {
         validateVectorInfo(manifest, vectorInfo);
+    }
+
+    static boolean shouldInstallFromAssetsForTest(
+        boolean force,
+        File manifestFile,
+        File sqliteFile,
+        File vectorFile
+    ) throws IOException, JSONException {
+        // Prefer any self-consistent installed pack so dev hot-swaps and future downloaded
+        // packs survive normal app restarts. A force reinstall still refreshes from assets.
+        return force || !isInstalledPackUsable(manifestFile, sqliteFile, vectorFile);
     }
 
     private static void validateVectorInfo(PackManifest manifest, VectorInfo vectorInfo) throws IOException {

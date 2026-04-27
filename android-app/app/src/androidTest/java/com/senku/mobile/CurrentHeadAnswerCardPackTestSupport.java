@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +20,16 @@ final class CurrentHeadAnswerCardPackTestSupport {
     static final String PACK_DIR = "mobile_pack";
     static final String MANIFEST_NAME = "senku_manifest.json";
     static final String DATABASE_NAME = "senku_mobile.sqlite3";
+    static final int NON_PILOT_SAMPLE_SIZE = 24;
+    static final int NON_PILOT_BUCKET_SIZE = 8;
+    static final Set<String> PILOT_CARD_IDS = new LinkedHashSet<>(Arrays.asList(
+        "poisoning_unknown_ingestion",
+        "newborn_danger_sepsis",
+        "choking_airway_obstruction",
+        "meningitis_sepsis_child",
+        "infected_wound_spreading_infection",
+        "abdominal_internal_bleeding"
+    ));
 
     private CurrentHeadAnswerCardPackTestSupport() {
     }
@@ -61,6 +75,54 @@ final class CurrentHeadAnswerCardPackTestSupport {
         }
     }
 
+    static List<SampledCard> sampledNonPilotCards(SQLiteDatabase database) {
+        LinkedHashSet<SampledCard> sampledCards = new LinkedHashSet<>();
+        addSampledCards(
+            sampledCards,
+            querySampledCards(
+                database,
+                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "ORDER BY card_id LIMIT ?",
+                NON_PILOT_BUCKET_SIZE
+            )
+        );
+        addSampledCards(
+            sampledCards,
+            querySampledCards(
+                database,
+                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "ORDER BY card_id DESC LIMIT ?",
+                NON_PILOT_BUCKET_SIZE
+            )
+        );
+        addSampledCards(
+            sampledCards,
+            querySampledCards(
+                database,
+                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "AND risk_tier IN ('critical', 'high') " +
+                    "ORDER BY CASE risk_tier WHEN 'critical' THEN 0 ELSE 1 END, card_id LIMIT ?",
+                NON_PILOT_BUCKET_SIZE
+            )
+        );
+        if (sampledCards.size() < NON_PILOT_SAMPLE_SIZE) {
+            addSampledCards(
+                sampledCards,
+                querySampledCards(
+                    database,
+                    "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                        "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                        "ORDER BY card_id LIMIT ?",
+                    NON_PILOT_SAMPLE_SIZE
+                )
+            );
+        }
+        return new java.util.ArrayList<>(sampledCards).subList(0, NON_PILOT_SAMPLE_SIZE);
+    }
+
     static PackManifest assumeCurrentHeadPack(
         File manifestFile,
         File databaseFile,
@@ -88,5 +150,59 @@ final class CurrentHeadAnswerCardPackTestSupport {
 
     private static File packRoot(Context context) {
         return new File(context.getFilesDir(), PACK_DIR);
+    }
+
+    private static void addSampledCards(Set<SampledCard> target, List<SampledCard> cards) {
+        target.addAll(cards);
+    }
+
+    private static List<SampledCard> querySampledCards(SQLiteDatabase database, String sql, int limit) {
+        String[] pilotIds = PILOT_CARD_IDS.toArray(new String[0]);
+        try (Cursor cursor = database.rawQuery(sql, new String[]{
+                pilotIds[0],
+                pilotIds[1],
+                pilotIds[2],
+                pilotIds[3],
+                pilotIds[4],
+                pilotIds[5],
+                String.valueOf(limit)
+            })) {
+            java.util.ArrayList<SampledCard> cards = new java.util.ArrayList<>();
+            while (cursor.moveToNext()) {
+                cards.add(new SampledCard(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
+            }
+            return cards;
+        }
+    }
+
+    static final class SampledCard {
+        final String cardId;
+        final String guideId;
+        final String riskTier;
+
+        SampledCard(String cardId, String guideId, String riskTier) {
+            this.cardId = cardId;
+            this.guideId = guideId;
+            this.riskTier = riskTier;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof SampledCard)) {
+                return false;
+            }
+            SampledCard card = (SampledCard) other;
+            return cardId.equals(card.cardId);
+        }
+
+        @Override
+        public int hashCode() {
+            return cardId.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return cardId + "/" + guideId + "/" + riskTier;
+        }
     }
 }

@@ -1,11 +1,20 @@
 package com.senku.mobile;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 
 public final class PackManifestTest {
+    private static final Path MOBILE_PACK_DIR = Path.of("src", "main", "assets", "mobile_pack");
+    private static final Path MANIFEST_PATH = MOBILE_PACK_DIR.resolve("senku_manifest.json");
+
     @Test
     public void fromJsonParsesRequiredFields() throws Exception {
         PackManifest manifest = PackManifest.fromJson(
@@ -46,6 +55,41 @@ public final class PackManifestTest {
         assertEquals(6, manifest.answerCardCount);
         assertEquals("abc", manifest.sqliteSha256);
         assertEquals("def", manifest.vectorSha256);
+    }
+
+    @Test
+    public void bundledManifestLocksCheckedInPilotInventory() throws Exception {
+        String jsonText = readManifest();
+        PackManifest manifest = PackManifest.fromJson(jsonText);
+        JSONObject root = new JSONObject(jsonText);
+        JSONObject files = root.getJSONObject("files");
+        JSONObject sqlite = files.getJSONObject("sqlite");
+        JSONObject vectors = files.getJSONObject("vectors");
+
+        assertEquals("senku-mobile-pack-v2", manifest.packFormat);
+        assertEquals(2, manifest.packVersion);
+        assertEquals("2026-04-25T00:08:46.459832+00:00", manifest.generatedAt);
+        assertEquals(754, manifest.guideCount);
+        assertEquals(49726, manifest.chunkCount);
+        assertEquals(9, manifest.deterministicRuleCount);
+        assertEquals(5743, manifest.relatedLinkCount);
+        assertEquals(6, manifest.answerCardCount);
+        assertEquals("nomic-ai/text-embedding-nomic-embed-text-v1.5", manifest.embeddingModelId);
+        assertEquals(768, manifest.embeddingDimension);
+        assertEquals("float16", manifest.vectorDtype);
+        assertEquals(10, manifest.mobileTopK);
+
+        assertEquals("senku_mobile.sqlite3", sqlite.getString("path"));
+        assertEquals(286695424L, manifest.sqliteBytes);
+        assertEquals(manifest.sqliteBytes, sqlite.getLong("bytes"));
+        assertEquals("bf2d8e616c2855c63ab52d72c537290ca2e022b967e975368059cce1a3366540", manifest.sqliteSha256);
+        assertEquals(manifest.sqliteSha256, sqlite.getString("sha256"));
+
+        assertEquals("senku_vectors.f16", vectors.getString("path"));
+        assertEquals(76379168L, manifest.vectorBytes);
+        assertEquals(manifest.vectorBytes, vectors.getLong("bytes"));
+        assertEquals("893a7d5704603dd2dfb9645dd90c845e9ede61f4d1f27b5e7fe86bee5df81802", manifest.vectorSha256);
+        assertEquals(manifest.vectorSha256, vectors.getString("sha256"));
     }
 
     @Test
@@ -186,5 +230,9 @@ public final class PackManifestTest {
                 "  }\n" +
                 "}"
         );
+    }
+
+    private static String readManifest() throws IOException {
+        return new String(Files.readAllBytes(MANIFEST_PATH), StandardCharsets.UTF_8);
     }
 }

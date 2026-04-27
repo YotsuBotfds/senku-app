@@ -808,6 +808,37 @@ public final class AnswerCardRuntimeTest {
         ));
     }
 
+    @Test
+    public void syntheticHighCriticalNonPilotCardsDoNotBypassPlannerAllowlist() {
+        AnswerCard highNonPilotCard = temptingNonPilotAnswerCard("non_pilot_high_card", "GD-585", "high");
+        AnswerCard criticalNonPilotCard = temptingNonPilotAnswerCard("non_pilot_critical_card", "GD-898", "critical");
+
+        assertNull(AnswerCardRuntime.planPoisoningAnswerCardFromCardsForTest(
+            "my child swallowed an unknown cleaner",
+            List.of(criticalNonPilotCard)
+        ));
+        assertNull(AnswerCardRuntime.planNewbornDangerSepsisAnswerCardFromCardsForTest(
+            "3 day old baby has fever and fast breathing",
+            List.of(criticalNonPilotCard)
+        ));
+        assertNull(AnswerCardRuntime.planChokingAirwayObstructionAnswerCardFromCardsForTest(
+            "child is choking on a grape and cannot speak",
+            List.of(criticalNonPilotCard)
+        ));
+        assertNull(AnswerCardRuntime.planMeningitisSepsisChildAnswerCardFromCardsForTest(
+            "child has fever and a stiff neck",
+            List.of(criticalNonPilotCard)
+        ));
+        assertNull(AnswerCardRuntime.planInfectedWoundSpreadingInfectionAnswerCardFromCardsForTest(
+            "wound has spreading redness and fever",
+            List.of(highNonPilotCard)
+        ));
+        assertNull(AnswerCardRuntime.planAbdominalInternalBleedingAnswerCardFromCardsForTest(
+            "bike handlebar hit his belly and now he is pale and dizzy",
+            List.of(criticalNonPilotCard)
+        ));
+    }
+
     private static AnswerCard poisoningAnswerCard(String reviewStatus) {
         return poisoningAnswerCard(
             reviewStatus,
@@ -858,6 +889,36 @@ public final class AnswerCardRuntimeTest {
                 clause("poisoning_unknown_ingestion", "do_not", "Do not taste the substance.")
             ),
             sources
+        );
+    }
+
+    private static AnswerCard temptingNonPilotAnswerCard(String cardId, String guideId, String riskTier) {
+        return new AnswerCard(
+            cardId,
+            guideId,
+            "synthetic-non-pilot",
+            "Synthetic non-pilot card",
+            riskTier,
+            "guide-corpus",
+            "approved",
+            "reviewed_source_family",
+            "Tempting synthetic reviewed-card fixture.",
+            "This card should never be selected by planner hooks unless explicitly allowlisted.",
+            "Synthetic non-pilot reviewed-card test fixture.",
+            List.of(
+                clause(cardId, "required_first_action", "Seek emergency care now."),
+                clause(cardId, "first_action", "Keep the person observed while getting help."),
+                clause(cardId, "urgent_red_flag", "danger signs are present."),
+                clause(cardId, "forbidden_advice", "Do not delay care.")
+            ),
+            List.of(new AnswerCardSource(
+                cardId,
+                guideId,
+                "synthetic-non-pilot",
+                "Synthetic Non-Pilot Card",
+                List.of("Emergency escalation"),
+                true
+            ))
         );
     }
 

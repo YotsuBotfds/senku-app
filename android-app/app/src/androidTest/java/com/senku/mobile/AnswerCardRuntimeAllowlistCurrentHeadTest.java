@@ -1,7 +1,6 @@
 package com.senku.mobile;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.test.core.app.ApplicationProvider;
@@ -12,34 +11,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.CURRENT_HEAD_ANSWER_CARD_COUNT;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.NON_PILOT_SAMPLE_SIZE;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.PILOT_CARD_IDS;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.SampledCard;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.assumeCurrentHeadPack;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.databaseFile;
 import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.manifestFile;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.queryLong;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.sampledNonPilotCards;
 
 @RunWith(AndroidJUnit4.class)
 public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
-    private static final int NON_PILOT_SAMPLE_SIZE = 24;
-    private static final int NON_PILOT_BUCKET_SIZE = 8;
-    private static final Set<String> PILOT_CARD_IDS = new LinkedHashSet<>(Arrays.asList(
-        "poisoning_unknown_ingestion",
-        "newborn_danger_sepsis",
-        "choking_airway_obstruction",
-        "meningitis_sepsis_child",
-        "infected_wound_spreading_infection",
-        "abdominal_internal_bleeding"
-    ));
-
     @After
     public void tearDown() {
         AnswerCardRuntime.resetEnabledForTest();
@@ -254,114 +244,4 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
             plan.reviewedCardMetadata.provenance
         );
     }
-
-    private static List<SampledCard> sampledNonPilotCards(SQLiteDatabase database) {
-        LinkedHashSet<SampledCard> sampledCards = new LinkedHashSet<>();
-        addSampledCards(
-            sampledCards,
-            querySampledCards(
-                database,
-                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
-                    "ORDER BY card_id LIMIT ?",
-                NON_PILOT_BUCKET_SIZE
-            )
-        );
-        addSampledCards(
-            sampledCards,
-            querySampledCards(
-                database,
-                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
-                    "ORDER BY card_id DESC LIMIT ?",
-                NON_PILOT_BUCKET_SIZE
-            )
-        );
-        addSampledCards(
-            sampledCards,
-            querySampledCards(
-                database,
-                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
-                    "AND risk_tier IN ('critical', 'high') " +
-                    "ORDER BY CASE risk_tier WHEN 'critical' THEN 0 ELSE 1 END, card_id LIMIT ?",
-                NON_PILOT_BUCKET_SIZE
-            )
-        );
-        if (sampledCards.size() < NON_PILOT_SAMPLE_SIZE) {
-            addSampledCards(
-                sampledCards,
-                querySampledCards(
-                    database,
-                    "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
-                        "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
-                        "ORDER BY card_id LIMIT ?",
-                    NON_PILOT_SAMPLE_SIZE
-                )
-            );
-        }
-        return new java.util.ArrayList<>(sampledCards).subList(0, NON_PILOT_SAMPLE_SIZE);
-    }
-
-    private static void addSampledCards(Set<SampledCard> target, List<SampledCard> cards) {
-        target.addAll(cards);
-    }
-
-    private static List<SampledCard> querySampledCards(SQLiteDatabase database, String sql, int limit) {
-        String[] pilotIds = PILOT_CARD_IDS.toArray(new String[0]);
-        try (Cursor cursor = database.rawQuery(sql, new String[]{
-                pilotIds[0],
-                pilotIds[1],
-                pilotIds[2],
-                pilotIds[3],
-                pilotIds[4],
-                pilotIds[5],
-                String.valueOf(limit)
-            })) {
-            java.util.ArrayList<SampledCard> cards = new java.util.ArrayList<>();
-            while (cursor.moveToNext()) {
-                cards.add(new SampledCard(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
-            }
-            return cards;
-        }
-    }
-
-    private static final class SampledCard {
-        final String cardId;
-        final String guideId;
-        final String riskTier;
-
-        SampledCard(String cardId, String guideId, String riskTier) {
-            this.cardId = cardId;
-            this.guideId = guideId;
-            this.riskTier = riskTier;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (!(other instanceof SampledCard)) {
-                return false;
-            }
-            SampledCard card = (SampledCard) other;
-            return cardId.equals(card.cardId);
-        }
-
-        @Override
-        public int hashCode() {
-            return cardId.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return cardId + "/" + guideId + "/" + riskTier;
-        }
-    }
-
-    private static long queryLong(SQLiteDatabase database, String sql) {
-        try (Cursor cursor = database.rawQuery(sql, null)) {
-            assertTrue("Expected one row for query: " + sql, cursor.moveToFirst());
-            return cursor.getLong(0);
-        }
-    }
-
 }

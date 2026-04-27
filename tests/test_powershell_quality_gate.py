@@ -1,4 +1,5 @@
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -8,6 +9,10 @@ SCRIPT_PATH = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 WINDOWS_VALIDATION_PATH = REPO_ROOT / "scripts" / "run_windows_validation.ps1"
 ANDROID_PROMPT_PATH = REPO_ROOT / "scripts" / "run_android_prompt.ps1"
 ANDROID_SMOKE_PATH = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
+ANDROID_WRAPPER_SMOKE_PATHS = (
+    "scripts\\run_android_instrumented_ui_smoke.ps1",
+    "scripts\\run_android_prompt.ps1",
+)
 ANDROID_HARNESS_SCRIPT_PATHS = (
     "scripts\\run_android_prompt.ps1",
     "scripts\\run_android_prompt_logged.ps1",
@@ -65,16 +70,37 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("Parser gate passed", result.stdout)
 
-    def test_quality_gate_parses_android_prompt_script(self):
+    def test_quality_gate_parses_android_wrapper_smoke_scripts(self):
         result = run_gate(
             "-Path",
-            "scripts\\run_android_prompt.ps1",
+            ",".join(ANDROID_WRAPPER_SMOKE_PATHS),
             "-SkipAnalyzer",
             "-SkipPester",
         )
 
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("Parser gate passed", result.stdout)
+        self.assertIn("2 PowerShell file(s)", result.stdout)
+
+    def test_quality_gate_fails_closed_on_parser_errors(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            invalid_script = Path(temp_dir) / "invalid_wrapper.ps1"
+            invalid_script.write_text(
+                "param(\n[string]$Name\nWrite-Host $Name\n",
+                encoding="utf-8",
+            )
+
+            result = run_gate(
+                "-Path",
+                str(invalid_script),
+                "-SkipAnalyzer",
+                "-SkipPester",
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        output = result.stderr + result.stdout
+        self.assertIn("invalid_wrapper.ps1", output)
+        self.assertIn("Missing ')' in function parameter list", output)
 
     def test_android_harness_wrapper_slice_parser_passes_without_emulator(self):
         result = run_gate(
