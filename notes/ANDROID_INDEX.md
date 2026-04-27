@@ -57,6 +57,8 @@ Use this as the first stop for Android parity and mobile-pack work.
   the pack hot-swap path.
 - Prompt/detail logged manifests can surface pack push summary, cache, and
   pushed fields from the hot-swap path.
+- Mixed prompt/follow-up and follow-up-only matrix summaries carry
+  `host_adb_platform_tools_version` from child artifacts when available.
 - `run_android_harness_matrix.ps1` supports `-DefaultWarmStart`,
   row-level `warm_start`, `-PushPackDir`, and row-level `push_pack_dir`.
   Its `summary.json` / `summary.md` include completion counts, emulator

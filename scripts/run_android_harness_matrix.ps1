@@ -136,6 +136,70 @@ function Read-RunJson {
     }
 }
 
+function Get-ObjectStringProperty {
+    param(
+        $Object,
+        [string]$PropertyName
+    )
+
+    if (-not $Object) {
+        return $null
+    }
+    if (-not ($Object.PSObject.Properties.Name -contains $PropertyName)) {
+        return $null
+    }
+
+    $value = $Object.$PropertyName
+    if ($null -eq $value -or [string]::IsNullOrWhiteSpace([string]$value)) {
+        return $null
+    }
+
+    return [string]$value
+}
+
+function Get-HostAdbPlatformToolsVersion {
+    param(
+        $Manifest,
+        [string]$OutputText
+    )
+
+    $manifestVersion = Get-ObjectStringProperty -Object $Manifest -PropertyName "host_adb_platform_tools_version"
+    if (-not [string]::IsNullOrWhiteSpace($manifestVersion)) {
+        return $manifestVersion
+    }
+
+    foreach ($line in @($OutputText -split "`r?`n")) {
+        $trimmed = $line.Trim()
+        if ([string]::IsNullOrWhiteSpace($trimmed) -or -not $trimmed.Contains("host_adb_platform_tools_version")) {
+            continue
+        }
+
+        try {
+            $parsed = $trimmed | ConvertFrom-Json
+            $outputVersion = Get-ObjectStringProperty -Object $parsed -PropertyName "host_adb_platform_tools_version"
+            if (-not [string]::IsNullOrWhiteSpace($outputVersion)) {
+                return $outputVersion
+            }
+        } catch {
+        }
+    }
+
+    return $null
+}
+
+function Get-FirstNonEmptyHostAdbPlatformToolsVersion {
+    param([object[]]$Items)
+
+    foreach ($item in @($Items)) {
+        $version = Get-ObjectStringProperty -Object $item -PropertyName "host_adb_platform_tools_version"
+        if (-not [string]::IsNullOrWhiteSpace($version)) {
+            return $version
+        }
+    }
+
+    return $null
+}
+
 function Test-HasProperty {
     param(
         $Object,
@@ -589,6 +653,7 @@ function Receive-CompletedJobs {
         }
 
         $durationSeconds = Get-RunDurationSeconds -Manifest $manifest -FallbackStartedAt $entry.runner.started_at -FallbackCompletedAt $resultCompletedAt
+        $hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -Manifest $manifest -OutputText $outputText
 
         $Results.Add([pscustomobject]@{
             mode = $entry.runner.mode
@@ -603,6 +668,7 @@ function Receive-CompletedJobs {
             push_pack_cache_hit = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_cache_hit")) { $manifest.push_pack_cache_hit } else { $null })
             push_pack_pushed = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_pushed")) { $manifest.push_pack_pushed } else { $null })
             push_pack_state_path = $(if ($manifest -and ($manifest.PSObject.Properties.Name -contains "push_pack_state_path")) { [string]$manifest.push_pack_state_path } else { $null })
+            host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
             started_at = $entry.runner.started_at
             completed_at = $resultCompletedAt.ToString("o")
             duration_seconds = $durationSeconds
@@ -758,6 +824,7 @@ function New-MatrixSummary {
         status_groups = $statusGroups
         emulator_groups = $emulatorGroups
         failed_items = $failedItems
+        host_adb_platform_tools_version = Get-FirstNonEmptyHostAdbPlatformToolsVersion -Items $Results
         duration_seconds = $durationStats
         push_pack_cache_hit_count = @($Results | Where-Object { $_.push_pack_cache_hit -eq $true }).Count
         push_pack_pushed_count = @($Results | Where-Object { $_.push_pack_pushed -eq $true }).Count
@@ -779,6 +846,7 @@ function ConvertTo-MatrixSummaryMarkdown {
         "- duration_samples: $($Summary.duration_seconds.count)",
         "- push_pack_cache_hit_count: $($Summary.push_pack_cache_hit_count)",
         "- push_pack_pushed_count: $($Summary.push_pack_pushed_count)",
+        "- host_adb_platform_tools_version: $($Summary.host_adb_platform_tools_version)",
         "- summary_jsonl_path: $($Summary.summary_jsonl_path)",
         "- summary_csv_path: $($Summary.summary_csv_path)",
         "",

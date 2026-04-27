@@ -132,6 +132,70 @@ function Read-RunJson {
     }
 }
 
+function Get-ObjectStringProperty {
+    param(
+        $Object,
+        [string]$PropertyName
+    )
+
+    if (-not $Object) {
+        return $null
+    }
+    if (-not ($Object.PSObject.Properties.Name -contains $PropertyName)) {
+        return $null
+    }
+
+    $value = $Object.$PropertyName
+    if ($null -eq $value -or [string]::IsNullOrWhiteSpace([string]$value)) {
+        return $null
+    }
+
+    return [string]$value
+}
+
+function Get-HostAdbPlatformToolsVersion {
+    param(
+        $Manifest,
+        [string]$OutputText
+    )
+
+    $manifestVersion = Get-ObjectStringProperty -Object $Manifest -PropertyName "host_adb_platform_tools_version"
+    if (-not [string]::IsNullOrWhiteSpace($manifestVersion)) {
+        return $manifestVersion
+    }
+
+    foreach ($line in @($OutputText -split "`r?`n")) {
+        $trimmed = $line.Trim()
+        if ([string]::IsNullOrWhiteSpace($trimmed) -or -not $trimmed.Contains("host_adb_platform_tools_version")) {
+            continue
+        }
+
+        try {
+            $parsed = $trimmed | ConvertFrom-Json
+            $outputVersion = Get-ObjectStringProperty -Object $parsed -PropertyName "host_adb_platform_tools_version"
+            if (-not [string]::IsNullOrWhiteSpace($outputVersion)) {
+                return $outputVersion
+            }
+        } catch {
+        }
+    }
+
+    return $null
+}
+
+function Get-FirstNonEmptyHostAdbPlatformToolsVersion {
+    param([object[]]$Items)
+
+    foreach ($item in @($Items)) {
+        $version = Get-ObjectStringProperty -Object $item -PropertyName "host_adb_platform_tools_version"
+        if (-not [string]::IsNullOrWhiteSpace($version)) {
+            return $version
+        }
+    }
+
+    return $null
+}
+
 function Stop-ConflictingHarnessRuns {
     param([string]$TargetEmulator)
 
@@ -209,6 +273,7 @@ function New-FollowupMatrixSummary {
         warm_start_count = @($Records | Where-Object { $_.warm_start }).Count
         push_pack_cache_hit_count = @($Records | Where-Object { $_.push_pack_cache_hit -eq $true }).Count
         push_pack_pushed_count = @($Records | Where-Object { $_.push_pack_pushed -eq $true }).Count
+        host_adb_platform_tools_version = Get-FirstNonEmptyHostAdbPlatformToolsVersion -Items $Records
         posture_groups = $postureGroups
         emulator_groups = $emulatorGroups
         failed_items = @($failed | ForEach-Object {
@@ -244,6 +309,7 @@ function ConvertTo-FollowupMatrixSummaryMarkdown {
         "- warm_start_count: $($Summary.warm_start_count)",
         "- push_pack_cache_hit_count: $($Summary.push_pack_cache_hit_count)",
         "- push_pack_pushed_count: $($Summary.push_pack_pushed_count)",
+        "- host_adb_platform_tools_version: $($Summary.host_adb_platform_tools_version)",
         "- manifest_path: $($Summary.manifest_path)",
         "- summary_csv_path: $($Summary.summary_csv_path)",
         "",
@@ -363,10 +429,18 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     if ($WarmStart) {
         $detailArgs.WarmStart = $true
     }
+    $detailOutputText = ""
     try {
-        & $detailRunner @detailArgs
+        $detailOutput = & $detailRunner @detailArgs 2>&1
+        if ($detailOutput) {
+            $detailOutputText = ($detailOutput | Out-String).Trim()
+            Write-Host $detailOutputText
+        }
     } catch {
         $status = "failed"
+        if ($_.Exception.Message) {
+            $detailOutputText = $_.Exception.Message
+        }
         $errorMessage = $_.Exception.Message
         Write-Warning ("Case failed: " + $runLabel + " :: " + $errorMessage)
     }
@@ -383,6 +457,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
     }
 
     $runJson = Read-RunJson -Path $jsonPath
+    $hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -Manifest $runJson -OutputText $detailOutputText
     $record = [ordered]@{
         label = $runLabel
         emulator = $emulator
@@ -404,6 +479,7 @@ for ($index = 0; $index -lt $cases.Count; $index++) {
         push_pack_cache_hit = if ($runJson) { $runJson.push_pack_cache_hit } else { $null }
         push_pack_pushed = if ($runJson) { $runJson.push_pack_pushed } else { $null }
         push_pack_state_path = if ($runJson) { $runJson.push_pack_state_path } else { $null }
+        host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
         source_link_verified = if ($runJson) { $runJson.source_link_verified } else { $null }
         error = $errorMessage
     }
