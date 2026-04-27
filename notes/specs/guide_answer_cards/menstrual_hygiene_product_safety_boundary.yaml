@@ -1,0 +1,164 @@
+card_id: menstrual_hygiene_product_safety_boundary
+guide_id: GD-063
+slug: feminine-hygiene-production
+title: Feminine Hygiene Manufacturing
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks about menstrual hygiene product inventory, routine use-safety, clean/dry storage, discard decisions, supply logs, product irritation, infection warning signs, toxic-shock-like red flags, vulnerable users, or clinician/public-health handoff.
+  - The prompt is about pads, reusable menstrual products, improvised menstrual supplies, shared stock, school/shelter/community distribution, storage contamination, wash/dry failures, or whether a product should be discarded or escalated.
+  - The answer can stay at inventory, hygiene, red-flag screening, discard-or-handoff, and non-diagnostic support level.
+required_first_actions:
+  - Start with product and user-context intake: product type, source or batch, reusable or single-use status, current condition, cleanliness, drying, storage, contamination, owner labeling, and whether the user is pregnant, postpartum, immunocompromised, dependent on a caregiver, or otherwise vulnerable.
+  - Screen for irritation, infection, and toxic-shock-like red flags before routine product advice.
+  - Keep clean, used, wet, damaged, moldy, unlabeled, unknown-history, and discarded products separate.
+  - Do not call any product sterile, infection-proof, medically safe, absorbency-rated, leakproof, insertion-safe, or certified.
+  - Hand off to a clinician, midwife, emergency service, infection-control owner, facility owner, school/shelter lead, or public-health contact when red flags, vulnerable-user concerns, contamination uncertainty, or shared-stock problems are present.
+first_actions:
+  - Make a dated inventory and use-safety log with product type, quantity, source or batch if known, owner label, clean/used/wet/damaged/discard status, storage location, wash/dry failure, product changes, irritation reports, and handoff owner.
+  - Store only fully dry reusable products in breathable clean storage, away from damp laundry, waste, pests, chemicals, and unlabeled unknown-history supplies.
+  - Discard or isolate products that are moldy, persistently foul-smelling after washing and drying, visibly contaminated with unknown material, wet-stored, damaged, shedding fibers, chemically exposed, unlabeled in shared stock, or linked to repeated irritation.
+  - Protect privacy, dignity, nonjudgmental access, safe water access, hand hygiene, and enough clean dry supplies for changes and washing/drying rotation.
+  - Prepare a factual handoff summary when symptoms, contamination uncertainty, stock failures, or vulnerable-user needs exceed routine support.
+urgent_red_flags:
+  - Fever, chills, dizziness, fainting, confusion, widespread rash, vomiting, or diarrhea during or after tampon or internal menstrual product use.
+  - Severe pelvic or abdominal pain, rapidly worsening pain, foul-smelling discharge, pus, sores, spreading swelling, or severe vulvar irritation.
+  - Heavy bleeding with weakness, pallor, repeated large clots, fainting, or shock-like symptoms.
+  - Possible pregnancy, postpartum bleeding or pain, immunocompromised status, infant/young adolescent vulnerability, disability, dependence on a caregiver, or inability to maintain clean/dry product access.
+  - Symptoms that are new, severe, recurrent, not improving, or substantially different from the person's baseline.
+  - Shared stock with wet storage, mold, pest contact, chemical exposure, unknown history, mixed clean/used items, missing labels, or repeated reports of irritation.
+forbidden_advice:
+  - Do not provide production patterns, sewing dimensions, material recipes, absorbency ratings, leakproof claims, waterproof claims, manufacturing quality claims, or product certification.
+  - Do not provide sterilization recipes, process parameters, times, temperatures, pressures, chemical concentrations, boiling instructions, validation tests, pathogen-elimination guarantees, or sterile-status claims.
+  - Do not provide menstrual cup or disc insertion instructions, removal troubleshooting, internal-device fitting, device selection for anatomy, or internal exam guidance.
+  - Do not diagnose or treat irritation, infection, toxic shock syndrome, STI, pregnancy complications, heavy bleeding causes, anemia, allergy, or any gynecologic condition.
+  - Do not provide medication names, dosing, antifungal, antibiotic, pain-medication, hormone, contraception, fertility, abortion, or pregnancy-management guidance.
+  - Do not provide legal claims, return-to-school or work clearance, public-health certification, or safety certification.
+do_not:
+  - Do not reassure fever, rash, fainting, vomiting/diarrhea, severe pain, foul discharge, heavy bleeding, postpartum symptoms, pregnancy concern, or immunocompromised symptoms as routine period problems.
+  - Do not treat scarcity or embarrassment as a reason to keep using wet, moldy, damaged, contaminated, chemically exposed, unlabeled, or irritating products.
+  - Do not convert the source guide's production, cup, disc, sanitization, or absorbency content into reviewed-card instructions.
+routine_boundary: >
+  This card owns only menstrual hygiene product inventory and use-safety
+  boundaries: supply and condition logs, clean/used/wet/discard separation,
+  complete drying and storage checks, irritation/infection/toxic-shock-like
+  red-flag screening, vulnerable-user flags, privacy/dignity support, and
+  clinician, facility, school, shelter, infection-control, or public-health
+  handoff. It does not own production methods, sterilization procedures,
+  absorbency claims, insertion/device instructions, diagnosis, treatment,
+  medication/dosing, legal claims, or safety certification.
+acceptable_uncertain_fit: >
+  If product status, storage history, symptoms, pregnancy/postpartum status,
+  immunocompromised status, caregiver support, or shared-stock labeling is
+  unclear, lead with conservative separation, discard-or-handoff language, and
+  a red-flag screen. Give only non-diagnostic inventory, hygiene, drying,
+  storage, privacy, and handoff-preparation steps.
+clarifying_questions:
+  - What product type is involved, and is it clean, used, wet, damaged, moldy, unlabeled, chemically exposed, or unknown-history?
+  - Is there fever, chills, rash, vomiting, diarrhea, fainting, severe pelvic or abdominal pain, foul-smelling discharge, sores, swelling, heavy bleeding, pregnancy, postpartum status, or immunocompromised status?
+  - Is this a personal supply, shared household stock, school/shelter/community stock, or caregiver-managed supply?
+  - Are there enough clean, fully dry products, safe water, soap, privacy, and breathable storage for the next cycle or distribution period?
+citation_ids:
+  - gd-063-reviewed-boundary-scope
+  - gd-063-inventory-use-safety-log
+  - gd-063-clean-dry-storage-discard
+  - gd-063-red-flag-handoff
+  - gd-063-forbidden-production-medical-claims
+source_sections:
+  - guide: GD-063
+    slug: feminine-hygiene-production
+    title: Feminine Hygiene Manufacturing
+    sections:
+      - "#reviewed-boundary-card"
+      - "#washing-sanitization"
+      - "#period-tracking"
+      - "#menstrual-health"
+      - "#storage-distribution"
+      - "#common-mistakes"
+applicability:
+  owner: menstrual hygiene product inventory and use-safety boundary
+  use_when:
+    - menstrual_product_inventory_or_supply_log
+    - clean_dry_storage_or_discard_decision
+    - reusable_product_wash_dry_failure_or_storage_contamination
+    - irritation_infection_toxic_shock_red_flag_screen
+    - vulnerable_user_or_shared_stock_handoff
+  do_not_use_when:
+    - product_production_patterns_or_recipes
+    - sterilization_parameters_or_guarantees
+    - absorbency_leakproof_or_safety_certification_claims
+    - cup_disc_insertion_or_device_troubleshooting
+    - diagnosis_treatment_medication_dosing_or_pregnancy_management
+  handoff:
+    - common-vaginal-infections for non-diagnostic vaginal itching, discharge, odor, and irritation self-care boundaries.
+    - menstruation-reproductive-health for menstrual-cycle symptoms, bleeding/pain logs, pregnancy/postpartum red flags, and menstrual support handoff.
+    - sterilization-methods for sterile-item uncertainty and infection-control owner handoff.
+    - hygiene-disease-prevention-basics for broader household/community hygiene boundaries.
+actions:
+  required:
+    - classify prompt as inventory, personal use-safety, shared stock, storage contamination, irritation symptom, red flag, vulnerable-user issue, or out-of-scope production/device request
+    - screen for red flags before routine product handling advice
+    - separate clean, used, wet, damaged, moldy, unlabeled, unknown-history, and discarded products
+    - use discard-or-handoff language for contaminated or uncertain products
+  standard:
+    - recommend dated logs for product source, condition, wash/dry failures, irritation reports, discard decisions, shortages, and handoff owner
+    - recommend privacy, dignity, hand hygiene, safe water access, breathable storage, and enough clean dry products for rotation
+    - route production, sterilization, insertion, diagnosis, treatment, medication, legal, and certification requests away from this card
+forbidden:
+  - production patterns, recipes, material formulas, or dimensions
+  - sterilization recipes, parameters, validation, or pathogen guarantees
+  - absorbency, leakproof, waterproof, sterile, medically safe, or certified claims
+  - cup or disc insertion, removal, fitting, or internal-device troubleshooting
+  - diagnosis, treatment, medication names, dosing, or pregnancy management
+  - legal, clearance, or safety certification claims
+fallback:
+  - If any toxic-shock-like, infection, heavy bleeding, pregnancy/postpartum, immunocompromised, severe pain, or vulnerable-user red flag is present, hand off before routine product advice.
+  - If product cleanliness, drying, storage, source, or labeling is uncertain in shared stock, do not treat it as safe for vulnerable users; isolate, discard, or hand off to the responsible owner.
+  - If the user asks for production, sterilization, absorbency, insertion, diagnosis, treatment, medication, legal, or certification advice, state that this card covers only inventory and use-safety boundaries.
+output:
+  required:
+    - immediate status: routine support, isolate/discard, or urgent handoff
+    - product and user-context intake
+    - red-flag screen
+    - clean/used/wet/damaged/discard separation step
+    - drying, breathable storage, or shared-stock labeling step
+    - handoff owner when needed
+  prohibited:
+    - manufacturing instructions
+    - sterilization parameters or guarantees
+    - absorbency or leakproof claims
+    - insertion or internal-device instructions
+    - diagnosis, treatment, or medication/dosing
+    - legal, clearance, or safety certification claims
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: reviewed boundary limits scope
+    guide: GD-063
+    must_include:
+      - This is the reviewed answer-card surface for GD-063.
+      - Use it only for menstrual hygiene product inventory
+      - Do not use this reviewed card for manufacturing patterns
+      - safety certification.
+  - name: bounded record and routine logs
+    guide: GD-063
+    must_include:
+      - Start with a bounded record
+      - Keep routine actions non-procedural
+      - store only fully dry reusable products in breathable clean storage
+      - log product shortages
+  - name: red flags and handoff remain source anchored
+    guide: GD-063
+    must_include:
+      - Handoff urgently to a clinician, midwife, emergency service, or public-health contact
+      - fever, chills, fainting, dizziness, confusion, widespread rash, vomiting or diarrhea
+      - foul-smelling discharge
+      - immunocompromised person
+review_status: pilot_reviewed
+notes: >
+  Reviewed answer-card closure for GD-063. The card is intentionally a
+  menstrual hygiene product inventory and use-safety boundary only: logs,
+  clean/dry storage, discard triggers, red flags, vulnerable users, privacy,
+  dignity, and clinician/facility/public-health handoff. It blocks production
+  patterns and recipes, sterilization guarantees, absorbency claims,
+  insertion/device instructions, diagnosis, treatment, medication/dosing, legal
+  claims, and safety certification. READY_FOR_PARENT_CLOSE.

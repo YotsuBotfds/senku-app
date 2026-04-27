@@ -4,6 +4,17 @@ slug: suture-material-production
 title: Suture Material Production
 category: medical
 difficulty: intermediate
+aliases:
+  - suture material safety boundary
+  - wound closure material intake
+  - improvised sutures warning
+  - should i use thread to close a cut
+  - dirty wound closure red flags
+  - sterile closure uncertainty
+routing_cues:
+  - Use this guide's reviewed answer card only for wound/closure-material request intake, contamination or sterility uncertainty, improvised material warnings, red-flag screening, covering/protecting a wound, and clinician or emergency handoff.
+  - Screen for deep, gaping, bite, dirty, contaminated, crush, face, hand, genital, joint, tendon, fever, spreading redness, pus, red streaking, numbness, reduced movement, or uncontrolled bleeding before discussing closure materials.
+  - Route suture production, sterilization parameters, needle manufacture, closure technique, stitch choice, material recipes, wound diagnosis, antibiotics or pain dosing, return-to-use, legal claims, and safety certification away from this card.
 tags:
   - essential
 icon: 🧵
@@ -20,7 +31,36 @@ last_updated: '2026-02-15'
 version: '1.0'
 custom_css: body.dark-theme{--bg:#1a2e1a;--surface:#2d2416;--card:#2d2416;--text:#f5f0e8}body.light-theme{--bg:#f5f5f5;--surface:#fff;--card:#e8f0f7;--text:#1a2e1a;--accent:#d63447;--accent2:#2ba882;--muted:#555;--border:#d0d0d0}.header-meta{display:flex;justify-content:center;gap:1rem;font-size:.9rem;flex-wrap:wrap}.tag{background:var(--accent);color:var(--bg);padding:.3rem .8rem;border-radius:3px;font-weight:bold;font-size:.85rem}.tag.critical{background:#f44}.tag.essential{background:var(--accent2)}.controls{position:fixed;top:1rem;right:1rem;z-index:100;display:flex;gap:1rem}.theme-toggle{padding:.5rem 1rem;background:var(--card);border:2px solid var(--accent);color:var(--accent);cursor:pointer;border-radius:4px;font-weight:bold;transition:all .3s ease}nav{background:var(--surface);padding:2rem;border:2px solid var(--border);border-radius:6px;height:fit-content;position:sticky;top:1rem;max-height:90vh;overflow-y:auto}nav h3{color:var(--accent2);margin-bottom:1rem;text-transform:uppercase;font-size:.9rem;letter-spacing:1px}nav li{margin:.5rem 0}nav a{color:var(--muted);text-decoration:none;font-size:.95rem;display:block;padding:.4rem .8rem;border-left:3px solid transparent;transition:all .3s ease}nav a:hover{color:var(--accent2);border-left-color:var(--accent2);background:var(--card);border-radius:3px}main{padding:0}section:nth-child(odd){border-left-color:var(--accent2)}.note strong{color:var(--accent)}li{margin-bottom:.5rem;color:var(--text)}.field-notes{background:var(--card);padding:1.5rem;border:2px dashed var(--accent);border-radius:6px;margin:1.5rem 0;font-style:italic;color:var(--muted)}.field-notes strong{color:var(--accent2);font-style:normal}.diagram{background:var(--card);padding:2rem;margin:1.5rem 0;border-radius:6px;text-align:center;border:2px solid var(--border)}.step{background:var(--card);padding:1rem;margin:.8rem 0;border-left:4px solid var(--accent2);border-radius:3px}.step strong{color:var(--accent2)}.cross-ref{background:var(--card);padding:1rem;margin:1rem 0;border-radius:4px;border-left:4px solid var(--accent)}.cross-ref strong{color:var(--accent)}@media(max-width:1024px){.container{grid-template-columns:1fr}nav{position:static;max-height:none}}.footer-separator{margin:.5rem 0}
 liability_level: high
+citations_required: true
+citation_policy: cite reviewed GD-060 answer card only for closure-material safety intake, contamination or sterility uncertainty, improvised-material avoidance, red-flag screening, cover/protect guidance, and clinician or emergency handoff; do not use it for suture production, sterilization parameters, needle manufacture, closure technique, stitch choice, material recipes, wound diagnosis, antibiotics or pain dosing, return-to-use, legal claims, or safety certification.
+applicability: >
+  Boundary-only wound closure and closure-material request intake when the
+  user is considering sutures, thread, fishing line, glue, tape, staples, or
+  other improvised materials and needs red-flag screening, contamination or
+  sterility uncertainty handling, cover/protect advice, and clinician or
+  emergency handoff. Not for producing sutures, sterilizing materials,
+  manufacturing needles, choosing stitches, teaching closure technique,
+  diagnosing wounds, prescribing antibiotics or pain medicine, clearing return
+  to use, making legal claims, or certifying any closure as safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: suture_materials_wound_closure_boundary
+answer_card:
+  - suture_materials_wound_closure_boundary
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-060. Use it only for wound/closure-material request intake: whether the person is considering sutures, thread, fishing line, glue, tape, staples, or other improvised materials; whether contamination or sterility is uncertain; whether red flags are present; how to cover and protect the wound while arranging clinician or emergency care.
+
+Start by screening for red flags before any closure-material discussion: deep or gaping wounds, bites, dirty or contaminated wounds, crush injuries, wounds on the face, hand, genitals, across a joint, or near a tendon, uncontrolled bleeding, numbness, reduced movement, fever, spreading redness, pus, red streaking, or the person appearing very ill. These findings should move the answer to urgent clinician or emergency handoff rather than home closure.
+
+If sterility, contamination, wound depth, or location risk is uncertain, do not present improvised closure as safe. Keep the wound covered with clean material, protect it from further contamination, avoid putting homemade or non-sterile thread, fishing line, hair, plant fiber, glue, or other improvised materials into the wound, and arrange qualified evaluation. If the wound is dirty, a bite, deep, infected-looking, or high-risk by location, do not recommend closing it in the field.
+
+Do not use this reviewed card for suture production, sterilization parameters, needle manufacture, closure technique, stitch choice, material recipes, wound diagnosis, antibiotics or pain dosing, return-to-use decisions, legal claims, or safety certification. Route those requests away from this card and keep the response focused on risk recognition, protection, documentation for handoff, and getting appropriate care.
+
+</section>
 
 <section id="overview">
 

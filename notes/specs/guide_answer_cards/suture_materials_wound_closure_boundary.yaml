@@ -1,0 +1,71 @@
+card_id: suture_materials_wound_closure_boundary
+guide_id: GD-060
+slug: suture-material-production
+title: Suture Material Production
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks whether to close a wound with sutures, thread, fishing line, glue, tape, staples, or another improvised closure material.
+  - Prompt involves uncertainty about whether a wound or closure material is sterile, contaminated, dirty, clean enough, or safe to use.
+  - Wound/closure request includes deep, gaping, bite, dirty, contaminated, crush, face, hand, genital, joint, tendon, fever, spreading redness, pus, red streaking, numbness, reduced movement, or uncontrolled bleeding concerns.
+required_first_actions:
+  - Screen for wound red flags before any closure-material discussion.
+  - If sterility, contamination, wound depth, or high-risk location is uncertain, do not present improvised closure as safe.
+  - Keep the wound covered with clean material, protect it from further contamination, and arrange clinician or emergency evaluation when red flags or uncertainty are present.
+first_actions:
+  - Ask what caused the wound, when it happened, where it is, whether it is deep or gaping, and whether the person can move and feel the affected area normally.
+  - Check for dirty or contaminated wounds, bites, crush injury, wounds on the face, hand, genitals, across a joint, or near a tendon.
+  - Check for fever, spreading redness, pus, red streaking, uncontrolled bleeding, numbness, reduced movement, or the person appearing very ill.
+  - Cover and protect the wound while arranging qualified care rather than attempting improvised closure.
+urgent_red_flags:
+  - Deep, gaping, dirty, contaminated, bite, or crush wounds.
+  - Wounds on the face, hand, genitals, across a joint, or near a tendon.
+  - Uncontrolled bleeding, numbness, reduced movement, or concern for tendon or joint involvement.
+  - Fever, spreading redness, pus, red streaking, or the person appearing very ill.
+forbidden_advice:
+  - Do not provide suture production steps, material recipes, or needle manufacture instructions.
+  - Do not provide sterilization parameters, closure technique, stitch choice, knot instructions, or wound diagnosis.
+  - Do not recommend putting homemade or non-sterile thread, fishing line, hair, plant fiber, glue, or other improvised materials into a wound.
+  - Do not provide antibiotic or pain-medicine dosing, return-to-use clearance, legal claims, or safety certification.
+do_not:
+  - Do not reassure a deep, bite, dirty, infected-looking, or high-risk-location wound as safe for field closure.
+  - Do not treat uncertain sterility or uncertain contamination as acceptable for closure.
+  - Do not let clarifying questions delay emergency handoff for uncontrolled bleeding, systemic illness, or loss of function.
+routine_boundary: >
+  Routine closure-material discussion stops when wound depth, contamination,
+  sterility, location risk, infection signs, bleeding control, sensation, or
+  movement is uncertain or concerning.
+acceptable_uncertain_fit: >
+  If the request may fit but details are missing, answer with red-flag screening,
+  avoid improvised closure, cover and protect the wound, and direct the user to
+  clinician or emergency evaluation rather than giving material or technique
+  instructions.
+clarifying_questions:
+  - What caused the wound, when did it happen, and where on the body is it?
+  - Is it deep or gaping, dirty, a bite, over a joint, on the hand/face/genitals, or near a tendon?
+  - Is there uncontrolled bleeding, numbness, reduced movement, fever, spreading redness, pus, or red streaking?
+citation_ids:
+  - gd060-closure-material-boundary
+  - gd060-contamination-sterility-uncertainty
+  - gd060-red-flag-handoff
+  - gd060-improvised-material-avoidance
+source_sections:
+  - guide: GD-060
+    slug: suture-material-production
+    title: Suture Material Production
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#reviewed-answer-card-boundary > Reviewed Answer-Card Boundary"
+source_invariants:
+  - name: improvised_closure_boundary
+    guide: GD-060
+    must_include:
+      - avoid putting homemade or non-sterile thread, fishing line, hair, plant fiber, glue, or other improvised materials into the wound
+      - If sterility, contamination, wound depth, or location risk is uncertain, do not present improvised closure as safe.
+      - If the wound is dirty, a bite, deep, infected-looking, or high-risk by location, do not recommend closing it in the field.
+review_status: pilot_reviewed
+notes: >
+  Safety-reviewed boundary card for GD-060 only. It closes the metadata/card gap
+  for wound closure-material intake and deliberately avoids production,
+  sterilization, closure technique, diagnosis, medication dosing, clearance,
+  legal, and safety-certification claims.

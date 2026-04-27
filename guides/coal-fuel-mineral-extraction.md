@@ -22,9 +22,51 @@ word_count: 5600
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+aliases:
+  - coal site safety inventory
+  - fuel mineral storage red flags
+  - mine collapse dust fire CO boundary
+  - coal stockpile spontaneous heating handoff
+  - coal runoff access control log
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level coal or fuel-mineral site and storage inventory, mine/collapse/dust/fire/CO/spontaneous-heating/water-runoff red flags, access-control, stop-use, logging, and emergency, fire-service, mining/geology, environmental, or qualified owner handoff.
+  - Keep routine answers focused on non-invasive observation, site status, access restriction, visible red flags, incident logs, and who owns qualified follow-up.
+  - Route extraction, tunneling, blasting, ventilation engineering, mining methods, combustion appliance operation, coke or char production, gasification, hauling/loading procedures, dust-control recipes, permit/legal claims, and safety certification away from this reviewed card.
+routing_support:
+  - GD-716 is high-liability and contains procedural extraction and fuel-use material, but the reviewed answer-card surface is deliberately boundary-only and narrower than the full guide.
+  - Prefer the reviewed card for existing coal or fuel-mineral sites, stockpiles, storage areas, old workings, suspected shafts, runoff concerns, dust/fire/CO symptoms, stop-use flags, and qualified handoff.
+  - Pair with emergency services, fire service, mine safety, geology/geotechnical, environmental, medical, or responsible site owners when active hazards, symptoms, public access, unstable ground, smoke/heat/fire, water contamination, or unknown ownership dominates the prompt.
+citations_required: true
+citation_policy: cite reviewed GD-716 answer card only for boundary-level coal/fuel-mineral site or storage inventory, mine/collapse/dust/fire/CO/spontaneous-heating/water-runoff red flags, access-control/stop-use/logging, and emergency/fire-service/mining/geology/environmental/qualified-owner handoff; do not use it for extraction, tunneling, blasting, ventilation engineering, mining methods, combustion appliance operation, coke/char production, gasification, hauling/loading procedures, dust-control recipes, legal/permit claims, or safety certification.
+applicability: >
+  Use for boundary-only coal and fuel-mineral site or storage safety questions:
+  non-invasive inventory, old mine or collapse red flags, coal dust, fire,
+  carbon monoxide, spontaneous heating, water-runoff concerns, access control,
+  stop-use language, logging, and emergency, fire-service, mining/geology,
+  environmental, medical, or qualified owner handoff. Do not use for
+  extraction, tunneling, blasting, ventilation engineering, mining methods,
+  combustion appliance operation, coke or char production, gasification,
+  hauling/loading procedures, dust-control recipes, legal or permit claims, or
+  safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: coal_fuel_mineral_site_storage_boundary
+answer_card:
+  - coal_fuel_mineral_site_storage_boundary
 ---
 
 Coal is fossilized plant material; burning it releases energy accumulated over millions of years. In resource-limited contexts, coal provides concentrated fuel for heat, cooking, and power generation. Understanding coal deposits, safe extraction, and efficient use maximizes value.
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Site and Storage Inventory, Stop-Use Flags, and Handoffs
+
+This is the reviewed answer-card surface for GD-716. Use it only for boundary-level coal or fuel-mineral site and storage inventory: old workings, suspected shafts, unstable ground, collapse signs, dust, smoke, fire, carbon monoxide concern, spontaneous heating, water-runoff concerns, access-control status, stop-use language, incident logging, and emergency, fire-service, mining/geology, environmental, medical, or qualified owner handoff.
+
+For routine boundary screening, record the site or storage location, date, observer, responsible owner, current activity status, whether access is restricted, whether use or entry has been paused, visible ground cracks or subsidence, exposed openings, loose highwalls, dust release, smoke, heat, odor, flame, headache/dizziness/nausea symptoms, stockpile warmth or steaming, water discoloration or runoff path, nearby drains/streams/wells, public or child access, and who has authority to keep the area closed pending qualified review.
+
+Do not use this reviewed card for extraction, tunneling, blasting, ventilation engineering, mining methods, combustion appliance operation, coke or char production, gasification, hauling/loading procedures, dust-control recipes, legal or permit claims, or safety certification. If there is active fire, smoke, heat, possible carbon monoxide exposure, collapse risk, suspected shaft or void, flooding, contaminated runoff, public access, missing ownership, or pressure to enter/use/move material despite uncertainty, pause routine planning and route to emergency services, fire service, mine safety, mining/geology or geotechnical support, environmental authorities, medical care, or the qualified site owner.
+
+</section>
 
 <section id="coal-deposit-identification">
 

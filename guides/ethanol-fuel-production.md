@@ -14,6 +14,42 @@ related:
   - fermentation-baking
   - fuel-production-management
   - wine-brewing
+aliases:
+  - ethanol fuel safety boundary
+  - fuel alcohol inventory
+  - denatured ethanol toxic ingestion
+  - ethanol flammable vapor storage
+  - alcohol fuel spill fire stop use
+  - ethanol source access log handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for ethanol or fuel-alcohol inventory, labeling, source/access logs, storage condition, flammable vapor/fire/explosion red flags, ingestion or toxic-denaturant concerns, spill/fire/ventilation stop-use flags, and emergency, fire-service, poison-control, or qualified fuel/chemical owner handoff.
+  - Keep answers at safe observation and routing level: container identity, label text, source, storage location, access control, approximate inventory category, odor/vapor/fire/spill concern, possible exposure or ingestion, denaturant warning, ventilation status, and who has been notified.
+  - Route fermentation, distillation, dehydration, proofing, denaturing, still construction or operation, temperatures, cuts, recipes, fuel blending, engine-use claims, legal/tax claims, safety certification, and return-to-use decisions away from this card.
+citations_required: true
+citation_policy: >
+  Cite GD-336 and its reviewed answer card only for ethanol or fuel-alcohol
+  boundary intake: inventory, labels, source/access logs, storage condition,
+  flammable vapor/fire/explosion red flags, ingestion or toxic-denaturant
+  concerns, spill/fire/ventilation stop-use flags, and emergency, fire-service,
+  poison-control, or qualified fuel/chemical owner handoff. Do not use it for
+  fermentation, distillation, dehydration, proofing, denaturing, still
+  construction or operation, temperatures, cuts, recipes, fuel blending,
+  engine-use claims, legal/tax claims, safety certification, safe-to-use
+  statements, or return-to-service decisions.
+applicability: >
+  Use for a non-procedural ethanol and fuel-alcohol safety boundary: container
+  inventory, label/source/access records, storage condition screening,
+  flammable vapor/fire/explosion red flags, ingestion and toxic-denaturant
+  routing, spill/fire/ventilation stop-use flags, and handoff to emergency
+  services, fire service, poison control, site safety, or a qualified
+  fuel/chemical owner. Do not use for production methods, process parameters,
+  denaturing instructions, fuel blending, engine advice, legal/tax compliance,
+  return-to-use decisions, or declaring any alcohol, container, storage area,
+  vehicle fuel system, site, or process safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: ethanol_fuel_alcohol_safety_boundary
+answer_card:
+  - ethanol_fuel_alcohol_safety_boundary
 read_time: 14
 word_count: 2852
 last_updated: '2026-02-18'
@@ -31,6 +67,20 @@ This guide covers feedstock selection (sugarcane, grain, potatoes, cellulose), f
 :::warning
 **Legal and Regulatory Notice:** Distillation of ethanol for fuel is heavily regulated or prohibited in many countries and regions. In the United States, for example, home fuel ethanol production is illegal without federal and state permits, even for personal use. Similar restrictions apply in Canada, Australia, and many European nations. Check your local, state/provincial, and national laws before attempting any ethanol production or distillation. This guide is provided for educational and survival knowledge purposes only. Unauthorized fuel production may result in substantial criminal penalties, equipment seizure, and fines. If ethanol production is illegal in your jurisdiction, this guide documents the technical principles for reference but should not be used for actual fuel production.
 :::
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Ethanol Fuel Alcohol Safety and Handoff
+
+This is the reviewed answer-card surface for GD-336. Use it only for non-procedural ethanol and fuel-alcohol safety boundaries: inventory, container labels, source and access logs, storage condition screening, flammable vapor, fire, explosion, ingestion, toxic denaturant, spill, ventilation, stop-use flags, and emergency, fire-service, poison-control, site-safety, or qualified fuel/chemical owner handoff.
+
+Start with safe observation and routing rather than production or use advice: product or container identity, label text, source, storage location, access status, approximate inventory category, whether it is denatured or unknown, odor or vapor report, visible spill or container damage, heat or fire exposure, ventilation concern, possible ingestion or skin/eye exposure, vulnerable-person access, and who has already been notified.
+
+Stop use, isolate from access if it can be done without exposure, and hand off when there is ethanol odor or vapor in an enclosed space, fire, heat exposure, sparks or ignition sources, damaged or leaking containers, unlabeled or unknown-source alcohol, suspected ingestion, toxic denaturant concern, eye or skin exposure, dizziness, vomiting, confusion, breathing trouble, multiple exposed people, spill spreading toward drains or low areas, inadequate ventilation, or pressure to relabel, transfer, mix, burn, use in equipment, or certify before qualified review.
+
+Do not provide fermentation, distillation, dehydration, proofing, denaturing, still construction or operation, temperatures, cuts, recipes, fuel blending, engine-use claims, legal or tax claims, safe-to-use statements, return-to-service decisions, or safety certification from this reviewed card.
 
 </section>
 

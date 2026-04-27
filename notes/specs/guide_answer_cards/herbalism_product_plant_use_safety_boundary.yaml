@@ -1,0 +1,110 @@
+card_id: herbalism_product_plant_use_safety_boundary
+guide_id: GD-034
+slug: herbalism
+title: Herbalism & Medicinal Plants
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - A user asks about safety intake for an herbal product, supplement, plant remedy, medicinal plant use, topical plant exposure, tea, tincture, salve, poultice, capsule, powder, essential oil, or wild-harvested plant material.
+  - The prompt includes uncertainty about what plant or product was used, whether a label/source is trustworthy, whether symptoms after use matter, or whether allergy, pregnancy, child exposure, chronic disease, or medication interaction risk should change the next step.
+  - The user needs a concise log or handoff for a clinician, pharmacist, Poison Control, or qualified local plant expert without plant identification certainty, dosing, preparation, or treatment advice.
+required_first_actions:
+  - Keep the answer to intake, uncertainty, red-flag screening, symptom logging, stop-use flags, product/source/label logging, and handoff.
+  - Stop use and route to Poison Control, EMS, a clinician, pharmacist, or qualified local plant expert when the plant/product identity is uncertain, symptoms are present, a child or pregnant/breastfeeding person is involved, chronic disease or medication interactions may matter, or ingestion/exposure was accidental.
+  - Treat a label, user-supplied plant name, photo, smell, taste, or single field trait as intake evidence only, not proof of plant identity or safety.
+  - For possible mouth exposure or unknown ingestion, rinse and spit if applicable, do not induce vomiting, and contact Poison Control or emergency/clinical help promptly.
+first_actions:
+  - Ask what was taken, touched, inhaled, applied, or prepared; when; by whom; and by what route.
+  - Record the product name, plant name exactly as written, full ingredient list, strength or concentration as printed on the label, lot or batch, expiration date, seller/source, wild-harvest location if relevant, and whether the container or label is available.
+  - Log the user's uncertainty separately from facts: unknown plant, uncertain lookalike, unlabeled product, mixed ingredients, homemade preparation, changed smell/color, mold, contamination concern, or conflicting local advice.
+  - Screen for allergy, pregnancy or breastfeeding, child exposure, older adult/frailty, liver/kidney/heart disease, bleeding disorder, immune suppression, surgery planned, and current medications or supplements.
+  - Log symptoms and timing after ingestion or exposure, including rash, itching, swelling, breathing trouble, swallowing trouble, drooling, vomiting, diarrhea, abdominal pain, dizziness, fainting, confusion, agitation, drowsiness, seizure, palpitations, chest pain, eye pain, or vision change.
+  - Preserve the product container, label, receipt/source notes, safe photo, or remaining sample for handoff when this can be done without more exposure.
+urgent_red_flags:
+  - Trouble breathing, wheeze, throat tightness, facial/lip/tongue swelling, trouble swallowing, drooling, widespread hives, or fast-worsening allergic symptoms.
+  - Severe vomiting or diarrhea, chest pain, fainting, confusion, severe drowsiness, seizure, severe agitation, irregular heartbeat, severe abdominal pain, eye pain, or vision change after plant or herbal-product exposure.
+  - Unknown ingestion, unlabeled product use, suspected toxic lookalike, mold/contamination concern, or accidental exposure involving a child, pregnant/breastfeeding person, older adult, pet, or livestock.
+  - Current use of prescription medicines, blood thinners, heart medicines, seizure medicines, psychiatric medicines, diabetes medicines, immunosuppressants, birth control, or multiple supplements where interaction risk is plausible.
+  - Chronic liver, kidney, heart, bleeding, immune, seizure, pregnancy, or cancer/chemotherapy context before or after herbal use.
+forbidden_advice:
+  - Do not identify a plant with certainty from a photo, label, smell, taste, single trait, local name, or user description.
+  - Do not decide that an unknown plant, wild-harvested plant, product, tea, tincture, salve, poultice, essential oil, capsule, or supplement is safe to ingest, apply, inhale, forage, feed to animals, or use medicinally.
+  - Do not recommend treatment, dosing, frequency, duration, preparation recipes, substitutions for medications, pregnancy or child dosing, stopping prescribed medicine, or combining herbs with medications.
+  - Do not diagnose symptoms, certify a product/source as safe, make legal or regulatory claims, or provide foraging edibility decisions.
+  - Do not induce vomiting, neutralize with home remedies, or advise activated charcoal unless Poison Control or a clinician specifically directs it.
+do_not:
+  - Do not let routine herbal education delay emergency, poison-control, pharmacist, clinician, veterinarian, or local expert handoff when red flags or uncertainty are present.
+  - Do not convert a user's plant name, folk name, label claim, or photo into proof of identity, purity, dose, effectiveness, or safety.
+  - Do not provide recipes or dose-like instructions from this reviewed card.
+routine_boundary: >
+  GD-034 reviewed-card answers are limited to herbal product and plant-use
+  safety intake, uncertainty handling, allergy/pregnancy/child/chronic
+  disease/medication interaction red-flag screening, ingestion or exposure
+  symptom logs, stop-use flags, source/product/label logs, and concise handoff
+  to a clinician, pharmacist, Poison Control, veterinarian, or qualified local
+  plant expert. They are not plant identification, edibility, treatment,
+  dosing, preparation, medication-substitution, diagnosis, legal, or safety
+  certification answers.
+acceptable_uncertain_fit: >
+  If the user is unsure what plant or product was used, whether the label is
+  reliable, or whether symptoms are related, answer from the conservative
+  uncertainty lane: stop use, avoid further ingestion/exposure, document facts
+  and symptoms, preserve label/source evidence when safe, and hand off to
+  Poison Control, a clinician/pharmacist, veterinarian, or qualified local
+  plant expert as appropriate.
+clarifying_questions:
+  - What exactly was taken, touched, inhaled, applied, or prepared, and when?
+  - Who was exposed, and are they a child, pregnant or breastfeeding, older/frail, chronically ill, taking medications, or managing allergies?
+  - What symptoms are present now, and when did they start relative to the plant or product exposure?
+  - Is the product container or label available, including ingredient list, concentration, lot/batch, expiration date, and seller/source?
+  - Was the plant wild-harvested, unlabeled, homemade, moldy, contaminated, or uncertain because of a lookalike or local-name mismatch?
+citation_ids:
+  - gd-034-reviewed-answer-card-boundary
+  - principles-safety-warnings
+  - principles-when-not-to-use-herbs
+  - dangerous-poison-identification-checklist
+  - dangerous-accidental-poisoning-response-protocol
+  - pharmacopeia-what-to-record
+  - pharmacopeia-legal-safety-documentation
+source_sections:
+  - guide: GD-034
+    slug: herbalism
+    title: Herbalism & Medicinal Plants
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#principles"
+      - "#dangerous"
+      - "#pharmacopeia"
+source_invariants:
+  - name: herbalism reviewed card remains boundary only
+    guide: GD-034
+    must_include:
+      - This is the reviewed answer-card surface for GD-034.
+      - Use it only for herbal product or plant-use safety intake
+      - allergy, pregnancy, child, chronic disease, and medication-interaction red flags
+      - Do not use this reviewed card for plant identification certainty
+      - dosing, preparation recipes, medication substitution
+    must_not_match:
+      - "(This is the reviewed answer-card surface|Routine answers|Do not use this reviewed card)[\\s\\S]{0,900}(safe to eat|safe to ingest|edible|definitely identified)[^\\n]{0,160}\\b(yes|confirmed|certain)\\b"
+      - "(This is the reviewed answer-card surface|Routine answers|Do not use this reviewed card)[\\s\\S]{0,900}(take|dose|use)[^\\n]{0,120}(teaspoon|dropper|mg|grams|times daily|per day)"
+  - name: red flags stop use and hand off
+    guide: GD-034
+    must_include:
+      - Stop use and route away from routine herbal support
+      - trouble breathing, wheezing, throat tightness
+      - facial/lip/tongue swelling
+      - child exposure
+      - pregnancy or breastfeeding exposure concern
+      - chronic liver/kidney/heart disease
+      - current medication use where interactions are possible
+    must_not_match:
+      - "(trouble breathing|throat tightness|facial swelling|child exposure|pregnancy)[^\\n]{0,160}(continue use|routine herbal support|watch only)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Safety-reviewed boundary card for GD-034 metadata/card closure. It narrows
+  the herbalism surface to intake, uncertainty, red-flag screening, symptom and
+  product/source logs, stop-use flags, and handoff while excluding plant ID
+  certainty, foraging edibility, treatment, dosing, preparation recipes,
+  medication substitution, pregnancy/child dosing, diagnosis, legal claims, and
+  safety certification.

@@ -22,7 +22,36 @@ last_updated: '2026-02-18'
 version: '1.0'
 custom_css: '.subtitle{color:#888;font-size:1.1em;font-style:italic}.tier-1{background-color:#1a3a1a !important}.tier-2{background-color:#2a2a1a !important}.tier-3{background-color:#2d2416 !important}.dosage{color:#b3e5fc;font-weight:bold}.preparation-methods{display:grid;grid-template-columns:1fr;gap:20px;margin:30px 0}.method-card{background-color:#242424;padding:20px;border-left:4px solid #66bb6a;border-radius:4px}.method-card h4{margin-top:0}.protocol-step{background-color:#242424;padding:15px;margin:15px 0;border-radius:4px;border-left:4px solid #4caf50}.protocol-step strong{color:#81c784}svg{background-color:#242424;padding:20px;border-radius:4px;margin:30px 0;width:100%;max-width:900px}.plant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin:30px 0}.plant-card{background-color:#242424;padding:20px;border-radius:4px;border-top:3px solid #4caf50}.plant-card h4{margin-top:0;color:#81c784}.growing-info{font-size:.9em;color:#aaa;margin-top:10px}.footer{text-align:center;color:#666;margin-top:60px;padding-top:20px;border-top:1px solid #333;font-size:.9em}.dosage-table{width:100%;margin:20px 0}.dosage-table td:first-child{font-weight:bold;color:#81c784;width:30%}.decision-tree{background-color:#242424;padding:20px;border-radius:4px;margin:30px 0}.tree-node{margin-left:20px;margin-top:10px;padding-left:10px;border-left:2px solid #4caf50;padding-bottom:10px}'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: herbal_antibiotics_infection_safety_boundary
+aliases:
+  - herbal antibiotic safety
+  - natural antibiotic infection concern
+  - infection herbal remedy risk
+  - herbal self treatment infection red flags
+  - supplement infection handoff
+  - wound fever herbal concern
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level infection concern intake, severe infection red flags, herbal or supplement self-treatment risk warnings, product/source/label logs, stop-self-treatment cues, and clinician, emergency, poison-control, or veterinary handoff.
+  - Preserve urgent routing for fever with rapid worsening, spreading redness, red streaking, severe pain, confusion, trouble breathing, dehydration, deep or dirty wounds, animal bites, pregnancy, infants/children, immunocompromised people, and medication interaction or overdose concerns.
+  - Do not use the reviewed card for antibiotic claims, herbal treatment regimens, dosing, preparation recipes, diagnosis, medication substitution, wound procedures, delay-care reassurance, legal claims, or safety certification.
+citations_required: true
+applicability: Boundary-only infection concern intake when the safe answer is to stop herbal or self-treatment escalation, screen for severe infection and vulnerable-person flags, log products and symptoms, and hand off to a clinician, emergency service, Poison Control, or veterinarian.
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer Card Boundary
+
+This is the reviewed answer-card surface for GD-040. Use it only for boundary-level infection concern intake, herbal or supplement self-treatment risk warnings, severe infection red flags, vulnerable-person flags, product/source/label logs, stop-self-treatment cues, and concise clinician, emergency, Poison Control, or veterinary handoff.
+
+Safe reviewed-card answers may ask what infection concern is present, when it started, whether symptoms are worsening, whether fever or systemic symptoms are present, whether the person is pregnant, a child, immunocompromised, elderly, or has a serious chronic illness, whether there is an animal bite, deep/dirty wound, spreading redness, red streaking, severe pain, trouble breathing, dehydration, confusion, or reduced alertness, and what herbs, essential oils, supplements, medicines, products, doses as already taken, labels, sources, lot numbers, and timing should be logged for the handoff.
+
+Stop routine self-treatment and route to urgent medical help when severe infection signs, wound or bite red flags, fever with worsening illness, pregnancy, child/infant risk, immunocompromised status, animal bite, rapidly worsening skin infection, dehydration, breathing trouble, confusion, or possible overdose, allergic reaction, poisoning, contamination, adulteration, or medication interaction is present or uncertain. For animal patients, use a veterinarian or animal poison-control owner rather than human dosing or treatment advice.
+
+Do not use this reviewed card for antibiotic claims, herbal treatment regimens, dosing, preparation recipes, essential-oil internal use, diagnosis, delay-care reassurance, medication substitution, wound cleaning or closure procedures, pregnancy/child/immunocompromised treatment decisions, legal claims, or safety certification.
+
+</section>
 
 <section id="pharmaceuticals-runout">
 

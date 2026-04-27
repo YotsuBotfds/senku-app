@@ -4,11 +4,28 @@ slug: pharmacy-compounding
 aliases:
   - oral rehydration solution
   - ors
+  - compounding safety intake
+  - medication label uncertainty
+  - compounded medication safety
+  - pharmacy handoff
+  - unknown medication strength
+  - medication contamination concern
 title: Pharmacy Compounding
 category: medical
 difficulty: intermediate
 tags:
   - essential
+  - medication-safety
+  - compounding-boundary
+  - pharmacist-handoff
+  - red-flags
+routing_cues:
+  - unlabeled or unknown medication identity
+  - medication strength concentration or expiry uncertainty
+  - compounded medication source storage or contamination concern
+  - child pregnancy allergy polypharmacy medication red flag
+  - wrong medication overdose unknown ingestion poison control handoff
+  - pharmacist clinician emergency medication safety handoff
 icon: 💊
 description: Making pills, capsules, ointments, tinctures, suppositories, dosage calculations, shelf-life extension, and canonical oral rehydration solution (ORS) preparation.
 related:
@@ -25,6 +42,25 @@ word_count: 9150
 last_updated: '2026-02-26'
 version: '1.1'
 liability_level: high
+reviewed_answer_card: pharmacy_compounding_intake_boundary
+reviewed_answer_card_scope: boundary_only
+reindex_required: true
+applicability:
+  owner: boundary-level medication or compounding request intake, uncertainty triage, red-flag routing, and pharmacist/clinician/poison-control handoff
+  use_when:
+    - medication_compounding_request_intake
+    - unknown_label_identity_strength_or_expiry
+    - compounded_medication_source_or_storage_uncertainty
+    - child_pregnancy_allergy_polypharmacy_red_flags
+    - contamination_storage_or_tampering_concern
+    - pharmacist_clinician_or_poison_control_handoff
+  do_not_use_when:
+    - compounding_formula_or_recipe
+    - dosing_calculation_or_administration_instruction
+    - medication_substitution_selection_or_diagnosis
+    - sterile_preparation_or_injectable_procedure
+    - extraction_or_tincture_instruction
+    - legal_safety_or_quality_certification
 custom_css: |-
   .svg-title{fill:#d4a574;font-size:18px;font-weight:bold}.svg-label{fill:#b8956a;font-size:14px}.svg-body{fill:#f5f0e8;font-size:12px}.svg-stroke{stroke:#b8956a;stroke-width:2;fill:none}
   .svg-title{fill:#d4a574;font-size:18px;font-weight:bold}.svg-label{fill:#b8956a;font-size:14px}.svg-body{fill:#f5f0e8;font-size:12px}.svg-stroke{stroke:#b8956a;stroke-width:2;fill:none}
@@ -37,6 +73,20 @@ custom_css: |-
 
 :::danger
 **WARNING:** Pharmaceutical compounding (including antibiotic reconstitution, pediatric dosing, and IV fluid preparation) requires professional pharmaceutical training and licensure. Contaminated preparations can cause fatal infections. Incorrect dosing — especially for pediatric patients — can cause organ failure and death. This guide is for educational reference only.
+:::
+
+:::danger
+### Reviewed Answer-Card Boundary: Medication and Compounding Intake Only
+
+This is the reviewed answer-card surface for GD-056. Use it only for boundary-level intake, uncertainty labeling, stop-use decisions, red-flag screening, and pharmacist, clinician, emergency, or poison-control handoff.
+
+For any medication or compounding request, first record the label, active ingredient name if known, strength or concentration, dosage form, route on the label, lot or source if known, expiration or beyond-use date, storage conditions, visible changes, and who the medication is for. Keep identity, strength, expiry, and source uncertainty explicit; do not infer them from appearance, taste, smell, color, container shape, or scarcity.
+
+Hard stop and hand off before use if the product is unlabeled, partly labeled, relabeled, mixed with other products, visibly contaminated, discolored, crystallized, cloudy when it should be clear, leaking, wet-stored, heat-damaged, frozen when it should not be, exposed to unknown water or chemicals, past a known beyond-use limit, from an unknown source, or linked to a dosing, administration, allergic, or unexpected-symptom concern.
+
+Escalate promptly when a child, pregnant person, older adult, immunocompromised person, severe allergy history, kidney or liver disease, seizure history, diabetes, multiple medications, blood thinners, sedatives, opioids, insulin, concentrated electrolytes, chemotherapy, injectable or sterile products, eye products, inhaled products, or poison exposure may be involved. For possible overdose, wrong medication, unknown ingestion, or serious symptoms, contact poison control, emergency medical services, or a clinician immediately.
+
+Do not use this reviewed card for compounding formulas, calculations, substitutions, dose selection, medication selection, diagnosis, administration instructions, sterile preparation, injectable preparation, extraction, tincture preparation, shelf-life extension claims, legal claims, quality release, or safety certification.
 :::
 
 <section id="overview">

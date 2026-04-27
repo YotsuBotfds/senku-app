@@ -15,6 +15,11 @@ aliases:
   - drug dosing
   - medication interactions
   - pharmacy reference
+  - medication safety boundary
+  - medication identity handoff
+  - unknown pill intake
+  - medication record handoff
+  - do not take hold and call
   - med storage
   - what medicine for headache
   - what medicine for chest pain
@@ -30,6 +35,9 @@ aliases:
   - what can I take for urinary burning
 icon: 💊
 description: Drug selection, dosing, administration, interactions, and storage for survival medical practice
+routing_cues:
+  - Use this reviewed card only for boundary-level medication safety intake: label and identity uncertainty, possible dose conflict or duplicate ingredient, allergy or prior reaction, child or pregnancy exposure, polypharmacy concern, expired or storage-damaged medicine, unknown pill, do-not-take or hold-and-call boundaries, poison-control/pharmacist/clinician handoff, and medication records.
+  - Route medication selection, dosing, dose conversion, tapering, substitution, compounding, diagnosis, treatment plans, interaction clearance, legal claims, and safety certification outside this reviewed card.
 related:
   - addiction-withdrawal-management
   - blood-medicine
@@ -79,7 +87,34 @@ word_count: 16500
 last_updated: '2026-04-13'
 version: '1.1'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: medications_boundary_intake_handoff
+answer_card:
+  - medications_boundary_intake_handoff
+citations_required: true
+citation_policy: >
+  Cite GD-239 and its reviewed answer card only for boundary-level medication
+  safety intake: label/identity/dose-conflict/allergy/child/pregnancy/
+  polypharmacy/expiry/storage/unknown-pill questions, do-not-take or
+  hold-and-call boundaries, poison-control/pharmacist/clinician handoff, and
+  medication records. Do not use the reviewed card for medication selection,
+  dosing, dose conversions, tapering, substitution, compounding, diagnosis,
+  treatment plans, interaction clearance, legal claims, or safety certification.
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-239. Use it only for boundary-level medication safety intake: medication label and identity checks, unreadable or mismatched labels, unknown pills, possible duplicate ingredients or dose conflicts, allergy or prior reaction history, child or pregnancy exposure, polypharmacy concerns, expired or storage-damaged medicines, do-not-take or hold-and-call boundaries, poison-control/pharmacist/clinician handoff, and medication records.
+
+Start with what is already known and visible: the person involved, age or child status, pregnancy or breastfeeding status if known, symptoms now, time and amount already taken if known, medication name, strength, form, route, prescription label, imprint or package details, expiration date, storage history, current medication list, supplements or alcohol/drug exposure if disclosed, allergies or prior bad reactions, and whether labels, pills, bottles, instructions, or records are missing, unreadable, mismatched, expired, damaged, or uncertain. Keep observations separate from guesses.
+
+Routine boundary support may include making a dated medication log, preserving bottles, labels, blister packs, pill fragments, photos, discharge papers, prescription records, and pharmacy instructions, flagging identity or dose-conflict uncertainty, and preparing a concise handoff to poison control, a pharmacist, a clinician, emergency services, or the responsible medication owner. If the question involves an unknown pill, child exposure, pregnancy exposure, possible overdose, severe allergy signs, breathing trouble, altered consciousness, repeated vomiting, chest pain, severe dizziness, fainting, severe rash or swelling, a duplicate-ingredient concern, a wrong-person/wrong-medicine concern, or a damaged/expired/storage-uncertain medicine, do not reassure it as safe from this reviewed card.
+
+Do not use this reviewed card for medication selection, dosing, dose conversions, tapering schedules, substitution, compounding, diagnosis, treatment plans, interaction clearance, legal claims, or safety certification. If a prompt asks for those, answer only the safe intake, uncertainty flagging, do-not-take or hold-and-call boundary, records, and handoff portion and route the rest to the appropriate qualified owner.
+
+</section>
 
 <section id="overview">
 

@@ -4,6 +4,16 @@ slug: feminine-hygiene-production
 title: Feminine Hygiene Manufacturing
 category: medical
 difficulty: beginner
+aliases:
+  - menstrual hygiene supplies
+  - period product storage
+  - reusable pad safety
+  - menstrual product inventory
+  - tampon toxic shock warning signs
+  - menstrual supply discard log
+routing_cues:
+  - Use for menstrual hygiene product inventory, clean/dry storage, discard logs, irritation reports, infection red flags, toxic-shock-like red flags, vulnerable users, and clinician or public-health handoff.
+  - Do not use for product manufacturing patterns, sterilization parameters, absorbency claims, menstrual cup or disc insertion instructions, diagnosis, treatment, medication/dosing, legal claims, or safety certification.
 tags:
   - essential
 icon: 🩺
@@ -16,12 +26,48 @@ related:
   - sterilization-methods
   - textiles
 read_time: 5
-word_count: 4504
-last_updated: '2026-02-15'
-version: '1.0'
+word_count: 4980
+last_updated: '2026-04-26'
+version: '1.1'
+applicability: >
+  Boundary-only menstrual hygiene product inventory and use-safety support:
+  supply logs, product condition, cleanliness, drying, storage, discard
+  triggers, irritation/infection/toxic-shock red flags, vulnerable-user flags,
+  and clinician or public-health handoff. Do not use as a production recipe,
+  sterilization guarantee, absorbency claim, insertion or device-use manual,
+  diagnosis, treatment, medication/dosing, legal claim, or safety
+  certification.
+citation_policy: >
+  Cite reviewed GD-063 answer card only for menstrual hygiene product
+  inventory, use-safety boundaries, cleanliness/drying/storage/discard logs,
+  irritation, infection, toxic-shock-like red flags, vulnerable-user flags, and
+  clinician/public-health handoff; do not cite it for manufacturing patterns,
+  recipes, sterilization parameters or guarantees, absorbency claims,
+  insertion/device instructions, diagnosis, treatment, medication/dosing,
+  legal claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: menstrual_hygiene_product_safety_boundary
+answer_card:
+  runtime_citation_policy: reviewed_source_family
 custom_css: 'body.tags{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.tag{background-color:var(--card);color:var(--accent);padding:6px 12px;border-radius:20px;font-size:.85em;border:1px solid var(--accent)}nav{background-color:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;height:fit-content;position:sticky;top:20px}nav h2{color:var(--accent2);margin-bottom:15px;font-size:1.1em}nav a{color:var(--text);text-decoration:none;display:block;padding:8px 12px;border-radius:4px;transition:all .3s;border-left:3px solid transparent}nav a:hover{background-color:var(--card);border-left-color:var(--accent2);padding-left:20px}main{background-color:var(--surface);border:1px solid var(--border);border-radius:8px;padding:40px}.field-note{background-color:var(--card);border:1px dashed var(--accent2);padding:15px;margin:20px 0;border-radius:4px;font-style:italic;color:var(--text)}.field-note::before{content:"📝 FIELD NOTE: ";color:var(--accent2);font-weight:bold;font-style:normal}table th,table td{padding:12px;text-align:left;border:1px solid var(--border)}table th{background-color:var(--bg);color:var(--accent2);font-weight:bold}table tr:hover{background-color:rgba(83,216,168,0.1)}svg{max-width:100%;height:auto;display:block;margin:0 auto}.process-steps{counter-reset:step-counter;margin:20px 0}.step{counter-increment:step-counter;background-color:var(--card);padding:15px;margin:15px 0;border-radius:4px;border-left:4px solid var(--accent2);padding-left:50px;position:relative}.step::before{content:counter(step-counter);position:absolute;left:15px;top:15px;background-color:var(--accent2);color:var(--bg);width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold}.theme-toggle:hover{background-color:var(--card);transform:scale(1.1)}pre code{background-color:transparent;padding:0;color:var(--accent2)}.reference-box{background-color:var(--card);border:2px solid var(--accent);padding:15px;margin:20px 0;border-radius:4px}.reference-box h4{color:var(--accent);margin-top:0}.material-specs{background-color:var(--card);padding:15px;margin:15px 0;border-radius:4px;border:1px solid var(--accent2)}.material-specs strong{color:var(--accent2)}@media(max-width:1024px){.container{grid-template-columns:1fr}nav{display:none}}'
 liability_level: high
 ---
+
+<section id="reviewed-boundary-card">
+
+## Reviewed Answer-Card Boundary: Menstrual Product Inventory and Use Safety
+
+This is the reviewed answer-card surface for GD-063. Use it only for menstrual hygiene product inventory, condition and use-safety intake, cleanliness, complete drying, storage, discard logs, irritation, infection, toxic-shock-like red flags, vulnerable-user flags, and clinician or public-health handoff.
+
+Start with a bounded record: product type, source or batch if known, whether it is reusable or single-use, current condition, cleanliness status, drying status, storage container, discard history, skin or vulvar irritation, unusual odor or discharge, pelvic or abdominal pain, fever or chills, dizziness or fainting, rash, vomiting or diarrhea, pregnancy or postpartum status, immunocompromised status, disability or dependence on a caregiver, and whether a clinician, midwife, clinic, school, shelter, or public-health contact owns follow-up.
+
+Keep routine actions non-procedural: separate clean, used, wet, damaged, moldy, unlabeled, unknown-history, and discarded products; label reusable items by owner when shared storage exists; store only fully dry reusable products in breathable clean storage; log product shortages, product changes that trigger irritation, wash/dry failures, storage contamination, and discard decisions; protect privacy, dignity, hand hygiene, safe water access, and nonjudgmental supply access.
+
+Handoff urgently to a clinician, midwife, emergency service, or public-health contact for fever, chills, fainting, dizziness, confusion, widespread rash, vomiting or diarrhea with tampon or internal product use, severe pelvic or abdominal pain, rapidly worsening pain, foul-smelling discharge, pus, sores, spreading swelling, heavy bleeding with weakness or repeated large clots, possible pregnancy or postpartum bleeding/pain, symptoms in an immunocompromised person, or symptoms that are new, severe, recurrent, not improving, or substantially different from baseline.
+
+Do not use this reviewed card for manufacturing patterns, recipes, material formulas, absorbency ratings, leakproof or waterproof claims, sterilization recipes, sterilization parameters, pathogen-elimination guarantees, menstrual cup or disc insertion instructions, device troubleshooting, diagnosis, infection treatment, toxic shock syndrome treatment, medication names or dosing, contraception or pregnancy management, legal claims, return-to-school or work clearance, or safety certification. If a prompt asks for those, provide only the inventory/use-safety log, red-flag screen, discard-or-handoff language, and clinician, midwife, infection-control, facility, school, shelter, or public-health routing.
+
+</section>
 
 <section id="overview">
 

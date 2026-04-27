@@ -8,12 +8,51 @@ tags:
   - practical
   - power-generation
 icon: 💨
-description: Design and operation of wood gasification systems for producer gas generation, including updraft and downdraft gasifier design, tar cracking, gas cleaning, and carburetor modification for internal combustion engines.
+description: Safety-reviewed wood gasifier boundary for fuel-gas system inventory, CO/fire/explosion/asphyxiation red flags, outdoor and avoid-entry stop-use limits, logs, labels, and emergency or qualified owner handoff.
 related:
   - charcoal-fuels
   - energy-systems
   - fuel-production-management
   - internal-combustion
+aliases:
+  - wood gasifier safety boundary
+  - producer gas carbon monoxide fire explosion red flags
+  - fuel gas system inventory handoff
+  - wood gas stop use avoid entry
+  - gasifier labels storage access logs
+  - qualified fuel gas mechanical owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural wood gasifier and fuel-gas system safety boundaries: system inventory, CO/fire/explosion/asphyxiation red flags, outdoor/ventilation/avoid-entry/stop-use decisions, labels, storage and access logs, symptom or exposure logs, and emergency, fire-service, poison-control, or qualified fuel-gas/mechanical owner handoff.
+  - Keep answers focused on safe observation from outside the hazard area: system location, whether it is outdoors, ventilation and access status, labels, storage state, ignition/fire/heat signs, gas odor or suspected gas accumulation, CO alarm or symptoms, visible damage, exposure history, access log, and who owns the decision.
+  - Route gasifier construction, operation, startup/shutdown, fuel sizing, plumbing, engine conversion or tuning, filtration media recipes, leak testing methods, repair, indoor-use reassurance, performance claims, legal/code claims, and safety certification away from this card.
+routing_support:
+  - smoke-carbon-monoxide-fire-gas-exposure for active CO, smoke, fire-gas, or poisoning symptom triage and poison-control or emergency handoff.
+  - toxic-gas-identification-detection for toxic gas suspicion, detector/alarm context, and avoid-entry boundaries.
+  - fuel-storage-handling-planning for non-procedural fuel storage labeling, separation, access control, and inventory logs.
+  - internal-combustion for engine owner handoff only, not conversion, tuning, or fuel-system modification instructions.
+citations_required: true
+citation_policy: >
+  Cite GD-334 and its reviewed answer card only for boundary-level wood
+  gasifier or producer-gas safety intake: fuel-gas system inventory,
+  CO/fire/explosion/asphyxiation red flags, outdoor/ventilation/avoid-entry
+  and stop-use decisions, labels, storage and access logs, symptom/exposure
+  logs, and emergency, fire-service, poison-control, or qualified
+  fuel-gas/mechanical owner handoff. Do not use it for gasifier construction,
+  operation, startup/shutdown, fuel sizing, plumbing, engine conversion or
+  tuning, filtration media recipes, leak testing methods, repair, indoor-use
+  reassurance, performance claims, legal/code claims, or safety certification.
+applicability: >
+  Use for non-procedural wood gasifier and producer-gas boundary questions:
+  what to log, when to stop use, how to recognize CO/fire/explosion/
+  asphyxiation red flags, when to keep people out or move outdoors, and who
+  should own emergency or qualified fuel-gas/mechanical review. Do not use for
+  building, operating, troubleshooting, testing, tuning, repairing, certifying,
+  or declaring any gasifier, fuel-gas system, engine conversion, room, shed, or
+  storage setup safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: wood_gas_producer_safety_boundary
+answer_card:
+  - wood_gas_producer_safety_boundary
 read_time: 14
 word_count: 2808
 last_updated: '2026-02-19'
@@ -27,6 +66,20 @@ liability_level: high
 Wood gas producers (gasifiers) convert solid biomass fuel into combustible gas through a thermochemical process called pyrolysis and partial oxidation. The resulting gas—a mixture of carbon monoxide (CO), hydrogen (H₂), nitrogen (N₂), and carbon dioxide (CO₂)—can power internal combustion engines when properly cleaned and regulated. During periods when liquid fuels are unavailable, wood gas systems represent a viable method to generate heat and mechanical power from locally available biomass.
 
 This guide covers gasifier design principles, construction methods, gas cleaning systems, engine modification, feedstock preparation, operating procedures, and critical safety considerations. Wood gas production requires careful attention to chemistry and engineering; improper design or operation creates hazardous conditions including CO poisoning, explosion risk, and engine damage.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Wood Gasifier Safety and Handoff
+
+This is the reviewed answer-card surface for GD-334. Use it only for non-procedural wood gasifier and producer-gas safety boundaries: fuel-gas system inventory, carbon monoxide, fire, explosion, and asphyxiation red flags, outdoor operation and ventilation limits, avoid-entry and stop-use decisions, labels, storage and access logs, symptom or exposure logs, and emergency, fire-service, poison-control, or qualified fuel-gas/mechanical owner handoff.
+
+Start with safe observation and routing rather than construction, operation, testing, tuning, or repair: system identity and location, whether any component is indoors or in an enclosed or low area, outdoor/ventilation status, access controls, labels, storage state, ignition sources, fire or heat exposure, CO alarm or detector report, symptoms, suspected gas accumulation, visible damage, recent access or use, and who has already been notified. Keep people out of suspected contaminated or enclosed spaces until emergency or qualified owner review.
+
+Stop-use and avoid-entry triggers include headache, dizziness, nausea, confusion, weakness, fainting, chest pain, shortness of breath, CO alarm, suspected gas accumulation, flame rollout, popping, flashback, explosion, fire, heat-damaged equipment, damaged or unlabeled fuel-gas components, indoor or enclosed-space operation, poor ventilation, unknown system status, unauthorized access, missing logs, or pressure to inspect, enter, relight, restart, test, repair, tune, certify, or declare the setup safe before qualified review.
+
+Do not provide gasifier construction, operation, startup/shutdown, fuel sizing, plumbing, engine conversion or tuning, filtration media recipes, leak testing methods, repair, indoor-use reassurance, performance claims, legal or code claims, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
 
 </section>
 

@@ -19,7 +19,42 @@ word_count: 3650
 last_updated: '2026-02-19'
 version: '1.0'
 liability_level: high
+aliases:
+  - biodiesel chemical safety boundary
+  - methanol lye fuel storage red flags
+  - waste oil fuel inventory handoff
+  - biodiesel spill fire ventilation stop work
+  - caustic flammable exposure handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for biodiesel chemical and fuel-inventory safety boundaries: methanol, lye, flammable or caustic exposure red flags, storage labels, source logs, spill/fire/ventilation stop-work triggers, and emergency, fire-service, poison-control, qualified chemical, or fuel-owner handoff.
+  - Route transesterification recipes, catalyst amounts, titration, washing/drying, heating/mixing steps, fuel-quality testing, engine-use claims, waste-disposal legality, repair, PPE efficacy guarantees, legal/code claims, and safety certification away from this card.
+  - Treat methanol odor or vapor, caustic contact, unknown/unlabeled containers, poor ventilation, spill, fire, heat exposure, damaged storage, incompatible storage, symptoms, or pressure to continue production as handoff triggers before any routine fuel discussion.
+citations_required: true
+citation_policy: cite GD-335 and its reviewed biodiesel chemical/fuel safety boundary card only for inventory, label/source-log review, methanol/lye/flammable/caustic exposure red flags, storage concerns, spill/fire/ventilation stop-work flags, and emergency/fire-service/poison-control/qualified chemical or fuel-owner handoff; do not use it for transesterification recipes, catalyst amounts, titration, washing/drying, heating/mixing steps, fuel-quality testing, engine-use claims, waste-disposal legality, repair, PPE efficacy guarantees, legal/code claims, or safety certification.
+applicability: >
+  Biodiesel chemical and fuel-inventory safety boundary for methanol, lye,
+  flammable or caustic exposure red flags, storage labels, source logs,
+  spill/fire/ventilation stop-work flags, and emergency, fire-service,
+  poison-control, qualified chemical, or fuel-owner handoff. Do not use this
+  reviewed card for transesterification recipes, catalyst amounts, titration,
+  washing/drying, heating/mixing steps, fuel-quality testing, engine-use
+  claims, waste-disposal legality, repair, PPE efficacy guarantees, legal/code
+  claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: biodiesel_chemical_fuel_safety_boundary
+answer_card:
+  - biodiesel_chemical_fuel_safety_boundary
 ---
+
+:::danger
+## Reviewed Boundary: Biodiesel Chemical and Fuel Safety Handoff
+
+This is the reviewed answer-card surface for GD-335. Use it only for biodiesel chemical and fuel-inventory safety boundaries: methanol, lye, flammable or caustic exposure red flags, storage labels, source logs, spill/fire/ventilation stop-work flags, and emergency, fire-service, poison-control, qualified chemical, or fuel-owner handoff. Start with safe-observation facts: container label text, chemical or fuel identity if already known, source and date log, storage location, access status, ventilation status, visible leak or spill, odor or vapor report, fire or heat exposure, damaged containers, exposed people and symptoms, and who has already been notified.
+
+Stop routine work and keep people away from the area when methanol odor or vapor, breathing symptoms, eye or skin pain, caustic contact, ingestion concern, unlabeled or mixed chemicals, damaged storage, spill, fire, heat exposure, poor ventilation, enclosed-space vapor, incompatible storage, or missing source records are present. For active exposure, fire, uncontrolled spill, unknown vapor, or symptomatic people, prioritize emergency services, fire service or hazmat, poison control, site safety, the responsible fuel owner, or a qualified chemical owner before any inventory or production discussion.
+
+Do not use this reviewed card for transesterification recipes, catalyst amounts, titration, washing or drying procedures, heating or mixing steps, fuel-quality testing, engine-use claims, waste-disposal legality, repair, PPE efficacy guarantees, legal or code claims, safe-to-use statements, safe-to-store statements, return-to-service decisions, or safety certification.
+:::
 <section id="overview">
 
 ## Overview

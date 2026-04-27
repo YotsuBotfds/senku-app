@@ -8,6 +8,30 @@ tags:
   - critical
 icon: 🌿
 description: 20 essential medicinal plants with preparation methods, dosage, growing a medicine garden, common ailment treatment guide, and building a pharmacopeia.
+aliases:
+  - herbal product safety
+  - medicinal plant use
+  - herb supplement intake
+  - plant remedy safety
+  - herbal exposure log
+routing_cues:
+  - Use this guide's reviewed answer card only for herbal product or plant-use intake, uncertainty, red-flag screening, exposure or ingestion logs, stop-use flags, product/source/label logs, and clinician, poison-control, or qualified local expert handoff.
+  - Do not use the reviewed card for plant identification certainty, foraging edibility decisions, treatment recommendations, dosing, preparation recipes, medication substitution, pregnancy or child dosing, diagnosis, legal claims, or safety certification.
+  - Route possible poisoning, unknown ingestion, severe allergy, breathing/swallowing trouble, pregnancy, child exposure, chronic disease, medication interactions, or worsening symptoms to poison-control, emergency, clinician, medication, pediatric, pregnancy, or hazardous-plant owners as appropriate.
+applicability: >
+  Use for boundary-only herbal product and medicinal-plant safety intake:
+  documenting what was used, source and label details, route and timing,
+  uncertainty, allergies, pregnancy/child/chronic disease/medication
+  interaction red flags, symptom logs after ingestion or exposure, stop-use
+  flags, and concise handoff to a clinician, Poison Control, or qualified local
+  plant expert.
+citation_policy: >
+  Cite GD-034 and its reviewed answer card only for herbal product/plant-use
+  intake, red-flag screening, exposure or ingestion logs, source/label logs,
+  stop-use flags, and handoff. Do not cite it for plant identification
+  certainty, edibility decisions, treatment recommendations, dosing,
+  preparation recipes, medication substitution, pregnancy or child dosing,
+  diagnosis, legal claims, or safety certification.
 related:
   - agriculture
   - beekeeping
@@ -34,6 +58,11 @@ custom_css: |-
   .garden-bed { fill: #2d2416; stroke: #b8956a; stroke-width: 2; } .plant-circle { fill: #2d2416; stroke: #e94560; stroke-width: 2; } .path { fill: #1a2e1a; stroke: #aaa; stroke-width: 1; stroke-dasharray: 3,3; } .label { fill: #b8956a; font-size: 11px; font-weight: bold; text-anchor: middle; } .sun { fill: #e94560; } .garden-title { fill: #b8956a; font-size: 18px; font-weight: bold; } @media print{body{background:#fff;color:#000}h1,h2,h3,h4{color:#000}a{color:#000;text-decoration:underline}.hero,.footer,nav,[style*="Related Guides"]{display:none}table{border-collapse:collapse}table,th,td{border:1px solid #000}svg{max-width:100%;filter:invert(1) hue-rotate(180deg)}*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}img{filter:grayscale(100%)}}
   .harvest-label { fill: #b8956a; font-size: 12px; font-weight: bold; } .harvest-text { fill: #eee; font-size: 11px; } .month-box { fill: #2d2416; stroke: #e94560; stroke-width: 1; } .title-harvest { fill: #b8956a; font-size: 16px; font-weight: bold; } @media print{body{background:#fff;color:#000}h1,h2,h3,h4{color:#000}a{color:#000;text-decoration:underline}.hero,.footer,nav,[style*="Related Guides"]{display:none}table{border-collapse:collapse}table,th,td{border:1px solid #000}svg{max-width:100%;filter:invert(1) hue-rotate(180deg)}*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}img{filter:grayscale(100%)}}
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: herbalism_product_plant_use_safety_boundary
+answer_card:
+  - herbalism_product_plant_use_safety_boundary
+citations_required: true
 ---
 <section id="principles">
 
@@ -100,6 +129,24 @@ Herbalism is complementary, not a replacement for modern medicine in critical si
 -   **Uncontrolled blood pressure or blood sugar:** Medical monitoring critical
 
 The best approach: use herbs for minor conditions, prevention, and long-term wellness support while maintaining a relationship with qualified healthcare providers.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-034. Use it only for herbal product or plant-use safety intake: what was taken, touched, inhaled, applied, or prepared; source and label details; timing; uncertainty; allergy, pregnancy, child, chronic disease, and medication-interaction red flags; ingestion or exposure symptom logs; stop-use flags; and concise handoff to a clinician, Poison Control, or a qualified local plant expert.
+
+Routine answers may ask for the product name, plant name as written on the label, ingredients, lot or batch, source, whether it was wild-harvested or purchased, plant part, route of exposure, amount as a label description only, time used, who used it, age or pregnancy status when relevant, medical conditions, current medications or supplements, allergies, and symptoms with timing. If a safe photo of the product label or plant can be preserved, treat it as handoff documentation rather than proof of identity.
+
+Stop use and route away from routine herbal support when there is trouble breathing, wheezing, throat tightness, facial/lip/tongue swelling, widespread hives, trouble swallowing, drooling, severe vomiting or diarrhea, chest pain, fainting, confusion, severe drowsiness, seizure, severe agitation, irregular heartbeat, eye pain, vision change, rapidly spreading rash, symptoms after unknown ingestion, a child exposure, pregnancy or breastfeeding exposure concern, chronic liver/kidney/heart disease, bleeding disorder, immune suppression, or current medication use where interactions are possible.
+
+Do not use this reviewed card for plant identification certainty, foraging edibility decisions, treatment recommendations, dosing, preparation recipes, medication substitution, pregnancy or child dosing, diagnosis, legal claims, or safety certification. If the prompt asks whether a plant is safe to eat, safe to use medicinally, or definitely identified, answer from the uncertainty boundary: do not ingest or continue use, log the facts, save the label or safe photo if available, and hand off to Poison Control, a clinician, pharmacist, or qualified local plant expert.
+
+</section>
+
+<section id="allergy-testing">
 
 ### Testing for Allergies
 
