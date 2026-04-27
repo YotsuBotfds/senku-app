@@ -77,6 +77,8 @@ if ([string]::IsNullOrWhiteSpace($Output)) {
 $baselinePath = Resolve-GatePath -Path $BaselinePackDir -RepoRoot $repoRoot
 $candidatePath = Resolve-GatePath -Path $CandidatePackDir -RepoRoot $repoRoot
 $outputPath = Resolve-GatePath -Path $Output -RepoRoot $repoRoot
+$comparisonBaseline = "fixed_four_emulator_matrix"
+$stopLine = "STOP: fixed four-emulator evidence remains primary; this asset-pack parity dry run is non-acceptance evidence only."
 
 if (-not (Test-Path -LiteralPath $baselinePath)) {
     throw "Baseline pack path not found: $baselinePath"
@@ -98,10 +100,17 @@ $displayCommand = Format-GateCommand -Executable $pythonPath -Arguments $argumen
 
 if ($WhatIf) {
     $whatIfSummary = [ordered]@{
+        status = "dry_run_only"
         baseline_pack_dir = $baselinePath
         candidate_pack_dir = $candidatePath
         output = $outputPath
         display_command = $displayCommand
+        dry_run = $true
+        non_acceptance_evidence = $true
+        acceptance_evidence = $false
+        comparison_baseline = $comparisonBaseline
+        primary_evidence = $comparisonBaseline
+        stop_line = $stopLine
         would_run = $false
         fail_on_mismatch = $true
     }
@@ -113,6 +122,7 @@ if ($WhatIf) {
     $whatIfSummary | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $outputPath -Encoding UTF8
 
     Write-Host "Android asset-pack parity gate dry run."
+    Write-Host $stopLine
     Write-Host ("Baseline pack: " + $baselinePath)
     Write-Host ("Candidate pack: " + $candidatePath)
     Write-Host ("Output: " + $outputPath)

@@ -20,6 +20,12 @@ $expectedArtifactRoots = @(
 )
 $expectedTestTarget = ":app:$taskName"
 $comparisonBaseline = "fixed_four_emulator_matrix"
+$plannedTaskInventoryCommand = ".\gradlew.bat :app:tasks --all $managedDeviceProperty --console=plain"
+$expectedGradleTaskNames = @(
+    ":app:senkuPhoneApi30DebugAndroidTest",
+    ":app:senkuTabletApi30DebugAndroidTest",
+    ":app:senkuManagedSmokeGroupDebugAndroidTest"
+)
 
 if (-not $DryRun) {
     throw "This first-slice wrapper is dry-run-only. Re-run with -DryRun; it must not launch Gradle Managed Devices yet."
@@ -72,6 +78,8 @@ function Write-SummaryMarkdown {
         "- expected_devices: $($Summary.expected_devices -join ', ')",
         "- expected_artifact_roots: $($Summary.expected_artifact_roots -join ', ')",
         "- expected_test_target: ``$($Summary.expected_test_target)``",
+        "- planned_task_inventory_command: ``$($Summary.planned_task_inventory_command)``",
+        "- expected_gradle_task_names: $($Summary.expected_gradle_task_names -join ', ')",
         "- comparison_baseline: $($Summary.comparison_baseline)",
         "- planned_command: ``$($Summary.planned_command)``",
         "- stop_line: $($Summary.stop_line)"
@@ -96,6 +104,8 @@ $summary = [pscustomobject]@{
     expected_devices = $expectedDevices
     expected_artifact_roots = $expectedArtifactRoots
     expected_test_target = $expectedTestTarget
+    planned_task_inventory_command = $plannedTaskInventoryCommand
+    expected_gradle_task_names = $expectedGradleTaskNames
     comparison_baseline = $comparisonBaseline
     planned_command = $plannedCommand
     gradle_project_dir = (Convert-ToRepoRelativePath -Path $gradleProjectDir)

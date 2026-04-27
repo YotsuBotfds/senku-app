@@ -31,6 +31,10 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn('"android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30"', self.script)
         self.assertIn('"android-app/app/build/reports/androidTests/managedDevice/senkuTabletApi30"', self.script)
         self.assertIn('$expectedTestTarget = ":app:$taskName"', self.script)
+        self.assertIn('$plannedTaskInventoryCommand = ".\\gradlew.bat :app:tasks --all $managedDeviceProperty --console=plain"', self.script)
+        self.assertIn('":app:senkuPhoneApi30DebugAndroidTest"', self.script)
+        self.assertIn('":app:senkuTabletApi30DebugAndroidTest"', self.script)
+        self.assertIn('":app:senkuManagedSmokeGroupDebugAndroidTest"', self.script)
         self.assertIn('$comparisonBaseline = "fixed_four_emulator_matrix"', self.script)
         self.assertIn("fixed four-emulator evidence remains primary", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
@@ -101,6 +105,18 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             )
             self.assertEqual(summary["expected_test_target"], ":app:senkuManagedSmoke")
             self.assertEqual(summary["comparison_baseline"], "fixed_four_emulator_matrix")
+            self.assertEqual(
+                summary["planned_task_inventory_command"],
+                ".\\gradlew.bat :app:tasks --all -Psenku.enableManagedDevices=true --console=plain",
+            )
+            self.assertEqual(
+                summary["expected_gradle_task_names"],
+                [
+                    ":app:senkuPhoneApi30DebugAndroidTest",
+                    ":app:senkuTabletApi30DebugAndroidTest",
+                    ":app:senkuManagedSmokeGroupDebugAndroidTest",
+                ],
+            )
             self.assertIn("-Psenku.enableManagedDevices=true", summary["planned_command"])
             self.assertIn(":app:senkuManagedSmoke", summary["planned_command"])
             self.assertFalse(summary["would_launch_emulators"])

@@ -44,6 +44,8 @@ class AndroidFtsFallbackMatrixContractTests(unittest.TestCase):
         self.assertIn("device_lock_used =", self.script)
         self.assertIn("host_adb_platform_tools_version =", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
+        self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
+        self.assertIn("function Write-MarkdownSummary", self.script)
         self.assertIn("No Android devices resolved", self.script)
 
     def test_parser_gate_passes(self):
@@ -104,6 +106,16 @@ class AndroidFtsFallbackMatrixContractTests(unittest.TestCase):
             self.assertFalse(summary["device_lock_used"])
             self.assertEqual(summary["host_adb_platform_tools_version"], "dry_run")
             self.assertEqual(summary["devices"], ["emulator-5554", "emulator-5556"])
+
+            summary_markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
+            self.assertIn("- runtime_evidence: fts4_fallback", summary_markdown)
+            self.assertIn("- not_fts5_runtime_proof: true", summary_markdown)
+            self.assertIn("- devices: emulator-5554, emulator-5556", summary_markdown)
+            self.assertIn("- passed_count: 2", summary_markdown)
+            self.assertIn("- failed_count: 0", summary_markdown)
+            self.assertIn("- device_lock_used: false", summary_markdown)
+            self.assertIn("- host_adb_platform_tools_version: dry_run", summary_markdown)
+            self.assertIn(f"- summary_json: {output_dir / 'summary.json'}", summary_markdown)
 
             first_device = json.loads((output_dir / "emulator-5554.json").read_text(encoding="utf-8-sig"))
             self.assertTrue(first_device["passed"])

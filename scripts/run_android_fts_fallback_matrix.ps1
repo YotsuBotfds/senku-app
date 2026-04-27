@@ -117,6 +117,31 @@ function Write-JsonFile {
     $Value | ConvertTo-Json -Depth 8 | Set-Content -Path $Path -Encoding UTF8
 }
 
+function Write-MarkdownSummary {
+    param(
+        [string]$Path,
+        $Summary,
+        [string]$SummaryJsonPath
+    )
+
+    $failedCount = @($Summary.failed_devices).Count
+    $deviceList = @($Summary.devices) -join ", "
+    $lines = @(
+        "# Android FTS fallback matrix summary",
+        "",
+        "- runtime_evidence: $($Summary.runtime_evidence)",
+        "- not_fts5_runtime_proof: $($Summary.not_fts5_runtime_proof.ToString().ToLowerInvariant())",
+        "- devices: $deviceList",
+        "- passed_count: $($Summary.passed_count)",
+        "- failed_count: $failedCount",
+        "- device_lock_used: $($Summary.device_lock_used.ToString().ToLowerInvariant())",
+        "- host_adb_platform_tools_version: $($Summary.host_adb_platform_tools_version)",
+        "- summary_json: $SummaryJsonPath"
+    )
+
+    $lines | Set-Content -Path $Path -Encoding UTF8
+}
+
 function Get-HostAdbPlatformToolsVersion {
     param([switch]$DryRun)
 
@@ -200,8 +225,11 @@ $summary = [pscustomobject]@{
 }
 
 $summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
+$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
 Write-JsonFile -Path $summaryJsonPath -Value $summary
+Write-MarkdownSummary -Path $summaryMarkdownPath -Summary $summary -SummaryJsonPath $summaryJsonPath
 Write-Host "Wrote Android FTS fallback matrix summary: $summaryJsonPath"
+Write-Host "Wrote Android FTS fallback matrix summary markdown: $summaryMarkdownPath"
 
 if ($failedDevices.Count -gt 0) {
     exit 1

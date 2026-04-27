@@ -6,6 +6,8 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 
+from scripts.validate_android_migration_summary import validate_summary
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_android_asset_pack_parity_gate.ps1"
@@ -89,8 +91,39 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
         self.assertEqual(report["candidate_pack_dir"], str(candidate))
         self.assertEqual(report["output"], str(output))
         self.assertIn("scripts\\compare_mobile_pack_counts.py", report["display_command"])
+        self.assertEqual(report["status"], "dry_run_only")
+        self.assertTrue(report["dry_run"])
+        self.assertTrue(report["non_acceptance_evidence"])
+        self.assertFalse(report["acceptance_evidence"])
+        self.assertEqual(report["comparison_baseline"], "fixed_four_emulator_matrix")
+        self.assertEqual(report["primary_evidence"], "fixed_four_emulator_matrix")
+        self.assertIn("fixed four-emulator evidence remains primary", report["stop_line"])
         self.assertFalse(report["would_run"])
         self.assertTrue(report["fail_on_mismatch"])
+
+    def test_whatif_summary_validates_as_non_acceptance_artifact(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            baseline = Path(tmpdir) / "baseline"
+            candidate = Path(tmpdir) / "candidate"
+            output = Path(tmpdir) / "whatif.json"
+            write_pack(baseline, 2)
+            write_pack(candidate, 3)
+
+            self.run_script(
+                "-BaselinePackDir",
+                str(baseline),
+                "-CandidatePackDir",
+                str(candidate),
+                "-Output",
+                str(output),
+                "-WhatIf",
+            )
+
+            report, errors = validate_summary(output)
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(report)
+        self.assertTrue(report["non_acceptance_evidence"])
 
     def test_real_gate_writes_report_for_non_regressing_candidate(self):
         with tempfile.TemporaryDirectory() as tmpdir:
