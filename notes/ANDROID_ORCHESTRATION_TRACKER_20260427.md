@@ -130,3 +130,37 @@ handoffs. It is not Android acceptance evidence.
   `artifacts/bench/ui_state_pack_plan_after_814d28a_20260427/20260427_160707/plan.json`;
   it selected the fixed four roles and did not build, install, start jobs, or
   finalize a pack.
+- Fixed-four headless state-pack real run returned acceptance evidence for the
+  code head it launched from, `5c9bca5`: wrapper summary
+  `artifacts/ui_state_pack_headless_lane/20260427_160948/headless_lane_summary.json`
+  and state-pack summary
+  `artifacts/ui_state_pack_headless_lane/20260427_161118/summary.json`.
+  Result: `status=pass`, `45 / 45`, `fail_count=0`,
+  `platform_anr_count=0`, `matrix_homogeneous=true`,
+  `matrix_model_name=gemma-4-e2b-it-litert`, matrix APK SHA
+  `cb8f6348b5669d622c4f344ba57ffd2ee1acc8ffb9d68f325dd45be9e2aac5a8`,
+  model SHA
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`,
+  and adb/platform-tools `37.0.0-14910828`. Installed pack metadata was
+  homogeneous and available on all devices with `271` answer cards.
+- No-emulator Android migration validator batch initially found one stale test
+  expectation: `run_android_migration_preflight_bundle.ps1` already emits the
+  `uiautomator_24_comparison_dry_run` step, while
+  `tests.test_run_android_migration_preflight_bundle` had not included that
+  step or its paired `validate_uiautomator_24_comparison` validator in its
+  expected sets. The test expectation was updated as an integration fix.
+- Low-worker non-emulator artifact slices completed without tracked edits:
+  tooling version manifest at
+  `artifacts/bench/android_tooling_version_manifest_20260427_local_worker_1619/tooling.json`
+  validated with probes disabled, and UIAutomator 2.4 comparison dry-run at
+  `artifacts/bench/android_uiautomator_24_comparison_20260427_local_worker_1619/summary.json`
+  validated with `status=dry_run_only`, `acceptance_evidence=false`, and no
+  Gradle/adb/emulator/instrumentation touch.
+- Harness matrix `-PlanOnly` preflight also completed under
+  `artifacts/bench/android_harness_matrix_plan_20260427_local_worker_1619/summary.json`
+  using `artifacts/prompts/android_harness_matrix_validation_20260412.jsonl`.
+  Both the harness-plan validator and migration-summary compatibility
+  validator passed; the summary reported `will_touch_emulators=false` and
+  `acceptance_evidence=false`.
+- After the preflight-bundle test expectation fix, the no-emulator Android
+  migration validator batch passed `64` tests OK.

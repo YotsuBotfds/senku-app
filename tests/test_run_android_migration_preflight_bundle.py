@@ -113,6 +113,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
                 "litert_readiness_dry_run",
                 "senku_tablet_2_large_data_avd_preflight",
                 "orchestrator_smoke_dry_run",
+                "uiautomator_24_comparison_dry_run",
                 "harness_matrix_plan_only",
                 "ui_state_pack_plan_only",
                 "migration_proof_summarizer_json",
@@ -127,6 +128,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
                 "validate_litert_readiness",
                 "validate_senku_tablet_2_large_data_avd_preflight",
                 "validate_orchestrator_smoke",
+                "validate_uiautomator_24_comparison",
                 "validate_harness_matrix_plan",
                 "validate_ui_state_pack_plan",
             }
