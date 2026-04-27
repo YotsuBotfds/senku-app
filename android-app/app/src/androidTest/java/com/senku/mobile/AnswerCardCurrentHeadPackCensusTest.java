@@ -11,38 +11,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.CURRENT_HEAD_ANSWER_CARD_COUNT;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.assumeCurrentHeadPack;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.databaseFile;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.manifestFile;
 
 @RunWith(AndroidJUnit4.class)
 public final class AnswerCardCurrentHeadPackCensusTest {
-    private static final int CURRENT_HEAD_ANSWER_CARD_COUNT = 271;
     private static final int CURRENT_HEAD_ANSWER_CARD_CLAUSE_COUNT = 6945;
     private static final int CURRENT_HEAD_ANSWER_CARD_SOURCE_COUNT = 311;
 
     @Test
     public void pushedCurrentHeadPackCensusesAnswerCardsWithoutRuntimePlanning() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        File packRoot = new File(context.getFilesDir(), "mobile_pack");
-        File manifestFile = new File(packRoot, "senku_manifest.json");
-        File databaseFile = new File(packRoot, "senku_mobile.sqlite3");
+        File manifestFile = manifestFile(context);
+        File databaseFile = databaseFile(context);
 
-        assumeTrue("installed mobile pack manifest is absent; push current-head pack before running this census", manifestFile.isFile());
-        assumeTrue("installed mobile pack database is absent; push current-head pack before running this census", databaseFile.isFile());
-
-        PackManifest manifest = PackManifest.fromJson(readFileText(manifestFile));
-
-        assumeTrue(
-            "installed mobile pack is not the current-head 271-answer-card pack; found manifest answer_cards="
-                + manifest.answerCardCount
-                + " generated_at="
-                + manifest.generatedAt,
-            manifest.answerCardCount == CURRENT_HEAD_ANSWER_CARD_COUNT
-        );
+        assumeCurrentHeadPack(manifestFile, databaseFile, "this census");
 
         try (SQLiteDatabase database = SQLiteDatabase.openDatabase(
             databaseFile.getAbsolutePath(),
@@ -217,9 +205,4 @@ public final class AnswerCardCurrentHeadPackCensusTest {
         }
     }
 
-    private static String readFileText(File file) throws Exception {
-        try (FileInputStream input = new FileInputStream(file)) {
-            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
-        }
-    }
 }

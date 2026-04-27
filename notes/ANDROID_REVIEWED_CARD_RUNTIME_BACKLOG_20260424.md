@@ -108,6 +108,9 @@ Landed Android sequence:
   referential integrity and primary-source presence, and the runtime allowlist
   negative-control sample now covers first, last, and high/critical non-pilot
   card buckets.
+- `RAG-A15f`: current-head pushed-pack androidTests now share
+  `CurrentHeadAnswerCardPackTestSupport` for pack paths, manifest reading, and
+  current-head assumption gating, reducing drift before more guard additions.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from

@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -24,16 +22,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.CURRENT_HEAD_ANSWER_CARD_COUNT;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.assumeCurrentHeadPack;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.databaseFile;
+import static com.senku.mobile.CurrentHeadAnswerCardPackTestSupport.manifestFile;
 
 @RunWith(AndroidJUnit4.class)
 public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
-    private static final int CURRENT_HEAD_ANSWER_CARD_COUNT = 271;
     private static final int NON_PILOT_SAMPLE_SIZE = 24;
     private static final int NON_PILOT_BUCKET_SIZE = 8;
-    private static final String PACK_DIR = "mobile_pack";
-    private static final String MANIFEST_NAME = "senku_manifest.json";
-    private static final String DATABASE_NAME = "senku_mobile.sqlite3";
     private static final Set<String> PILOT_CARD_IDS = new LinkedHashSet<>(Arrays.asList(
         "poisoning_unknown_ingestion",
         "newborn_danger_sepsis",
@@ -51,27 +48,10 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
     @Test
     public void currentHeadRuntimeSelectionStaysLimitedToExplicitPilotCards() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        File packRoot = new File(context.getFilesDir(), PACK_DIR);
-        File manifestFile = new File(packRoot, MANIFEST_NAME);
-        File databaseFile = new File(packRoot, DATABASE_NAME);
+        File manifestFile = manifestFile(context);
+        File databaseFile = databaseFile(context);
 
-        assumeTrue(
-            "installed mobile pack manifest is absent; push current-head pack before running runtime allowlist guard",
-            manifestFile.isFile()
-        );
-        assumeTrue(
-            "installed mobile pack database is absent; push current-head pack before running runtime allowlist guard",
-            databaseFile.isFile()
-        );
-
-        PackManifest manifest = PackManifest.fromJson(readFileText(manifestFile));
-        assumeTrue(
-            "installed mobile pack is not the current-head 271-answer-card pack; found manifest answer_cards="
-                + manifest.answerCardCount
-                + " generated_at="
-                + manifest.generatedAt,
-            manifest.answerCardCount == CURRENT_HEAD_ANSWER_CARD_COUNT
-        );
+        assumeCurrentHeadPack(manifestFile, databaseFile, "runtime allowlist guard");
 
         try (PackRepository repository = new PackRepository(databaseFile, null);
              SQLiteDatabase database = SQLiteDatabase.openDatabase(
@@ -342,9 +322,4 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
         }
     }
 
-    private static String readFileText(File file) throws Exception {
-        try (FileInputStream input = new FileInputStream(file)) {
-            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
-        }
-    }
 }
