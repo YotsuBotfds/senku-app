@@ -46,9 +46,9 @@ internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
     TabletEvidenceVisibilityPolicy(
         evidencePaneWidthDp = 360,
         activeTitleMaxLines = 2,
-        activeSnippetMaxLines = 8,
+        activeSnippetMaxLines = 10,
         collapsedTitleMaxLines = 2,
-        collapsedSnippetMaxLines = 4,
+        collapsedSnippetMaxLines = 5,
     )
 
 @Composable
@@ -247,7 +247,7 @@ private fun CollapsedEvidencePreview(
     val typography = SenkuTheme.typography
     val title = anchor.title.trim().ifEmpty { anchor.id.trim().ifEmpty { "Active evidence" } }
     val section = anchor.section.trim()
-    val snippet = anchor.snippet.trim()
+    val previewText = buildCollapsedEvidencePreviewText(anchor)
 
     Column(
         modifier = modifier.padding(horizontal = 12.dp, vertical = 10.dp),
@@ -278,9 +278,9 @@ private fun CollapsedEvidencePreview(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        if (snippet.isNotEmpty()) {
+        if (previewText.isNotEmpty()) {
             Text(
-                text = snippet,
+                text = previewText,
                 style = typography.smallBody.copy(
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -290,6 +290,19 @@ private fun CollapsedEvidencePreview(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+    }
+}
+
+internal fun buildCollapsedEvidencePreviewText(anchor: AnchorState): String {
+    val snippet = anchor.snippet.trim()
+    if (snippet.isNotEmpty()) {
+        return snippet
+    }
+    val section = anchor.section.trim()
+    return if (section.isEmpty()) {
+        ""
+    } else {
+        "Section: $section"
     }
 }
 
