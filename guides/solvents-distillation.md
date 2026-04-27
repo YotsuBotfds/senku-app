@@ -8,7 +8,7 @@ tags:
   - rebuild
   - essential
 icon: 🧪
-description: Turpentine, ethanol, methanol, acetone production. Fractional distillation, safety, and solvent recovery for survival applications.
+description: Safety-reviewed solvent and distillation boundary for container/process-area inventory, unknown-mixture flags, hazard red flags, stop-use logs, and emergency or qualified chemistry handoff.
 related:
   - alkali-production
   - ammonia-synthesis-simplified
@@ -32,6 +32,43 @@ related:
   - salt-production
   - sur-03-herbal-medicine
   - wood-distillation
+aliases:
+  - solvent distillation safety boundary
+  - solvent container inventory unknown mixture handoff
+  - flammable vapor toxic exposure peroxide pressure red flags
+  - solvent stop use avoid ignition ventilation logs
+  - fire service hazmat poison control chemistry owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural solvent and distillation safety boundaries: container and process-area inventory, label/source/unknown-mixture flags, flammable vapor, toxic exposure, fire, explosion, peroxide, and pressure red flags, isolate/avoid-ignition/ventilation/stop-use logs, and fire-service, hazmat, poison-control, or qualified chemistry owner handoff.
+  - Keep answers focused on safe observation and routing: product or container identity, label text, source, storage or process-area location, unknown mixtures, odors or vapor, symptoms, fire/heat/ignition sources, pressure or sealed-container concerns, peroxide-former concern, ventilation/access status, stop-use log, and who has been notified.
+  - Route distillation setup or operation, boiling points or cuts, purification recipes, solvent recovery, drying agents, testing, transfer procedures, cleanup chemistry, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-industrial-accident-response for active solvent release, fire/explosion, evacuation, hazmat, or incident-command handoff.
+  - toxicology-poisoning-response for inhalation, ingestion, skin/eye exposure, symptomatic exposure, poison-control escalation, or medical handoff.
+  - chemical-safety for general labeling, storage compatibility, access control, and prevention once the scene is safe.
+  - fire-safety for ignition isolation, fire-service handoff, and non-procedural fire-risk routing.
+citations_required: true
+citation_policy: >
+  Cite GD-179 and its reviewed answer card only for solvent and distillation
+  boundary intake: container/process-area inventory, label/source/unknown-mixture
+  flags, flammable vapor, toxic exposure, fire, explosion, peroxide, and pressure
+  red flags, isolate/avoid-ignition/ventilation/stop-use logs, and fire-service,
+  hazmat, poison-control, or qualified chemistry owner handoff. Do not use it for
+  distillation setup or operation, boiling points or cuts, purification recipes,
+  solvent recovery, drying agents, testing, transfer procedures, cleanup
+  chemistry, legal/code claims, or safety certification.
+applicability: >
+  Use for non-procedural solvent and distillation safety boundary questions:
+  what to record, when to stop use, how to recognize vapor/exposure/fire/
+  explosion/peroxide/pressure red flags, when to isolate and avoid ignition, and
+  who should own emergency or qualified chemistry review. Do not use for
+  building, operating, testing, recovering, purifying, transferring, cleaning up,
+  certifying, or declaring any solvent, still, container, process area, or
+  storage setup safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: solvents_distillation_safety_boundary
+answer_card:
+  - solvents_distillation_safety_boundary
 read_time: 12
 word_count: 3325
 last_updated: '2026-02-16'
@@ -54,6 +91,20 @@ custom_css: |
 :::danger
 **Fire and Explosion Hazard:** Organic solvents are highly flammable. Distillation of solvents must be performed outdoors or in well-ventilated areas away from all ignition sources. Solvent vapors are heavier than air and can travel to distant ignition sources. Use only explosion-proof equipment.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Solvent and Distillation Safety Handoff
+
+This is the reviewed answer-card surface for GD-179. Use it only for non-procedural solvent and distillation safety boundaries: container and process-area inventory, label, source, and unknown-mixture flags, flammable vapor, toxic exposure, fire, explosion, peroxide, and pressure red flags, isolate, avoid-ignition, ventilation, and stop-use logs, and fire-service, hazmat, poison-control, or qualified chemistry owner handoff.
+
+Start with safe observation and routing rather than distillation, recovery, testing, transfer, purification, or cleanup chemistry: product or container identity, label text, source if known, storage or process-area location, whether any mixture is unknown or unlabeled, odor or vapor report, exposed people and symptoms, fire, heat, sparks, static, open flame, incompatible storage, sealed or pressurized containers, peroxide-former concern, ventilation and access status, stop-use or isolation log, and who has already been notified.
+
+Stop-use, isolate, avoid-ignition, and handoff triggers include solvent odor or visible vapor, dizziness, headache, nausea, breathing symptoms, eye or skin pain, confusion, collapse, multiple exposed people, unknown or mixed solvents, damaged, leaking, swollen, heated, sealed, pressurized, or unlabeled containers, old or peroxide-forming solvents with uncertain storage history, fire, explosion, nearby ignition sources, poor ventilation, enclosed or low-area vapor accumulation, missing labels or logs, or pressure to operate, heat, distill, recover, transfer, test, clean up, restart, certify, or declare the area safe before qualified review.
+
+Do not provide distillation setup or operation, boiling points or cuts, purification recipes, solvent recovery, drying agents, testing, transfer procedures, cleanup chemistry, legal or code claims, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="overview">
 

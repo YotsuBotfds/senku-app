@@ -16,6 +16,46 @@ related:
   - homestead-chemistry
   - pressure-vessels
   - science-education-experimental
+aliases:
+  - chemistry lab activity intake checklist
+  - lab labels SDS unknown chemical handoff
+  - chemical storage segregation red flags
+  - lab spill exposure fire ventilation stop work
+  - unknown lab chemical isolate evacuate
+  - qualified chemistry safety handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level lab activity intake, labels and SDS review, unknown chemical screening, storage and segregation concerns, spill/exposure/fire/ventilation red flags, stop-work/isolate/evacuate flags, symptom logs, and emergency, hazmat, poison-control, or qualified chemistry safety handoff.
+  - Keep reviewed-card answers non-procedural: identify what activity is planned or underway, labels/SDS available, unknowns, container condition, storage groups, ventilation status, people exposed, symptoms, spill/fire/fume signs, access control, and who has been notified.
+  - Route experiment protocols, synthesis, neutralization, cleanup chemistry, disposal legality, concentration calculations, PPE efficacy guarantees, lab certification, legal/code claims, and safety certification away from this reviewed card.
+routing_support:
+  - chemical-safety for household chemical incidents, do-not-mix prevention, cleaner exposure, and unknown household substances.
+  - chemical-industrial-accident-response for active or multi-person chemical releases, evacuation/shelter/decontamination triage, and hazmat or incident-command handoff.
+  - toxicology-poisoning-response for symptomatic exposure, inhalation, ingestion, eye/skin injury, poison-control escalation, or medical handoff.
+  - pressure-vessels for pressure-equipment boundary concerns when pressure storage or reaction vessels dominate.
+citations_required: true
+citation_policy: >
+  Cite GD-425 and its reviewed answer card only for chemistry lab safety
+  boundaries: lab activity intake, labels/SDS, unknown chemicals, storage and
+  segregation concerns, spill/exposure/fire/ventilation red flags,
+  stop-work/isolate/evacuate flags, symptom logs, and emergency, hazmat,
+  poison-control, or qualified chemistry safety handoff. Do not use it for
+  experiment protocols, synthesis, neutralization, cleanup chemistry, disposal
+  legality, concentration calculations, PPE efficacy guarantees, legal/code
+  claims, lab certification, or safety certification.
+applicability: >
+  Use for non-procedural chemistry lab safety intake and handoff: planned or
+  active lab activities, label/SDS inventory, unknown chemicals, damaged or
+  unlabeled containers, incompatible storage, ventilation concern, spill,
+  exposure, fumes, fire, symptom logging, stop-work/isolate/evacuate screening,
+  and handoff to emergency services, hazmat, poison control, site safety, or a
+  qualified chemistry safety owner. Do not use for experimental procedures,
+  synthesis, neutralization, cleanup or disposal instructions, calculations,
+  PPE guarantees, legal/code determinations, or declaring any lab, chemical,
+  setup, or activity safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: chemistry_lab_protocols_safety_boundary
+answer_card:
+  - chemistry_lab_protocols_safety_boundary
 read_time: 16
 word_count: 3190
 last_updated: '2026-02-20'
@@ -28,6 +68,20 @@ custom_css: |
 liability_level: high
 ---
 Performing chemistry in austere environments requires safety discipline and improvisation. This guide covers lab setup, ventilation, protective equipment, standard operating procedures, and waste disposal in low-resource conditions.
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Lab Safety Intake and Handoff
+
+This is the reviewed answer-card surface for GD-425. Use it only for non-procedural chemistry lab safety boundaries: lab activity intake, labels and SDS review, unknown chemical screening, storage and segregation concerns, spill, exposure, fire, and ventilation red flags, stop-work/isolate/evacuate flags, symptom logs, and emergency, hazmat, poison-control, site-safety, or qualified chemistry safety handoff.
+
+Start with safe observation and routing rather than experiment instructions: what activity is planned or underway, chemical names exactly as labeled, SDS availability, unlabeled or unknown containers, container condition, storage group or segregation concern, ventilation status, odor or visible vapor, spill size by observation only, fire or heat exposure, exposed people, symptoms, access control, and who has already been notified. If the substance is unknown, keep distance, prevent access, do not touch, inhale, mix, neutralize, heat, move, clean up, or dispose of it, and hand off to the responsible safety owner or emergency/hazmat support.
+
+Stop-work, isolate, evacuate, and handoff triggers include unknown or unlabeled chemicals, missing SDS for hazardous work, damaged or leaking containers, incompatible storage, strong odors or visible vapor, inadequate ventilation, symptoms after exposure, eye or skin contact, ingestion, breathing trouble, coughing, chest tightness, dizziness, confusion, fire, heat near chemicals, pressure to continue work after a spill or exposure, or requests to certify a lab, activity, PPE, cleanup, disposal, or storage setup as safe.
+
+Do not use this reviewed card for experiment protocols, synthesis, neutralization, cleanup chemistry, disposal legality, concentration calculations, PPE efficacy guarantees, lab certification, legal/code claims, safe-to-enter statements, safe-to-use statements, or safety certification. If a prompt asks for those, answer only with the relevant safety intake, red flags, stop-work/isolation boundary, symptom log, and qualified handoff.
+
+</section>
 
 ## Safety First: Unknown-Substance and Spill Triage
 
@@ -372,4 +426,3 @@ Before starting any chemistry work:
 :::
 
 </section>
-

@@ -7,6 +7,20 @@ difficulty: intermediate
 tags:
   - essential
   - rebuild
+  - safety
+  - high-liability
+aliases:
+  - fuel production management
+  - fuel site inventory
+  - fuel production safety admin
+  - fuel storage access log
+  - biodiesel ethanol wood gas charcoal site records
+  - fuel production stop work checklist
+routing_cues:
+  - fuel production site inventory, labels, owner records, role records, permit records, and access logs
+  - storage, ventilation, fire, vapor, exposure, spill, damaged container, unlabeled fuel, or unauthorized access red flags
+  - stop-work, avoid-entry, escalation log, emergency handoff, fire-service handoff, environmental handoff, or qualified fuel/chemical owner handoff
+  - boundary-only request that must not become production planning, throughput calculation, process design, feedstock ratio, equipment setup, operation, transfer procedure, optimization, legal/regulatory advice, or safety certification
 icon: ⛽
 description: Unified fuel production guide covering biodiesel, ethanol, wood gas, and charcoal production processes, fuel storage safety, quality testing methods, fuel type conversion and vehicle compatibility, production equipment construction, energy density comparisons, and integrated community fuel strategies.
 related:
@@ -26,6 +40,8 @@ word_count: 4500
 last_updated: '2026-02-20'
 version: '1.0'
 liability_level: high
+applicability: Boundary-only runtime surface for fuel production site/admin inventory, role/permit/owner records, storage/access/fire/ventilation/exposure red flags, stop-work and escalation logs, and emergency, fire-service, environmental, or qualified fuel/chemical owner handoff.
+citation_policy: reviewed_source_family
 ---
 
 <section id="overview">
@@ -44,6 +60,18 @@ Fuel is what separates a community that can project power, transport goods, and 
 Each fuel type has specific feedstock requirements, production complexity, energy density, and engine compatibility. The optimal strategy for most communities is to produce multiple fuel types matched to available resources and equipment.
 
 For detailed production procedures for individual fuel types, see the specialized guides: <a href="../biodiesel-production.html">Biodiesel Production from Waste Oils</a>, <a href="../ethanol-fuel-production.html">Ethanol Fuel Production by Fermentation</a>, and <a href="../wood-gas-producer.html">Wood Gas Producer Systems</a>. For internal combustion engine maintenance, see <a href="../internal-combustion.html">Internal Combustion</a>.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Fuel Production Site Administration and Handoff
+
+This is the reviewed answer-card surface for GD-516. Use it only for non-procedural fuel production site and administration boundaries: site inventory, container and area labels, role, permit, and owner records, storage and access logs, fire, ventilation, vapor, spill, damaged-container, unlabeled-material, and exposure red flags, stop-work or avoid-entry logs, escalation records, and emergency, fire-service, environmental, or qualified fuel/chemical owner handoff.
+
+Do not provide production planning recipes, throughput calculations, process design, feedstock ratios, equipment setup, operations, transfer procedures, optimization, legal or regulatory advice, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
+
+For any fuel odor, vapor, spill, fire, smoke, heat damage, damaged or unlabeled container, suspected toxic exposure, poor ventilation, enclosed-space concern, unauthorized access, missing owner, unknown material, environmental release, or pressure to enter, restart, transfer, process, or certify, stop routine planning. Keep people away if safe, record only safe visible facts, and hand off to emergency services, fire service, poison control, environmental response, site safety, or the responsible qualified fuel or chemical owner.
 
 </section>
 

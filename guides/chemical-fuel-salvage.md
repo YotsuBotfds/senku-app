@@ -8,7 +8,7 @@ tags:
   - new
   - rebuild
 icon: ♻️
-description: Safe siphoning, storage, and identification of salvaged fuels and chemicals. Cleaning products, paints, solvents, lubricants, fertilizers.
+description: Safety-reviewed boundary for salvaged fuel and chemical container inventory, labels, unknown-mixture flags, red flags, isolation logs, do-not-mix/do-not-use limits, and fire-service, hazmat, poison-control, environmental, or responsible-owner handoff.
 related:
   - alkali-production
   - building-materials-salvage
@@ -25,12 +25,64 @@ related:
   - textile-fabric-salvage
   - tire-recycling
   - tool-restoration-salvage
+aliases:
+  - chemical fuel salvage safety boundary
+  - salvaged chemical container inventory
+  - unknown fuel mixture do not use
+  - unlabeled solvent container handoff
+  - flammable vapor corrosive toxic exposure red flags
+  - do not mix do not use chemical log
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level salvaged fuel and chemical container inventory: label/source records, unknown or mixed-container flags, flammable vapor, fire, corrosive, toxic, exposure, leak, damaged-container, and environmental red flags, isolation and do-not-mix/do-not-use logs, and fire-service, hazmat, poison-control, environmental, site-safety, or responsible-owner handoff.
+  - Keep answers focused on safe observation and records from outside the hazard: container count, original labels, source location, whether contents are unknown or mixed, container condition, odor or vapor noticed incidentally, leak/spill/fire/heat exposure, incompatible-storage concern, symptoms or exposure, isolation status, and who owns the next decision.
+  - Route salvage methods, separation, distillation, filtering, blending, testing, engine-use claims, neutralization, disposal legality, transfer procedures, legal/code claims, safe-to-use statements, safe-to-store statements, and safety certification away from this card.
+routing_support:
+  - chemical-safety for household chemical compatibility, unknown spill isolation, cleaner mixing, skin/eye/inhalation/ingestion exposure, and poison-control escalation.
+  - chemical-industrial-accident-response for active chemical release, visible cloud, multi-person exposure, evacuation, shelter-in-place, decontamination triage, or hazmat incident command.
+  - fuel-storage-handling for non-procedural settlement fuel storage planning, separation, inventory, reserve rotation, and fuel depot tripwires.
+  - toxic-gas-identification-detection for toxic gas suspicion, detector or alarm context, and avoid-entry boundaries.
+citations_required: true
+citation_policy: >
+  Cite GD-262 and its reviewed answer card only for boundary-level salvaged
+  fuel and chemical container inventory, label/source/unknown-mixture flags,
+  flammable/vapor/fire/corrosive/toxic/exposure red flags, isolation and
+  do-not-mix/do-not-use logs, and fire-service, hazmat, poison-control,
+  environmental, site-safety, or responsible-owner handoff. Do not use it for
+  salvage methods, separation, distillation, filtering, blending, testing,
+  engine-use claims, neutralization, disposal legality, transfer procedures,
+  legal/code claims, safe-to-use statements, safe-to-store statements, or
+  safety certification.
+applicability: >
+  Use for non-procedural chemical and fuel salvage safety triage: inventory
+  records, label preservation, source logs, unknown or mixed-container flags,
+  red-flag recognition, isolation status, do-not-mix/do-not-use decisions, and
+  owner handoff. Do not use to identify contents through exposure, recover,
+  process, separate, distill, filter, blend, test, transfer, neutralize,
+  dispose, certify, or approve engine or equipment use.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: chemical_fuel_salvage_boundary
+answer_card:
+  - chemical_fuel_salvage_boundary
 read_time: 28
 word_count: 6664
 last_updated: '2026-02-15'
 version: '1.0'
 liability_level: critical
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Salvaged Fuel and Chemical Container Handoff
+
+This is the reviewed answer-card surface for GD-262. Use it only for non-procedural salvaged fuel and chemical container safety boundaries: container inventory, label and source preservation, unknown or mixed-container flags, flammable vapor, fire, corrosive, toxic, exposure, leak, spill, damaged-container, incompatible-storage, and environmental red flags, isolation and do-not-mix/do-not-use logs, and fire-service, hazmat, poison-control, environmental, site-safety, or responsible-owner handoff.
+
+Start with safe observation and records rather than recovery or testing: container count, original label text or markings, source location, date found, whether any contents are unknown, unlabeled, degraded, mixed, transferred, or suspected incompatible, container material and condition, leak or spill signs, fire or heat exposure, vapor or odor noticed incidentally, people exposed and symptoms, nearby drains, soil, water, food, living areas, children, animals, heat, sparks, oxidizers, acids, bases, or other incompatible storage, isolation status, do-not-mix and do-not-use labels already applied, and who has already been notified.
+
+Stop routine inventory and keep people away when a container is unlabeled, unknown, mixed, actively leaking, swollen, corroded, heat-damaged, near ignition sources, near drains or water, producing vapor, associated with headache, dizziness, cough, breathing trouble, eye or skin pain, burns, ingestion concern, strong incidental odor, visible reaction, fire, spill, or pressure to salvage, transfer, blend, test, neutralize, filter, distill, dispose, use in an engine, or declare it safe before qualified review.
+
+Do not provide salvage methods, separation, distillation, filtering, blending, empirical testing, sniff/taste tests, engine-use claims, neutralization, disposal legality, transfer procedures, legal or code claims, safe-to-use statements, safe-to-store statements, return-to-service decisions, or safety certification from this reviewed card.
+
+</section>
 
 <section id="fuel-siphoning">
 

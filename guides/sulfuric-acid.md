@@ -31,10 +31,49 @@ related:
   - ammonia-synthesis-simplified
   - everyday-compounds-production
   - homestead-chemistry
+aliases:
+  - sulfuric acid safety boundary
+  - battery acid container inventory handoff
+  - corrosive acid label concentration uncertainty
+  - sulfuric acid fume spill exposure red flags
+  - avoid neutralizing acid spill boundary
+  - qualified chemical owner sulfuric acid handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural sulfuric acid safety boundaries: container inventory, label and concentration uncertainty, corrosive exposure, fume, spill, heat, and reactive-mixing red flags, isolate/evacuate/avoid-neutralizing boundaries, symptom logs, and emergency, hazmat, poison-control, or qualified chemical-owner handoff.
+  - Keep answers focused on safe observation from outside the hazard area: container or battery identity, exact label text, printed concentration if already visible, location, amount estimate, container condition, fumes or odor, splash or ingestion exposure, symptoms, spill spread, nearby water, bases, metals, organics, drains, ignition or heat sources, and who has been contacted.
+  - Route acid production, contact process, dilution ratios, neutralization recipes, battery acid recovery, concentration tests, transfer procedures, cleanup chemistry, PPE guarantees, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-industrial-accident-response for active or multi-person chemical releases, evacuation/shelter/decontamination triage, and hazmat or incident-command handoff.
+  - toxicology-poisoning-response for sulfuric acid ingestion, inhalation, eye/skin injury, chemical burns, symptom triage, and poison-control escalation.
+  - chemical-safety for labels, storage compatibility, segregation, and prevention once the scene is safe.
+  - toxic-gas-identification-detection for unknown fumes, acid gas suspicion, confined-space avoidance, and detector/alarm context.
+citations_required: true
+citation_policy: >
+  Cite GD-167 and its reviewed answer card only for boundary-level sulfuric
+  acid safety intake: container inventory, label and concentration uncertainty,
+  corrosive exposure/fume/spill/reactive-mixing red flags, isolate/evacuate/
+  avoid-neutralizing boundaries, symptom logs, and emergency, hazmat,
+  poison-control, or qualified chemical-owner handoff. Do not use it for acid
+  production, contact-process instructions, dilution ratios, neutralization
+  recipes, battery acid recovery, concentration tests, transfer procedures,
+  cleanup chemistry, PPE efficacy guarantees, legal/code claims, or safety
+  certification.
+applicability: >
+  Use for non-procedural sulfuric acid and battery-acid boundary questions:
+  what to record, when to isolate or evacuate, how to recognize corrosive
+  exposure, fume, spill, heat, and reactive-mixing red flags, when to avoid
+  neutralizing or handling the material, and who should own emergency or
+  qualified chemical review. Do not use for making, concentrating, diluting,
+  testing, transferring, recovering, neutralizing, cleaning up, certifying, or
+  declaring any acid, container, spill, room, battery, or process safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: sulfuric_acid_container_inventory_boundary
+answer_card:
+  - sulfuric_acid_container_inventory_boundary
 read_time: 13
 word_count: 5700
 last_updated: '2026-02-21'
-version: '1.3'
+version: '1.4'
 liability_level: critical
 custom_css: .theme-toggle{background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 15px;border-radius:5px;cursor:pointer;font-weight:bold;transition:all .3s ease}.meta-label{color:var(--muted);font-size:.85em;text-transform:uppercase;margin-bottom:5px}.mark-read-btn:hover,.mark-read-btn.read{background:var(--accent)}.toc h3{color:var(--accent);margin-bottom:15px}.diagram{background:var(--card);padding:20px;border-radius:5px;margin:20px 0;text-align:center;border:1px solid var(--border)}.note-box{background:rgba(83,216,168,0.1);border-left:4px solid var(--accent2);padding:15px;margin:20px 0;border-radius:5px}.guide-card{background:var(--card);padding:15px;border-radius:5px;border:1px solid var(--border)}.guide-card:hover{border-color:var(--accent2);transform:translateY(-5px)}.guide-card a{color:var(--accent2);text-decoration:none;font-weight:bold}#notes-area{background:var(--bg);color:var(--text);padding:10px;border-radius:3px;min-height:100px;border:1px solid var(--border);font-family:'Courier New',monospace;font-size:.9em}.back-to-top{display:none;position:fixed;bottom:30px;right:30px;background:var(--accent);color:var(--bg);border:0;padding:15px 20px;border-radius:5px;cursor:pointer;font-weight:bold;z-index:999}.back-to-top.show{display:block}.back-to-top:hover{background:var(--accent2);transform:translateY(-5px)}
 ---
@@ -53,6 +92,20 @@ custom_css: .theme-toggle{background:var(--card);border:1px solid var(--border);
 
 **Retrieval routing — what this guide covers:** Making acid · how to make sulfuric acid · making H₂SO₄ · how to make H2SO4 · contact process · lead chamber process · battery acid · battery acid salvage · car battery acid · vehicle battery electrolyte · reconcentrating battery acid · acid concentration by boiling · concentrate acid · V₂O₅ catalyst · sulfur dioxide oxidation · SO₃ absorption · industrial acid production · oil of vitriol · king of chemicals · make your own acid · homemade sulfuric acid · what is sulfuric acid used for · sulfuric acid safety.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Sulfuric Acid Container Inventory and Handoff
+
+This is the reviewed answer-card surface for GD-167. Use it only for non-procedural sulfuric acid and battery-acid safety boundaries: container inventory, label and concentration uncertainty, corrosive exposure, fume, spill, heat, and reactive-mixing red flags, isolate/evacuate/avoid-neutralizing boundaries, symptom logs, and emergency, hazmat, poison-control, or qualified chemical-owner handoff.
+
+Start with safe observation and routing rather than production, dilution, concentration testing, transfer, neutralization, or cleanup chemistry: container or battery identity, exact label text, printed concentration if already visible, location, approximate amount from a safe distance, container condition, visible leaks or bulging, fumes or odor, splash or ingestion exposure, symptoms, spill spread, nearby drains, water, bases, metals, organics, combustibles, ignition or heat sources, access status, and who has already been contacted.
+
+Isolate, evacuate, or avoid-entry triggers include skin or eye pain, burns, throat or chest irritation, coughing, breathing trouble, vomiting, trouble swallowing, confusion, collapse, multiple exposed people, visible fumes or mist, leaking or unlabeled containers, swollen batteries, heat or fire exposure, spill spread, acid near drains or waterways, unknown concentration, mixed or unknown chemicals, contact with water, bases, metals, organics, combustibles, or any pressure to neutralize, dilute, transfer, recover battery acid, test concentration, clean up, certify, or declare the area safe before qualified review.
+
+Do not provide acid production, contact-process instructions, dilution ratios, neutralization recipes, battery acid recovery, concentration tests, transfer procedures, cleanup chemistry, PPE efficacy guarantees, legal or code claims, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="overview">
 

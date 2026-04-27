@@ -6,8 +6,21 @@ category: chemistry
 difficulty: beginner
 tags:
   - essential
+  - safety
+  - high-liability
+aliases:
+  - charcoal fuel storage safety boundary
+  - charcoal burn area inventory
+  - hot ash stop use handoff
+  - charcoal carbon monoxide smoke red flags
+  - charcoal spontaneous heating storage log
+  - charcoal indoor use evacuation
+routing_cues:
+  - Use this guide's reviewed answer card only for charcoal or solid-fuel storage and burn-area inventory, access logs, ventilation logs, CO, smoke, fire, hot-ash, spontaneous-heating, and indoor-use red flags, stop-use or evacuate records, fresh-air handoff, and fire-service, poison-control, medical, or qualified-owner routing.
+  - Keep answers focused on safe observation and records from outside the hazard: fuel type, storage area, burn area, access status, ventilation or enclosed-space status, CO alarm or symptom report, smoke/fire/hot-ash signs, container condition, recent use, exposed people, and who has already been notified.
+  - Route charcoal making, kiln or retort construction, burn management, fuel ratios, cookstove operation, gasifier use, carbonization temperatures, performance claims, legal/code claims, and safety certification away from this reviewed card.
 icon: 🔥
-description: Charcoal production, coal making, fuel sources, biomass energy, biochar, and energy storage methods.
+description: Safety-reviewed boundary for charcoal fuel storage and burn-area inventory, CO/smoke/fire/hot-ash/spontaneous-heating/indoor-use red flags, access/storage/ventilation logs, stop-use or evacuate/fresh-air handoff, and fire-service, poison-control, medical, or qualified-owner routing.
 related:
   - batteries
   - battery-restoration
@@ -31,6 +44,28 @@ last_updated: '2026-02-21'
 version: '1.0'
 custom_css: nav{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap}.nav-btn{display:inline-block;padding:.5rem 1rem;background:var(--card);border:1px solid var(--border);color:var(--text);text-decoration:none;border-radius:4px;font-size:.9rem;transition:all .3s ease}.nav-btn:hover{background:var(--accent);border-color:var(--accent);color:#000}.nav-btn.back{background:var(--accent2);color:#000}.nav-btn.back:hover{background:#4ac697}.info-card{background:var(--card);border-left:4px solid var(--accent);border-radius:4px;padding:1.25rem;margin:1.5rem 0}.info-card.highlight{border-left-color:var(--accent2);background:rgba(83,216,168,0.08)}.info-card h4{color:var(--accent2);margin-bottom:.5rem;text-transform:uppercase;font-size:.9rem;letter-spacing:1px}.info-card p{margin-bottom:0;color:var(--text)}li{margin-bottom:.5rem;line-height:1.8}.table-container{overflow-x:auto;margin:2rem 0}thead{background:var(--card)}tbody tr:hover{background:rgba(233,69,96,0.1)}tbody tr:nth-child(odd){background:rgba(15,52,96,0.5)}.svg-container{display:flex;justify-content:center;margin:2rem 0;background:var(--surface);padding:2rem;border-radius:8px;border:1px solid var(--border)}.svg-label{text-align:center;color:var(--muted);font-size:.9rem;margin-top:1rem;font-style:italic}.guide-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1rem}.guide-link{display:block;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--accent2);text-decoration:none;text-align:center;transition:all .3s ease;font-weight:500}.guide-link:hover{background:var(--accent);color:#000;border-color:var(--accent)}.spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin:1.5rem 0}.spec-item{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1rem;text-align:center}.spec-item .value{font-size:1.5rem;font-weight:bold;color:var(--accent);margin-bottom:.5rem}.spec-item .label{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 liability_level: high
+citations_required: true
+citation_policy: >
+  Cite GD-131 and its reviewed answer card only for boundary-level charcoal or
+  solid-fuel storage and burn-area inventory, access/storage/ventilation logs,
+  CO, smoke, fire, hot-ash, spontaneous-heating, indoor-use, and exposure red
+  flags, stop-use or evacuate/fresh-air handoff, and fire-service,
+  poison-control, medical, or qualified-owner routing. Do not use it for
+  charcoal making, kiln or retort construction, burn management, fuel ratios,
+  cookstove operation, gasifier use, carbonization temperatures, performance
+  claims, legal/code claims, or safety certification.
+applicability: >
+  Use for non-procedural charcoal and solid-fuel storage or burn-area safety
+  triage: safe-observation inventory, labels and access status, ventilation
+  records, CO/smoke/fire/hot-ash/spontaneous-heating/indoor-use red flags,
+  stop-use or evacuate/fresh-air logs, and emergency, fire-service,
+  poison-control, medical, or qualified-owner handoff. Do not use to design,
+  build, operate, optimize, certify, or approve charcoal production, kiln,
+  retort, stove, gasifier, or burn processes.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: charcoal_fuels_storage_burn_area_boundary
+answer_card:
+  - charcoal_fuels_storage_burn_area_boundary
 ---
 :::danger
 **CARBON MONOXIDE WARNING — RISK OF DEATH:** ALL charcoal production and burning produces carbon monoxide (CO), an odorless, colorless gas that causes death without warning. ALL charcoal production MUST occur outdoors with adequate ventilation. NEVER burn charcoal indoors or in enclosed/poorly ventilated spaces. CO poisoning symptoms (headache, dizziness, confusion) may not be recognized before loss of consciousness. CO detectors cannot substitute for proper ventilation.
@@ -39,6 +74,20 @@ liability_level: high
 :::info-box
 **Scope note:** This guide owns the fuel-prep band: charcoal, coke, biomass, and other furnace fuels. Use it for making or conditioning fuel, not for turning raw ore into metal or turning hot stock into tools. For furnace-scale refining, hand off to <a href="../steel-making.html">Steel Making</a>; for shaping, welding, hardening, or tempering solid stock, hand off to <a href="../blacksmithing.html">Blacksmithing</a>.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Charcoal Storage and Burn-Area Handoff
+
+This is the reviewed answer-card surface for GD-131. Use it only for non-procedural charcoal or solid-fuel storage and burn-area boundaries: safe-observation inventory, storage and access logs, ventilation or enclosed-space logs, CO alarm or symptom reports, smoke, fire, hot-ash, spontaneous-heating, and indoor-use red flags, stop-use or evacuate/fresh-air records, and emergency, fire-service, poison-control, medical, or qualified charcoal/fuel owner handoff.
+
+Start with safe observation and records rather than fuel-making or operation: fuel type if already known, storage area and burn-area location, whether the area is indoors, enclosed, low-lying, or poorly ventilated, container or ash-bin condition, access by children or bystanders, recent use, visible smoke, flame, heat, hot ash, damp or self-heating piles, CO alarm status if already available, people exposed and symptoms, stop-use or evacuation actions already taken, and who has already been notified.
+
+Stop routine inventory when charcoal, coal, ash, or other solid fuel is burning or cooling indoors, in a tent, vehicle, garage, shed, cellar, trailer, occupied building, or other enclosed or poorly ventilated space; when there is headache, dizziness, nausea, confusion, fainting, cough, breathing trouble, chest pain, unconsciousness, CO alarm, smoke, active fire, hot ash, spreading heat, self-heating pile, damaged container, or pressure to keep using or re-enter the area. Move people to fresh air if it is safe to leave, keep others out, do not re-enter for belongings or ventilation attempts, and contact emergency services, fire service, poison control, medical care, or the qualified owner as appropriate.
+
+Do not provide charcoal making, kiln or retort construction, burn management, fuel ratios, cookstove operation, gasifier use, carbonization temperatures, performance claims, legal or code claims, safe-to-use statements, safe-to-enter statements, return-to-service decisions, or safety certification from this reviewed card.
+
+</section>
 
 <section id="why-charcoal">
 

@@ -17,10 +17,36 @@ related:
   - composting-systems
   - energy-systems
   - waste-management-recycling
+aliases:
+  - biogas production safety
+  - biogas fuel gas inventory
+  - methane digester red flags
+  - hydrogen sulfide biogas odor
+  - biogas confined space
+  - digestate pathogen exposure
+  - biogas pressure concern
+routing_cues:
+  - Use this guide's reviewed card for boundary-only site and fuel-gas inventory, methane/H2S/asphyxiation/fire/explosion/pathogen/pressure/confined-space red flags, access logs, stop-use or avoid-entry notes, and emergency/fire-service/public-health/poison-control/qualified fuel-gas/wastewater owner handoff for existing or suspected biogas production systems.
+  - Do not use the reviewed card for digester design, feedstock ratios, inoculation, gas storage or plumbing, purification or scrubbing, burner or engine operation, leak testing, confined-space entry, repair, performance claims, legal/code claims, or safety certification.
+applicability: >
+  Existing or suspected biogas production site and fuel-gas inventory boundary
+  triage only: record what can be observed from outside, recognize methane,
+  H2S, asphyxiation, fire, explosion, pathogen, pressure, and confined-space
+  red flags, keep people out of digesters, pits, tanks, sheds, trenches, low
+  areas, and gas equipment zones, maintain access and stop-use logs, and hand
+  off to emergency, fire-service, public-health, poison-control, qualified
+  fuel-gas, wastewater, or responsible owners. Not a design, feedstock,
+  inoculation, gas-storage/plumbing, gas-treatment, burner/engine,
+  leak-testing, confined-space-entry, repair, performance, legal/code, or
+  safety-certification guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: biogas_production_site_fuel_gas_boundary
+answer_card:
+  - biogas_production_site_fuel_gas_boundary
 read_time: 12
 word_count: 3926
-last_updated: '2026-02-16'
-version: '1.1'
+last_updated: '2026-04-26'
+version: '1.2'
 liability_level: high
 custom_css: |
   .chemical-formula { font-family: monospace; background: var(--card); padding: 0.2em 0.5em; border-radius: 3px; }
@@ -49,6 +75,24 @@ Key advantages: waste reduction (60-80% volume loss), pathogen destruction (if t
 :::info-box
 **Energy Equivalence:** 1 m³ biogas (60% CH₄) = 6 kWh thermal energy ≈ 0.5 liters diesel fuel ≈ 1.5 hours cooking on medium flame.
 :::
+
+</section>
+
+<section id="reviewed-answer-card-boundary-biogas-production-site-fuel-gas-red-flags-and-handoffs">
+
+## Reviewed Answer-Card Boundary: Biogas Production Site Fuel-Gas Red Flags and Handoffs
+
+This is the reviewed answer-card surface for GD-223. Use it only for boundary-level inventory, red-flag recognition, stop-use and avoid-entry notes, access logs, and handoff routing for an existing or suspected biogas production site or fuel-gas inventory.
+
+Start outside the digester, gas holder, gas-storage area, piping, regulator, burner, engine, manure or digestate area, pit, tank, vault, trench, shed, low area, or enclosed structure. Do not enter or re-enter a digester, gas holder, pit, tank, vault, manure handling area, or other confined or low-lying space to inspect, ventilate, rescue, repair, test, drain, clean, or troubleshoot. Keep people and animals away when gas odor, rotten-egg odor, symptoms, suspected leak, fire, pressure, overflow, splash, or access-control concerns are present.
+
+Use a simple outside-only inventory and handoff log: site name, owner/operator if known, date, observer, digester or gas holder presence if already known, fuel-gas storage or piping visible from outside, burner or engine area present, pressure gauge or relief device observed from outside, posted restrictions, barriers, recent maintenance, storm, impact, odor, symptom, leak, digestate, or access concern, stop-use or avoid-entry decision, and who received the handoff.
+
+Treat these as red flags before routine work: methane or fuel-gas odor, rotten-egg odor, suspected hydrogen sulfide, suspected carbon dioxide or oxygen-displacement/asphyxiation, headache, dizziness, nausea, coughing, breathing trouble, eye/throat irritation, confusion, unusual sleepiness, collapse, multiple people or animals affected, fire, flame flashback, explosion, damaged piping or storage, abnormal pressure, bulging, hissing, blocked vent, digestate overflow, sewage/manure splash, pathogen exposure, missing barriers, children or bystanders near equipment, or any request to enter, repair, leak-test, relight, tune, operate, or certify the system during a concern.
+
+If red flags are present, stop routine use when it can be done from a safe distance without entering the hazard area, keep people outdoors and away from low spots or enclosed spaces, avoid ignition sources, do not troubleshoot or leak-test, and route to emergency services, the fire service or hazmat responders, poison control, public health, a qualified fuel-gas professional, a qualified wastewater operator, or the responsible owner/operator as appropriate.
+
+Do not provide digester design, feedstock ratios, inoculation, gas storage or plumbing instructions, purification or H2S scrubbing instructions, burner or engine operation, leak testing methods, confined-space entry, rescue or repair steps, performance claims, legal/code claims, or safety certification from this reviewed card.
 
 </section>
 

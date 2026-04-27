@@ -1,0 +1,120 @@
+card_id: chemical_fuel_salvage_boundary
+guide_id: GD-262
+slug: chemical-fuel-salvage
+title: Chemical & Fuel Salvage Safety
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user found salvaged fuel, solvents, cleaners, paints, oils, fertilizers, or other chemical containers and needs a safe inventory, labeling, isolation, or handoff plan.
+  - A container is unlabeled, partly labeled, source-uncertain, mixed, degraded, leaking, swollen, corroded, heat damaged, or near people, food, water, drains, living areas, sparks, heat, or incompatible materials.
+  - The answer must stay at boundary level: label/source records, unknown-mixture flags, red flags, do-not-mix/do-not-use logs, isolation, and fire-service, hazmat, poison-control, environmental, site-safety, or responsible-owner handoff.
+required_first_actions:
+  - Lead with safe observation from outside the hazard area; do not ask the user to sniff, taste, touch, open, transfer, mix, test, filter, distill, neutralize, burn, or use the material.
+  - Separate known label facts from guesses: original label text, markings, container type, source location, date found, and whether the contents are unknown, mixed, transferred, degraded, or source-uncertain.
+  - Mark unknown, mixed, leaking, damaged, degraded, or source-uncertain containers as do not use and do not mix, and keep people, children, animals, food, water, drains, heat, sparks, and routine traffic away.
+  - Treat active fire, strong incidental vapor or odor, spill, leak, corrosive contact, toxic exposure symptoms, vapor accumulation, unknown mixture, or environmental release as a handoff problem for emergency services, fire service, hazmat, poison control, environmental authority, site safety, or the responsible owner.
+first_actions:
+  - Create a container inventory with count, label text, source location, date found, quantity estimate if visible without handling, container material, condition, storage location, and isolation status.
+  - Flag containers as original-labeled, partly labeled, unlabeled, unknown, mixed, transferred, degraded, leaking, damaged, or incompatible-storage concern.
+  - Log red flags separately: flammable vapor, fire or heat exposure, corrosion, toxic or irritating vapor, skin/eye/ingestion/inhalation exposure, visible reaction, nearby drains, soil, water, food, living areas, children, animals, oxidizers, acids, bases, or other incompatibles.
+  - Apply do-not-mix and do-not-use records to unknown, mixed, degraded, leaking, damaged, or source-uncertain containers until a qualified owner reviews them.
+  - Prepare a handoff note with location, container count, labels or markings, source history, isolation steps already taken, exposure or symptom log, spill/leak/fire/environmental concerns, and responsible owner contacted.
+urgent_red_flags:
+  - Fire, smoke, heat exposure, vapor cloud, strong incidental chemical or fuel odor, enclosed-space fumes, visible reaction, swelling, pressure, or container rupture.
+  - Breathing trouble, coughing, wheezing, chest tightness, dizziness, headache, confusion, collapse, eye pain, skin burning, chemical burns, ingestion concern, or multiple people with symptoms.
+  - Unknown, unlabeled, mixed, transferred, degraded, actively leaking, badly corroded, or incompatible containers.
+  - Fuel or chemical near sparks, flame, hot surfaces, generators, stoves, living areas, food, drinking water, wells, drains, soil, streams, children, animals, or routine traffic.
+  - Any request to salvage, separate, distill, filter, blend, test, neutralize, transfer, dispose, burn, run in an engine, or declare a container safe.
+forbidden_advice:
+  - Do not provide salvage methods, recovery steps, siphoning, pumping, draining, pouring, decanting, transfer procedures, or container-opening instructions.
+  - Do not provide separation, distillation, filtering, blending, fuel stabilization, biocide, additive, or empirical fuel-quality testing instructions.
+  - Do not provide sniff, taste, burn, touch, jar, water-separation, compatibility, pH, or other improvised identification tests for unknown or suspect materials.
+  - Do not provide neutralization, disposal legality, disposal methods, spill-cleanup chemistry, environmental release clearance, or legal/code claims.
+  - Do not provide engine-use claims, equipment-use approval, safe-to-use statements, safe-to-store statements, return-to-service decisions, or safety certification.
+do_not:
+  - Do not convert the guide's siphoning, fuel quality testing, degradation testing, transfer, disposal, neutralization, troubleshooting, or product-affiliate content into reviewed-card instructions.
+  - Do not reassure the user that an unknown, mixed, degraded, leaking, or unlabeled container is usable because it resembles fuel, solvent, cleaner, paint, oil, or fertilizer.
+  - Do not delay emergency, poison-control, fire-service, hazmat, environmental, or site-safety handoff to gather more inventory details when exposure, fire, vapor, leak, or environmental release is present.
+routine_boundary: >
+  Routine answers under this card are limited to container inventory, label and
+  source preservation, unknown or mixed-container flags, red-flag recognition,
+  isolation status, do-not-mix and do-not-use logs, and owner handoff. Active
+  fire, vapor, leak, spill, exposure, unknown mixture, environmental release,
+  or any procedural salvage request must leave routine inventory framing.
+acceptable_uncertain_fit: >
+  If the container identity, source, mixture status, quantity, exposure route,
+  or storage condition is unclear, keep the answer conservative: label it
+  unknown or source-uncertain, isolate it, mark do not use and do not mix, log
+  observable facts only, ask handoff-focused questions, and route active hazards
+  or symptoms to emergency services, poison control, fire service, hazmat,
+  environmental authority, site safety, or the responsible owner.
+clarifying_questions:
+  - Is anyone exposed or symptomatic, and is there fire, vapor, strong incidental odor, leak, spill, heat exposure, or container swelling?
+  - What exact label text, hazard symbols, markings, container type, source location, and date found can be recorded without touching or opening the container?
+  - Are any containers unlabeled, mixed, transferred, degraded, corroded, swollen, leaking, or stored near heat, sparks, drains, water, food, living areas, children, animals, acids, bases, oxidizers, or fuels?
+  - What isolation, do-not-use, do-not-mix, access-control, and handoff steps have already been logged?
+citation_ids:
+  - gd-262-reviewed-boundary
+  - gd-262-chemical-identification-unknowns
+  - gd-262-storage-segregation-ventilation
+  - gd-262-hazard-exposure-red-flags
+  - gd-262-field-inspection
+  - gd-262-inventory-management
+source_sections:
+  - guide: GD-262
+    slug: chemical-fuel-salvage
+    title: Chemical & Fuel Salvage Safety
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#chemical-identification"
+      - "#storage-compatibility"
+      - "#hazard-recognition"
+      - "#field-inspection"
+      - "#inventory-system"
+source_invariants:
+  - name: reviewed boundary remains non-procedural
+    guide: GD-262
+    must_include:
+      - "Use it only for non-procedural salvaged fuel and chemical container safety boundaries"
+      - "do-not-mix/do-not-use logs"
+      - "fire-service, hazmat, poison-control, environmental, site-safety, or responsible-owner handoff"
+  - name: unknown chemical no-guess boundary remains present
+    guide: GD-262
+    must_include:
+      - "Unknown Chemicals: Never Guess"
+      - "do not attempt to identify it empirically through sniffing, tasting, mixing, or improvised testing"
+      - "Mark it as \"Unknown - Do Not Use.\""
+  - name: label and inventory anchors remain present
+    guide: GD-262
+    must_include:
+      - "Original labels provide critical information"
+      - "Never discard labeled containers"
+      - "Every container must be clearly labeled"
+      - "Create written inventory"
+  - name: hazard recognition anchors remain present
+    guide: GD-262
+    must_include:
+      - "Respiratory irritation"
+      - "Skin contact"
+      - "Eye exposure"
+      - "Ingestion/aspiration"
+      - "Systemic toxicity"
+  - name: field inspection isolation anchors remain present
+    guide: GD-262
+    must_include:
+      - "actively leaking"
+      - "Unknown contents are high-risk"
+      - "Never transport unknown or uncontainable items"
+      - "segregate by type"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed safety boundary card for GD-262. It closes the metadata/card gap
+  only for salvaged fuel and chemical container inventory, label/source and
+  unknown-mixture flags, flammable/vapor/corrosive/toxic/exposure red flags,
+  isolation and do-not-mix/do-not-use logs, and fire-service, hazmat,
+  poison-control, environmental, site-safety, or responsible-owner handoff. It
+  deliberately excludes salvage methods, separation, distillation, filtering,
+  blending, testing, engine-use claims, neutralization, disposal legality,
+  transfer procedures, legal/code claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.

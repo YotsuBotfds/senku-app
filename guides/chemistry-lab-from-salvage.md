@@ -7,6 +7,20 @@ difficulty: advanced
 tags:
   - practical
   - sciences
+  - safety-boundary
+  - salvage-inventory
+  - chemical-safety
+aliases:
+  - salvaged lab inventory
+  - unknown lab chemicals
+  - lab salvage safety screen
+  - old chemistry equipment quarantine
+routing_cues:
+  - unlabeled or relabeled salvaged chemical container
+  - unknown residue in lab bottles tubing or glassware
+  - cracked chipped or pressure-exposed lab glassware
+  - damaged wet or unknown-condition electrical lab equipment
+  - lab salvage quarantine stop-use log and hazmat handoff
 icon: 🧪
 description: Improvised glassware from salvage, reagent sourcing, distillation apparatus, filtration, pH testing with natural indicators, titration without burettes, and safety equipment
 related:
@@ -28,6 +42,25 @@ custom_css: |
   .reagent-table th { background: var(--accent); color: var(--bg); }
   .disposal-list { margin: 16px 0; padding-left: 20px; }
 liability_level: critical
+reviewed_answer_card: chemistry_lab_salvage_boundary
+answer_cards:
+  - chemistry_lab_salvage_boundary
+runtime_citation_policy: reviewed_source_family
+applicability: >
+  Use GD-325's reviewed card only for salvage-lab inventory intake, label/source
+  tracking, unknown-residue flags, glassware/pressure/electrical/contamination
+  red flags, quarantine or stop-use logs, and qualified lab-safety, hazmat, or
+  poison-control handoff. Do not use it for salvage cleaning recipes, equipment
+  build or repair, distillation or reactor setup, pressure use of glassware,
+  chemical identification tests, disposal legality, lab certification, legal or
+  code claims, or safety certification.
+routine_boundary: >
+  This guide has a reviewed boundary card for inventory and safety triage only.
+  It may help decide what to log, isolate, label, reject, or hand off, but it is
+  not runtime permission to clean unknown residues, build or repair lab
+  equipment, identify chemicals by testing, heat or pressurize glassware, set up
+  distillation/reactor systems, make disposal legality claims, certify a lab, or
+  declare salvaged equipment safe.
 ---
 
 <section id="overview">
@@ -41,6 +74,20 @@ Chemical work without proper equipment is inherently risky. This guide assumes t
 **Household-level unknown substances and spills route to [`chemical-safety.md`](chemical-safety.md) first.** This guide covers building and operating a salvage lab for water testing, mineral identification, and compound production. For household chemical emergencies — unknown substances, spilled cleaners, mixed-cleaner fumes, bleach or ammonia spills, ingestion of household products — route to [`chemical-safety.md`](chemical-safety.md) for structured hazard triage and do-not-mix rules. For unknown ingestion (especially children), route to [`unknown-ingestion-child-poisoning-triage.md`](unknown-ingestion-child-poisoning-triage.md). For toxic exposure treatment, route to [`toxicology-poisoning-response.md`](toxicology-poisoning-response.md).
 
 If you encounter an unknown substance during salvage lab work: isolate, do not touch or inhale, ventilate, contain with sand or earth, and do not mix or neutralize. See [`chemistry-fundamentals.md`](chemistry-fundamentals.md) for detailed scene-safety triage steps.
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-325. Use it only for boundary-level salvage-lab inventory and safety triage: item type, source history, visible label, original container status, unknown residue, odor, corrosion, incompatible storage, breakage, cracks, pressure or heat exposure history, electrical damage, contamination, stop-use status, quarantine location, date found, handler, and who needs the handoff.
+
+Start by separating routine inventory from red flags. Red flags include unlabeled or relabeled containers, unknown powders or liquids, solvent or fuel odor, residue in bottles or tubing, cracked/chipped glass, improvised pressure or vacuum use, sealed containers that may be heated, damaged cords, wet electrical equipment, battery/mercury/asbestos/lead concerns, biological contamination, spill exposure, symptoms after contact or inhalation, and any request to identify, clean, neutralize, dispose of, repair, build, heat, pressurize, or certify salvaged lab materials.
+
+For suspect items, answer with a conservative log-and-handoff frame: stop use, avoid touching or smelling, keep containers closed if safe, isolate from people, food, drains, flames, incompatible chemicals, and weather, mark "unknown/do not use," record source and visible labels without testing, and route to qualified lab safety, hazmat, poison control, facility owner, environmental health, or emergency responders as appropriate.
+
+Do not use this reviewed card for salvage cleaning recipes, equipment build or repair, distillation or reactor setup, glassware pressure use, chemical identification tests, disposal legality, lab certification, legal/code claims, or safety certification. If the prompt asks for those, provide only the inventory, red-flag, quarantine, stop-use, and qualified-handoff portion that is in scope.
 
 </section>
 

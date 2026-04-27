@@ -18,10 +18,33 @@ related:
   - herbal-antibiotics
   - homestead-chemistry
   - sur-03-herbal-medicine
+aliases:
+  - fermentation batch safety boundary
+  - fermented food red flags
+  - fermentation inventory label source log
+  - mold gas pressure allergen alcohol handoff
+  - vulnerable consumers fermented food safety
+routing_cues:
+  - Use this guide's reviewed card only for boundary-level fermentation batch and intended-use inventory, label/source/time/storage logs, spoilage/mold/gas/pressure/allergen/alcohol/food-safety red flags, hold/discard/handoff boundaries, vulnerable-consumer screening, and food-safety/public-health/clinician handoff.
+  - Do not use the reviewed card for fermentation recipes, starter or culture propagation, process times, temperatures, pH targets, alcohol production, pressure-vessel operation, botulism treatment, safety guarantees, legal claims, or certification.
+  - Treat mold, bulging or pressurized containers, unknown labels or source, unsafe storage history, allergen uncertainty, alcohol uncertainty, illness after consumption, and service to infants, pregnant people, immunocompromised people, older adults, or clinically fragile consumers as handoff triggers before routine use.
+applicability: >
+  Boundary-only runtime surface for existing or proposed fermented food or
+  beverage batches: batch and intended-use inventory, label/source/time/storage
+  logs, spoilage, mold, gas, pressure, allergen, alcohol, illness, vulnerable
+  consumer, and food-safety red flags, hold/discard decisions, and food-safety,
+  public-health, clinician, poison-control, or responsible food owner handoff.
+  Not a recipe, starter/culture propagation, process-parameter, pH, alcohol
+  production, pressure-vessel operation, botulism treatment, legal, guarantee,
+  or certification surface.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: fermentation_batch_food_safety_boundary
+answer_card:
+  - fermentation_batch_food_safety_boundary
 read_time: 17
 word_count: 3350
-last_updated: '2026-02-20'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 custom_css: |
   .ferment-table { width: 100%; margin: 1rem 0; }
   .ferment-table th, .ferment-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -34,6 +57,20 @@ Fermentation harnesses microorganisms to preserve food, produce alcohol, generat
 **Scope note:** This is the *applied* companion — step-by-step recipes, yeast biology and kinetics, fermentation vessel design, and industrial applications. For the underlying microbiology, microbial succession dynamics, starter culture creation and long-term maintenance, pH safety thresholds, and troubleshooting diagnosis by symptom, see **Fermentation Science** (GD-704).
 
 ![Fermentation science applied diagram](../assets/svgs/fermentation-science-applied-1.svg)
+
+<section id="reviewed-answer-card-boundary-fermentation-batch-food-safety-red-flags-and-handoffs">
+
+## Reviewed Answer-Card Boundary: Fermentation Batch Food-Safety Red Flags and Handoffs
+
+This is the reviewed answer-card surface for GD-424. Use it only for boundary-level fermentation batch and intended-use inventory, label/source/time/storage logs, spoilage, mold, gas, pressure, allergen, alcohol, illness, vulnerable-consumer, and food-safety red flags, hold/discard boundaries, and food-safety, public-health, clinician, poison-control, or responsible food owner handoff.
+
+Start with a non-tasting inventory and handoff log: batch name or description, intended use, source of ingredients if known, starter or culture source if already known, date made or received, label text, storage history, container condition, gas or pressure concern, visible mold or spoilage concern, odor concern, allergen uncertainty, alcohol uncertainty, who has eaten it, symptoms or illness reports, whether vulnerable consumers may be served, hold or discard decision, and who received the handoff.
+
+Hold the batch out of service and do not taste, serve, rescue, rework, vent, open under pressure, dilute, heat, skim, relabel, or certify it when identity, source, time, storage, allergen status, alcohol content, container pressure, spoilage, mold, illness, or vulnerable-consumer risk is uncertain. Discard or hand off rather than reassure when red flags are present, especially for infants, pregnant people, immunocompromised people, older adults, clinically fragile people, or any group setting.
+
+Do not use this reviewed card for fermentation recipes, starter or culture propagation, process times or temperatures, pH targets, alcohol production, pressure-vessel operation, botulism treatment, safety guarantees, legal claims, safe-to-eat declarations, shelf-life promises, sale approval, or certification.
+
+</section>
 
 <section id="fermentation-fundamentals">
 
@@ -361,4 +398,3 @@ $$\text{C}_2\text{H}_5\text{OH} + \text{O}_2 \rightarrow \text{CH}_3\text{COOH} 
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

@@ -18,6 +18,46 @@ related:
   - interior-finishes
   - pigments-dyes-industrial
   - dyeing-pigments
+aliases:
+  - paint formulation safety boundary
+  - paint material inventory intake
+  - coating label source uncertainty
+  - paint lead heavy metal solvent red flags
+  - paint child food indoor use stop use
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level paint and coating material inventory: labels, source records, lead/heavy-metal/solvent/isocyanate/dust/fume/skin/eye/respiratory red flags, child/food/indoor-use uncertainty, isolate/ventilate/stop-use logs, and poison-control, public-health, hazmat, qualified coatings, materials, or site-owner handoff.
+  - Keep answers focused on safe observation and routing: product or container identity, exact label text, source/date logs, intended surface or use, indoor or child/food-contact concerns, visible dust or fumes, damaged containers, exposed people, symptoms, ventilation status, isolation status, and who has already been contacted.
+  - Route paint recipes, pigment or solvent processing, formulation ratios, application or removal instructions, compatibility testing, cleanup chemistry, disposal legality, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-safety for chemical label, storage, compatibility, and PPE-prevention context once active exposure and use urgency are separated.
+  - chemical-industrial-accident-response for active spills, fumes, multi-person exposure, evacuation/shelter/decontamination triage, and hazmat or incident-command handoff.
+  - toxicology-poisoning-response for symptomatic ingestion, inhalation, eye, skin, solvent, heavy-metal, isocyanate, or unknown paint-material exposure.
+  - finishing-surface-treatment for non-emergency finish-selection context only after material hazards, labels, and use boundaries are resolved.
+citations_required: true
+citation_policy: >
+  Cite GD-465 and its reviewed answer card only for boundary-level paint and
+  coating material inventory, labels and source records, lead, heavy-metal,
+  solvent, isocyanate, dust, fume, skin, eye, and respiratory red flags,
+  child/food/indoor-use uncertainty, isolate/ventilate/stop-use logs, and
+  poison-control, public-health, hazmat, qualified coatings, materials, or
+  site-owner handoff. Do not use it for paint recipes, pigment or solvent
+  processing, formulation ratios, application or removal instructions,
+  compatibility testing, cleanup chemistry, disposal legality, legal/code
+  claims, safe-to-use statements, or safety certification.
+applicability: >
+  Use for a non-procedural paint and coating material safety boundary:
+  inventory and intake, label/source uncertainty, toxic pigment or solvent
+  red flags, lead and heavy-metal concern, isocyanate or fume concern,
+  dust and skin/eye/respiratory exposure, child/food-contact/indoor-use
+  uncertainty, isolate/ventilate/stop-use logs, and handoff to poison-control,
+  public-health, emergency, hazmat, qualified coatings, materials, or site
+  owners. Do not use for formulation, processing, application, removal,
+  cleanup, disposal legality, compatibility testing, legal/code claims, or
+  declaring materials, surfaces, rooms, containers, or coatings safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: paint_production_formulation_material_safety_boundary
+answer_card:
+  - paint_production_formulation_material_safety_boundary
 read_time: 14
 word_count: 2900
 last_updated: '2026-02-20'
@@ -35,6 +75,22 @@ Paint is pigment suspended in a vehicle (binder + solvent) that dries/hardens to
 **Toxic Pigment and Solvent Exposure**
 Traditional pigments cause specific organ damage: lead (neurological damage, kidney failure, developmental harm in children), mercury/vermillion (neurological tremors, kidney damage, vision loss), cadmium (kidney disease, bone demineralization, lung cancer), chromium VI (lung cancer, liver damage, skin ulceration), and arsenic compounds (cancer, peripheral neuropathy, organ failure). Inhalation of pigment dust or solvent fumes causes cumulative damage even at low exposures. Always work in well-ventilated areas, wear a dust mask or respirator rated for particulates, and use gloves when handling dry pigments. Never use toxic pigments on surfaces that contact food, drinking water, or children's items. Prefer low-toxicity alternatives (iron oxides, carbon black, chalk) whenever possible.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Paint and Coating Material Safety Handoff
+
+This is the reviewed answer-card surface for GD-465. Use it only for boundary-level paint and coating material inventory: product or container labels, source and date records, lead and heavy-metal uncertainty, solvent, isocyanate, dust, fume, skin, eye, and respiratory red flags, child, food-contact, and indoor-use uncertainty, isolate, ventilate, and stop-use logs, and poison-control, public-health, emergency, hazmat, qualified coatings, materials, or site-owner handoff.
+
+Start with safe observation and routing rather than paint-making or surface-work instructions: product name, exact label text, manufacturer or source if known, purchase or salvage date, original versus decanted container, container condition, intended surface or use, indoor location, child or food-contact pathway, visible dust, residue, peeling, damaged coating, solvent odor, fumes, spray mist, heat exposure, skin or eye contact, inhalation concern, symptoms, ventilation and isolation status, and who has already been contacted.
+
+Stop-use and handoff triggers include unknown or unlabeled pigments, old paint, salvage paint, damaged containers, suspected lead paint, cadmium, chromium, arsenic, mercury, or other heavy-metal pigment concern, strong solvent odor, isocyanate or two-part coating uncertainty, sanding or scraping dust, spray mist, fumes in an indoor or enclosed space, skin or eye pain, burns, coughing, wheezing, chest tightness, dizziness, vomiting, confusion, collapse, multiple exposed people, children, pregnant people, medically fragile users, food-contact surfaces, cookware, toys, drinking-water contact, or pressure to declare a coating, room, surface, or container safe.
+
+When child exposure, food contact, drinking-water contact, or indoor-use uncertainty is plausible, do not reassure that a material or painted surface is safe. Isolate suspect materials or surfaces from use when that can be done without exposure, improve fresh-air ventilation from a safe location when fumes are present, keep people away from dust or fumes, log what is known, and hand off to poison control, public health, emergency services, hazmat, a qualified coatings or materials owner, or the responsible site owner.
+
+Do not provide paint recipes, pigment or solvent processing steps, formulation ratios, application or removal instructions, sanding/scraping methods, compatibility testing, cleanup chemistry, disposal legality, legal or code claims, safe-to-use statements, indoor or food-contact clearance, return-to-service decisions, or safety certification from this reviewed card.
+
+</section>
 
 <section id="paint-components">
 

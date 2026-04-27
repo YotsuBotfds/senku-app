@@ -7,18 +7,56 @@ difficulty: advanced
 tags:
   - essential
 icon: ⚡
-description: Brine electrolysis for NaOH, hydrogen, and chlorine. Mercury/diaphragm/membrane cells. Unlocks bleach, PVC, pharmaceuticals.
+description: Safety-reviewed electrolysis and chlor-alkali boundary for area inventory, electrical and gas red flags, labels/source uncertainty, stop-work logs, and emergency or qualified chemistry owner handoff.
 related:
   - chemistry-fundamentals
   - solvents-distillation
   - alkali-production
   - soap-candles
   - glue-adhesives
+aliases:
+  - electrolysis chlor alkali safety boundary
+  - chlorine caustic hydrogen red flag inventory
+  - brine electrolysis stop work handoff
+  - unlabeled caustic chlorine hydrogen electrical hazard log
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural electrolysis and chlor-alkali safety boundaries: area inventory, electrical red flags, chlorine, caustic, and hydrogen gas red flags, labels/source/unknown-solution uncertainty, stop-work, avoid-entry, ventilation, evacuation, and handoff logs.
+  - Keep answers focused on safe observation and routing: site or container identity, label text, source and date if known, unknown or mixed-solution status, electrical isolation status if already known, visible corrosion or damage, odor or vapor report, gas bubbling or pressure concern, heat or fire exposure, ventilation status, exposed people and symptoms, access controls, stop-work or evacuation decisions, and who has been notified.
+  - Route cell construction, electrolysis settings, brine preparation, gas collection, caustic or chlorine production, wiring or electrode setup, neutralization, cleanup chemistry, legal or code claims, and safety certification away from this card.
+routing_support:
+  - chemical-industrial-accident-response for active chlorine, caustic, hydrogen, fire, explosion, evacuation, hazmat, or incident-command handoff.
+  - toxicology-poisoning-response for chlorine inhalation, caustic eye or skin exposure, ingestion, poison-control escalation, or medical handoff.
+  - chemical-safety for labeling, segregation, access control, and prevention once the scene is safe.
+  - electricity for electrical owner handoff without live troubleshooting, wiring, repair, or return-to-service claims.
+citations_required: true
+citation_policy: >
+  Cite GD-186 and its reviewed answer card only for electrolysis and
+  chlor-alkali boundary intake: area inventory, electrical red flags, chlorine,
+  caustic, and hydrogen gas red flags, labels/source/unknown-solution
+  uncertainty, stop-work, avoid-entry, ventilation, evacuation logs, and
+  emergency, hazmat, poison-control, electrical, or qualified chemistry owner
+  handoff. Do not use it for cell construction, electrolysis settings, brine
+  preparation, gas collection, caustic or chlorine production, wiring or
+  electrode setup, neutralization, cleanup chemistry, legal/code claims, or
+  safety certification.
+applicability: >
+  Use for non-procedural electrolysis and chlor-alkali safety boundary
+  questions: what to record, when to stop work, how to recognize electrical,
+  chlorine, caustic, hydrogen, ventilation, fire, explosion, and unknown
+  solution red flags, when to avoid entry or evacuate, and who should own
+  emergency, poison-control, electrical, hazmat, or qualified chemistry review.
+  Do not use for building, operating, tuning, collecting, producing,
+  neutralizing, cleaning up, certifying, or declaring any electrolysis cell,
+  chlor-alkali area, product container, wiring, gas line, or process safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: electrolysis_chloralkali_safety_boundary
+answer_card:
+  - electrolysis_chloralkali_safety_boundary
 read_time: 5
 word_count: 7912
 last_updated: '2026-02-19'
-version: '1.0'
-liability_level: high
+version: '1.1'
+liability_level: critical
 custom_css: 'body.light-mode{--bg:#f5f5f5;--surface:#fff;--card:#e8f4f8;--text:#1a2e1a;--muted:#666;--border:#d4c9b4;--accent:#d32f2f;--accent2:#00897b}.tag-container{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}.tag{display:inline-block;background-color:var(--accent);color:white;padding:.35rem .75rem;border-radius:20px;font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px}.tag.alt{background-color:var(--accent2)}nav.toc{background-color:var(--surface);border:1px solid var(--border);border-radius:8px;padding:2rem;margin:2rem 0;position:sticky;top:20px;z-index:100}main{margin-bottom:4rem}section h2{color:var(--accent2);font-size:1.8rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--border)}section h3{color:var(--accent2);font-size:1.3rem;margin-top:1.5rem;margin-bottom:.75rem}section h4{color:var(--accent);font-size:1.1rem;margin-top:1.2rem;margin-bottom:.6rem}.note{background-color:rgba(100,150,200,0.1);border-left:4px solid #6496c8;padding:1.5rem;margin:1.5rem 0;border-radius:4px}.note::before{content:"📝";font-size:1.5rem;margin-right:.75rem;vertical-align:middle}.danger{background-color:rgba(255,68,68,0.15);border-left:4px solid var(--danger);padding:1.5rem;margin:1.5rem 0;border-radius:4px}.danger::before{content:"🔴";font-size:1.5rem;margin-right:.75rem;vertical-align:middle}.danger strong{color:var(--danger)}li{margin-bottom:.75rem}.diagram-container{background-color:var(--card);border:2px solid var(--border);border-radius:8px;padding:2rem;margin:2rem 0;text-align:center;overflow-x:auto}.diagram-container h4{color:var(--accent2);margin-bottom:1.5rem;text-align:center}table th{background-color:var(--accent2);color:var(--bg);padding:1rem;text-align:left;font-weight:600}table td{padding:.875rem 1rem;border-bottom:1px solid var(--border)}table tr:hover{background-color:rgba(83,216,168,0.05)}.data-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin:1.5rem 0}.data-item{background-color:var(--card);padding:1.25rem;border-radius:6px;border-left:3px solid var(--accent2)}.data-item strong{color:var(--accent2);display:block;margin-bottom:.5rem}.data-item code{background-color:rgba(0,0,0,0.3);padding:.25rem .5rem;border-radius:3px;font-family:''Courier New'',monospace;color:var(--accent2)}.formula{background-color:var(--card);padding:1rem;border-radius:6px;margin:1rem 0;font-family:''Courier New'',monospace;text-align:center;border:1px solid var(--border);color:var(--accent2)}.guides-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}.guide-link{background-color:var(--surface);padding:1rem;border-radius:6px;text-decoration:none;color:var(--accent2);border:1px solid var(--border);transition:all .3s ease;text-align:center;font-weight:500}.guide-link:hover{background-color:var(--accent2);color:var(--bg);transform:translateY(-3px);box-shadow:0 5px 15px rgba(83,216,168,0.2)}.field-notes-section{background-color:var(--card);padding:2rem;border-radius:8px;margin-top:3rem;border:2px dashed var(--border)}.field-notes-section h3{color:var(--accent);margin-bottom:1.5rem}.notes-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}.note-card{background-color:var(--surface);padding:1.25rem;border-radius:6px;border-left:3px solid var(--accent)}.note-card strong{color:var(--accent);display:block;margin-bottom:.5rem}.note-card textarea{width:100%;min-height:100px;background-color:var(--card);color:var(--text);border:1px solid var(--border);padding:.75rem;border-radius:4px;font-family:''Segoe UI'',sans-serif;resize:vertical;margin-top:.5rem}.theme-toggle:hover{background-color:var(--card);transform:scale(1.1)}.progress-tracker{background-color:var(--card);padding:1.5rem;border-radius:8px;margin:2rem 0}.progress-tracker h4{color:var(--accent2);margin-bottom:1rem}.progress-bar{width:100%;height:25px;background-color:var(--surface);border-radius:12px;overflow:hidden;border:1px solid var(--border)}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0;transition:width .3s ease;display:flex;align-items:center;justify-content:center;color:var(--bg);font-weight:600;font-size:.85rem}.risk-matrix{background-color:var(--card);padding:1.5rem;border-radius:8px;margin:1.5rem 0;border:2px solid var(--border)}.risk-row{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start}.risk-level{min-width:120px;padding:.75rem;border-radius:4px;font-weight:600;text-align:center}.risk-level.extreme{background-color:rgba(255,68,68,0.2);color:var(--danger);border:1px solid var(--danger)}.risk-level.high{background-color:rgba(255,152,0,0.2);color:var(--warning);border:1px solid var(--warning)}.risk-level.moderate{background-color:rgba(255,193,7,0.2);color:#ffc107;border:1px solid #ffc107}.risk-level.low{background-color:rgba(76,175,80,0.2);color:var(--success);border:1px solid var(--success)}.risk-description{flex:1;background-color:var(--surface);padding:.75rem;border-radius:4px;border-left:3px solid var(--border)}.checklist{list-style:none;margin-left:0}.checklist li{padding-left:1.75rem;position:relative;margin-bottom:.75rem}.checklist li::before{content:"☑";position:absolute;left:0;color:var(--accent2)}.equation-box{background-color:var(--card);border-left:4px solid var(--accent2);padding:1.5rem;margin:1.5rem 0;border-radius:6px}.equation-box .label{color:var(--muted);font-size:.9rem;margin-bottom:.5rem}.equation-box .equation{font-family:''Courier New'',monospace;color:var(--accent2);font-size:1.1rem;text-align:center;padding:1rem 0}.material-list{background-color:var(--card);padding:1.5rem;border-radius:6px;margin:1.5rem 0}.material-list h4{color:var(--accent2);margin-bottom:1rem}.material-list .item{padding:.75rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.material-list .item:last-child{border-bottom:0}.material-list .quantity{color:var(--accent);font-weight:600;min-width:100px;text-align:right}.procedural-step{background-color:var(--card);padding:1.25rem;border-radius:6px;margin-bottom:1rem;border-left:4px solid var(--accent2);position:relative}.procedural-step .step-number{position:absolute;left:-15px;top:-15px;width:35px;height:35px;background-color:var(--accent2);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem}.procedural-step h5{color:var(--accent2);margin-bottom:.5rem;margin-left:1rem}.procedural-step p{margin-left:1rem}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}.live-alert{animation:pulse 2s infinite}'
 ---
 
@@ -29,6 +67,20 @@ custom_css: 'body.light-mode{--bg:#f5f5f5;--surface:#fff;--card:#e8f4f8;--text:#
 :::danger
 **LETHAL HAZARD:** Chloralkali electrolysis simultaneously produces chlorine gas (lethal), hydrogen gas (explosive), and caustic soda (severe chemical burns). Mixing chlorine and hydrogen creates an explosive mixture. This process requires industrial safety equipment, gas detection, and regulatory compliance. DO NOT attempt without proper training, equipment, and licensing.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Electrolysis and Chlor-Alkali Safety Handoff
+
+This is the reviewed answer-card surface for GD-186. Use it only for non-procedural electrolysis and chlor-alkali safety boundaries: area inventory, electrical red flags, chlorine, caustic, and hydrogen gas red flags, labels/source/unknown-solution uncertainty, stop-work, avoid-entry, ventilation, evacuation logs, and emergency, hazmat, poison-control, electrical, or qualified chemistry owner handoff.
+
+Start with safe-observation facts from outside the hazard area when possible: site or container identity, label text, source and date if known, unknown or mixed-solution status, electrical isolation status if already known, visible corrosion or damage, odor or vapor report, gas bubbling or pressure concern, heat or fire exposure, ventilation status, exposed people and symptoms, access controls, stop-work or evacuation decisions already made, and who has been notified.
+
+If there is chlorine odor or vapor, breathing trouble, eye or throat irritation, caustic splash or burns, unlabeled or unknown solution, active bubbling or gas accumulation, hydrogen or ignition concern, damaged wiring, wet electrical equipment, heat, fire, poor ventilation, or pressure to enter, restart, repair, collect gas, neutralize, or clean up, keep the answer in stop-work, avoid-entry, ventilation-from-safe-location, evacuation, and emergency/hazmat/poison-control/electrical/qualified-chemistry handoff language.
+
+Do not provide cell construction, electrolysis settings, brine preparation, gas collection, caustic or chlorine production, wiring or electrode setup, neutralization, cleanup chemistry, legal or code claims, safe-to-enter statements, safe-to-use statements, return-to-service decisions, or safety certification from this reviewed card.
+
+</section>
 
 <section id="quick-summary">
 

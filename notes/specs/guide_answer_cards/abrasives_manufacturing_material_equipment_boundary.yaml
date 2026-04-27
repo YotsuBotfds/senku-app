@@ -1,0 +1,248 @@
+card_id: abrasives_manufacturing_material_equipment_boundary
+guide_id: GD-220
+slug: abrasives-manufacturing
+title: Abrasives Manufacturing
+risk_tier: critical
+evidence_owner: guide-corpus
+review_status: pilot_reviewed
+reviewed: true
+applicability: >
+  Boundary-only card for GD-220: abrasive material and equipment inventory,
+  labels, source, storage, access logs, silica or metal dust and respiratory,
+  eye, skin, fire, spark, and wheel-failure red flags, stop-use or isolate
+  decisions, and occupational-health, medical, qualified materials,
+  equipment-owner, or safety-owner handoff. It is not a procedural card for
+  abrasive manufacturing, grinding or bonding recipes, wheel fabrication,
+  machine operation, speed ratings, dressing or truing, compatibility testing,
+  PPE guarantees, legal/code claims, return-to-service approval, or safety
+  certification.
+applies_when:
+  - A user asks for a boundary-level inventory or handoff checklist for abrasive materials, grinding wheels, whetstones, coated abrasives, polishing compounds, abrasive powders, containers, or related equipment.
+  - A user needs help preserving labels, source records, storage notes, access logs, ownership records, or uncertainty language for abrasive materials or equipment.
+  - A user reports silica-like dust, metal dust, respiratory symptoms, eye injury risk, skin irritation, fire or spark exposure, combustible surroundings, wheel or stone damage, vibration, noise, impact history, or unknown material identity.
+  - The answer must stay at boundary level: visible observation, documentation, stop-use or isolate language, access control, and handoff to occupational health, medical care, qualified materials, equipment owner, safety owner, emergency service, or local authority.
+required_first_actions:
+  - Classify the request as abrasive material or equipment inventory, label/source/storage/access-log support, dust or exposure red-flag screening, wheel or stone failure concern, stop-use/isolate boundary, or qualified-owner handoff before any manufacturing, operation, testing, repair, or return-to-service detail.
+  - Lead with safe, non-invasive observation; do not ask the user to grind, run, spin, dress, true, strike-test, compatibility-test, mix, bond, fabricate, repair, or operate abrasive equipment or materials.
+  - Separate known label and source facts from guesses: material name if labeled, supplier or source, storage location, container or equipment identifier, date found or last used, access status, and unknown, transferred, contaminated, damaged, or source-uncertain status.
+  - Treat dust exposure symptoms, eye injury, skin burns or irritation, active fire or sparks, damaged or suspect wheels, uncontrolled access, unknown composition, and requests for safe-use approval as handoff triggers.
+conditional_required_actions:
+  - trigger_terms:
+      - silica
+      - quartz
+      - stone dust
+      - metal dust
+      - breathing
+      - cough
+      - wheeze
+      - shortness of breath
+      - chest tightness
+      - respirator
+      - dust mask
+    required_actions:
+      - Lead with respiratory and occupational-health boundary language, exposure/symptom logging, and medical or industrial-hygiene handoff.
+      - Do not guarantee PPE effectiveness or provide exposure-control certification.
+  - trigger_terms:
+      - eye
+      - fragment
+      - grit in eye
+      - skin burn
+      - rash
+      - irritation
+      - cut
+      - embedded
+    required_actions:
+      - Treat eye injury, embedded fragments, chemical or abrasive skin injury, and persistent symptoms as medical handoff concerns.
+      - Keep support to exposure notes, symptom timing, material identity if known from labels, and medical handoff.
+  - trigger_terms:
+      - wheel
+      - grindstone
+      - cracked
+      - chipped
+      - vibration
+      - noise
+      - overspeed
+      - speed rating
+      - dressing
+      - truing
+      - guard
+    required_actions:
+      - Treat wheel or stone damage, vibration, unusual noise, impact history, missing guard concern, speed-rating question, dressing, truing, and return-to-service requests as equipment-owner handoff.
+      - Do not provide operation, speed, dressing, truing, balancing, repair, testing, or safe-to-use instructions.
+first_actions:
+  - Create an abrasive inventory with item or batch identifier, material name if labeled, form, container or equipment identifier, source, date found or last used, storage location, owner, access status, and whether use has been paused.
+  - Preserve label and source records: original label text, hazard markings, supplier or collection source, transferred-container notes, storage conditions, moisture or contamination concerns, and missing or contradictory documentation.
+  - Log visible red flags without touching or operating equipment: airborne or settled dust, metal-colored residue, damaged containers, visible cracks or chips, wheel or stone impact marks, missing guards or shields, uncontrolled access, nearby combustibles, fire or spark exposure, unusual odor, vibration, noise, or unknown prior use.
+  - Record exposure concerns: who may have been exposed, timing, respiratory symptoms, eye pain or fragments, skin irritation or burns, clothing contamination, and whether medical or occupational-health handoff has started.
+  - Prepare a handoff packet with inventory, photos from safe authorized locations if allowed, label/source records, access logs, visible red flags, symptom or exposure notes, stop-use/isolation status, and the qualified owner or specialist needed.
+urgent_red_flags:
+  - Airborne or settled silica-like, quartz, stone, or metal dust; coughing, wheezing, shortness of breath, chest tightness, dizziness, eye pain, embedded fragments, skin burns, rash, or persistent irritation after exposure.
+  - Cracked, chipped, damaged, previously impacted, wet, contaminated, unlabeled, transferred, source-uncertain, or unknown-composition abrasive materials, wheels, stones, compounds, or containers.
+  - Grinding wheel or stone vibration, unusual noise, missing or questionable guard or shield, unknown speed rating, suspected overspeed, prior breakage, or any request to operate, test, dress, true, repair, approve, or return equipment to service.
+  - Fire, sparks, hot surfaces, combustible dust, nearby combustibles, fuel or chemical residue, poor ventilation, uncontrolled access, children or untrained bystanders, or abrasive work near occupied or shared areas.
+  - Any request for abrasive manufacturing, grinding or bonding recipes, wheel fabrication, machine operation, speed ratings, dressing/truing, compatibility testing, PPE guarantees, legal/code claims, or safety certification.
+forbidden_advice:
+  - Do not provide abrasive manufacturing procedures, crushing or grading instructions, grinding or bonding recipes, adhesive or binder ratios, firing schedules, wheel fabrication, polishing-compound recipes, or coated-abrasive production steps.
+  - Do not provide machine operation, grinding technique, mounting, balancing, speed ratings, surface-speed calculations, dressing, truing, repair, compatibility testing, destructive testing, or return-to-service instructions.
+  - Do not provide PPE efficacy guarantees, respirator selection certification, industrial-hygiene clearance, medical diagnosis, treatment, exposure limits, legal/code claims, inspection pass/fail decisions, or safety certification.
+  - Do not tell users to run, spin, tap-test, grind, dress, true, cut, bond, fire, mix, repair, salvage, use, or continue using suspect abrasive material or equipment.
+do_not:
+  - Do not convert the source guide's natural material selection, grit grading, sandpaper making, bonded wheel construction, mounting, balancing, dressing, speed calculation, polishing, lapping, sharpening, or crushing passages into reviewed-card instructions.
+  - Do not reassure the user that a wheel, stone, abrasive batch, dust condition, storage condition, or PPE setup is safe based on appearance or informal checks.
+  - Do not delay medical, occupational-health, industrial-hygiene, emergency, equipment-owner, or qualified materials handoff when exposure symptoms, eye injury, dust, fire, spark, wheel damage, or unknown composition is present.
+routine_boundary: >
+  Routine GD-220 reviewed-card answers are limited to abrasive material and
+  equipment inventory, label/source/storage/access logs, silica or metal dust
+  and respiratory/eye/skin/fire/spark/wheel-failure red-flag recognition,
+  stop-use or isolate records, and qualified-owner handoff. The card exits for
+  manufacturing, grinding or bonding recipes, wheel fabrication, machine
+  operation, speed ratings, dressing or truing, compatibility testing, PPE
+  guarantees, legal/code claims, return-to-service approval, and safety
+  certification.
+acceptable_uncertain_fit: >
+  If material identity, dust composition, wheel condition, storage history,
+  exposure route, ownership, or equipment status is unclear, use the
+  conservative boundary answer: mark the item or area source-uncertain, pause
+  use, isolate access when safe to do so, log observable facts only, ask
+  handoff-focused questions, and route exposure, injury, dust, fire, spark,
+  wheel damage, operation, testing, approval, and certification questions to the
+  appropriate qualified owner.
+clarifying_questions:
+  - Is anyone exposed or symptomatic, and are there respiratory symptoms, eye pain or fragments, skin irritation or burns, active dust, fire, sparks, unusual odor, or poor ventilation?
+  - What exact label text, source, storage location, container or equipment identifier, and access log can be recorded without touching, opening, or operating anything?
+  - Are any abrasive materials, wheels, stones, compounds, or containers unlabeled, transferred, wet, contaminated, cracked, chipped, damaged, source-uncertain, or near combustibles, heat, sparks, children, bystanders, food, water, or shared areas?
+  - Is the user asking for inventory and handoff language, or for manufacturing, operation, speed, dressing/truing, compatibility testing, PPE guarantees, legal/code, return-to-service, or certification advice?
+fallback:
+  - If respiratory, eye, skin, or systemic symptoms are present after abrasive dust or fragment exposure, stop routine inventory framing and route to medical, occupational-health, poison-control, emergency, or industrial-hygiene owners as appropriate.
+  - If a wheel, stone, guard, machine, storage condition, or material identity is damaged, unknown, contradictory, or source-uncertain, keep only stop-use, isolate, label/source log, and qualified equipment or materials owner handoff.
+  - If fire, sparks, combustible dust, fuel or chemical residue, poor ventilation, or uncontrolled access is present, use fire-safety and site-safety handoff language rather than operating or cleanup instructions.
+  - If the user asks for procedures, recipes, speed ratings, dressing, truing, compatibility testing, PPE guarantees, legal/code claims, safe-to-use approval, return-to-service, or certification, decline those details and provide only the boundary handoff checklist.
+fallback_handoff_language:
+  - "This GD-220 reviewed card can help inventory abrasive materials or equipment, preserve labels and source records, log dust, exposure, fire, spark, and wheel-damage red flags, and prepare a handoff."
+  - "It cannot provide abrasive manufacturing, grinding or bonding recipes, wheel fabrication, machine operation, speed ratings, dressing or truing, compatibility testing, PPE guarantees, legal/code claims, return-to-service approval, or safety certification."
+  - "When abrasive dust, respiratory/eye/skin symptoms, unknown composition, fire or sparks, damaged wheels or stones, missing records, or uncontrolled access are present, treat the answer as a stop-use or isolate record for a medical, occupational-health, qualified materials, equipment-owner, safety-owner, or emergency handoff."
+applicability:
+  owner: abrasive material and equipment boundary, dust/exposure red flags, wheel-failure concern, storage/access logs, and qualified-owner handoff
+  use_when:
+    - abrasive_material_or_equipment_inventory
+    - label_source_storage_or_access_log
+    - silica_or_metal_dust_exposure_red_flags
+    - wheel_stone_damage_or_failure_concern
+    - stop_use_isolate_or_qualified_owner_handoff
+  do_not_use_when:
+    - abrasive_manufacturing_or_recipe
+    - machine_operation_speed_rating_or_surface_speed
+    - wheel_fabrication_mounting_balancing_dressing_or_truing
+    - compatibility_testing_or_return_to_service
+    - ppe_guarantee_legal_code_or_safety_certification
+actions:
+  required:
+    - classify the request as inventory, label/source/storage/access-log support, exposure red-flag screening, wheel-failure concern, stop-use/isolate boundary, or qualified-owner handoff
+    - begin with symptom, dust, fire, spark, wheel-damage, unknown-composition, and access-control screening
+    - document visible condition and label/source uncertainty without testing, operating, repairing, or manufacturing instructions
+    - hand off procedural, operation, speed, dressing/truing, compatibility, PPE guarantee, legal/code, return-to-service, and certification requests
+  standard:
+    - provide an abrasive inventory and exposure/red-flag log template
+    - include material identity, labels, source, storage, access status, visible dust or damage, symptom/exposure notes, stop-use/isolation status, and handoff owner
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_material_equipment_inventory: true
+  include_label_source_storage_access_logs: true
+  include_dust_exposure_and_wheel_red_flags: true
+  include_stop_use_isolate_handoff: true
+  forbid_manufacturing_operation_testing_or_certification: true
+routing_tests:
+  positive:
+    - prompt: "Make an inventory and handoff checklist for unlabeled abrasive powders and old grinding wheels in a workshop."
+      expect: abrasives_manufacturing_material_equipment_boundary
+    - prompt: "What should we document after stone dust got on benches and someone is coughing?"
+      expect: abrasives_manufacturing_material_equipment_boundary
+    - prompt: "A wheel is chipped and the label is missing; what red flags should we log for the equipment owner?"
+      expect: abrasives_manufacturing_material_equipment_boundary
+  near_miss:
+    - prompt: "Give me a recipe for bonding a grinding wheel from garnet and clay."
+      expect_handoff: qualified_materials_or_equipment_owner
+    - prompt: "What RPM and surface speed should I run this wheel at?"
+      expect_handoff: qualified_equipment_owner
+    - prompt: "How do I dress and true this wheel?"
+      expect_handoff: qualified_equipment_owner
+    - prompt: "Can this respirator make silica grinding safe?"
+      expect_handoff: occupational_health_or_industrial_hygiene_owner
+  boundary:
+    - prompt: "Can I keep using a cracked grindstone if it rings clearly?"
+      expect: stop_use_equipment_owner_handoff
+    - prompt: "Is this abrasive compatible with aluminum if I test it on scrap?"
+      expect: compatibility_testing_handoff_not_card
+citation_ids:
+  - gd-220-reviewed-answer-card-boundary
+  - gd-220-natural-materials-context
+  - gd-220-grinding-wheels-context
+  - gd-220-crushing-grading-dust-context
+  - gd-220-safety-silicosis-wheel-burst-eye-context
+  - gd-220-storage-labeling-context
+source_sections:
+  - guide: GD-220
+    slug: abrasives-manufacturing
+    title: Abrasives Manufacturing
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#natural-materials"
+      - "#grinding-wheels"
+      - "#crushing"
+      - "#safety"
+      - "#mistakes"
+source_invariants:
+  - name: reviewed abrasives boundary remains non-procedural
+    guide: GD-220
+    must_include:
+      - "This is the reviewed answer-card surface for GD-220."
+      - "Use it only for boundary-level abrasive material and equipment inventory"
+      - "silica or metal dust, respiratory, eye, skin, fire, spark, and wheel-failure red flags"
+      - "Do not use this reviewed card for abrasive manufacturing"
+      - "safety certification"
+  - name: dust and respiratory hazard anchors remain present
+    guide: GD-220
+    must_include:
+      - "Silicosis Risk from Dust Inhalation"
+      - "stone dust"
+      - "Wet grinding mandatory"
+      - "Respiratory health"
+  - name: wheel failure hazard anchors remain present
+    guide: GD-220
+    must_include:
+      - "Grinding Wheel Burst Hazards"
+      - "Grinding wheels spinning too fast"
+      - "Never exceed rated speed"
+      - "Inspect before use"
+  - name: label and storage anchors remain present
+    guide: GD-220
+    must_include:
+      - "Label and track"
+      - "material, and production date"
+      - "Storing Graded Abrasives"
+      - "Labels"
+  - name: procedural source content is not reviewed card authority
+    guide: GD-220
+    must_include:
+      - "Making Sandpaper & Coated Abrasives"
+      - "Bonded Abrasive Wheel Construction"
+      - "Dressing Wheels"
+      - "Crushing & Grading Abrasives"
+runtime_citation_policy: reviewed_source_family
+notes: >
+  Reviewed closure for GD-220 as a boundary-only abrasive material and
+  equipment inventory, label/source/storage/access log, dust/exposure,
+  fire/spark, wheel-failure red-flag, stop-use/isolate, and qualified-owner
+  handoff card. It deliberately excludes abrasive manufacturing, grinding or
+  bonding recipes, wheel fabrication, machine operation, speed ratings,
+  dressing/truing, compatibility testing, PPE guarantees, legal/code claims,
+  return-to-service approval, and safety certification. READY_FOR_PARENT_CLOSE.

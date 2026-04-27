@@ -31,6 +31,45 @@ related:
   - sterilization-methods
   - wood-distillation
   - wound-care-chronic
+aliases:
+  - alkali caustic safety boundary
+  - caustic container inventory
+  - lye label concentration uncertainty
+  - alkali exposure red flags
+  - caustic stop use handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level alkali and caustic container inventory: label, concentration, and source uncertainty; skin, eye, respiratory, spill, and reactive-mixing red flags; isolate, avoid-mixing, stop-use logs; and emergency, hazmat, poison-control, or qualified chemistry-owner handoff.
+  - Keep answers focused on safe observation and routing: container identity, exact label text, printed concentration if already visible, source or acquisition uncertainty, container condition, storage or mixing uncertainty, people exposed, symptoms, spill or fume reports, access controls, stop-use status, and who has already been contacted.
+  - Route alkali production, leaching, causticizing, concentration, neutralization, soap or chemical recipes, dosing, cleanup chemistry, transfer procedures, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-safety for chemical labels, storage compatibility, PPE caution, and prevention once exposure or active spill urgency is separated.
+  - chemical-industrial-accident-response for active spills, fumes, multi-person exposure, evacuation/shelter/decontamination triage, and hazmat or incident-command handoff.
+  - toxicology-poisoning-response for symptomatic ingestion, inhalation, eye/skin injury, or poison-control escalation.
+  - soap-candles for non-reviewed soap context only after caustic inventory, label uncertainty, exposure, and recipe/dosing boundaries are separated.
+citations_required: true
+citation_policy: >
+  Cite GD-178 and its reviewed answer card only for boundary-level alkali and
+  caustic container inventory, label/concentration/source uncertainty, skin,
+  eye, respiratory, spill, and reactive-mixing red flags, isolate/avoid-mixing
+  and stop-use logs, and emergency, hazmat, poison-control, or qualified
+  chemistry-owner handoff. Do not use it for alkali production, leaching,
+  causticizing, concentration, neutralization, soap or chemical recipes,
+  dosing, cleanup chemistry, transfer procedures, legal/code claims, or safety
+  certification.
+applicability: >
+  Use for non-procedural alkali and caustic safety boundaries: container
+  inventory, product labels, printed concentrations, source uncertainty,
+  damaged or unlabeled containers, possible exposure symptoms, spill or fume
+  red flags, reactive-mixing uncertainty, isolate/avoid-mixing/stop-use logs,
+  and handoff to emergency, hazmat, poison-control, or qualified chemistry
+  owners. Do not use for making, concentrating, neutralizing, transferring, or
+  using alkalis; soap or chemical recipes; cleanup chemistry; legal/code
+  determinations; or declaring any container, product, exposure, spill, or
+  workspace safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: alkali_production_caustic_safety_boundary
+answer_card:
+  - alkali_production_caustic_safety_boundary
 read_time: 25
 word_count: 5676
 last_updated: '2026-02-16'
@@ -46,6 +85,22 @@ custom_css: 'nav{display:flex;justify-content:center;gap:1.5rem;padding:1rem;bac
 :::danger
 **SEVERE CHEMICAL HAZARD:** Caustic soda (sodium hydroxide/lye) and caustic potash (potassium hydroxide) cause liquefactive necrosis — they dissolve living tissue on contact, causing deep, progressive burns that are far more destructive than acid burns. Always wear chemical-resistant gloves, full face shield, and chemical-resistant apron. Source commercial products when available rather than attempting synthesis.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Alkali and Caustic Safety Handoff
+
+This is the reviewed answer-card surface for GD-178. Use it only for boundary-level alkali and caustic container inventory: label, concentration, and source uncertainty; skin, eye, respiratory, spill, and reactive-mixing red flags; isolate, avoid-mixing, stop-use logs; and emergency, hazmat, poison-control, or qualified chemistry-owner handoff.
+
+Start with safe observation and routing rather than production or handling instructions: container or product identity, exact label text, printed concentration if visible without handling, source or acquisition uncertainty, container condition, leak, crusting, pressure, heat, odor, fumes, storage or mixing uncertainty, incompatible-material concern, exposed people, symptoms, spill location, access controls, whether use has stopped, and who has already been contacted.
+
+Stop-use and handoff triggers include unlabeled, unknown, damaged, leaking, pressurized, heated, or crusted caustic containers; any splash, ingestion, inhalation, eye pain, skin pain, burns, coughing, throat or chest symptoms, breathing trouble, vomiting, confusion, collapse, or multiple exposed people; spills, fumes, enclosed-space concerns, drains or waterways at risk, incompatible or reactive mixing uncertainty, or pressure to keep using, transfer, neutralize, clean up, certify, or declare the material safe.
+
+For uncertain alkali or caustic containers, keep people away from the container or spill area, prevent further use or mixing, preserve labels and logs from a safe distance, and hand off to emergency services, hazmat, poison control, site safety, or a qualified chemistry owner. Do not smell-test, taste-test, mix, dilute, neutralize, transfer, scrape, relabel, or perform cleanup chemistry from this reviewed card.
+
+Do not provide alkali production, leaching, causticizing, concentration, neutralization, soap or chemical recipes, dosing, cleanup chemistry, transfer procedures, legal or code claims, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="importance">
 

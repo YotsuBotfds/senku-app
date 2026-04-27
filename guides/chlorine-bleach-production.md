@@ -9,7 +9,7 @@ tags:
   - water-treatment
   - disinfection
 icon: 🧴
-description: Chloralkali electrolysis, sodium/calcium hypochlorite, water treatment dosing, and safety protocols for survival scenarios.
+description: Safety-reviewed boundary for chlorine and bleach container or exposure inventory, label and concentration uncertainty, gas-release and mixed-cleaner red flags, stop-use logs, and emergency, hazmat, poison-control, or public-health handoff.
 related:
   - chemical-safety
   - electrical-wiring
@@ -22,6 +22,44 @@ related:
   - water-purification
   - wound-care-chronic
   - wound-hygiene-infection-prevention
+aliases:
+  - chlorine bleach safety boundary
+  - bleach container inventory
+  - unknown bleach concentration handoff
+  - mixed cleaner chlorine gas red flags
+  - chlorine exposure poison control
+  - do not mix bleach stop use log
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level chlorine and bleach container or exposure inventory: product label, concentration, source and age uncertainty, mixed-cleaner or gas-release concern, skin, eye, respiratory, ingestion, or multi-person red flags, evacuate or fresh-air prompts, avoid-mixing and stop-use logs, and emergency, hazmat, poison-control, public-health, site-safety, or responsible-owner handoff.
+  - Keep answers focused on safe observation and records from outside the hazard: exact label text, container count and condition, concentration if printed, source and date, whether contents are unknown, transferred, mixed, degraded, leaking, heated, or near acids, ammonia, drains, food, water, children, animals, or living areas, symptoms or exposed people, isolation status, stop-use and do-not-mix labels, and who owns the next decision.
+  - Route chlorine or bleach production, electrolysis, concentration or dilution recipes, water-treatment dosing, neutralization, gas handling, cleanup chemistry, PPE efficacy guarantees, legal or code claims, safe-to-use statements, and safety certification away from this card.
+routing_support:
+  - chemical-safety for household cleaner compatibility, unknown chemical isolation, bleach storage labels, and prevention once the scene is safe.
+  - chemical-industrial-accident-response for active gas release, visible cloud, evacuation, shelter, hazmat incident command, or multi-person exposure.
+  - toxicology-poisoning-response for skin, eye, inhalation, ingestion, respiratory symptoms, poison-control escalation, or medical handoff.
+  - water-purification for non-emergency water treatment questions that require tested-source dosing guidance outside this reviewed card.
+citations_required: true
+citation_policy: >
+  Cite GD-180 and its reviewed answer card only for boundary-level chlorine and
+  bleach container or exposure inventory, label/concentration/source
+  uncertainty, mixed-cleaner and gas-release red flags, skin/eye/respiratory
+  exposure red flags, evacuate or fresh-air prompts, avoid-mixing and stop-use
+  logs, and emergency, hazmat, poison-control, public-health, site-safety, or
+  responsible-owner handoff. Do not use it for chlorine or bleach production,
+  electrolysis, concentration or dilution recipes, water-treatment dosing,
+  neutralization, gas handling, cleanup chemistry, PPE efficacy guarantees,
+  legal/code claims, safe-use declarations, or safety certification.
+applicability: >
+  Use for non-procedural chlorine and bleach safety triage: container
+  inventory, label and concentration preservation, source/age uncertainty,
+  gas-release or mixed-cleaner recognition, exposure red flags, isolation,
+  stop-use and do-not-mix records, fresh-air or evacuation prompts, and owner
+  handoff. Do not use to make, concentrate, dilute, dose, neutralize, handle gas,
+  clean up chemically, certify, or approve use.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: chlorine_bleach_container_exposure_boundary
+answer_card:
+  - chlorine_bleach_container_exposure_boundary
 read_time: 12
 word_count: 5750
 last_updated: '2026-02-19'
@@ -36,6 +74,20 @@ liability_level: critical
 :::warning
 **Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety.html) in full. Failure to follow proper safety protocols can result in severe injury or death.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Chlorine and Bleach Container or Exposure Handoff
+
+This is the reviewed answer-card surface for GD-180. Use it only for non-procedural chlorine and bleach safety boundaries: container or exposure inventory, label, concentration, source, and age uncertainty, gas-release or mixed-cleaner red flags, skin, eye, respiratory, ingestion, or multi-person exposure red flags, evacuate or fresh-air prompts, avoid-mixing and stop-use logs, and emergency, hazmat, poison-control, public-health, site-safety, or responsible-owner handoff.
+
+Start with safe observation and records rather than production, testing, dilution, dosing, cleanup chemistry, or gas handling: exact product label and hazard symbols, printed concentration if present, container count, container condition, source, date found or opened if known, whether contents are unknown, transferred, mixed, degraded, leaking, heated, pressurized, or stored near acids, ammonia, other cleaners, drains, food, drinking water, children, animals, living areas, or routine traffic, symptoms or exposed people, odor or vapor noticed incidentally, isolation status, stop-use and do-not-mix labels already applied, and who has already been notified.
+
+Stop routine inventory and prioritize evacuation, fresh air, keeping others out, and emergency, hazmat, poison-control, public-health, site-safety, or responsible-owner handoff when there is suspected chlorine gas, mixed bleach with acid or ammonia, breathing trouble, coughing, wheezing, chest tightness, throat burning, eye pain, skin burning, ingestion concern, confusion, collapse, multiple exposed people, visible vapor, strong incidental odor, a leaking or damaged container, an unknown or transferred product, or pressure to keep using, mix, dilute, neutralize, clean up, handle gas, treat water, or declare the situation safe before qualified review.
+
+Do not provide chlorine or bleach production, electrolysis, concentration or dilution recipes, water-treatment dosing, neutralization, gas handling, cleanup chemistry, PPE efficacy guarantees, legal or code claims, safe-to-use statements, safe-to-enter statements, public-health clearance, return-to-service decisions, or safety certification from this reviewed card.
+
+</section>
 
 <section id="overview">
 

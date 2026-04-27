@@ -14,6 +14,43 @@ related:
   - sulfuric-acid
   - agriculture
   - pressure-vessels
+aliases:
+  - nitrogen fertility planning intake
+  - fertilizer label uncertainty handoff
+  - biological nitrogen alternatives
+  - fertilizer runoff water child pet exposure red flags
+  - soil fertility extension handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level nitrogen and fertility planning intake, safer biological alternatives, fertilizer or chemical label/source uncertainty, runoff/water/child/pet exposure red flags, recordkeeping, and agricultural-extension, soil, public-health, or environmental handoff.
+  - Keep answers focused on safe observation and records: crop or site goal, soil-test status, current amendments, product label text, source uncertainty, storage/access status, runoff or water proximity, children or pets exposed, and who has been contacted.
+  - Route synthetic ammonia, nitrate extraction, chemical fertilizer recipes, application rates, dosing calculations, explosive pathways, lab production, legal claims, and safety certification away from this card.
+routing_support:
+  - soil-fertility-decline-prevention, cover-crops-green-manures, composting-systems, and agriculture for agronomic planning context after rate/dosing requests are separated.
+  - chemical-safety for chemical label, storage, compatibility, or source-identity uncertainty once active exposure concerns are separated.
+  - toxicology-poisoning-response for possible ingestion, inhalation, skin/eye contact, or symptomatic child, pet, livestock, or worker exposure.
+  - water-chemistry-treatment and public-health-disease-surveillance for water contamination, well, stream, pond, or community exposure concerns.
+citations_required: true
+citation_policy: >
+  Cite GD-168 and its reviewed answer card only for nitrogen/fertility planning
+  intake, safer biological alternatives, fertilizer or chemical label/source
+  uncertainty, runoff/water/child/pet exposure red flags, recordkeeping, and
+  agricultural-extension, soil, public-health, or environmental handoff. Do
+  not use it for synthetic ammonia, nitrate extraction, chemical fertilizer
+  recipes, application rates, dosing calculations, explosive pathways, lab
+  production, legal claims, or safety certification.
+applicability: >
+  Use for boundary-level nitrogen and fertility planning intake, biological
+  alternatives such as legumes, compost, manure, and soil testing, fertilizer
+  label/source uncertainty, runoff or water contamination concerns, child or
+  pet exposure red flags, records for handoff, and routing to agricultural
+  extension, soil-testing, public-health, environmental, poison-control, or
+  qualified agricultural owners. Do not use for ammonia synthesis, nitrate
+  extraction, fertilizer recipes, application rates, dosing calculations,
+  explosive pathways, lab production, legal claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: nitrogen_fertility_planning_boundary
+answer_card:
+  - nitrogen_fertility_planning_boundary
 read_time: 12
 word_count: 3617
 last_updated: '2026-02-16'
@@ -21,6 +58,20 @@ version: '1.1'
 custom_css: .theme-toggle{background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 15px;border-radius:5px;cursor:pointer;transition:all .3s ease}.meta-label{color:var(--muted);font-size:.85em;text-transform:uppercase;margin-bottom:5px}.mark-read-btn{background:var(--accent2);color:var(--bg);border:0;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:bold;transition:all .3s ease}.mark-read-btn:hover,.mark-read-btn.read{background:var(--accent)}.toc h3{color:var(--accent);margin-bottom:15px}.toc a{color:var(--accent2);text-decoration:none;transition:all .3s ease}.diagram{background:var(--card);padding:20px;border-radius:5px;margin:20px 0;text-align:center;border:1px solid var(--border)}.note-box{background:rgba(83,216,168,0.1);border-left:4px solid var(--accent2);padding:15px;margin:20px 0;border-radius:5px}.note-box strong{color:var(--accent2)}.guide-card{background:var(--card);padding:15px;border-radius:5px;border:1px solid var(--border);transition:all .3s ease}.guide-card:hover{border-color:var(--accent2);transform:translateY(-5px)}.guide-card a{color:var(--accent2);text-decoration:none;font-weight:bold}.guide-card a:hover{color:var(--accent)}#notes-area{background:var(--bg);color:var(--text);padding:10px;border-radius:3px;min-height:100px;border:1px solid var(--border);font-family:'Courier New',monospace;font-size:.9em}.back-to-top.show{display:block}.back-to-top:hover{background:var(--accent2);transform:translateY(-5px)}
 liability_level: high
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Nitrogen Fertility Planning Intake and Handoff
+
+This is the reviewed answer-card surface for GD-168. Use it only for boundary-level nitrogen and fertility planning intake, safer biological alternatives, fertilizer or chemical label/source uncertainty, runoff/water/child/pet exposure red flags, recordkeeping, and agricultural-extension, soil-testing, public-health, environmental, poison-control, or qualified agricultural handoff.
+
+Start with safe observation and records rather than chemical production or rates: crop or site goal, soil-test status, visible deficiency or over-application concern, current amendments, product or container label text, source uncertainty, storage and access status, proximity to wells, streams, ponds, drains, food areas, children, pets, livestock, and who has already been contacted. Safer planning alternatives include legumes, crop rotation, green manures, compost, manure handled under local guidance, purchased labeled amendments, and agricultural-extension or soil-lab advice.
+
+Red flags include unknown or unlabeled fertilizer or chemical material, mixed or damaged containers, spill or runoff toward wells, drinking water, streams, ponds, drains, gardens, food areas, animal areas, or play areas, suspected ingestion, skin/eye contact, inhalation, symptoms in people or animals, children or pets with access to product or runoff, dead fish or distressed animals, and pressure to apply, mix, extract, neutralize, certify, or declare a site safe before qualified review.
+
+Do not provide synthetic ammonia, nitrate extraction, chemical fertilizer recipes, application rates, dosing calculations, explosive pathways, lab production, chemical conversion, neutralization instructions, legal claims, safe-to-use or safe-to-drink declarations, environmental clearance, or safety certification from this reviewed card.
+
+</section>
 
 <section id="importance">
 

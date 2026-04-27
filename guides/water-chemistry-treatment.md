@@ -20,6 +20,45 @@ related:
   - sterilization-ecosystem
   - sterilization-methods
   - water-purification
+aliases:
+  - water treatment chemical safety boundary
+  - water treatment inventory intake
+  - water treatment chemical label uncertainty
+  - water treatment exposure red flags
+  - water stop use boil water not enough
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level water treatment chemical inventory and intake: source and intended-use context, product or container labels, unknown contamination uncertainty, chemical exposure red flags, vulnerable users, stop-use or boil-water-not-enough uncertainty, and water-quality, public-health, poison-control, or qualified treatment-operator handoff.
+  - Keep answers focused on safe observation and routing: source type, intended use, visible contamination, product identity, label text, container condition, mixing or storage uncertainty, exposed people or animals, symptoms, vulnerable users, and who has already been contacted.
+  - Route treatment dosing, chemical recipes, pH/ORP/chlorine calculations, purification guarantees, potability certification, detailed test interpretation, legal/code claims, and safety certification away from this card.
+routing_support:
+  - water-purification for reviewed drinking-water treatment planning only after contamination category, source risk, and safety boundary concerns are separated.
+  - water-testing-quality-assessment for source assessment and uncertainty/handoff around test results, not treatment certification.
+  - chemical-safety for chemical labels, storage compatibility, PPE caution, and prevention once exposure or water-use urgency is separated.
+  - chemical-industrial-accident-response for active spills, fumes, multi-person exposure, evacuation/shelter/decontamination triage, and hazmat or incident-command handoff.
+  - toxicology-poisoning-response for symptomatic exposure, ingestion, inhalation, eye/skin injury, or poison-control escalation.
+citations_required: true
+citation_policy: >
+  Cite GD-423 and its reviewed answer card only for boundary-level water
+  treatment chemical inventory and intake, source and intended-use context,
+  labels, contamination uncertainty, exposure red flags, vulnerable users,
+  stop-use or boil-water-not-enough uncertainty, and water-quality,
+  public-health, poison-control, or qualified treatment-operator handoff. Do
+  not use it for treatment dosing, chemical recipes, pH/ORP/chlorine
+  calculations, purification guarantees, potability certification, detailed
+  test interpretation, legal/code claims, or safety certification.
+applicability: >
+  Use for a non-procedural water treatment chemical safety boundary: inventory
+  and intake, source/use context, product labels, unknown contamination or
+  mixed-chemical uncertainty, exposure symptoms, vulnerable users, stop-use or
+  boil-water-not-enough decisions, and handoff to water-quality, public-health,
+  poison-control, emergency, hazmat, or qualified treatment owners. Do not use
+  for dosing, treatment recipes, calculations, purification guarantees,
+  potability certification, legal/code determinations, or declaring water,
+  containers, treatment chemicals, or treatment systems safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: water_chemistry_treatment_safety_boundary
+answer_card:
+  - water_chemistry_treatment_safety_boundary
 read_time: 16
 word_count: 3220
 last_updated: '2026-02-20'
@@ -33,6 +72,22 @@ liability_level: high
 Water quality determines health, and water treatment removes pathogens, suspended solids, and dissolved contaminants. This guide covers the chemistry and field methods for treating raw water in austere environments.
 
 ![Water chemistry and treatment reference diagram](../assets/svgs/water-chemistry-treatment-1.svg)
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Water Treatment Chemical Safety and Handoff
+
+This is the reviewed answer-card surface for GD-423. Use it only for boundary-level water treatment chemical inventory and intake: source and intended-use context, product or container labels, unknown contamination uncertainty, chemical exposure red flags, vulnerable users, stop-use or boil-water-not-enough uncertainty, and water-quality, public-health, poison-control, emergency, hazmat, or qualified treatment-operator handoff.
+
+Start with safe observation and routing rather than treatment instructions: water source type, intended use, visible contamination, recent flood, sewage, industrial, agricultural, fuel, solvent, pesticide, algae, or unknown runoff concern, treatment chemical or container identity, exact label text, concentration if already printed on the label, container condition, storage or mixing uncertainty, odors or fumes, people or animals exposed, symptoms, vulnerable users, and who has already been contacted.
+
+Stop-use and handoff triggers include unknown or unlabeled treatment chemicals, damaged or leaking containers, mixed products, strong chemical odor, fumes, splash or ingestion exposure, skin or eye burns, coughing, breathing trouble, vomiting, confusion, collapse, multiple exposed people, infants, pregnant people, immunocompromised users, elder users, medically fragile users, uncertainty about sewage, chemical, fuel, pesticide, heavy-metal, harmful-algae, or industrial contamination, and any pressure to certify water as potable or safe.
+
+Boiling is not enough when chemical contamination, fuel, solvent, pesticide, heavy metals, harmful-algae toxins, unknown runoff, or treatment-chemical overdose/mixture is plausible. In those cases, keep the water out of drinking, cooking, infant formula, wound care, medication preparation, animal watering, and other consumption pathways until public-health, water-quality, poison-control, emergency, hazmat, or qualified treatment owners give instructions.
+
+Do not provide treatment dosing, chemical recipes, pH/ORP/chlorine calculations, purification guarantees, potability certification, test-result interpretation beyond uncertainty and handoff, legal or code claims, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="water-quality-basics">
 
@@ -354,4 +409,3 @@ For turbid, untreated surface water:
 **Result:** Water safe for drinking, with <1 NTU turbidity, <1 mg/L iron, 0 pathogens (theoretically), and 0.5–1.0 mg/L chlorine residual.
 
 </section>
-

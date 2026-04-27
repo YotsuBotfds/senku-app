@@ -14,6 +14,43 @@ related:
   - archival-records
   - papermaking
   - dyeing-pigments
+aliases:
+  - ink pigment material inventory
+  - pigment label source heavy metal red flags
+  - solvent powder dust exposure handoff
+  - child food skin contact pigment uncertainty
+  - ink pigment stop use poison control handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for ink and pigment material-inventory safety boundaries: label and source review, heavy-metal pigment concerns, solvent concerns, powder and dust exposure red flags, skin, eye, or respiratory exposure, child/food/skin-contact use uncertainty, isolate or stop-use logs, and poison-control, public-health, qualified materials, or chemical owner handoff.
+  - Keep reviewed-card answers non-procedural: inventory visible labels and source history, identify exposure routes and symptoms, isolate suspect materials, stop use when identity or use-safety is uncertain, record affected people and products, and hand off to the responsible owner.
+  - Route pigment synthesis, grinding instructions, solvent recipes, paint or ink formulation, application safety guarantees, testing protocols, cleanup chemistry, disposal legality, legal/code claims, and safety certification away from this reviewed card.
+routing_support:
+  - chemical-safety for household chemical exposure, unknown substances, solvent or cleaner incidents, and poison-control escalation.
+  - toxicology-poisoning-response for symptomatic inhalation, ingestion, eye, skin, or child exposure concerns.
+  - chemistry-lab-protocols-safety for laboratory activity, SDS, unknown lab chemicals, or qualified chemistry safety owner handoff.
+  - industrial-waste-recycling for waste-stream inventory and qualified waste-owner handoff without disposal legality claims.
+citations_required: true
+citation_policy: >
+  Cite GD-184 and its reviewed answer card only for ink and pigment material
+  inventory, label/source review, heavy-metal or solvent concern screening,
+  powder and dust exposure red flags, skin/eye/respiratory exposure,
+  child/food/skin-contact use uncertainty, isolate or stop-use logs, and
+  poison-control, public-health, qualified materials, or chemical owner
+  handoff. Do not use it for pigment synthesis, grinding, solvent recipes,
+  paint/ink formulation, application safety guarantees, testing, cleanup
+  chemistry, disposal legality, legal/code claims, or safety certification.
+applicability: >
+  Boundary-only ink and pigment material safety intake for label and source
+  inventory, heavy-metal pigment concerns, solvent concerns, powder or dust
+  exposure, skin, eye, or respiratory exposure, uncertain child, food, or
+  skin-contact uses, isolate or stop-use logs, and poison-control,
+  public-health, qualified materials, or chemical owner handoff. Do not use for
+  synthesis, grinding, solvent recipes, formulation, testing, cleanup
+  chemistry, disposal legality, legal/code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: ink_pigment_material_safety_boundary
+answer_card:
+  - ink_pigment_material_safety_boundary
 read_time: 6
 word_count: 6250
 last_updated: '2026-02-15'
@@ -27,6 +64,20 @@ liability_level: critical
 ---
 
 This comprehensive guide covers traditional ink and pigment chemistry for creating archival-quality writing and printing inks. Content covers five core areas: (1) historical ink development and permanence evidence, (2) pigment chemistry and sourcing (natural vs synthetic, toxicity considerations), (3) production methods from raw materials (carbon black from fire, natural plant dye extraction, iron oxide processing), (4) formulation science (ratios, binders, testing protocols), and (5) scaling from household to community to regional production with knowledge preservation strategy.
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Ink and Pigment Material Safety Handoff
+
+This is the reviewed answer-card surface for GD-184. Use it only for ink and pigment material-inventory safety boundaries: label and source review, heavy-metal pigment concerns, solvent concerns, powder and dust exposure red flags, skin, eye, or respiratory exposure, child, food, or skin-contact use uncertainty, isolate or stop-use logs, and poison-control, public-health, qualified materials, or chemical owner handoff.
+
+Start with safe observation and routing rather than preparation instructions: exact label text, known or unknown pigment or ink identity, source and date history, container condition, powder or dust release, solvent odor or vapor, heavy-metal warning terms such as lead, cadmium, mercury, chrome, or cobalt, intended use on food-contact, toys, children's items, cosmetics, skin-contact goods, or living spaces, exposed people, symptoms, access control, and who has already been notified. If identity, source, or intended use is uncertain, keep the material out of service, isolate it from children, food, skin-contact items, and work areas, and record the uncertainty for handoff.
+
+Stop-use, isolate, and handoff triggers include unlabeled or salvaged pigments, missing source records, visible dust clouds, grinding or dry powder handling concerns, solvent odor or vapor, heavy-metal labels or legacy artist pigments, skin or eye contact, coughing, wheezing, chest tightness, dizziness, headache, nausea, ingestion concern, child access, use on dishes, toys, body paint, cosmetics, textiles worn against skin, or requests to declare a pigment, ink, coating, cleanup, disposal, or finished object safe.
+
+Do not use this reviewed card for pigment synthesis, grinding instructions, solvent recipes, paint or ink formulation, application safety guarantees, testing protocols, cleanup chemistry, disposal legality, legal or code claims, safe-to-use statements, food-safe or skin-safe assurances, child-safe assurances, or safety certification. If a prompt asks for those, answer only with the relevant inventory, exposure red flags, isolate or stop-use boundary, symptom log, and qualified handoff.
+
+</section>
 
 **Survival Context:** In post-collapse scenarios where commercial ink supply ceases, knowledge of traditional ink production becomes critical for documentation preservation. Modern inks fade within 50-100 years; medieval iron gall inks remain legible 700+ years later (proof of permanence). Learning traditional ink-making establishes indefinite-lifetime documentation capability using renewable materials (plant dyes, charcoal, iron, tree resins). This knowledge can be taught, documented, and preserved for future generations.
 
@@ -570,4 +621,3 @@ Minimum for 50mL batches: mortar/pestle, measuring spoon, glass bottles, filter 
 :::
 
 </section>
-

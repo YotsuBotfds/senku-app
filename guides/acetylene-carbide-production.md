@@ -7,17 +7,59 @@ difficulty: advanced
 tags:
   - essential
 icon: 🔥
-description: Calcium carbide synthesis, portable acetylene lamps, welding/cutting torch setup. EXTREME RISK — comprehensive safety protocols.
+description: Safety-reviewed acetylene and calcium carbide boundary for container or site inventory, water-reactive and flammable gas red flags, stop-use logs, and emergency or qualified owner handoff.
 related:
   - batteries
   - battery-restoration
+  - chemical-safety
+  - fire-safety
   - solar-technology
   - small-engines
   - electrical-generation
+aliases:
+  - acetylene carbide safety boundary
+  - calcium carbide container inventory handoff
+  - acetylene cylinder site inventory red flags
+  - water reactive flammable gas pressure fire explosion asphyxiation
+  - isolate dry avoid water avoid ignition stop use logs
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural acetylene and calcium carbide safety boundaries: container or site inventory, label/source/unknown-material flags, water-reactive, flammable gas, pressure, fire, explosion, and asphyxiation red flags, isolate/dry/avoid-water/avoid-ignition/stop-use logs, and fire-service, hazmat, poison-control, qualified gas supplier, qualified chemical safety owner, or responsible site owner handoff.
+  - Keep answers focused on safe observation and routing: container or site identity, label text, source, location, unknown or mixed-material status, moisture or water exposure, odor or gas report, pressure or heat concern, ignition sources, confined-space or low-area accumulation, symptoms, access controls, stop-use log, and who has been notified.
+  - Route calcium carbide or acetylene production, gas generation, welding torch setup, pressure handling, purification, storage design, leak testing, transfer procedures, cleanup chemistry, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-industrial-accident-response for active release, fire, explosion, evacuation, hazmat, or incident-command handoff.
+  - toxicology-poisoning-response for inhalation, ingestion, skin/eye exposure, asphyxiation concern, poison-control escalation, or medical handoff.
+  - chemical-safety for labeling, segregation, access control, and prevention once the scene is safe.
+  - fire-safety for ignition isolation and fire-service handoff without firefighting tactics or return-to-service claims.
+citations_required: true
+citation_policy: >
+  Cite GD-185 and its reviewed answer card only for acetylene and calcium
+  carbide boundary intake: container or site inventory, label/source/
+  unknown-material flags, water-reactive, flammable gas, pressure, fire,
+  explosion, and asphyxiation red flags, isolate/dry/avoid-water/
+  avoid-ignition/stop-use logs, and fire-service, hazmat, poison-control,
+  qualified gas supplier, qualified chemical safety owner, or responsible site
+  owner handoff. Do not use it for calcium carbide or acetylene production, gas
+  generation, welding torch setup, pressure handling, purification, storage
+  design, leak testing, transfer procedures, cleanup chemistry, legal/code
+  claims, or safety certification.
+applicability: >
+  Use for non-procedural acetylene and calcium carbide safety boundary
+  questions: what to record, when to stop use, how to recognize water-reactive,
+  flammable gas, pressure, fire, explosion, and asphyxiation red flags, when to
+  isolate, keep dry, avoid water, avoid ignition, and who should own emergency
+  or qualified gas/chemical review. Do not use for building, operating,
+  generating, pressurizing, purifying, transferring, leak testing, cleaning up,
+  certifying, or declaring any acetylene, carbide, cylinder, generator, torch,
+  storage setup, or process area safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: acetylene_carbide_container_site_boundary
+answer_card:
+  - acetylene_carbide_container_site_boundary
 read_time: 5
 word_count: 7987
 last_updated: '2026-02-16'
-version: '1.0'
+version: '1.1'
 liability_level: critical
 custom_css: 'body.dark-mode{--bg:#0d0d1a;--surface:#0f1419;--card:#0a1929;--accent:#ff6b7a;--accent2:#4ade80;--text:#f0f0f0;--muted:#888;--border:#1a1a2a}.theme-toggle:hover{background:var(--accent2);color:var(--bg)}.main-wrapper{display:grid;grid-template-columns:280px 1fr;gap:30px}.sidebar{position:sticky;top:20px;height:fit-content;background:var(--surface);padding:20px;border-radius:8px;border-left:4px solid var(--accent2);box-shadow:0 2px 4px rgba(0,0,0,0.2)}.sidebar h2{color:var(--accent2);font-size:1.1em;margin-bottom:15px;text-transform:uppercase;letter-spacing:1px}.sidebar ul{list-style:none}.sidebar li{margin-bottom:8px}.sidebar a{color:var(--text);text-decoration:none;padding:8px 12px;display:block;border-radius:3px;transition:all .3s ease;border-left:3px solid transparent}.sidebar a:hover{background:var(--card);border-left-color:var(--accent);padding-left:15px}.content{display:flex;flex-direction:column;gap:40px}section h2{color:var(--accent);font-size:2em;margin-bottom:20px;display:flex;align-items:center;gap:10px}section h3{color:var(--accent2);font-size:1.4em;margin-top:25px;margin-bottom:15px}section p{margin-bottom:15px;color:var(--text)}section ul,section ol{margin-left:30px;margin-bottom:20px}section .risk-matrix{background:var(--card);border:2px solid var(--accent);border-radius:4px;padding:20px;margin:25px 0}.risk-matrix h4{color:var(--accent);margin-top:0}.risk-matrix-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}.risk-item{background:var(--surface);padding:15px;border-radius:3px;border-left:3px solid var(--accent)}.risk-item strong{color:var(--accent)}.diagram{background:var(--card);border:2px solid var(--accent2);border-radius:4px;padding:30px;margin:30px 0;text-align:center;overflow-x:auto}.diagram h4{color:var(--accent2);margin-top:0;margin-bottom:20px}.diagram table thead{background:var(--surface)}table th{padding:15px;text-align:left;color:var(--accent2);font-weight:bold;border-bottom:2px solid var(--accent2)}table td{padding:12px 15px;border-bottom:1px solid var(--border)}.chemistry-box{background:var(--card);border:2px solid var(--accent);border-radius:4px;padding:20px;margin:25px 0;font-family:''Courier New'',monospace}.chemistry-box h4{color:var(--accent);margin-top:0}.field-notes{background:var(--surface);border-left:5px solid var(--muted);border-radius:4px;padding:20px;margin:25px 0;font-style:italic;color:var(--muted)}.field-notes::before{content:"📔 Field Note: ";color:var(--accent2);font-style:normal;font-weight:bold}.notes-section{background:var(--surface);border:2px dashed var(--border);border-radius:4px;padding:20px;margin-top:20px}.notes-section h4{color:var(--accent2);margin-top:0;margin-bottom:15px}.notes-input{width:100%;min-height:100px;padding:12px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:4px;font-family:Georgia,''Times New Roman'',serif;resize:vertical}.notes-button{display:inline-block;margin-top:10px;padding:10px 20px;background:var(--accent2);color:var(--bg);border:0;border-radius:4px;cursor:pointer;font-weight:bold;transition:all .3s ease}.notes-button:hover{background:var(--accent);color:var(--text)}.safety-highlight{background:rgba(220,20,60,0.2);padding:15px;border-radius:4px;color:var(--accent);font-weight:bold;margin:15px 0}.equipment-list{background:var(--card);padding:20px;border-radius:4px;margin:20px 0;border-left:5px solid var(--accent2)}.equipment-list ul{columns:2;column-gap:30px}'
 ---
@@ -29,6 +71,20 @@ custom_css: 'body.dark-mode{--bg:#0d0d1a;--surface:#0f1419;--card:#0a1929;--acce
 :::warning
 **Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety.html) in full. Failure to follow proper safety protocols can result in severe injury or death.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Acetylene and Carbide Safety Handoff
+
+This is the reviewed answer-card surface for GD-185. Use it only for non-procedural acetylene and calcium carbide safety boundaries: container or site inventory, label, source, and unknown-material flags, water-reactive, flammable gas, pressure, fire, explosion, and asphyxiation red flags, isolate, keep dry, avoid water, avoid ignition, stop-use logs, and fire-service, hazmat, poison-control, qualified gas supplier, qualified chemical safety owner, or responsible site owner handoff.
+
+Start with safe observation and routing rather than production, gas generation, welding setup, pressure handling, purification, storage design, leak testing, transfer, or cleanup chemistry: container or site identity, label text, source if known, storage or process-area location, whether contents are unknown, mixed, damaged, wet, or unlabeled, visible moisture or water exposure, gas odor or release report, pressure, heat, fire, sparks, static, open flame, confined-space or low-area accumulation, exposed people and symptoms, access status, stop-use or isolation log, and who has already been notified.
+
+Stop-use, isolate, keep dry, avoid-water, avoid-ignition, and handoff triggers include any wet or water-exposed calcium carbide, unlabeled or unknown carbide-like material, acetylene odor or suspected release, headache, dizziness, breathing symptoms, confusion, collapse, fire, explosion, nearby ignition sources, damaged, leaking, heated, pressurized, or unknown cylinders or containers, poor ventilation, confined-space or low-area gas accumulation, missing labels or logs, or pressure to generate gas, handle pressure, test leaks, transfer, purify, clean up, restart, certify, or declare the area safe before qualified review.
+
+Do not provide calcium carbide or acetylene production, gas generation, welding torch setup, pressure handling, purification, storage design, leak testing, transfer procedures, cleanup chemistry, legal or code claims, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="overview">
 

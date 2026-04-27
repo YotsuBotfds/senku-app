@@ -16,6 +16,45 @@ related:
   - glue-adhesives
   - soap-candles
   - solvents-distillation
+aliases:
+  - petroleum fuel inventory safety boundary
+  - fuel container label source unknown fraction flags
+  - flammable vapor toxic exposure fire explosion spill red flags
+  - petroleum stop use isolate ventilate avoid ignition handoff
+  - fuel owner hazmat poison control fire service handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural petroleum or fuel container and site-inventory safety boundaries: label/source/unknown fraction flags, flammable vapor, toxic exposure, fire, explosion, spill red flags, isolate/ventilate/avoid-ignition/stop-use logs, and fire-service, hazmat, poison-control, environmental, or qualified fuel-owner handoff.
+  - Keep answers focused on safe observation from outside the hazard area: container or site location, label text, source history, unknown fraction or mixed-fuel uncertainty, odor or vapor report, visible leak or spill, fire/heat/ignition concerns, exposed people and symptoms, access controls, stop-use status, logs, and who owns the decision.
+  - Route refining, distillation, cracking, fractionation, blending, testing, transfer procedures, engine-use claims, cleanup chemistry, disposal legality, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-industrial-accident-response for active releases, fire/explosion concern, evacuation or isolation, hazmat, environmental, or incident-command handoff.
+  - toxicology-poisoning-response for symptomatic petroleum vapor, solvent, fuel, or hydrocarbon exposure and poison-control or medical handoff.
+  - chemical-safety for general labeling, compatibility, storage prevention, and household chemical safety after the scene is safe.
+  - solvents-distillation only for non-reviewed background routing, not petroleum refining instructions from this reviewed card.
+citations_required: true
+citation_policy: >
+  Cite GD-169 and its reviewed answer card only for boundary-level petroleum or
+  fuel container and site-inventory safety intake: label/source/unknown fraction
+  flags, flammable vapor, toxic exposure, fire, explosion, spill red flags,
+  isolate, ventilate from a safe location, avoid ignition, stop-use logs, and
+  fire-service, hazmat, poison-control, environmental, or qualified fuel-owner
+  handoff. Do not use it for refining, distillation, cracking, fractionation,
+  blending, testing, transfer procedures, engine-use claims, cleanup chemistry,
+  disposal legality, legal/code claims, or safety certification.
+applicability: >
+  Use for non-procedural petroleum and fuel safety boundary questions: what to
+  label or log about containers and site inventory, when unknown or mixed
+  fractions should be treated as unsafe, how to recognize flammable vapor,
+  toxic exposure, fire, explosion, and spill red flags, when to isolate,
+  ventilate from a safe location, avoid ignition, stop use, and who should own
+  fire-service, hazmat, poison-control, environmental, or qualified fuel review.
+  Do not use for making, separating, testing, transferring, cleaning up,
+  disposing of, certifying, or declaring any fuel, container, site, or engine use
+  safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: petroleum_refining_fuel_inventory_boundary
+answer_card:
+  - petroleum_refining_fuel_inventory_boundary
 read_time: 22
 last_updated: '2026-02-19'
 version: '1.1'
@@ -30,6 +69,20 @@ custom_css: .theme-toggle{background:var(--card);border:1px solid var(--border);
 :::warning
 **Required Reading:** Before attempting any procedures in this guide, read the [Chemical Safety Guide](chemical-safety) in full.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Petroleum Fuel Inventory Safety and Handoff
+
+This is the reviewed answer-card surface for GD-169. Use it only for non-procedural petroleum or fuel container and site-inventory safety boundaries: label, source, and unknown-fraction flags; flammable vapor, toxic exposure, fire, explosion, and spill red flags; isolate, ventilate from a safe location, avoid ignition, and stop-use logs; and fire-service, hazmat, poison-control, environmental, or qualified fuel-owner handoff.
+
+Start with safe observation and routing rather than refining, testing, transfer, cleanup, disposal, or engine-use advice: container or site location, label text, source history, whether the material is unknown, mixed, degraded, unlabeled, or a suspected fraction, odor or vapor report, visible leaks or spills, stains, damaged containers, heat, fire, sparks, static, nearby ignition sources, access controls, exposed people and symptoms, stop-use status, incident or inventory logs, and who has already been notified.
+
+Stop-use, isolate, avoid-ignition, and handoff triggers include strong fuel or solvent odor, visible vapor, dizziness, headache, nausea, confusion, breathing trouble, eye or skin irritation, multiple exposed people, fire, smoke, heat exposure, explosion, flash, spill, leak, bulging or damaged containers, unknown or contradictory labels, unknown source, mixed or unknown fraction, fuel found in drains, soil, water, enclosed spaces, vehicles, sheds, basements, or low areas, unauthorized access, missing logs, or pressure to refine, separate, blend, test, transfer, use in an engine, clean up, dispose, certify, or declare safe before qualified review.
+
+Do not provide refining, distillation, cracking, fractionation, blending, fuel testing, transfer procedures, engine-use claims, cleanup chemistry, disposal legality, legal or code claims, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="overview">
 
