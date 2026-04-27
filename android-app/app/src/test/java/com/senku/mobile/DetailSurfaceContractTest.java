@@ -114,6 +114,18 @@ public final class DetailSurfaceContractTest {
     }
 
     @Test
+    public void surfaceClassifierMapsGuideAndAnswerStates() {
+        assertEquals(
+            DetailSurfaceContract.Surface.GUIDE_READER,
+            DetailSurfaceContract.classifySurface(false)
+        );
+        assertEquals(
+            DetailSurfaceContract.Surface.ANSWER_DETAIL,
+            DetailSurfaceContract.classifySurface(true)
+        );
+    }
+
+    @Test
     public void stateFactoryDefaultsNullGuideInputsToDirectGuideReader() {
         DetailSurfaceContract.Posture posture =
             DetailSurfaceContract.fromState(false, null, null, false, false, null);

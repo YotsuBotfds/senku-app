@@ -15,6 +15,8 @@ class SearchResultCardHeuristicsTest {
         assertEquals("Keyword match", laneLabelForRetrievalMode("lexical"))
         assertEquals("Related guide", laneLabelForRetrievalMode("guide-focus"))
         assertEquals("Related guide", laneLabelForRetrievalMode("guide"))
+        assertEquals("Best match", laneLabelForRetrievalMode(" HYBRID "))
+        assertEquals("Best match", laneLabelForRetrievalMode("cross-ref"))
     }
 
     @Test

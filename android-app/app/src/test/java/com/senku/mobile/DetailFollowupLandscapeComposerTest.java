@@ -4,6 +4,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.senku.ui.primitives.MetaItem;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public final class DetailFollowupLandscapeComposerTest {
@@ -61,6 +66,22 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void compactDockedComposerUsesCompactHintResource() {
+        assertEquals(
+            R.string.detail_followup_hint_compact,
+            DetailActivity.resolveDockedComposerCompactHintResId(true)
+        );
+    }
+
+    @Test
+    public void dockedComposerKeepsFieldHintAsCompactResourceFallback() {
+        assertEquals(
+            R.string.detail_loop4_followup_hint_compact,
+            DetailActivity.resolveDockedComposerCompactHintResId(false)
+        );
+    }
+
+    @Test
     public void dockedComposerKeepsFullHintOutsideCompactMode() {
         assertEquals(
             "Ask another question without leaving this thread",
@@ -70,5 +91,19 @@ public final class DetailFollowupLandscapeComposerTest {
                 false
             )
         );
+    }
+
+    @Test
+    public void metaStripAppendsFreshnessTokens() {
+        ArrayList<MetaItem> items = new ArrayList<>();
+        DetailActivity.appendMetaStripTokens(
+            items,
+            Arrays.asList("rev 04-27", "", "pack 12", "  hash abc123  ")
+        );
+
+        assertEquals(3, items.size());
+        assertEquals("rev 04-27", items.get(0).getLabel());
+        assertEquals("pack 12", items.get(1).getLabel());
+        assertEquals("hash abc123", items.get(2).getLabel());
     }
 }

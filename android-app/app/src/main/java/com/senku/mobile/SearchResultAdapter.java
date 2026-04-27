@@ -220,7 +220,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         }
         int color = colorForRetrievalMode(normalized);
         accent.setBackgroundColor(color);
-        applyBadgeStyle(badge, humanizeMode(normalized), color);
+        applyBadgeStyle(badge, displayLabelForRetrievalMode(normalized), color);
     }
 
     private void bindLinkedGuideCue(
@@ -639,6 +639,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         return humanize(mode);
     }
 
+    static String displayLabelForRetrievalModeForTest(String mode) {
+        return displayLabelForRetrievalMode(mode);
+    }
+
+    private static String displayLabelForRetrievalMode(String mode) {
+        return laneLabelForRetrievalMode(safe(mode));
+    }
+
     private String humanize(String value) {
         return humanizeStatic(value);
     }
@@ -668,7 +676,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             String[] parts = subtitle.split("\\|");
             String normalizedGuideId = safe(result == null ? null : result.guideId).trim();
             String normalizedSection = cleanDisplayText(result == null ? null : result.sectionHeading, 48);
-            String normalizedRetrieval = humanizeMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
+            String rawRetrievalMode = safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US);
+            String normalizedRetrieval = displayLabelForRetrievalMode(rawRetrievalMode);
+            String legacyRetrieval = humanizeMode(rawRetrievalMode);
             for (String part : parts) {
                 String cleaned = cleanDisplayText(part, 30);
                 if (cleaned.isEmpty()) {
@@ -681,6 +691,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
                     continue;
                 }
                 if (!normalizedRetrieval.isEmpty() && cleaned.equalsIgnoreCase(normalizedRetrieval)) {
+                    continue;
+                }
+                if (!legacyRetrieval.isEmpty() && cleaned.equalsIgnoreCase(legacyRetrieval)) {
                     continue;
                 }
                 fragments.add(cleaned);

@@ -15,4 +15,13 @@ public final class SearchResultAdapterTest {
     public void humanizeContentRoleKeepsUnprefixedValuesReadable() {
         assertEquals("Safety", SearchResultAdapter.humanizeContentRoleForTest("safety", 22));
     }
+
+    @Test
+    public void retrievalModeLabelsUseResultHierarchyLanguage() {
+        assertEquals("Best match", SearchResultAdapter.displayLabelForRetrievalModeForTest("hybrid"));
+        assertEquals("Best match", SearchResultAdapter.displayLabelForRetrievalModeForTest("route-focus"));
+        assertEquals("Concept match", SearchResultAdapter.displayLabelForRetrievalModeForTest("vector"));
+        assertEquals("Keyword match", SearchResultAdapter.displayLabelForRetrievalModeForTest("lexical"));
+        assertEquals("Related guide", SearchResultAdapter.displayLabelForRetrievalModeForTest("guide-focus"));
+    }
 }

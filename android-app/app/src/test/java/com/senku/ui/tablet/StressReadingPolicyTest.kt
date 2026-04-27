@@ -19,6 +19,8 @@ class StressReadingPolicyTest {
         val portraitPolicy = tabletReadingLayoutPolicy(isLandscape = false)
         val landscapePolicy = tabletReadingLayoutPolicy(isLandscape = true)
 
+        assertEquals(tabletLandscapeReadingLayoutPolicy(), portraitPolicy)
+        assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
         assertEquals(240, portraitPolicy.threadRailWidthDp)
         assertEquals(680, portraitPolicy.answerMaxWidthDp)
         assertEquals(240, landscapePolicy.threadRailWidthDp)
@@ -58,6 +60,8 @@ class StressReadingPolicyTest {
             answerReady = true,
         )
 
+        assertEquals(phoneLandscapeStressReadingPolicy(), awaitingAnswerPolicy)
+        assertEquals(phoneLandscapeStressReadingPolicy(), answerReadyPolicy)
         assertTrue(awaitingAnswerPolicy.compactComposer)
         assertTrue(awaitingAnswerPolicy.suppressRetryChrome)
         assertTrue(awaitingAnswerPolicy.suppressSupportSuggestions)
@@ -77,6 +81,7 @@ class StressReadingPolicyTest {
             answerReady = true,
         )
 
+        assertEquals(phonePortraitAnswerFirstStressReadingPolicy(), answerReadyPolicy)
         assertTrue(awaitingAnswerPolicy.compactComposer)
         assertFalse(awaitingAnswerPolicy.suppressRetryChrome)
         assertFalse(awaitingAnswerPolicy.suppressSupportSuggestions)
@@ -88,5 +93,19 @@ class StressReadingPolicyTest {
         assertFalse(answerReadyPolicy.suppressSupportSuggestions)
         assertTrue(answerReadyPolicy.collapseThreadChrome)
         assertTrue(answerReadyPolicy.collapseSourceChrome)
+    }
+
+    @Test
+    fun phonePolicySelectorKeepsCompactComposerAcrossStressPostures() {
+        val policies = listOf(
+            phoneStressReadingPolicy(isLandscape = true, answerReady = false),
+            phoneStressReadingPolicy(isLandscape = true, answerReady = true),
+            phoneStressReadingPolicy(isLandscape = false, answerReady = false),
+            phoneStressReadingPolicy(isLandscape = false, answerReady = true),
+        )
+
+        policies.forEach { policy ->
+            assertTrue(policy.compactComposer)
+        }
     }
 }

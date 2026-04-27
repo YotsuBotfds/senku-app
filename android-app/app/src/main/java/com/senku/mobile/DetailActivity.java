@@ -1782,7 +1782,7 @@ public final class DetailActivity extends AppCompatActivity {
         String retryLabel = followUpRetryButton == null ? getString(R.string.detail_followup_retry) : safe(followUpRetryButton.getText().toString());
         boolean compactFollowUpMode = isCompactFollowUpMode();
         String fullHint = safe(String.valueOf(followUpInput.getHint()));
-        String compactHint = getString(R.string.detail_followup_hint_compact);
+        String compactHint = getString(resolveDockedComposerCompactHintResId(compactFollowUpMode));
         DockedComposerModel model = new DockedComposerModel(
             safe(followUpInput.getText() == null ? null : followUpInput.getText().toString()),
             resolveDockedComposerHint(fullHint, compactHint, compactFollowUpMode),
@@ -1844,6 +1844,12 @@ public final class DetailActivity extends AppCompatActivity {
         }
         String compact = safe(compactHint).trim();
         return compact.isEmpty() ? fallback : compact;
+    }
+
+    static int resolveDockedComposerCompactHintResId(boolean compactFollowUpMode) {
+        return compactFollowUpMode
+            ? R.string.detail_followup_hint_compact
+            : R.string.detail_loop4_followup_hint_compact;
     }
 
     static boolean shouldRequestLandscapeDockedComposerFocus(
@@ -4056,11 +4062,17 @@ public final class DetailActivity extends AppCompatActivity {
             && statusText.getVisibility() == View.VISIBLE
             && progressBar != null
             && progressBar.getVisibility() == View.VISIBLE;
-        if (isCompactPortraitPhoneLayout() && answerMode && collapseHeroAfterStableAnswer && !generatingAnswer) {
+        DetailSurfaceContract.Surface surface = DetailSurfaceContract.classifySurface(answerMode);
+        if (
+            isCompactPortraitPhoneLayout()
+                && surface == DetailSurfaceContract.Surface.ANSWER_DETAIL
+                && collapseHeroAfterStableAnswer
+                && !generatingAnswer
+        ) {
             heroPanel.setVisibility(View.GONE);
             return;
         }
-        boolean showForGuide = !answerMode;
+        boolean showForGuide = surface == DetailSurfaceContract.Surface.GUIDE_READER;
         boolean showForStatus = statusText != null && statusText.getVisibility() == View.VISIBLE;
         boolean showForProgress = progressBar != null && progressBar.getVisibility() == View.VISIBLE;
         heroPanel.setVisibility((showForGuide || showForStatus || showForProgress) ? View.VISIBLE : View.GONE);
@@ -4775,20 +4787,24 @@ public final class DetailActivity extends AppCompatActivity {
                 evidenceTone(),
                 false
             ));
-            for (String token : splitSerialTokens(buildPackFreshnessMeta(true))) {
-                if (!token.isEmpty()) {
-                    items.add(new MetaItem(token, Tone.Default, false));
-                }
-            }
+            appendMetaStripTokens(items, splitSerialTokens(buildPackFreshnessMeta(true)));
         } else {
             items.add(new MetaItem(buildGuideModeChipText(), Tone.Accent, false));
-            for (String token : splitSerialTokens(buildPackFreshnessMeta(true))) {
-                if (!token.isEmpty()) {
-                    items.add(new MetaItem(token, Tone.Default, false));
-                }
-            }
+            appendMetaStripTokens(items, splitSerialTokens(buildPackFreshnessMeta(true)));
         }
         return items;
+    }
+
+    static void appendMetaStripTokens(List<MetaItem> items, List<String> tokens) {
+        if (items == null || tokens == null) {
+            return;
+        }
+        for (String token : tokens) {
+            String cleaned = safe(token).trim();
+            if (!cleaned.isEmpty()) {
+                items.add(new MetaItem(cleaned, Tone.Default, false));
+            }
+        }
     }
 
     private ArrayList<String> splitSerialTokens(String value) {
