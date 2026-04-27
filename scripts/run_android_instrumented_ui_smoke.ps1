@@ -43,6 +43,7 @@ param(
     [switch]$ClearLogcatBeforeRun,
     [string]$LogcatSpec = "SenkuPackRepo:D SenkuMobile:D AndroidJUnitRunner:D TestRunner:D *:S",
     [string]$SummaryPath = "",
+    [string]$CaptureSummaryPath = "",
     [switch]$SkipDeviceLock
 )
 
@@ -629,6 +630,134 @@ function Resolve-SummaryModelIdentity {
         name = $null
         sha = $null
     }
+}
+
+function Get-LocalFileSha256 {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path) -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        return $null
+    }
+    return (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLowerInvariant()
+}
+
+function New-CaptureSummaryArtifact {
+    param(
+        [string]$Name,
+        [string]$Path
+    )
+
+    $sha256 = Get-LocalFileSha256 -Path $Path
+    if ([string]::IsNullOrWhiteSpace($sha256)) {
+        throw "Cannot write canonical capture summary: required $Name artifact is missing at $Path"
+    }
+
+    return [pscustomobject]@{
+        path = $Path
+        sha256 = $sha256
+    }
+}
+
+function Resolve-CaptureSummaryFirstPath {
+    param(
+        [string]$Directory,
+        [string[]]$FileNames
+    )
+
+    foreach ($fileName in $FileNames) {
+        if ([string]::IsNullOrWhiteSpace($fileName)) {
+            continue
+        }
+        $candidate = Join-Path $Directory $fileName
+        if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+            return $candidate
+        }
+    }
+    return $null
+}
+
+function Convert-InstalledPackMetadataForCaptureSummary {
+    param([object]$InstalledPack)
+
+    if ($null -eq $InstalledPack) {
+        return [pscustomobject]@{
+            status = "not_provided"
+            pack_format = "not_provided"
+            pack_version = 0
+        }
+    }
+
+    $packFormat = if ([string]::IsNullOrWhiteSpace([string]$InstalledPack.pack_format)) { "not_provided" } else { [string]$InstalledPack.pack_format }
+    $packVersion = 0
+    if ($null -ne $InstalledPack.pack_version) {
+        try {
+            $packVersion = [int]$InstalledPack.pack_version
+        } catch {
+            $packVersion = 0
+        }
+    }
+
+    return [pscustomobject]@{
+        status = $(if ([string]::IsNullOrWhiteSpace([string]$InstalledPack.status)) { "not_provided" } else { [string]$InstalledPack.status })
+        pack_format = $packFormat
+        pack_version = $packVersion
+        metadata = $InstalledPack
+    }
+}
+
+function Write-AndroidInstrumentedCaptureSummary {
+    param(
+        [string]$Path,
+        [string[]]$ScreenshotFiles,
+        [string[]]$DumpFiles,
+        [string]$LogcatFilePath,
+        [object]$InstalledPack,
+        [object]$ModelIdentity,
+        [string]$ResolvedApkSha
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return
+    }
+
+    $firstScreenshotPath = Resolve-CaptureSummaryFirstPath -Directory $screenshotDir -FileNames $ScreenshotFiles
+    $firstDumpPath = Resolve-CaptureSummaryFirstPath -Directory $dumpDir -FileNames $DumpFiles
+    $logcatArtifactPath = if ([string]::IsNullOrWhiteSpace($LogcatFilePath)) { $null } else { $LogcatFilePath }
+    $captureRole = if (-not [string]::IsNullOrWhiteSpace($SmokePreset)) { $SmokePreset } else { $SmokeProfile }
+
+    $captureSummary = [pscustomobject]@{
+        schema_version = 1
+        serial = $Device
+        role = $captureRole
+        orientation = $Orientation
+        apk_sha256 = $(if ([string]::IsNullOrWhiteSpace($ResolvedApkSha)) { "not_provided" } else { $ResolvedApkSha })
+        platform_tools_version = $(if ([string]::IsNullOrWhiteSpace($hostAdbPlatformToolsVersion)) { "not_provided" } else { $hostAdbPlatformToolsVersion })
+        artifacts = [pscustomobject]@{
+            screenshot = New-CaptureSummaryArtifact -Name "screenshot" -Path $firstScreenshotPath
+            ui_dump = New-CaptureSummaryArtifact -Name "ui_dump" -Path $firstDumpPath
+            logcat = New-CaptureSummaryArtifact -Name "logcat" -Path $logcatArtifactPath
+        }
+        package_data_posture = [pscustomobject]@{
+            cleared_before_capture = $false
+            restored_after_capture = $false
+            description = "instrumented smoke preserves caller/device package data unless setup steps change it"
+        }
+        model_identity = [pscustomobject]@{
+            name = $(if ($null -eq $ModelIdentity -or [string]::IsNullOrWhiteSpace([string]$ModelIdentity.name)) { "not_provided" } else { [string]$ModelIdentity.name })
+            sha256 = $(if ($null -eq $ModelIdentity -or [string]::IsNullOrWhiteSpace([string]$ModelIdentity.sha)) { "not_provided" } else { [string]$ModelIdentity.sha })
+        }
+        installed_pack_metadata = Convert-InstalledPackMetadataForCaptureSummary -InstalledPack $InstalledPack
+        evidence_posture = [pscustomobject]@{
+            non_acceptance_evidence = $true
+            acceptance_evidence = $false
+        }
+    }
+
+    $captureSummaryParent = Split-Path -Parent $Path
+    if ($captureSummaryParent) {
+        New-Item -ItemType Directory -Force -Path $captureSummaryParent | Out-Null
+    }
+    ($captureSummary | ConvertTo-Json -Depth 8) | Set-Content -LiteralPath $Path -Encoding UTF8
 }
 
 function Convert-ToProcessArgumentString {
@@ -1610,6 +1739,14 @@ try {
             }
             $summaryJson | Set-Content -LiteralPath $SummaryPath -Encoding UTF8
         }
+        Write-AndroidInstrumentedCaptureSummary `
+            -Path $CaptureSummaryPath `
+            -ScreenshotFiles $localScreenshotFiles `
+            -DumpFiles $localDumpFiles `
+            -LogcatFilePath $(if ($logcatPath -and (Test-Path -LiteralPath $logcatPath -PathType Leaf)) { $logcatPath } else { $null }) `
+            -InstalledPack $installedPackMetadata `
+            -ModelIdentity $summaryModelIdentity `
+            -ResolvedApkSha $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.apk_sha)) { [string]$installedIdentity.apk_sha } else { $null })
         Write-Output $summaryJson
     }
 }
