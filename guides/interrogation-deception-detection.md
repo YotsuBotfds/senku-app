@@ -7,6 +7,38 @@ difficulty: advanced
 tags:
   - practical
   - investigation
+aliases:
+  - non-coercive questioning boundary
+  - interrogation rights safeguard handoff
+  - factual interview documentation
+  - false confession prevention boundary
+  - vulnerable person questioning safeguard
+  - deception detection uncertainty warning
+routing_cues:
+  - interrogation deception detection reviewed boundary non coercive questioning rights safeguard factual questions documentation
+  - false confession warning avoid predetermined guilt vulnerable person legal handoff recording consent authority
+  - use reviewed card only for safety consent authority factual recording rights safeguards and documentation boundaries
+citations_required: true
+citation_policy: >
+  Cite reviewed GD-434 answer card only for non-coercive questioning and
+  rights-safeguard boundaries: safety, consent or lawful authority, factual
+  recording, non-leading questions, avoiding predetermined guilt, vulnerable-
+  person or legal handoff, false-confession warning, and documentation limits.
+  Do not use it for interrogation tactics, deception-detection certainty,
+  psychological pressure, coercion, threats, detention, counter-interrogation,
+  profiling, surveillance, legal conclusions, admissibility, or certification.
+applicability: >
+  Non-coercive questioning and rights-safeguard boundary only: safety,
+  consent or lawful authority, factual questions, recording what was said,
+  avoiding predetermined guilt, vulnerable-person/legal handoff, false-
+  confession warning, and documentation boundaries. Not an interrogation
+  tactics, deception-certainty, coercion, detention, counter-interrogation,
+  profiling, surveillance, legal-conclusion, admissibility, or certification
+  guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: interrogation_deception_detection_boundary
+answer_card:
+  - interrogation_deception_detection_boundary
 icon: 🔍
 description: Ethical interrogation frameworks, rapport-building, cognitive interview method, baseline behavior, verbal indicators of deception, non-verbal cues, statement analysis, documentation, legal/ethical boundaries, false confession prevention, cultural considerations, counter-interrogation awareness.
 related:
@@ -16,8 +48,8 @@ related:
   - justice-law
 read_time: 7
 word_count: 4200
-last_updated: '2026-02-20'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: high
 ---
 <section id="overview">
@@ -38,6 +70,16 @@ This guide covers:
 :::warning
 **Ethical Boundary:** Interrogation is justified for serious crimes (violent assault, repeated theft, espionage) and legitimate security investigations. It is NOT justified for political suppression, personal vendettas, or extracting confessions to predetermined guilt. If you are interrogating to punish a predetermined victim, you are committing injustice.
 :::
+
+## Reviewed Answer-Card Boundary: Non-Coercive Questioning and Rights Safeguards
+
+This is the reviewed answer-card surface for GD-434. Use it only for non-coercive questioning and rights-safeguard support: immediate safety, consent or lawful authority, factual open-ended questions, recording what was asked and said, avoiding predetermined guilt, vulnerable-person or legal handoff, false-confession warning, and documentation boundaries.
+
+Routine answers should start by confirming there is no immediate danger, medical need, threat, force, detention, exhaustion, intoxication, language barrier, child or vulnerable adult issue, or unclear authority. If any of those are present, stop routine questioning guidance and hand off to the responsible legal, medical, safeguarding, interpreter, advocate, or community authority.
+
+Questioning guidance should stay limited to voluntary, non-leading fact gathering: explain the purpose, identify who is asking and under what authority, ask what happened in the person's own words, record time, place, participants, exact quoted statements where possible, breaks, witnesses, interpreter or advocate presence, and uncertainties. Keep observations separate from conclusions, and treat stress signs or inconsistent memory as reasons to corroborate, not proof of deception.
+
+Do not provide interrogation tactics, deception-detection certainty, psychological pressure, coercion, threats, detention advice, counter-interrogation, profiling, surveillance, legal conclusions, admissibility claims, certification, or instructions that imply guilt is already decided. A confession or accusation should not be treated as reliable without independent corroboration and review.
 
 </section>
 
@@ -477,4 +519,3 @@ This secondary review prevents tunnel vision and false convictions.
 - [ ] Provide interrogation training to personnel annually
 
 </section>
-

@@ -1,0 +1,243 @@
+card_id: ore_to_tool_pipeline_planning_boundary
+guide_id: GD-645
+slug: ore-to-tool-pipeline
+title: From Ore to Tool - Complete Metalworking Pipeline
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applicability: >
+  Boundary-only card for GD-645: ore-to-tool stage mapping, inventory and
+  ownership handoff, material identity uncertainty, visible hazard logging,
+  stop-use or hold flags, and qualified mining, metallurgy, blacksmithing,
+  materials, equipment, structural, or safety-owner routing. It is not a
+  procedural card for mining, crushing, smelting, furnace work, alloying,
+  forging, heat treatment, toolmaking, repair, certification, calculations, or
+  return-to-service advice.
+applies_when:
+  - A user asks how to map where an ore, bloom, ingot, forged blank, heat-treated item, finished tool, or suspect batch sits in the ore-to-tool pipeline before deciding who owns the next step.
+  - A user needs a non-procedural inventory or handoff record for material identity, source, batch history, owner, visible condition, documentation, or hold status.
+  - A user reports uncertainty about ore identity, alloy identity, mixed batches, unlabeled material, failed or suspect stock, visible defects, dust, fumes, fire exposure, contamination, or uncontrolled access.
+  - A user needs language for stop-use, hold, quarantine, or qualified-owner routing without asking for operational metalworking instructions.
+required_first_actions:
+  - Start with boundary-level planning only: identify the stage, material or batch label, owner, last known handler, current service or intended use, visible condition, material uncertainty, hazard log, and pending decision.
+  - Separate routine planning from hold triggers; unknown material identity, mixed batches, visible cracks, brittle or crumbly stock, toxic coating or contamination concern, dust or fume concern, active fire or hot-work hazard, safety-critical use, and return-to-service questions override routine planning.
+  - Keep material identity support nonprocedural: labels, source notes, batch or lot identity, known ore or metal family if documented, prior stage history, and uncertainty status only.
+  - Hand off mining, crushing, washing, sorting, smelting, furnace design or operation, fuel or flux recipes, charge ratios, temperatures, yield calculations, alloying, bloom processing, forging, heat treatment, sharpening, toolmaking, repair procedures, load ratings, inspection pass/fail decisions, structural certification, and return-to-service advice.
+conditional_required_actions:
+  - trigger_terms:
+      - unknown ore
+      - unknown alloy
+      - mixed batch
+      - unlabeled
+      - contaminated
+      - coating
+      - galvanized
+      - fumes
+      - dust
+      - smoke
+    required_actions:
+      - Treat material identity and exposure uncertainty as a hold or qualified-owner routing issue, not as a prompt for processing instructions.
+      - Keep the answer to labels, source notes, batch separation, visible hazard logging, access control, and mining, metallurgy, materials, or safety-owner handoff.
+  - trigger_terms:
+      - crack
+      - cracked
+      - brittle
+      - crumbly
+      - slag
+      - inclusion
+      - corrosion
+      - distorted
+      - overheated
+      - failed test
+    required_actions:
+      - Treat visible defect or failed-material language as a stop-use and handoff screen before any routine pipeline planning.
+      - Record visible condition from a safe, non-invasive vantage point and route to the responsible blacksmith, metallurgist, materials engineer, equipment owner, or safety owner.
+  - trigger_terms:
+      - structural
+      - load bearing
+      - vehicle
+      - lifting
+      - pressure
+      - boiler
+      - certify
+      - safe to use
+      - return to service
+    required_actions:
+      - Decline load-rating, certification, repair approval, and return-to-service advice; route to the structural engineer, equipment specialist, qualified inspector, responsible owner, or local authority.
+first_actions:
+  - Build a pipeline inventory with stage, item or batch identifier, source or label, material family if documented, owner or maintainer, last completed stage, next pending decision, current service or intended use, and hold status.
+  - Record material identity uncertainty: ore type or metal family known, uncertain, mixed, unlabeled, contaminated, previously repaired, heat-exposed, or unsupported by documentation.
+  - Log visible hazards and defects without invasive testing: cracks, slag pockets, inclusions, corrosion, distortion, overheating signs, dust, fumes, smoke, coating or contamination concerns, unstable storage, hot-work exposure, nearby combustibles, or uncontrolled access.
+  - Identify whether the item is safety-sensitive: cutting or striking tool, public/shared equipment, load-bearing component, vehicle or lifting equipment, structural use, pressure or heat service, or critical machinery.
+  - Name the responsible handoff owner and prepare a handoff packet with photos from safe locations if allowed, stage map, batch identity, uncertainty notes, visible hazard log, hold status, access-control status, and the decision pending.
+urgent_red_flags:
+  - Unknown ore, alloy, or batch identity when processing, tool use, structural service, pressure/heat service, vehicle/lifting use, public/shared equipment, or critical machinery is involved.
+  - Mixed or unlabeled batches, missing documentation, unknown prior repairs, failed prior tests, visible cracks, brittle or crumbly stock, severe corrosion, slag pockets, inclusions, distortion, or overheating signs.
+  - Dust, fumes, smoke, coating or contamination concern, toxic scrap uncertainty, hot-work fire risk, unstable storage, nearby combustibles, or uncontrolled access.
+  - Any request for mining, crushing, smelting, furnace operation, alloying, forging, heat treatment, toolmaking, repair, load rating, certification, inspection pass/fail, safe-to-use, or return-to-service advice.
+forbidden_advice:
+  - Do not provide mining, quarrying, crushing, washing, sorting, smelting, furnace construction or operation, ore charging, fuel, flux, charcoal, bellows, tapping, bloom consolidation, alloying, forging, heat-treatment, sharpening, or toolmaking steps.
+  - Do not provide recipes, ratios, temperatures, color targets, dimensions, timing, yield calculations, fuel estimates, flux choices, quench media, tempering colors, hardness targets, load ratings, or performance guarantees.
+  - Do not provide repair procedures, structural assessment, vehicle or lifting-equipment approval, pressure or heat-service approval, inspection pass/fail statements, legal/code claims, safety certification, or return-to-service advice.
+  - Do not infer material identity, alloy composition, tool safety, load capacity, pressure capacity, or service suitability from appearance alone.
+  - Do not tell users to mine, crush, heat, smelt, tap, hammer, forge, quench, temper, sharpen, pressure-test, load-test, strike-test, use, repair, or return a suspect item to service.
+do_not:
+  - Do not convert the source guide's ore identification, preparation, smelting, furnace, bloom processing, forging, heat-treatment, timeline, or troubleshooting passages into reviewed-card instructions.
+  - Do not treat unknown material identity, mixed batches, visible defects, dust, fumes, fire exposure, safety-critical use, certification, or return-to-service requests as routine planning.
+  - Do not collapse qualified mining, metallurgy, blacksmithing, materials, structural, equipment, or safety ownership into generic advice.
+routine_boundary: >
+  Routine GD-645 reviewed-card answers are limited to non-procedural
+  ore-to-tool stage mapping, inventory and ownership handoff, material identity
+  uncertainty, visible hazard logging, stop-use or hold flags, access control,
+  and qualified-owner routing. The card exits for operational extraction,
+  crushing, smelting, furnace work, alloying, forging, heat treatment,
+  toolmaking, repair, calculations, certification, and return-to-service
+  advice.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt appears to involve an ore-to-tool
+  material, batch, tool, or project handoff, provide a conservative stage map,
+  inventory checklist, hazard log, hold-status language, and qualified-owner
+  routing. Ask only for non-procedural identifiers, visible condition, material
+  uncertainty, owner, access-control status, and the decision pending.
+clarifying_questions:
+  - What stage is the material or item in: ore/source, prepared feedstock, furnace or smelt planning, bloom or ingot, consolidated stock, forged blank, heat-treated item, finished tool, stored inventory, or failed/suspect material?
+  - What material identity is known from labels, source notes, batch records, photos, prior handlers, or documentation, and what remains uncertain?
+  - Who owns the current decision: miner, site owner, metallurgist, blacksmith, materials engineer, equipment owner, structural engineer, safety owner, inspector, or local authority?
+  - What is visible from a safe, non-invasive vantage point: cracks, slag pockets, inclusions, corrosion, distortion, overheating signs, dust, fumes, smoke, coating or contamination, fire exposure, unstable storage, or uncontrolled access?
+  - Is the item intended for cutting, striking, public/shared equipment, load-bearing, vehicle/lifting, pressure/heat service, structural use, repair, certification, or return to service?
+fallback:
+  - If material identity is unknown, mixed, unlabeled, contaminated, or undocumented, keep the material on hold and route to the mining, metallurgy, materials, blacksmithing, or safety owner before any processing or use.
+  - If visible defects, failed prior tests, severe corrosion, brittleness, slag pockets, inclusions, distortion, overheating signs, dust, fumes, smoke, coating, contamination, hot-work exposure, unstable storage, or uncontrolled access are present, stop routine planning and prepare a hazard-and-owner handoff.
+  - If structural, pressure, vehicle, lifting, public/shared, critical equipment, cutting, or striking use appears, do not advise repair, approval, certification, or return to service; route to the responsible qualified owner or local authority.
+  - If the user asks for procedure, recipes, temperatures, ratios, calculations, design, repair, inspection pass/fail, certification, or safe-to-use advice, decline those details and provide only the boundary handoff checklist.
+fallback_handoff_language:
+  - "This GD-645 reviewed card can help map the ore-to-tool stage, inventory material identity uncertainty, log visible hazards, set hold status, and prepare a qualified-owner handoff."
+  - "It cannot provide mining, crushing, smelting, furnace, alloying, forging, heat-treatment, toolmaking, repair, calculation, certification, or return-to-service instructions."
+  - "When material identity is uncertain, visible defects or hazards are present, or the item is safety-critical, treat this as a hold record for the qualified mining, metallurgy, blacksmithing, materials, equipment, structural, or safety owner."
+applicability:
+  owner: ore-to-tool stage mapping, inventory handoff, material identity uncertainty, visible hazard logging, hold flags, and qualified-owner routing
+  use_when:
+    - ore_to_tool_stage_mapping
+    - material_identity_uncertainty
+    - inventory_or_batch_handoff
+    - visible_hazard_or_defect_log
+    - stop_use_or_hold_flag
+    - qualified_mining_metallurgy_blacksmithing_materials_owner_routing
+  do_not_use_when:
+    - mining_crushing_or_ore_processing_steps
+    - smelting_furnace_fuel_flux_or_yield_calculations
+    - alloying_forging_heat_treatment_or_toolmaking_steps
+    - repair_structural_certification_or_return_to_service
+actions:
+  required:
+    - classify the request as stage mapping, inventory handoff, material identity uncertainty, visible hazard logging, stop-use or hold flag, access control, or qualified-owner routing
+    - begin with safety-sensitive use, material uncertainty, and visible hazard screening
+    - document visible condition and material uncertainty without operational processing, testing, repair, or approval instructions
+    - hand off procedural, calculation, repair, structural, pressure, vehicle, lifting, certification, inspection, and return-to-service requests
+  standard:
+    - provide an ore-to-tool stage map and inventory handoff template
+    - include material identity, batch source, owner, last completed stage, pending decision, visible hazard log, hold status, and handoff owner
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_stage_mapping: true
+  include_material_identity_uncertainty: true
+  include_visible_hazard_log: true
+  include_stop_use_hold_flags: true
+  include_qualified_owner_handoff: true
+  forbid_procedural_metalworking_or_return_to_service: true
+routing_tests:
+  positive:
+    - prompt: "Make a handoff checklist for unlabeled ore, a suspect bloom, and a cracked tool blank before a blacksmith reviews it."
+      expect: ore_to_tool_pipeline_planning_boundary
+    - prompt: "What should we document about material identity uncertainty and visible hazards before deciding who owns the next ore-to-tool stage?"
+      expect: ore_to_tool_pipeline_planning_boundary
+    - prompt: "We have mixed batches and unknown slag inclusions; help set hold flags and route to the right owner."
+      expect: ore_to_tool_pipeline_planning_boundary
+  near_miss:
+    - prompt: "How do I crush and wash magnetite before smelting?"
+      expect_handoff: qualified_mining_or_ore_processing_owner
+    - prompt: "Give me a charcoal ratio and furnace dimensions for smelting ore."
+      expect_handoff: qualified_smelt_or_furnace_owner
+    - prompt: "What heat treatment should I use for an axe head?"
+      expect_handoff: qualified_blacksmith_or_heat_treatment_owner
+    - prompt: "Can this cracked forged bracket go back into load-bearing service?"
+      expect_handoff: structural_or_equipment_owner
+  boundary:
+    - prompt: "The batch identity is unknown and the finished tool may be used for striking; can we use it?"
+      expect: hold_and_qualified_owner_handoff
+    - prompt: "Map the pipeline stage and owner handoff for a finished tool with uncertain material identity."
+      expect: ore_to_tool_pipeline_planning_boundary
+citation_ids:
+  - gd-645-reviewed-answer-card-boundary
+  - gd-645-complete-metalworking-cycle-handoffs
+  - gd-645-ore-readiness-checklist-context
+  - gd-645-furnace-design-readiness-context
+  - gd-645-pre-smelt-safety-briefing-context
+  - gd-645-iron-quality-assessment-context
+  - gd-645-tool-stock-and-quality-inspection-context
+source_sections:
+  - guide: GD-645
+    slug: ore-to-tool-pipeline
+    title: From Ore to Tool - Complete Metalworking Pipeline
+    sections:
+      - "#reviewed-answer-card-boundary-ore-to-tool-planning-holds-and-handoffs"
+      - "#introduction-the-complete-metalworking-cycle"
+      - "#handoff-point-ore-readiness-checklist"
+      - "#handoff-point-furnace-design-readiness"
+      - "#handoff-point-pre-smelt-safety-briefing"
+      - "#handoff-point-iron-quality-assessment"
+      - "#handoff-point-tool-stock-is-ready-for-heat-treatment"
+      - "#handoff-point-tool-quality-inspection"
+      - "#final-checklist-ore-to-tool"
+source_invariants:
+  - name: reviewed ore-to-tool boundary remains non-procedural
+    guide: GD-645
+    must_include:
+      - "This is the reviewed answer-card surface for GD-645."
+      - "Use it only for non-procedural ore-to-tool planning"
+      - "mapping the current stage"
+      - "material identity and uncertainty"
+      - "stop-use or hold flags"
+      - "Do not use this reviewed card for mining"
+      - "return-to-service advice"
+  - name: original guide handoff structure remains
+    guide: GD-645
+    must_include:
+      - "Success requires decisions at five critical handoff points"
+      - "Handoff Point: Ore Readiness Checklist"
+      - "Handoff Point: Furnace Design Readiness"
+      - "Handoff Point: Pre-Smelt Safety Briefing"
+      - "Handoff Point: Iron Quality Assessment"
+      - "Handoff Point: Tool Stock is Ready for Heat Treatment"
+      - "Handoff Point: Tool Quality Inspection"
+  - name: procedural source content is not reviewed card authority
+    guide: GD-645
+    must_include:
+      - "Ore Preparation Steps"
+      - "Smelting Method Comparison Table"
+      - "Shaft Furnace Design"
+      - "Charging and Firing Sequence"
+      - "Bloom Consolidation"
+      - "Forging Sequence by Tool Type"
+      - "Quenching and Tempering Procedure"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-645 as a boundary-only ore-to-tool planning card. It
+  owns stage mapping, inventory and ownership handoff, material identity
+  uncertainty, visible hazard logs, stop-use or hold flags, access control, and
+  qualified mining, metallurgy, blacksmithing, materials, equipment, structural,
+  or safety-owner routing. It deliberately excludes mining, crushing, smelting,
+  furnace construction or operation, fuel or flux recipes, calculations,
+  alloying, forging, heat treatment, toolmaking, repair, structural
+  certification, inspection pass/fail decisions, and return-to-service advice.
+  READY_FOR_PARENT_CLOSE.

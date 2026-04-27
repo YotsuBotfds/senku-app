@@ -22,6 +22,37 @@ custom_css: |
   .temp-specs td { padding: 0.75rem; border-bottom: 1px solid var(--border); }
   .crucible-process { margin: 1.5rem 0; padding: 1rem; background: var(--surface); border-radius: 4px; }
 liability_level: critical
+aliases:
+  - refractory condition boundary
+  - crucible visible crack log
+  - crucible spalling contamination moisture
+  - unknown crucible material handoff
+  - refractory stop use checklist
+  - foundry materials owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level condition inspection of refractories and crucibles: visible cracks, spalling, contamination, moisture, unknown material records, heat or melt context, stop-use flags, and qualified foundry/materials owner handoff.
+  - Keep reviewed-card answers non-procedural: identify the item, material if known, heat or melt context, visible condition, contamination or moisture uncertainty, current use status, authority to stop use, and qualified owner for review.
+  - Route refractory recipes, drying or firing schedules, furnace operation, molten-metal handling, repair or relining, thermal calculations, safe-use declarations, return-to-service advice, legal/code claims, and safety certification away from this card.
+routing_support:
+  - foundry-casting for broader foundry-area readiness, molten-metal workflow, molds, pour-area context, and foundry owner handoff.
+  - crucible-refractory-inspection for detailed inspection and maintenance surfaces when GD-604 is the expected owner.
+  - metallurgy-basics for non-procedural material identity uncertainty when unknown metal, coating, alloy, or scrap context dominates.
+citations_required: true
+citation_policy: cite reviewed GD-460 answer card only for boundary-level refractory or crucible condition inspection, visible damage or contamination logs, heat/melt context, stop-use flags, and qualified foundry/materials owner handoff; do not use it for refractory recipes, drying/firing schedules, furnace operation, molten-metal handling, repair/relining, thermal calculations, safe-use certification, or return-to-service advice.
+applicability: >
+  Use for condition-inspection boundary questions about refractories or
+  crucibles: visible cracks, spalling, contamination, moisture, unknown
+  material records, heat or melt context, current use status, stop-use flags,
+  and handoff to a qualified foundry, furnace, refractory, materials,
+  fire-safety, chemical-safety, site, or emergency owner. Do not use for
+  refractory recipes, crucible making, drying or firing schedules, furnace
+  operation, molten-metal handling, repair or relining, thermal calculations,
+  safe-use declarations, return-to-service decisions, legal/code claims, or
+  safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: refractories_crucibles_condition_boundary
+answer_card:
+  - refractories_crucibles_condition_boundary
 ---
 
 Refractory materials resist heat without degrading — essential for furnaces, crucibles, kilns, and high-temperature vessels. Understanding refractory properties allows you to select or make suitable containers and linings for metalworking, glassmaking, and ceramic work.
@@ -36,6 +67,38 @@ Refractory materials resist heat without degrading — essential for furnaces, c
 **Silica Inhalation and Thermal Shock Hazard**
 Mixing and shaping refractory materials generates fine silite dust that causes silicosis — a serious, irreversible lung disease. Always wear an N95 or P100 respirator when handling dry refractory powders, and wet materials when possible to suppress dust. Crucibles can crack or shatter explosively from thermal shock if heated or cooled too rapidly. Always preheat crucibles gradually and never quench hot refractory ware. Some traditional refractory binders contain asbestos — identify and avoid asbestos-bearing minerals.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Condition Inspection and Owner Handoff
+
+This is the reviewed answer-card surface for GD-460. Use it only for
+boundary-level refractory and crucible condition inspection: visible cracks,
+spalling, contamination, moisture, unknown material records, heat or melt
+context, stop-use flags, access-control notes, uncertainty language, and
+qualified foundry, furnace, refractory, materials, fire-safety,
+chemical-safety, site, or emergency owner handoff.
+
+For a condition log, record the item type, location, material or rating if
+known, unknown material or missing record notes, current use status, whether
+heating or melting is active or planned, visible cracks, crack growth already
+known, spalling, missing refractory, exposed backing, adhered metal or slag,
+contamination, moisture, discoloration, prior failure notes, who has authority
+to stop use, and who was notified.
+
+Stop the routine frame and hand off when there are visible cracks, spalling,
+missing lining, contamination, moisture, unknown material, missing records,
+active heat, fumes, smoke, planned or active melt work, burn or exposure
+symptoms, unclear ownership, pressure to proceed, or any request to declare the
+item safe, ready, certified, repaired, dried, fired, relined, or returned to
+service.
+
+Do not use this reviewed card for refractory recipes, crucible making, drying
+or firing schedules, furnace operation, molten-metal handling, repair or
+relining, thermal calculations, safe-use declarations, return-to-service
+decisions, legal or code claims, or safety certification.
+
+</section>
 
 <section id="refractory-basics">
 

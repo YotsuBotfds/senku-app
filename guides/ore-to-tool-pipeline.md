@@ -24,12 +24,60 @@ related:
   - natural-building
   - steel-making
   - tool-hardening-edges
+aliases:
+  - ore to tool planning boundary
+  - ore pipeline inventory handoff
+  - metalworking stage mapping
+  - material identity uncertainty log
+  - mining metallurgy blacksmithing owner routing
+  - ore smelting forging stop use handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural ore-to-tool planning boundaries: stage mapping, inventory and ownership handoff, material identity uncertainty, visible hazard logs, stop-use or hold flags, and qualified mining, metallurgy, blacksmithing, or materials-owner routing.
+  - Keep routine answers focused on what stage the material or project is in, what is known or unknown about material identity, what hazards or defects are visible, who owns the next decision, and whether any work should remain on hold until qualified review.
+  - Route mining, crushing, smelting, furnace construction or operation, fuel or flux recipes, alloying, forging, heat treatment, toolmaking procedures, calculations, repair, structural certification, and return-to-service requests away from this card.
+routing_support:
+  - mining-materials for source and site ownership when the question is about mine or quarry work rather than planning handoff.
+  - metallurgy-basics, steel-making, bloomery-furnace, basic-forge-operation, alloy-decision-tree, and tool-hardening-edges for specialist context without converting this card into procedural instructions.
+  - welding-metallurgy and engineering-repair for joined-metal, repair, inspection, or equipment-owner handoff when the concern is no longer an ore-to-tool stage map.
+citations_required: true
+citation_policy: >
+  Cite GD-645 and its reviewed answer card only for non-procedural
+  ore-to-tool planning boundaries: stage mapping, inventory and ownership
+  handoff, material identity uncertainty, visible hazard logs, stop-use or
+  hold flags, and qualified mining, metallurgy, blacksmithing, or materials
+  owner routing. Do not use it for mining, crushing, smelting, furnace,
+  fuel/flux, alloying, forging, heat-treatment, toolmaking, calculation,
+  repair, structural certification, or return-to-service advice.
+applicability: >
+  Use for boundary-only ore-to-tool planning questions where the user needs
+  to map a material or project stage, build a non-procedural inventory and
+  handoff record, preserve material identity uncertainty, log visible hazards,
+  set stop-use or hold flags, and route to a qualified mining, metallurgy,
+  blacksmithing, materials, equipment, structural, or safety owner. Do not use
+  for operational extraction, crushing, smelting, furnace, alloying, forging,
+  heat-treatment, toolmaking, repair, structural certification, or
+  return-to-service instructions.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: ore_to_tool_pipeline_planning_boundary
+answer_card:
+  - ore_to_tool_pipeline_planning_boundary
+runtime_citation_policy: reviewed_source_family
 read_time: 45
 word_count: 6200
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
 ---
+
+## Reviewed Answer-Card Boundary: Ore-to-Tool Planning, Holds, and Handoffs
+
+This is the reviewed answer-card surface for GD-645. Use it only for non-procedural ore-to-tool planning: mapping the current stage, inventorying material identity and uncertainty, naming the owner of the next decision, logging visible hazards or defects, setting stop-use or hold flags, and routing to a qualified mining, metallurgy, blacksmithing, materials, equipment, structural, or safety owner.
+
+For routine planning, record the current stage without adding instructions: ore/source identified or uncertain, prepared feedstock, furnace or smelt planning, bloom or ingot, consolidated stock, forged blank, heat-treated item, finished tool, stored inventory, or failed/suspect material. Keep a visible log of labels, source notes, material family if known, batch or lot identity, who handled the last stage, what decision is pending, photos from safe locations if allowed, visible cracks, slag pockets, unknown inclusions, corrosion, distortion, overheating signs, fumes, dust, fire exposure, unstable storage, uncontrolled access, or missing documentation.
+
+Treat these as hold or handoff triggers before routine planning: unknown ore or alloy identity, mixed or unlabeled batches, visible cracks, crumbly or brittle stock, severe corrosion, suspected toxic coating or contamination, dust or fume concern, uncontrolled fire or hot-work area, failed prior test, load-bearing or struck-tool use, public/shared equipment, vehicle or lifting use, structural service, pressure or heat service, or any request to declare material, a tool, or repaired equipment safe to use.
+
+Do not use this reviewed card for mining, quarrying, crushing, washing, sorting, smelting, furnace design or operation, fuel or flux recipes, charge ratios, temperatures, yield calculations, alloying, bloom processing, forging, heat treatment, sharpening, toolmaking, repair procedures, load ratings, structural certification, inspection pass/fail decisions, or return-to-service advice. Hand off those requests to the responsible owner, qualified miner, metallurgist, blacksmith, materials engineer, structural engineer, equipment specialist, safety owner, emergency services, or local authority as appropriate.
 
 ## Introduction: The Complete Metalworking Cycle
 

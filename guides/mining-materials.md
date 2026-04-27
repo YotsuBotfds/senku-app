@@ -24,11 +24,51 @@ word_count: 4880
 last_updated: '2026-02-16'
 version: '1.0'
 liability_level: critical
+aliases:
+  - mine site hazard observation log
+  - mining materials keep out boundary
+  - abandoned mine red flags
+  - quarry access control handoff
+  - visible mine hazard inventory
+  - mine dust gas water unstable ground red flags
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level mine, quarry, spoil pile, shaft, adit, tunnel portal, tailings, or materials-site hazard observation, access-control status, location/log inventory, and qualified mining/geology/environmental/public-safety handoff.
+  - Keep routine answers focused on what can be observed from a safe public or authorized vantage point: posted closures, damaged barriers, dust, suspicious gas odors or dead-air signs, water inflow or flooding, unstable ground, subsidence, cracking, loose rock, spoil piles, tailings, exposed pits, and record gaps.
+  - Route extraction, tunneling, blasting, shoring, ventilation engineering, assay methods, ore processing, heavy-equipment operation, rescue entry, legal claims, and safety certification away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-161 answer card for mine/site hazard observation, access control, visible red flags, location/log inventory, and qualified mining/geology/environmental/public-safety handoff only; do not use it for extraction, tunneling, blasting, shoring, ventilation engineering, assay methods, ore processing, heavy-equipment operation, rescue entry, legal claims, or safety certification.
+applicability: >
+  Use for boundary-only planning, site-observation, access-control, visible
+  hazard recognition, location/log inventory, and qualified handoff questions
+  about mine, quarry, shaft, adit, tunnel portal, spoil pile, tailings, exposed
+  pit, or materials-site hazards. Do not use for extraction, tunneling,
+  blasting, shoring, ventilation engineering, assay methods, ore processing,
+  heavy-equipment operation, rescue entry, legal claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: mining_materials_site_hazard_boundary
+answer_card:
+  - mining_materials_site_hazard_boundary
 custom_css: .subtitle{color:var(--accent2);font-size:1.1em;margin-bottom:15px}nav{background-color:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px;margin-bottom:30px}nav h2{color:var(--accent);margin-bottom:15px;font-size:1.3em}nav ul{list-style:none;columns:2;gap:20px}nav li{margin-bottom:8px}nav a{color:var(--accent2);text-decoration:none;transition:color .content-box{background-color:var(--card);border-left:4px solid var(--accent);padding:15px;margin:15px 0;border-radius:4px}.diagram-container{display:flex;justify-content:center;margin:25px 0;padding:20px;background-color:var(--card);border-radius:6px;border:1px solid var(--border)}.ore-color-swatch{display:inline-block;width:30px;height:30px;border:2px solid var(--border);border-radius:4px;margin-right:10px;vertical-align:middle}
 ---
 :::danger
 **Confined Space and Cave-In Hazard:** Mining is one of the most dangerous activities. Underground shafts risk sudden collapse, poisonous gas accumulation, flooding, and explosions. Improper ventilation kills through asphyxiation. Do not enter mines without professional safety training, proper shoring, and continuous ventilation systems. Smelting involves extreme heat (1000°C+) and toxic fumes. Never smell, taste, or touch ore or products without protective equipment. Have rescue equipment and trained personnel on standby.
 :::
+
+## Scope Boundary
+
+This guide contains historical and educational material about ore identification, mining, smelting, refining, fuels, alloys, cement, salt, sulfur, and raw material sourcing, but its reviewed answer-card surface is mine and materials-site hazard observation, access-control awareness, location/log inventory, and qualified handoff only. Use it to recognize visible hazards from a safe public or authorized vantage point, keep people out of unsafe or restricted areas, preserve a simple observation log, and route decisions to the owner/operator, qualified mining engineer, geologist, environmental professional, public-safety authority, emergency manager, inspector, or local jurisdiction.
+
+Do not use the reviewed card for extraction, tunneling, blasting, shoring, ventilation engineering, assay methods, ore processing, smelting, heavy-equipment operation, rescue entry, legal claims, safe-to-enter decisions, reopening permission, or safety certification.
+
+## Reviewed Answer-Card Boundary: Site Hazard Logs and Handoffs
+
+This is the reviewed answer-card surface for GD-161. Start from a safe public or authorized vantage point and do not enter shafts, adits, tunnels, pits, stopes, trenches, unstable slopes, spoil piles, tailings, flooded workings, posted closures, fenced areas, confined spaces, or heavy-equipment zones. Record only what can be observed without entry, digging, sampling, probing, climbing, removing barriers, operating equipment, disturbing tailings, testing gas, dewatering, ventilating, shoring, blasting, or attempting rescue: site name or coordinates, date and observer, current access status, posted warnings, barriers, recent weather or disturbance, visible openings, subsidence, cracks, slumping, loose rock, highwalls, water inflow or flooding, dust clouds or residue, unusual odors from a safe distance, dead vegetation, stained runoff, tailings or spoil movement, and any available owner, inspection, closure, environmental, or incident records.
+
+Routine planning should preserve a simple handoff log: what changed, when it was first noticed, whether it is worsening, photos from safe locations if allowed, current access-control status, weather and water conditions, record gaps, and the named owner/operator, qualified mining engineer, geologist, environmental professional, public-safety authority, emergency manager, inspector, or local jurisdiction responsible for decisions.
+
+Red flags require stopping routine observation and keeping people back or escalating immediately: open or hidden shafts, adits, pits, trenches, undermined ground, active collapse, fresh cracks, slumping, falling rock, unstable highwalls, water inflow, flooding, suspected bad air, gas odor, low-lying dead-air areas, heavy dust, tailings movement, contaminated runoff, damaged fences, missing signs, public access to openings or unstable ground, posted closure, people inside or trapped, or any uncertainty about safe public access.
+
+Do not extract, tunnel, blast, shore, ventilate, assay, process ore, operate heavy equipment, enter for rescue, certify, reopen, or declare the site safe. Route those questions to the owner/operator and qualified mining, geology, environmental, public-safety, emergency-management, inspection, rescue, or local authorities.
 
 <section id="ore-identification">
 

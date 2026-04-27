@@ -1,0 +1,235 @@
+card_id: corrosion_chemistry_prevention_boundary
+guide_id: GD-597
+slug: corrosion-chemistry-prevention
+title: Corrosion Chemistry & Prevention
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for a boundary-level corrosion condition inspection, visible corrosion log, leak or contamination observation record, isolation or stop-use trigger list, photo inventory, or qualified owner handoff.
+  - A prompt reports rust, pitting, perforation, verdigris, discoloration, staining, white powder, coating damage, leaks, residues, contamination concern, unknown material, dissimilar metals, saltwater, soil moisture, pressure service, potable water, electrical service, or structural service.
+  - A user needs help documenting what is visible before isolating, tagging, stopping use, or routing a corroded asset to a qualified owner, materials specialist, structural owner, pressure-equipment owner, potable-water owner, electrical owner, environmental/safety lead, or responsible facility lead.
+required_first_actions:
+  - Keep the answer at boundary, observation, documentation, isolation or stop-use screening, uncertainty language, photo/log inventory, and qualified-owner handoff before any treatment, coating, plating, calculation, repair, cleanup chemistry, return-to-service, legal, or certification advice.
+  - Identify the item or asset, location, owner or decision maker, known material if any, service context, current use or access status, recent exposure history, visible corrosion, leak or residue observations, contamination concerns, labels, records, and reviewer needed.
+  - Screen active leaks, contamination, severe pitting, perforation, unknown material, dissimilar-metal contact, saltwater or soil exposure, pressure, potable-water, food-contact, electrical, structural, public-access, or missing-record contexts as red flags before routine documentation.
+  - Hand off chemical treatment recipes, inhibitor formulas, electrochemistry calculations, sacrificial-anode sizing, cathodic-protection settings, coating or plating procedures, cleanup chemistry, repair, return-to-service decisions, legal/code claims, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - leak
+      - leaking
+      - residue
+      - staining
+      - contamination
+      - potable water
+      - drinking water
+      - food contact
+      - electrical
+      - structural
+      - pressure
+      - pipe
+      - tank
+      - vessel
+      - perforation
+      - severe pitting
+    required_actions:
+      - Treat the prompt as an isolation, stop-use, contamination documentation, and qualified-owner handoff issue rather than routine corrosion maintenance.
+      - Keep the answer limited to visible observations, access/use status, service context, photo/log inventory, uncertainty language, and specialist handoff.
+  - trigger_terms:
+      - recipe
+      - inhibitor
+      - formula
+      - calculate
+      - anode
+      - cathodic protection
+      - coating
+      - plating
+      - passivation
+      - clean up
+      - neutralize
+      - repair
+      - return to service
+      - certify
+      - code
+      - safe to use
+    required_actions:
+      - Give a boundary and do not provide treatment recipes, formulas, calculations, coating or plating procedures, cleanup chemistry, repair approval, return-to-service, legal/code, or certification advice from this card.
+first_actions:
+  - Build a corrosion condition record with item or asset name, location, observer, date, owner or decision maker, known or suspected material, service role, current use or access status, isolation or tag status, and pending reviewer.
+  - Record visible observations without scraping, treating, pressurizing, energizing, entering, repairing, or declaring suitability; include rust color and location, pitting, perforation, verdigris, white powder, discoloration, coating damage, wetness, leaks, stains, residues, odor, nearby soil, saltwater, water, food, electrical, structural, or public-exposure context, and missing labels or maintenance records.
+  - Ask whether the item serves potable water, food contact, pressure containment, structure, lifting, electrical service, heat, public/shared access, children, medical/rescue use, environmental containment, or another high-consequence role.
+  - Take or request photographs from a safe vantage point, label the asset, log date/time/location/observer, record leak paths and affected surroundings, preserve records, and avoid disturbing residues or corrosion products when contamination is possible.
+  - End with isolation, stop-use, access control, uncertainty language, and qualified handoff when red flags, missing records, high-consequence service, active leak/contamination, or requests for treatment, repair, return-to-service, or certification appear.
+urgent_red_flags:
+  - Active leak, wet corrosion path, unknown residue, odor, staining into soil or water, possible contamination of potable water, food-contact surfaces, electrical equipment, or occupied/public areas.
+  - Severe pitting, perforation, rapidly spreading rust, coating failure on a critical asset, corrosion at fasteners, welds, supports, pressure boundaries, tanks, pipes, electrical enclosures, or structural members.
+  - Unknown material, unknown source or service history, missing inspection or maintenance records, dissimilar-metal contact in wet/salty/soil exposure, or similar components still in service.
+  - Any request to treat, neutralize, coat, plate, calculate protection, repair, approve pressure/structural/potable-water/electrical use, return to service, make code/legal claims, declare safe, or certify.
+forbidden_advice:
+  - Do not provide chemical treatment recipes, rust-removal mixtures, inhibitor formulas, neutralization steps, cleanup chemistry, or contamination-removal procedures.
+  - Do not provide electrochemistry calculations, corrosion-rate calculations, sacrificial-anode sizing, cathodic-protection settings, current-density targets, or service-life predictions.
+  - Do not provide coating, plating, passivation, galvanizing, cathodic-protection installation, repair, pressure testing, structural repair, electrical repair, or potable-water remediation procedures.
+  - Do not provide return-to-service decisions, safe-to-use statements, potable-water, pressure, structural, electrical, environmental, legal/code, inspection-pass, or safety-certification claims.
+do_not:
+  - Do not convert the source guide's electrochemistry, galvanic series, passivation, cathodic protection, coating, salvage assessment, or treatment passages into reviewed-card instructions.
+  - Do not infer material identity, contamination status, pressure capacity, structural capacity, electrical safety, potable-water safety, repair adequacy, service life, or legal compliance from appearance.
+  - Do not treat active leaks, contamination concerns, severe pitting, perforation, unknown materials, dissimilar-metal wet service, pressure, potable-water, electrical, structural, public-facing, or missing-record assets as routine corrosion maintenance.
+  - Do not let an inspection answer become treatment, inhibitor, formula, electrochemistry, coating, plating, repair, cleanup, return-to-service, legal, code, or certification advice.
+routine_boundary: >
+  Routine GD-597 reviewed-card answers are limited to boundary-level corrosion
+  condition inspection, visible corrosion, leak and contamination observations,
+  material and service context, isolation or stop-use flags, photo/log
+  inventory, uncertainty language, access control, and qualified owner,
+  materials, structural, pressure-equipment, potable-water, electrical,
+  environmental, or safety handoff. The card exits for chemical treatment
+  recipes, inhibitor formulas, electrochemistry calculations, coating/plating
+  procedures, cleanup chemistry, repair, return-to-service decisions,
+  service-suitability claims, legal/code claims, and safety certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but appears to involve corrosion, leaks,
+  contamination, unknown material, critical service, or questionable reuse,
+  provide a conservative inspection-log and handoff checklist, ask for material,
+  service role, owner, access/use status, visible observations, exposure
+  history, photo/log records, isolation status, and reviewer, and avoid all
+  treatment, calculation, coating, plating, repair, cleanup, legal, code, or
+  certification advice.
+clarifying_questions:
+  - What item or asset is involved, where is it located, who owns the decision, and is it currently in use, accessible, isolated, or tagged?
+  - What material, coating, prior service, source record, inspection record, maintenance record, or exposure history is known, and what is missing?
+  - What is visible without disturbing it; rust, pitting, perforation, verdigris, white powder, discoloration, coating damage, wetness, leaks, stains, residues, odor, or affected surroundings?
+  - Does the item involve potable water, food contact, pressure containment, structural support, lifting, electrical service, heat, public/shared access, children, medical/rescue use, environmental containment, or another high-consequence role?
+  - Has the asset been photographed, logged, labeled, isolated, access-controlled, or routed to a qualified owner or specialist?
+applicability:
+  owner: corrosion condition inspection, visible leak or contamination observation, photo/log inventory, isolation or stop-use screening, and qualified owner handoff
+  use_when:
+    - corrosion_condition_inspection_boundary
+    - visible_rust_pitting_verdigris_or_coating_damage_log
+    - leak_stain_residue_or_contamination_observation
+    - material_service_context_and_exposure_history_questions
+    - isolation_stop_use_photo_inventory_or_qualified_handoff
+  do_not_use_when:
+    - chemical_treatment_recipe_or_inhibitor_formula
+    - electrochemistry_corrosion_rate_anode_or_cathodic_protection_calculation
+    - coating_plating_passivation_galvanizing_or_repair_procedure
+    - cleanup_chemistry_or_contamination_removal_instruction
+    - pressure_structural_potable_water_electrical_or_return_to_service_claim
+    - legal_code_claim_or_safety_certification
+actions:
+  required:
+    - classify the request as condition inspection, visible observation logging, leak or contamination screening, material/service context, isolation or stop-use screening, photo/log inventory, access control, uncertainty documentation, or qualified-owner handoff
+    - begin with asset identity, owner, current use/access status, material if known, service context, exposure history, visible observations, records, labels, isolation status, and reviewer needed
+    - screen active leak, contamination, severe pitting, perforation, unknown material, high-consequence service, public access, and missing-record red flags before routine documentation
+    - hand off treatment recipes, inhibitor formulas, electrochemistry calculations, coating/plating procedures, cleanup chemistry, repair, return-to-service, service claims, legal/code claims, and certification requests
+  standard:
+    - provide a corrosion inspection log template
+    - include item identity, location, observer/date, owner, material and service context, exposure history, visible corrosion and leak/residue observations, photo inventory, access/use status, isolation tag, uncertainty notes, red flags, and handoff owner
+    - name a qualified materials specialist, structural owner, pressure-equipment owner, potable-water owner, electrical owner, environmental/safety lead, responsible facility lead, inspector, or other expert when red flags or uncertainty appear
+forbidden:
+  - chemical treatment recipes, rust-removal mixtures, inhibitor formulas, neutralization steps, cleanup chemistry, or contamination-removal procedures
+  - electrochemistry calculations, corrosion-rate calculations, sacrificial-anode sizing, cathodic-protection settings, current-density targets, or service-life predictions
+  - coating, plating, passivation, galvanizing, cathodic-protection installation, repair, pressure testing, structural repair, electrical repair, or potable-water remediation procedures
+  - return-to-service decisions, safe-to-use statements, potable-water, pressure, structural, electrical, environmental, legal/code, inspection-pass, or safety-certification claims
+fallback:
+  - If a prompt mixes corrosion inspection with treatment, inhibitor, calculation, coating, plating, cleanup, repair, return-to-service, legal, or certification requests, answer only the inspection, isolation, documentation, uncertainty, and handoff portion.
+  - If material identity, contamination status, service context, ownership, records, current use, exposure history, or reviewer authority is unknown, document that uncertainty and route before use.
+  - If active leak, contamination, severe pitting, perforation, high-consequence service, public access, unknown material, dissimilar-metal wet service, similar assets in service, or missing records appear, stop routine framing and escalate to the qualified owner or specialist.
+fallback_handoff_language:
+  - "This GD-597 reviewed card can help scope a corrosion condition inspection, log visible corrosion/leak/contamination observations, record material and service context, preserve uncertainty, and prepare a qualified-owner handoff."
+  - "It cannot provide chemical treatment recipes, inhibitor formulas, electrochemistry calculations, coating or plating procedures, cleanup chemistry, repair, return-to-service decisions, legal/code claims, or certification."
+  - "When corrosion involves active leaking, contamination, pressure, potable water, electrical service, structural support, severe pitting, perforation, unknown material, public access, or missing records, treat the answer as isolation or stop-use documentation for a qualified owner or specialist."
+output:
+  required:
+    - boundary classification
+    - asset, owner, and service-context fields
+    - visible corrosion, leak, residue, and contamination observation log
+    - high-consequence and missing-record red-flag screen
+    - photo/log inventory fields
+    - isolation, stop-use, or access-control note
+    - uncertainty language
+    - qualified owner/materials/structural/environmental handoff
+  prohibited:
+    - chemical treatment recipe or inhibitor formula
+    - electrochemistry, corrosion-rate, anode, or cathodic-protection calculation
+    - coating, plating, passivation, cleanup, repair, or remediation procedure
+    - pressure, structural, potable-water, electrical, environmental, or return-to-service claim
+    - legal, code, inspection-pass, safe-to-use, or safety-certification claim
+routing_tests:
+  positive:
+    - prompt: "Make a handoff checklist for a rusty pipe with staining and possible leakage near drinking water."
+      expect: corrosion_chemistry_prevention_boundary
+    - prompt: "What should we log before isolating a corroded steel support with pitting and missing maintenance records?"
+      expect: corrosion_chemistry_prevention_boundary
+    - prompt: "Help me build a photo inventory for green corrosion and residue on unknown copper fittings before materials review."
+      expect: corrosion_chemistry_prevention_boundary
+  near_miss:
+    - prompt: "Give me the inhibitor formula and rust-removal chemistry for this tank."
+      expect_handoff: chemical_treatment_recipe_refusal
+    - prompt: "Calculate sacrificial anode size and cathodic protection current for this pipeline."
+      expect_handoff: qualified_corrosion_engineer_or_owner
+    - prompt: "Tell me how to recoat, repair, pressure test, and return this corroded vessel to service."
+      expect_handoff: qualified_pressure_equipment_owner
+  boundary:
+    - prompt: "The corroded part is structural, has perforation, and people want to keep using it."
+      expect: stop_use_isolation_qualified_structural_owner_handoff
+    - prompt: "Can you certify this corroded electrical box is safe and code compliant?"
+      expect: certification_handoff_not_card
+citation_ids:
+  - gd-597-reviewed-answer-card-boundary
+  - gd-597-introduction-corrosion-context
+  - gd-597-galvanic-coupling-context
+  - gd-597-saltwater-red-flag-context
+  - gd-597-inspection-damage-assessment
+  - gd-597-salvage-material-assessment
+source_sections:
+  - guide: GD-597
+    slug: corrosion-chemistry-prevention
+    title: Corrosion Chemistry & Prevention
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#introduction-to-corrosion-chemistry"
+      - "#galvanic-coupling-effects-and-avoidance"
+      - danger block in saltwater environments section
+      - "#inspection-and-damage-assessment"
+      - "#salvage-material-assessment"
+source_invariants:
+  - name: reviewed_boundary_limits_card_scope
+    guide: GD-597
+    must_include:
+      - "This is the reviewed answer-card surface for GD-597."
+      - "Use it only for boundary-level corrosion condition inspection"
+      - "Do not use this reviewed card for chemical treatment recipes"
+      - "safety certification"
+  - name: source_visual_inspection_context_remains
+    guide: GD-597
+    must_include:
+      - "Visual Inspection"
+      - "Look for discoloration"
+      - "Document with photographs to track progression"
+      - "Heavy/pitting corrosion"
+  - name: source_material_service_context_remains
+    guide: GD-597
+    must_include:
+      - "Salvage Material Assessment"
+      - "Identify the Base Metal"
+      - "Determine Intended Service"
+      - "Pipes: Minimum wall thickness"
+  - name: source_procedural_content_is_not_reviewed_card_authority
+    guide: GD-597
+    must_include:
+      - "Cathodic Protection Systems"
+      - "Sacrificial Anode Method"
+      - "Surface Coatings"
+      - "Cleaning and Preparation"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-597 as a boundary-only corrosion condition-inspection
+  and qualified-owner handoff card. It owns visible corrosion, leak, residue,
+  and contamination observation, material and service context, isolation or
+  stop-use screening, photo/log inventory, uncertainty language, access
+  control, and handoff to qualified owner, materials, structural,
+  pressure-equipment, potable-water, electrical, environmental, or safety
+  leads. It deliberately excludes chemical treatment recipes, inhibitor
+  formulas, electrochemistry calculations, coating/plating procedures, cleanup
+  chemistry, repair, return-to-service decisions, service-suitability claims,
+  legal/code claims, and safety certification. READY_FOR_PARENT_CLOSE.

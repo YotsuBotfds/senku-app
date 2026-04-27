@@ -7,6 +7,35 @@ difficulty: intermediate
 tags:
   - practical
   - security
+aliases:
+  - border intake handoff boundary
+  - stranger protocol lawful access intake
+  - visitor refugee trade intake log
+  - safe waiting area illness vulnerability handoff
+  - nonviolent first contact community leadership handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for nonviolent first contact, lawful access/intake boundaries, visitor refugee trade intake logs, illness or vulnerability red flags, safe waiting areas, communication, consent/authority checks, and public-health or community-leadership handoff.
+  - Keep routine answers focused on observed facts, calm communication, waiting-area safety, illness or vulnerability needs, intake records, who has authority to consent or decide access, and responsible handoff.
+  - Route checkpoint construction, searches, detention, force, weapons, patrol tactics, profiling, quarantine enforcement, contraband detection tactics, surveillance, legal conclusions, and safety certification away from this reviewed card.
+routing_support:
+  - "First-contact sections support calm purpose, representative, communication, respect, and leader handoff."
+  - "Refugee and caravan sections support basic intake questions, capacity/resource notes, health concerns, trade declarations, and temporary shelter without enforcement tactics."
+  - "Logging sections support visitor, traffic, incident, and illness/handoff records."
+citations_required: true
+citation_policy: cite reviewed GD-435 answer card for lawful access/intake and handoff boundaries only; do not use it for checkpoint construction, searches, detention, force, weapons, patrol tactics, profiling, quarantine enforcement, contraband detection tactics, surveillance, legal conclusions, or safety certification.
+runtime_citation_policy: reviewed_source_family
+applicability: >
+  Use for border or stranger-protocol questions where the safe answer is
+  nonviolent first contact, visitor/refugee/trade intake logging, illness or
+  vulnerability red flags, safe waiting areas, calm communication,
+  consent/authority checks, and public-health or community-leadership handoff.
+  Do not use for checkpoint construction, searches, detention, force, weapons,
+  patrol tactics, profiling, quarantine enforcement, contraband detection
+  tactics, surveillance, legal conclusions, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: border_security_stranger_protocol_boundary
+answer_card:
+  - border_security_stranger_protocol_boundary
 icon: 🚧
 description: Checkpoint design, identification verification, quarantine procedures, refugee integration, caravan inspection, contraband detection, gate watches, threat assessment, diplomatic first contact, coordination with neighbors.
 related:
@@ -42,6 +71,16 @@ This guide covers:
 6. **First contact protocols** (diplomatic safety)
 
 </section>
+
+## Reviewed Answer-Card Boundary: Lawful Intake and Handoff
+
+This is the reviewed answer-card surface for GD-435. Use it only for nonviolent first contact, lawful access and intake boundaries, visitor/refugee/trade intake logs, illness or vulnerability red flags, safe waiting areas, calm communication, consent and authority checks, and handoff to public health, community leadership, medical responders, emergency services, or another responsible authority.
+
+Routine answers should create a simple intake and handoff log: date and time, location, reporter, names or group description if offered, stated purpose, visitor/refugee/trade category, immediate needs, illness or vulnerability red flags, safe waiting area used, communication sent, consent or authority question, decision owner, and public-health or community-leadership handoff status. Keep advice to respectful distance, voluntary communication, basic needs, waiting-area safety, factual records, and responsible-authority routing.
+
+Immediate handoff is required for active violence, threats, serious injury, inability to communicate, children separated from caregivers, disabled or elderly people without support, visible severe illness, dehydration, exposure, urgent medical needs, no safe waiting area, unclear decision authority, or a public-health concern that exceeds routine intake.
+
+Do not provide checkpoint construction, searches, detention, force, weapons, patrol tactics, profiling, quarantine enforcement, contraband detection tactics, surveillance, legal conclusions, safety certification, or instructions to confront, pursue, detain, punish, coerce, or exclude people based on identity or origin. Preserve distance where useful, keep communication calm, record observed facts separately from assumptions, support vulnerable people, and route unresolved access, health, consent, or authority questions to the responsible public-health, community-leadership, emergency, medical, or legal authority.
 
 <section id="checkpoint-design">
 
@@ -565,4 +604,3 @@ For major trade routes:
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

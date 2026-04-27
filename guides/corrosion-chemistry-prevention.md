@@ -20,6 +20,21 @@ aliases:
   - prevent rust on tools
   - green corrosion on copper
   - verdigris removal
+  - corrosion inspection boundary
+  - corrosion leak contamination log
+  - rusty structural part stop use
+  - corroded pipe handoff checklist
+  - corrosion photo inventory
+  - materials corrosion owner handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level corrosion condition inspection: visible corrosion, leak, staining, contamination, material/service context, isolation or stop-use flags, photo/log inventory, and qualified owner handoff.
+  - Keep routine reviewed-card answers non-procedural: identify the item, material if known, service context, visible condition, leak or contamination signs, access/use status, recent exposure, photo/log record, and who owns the qualified review.
+  - Route chemical treatment recipes, inhibitor formulas, electrochemistry calculations, coating or plating procedures, cleanup chemistry, repair, return-to-service decisions, potable-water, pressure, structural, electrical, legal, code, and safety-certification claims away from this card.
+routing_support:
+  - metallurgy-basics for non-procedural material identification and uncertainty framing before service decisions.
+  - copper-bronze-alloys for non-ferrous material identity, scrap/source labels, contamination screening, and qualified materials handoff.
+  - tool-restoration-salvage for non-critical tool salvage context outside pressure, structural, potable-water, electrical, contamination, or certification decisions.
+  - water-testing-quality-assessment and water-purification for water-quality assessment when corrosion may have contaminated drinking water.
 icon: 🏭
 description: Understanding the electrochemistry of corrosion, galvanic coupling effects, passivation layers, and practical prevention methods including sacrificial anodes, coatings, cathodic protection, and material selection for various environments.
 related:
@@ -33,7 +48,34 @@ word_count: 4520
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: critical
+citations_required: true
+citation_policy: cite reviewed GD-597 answer card only for boundary-level corrosion condition inspection, visible corrosion/leak/contamination observations, material and service context, isolation or stop-use flags, photo/log inventory, and qualified owner/materials/structural/environmental handoff; do not use it for chemical treatment recipes, inhibitor formulas, electrochemistry calculations, coating/plating procedures, structural/pressure/potable-water/electrical safety certification, repair, cleanup chemistry, or return-to-service decisions.
+applicability: >
+  Use for boundary-only corrosion condition-inspection questions: visible rust,
+  pitting, discoloration, verdigris, staining, leaks, residues, contamination
+  concerns, material and service context, isolation or stop-use flags, photo
+  and log inventory, and handoff to a qualified owner, materials specialist,
+  structural owner, pressure-equipment owner, potable-water owner, electrical
+  owner, or environmental/safety lead. Do not use for treatment recipes,
+  inhibitor formulas, electrochemistry calculations, coating or plating
+  procedures, cleanup chemistry, repair, return-to-service decisions, service
+  suitability claims, legal/code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: corrosion_chemistry_prevention_boundary
+answer_card:
+  - corrosion_chemistry_prevention_boundary
 ---
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-597. Use it only for boundary-level corrosion condition inspection: visible corrosion, pitting, discoloration, verdigris, staining, leaks, residues, contamination concerns, material and service context, isolation or stop-use flags, photo and log inventory, and qualified owner handoff.
+
+Start by identifying the item or asset, location, owner or decision maker, known material if any, current use or access status, service role, recent exposure to water, salt, soil, acids, alkalis, heat, electrical contact, dissimilar metals, leaks, contamination, or prior maintenance, and what is visible without scraping, treating, energizing, pressurizing, entering, repairing, or declaring the item safe. Record photographs, dates, labels, missing records, leak paths, staining, residue, odor, nearby water/food/electrical/structural exposure, and whether the item has been isolated, tagged, or removed from service pending review.
+
+Do not use this reviewed card for chemical treatment recipes, rust-removal mixtures, inhibitor formulas, electrochemistry calculations, sacrificial-anode sizing, cathodic-protection settings, coating or plating procedures, cleanup chemistry, repair steps, pressure/structural/potable-water/electrical suitability decisions, return-to-service decisions, legal/code claims, or safety certification. If a prompt includes active leaking, contamination, pressure service, potable water, food contact, electrical service, structural support, public access, unknown material, severe pitting, perforation, missing records, or pressure to keep using the item, keep the answer to isolation or stop-use screening, photo/log inventory, uncertainty language, and handoff to a qualified owner, materials specialist, structural owner, pressure-equipment owner, potable-water owner, electrical owner, environmental/safety lead, or responsible facility lead.
+
+</section>
 
 ## Introduction to Corrosion Chemistry
 
