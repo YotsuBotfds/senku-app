@@ -76,6 +76,7 @@ $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 
 This scaffold is only a future parallel smoke lane. It does not replace the
 fixed four-emulator screenshot/state-pack evidence above.
+ATD images are not screenshot-sensitive proof for acceptance artifacts.
 
 ## Build
 

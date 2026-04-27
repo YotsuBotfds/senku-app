@@ -27,16 +27,19 @@ class AndroidGradleManagedDevicesContractTests(unittest.TestCase):
             "senkuPhoneApi30",
             "senkuTabletApi30",
             "senkuManagedSmoke",
+            "systemImageSource = 'aosp'",
             "targetDevices.add(devices.senkuPhoneApi30)",
             "targetDevices.add(devices.senkuTabletApi30)",
         ):
             self.assertIn(expected, self.gradle)
+        self.assertNotIn("systemImageSource = 'atd'", self.gradle)
 
     def test_readme_marks_managed_devices_as_non_acceptance_evidence(self):
         self.assertIn("'-Psenku.enableManagedDevices=true'", self.readme)
         self.assertIn("future parallel smoke lane", self.readme)
         self.assertIn("does not replace the", self.readme)
         self.assertIn("fixed four-emulator screenshot/state-pack evidence", self.readme)
+        self.assertIn("ATD images are not screenshot-sensitive proof", self.readme)
 
 
 if __name__ == "__main__":

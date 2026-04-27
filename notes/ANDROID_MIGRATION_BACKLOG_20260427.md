@@ -85,6 +85,23 @@ use it to approve reviewed-card runtime expansion or product exposure.
   The prior bundled no-push partial `42 / 45` is superseded for UI acceptance
   by this full proof.
 
+## Migration-Proof Checklist
+
+Future Android migration lanes should preserve a compact summary row, not a new
+audit. Capture:
+
+- status/pass counts, including total pass/fail/skipped counts and the artifact
+  path for the summary.
+- `platform_anr_count` plus any per-device ANR/null status.
+- `matrix_homogeneous`, `matrix_model_name`, and identity source/missing flags.
+- APK SHA for the installed app under test.
+- installed-pack metadata, especially manifest/listing source, card/chunk/guide
+  counts, and whether the lane used bundled, pushed, or cached pack files.
+- FTS evidence label such as `runtime_evidence=fts4_fallback` when retrieval
+  timing or behavior depends on Android SQLite capabilities.
+- host adb/platform-tools version, recorded as
+  `host_adb_platform_tools_version`, for transfer and device-control proof.
+
 ## Current Blockers
 
 - Consolidated host-inclusive state-pack proof: current bundled-pack UI

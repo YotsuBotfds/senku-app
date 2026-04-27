@@ -15,6 +15,7 @@ $instrumentationClass = "com.senku.mobile.PackRepositoryFtsFallbackAndroidTest"
 $instrumentationRunner = "com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner"
 $expectedTests = 3
 $runtimeEvidence = "fts4_fallback"
+$expectedFtsTable = "pack_pages_fts4"
 
 if (Test-Path -LiteralPath $commonHarnessModule) {
     Import-Module $commonHarnessModule -Force -DisableNameChecking
@@ -162,6 +163,9 @@ foreach ($device in @($Devices)) {
         passed = [bool]$passed
         expected_tests = $expectedTests
         runtime_evidence = $runtimeEvidence
+        expected_fts_table = $expectedFtsTable
+        fts5_runtime_proof = $false
+        not_fts5_runtime_proof = $true
         dry_run = [bool]$DryRun
         device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
         host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
@@ -184,6 +188,9 @@ $summary = [pscustomobject]@{
     failed_devices = $failedDevices
     expected_tests = $expectedTests
     runtime_evidence = $runtimeEvidence
+    expected_fts_table = $expectedFtsTable
+    fts5_runtime_proof = $false
+    not_fts5_runtime_proof = $true
     dry_run = [bool]$DryRun
     device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
     host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
