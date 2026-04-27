@@ -70,7 +70,7 @@ pushed pack:
 cd android-app
 $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 .\gradlew.bat :app:connectedDebugAndroidTest `
-  "-Pandroid.testInstrumentationRunnerArguments.class=com.senku.mobile.AnswerCardCurrentHeadPackCensusTest,com.senku.mobile.AnswerCardRuntimeAllowlistCurrentHeadTest" `
+  "-Pandroid.testInstrumentationRunnerArguments.class=com.senku.mobile.AnswerCardCurrentHeadPackCensusTest,com.senku.mobile.AnswerCardRuntimeAllowlistCurrentHeadTest,com.senku.mobile.PackMigrationInstallTest" `
   --console=plain
 ```
 
@@ -79,13 +79,13 @@ Direct proof on a lane after pushing the current-head pack:
 ```powershell
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 & $adb -s emulator-5556 shell am instrument -w `
-  -e class com.senku.mobile.AnswerCardCurrentHeadPackCensusTest,com.senku.mobile.AnswerCardRuntimeAllowlistCurrentHeadTest `
+  -e class com.senku.mobile.AnswerCardCurrentHeadPackCensusTest,com.senku.mobile.AnswerCardRuntimeAllowlistCurrentHeadTest,com.senku.mobile.PackMigrationInstallTest `
   com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
 Expected direct proof result:
 
-`OK (2 tests)`
+`OK (3 tests)`
 
 ## Guard Classes
 
@@ -94,6 +94,8 @@ Expected direct proof result:
 - `AnswerCardRuntimeAllowlistCurrentHeadTest`: six pilot runtime cards still
   plan, while deterministic non-pilot current-head samples do not satisfy any
   of the six runtime planner hooks.
+- `PackMigrationInstallTest`: normal app install keeps a usable pushed
+  current-head pack when checked-in app assets are older.
 
 ## Stop Lines
 

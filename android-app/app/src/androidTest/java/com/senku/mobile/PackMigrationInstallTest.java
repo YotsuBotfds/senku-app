@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +69,39 @@ public final class PackMigrationInstallTest {
         assertTrue(pack.vectorFile.isFile());
     }
 
+    @Test
+    public void forceInstallRestoresBundledAssetPackOverPartialInstalledPack() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+
+        PackManifest assetManifest = assumeAssetPackManifest(context);
+        File assetVectorFile = assumeAssetVectorAvailable(context, assetManifest);
+
+        File manifest = manifestFile(context);
+        File database = databaseFile(context);
+        File vector = vectorFileForManifest(context, assetManifest);
+        File packRoot = manifest.getParentFile();
+        assumeTrue(
+            "installed mobile pack directory could not be created for force migration refresh",
+            packRoot != null && (packRoot.exists() || packRoot.mkdirs())
+        );
+
+        writeText(manifest, "{\"answer_cards\":0}");
+        writeText(database, "partial sqlite");
+        writeText(vector, "partial vector");
+
+        PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(context, true);
+
+        assertEquals(assetManifest.answerCardCount, pack.manifest.answerCardCount);
+        assertEquals(assetManifest.generatedAt, pack.manifest.generatedAt);
+        assertEquals(assetManifest.sqliteBytes, pack.databaseFile.length());
+        assertEquals(assetManifest.vectorBytes, pack.vectorFile.length());
+        assertEquals(assetManifest.sqliteSha256, PackInstaller.sha256HexForTest(pack.databaseFile));
+        assertEquals(assetManifest.vectorSha256, PackInstaller.sha256HexForTest(pack.vectorFile));
+        assertEquals(assetVectorFile.getName(), pack.vectorFile.getName());
+        assertTrue(pack.databaseFile.isFile());
+        assertTrue(pack.vectorFile.isFile());
+    }
+
     private static PackManifest assumeAssetPackManifest(Context context) throws Exception {
         PackManifest manifest = null;
         try {
@@ -85,6 +119,26 @@ public final class PackMigrationInstallTest {
     private static String readAssetText(Context context, String assetPath) throws IOException {
         try (InputStream input = context.getAssets().open(assetPath)) {
             return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
+    private static File assumeAssetVectorAvailable(Context context, PackManifest manifest) {
+        String vectorName = "int8".equals(manifest.vectorDtype) ? "senku_vectors.i8" : "senku_vectors.f16";
+        try (InputStream ignored = context.getAssets().open(PACK_DIR + "/" + vectorName)) {
+            return new File(new File(context.getFilesDir(), PACK_DIR), vectorName);
+        } catch (IOException exc) {
+            assumeTrue(
+                "asset pack vector file is absent; include app assets before running force migration refresh: " + exc,
+                false
+            );
+            return null;
+        }
+    }
+
+    private static void writeText(File file, String value) throws IOException {
+        try (FileOutputStream output = new FileOutputStream(file, false)) {
+            output.write(value.getBytes(StandardCharsets.UTF_8));
+            output.getFD().sync();
         }
     }
 

@@ -1,12 +1,15 @@
 package com.senku.mobile;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.assertTrue;
 
 final class CurrentHeadAnswerCardPackTestSupport {
     static final int CURRENT_HEAD_ANSWER_CARD_COUNT = 271;
@@ -28,6 +31,33 @@ final class CurrentHeadAnswerCardPackTestSupport {
     static String readFileText(File file) throws Exception {
         try (FileInputStream input = new FileInputStream(file)) {
             return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
+    static void assertTableExists(SQLiteDatabase database, String tableName) {
+        assertTrue("Missing table: " + tableName, tableExists(database, tableName));
+    }
+
+    static boolean tableExists(SQLiteDatabase database, String tableName) {
+        try (Cursor cursor = database.rawQuery(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ? LIMIT 1",
+            new String[]{tableName}
+        )) {
+            return cursor.moveToFirst();
+        }
+    }
+
+    static long queryLong(SQLiteDatabase database, String sql) {
+        try (Cursor cursor = database.rawQuery(sql, null)) {
+            assertTrue("Expected one row for query: " + sql, cursor.moveToFirst());
+            return cursor.getLong(0);
+        }
+    }
+
+    static String queryString(SQLiteDatabase database, String sql, String[] args) {
+        try (Cursor cursor = database.rawQuery(sql, args)) {
+            assertTrue("Expected one row for query: " + sql, cursor.moveToFirst());
+            return cursor.getString(0);
         }
     }
 

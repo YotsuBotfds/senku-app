@@ -64,9 +64,51 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
                 CURRENT_HEAD_ANSWER_CARD_COUNT,
                 queryLong(database, "SELECT COUNT(*) FROM answer_cards")
             );
+            assertRuntimeDisabledDoesNotPlanPilotQueries(context, repository);
             assertPilotPlans(context, repository);
             assertSampledNonPilotCurrentHeadCardsDoNotPlan(repository, database);
         }
+    }
+
+    private static void assertRuntimeDisabledDoesNotPlanPilotQueries(Context context, PackRepository repository) {
+        AnswerCardRuntime.setEnabledForTest(false);
+
+        assertNull(
+            "disabled runtime must not plan poisoning pilot query",
+            AnswerCardRuntime.tryPlan(context, repository, "my child swallowed an unknown cleaner")
+        );
+        assertNull(
+            "disabled runtime must not plan newborn pilot query",
+            AnswerCardRuntime.tryPlan(context, repository, "newborn is limp, will not feed, and is hard to wake")
+        );
+        assertNull(
+            "disabled runtime must not plan choking pilot query",
+            AnswerCardRuntime.tryPlan(context, repository, "baby is choking and cannot cry or cough")
+        );
+        assertNull(
+            "disabled runtime must not plan meningitis pilot query",
+            AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "child has fever, stiff neck, and a purple rash that does not fade when pressed"
+            )
+        );
+        assertNull(
+            "disabled runtime must not plan infected-wound pilot query",
+            AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "cut on my hand yesterday and now a red streak is moving up my arm"
+            )
+        );
+        assertNull(
+            "disabled runtime must not plan internal-bleeding pilot query",
+            AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "bike handlebar hit his belly and now he is pale and dizzy"
+            )
+        );
     }
 
     private static void assertPilotPlans(Context context, PackRepository repository) {

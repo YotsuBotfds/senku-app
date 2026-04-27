@@ -14,6 +14,10 @@ ANDROID_HARNESS_SCRIPT_PATHS = (
     "scripts\\run_android_prompt_batch.ps1",
     "scripts\\run_android_harness_matrix.ps1",
     "scripts\\run_android_instrumented_ui_smoke.ps1",
+    "scripts\\start_senku_emulator_matrix.ps1",
+    "scripts\\build_android_ui_state_pack.ps1",
+    "scripts\\build_android_ui_state_pack_parallel.ps1",
+    "scripts\\start_litert_host_server.ps1",
 )
 WRAPPER_SLICE_PATHS = (
     "scripts\\run_powershell_quality_gate.ps1",
