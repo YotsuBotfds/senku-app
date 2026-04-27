@@ -84,6 +84,14 @@ def make_summary() -> dict:
                 "artifacts/bench/android_migration_preflight_bundle/harness_matrix_plan/summary.json",
             ],
         },
+        "self_validation": {
+            "name": "validate_migration_preflight_bundle_summary",
+            "command": "python scripts/validate_android_migration_preflight_bundle_summary.py artifacts/bench/android_migration_preflight_bundle/summary.json",
+            "target": "artifacts/bench/android_migration_preflight_bundle/summary.json",
+            "status": "pass",
+            "exit_code": 0,
+            "stdout_path": "artifacts/bench/android_migration_preflight_bundle/validation_validate_migration_preflight_bundle_summary/stdout.txt",
+        },
         "started_at_utc": "2026-04-27T00:00:00.0000000Z",
         "finished_at_utc": "2026-04-27T00:00:02.0000000Z",
     }
@@ -188,6 +196,40 @@ class ValidateAndroidMigrationPreflightBundleSummaryTests(unittest.TestCase):
         _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
 
         self.assertIn("expected migration_summarizer.inputs to be non-empty", errors)
+
+    def test_rejects_missing_or_failed_self_validation_record(self):
+        summary = make_summary()
+        del summary["self_validation"]
+
+        _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.self_validation to be dict, got NoneType", errors)
+
+        summary = make_summary()
+        summary["self_validation"]["status"] = "fail"
+        summary["self_validation"]["exit_code"] = 1
+
+        _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
+
+        self.assertIn("expected self_validation.status to be 'pass'", errors)
+        self.assertIn("expected self_validation.exit_code to be 0", errors)
+
+    def test_allows_pending_self_validation_only_when_explicit(self):
+        summary = make_summary()
+        summary["self_validation"]["status"] = "not_run"
+        summary["self_validation"]["exit_code"] = None
+
+        _, errors = validate_android_migration_preflight_bundle_summary(self.write_summary(summary))
+
+        self.assertIn("expected self_validation.status to be 'pass'", errors)
+        self.assertIn("expected self_validation.exit_code to be 0", errors)
+
+        _, errors = validate_android_migration_preflight_bundle_summary(
+            self.write_summary(summary),
+            allow_pending_self_validation=True,
+        )
+
+        self.assertEqual(errors, [])
 
     def test_cli_reports_failure_without_emulator_work(self):
         summary = make_summary()

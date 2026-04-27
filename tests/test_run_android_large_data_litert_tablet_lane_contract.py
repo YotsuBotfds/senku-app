@@ -204,6 +204,7 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertFalse(validation_command["will_touch_emulators"])
         self.assertIn("does not start jobs", validation_command["note"])
         self.assertIn("touch emulators", validation_command["note"])
+        self.assertIn("create UI acceptance evidence", validation_command["note"])
 
         self.assertEqual(launch["profile_metadata"]["profile"], "large-litert-data")
         self.assertEqual(launch["profile_metadata"]["expected_serial"], "emulator-5554")
@@ -230,6 +231,8 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
 
         self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
         self.assertIn("android_large_data_litert_tablet_lane_summary: ok", validator.stdout)
+        self.assertIn("status: dry_run_only", validator.stdout)
+        self.assertIn("evidence: deploy/runtime only, non_acceptance", validator.stdout)
 
 
 if __name__ == "__main__":

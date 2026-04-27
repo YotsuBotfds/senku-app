@@ -9,6 +9,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_android_headless_state_pack_lane.ps1"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
+VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_headless_state_pack_lane_summary.py"
 
 
 class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
@@ -37,6 +38,23 @@ class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
         self.assertTrue(plan_path.is_file(), output)
         return plan_path, json.loads(plan_path.read_text(encoding="utf-8-sig"))
 
+    def validate_plan_artifact(self, plan_path):
+        result = subprocess.run(
+            [
+                str(REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"),
+                str(VALIDATOR_SCRIPT),
+                str(plan_path),
+            ],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 0, output)
+        self.assertIn("android_headless_state_pack_lane_plan: ok", result.stdout)
+        self.assertIn("evidence: non_acceptance", result.stdout)
+
     def test_plan_only_writes_non_acceptance_fixed_matrix_plan_without_emulators(self):
         with tempfile.TemporaryDirectory(
             prefix="headless_lane_plan_",
@@ -54,6 +72,7 @@ class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
             output = result.stdout + result.stderr
             self.assertEqual(result.returncode, 0, output)
             plan_path, plan = self.read_plan_from_output(output)
+            self.validate_plan_artifact(plan_path)
 
         self.assertTrue(plan["plan_only"])
         self.assertFalse(plan["whatif"])
@@ -111,6 +130,7 @@ class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
             output = result.stdout + result.stderr
             self.assertEqual(result.returncode, 0, output)
             plan_path, plan = self.read_plan_from_output(output)
+            self.validate_plan_artifact(plan_path)
 
         self.assertFalse(plan["plan_only"])
         self.assertTrue(plan["whatif"])

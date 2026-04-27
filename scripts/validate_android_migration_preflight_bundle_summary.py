@@ -55,6 +55,15 @@ REQUIRED_MIGRATION_SUMMARIZER_FIELDS = {
     "inputs",
 }
 
+REQUIRED_SELF_VALIDATION_FIELDS = {
+    "name",
+    "command",
+    "target",
+    "status",
+    "exit_code",
+    "stdout_path",
+}
+
 
 def _type_name(expected_type: type | tuple[type, ...]) -> str:
     if isinstance(expected_type, tuple):
@@ -230,8 +239,58 @@ def _validate_migration_summarizer(data: dict[str, Any], errors: list[str]) -> N
             _expect_str(item, errors, f"migration_summarizer.inputs[{index}]")
 
 
+def _validate_self_validation(
+    data: dict[str, Any],
+    errors: list[str],
+    *,
+    allow_pending: bool = False,
+) -> None:
+    self_validation = data.get("self_validation")
+    if not isinstance(self_validation, dict):
+        errors.append(
+            f"expected root.self_validation to be dict, got {type(self_validation).__name__}"
+        )
+        return
+
+    for key in sorted(REQUIRED_SELF_VALIDATION_FIELDS):
+        if key not in self_validation:
+            errors.append(f"missing self_validation.{key}")
+
+    _expect_type(self_validation, "name", str, errors, "self_validation")
+    _expect_type(self_validation, "command", str, errors, "self_validation")
+    _expect_type(self_validation, "target", str, errors, "self_validation")
+    _expect_type(self_validation, "status", str, errors, "self_validation")
+    if allow_pending and self_validation.get("exit_code") is None:
+        pass
+    else:
+        _expect_type(self_validation, "exit_code", int, errors, "self_validation")
+    if allow_pending and self_validation.get("stdout_path") is None:
+        pass
+    else:
+        _expect_type(self_validation, "stdout_path", str, errors, "self_validation")
+
+    if self_validation.get("name") != "validate_migration_preflight_bundle_summary":
+        errors.append(
+            "expected self_validation.name to be 'validate_migration_preflight_bundle_summary'"
+        )
+    expected_statuses = {"pass", "not_run"} if allow_pending else {"pass"}
+    if self_validation.get("status") not in expected_statuses:
+        if allow_pending:
+            errors.append("expected self_validation.status to be 'pass' or 'not_run'")
+        else:
+            errors.append("expected self_validation.status to be 'pass'")
+    expected_exit_codes = {0, None} if allow_pending else {0}
+    if self_validation.get("exit_code") not in expected_exit_codes:
+        if allow_pending:
+            errors.append("expected self_validation.exit_code to be 0 or null")
+        else:
+            errors.append("expected self_validation.exit_code to be 0")
+
+
 def validate_android_migration_preflight_bundle_summary(
     path: Path,
+    *,
+    allow_pending_self_validation: bool = False,
 ) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -259,6 +318,11 @@ def validate_android_migration_preflight_bundle_summary(
     _validate_steps(data, errors)
     _validate_validation_commands(data, errors)
     _validate_migration_summarizer(data, errors)
+    _validate_self_validation(
+        data,
+        errors,
+        allow_pending=allow_pending_self_validation,
+    )
 
     return data, errors
 
@@ -269,9 +333,17 @@ def main(argv: list[str] | None = None) -> int:
         "summary_path",
         help="Path to run_android_migration_preflight_bundle.ps1 summary JSON.",
     )
+    parser.add_argument(
+        "--allow-pending-self-validation",
+        action="store_true",
+        help="Allow the wrapper's bootstrap self-validation record before it is updated.",
+    )
     args = parser.parse_args(argv)
 
-    data, errors = validate_android_migration_preflight_bundle_summary(Path(args.summary_path))
+    data, errors = validate_android_migration_preflight_bundle_summary(
+        Path(args.summary_path),
+        allow_pending_self_validation=args.allow_pending_self_validation,
+    )
     if errors:
         for error in errors:
             print(f"ERROR: {error}")

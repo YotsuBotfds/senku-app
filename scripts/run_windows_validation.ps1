@@ -15,7 +15,9 @@ param(
 
     [int]$TopK = 8,
 
-    [string[]]$ExtraBenchArgs = @()
+    [string[]]$ExtraBenchArgs = @(),
+
+    [switch]$WhatIf
 )
 
 $ErrorActionPreference = 'Stop'
@@ -37,14 +39,16 @@ try {
         return
     }
 
-    $depResult = Test-SenkuPythonDeps -PythonPath $pythonPath
-    if (-not $depResult.ok) {
-        Write-Warning "Validation dependencies are not ready for $pythonPath."
-        Write-Host $depResult.output
-        Write-Host ""
-        Write-Host "Run setup from a shell with package/network access:"
-        Write-Host "  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_windows_validation_env.ps1 -AllowInstall"
-        throw "Validation dependencies are not ready."
+    if (-not ($Mode -eq 'android-migration' -and $WhatIf)) {
+        $depResult = Test-SenkuPythonDeps -PythonPath $pythonPath
+        if (-not $depResult.ok) {
+            Write-Warning "Validation dependencies are not ready for $pythonPath."
+            Write-Host $depResult.output
+            Write-Host ""
+            Write-Host "Run setup from a shell with package/network access:"
+            Write-Host "  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_windows_validation_env.ps1 -AllowInstall"
+            throw "Validation dependencies are not ready."
+        }
     }
 
     switch ($Mode) {
@@ -76,8 +80,8 @@ try {
         }
         'android-migration' {
             $androidMigrationScript = Join-Path $PSScriptRoot "run_android_migration_validator_suite.ps1"
-            & $androidMigrationScript -PythonPath $pythonPath
-            if ($LASTEXITCODE -ne 0) {
+            & $androidMigrationScript -PythonPath $pythonPath -WhatIf:$WhatIf
+            if (-not $WhatIf -and $LASTEXITCODE -ne 0) {
                 throw "android migration validation failed with exit code $LASTEXITCODE"
             }
         }

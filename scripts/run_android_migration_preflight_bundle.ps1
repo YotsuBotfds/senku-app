@@ -302,6 +302,7 @@ $selfValidationDir = Join-Path $resolvedOutputDir "validation_validate_migration
 $selfValidationCommand = @(
     $python,
     (Join-Path $PSScriptRoot "validate_android_migration_preflight_bundle_summary.py"),
+    "--allow-pending-self-validation",
     $summaryJsonPath
 )
 $selfValidationCommandText = ($selfValidationCommand | ForEach-Object { ConvertTo-QuotedCliToken -Value $_ }) -join " "

@@ -326,6 +326,11 @@ Reviewer taxonomy for helper evidence:
   metadata/preflight only with `acceptance_evidence=false`. Validate the bundle
   shape with `scripts/validate_android_migration_preflight_bundle_summary.py`;
   that validation is contract evidence only.
+- `run_windows_validation.ps1 -Mode android-migration` invokes
+  `run_android_migration_validator_suite.ps1` as the no-emulator Android
+  migration validator batch. Treat it as summary/contract validation only:
+  it does not launch emulators, inspect UI evidence, or replace fixed
+  four-emulator state-pack acceptance.
 - Android Gradle dependency verification is enabled and includes the detached
   Android lint tool dependencies, but `:app:lintDebug` is still blocked by
   existing lint/code compatibility findings. Do not treat lint as a green
