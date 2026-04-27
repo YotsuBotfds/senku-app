@@ -28,17 +28,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.senku.mobile.R
+import com.senku.ui.evidence.EvidenceAnchorLabelStyle
+import com.senku.ui.evidence.EvidenceSourceModel
+import com.senku.ui.evidence.evidenceAnchorLabel
+import com.senku.ui.evidence.normalizeEvidenceGuideId
+import com.senku.ui.evidence.normalizeEvidenceLabel
+import com.senku.ui.evidence.normalizeEvidenceSourceTitle
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
-import java.util.Locale
 
-private const val AnchorLabel = "anchor guide"
-private const val FallbackGuideId = "GD-?"
-private const val FallbackTitle = "Source guide"
-private const val MetaSeparator = " · "
-
-private val CategoryDelimiterRegex = Regex("[-_]+")
-private val WhitespaceRegex = Regex("\\s+")
+private const val MetaSeparator = " \u00B7 "
 
 @Immutable
 data class SourceRowModel(
@@ -135,21 +134,25 @@ internal fun buildSourceRowMeta(category: String, isAnchor: Boolean): String {
             .takeIf { it.isNotEmpty() }
             ?.let(::add)
         if (isAnchor) {
-            add(AnchorLabel)
+            add(evidenceAnchorLabel(EvidenceAnchorLabelStyle.Guide))
         }
     }
     return parts.joinToString(separator = MetaSeparator)
 }
 
-internal fun normalizeSourceCategory(category: String): String = category
-    .trim()
-    .replace(CategoryDelimiterRegex, " ")
-    .replace(WhitespaceRegex, " ")
-    .lowercase(Locale.US)
+internal fun normalizeSourceCategory(category: String): String = normalizeEvidenceLabel(category)
 
-internal fun SourceRowModel.displayGuideId(): String = guideId.trim().ifEmpty { FallbackGuideId }
+internal fun EvidenceSourceModel.toSourceRowModel(): SourceRowModel =
+    SourceRowModel(
+        guideId = normalizeEvidenceGuideId(guideId),
+        title = normalizeEvidenceSourceTitle(title),
+        category = normalizeEvidenceLabel(label),
+        isAnchor = isAnchor,
+    )
 
-internal fun SourceRowModel.displayTitle(): String = title.trim().ifEmpty { FallbackTitle }
+internal fun SourceRowModel.displayGuideId(): String = normalizeEvidenceGuideId(guideId)
+
+internal fun SourceRowModel.displayTitle(): String = normalizeEvidenceSourceTitle(title)
 
 private fun SourceRowModel.containerColor(colors: com.senku.ui.theme.SenkuColorTokens): Color =
     if (isAnchor) {

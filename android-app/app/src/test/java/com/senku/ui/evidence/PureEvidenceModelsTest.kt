@@ -10,8 +10,17 @@ class PureEvidenceModelsTest {
     @Test
     fun normalizeEvidenceLabelTrimsDelimitersAndWhitespace() {
         assertEquals("reviewed evidence", normalizeEvidenceLabel("  Reviewed_Evidence  "))
+        assertEquals("generated evidence", normalizeEvidenceLabel("Generated_Evidence"))
         assertEquals("limited fit", normalizeEvidenceLabel("limited-fit"))
         assertEquals("source family", normalizeEvidenceLabel("source \n\t family"))
+    }
+
+    @Test
+    fun sourceFallbackVocabularyIsShared() {
+        assertEquals("GD-?", normalizeEvidenceGuideId(" "))
+        assertEquals("Source guide", normalizeEvidenceSourceTitle(" "))
+        assertEquals("anchor", evidenceAnchorLabel(EvidenceAnchorLabelStyle.Short))
+        assertEquals("anchor guide", evidenceAnchorLabel(EvidenceAnchorLabelStyle.Guide))
     }
 
     @Test

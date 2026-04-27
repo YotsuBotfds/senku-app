@@ -7,9 +7,16 @@ private const val FallbackSourceTitle = "Source guide"
 private const val FallbackSurfaceLabel = "Evidence"
 private const val EmptySnippetLabel = "No snippet yet."
 private const val Separator = " | "
+private const val AnchorLabel = "anchor"
+private const val AnchorGuideLabel = "anchor guide"
 
 private val WhitespaceRegex = Regex("\\s+")
 private val LabelDelimiterRegex = Regex("[-_]+")
+
+internal enum class EvidenceAnchorLabelStyle {
+    Short,
+    Guide,
+}
 
 data class EvidenceSourceModel(
     val guideId: String,
@@ -64,8 +71,8 @@ internal fun EvidenceSurfaceModel.toEvidenceSurfaceViewData(): EvidenceSurfaceVi
 internal fun EvidenceSourceModel.toEvidenceSourceRowData(): EvidenceSourceRowData {
     val normalizedSnippet = normalizeEvidenceSnippet(snippet)
     return EvidenceSourceRowData(
-        guideId = guideId.trim().ifEmpty { FallbackGuideId },
-        title = normalizeEvidenceTitle(title).ifEmpty { FallbackSourceTitle },
+        guideId = normalizeEvidenceGuideId(guideId),
+        title = normalizeEvidenceSourceTitle(title),
         section = normalizeEvidenceTitle(section),
         metaLabel = buildEvidenceSourceMetaLabel(
             label = label,
@@ -78,6 +85,12 @@ internal fun EvidenceSourceModel.toEvidenceSourceRowData(): EvidenceSourceRowDat
         hasSnippet = normalizedSnippet.isNotEmpty(),
     )
 }
+
+internal fun normalizeEvidenceGuideId(guideId: String): String =
+    guideId.trim().ifEmpty { FallbackGuideId }
+
+internal fun normalizeEvidenceSourceTitle(title: String): String =
+    normalizeEvidenceTitle(title).ifEmpty { FallbackSourceTitle }
 
 internal fun normalizeEvidenceLabel(label: String): String =
     label
@@ -112,11 +125,17 @@ internal fun buildEvidenceSourceMetaLabel(
             .takeIf { it.isNotEmpty() }
             ?.let(::add)
         if (isAnchor) {
-            add("anchor")
+            add(evidenceAnchorLabel(EvidenceAnchorLabelStyle.Short))
         }
     }
     return parts.joinToString(separator = Separator)
 }
+
+internal fun evidenceAnchorLabel(style: EvidenceAnchorLabelStyle): String =
+    when (style) {
+        EvidenceAnchorLabelStyle.Short -> AnchorLabel
+        EvidenceAnchorLabelStyle.Guide -> AnchorGuideLabel
+    }
 
 private fun sourceCountLabel(sourceCount: Int): String =
     when (sourceCount) {
