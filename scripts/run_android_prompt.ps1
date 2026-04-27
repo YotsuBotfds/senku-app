@@ -315,6 +315,78 @@ function Normalize-UiText {
     return ([string]::Join(" ", ([string]$Text).ToLowerInvariant().Split([char[]]" `r`n`t", [System.StringSplitOptions]::RemoveEmptyEntries))).Trim()
 }
 
+function Get-UiNodeAttributeValues {
+    param(
+        [xml]$Xml,
+        [string]$AttributeName
+    )
+
+    if ($null -eq $Xml -or [string]::IsNullOrWhiteSpace($AttributeName)) {
+        return @()
+    }
+
+    $values = New-Object System.Collections.Generic.List[string]
+    foreach ($node in @(Select-Xml -Xml $Xml -XPath "//node")) {
+        $normalized = Normalize-UiText -Text ([string]$node.Node.GetAttribute($AttributeName))
+        if (-not [string]::IsNullOrWhiteSpace($normalized)) {
+            $values.Add($normalized)
+        }
+    }
+    return @($values)
+}
+
+function Test-ComposeAnswerCardCompleted {
+    param([xml]$Xml)
+
+    if ($null -eq $Xml) {
+        return $false
+    }
+
+    $texts = @(Get-UiNodeAttributeValues -Xml $Xml -AttributeName "text")
+    $descriptions = @(Get-UiNodeAttributeValues -Xml $Xml -AttributeName "content-desc")
+    $hasAnsweredLabel = $false
+    foreach ($text in $texts) {
+        if ($text -eq "senku answered") {
+            $hasAnsweredLabel = $true
+            break
+        }
+    }
+    foreach ($description in $descriptions) {
+        if ($description.Contains("answered") -and $description.Contains("sources")) {
+            $hasAnsweredLabel = $true
+            break
+        }
+    }
+    if (-not $hasAnsweredLabel) {
+        return $false
+    }
+
+    $hasFollowUpComposer = $false
+    foreach ($text in $texts) {
+        if ($text.Contains("next field question") -or $text.Contains("follow-up") -or $text.Contains("follow up")) {
+            $hasFollowUpComposer = $true
+            break
+        }
+    }
+    if (-not $hasFollowUpComposer) {
+        return $false
+    }
+
+    foreach ($text in $texts) {
+        if ($text.Length -lt 40) {
+            continue
+        }
+        if ($text -match "^gd-\d+$" -or $text -match "^\d+\s+sources\b") {
+            continue
+        }
+        if ($text -eq "senku answered" -or $text.Contains("building answer")) {
+            continue
+        }
+        return $true
+    }
+    return $false
+}
+
 function Quote-AndroidShellArg {
     param([string]$Value)
 
@@ -407,6 +479,10 @@ function Test-UiCompleted {
         if ($detailTitleNode) {
             $detailTitleText = Normalize-UiText -Text $detailTitleNode.Node.text
         }
+    }
+
+    if (Test-ComposeAnswerCardCompleted -Xml $xml) {
+        return $true
     }
 
     $statusAggregate = (($detailStatusText + " " + $statusText).Trim()).ToLowerInvariant()
@@ -556,6 +632,10 @@ function Test-UiHighConfidenceCompleted {
         if ($statusNode) {
             $statusText = Normalize-UiText -Text $statusNode.Node.text
         }
+    }
+
+    if (Test-ComposeAnswerCardCompleted -Xml $xml) {
+        return $true
     }
 
     $statusAggregate = (($detailStatusText + " " + $statusText).Trim()).ToLowerInvariant()

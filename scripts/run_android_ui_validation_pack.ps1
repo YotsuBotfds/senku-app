@@ -1076,7 +1076,7 @@ foreach ($device in $normalizedDevices) {
             if ($device -like "emulator-*" -and [string]$case.expected_mode_hint -eq "generated" -and $effectiveInferenceMode -eq "preserve") {
                 $effectiveInferenceMode = "host"
             }
-            if ($device -like "emulator-*" -and [string]$case.expected_mode_hint -eq "generated") {
+            if ($device -like "emulator-*" -and [string]$case.expected_mode_hint -eq "generated" -and $effectiveInferenceMode -ne "local") {
                 $effectiveMaxWaitSeconds = [Math]::Max($effectiveMaxWaitSeconds, 540)
             }
 
@@ -1184,6 +1184,9 @@ foreach ($device in $normalizedDevices) {
                     )
                     if ($effectiveInferenceMode -eq "host") {
                         $promptArgs += @("-HostInferenceUrl", $HostInferenceUrl, "-HostInferenceModel", $HostInferenceModel)
+                    }
+                    if ($ForceShellExecution) {
+                        $promptArgs += "-ForceShellExecution"
                     }
                     $jobTimeoutSec = [Math]::Max(90, $effectiveMaxWaitSeconds + 90)
                     $childResult = Invoke-PowerShellChildScript -Arguments $promptArgs -TimeoutSeconds $jobTimeoutSec -LogPath $caseRunnerLogPath

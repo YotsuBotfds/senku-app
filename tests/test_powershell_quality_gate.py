@@ -133,6 +133,14 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('model_identity_source = $(if ($state.host) { "host_inference" } else { $null })', script)
         self.assertIn('model_sha = $(if ($state.host) { Get-StableIdentitySha256 -Value ("host-inference|{0}|{1}" -f [string]$followupSummary.host_inference_url, [string]$followupSummary.host_inference_model) } else { $null })', script)
 
+    def test_android_ui_validation_local_shell_generation_stays_bounded(self):
+        script = (REPO_ROOT / "scripts" / "run_android_ui_validation_pack.ps1").read_text(encoding="utf-8")
+
+        self.assertIn('$case.expected_mode_hint -eq "generated" -and $effectiveInferenceMode -ne "local"', script)
+        self.assertIn('if ($ForceShellExecution) {', script)
+        self.assertIn('$promptArgs += "-ForceShellExecution"', script)
+        self.assertIn('"-InferenceMode", $effectiveInferenceMode', script)
+
     def test_android_ui_state_pack_parallel_forwards_role_slices_and_skip_host_states(self):
         script = ANDROID_UI_STATE_PACK_PARALLEL_PATH.read_text(encoding="utf-8")
 
@@ -158,6 +166,10 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('[string]$Orientation = ""', script)
         self.assertIn('$preflightArgs += @("-Orientation", $Orientation)', script)
         self.assertIn('$instrumentationArgs += @("-Orientation", $Orientation)', script)
+        self.assertIn("function Test-ComposeAnswerCardCompleted", script)
+        self.assertIn('$text -eq "senku answered"', script)
+        self.assertIn('$text.Contains("next field question")', script)
+        self.assertIn("Test-ComposeAnswerCardCompleted -Xml $xml", script)
 
     def test_android_smoke_classifies_platform_anr_dialogs(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
