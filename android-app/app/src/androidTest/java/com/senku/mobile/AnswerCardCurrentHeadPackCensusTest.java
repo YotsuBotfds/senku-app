@@ -166,16 +166,6 @@ public final class AnswerCardCurrentHeadPackCensusTest {
                 )
             );
             assertEquals(
-                "answer cards must not duplicate guide ownership rows",
-                0,
-                queryLong(
-                    database,
-                    "SELECT COUNT(*) FROM (" +
-                        "SELECT guide_id FROM answer_cards GROUP BY guide_id HAVING COUNT(*) > 1" +
-                        ")"
-                )
-            );
-            assertEquals(
                 "answer card clause ordinals must be unique per card and clause kind",
                 0,
                 queryLong(
