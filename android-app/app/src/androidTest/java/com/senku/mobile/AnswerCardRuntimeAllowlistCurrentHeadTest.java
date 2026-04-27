@@ -30,6 +30,7 @@ import static org.junit.Assume.assumeTrue;
 public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
     private static final int CURRENT_HEAD_ANSWER_CARD_COUNT = 271;
     private static final int NON_PILOT_SAMPLE_SIZE = 24;
+    private static final int NON_PILOT_BUCKET_SIZE = 8;
     private static final String PACK_DIR = "mobile_pack";
     private static final String MANIFEST_NAME = "senku_manifest.json";
     private static final String DATABASE_NAME = "senku_mobile.sqlite3";
@@ -145,56 +146,64 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
         PackRepository repository,
         SQLiteDatabase database
     ) {
-        List<String> sampledGuideIds = sampledNonPilotGuideIds(database);
+        List<SampledCard> sampledCards = sampledNonPilotCards(database);
         assertEquals(
-            "sample should cover the expected number of non-pilot current-head cards",
+            "sample should cover the expected number of non-pilot current-head cards: " + sampledCards,
             NON_PILOT_SAMPLE_SIZE,
-            sampledGuideIds.size()
+            sampledCards.size()
         );
 
-        for (String guideId : sampledGuideIds) {
-            List<AnswerCard> cards = repository.loadAnswerCardsForGuideIds(Collections.singleton(guideId), 2);
-            assertEquals("sampled non-pilot guide should load exactly one card: " + guideId, 1, cards.size());
+        for (SampledCard sampledCard : sampledCards) {
+            List<AnswerCard> cards = repository.loadAnswerCardsForGuideIds(
+                Collections.singleton(sampledCard.guideId),
+                2
+            );
+            assertEquals(
+                "sampled non-pilot guide should load exactly one card: " + sampledCard,
+                1,
+                cards.size()
+            );
             AnswerCard card = cards.get(0);
-            assertTrue("sampled card must not be a pilot card: " + card.cardId, !PILOT_CARD_IDS.contains(card.cardId));
+            assertEquals("sampled guide should load expected card: " + sampledCard, sampledCard.cardId, card.cardId);
+            assertTrue("sampled card must not be a pilot card: " + sampledCard, !PILOT_CARD_IDS.contains(card.cardId));
 
             assertNull(
-                "non-pilot current-head card must not satisfy poisoning runtime planner: " + card.cardId,
+                "non-pilot current-head card must not satisfy poisoning runtime planner: " + sampledCard,
                 AnswerCardRuntime.planPoisoningAnswerCardFromCardsForTest(
                     "my child swallowed an unknown cleaner",
                     cards
                 )
             );
             assertNull(
-                "non-pilot current-head card must not satisfy newborn runtime planner: " + card.cardId,
+                "non-pilot current-head card must not satisfy newborn runtime planner: " + sampledCard,
                 AnswerCardRuntime.planNewbornDangerSepsisAnswerCardFromCardsForTest(
                     "newborn is limp, will not feed, and is hard to wake",
                     cards
                 )
             );
             assertNull(
-                "non-pilot current-head card must not satisfy choking runtime planner: " + card.cardId,
+                "non-pilot current-head card must not satisfy choking runtime planner: " + sampledCard,
                 AnswerCardRuntime.planChokingAirwayObstructionAnswerCardFromCardsForTest(
                     "baby is choking and cannot cry or cough",
                     cards
                 )
             );
             assertNull(
-                "non-pilot current-head card must not satisfy meningitis runtime planner: " + card.cardId,
+                "non-pilot current-head card must not satisfy meningitis runtime planner: " + sampledCard,
                 AnswerCardRuntime.planMeningitisSepsisChildAnswerCardFromCardsForTest(
                     "child has fever, stiff neck, and a purple rash that does not fade when pressed",
                     cards
                 )
             );
             assertNull(
-                "non-pilot current-head card must not satisfy infected-wound runtime planner: " + card.cardId,
+                "non-pilot current-head card must not satisfy infected-wound runtime planner: " + sampledCard,
                 AnswerCardRuntime.planInfectedWoundSpreadingInfectionAnswerCardFromCardsForTest(
                     "cut on my hand yesterday and now a red streak is moving up my arm",
                     cards
                 )
             );
             assertNull(
-                "non-pilot current-head card must not satisfy internal-bleeding runtime planner: " + card.cardId,
+                "non-pilot current-head card must not satisfy internal-bleeding runtime planner: " + sampledCard,
                 AnswerCardRuntime.planAbdominalInternalBleedingAnswerCardFromCardsForTest(
                     "bike handlebar hit his belly and now he is pale and dizzy",
                     cards
@@ -224,27 +233,105 @@ public final class AnswerCardRuntimeAllowlistCurrentHeadTest {
         );
     }
 
-    private static List<String> sampledNonPilotGuideIds(SQLiteDatabase database) {
+    private static List<SampledCard> sampledNonPilotCards(SQLiteDatabase database) {
+        LinkedHashSet<SampledCard> sampledCards = new LinkedHashSet<>();
+        addSampledCards(
+            sampledCards,
+            querySampledCards(
+                database,
+                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "ORDER BY card_id LIMIT ?",
+                NON_PILOT_BUCKET_SIZE
+            )
+        );
+        addSampledCards(
+            sampledCards,
+            querySampledCards(
+                database,
+                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "ORDER BY card_id DESC LIMIT ?",
+                NON_PILOT_BUCKET_SIZE
+            )
+        );
+        addSampledCards(
+            sampledCards,
+            querySampledCards(
+                database,
+                "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                    "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                    "AND risk_tier IN ('critical', 'high') " +
+                    "ORDER BY CASE risk_tier WHEN 'critical' THEN 0 ELSE 1 END, card_id LIMIT ?",
+                NON_PILOT_BUCKET_SIZE
+            )
+        );
+        if (sampledCards.size() < NON_PILOT_SAMPLE_SIZE) {
+            addSampledCards(
+                sampledCards,
+                querySampledCards(
+                    database,
+                    "SELECT card_id, guide_id, risk_tier FROM answer_cards " +
+                        "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
+                        "ORDER BY card_id LIMIT ?",
+                    NON_PILOT_SAMPLE_SIZE
+                )
+            );
+        }
+        return new java.util.ArrayList<>(sampledCards).subList(0, NON_PILOT_SAMPLE_SIZE);
+    }
+
+    private static void addSampledCards(Set<SampledCard> target, List<SampledCard> cards) {
+        target.addAll(cards);
+    }
+
+    private static List<SampledCard> querySampledCards(SQLiteDatabase database, String sql, int limit) {
         String[] pilotIds = PILOT_CARD_IDS.toArray(new String[0]);
-        try (Cursor cursor = database.rawQuery(
-            "SELECT guide_id FROM answer_cards " +
-                "WHERE card_id NOT IN (?, ?, ?, ?, ?, ?) " +
-                "ORDER BY card_id LIMIT ?",
-            new String[]{
+        try (Cursor cursor = database.rawQuery(sql, new String[]{
                 pilotIds[0],
                 pilotIds[1],
                 pilotIds[2],
                 pilotIds[3],
                 pilotIds[4],
                 pilotIds[5],
-                String.valueOf(NON_PILOT_SAMPLE_SIZE)
-            }
-        )) {
-            java.util.ArrayList<String> guideIds = new java.util.ArrayList<>();
+                String.valueOf(limit)
+            })) {
+            java.util.ArrayList<SampledCard> cards = new java.util.ArrayList<>();
             while (cursor.moveToNext()) {
-                guideIds.add(cursor.getString(0));
+                cards.add(new SampledCard(cursor.getString(0), cursor.getString(1), cursor.getString(2)));
             }
-            return guideIds;
+            return cards;
+        }
+    }
+
+    private static final class SampledCard {
+        final String cardId;
+        final String guideId;
+        final String riskTier;
+
+        SampledCard(String cardId, String guideId, String riskTier) {
+            this.cardId = cardId;
+            this.guideId = guideId;
+            this.riskTier = riskTier;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof SampledCard)) {
+                return false;
+            }
+            SampledCard card = (SampledCard) other;
+            return cardId.equals(card.cardId);
+        }
+
+        @Override
+        public int hashCode() {
+            return cardId.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return cardId + "/" + guideId + "/" + riskTier;
         }
     }
 

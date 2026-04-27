@@ -102,6 +102,59 @@ public final class AnswerCardCurrentHeadPackCensusTest {
                 )
             );
             assertEquals(
+                "answer_card_clauses.card_id values must all reference installed answer_cards",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) " +
+                        "FROM answer_card_clauses cc " +
+                        "LEFT JOIN answer_cards c ON c.card_id = cc.card_id " +
+                        "WHERE c.card_id IS NULL"
+                )
+            );
+            assertEquals(
+                "answer_card_sources.card_id values must all reference installed answer_cards",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) " +
+                        "FROM answer_card_sources s " +
+                        "LEFT JOIN answer_cards c ON c.card_id = s.card_id " +
+                        "WHERE c.card_id IS NULL"
+                )
+            );
+            assertEquals(
+                "answer_card_sources.source_guide_id must be non-empty in the current-head pack",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) FROM answer_card_sources " +
+                        "WHERE source_guide_id IS NULL OR trim(source_guide_id) = ''"
+                )
+            );
+            assertEquals(
+                "answer_card_clauses.text must be non-empty in the current-head pack",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) FROM answer_card_clauses " +
+                        "WHERE text IS NULL OR trim(text) = ''"
+                )
+            );
+            assertEquals(
+                "every answer card must have at least one primary source in the current-head pack",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) " +
+                        "FROM answer_cards c " +
+                        "WHERE NOT EXISTS (" +
+                        "SELECT 1 FROM answer_card_sources s " +
+                        "WHERE s.card_id = c.card_id AND s.is_primary = 1" +
+                        ")"
+                )
+            );
+            assertEquals(
                 "answer cards must use an allowed review_status",
                 0,
                 queryLong(

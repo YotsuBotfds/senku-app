@@ -104,6 +104,10 @@ Landed Android sequence:
   smoke-summary `failure_reason` and `platform_anr` evidence when instrumented
   execution fails, so System UI blockers remain visible outside the lower-level
   smoke wrapper.
+- `RAG-A15d`: pushed current-head pack guards now assert clause/source
+  referential integrity and primary-source presence, and the runtime allowlist
+  negative-control sample now covers first, last, and high/critical non-pilot
+  card buckets.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
