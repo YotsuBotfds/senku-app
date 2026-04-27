@@ -1,0 +1,119 @@
+card_id: obstetric_labor_delivery_practice_boundary
+guide_id: GD-491
+slug: obstetric-labor-delivery-practice
+title: Obstetric Labor & Delivery Practice
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks how to organize a labor or delivery-practice intake log before clinician, midwife, OB, or emergency handoff.
+  - A support person needs to record contractions, ruptured membranes or leaking fluid, vaginal bleeding, fetal movement, maternal symptoms, transport status, and who has been notified.
+  - A prompt asks what information to communicate to a midwife, clinician, OB unit, emergency dispatcher, or receiving facility without asking for delivery maneuvers, diagnosis, medication, or procedural care.
+required_first_actions:
+  - Keep the answer boundary-only: organize the timeline, current observations, support-person communication, transport/escalation triggers, and clinician or emergency handoff.
+  - Treat active labor management, imminent birth, obstetric emergencies, hypertensive emergency symptoms, ectopic concern, postpartum hemorrhage, and newborn distress as routes to more specific owner guides or emergency services.
+  - Do not provide delivery maneuvers, vaginal exams, fetal-monitor interpretation, medication or dosing, induction, hemorrhage treatment, neonatal resuscitation, diagnosis, clearance, legal decisions, or certification.
+first_actions:
+  - Build a timeline with first contraction time, contraction spacing and duration trend, membrane rupture or leaking time, fluid color and odor, bleeding amount and timing, fetal movement compared with normal, and maternal symptoms.
+  - Keep the pregnant person accompanied, warm, and private; avoid unnecessary movement; gather prenatal records, allergies, medications, due date, prior pregnancy risks, transport options, and receiving contact if already known.
+  - Call or message the clinician, midwife, OB unit, emergency number, or receiving facility with the timeline, current symptoms, bleeding or fluid details, fetal movement concern, vital signs if already measured, and what changed.
+urgent_red_flags:
+  - Heavy bleeding, fainting, collapse, shock signs, severe abdominal pain, one-sided abdominal pain with possible pregnancy, or shoulder-tip pain with dizziness.
+  - Severe headache, vision changes, upper abdominal pain, seizure, confusion, chest pain, breathing trouble, very high blood pressure if known, or rapidly worsening maternal condition.
+  - Ruptured membranes with fever, chills, foul-smelling fluid, green or brown fluid, or decreased or absent fetal movement.
+  - Birth is imminent, the baby or placenta is delivering, cord or limb presents, breech or multiple gestation is suspected, or delivery maneuvers are being requested.
+  - Postpartum hemorrhage, uncontrolled bleeding after birth, or a newborn not breathing normally.
+forbidden_advice:
+  - Do not provide delivery maneuvers, pushing instructions, vaginal exams, Leopold maneuvers, shoulder dystocia maneuvers, breech or twin delivery steps, cord management, placental delivery, laceration repair, or uterine massage.
+  - Do not provide medication, antibiotic, oxytocin, misoprostol, ergot, pain medicine, IV fluid, induction, augmentation, or dosing advice.
+  - Do not interpret fetal monitoring or fetal heart-rate patterns, diagnose labor stage or obstetric complications, or clear someone to remain at home.
+  - Do not provide postpartum hemorrhage treatment, neonatal resuscitation, legal decisions, safe-to-transport certification, low-risk delivery certification, or proof of clearance.
+do_not:
+  - Do not let this boundary card crowd out a specific obstetric emergency, hypertensive emergency, ectopic pregnancy, postpartum hemorrhage, neonatal emergency, medication, or emergency medical owner.
+  - Do not reassure decreased fetal movement, heavy bleeding, severe maternal symptoms, fever with ruptured membranes, or newborn breathing distress as routine labor logging.
+  - Do not convert a support-person communication prompt into a procedural birth-management protocol.
+routine_boundary: >
+  Routine labor/delivery practice intake is in scope only when the answer
+  remains observational and handoff-oriented: timeline logs, support-person
+  communication, transport readiness, escalation triggers, and clinician,
+  midwife, OB, or emergency handoff. Anything requesting delivery management,
+  fetal monitoring interpretation, diagnosis, medication, dosing, procedures,
+  emergency treatment, clearance, legal decisions, or certification is outside
+  this reviewed boundary card.
+acceptable_uncertain_fit: >
+  If the prompt mixes routine labor observations with possible emergency signs,
+  preserve the intake/handoff structure while prioritizing emergency evaluation
+  and routing to the specific owner. Do not decide that labor is safe, diagnose
+  the cause, or offer procedures. Active labor, obstetric emergencies,
+  hypertensive emergency symptoms, ectopic-pregnancy concern, postpartum
+  hemorrhage, and neonatal distress should route away from this card.
+clarifying_questions:
+  - What is the gestational age or due date, and when did contractions start?
+  - How far apart are contractions now, how long do they last, and are they getting stronger or closer together?
+  - Did membranes rupture or fluid start leaking; when, what color, and is there odor?
+  - Is there bleeding, decreased fetal movement, severe headache, vision change, upper abdominal pain, fever, chills, fainting, seizure, chest pain, breathing trouble, severe abdominal pain, or confusion?
+  - Who has been contacted, what transport is available, and who is staying with the pregnant person?
+citation_ids:
+  - reviewed-answer-card-boundary
+  - documentation-monitoring
+  - when-transport
+  - summary
+source_sections:
+  - guide: GD-491
+    slug: obstetric-labor-delivery-practice
+    title: Obstetric Labor & Delivery Practice
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#documentation-monitoring"
+      - "#when-transport"
+      - "#summary"
+source_invariants:
+  - name: boundary_only_intake_and_handoff
+    guide: GD-491
+    must_include:
+      - "Use it only for labor and delivery practice intake"
+      - "timeline logging"
+      - "support-person communication"
+      - "concise handoff to a clinician, midwife, obstetric service, or emergency responder"
+    must_not_match:
+      - "Use it only[^\\n]{0,160}(for vaginal exams|for pushing instructions|for delivery maneuvers|for medication)"
+      - "Use it only[^\\n]{0,160}(to manage delivery|to treat hemorrhage|for resuscitation)"
+  - name: route_emergencies_to_specific_owners
+    guide: GD-491
+    must_include:
+      - "Escalate or route away from this boundary card"
+      - "active labor requiring management"
+      - "postpartum hemorrhage"
+      - "newborn not breathing normally"
+      - "hypertensive emergency"
+    must_not_match:
+      - "heavy bleeding[^\\n]{0,160}(routine|stay home|watchful waiting)"
+      - "newborn not breathing[^\\n]{0,160}(routine|wait)"
+  - name: exclusions_for_procedures_dosing_clearance
+    guide: GD-491
+    must_include:
+      - "Do not use this reviewed answer-card surface for vaginal exams"
+      - "medication or dosing advice"
+      - "neonatal resuscitation"
+      - "legal decisions"
+      - "safe-to-transport certification"
+    must_not_match:
+      - "safe-to-transport certification[^\\n]{0,120}(provide|issue|confirm)"
+runtime_citation_policy: >
+  Cite this card only for boundary-level labor/delivery intake logs,
+  support-person communication, escalation triggers, and clinician, midwife, OB,
+  or emergency handoff. Do not cite it as authority for delivery maneuvers,
+  procedures, medication or dosing, induction, fetal-monitor interpretation,
+  diagnosis, postpartum hemorrhage treatment, neonatal resuscitation, legal
+  decisions, clearance, or certification.
+review_status: pilot_reviewed
+notes: >
+  Boundary-only reviewed answer card for GD-491. It closes the metadata/card
+  audit gap by owning labor/delivery practice intake, contraction/ruptured
+  membranes/bleeding/fetal movement/maternal symptom timeline logs,
+  support-person communication, transport and escalation triggers, and
+  clinician/midwife/OB/emergency handoff. It deliberately excludes delivery
+  maneuvers, procedures, medication/dosing, induction, fetal-monitoring
+  interpretation, diagnosis, postpartum hemorrhage treatment, neonatal
+  resuscitation, legal decisions, clearance, and certification. Active labor,
+  obstetric emergencies, hypertensive emergency, ectopic pregnancy concern, and
+  postpartum hemorrhage should route to more specific owners.

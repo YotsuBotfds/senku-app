@@ -1,0 +1,252 @@
+card_id: trauma_hemorrhage_control_boundary
+guide_id: GD-297
+slug: trauma-hemorrhage-control
+title: Trauma Hemorrhage Control
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A prompt asks for boundary-level traumatic bleeding intake, scene safety, bleeding/shock status logging, obvious life-threat red-flag screening, or emergency/trauma-owner handoff.
+  - The injury includes visible bleeding or possible blood loss, but the user is asking for what to record, who to call, how to describe severity, or whether obvious emergency red flags are present rather than for procedures.
+  - A source-safe answer can limit itself to calling for help, staying out of danger, applying firm direct pressure with clean cloth to obvious external bleeding if safe, and routing specific trauma care to the right owner.
+required_first_actions:
+  - Keep the answer boundary-only: scene safety, urgent help, bleeding and shock status log, obvious life-threat red flags, source-safe direct-pressure/basic call-for-help support, and emergency or trauma-owner handoff.
+  - Start with scene safety and do not send an untrained responder into traffic, violence, fire, collapse, electrical, chemical, or other active hazards.
+  - If bleeding may be serious, call emergency services or arrange urgent higher-level medical help before collecting a complete history.
+  - For obvious external bleeding only, say to apply firm direct pressure with clean cloth if it can be done safely; do not give tourniquet, wound-packing, hemostatic, dressing-protocol, medication, IV, fluid, or procedure instructions from this card.
+  - Route life-threatening traumatic bleeding, tourniquet decisions, wound packing, crush/compartment concern, amputation, and chest-trauma deterioration to the reviewed shock_bleeding_trauma_stabilization card.
+conditional_required_actions:
+  - trigger_terms:
+      - tourniquet
+      - wound packing
+      - pack the wound
+      - hemostatic
+      - spurting
+      - soaking through
+      - amputation
+      - life threatening bleeding
+      - uncontrolled bleeding
+    required_actions:
+      - Route/support the reviewed shock_bleeding_trauma_stabilization card for life-threatening traumatic bleeding, tourniquet decisions, wound packing, hemostatic framing, amputation, and uncontrolled bleeding.
+      - Keep any GD-297 boundary contribution to scene safety, help activation, status logging, and handoff facts.
+  - trigger_terms:
+      - crush
+      - pinned
+      - compartment
+      - hard calf
+      - tight shiny
+      - numb
+      - weakness
+      - pain out of proportion
+    required_actions:
+      - Route/support the reviewed shock_bleeding_trauma_stabilization card for crush or compartment red flags.
+      - Do not convert this card into crush treatment, release, compression, elevation, medication, or clearance advice.
+  - trigger_terms:
+      - chest trauma
+      - chest wound
+      - one side silent
+      - severe breathing trouble
+      - cyanosis
+      - distended neck veins
+      - needle decompression
+    required_actions:
+      - Route/support the reviewed shock_bleeding_trauma_stabilization card or emergency trauma owner for chest-trauma deterioration.
+      - Do not provide chest-seal, needle-decompression, invasive airway, or procedural instructions from this card.
+  - trigger_terms:
+      - iv
+      - fluids
+      - saline
+      - blood product
+      - transfusion
+      - txa
+      - tranexamic
+      - medication
+      - dose
+    required_actions:
+      - Refuse to provide medication, dosing, IV, fluid, transfusion, or blood-product protocols from this boundary card.
+      - Preserve emergency handoff and status-log language.
+first_actions:
+  - Confirm the scene is safe for the responder and patient; if not, call emergency services and wait for trained responders rather than entering the hazard.
+  - Call emergency services, trauma response, or the local emergency owner early when bleeding is heavy, uncontrolled, associated with shock signs, or the mechanism is serious.
+  - Start a concise bleeding/shock status log with time of injury, mechanism, bleeding location, whether bleeding is spurting/flowing/oozing/soaking cloth, pressure already applied, skin color/temperature, breathing, mental status, pulse if known, and changes over time.
+  - Screen for obvious life-threat red flags: heavy or spurting bleeding, blood soaking through cloth, inability to maintain pressure safely, altered mental status, fainting/collapse, weak or very rapid pulse, cold pale clammy skin, abnormal breathing, amputation, crush injury, chest trauma, or embedded object.
+  - For obvious external bleeding, apply firm direct pressure with clean cloth if safe, add clean layers if cloth soaks through, and avoid removing the original soaked cloth or disturbing clots.
+  - Prepare a handoff note for emergency or trauma owners with mechanism, time, bleeding source, shock signs, actions already taken, response to pressure, known medications/allergies if readily known, and current location/evacuation constraints.
+urgent_red_flags:
+  - Heavy bleeding, bright red spurting blood, bleeding that rapidly soaks cloth, or bleeding that does not slow with firm direct pressure.
+  - Cold pale clammy or mottled skin, confusion, agitation, lethargy, fainting, collapse, weak or very rapid pulse, low blood pressure if known, cyanosis, or abnormal breathing after injury.
+  - Amputation, mangled limb, deep or penetrating traumatic wound, embedded object, suspected internal bleeding, crush/pinning injury, or inability to safely reach or maintain pressure.
+  - Chest trauma with sudden or worsening breathing trouble, blue/gray color, one-sided absent breath sounds if known, distended neck veins, severe weakness, or rapid deterioration.
+forbidden_advice:
+  - Do not provide tourniquet placement, tightening, timing, conversion, removal, or improvised-tourniquet instructions from this boundary card.
+  - Do not provide wound packing, hemostatic-agent use, pressure-dressing protocols, pelvic binder, needle decompression, airway procedure, surgery, suturing, wound repair, closure, or transport-clearance instructions.
+  - Do not provide IV access, fluids, blood products, transfusion, permissive hypotension, tranexamic acid, analgesics, antibiotics, other medications, or dosing.
+  - Do not diagnose bleeding class, internal injury, pneumothorax, compartment syndrome, vascular injury, or wound severity beyond red-flag screening and owner routing.
+  - Do not make legal claims, certification, responder-scope claims, return-to-duty decisions, or assurances that transport is safe to delay.
+do_not:
+  - Do not delay calling for help or applying safe direct pressure to complete a perfect log.
+  - Do not send a responder into an unsafe scene.
+  - Do not remove embedded objects, remove soaked-through cloth layers, probe the wound, or disturb clots.
+  - Do not let shock signs be treated as routine observation, hydration-only care, or self-transport clearance.
+routine_boundary: >
+  GD-297's reviewed card is limited to boundary-only traumatic bleeding intake
+  and routing. It may cover scene safety, emergency activation, bleeding and
+  shock status logs, obvious life-threat red flags, safe direct pressure for
+  obvious external bleeding, and emergency/trauma-owner handoff. It exits for
+  tourniquets, wound packing, hemostatics, invasive procedures, IV/fluids,
+  medication/dosing, diagnosis, repair/closure, transport clearance, legal
+  claims, and certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but traumatic bleeding or shock might be serious,
+  lead with scene safety, emergency help, safe direct pressure for visible
+  external bleeding, and a concise status log. If the prompt includes
+  life-threatening bleeding, tourniquet, wound-packing, crush, amputation, or
+  chest-trauma cues, route to shock_bleeding_trauma_stabilization.
+clarifying_questions:
+  - Is the scene safe from traffic, violence, fire, collapse, electrical, chemical, or other active hazards?
+  - What caused the injury, when did it happen, and where is the bleeding coming from?
+  - Is blood spurting, flowing steadily, soaking through cloth, or only oozing, and is firm direct pressure being held safely?
+  - Is the person pale, cold, clammy, confused, fainting, weak, breathing abnormally, or getting worse?
+  - Are there tourniquet, wound-packing, amputation, crush/pinning, chest-trauma, embedded-object, or evacuation constraints that require a trauma/emergency owner?
+fallback:
+  - If the user asks for tourniquet, wound packing, hemostatic agents, crush/compartment management, amputation, or chest-trauma deterioration, state the boundary and route to shock_bleeding_trauma_stabilization.
+  - If the user asks for medication, dosing, IV, fluids, transfusion, repair, closure, diagnosis, transport clearance, legal claims, or certification, provide only the status log, red flags, and emergency/trauma-owner handoff.
+  - If the scene is unsafe, prioritize emergency services and responder safety over hands-on aid.
+fallback_handoff_language:
+  - "This GD-297 reviewed card can help with scene safety, traumatic bleeding intake, bleeding/shock status logging, obvious red flags, safe direct pressure for visible external bleeding, and emergency or trauma-owner handoff."
+  - "It cannot provide tourniquet steps, wound packing, hemostatic use, IV/fluids, medications or dosing, diagnosis, wound repair or closure, transport clearance, legal claims, or certification."
+  - "Life-threatening traumatic bleeding, tourniquet decisions, wound packing, crush/compartment concerns, amputation, or chest-trauma deterioration should route to the reviewed shock_bleeding_trauma_stabilization card and emergency trauma care."
+applicability:
+  owner: traumatic bleeding intake, scene safety, bleeding/shock status log, obvious red-flag screen, source-safe direct pressure, and emergency/trauma-owner handoff
+  use_when:
+    - traumatic_bleeding_intake
+    - scene_safety_and_help_activation
+    - bleeding_shock_status_log
+    - obvious_life_threat_red_flag_screen
+    - direct_pressure_basic_boundary
+    - emergency_trauma_owner_handoff
+  do_not_use_when:
+    - life_threatening_bleeding_tourniquet_or_wound_packing_decision
+    - crush_compartment_amputation_or_chest_trauma_deterioration
+    - medication_dosing_iv_fluids_or_transfusion
+    - diagnosis_repair_closure_or_transport_clearance
+    - legal_claim_certification_or_responder_scope_claim
+  handoff:
+    - shock_bleeding_trauma_stabilization for life-threatening traumatic bleeding, tourniquet decisions, wound packing, crush/compartment concern, amputation, and chest-trauma deterioration.
+    - emergency services or trauma care for heavy bleeding, shock signs, unsafe scene, serious mechanism, abnormal breathing, collapse, or inability to maintain pressure.
+    - surgical, emergency, or clinician owner for embedded objects, deep or penetrating wounds, suspected internal bleeding, repair/closure, diagnosis, or transport decisions.
+actions:
+  required:
+    - classify the request as traumatic bleeding intake, scene-safety check, status log, red-flag screen, direct-pressure boundary, or handoff
+    - activate emergency or trauma-owner help early when bleeding or shock may be serious
+    - keep direct pressure advice limited to obvious external bleeding with clean cloth when safe
+    - route life-threatening bleeding, tourniquet, wound-packing, crush, amputation, and chest-trauma deterioration to shock_bleeding_trauma_stabilization
+  standard:
+    - provide a concise bleeding and shock status log template
+    - include scene safety and handoff owner language
+    - include forbidden scope when the prompt asks for procedures, medications, diagnosis, clearance, legal claims, or certification
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_scene_safety: true
+  include_bleeding_shock_status_log: true
+  include_obvious_life_threat_red_flags: true
+  include_source_safe_direct_pressure_boundary: true
+  include_emergency_trauma_owner_handoff: true
+  route_life_threatening_trauma_to_shock_bleeding_card: true
+  forbid_tourniquet_wound_packing_hemostatics_medication_iv_fluids_diagnosis_repair_closure_clearance_legal_certification: true
+routing_tests:
+  positive:
+    - prompt: "Help me make a handoff note for a bleeding injury: what happened, where bleeding is, pressure held, skin color, and mental status."
+      expect: trauma_hemorrhage_control_boundary
+    - prompt: "Someone cut their arm and I need a scene-safety and bleeding status checklist, not tourniquet instructions."
+      expect: trauma_hemorrhage_control_boundary
+    - prompt: "For a traumatic bleeding call, what red flags should I report to emergency responders?"
+      expect: trauma_hemorrhage_control_boundary
+  near_miss:
+    - prompt: "Show me how to put on an improvised tourniquet for spurting leg blood."
+      expect_handoff: shock_bleeding_trauma_stabilization
+    - prompt: "How do I pack a deep groin wound with hemostatic gauze?"
+      expect_handoff: shock_bleeding_trauma_stabilization
+    - prompt: "What IV fluids and TXA dose should I give for hemorrhagic shock?"
+      expect_handoff: emergency_trauma_or_clinician_owner
+    - prompt: "Can I close this bleeding wound and drive them myself?"
+      expect_handoff: emergency_surgical_or_trauma_owner
+  boundary:
+    - prompt: "Blood is soaking through cloth after a crash; make a status log and route me to the right trauma card."
+      expect: shock_bleeding_trauma_stabilization_handoff_with_gd297_status_log
+    - prompt: "The scene has traffic and broken glass; what should I record for responders before getting closer?"
+      expect: scene_safety_and_emergency_handoff
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-297-reviewed-answer-card-boundary
+  - trauma-hemorrhage-rapid-assessment
+  - trauma-hemorrhage-direct-pressure
+  - trauma-hemorrhage-evacuation-handoff
+  - gd-584-trauma-specific-routing
+source_sections:
+  - guide: GD-297
+    slug: trauma-hemorrhage-control
+    title: Trauma Hemorrhage Control
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#hemorrhage-assessment"
+      - "#direct-pressure-and-wound-packing > Direct Pressure Technique"
+      - "#evacuation-and-handoff"
+  - guide: GD-584
+    slug: shock-bleeding-trauma-stabilization
+    title: "Shock, Bleeding & Trauma Stabilization"
+    sections:
+      - "#hemorrhage-control-decision-tree"
+      - "#tourniquet-application"
+      - "#wound-packing-for-deep-hemorrhage"
+      - "#crush-injuries-and-crush-syndrome"
+      - "#tension-pneumothorax-recognition-and-treatment"
+    role: specific-trauma-owner
+source_invariants:
+  - name: gd-297-reviewed-card-boundary-limits-scope
+    guide: GD-297
+    must_include:
+      - "This is the reviewed answer-card surface for GD-297."
+      - "scene safety, bleeding and shock status logging"
+      - "source-safe direct-pressure or call-for-help basics"
+      - "emergency or trauma-owner handoff"
+      - "route to GD-584 and the reviewed shock_bleeding_trauma_stabilization card"
+  - name: gd-297-status-log-and-direct-pressure-source
+    guide: GD-297
+    must_include:
+      - "Scene safety first."
+      - "Hemorrhage check"
+      - "Shock assessment"
+      - "Apply firm, continuous pressure"
+      - "If blood soaks through, apply fresh cloth on top"
+      - "Document everything"
+  - name: gd-297-procedural-source-content-is-not-card-authority
+    guide: GD-297
+    must_include:
+      - "Tourniquet Application"
+      - "Hemostatic Agents"
+      - "Wound Packing Protocol"
+      - "Fluid Resuscitation"
+      - "Tranexamic acid"
+    must_not_match:
+      - "(tourniquet|wound packing|hemostatic|tranexamic|IV|fluid)[^\\n]{0,160}(from this reviewed card|using this reviewed card|boundary-only card may instruct)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-297 as a boundary-only traumatic bleeding intake,
+  scene-safety, bleeding/shock status log, obvious red-flag screen, basic
+  direct-pressure/call-for-help, and emergency/trauma-owner handoff card. It
+  deliberately avoids competing with GD-584: life-threatening traumatic
+  bleeding, tourniquet decisions, wound packing, crush/compartment concern,
+  amputation, and chest-trauma deterioration route to the existing reviewed
+  shock_bleeding_trauma_stabilization card. It also excludes medication/dosing,
+  IV/fluids, diagnosis, repair/closure, transport clearance, legal claims, and
+  certification. READY_FOR_PARENT_CLOSE.

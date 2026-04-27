@@ -12,6 +12,31 @@ tags:
   - wound-packing
 icon: 🩸
 description: Tourniquet application, direct pressure techniques, wound packing with hemostatic agents, junctional hemorrhage management, shock assessment and response.
+aliases:
+  - trauma bleeding intake
+  - bleeding status log after injury
+  - basic direct pressure for injury
+  - trauma scene safety bleeding handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level traumatic bleeding intake, scene safety, bleeding and shock status logging, obvious life-threat red-flag screening, source-safe direct-pressure or call-for-help basics, and emergency or trauma-owner handoff.
+  - Do not use the reviewed card for tourniquet instructions, wound packing, hemostatic agents, IV or fluid resuscitation, medication or dosing, diagnosis, wound repair or closure, transport clearance, legal claims, or certification.
+  - Route life-threatening traumatic bleeding, tourniquet decisions, wound packing, crush or compartment concern, amputation, and chest-trauma deterioration to shock-bleeding-trauma-stabilization and its reviewed shock_bleeding_trauma_stabilization card.
+applicability: >
+  Use GD-297's reviewed answer card only as a boundary-only traumatic bleeding
+  intake and routing surface: scene safety, bleeding/shock status log, obvious
+  life-threat red flags, source-safe direct-pressure or call-for-help basics,
+  and emergency or trauma-owner handoff. Escalate life-threatening traumatic
+  bleeding, tourniquet, wound-packing, crush/compartment, amputation, and chest
+  trauma prompts to GD-584's reviewed shock_bleeding_trauma_stabilization card.
+citation_policy: >
+  Cite GD-297 and its reviewed answer card only for boundary-level traumatic
+  bleeding intake, scene safety, bleeding and shock status logging, obvious
+  life-threat red flags, source-safe direct-pressure or call-for-help basics,
+  and emergency or trauma-owner handoff. Do not cite the reviewed card for
+  tourniquet steps, wound packing, hemostatic agents, IV/fluids, medication or
+  dosing, diagnosis, repair or closure, transport clearance, legal claims, or
+  certification; route those to the appropriate trauma, emergency, surgical, or
+  clinician owner.
 related:
   - blood-medicine
   - burn-treatment
@@ -25,7 +50,25 @@ word_count: 1670
 last_updated: '2026-02-18'
 version: '1.0'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: trauma_hemorrhage_control_boundary
+answer_card:
+  - trauma_hemorrhage_control_boundary
+citations_required: true
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-297. Use it only for boundary-level traumatic bleeding intake and routing: scene safety, bleeding and shock status logging, obvious life-threat red-flag screening, source-safe direct-pressure or call-for-help basics, and emergency or trauma-owner handoff.
+
+Start with scene safety and urgent help when bleeding may be serious. A bounded answer may log the injury time, mechanism, bleeding location, whether blood is spurting or soaking through cloth, whether pressure is being held, skin color and temperature, mental status, breathing, pulse if known, and whether the person is improving or deteriorating. For obvious external bleeding, the only reviewed-card action advice is to call for emergency help and apply firm direct pressure with clean cloth if it can be done safely, without removing soaked-through cloth layers.
+
+Do not use this reviewed card for tourniquet instructions, wound packing, hemostatic agents, pressure-dressing protocols, pelvic binders, needle decompression, IV access, fluids, blood products, tranexamic acid or other medication/dosing, diagnosis, wound repair or closure, transport clearance, legal claims, or certification. If a prompt asks for life-threatening traumatic bleeding, tourniquet decisions, wound packing, crush or compartment concern, amputation, or chest-trauma deterioration, route to GD-584 and the reviewed shock_bleeding_trauma_stabilization card.
+
+</section>
+
 ## Quick Triage: Life-Threatening Bleeding
 
 If bleeding is heavy or spurting, apply a tourniquet high and tight for limb wounds, or use direct pressure plus wound packing, then evacuate urgently.

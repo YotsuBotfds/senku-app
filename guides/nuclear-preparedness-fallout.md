@@ -10,6 +10,16 @@ tags:
   - radiation
   - shelter
   - dosimetry
+aliases:
+  - nuclear fallout preparedness
+  - fallout shelter intake
+  - nuclear shelter in place
+  - radioactive fallout uncertainty
+  - fallout handoff checklist
+routing_cues:
+  - Use this guide's reviewed answer card only for nuclear/fallout preparedness intake and handoff; shelter, communication, supplies, location, time-since-event, contamination uncertainty, stay-inside/avoid-dust basics, outer-clothing separation basics, symptom red flags, and emergency or radiation-safety handoff.
+  - Route suspected radiation exposure medical triage to acute-radiation-syndrome when vomiting within hours, confusion, seizures, bloody diarrhea, shock signs, rapid deterioration, or contaminated skin, hair, clothing, shoes, tools, or personal items are central.
+  - Do not use this guide's reviewed answer card for bomb-making, weapons, decontamination formulas, radiation dose calculations, medical treatment or dosing, iodine dosing, re-entry clearance, rescue operations, legal claims, or safety certification.
 icon: ☢️
 description: Fallout shelter design and operation in nuclear emergency scenarios. Covers radiation physics basics, fallout characteristics, shelter construction (purpose-built and expedient), decontamination procedures, dosimetry concepts, radiation exposure limits, and long-term shelter management protocols.
 related:
@@ -22,6 +32,20 @@ word_count: 4200
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: nuclear_preparedness_fallout_boundary
+answer_card:
+  - nuclear_preparedness_fallout_boundary
+citations_required: true
+runtime_citation_policy: reviewed_source_family
+answer_card_boundary: >
+  Boundary-only nuclear/fallout preparedness intake and handoff: shelter,
+  communication, supply, location, time-since-event, contamination uncertainty,
+  stay-inside/avoid-dust/outer-clothing separation basics, symptom red flags,
+  and emergency, public-health, or radiation-safety handoff. Excludes weapons,
+  dose calculations, decontamination formulas, medical treatment or dosing,
+  iodine dosing, re-entry clearance, rescue operations, legal claims, and safety
+  certification.
 custom_css: |
   .radiation-basics { background-color: var(--surface); padding: 20px; margin: 20px 0; border-radius: 4px; border-left: 4px solid var(--accent); }
   .shelter-design { background-color: var(--card); padding: 15px; margin: 15px 0; border-left: 3px solid var(--accent); border-radius: 4px; }
@@ -34,6 +58,18 @@ custom_css: |
 :::danger
 **Radiation Safety:** This guide provides austere-condition knowledge for fallout shelter operation. It is NOT professional radiation safety training. When radiation professionals are available, defer to them. Inadequate shelter design or operation can result in lethal radiation exposure. This guide assumes emergency conditions where expert support is unavailable.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-563. Use it only for boundary-level nuclear or fallout preparedness intake and handoff: shelter location, communication status, supply status, current location, time since detonation or fallout report, contamination uncertainty, stay-inside and avoid-dust reminders, gentle outer-clothing separation from living/food areas when contamination is possible, exposure symptom red flags, and emergency, public-health, radiation-safety, or incident-command handoff.
+
+Do not use this reviewed card for bomb-making, weapons, shelter construction calculations, decontamination formulas, radiation dose calculations, medical diagnosis or treatment, medication or iodine dosing, re-entry clearance, rescue operations, legal claims, or safety certification. If the user reports possible radiation exposure with vomiting within hours, confusion, seizures, bloody diarrhea, shock signs, rapid deterioration, or contamination on skin, hair, clothing, shoes, tools, or personal items, route medical triage to the Acute Radiation Syndrome reviewed card (GD-655) and preserve urgent expert handoff.
+
+Safe answer shape: identify whether the request is current-event intake or preparedness planning; ask only for facts that help handoff and shelter decisions; keep people indoors and away from dust or visible fallout unless official instructions or immediate life safety require otherwise; separate possibly contaminated outer clothing without shaking it and keep it away from people, food, and clean living areas; log symptoms and timing; and defer clearance, dose interpretation, treatment, and outside movement decisions to emergency services, public-health/radiation authorities, radiation-safety professionals, or incident command.
+
+</section>
 
 <section id="overview">
 
@@ -508,4 +544,3 @@ Use decay rule (dose rate ÷ 2 every ~7 hours):
 - Focus on decontamination, water/food restoration, community rebuilding
 
 </section>
-

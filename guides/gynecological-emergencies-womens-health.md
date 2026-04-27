@@ -27,6 +27,31 @@ related:
   - pregnancy-nutrition-maternal
   - medications
   - sti-recognition-transmission-reduction
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: gynecological_emergencies_womens_health_boundary
+answer_card:
+  - gynecological_emergencies_womens_health_boundary
+citations_required: true
+routing_cues:
+  - Use the reviewed card only for gynecologic symptom and emergency intake, bleeding/pain/discharge/pregnancy possibility/assault safety timeline logs, red flags, privacy/safety support, and clinician, OB-GYN, or emergency handoff.
+  - Route ectopic or pregnancy emergencies, labor, postpartum hemorrhage or infection, sepsis, and assault/forensic/legal issues to their specific emergency, obstetric, infectious-disease, advocacy, forensic, or legal owners.
+  - Do not use the reviewed card for diagnosis, pelvic exam or internal inspection instructions, medication/dosing, antibiotics, hormones, contraception, fertility decisions, abortion guidance, pregnancy management, procedures, clearance, certification, legal reporting decisions, or forensic investigation.
+card_routing:
+  boundary_owner: gynecologic symptom and emergency intake, privacy/safety support, timeline logs, red-flag screening, and clinician/OB-GYN/emergency handoff
+  scope_note: >
+    Use GD-401's reviewed answer card only for boundary-only gynecologic
+    symptom/emergency intake: bleeding, pelvic pain, discharge, possible
+    pregnancy, assault safety, timeline logs, red flags, privacy/safety, and
+    clinician, OB-GYN, or emergency handoff. Route ectopic or pregnancy
+    emergencies, labor, postpartum, sepsis, and assault/forensic/legal issues
+    to their specific owners.
+  exclude:
+    - diagnosis or differential diagnosis decisions
+    - pelvic exam or internal inspection instructions
+    - medication, dosing, antibiotic, hormone, contraception, or fertility decisions
+    - abortion guidance or pregnancy management
+    - procedures, clearance, certification, legal reporting decisions, or forensic investigation
+citation_policy: cite reviewed GD-401 boundary sections only for gynecologic intake, red-flag screening, timeline logs, privacy/safety support, and clinician/OB-GYN/emergency handoff; do not cite broader treatment sections as the reviewed answer-card surface
 read_time: 29
 word_count: 4200
 last_updated: '2026-02-20'
@@ -53,6 +78,22 @@ First actions are emergency actions: arrange urgent medical care or evacuation n
 For vaginal bleeding with pelvic pain or possible pregnancy, use pads or cloth only to observe bleeding amount during transport. Do **not** apply direct pressure inside the vagina, perform internal inspection, or use uterine massage unless this is clearly postpartum bleeding after a recent delivery. Uterine massage belongs to postpartum hemorrhage, not early pregnancy bleeding, missed-period pain, or undifferentiated heavy pelvic bleeding.
 
 Do **not** route these red-zone prompts to routine menstrual-cramp care, STI-only advice, hemorrhoid/direct-pressure care, nosebleed cleanup, cough/cold care, or general survival basics just because the user says "period," "bleeding," "cramps," or "not sure if pregnant."
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-401. Use it only for boundary-level gynecologic symptom and emergency intake: vaginal bleeding, pelvic or lower abdominal pain, discharge, possible pregnancy or missed/late period, assault safety concerns, timeline logs, red-flag screening, privacy/safety support, and concise clinician, OB-GYN, or emergency handoff.
+
+Start with observable facts and safety, not diagnosis. Record the person's age range if relevant, last menstrual period or cycle timing if known, pregnancy possibility or test status if already available, bleeding amount and rate, clots or tissue passed without inspecting internally, pain location and severity, discharge color or odor as reported, fever or chills, dizziness, fainting, shoulder-tip pain, recent childbirth or postpartum timing, recent procedure or trauma, assault concern, medicines or devices already known, and how symptoms changed over time.
+
+Urgent red flags require emergency or OB-GYN-capable handoff rather than routine advice: possible pregnancy or missed/late period with pelvic pain, one-sided pain, shoulder-tip pain, dizziness, fainting, or bleeding; heavy bleeding or rapidly soaking pads; severe, sudden, worsening, or one-sided pelvic pain; fever, chills, confusion, weakness, pale/cold skin, rapid worsening, or sepsis concern; foul-smelling discharge with pelvic pain or fever; postpartum bleeding or pain; labor or pregnancy complication; and any trauma or sexual assault concern.
+
+Keep privacy and safety explicit. Ask only what is needed for care, use nonjudgmental language, protect the person's choice of support person when safe, avoid unnecessary exposure, preserve dignity during transport or handoff, and do not pressure the person to disclose assault details. For assault concerns, prioritize immediate physical safety, trusted support, urgent medical/advocacy resources, and preservation of options; do not make legal reporting decisions, investigate, collect forensic evidence, or promise confidentiality rules beyond the responsible local owner.
+
+Do not use this reviewed card for diagnosis, pelvic exam instructions, internal inspection, medication or dosing advice, antibiotics, hormones, contraception decisions, fertility treatment, abortion guidance, pregnancy management, labor management, postpartum hemorrhage management, procedures, legal reporting decisions, forensic investigation, clearance, or certification. Route suspected ectopic pregnancy, pregnancy complications, labor, postpartum hemorrhage or postpartum infection, sepsis, and sexual assault medical/forensic/legal questions to the specific emergency, obstetric, infectious-disease, advocacy, forensic, or legal owner while preserving the GD-401 intake log for handoff.
+
+</section>
 
 <section id="menstrual-disorders">
 

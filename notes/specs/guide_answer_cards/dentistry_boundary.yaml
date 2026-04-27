@@ -1,0 +1,297 @@
+card_id: dentistry_boundary
+guide_id: GD-351
+slug: dentistry
+title: Dentistry
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - User asks a general dental question and needs help classifying whether it is pain, swelling, trauma, hygiene, restoration, prosthetic, orthodontic, or oral anatomy.
+  - User needs a concise dental symptom, location, timing, restoration, appliance, or trauma log before calling a dentist, clinician, orthodontist, prosthodontist, emergency dental service, or local emergency pathway.
+  - User asks which specific dental guide owns the answer without requesting diagnosis, procedures, medication dosing, appliance repair, clearance, legal claims, or certification.
+required_first_actions:
+  - Screen immediately for trouble breathing, trouble swallowing, drooling, voice change, tongue or floor-of-mouth swelling, spreading facial, jaw, neck, gum, or near-eye swelling, fever, pus, foul drainage, uncontrolled bleeding, major trauma, knocked-out, displaced, or very loose tooth, severe or worsening pain, or a possible swallowed or inhaled appliance part.
+  - Classify the dental concern as pain/swelling/infection, trauma/bleeding, routine hygiene, restoration/cavity/filling/crown, prosthetic/removable appliance, orthodontic appliance, or oral anatomy terminology.
+  - Route to the focused dental owner card when applicable: emergency_dental_intake_handoff, preventive_dental_hygiene_boundary, dentistry_restorative_boundary_intake, dental_prosthetics_comfort_handoff, orthodontics_survival_boundary, or oral_anatomy_boundary.
+conditional_required_actions:
+  - trigger_terms:
+      - swelling
+      - fever
+      - pus
+      - drainage
+      - abscess
+      - trouble swallowing
+      - trouble breathing
+      - severe pain
+    required_actions:
+      - Route urgent dental pain, swelling, fever, pus, foul drainage, airway or swallowing concern, severe or worsening pain, or infection concern to emergency dental, clinician, emergency department, EMS, or the local emergency pathway, using emergency_dental_intake_handoff when a dental card is needed.
+  - trigger_terms:
+      - knocked out
+      - loose tooth
+      - displaced tooth
+      - broken tooth
+      - trauma
+      - bleeding
+      - bite change
+    required_actions:
+      - Route dental trauma, uncontrolled bleeding, knocked-out, loose, displaced, or broken teeth, bite change, numbness after injury, or major facial/jaw trauma to emergency_dental_intake_handoff or a clinician/emergency pathway.
+  - trigger_terms:
+      - brushing
+      - floss
+      - rinse
+      - gums bleed
+      - mild sensitivity
+      - daily mouth care
+    required_actions:
+      - Route routine brushing, flossing, rinsing, limited-tool cleaning, mild non-escalating gum irritation, and mild sensitivity without red flags to preventive_dental_hygiene_boundary.
+  - trigger_terms:
+      - filling
+      - crown
+      - cavity
+      - restoration
+      - cracked tooth
+      - sensitive after filling
+    required_actions:
+      - Route broken filling, loose crown, restoration discomfort, cavity concern, tooth fracture, and post-restoration sensitivity to dentistry_restorative_boundary_intake, unless red flags require emergency dental handoff.
+  - trigger_terms:
+      - denture
+      - partial
+      - mouthguard
+      - night guard
+      - removable appliance
+      - prosthetic
+    required_actions:
+      - Route denture, partial, mouthguard, night guard, retainer, removable appliance fit, rubbing, looseness, cleaning, or comfort concerns to dental_prosthetics_comfort_handoff, unless airway, swallowing, infection, breakage, or choking risk requires emergency handoff.
+  - trigger_terms:
+      - braces
+      - aligner
+      - bracket
+      - wire
+      - elastic
+      - orthodontic
+    required_actions:
+      - Route braces, aligners, retainers, brackets, wires, elastics, rubbing, poking, loose or missing orthodontic components, or possible swallowed/inhaled appliance parts to orthodontics_survival_boundary or emergency dental/clinician handoff when red flags are present.
+first_actions:
+  - Make a dental intake log with location, onset, what changed, pain pattern, swelling, pus or foul drainage, fever, trauma history, bleeding, ability to swallow and breathe, chewing or biting triggers, restoration status, appliance status, and whether symptoms are worsening.
+  - Use plain location terms: upper or lower, right or left, front or back, tooth, gumline, cheek side, tongue side, roof of mouth, floor of mouth, tongue, lip, cheek, under-jaw area, jaw joint near the ear, face, or appliance type.
+  - Choose the focused owner guide before giving details, and keep the answer to intake, red-flag screening, owner routing, and dentist or clinician handoff.
+  - If the prompt asks for diagnosis, treatment, procedure steps, medication dosing, appliance repair, clearance, legal claims, or certification, state the boundary and route to the appropriate dentist, clinician, emergency dental, or focused guide owner.
+urgent_red_flags:
+  - Trouble breathing, stridor, trouble swallowing, drooling, voice change, tongue swelling, floor-of-mouth swelling, neck swelling, or swelling that affects opening the mouth.
+  - Facial, jaw, gum, tongue, under-jaw, or near-eye swelling, especially if spreading, rapidly worsening, or paired with fever.
+  - Fever with dental pain, pus, foul drainage, foul taste from one tooth or gum area, confusion, fast breathing, rapid heartbeat, or feeling very ill.
+  - Uncontrolled bleeding, major facial or jaw trauma, tooth knocked out, tooth displaced or very loose, bite change, numbness after injury, or sharp fragment cutting the mouth.
+  - Severe, constant, worsening, throbbing, night-waking, or biting-related tooth or jaw pain.
+  - Possible swallowed or inhaled appliance part, especially if paired with coughing, choking, chest pain, abdominal pain, vomiting, difficulty swallowing, or breathing symptoms.
+forbidden_advice:
+  - Do not diagnose cavities, abscess, cellulitis, pulpitis, gum disease severity, fracture type, restoration failure cause, appliance fit safety, malocclusion, nerve injury, TMJ disorder, salivary-gland disease, or sinus-related dental pain from this card.
+  - Do not give extraction, drilling, filling, filing, smoothing, incision, drainage, splinting, reimplantation, suturing, nerve block, anesthetic, orthodontic, prosthetic, restoration placement, appliance adjustment, fabrication, or repair instructions.
+  - Do not recommend antibiotics, antibiotic selection or dosing, pain-medication dosing, anesthetic dosing, sedation, herbal dosing, medication changes, or treatment decisions.
+  - Do not tell the user a tooth, restoration, appliance, injury, chewing pattern, work status, or return-to-use situation is safe, cleared, legally adequate, certified, or ready for normal use.
+  - Do not use this router to delay dentist, clinician, emergency department, EMS, or local emergency-pathway handoff when red flags are present.
+do_not:
+  - Do not pull, drill, cut, drain, inject, file, splint, reposition, fill, re-cement, reshape, adjust, fabricate, or repair teeth, oral tissue, restorations, or appliances based on this router card.
+  - Do not route possible swallowed cleaners, unknown pills, chemical burns, fumes, or poisoning exposures to dental routing just because the mouth is involved.
+  - Do not keep a user in routine dental intake when swelling, fever, pus, airway symptoms, swallowing symptoms, uncontrolled bleeding, severe worsening pain, trauma, or swallowed/inhaled appliance concern is present.
+routine_boundary: >
+  This card is appropriate only for dental concern classification, symptom and
+  location logs, red-flag screening, routing to focused dental owner cards, and
+  dentist, clinician, emergency dental, EMS, emergency-department, or local
+  emergency-pathway handoff. It is not a diagnosis, treatment, procedure,
+  medication, appliance fabrication or repair, return-to-chewing, work
+  clearance, legal, or safety-certification card.
+acceptable_uncertain_fit: >
+  If the prompt is dental but the owner is unclear, lead with the red-flag
+  screen, gather a concise location and symptom log, classify the concern, and
+  route to the most specific dental owner. Provide only boundary-level handoff
+  support until urgency and owner are clear.
+clarifying_questions:
+  - Is there trouble breathing, trouble swallowing, drooling, voice change, tongue or floor-of-mouth swelling, neck swelling, or swelling near the eye?
+  - Is there facial, jaw, gum, tongue, or under-jaw swelling, fever, pus, foul drainage, bad taste from one area, uncontrolled bleeding, or feeling very ill?
+  - Was there trauma, a knocked-out, loose, displaced, broken, or sharp tooth, bite change, numbness, or possible swallowed or inhaled appliance part?
+  - Is the main concern pain/swelling, injury, daily cleaning, a filling/crown/cavity/restoration, denture or removable appliance, braces/aligner/orthodontic appliance, or anatomy terminology?
+  - Which area is involved: upper or lower, right or left, front or back, tooth, gumline, cheek side, tongue side, jaw, face, roof or floor of mouth, tongue, lip, cheek, under-jaw area, or appliance?
+fallback:
+  - If red flags are present, route immediately to emergency_dental_intake_handoff, a clinician, emergency department, EMS, or the local emergency pathway rather than completing routine classification.
+  - If the request is routine but specific, route to preventive_dental_hygiene_boundary, dentistry_restorative_boundary_intake, dental_prosthetics_comfort_handoff, orthodontics_survival_boundary, or oral_anatomy_boundary.
+  - If the user requests diagnosis, procedures, medication dosing, appliance repair, clearance, legal claims, or certification, decline that portion and provide only intake logging and handoff language.
+fallback_handoff_language:
+  - "This GD-351 reviewed card can classify the dental concern, screen for red flags, make a symptom/location log, and route to the right dental owner."
+  - "It cannot diagnose, provide procedure steps, medication dosing, appliance fabrication or repair, return-to-chewing or work clearance, legal claims, or safety certification."
+  - "Swelling, fever, pus, severe or worsening pain, trouble swallowing or breathing, uncontrolled bleeding, major trauma, loose or displaced tooth, or possible swallowed/inhaled appliance part should route to emergency dental, a clinician, emergency department, EMS, or the local emergency pathway."
+applicability:
+  owner: dental concern intake, classification, red-flag screening, focused owner routing, and dentist or clinician handoff
+  use_when:
+    - dental_concern_classification
+    - symptom_location_timing_log
+    - red_flag_screening
+    - focused_dental_owner_selection
+    - dentist_clinician_emergency_dental_handoff
+  do_not_use_when:
+    - diagnosis_or_treatment_decision
+    - extraction_drilling_filling_incision_drainage_splinting_or_reimplantation
+    - anesthetic_procedure_antibiotic_or_pain_medication_dosing
+    - appliance_fabrication_adjustment_or_repair
+    - return_to_chewing_work_clearance_legal_claim_or_safety_certification
+    - poisoning_chemical_or_unknown_ingestion_exposure
+  handoff:
+    - emergency_dental_intake_handoff for swelling, fever, pus, severe or worsening pain, uncontrolled bleeding, trauma, knocked-out, loose, displaced, or broken teeth, and airway or swallowing concern.
+    - preventive_dental_hygiene_boundary for routine brushing, flossing, rinsing, limited-tool hygiene, and mild non-escalating gum or sensitivity questions after red flags are absent.
+    - dentistry_restorative_boundary_intake for filling, crown, cavity, restoration, tooth fracture, or post-restoration sensitivity intake after emergency red flags are screened.
+    - dental_prosthetics_comfort_handoff for denture, partial, retainer, mouthguard, night guard, or removable appliance comfort, cleaning, fit, rubbing, looseness, or breakage intake.
+    - orthodontics_survival_boundary for braces, aligner, bracket, wire, elastic, retainer, poking, rubbing, loose, missing, or broken orthodontic appliance intake.
+    - oral_anatomy_boundary for terminology, tooth/gum/jaw/mouth-area naming, and non-diagnostic anatomy education.
+actions:
+  required:
+    - classify the dental concern before answering
+    - screen urgent red flags before routine routing
+    - preserve uncertainty and separate observations from diagnosis
+    - route to the focused dental owner card when applicable
+    - route procedures diagnosis dosing appliance repair clearance legal claims and certification away from this card
+  standard:
+    - provide a concise symptom and location log template
+    - include red-flag escalation language
+    - include focused dental owner routing
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_classification: true
+  include_symptom_location_log: true
+  include_red_flag_screen: true
+  include_focused_owner_routing: true
+  forbid_diagnosis_procedure_dosing_appliance_repair_clearance_legal_certification: true
+routing_tests:
+  positive:
+    - prompt: "I have a dental problem but I do not know if it is hygiene, a filling, braces, or urgent. Help me sort it and make a handoff note."
+      expect: dentistry_boundary
+    - prompt: "My tooth hurts a little and I need to know what details to record before calling a dentist."
+      expect: dentistry_boundary
+    - prompt: "Which dental card owns dentures versus braces versus swelling?"
+      expect: dentistry_boundary
+  near_miss:
+    - prompt: "My face is swelling and I have fever with tooth pain."
+      expect_handoff: emergency_dental_intake_handoff
+    - prompt: "Show me how to drill and fill a cavity."
+      expect_handoff: dentist_or_restorative_owner_without_procedure_steps
+    - prompt: "What antibiotic dose should I take for a tooth abscess?"
+      expect_handoff: emergency_dental_or_clinician_owner
+  boundary:
+    - prompt: "My retainer rubs and I may have swallowed a missing piece."
+      expect: orthodontics_survival_boundary_or_clinician_handoff
+    - prompt: "I tasted a cleaner and my mouth burns."
+      expect: poisoning_or_chemical_safety_owner_not_dentistry_boundary
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-351-reviewed-answer-card-boundary
+  - gd-351-dentistry-router
+  - dental-owner-routing-map
+  - dental-intake-red-flag-screen
+  - dental-symptom-location-log
+source_sections:
+  - guide: GD-351
+    slug: dentistry
+    title: Dentistry
+    sections:
+      - "#dentistry-router"
+      - "#reviewed-answer-card-boundary"
+  - guide: GD-047
+    slug: emergency-dental
+    title: "Emergency Dental Procedures"
+    sections:
+      - "#overview"
+      - "#recognition"
+      - "#common-emergencies"
+      - "#when-dental-issues-become-life-threatening-emergencies"
+  - guide: GD-939
+    slug: preventive-dental-hygiene
+    title: "Preventive Dental Hygiene & Everyday Mouth Care"
+    sections:
+      - "#overview"
+      - "#daily-routine"
+      - "#red-flags"
+  - guide: GD-055
+    slug: dentistry-restorative
+    title: Restorative Dentistry
+    sections:
+      - "#temporary-restoration"
+      - "#complications-when-stop"
+      - "#recovery-aftercare"
+  - guide: GD-061
+    slug: dental-prosthetics
+    title: "Dental Prosthetics & Denture Making"
+    sections:
+      - "#overview"
+      - "#maintenance"
+      - "#long-term-care"
+  - guide: GD-244
+    slug: orthodontics-survival
+    title: Survival Orthodontics
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#appliance-types"
+      - "#safety"
+  - guide: GD-221
+    slug: anatomy-oral
+    title: Oral Anatomy
+    sections:
+      - "#overview"
+      - "#tooth-structure"
+      - "#clinical-assessment"
+      - "#complications"
+source_invariants:
+  - name: GD-351 remains a dental router and reviewed boundary surface
+    guide: GD-351
+    must_include:
+      - "Use this page only as the intake and routing layer."
+      - "intake only: classify the concern as pain, swelling, trauma, hygiene,"
+      - "restoration, prosthetic, orthodontic, or anatomy; record location and timing;"
+      - "record location and timing"
+      - "screen red flags"
+      - "route to the specific dental owner card"
+      - "Do not use this reviewed card for diagnosis, extraction, drilling, filling"
+    must_not_match:
+      - "(extract|drill|fill|drain|splint|reimplant|antibiotic|ibuprofen|acetaminophen|anesthetic)[^\\n]{0,160}(from this reviewed card|using this reviewed card|GD-351 can)"
+  - name: GD-351 routes focused dental concerns to existing owners
+    guide: GD-351
+    must_include:
+      - "[preventive-dental-hygiene](./preventive-dental-hygiene.md)"
+      - "[emergency-dental](./emergency-dental.md)"
+      - "[dentistry-restorative](./dentistry-restorative.md)"
+      - "[dental-prosthetics](./dental-prosthetics.md)"
+      - "[orthodontics-survival](./orthodontics-survival.md)"
+      - "[anatomy-oral](./anatomy-oral.md)"
+  - name: sibling owner cards retain their specific reviewed-card lanes
+    guide: GD-047
+    must_include:
+      - "Start here when the complaint is urgent first"
+      - "Do not route routine hygiene complaints here just because they mention gums or teeth."
+  - name: routine hygiene owner remains separate
+    guide: GD-939
+    must_include:
+      - "Do not stay in this guide if the complaint is really pain, swelling, injury, infection, or poisoning exposure."
+      - "If swelling, fever, pus, trouble swallowing, trouble breathing, or rapidly worsening pain appears, stop preventive care and move to `emergency-dental`."
+  - name: orthodontic owner remains separate
+    guide: GD-244
+    must_include:
+      - "This is the reviewed answer-card surface for GD-244."
+      - "dentist, orthodontist, clinician, or emergency-dental handoff"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only card for GD-351 metadata/card audit closure. It is a
+  dental intake and owner-routing card only: classify pain, swelling, trauma,
+  hygiene, restoration, prosthetic, orthodontic, and oral-anatomy concerns;
+  collect symptom/location logs; screen red flags; and route to existing dental
+  owner cards, dentist, clinician, emergency dental, EMS, emergency department,
+  or local emergency pathway. It excludes diagnosis, extraction, drilling,
+  filling, incision, drainage, splinting, reimplantation, anesthetic/procedure
+  steps, antibiotics, pain-medication dosing, appliance fabrication or repair,
+  return-to-chewing or work clearance, legal claims, and safety certification.
+  READY_FOR_PARENT_CLOSE.

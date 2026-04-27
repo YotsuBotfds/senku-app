@@ -6,8 +6,45 @@ category: medical
 difficulty: advanced
 tags:
   - critical
+aliases:
+  - pregnancy labor support intake
+  - birth plan handoff
+  - contraction log for midwife
+  - when to call midwife during labor
+  - pregnancy danger signs handoff
+  - labor support questions for clinician
+routing_cues:
+  - Use the reviewed card only for pregnancy or labor support intake, gestational context if known, contraction/bleeding/fluid/movement/pain/vital-concern logs, danger-sign screening, birth-plan communication, and midwife, OB, clinician, or emergency handoff.
+  - Do not use the reviewed card for delivery procedure instructions, medication or dosing, induction, fetal monitoring interpretation, diagnosis, postpartum hemorrhage treatment, newborn resuscitation, legal decisions, clearance, or certification.
+  - Route active labor emergency, obstetric emergencies, ectopic pregnancy concern, hypertensive emergency, postpartum hemorrhage, and newborn danger signs to their specific reviewed owners.
 icon: 👶
 description: Prenatal care, labor stages, delivery techniques, postpartum care, newborn assessment, complications, and breastfeeding support.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: midwifery_boundary
+answer_card:
+  - midwifery_boundary
+citations_required: true
+applicability: >
+  Use GD-041 only for boundary-level pregnancy and labor support intake:
+  gestational context if known, contraction timing logs, bleeding/fluid/fetal
+  movement/pain/vital-concern notes, danger-sign screening, birth-plan
+  communication, and handoff to a midwife, OB, clinician, emergency service, or
+  reviewed emergency owner. Do not use its reviewed card for delivery
+  procedure instructions, medication or dosing, induction, fetal monitoring
+  interpretation, diagnosis, postpartum hemorrhage treatment, newborn
+  resuscitation, legal decisions, clearance, or certification.
+fallthrough: >
+  Active labor emergency, shoulder dystocia, cord prolapse, eclampsia/HELLP
+  concern, uterine rupture, heavy bleeding or shock, ectopic pregnancy concern,
+  hypertensive emergency, postpartum hemorrhage, and newborn danger signs route
+  away from this card to the specific reviewed emergency or clinician owner.
+citation_policy: >
+  Cite GD-041 and its reviewed midwifery boundary card only for pregnancy/labor
+  support intake, observation logs, danger-sign screening, birth-plan
+  communication, and handoff planning. Do not cite the reviewed card for
+  delivery procedures, medications/dosing, induction, fetal monitoring
+  interpretation, diagnosis, postpartum hemorrhage treatment, newborn
+  resuscitation, legal decisions, clearance, or certification.
 related:
   - blood-medicine
   - burn-treatment
@@ -31,6 +68,22 @@ custom_css: 'nav{background-color:#2c2c2c;padding:15px 20px;position:sticky;top:
 :::danger
 **CRITICAL WARNING:** Manual placental removal and uterine compression carry high maternal mortality risk even when performed by trained professionals. Uterine perforation, uncontrolled hemorrhage, and infection are common complications. These procedures should only be attempted when maternal death from hemorrhage is imminent and no professional care is available.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-041. Use it only for pregnancy and labor support intake: gestational context if known, contraction timing, bleeding, fluid leakage, fetal movement, pain pattern, vital-sign concern, danger-sign screening, birth-plan communication, and handoff to a midwife, OB, clinician, emergency service, or the specific reviewed emergency owner.
+
+Start with a bounded intake record: estimated gestational age or due date if known, first pregnancy or prior births if volunteered, whether labor has started, contraction start time/frequency/duration, vaginal bleeding amount and color, fluid leakage or rupture concern, fetal movement change, pain location and severity, headache/vision/right-upper-abdominal symptoms, fever, blood pressure concern if already measured, dizziness/fainting, seizure, known high-risk pregnancy factors, location, transport options, birth-plan preferences that affect communication, and who has already been contacted. Keep observations separate from diagnosis, fetal-monitor interpretation, delivery decisions, and clearance.
+
+For routine support, help organize comfort, communication, and handoff details only: what the pregnant person wants the midwife/OB team to know, support-person roles, known preferences, supplies or documents to bring if traveling to care, and a concise timeline of contractions, bleeding/fluid, movement, pain, and vital concerns. Use uncertainty language when gestational age, membrane status, bleeding amount, movement, or vital signs are unclear.
+
+Danger signs or emergency patterns are not owned by this card. Active labor emergency, shoulder dystocia, cord prolapse, eclampsia or HELLP-pattern symptoms, uterine rupture concern, severe abdominal or pelvic pain with possible pregnancy or fainting, suspected ectopic pregnancy, heavy bleeding, shock signs, severe hypertension symptoms, postpartum hemorrhage, newborn not breathing, newborn fever or low temperature, poor feeding, seizure, cyanosis, severe jaundice, or umbilical infection signs require immediate clinician/emergency handoff and routing to the reviewed obstetric emergency, ectopic/abdominal emergency, blood-pressure crisis, postpartum mother-infant, or newborn danger owner as appropriate.
+
+Do not use this reviewed card for delivery procedure instructions, pushing or delivery maneuvers, cord management instructions, placental delivery or removal, postpartum hemorrhage treatment, newborn resuscitation, induction, medication selection, medication dosing, fetal monitoring interpretation, diagnosis, legal decisions, return-to-activity or birth-setting clearance, or safety certification. If a prompt asks for those, provide only the observation log, danger-sign screen, birth-plan communication notes, and handoff to the appropriate midwife, OB, clinician, emergency service, or reviewed emergency owner.
+
+</section>
 
 <section id="prenatal">
 

@@ -7,8 +7,20 @@ difficulty: intermediate
 tags:
   - essential
   - medical
+  - labor support boundary
+  - obstetric intake
+aliases:
+  - labor and delivery support boundary
+  - contraction timeline log
+  - ruptured membranes handoff
+  - pregnancy bleeding escalation
+  - decreased fetal movement handoff
+  - obstetric support person communication
+routing_cues:
+  - Use this guide's reviewed answer card only for labor/delivery practice intake, timeline logging, support-person communication, transport triggers, and clinician, midwife, OB, or emergency handoff.
+  - Route active labor management, delivery maneuvers, obstetric emergencies, hypertensive emergency, ectopic pregnancy concern, postpartum hemorrhage, neonatal resuscitation, induction, fetal monitoring interpretation, medication or dosing, and procedural requests to more specific owner guides or emergency care.
 icon: 🤰
-description: Practical midwifery guide covering labor stages, delivery positions, complication recognition, neonatal first moments, emergency interventions, and low-resource birth management protocols.
+description: Boundary-focused labor and delivery practice intake guide for contraction, membrane rupture, bleeding, fetal movement, maternal-symptom timelines, support-person communication, escalation triggers, and clinician or emergency handoff.
 related:
   - pregnancy-nutrition-maternal
   - gynecological-emergencies-womens-health
@@ -25,7 +37,30 @@ word_count: 8400
 last_updated: '2026-02-26'
 version: '1.2'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: obstetric_labor_delivery_practice_boundary
+answer_card:
+  - obstetric_labor_delivery_practice_boundary
+citations_required: true
+applicability: Use only for non-procedural labor/delivery intake logs, support-person communication, escalation triggers, and clinician, midwife, OB, or emergency handoff; not for managing delivery or complications.
+citation_policy: Cite GD-491 and its reviewed answer card only for boundary-level labor/delivery intake, timeline documentation, support-person communication, transport/escalation triggers, and clinician/OB handoff; do not cite it for delivery maneuvers, procedures, medication/dosing, induction, fetal monitoring interpretation, diagnosis, postpartum hemorrhage treatment, neonatal resuscitation, legal decisions, clearance, or certification.
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Labor/Delivery Intake & Escalation
+
+This is the reviewed answer-card surface for GD-491. Use it only for labor and delivery practice intake, timeline logging, support-person communication, transport or escalation triggers, and concise handoff to a clinician, midwife, obstetric service, or emergency responder.
+
+Keep the answer observational and handoff-oriented. A suitable response may organize what is already known: gestational age or due date if known, first contraction time, contraction spacing and duration trend, whether contractions are getting stronger or closer together, time membranes ruptured or leaking started, fluid color and odor, vaginal bleeding amount and timing, fetal movement compared with normal, maternal symptoms such as severe headache, vision changes, upper abdominal pain, chest pain, breathing trouble, fever, chills, fainting, seizure, severe abdominal pain, weakness, or confusion, available transport, receiving clinician or facility, and who is staying with the pregnant person.
+
+For routine boundary support, help the support person communicate clearly: keep the pregnant person accompanied, reduce unnecessary movement, preserve privacy and warmth, avoid food or drink if urgent transport or surgery may be needed, gather prenatal records or medication/allergy facts if already known, log times without delaying help, and call ahead to the clinician, midwife, OB unit, emergency number, or receiving facility. The handoff should state the timeline, current symptoms, bleeding or fluid details, fetal-movement concern, vital signs if already measured, prior pregnancy risks if known, and what changed.
+
+Escalate or route away from this boundary card when there is active labor requiring management, birth is imminent, delivery maneuvers are requested, the baby or placenta is delivering, heavy bleeding, severe or one-sided abdominal pain with possible pregnancy, fainting or shock signs, suspected ectopic pregnancy, severe headache with vision changes or upper abdominal pain, seizure, very high blood pressure, fever with ruptured membranes, foul-smelling fluid, green or brown fluid, decreased or absent fetal movement, chest pain, breathing trouble, cord or limb presenting, breech or multiple gestation concern, postpartum hemorrhage, newborn not breathing normally, or any rapidly worsening maternal or fetal condition.
+
+Do not use this reviewed answer-card surface for vaginal exams, Leopold maneuvers, pushing instructions, shoulder dystocia maneuvers, breech or twin delivery, cord management, placental delivery, laceration repair, uterine massage, hemorrhage treatment, induction or augmentation, fetal heart-rate interpretation, medication or dosing advice, antibiotics, oxytocin, misoprostol, ergot drugs, pain medicine, neonatal resuscitation, diagnosis, legal decisions, clearance to stay home, safe-to-transport certification, or proof that delivery is low risk. Route those prompts to the relevant obstetric emergency, gynecologic emergency, hypertensive emergency, postpartum hemorrhage, neonatal, medication, or emergency medical owner.
+
+</section>
 
 <section id="overview">
 

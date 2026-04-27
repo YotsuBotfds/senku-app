@@ -1,0 +1,149 @@
+card_id: nuclear_preparedness_fallout_boundary
+guide_id: GD-563
+slug: nuclear-preparedness-fallout
+title: Nuclear Preparedness & Fallout Shelter Operations
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks what to record or do first during a possible nuclear detonation, fallout warning, visible ash, shelter-in-place situation, or uncertain fallout contamination.
+  - A user needs a safe intake checklist for shelter location, communication status, supplies, current location, time since event, contamination uncertainty, and authority handoff.
+  - A user asks for nuclear/fallout preparedness planning at a boundary level without requesting weapons, dose calculations, treatment, iodine dosing, re-entry clearance, or rescue operations.
+required_first_actions:
+  - Keep the answer boundary-only: current shelter, communication, supply, location, time-since-event, contamination uncertainty, symptom red flags, and emergency or radiation-safety handoff.
+  - If fallout is possible and the person is not under contrary official instruction, prioritize staying inside a building or shelter, away from windows and dust, while listening for official alerts.
+  - Record factual handoff notes: current location, shelter type, people present, time since detonation or alert, visible fallout or dust, communication attempts, supplies, injuries or symptoms, and authorities contacted.
+  - If clothing or shoes may have fallout dust, separate outer clothing gently without shaking it and keep it away from people, food, and clean living areas.
+  - Route radiation exposure medical triage to GD-655 when the user reports vomiting within hours, confusion, seizures, bloody diarrhea, shock signs, rapid deterioration, or contaminated skin, hair, clothing, shoes, tools, or personal items.
+conditional_required_actions:
+  - trigger_terms:
+      - vomiting
+      - confusion
+      - seizure
+      - bloody diarrhea
+      - shock
+      - collapsed
+      - rapid deterioration
+    required_actions:
+      - Treat this as possible radiation exposure medical triage; hand off to the acute radiation syndrome card and urge emergency medical, radiation-safety, public-health, poison-center, or incident-command coordination.
+  - trigger_terms:
+      - contaminated clothes
+      - contaminated clothing
+      - fallout on clothes
+      - dust on shoes
+      - radioactive dust
+      - ash on hair
+    required_actions:
+      - Keep the guidance to gentle outer-clothing separation and isolation away from people, food, and clean areas; do not give scrubbing, formula, disposal, burning, or dose-estimation instructions.
+  - trigger_terms:
+      - go outside
+      - re-enter
+      - safe to leave
+      - clear to return
+      - rescue
+      - check outside
+    required_actions:
+      - Do not provide re-entry clearance, outside movement timing, rescue tactics, or safety certification; defer to official emergency, public-health/radiation authority, radiation-safety, or incident-command instructions.
+first_actions:
+  - Sort the prompt as active fallout intake, preparedness planning, or medical exposure triage; if medical exposure red flags appear, route to GD-655 first.
+  - Ask for a concise status log: where they are, who is with them, shelter type, time since detonation or warning, what official alerts say, whether visible fallout or dust is present, and what communications still work.
+  - Ask for supply status only at a planning level: drinking water, shelf-stable food, radio or phone power, light, basic first aid, needed medications, hygiene, and waste containment.
+  - Keep people indoors and away from windows, outside dust, and tracked-in particles while awaiting official emergency or radiation-safety direction.
+  - Prepare a handoff summary for emergency services, public-health/radiation authorities, radiation-safety professionals, or incident command.
+urgent_red_flags:
+  - Vomiting within hours, confusion, seizures, bloody diarrhea, shock signs, collapse, trouble breathing, or rapid deterioration after possible radiation exposure.
+  - Ongoing outdoor exposure, visible fallout or dust, unknown contamination on skin, hair, clothing, shoes, tools, vehicles, supplies, or living areas.
+  - Pressure to leave shelter, re-enter an area, perform rescue, clear a building or route, or declare an area safe without official radiation-safety direction.
+  - No communication, insufficient shelter, medically fragile people, missing family members, or running out of essential water or medications.
+forbidden_advice:
+  - Do not provide bomb-making, weapons, blast optimization, fallout targeting, or tactical conflict guidance.
+  - Do not provide shelter construction calculations, shielding factor math, radiation dose calculations, dose-rate decay calculations, or safety-clearance thresholds as runtime answer steps for this card.
+  - Do not provide decontamination formulas, scrubbing protocols, contaminated-waste disposal procedures, burning/incineration advice, or cleanup recipes.
+  - Do not provide medical diagnosis, treatment, medication dosing, iodine or potassium iodide dosing, chelation, antibiotics, transfusion, or exposure prognosis.
+  - Do not provide re-entry clearance, rescue operations, evacuation tactics, legal claims, regulatory claims, or safety certification.
+  - Do not route radiation exposure with serious symptoms to routine preparedness instead of the acute radiation syndrome card.
+do_not:
+  - Do not tell users an area, route, food, water source, shelter, or person is safe from radiation based on this card.
+  - Do not convert the guide's dose, shielding, decontamination, exit, or long-term operations material into reviewed-card instructions.
+  - Do not delay emergency, public-health/radiation authority, radiation-safety, or incident-command handoff while gathering a perfect checklist.
+routine_boundary: >
+  This card owns only nuclear/fallout preparedness intake and handoff: shelter,
+  communication, supplies, location, time-since-event, contamination uncertainty,
+  stay-inside/avoid-dust/outer-clothing separation basics, symptom red flags,
+  and authority handoff. Medical radiation exposure triage belongs to GD-655.
+  Weapons, dose math, decontamination formulas, treatment, iodine dosing,
+  re-entry clearance, rescue operations, legal claims, and safety certification
+  are outside this card.
+acceptable_uncertain_fit: >
+  If details are incomplete but fallout or contamination is plausible, give a
+  conservative shelter-and-handoff checklist, ask only for facts that affect
+  immediate shelter status and official handoff, and avoid calculations,
+  clearance claims, treatment, or procedural decontamination. If exposure
+  symptoms or contaminated body/clothing details are central, switch to GD-655.
+clarifying_questions:
+  - Is this an active event or preparedness planning, and what official alert or report triggered the concern?
+  - Where are you now, what kind of shelter are you in, who is with you, and how long has it been since the detonation, alert, or visible fallout?
+  - What communications still work, and have emergency services, public-health/radiation authorities, radiation safety, or incident command been contacted?
+  - Is there visible dust or possible contamination on clothing, shoes, hair, skin, supplies, tools, or the living area?
+  - Is anyone vomiting within hours, confused, seizing, having bloody diarrhea, showing shock signs, having trouble breathing, collapsed, or rapidly worsening?
+fallback_handoff_language:
+  - If serious exposure symptoms are present, use the acute radiation syndrome reviewed card and urge emergency medical and radiation-safety coordination.
+  - If the user asks whether it is safe to leave, return, rescue, clean up, or certify an area, state that this card cannot clear re-entry or safety and defer to official emergency or radiation authorities.
+  - If contamination is uncertain, keep possibly dusty outer clothing and items separated from people, food, and clean living areas and hand off to radiation-safety or public-health guidance.
+citation_ids:
+  - gd-563-reviewed-answer-card-boundary
+  - gd-563-fallout-emergency-basics
+  - gd-563-expedient-fallout-shelter
+  - gd-563-decontamination-on-shelter-entry
+  - gd-563-health-monitoring
+  - gd-655-suspected-radiation-exposure-danger-triage
+source_sections:
+  - guide: GD-563
+    slug: nuclear-preparedness-fallout
+    title: Nuclear Preparedness & Fallout Shelter Operations
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview > Fallout Emergency Basics"
+      - "#shelter-design > Expedient Fallout Shelter (In Acute Emergency)"
+      - "#decontamination > Decontamination on Shelter Entry"
+      - "#shelter-operations > Health Monitoring"
+  - guide: GD-655
+    slug: acute-radiation-syndrome
+    title: Acute Radiation Syndrome Clinical Management
+    sections:
+      - "#suspected-radiation-exposure-danger-triage"
+      - "#exposure-decontamination"
+source_invariants:
+  - name: reviewed boundary remains intake and handoff only
+    guide: GD-563
+    must_include:
+      - "This is the reviewed answer-card surface for GD-563."
+      - "shelter location, communication status, supply status, current location, time since detonation or fallout report, contamination uncertainty"
+      - "Do not use this reviewed card for bomb-making, weapons, shelter construction calculations, decontamination formulas, radiation dose calculations, medical diagnosis or treatment, medication or iodine dosing, re-entry clearance, rescue operations, legal claims, or safety certification."
+      - "route medical triage to the Acute Radiation Syndrome reviewed card (GD-655)"
+  - name: safe shelter and clothing-separation anchors remain
+    guide: GD-563
+    must_include:
+      - "Go to basement, interior corner away from windows"
+      - "Close all windows/doors"
+      - "Remove contaminated clothing"
+      - "Remove carefully (don't shake, which disperses particles)"
+      - "Place in sealed bag or container outside (or sealed closet/room away from living space)"
+      - "Daily check:"
+  - name: gd-655 medical triage handoff anchors remain
+    guide: GD-655
+    must_include:
+      - "Stop the exposure"
+      - "Remove outer clothing gently"
+      - "Wash gently"
+      - "Contact emergency medical services, a radiation safety officer, poison center, public health/radiation authority, or incident command as available."
+      - "vomiting within hours, especially repeated or early vomiting"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Boundary-only closure for GD-563. The source guide contains high-liability
+  dose, shielding, decontamination, exit, and long-term operations material; this
+  card intentionally carries only preparedness intake and handoff facts, simple
+  stay-inside/avoid-dust/outer-clothing separation basics, symptom red flags, and
+  routing to emergency, public-health/radiation, radiation-safety, incident
+  command, or GD-655 medical exposure triage.

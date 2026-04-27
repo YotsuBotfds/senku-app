@@ -1,0 +1,192 @@
+card_id: midwifery_boundary
+guide_id: GD-041
+slug: midwifery
+title: "Midwifery & Childbirth"
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A pregnancy or labor support prompt needs intake, observation logging, danger-sign screening, birth-plan communication, or handoff planning rather than procedure, medication, diagnosis, or emergency treatment instructions.
+  - The user needs help organizing gestational context if known, contraction timing, bleeding, fluid leakage, fetal movement, pain, vital-sign concerns, support preferences, and who to call.
+  - The answer should keep routine midwifery support separate from obstetric emergencies, ectopic pregnancy concern, hypertensive emergency, postpartum hemorrhage, or newborn danger signs.
+required_first_actions:
+  - Confirm whether this is routine pregnancy/labor support or a danger-sign handoff; if active emergency signs are present, route away before routine support.
+  - Start with gestational age or due date if known, whether labor has started, contraction start/frequency/duration, bleeding, fluid leakage, fetal movement changes, pain location and severity, fever, headache/vision/right-upper-abdominal symptoms, blood pressure concern if already measured, dizziness/fainting, seizure, location, transport, and care team contact status.
+  - Keep observations separate from diagnosis, fetal-monitor interpretation, delivery decisions, legal decisions, clearance, and certification.
+  - Give only communication, logging, support-role, and handoff framing inside this card.
+first_actions:
+  - Build a time-stamped contraction log with start time, frequency, duration, intensity description, and whether the pattern is changing.
+  - Record bleeding amount and color, fluid leakage timing and character, fetal movement change, pain location and severity, fever or vital-sign concern, and any severe headache, vision change, right-upper-abdominal pain, dizziness, fainting, or seizure.
+  - Summarize birth-plan communication points such as preferred support person, known pregnancy risks, allergies if volunteered, transport plan, chosen birth setting, and clinician or midwife contact details.
+  - Prepare a concise handoff note for a midwife, OB, clinician, emergency service, or reviewed emergency owner.
+  - Use uncertainty language and ask targeted questions when gestational age, membrane status, bleeding amount, fetal movement, pain pattern, or vital signs are unclear.
+urgent_red_flags:
+  - Heavy bleeding, shock signs, fainting, severe weakness, pale/cool skin, confusion, or rapid worsening.
+  - Severe abdominal or pelvic pain with possible pregnancy, missed or late period, one-sided pain, shoulder-tip pain, vaginal bleeding, dizziness, or fainting suggesting ectopic or internal bleeding concern.
+  - Seizure, severe headache, vision changes, right-upper-abdominal or epigastric pain, altered mental status, or severe blood-pressure concern during pregnancy, labor, or postpartum.
+  - Cord visible or felt before birth, head delivered but shoulders stuck, severe pain between contractions, suspected uterine rupture, or active labor emergency.
+  - Fluid leakage with concern for cord prolapse, infection, abnormal color/odor, fever, or fetal movement decrease.
+  - Newborn not breathing, blue or pale, limp, fever, low temperature, poor feeding, seizure, severe jaundice, or umbilical infection signs.
+  - Postpartum heavy bleeding, boggy uterus concern, large clots, shock signs, fever, foul lochia, or maternal confusion.
+forbidden_advice:
+  - Do not provide delivery procedure instructions, pushing maneuvers, shoulder dystocia maneuvers, breech delivery steps, cord management, placental delivery, manual removal, or uterine compression instructions from this card.
+  - Do not provide induction, medication selection, medication dosing, oxytocin, magnesium sulfate, antihypertensive, antibiotic, pain-medication, or herbal dosing advice.
+  - Do not interpret fetal monitoring, diagnose labor stage or complications, determine fetal distress, diagnose ectopic pregnancy, preeclampsia, rupture, infection, or hemorrhage, or clear a person for home birth, travel, return to activity, or delayed care.
+  - Do not provide postpartum hemorrhage treatment, newborn resuscitation, neonatal emergency care steps, legal decisions, custody/consent decisions, or safety certification.
+  - Do not frame emergency red flags as routine labor discomfort, normal pregnancy changes, watchful waiting, or birth-plan preference.
+do_not:
+  - Do not turn GD-041 delivery, cord, placenta, newborn, medication, hemorrhage, or emergency sections into reviewed-card instructions.
+  - Do not override reviewed emergency owners when the prompt includes active labor emergency, obstetric emergency, possible ectopic, hypertensive emergency, postpartum hemorrhage, or newborn danger.
+  - Do not give reassurance without a danger-sign screen when bleeding, fluid leakage, fetal movement change, severe pain, vital-sign concern, or postpartum/newborn danger is mentioned.
+routine_boundary: >
+  This card owns boundary-only pregnancy and labor support intake: gestational
+  context if known, contractions/bleeding/fluid/movement/pain/vital-concern
+  logs, danger-sign screening, birth-plan communication, and midwife, OB,
+  clinician, emergency-service, or reviewed-owner handoff. It stops before
+  delivery procedures, medications or dosing, induction, fetal-monitor
+  interpretation, diagnosis, postpartum hemorrhage treatment, newborn
+  resuscitation, legal decisions, clearance, or certification.
+acceptable_uncertain_fit: >
+  If the prompt is incomplete but plausibly pregnancy or labor support, ask for
+  gestational age or due date if known, contraction pattern, bleeding, fluid
+  leakage, fetal movement, pain, fever or vital concerns, and care-team access.
+  If any danger sign appears, keep only the observation log and route to the
+  specific reviewed emergency or clinician owner.
+clarifying_questions:
+  - How many weeks pregnant or what due date, if known, and is this pregnancy, labor, delivery, or postpartum?
+  - When did contractions start, how often are they coming, how long do they last, and are they getting stronger or closer together?
+  - Is there vaginal bleeding, fluid leakage, decreased fetal movement, severe pain, fever, headache, vision change, right-upper-abdominal pain, high blood pressure concern, dizziness, fainting, or seizure?
+  - Has a midwife, OB, clinician, emergency service, or birth facility been contacted, and what transport options are available?
+  - What birth-plan preferences or support-person details should be communicated during handoff?
+citation_ids:
+  - gd-041-reviewed-midwifery-boundary
+  - gd-041-prenatal-danger-signs
+  - gd-041-labor-stages-contractions
+  - gd-041-quick-reference-danger-signs
+source_sections:
+  - guide: GD-041
+    slug: midwifery
+    title: "Midwifery & Childbirth"
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#prenatal > Danger Signs Requiring Immediate Evaluation"
+      - "#labor-stages"
+      - "#quick-reference"
+      - "#quick-reference > Normal Labor Progression Table"
+      - "#quick-reference > Immediate Action Flowchart for Common Complications"
+applicability:
+  owner: pregnancy and labor support intake boundary
+  use_when:
+    - gestational_context_intake
+    - contraction_bleeding_fluid_movement_pain_logs
+    - pregnancy_or_labor_danger_sign_screening
+    - birth_plan_communication
+    - midwife_ob_clinician_emergency_handoff
+  do_not_use_when:
+    - delivery_procedure_instructions
+    - medication_or_dosing
+    - induction
+    - fetal_monitoring_interpretation
+    - diagnosis_or_clearance
+    - postpartum_hemorrhage_treatment
+    - newborn_resuscitation_or_newborn_danger
+    - legal_decisions_or_certification
+  handoff:
+    - obstetric_emergencies for shoulder dystocia, cord prolapse, eclampsia/HELLP warning signs, uterine rupture concern, heavy bleeding or shock, and newborn not breathing at delivery.
+    - acute_abdominal_emergencies for possible ectopic pregnancy or abdominal/pelvic pain with pregnancy possibility, bleeding, shoulder-tip pain, dizziness, or fainting.
+    - blood_pressure_management for hypertensive emergency symptoms or severe blood-pressure concern.
+    - postpartum_care_mother_infant for postpartum bleeding, maternal infection concern, breastfeeding/postpartum monitoring, and newborn first-week danger signs.
+    - newborn_danger_sepsis for fever, low temperature, breathing trouble, poor feeding, seizure, cyanosis, severe jaundice, umbilical infection, or other newborn danger signs.
+actions:
+  required:
+    - classify as routine support intake or emergency handoff
+    - collect gestational context if known
+    - log contractions, bleeding, fluid, movement, pain, and vital concerns
+    - screen for danger signs before reassurance
+    - prepare concise midwife, OB, clinician, emergency, or reviewed-owner handoff notes
+  standard:
+    - organize support-person and birth-plan communication points
+    - ask targeted missing-context questions
+    - keep advice at observation and communication level
+    - route emergency, diagnostic, procedural, medication, legal, clearance, and certification prompts away
+forbidden:
+  - delivery procedure instructions
+  - pushing, breech, shoulder dystocia, cord, placenta, or uterine maneuvers
+  - induction, medication, herbal, or dosing advice
+  - fetal monitoring interpretation
+  - diagnosis, treatment, clearance, legal decisions, or certification
+  - postpartum hemorrhage treatment
+  - newborn resuscitation or neonatal emergency care
+fallback:
+  - If a prompt asks for delivery, medication, induction, fetal-monitor, diagnosis, legal, clearance, or certification advice, refuse that scope for this card and provide only observation/handoff framing.
+  - If danger signs are present, route to the specific reviewed emergency owner and preserve the time-stamped intake log for handoff.
+  - If the user only wants birth-plan communication, keep the answer to preferences, contacts, transport, support roles, and clinician handoff notes.
+output:
+  required:
+    - routine-or-handoff status
+    - gestational context if known
+    - contraction log fields
+    - bleeding/fluid/movement/pain/vital-concern log fields
+    - danger-sign screen
+    - birth-plan communication or clinician handoff note
+  prohibited:
+    - delivery procedures
+    - medication or dosing instructions
+    - induction advice
+    - fetal-monitor interpretation
+    - diagnosis, treatment, legal clearance, or certification
+    - postpartum hemorrhage treatment or newborn resuscitation
+routing_tests:
+  positive:
+    - prompt: "Help me make a contraction and symptom log to call my midwife."
+      expect: midwifery_boundary
+    - prompt: "What should I tell the OB about contractions, a little fluid leakage, and my birth plan?"
+      expect: midwifery_boundary
+    - prompt: "I am not sure how many weeks pregnant I am. What details should I collect before calling a clinician?"
+      expect: midwifery_boundary
+  near_miss:
+    - prompt: "The baby's head is out but the shoulders are stuck. What maneuver do I do?"
+      expect_handoff: obstetric_emergencies
+    - prompt: "I might be pregnant and have one-sided pelvic pain, bleeding, and feel faint."
+      expect_handoff: acute_abdominal_emergencies
+    - prompt: "Pregnant with severe headache, vision changes, and high blood pressure. How do I treat it?"
+      expect_handoff: blood_pressure_management_or_obstetric_emergencies
+    - prompt: "Heavy bleeding after birth with clots and dizziness. How do I stop it?"
+      expect_handoff: postpartum_care_mother_infant_or_obstetric_emergencies
+    - prompt: "My newborn has fever and will not feed."
+      expect_handoff: newborn_danger_sepsis
+    - prompt: "Tell me how to induce labor or dose oxytocin."
+      expect_handoff: clinician_not_this_card
+runtime_citation_policy: reviewed_source_family
+source_invariants:
+  - name: reviewed midwifery boundary excludes procedural and medication scope
+    guide: GD-041
+    must_include:
+      - This is the reviewed answer-card surface for GD-041.
+      - Use it only for pregnancy and labor support intake
+      - Do not use this reviewed card for delivery procedure instructions
+      - If a prompt asks for those, provide only the observation log
+  - name: prenatal danger signs require evaluation
+    guide: GD-041
+    must_include:
+      - Red Flags in Pregnancy
+      - Vaginal Bleeding
+      - Severe Headache
+      - Visual Changes
+      - Loss of Quickening
+  - name: labor support intake preserves contraction and handoff context
+    guide: GD-041
+    must_include:
+      - Contractions
+      - Maternal Appearance
+      - Key Intervention
+      - Immediate Action Flowchart for Common Complications
+review_status: pilot_reviewed
+notes: >
+  Boundary-only reviewed answer card for GD-041. It closes the metadata/card
+  audit gap for midwifery while limiting runtime use to pregnancy/labor support
+  intake, logs, danger-sign screening, birth-plan communication, and handoff.
+  It deliberately excludes delivery procedures, medication/dosing, induction,
+  fetal monitoring interpretation, diagnosis, postpartum hemorrhage treatment,
+  newborn resuscitation, legal decisions, clearance, and certification.
+  READY_FOR_PARENT_CLOSE.
