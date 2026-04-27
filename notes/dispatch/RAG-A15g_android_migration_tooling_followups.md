@@ -16,9 +16,9 @@
 
 ## Next Queue
 
-- Add a small CI or local validation wrapper that runs
-  `compare_mobile_pack_counts --fail-on-mismatch` against the expected Android
-  pack location before any migration evidence is promoted.
+- Use `scripts/run_android_asset_pack_parity_gate.ps1` when a local promotion
+  check needs `compare_mobile_pack_counts --fail-on-mismatch` against the
+  expected Android pack location.
 - Capture one managed-device smoke artifact behind the opt-in Gradle property
   and compare its fields with the fixed four-emulator harness output.
 - Keep `5554` in the required fixed-emulator matrix even while managed-device

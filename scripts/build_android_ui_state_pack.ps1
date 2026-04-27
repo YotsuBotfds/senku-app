@@ -373,6 +373,132 @@ function Get-PackIdentityRollup {
     }
 }
 
+function Add-PackMetadataSetValue {
+    param(
+        [object]$Set,
+        [object]$Value
+    )
+
+    $text = [string]$Value
+    if (-not [string]::IsNullOrWhiteSpace($text)) {
+        $null = $Set.Add($text)
+    }
+}
+
+function Get-PackInstalledPackRollup {
+    param([object[]]$ResultEntries)
+
+    $deviceBuckets = [ordered]@{}
+    foreach ($entry in @($ResultEntries)) {
+        $device = [string]$entry.device
+        if ([string]::IsNullOrWhiteSpace($device)) {
+            continue
+        }
+        if (-not $deviceBuckets.Contains($device)) {
+            $deviceBuckets[$device] = @{
+                roles = New-Object System.Collections.Generic.HashSet[string]
+                statuses = New-Object System.Collections.Generic.HashSet[string]
+                pack_formats = New-Object System.Collections.Generic.HashSet[string]
+                pack_versions = New-Object System.Collections.Generic.HashSet[string]
+                generated_at_values = New-Object System.Collections.Generic.HashSet[string]
+                answer_card_counts = New-Object System.Collections.Generic.HashSet[string]
+                sqlite_shas = New-Object System.Collections.Generic.HashSet[string]
+                vector_shas = New-Object System.Collections.Generic.HashSet[string]
+                state_count = 0
+                available_count = 0
+                metadata_count = 0
+            }
+        }
+
+        $bucket = $deviceBuckets[$device]
+        $null = $bucket.roles.Add([string]$entry.role)
+        $bucket.state_count += 1
+
+        $summaryPath = [string]$entry.summary_path
+        if ([string]::IsNullOrWhiteSpace($summaryPath) -or -not (Test-Path -LiteralPath $summaryPath)) {
+            continue
+        }
+
+        try {
+            $summary = Get-Content -LiteralPath $summaryPath -Raw | ConvertFrom-Json
+        } catch {
+            continue
+        }
+
+        if ($null -eq $summary.installed_pack) {
+            continue
+        }
+        $bucket.metadata_count += 1
+
+        $installedPack = $summary.installed_pack
+        $status = [string]$installedPack.status
+        if (-not [string]::IsNullOrWhiteSpace($status)) {
+            $null = $bucket.statuses.Add($status)
+            if ($status -eq "available") {
+                $bucket.available_count += 1
+            }
+        }
+        Add-PackMetadataSetValue -Set $bucket.pack_formats -Value $installedPack.pack_format
+        Add-PackMetadataSetValue -Set $bucket.pack_versions -Value $installedPack.pack_version
+        Add-PackMetadataSetValue -Set $bucket.generated_at_values -Value $installedPack.generated_at
+        Add-PackMetadataSetValue -Set $bucket.answer_card_counts -Value $installedPack.counts.answer_cards
+        Add-PackMetadataSetValue -Set $bucket.sqlite_shas -Value $installedPack.sqlite.manifest_sha256
+        Add-PackMetadataSetValue -Set $bucket.vector_shas -Value $installedPack.vectors.manifest_sha256
+    }
+
+    $deviceSummaries = New-Object System.Collections.Generic.List[object]
+    foreach ($device in $deviceBuckets.Keys) {
+        $bucket = $deviceBuckets[$device]
+        $formats = @($bucket.pack_formats | Sort-Object)
+        $versions = @($bucket.pack_versions | Sort-Object)
+        $generated = @($bucket.generated_at_values | Sort-Object)
+        $answerCards = @($bucket.answer_card_counts | Sort-Object)
+        $sqliteShas = @($bucket.sqlite_shas | Sort-Object)
+        $vectorShas = @($bucket.vector_shas | Sort-Object)
+        $statuses = @($bucket.statuses | Sort-Object)
+        $metadataMissing = ([int]$bucket.metadata_count -eq 0)
+        $metadataConflict = ($formats.Count -gt 1) -or ($versions.Count -gt 1) -or ($answerCards.Count -gt 1) -or ($sqliteShas.Count -gt 1) -or ($vectorShas.Count -gt 1)
+
+        $deviceSummaries.Add([pscustomobject]@{
+            device = $device
+            roles = @($bucket.roles | Sort-Object)
+            state_count = [int]$bucket.state_count
+            metadata_count = [int]$bucket.metadata_count
+            available_count = [int]$bucket.available_count
+            statuses = @($statuses)
+            pack_format = $(if ($formats.Count -eq 1) { $formats[0] } else { $null })
+            pack_version = $(if ($versions.Count -eq 1) { [int]$versions[0] } else { $null })
+            generated_at = $(if ($generated.Count -eq 1) { $generated[0] } else { $null })
+            answer_cards = $(if ($answerCards.Count -eq 1) { [int]$answerCards[0] } else { $null })
+            sqlite_manifest_sha256 = $(if ($sqliteShas.Count -eq 1) { $sqliteShas[0] } else { $null })
+            vectors_manifest_sha256 = $(if ($vectorShas.Count -eq 1) { $vectorShas[0] } else { $null })
+            metadata_conflict = [bool]$metadataConflict
+            metadata_missing = [bool]$metadataMissing
+        })
+    }
+
+    $deviceSummaryArray = @($deviceSummaries.ToArray())
+    $devicesWithMetadata = @($deviceSummaryArray | Where-Object { -not $_.metadata_missing })
+    $homogeneous = ($devicesWithMetadata.Count -gt 0) -and (@($devicesWithMetadata | Where-Object { $_.metadata_conflict }).Count -eq 0)
+    foreach ($propertyName in @("pack_format", "pack_version", "generated_at", "answer_cards", "sqlite_manifest_sha256", "vectors_manifest_sha256")) {
+        if ($homogeneous -and @($devicesWithMetadata | Select-Object -ExpandProperty $propertyName -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }).Count -gt 1) {
+            $homogeneous = $false
+        }
+    }
+
+    return [pscustomobject]@{
+        devices = @($deviceSummaryArray)
+        metadata_present = [bool]($devicesWithMetadata.Count -gt 0)
+        matrix_homogeneous = [bool]$homogeneous
+        pack_format = $(if ($homogeneous) { @($devicesWithMetadata | Select-Object -ExpandProperty pack_format -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })[0] } else { $null })
+        pack_version = $(if ($homogeneous) { @($devicesWithMetadata | Select-Object -ExpandProperty pack_version -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })[0] } else { $null })
+        generated_at = $(if ($homogeneous) { @($devicesWithMetadata | Select-Object -ExpandProperty generated_at -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })[0] } else { $null })
+        answer_cards = $(if ($homogeneous) { @($devicesWithMetadata | Select-Object -ExpandProperty answer_cards -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })[0] } else { $null })
+        sqlite_manifest_sha256 = $(if ($homogeneous) { @($devicesWithMetadata | Select-Object -ExpandProperty sqlite_manifest_sha256 -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })[0] } else { $null })
+        vectors_manifest_sha256 = $(if ($homogeneous) { @($devicesWithMetadata | Select-Object -ExpandProperty vectors_manifest_sha256 -Unique | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) })[0] } else { $null })
+    }
+}
+
 function New-StateDefinition {
     param(
         [string]$Name = "",
@@ -727,6 +853,7 @@ $platformAnrCount = @($results | Where-Object { $null -ne $_.platform_anr -and -
 $hostAdbPlatformToolsVersion = Get-FirstNonEmptyPackMetadataValue -Entries $results -PropertyName "host_adb_platform_tools_version"
 $status = if ($failCount -eq 0) { "pass" } elseif ($successCount -gt 0) { "partial" } else { "fail" }
 $identityRollup = Get-PackIdentityRollup -ResultEntries $results
+$installedPackRollup = Get-PackInstalledPackRollup -ResultEntries $results
 
 if ($SkipFinalize) {
     Write-Host ""
@@ -766,6 +893,7 @@ $summary = [pscustomobject]@{
     matrix_model_name = $identityRollup.matrix_model_name
     matrix_model_sha = $identityRollup.matrix_model_sha
     devices = $identityRollup.devices
+    installed_pack = $installedPackRollup
     manifest_path = $manifestPath
     readme_path = $readmePath
 }

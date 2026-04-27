@@ -11,7 +11,7 @@ QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 
 
 class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
-    def test_whatif_prints_read_only_headless_large_data_launch_args(self):
+    def test_whatif_prints_5554_read_only_headless_large_data_launch_args(self):
         with tempfile.TemporaryDirectory(prefix="fake_android_sdk_") as temp_dir:
             sdk_root = Path(temp_dir)
             emulator_dir = sdk_root / "emulator"
@@ -34,12 +34,12 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
                     "-File",
                     str(SCRIPT),
                     "-Roles",
-                    "phone_portrait",
+                    "tablet_portrait",
                     "-Mode",
                     "read_only",
                     "-Headless",
                     "-PartitionSizeMb",
-                    "4096",
+                    "8192",
                     "-WhatIf",
                 ],
                 cwd=REPO_ROOT,
@@ -51,12 +51,13 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
 
         output = result.stdout + result.stderr
         self.assertEqual(result.returncode, 0, output)
-        self.assertIn("phone_portrait: emulator-5556 / Senku_Large_4 / 1080x2400", output)
-        self.assertIn("-avd Senku_Large_4 -port 5556", output)
+        self.assertIn("tablet_portrait: emulator-5554 / Senku_Tablet_2 / 1600x2560", output)
+        self.assertIn("-avd Senku_Tablet_2 -port 5554", output)
         self.assertIn("-read-only -no-snapshot-load -no-snapshot-save", output)
         self.assertIn("-no-window", output)
-        self.assertIn("-partition-size 4096", output)
+        self.assertIn("-partition-size 8192", output)
         self.assertIn("What if:", output)
+        self.assertIn("emulator-5554 (Senku_Tablet_2)", output)
         self.assertIn("Start emulator in read_only mode", output)
 
     def test_whatif_prints_only_selected_role_serials(self):
