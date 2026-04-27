@@ -68,14 +68,18 @@ foreach ($device in $devices) {
 - Prompt, follow-up, search-log, logged, mixed-matrix, and follow-up-matrix
   wrappers expose `-SkipPackPushIfCurrent` / `-ForcePackPush` when they invoke
   the pack hot-swap path.
+- Prompt/detail logged manifests can surface pack push summary, cache, and
+  pushed fields from the hot-swap path.
 - `run_android_harness_matrix.ps1` supports `-DefaultWarmStart`,
   row-level `warm_start`, `-PushPackDir`, and row-level `push_pack_dir`.
   Its `summary.json` / `summary.md` include completion counts, emulator
   groups, posture labels (`phone_portrait`, `phone_landscape`,
-  `tablet_portrait`, `tablet_landscape`), warm-start counts, failures, and
-  artifact paths.
+  `tablet_portrait`, `tablet_landscape`), warm-start counts, duration stats,
+  pack cache counts, failures, and artifact paths.
 - `run_android_followup_matrix.ps1` supports `-WarmStart` and records
-  `warm_start` in each JSONL/CSV row.
+  `warm_start` in each JSONL/CSV row. Its summary also includes posture groups.
+- LiteRT model push now checks `/data` free space before upload; use
+  `-SkipDataSpaceCheck` only when intentionally bypassing that preflight.
 
 ## Current artifact baseline
 

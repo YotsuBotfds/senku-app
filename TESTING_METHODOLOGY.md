@@ -543,7 +543,8 @@ check. Reserve generated local validation for answer behavior after this smoke
 passes.
 
 Practical rules:
-- the helper's tmp-staging path copies the model into `/data/local/tmp` first and then into `files/models/`, so budget at least `>= 2x model_size` free space on the AVD data partition before using that path
+- the helper's tmp-staging path copies the model into `/data/local/tmp` first and then into `files/models/`, so it preflights `/data` for about `>= 2x model_size` free space before pushing
+- use `-SkipDataSpaceCheck` only after separately verifying `/data` has enough room, or when intentionally probing the tmp-staging failure path
 - D22 found the Windows direct-stream transport family unsafe or unproven for real binary LiteRT payloads, so do not treat a Windows `adb shell run-as ... cat` recipe as the normal solved workaround; see `notes/LITERT_PUSH_TRANSPORT_INVESTIGATION_20260423.md`
 - tablet AVDs with roughly `6 GB` data partitions remain a known blocker for tmp-staging `E4B` on the current helper path rather than a solved transport workaround
 - for Stage 0 / RC validation, record which local model was actually pushed (`E2B` or `E4B`) and re-push it after every reinstall before comparing answer quality across serials

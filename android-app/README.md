@@ -217,6 +217,12 @@ powershell -ExecutionPolicy Bypass -File .\scripts\push_litert_model_to_android.
   -RestartApp
 ```
 
+The helper still uses tmp staging: it pushes the model to `/data/local/tmp`
+before copying it into the app's internal `files/models/` directory. It now
+preflights `/data` free space and fails early when the device cannot hold both
+copies. Use `-SkipDataSpaceCheck` only when you have already verified enough
+space or are intentionally testing the failure path.
+
 If `-ModelPath` is omitted, the helper looks for these common names in repo root, `models\`, and `Downloads`:
 
 - `gemma-4-E4B-it.litertlm`
