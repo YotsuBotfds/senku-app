@@ -16,6 +16,26 @@ use it to approve reviewed-card runtime expansion or product exposure.
   [`../artifacts/ui_state_pack_current_head_screenshot_proof/current_head_phone/summary.json`](../artifacts/ui_state_pack_current_head_screenshot_proof/current_head_phone/summary.json)
 - Phone landscape install-probe ANR artifact:
   [`../artifacts/android_current_head_guard_install_probe_5560/summary.json`](../artifacts/android_current_head_guard_install_probe_5560/summary.json)
+- Current-head readiness/direct-guard replay: all four emulators passed the
+  271-card pack readiness/direct guard tests (`AnswerCardCurrentHeadPackCensusTest`,
+  `AnswerCardRuntimeAllowlistCurrentHeadTest`, `PackMigrationInstallTest`) under
+  `artifacts/android_pack_readiness_5554_20260427_085938`,
+  `artifacts/android_current_head_pack_readiness_20260427_085935_5556`,
+  `artifacts/mobile_pack_readiness_20260427_085933_5558`, and
+  `artifacts/mobile_pack_readiness/current_head_pack_readiness_20260427_085944_5560`.
+  The first follow-on four-posture state-pack replay passed `45 / 45` with
+  `platform_anr_count=0` and APK SHA
+  `987acb427b72c95fa6c1ae6a0a3108662e42ec2c1323ae12b876763d62a8ddcd` at
+  `artifacts/ui_state_pack_next_android_migration/20260427_090123/summary.json`.
+  Treat that artifact as behavioral/UI proof only: it accidentally used an
+  explicit E4B host override on `5554`/`5560` while `5556`/`5558` reported
+  installed E2B identity, so `matrix_homogeneous=false`. The corrected
+  default-primary E2B host rerun also passed `45 / 45` with
+  `platform_anr_count=0` at
+  `artifacts/ui_state_pack_next_android_migration_e2b/20260427_090550/summary.json`.
+  It aligns all device model names to E2B, but strict
+  `matrix_homogeneous=false` remains because `5554`/`5560` report host E2B
+  identity while `5556`/`5558` report installed-model E2B file identity.
 
 ## Current Blockers
 
