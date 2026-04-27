@@ -1,18 +1,21 @@
 # Android Current-Head Pack Guards - 2026-04-27
 
 Use this note when running Android guards that require the current-head mobile
-pack, either from bundled current-head assets or an app-private hydrated pack.
-The `push_mobile_pack_to_android.ps1` lane remains a pre-promotion/dev
-hot-swap path.
+pack. As of commits `e00e4e2`, `d6ad218`, and `faa7352`, the bundled Android
+asset pack is the 271-card current-head pack. The
+`push_mobile_pack_to_android.ps1` lane remains a pre-promotion/dev hot-swap
+path, not the expected clean-install path for bundled-pack acceptance.
 
 ## Boundary
 
-These guards prove Android can read and constrain a 271-card current-head pack.
+These guards prove Android can read and constrain the bundled 271-card
+current-head pack.
 They do not expand runtime card selection, product-enable reviewed-card
 runtime, or turn the runtime on by default.
 
-Missing or non-current packs intentionally make the current-head tests skip.
-That is expected on clean-install lanes.
+Missing or non-current packs intentionally make the current-head tests skip on
+dev/hot-swap lanes. Clean installs from current APKs should have the bundled
+271-card pack available.
 
 ## Expected Pack
 
@@ -38,8 +41,8 @@ Expected files:
 
 ## Prepare A Device
 
-Install the debug app/test package without clearing app-private files unless the
-package is absent:
+Install the debug app/test package. Current APKs should carry the bundled
+271-card current-head pack:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
@@ -52,7 +55,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_instru
   -SummaryPath artifacts\android_current_head_guard_install_probe_5556\summary.json
 ```
 
-Hydrate the current-head pack through the pre-promotion/dev hot-swap path:
+Optional pre-promotion/dev hot-swap path when testing a non-bundled candidate:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\push_mobile_pack_to_android.ps1 `
@@ -75,7 +78,7 @@ $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
   --console=plain
 ```
 
-Direct proof on a lane after hydrating the current-head pack:
+Direct proof on a lane:
 
 ```powershell
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
@@ -196,6 +199,32 @@ Identity-fixed four-role host-inclusive UI state-pack proof,
 - APK SHA:
   `24af2ea76558829f94c973c87f47734ea2ef3c07b5756d0efe0e851f4164c21f`.
 
+Current UI acceptance proof after bundled current-head asset-pack promotion,
+2026-04-27 10:18 CT:
+
+- Artifact:
+  `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`.
+- Result: `status=pass`, `45 / 45`, `host_states_included=true`,
+  `platform_anr_count=0`.
+- Scope: `phone_portrait`, `phone_landscape`, `tablet_portrait`, and
+  `tablet_landscape`, including host/generative states.
+- Identity rollup: `matrix_homogeneous=true`,
+  `matrix_model_name=gemma-4-e2b-it-litert`, and `identity_missing=false` on
+  all four devices.
+- APK SHA:
+  `ac25c273b28dc7a7acf77bdc2954d1c8b25230b2d36c179a0bb304b39ca7c24f`.
+- The prior bundled no-push partial `42 / 45` is superseded for UI acceptance
+  by this full proof.
+
+Current APK FTS fallback proof, 2026-04-27 10:25 CT:
+
+- `PackRepositoryFtsFallbackAndroidTest` passed `OK (3 tests)` on each fixed
+  emulator lane: `emulator-5554`, `emulator-5556`, `emulator-5558`, and
+  `emulator-5560`.
+- Treat Android retrieval/performance evidence from the current emulator matrix
+  as `lexical_chunks_fts4` fallback evidence. The emulators still do not prove
+  SQLite FTS5 runtime support.
+
 Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 
 - `newborn_danger_sepsis` / `GD-284`:
@@ -223,8 +252,8 @@ Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 - `AnswerCardRuntimeAllowlistCurrentHeadTest`: six pilot runtime cards still
   plan, while deterministic non-pilot current-head samples do not satisfy any
   of the six runtime planner hooks.
-- `PackMigrationInstallTest`: normal app install keeps a usable app-private
-  hydrated current-head pack when bundled app assets are older.
+- `PackMigrationInstallTest`: normal app install keeps a usable pack across
+  bundled/current-head asset and app-private migration cases.
 
 ## Stop Lines
 
@@ -236,6 +265,4 @@ Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 - Do not use destructive force-refresh instrumentation; that path was removed
   from the guard lane.
 - Rehydrate the pack after any command that reinstalls, clears, or removes the
-  app when relying on the pre-promotion/dev hot-swap path.
-- Phone-landscape reviewed-card UI proof remains blocked by Android System UI
-  ANR until a clean landscape canary runs without `platform_anr`.
+  app only when relying on the pre-promotion/dev hot-swap path.

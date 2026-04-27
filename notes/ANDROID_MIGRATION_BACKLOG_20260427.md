@@ -11,12 +11,14 @@ use it to approve reviewed-card runtime expansion or product exposure.
 - Phone portrait proof note:
   [`ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md`](./ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md)
 - Four-role state-pack artifact:
-  [`../artifacts/ui_state_pack_current_head_20260427_matrix/20260427_005131/summary.json`](../artifacts/ui_state_pack_current_head_20260427_matrix/20260427_005131/summary.json)
+  [`../artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`](../artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json)
 - Phone portrait focused artifact:
   [`../artifacts/ui_state_pack_current_head_screenshot_proof/current_head_phone/summary.json`](../artifacts/ui_state_pack_current_head_screenshot_proof/current_head_phone/summary.json)
 - Phone landscape install-probe ANR artifact:
   [`../artifacts/android_current_head_guard_install_probe_5560/summary.json`](../artifacts/android_current_head_guard_install_probe_5560/summary.json)
-- Asset-pack promotion preflight evidence: desktop validation passed
+- Asset-pack promotion evidence: after commits `e00e4e2`, `d6ad218`, and
+  `faa7352`, the bundled Android asset pack is the 271-card current-head pack.
+  Desktop validation passed
   `tests.test_compare_mobile_pack_counts`,
   `tests.test_mobile_pack_manifest_parity`, and
   `tests.test_mobile_pack_push_cache_contract` (`10` tests OK). Compare helper
@@ -30,15 +32,17 @@ use it to approve reviewed-card runtime expansion or product exposure.
   counts `answer_cards=271`, `answer_card_clauses=6945`,
   `answer_card_sources=311`, `deterministic_rules=9`. Manifest/sqlite hashes
   match. Count deltas include `answer_cards +265`, `chunks +115`,
-  `guide_related_links +7`, and `retrieval_metadata_guides +4`. This preflight
-  supports candidate inventory only; clean-install no-push proof would still be
-  required before replacing the checked-in asset pack.
+  `guide_related_links +7`, and `retrieval_metadata_guides +4`.
 - FTS runtime reality check: `artifacts/android_fts_probe_next_20260427_0911`
   confirms the current-head host pack carries both `lexical_chunks_fts` and
   `lexical_chunks_fts4` with `49841` rows each. All four emulator lanes lack
   SQLite FTS5 module support, can create FTS4 tables, and the app runtime falls
   back to `lexical_chunks_fts4`. Treat Android retrieval/performance evidence
   from this matrix as FTS4 fallback evidence, not FTS5 runtime proof.
+- Current APK direct fallback proof: on 2026-04-27 10:25 CT,
+  `PackRepositoryFtsFallbackAndroidTest` passed `OK (3 tests)` on each fixed
+  emulator lane (`5554`, `5556`, `5558`, and `5560`) against the current
+  bundled 271-card pack.
 - Current-head readiness/direct-guard replay: all four emulators passed the
   271-card pack readiness/direct guard tests (`AnswerCardCurrentHeadPackCensusTest`,
   `AnswerCardRuntimeAllowlistCurrentHeadTest`, `PackMigrationInstallTest`) under
@@ -59,16 +63,22 @@ use it to approve reviewed-card runtime expansion or product exposure.
   It aligns all device model names to E2B, but strict
   `matrix_homogeneous=false` remains because `5554`/`5560` report host E2B
   identity while `5556`/`5558` report installed-model E2B file identity.
+- Current bundled-pack UI acceptance proof: the full four-role host-inclusive
+  state pack passed `45 / 45` with `platform_anr_count=0`, homogeneous E2B
+  identity, and APK SHA
+  `ac25c273b28dc7a7acf77bdc2954d1c8b25230b2d36c179a0bb304b39ca7c24f` at
+  `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`.
+  The prior bundled no-push partial `42 / 45` is superseded for UI acceptance
+  by this full proof.
 
 ## Current Blockers
 
-- Consolidated host-inclusive state-pack proof: after the harness identity
-  fix, the four-role current-head UI state pack passed `45 / 45` under
-  `artifacts/ui_state_pack_current_head_20260427_identity_fixed_full_host/20260427_013639/`.
+- Consolidated host-inclusive state-pack proof: current bundled-pack UI
+  acceptance is the `45 / 45` E2B proof at
+  `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`.
   The rollup reports `matrix_homogeneous=true`,
-  `matrix_model_name=gemma-4-e4b-it-litert`, and `identity_missing=false` on
-  all four devices. Treat `matrix_model_sha` as a stable host inference
-  identity key, not a hash of an installed on-device LiteRT model file.
+  `matrix_model_name=gemma-4-e2b-it-litert`, `platform_anr_count=0`, and
+  `identity_missing=false` on all four devices.
 - `phone_landscape` System UI ANR: resolved for this session after restarting
   `emulator-5560`, reinstalling app/test APKs, and rehydrating the
   current-head pack. The post-restart full `phone_landscape` pack passed
@@ -114,6 +124,8 @@ use it to approve reviewed-card runtime expansion or product exposure.
   in the 2026-04-27 tablet proof artifacts above.
 - Do not broaden this backlog into tests, scripts, source edits, or runtime
   product policy changes.
+- Do not expand reviewed-card product exposure or card coverage from this
+  migration evidence.
 - Do not retry on-device LiteRT pushes on `emulator-5554` with the staged helper
   until its AVD data partition is enlarged or a non-staging transfer path is
   implemented.

@@ -9,7 +9,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`CP9_ACTIVE_QUEUE.md`](./CP9_ACTIVE_QUEUE.md): live planner queue and post-RC backlog status
 - [`../scripts/start_senku_emulator_matrix.ps1`](../scripts/start_senku_emulator_matrix.ps1): launch the fixed four-emulator matrix with read-only as the default mode
 - [`../scripts/export_mobile_pack.py`](../scripts/export_mobile_pack.py): mobile pack export entry point
-- [`../scripts/push_mobile_pack_to_android.ps1`](../scripts/push_mobile_pack_to_android.ps1): fast pack hot-swap path
+- [`../scripts/push_mobile_pack_to_android.ps1`](../scripts/push_mobile_pack_to_android.ps1): pre-promotion/dev pack hot-swap path
 - [`../scripts/run_android_instrumented_ui_smoke.ps1`](../scripts/run_android_instrumented_ui_smoke.ps1): instrumentation-backed smoke lane with screenshots, dumps, logcat, and `summary.json`
 - [`../scripts/run_android_prompt.ps1`](../scripts/run_android_prompt.ps1): prompt automation harness
 - [`../scripts/run_android_search_log_only.ps1`](../scripts/run_android_search_log_only.ps1): preferred long retrieval harness
@@ -23,41 +23,20 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md`](./ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md): phone-portrait current-head UI state proof plus matrix follow-up findings
 - [`ANDROID_MIGRATION_BACKLOG_20260427.md`](./ANDROID_MIGRATION_BACKLOG_20260427.md): current-head Android migration blockers after matrix proof
 
-## Current emulator lane repair status - 2026-04-27
+## Current emulator lane status - 2026-04-27
 
-- Scout status: `emulator-5556` currently has the app-private hydrated
-  271-card current-head pack present.
-- Scout status: `emulator-5554`, `emulator-5558`, and `emulator-5560` have
-  the app absent or are missing the app-private hydrated current-head pack. Treat
-  current-head guard skips on those lanes as missing-pack state, not proof.
-- Use this exact pre-promotion/dev hot-swap loop to restore app presence,
-  hydrate the current-head pack, and run the direct three-class proof on the
-  missing lanes:
-
-```powershell
-$devices = @("emulator-5554", "emulator-5558", "emulator-5560")
-$adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
-foreach ($device in $devices) {
-  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
-    -Device $device `
-    -TestClass com.senku.mobile.DeveloperPanelRuntimeToggleTest `
-    -SmokeProfile custom `
-    -SkipBuild `
-    -ArtifactRoot "artifacts/android_current_head_guard_install_probe_$($device -replace 'emulator-','')" `
-    -SummaryPath "artifacts\android_current_head_guard_install_probe_$($device -replace 'emulator-','')\summary.json"
-
-  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\push_mobile_pack_to_android.ps1 `
-    -Device $device `
-    -PackDir artifacts\mobile_pack\senku_current_head_20260426_232032 `
-    -ForceStop `
-    -SkipIfCurrent `
-    -ShowInstalledManifest
-
-  & $adb -s $device shell am instrument -w `
-    -e class com.senku.mobile.AnswerCardCurrentHeadPackCensusTest,com.senku.mobile.AnswerCardRuntimeAllowlistCurrentHeadTest,com.senku.mobile.PackMigrationInstallTest `
-    com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner
-}
-```
+- Current APKs after commits `e00e4e2`, `d6ad218`, and `faa7352` bundle the
+  271-card current-head Android asset pack.
+- Current full four-role host-inclusive state-pack proof passed `45 / 45` with
+  `platform_anr_count=0`, homogeneous E2B identity, and APK SHA
+  `ac25c273b28dc7a7acf77bdc2954d1c8b25230b2d36c179a0bb304b39ca7c24f` at
+  `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`.
+- The prior bundled no-push partial `42 / 45` is superseded for UI acceptance
+  by this full proof.
+- Direct `PackRepositoryFtsFallbackAndroidTest` proof passed `OK (3 tests)` on
+  all four fixed emulator lanes at 2026-04-27 10:25 CT. Treat current emulator
+  retrieval/performance evidence as FTS4 fallback evidence, not FTS5 runtime
+  proof.
 
 ## Fast Replay Helpers - 2026-04-27
 
@@ -226,6 +205,13 @@ foreach ($device in $devices) {
   alias support, strict boolean parsing, and fail-closed reviewed-evidence
   guard requirements. Dispatch note:
   [`dispatch/RAG-CH5_android_scripted_harness_contract_tests.md`](./dispatch/RAG-CH5_android_scripted_harness_contract_tests.md).
+- Current-head bundled asset-pack UI acceptance proof:
+  `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`
+  passed `45 / 45` across the fixed four roles with `platform_anr_count=0`,
+  homogeneous `gemma-4-e2b-it-litert` identity, and APK SHA
+  `ac25c273b28dc7a7acf77bdc2954d1c8b25230b2d36c179a0bb304b39ca7c24f`.
+  This supersedes the prior bundled no-push partial `42 / 45` for UI
+  acceptance.
 - Reviewed-card developer-panel toggle proof:
   `artifacts/android_reviewed_card_toggle_20260424_193049/`
   (phone/tablet portrait and landscape screenshots)
@@ -249,10 +235,10 @@ foreach ($device in $devices) {
 
 ## Current practical reminder
 
-- Prefer the pack hot-swap lane when code has not changed.
-- Fresh APK installs now include the six pilot-reviewed answer cards in the
-  checked-in asset pack; no manual probe-pack push is needed for that pilot
-  proof. Runtime still requires the developer/test flag.
+- Prefer the pack hot-swap lane only for pre-promotion/dev candidate checks when
+  code has not changed.
+- Fresh APK installs now include the 271-card current-head pack in the bundled
+  Android assets. Runtime still requires the developer/test flag.
 - Runtime selection currently covers all six checked-in developer/test-gated
   pilot cards:
   `poisoning_unknown_ingestion`, `newborn_danger_sepsis`, and
