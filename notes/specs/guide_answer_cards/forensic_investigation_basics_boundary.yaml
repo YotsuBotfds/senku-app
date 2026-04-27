@@ -1,0 +1,143 @@
+card_id: forensic_investigation_basics_boundary
+guide_id: GD-515
+slug: forensic-investigation-basics
+title: Forensic Investigation Basics
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks what to do after discovering a possible crime scene, suspicious damage, injury, death, theft, fire, or other incident and needs safe scene-preservation boundaries.
+  - A user needs a factual documentation checklist for notes, photos, sketches, logs, visible-item inventory, chain-of-custody awareness, or responsible-authority handoff.
+  - A user is a witness, discoverer, property steward, community organizer, or responder at an authorized position and needs to avoid disturbing a scene while preserving facts for medical, emergency, or legal authorities.
+required_first_actions:
+  - Lead with life safety: address active threats, fire, collapse, hazardous materials, injuries, missing people, or medical emergencies before documentation.
+  - If anyone may be injured, dead, missing, endangered, or under active threat, hand off to emergency medical responders, public safety, legal authority, incident command, or the responsible local authority before routine guidance.
+  - Preserve the scene from an authorized and safe position: do not clean, tidy, move objects, open or close doors or windows, cover bodies, handle items, collect evidence, test stains, or enter unsafe or unauthorized areas.
+  - Record factual notes only: date, time, location, weather or lighting when relevant, who was present, what was visible, what was already moved for safety or medical aid, access restrictions, and who was notified.
+  - Keep chain-of-custody language at awareness level: note who handled, moved, secured, or received an item and transfer unresolved evidence questions to the responsible authority.
+first_actions:
+  - Establish a safe boundary and keep nonessential people out without confrontation or impersonating law enforcement.
+  - Make a written log of observations in plain factual language, separating what was seen from interpretations, theories, or legal conclusions.
+  - From a safe authorized position, make a photo, sketch, or visible-item log before anything is changed, without directing collection, testing, comparison, or close inspection.
+  - Note any necessary scene changes made for life safety or medical aid, including what was moved, touched, covered, opened, closed, or disturbed and by whom.
+  - Prepare a concise handoff packet for emergency, medical, legal, facility, community justice, or responsible authority: what happened, where, when, who is affected, immediate safety issues, factual observations, access log, and current scene status.
+urgent_red_flags:
+  - Active violence, ongoing threat, fire, smoke, structural collapse, hazardous materials, weapon hazard, unstable scene, or unsafe access.
+  - Injured person, possible death, missing person, medical emergency, vulnerable person at risk, or urgent need to render first aid.
+  - Possible crime, suspicious death, arson, sabotage, tampering, threats, coercion, or any legally controlled scene.
+  - People are entering, cleaning, tidying, moving objects, collecting items, confronting suspects, questioning witnesses, following tracks, or making accusations.
+  - The user asks for collection procedures, interrogation, suspect profiling, surveillance, tampering, legal conclusions, or law-enforcement-style authority.
+forbidden_advice:
+  - Do not provide investigative tactics, interrogation, deception detection, suspect profiling, pursuit, confrontation, surveillance, or intelligence-gathering instructions.
+  - Do not provide evidence collection procedures, testing, comparison, casting, packaging, sealing, storage setup, tool mark analysis, body examination, fire-origin determination, or scene reconstruction steps.
+  - Do not advise tampering, staging, hiding, altering, cleaning, moving, planting, destroying, or handling evidence except to note unavoidable safety or medical changes already made.
+  - Do not make legal conclusions, guilt determinations, cause or manner of death determinations, arson findings, custody decisions, liability claims, or safety/legal certification statements.
+  - Do not imply the user has law-enforcement authority, authorize detention, search, seizure, arrest, questioning, or access to unauthorized areas.
+do_not:
+  - Do not turn the guide's tactical investigation, witness interviewing, evidence collection, cause-of-death, fire investigation, impression evidence, or reconstruction sections into reviewed answer-card advice.
+  - Do not tell the user to touch, collect, package, test, smell, compare, cast, move, open, close, cover, uncover, clean, or disturb items at the scene.
+  - Do not delay medical, emergency, or legal-authority handoff while completing documentation.
+  - Do not present a photo log, inventory, or chain-of-custody note as proof of guilt, authenticity, safety, or legal admissibility.
+routine_boundary: >
+  This card owns only the scene-preservation and documentation boundary for
+  GD-515: safety first, do not disturb, factual notes, chain-of-custody
+  awareness, photo/log inventory from an authorized position, and medical,
+  emergency, legal-authority, or responsible-authority handoff. It stops before
+  investigative tactics, interrogation, suspect profiling, evidence collection
+  procedures, tampering, surveillance, legal conclusions, law-enforcement
+  impersonation, and safety or legal certification.
+acceptable_uncertain_fit: >
+  If the exact event type is unclear, give the conservative preservation
+  boundary, ask only for facts needed for safe handoff, and route any active,
+  unsafe, medical, emergency, or legally controlled situation to the responsible
+  authority. Keep the answer at observation and documentation from a safe,
+  authorized position.
+clarifying_questions:
+  - Is anyone injured, missing, deceased, threatened, or in immediate danger, and have emergency or responsible authorities been notified?
+  - Are you in a safe and authorized position, or would documenting require entering, touching, moving, or disturbing anything?
+  - What time, location, people present, visible scene status, and unavoidable safety or medical changes need to be recorded?
+  - Who currently controls the area, and who should receive the factual handoff log?
+applicability:
+  owner: forensic scene-preservation and documentation boundary only
+  use_when:
+    - scene_preservation_boundary
+    - factual_incident_notes
+    - authorized_position_photo_or_log_inventory
+    - chain_of_custody_awareness
+    - medical_emergency_legal_authority_handoff
+  do_not_use_when:
+    - investigative_tactics_or_interrogation
+    - suspect_profiling_or_surveillance
+    - evidence_collection_or_testing_procedures
+    - cause_manner_fire_origin_or_legal_conclusions
+    - law_enforcement_impersonation_or_safety_certification
+  handoff:
+    - first-aid, disaster-triage, or emergency-medical-system-design for immediate medical care and responder coordination.
+    - justice-law for legal process, authority, rights, and community justice procedures.
+    - search-rescue for missing-person incident handoff and volunteer staging boundaries.
+    - infrastructure-physical-security for lawful site-safety logs and responsible facility/security handoff.
+runtime_citation_policy: reviewed_source_family
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  must_include_urgent_handoff: true
+  forbid: true
+fallback_handoff_language:
+  - If anyone is injured, endangered, missing, deceased, or under active threat, stop routine advice and contact emergency medical, public-safety, legal, incident-command, or responsible local authority.
+  - If documenting would require unsafe or unauthorized entry or disturbing the scene, stay out, preserve distance, and record only what is visible from the safe authorized position.
+  - If the user asks for evidence collection, interrogation, suspect profiling, surveillance, or legal conclusions, decline those steps and provide only preservation, factual logging, and authority handoff.
+citation_ids:
+  - gd-515-reviewed-boundary
+  - gd-515-first-response-safety-preservation
+  - gd-515-do-not-clean-up
+  - gd-515-scene-documentation
+  - gd-515-chain-of-custody-awareness
+  - gd-515-justice-safeguards
+source_sections:
+  - guide: GD-515
+    slug: forensic-investigation-basics
+    title: Forensic Investigation Basics
+    sections:
+      - "#overview > Reviewed Answer-Card Boundary: Scene Preservation and Documentation Handoff"
+      - "#crime-scene > First Response Protocol"
+      - "#crime-scene > Do NOT clean up"
+      - "#crime-scene > Scene Documentation"
+      - "#chain-of-custody > What It Is and Why It Matters"
+      - "#chain-of-custody > Maintaining Chain of Custody"
+      - "#community-protocols > Rights of the Accused"
+source_invariants:
+  - name: reviewed boundary remains preservation and handoff only
+    guide: GD-515
+    must_include:
+      - This is the reviewed answer-card surface for GD-515.
+      - safety first, do not disturb, factual notes, chain-of-custody awareness, photo/log inventory from an authorized position, and medical, emergency, or legal-authority handoff
+      - Do not provide investigative tactics, interrogation, suspect profiling, evidence collection procedures, tampering, surveillance, legal conclusions, law-enforcement impersonation, confrontation instructions, or safety/legal certification.
+  - name: first response life safety and preservation anchors remain
+    guide: GD-515
+    must_include:
+      - Ensure safety
+      - Aid the injured
+      - Restrict access
+      - Document your actions
+      - Do NOT clean up.
+  - name: documentation and custody anchors remain factual
+    guide: GD-515
+    must_include:
+      - Before touching anything, document the entire scene using every available method
+      - Write a narrative description of the scene as found
+      - Chain of custody is the documented record of who possessed a piece of evidence
+      - record who handled, moved, secured, or received an item
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-515 as a narrow scene-preservation and documentation
+  boundary card. The source guide contains investigative, collection,
+  interviewing, cause-of-death, fire-origin, impression-evidence, and
+  reconstruction material; this card does not carry those procedures into the
+  reviewed answer surface. It only supports safety-first preservation, factual
+  notes, authorized-position photo/log inventory, chain-of-custody awareness,
+  and medical, emergency, legal-authority, or responsible-authority handoff.
+  READY_FOR_PARENT_CLOSE.

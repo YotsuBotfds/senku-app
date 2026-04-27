@@ -13,6 +13,17 @@ tags:
   - power-grid
 icon: ⚡
 description: Electromagnetic pulse (EMP) effects on electronics and infrastructure, Faraday cage construction, protection of critical systems, hardened device storage, and grid recovery strategies. Covers shielding principles, grounding, surge protection, and expedient countermeasures in austere conditions.
+aliases:
+  - emp resilience planning
+  - emp critical service inventory
+  - emp outage status log
+  - emp communication fallback plan
+  - emp dependency log
+  - infrastructure resilience intake
+  - post emp handoff planning
+routing_cues:
+  - Use for planning-level EMP infrastructure resilience questions about critical-service inventories, communication fallback planning, dependency logs, outage status, medical/electrical red flags, and handoff to utilities, emergency management, or qualified owners.
+  - Route Faraday cage construction, electronics hardening build steps, grid restoration procedure, live electrical work, generator backfeed or interconnection, tactical attack advice, legal claims, and safety certification away from this reviewed card.
 related:
   - electrical-motors
   - emergency-dental
@@ -21,6 +32,28 @@ read_time: 34
 word_count: 4000
 last_updated: '2026-02-21'
 version: '1.0'
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: emp_infrastructure_resilience_boundary
+answer_card:
+  - emp_infrastructure_resilience_boundary
+citations_required: true
+runtime_citation_policy: reviewed_source_family
+applicability: >
+  Use GD-564 only for the reviewed planning/intake boundary around EMP
+  infrastructure resilience: critical-service inventory, communication fallback
+  planning, dependency logs, outage status, medical and electrical red flags,
+  and utility, emergency-management, or qualified-owner handoff. Do not use the
+  reviewed card for electronics hardening construction, Faraday cage build
+  instructions, grid restoration, live electrical work, generator backfeed or
+  interconnection, tactical attack advice, legal claims, or safety
+  certification.
+citation_policy: >
+  Cite this guide and reviewed answer card only for planning-level resilience
+  intake, service prioritization, fallback communications, outage/dependency
+  logging, red-flag screening, and responsible-owner handoff. Do not cite the
+  reviewed card as authority for construction, electrical work, grid operation,
+  generator interconnection, attack planning, legal compliance, or safety
+  certification.
 custom_css: |
   .emp-physics { background-color: var(--surface); padding: 20px; margin: 20px 0; border-radius: 4px; border-left: 4px solid var(--accent); }
   .shielding-guide { background-color: var(--card); padding: 15px; margin: 10px 0; border-left: 3px solid var(--accent); border-radius: 4px; }
@@ -35,6 +68,18 @@ liability_level: high
 :::warning
 **Scope & Physics:** This guide covers EMP effects and practical protective measures in austere conditions. Full understanding requires electromagnetism expertise. When professional engineers are available, consult them. This guide assumes emergency conditions where expert support is unavailable. Improper grounding can cause safety hazards (electrocution); use caution with metal/electrical systems.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-564. Use it for planning-level EMP infrastructure resilience intake: identify critical services, note who depends on each service, document current outage status, list dependencies and single points of failure, choose communication fallback paths, screen for medical and electrical red flags, and route decisions to the utility, emergency-management lead, facility owner, or qualified technical owner.
+
+Start by inventorying services that affect life safety and community stability: medical devices and medication refrigeration, water and wastewater, shelter heat or cooling, food cold storage, communications, transportation coordination, fuel, and local power dependencies. For each service, record the responsible owner, current status, backup status, manual fallback, last verified check, and who must receive the handoff if the service fails or cannot be verified.
+
+Do not use this reviewed card for electronics hardening construction, Faraday cage build instructions, grid restoration procedure, live electrical work, generator backfeed or interconnection, tactical attack advice, legal claims, or safety certification. If the prompt asks for those, answer only the planning, logging, red-flag, or handoff portion that is in scope and route the technical decision to the appropriate utility, emergency-management, electrical, medical, legal, or qualified facility owner.
+
+</section>
 
 <section id="overview">
 

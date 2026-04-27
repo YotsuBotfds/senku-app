@@ -9,6 +9,33 @@ tags:
   - evacuation
   - fire-prevention
   - home-hardening
+aliases:
+  - wildfire evacuation readiness
+  - wildfire go no go evacuation prompts
+  - wildfire smoke route visibility red flags
+  - wildfire vulnerable people pets evacuation plan
+  - wildfire incident command handoff
+routing_cues:
+  - wildfire evacuation readiness alerts go no go prompts handoff
+  - smoke air visibility route red flags vulnerable people pets
+  - defensible space observation emergency services incident command
+  - wildfire boundary without firefighting tactics structure defense or reentry clearance
+routing_support:
+  - Use GD-694 only for evacuation/readiness boundary answers: alerts, go/no-go evacuation prompts, smoke/air/visibility/route red flags, vulnerable people and pets, defensible-space observation, and emergency or incident-command handoff.
+  - Do not route requests for firefighting tactics, backburning, structure-defense procedures, pump or hose operations, shelter-in-place survival claims, road re-entry clearance, legal claims, or safety certification to this reviewed card.
+citations_required: true
+citation_policy: cite reviewed GD-694 answer card only for wildfire evacuation/readiness, alerts, go/no-go prompts, smoke/air/visibility/route red flags, vulnerable people and pets, defensible-space observation, and emergency or incident-command handoff; do not use it for firefighting tactics, backburning, structure-defense procedure, pump/hose operations, shelter-in-place survival claims, road re-entry clearance, legal claims, or safety certification
+applicability: >
+  Wildfire evacuation and readiness boundary only: alerts, go/no-go evacuation
+  prompts, smoke/air/visibility/route red flags, vulnerable people and pets,
+  defensible-space observation, and handoff to emergency services or incident
+  command. Not a firefighting, backburning, structure-defense, pump/hose,
+  shelter-in-place survival, re-entry clearance, legal, or safety-certification
+  guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: wildfire_defense_evacuation_boundary
+answer_card:
+  - wildfire_defense_evacuation_boundary
 icon: 🔥
 description: Comprehensive wildfire preparedness including defensible space creation, home hardening, evacuation planning, and smoke safety.
 related:
@@ -22,6 +49,12 @@ last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
 ---
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-694. Use it only for wildfire evacuation and readiness: alerts, go/no-go evacuation prompts, smoke, air, visibility, and route red flags, vulnerable people and pets, defensible-space observation, and handoff to emergency services, local authorities, or incident command.
+
+Do not use the reviewed answer card for firefighting tactics, backburning, structure-defense procedures, pump or hose operations, shelter-in-place survival claims, road re-entry clearance, legal claims, or safety certification. If there is an evacuation order, visible fire, heavy smoke, blocked routes, poor visibility, vulnerable people without transport, worsening health symptoms, or contradictory official information, prioritize leaving early when safe, contacting emergency services when immediate danger exists, following official alerts and incident-command instructions, and documenting observations for handoff.
 
 ## Understanding Wildfire Behavior
 

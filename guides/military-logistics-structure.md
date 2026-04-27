@@ -18,6 +18,35 @@ read_time: 18
 word_count: 3600
 last_updated: '2026-02-20'
 version: '1.0'
+aliases:
+  - military logistics admin checklist
+  - unit supply inventory status log
+  - transport resource status handoff
+  - communications accountability log
+  - medical evacuation support tracking
+  - lawful organizational logistics handoff
+routing_cues:
+  - "Use this guide's reviewed answer card only for non-tactical logistics and administration boundaries: supply inventory, transport/resource status logs, communications accountability, medical/evacuation support tracking, role clarity, accountability, and lawful organizational handoff."
+  - Keep routine answers focused on records, status visibility, accountable roles, handoff logs, resource condition, communication paths, and medical-support tracking for responsible leaders or authorities.
+  - Route combat logistics, weapons or ammunition planning, operational or tactical movement, force deployment, evasion, targeting, requisition fraud, legal claims, and certification away from this card.
+routing_support:
+  - "The reviewed boundary narrows GD-472 to administrative logistics support: inventory, transport status, communications, medical support tracking, role clarity, accountability, and lawful handoff."
+  - "Supply, communication, medical, and command sections support non-tactical recordkeeping and accountability when stripped of combat planning detail."
+  - "Older tactical examples in the guide are not runtime permission for weapons, ammunition, convoy, assault, targeting, evasion, deployment, legal-claim, or certification advice."
+citations_required: true
+citation_policy: cite reviewed GD-472 answer card for non-tactical logistics and administration boundaries only; do not use it for combat logistics, weapons or ammunition planning, operational or tactical movement, force deployment, evasion, targeting, requisition fraud, legal claims, or certification.
+runtime_citation_policy: reviewed_source_family
+applicability: >
+  Use for military or military-adjacent logistics questions where the safe answer
+  is administrative recordkeeping, resource status visibility, communication
+  accountability, medical or evacuation support tracking, role clarity,
+  accountability, and lawful organizational handoff. Do not use for combat
+  logistics, weapons or ammunition planning, tactical movement, force deployment,
+  evasion, targeting, requisition fraud, legal claims, or certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: military_logistics_structure_boundary
+answer_card:
+  - military_logistics_structure_boundary
 liability_level: high
 ---
 
@@ -30,6 +59,16 @@ Military organizations are optimized for coordinated combat operations. Success 
 This guide covers organizational structure (squad through battalion), command systems, supply accounting, medical evacuation, and field operations. Understanding these principles applies to civilian emergency management, large work crews, and organized communities.
 
 </section>
+
+## Reviewed Answer-Card Boundary: Non-Tactical Logistics Administration
+
+This is the reviewed answer-card surface for GD-472. Use it for non-tactical logistics and administration support: supply inventory records, transport and resource status logs, communications accountability, medical or evacuation support tracking, role clarity, accountability, and lawful organizational handoff to responsible leadership, logistics staff, medical coordinators, emergency managers, or other authorized authorities.
+
+Routine answers should create a simple logistics handoff log: organization or unit involved, date and recorder, accountable role, supply category or resource, quantity or status if known, condition, location at a general administrative level, communication contact or channel owner, medical or evacuation support need, open issue, and the person or office receiving the handoff. Keep advice at inventory, status visibility, accountable roles, communications records, medical-support tracking, and responsible-authority routing.
+
+Immediate handoff is required for missing or unaccounted people, injury or urgent medical transport needs, failed communications affecting safety, unavailable critical supplies, suspected theft or diversion, damaged transport resources that affect safety, or any unclear authority over people, records, property, or care responsibilities.
+
+Do not provide combat logistics, weapons or ammunition planning, operational or tactical movement, force deployment, evasion, targeting, requisition fraud, legal claims, certification, convoy protection, assault support, route selection for operations, or advice that helps plan or execute military operations. Preserve the boundary: document administrative status, clarify roles, account for people and resources, and route unresolved issues to lawful organizational authority.
 
 <section id="unit-structure">
 

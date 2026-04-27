@@ -1,0 +1,210 @@
+card_id: wildfire_defense_evacuation_boundary
+guide_id: GD-694
+slug: wildfire-defense-evacuation
+title: Wildfire Defense & Evacuation
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for wildfire evacuation readiness, alert monitoring, go/no-go prompts, route checks, smoke/air/visibility red flags, or emergency handoff.
+  - A prompt needs a safe wildfire boundary answer that helps people prepare to leave early without giving firefighting, structure-defense, pump/hose, backburning, shelter-in-place survival, road re-entry, legal, or certification advice.
+  - The user is organizing vulnerable people, pets, go-bags, vehicles, destinations, communications, defensible-space observations, or incident-command handoff before or during a wildfire threat.
+required_first_actions:
+  - If there is an evacuation order, visible fire, heavy smoke, blocked route, poor visibility, vulnerable person without transport, medical distress, or immediate danger, prioritize leaving early when safe and contact emergency services or follow incident-command instructions.
+  - Keep the answer boundary-only: alerts, go/no-go evacuation prompts, smoke/air/visibility/route red flags, vulnerable people and pets, defensible-space observation, and emergency or incident-command handoff.
+  - Ask for or organize current facts that affect evacuation: official alerts, location, fire or smoke observation, route status, visibility, transport, vulnerable people, pets, medications, go-bags, destination, and who has been notified.
+  - Do not delay evacuation, emergency contact, or official handoff while completing a checklist.
+conditional_required_actions:
+  - trigger_terms:
+      - evacuation order
+      - alert
+      - warning
+      - leave now
+      - incident command
+    required_actions:
+      - Lead with official alerts and incident-command instructions; help structure a quick go/no-go note with order status, time, route, destination, transport, people, pets, medications, and contact log.
+  - trigger_terms:
+      - smoke
+      - air quality
+      - visibility
+      - route blocked
+      - road closed
+    required_actions:
+      - Treat heavy smoke, poor visibility, blocked routes, worsening air quality, or health symptoms as red flags; recommend moving to cleaner air or leaving early when safe and handing route observations to authorities.
+  - trigger_terms:
+      - child
+      - elderly
+      - disabled
+      - respiratory
+      - heart disease
+      - pet
+      - livestock
+    required_actions:
+      - Prioritize vulnerable people and animals in the evacuation plan, including transport, medications or mobility needs, carriers or trailers, vaccination or ID records, and destination constraints.
+  - trigger_terms:
+      - defend my house
+      - fight the fire
+      - pump
+      - hose
+      - backburn
+      - stay and defend
+      - re-enter
+    required_actions:
+      - Decline firefighting tactics, backburning, structure-defense procedures, pump/hose operations, shelter-in-place survival claims, road re-entry clearance, legal claims, or safety certification; redirect to evacuation readiness and official handoff.
+first_actions:
+  - Check official alerts and local authority or incident-command instructions; note the alert level, time, source, affected area, and whether evacuation is ordered, warned, or voluntary.
+  - Build a go/no-go prompt around current observations: visible flames, ember fall, heavy smoke, wind shift, poor visibility, blocked roads, traffic, route closures, medical symptoms, and whether everyone can leave now.
+  - Confirm two routes where possible, current route status, vehicle fuel, parked-exit orientation, destination, communication contact, chargers, documents, medications, sturdy shoes, cash, and go-bag access.
+  - Identify vulnerable people and pets or livestock: children, older adults, mobility limits, respiratory or heart disease, medications, devices, carriers, trailers, vaccination records, photos, and receiving location.
+  - Note defensible-space observations only as readiness context: gutters or roof debris, vegetation touching the house, deck debris, nearby dead branches, and other observations to report or address before danger rises.
+  - Prepare a concise handoff note for emergency services, local authorities, shelter staff, animal facilities, or incident command with location, people, pets, route status, smoke/visibility, medical needs, and communications already sent.
+urgent_red_flags:
+  - Official evacuation order, visible fire, ember fall, heavy smoke, rapidly worsening wind, poor visibility, blocked or congested routes, power or communications failure, or contradictory alerts.
+  - Chest pain, severe shortness of breath, wheezing, confusion, worsening smoke symptoms, or vulnerable people exposed to smoke.
+  - Children, older adults, people with disabilities, respiratory or heart disease, medically fragile people, pets, or livestock lack transport, medication, carriers, trailers, or destination.
+  - A user wants to stay and defend, fight the fire, operate pumps or hoses, backburn, clear roads, re-enter a closed area, or wait for certainty while conditions are worsening.
+forbidden_advice:
+  - Do not provide firefighting tactics, backburning, structure-defense procedures, pump or hose operations, burn operations, ember patrol procedures, road clearing, traffic control, shelter-in-place survival claims, or re-entry clearance.
+  - Do not tell users it is safe to stay, defend a structure, re-enter a burned or closed area, ignore official orders, or wait for visual confirmation of flames before leaving.
+  - Do not make legal claims, liability statements, incident-command decisions, road-opening decisions, medical clearance, habitability determinations, or safety certifications.
+  - Do not convert the guide's defensible-space, firebreak, hardening, or post-fire cleanup material into emergency firefighting or re-entry instructions.
+do_not:
+  - Do not treat this card as permission to fight wildfire, backburn, operate pumps or hoses, defend structures, clear roads, or enter burned areas.
+  - Do not delay evacuation or emergency handoff while assembling supplies, checking property, loading animals, or documenting observations.
+  - Do not present indoor smoke reduction as a substitute for evacuation when an evacuation order, immediate fire threat, or severe smoke-health symptoms are present.
+routine_boundary: >
+  This card owns wildfire evacuation/readiness only: alerts, go/no-go prompts,
+  smoke, air, visibility, and route red flags, vulnerable people and pets,
+  defensible-space observation, and emergency or incident-command handoff. It
+  stops before firefighting tactics, backburning, structure defense, pump or
+  hose operations, shelter-in-place survival claims, road re-entry clearance,
+  legal claims, habitability decisions, or safety certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but wildfire risk is plausible, provide a
+  conservative evacuation-readiness checklist and ask for official alert
+  status, current fire or smoke observations, route and visibility status,
+  vulnerable people, pets, transport, medications, go-bags, destination, and
+  whether emergency services or incident command has been contacted. If any red
+  flag is present, lead with leaving early when safe and official handoff.
+clarifying_questions:
+  - What official alert or evacuation order is active, and what agency or incident-command source issued it?
+  - What do you observe now: visible fire, embers, heavy smoke, wind shift, poor visibility, blocked routes, or traffic?
+  - Who needs help leaving: children, older adults, disabled or medically fragile people, respiratory or heart disease patients, pets, or livestock?
+  - What route, vehicle, fuel, destination, communication contact, medications, go-bag, pet carrier, or trailer constraint could delay departure?
+  - Have emergency services, local authorities, shelter staff, animal facilities, or incident command already been contacted?
+fallback:
+  - If the prompt mixes safe readiness with firefighting, structure defense, backburning, pump/hose, shelter-in-place, re-entry, legal, or certification requests, answer only the evacuation/readiness and authority-handoff portion.
+  - If immediate danger or medical symptoms are present, prioritize emergency services, official evacuation instructions, and movement to safer air or location over routine planning.
+  - If the user asks whether a route, road, home, or burned area is safe, route to local authorities, incident command, fire officials, public health, or qualified inspectors as appropriate.
+fallback_handoff_language:
+  - "This GD-694 reviewed card can help structure wildfire evacuation readiness: alerts, go/no-go prompts, smoke/air/visibility/route red flags, vulnerable people and pets, defensible-space observation, and emergency or incident-command handoff."
+  - "It cannot provide firefighting tactics, backburning, structure-defense procedures, pump or hose operations, shelter-in-place survival claims, road re-entry clearance, legal claims, or safety certification."
+  - "For evacuation orders, visible fire, heavy smoke, blocked routes, medical distress, or vulnerable people without transport, prioritize leaving early when safe and follow emergency services, local authorities, or incident-command instructions."
+applicability:
+  owner: Wildfire evacuation/readiness boundary, alerts, go/no-go prompts, smoke/air/visibility/route red flags, vulnerable people and pets, defensible-space observation, and emergency or incident-command handoff
+  use_when:
+    - wildfire_evacuation_readiness
+    - official_alerts_go_no_go_prompt
+    - smoke_air_visibility_route_red_flags
+    - vulnerable_people_pets_handoff
+    - defensible_space_observation_only
+  do_not_use_when:
+    - firefighting_tactics_or_backburning
+    - structure_defense_pump_hose_operations
+    - shelter_in_place_survival_claim
+    - road_reentry_clearance
+    - legal_claim_or_safety_certification
+actions:
+  required:
+    - classify the request as evacuation readiness, alert tracking, route/smoke red flags, vulnerable people/pets, defensible-space observation, or emergency handoff
+    - lead with evacuation orders, visible fire, heavy smoke, blocked routes, vulnerable people, medical symptoms, and official handoff checks
+    - refuse firefighting, backburning, structure-defense, pump/hose, shelter-in-place survival, re-entry, legal, and certification advice
+  standard:
+    - provide a concise go/no-go and handoff checklist
+    - include alerts, route status, visibility, smoke symptoms, transport, destination, vulnerable people, pets, go-bags, and authority contact status
+forbidden:
+  - forbidden_advice
+  - do_not
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  include_go_no_go_prompt: true
+  include_smoke_air_visibility_route_red_flags: true
+  include_vulnerable_people_pets: true
+  include_emergency_incident_command_handoff: true
+  forbid_firefighting_backburning_structure_defense_pump_hose_reentry_certification: true
+routing_tests:
+  positive:
+    - prompt: "Make a wildfire evacuation readiness checklist with alerts, go/no-go prompts, smoke and route red flags, pets, and incident command handoff."
+      expect: wildfire_defense_evacuation_boundary
+    - prompt: "We have smoke and possible evacuation warnings; help organize vulnerable people, meds, pets, routes, and official handoff only."
+      expect: wildfire_defense_evacuation_boundary
+    - prompt: "Create a boundary answer card for wildfire alerts, visibility red flags, go-bags, and defensible-space observations without firefighting tactics."
+      expect: wildfire_defense_evacuation_boundary
+  near_miss:
+    - prompt: "Tell me how to backburn around my house."
+      expect_handoff: refuse_backburning_and_firefighting_tactics
+    - prompt: "How do I run pumps and hoses to defend the structure?"
+      expect_handoff: refuse_structure_defense_pump_hose_operations
+    - prompt: "Can I re-enter after the fire if the road looks clear?"
+      expect_handoff: local_authority_or_incident_command_clearance
+  boundary:
+    - prompt: "There is heavy smoke, a blocked route, and an elderly person without transport."
+      expect: prioritize_evacuation_assistance_and_emergency_handoff
+    - prompt: "They ask about staying to defend, but I only need an evacuation handoff note."
+      expect: boundary_note_and_handoff_without_firefighting
+citation_ids:
+  - gd-694-reviewed-answer-card-boundary
+  - gd-694-evacuation-planning
+  - gd-694-animal-evacuation
+  - gd-694-smoke-inhalation-prevention-treatment
+  - gd-694-defensible-space-observation
+  - gd-694-post-fire-authority-safety
+source_sections:
+  - guide: GD-694
+    slug: wildfire-defense-evacuation
+    title: Wildfire Defense & Evacuation
+    sections:
+      - "#reviewed-answer-card-boundary > Reviewed Answer-Card Boundary"
+      - "#evacuation-planning > Evacuation Planning"
+      - "#animal-evacuation > Animal Evacuation"
+      - "#smoke-inhalation-prevention-and-treatment > Smoke Inhalation Prevention and Treatment"
+      - "#creating-defensible-space > Creating Defensible Space"
+      - "#post-fire-safety > Post-Fire Safety"
+source_invariants:
+  - name: reviewed_boundary_remains_evacuation_readiness_only
+    guide: GD-694
+    must_include:
+      - "This is the reviewed answer-card surface for GD-694."
+      - "Use it only for wildfire evacuation and readiness: alerts, go/no-go evacuation prompts, smoke, air, visibility, and route red flags, vulnerable people and pets, defensible-space observation, and handoff to emergency services, local authorities, or incident command."
+      - "Do not use the reviewed answer card for firefighting tactics, backburning, structure-defense procedures, pump or hose operations, shelter-in-place survival claims, road re-entry clearance, legal claims, or safety certification."
+    must_not_match:
+      - "reviewed answer-card surface for gd-694[\\s\\S]{0,900}(?:backburning is permitted|pump operations are permitted|structure defense is permitted|shelter-in-place survival is assured)"
+  - name: evacuation_and_smoke_anchors_remain
+    guide: GD-694
+    must_include:
+      - "Evacuation is the ultimate defense."
+      - "Evacuate before roads jam."
+      - "If symptoms worsen (severe shortness of breath, chest pain, confusion), seek medical attention."
+      - "Vulnerable populations"
+  - name: animal_defensible_space_and_authority_anchors_remain
+    guide: GD-694
+    must_include:
+      - "Livestock and pets require advance planning."
+      - "Microchip and photograph"
+      - "Defensible space is an area around a structure where you reduce fuel load"
+      - "until deemed safe by authorities"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-694 as a narrow wildfire evacuation/readiness
+  boundary. The source guide contains broader defensible-space, hardening,
+  firebreak, smoke, and post-fire material, but this card only carries alerts,
+  go/no-go evacuation prompts, smoke/air/visibility/route red flags, vulnerable
+  people and pets, defensible-space observation, and emergency or
+  incident-command handoff into reviewed answer-card use.

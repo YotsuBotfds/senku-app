@@ -10,6 +10,22 @@ tags:
   - ashfall
   - evacuation
   - monitoring
+aliases:
+  - volcanic ash falling outside
+  - ashfall shelter question
+  - volcano evacuation alert
+  - lahar roaring river valley
+  - volcanic gas eye irritation
+  - vog breathing symptoms
+  - ash in water supply
+  - roof ash hazard
+  - volcanic hazard handoff
+routing_cues:
+  - Use for active or recent volcanic hazard response when the user needs evacuation or shelter intake, ash exposure reduction, respiratory or eye red flags, lahar/river-valley danger recognition, road/roof/utility hazard observations, official alert follow-up, or responder handoff.
+  - Keep reviewed-card answers boundary-only; do not use for eruption prediction, geologic certainty, ash-load calculations, roof-clearing procedures, rescue entry, vehicle or road clearance, respiratory-device efficacy claims, legal claims, or safety certification.
+routing_support:
+  - Pair with first-aid or eye-injuries-emergency-care when respiratory distress, burns, eye pain, vision change, collapse, confusion, or other injury symptoms dominate.
+  - Pair with water-purification for general water treatment planning only after ash-contaminated water is separated from urgent evacuation, exposure, and official-alert response.
 icon: 🌋
 description: Comprehensive response to volcanic hazards including hazard types, monitoring without instruments, ashfall protection, evacuation planning, and post-eruption recovery.
 related:
@@ -23,6 +39,14 @@ word_count: 5100
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: volcanic_hazard_response_boundary
+answer_card:
+  - volcanic_hazard_response_boundary
+citations_required: true
+citation_policy: cite reviewed GD-697 answer card only for natural-hazard safety boundary intake, evacuation/shelter status, ash exposure reduction, respiratory/eye red flags, road/roof/utility hazard observations, official alert or responder handoff, and clarifying questions; do not use it for eruption prediction, geologic certainty, ash-load calculations, roof-clearing procedures, rescue entry, vehicle or road clearance, respiratory-device efficacy claims, legal claims, or safety certification.
+runtime_citation_policy: reviewed_source_family
+applicability: volcanic hazard response boundary for evacuation or shelter intake, ash/gas exposure reduction, respiratory and eye red flags, lahar and river-valley danger recognition, road/roof/utility hazard observations, official alert follow-up, and emergency/responder handoff; not eruption prediction, geologic certainty, ash-load calculations, roof-clearing procedures, rescue entry, vehicle or road clearance, respiratory-device efficacy claims, legal claims, or safety certification.
 ---
 
 ## Volcanic Hazard Types

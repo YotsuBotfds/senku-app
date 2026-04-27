@@ -7,6 +7,37 @@ difficulty: advanced
 tags:
   - practical
   - governance
+aliases:
+  - forensic scene preservation boundary
+  - crime scene documentation handoff
+  - scene notes and photo log
+  - chain of custody awareness
+  - authorized position evidence inventory
+  - medical emergency legal authority handoff
+routing_cues:
+  - forensic investigation basics reviewed boundary scene preservation documentation chain of custody awareness emergency legal authority handoff
+  - crime scene do not disturb factual notes photo log inventory authorized position medical handoff
+  - use reviewed card only for safety first scene preservation documentation and authority handoff not investigative tactics
+citations_required: true
+citation_policy: >
+  Cite reviewed GD-515 answer card only for scene-preservation and
+  documentation boundaries: safety first, do not disturb, factual notes,
+  chain-of-custody awareness, photo/log inventory from an authorized position,
+  and medical/emergency/legal-authority handoff; do not use it for
+  investigative tactics, interrogation, suspect profiling, evidence collection
+  procedures, tampering, surveillance, legal conclusions, law-enforcement
+  impersonation, or safety/legal certification.
+applicability: >
+  Scene-preservation and documentation boundary only: safety first, do not
+  disturb, factual notes, chain-of-custody awareness, photo/log inventory from
+  an authorized position, and medical, emergency, or legal-authority handoff.
+  Not an investigative tactics, interrogation, suspect-profiling, evidence
+  collection, surveillance, tampering, legal-conclusion, law-enforcement
+  impersonation, or safety/legal certification guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: forensic_investigation_basics_boundary
+answer_card:
+  - forensic_investigation_basics_boundary
 icon: 🔍
 description: Basic crime scene investigation techniques without modern technology including evidence preservation, witness interviewing methods, cause of death determination, fire investigation basics, documentation and chain of custody, scene reconstruction, impression evidence, and establishing community investigation protocols.
 related:
@@ -20,8 +51,8 @@ related:
   - community-organizing
 read_time: 15
 word_count: 4100
-last_updated: '2026-02-20'
-version: '1.0'
+last_updated: '2026-04-26'
+version: '1.1'
 liability_level: high
 ---
 
@@ -36,6 +67,16 @@ When serious crimes occur in a post-collapse community — theft, assault, murde
 **Limitations to acknowledge:** Without laboratory analysis, many determinations will be probabilistic rather than certain. The goal is not courtroom-standard proof but sufficient evidence for a community justice process to make reasonable decisions. For the legal and procedural framework within which investigations operate, see <a href="../justice-law.html">Justice & Law</a>.
 
 **Ethical foundation:** Investigation must serve justice, not vengeance. The investigator's job is to determine what happened, not to build a case against a predetermined suspect. Confirmation bias — seeing evidence that supports a theory while ignoring evidence that contradicts it — is the single greatest threat to honest investigation.
+
+## Reviewed Answer-Card Boundary: Scene Preservation and Documentation Handoff
+
+This is the reviewed answer-card surface for GD-515. Use it only for scene-preservation and documentation boundaries: safety first, do not disturb, factual notes, chain-of-custody awareness, photo/log inventory from an authorized position, and medical, emergency, or legal-authority handoff.
+
+Routine answers should begin by protecting life and safety, calling or handing off to emergency medical responders or the responsible legal authority when anyone may be injured, in danger, deceased, missing, or under active threat. If the person is only a witness or discoverer, keep them out of the scene, avoid touching or moving objects, avoid cleaning or tidying, record time, location, who was present, what was visible, what was already moved for safety or medical aid, and who was notified.
+
+Documentation may include a factual written note, a photo or sketch log from a safe and authorized position, and an inventory of visible items without directing collection, testing, comparison, interrogation, suspect profiling, surveillance, or conclusions about guilt, cause, manner, or legal status. Chain-of-custody language should stay at awareness level: record who handled, moved, secured, or received an item, and transfer unresolved evidence questions to the responsible authority.
+
+Do not provide investigative tactics, interrogation, suspect profiling, evidence collection procedures, tampering, surveillance, legal conclusions, law-enforcement impersonation, confrontation instructions, or safety/legal certification. If the situation is active, unsafe, medical, or legally controlled, stop routine guidance and hand off.
 
 </section>
 

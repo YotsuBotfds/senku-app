@@ -17,6 +17,35 @@ read_time: 6
 word_count: 3800
 last_updated: '2026-02-20'
 version: '1.0'
+aliases:
+  - crowd safety de-escalation boundary
+  - crowd crush exit safety checklist
+  - riot response medical handoff
+  - public safety incident command handoff
+  - crowd incident log communication checklist
+routing_cues:
+  - Use this guide's reviewed answer card only for crowd-safety and de-escalation boundaries: avoid or leave crowd crush or violence, identify safe exits, assist vulnerable people, coordinate injury or medical handoff, keep communication and incident logs, and hand off to public safety or incident command.
+  - Keep routine answers focused on immediate safety, distance, calm communication, exit and evacuation status, vulnerable people, injury triage handoff, factual logging, and responsible-authority routing.
+  - Route crowd-control tactics, force or restraint, weapons, chemical agents, barricade tactics, riot operations, surveillance or targeting, legal conclusions, and safety certification away from this reviewed card.
+routing_support:
+  - "Crowd psychology and stampede sections support avoiding bottlenecks, crowd crush, panic, and blocked exits."
+  - "De-escalation and evacuation sections support calm communication, safe exits, vulnerable-person assistance, and medical coordination."
+  - "Post-incident review supports factual documentation, witness statements, injury records, communications, and public-safety handoff."
+citations_required: true
+citation_policy: cite reviewed GD-433 answer card for crowd-safety/de-escalation boundaries only; do not use it for crowd-control tactics, force/restraint, weapons, chemical agents, barricade tactics, riot operations, surveillance/targeting, legal conclusions, or safety certification.
+applicability: >
+  Use for crowd-safety questions where the safe answer is to avoid or leave
+  crowd crush or violence, identify safe exits, assist vulnerable people,
+  coordinate injury or medical handoff, maintain communication and incident
+  logs, and hand off to public safety, emergency services, medical responders,
+  incident command, or another responsible authority. Do not use for crowd-
+  control tactics, force or restraint, weapons, chemical agents, barricade
+  tactics, riot operations, surveillance or targeting, legal conclusions, or
+  safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: crowd_control_riot_response_boundary
+answer_card:
+  - crowd_control_riot_response_boundary
 liability_level: high
 ---
 
@@ -35,6 +64,16 @@ The core principle: **Remove the conditions that trigger panic; separate angry a
 :::
 
 </section>
+
+## Reviewed Answer-Card Boundary: Crowd Safety and De-Escalation
+
+This is the reviewed answer-card surface for GD-433. Use it only for crowd-safety and de-escalation support: avoid or leave crowd crush or violence, identify safe exits and assembly points, help vulnerable people move away from danger, coordinate injury or medical handoff, keep clear public communication and incident logs, and hand off unresolved danger to public safety, emergency services, medical responders, incident command, or another responsible authority.
+
+Routine answers should create a simple crowd-safety handoff log: event or location, date and time, reporter, observed crowd density or bottlenecks, exit status, vulnerable people needing help, injuries or medical needs, communication messages sent, missing people, witnesses, and who received the public-safety or incident-command handoff. Keep advice at distance, calm communication, exit awareness, evacuation and medical coordination, documentation, and responsible-authority routing.
+
+Immediate handoff is required for crowd crush, blocked exits, active violence, credible threats, weapons displayed, fire, smoke, structural hazards, severe weather, missing people, separated children, disabled or elderly people unable to leave, serious injury, breathing distress, loss of consciousness, or any situation where the crowd cannot safely disperse.
+
+Do not provide crowd-control tactics, force or restraint instructions, weapons advice, chemical agents, barricade tactics, riot operations, surveillance or targeting, legal conclusions, safety certification, or instructions to confront, pursue, detain, punish, or disperse people by force. Preserve distance where possible, keep exits open, prioritize medical and evacuation needs, document observed facts, and route to the responsible public-safety or incident-command authority.
 
 <section id="crowd-psychology">
 
@@ -455,4 +494,3 @@ Regular reviews build trust and improve future responses.
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-
