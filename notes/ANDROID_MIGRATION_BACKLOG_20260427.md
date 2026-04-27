@@ -49,6 +49,17 @@ use it to approve reviewed-card runtime expansion or product exposure.
 - Identity/model metadata missing: resolved for harness/state-pack summaries by
   recording a host inference identity source plus stable host model key. Visible
   UI identity polish remains separate from migration proof.
+- Tablet on-device LiteRT readiness: partially reopened and narrowed. E2B
+  push/readiness now works on `emulator-5558` tablet landscape after adding a
+  helper free-space preflight and local model-readiness smoke. Proof passed
+  under
+  `artifacts/android_litert_model_readiness_5558_landscape_skipinstall_20260427/20260427_081639_614/emulator-5558/summary.json`
+  with `model_identity_source=installed_model`,
+  `model_name=gemma-4-E2B-it.litertlm`, `identity_cache_hit=true`, and
+  landscape screenshot/dump artifacts. `emulator-5554` still cannot use the
+  current staged push path for E2B: the helper failed fast with about `3.38 GiB`
+  free versus about `4.87 GiB` required. Treat `5554` as an AVD data-size
+  blocker, not an app/runtime failure.
 
 ## Stop Lines
 
@@ -59,3 +70,6 @@ use it to approve reviewed-card runtime expansion or product exposure.
   in the 2026-04-27 tablet proof artifacts above.
 - Do not broaden this backlog into tests, scripts, source edits, or runtime
   product policy changes.
+- Do not retry on-device LiteRT pushes on `emulator-5554` with the staged helper
+  until its AVD data partition is enlarged or a non-staging transfer path is
+  implemented.
