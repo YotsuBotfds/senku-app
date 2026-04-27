@@ -9,6 +9,7 @@ SCRIPT_PATH = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
 WINDOWS_VALIDATION_PATH = REPO_ROOT / "scripts" / "run_windows_validation.ps1"
 ANDROID_PROMPT_PATH = REPO_ROOT / "scripts" / "run_android_prompt.ps1"
 ANDROID_SMOKE_PATH = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
+ANDROID_UI_STATE_PACK_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack.ps1"
 ANDROID_WRAPPER_SMOKE_PATHS = (
     "scripts\\run_android_instrumented_ui_smoke.ps1",
     "scripts\\run_android_prompt.ps1",
@@ -112,6 +113,14 @@ class PowerShellQualityGateTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("Parser gate passed", result.stdout)
+
+    def test_android_ui_state_pack_exposes_slice_contracts(self):
+        script = ANDROID_UI_STATE_PACK_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('[string]$OutputRoot = "artifacts/ui_state_pack"', script)
+        self.assertIn("[switch]$SkipHostStates", script)
+        self.assertIn("[string[]]$RoleFilter = @()", script)
+        self.assertIn('[string]$RunId = ""', script)
 
     def test_android_prompt_accepts_orientation_contract(self):
         script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")

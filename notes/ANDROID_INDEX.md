@@ -19,6 +19,40 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1` through `RAG-CH3`, plus test-only `RAG-CH5`
 - [`ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](./ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md): pushed 271-card current-head pack guard runbook
 
+## Current emulator lane repair status - 2026-04-27
+
+- Scout status: `emulator-5556` currently has the pushed 271-card
+  current-head pack present.
+- Scout status: `emulator-5554`, `emulator-5558`, and `emulator-5560` have
+  the app absent or are missing the pushed current-head pack. Treat
+  current-head guard skips on those lanes as missing-pack state, not proof.
+- Use this exact repair loop to restore app presence, push the current-head
+  pack, and run the direct three-class proof on the missing lanes:
+
+```powershell
+$devices = @("emulator-5554", "emulator-5558", "emulator-5560")
+$adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
+foreach ($device in $devices) {
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+    -Device $device `
+    -TestClass com.senku.mobile.DeveloperPanelRuntimeToggleTest `
+    -SmokeProfile custom `
+    -SkipBuild `
+    -ArtifactRoot "artifacts/android_current_head_guard_install_probe_$($device -replace 'emulator-','')" `
+    -SummaryPath "artifacts\android_current_head_guard_install_probe_$($device -replace 'emulator-','')\summary.json"
+
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\push_mobile_pack_to_android.ps1 `
+    -Device $device `
+    -PackDir artifacts\mobile_pack\senku_current_head_20260426_232032 `
+    -ForceStop `
+    -ShowInstalledManifest
+
+  & $adb -s $device shell am instrument -w `
+    -e class com.senku.mobile.AnswerCardCurrentHeadPackCensusTest,com.senku.mobile.AnswerCardRuntimeAllowlistCurrentHeadTest,com.senku.mobile.PackMigrationInstallTest `
+    com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner
+}
+```
+
 ## Current artifact baseline
 
 - Current broad visual baseline: `artifacts/external_review/ui_review_20260421_retrieval_chain_closed/`
