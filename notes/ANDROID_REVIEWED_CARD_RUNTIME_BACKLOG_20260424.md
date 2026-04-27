@@ -73,6 +73,9 @@ Landed Android sequence:
   installed-pack schema validation. Future optional manifest fields and
   optional future tables are ignored while required fields/core tables remain
   enforced.
+- `RAG-A14h`: Android instrumented UI smoke summaries now include installed
+  mobile-pack manifest counts and sqlite/vector listing signatures from the app
+  sandbox, making no-push vs pushed-pack proof explicit in wrapper artifacts.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from

@@ -398,6 +398,63 @@ function Get-AppModelMetadata {
     }
 }
 
+function Get-InstalledPackMetadata {
+    $packDir = "files/mobile_pack"
+    $manifestRelativePath = "$packDir/senku_manifest.json"
+    try {
+        $manifestText = Invoke-AdbChecked -Arguments @(
+            "-s", $Device, "shell", "run-as", "com.senku.mobile", "cat", $manifestRelativePath
+        ) -FailureMessage "Installed pack manifest probe failed"
+        if ([string]::IsNullOrWhiteSpace($manifestText)) {
+            return [pscustomobject]@{
+                status = "missing"
+                manifest_path = $manifestRelativePath
+            }
+        }
+        $manifest = $manifestText | ConvertFrom-Json
+        $sqliteName = [string]$manifest.files.sqlite.path
+        $vectorName = [string]$manifest.files.vectors.path
+        $sqlitePath = if ([string]::IsNullOrWhiteSpace($sqliteName)) { $null } else { "$packDir/$sqliteName" }
+        $vectorPath = if ([string]::IsNullOrWhiteSpace($vectorName)) { $null } else { "$packDir/$vectorName" }
+
+        return [pscustomobject]@{
+            status = "available"
+            manifest_path = $manifestRelativePath
+            pack_format = $(if ($null -ne $manifest.pack_format) { [string]$manifest.pack_format } else { $null })
+            pack_version = $(if ($null -ne $manifest.pack_version) { [int]$manifest.pack_version } else { $null })
+            generated_at = $(if ($null -ne $manifest.generated_at) { [string]$manifest.generated_at } else { $null })
+            counts = [pscustomobject]@{
+                guides = $(if ($null -ne $manifest.counts.guides) { [int]$manifest.counts.guides } else { $null })
+                chunks = $(if ($null -ne $manifest.counts.chunks) { [int]$manifest.counts.chunks } else { $null })
+                deterministic_rules = $(if ($null -ne $manifest.counts.deterministic_rules) { [int]$manifest.counts.deterministic_rules } else { $null })
+                guide_related_links = $(if ($null -ne $manifest.counts.guide_related_links) { [int]$manifest.counts.guide_related_links } else { $null })
+                retrieval_metadata_guides = $(if ($null -ne $manifest.counts.retrieval_metadata_guides) { [int]$manifest.counts.retrieval_metadata_guides } else { $null })
+                answer_cards = $(if ($null -ne $manifest.counts.answer_cards) { [int]$manifest.counts.answer_cards } else { $null })
+                answer_card_clauses = $(if ($null -ne $manifest.counts.answer_card_clauses) { [int]$manifest.counts.answer_card_clauses } else { $null })
+                answer_card_sources = $(if ($null -ne $manifest.counts.answer_card_sources) { [int]$manifest.counts.answer_card_sources } else { $null })
+            }
+            sqlite = [pscustomobject]@{
+                path = $sqlitePath
+                manifest_bytes = $(if ($null -ne $manifest.files.sqlite.bytes) { [long]$manifest.files.sqlite.bytes } else { $null })
+                manifest_sha256 = $(if ($null -ne $manifest.files.sqlite.sha256) { [string]$manifest.files.sqlite.sha256 } else { $null })
+                listing_signature = $(if ([string]::IsNullOrWhiteSpace($sqlitePath)) { $null } else { Get-RemoteFileListingSignature -Path $sqlitePath -RunAsPackage "com.senku.mobile" })
+            }
+            vectors = [pscustomobject]@{
+                path = $vectorPath
+                manifest_bytes = $(if ($null -ne $manifest.files.vectors.bytes) { [long]$manifest.files.vectors.bytes } else { $null })
+                manifest_sha256 = $(if ($null -ne $manifest.files.vectors.sha256) { [string]$manifest.files.vectors.sha256 } else { $null })
+                listing_signature = $(if ([string]::IsNullOrWhiteSpace($vectorPath)) { $null } else { Get-RemoteFileListingSignature -Path $vectorPath -RunAsPackage "com.senku.mobile" })
+            }
+        }
+    } catch {
+        return [pscustomobject]@{
+            status = "unavailable"
+            manifest_path = $manifestRelativePath
+            error = $_.Exception.Message
+        }
+    }
+}
+
 function Resolve-InstalledBinaryIdentity {
     param([string]$CachePath)
 
@@ -1242,6 +1299,7 @@ try {
         if (Test-Path -LiteralPath $dumpDir) {
             $localDumpFiles = @(Get-ChildItem -LiteralPath $dumpDir -File -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object { $_.Name })
         }
+        $installedPackMetadata = Get-InstalledPackMetadata
         $deviceFacts = Get-ResolvedDeviceFacts -RequestedOrientation $Orientation
         if ($localScreenshotFiles.Count -gt 0) {
             $firstScreenshotPath = Join-Path $screenshotDir $localScreenshotFiles[0]
@@ -1338,6 +1396,7 @@ try {
         model_name = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_name)) { [string]$installedIdentity.model_name } else { $null })
         model_sha = $(if ($null -ne $installedIdentity -and -not [string]::IsNullOrWhiteSpace([string]$installedIdentity.model_sha)) { [string]$installedIdentity.model_sha } else { $null })
         identity_probe_error = $(if ([string]::IsNullOrWhiteSpace($identityProbeError)) { $null } else { $identityProbeError })
+        installed_pack = $installedPackMetadata
         artifact_dir = $artifactDir
         device_facts = $deviceFacts
         artifact_facts = [pscustomobject]@{
