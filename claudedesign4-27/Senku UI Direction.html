@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Senku Android — UI Direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg0: #1A1D16;
+    --bg1: #22271D;
+    --bg2: #2C3224;
+    --bg3: #3A4130;
+    --olive40: #7A8263;
+    --olive60: #9AA084;
+    --ink0: #F1EEE2;
+    --ink1: #D7D3C2;
+    --ink2: #A09C8A;
+    --ink3: #7A7868;
+    --paper: #E9E1CF;
+    --paper-ink: #1F2318;
+    --paper-ink-mute: #646456;
+    --accent: #C9B682;
+    --copper: #C48A5A;
+    --moss: #9BAB6A;
+    --danger: #C4704B;
+    --warn: #C49A4B;
+    --ok: #7A9A5A;
+    --hair: rgba(241,238,226,0.08);
+    --hair-strong: rgba(241,238,226,0.14);
+    --f-ui: 'Inter Tight', system-ui, sans-serif;
+    --f-serif: 'Source Serif 4', Georgia, serif;
+    --f-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  html, body { margin: 0; padding: 0; background: var(--bg0); color: var(--ink0); }
+  body { font-family: var(--f-ui); font-feature-settings: "ss01", "cv01"; }
+
+  /* ── Doc — long-form readable critique ────────────── */
+  .doc { max-width: 960px; margin: 0 auto; padding: 64px 32px 48px; }
+  .doc h1 { font-family: var(--f-ui); font-weight: 700; font-size: 44px; line-height: 1.05; letter-spacing: -0.025em; margin: 0 0 8px; }
+  .doc .lede { font-family: var(--f-serif); font-size: 19px; line-height: 1.6; color: var(--ink1); margin: 0 0 36px; max-width: 720px; }
+  .doc h2 { font-family: var(--f-ui); font-weight: 600; font-size: 26px; letter-spacing: -0.015em; margin: 56px 0 12px; }
+  .doc h3 { font-family: var(--f-ui); font-weight: 600; font-size: 17px; letter-spacing: -0.005em; margin: 28px 0 6px; color: var(--ink0); }
+  .doc h4 { font-family: var(--f-mono); font-weight: 500; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 24px 0 8px; }
+  .doc p { font-family: var(--f-serif); font-size: 16px; line-height: 1.65; color: var(--ink1); margin: 0 0 14px; max-width: 720px; }
+  .doc p strong { color: var(--ink0); font-weight: 600; }
+  .doc p code, .doc li code { font-family: var(--f-mono); font-size: 12.5px; background: var(--bg2); border: 1px solid var(--hair); padding: 1px 6px; border-radius: 4px; color: var(--accent); letter-spacing: 0; }
+  .doc ul { font-family: var(--f-serif); font-size: 16px; line-height: 1.65; color: var(--ink1); padding-left: 22px; margin: 0 0 16px; max-width: 720px; }
+  .doc ul li { margin-bottom: 6px; }
+  .doc ul li strong { color: var(--ink0); font-weight: 600; }
+  .doc .meta { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink2); margin: 0 0 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .doc .meta span::before { content: '· '; color: var(--ink3); margin-right: 4px; }
+  .doc .meta span:first-child::before { content: ''; margin: 0; }
+  .doc hr { border: 0; border-top: 1px solid var(--hair-strong); margin: 56px 0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 720px; margin: 0 0 18px; }
+  .grid-2 .col h4 { margin-top: 8px; }
+  .grid-2 .col p, .grid-2 .col ul { font-size: 14.5px; line-height: 1.6; }
+
+  .swatch-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 18px; max-width: 720px; }
+  .sw { width: 72px; height: 64px; border-radius: 6px; border: 1px solid var(--hair); display: flex; align-items: flex-end; padding: 6px; font-family: var(--f-mono); font-size: 9.5px; color: var(--ink0); letter-spacing: 0.04em; }
+  .sw.light { color: var(--paper-ink); }
+
+  .priority-table { width: 100%; max-width: 720px; border-collapse: collapse; margin: 8px 0 18px; font-family: var(--f-ui); font-size: 14px; }
+  .priority-table th, .priority-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+  .priority-table th { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink2); font-weight: 500; }
+  .priority-table td.id { font-family: var(--f-mono); font-size: 11.5px; color: var(--accent); white-space: nowrap; width: 64px; }
+  .priority-table td.code { font-family: var(--f-mono); font-size: 12px; color: var(--ink2); }
+  .priority-table td { color: var(--ink1); }
+
+  .pull { border-left: 2px solid var(--accent); padding: 6px 0 6px 18px; margin: 18px 0 18px; max-width: 720px; }
+  .pull p { font-family: var(--f-serif); font-style: italic; font-size: 16.5px; color: var(--ink0); margin: 0; }
+
+  .anchor-id { font-family: var(--f-mono); color: var(--accent); font-size: 12.5px; letter-spacing: 0; }
+
+  /* ── Canvas section header ─── */
+  .canvas-intro { max-width: 960px; margin: 0 auto; padding: 24px 32px 12px; border-top: 1px solid var(--hair-strong); }
+  .canvas-intro h2 { font-family: var(--f-ui); font-weight: 600; font-size: 26px; letter-spacing: -0.015em; margin: 0 0 6px; }
+  .canvas-intro p { font-family: var(--f-serif); font-size: 16px; line-height: 1.6; color: var(--ink1); margin: 0; max-width: 720px; }
+
+  #canvas-root { background: var(--bg1); }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+  <div class="meta">
+    <span>SENKU FIELD MANUAL</span>
+    <span>Android · ed. 2</span>
+    <span>UI direction · rev 04-27</span>
+    <span>anchored to <span style="color:var(--accent);">rev03</span> tokens</span>
+    <span>commit fc68b7f</span>
+  </div>
+
+  <h1>Senku Android — UI direction</h1>
+  <p class="lede">
+    Today's UI works. It survives every test in the screenshot suite, the offline pack ships,
+    the deterministic and generative answer paths both land on a usable detail screen. The problem
+    is not behavior — it's hierarchy. Guide reader and answer detail wear the same uniform; meta
+    pills stack three deep; the toolbar fights the content for breathing room; tablet landscape is
+    a phone with sidebars bolted on. This document proposes a quieter, more purpose-built direction
+    that still feels like Senku and lands incrementally on the existing Java/XML codebase.
+  </p>
+
+  <h2>1 · Critique of the current UI</h2>
+
+  <h3>1.1 Two surfaces, one costume</h3>
+  <p>
+    The biggest legibility issue is that <strong>guide pages and answer pages look identical.</strong>
+    Both run on the dark olive canvas, both use the same parchment card with a left rule, both
+    open with a <code>FIELD HEADER · Field manual</code> stamp. A user landing mid-task can't tell
+    whether they are reading <em>source</em> or <em>generated guidance</em> — and that distinction
+    is the whole trust model. <code>DetailGuideContextPresentationFormatter</code> and
+    <code>DetailAnswerPresentationFormatter</code> currently render into roughly the same shell.
+  </p>
+
+  <h3>1.2 Pill stacks and chrome inflation</h3>
+  <p>
+    The toolbar capsule (<code>bg_detail_topbar_group</code>) groups back / home / pin / share into a
+    floating chip cluster. It then sits next to a title, then below it a header pill
+    (<code>bg_detail_header_baseline</code>), then below that a hero pill
+    (<code>bg_hero_panel</code>) carrying the question. On a generative answer screen we count
+    <strong>up to eight mono-caps chips</strong> on a single row: <code>ANSWERED</code> ·
+    <code>THIS DEVICE</code> · <code>3 SOURCES</code> · <code>1 TURN</code> · <code>UNSURE FIT</code> ·
+    <code>REV 04-27</code> · <code>PK 2</code> · <code>#BCA1DC3D</code>. Each is meaningful, but
+    eight equally-weighted pieces of metadata read as visual static.
+  </p>
+
+  <div class="pull"><p>
+    Every container has a stroke, a corner radius, and a faint inner gradient — so nothing
+    contains anything; everything just floats next to everything else.
+  </p></div>
+
+  <h3>1.3 Phone landscape is portrait turned sideways</h3>
+  <p>
+    Screenshot <code>home_entry</code> in landscape preserves the same vertical search shell, the
+    same stacked Browse/Ask segmented control, and pushes "Recent threads" off the right of the
+    viewport into a half-visible second column. The status strip and identity row eat ~120px of
+    vertical space, leaving only 280px of content height — there is no actual landscape-native
+    layout.
+  </p>
+
+  <h3>1.4 Tablet landscape is phone-with-rails</h3>
+  <p>
+    The 3-pane tablet shot (<code>guide_cross_reference_tablet_landscape</code>) is structurally
+    correct — left thread / center guide / right evidence — but visually all three panes share
+    the same olive surface, the same stroke, the same parchment card treatment. The eye treats it
+    as one busy surface, not three coordinated regions. There is no surface ladder.
+  </p>
+
+  <h3>1.5 Brown body on dark olive</h3>
+  <p>
+    The parchment-card body uses warm-brown ink on a saturated olive background in the field-manual
+    surface. WCAG contrast is borderline (around 4.2:1) and in direct sunlight — the realistic
+    use case for a field-ready app — it falls below readable. The rev03 tokens already define
+    <code>paper_ink #1F2318</code> on <code>paper #E9E1CF</code> at 13.6:1; that's the right pair.
+  </p>
+
+  <h3>1.6 Composer floats inside the same chrome it sits above</h3>
+  <p>
+    <code>bg_detail_followup_active</code> uses the same panel grammar as the answer card.
+    There is no surface separation between "this is content" and "this is where I type." The
+    follow-up shell ends up reading as another piece of answer card.
+  </p>
+
+  <hr />
+
+  <h2>2 · Recommended design direction</h2>
+
+  <h3>2.1 Two surfaces, two textures</h3>
+  <p>
+    The single most useful move in this redesign: <strong>guide reader and answer detail get
+    different surface treatments.</strong> Same content density, same typography, different
+    paper.
+  </p>
+
+  <div class="grid-2">
+    <div class="col">
+      <h4>Guide reader</h4>
+      <p>Parchment card on the dark canvas. Serif body in dark ink. Section labels in
+      mono caps with a small leading rule. The page is a printed object you are reading.</p>
+    </div>
+    <div class="col">
+      <h4>Answer detail</h4>
+      <p>No paper. Content lives directly on the dark canvas, with serif body in light ink.
+      The question is the title. The answer is the body. Evidence is a separated rail or
+      panel below.</p>
+    </div>
+  </div>
+
+  <p>
+    This costs almost nothing to implement — the parchment drawable already exists
+    (<code>bg_chip_parchment</code>, <code>senku_card</code> family). What changes is when it's
+    used: <em>guide content surfaces</em>, never answer surfaces. Answer screens stop trying to
+    be paper.
+  </p>
+
+  <h3>2.2 Identity strip replaces the toolbar capsule</h3>
+  <p>
+    Replace the floating <code>bg_detail_topbar_group</code> capsule with a flat
+    <strong>36dp identity strip</strong>: chevron-back, then a context tag in the new accent
+    (<code>GUIDE</code>, <code>ANSWER</code>, <code>THREAD</code>, <code>SEARCH</code>) in
+    JetBrains Mono caps, then the GD-id, then the truncatable title, then 2–3 icon-only actions
+    on the right. Hairline rule below. No capsule, no inner gradient, no nested radii.
+  </p>
+
+  <p>
+    The win is horizontal: the strip is one row tall, doesn't compete with the title, and the
+    context tag does the surface-distinction work for free — <code>GUIDE</code> in olive,
+    <code>ANSWER</code> in sand, <code>THREAD</code> in moss. The dimens token
+    <code>senku_rev03_toolbar_button = 34dp</code> already supports this; we just stop wrapping
+    them.
+  </p>
+
+  <h3>2.3 Meta line, not meta wall</h3>
+  <p>
+    Collapse the chip wall into a single <strong>tab-stop separated mono line</strong>:
+    <code>GD-345 · 3 src · rev 04-27 · pk 2 · unsure</code>. Confidence and danger states are
+    the only ones that get a leading dot color; the rest are weight-equal. Long lines truncate
+    with an inline <code>more ›</code> that opens a provenance sheet
+    (<code>DetailProvenancePresentationFormatter</code>) in full.
+  </p>
+
+  <h3>2.4 Surface ladder for tablet</h3>
+  <p>
+    Three panes, three shades. <code>bg0</code> for the left rail (deepest),
+    <code>bg2</code> or paper for the center (the focused content), <code>bg1</code> for the
+    right evidence rail. A 1px hairline between, no double strokes, no shadow. The eye
+    follows lightness from left navigation outward to the work surface.
+  </p>
+
+  <div class="swatch-row">
+    <div class="sw" style="background:#1A1D16;">bg0</div>
+    <div class="sw" style="background:#22271D;">bg1</div>
+    <div class="sw" style="background:#2C3224;">bg2</div>
+    <div class="sw" style="background:#3A4130;">bg3</div>
+    <div class="sw light" style="background:#E9E1CF;">paper</div>
+    <div class="sw" style="background:#C9B682;color:#1F2318;">accent</div>
+    <div class="sw" style="background:#C4704B;color:#1F2318;">danger</div>
+    <div class="sw" style="background:#7A9A5A;color:#1F2318;">ok</div>
+  </div>
+
+  <h3>2.5 Type</h3>
+  <p>
+    Lock in the rev03 type system. <strong>Inter Tight</strong> for UI and titles
+    (-0.005 to -0.02 letter-spacing), <strong>Source Serif 4</strong> for answer body and guide
+    body (the long-read surface), <strong>JetBrains Mono</strong> at 11sp for caps metadata only.
+    Three roles, three faces — anything else (system sans, AppCompat caption) gets phased out.
+  </p>
+
+  <h3>2.6 Cards, panels, buttons, chips</h3>
+  <ul>
+    <li><strong>Card containment rule:</strong> a region is either <em>a paper card</em>
+        (parchment, dark ink, drop shadow) or <em>a canvas region</em> (no fill, hairline border,
+        light ink). Never both. Kill the inner-gradient layer in
+        <code>bg_chat_answer.xml</code> / <code>bg_evidence_panel.xml</code> — the gradient adds
+        nothing readable.</li>
+    <li><strong>Buttons:</strong> primary = solid sand on dark; secondary = hairline-stroked
+        ghost; destructive = solid copper. Drop the parchment-on-olive button variant — it
+        reads as a chip.</li>
+    <li><strong>Chips:</strong> two flavors only. <em>Outline chip</em> for filters and tags;
+        <em>solid chip</em> only for status confidence. Today there are nine
+        <code>bg_chip_*</code> drawables (fire, hybrid, lexical, medicine, olive, parchment,
+        shelter, vector, water) — keep them as semantic <em>color tokens</em>, not as nine
+        different chip shapes.</li>
+    <li><strong>Two radii only:</strong> 10dp for inline chrome, 14dp for cards. The current
+        mix of 17/18/21/22dp inside a single layer-list is the noise source.</li>
+  </ul>
+
+  <h3>2.7 Navigation</h3>
+  <p>
+    Phone portrait: bottom nav, three items (<em>Library</em>, <em>Ask</em>, <em>Saved</em>) —
+    same as today, but with a 2px accent underline on the active item instead of a tinted
+    pill. Phone landscape and tablet (both orientations): a 56–80dp <strong>side rail</strong>
+    on the left edge with the brand mark on top, the same three items below. The current
+    landscape behavior of keeping bottom nav at the bottom + putting nav-icon-rail on the left
+    is a contradiction — pick one per orientation.
+  </p>
+
+  <hr />
+
+  <h2>3 · Form-factor recommendations</h2>
+
+  <h3>3.1 Phone portrait — 360–412 dp wide</h3>
+  <p>
+    Single column. Identity strip, content, bottom nav. Composer docks at the bottom only on
+    answer / thread surfaces. Provenance and related guides are <em>collapsed sections</em>
+    below the answer body, not a side rail — there is no horizontal room and stacking is fine
+    in this orientation.
+  </p>
+
+  <h3>3.2 Phone landscape — 712–880 dp wide × 360–412 dp tall</h3>
+  <p>
+    Switch to a <strong>56dp left rail</strong> (icon-only) and split the body into two
+    flexible columns when the surface supports it: answer + evidence side-by-side, guide TOC
+    + body, search results + preview. Bottom nav goes away in landscape — the rail replaces it.
+    Identity strip stays at 36dp; status bar gets reduced left/right padding.
+  </p>
+
+  <p>
+    The hard rule: <strong>vertical real estate is the scarce resource in landscape.</strong>
+    Anything that can be made horizontal should be. Confidence + meta should be one row, not
+    two. The composer should be a single line, not a multi-line panel.
+  </p>
+
+  <h3>3.3 Tablet portrait — 800–960 dp wide × 1240+ tall</h3>
+  <p>
+    <strong>80dp side rail with labels</strong> on the left. Two-pane center. For guide reader:
+    TOC (220dp) + paper card. For answer detail: answer body (1.5fr) + evidence rail (1fr).
+    Composer docks below the answer pane only — never below the evidence rail. The whole content
+    region uses 28–32dp horizontal padding; this is where the parchment card can finally breathe
+    with proper margins.
+  </p>
+
+  <h3>3.4 Tablet landscape — 1240+ × 880 dp</h3>
+  <p>
+    The marquee tablet posture. Three panes:
+  </p>
+  <ul>
+    <li><strong>Rail (220dp):</strong> per-surface index — for an answer, the thread turns and
+      the source list; for a guide, the TOC and section anchors. This is where the
+      <code>DetailThreadHistoryRenderer</code> and <code>DetailRelatedGuidePresentationFormatter</code>
+      naturally live.</li>
+    <li><strong>Center (flex):</strong> the work surface. Paper for guide, canvas for answer.
+      Composer docks here.</li>
+    <li><strong>Evidence (320dp):</strong> source cards + cross-references, always-on but
+      collapsible to a 44dp gutter.</li>
+  </ul>
+  <p>
+    Each pane gets its own <code>bg</code> shade (bg0/bg1+paper/bg1) so the hierarchy reads
+    without explicit borders. Hairlines do the rest.
+  </p>
+
+  <hr />
+
+  <h2>4 · Guide reader vs answer detail — the distinction</h2>
+  <div class="grid-2">
+    <div class="col">
+      <h4>Guide reader is reference</h4>
+      <ul>
+        <li>Parchment card with drop shadow</li>
+        <li>Section-numbered (§1, §2…) with TOC rail</li>
+        <li>Header tag in <span style="color:var(--paper-ink-mute);font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;">FIELD MANUAL · REV 04-27</span></li>
+        <li>Source-anchored danger callouts (paper-tone <code>paper_danger</code>)</li>
+        <li>Related guides surface as <em>required reading</em> blocks inline</li>
+        <li>No composer; it's a book, not a chat</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>Answer detail is response</h4>
+      <ul>
+        <li>Direct on canvas, no paper card</li>
+        <li>Question is the page title; answer is the body</li>
+        <li>Header tag in <span style="color:var(--accent);font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;">ANSWER · THIS DEVICE · UNSURE</span></li>
+        <li>Confidence is a single dot+word, not a chip-cluster</li>
+        <li>Evidence is a structured rail (id / role / quote / match%)</li>
+        <li>Composer is always present, anchored to the bottom</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr />
+
+  <h2>5 · Evidence and cross-reference</h2>
+  <p>
+    The current evidence rail has three problems: it's full-width even on tablet, the source
+    cards have full chrome (border + gradient + parchment fill + left rule = four containers),
+    and the relationship between an answer claim and a source quote is not visually traceable.
+  </p>
+
+  <h3>Recommended evidence card</h3>
+  <p>
+    Six elements in fixed order: <strong>id</strong> (mono, accent) · <strong>role</strong>
+    (anchor / related / required, mono caps) · <strong>match%</strong> (right-aligned, mono) on
+    one row; <strong>title</strong> on row 2 in UI semibold; <strong>quote</strong> on row 3 in
+    italic serif at small body size; optional <strong>anchor section</strong> on row 4.
+    Background is <code>bg2</code>, only decoration is a 2dp left rule in
+    <code>accent</code> for anchor / <code>olive60</code> for related / <code>warn</code> for
+    required. No outer card border, just a hairline above and below.
+  </p>
+
+  <h3>Cross-reference (related guides)</h3>
+  <p>
+    On phone, list rows below the answer: id + title + chevron, separated by hairlines. On
+    tablet, the right rail. Cross-reference roles get colored 2dp left rules to match evidence
+    semantics — same vocabulary across the app.
+  </p>
+
+  <hr />
+
+  <h2>6 · Follow-up composer</h2>
+  <p>
+    Recommendation: <strong>persistent docked at the bottom on answer/thread surfaces only</strong>.
+    Never on guide reader. Ghost-styled (no card chrome, just a hairline rule above), single-line
+    placeholder, with a context hint above the input
+    (<code>GD-345 · context kept · 3 sources visible</code>). The hint is the trust signal: the
+    user knows what scope their next question will inherit.
+  </p>
+  <p>
+    Send button: ghost-stroke until the user types, then solid sand. No FAB. No inline-at-end
+    behavior — that adds a state machine for marginal benefit and complicates the
+    <code>DetailFollowupActive</code> background drawable.
+  </p>
+
+  <hr />
+
+  <h2>7 · Emergency / safety states</h2>
+  <p>
+    Stay calm, never alarmist. The current <code>bg_emergency_banner</code> is too red and too
+    rounded — it reads like a marketing alert. Use:
+  </p>
+  <ul>
+    <li><strong>Top rule, not banner.</strong> A 2dp solid <code>danger</code> stroke at the
+        top of the surface, with a tinted region (8% danger over canvas) below it.</li>
+    <li><strong>Numbered actions, not paragraphs.</strong> Steps as 22dp numbered circles;
+        action verb in body, sub-line in muted.</li>
+    <li><strong>Single source anchor.</strong> One evidence card, prominently. Emergency
+        responses with multiple sources erode confidence in context — pick the canonical guide
+        and link.</li>
+    <li><strong>No animation. No icon. No exclamation marks.</strong> The word
+        <code>DANGER</code> in mono caps with a single dot does the work.</li>
+  </ul>
+  <p>
+    See the small example in the canvas below.
+  </p>
+
+  <hr />
+
+  <h2>8 · Implementation roadmap</h2>
+
+  <h4>Quick wins · 1–2 days each</h4>
+  <table class="priority-table">
+    <thead><tr><th>id</th><th>change</th><th>touches</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="id">QW-01</td>
+        <td>Adopt rev03 token set as the only token set; remove duplicate <code>senku_*</code> non-rev03 colors from new code paths.</td>
+        <td class="code">colors.xml, dimens.xml</td>
+      </tr>
+      <tr>
+        <td class="id">QW-02</td>
+        <td>Replace toolbar capsule (<code>bg_detail_topbar_group</code>) with a flat 36dp identity strip + hairline.</td>
+        <td class="code">activity_detail.xml</td>
+      </tr>
+      <tr>
+        <td class="id">QW-03</td>
+        <td>Collapse meta-pill row (<code>DetailMetaPresentationFormatter</code>) to a single tab-stop mono line; provenance pills move into expand sheet.</td>
+        <td class="code">DetailMetaPresentationFormatter.java<br>DetailProvenancePresentationFormatter.java</td>
+      </tr>
+      <tr>
+        <td class="id">QW-04</td>
+        <td>Lock paper text to <code>paper_ink #1F2318</code> on <code>paper #E9E1CF</code>; retire warm-brown body color in guide surfaces.</td>
+        <td class="code">DetailGuidePresentationFormatter.java</td>
+      </tr>
+      <tr>
+        <td class="id">QW-05</td>
+        <td>Drop inner gradient layers from <code>bg_chat_answer</code>, <code>bg_chat_question</code>, <code>bg_evidence_panel</code>. Keep border + 2dp rule only.</td>
+        <td class="code">drawable/*.xml</td>
+      </tr>
+      <tr>
+        <td class="id">QW-06</td>
+        <td>Reduce category chip variants to a single <code>bg_chip_outline</code> drawable + tint via color token.</td>
+        <td class="code">drawable/bg_chip_*.xml</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Near-term structural · 1–2 sprints</h4>
+  <table class="priority-table">
+    <thead><tr><th>id</th><th>change</th><th>touches</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="id">NT-01</td>
+        <td>Split guide-reader vs answer-detail surface treatments — paper card vs canvas direct.</td>
+        <td class="code">DetailActivity.java<br>DetailSurfaceContract.java</td>
+      </tr>
+      <tr>
+        <td class="id">NT-02</td>
+        <td>Build EvidenceCard as a single composable row component (id / role / match / title / quote / anchor) used in all source rails.</td>
+        <td class="code">DetailSourcePresentationFormatter.java</td>
+      </tr>
+      <tr>
+        <td class="id">NT-03</td>
+        <td>Implement landscape-side-rail on phone; suppress bottom nav in landscape; identity strip stays.</td>
+        <td class="code">activity_main.xml (sw600 + land qualifiers)</td>
+      </tr>
+      <tr>
+        <td class="id">NT-04</td>
+        <td>Composer rebuilt as a flat hairline-bounded input with context-hint row; <code>bg_detail_followup_active</code> retired.</td>
+        <td class="code">activity_detail.xml<br>DetailFollowupActive (drawable)</td>
+      </tr>
+      <tr>
+        <td class="id">NT-05</td>
+        <td>Recolor confidence vocabulary: only <em>confident</em>, <em>unsure</em>, and <em>danger</em> get color; everything else is ink-2.</td>
+        <td class="code">DetailWarningCopySanitizer.java<br>confidence_label_contract.py</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Larger redesign · 3+ sprints</h4>
+  <table class="priority-table">
+    <thead><tr><th>id</th><th>change</th><th>touches</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="id">LR-01</td>
+        <td>Tablet 3-pane shell as a real layout, not a wide-phone branch. New <code>activity_detail.xml</code> in <code>res/layout-sw720dp-land</code>; surface ladder bg0/bg1+paper/bg1.</td>
+        <td class="code">layout-sw720dp-land/<br>DetailActivity.java</td>
+      </tr>
+      <tr>
+        <td class="id">LR-02</td>
+        <td>Cross-reference graph component: roles (anchor / related / required / cleared) get color tokens and consistent ordering across guide and answer surfaces.</td>
+        <td class="code">DetailRelatedGuidePresentationFormatter.java</td>
+      </tr>
+      <tr>
+        <td class="id">LR-03</td>
+        <td>Emergency surface as a distinct screen template, not a banner-on-detail; calm layout with 2dp top rule, numbered actions, single anchor.</td>
+        <td class="code">EmergencySurfacePolicy.java<br>new layout/activity_emergency.xml</td>
+      </tr>
+      <tr>
+        <td class="id">LR-04</td>
+        <td>Home redesign for tablet — index + recent threads side-by-side; categories as a 6-tile grid not a stacked list.</td>
+        <td class="code">activity_main.xml (sw720dp)<br>HomeGuidePresentationFormatter.java</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>9 · Risks &amp; tradeoffs</h2>
+  <ul>
+    <li><strong>Two surfaces, two costumes</strong> sounds elegant but doubles the surface
+        treatments engineers have to keep consistent. Mitigate by enforcing the two-surface
+        rule in <code>DetailSurfaceContract</code> with a single enum, not free-text.</li>
+    <li><strong>Side rail on phone landscape</strong> deviates from Material defaults; some
+        users may expect a top app bar. The win in vertical room is large enough that this is
+        the right call, but it does mean writing landscape XML once and maintaining it.</li>
+    <li><strong>Removing the chip wall</strong> hides metadata behind a "more" affordance.
+        Power users (and the integration tests) currently depend on seeing every pill at
+        once. Solution: keep the data accessible via the provenance sheet, not the front-page
+        row.</li>
+    <li><strong>Calm emergency state</strong> is an explicit choice. If product wants
+        attention-grabbing, this direction will feel underweight. Hold the line — danger
+        copy is loud enough; the chrome shouldn't shout.</li>
+    <li><strong>Source-quote in evidence cards</strong> requires the runtime to surface a
+        canonical excerpt per source (<code>AnswerCardClause</code> already carries a
+        <code>quoted_span</code>; just thread it through
+        <code>DetailSourcePresentationFormatter</code>).</li>
+    <li><strong>Tablet 3-pane</strong> demands real responsive thinking — what collapses
+        first on a smaller tablet, what evidence is "always on" vs "on demand". Punting on
+        this means tablet is permanently wide-phone.</li>
+  </ul>
+
+</div>
+
+<div class="canvas-intro">
+  <h2>Hi-fi mocks</h2>
+  <p>
+    All four form factors × six surfaces, built directly on rev03 tokens and Inter Tight /
+    Source Serif 4 / JetBrains Mono. Pan/zoom the canvas; click an artboard to focus it.
+    Toggle Tweaks on the toolbar to vary accent, density, and evidence position.
+  </p>
+</div>
+
+<div id="canvas-root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tokens.jsx"></script>
+<script type="text/babel" src="frame.jsx"></script>
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="surface-home-search.jsx"></script>
+<script type="text/babel" src="surface-guide.jsx"></script>
+<script type="text/babel" src="surface-answer-thread.jsx"></script>
+
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+const SIZES = ['phone-portrait', 'phone-landscape', 'tablet-portrait', 'tablet-landscape'];
+
+function Mock({ size, Surface }) {
+  return (
+    <SenkuFrame size={size} surface={T.bg0}>
+      <Surface form={size} />
+    </SenkuFrame>
+  );
+}
+
+function frameDims(size) {
+  const f = window.FRAME_SIZES[size];
+  return { width: f.w + 2, height: f.h + 2, label: f.label };
+}
+
+function SectionRow({ id, title, surface, Surface }) {
+  return (
+    <DCSection id={id} title={title}>
+      {SIZES.map(sz => {
+        const d = frameDims(sz);
+        return (
+          <DCArtboard key={sz} id={`${id}-${sz}`} label={d.label} width={d.width} height={d.height}>
+            <Mock size={sz} Surface={Surface} />
+          </DCArtboard>
+        );
+      })}
+    </DCSection>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas title="Senku · UI direction" subtitle="Field-manual aesthetic, refined. Six surfaces × four postures.">
+      <SectionRow id="answer" title="Answer detail · question, answer, evidence, follow-up" Surface={AnswerSurface} />
+      <SectionRow id="guide"  title="Guide reader · paper card on canvas, TOC + cross-ref" Surface={GuideSurface} />
+      <SectionRow id="thread" title="Follow-up thread · multi-turn with inline anchors"     Surface={ThreadSurface} />
+      <SectionRow id="home"   title="Home · pack status, browse, recent threads"           Surface={HomeSurface} />
+      <SectionRow id="search" title="Search results · ranked list, filter rail, preview"    Surface={SearchSurface} />
+      <DCSection id="emergency" title="Emergency state · calm, serious, single anchor (small example)">
+        <DCArtboard id="emergency-pp" label="Phone · portrait" width={402} height={882}>
+          <SenkuFrame size="phone-portrait" surface={T.bg0}>
+            <EmergencySurface form="phone-portrait" />
+          </SenkuFrame>
+        </DCArtboard>
+        <DCArtboard id="emergency-tp" label="Tablet · portrait" width={882} height={1242}>
+          <SenkuFrame size="tablet-portrait" surface={T.bg0}>
+            <EmergencySurface form="tablet-portrait" />
+          </SenkuFrame>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('canvas-root')).render(<App />);
+</script>
+
+</body>
+</html>
