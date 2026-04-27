@@ -162,6 +162,68 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
                 self.assertTrue(metadata["non_acceptance_evidence"])
                 self.assertFalse(metadata["acceptance_evidence"])
 
+    def test_whatif_launch_profile_writes_machine_readable_summary(self):
+        with tempfile.TemporaryDirectory(prefix="senku_profile_summary_") as temp_dir:
+            summary_path = Path(temp_dir) / "nested" / "summary.json"
+            result = self.run_with_fake_sdk(
+                "-Roles",
+                "tablet_portrait",
+                "-LaunchProfile",
+                "large-litert-data",
+                "-Headless",
+                "-PartitionSizeMb",
+                "8192",
+                "-SummaryPath",
+                str(summary_path),
+                "-WhatIf",
+            )
+
+            output = result.stdout + result.stderr
+            self.assertEqual(result.returncode, 0, output)
+            self.assertTrue(summary_path.exists(), output)
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+
+        self.assertTrue(summary["non_acceptance_evidence"])
+        self.assertFalse(summary["acceptance_evidence"])
+        self.assertTrue(summary["preflight_only"])
+        self.assertEqual(summary["profile_metadata"]["profile"], "large-litert-data")
+        self.assertTrue(summary["profile_metadata"]["preflight_only"])
+        self.assertTrue(summary["profile_metadata"]["non_acceptance_evidence"])
+        self.assertFalse(summary["profile_metadata"]["acceptance_evidence"])
+        self.assertEqual(len(summary["selected_lanes"]), 1)
+        lane = summary["selected_lanes"][0]
+        self.assertEqual(lane["role"], "tablet_portrait")
+        self.assertEqual(lane["serial"], "emulator-5554")
+        self.assertEqual(
+            lane["emulator_args"],
+            [
+                "-avd",
+                "Senku_Tablet_2",
+                "-port",
+                "5554",
+                "-read-only",
+                "-no-snapshot-load",
+                "-no-snapshot-save",
+                "-no-window",
+                "-partition-size",
+                "8192",
+            ],
+        )
+
+    def test_summary_path_requires_launch_profile(self):
+        with tempfile.TemporaryDirectory(prefix="senku_profile_summary_") as temp_dir:
+            summary_path = Path(temp_dir) / "summary.json"
+            result = self.run_with_fake_sdk(
+                "-SummaryPath",
+                str(summary_path),
+                "-WhatIf",
+            )
+
+            output = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, output)
+            self.assertIn("requires -LaunchProfile", output)
+            self.assertFalse(summary_path.exists(), output)
+
     def test_launch_profile_is_rejected_outside_whatif(self):
         result = self.run_with_fake_sdk(
             "-LaunchProfile",

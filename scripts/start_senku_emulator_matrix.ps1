@@ -10,6 +10,7 @@ param(
     [switch]$Headless,
     [ValidateSet("none", "clean-headless", "cached-local", "large-litert-data")]
     [string]$LaunchProfile = "none",
+    [string]$SummaryPath = "",
     [int]$PartitionSizeMb = 0
 )
 
@@ -269,10 +270,61 @@ function Get-SenkuEmulatorLaunchProfileMetadata {
     return $profiles[$LaunchProfile]
 }
 
+function Write-SenkuEmulatorLaunchProfileSummary {
+    param(
+        [string]$Path,
+        [object[]]$Lanes,
+        [object]$ProfileMetadata,
+        [string]$Mode,
+        [switch]$NoBootAnim,
+        [switch]$GpuSwiftshader,
+        [switch]$Headless,
+        [int]$PartitionSizeMb = 0
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return
+    }
+
+    $summaryLanes = @(
+        foreach ($lane in $Lanes) {
+            $launchArguments = Get-SenkuEmulatorLaunchArguments -Lane $lane -Mode $Mode -NoBootAnim:$NoBootAnim -GpuSwiftshader:$GpuSwiftshader -Headless:$Headless -PartitionSizeMb $PartitionSizeMb
+            [pscustomobject]@{
+                role = $lane.role
+                avd = $lane.avd
+                port = $lane.port
+                serial = $lane.serial
+                resolution = $lane.resolution
+                orientation = $lane.orientation
+                emulator_args = $launchArguments
+            }
+        }
+    )
+
+    $summary = [pscustomobject]@{
+        selected_lanes = $summaryLanes
+        profile_metadata = $ProfileMetadata
+        non_acceptance_evidence = $true
+        acceptance_evidence = $false
+        preflight_only = $true
+    }
+
+    $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    $parent = Split-Path -Parent $resolvedPath
+    if (-not [string]::IsNullOrWhiteSpace($parent)) {
+        New-Item -ItemType Directory -Path $parent -Force -WhatIf:$false | Out-Null
+    }
+
+    $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $resolvedPath -Encoding UTF8 -WhatIf:$false
+}
+
 $isWhatIf = [bool]$WhatIfPreference
 
 if ($LaunchProfile -ne "none" -and -not $isWhatIf) {
     throw "-LaunchProfile is preflight-only metadata and must be used with -WhatIf."
+}
+if (-not [string]::IsNullOrWhiteSpace($SummaryPath) -and $LaunchProfile -eq "none") {
+    throw "-SummaryPath requires -LaunchProfile preflight metadata."
 }
 
 $emulatorPath = Resolve-SenkuEmulatorPath
@@ -304,6 +356,7 @@ if ($isWhatIf -and $LaunchProfile -ne "none") {
     $profileMetadata = Get-SenkuEmulatorLaunchProfileMetadata -LaunchProfile $LaunchProfile
     Write-Host "Launch profile metadata:"
     Write-Host ($profileMetadata | ConvertTo-Json -Depth 4 -Compress)
+    Write-SenkuEmulatorLaunchProfileSummary -Path $SummaryPath -Lanes $selectedLanes -ProfileMetadata $profileMetadata -Mode $Mode -NoBootAnim:$NoBootAnim -GpuSwiftshader:$GpuSwiftshader -Headless:$Headless -PartitionSizeMb $PartitionSizeMb
 }
 
 foreach ($lane in $selectedLanes) {

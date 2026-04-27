@@ -101,6 +101,10 @@ audit. Capture:
   timing or behavior depends on Android SQLite capabilities.
 - host adb/platform-tools version, recorded as
   `host_adb_platform_tools_version`, for transfer and device-control proof.
+- tooling/context preflight artifacts, when used, must mark
+  `non_acceptance_evidence=true` and `acceptance_evidence=false`; they can
+  explain a planned lane or host setup, but they do not replace the fixed
+  four-emulator state-pack evidence.
 
 ## Current Blockers
 
@@ -158,6 +162,11 @@ audit. Capture:
   `-PartitionSizeMb` switches for those profiles; defaults remain unchanged.
   `-WhatIf` output now includes the concrete emulator launch arguments, so
   profile changes can be reviewed without launching a lane.
+- Launch profile preflight has a named `-LaunchProfile` contract for
+  `clean-headless`, `cached-local`, and `large-litert-data`, but it is intentionally
+  restricted to `-WhatIf`. The metadata reports profile, headless posture,
+  expected serial, and partition size without changing launch arguments or
+  starting an emulator. Treat it as reviewer context only.
 - adb/platform-tools version capture has landed in Android harness artifacts.
   Android
   documents normal `adb push`/`pull`, screenshot, and screenrecord flows, and
@@ -171,12 +180,30 @@ audit. Capture:
   `run_android_fts_fallback_matrix.ps1` writes it to `summary.json`; state-pack
   summaries roll the first available child value into their `summary.json` /
   compact matrix rollup.
+- Tooling version manifest has landed as a metadata-only scaffold:
+  `scripts/write_android_tooling_version_manifest.py` records Gradle wrapper,
+  Android Gradle Plugin, Kotlin plugin, LiteRT-LM, AndroidX test,
+  Orchestrator, and optional host tool versions into JSON/Markdown. Its
+  manifest kind is `android_tooling_version_manifest`, with
+  `metadata_only=true`, `non_acceptance_evidence=true`, and
+  `acceptance_evidence=false`.
+- Capture summary validation has landed as a preflight/compatibility scaffold:
+  `scripts/validate_android_capture_summary.py` validates canonical capture
+  summary fields such as serial, role, orientation, APK SHA, platform-tools
+  version, screenshot/UI dump/logcat hashes, optional screenrecord, package
+  data posture, model identity, installed-pack metadata, and the required
+  non-acceptance evidence posture. It validates shape only; it does not perform
+  emulator capture or confer acceptance.
 - Evaluate Gradle Managed Devices as a parallel smoke lane after the fixed
   four-emulator harness remains green. The Android Gradle plugin can define
   named devices, groups, parallel group runs, and managed-device sharding, but
   this should not replace the existing screenshot/state-pack matrix until it
   can emit comparable artifacts:
   <https://developer.android.com/studio/test/managed-devices>.
+- GMD task inventory is property-gated. Use
+  `.\gradlew.bat :app:tasks --all -Psenku.enableManagedDevices=true --console=plain`
+  or the managed-device smoke dry run to inspect planned tasks and expected
+  roots only; inventory output is not device evidence.
 - `run_android_managed_device_smoke.ps1 -DryRun` currently writes a
   non-acceptance helper artifact only. Its `summary.json` / `summary.md`
   shape includes `status=dry_run_only`, `dry_run=true`,
@@ -190,8 +217,10 @@ audit. Capture:
   non-acceptance helper summary before any candidate comparison runs. Its JSON
   shape includes `baseline_pack_dir`, `candidate_pack_dir`, `output`,
   `display_command`, `would_run=false`, and `fail_on_mismatch=true`. The
-  artifact reviews the parity command and fail-on-mismatch posture only; it
-  does not replace fixed four-emulator evidence.
+  artifact reviews the parity command and fail-on-mismatch posture only; it is
+  validator-compatible with `scripts/validate_android_migration_summary.py` and
+  does not replace fixed four-emulator evidence. Real parity-gate summaries are
+  also non-acceptance pack evidence, not UI acceptance evidence.
 - Treat ATD images as non-visual smoke only. Android documents ATDs as lower
   resource managed devices, but they disable hardware rendering, so they are
   inappropriate for screenshot-sensitive UI proof.
@@ -213,6 +242,13 @@ audit. Capture:
   `acceptance_evidence=false`, and `migration_checklist_intent` with the
   selected roles, host model identity, host/skip flags, parallelism, and the
   same non-acceptance posture fields.
+- Use `run_android_harness_matrix.ps1 -PlanOnly` for prompt/detail matrix
+  preflight. It writes a validator-compatible `summary.json` with
+  `plan_kind=android_harness_matrix`, `preflight_only=true`,
+  `plan_only=true`, `non_acceptance_evidence=true`,
+  `acceptance_evidence=false`, selected rows/postures, runner commands, pack
+  push intent, and `will_touch_emulators=false`. It starts no jobs and is not
+  acceptance evidence.
 - `run_android_fts_fallback_matrix.ps1` now runs under the normal harness
   controls: resolved SDK adb path, per-device locks for real runs, and
   `stop_android_harness_runs.ps1` coverage. It writes both `summary.json` and
@@ -227,6 +263,13 @@ audit. Capture:
   writes a machine-readable non-acceptance dry-run summary. It transfers no
   bytes, writes no acceptance artifact, and remains subordinate to fixed
   four-emulator evidence.
+- `run_android_litert_readiness_matrix.ps1 -DryRun` is the
+  validator-compatible LiteRT readiness preflight. It can run without adb,
+  records `status=dry_run_only`, model path/name/bytes/SHA, app-private
+  target, `/data` free-space posture, backend/request fields, logcat
+  extraction plan, `real_run_status=not_implemented`,
+  `primary_evidence=fixed_four_emulator_matrix`, and the stop line that fixed
+  four-emulator evidence remains primary.
 - Android Gradle dependency verification is enabled and includes the detached
   Android lint tool dependencies, but `:app:lintDebug` is still blocked by
   existing lint/code compatibility findings. Do not treat lint as a green

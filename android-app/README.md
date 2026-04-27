@@ -47,6 +47,9 @@ Notes:
 - app installs, pushed packs, and imported models remain available during the live session, but they do not survive a full emulator restart in read-only mode
 - use `-Headless` for no-window launches, and `-PartitionSizeMb <mb>` only when intentionally starting a large-data AVD lane
 - use `-WhatIf` to review selected lanes and concrete emulator arguments before launching
+- use named `-LaunchProfile clean-headless|cached-local|large-litert-data`
+  only with `-WhatIf`; it prints profile metadata such as headless posture,
+  expected serial, and partition size without launching or changing a lane
 
 Before a long four-posture UI state pack, preflight the selected roles and launcher commands without starting jobs:
 
@@ -68,6 +71,25 @@ Plan-only artifact shape:
 - `launchers` records the per-role commands that would be started by a real
   state-pack run.
 
+For prompt/detail matrix planning, use the harness matrix plan mode:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_harness_matrix.ps1 `
+  -RunFile artifacts\bench\android_runs.jsonl `
+  -OutputDir artifacts\bench\android_harness_matrix_plan `
+  -PlanOnly
+```
+
+Harness plan artifact shape:
+- `summary.json` is validator-compatible with
+  `plan_kind=android_harness_matrix`, `preflight_only=true`,
+  `plan_only=true`, `non_acceptance_evidence=true`, and
+  `acceptance_evidence=false`.
+- `runner_commands`, selected rows/postures, pack push intent, and
+  `will_touch_emulators=false` describe the planned run only.
+- It starts no jobs and does not replace fixed four-emulator state-pack
+  evidence.
+
 Replay the current Android FTS4 fallback proof. This is fallback-path emulator evidence, not FTS5 runtime proof:
 
 ```powershell
@@ -81,6 +103,39 @@ FTS fallback artifact shape:
   `runtime_evidence=fts4_fallback`, `not_fts5_runtime_proof=true`, device
   counts, lock posture, adb version, and the paired `summary.json` path.
 
+Tooling/version metadata can be captured without creating acceptance evidence:
+
+```powershell
+.\.venvs\senku-validate\Scripts\python.exe scripts\write_android_tooling_version_manifest.py `
+  --repo-root . `
+  --json-out artifacts\bench\android_tooling_version_manifest\tooling.json `
+  --markdown-out artifacts\bench\android_tooling_version_manifest\tooling.md
+```
+
+Tooling manifest shape:
+- `manifest_kind=android_tooling_version_manifest`,
+  `metadata_only=true`, `non_acceptance_evidence=true`, and
+  `acceptance_evidence=false`.
+- It records Gradle wrapper, Android Gradle Plugin, Kotlin plugin, LiteRT-LM,
+  AndroidX test, Orchestrator, and optional adb/emulator version facts.
+- It is host/tooling context only; fixed four-emulator state-pack evidence
+  remains primary.
+
+Validate capture-summary shape without touching an emulator:
+
+```powershell
+.\.venvs\senku-validate\Scripts\python.exe scripts\validate_android_capture_summary.py `
+  artifacts\bench\android_capture\capture_summary.json
+```
+
+Capture validator scope:
+- Required fields include serial, role, orientation, APK SHA,
+  platform-tools version, screenshot/UI dump/logcat hashes, optional
+  screenrecord, package-data posture, model identity, installed-pack metadata,
+  and `evidence_posture`.
+- The validator rejects acceptance posture for this scaffold; it checks summary
+  compatibility only and does not create capture evidence.
+
 Optional Gradle Managed Devices tasks are hidden behind an explicit property
 gate:
 
@@ -88,6 +143,10 @@ gate:
 $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 .\gradlew.bat :app:tasks --all '-Psenku.enableManagedDevices=true' --console=plain
 ```
+
+That task inventory is for planning only. It shows the property-gated GMD
+surface and expected task names; it is not device, screenshot, or acceptance
+evidence.
 
 Dry-run the first wrapper slice from the repo root:
 
@@ -142,7 +201,10 @@ The `-WhatIf` artifact is another non-acceptance helper summary. It records
 `baseline_pack_dir`, `candidate_pack_dir`, `output`, `display_command`,
 `would_run=false`, and `fail_on_mismatch=true`. It reviews the exact parity
 command shape without running the count comparison, and it does not replace the
-fixed four-emulator acceptance evidence.
+fixed four-emulator acceptance evidence. Both dry-run and real parity-gate
+summaries are validator-compatible with
+`scripts\validate_android_migration_summary.py`; they remain pack evidence, not
+UI acceptance evidence.
 
 ## Build
 
@@ -352,6 +414,28 @@ requirement, `/data` free-space requirement, `-SkipDataSpaceCheck` posture, and
 `Transfer posture: skipped by -DryRun.` Add `-SummaryPath` only when you want a
 machine-readable non-acceptance dry-run summary. It does not emit an acceptance
 artifact and does not replace fixed four-emulator evidence.
+
+The readiness matrix wrapper also has a no-adb dry run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_litert_readiness_matrix.ps1 `
+  -DryRun `
+  -OutputDir artifacts\bench\android_litert_readiness_dry_run `
+  -ModelPath C:\path\to\gemma-4-E2B-it.litertlm `
+  -Backend litert `
+  -RequestMode single_prompt_smoke
+```
+
+LiteRT readiness dry-run summary:
+- `summary.json` is accepted by
+  `scripts\validate_android_migration_summary.py`.
+- It records `status=dry_run_only`, `dry_run=true`,
+  `non_acceptance_evidence=true`, `acceptance_evidence=false`,
+  model path/name/bytes/SHA, app-private target, `/data` free-space posture,
+  backend/request fields, logcat extraction plan, and
+  `real_run_status=not_implemented`.
+- `primary_evidence=fixed_four_emulator_matrix` and the stop line make this a
+  preflight only, not LiteRT runtime acceptance proof.
 
 If `-ModelPath` is omitted, the helper looks for these common names in repo root, `models\`, and `Downloads`:
 

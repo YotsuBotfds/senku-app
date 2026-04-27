@@ -41,6 +41,10 @@ class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("Parser gate passed", result.stdout)
 
+    def test_script_declares_summary_markdown_output(self):
+        self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
+        self.assertIn("function New-LiteRtReadinessMarkdown", self.script)
+
     def test_dry_run_writes_readiness_summary_without_adb_requirement(self):
         payload = b"tiny litert placeholder\n"
         expected_hash = hashlib.sha256(payload).hexdigest()
@@ -80,8 +84,10 @@ class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertIn("no adb", result.stdout.lower())
             self.assertTrue((output_dir / "summary.json").exists())
+            self.assertTrue((output_dir / "summary.md").exists())
 
             summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+            summary_markdown = (output_dir / "summary.md").read_text(encoding="utf-8-sig")
 
             validator = subprocess.run(
                 [
@@ -127,6 +133,19 @@ class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
         self.assertIn("logcat", summary["logcat_extraction_plan"]["command"])
         self.assertIn("fixed four-emulator posture matrix", summary["fixed_four_emulator_stop_line"])
         self.assertEqual(summary["real_run_status"], "not_implemented")
+
+        self.assertIn("# LiteRT Readiness Dry Run", summary_markdown)
+        self.assertIn("Non-acceptance evidence: true", summary_markdown)
+        self.assertIn("Acceptance evidence: false", summary_markdown)
+        self.assertIn("STOP: LiteRT readiness dry run is non-acceptance evidence only", summary_markdown)
+        self.assertIn("- Name: tiny.task", summary_markdown)
+        self.assertIn(f"- Bytes: {len(payload)}", summary_markdown)
+        self.assertIn(f"- SHA-256: {expected_hash}", summary_markdown)
+        self.assertIn("- Backend: litert", summary_markdown)
+        self.assertIn("- Request mode: single_prompt_smoke", summary_markdown)
+        self.assertIn("- Required bytes: " + str(len(payload) * 2 + 67108864), summary_markdown)
+        self.assertIn("adb -s <serial> logcat -d -v time", summary_markdown)
+        self.assertTrue(summary_markdown.rstrip().endswith(summary["fixed_four_emulator_stop_line"]))
 
         self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
         self.assertIn("android_migration_summary: ok", validator.stdout)
