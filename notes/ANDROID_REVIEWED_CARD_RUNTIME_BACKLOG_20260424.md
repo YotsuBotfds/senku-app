@@ -69,6 +69,10 @@ Landed Android sequence:
   answer-card DAO and reviewed-card runtime. Missing tables, answer-cards-only
   packs, missing clause rows, missing source rows, and malformed JSON now have
   focused connected-test proof.
+- `RAG-A14g`: forward-pack tolerance tests landed for manifest parsing and
+  installed-pack schema validation. Future optional manifest fields and
+  optional future tables are ignored while required fields/core tables remain
+  enforced.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from

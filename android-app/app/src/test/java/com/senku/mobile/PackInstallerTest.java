@@ -40,6 +40,31 @@ public final class PackInstallerTest {
     }
 
     @Test
+    public void missingRequiredPackTablesDoesNotRequireOptionalAnswerCardTables() {
+        assertEquals(
+            "",
+            PackInstaller.missingRequiredPackTablesForTest(Set.of("guides", "guide_related", "lexical_chunks_fts"))
+        );
+    }
+
+    @Test
+    public void missingRequiredPackTablesIgnoresFutureOptionalTables() {
+        assertEquals(
+            "",
+            PackInstaller.missingRequiredPackTablesForTest(Set.of(
+                "guides",
+                "guide_related",
+                "lexical_chunks_fts",
+                "answer_cards",
+                "answer_card_clauses",
+                "answer_card_sources",
+                "answer_card_tags",
+                "retrieval_metadata_v2"
+            ))
+        );
+    }
+
+    @Test
     public void missingRequiredPackTablesRequiresAtLeastOneLexicalTable() {
         assertEquals(
             "lexical_chunks_fts or lexical_chunks_fts4",
