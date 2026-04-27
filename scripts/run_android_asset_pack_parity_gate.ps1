@@ -97,11 +97,27 @@ $arguments = @(
 $displayCommand = Format-GateCommand -Executable $pythonPath -Arguments $arguments
 
 if ($WhatIf) {
+    $whatIfSummary = [ordered]@{
+        baseline_pack_dir = $baselinePath
+        candidate_pack_dir = $candidatePath
+        output = $outputPath
+        display_command = $displayCommand
+        would_run = $false
+        fail_on_mismatch = $true
+    }
+
+    $outputDir = Split-Path -Parent $outputPath
+    if (-not [string]::IsNullOrWhiteSpace($outputDir)) {
+        New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
+    }
+    $whatIfSummary | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $outputPath -Encoding UTF8
+
     Write-Host "Android asset-pack parity gate dry run."
     Write-Host ("Baseline pack: " + $baselinePath)
     Write-Host ("Candidate pack: " + $candidatePath)
     Write-Host ("Output: " + $outputPath)
     Write-Host $displayCommand
+    Write-Host ("Android asset-pack parity dry-run summary written to " + $outputPath)
     return
 }
 

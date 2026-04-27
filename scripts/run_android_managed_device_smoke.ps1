@@ -11,6 +11,15 @@ $gradleWrapper = Join-Path $gradleProjectDir "gradlew.bat"
 $managedDeviceProperty = "-Psenku.enableManagedDevices=true"
 $taskName = "senkuManagedSmoke"
 $stopLine = "STOP: fixed four-emulator evidence remains primary; this Gradle Managed Devices smoke is non-acceptance evidence only."
+$expectedDevices = @("senkuPhoneApi30", "senkuTabletApi30")
+$expectedArtifactRoots = @(
+    "android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30",
+    "android-app/app/build/outputs/androidTest-results/managedDevice/senkuTabletApi30",
+    "android-app/app/build/reports/androidTests/managedDevice/senkuPhoneApi30",
+    "android-app/app/build/reports/androidTests/managedDevice/senkuTabletApi30"
+)
+$expectedTestTarget = ":app:$taskName"
+$comparisonBaseline = "fixed_four_emulator_matrix"
 
 if (-not $DryRun) {
     throw "This first-slice wrapper is dry-run-only. Re-run with -DryRun; it must not launch Gradle Managed Devices yet."
@@ -60,6 +69,10 @@ function Write-SummaryMarkdown {
         "- non_acceptance_evidence: $($Summary.non_acceptance_evidence)",
         "- gradle_property: ``$($Summary.gradle_property)``",
         "- task_group: $($Summary.task_group)",
+        "- expected_devices: $($Summary.expected_devices -join ', ')",
+        "- expected_artifact_roots: $($Summary.expected_artifact_roots -join ', ')",
+        "- expected_test_target: ``$($Summary.expected_test_target)``",
+        "- comparison_baseline: $($Summary.comparison_baseline)",
         "- planned_command: ``$($Summary.planned_command)``",
         "- stop_line: $($Summary.stop_line)"
     )
@@ -80,13 +93,17 @@ $summary = [pscustomobject]@{
     gradle_property = $managedDeviceProperty
     task_group = $taskName
     task_name = ":app:$taskName"
+    expected_devices = $expectedDevices
+    expected_artifact_roots = $expectedArtifactRoots
+    expected_test_target = $expectedTestTarget
+    comparison_baseline = $comparisonBaseline
     planned_command = $plannedCommand
     gradle_project_dir = (Convert-ToRepoRelativePath -Path $gradleProjectDir)
     gradle_wrapper = (Convert-ToRepoRelativePath -Path $gradleWrapper)
     would_launch_emulators = $false
     managed_devices_launched = $false
     acceptance_evidence = $false
-    primary_evidence = "fixed_four_emulator_matrix"
+    primary_evidence = $comparisonBaseline
     stop_line = $stopLine
     started_at_utc = $startedAt.ToString("o")
     finished_at_utc = $finishedAt.ToString("o")

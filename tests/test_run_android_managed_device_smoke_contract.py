@@ -27,6 +27,11 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("would_launch_emulators = $false", self.script)
         self.assertIn("managed_devices_launched = $false", self.script)
         self.assertIn("acceptance_evidence = $false", self.script)
+        self.assertIn('$expectedDevices = @("senkuPhoneApi30", "senkuTabletApi30")', self.script)
+        self.assertIn('"android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30"', self.script)
+        self.assertIn('"android-app/app/build/reports/androidTests/managedDevice/senkuTabletApi30"', self.script)
+        self.assertIn('$expectedTestTarget = ":app:$taskName"', self.script)
+        self.assertIn('$comparisonBaseline = "fixed_four_emulator_matrix"', self.script)
         self.assertIn("fixed four-emulator evidence remains primary", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
         self.assertIn('$summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"', self.script)
@@ -84,6 +89,18 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["gradle_property"], "-Psenku.enableManagedDevices=true")
             self.assertEqual(summary["task_group"], "senkuManagedSmoke")
             self.assertEqual(summary["task_name"], ":app:senkuManagedSmoke")
+            self.assertEqual(summary["expected_devices"], ["senkuPhoneApi30", "senkuTabletApi30"])
+            self.assertEqual(
+                summary["expected_artifact_roots"],
+                [
+                    "android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30",
+                    "android-app/app/build/outputs/androidTest-results/managedDevice/senkuTabletApi30",
+                    "android-app/app/build/reports/androidTests/managedDevice/senkuPhoneApi30",
+                    "android-app/app/build/reports/androidTests/managedDevice/senkuTabletApi30",
+                ],
+            )
+            self.assertEqual(summary["expected_test_target"], ":app:senkuManagedSmoke")
+            self.assertEqual(summary["comparison_baseline"], "fixed_four_emulator_matrix")
             self.assertIn("-Psenku.enableManagedDevices=true", summary["planned_command"])
             self.assertIn(":app:senkuManagedSmoke", summary["planned_command"])
             self.assertFalse(summary["would_launch_emulators"])

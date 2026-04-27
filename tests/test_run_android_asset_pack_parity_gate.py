@@ -61,10 +61,11 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
         self.assertIn("--fail-on-mismatch", self.script)
         self.assertIn("--output", self.script)
 
-    def test_whatif_prints_compare_command(self):
+    def test_whatif_writes_machine_readable_summary_without_compare(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             baseline = Path(tmpdir) / "baseline"
             candidate = Path(tmpdir) / "candidate"
+            output = Path(tmpdir) / "nested" / "report.json"
             write_pack(baseline, 2)
             write_pack(candidate, 3)
 
@@ -74,14 +75,22 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
                 "-CandidatePackDir",
                 str(candidate),
                 "-Output",
-                str(Path(tmpdir) / "report.json"),
+                str(output),
                 "-WhatIf",
             )
+            report = json.loads(output.read_text(encoding="utf-8-sig"))
 
         self.assertIn("Android asset-pack parity gate dry run.", result.stdout)
         self.assertIn("scripts\\compare_mobile_pack_counts.py", result.stdout)
         self.assertIn("--fail-on-mismatch", result.stdout)
         self.assertIn("--output", result.stdout)
+        self.assertIn("dry-run summary written", result.stdout)
+        self.assertEqual(report["baseline_pack_dir"], str(baseline))
+        self.assertEqual(report["candidate_pack_dir"], str(candidate))
+        self.assertEqual(report["output"], str(output))
+        self.assertIn("scripts\\compare_mobile_pack_counts.py", report["display_command"])
+        self.assertFalse(report["would_run"])
+        self.assertTrue(report["fail_on_mismatch"])
 
     def test_real_gate_writes_report_for_non_regressing_candidate(self):
         with tempfile.TemporaryDirectory() as tmpdir:
