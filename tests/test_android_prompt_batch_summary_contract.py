@@ -13,6 +13,9 @@ class AndroidPromptBatchSummaryContractTests(unittest.TestCase):
 
         self.assertIn("function New-BatchSummary", script)
         self.assertIn("function ConvertTo-BatchSummaryMarkdown", script)
+        self.assertIn("throw \"StartIndex must be at least 0\"", script)
+        self.assertIn("throw \"MaxPrompts must be at least 1\"", script)
+        self.assertIn("throw \"Stride must be at least 1\"", script)
         self.assertIn("$records += [pscustomobject]$record", script)
         self.assertIn("$summaryJsonPath = Join-Path $outputPath \"summary.json\"", script)
         self.assertIn("$summaryMarkdownPath = Join-Path $outputPath \"summary.md\"", script)

@@ -78,6 +78,23 @@ function Require-RunValue {
     return [string]$value
 }
 
+function Assert-PositiveWaitParameter {
+    param(
+        [string]$Name,
+        [int]$Value
+    )
+
+    if ($Value -lt 1) {
+        throw "$Name must be greater than or equal to 1 before forwarding to child prompt runs."
+    }
+}
+
+function Assert-WaitParameters {
+    Assert-PositiveWaitParameter -Name "InitialMaxWaitSeconds" -Value $InitialMaxWaitSeconds
+    Assert-PositiveWaitParameter -Name "FollowUpMaxWaitSeconds" -Value $FollowUpMaxWaitSeconds
+    Assert-PositiveWaitParameter -Name "PollSeconds" -Value $PollSeconds
+}
+
 function New-RunArgs {
     param($Run)
 
@@ -157,6 +174,8 @@ function Receive-CompletedJobs {
 
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
+
+Assert-WaitParameters
 
 $runs = Load-Runs -Path $RunFile
 if ($runs.Count -eq 0) {

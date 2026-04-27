@@ -55,6 +55,10 @@ if ($StartIndex -lt 0) {
     throw "StartIndex must be at least 0"
 }
 
+if ($MaxPrompts -lt 1) {
+    throw "MaxPrompts must be at least 1"
+}
+
 if ($Stride -lt 1) {
     throw "Stride must be at least 1"
 }

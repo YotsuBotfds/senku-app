@@ -42,6 +42,25 @@ class RunAndroidDetailFollowupMatrixContractTests(unittest.TestCase):
         self.assertIn("$args.RunLabel = [string]$Run.run_label", self.script)
         self.assertIn("$args.SkipSourceProbe = $true", self.script)
 
+    def test_wait_parameters_are_validated_before_child_prompt_runs(self):
+        self.assertIn("function Assert-PositiveWaitParameter", self.script)
+        self.assertIn("function Assert-WaitParameters", self.script)
+        for field in (
+            "InitialMaxWaitSeconds",
+            "FollowUpMaxWaitSeconds",
+            "PollSeconds",
+        ):
+            self.assertIn(f'Assert-PositiveWaitParameter -Name "{field}" -Value ${field}', self.script)
+        self.assertIn("must be greater than or equal to 1 before forwarding to child prompt runs.", self.script)
+        self.assertLess(
+            self.script.index("Assert-WaitParameters"),
+            self.script.index("$runs = Load-Runs -Path $RunFile"),
+        )
+        self.assertLess(
+            self.script.index("Assert-WaitParameters"),
+            self.script.index("$runArgs = New-RunArgs -Run $run"),
+        )
+
     def test_parallel_jobs_invoke_logged_wrapper_from_repo_root(self):
         self.assertIn("return Start-Job -ScriptBlock {", self.script)
         self.assertIn("param($WorkingDirectory, $ScriptPath, $Arguments)", self.script)
