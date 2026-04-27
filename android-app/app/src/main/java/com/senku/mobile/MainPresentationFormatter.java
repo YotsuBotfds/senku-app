@@ -321,6 +321,26 @@ final class MainPresentationFormatter {
         return context.getString(R.string.external_review_home_ready_status, format.format(guideCount));
     }
 
+    String buildPackUnavailableStatus() {
+        return "Manual is still preparing. Try again when the pack is ready.";
+    }
+
+    String buildPackInstallFailedHeader() {
+        return "Manual pack unavailable";
+    }
+
+    String buildNoResultsHeader(String query) {
+        String trimmedQuery = safe(query).trim();
+        if (trimmedQuery.isEmpty()) {
+            return "No guide matches";
+        }
+        return "No guide matches for \"" + trimmedQuery + "\"";
+    }
+
+    String buildModelUnavailableStatus() {
+        return "Answer model unavailable. Import a model or enable Host GPU.";
+    }
+
     String buildDeveloperDiagnostics(PackInstaller.InstalledPack pack, PackRepository repo, int loadedGuideCount) {
         NumberFormat format = NumberFormat.getNumberInstance(Locale.US);
         HostInferenceConfig.Settings inferenceSettings = HostInferenceConfig.resolve(context);
@@ -390,7 +410,7 @@ final class MainPresentationFormatter {
             return buildCompactResultsHeader(query, results.size(), landscapePhoneLayout, largeFontScale);
         }
         if (results.isEmpty()) {
-            return label + " for \"" + query + "\" (0)";
+            return buildNoResultsHeader(query);
         }
 
         int hybridCount = 0;

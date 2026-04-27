@@ -542,7 +542,7 @@ public final class MainActivity extends AppCompatActivity {
                     updateHomeSubtitle(0);
                     renderHomeRelatedGuides(null, Collections.emptyList());
                     setInfoTextMessage(exc.toString(), true);
-                    resultsHeader.setText("No results available");
+                    resultsHeader.setText(presentationFormatter().buildPackInstallFailedHeader());
                 });
             }
         });
@@ -551,7 +551,7 @@ public final class MainActivity extends AppCompatActivity {
     private void runSearch(String query) {
         PackRepository repo = repository;
         if (repo == null) {
-            setBusy("Manual is not ready yet", false);
+            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
             return;
         }
         dismissSearchKeyboard();
@@ -631,7 +631,7 @@ public final class MainActivity extends AppCompatActivity {
     private void runAsk(String query) {
         PackRepository repo = repository;
         if (repo == null) {
-            setBusy("Manual is not ready yet", false);
+            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
             return;
         }
         dismissSearchKeyboard();
@@ -674,7 +674,7 @@ public final class MainActivity extends AppCompatActivity {
         HostInferenceConfig.Settings inferenceSettings = HostInferenceConfig.resolve(this);
         if (!ReviewedCardRuntimeConfig.isEnabled(this) && !inferenceSettings.enabled && modelFile == null) {
             askLaneActive = false;
-            setBusy("Import a .litertlm or .task model first", false);
+            setBusy(presentationFormatter().buildModelUnavailableStatus(), false);
             if (!hasAutoQuery(getIntent())) {
                 showBrowseChrome(true);
             }
@@ -915,7 +915,7 @@ public final class MainActivity extends AppCompatActivity {
     private void browseGuides() {
         PackRepository repo = repository;
         if (repo == null) {
-            setBusy("Manual is not ready yet", false);
+            setBusy(presentationFormatter().buildPackUnavailableStatus(), false);
             return;
         }
         if (!allGuides.isEmpty()) {
