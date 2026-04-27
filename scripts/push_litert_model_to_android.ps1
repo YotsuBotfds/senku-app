@@ -4,6 +4,7 @@ param(
     [string]$PackageName = "com.senku.mobile",
     [string]$RemoteTempDir = "/data/local/tmp/senku_litert_model_push",
     [string]$SummaryPath = "",
+    [string]$SummaryMarkdownPath = "",
     [switch]$DryRun,
     [switch]$SkipDataSpaceCheck,
     [switch]$RestartApp,
@@ -169,6 +170,10 @@ if ([string]::IsNullOrWhiteSpace($ModelPath)) {
     $ModelPath = Resolve-DefaultLiteRtModelPath
 }
 
+if (-not $DryRun -and -not [string]::IsNullOrWhiteSpace($SummaryMarkdownPath)) {
+    throw "-SummaryMarkdownPath is only supported with -DryRun."
+}
+
 if ([string]::IsNullOrWhiteSpace($ModelPath) -or -not (Test-Path -LiteralPath $ModelPath)) {
     throw "LiteRT model not found. Pass -ModelPath or place an E4B/E2B .litertlm/.task in repo root, repo models/, or Downloads."
 }
@@ -246,6 +251,43 @@ if ($DryRun) {
         }
         $summary | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $resolvedSummaryPath -Encoding UTF8
         Write-Host "Dry-run summary: $resolvedSummaryPath"
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($SummaryMarkdownPath)) {
+        $resolvedSummaryMarkdownPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($SummaryMarkdownPath)
+        $summaryMarkdownDir = Split-Path -Parent $resolvedSummaryMarkdownPath
+        if (-not [string]::IsNullOrWhiteSpace($summaryMarkdownDir)) {
+            New-Item -ItemType Directory -Force -Path $summaryMarkdownDir | Out-Null
+        }
+
+        $summaryMarkdown = @(
+            "# LiteRT Model Push Dry Run",
+            "",
+            "STOP: LiteRT model push dry run is non-acceptance evidence only; fixed four-emulator evidence remains primary.",
+            "",
+            "## Model",
+            "",
+            "- Path: ``$resolvedModelPath``",
+            "- Name: ``$modelFileName``",
+            "- Bytes: $modelBytes",
+            "- SHA256: ``$modelSha256``",
+            "",
+            "## Android Target",
+            "",
+            "- App-private target: ``$appModelPath``",
+            "- Temporary staging: ``$RemoteTempDir``",
+            "- /data free-space requirement: $requiredBytes bytes (${requiredGiB} GiB)",
+            "- skip_data_space_check: $([bool]$SkipDataSpaceCheck)",
+            "- transfer_skipped: true",
+            "",
+            "## Posture",
+            "",
+            "- acceptance_evidence: false",
+            "- non_acceptance_evidence: true",
+            "- Fixed-four stop line: $fixedFourEmulatorStopLine"
+        )
+        $summaryMarkdown | Set-Content -LiteralPath $resolvedSummaryMarkdownPath -Encoding UTF8
+        Write-Host "Dry-run markdown summary: $resolvedSummaryMarkdownPath"
     }
     return
 }

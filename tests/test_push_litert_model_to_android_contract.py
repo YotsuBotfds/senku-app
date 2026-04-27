@@ -21,6 +21,8 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
         self.assertIn("[switch]$DryRun", self.script)
         self.assertIn("[switch]$SkipDataSpaceCheck", self.script)
         self.assertIn('[string]$SummaryPath = ""', self.script)
+        self.assertIn('[string]$SummaryMarkdownPath = ""', self.script)
+        self.assertIn('throw "-SummaryMarkdownPath is only supported with -DryRun."', self.script)
         self.assertIn('if ($Skip) {', self.script)
         self.assertIn("Skipping /data free-space preflight because -SkipDataSpaceCheck was set.", self.script)
         self.assertIn("Assert-DeviceHasModelStagingSpace -ModelBytes $modelBytes -Skip:$SkipDataSpaceCheck", self.script)
@@ -52,6 +54,14 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
         self.assertIn("skip_data_space_check = [bool]$SkipDataSpaceCheck", self.script)
         self.assertIn("transfer_skipped = $true", self.script)
         self.assertIn("fixed_four_emulator_stop_line = $fixedFourEmulatorStopLine", self.script)
+        self.assertIn('"# LiteRT Model Push Dry Run"', self.script)
+        self.assertIn('"STOP: LiteRT model push dry run is non-acceptance evidence only; fixed four-emulator evidence remains primary."', self.script)
+        self.assertIn('"- App-private target: ``$appModelPath``"', self.script)
+        self.assertIn('"- Temporary staging: ``$RemoteTempDir``"', self.script)
+        self.assertIn('"- /data free-space requirement: $requiredBytes bytes (${requiredGiB} GiB)"', self.script)
+        self.assertIn('"- skip_data_space_check: $([bool]$SkipDataSpaceCheck)"', self.script)
+        self.assertIn('"- transfer_skipped: true"', self.script)
+        self.assertIn('"- Fixed-four stop line: $fixedFourEmulatorStopLine"', self.script)
         self.assertIn('[long]$ModelBytes,', self.script)
         self.assertIn('param(', self.script)
         self.assertIn('$trimmed -match "^\\S+\\s+\\d+\\s+\\d+\\s+(\\d+)\\s+\\d+%\\s+/data(\\s|$)"', self.script)
@@ -73,6 +83,7 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
             tmp_path = Path(tmp)
             model_path = tmp_path / "tiny.task"
             summary_path = tmp_path / "summary.json"
+            markdown_path = tmp_path / "summary.md"
             model_path.write_bytes(b"abc")
 
             result = subprocess.run(
@@ -89,6 +100,8 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
                     str(model_path),
                     "-SummaryPath",
                     str(summary_path),
+                    "-SummaryMarkdownPath",
+                    str(markdown_path),
                 ],
                 cwd=REPO_ROOT,
                 capture_output=True,
@@ -98,6 +111,7 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertTrue(summary_path.exists(), result.stderr + result.stdout)
+            self.assertTrue(markdown_path.exists(), result.stderr + result.stdout)
             summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
             self.assertEqual(summary["status"], "dry_run_only")
             self.assertTrue(summary["non_acceptance_evidence"])
@@ -134,6 +148,33 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
                 summary["fixed_four_emulator_stop_line"],
                 "fixed four-emulator posture matrix: 5556 phone portrait; 5560 phone landscape; 5554 tablet portrait; 5558 tablet landscape",
             )
+            markdown = markdown_path.read_text(encoding="utf-8-sig")
+            self.assertIn("# LiteRT Model Push Dry Run", markdown)
+            self.assertIn(
+                "STOP: LiteRT model push dry run is non-acceptance evidence only; fixed four-emulator evidence remains primary.",
+                markdown,
+            )
+            self.assertIn(f"- Path: `{model_path.resolve()}`", markdown)
+            self.assertIn("- Name: `tiny.task`", markdown)
+            self.assertIn("- Bytes: 3", markdown)
+            self.assertIn(
+                "- SHA256: `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad`",
+                markdown,
+            )
+            self.assertIn(
+                "- App-private target: `/data/user/0/com.senku.mobile/files/models/tiny.task`",
+                markdown,
+            )
+            self.assertIn("- Temporary staging: `/data/local/tmp/senku_litert_model_push`", markdown)
+            self.assertIn("- /data free-space requirement: 67108870 bytes (0.06 GiB)", markdown)
+            self.assertIn("- skip_data_space_check: True", markdown)
+            self.assertIn("- transfer_skipped: true", markdown)
+            self.assertIn("- acceptance_evidence: false", markdown)
+            self.assertIn("- non_acceptance_evidence: true", markdown)
+            self.assertIn(
+                "- Fixed-four stop line: fixed four-emulator posture matrix: 5556 phone portrait; 5560 phone landscape; 5554 tablet portrait; 5558 tablet landscape",
+                markdown,
+            )
 
             validator = subprocess.run(
                 [
@@ -150,6 +191,36 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
             self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
             self.assertIn("android_migration_summary: ok", validator.stdout)
             self.assertIn("evidence: non_acceptance", validator.stdout)
+
+    def test_summary_markdown_path_requires_dry_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            model_path = tmp_path / "tiny.task"
+            markdown_path = tmp_path / "summary.md"
+            model_path.write_bytes(b"abc")
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-ModelPath",
+                    str(model_path),
+                    "-SummaryMarkdownPath",
+                    str(markdown_path),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertFalse(markdown_path.exists(), result.stderr + result.stdout)
+            self.assertIn("-SummaryMarkdownPath is only supported with -DryRun.", result.stderr + result.stdout)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(
