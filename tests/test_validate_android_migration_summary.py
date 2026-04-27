@@ -71,6 +71,61 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
 
         self.assertIn("missing devices[0].identity_missing", errors)
 
+    def test_valid_installed_pack_rollup_passes(self):
+        summary = make_summary()
+        summary["installed_pack"] = {
+            "metadata_present": True,
+            "matrix_homogeneous": True,
+            "pack_format": "senku-mobile-pack-v2",
+            "pack_version": 2,
+            "answer_cards": 271,
+            "devices": [
+                {
+                    "device": "emulator-5556",
+                    "state_count": 2,
+                    "metadata_count": 2,
+                    "available_count": 2,
+                    "statuses": ["available"],
+                    "metadata_missing": False,
+                    "metadata_conflict": False,
+                }
+            ],
+        }
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+
+    def test_malformed_installed_pack_rollup_fails(self):
+        summary = make_summary()
+        summary["installed_pack"] = {
+            "metadata_present": "yes",
+            "matrix_homogeneous": True,
+            "devices": [
+                {
+                    "device": "emulator-5556",
+                    "state_count": 1,
+                    "metadata_count": 2,
+                    "metadata_missing": False,
+                }
+            ],
+        }
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected installed_pack.metadata_present to be bool, got str",
+            errors,
+        )
+        self.assertIn(
+            "missing installed_pack.devices[0].metadata_conflict",
+            errors,
+        )
+        self.assertIn(
+            "expected installed_pack.devices[0].metadata_count to be <= installed_pack.devices[0].state_count",
+            errors,
+        )
+
     def test_cli_reports_failure_without_emulator_work(self):
         summary = make_summary()
         del summary["devices"][0]["apk_sha"]

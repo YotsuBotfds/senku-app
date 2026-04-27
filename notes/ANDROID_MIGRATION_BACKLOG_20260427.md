@@ -165,6 +165,12 @@ audit. Capture:
   transfers. That makes host adb version part of the evidence surface for
   LiteRT/model-transfer work:
   <https://developer.android.com/tools/adb>.
+  Reviewers should look for `host_adb_platform_tools_version` in harness
+  `summary.json` outputs. `run_android_harness_matrix.ps1` and
+  `run_android_followup_matrix.ps1` also include it in `summary.md`;
+  `run_android_fts_fallback_matrix.ps1` writes it to `summary.json`; state-pack
+  summaries roll the first available child value into their `summary.json` /
+  compact matrix rollup.
 - Evaluate Gradle Managed Devices as a parallel smoke lane after the fixed
   four-emulator harness remains green. The Android Gradle plugin can define
   named devices, groups, parallel group runs, and managed-device sharding, but

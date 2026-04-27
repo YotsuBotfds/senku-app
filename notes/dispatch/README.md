@@ -78,7 +78,7 @@ Current RAG status:
 - Android reviewed-card/runtime work remains a separate lane; do not infer
   Android implementation work from this non-Android status reconciliation.
 - Android current-head/pushed-pack guard history is tracked from `RAG-A14e`
-  through `RAG-A15f`; start from [`../ANDROID_INDEX.md`](../ANDROID_INDEX.md),
+  through `RAG-A15h`; start from [`../ANDROID_INDEX.md`](../ANDROID_INDEX.md),
   [`../ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](../ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md),
   and [`../ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](../ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md).
   The 271-card pushed-pack guards are assumption-gated and skip without that
@@ -589,6 +589,18 @@ Historical landed ledger:
   `ffe6f23038d20f488c73f5166649b4319b3413e37d7dfd759037f8ef7541eaca`.
   These are reinstall/no-pack-push proofs, not clean-install proofs, because
   uninstall returned `DELETE_FAILED_INTERNAL_ERROR` before reinstall.
+- `RAG-A15g` captured Android migration tooling follow-ups after the fixed
+  four-emulator evidence lane. `scripts/run_android_asset_pack_parity_gate.ps1`
+  is the named local promotion helper for pack-count parity, while managed
+  devices remain opt-in smoke until their artifacts prove comparable. Dispatch
+  note:
+  `notes/dispatch/RAG-A15g_android_migration_tooling_followups.md`.
+- `RAG-A15h` captured the Android tooling research queue: make managed-device
+  smoke observable, keep adb-first screenshot/log capture canonical, evaluate
+  UI Automator/Orchestrator only as focused opt-in lanes, and keep hosted CI
+  expectations modest. `scripts/validate_android_migration_summary.py` remains
+  the named summary validation helper. Dispatch note:
+  `notes/dispatch/RAG-A15h_android_tooling_research_queue.md`.
 - Android reviewed-card continuation is organized in
   `notes/ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`; do not rediscover
   the next steps from scratch.

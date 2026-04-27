@@ -35,8 +35,10 @@ class RunAndroidInstrumentedUiSmokeSummaryContractTests(unittest.TestCase):
         self.assertIn('Get-RemoteFileListingSignature -Path $sqlitePath -RunAsPackage "com.senku.mobile"', self.script)
         self.assertIn('Get-RemoteFileListingSignature -Path $vectorPath -RunAsPackage "com.senku.mobile"', self.script)
 
-    def test_final_summary_includes_installed_pack_metadata(self):
+    def test_final_summary_includes_installed_pack_metadata_and_host_adb_version(self):
         self.assertIn("$installedPackMetadata = Get-InstalledPackMetadata", self.script)
+        self.assertIn("$summaryObject = [pscustomobject]@{", self.script)
+        self.assertIn("host_adb_platform_tools_version = $hostAdbPlatformToolsVersion", self.script)
         self.assertIn("installed_pack = $installedPackMetadata", self.script)
 
     def test_parser_gate_passes(self):

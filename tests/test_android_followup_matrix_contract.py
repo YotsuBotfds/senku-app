@@ -13,6 +13,39 @@ class AndroidFollowupMatrixContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.script = SCRIPT.read_text(encoding="utf-8")
 
+    def test_summary_rolls_up_first_host_adb_platform_tools_version(self):
+        self.assertIn(
+            "function Get-FirstNonEmptyHostAdbPlatformToolsVersion",
+            self.script,
+        )
+        self.assertIn(
+            '$version = Get-ObjectStringProperty -Object $item -PropertyName "host_adb_platform_tools_version"',
+            self.script,
+        )
+        self.assertIn(
+            "host_adb_platform_tools_version = Get-FirstNonEmptyHostAdbPlatformToolsVersion -Items $Records",
+            self.script,
+        )
+        self.assertIn(
+            "- host_adb_platform_tools_version: $($Summary.host_adb_platform_tools_version)",
+            self.script,
+        )
+
+        record_field_index = self.script.index(
+            "host_adb_platform_tools_version = $hostAdbPlatformToolsVersion"
+        )
+        summary_rollup_index = self.script.index(
+            "host_adb_platform_tools_version = Get-FirstNonEmptyHostAdbPlatformToolsVersion -Items $Records"
+        )
+        json_write_index = self.script.index("$summary | ConvertTo-Json -Depth 8")
+        markdown_write_index = self.script.index(
+            "ConvertTo-FollowupMatrixSummaryMarkdown -Summary $summary"
+        )
+
+        self.assertLess(record_field_index, json_write_index)
+        self.assertLess(summary_rollup_index, json_write_index)
+        self.assertLess(summary_rollup_index, markdown_write_index)
+
     def test_followup_matrix_contract_fields_and_pass_throughs(self):
         self.assertIn("[switch]$WarmStart", self.script)
         self.assertIn("[switch]$SkipPackPushIfCurrent", self.script)

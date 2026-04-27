@@ -75,6 +75,12 @@ Use this as the first stop for Android parity and mobile-pack work.
   forwarding and LiteRT launcher model-path discovery order.
 - Mixed prompt/follow-up and follow-up-only matrix summaries carry
   `host_adb_platform_tools_version` from child artifacts when available.
+- ADB metadata reviewer handoff: check
+  `host_adb_platform_tools_version` in each harness output `summary.json`.
+  `run_android_harness_matrix.ps1` and `run_android_followup_matrix.ps1`
+  also emit it in `summary.md`; `run_android_fts_fallback_matrix.ps1`
+  emits it in `summary.json`; state-pack rollups carry the first available
+  child value into the pack `summary.json` / compact matrix rollup.
 - `run_android_harness_matrix.ps1` supports `-DefaultWarmStart`,
   row-level `warm_start`, `-PushPackDir`, and row-level `push_pack_dir`.
   Its `summary.json` / `summary.md` include completion counts, emulator
