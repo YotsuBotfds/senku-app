@@ -27,7 +27,7 @@ import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 
 private const val XRefFallbackGuideId = "GD-?"
-private const val XRefFallbackTitle = "Related guide"
+private const val XRefFallbackTitle = "Guide connection"
 
 @Immutable
 data class XRefRowModel(

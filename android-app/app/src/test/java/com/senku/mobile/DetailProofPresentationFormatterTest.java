@@ -24,12 +24,14 @@ public final class DetailProofPresentationFormatterTest {
             DetailProofPresentationFormatter.compactReviewedCardLines(metadata);
 
         assertEquals("Reviewed guide card burns_pilot_card", lines.get(0).label);
+        assertEquals("available for review", lines.get(0).value);
         assertEquals("Cites guide GD-380", lines.get(1).label);
+        assertEquals("guide anchor", lines.get(1).value);
         assertEquals("Status", lines.get(2).label);
         assertEquals("Status: pilot reviewed", lines.get(2).value);
         assertEquals("Limit", lines.get(3).label);
         assertEquals(
-            "Limit: reviewed-card support only; inspect cited guide before relying.",
+            "Limit: reviewed support only; inspect cited guide before relying.",
             lines.get(3).value
         );
         assertEquals(4, lines.size());
@@ -52,11 +54,30 @@ public final class DetailProofPresentationFormatterTest {
         assertEquals("Reviewed guide card shock_card", lines.get(0).label);
         assertEquals("Cites guide GD-400", lines.get(1).label);
         assertEquals("Cites guide GD-401, GD-402", lines.get(2).label);
-        assertEquals("support source", lines.get(2).value);
+        assertEquals("supporting guide", lines.get(2).value);
         for (DetailProofPresentationFormatter.CompactReviewedCardLine line : lines) {
             String visible = line.label + " " + line.value;
             assertFalse(visible.contains("runtime_card_only"));
             assertFalse(visible.contains(ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME));
         }
+    }
+
+    @Test
+    public void retrievalModesUseReaderFacingMatchTypes() {
+        assertEquals("Match type", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
+        assertEquals("Best match", DetailProofPresentationFormatter.humanizeRetrievalMode("route-focus"));
+        assertEquals("Related guide", DetailProofPresentationFormatter.humanizeRetrievalMode("guide-focus"));
+        assertEquals("Generated answer", DetailProofPresentationFormatter.humanizeRetrievalMode("ai-generated"));
+        assertEquals("Concept match", DetailProofPresentationFormatter.humanizeRetrievalMode("vector"));
+        assertEquals("Keyword match", DetailProofPresentationFormatter.humanizeRetrievalMode("lexical"));
+    }
+
+    @Test
+    public void retrievalModeFallbackRemovesRawTokenSeparators() {
+        String visible = DetailProofPresentationFormatter.humanizeRetrievalMode("source_anchor_boost");
+
+        assertEquals("Source Anchor Boost", visible);
+        assertFalse(visible.contains("_"));
+        assertFalse(visible.contains("-"));
     }
 }

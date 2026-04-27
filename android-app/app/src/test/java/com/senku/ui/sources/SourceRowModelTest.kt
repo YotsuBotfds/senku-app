@@ -6,12 +6,12 @@ import org.junit.Test
 class SourceRowModelTest {
     @Test
     fun buildSourceRowMetaUsesReadableSeparatorAndNormalizesCategory() {
-        assertEquals("water · anchor", buildSourceRowMeta(category = " Water ", isAnchor = true))
+        assertEquals("water · anchor guide", buildSourceRowMeta(category = " Water ", isAnchor = true))
         assertEquals(
             "resource management",
             buildSourceRowMeta(category = "resource-management", isAnchor = false),
         )
-        assertEquals("anchor", buildSourceRowMeta(category = "", isAnchor = true))
+        assertEquals("anchor guide", buildSourceRowMeta(category = "", isAnchor = true))
     }
 
     @Test

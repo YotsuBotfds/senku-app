@@ -32,7 +32,7 @@ import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 import java.util.Locale
 
-private const val AnchorLabel = "anchor"
+private const val AnchorLabel = "anchor guide"
 private const val FallbackGuideId = "GD-?"
 private const val FallbackTitle = "Source guide"
 private const val MetaSeparator = " · "

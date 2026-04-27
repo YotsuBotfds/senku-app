@@ -40,7 +40,7 @@ import java.util.Locale
 data class PaperAnswerCardModel(
     val content: AnswerContent,
     val mode: Mode = Mode.Paper,
-    val showProofLabel: String = "Show proof",
+    val showProofLabel: String = "View sources",
 )
 
 enum class Mode {
@@ -90,7 +90,7 @@ fun PaperAnswerCard(
     content: AnswerContent,
     modifier: Modifier = Modifier,
     mode: Mode = Mode.Paper,
-    showProofLabel: String = "Show proof",
+    showProofLabel: String = "View sources",
     onShowProof: () -> Unit = {},
 ) {
     val colors = SenkuTheme.colors
@@ -143,7 +143,7 @@ fun PaperAnswerCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = if (content.abstain) "NO MATCH" else "SENKU ANSWERED",
+                        text = if (content.abstain) "NO MATCH" else "FIELD ANSWER",
                         style = typography.monoCaps.copy(
                             fontSize = 10.sp,
                             lineHeight = 12.sp,
@@ -263,7 +263,7 @@ fun PaperAnswerCard(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Text(
-                                text = showProofLabel,
+                                text = displayProofCtaLabel(showProofLabel),
                                 style = typography.tag.copy(
                                     fontSize = 12.sp,
                                     lineHeight = 14.sp,
@@ -383,24 +383,24 @@ private fun evidenceToneColor(
     }
 }
 
-private fun compactEvidenceLabel(content: AnswerContent): String {
+internal fun compactEvidenceLabel(content: AnswerContent): String {
     return when (content.answerSurfaceLabel) {
-        AnswerSurfaceLabel.DeterministicRule -> "DETERMINISTIC"
+        AnswerSurfaceLabel.DeterministicRule -> "RULE MATCH"
         AnswerSurfaceLabel.LimitedFit -> "UNSURE FIT"
         AnswerSurfaceLabel.Abstain -> "NO MATCH"
-        AnswerSurfaceLabel.ReviewedCardEvidence -> "REVIEWED EVIDENCE"
+        AnswerSurfaceLabel.ReviewedCardEvidence -> "REVIEWED SOURCES"
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
             content.uncertainFit -> "UNSURE FIT"
-            content.evidence == Evidence.Strong -> "STRONG EVIDENCE"
-            content.evidence == Evidence.Moderate -> "MODERATE EVIDENCE"
+            content.evidence == Evidence.Strong -> "STRONG SOURCES"
+            content.evidence == Evidence.Moderate -> "SOURCE MATCH"
             content.abstain -> "NO MATCH"
-            else -> "LIMITED EVIDENCE"
+            else -> "LIMITED SOURCES"
         }
     }
 }
 
-private fun buildFooterMeta(content: AnswerContent): String {
+internal fun buildFooterMeta(content: AnswerContent): String {
     val tokens = mutableListOf<String>()
     tokens += if (content.sourceCount == 1) "1 SOURCE" else "${content.sourceCount} SOURCES"
     if (content.host.isNotBlank()) {
@@ -409,5 +409,13 @@ private fun buildFooterMeta(content: AnswerContent): String {
     if (content.elapsedSeconds > 0.0) {
         tokens += String.format(Locale.US, "%.1fS", content.elapsedSeconds)
     }
-    return tokens.joinToString(" · ")
+    return tokens.joinToString(" | ")
+}
+
+internal fun displayProofCtaLabel(label: String): String {
+    return if (label.trim().equals("Show proof", ignoreCase = true)) {
+        "View sources"
+    } else {
+        label
+    }
 }

@@ -327,6 +327,65 @@ Rules:
 - Reviewed-card gallery shots must say when they are developer/test-gated.
   They must not be used to imply product-default runtime exposure.
 
+## Local Proof Commands
+
+Use the gallery wrapper after a coherent UI batch when reviewers need a
+task-ordered screenshot packet with the same posture vocabulary as the
+state-pack lane.
+
+Preflight only:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_gallery_local_proof.ps1 -PlanOnly
+```
+
+Full local gallery proof:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_gallery_local_proof.ps1
+```
+
+Focused role while iterating:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_gallery_local_proof.ps1 -RoleFilter phone_portrait -SkipBuild
+```
+
+Host-independent visual pass, when host inference is unavailable:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_gallery_local_proof.ps1 -SkipHostStates
+```
+
+The wrapper only calls
+[`scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1)
+and writes a `GALLERY_LOCAL_PROOF.md` run sheet beside the resulting artifacts.
+It does not add new assertions, product behavior, or acceptance semantics.
+
+Default output root:
+
+- `artifacts/android_ui_gallery_local_proof/<run_id>/GALLERY_LOCAL_PROOF.md`
+- `artifacts/android_ui_gallery_local_proof/<run_id>/summary.json`
+- `artifacts/android_ui_gallery_local_proof/<run_id>/manifest.json`
+- `artifacts/android_ui_gallery_local_proof/<run_id>/screenshots/<posture>/`
+- `artifacts/android_ui_gallery_local_proof/<run_id>/dumps/<posture>/`
+- `artifacts/android_ui_gallery_local_proof/<run_id>/summaries/<posture>/`
+- `artifacts/android_ui_gallery_local_proof/<run_id>/parallel_logs/`
+
+Acceptance boundaries for local proof:
+
+- `-PlanOnly` plus
+  [`scripts/validate_android_ui_state_pack_plan.py`](../scripts/validate_android_ui_state_pack_plan.py)
+  is preflight evidence only.
+- A failed or partial wrapped state pack can still be useful for visual triage,
+  but it is not UI acceptance proof.
+- A passing wrapped state pack is the acceptance receipt only for the scripted
+  fixed-posture state-pack contract. The task gallery remains human design
+  review context.
+- Separately captured no-pack, slow-model, abstain, large-font, or reviewed
+  emergency screenshots should be linked from the run sheet or gallery
+  metadata, not treated as replacing the fixed matrix.
+
 ## Acceptance For This Planning Note
 
 This note is complete when it lets the next Android/UI agent build or request a

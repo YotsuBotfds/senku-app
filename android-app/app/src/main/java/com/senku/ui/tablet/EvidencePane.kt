@@ -136,7 +136,7 @@ fun CollapsibleEvidencePane(
                     color = colors.accent,
                 )
                 Text(
-                    text = "Evidence & cross-refs (${xrefs.size})",
+                    text = "Source evidence & guide connections (${xrefs.size})",
                     modifier = Modifier.weight(1f),
                     style = SenkuTheme.typography.uiBody.copy(
                         fontSize = 13.sp,
@@ -211,7 +211,7 @@ private fun ActiveEvidenceSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SectionHeader(
-            title = "EVIDENCE · ACTIVE",
+            title = "SOURCE EVIDENCE",
             accessibilitySummary = buildProvenanceAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
@@ -219,7 +219,7 @@ private fun ActiveEvidenceSection(
             ),
         )
         if (!anchor.hasSource) {
-            PlaceholderCard("No active evidence")
+            PlaceholderCard("No source evidence")
         } else {
             EvidenceSnippet(
                 evidence = EvidenceSnippetModel(
@@ -245,7 +245,7 @@ private fun CollapsedEvidencePreview(
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
-    val title = anchor.title.trim().ifEmpty { anchor.id.trim().ifEmpty { "Active evidence" } }
+    val title = anchor.title.trim().ifEmpty { anchor.id.trim().ifEmpty { "Source guide" } }
     val section = anchor.section.trim()
     val previewText = buildCollapsedEvidencePreviewText(anchor)
 
@@ -257,7 +257,7 @@ private fun CollapsedEvidencePreview(
             text = listOf(anchor.id.trim(), section)
                 .filter { it.isNotEmpty() }
                 .joinToString(" | ")
-                .ifEmpty { "Active source" },
+                .ifEmpty { "Source guide" },
             style = typography.monoCaps.copy(
                 fontSize = 10.sp,
                 lineHeight = 13.sp,
@@ -302,7 +302,7 @@ internal fun buildCollapsedEvidencePreviewText(anchor: AnchorState): String {
     return if (section.isEmpty()) {
         ""
     } else {
-        "Section: $section"
+        "Guide section: $section"
     }
 }
 
@@ -322,7 +322,7 @@ private fun CrossReferenceSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SectionHeader(
-            title = "CROSS-REFERENCE · ${xrefs.size} LINKED",
+            title = "GUIDE CONNECTIONS · ${xrefs.size}",
             accessibilitySummary = buildSourceGraphAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
@@ -332,7 +332,7 @@ private fun CrossReferenceSection(
         )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (xrefs.isEmpty()) {
-                PlaceholderCard("No cross-references")
+                PlaceholderCard("No guide connections")
             } else {
                 xrefs.forEach { xref ->
                     XRefRow(
@@ -410,7 +410,7 @@ private fun buildProvenanceAccessibilitySummary(
     val builder = StringBuilder()
     builder.append(landmark)
     if (anchorLabel.isNotEmpty()) {
-        builder.append(". Source entry ")
+        builder.append(". Source guide ")
         builder.append(anchorLabel)
     }
     if (section.isNotEmpty()) {

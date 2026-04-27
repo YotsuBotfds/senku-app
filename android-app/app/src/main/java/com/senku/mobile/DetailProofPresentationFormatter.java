@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Locale;
 
 final class DetailProofPresentationFormatter {
+    static final String MATCH_TYPE_LABEL = "Match type";
+
     static final class State {
         final String routeValue;
         final int routeAccentColor;
@@ -322,13 +324,13 @@ final class DetailProofPresentationFormatter {
         String cardLabel = normalized.cardId.isEmpty()
             ? "Reviewed guide card"
             : "Reviewed guide card " + normalized.cardId;
-        lines.add(new CompactReviewedCardLine(cardLabel, "ready for UI review"));
+        lines.add(new CompactReviewedCardLine(cardLabel, "available for review"));
         if (!normalized.cardGuideId.isEmpty()) {
-            lines.add(new CompactReviewedCardLine("Cites guide " + normalized.cardGuideId, "card anchor"));
+            lines.add(new CompactReviewedCardLine("Cites guide " + normalized.cardGuideId, "guide anchor"));
         }
         String sourceGuideIds = normalized.citedSourceGuideIdsCsv();
         if (!sourceGuideIds.isEmpty() && !sourceGuideIds.equals(normalized.cardGuideId)) {
-            lines.add(new CompactReviewedCardLine("Cites guide " + sourceGuideIds, "support source"));
+            lines.add(new CompactReviewedCardLine("Cites guide " + sourceGuideIds, "supporting guide"));
         }
         if (!normalized.reviewStatus.isEmpty()) {
             lines.add(new CompactReviewedCardLine(
@@ -338,7 +340,7 @@ final class DetailProofPresentationFormatter {
         }
         lines.add(new CompactReviewedCardLine(
             "Limit",
-            "Limit: reviewed-card support only; inspect cited guide before relying."
+            "Limit: reviewed support only; inspect cited guide before relying."
         ));
         return lines;
     }
@@ -368,7 +370,7 @@ final class DetailProofPresentationFormatter {
         String retrievalMode = safe(firstSource.retrievalMode).trim();
         if (!retrievalMode.isEmpty() && (!compact || !utilityRail)) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_lane),
+                MATCH_TYPE_LABEL,
                 humanizeRetrievalMode(retrievalMode),
                 context.getColor(R.color.senku_text_muted_light)
             ));
@@ -382,25 +384,53 @@ final class DetailProofPresentationFormatter {
         }
     }
 
-    private String humanizeRetrievalMode(String retrievalMode) {
+    static String humanizeRetrievalMode(String retrievalMode) {
         String mode = safe(retrievalMode).trim().toLowerCase(Locale.US);
         if (mode.isEmpty()) {
             return "";
         }
         switch (mode) {
             case "guide-focus":
-                return "guide focus";
+            case "guide":
+                return "Related guide";
             case "route-focus":
-                return "route focus";
+            case "hybrid":
+                return "Best match";
+            case "vector":
+                return "Concept match";
+            case "lexical":
+                return "Keyword match";
             case "ai-generated":
-                return "AI generated";
+                return "Generated answer";
             default:
-                return mode.replace('-', ' ');
+                return humanizeFallbackToken(mode);
         }
     }
 
     private static String humanizeReviewedCardToken(String token) {
         return safe(token).trim().replace('_', ' ');
+    }
+
+    private static String humanizeFallbackToken(String token) {
+        String cleaned = safe(token).trim().replace('-', ' ').replace('_', ' ');
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        String[] words = cleaned.split("\\s+");
+        StringBuilder label = new StringBuilder();
+        for (String word : words) {
+            if (word.isEmpty()) {
+                continue;
+            }
+            if (label.length() > 0) {
+                label.append(' ');
+            }
+            label.append(word.substring(0, 1).toUpperCase(Locale.US));
+            if (word.length() > 1) {
+                label.append(word.substring(1));
+            }
+        }
+        return label.toString();
     }
 
     String buildSourceEntryValue(SearchResult source, List<SearchResult> currentSources) {

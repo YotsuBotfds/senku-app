@@ -6,7 +6,7 @@ import org.junit.Test
 
 class TabletEvidenceVisibilityPolicyTest {
     @Test
-    fun tabletLandscapeEvidencePaneKeepsUsefulProofWidth() {
+    fun tabletLandscapeEvidencePaneKeepsUsefulSourceEvidenceWidth() {
         val policy = tabletEvidenceVisibilityPolicy()
 
         assertEquals(360, policy.evidencePaneWidthDp)
@@ -34,7 +34,7 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
-    fun tabletPortraitCollapsedEvidencePreviewFallsBackToSectionContext() {
+    fun tabletPortraitCollapsedEvidencePreviewFallsBackToGuideSectionContext() {
         val previewText = buildCollapsedEvidencePreviewText(
             anchor(
                 section = "water storage",
@@ -42,7 +42,7 @@ class TabletEvidenceVisibilityPolicyTest {
             )
         )
 
-        assertEquals("Section: water storage", previewText)
+        assertEquals("Guide section: water storage", previewText)
     }
 
     @Test
