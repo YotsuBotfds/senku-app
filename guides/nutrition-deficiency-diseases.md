@@ -1147,4 +1147,13 @@ Train community members on deficiency recognition:
 
 </section>
 
-{{> nutrition-deficiency-diseases-custom }}
+:::warning
+**Nutrition-deficiency boundary:** Use this guide to organize food-pattern,
+symptom, age, pregnancy, illness, workload, and access notes for a clinician,
+public-health, nutrition, or community food-planning handoff. Severe weakness,
+confusion, swelling, heart rhythm concerns, neurologic changes, inability to
+eat or drink, suspected refeeding risk, child growth failure, pregnancy
+concerns, or rapidly worsening symptoms need medical escalation. Do not use
+this guide to diagnose, prescribe supplements, set dosing, manage refeeding, or
+delay emergency care.
+:::

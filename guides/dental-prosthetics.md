@@ -1081,4 +1081,12 @@ For patients new to denture use:
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools/methods discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> dental-prosthetics-custom }}
+:::warning
+**Dental prosthetics boundary:** Use this guide to log comfort, fit, rubbing,
+wear duration, food tolerance, slippage, breakage, and cleaning/storage needs.
+Seek dental, prosthodontic, clinical, or emergency help for worsening sores,
+swelling, pus, fever, facial swelling, trouble breathing or swallowing, choking
+risk, sharp broken appliances, or severe pain. Do not use this guide for
+impressions, grinding, relining, fabrication, adhesives, medication dosing, or
+return-to-chewing clearance.
+:::

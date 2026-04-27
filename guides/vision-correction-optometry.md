@@ -703,4 +703,13 @@ Document all instructions provided to customers about vision prescription, safe 
 
 </section>
 
-{{> vision-correction-optometry-custom }}
+:::warning
+**Vision correction boundary:** Routine vision notes should capture onset,
+one-eye versus both-eyes involvement, current glasses or contacts, task limits,
+strain triggers, and whether symptoms improve with rest. Sudden vision loss,
+eye trauma, chemical exposure, flash injury, new floaters or curtain-like
+shadow, severe pain, contact-lens pain with discharge, or infection signs need
+urgent optometrist, clinician, or emergency care. Do not use this guide for
+prescribing lenses, grinding lenses, contact fitting, medication guidance, or
+return-to-work/drive clearance.
+:::

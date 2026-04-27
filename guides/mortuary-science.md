@@ -971,4 +971,13 @@ The costliest mistake: Burying uphill from wells. One contaminated well can kill
 -   [First Aid & Emergency Care](first-aid.html) - Determining death, emergency procedures
 -   [Disaster Response & Triage](disaster-triage.html) - Mass casualty management
 
-{{> mortuary-science-custom }}
+:::warning
+**Mortuary care boundary:** Use this guide for respectful intake, identity and
+chain-of-custody notes, family/community coordination, hygiene, temporary
+holding, and public-health or authority handoff. Escalate for uncertain
+identity, suspicious death, infectious-disease risk, mass-casualty conditions,
+water-table or burial-site uncertainty, family/legal disputes, or unsafe
+handling conditions. Do not use this guide for cause-of-death rulings, autopsy,
+embalming, invasive preparation, forensic decisions, legal declarations, or
+religious directives outside the community's chosen authority.
+:::
