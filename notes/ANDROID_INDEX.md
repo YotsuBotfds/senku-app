@@ -60,6 +60,11 @@ Use this as the first stop for Android parity and mobile-pack work.
   `warm_start` in each JSONL/CSV row. Its summary also includes posture groups.
 - LiteRT model push now checks `/data` free space before upload; use
   `-SkipDataSpaceCheck` only when intentionally bypassing that preflight.
+- `emulator-5554` remains blocked for staged E2B LiteRT push by AVD data
+  partition size. The 2026-04-27 transport follow-up at
+  `artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md`
+  reconfirmed tmp-staging safety for small payloads, but no Windows
+  direct-stream candidate is byte-safe enough to bypass staging.
 
 ## Current artifact baseline
 

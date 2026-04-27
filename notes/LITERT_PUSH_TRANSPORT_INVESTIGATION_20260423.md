@@ -11,6 +11,8 @@ Artifact bundle:
 - [`../artifacts/bench/litert_transport_probe_20260423_062415/summary.md`](../artifacts/bench/litert_transport_probe_20260423_062415/summary.md)
 - Supplemental direct-stream checks:
   [`../artifacts/bench/litert_transport_probe_20260423_062415/manual_direct_stream_followups.md`](../artifacts/bench/litert_transport_probe_20260423_062415/manual_direct_stream_followups.md)
+- 2026-04-27 `emulator-5554` E2B follow-up:
+  [`../artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md`](../artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md)
 
 ## Methods Tested
 
@@ -38,6 +40,8 @@ Artifact bundle:
   - `emulator-5556`
   - `256 B` control payload: byte count and SHA-256 matched
   - `64 MB` random binary payload: byte count and SHA-256 matched
+- 2026-04-27 follow-up on `emulator-5554` reconfirmed tmp-staging safety for
+  `256 B` and `64 MB` payloads.
 
 ### Unsafe
 
@@ -47,6 +51,9 @@ Artifact bundle:
   - Confirmatory real-model run on `emulator-5554` also failed.
   - `cmd_type_pipe_cat` failed on `256 B` and `64 MB`.
   - `process_stdin_copy_cat` failed on `256 B` and `64 MB`.
+- 2026-04-27 follow-up on `emulator-5554` kept the same stop line: every
+  Windows direct-stream `cat` family candidate failed even for the `256 B`
+  control payload, and the real `E2B` model through `cmd_redirect_cat` failed.
 - Windows-host stdin redirection into `tee` is **unsafe for real binary
   payloads**.
   - `256 B` control payload matched.
@@ -70,6 +77,9 @@ Treat helper/default-path work as still blocked on transport.
 
 - Do **not** retry `BACK-P-06` yet.
 - Keep `scripts/push_litert_model_to_android.ps1` unchanged for now.
+- Do **not** use `-SkipDataSpaceCheck` to force the staged E2B helper on
+  `emulator-5554`; that lane remains blocked by AVD data partition size unless
+  a fresh byte-safe non-staging transfer path is proven.
 - If follow-up work is approved later, it should start from a fresh transport
   design/probe slice rather than assuming any current Windows direct-stream
   recipe is byte-safe for real binaries.

@@ -169,6 +169,33 @@ function Get-ApkFingerprint {
     }
 }
 
+function Get-HostAdbPlatformToolsVersion {
+    param([string]$AdbPath)
+
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $AdbPath -Arguments @("version") -TimeoutMilliseconds 10000
+    if ($result.exit_code -ne 0 -or [string]::IsNullOrWhiteSpace([string]$result.output)) {
+        return $null
+    }
+
+    $lines = @(([string]$result.output -split "`r?`n") | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $platformToolsLine = @($lines | Where-Object { $_ -match "^Version\s+(.+)$" } | Select-Object -First 1)
+    if ($platformToolsLine.Count -gt 0 -and $platformToolsLine[0] -match "^Version\s+(.+)$") {
+        return $Matches[1]
+    }
+
+    if ($lines.Count -eq 0) {
+        return $null
+    }
+
+    $line = $lines[0]
+    if ($line -match "Android Debug Bridge version\s+([0-9A-Za-z.\-]+)") {
+        return $Matches[1]
+    }
+    return $line
+}
+
+$hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -AdbPath $adb
+
 function Invoke-AdbChecked {
     param(
         [string[]]$Arguments,
@@ -1548,6 +1575,7 @@ try {
         model_identity_source = $summaryModelIdentity.source
         model_name = $summaryModelIdentity.name
         model_sha = $summaryModelIdentity.sha
+        host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
         identity_cache_hit = [bool]$script:IdentityCacheHit
         identity_probe_error = $(if ([string]::IsNullOrWhiteSpace($identityProbeError)) { $null } else { $identityProbeError })
         installed_pack = $installedPackMetadata

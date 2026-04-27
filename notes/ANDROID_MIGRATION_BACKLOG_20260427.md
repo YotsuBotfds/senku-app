@@ -43,6 +43,14 @@ use it to approve reviewed-card runtime expansion or product exposure.
   `PackRepositoryFtsFallbackAndroidTest` passed `OK (3 tests)` on each fixed
   emulator lane (`5554`, `5556`, `5558`, and `5560`) against the current
   bundled 271-card pack.
+- LiteRT transport proof on `emulator-5554`: on 2026-04-27 10:30 CT,
+  `scripts/probe_litert_model_transport.ps1` wrote
+  `artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md`.
+  The staged `adb push` plus app-data copy path matched bytes and SHA-256 for
+  `256 B` and `64 MB` payloads, while every Windows direct-stream candidate
+  failed even for the `256 B` control payload. The real E2B model probe through
+  `cmd_redirect_cat` also failed. This confirms the `5554` E2B block is still
+  a data-partition/transport constraint, not an app/runtime failure.
 - Current-head readiness/direct-guard replay: all four emulators passed the
   271-card pack readiness/direct guard tests (`AnswerCardCurrentHeadPackCensusTest`,
   `AnswerCardRuntimeAllowlistCurrentHeadTest`, `PackMigrationInstallTest`) under
@@ -115,6 +123,39 @@ use it to approve reviewed-card runtime expansion or product exposure.
   free versus about `4.87 GiB` required. Treat `5554` as an AVD data-size
   blocker, not an app/runtime failure.
 
+## Tooling Queue
+
+- Standardize emulator launch/evidence profiles before adding another runner
+  layer. Android's emulator CLI supports headless launches with `-no-window`
+  and data partition sizing with `-partition-size`, which maps directly to a
+  clean-boot profile, a cached local profile, and a large-asset profile for the
+  `5554` E2B blocker:
+  <https://developer.android.com/studio/run/emulator-commandline>.
+- Add adb/platform-tools version capture to Android harness artifacts. Android
+  documents normal `adb push`/`pull`, screenshot, and screenrecord flows, and
+  current Platform Tools also document experimental ADB Burst Mode for large
+  transfers. That makes host adb version part of the evidence surface for
+  LiteRT/model-transfer work:
+  <https://developer.android.com/tools/adb>.
+- Evaluate Gradle Managed Devices as a parallel smoke lane after the fixed
+  four-emulator harness remains green. The Android Gradle plugin can define
+  named devices, groups, parallel group runs, and managed-device sharding, but
+  this should not replace the existing screenshot/state-pack matrix until it
+  can emit comparable artifacts:
+  <https://developer.android.com/studio/test/managed-devices>.
+- Treat ATD images as non-visual smoke only. Android documents ATDs as lower
+  resource managed devices, but they disable hardware rendering, so they are
+  inappropriate for screenshot-sensitive UI proof.
+- Keep Android Test Orchestrator as Gradle-run infrastructure, not an assumed
+  property of the PowerShell smoke harness. `android-app/app/build.gradle`
+  already configures `ANDROIDX_TEST_ORCHESTRATOR`, but
+  `scripts/run_android_instrumented_ui_smoke.ps1` builds APKs and then invokes
+  `am instrument` directly, so Orchestrator is not active there unless a future
+  opt-in harness path installs and drives it explicitly. Android's Orchestrator
+  docs are still relevant for targeted flake isolation because it runs each
+  test in a separate instrumentation invocation and can clear app data:
+  <https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#orchestrator>.
+
 ## Stop Lines
 
 - Do not count the earlier ANR-blocked `phone_landscape` lane as proof; use
@@ -129,3 +170,10 @@ use it to approve reviewed-card runtime expansion or product exposure.
 - Do not retry on-device LiteRT pushes on `emulator-5554` with the staged helper
   until its AVD data partition is enlarged or a non-staging transfer path is
   implemented.
+- Do not use `-SkipDataSpaceCheck` on `5554` to force the E2B staged helper;
+  the current free-space failure is expected and byte-safe direct streaming is
+  not proven.
+- Do not replace the fixed four-emulator state-pack evidence with Gradle
+  Managed Devices, ATD, Orchestrator, or Firebase Test Lab output until the new
+  lane proves equivalent screenshots, UI dumps, summaries, identity metadata,
+  and failure artifacts.

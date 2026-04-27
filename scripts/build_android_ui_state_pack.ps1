@@ -219,6 +219,24 @@ function Normalize-IdentityValue {
     return $text.Trim().ToLowerInvariant()
 }
 
+function Get-FirstNonEmptyPackMetadataValue {
+    param(
+        [object[]]$Entries,
+        [string]$PropertyName
+    )
+
+    foreach ($entry in @($Entries)) {
+        if ($null -eq $entry) {
+            continue
+        }
+        $candidate = $entry.$PropertyName
+        if ($null -ne $candidate -and -not [string]::IsNullOrWhiteSpace([string]$candidate)) {
+            return [string]$candidate
+        }
+    }
+    return $null
+}
+
 function Get-StableIdentitySha256 {
     param([string]$Value)
 
@@ -609,6 +627,7 @@ if ($FinalizeOnly) {
                     summary_path = $stateSummaryPath
                     screenshots = $copiedScreenshots
                     dumps = $copiedDumps
+                    host_adb_platform_tools_version = $(if ($null -ne $trustedFollowupSummary.host_adb_platform_tools_version -and -not [string]::IsNullOrWhiteSpace([string]$trustedFollowupSummary.host_adb_platform_tools_version)) { [string]$trustedFollowupSummary.host_adb_platform_tools_version } else { $null })
                     failure_reason = $trustedFollowupSummary.failure_reason
                     platform_anr = $trustedFollowupSummary.platform_anr
                 })
@@ -656,6 +675,7 @@ if ($FinalizeOnly) {
                     summary_path = $stateSummaryPath
                     screenshots = @()
                     dumps = @()
+                    host_adb_platform_tools_version = $null
                     failure_reason = "smoke wrapper failed before trusted summary"
                     platform_anr = $null
                 })
@@ -680,6 +700,7 @@ if ($FinalizeOnly) {
                 summary_path = $stateSummaryPath
                 screenshots = $copied.screenshots
                 dumps = $copied.dumps
+                host_adb_platform_tools_version = $(if ($null -ne $trustedSummary.host_adb_platform_tools_version -and -not [string]::IsNullOrWhiteSpace([string]$trustedSummary.host_adb_platform_tools_version)) { [string]$trustedSummary.host_adb_platform_tools_version } else { $null })
                 failure_reason = $trustedSummary.failure_reason
                 platform_anr = $trustedSummary.platform_anr
             })
@@ -703,6 +724,7 @@ $summaryPath = Join-Path $outputDir "summary.json"
 $successCount = @($results | Where-Object { $_.status -eq "pass" }).Count
 $failCount = @($results | Where-Object { $_.status -ne "pass" }).Count
 $platformAnrCount = @($results | Where-Object { $null -ne $_.platform_anr -and -not [string]::IsNullOrWhiteSpace([string]$_.platform_anr) }).Count
+$hostAdbPlatformToolsVersion = Get-FirstNonEmptyPackMetadataValue -Entries $results -PropertyName "host_adb_platform_tools_version"
 $status = if ($failCount -eq 0) { "pass" } elseif ($successCount -gt 0) { "partial" } else { "fail" }
 $identityRollup = Get-PackIdentityRollup -ResultEntries $results
 
@@ -721,6 +743,7 @@ $manifest = [pscustomobject]@{
     output_dir = $outputDir
     status = $status
     host_states_included = (-not $SkipHostStates)
+    host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
     device_matrix = $deviceMatrix
     results = $results
 }
@@ -733,6 +756,7 @@ $summary = [pscustomobject]@{
     output_dir = $outputDir
     status = $status
     host_states_included = (-not $SkipHostStates)
+    host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
     total_states = [int]$results.Count
     pass_count = [int]$successCount
     fail_count = [int]$failCount
