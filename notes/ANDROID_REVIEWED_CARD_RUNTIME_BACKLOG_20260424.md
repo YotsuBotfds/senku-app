@@ -76,6 +76,10 @@ Landed Android sequence:
 - `RAG-A14h`: Android instrumented UI smoke summaries now include installed
   mobile-pack manifest counts and sqlite/vector listing signatures from the app
   sandbox, making no-push vs pushed-pack proof explicit in wrapper artifacts.
+- `RAG-A14i`: current-head 271-card mobile-pack export was pushed to an Android
+  app sandbox and proved via `summary.json.installed_pack`. Reviewed prompt
+  canary attempts were blocked by Android System UI ANR dialogs and are not
+  counted as green runtime proof.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
