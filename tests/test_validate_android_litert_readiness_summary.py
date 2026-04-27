@@ -74,6 +74,24 @@ def make_summary() -> dict:
                 "backend request/response timing",
             ],
         },
+        "runtime_readiness": {
+            "status": "not_captured_dry_run",
+            "real_run_status": "not_implemented",
+            "acceptance_evidence": False,
+            "device_required_in_dry_run": False,
+            "model_bytes": 22,
+            "model_sha256": "a" * 64,
+            "app_private_path": "/data/user/0/com.example.senku/files/models/tiny.task",
+            "backend_requested": "litert",
+            "backend_actual": "",
+            "init_timing_ms": None,
+            "first_response_timing_ms": None,
+            "native_log_excerpt": "",
+            "native_log_sha256": "",
+            "cpu_fallback": "not_observed_dry_run",
+            "gpu_fallback": "not_observed_dry_run",
+            "npu_fallback": "not_observed_dry_run",
+        },
         "logcat_extraction_plan": {
             "status": "planned_for_real_run",
             "real_run_status": "not_implemented",
@@ -112,6 +130,13 @@ class ValidateAndroidLiteRtReadinessSummaryTests(unittest.TestCase):
         summary["model"].update({"exists": False, "name": "", "bytes": None, "sha256": ""})
         summary["model_identity"].update({"exists": False, "name": "", "bytes": None, "sha256": ""})
         summary["app_private_target"]["path"] = "/data/user/0/com.example.senku/files/models/<model-file>"
+        summary["runtime_readiness"].update(
+            {
+                "model_bytes": None,
+                "model_sha256": "",
+                "app_private_path": "/data/user/0/com.example.senku/files/models/<model-file>",
+            }
+        )
         summary["data_free_space_posture"]["required_bytes"] = None
 
         _, errors = validate_litert_readiness_summary(self.write_summary(summary))
@@ -175,6 +200,53 @@ class ValidateAndroidLiteRtReadinessSummaryTests(unittest.TestCase):
         self.assertIn("expected request.device_required_in_dry_run to be False", errors)
         self.assertIn("expected logcat_extraction_plan.status to be 'planned_for_real_run'", errors)
         self.assertIn("missing logcat_extraction_plan.extraction_filters LiteRT:D", errors)
+
+    def test_rejects_runtime_readiness_acceptance_or_observed_fields(self):
+        summary = make_summary()
+        summary["runtime_readiness"].update(
+            {
+                "status": "captured",
+                "real_run_status": "pass",
+                "acceptance_evidence": True,
+                "device_required_in_dry_run": True,
+                "backend_actual": "gpu",
+                "init_timing_ms": 123,
+                "first_response_timing_ms": 456,
+                "native_log_excerpt": "LiteRT initialized",
+                "native_log_sha256": "b" * 64,
+                "cpu_fallback": "cpu",
+            }
+        )
+
+        _, errors = validate_litert_readiness_summary(self.write_summary(summary))
+
+        self.assertIn("expected runtime_readiness.status to be 'not_captured_dry_run'", errors)
+        self.assertIn("expected runtime_readiness.real_run_status to be 'not_implemented'", errors)
+        self.assertIn("expected runtime_readiness.acceptance_evidence to be False", errors)
+        self.assertIn("expected runtime_readiness.device_required_in_dry_run to be False", errors)
+        self.assertIn("expected runtime_readiness.backend_actual to be ''", errors)
+        self.assertIn("expected runtime_readiness.init_timing_ms to be None", errors)
+        self.assertIn("expected runtime_readiness.first_response_timing_ms to be None", errors)
+        self.assertIn("expected runtime_readiness.native_log_excerpt to be ''", errors)
+        self.assertIn("expected runtime_readiness.native_log_sha256 to be ''", errors)
+        self.assertIn(
+            "expected runtime_readiness.cpu_fallback to be 'not_observed_dry_run' or 'planned_for_real_run'",
+            errors,
+        )
+
+    def test_rejects_runtime_readiness_metadata_drift(self):
+        summary = make_summary()
+        summary["runtime_readiness"]["model_bytes"] = 1
+        summary["runtime_readiness"]["model_sha256"] = "b" * 64
+        summary["runtime_readiness"]["app_private_path"] = "/data/user/0/com.example.senku/files/models/other.task"
+        summary["runtime_readiness"]["backend_requested"] = "cpu"
+
+        _, errors = validate_litert_readiness_summary(self.write_summary(summary))
+
+        self.assertIn("expected runtime_readiness.model_bytes to match model.bytes", errors)
+        self.assertIn("expected runtime_readiness.model_sha256 to match model.sha256", errors)
+        self.assertIn("expected runtime_readiness.app_private_path to match app_private_target.path", errors)
+        self.assertIn("expected runtime_readiness.backend_requested to match backend.name", errors)
 
     def test_rejects_bad_data_free_space_posture(self):
         summary = make_summary()

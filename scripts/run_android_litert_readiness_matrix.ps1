@@ -131,6 +131,24 @@ function New-LiteRtReadinessSummary {
             device_required_in_dry_run = $false
             expected_artifacts = @("summary.json", "logcat excerpt", "backend request/response timing")
         }
+        runtime_readiness = [ordered]@{
+            status = "not_captured_dry_run"
+            real_run_status = "not_implemented"
+            acceptance_evidence = $false
+            device_required_in_dry_run = $false
+            model_bytes = $Model.bytes
+            model_sha256 = $Model.sha256
+            app_private_path = "/data/user/0/$PackageName/files/models/$modelName"
+            backend_requested = $Backend
+            backend_actual = ""
+            init_timing_ms = $null
+            first_response_timing_ms = $null
+            native_log_excerpt = ""
+            native_log_sha256 = ""
+            cpu_fallback = "not_observed_dry_run"
+            gpu_fallback = "not_observed_dry_run"
+            npu_fallback = "not_observed_dry_run"
+        }
         logcat_extraction_plan = [ordered]@{
             status = "planned_for_real_run"
             real_run_status = "not_implemented"
@@ -176,6 +194,13 @@ function New-LiteRtReadinessMarkdown {
     $modelSha256 = Format-ReadinessMarkdownValue -Value $Summary.model.sha256
     $modelIdentitySource = Format-ReadinessMarkdownValue -Value $Summary.model_identity.source
     $requiredBytes = Format-ReadinessMarkdownValue -Value $Summary.data_free_space_posture.required_bytes
+    $runtimeModelBytes = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.model_bytes
+    $runtimeModelSha256 = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.model_sha256
+    $backendActual = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.backend_actual
+    $initTimingMs = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.init_timing_ms
+    $firstResponseTimingMs = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.first_response_timing_ms
+    $nativeLogExcerpt = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.native_log_excerpt
+    $nativeLogSha256 = Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.native_log_sha256
 
     return @(
         "# LiteRT Readiness Dry Run"
@@ -213,6 +238,25 @@ function New-LiteRtReadinessMarkdown {
         "- Request real run status: $($Summary.request.real_run_status)"
         "- Request device required in dry run: $(Format-ReadinessMarkdownValue -Value $Summary.request.device_required_in_dry_run)"
         "- Prompt: $($Summary.request.prompt)"
+        ""
+        "## Runtime readiness"
+        ""
+        "- Status: $($Summary.runtime_readiness.status)"
+        "- Real run status: $($Summary.runtime_readiness.real_run_status)"
+        "- Acceptance evidence: $(Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.acceptance_evidence)"
+        "- Device required in dry run: $(Format-ReadinessMarkdownValue -Value $Summary.runtime_readiness.device_required_in_dry_run)"
+        "- Model bytes: $runtimeModelBytes"
+        "- Model SHA-256: $runtimeModelSha256"
+        "- App-private path: $($Summary.runtime_readiness.app_private_path)"
+        "- Backend requested: $($Summary.runtime_readiness.backend_requested)"
+        "- Backend actual: $backendActual"
+        "- Init timing ms: $initTimingMs"
+        "- First response timing ms: $firstResponseTimingMs"
+        "- Native log excerpt: $nativeLogExcerpt"
+        "- Native log SHA-256: $nativeLogSha256"
+        "- CPU fallback: $($Summary.runtime_readiness.cpu_fallback)"
+        "- GPU fallback: $($Summary.runtime_readiness.gpu_fallback)"
+        "- NPU fallback: $($Summary.runtime_readiness.npu_fallback)"
         ""
         "## Data free-space posture"
         ""

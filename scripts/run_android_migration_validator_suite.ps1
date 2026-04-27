@@ -54,6 +54,7 @@ $testModules = @(
     "tests.test_validate_android_managed_device_smoke_summary",
     "tests.test_validate_android_litert_readiness_summary",
     "tests.test_validate_android_orchestrator_smoke_summary",
+    "tests.test_validate_android_uiautomator_24_comparison_summary",
     "tests.test_validate_android_harness_matrix_plan",
     "tests.test_validate_android_ui_state_pack_plan",
     "tests.test_validate_android_capture_summary",

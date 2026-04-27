@@ -282,6 +282,17 @@ Reviewer taxonomy for helper evidence:
   docs are still relevant for targeted flake isolation because it runs each
   test in a separate instrumentation invocation and can clear app data:
   <https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#orchestrator>.
+- UIAutomator 2.4 beta comparison is now captured as a dry-run-only scaffold,
+  not a dependency migration. Use
+  `scripts/run_android_uiautomator_24_comparison.ps1 -DryRun` to write the
+  planned candidate lane for `androidx.test.uiautomator:uiautomator:2.4.0-beta02`
+  against the checked-in `2.3.0` baseline. The summary must keep
+  `status=dry_run_only`, `plan_only=true`, `non_acceptance_evidence=true`,
+  `acceptance_evidence=false`, `would_modify_gradle_files=false`,
+  `would_launch_connected_instrumentation=false`, and
+  `primary_evidence=fixed_four_emulator_matrix`. This scaffold records the
+  comparison plan only; it does not bump dependencies globally or replace
+  fixed four-emulator screenshot/state-pack proof.
 - Use `build_android_ui_state_pack_parallel.ps1 -PlanOnly` before long
   multi-role sweeps when role filters or host flags changed. The plan mode
   writes a JSON plan with selected roles, device metadata, skip flags, and

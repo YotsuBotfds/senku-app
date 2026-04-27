@@ -9,7 +9,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_android_litert_readiness_matrix.ps1"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
-SUMMARY_VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_migration_summary.py"
+SUMMARY_VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_litert_readiness_summary.py"
 VALIDATION_PYTHON = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"
 
 
@@ -147,6 +147,25 @@ class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
         self.assertFalse(summary["request"]["device_required_in_dry_run"])
         self.assertEqual(summary["request"]["prompt"], "LiteRT readiness placeholder prompt.")
         self.assertIn("backend request/response timing", summary["request"]["expected_artifacts"])
+        self.assertEqual(summary["runtime_readiness"]["status"], "not_captured_dry_run")
+        self.assertEqual(summary["runtime_readiness"]["real_run_status"], "not_implemented")
+        self.assertFalse(summary["runtime_readiness"]["acceptance_evidence"])
+        self.assertFalse(summary["runtime_readiness"]["device_required_in_dry_run"])
+        self.assertEqual(summary["runtime_readiness"]["model_bytes"], len(payload))
+        self.assertEqual(summary["runtime_readiness"]["model_sha256"], expected_hash)
+        self.assertEqual(
+            summary["runtime_readiness"]["app_private_path"],
+            "/data/user/0/com.example.senku/files/models/tiny.task",
+        )
+        self.assertEqual(summary["runtime_readiness"]["backend_requested"], "litert")
+        self.assertEqual(summary["runtime_readiness"]["backend_actual"], "")
+        self.assertIsNone(summary["runtime_readiness"]["init_timing_ms"])
+        self.assertIsNone(summary["runtime_readiness"]["first_response_timing_ms"])
+        self.assertEqual(summary["runtime_readiness"]["native_log_excerpt"], "")
+        self.assertEqual(summary["runtime_readiness"]["native_log_sha256"], "")
+        self.assertEqual(summary["runtime_readiness"]["cpu_fallback"], "not_observed_dry_run")
+        self.assertEqual(summary["runtime_readiness"]["gpu_fallback"], "not_observed_dry_run")
+        self.assertEqual(summary["runtime_readiness"]["npu_fallback"], "not_observed_dry_run")
         self.assertEqual(summary["logcat_extraction_plan"]["status"], "planned_for_real_run")
         self.assertEqual(summary["logcat_extraction_plan"]["real_run_status"], "not_implemented")
         self.assertFalse(summary["logcat_extraction_plan"]["adb_required_in_dry_run"])
@@ -179,6 +198,18 @@ class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
         self.assertIn("- Request package: com.example.senku", summary_markdown)
         self.assertIn("- Request real run status: not_implemented", summary_markdown)
         self.assertIn("- Request device required in dry run: false", summary_markdown)
+        self.assertIn("## Runtime readiness", summary_markdown)
+        self.assertIn("- Status: not_captured_dry_run", summary_markdown)
+        self.assertIn("- Model bytes: " + str(len(payload)), summary_markdown)
+        self.assertIn(f"- Model SHA-256: {expected_hash}", summary_markdown)
+        self.assertIn("- App-private path: /data/user/0/com.example.senku/files/models/tiny.task", summary_markdown)
+        self.assertIn("- Backend requested: litert", summary_markdown)
+        self.assertIn("- Backend actual: n/a", summary_markdown)
+        self.assertIn("- Init timing ms: n/a", summary_markdown)
+        self.assertIn("- First response timing ms: n/a", summary_markdown)
+        self.assertIn("- Native log excerpt: n/a", summary_markdown)
+        self.assertIn("- Native log SHA-256: n/a", summary_markdown)
+        self.assertIn("- CPU fallback: not_observed_dry_run", summary_markdown)
         self.assertIn("- Required bytes: " + str(len(payload) * 2 + 67108864), summary_markdown)
         self.assertIn("- Status: planned_for_real_run", summary_markdown)
         self.assertIn("- ADB required in dry run: false", summary_markdown)
@@ -186,7 +217,7 @@ class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
         self.assertTrue(summary_markdown.rstrip().endswith(summary["fixed_four_emulator_stop_line"]))
 
         self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
-        self.assertIn("android_migration_summary: ok", validator.stdout)
+        self.assertIn("android_litert_readiness_summary: ok", validator.stdout)
 
 
 if __name__ == "__main__":

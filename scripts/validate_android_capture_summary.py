@@ -65,6 +65,15 @@ OPTIONAL_MIGRATION_METADATA: dict[str, type | tuple[type, ...]] = {
     "reindex_required": bool,
 }
 
+OPTIONAL_VIEWPORT_FACTS: dict[str, type | tuple[type, ...]] = {
+    "width": int,
+    "height": int,
+    "density": (int, float),
+    "font_scale": (int, float),
+    "window_size_class": str,
+    "source": str,
+}
+
 VALID_ORIENTATIONS = {"portrait", "landscape"}
 OPTIONAL_ARTIFACTS = {"screenrecord"}
 
@@ -160,6 +169,26 @@ def _validate_migration_metadata(data: dict[str, Any], errors: list[str]) -> Non
         )
 
 
+def _validate_viewport_facts(data: dict[str, Any], errors: list[str]) -> None:
+    if "viewport_facts" not in data:
+        return
+
+    scope = "viewport_facts"
+    viewport_facts = data.get("viewport_facts")
+    _validate_required_fields(viewport_facts, OPTIONAL_VIEWPORT_FACTS, errors, scope)
+    if not isinstance(viewport_facts, dict):
+        return
+
+    for key in ("width", "height", "density", "font_scale"):
+        value = viewport_facts.get(key)
+        if isinstance(value, bool):
+            errors.append(
+                f"expected {scope}.{key} to be {_type_name(OPTIONAL_VIEWPORT_FACTS[key])}, got bool"
+            )
+        elif isinstance(value, (int, float)) and value < 0:
+            errors.append(f"expected {scope}.{key} to be non-negative")
+
+
 def validate_capture_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -202,6 +231,7 @@ def validate_capture_summary(path: Path) -> tuple[dict[str, Any] | None, list[st
         "installed_pack_metadata",
     )
     _validate_migration_metadata(data, errors)
+    _validate_viewport_facts(data, errors)
     _validate_evidence_posture(data.get("evidence_posture"), errors)
 
     return data, errors

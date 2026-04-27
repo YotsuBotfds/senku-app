@@ -28,6 +28,7 @@ REQUIRED_TOP_LEVEL: dict[str, type | tuple[type, ...]] = {
     "data_free_space_posture": dict,
     "backend": dict,
     "request": dict,
+    "runtime_readiness": dict,
     "logcat_extraction_plan": dict,
 }
 
@@ -78,6 +79,25 @@ REQUIRED_REQUEST: dict[str, type | tuple[type, ...]] = {
     "real_run_status": str,
     "device_required_in_dry_run": bool,
     "expected_artifacts": list,
+}
+
+REQUIRED_RUNTIME_READINESS: dict[str, type | tuple[type, ...]] = {
+    "status": str,
+    "real_run_status": str,
+    "acceptance_evidence": bool,
+    "device_required_in_dry_run": bool,
+    "model_bytes": (int, type(None)),
+    "model_sha256": str,
+    "app_private_path": str,
+    "backend_requested": str,
+    "backend_actual": str,
+    "init_timing_ms": (int, type(None)),
+    "first_response_timing_ms": (int, type(None)),
+    "native_log_excerpt": str,
+    "native_log_sha256": str,
+    "cpu_fallback": str,
+    "gpu_fallback": str,
+    "npu_fallback": str,
 }
 
 REQUIRED_LOGCAT_EXTRACTION_PLAN: dict[str, type | tuple[type, ...]] = {
@@ -271,6 +291,50 @@ def _validate_logcat_extraction_plan(plan: Any, errors: list[str]) -> None:
                 errors.append(f"missing logcat_extraction_plan.extraction_filters {expected_filter}")
 
 
+def _validate_runtime_readiness(data: dict[str, Any], errors: list[str]) -> None:
+    scope = "runtime_readiness"
+    readiness = data.get(scope)
+    _validate_required_fields(
+        readiness,
+        REQUIRED_RUNTIME_READINESS,
+        errors,
+        scope,
+        allow_empty_strings={"model_sha256", "backend_actual", "native_log_excerpt", "native_log_sha256"},
+    )
+    if not isinstance(readiness, dict):
+        return
+
+    _expect_value(readiness, "status", "not_captured_dry_run", errors, scope)
+    _expect_value(readiness, "real_run_status", "not_implemented", errors, scope)
+    _expect_value(readiness, "acceptance_evidence", False, errors, scope)
+    _expect_value(readiness, "device_required_in_dry_run", False, errors, scope)
+    _expect_value(readiness, "backend_actual", "", errors, scope)
+    _expect_value(readiness, "init_timing_ms", None, errors, scope)
+    _expect_value(readiness, "first_response_timing_ms", None, errors, scope)
+    _expect_value(readiness, "native_log_excerpt", "", errors, scope)
+    _expect_value(readiness, "native_log_sha256", "", errors, scope)
+
+    model = data.get("model")
+    target = data.get("app_private_target")
+    backend = data.get("backend")
+
+    if isinstance(model, dict):
+        for source_key, readiness_key in (("bytes", "model_bytes"), ("sha256", "model_sha256")):
+            if model.get(source_key) != readiness.get(readiness_key):
+                errors.append(f"expected runtime_readiness.{readiness_key} to match model.{source_key}")
+    if isinstance(target, dict) and target.get("path") != readiness.get("app_private_path"):
+        errors.append("expected runtime_readiness.app_private_path to match app_private_target.path")
+    if isinstance(backend, dict) and backend.get("name") != readiness.get("backend_requested"):
+        errors.append("expected runtime_readiness.backend_requested to match backend.name")
+
+    for key in ("cpu_fallback", "gpu_fallback", "npu_fallback"):
+        value = readiness.get(key)
+        if value not in {"not_observed_dry_run", "planned_for_real_run"}:
+            errors.append(
+                f"expected runtime_readiness.{key} to be 'not_observed_dry_run' or 'planned_for_real_run'"
+            )
+
+
 def validate_litert_readiness_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -304,6 +368,7 @@ def validate_litert_readiness_summary(path: Path) -> tuple[dict[str, Any] | None
     )
     _validate_data_free_space_posture(data.get("data_free_space_posture"), data.get("model"), errors)
     _validate_backend_and_request(data, errors)
+    _validate_runtime_readiness(data, errors)
     _validate_logcat_extraction_plan(data.get("logcat_extraction_plan"), errors)
 
     return data, errors

@@ -59,6 +59,14 @@ def make_capture_summary() -> dict:
             "large_data_lane_change": False,
             "reindex_required": False,
         },
+        "viewport_facts": {
+            "width": 1080,
+            "height": 2400,
+            "density": 420,
+            "font_scale": 1.0,
+            "window_size_class": "compact",
+            "source": "adb wm + settings",
+        },
         "evidence_posture": {
             "non_acceptance_evidence": True,
             "acceptance_evidence": False,
@@ -133,6 +141,31 @@ class ValidateAndroidCaptureSummaryTests(unittest.TestCase):
     def test_legacy_summary_without_migration_metadata_still_passes(self):
         summary = make_capture_summary()
         del summary["migration_metadata"]
+
+        _, errors = validate_capture_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+
+    def test_optional_viewport_facts_are_validated_when_present(self):
+        summary = make_capture_summary()
+        del summary["viewport_facts"]["source"]
+        summary["viewport_facts"]["width"] = True
+        summary["viewport_facts"]["density"] = -1.0
+        summary["viewport_facts"]["font_scale"] = "1.0"
+
+        _, errors = validate_capture_summary(self.write_summary(summary))
+
+        self.assertIn("missing viewport_facts.source", errors)
+        self.assertIn("expected viewport_facts.width to be int, got bool", errors)
+        self.assertIn("expected viewport_facts.density to be non-negative", errors)
+        self.assertIn(
+            "expected viewport_facts.font_scale to be int|float, got str",
+            errors,
+        )
+
+    def test_legacy_summary_without_viewport_facts_still_passes(self):
+        summary = make_capture_summary()
+        del summary["viewport_facts"]
 
         _, errors = validate_capture_summary(self.write_summary(summary))
 

@@ -59,6 +59,14 @@ def make_instrumented_capture_summary() -> dict:
             "large_data_lane_change": False,
             "reindex_required": False,
         },
+        "viewport_facts": {
+            "width": 1080,
+            "height": 2400,
+            "density": 420,
+            "font_scale": 1.0,
+            "window_size_class": "compact",
+            "source": "run_android_instrumented_ui_smoke.ps1",
+        },
         "evidence_posture": {
             "non_acceptance_evidence": True,
             "acceptance_evidence": False,
@@ -133,6 +141,26 @@ class ValidateAndroidInstrumentedCaptureSummaryTests(unittest.TestCase):
     def test_legacy_capture_summary_path_without_migration_metadata_still_passes(self):
         summary = make_instrumented_capture_summary()
         del summary["migration_metadata"]
+
+        _, errors = validate_instrumented_capture_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+
+    def test_optional_viewport_facts_are_validated_when_present(self):
+        summary = make_instrumented_capture_summary()
+        del summary["viewport_facts"]["window_size_class"]
+        summary["viewport_facts"]["height"] = -1
+        summary["viewport_facts"]["font_scale"] = False
+
+        _, errors = validate_instrumented_capture_summary(self.write_summary(summary))
+
+        self.assertIn("missing viewport_facts.window_size_class", errors)
+        self.assertIn("expected viewport_facts.height to be non-negative", errors)
+        self.assertIn("expected viewport_facts.font_scale to be int|float, got bool", errors)
+
+    def test_legacy_capture_summary_path_without_viewport_facts_still_passes(self):
+        summary = make_instrumented_capture_summary()
+        del summary["viewport_facts"]
 
         _, errors = validate_instrumented_capture_summary(self.write_summary(summary))
 

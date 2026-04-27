@@ -90,6 +90,17 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertFalse(data["migration_metadata"]["android_layout_change"])
         self.assertFalse(data["migration_metadata"]["large_data_lane_change"])
         self.assertFalse(data["migration_metadata"]["reindex_required"])
+        self.assertEqual(
+            data["viewport_facts"],
+            {
+                "width": 0,
+                "height": 0,
+                "density": 0,
+                "font_scale": 0.0,
+                "window_size_class": "not_provided",
+                "source": "not_provided",
+            },
+        )
 
     def test_markdown_summary_includes_reviewer_fields_without_changing_json(self):
         screenshot = self.write_file("screen.png", b"png bytes")
@@ -125,6 +136,12 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
             package_data_cleared_before_capture=False,
             package_data_restored_after_capture=True,
             package_data_description="restored from harness snapshot",
+            viewport_width=1080,
+            viewport_height=2400,
+            viewport_density=420,
+            viewport_font_scale=1.15,
+            viewport_window_size_class="compact",
+            viewport_source="adb wm + settings",
         )
         before_json = json.dumps(summary, indent=2, sort_keys=True)
 
@@ -135,6 +152,12 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertIn("- serial: `emulator-5556`", markdown)
         self.assertIn("- role: `phone_portrait`", markdown)
         self.assertIn("- orientation: `portrait`", markdown)
+        self.assertIn("- width: `1080`", markdown)
+        self.assertIn("- height: `2400`", markdown)
+        self.assertIn("- density: `420`", markdown)
+        self.assertIn("- font_scale: `1.15`", markdown)
+        self.assertIn("- window_size_class: `compact`", markdown)
+        self.assertIn("- source: `adb wm + settings`", markdown)
         self.assertIn("- non_acceptance_evidence: `true`", markdown)
         self.assertIn("- acceptance_evidence: `false`", markdown)
         self.assertIn(f"- screenshot: `{digest(b'png bytes')}`", markdown)
@@ -188,6 +211,18 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
                 "test-model",
                 "--model-sha256",
                 "a" * 64,
+                "--viewport-width",
+                "1920",
+                "--viewport-height",
+                "1200",
+                "--viewport-density",
+                "240",
+                "--viewport-font-scale",
+                "1.0",
+                "--viewport-window-size-class",
+                "medium",
+                "--viewport-source",
+                "instrumented_summary",
             ],
             cwd=REPO_ROOT,
             capture_output=True,
@@ -212,6 +247,17 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertEqual(data["apk_sha256"], "not_provided")
         self.assertEqual(data["installed_pack_metadata"]["status"], "not_provided")
         self.assertEqual(data["migration_metadata"]["status"], "capture_only")
+        self.assertEqual(
+            data["viewport_facts"],
+            {
+                "width": 1920,
+                "height": 1200,
+                "density": 240.0,
+                "font_scale": 1.0,
+                "window_size_class": "medium",
+                "source": "instrumented_summary",
+            },
+        )
         self.assertIn("- serial: `device-1234`", markdown)
         self.assertIn("- role: `tablet_landscape`", markdown)
         self.assertIn("- orientation: `landscape`", markdown)
@@ -220,6 +266,7 @@ class WriteAndroidCaptureSummaryTests(unittest.TestCase):
         self.assertIn("- sha256: `not_provided`", markdown)
         self.assertIn("- status: `not_provided`", markdown)
         self.assertIn("- status: `capture_only`", markdown)
+        self.assertIn("- window_size_class: `medium`", markdown)
 
 
 if __name__ == "__main__":

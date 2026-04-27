@@ -26,6 +26,14 @@ DEFAULT_MIGRATION_METADATA = {
     "large_data_lane_change": False,
     "reindex_required": False,
 }
+DEFAULT_VIEWPORT_FACTS = {
+    "width": 0,
+    "height": 0,
+    "density": 0,
+    "font_scale": 0.0,
+    "window_size_class": "not_provided",
+    "source": "not_provided",
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -86,6 +94,12 @@ def build_capture_summary(
     package_data_cleared_before_capture: bool = True,
     package_data_restored_after_capture: bool = False,
     package_data_description: str = DEFAULT_PACKAGE_DATA_DESCRIPTION,
+    viewport_width: int = 0,
+    viewport_height: int = 0,
+    viewport_density: int | float = 0,
+    viewport_font_scale: int | float = 0.0,
+    viewport_window_size_class: str = "not_provided",
+    viewport_source: str = "not_provided",
 ) -> dict[str, Any]:
     artifacts = {
         "screenshot": _artifact(screenshot),
@@ -121,6 +135,14 @@ def build_capture_summary(
         },
         "installed_pack_metadata": _load_installed_pack_metadata(installed_pack_metadata),
         "migration_metadata": dict(DEFAULT_MIGRATION_METADATA),
+        "viewport_facts": {
+            "width": viewport_width,
+            "height": viewport_height,
+            "density": viewport_density,
+            "font_scale": viewport_font_scale,
+            "window_size_class": viewport_window_size_class,
+            "source": viewport_source,
+        },
         "evidence_posture": {
             "non_acceptance_evidence": True,
             "acceptance_evidence": False,
@@ -150,6 +172,7 @@ def markdown_for_capture_summary(summary: dict[str, Any]) -> str:
     installed_pack = summary.get("installed_pack_metadata", {})
     migration = summary.get("migration_metadata", {})
     package_data = summary.get("package_data_posture", {})
+    viewport_facts = summary.get("viewport_facts", DEFAULT_VIEWPORT_FACTS)
 
     lines = [
         "# Android Capture Reviewer Summary",
@@ -159,6 +182,15 @@ def markdown_for_capture_summary(summary: dict[str, Any]) -> str:
         f"- serial: `{summary.get('serial', 'not_provided')}`",
         f"- role: `{summary.get('role', 'not_provided')}`",
         f"- orientation: `{summary.get('orientation', 'not_provided')}`",
+        "",
+        "## Viewport Facts",
+        "",
+        f"- width: `{viewport_facts.get('width', 'not_provided')}`",
+        f"- height: `{viewport_facts.get('height', 'not_provided')}`",
+        f"- density: `{viewport_facts.get('density', 'not_provided')}`",
+        f"- font_scale: `{viewport_facts.get('font_scale', 'not_provided')}`",
+        f"- window_size_class: `{viewport_facts.get('window_size_class', 'not_provided')}`",
+        f"- source: `{viewport_facts.get('source', 'not_provided')}`",
         "",
         "## Evidence Posture",
         "",
@@ -270,6 +302,40 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         default=DEFAULT_PACKAGE_DATA_DESCRIPTION,
         help="Human-readable package data posture description.",
     )
+    parser.add_argument(
+        "--viewport-width",
+        type=int,
+        default=DEFAULT_VIEWPORT_FACTS["width"],
+        help="Captured viewport width in pixels, if known.",
+    )
+    parser.add_argument(
+        "--viewport-height",
+        type=int,
+        default=DEFAULT_VIEWPORT_FACTS["height"],
+        help="Captured viewport height in pixels, if known.",
+    )
+    parser.add_argument(
+        "--viewport-density",
+        type=float,
+        default=DEFAULT_VIEWPORT_FACTS["density"],
+        help="Captured viewport density, if known.",
+    )
+    parser.add_argument(
+        "--viewport-font-scale",
+        type=float,
+        default=DEFAULT_VIEWPORT_FACTS["font_scale"],
+        help="Captured font scale, if known.",
+    )
+    parser.add_argument(
+        "--viewport-window-size-class",
+        default=DEFAULT_VIEWPORT_FACTS["window_size_class"],
+        help="Captured window size class, if known.",
+    )
+    parser.add_argument(
+        "--viewport-source",
+        default=DEFAULT_VIEWPORT_FACTS["source"],
+        help="Source for viewport facts, if known.",
+    )
     return parser.parse_args(argv)
 
 
@@ -292,6 +358,12 @@ def main(argv: list[str] | None = None) -> int:
             package_data_cleared_before_capture=args.package_data_cleared_before_capture,
             package_data_restored_after_capture=args.package_data_restored_after_capture,
             package_data_description=args.package_data_description,
+            viewport_width=args.viewport_width,
+            viewport_height=args.viewport_height,
+            viewport_density=args.viewport_density,
+            viewport_font_scale=args.viewport_font_scale,
+            viewport_window_size_class=args.viewport_window_size_class,
+            viewport_source=args.viewport_source,
         )
         write_capture_summary(args.output, summary)
         if args.markdown_out:

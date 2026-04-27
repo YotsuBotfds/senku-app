@@ -212,6 +212,12 @@ $steps.Add((Invoke-BundleCommand -Name "orchestrator_smoke_dry_run" -Command @(
     "-OutputDir", $orchestratorDir, "-DryRun"
 ) -OutputDirectory $orchestratorDir -SummaryPath (Join-Path $orchestratorDir "summary.json") -MarkdownPath (Join-Path $orchestratorDir "summary.md"))) | Out-Null
 
+$uiautomatorDir = Join-Path $resolvedOutputDir "uiautomator_24_comparison"
+$steps.Add((Invoke-BundleCommand -Name "uiautomator_24_comparison_dry_run" -Command @(
+    "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "run_android_uiautomator_24_comparison.ps1"),
+    "-OutputDir", $uiautomatorDir, "-DryRun"
+) -OutputDirectory $uiautomatorDir -SummaryPath (Join-Path $uiautomatorDir "summary.json") -MarkdownPath (Join-Path $uiautomatorDir "summary.md"))) | Out-Null
+
 $harnessDir = Join-Path $resolvedOutputDir "harness_matrix_plan"
 $steps.Add((Invoke-BundleCommand -Name "harness_matrix_plan_only" -Command @(
     "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "run_android_harness_matrix.ps1"),
@@ -239,6 +245,7 @@ $validationCommands = @(
     [ordered]@{ name = "validate_litert_readiness"; command = "$($python) scripts\validate_android_litert_readiness_summary.py $litertDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $litertDir "summary.json")) },
     [ordered]@{ name = "validate_senku_tablet_2_large_data_avd_preflight"; command = "$($python) scripts\validate_senku_tablet_2_large_data_avd_preflight_summary.py $tabletAvdDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $tabletAvdDir "summary.json")) },
     [ordered]@{ name = "validate_orchestrator_smoke"; command = "$($python) scripts\validate_android_orchestrator_smoke_summary.py $orchestratorDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $orchestratorDir "summary.json")) },
+    [ordered]@{ name = "validate_uiautomator_24_comparison"; command = "$($python) scripts\validate_android_uiautomator_24_comparison_summary.py $uiautomatorDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $uiautomatorDir "summary.json")) },
     [ordered]@{ name = "validate_harness_matrix_plan"; command = "$($python) scripts\validate_android_harness_matrix_plan.py $harnessDir\summary.json"; target = (Convert-ToRepoRelativePath -Path (Join-Path $harnessDir "summary.json")) }
 )
 if ($null -ne $uiPlanPath) {
@@ -258,6 +265,7 @@ foreach ($validation in @($validationCommands)) {
         "validate_litert_readiness" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_litert_readiness_summary.py"), (Join-Path $litertDir "summary.json")) }
         "validate_senku_tablet_2_large_data_avd_preflight" { $parts = @($python, (Join-Path $PSScriptRoot "validate_senku_tablet_2_large_data_avd_preflight_summary.py"), (Join-Path $tabletAvdDir "summary.json")) }
         "validate_orchestrator_smoke" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_orchestrator_smoke_summary.py"), (Join-Path $orchestratorDir "summary.json")) }
+        "validate_uiautomator_24_comparison" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_uiautomator_24_comparison_summary.py"), (Join-Path $uiautomatorDir "summary.json")) }
         "validate_harness_matrix_plan" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_harness_matrix_plan.py"), (Join-Path $harnessDir "summary.json")) }
         "validate_ui_state_pack_plan" { $parts = @($python, (Join-Path $PSScriptRoot "validate_android_ui_state_pack_plan.py"), $uiPlanPath.FullName) }
     }
