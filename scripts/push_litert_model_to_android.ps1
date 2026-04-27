@@ -133,7 +133,18 @@ try {
     Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "mkdir", "-p", $appPrefsDir) | Out-Null
 
     if ($PruneExistingModels) {
-        Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "sh", "-c", "rm -f files/models/*.litertlm files/models/*.task") | Out-Null
+        $existingModels = Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "ls", "files/models") -AllowFailure
+        if ($script:LastAdbExitCode -eq 0) {
+            foreach ($line in $existingModels) {
+                $trimmed = ([string]$line).Trim()
+                if ([string]::IsNullOrWhiteSpace($trimmed)) {
+                    continue
+                }
+                if ($trimmed.EndsWith(".litertlm") -or $trimmed.EndsWith(".task")) {
+                    Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "rm", "-f", ("files/models/" + $trimmed)) | Out-Null
+                }
+            }
+        }
     }
 
     $remoteModelPath = "$RemoteTempDir/$modelFileName"

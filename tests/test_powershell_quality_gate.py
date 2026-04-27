@@ -192,6 +192,15 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertNotIn('$EffectiveSkipInstall = $SkipInstall -or', script)
         self.assertIn("platform_anr = $platformAnrEvidence", script)
 
+    def test_litert_model_push_prunes_models_without_shell_wildcards(self):
+        script = (REPO_ROOT / "scripts" / "push_litert_model_to_android.ps1").read_text(encoding="utf-8")
+
+        self.assertIn('Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "ls", "files/models") -AllowFailure', script)
+        self.assertIn('$trimmed.EndsWith(".litertlm") -or $trimmed.EndsWith(".task")', script)
+        self.assertIn('Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "rm", "-f", ("files/models/" + $trimmed))', script)
+        self.assertNotIn('sh", "-c"', script)
+        self.assertNotIn('files/models/*.litertlm', script)
+
     def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
 
