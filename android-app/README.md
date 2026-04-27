@@ -224,6 +224,22 @@ If `-ModelPath` is omitted, the helper looks for these common names in repo root
 - `gemma-4-E2B-it.litertlm`
 - `gemma-4-E2B-it.task`
 
+To run the fast local-model readiness smoke after pushing a model, use the focused
+instrumentation class instead of a full generated-answer validation pack:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device emulator-5556 `
+  -TestClass com.senku.mobile.ModelFileStoreImportedModelTest#importedLiteRtModelIsDiscoverableAndNonEmpty `
+  -SmokeProfile custom `
+  -SkipBuild `
+  -SkipInstall
+```
+
+Omit `-SkipInstall` once after adding or rebuilding the test APK; `adb install -r`
+preserves app data, while uninstalling or clearing data removes the imported
+model.
+
 ## Next Step
 
 Current priorities:

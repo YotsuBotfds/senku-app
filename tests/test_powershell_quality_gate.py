@@ -11,6 +11,7 @@ ANDROID_PROMPT_PATH = REPO_ROOT / "scripts" / "run_android_prompt.ps1"
 ANDROID_SMOKE_PATH = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
 ANDROID_UI_STATE_PACK_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack.ps1"
 ANDROID_UI_STATE_PACK_PARALLEL_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack_parallel.ps1"
+LITERT_MODEL_PUSH_PATH = REPO_ROOT / "scripts" / "push_litert_model_to_android.ps1"
 ANDROID_WRAPPER_SMOKE_PATHS = (
     "scripts\\run_android_instrumented_ui_smoke.ps1",
     "scripts\\run_android_prompt.ps1",
@@ -25,6 +26,7 @@ ANDROID_HARNESS_SCRIPT_PATHS = (
     "scripts\\build_android_ui_state_pack.ps1",
     "scripts\\build_android_ui_state_pack_parallel.ps1",
     "scripts\\start_litert_host_server.ps1",
+    "scripts\\push_litert_model_to_android.ps1",
 )
 WRAPPER_SLICE_PATHS = (
     "scripts\\run_powershell_quality_gate.ps1",
@@ -193,13 +195,16 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("platform_anr = $platformAnrEvidence", script)
 
     def test_litert_model_push_prunes_models_without_shell_wildcards(self):
-        script = (REPO_ROOT / "scripts" / "push_litert_model_to_android.ps1").read_text(encoding="utf-8")
+        script = LITERT_MODEL_PUSH_PATH.read_text(encoding="utf-8")
 
+        self.assertIn("[switch]$PruneExistingModels", script)
         self.assertIn('Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "ls", "files/models") -AllowFailure', script)
+        self.assertIn("$script:LastAdbExitCode -eq 0", script)
         self.assertIn('$trimmed.EndsWith(".litertlm") -or $trimmed.EndsWith(".task")', script)
         self.assertIn('Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "run-as", $PackageName, "rm", "-f", ("files/models/" + $trimmed))', script)
         self.assertNotIn('sh", "-c"', script)
         self.assertNotIn('files/models/*.litertlm', script)
+        self.assertNotIn('files/models/*.task', script)
 
     def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
