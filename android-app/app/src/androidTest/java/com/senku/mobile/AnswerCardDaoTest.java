@@ -53,6 +53,32 @@ public final class AnswerCardDaoTest {
     }
 
     @Test
+    public void loadCardsForGuideIdsReturnsEmptyForColumnIncompatibleOldAnswerCardsTable() {
+        database = SQLiteDatabase.create(null);
+        createOldAnswerCardsTable(database);
+        createClausesTable(database);
+        createSourcesTable(database);
+        database.execSQL(
+            "INSERT INTO answer_cards (" +
+                "card_id, guide_id, slug, title, risk_tier, evidence_owner, review_status" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?)",
+            new Object[]{
+                "poisoning_unknown_ingestion",
+                "GD-001",
+                "poisoning",
+                "Unknown ingestion",
+                "critical",
+                "guide-corpus",
+                "pilot_reviewed"
+            }
+        );
+
+        AnswerCardDao dao = new AnswerCardDao(database);
+
+        assertTrue(dao.loadCardsForGuideIds(setOf("GD-001"), 5).isEmpty());
+    }
+
+    @Test
     public void loadCardsForGuideIdsLoadsReviewedCardsClausesAndSources() {
         database = SQLiteDatabase.create(null);
         createAnswerCardTables(database);
@@ -229,6 +255,20 @@ public final class AnswerCardDaoTest {
                 "routine_boundary TEXT, " +
                 "acceptable_uncertain_fit TEXT, " +
                 "notes TEXT" +
+                ")"
+        );
+    }
+
+    private static void createOldAnswerCardsTable(SQLiteDatabase database) {
+        database.execSQL(
+            "CREATE TABLE answer_cards (" +
+                "card_id TEXT PRIMARY KEY, " +
+                "guide_id TEXT NOT NULL, " +
+                "slug TEXT, " +
+                "title TEXT, " +
+                "risk_tier TEXT, " +
+                "evidence_owner TEXT, " +
+                "review_status TEXT" +
                 ")"
         );
     }

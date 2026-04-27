@@ -84,6 +84,9 @@ Landed Android sequence:
   dump artifacts that contain the platform `System UI isn't responding` ANR
   dialog, preserving the exact blocker in `failure_reason` and `platform_anr`
   without auto-dismissing or changing app behavior.
+- `RAG-A15`: Android test coverage now guards old column-incompatible
+  answer-card schemas failing closed, and adds an assumption-gated census for
+  already-pushed current-head 271-card packs without invoking runtime planning.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
