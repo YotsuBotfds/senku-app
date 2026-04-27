@@ -53,7 +53,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewRowBehaviorText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview the linked guide on this page first. Use Open full guide when ready to switch pages.";
+            return "Preview this linked guide here, then open it when ready.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }
@@ -67,7 +67,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewCaptionText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview the selected linked guide on this page. Use Open full guide when ready to switch pages.";
+            return "Preview the selected linked guide here, or open the full guide.";
         }
         if (state.activeGuideContextPanel) {
             return buildRelatedGuidePreviewComparisonCaption(state);

@@ -152,6 +152,18 @@ fun CollapsibleEvidencePane(
                         emptyDescription = sourceGraphEmpty,
                     )
                 }
+            } else if (anchor.hasSource) {
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 1.dp,
+                    color = colors.hairlineStrong,
+                )
+                CollapsedEvidencePreview(
+                    anchor = anchor,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onAnchorClick),
+                )
             }
         }
     }
@@ -190,6 +202,61 @@ private fun ActiveEvidenceSection(
                     snippet = anchor.snippet,
                 ),
                 onClick = { onAnchorClick() },
+            )
+        }
+    }
+}
+
+@Composable
+private fun CollapsedEvidencePreview(
+    anchor: AnchorState,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    val typography = SenkuTheme.typography
+    val title = anchor.title.trim().ifEmpty { anchor.id.trim().ifEmpty { "Active evidence" } }
+    val section = anchor.section.trim()
+    val snippet = anchor.snippet.trim()
+
+    Column(
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Text(
+            text = listOf(anchor.id.trim(), section)
+                .filter { it.isNotEmpty() }
+                .joinToString(" | ")
+                .ifEmpty { "Active source" },
+            style = typography.monoCaps.copy(
+                fontSize = 10.sp,
+                lineHeight = 13.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            color = colors.accent,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = title,
+            style = typography.uiBody.copy(
+                fontSize = 13.sp,
+                lineHeight = 17.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
+            color = colors.ink0,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (snippet.isNotEmpty()) {
+            Text(
+                text = snippet,
+                style = typography.smallBody.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                ),
+                color = colors.ink2,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

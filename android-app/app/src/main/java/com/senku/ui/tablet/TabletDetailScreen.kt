@@ -235,7 +235,7 @@ fun TabletDetailScreen(
                     onAnchorClick = onAnchorClick,
                     onXRefClick = onXRefClick,
                     modifier = Modifier
-                        .width(280.dp)
+                        .width(320.dp)
                         .fillMaxHeight()
                         .semantics {
                             paneTitle = evidencePaneTitle

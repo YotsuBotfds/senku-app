@@ -89,14 +89,14 @@ final class DetailRelatedGuidePresentationFormatter {
         return formatCountLabel(count, "linked guide", "linked guides")
             + " for "
             + anchorLabel
-            + ". Preview a linked guide here, then use Open full guide to switch pages.";
+            + ". Preview here, or open the full guide.";
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
         return formatCountLabel(count, "linked guide", "linked guides")
             + " for "
             + resolveSourceAnchorLabel(state)
-            + ". Preview a linked guide here, then use Open full guide to switch pages.";
+            + ". Preview here, or open the full guide.";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
@@ -232,7 +232,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     private String buildRelatedGuidePreviewRowBehaviorText(boolean nonRailCrossReferenceCopy) {
         if (nonRailCrossReferenceCopy) {
-            return "Preview the linked guide on this page first. Use Open full guide when ready to switch pages.";
+            return "Preview this linked guide here, then open it when ready.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

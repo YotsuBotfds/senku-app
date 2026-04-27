@@ -943,12 +943,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <Button
                             android:id="@+id/detail_related_guide_preview_toggle"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_source_link"
                             android:text="@string/detail_provenance_show_more"
@@ -958,9 +957,9 @@
 
                         <Button
                             android:id="@+id/detail_related_guide_preview_open"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="6dp"
                             android:background="@drawable/bg_source_link"
                             android:text="@string/detail_related_guides_preview_open"
                             android:textAllCaps="false"
