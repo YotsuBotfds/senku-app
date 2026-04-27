@@ -58,7 +58,16 @@ REQUIRED_NON_ACCEPTANCE_TOOLING_FIELDS: dict[str, type | tuple[type, ...]] = {
     "stop_line": str,
 }
 
+REQUIRED_FTS_FALLBACK_WRAPPER_FIELDS: dict[str, type | tuple[type, ...]] = {
+    "runtime_evidence": str,
+    "passed_count": int,
+    "failed_devices": list,
+    "devices": list,
+    "dry_run": bool,
+}
+
 FIXED_FOUR_EMULATOR_MATRIX = "fixed_four_emulator_matrix"
+FTS_FALLBACK_RUNTIME_EVIDENCE = "fts4_fallback"
 
 
 def _expect(
@@ -172,6 +181,46 @@ def _validate_non_acceptance_tooling_summary(data: dict[str, Any]) -> list[str]:
     return errors
 
 
+def _validate_str_list(value: Any, errors: list[str], scope: str) -> None:
+    if not isinstance(value, list):
+        return
+    for index, item in enumerate(value):
+        if not isinstance(item, str) or not item.strip():
+            errors.append(f"expected {scope}[{index}] to be non-empty str")
+
+
+def _validate_fts_fallback_wrapper_summary(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for key, expected_type in REQUIRED_FTS_FALLBACK_WRAPPER_FIELDS.items():
+        _expect(data, key, expected_type, errors, "root")
+
+    if data.get("runtime_evidence") != FTS_FALLBACK_RUNTIME_EVIDENCE:
+        errors.append(f"expected root.runtime_evidence to be {FTS_FALLBACK_RUNTIME_EVIDENCE!r}")
+    if "not_fts5_runtime_proof" in data and data.get("not_fts5_runtime_proof") is not True:
+        errors.append("expected root.not_fts5_runtime_proof to be true")
+    if "fts5_runtime_proof" in data and data.get("fts5_runtime_proof") is not False:
+        errors.append("expected root.fts5_runtime_proof to be false")
+    if "host_adb_platform_tools_version" in data:
+        _expect(data, "host_adb_platform_tools_version", str, errors, "root")
+
+    _validate_non_negative_count(data, "passed_count", errors, "root")
+    _validate_str_list(data.get("failed_devices"), errors, "root.failed_devices")
+    _validate_str_list(data.get("devices"), errors, "root.devices")
+    devices = data.get("devices")
+    failed_devices = data.get("failed_devices")
+    if isinstance(devices, list) and not devices:
+        errors.append("expected root.devices to be non-empty")
+    if isinstance(devices, list) and isinstance(failed_devices, list):
+        unknown_failed_devices = sorted(set(failed_devices) - set(devices))
+        if unknown_failed_devices:
+            errors.append(
+                "expected root.failed_devices to be a subset of root.devices, "
+                f"unknown: {', '.join(unknown_failed_devices)}"
+            )
+
+    return errors
+
+
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -183,6 +232,9 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
 
     if not isinstance(data, dict):
         return None, ["top-level JSON document must be an object"]
+
+    if data.get("runtime_evidence") == FTS_FALLBACK_RUNTIME_EVIDENCE:
+        return data, _validate_fts_fallback_wrapper_summary(data)
 
     if any(key in data for key in ("non_acceptance_evidence", "acceptance_evidence", "dry_run")):
         return data, _validate_non_acceptance_tooling_summary(data)
@@ -217,12 +269,17 @@ def main(argv: list[str] | None = None) -> int:
 
     assert data is not None
     print("android_migration_summary: ok")
-    print(f"status: {data.get('status')}")
     if data.get("non_acceptance_evidence") is True:
+        print(f"status: {data.get('status')}")
         print("evidence: non_acceptance")
         print(f"primary_evidence: {data.get('primary_evidence')}")
         print(f"comparison_baseline: {data.get('comparison_baseline')}")
+    elif data.get("runtime_evidence") == FTS_FALLBACK_RUNTIME_EVIDENCE:
+        print("evidence: fts4_fallback")
+        print(f"devices: {len(data.get('devices', []))}")
+        print(f"passed_count: {data.get('passed_count')}")
     else:
+        print(f"status: {data.get('status')}")
         print(f"devices: {len(data.get('devices', []))}")
         print(f"total_states: {data.get('total_states')}")
     return 0

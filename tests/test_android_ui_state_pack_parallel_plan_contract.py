@@ -49,6 +49,8 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
 
             self.assertTrue(plan["plan_only"])
             self.assertTrue(plan["preflight_only"])
+            self.assertFalse(plan["acceptance_evidence"])
+            self.assertTrue(plan["non_acceptance_evidence"])
             self.assertFalse(plan["will_build"])
             self.assertFalse(plan["will_install"])
             self.assertFalse(plan["will_start_role_jobs"])
@@ -72,6 +74,29 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             )
             self.assertEqual(plan["max_parallel_devices"], 4)
             self.assertEqual(plan["effective_max_parallel_devices"], 4)
+            intent = plan["migration_checklist_intent"]
+            self.assertEqual(
+                intent["selected_roles"],
+                ["phone_portrait", "tablet_landscape"],
+            )
+            self.assertFalse(intent["acceptance_evidence"])
+            self.assertTrue(intent["non_acceptance_evidence"])
+            self.assertTrue(intent["preflight_only"])
+            self.assertFalse(intent["host_flags"]["skip_host_states"])
+            self.assertTrue(intent["host_flags"]["will_request_host_states"])
+            self.assertEqual(
+                intent["host_model_identity"]["host_inference_url"],
+                "http://10.0.2.2:1235/v1",
+            )
+            self.assertEqual(
+                intent["host_model_identity"]["host_inference_model"],
+                "gemma-4-e2b-it-litert",
+            )
+            self.assertFalse(intent["skip_flags"]["skip_build"])
+            self.assertFalse(intent["skip_flags"]["skip_install"])
+            self.assertFalse(intent["skip_flags"]["skip_host_states"])
+            self.assertEqual(intent["max_parallel_devices"], 4)
+            self.assertEqual(intent["effective_max_parallel_devices"], 4)
             self.assertTrue(
                 all("-SkipFinalize -SkipBuild" in launcher["command"] for launcher in plan["launchers"])
             )
@@ -124,6 +149,12 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             self.assertEqual(plan["max_parallel_devices"], 0)
             self.assertEqual(plan["effective_max_parallel_devices"], 1)
             self.assertEqual(plan["selected_roles"], ["phone_portrait"])
+            self.assertEqual(plan["migration_checklist_intent"]["max_parallel_devices"], 0)
+            self.assertEqual(plan["migration_checklist_intent"]["effective_max_parallel_devices"], 1)
+            self.assertEqual(
+                plan["migration_checklist_intent"]["selected_roles"],
+                ["phone_portrait"],
+            )
 
     def test_plan_only_branch_precedes_launch_and_finalize_work(self):
         script = SCRIPT_PATH.read_text(encoding="utf-8-sig")

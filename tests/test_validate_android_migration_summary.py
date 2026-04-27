@@ -56,6 +56,33 @@ def make_non_acceptance_tooling_summary() -> dict:
     }
 
 
+def make_fts_fallback_wrapper_summary() -> dict:
+    return {
+        "passed_count": 4,
+        "failed_devices": [],
+        "runtime_evidence": "fts4_fallback",
+        "not_fts5_runtime_proof": True,
+        "fts5_runtime_proof": False,
+        "devices": [
+            "emulator-5554",
+            "emulator-5556",
+            "emulator-5558",
+            "emulator-5560",
+        ],
+        "host_adb_platform_tools_version": "36.0.0-13206524",
+        "dry_run": False,
+        "results": [
+            {
+                "device": "emulator-5554",
+                "status": "passed",
+                "passed": True,
+                "runtime_evidence": "fts4_fallback",
+                "dry_run": False,
+            }
+        ],
+    }
+
+
 class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
     def write_summary(self, payload: dict) -> Path:
         temp_dir = tempfile.TemporaryDirectory()
@@ -77,6 +104,44 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertIsNotNone(data)
         self.assertEqual(data["status"], "dry_run_only")
+
+    def test_valid_fts_fallback_wrapper_summary_passes(self):
+        data, errors = validate_summary(self.write_summary(make_fts_fallback_wrapper_summary()))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["runtime_evidence"], "fts4_fallback")
+
+    def test_legacy_fts_fallback_wrapper_summary_without_newer_fields_passes(self):
+        summary = make_fts_fallback_wrapper_summary()
+        del summary["not_fts5_runtime_proof"]
+        del summary["fts5_runtime_proof"]
+        del summary["host_adb_platform_tools_version"]
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+
+    def test_fts_fallback_wrapper_summary_rejects_wrong_runtime_proof_fields(self):
+        summary = make_fts_fallback_wrapper_summary()
+        summary["not_fts5_runtime_proof"] = False
+        summary["fts5_runtime_proof"] = True
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.not_fts5_runtime_proof to be true", errors)
+        self.assertIn("expected root.fts5_runtime_proof to be false", errors)
+
+    def test_fts_fallback_wrapper_summary_rejects_failed_device_outside_device_list(self):
+        summary = make_fts_fallback_wrapper_summary()
+        summary["failed_devices"] = ["emulator-9999"]
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.failed_devices to be a subset of root.devices, unknown: emulator-9999",
+            errors,
+        )
 
     def test_non_acceptance_tooling_summary_rejects_acceptance_evidence(self):
         summary = make_non_acceptance_tooling_summary()

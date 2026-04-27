@@ -3,6 +3,7 @@ param(
     [string]$ModelPath = "",
     [string]$PackageName = "com.senku.mobile",
     [string]$RemoteTempDir = "/data/local/tmp/senku_litert_model_push",
+    [switch]$DryRun,
     [switch]$SkipDataSpaceCheck,
     [switch]$RestartApp,
     [switch]$ForceStop,
@@ -192,6 +193,24 @@ $prefsXml = @"
     <string name="model_path">$appModelPath</string>
 </map>
 "@
+
+if ($DryRun) {
+    $modelGiB = [Math]::Round(($modelBytes / 1GB), 2)
+    $requiredBytes = ($modelBytes * 2L) + 67108864L
+    $requiredGiB = [Math]::Round(($requiredBytes / 1GB), 2)
+
+    Write-Host "LiteRT model push dry run; no emulator/device commands will be run and no bytes will be transferred."
+    Write-Host "Device: $Device"
+    Write-Host "Package: $PackageName"
+    Write-Host "Model: $resolvedModelPath"
+    Write-Host "Model size: $modelBytes bytes (${modelGiB} GiB)"
+    Write-Host "Target: $appModelPath"
+    Write-Host "Staging requirement: model is staged in $RemoteTempDir before copying into app storage."
+    Write-Host "Free-space check posture: real push requires about ${requiredGiB} GiB free on /data unless -SkipDataSpaceCheck is set."
+    Write-Host "SkipDataSpaceCheck posture: $([bool]$SkipDataSpaceCheck)"
+    Write-Host "Transfer posture: skipped by -DryRun."
+    return
+}
 
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_litert_model_push_" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Force -Path $tempDir | Out-Null

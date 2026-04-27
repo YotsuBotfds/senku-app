@@ -83,6 +83,8 @@ if ($PlanOnly) {
         run_id = $runId
         output_root = $OutputRoot
         preflight_only = $true
+        acceptance_evidence = $false
+        non_acceptance_evidence = $true
         will_build = $false
         will_install = $false
         will_start_role_jobs = $false
@@ -97,6 +99,27 @@ if ($PlanOnly) {
         max_parallel_devices = [int]$MaxParallelDevices
         effective_max_parallel_devices = [Math]::Max(1, $MaxParallelDevices)
         plan_only = $true
+        migration_checklist_intent = [pscustomobject]@{
+            selected_roles = @($roles)
+            host_flags = [pscustomobject]@{
+                skip_host_states = [bool]$SkipHostStates
+                will_request_host_states = -not [bool]$SkipHostStates
+            }
+            host_model_identity = [pscustomobject]@{
+                host_inference_url = $HostInferenceUrl
+                host_inference_model = $HostInferenceModel
+            }
+            skip_flags = [pscustomobject]@{
+                skip_build = [bool]$SkipBuild
+                skip_install = [bool]$SkipInstall
+                skip_host_states = [bool]$SkipHostStates
+            }
+            max_parallel_devices = [int]$MaxParallelDevices
+            effective_max_parallel_devices = [Math]::Max(1, $MaxParallelDevices)
+            acceptance_evidence = $false
+            non_acceptance_evidence = $true
+            preflight_only = $true
+        }
         launchers = @($roles | ForEach-Object {
             [pscustomobject]@{
                 role = $_
