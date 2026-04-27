@@ -81,6 +81,17 @@ class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
         self.assertEqual(plan["launch_profile"], "large-litert-data")
         self.assertEqual(plan["partition_size_mb"], 8192)
         self.assertIn("Planning, dry-run", " ".join(plan["acceptance_criteria"]))
+        self.assertEqual(len(plan["validation_commands"]), 1)
+        validation_command = plan["validation_commands"][0]
+        self.assertEqual(validation_command["name"], "validate_headless_state_pack_lane_artifact")
+        self.assertIn("validate_android_headless_state_pack_lane_summary.py", validation_command["command"])
+        self.assertIn(str(plan_path), validation_command["command"])
+        self.assertEqual(validation_command["validates"], "headless_lane_plan.json")
+        self.assertEqual(Path(validation_command["artifact_path"]), plan_path)
+        self.assertTrue(validation_command["plan_only"])
+        self.assertFalse(validation_command["will_start_jobs"])
+        self.assertFalse(validation_command["will_touch_emulators"])
+        self.assertIn("does not start jobs or touch emulators", validation_command["note"])
         self.assertIn("Non-acceptance evidence", output)
         self.assertFalse((plan_path.parent / "headless_lane_summary.json").exists())
 
@@ -113,6 +124,10 @@ class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
         self.assertIn("-WhatIf", plan["commands"]["emulator_profile_preflight"])
         self.assertIn("-Headless", plan["commands"]["emulator_real_run"])
         self.assertIn("build_android_ui_state_pack_parallel.ps1", plan["commands"]["state_pack_real_run"])
+        validation_command = plan["validation_commands"][0]
+        self.assertIn("validate_android_headless_state_pack_lane_summary.py", validation_command["command"])
+        self.assertTrue(validation_command["plan_only"])
+        self.assertFalse(validation_command["will_touch_emulators"])
         self.assertFalse((plan_path.parent / "headless_lane_summary.json").exists())
 
     def test_without_plan_or_real_run_refuses_before_launching(self):
@@ -155,6 +170,10 @@ class RunAndroidHeadlessStatePackLaneContractTests(unittest.TestCase):
         self.assertIn('"-LaunchProfile", $LaunchProfile', script)
         self.assertIn("acceptance_label_allowed = [bool]$acceptanceEvidence", script)
         self.assertIn("planning_artifacts_are_acceptance = $false", script)
+        self.assertIn("validation_commands = @(New-ValidationCommands", script)
+        self.assertIn("validate_android_headless_state_pack_lane_summary.py", script)
+        self.assertIn("will_touch_emulators = $false", script)
+        self.assertIn("headless_lane_summary.json", script)
         self.assertIn("if ($null -ne $device.roles)", script)
         self.assertIn("foreach ($role in @($device.roles))", script)
 

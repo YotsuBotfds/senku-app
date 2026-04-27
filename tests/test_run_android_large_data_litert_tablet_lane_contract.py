@@ -11,7 +11,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "run_android_large_data_litert_tablet_lane.ps1"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
-SUMMARY_VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_migration_summary.py"
+SUMMARY_VALIDATOR_SCRIPT = (
+    REPO_ROOT / "scripts" / "validate_android_large_data_litert_tablet_lane_summary.py"
+)
 VALIDATION_PYTHON = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"
 
 
@@ -92,6 +94,8 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("run_android_litert_readiness_matrix.ps1", self.script)
         self.assertIn("start_senku_emulator_matrix.ps1", self.script)
         self.assertIn("run_android_instrumented_ui_smoke.ps1", self.script)
+        self.assertIn("validate_android_large_data_litert_tablet_lane_summary.py", self.script)
+        self.assertIn("validation_commands", self.script)
         self.assertIn("ui_acceptance_evidence = $false", self.script)
         self.assertIn("deploy/runtime evidence only", self.script)
 
@@ -182,6 +186,24 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("-DryRun", summary["planned_commands"]["model_push"])
         self.assertIn("-DryRun", summary["planned_commands"]["litert_readiness"])
         self.assertIn("large-litert-data", summary["planned_commands"]["launch_profile_preflight"])
+        self.assertEqual(len(summary["validation_commands"]), 1)
+        validation_command = summary["validation_commands"][0]
+        self.assertEqual(
+            validation_command["name"],
+            "validate_large_data_litert_tablet_lane_summary",
+        )
+        self.assertIn(
+            "validate_android_large_data_litert_tablet_lane_summary.py",
+            validation_command["command"],
+        )
+        self.assertIn(str(summary_path), validation_command["command"])
+        self.assertEqual(validation_command["validates"], "summary.json")
+        self.assertEqual(Path(validation_command["summary_json_path"]), summary_path)
+        self.assertTrue(validation_command["plan_only"])
+        self.assertFalse(validation_command["will_start_jobs"])
+        self.assertFalse(validation_command["will_touch_emulators"])
+        self.assertIn("does not start jobs", validation_command["note"])
+        self.assertIn("touch emulators", validation_command["note"])
 
         self.assertEqual(launch["profile_metadata"]["profile"], "large-litert-data")
         self.assertEqual(launch["profile_metadata"]["expected_serial"], "emulator-5554")
@@ -199,10 +221,15 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("Real mode: false", markdown)
         self.assertIn("- UI acceptance evidence: false", markdown)
         self.assertIn("- Runtime evidence: false", markdown)
+        self.assertIn("## Validation Commands", markdown)
+        self.assertIn("validate_large_data_litert_tablet_lane_summary:", markdown)
+        self.assertIn("validate_android_large_data_litert_tablet_lane_summary.py", markdown)
+        self.assertIn("validates: summary.json", markdown)
+        self.assertIn("will_touch_emulators: False", markdown)
         self.assertTrue(markdown.rstrip().endswith(summary["stop_line"]))
 
         self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
-        self.assertIn("android_migration_summary: ok", validator.stdout)
+        self.assertIn("android_large_data_litert_tablet_lane_summary: ok", validator.stdout)
 
 
 if __name__ == "__main__":

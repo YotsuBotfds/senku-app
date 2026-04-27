@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('compile', 'unit', 'ingest', 'guide')]
+    [ValidateSet('compile', 'unit', 'ingest', 'guide', 'android-migration')]
     [string]$Mode = 'compile',
 
     [string]$Wave = 'be',
@@ -72,6 +72,13 @@ try {
                 -ExtraBenchArgs $ExtraBenchArgs
             if ($LASTEXITCODE -ne 0) {
                 throw "guide validation failed with exit code $LASTEXITCODE"
+            }
+        }
+        'android-migration' {
+            $androidMigrationScript = Join-Path $PSScriptRoot "run_android_migration_validator_suite.ps1"
+            & $androidMigrationScript -PythonPath $pythonPath
+            if ($LASTEXITCODE -ne 0) {
+                throw "android migration validation failed with exit code $LASTEXITCODE"
             }
         }
     }

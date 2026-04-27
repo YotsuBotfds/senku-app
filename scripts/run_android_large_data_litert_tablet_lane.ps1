@@ -27,6 +27,7 @@ $launchScript = Join-Path $PSScriptRoot "start_senku_emulator_matrix.ps1"
 $pushScript = Join-Path $PSScriptRoot "push_litert_model_to_android.ps1"
 $readinessScript = Join-Path $PSScriptRoot "run_android_litert_readiness_matrix.ps1"
 $instrumentedSmokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
+$summaryValidatorScript = Join-Path $PSScriptRoot "validate_android_large_data_litert_tablet_lane_summary.py"
 $confirmationToken = "RUN_EMULATOR_5554_LARGE_LITERT_DATA"
 $fixedFourEmulatorMatrix = "fixed_four_emulator_matrix"
 $stopLine = "STOP: large-data LiteRT tablet lane evidence is deploy/runtime evidence only; fixed four-emulator UI acceptance evidence remains primary."
@@ -93,6 +94,15 @@ function Format-LaneValue {
     return [string]$Value
 }
 
+function ConvertTo-QuotedCliToken {
+    param([string]$Value)
+
+    if ($null -eq $Value) {
+        return '""'
+    }
+    return '"' + ($Value -replace '"', '\"') + '"'
+}
+
 function New-LaneMarkdown {
     param([object]$Summary)
 
@@ -128,6 +138,13 @@ function New-LaneMarkdown {
         "- Readiness summary: ``$($Summary.child_artifacts.readiness_summary)``"
         "- Instrumentation summary: ``$($Summary.child_artifacts.instrumentation_summary)``"
         ""
+        "## Validation Commands"
+        ""
+        "- validate_large_data_litert_tablet_lane_summary: ``$($Summary.validation_commands[0].command)``"
+        "  - validates: $($Summary.validation_commands[0].validates)"
+        "  - will_start_jobs: $($Summary.validation_commands[0].will_start_jobs)"
+        "  - will_touch_emulators: $($Summary.validation_commands[0].will_touch_emulators)"
+        ""
         $Summary.stop_line
     ) -join [Environment]::NewLine
 }
@@ -136,6 +153,7 @@ Assert-RequiredScript -Path $launchScript
 Assert-RequiredScript -Path $pushScript
 Assert-RequiredScript -Path $readinessScript
 Assert-RequiredScript -Path $instrumentedSmokeScript
+Assert-RequiredScript -Path $summaryValidatorScript
 
 if ($Device -ne "emulator-5554") {
     throw "This guarded lane is scoped to emulator-5554. Pass Device emulator-5554 or use another Android lane."
@@ -321,6 +339,18 @@ $summary = [ordered]@{
     selected_roles = @("tablet_portrait")
     devices = @($Device)
     generated_utc = [DateTime]::UtcNow.ToString("o")
+    validation_commands = @(
+        [ordered]@{
+            name = "validate_large_data_litert_tablet_lane_summary"
+            command = ("& .\.venvs\senku-validate\Scripts\python.exe scripts\validate_android_large_data_litert_tablet_lane_summary.py " + (ConvertTo-QuotedCliToken -Value $summaryJsonPath))
+            validates = "summary.json"
+            summary_json_path = $summaryJsonPath
+            plan_only = $true
+            will_start_jobs = $false
+            will_touch_emulators = $false
+            note = "Summary validation only; does not start jobs, touch emulators, or create UI acceptance evidence."
+        }
+    )
     child_artifacts = [ordered]@{
         launch_profile_summary = $launchSummaryPath
         push_summary = $(if (Test-Path -LiteralPath $pushSummaryPath) { $pushSummaryPath } else { $null })

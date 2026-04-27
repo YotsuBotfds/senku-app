@@ -121,6 +121,10 @@ Reviewer taxonomy for helper evidence:
 - Metadata-only: host/tooling or summary-shape context only. Look for
   `metadata_only=true` or explicit non-acceptance posture; these artifacts
   help explain the environment but do not prove device behavior.
+- Validator evidence: Android validators prove JSON/Markdown shape,
+  stop-line posture, and summary contracts only. They do not launch emulators,
+  inspect screenshots/UI dumps for acceptance, or replace fixed four-emulator
+  state-pack proof.
 - Pack evidence: asset-pack parity, installed-pack metadata, cache/push
   summaries, and manifest/sqlite/vector counts prove inventory and pack
   identity only. They are not screenshot/state-pack UI acceptance.
@@ -220,9 +224,11 @@ Reviewer taxonomy for helper evidence:
   non-acceptance evidence posture. It validates shape only; it does not perform
   emulator capture or confer acceptance.
 - `run_android_instrumented_ui_smoke.ps1 -CaptureSummaryPath` writes the
-  capture-summary handoff consumed by that validator. Use it for artifact-shape
-  compatibility and migration review; it is non-acceptance evidence unless the
-  same capture is rolled into the fixed four-emulator state-pack proof.
+  capture-summary handoff consumed by
+  `scripts/validate_android_instrumented_capture_summary.py`. Use it for
+  artifact-shape compatibility and migration review; it is non-acceptance
+  evidence unless the same capture is rolled into the fixed four-emulator
+  state-pack proof.
 - Evaluate Gradle Managed Devices as a parallel smoke lane after the fixed
   four-emulator harness remains green. The Android Gradle plugin can define
   named devices, groups, parallel group runs, and managed-device sharding, but
@@ -275,6 +281,9 @@ Reviewer taxonomy for helper evidence:
   state-pack path with headless emulator launch profiles. `-PlanOnly` and
   `-WhatIf` write non-acceptance plans only; a real run requires `-RealRun` and
   only counts when the fixed roles all pass through the state-pack summary.
+  Validate the lane summary contract with
+  `scripts/validate_android_headless_state_pack_lane_summary.py`; the validator
+  proves shape/posture only.
 - Use `run_android_harness_matrix.ps1 -PlanOnly` for prompt/detail matrix
   preflight. It writes a validator-compatible `summary.json` with
   `plan_kind=android_harness_matrix`, `preflight_only=true`,
@@ -306,12 +315,17 @@ Reviewer taxonomy for helper evidence:
 - `run_android_large_data_litert_tablet_lane.ps1` is the guarded
   `emulator-5554` large-data LiteRT lane. Dry runs are preflight only; real mode
   requires the confirmation token and produces deploy/runtime evidence, not UI
-  acceptance, until it is folded into fixed-four state-pack evidence.
+  acceptance, until it is folded into fixed-four state-pack evidence. Validate
+  its summary with
+  `scripts/validate_android_large_data_litert_tablet_lane_summary.py`; the
+  validator does not confer emulator/UI acceptance.
 - `run_android_migration_preflight_bundle.ps1` collects the current migration
   helper preflights into one metadata bundle: tooling versions, managed-device
   dry run, LiteRT readiness dry run, orchestrator dry run, harness-matrix plan,
   UI state-pack plan, and validator command references. Its summary is
-  metadata/preflight only with `acceptance_evidence=false`.
+  metadata/preflight only with `acceptance_evidence=false`. Validate the bundle
+  shape with `scripts/validate_android_migration_preflight_bundle_summary.py`;
+  that validation is contract evidence only.
 - Android Gradle dependency verification is enabled and includes the detached
   Android lint tool dependencies, but `:app:lintDebug` is still blocked by
   existing lint/code compatibility findings. Do not treat lint as a green

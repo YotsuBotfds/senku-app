@@ -38,6 +38,8 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
         self.assertIn("validate_android_orchestrator_smoke_summary.py", self.script)
         self.assertIn("validate_android_harness_matrix_plan.py", self.script)
         self.assertIn("validate_android_ui_state_pack_plan.py", self.script)
+        self.assertIn("validate_android_migration_preflight_bundle_summary.py", self.script)
+        self.assertIn("self_validation", self.script)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(
@@ -127,6 +129,20 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
             self.assertEqual({item["name"] for item in summary["validation_commands"]}, expected_validators)
             self.assertTrue(all(item["status"] == "pass" for item in summary["validation_commands"]))
 
+            self_validation = summary["self_validation"]
+            self.assertEqual(
+                self_validation["name"],
+                "validate_migration_preflight_bundle_summary",
+            )
+            self.assertEqual(self_validation["status"], "pass")
+            self.assertEqual(self_validation["exit_code"], 0)
+            self.assertEqual(self_validation["target"], summary["output_dir"] + "/summary.json")
+            self.assertIn(
+                "validate_android_migration_preflight_bundle_summary.py",
+                self_validation["command"],
+            )
+            self.assertTrue((REPO_ROOT / self_validation["stdout_path"]).exists())
+
             tiny_model = REPO_ROOT / summary["fixtures"]["tiny_model_path"]
             task_inventory = REPO_ROOT / summary["fixtures"]["task_inventory_path"]
             self.assertTrue(tiny_model.exists())
@@ -180,6 +196,7 @@ class AndroidMigrationPreflightBundleTests(unittest.TestCase):
             self.assertIn("- preflight_only: True", summary_md)
             self.assertIn("- acceptance_evidence: False", summary_md)
             self.assertIn("validate_ui_state_pack_plan", summary_md)
+            self.assertIn("validate_migration_preflight_bundle_summary", summary_md)
 
 
 if __name__ == "__main__":

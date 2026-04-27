@@ -110,6 +110,11 @@ function Write-BundleMarkdown {
     foreach ($command in @($Summary.validation_commands)) {
         $lines += "- $($command.name): ``$($command.command)``"
     }
+    if ($null -ne $Summary.self_validation) {
+        $lines += @("", "## Self Validation")
+        $lines += "- $($Summary.self_validation.name): $($Summary.self_validation.status) (exit $($Summary.self_validation.exit_code))"
+        $lines += "- command: ``$($Summary.self_validation.command)``"
+    }
     $lines += @("", "## Migration Summarizer")
     $lines += "- json: ``$($Summary.migration_summarizer.json_path)``"
     $lines += "- markdown: ``$($Summary.migration_summarizer.markdown_path)``"
@@ -293,6 +298,30 @@ $summary | Add-Member -NotePropertyName finished_at_utc -NotePropertyValue $fini
 
 $summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
 $summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
+$selfValidationDir = Join-Path $resolvedOutputDir "validation_validate_migration_preflight_bundle_summary"
+$selfValidationCommand = @(
+    $python,
+    (Join-Path $PSScriptRoot "validate_android_migration_preflight_bundle_summary.py"),
+    $summaryJsonPath
+)
+$selfValidationCommandText = ($selfValidationCommand | ForEach-Object { ConvertTo-QuotedCliToken -Value $_ }) -join " "
+$summary | Add-Member -NotePropertyName self_validation -NotePropertyValue ([pscustomobject]@{
+    name = "validate_migration_preflight_bundle_summary"
+    command = $selfValidationCommandText
+    target = (Convert-ToRepoRelativePath -Path $summaryJsonPath)
+    status = "not_run"
+    exit_code = $null
+    stdout_path = $null
+})
+$summary | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $summaryJsonPath -Encoding UTF8
+$selfValidationResult = Invoke-BundleCommand -Name "validate_migration_preflight_bundle_summary" -Command $selfValidationCommand -OutputDirectory $selfValidationDir
+$summary.self_validation.status = $selfValidationResult.status
+$summary.self_validation.exit_code = $selfValidationResult.exit_code
+$summary.self_validation.stdout_path = $selfValidationResult.stdout_path
+if ($selfValidationResult.status -ne "pass") {
+    $summary.status = "fail"
+    $status = "fail"
+}
 $summary | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $summaryJsonPath -Encoding UTF8
 Write-BundleMarkdown -Path $summaryMarkdownPath -Summary $summary
 

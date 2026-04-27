@@ -22,7 +22,8 @@ if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -Error
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $matrixScript = Join-Path $PSScriptRoot "start_senku_emulator_matrix.ps1"
 $packScript = Join-Path $PSScriptRoot "build_android_ui_state_pack_parallel.ps1"
-foreach ($scriptPath in @($matrixScript, $packScript)) {
+$laneValidatorScript = Join-Path $PSScriptRoot "validate_android_headless_state_pack_lane_summary.py"
+foreach ($scriptPath in @($matrixScript, $packScript, $laneValidatorScript)) {
     if (-not (Test-Path -LiteralPath $scriptPath)) {
         throw "Required lane script not found: $scriptPath"
     }
@@ -56,6 +57,35 @@ function New-AcceptanceCriteria {
         "State-pack summary.json exists under the run output and reports status pass.",
         "Summary total_states is greater than zero, pass_count equals total_states, and fail_count is zero.",
         "Planning, dry-run, launch-profile metadata, and emulator WhatIf artifacts remain non-acceptance evidence."
+    )
+}
+
+function ConvertTo-QuotedCliToken {
+    param([string]$Value)
+
+    if ($Value -match "\s") {
+        return "'" + ($Value -replace "'", "''") + "'"
+    }
+    return $Value
+}
+
+function New-ValidationCommands {
+    param(
+        [string]$ArtifactPath,
+        [string]$Validates
+    )
+
+    return @(
+        [pscustomobject]@{
+            name = "validate_headless_state_pack_lane_artifact"
+            command = ("& .\.venvs\senku-validate\Scripts\python.exe scripts\validate_android_headless_state_pack_lane_summary.py " + (ConvertTo-QuotedCliToken -Value $ArtifactPath))
+            validates = $Validates
+            artifact_path = $ArtifactPath
+            plan_only = $true
+            will_start_jobs = $false
+            will_touch_emulators = $false
+            note = "Validation only; does not start jobs or touch emulators."
+        }
     )
 }
 
@@ -137,6 +167,7 @@ function New-PlanObject {
         acceptance_label_allowed = $false
         acceptance_criteria = New-AcceptanceCriteria
         planning_artifacts_are_acceptance = $false
+        validation_commands = @(New-ValidationCommands -ArtifactPath (Join-Path $RunDir "headless_lane_plan.json") -Validates "headless_lane_plan.json")
         commands = [pscustomobject]@{
             emulator_profile_preflight = "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass $($matrixArgs -join ' ')"
             emulator_real_run = "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass $($realMatrixArgs -join ' ')"
@@ -228,6 +259,7 @@ function New-RunSummary {
         non_acceptance_evidence = -not [bool]$acceptanceEvidence
         acceptance_label_allowed = [bool]$acceptanceEvidence
         acceptance_criteria = New-AcceptanceCriteria
+        validation_commands = @(New-ValidationCommands -ArtifactPath (Join-Path $Plan.run_dir "headless_lane_summary.json") -Validates "headless_lane_summary.json")
         pack_status = $(if ($null -ne $packSummary) { [string]$packSummary.status } else { $null })
         pack_total_states = $(if ($null -ne $packSummary) { [int]$packSummary.total_states } else { 0 })
         pack_pass_count = $(if ($null -ne $packSummary) { [int]$packSummary.pass_count } else { 0 })
