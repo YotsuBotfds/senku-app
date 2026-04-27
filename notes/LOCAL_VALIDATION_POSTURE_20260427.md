@@ -16,8 +16,9 @@ The helper runs:
 
 - `git diff --check`
 - `android-app\gradlew.bat --no-daemon :app:testDebugUnitTest` with focused UI
-  JVM filters for answer content, pure evidence models, search result cards,
-  source rows, tablet evidence visibility, and contrast audit coverage
+  JVM filters for answer content, detail action/warning presentation,
+  phone navigation, search result adapters/cards, pure evidence models, source
+  rows, tablet evidence visibility, and contrast audit coverage
 
 Add extra Gradle `--tests` filters with `-Tests`:
 

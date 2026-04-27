@@ -32,7 +32,7 @@ final class DetailSourcePresentationFormatter {
         int safeTotal = Math.max(totalSources, 1);
         int safeIndex = Math.max(0, sourceIndex) + 1;
         StringBuilder builder = new StringBuilder();
-        builder.append(primaryAnchorChip ? "Primary anchor source" : "Source");
+        builder.append(primaryAnchorChip ? "Anchor guide" : "Source guide");
         if (safeTotal > 1) {
             builder.append(" ").append(safeIndex).append(" of ").append(safeTotal);
         }
@@ -40,34 +40,32 @@ final class DetailSourcePresentationFormatter {
             builder.append(": ").append(guideId);
         }
         if (!section.isEmpty()) {
-            builder.append(", section: ").append(section);
+            builder.append(", ").append(section);
         } else if (!title.isEmpty()) {
             builder.append(", ").append(title);
         }
-        builder.append(opensPreview ? ". Shows source preview." : ". Tap to open guide.");
+        builder.append(opensPreview ? ". Shows source preview." : ". Opens source guide.");
         return builder.toString();
     }
 
     String buildSourceButtonContentDescription(SearchResult source, boolean opensPreview, int index, int total, boolean primaryAnchorSource) {
-        String label = opensPreview
-            ? buildStationSourceButtonLabel(source, index, total, primaryAnchorSource)
-            : buildSourceButtonLabel(source);
+        String label = buildSourceButtonLabel(source);
         String compactLabel = label.replace('\n', ' ').trim();
         int safeIndex = Math.max(0, index) + 1;
         int safeTotal = Math.max(total, 1);
         if (label.isEmpty()) {
             if (opensPreview) {
                 return primaryAnchorSource
-                    ? "Primary anchor source. Shows source preview."
-                    : "Supporting source. Shows source preview.";
+                    ? "Anchor guide. Shows source preview."
+                    : "Related guide. Shows source preview.";
             }
-            return "Source. Opens source guide.";
+            return "Source guide. Opens source guide.";
         }
         if (opensPreview) {
-            String role = primaryAnchorSource ? "Primary anchor source " : "Supporting source ";
+            String role = primaryAnchorSource ? "Anchor guide " : "Related guide ";
             return role + safeIndex + " of " + safeTotal + ": " + compactLabel + ". Shows source preview.";
         }
-        return "Source " + safeIndex + " of " + safeTotal + ": " + compactLabel + ". Opens source guide.";
+        return "Source guide " + safeIndex + " of " + safeTotal + ": " + compactLabel + ". Opens source guide.";
     }
 
     String buildStationSourceButtonLabel(SearchResult source, int index, int total, boolean primaryAnchorSource) {
@@ -76,13 +74,13 @@ final class DetailSourcePresentationFormatter {
         int safeIndex = Math.max(0, index) + 1;
         if (label.isEmpty()) {
             return primaryAnchorSource
-                ? String.format(Locale.US, "Anchor | %d/%d", safeIndex, safeTotal)
-                : String.format(Locale.US, "%d/%d", safeIndex, safeTotal);
+                ? String.format(Locale.US, "Anchor guide %d/%d", safeIndex, safeTotal)
+                : String.format(Locale.US, "Related guide %d/%d", safeIndex, safeTotal);
         }
         if (primaryAnchorSource) {
-            return String.format(Locale.US, "Anchor | %d/%d %s", safeIndex, safeTotal, label);
+            return String.format(Locale.US, "Anchor guide %d/%d %s", safeIndex, safeTotal, label);
         }
-        return String.format(Locale.US, "%d/%d %s", safeIndex, safeTotal, label);
+        return String.format(Locale.US, "Related guide %d/%d %s", safeIndex, safeTotal, label);
     }
 
     String buildNextStepChipContentDescription(String nextStep, int index, int total) {
@@ -142,7 +140,7 @@ final class DetailSourcePresentationFormatter {
         String section = safe(source == null ? null : source.sectionHeading).trim();
         if (primaryAnchorChip) {
             if (!guideId.isEmpty()) {
-                return guideId + " anchor";
+                return guideId + " anchor guide";
             }
             return title.isEmpty() ? context.getString(R.string.detail_inline_sources_label) : trimHeaderLabel(title);
         }
@@ -150,7 +148,7 @@ final class DetailSourcePresentationFormatter {
             return trimChipSection(section);
         }
         if (!guideId.isEmpty() && !section.isEmpty()) {
-            return guideId + " | " + trimChipSection(section);
+            return guideId + " - " + trimChipSection(section);
         }
         if (!guideId.isEmpty()) {
             return guideId;
@@ -162,9 +160,9 @@ final class DetailSourcePresentationFormatter {
         String sourceGuideId = safe(source == null ? null : source.guideId).trim();
         String guideCount = formatCountLabel(totalSources, "guide", "guides");
         if (!sourceGuideId.isEmpty()) {
-            return sourceGuideId + " | Show proof (" + guideCount + ")";
+            return sourceGuideId + " - Source preview (" + guideCount + ")";
         }
-        return "Show proof (" + guideCount + ")";
+        return "Source preview (" + guideCount + ")";
     }
 
     String buildCompactInlineSourceTriggerContentDescription(SearchResult source, int totalSources) {
@@ -190,8 +188,8 @@ final class DetailSourcePresentationFormatter {
         String action = expanded
             ? (generationStallNoticeVisible
                 ? label + " ready. Preview stays visible while the answer finishes."
-                : label + " ready. Tap a source to inspect.")
-            : label + " ready. Tap show or a source chip.";
+                : label + " ready. Tap a source guide to preview.")
+            : label + " ready. Tap source preview or a source guide.";
         String compactTrustSummary = safe(trustSummary).trim();
         return compactTrustSummary.isEmpty() ? action : compactTrustSummary + " | " + action;
     }
@@ -200,7 +198,7 @@ final class DetailSourcePresentationFormatter {
         String label = formatCountLabel(sourceCount, "guide", "guides");
         String action = generationStallNoticeVisible
             ? label + " ready. Preview stays visible while the answer finishes."
-            : label + " ready. Tap a source to inspect.";
+            : label + " ready. Tap a source guide to preview.";
         String expandedTrustSummary = safe(trustSummary).trim();
         return expandedTrustSummary.isEmpty() ? action : expandedTrustSummary + " | " + action;
     }

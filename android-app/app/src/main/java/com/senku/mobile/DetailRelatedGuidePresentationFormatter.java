@@ -36,7 +36,7 @@ final class DetailRelatedGuidePresentationFormatter {
     String buildRelatedGuidesSubtitle(int count) {
         return context.getString(
             R.string.detail_next_steps_subtitle_guides,
-            formatCountLabel(count, "linked guide", "linked guides")
+            formatCountLabel(count, "related guide", "related guides")
         );
     }
 
@@ -47,7 +47,7 @@ final class DetailRelatedGuidePresentationFormatter {
         }
         return context.getString(
             R.string.detail_related_guides_station_subtitle_live,
-            formatCountLabel(count, "linked guide", "linked guides"),
+            formatCountLabel(count, "related guide", "related guides"),
             anchorLabel
         );
     }
@@ -86,21 +86,21 @@ final class DetailRelatedGuidePresentationFormatter {
         if (anchorLabel.isEmpty()) {
             anchorLabel = context.getString(R.string.detail_related_guides_anchor_fallback);
         }
-        return formatCountLabel(count, "linked guide", "linked guides")
+        return formatCountLabel(count, "related guide", "related guides")
             + " for "
             + anchorLabel
             + ". Preview, then open.";
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return formatCountLabel(count, "linked guide", "linked guides")
+        return formatCountLabel(count, "related guide", "related guides")
             + " for "
             + resolveSourceAnchorLabel(state)
             + ". Preview, then open.";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
-        return "Source-anchored cross-reference lane. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
+        return "Source-anchored guide connections. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
     }
 
     String buildRelatedGuideButtonLabel(SearchResult guide) {
@@ -141,10 +141,10 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean nonRailCrossReferenceCopy = state != null && state.nonRailCrossReferenceCopy;
         StringBuilder builder = new StringBuilder();
         builder.append(opensPreview
-            ? "Linked guide "
+            ? "Related guide "
             : (nonRailCrossReferenceCopy
                 ? context.getString(R.string.detail_related_guides_button_prefix_nonrail)
-                : "Open linked guide "));
+                : "Open related guide "));
         builder.append(index + 1);
         builder.append(" of ");
         builder.append(total);
@@ -157,7 +157,7 @@ final class DetailRelatedGuidePresentationFormatter {
         }
         String anchorGuideId = safe(state == null ? null : state.currentGuideId).trim();
         if (!anchorGuideId.isEmpty()) {
-            builder.append(nonRailCrossReferenceCopy ? ". Cross-reference from " : ". Related to ");
+            builder.append(nonRailCrossReferenceCopy ? ". Guide connection from " : ". Related to ");
             builder.append(anchorGuideId);
         }
         builder.append(opensPreview
@@ -176,7 +176,7 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean opensPreview
     ) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Cross-reference guide ");
+        builder.append("Connected guide ");
         builder.append(index + 1);
         builder.append(" of ");
         builder.append(total);
@@ -193,7 +193,7 @@ final class DetailRelatedGuidePresentationFormatter {
             builder.append(anchorLabel);
         }
         builder.append(opensPreview
-            ? ". Previews the linked guide on this page while staying anchored to the selected source guide. Use Open full guide when ready to switch pages."
+            ? ". Previews the related guide on this page while staying anchored to the selected source guide. Use Open full guide when ready to switch pages."
             : ". Opens this guide with source-guide context.");
         return builder.toString();
     }
@@ -232,7 +232,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     private String buildRelatedGuidePreviewRowBehaviorText(boolean nonRailCrossReferenceCopy) {
         if (nonRailCrossReferenceCopy) {
-            return "Preview this linked guide here, then use Open full guide when ready.";
+            return "Preview this related guide here, then use Open full guide when ready.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

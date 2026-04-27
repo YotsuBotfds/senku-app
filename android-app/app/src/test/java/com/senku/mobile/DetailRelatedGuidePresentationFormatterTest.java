@@ -54,18 +54,18 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
-    public void crossReferenceSubtitlesUseCompactActionCopy() {
+    public void guideConnectionSubtitlesUseCompactActionCopy() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "2 linked guides for [GD-214] Water Storage. Preview, then open.",
+            "2 related guides for [GD-214] Water Storage. Preview, then open.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
             )
         );
         assertEquals(
-            "1 linked guide for [GD-215] Rainwater Catchment. Preview, then open.",
+            "1 related guide for [GD-215] Rainwater Catchment. Preview, then open.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -80,11 +80,11 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     }
 
     @Test
-    public void nonRailPreviewRowDescriptionNamesExactOpenAction() {
+    public void nonRailPreviewRowDescriptionUsesGuideConnectionLanguage() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "Linked guide 1 of 1. [GD-215] Rainwater Catchment. Cross-reference from GD-214. Preview this linked guide here, then use Open full guide when ready.",
+            "Related guide 1 of 1. [GD-215] Rainwater Catchment. Guide connection from GD-214. Preview this related guide here, then use Open full guide when ready.",
             formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -98,6 +98,23 @@ public final class DetailRelatedGuidePresentationFormatterTest {
                 1,
                 true
             )
+        );
+    }
+
+    @Test
+    public void answerModePanelAndRowsUseGuideConnectionLanguage() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+        DetailRelatedGuidePresentationFormatter.State state =
+            new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage");
+        SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
+
+        assertEquals(
+            "Source-anchored guide connections. 2 related guides for [GD-214] Water Storage. Preview, then open.",
+            formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
+        );
+        assertEquals(
+            "Connected guide 1 of 2. [GD-215] Rainwater Catchment. Linked from [GD-214] Water Storage. Previews the related guide on this page while staying anchored to the selected source guide. Use Open full guide when ready to switch pages.",
+            formatter.buildAnswerModeRelatedGuideButtonContentDescription(state, guide, 0, 2, true)
         );
     }
 }

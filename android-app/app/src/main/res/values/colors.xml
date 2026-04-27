@@ -38,8 +38,8 @@
     <color name="senku_accent_warning_amber">#C38A46</color>
     <color name="senku_accent_alert">#9A5B4D</color>
     <color name="senku_surface_alert">#33211F</color>
-    <color name="senku_emergency_banner_bg">#A8433C</color>
-    <color name="senku_emergency_banner_text">#FFFFFF</color>
+    <color name="senku_emergency_banner_bg">#743632</color>
+    <color name="senku_emergency_banner_text">#FFF7E8</color>
 
     <!-- Rev 03 design tokens -->
     <color name="senku_rev03_bg_0">#1A1D16</color>

@@ -113,6 +113,26 @@ class ContrastAuditTest {
         }
     }
 
+    @Test
+    fun emergencyBannerTextMeetsAaThroughDrawableHighlight() {
+        val text = xmlColors.getValue("senku_emergency_banner_text")
+        val baseBackground = xmlColors.getValue("senku_emergency_banner_bg")
+        val highlightBackground = text.withAlpha(0x12 / 255.0).compositeOver(baseBackground)
+
+        assertContrastAtLeast(
+            label = "emergency banner text / base background",
+            foreground = text,
+            background = baseBackground,
+            minimum = 7.0,
+        )
+        assertContrastAtLeast(
+            label = "emergency banner text / highlighted background",
+            foreground = text,
+            background = highlightBackground,
+            minimum = 7.0,
+        )
+    }
+
     private fun assertMirror(name: String, color: Color) {
         assertEquals(name, color.toSwatch().toCanonicalHex(), xmlColors.getValue(name).toCanonicalHex())
     }
