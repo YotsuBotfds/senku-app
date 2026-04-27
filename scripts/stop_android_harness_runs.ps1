@@ -5,6 +5,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $adb = Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
 function Matches-TargetEmulator {
     param(
@@ -90,7 +91,26 @@ function Stop-AndroidPackages {
     return $stoppedDevices
 }
 
+function Matches-HarnessCommand {
+    param(
+        [string]$CommandLine,
+        [string[]]$ScriptPatterns
+    )
+
+    if ($ScriptPatterns | Where-Object { $CommandLine -like ("*" + $_ + "*") }) {
+        return $true
+    }
+
+    $normalizedCommand = $CommandLine.Replace("/", "\")
+    $normalizedRoot = $repoRoot.Replace("/", "\")
+    return $normalizedCommand -like ("*" + $normalizedRoot + "*") `
+        -and $normalizedCommand -like "*\ui_state_pack*\*" `
+        -and $normalizedCommand -like "*.launcher.ps1*"
+}
+
 $patterns = @(
+    "build_android_ui_state_pack.ps1",
+    "build_android_ui_state_pack_parallel.ps1",
     "run_android_detail_followup.ps1",
     "run_android_detail_followup_logged.ps1",
     "run_android_followup_matrix.ps1",
@@ -107,7 +127,7 @@ $targets = Get-CimInstance Win32_Process | Where-Object {
         -and $_.ProcessId -ne $PID `
         -and $commandLine `
         -and (Matches-TargetEmulator -CommandLine $commandLine -Targets $Emulators) `
-        -and ($patterns | Where-Object { $commandLine -like ("*" + $_ + "*") })
+        -and (Matches-HarnessCommand -CommandLine $commandLine -ScriptPatterns $patterns)
 }
 
 if (-not $targets) {

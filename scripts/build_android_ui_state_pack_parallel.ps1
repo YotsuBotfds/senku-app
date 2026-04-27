@@ -5,7 +5,8 @@ param(
     [switch]$SkipHostStates,
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
-    [int]$MaxParallelDevices = 4
+    [int]$MaxParallelDevices = 4,
+    [string[]]$RoleFilter = @()
 )
 
 $ErrorActionPreference = "Stop"
@@ -24,7 +25,27 @@ if (-not (Test-Path -LiteralPath $gradlew)) {
 }
 
 $runId = Get-Date -Format "yyyyMMdd_HHmmss"
-$roles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")
+$allRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")
+$roles = @($allRoles)
+if ($RoleFilter.Count -gt 0) {
+    $requestedRoles = New-Object System.Collections.Generic.List[string]
+    foreach ($entry in $RoleFilter) {
+        foreach ($part in ([string]$entry -split ",")) {
+            $trimmed = $part.Trim()
+            if (-not [string]::IsNullOrWhiteSpace($trimmed)) {
+                $requestedRoles.Add($trimmed)
+            }
+        }
+    }
+    $unknownRoles = @($requestedRoles | Where-Object { $allRoles -notcontains $_ })
+    if ($unknownRoles.Count -gt 0) {
+        throw ("RoleFilter contains unknown role(s): {0}" -f (($unknownRoles | Sort-Object -Unique) -join ", "))
+    }
+    $roles = @($allRoles | Where-Object { $requestedRoles -contains $_ })
+    if ($roles.Count -eq 0) {
+        throw "RoleFilter did not match any device roles."
+    }
+}
 $active = New-Object System.Collections.Generic.List[object]
 $sliceFailures = New-Object System.Collections.Generic.List[object]
 $logsDir = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "parallel_logs")

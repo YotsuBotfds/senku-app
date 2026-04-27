@@ -1029,6 +1029,42 @@ function Invoke-AdbBestEffort {
     return $result
 }
 
+function Get-AdbShellValue {
+    param([string[]]$ShellArguments)
+
+    $result = Invoke-AdbBestEffort -Arguments (@("-s", $Device, "shell") + $ShellArguments)
+    if ($result.exit_code -ne 0 -or $result.timed_out) {
+        return ""
+    }
+    return ([string]$result.output).Trim()
+}
+
+function Wait-ForDeviceReadiness {
+    param([int]$TimeoutSeconds = 90)
+
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $lastBootCompleted = ""
+    $lastBootAnim = ""
+    $lastWindowSize = ""
+
+    do {
+        $lastBootCompleted = Get-AdbShellValue -ShellArguments @("getprop", "sys.boot_completed")
+        $lastBootAnim = Get-AdbShellValue -ShellArguments @("getprop", "init.svc.bootanim")
+        $lastWindowSize = Get-AdbShellValue -ShellArguments @("wm", "size")
+
+        $bootReady = ($lastBootCompleted -eq "1")
+        $bootAnimReady = ([string]::IsNullOrWhiteSpace($lastBootAnim) -or $lastBootAnim -eq "stopped")
+        $windowReady = ($lastWindowSize -match '(Physical|Override) size:\s*\d+x\d+')
+        if ($bootReady -and $bootAnimReady -and $windowReady) {
+            return
+        }
+
+        Start-Sleep -Seconds 2
+    } while ((Get-Date) -lt $deadline)
+
+    throw ("Device {0} did not become ready after adb wait-for-device within {1}s: sys.boot_completed='{2}', init.svc.bootanim='{3}', wm size='{4}'" -f $Device, $TimeoutSeconds, $lastBootCompleted, $lastBootAnim, $lastWindowSize)
+}
+
 function Set-DeviceFontScale([double]$Scale) {
     $safeScale = [Math]::Max(0.5, [Math]::Min(2.0, $Scale))
     $serialized = $safeScale.ToString("0.##", [System.Globalization.CultureInfo]::InvariantCulture)
@@ -1102,6 +1138,10 @@ if ($EnableHostInferenceSmoke -and [string]::IsNullOrWhiteSpace($EffectiveHostIn
 }
 
 & $adb -s $Device wait-for-device
+if ($LASTEXITCODE -ne 0) {
+    throw "adb wait-for-device failed for $Device"
+}
+Wait-ForDeviceReadiness
 if (-not $EffectiveSkipInstall) {
     [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $appApk) -FailureMessage "App APK install failed")
     [void](Invoke-AdbChecked -Arguments @("-s", $Device, "install", "-r", $testApk) -FailureMessage "Test APK install failed")
