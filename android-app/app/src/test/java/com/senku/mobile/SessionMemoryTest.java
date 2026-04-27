@@ -347,6 +347,63 @@ public final class SessionMemoryTest {
     }
 
     @Test
+    public void fromJsonMigratesVersionTwoSessionWithoutReviewedCardFields() {
+        SessionMemory memory = SessionMemory.fromJson(
+            "{\n" +
+                "  \"version\": 2,\n" +
+                "  \"sticky_anchor_guide_id\": \"GD-444\",\n" +
+                "  \"turns\": [\n" +
+                "    {\n" +
+                "      \"question\": \"how do i build a rain shelter\",\n" +
+                "      \"answer_summary\": \"Keep it simple and waterproof.\",\n" +
+                "      \"answer_body\": \"Short answer: pitch a tarp low to the wind.\",\n" +
+                "      \"sources\": [\"[GD-444] Tarp Shelters\"],\n" +
+                "      \"source_results\": [\n" +
+                "        {\n" +
+                "          \"title\": \"Tarp Shelters\",\n" +
+                "          \"subtitle\": \"Field shelter\",\n" +
+                "          \"snippet\": \"Use a ridge line and drainage.\",\n" +
+                "          \"body\": \"Stake the tarp securely.\",\n" +
+                "          \"guide_id\": \"GD-444\",\n" +
+                "          \"section_heading\": \"Ridge Line Setup\",\n" +
+                "          \"category\": \"survival\",\n" +
+                "          \"retrieval_mode\": \"guide-focus\",\n" +
+                "          \"content_role\": \"starter\",\n" +
+                "          \"time_horizon\": \"immediate\",\n" +
+                "          \"structure_type\": \"tarp_shelter\",\n" +
+                "          \"topic_tags\": \"rain_shelter,drainage\"\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"rule_id\": \"deterministic:shelter\",\n" +
+                "      \"recorded_at_epoch_ms\": 1714244042000\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}"
+        );
+
+        assertEquals(1, memory.turnCount());
+        SessionMemory.TurnSnapshot snapshot = memory.latestTurnSnapshot();
+        assertEquals("how do i build a rain shelter", snapshot.question);
+        assertEquals("Short answer: pitch a tarp low to the wind.", snapshot.answerBody);
+        assertEquals("deterministic:shelter", snapshot.ruleId);
+        assertEquals(1714244042000L, snapshot.recordedAtEpochMs);
+        assertEquals("GD-444", snapshot.sourceResults.get(0).guideId);
+        assertEquals("Ridge Line Setup", snapshot.sourceResults.get(0).sectionHeading);
+        assertEquals("guide-focus", snapshot.sourceResults.get(0).retrievalMode);
+        assertFalse(snapshot.reviewedCardMetadata.isPresent());
+        assertEquals(null, snapshot.latencyBreakdown);
+
+        SessionMemory.setAnchorPriorEnabledForTest(true);
+        try {
+            SessionMemory.RetrievalPlan plan = memory.buildRetrievalPlan("what next");
+            assertEquals("GD-444", plan.anchorPrior.anchorGuideId);
+            assertEquals(1, plan.anchorPrior.turnCount);
+        } finally {
+            SessionMemory.setAnchorPriorEnabledForTest(false);
+        }
+    }
+
+    @Test
     public void genericFollowUpFallsBackToTopicHintsWhenNoMeaningfulTermsExist() {
         SessionMemory memory = new SessionMemory();
         memory.recordTurn(
