@@ -83,6 +83,13 @@ reports `3` unresolved partial markers, and
    - Current unresolved partial markers are `3`: `GD-045`, `GD-059`, and `GD-211`. `GD-045` and `GD-059` are explicit deferrals; `GD-211` battery restoration is intentionally deferred for safety review.
 3. Corpus/content hygiene:
    - `3` unresolved partial markers remain: `GD-045`, `GD-059`, and `GD-211`.
+   - `GD-045` and `GD-059` are explicit medical/manufacturing deferrals from
+     the safety-review queue. `GD-211` is not part of the six high-liability
+     metadata/card deferrals, but its `battery-restoration-custom` marker is
+     deliberately parked as a source-body safety-review item because battery
+     restoration combines electrical, acid/chemical, gas, fire, and
+     return-to-service hazards. Do not quick-close it with procedural repair
+     text or calculator-like advice.
    - Guide-body edits require safety review and re-ingest before retrieval claims.
 4. Runtime/citation behavior:
    - Status: desktop card-backed answer composer now suppresses repeated inline citations for the same source while preserving `cited_guide_ids`.
