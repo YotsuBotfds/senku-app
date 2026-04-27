@@ -66,6 +66,9 @@ data class TabletDetailState(
     val pinActive: Boolean,
     val evidenceExpanded: Boolean,
     val isLandscape: Boolean,
+    val guideModeLabel: String = "",
+    val guideModeSummary: String = "",
+    val guideModeAnchorLabel: String = "",
     val statusText: String = "",
 )
 
@@ -267,6 +270,9 @@ private fun CenterPane(
             guideId = state.guideId,
             guideTitle = state.guideTitle,
             meta = state.meta,
+            guideModeLabel = state.guideModeLabel,
+            guideModeSummary = state.guideModeSummary,
+            guideModeAnchorLabel = state.guideModeAnchorLabel,
             statusText = state.statusText,
         )
 
@@ -339,6 +345,9 @@ private fun TitleBar(
     guideId: String,
     guideTitle: String,
     meta: List<MetaItem>,
+    guideModeLabel: String,
+    guideModeSummary: String,
+    guideModeAnchorLabel: String,
     statusText: String,
     modifier: Modifier = Modifier,
 ) {
@@ -385,6 +394,45 @@ private fun TitleBar(
             items = meta,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        val handoffLabel = guideModeLabel.trim()
+        val handoffSummary = guideModeSummary.trim()
+        val handoffAnchor = guideModeAnchorLabel.trim()
+        if (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                if (handoffLabel.isNotEmpty()) {
+                    Text(
+                        text = handoffLabel,
+                        style = typography.monoCaps.copy(
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = colors.accent,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                val summaryText = listOf(handoffAnchor, handoffSummary)
+                    .filter { it.isNotEmpty() }
+                    .joinToString(" - ")
+                if (summaryText.isNotEmpty()) {
+                    Text(
+                        text = summaryText,
+                        style = typography.smallBody.copy(
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp,
+                        ),
+                        color = colors.ink2,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
 
         if (statusText.isNotBlank()) {
             Text(

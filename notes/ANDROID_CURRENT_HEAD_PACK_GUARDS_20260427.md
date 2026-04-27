@@ -122,12 +122,45 @@ Matrix state-pack evidence, 2026-04-27 00:51-00:54 CT:
 - `phone_portrait` on `emulator-5556`: `11 / 11`.
 - `tablet_portrait` on `emulator-5554`: `10 / 11`; only
   `searchResultsLinkedGuideHandoffOpensLinkedGuideDetail` failed because the
-  destination page did not preserve cross-reference context.
+  destination page did not preserve cross-reference context. Fixed after this
+  run; see the tablet handoff fix evidence below.
 - `tablet_landscape` on `emulator-5558`: `10 / 11`; same linked-guide handoff
-  context failure.
+  context failure. Fixed after this run; see the tablet handoff fix evidence
+  below.
 - `phone_landscape` on `emulator-5560`: `0 / 12`; blocked by System UI ANR and
   early instrumentation failures. Treat this as a lane/platform blocker, not a
   current-head pack failure.
+
+Tablet handoff fix evidence, 2026-04-27 01:06-01:07 CT:
+
+- `emulator-5554` / tablet portrait:
+  `artifacts/android_tablet_handoff_context_fix_5554_final/summary.json`,
+  `status=pass`, `platform_anr=null`, `OK (1 test)`.
+- `emulator-5558` / tablet landscape:
+  `artifacts/android_tablet_handoff_context_fix_5558_final/summary.json`,
+  `status=pass`, `platform_anr=null`, `OK (1 test)`.
+- APK SHA for the fix proof:
+  `24af2ea76558829f94c973c87f47734ea2ef3c07b5756d0efe0e851f4164c21f`.
+
+Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
+
+- `newborn_danger_sepsis` / `GD-284`:
+  `artifacts/android_current_head_reviewed_card_canary_newborn/summary.json`,
+  `status=pass`, `platform_anr=null`, `answer_cards=271`.
+- `choking_airway_obstruction` / `GD-232`:
+  `artifacts/android_current_head_reviewed_card_canary_choking/summary.json`,
+  `status=pass`, `platform_anr=null`, `answer_cards=271`.
+- `meningitis_sepsis_child` / `GD-589`:
+  `artifacts/android_current_head_reviewed_card_canary_meningitis/summary.json`,
+  `status=pass`, `platform_anr=null`, `answer_cards=271`.
+- `infected_wound_spreading_infection` / `GD-585`:
+  `artifacts/android_current_head_reviewed_card_canary_wound/summary.json`,
+  `status=pass`, `platform_anr=null`, `answer_cards=271`.
+- `abdominal_internal_bleeding` / `GD-380`:
+  `artifacts/android_current_head_reviewed_card_canary_abdominal/summary.json`,
+  `status=pass`, `platform_anr=null`, `answer_cards=271`.
+- With the earlier poisoning current-head canary, all six existing
+  developer/test-gated pilot runtime cards now have current-head pack proof.
 
 ## Guard Classes
 

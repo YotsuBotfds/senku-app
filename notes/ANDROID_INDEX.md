@@ -19,6 +19,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1` through `RAG-CH3`, plus test-only `RAG-CH5`
 - [`ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](./ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md): pushed 271-card current-head pack guard runbook
 - [`ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md`](./ANDROID_CURRENT_HEAD_PHONE_UI_STATE_PROOF_20260427.md): phone-portrait current-head UI state proof plus matrix follow-up findings
+- [`ANDROID_MIGRATION_BACKLOG_20260427.md`](./ANDROID_MIGRATION_BACKLOG_20260427.md): current-head Android migration blockers after matrix proof
 
 ## Current emulator lane repair status - 2026-04-27
 

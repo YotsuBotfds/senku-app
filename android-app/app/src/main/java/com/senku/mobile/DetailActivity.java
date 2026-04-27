@@ -1261,6 +1261,9 @@ public final class DetailActivity extends AppCompatActivity {
             pinActive,
             tabletEvidenceExpanded,
             showUtilityRail(),
+            safe(currentGuideModeLabel),
+            safe(currentGuideModeSummary),
+            safe(currentGuideModeAnchorLabel),
             safe(tabletStatusText)
         );
     }
@@ -2170,6 +2173,9 @@ public final class DetailActivity extends AppCompatActivity {
             compactTrigger.setTextColor(getColor(R.color.senku_text_light));
             compactTrigger.setMinHeight(0);
             compactTrigger.setMinimumHeight(0);
+            compactTrigger.setMaxWidth(dp(240));
+            compactTrigger.setMaxLines(1);
+            compactTrigger.setEllipsize(TextUtils.TruncateAt.END);
             compactTrigger.setPadding(dp(12), dp(8), dp(12), dp(8));
             compactTrigger.setText(
                 detailSourcePresentationFormatter().buildCompactInlineSourceTriggerLabel(primarySource, inlineSources.size())
@@ -2210,6 +2216,9 @@ public final class DetailActivity extends AppCompatActivity {
             chip.setTextColor(getColor(R.color.senku_text_light));
             chip.setMinHeight(0);
             chip.setMinimumHeight(0);
+            chip.setMaxWidth(dp(compactPhonePortrait ? 200 : 260));
+            chip.setMaxLines(1);
+            chip.setEllipsize(TextUtils.TruncateAt.END);
             chip.setPadding(dp(12), compactPhonePortrait ? dp(8) : dp(10), dp(12), compactPhonePortrait ? dp(8) : dp(10));
             chip.setText(detailSourcePresentationFormatter().buildInlineSourceChipLabel(source, primaryGuideId, renderPrimaryAnchor));
             chip.setContentDescription(
