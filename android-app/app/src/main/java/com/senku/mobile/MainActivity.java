@@ -87,6 +87,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private MainPresentationFormatter presentationFormatter;
     private HomeGuidePresentationFormatter homeGuidePresentationFormatter;
+    private DetailSessionPresentationFormatter detailSessionPresentationFormatter;
     private SearchResultAdapter adapter;
     private RecyclerView resultsList;
     private TextView statusText;
@@ -852,6 +853,13 @@ public final class MainActivity extends AppCompatActivity {
             homeGuidePresentationFormatter = new HomeGuidePresentationFormatter(this, presentationFormatter());
         }
         return homeGuidePresentationFormatter;
+    }
+
+    private DetailSessionPresentationFormatter detailSessionPresentationFormatter() {
+        if (detailSessionPresentationFormatter == null) {
+            detailSessionPresentationFormatter = new DetailSessionPresentationFormatter(this);
+        }
+        return detailSessionPresentationFormatter;
     }
 
     private String decodeAutoQuery(String query) {
@@ -1753,8 +1761,8 @@ public final class MainActivity extends AppCompatActivity {
             null,
             conversationId,
             turn.ruleId,
-            null,
-            null,
+            detailSessionPresentationFormatter().reopenedAnswerMode(turn),
+            detailSessionPresentationFormatter().reopenedConfidenceLabel(turn),
             turn.reviewedCardMetadata
         );
         applyPackDetailExtras(intent);

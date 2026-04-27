@@ -1,6 +1,7 @@
 package com.senku.mobile;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +72,52 @@ public final class DetailSessionPresentationFormatterTest {
             "GD-999",
             formatter.resolvePrimaryGuideId(List.of(source("Primary", "", "")), "Subtitle [GD-999]")
         );
+    }
+
+    @Test
+    public void reopenedReviewedCardTurnKeepsConfidentReviewedShape() {
+        DetailSessionPresentationFormatter formatter = new DetailSessionPresentationFormatter(null);
+        SessionMemory.TurnSnapshot reviewedTurn = new SessionMemory.TurnSnapshot(
+            "poisoning",
+            "answer",
+            "answer",
+            List.of("GD-898"),
+            List.of(source("Poisoning", "GD-898", "")),
+            "answer_card:poisoning_unknown_ingestion",
+            new ReviewedCardMetadata(
+                "poisoning_unknown_ingestion",
+                "GD-898",
+                "pilot_reviewed",
+                "reviewed_source_family",
+                ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+                List.of("GD-898")
+            ),
+            null,
+            1234L
+        );
+
+        assertEquals(
+            OfflineAnswerEngine.AnswerMode.CONFIDENT,
+            formatter.reopenedAnswerMode(reviewedTurn)
+        );
+        assertEquals(
+            OfflineAnswerEngine.ConfidenceLabel.HIGH,
+            formatter.reopenedConfidenceLabel(reviewedTurn)
+        );
+        assertEquals(
+            ReviewedCardMetadata.PROVENANCE_REVIEWED_CARD_RUNTIME,
+            reviewedTurn.reviewedCardMetadata.provenance
+        );
+        assertEquals(List.of("GD-898"), reviewedTurn.reviewedCardMetadata.citedReviewedSourceGuideIds);
+    }
+
+    @Test
+    public void reopenedPlainTurnKeepsExistingUnlabeledShape() {
+        DetailSessionPresentationFormatter formatter = new DetailSessionPresentationFormatter(null);
+        SessionMemory.TurnSnapshot plainTurn = turn("plain", List.of("GD-214"), List.of());
+
+        assertNull(formatter.reopenedAnswerMode(plainTurn));
+        assertNull(formatter.reopenedConfidenceLabel(plainTurn));
     }
 
     private static SessionMemory.TurnSnapshot turn(

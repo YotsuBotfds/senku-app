@@ -10,6 +10,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -113,6 +114,8 @@ final class DetailAnswerPresentationFormatter {
                     styleAnswerSectionLabel(styled, text, contentStart, contentEnd, sectionLabel);
                 } else if (trimmedLine.equals(context.getString(R.string.detail_loop2_corpus_gap_label))) {
                     styleCorpusGapLabel(styled, contentStart, contentEnd, lowCoverageAccentColor);
+                } else if (isSafetyLine(trimmedLine)) {
+                    styleSafetyLine(styled, contentStart, lineEnd);
                 } else {
                     styleStepLineIfPresent(styled, trimmedLine, contentStart, lineEnd);
                 }
@@ -211,6 +214,16 @@ final class DetailAnswerPresentationFormatter {
         );
     }
 
+    private void styleSafetyLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(R.color.senku_accent_warning)),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+
     private int colorForAnswerSectionLabel(String sectionLabel) {
         if ("Limits or safety:".equals(sectionLabel)) {
             return color(R.color.senku_accent_warning);
@@ -228,6 +241,15 @@ final class DetailAnswerPresentationFormatter {
             }
         }
         return "";
+    }
+
+    private static boolean isSafetyLine(String line) {
+        String normalized = safe(line).trim().toLowerCase(Locale.US);
+        return normalized.startsWith("avoid:")
+            || normalized.startsWith("- avoid:")
+            || normalized.startsWith("limits:")
+            || normalized.startsWith("limit:")
+            || normalized.startsWith("safety:");
     }
 
     private static int firstNonWhitespaceIndex(String text, int start, int end) {

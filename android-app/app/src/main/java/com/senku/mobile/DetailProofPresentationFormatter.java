@@ -69,6 +69,16 @@ final class DetailProofPresentationFormatter {
         }
     }
 
+    static final class CompactReviewedCardLine {
+        final String label;
+        final String value;
+
+        CompactReviewedCardLine(String label, String value) {
+            this.label = safe(label);
+            this.value = safe(value);
+        }
+    }
+
     private final Context context;
 
     DetailProofPresentationFormatter(Context context) {
@@ -85,7 +95,7 @@ final class DetailProofPresentationFormatter {
             return buildNoCitationProofSummary(state, compact);
         }
         SearchResult firstSource = currentSources.get(0);
-        ArrayList<StructuredLine> lines = buildBaseProofLines(state, currentSources, firstSource);
+        ArrayList<StructuredLine> lines = buildBaseProofLines(state, currentSources, firstSource, compact);
         addProofDetailLines(lines, state, currentSources, firstSource, compact, utilityRail);
         return buildStructuredLineBlock(lines);
     }
@@ -197,7 +207,7 @@ final class DetailProofPresentationFormatter {
                 context.getColor(R.color.senku_text_muted_light)
             ));
         }
-        appendReviewedCardLines(lines, state);
+        appendReviewedCardLines(lines, state, false);
         appendProofRevisionLine(lines, state.revisionStamp);
         return buildStructuredLineBlock(lines);
     }
@@ -205,9 +215,22 @@ final class DetailProofPresentationFormatter {
     private ArrayList<StructuredLine> buildBaseProofLines(
         State state,
         List<SearchResult> currentSources,
-        SearchResult firstSource
+        SearchResult firstSource,
+        boolean compact
     ) {
         ArrayList<StructuredLine> lines = new ArrayList<>();
+        if (compact && state.reviewedCardMetadata.isPresent()) {
+            String leadValue = buildSourceEntryValue(firstSource, currentSources);
+            if (!leadValue.isEmpty()) {
+                lines.add(new StructuredLine(
+                    context.getString(R.string.detail_external_review_proof_lead),
+                    leadValue,
+                    context.getColor(R.color.senku_accent_olive)
+                ));
+            }
+            appendReviewedCardLines(lines, state, true);
+            return lines;
+        }
         lines.add(new StructuredLine(
             context.getString(R.string.detail_external_review_proof_route),
             state.routeValue,
@@ -235,16 +258,20 @@ final class DetailProofPresentationFormatter {
                 context.getColor(R.color.senku_accent_olive)
             ));
         }
-        appendReviewedCardLines(lines, state);
+        appendReviewedCardLines(lines, state, compact);
         appendProofRevisionLine(lines, state.revisionStamp);
         return lines;
     }
 
-    private void appendReviewedCardLines(List<StructuredLine> lines, State state) {
+    private void appendReviewedCardLines(List<StructuredLine> lines, State state, boolean compact) {
         ReviewedCardMetadata metadata = state == null
             ? ReviewedCardMetadata.empty()
             : ReviewedCardMetadata.normalize(state.reviewedCardMetadata);
         if (!metadata.isPresent()) {
+            return;
+        }
+        if (compact) {
+            appendCompactReviewedCardLines(lines, metadata);
             return;
         }
         int accentColor = context.getColor(R.color.senku_text_muted_light);
@@ -280,6 +307,40 @@ final class DetailProofPresentationFormatter {
                 true
             ));
         }
+    }
+
+    private void appendCompactReviewedCardLines(List<StructuredLine> lines, ReviewedCardMetadata metadata) {
+        int accentColor = context.getColor(R.color.senku_text_muted_light);
+        for (CompactReviewedCardLine line : compactReviewedCardLines(metadata)) {
+            lines.add(new StructuredLine(line.label, line.value, accentColor));
+        }
+    }
+
+    static List<CompactReviewedCardLine> compactReviewedCardLines(ReviewedCardMetadata metadata) {
+        ArrayList<CompactReviewedCardLine> lines = new ArrayList<>();
+        ReviewedCardMetadata normalized = ReviewedCardMetadata.normalize(metadata);
+        String cardLabel = normalized.cardId.isEmpty()
+            ? "Reviewed guide card"
+            : "Reviewed guide card " + normalized.cardId;
+        lines.add(new CompactReviewedCardLine(cardLabel, "ready for UI review"));
+        if (!normalized.cardGuideId.isEmpty()) {
+            lines.add(new CompactReviewedCardLine("Cites guide " + normalized.cardGuideId, "card anchor"));
+        }
+        String sourceGuideIds = normalized.citedSourceGuideIdsCsv();
+        if (!sourceGuideIds.isEmpty() && !sourceGuideIds.equals(normalized.cardGuideId)) {
+            lines.add(new CompactReviewedCardLine("Cites guide " + sourceGuideIds, "support source"));
+        }
+        if (!normalized.reviewStatus.isEmpty()) {
+            lines.add(new CompactReviewedCardLine(
+                "Status",
+                "Status: " + humanizeReviewedCardToken(normalized.reviewStatus)
+            ));
+        }
+        lines.add(new CompactReviewedCardLine(
+            "Limit",
+            "Limit: reviewed-card support only; inspect cited guide before relying."
+        ));
+        return lines;
     }
 
     private void addProofDetailLines(
@@ -338,7 +399,7 @@ final class DetailProofPresentationFormatter {
         }
     }
 
-    private String humanizeReviewedCardToken(String token) {
+    private static String humanizeReviewedCardToken(String token) {
         return safe(token).trim().replace('_', ' ');
     }
 

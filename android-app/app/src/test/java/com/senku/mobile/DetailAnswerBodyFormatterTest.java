@@ -33,4 +33,25 @@ public final class DetailAnswerBodyFormatterTest {
             )
         );
     }
+
+    @Test
+    public void formatAnswerBodyPreservesReviewedCardHierarchyAndPromotesAvoidLines() {
+        DetailAnswerBodyFormatter formatter = new DetailAnswerBodyFormatter(null);
+
+        assertEquals(
+            "Short answer:\nControl bleeding first.\n\n" +
+                "Steps:\n1. Apply steady pressure.\n2. Wrap the wound.\n\n" +
+                "Limits or safety:\nWatch for shock.\nAvoid: Do not remove deeply embedded objects.",
+            formatter.formatAnswerBody(
+                "Steps:\n" +
+                    "1. Apply steady pressure.\n" +
+                    "Avoid: Do not remove deeply embedded objects.\n" +
+                    "2. Wrap the wound.\n\n" +
+                    "Short answer:\n" +
+                    "Control bleeding first.\n\n" +
+                    "Limits or safety:\n" +
+                    "Watch for shock."
+            )
+        );
+    }
 }

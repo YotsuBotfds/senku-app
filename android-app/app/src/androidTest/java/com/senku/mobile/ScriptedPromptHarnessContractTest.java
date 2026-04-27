@@ -48,6 +48,10 @@ public final class ScriptedPromptHarnessContractTest {
             "scriptedExpectedReviewedCardSourceGuideIds",
             Uri.encode("  GD-898 | GD-901 | | GD-902  ")
         );
+        args.putString(
+            "scriptedExpectedReviewedCardSupportFragments",
+            Uri.encode("  CARD  poisoning_unknown_ingestion | REVIEW  pilot reviewed | | CARD GUIDE  GD-898  ")
+        );
 
         ScriptedPromptHarnessContract contract = new ScriptedPromptHarnessContract(args);
 
@@ -62,6 +66,14 @@ public final class ScriptedPromptHarnessContractTest {
         Assert.assertEquals(
             Arrays.asList("GD-898", "GD-901", "GD-902"),
             contract.expectedReviewedCardSourceGuideIds
+        );
+        Assert.assertEquals(
+            Arrays.asList(
+                "CARD  poisoning_unknown_ingestion",
+                "REVIEW  pilot reviewed",
+                "CARD GUIDE  GD-898"
+            ),
+            contract.expectedReviewedCardSupportFragments
         );
     }
 
@@ -109,6 +121,45 @@ public final class ScriptedPromptHarnessContractTest {
             new ScriptedPromptHarnessContract(completeReviewedEvidenceArgs());
 
         contract.assertReviewedEvidenceExpectationIsClosed();
+    }
+
+    @Test
+    public void reviewedCardSupportLineFragmentsAreDerivedFromMetadataContract() {
+        ScriptedPromptHarnessContract contract =
+            new ScriptedPromptHarnessContract(completeReviewedEvidenceArgs());
+
+        Assert.assertEquals(
+            Arrays.asList(
+                "CARD  poisoning_unknown_ingestion",
+                "REVIEW  pilot reviewed",
+                "CARD GUIDE  GD-898",
+                "REVIEWED SOURCES  GD-898, GD-901"
+            ),
+            contract.expectedReviewedCardSupportLineFragments
+        );
+    }
+
+    @Test
+    public void explicitReviewedCardSupportFragmentsAppendToDerivedLines() {
+        Bundle args = completeReviewedEvidenceArgs();
+        args.putString(
+            "scriptedExpectedReviewedCardSupportFragments",
+            Uri.encode("Support line from reviewed card body | Follow-up support sentence")
+        );
+
+        ScriptedPromptHarnessContract contract = new ScriptedPromptHarnessContract(args);
+
+        Assert.assertEquals(
+            Arrays.asList(
+                "CARD  poisoning_unknown_ingestion",
+                "REVIEW  pilot reviewed",
+                "CARD GUIDE  GD-898",
+                "REVIEWED SOURCES  GD-898, GD-901",
+                "Support line from reviewed card body",
+                "Follow-up support sentence"
+            ),
+            contract.expectedReviewedCardSupportLineFragments
+        );
     }
 
     @Test

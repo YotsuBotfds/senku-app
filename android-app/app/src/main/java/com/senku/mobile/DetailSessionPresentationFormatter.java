@@ -157,6 +157,14 @@ final class DetailSessionPresentationFormatter {
             : context.getString(R.string.detail_thread_anchor_shift, previous, anchorGuideId);
     }
 
+    OfflineAnswerEngine.AnswerMode reopenedAnswerMode(SessionMemory.TurnSnapshot turn) {
+        return hasReviewedCardMetadata(turn) ? OfflineAnswerEngine.AnswerMode.CONFIDENT : null;
+    }
+
+    OfflineAnswerEngine.ConfidenceLabel reopenedConfidenceLabel(SessionMemory.TurnSnapshot turn) {
+        return hasReviewedCardMetadata(turn) ? OfflineAnswerEngine.ConfidenceLabel.HIGH : null;
+    }
+
     String primaryGuideIdForTurn(SessionMemory.TurnSnapshot turn) {
         if (turn == null) {
             return "";
@@ -178,6 +186,11 @@ final class DetailSessionPresentationFormatter {
             }
         }
         return "";
+    }
+
+    private static boolean hasReviewedCardMetadata(SessionMemory.TurnSnapshot turn) {
+        return turn != null
+            && ReviewedCardMetadata.normalize(turn.reviewedCardMetadata).isPresent();
     }
 
     private static String safe(String text) {

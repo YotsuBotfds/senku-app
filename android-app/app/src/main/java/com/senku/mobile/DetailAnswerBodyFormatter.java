@@ -14,6 +14,8 @@ final class DetailAnswerBodyFormatter {
         "Steps:",
         "Limits or safety:"
     };
+    private static final String STEPS_LABEL = "Steps:";
+    private static final String LIMITS_OR_SAFETY_LABEL = "Limits or safety:";
 
     private static final class AnswerBodySection {
         final String label;
@@ -73,9 +75,20 @@ final class DetailAnswerBodyFormatter {
             sections.add(currentSection);
         }
 
+        ArrayList<String> visiblePreambleLines = new ArrayList<>();
+        ArrayList<String> preambleSafetyLines = new ArrayList<>();
+        for (String line : trimEmptyBoundaryLines(preambleLines)) {
+            if (isSafetyLine(line)) {
+                preambleSafetyLines.add(line);
+            } else {
+                visiblePreambleLines.add(line);
+            }
+        }
+
         StringBuilder rebuilt = new StringBuilder(trimmedBody.length());
-        appendAnswerBodyBlock(rebuilt, trimEmptyBoundaryLines(preambleLines));
-        for (AnswerBodySection section : sections) {
+        appendAnswerBodyBlock(rebuilt, visiblePreambleLines);
+        for (String label : ANSWER_SECTION_LABELS) {
+            AnswerBodySection section = mergedSection(sections, label, preambleSafetyLines);
             ArrayList<String> visibleLines = visibleAnswerSectionLines(section);
             if (visibleLines.isEmpty()) {
                 continue;
@@ -88,18 +101,58 @@ final class DetailAnswerBodyFormatter {
         return rebuilt.toString().trim();
     }
 
+    private AnswerBodySection mergedSection(List<AnswerBodySection> sections, String label, List<String> preambleSafetyLines) {
+        AnswerBodySection merged = new AnswerBodySection(label);
+        if (sections == null || sections.isEmpty()) {
+            if (LIMITS_OR_SAFETY_LABEL.equals(label) && preambleSafetyLines != null) {
+                merged.lines.addAll(preambleSafetyLines);
+            }
+            return merged;
+        }
+        for (AnswerBodySection section : sections) {
+            if (section == null || !label.equals(section.label)) {
+                continue;
+            }
+            merged.lines.addAll(section.lines);
+        }
+        if (!LIMITS_OR_SAFETY_LABEL.equals(label)) {
+            return merged;
+        }
+        if (preambleSafetyLines != null) {
+            for (String line : preambleSafetyLines) {
+                if (!containsLine(merged.lines, line)) {
+                    merged.lines.add(line);
+                }
+            }
+        }
+        for (AnswerBodySection section : sections) {
+            if (section == null || LIMITS_OR_SAFETY_LABEL.equals(section.label)) {
+                continue;
+            }
+            for (String line : section.lines) {
+                if (isSafetyLine(line) && !containsLine(merged.lines, line)) {
+                    merged.lines.add(line);
+                }
+            }
+        }
+        return merged;
+    }
+
     private ArrayList<String> visibleAnswerSectionLines(AnswerBodySection section) {
         ArrayList<String> rawLines = trimEmptyBoundaryLines(section == null ? null : section.lines);
         if (rawLines.isEmpty()) {
             return rawLines;
         }
-        if (!"Steps:".equals(section.label)) {
+        if (!STEPS_LABEL.equals(section.label)) {
             return rawLines;
         }
         ArrayList<String> filtered = new ArrayList<>(rawLines.size());
         boolean substantiveContentFound = false;
         for (String line : rawLines) {
             if (isEffectivelyEmptyStepsLine(line)) {
+                continue;
+            }
+            if (isSafetyLine(line)) {
                 continue;
             }
             filtered.add(line);
@@ -124,6 +177,11 @@ final class DetailAnswerBodyFormatter {
         normalized = normalized.replace(")", "");
         normalized = normalized.replaceAll("\\s+", " ").trim().toLowerCase(Locale.US);
         normalized = normalized.replaceAll("[.!:]+$", "").trim();
+        if (context == null) {
+            return normalized.equals("no steps available")
+                || normalized.equals("no steps are available")
+                || normalized.equals("no steps were found");
+        }
         return normalized.equals("no steps available")
             || normalized.equals("no steps are available")
             || normalized.equals("no steps were found")
@@ -142,6 +200,25 @@ final class DetailAnswerBodyFormatter {
         String[] lines = safe(body).split("\\R", -1);
         for (String line : lines) {
             if (isKnownAnswerSectionLabel(safe(line).trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isSafetyLine(String line) {
+        String normalized = safe(line).trim().toLowerCase(Locale.US);
+        return normalized.startsWith("avoid:")
+            || normalized.startsWith("- avoid:")
+            || normalized.startsWith("limits:")
+            || normalized.startsWith("limit:")
+            || normalized.startsWith("safety:");
+    }
+
+    private static boolean containsLine(List<String> lines, String line) {
+        String normalizedLine = safe(line).trim();
+        for (String existing : lines) {
+            if (safe(existing).trim().equals(normalizedLine)) {
                 return true;
             }
         }

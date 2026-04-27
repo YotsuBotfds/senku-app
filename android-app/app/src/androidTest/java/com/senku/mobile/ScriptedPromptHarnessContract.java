@@ -19,6 +19,8 @@ final class ScriptedPromptHarnessContract {
     final String expectedReviewedCardReviewStatus;
     final List<String> expectedBodyFragments;
     final List<String> expectedReviewedCardSourceGuideIds;
+    final List<String> expectedReviewedCardSupportFragments;
+    final List<String> expectedReviewedCardSupportLineFragments;
     final boolean assertRecentThreadReviewedCardMetadata;
 
     ScriptedPromptHarnessContract(Bundle args) {
@@ -41,6 +43,15 @@ final class ScriptedPromptHarnessContract {
         expectedBodyFragments = parseDelimitedArg(args, "scriptedExpectedBodyContains");
         expectedReviewedCardSourceGuideIds =
             parseDelimitedArg(args, "scriptedExpectedReviewedCardSourceGuideIds");
+        expectedReviewedCardSupportFragments =
+            parseDelimitedArg(args, "scriptedExpectedReviewedCardSupportFragments");
+        expectedReviewedCardSupportLineFragments = buildReviewedCardSupportLineFragments(
+            expectedReviewedCardId,
+            expectedReviewedCardGuideId,
+            expectedReviewedCardReviewStatus,
+            expectedReviewedCardSourceGuideIds,
+            expectedReviewedCardSupportFragments
+        );
         assertRecentThreadReviewedCardMetadata =
             parseBooleanArg(args, "scriptedAssertRecentThreadReviewedCardMetadata");
     }
@@ -77,6 +88,47 @@ final class ScriptedPromptHarnessContract {
             "REVIEWED EVIDENCE expectation must assert at least one cited reviewed source guide id",
             expectedReviewedCardSourceGuideIds != null && !expectedReviewedCardSourceGuideIds.isEmpty()
         );
+        Assert.assertTrue(
+            "REVIEWED EVIDENCE expectation must expose reviewed-card support line fragments",
+            expectedReviewedCardSupportLineFragments != null
+                && !expectedReviewedCardSupportLineFragments.isEmpty()
+        );
+    }
+
+    private static List<String> buildReviewedCardSupportLineFragments(
+        String cardId,
+        String cardGuideId,
+        String reviewStatus,
+        List<String> sourceGuideIds,
+        List<String> explicitFragments
+    ) {
+        ArrayList<String> fragments = new ArrayList<>();
+        addSupportLineFragment(fragments, "CARD", cardId);
+        addSupportLineFragment(fragments, "REVIEW", humanizeReviewedCardToken(reviewStatus));
+        addSupportLineFragment(fragments, "CARD GUIDE", cardGuideId);
+        if (sourceGuideIds != null && !sourceGuideIds.isEmpty()) {
+            addSupportLineFragment(fragments, "REVIEWED SOURCES", String.join(", ", sourceGuideIds));
+        }
+        if (explicitFragments != null) {
+            for (String fragment : explicitFragments) {
+                String value = safe(fragment).trim();
+                if (!value.isEmpty()) {
+                    fragments.add(value);
+                }
+            }
+        }
+        return fragments;
+    }
+
+    private static void addSupportLineFragment(List<String> fragments, String label, String value) {
+        String trimmed = safe(value).trim();
+        if (!trimmed.isEmpty()) {
+            fragments.add(label + "  " + trimmed);
+        }
+    }
+
+    private static String humanizeReviewedCardToken(String token) {
+        return safe(token).trim().replace('_', ' ');
     }
 
     private static boolean parseBooleanArg(Bundle args, String key) {
