@@ -15,6 +15,17 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletReadingPolicySelectorKeepsCurrentPostureBudgets() {
+        val portraitPolicy = tabletReadingLayoutPolicy(isLandscape = false)
+        val landscapePolicy = tabletReadingLayoutPolicy(isLandscape = true)
+
+        assertEquals(240, portraitPolicy.threadRailWidthDp)
+        assertEquals(680, portraitPolicy.answerMaxWidthDp)
+        assertEquals(240, landscapePolicy.threadRailWidthDp)
+        assertEquals(680, landscapePolicy.answerMaxWidthDp)
+    }
+
+    @Test
     fun phoneLandscapePolicyCompactsComposerAndSuppressesSupportChrome() {
         val policy = phoneLandscapeStressReadingPolicy()
 
@@ -34,5 +45,48 @@ class StressReadingPolicyTest {
         assertFalse(policy.suppressSupportSuggestions)
         assertTrue(policy.collapseThreadChrome)
         assertTrue(policy.collapseSourceChrome)
+    }
+
+    @Test
+    fun phonePolicySelectorUsesLandscapePolicyBeforeAnswerReadiness() {
+        val awaitingAnswerPolicy = phoneStressReadingPolicy(
+            isLandscape = true,
+            answerReady = false,
+        )
+        val answerReadyPolicy = phoneStressReadingPolicy(
+            isLandscape = true,
+            answerReady = true,
+        )
+
+        assertTrue(awaitingAnswerPolicy.compactComposer)
+        assertTrue(awaitingAnswerPolicy.suppressRetryChrome)
+        assertTrue(awaitingAnswerPolicy.suppressSupportSuggestions)
+        assertFalse(awaitingAnswerPolicy.collapseThreadChrome)
+        assertFalse(awaitingAnswerPolicy.collapseSourceChrome)
+        assertEquals(awaitingAnswerPolicy, answerReadyPolicy)
+    }
+
+    @Test
+    fun phonePolicySelectorCollapsesPortraitChromeOnlyWhenAnswerReady() {
+        val awaitingAnswerPolicy = phoneStressReadingPolicy(
+            isLandscape = false,
+            answerReady = false,
+        )
+        val answerReadyPolicy = phoneStressReadingPolicy(
+            isLandscape = false,
+            answerReady = true,
+        )
+
+        assertTrue(awaitingAnswerPolicy.compactComposer)
+        assertFalse(awaitingAnswerPolicy.suppressRetryChrome)
+        assertFalse(awaitingAnswerPolicy.suppressSupportSuggestions)
+        assertFalse(awaitingAnswerPolicy.collapseThreadChrome)
+        assertFalse(awaitingAnswerPolicy.collapseSourceChrome)
+
+        assertTrue(answerReadyPolicy.compactComposer)
+        assertFalse(answerReadyPolicy.suppressRetryChrome)
+        assertFalse(answerReadyPolicy.suppressSupportSuggestions)
+        assertTrue(answerReadyPolicy.collapseThreadChrome)
+        assertTrue(answerReadyPolicy.collapseSourceChrome)
     }
 }

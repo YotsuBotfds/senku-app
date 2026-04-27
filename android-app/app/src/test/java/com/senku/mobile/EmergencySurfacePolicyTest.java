@@ -45,6 +45,42 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void reviewedDeterministicSpreadingInfectionEmergencyQualifies() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:infected_wound_spreading_infection",
+                "Emergency escalation",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertTrue(decision.eligible);
+    }
+
+    @Test
+    public void reviewedDeterministicMeningitisEmergencyQualifies() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:meningitis_red_flags_child",
+                "Pediatric Emergency Medicine",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                2
+            )
+        );
+
+        assertTrue(decision.eligible);
+    }
+
+    @Test
     public void routineGuideReadingDoesNotQualify() {
         EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
             input(
@@ -61,6 +97,63 @@ public final class EmergencySurfacePolicyTest {
 
         assertFalse(decision.eligible);
         assertEquals(EmergencySurfacePolicy.REASON_GUIDE_READING, decision.reason);
+    }
+
+    @Test
+    public void routineWoundCareDoesNotQualify() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:routine_wound_cleaning_bandage_change",
+                "First Aid & Emergency Response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
+    }
+
+    @Test
+    public void genericFeverWithoutMeningitisOrSepsisDoesNotQualify() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:generic_fever_home_care",
+                "Pediatric Emergency Medicine",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
+    }
+
+    @Test
+    public void poisonPlanningAndCleaningSuppliesDoesNotQualify() {
+        EmergencySurfacePolicy.Decision decision = EmergencySurfacePolicy.evaluate(
+            input(
+                true,
+                "answer_card:poisoning_prevention_cleaning_supplies_storage",
+                "First Aid & Emergency Response",
+                "reviewed",
+                "high",
+                "high",
+                "deterministic_rule",
+                1
+            )
+        );
+
+        assertFalse(decision.eligible);
+        assertEquals(EmergencySurfacePolicy.REASON_NOT_HIGH_RISK_EMERGENCY, decision.reason);
     }
 
     @Test

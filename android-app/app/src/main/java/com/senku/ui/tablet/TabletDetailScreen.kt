@@ -124,6 +124,12 @@ internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
         answerMaxWidthDp = 680,
     )
 
+internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
+    when (isLandscape) {
+        true -> tabletLandscapeReadingLayoutPolicy()
+        false -> tabletLandscapeReadingLayoutPolicy()
+    }
+
 internal data class PhoneStressReadingPolicy(
     val compactComposer: Boolean,
     val suppressRetryChrome: Boolean,
@@ -148,6 +154,25 @@ internal fun phonePortraitAnswerFirstStressReadingPolicy(): PhoneStressReadingPo
         suppressSupportSuggestions = false,
         collapseThreadChrome = true,
         collapseSourceChrome = true,
+    )
+
+internal fun phoneStressReadingPolicy(
+    isLandscape: Boolean,
+    answerReady: Boolean,
+): PhoneStressReadingPolicy =
+    when {
+        isLandscape -> phoneLandscapeStressReadingPolicy()
+        answerReady -> phonePortraitAnswerFirstStressReadingPolicy()
+        else -> phonePortraitAwaitingAnswerStressReadingPolicy()
+    }
+
+private fun phonePortraitAwaitingAnswerStressReadingPolicy(): PhoneStressReadingPolicy =
+    PhoneStressReadingPolicy(
+        compactComposer = true,
+        suppressRetryChrome = false,
+        suppressSupportSuggestions = false,
+        collapseThreadChrome = false,
+        collapseSourceChrome = false,
     )
 
 fun bindTabletDetailScreen(

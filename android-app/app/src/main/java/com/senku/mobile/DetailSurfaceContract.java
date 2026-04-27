@@ -3,6 +3,9 @@ package com.senku.mobile;
 import java.util.Objects;
 
 public final class DetailSurfaceContract {
+    private static final String ANSWER_MODE_ABSTAIN = "ABSTAIN";
+    private static final String ANSWER_MODE_UNCERTAIN_FIT = "UNCERTAIN_FIT";
+
     public enum Surface {
         GUIDE_READER,
         ANSWER_DETAIL
@@ -87,7 +90,7 @@ public final class DetailSurfaceContract {
     }
 
     public static Posture guide(EntryPoint entryPoint) {
-        boolean handoff = entryPoint == EntryPoint.RELATED_GUIDE_HANDOFF;
+        boolean handoff = normalizeEntryPoint(entryPoint) == EntryPoint.RELATED_GUIDE_HANDOFF;
         return new Posture(
             Surface.GUIDE_READER,
             handoff ? TitleRole.GUIDE_TITLE_WITH_HANDOFF_CONTEXT : TitleRole.GUIDE_TITLE,
@@ -96,6 +99,43 @@ public final class DetailSurfaceContract {
             FollowUpVisibility.HIDDEN,
             handoff ? RelatedGuidePosture.GUIDE_HANDOFF_CONTEXT : RelatedGuidePosture.GUIDE_NAVIGATION
         );
+    }
+
+    public static Surface classifySurface(boolean isAnswer) {
+        return isAnswer ? Surface.ANSWER_DETAIL : Surface.GUIDE_READER;
+    }
+
+    public static AnswerKind classifyAnswerKind(
+        String answerMode,
+        boolean deterministic,
+        boolean abstain,
+        String ruleId
+    ) {
+        String normalizedMode = safe(answerMode).trim().toUpperCase(java.util.Locale.US);
+        if (abstain || ANSWER_MODE_ABSTAIN.equals(normalizedMode)) {
+            return AnswerKind.ABSTAIN;
+        }
+        if (ANSWER_MODE_UNCERTAIN_FIT.equals(normalizedMode)) {
+            return AnswerKind.UNCERTAIN_FIT;
+        }
+        if (deterministic || !safe(ruleId).trim().isEmpty()) {
+            return AnswerKind.DETERMINISTIC;
+        }
+        return AnswerKind.GENERATED;
+    }
+
+    public static Posture fromState(
+        boolean isAnswer,
+        EntryPoint entryPoint,
+        String answerMode,
+        boolean deterministic,
+        boolean abstain,
+        String ruleId
+    ) {
+        if (classifySurface(isAnswer) == Surface.GUIDE_READER) {
+            return guide(entryPoint);
+        }
+        return answer(classifyAnswerKind(answerMode, deterministic, abstain, ruleId));
     }
 
     public static Posture answer(AnswerKind answerKind) {
@@ -139,5 +179,13 @@ public final class DetailSurfaceContract {
                     RelatedGuidePosture.SOURCE_ANCHORED_CONNECTIONS
                 );
         }
+    }
+
+    private static EntryPoint normalizeEntryPoint(EntryPoint entryPoint) {
+        return entryPoint == null ? EntryPoint.DIRECT : entryPoint;
+    }
+
+    private static String safe(String text) {
+        return text == null ? "" : text;
     }
 }

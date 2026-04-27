@@ -45,19 +45,48 @@ public final class EmergencySurfacePolicy {
         String normalizedRuleId = normalize(ruleId);
         String normalizedCategory = normalize(category);
         return normalizedRuleId.startsWith("answer_card:")
-            && (
-                normalizedRuleId.contains("poisoning")
-                    || normalizedRuleId.contains("choking")
-                    || normalizedRuleId.contains("sepsis")
-                    || normalizedRuleId.contains("internal_bleeding")
-                    || normalizedRuleId.contains("spreading_infection")
-            )
-            && (
-                normalizedCategory.contains("emergency")
-                    || normalizedCategory.contains("danger")
-                    || normalizedCategory.contains("first aid")
-                    || normalizedCategory.contains("red flag")
+            && hasHighRiskEmergencyRule(normalizedRuleId)
+            && hasEmergencyCategory(normalizedCategory);
+    }
+
+    private static boolean hasHighRiskEmergencyRule(String normalizedRuleId) {
+        return isPoisoningEmergency(normalizedRuleId)
+            || normalizedRuleId.contains("choking")
+            || normalizedRuleId.contains("sepsis")
+            || normalizedRuleId.contains("meningitis")
+            || normalizedRuleId.contains("internal_bleeding")
+            || normalizedRuleId.contains("spreading_infection");
+    }
+
+    private static boolean isPoisoningEmergency(String normalizedRuleId) {
+        return normalizedRuleId.contains("poisoning")
+            && containsAny(
+                normalizedRuleId,
+                "ingestion",
+                "swallowed",
+                "overdose",
+                "exposure",
+                "inhalation"
             );
+    }
+
+    private static boolean hasEmergencyCategory(String normalizedCategory) {
+        return containsAny(
+            normalizedCategory,
+            "emergency",
+            "danger",
+            "first aid",
+            "red flag"
+        );
+    }
+
+    private static boolean containsAny(String value, String... needles) {
+        for (String needle : needles) {
+            if (value.contains(needle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isReviewed(String reviewStatus, String provenance) {

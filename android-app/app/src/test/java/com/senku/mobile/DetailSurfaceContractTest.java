@@ -112,4 +112,68 @@ public final class DetailSurfaceContractTest {
             posture.relatedGuidePosture
         );
     }
+
+    @Test
+    public void stateFactoryDefaultsNullGuideInputsToDirectGuideReader() {
+        DetailSurfaceContract.Posture posture =
+            DetailSurfaceContract.fromState(false, null, null, false, false, null);
+
+        assertEquals(DetailSurfaceContract.Surface.GUIDE_READER, posture.surface);
+        assertEquals(DetailSurfaceContract.TitleRole.GUIDE_TITLE, posture.titleRole);
+        assertEquals(DetailSurfaceContract.RelatedGuidePosture.GUIDE_NAVIGATION, posture.relatedGuidePosture);
+    }
+
+    @Test
+    public void stateFactoryDefaultsNullAnswerInputsToGeneratedAnswerDetail() {
+        DetailSurfaceContract.Posture posture =
+            DetailSurfaceContract.fromState(true, null, null, false, false, null);
+
+        assertEquals(DetailSurfaceContract.Surface.ANSWER_DETAIL, posture.surface);
+        assertEquals(DetailSurfaceContract.BodyRole.GENERATED_ANSWER_BODY, posture.bodyRole);
+        assertEquals(
+            DetailSurfaceContract.TrustProvenanceVisibility.ANSWER_PROVENANCE,
+            posture.trustProvenanceVisibility
+        );
+        assertEquals(DetailSurfaceContract.FollowUpVisibility.VISIBLE, posture.followUpVisibility);
+    }
+
+    @Test
+    public void stateFactoryMapsGuideHandoffToGuideReaderHandoffPosture() {
+        DetailSurfaceContract.Posture posture =
+            DetailSurfaceContract.fromState(
+                false,
+                DetailSurfaceContract.EntryPoint.RELATED_GUIDE_HANDOFF,
+                "ABSTAIN",
+                true,
+                true,
+                "card-rule"
+            );
+
+        assertEquals(DetailSurfaceContract.Surface.GUIDE_READER, posture.surface);
+        assertEquals(DetailSurfaceContract.TitleRole.GUIDE_TITLE_WITH_HANDOFF_CONTEXT, posture.titleRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuidePosture.GUIDE_HANDOFF_CONTEXT,
+            posture.relatedGuidePosture
+        );
+    }
+
+    @Test
+    public void answerKindClassificationMapsExistingStateSignals() {
+        assertEquals(
+            DetailSurfaceContract.AnswerKind.ABSTAIN,
+            DetailSurfaceContract.classifyAnswerKind("ABSTAIN", false, false, "")
+        );
+        assertEquals(
+            DetailSurfaceContract.AnswerKind.DETERMINISTIC,
+            DetailSurfaceContract.classifyAnswerKind("CONFIDENT", false, false, "reviewed-card")
+        );
+        assertEquals(
+            DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT,
+            DetailSurfaceContract.classifyAnswerKind("uncertain_fit", true, false, "reviewed-card")
+        );
+        assertEquals(
+            DetailSurfaceContract.AnswerKind.GENERATED,
+            DetailSurfaceContract.classifyAnswerKind("CONFIDENT", false, false, "")
+        );
+    }
 }

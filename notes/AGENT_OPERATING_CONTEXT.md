@@ -18,9 +18,9 @@ changing operational detail here.
 
 - GitHub Actions billing posture: workflows are intentionally manual-only.
   Do not reintroduce automatic `push`, `pull_request`, or scheduled triggers
-  without an explicit user request. After pushes, use a low worker for local
-  validation and treat `gh run list` as a sanity check that no new automatic
-  run was started.
+  without an explicit user request. Use the local gate as the default
+  validation lane for new heads; treat `gh run list` only as a sanity check
+  that no automatic run was started.
 
 - Standard desktop deterministic/routing check:
 

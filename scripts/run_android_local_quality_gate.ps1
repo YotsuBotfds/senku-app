@@ -82,12 +82,15 @@ if (-not (Test-Path $gradleWrapper)) {
 $defaultTests = @(
     'com.senku.ui.answer.AnswerContentFactoryTest',
     'com.senku.mobile.DetailActionBlockPresentationFormatterTest',
+    'com.senku.mobile.DetailSurfaceContractTest',
     'com.senku.mobile.DetailWarningCopySanitizerTest',
+    'com.senku.mobile.EmergencySurfacePolicyTest',
     'com.senku.mobile.MainActivityPhoneNavigationTest',
     'com.senku.mobile.SearchResultAdapterTest',
     'com.senku.ui.evidence.PureEvidenceModelsTest',
     'com.senku.ui.search.SearchResultCardHeuristicsTest',
     'com.senku.ui.sources.SourceRowModelTest',
+    'com.senku.ui.tablet.StressReadingPolicyTest',
     'com.senku.ui.tablet.TabletEvidenceVisibilityPolicyTest',
     'com.senku.ui.theme.ContrastAuditTest'
 )

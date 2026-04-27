@@ -46,7 +46,8 @@ handoffs. It is not Android acceptance evidence.
 ## Active Queue
 
 1. Run no-emulator migration preflight bundle and state-pack plan-only checks.
-2. Re-check GitHub CI/status visibility for pushed heads.
+2. Use local validation as the default gate for new heads; use `gh run list`
+   only as a sanity check that no automatic GitHub Actions run started.
 3. Choose between focused emulator proof for landed UI polish and the next
    safe tooling/documentation slice.
 
@@ -73,21 +74,19 @@ handoffs. It is not Android acceptance evidence.
     JVM `testDebugUnitTest` passed.
   - Pushed at about `2026-04-27T16:06:22-05:00`.
 
-## CI Tracking
+## CI Posture
 
 - GitHub connector checks for `f55d2b0`, `6accee4`, and `814d28a` returned no
   commit statuses and no workflow runs at query time.
-- CI scout found that `Master Head Health` is the only guaranteed workflow on
-  every `master` push. It calls the reusable `Non-Android Regression Gate` in
-  `Generated` mode.
-- Other push workflows are path-filtered: Actions security lint, dependency
-  security scan, and PowerShell quality gate run only when their matching files
-  change.
-- The connector status query checks classic commit statuses, while these
-  workflows emit GitHub Actions check runs. Use the Actions run list for live
-  CI tracking.
-- `gh run list --repo YotsuBotfds/senku-app --limit 20` sees the push runs.
-  Latest relevant failures are still the known infra shape:
+- `49ef031` made GitHub workflows manual-only to avoid unbounded Actions
+  billing: automatic `push`, `pull_request`, and `schedule` triggers were
+  removed from the workflow set while `workflow_dispatch` remained. Local
+  policy tests (`tests.test_github_workflows`) passed with `19` tests OK, and
+  a low validation worker independently found no automatic workflow triggers.
+- Do not expect GitHub CI to start from pushes. The local gate is the default
+  validation lane for new heads; use `gh run list --repo YotsuBotfds/senku-app
+  --limit 20` only as a sanity check that the automatic stream stays quiet.
+- Historical pre-manual-only failures had the known infra shape:
   - `814d28a`: `Master Head Health` run `25019563285`, job
     `73276301040`, `steps=[]`.
   - `6accee4`: `Master Head Health` run `25019541550`, job
@@ -107,11 +106,6 @@ handoffs. It is not Android acceptance evidence.
   parsed `68` PowerShell files successfully, then stopped because
   `PSScriptAnalyzer` is not installed locally and the run required analyzer
   coverage. No source failure was observed before the missing-module stop.
-- `49ef031` made GitHub workflows manual-only to avoid unbounded Actions
-  billing: automatic `push`, `pull_request`, and `schedule` triggers were
-  removed from the workflow set while `workflow_dispatch` remained. Local
-  policy tests (`tests.test_github_workflows`) passed with `19` tests OK, and
-  a low validation worker independently found no automatic workflow triggers.
 - Post-push sanity check after `49ef031` showed no new Actions run for that
   head in the latest run list. Continue using local low-worker validation after
   commits; use GitHub run tracking only to confirm the automatic stream stays
