@@ -142,6 +142,15 @@ Tablet handoff fix evidence, 2026-04-27 01:06-01:07 CT:
 - APK SHA for the fix proof:
   `24af2ea76558829f94c973c87f47734ea2ef3c07b5756d0efe0e851f4164c21f`.
 
+Tablet state-pack proof after handoff fix, 2026-04-27 01:08-01:10 CT:
+
+- `tablet_portrait`:
+  `artifacts/ui_state_pack_current_head_tablet_after_handoff_fix/tablet_portrait_after_handoff_fix/summary.json`,
+  `status=pass`, `10 / 10`, `platform_anr=null`.
+- `tablet_landscape`:
+  `artifacts/ui_state_pack_current_head_tablet_after_handoff_fix/tablet_landscape_after_handoff_fix/summary.json`,
+  `status=pass`, `10 / 10`, `platform_anr=null`.
+
 Current-head pilot runtime canaries, 2026-04-27 00:57 CT:
 
 - `newborn_danger_sepsis` / `GD-284`:

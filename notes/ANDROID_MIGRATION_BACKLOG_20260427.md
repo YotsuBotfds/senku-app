@@ -28,6 +28,9 @@ use it to approve reviewed-card runtime expansion or product exposure.
   fields. Follow-up proof passed on `emulator-5554` and `emulator-5558` under
   `artifacts/android_tablet_handoff_context_fix_5554_final/summary.json` and
   `artifacts/android_tablet_handoff_context_fix_5558_final/summary.json`.
+  Post-fix tablet state packs also passed `10 / 10` for `tablet_portrait` and
+  `tablet_landscape` under
+  `artifacts/ui_state_pack_current_head_tablet_after_handoff_fix/`.
 - Phone portrait clipping polish: the focused phone portrait proof is green,
   but visual review found placeholder text clipping and source/path chip
   clipping on the narrow surface. This is polish debt, not a migration proof
