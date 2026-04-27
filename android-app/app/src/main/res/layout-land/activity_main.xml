@@ -357,7 +357,7 @@
                     android:id="@+id/developer_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/home_block_gap"
+                    android:layout_marginTop="@dimen/home_compact_gap"
                     android:orientation="vertical"
                     android:visibility="gone">
 
@@ -386,7 +386,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/home_compact_gap"
                         android:background="@drawable/bg_surface_panel"
+                        android:ellipsize="end"
                         android:lineSpacingExtra="2dp"
+                        android:maxLines="4"
                         android:padding="@dimen/home_surface_padding"
                         android:text="@string/info_loading"
                         android:textAppearance="?android:attr/textAppearanceSmall"

@@ -165,7 +165,7 @@
         android:layout_marginEnd="10dp"
         android:background="@drawable/bg_hero_panel"
         android:orientation="vertical"
-        android:padding="6dp">
+        android:padding="4dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -183,11 +183,11 @@
             android:layout_height="wrap_content"
             android:accessibilityLiveRegion="polite"
             android:background="@drawable/bg_status_pill"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:paddingStart="8dp"
-            android:paddingTop="3dp"
+            android:paddingTop="2dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="3dp"
+            android:paddingBottom="2dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_text_light"
             android:textStyle="bold"
@@ -198,7 +198,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:indeterminate="true"
             android:indeterminateTint="@color/senku_accent_olive"
             android:importantForAccessibility="no"
@@ -209,7 +209,7 @@
             android:id="@+id/detail_hero_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:text="@string/detail_thread_title"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/senku_text_light"
@@ -227,7 +227,7 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -295,7 +295,7 @@
             android:id="@+id/detail_mode_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:text="@string/detail_mode_summary_guide"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/senku_text_muted_light" />
@@ -363,10 +363,10 @@
                     android:id="@+id/detail_question_bubble"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="36dp"
+                    android:layout_marginStart="24dp"
                     android:background="@drawable/bg_chat_question"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:id="@+id/detail_header_label"
@@ -386,7 +386,7 @@
                         android:id="@+id/detail_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_text_light"
                         android:textStyle="bold" />
@@ -395,7 +395,7 @@
                         android:id="@+id/detail_subtitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:fontFamily="monospace"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_text_muted_light" />
@@ -412,11 +412,11 @@
                     android:id="@+id/detail_answer_bubble"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="36dp"
+                    android:layout_marginEnd="24dp"
                     android:animateLayoutChanges="true"
                     android:background="@drawable/bg_chat_answer"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="8dp">
 
                     <TextView
                         android:id="@+id/detail_body_label"
@@ -436,7 +436,7 @@
                         android:id="@+id/detail_materials_scroll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:background="@drawable/bg_detail_material_tag"
                         android:clipToPadding="false"
                         android:contentDescription="@string/external_review_detail_material_rail_description"
@@ -458,14 +458,14 @@
                         android:id="@+id/detail_answer_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/detail_body_mirror_shell"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:background="@drawable/bg_detail_warning_shell"
                         android:contentDescription="@string/external_review_detail_body_shell_description"
                         android:orientation="vertical"
@@ -489,7 +489,7 @@
                         android:id="@+id/detail_inline_sources_scroll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:scrollbars="none"
                         android:visibility="gone">
 
@@ -504,11 +504,11 @@
                         android:id="@+id/detail_provenance_panel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:background="@drawable/bg_provenance_panel"
                         android:clipToOutline="true"
                         android:orientation="vertical"
-                        android:padding="10dp"
+                        android:padding="8dp"
                         android:visibility="gone">
 
                         <TextView
@@ -524,14 +524,14 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="2dp"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="4dp"
                             android:background="@drawable/bg_detail_header_baseline" />
 
                         <TextView
                             android:id="@+id/detail_provenance_title_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="6dp"
                             android:text="@string/detail_provenance_title"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/senku_text_muted_light"
@@ -541,7 +541,7 @@
                             android:id="@+id/detail_provenance_meta"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
+                            android:layout_marginTop="4dp"
                             android:fontFamily="monospace"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/senku_text_light"
@@ -551,7 +551,7 @@
                             android:id="@+id/detail_provenance_body"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="6dp"
                             android:ellipsize="end"
                             android:lineSpacingExtra="2dp"
                             android:maxLines="2"
@@ -562,7 +562,7 @@
                             android:id="@+id/detail_provenance_open"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="8dp"
                             android:background="@drawable/bg_source_link"
                             android:text="@string/detail_provenance_open"
                             android:textAllCaps="false"
@@ -625,11 +625,11 @@
                 android:id="@+id/detail_sources_panel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/bg_sources_stack_shell"
                 android:clipToOutline="true"
                 android:orientation="vertical"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:visibility="gone">
 
                 <TextView
@@ -645,14 +645,14 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/bg_detail_header_baseline" />
 
                 <TextView
                     android:id="@+id/detail_sources_title_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:background="@drawable/bg_sources_section_pill"
                     android:paddingStart="8dp"
                     android:paddingTop="5dp"
@@ -676,7 +676,7 @@
                     android:id="@+id/detail_sources_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:orientation="vertical" />
 
             </LinearLayout>
