@@ -84,6 +84,15 @@ use it to approve reviewed-card runtime expansion or product exposure.
   `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`.
   The prior bundled no-push partial `42 / 45` is superseded for UI acceptance
   by this full proof.
+- Fixed-four Android headless state-pack real run acceptance evidence: wrapper
+  `artifacts/ui_state_pack_headless_lane/20260427_134620/headless_lane_summary.json`
+  validated acceptance; state pack
+  `artifacts/ui_state_pack_headless_lane/20260427_134751/summary.json`
+  reported `status=pass`, `45 / 45`, `fail_count=0`,
+  `platform_anr_count=0`, `matrix_homogeneous=true`,
+  `model=gemma-4-e2b-it-litert`, APK SHA
+  `ac25c273b28dc7a7acf77bdc2954d1c8b25230b2d36c179a0bb304b39ca7c24f`,
+  and adb `37.0.0-14910828`.
 
 ## Migration-Proof Checklist
 
