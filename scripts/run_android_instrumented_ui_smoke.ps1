@@ -164,6 +164,7 @@ function Get-ApkFingerprint {
         path = $Path
         length = [int64]$item.Length
         last_write_utc = $item.LastWriteTimeUtc.ToString("o")
+        sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLowerInvariant()
     }
 }
 
@@ -210,6 +211,10 @@ function Test-InstallCacheMatch {
     try {
         $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json
         return ($state.device -eq $Device) -and
+            (-not [string]::IsNullOrWhiteSpace([string]$state.app.sha256)) -and
+            (-not [string]::IsNullOrWhiteSpace([string]$state.test.sha256)) -and
+            ([string]$state.app.sha256 -eq [string]$AppFingerprint.sha256) -and
+            ([string]$state.test.sha256 -eq [string]$TestFingerprint.sha256) -and
             ($state.app.length -eq $AppFingerprint.length) -and
             ($state.app.last_write_utc -eq $AppFingerprint.last_write_utc) -and
             ($state.test.length -eq $TestFingerprint.length) -and
@@ -1067,7 +1072,8 @@ function Restore-DeviceSettings {
 $EffectiveHostInferenceUrl = Resolve-HostInferenceUrlForDevice -Url $HostInferenceUrl
 $appFingerprint = Get-ApkFingerprint -Path $appApk
 $testFingerprint = Get-ApkFingerprint -Path $testApk
-$EffectiveSkipInstall = $SkipInstall -or (Test-InstallCacheMatch -StatePath $installStatePath -AppFingerprint $appFingerprint -TestFingerprint $testFingerprint)
+$InstallCacheMatches = Test-InstallCacheMatch -StatePath $installStatePath -AppFingerprint $appFingerprint -TestFingerprint $testFingerprint
+$EffectiveSkipInstall = [bool]$SkipInstall
 $EffectiveTestClass = if (Use-ScriptedPromptRun) {
     "${TestClass}#scriptedPromptFlowCompletes"
 } else {
@@ -1467,6 +1473,7 @@ try {
         smoke_profile = $SmokeProfile
         skip_build = [bool]$SkipBuild
         skip_install = [bool]$EffectiveSkipInstall
+        install_cache_matches = [bool]$InstallCacheMatches
         scripted_query = $ScriptedQuery
         scripted_ask = [bool]$ScriptedAsk
         scripted_followup_query = $ScriptedFollowUpQuery

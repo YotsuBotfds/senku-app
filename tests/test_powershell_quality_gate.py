@@ -174,6 +174,22 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('resource-id="android:id/aerr_wait"', script)
         self.assertIn('resource-id="android:id/aerr_close"', script)
         self.assertIn("throw $platformAnrEvidence.reason", script)
+
+    def test_android_smoke_install_cache_uses_apk_hashes(self):
+        script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('(Get-FileHash -Algorithm SHA256 -LiteralPath $Path).Hash.ToLowerInvariant()', script)
+        self.assertIn('(-not [string]::IsNullOrWhiteSpace([string]$state.app.sha256))', script)
+        self.assertIn('(-not [string]::IsNullOrWhiteSpace([string]$state.test.sha256))', script)
+        self.assertIn('([string]$state.app.sha256 -eq [string]$AppFingerprint.sha256)', script)
+        self.assertIn('([string]$state.test.sha256 -eq [string]$TestFingerprint.sha256)', script)
+        self.assertIn('$InstallCacheMatches = Test-InstallCacheMatch', script)
+        self.assertIn('$EffectiveSkipInstall = [bool]$SkipInstall', script)
+        self.assertIn('install_cache_matches = [bool]$InstallCacheMatches', script)
+        self.assertIn("app = $appFingerprint", script)
+        self.assertIn("test = $testFingerprint", script)
+        self.assertIn("Set-Content -LiteralPath $installStatePath", script)
+        self.assertNotIn('$EffectiveSkipInstall = $SkipInstall -or', script)
         self.assertIn("platform_anr = $platformAnrEvidence", script)
 
     def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
