@@ -45,9 +45,56 @@ class RunAndroidGapPackContractTests(unittest.TestCase):
         self.assertIn("function Select-Emulator", self.script)
         self.assertIn("$suggested = [string]$Case.suggested_emulator", self.script)
         self.assertIn("return $suggested", self.script)
-        self.assertIn("if ($FallbackEmulators.Count -eq 0)", self.script)
-        self.assertIn('throw "Provide at least one fallback emulator."', self.script)
-        self.assertIn("return $FallbackEmulators[$CaseIndex % $FallbackEmulators.Count]", self.script)
+        self.assertIn("$usableFallbackEmulators = @()", self.script)
+        self.assertIn(
+            "if (-not [string]::IsNullOrWhiteSpace([string]$emulator))",
+            self.script,
+        )
+        self.assertIn('throw "Provide at least one non-empty fallback emulator."', self.script)
+        self.assertIn(
+            "return $usableFallbackEmulators[$CaseIndex % $usableFallbackEmulators.Count]",
+            self.script,
+        )
+
+    def test_parameter_guards_fail_before_runner_execution(self):
+        self.assertIn("function Assert-RunParameterGuards", self.script)
+        self.assertIn('throw "PollSeconds must be at least 1."', self.script)
+        self.assertIn(
+            'throw "SingleMaxWaitSeconds must be greater than or equal to PollSeconds."',
+            self.script,
+        )
+        self.assertIn(
+            'throw "InitialMaxWaitSeconds must be greater than or equal to PollSeconds."',
+            self.script,
+        )
+        self.assertIn(
+            'throw "FollowUpMaxWaitSeconds must be greater than or equal to PollSeconds."',
+            self.script,
+        )
+        self.assertIn('throw "PauseSeconds must be at least 0."', self.script)
+        self.assertIn('throw "MaxCases must be at least 0."', self.script)
+        self.assertLess(
+            self.script.index("Assert-RunParameterGuards"),
+            self.script.index("& powershell -ExecutionPolicy Bypass -File $singleRunner"),
+        )
+        self.assertLess(
+            self.script.index("Assert-RunParameterGuards"),
+            self.script.index("& powershell -ExecutionPolicy Bypass -File $followUpRunner"),
+        )
+
+    def test_fallback_emulator_guard_runs_after_selection_before_runners(self):
+        self.assertIn("function Assert-FallbackEmulatorsAvailable", self.script)
+        self.assertIn("$needsFallback = $false", self.script)
+        self.assertIn(
+            "if ([string]::IsNullOrWhiteSpace([string]$case.suggested_emulator))",
+            self.script,
+        )
+        self.assertIn("$hasFallback = $false", self.script)
+        self.assertIn("Assert-FallbackEmulatorsAvailable -Cases $selectedCases", self.script)
+        self.assertLess(
+            self.script.index("Assert-FallbackEmulatorsAvailable -Cases $selectedCases"),
+            self.script.index("& powershell -ExecutionPolicy Bypass -File $singleRunner"),
+        )
 
     def test_runner_invocations_forward_host_inference_and_wait_controls(self):
         self.assertIn('$singleRunner = Join-Path $PSScriptRoot "run_android_prompt.ps1"', self.script)

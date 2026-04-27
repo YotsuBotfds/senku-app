@@ -38,6 +38,7 @@ class AndroidFtsFallbackMatrixContractTests(unittest.TestCase):
         self.assertIn("device_lock_used =", self.script)
         self.assertIn("host_adb_platform_tools_version =", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
+        self.assertIn("No Android devices resolved", self.script)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(
@@ -101,6 +102,35 @@ class AndroidFtsFallbackMatrixContractTests(unittest.TestCase):
             self.assertFalse(first_device["device_lock_used"])
             self.assertEqual(first_device["host_adb_platform_tools_version"], "dry_run")
             self.assertIn("adb -s emulator-5554 shell am instrument -w", first_device["command"])
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
+
+    def test_dry_run_fails_closed_when_no_devices_resolve(self):
+        output_dir = Path(tempfile.mkdtemp(prefix="fts_fallback_matrix_empty_"))
+        try:
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir),
+                    "-Devices",
+                    " , ",
+                    "-DryRun",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertNotEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("No Android devices resolved", result.stderr + result.stdout)
+            self.assertFalse((output_dir / "summary.json").exists())
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 

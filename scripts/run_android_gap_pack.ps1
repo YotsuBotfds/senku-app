@@ -84,6 +84,53 @@ function Normalize-FilterValues {
     return $normalized
 }
 
+function Assert-RunParameterGuards {
+    if ($PollSeconds -lt 1) {
+        throw "PollSeconds must be at least 1."
+    }
+    if ($SingleMaxWaitSeconds -lt $PollSeconds) {
+        throw "SingleMaxWaitSeconds must be greater than or equal to PollSeconds."
+    }
+    if ($InitialMaxWaitSeconds -lt $PollSeconds) {
+        throw "InitialMaxWaitSeconds must be greater than or equal to PollSeconds."
+    }
+    if ($FollowUpMaxWaitSeconds -lt $PollSeconds) {
+        throw "FollowUpMaxWaitSeconds must be greater than or equal to PollSeconds."
+    }
+    if ($PauseSeconds -lt 0) {
+        throw "PauseSeconds must be at least 0."
+    }
+    if ($MaxCases -lt 0) {
+        throw "MaxCases must be at least 0."
+    }
+}
+
+function Assert-FallbackEmulatorsAvailable {
+    param($Cases)
+
+    $needsFallback = $false
+    foreach ($case in $Cases) {
+        if ([string]::IsNullOrWhiteSpace([string]$case.suggested_emulator)) {
+            $needsFallback = $true
+            break
+        }
+    }
+    if (-not $needsFallback) {
+        return
+    }
+
+    $hasFallback = $false
+    foreach ($emulator in $FallbackEmulators) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$emulator)) {
+            $hasFallback = $true
+            break
+        }
+    }
+    if (-not $hasFallback) {
+        throw "Provide at least one non-empty fallback emulator."
+    }
+}
+
 function Select-Emulator {
     param(
         $Case,
@@ -94,10 +141,16 @@ function Select-Emulator {
     if (-not [string]::IsNullOrWhiteSpace($suggested)) {
         return $suggested
     }
-    if ($FallbackEmulators.Count -eq 0) {
-        throw "Provide at least one fallback emulator."
+    $usableFallbackEmulators = @()
+    foreach ($emulator in $FallbackEmulators) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$emulator)) {
+            $usableFallbackEmulators += ([string]$emulator).Trim()
+        }
     }
-    return $FallbackEmulators[$CaseIndex % $FallbackEmulators.Count]
+    if ($usableFallbackEmulators.Count -eq 0) {
+        throw "Provide at least one non-empty fallback emulator."
+    }
+    return $usableFallbackEmulators[$CaseIndex % $usableFallbackEmulators.Count]
 }
 
 function Get-SingleDumpSummary {
@@ -148,19 +201,11 @@ function Get-FollowUpSummary {
     }
 }
 
-$resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
-$singleOutputDir = Join-Path $resolvedOutputDir "single"
-$followUpOutputDir = Join-Path $resolvedOutputDir "followup"
-New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
-New-Item -ItemType Directory -Force -Path $singleOutputDir | Out-Null
-New-Item -ItemType Directory -Force -Path $followUpOutputDir | Out-Null
-
-$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$manifestPath = Join-Path $resolvedOutputDir ("gap_pack_run_" + $timestamp + ".jsonl")
-
 $caseIdFilter = Normalize-FilterValues -Values $CaseIds
 $familyFilter = Normalize-FilterValues -Values $Families
 $priorityFilter = Normalize-FilterValues -Values $Priorities
+
+Assert-RunParameterGuards
 
 $cases = @(Load-GapPackCases -Path $GapPackPath)
 $selectedCases = @()
@@ -186,6 +231,17 @@ if ($MaxCases -gt 0) {
 if ($selectedCases.Count -eq 0) {
     throw "No gap-pack cases matched the selected filters."
 }
+Assert-FallbackEmulatorsAvailable -Cases $selectedCases
+
+$resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
+$singleOutputDir = Join-Path $resolvedOutputDir "single"
+$followUpOutputDir = Join-Path $resolvedOutputDir "followup"
+New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
+New-Item -ItemType Directory -Force -Path $singleOutputDir | Out-Null
+New-Item -ItemType Directory -Force -Path $followUpOutputDir | Out-Null
+
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$manifestPath = Join-Path $resolvedOutputDir ("gap_pack_run_" + $timestamp + ".jsonl")
 
 for ($caseIndex = 0; $caseIndex -lt $selectedCases.Count; $caseIndex++) {
     $case = $selectedCases[$caseIndex]

@@ -32,6 +32,13 @@ class RunAndroidDetailFollowupContractTests(unittest.TestCase):
         self.assertIn("push_pack_cache_hit =", self.script)
         self.assertIn("push_pack_pushed =", self.script)
 
+    def test_new_slug_uses_safe_text_before_lowercasing(self):
+        self.assertIn(
+            '$slug = (Safe-Text -Text $Text).ToLowerInvariant() -replace "[^a-z0-9]+", "_"',
+            self.script,
+        )
+        self.assertNotIn("$slug = $Text.ToLowerInvariant()", self.script)
+
     def test_quality_gate_parser_passes(self):
         result = subprocess.run(
             [

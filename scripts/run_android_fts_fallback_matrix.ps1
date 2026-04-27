@@ -31,6 +31,9 @@ if (Test-Path -LiteralPath $commonHarnessModule) {
     }
     $Devices = @($normalizedDevices.ToArray())
 }
+if (@($Devices).Count -eq 0) {
+    throw "No Android devices resolved. Provide at least one non-empty device via -Devices."
+}
 if (-not $DryRun -and -not (Test-Path -LiteralPath $adb)) {
     throw "adb not found at $adb"
 }

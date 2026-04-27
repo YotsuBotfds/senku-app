@@ -121,7 +121,7 @@ function Read-JsonFileOrNull {
 function New-Slug {
     param([string]$Text)
 
-    $slug = $Text.ToLowerInvariant() -replace "[^a-z0-9]+", "_"
+    $slug = (Safe-Text -Text $Text).ToLowerInvariant() -replace "[^a-z0-9]+", "_"
     $slug = $slug.Trim("_")
     if ([string]::IsNullOrWhiteSpace($slug)) {
         return "detail_followup"
