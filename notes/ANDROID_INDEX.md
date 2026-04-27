@@ -14,6 +14,8 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/run_android_instrumented_ui_smoke.ps1`](../scripts/run_android_instrumented_ui_smoke.ps1): instrumentation-backed smoke lane with screenshots, dumps, logcat, and `summary.json`
 - [`../scripts/run_android_prompt.ps1`](../scripts/run_android_prompt.ps1): prompt automation harness
 - [`../scripts/run_android_search_log_only.ps1`](../scripts/run_android_search_log_only.ps1): preferred long retrieval harness
+- [`../scripts/run_android_prompt_batch.ps1`](../scripts/run_android_prompt_batch.ps1): prompt JSONL batch runner with summary artifacts, guarded by `tests/test_android_prompt_batch_summary_contract.py`
+- [`../scripts/run_android_session_batch.ps1`](../scripts/run_android_session_batch.ps1): multi-turn session batch runner with summary artifacts, guarded by `tests/test_android_session_batch_summary_contract.py`
 - [`../scripts/run_android_harness_matrix.ps1`](../scripts/run_android_harness_matrix.ps1): mixed prompt/follow-up matrix runner with JSONL/CSV plus `summary.json` and `summary.md`
 - [`../scripts/run_android_followup_matrix.ps1`](../scripts/run_android_followup_matrix.ps1): follow-up-only matrix runner
 - [`../scripts/run_android_session_flow.ps1`](../scripts/run_android_session_flow.ps1): single-emulator initial query plus required follow-up session-flow harness, guarded by `tests/test_android_session_flow_contract.py`
@@ -62,6 +64,11 @@ Use this as the first stop for Android parity and mobile-pack work.
   the pack hot-swap path.
 - Prompt/detail logged manifests can surface pack push summary, cache, and
   pushed fields from the hot-swap path.
+- Instrumented UI smoke `summary.json` now exposes `installed_pack` metadata
+  from the app sandbox manifest/listing probe; use it to audit clean-install,
+  no-push, and pushed-pack proof without copying or hashing large pack files.
+- Host launcher contracts now guard FastEmbed launcher defaults/argument
+  forwarding and LiteRT launcher model-path discovery order.
 - Mixed prompt/follow-up and follow-up-only matrix summaries carry
   `host_adb_platform_tools_version` from child artifacts when available.
 - `run_android_harness_matrix.ps1` supports `-DefaultWarmStart`,
