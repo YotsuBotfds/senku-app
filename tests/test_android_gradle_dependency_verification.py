@@ -32,9 +32,19 @@ class AndroidGradleDependencyVerificationTests(unittest.TestCase):
 
         components = root.findall("gradle:components/gradle:component", namespaces=GRADLE_NAMESPACE)
         sha256_nodes = root.findall(".//gradle:sha256", namespaces=GRADLE_NAMESPACE)
+        component_keys = {
+            (
+                component.attrib.get("group"),
+                component.attrib.get("name"),
+                component.attrib.get("version"),
+            )
+            for component in components
+        }
 
         self.assertGreater(len(components), 100)
         self.assertGreater(len(sha256_nodes), 250)
+        self.assertIn(("com.android.tools.lint", "lint", "31.2.1"), component_keys)
+        self.assertIn(("com.android.tools.lint", "lint-checks", "31.2.1"), component_keys)
         for node in sha256_nodes:
             value = node.attrib.get("value", "")
             self.assertRegex(value, r"^[0-9a-f]{64}$")
@@ -51,6 +61,10 @@ class AndroidGradleDependencyVerificationTests(unittest.TestCase):
         self.assertNotRegex(settings, re.compile(r"\bmaven\s*\{", re.IGNORECASE))
         self.assertIn(
             "distributionUrl=https\\://services.gradle.org/distributions/gradle-8.2.1-bin.zip",
+            wrapper,
+        )
+        self.assertIn(
+            "distributionSha256Sum=03ec176d388f2aa99defcadc3ac6adf8dd2bce5145a129659537c0874dea5ad1",
             wrapper,
         )
 

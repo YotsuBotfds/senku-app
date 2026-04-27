@@ -173,6 +173,10 @@ use it to approve reviewed-card runtime expansion or product exposure.
 - Keep `run_android_fts_fallback_matrix.ps1` under the normal harness controls:
   resolved SDK adb path, per-device locks for real runs, and
   `stop_android_harness_runs.ps1` coverage.
+- Android Gradle dependency verification is enabled and includes the detached
+  Android lint tool dependencies, but `:app:lintDebug` is still blocked by
+  existing lint/code compatibility findings. Do not treat lint as a green
+  validation lane until those findings are triaged separately.
 
 ## Stop Lines
 

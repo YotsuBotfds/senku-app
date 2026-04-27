@@ -77,7 +77,9 @@ $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
 
 Dependency resolution is pinned by Gradle verification metadata at
 `gradle/verification-metadata.xml`. Refresh it only when intentionally changing
-Android dependencies:
+Android dependencies. The metadata includes the detached Android lint tool
+dependencies, but `lintDebug` is not a green validation lane until the existing
+lint findings are triaged.
 
 ```powershell
 $env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
