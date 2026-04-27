@@ -50,6 +50,16 @@ REQUIRED_INSTALLED_PACK_DEVICE_FIELDS: dict[str, type | tuple[type, ...]] = {
     "metadata_conflict": bool,
 }
 
+REQUIRED_NON_ACCEPTANCE_TOOLING_FIELDS: dict[str, type | tuple[type, ...]] = {
+    "status": str,
+    "dry_run": bool,
+    "non_acceptance_evidence": bool,
+    "acceptance_evidence": bool,
+    "stop_line": str,
+}
+
+FIXED_FOUR_EMULATOR_MATRIX = "fixed_four_emulator_matrix"
+
 
 def _expect(
     mapping: dict[str, Any],
@@ -139,6 +149,29 @@ def _validate_installed_pack(installed_pack: Any, errors: list[str]) -> None:
             _validate_installed_pack_device(device, index, errors)
 
 
+def _validate_non_acceptance_tooling_summary(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for key, expected_type in REQUIRED_NON_ACCEPTANCE_TOOLING_FIELDS.items():
+        _expect(data, key, expected_type, errors, "root")
+
+    if data.get("non_acceptance_evidence") is not True:
+        errors.append("expected root.non_acceptance_evidence to be true")
+    if data.get("acceptance_evidence") is not False:
+        errors.append("expected root.acceptance_evidence to be false")
+    if data.get("dry_run") is not True:
+        errors.append("expected root.dry_run to be true")
+
+    comparison_baseline = data.get("comparison_baseline")
+    primary_evidence = data.get("primary_evidence")
+    if comparison_baseline != FIXED_FOUR_EMULATOR_MATRIX and primary_evidence != FIXED_FOUR_EMULATOR_MATRIX:
+        errors.append(
+            "expected root.comparison_baseline or root.primary_evidence "
+            f"to be {FIXED_FOUR_EMULATOR_MATRIX!r}"
+        )
+
+    return errors
+
+
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -150,6 +183,9 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
 
     if not isinstance(data, dict):
         return None, ["top-level JSON document must be an object"]
+
+    if any(key in data for key in ("non_acceptance_evidence", "acceptance_evidence", "dry_run")):
+        return data, _validate_non_acceptance_tooling_summary(data)
 
     errors: list[str] = []
     for key, expected_type in REQUIRED_TOP_LEVEL.items():
@@ -182,8 +218,13 @@ def main(argv: list[str] | None = None) -> int:
     assert data is not None
     print("android_migration_summary: ok")
     print(f"status: {data.get('status')}")
-    print(f"devices: {len(data.get('devices', []))}")
-    print(f"total_states: {data.get('total_states')}")
+    if data.get("non_acceptance_evidence") is True:
+        print("evidence: non_acceptance")
+        print(f"primary_evidence: {data.get('primary_evidence')}")
+        print(f"comparison_baseline: {data.get('comparison_baseline')}")
+    else:
+        print(f"devices: {len(data.get('devices', []))}")
+        print(f"total_states: {data.get('total_states')}")
     return 0
 
 

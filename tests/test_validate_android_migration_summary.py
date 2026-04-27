@@ -40,6 +40,22 @@ def make_summary() -> dict:
     }
 
 
+def make_non_acceptance_tooling_summary() -> dict:
+    return {
+        "status": "dry_run_only",
+        "dry_run": True,
+        "non_acceptance_evidence": True,
+        "acceptance_evidence": False,
+        "comparison_baseline": "fixed_four_emulator_matrix",
+        "primary_evidence": "fixed_four_emulator_matrix",
+        "stop_line": (
+            "STOP: fixed four-emulator evidence remains primary; "
+            "this Gradle Managed Devices smoke is non-acceptance evidence only."
+        ),
+        "task_name": ":app:senkuManagedSmoke",
+    }
+
+
 class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
     def write_summary(self, payload: dict) -> Path:
         temp_dir = tempfile.TemporaryDirectory()
@@ -54,6 +70,34 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertIsNotNone(data)
         self.assertEqual(data["status"], "pass")
+
+    def test_valid_non_acceptance_tooling_summary_passes(self):
+        data, errors = validate_summary(self.write_summary(make_non_acceptance_tooling_summary()))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["status"], "dry_run_only")
+
+    def test_non_acceptance_tooling_summary_rejects_acceptance_evidence(self):
+        summary = make_non_acceptance_tooling_summary()
+        summary["acceptance_evidence"] = True
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.acceptance_evidence to be false", errors)
+
+    def test_non_acceptance_tooling_summary_requires_fixed_four_baseline(self):
+        summary = make_non_acceptance_tooling_summary()
+        summary["comparison_baseline"] = "managed_device_smoke"
+        summary["primary_evidence"] = "managed_device_smoke"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.comparison_baseline or root.primary_evidence "
+            "to be 'fixed_four_emulator_matrix'",
+            errors,
+        )
 
     def test_missing_top_level_migration_field_fails(self):
         summary = make_summary()

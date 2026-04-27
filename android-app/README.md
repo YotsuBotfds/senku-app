@@ -86,6 +86,34 @@ ATD images are not screenshot-sensitive proof for acceptance artifacts.
 The wrapper is currently dry-run-only and records `non_acceptance_evidence=true`;
 fixed four-emulator evidence remains primary.
 
+Dry-run artifact shape:
+- `summary.json` and `summary.md` are written under the selected output
+  directory.
+- `status=dry_run_only`, `dry_run=true`, `non_acceptance_evidence=true`, and
+  `acceptance_evidence=false` identify the artifact as planning evidence only.
+- `planned_command`, `gradle_property`, `task_name`, `expected_devices`, and
+  `expected_artifact_roots` describe what a future managed-device smoke would
+  use.
+- `would_launch_emulators=false` and `managed_devices_launched=false` confirm
+  the dry run did not start a managed-device lane.
+- `primary_evidence=fixed_four_emulator_matrix` restates the acceptance stop
+  line: this helper does not replace fixed four-emulator screenshot/state-pack
+  evidence.
+
+Dry-run the Android asset-pack parity gate before running a candidate compare:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_asset_pack_parity_gate.ps1 `
+  -CandidatePackDir artifacts\mobile_pack\senku_current_head_20260426_232032 `
+  -WhatIf
+```
+
+The `-WhatIf` artifact is another non-acceptance helper summary. It records
+`baseline_pack_dir`, `candidate_pack_dir`, `output`, `display_command`,
+`would_run=false`, and `fail_on_mismatch=true`. It reviews the exact parity
+command shape without running the count comparison, and it does not replace the
+fixed four-emulator acceptance evidence.
+
 ## Build
 
 From this directory:

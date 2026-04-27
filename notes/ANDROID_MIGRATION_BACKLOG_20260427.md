@@ -177,6 +177,21 @@ audit. Capture:
   this should not replace the existing screenshot/state-pack matrix until it
   can emit comparable artifacts:
   <https://developer.android.com/studio/test/managed-devices>.
+- `run_android_managed_device_smoke.ps1 -DryRun` currently writes a
+  non-acceptance helper artifact only. Its `summary.json` / `summary.md`
+  shape includes `status=dry_run_only`, `dry_run=true`,
+  `non_acceptance_evidence=true`, `acceptance_evidence=false`,
+  `planned_command`, `gradle_property`, `task_name`, `expected_devices`,
+  `expected_artifact_roots`, `would_launch_emulators=false`,
+  `managed_devices_launched=false`, and
+  `primary_evidence=fixed_four_emulator_matrix`. Do not treat it as a
+  substitute for fixed four-emulator screenshot/state-pack proof.
+- `run_android_asset_pack_parity_gate.ps1 -WhatIf` writes a second
+  non-acceptance helper summary before any candidate comparison runs. Its JSON
+  shape includes `baseline_pack_dir`, `candidate_pack_dir`, `output`,
+  `display_command`, `would_run=false`, and `fail_on_mismatch=true`. The
+  artifact reviews the parity command and fail-on-mismatch posture only; it
+  does not replace fixed four-emulator evidence.
 - Treat ATD images as non-visual smoke only. Android documents ATDs as lower
   resource managed devices, but they disable hardware rendering, so they are
   inappropriate for screenshot-sensitive UI proof.
