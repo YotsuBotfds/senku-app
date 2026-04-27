@@ -1,4 +1,5 @@
 import unittest
+import subprocess
 from pathlib import Path
 
 
@@ -23,6 +24,32 @@ class AndroidPromptBatchSummaryContractTests(unittest.TestCase):
         self.assertIn("kind = \"ui_dump\"", script)
         self.assertIn("error = $_.error", script)
         self.assertIn("dump_path = $_.dump_path", script)
+        self.assertIn('started_at = $startedAt.ToString("o")', script)
+        self.assertIn('finished_at = $finishedAt.ToString("o")', script)
+        self.assertIn("elapsed_seconds =", script)
+
+    def test_prompt_batch_parser_gate_passes(self):
+        result = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"),
+                "-Path",
+                "scripts\\run_android_prompt_batch.ps1",
+                "-SkipAnalyzer",
+                "-SkipPester",
+            ],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("Parser gate passed", result.stdout)
 
 
 if __name__ == "__main__":
