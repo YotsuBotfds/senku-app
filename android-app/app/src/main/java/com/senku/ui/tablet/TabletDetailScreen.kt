@@ -113,6 +113,43 @@ enum class Status {
     Pending,
 }
 
+internal data class TabletReadingLayoutPolicy(
+    val threadRailWidthDp: Int,
+    val answerMaxWidthDp: Int,
+)
+
+internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
+    TabletReadingLayoutPolicy(
+        threadRailWidthDp = 240,
+        answerMaxWidthDp = 680,
+    )
+
+internal data class PhoneStressReadingPolicy(
+    val compactComposer: Boolean,
+    val suppressRetryChrome: Boolean,
+    val suppressSupportSuggestions: Boolean,
+    val collapseThreadChrome: Boolean,
+    val collapseSourceChrome: Boolean,
+)
+
+internal fun phoneLandscapeStressReadingPolicy(): PhoneStressReadingPolicy =
+    PhoneStressReadingPolicy(
+        compactComposer = true,
+        suppressRetryChrome = true,
+        suppressSupportSuggestions = true,
+        collapseThreadChrome = false,
+        collapseSourceChrome = false,
+    )
+
+internal fun phonePortraitAnswerFirstStressReadingPolicy(): PhoneStressReadingPolicy =
+    PhoneStressReadingPolicy(
+        compactComposer = true,
+        suppressRetryChrome = false,
+        suppressSupportSuggestions = false,
+        collapseThreadChrome = true,
+        collapseSourceChrome = true,
+    )
+
 fun bindTabletDetailScreen(
     composeView: ComposeView,
     state: TabletDetailState,
@@ -166,6 +203,7 @@ fun TabletDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
+    val readingPolicy = tabletLandscapeReadingLayoutPolicy()
     val threadPaneTitle = stringResource(R.string.detail_a11y_landmark_thread_sources)
     val answerPaneTitle = stringResource(R.string.detail_a11y_landmark_answer_detail)
     val evidencePaneTitle = stringResource(R.string.detail_a11y_landmark_evidence)
@@ -187,7 +225,7 @@ fun TabletDetailScreen(
                 onTurnClick = onTurnClick,
                 onSourceClick = onSourceClick,
                 modifier = Modifier
-                    .width(240.dp)
+                    .width(readingPolicy.threadRailWidthDp.dp)
                     .fillMaxHeight()
                     .semantics {
                         paneTitle = threadPaneTitle
@@ -261,6 +299,7 @@ private fun CenterPane(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
+    val readingPolicy = tabletLandscapeReadingLayoutPolicy()
     val scrollState = rememberScrollState()
 
     Column(
@@ -284,7 +323,7 @@ private fun CenterPane(
             Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .widthIn(max = 680.dp)
+                    .widthIn(max = readingPolicy.answerMaxWidthDp.dp)
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
                     .padding(horizontal = 20.dp, vertical = 14.dp),

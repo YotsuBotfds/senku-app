@@ -2091,10 +2091,30 @@ public final class MainActivity extends AppCompatActivity {
         if (destination == null) {
             return BottomTabDestination.HOME;
         }
-        if (destination == BottomTabDestination.THREADS) {
+        if (isLibraryPhoneFlowIntent(destination)) {
+            return BottomTabDestination.HOME;
+        }
+        if (isAskPhoneFlowIntent(destination)) {
             return BottomTabDestination.ASK;
         }
+        if (isSavedPhoneFlowIntent(destination)) {
+            return BottomTabDestination.PINS;
+        }
         return destination;
+    }
+
+    static boolean isLibraryPhoneFlowIntent(BottomTabDestination destination) {
+        return destination == BottomTabDestination.HOME
+            || destination == BottomTabDestination.SEARCH;
+    }
+
+    static boolean isAskPhoneFlowIntent(BottomTabDestination destination) {
+        return destination == BottomTabDestination.ASK
+            || destination == BottomTabDestination.THREADS;
+    }
+
+    static boolean isSavedPhoneFlowIntent(BottomTabDestination destination) {
+        return destination == BottomTabDestination.PINS;
     }
 
     private static int phoneTabLabelResource(BottomTabDestination destination) {

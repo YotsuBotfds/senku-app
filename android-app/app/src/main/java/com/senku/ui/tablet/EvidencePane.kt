@@ -40,17 +40,27 @@ import com.senku.ui.theme.SenkuTheme
 
 internal data class TabletEvidenceVisibilityPolicy(
     val evidencePaneWidthDp: Int,
+    val landscapeRailDensity: EvidenceRailDensity,
     val activeTitleMaxLines: Int,
     val activeSnippetMaxLines: Int,
+    val portraitCollapsedByDefault: Boolean,
     val collapsedTitleMaxLines: Int,
     val collapsedSnippetMaxLines: Int,
 )
 
+internal enum class EvidenceRailDensity {
+    Full,
+    Collapsed,
+    Hidden,
+}
+
 internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
     TabletEvidenceVisibilityPolicy(
         evidencePaneWidthDp = 360,
+        landscapeRailDensity = EvidenceRailDensity.Full,
         activeTitleMaxLines = 2,
         activeSnippetMaxLines = 10,
+        portraitCollapsedByDefault = true,
         collapsedTitleMaxLines = 2,
         collapsedSnippetMaxLines = 5,
     )

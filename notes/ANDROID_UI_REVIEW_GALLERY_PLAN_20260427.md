@@ -395,16 +395,20 @@ Commits now reflected in this gallery plan:
   policy changes.
 - `3adbf79` adds local gallery proof commands and tightens field-manual wording
   across answer, proof, source, cross-reference, and tablet evidence surfaces.
+- `7294d2b` updates guide connection/source formatter copy, improves emergency
+  banner contrast for gallery review, and expands local gates around the current
+  UI seams.
 
 Next gallery queue from the scout:
 
-1. Ask owns threads: add or prioritize captures that show thread list, active
-   thread, and follow-up turns as Ask history, not as global navigation.
-2. Search cards as capability: keep G-02 and related answer pivots focused on
-   search cards embedded in Library/Ask work, not a separate Search product
-   destination.
-3. Evidence pane pure seam: review tablet evidence pane shots against pure
-   source/proof display-model expectations before accepting visual changes.
+1. Nav intent: prioritize captures that prove Library / Ask / Saved is the
+   visible navigation story without implying a broader navigation rewrite.
+2. Detail surface contract: add review attention to guide-reader versus
+   answer-detail shots so source/proof affordances stay task-specific.
+3. Emergency eligibility policy: pair any emergency banner/gallery shot with
+   reviewed/support-state evidence and routine negative controls.
+4. Stress reading policy: keep phone landscape, large font, and urgent-answer
+   density in the gallery queue before treating contrast or copy polish as done.
 
 Boundary: this progress update does not change the gallery acceptance contract.
 Plan-only output, local wrapper metadata, copy tightening, and seam tests remain

@@ -216,15 +216,22 @@ Latest Android UI direction movement:
 - `3adbf79` tightened field-manual copy across answer, source, cross-reference,
   proof, and tablet evidence surfaces, and added the local gallery proof wrapper
   plan without changing acceptance semantics.
+- `7294d2b` tightened guide connection and source-formatter copy, improved
+  emergency banner contrast, and expanded local gate coverage for the Android
+  UI seam work.
 
 Next scout queue:
 
-1. Ask owns threads: thread history, active turn state, and follow-up continuity
-   should live under Ask rather than product navigation chrome.
-2. Search cards as capability: keep search result cards available inside
-   Library and Ask flows without making Search a standalone destination.
-3. Evidence pane pure seam: continue moving tablet/source/proof presentation
-   through pure display models before changing evidence rendering behavior.
+1. Nav intent seam: preserve Library / Ask / Saved as the visible product
+   direction while internal navigation constants and runtime behavior stay
+   stable.
+2. Detail surface contract: separate guide-reading and answer-detail display
+   expectations before changing rendering behavior.
+3. Emergency eligibility policy: define which reviewed/support states may enter
+   the emergency lane, with negative controls for routine medical and planning
+   prompts.
+4. Stress reading policy: make phone landscape, large font, and urgent-answer
+   density rules explicit before accepting visual polish.
 
 Acceptance boundaries remain strict: these commits are direction and seam
 progress only. They do not approve reviewed-card product runtime, new card
