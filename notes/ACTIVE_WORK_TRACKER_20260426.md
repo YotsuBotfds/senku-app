@@ -115,6 +115,15 @@ reports `3` unresolved partial markers, and
      The only matching `*current_head*20260426.json` artifact with nonzero
      duplicate citations is the superseded pre-fix
      `rag_eval8_re8_sp001_current_head_20260426.json` baseline.
+   - Guide wave `y` exposed routine generated-answer truncation that was not
+     safety/crisis-specific: repeated model stops left settlement, market, and
+     schoolhouse rows mid-list or mid-citation. Runtime hardening now retries
+     generic incomplete generated answers and records repeated failures as
+     `incomplete_completion` instead of successful prompt rows. Proof artifact:
+     `artifacts/bench/guide_wave_y_20260426_230719.json` reports `10` prompts,
+     `6` successes, `4` `incomplete_completion` errors, and `4` completion
+     retries; the raw `GD-009` citation warning is pre-normalization output
+     stripped from visible answers.
 
 ## Active Operating Rules
 

@@ -86,6 +86,31 @@ class QueryCompletionHardeningExtractionTests(unittest.TestCase):
             ("answer", False),
         )
 
+    def test_general_response_helper_detects_dangling_citation_tail(self):
+        self.assertTrue(
+            hardening._is_obviously_incomplete_response(
+                "Keep carts away from the tightest stall corners [GD"
+            )
+        )
+
+    def test_general_response_helper_detects_mid_list_tail(self):
+        self.assertTrue(
+            hardening._is_obviously_incomplete_response(
+                "1. Put the teacher near the entrance. [GD-653]\n"
+                "2. Keep one clear lane through the room. [GD-653]\n"
+                "3. Organize seating by activity"
+            )
+        )
+
+    def test_general_response_helper_allows_complete_numbered_answer(self):
+        self.assertFalse(
+            hardening._is_obviously_incomplete_response(
+                "1. Put the teacher near the entrance. [GD-653]\n"
+                "2. Keep one clear lane through the room. [GD-653]\n"
+                "3. Organize seating by activity and leave the exit clear. [GD-653]"
+            )
+        )
+
     def test_valid_crisis_retry_response_shape(self):
         complete = (
             "1. Call emergency services now and stay with the person right now. [GD-101]\n"

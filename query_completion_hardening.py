@@ -104,6 +104,62 @@ def _is_obviously_incomplete_safety_response(text, *, normalize_response_text_fn
     return False
 
 
+def _is_obviously_incomplete_response(text, *, normalize_response_text_fn=None):
+    """Detect generic generated answers that stopped mid-citation or mid-list."""
+    cleaned_text = _normalize_completion_text(text, normalize_response_text_fn)
+    if not _has_substantive_response(cleaned_text):
+        return False
+    if _has_malformed_trailing_citation(cleaned_text):
+        return True
+
+    lines = [line.strip() for line in cleaned_text.splitlines() if line.strip()]
+    if not lines:
+        return False
+
+    final_line = lines[-1]
+    compact = re.sub(r"\s+", " ", final_line).strip()
+    markdown_light = re.sub(r"[*_`]+", "", compact).strip()
+    without_marker = re.sub(
+        r"^\s*(?:[-*+]\s*)?(?:\d+[\.)]\s*)?",
+        "",
+        markdown_light,
+    ).strip()
+    without_marker = without_marker.strip("-: ")
+
+    if re.match(r"^\s*(?:[-*+]\s*)?\d+[\.)]\s*$", compact):
+        return True
+
+    trailing_words = without_marker.lower().split()
+    if trailing_words and trailing_words[-1] in {
+        "a",
+        "an",
+        "and",
+        "around",
+        "as",
+        "at",
+        "before",
+        "between",
+        "by",
+        "for",
+        "from",
+        "in",
+        "into",
+        "of",
+        "or",
+        "the",
+        "to",
+        "with",
+        "without",
+    }:
+        return True
+
+    is_list_tail = bool(re.match(r"^\s*(?:[-*+]\s*)?\d+[\.)]\s+", compact))
+    if is_list_tail and not re.search(r"(?:[.!?]|\[GD-\d{3}\])\s*$", compact):
+        return True
+
+    return False
+
+
 def _trim_incomplete_final_safety_line(text, *, normalize_response_text_fn=None):
     """Drop a final dangling scaffold line when the remaining safety answer is usable."""
     cleaned_text = _normalize_completion_text(text, normalize_response_text_fn)

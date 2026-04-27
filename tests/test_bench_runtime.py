@@ -749,7 +749,7 @@ class BenchRuntimeTests(unittest.TestCase):
     @patch("bench.generate_response")
     def test_process_prepared_prompt_does_not_retry_malformed_non_safety_response(self, mock_generate):
         mock_generate.return_value = (
-            "1. Start with context.\n2. Compare options.\n3. **If Unsure:** If",
+            "1. Start with context.\n2. Compare options.\n3. If unsure, ask an owner.",
             0.1,
             {"prompt_tokens": 100, "completion_tokens": 120},
             "stop",
@@ -773,10 +773,94 @@ class BenchRuntimeTests(unittest.TestCase):
             runtime_profile=SMALL_MODEL_PROFILE,
         )
 
-        self.assertEqual(response, "1. Start with context.\n2. Compare options.\n3. **If Unsure:** If")
+        self.assertEqual(response, "1. Start with context.\n2. Compare options.\n3. If unsure, ask an owner.")
         self.assertEqual(mock_generate.call_count, 1)
         self.assertEqual(meta["completion_retry_count"], 0)
         self.assertFalse(meta["completion_attempts"][0]["incomplete_safety_response"])
+
+    @patch("bench.generate_response")
+    def test_process_prepared_prompt_retries_malformed_non_safety_response(self, mock_generate):
+        mock_generate.side_effect = [
+            (
+                "1. Set the stalls near the entry. [GD-963]\n"
+                "2. Keep the main lane open. [GD-963]\n"
+                "3. Put notices",
+                0.1,
+                {"prompt_tokens": 100, "completion_tokens": 120},
+                "stop",
+            ),
+            (
+                "1. Set the stalls near the entry. [GD-963]\n"
+                "2. Keep the main lane open. [GD-963]\n"
+                "3. Put notices where people enter and trade. [GD-963]",
+                0.2,
+                {"prompt_tokens": 100, "completion_tokens": 160},
+                "stop",
+            ),
+        ]
+
+        prepared_prompt = (
+            0,
+            "routine market layout",
+            "prompt body",
+            bench.empty_results(),
+            {"decision_path": "rag", "retrieval_metadata": {"safety_critical": False}},
+        )
+
+        _, _, response, _, meta = bench.process_prepared_prompt(
+            prepared_prompt,
+            0.11,
+            "http://localhost:1234/v1",
+            gen_worker="local",
+            mode="default",
+            max_completion_tokens=768,
+            runtime_profile=SMALL_MODEL_PROFILE,
+        )
+
+        self.assertIn("where people enter and trade", response)
+        self.assertEqual(
+            mock_generate.call_args_list[1].kwargs["max_completion_tokens"],
+            1024,
+        )
+        self.assertEqual(meta["completion_retry_count"], 1)
+        self.assertTrue(meta["completion_attempts"][0]["incomplete_response"])
+        self.assertFalse(meta["completion_attempts"][0]["incomplete_safety_response"])
+
+    @patch("bench.generate_response")
+    def test_process_prepared_prompt_fails_closed_after_repeated_incomplete_response(self, mock_generate):
+        clipped = (
+            "1. Set the stalls near the entry. [GD-963]\n"
+            "2. Keep the main lane open. [GD-963]\n"
+            "3. Put notices"
+        )
+        mock_generate.side_effect = [
+            (clipped, 0.1, {"prompt_tokens": 100, "completion_tokens": 120}, "stop"),
+            (clipped, 0.2, {"prompt_tokens": 100, "completion_tokens": 120}, "stop"),
+        ]
+
+        prepared_prompt = (
+            0,
+            "routine market layout",
+            "prompt body",
+            bench.empty_results(),
+            {"decision_path": "rag", "retrieval_metadata": {"safety_critical": False}},
+        )
+
+        with self.assertRaises(bench.PreparedPromptGenerationError) as raised:
+            bench.process_prepared_prompt(
+                prepared_prompt,
+                0.11,
+                "http://localhost:1234/v1",
+                gen_worker="local",
+                mode="default",
+                max_completion_tokens=768,
+                runtime_profile=SMALL_MODEL_PROFILE,
+            )
+
+        self.assertEqual(raised.exception.cause_info["category"], "incomplete_completion")
+        self.assertEqual(raised.exception.meta["completion_retry_count"], 1)
+        self.assertTrue(raised.exception.meta["completion_attempts"][0]["incomplete_response"])
+        self.assertTrue(raised.exception.meta["completion_attempts"][1]["incomplete_response"])
 
 
 if __name__ == "__main__":

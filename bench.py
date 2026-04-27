@@ -50,6 +50,7 @@ from query import (
 from query_completion_hardening import (
     _has_substantive_response as _hardening_has_substantive_response,
     _is_obviously_incomplete_crisis_response,
+    _is_obviously_incomplete_response as _hardening_is_obviously_incomplete_response,
     _is_obviously_incomplete_safety_response as _hardening_is_obviously_incomplete_safety_response,
     _is_valid_crisis_retry_response as _hardening_is_valid_crisis_retry_response,
     _trim_incomplete_final_safety_line as _hardening_trim_incomplete_final_safety_line,
@@ -746,6 +747,13 @@ def _is_obviously_incomplete_safety_response(text):
     )
 
 
+def _is_obviously_incomplete_response(text):
+    return _hardening_is_obviously_incomplete_response(
+        text,
+        normalize_response_text_fn=normalize_response_text,
+    )
+
+
 def _trim_incomplete_final_safety_line(text):
     return _hardening_trim_incomplete_final_safety_line(
         text,
@@ -1357,6 +1365,7 @@ def process_prepared_prompt(
             safety_critical_generation
             and _is_obviously_incomplete_safety_response(response_text)
         )
+        incomplete_response = _is_obviously_incomplete_response(response_text)
         completion_attempts.append({
             "attempt": len(completion_attempts) + 1,
             "max_completion_tokens": current_max_completion_tokens,
@@ -1366,6 +1375,7 @@ def process_prepared_prompt(
             "response_length": len(response_text or ""),
             "substantive": _has_substantive_response(response_text),
             "cap_hit": completion_cap_hit,
+            "incomplete_response": incomplete_response,
             "incomplete_safety_response": incomplete_safety_response,
             "retry_event_count": len(request_retry_log),
         })
@@ -1406,7 +1416,7 @@ def process_prepared_prompt(
                 continue
 
         if (
-            incomplete_safety_response
+            (incomplete_safety_response or incomplete_response)
             and adaptive_retries_used < adaptive_retry_budget
         ):
             next_budget = _next_completion_budget(
@@ -1465,6 +1475,40 @@ def process_prepared_prompt(
         if did_trim:
             response_text = trimmed_response
             completion_safety_trimmed = True
+
+    if _is_obviously_incomplete_response(response_text):
+        failure_meta = dict(meta)
+        failure_meta.update({
+            **prompt_budget_meta,
+            "prompt_token_limit": prompt_token_limit,
+            "prompt_token_safety_margin": prompt_safety_margin,
+            "generation_time": round(total_elapsed, 1),
+            "prompt_tokens": usage.get("prompt_tokens", 0),
+            "completion_tokens": usage.get("completion_tokens", 0),
+            "gen_url": gen_url,
+            "gen_model": gen_model,
+            "gen_worker": gen_worker or gen_url,
+            "finish_reason": finish_reason,
+            "completion_cap_hit": completion_cap_hit,
+            "completion_attempts": completion_attempts,
+            "retry_events": retry_events,
+            "retry_cause_counts": _retry_cause_counts(retry_events),
+            "completion_retry_count": max(len(completion_attempts) - 1, 0),
+            "completion_safety_trimmed": completion_safety_trimmed,
+            "requested_max_completion_tokens": max_completion_tokens,
+            "final_max_completion_tokens": current_max_completion_tokens,
+            "runtime_profile": runtime_profile.get("name"),
+        })
+        raise PreparedPromptGenerationError(
+            "Incomplete completion from generation server",
+            meta=failure_meta,
+            cause_info={
+                "category": "incomplete_completion",
+                "status_code": None,
+                "retryable": False,
+                "message": "Incomplete completion from generation server",
+            },
+        )
 
     if not _has_substantive_response(response_text):
         failure_meta = dict(meta)
