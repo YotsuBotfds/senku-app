@@ -231,6 +231,42 @@ function Get-AndroidHarnessAdbOutputText {
     return [string]$result.output
 }
 
+function Resolve-AndroidHostAdbPlatformToolsVersionText {
+    param([string]$OutputText)
+
+    if ([string]::IsNullOrWhiteSpace($OutputText)) {
+        return $null
+    }
+
+    $lines = @(([string]$OutputText -split "`r?`n") | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $platformToolsLine = @($lines | Where-Object { $_ -match "^Version\s+(.+)$" } | Select-Object -First 1)
+    if ($platformToolsLine.Count -gt 0 -and $platformToolsLine[0] -match "^Version\s+(.+)$") {
+        return $Matches[1]
+    }
+
+    $bridgeVersionLine = @($lines | Where-Object { $_ -match "Android Debug Bridge version\s+([0-9A-Za-z.\-]+)" } | Select-Object -First 1)
+    if ($bridgeVersionLine.Count -gt 0 -and $bridgeVersionLine[0] -match "Android Debug Bridge version\s+([0-9A-Za-z.\-]+)") {
+        return $Matches[1]
+    }
+
+    if ($lines.Count -eq 0) {
+        return $null
+    }
+
+    return $lines[0]
+}
+
+function Get-AndroidHostAdbPlatformToolsVersion {
+    param([string]$AdbPath)
+
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $AdbPath -Arguments @("version") -TimeoutMilliseconds 10000
+    if ($result.exit_code -ne 0 -or [string]::IsNullOrWhiteSpace([string]$result.output)) {
+        return $null
+    }
+
+    return Resolve-AndroidHostAdbPlatformToolsVersionText -OutputText ([string]$result.output)
+}
+
 function Get-AndroidPhysicalDisplaySize {
     param(
         [string]$AdbPath,
@@ -569,4 +605,4 @@ function Write-AndroidHarnessZipBundle {
     return $DestinationZip
 }
 
-Export-ModuleMember -Function Acquire-AndroidHarnessDeviceLock,Get-AndroidCurrentRotation,Get-AndroidDisplayDensity,Get-AndroidPhysicalDisplaySize,Get-AndroidScreenshotDimensions,Get-AndroidScreenshotFacts,Invoke-AndroidAdbCommandCapture,Resolve-AndroidDeviceFacts,Resolve-AndroidDeviceRole,Resolve-AndroidDimensionsOrientation,Resolve-AndroidHarnessDeviceList,Resolve-AndroidHostInferenceUrlForDevice,Resolve-AndroidRequestedRotation,Write-AndroidHarnessZipBundle
+Export-ModuleMember -Function Acquire-AndroidHarnessDeviceLock,Get-AndroidCurrentRotation,Get-AndroidDisplayDensity,Get-AndroidHostAdbPlatformToolsVersion,Get-AndroidPhysicalDisplaySize,Get-AndroidScreenshotDimensions,Get-AndroidScreenshotFacts,Invoke-AndroidAdbCommandCapture,Resolve-AndroidDeviceFacts,Resolve-AndroidDeviceRole,Resolve-AndroidDimensionsOrientation,Resolve-AndroidHarnessDeviceList,Resolve-AndroidHostInferenceUrlForDevice,Resolve-AndroidRequestedRotation,Write-AndroidHarnessZipBundle
