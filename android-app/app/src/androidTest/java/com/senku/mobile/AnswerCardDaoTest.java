@@ -79,6 +79,32 @@ public final class AnswerCardDaoTest {
     }
 
     @Test
+    public void loadCardsForGuideIdsReturnsEmptyForColumnIncompatibleOldClausesTable() {
+        database = SQLiteDatabase.create(null);
+        createAnswerCardsTable(database);
+        createOldClausesTable(database);
+        createSourcesTable(database);
+        insertReviewedCard(database, "poisoning_unknown_ingestion", "GD-001");
+
+        AnswerCardDao dao = new AnswerCardDao(database);
+
+        assertTrue(dao.loadCardsForGuideIds(setOf("GD-001"), 5).isEmpty());
+    }
+
+    @Test
+    public void loadCardsForGuideIdsReturnsEmptyForColumnIncompatibleOldSourcesTable() {
+        database = SQLiteDatabase.create(null);
+        createAnswerCardsTable(database);
+        createClausesTable(database);
+        createOldSourcesTable(database);
+        insertReviewedCard(database, "poisoning_unknown_ingestion", "GD-001");
+
+        AnswerCardDao dao = new AnswerCardDao(database);
+
+        assertTrue(dao.loadCardsForGuideIds(setOf("GD-001"), 5).isEmpty());
+    }
+
+    @Test
     public void loadCardsForGuideIdsLoadsReviewedCardsClausesAndSources() {
         database = SQLiteDatabase.create(null);
         createAnswerCardTables(database);
@@ -286,6 +312,18 @@ public final class AnswerCardDaoTest {
         );
     }
 
+    private static void createOldClausesTable(SQLiteDatabase database) {
+        database.execSQL(
+            "CREATE TABLE answer_card_clauses (" +
+                "card_id TEXT NOT NULL, " +
+                "clause_kind TEXT NOT NULL, " +
+                "ordinal INTEGER NOT NULL, " +
+                "text TEXT NOT NULL, " +
+                "PRIMARY KEY (card_id, clause_kind, ordinal)" +
+                ")"
+        );
+    }
+
     private static void createSourcesTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_card_sources (" +
@@ -295,6 +333,18 @@ public final class AnswerCardDaoTest {
                 "title TEXT, " +
                 "sections_json TEXT NOT NULL, " +
                 "is_primary INTEGER NOT NULL, " +
+                "PRIMARY KEY (card_id, source_guide_id)" +
+                ")"
+        );
+    }
+
+    private static void createOldSourcesTable(SQLiteDatabase database) {
+        database.execSQL(
+            "CREATE TABLE answer_card_sources (" +
+                "card_id TEXT NOT NULL, " +
+                "source_guide_id TEXT NOT NULL, " +
+                "slug TEXT, " +
+                "title TEXT, " +
                 "PRIMARY KEY (card_id, source_guide_id)" +
                 ")"
         );

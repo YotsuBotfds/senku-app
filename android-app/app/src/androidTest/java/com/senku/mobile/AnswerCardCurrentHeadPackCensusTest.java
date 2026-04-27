@@ -21,6 +21,8 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(AndroidJUnit4.class)
 public final class AnswerCardCurrentHeadPackCensusTest {
     private static final int CURRENT_HEAD_ANSWER_CARD_COUNT = 271;
+    private static final int CURRENT_HEAD_ANSWER_CARD_CLAUSE_COUNT = 6945;
+    private static final int CURRENT_HEAD_ANSWER_CARD_SOURCE_COUNT = 311;
 
     @Test
     public void pushedCurrentHeadPackCensusesAnswerCardsWithoutRuntimePlanning() throws Exception {
@@ -57,6 +59,16 @@ public final class AnswerCardCurrentHeadPackCensusTest {
                 queryLong(database, "SELECT COUNT(*) FROM answer_cards")
             );
             assertEquals(
+                "installed current-head answer_card_clauses table count should remain stable",
+                CURRENT_HEAD_ANSWER_CARD_CLAUSE_COUNT,
+                queryLong(database, "SELECT COUNT(*) FROM answer_card_clauses")
+            );
+            assertEquals(
+                "installed current-head answer_card_sources table count should remain stable",
+                CURRENT_HEAD_ANSWER_CARD_SOURCE_COUNT,
+                queryLong(database, "SELECT COUNT(*) FROM answer_card_sources")
+            );
+            assertEquals(
                 "pack_meta answer_card_count must match the current-head manifest",
                 String.valueOf(CURRENT_HEAD_ANSWER_CARD_COUNT),
                 queryString(
@@ -89,6 +101,24 @@ public final class AnswerCardCurrentHeadPackCensusTest {
                         ")"
                 )
             );
+            assertEquals(
+                "answer cards must use an allowed review_status",
+                0,
+                queryLong(
+                    database,
+                    "SELECT COUNT(*) FROM answer_cards " +
+                        "WHERE review_status NOT IN ('approved', 'pilot_reviewed')"
+                )
+            );
+            assertNoBlankAnswerCardField(database, "card_id");
+            assertNoBlankAnswerCardField(database, "guide_id");
+            assertNoBlankAnswerCardField(database, "slug");
+            assertNoBlankAnswerCardField(database, "title");
+            assertNoBlankAnswerCardField(database, "risk_tier");
+            assertNoBlankAnswerCardField(database, "evidence_owner");
+            assertNoBlankAnswerCardField(database, "review_status");
+            assertNoBlankAnswerCardField(database, "routine_boundary");
+            assertNoBlankAnswerCardField(database, "acceptable_uncertain_fit");
         }
     }
 
@@ -103,6 +133,21 @@ public final class AnswerCardCurrentHeadPackCensusTest {
         )) {
             return cursor.moveToFirst();
         }
+    }
+
+    private static void assertNoBlankAnswerCardField(SQLiteDatabase database, String fieldName) {
+        assertEquals(
+            "answer_cards." + fieldName + " must be non-empty in the current-head pack",
+            0,
+            queryLong(
+                database,
+                "SELECT COUNT(*) FROM answer_cards WHERE " +
+                    fieldName +
+                    " IS NULL OR trim(" +
+                    fieldName +
+                    ") = ''"
+            )
+        );
     }
 
     private static long queryLong(SQLiteDatabase database, String sql) {

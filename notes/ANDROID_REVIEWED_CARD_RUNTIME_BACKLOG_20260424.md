@@ -97,6 +97,9 @@ Landed Android sequence:
 - `RAG-A14l`: the Android smoke wrapper now fails closed when copied XML
   artifacts contain a platform ANR dialog, even if instrumentation itself reports
   `OK`, so System UI overlays cannot be mistaken for valid UI proof.
+- `RAG-A15c`: current-head pack census now locks 271-card / 6945-clause /
+  311-source inventory and required fields, while DAO tests cover old
+  column-incompatible clause/source schemas failing closed.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
