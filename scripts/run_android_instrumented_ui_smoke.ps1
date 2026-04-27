@@ -1293,10 +1293,11 @@ try {
         Write-RunPhase -Phase "artifact copy complete"
         $platformAnrEvidence = Get-PlatformAnrEvidence -DumpDirectory $dumpDir
 
+        if ($null -ne $platformAnrEvidence -and $platformAnrEvidence.detected -eq $true) {
+            throw $platformAnrEvidence.reason
+        }
+
         if ($instrumentationLooksFailed) {
-            if ($null -ne $platformAnrEvidence -and $platformAnrEvidence.detected -eq $true) {
-                throw $platformAnrEvidence.reason
-            }
             throw "Instrumentation run failed"
         }
 

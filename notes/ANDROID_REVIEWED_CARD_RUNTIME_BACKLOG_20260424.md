@@ -94,6 +94,9 @@ Landed Android sequence:
   re-pushing the current-head 271-card pack to `emulator-5556`; the summary
   shows `status=pass`, `answer_cards=271`, correct poisoning reviewed-card
   metadata, and `platform_anr=null`.
+- `RAG-A14l`: the Android smoke wrapper now fails closed when copied XML
+  artifacts contain a platform ANR dialog, even if instrumentation itself reports
+  `OK`, so System UI overlays cannot be mistaken for valid UI proof.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from

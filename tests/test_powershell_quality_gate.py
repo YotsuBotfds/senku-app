@@ -80,6 +80,7 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("System UI isn't responding", script)
         self.assertIn('resource-id="android:id/aerr_wait"', script)
         self.assertIn('resource-id="android:id/aerr_close"', script)
+        self.assertIn("throw $platformAnrEvidence.reason", script)
         self.assertIn("platform_anr = $platformAnrEvidence", script)
 
     def test_quality_gate_dry_run_lists_selected_files(self):
