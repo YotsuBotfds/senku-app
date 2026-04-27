@@ -16,6 +16,29 @@ use it to approve reviewed-card runtime expansion or product exposure.
   [`../artifacts/ui_state_pack_current_head_screenshot_proof/current_head_phone/summary.json`](../artifacts/ui_state_pack_current_head_screenshot_proof/current_head_phone/summary.json)
 - Phone landscape install-probe ANR artifact:
   [`../artifacts/android_current_head_guard_install_probe_5560/summary.json`](../artifacts/android_current_head_guard_install_probe_5560/summary.json)
+- Asset-pack promotion preflight evidence: desktop validation passed
+  `tests.test_compare_mobile_pack_counts`,
+  `tests.test_mobile_pack_manifest_parity`, and
+  `tests.test_mobile_pack_push_cache_contract` (`10` tests OK). Compare helper
+  evidence for baseline
+  `android-app/app/src/main/assets/mobile_pack` versus candidate
+  `artifacts/mobile_pack/senku_current_head_20260426_232032` supports the
+  candidate inventory: the baseline asset contains Git LFS pointer
+  sqlite/vector files with manifest counts `answer_cards=6`, `chunks=49726`,
+  `guides=754`, while the candidate has materialized sqlite assets with
+  manifest counts `answer_cards=271`, `chunks=49841`, `guides=754` and sqlite
+  counts `answer_cards=271`, `answer_card_clauses=6945`,
+  `answer_card_sources=311`, `deterministic_rules=9`. Manifest/sqlite hashes
+  match. Count deltas include `answer_cards +265`, `chunks +115`,
+  `guide_related_links +7`, and `retrieval_metadata_guides +4`. This preflight
+  supports candidate inventory only; clean-install no-push proof would still be
+  required before replacing the checked-in asset pack.
+- FTS runtime reality check: `artifacts/android_fts_probe_next_20260427_0911`
+  confirms the current-head host pack carries both `lexical_chunks_fts` and
+  `lexical_chunks_fts4` with `49841` rows each. All four emulator lanes lack
+  SQLite FTS5 module support, can create FTS4 tables, and the app runtime falls
+  back to `lexical_chunks_fts4`. Treat Android retrieval/performance evidence
+  from this matrix as FTS4 fallback evidence, not FTS5 runtime proof.
 - Current-head readiness/direct-guard replay: all four emulators passed the
   271-card pack readiness/direct guard tests (`AnswerCardCurrentHeadPackCensusTest`,
   `AnswerCardRuntimeAllowlistCurrentHeadTest`, `PackMigrationInstallTest`) under
