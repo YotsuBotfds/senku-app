@@ -1,4 +1,6 @@
+import json
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -67,6 +69,107 @@ class AndroidHarnessMatrixSummaryContractTests(unittest.TestCase):
         self.assertIn("duration_seconds_max:", self.script)
         self.assertIn("duration_seconds_avg:", self.script)
         self.assertIn("duration_seconds_total:", self.script)
+        self.assertIn("[switch]$PlanOnly", self.script)
+        self.assertIn("function New-MatrixPlan", self.script)
+        self.assertIn('plan_kind = "android_harness_matrix"', self.script)
+        self.assertIn("will_touch_emulators = $false", self.script)
+        self.assertIn("runner_commands =", self.script)
+        self.assertIn("posture_groups = $postureGroups", self.script)
+
+    def test_plan_only_writes_matrix_plan_without_starting_jobs(self):
+        temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(temp_dir.cleanup)
+        temp_path = Path(temp_dir.name)
+        run_file = temp_path / "runs.jsonl"
+        output_dir = temp_path / "matrix_plan"
+        run_file.write_text(
+            "\n".join(
+                [
+                    json.dumps(
+                        {
+                            "mode": "prompt",
+                            "query": "How do I purify water?",
+                            "run_label": "prompt_case",
+                            "warm_start": True,
+                            "push_pack_dir": "artifacts\\packs\\candidate",
+                            "ask": True,
+                            "wait_for_completion": True,
+                        }
+                    ),
+                    json.dumps(
+                        {
+                            "mode": "detail_followup",
+                            "initial_query": "sprained ankle",
+                            "follow_up_query": "when should I seek care",
+                            "run_label": "followup_case",
+                            "emulator": "emulator-5558",
+                        }
+                    ),
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        result = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(SCRIPT),
+                "-RunFile",
+                str(run_file),
+                "-OutputDir",
+                str(output_dir),
+                "-Emulators",
+                "emulator-5556",
+                "-PlanOnly",
+                "-SkipPackPushIfCurrent",
+            ],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("Plan JSON written to", result.stdout)
+        self.assertNotIn("Started [", result.stdout)
+
+        summary_path = output_dir / "summary.json"
+        self.assertTrue(summary_path.exists(), result.stdout)
+        summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+        self.assertEqual(summary["plan_kind"], "android_harness_matrix")
+        self.assertTrue(summary["preflight_only"])
+        self.assertTrue(summary["plan_only"])
+        self.assertTrue(summary["non_acceptance_evidence"])
+        self.assertFalse(summary["acceptance_evidence"])
+        self.assertFalse(summary["will_start_jobs"])
+        self.assertFalse(summary["will_touch_emulators"])
+        self.assertEqual(summary["row_count"], 2)
+        self.assertEqual(summary["rows"][0]["emulator"], "emulator-5556")
+        self.assertEqual(summary["rows"][0]["posture"], "phone_portrait")
+        self.assertTrue(summary["rows"][0]["warm_start"])
+        self.assertTrue(summary["rows"][0]["will_push_pack"])
+        self.assertTrue(summary["rows"][0]["skip_pack_push_if_current"])
+        self.assertEqual(summary["rows"][1]["emulator"], "emulator-5558")
+        self.assertEqual(summary["rows"][1]["posture"], "tablet_landscape")
+        self.assertIn("-RunLabel", summary["runner_commands"][0])
+        self.assertIn("prompt_case", summary["runner_commands"][0])
+
+        validator = REPO_ROOT / "scripts" / "validate_android_migration_summary.py"
+        python_path = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"
+        validation = subprocess.run(
+            [str(python_path), str(validator), str(summary_path)],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(validation.returncode, 0, validation.stderr + validation.stdout)
+        self.assertIn("android_migration_summary: ok", validation.stdout)
 
     def test_matrix_parser_gate_passes(self):
         result = subprocess.run(

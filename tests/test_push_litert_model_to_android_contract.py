@@ -8,6 +8,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = REPO_ROOT / "scripts" / "push_litert_model_to_android.ps1"
 QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
+SUMMARY_VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_migration_summary.py"
+VALIDATION_PYTHON = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"
 
 
 class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
@@ -32,6 +34,10 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
         self.assertIn("non_acceptance_evidence = $true", self.script)
         self.assertIn("acceptance_evidence = $false", self.script)
         self.assertIn("dry_run = $true", self.script)
+        self.assertIn('status = "dry_run_only"', self.script)
+        self.assertIn("stop_line = $nonAcceptanceStopLine", self.script)
+        self.assertIn("primary_evidence = $fixedFourEmulatorMatrix", self.script)
+        self.assertIn("comparison_baseline = $fixedFourEmulatorMatrix", self.script)
         self.assertIn("required_staging_bytes = $requiredBytes", self.script)
         self.assertIn("skip_data_space_check = [bool]$SkipDataSpaceCheck", self.script)
         self.assertIn("transfer_skipped = $true", self.script)
@@ -83,9 +89,16 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
             self.assertTrue(summary_path.exists(), result.stderr + result.stdout)
             summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["status"], "dry_run_only")
             self.assertTrue(summary["non_acceptance_evidence"])
             self.assertFalse(summary["acceptance_evidence"])
             self.assertTrue(summary["dry_run"])
+            self.assertEqual(
+                summary["stop_line"],
+                "STOP: LiteRT model push dry run is non-acceptance evidence only; fixed four-emulator evidence remains primary.",
+            )
+            self.assertEqual(summary["primary_evidence"], "fixed_four_emulator_matrix")
+            self.assertEqual(summary["comparison_baseline"], "fixed_four_emulator_matrix")
             self.assertEqual(summary["model_path"], str(model_path.resolve()))
             self.assertEqual(summary["model_bytes"], 3)
             self.assertEqual(summary["model_gib"], 0)
@@ -97,6 +110,22 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
                 summary["fixed_four_emulator_stop_line"],
                 "fixed four-emulator posture matrix: 5556 phone portrait; 5560 phone landscape; 5554 tablet portrait; 5558 tablet landscape",
             )
+
+            validator = subprocess.run(
+                [
+                    str(VALIDATION_PYTHON),
+                    str(SUMMARY_VALIDATOR_SCRIPT),
+                    str(summary_path),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
+            self.assertIn("android_migration_summary: ok", validator.stdout)
+            self.assertIn("evidence: non_acceptance", validator.stdout)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(

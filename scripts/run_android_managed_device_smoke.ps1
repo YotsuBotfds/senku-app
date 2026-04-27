@@ -1,6 +1,8 @@
 param(
     [string]$OutputDir = "artifacts\bench\android_managed_device_smoke",
-    [switch]$DryRun
+    [switch]$DryRun,
+    [string]$TaskInventoryPath,
+    [switch]$ProbeTaskInventory
 )
 
 $ErrorActionPreference = "Stop"
@@ -173,6 +175,77 @@ function Build-ExpectedGradleTaskNames {
     return $names
 }
 
+function Convert-ObservedGradleTaskName {
+    param([string]$TaskName)
+
+    if ($TaskName.StartsWith(":")) {
+        return $TaskName
+    }
+    return ":app:$TaskName"
+}
+
+function Parse-GradleTaskInventory {
+    param([string]$InventoryText)
+
+    $observedTaskNames = New-Object System.Collections.Generic.List[string]
+    $seen = New-Object System.Collections.Generic.HashSet[string]
+    $linePattern = [regex]"^\s*(?<task>:?[A-Za-z][A-Za-z0-9_:\-]*)\s+-\s+"
+
+    foreach ($line in ($InventoryText -split "`r?`n")) {
+        $match = $linePattern.Match($line)
+        if (-not $match.Success) {
+            continue
+        }
+
+        $taskName = Convert-ObservedGradleTaskName -TaskName $match.Groups["task"].Value
+        if ($seen.Add($taskName)) {
+            $observedTaskNames.Add($taskName) | Out-Null
+        }
+    }
+
+    return @($observedTaskNames)
+}
+
+function Read-TaskInventory {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $null
+    }
+
+    $resolvedPath = Resolve-TargetPath -Path $Path
+    if (-not (Test-Path -LiteralPath $resolvedPath)) {
+        throw "Task inventory path does not exist: $resolvedPath"
+    }
+
+    return [pscustomobject]@{
+        source = "path"
+        source_path = (Convert-ToRepoRelativePath -Path $resolvedPath)
+        gradle_invoked = $false
+        raw_text = (Get-Content -LiteralPath $resolvedPath -Raw -Encoding UTF8)
+    }
+}
+
+function Invoke-TaskInventoryProbe {
+    param([string]$CommandText)
+
+    $previousLocation = Get-Location
+    try {
+        Set-Location -LiteralPath $gradleProjectDir
+        $output = & $gradleWrapper ":app:tasks" "--all" $managedDeviceProperty "--console=plain" 2>&1
+        return [pscustomobject]@{
+            source = "probe"
+            source_path = $null
+            gradle_invoked = $true
+            command = $CommandText
+            exit_code = $LASTEXITCODE
+            raw_text = ($output -join [Environment]::NewLine)
+        }
+    } finally {
+        Set-Location -LiteralPath $previousLocation
+    }
+}
+
 if (-not $DryRun) {
     throw "This first-slice wrapper is dry-run-only. Re-run with -DryRun; it must not launch Gradle Managed Devices yet."
 }
@@ -256,6 +329,9 @@ function Write-SummaryMarkdown {
         "- expected_test_target: ``$($Summary.expected_test_target)``",
         "- planned_task_inventory_command: ``$($Summary.planned_task_inventory_command)``",
         "- expected_gradle_task_names: $($Summary.expected_gradle_task_names -join ', ')",
+        "- observed_gradle_task_names: $($Summary.observed_gradle_task_names -join ', ')",
+        "- task_inventory_source: $($Summary.task_inventory_source)",
+        "- task_inventory_probe_ran: $($Summary.task_inventory_probe_ran)",
         "- comparison_baseline: $($Summary.comparison_baseline)",
         "- planned_command: ``$($Summary.planned_command)``",
         "- stop_line: $($Summary.stop_line)"
@@ -268,6 +344,33 @@ New-Item -ItemType Directory -Force -Path $resolvedOutputDir | Out-Null
 
 $plannedCommand = ".\gradlew.bat :app:$taskName $managedDeviceProperty --console=plain"
 $startedAt = (Get-Date).ToUniversalTime()
+
+$taskInventory = $null
+if (-not [string]::IsNullOrWhiteSpace($TaskInventoryPath)) {
+    $taskInventory = Read-TaskInventory -Path $TaskInventoryPath
+} elseif ($ProbeTaskInventory) {
+    $taskInventory = Invoke-TaskInventoryProbe -CommandText $plannedTaskInventoryCommand
+}
+
+$observedGradleTaskNames = @()
+$observedExpectedGradleTaskNames = @()
+$taskInventorySummary = $null
+if ($null -ne $taskInventory) {
+    $observedGradleTaskNames = Parse-GradleTaskInventory -InventoryText $taskInventory.raw_text
+    $observedExpectedGradleTaskNames = @($observedGradleTaskNames | Where-Object { $expectedGradleTaskNames -contains $_ })
+    $taskInventorySummary = [ordered]@{
+        source = $taskInventory.source
+        source_path = $taskInventory.source_path
+        gradle_invoked = $taskInventory.gradle_invoked
+        command = $plannedTaskInventoryCommand
+        observed_gradle_task_names = $observedGradleTaskNames
+        observed_expected_gradle_task_names = $observedExpectedGradleTaskNames
+    }
+    if ($taskInventory.PSObject.Properties.Name -contains "exit_code") {
+        $taskInventorySummary["exit_code"] = $taskInventory.exit_code
+    }
+}
+
 $finishedAt = (Get-Date).ToUniversalTime()
 
 $summary = [pscustomobject]@{
@@ -282,6 +385,11 @@ $summary = [pscustomobject]@{
     expected_test_target = $expectedTestTarget
     planned_task_inventory_command = $plannedTaskInventoryCommand
     expected_gradle_task_names = $expectedGradleTaskNames
+    observed_gradle_task_names = $observedGradleTaskNames
+    observed_expected_gradle_task_names = $observedExpectedGradleTaskNames
+    task_inventory_source = if ($null -eq $taskInventory) { "not_collected" } else { $taskInventory.source }
+    task_inventory_probe_ran = ($null -ne $taskInventory -and $taskInventory.gradle_invoked)
+    task_inventory = $taskInventorySummary
     comparison_baseline = $comparisonBaseline
     planned_command = $plannedCommand
     gradle_project_dir = (Convert-ToRepoRelativePath -Path $gradleProjectDir)

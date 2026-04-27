@@ -46,14 +46,42 @@ def make_non_acceptance_tooling_summary() -> dict:
         "dry_run": True,
         "non_acceptance_evidence": True,
         "acceptance_evidence": False,
+        "asset_pack_parity_evidence": True,
+        "ui_acceptance_evidence": False,
+        "evidence_kind": "asset_pack_parity",
         "comparison_baseline": "fixed_four_emulator_matrix",
         "primary_evidence": "fixed_four_emulator_matrix",
         "stop_line": (
             "STOP: fixed four-emulator evidence remains primary; "
-            "this Gradle Managed Devices smoke is non-acceptance evidence only."
+            "this asset-pack parity gate is non-acceptance evidence only, "
+            "not UI acceptance evidence."
         ),
         "task_name": ":app:senkuManagedSmoke",
     }
+
+
+def make_litert_push_dry_run_summary() -> dict:
+    summary = make_non_acceptance_tooling_summary()
+    summary.update(
+        {
+            "stop_line": (
+                "STOP: LiteRT model push dry run is non-acceptance evidence only; "
+                "fixed four-emulator evidence remains primary."
+            ),
+            "model_path": "C:\\tmp\\tiny.task",
+            "model_bytes": 3,
+            "model_gib": 0,
+            "required_staging_bytes": 67108870,
+            "required_staging_gib": 0.06,
+            "skip_data_space_check": True,
+            "transfer_skipped": True,
+            "fixed_four_emulator_stop_line": (
+                "fixed four-emulator posture matrix: 5556 phone portrait; "
+                "5560 phone landscape; 5554 tablet portrait; 5558 tablet landscape"
+            ),
+        }
+    )
+    return summary
 
 
 def make_plan_only_preflight_summary() -> dict:
@@ -139,6 +167,26 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data["status"], "dry_run_only")
 
+    def test_valid_non_acceptance_tooling_summary_may_be_real_gate_run(self):
+        summary = make_non_acceptance_tooling_summary()
+        summary["status"] = "pass"
+        summary["dry_run"] = False
+
+        data, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertFalse(data["dry_run"])
+
+    def test_valid_litert_push_dry_run_summary_passes(self):
+        data, errors = validate_summary(self.write_summary(make_litert_push_dry_run_summary()))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertEqual(data["status"], "dry_run_only")
+        self.assertEqual(data["primary_evidence"], "fixed_four_emulator_matrix")
+        self.assertTrue(data["transfer_skipped"])
+
     def test_valid_plan_only_preflight_summary_passes_without_dry_run_or_stop_line(self):
         summary = make_plan_only_preflight_summary()
 
@@ -195,6 +243,18 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
         _, errors = validate_summary(self.write_summary(summary))
 
         self.assertIn("expected root.acceptance_evidence to be false", errors)
+
+    def test_non_acceptance_tooling_summary_rejects_ui_acceptance_evidence(self):
+        summary = make_non_acceptance_tooling_summary()
+        summary["ui_acceptance_evidence"] = True
+        summary["asset_pack_parity_evidence"] = False
+        summary["evidence_kind"] = "ui_acceptance"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.ui_acceptance_evidence to be false", errors)
+        self.assertIn("expected root.asset_pack_parity_evidence to be true", errors)
+        self.assertIn("expected root.evidence_kind to be 'asset_pack_parity'", errors)
 
     def test_plan_only_preflight_summary_rejects_acceptance_evidence(self):
         summary = make_plan_only_preflight_summary()

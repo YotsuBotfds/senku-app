@@ -16,6 +16,7 @@ param(
     [switch]$DefaultPromptWaitForCompletion,
     [switch]$DefaultSkipSourceProbe,
     [switch]$StopOnError,
+    [switch]$PlanOnly,
     [int]$PromptWaitSeconds = 5,
     [int]$PromptMaxWaitSeconds = 180,
     [int]$PromptPollSeconds = 5,
@@ -497,6 +498,165 @@ function Convert-ArgumentsToCliArray {
     return @($cliArgs.ToArray())
 }
 
+function ConvertTo-QuotedCliToken {
+    param([string]$Value)
+
+    if ($null -eq $Value) {
+        return '""'
+    }
+
+    $escaped = ([string]$Value).Replace('"', '\"')
+    return '"' + $escaped + '"'
+}
+
+function ConvertTo-RunnerCommandLine {
+    param($RunnerSpec)
+
+    $tokens = New-Object System.Collections.Generic.List[string]
+    $tokens.Add("&")
+    $tokens.Add((ConvertTo-QuotedCliToken -Value $RunnerSpec.runner_path))
+    foreach ($arg in (Convert-ArgumentsToCliArray -Arguments $RunnerSpec.args)) {
+        if ([string]$arg -like "-*") {
+            $tokens.Add([string]$arg)
+        } else {
+            $tokens.Add((ConvertTo-QuotedCliToken -Value ([string]$arg)))
+        }
+    }
+
+    return ($tokens.ToArray() -join " ")
+}
+
+function New-MatrixPlan {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object[]]$Runs,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedOutputDir
+    )
+
+    $rows = @(
+        for ($index = 0; $index -lt $Runs.Count; $index++) {
+            $runnerSpec = New-RunnerSpec -Run $Runs[$index] -Index $index -ResolvedOutputDir $ResolvedOutputDir
+            $runnerCommand = ConvertTo-RunnerCommandLine -RunnerSpec $runnerSpec
+            [ordered]@{
+                row_index = $index
+                row_number = $index + 1
+                mode = $runnerSpec.mode
+                run_label = $runnerSpec.run_label
+                emulator = $runnerSpec.args.Emulator
+                device_role = $runnerSpec.device_role
+                orientation = $runnerSpec.orientation
+                posture = $runnerSpec.posture
+                runner_path = $runnerSpec.runner_path
+                runner_command = $runnerCommand
+                manifest_path = $runnerSpec.manifest_path
+                logcat_path = $runnerSpec.logcat_path
+                warm_start = [bool]$runnerSpec.args.WarmStart
+                push_pack_dir = $(if ($runnerSpec.args.Contains("PushPackDir")) { [string]$runnerSpec.args.PushPackDir } else { $null })
+                skip_pack_push_if_current = [bool]$runnerSpec.args.SkipPackPushIfCurrent
+                force_pack_push = [bool]$runnerSpec.args.ForcePackPush
+                will_push_pack = $runnerSpec.args.Contains("PushPackDir")
+                runner_args = $runnerSpec.args
+            }
+        }
+    )
+
+    $emulatorGroups = @(
+        foreach ($group in @($rows | Group-Object -Property emulator | Sort-Object -Property Name)) {
+            $items = @($group.Group)
+            [ordered]@{
+                emulator = [string]$group.Name
+                posture = $(if ($items.Count -gt 0) { $items[0].posture } else { "unknown" })
+                device_role = $(if ($items.Count -gt 0) { $items[0].device_role } else { "unknown" })
+                orientation = $(if ($items.Count -gt 0) { $items[0].orientation } else { "unknown" })
+                row_count = $items.Count
+                run_labels = @($items | ForEach-Object { $_.run_label })
+            }
+        }
+    )
+
+    $postureGroups = @(
+        foreach ($group in @($rows | Group-Object -Property posture | Sort-Object -Property Name)) {
+            $items = @($group.Group)
+            [ordered]@{
+                posture = [string]$group.Name
+                row_count = $items.Count
+                emulators = @($items | ForEach-Object { $_.emulator } | Sort-Object -Unique)
+                run_labels = @($items | ForEach-Object { $_.run_label })
+            }
+        }
+    )
+
+    return [ordered]@{
+        plan_kind = "android_harness_matrix"
+        preflight_only = $true
+        plan_only = $true
+        non_acceptance_evidence = $true
+        acceptance_evidence = $false
+        will_start_jobs = $false
+        will_touch_emulators = $false
+        will_write_run_manifests = $false
+        run_file = (Resolve-TargetPath -Path $RunFile)
+        output_dir = $ResolvedOutputDir
+        max_parallel = [int]$MaxParallel
+        effective_max_parallel = [Math]::Max(1, $MaxParallel)
+        inference_mode = $InferenceMode
+        host_inference_url = $HostInferenceUrl
+        host_inference_model = $HostInferenceModel
+        default_warm_start = [bool]$DefaultWarmStart
+        push_pack_dir = $PushPackDir
+        skip_pack_push_if_current = [bool]$SkipPackPushIfCurrent
+        force_pack_push = [bool]$ForcePackPush
+        row_count = $rows.Count
+        selected_emulators = @($Emulators)
+        rows = $rows
+        emulator_groups = $emulatorGroups
+        posture_groups = $postureGroups
+        runner_commands = @($rows | ForEach-Object { $_.runner_command })
+        migration_checklist_intent = [ordered]@{
+            plan_kind = "android_harness_matrix"
+            preflight_only = $true
+            plan_only = $true
+            non_acceptance_evidence = $true
+            acceptance_evidence = $false
+            will_start_jobs = $false
+            will_touch_emulators = $false
+            posture_groups = @($postureGroups | ForEach-Object { $_.posture })
+        }
+    }
+}
+
+function ConvertTo-MatrixPlanMarkdown {
+    param([Parameter(Mandatory = $true)][object]$Plan)
+
+    $lines = @(
+        "# Android Harness Matrix Plan",
+        "",
+        "- plan_kind: $($Plan.plan_kind)",
+        "- preflight_only: $($Plan.preflight_only)",
+        "- non_acceptance_evidence: $($Plan.non_acceptance_evidence)",
+        "- acceptance_evidence: $($Plan.acceptance_evidence)",
+        "- will_start_jobs: $($Plan.will_start_jobs)",
+        "- will_touch_emulators: $($Plan.will_touch_emulators)",
+        "- row_count: $($Plan.row_count)",
+        "- output_dir: $($Plan.output_dir)",
+        "",
+        "## Rows"
+    )
+
+    foreach ($row in $Plan.rows) {
+        $lines += "- row=$($row.row_number) label=$($row.run_label) mode=$($row.mode) emulator=$($row.emulator) posture=$($row.posture) warm_start=$($row.warm_start) will_push_pack=$($row.will_push_pack)"
+        $lines += "  command: $($row.runner_command)"
+    }
+
+    $lines += @("", "## Posture Groups")
+    foreach ($group in $Plan.posture_groups) {
+        $lines += "- posture=$($group.posture) rows=$($group.row_count) emulators=$(($group.emulators) -join ', ')"
+    }
+
+    return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
+}
+
 function Start-HarnessJob {
     param($RunnerSpec)
 
@@ -918,6 +1078,29 @@ if ($runs.Count -eq 0) {
     throw "No runs found in $RunFile"
 }
 
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+
+if ($PlanOnly) {
+    $planJsonPath = Join-Path $resolvedOutputDir ("android_harness_matrix_plan_" + $timestamp + ".json")
+    $planMarkdownPath = Join-Path $resolvedOutputDir ("android_harness_matrix_plan_" + $timestamp + ".md")
+    $summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"
+    $summaryMarkdownPath = Join-Path $resolvedOutputDir "summary.md"
+    $plan = New-MatrixPlan -Runs $runs -ResolvedOutputDir $resolvedOutputDir
+    $plan["plan_json_path"] = $planJsonPath
+    $plan["plan_markdown_path"] = $planMarkdownPath
+    $plan["summary_json_path"] = $summaryJsonPath
+    $plan["summary_markdown_path"] = $summaryMarkdownPath
+    ($plan | ConvertTo-Json -Depth 12) | Set-Content -LiteralPath $planJsonPath -Encoding UTF8
+    ($plan | ConvertTo-Json -Depth 12) | Set-Content -LiteralPath $summaryJsonPath -Encoding UTF8
+    ConvertTo-MatrixPlanMarkdown -Plan $plan | Set-Content -LiteralPath $planMarkdownPath -Encoding UTF8
+    ConvertTo-MatrixPlanMarkdown -Plan $plan | Set-Content -LiteralPath $summaryMarkdownPath -Encoding UTF8
+    Write-Host ("Plan JSON written to " + $planJsonPath)
+    Write-Host ("Plan Markdown written to " + $planMarkdownPath)
+    Write-Host ("Summary JSON written to " + $summaryJsonPath)
+    Write-Host ("Summary Markdown written to " + $summaryMarkdownPath)
+    exit 0
+}
+
 $parallelLimit = [Math]::Max(1, $MaxParallel)
 $activeJobs = New-Object System.Collections.ArrayList
 $results = New-Object System.Collections.ArrayList
@@ -946,7 +1129,6 @@ while ($activeJobs.Count -gt 0) {
     }
 }
 
-$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $summaryJsonlPath = Join-Path $resolvedOutputDir ("android_harness_matrix_" + $timestamp + ".jsonl")
 $summaryCsvPath = Join-Path $resolvedOutputDir ("android_harness_matrix_" + $timestamp + ".csv")
 $summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"

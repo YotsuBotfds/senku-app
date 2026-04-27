@@ -196,7 +196,9 @@ if ($DryRun) {
     $modelGiB = [Math]::Round(($modelBytes / 1GB), 2)
     $requiredBytes = ($modelBytes * 2L) + 67108864L
     $requiredGiB = [Math]::Round(($requiredBytes / 1GB), 2)
+    $fixedFourEmulatorMatrix = "fixed_four_emulator_matrix"
     $fixedFourEmulatorStopLine = "fixed four-emulator posture matrix: 5556 phone portrait; 5560 phone landscape; 5554 tablet portrait; 5558 tablet landscape"
+    $nonAcceptanceStopLine = "STOP: LiteRT model push dry run is non-acceptance evidence only; fixed four-emulator evidence remains primary."
 
     Write-Host "LiteRT model push dry run; no emulator/device commands will be run and no bytes will be transferred."
     Write-Host "Device: $Device"
@@ -211,9 +213,13 @@ if ($DryRun) {
 
     if (-not [string]::IsNullOrWhiteSpace($SummaryPath)) {
         $summary = [ordered]@{
+            status = "dry_run_only"
             non_acceptance_evidence = $true
             acceptance_evidence = $false
             dry_run = $true
+            stop_line = $nonAcceptanceStopLine
+            primary_evidence = $fixedFourEmulatorMatrix
+            comparison_baseline = $fixedFourEmulatorMatrix
             model_path = $resolvedModelPath
             model_bytes = $modelBytes
             model_gib = $modelGiB

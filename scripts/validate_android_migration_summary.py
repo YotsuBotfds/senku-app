@@ -173,8 +173,12 @@ def _validate_non_acceptance_tooling_summary(data: dict[str, Any]) -> list[str]:
         errors.append("expected root.non_acceptance_evidence to be true")
     if data.get("acceptance_evidence") is not False:
         errors.append("expected root.acceptance_evidence to be false")
-    if data.get("dry_run") is not True:
-        errors.append("expected root.dry_run to be true")
+    if "asset_pack_parity_evidence" in data and data.get("asset_pack_parity_evidence") is not True:
+        errors.append("expected root.asset_pack_parity_evidence to be true")
+    if "ui_acceptance_evidence" in data and data.get("ui_acceptance_evidence") is not False:
+        errors.append("expected root.ui_acceptance_evidence to be false")
+    if "evidence_kind" in data and data.get("evidence_kind") != "asset_pack_parity":
+        errors.append("expected root.evidence_kind to be 'asset_pack_parity'")
 
     _validate_non_acceptance_evidence_marker(data, errors)
 

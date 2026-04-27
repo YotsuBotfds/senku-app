@@ -1,0 +1,136 @@
+import hashlib
+import json
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SCRIPT = REPO_ROOT / "scripts" / "run_android_litert_readiness_matrix.ps1"
+QUALITY_GATE_SCRIPT = REPO_ROOT / "scripts" / "run_powershell_quality_gate.ps1"
+SUMMARY_VALIDATOR_SCRIPT = REPO_ROOT / "scripts" / "validate_android_migration_summary.py"
+VALIDATION_PYTHON = REPO_ROOT / ".venvs" / "senku-validate" / "Scripts" / "python.exe"
+
+
+class AndroidLiteRtReadinessMatrixContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.script = SCRIPT.read_text(encoding="utf-8")
+
+    def test_parser_gate_passes(self):
+        result = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(QUALITY_GATE_SCRIPT),
+                "-Path",
+                "scripts\\run_android_litert_readiness_matrix.ps1",
+                "-SkipAnalyzer",
+                "-SkipPester",
+            ],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        self.assertIn("Parser gate passed", result.stdout)
+
+    def test_dry_run_writes_readiness_summary_without_adb_requirement(self):
+        payload = b"tiny litert placeholder\n"
+        expected_hash = hashlib.sha256(payload).hexdigest()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            model_path = temp_path / "tiny.task"
+            output_dir = temp_path / "out"
+            model_path.write_bytes(payload)
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-DryRun",
+                    "-OutputDir",
+                    str(output_dir),
+                    "-ModelPath",
+                    str(model_path),
+                    "-PackageName",
+                    "com.example.senku",
+                    "-Backend",
+                    "litert",
+                    "-RequestMode",
+                    "single_prompt_smoke",
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertIn("no adb", result.stdout.lower())
+            self.assertTrue((output_dir / "summary.json").exists())
+
+            summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8-sig"))
+
+            validator = subprocess.run(
+                [
+                    str(VALIDATION_PYTHON),
+                    str(SUMMARY_VALIDATOR_SCRIPT),
+                    str(output_dir / "summary.json"),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertTrue(summary["non_acceptance_evidence"])
+        self.assertFalse(summary["acceptance_evidence"])
+        self.assertTrue(summary["dry_run"])
+        self.assertEqual(summary["status"], "dry_run_only")
+        self.assertEqual(
+            summary["stop_line"],
+            "STOP: LiteRT readiness dry run is non-acceptance evidence only; fixed four-emulator evidence remains primary.",
+        )
+        self.assertEqual(summary["primary_evidence"], "fixed_four_emulator_matrix")
+        self.assertEqual(summary["comparison_baseline"], "fixed_four_emulator_matrix")
+        self.assertEqual(summary["package_name"], "com.example.senku")
+        self.assertEqual(summary["model"]["path"], str(model_path))
+        self.assertTrue(summary["model"]["exists"])
+        self.assertEqual(summary["model"]["name"], "tiny.task")
+        self.assertEqual(summary["model"]["bytes"], len(payload))
+        self.assertEqual(summary["model"]["sha256"], expected_hash)
+        self.assertEqual(
+            summary["app_private_target"]["path"],
+            "/data/user/0/com.example.senku/files/models/tiny.task",
+        )
+        self.assertFalse(summary["data_free_space_posture"]["adb_required_in_dry_run"])
+        self.assertFalse(summary["data_free_space_posture"]["adb_queried"])
+        self.assertEqual(
+            summary["data_free_space_posture"]["required_bytes"],
+            len(payload) * 2 + 67108864,
+        )
+        self.assertEqual(summary["backend"]["name"], "litert")
+        self.assertEqual(summary["request"]["mode"], "single_prompt_smoke")
+        self.assertEqual(summary["request"]["prompt"], "LiteRT readiness placeholder prompt.")
+        self.assertIn("logcat", summary["logcat_extraction_plan"]["command"])
+        self.assertIn("fixed four-emulator posture matrix", summary["fixed_four_emulator_stop_line"])
+        self.assertEqual(summary["real_run_status"], "not_implemented")
+
+        self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
+        self.assertIn("android_migration_summary: ok", validator.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

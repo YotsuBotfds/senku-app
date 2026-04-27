@@ -18,6 +18,8 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
 
     def test_wrapper_is_dry_run_only_and_documents_non_acceptance_boundary(self):
         self.assertIn("[switch]$DryRun", self.script)
+        self.assertIn("[string]$TaskInventoryPath", self.script)
+        self.assertIn("[switch]$ProbeTaskInventory", self.script)
         self.assertIn("if (-not $DryRun)", self.script)
         self.assertIn("dry-run-only", self.script)
         self.assertIn("must not launch Gradle Managed Devices yet", self.script)
@@ -30,6 +32,9 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("function Parse-ManagedDeviceScaffold", self.script)
         self.assertIn("function Expand-ArtifactRoots", self.script)
         self.assertIn("function Build-ExpectedGradleTaskNames", self.script)
+        self.assertIn("function Parse-GradleTaskInventory", self.script)
+        self.assertIn("function Read-TaskInventory", self.script)
+        self.assertIn("function Invoke-TaskInventoryProbe", self.script)
         self.assertIn("agp_plugin_version", self.script)
         self.assertIn("configured_device_names", self.script)
         self.assertIn("configured_device_api_levels", self.script)
@@ -37,6 +42,10 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("managed_device_scaffold", self.script)
         self.assertIn("smoke_group", self.script)
         self.assertIn("expected_artifact_roots", self.script)
+        self.assertIn("observed_gradle_task_names", self.script)
+        self.assertIn("observed_expected_gradle_task_names", self.script)
+        self.assertIn("task_inventory_source", self.script)
+        self.assertIn("task_inventory_probe_ran", self.script)
         self.assertIn('$plannedTaskInventoryCommand = ".\\gradlew.bat :app:tasks --all $managedDeviceProperty --console=plain"', self.script)
         self.assertIn('$comparisonBaseline = "fixed_four_emulator_matrix"', self.script)
         self.assertIn("fixed four-emulator evidence remains primary", self.script)
@@ -120,6 +129,11 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
                     ":app:senkuManagedSmokeGroupDebugAndroidTest",
                 ],
             )
+            self.assertEqual(summary["observed_gradle_task_names"], [])
+            self.assertEqual(summary["observed_expected_gradle_task_names"], [])
+            self.assertEqual(summary["task_inventory_source"], "not_collected")
+            self.assertFalse(summary["task_inventory_probe_ran"])
+            self.assertIsNone(summary["task_inventory"])
             self.assertIn("managed_device_scaffold", summary)
             scaffold = summary["managed_device_scaffold"]
             self.assertEqual(scaffold.get("agp_plugin_version"), "8.2.1")
@@ -154,6 +168,84 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             self.assertEqual(summary["primary_evidence"], "fixed_four_emulator_matrix")
             self.assertIn("fixed four-emulator evidence remains primary", summary["stop_line"])
             self.assertTrue((output_dir / "summary.md").exists())
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
+
+    def test_dry_run_can_ingest_saved_task_inventory_without_probe(self):
+        output_dir = Path(tempfile.mkdtemp(prefix="managed_device_smoke_inventory_"))
+        try:
+            inventory_path = output_dir / "tasks.txt"
+            inventory_path.write_text(
+                "\n".join(
+                    [
+                        "> Task :app:tasks",
+                        "",
+                        "Android tasks",
+                        "-------------",
+                        "senkuPhoneApi30DebugAndroidTest - Installs and runs instrumentation tests on senkuPhoneApi30.",
+                        "senkuTabletApi30DebugAndroidTest - Installs and runs instrumentation tests on senkuTabletApi30.",
+                        "senkuManagedSmokeGroupDebugAndroidTest - Installs and runs instrumentation tests on a group.",
+                        "unrelatedDebugAndroidTest - Existing unrelated task should remain observed but not expected.",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(SCRIPT),
+                    "-OutputDir",
+                    str(output_dir / "out"),
+                    "-DryRun",
+                    "-TaskInventoryPath",
+                    str(inventory_path),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            summary = json.loads((output_dir / "out" / "summary.json").read_text(encoding="utf-8-sig"))
+            self.assertEqual(summary["status"], "dry_run_only")
+            self.assertTrue(summary["non_acceptance_evidence"])
+            self.assertFalse(summary["acceptance_evidence"])
+            self.assertEqual(summary["task_inventory_source"], "path")
+            self.assertFalse(summary["task_inventory_probe_ran"])
+            self.assertEqual(
+                summary["expected_gradle_task_names"],
+                [
+                    ":app:senkuPhoneApi30DebugAndroidTest",
+                    ":app:senkuTabletApi30DebugAndroidTest",
+                    ":app:senkuManagedSmokeGroupDebugAndroidTest",
+                ],
+            )
+            self.assertEqual(
+                summary["observed_gradle_task_names"],
+                [
+                    ":app:senkuPhoneApi30DebugAndroidTest",
+                    ":app:senkuTabletApi30DebugAndroidTest",
+                    ":app:senkuManagedSmokeGroupDebugAndroidTest",
+                    ":app:unrelatedDebugAndroidTest",
+                ],
+            )
+            self.assertEqual(
+                summary["observed_expected_gradle_task_names"],
+                summary["expected_gradle_task_names"],
+            )
+            self.assertEqual(summary["task_inventory"]["source"], "path")
+            self.assertFalse(summary["task_inventory"]["gradle_invoked"])
+            self.assertEqual(
+                summary["task_inventory"]["observed_gradle_task_names"],
+                summary["observed_gradle_task_names"],
+            )
+            self.assertIn("tasks.txt", summary["task_inventory"]["source_path"])
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)
 

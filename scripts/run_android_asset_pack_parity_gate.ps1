@@ -108,7 +108,7 @@ $baselinePath = Resolve-GatePath -Path $BaselinePackDir -RepoRoot $repoRoot
 $candidatePath = Resolve-GatePath -Path $CandidatePackDir -RepoRoot $repoRoot
 $outputPath = Resolve-GatePath -Path $Output -RepoRoot $repoRoot
 $comparisonBaseline = "fixed_four_emulator_matrix"
-$stopLine = "STOP: fixed four-emulator evidence remains primary; this asset-pack parity dry run is non-acceptance evidence only."
+$stopLine = "STOP: fixed four-emulator evidence remains primary; this asset-pack parity gate is non-acceptance evidence only, not UI acceptance evidence."
 
 if (-not (Test-Path -LiteralPath $baselinePath)) {
     throw "Baseline pack path not found: $baselinePath"
@@ -138,6 +138,9 @@ if ($WhatIf) {
         dry_run = $true
         non_acceptance_evidence = $true
         acceptance_evidence = $false
+        asset_pack_parity_evidence = $true
+        ui_acceptance_evidence = $false
+        evidence_kind = "asset_pack_parity"
         comparison_baseline = $comparisonBaseline
         primary_evidence = $comparisonBaseline
         stop_line = $stopLine
@@ -194,6 +197,9 @@ $gateReport = [ordered]@{
     dry_run = $false
     non_acceptance_evidence = $true
     acceptance_evidence = $false
+    asset_pack_parity_evidence = $true
+    ui_acceptance_evidence = $false
+    evidence_kind = "asset_pack_parity"
     comparison_baseline = $comparisonBaseline
     primary_evidence = $comparisonBaseline
     stop_line = $stopLine

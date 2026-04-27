@@ -8,6 +8,8 @@ param(
     [switch]$NoBootAnim,
     [switch]$GpuSwiftshader,
     [switch]$Headless,
+    [ValidateSet("none", "clean-headless", "cached-local", "large-litert-data")]
+    [string]$LaunchProfile = "none",
     [int]$PartitionSizeMb = 0
 )
 
@@ -213,6 +215,66 @@ function Get-SenkuEmulatorLaunchArguments {
     return $arguments
 }
 
+function Get-SenkuEmulatorLaunchProfileMetadata {
+    param(
+        [string]$LaunchProfile
+    )
+
+    $profiles = @{
+        "clean-headless" = [pscustomobject]@{
+            profile = "clean-headless"
+            preflight_only = $true
+            whatif_metadata_only = $true
+            non_acceptance_evidence = $true
+            acceptance_evidence = $false
+            headless = $true
+            partition_size_mb = $null
+            data_sizing = "default emulator data partition"
+            snapshot_cache_posture = "clean/read-only posture; no snapshot load or save expected"
+            expected_role = "phone_portrait"
+            expected_serial = "emulator-5556"
+        }
+        "cached-local" = [pscustomobject]@{
+            profile = "cached-local"
+            preflight_only = $true
+            whatif_metadata_only = $true
+            non_acceptance_evidence = $true
+            acceptance_evidence = $false
+            headless = $false
+            partition_size_mb = $null
+            data_sizing = "default emulator data partition with local cache posture"
+            snapshot_cache_posture = "cached/local posture; writable launch state must be requested explicitly"
+            expected_role = "phone_portrait"
+            expected_serial = "emulator-5556"
+        }
+        "large-litert-data" = [pscustomobject]@{
+            profile = "large-litert-data"
+            preflight_only = $true
+            whatif_metadata_only = $true
+            non_acceptance_evidence = $true
+            acceptance_evidence = $false
+            headless = $true
+            partition_size_mb = 8192
+            data_sizing = "large data partition for LiteRT model and pack transport preflight"
+            snapshot_cache_posture = "read-only/no snapshot load or save expected"
+            expected_role = "tablet_portrait"
+            expected_serial = "emulator-5554"
+        }
+    }
+
+    if (-not $profiles.ContainsKey($LaunchProfile)) {
+        return $null
+    }
+
+    return $profiles[$LaunchProfile]
+}
+
+$isWhatIf = [bool]$WhatIfPreference
+
+if ($LaunchProfile -ne "none" -and -not $isWhatIf) {
+    throw "-LaunchProfile is preflight-only metadata and must be used with -WhatIf."
+}
+
 $emulatorPath = Resolve-SenkuEmulatorPath
 $adbPath = Resolve-SenkuAdbPath -EmulatorPath $emulatorPath
 $matrix = Get-SenkuEmulatorMatrix
@@ -237,6 +299,12 @@ if (-not $selectedLanes -or $selectedLanes.Count -eq 0) {
 Write-Host ("Using emulator: {0}" -f $emulatorPath)
 Write-Host ("Using adb: {0}" -f $adbPath)
 Write-Host ("Launch mode: {0}" -f $Mode)
+
+if ($isWhatIf -and $LaunchProfile -ne "none") {
+    $profileMetadata = Get-SenkuEmulatorLaunchProfileMetadata -LaunchProfile $LaunchProfile
+    Write-Host "Launch profile metadata:"
+    Write-Host ($profileMetadata | ConvertTo-Json -Depth 4 -Compress)
+}
 
 foreach ($lane in $selectedLanes) {
     Write-Host ("- {0}: {1} / {2} / {3}" -f $lane.role, $lane.serial, $lane.avd, $lane.resolution)

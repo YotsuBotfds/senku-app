@@ -115,6 +115,21 @@ Dry-run artifact shape:
   line: this helper does not replace fixed four-emulator screenshot/state-pack
   evidence.
 
+Optional Android Test Orchestrator Gradle configuration is also hidden behind
+an explicit property gate:
+
+```powershell
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+.\gradlew.bat :app:connectedDebugAndroidTest '-Psenku.enableTestOrchestrator=true' --console=plain
+```
+
+This is a non-acceptance flake-isolation scaffold only. Normal Gradle
+instrumentation and the PowerShell smoke harness do not opt into Orchestrator by
+default. When enabled, the scaffold sets `clearPackageData=true`, so each test
+starts after app data is cleared; do not use this lane for warm-state, pack-cache,
+or imported-model persistence evidence. Fixed four-emulator screenshot/state-pack
+evidence remains primary for acceptance.
+
 Dry-run the Android asset-pack parity gate before running a candidate compare:
 
 ```powershell

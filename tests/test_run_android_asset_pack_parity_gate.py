@@ -95,9 +95,13 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
         self.assertTrue(report["dry_run"])
         self.assertTrue(report["non_acceptance_evidence"])
         self.assertFalse(report["acceptance_evidence"])
+        self.assertTrue(report["asset_pack_parity_evidence"])
+        self.assertFalse(report["ui_acceptance_evidence"])
+        self.assertEqual(report["evidence_kind"], "asset_pack_parity")
         self.assertEqual(report["comparison_baseline"], "fixed_four_emulator_matrix")
         self.assertEqual(report["primary_evidence"], "fixed_four_emulator_matrix")
         self.assertIn("fixed four-emulator evidence remains primary", report["stop_line"])
+        self.assertIn("not UI acceptance evidence", report["stop_line"])
         self.assertFalse(report["would_run"])
         self.assertTrue(report["fail_on_mismatch"])
 
@@ -153,14 +157,44 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
         self.assertFalse(report["dry_run"])
         self.assertTrue(report["non_acceptance_evidence"])
         self.assertFalse(report["acceptance_evidence"])
+        self.assertTrue(report["asset_pack_parity_evidence"])
+        self.assertFalse(report["ui_acceptance_evidence"])
+        self.assertEqual(report["evidence_kind"], "asset_pack_parity")
         self.assertEqual(report["comparison_baseline"], "fixed_four_emulator_matrix")
         self.assertEqual(report["primary_evidence"], "fixed_four_emulator_matrix")
         self.assertIn("fixed four-emulator evidence remains primary", report["stop_line"])
+        self.assertIn("not UI acceptance evidence", report["stop_line"])
         self.assertEqual(report["candidate_highlights"]["sqlite_counts"]["answer_cards"], 3)
         self.assertEqual(
             report["count_deltas"],
             [{"name": "answer_cards", "baseline": 2, "candidate": 3, "delta": 1}],
         )
+
+    def test_real_gate_summary_validates_as_non_acceptance_artifact(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            baseline = Path(tmpdir) / "baseline"
+            candidate = Path(tmpdir) / "candidate"
+            output = Path(tmpdir) / "report.json"
+            write_pack(baseline, 2)
+            write_pack(candidate, 3)
+
+            self.run_script(
+                "-BaselinePackDir",
+                str(baseline),
+                "-CandidatePackDir",
+                str(candidate),
+                "-Output",
+                str(output),
+            )
+
+            report, errors = validate_summary(output)
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(report)
+        self.assertFalse(report["dry_run"])
+        self.assertTrue(report["non_acceptance_evidence"])
+        self.assertTrue(report["asset_pack_parity_evidence"])
+        self.assertFalse(report["ui_acceptance_evidence"])
 
     def test_real_gate_writes_fail_wrapper_before_returning_failure(self):
         with tempfile.TemporaryDirectory() as tmpdir:

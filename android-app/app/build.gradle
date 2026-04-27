@@ -9,6 +9,11 @@ def senkuManagedDevicesEnabled = providers.gradleProperty('senku.enableManagedDe
         .orElse(false)
         .get()
 
+def senkuTestOrchestratorEnabled = providers.gradleProperty('senku.enableTestOrchestrator')
+        .map { it.toBoolean() }
+        .orElse(false)
+        .get()
+
 android {
     namespace 'com.senku.mobile'
     compileSdk 34
@@ -20,11 +25,16 @@ android {
         versionCode 1
         versionName "0.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        if (senkuTestOrchestratorEnabled) {
+            testInstrumentationRunnerArguments clearPackageData: 'true'
+        }
     }
 
     testOptions {
         animationsDisabled true
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        if (senkuTestOrchestratorEnabled) {
+            execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        }
 
         if (senkuManagedDevicesEnabled) {
             managedDevices {
@@ -106,5 +116,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
-    androidTestUtil 'androidx.test:orchestrator:1.5.1'
+    if (senkuTestOrchestratorEnabled) {
+        androidTestUtil 'androidx.test:orchestrator:1.5.1'
+    }
 }
