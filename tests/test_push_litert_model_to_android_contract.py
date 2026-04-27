@@ -27,6 +27,8 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
         self.assertIn("LiteRT model push dry run; no emulator/device commands will be run and no bytes will be transferred.", self.script)
         self.assertIn('Write-Host "Model: $resolvedModelPath"', self.script)
         self.assertIn('Write-Host "Model size: $modelBytes bytes (${modelGiB} GiB)"', self.script)
+        self.assertIn('$modelSha256 = (Get-FileHash -LiteralPath $resolvedModelPath -Algorithm SHA256).Hash.ToLowerInvariant()', self.script)
+        self.assertIn('Write-Host "Model sha256: $modelSha256"', self.script)
         self.assertIn('Write-Host "Staging requirement: model is staged in $RemoteTempDir before copying into app storage."', self.script)
         self.assertIn('Write-Host "Free-space check posture: real push requires about ${requiredGiB} GiB free on /data unless -SkipDataSpaceCheck is set."', self.script)
         self.assertIn('Write-Host "SkipDataSpaceCheck posture: $([bool]$SkipDataSpaceCheck)"', self.script)
@@ -38,7 +40,15 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
         self.assertIn("stop_line = $nonAcceptanceStopLine", self.script)
         self.assertIn("primary_evidence = $fixedFourEmulatorMatrix", self.script)
         self.assertIn("comparison_baseline = $fixedFourEmulatorMatrix", self.script)
+        self.assertIn("model_name = $modelFileName", self.script)
         self.assertIn("required_staging_bytes = $requiredBytes", self.script)
+        self.assertIn("model_sha256 = $modelSha256", self.script)
+        self.assertIn("app_private_target = $true", self.script)
+        self.assertIn("app_private_target_path = $appModelPath", self.script)
+        self.assertIn("remote_temp_dir = $RemoteTempDir", self.script)
+        self.assertIn("tmp_staging_required = $true", self.script)
+        self.assertIn("data_free_space_check_required = (-not [bool]$SkipDataSpaceCheck)", self.script)
+        self.assertIn("data_free_space_required_bytes = $requiredBytes", self.script)
         self.assertIn("skip_data_space_check = [bool]$SkipDataSpaceCheck", self.script)
         self.assertIn("transfer_skipped = $true", self.script)
         self.assertIn("fixed_four_emulator_stop_line = $fixedFourEmulatorStopLine", self.script)
@@ -100,10 +110,24 @@ class PushLiteRtModelToAndroidContractTests(unittest.TestCase):
             self.assertEqual(summary["primary_evidence"], "fixed_four_emulator_matrix")
             self.assertEqual(summary["comparison_baseline"], "fixed_four_emulator_matrix")
             self.assertEqual(summary["model_path"], str(model_path.resolve()))
+            self.assertEqual(summary["model_name"], "tiny.task")
             self.assertEqual(summary["model_bytes"], 3)
+            self.assertEqual(
+                summary["model_sha256"],
+                "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+            )
             self.assertEqual(summary["model_gib"], 0)
+            self.assertTrue(summary["app_private_target"])
+            self.assertEqual(
+                summary["app_private_target_path"],
+                "/data/user/0/com.senku.mobile/files/models/tiny.task",
+            )
+            self.assertEqual(summary["remote_temp_dir"], "/data/local/tmp/senku_litert_model_push")
+            self.assertTrue(summary["tmp_staging_required"])
             self.assertEqual(summary["required_staging_bytes"], 67108870)
             self.assertEqual(summary["required_staging_gib"], 0.06)
+            self.assertFalse(summary["data_free_space_check_required"])
+            self.assertEqual(summary["data_free_space_required_bytes"], 67108870)
             self.assertTrue(summary["skip_data_space_check"])
             self.assertTrue(summary["transfer_skipped"])
             self.assertEqual(

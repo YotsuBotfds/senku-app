@@ -82,6 +82,16 @@ class WriteAndroidToolingVersionManifestTests(unittest.TestCase):
         self.assertFalse(manifest["acceptance_evidence"])
         self.assertEqual(manifest["gradle_wrapper"]["distribution_version"], "8.2.1")
         self.assertEqual(manifest["gradle_wrapper"]["distribution_sha256_sum"], "abc123")
+        self.assertEqual(manifest["summary"]["gradle_wrapper"]["count"], 1)
+        self.assertEqual(manifest["summary"]["gradle_wrapper"]["version"], "8.2.1")
+        self.assertTrue(manifest["summary"]["gradle_wrapper"]["has_sha256"])
+        self.assertEqual(manifest["summary"]["android_gradle_plugin"]["count"], 1)
+        self.assertEqual(manifest["summary"]["kotlin_plugins"]["count"], 2)
+        self.assertEqual(manifest["summary"]["androidx_test"]["count"], 3)
+        self.assertEqual(manifest["summary"]["orchestrator"]["count"], 1)
+        self.assertEqual(manifest["summary"]["litert_lm"]["count"], 1)
+        self.assertFalse(manifest["summary"]["host_tools"]["probed"])
+        self.assertIsNone(manifest["summary"]["host_tools"]["adb_version"])
         self.assertIn(
             {"id": "com.android.application", "version": "8.2.1", "source": "android-app/build.gradle"},
             manifest["android_gradle_plugin"],
@@ -132,6 +142,9 @@ class WriteAndroidToolingVersionManifestTests(unittest.TestCase):
 
         self.assertFalse(payload["acceptance_evidence"])
         self.assertIn("non_acceptance_evidence: `true`", markdown)
+        self.assertEqual(payload["summary"]["androidx_test"]["count"], 3)
+        self.assertIn("- AndroidX test dependencies: `3`", markdown)
+        self.assertIn("- LiteRT-LM dependencies: `1`", markdown)
         self.assertIn("`com.google.ai.edge.litertlm:litertlm-android:0.10.0`", markdown)
         self.assertIn("- adb: `probe_disabled`", markdown)
 
@@ -154,6 +167,7 @@ class WriteAndroidToolingVersionManifestTests(unittest.TestCase):
             manifest = manifest_script.build_manifest(Path(temp_dir), probe_tools=False)
 
         self.assertFalse(manifest["gradle_wrapper"]["available"])
+        self.assertEqual(manifest["summary"]["gradle_wrapper"]["count"], 0)
         self.assertEqual(manifest["plugins"], [])
         self.assertEqual(manifest["dependencies"]["androidx_test"], [])
 

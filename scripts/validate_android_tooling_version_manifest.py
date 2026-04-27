@@ -19,6 +19,7 @@ REQUIRED_TOP_LEVEL: dict[str, type | tuple[type, ...]] = {
     "non_acceptance_evidence": bool,
     "acceptance_evidence": bool,
     "inputs": dict,
+    "summary": dict,
     "gradle_wrapper": dict,
     "plugins": list,
     "android_gradle_plugin": list,
@@ -31,6 +32,46 @@ REQUIRED_TOP_LEVEL: dict[str, type | tuple[type, ...]] = {
 REQUIRED_INPUTS: dict[str, type | tuple[type, ...]] = {
     "wrapper_properties": str,
     "build_files": list,
+}
+
+REQUIRED_SUMMARY: dict[str, type | tuple[type, ...]] = {
+    "metadata_only": bool,
+    "acceptance_evidence": bool,
+    "gradle_wrapper": dict,
+    "android_gradle_plugin": dict,
+    "kotlin_plugins": dict,
+    "androidx_test": dict,
+    "orchestrator": dict,
+    "litert_lm": dict,
+    "sdk_path_hints": dict,
+    "host_tools": dict,
+}
+
+REQUIRED_VERSION_COUNT_SUMMARY: dict[str, type | tuple[type, ...]] = {
+    "count": int,
+    "versions": list,
+}
+
+REQUIRED_COORDINATE_COUNT_SUMMARY: dict[str, type | tuple[type, ...]] = {
+    "count": int,
+    "coordinates": list,
+}
+
+REQUIRED_GRADLE_WRAPPER_SUMMARY: dict[str, type | tuple[type, ...]] = {
+    "count": int,
+    "version": (str, type(None)),
+    "has_sha256": bool,
+}
+
+REQUIRED_SDK_HINT_SUMMARY: dict[str, type | tuple[type, ...]] = {
+    "set_count": int,
+    "existing_count": int,
+}
+
+REQUIRED_HOST_TOOL_SUMMARY: dict[str, type | tuple[type, ...]] = {
+    "probed": bool,
+    "adb_version": (str, type(None)),
+    "emulator_version": (str, type(None)),
 }
 
 REQUIRED_GRADLE_WRAPPER: dict[str, type | tuple[type, ...]] = {
@@ -161,6 +202,54 @@ def _validate_dependencies(dependencies: Any, errors: list[str]) -> None:
             _validate_required_fields(dependency, REQUIRED_DEPENDENCY_FIELDS, errors, item_scope)
 
 
+def _validate_summary(summary: Any, errors: list[str]) -> None:
+    _validate_required_fields(summary, REQUIRED_SUMMARY, errors, "summary")
+    if not isinstance(summary, dict):
+        return
+
+    if summary.get("metadata_only") is not True:
+        errors.append("expected summary.metadata_only to be true")
+    if summary.get("acceptance_evidence") is not False:
+        errors.append("expected summary.acceptance_evidence to be false")
+
+    _validate_required_fields(
+        summary.get("gradle_wrapper"),
+        REQUIRED_GRADLE_WRAPPER_SUMMARY,
+        errors,
+        "summary.gradle_wrapper",
+    )
+    for key in ("android_gradle_plugin", "kotlin_plugins"):
+        _validate_required_fields(
+            summary.get(key),
+            REQUIRED_VERSION_COUNT_SUMMARY,
+            errors,
+            f"summary.{key}",
+        )
+        if isinstance(summary.get(key), dict):
+            _validate_str_list(summary[key].get("versions"), errors, f"summary.{key}.versions")
+    for key in ("androidx_test", "orchestrator", "litert_lm"):
+        _validate_required_fields(
+            summary.get(key),
+            REQUIRED_COORDINATE_COUNT_SUMMARY,
+            errors,
+            f"summary.{key}",
+        )
+        if isinstance(summary.get(key), dict):
+            _validate_str_list(summary[key].get("coordinates"), errors, f"summary.{key}.coordinates")
+    _validate_required_fields(
+        summary.get("sdk_path_hints"),
+        REQUIRED_SDK_HINT_SUMMARY,
+        errors,
+        "summary.sdk_path_hints",
+    )
+    _validate_required_fields(
+        summary.get("host_tools"),
+        REQUIRED_HOST_TOOL_SUMMARY,
+        errors,
+        "summary.host_tools",
+    )
+
+
 def _validate_tool_probe(probe: Any, errors: list[str], scope: str) -> None:
     _validate_required_fields(probe, REQUIRED_TOOL_PROBE_FIELDS, errors, scope)
     if not isinstance(probe, dict):
@@ -224,6 +313,7 @@ def validate_manifest(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if data.get("acceptance_evidence") is not False:
         errors.append("expected root.acceptance_evidence to be false")
 
+    _validate_summary(data.get("summary"), errors)
     _validate_required_fields(data.get("inputs"), REQUIRED_INPUTS, errors, "inputs")
     if isinstance(data.get("inputs"), dict):
         _validate_str_list(data["inputs"].get("build_files"), errors, "inputs.build_files")

@@ -175,6 +175,7 @@ if ([string]::IsNullOrWhiteSpace($ModelPath) -or -not (Test-Path -LiteralPath $M
 
 $resolvedModelPath = (Resolve-Path -LiteralPath $ModelPath).Path
 $modelBytes = (Get-Item -LiteralPath $resolvedModelPath).Length
+$modelSha256 = (Get-FileHash -LiteralPath $resolvedModelPath -Algorithm SHA256).Hash.ToLowerInvariant()
 $modelFileName = [System.IO.Path]::GetFileName($resolvedModelPath)
 $modelExtension = [System.IO.Path]::GetExtension($resolvedModelPath).ToLowerInvariant()
 if ($modelExtension -ne ".litertlm" -and $modelExtension -ne ".task") {
@@ -205,6 +206,7 @@ if ($DryRun) {
     Write-Host "Package: $PackageName"
     Write-Host "Model: $resolvedModelPath"
     Write-Host "Model size: $modelBytes bytes (${modelGiB} GiB)"
+    Write-Host "Model sha256: $modelSha256"
     Write-Host "Target: $appModelPath"
     Write-Host "Staging requirement: model is staged in $RemoteTempDir before copying into app storage."
     Write-Host "Free-space check posture: real push requires about ${requiredGiB} GiB free on /data unless -SkipDataSpaceCheck is set."
@@ -221,10 +223,18 @@ if ($DryRun) {
             primary_evidence = $fixedFourEmulatorMatrix
             comparison_baseline = $fixedFourEmulatorMatrix
             model_path = $resolvedModelPath
+            model_name = $modelFileName
             model_bytes = $modelBytes
+            model_sha256 = $modelSha256
             model_gib = $modelGiB
+            app_private_target = $true
+            app_private_target_path = $appModelPath
+            remote_temp_dir = $RemoteTempDir
+            tmp_staging_required = $true
             required_staging_bytes = $requiredBytes
             required_staging_gib = $requiredGiB
+            data_free_space_check_required = (-not [bool]$SkipDataSpaceCheck)
+            data_free_space_required_bytes = $requiredBytes
             skip_data_space_check = [bool]$SkipDataSpaceCheck
             transfer_skipped = $true
             fixed_four_emulator_stop_line = $fixedFourEmulatorStopLine

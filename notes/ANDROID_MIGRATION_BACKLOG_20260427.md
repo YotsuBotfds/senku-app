@@ -106,6 +106,31 @@ audit. Capture:
   explain a planned lane or host setup, but they do not replace the fixed
   four-emulator state-pack evidence.
 
+Reviewer taxonomy for helper evidence:
+
+- `-PlanOnly`: command/role/row preflight only. Expected markers include
+  `preflight_only=true`, `plan_only=true`, `non_acceptance_evidence=true`,
+  `acceptance_evidence=false`, and, for harness matrix plans,
+  `will_touch_emulators=false`.
+- `-DryRun`: no-device or no-transfer rehearsal only. Expected markers include
+  `dry_run=true`, `status=dry_run_only` where applicable,
+  `non_acceptance_evidence=true`, and `acceptance_evidence=false`.
+- `-WhatIf`: command review only. Expected markers include `would_run=false`
+  or printed launch arguments/profile metadata; it does not run the parity
+  compare, start an emulator, or create UI proof.
+- Metadata-only: host/tooling or summary-shape context only. Look for
+  `metadata_only=true` or explicit non-acceptance posture; these artifacts
+  help explain the environment but do not prove device behavior.
+- Pack evidence: asset-pack parity, installed-pack metadata, cache/push
+  summaries, and manifest/sqlite/vector counts prove inventory and pack
+  identity only. They are not screenshot/state-pack UI acceptance.
+- FTS fallback evidence: direct and wrapper FTS proofs with
+  `runtime_evidence=fts4_fallback` prove Android fallback behavior. Treat
+  them as not FTS5 runtime proof and not UI acceptance.
+- True UI acceptance: only the fixed four-emulator state-pack lane across
+  phone portrait, phone landscape, tablet portrait, and tablet landscape
+  proves screenshot/dump UI acceptance for this migration baseline.
+
 ## Current Blockers
 
 - Consolidated host-inclusive state-pack proof: current bundled-pack UI

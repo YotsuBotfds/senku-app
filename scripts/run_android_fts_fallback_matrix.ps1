@@ -126,6 +126,7 @@ function Write-MarkdownSummary {
 
     $failedCount = @($Summary.failed_devices).Count
     $deviceList = @($Summary.devices) -join ", "
+    $failedDeviceList = if ($failedCount -gt 0) { @($Summary.failed_devices) -join ", " } else { "none" }
     $lines = @(
         "# Android FTS fallback matrix summary",
         "",
@@ -134,7 +135,10 @@ function Write-MarkdownSummary {
         "- devices: $deviceList",
         "- passed_count: $($Summary.passed_count)",
         "- failed_count: $failedCount",
+        "- failed_devices: $failedDeviceList",
+        "- device_lock_posture: $($Summary.device_lock_posture)",
         "- device_lock_used: $($Summary.device_lock_used.ToString().ToLowerInvariant())",
+        "- adb_path: $($Summary.adb_path)",
         "- host_adb_platform_tools_version: $($Summary.host_adb_platform_tools_version)",
         "- summary_json: $SummaryJsonPath"
     )
@@ -165,6 +169,14 @@ function Acquire-DeviceLock {
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Path $resolvedOutputDir -Force | Out-Null
 $hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -DryRun:$DryRun
+$deviceLockUsed = [bool](-not $DryRun -and -not $SkipDeviceLock)
+$deviceLockPosture = if ($DryRun) {
+    "not_acquired_dry_run"
+} elseif ($SkipDeviceLock) {
+    "skipped_by_flag"
+} else {
+    "required_per_device"
+}
 
 $deviceResults = @()
 foreach ($device in @($Devices)) {
@@ -192,7 +204,9 @@ foreach ($device in @($Devices)) {
         fts5_runtime_proof = $false
         not_fts5_runtime_proof = $true
         dry_run = [bool]$DryRun
-        device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
+        device_lock_posture = $deviceLockPosture
+        device_lock_used = $deviceLockUsed
+        adb_path = $adb
         host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
         started_at_utc = $startedAt.ToString("o")
         finished_at_utc = $finishedAt.ToString("o")
@@ -208,16 +222,26 @@ foreach ($device in @($Devices)) {
 }
 
 $failedDevices = @($deviceResults | Where-Object { -not $_.passed } | ForEach-Object { $_.device })
+$failedDeviceResults = @($deviceResults | Where-Object { -not $_.passed } | ForEach-Object {
+    [pscustomobject]@{
+        device = $_.device
+        exit_code = $_.exit_code
+        command = $_.command
+    }
+})
 $summary = [pscustomobject]@{
     passed_count = @($deviceResults | Where-Object { $_.passed }).Count
     failed_devices = $failedDevices
+    failed_device_results = $failedDeviceResults
     expected_tests = $expectedTests
     runtime_evidence = $runtimeEvidence
     expected_fts_table = $expectedFtsTable
     fts5_runtime_proof = $false
     not_fts5_runtime_proof = $true
     dry_run = [bool]$DryRun
-    device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
+    device_lock_posture = $deviceLockPosture
+    device_lock_used = $deviceLockUsed
+    adb_path = $adb
     host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
     device_count = @($deviceResults).Count
     devices = @($deviceResults | ForEach-Object { $_.device })

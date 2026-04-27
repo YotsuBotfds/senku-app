@@ -80,18 +80,29 @@ function New-LiteRtReadinessSummary {
 
     $modelName = if ($Model.exists) { $Model.name } else { "<model-file>" }
     $requiredBytes = if ($Model.exists) { ($Model.bytes * 2L) + 67108864L } else { $null }
+    $modelIdentity = [ordered]@{
+        source = "dry_run_model_path"
+        path = $Model.path
+        name = $Model.name
+        bytes = $Model.bytes
+        sha256 = $Model.sha256
+        exists = $Model.exists
+    }
 
     return [ordered]@{
         status = "dry_run_only"
+        real_run_status = "not_implemented"
         non_acceptance_evidence = $true
         acceptance_evidence = $false
         dry_run = $true
         stop_line = $nonAcceptanceStopLine
         primary_evidence = $fixedFourEmulatorMatrix
         comparison_baseline = $fixedFourEmulatorMatrix
+        runtime_evidence = "none_dry_run_only"
         generated_utc = [DateTime]::UtcNow.ToString("o")
         package_name = $PackageName
         model = $Model
+        model_identity = $modelIdentity
         app_private_target = [ordered]@{
             directory = "/data/user/0/$PackageName/files/models"
             path = "/data/user/0/$PackageName/files/models/$modelName"
@@ -108,20 +119,29 @@ function New-LiteRtReadinessSummary {
             name = $Backend
             package = $PackageName
             readiness_matrix = $DeviceMatrix
+            real_run_status = "not_implemented"
+            adb_required_in_dry_run = $false
         }
         request = [ordered]@{
             mode = $RequestMode
             prompt = "LiteRT readiness placeholder prompt."
+            backend = $Backend
+            package = $PackageName
+            real_run_status = "not_implemented"
+            device_required_in_dry_run = $false
             expected_artifacts = @("summary.json", "logcat excerpt", "backend request/response timing")
         }
         logcat_extraction_plan = [ordered]@{
+            status = "planned_for_real_run"
+            real_run_status = "not_implemented"
+            adb_required_in_dry_run = $false
             clear_before_run = $true
             capture_after_run = $true
             command = "adb -s <serial> logcat -d -v time Senku:D LiteRT:D AndroidRuntime:E *:S"
             artifact = "logcat_litert_readiness_<serial>.txt"
+            extraction_filters = @("Senku:D", "LiteRT:D", "AndroidRuntime:E", "*:S")
         }
         fixed_four_emulator_stop_line = $fixedFourEmulatorStopLine
-        real_run_status = "not_implemented"
         output_dir = $ResolvedOutputDir
     }
 }
@@ -154,12 +174,14 @@ function New-LiteRtReadinessMarkdown {
     $modelPath = Format-ReadinessMarkdownValue -Value $Summary.model.path
     $modelBytes = Format-ReadinessMarkdownValue -Value $Summary.model.bytes
     $modelSha256 = Format-ReadinessMarkdownValue -Value $Summary.model.sha256
+    $modelIdentitySource = Format-ReadinessMarkdownValue -Value $Summary.model_identity.source
     $requiredBytes = Format-ReadinessMarkdownValue -Value $Summary.data_free_space_posture.required_bytes
 
     return @(
         "# LiteRT Readiness Dry Run"
         ""
         "Status: $($Summary.status)"
+        "Real run status: $($Summary.real_run_status)"
         ""
         "## Evidence posture"
         ""
@@ -176,13 +198,20 @@ function New-LiteRtReadinessMarkdown {
         "- Path: $modelPath"
         "- Bytes: $modelBytes"
         "- SHA-256: $modelSha256"
+        "- Identity source: $modelIdentitySource"
         ""
         "## Backend and request"
         ""
         "- Backend: $($Summary.backend.name)"
         "- Package: $($Summary.backend.package)"
         "- Readiness matrix: $($Summary.backend.readiness_matrix)"
+        "- Backend real run status: $($Summary.backend.real_run_status)"
+        "- Backend ADB required in dry run: $(Format-ReadinessMarkdownValue -Value $Summary.backend.adb_required_in_dry_run)"
         "- Request mode: $($Summary.request.mode)"
+        "- Request backend: $($Summary.request.backend)"
+        "- Request package: $($Summary.request.package)"
+        "- Request real run status: $($Summary.request.real_run_status)"
+        "- Request device required in dry run: $(Format-ReadinessMarkdownValue -Value $Summary.request.device_required_in_dry_run)"
         "- Prompt: $($Summary.request.prompt)"
         ""
         "## Data free-space posture"
@@ -196,6 +225,9 @@ function New-LiteRtReadinessMarkdown {
         ""
         "## Logcat plan"
         ""
+        "- Status: $($Summary.logcat_extraction_plan.status)"
+        "- Real run status: $($Summary.logcat_extraction_plan.real_run_status)"
+        "- ADB required in dry run: $(Format-ReadinessMarkdownValue -Value $Summary.logcat_extraction_plan.adb_required_in_dry_run)"
         "- Clear before run: $(Format-ReadinessMarkdownValue -Value $Summary.logcat_extraction_plan.clear_before_run)"
         "- Capture after run: $(Format-ReadinessMarkdownValue -Value $Summary.logcat_extraction_plan.capture_after_run)"
         "- Command: ``$($Summary.logcat_extraction_plan.command)``"

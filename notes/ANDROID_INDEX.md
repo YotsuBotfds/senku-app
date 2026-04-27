@@ -28,6 +28,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/cleanup_android_harness_artifacts.ps1`](../scripts/cleanup_android_harness_artifacts.ps1): Android harness artifact retention cleanup, guarded by `tests/test_cleanup_android_harness_artifacts_contract.py`
 - [`../scripts/run_android_ui_validation_pack.ps1`](../scripts/run_android_ui_validation_pack.ps1): deterministic + generative UI smoke pack
 - [`../scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1): parallel four-lane screenshot/dump sweep across the fixed emulator matrix
+- [`../android-app/README.md`](../android-app/README.md): reviewer taxonomy for `-PlanOnly`, `-DryRun`, `-WhatIf`, metadata-only, pack evidence, FTS fallback evidence, and true fixed four-emulator UI acceptance
 - [`ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md`](./ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md): desktop reviewed-card/provenance contract translated into Android work
 - [`ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md`](./ANDROID_REVIEWED_CARD_RUNTIME_BACKLOG_20260424.md): current Android reviewed-card runtime backlog after `RAG-A1` through `RAG-A11e`, `RAG-A14a` through `RAG-A14d`, `RAG-CH1` through `RAG-CH3`, plus test-only `RAG-CH5`
 - [`ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md`](./ANDROID_CURRENT_HEAD_PACK_GUARDS_20260427.md): bundled/app-private 271-card current-head pack guard runbook
@@ -110,6 +111,12 @@ Use this as the first stop for Android parity and mobile-pack work.
 - `run_android_fts_fallback_matrix.ps1` now uses the resolved SDK adb path,
   records `device_lock_used` plus `host_adb_platform_tools_version`, and
   participates in `stop_android_harness_runs.ps1`.
+- No-emulator helper taxonomy: `-PlanOnly`, `-DryRun`, `-WhatIf`, and
+  metadata-only outputs are reviewer context with explicit
+  `non_acceptance_evidence=true` / `acceptance_evidence=false` posture where
+  they write summaries. Pack evidence proves inventory/identity, FTS fallback
+  evidence proves `runtime_evidence=fts4_fallback`, and only the fixed
+  four-emulator state-pack lane is UI acceptance evidence.
 
 ## Current artifact baseline
 

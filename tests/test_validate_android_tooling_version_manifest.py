@@ -28,6 +28,44 @@ def make_manifest() -> dict:
                 "android-app/settings.gradle",
             ],
         },
+        "summary": {
+            "metadata_only": True,
+            "acceptance_evidence": False,
+            "gradle_wrapper": {
+                "count": 1,
+                "version": "8.7",
+                "has_sha256": False,
+            },
+            "android_gradle_plugin": {
+                "count": 1,
+                "versions": ["8.6.1"],
+            },
+            "kotlin_plugins": {
+                "count": 1,
+                "versions": ["2.0.21"],
+            },
+            "androidx_test": {
+                "count": 1,
+                "coordinates": ["androidx.test:runner:1.6.2"],
+            },
+            "orchestrator": {
+                "count": 1,
+                "coordinates": ["androidx.test:orchestrator:1.5.1"],
+            },
+            "litert_lm": {
+                "count": 1,
+                "coordinates": ["com.google.ai.edge.litertlm:litert-lm:1.0.0"],
+            },
+            "sdk_path_hints": {
+                "set_count": 1,
+                "existing_count": 0,
+            },
+            "host_tools": {
+                "probed": False,
+                "adb_version": None,
+                "emulator_version": None,
+            },
+        },
         "gradle_wrapper": {
             "available": True,
             "distribution_url": "https://services.gradle.org/distributions/gradle-8.7-bin.zip",
@@ -166,21 +204,37 @@ class ValidateAndroidToolingVersionManifestTests(unittest.TestCase):
         manifest = make_manifest()
         manifest["metadata_only"] = False
         manifest["non_acceptance_evidence"] = False
+        manifest["summary"]["metadata_only"] = False
 
         _, errors = validate_manifest(self.write_manifest(manifest))
 
         self.assertIn("expected root.metadata_only to be true", errors)
         self.assertIn("expected root.non_acceptance_evidence to be true", errors)
+        self.assertIn("expected summary.metadata_only to be true", errors)
 
     def test_acceptance_evidence_is_rejected_recursively(self):
         manifest = make_manifest()
         manifest["acceptance_evidence"] = True
+        manifest["summary"]["acceptance_evidence"] = True
         manifest["host_tools"]["adb"]["ui_acceptance_evidence"] = True
 
         _, errors = validate_manifest(self.write_manifest(manifest))
 
         self.assertIn("expected root.acceptance_evidence to be false", errors)
+        self.assertIn("expected summary.acceptance_evidence to be false", errors)
         self.assertIn("expected root.host_tools.adb.ui_acceptance_evidence to be false", errors)
+
+    def test_reviewer_summary_shape_is_required(self):
+        manifest = make_manifest()
+        del manifest["summary"]["androidx_test"]["count"]
+        manifest["summary"]["kotlin_plugins"]["versions"] = [""]
+        manifest["summary"]["host_tools"]["adb_version"] = 123
+
+        _, errors = validate_manifest(self.write_manifest(manifest))
+
+        self.assertIn("missing summary.androidx_test.count", errors)
+        self.assertIn("expected summary.kotlin_plugins.versions[0] to be non-empty str", errors)
+        self.assertIn("expected summary.host_tools.adb_version to be str|NoneType, got int", errors)
 
     def test_cli_reports_failure_without_device_or_sdk_tools(self):
         manifest = make_manifest()

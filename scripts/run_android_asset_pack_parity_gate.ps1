@@ -90,6 +90,75 @@ function Get-PackHighlights {
     return $highlights
 }
 
+function New-GateEvidenceFields {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$BaselinePath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$CandidatePath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$OutputPath,
+
+        [Parameter(Mandatory = $true)]
+        [bool]$DryRun,
+
+        [Parameter(Mandatory = $true)]
+        [string]$ComparisonBaseline,
+
+        [Parameter(Mandatory = $true)]
+        [string]$StopLine
+    )
+
+    return [ordered]@{
+        baseline_pack_dir = $BaselinePath
+        candidate_pack_dir = $CandidatePath
+        output = $OutputPath
+        fail_on_mismatch = $true
+        dry_run = $DryRun
+        non_acceptance_evidence = $true
+        acceptance_evidence = $false
+        asset_pack_parity_evidence = $true
+        ui_acceptance_evidence = $false
+        evidence_kind = "asset_pack_parity"
+        comparison_baseline = $ComparisonBaseline
+        primary_evidence = $ComparisonBaseline
+        stop_line = $StopLine
+    }
+}
+
+function Write-GateMarkdownSummary {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$GateReport,
+
+        [Parameter(Mandatory = $true)]
+        [string]$SummaryMarkdownPath
+    )
+
+    $lines = @(
+        "# Android Asset-Pack Parity Gate",
+        "",
+        "- status: $($GateReport.status)",
+        "- baseline_pack_dir: $($GateReport.baseline_pack_dir)",
+        "- candidate_pack_dir: $($GateReport.candidate_pack_dir)",
+        "- fail_on_mismatch: $($GateReport.fail_on_mismatch)",
+        "- dry_run: $($GateReport.dry_run)",
+        "- non_acceptance_evidence: $($GateReport.non_acceptance_evidence)",
+        "- acceptance_evidence: $($GateReport.acceptance_evidence)",
+        "- asset_pack_parity_evidence: $($GateReport.asset_pack_parity_evidence)",
+        "- ui_acceptance_evidence: $($GateReport.ui_acceptance_evidence)",
+        "- evidence_kind: $($GateReport.evidence_kind)",
+        "- comparison_baseline: $($GateReport.comparison_baseline)",
+        "- primary_evidence: $($GateReport.primary_evidence)",
+        "",
+        $GateReport.stop_line
+    )
+
+    $lines | Set-Content -LiteralPath $SummaryMarkdownPath -Encoding UTF8
+}
+
 $repoRoot = Get-SenkuRepoRoot
 Initialize-SenkuUvCache -RepoRoot $repoRoot | Out-Null
 $pythonPath = Resolve-SenkuPythonPath -RepoRoot $repoRoot -VenvPath $VenvPath
@@ -129,24 +198,19 @@ $arguments = @(
 $displayCommand = Format-GateCommand -Executable $pythonPath -Arguments $arguments
 
 if ($WhatIf) {
-    $whatIfSummary = [ordered]@{
-        status = "dry_run_only"
-        baseline_pack_dir = $baselinePath
-        candidate_pack_dir = $candidatePath
-        output = $outputPath
-        display_command = $displayCommand
-        dry_run = $true
-        non_acceptance_evidence = $true
-        acceptance_evidence = $false
-        asset_pack_parity_evidence = $true
-        ui_acceptance_evidence = $false
-        evidence_kind = "asset_pack_parity"
-        comparison_baseline = $comparisonBaseline
-        primary_evidence = $comparisonBaseline
-        stop_line = $stopLine
-        would_run = $false
-        fail_on_mismatch = $true
+    $whatIfSummary = [ordered]@{ status = "dry_run_only" }
+    $evidenceFields = New-GateEvidenceFields `
+        -BaselinePath $baselinePath `
+        -CandidatePath $candidatePath `
+        -OutputPath $outputPath `
+        -DryRun $true `
+        -ComparisonBaseline $comparisonBaseline `
+        -StopLine $stopLine
+    foreach ($field in $evidenceFields.GetEnumerator()) {
+        $whatIfSummary[$field.Key] = $field.Value
     }
+    $whatIfSummary.display_command = $displayCommand
+    $whatIfSummary.would_run = $false
 
     $outputDir = Split-Path -Parent $outputPath
     if (-not [string]::IsNullOrWhiteSpace($outputDir)) {
@@ -168,6 +232,10 @@ $outputDir = Split-Path -Parent $outputPath
 if (-not [string]::IsNullOrWhiteSpace($outputDir)) {
     New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 }
+else {
+    $outputDir = $repoRoot
+}
+$summaryMarkdownPath = [System.IO.Path]::ChangeExtension($outputPath, ".md")
 
 Write-Host "Android asset-pack parity gate."
 Write-Host $displayCommand
@@ -188,31 +256,29 @@ if (Test-Path -LiteralPath $rawOutputPath) {
     $compareReport = Get-Content -LiteralPath $rawOutputPath -Raw -Encoding UTF8 | ConvertFrom-Json
 }
 
-$gateReport = [ordered]@{
-    status = if ($exitCode -eq 0) { "pass" } else { "fail" }
-    baseline_pack_dir = $baselinePath
-    candidate_pack_dir = $candidatePath
-    output = $outputPath
-    fail_on_mismatch = $true
-    dry_run = $false
-    non_acceptance_evidence = $true
-    acceptance_evidence = $false
-    asset_pack_parity_evidence = $true
-    ui_acceptance_evidence = $false
-    evidence_kind = "asset_pack_parity"
-    comparison_baseline = $comparisonBaseline
-    primary_evidence = $comparisonBaseline
-    stop_line = $stopLine
+$gateReport = [ordered]@{ status = if ($exitCode -eq 0) { "pass" } else { "fail" } }
+$evidenceFields = New-GateEvidenceFields `
+    -BaselinePath $baselinePath `
+    -CandidatePath $candidatePath `
+    -OutputPath $outputPath `
+    -DryRun $false `
+    -ComparisonBaseline $comparisonBaseline `
+    -StopLine $stopLine
+foreach ($field in $evidenceFields.GetEnumerator()) {
+    $gateReport[$field.Key] = $field.Value
 }
+$gateReport.summary_markdown = $summaryMarkdownPath
 if ($null -ne $compareReport) {
     $gateReport.count_deltas = $compareReport.count_deltas
     $gateReport.baseline_highlights = Get-PackHighlights -PackReport $compareReport.baseline
     $gateReport.candidate_highlights = Get-PackHighlights -PackReport $compareReport.candidate
 }
 $gateReport | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $outputPath -Encoding UTF8
+Write-GateMarkdownSummary -GateReport $gateReport -SummaryMarkdownPath $summaryMarkdownPath
 
 if ($exitCode -ne 0) {
     throw "Android asset-pack parity gate failed with exit code $exitCode."
 }
 
 Write-Host ("Android asset-pack parity report written to " + $outputPath)
+Write-Host ("Android asset-pack parity summary written to " + $summaryMarkdownPath)

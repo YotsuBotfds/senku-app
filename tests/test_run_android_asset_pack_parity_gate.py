@@ -68,6 +68,7 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
             baseline = Path(tmpdir) / "baseline"
             candidate = Path(tmpdir) / "candidate"
             output = Path(tmpdir) / "nested" / "report.json"
+            markdown = output.with_suffix(".md")
             write_pack(baseline, 2)
             write_pack(candidate, 3)
 
@@ -104,6 +105,7 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
         self.assertIn("not UI acceptance evidence", report["stop_line"])
         self.assertFalse(report["would_run"])
         self.assertTrue(report["fail_on_mismatch"])
+        self.assertFalse(markdown.exists())
 
     def test_whatif_summary_validates_as_non_acceptance_artifact(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -134,6 +136,7 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
             baseline = Path(tmpdir) / "baseline"
             candidate = Path(tmpdir) / "candidate"
             output = Path(tmpdir) / "report.json"
+            markdown = output.with_suffix(".md")
             write_pack(baseline, 2)
             write_pack(candidate, 3)
 
@@ -147,8 +150,11 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
             )
 
             report = json.loads(output.read_text(encoding="utf-8-sig"))
+            summary_md = markdown.read_text(encoding="utf-8-sig")
 
         self.assertIn("Android asset-pack parity report written", result.stdout)
+        self.assertIn("Android asset-pack parity summary written", result.stdout)
+        self.assertEqual(report["summary_markdown"], str(markdown))
         self.assertEqual(report["status"], "pass")
         self.assertEqual(report["baseline_pack_dir"], str(baseline))
         self.assertEqual(report["candidate_pack_dir"], str(candidate))
@@ -169,6 +175,14 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
             report["count_deltas"],
             [{"name": "answer_cards", "baseline": 2, "candidate": 3, "delta": 1}],
         )
+        self.assertIn("# Android Asset-Pack Parity Gate", summary_md)
+        self.assertIn("- status: pass", summary_md)
+        self.assertIn(f"- baseline_pack_dir: {baseline}", summary_md)
+        self.assertIn(f"- candidate_pack_dir: {candidate}", summary_md)
+        self.assertIn("- fail_on_mismatch: True", summary_md)
+        self.assertIn("- asset_pack_parity_evidence: True", summary_md)
+        self.assertIn("- ui_acceptance_evidence: False", summary_md)
+        self.assertTrue(summary_md.rstrip().endswith(report["stop_line"]))
 
     def test_real_gate_summary_validates_as_non_acceptance_artifact(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -201,6 +215,7 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
             baseline = Path(tmpdir) / "baseline"
             candidate = Path(tmpdir) / "candidate"
             output = Path(tmpdir) / "report.json"
+            markdown = output.with_suffix(".md")
             write_pack(baseline, 3)
             write_pack(candidate, 2)
 
@@ -215,15 +230,21 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
             )
 
             report = json.loads(output.read_text(encoding="utf-8-sig"))
+            summary_md = markdown.read_text(encoding="utf-8-sig")
 
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(report["status"], "fail")
+        self.assertEqual(report["summary_markdown"], str(markdown))
         self.assertTrue(report["fail_on_mismatch"])
         self.assertEqual(report["candidate_highlights"]["sqlite_counts"]["answer_cards"], 2)
         self.assertEqual(
             report["count_deltas"],
             [{"name": "answer_cards", "baseline": 3, "candidate": 2, "delta": -1}],
         )
+        self.assertIn("- status: fail", summary_md)
+        self.assertIn("- fail_on_mismatch: True", summary_md)
+        self.assertIn("- asset_pack_parity_evidence: True", summary_md)
+        self.assertIn("- ui_acceptance_evidence: False", summary_md)
 
     def test_parser_gate_passes(self):
         result = subprocess.run(

@@ -114,6 +114,64 @@ def interesting_dependencies(dependencies: list[dict[str, str]]) -> dict[str, An
     }
 
 
+def _versions(items: list[dict[str, str]]) -> list[str]:
+    return sorted({item["version"] for item in items if item.get("version")})
+
+
+def build_summary(
+    gradle_wrapper: dict[str, Any],
+    android_gradle_plugin: list[dict[str, str]],
+    kotlin_plugins: list[dict[str, str]],
+    dependencies: dict[str, list[dict[str, str]]],
+    sdk_hints: dict[str, Any],
+    host_tools: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "metadata_only": True,
+        "acceptance_evidence": False,
+        "gradle_wrapper": {
+            "count": 1 if gradle_wrapper.get("available") else 0,
+            "version": gradle_wrapper.get("distribution_version"),
+            "has_sha256": bool(gradle_wrapper.get("distribution_sha256_sum")),
+        },
+        "android_gradle_plugin": {
+            "count": len(android_gradle_plugin),
+            "versions": _versions(android_gradle_plugin),
+        },
+        "kotlin_plugins": {
+            "count": len(kotlin_plugins),
+            "versions": _versions(kotlin_plugins),
+        },
+        "androidx_test": {
+            "count": len(dependencies["androidx_test"]),
+            "coordinates": [dep["coordinate"] for dep in dependencies["androidx_test"]],
+        },
+        "orchestrator": {
+            "count": len(dependencies["orchestrator"]),
+            "coordinates": [dep["coordinate"] for dep in dependencies["orchestrator"]],
+        },
+        "litert_lm": {
+            "count": len(dependencies["litert_lm"]),
+            "coordinates": [dep["coordinate"] for dep in dependencies["litert_lm"]],
+        },
+        "sdk_path_hints": {
+            "set_count": len(
+                [
+                    key
+                    for key in ("ANDROID_HOME", "ANDROID_SDK_ROOT", "ANDROID_AVD_HOME")
+                    if sdk_hints.get(key)
+                ]
+            ),
+            "existing_count": len(sdk_hints.get("existing", [])),
+        },
+        "host_tools": {
+            "probed": host_tools.get("probed") is True,
+            "adb_version": host_tools.get("adb", {}).get("version"),
+            "emulator_version": host_tools.get("emulator", {}).get("version"),
+        },
+    }
+
+
 def run_version_command(command: list[str], timeout: float = 8.0) -> dict[str, Any]:
     executable = shutil.which(command[0]) if len(command) == 1 or not Path(command[0]).exists() else command[0]
     if executable is None:
@@ -186,6 +244,22 @@ def build_manifest(repo_root: Path, probe_tools: bool = True, now: datetime | No
     plugins = collect_plugins(gradle_texts)
     dependencies = collect_dependencies(gradle_texts)
     interesting = interesting_dependencies(dependencies)
+    gradle_wrapper = {
+        "available": bool(wrapper_props),
+        "distribution_url": wrapper_props.get("distributionUrl"),
+        "distribution_sha256_sum": wrapper_props.get("distributionSha256Sum"),
+        "distribution_version": distribution_version(wrapper_props.get("distributionUrl")),
+    }
+    android_gradle_plugin = [plugin for plugin in plugins if plugin["id"].startswith("com.android.")]
+    kotlin_plugins = [plugin for plugin in plugins if plugin["id"].startswith("org.jetbrains.kotlin")]
+    sdk_hints = sdk_path_hints()
+    host_tools = {
+        "probed": probe_tools,
+        "adb": run_version_command(["adb", "version"]) if probe_tools else {"available": False, "reason": "probe_disabled"},
+        "emulator": run_version_command(["emulator", "-version"])
+        if probe_tools
+        else {"available": False, "reason": "probe_disabled"},
+    }
 
     generated_at = now or datetime.now(timezone.utc)
     manifest: dict[str, Any] = {
@@ -200,24 +274,21 @@ def build_manifest(repo_root: Path, probe_tools: bool = True, now: datetime | No
             "wrapper_properties": str(wrapper_path.relative_to(root)),
             "build_files": [source for source, _text in gradle_texts],
         },
-        "gradle_wrapper": {
-            "available": bool(wrapper_props),
-            "distribution_url": wrapper_props.get("distributionUrl"),
-            "distribution_sha256_sum": wrapper_props.get("distributionSha256Sum"),
-            "distribution_version": distribution_version(wrapper_props.get("distributionUrl")),
-        },
+        "summary": build_summary(
+            gradle_wrapper,
+            android_gradle_plugin,
+            kotlin_plugins,
+            interesting,
+            sdk_hints,
+            host_tools,
+        ),
+        "gradle_wrapper": gradle_wrapper,
         "plugins": plugins,
-        "android_gradle_plugin": [plugin for plugin in plugins if plugin["id"].startswith("com.android.")],
-        "kotlin_plugins": [plugin for plugin in plugins if plugin["id"].startswith("org.jetbrains.kotlin")],
+        "android_gradle_plugin": android_gradle_plugin,
+        "kotlin_plugins": kotlin_plugins,
         "dependencies": interesting,
-        "sdk_path_hints": sdk_path_hints(),
-        "host_tools": {
-            "probed": probe_tools,
-            "adb": run_version_command(["adb", "version"]) if probe_tools else {"available": False, "reason": "probe_disabled"},
-            "emulator": run_version_command(["emulator", "-version"])
-            if probe_tools
-            else {"available": False, "reason": "probe_disabled"},
-        },
+        "sdk_path_hints": sdk_hints,
+        "host_tools": host_tools,
     }
     return manifest
 
@@ -230,6 +301,18 @@ def markdown_for_manifest(manifest: dict[str, Any]) -> str:
         f"- non_acceptance_evidence: `{str(manifest['non_acceptance_evidence']).lower()}`",
         f"- acceptance_evidence: `{str(manifest['acceptance_evidence']).lower()}`",
         f"- generated_at_utc: `{manifest['generated_at_utc']}`",
+        "",
+        "## Summary",
+        "",
+        f"- Gradle wrapper: `{manifest['summary']['gradle_wrapper']['count']}` found, version `{manifest['summary']['gradle_wrapper'].get('version') or 'unavailable'}`",
+        f"- Android Gradle Plugin: `{manifest['summary']['android_gradle_plugin']['count']}` entries, versions `{', '.join(manifest['summary']['android_gradle_plugin']['versions']) or 'unavailable'}`",
+        f"- Kotlin plugins: `{manifest['summary']['kotlin_plugins']['count']}` entries, versions `{', '.join(manifest['summary']['kotlin_plugins']['versions']) or 'unavailable'}`",
+        f"- AndroidX test dependencies: `{manifest['summary']['androidx_test']['count']}`",
+        f"- Orchestrator dependencies: `{manifest['summary']['orchestrator']['count']}`",
+        f"- LiteRT-LM dependencies: `{manifest['summary']['litert_lm']['count']}`",
+        f"- SDK hints: `{manifest['summary']['sdk_path_hints']['set_count']}` set, `{manifest['summary']['sdk_path_hints']['existing_count']}` existing",
+        f"- adb version: `{manifest['summary']['host_tools'].get('adb_version') or 'unavailable'}`",
+        f"- emulator version: `{manifest['summary']['host_tools'].get('emulator_version') or 'unavailable'}`",
         "",
         "## Gradle",
         "",

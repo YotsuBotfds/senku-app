@@ -90,6 +90,18 @@ Harness plan artifact shape:
 - It starts no jobs and does not replace fixed four-emulator state-pack
   evidence.
 
+Reviewer taxonomy for no-emulator helpers:
+
+| Helper posture | Example | Evidence class | Reviewer stop line |
+| --- | --- | --- | --- |
+| `-PlanOnly` | `build_android_ui_state_pack_parallel.ps1 -PlanOnly`, `run_android_harness_matrix.ps1 -PlanOnly` | Planned commands, selected roles/rows, skip flags, pack-push intent, and `will_touch_emulators=false` / `preflight_only=true` metadata | Planning only; no role job, install, capture, or UI acceptance |
+| `-DryRun` | `run_android_managed_device_smoke.ps1 -DryRun`, `push_litert_model_to_android.ps1 -DryRun`, `run_android_litert_readiness_matrix.ps1 -DryRun` | Future command shape, model/path/free-space posture, expected roots, and `dry_run=true` summaries | Preflight only; no managed device lane, model transfer, runtime proof, or UI acceptance |
+| `-WhatIf` | `start_senku_emulator_matrix.ps1 -WhatIf`, `run_android_asset_pack_parity_gate.ps1 -WhatIf` | Launch/profile metadata or parity command review with `would_run=false` | Command review only; does not launch, compare, capture, or prove UI |
+| metadata-only | `write_android_tooling_version_manifest.py`, capture-summary validation | Host/tooling versions or summary-shape compatibility with `metadata_only=true` or required non-acceptance posture | Context only; cannot replace device evidence |
+| pack evidence | real asset-pack parity summaries, installed-pack metadata in harness summaries | Pack counts, hashes, manifest/sqlite/vector facts, cache/push posture | Pack inventory proof; not screenshot/state-pack UI acceptance |
+| FTS fallback evidence | `run_android_fts_fallback_matrix.ps1` and direct `PackRepositoryFtsFallbackAndroidTest` proof | Android SQLite capability/runtime fallback with `runtime_evidence=fts4_fallback` and `not_fts5_runtime_proof=true` where emitted | Retrieval fallback proof; not FTS5 runtime proof and not UI acceptance |
+| true UI acceptance | fixed four-role state pack across `5556`, `5560`, `5554`, and `5558` | Screenshots, UI dumps, logcat, identity, installed-pack metadata, APK SHA, pass counts, and ANR posture | Current acceptance proof is the full fixed four-emulator state-pack evidence |
+
 Replay the current Android FTS4 fallback proof. This is fallback-path emulator evidence, not FTS5 runtime proof:
 
 ```powershell
