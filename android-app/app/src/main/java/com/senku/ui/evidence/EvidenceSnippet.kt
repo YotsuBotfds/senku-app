@@ -48,11 +48,17 @@ fun EvidenceSnippet(
     evidence: EvidenceSnippetModel,
     onClick: ((EvidenceSnippetModel) -> Unit)? = null,
     modifier: Modifier = Modifier,
+    titleMaxLines: Int = 2,
+    snippetMaxLines: Int = 6,
 ) {
     val colors = SenkuTheme.colors
     val shape = RoundedCornerShape(12.dp)
     val content: @Composable () -> Unit = {
-        EvidenceSnippetContent(evidence = evidence)
+        EvidenceSnippetContent(
+            evidence = evidence,
+            titleMaxLines = titleMaxLines,
+            snippetMaxLines = snippetMaxLines,
+        )
     }
 
     if (onClick == null) {
@@ -83,6 +89,8 @@ fun EvidenceSnippet(
 private fun EvidenceSnippetContent(
     evidence: EvidenceSnippetModel,
     modifier: Modifier = Modifier,
+    titleMaxLines: Int = 2,
+    snippetMaxLines: Int = 6,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
@@ -124,7 +132,7 @@ private fun EvidenceSnippetContent(
                 fontWeight = FontWeight.SemiBold,
             ),
             color = colors.ink0,
-            maxLines = 2,
+            maxLines = titleMaxLines.coerceAtLeast(1),
             overflow = TextOverflow.Ellipsis,
         )
 
@@ -156,7 +164,7 @@ private fun EvidenceSnippetContent(
                 fontWeight = FontWeight.Normal,
             ),
             color = if (hasSnippet) colors.ink1 else colors.ink3,
-            maxLines = 6,
+            maxLines = snippetMaxLines.coerceAtLeast(1),
             overflow = TextOverflow.Ellipsis,
         )
     }

@@ -78,4 +78,26 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
     }
+
+    @Test
+    public void nonRailPreviewRowDescriptionNamesExactOpenAction() {
+        DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
+
+        assertEquals(
+            "Linked guide 1 of 1. [GD-215] Rainwater Catchment. Cross-reference from GD-214. Preview this linked guide here, then use Open full guide when ready.",
+            formatter.buildRelatedGuideButtonContentDescription(
+                new DetailRelatedGuidePresentationFormatter.State(
+                    false,
+                    true,
+                    "GD-214",
+                    "[GD-214] Water Storage",
+                    ""
+                ),
+                new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", ""),
+                0,
+                1,
+                true
+            )
+        );
+    }
 }

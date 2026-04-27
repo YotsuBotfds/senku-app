@@ -53,7 +53,7 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewRowBehaviorText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview this linked guide here, then open it when ready.";
+            return "Preview this linked guide here, then use Open full guide when ready.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

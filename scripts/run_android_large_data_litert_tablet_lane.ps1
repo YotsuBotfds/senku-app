@@ -210,10 +210,12 @@ $launchPreflightArgs = @(
     "-Mode", "read_only",
     "-LaunchProfile", "large-litert-data",
     "-Headless",
-    "-PartitionSizeMb", [string]$PartitionSizeMb,
     "-SummaryPath", $launchSummaryPath,
     "-WhatIf"
 )
+if (-not $UsePreparedAvdDataPartition) {
+    $launchPreflightArgs += @("-PartitionSizeMb", [string]$PartitionSizeMb)
+}
 $childResults.launch_profile_preflight = Invoke-LaneChildPowerShell -Arguments $launchPreflightArgs
 
 if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitionSizeMaxMb -and -not $UsePreparedAvdDataPartition) {

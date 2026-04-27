@@ -302,6 +302,7 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
             self.assertTrue(prepared_summary_path.exists())
             summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
             prepared = json.loads(prepared_summary_path.read_text(encoding="utf-8-sig"))
+            launch = json.loads((output_dir / "launch_profile_summary.json").read_text(encoding="utf-8-sig"))
             validator = subprocess.run(
                 [str(VALIDATION_PYTHON), str(SUMMARY_VALIDATOR_SCRIPT), str(summary_path)],
                 cwd=REPO_ROOT,
@@ -318,6 +319,10 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertFalse(summary["cli_partition_size_argument_used"])
         self.assertEqual(summary["child_status"]["prepared_avd_preflight_exit_code"], 0)
         self.assertEqual(Path(summary["child_artifacts"]["prepared_avd_preflight_summary"]), prepared_summary_path)
+        self.assertNotIn("-PartitionSizeMb", summary["planned_commands"]["launch_profile_preflight"])
+        self.assertNotIn("-partition-size", launch["selected_lanes"][0]["emulator_args"])
+        self.assertEqual(launch["profile_metadata"]["data_partition_source"], "prepared_avd_config_required")
+        self.assertFalse(launch["profile_metadata"]["cli_partition_size_argument_supported"])
         self.assertEqual(
             summary["child_summaries"]["prepared_avd_preflight"]["summary_kind"],
             "senku_tablet_2_large_data_avd_preflight",

@@ -24,7 +24,7 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "Preview this linked guide here, then open it when ready.",
+            "Preview this linked guide here, then use Open full guide when ready.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(
@@ -62,7 +62,7 @@ public final class DetailGuideContextPresentationFormatterTest {
         );
 
         assertEquals(
-            "Preview this linked guide here, then open it when ready.",
+            "Preview this linked guide here, then use Open full guide when ready.",
             formatter.buildRelatedGuidePreviewRowBehaviorText(state)
         );
         assertEquals(

@@ -34,6 +34,23 @@ import com.senku.ui.evidence.XRefRow
 import com.senku.ui.evidence.XRefRowModel
 import com.senku.ui.theme.SenkuTheme
 
+internal data class TabletEvidenceVisibilityPolicy(
+    val evidencePaneWidthDp: Int,
+    val activeTitleMaxLines: Int,
+    val activeSnippetMaxLines: Int,
+    val collapsedTitleMaxLines: Int,
+    val collapsedSnippetMaxLines: Int,
+)
+
+internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
+    TabletEvidenceVisibilityPolicy(
+        evidencePaneWidthDp = 360,
+        activeTitleMaxLines = 2,
+        activeSnippetMaxLines = 8,
+        collapsedTitleMaxLines = 2,
+        collapsedSnippetMaxLines = 4,
+    )
+
 @Composable
 fun EvidencePane(
     anchor: AnchorState,
@@ -43,6 +60,7 @@ fun EvidencePane(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
+    val visibilityPolicy = tabletEvidenceVisibilityPolicy()
     val scrollState = rememberScrollState()
     val provenanceLandmark = stringResource(R.string.detail_a11y_landmark_provenance)
     val provenanceEmpty = stringResource(R.string.detail_a11y_provenance_none)
@@ -62,6 +80,8 @@ fun EvidencePane(
             onAnchorClick = onAnchorClick,
             landmark = provenanceLandmark,
             emptyDescription = provenanceEmpty,
+            titleMaxLines = visibilityPolicy.activeTitleMaxLines,
+            snippetMaxLines = visibilityPolicy.activeSnippetMaxLines,
         )
         CrossReferenceSection(
             anchor = anchor,
@@ -84,6 +104,7 @@ fun CollapsibleEvidencePane(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
+    val visibilityPolicy = tabletEvidenceVisibilityPolicy()
     val provenanceLandmark = stringResource(R.string.detail_a11y_landmark_provenance)
     val provenanceEmpty = stringResource(R.string.detail_a11y_provenance_none)
     val sourceGraphLandmark = stringResource(R.string.detail_a11y_landmark_source_graph)
@@ -143,6 +164,8 @@ fun CollapsibleEvidencePane(
                         onAnchorClick = onAnchorClick,
                         landmark = provenanceLandmark,
                         emptyDescription = provenanceEmpty,
+                        titleMaxLines = visibilityPolicy.activeTitleMaxLines,
+                        snippetMaxLines = visibilityPolicy.activeSnippetMaxLines,
                     )
                     CrossReferenceSection(
                         anchor = anchor,
@@ -160,6 +183,8 @@ fun CollapsibleEvidencePane(
                 )
                 CollapsedEvidencePreview(
                     anchor = anchor,
+                    titleMaxLines = visibilityPolicy.collapsedTitleMaxLines,
+                    snippetMaxLines = visibilityPolicy.collapsedSnippetMaxLines,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(onClick = onAnchorClick),
@@ -175,6 +200,8 @@ private fun ActiveEvidenceSection(
     onAnchorClick: () -> Unit,
     landmark: String,
     emptyDescription: String,
+    titleMaxLines: Int,
+    snippetMaxLines: Int,
 ) {
     Column(
         modifier = Modifier.semantics {
@@ -202,6 +229,8 @@ private fun ActiveEvidenceSection(
                     snippet = anchor.snippet,
                 ),
                 onClick = { onAnchorClick() },
+                titleMaxLines = titleMaxLines,
+                snippetMaxLines = snippetMaxLines,
             )
         }
     }
@@ -210,6 +239,8 @@ private fun ActiveEvidenceSection(
 @Composable
 private fun CollapsedEvidencePreview(
     anchor: AnchorState,
+    titleMaxLines: Int,
+    snippetMaxLines: Int,
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
@@ -233,7 +264,7 @@ private fun CollapsedEvidencePreview(
                 fontWeight = FontWeight.Medium,
             ),
             color = colors.accent,
-            maxLines = 1,
+            maxLines = titleMaxLines.coerceAtLeast(1),
             overflow = TextOverflow.Ellipsis,
         )
         Text(
@@ -255,7 +286,7 @@ private fun CollapsedEvidencePreview(
                     lineHeight = 16.sp,
                 ),
                 color = colors.ink2,
-                maxLines = 2,
+                maxLines = snippetMaxLines.coerceAtLeast(1),
                 overflow = TextOverflow.Ellipsis,
             )
         }
