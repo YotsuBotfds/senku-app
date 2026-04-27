@@ -47,8 +47,8 @@ data class SearchResultCardModel(
     val laneLabel: String,
     @param:ColorInt val laneColorArgb: Int,
     val showContinueThreadChip: Boolean = false,
-    val continueThreadLabel: String = "Continue thread",
-    val continueThreadContentDescription: String = "Continue this thread",
+    val continueThreadLabel: String = "Continue conversation",
+    val continueThreadContentDescription: String = continueConversationContentDescription(),
     val linkedGuideLabel: String? = null,
     val linkedGuideContentDescription: String? = null,
 )
@@ -169,7 +169,7 @@ fun SearchResultCard(
                         ActionChip(
                             label = label,
                             contentDescription = model.linkedGuideContentDescription
-                                ?: "Open linked guide",
+                                ?: relatedGuideContentDescription(),
                             backgroundColor = colors.ink2.copy(alpha = 0.14f),
                             borderColor = colors.ink2.copy(alpha = 0.28f),
                             textColor = colors.paperInk,
@@ -272,6 +272,24 @@ fun laneLabelForRetrievalMode(retrievalMode: String): String {
     }
 }
 
+fun continueConversationContentDescription(guideId: String = ""): String {
+    val cleanedGuideId = guideId.trim()
+    return if (cleanedGuideId.isEmpty()) {
+        "Continue conversation about this result"
+    } else {
+        "Continue conversation about $cleanedGuideId"
+    }
+}
+
+fun relatedGuideContentDescription(guideLabel: String = ""): String {
+    val cleanedGuideLabel = guideLabel.trim()
+    return if (cleanedGuideLabel.isEmpty()) {
+        "Open related guide"
+    } else {
+        "Open related guide: $cleanedGuideLabel"
+    }
+}
+
 internal fun isWarmConversation(
     lastActivityEpoch: Long,
     nowEpochMs: Long = System.currentTimeMillis(),
@@ -310,11 +328,11 @@ private fun SearchResultCardPreview() {
                 title = "Boil the water before use",
                 subtitle = "GD-214 \u00B7 Water",
                 snippet = "Bring the water to a rolling boil, then let it cool covered before storing it in a clean container.",
-                laneLabel = "Hybrid",
+                laneLabel = "Best match",
                 laneColorArgb = 0xFF7A9A5A.toInt(),
                 showContinueThreadChip = true,
-                linkedGuideLabel = "Cross-ref",
-                linkedGuideContentDescription = "Open cross-reference guide: GD-214 - Boiling water",
+                linkedGuideLabel = "Related guide",
+                linkedGuideContentDescription = relatedGuideContentDescription("GD-214 - Boiling water"),
             ),
             onCardClick = Runnable { },
             onContinueThreadClick = Runnable { },

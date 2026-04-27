@@ -12,6 +12,32 @@ import java.util.List;
 import java.util.Locale;
 
 final class DetailActionBlockPresentationFormatter {
+    static final String ACTION_LABEL_DO_FIRST = "Do first";
+    static final String ACTION_LABEL_AVOID = "Avoid";
+    static final String ACTION_LABEL_ESCALATE = "Escalate if";
+
+    enum ActionBlockKind {
+        DO_FIRST,
+        AVOID,
+        ESCALATE
+    }
+
+    static final class ActionBlockSpec {
+        final ActionBlockKind kind;
+        final String label;
+        final String body;
+
+        ActionBlockSpec(ActionBlockKind kind, String label, String body) {
+            this.kind = kind;
+            this.label = label;
+            this.body = body;
+        }
+    }
+
+    interface ActionBlockTextSanitizer {
+        String sanitize(String text);
+    }
+
     private static final class ActionBlock {
         final String label;
         final String body;
@@ -56,31 +82,12 @@ final class DetailActionBlockPresentationFormatter {
 
     private List<ActionBlock> buildHighRiskActionBlocks(String currentBody, int severityAccentColor) {
         ArrayList<ActionBlock> blocks = new ArrayList<>();
-        List<String> steps = extractStepLines(answerBodyFormatter.formatAnswerBody(currentBody));
-        if (steps.isEmpty()) {
-            return blocks;
-        }
-        String doFirst = sanitizeActionBlockText(steps.get(0));
-        String avoid = "";
-        String escalate = "";
-        for (String step : steps) {
-            String normalized = sanitizeActionBlockText(step);
-            String lower = normalized.toLowerCase(Locale.US);
-            if (avoid.isEmpty() && containsAnyPhrase(lower, "do not", "avoid", "never")) {
-                avoid = extractActionMarkerClause(normalized, "Do not", "Avoid", "Never");
-            }
-            if (escalate.isEmpty() && containsAnyPhrase(lower, "escalate", "get medical", "seek", "worsening", "fever", "red streaking")) {
-                escalate = extractActionMarkerClause(normalized, "Escalate", "Get medical", "Seek", "Worsening", "Fever", "Red streaking");
-            }
-        }
-        if (!doFirst.isEmpty()) {
-            blocks.add(new ActionBlock(context.getString(R.string.detail_action_do_first), doFirst, severityAccentColor));
-        }
-        if (!avoid.isEmpty()) {
-            blocks.add(new ActionBlock(context.getString(R.string.detail_action_avoid), avoid, context.getColor(R.color.senku_accent_warning)));
-        }
-        if (!escalate.isEmpty()) {
-            blocks.add(new ActionBlock(context.getString(R.string.detail_action_escalate), escalate, context.getColor(R.color.senku_emergency_banner_bg)));
+        List<ActionBlockSpec> specs = extractHighRiskActionBlockSpecs(
+            answerBodyFormatter.formatAnswerBody(currentBody),
+            this::sanitizeActionBlockText
+        );
+        for (ActionBlockSpec spec : specs) {
+            blocks.add(new ActionBlock(actionBlockLabel(spec.kind), spec.body, actionBlockAccentColor(spec.kind, severityAccentColor)));
         }
         return blocks;
     }
@@ -130,7 +137,50 @@ final class DetailActionBlockPresentationFormatter {
         return card;
     }
 
-    private List<String> extractStepLines(String answerText) {
+    static List<ActionBlockSpec> extractHighRiskActionBlockSpecs(
+        String formattedAnswerText,
+        ActionBlockTextSanitizer sanitizer
+    ) {
+        ArrayList<ActionBlockSpec> blocks = new ArrayList<>();
+        List<String> steps = extractStepLines(formattedAnswerText);
+        if (steps.isEmpty()) {
+            return blocks;
+        }
+        String doFirst = sanitizeActionBlockText(steps.get(0), sanitizer);
+        String avoid = "";
+        String escalate = "";
+        for (String step : steps) {
+            String normalized = sanitizeActionBlockText(step, sanitizer);
+            String lower = normalized.toLowerCase(Locale.US);
+            if (avoid.isEmpty() && containsAnyPhrase(lower, "do not", "avoid", "never")) {
+                avoid = extractActionMarkerClause(normalized, sanitizer, "Do not", "Avoid", "Never");
+            }
+            if (escalate.isEmpty() && containsAnyPhrase(lower, "escalate", "get medical", "seek", "worsening", "fever", "red streaking")) {
+                escalate = extractActionMarkerClause(
+                    normalized,
+                    sanitizer,
+                    "Escalate",
+                    "Get medical",
+                    "Seek",
+                    "Worsening",
+                    "Fever",
+                    "Red streaking"
+                );
+            }
+        }
+        if (!doFirst.isEmpty()) {
+            blocks.add(new ActionBlockSpec(ActionBlockKind.DO_FIRST, ACTION_LABEL_DO_FIRST, doFirst));
+        }
+        if (!avoid.isEmpty()) {
+            blocks.add(new ActionBlockSpec(ActionBlockKind.AVOID, ACTION_LABEL_AVOID, avoid));
+        }
+        if (!escalate.isEmpty()) {
+            blocks.add(new ActionBlockSpec(ActionBlockKind.ESCALATE, ACTION_LABEL_ESCALATE, escalate));
+        }
+        return blocks;
+    }
+
+    private static List<String> extractStepLines(String answerText) {
         ArrayList<String> steps = new ArrayList<>();
         String[] lines = safe(answerText).split("\\R");
         for (String rawLine : lines) {
@@ -143,15 +193,24 @@ final class DetailActionBlockPresentationFormatter {
     }
 
     private String sanitizeActionBlockText(String text) {
+        return sanitizeActionBlockText(
+            text,
+            textToSanitize -> citationPresentationFormatter.stripInlineCitationText(safe(textToSanitize).trim())
+        );
+    }
+
+    private static String sanitizeActionBlockText(String text, ActionBlockTextSanitizer sanitizer) {
         String cleaned = safe(text).trim();
-        cleaned = citationPresentationFormatter.stripInlineCitationText(cleaned);
+        if (sanitizer != null) {
+            cleaned = safe(sanitizer.sanitize(cleaned)).trim();
+        }
         cleaned = cleaned.replace(":::", "");
         cleaned = cleaned.replaceAll("\\s{2,}", " ").trim();
         return DetailWarningCopySanitizer.sanitizeWarningResidualCopy(cleaned);
     }
 
-    private String extractActionMarkerClause(String text, String... markers) {
-        String cleaned = sanitizeActionBlockText(text);
+    private static String extractActionMarkerClause(String text, ActionBlockTextSanitizer sanitizer, String... markers) {
+        String cleaned = sanitizeActionBlockText(text, sanitizer);
         if (cleaned.isEmpty()) {
             return "";
         }
@@ -171,6 +230,26 @@ final class DetailActionBlockPresentationFormatter {
             return cleaned;
         }
         return cleaned.substring(bestIndex).trim();
+    }
+
+    private String actionBlockLabel(ActionBlockKind kind) {
+        if (kind == ActionBlockKind.DO_FIRST) {
+            return context.getString(R.string.detail_action_do_first);
+        }
+        if (kind == ActionBlockKind.AVOID) {
+            return context.getString(R.string.detail_action_avoid);
+        }
+        return context.getString(R.string.detail_action_escalate);
+    }
+
+    private int actionBlockAccentColor(ActionBlockKind kind, int severityAccentColor) {
+        if (kind == ActionBlockKind.DO_FIRST) {
+            return severityAccentColor;
+        }
+        if (kind == ActionBlockKind.AVOID) {
+            return context.getColor(R.color.senku_accent_warning);
+        }
+        return context.getColor(R.color.senku_emergency_banner_bg);
     }
 
     private static boolean containsAnyPhrase(String text, String... markers) {

@@ -32,7 +32,9 @@ import java.util.Set;
 
 import static com.senku.ui.search.SearchResultCardKt.bindSearchResultCard;
 import static com.senku.ui.search.SearchResultCardKt.buildWarmThreadGuideIds;
+import static com.senku.ui.search.SearchResultCardKt.continueConversationContentDescription;
 import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
+import static com.senku.ui.search.SearchResultCardKt.relatedGuideContentDescription;
 
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
@@ -260,7 +262,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         applyBadgeStyle(
             cue,
             usePreviewLineAction
-                ? inflater.getContext().getString(R.string.browse_result_linked_lane_label)
+                ? "Related guide"
                 : buildCompactLinkedGuideCueLabel(preview, compactLinkedCue),
             guideColor
         );
@@ -388,49 +390,31 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildCompactLinkedGuideCueLabel(LinkedGuidePreview preview, boolean compactLinkedCue) {
         if (preview == null) {
-            return inflater.getContext().getString(
-                compactLinkedCue
-                    ? R.string.browse_result_linked_cue_short
-                    : R.string.browse_result_linked_cue_default
-            );
+            return "Related guide";
         }
         String guideId = safe(preview.guideId).trim();
         if (!guideId.isEmpty()) {
             if (compactLinkedCue) {
-                return inflater.getContext().getString(R.string.browse_result_linked_cue_short);
+                return "Related guide";
             }
             return cleanDisplayText(
-                inflater.getContext().getString(R.string.browse_result_linked_cue_with_id, guideId),
+                "Related guide " + guideId,
                 20
             );
         }
         String label = buildLinkedGuidePreviewLabel(preview);
         if (!label.isEmpty()) {
-            return inflater.getContext().getString(
-                compactLinkedCue
-                    ? R.string.browse_result_linked_cue_short
-                    : R.string.browse_result_linked_cue_default
-            );
+            return "Related guide";
         }
-        return inflater.getContext().getString(
-            compactLinkedCue
-                ? R.string.browse_result_linked_cue_short
-                : R.string.browse_result_linked_cue_default
-        );
+        return "Related guide";
     }
 
     private String buildLinkedGuideAvailableDescription(String actionLabel) {
-        return inflater.getContext().getString(
-            R.string.browse_result_linked_guide_available_description,
-            actionLabel
-        );
+        return "Related guide available: " + safe(actionLabel).trim();
     }
 
     private String buildLinkedGuideOpenDescription(String actionLabel) {
-        return inflater.getContext().getString(
-            R.string.browse_result_linked_guide_open_description,
-            actionLabel
-        );
+        return relatedGuideContentDescription(actionLabel);
     }
 
     private void bindLinkedGuideAction(View view, SearchResult result, LinkedGuidePreview preview) {
@@ -484,7 +468,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
         String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Related guide" : null;
         String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
-            ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
+            ? relatedGuideContentDescription(buildLinkedGuidePreviewLabel(linkedPreview))
             : null;
         boolean showContinueThreadChip = shouldShowContinueThreadChip(result);
         return new SearchResultCardModel(
@@ -495,7 +479,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             laneColor,
             showContinueThreadChip,
             "Continue conversation",
-            showContinueThreadChip ? buildContinueThreadContentDescription(result) : "Continue this conversation",
+            showContinueThreadChip ? buildContinueThreadContentDescription(result) : continueConversationContentDescription(""),
             linkedLabel,
             linkedDescription
         );
@@ -516,10 +500,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildContinueThreadContentDescription(SearchResult result) {
         String guideId = cleanDisplayText(result == null ? null : result.guideId, 32);
-        if (guideId.isEmpty()) {
-            return "Continue this thread";
-        }
-        return "Continue thread from " + guideId;
+        return continueConversationContentDescription(guideId);
     }
 
     private String buildCardSubtitle(SearchResult result) {
@@ -745,7 +726,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (label.isEmpty()) {
             return "";
         }
-        return inflater.getContext().getString(R.string.browse_result_linked_preview, label);
+        return "Related guide: " + label;
     }
 
     private String formatSectionAnchor(String section) {

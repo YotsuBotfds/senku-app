@@ -386,6 +386,31 @@ Acceptance boundaries for local proof:
   emergency screenshots should be linked from the run sheet or gallery
   metadata, not treated as replacing the fixed matrix.
 
+## Progress Update - 2026-04-27
+
+Commits now reflected in this gallery plan:
+
+- `761162a` gives the gallery a first seam to review Library / Ask / Saved tab
+  language and pure evidence models without requiring renderer or runtime
+  policy changes.
+- `3adbf79` adds local gallery proof commands and tightens field-manual wording
+  across answer, proof, source, cross-reference, and tablet evidence surfaces.
+
+Next gallery queue from the scout:
+
+1. Ask owns threads: add or prioritize captures that show thread list, active
+   thread, and follow-up turns as Ask history, not as global navigation.
+2. Search cards as capability: keep G-02 and related answer pivots focused on
+   search cards embedded in Library/Ask work, not a separate Search product
+   destination.
+3. Evidence pane pure seam: review tablet evidence pane shots against pure
+   source/proof display-model expectations before accepting visual changes.
+
+Boundary: this progress update does not change the gallery acceptance contract.
+Plan-only output, local wrapper metadata, copy tightening, and seam tests remain
+preflight or implementation evidence until backed by the fixed posture
+state-pack screenshots/dumps required for UI acceptance.
+
 ## Acceptance For This Planning Note
 
 This note is complete when it lets the next Android/UI agent build or request a

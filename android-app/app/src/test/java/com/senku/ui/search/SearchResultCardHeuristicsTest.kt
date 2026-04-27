@@ -18,6 +18,27 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun continueConversationContentDescription_readsAsAskCapability() {
+        assertEquals(
+            "Continue conversation about this result",
+            continueConversationContentDescription(),
+        )
+        assertEquals(
+            "Continue conversation about GD-214",
+            continueConversationContentDescription(" GD-214 "),
+        )
+    }
+
+    @Test
+    fun relatedGuideContentDescription_readsAsLibraryCapability() {
+        assertEquals("Open related guide", relatedGuideContentDescription())
+        assertEquals(
+            "Open related guide: GD-214 - Boiling water",
+            relatedGuideContentDescription(" GD-214 - Boiling water "),
+        )
+    }
+
+    @Test
     fun warmThreadGuideIdsForPreview_onlyKeepsFreshThreads() {
         val now = 1_000_000L
         val freshIds = warmThreadGuideIdsForPreview(

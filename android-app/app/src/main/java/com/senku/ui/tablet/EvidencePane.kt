@@ -30,8 +30,12 @@ import androidx.compose.ui.unit.sp
 import com.senku.mobile.R
 import com.senku.ui.evidence.EvidenceSnippet
 import com.senku.ui.evidence.EvidenceSnippetModel
+import com.senku.ui.evidence.EvidenceSourceModel
+import com.senku.ui.evidence.EvidenceSourceRowData
+import com.senku.ui.evidence.EvidenceSurfaceModel
 import com.senku.ui.evidence.XRefRow
 import com.senku.ui.evidence.XRefRowModel
+import com.senku.ui.evidence.toEvidenceSurfaceViewData
 import com.senku.ui.theme.SenkuTheme
 
 internal data class TabletEvidenceVisibilityPolicy(
@@ -203,6 +207,7 @@ private fun ActiveEvidenceSection(
     titleMaxLines: Int,
     snippetMaxLines: Int,
 ) {
+    val activeEvidence = anchor.toActiveEvidenceRowData()
     Column(
         modifier = Modifier.semantics {
             isTraversalGroup = true
@@ -215,18 +220,18 @@ private fun ActiveEvidenceSection(
             accessibilitySummary = buildProvenanceAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,
-                anchor = anchor,
+                activeEvidence = activeEvidence,
             ),
         )
-        if (!anchor.hasSource) {
+        if (activeEvidence == null) {
             PlaceholderCard("No source evidence")
         } else {
             EvidenceSnippet(
                 evidence = EvidenceSnippetModel(
-                    guideId = anchor.id,
-                    title = anchor.title,
-                    section = anchor.section,
-                    snippet = anchor.snippet,
+                    guideId = activeEvidence.guideId,
+                    title = activeEvidence.title,
+                    section = activeEvidence.section,
+                    snippet = activeEvidence.snippet,
                 ),
                 onClick = { onAnchorClick() },
                 titleMaxLines = titleMaxLines,
@@ -245,8 +250,9 @@ private fun CollapsedEvidencePreview(
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
-    val title = anchor.title.trim().ifEmpty { anchor.id.trim().ifEmpty { "Source guide" } }
-    val section = anchor.section.trim()
+    val activeEvidence = anchor.toActiveEvidenceRowData()
+    val title = activeEvidence?.title ?: "Source guide"
+    val section = activeEvidence?.section.orEmpty()
     val previewText = buildCollapsedEvidencePreviewText(anchor)
 
     Column(
@@ -254,7 +260,7 @@ private fun CollapsedEvidencePreview(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = listOf(anchor.id.trim(), section)
+            text = listOf(activeEvidence?.guideId.orEmpty(), section)
                 .filter { it.isNotEmpty() }
                 .joinToString(" | ")
                 .ifEmpty { "Source guide" },
@@ -294,11 +300,12 @@ private fun CollapsedEvidencePreview(
 }
 
 internal fun buildCollapsedEvidencePreviewText(anchor: AnchorState): String {
-    val snippet = anchor.snippet.trim()
+    val activeEvidence = anchor.toActiveEvidenceRowData() ?: return ""
+    val snippet = activeEvidence.snippet
     if (snippet.isNotEmpty()) {
         return snippet
     }
-    val section = anchor.section.trim()
+    val section = activeEvidence.section
     return if (section.isEmpty()) {
         ""
     } else {
@@ -400,13 +407,13 @@ private fun PlaceholderCard(
 private fun buildProvenanceAccessibilitySummary(
     landmark: String,
     emptyDescription: String,
-    anchor: AnchorState,
+    activeEvidence: EvidenceSourceRowData?,
 ): String {
-    if (!anchor.hasSource) {
+    if (activeEvidence == null) {
         return "$landmark. $emptyDescription"
     }
-    val anchorLabel = anchor.accessibilityLabel()
-    val section = anchor.section.trim()
+    val anchorLabel = activeEvidence.accessibilityLabel()
+    val section = activeEvidence.section
     val builder = StringBuilder()
     builder.append(landmark)
     if (anchorLabel.isNotEmpty()) {
@@ -436,6 +443,34 @@ private fun buildSourceGraphAccessibilitySummary(
         "$landmark. $guideLabel."
     } else {
         "$landmark. $guideLabel from $anchorLabel."
+    }
+}
+
+private fun AnchorState.toActiveEvidenceRowData(): EvidenceSourceRowData? =
+    EvidenceSurfaceModel(
+        label = "source evidence",
+        sources = if (hasSource) {
+            listOf(
+                EvidenceSourceModel(
+                    guideId = id,
+                    title = title,
+                    section = section,
+                    snippet = snippet,
+                    label = "source evidence",
+                    isAnchor = true,
+                )
+            )
+        } else {
+            emptyList()
+        },
+    ).toEvidenceSurfaceViewData().activeSource
+
+private fun EvidenceSourceRowData.accessibilityLabel(): String {
+    return when {
+        guideId.isNotEmpty() && title.isNotEmpty() -> "$guideId, $title"
+        title.isNotEmpty() -> title
+        guideId.isNotEmpty() -> guideId
+        else -> ""
     }
 }
 

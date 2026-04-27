@@ -32,6 +32,7 @@ class PureEvidenceModelsTest {
 
         assertEquals("GD-?", row.guideId)
         assertEquals("Source guide", row.title)
+        assertEquals("", row.section)
         assertEquals("", row.metaLabel)
         assertEquals("", row.snippet)
         assertEquals("No snippet yet.", row.quotedSnippet)
@@ -51,6 +52,7 @@ class PureEvidenceModelsTest {
 
         assertEquals("GD-214", row.guideId)
         assertEquals("Water storage", row.title)
+        assertEquals("treated water", row.section)
         assertEquals("reviewed evidence | treated water | anchor", row.metaLabel)
         assertEquals("Keep sealed.", row.snippet)
         assertEquals("\"Keep sealed.\"", row.quotedSnippet)

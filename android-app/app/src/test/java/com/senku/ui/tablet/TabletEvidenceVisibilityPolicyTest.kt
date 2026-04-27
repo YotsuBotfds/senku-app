@@ -34,10 +34,34 @@ class TabletEvidenceVisibilityPolicyTest {
     }
 
     @Test
+    fun tabletPortraitCollapsedEvidencePreviewUsesPureEvidenceSnippetNormalization() {
+        val previewText = buildCollapsedEvidencePreviewText(
+            anchor(
+                section = "water storage",
+                snippet = "  Keep treated\n water\tsealed.  ",
+            )
+        )
+
+        assertEquals("Keep treated water sealed.", previewText)
+    }
+
+    @Test
     fun tabletPortraitCollapsedEvidencePreviewFallsBackToGuideSectionContext() {
         val previewText = buildCollapsedEvidencePreviewText(
             anchor(
                 section = "water storage",
+                snippet = "",
+            )
+        )
+
+        assertEquals("Guide section: water storage", previewText)
+    }
+
+    @Test
+    fun tabletPortraitCollapsedEvidencePreviewUsesPureEvidenceSectionNormalization() {
+        val previewText = buildCollapsedEvidencePreviewText(
+            anchor(
+                section = "  water\n storage  ",
                 snippet = "",
             )
         )

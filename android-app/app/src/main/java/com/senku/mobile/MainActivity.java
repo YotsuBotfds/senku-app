@@ -1765,6 +1765,7 @@ public final class MainActivity extends AppCompatActivity {
         if (preview == null || preview.latestTurn == null) {
             return;
         }
+        setPhoneTabFromFlow(phoneTabSelectionOwner(BottomTabDestination.THREADS));
         conversationId = ChatSessionStore.ensureConversationId(preview.conversationId);
         sessionMemory = ChatSessionStore.memoryFor(conversationId);
         updateSessionPanel();
@@ -1960,7 +1961,7 @@ public final class MainActivity extends AppCompatActivity {
             return BottomTabDestination.HOME;
         }
         try {
-            return BottomTabDestination.valueOf(rawValue);
+            return phoneTabSelectionOwner(BottomTabDestination.valueOf(rawValue));
         } catch (IllegalArgumentException ignored) {
             return BottomTabDestination.HOME;
         }
@@ -2086,6 +2087,16 @@ public final class MainActivity extends AppCompatActivity {
         );
     }
 
+    static BottomTabDestination phoneTabSelectionOwner(BottomTabDestination destination) {
+        if (destination == null) {
+            return BottomTabDestination.HOME;
+        }
+        if (destination == BottomTabDestination.THREADS) {
+            return BottomTabDestination.ASK;
+        }
+        return destination;
+    }
+
     private static int phoneTabLabelResource(BottomTabDestination destination) {
         switch (destination) {
             case HOME:
@@ -2111,10 +2122,11 @@ public final class MainActivity extends AppCompatActivity {
         if (!isPhoneFormFactor()) {
             return;
         }
-        if (pushHistory && destination != activePhoneTab) {
+        BottomTabDestination selectionOwner = phoneTabSelectionOwner(destination);
+        if (pushHistory && selectionOwner != activePhoneTab) {
             pushPhoneTab(activePhoneTab);
         }
-        activePhoneTab = destination;
+        activePhoneTab = selectionOwner;
         updatePhoneTabBarState();
         switch (destination) {
             case HOME:
@@ -2163,7 +2175,7 @@ public final class MainActivity extends AppCompatActivity {
         if (!isPhoneFormFactor()) {
             return;
         }
-        activePhoneTab = destination;
+        activePhoneTab = phoneTabSelectionOwner(destination);
         updatePhoneTabBarState();
     }
 

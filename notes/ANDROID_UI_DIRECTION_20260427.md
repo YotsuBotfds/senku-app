@@ -206,6 +206,31 @@ Smallest useful UI slices, intended to avoid risky product behavior:
 6. Validate code slices with focused JVM tests first, then promote to fixed
    four-posture state-pack proof after a coherent UI batch lands.
 
+## Progress Update - 2026-04-27
+
+Latest Android UI direction movement:
+
+- `761162a` started the behavior-preserving navigation and evidence seams:
+  phone tab labels now have a tested Library / Ask / Saved direction, and pure
+  evidence models exist as a non-rendering mapper seam.
+- `3adbf79` tightened field-manual copy across answer, source, cross-reference,
+  proof, and tablet evidence surfaces, and added the local gallery proof wrapper
+  plan without changing acceptance semantics.
+
+Next scout queue:
+
+1. Ask owns threads: thread history, active turn state, and follow-up continuity
+   should live under Ask rather than product navigation chrome.
+2. Search cards as capability: keep search result cards available inside
+   Library and Ask flows without making Search a standalone destination.
+3. Evidence pane pure seam: continue moving tablet/source/proof presentation
+   through pure display models before changing evidence rendering behavior.
+
+Acceptance boundaries remain strict: these commits are direction and seam
+progress only. They do not approve reviewed-card product runtime, new card
+coverage, retrieval behavior changes, emergency-lane exposure, or UI acceptance
+without fixed four-emulator screenshot/dump state-pack proof.
+
 ## Stop Lines
 
 - Do not expose reviewed-card runtime beyond the current developer/test policy.

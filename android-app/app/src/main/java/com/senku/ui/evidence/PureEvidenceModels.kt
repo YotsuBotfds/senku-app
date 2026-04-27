@@ -29,6 +29,7 @@ data class EvidenceSurfaceModel(
 internal data class EvidenceSourceRowData(
     val guideId: String,
     val title: String,
+    val section: String,
     val metaLabel: String,
     val snippet: String,
     val quotedSnippet: String,
@@ -65,6 +66,7 @@ internal fun EvidenceSourceModel.toEvidenceSourceRowData(): EvidenceSourceRowDat
     return EvidenceSourceRowData(
         guideId = guideId.trim().ifEmpty { FallbackGuideId },
         title = normalizeEvidenceTitle(title).ifEmpty { FallbackSourceTitle },
+        section = normalizeEvidenceTitle(section),
         metaLabel = buildEvidenceSourceMetaLabel(
             label = label,
             section = section,
