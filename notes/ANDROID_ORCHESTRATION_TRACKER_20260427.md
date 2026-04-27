@@ -116,6 +116,16 @@ handoffs. It is not Android acceptance evidence.
 - No-emulator Android migration validator lane passed after `814d28a`:
   `185` tests OK. It did not touch adb, emulators, instrumentation, or Gradle
   managed devices.
+- Current Android UI proof anchor after the 18:00 CT UI direction batch is
+  `948b201`. Post-push local Android quality gate passed, and
+  `gh run list --commit 948b201 --limit 5` returned no GitHub Actions runs.
+  Full fixed four-posture gallery proof passed at
+  `artifacts/android_ui_gallery_local_proof_948b201/20260427_181116/summary.json`:
+  `status=pass`, `45 / 45`, `fail_count=0`, `platform_anr_count=0`,
+  `matrix_homogeneous=true`, model `gemma-4-e2b-it-litert`, APK SHA
+  `081fe91540d3e1f856e3c438fe344cbe92ce325a3ddcaea455d8d15df66c1004`.
+  Role counts: phone portrait `11 / 11`, phone landscape `12 / 12`, tablet
+  portrait `11 / 11`, tablet landscape `11 / 11`.
 - Fresh Android JVM validation after `814d28a`: `testDebugUnitTest` passed.
 - Migration preflight bundle after `814d28a` passed at
   `artifacts/bench/android_migration_preflight_bundle/summary.json`; it is

@@ -219,6 +219,16 @@ Latest Android UI direction movement:
 - `7294d2b` tightened guide connection and source-formatter copy, improved
   emergency banner contrast, and expanded local gate coverage for the Android
   UI seam work.
+- `948b201` is the current clean proof anchor for the Android UI direction
+  batch after the result-card, developer-panel, guide/answer contract,
+  cross-reference, and phone navigation seam work. The fixed four-posture local
+  gallery proof passed at
+  `artifacts/android_ui_gallery_local_proof_948b201/20260427_181116/summary.json`:
+  `45 / 45`, `fail_count=0`, `platform_anr_count=0`,
+  `matrix_homogeneous=true`, model `gemma-4-e2b-it-litert`, APK SHA
+  `081fe91540d3e1f856e3c438fe344cbe92ce325a3ddcaea455d8d15df66c1004`.
+  Per-role counts were phone portrait `11 / 11`, phone landscape `12 / 12`,
+  tablet portrait `11 / 11`, and tablet landscape `11 / 11`.
 
 Next scout queue:
 

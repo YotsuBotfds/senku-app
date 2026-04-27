@@ -398,6 +398,14 @@ Commits now reflected in this gallery plan:
 - `7294d2b` updates guide connection/source formatter copy, improves emergency
   banner contrast for gallery review, and expands local gates around the current
   UI seams.
+- `948b201` provides the latest fixed four-posture acceptance receipt for the
+  UI direction batch. The run at
+  `artifacts/android_ui_gallery_local_proof_948b201/20260427_181116/summary.json`
+  passed `45 / 45` with `fail_count=0`, `platform_anr_count=0`, homogeneous
+  APK/model identity, and model `gemma-4-e2b-it-litert`. The companion bundle is
+  `artifacts/android_ui_gallery_local_proof_948b201/20260427_181116_bundle.zip`.
+  This accepts the scripted fixed-posture state-pack contract for that head; it
+  remains separate from broader human UI/design approval.
 
 Next gallery queue from the scout:
 
