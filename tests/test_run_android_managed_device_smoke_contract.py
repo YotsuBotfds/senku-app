@@ -32,6 +32,7 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("function Parse-ManagedDeviceScaffold", self.script)
         self.assertIn("function Expand-ArtifactRoots", self.script)
         self.assertIn("function Build-ExpectedGradleTaskNames", self.script)
+        self.assertIn("function Build-PlannedResultEvidenceSchema", self.script)
         self.assertIn("function Parse-GradleTaskInventory", self.script)
         self.assertIn("function Read-TaskInventory", self.script)
         self.assertIn("function Invoke-TaskInventoryProbe", self.script)
@@ -44,6 +45,11 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("expected_artifact_roots", self.script)
         self.assertIn("observed_gradle_task_names", self.script)
         self.assertIn("observed_expected_gradle_task_names", self.script)
+        self.assertIn("planned_result_evidence_schema", self.script)
+        self.assertIn("planned_not_collected", self.script)
+        self.assertIn("total_test_count", self.script)
+        self.assertIn("failure_count", self.script)
+        self.assertIn("artifact_paths", self.script)
         self.assertIn("task_inventory_source", self.script)
         self.assertIn("task_inventory_probe_ran", self.script)
         self.assertIn('$plannedTaskInventoryCommand = ".\\gradlew.bat :app:tasks --all $managedDeviceProperty --console=plain"', self.script)
@@ -131,6 +137,41 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             )
             self.assertEqual(summary["observed_gradle_task_names"], [])
             self.assertEqual(summary["observed_expected_gradle_task_names"], [])
+            planned_schema = summary["planned_result_evidence_schema"]
+            self.assertEqual(planned_schema["schema_version"], 1)
+            self.assertEqual(planned_schema["status"], "planned_not_collected")
+            self.assertTrue(planned_schema["non_acceptance_evidence"])
+            self.assertFalse(planned_schema["acceptance_evidence"])
+            self.assertIsNone(planned_schema["result_fields"]["total_test_count"])
+            self.assertIsNone(planned_schema["result_fields"]["passed_test_count"])
+            self.assertIsNone(planned_schema["result_fields"]["failed_test_count"])
+            self.assertIsNone(planned_schema["result_fields"]["skipped_test_count"])
+            self.assertIsNone(planned_schema["result_fields"]["failure_count"])
+            self.assertEqual(planned_schema["result_fields"]["failures"], [])
+            self.assertEqual(
+                planned_schema["result_fields"]["per_device_results"],
+                [
+                    {
+                        "device_name": "senkuPhoneApi30",
+                        "total_test_count": None,
+                        "failed_test_count": None,
+                        "artifact_paths": [],
+                    },
+                    {
+                        "device_name": "senkuTabletApi30",
+                        "total_test_count": None,
+                        "failed_test_count": None,
+                        "artifact_paths": [],
+                    },
+                ],
+            )
+            self.assertEqual(planned_schema["evidence_fields"]["artifact_roots"], summary["expected_artifact_roots"])
+            self.assertEqual(planned_schema["evidence_fields"]["junit_xml_paths"], [])
+            self.assertEqual(planned_schema["evidence_fields"]["html_report_paths"], [])
+            self.assertEqual(planned_schema["evidence_fields"]["logcat_paths"], [])
+            self.assertEqual(planned_schema["evidence_fields"]["screenshot_paths"], [])
+            self.assertIsNone(planned_schema["evidence_fields"]["stdout_path"])
+            self.assertIsNone(planned_schema["evidence_fields"]["stderr_path"])
             self.assertEqual(summary["task_inventory_source"], "not_collected")
             self.assertFalse(summary["task_inventory_probe_ran"])
             self.assertIsNone(summary["task_inventory"])
@@ -247,6 +288,7 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
             )
             self.assertIn("tasks.txt", summary["task_inventory"]["source_path"])
             summary_md = (output_dir / "out" / "summary.md").read_text(encoding="utf-8-sig")
+            self.assertIn("- planned_result_evidence_schema: planned_not_collected v1", summary_md)
             self.assertIn(
                 "- observed_gradle_task_names: :app:senkuPhoneApi30DebugAndroidTest, "
                 ":app:senkuTabletApi30DebugAndroidTest, "

@@ -56,6 +56,7 @@ REQUIRED_TYPES: dict[str, type | tuple[type, ...]] = {
     "expected_gradle_task_names": list,
     "observed_gradle_task_names": list,
     "observed_expected_gradle_task_names": list,
+    "planned_result_evidence_schema": dict,
     "task_inventory_source": str,
     "task_inventory_probe_ran": bool,
     "task_inventory": (dict, type(None)),
@@ -251,6 +252,138 @@ def _validate_task_inventory(data: dict[str, Any], errors: list[str]) -> None:
         )
 
 
+def _validate_planned_result_evidence_schema(schema: Any, errors: list[str]) -> None:
+    if not isinstance(schema, dict):
+        return
+
+    required_schema_types: dict[str, type] = {
+        "schema_version": int,
+        "status": str,
+        "description": str,
+        "non_acceptance_evidence": bool,
+        "acceptance_evidence": bool,
+        "result_fields": dict,
+        "evidence_fields": dict,
+    }
+    for key, expected_type in required_schema_types.items():
+        _expect_type(schema, key, expected_type, errors, scope="root.planned_result_evidence_schema")
+
+    _expect_equal(schema, "schema_version", 1, errors, scope="root.planned_result_evidence_schema")
+    _expect_equal(
+        schema,
+        "status",
+        "planned_not_collected",
+        errors,
+        scope="root.planned_result_evidence_schema",
+    )
+    _expect_equal(
+        schema,
+        "non_acceptance_evidence",
+        True,
+        errors,
+        scope="root.planned_result_evidence_schema",
+    )
+    _expect_equal(
+        schema,
+        "acceptance_evidence",
+        False,
+        errors,
+        scope="root.planned_result_evidence_schema",
+    )
+
+    result_fields = schema.get("result_fields")
+    if isinstance(result_fields, dict):
+        nullable_count_fields = (
+            "total_test_count",
+            "passed_test_count",
+            "failed_test_count",
+            "skipped_test_count",
+            "failure_count",
+        )
+        for key in nullable_count_fields:
+            if key not in result_fields:
+                errors.append(f"missing root.planned_result_evidence_schema.result_fields.{key}")
+            elif result_fields[key] is not None:
+                errors.append(
+                    "expected root.planned_result_evidence_schema.result_fields."
+                    f"{key} to be None until real managed-device smoke runs, got {result_fields[key]!r}"
+                )
+
+        _expect_type(
+            result_fields,
+            "failures",
+            list,
+            errors,
+            scope="root.planned_result_evidence_schema.result_fields",
+        )
+        _expect_type(
+            result_fields,
+            "per_device_results",
+            list,
+            errors,
+            scope="root.planned_result_evidence_schema.result_fields",
+        )
+        if isinstance(result_fields.get("failures"), list) and result_fields["failures"]:
+            errors.append(
+                "expected root.planned_result_evidence_schema.result_fields.failures "
+                "to stay empty until real managed-device smoke runs"
+            )
+
+        per_device_results = result_fields.get("per_device_results")
+        if isinstance(per_device_results, list):
+            device_names = [item.get("device_name") for item in per_device_results if isinstance(item, dict)]
+            if device_names != EXPECTED_DEVICES:
+                errors.append(
+                    "expected root.planned_result_evidence_schema.result_fields.per_device_results "
+                    f"to cover {EXPECTED_DEVICES!r}, got {device_names!r}"
+                )
+            for index, item in enumerate(per_device_results):
+                scope = f"root.planned_result_evidence_schema.result_fields.per_device_results[{index}]"
+                if not isinstance(item, dict):
+                    errors.append(f"expected {scope} to be dict, got {type(item).__name__}")
+                    continue
+                _expect_type(item, "device_name", str, errors, scope=scope)
+                _expect_type(item, "artifact_paths", list, errors, scope=scope)
+                for key in ("total_test_count", "failed_test_count"):
+                    if key not in item:
+                        errors.append(f"missing {scope}.{key}")
+                    elif item[key] is not None:
+                        errors.append(f"expected {scope}.{key} to be None until real managed-device smoke runs")
+                if isinstance(item.get("artifact_paths"), list) and item["artifact_paths"]:
+                    errors.append(f"expected {scope}.artifact_paths to stay empty until real managed-device smoke runs")
+
+    evidence_fields = schema.get("evidence_fields")
+    if isinstance(evidence_fields, dict):
+        _expect_equal(
+            evidence_fields,
+            "artifact_roots",
+            EXPECTED_ARTIFACT_ROOTS,
+            errors,
+            scope="root.planned_result_evidence_schema.evidence_fields",
+        )
+        for key in ("junit_xml_paths", "html_report_paths", "logcat_paths", "screenshot_paths"):
+            _expect_type(
+                evidence_fields,
+                key,
+                list,
+                errors,
+                scope="root.planned_result_evidence_schema.evidence_fields",
+            )
+            if isinstance(evidence_fields.get(key), list) and evidence_fields[key]:
+                errors.append(
+                    "expected root.planned_result_evidence_schema.evidence_fields."
+                    f"{key} to stay empty until real managed-device smoke runs"
+                )
+        for key in ("stdout_path", "stderr_path"):
+            if key not in evidence_fields:
+                errors.append(f"missing root.planned_result_evidence_schema.evidence_fields.{key}")
+            elif evidence_fields[key] is not None:
+                errors.append(
+                    "expected root.planned_result_evidence_schema.evidence_fields."
+                    f"{key} to be None until real managed-device smoke runs"
+                )
+
+
 def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not path.exists():
         return None, [f"summary file not found: {path}"]
@@ -302,6 +435,7 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
 
     _validate_scaffold(data.get("managed_device_scaffold"), errors)
     _validate_task_inventory(data, errors)
+    _validate_planned_result_evidence_schema(data.get("planned_result_evidence_schema"), errors)
     return data, errors
 
 

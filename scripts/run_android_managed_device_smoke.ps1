@@ -175,6 +175,46 @@ function Build-ExpectedGradleTaskNames {
     return $names
 }
 
+function Build-PlannedResultEvidenceSchema {
+    param(
+        [string[]]$DeviceNames,
+        [string[]]$ArtifactRoots
+    )
+
+    return [ordered]@{
+        schema_version = 1
+        status = "planned_not_collected"
+        description = "Future real-run managed-device smoke result shape; dry-run summaries do not collect these values."
+        non_acceptance_evidence = $true
+        acceptance_evidence = $false
+        result_fields = [ordered]@{
+            total_test_count = $null
+            passed_test_count = $null
+            failed_test_count = $null
+            skipped_test_count = $null
+            failure_count = $null
+            failures = @()
+            per_device_results = @($DeviceNames | ForEach-Object {
+                [ordered]@{
+                    device_name = $_
+                    total_test_count = $null
+                    failed_test_count = $null
+                    artifact_paths = @()
+                }
+            })
+        }
+        evidence_fields = [ordered]@{
+            artifact_roots = $ArtifactRoots
+            junit_xml_paths = @()
+            html_report_paths = @()
+            logcat_paths = @()
+            screenshot_paths = @()
+            stdout_path = $null
+            stderr_path = $null
+        }
+    }
+}
+
 function Convert-ObservedGradleTaskName {
     param([string]$TaskName)
 
@@ -279,6 +319,7 @@ $plannedTaskInventoryCommand = ".\gradlew.bat :app:tasks --all $managedDevicePro
 
 $scaffoldSummary["expected_gradle_task_names"] = $expectedGradleTaskNames
 $scaffoldSummary["expected_artifact_roots"] = $expectedArtifactRoots
+$plannedResultEvidenceSchema = Build-PlannedResultEvidenceSchema -DeviceNames $expectedDevices -ArtifactRoots $expectedArtifactRoots
 
 function Resolve-TargetPath {
     param([string]$Path)
@@ -331,6 +372,7 @@ function Write-SummaryMarkdown {
         "- expected_gradle_task_names: $($Summary.expected_gradle_task_names -join ', ')",
         "- observed_gradle_task_names: $($Summary.observed_gradle_task_names -join ', ')",
         "- observed_expected_gradle_task_names: $($Summary.observed_expected_gradle_task_names -join ', ')",
+        "- planned_result_evidence_schema: $($Summary.planned_result_evidence_schema.status) v$($Summary.planned_result_evidence_schema.schema_version)",
         "- task_inventory_source: $($Summary.task_inventory_source)",
         "- task_inventory_probe_ran: $($Summary.task_inventory_probe_ran)",
         "- comparison_baseline: $($Summary.comparison_baseline)",
@@ -388,6 +430,7 @@ $summary = [pscustomobject]@{
     expected_gradle_task_names = $expectedGradleTaskNames
     observed_gradle_task_names = $observedGradleTaskNames
     observed_expected_gradle_task_names = $observedExpectedGradleTaskNames
+    planned_result_evidence_schema = $plannedResultEvidenceSchema
     task_inventory_source = if ($null -eq $taskInventory) { "not_collected" } else { $taskInventory.source }
     task_inventory_probe_ran = ($null -ne $taskInventory -and $taskInventory.gradle_invoked)
     task_inventory = $taskInventorySummary

@@ -40,6 +40,47 @@ def make_summary() -> dict:
         "expected_gradle_task_names": expected_gradle_task_names,
         "observed_gradle_task_names": [],
         "observed_expected_gradle_task_names": [],
+        "planned_result_evidence_schema": {
+            "schema_version": 1,
+            "status": "planned_not_collected",
+            "description": (
+                "Future real-run managed-device smoke result shape; dry-run summaries "
+                "do not collect these values."
+            ),
+            "non_acceptance_evidence": True,
+            "acceptance_evidence": False,
+            "result_fields": {
+                "total_test_count": None,
+                "passed_test_count": None,
+                "failed_test_count": None,
+                "skipped_test_count": None,
+                "failure_count": None,
+                "failures": [],
+                "per_device_results": [
+                    {
+                        "device_name": "senkuPhoneApi30",
+                        "total_test_count": None,
+                        "failed_test_count": None,
+                        "artifact_paths": [],
+                    },
+                    {
+                        "device_name": "senkuTabletApi30",
+                        "total_test_count": None,
+                        "failed_test_count": None,
+                        "artifact_paths": [],
+                    },
+                ],
+            },
+            "evidence_fields": {
+                "artifact_roots": expected_artifact_roots,
+                "junit_xml_paths": [],
+                "html_report_paths": [],
+                "logcat_paths": [],
+                "screenshot_paths": [],
+                "stdout_path": None,
+                "stderr_path": None,
+            },
+        },
         "task_inventory_source": "not_collected",
         "task_inventory_probe_ran": False,
         "task_inventory": None,
@@ -99,6 +140,8 @@ class ValidateAndroidManagedDeviceSmokeSummaryTests(unittest.TestCase):
         summary["acceptance_evidence"] = True
         summary["would_launch_emulators"] = True
         summary["managed_devices_launched"] = True
+        summary["planned_result_evidence_schema"]["non_acceptance_evidence"] = False
+        summary["planned_result_evidence_schema"]["acceptance_evidence"] = True
 
         _, errors = validate_summary(self.write_summary(summary))
 
@@ -107,6 +150,14 @@ class ValidateAndroidManagedDeviceSmokeSummaryTests(unittest.TestCase):
         self.assertIn("expected root.acceptance_evidence to be False, got True", errors)
         self.assertIn("expected root.would_launch_emulators to be False, got True", errors)
         self.assertIn("expected root.managed_devices_launched to be False, got True", errors)
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.non_acceptance_evidence to be True, got False",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.acceptance_evidence to be False, got True",
+            errors,
+        )
 
     def test_rejects_non_fixed_four_baseline(self):
         summary = make_summary()
@@ -195,6 +246,60 @@ class ValidateAndroidManagedDeviceSmokeSummaryTests(unittest.TestCase):
         _, errors = validate_summary(self.write_summary(summary))
 
         self.assertEqual(errors, [])
+
+    def test_rejects_planned_result_evidence_schema_with_collected_values(self):
+        summary = make_summary()
+        result_fields = summary["planned_result_evidence_schema"]["result_fields"]
+        result_fields["total_test_count"] = 12
+        result_fields["failure_count"] = 1
+        result_fields["failures"] = [{"test_name": "ExampleTest", "message": "boom"}]
+        result_fields["per_device_results"][0]["failed_test_count"] = 1
+        result_fields["per_device_results"][0]["artifact_paths"] = [
+            "android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30/result.xml"
+        ]
+        evidence_fields = summary["planned_result_evidence_schema"]["evidence_fields"]
+        evidence_fields["junit_xml_paths"] = [
+            "android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30/result.xml"
+        ]
+        evidence_fields["stdout_path"] = "artifacts/bench/android_managed_device_smoke/stdout.txt"
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.result_fields.total_test_count "
+            "to be None until real managed-device smoke runs, got 12",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.result_fields.failure_count "
+            "to be None until real managed-device smoke runs, got 1",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.result_fields.failures "
+            "to stay empty until real managed-device smoke runs",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.result_fields.per_device_results[0]."
+            "failed_test_count to be None until real managed-device smoke runs",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.result_fields.per_device_results[0]."
+            "artifact_paths to stay empty until real managed-device smoke runs",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.evidence_fields.junit_xml_paths "
+            "to stay empty until real managed-device smoke runs",
+            errors,
+        )
+        self.assertIn(
+            "expected root.planned_result_evidence_schema.evidence_fields.stdout_path "
+            "to be None until real managed-device smoke runs",
+            errors,
+        )
 
     def test_rejects_task_inventory_mismatch(self):
         summary = make_summary()
