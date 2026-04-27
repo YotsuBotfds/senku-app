@@ -57,6 +57,32 @@ public final class DetailSurfaceContract {
         SUPPORTING_GUIDE_CHOICES
     }
 
+    public enum PrimaryAction {
+        OPEN_GUIDE,
+        ASK_FOLLOW_UP,
+        REVIEW_SUPPORTING_GUIDES
+    }
+
+    public enum EvidenceRegionRole {
+        GUIDE_METADATA,
+        ANSWER_EVIDENCE,
+        DETERMINISTIC_EVIDENCE,
+        ABSTAIN_RATIONALE,
+        UNCERTAIN_FIT_RATIONALE
+    }
+
+    public enum RelatedGuideRole {
+        GUIDE_READER_NAVIGATION,
+        GUIDE_READER_HANDOFF_CONTEXT,
+        ANSWER_SOURCE_CONNECTIONS,
+        ANSWER_SUPPORTING_CHOICES
+    }
+
+    public enum FollowUpEligibility {
+        INELIGIBLE,
+        ELIGIBLE
+    }
+
     public static final class Posture {
         public final Surface surface;
         public final TitleRole titleRole;
@@ -64,6 +90,10 @@ public final class DetailSurfaceContract {
         public final TrustProvenanceVisibility trustProvenanceVisibility;
         public final FollowUpVisibility followUpVisibility;
         public final RelatedGuidePosture relatedGuidePosture;
+        public final PrimaryAction primaryAction;
+        public final EvidenceRegionRole evidenceRegionRole;
+        public final RelatedGuideRole relatedGuideRole;
+        public final FollowUpEligibility followUpEligibility;
 
         private Posture(
             Surface surface,
@@ -71,7 +101,11 @@ public final class DetailSurfaceContract {
             BodyRole bodyRole,
             TrustProvenanceVisibility trustProvenanceVisibility,
             FollowUpVisibility followUpVisibility,
-            RelatedGuidePosture relatedGuidePosture
+            RelatedGuidePosture relatedGuidePosture,
+            PrimaryAction primaryAction,
+            EvidenceRegionRole evidenceRegionRole,
+            RelatedGuideRole relatedGuideRole,
+            FollowUpEligibility followUpEligibility
         ) {
             this.surface = Objects.requireNonNull(surface);
             this.titleRole = Objects.requireNonNull(titleRole);
@@ -79,6 +113,10 @@ public final class DetailSurfaceContract {
             this.trustProvenanceVisibility = Objects.requireNonNull(trustProvenanceVisibility);
             this.followUpVisibility = Objects.requireNonNull(followUpVisibility);
             this.relatedGuidePosture = Objects.requireNonNull(relatedGuidePosture);
+            this.primaryAction = Objects.requireNonNull(primaryAction);
+            this.evidenceRegionRole = Objects.requireNonNull(evidenceRegionRole);
+            this.relatedGuideRole = Objects.requireNonNull(relatedGuideRole);
+            this.followUpEligibility = Objects.requireNonNull(followUpEligibility);
         }
     }
 
@@ -97,7 +135,11 @@ public final class DetailSurfaceContract {
             BodyRole.GUIDE_BODY,
             TrustProvenanceVisibility.GUIDE_METADATA,
             FollowUpVisibility.HIDDEN,
-            handoff ? RelatedGuidePosture.GUIDE_HANDOFF_CONTEXT : RelatedGuidePosture.GUIDE_NAVIGATION
+            handoff ? RelatedGuidePosture.GUIDE_HANDOFF_CONTEXT : RelatedGuidePosture.GUIDE_NAVIGATION,
+            PrimaryAction.OPEN_GUIDE,
+            EvidenceRegionRole.GUIDE_METADATA,
+            handoff ? RelatedGuideRole.GUIDE_READER_HANDOFF_CONTEXT : RelatedGuideRole.GUIDE_READER_NAVIGATION,
+            FollowUpEligibility.INELIGIBLE
         );
     }
 
@@ -158,6 +200,27 @@ public final class DetailSurfaceContract {
             && posture.followUpVisibility == FollowUpVisibility.VISIBLE;
     }
 
+    public static boolean isFollowUpEligible(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && posture.followUpEligibility == FollowUpEligibility.ELIGIBLE;
+    }
+
+    public static boolean isAnswerEvidenceRegion(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && posture.evidenceRegionRole != EvidenceRegionRole.GUIDE_METADATA;
+    }
+
+    public static boolean usesAnswerRelatedGuideRole(Posture posture) {
+        return posture != null
+            && posture.surface == Surface.ANSWER_DETAIL
+            && (
+                posture.relatedGuideRole == RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS
+                || posture.relatedGuideRole == RelatedGuideRole.ANSWER_SUPPORTING_CHOICES
+            );
+    }
+
     public static Posture answer(AnswerKind answerKind) {
         AnswerKind kind = answerKind == null ? AnswerKind.GENERATED : answerKind;
         switch (kind) {
@@ -168,7 +231,11 @@ public final class DetailSurfaceContract {
                     BodyRole.DETERMINISTIC_ANSWER_BODY,
                     TrustProvenanceVisibility.DETERMINISTIC_PROVENANCE,
                     FollowUpVisibility.VISIBLE,
-                    RelatedGuidePosture.SOURCE_ANCHORED_CONNECTIONS
+                    RelatedGuidePosture.SOURCE_ANCHORED_CONNECTIONS,
+                    PrimaryAction.ASK_FOLLOW_UP,
+                    EvidenceRegionRole.DETERMINISTIC_EVIDENCE,
+                    RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS,
+                    FollowUpEligibility.ELIGIBLE
                 );
             case ABSTAIN:
                 return new Posture(
@@ -177,7 +244,11 @@ public final class DetailSurfaceContract {
                     BodyRole.ABSTAIN_BODY,
                     TrustProvenanceVisibility.ABSTAIN_PROVENANCE,
                     FollowUpVisibility.HIDDEN,
-                    RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES
+                    RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES,
+                    PrimaryAction.REVIEW_SUPPORTING_GUIDES,
+                    EvidenceRegionRole.ABSTAIN_RATIONALE,
+                    RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
+                    FollowUpEligibility.INELIGIBLE
                 );
             case UNCERTAIN_FIT:
                 return new Posture(
@@ -186,7 +257,11 @@ public final class DetailSurfaceContract {
                     BodyRole.UNCERTAIN_FIT_BODY,
                     TrustProvenanceVisibility.UNCERTAIN_FIT_PROVENANCE,
                     FollowUpVisibility.HIDDEN,
-                    RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES
+                    RelatedGuidePosture.SUPPORTING_GUIDE_CHOICES,
+                    PrimaryAction.REVIEW_SUPPORTING_GUIDES,
+                    EvidenceRegionRole.UNCERTAIN_FIT_RATIONALE,
+                    RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
+                    FollowUpEligibility.INELIGIBLE
                 );
             case GENERATED:
             default:
@@ -196,7 +271,11 @@ public final class DetailSurfaceContract {
                     BodyRole.GENERATED_ANSWER_BODY,
                     TrustProvenanceVisibility.ANSWER_PROVENANCE,
                     FollowUpVisibility.VISIBLE,
-                    RelatedGuidePosture.SOURCE_ANCHORED_CONNECTIONS
+                    RelatedGuidePosture.SOURCE_ANCHORED_CONNECTIONS,
+                    PrimaryAction.ASK_FOLLOW_UP,
+                    EvidenceRegionRole.ANSWER_EVIDENCE,
+                    RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS,
+                    FollowUpEligibility.ELIGIBLE
                 );
         }
     }

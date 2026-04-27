@@ -226,9 +226,94 @@ public final class DetailSurfaceContractTest {
     }
 
     @Test
+    public void guideReaderV2AffordancesSeparateNavigationFromAnswerActions() {
+        DetailSurfaceContract.Posture direct = DetailSurfaceContract.guide();
+        DetailSurfaceContract.Posture handoff =
+            DetailSurfaceContract.guide(DetailSurfaceContract.EntryPoint.RELATED_GUIDE_HANDOFF);
+
+        assertEquals(DetailSurfaceContract.PrimaryAction.OPEN_GUIDE, direct.primaryAction);
+        assertEquals(DetailSurfaceContract.EvidenceRegionRole.GUIDE_METADATA, direct.evidenceRegionRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuideRole.GUIDE_READER_NAVIGATION,
+            direct.relatedGuideRole
+        );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, direct.followUpEligibility);
+        assertEquals(false, DetailSurfaceContract.isFollowUpEligible(direct));
+        assertEquals(false, DetailSurfaceContract.isAnswerEvidenceRegion(direct));
+        assertEquals(false, DetailSurfaceContract.usesAnswerRelatedGuideRole(direct));
+
+        assertEquals(DetailSurfaceContract.PrimaryAction.OPEN_GUIDE, handoff.primaryAction);
+        assertEquals(DetailSurfaceContract.EvidenceRegionRole.GUIDE_METADATA, handoff.evidenceRegionRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuideRole.GUIDE_READER_HANDOFF_CONTEXT,
+            handoff.relatedGuideRole
+        );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, handoff.followUpEligibility);
+    }
+
+    @Test
+    public void answerDetailV2AffordancesSeparateActionableAnswersFromSupportChoices() {
+        DetailSurfaceContract.Posture generated =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.GENERATED);
+        DetailSurfaceContract.Posture deterministic =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.DETERMINISTIC);
+        DetailSurfaceContract.Posture abstain =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.ABSTAIN);
+        DetailSurfaceContract.Posture uncertain =
+            DetailSurfaceContract.answer(DetailSurfaceContract.AnswerKind.UNCERTAIN_FIT);
+
+        assertEquals(DetailSurfaceContract.PrimaryAction.ASK_FOLLOW_UP, generated.primaryAction);
+        assertEquals(DetailSurfaceContract.EvidenceRegionRole.ANSWER_EVIDENCE, generated.evidenceRegionRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS,
+            generated.relatedGuideRole
+        );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.ELIGIBLE, generated.followUpEligibility);
+        assertEquals(true, DetailSurfaceContract.isFollowUpEligible(generated));
+        assertEquals(true, DetailSurfaceContract.isAnswerEvidenceRegion(generated));
+        assertEquals(true, DetailSurfaceContract.usesAnswerRelatedGuideRole(generated));
+
+        assertEquals(DetailSurfaceContract.PrimaryAction.ASK_FOLLOW_UP, deterministic.primaryAction);
+        assertEquals(
+            DetailSurfaceContract.EvidenceRegionRole.DETERMINISTIC_EVIDENCE,
+            deterministic.evidenceRegionRole
+        );
+        assertEquals(
+            DetailSurfaceContract.RelatedGuideRole.ANSWER_SOURCE_CONNECTIONS,
+            deterministic.relatedGuideRole
+        );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.ELIGIBLE, deterministic.followUpEligibility);
+
+        assertEquals(DetailSurfaceContract.PrimaryAction.REVIEW_SUPPORTING_GUIDES, abstain.primaryAction);
+        assertEquals(DetailSurfaceContract.EvidenceRegionRole.ABSTAIN_RATIONALE, abstain.evidenceRegionRole);
+        assertEquals(
+            DetailSurfaceContract.RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
+            abstain.relatedGuideRole
+        );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, abstain.followUpEligibility);
+        assertEquals(false, DetailSurfaceContract.isFollowUpEligible(abstain));
+        assertEquals(true, DetailSurfaceContract.isAnswerEvidenceRegion(abstain));
+        assertEquals(true, DetailSurfaceContract.usesAnswerRelatedGuideRole(abstain));
+
+        assertEquals(DetailSurfaceContract.PrimaryAction.REVIEW_SUPPORTING_GUIDES, uncertain.primaryAction);
+        assertEquals(
+            DetailSurfaceContract.EvidenceRegionRole.UNCERTAIN_FIT_RATIONALE,
+            uncertain.evidenceRegionRole
+        );
+        assertEquals(
+            DetailSurfaceContract.RelatedGuideRole.ANSWER_SUPPORTING_CHOICES,
+            uncertain.relatedGuideRole
+        );
+        assertEquals(DetailSurfaceContract.FollowUpEligibility.INELIGIBLE, uncertain.followUpEligibility);
+    }
+
+    @Test
     public void detailSurfaceHelpersDefaultNullToNoVisibleAnswerChrome() {
         assertEquals(false, DetailSurfaceContract.isCanonicalGuideReader(null));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerEvidence(null));
         assertEquals(false, DetailSurfaceContract.shouldShowAnswerFollowUp(null));
+        assertEquals(false, DetailSurfaceContract.isFollowUpEligible(null));
+        assertEquals(false, DetailSurfaceContract.isAnswerEvidenceRegion(null));
+        assertEquals(false, DetailSurfaceContract.usesAnswerRelatedGuideRole(null));
     }
 }
