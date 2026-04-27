@@ -61,6 +61,10 @@ Use this as the first stop for Android parity and mobile-pack work.
   pack cache counts, failures, and artifact paths.
 - `run_android_followup_matrix.ps1` supports `-WarmStart` and records
   `warm_start` in each JSONL/CSV row. Its summary also includes posture groups.
+- `build_android_ui_state_pack_parallel.ps1` supports `-PlanOnly` to emit a
+  role/device/launcher plan without building, installing, starting role jobs,
+  or finalizing a pack. Use it before long four-role sweeps when changing
+  role filters or host flags.
 - LiteRT model push now checks `/data` free space before upload; use
   `-SkipDataSpaceCheck` only when intentionally bypassing that preflight.
 - `emulator-5554` remains blocked for staged E2B LiteRT push by AVD data
@@ -70,7 +74,10 @@ Use this as the first stop for Android parity and mobile-pack work.
   direct-stream candidate is byte-safe enough to bypass staging.
 - `start_senku_emulator_matrix.ps1` exposes opt-in `-Headless` and
   `-PartitionSizeMb` launch-profile knobs for headless and large-data AVD
-  lanes; defaults remain unchanged.
+  lanes; defaults remain unchanged, and `-WhatIf` output now prints the
+  concrete emulator arguments.
+- `run_android_fts_fallback_matrix.ps1` now uses the resolved SDK adb path,
+  records `device_lock_used`, and participates in `stop_android_harness_runs.ps1`.
 
 ## Current artifact baseline
 

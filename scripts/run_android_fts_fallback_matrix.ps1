@@ -1,13 +1,16 @@
 param(
     [string]$OutputDir = "artifacts\bench\android_fts_fallback_matrix",
     [string[]]$Devices = @("emulator-5554", "emulator-5556", "emulator-5558", "emulator-5560"),
-    [switch]$DryRun
+    [switch]$DryRun,
+    [switch]$SkipDeviceLock
 )
 
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
+$adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
+$lockRoot = Join-Path $repoRoot "artifacts\harness_locks"
 $instrumentationClass = "com.senku.mobile.PackRepositoryFtsFallbackAndroidTest"
 $instrumentationRunner = "com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner"
 $expectedTests = 3
@@ -28,6 +31,10 @@ if (Test-Path -LiteralPath $commonHarnessModule) {
     }
     $Devices = @($normalizedDevices.ToArray())
 }
+if (-not $DryRun -and -not (Test-Path -LiteralPath $adb)) {
+    throw "adb not found at $adb"
+}
+New-Item -ItemType Directory -Force -Path $lockRoot | Out-Null
 
 function Resolve-TargetPath {
     param([string]$Path)
@@ -72,7 +79,7 @@ function Invoke-FtsFallbackInstrumentation {
         }
     }
 
-    $output = & adb @adbArgs 2>&1
+    $output = & $adb @adbArgs 2>&1
     $exitCode = $LASTEXITCODE
     return [pscustomobject]@{
         exit_code = $exitCode
@@ -106,13 +113,32 @@ function Write-JsonFile {
     $Value | ConvertTo-Json -Depth 8 | Set-Content -Path $Path -Encoding UTF8
 }
 
+function Acquire-DeviceLock {
+    param([string]$Device)
+
+    if ($DryRun -or $SkipDeviceLock) {
+        return $null
+    }
+
+    return Acquire-AndroidHarnessDeviceLock -DeviceName $Device -LockRoot $lockRoot -TimeoutSeconds 900
+}
+
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Path $resolvedOutputDir -Force | Out-Null
 
 $deviceResults = @()
 foreach ($device in @($Devices)) {
     $startedAt = (Get-Date).ToUniversalTime()
-    $runResult = Invoke-FtsFallbackInstrumentation -Device $device -DryRun:$DryRun
+    $deviceLock = $null
+    try {
+        $deviceLock = Acquire-DeviceLock -Device $device
+        $runResult = Invoke-FtsFallbackInstrumentation -Device $device -DryRun:$DryRun
+    } finally {
+        if ($deviceLock) {
+            $deviceLock.Dispose()
+            $deviceLock = $null
+        }
+    }
     $finishedAt = (Get-Date).ToUniversalTime()
     $passed = Test-InstrumentationPassed -Result $runResult
 
@@ -123,6 +149,7 @@ foreach ($device in @($Devices)) {
         expected_tests = $expectedTests
         runtime_evidence = $runtimeEvidence
         dry_run = [bool]$DryRun
+        device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
         started_at_utc = $startedAt.ToString("o")
         finished_at_utc = $finishedAt.ToString("o")
         command = $runResult.command
@@ -143,6 +170,7 @@ $summary = [pscustomobject]@{
     expected_tests = $expectedTests
     runtime_evidence = $runtimeEvidence
     dry_run = [bool]$DryRun
+    device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
     device_count = @($deviceResults).Count
     devices = @($deviceResults | ForEach-Object { $_.device })
     results = $deviceResults

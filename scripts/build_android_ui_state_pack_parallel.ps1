@@ -6,7 +6,8 @@ param(
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
     [int]$MaxParallelDevices = 4,
-    [string[]]$RoleFilter = @()
+    [string[]]$RoleFilter = @(),
+    [switch]$PlanOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,6 +27,16 @@ if (-not (Test-Path -LiteralPath $gradlew)) {
 
 $runId = Get-Date -Format "yyyyMMdd_HHmmss"
 $allRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")
+$roleDeviceMatrix = @(
+    [pscustomobject]@{ role = "phone_portrait"; device = "emulator-5556"; orientation = "portrait"; avd = "Senku_Large_4"; dimensions = "1080x2400" },
+    [pscustomobject]@{ role = "phone_landscape"; device = "emulator-5560"; orientation = "landscape"; avd = "Senku_Large_3"; dimensions = "2400x1080" },
+    [pscustomobject]@{ role = "tablet_portrait"; device = "emulator-5554"; orientation = "portrait"; avd = "Senku_Tablet_2"; dimensions = "1600x2560" },
+    [pscustomobject]@{ role = "tablet_landscape"; device = "emulator-5558"; orientation = "landscape"; avd = "Senku_Tablet"; dimensions = "2560x1600" }
+)
+$roleInfoByRole = @{}
+foreach ($entry in $roleDeviceMatrix) {
+    $roleInfoByRole[$entry.role] = $entry
+}
 $roles = @($allRoles)
 if ($RoleFilter.Count -gt 0) {
     $requestedRoles = New-Object System.Collections.Generic.List[string]
@@ -51,6 +62,48 @@ $sliceFailures = New-Object System.Collections.Generic.List[object]
 $logsDir = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "parallel_logs")
 New-Item -ItemType Directory -Force -Path $logsDir | Out-Null
 
+function New-RoleInvokeLine {
+    param([string]$Role)
+
+    return '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4} -HostInferenceUrl "{5}" -HostInferenceModel "{6}"{7}' -f `
+        $buildScript,
+        $OutputRoot,
+        $runId,
+        $Role,
+        $(if ($SkipInstall) { ' -SkipInstall' } else { '' }),
+        $HostInferenceUrl,
+        $HostInferenceModel,
+        $(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })
+}
+
+if ($PlanOnly) {
+    $runDir = Join-Path $repoRoot (Join-Path $OutputRoot $runId)
+    New-Item -ItemType Directory -Force -Path $runDir | Out-Null
+    $planPath = Join-Path $runDir "plan.json"
+    $plan = [pscustomobject]@{
+        run_id = $runId
+        output_root = $OutputRoot
+        selected_roles = @($roles)
+        devices = @($roles | ForEach-Object { $roleInfoByRole[$_] })
+        skip_build = [bool]$SkipBuild
+        skip_install = [bool]$SkipInstall
+        skip_host_states = [bool]$SkipHostStates
+        host_inference_url = $HostInferenceUrl
+        host_inference_model = $HostInferenceModel
+        max_parallel_devices = [int]$MaxParallelDevices
+        plan_only = $true
+        launchers = @($roles | ForEach-Object {
+            [pscustomobject]@{
+                role = $_
+                command = New-RoleInvokeLine -Role $_
+            }
+        })
+    }
+    $plan | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $planPath -Encoding UTF8
+    Write-Host ("Plan: {0}" -f $planPath)
+    exit 0
+}
+
 if (-not $SkipBuild) {
     Push-Location (Join-Path $repoRoot "android-app")
     try {
@@ -70,15 +123,7 @@ function Start-RoleProcess {
     $errPath = Join-Path $logsDir ($Role + ".err.log")
     $exitCodePath = Join-Path $logsDir ($Role + ".exitcode.txt")
     $launcherPath = Join-Path $logsDir ($Role + ".launcher.ps1")
-    $invokeLine = '& "{0}" -OutputRoot "{1}" -RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4} -HostInferenceUrl "{5}" -HostInferenceModel "{6}"{7}' -f `
-        $buildScript,
-        $OutputRoot,
-        $runId,
-        $Role,
-        $(if ($SkipInstall) { ' -SkipInstall' } else { '' }),
-        $HostInferenceUrl,
-        $HostInferenceModel,
-        $(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })
+    $invokeLine = New-RoleInvokeLine -Role $Role
     $launcherLines = @(
         '$ErrorActionPreference = ''Stop''',
         $invokeLine,

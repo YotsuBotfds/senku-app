@@ -174,6 +174,21 @@ function Start-SenkuEmulatorLane {
         [int]$PartitionSizeMb = 0
     )
 
+    $arguments = Get-SenkuEmulatorLaunchArguments -Lane $Lane -Mode $Mode -NoBootAnim:$NoBootAnim -GpuSwiftshader:$GpuSwiftshader -Headless:$Headless -PartitionSizeMb $PartitionSizeMb
+
+    return Start-Process -FilePath $EmulatorPath -ArgumentList $arguments -PassThru
+}
+
+function Get-SenkuEmulatorLaunchArguments {
+    param(
+        [object]$Lane,
+        [string]$Mode,
+        [switch]$NoBootAnim,
+        [switch]$GpuSwiftshader,
+        [switch]$Headless,
+        [int]$PartitionSizeMb = 0
+    )
+
     $arguments = @(
         "-avd", $Lane.avd,
         "-port", [string]$Lane.port
@@ -195,7 +210,7 @@ function Start-SenkuEmulatorLane {
         $arguments += @("-partition-size", [string]$PartitionSizeMb)
     }
 
-    return Start-Process -FilePath $EmulatorPath -ArgumentList $arguments -PassThru
+    return $arguments
 }
 
 $emulatorPath = Resolve-SenkuEmulatorPath
@@ -225,6 +240,8 @@ Write-Host ("Launch mode: {0}" -f $Mode)
 
 foreach ($lane in $selectedLanes) {
     Write-Host ("- {0}: {1} / {2} / {3}" -f $lane.role, $lane.serial, $lane.avd, $lane.resolution)
+    $launchArguments = Get-SenkuEmulatorLaunchArguments -Lane $lane -Mode $Mode -NoBootAnim:$NoBootAnim -GpuSwiftshader:$GpuSwiftshader -Headless:$Headless -PartitionSizeMb $PartitionSizeMb
+    Write-Host ("  args: {0}" -f ($launchArguments -join " "))
 }
 
 foreach ($lane in $selectedLanes) {

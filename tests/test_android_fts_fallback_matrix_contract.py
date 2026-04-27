@@ -25,10 +25,15 @@ class AndroidFtsFallbackMatrixContractTests(unittest.TestCase):
         self.assertIn("com.senku.mobile.PackRepositoryFtsFallbackAndroidTest", self.script)
         self.assertIn("com.senku.mobile.test/androidx.test.runner.AndroidJUnitRunner", self.script)
         self.assertIn('"shell", "am", "instrument", "-w"', self.script)
+        self.assertIn('$adb = Join-Path $env:LOCALAPPDATA "Android\\Sdk\\platform-tools\\adb.exe"', self.script)
+        self.assertIn("$output = & $adb @adbArgs", self.script)
+        self.assertIn("Acquire-AndroidHarnessDeviceLock", self.script)
+        self.assertIn("[switch]$SkipDeviceLock", self.script)
         self.assertIn('"fts4_fallback"', self.script)
         self.assertIn("$expectedTests = 3", self.script)
         self.assertIn("passed_count =", self.script)
         self.assertIn("failed_devices =", self.script)
+        self.assertIn("device_lock_used =", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
 
     def test_parser_gate_passes(self):
@@ -83,11 +88,13 @@ class AndroidFtsFallbackMatrixContractTests(unittest.TestCase):
             self.assertEqual(summary["failed_devices"], [])
             self.assertEqual(summary["expected_tests"], 3)
             self.assertEqual(summary["runtime_evidence"], "fts4_fallback")
+            self.assertFalse(summary["device_lock_used"])
             self.assertEqual(summary["devices"], ["emulator-5554", "emulator-5556"])
 
             first_device = json.loads((output_dir / "emulator-5554.json").read_text(encoding="utf-8-sig"))
             self.assertTrue(first_device["passed"])
             self.assertTrue(first_device["dry_run"])
+            self.assertFalse(first_device["device_lock_used"])
             self.assertIn("adb -s emulator-5554 shell am instrument -w", first_device["command"])
         finally:
             shutil.rmtree(output_dir, ignore_errors=True)

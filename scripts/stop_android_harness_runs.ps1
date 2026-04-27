@@ -114,6 +114,7 @@ $patterns = @(
     "run_android_detail_followup.ps1",
     "run_android_detail_followup_logged.ps1",
     "run_android_followup_matrix.ps1",
+    "run_android_fts_fallback_matrix.ps1",
     "run_android_instrumented_ui_smoke.ps1",
     "run_android_ui_validation_pack.ps1"
 )

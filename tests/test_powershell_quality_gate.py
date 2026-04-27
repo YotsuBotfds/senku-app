@@ -125,6 +125,8 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("[int]$PartitionSizeMb = 0", script)
         self.assertIn('$arguments += "-no-window"', script)
         self.assertIn('$arguments += @("-partition-size", [string]$PartitionSizeMb)', script)
+        self.assertIn("function Get-SenkuEmulatorLaunchArguments", script)
+        self.assertIn('Write-Host ("  args: {0}" -f ($launchArguments -join " "))', script)
         self.assertIn("-Headless:$Headless", script)
         self.assertIn("-PartitionSizeMb $PartitionSizeMb", script)
 
@@ -160,11 +162,22 @@ class PowerShellQualityGateTests(unittest.TestCase):
         script = ANDROID_UI_STATE_PACK_PARALLEL_PATH.read_text(encoding="utf-8")
 
         self.assertIn('[switch]$SkipHostStates', script)
+        self.assertIn("[switch]$PlanOnly", script)
         self.assertIn('$allRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")', script)
         self.assertIn("$roles = @($allRoles)", script)
+        self.assertIn("if ($PlanOnly) {", script)
+        self.assertIn('plan_only = $true', script)
+        self.assertIn('launchers = @($roles | ForEach-Object', script)
+        self.assertIn('Write-Host ("Plan: {0}" -f $planPath)', script)
         self.assertIn('-RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4}', script)
         self.assertIn("$(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })", script)
         self.assertIn("-FinalizeOnly -SkipBuild", script)
+
+    def test_android_stop_helper_covers_fts_fallback_matrix(self):
+        script = (REPO_ROOT / "scripts" / "stop_android_harness_runs.ps1").read_text(encoding="utf-8")
+
+        self.assertIn('"run_android_fts_fallback_matrix.ps1"', script)
+        self.assertIn("Stop-AndroidPackages", script)
 
     def test_android_smoke_remains_single_device_entrypoint_for_state_pack_slices(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
