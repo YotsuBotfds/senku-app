@@ -20,7 +20,7 @@ related:
   - surveying-land-management
   - intelligence-scouting
 read_time: 5
-word_count: 520
+word_count: 430
 last_updated: '2026-02-15'
 version: '1.0'
 custom_css: |-
@@ -121,8 +121,18 @@ liability_level: low
 
 ## Search Guide
 
-Use this lookup page when you have a partial clue, alternate wording, or a
-broad task and need to find the right guide family before acting.
+<div class="search-container">
+  <input class="search-box" id="guide-search-input" type="search" placeholder="Search guides by topic, symptom, tool, material, or task" autocomplete="off">
+  <div class="search-info">Search broad terms first, then add context words like medical, food, power, building, salvage, or governance.</div>
+</div>
+
+<div class="search-stats" id="guide-search-stats">Enter a query to search the offline guide index.</div>
+<div class="results" id="guide-search-results">
+  <div class="empty-state">
+    <p>Type a topic, material, failure sign, guide title, or plain-language question.</p>
+    <p>If interactive search is unavailable in this build, use the fallback patterns below and the main index category links.</p>
+  </div>
+</div>
 
 ### Query Patterns
 
