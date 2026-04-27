@@ -25,6 +25,17 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void landscapePhoneFollowUpPanelUsesTightVerticalBudget() {
+        assertEquals(6, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(true, true));
+    }
+
+    @Test
+    public void followUpPanelKeepsExistingVerticalPaddingOutsideLandscapePhone() {
+        assertEquals(10, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, true));
+        assertEquals(14, DetailActivity.resolveFollowUpPanelVerticalPaddingDp(false, false));
+    }
+
+    @Test
     public void landscapeComposerDoesNotStealFocusFromInitialRenderLegacyFocus() {
         assertFalse(DetailActivity.shouldRequestLandscapeDockedComposerFocus(true, true, true, false));
     }

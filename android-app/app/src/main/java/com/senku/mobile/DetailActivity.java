@@ -1772,11 +1772,13 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (!answerMode || followUpPanel == null || followUpPanel.getVisibility() != View.VISIBLE || followUpInput == null) {
             followUpComposerFocused = false;
+            followUpComposeView.setLandscapePhoneBudgeted(false);
             followUpComposeView.setVisibility(View.GONE);
             return;
         }
+        boolean landscapePhone = isLandscapePhoneLayout();
         boolean retryAvailable = followUpRetryButton != null && followUpRetryButton.getVisibility() == View.VISIBLE;
-        boolean showRetry = shouldShowDockedComposerRetry(retryAvailable, isLandscapePhoneLayout());
+        boolean showRetry = shouldShowDockedComposerRetry(retryAvailable, landscapePhone);
         String retryLabel = followUpRetryButton == null ? getString(R.string.detail_followup_retry) : safe(followUpRetryButton.getText().toString());
         boolean compactFollowUpMode = isCompactFollowUpMode();
         String fullHint = safe(String.valueOf(followUpInput.getHint()));
@@ -1789,6 +1791,7 @@ public final class DetailActivity extends AppCompatActivity {
             retryLabel,
             compactFollowUpMode
         );
+        followUpComposeView.setLandscapePhoneBudgeted(landscapePhone);
         followUpComposeView.setVisibility(View.VISIBLE);
         followUpComposeView.updateModel(
             model,
@@ -4498,7 +4501,7 @@ public final class DetailActivity extends AppCompatActivity {
             }
         }
         int horizontal = compactFollowUp ? dp(12) : dp(14);
-        int vertical = compactFollowUp ? dp(10) : dp(14);
+        int vertical = dp(resolveFollowUpPanelVerticalPaddingDp(compactLandscapePhone, compactFollowUp));
         followUpPanel.setPadding(horizontal, vertical, horizontal, vertical);
         if (followUpInput != null) {
             followUpInput.setHint(compactFollowUp
@@ -4535,6 +4538,13 @@ public final class DetailActivity extends AppCompatActivity {
             followUpRetryButton.setPadding(buttonHorizontal, buttonVertical, buttonHorizontal, buttonVertical);
         }
         renderDockedComposer();
+    }
+
+    static int resolveFollowUpPanelVerticalPaddingDp(boolean landscapePhone, boolean compactFollowUp) {
+        if (landscapePhone) {
+            return 6;
+        }
+        return compactFollowUp ? 10 : 14;
     }
 
     private void updateTopBarActions() {

@@ -78,6 +78,7 @@ class DockedComposerHostView @JvmOverloads constructor(
     private var onFocusChange: Consumer<Boolean>? by mutableStateOf(null)
     private var focusRequestTick by mutableStateOf(0)
     private var composerFocused by mutableStateOf(false)
+    private var phoneLandscapeBudgetActive by mutableStateOf(false)
 
     fun updateModel(
         value: DockedComposerModel,
@@ -102,6 +103,10 @@ class DockedComposerHostView @JvmOverloads constructor(
 
     fun getFocusRequestCount(): Int = focusRequestTick
 
+    fun setLandscapePhoneBudgeted(value: Boolean) {
+        phoneLandscapeBudgetActive = value
+    }
+
     private fun handleComposerFocusChanged(focused: Boolean) {
         composerFocused = focused
         onFocusChange?.accept(focused)
@@ -117,6 +122,7 @@ class DockedComposerHostView @JvmOverloads constructor(
                 onSendClick = { onSendClick?.run() },
                 onRetryClick = if (model.showRetry) ({ onRetryClick?.run() }) else null,
                 onFocusChange = ::handleComposerFocusChanged,
+                landscapePhoneBudgeted = phoneLandscapeBudgetActive,
             )
         }
     }
@@ -131,11 +137,17 @@ fun DockedComposer(
     onSendClick: () -> Unit,
     onRetryClick: (() -> Unit)? = null,
     onFocusChange: ((Boolean) -> Unit)? = null,
+    landscapePhoneBudgeted: Boolean = false,
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     var focused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
+    val fieldMinHeight = if (landscapePhoneBudgeted) 44.dp else 48.dp
+    val fieldVerticalPadding = if (landscapePhoneBudgeted) 10.dp else if (model.compact) 12.dp else 14.dp
+    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 10.dp
+    val sendButtonSize = if (landscapePhoneBudgeted) 38.dp else 40.dp
+    val bottomSpacerHeight = if (landscapePhoneBudgeted) 0.dp else 2.dp
 
     LaunchedEffect(focusRequestTick, model.enabled) {
         if (focusRequestTick > 0 && model.enabled) {
@@ -156,7 +168,7 @@ fun DockedComposer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (model.compact) 12.dp else 14.dp, vertical = 10.dp),
+                .padding(horizontal = if (model.compact) 12.dp else 14.dp, vertical = rowVerticalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
@@ -186,7 +198,7 @@ fun DockedComposer(
                 onValueChange = onTextChange,
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(min = 48.dp)
+                    .heightIn(min = fieldMinHeight)
                     .focusRequester(focusRequester)
                     .border(
                         width = 1.dp,
@@ -194,7 +206,7 @@ fun DockedComposer(
                         shape = RoundedCornerShape(999.dp),
                     )
                     .background(colors.bg2, RoundedCornerShape(999.dp))
-                    .padding(horizontal = 16.dp, vertical = if (model.compact) 12.dp else 14.dp)
+                    .padding(horizontal = 16.dp, vertical = fieldVerticalPadding)
                     .onFocusChanged {
                         focused = it.isFocused
                         onFocusChange?.invoke(it.isFocused)
@@ -243,7 +255,7 @@ fun DockedComposer(
             )
 
             Surface(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(sendButtonSize),
                 color = if (model.enabled && model.text.trim().isNotEmpty()) colors.accent else colors.olive20,
                 contentColor = colors.paperInk,
                 shape = CircleShape,
@@ -266,6 +278,6 @@ fun DockedComposer(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(bottomSpacerHeight))
     }
 }
