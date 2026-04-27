@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import sqlite3
+import sys
 from contextlib import closing
 from pathlib import Path
 from typing import Any
@@ -184,12 +185,28 @@ def _effective_counts(summary: dict[str, Any]) -> dict[str, Any]:
     return counts
 
 
-def main() -> None:
+def report_has_fail_on_mismatch_condition(report: dict[str, Any]) -> bool:
+    for side in ("baseline", "candidate"):
+        if report.get(side, {}).get("manifest_sqlite_mismatches"):
+            return True
+    for delta in report.get("count_deltas", []):
+        value = delta.get("delta")
+        if isinstance(value, int) and value < 0:
+            return True
+    return False
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline", help="Baseline pack directory, manifest, or senku_mobile.sqlite3")
     parser.add_argument("candidate", help="Candidate pack directory, manifest, or senku_mobile.sqlite3")
     parser.add_argument("--output", help="Optional JSON report path")
-    args = parser.parse_args()
+    parser.add_argument(
+        "--fail-on-mismatch",
+        action="store_true",
+        help="Exit nonzero when manifest/sqlite mismatches exist or candidate counts regress",
+    )
+    args = parser.parse_args(argv)
 
     report = compare_summaries(
         summarize_pack(Path(args.baseline)),
@@ -202,7 +219,10 @@ def main() -> None:
         output_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
     print(json.dumps(report, indent=2))
+    if args.fail_on_mismatch and report_has_fail_on_mismatch_condition(report):
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

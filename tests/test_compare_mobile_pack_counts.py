@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import sqlite3
 import tempfile
@@ -5,7 +7,12 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 
-from scripts.compare_mobile_pack_counts import compare_summaries, summarize_pack
+from scripts.compare_mobile_pack_counts import (
+    compare_summaries,
+    main,
+    report_has_fail_on_mismatch_condition,
+    summarize_pack,
+)
 
 
 class CompareMobilePackCountsTests(unittest.TestCase):
@@ -103,6 +110,82 @@ class CompareMobilePackCountsTests(unittest.TestCase):
                 summary["manifest_sqlite_mismatches"],
                 [{"name": "answer_cards", "manifest": 3, "sqlite": 2, "delta": -1}],
             )
+
+    def test_fail_on_mismatch_condition_detects_manifest_sqlite_drift(self):
+        report = {
+            "baseline": {"manifest_sqlite_mismatches": []},
+            "candidate": {
+                "manifest_sqlite_mismatches": [
+                    {"name": "answer_cards", "manifest": 3, "sqlite": 2, "delta": -1}
+                ]
+            },
+            "count_deltas": [{"name": "answer_cards", "baseline": 2, "candidate": 2, "delta": 0}],
+        }
+
+        self.assertTrue(report_has_fail_on_mismatch_condition(report))
+
+    def test_fail_on_mismatch_condition_detects_candidate_regression(self):
+        report = {
+            "baseline": {"manifest_sqlite_mismatches": []},
+            "candidate": {"manifest_sqlite_mismatches": []},
+            "count_deltas": [{"name": "guides", "baseline": 10, "candidate": 9, "delta": -1}],
+        }
+
+        self.assertTrue(report_has_fail_on_mismatch_condition(report))
+
+    def test_fail_on_mismatch_condition_allows_growth_and_unknown_delta(self):
+        report = {
+            "baseline": {"manifest_sqlite_mismatches": []},
+            "candidate": {"manifest_sqlite_mismatches": []},
+            "count_deltas": [
+                {"name": "answer_cards", "baseline": 1, "candidate": 2, "delta": 1},
+                {"name": "chunks", "baseline": None, "candidate": 4, "delta": None},
+            ],
+        }
+
+        self.assertFalse(report_has_fail_on_mismatch_condition(report))
+
+    def test_cli_default_reports_mismatch_without_failing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            baseline_dir = tmp_path / "baseline"
+            candidate_dir = tmp_path / "candidate"
+            baseline_dir.mkdir()
+            candidate_dir.mkdir()
+            (baseline_dir / "senku_manifest.json").write_text(
+                json.dumps({"counts": {"answer_cards": 3}}),
+                encoding="utf-8",
+            )
+            (candidate_dir / "senku_manifest.json").write_text(
+                json.dumps({"counts": {"answer_cards": 2}}),
+                encoding="utf-8",
+            )
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                exit_code = main([str(baseline_dir), str(candidate_dir)])
+
+            self.assertEqual(exit_code, 0)
+
+    def test_cli_fail_on_mismatch_fails_on_candidate_regression(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            baseline_dir = tmp_path / "baseline"
+            candidate_dir = tmp_path / "candidate"
+            baseline_dir.mkdir()
+            candidate_dir.mkdir()
+            (baseline_dir / "senku_manifest.json").write_text(
+                json.dumps({"counts": {"answer_cards": 3}}),
+                encoding="utf-8",
+            )
+            (candidate_dir / "senku_manifest.json").write_text(
+                json.dumps({"counts": {"answer_cards": 2}}),
+                encoding="utf-8",
+            )
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                exit_code = main([str(baseline_dir), str(candidate_dir), "--fail-on-mismatch"])
+
+            self.assertEqual(exit_code, 1)
 
 
 if __name__ == "__main__":
