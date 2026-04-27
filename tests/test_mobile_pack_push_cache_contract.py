@@ -11,6 +11,13 @@ class MobilePackPushCacheContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.script = SCRIPT.read_text(encoding="utf-8-sig")
 
+    def assertBlockContainsFields(self, start_marker, end_marker, fields):
+        start = self.script.index(start_marker)
+        end = self.script.index(end_marker, start)
+        block = self.script[start:end]
+        for field in fields:
+            self.assertIn(field, block)
+
     def test_exposes_opt_in_cache_controls(self):
         self.assertIn("[switch]$SkipIfCurrent", self.script)
         self.assertIn("[switch]$ForcePush", self.script)
@@ -41,6 +48,56 @@ class MobilePackPushCacheContractTests(unittest.TestCase):
         self.assertIn('Write-Host "Mobile pack push cache hit: false"', self.script)
         self.assertIn("cache_hit = [bool]$cacheHit", self.script)
         self.assertIn("Write-MobilePackPushSummary -Summary $summaryObject -Path $SummaryPath", self.script)
+
+    def test_cache_hit_summary_preserves_cache_schema_fields(self):
+        self.assertBlockContainsFields(
+            "Local pack fingerprint and installed file sizes match prior verified push; skipping adb upload.",
+            "Write-MobilePackPushSummary -Summary $summaryObject -Path $SummaryPath",
+            [
+                "state_path = $statePath",
+                "cache_hit = [bool]$cacheHit",
+                "skip_if_current = [bool]$SkipIfCurrent",
+                "force_push = [bool]$ForcePush",
+                "pushed = $false",
+                "pack_version = $manifestSummary.manifest.pack_version",
+                "pack_fingerprint = $packFingerprint",
+            ],
+        )
+
+    def test_pushed_summary_preserves_cache_schema_fields(self):
+        self.assertBlockContainsFields(
+            "if ($ShowInstalledManifest) {",
+            "Write-MobilePackPushSummary -Summary $summaryObject -Path $SummaryPath",
+            [
+                "state_path = $statePath",
+                "cache_hit = [bool]$cacheHit",
+                "skip_if_current = [bool]$SkipIfCurrent",
+                "force_push = [bool]$ForcePush",
+                "pushed = $true",
+                "pack_version = $manifestSummary.manifest.pack_version",
+                "pack_fingerprint = $packFingerprint",
+            ],
+        )
+
+    def test_verified_state_write_preserves_cache_schema_fields(self):
+        state_dir = 'Join-Path $repoRoot "artifacts\\harness_state"'
+        state_file = '"mobile_pack_push_" + (Get-SafeStateName -Value $Device) + ".json"'
+        mkdir = "New-Item -ItemType Directory -Force -Path $harnessStateDir | Out-Null"
+        write_state = '($verifiedPushState | ConvertTo-Json -Depth 6) | Set-Content -LiteralPath $statePath -Encoding UTF8'
+
+        self.assertLess(self.script.index(state_dir), self.script.index(state_file))
+        self.assertLess(self.script.index(state_file), self.script.index(mkdir))
+        self.assertLess(self.script.index(mkdir), self.script.index(write_state))
+        self.assertBlockContainsFields(
+            "$verifiedPushState = [pscustomobject]@{",
+            write_state,
+            [
+                "schema_version = $pushState.schema_version",
+                'updated_utc = (Get-Date).ToUniversalTime().ToString("o")',
+                "pack_fingerprint = $pushState.pack_fingerprint",
+                "files = $pushState.files",
+            ],
+        )
 
 
 if __name__ == "__main__":

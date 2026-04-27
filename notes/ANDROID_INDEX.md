@@ -16,6 +16,7 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/run_android_search_log_only.ps1`](../scripts/run_android_search_log_only.ps1): preferred long retrieval harness
 - [`../scripts/run_android_harness_matrix.ps1`](../scripts/run_android_harness_matrix.ps1): mixed prompt/follow-up matrix runner with JSONL/CSV plus `summary.json` and `summary.md`
 - [`../scripts/run_android_followup_matrix.ps1`](../scripts/run_android_followup_matrix.ps1): follow-up-only matrix runner
+- [`../scripts/run_android_session_flow.ps1`](../scripts/run_android_session_flow.ps1): single-emulator initial query plus required follow-up session-flow harness, guarded by `tests/test_android_session_flow_contract.py`
 - [`../scripts/run_android_ui_validation_pack.ps1`](../scripts/run_android_ui_validation_pack.ps1): deterministic + generative UI smoke pack
 - [`../scripts/build_android_ui_state_pack_parallel.ps1`](../scripts/build_android_ui_state_pack_parallel.ps1): parallel four-lane screenshot/dump sweep across the fixed emulator matrix
 - [`ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md`](./ANDROID_RAG_CONTRACT_TRANSLATION_20260424.md): desktop reviewed-card/provenance contract translated into Android work
