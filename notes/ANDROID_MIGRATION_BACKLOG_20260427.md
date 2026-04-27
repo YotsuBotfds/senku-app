@@ -39,10 +39,13 @@ use it to approve reviewed-card runtime expansion or product exposure.
   Post-fix tablet state packs also passed `10 / 10` for `tablet_portrait` and
   `tablet_landscape` under
   `artifacts/ui_state_pack_current_head_tablet_after_handoff_fix/`.
-- Phone portrait clipping polish: the focused phone portrait proof is green,
-  but visual review found placeholder text clipping and source/path chip
-  clipping on the narrow surface. This is polish debt, not a migration proof
-  blocker for the current phone portrait lane.
+- Phone portrait clipping polish: resolved for the known home-surface issues.
+  Search/composer placeholders now ellipsize, and compact-phone linked path
+  chips stack vertically instead of exposing half-visible horizontal-scroll
+  chips. Focused proof passed under
+  `artifacts/android_phone_portrait_home_polish_final/20260427_014631_897/emulator-5556/summary.json`;
+  the broader phone portrait pack also passed `11 / 11` under
+  `artifacts/ui_state_pack_phone_portrait_polish_20260427/20260427_014311/`.
 - Identity/model metadata missing: resolved for harness/state-pack summaries by
   recording a host inference identity source plus stable host model key. Visible
   UI identity polish remains separate from migration proof.

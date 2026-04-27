@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuAppTheme
@@ -232,6 +233,8 @@ fun DockedComposer(
                                     fontWeight = FontWeight.Medium,
                                 ),
                                 color = colors.ink3,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                         innerTextField()

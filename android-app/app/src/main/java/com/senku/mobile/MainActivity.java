@@ -1332,7 +1332,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setMinHeight(dp(compactPhoneHome ? 40 : 46));
         button.setMinimumHeight(dp(compactPhoneHome ? 40 : 46));
-        button.setPadding(dp(compactPhoneHome ? 14 : 16), dp(compactPhoneHome ? 10 : 12), dp(compactPhoneHome ? 12 : 14), dp(compactPhoneHome ? 9 : 10));
+        button.setPadding(dp(compactPhoneHome ? 20 : 16), dp(compactPhoneHome ? 10 : 12), dp(compactPhoneHome ? 12 : 14), dp(compactPhoneHome ? 9 : 10));
         button.setTextColor(getResources().getColor(R.color.senku_text_light));
         button.setSingleLine(compactPhoneHome);
         button.setMaxLines(compactPhoneHome ? 1 : 2);
@@ -1346,11 +1346,15 @@ public final class MainActivity extends AppCompatActivity {
             homeGuidePresentationFormatter().buildHomeRelatedGuideContentDescription(result, anchor, index, total)
         );
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
+            compactPhoneHome ? LinearLayout.LayoutParams.MATCH_PARENT : LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.setMarginStart(dp(compactPhoneHome ? 6 : 8));
+            if (compactPhoneHome) {
+                params.topMargin = dp(6);
+            } else {
+                params.setMarginStart(dp(8));
+            }
         }
         button.setLayoutParams(params);
         GuideHandoffContext handoffContext = buildHomeRelatedGuideHandoffContext(anchor);
@@ -1669,8 +1673,10 @@ public final class MainActivity extends AppCompatActivity {
         }
         boolean hasAnchor = anchor != null && !safe(anchor.guideId).trim().isEmpty();
         boolean hasGuides = !homeRelatedGuides.isEmpty();
+        boolean compactPhoneHome = isCompactPhoneHomeLayout();
         if (homeRelatedContainer != null) {
             homeRelatedContainer.removeAllViews();
+            homeRelatedContainer.setOrientation(compactPhoneHome ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
             for (int index = 0; index < homeRelatedGuides.size(); index++) {
                 homeRelatedContainer.addView(
                     createHomeRelatedGuideButton(
@@ -1684,7 +1690,7 @@ public final class MainActivity extends AppCompatActivity {
         }
         if (homeRelatedSubtitleText != null) {
             String subtitle = homeGuidePresentationFormatter().buildHomeRelatedSubtitle(anchor, homeRelatedGuides.size());
-            boolean showSubtitle = !subtitle.isEmpty() && (!isCompactPhoneHomeLayout() || !hasGuides);
+            boolean showSubtitle = !subtitle.isEmpty() && (!compactPhoneHome || !hasGuides);
             if (showSubtitle) {
                 homeRelatedSubtitleText.setText(subtitle);
                 homeRelatedSubtitleText.setVisibility(View.VISIBLE);
@@ -1696,7 +1702,7 @@ public final class MainActivity extends AppCompatActivity {
         if (homeRelatedAnchorButton != null) {
             String anchorAction = homeGuidePresentationFormatter().buildHomeRelatedAnchorButtonLabel(
                 anchor,
-                isCompactPhoneHomeLayout()
+                compactPhoneHome
             );
             if (!anchorAction.isEmpty()) {
                 homeRelatedAnchorButton.setText(anchorAction);

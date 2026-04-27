@@ -148,6 +148,7 @@
                     android:contentDescription="@string/search_input_description"
                     android:drawableStart="@drawable/ic_search_target"
                     android:drawablePadding="8dp"
+                    android:ellipsize="end"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:hint="@string/search_hint"
