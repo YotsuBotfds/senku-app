@@ -35,6 +35,7 @@ import java.util.Locale
 private const val AnchorLabel = "anchor"
 private const val FallbackGuideId = "GD-?"
 private const val FallbackTitle = "Source guide"
+private const val MetaSeparator = " · "
 
 private val CategoryDelimiterRegex = Regex("[-_]+")
 private val WhitespaceRegex = Regex("\\s+")
@@ -137,7 +138,7 @@ internal fun buildSourceRowMeta(category: String, isAnchor: Boolean): String {
             add(AnchorLabel)
         }
     }
-    return parts.joinToString(separator = " · ")
+    return parts.joinToString(separator = MetaSeparator)
 }
 
 internal fun normalizeSourceCategory(category: String): String = category

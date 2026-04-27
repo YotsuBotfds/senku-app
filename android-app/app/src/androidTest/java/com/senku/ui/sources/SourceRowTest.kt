@@ -36,7 +36,7 @@ class SourceRowTest {
 
         composeRule.onAllNodesWithText("GD-214").assertCountEquals(1)
         composeRule.onAllNodesWithText("Water cache rotation").assertCountEquals(1)
-        composeRule.onAllNodesWithText("water Â· anchor").assertCountEquals(1)
+        composeRule.onAllNodesWithText("water · anchor").assertCountEquals(1)
         composeRule.onNodeWithText("Water cache rotation").performClick()
         composeRule.runOnIdle {
             assertEquals(source, clicked)
