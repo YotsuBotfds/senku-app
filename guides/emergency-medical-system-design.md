@@ -17,6 +17,36 @@ related:
   - home-management
   - infection-control
   - pandemic-response-operations
+aliases:
+  - EMS design boundary
+  - field triage system intake
+  - mass casualty coordination log
+  - field hospital roles and handoff
+  - dispatch and transport documentation
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level EMS and field-triage system intake: role assignment, communications, dispatch and transport logs, supply and coverage gaps, escalation triggers, and clinician, incident-command, or public-safety handoff.
+  - Do not use the reviewed card for clinical protocols, medication or dosing advice, invasive procedures, detailed triage algorithms, transport clearance decisions, legal or regulatory authorization, scope-of-practice decisions, resource denial or allocation authority, or safety certification.
+citation_policy: >
+  Cite GD-558 and its reviewed answer card only for EMS/design and field-triage
+  system intake, roles, communications, dispatch/transport logs, supply or
+  coverage gaps, escalation triggers, and clinician/incident-command/public-
+  safety handoff. Do not cite the reviewed card for clinical protocols,
+  medication/dosing, invasive procedures, detailed triage algorithms, transport
+  clearance, legal/regulatory authorization, scope-of-practice decisions,
+  resource denial/allocation authority, or safety certification.
+applicability: >
+  Use for boundary-only emergency medical system design and field-triage intake:
+  assigning roles, setting communication and documentation lanes, building
+  dispatch and transport logs, noting supply or coverage gaps, identifying
+  escalation triggers, and preparing clinician, incident-command, or
+  public-safety handoff. This reviewed card is not a clinical treatment,
+  triage-algorithm, transport-clearance, legal-authorization, scope-of-practice,
+  resource-allocation, or safety-certification authority.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: emergency_medical_system_design_boundary
+answer_card:
+  - emergency_medical_system_design_boundary
+citations_required: true
 read_time: 35
 word_count: 4200
 last_updated: '2026-02-21'
@@ -37,6 +67,22 @@ custom_css: |
 :::danger
 **Critical Role of Expertise:** This guide outlines principles of emergency medical system organization. Actual implementation requires medical professionals with training in emergency medicine, surgery, and triage. Inadequate expertise leads to preventable mortality. When expert care is unavailable, these principles help maximize limited resources.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-558. Use it only for EMS/design and field-triage system intake: role assignment, communications, dispatch and transport logs, supply and coverage gaps, escalation triggers, and clinician, incident-command, or public-safety handoff.
+
+Start with the incident name or location, date and time, reporting person, incident-command contact, public-safety contact, clinician or medical lead if known, available communications channels, current casualty estimate, transport destinations or constraints, dispatch log status, transport log status, staffing coverage, supply status, and known gaps. Keep known facts separate from uncertain reports.
+
+For routine boundary intake, organize the answer around roles, communications, records, resources, escalation, and handoff. Record who is responsible for incident command or field hospital direction, triage intake, logistics and supply, documentation and communications, transport coordination, and receiving-facility contact. Log dispatch requests, transport departures and arrivals, destination, patient identifier if available, broad triage category if already assigned by qualified responders, vital record availability, treatments already documented by clinicians, and receiving-provider handoff status.
+
+Escalate instead of giving routine planning advice when there is no named incident commander or medical lead, communications are failing, transport destinations are unknown or unreachable, patient identity or movement logs are missing, supply or staffing coverage cannot support the current load, scene safety is uncertain, public-safety coordination is absent, or clinician handoff is unavailable for deteriorating or high-acuity casualties.
+
+Do not use this reviewed card for clinical protocols, medication or dosing instructions, invasive procedures, detailed START or other triage algorithms, transport clearance, legal or regulatory authorization, scope-of-practice decisions, resource denial or allocation authority, or safety certification. If a prompt asks for those, provide only the EMS intake record, uncertainty note, escalation trigger, and handoff to the responsible clinician, incident commander, public-safety lead, emergency manager, receiving facility, legal or regulatory authority, or safety owner.
+
+</section>
 
 <section id="overview">
 
@@ -599,4 +645,3 @@ Infection is the most common killer in field hospital settings. Understanding th
 ## Conclusion
 
 A well-organized field hospital system bridges the gap between emergency response and definitive medical care. Success depends on advance planning, clear triage protocols, trained personnel, adequate supplies, and psychological support. During the acute chaos of a mass casualty event, having established systems, designated roles, and practiced procedures dramatically improves outcomes. Work systematically through triage, stabilize immediately life-threatening conditions, initiate evacuation protocols, and maintain the psychological and physical well-being of your team. The difference between effective and chaotic response is preparation.
-

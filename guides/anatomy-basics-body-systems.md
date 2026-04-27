@@ -17,11 +17,36 @@ related:
   - medications
   - vital-signs-health-assessment
   - wound-hygiene-infection-prevention
+aliases:
+  - anatomy basics
+  - body systems overview
+  - body area terminology
+  - symptom location log
+  - anatomy orientation
+routing_cues:
+  - body-system terminology
+  - body area or symptom location log
+  - non-diagnostic anatomy explanation
+  - clinician handoff note
+  - uncertainty language for anatomy questions
+  - red-flag medical owner routing
+citation_policy: cite reviewed GD-731 answer card only for anatomy orientation, body-system terminology, symptom/body-area logs, uncertainty language, red-flag owner handoff, and clinician handoff; do not use it for diagnosis, treatment, medication or dosing, procedures, vital-sign/lab/imaging interpretation, emergency protocols, return-to-work or activity clearance, legal or fitness claims, or safety certification.
+applicability: >
+  Boundary-only anatomy education and communication support: body-system
+  terminology, symptom/body-area logs, non-diagnostic explanations, uncertainty
+  language, red-flag routing to specific medical owners, and clinician handoff.
+  Not a diagnostic, treatment, medication, procedure, monitoring-interpretation,
+  emergency-protocol, clearance, legal/fitness, or safety-certification guide.
 read_time: 16
 word_count: 4800
 last_updated: '2026-02-23'
 version: '1.0'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: anatomy_basics_body_systems_boundary
+answer_card:
+  - anatomy_basics_body_systems_boundary
+citations_required: true
 custom_css: |
   .anatomy-box { background-color: var(--card); border-left: 4px solid var(--accent); padding: 15px; margin: 15px 0; border-radius: 4px; }
   .system-overview { background-color: var(--surface); padding: 15px; margin: 20px 0; border-radius: 4px; }
@@ -33,6 +58,18 @@ custom_css: |
 :::warning
 **Disclaimer:** This guide provides foundational anatomical knowledge for survival medicine contexts. It is NOT a substitute for formal medical training or professional medical care. Understanding anatomy helps you recognize problems and communicate with medical professionals. When professional medical care is available, use it. This guide is for austere settings where formal training may be unavailable.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-731. Use it only for anatomy orientation and communication support: body-system terminology, body-area or symptom-location logs, non-diagnostic education, uncertainty language, red-flag handoff to specific medical owners, and concise clinician handoff.
+
+Start with what is known and observable without interpreting it: the body area involved, side of body, timing, mechanism if known, visible symptoms, function changes, worsening or improving trend, relevant body system terms, uncertainty about location or system, and who needs the handoff. Keep observations separate from guesses.
+
+Do not use this reviewed card for diagnosis, treatment, medication or dosing advice, procedures, interpreting vital signs, labs, or imaging, emergency protocols, return-to-work or activity clearance, legal or fitness claims, or safety certification. When a prompt includes severe bleeding, breathing difficulty, altered consciousness, suspected head/spine injury, severe abdominal pain, shock signs, infection concern, major joint deformity, or rapidly worsening symptoms, stop routine anatomy explanation and route to the appropriate clinician, emergency-response, trauma, wound-care, neurology, respiratory, cardiovascular, abdominal, orthopedic, or public-health owner.
+
+</section>
 
 <section id="overview">
 

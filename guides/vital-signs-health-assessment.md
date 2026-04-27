@@ -10,6 +10,23 @@ tags:
   - diagnostic-basics
   - essential
 icon: 💓
+aliases:
+  - vital signs log
+  - record vital signs
+  - vital sign trend
+  - patient intake vitals
+  - temperature pulse respiration blood pressure
+  - oxygen saturation reading
+  - pulse ox reading
+  - basic health assessment observations
+  - handoff vital signs
+  - uncertain vital sign measurement
+routing_cues:
+  - Use for recording already-measured temperature, pulse, respirations, blood pressure, oxygen saturation if available, mental status, skin findings, and trend/status observations for intake or clinician handoff.
+  - Keep answers to observation, measurement uncertainty, trend logs, red-flag recognition, and emergency or clinician handoff; route diagnosis, treatment decisions, medication, dosing, oxygen therapy, resuscitation protocols, labs, imaging, clearance, legal claims, and safety certification elsewhere.
+  - For condition-specific danger prompts, prefer the specific emergency owner guide; use this guide only as a boundary support surface for vital-sign observation and handoff.
+citation_policy: cite reviewed GD-734 vital-sign observation/intake boundary sections for intake logs and handoff support; do not use as the sole owner for condition-specific emergency treatment
+applicability: vital-sign observation, intake logging, trend/status documentation, measurement uncertainty, red-flag recognition, and clinician/emergency handoff only; not diagnosis, treatment, dosing, oxygen therapy, resuscitation, device repair, lab/imaging interpretation, clearance, legal claims, or safety certification
 description: Taking pulse, respiration, temperature, blood pressure; recognizing normal vs. abnormal; basic patient assessment without instruments. Trending vital signs to detect deterioration.
 related:
   - first-aid
@@ -21,6 +38,11 @@ word_count: 4200
 last_updated: '2026-02-23'
 version: '1.0'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: vital_signs_health_assessment_boundary
+answer_card:
+  - vital_signs_health_assessment_boundary
+citations_required: true
 custom_css: |
   .vital-range { background-color: var(--card); border-left: 4px solid var(--accent); padding: 15px; margin: 15px 0; border-radius: 4px; }
   .assessment-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
@@ -44,6 +66,24 @@ Vital signs (pulse, respiration, temperature, blood pressure) are the body's bas
 **Key principle:** A single vital sign measurement is less useful than TRENDS. Taking vitals every 15–60 minutes and comparing shows you if a patient is improving or declining.
 
 ![Four vital signs dashboard](../assets/svgs/vital-signs-health-assessment-1.svg)
+
+</section>
+
+<section id="vital-sign-observation-intake-boundary">
+
+## Vital-Sign Observation, Intake, and Handoff Boundary
+
+This is the reviewed answer-card surface for GD-734. Use it for recording observed or already-measured vital signs, tracking whether the person is stable or worsening, and preparing a clear handoff to a clinician or emergency responder.
+
+**Record what is available:** time, temperature, pulse rate and quality, respiration rate and effort, blood pressure if measured, oxygen saturation if a pulse oximeter reading is available, mental status, skin color/temperature/moisture, and any notes about pain, distress, exertion, fever, injury, or measurement conditions.
+
+**Handle uncertainty plainly:** If a reading may be unreliable, say why: no equipment, poor cuff fit, movement, cold fingers, weak pulse, difficult counting, recent exertion, anxiety, or an unclear pulse-ox signal. Repeat the observation if practical, record the uncertainty, and do not invent a diagnosis from one number.
+
+**Trend and handoff:** Compare readings over time. Worsening pulse, respirations, blood pressure, oxygen saturation, mental status, skin signs, or overall appearance should be documented with times and handed off urgently.
+
+**Emergency handoff triggers:** severe or worsening breathing trouble, inability to speak full sentences, stridor, respiratory rate below 8 or above 30, shock signs, BP below 90 with symptoms, pulse above 120 with deterioration, heart rate below 40 unless known trained-athlete baseline, progressive confusion, unresponsiveness, unequal pupils, severe fever with confusion or stiff neck, blue or gray color, or any vital sign trending toward danger values.
+
+**Hard stops for answers:** Do not diagnose the condition, choose treatment, give medication or dosing advice, give resuscitation protocols, instruct oxygen therapy, repair or calibrate medical devices, interpret labs or imaging, clear someone for work, transport, or activity, make legal claims, or certify that a person or setting is safe.
 
 </section>
 

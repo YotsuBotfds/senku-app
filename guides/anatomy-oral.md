@@ -27,6 +27,47 @@ word_count: 4234
 last_updated: '2026-04-13'
 version: '1.1'
 liability_level: critical
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: oral_anatomy_boundary
+answer_card:
+  - oral_anatomy_boundary
+aliases:
+  - oral anatomy terms
+  - tooth gum jaw mouth names
+  - tooth location log
+  - dental symptom location handoff
+  - mouth area terminology
+  - parts of a tooth
+  - jaw anatomy terms
+  - gum and tooth naming
+routing_cues:
+  - name the tooth gum jaw or mouth area involved
+  - explain tooth layers and tooth types without diagnosis
+  - log dental symptom location for a dentist or clinician
+  - identify mouth anatomy terms for handoff notes
+  - describe where pain swelling bleeding or injury is located before handoff
+  - route dental red flags to emergency dental or clinician owner
+citations_required: true
+applicability: >
+  Boundary-only oral anatomy terminology and handoff support for naming tooth,
+  gum, jaw, salivary-gland, palate, TMJ, and mouth areas; logging symptom
+  location and timing; non-diagnostic education about structures; red-flag
+  routing; and dentist or clinician communication. Use emergency-dental for
+  urgent pain, swelling, fever, pus, trauma, bleeding, airway, or swallowing
+  concerns, preventive-dental-hygiene for routine cleaning and bleeding gums
+  without red flags, and dental-prosthetics for removable appliance comfort.
+  This card does not support diagnosis, extraction, drilling, filling,
+  orthodontic or prosthetic procedures, incision or drainage, medication or
+  anesthetic dosing, treatment decisions, chewing clearance, legal claims, or
+  safety certification.
+citation_policy: >
+  Cite GD-221 and its reviewed answer card only for oral anatomy terms,
+  tooth/gum/jaw/mouth location language, symptom-location logs, non-diagnostic
+  education, red-flag routing, and dentist or clinician handoff. Do not cite it
+  as runtime authority for diagnosis, extraction, drilling, filling,
+  orthodontic or prosthetic procedures, incision or drainage, medication or
+  anesthetic dosing, treatment decisions, return-to-use or chewing clearance,
+  legal claims, or safety certification.
 ---
 
 <section id="overview">

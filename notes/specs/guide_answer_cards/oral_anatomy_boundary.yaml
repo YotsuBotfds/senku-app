@@ -1,0 +1,139 @@
+card_id: oral_anatomy_boundary
+guide_id: GD-221
+slug: anatomy-oral
+title: Oral Anatomy
+risk_tier: high
+evidence_owner: guide-corpus
+applies_when:
+  - User asks what a tooth, gum, jaw, palate, salivary gland, TMJ, or mouth-area term means, or asks for non-diagnostic oral anatomy education.
+  - User needs help naming the tooth, gum, jaw, mouth, or facial area involved in a symptom or injury log before speaking with a dentist, clinician, or emergency owner.
+  - User asks whether tooth, gum, jaw, or mouth symptoms include red flags that should route away from anatomy education to emergency dental or medical care.
+required_first_actions:
+  - Screen first for dental or medical red flags before routine anatomy education, including trouble breathing, trouble swallowing, drooling, voice change, tongue or floor-of-mouth swelling, facial or jaw swelling, swelling near the eye, fever, pus, foul drainage, uncontrolled bleeding, trauma, severe or worsening pain, or feeling very ill.
+  - Keep the answer limited to anatomy terminology, tooth/gum/jaw/mouth area naming, symptom-location and timing logs, uncertainty language, and dentist or clinician handoff.
+  - If red flags, urgent pain, swelling, fever, pus, trauma, bleeding, airway concern, or swallowing concern appear, route to emergency-dental, a dentist, clinician, emergency department, EMS, or the local emergency pathway instead of giving diagnosis or treatment instructions.
+conditional_required_actions:
+  - trigger_terms:
+      - swelling
+      - fever
+      - pus
+      - drainage
+      - abscess
+      - infection
+      - trouble swallowing
+      - trouble breathing
+    required_actions:
+      - Treat swelling with fever, pus, foul drainage, spreading facial or jaw swelling, tongue or floor-of-mouth swelling, trouble swallowing, or trouble breathing as urgent dental or medical handoff, not routine anatomy education.
+  - trigger_terms:
+      - tooth pain
+      - hurts
+      - severe pain
+      - worsening pain
+      - night
+      - chewing
+    required_actions:
+      - Use anatomy terms only to help locate and describe the painful area; do not diagnose cavity, pulpitis, abscess, fracture, TMJ disorder, or sinus cause, and route severe, constant, worsening, night-waking, or biting-related pain to dental care.
+  - trigger_terms:
+      - broken
+      - chipped
+      - knocked out
+      - loose
+      - bleeding
+      - trauma
+      - injury
+    required_actions:
+      - For trauma, loose or displaced teeth, uncontrolled bleeding, jaw injury, bite change, numbness, or sharp fragments cutting tissue, stop at location logging and urgent dental or emergency handoff.
+first_actions:
+  - Name the involved area using plain anatomy terms such as upper or lower jaw, right or left side, front or back teeth, incisor, canine, premolar, molar, gumline, cheek side, tongue side, roof of mouth, floor of mouth, tongue, lip, cheek, under-jaw area, salivary-gland area, or TMJ near the ear.
+  - Make a concise handoff log with location, onset, symptom pattern, pain severity if any, swelling or drainage status, fever status, trauma history, bleeding, chewing or biting trigger, ability to swallow and breathe, and what changed over time.
+  - Explain oral structures non-diagnostically when useful: enamel, dentin, pulp chamber, cementum, periodontal ligament, alveolar bone, maxilla, mandible, TMJ, palate, and major salivary glands.
+  - Use tooth-numbering or location language only as communication support, and encourage confirming exact tooth identity with a dentist or clinician.
+  - End with the correct owner when symptoms go beyond terminology: emergency-dental or emergency medical owner for urgent red flags, preventive-dental-hygiene for routine cleaning questions, dental-prosthetics for removable appliance comfort, and dentist or clinician for diagnosis and treatment decisions.
+urgent_red_flags:
+  - Trouble breathing, trouble swallowing, drooling, voice change, tongue swelling, floor-of-mouth swelling, neck swelling, or swelling that affects opening the mouth.
+  - Facial, jaw, gum, tongue, under-jaw, or near-eye swelling, especially if spreading, rapidly worsening, or paired with fever.
+  - Fever, pus, foul drainage, foul taste from one tooth or gum area, confusion, fast breathing, rapid heartbeat, or feeling very ill.
+  - Uncontrolled bleeding, major facial or jaw trauma, tooth knocked out, tooth very loose or displaced, bite change, numbness after injury, or sharp fragment cutting the mouth.
+  - Severe, constant, worsening, throbbing, night-waking, or biting-related tooth or jaw pain.
+forbidden_advice:
+  - Do not diagnose cavities, pulpitis, abscess, cellulitis, periodontal disease severity, cracked tooth syndrome, TMJ disorder, salivary-gland disease, fracture type, nerve injury, or sinus-related dental pain from this card.
+  - Do not give extraction, drilling, filling, filing, smoothing, orthodontic, prosthetic, splinting, incision, drainage, suturing, nerve block, anesthetic, reimplantation, or other dental procedure instructions.
+  - Do not recommend antibiotics, antibiotic selection or dosing, pain-medication dosing, anesthetic dosing, sedation, herbal dosing, medication changes, or treatment decisions.
+  - Do not tell the user a tooth, jaw, mouth injury, appliance, restoration, or chewing pattern is safe, cleared, legally adequate, certified, or ready for return to use.
+  - Do not use anatomy education to delay dentist, clinician, emergency department, EMS, or local emergency-pathway handoff when red flags are present.
+do_not:
+  - Do not pull, drill, cut, drain, inject, file, splint, reposition, fill, re-cement, or reshape a tooth or oral tissue based on this anatomy card.
+  - Do not reassure swelling, fever, pus, foul drainage, airway symptoms, swallowing symptoms, uncontrolled bleeding, severe worsening pain, or dental trauma as routine anatomy or home-care issues.
+  - Do not provide chewing clearance, return-to-work or return-to-duty clearance, legal claims, liability statements, or safety certification.
+  - Do not route denture, retainer, mouthguard, or removable appliance fabrication or repair requests to this card.
+routine_boundary: >
+  This card is appropriate only for oral anatomy terminology, tooth/gum/jaw/
+  mouth area naming, symptom-location logs, non-diagnostic education, red-flag
+  routing, and dentist or clinician handoff. It is not a diagnosis, procedure,
+  medication, treatment-decision, orthodontic, prosthetic, appliance,
+  return-to-chewing, legal, or safety-certification card.
+acceptable_uncertain_fit: >
+  If the prompt may be an anatomy question but symptoms are incomplete, lead
+  with the red-flag screen, help the user describe the location in plain
+  anatomical language, ask only handoff-relevant questions, and route dental or
+  medical decisions to the proper owner.
+clarifying_questions:
+  - Which area is involved: upper or lower jaw, right or left side, front or back, tooth, gumline, cheek side, tongue side, roof of mouth, floor of mouth, under-jaw area, or near the ear/TMJ?
+  - Is there trouble breathing, trouble swallowing, drooling, voice change, tongue or floor-of-mouth swelling, neck swelling, or swelling near the eye?
+  - Is there fever, pus, foul drainage, bad taste from one area, facial or jaw swelling, uncontrolled bleeding, or feeling very ill?
+  - Was there trauma, a knocked-out, loose, displaced, broken, or sharp tooth, bite change, numbness, or jaw injury?
+  - Is any pain mild and brief, or severe, constant, worsening, throbbing, waking the person at night, or worse with biting?
+citation_ids:
+  - oral-anatomy-routing-boundary
+  - tooth-structure-terminology
+  - numbering-location-language
+  - jaw-tmj-mouth-area-terms
+  - salivary-gland-location-terms
+  - oral-red-flag-handoff
+source_sections:
+  - guide: GD-221
+    slug: anatomy-oral
+    title: Oral Anatomy
+    sections:
+      - "#overview"
+      - "#tooth-structure"
+      - "#numbering-systems"
+      - "#jaw-anatomy"
+      - "#salivary-glands"
+      - "#clinical-assessment"
+      - "#complications"
+      - "#quick-reference"
+source_invariants:
+  - name: oral anatomy guide routes practical dental care to sibling owners
+    guide: GD-221
+    must_include:
+      - "Use this guide for structure, terminology, and context."
+      - "This guide explains what the parts are; the linked guides handle the practical cleaning, prosthetic, and urgent-care steps."
+      - "If you are trying to decide whether to escalate, swelling, pus, fever, trouble swallowing, trouble breathing, or worsening night pain are the main triggers to leave routine care."
+  - name: tooth and jaw terminology is source backed
+    guide: GD-221
+    must_include:
+      - "Teeth are complex organs with multiple layers, each serving distinct functions."
+      - "Quadrants: 1=upper right, 2=upper left, 3=lower left, 4=lower right."
+      - "Only movable bone of skull."
+      - "Allows three motions: opening/closing (hinge), protrusion/retrusion (forward/backward), and lateral movement."
+  - name: red flags require emergency owner not anatomy answer
+    guide: GD-221
+    must_include:
+      - "Facial swelling with airway compromise"
+      - "difficulty swallowing"
+      - "Swelling of eyelid"
+      - "Any of the following requires patient repositioning, airway clearance, and consideration of emergency tracheostomy"
+  - name: anatomy card does not authorize procedures or dosing
+    guide: GD-221
+    must_not_match:
+      - "(extract|drill|fill|drain|incision|antibiotic|ibuprofen|lidocaine|benzocaine)[^\\n]{0,160}(from this card|boundary card|answer card)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary card for GD-221. It intentionally narrows a broad and
+  procedure-heavy oral anatomy source to terminology, tooth/gum/jaw/mouth
+  area naming, symptom-location logs, non-diagnostic education, red-flag
+  routing, and dentist or clinician handoff. It excludes diagnosis,
+  extraction, drilling, filling, orthodontic and prosthetic procedures,
+  incision or drainage, medication and anesthetic dosing, treatment decisions,
+  return-to-use or chewing clearance, legal claims, and safety certification.

@@ -1,0 +1,108 @@
+card_id: vital_signs_health_assessment_boundary
+guide_id: GD-734
+slug: vital-signs-health-assessment
+title: Vital Signs & Basic Health Assessment
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A prompt asks how to record, summarize, trend, or hand off already-observed temperature, pulse, respirations, blood pressure, oxygen saturation if available, mental status, skin signs, or basic intake observations.
+  - A prompt has uncertain vital-sign measurements and needs cautious logging, repeat observation, and clinician or emergency handoff rather than diagnosis or treatment.
+  - A prompt asks whether vital signs or basic observations are stable, worsening, or severe enough to seek urgent help, without requesting a condition-specific treatment plan.
+required_first_actions:
+  - Keep the answer to observation and handoff: record time, temperature, pulse, respirations, blood pressure if measured, oxygen saturation if available, mental status, skin signs, and relevant context.
+  - State measurement uncertainty clearly and do not invent a diagnosis from one number or one uncertain reading.
+  - If severe or worsening red flags are present, prioritize emergency services, urgent transport, or clinician handoff and route condition-specific treatment to the relevant emergency owner.
+first_actions:
+  - Build a simple status log with time, HR or pulse quality, RR and breathing effort, temperature, BP, oxygen saturation if available, AVPU or mental status, skin color/temperature/moisture, and notes.
+  - Compare the current readings with prior readings and describe the trend as improving, stable, or deteriorating.
+  - Note reasons a measurement may be unreliable, such as no equipment, poor cuff fit, movement, cold fingers, weak pulse, difficult counting, recent exertion, anxiety, or unclear pulse-ox signal.
+  - Prepare a concise handoff that includes the trend, the worst reading, the current reading, red flags, and what changed over time.
+urgent_red_flags:
+  - Severe or worsening breathing trouble, inability to speak full sentences, stridor, respiratory rate below 8 or above 30, blue or gray color, or worsening oxygen saturation when available.
+  - Shock signs, BP below 90 with symptoms, rapid weak pulse, cool clammy skin, collapse, severe weakness, confusion, or pulse above 120 with deterioration.
+  - Progressive confusion, unresponsiveness, unequal pupils, severe fever with confusion or stiff neck, heart rate below 40 unless known trained-athlete baseline, or any vital sign trending toward danger values.
+forbidden_advice:
+  - Do not diagnose the condition from the vital signs.
+  - Do not choose treatment, medication, dose, oxygen flow, fluid resuscitation, CPR, airway, or evacuation protocol details.
+  - Do not provide oxygen therapy instructions, device calibration, pulse-ox repair, blood-pressure cuff repair, or medical-device repair.
+  - Do not interpret labs or imaging.
+  - Do not clear someone for work, transport, sports, return to activity, legal claims, safety certification, or proof of fitness.
+  - Do not let this support card crowd out a more specific emergency card when a condition-specific red flag is present.
+do_not:
+  - Do not treat this card as a diagnosis, triage protocol, treatment protocol, medication guide, oxygen protocol, resuscitation guide, device-repair guide, clearance form, legal opinion, or safety certification.
+  - Do not reassure worsening vital signs as routine monitoring.
+  - Do not omit emergency or clinician handoff when severe or worsening red flags are present.
+routine_boundary: >
+  Routine vital-sign education and logging are in scope only when the answer
+  remains observational. If the prompt asks what disease the person has, how to
+  treat it, whether to give medication or oxygen, whether to start resuscitation,
+  whether equipment is calibrated, whether labs or imaging prove a diagnosis, or
+  whether the person is legally safe or cleared for activity, answer with a
+  boundary and route to the specific owner.
+acceptable_uncertain_fit: >
+  If the prompt mixes vital-sign observations with a possible emergency, provide
+  a brief intake/handoff structure, preserve emergency evaluation for severe or
+  worsening red flags, and avoid diagnosis or treatment decisions. For named
+  emergencies such as anaphylaxis, poisoning, stroke, chest pain, shock,
+  meningitis, sepsis, choking, trauma, hypothermia, heat illness, or wound
+  infection, route the answer to the more specific emergency card or guide.
+clarifying_questions:
+  - What are the times and readings for temperature, pulse, respirations, blood pressure, oxygen saturation if available, mental status, and skin signs?
+  - Is the person getting better, staying the same, or worsening compared with the prior reading?
+  - Are there severe breathing problems, shock signs, confusion, unresponsiveness, blue or gray color, severe fever with stiff neck or confusion, or other red flags?
+  - Was any reading uncertain because of movement, poor cuff fit, cold fingers, weak pulse, recent exertion, anxiety, or unclear device signal?
+citation_ids:
+  - vital-sign-observation-intake-boundary
+  - overview-why-vital-signs-matter
+  - rapid-assessment-vital-signs-trending
+  - when-to-seek-help
+  - sample-vital-signs-log
+source_sections:
+  - guide: GD-734
+    slug: vital-signs-health-assessment
+    title: Vital Signs & Basic Health Assessment
+    sections:
+      - "#vital-sign-observation-intake-boundary"
+      - "#overview"
+      - "#rapid-assessment"
+      - "#when-to-seek-help"
+      - "#vital-signs-log"
+source_invariants:
+  - name: observation_intake_boundary_only
+    guide: GD-734
+    must_include:
+      - "Use it for recording observed or already-measured vital signs"
+      - "oxygen saturation if a pulse oximeter reading is available"
+      - "do not invent a diagnosis from one number"
+      - "Do not diagnose the condition, choose treatment, give medication or dosing advice"
+    must_not_match:
+      - "use it[^\\n]{0,120}(diagnose|treat|dose)"
+      - "oxygen saturation[^\\n]{0,120}(start oxygen|oxygen flow|liters per minute)"
+  - name: trending_and_handoff_dominate
+    guide: GD-734
+    must_include:
+      - "trends matter more than single measurements"
+      - "Record each measurement with time"
+      - "Any vital sign trending toward danger values"
+      - "Sample Vital Signs Log"
+    must_not_match:
+      - "worsening vital signs[^\\n]{0,120}(watchful waiting|routine monitoring)"
+  - name: emergency_owner_boundary
+    guide: GD-734
+    must_include:
+      - "For condition-specific danger prompts, prefer the specific emergency owner guide"
+      - "do not use as the sole owner for condition-specific emergency treatment"
+      - "Do not diagnose the condition, choose treatment"
+    must_not_match:
+      - "condition-specific emergency[^\\n]{0,120}(use this guide only|sole owner)"
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only support card for GD-734. It owns vital-sign
+  observation, intake logging, trend/status documentation, measurement
+  uncertainty, red-flag recognition, and clinician/emergency handoff. It
+  deliberately excludes diagnosis, treatment decisions, medication/dosing,
+  resuscitation protocols, oxygen therapy instructions, device calibration or
+  repair, lab/imaging interpretation, clearance for work/transport/activity,
+  legal claims, and safety certification. Condition-specific emergency prompts
+  should route to their specific owner cards or guides, with GD-734 used only
+  as handoff-support evidence.

@@ -1,0 +1,238 @@
+card_id: epidemiology_outbreak_investigation_boundary
+guide_id: GD-303
+slug: epidemiology-outbreak-investigation
+title: Epidemiology and Outbreak Investigation
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks for an outbreak, illness cluster, shared-event, school/workplace/venue illness, food/water exposure, or community symptom-count intake record.
+  - The prompt needs symptom or event counts, onset timeline, exposure log, cluster description, privacy-aware record, voluntary risk-reduction communication, sanitation/support note, or public-health or clinician handoff.
+  - The user needs boundary language that routes diagnosis, treatment, vaccine or medication guidance, lab sampling/testing, pathogen identification, quarantine/enforcement, coercive isolation, private-data contact tracing tactics, outbreak declarations, legal/regulatory claims, or safety certification away from the reviewed card.
+required_first_actions:
+  - Keep the answer boundary-only: outbreak/event intake, symptom and event counts, timeline and exposure logs, cluster description, privacy-aware records, voluntary risk-reduction communication, sanitation/support notes, and public-health or clinician handoff.
+  - Start with event or setting, dates and times, location, reporter, symptom counts, severe illness or hospitalization counts if known, deaths if known, affected groups, shared exposures, timeline, sanitation/support context, privacy limits, and who has already been notified.
+  - Use minimal necessary identifiers; case IDs, initials, aggregate counts, or role/group labels for community-facing summaries, while reserving names/contact details for appropriate clinician, public-health, or responsible care-owner handoff.
+  - Hand off diagnosis, treatment, vaccine/medication guidance, lab sampling/testing instructions, pathogen identification, quarantine or enforcement orders, coercive isolation, private-data contact tracing tactics, outbreak declarations, legal/regulatory claims, and safety certification.
+conditional_required_actions:
+  - trigger_terms:
+      - severe illness
+      - hospitalized
+      - death
+      - trouble breathing
+      - dehydration
+      - neurologic
+      - infant
+      - pregnancy
+      - elder
+      - immunocompromised
+    required_actions:
+      - Prioritize clinician or emergency/public-health handoff before routine log completion.
+      - Preserve symptom counts, timing, affected groups, and uncertainty without diagnosing or recommending treatment.
+  - trigger_terms:
+      - test
+      - sample
+      - specimen
+      - culture
+      - PCR
+      - pathogen
+      - identify the disease
+      - antibiotic
+      - antiviral
+      - vaccine
+      - medication
+    required_actions:
+      - Give a boundary and do not provide diagnostic, treatment, medication, vaccine, lab-sampling, testing, or pathogen-identification instructions from this card.
+  - trigger_terms:
+      - quarantine
+      - isolation order
+      - force
+      - enforce
+      - compel
+      - contact trace
+      - names and addresses
+      - declare outbreak
+      - legal
+      - certify safe
+    required_actions:
+      - Give a boundary and keep the answer to privacy-aware intake, voluntary communication, uncertainty language, and public-health or responsible-authority handoff.
+first_actions:
+  - Build an intake record with event/setting name, date and time range, location, reporter, affected population, number ill, number exposed if known, symptom groups, onset dates/times, severe outcomes if known, and what is uncertain.
+  - Create a timeline and exposure log that records shared meals, water sources, gatherings, workplaces, schools, travel, environmental conditions, sanitation/support concerns, and existing notifications without naming a pathogen.
+  - Describe the cluster in neutral terms; who is affected by group or role, where and when illness was noticed, whether counts appear above the normal baseline if known, and whether similar reports are increasing.
+  - Record privacy-aware identifiers, using case IDs, initials, aggregate counts, or role/group labels unless the handoff owner needs direct contact details.
+  - End with the handoff owner; clinician or emergency care for severe illness, public-health authority for community clusters, site/venue/food/water/sanitation owner for support and remediation questions, and responsible care owner for affected facilities.
+urgent_red_flags:
+  - Severe illness, hospitalization, death, trouble breathing, dehydration concern, neurologic symptoms, rapidly worsening symptoms, or multiple vulnerable people affected.
+  - A cluster in a school, care facility, shelter, workplace, food venue, water system, event, or other shared setting where more reports are appearing.
+  - Requests to identify the pathogen, diagnose the illness, choose treatment, use antibiotics/antivirals, provide vaccine/medication guidance, or decide who needs testing.
+  - Requests to issue quarantine/enforcement orders, force isolation, perform private-data contact tracing tactics, declare an outbreak, make legal/regulatory decisions, or certify safety.
+forbidden_advice:
+  - Do not diagnose the disease, identify a pathogen as fact, or decide whether the situation legally or formally is an outbreak.
+  - Do not provide treatment, vaccine or medication guidance, antibiotic/antiviral advice, dosing, substitutions, or clinical protocols.
+  - Do not provide lab sampling, specimen collection, testing procedures, pathogen confirmation, or chain-of-custody instructions.
+  - Do not issue quarantine or enforcement orders, coercive isolation instructions, private-data contact tracing tactics, legal/regulatory claims, or safety certification.
+do_not:
+  - Do not convert the source guide's case-definition, lab-confirmation, contact-tracing, quarantine/isolation, testing, vaccination-campaign, boil-water-order, closure, or control-measure examples into reviewed-card instructions.
+  - Do not reassure that a cluster is safe, contained, noninfectious, or not reportable because counts are incomplete or a pathogen is unknown.
+  - Do not delay clinician or public-health handoff while gathering a complete intake record when severe illness, death, vulnerable groups, or a growing cluster is present.
+routine_boundary: >
+  Routine GD-303 reviewed-card answers are limited to boundary-level outbreak
+  or event intake, symptom/event counts, timeline and exposure logs, cluster
+  description, privacy-aware records, voluntary risk-reduction communication,
+  sanitation/support notes, and public-health or clinician handoff. The card
+  exits for diagnosis, treatment, vaccine/medication guidance, lab sampling or
+  testing instructions, pathogen identification, quarantine/enforcement orders,
+  coercive isolation, private-data contact tracing tactics, outbreak
+  declarations, legal/regulatory claims, and safety certification.
+acceptable_uncertain_fit: >
+  If details are incomplete but the prompt plausibly involves a shared illness
+  event or cluster, provide a conservative intake and handoff checklist, ask for
+  event/setting, dates, location, counts, symptoms, onset timing, shared
+  exposures, severe outcomes, sanitation/support concerns, privacy constraints,
+  and notification owner, and avoid diagnosis, treatment, testing, enforcement,
+  legal, or certification advice.
+clarifying_questions:
+  - What event, setting, or community group is involved, and what date/time range and location should the intake record cover?
+  - How many people were exposed if known, how many are ill, what symptom groups are reported, and when did symptoms begin?
+  - Are there severe illness, hospitalization, death, trouble breathing, dehydration, neurologic symptoms, or vulnerable groups involved?
+  - What shared exposures, sanitation/support concerns, existing notifications, and privacy constraints should be preserved for handoff?
+  - Are you asking only for an intake/handoff record, or for diagnosis, treatment, testing, quarantine/enforcement, legal/regulatory, or safety-certification decisions?
+applicability:
+  owner: outbreak/event intake, privacy-aware records, voluntary risk-reduction communication, sanitation/support notes, and public-health or clinician handoff
+  use_when:
+    - outbreak_event_intake
+    - symptom_event_count_log
+    - timeline_and_exposure_log
+    - cluster_description
+    - privacy_aware_public_health_handoff
+    - voluntary_risk_reduction_communication
+    - sanitation_support_note
+  do_not_use_when:
+    - diagnosis_treatment_or_pathogen_identification
+    - vaccine_medication_or_testing_guidance
+    - lab_sampling_specimen_collection_or_testing_protocol
+    - quarantine_enforcement_or_coercive_isolation
+    - private_data_contact_tracing_tactics
+    - outbreak_declaration_legal_regulatory_or_safety_certification
+actions:
+  required:
+    - classify the request as outbreak/event intake, symptom/event count log, timeline/exposure log, cluster description, voluntary communication, sanitation/support note, or handoff planning
+    - begin with event/setting, dates/times, location, counts, symptoms, onset timing, affected groups, severe outcomes if known, shared exposures, sanitation/support context, privacy limits, and notification owner
+    - use privacy-aware identifiers and separate known facts from uncertainty
+    - route diagnosis, treatment, vaccine/medication, testing, lab sampling, pathogen identification, enforcement, coercive isolation, private-data contact tracing, legal/regulatory, and certification requests away from the card
+  standard:
+    - provide an outbreak/event intake template
+    - include counts, timeline, exposure log, cluster description, privacy notes, voluntary risk-reduction communication, sanitation/support notes, and handoff owner
+forbidden:
+  - diagnosis, treatment, pathogen identification, clinical protocol, antibiotic/antiviral, vaccine, medication, dosing, or substitution advice
+  - lab sampling, specimen collection, testing procedure, pathogen confirmation, or chain-of-custody instruction
+  - quarantine/enforcement order, coercive isolation, private-data contact tracing tactic, outbreak declaration, legal/regulatory claim, or safety certification
+fallback:
+  - If a prompt mixes intake with diagnosis, treatment, testing, pathogen identification, quarantine/enforcement, legal, or certification requests, answer only the intake, uncertainty, voluntary communication, sanitation/support, and handoff portion.
+  - If counts, timeline, exposure history, symptoms, privacy limits, or notification owner are unknown, preserve those gaps in the log and route before concluding.
+  - If severe illness, death, vulnerable groups, or a growing shared-setting cluster appears, prioritize clinician or public-health handoff before routine documentation detail.
+fallback_handoff_language:
+  - This GD-303 reviewed card can help build an outbreak/event intake record, organize symptom and event counts, timeline and exposure logs, cluster description, privacy-aware notes, voluntary communication, sanitation/support notes, and public-health or clinician handoff.
+  - It cannot diagnose the illness, identify the pathogen, choose treatment, give vaccine/medication/testing instructions, collect lab samples, issue quarantine or enforcement orders, use coercive isolation or private-data contact tracing tactics, declare an outbreak, make legal/regulatory claims, or certify safety.
+  - If severe illness, hospitalization, death, vulnerable groups, or a growing shared-setting cluster is involved, do not wait for a complete log before clinician or public-health handoff.
+output:
+  required:
+    - outbreak/event intake scope and boundary
+    - event/setting, dates/times, location, reporter, affected group, number exposed if known, number ill, symptom groups, onset timing, severe outcomes if known, and uncertainty
+    - timeline and shared-exposure log
+    - privacy-aware record fields and minimal-identifier guidance
+    - voluntary risk-reduction communication and sanitation/support notes
+    - clinician, public-health, site/venue, food/water/sanitation, or responsible care-owner handoff
+    - explicit boundary against diagnosis, treatment, vaccine/medication/testing guidance, lab sampling, pathogen identification, enforcement/coercion, private-data contact tracing, declarations, legal/regulatory claims, and safety certification
+  prohibited:
+    - diagnosis, pathogen identification, treatment, medication, vaccine, or testing decision
+    - lab sampling or specimen collection instructions
+    - quarantine or enforcement order, coercive isolation, private-data contact tracing tactic, outbreak declaration, legal/regulatory claim, or safety certification
+routing_tests:
+  positive:
+    - prompt: Make a privacy-aware intake log for 18 people with vomiting after a community dinner, including timeline and public health handoff.
+      expect: epidemiology_outbreak_investigation_boundary
+    - prompt: Help summarize symptom counts and shared exposures for a school illness cluster without diagnosing it.
+      expect: epidemiology_outbreak_investigation_boundary
+    - prompt: Create a handoff note for a shelter respiratory illness cluster with sanitation and support notes.
+      expect: epidemiology_outbreak_investigation_boundary
+  near_miss:
+    - prompt: Which pathogen is causing this and what antibiotic should we use?
+      expect_handoff: clinician_or_public_health_owner
+    - prompt: How do I collect stool samples and run PCR testing?
+      expect_handoff: qualified_lab_or_public_health_owner
+    - prompt: Can I order quarantine and force people to isolate?
+      expect_handoff: public_health_legal_or_responsible_authority
+    - prompt: Declare this venue safe and legally cleared to reopen.
+      expect_handoff: public_health_legal_or_safety_authority
+  boundary:
+    - prompt: A care facility has two hospitalizations and one death after a diarrhea cluster; should I finish the log first?
+      expect: urgent_clinician_public_health_handoff_before_complete_log
+    - prompt: Build an exposure timeline but do not include names in the public summary.
+      expect: privacy_aware_timeline_and_exposure_log
+runtime_citation_policy: reviewed_source_family
+citation_ids:
+  - gd-303-reviewed-answer-card-boundary
+  - gd-303-overview-public-health-authorities
+  - gd-303-outbreak-detection-triggers
+  - gd-303-line-list-minimum-elements
+  - gd-303-case-investigation-interview
+  - gd-303-investigation-team-handoff
+  - gd-303-outbreak-report-results
+  - gd-303-surveillance-reporting-tools
+source_sections:
+  - guide: GD-303
+    slug: epidemiology-outbreak-investigation
+    title: Epidemiology and Outbreak Investigation
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#overview"
+      - "#outbreak-detection > Detection Triggers"
+      - "#line-list > Line List Minimum Elements"
+      - "#line-list > Case Investigation Interview"
+      - "#investigation-teams"
+      - "#outbreak-report > Report Sections"
+      - "#surveillance > Reporting Tools (Austere Settings)"
+source_invariants:
+  - name: reviewed answer-card scope and exclusions
+    guide: GD-303
+    must_include:
+      - This is the reviewed answer-card surface for GD-303.
+      - Use it only for boundary-level outbreak or event intake, symptom and event counts, timeline and exposure logs
+      - Do not use this reviewed card for diagnosis, treatment, vaccine or medication guidance, lab sampling or testing instructions, pathogen identification
+  - name: public health and intake source context remains
+    guide: GD-303
+    must_include:
+      - When possible, notify local or regional health authorities early.
+      - Cluster
+      - Begin line list
+      - Line List Minimum Elements
+      - Case Investigation Interview
+  - name: privacy and handoff fields remain
+    guide: GD-303
+    must_include:
+      - Name (or initials for privacy)
+      - Date of symptom onset
+      - Exposure type
+      - Document responses verbatim
+      - Team leader
+  - name: source procedural content is not reviewed card authority
+    guide: GD-303
+    must_include:
+      - Contact Tracing and Quarantine/Isolation
+      - Test if available
+      - Isolation Criteria (When to Release)
+      - Quarantine Duration
+      - Emergency vaccination campaign
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-303 as a boundary-only outbreak/event intake and
+  public-health handoff card. It owns symptom/event counts, timeline and
+  exposure logs, cluster description, privacy-aware records, voluntary
+  risk-reduction communication, sanitation/support notes, and clinician or
+  public-health handoff. It deliberately excludes diagnosis, treatment,
+  vaccine/medication guidance, lab sampling/testing instructions, pathogen
+  identification, quarantine/enforcement orders, coercive isolation,
+  private-data contact tracing tactics, outbreak declarations, legal/regulatory
+  claims, and safety certification. READY_FOR_PARENT_CLOSE.

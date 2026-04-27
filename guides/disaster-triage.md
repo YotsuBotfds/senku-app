@@ -8,6 +8,19 @@ tags:
   - critical
 icon: 🏥
 description: START and JumpSTART triage systems, mass casualty incident management, field hospital setup, resource allocation, and mixed-casualty recognition of hidden cardiac emergencies such as chest pain, jaw pain, and heart attack symptoms.
+aliases:
+  - disaster triage
+  - mass casualty incident intake
+  - MCI scene handoff
+  - casualty count log
+routing_cues:
+  - mci intake
+  - mass casualty scene safety
+  - casualty count and status log
+  - incident command handoff
+  - disaster documentation
+applicability: disaster or mass-casualty intake, scene-safety reminder, casualty count/status logging, obvious life-threat red-flag noting, role or incident-command handoff, and documentation only; not diagnosis, treatment, triage color assignment authority, allocation, transport priority, death/pronouncement, legal/liability advice, or safety certification.
+citation_policy: cite the reviewed answer-card boundary, MCI overview, ICS, and documentation/tracking sections for boundary-only answers; do not cite detailed START, JumpSTART, color-category assignment, resource-allocation, transport-priority, procedure, or death/pronouncement sections as reviewed-card authority.
 related:
   - acute-coronary-cardiac-emergencies
   - desert-survival
@@ -22,12 +35,29 @@ word_count: 3102
 last_updated: '2026-04-06'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: disaster_triage_mci_boundary
+answer_card:
+  - disaster_triage_mci_boundary
+citations_required: true
 custom_css: '.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.theme-toggle{background-color:var(--accent-red);color:white;border:0;padding:.7rem 1.5rem;border-radius:4px;cursor:pointer;font-weight:bold;transition:background-color .3s}.theme-toggle:hover{background-color:var(--accent-red-bright)}.subtitle{color:var(--accent-red-medium);font-size:1.1rem}.navigation{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--accent-red)}.nav-link{color:var(--accent-blue);text-decoration:none;margin-right:2rem;transition:color .3s}.nav-link:hover{color:var(--accent-red-light)}.content-box{background-color:var(--bg-secondary);border-left:4px solid var(--accent-red-bright);padding:1.5rem;margin-bottom:1.5rem;border-radius:4px}.triage-immediate{background-color:rgba(211,47,47,0.2);border-left:4px solid red;padding:.5rem;margin:.5rem 0;border-radius:2px}.triage-delayed{background-color:rgba(255,193,7,0.2);border-left:4px solid #ffc107;padding:.5rem;margin:.5rem 0;border-radius:2px}.triage-minor{background-color:rgba(76,175,80,0.2);border-left:4px solid #4caf50;padding:.5rem;margin:.5rem 0;border-radius:2px}.triage-expectant{background-color:rgba(100,100,100,0.2);border-left:4px solid #666;padding:.5rem;margin:.5rem 0;border-radius:2px}.diagram{background-color:var(--bg-secondary);border:2px solid var(--accent-red);padding:2rem;margin:2rem 0;border-radius:8px;text-align:center;overflow-x:auto}.diagram-title{color:var(--accent-red-light);font-weight:bold;margin-bottom:1rem;font-size:1.2rem}.guide-link{background-color:var(--bg-secondary);border-left:4px solid var(--accent-red-bright);padding:1rem;border-radius:4px;transition:transform .3s,box-shadow .3s}.guide-link:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(211,47,47,0.2)}.guide-link a{color:var(--accent-blue);text-decoration:none;font-weight:bold}.guide-link a:hover{color:var(--accent-red-light)}body.light-theme{--bg-primary:#f5f5f5;--bg-secondary:#fff;--bg-tertiary:#eee;--text-primary:#1a2e1a;--text-secondary:#666;--table-bg:#fafafa;--table-header:#f0f0f0}body.light-theme h1,body.light-theme h2,body.light-theme h3{color:var(--accent-red)}body.light-theme .content-box,body.light-theme .toc,body.light-theme .guide-link,body.light-theme header{background-color:var(--bg-secondary);box-shadow:0 2px 4px rgba(0,0,0,0.1)}body.light-theme .theme-toggle{background-color:var(--accent-red)}body.light-theme .toc h2,body.light-theme h1{color:var(--accent-red)}.highlight{background-color:rgba(211,47,47,0.1);padding:.2rem .4rem;border-radius:2px}'
 ---
 
 :::danger
 **Medical Disclaimer:** Triage—the prioritization of patients based on severity and survivability—should only be performed by trained medical professionals when possible. Incorrect triage decisions can result in withholding treatment from salvageable patients. The BLACK (expectant) category should only be applied when medical resources are confirmed to be exhausted and the patient's condition is confirmed non-survivable with available resources. When in doubt, always treat.
 :::
+
+<section id="reviewed-answer-card-boundary-mci-intake-handoff">
+
+## Reviewed Answer-Card Boundary: MCI Intake, Logs, and Handoff
+
+This is the reviewed answer-card surface for GD-029. Use it only for disaster or mass-casualty intake and handoff support: note scene safety concerns, estimate casualty count, keep a simple casualty status log, record obvious life-threat red flags, identify the current role or incident-command contact, and preserve documentation for receiving responders.
+
+The reviewed card may say to avoid entering an unsafe scene, call or hand off to emergency services or incident command when available, separate known facts from uncertainty, and document who was found, where, when, what obvious condition was seen, what was already done by others, and who received the handoff.
+
+Do not use this reviewed card to diagnose patients, give treatment or procedure instructions, teach detailed START or JumpSTART algorithms, assign triage colors as authority, allocate scarce resources, decide transport priority, pronounce death, make legal or liability claims, or certify that a scene is safe.
+
+</section>
 
 <section id="first-10-minutes-mixed-casualty-sorting">
 

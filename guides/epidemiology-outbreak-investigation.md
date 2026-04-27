@@ -7,6 +7,15 @@ difficulty: intermediate
 tags:
   - essential
   - medical
+aliases:
+  - outbreak investigation intake
+  - outbreak event log
+  - epidemiology handoff
+  - illness cluster documentation
+  - public health handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level outbreak or event intake, symptom and event counts, timeline and exposure logs, cluster description, privacy-aware records, voluntary risk-reduction communication, sanitation/support notes, and public-health or clinician handoff.
+  - Route diagnosis, treatment, vaccine or medication guidance, lab sampling or testing instructions, pathogen identification, quarantine or enforcement orders, coercive isolation, private-data contact tracing tactics, outbreak declarations, legal/regulatory claims, and safety certification away from this reviewed card.
 icon: 📊
 description: Case definition development, attack rate calculation, epidemic curve construction, contact tracing, isolation and quarantine criteria, outbreak reporting, surveillance for small communities.
 related:
@@ -20,6 +29,25 @@ word_count: 2378
 last_updated: '2026-02-18'
 version: '1.0'
 liability_level: critical
+citation_policy: >
+  Cite GD-303 and its reviewed answer card only for boundary-level outbreak or
+  event intake, symptom/event counts, timeline and exposure logs, cluster
+  description, privacy-aware records, voluntary risk-reduction communication,
+  sanitation/support notes, and public-health or clinician handoff. Do not use
+  the reviewed card for diagnosis, treatment, vaccine/medication guidance, lab
+  sampling/testing instructions, pathogen identification, quarantine or
+  enforcement orders, coercive isolation, private-data contact tracing tactics,
+  outbreak declarations, legal/regulatory claims, or safety certification.
+applicability: >
+  Use for boundary-only outbreak/event intake and public-health handoff: count
+  symptoms and events, organize timelines and exposure logs, describe clusters,
+  preserve privacy-aware records, note voluntary risk-reduction communication,
+  sanitation/support context, and route to public-health or clinician owners.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: epidemiology_outbreak_investigation_boundary
+answer_card:
+  - epidemiology_outbreak_investigation_boundary
+citations_required: true
 ---
 
 <section id="overview">
@@ -31,6 +59,18 @@ An outbreak is the occurrence of cases of disease in excess of normal expectancy
 **Critical disclaimer:** This guide is educational and intended for austere settings. Formal outbreak response involves public health authorities, laboratory confirmation, and coordination with regional health systems. When possible, notify local or regional health authorities early. These methods apply when formal systems are unavailable.
 
 The goal is to interrupt disease transmission and prevent further cases. For practical infection prevention protocols (hand hygiene, PPE, sterilization, wound care) that complement these investigation methods, see <a href="../infection-control.html">Infection Control</a>. For establishing permanent community disease surveillance networks, quarantine facilities, and vaccination campaigns, see <a href="../public-health-epidemiology.html">Public Health Systems & Epidemiology</a>.
+
+<section id="reviewed-answer-card-boundary">
+
+### Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-303. Use it only for boundary-level outbreak or event intake, symptom and event counts, timeline and exposure logs, cluster description, privacy-aware records, voluntary risk-reduction communication, sanitation and support notes, and public-health or clinician handoff.
+
+Start with a bounded outbreak/event record: event or setting, dates and times, location, reporter, symptom counts, severe illness or hospitalization counts if known, deaths if known, affected groups, shared exposures, timeline, existing sanitation/support concerns, privacy limits, and who has already been notified. Keep names and contact details minimized to the receiving clinician, public-health authority, or responsible care owner; use case IDs, initials, or aggregate counts when a public-facing or community-facing summary is enough.
+
+Do not use this reviewed card for diagnosis, treatment, vaccine or medication guidance, lab sampling or testing instructions, pathogen identification, quarantine or enforcement orders, coercive isolation, private-data contact tracing tactics, outbreak declarations, legal/regulatory claims, or safety certification. If a prompt asks for those, provide only the safe intake record, uncertainty note, voluntary risk-reduction communication, sanitation/support notes, and public-health or clinician handoff.
+
+</section>
 
 :::danger
 **Infection Control — Personal Safety**
