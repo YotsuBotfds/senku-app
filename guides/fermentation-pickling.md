@@ -420,7 +420,18 @@ Fermented fruits can be preserved in a sweet vinegar brine for use in sauces and
 - Add more vinegar (5% acidity) before processing
 - Measure pH again; must reach 3.6 before processing
 
-{{> fermentation-troubleshooter }}
+### Troubleshooting Decision Check
+
+| Problem signal | Treat as | Conservative response |
+| --- | --- | --- |
+| Fuzzy green, black, or spreading mold | Spoilage | Discard the batch and clean the vessel before starting over. |
+| Rotten, sulfurous, fecal, or otherwise foul odor | Possible unsafe fermentation | Discard rather than trying to rescue the batch. |
+| Brine no longer covers the vegetables | Air exposure risk | If caught early and no spoilage signs are present, restore submersion; discard if mold or foul odor appears. |
+| pH remains too high for vinegar pickles | Insufficient acidity | Keep refrigerated and do not process for shelf storage until the acidity problem is corrected and rechecked. |
+| Texture is soft but odor and appearance are normal | Quality problem rather than automatic danger | Improve salt, temperature, tannin, and variety choices next batch; use caution with storage. |
+
+When a batch has uncertain safety, do not taste-test to decide. Use appearance,
+odor, pH where relevant, storage history, and the discard rules above.
 
 ## Part Six: Storage and Shelf Life
 

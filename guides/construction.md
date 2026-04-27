@@ -953,4 +953,9 @@ In seismic regions, connections must allow slight movement without failure. Flex
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. Recommendations are based on the methods covered in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> construction-calculator }}
+:::note
+The static concrete-calculator and planning tables earlier in this guide are
+the local calculation aids for this page. Recheck measurements, material
+availability, and soil or structural uncertainty before treating any estimate
+as a build decision.
+:::

@@ -385,7 +385,18 @@ If your first several attempts fail, that is normal. Almost every problem traces
 - Cause: Most often the wood is not as dry as you think, or the species pairing is off
 - Fix: Break open a test piece and feel the interior; if it feels cool or damp, find drier material. Try a proven species pair like cedar-on-cedar or willow-on-willow
 
-{{> fire-starting-troubleshooter }}
+### Troubleshooting Fallback
+
+| Symptom | Likely cause | Immediate response |
+| --- | --- | --- |
+| Smoke appears but no coal forms | Wood is damp, species are poorly matched, or pressure is too light | Switch to drier material, use a proven wood pair, and rebuild the notch and dust pile. |
+| Coal forms but dies during transfer | Coal is too small, tinder is coarse, or the transfer is rushed | Build a larger coal, prepare finer tinder first, and move it gently. |
+| Hands fatigue before steady smoke | Technique is inefficient or the spindle is binding | Rest, reset posture, smooth the spindle/socket contact, and use body weight instead of arm strain. |
+| The setup keeps slipping | Spindle ends, socket, or board hole are uneven or worn | Reshape contact points or start a fresh hole before continuing. |
+| Conditions are windy, wet, or unsafe | Environment is working against the method | Stop the attempt and use a safer backup ignition method or wait for a controlled setting. |
+
+If repeated attempts create fatigue, burns, spreading embers, or unsafe wind
+conditions, stop practicing and secure the site before trying again.
 
 :::tip
 Success at friction fire comes from rhythm and confidence. The first few attempts will likely fail, but by attempt 5–10, most people develop the muscle memory and intuition to succeed consistently. Keep practicing, and don't give up if the coal doesn't form immediately.

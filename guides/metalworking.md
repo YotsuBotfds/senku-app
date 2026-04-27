@@ -1631,4 +1631,23 @@ Always prioritize safety. Start with cold work where the worst risk is a crushed
 
 </section>
 
-{{> metalworking-troubleshooter }}
+<section id="metalworking-troubleshooter-fallback">
+
+## Forge Troubleshooting Quick Reference
+
+The detailed forge troubleshooter above is the primary diagnostic path. Use
+this static fallback to decide what to check first before changing the setup.
+
+| Symptom | Check first | Conservative response |
+| --- | --- | --- |
+| Fire will not start | Fuel dryness, fuel size, air inlet, and bellows airflow | Dry or replace fuel, clear obvious airflow blockage, and restart from small kindling. |
+| Fire burns but stays weak | Fuel type, fuel depth, clinker or ash buildup, and air leaks | Clean the fire pot, restore steady air, and use known suitable fuel before continuing. |
+| Metal heats unevenly | Workpiece size, placement, soak time, and whether the fire surrounds the work | Reposition the work and slow down; do not force shaping if only the surface is hot. |
+| Metal sparks, crumbles, or looks overheated | Material identity and heating time | Stop heating that piece, let it cool safely, and confirm material before trying again. |
+| Bellows, tuyere, or forge structure seems damaged | Visible leaks, loose parts, blocked passages, or unstable supports | Stop hot work until the forge owner repairs or replaces the faulty part. |
+
+When the problem involves unknown alloy, repeated overheating, unstable forge
+structure, fire spread, or injury risk, stop the session and move to a safer
+cold-work or qualified-owner path.
+
+</section>
