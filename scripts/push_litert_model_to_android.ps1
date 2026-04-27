@@ -3,6 +3,7 @@ param(
     [string]$ModelPath = "",
     [string]$PackageName = "com.senku.mobile",
     [string]$RemoteTempDir = "/data/local/tmp/senku_litert_model_push",
+    [string]$SummaryPath = "",
     [switch]$DryRun,
     [switch]$SkipDataSpaceCheck,
     [switch]$RestartApp,
@@ -17,9 +18,6 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $adb = Join-Path $env:LOCALAPPDATA "Android\Sdk\platform-tools\adb.exe"
-if (-not (Test-Path $adb)) {
-    throw "adb not found at $adb"
-}
 
 function Invoke-AdbChecked {
     param(
@@ -198,6 +196,7 @@ if ($DryRun) {
     $modelGiB = [Math]::Round(($modelBytes / 1GB), 2)
     $requiredBytes = ($modelBytes * 2L) + 67108864L
     $requiredGiB = [Math]::Round(($requiredBytes / 1GB), 2)
+    $fixedFourEmulatorStopLine = "fixed four-emulator posture matrix: 5556 phone portrait; 5560 phone landscape; 5554 tablet portrait; 5558 tablet landscape"
 
     Write-Host "LiteRT model push dry run; no emulator/device commands will be run and no bytes will be transferred."
     Write-Host "Device: $Device"
@@ -209,7 +208,34 @@ if ($DryRun) {
     Write-Host "Free-space check posture: real push requires about ${requiredGiB} GiB free on /data unless -SkipDataSpaceCheck is set."
     Write-Host "SkipDataSpaceCheck posture: $([bool]$SkipDataSpaceCheck)"
     Write-Host "Transfer posture: skipped by -DryRun."
+
+    if (-not [string]::IsNullOrWhiteSpace($SummaryPath)) {
+        $summary = [ordered]@{
+            non_acceptance_evidence = $true
+            acceptance_evidence = $false
+            dry_run = $true
+            model_path = $resolvedModelPath
+            model_bytes = $modelBytes
+            model_gib = $modelGiB
+            required_staging_bytes = $requiredBytes
+            required_staging_gib = $requiredGiB
+            skip_data_space_check = [bool]$SkipDataSpaceCheck
+            transfer_skipped = $true
+            fixed_four_emulator_stop_line = $fixedFourEmulatorStopLine
+        }
+        $resolvedSummaryPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($SummaryPath)
+        $summaryDir = Split-Path -Parent $resolvedSummaryPath
+        if (-not [string]::IsNullOrWhiteSpace($summaryDir)) {
+            New-Item -ItemType Directory -Force -Path $summaryDir | Out-Null
+        }
+        $summary | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $resolvedSummaryPath -Encoding UTF8
+        Write-Host "Dry-run summary: $resolvedSummaryPath"
+    }
     return
+}
+
+if (-not (Test-Path $adb)) {
+    throw "adb not found at $adb"
 }
 
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("senku_litert_model_push_" + [guid]::NewGuid().ToString("N"))

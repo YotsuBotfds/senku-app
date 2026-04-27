@@ -27,14 +27,17 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
         self.assertIn("would_launch_emulators = $false", self.script)
         self.assertIn("managed_devices_launched = $false", self.script)
         self.assertIn("acceptance_evidence = $false", self.script)
-        self.assertIn('$expectedDevices = @("senkuPhoneApi30", "senkuTabletApi30")', self.script)
-        self.assertIn('"android-app/app/build/outputs/androidTest-results/managedDevice/senkuPhoneApi30"', self.script)
-        self.assertIn('"android-app/app/build/reports/androidTests/managedDevice/senkuTabletApi30"', self.script)
-        self.assertIn('$expectedTestTarget = ":app:$taskName"', self.script)
+        self.assertIn("function Parse-ManagedDeviceScaffold", self.script)
+        self.assertIn("function Expand-ArtifactRoots", self.script)
+        self.assertIn("function Build-ExpectedGradleTaskNames", self.script)
+        self.assertIn("agp_plugin_version", self.script)
+        self.assertIn("configured_device_names", self.script)
+        self.assertIn("configured_device_api_levels", self.script)
+        self.assertIn("configured_device_image_sources", self.script)
+        self.assertIn("managed_device_scaffold", self.script)
+        self.assertIn("smoke_group", self.script)
+        self.assertIn("expected_artifact_roots", self.script)
         self.assertIn('$plannedTaskInventoryCommand = ".\\gradlew.bat :app:tasks --all $managedDeviceProperty --console=plain"', self.script)
-        self.assertIn('":app:senkuPhoneApi30DebugAndroidTest"', self.script)
-        self.assertIn('":app:senkuTabletApi30DebugAndroidTest"', self.script)
-        self.assertIn('":app:senkuManagedSmokeGroupDebugAndroidTest"', self.script)
         self.assertIn('$comparisonBaseline = "fixed_four_emulator_matrix"', self.script)
         self.assertIn("fixed four-emulator evidence remains primary", self.script)
         self.assertIn('$summaryJsonPath = Join-Path $resolvedOutputDir "summary.json"', self.script)
@@ -116,6 +119,32 @@ class AndroidManagedDeviceSmokeContractTests(unittest.TestCase):
                     ":app:senkuTabletApi30DebugAndroidTest",
                     ":app:senkuManagedSmokeGroupDebugAndroidTest",
                 ],
+            )
+            self.assertIn("managed_device_scaffold", summary)
+            scaffold = summary["managed_device_scaffold"]
+            self.assertEqual(scaffold.get("agp_plugin_version"), "8.2.1")
+            self.assertEqual(scaffold.get("smoke_group"), "senkuManagedSmoke")
+            self.assertEqual(scaffold.get("configured_device_names"), ["senkuPhoneApi30", "senkuTabletApi30"])
+            self.assertEqual(scaffold.get("configured_device_api_levels"), [30, 30])
+            self.assertEqual(scaffold.get("configured_device_image_sources"), ["aosp", "aosp"])
+            self.assertEqual(scaffold.get("smoke_group_devices"), ["senkuPhoneApi30", "senkuTabletApi30"])
+            self.assertEqual(
+                scaffold.get("expected_gradle_task_names"),
+                summary["expected_gradle_task_names"],
+            )
+            self.assertEqual(
+                scaffold.get("expected_artifact_roots"),
+                summary["expected_artifact_roots"],
+            )
+            configured_devices = scaffold.get("configured_devices", [])
+            self.assertEqual(len(configured_devices), 2)
+            self.assertEqual(
+                configured_devices[0],
+                {"name": "senkuPhoneApi30", "api_level": 30, "image_source": "aosp"},
+            )
+            self.assertEqual(
+                configured_devices[1],
+                {"name": "senkuTabletApi30", "api_level": 30, "image_source": "aosp"},
             )
             self.assertIn("-Psenku.enableManagedDevices=true", summary["planned_command"])
             self.assertIn(":app:senkuManagedSmoke", summary["planned_command"])

@@ -58,6 +58,12 @@ REQUIRED_NON_ACCEPTANCE_TOOLING_FIELDS: dict[str, type | tuple[type, ...]] = {
     "stop_line": str,
 }
 
+REQUIRED_PLAN_ONLY_PREFLIGHT_FIELDS: dict[str, type | tuple[type, ...]] = {
+    "preflight_only": bool,
+    "non_acceptance_evidence": bool,
+    "acceptance_evidence": bool,
+}
+
 REQUIRED_FTS_FALLBACK_WRAPPER_FIELDS: dict[str, type | tuple[type, ...]] = {
     "runtime_evidence": str,
     "passed_count": int,
@@ -170,15 +176,60 @@ def _validate_non_acceptance_tooling_summary(data: dict[str, Any]) -> list[str]:
     if data.get("dry_run") is not True:
         errors.append("expected root.dry_run to be true")
 
-    comparison_baseline = data.get("comparison_baseline")
-    primary_evidence = data.get("primary_evidence")
-    if comparison_baseline != FIXED_FOUR_EMULATOR_MATRIX and primary_evidence != FIXED_FOUR_EMULATOR_MATRIX:
-        errors.append(
-            "expected root.comparison_baseline or root.primary_evidence "
-            f"to be {FIXED_FOUR_EMULATOR_MATRIX!r}"
-        )
+    _validate_non_acceptance_evidence_marker(data, errors)
 
     return errors
+
+
+def _has_preflight_or_plan_only_marker(data: dict[str, Any]) -> bool:
+    if data.get("preflight_only") is True or data.get("plan_only") is True:
+        return True
+
+    intent = data.get("migration_checklist_intent")
+    return isinstance(intent, dict) and (
+        intent.get("preflight_only") is True or intent.get("plan_only") is True
+    )
+
+
+def _validate_non_acceptance_evidence_marker(data: dict[str, Any], errors: list[str]) -> None:
+    comparison_baseline = data.get("comparison_baseline")
+    primary_evidence = data.get("primary_evidence")
+    if (
+        comparison_baseline != FIXED_FOUR_EMULATOR_MATRIX
+        and primary_evidence != FIXED_FOUR_EMULATOR_MATRIX
+        and not _has_preflight_or_plan_only_marker(data)
+    ):
+        errors.append(
+            "expected root.comparison_baseline or root.primary_evidence "
+            f"to be {FIXED_FOUR_EMULATOR_MATRIX!r}, or an explicit preflight/plan-only marker"
+        )
+
+
+def _validate_plan_only_preflight_summary(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for key, expected_type in REQUIRED_PLAN_ONLY_PREFLIGHT_FIELDS.items():
+        _expect(data, key, expected_type, errors, "root")
+
+    if data.get("preflight_only") is not True:
+        errors.append("expected root.preflight_only to be true")
+    if data.get("non_acceptance_evidence") is not True:
+        errors.append("expected root.non_acceptance_evidence to be true")
+    if data.get("acceptance_evidence") is not False:
+        errors.append("expected root.acceptance_evidence to be false")
+    if not _has_preflight_or_plan_only_marker(data):
+        errors.append("expected an explicit preflight/plan-only marker")
+
+    _validate_non_acceptance_evidence_marker(data, errors)
+
+    return errors
+
+
+def _is_plan_only_preflight_summary(data: dict[str, Any]) -> bool:
+    return (
+        "preflight_only" in data
+        or "plan_only" in data
+        or _has_preflight_or_plan_only_marker(data)
+    ) and "dry_run" not in data
 
 
 def _validate_str_list(value: Any, errors: list[str], scope: str) -> None:
@@ -237,6 +288,8 @@ def validate_summary(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
         return data, _validate_fts_fallback_wrapper_summary(data)
 
     if any(key in data for key in ("non_acceptance_evidence", "acceptance_evidence", "dry_run")):
+        if _is_plan_only_preflight_summary(data):
+            return data, _validate_plan_only_preflight_summary(data)
         return data, _validate_non_acceptance_tooling_summary(data)
 
     errors: list[str] = []
@@ -269,7 +322,12 @@ def main(argv: list[str] | None = None) -> int:
 
     assert data is not None
     print("android_migration_summary: ok")
-    if data.get("non_acceptance_evidence") is True:
+    if data.get("non_acceptance_evidence") is True and _has_preflight_or_plan_only_marker(data):
+        print("evidence: non_acceptance")
+        print("preflight_only: true")
+        print(f"selected_roles: {len(data.get('selected_roles', []))}")
+        print(f"devices: {len(data.get('devices', []))}")
+    elif data.get("non_acceptance_evidence") is True:
         print(f"status: {data.get('status')}")
         print("evidence: non_acceptance")
         print(f"primary_evidence: {data.get('primary_evidence')}")

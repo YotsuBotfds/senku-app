@@ -59,12 +59,27 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build_android_ui_state_pack_p
   -SkipHostStates
 ```
 
+Plan-only artifact shape:
+- `plan.json` is written under the selected output root and dated run folder.
+- `preflight_only=true`, `plan_only=true`, `non_acceptance_evidence=true`,
+  and `acceptance_evidence=false` mark it as planning output only.
+- `migration_checklist_intent` repeats selected roles, host model identity,
+  host/skip flags, parallelism, and the same preflight/non-acceptance fields.
+- `launchers` records the per-role commands that would be started by a real
+  state-pack run.
+
 Replay the current Android FTS4 fallback proof. This is fallback-path emulator evidence, not FTS5 runtime proof:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\run_android_fts_fallback_matrix.ps1 `
   -OutputDir artifacts\bench\android_fts_fallback_matrix_current
 ```
+
+FTS fallback artifact shape:
+- `summary.json` remains the machine-readable matrix result.
+- `summary.md` is the concise reviewer summary with
+  `runtime_evidence=fts4_fallback`, `not_fts5_runtime_proof=true`, device
+  counts, lock posture, adb version, and the paired `summary.json` path.
 
 Optional Gradle Managed Devices tasks are hidden behind an explicit property
 gate:
@@ -315,6 +330,13 @@ before copying it into the app's internal `files/models/` directory. It now
 preflights `/data` free space and fails early when the device cannot hold both
 copies. Use `-SkipDataSpaceCheck` only when you have already verified enough
 space or are intentionally testing the failure path.
+
+Use `-DryRun` to review the LiteRT push posture without touching a device. It
+prints device, package, resolved model path/size, app target path, tmp staging
+requirement, `/data` free-space requirement, `-SkipDataSpaceCheck` posture, and
+`Transfer posture: skipped by -DryRun.` Add `-SummaryPath` only when you want a
+machine-readable non-acceptance dry-run summary. It does not emit an acceptance
+artifact and does not replace fixed four-emulator evidence.
 
 If `-ModelPath` is omitted, the helper looks for these common names in repo root, `models\`, and `Downloads`:
 

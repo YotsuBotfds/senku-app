@@ -208,10 +208,25 @@ audit. Capture:
   multi-role sweeps when role filters or host flags changed. The plan mode
   writes a JSON plan with selected roles, device metadata, skip flags, and
   per-role launcher commands without building, installing, starting role jobs,
-  or finalizing a pack.
+  or finalizing a pack. Its `plan.json` includes `preflight_only=true`,
+  `plan_only=true`, `non_acceptance_evidence=true`,
+  `acceptance_evidence=false`, and `migration_checklist_intent` with the
+  selected roles, host model identity, host/skip flags, parallelism, and the
+  same non-acceptance posture fields.
 - `run_android_fts_fallback_matrix.ps1` now runs under the normal harness
   controls: resolved SDK adb path, per-device locks for real runs, and
-  `stop_android_harness_runs.ps1` coverage.
+  `stop_android_harness_runs.ps1` coverage. It writes both `summary.json` and
+  `summary.md`; the markdown rollup is a concise FTS4 fallback reviewer
+  surface with `runtime_evidence=fts4_fallback`,
+  `not_fts5_runtime_proof=true`, device counts, lock posture, adb version, and
+  the paired JSON path.
+- `push_litert_model_to_android.ps1 -DryRun` is a no-device preflight. It
+  reports the resolved device/package/model target, tmp staging requirement,
+  `/data` free-space requirement, `-SkipDataSpaceCheck` posture, and
+  `Transfer posture: skipped by -DryRun.` When `-SummaryPath` is provided, it
+  writes a machine-readable non-acceptance dry-run summary. It transfers no
+  bytes, writes no acceptance artifact, and remains subordinate to fixed
+  four-emulator evidence.
 - Android Gradle dependency verification is enabled and includes the detached
   Android lint tool dependencies, but `:app:lintDebug` is still blocked by
   existing lint/code compatibility findings. Do not treat lint as a green

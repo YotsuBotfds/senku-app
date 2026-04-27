@@ -56,6 +56,40 @@ def make_non_acceptance_tooling_summary() -> dict:
     }
 
 
+def make_plan_only_preflight_summary() -> dict:
+    return {
+        "run_id": "20260427_122409",
+        "output_root": "artifacts\\bench\\android_planonly_probe_integrator",
+        "preflight_only": True,
+        "plan_only": True,
+        "non_acceptance_evidence": True,
+        "acceptance_evidence": False,
+        "will_build": False,
+        "will_install": False,
+        "will_start_role_jobs": False,
+        "will_finalize": False,
+        "selected_roles": ["phone_portrait", "tablet_landscape"],
+        "devices": [
+            {
+                "role": "phone_portrait",
+                "device": "emulator-5556",
+                "orientation": "portrait",
+            },
+            {
+                "role": "tablet_landscape",
+                "device": "emulator-5558",
+                "orientation": "landscape",
+            },
+        ],
+        "migration_checklist_intent": {
+            "selected_roles": ["phone_portrait", "tablet_landscape"],
+            "acceptance_evidence": False,
+            "non_acceptance_evidence": True,
+            "preflight_only": True,
+        },
+    }
+
+
 def make_fts_fallback_wrapper_summary() -> dict:
     return {
         "passed_count": 4,
@@ -105,6 +139,17 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data["status"], "dry_run_only")
 
+    def test_valid_plan_only_preflight_summary_passes_without_dry_run_or_stop_line(self):
+        summary = make_plan_only_preflight_summary()
+
+        data, errors = validate_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
+        self.assertIsNotNone(data)
+        self.assertTrue(data["preflight_only"])
+        self.assertNotIn("dry_run", data)
+        self.assertNotIn("stop_line", data)
+
     def test_valid_fts_fallback_wrapper_summary_passes(self):
         data, errors = validate_summary(self.write_summary(make_fts_fallback_wrapper_summary()))
 
@@ -151,6 +196,40 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
 
         self.assertIn("expected root.acceptance_evidence to be false", errors)
 
+    def test_plan_only_preflight_summary_rejects_acceptance_evidence(self):
+        summary = make_plan_only_preflight_summary()
+        summary["acceptance_evidence"] = True
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.acceptance_evidence to be false", errors)
+
+    def test_plan_only_preflight_summary_requires_explicit_marker_without_fixed_four(self):
+        summary = make_plan_only_preflight_summary()
+        del summary["plan_only"]
+        summary["preflight_only"] = False
+        summary["migration_checklist_intent"]["preflight_only"] = False
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.preflight_only to be true", errors)
+        self.assertIn("expected an explicit preflight/plan-only marker", errors)
+        self.assertIn(
+            "expected root.comparison_baseline or root.primary_evidence "
+            "to be 'fixed_four_emulator_matrix', or an explicit preflight/plan-only marker",
+            errors,
+        )
+
+    def test_dry_run_non_acceptance_still_requires_dry_run_and_stop_line(self):
+        summary = make_non_acceptance_tooling_summary()
+        del summary["dry_run"]
+        del summary["stop_line"]
+
+        _, errors = validate_summary(self.write_summary(summary))
+
+        self.assertIn("missing root.dry_run", errors)
+        self.assertIn("missing root.stop_line", errors)
+
     def test_non_acceptance_tooling_summary_requires_fixed_four_baseline(self):
         summary = make_non_acceptance_tooling_summary()
         summary["comparison_baseline"] = "managed_device_smoke"
@@ -160,7 +239,7 @@ class ValidateAndroidMigrationSummaryTests(unittest.TestCase):
 
         self.assertIn(
             "expected root.comparison_baseline or root.primary_evidence "
-            "to be 'fixed_four_emulator_matrix'",
+            "to be 'fixed_four_emulator_matrix', or an explicit preflight/plan-only marker",
             errors,
         )
 

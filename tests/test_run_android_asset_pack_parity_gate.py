@@ -142,10 +142,54 @@ class RunAndroidAssetPackParityGateTests(unittest.TestCase):
                 str(output),
             )
 
-            report = json.loads(output.read_text(encoding="utf-8"))
+            report = json.loads(output.read_text(encoding="utf-8-sig"))
 
         self.assertIn("Android asset-pack parity report written", result.stdout)
-        self.assertEqual(report["candidate"]["sqlite_counts"]["answer_cards"], 3)
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["baseline_pack_dir"], str(baseline))
+        self.assertEqual(report["candidate_pack_dir"], str(candidate))
+        self.assertEqual(report["output"], str(output))
+        self.assertTrue(report["fail_on_mismatch"])
+        self.assertFalse(report["dry_run"])
+        self.assertTrue(report["non_acceptance_evidence"])
+        self.assertFalse(report["acceptance_evidence"])
+        self.assertEqual(report["comparison_baseline"], "fixed_four_emulator_matrix")
+        self.assertEqual(report["primary_evidence"], "fixed_four_emulator_matrix")
+        self.assertIn("fixed four-emulator evidence remains primary", report["stop_line"])
+        self.assertEqual(report["candidate_highlights"]["sqlite_counts"]["answer_cards"], 3)
+        self.assertEqual(
+            report["count_deltas"],
+            [{"name": "answer_cards", "baseline": 2, "candidate": 3, "delta": 1}],
+        )
+
+    def test_real_gate_writes_fail_wrapper_before_returning_failure(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            baseline = Path(tmpdir) / "baseline"
+            candidate = Path(tmpdir) / "candidate"
+            output = Path(tmpdir) / "report.json"
+            write_pack(baseline, 3)
+            write_pack(candidate, 2)
+
+            result = self.run_script(
+                "-BaselinePackDir",
+                str(baseline),
+                "-CandidatePackDir",
+                str(candidate),
+                "-Output",
+                str(output),
+                check=False,
+            )
+
+            report = json.loads(output.read_text(encoding="utf-8-sig"))
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(report["status"], "fail")
+        self.assertTrue(report["fail_on_mismatch"])
+        self.assertEqual(report["candidate_highlights"]["sqlite_counts"]["answer_cards"], 2)
+        self.assertEqual(
+            report["count_deltas"],
+            [{"name": "answer_cards", "baseline": 3, "candidate": 2, "delta": -1}],
+        )
 
     def test_parser_gate_passes(self):
         result = subprocess.run(
