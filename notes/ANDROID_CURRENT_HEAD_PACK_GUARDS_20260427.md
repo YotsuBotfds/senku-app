@@ -95,6 +95,40 @@ Fresh direct proof, 2026-04-27 00:40 CT:
   `AnswerCardRuntimeAllowlistCurrentHeadTest`, and
   `PackMigrationInstallTest` passed: `OK (3 tests)`.
 
+Repaired lane evidence, 2026-04-27 00:48-00:49 CT:
+
+- `emulator-5554` install-probe artifact
+  `artifacts/android_current_head_guard_install_probe_5554/summary.json`
+  reports `status=pass`, `platform_anr=null`, requested portrait settled, and
+  instrumentation `OK (1 test)`. Direct current-head guard proof also passed:
+  `OK (3 tests)`.
+- `emulator-5558` install-probe artifact
+  `artifacts/android_current_head_guard_install_probe_5558/summary.json`
+  reports `status=pass`, `platform_anr=null`, requested portrait settled, and
+  instrumentation `OK (1 test)`. Direct current-head guard proof also passed:
+  `OK (3 tests)`.
+- `emulator-5560` has an install-probe artifact at
+  `artifacts/android_current_head_guard_install_probe_5560/summary.json`, but
+  it records `platform_anr` from the Android System UI dialog. After the pack
+  was re-pushed separately, direct current-head guard proof passed:
+  `OK (3 tests)`. Do not count this as clean phone-landscape UI proof; it only
+  proves the installed pack and guard classes.
+
+Matrix state-pack evidence, 2026-04-27 00:51-00:54 CT:
+
+- Four-role state pack:
+  `artifacts/ui_state_pack_current_head_20260427_matrix/20260427_005131/`.
+- Rollup status: `partial`; pass count `31 / 45`.
+- `phone_portrait` on `emulator-5556`: `11 / 11`.
+- `tablet_portrait` on `emulator-5554`: `10 / 11`; only
+  `searchResultsLinkedGuideHandoffOpensLinkedGuideDetail` failed because the
+  destination page did not preserve cross-reference context.
+- `tablet_landscape` on `emulator-5558`: `10 / 11`; same linked-guide handoff
+  context failure.
+- `phone_landscape` on `emulator-5560`: `0 / 12`; blocked by System UI ANR and
+  early instrumentation failures. Treat this as a lane/platform blocker, not a
+  current-head pack failure.
+
 ## Guard Classes
 
 - `AnswerCardCurrentHeadPackCensusTest`: inventory, required fields,

@@ -10,6 +10,7 @@ WINDOWS_VALIDATION_PATH = REPO_ROOT / "scripts" / "run_windows_validation.ps1"
 ANDROID_PROMPT_PATH = REPO_ROOT / "scripts" / "run_android_prompt.ps1"
 ANDROID_SMOKE_PATH = REPO_ROOT / "scripts" / "run_android_instrumented_ui_smoke.ps1"
 ANDROID_UI_STATE_PACK_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack.ps1"
+ANDROID_UI_STATE_PACK_PARALLEL_PATH = REPO_ROOT / "scripts" / "build_android_ui_state_pack_parallel.ps1"
 ANDROID_WRAPPER_SMOKE_PATHS = (
     "scripts\\run_android_instrumented_ui_smoke.ps1",
     "scripts\\run_android_prompt.ps1",
@@ -121,6 +122,28 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("[switch]$SkipHostStates", script)
         self.assertIn("[string[]]$RoleFilter = @()", script)
         self.assertIn('[string]$RunId = ""', script)
+        self.assertIn('$deviceMatrix = @($deviceMatrix | Where-Object { $normalizedRoleFilter -contains $_.role })', script)
+        self.assertIn('throw "RoleFilter did not match any device roles."', script)
+        self.assertIn('if ($SkipHostStates -and $state.host) {', script)
+        self.assertIn('host_states_included = (-not $SkipHostStates)', script)
+
+    def test_android_ui_state_pack_parallel_forwards_role_slices_and_skip_host_states(self):
+        script = ANDROID_UI_STATE_PACK_PARALLEL_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('[switch]$SkipHostStates', script)
+        self.assertIn('$roles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")', script)
+        self.assertIn('-RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4}', script)
+        self.assertIn("$(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })", script)
+        self.assertIn("-FinalizeOnly -SkipBuild", script)
+
+    def test_android_smoke_remains_single_device_entrypoint_for_state_pack_slices(self):
+        script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn('[string]$Device = "RFCX607ZM8L"', script)
+        self.assertIn("Acquire-DeviceLock -DeviceName $Device", script)
+        self.assertIn('$artifactDir = Join-Path $repoRoot (Join-Path $ArtifactRoot (Join-Path $timestamp $Device))', script)
+        self.assertNotIn("RunAllDevices", script)
+        self.assertNotIn("adb devices", script)
 
     def test_android_prompt_accepts_orientation_contract(self):
         script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")

@@ -128,8 +128,17 @@ Result:
 - `OK (1 test)`
 - wrapper `status=pass`
 - `installed_pack.counts.answer_cards=271`
+- `installed_pack.generated_at=2026-04-27T04:21:12.533181+00:00`
+- APK SHA
+  `87648dceeddbf5238d0ce93985cedad88242352ed172c75dabb9dbead06c6be3`
 - `platform_anr=null`
 - `artifact_expectations_met=true`
+- phone portrait UI state proof:
+  `device_facts.resolved_role=phone`, `current_orientation=portrait`,
+  `rotation_matches_requested=true`
+- first screenshot:
+  `screenshots/scriptedPromptFlowCompletes__prompt_detail.png`, `1080x2400`,
+  `orientation_matches_requested=true`
 - screenshot count: `1`
 - dump count: `1`
 
