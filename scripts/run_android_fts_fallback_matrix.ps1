@@ -113,6 +113,35 @@ function Write-JsonFile {
     $Value | ConvertTo-Json -Depth 8 | Set-Content -Path $Path -Encoding UTF8
 }
 
+function Get-HostAdbPlatformToolsVersion {
+    param([switch]$DryRun)
+
+    if ($DryRun) {
+        return "dry_run"
+    }
+
+    $result = Invoke-AndroidAdbCommandCapture -AdbPath $adb -Arguments @("version") -TimeoutMilliseconds 10000
+    if ($result.exit_code -ne 0 -or [string]::IsNullOrWhiteSpace([string]$result.output)) {
+        return $null
+    }
+
+    $lines = @(([string]$result.output -split "`r?`n") | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $platformToolsLine = @($lines | Where-Object { $_ -match "^Version\s+(.+)$" } | Select-Object -First 1)
+    if ($platformToolsLine.Count -gt 0 -and $platformToolsLine[0] -match "^Version\s+(.+)$") {
+        return $Matches[1]
+    }
+
+    if ($lines.Count -eq 0) {
+        return $null
+    }
+
+    $line = $lines[0]
+    if ($line -match "Android Debug Bridge version\s+([0-9A-Za-z.\-]+)") {
+        return $Matches[1]
+    }
+    return $line
+}
+
 function Acquire-DeviceLock {
     param([string]$Device)
 
@@ -125,6 +154,7 @@ function Acquire-DeviceLock {
 
 $resolvedOutputDir = Resolve-TargetPath -Path $OutputDir
 New-Item -ItemType Directory -Path $resolvedOutputDir -Force | Out-Null
+$hostAdbPlatformToolsVersion = Get-HostAdbPlatformToolsVersion -DryRun:$DryRun
 
 $deviceResults = @()
 foreach ($device in @($Devices)) {
@@ -150,6 +180,7 @@ foreach ($device in @($Devices)) {
         runtime_evidence = $runtimeEvidence
         dry_run = [bool]$DryRun
         device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
+        host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
         started_at_utc = $startedAt.ToString("o")
         finished_at_utc = $finishedAt.ToString("o")
         command = $runResult.command
@@ -171,6 +202,7 @@ $summary = [pscustomobject]@{
     runtime_evidence = $runtimeEvidence
     dry_run = [bool]$DryRun
     device_lock_used = [bool](-not $DryRun -and -not $SkipDeviceLock)
+    host_adb_platform_tools_version = $hostAdbPlatformToolsVersion
     device_count = @($deviceResults).Count
     devices = @($deviceResults | ForEach-Object { $_.device })
     results = $deviceResults

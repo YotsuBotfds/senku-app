@@ -77,7 +77,8 @@ Use this as the first stop for Android parity and mobile-pack work.
   lanes; defaults remain unchanged, and `-WhatIf` output now prints the
   concrete emulator arguments.
 - `run_android_fts_fallback_matrix.ps1` now uses the resolved SDK adb path,
-  records `device_lock_used`, and participates in `stop_android_harness_runs.ps1`.
+  records `device_lock_used` plus `host_adb_platform_tools_version`, and
+  participates in `stop_android_harness_runs.ps1`.
 
 ## Current artifact baseline
 
