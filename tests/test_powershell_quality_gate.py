@@ -225,6 +225,17 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertNotIn('files/models/*.litertlm', script)
         self.assertNotIn('files/models/*.task', script)
 
+    def test_android_fts_probe_handles_missing_host_tables(self):
+        script = (REPO_ROOT / "scripts" / "android_fts5_probe.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("function Normalize-DeviceArguments", script)
+        self.assertIn('[string]$serial -split ","', script)
+        self.assertIn("$Devices = Normalize-DeviceArguments -Serials $Devices", script)
+        self.assertIn('$hostTables = @()', script)
+        self.assertIn('$hostProbe.PSObject.Properties.Name -contains "tables"', script)
+        self.assertIn('hostPackContainsFts5Schema = @($hostTables | Where-Object', script)
+        self.assertIn('hostPackContainsFts4Schema = @($hostTables | Where-Object', script)
+
     def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
 

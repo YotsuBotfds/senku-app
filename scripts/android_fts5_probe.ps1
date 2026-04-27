@@ -113,6 +113,21 @@ function Get-ConnectedDevices {
     return $devices
 }
 
+function Normalize-DeviceArguments {
+    param([string[]]$Serials)
+
+    $normalized = New-Object System.Collections.Generic.List[string]
+    foreach ($serial in @($Serials)) {
+        foreach ($piece in ([string]$serial -split ",")) {
+            $trimmed = $piece.Trim()
+            if (-not [string]::IsNullOrWhiteSpace($trimmed)) {
+                $normalized.Add($trimmed)
+            }
+        }
+    }
+    return $normalized.ToArray()
+}
+
 function Order-Devices {
     param([string[]]$Serials)
 
@@ -473,6 +488,7 @@ if (-not $Devices -or $Devices.Count -eq 0) {
     }
     $Devices = Order-Devices -Serials $connectedDevices
 } else {
+    $Devices = Normalize-DeviceArguments -Serials $Devices
     $Devices = Order-Devices -Serials $Devices
 }
 
@@ -480,6 +496,10 @@ $outputDirectory = Get-OutputDirectory -RepoRoot $repoRoot -RequestedOutputRoot 
 New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
 
 $hostProbe = Get-HostPackProbe -PythonPath $pythonPath -SqlitePath $HostSqlitePath
+$hostTables = @()
+if ($hostProbe.PSObject.Properties.Name -contains "tables") {
+    $hostTables = @($hostProbe.tables)
+}
 $deviceProbes = @()
 foreach ($device in $Devices) {
     $deviceProbes += Get-DeviceProbe -AdbPath $adbPath -Device $device -PackageName $PackageName -LaunchActivity $LaunchActivity -LaunchQuery $LaunchQuery -LaunchWaitSeconds $LaunchWaitSeconds -OutputDirectory $outputDirectory
@@ -500,8 +520,8 @@ $summary = [pscustomobject]@{
     devices = $deviceProbes
     conclusion = [pscustomobject]@{
         testedDeviceCount = $deviceProbes.Count
-        hostPackContainsFts5Schema = @($hostProbe.tables | Where-Object { $_.name -eq "lexical_chunks_fts" }).Count -gt 0
-        hostPackContainsFts4Schema = @($hostProbe.tables | Where-Object { $_.name -eq "lexical_chunks_fts4" }).Count -gt 0
+        hostPackContainsFts5Schema = @($hostTables | Where-Object { $_.name -eq "lexical_chunks_fts" }).Count -gt 0
+        hostPackContainsFts4Schema = @($hostTables | Where-Object { $_.name -eq "lexical_chunks_fts4" }).Count -gt 0
         anyDeviceReportsFts5 = $fts5PositiveDevices.Count -gt 0
         allTestedDevicesMarkedAppUnavailable = $deviceProbes.Count -gt 0 -and $appUnavailableDevices.Count -eq $deviceProbes.Count
         authoritativeForTestedRuntime = $authoritativeDevices.Count -eq $deviceProbes.Count
