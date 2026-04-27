@@ -34,7 +34,6 @@ import static com.senku.ui.search.SearchResultCardKt.bindSearchResultCard;
 import static com.senku.ui.search.SearchResultCardKt.buildWarmThreadGuideIds;
 import static com.senku.ui.search.SearchResultCardKt.continueConversationContentDescription;
 import static com.senku.ui.search.SearchResultCardKt.laneLabelForRetrievalMode;
-import static com.senku.ui.search.SearchResultCardKt.relatedGuideContentDescription;
 
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
@@ -262,7 +261,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         applyBadgeStyle(
             cue,
             usePreviewLineAction
-                ? "Related guide"
+                ? "Guide connection"
                 : buildCompactLinkedGuideCueLabel(preview, compactLinkedCue),
             guideColor
         );
@@ -390,31 +389,45 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildCompactLinkedGuideCueLabel(LinkedGuidePreview preview, boolean compactLinkedCue) {
         if (preview == null) {
-            return "Related guide";
+            return "Guide connection";
         }
         String guideId = safe(preview.guideId).trim();
         if (!guideId.isEmpty()) {
             if (compactLinkedCue) {
-                return "Related guide";
+                return "Guide connection";
             }
             return cleanDisplayText(
-                "Related guide " + guideId,
+                "Linked guide " + guideId,
                 20
             );
         }
         String label = buildLinkedGuidePreviewLabel(preview);
         if (!label.isEmpty()) {
-            return "Related guide";
+            return "Guide connection";
         }
-        return "Related guide";
+        return "Guide connection";
     }
 
     private String buildLinkedGuideAvailableDescription(String actionLabel) {
-        return "Related guide available: " + safe(actionLabel).trim();
+        return buildLinkedGuideAvailableDescriptionForTest(actionLabel);
     }
 
     private String buildLinkedGuideOpenDescription(String actionLabel) {
-        return relatedGuideContentDescription(actionLabel);
+        return buildLinkedGuideOpenDescriptionForTest(actionLabel);
+    }
+
+    static String buildLinkedGuideAvailableDescriptionForTest(String actionLabel) {
+        String label = safe(actionLabel).trim();
+        return label.isEmpty()
+            ? "Guide connection available"
+            : "Guide connection available: " + label;
+    }
+
+    static String buildLinkedGuideOpenDescriptionForTest(String actionLabel) {
+        String label = safe(actionLabel).trim();
+        return label.isEmpty()
+            ? "Open cross-reference guide"
+            : "Open cross-reference guide: " + label;
     }
 
     private void bindLinkedGuideAction(View view, SearchResult result, LinkedGuidePreview preview) {
@@ -466,9 +479,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         String laneLabel = laneLabelForRetrievalMode(safe(result == null ? null : result.retrievalMode));
         int laneColor = colorForRetrievalMode(safe(result == null ? null : result.retrievalMode).trim().toLowerCase(Locale.US));
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
-        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Related guide" : null;
+        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Guide connection" : null;
         String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
-            ? relatedGuideContentDescription(buildLinkedGuidePreviewLabel(linkedPreview))
+            ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
             : null;
         boolean showContinueThreadChip = shouldShowContinueThreadChip(result);
         return new SearchResultCardModel(
@@ -739,7 +752,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (label.isEmpty()) {
             return "";
         }
-        return "Related guide: " + label;
+        return "Linked guide: " + label;
     }
 
     private String formatSectionAnchor(String section) {

@@ -24,4 +24,16 @@ public final class SearchResultAdapterTest {
         assertEquals("Keyword match", SearchResultAdapter.displayLabelForRetrievalModeForTest("lexical"));
         assertEquals("Related guide", SearchResultAdapter.displayLabelForRetrievalModeForTest("guide-focus"));
     }
+
+    @Test
+    public void linkedGuideBrowseHandoffDescriptionsUseConnectionLanguage() {
+        assertEquals(
+            "Guide connection available: GD-214 - Water Storage",
+            SearchResultAdapter.buildLinkedGuideAvailableDescriptionForTest("GD-214 - Water Storage")
+        );
+        assertEquals(
+            "Open cross-reference guide: GD-214 - Water Storage",
+            SearchResultAdapter.buildLinkedGuideOpenDescriptionForTest("GD-214 - Water Storage")
+        );
+    }
 }
