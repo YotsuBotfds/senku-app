@@ -18,6 +18,36 @@ word_count: 4580
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: toxic_gas_identification_detection_boundary
+aliases:
+  - toxic gas exposure
+  - toxic gas smell
+  - unknown gas exposure
+  - chemical gas exposure
+  - suspected chlorine gas
+  - suspected hydrogen sulfide
+  - suspected ammonia gas
+  - suspected nitrogen dioxide
+  - suspected sulfur dioxide
+  - rotten egg gas exposure
+  - brown gas exposure
+  - yellow green gas exposure
+  - gas in confined space
+  - manure pit gas
+  - biogas toxic gas
+  - industrial toxic fumes
+routing_cues:
+  - Use for suspected toxic industrial gas exposure, unknown gas/fume complaints, toxic-gas odor or visible gas, or confined-space gas concern where people may be exposed.
+  - Lead with leaving or avoiding the area, fresh air, emergency/hazmat/poison-control handoff, symptom red flags, and whether anyone remains inside.
+  - Ask only clarifying questions that support scene safety and emergency handoff, such as location, source/process, symptoms, number of people affected, confined-space involvement, visible color/odor, timing, and whether anyone is trapped.
+  - Do not advise sniff-testing, improvised detection tests, chemical gas-generation tests, concentration thresholds as action rules, detector calibration, hazardous entry, or solo rescue in confined spaces.
+citations_required: true
+applicability: suspected toxic gas exposure or unknown industrial/chemical fumes where first-hop safety triage, fresh-air movement, symptom logging, red-flag recognition, confined-space avoidance, and emergency/hazmat/poison-control handoff are needed; not for detection-device calibration, improvised tests, gas-generation chemistry, concentration-based clearance, hazardous entry procedure, or rescue operations.
+answer_card:
+  card_id: toxic_gas_identification_detection_boundary
+  scope: boundary-only toxic-gas exposure triage, fresh-air movement, no-entry/no-sniff safety, red-flag handoff, and clarifying questions
+  runtime_citation_policy: reviewed_source_family
 ---
 
 ## Introduction to Industrial Toxic Gases

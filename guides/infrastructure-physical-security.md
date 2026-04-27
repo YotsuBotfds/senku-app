@@ -18,12 +18,52 @@ read_time: 12
 word_count: 8200
 last_updated: '2026-02-22'
 version: '1.0'
+aliases:
+  - infrastructure site safety access control
+  - physical security visitor log checklist
+  - utility site hazard observation
+  - lawful access control basics
+  - lighting locks signage checklist
+  - site safety handoff public safety
+routing_cues:
+  - Use this guide's reviewed answer card only for lawful, non-tactical site-safety and access-control boundaries: hazard observation, visitor and access logs, lighting, locks, signage, evacuation or medical coordination, incident documentation, and handoff to qualified security, facility leadership, public safety, emergency management, or medical responders.
+  - Keep routine answers focused on observable hazards, access status, posted rules, visitor accountability, basic maintenance of locks and lighting, clear routes, first-aid or evacuation coordination, and documentation for responsible authorities.
+  - Route tactical hardening, booby traps, surveillance evasion, weapons, force instructions, bypassing locks or controls, covert entry, sabotage, intrusion, or confrontation tactics away from this card.
+routing_support:
+  - "Access procedures in the guide emphasize sign-in logs, escort requirements, access schedules, emergency contact trees, and incident documentation."
+  - "Lighting and signage sections support basic visibility, safe routes, facility-hours posting, access procedures, and community transparency."
+  - "The reviewed boundary narrows this guide to lawful prevention, hazard observation, logs, coordination, and professional/public-safety handoff."
+citations_required: true
+citation_policy: cite reviewed GD-651 answer card for lawful site-safety/access-control boundaries only; do not use it for tactical hardening, booby traps, surveillance evasion, weapons, force instructions, bypassing security, covert entry, sabotage, intrusion, or confrontation tactics.
+applicability: >
+  Use for infrastructure physical-security questions where the safe answer is
+  hazard observation, visitor/access logging, basic lighting, locks and signage,
+  evacuation or medical coordination, incident documentation, and handoff to
+  qualified security, facility leadership, public safety, emergency management,
+  medical responders, or the responsible owner/operator. Do not use for tactical
+  hardening, booby traps, surveillance evasion, weapons, force instructions,
+  bypassing locks or controls, covert entry, sabotage, intrusion, or
+  confrontation tactics.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: infrastructure_physical_security_boundary
+answer_card:
+  - infrastructure_physical_security_boundary
 liability_level: high
 ---
 
 # Critical Infrastructure Physical Security
 
 Critical infrastructure — water supply systems, power generation, fuel storage, and food reserves — represents life-sustaining resources that require deliberate physical protection in disrupted scenarios. Unlike perimeter defense of a homestead, infrastructure security balances accessibility (maintenance, monitoring, legitimate use) against threat vectors including contamination, theft, sabotage, and uncontrolled disruption. This guide covers passive detection systems, access control without electronics, tamper-evident measures, and community-scale defensive architecture.
+
+## Reviewed Answer-Card Boundary: Lawful Site Safety and Access Control
+
+This is the reviewed answer-card surface for GD-651. Use it for lawful, non-tactical site-safety and access-control support: observe visible hazards from authorized areas, confirm who is allowed on site, maintain visitor and access logs, check that lighting, locks, signage, and clear routes support safe legitimate access, coordinate evacuation or medical needs when people may be at risk, and hand off unresolved threats to qualified security, facility leadership, public safety, emergency management, medical responders, or the responsible owner/operator.
+
+Routine answers should create a simple site-safety handoff log: asset or entrance involved, date and observer, access status, posted rules or warnings, visitor name and purpose when relevant, escort or staff contact, lighting or lock condition, blocked exits or unsafe routes, injuries or medical needs, evacuation status, and who received the report. Keep advice at observation, documentation, visitor accountability, basic maintenance checks, and responsible-authority routing.
+
+Immediate handoff is required for active intrusion, violence, credible threats, fire, smoke, chemical release, suspected contamination, medical emergency, blocked evacuation route, missing person, damaged lock or gate with unknown access, broken seal on critical infrastructure, or any situation where staff cannot safely account for people on site.
+
+Do not provide tactical hardening, booby traps, surveillance evasion, weapons, force instructions, ways to bypass locks, gates, cameras, alarms, seals, logs, escorts, or other security controls, covert entry methods, sabotage instructions, confrontation tactics, or advice that turns observation into an attempt to apprehend or fight someone. Preserve distance, keep people out of unsafe areas, document what is visible, and route to the responsible qualified security or public-safety authority.
 
 <section id="threat-assessment">
 
@@ -723,4 +763,3 @@ Critical infrastructure security is as much about clear procedures, trained pers
 
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
-

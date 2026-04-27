@@ -31,6 +31,13 @@ word_count: 5600
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: chemical_industrial_accident_response_boundary
+answer_card:
+  - chemical_industrial_accident_response_boundary
+citations_required: true
+runtime_citation_policy: reviewed_source_family
+applicability: chemical or industrial incident-response boundary for evacuation/shelter decisions, decontamination triage, symptom and red-flag recognition, contaminated clothing isolation, and expert/incident-command/poison-center/hazmat handoff; not chemical recipes, neutralization instructions, detection or calibration procedures, antidote protocols, exposure dose tables, re-entry clearance, legal claims, or safety certification.
 ---
 
 ## Start Here: industrial incidents and public exposure

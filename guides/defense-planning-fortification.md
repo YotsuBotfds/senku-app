@@ -7,6 +7,32 @@ difficulty: intermediate
 tags:
   - essential
   - defense
+aliases:
+  - community defense safety planning
+  - nonviolent defense planning boundary
+  - community incident handoff
+  - risk assessment access log communications evacuation coordination
+  - lawful authority handoff for community safety
+routing_cues:
+  - community safety planning risk assessment access logs communications handoff
+  - nonviolent de-escalation evacuation medical coordination lawful authority
+  - defense planning boundary without fortification tactics weapons traps or patrols
+  - community incident documentation and local authority coordination
+routing_support:
+  - Use GD-388 only for boundary-level community safety planning: risk assessment, access/incident logs, communications, evacuation and medical coordination, nonviolent de-escalation, and handoff to local lawful authority.
+  - Do not route requests for construction recipes, traps, weapons placement, force doctrine, tactical patrol plans, surveillance, targeting, engagement tactics, or offensive/violent operational planning to this reviewed card.
+citations_required: true
+citation_policy: cite reviewed GD-388 answer card only for community safety planning, documentation, communications, evacuation/medical coordination, nonviolent de-escalation, and lawful authority handoff; do not use it for fortification construction, traps, weapons placement, force doctrine, tactical patrols, surveillance, targeting, engagement tactics, or offensive planning
+applicability: >
+  Community safety planning boundary only: risk assessment, access and incident
+  logs, communications, evacuation and medical coordination, nonviolent
+  de-escalation, and handoff to local lawful authority. Not a construction,
+  weapons, tactical patrol, surveillance, targeting, force doctrine, or
+  engagement guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: defense_planning_fortification_boundary
+answer_card:
+  - defense_planning_fortification_boundary
 icon: 🏰
 description: Threat assessment frameworks, defense-in-depth strategies, fortification construction, watch rotations, rules of engagement, and integration with community survival.
 related:
@@ -36,6 +62,12 @@ liability_level: high
 Community defense is not about creating a military compound—it is about protecting your group's survival through intelligent planning, layered barriers, and clear protocols. Whether your community faces organized raiders, desperate individuals, wildlife threats, or environmental hazards, defense begins with assessment and preparation, not weaponry.
 
 This guide covers the legal, ethical, and practical foundations of community defense that align with most jurisdictions' self-defense laws and realistic threat scenarios in resource-constrained environments.
+
+### Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-388. Use it only for community safety planning: risk assessment, access and incident logs, communications, evacuation and medical coordination, nonviolent de-escalation, and handoff to local lawful authority.
+
+Do not use the reviewed answer card for fortification construction recipes, traps, weapons placement, force doctrine, tactical patrol plans, surveillance or targeting advice, fields-of-fire planning, kill-zone design, engagement tactics, or offensive operations. If there is an active threat or injury risk, prioritize immediate safety, call local emergency services or the responsible lawful authority when available, keep factual logs, move people away from danger when safe, coordinate medical needs, use nonviolent de-escalation where feasible, and hand off decisions about force, detention, investigation, or enforcement to lawful authority.
 
 <section id="threat-assessment">
 

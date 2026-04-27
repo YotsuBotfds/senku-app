@@ -6,6 +6,38 @@ category: defense
 difficulty: intermediate
 tags:
   - important
+aliases:
+  - NBC threat boundary checklist
+  - fallout protection handoff
+  - nuclear biological chemical exposure uncertainty
+  - possible fallout contamination isolation
+  - NBC shelter or evacuation question
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level NBC recognition, avoidance, evacuation or shelter intake, basic contamination isolation, urgent medical or expert coordination, uncertainty questions, and official handoff.
+  - Keep answers non-procedural: identify the suspected hazard type, current location, time since alert or exposure, official instructions, visible dust/powder/fumes/symptoms, shelter or evacuation constraints, and whether emergency, public-health, hazmat, poison-control, radiation-safety, or incident-command support has been contacted.
+  - Do not use this guide's reviewed answer card for fallout construction recipes, weapons effects calculations, dose estimation, KI dosing, chemical or biological decontamination protocols beyond gentle avoid-spread basics, tactical or warfare advice, improvised respirator claims, re-entry clearance, legal claims, or safety certification.
+routing_support:
+  - Route detailed nuclear/fallout preparedness intake to nuclear-preparedness-fallout when the prompt is specifically about fallout shelter status, supplies, communications, or nuclear-event handoff.
+  - Route suspected radiation exposure medical triage to acute-radiation-syndrome when vomiting within hours, confusion, seizures, bloody diarrhea, shock signs, rapid deterioration, or contaminated skin, hair, clothing, shoes, tools, or personal items are central.
+  - Route household/industrial chemical spills, fumes, mixed cleaners, skin or eye chemical contact, and chemical ingestion to chemical-safety or emergency services/poison control when that guide is the better fit.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card only for NBC recognition,
+  avoidance, evacuation or shelter intake, basic avoid-spread contamination
+  isolation, urgent medical or expert coordination, uncertainty questions, and
+  official handoff. Do not cite it for fallout construction recipes, weapons
+  effects calculations, dose estimation, KI dosing, detailed decontamination,
+  tactical or warfare advice, improvised respirator claims, re-entry clearance,
+  legal claims, or safety certification.
+applicability: >
+  Use for boundary-only questions about possible nuclear, biological, chemical,
+  or fallout hazard recognition; whether to avoid, evacuate, or shelter based on
+  official instructions and immediate life safety; simple separation of possibly
+  contaminated outer items from people, food, and clean living areas; exposure
+  symptom red flags; uncertainty logging; and emergency, public-health, hazmat,
+  poison-control, radiation-safety, medical, or incident-command handoff.
+  Excludes construction, calculations, dosing, treatment protocols, tactical
+  advice, respirator efficacy claims, re-entry clearance, and certification.
 icon: ☢️
 description: Nuclear, biological, and chemical hazards, fallout shelter design, radiation protection, decontamination, and survival protocols.
 related:
@@ -21,11 +53,38 @@ word_count: 5902
 last_updated: '2026-02-15'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: nbc_defense_fallout_protection_boundary
+answer_card:
+  - nbc_defense_fallout_protection_boundary
+runtime_citation_policy: reviewed_source_family
+answer_card_boundary: >
+  Boundary-only NBC and fallout protection intake and handoff: recognition,
+  avoidance, evacuation or shelter status, contamination uncertainty, gentle
+  avoid-spread isolation of possibly contaminated outer items, exposure symptom
+  red flags, and urgent medical, public-health, hazmat, poison-control,
+  radiation-safety, emergency-services, or incident-command coordination.
+  Excludes fallout construction recipes, weapons effects calculations, dose
+  estimation, KI dosing, detailed decontamination protocols, tactical or warfare
+  advice, improvised respirator claims, re-entry clearance, legal claims, and
+  safety certification.
 custom_css: .subtitle{color:var(--muted);font-size:1.1rem;margin-bottom:1rem}.info{background:rgba(83,216,168,0.15);border-left:4px solid var(--accent2)}.svg-container{background:var(--card);border:1px solid var(--border);padding:1.5rem;border-radius:4px;margin-bottom:1.5rem;display:flex;justify-content:center;align-items:center;min-height:300px}.diagram-label{color:var(--accent2);font-weight:600;margin-bottom:.5rem;font-size:.95rem}.procedure{background:var(--surface);border:1px solid var(--border);padding:1.5rem;border-radius:4px;margin-bottom:1.5rem}.procedure ol{margin-left:1.5rem}.procedure li{margin-bottom:1rem}.quick-ref{background:var(--card);padding:1rem;border-left:4px solid var(--accent2);margin-bottom:1rem;border-radius:4px}
 ---
 :::danger
 **CRITICAL WARNING:** Improvised NBC (Nuclear, Biological, Chemical) defense measures provide LIMITED protection and should NEVER be relied upon as a substitute for professional hazmat response and medical treatment. Improvised decontamination is not a substitute for professional care. The primary response to NBC threats should be recognition, avoidance, and evacuation. Exposure to NBC agents requires professional medical evaluation and treatment.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-151. Use it only for boundary-level NBC and fallout protection intake and handoff: recognition of possible nuclear, biological, chemical, or fallout hazards; avoidance; evacuation or shelter status; contamination uncertainty; gentle avoid-spread isolation of possibly contaminated outer clothing, shoes, tools, or supplies away from people, food, and clean living areas; exposure symptom red flags; and urgent medical, public-health, hazmat, poison-control, radiation-safety, emergency-services, or incident-command coordination.
+
+Start by identifying the suspected hazard type, current location, who is exposed or nearby, time since alert or exposure, official instructions, visible dust, powder, fumes, liquid, dead vegetation, unusual animal behavior, symptoms, shelter or evacuation constraints, communications available, and authorities already contacted. If details are uncertain but NBC or fallout exposure is plausible, answer conservatively: avoid the area, keep people out of suspected contamination paths, follow official evacuation or shelter instructions when available, separate possible outer contamination gently without shaking or spreading it, log symptoms and timing, and seek expert coordination.
+
+Do not use this reviewed card for fallout construction recipes, weapons effects calculations, radiation dose estimation, potassium iodide or other medication dosing, decontamination protocols beyond gentle avoid-spread basics, tactical or warfare advice, improvised respirator or filtration efficacy claims, re-entry clearance, legal claims, or safety certification. If a prompt asks for those, provide only the safe intake facts, uncertainty boundary, red flags, and handoff to emergency services, public-health, hazmat, poison control, radiation-safety, medical professionals, or incident command.
+
+</section>
 
 <section id="nuclear-survival">
 

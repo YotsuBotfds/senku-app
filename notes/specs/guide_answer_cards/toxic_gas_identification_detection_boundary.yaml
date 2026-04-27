@@ -1,0 +1,118 @@
+card_id: toxic_gas_identification_detection_boundary
+guide_id: GD-598
+slug: toxic-gas-identification-detection
+title: Toxic Gas Identification & Improvised Detection
+risk_tier: critical
+evidence_owner: guide-corpus
+applies_when:
+  - A user reports suspected toxic gas, unknown industrial fumes, visible colored gas, strong gas odor, or symptoms near combustion, smelting, acid production, fermentation, biogas, manure handling, animal waste, or other chemical/industrial processes.
+  - A person may have been exposed to carbon monoxide, hydrogen sulfide, nitrogen dioxide, chlorine, sulfur dioxide, ammonia, or an unknown toxic gas.
+  - A tank, pit, underground structure, enclosed room, manure pit, biogas area, or other confined space may contain toxic gas or oxygen-displacing gas.
+required_first_actions:
+  - Tell exposed people to leave or avoid the suspected gas area immediately and get to fresh air.
+  - Do not delay evacuation to identify the gas, test the air, sniff for odor, troubleshoot the source, or ventilate from inside the contaminated area.
+  - Call emergency services, hazmat/fire response, poison control, or the fastest available medical help for symptoms, unknown gas, visible colored gas, confined-space involvement, unconsciousness, respiratory distress, or anyone still inside.
+  - Do not enter or re-enter a confined space or suspected toxic-gas area alone; avoid rescue attempts that create a second victim.
+first_actions:
+  - Ask where the exposure happened, when it started, what process or source was nearby, and whether the gas or source is still present.
+  - Ask whether anyone is still inside, trapped, unconscious, collapsed, confused, or unable to get to fresh air.
+  - Ask who is affected, how many people or animals are affected, what symptoms are present, and whether symptoms improve after moving outside.
+  - Ask about visible gas color or reported odor only as scene information for emergency handoff, not as a reason to approach or sniff-test.
+urgent_red_flags:
+  - Loss of consciousness, collapse, confusion, seizure, severe headache, unusual sleepiness, chest pain, or inability to self-rescue.
+  - Shortness of breath, wheezing, chest tightness, severe cough, frothy sputum, hoarseness, throat constriction, eye burns, or respiratory distress.
+  - Multiple people or animals affected in the same area, symptoms in a confined space, or symptoms near combustion, manure, biogas, smelting, acid production, bleach reactions, or animal waste.
+  - Brown/reddish gas, yellow-green gas, strong rotten-egg odor, strong bleach-like odor, or any unknown gas cloud.
+  - Symptoms that worsen or return hours after exposure, especially cough, shortness of breath, chest tightness, or signs of delayed pulmonary edema.
+forbidden_advice:
+  - Do not tell the user to sniff, taste, approach, sample, or experimentally identify an unknown gas.
+  - Do not provide candle tests, animal indicators, pH-paper tests, starch-iodide tests, lead-acetate tests, gas-generation chemistry, or improvised detection procedures as action advice.
+  - Do not provide detector calibration, cartridge selection as clearance, concentration thresholds as go/no-go action rules, ventilation-rate calculations, or re-entry clearance.
+  - Do not provide hazardous entry procedure, confined-space rescue instructions, solo rescue advice, or instructions to retrieve an unconscious person from a contaminated area.
+  - Do not reassure based on clear air, odor fading, brief symptom improvement, or one gas being less irritating than another.
+do_not:
+  - Do not rely on smell to decide whether a toxic gas area is safe.
+  - Do not enter a suspected toxic-gas space to ventilate, investigate, or rescue without trained, equipped emergency response.
+  - Do not use concentration tables from the guide as user-facing action thresholds.
+  - Do not turn the guide's detection examples into step-by-step tests.
+routine_boundary: >
+  Suspected toxic gas exposure is exposure triage first. Identification,
+  detection-device work, process troubleshooting, ventilation design, re-entry
+  clearance, industrial hygiene, and hazardous entry planning belong elsewhere
+  after people are away from exposure and emergency or poison-control handoff
+  needs are separated.
+acceptable_uncertain_fit: >
+  If the gas identity, source, dose, timing, or symptoms are incomplete, keep
+  the answer conservative: leave or avoid the area, get fresh air, prevent
+  entry or solo rescue, call emergency/hazmat/poison help when symptoms,
+  unknown gas, visible gas, or confined space are involved, and ask only
+  handoff-oriented clarifying questions.
+clarifying_questions:
+  - Is anyone still inside, trapped, unconscious, confused, collapsed, or unable to get to fresh air?
+  - Where did this happen, when did it start, and what process or source was nearby?
+  - What symptoms are present now, and do they improve after moving to fresh air?
+  - Was there a visible gas color, reported odor, confined space, combustion source, manure/biogas area, smelting, acid production, or mixed-cleaner/bleach reaction?
+citation_ids:
+  - toxic-gas-common-industrial-gases
+  - toxic-gas-confined-space-behavior
+  - toxic-gas-ventilation-requirements
+  - toxic-gas-process-specific-hazards
+  - toxic-gas-emergency-treatment
+source_sections:
+  - guide: GD-598
+    slug: toxic-gas-identification-detection
+    title: Toxic Gas Identification & Improvised Detection
+    sections:
+      - "#common-industrial-toxic-gases"
+      - "#confined-space-gas-behavior"
+      - "#ventilation-requirements"
+      - "#process-specific-hazards"
+      - "#personal-protection-and-emergency-treatment"
+source_invariants:
+  - name: leave and fresh air before identification
+    guide: GD-598
+    must_include:
+      - "**Evacuate immediately** if gas is suspected"
+      - "**Provide fresh air**"
+      - Move to fresh air immediately
+      - Evacuate and move to fresh air
+    must_not_match:
+      - "(identify|test|sample|sniff)[^\\n]{0,120}before\\s+(leaving|evacuat|fresh air)"
+      - "stay[^\\n]{0,120}(identify|test|sample|sniff)"
+  - name: symptom and delayed red flags
+    guide: GD-598
+    must_include:
+      - Loss of consciousness
+      - respiratory distress
+      - delayed pulmonary edema
+      - Delayed onset
+    must_not_match:
+      - "(symptoms improve|feels better)[^\\n]{0,120}(safe|clear|return|re-enter)"
+  - name: confined space and odor limits
+    guide: GD-598
+    must_include:
+      - In confined spaces
+      - '"Fresh-looking" air is not guaranteed to be safe.'
+      - do not rely on smell for safety
+      - CO poisoning is insidious because the victim loses consciousness and cannot self-rescue.
+    must_not_match:
+      - "smell[^\\n]{0,120}(guarantees|proves)[^\\n]{0,80}safe"
+      - "fresh-looking[^\\n]{0,120}(guarantees|proves)[^\\n]{0,80}safe"
+  - name: no improvised detection as action advice
+    guide: GD-598
+    must_include:
+      - Candle test (unreliable)
+      - Gas | Odor | Color | Density | Detection Method
+    must_not_match:
+      - "(candle test|animal indicator|lead acetate|starch-iodide|pH paper)[^\\n]{0,160}(do this|perform|use this test|step)"
+      - "(ppm|concentration)[^\\n]{0,120}(safe to enter|safe for re-entry|go/no-go)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Boundary-only reviewed card for GD-598. It converts a detection-heavy guide
+  into first-hop toxic-gas exposure triage: evacuate or avoid entry, fresh air,
+  emergency/hazmat/poison-control or medical handoff, symptom red flags,
+  confined-space no-entry/no-solo-rescue framing, and clarifying questions for
+  handoff. It intentionally excludes detector calibration, improvised tests,
+  gas-generation chemistry, concentration thresholds as action rules, hazardous
+  entry procedure, and rescue instructions.

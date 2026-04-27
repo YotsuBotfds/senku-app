@@ -1,0 +1,169 @@
+card_id: self_defense_fundamentals_deescalation_boundary
+guide_id: GD-726
+slug: self-defense-fundamentals
+title: "Self-Defense Fundamentals: De-Escalation & Basic Techniques"
+risk_tier: high
+evidence_owner: guide-corpus
+applicability: >
+  Use for self-defense de-escalation and escape boundary answers only:
+  prevention-first framing, recognizing escalation signs, calm boundary
+  statements, creating distance, leaving toward safety, calling for help,
+  post-incident medical support, and legal uncertainty. Do not use for fight
+  instructions, strike/grapple details, weapon advice, chokeholds, targeting
+  guidance, pursuit, retaliation, or legal conclusions.
+applies_when:
+  - A user asks what to say or do to avoid a physical confrontation, de-escalate a hostile person, or set a non-fighting boundary.
+  - A user asks how to recognize escalation signs and decide when to leave before contact occurs.
+  - A user needs a safe escape-first response for a confrontation without technique details.
+  - A user asks what to do after escaping a threat and needs help-seeking, injury check, documentation, or legal uncertainty boundaries.
+required_first_actions:
+  - Preserve the guide's hierarchy: prevention first, escape second, and physical techniques only as a last resort outside this reviewed card.
+  - If escalation signs appear or de-escalation is failing, tell the user to create distance, leave immediately, head toward safety or other people, and call for help when available.
+  - Use calm, non-threatening de-escalation language: visible open hands, non-challenging posture, validation, apology/accountability when useful, choice-giving, and a clear boundary statement.
+  - If violence occurred or injuries may exist, include injury checks, medical care if injured, reporting to appropriate community or emergency help, and factual documentation.
+  - State that self-defense laws vary by location and circumstance; avoid legal conclusions or claims that a specific action is lawful.
+conditional_required_actions:
+  - trigger_terms:
+      - pre attack
+      - escalation signs
+      - staring
+      - gap closing
+      - tense shoulders
+      - target glance
+      - ultimatum
+    required_actions:
+      - Treat these as a cue to leave or create distance immediately rather than waiting for proof of intent.
+      - Keep the answer at recognition, pre-decided exit, distance, and help-seeking; do not add strike, target, or counterattack advice.
+  - trigger_terms:
+      - what do I say
+      - boundary
+      - calm down
+      - de escalate
+      - angry person
+    required_actions:
+      - Offer a short non-fighting boundary such as "I'm not looking for a fight. I want to resolve this. If you need space, I can give it to you."
+      - Avoid commanding, dismissive, humiliating, or threat-like wording.
+  - trigger_terms:
+      - after
+      - injury
+      - report
+      - legal
+      - police
+      - document
+    required_actions:
+      - Shift to post-incident safety: check for injuries, seek medical care if injured, call appropriate help, document facts, and avoid legal conclusions.
+first_actions:
+  - Notice escalation early: intense staring or sudden looking away, gap closing, breathing or muscle tension changes, target glancing, weight shifting, harsh tone, insults, or repeated ultimatums.
+  - Keep hands visible and open, move slowly, avoid intense staring, angle your body, and maintain distance without posturing for a fight.
+  - Use short de-escalation statements that validate emotion, reduce loss of face, offer choices, and state you are not looking for a fight.
+  - If the person keeps closing distance or the situation moves toward violence, step back or angle away, identify an exit, leave quickly, and move toward a populated or safer area.
+  - Call for help, alert nearby people, emergency services, or responsible community leadership when there is active danger, a serious threat, ongoing risk, or injury.
+urgent_red_flags:
+  - The person closes distance despite your movement away, blocks your path, issues threats or ultimatums, drops hands or tenses shoulders, gives a final target glance, or appears about to attack.
+  - There is any weapon, multiple aggressors, stalking or pursuit, confinement, intoxication or severe agitation, ongoing domestic violence, or inability to leave safely.
+  - Anyone is injured, unconscious, bleeding, has breathing trouble, head injury concern, severe pain, or may need medical care after escape.
+  - The user wants to retaliate, pursue, punish, detain, choke, target vulnerable areas, use weapons, or test a physical technique.
+forbidden_advice:
+  - Do not provide fight instructions, strike mechanics, punch/kick/knee/stomp details, vulnerable target guidance, chokeholds, submissions, grappling sequences, disarms, weapon advice, improvised weapon use, or tactical pursuit.
+  - Do not advise retaliation, chasing, punishing, detaining, cornering, escalating, humiliating, threatening, or provoking the other person.
+  - Do not provide legal conclusions, jurisdiction-specific self-defense claims, custody or liability determinations, or assurances that force would be lawful.
+  - Do not present this card as a substitute for emergency services, medical care, trauma support, legal counsel, trained security, or local authority response.
+  - Do not mine the guide's basic-technique, strike, vulnerable-area, grab-escape, or tool sections for reviewed answer-card advice.
+do_not:
+  - Do not turn "last resort" technique material into the card answer.
+  - Do not name targets or explain how to injure, disable, restrain, or overpower someone.
+  - Do not encourage waiting for confirmation once clear pre-attack signs are present.
+  - Do not minimize legal, medical, or trauma uncertainty after an incident.
+routine_boundary: >
+  This card owns de-escalation and escape-only self-defense guidance: prevention
+  hierarchy, recognition of escalation signs, non-threatening body language,
+  verbal boundary statements, distance creation, leaving, calling help, and
+  post-incident medical/legal uncertainty. It stops before physical technique,
+  targeting, weapon, restraint, pursuit, retaliation, and legal-conclusion
+  content.
+acceptable_uncertain_fit: >
+  If the facts are incomplete but a confrontation may be escalating, choose the
+  conservative escape-first answer: reduce threat cues, create distance, leave
+  toward safety, call for help if danger continues, and ask only brief clarifying
+  questions that do not delay escape or emergency support.
+clarifying_questions:
+  - Are you safe and able to leave the area right now?
+  - Is the person closing distance, blocking an exit, threatening you, armed, or with others?
+  - Are there nearby people, a public place, locked building, phone, emergency service, or community leader you can move toward or contact?
+  - Has anyone been injured or do you need medical care after the incident?
+  - Are you asking for de-escalation and escape planning, or for legal advice or fight technique that this card cannot provide?
+fallback_handoff_language:
+  - If danger is active, leave if you can, move toward safer people or a secure place, and call emergency help or local responsible support when available.
+  - If someone is injured or may be injured, seek medical care and use first-aid or emergency medical guidance rather than this de-escalation card.
+  - If legal consequences are a concern, document facts and seek qualified local legal guidance; do not rely on this card for legal conclusions.
+output_contract:
+  requires_contract_items:
+    - required_first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+    - clarifying_questions
+  must_include_urgent_handoff: true
+  forbid: true
+citation_ids:
+  - gd-726-reviewed-boundary
+  - gd-726-prevention-escape-last-resort
+  - gd-726-pre-attack-exit-moment
+  - gd-726-deescalation-boundary-statement
+  - gd-726-escape-primary-response
+  - gd-726-post-incident-medical-legal
+source_sections:
+  - guide: GD-726
+    slug: self-defense-fundamentals
+    title: "Self-Defense Fundamentals: De-Escalation & Basic Techniques"
+    sections:
+      - "#philosophy > Reviewed Answer-Card Boundary"
+      - "#philosophy > Self-Defense Philosophy: Prevention > Escape > Techniques"
+      - "#pre-attack-indicators > Recognizing Pre-Attack Indicators"
+      - "#deescalation-techniques > De-Escalation Techniques: Preventing Confrontation"
+      - "#escape-strategies > Escape and Evasion: The Primary Response"
+      - "#post-incident > Post-Incident Response and Trauma"
+      - "#legal-considerations > Legal and Ethical Considerations"
+      - "#prevention-emphasis > Final Emphasis: Prevention Is Superior"
+source_invariants:
+  - name: reviewed boundary stays deescalation and escape only
+    guide: GD-726
+    must_include:
+      - This is the reviewed answer-card surface for GD-726.
+      - prevention first, recognizing escalation signs, calm boundary statements, creating distance, leaving toward safety, calling for help, post-incident medical support, and legal uncertainty
+      - Do not use the reviewed answer card for fight instructions, strike or grapple details, weapon advice, chokeholds, targeting guidance, pursuit, retaliation, or legal conclusions.
+  - name: prevention escape last resort hierarchy remains explicit
+    guide: GD-726
+    must_include:
+      - "Self-defense is often described as a hierarchy of effectiveness. The best fight is the one that never happens."
+      - "1. PREVENTION (Highest Priority)"
+      - "2. ESCAPE (Most Effective When Needed)"
+      - "3. PHYSICAL TECHNIQUES (Last Resort)"
+      - "Physical self-defense should NEVER be your first response."
+  - name: escalation signs lead to exit
+    guide: GD-726
+    must_include:
+      - "This is your exit moment."
+      - "If you see ANY of these signs, leave immediately."
+      - "Do not wait for confirmation of intent."
+  - name: escape and post incident uncertainty anchors remain
+    guide: GD-726
+    must_include:
+      - "If de-escalation is failing and you sense imminent violence, your response is to escape."
+      - "Escape is always superior to fighting."
+      - "Seek medical care"
+      - "Self-defense laws vary by location and circumstance."
+  - name: reviewed card must not drift into technique details
+    guide: GD-726
+    must_not_match:
+      - "(?i)Use it only.*(palm strike|knee strike|stomp|chokehold|targeting guidance|grapple|submission|disarm|pursuit)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed closure for GD-726 as a de-escalation and escape boundary card only.
+  The source guide contains last-resort physical techniques and vulnerable-area
+  discussion, but those sections are intentionally excluded from reviewed
+  answer-card use. Runtime answers should preserve prevention > escape > last
+  resort framing while routing active danger to distance, leaving, help-seeking,
+  medical care when injured, and legal uncertainty rather than technique or
+  legal-conclusion advice.

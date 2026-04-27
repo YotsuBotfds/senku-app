@@ -9,6 +9,30 @@ tags:
   - de-escalation
   - conflict-avoidance
   - essential
+aliases:
+  - self defense de escalation boundary
+  - de escalation and escape self defense
+  - boundary statement leave call help
+  - recognize escalation signs escape
+  - self defense prevention escape last resort
+routing_cues:
+  - self defense de escalation escape boundary prevention distance leave help
+  - recognizing pre attack indicators leave immediately create distance
+  - boundary statement not looking for a fight give space
+  - self defense legal medical uncertainty after incident
+  - conflict avoidance prevention escape last resort no fight instructions
+citations_required: true
+citation_policy: cite reviewed GD-726 answer card only for de-escalation, recognizing escalation signs, creating distance, leaving, calling help, post-incident medical support, and legal uncertainty; do not use it for fight instructions, strikes, grappling, weapons, chokeholds, targeting, pursuit, or legal conclusions
+applicability: >
+  Self-defense de-escalation and escape boundary only: prevention-first
+  framing, recognizing escalation signs, calm boundary language, creating
+  distance, leaving toward safety, calling help, post-incident medical support,
+  and legal uncertainty. Not a fight-instruction, striking, grappling, weapon,
+  chokehold, targeting, pursuit, or legal-advice card.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: self_defense_fundamentals_deescalation_boundary
+answer_card:
+  - self_defense_fundamentals_deescalation_boundary
 icon: 🤺
 description: 'Non-lethal personal protection: de-escalation techniques, escape strategies, basic holds, awareness-based prevention.'
 related:
@@ -63,6 +87,12 @@ Many people focus on combat skills and neglect the first two layers. This is bac
 ![De-escalation decision flowchart for self-defense scenarios](../assets/svgs/self-defense-fundamentals-1.svg)
 
 A practical decision tree showing the progression from threat recognition through de-escalation techniques to escape strategies, emphasizing prevention as the primary approach.
+
+### Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-726. Use it only for self-defense de-escalation and escape boundaries: prevention first, recognizing escalation signs, calm boundary statements, creating distance, leaving toward safety, calling for help, post-incident medical support, and legal uncertainty.
+
+Do not use the reviewed answer card for fight instructions, strike or grapple details, weapon advice, chokeholds, targeting guidance, pursuit, retaliation, or legal conclusions. If danger is active, prioritize getting distance, leaving the area, alerting other people or emergency help when available, and seeking medical care for injuries.
 
 :::warning
 Physical self-defense should NEVER be your first response. Use it only when escape is impossible and a serious threat is imminent.

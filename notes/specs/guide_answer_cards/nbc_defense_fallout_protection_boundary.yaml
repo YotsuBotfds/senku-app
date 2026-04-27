@@ -1,0 +1,164 @@
+card_id: nbc_defense_fallout_protection_boundary
+guide_id: GD-151
+slug: nbc-defense
+title: NBC Defense & Fallout Protection
+risk_tier: critical
+evidence_owner: guide-corpus
+reviewed: true
+applies_when:
+  - A user asks about possible nuclear, biological, chemical, or fallout hazard recognition, uncertainty, first sorting, or what to do before expert help arrives.
+  - A user needs boundary-level evacuation or shelter intake, contamination uncertainty logging, basic avoid-spread isolation, symptom red flags, or official handoff after a possible NBC event.
+  - A user asks for NBC or fallout protection help but the safe answer should avoid construction recipes, calculations, dosing, detailed decontamination, tactical advice, respirator claims, re-entry clearance, or certification.
+required_first_actions:
+  - Keep the answer boundary-only: recognition, avoidance, evacuation or shelter status, contamination uncertainty, gentle avoid-spread isolation of possible outer contamination, symptom red flags, and urgent expert or official handoff.
+  - Ask for immediate status facts that affect handoff: suspected hazard type, current location, who is exposed or nearby, time since alert or exposure, official instructions, visible dust/powder/fumes/liquid, symptoms, shelter or evacuation constraints, communications, and authorities contacted.
+  - If details are uncertain but NBC or fallout exposure is plausible, answer conservatively by keeping people away from suspected contamination paths, following official evacuation or shelter instructions when available, and avoiding claims that an area, person, item, food, or water source is safe.
+  - For possible outer contamination, keep guidance to gentle separation of outer clothing, shoes, tools, or supplies away from people, food, and clean living areas; do not provide scrubbing, chemical recipes, waste-disposal, burning, or cleanup protocols.
+  - Coordinate urgently with emergency services, public-health, hazmat, poison control, radiation-safety, medical professionals, or incident command when symptoms, exposure, uncertainty, unknown powders/fumes/liquids, or official evacuation/shelter instructions are involved.
+conditional_required_actions:
+  - trigger_terms:
+      - vomiting
+      - confusion
+      - seizure
+      - bloody diarrhea
+      - shock
+      - collapsed
+      - rapid deterioration
+    required_actions:
+      - Treat this as possible radiation or NBC exposure triage; urge emergency medical and incident-command coordination and do not answer as routine preparedness.
+  - trigger_terms:
+      - white powder
+      - unknown powder
+      - suspicious powder
+      - powder in envelope
+      - biological threat
+      - anthrax
+    required_actions:
+      - Treat the powder or suspected biological material as hazardous until expert evaluation; isolate the area, avoid disturbing particles, keep people away, log exposure facts, and coordinate with emergency, public-health, hazmat, or law-enforcement channels as appropriate.
+  - trigger_terms:
+      - chemical fumes
+      - choking gas
+      - nerve agent
+      - blister agent
+      - unknown odor
+      - dead plants
+      - dead birds
+      - animal indicators
+    required_actions:
+      - Prioritize avoidance, fresh-air/evacuation or shelter direction from authorities, symptom logging, and poison-control, hazmat, emergency, or incident-command handoff; do not provide tactical movement, agent neutralization, or improvised-filter efficacy claims.
+  - trigger_terms:
+      - safe to leave
+      - re-enter
+      - return home
+      - clean up
+      - decontaminate area
+      - certify safe
+    required_actions:
+      - Do not provide re-entry clearance, cleanup protocols, area decontamination, or safety certification; defer to official emergency, public-health, hazmat, radiation-safety, or incident-command instructions.
+first_actions:
+  - Sort the request as current-event intake, exposure/symptom triage, or preparedness planning; symptom or exposure prompts should prioritize emergency, medical, poison-control, hazmat, public-health, radiation-safety, or incident-command handoff.
+  - Ask what official emergency broadcasts, alerts, evacuation orders, shelter instructions, or incident-command directions are available.
+  - For possible fallout or dust, keep people indoors or away from dust paths when consistent with official instructions and immediate life safety; separate possible outer contamination gently and away from clean areas.
+  - For possible biological or unknown-powder exposure, avoid disturbing particles, isolate the area, keep people away, record who may have been exposed, and seek public-health, emergency, hazmat, or incident-command support.
+  - For possible chemical release, avoid suspected fumes or liquids, use authority-directed evacuation or shelter guidance, record symptoms and visible indicators, and coordinate with emergency services, poison control, hazmat, or incident command.
+  - Prepare a concise handoff log: hazard suspected, location, time, people exposed, symptoms and timing, visible contamination signs, official instructions, communications available, and actions already taken.
+urgent_red_flags:
+  - Trouble breathing, chest tightness, wheezing, choking, collapse, seizures, confusion, shock signs, severe burns, eye injury, bloody diarrhea, repeated vomiting, or rapid deterioration after possible NBC exposure.
+  - Unknown powder, visible fallout or dust, chemical fumes, unexplained liquid contamination, dead vegetation, unusual animal behavior, or symptoms clustered across multiple people.
+  - Contamination on skin, hair, clothing, shoes, tools, vehicles, supplies, food, water, or living areas when the hazard is unknown.
+  - Pressure to leave shelter, enter or re-enter an area, clean up contamination, rescue others, declare a route safe, or certify an area without official direction.
+  - No communications, no safe shelter, medically fragile people, missing people, or inability to follow official evacuation or shelter instructions safely.
+forbidden_advice:
+  - Do not provide fallout shelter construction recipes, shielding thickness instructions, weapons effects calculations, blast-radius analysis, fallout prediction, dose estimation, dose-rate decay calculations, or safety-clearance thresholds as runtime advice.
+  - Do not provide potassium iodide, antidote, antibiotic, chelation, or other medication dosing, diagnosis, prognosis, or treatment protocols.
+  - Do not provide chemical, biological, radiological, equipment, area, soil, water, food, or waste decontamination protocols beyond gentle avoid-spread basics for possible outer contamination.
+  - Do not provide tactical, warfare, evasion, combat, weaponization, agent-dissemination, targeting, or operational advice.
+  - Do not claim that improvised respirators, masks, wet cloths, filters, rooms, shelters, routes, food, water, tools, clothing, or people are safe or effective against NBC hazards.
+  - Do not provide re-entry clearance, cleanup authorization, legal claims, regulatory claims, or safety certification.
+do_not:
+  - Do not tell users an area, route, shelter, person, item, food, water source, mask, or improvised filter is safe from NBC or fallout hazards based on this card.
+  - Do not convert the guide's construction, calculation, KI, PPE, decontamination, water-treatment, food-recovery, or post-event recovery details into reviewed-card steps.
+  - Do not delay urgent medical, poison-control, public-health, hazmat, radiation-safety, emergency-services, or incident-command coordination while gathering a complete history.
+routine_boundary: >
+  This card owns only NBC and fallout boundary intake and handoff: recognition,
+  avoidance, evacuation or shelter status, contamination uncertainty, gentle
+  avoid-spread isolation of possibly contaminated outer items, symptom red
+  flags, status logging, and urgent expert or official coordination. Detailed
+  shelter construction, calculations, dosing, treatment, decontamination,
+  tactical guidance, respirator efficacy claims, re-entry clearance, legal
+  claims, and safety certification are outside this card.
+acceptable_uncertain_fit: >
+  If the hazard type, exposure route, or official situation is incomplete but
+  NBC or fallout exposure is plausible, use the conservative boundary: avoid
+  suspected contamination, keep others away, follow official evacuation or
+  shelter instructions when available, separate possible outer contamination
+  gently and away from clean areas, log symptoms and timing, and coordinate with
+  emergency, medical, public-health, hazmat, poison-control, radiation-safety,
+  or incident-command support.
+clarifying_questions:
+  - Is this an active event, a suspected exposure, or preparedness planning, and what alert, observation, or symptom triggered the concern?
+  - Where are you now, who is nearby or possibly exposed, and what official evacuation or shelter instructions have you received?
+  - What signs are present: visible dust, powder, fumes, liquid, dead vegetation, unusual animal behavior, odors, alarms, or clustered symptoms?
+  - Is anyone having trouble breathing, chest tightness, vomiting, confusion, seizures, burns, eye pain, bloody diarrhea, collapse, shock signs, or rapid worsening?
+  - What clothing, shoes, tools, supplies, food, water, vehicles, or living areas may have been contaminated, and have emergency services, public health, hazmat, poison control, radiation safety, medical support, or incident command been contacted?
+fallback_handoff_language:
+  - If serious symptoms or possible exposure are present, urge emergency medical, poison-control, hazmat, public-health, radiation-safety, emergency-services, or incident-command coordination before routine planning.
+  - If the user asks whether it is safe to leave, return, clean up, use supplies, or certify an area, state that this card cannot clear safety and defer to official emergency, public-health, hazmat, radiation-safety, or incident-command instructions.
+  - If contamination is uncertain, keep possible outer contamination separated from people, food, and clean living areas, log facts for responders, and avoid cleanup or disposal protocols.
+citation_ids:
+  - gd-151-reviewed-answer-card-boundary
+  - gd-151-critical-warning
+  - gd-151-fallout-basics
+  - gd-151-biological-threats
+  - gd-151-chemical-detection-without-instruments
+  - gd-151-shelter-decision-tree
+  - gd-151-emergency-communications
+source_sections:
+  - guide: GD-151
+    slug: nbc-defense
+    title: NBC Defense & Fallout Protection
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "Critical Warning"
+      - "#nuclear-survival > Fallout Basics"
+      - "#biological-threats > Natural Epidemic vs Deliberate Release"
+      - "#biological-threats > Key Biological Agents"
+      - "#chemical-threats > Detection Without Instruments"
+      - "#shelter-in-place > Decision Tree: Shelter vs Evacuate"
+      - "#emergency-communications > EBS/EAS (Emergency Broadcast System / Emergency Alert System)"
+source_invariants:
+  - name: reviewed boundary remains intake and handoff only
+    guide: GD-151
+    must_include:
+      - "This is the reviewed answer-card surface for GD-151."
+      - "Use it only for boundary-level NBC and fallout protection intake and handoff"
+      - "gentle avoid-spread isolation of possibly contaminated outer clothing, shoes, tools, or supplies away from people, food, and clean living areas"
+      - "Do not use this reviewed card for fallout construction recipes, weapons effects calculations, radiation dose estimation, potassium iodide or other medication dosing"
+      - "decontamination protocols beyond gentle avoid-spread basics"
+      - "improvised respirator or filtration efficacy claims"
+  - name: critical warning keeps primary response and professional care
+    guide: GD-151
+    must_include:
+      - "Improvised NBC (Nuclear, Biological, Chemical) defense measures provide LIMITED protection"
+      - "should NEVER be relied upon as a substitute for professional hazmat response and medical treatment"
+      - "The primary response to NBC threats should be recognition, avoidance, and evacuation."
+      - "Exposure to NBC agents requires professional medical evaluation and treatment."
+  - name: recognition and official instruction anchors remain
+    guide: GD-151
+    must_include:
+      - "Any white powder exposure in context of biological threat must be assumed dangerous"
+      - "White powder suspects must be treated as hazardous."
+      - "Dogs, birds, insects dying or acting abnormally in an area = possible chemical contamination"
+      - "Dead plants, discolored leaves, or sudden wilting = possible chemical or biological contamination"
+      - "Local authorities issue evacuation orders"
+      - "**Information provided:** Type of emergency, affected areas, instructions for survival/evacuation"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Boundary-only closure for GD-151. The source guide contains high-risk fallout
+  construction, blast/effects tables, dose and decay concepts, KI dosing,
+  improvised PPE/filter material, and detailed decontamination/recovery
+  sections. This reviewed card intentionally carries only recognition,
+  avoidance, evacuation or shelter intake, basic avoid-spread contamination
+  isolation, urgent red flags, uncertainty handling, and expert or official
+  coordination.
