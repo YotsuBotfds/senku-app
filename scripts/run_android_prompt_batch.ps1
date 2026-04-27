@@ -133,6 +133,114 @@ function Get-DumpCompletionState {
     }
 }
 
+function New-BatchSummary {
+    param(
+        [string]$Label,
+        [string]$Emulator,
+        [string]$ManifestPath,
+        [object[]]$Records
+    )
+
+    $passed = @($Records | Where-Object { [string]::IsNullOrWhiteSpace([string]$_.error) })
+    $failed = @($Records | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_.error) })
+    $statusGroups = @()
+    foreach ($statusName in @("passed", "failed")) {
+        $source = if ($statusName -eq "passed") { $passed } else { $failed }
+        $statusGroups += [ordered]@{
+            status = $statusName
+            count = @($source).Count
+            run_indexes = @($source | ForEach-Object { $_.run_index })
+        }
+    }
+
+    $dumpStateGroups = @()
+    foreach ($group in @($Records | Group-Object -Property dump_completion_state | Sort-Object -Property Name)) {
+        $dumpStateGroups += [ordered]@{
+            state = if ([string]::IsNullOrWhiteSpace([string]$group.Name)) { "unknown" } else { [string]$group.Name }
+            count = $group.Count
+            run_indexes = @($group.Group | ForEach-Object { $_.run_index })
+        }
+    }
+
+    return [ordered]@{
+        batch_label = $Label
+        emulator = $Emulator
+        manifest_path = $ManifestPath
+        total = @($Records).Count
+        passed = $passed.Count
+        failed = $failed.Count
+        status_groups = $statusGroups
+        dump_completion_state_groups = $dumpStateGroups
+        failed_items = @($failed | ForEach-Object {
+            [ordered]@{
+                run_index = $_.run_index
+                prompt_source_line = $_.prompt_source_line
+                prompt = $_.prompt
+                error = $_.error
+                dump_completion_state = $_.dump_completion_state
+                dump_path = $_.dump_path
+            }
+        })
+        artifact_paths = @(
+            [ordered]@{
+                kind = "manifest_jsonl"
+                path = $ManifestPath
+            }
+        ) + @($Records | ForEach-Object {
+            [ordered]@{
+                kind = "ui_dump"
+                run_index = $_.run_index
+                path = $_.dump_path
+            }
+        })
+    }
+}
+
+function ConvertTo-BatchSummaryMarkdown {
+    param([object]$Summary)
+
+    $lines = @(
+        "# Android Prompt Batch Summary",
+        "",
+        "- batch_label: $($Summary.batch_label)",
+        "- emulator: $($Summary.emulator)",
+        "- total: $($Summary.total)",
+        "- passed: $($Summary.passed)",
+        "- failed: $($Summary.failed)",
+        "- manifest_path: $($Summary.manifest_path)",
+        "",
+        "## Status Groups"
+    )
+
+    foreach ($group in $Summary.status_groups) {
+        $runIndexes = if ($group.run_indexes.Count -gt 0) { ($group.run_indexes -join ", ") } else { "-" }
+        $lines += "- $($group.status): $($group.count) ($runIndexes)"
+    }
+
+    $lines += @("", "## Dump Completion States")
+    foreach ($group in $Summary.dump_completion_state_groups) {
+        $runIndexes = if ($group.run_indexes.Count -gt 0) { ($group.run_indexes -join ", ") } else { "-" }
+        $lines += "- $($group.state): $($group.count) ($runIndexes)"
+    }
+
+    $lines += @("", "## Failed Items")
+    if ($Summary.failed_items.Count -eq 0) {
+        $lines += "- none"
+    } else {
+        foreach ($item in $Summary.failed_items) {
+            $lines += "- run_index=$($item.run_index) source_line=$($item.prompt_source_line) state=$($item.dump_completion_state) error=$($item.error) dump_path=$($item.dump_path)"
+        }
+    }
+
+    $lines += @("", "## Artifact Paths")
+    foreach ($artifact in $Summary.artifact_paths) {
+        $suffix = if ($artifact.PSObject.Properties.Name -contains "run_index") { " run_index=$($artifact.run_index)" } else { "" }
+        $lines += "- kind=$($artifact.kind)$suffix path=$($artifact.path)"
+    }
+
+    return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
+}
+
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $safeEmulator = $Emulator.Replace("-", "_")
 $label = if ([string]::IsNullOrWhiteSpace($BatchLabel)) {
@@ -145,6 +253,7 @@ if ([string]::IsNullOrWhiteSpace($label)) {
     $label = "${safeEmulator}_${timestamp}"
 }
 $manifestPath = Join-Path $outputPath "${label}.jsonl"
+$records = @()
 
 for ($runIndex = 0; $runIndex -lt $selected.Count; $runIndex++) {
     $entry = $selected[$runIndex]
@@ -199,7 +308,16 @@ for ($runIndex = 0; $runIndex -lt $selected.Count; $runIndex++) {
         elapsed_seconds = [math]::Round(($finishedAt - $startedAt).TotalSeconds, 1)
         error = $failed
     }
+    $records += [pscustomobject]$record
     ($record | ConvertTo-Json -Compress) | Add-Content -Path $manifestPath
 }
 
+$summary = New-BatchSummary -Label $label -Emulator $Emulator -ManifestPath $manifestPath -Records $records
+$summaryJsonPath = Join-Path $outputPath "summary.json"
+$summaryMarkdownPath = Join-Path $outputPath "summary.md"
+($summary | ConvertTo-Json -Depth 6) | Set-Content -Path $summaryJsonPath -Encoding UTF8
+ConvertTo-BatchSummaryMarkdown -Summary $summary | Set-Content -Path $summaryMarkdownPath -Encoding UTF8
+
 Write-Host "Batch manifest saved to $manifestPath"
+Write-Host "Batch summary saved to $summaryJsonPath"
+Write-Host "Batch summary markdown saved to $summaryMarkdownPath"
