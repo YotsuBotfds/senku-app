@@ -7,7 +7,7 @@ difficulty: advanced
 tags:
   - essential
 icon: ⚗️
-description: Small-scale Haber-Bosch process. Hydrogen from electrolysis, nitrogen from air, catalyst preparation. Critical for fertilizer.
+description: Safety-reviewed ammonia boundary for fertilizer/nitrogen-planning alternatives, storage/leak/exposure recognition, red flags, and expert handoff.
 related:
   - chemistry-fundamentals
   - solvents-distillation
@@ -17,6 +17,47 @@ related:
   - sulfuric-acid
   - everyday-compounds-production
   - homestead-chemistry
+aliases:
+  - ammonia synthesis safety boundary
+  - ammonia storage leak exposure recognition
+  - ammonia fertilizer nitrogen planning alternatives
+  - ammonia reactor pressure temperature red flags
+  - ammonia stop work evacuate avoid entry
+  - qualified chemical engineer ammonia handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for non-procedural ammonia safety boundaries: fertilizer and nitrogen-planning alternatives, ammonia storage/leak/exposure recognition, inventory labels, pressure/temperature/reactor red flags, stop-work or evacuate/avoid-entry decisions, and emergency, hazmat, poison-control, agricultural-extension, or qualified chemical-engineer handoff.
+  - Keep answers focused on safe observation and routing: what product or storage container is involved, label text, location, access status, odor or vapor report, exposed people, symptoms, visible damage, heat/fire/pressure/reactor concerns, and who has been contacted.
+  - Route Haber-Bosch construction, operating parameters, catalyst preparation, hydrogen or nitrogen generation, reactor design, ammonium nitrate or explosive pathways, fertilizer conversion recipes, dosing or application rates, leak repair, PPE efficacy guarantees, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-industrial-accident-response for active or multi-person chemical releases, evacuation/shelter/decontamination triage, and hazmat or incident-command handoff.
+  - toxicology-poisoning-response for symptomatic ammonia exposure, inhalation, eye/skin injury, ingestion, poison-control escalation, or medical handoff.
+  - chemical-safety for household or storage compatibility, labeling, and prevention once the scene is safe.
+  - nitrogen-fixation, soil-fertility-decline-prevention, cover-crops-green-manures, and composting-systems for safer fertilizer and biological nitrogen-planning alternatives.
+citations_required: true
+citation_policy: >
+  Cite GD-187 and its reviewed answer card only for ammonia boundary intake:
+  fertilizer/nitrogen-planning alternatives, ammonia storage/leak/exposure
+  recognition, inventory labels, pressure/temperature/reactor red flags,
+  stop-work, evacuate, avoid-entry, and emergency, hazmat, poison-control,
+  agricultural-extension, or qualified chemical-engineer handoff. Do not use it
+  for Haber-Bosch construction, operating parameters, catalyst preparation,
+  hydrogen or nitrogen generation, reactor design, ammonium nitrate or explosive
+  pathways, fertilizer conversion recipes, dosing or application rates, leak
+  repair, PPE efficacy guarantees, legal/code claims, or safety certification.
+applicability: >
+  Use for a non-procedural ammonia safety boundary: safer nitrogen-planning
+  alternatives, storage and inventory label intake, leak or exposure
+  recognition, pressure/temperature/reactor danger recognition, stop-work or
+  evacuate/avoid-entry triggers, and handoff to emergency services, hazmat,
+  poison control, agricultural extension, or a qualified chemical engineer. Do
+  not use for construction, synthesis, gas generation, catalyst preparation,
+  process operation, fertilizer conversion, dosing, repair, legal/code
+  determinations, PPE guarantees, or declaring any process, site, product, or
+  container safe.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: ammonia_synthesis_safety_boundary
+answer_card:
+  - ammonia_synthesis_safety_boundary
 read_time: 5
 word_count: 5431
 last_updated: '2026-02-16'
@@ -36,6 +77,20 @@ custom_css: 'body.light-mode{--bg:#f5f5f5;--surface:#e8e8e8;--card:#d0d0e0;--acc
 :::info-box
 **Industrial precursors — raw materials to products:** Water → H₂ (electrolysis) + Air → N₂ (PSA or cryogenic) → NH₃ (Haber-Bosch, Fe catalyst, 400 °C, 150 atm) → ammonium nitrate (fertilizer/explosive) or ammonium sulfate (fertilizer, requires H₂SO₄ from [Sulfuric Acid Production](sulfuric-acid.html)). Ammonia is the primary industrial precursor for synthetic nitrogen fertilizer, which sustains global food production. See [Everyday Compounds Production](everyday-compounds-production.html) and [Homestead Chemistry](homestead-chemistry.html) for household-scale chemistry that does not require high-pressure synthesis.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Ammonia Safety and Handoff
+
+This is the reviewed answer-card surface for GD-187. Use it only for non-procedural ammonia safety boundaries: fertilizer and nitrogen-planning alternatives, ammonia storage/leak/exposure recognition, inventory labels, pressure/temperature/reactor red flags, stop-work or evacuate/avoid-entry decisions, and emergency, hazmat, poison-control, agricultural-extension, or qualified chemical-engineer handoff.
+
+Start with safe observation and routing rather than synthesis or repair: product or container identity, label text, location, access status, odor or vapor report, exposed people, symptoms, visible container damage, heat, fire, pressure-equipment concern, reactor concern, nearby drains or enclosed spaces, and who has already been contacted. Safer nitrogen planning belongs in biological or agronomic alternatives such as legumes, manure, composting, tested soil amendments, supplier labels, and agricultural-extension advice.
+
+Stop-work and evacuate/avoid-entry triggers include ammonia odor or vapor, breathing trouble, coughing, chest tightness, eye or skin pain, confusion, collapse, multiple exposed people, damaged or unlabeled containers, suspected storage leak, fire or heat exposure near ammonia, pressure-equipment distress, reactor abnormality, enclosed-space contamination, unknown concentration, or any pressure to inspect, enter, repair, restart, synthesize, convert, dose, or certify before qualified review.
+
+Do not provide Haber-Bosch construction, pressures or temperatures, catalyst preparation, hydrogen or nitrogen generation, reactor design, ammonium nitrate or explosive pathways, fertilizer conversion recipes, dosing or application rates, leak repair, PPE efficacy guarantees, legal or code claims, safe-to-enter statements, safe-to-use statements, or safety certification from this reviewed card.
+
+</section>
 
 <section id="overview">
 

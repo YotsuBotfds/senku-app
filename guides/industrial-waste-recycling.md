@@ -8,6 +8,21 @@ tags:
   - closed-loop
   - chemistry
   - resource-recovery
+aliases:
+  - industrial waste inventory boundary
+  - waste stream identification checklist
+  - unknown mixed container red flags
+  - industrial waste segregation status
+  - qualified waste authority handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level industrial waste stream identification and inventory: labels, source traceability, segregation status, unknown or mixed-container red flags, contamination flags, stop-reuse triggers, containment, documentation, and qualified chemistry, safety, environmental, or waste-authority handoff.
+  - Keep routine reviewed-card answers focused on what the container or stream is, where it came from, how it is labeled, whether it has stayed segregated, visible contamination or heavy-metal/solvent/plating-sludge flags, current containment, and who owns the next decision.
+  - Route recycling, recovery, neutralization, regeneration, filtering, crystallization, soil/food/fertilizer reuse, treatment calculations, chemical recipes, pH endpoints, disposal legality, and safety certification away from this card.
+routing_support:
+  - basic-chemistry for general chemistry language when no industrial waste stream is involved.
+  - acid-safety for corrosive-acid exposure or storage safety handoff rather than recovery instructions.
+  - water-chemistry-treatment and sewage-treatment for wastewater-owner handoff when the question involves treatment systems or discharge.
+  - corrosion-chemistry-prevention for corrosion context without waste recovery steps.
 bridge: true
 icon: ♻️
 description: Closed-loop industrial processes—converting pickling acid to feedstock, ash to potash, slag to aggregate—turning waste into feedstock from day one
@@ -24,6 +39,30 @@ word_count: 687
 last_updated: '2026-02-21'
 version: '1.0'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: industrial_waste_stream_inventory_boundary
+answer_card:
+  - industrial_waste_stream_inventory_boundary
+citations_required: true
+applicability: >
+  Use GD-638 for boundary-only industrial waste stream identification and
+  inventory: container labels, source traceability, segregation status,
+  unknown or mixed-container red flags, heavy-metal, solvent, paint,
+  plating-sludge, contamination, and reactive-material flags, stop-reuse
+  triggers, containment, documentation, and environmental, safety, qualified
+  chemistry, or waste-authority handoff. Do not use its reviewed card for
+  recycling or recovery procedures, neutralization, regeneration, filtering,
+  crystallization, soil/food/fertilizer reuse, chemical recipes, pH endpoints,
+  treatment calculations, disposal legality, or safety certification.
+citation_policy: >
+  Cite GD-638 and its reviewed answer card only for boundary-level industrial
+  waste stream inventory, label/source/segregation documentation, contamination
+  and mixed-container red flags, stop-reuse and containment language, and
+  qualified environmental, safety, chemistry, or waste-authority handoff. Do
+  not cite the reviewed card for recycling, recovery, neutralization,
+  regeneration, filtering, crystallization, soil/food/fertilizer reuse,
+  chemical recipes, pH endpoints, treatment calculations, disposal legality, or
+  safety certification.
 ---
 
 ## Overview
@@ -31,6 +70,16 @@ liability_level: high
 In a circular economy, waste is feedstock. Pickling acid from metal processing becomes a processing chemical. Wood ash becomes potash (plant nutrient). Steel slag becomes concrete aggregate. This guide maps industrial waste streams—what you generate, where it goes, how to capture value—into a closed-loop system.
 
 The bridge connects **industrial processes** → **waste streams identified** → **collection & storage** → **reprocessing methods** → **feedback into production**.
+
+## Reviewed Answer-Card Boundary: Waste Stream Inventory and Handoff
+
+This is the reviewed answer-card surface for GD-638. Use it only for boundary-level industrial waste stream identification and inventory: labels, source traceability, segregation status, unknown or mixed-container red flags, contamination flags, heavy-metal/solvent/paint/plating-sludge flags, stop-reuse triggers, containment, documentation, and environmental, safety, qualified chemistry, or waste-authority handoff.
+
+For routine inventory, record the container or stream identifier, date found or generated, source process if known, original label and any relabeling history, whether the material has stayed segregated from the source, current container condition, lid or secondary containment status, nearby drains/soil/water/food/feed exposure, odors or visible reactions, and the person or authority responsible for the next decision.
+
+Treat these as handoff triggers before any reuse discussion: unknown source, missing or conflicting labels, mixed containers, pooled "general waste," oils, solvents, paint, plating sludge, acids or bases with uncertain identity, reactive or pressurized containers, visible heavy-metal contamination, ash from treated wood or burned plastics, slag from lead/chromium/cadmium/unknown metal work, residue near food, soil, feed, water, or drains, leaking containers, heat, gas, swelling, strong odor, or any request to certify a stream as safe.
+
+Do not use this reviewed card for recycling or recovery steps, neutralization, regeneration, filtering, crystallization, soil, food, or fertilizer reuse, chemical recipes, pH endpoints, treatment calculations, disposal legality, or safety certification. If the prompt asks for those, provide only the inventory, containment, stop-reuse, documentation, and qualified handoff boundary.
 
 ## What You Need Before Starting
 

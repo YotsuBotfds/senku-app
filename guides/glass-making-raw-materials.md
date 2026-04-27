@@ -23,6 +23,36 @@ word_count: 5400
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: critical
+aliases:
+  - glass raw material hazard inventory
+  - glass furnace area safety boundary
+  - silica dust and flux label screen
+  - glassmaking additive handoff
+  - raw glass batch storage log
+  - glass furnace stop work flags
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level raw material and furnace-area hazard inventory, silica dust, flux, and unknown additive label screening, heat/fume/caustic/exposure red flags, stop-work or hold flags, storage/access logs, and qualified glass, furnace, materials, chemical-safety, or fire-safety handoff.
+  - Keep routine answers focused on material labels, source and storage records, dust/fume/caustic exposure concerns, visible furnace-area hazards, access control, work-paused or batch-held status, and who owns qualified follow-up.
+  - Route batch recipes, furnace construction, melting, forming, annealing, flux extraction, calcination, temperatures, PPE efficacy guarantees, return-to-service decisions, legal/code claims, and safety certification away from this reviewed card.
+routing_support:
+  - GD-711 is critical-liability and contains procedural glassmaking material, but the reviewed answer-card surface is deliberately boundary-only and narrower than the full guide.
+  - Prefer the reviewed card for non-invasive inventory, label checks, red-flag recognition, hold/stop-work language, storage/access logging, and specialist handoff before any glassmaking activity.
+  - Pair with chemical-safety, fire-safety, emergency-care, or qualified furnace/materials owners when exposure symptoms, fire, fume, caustic materials, hot work, unknown additives, or active incidents dominate the prompt.
+citations_required: true
+citation_policy: cite reviewed GD-711 answer card only for boundary-level raw-material and furnace-area hazard inventory, silica dust/flux/unknown additive label screening, heat/fume/caustic/exposure red flags, stop-work or hold flags, storage/access logs, and qualified glass/furnace/materials/chemical-safety/fire-safety handoff; do not use it for batch recipes, furnace construction, melting/forming/annealing, flux extraction, calcination, temperatures, PPE efficacy guarantees, return-to-service, legal/code claims, or safety certification.
+applicability: >
+  Use for boundary-only glassmaking raw-material and furnace-area safety
+  questions: non-invasive hazard inventory, silica dust, flux, and unknown
+  additive label screening, heat/fume/caustic/exposure red flags, stop-work or
+  batch-hold flags, storage/access logs, and qualified glass, furnace,
+  materials, chemical-safety, or fire-safety handoff. Do not use for batch
+  recipes, furnace construction, melting, forming, annealing, flux extraction,
+  calcination, temperatures, PPE efficacy guarantees, return-to-service, legal
+  or code claims, or safety certification.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: glass_making_raw_materials_hazard_inventory_boundary
+answer_card:
+  - glass_making_raw_materials_hazard_inventory_boundary
 ---
 
 :::note
@@ -34,6 +64,18 @@ liability_level: critical
 Glass is molten silica cooled rapidly, trapping it in a rigid amorphous state. Understanding raw materials and furnace construction is essential for producing usable glass in low-tech environments.
 
 ![Glass furnace design and material composition diagram](../assets/svgs/glass-making.svg)
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Raw Material Hazard Inventory, Hold Flags, and Handoffs
+
+This is the reviewed answer-card surface for GD-711. Use it only for boundary-level glassmaking raw-material and furnace-area hazard inventory: silica dust, flux, and unknown additive label screening; heat, fume, caustic, and exposure red flags; stop-work or batch-hold flags; storage and access logs; and qualified glass, furnace, materials, chemical-safety, or fire-safety handoff.
+
+For routine boundary screening, record the material or furnace-area location, date, observer, owner or responsible operator, current activity status, access-control status, work-paused or batch-held status, material labels and sources, storage separation, dust or spill signs, unknown or mixed additives, caustic flux concern, visible heat or fume concern, fire exposure, moisture or container damage, exposure symptoms, and who has authority to restrict access or request qualified review.
+
+Do not use this reviewed card for batch recipes, furnace construction, melting, forming, annealing, flux extraction, calcination, temperatures, PPE efficacy guarantees, return-to-service decisions, legal or code claims, or safety certification. If labels are missing, additives are unknown, dust/fume/caustic exposure is suspected, containers are damaged, storage is uncontrolled, heat or fire is active, symptoms are present, bystanders have access, or anyone is asking to proceed despite uncertainty, pause routine planning and route to the responsible glass, furnace, materials, chemical-safety, fire-safety, emergency, or site owner.
+
+</section>
 
 <section id="raw-materials">
 

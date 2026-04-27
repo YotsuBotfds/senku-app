@@ -1,0 +1,219 @@
+card_id: lime_caustic_material_boundary
+guide_id: GD-851
+slug: lime-production-applications
+title: Lime — From Limestone to Mortar — Geology, Chemistry, Kilns & Applications
+risk_tier: high
+evidence_owner: guide-corpus
+reviewed: true
+applicability: >
+  Boundary-only card for GD-851 caustic lime material safety. It covers
+  quicklime, hydrated lime, slaked lime, lime dust, wet lime, damaged or
+  suspect containers, storage condition, exposure red flags, stop-use
+  isolation, label/SDS/owner handoff, and emergency, poison-control, medical,
+  or public-health escalation. It is not a production, calcination, slaking,
+  mortar, plaster, soil, sanitation, whitewash, water-treatment, pH dosing,
+  application-rate, PPE-performance, legal/code, or safety-certification card.
+applies_when:
+  - A user asks what to do with quicklime, hydrated lime, slaked lime, lime dust, wet lime, a leaking bag, a damaged container, or stored lime of uncertain condition.
+  - A user reports lime dust, slurry, powder, or caustic material on skin, in eyes, inhaled, swallowed, or near children, animals, food, water, drains, or shared work areas.
+  - A user asks whether suspect lime can still be used, stored, moved, mixed, neutralized, applied, or left in service after moisture, heat, dust release, damaged labels, or unknown history.
+  - A user needs a nonprocedural handoff record for labels, SDS, owner/maintainer, storage location, exposure route, symptoms, isolation status, and responder/public-health follow-up.
+required_first_actions:
+  - Start with exposure control and scene isolation; keep people, children, pets, food, and water away from suspect lime, visible dust, wet lime, damaged bags, or unknown containers.
+  - Stop handling, mixing, applying, sweeping, or transferring suspect lime until the material is identified, labelled, isolated, and handed to the responsible owner or responder.
+  - Avoid creating dust or splashes; do not taste, smell, neutralize, hose into drains, combine with other chemicals, or test unknown lime as part of the answer-card response.
+  - For eye exposure, skin burns, inhalation symptoms, swallowed material, large dust release, wet/heating quicklime, unclear product identity, or public-area exposure, route immediately to poison control, medical care, emergency services, or public health as appropriate.
+  - Preserve labels, SDS, lot/source details, container condition, storage location, and exposure notes for owner, medical, poison-control, emergency, or public-health handoff.
+conditional_required_actions:
+  - trigger_terms:
+      - eye
+      - eyes
+      - splash
+      - dust in eye
+      - slurry in eye
+    required_actions:
+      - Treat lime, cement dust, or slurry in the eye as urgent alkaline exposure; flush with water immediately, do not rub, remove contact lenses if present, continue flushing, and seek emergency medical attention.
+  - trigger_terms:
+      - skin
+      - burn
+      - hands
+      - on me
+      - wet lime
+      - slurry
+    required_actions:
+      - Remove ongoing contact, brush off dry material without creating more dust when practical, flood affected skin with water, wash residue after flushing, monitor for progression, and seek medical care for persistent pain, redness, swelling, or large-area exposure.
+  - trigger_terms:
+      - breathed
+      - inhaled
+      - cough
+      - chest
+      - dust cloud
+      - respiratory
+    required_actions:
+      - Move away from the dusty area to fresh air, do not re-enter without proper respiratory protection, and seek medical attention for persistent coughing, shortness of breath, or chest pain.
+  - trigger_terms:
+      - wet bag
+      - hot bag
+      - heating
+      - leaking
+      - moisture
+      - unknown container
+    required_actions:
+      - Isolate the container, keep it dry and away from water and flammables, avoid opening or moving it unnecessarily, label the hazard if safe, and hand off to the owner or emergency/public-health authority for unsafe storage or release.
+first_actions:
+  - Record material identity only from labels, SDS, purchase records, or owner knowledge; distinguish quicklime, hydrated/slaked lime, mortar/cement mix, unknown white powder, and contaminated or unlabeled material.
+  - Check material condition without handling: damaged bag, missing label, wetness, warmth, clumping, visible dust, crusting, leaking slurry, proximity to water or flammables, children or untrained people nearby, and whether exposure has already occurred.
+  - Use stop-use language for suspect material: isolate, label, keep dry where safe, prevent access, avoid dust generation, and do not approve continued use or application from the card.
+  - For storage questions, keep quicklime in sealed, dry, clearly labelled containers away from moisture, water sources, flammables, open bins, and mixed materials; keep slaked lime or mortar sealed and clearly labelled as caustic.
+  - For handoff, list owner/maintainer, location, product label or SDS, container condition, amount if known, exposure route, symptoms, people at risk, isolation actions already taken, and who was contacted.
+urgent_red_flags:
+  - Eye exposure, eye pain, dust or slurry in eyes, inability to flush, contact lens complication, or any alkaline eye exposure.
+  - Skin contact with quicklime, wet lime, slaked lime, cement, mortar, pain, redness, swelling, blistering, persistent symptoms, or large-area exposure.
+  - Coughing, shortness of breath, chest pain, persistent cough, visible dust cloud, enclosed-space dust, or symptoms after inhaling lime/cement dust.
+  - Swallowed lime, unknown white powder ingestion, mouth/throat burning, vomiting, trouble swallowing, altered consciousness, child exposure, or animal exposure.
+  - Wet or heating quicklime, damaged or unlabeled container, large release, dust in a shared area, material near food/water/drains, unclear ownership, or public-area contamination.
+forbidden_advice:
+  - Do not provide kiln, calcination, firing, temperature, fuel, draft, or production instructions as answer-card output.
+  - Do not provide slaking procedures, water addition ratios, heat expectations, batch sizes, quality tests, or instructions for deliberately reacting quicklime with water.
+  - Do not provide mortar, plaster, hot-lime mortar, whitewash, soil amendment, sanitation, latrine, water-treatment, or pH-dosing recipes, formulas, application rates, or use approvals.
+  - Do not tell the user to neutralize, acid-treat, taste, smell, sweep dry dust, hose into drains, mix with other chemicals, or experiment with unknown lime.
+  - Do not claim PPE makes handling safe, guarantee protection, certify material safety, make legal/code claims, approve public use, or declare suspect lime safe to keep using.
+do_not:
+  - Do not convert GD-851's production, kiln, calcination, slaking, mortar, plaster, agriculture, sanitation, whitewash, or water-treatment sections into reviewed-card instructions.
+  - Do not delay eye flushing, fresh air, skin flushing, poison control, medical care, emergency services, or public-health handoff while trying to identify product purity or usability.
+  - Do not treat wet quicklime, damaged storage, missing labels, exposure symptoms, or shared-area dust release as routine material handling.
+  - Do not use this card to certify PPE efficacy, code compliance, product suitability, storage compliance, public-area clearance, or safe continued use.
+actions:
+  required_first:
+    - required_first_actions
+  core:
+    - first_actions
+  safety_override:
+    - urgent_red_flags
+    - fallback
+forbidden:
+  - forbidden_advice
+  - do_not
+routine_boundary: >
+  Routine GD-851 reviewed-card answers are limited to caustic lime material
+  condition, storage isolation, exposure red flags, stop-use language, label/SDS
+  capture, owner handoff, and emergency/poison-control/medical/public-health
+  routing. Any request for production, calcination, slaking, recipes, dosing,
+  application rates, use approval, PPE guarantees, legal/code claims, or
+  certification must be bounded and handed off.
+acceptable_uncertain_fit: >
+  If the product identity, amount, exposure route, symptoms, or ownership is
+  incomplete, answer from the conservative caustic-material branch: isolate the
+  material, stop handling or application, avoid dust and splashes, preserve
+  labels/SDS, ask only questions that do not delay exposure response, and route
+  eye/skin/respiratory/ingestion or public-area exposure to the appropriate
+  emergency, poison-control, medical, owner, or public-health contact.
+clarifying_questions:
+  - Is this quicklime, hydrated/slaked lime, mortar/cement mix, or an unknown white powder, and can the label or SDS be read without handling the material?
+  - Has anyone gotten it in their eyes, on skin, inhaled dust, swallowed it, or developed coughing, chest pain, eye pain, skin pain, vomiting, or trouble swallowing?
+  - Is the container wet, warm, leaking, damaged, unlabeled, near water or flammables, or in an area used by children, animals, food, water, or the public?
+  - Who owns the material and has the area already been isolated, labelled, ventilated if dusty, and kept away from people?
+fallback:
+  - For eye exposure, begin immediate water flushing and seek emergency medical attention; do not wait for product identification.
+  - For skin exposure, stop contact, remove contaminated items when safe, brush off dry material carefully if present, flush with water, and seek medical care for persistent or large-area effects.
+  - For inhalation symptoms or enclosed dust release, move to fresh air, keep others out, avoid re-entry, and seek medical care for persistent cough, shortness of breath, or chest pain.
+  - For swallowed lime, child exposure, animal exposure, unknown ingestion, or mouth/throat burning, contact poison control or emergency services and preserve the container or label.
+  - For damaged, wet, heating, unlabeled, or public-area lime releases, isolate the area, stop use, preserve labels/SDS, and hand off to the owner, emergency services, or public-health authority.
+fallback_handoff_language:
+  - "This GD-851 reviewed card can help isolate suspect caustic lime, record material condition, preserve labels/SDS, identify exposure red flags, and route the handoff."
+  - "It cannot provide production, calcination, slaking, mortar, plaster, soil, sanitation, whitewash, water-treatment, pH dosing, application-rate, PPE guarantee, code, legal, certification, or use-approval guidance."
+  - "If exposure has already happened, poison control, medical care, emergency services, or public health owns the next step before cleanup or reuse decisions."
+output:
+  requires_contract_items:
+    - required_first_actions
+    - first_actions
+    - urgent_red_flags
+    - forbidden_advice
+    - fallback_handoff_language
+  include_material_condition_log: true
+  include_storage_isolation_check: true
+  include_exposure_red_flags: true
+  include_label_sds_owner_handoff: true
+  include_emergency_public_health_handoff: true
+  forbid_production_recipes_dosing_or_certification: true
+routing_tests:
+  positive:
+    - prompt: "A bag of quicklime got damp and warm in storage. What should we do before anyone handles it?"
+      expect: lime_caustic_material_boundary
+    - prompt: "Hydrated lime dust blew into a shared work area and someone is coughing. Give a safety handoff checklist."
+      expect: lime_caustic_material_boundary
+    - prompt: "An unlabeled white lime powder bag is torn near the water shed. How do I isolate it and document labels/SDS?"
+      expect: lime_caustic_material_boundary
+  near_miss:
+    - prompt: "Give the calcination temperature and kiln steps for making quicklime."
+      expect_handoff: lime_production_not_reviewed_card
+    - prompt: "How much water should I add to quicklime for slaking?"
+      expect_handoff: slaking_procedure_not_reviewed_card
+    - prompt: "Give a whitewash recipe and pH dosing for water treatment."
+      expect_handoff: application_recipe_or_dosing_not_reviewed_card
+  boundary:
+    - prompt: "Can you certify this wet quicklime is safe to keep using?"
+      expect: certification_or_use_approval_handoff_not_card
+    - prompt: "My child may have swallowed lime powder."
+      expect: poison_control_or_emergency_handoff
+citation_ids:
+  - gd-851-reviewed-answer-card-boundary
+  - gd-851-hazard-summary
+  - gd-851-skin-eye-respiratory-exposure
+  - gd-851-work-practice-isolation
+  - gd-851-storage-labeling
+source_sections:
+  - guide: GD-851
+    slug: lime-production-applications
+    title: Lime — From Limestone to Mortar — Geology, Chemistry, Kilns & Applications
+    sections:
+      - "#reviewed-answer-card-boundary"
+      - "#safety > Comprehensive Hazard Summary"
+      - "#safety > Skin Exposure Response"
+      - "#safety > Eye Exposure Response"
+      - "#safety > Respiratory Exposure Response"
+      - "#safety > Work Practices"
+      - "#safety > Storage Safety"
+source_invariants:
+  - name: reviewed caustic material boundary
+    guide: GD-851
+    must_include:
+      - "This is the reviewed answer-card surface for GD-851."
+      - "Use it only for caustic lime material condition, storage, exposure red flags, dust/eye/skin/respiratory precautions, stop-use isolation, labels/SDS/owner handoff, and emergency, poison-control, medical, or public-health handoff."
+      - "Do not use this reviewed card for kiln or calcination formulas, slaking procedures, mortar, plaster, soil, sanitation, whitewash, or water-treatment recipes, pH dosing, production steps, application rates, PPE efficacy guarantees, legal or code claims, safety certification, or approval to keep using suspect lime."
+  - name: hazard summary remains exposure-first
+    guide: GD-851
+    must_include:
+      - "Chemical burns from quicklime and slaked lime"
+      - "Respiratory damage from lime and cement dust"
+      - "Eye damage"
+  - name: exposure response anchors remain
+    guide: GD-851
+    must_include:
+      - "Flood with water immediately"
+      - "Flush with water immediately"
+      - "Seek emergency medical attention immediately."
+      - "Leave the work area immediately"
+      - "coughing persists"
+  - name: storage labeling anchors remain
+    guide: GD-851
+    must_include:
+      - "Store in airtight, sealed containers only."
+      - "Store away from flammable materials and water sources."
+      - "Label clearly"
+      - "Never store quicklime in open bins or with other materials."
+  - name: card must not authorize procedural use
+    guide: GD-851
+    must_not_match:
+      - "reviewed answer-card surface for gd-851[\\s\\S]{0,900}(?:calcination steps are permitted|slaking procedures are permitted|pH dosing is permitted|application rates are permitted|safety certification is permitted|approved to keep using)"
+runtime_citation_policy: reviewed_source_family
+review_status: pilot_reviewed
+notes: >
+  Reviewed boundary-only answer-card closure for GD-851. It owns caustic lime
+  material condition, storage isolation, exposure red flags, dust/eye/skin/
+  respiratory precautions, stop-use language, labels/SDS/owner handoff, and
+  emergency, poison-control, medical, or public-health routing. It explicitly
+  excludes kiln/calcination/slaking formulas and procedures, mortar/plaster/
+  soil/sanitation/whitewash/water-treatment recipes, pH dosing, production
+  steps, application rates, PPE efficacy guarantees, legal/code claims, safety
+  certification, and approval to keep using suspect lime. READY_FOR_PARENT_CLOSE.

@@ -11,6 +11,29 @@ tags:
   - lime
   - limestone
   - construction
+aliases:
+  - caustic lime safety
+  - quicklime storage
+  - hydrated lime exposure
+  - slaked lime caustic dust
+  - lime SDS handoff
+routing_cues:
+  - quicklime or hydrated lime material condition
+  - caustic lime storage, labels, or SDS
+  - lime dust, eye, skin, or breathing exposure
+  - wet or warm lime container, leaking lime, damaged lime bag, or unknown lime condition
+  - stop-use isolation and owner handoff for lime products
+routing_support:
+  - chemical-safety
+  - toxicology
+  - eye-injuries-emergency-care
+  - respiratory-protection
+citations_required: true
+citation_policy: cite_reviewed_boundary_and_source_sections
+applicability: Caustic lime material-condition, storage, exposure red-flag, stop-use/isolation, label/SDS, owner-handoff, and emergency/poison-control/medical/public-health handoff guidance only. Not a kiln, calcination, slaking, mortar, plaster, soil, water-treatment, dosing, production, application-rate, certification, or legal/code guidance surface.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: lime_caustic_material_boundary
+answer_card: lime_caustic_material_boundary
 icon: 🧱
 related:
   - building-materials-salvage
@@ -59,6 +82,18 @@ custom_css: |
 :::warning
 **Chemical Safety Reference Required:** Before working with lime, cement, or mortar on any scale beyond small repairs, study proper PPE, respiratory protection, ventilation, skin/eye protection, and emergency response procedures. Inadequate precautions result in permanent respiratory damage, chemical burns, or acute poisoning.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary: Caustic Lime Material Safety
+
+This is the reviewed answer-card surface for GD-851. Use it only for caustic lime material condition, storage, exposure red flags, dust/eye/skin/respiratory precautions, stop-use isolation, labels/SDS/owner handoff, and emergency, poison-control, medical, or public-health handoff.
+
+The reviewed card must start with scene and exposure safety: keep people away from suspect quicklime, hydrated lime, wet lime, damaged bags, or visible dust; stop handling or application; isolate the material; avoid creating dust; keep labels or SDS available for the responsible owner or responder; and route exposure symptoms to poison control, medical care, emergency services, or public health as appropriate.
+
+Do not use this reviewed card for kiln or calcination formulas, slaking procedures, mortar, plaster, soil, sanitation, whitewash, or water-treatment recipes, pH dosing, production steps, application rates, PPE efficacy guarantees, legal or code claims, safety certification, or approval to keep using suspect lime.
+
+</section>
 
 <section id="quick-route">
 

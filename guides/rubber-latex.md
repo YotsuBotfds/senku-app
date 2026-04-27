@@ -22,7 +22,57 @@ last_updated: '2026-02-16'
 version: '1.0'
 custom_css: '.subtitle{font-size:1.1em;color:#aaa;font-style:italic}li{margin-bottom:10px;color:#d0d0d0}.diagram{background-color:#2d2416;border:2px solid #444;border-radius:6px;padding:20px;margin:25px 0;text-align:center}.diagram svg{max-width:100%;height:auto}.diagram-title{font-size:1.1em;color:#fc0;margin-top:15px;font-weight:bold}.highlight-box{background-color:#2a3a2a;border-left:4px solid #6d6;padding:15px 20px;margin:20px 0;border-radius:4px;color:#c0e0c0}.process-steps{background-color:#2d2416;border:1px solid #444;border-radius:6px;padding:20px;margin:20px 0}.process-steps ol{margin-left:20px}.process-step{background-color:#1a2e1a;padding:12px;margin:10px 0;border-left:3px solid #fc0;border-radius:3px}'
 liability_level: high
+aliases:
+  - rubber latex material boundary
+  - latex allergy exposure handoff
+  - rubber gasket stop use flag
+  - degraded rubber condition log
+  - unknown rubber additive solvent inventory
+  - critical use rubber material handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level rubber and latex material inventory, allergy or exposure red flags, additive or solvent uncertainty, critical-use stop-use flags, label/storage/condition logs, and qualified owner handoff.
+  - Keep routine answers focused on source, label, age, storage, visible condition, current use, allergy/skin/eye/respiratory symptoms, chemical odor, solvent exposure, degradation, contamination, and whether pressure, fuel, medical, food-contact, rescue, electrical, or other critical service is involved.
+  - Route tapping, processing, coagulation, smoking, devulcanization, vulcanization recipes, solvent or curing formulas, gasket or hose pressure claims, fuel compatibility, medical-device suitability, food-contact suitability, repair procedures, return-to-service, legal/code claims, and safety certification away from this card.
+routing_support:
+  - chemical-safety for solvent, additive, fume, skin, eye, or respiratory exposure prevention and labeling questions once the scene is stable.
+  - toxicology-poisoning-response for symptomatic exposure, inhalation, ingestion, or poison-control escalation.
+  - materials-science and advanced-materials for non-procedural material identity, degradation, compatibility uncertainty, and qualified materials handoff.
+  - engineering-repair, plumbing-pipes, and fuel-storage-handling for owner routing when the rubber item is part of pressure, water, fuel, vehicle, electrical, medical, food-contact, or other critical equipment.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: rubber_latex_material_boundary
+answer_card:
+  - rubber_latex_material_boundary
+answer_card_ids:
+  - rubber_latex_material_boundary
+reviewed_card_scope:
+  scope: boundary-only rubber/latex material inventory, exposure red flags, critical-use stop-use flags, condition logs, and qualified handoff
+  runtime_citation_policy: reviewed_source_family
+citation_policy: cite the reviewed GD-134 answer card only for boundary-level rubber/latex material inventory, exposure red flags, critical-use stop-use flags, condition logs, and qualified handoff; route processing, vulcanization, pressure, fuel, medical, food-contact, repair, code/legal, or certification requests outside the reviewed card
+applicability: >
+  Use for boundary-only rubber and latex material inventory questions:
+  allergy, skin, eye, or respiratory exposure red flags; chemical additive,
+  solvent, smoke, or vulcanization uncertainty; degraded, cracked, tacky,
+  swollen, hardened, moldy, contaminated, unlabeled, or poorly stored material;
+  pressure, fuel, medical, food-contact, rescue, electrical, or other
+  critical-use stop-use flags; condition logs; and handoff to a qualified
+  materials, medical, safety, or equipment owner. Do not use for tapping,
+  processing, vulcanization, solvent or curing formulas, repair, suitability
+  claims, return-to-service, legal/code claims, or safety certification.
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-134. Use it only for boundary-level rubber and latex material inventory, allergy or exposure red-flag screening, chemical additive or solvent uncertainty, pressure/fuel/medical/food-contact critical-use stop-use flags, label, storage, and condition logs, and handoff to a qualified materials, medical, safety, or equipment owner.
+
+Start by identifying the item or stock, its source, label, age, storage condition, visible condition, current use, and owner. Screen for latex allergy or sensitivity, skin rash, eye exposure, breathing symptoms, chemical odor, solvent exposure, unknown additives, smoke or vulcanization history, cracking, swelling, tackiness, hardening, mold, contamination, missing labels, heat or sunlight exposure, and whether the item touches pressure, fuel, brakes, potable water, food, medical care, children, rescue, respiratory protection, electrical insulation, or other critical service.
+
+Use stop-use and handoff language when the rubber or latex is unlabeled, degraded, contaminated, chemically uncertain, involved in allergy, skin, eye, or respiratory symptoms, or requested for pressure, fuel, medical, food-contact, repair, return-to-service, or safety-critical equipment. Keep answers to inventory fields, red flags, isolation from contact or service, uncertainty notes, condition logs, and qualified-owner handoff.
+
+Do not use this reviewed card for tapping, processing, coagulation, smoking, devulcanization, vulcanization recipes, solvent or curing formulas, gasket or hose pressure claims, fuel compatibility claims, medical-device suitability, food-contact suitability, repair or patching procedures, return-to-service decisions, legal/code claims, or safety certification.
+
+</section>
 
 <section id="why-rubber">
 

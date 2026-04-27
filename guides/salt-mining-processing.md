@@ -26,7 +26,55 @@ word_count: 3800
 last_updated: '2026-02-22'
 version: '1.0'
 liability_level: high
+aliases:
+  - salt source inventory
+  - salt intended use uncertainty
+  - food grade industrial salt boundary
+  - salt contamination red flags
+  - mine brine seawater salt labels
+  - salt storage access log
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level salt source and intended-use inventory, food-vs-industrial uncertainty, contamination red flags, mine/brine/seawater source labels, storage and access logs, water or food-contact caution, stop-use triggers, and public-health, food-safety, geology, mining, or water-quality handoff.
+  - Keep routine answers focused on nonprocedural documentation: source type, label claims, intended use, container condition, storage location, access history, visible contamination, water or food-contact exposure, and whether the salt should be kept out of food, water, animals, wounds, or preservation until qualified review.
+  - Route mining, boiling, evaporation, recrystallization, purification chemistry, brine-well work, curing ratios, chlorine/bleach production, dosing, quality certification, legal claims, and safety certification away from this card.
+routing_support:
+  - The guide describes salt sources, deposit types, brines, seawater, plant ash, quality concerns, and food-grade versus industrial context.
+  - The reviewed surface narrows that material to source/intended-use inventory, contamination recognition, stop-use cautions, labeling/logging, and qualified handoff only; extraction, processing, purification, use formulas, dosing, certification, and legal claims remain out of the answer-card lane.
+citations_required: true
+citation_policy: >
+  Cite this guide and its reviewed answer card for salt source and intended-use
+  inventory, food-vs-industrial uncertainty, contamination red flags,
+  mine/brine/seawater source labels, storage and access logs, water or
+  food-contact caution, stop-use triggers, and public-health, food-safety,
+  geology, mining, or water-quality handoff only. Do not use it for mining,
+  boiling, evaporation, recrystallization, purification chemistry, brine wells,
+  food curing ratios, chlorine or bleach production, dosing, quality
+  certification, legal claims, or safety certification.
+applicability: >
+  Use for boundary-only documentation and handoff questions about an existing
+  salt supply, source label, intended use, storage condition, access history,
+  contamination concern, food or water contact concern, or uncertainty about
+  whether salt is suitable for food, preservation, animals, wounds, water, or
+  chemical use. Do not use for extraction, processing, purification, curing,
+  dosing, disinfection chemistry, certification, legal, or safety-guarantee
+  requests.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: salt_mining_processing_source_use_boundary_handoff
+answer_card:
+  - salt_mining_processing_source_use_boundary_handoff
 ---
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-706. Use it only for salt source and intended-use inventory, food-vs-industrial uncertainty, contamination red flags, mine/brine/seawater source labels, storage and access logs, water or food-contact caution, stop-use trigger recognition, and public-health, food-safety, geology, mining, or water-quality handoff.
+
+Start with documentation only: record the salt source or claimed source, intended use, label wording, supplier or site, container condition, storage location, date received or harvested, access history, visible debris or discoloration, moisture, odors, nearby chemicals or fuels, water contact, food-contact plans, animal or wound-contact plans, and any missing records. If the source, label, contamination status, or intended use is uncertain, keep it out of food, drinking water, animal feed, wounds, preservation batches, and chemical dosing until a qualified public-health, food-safety, geology, mining, or water-quality owner reviews it.
+
+Do not use this reviewed card for mining, boiling, evaporation, recrystallization, purification chemistry, brine-well work, food curing ratios, chlorine or bleach production, dosing, quality certification, legal claims, or safety certification. If a prompt asks for those, give only the relevant inventory, stop-use, and qualified-handoff boundary.
+
+</section>
 
 <section id="overview">
 
@@ -534,4 +582,3 @@ If performing lime treatment or other chemical purification:
 -   [Chemistry Fundamentals](chemistry-fundamentals.html) — Understanding mineral composition, chemical reactions, and industrial processes for self-sufficiency.
 -   [Food Preservation](food-preservation.html) — Comprehensive methods for meat curing, fermentation, and long-term storage using salt.
 -   [Mineral Identification and Prospecting](mineral-identification-prospecting.html) — Identifying salt deposits, halite, and other minerals in the field.
-
