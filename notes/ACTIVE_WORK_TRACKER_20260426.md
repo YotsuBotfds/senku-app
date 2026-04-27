@@ -35,6 +35,9 @@ reports `3` unresolved partial markers, and
    - `evaluate_retrieval_pack.py --top-k 8` produced `8/8` expected hit@1 and `8/8` primary hit@1 with `0` retrieval errors.
    - Retrieval expectation cross-check passed with `--fail-on-errors --fail-on-warnings`.
    - No profile comparison needed unless later changes reopen weak EVAL9 rows.
+   - Current structural gate refresh after queue reconciliation passed:
+     partial-router expectations `21/21` and EVAL9 expectations `8/8`, both
+     with `0` warnings and `0` errors.
 2. Metadata/card surfacing:
    - Completed in this slice: reviewed answer cards for `GD-666`, `GD-732`, `GD-035`, `GD-024`, and `GD-636`; metadata audit now reports no gaps for those five guides.
    - Completed in follow-up medical slice: reviewed answer cards for `GD-298`, `GD-617`, `GD-635`, `GD-579`, and `GD-526`; metadata audit now reports no gaps for those five guides.
