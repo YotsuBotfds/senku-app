@@ -47,4 +47,24 @@ public final class HostInferenceClientTest {
         assertEquals("host", result.backend);
         assertEquals(0.0d, result.elapsedSeconds, 0.0001d);
     }
+
+    @Test
+    public void parseResponseBodyDefaultsBackendWhenBlank() throws Exception {
+        HostInferenceClient.Result result = HostInferenceClient.parseResponseBody(
+            "{\n" +
+                "  \"choices\": [\n" +
+                "    {\n" +
+                "      \"message\": {\n" +
+                "        \"content\": \"Ready\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"senku_backend\": \"   \"\n" +
+                "}"
+        );
+
+        assertEquals("Ready", result.answer);
+        assertEquals("host", result.backend);
+        assertEquals(0.0d, result.elapsedSeconds, 0.0001d);
+    }
 }
