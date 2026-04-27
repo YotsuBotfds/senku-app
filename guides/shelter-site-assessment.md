@@ -388,7 +388,15 @@ Use this checklist to evaluate a potential shelter site systematically:
 - [ ] Winter/summer hazards assessed?
 - [ ] Year-round resource availability confirmed?
 
-{{> shelter-site-assessment }}
+### Boundary Triage: Shelter Site
+
+Use this static check before committing people, supplies, or construction effort to a site.
+
+- **Move on from active hazards.** Flood channels, rising water, rockfall, avalanche paths, landslide signs, dead-fall overhead, lightning exposure, smoke, fire spread, or unstable structures are reasons to choose a different site or hand off to the specialist owner.
+- **Keep the assessment observational.** Compare terrain, drainage, wind, water access, vegetation, routes, and seasonal fit; do not turn this section into engineering calculations or tactical security planning.
+- **Do not treat distance or slope rules as guarantees.** Local weather, upstream runoff, soil, snowpack, wildfire behavior, and human activity can override a checklist.
+- **Prioritize exit and reversibility.** A safer site has visible routes out, room to relocate, and no single failure point that traps people.
+- **Hand off when the risk is specialized.** Use wildfire, flood, avalanche, structural, water-treatment, or medical guides when those hazards dominate the shelter question.
 
 </section>
 

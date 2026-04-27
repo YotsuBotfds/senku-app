@@ -1132,4 +1132,12 @@ Mark off items as you prepare:
 
 </section>
 
-{{> winter-survival-systems-custom }}
+### Boundary Triage: Winter Cold Exposure
+
+Use this quick boundary check before adding comfort projects, food work, or complex camp construction.
+
+- **Stop heat loss first.** Get people out of wind and precipitation, put dry insulation under and around them, and protect the head, neck, and torso before improving the shelter.
+- **Treat wet, confused, clumsy, very sleepy, or no-longer-shivering people as urgent.** Keep them horizontal if very impaired, handle gently, insulate the core, and seek medical or evacuation help when available.
+- **Do not promise survival from time, temperature, or gear ratings.** Wind, wet clothing, exhaustion, age, illness, and injury can make a mild-looking exposure dangerous.
+- **Do not rely on alcohol, forced fluids, rubbing frostbite, or sealed indoor combustion.** These can worsen cold injury, aspiration risk, tissue damage, or carbon-monoxide exposure.
+- **Route specialist problems out of this guide.** Use cold-water survival for immersion or ice breakthrough, first aid for CPR/airway care, avalanche safety for avalanche terrain, and shelter-site assessment for choosing a safer long-term location.

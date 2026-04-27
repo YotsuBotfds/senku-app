@@ -933,4 +933,13 @@ Batteries store electrical energy but have limited capacity and lifespan. For lo
 
 </section>
 
-{{> electricity-calculator }}
+### Boundary Inventory: Electricity Questions
+
+Use this section for conceptual orientation and safe scoping only. It is not a wiring, sizing, testing, or repair tool.
+
+- Name the question type: basic concept, visible condition inventory, project scoping, hazard recognition, emergency stop-work cue, or qualified-electrician handoff.
+- Record only non-contact observations: labels, equipment names, whether covers are missing, visible damage, water exposure, scorch marks, unusual odor, noise, heat, tripped devices, or access problems.
+- Keep people away from exposed conductors, wet panels, damaged cords, downed lines, sparking equipment, smoke, or any suspected energized metal.
+- Do not infer safe capacity, breaker size, wire size, grounding quality, battery suitability, generator connection safety, or return-to-service status from a casual description.
+- Route design, installation, troubleshooting, live testing, grounding, bonding, interconnection, panel work, generator transfer equipment, and repair decisions to a qualified electrical owner.
+- Keep the output as a plain-language risk note plus next owner, not calculations or instructions.

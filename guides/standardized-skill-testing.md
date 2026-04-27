@@ -714,7 +714,27 @@ These cases show that certification systems balance competing needs: safety (don
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> standardized-skill-testing-custom }}
+### Static Certification Worksheet
+
+When no custom testing form is available, use a plain written record for each candidate. Keep the standard narrow, observable, and tied to the actual work the person will be allowed to perform.
+
+**Minimum record:**
+- Candidate name and contact or household identifier
+- Skill being tested and certification level requested
+- Date, location, and names of examiners
+- Required tools, materials, or patients/simulations used
+- Written score, practical score, and pass/fail decision
+- Any restrictions, supervision requirements, or retest date
+
+**Practical test structure:**
+- State the task and safety limits before the test begins
+- Require the candidate to explain hazards and stop conditions
+- Observe the candidate performing the task, not only describing it
+- Score against a checklist agreed on before testing
+- Record critical failures separately from minor mistakes
+- Give the candidate written feedback and an appeal path
+
+For high-risk skills such as medical treatment, structural work, electrical repair, food preservation, or water treatment, do not certify from reputation alone. Require direct observation by at least two competent reviewers and limit the certificate to the tested scope.
 
 </section>
 

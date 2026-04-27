@@ -926,7 +926,16 @@ Start Over
 
 </section>
 
-{{> energy-systems-troubleshooter }}
+### Planning Boundary: Energy System Questions
+
+Use this section to sort the question before any technical work begins. Keep the answer at the level of needs, owners, records, and handoffs.
+
+- List the essential loads or services the system is meant to support, such as communication, lighting, refrigeration, water movement, heat, or medical equipment support.
+- Note the current source categories available, such as grid power, stored energy, fuel-based equipment, solar, wind, water, or thermal storage, without designing or modifying the equipment.
+- Record observed symptoms in plain language: outage pattern, unusual smell, heat, noise, visible damage, water exposure, corrosion, missing covers, or repeated shutoffs.
+- Separate planning questions from owner questions. Planning can rank needs and backups; wiring, charging systems, generators, inverters, fuel systems, and interconnection belong with qualified owners.
+- Stop the planning lane and route to the right owner when there is smoke, sparking, shock risk, damaged conductors, fuel odor, battery swelling, flooding, energized equipment, pressure equipment, or any improvised backfeed risk.
+- Keep a dated log of what was observed, who owns each component, what stayed off limits, and which specialist or guide lane should review it next.
 
 :::affiliate
 **If you're designing an off-grid power system,** these components form the backbone of reliable renewable energy storage and regulation:

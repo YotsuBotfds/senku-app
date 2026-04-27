@@ -878,24 +878,15 @@ For larger water demand, multiple cisterns can be connected in series or paralle
 
 ### Common Mistakes
 
--   Add specific common mistakes here based on the guide content
+-   Choosing a site from surface clues alone without checking contamination risks uphill, nearby latrines, fuel storage, septic fields, animal pens, or flood paths.
+-   Starting a bore without a collapse plan, casing plan, and safe spoil-handling area.
+-   Entering a well shaft or sending someone into a confined space without trained rescue support.
+-   Assuming clear water is safe to drink before bacterial, mineral, and chemical testing.
+-   Leaving the wellhead low, uncapped, or poorly sealed so runoff can enter during storms.
+-   Ignoring seasonal water-table changes and overestimating dry-season yield from wet-season observations.
 
-:::note
-:::note
-My Notes ▼
-:::
+### Planning Boundary
 
-:::note
-:::note
-Save Notes
-:::
-:::
-:::
+Use this guide to compare access methods, recognize warning signs, and plan questions for local drillers, health departments, or water specialists. Stop and get qualified help when a site has unstable soil, artesian pressure, suspected industrial or agricultural contamination, nearby sewage, methane or other gas concerns, or any need for confined-space entry.
 
-:::note
-:::note
-Save Notes
-:::
-:::
-
-{{> well-drilling-custom }}
+Before using a new or repaired well for drinking water, disinfect the system where appropriate and test through a qualified lab or public-health program. Keep untreated water for non-potable uses until testing and treatment confirm that it is safe.

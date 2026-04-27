@@ -1421,4 +1421,13 @@ The following projects range from beginner to intermediate, introducing differen
 
 </section>
 
-{{> foundry-casting-custom }}
+### Foundry-Area Boundary Inventory
+
+Use this section only to decide whether the foundry area is ready for expert review or should be kept inactive.
+
+- Record the current status: no work planned, cold setup review, recently used area, or active/hot work nearby.
+- Identify the responsible owner, access limits, ventilation concerns, fire-control owner, material labels, and whether bystanders can be kept out of the area.
+- Log visible hazards without touching equipment: unknown scrap, unlabeled metal, damp materials, fuel odor, damaged furnace parts, damaged crucibles, cluttered paths, combustible storage, spilled material, or missing barriers.
+- Treat any active molten-metal work, hot equipment, moisture near casting materials, unknown metal source, damaged containment, fire, smoke, fuel leak, or uncontrolled public access as a no-go trigger.
+- Do not provide mold design, furnace setup, melting or pouring instructions, alloy choices, fluxes, sand chemistry, gating, risers, temperatures, timing, calculations, or return-to-service approval.
+- Handoff to the qualified foundry owner with the inventory, labels, observed no-go triggers, and what remains unknown.

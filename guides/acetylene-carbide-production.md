@@ -1334,4 +1334,6 @@ Save NotesClear Notes
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> acetylene-carbide-production-custom }}
+:::danger
+**Boundary-only note:** No acetylene or calcium-carbide production supplement is provided here. Keep responses non-procedural: record container or site identity from a safe distance, isolate access, keep suspected carbide dry, avoid water and ignition sources, stop use, and hand off to fire service, hazmat, poison control, a qualified gas supplier, a qualified chemical safety owner, or the responsible site owner. Do not provide production, gas-generation, pressure handling, welding setup, purification, leak-testing, transfer, cleanup chemistry, or safety-certification instructions.
+:::

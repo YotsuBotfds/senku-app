@@ -2075,7 +2075,9 @@ In hot, dry climates without electricity or ice access, evaporative cooling pass
 
 </section>
 
-{{> food-preservation-calculator }}
+:::warning
+**Boundary-only note:** No preservation calculator is provided here. Keep preservation answers at method-selection and handoff level: separate suspect food from sound food, route spoiled or uncertain food to `food-spoilage-assessment`, use `food-storage-packaging` only after preservation is complete, and hand off detailed drying, fermentation, cold-storage, or pressure-canning questions to their owner guides. Do not provide recipes, canning times, pressure settings, brine or acid ratios, processing shortcuts, sensory-only safety guarantees, botulism treatment, or promises that a batch is safe.
+:::
 
 :::affiliate
 **If you're preparing in advance,** these preservation tools cover the core methods in this guide:

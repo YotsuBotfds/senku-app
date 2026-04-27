@@ -777,7 +777,15 @@ Prevention is far more effective than treatment.
 - Continue hydration with electrolytes
 - Watch for delayed symptoms
 
-{{> heat-illness-calculator }}
+### Boundary Triage: Heat Illness
+
+Use this static check instead of a calculator when someone may be overheated.
+
+- **Confusion, collapse, seizure, fainting, or worsening behavior in heat is an emergency.** Stop work, move to shade or a cooler place, begin cooling with available water, airflow, and shade, and seek emergency help.
+- **Do not wait for an exact temperature reading.** A thermometer can help, but mental-status change in heat is enough reason to cool and escalate.
+- **Give fluids only when the person is awake, cooperative, and able to swallow.** Use small sips; do not force water into someone confused, vomiting, unconscious, or hard to wake.
+- **Cooling comes before return-to-work decisions.** Anyone who needed help for heat illness should stay out of heat and exertion while symptoms are present or worsening.
+- **Route non-heat causes separately.** Smoke, carbon monoxide, chemical exposure, poisoning, infection, chest pain, or stroke-like symptoms need their own emergency owner, even if the day is hot.
 
 :::affiliate
 **If you're preparing in advance,** these heat management and hydration solutions prevent dehydration emergencies:

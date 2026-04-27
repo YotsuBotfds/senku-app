@@ -576,7 +576,18 @@ Solar lighting systems are extremely durable:
 
 The angle at which solar collectors (panels, cookers, heaters) are oriented dramatically affects annual energy capture. Unlike latitude alone, seasonal adjustment provides significant efficiency gains.
 
-{{> solar-panel-angle-calculator }}
+### Static Tilt Reference
+
+Use local latitude as the starting point when no calculator or survey tool is available. These values are approximate and are safest as planning defaults, not precision engineering:
+
+| Latitude | Fixed Year-Round Tilt | Summer Tilt | Winter Tilt |
+| --- | ---: | ---: | ---: |
+| 15 degrees | 15 degrees | 0-10 degrees | 30 degrees |
+| 30 degrees | 30 degrees | 15 degrees | 45 degrees |
+| 45 degrees | 45 degrees | 30 degrees | 60 degrees |
+| 60 degrees | 60 degrees | 45 degrees | 75 degrees |
+
+If the exact latitude is unknown, choose the nearest row and favor a slightly steeper angle for winter heat or battery charging. For improvised mounts, verify that the structure stays stable in wind before optimizing the final few degrees of tilt.
 
 ### Fixed Tilt Angle (Year-Round)
 

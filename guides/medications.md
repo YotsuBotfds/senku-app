@@ -350,7 +350,11 @@ Liquid formulations preferred for infants/toddlers (difficulty swallowing tablet
 
 ## Pediatric Medication Safety
 
-{{> medication-dosage-calculator }}
+### Boundary Replacement for Medication Dosage Requests
+
+This guide should not provide a dosage calculator, dose conversion, medication selection, tapering, substitution, compounding, or treatment plan. For a medication safety question, keep support limited to label and identity uncertainty, possible duplicate ingredients, allergy or prior reaction, child or pregnancy exposure, expired or storage-damaged medicine, unknown pills, do-not-take or hold-and-call boundaries, poison-control/pharmacist/clinician handoff, and medication records.
+
+Do not use this section to calculate a dose, adjust a dose, clear an interaction, decide whether a medicine is safe for a specific person, or replace pharmacist or clinician review.
 
 ### Weight-Based Dosing Principles
 

@@ -798,4 +798,8 @@ Never make menstrual products conditional on anything (attendance, behavior, etc
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> feminine-hygiene-production-custom }}
+### Boundary Replacement for Menstrual Product Requests
+
+This guide should not provide custom product patterns, fabrication instructions, sterilization guarantees, absorbency claims, or insertion/device-use instructions. For menstrual hygiene support, keep help limited to inventory, cleanliness, complete drying, clean storage, discard logs, irritation or infection red flags, toxic-shock-like red flags, vulnerable-user flags, and clinician or public-health handoff.
+
+Do not use this section to certify a homemade product as safe, diagnose symptoms, recommend treatment or medication, or make legal or medical clearance claims.

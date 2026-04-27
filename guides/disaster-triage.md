@@ -858,7 +858,11 @@ Making triage decisions in MCIs can cause significant psychological stress on me
 
 #### Longer-Term Support
 
-{{> first-aid-triage }}
+### Boundary Replacement for First-Aid Triage Requests
+
+This guide should not supply a first-aid triage algorithm or assign treatment priority. For a mass-casualty or disaster scene, keep support limited to scene-safety reminders, a simple count of people found, visible life-threat red flags already observed, and a clear handoff log for incident command, EMS, or the receiving clinical team.
+
+Do not use this section to diagnose injuries, choose triage colors, decide who receives treatment first, pronounce death, teach procedures, or override local emergency protocols. If trained responders are available, hand off immediately and preserve the facts already observed.
 
 </section>
 

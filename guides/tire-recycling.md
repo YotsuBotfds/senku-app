@@ -826,4 +826,10 @@ Tires represent one of the most abundant and versatile waste materials available
 -   [Rubber and Latex](rubber-latex.html) - Natural rubber processing and use
 -   [Natural Building](natural-building.html) - Earth-based and sustainable construction
 
-{{> tire-recycling-custom }}
+### Tire Reuse Planning Boundary
+
+Use tire projects first for non-structural or low-consequence applications: garden edging, sandals, splash guards, tool pads, temporary bumpers, weights, and similar uses where failure will not trap, crush, contaminate, or burn anything important. Retire any tire that is oil-soaked, chemically contaminated, brittle, badly cracked, heat-damaged, or shedding exposed steel wire.
+
+Do not burn tires, heat them in enclosed spaces, use them for potable-water storage, or rely on them for food-contact surfaces. Treat cutting dust and exposed wire as hazards: work outdoors or with strong ventilation, wear eye and hand protection, and finish sharp edges before the item goes into service.
+
+For walls, retaining edges, cisterns, animal shelters, or any application that could injure people if it moves or collapses, keep this guide at the planning level. Confirm drainage, anchoring, fire separation, and local code or expert review before building at scale.

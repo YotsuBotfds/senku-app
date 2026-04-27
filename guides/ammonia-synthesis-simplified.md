@@ -1043,7 +1043,9 @@ If iron oxide is not fully reduced to metallic iron before synthesis, activity i
 
 </section>
 
-{{> ammonia-synthesis-simplified-custom }}
+:::danger
+**Boundary-only note:** No ammonia synthesis or fertilizer-conversion supplement is provided here. Keep responses non-procedural: use safer nitrogen-planning alternatives, record labels and exposure facts from a safe place, stop work, evacuate or avoid entry for ammonia odor, vapor, symptoms, damaged containers, pressure-equipment distress, heat, fire, or reactor concerns, and hand off to emergency services, hazmat, poison control, agricultural extension, or a qualified chemical engineer. Do not provide Haber-Bosch construction, operating parameters, catalyst preparation, hydrogen or nitrogen generation, reactor design, ammonium nitrate pathways, fertilizer conversion recipes, dosing, repair, legal/code claims, or safety certification.
+:::
 
 :::affiliate
 **If you're preparing in advance,** have these reference materials and testing equipment for synthesis operations:

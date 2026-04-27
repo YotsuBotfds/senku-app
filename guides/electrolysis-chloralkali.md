@@ -1656,4 +1656,6 @@ Mark your understanding of each topic as you progress through this guide.
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> electrolysis-chloralkali-custom }}
+:::danger
+**Boundary-only note:** No electrolysis or chlor-alkali process supplement is provided here. Keep responses non-procedural: stop work, avoid entry, ventilate only from a safe location if already possible, evacuate when chlorine, caustic, hydrogen, electrical, heat, fire, pressure, or unknown-solution red flags appear, and hand off to emergency services, hazmat, poison control, an electrical owner, or a qualified chemistry owner. Do not provide cell construction, brine preparation, wiring or electrode setup, electrolysis settings, gas collection, neutralization, cleanup chemistry, return-to-service, or safety-certification instructions.
+:::

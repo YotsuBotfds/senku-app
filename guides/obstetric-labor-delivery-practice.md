@@ -1421,7 +1421,11 @@ Twin delivery has higher risks than singleton: cord prolapse, preterm labor, pla
 
 ## Complications & Emergency Interventions
 
-{{> childbirth-complication-decision-tree }}
+### Boundary Replacement for Childbirth Complication Requests
+
+This guide should not provide a childbirth complication decision tree, delivery maneuver, medication instruction, fetal-monitoring interpretation, or emergency obstetric procedure. For labor or delivery concerns, keep support limited to documenting the timeline, noting symptoms already observed, keeping the pregnant person accompanied and warm, preserving privacy, gathering known prenatal records or medication/allergy facts, calling ahead, and handing off to a clinician, midwife, OB unit, emergency number, or receiving facility.
+
+Do not use this section to manage birth, decide that a complication is stable, treat hemorrhage, manage cord or limb presentation, handle breech or multiple gestation, induce or augment labor, resuscitate a newborn, or delay emergency transport.
 
 ### Prolonged Labor
 

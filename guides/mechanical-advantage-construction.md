@@ -72,7 +72,11 @@ The difference between success and catastrophic failure often comes down to rope
 
 ## Mechanical Advantage Principles
 
-{{> load-bearing-calculator }}
+:::danger
+**Planning boundary:** Do not treat field rules of thumb as proof that a lift, beam, scaffold, anchor, or crane is safe. Use this section to understand load paths and mechanical advantage concepts only. Before lifting people, working under a load, or depending on a structure to carry weight, get a competent builder or engineer to review the materials, connections, anchors, ground conditions, and inspection plan.
+:::
+
+For field planning, describe the work before choosing hardware: what is being moved, where it will travel, who controls the movement, where people will stand, and how the load will be lowered if anything binds. Keep the first lift low and reversible, stop at the first sign of cracking, slipping, rope damage, anchor movement, or frame twist, and never place a person beneath a suspended load.
 
 ### The Lever and Inclined Plane
 

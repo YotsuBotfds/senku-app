@@ -1840,4 +1840,6 @@ Many deaths in field medicine result from overzealous intervention by well-meani
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> ether-chloroform-synthesis-custom }}
+:::danger
+**Boundary-only note:** No synthesis, dosing, or procedure supplement is provided here. Historical ether, chloroform, or improvised anesthesia questions should stay in safety-boundary language: do not attempt anesthetic synthesis or unsupervised general anesthesia; monitor for breathing, airway, aspiration, shock, overdose, and allergic-reaction red flags; use non-drug comfort and stabilization where appropriate; and hand off to trained medical care, emergency services, poison control, or a qualified anesthesia/airway clinician whenever possible.
+:::

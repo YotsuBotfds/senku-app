@@ -494,7 +494,15 @@ Downstream search or recovery actions belong only after emergency help is called
 
 **Key:** Even if unresponsive and apparently dead, resuscitate all cold-water submersion victims. Do not declare death until patient is warm.
 
-{{> cold-exposure-assessment }}
+### Boundary Triage: Cold-Water Exposure
+
+Use this static check after cold-water immersion, ice breakthrough, or near-drowning.
+
+- **Airway and breathing come first.** Call emergency help, check breathing, and start rescue breathing/CPR if the person is not breathing normally.
+- **Assume hypothermia risk even after rescue.** Remove wet clothing when safe, keep the person horizontal if weak or confused, insulate from the ground and air, and rewarm gently.
+- **Do not use survival-time tables as reassurance.** Water temperature, clothing, flotation, injury, exhaustion, and submersion can change risk quickly.
+- **Avoid rough handling, forced walking, alcohol, or forced drinks.** These can worsen collapse, aspiration risk, or heat loss, especially when the person is confused or very cold.
+- **Escalate after any submersion, breathing trouble, persistent cough, confusion, chest symptoms, or worsening condition.** Delayed breathing problems can appear after the person seems initially better.
 
 </section>
 

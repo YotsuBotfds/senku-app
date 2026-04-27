@@ -167,7 +167,16 @@ The tooth profile must be **involute** (a curve that resembles a spiral when a s
 
 The ratio of two gears determines speed and torque transformation.
 
-{{> gear-ratio-calculator }}
+### Boundary Inventory: Gear Train Questions
+
+Use this section only to inventory an existing gearbox or gear train and decide who should own the next step.
+
+- Identify the equipment, its owner, normal purpose, and whether it is currently stopped, locked out by the owner, or still in service.
+- Record visible condition without opening guards or touching moving parts: missing guards, loose covers, broken teeth seen from outside, leaks, overheating signs, corrosion, contamination, unusual noise, vibration, or repeated jams.
+- Note the consequence if the equipment fails: hand tool, shop machine, lifting equipment, vehicle, water power, public access, or another high-consequence use.
+- Treat missing guards, entanglement risk, unexpected motion, electrical exposure, cracked housings, severe vibration, grinding noise, or unknown modifications as stop-use and handoff triggers.
+- Leave ratio selection, tooth geometry, load, speed, torque, shaft alignment, cutting, machining, setup, repair, rebuild, and return-to-service decisions to the qualified mechanical owner.
+- Handoff with the observation log, photos if already available, equipment labels, known history, and the reason the guide did not provide design or repair values.
 
 <div class="ratio-calc">
 

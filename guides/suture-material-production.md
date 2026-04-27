@@ -1141,4 +1141,8 @@ For additional information on related topics, consult:
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> suture-material-production-custom }}
+### Boundary Replacement for Suture-Material Requests
+
+This guide should not provide custom suture production, needle manufacture, sterilization parameters, stitch selection, or wound-closure technique. For a wound or closure-material question, keep support limited to identifying uncertainty, avoiding improvised or non-sterile material in the wound, covering the wound with clean material, protecting it from further contamination, and arranging clinician or emergency evaluation.
+
+Do not use this section to certify homemade materials as safe, describe how to make or sterilize closure material, diagnose the wound, prescribe medicine, or decide that field closure is appropriate.
