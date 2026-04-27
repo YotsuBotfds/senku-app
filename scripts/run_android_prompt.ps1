@@ -10,6 +10,8 @@ param(
     [string]$InferenceMode = "preserve",
     [string]$HostInferenceUrl = "http://10.0.2.2:1235/v1",
     [string]$HostInferenceModel = "gemma-4-e2b-it-litert",
+    [ValidateSet("", "portrait", "landscape")]
+    [string]$Orientation = "",
     [int]$WaitSeconds = 5,
     [switch]$WaitForCompletion,
     [int]$MaxWaitSeconds = 180,
@@ -99,6 +101,9 @@ if ($UseInstrumentationPreflight) {
         )
     } else {
         $preflightArgs += @("-SmokeProfile", "basic")
+    }
+    if (-not [string]::IsNullOrWhiteSpace($Orientation)) {
+        $preflightArgs += @("-Orientation", $Orientation)
     }
     Write-Host ("Running instrumentation preflight on {0}..." -f $Emulator)
     & powershell @preflightArgs
@@ -690,6 +695,9 @@ if ($resolvedInstrumentationExecution) {
         )
         if ($canSkipBuild) {
             $instrumentationArgs += @("-SkipBuild")
+        }
+        if (-not [string]::IsNullOrWhiteSpace($Orientation)) {
+            $instrumentationArgs += @("-Orientation", $Orientation)
         }
         if ($Ask) {
             $instrumentationArgs += @("-ScriptedAsk")
