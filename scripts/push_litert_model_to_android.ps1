@@ -3,6 +3,7 @@ param(
     [string]$ModelPath = "",
     [string]$PackageName = "com.senku.mobile",
     [string]$RemoteTempDir = "/data/local/tmp/senku_litert_model_push",
+    [switch]$SkipDataSpaceCheck,
     [switch]$RestartApp,
     [switch]$ForceStop,
     [switch]$PruneExistingModels
@@ -86,14 +87,51 @@ function Get-DeviceDataAvailableBytes {
         return $null
     }
 
+    $availableColumn = -1
     foreach ($line in $dfOutput) {
         $trimmed = ([string]$line).Trim()
-        if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed.StartsWith("Filesystem")) {
+        if ([string]::IsNullOrWhiteSpace($trimmed)) {
             continue
         }
+
+        if ($trimmed.StartsWith("Filesystem")) {
+            $headerColumns = @($trimmed -split "\s+")
+            for ($i = 0; $i -lt $headerColumns.Count; $i++) {
+                if ($headerColumns[$i] -match "^(Available|Avail|Free)$") {
+                    $availableColumn = $i
+                    break
+                }
+            }
+            continue
+        }
+
+        if ($trimmed -match "^\S+\s+\d+\s+\d+\s+(\d+)\s+\d+%\s+/data(\s|$)") {
+            return ([long]$Matches[1] * 1024L)
+        }
+
+        if (-not $trimmed.EndsWith("/data")) {
+            continue
+        }
+
         $parts = @($trimmed -split "\s+")
         if ($parts.Count -lt 4) {
             continue
+        }
+
+        $candidateIndexes = @($parts.Count - 1)
+        if ($availableColumn -ge 0) {
+            $candidateIndexes = @($availableColumn)
+        }
+
+        foreach ($candidateIndex in $candidateIndexes) {
+            if ($candidateIndex -ge $parts.Count) {
+                continue
+            }
+            $candidate = $parts[$candidateIndex]
+            $availableKb = 0L
+            if ([long]::TryParse($candidate, [ref]$availableKb)) {
+                return ($availableKb * 1024L)
+            }
         }
         $availableKb = 0L
         if ([long]::TryParse($parts[3], [ref]$availableKb)) {
@@ -104,7 +142,15 @@ function Get-DeviceDataAvailableBytes {
 }
 
 function Assert-DeviceHasModelStagingSpace {
-    param([long]$ModelBytes)
+    param(
+        [long]$ModelBytes,
+        [switch]$Skip
+    )
+
+    if ($Skip) {
+        Write-Warning "Skipping /data free-space preflight because -SkipDataSpaceCheck was set."
+        return
+    }
 
     $availableBytes = Get-DeviceDataAvailableBytes
     if ($null -eq $availableBytes) {
@@ -164,6 +210,8 @@ try {
         throw "run-as failed for $PackageName on $Device. Install a debuggable build first. Output: $message"
     }
 
+    Assert-DeviceHasModelStagingSpace -ModelBytes $modelBytes -Skip:$SkipDataSpaceCheck
+
     if ($ForceStop -or $RestartApp) {
         Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "am", "force-stop", $PackageName) | Out-Null
     }
@@ -187,8 +235,6 @@ try {
             }
         }
     }
-
-    Assert-DeviceHasModelStagingSpace -ModelBytes $modelBytes
 
     $remoteModelPath = "$RemoteTempDir/$modelFileName"
     $remotePrefsPath = "$RemoteTempDir/senku_model_store.xml"
