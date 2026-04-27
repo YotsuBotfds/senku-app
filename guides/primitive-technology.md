@@ -923,4 +923,12 @@ Advanced hide processing, vegetable tanning, smoke tanning, leather working. Edg
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> primitive-technology-custom }}
+:::note
+**This guide (GD-027) covers:** primitive survival craft techniques including
+fire-by-friction, knapping, cordage, hide processing, shelters, and fieldcraft
+basics.
+
+**Scope boundary:** This guide is educational and practical craft guidance. It
+is not a medical-treatment, illegal-activity, weaponization, or advanced
+hazardous-operations playbook.
+:::

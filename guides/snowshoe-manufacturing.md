@@ -516,4 +516,10 @@ Walking pole with basket attachment for winter use
 <span class="affiliate-note">As an Amazon Associate we earn from qualifying purchases. These match the tools discussed in this guide — see the gear page for full pros/cons.</span>
 :::
 
-{{> snowshoe-manufacturing-custom }}
+:::note
+**This guide (GD-214) covers:** building and maintaining snowshoes, including
+frames, lacing, bindings, sizing, walking method, and repair.
+
+For sleds, toboggans, cargo hauling, and team hitching, route to
+[Snowshoe & Sled Construction](snowshoe-sled-construction.html) (GD-681).
+:::
