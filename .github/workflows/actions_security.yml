@@ -1,16 +1,6 @@
 name: Actions Security Lint
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/**"
-      - ".github/CODEOWNERS"
-  push:
-    branches:
-      - master
-    paths:
-      - ".github/workflows/**"
-      - ".github/CODEOWNERS"
   workflow_dispatch:
 
 permissions:

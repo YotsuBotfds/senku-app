@@ -94,7 +94,19 @@ handoffs. It is not Android acceptance evidence.
     `73276220792`, `steps=[]`.
   - `f55d2b0`: `PowerShell Quality Gate` run `25019435514`, job
     `73275842131`, `steps=[]`.
-  Treat these as CI setup/runner failures until a run emits actual step logs.
+- `gh run view 25019683831` for tracker commit `5c9bca5` showed the concrete
+  root cause: the job was not started because recent account payments failed
+  or the spending limit needs to be increased. Treat current red checks as
+  account/billing infra, not code regressions, until Actions can start jobs.
+- Local surrogate for `Master Head Health` generated mode passed after
+  `5c9bca5`:
+  `artifacts/bench/rag_eval_partial_router_holdouts_20260425_local_head_health_5c9bca5_generated_fixture_diag`.
+  It reported `expected_supported: 1`, regression gate `PASS`, and
+  `regressions: 0`.
+- Local PowerShell quality surrogate after the managed-device script change
+  parsed `68` PowerShell files successfully, then stopped because
+  `PSScriptAnalyzer` is not installed locally and the run required analyzer
+  coverage. No source failure was observed before the missing-module stop.
 
 ## Validation Notes
 

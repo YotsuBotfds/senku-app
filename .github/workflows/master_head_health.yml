@@ -1,9 +1,6 @@
 name: Master Head Health
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 permissions:

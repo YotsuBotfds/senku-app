@@ -32,6 +32,17 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
                     triggers = {triggers: None}
                 self.assertNotIn("pull_request_target", triggers)
 
+    def test_workflows_are_manual_only_to_avoid_unbounded_actions_billing(self):
+        for path, workflow in _workflow_docs():
+            with self.subTest(path=path.name):
+                triggers = workflow.get("on", workflow.get(True, {}))
+                if isinstance(triggers, str):
+                    triggers = {triggers: None}
+                self.assertIn("workflow_dispatch", triggers)
+                self.assertNotIn("push", triggers)
+                self.assertNotIn("pull_request", triggers)
+                self.assertNotIn("schedule", triggers)
+
     def test_action_references_are_pinned_to_commit_hashes(self):
         for path, workflow in _workflow_docs():
             jobs = workflow.get("jobs", {})
@@ -272,17 +283,12 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         )
         self.assertNotIn("Compact retrieval smoke index selected", gate_script)
 
-    def test_master_head_health_runs_generated_fixture_smoke_on_every_master_push(self):
+    def test_master_head_health_keeps_manual_generated_fixture_smoke(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "master_head_health.yml").read_text(encoding="utf-8")
         )
 
         triggers = workflow.get("on", workflow.get(True, {}))
-        self.assertIn("push", triggers)
-        push = triggers["push"]
-        self.assertEqual(["master"], push["branches"])
-        self.assertNotIn("paths", push)
-        self.assertNotIn("paths-ignore", push)
         self.assertIn("workflow_dispatch", triggers)
         self.assertNotIn("inputs", triggers["workflow_dispatch"] or {})
         self.assertEqual(
@@ -323,7 +329,7 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         self.assertFalse(job["with"]["include_safety_critical"])
         self.assertEqual("compact", job["with"]["retrieval_index_flavor"])
 
-    def test_strict_retrieval_head_health_runs_full_strict_retrieval_on_schedule_or_manual(self):
+    def test_strict_retrieval_head_health_keeps_manual_full_strict_retrieval(self):
         workflow = yaml.safe_load(
             (WORKFLOW_DIR / "strict_retrieval_head_health.yml").read_text(
                 encoding="utf-8"
@@ -333,13 +339,9 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
         triggers = workflow.get("on", workflow.get(True, {}))
         self.assertIn("workflow_dispatch", triggers)
         self.assertNotIn("inputs", triggers["workflow_dispatch"] or {})
-        self.assertIn("schedule", triggers)
         self.assertNotIn("push", triggers)
         self.assertNotIn("pull_request", triggers)
-        self.assertEqual(
-            [{"cron": "0 7 * * *"}],
-            triggers["schedule"],
-        )
+        self.assertNotIn("schedule", triggers)
 
         self.assertEqual(
             {"group": "${{ github.workflow }}-${{ github.ref }}", "cancel-in-progress": True},
@@ -539,25 +541,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
 
         self.assertEqual({"contents": "read"}, workflow.get("permissions"))
         triggers = workflow.get("on", workflow.get(True, {}))
-        self.assertIn("pull_request", triggers)
-        self.assertIn("push", triggers)
         self.assertIn("workflow_dispatch", triggers)
+        self.assertNotIn("pull_request", triggers)
+        self.assertNotIn("push", triggers)
         self.assertNotIn("pull_request_target", triggers)
-
-        pull_request = triggers["pull_request"]
-        self.assertEqual(
-            [
-                ".github/workflows/dependency_security.yml",
-                "requirements.txt",
-                "requirements.lock.txt",
-                "scripts/compile_python_lock.ps1",
-                "scripts/run_dependency_security_scan.ps1",
-            ],
-            pull_request["paths"],
-        )
-        self.assertEqual(["master"], triggers["push"]["branches"])
-        self.assertEqual(pull_request["paths"], triggers["push"]["paths"])
-        self.assertNotIn("paths-ignore", triggers["push"])
 
         jobs = workflow["jobs"]
         self.assertEqual(["dependency-security"], list(jobs))
@@ -610,23 +597,10 @@ class GithubWorkflowSecurityTests(unittest.TestCase):
 
         self.assertEqual({"contents": "read"}, workflow.get("permissions"))
         triggers = workflow.get("on", workflow.get(True, {}))
-        self.assertIn("pull_request", triggers)
         self.assertIn("workflow_dispatch", triggers)
+        self.assertNotIn("pull_request", triggers)
+        self.assertNotIn("push", triggers)
         self.assertNotIn("pull_request_target", triggers)
-        self.assertEqual(
-            [
-                ".github/workflows/powershell_quality.yml",
-                "PSScriptAnalyzerSettings.psd1",
-                "scripts/**/*.ps1",
-                "scripts/**/*.psm1",
-                "scripts/**/*.psd1",
-                "tests/powershell/**/*.ps1",
-            ],
-            triggers["pull_request"]["paths"],
-        )
-        self.assertEqual(["master"], triggers["push"]["branches"])
-        self.assertEqual(triggers["pull_request"]["paths"], triggers["push"]["paths"])
-        self.assertNotIn("paths-ignore", triggers["push"])
 
         jobs = workflow["jobs"]
         self.assertEqual(["powershell-quality"], list(jobs))
