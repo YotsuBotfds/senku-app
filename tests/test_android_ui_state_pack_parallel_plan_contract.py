@@ -69,6 +69,7 @@ class AndroidUiStatePackParallelPlanContractTests(unittest.TestCase):
             )
 
             run_dir = plan_path.parent
+            self.assertFalse((run_dir / "parallel_logs").exists())
             launched_artifacts = list((run_dir / "parallel_logs").glob("*.launcher.ps1"))
             launched_artifacts += list((run_dir / "parallel_logs").glob("*.out.log"))
             launched_artifacts += list((run_dir / "parallel_logs").glob("*.err.log"))

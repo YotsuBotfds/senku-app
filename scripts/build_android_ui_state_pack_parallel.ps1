@@ -60,7 +60,6 @@ if ($RoleFilter.Count -gt 0) {
 $active = New-Object System.Collections.Generic.List[object]
 $sliceFailures = New-Object System.Collections.Generic.List[object]
 $logsDir = Join-Path $repoRoot (Join-Path (Join-Path $OutputRoot $runId) "parallel_logs")
-New-Item -ItemType Directory -Force -Path $logsDir | Out-Null
 
 function New-RoleInvokeLine {
     param([string]$Role)
@@ -115,6 +114,8 @@ if (-not $SkipBuild) {
         Pop-Location
     }
 }
+
+New-Item -ItemType Directory -Force -Path $logsDir | Out-Null
 
 function Start-RoleProcess {
     param([string]$Role)
