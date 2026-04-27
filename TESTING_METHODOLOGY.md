@@ -525,6 +525,23 @@ Carry the APK parity gate forward with the artifact choice: if any code change o
 After every `adb uninstall com.senku.mobile`, clean install, or fresh read-only AVD boot, push the LiteRT model again before judging on-device behavior:
 - preferred helper: `powershell -ExecutionPolicy Bypass -File .\scripts\push_litert_model_to_android.ps1 -Device <serial> -ModelPath <local_model>`
 
+Before judging local generated-answer quality, prove deploy-state readiness with
+the focused model-store smoke. This only verifies that the resident model is
+discoverable and non-empty; it is not an answer-quality proof:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_android_instrumented_ui_smoke.ps1 `
+  -Device <serial> `
+  -TestClass com.senku.mobile.ModelFileStoreImportedModelTest#importedLiteRtModelIsDiscoverableAndNonEmpty `
+  -SmokeProfile custom `
+  -SkipBuild `
+  -SkipInstall
+```
+
+Do not run the full generated-answer UI validation pack as a model-readiness
+check. Reserve generated local validation for answer behavior after this smoke
+passes.
+
 Practical rules:
 - the helper's tmp-staging path copies the model into `/data/local/tmp` first and then into `files/models/`, so budget at least `>= 2x model_size` free space on the AVD data partition before using that path
 - D22 found the Windows direct-stream transport family unsafe or unproven for real binary LiteRT payloads, so do not treat a Windows `adb shell run-as ... cat` recipe as the normal solved workaround; see `notes/LITERT_PUSH_TRANSPORT_INVESTIGATION_20260423.md`

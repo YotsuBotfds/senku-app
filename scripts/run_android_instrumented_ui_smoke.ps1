@@ -121,6 +121,7 @@ $dumpDir = Join-Path $artifactDir "dumps"
 $harnessStateDir = Join-Path $repoRoot "artifacts\\harness_state"
 $installStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_" + $Device + ".json")
 $identityStatePath = Join-Path $harnessStateDir ("instrumented_ui_smoke_identity_" + $Device + ".json")
+$script:IdentityCacheHit = $false
 New-Item -ItemType Directory -Force -Path $screenshotDir | Out-Null
 New-Item -ItemType Directory -Force -Path $dumpDir | Out-Null
 New-Item -ItemType Directory -Force -Path $harnessStateDir | Out-Null
@@ -270,6 +271,20 @@ function Get-RemoteFileListingSignature {
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
         return $null
+    }
+
+    try {
+        $statArguments = if ([string]::IsNullOrWhiteSpace($RunAsPackage)) {
+            @("-s", $Device, "shell", "stat", "-c", "%n|%s|%Y|%f|%i", $Path)
+        } else {
+            @("-s", $Device, "shell", "run-as", $RunAsPackage, "stat", "-c", "%n|%s|%Y|%f|%i", $Path)
+        }
+        $statOutput = Invoke-AdbChecked -Arguments $statArguments -FailureMessage ("Remote stat failed for {0}" -f $Path)
+        $statTrimmed = $statOutput.Trim()
+        if (-not [string]::IsNullOrWhiteSpace($statTrimmed)) {
+            return "stat:$statTrimmed"
+        }
+    } catch {
     }
 
     try {
@@ -499,6 +514,7 @@ function Resolve-InstalledBinaryIdentity {
             ([string]$cachedIdentity.model_signature -eq [string]$modelMetadata.listing_signature)
     }
 
+    $script:IdentityCacheHit = $false
     $cacheMatches = ($null -ne $cachedIdentity) -and
         ([string]$cachedIdentity.device -eq $Device) -and
         (-not [string]::IsNullOrWhiteSpace($packagePath)) -and
@@ -509,6 +525,7 @@ function Resolve-InstalledBinaryIdentity {
 
     if ($cacheMatches -and -not [string]::IsNullOrWhiteSpace([string]$cachedIdentity.apk_sha)) {
         if ([string]::IsNullOrWhiteSpace([string]$modelMetadata.name) -or -not [string]::IsNullOrWhiteSpace([string]$cachedIdentity.model_sha)) {
+            $script:IdentityCacheHit = $true
             return [pscustomobject]@{
                 device = $Device
                 package_path = $packagePath
@@ -1491,6 +1508,7 @@ try {
         model_identity_source = $summaryModelIdentity.source
         model_name = $summaryModelIdentity.name
         model_sha = $summaryModelIdentity.sha
+        identity_cache_hit = [bool]$script:IdentityCacheHit
         identity_probe_error = $(if ([string]::IsNullOrWhiteSpace($identityProbeError)) { $null } else { $identityProbeError })
         installed_pack = $installedPackMetadata
         platform_anr = $platformAnrEvidence
