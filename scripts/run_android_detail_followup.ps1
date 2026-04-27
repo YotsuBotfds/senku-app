@@ -5,6 +5,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$FollowUpQuery,
     [string]$PushPackDir,
+    [switch]$SkipPackPushIfCurrent,
+    [switch]$ForcePackPush,
     [switch]$WarmStart,
     [ValidateSet("preserve", "local", "host")]
     [string]$InferenceMode = "preserve",
@@ -65,7 +67,18 @@ if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     if (-not (Test-Path $pushPackScript)) {
         throw "push script not found at $pushPackScript"
     }
-    & $pushPackScript -Device $Emulator -PackDir $PushPackDir -ForceStop
+    $pushArgs = @(
+        "-Device", $Emulator,
+        "-PackDir", $PushPackDir,
+        "-ForceStop"
+    )
+    if ($SkipPackPushIfCurrent) {
+        $pushArgs += "-SkipIfCurrent"
+    }
+    if ($ForcePackPush) {
+        $pushArgs += "-ForcePush"
+    }
+    & $pushPackScript @pushArgs
 }
 
 function Resolve-TargetPath {

@@ -3,6 +3,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$Query,
     [string]$PushPackDir,
+    [switch]$SkipPackPushIfCurrent,
+    [switch]$ForcePackPush,
     [switch]$WarmStart,
     [ValidateSet("preserve", "local", "host")]
     [string]$InferenceMode = "preserve",
@@ -35,7 +37,18 @@ if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     if (-not (Test-Path $pushPackScript)) {
         throw "push script not found at $pushPackScript"
     }
-    & $pushPackScript -Device $Emulator -PackDir $PushPackDir -ForceStop
+    $pushPackArgs = @(
+        "-Device", $Emulator,
+        "-PackDir", $PushPackDir,
+        "-ForceStop"
+    )
+    if ($SkipPackPushIfCurrent) {
+        $pushPackArgs += "-SkipIfCurrent"
+    }
+    if ($ForcePackPush) {
+        $pushPackArgs += "-ForcePush"
+    }
+    & $pushPackScript @pushPackArgs
 }
 
 function Save-Logcat {

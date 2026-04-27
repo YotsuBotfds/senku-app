@@ -172,6 +172,18 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('$text.Contains("next field question")', script)
         self.assertIn("Test-ComposeAnswerCardCompleted -Xml $xml", script)
 
+    def test_android_prompt_forwards_mobile_pack_cache_controls(self):
+        script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("[switch]$SkipPackPushIfCurrent", script)
+        self.assertIn("[switch]$ForcePackPush", script)
+        self.assertIn('$pushPackArgs = @(', script)
+        self.assertIn('if ($SkipPackPushIfCurrent)', script)
+        self.assertIn('$pushPackArgs += "-SkipIfCurrent"', script)
+        self.assertIn('if ($ForcePackPush)', script)
+        self.assertIn('$pushPackArgs += "-ForcePush"', script)
+        self.assertIn("& $pushPackScript @pushPackArgs", script)
+
     def test_android_smoke_classifies_platform_anr_dialogs(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")
 
