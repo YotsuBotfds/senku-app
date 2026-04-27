@@ -309,6 +309,51 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
         self.assertNotIn("emulator-5560", output)
         self.assertNotIn("emulator-5554", output)
 
+    def test_adb_resolution_prefers_sdk_platform_tools_before_path(self):
+        with tempfile.TemporaryDirectory(prefix="fake_android_sdk_") as sdk_temp_dir:
+            with tempfile.TemporaryDirectory(prefix="fake_path_adb_") as path_temp_dir:
+                sdk_root = Path(sdk_temp_dir)
+                emulator_dir = sdk_root / "emulator"
+                adb_dir = sdk_root / "platform-tools"
+                path_dir = Path(path_temp_dir)
+                emulator_dir.mkdir(parents=True)
+                adb_dir.mkdir(parents=True)
+                (emulator_dir / "emulator.exe").write_text("", encoding="utf-8")
+                sdk_adb = adb_dir / "adb.exe"
+                path_adb = path_dir / "adb.exe"
+                sdk_adb.write_text("", encoding="utf-8")
+                path_adb.write_text("", encoding="utf-8")
+
+                env = os.environ.copy()
+                env["ANDROID_SDK_ROOT"] = str(sdk_root)
+                env["PATH"] = str(path_dir) + os.pathsep + env.get("PATH", "")
+
+                result = subprocess.run(
+                    [
+                        "powershell",
+                        "-NoProfile",
+                        "-NonInteractive",
+                        "-ExecutionPolicy",
+                        "Bypass",
+                        "-File",
+                        str(SCRIPT),
+                        "-Roles",
+                        "phone_portrait",
+                        "-WhatIf",
+                    ],
+                    cwd=REPO_ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    env=env,
+                )
+
+        output = result.stdout + result.stderr
+        self.assertEqual(result.returncode, 0, output)
+        self.assertIn("Using adb: ", output)
+        self.assertIn("platform-tools\\adb.exe", output)
+        self.assertNotIn(f"Using adb: {path_adb}", output)
+
     def test_parser_gate_passes(self):
         result = subprocess.run(
             [

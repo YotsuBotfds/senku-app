@@ -58,26 +58,19 @@ function Resolve-SenkuEmulatorPath {
 function Resolve-SenkuAdbPath {
     param([string]$EmulatorPath)
 
-    try {
-        $adbCommand = Get-Command adb.exe -ErrorAction Stop
-        if ($adbCommand -and -not [string]::IsNullOrWhiteSpace([string]$adbCommand.Source)) {
-            return [string]$adbCommand.Source
-        }
-    } catch {
-    }
+    $candidates = @()
 
     if (-not [string]::IsNullOrWhiteSpace($EmulatorPath)) {
         try {
             $sdkRoot = Split-Path -Parent (Split-Path -Parent $EmulatorPath)
             $derived = Join-Path $sdkRoot "platform-tools\adb.exe"
             if (-not [string]::IsNullOrWhiteSpace([string]$derived)) {
-                return $derived
+                $candidates += $derived
             }
         } catch {
         }
     }
 
-    $candidates = @()
     if (-not [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)) {
         $candidates += (Join-Path $env:ANDROID_SDK_ROOT "platform-tools\adb.exe")
     }
@@ -101,6 +94,14 @@ function Resolve-SenkuAdbPath {
                 return $candidate
             }
         }
+    }
+
+    try {
+        $adbCommand = Get-Command adb.exe -ErrorAction Stop
+        if ($adbCommand -and -not [string]::IsNullOrWhiteSpace([string]$adbCommand.Source)) {
+            return [string]$adbCommand.Source
+        }
+    } catch {
     }
 
     throw "Could not resolve adb.exe."
