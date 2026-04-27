@@ -95,5 +95,8 @@ current-head pack migration proof.
   reached `31 / 45`: phone portrait stayed green, tablet lanes exposed one
   linked-guide handoff context failure each, and phone landscape remained
   blocked by System UI ANR.
+- That `31 / 45` matrix is superseded for current UI acceptance by the full
+  `45 / 45` proof at
+  `artifacts/ui_state_pack_current_head_surface_guard_full_20260427/20260427_101835/summary.json`.
 - Treat skipped, absent, or ANR-blocked current-head results as not-proof for
   that lane even when direct pack guards pass separately.

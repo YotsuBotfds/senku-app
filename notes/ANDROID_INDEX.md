@@ -18,10 +18,12 @@ Use this as the first stop for Android parity and mobile-pack work.
 - [`../scripts/run_android_session_batch.ps1`](../scripts/run_android_session_batch.ps1): multi-turn session batch runner with summary artifacts, guarded by `tests/test_android_session_batch_summary_contract.py`
 - [`../scripts/run_android_harness_matrix.ps1`](../scripts/run_android_harness_matrix.ps1): mixed prompt/follow-up matrix runner with JSONL/CSV plus `summary.json` and `summary.md`
 - [`../scripts/run_android_followup_matrix.ps1`](../scripts/run_android_followup_matrix.ps1): follow-up-only matrix runner
+- [`../scripts/run_android_followup_suite.ps1`](../scripts/run_android_followup_suite.ps1): follow-up suite replay wrapper, guarded by `tests/test_run_android_followup_suite_contract.py`
 - [`../scripts/run_android_detail_followup_matrix.ps1`](../scripts/run_android_detail_followup_matrix.ps1): JSON/JSONL detail follow-up matrix runner using the logged wrapper, guarded by `tests/test_run_android_detail_followup_matrix_contract.py`
 - [`../scripts/run_android_session_flow.ps1`](../scripts/run_android_session_flow.ps1): single-emulator initial query plus required follow-up session-flow harness, guarded by `tests/test_android_session_flow_contract.py`
 - [`../scripts/run_android_gap_pack.ps1`](../scripts/run_android_gap_pack.ps1): gap-pack single/follow-up replay wrapper, guarded by `tests/test_run_android_gap_pack_contract.py`
 - [`../scripts/start_android_detail_followup_lane.ps1`](../scripts/start_android_detail_followup_lane.ps1): background detail follow-up launcher, guarded by `tests/test_start_android_detail_followup_lane_contract.py`
+- [`../scripts/stop_android_harness_runs.ps1`](../scripts/stop_android_harness_runs.ps1): mixed host-process and device-package stop helper, guarded by `tests/test_stop_android_harness_runs_contract.py`
 - [`../scripts/stop_android_harness_orphans.ps1`](../scripts/stop_android_harness_orphans.ps1): host-side stale Android prompt/follow-up harness-tree cleanup, guarded by `tests/test_stop_android_harness_orphans_contract.py`
 - [`../scripts/cleanup_android_harness_artifacts.ps1`](../scripts/cleanup_android_harness_artifacts.ps1): Android harness artifact retention cleanup, guarded by `tests/test_cleanup_android_harness_artifacts_contract.py`
 - [`../scripts/run_android_ui_validation_pack.ps1`](../scripts/run_android_ui_validation_pack.ps1): deterministic + generative UI smoke pack
