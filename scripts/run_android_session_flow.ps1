@@ -47,7 +47,8 @@ function Resolve-TargetPath {
 function New-Slug {
     param([string]$Text)
 
-    $slug = $Text.ToLowerInvariant() -replace "[^a-z0-9]+", "_"
+    $safeText = if ($null -eq $Text) { "" } else { $Text }
+    $slug = $safeText.ToLowerInvariant() -replace "[^a-z0-9]+", "_"
     $slug = $slug.Trim("_")
     if ([string]::IsNullOrWhiteSpace($slug)) {
         $slug = "turn"

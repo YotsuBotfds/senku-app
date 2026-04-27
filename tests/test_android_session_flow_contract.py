@@ -32,6 +32,15 @@ class AndroidSessionFlowContractTests(unittest.TestCase):
         self.assertIn('"--activity-clear-top"', self.script)
         self.assertIn('"--activity-single-top"', self.script)
 
+    def test_new_slug_coerces_null_text_before_lowercasing(self):
+        self.assertIn("function New-Slug", self.script)
+        self.assertIn('$safeText = if ($null -eq $Text) { "" } else { $Text }', self.script)
+        self.assertIn(
+            '$slug = $safeText.ToLowerInvariant() -replace "[^a-z0-9]+", "_"',
+            self.script,
+        )
+        self.assertIn('$slug = "turn"', self.script)
+
     def test_manifest_records_session_and_turn_artifacts(self):
         self.assertIn("function Add-ManifestRecord", self.script)
         self.assertIn("session_label = $label", self.script)
