@@ -762,6 +762,7 @@ class SpecialCaseTests(unittest.TestCase):
         self.assertIn("do not have them walk", response)
         self.assertIn("Handle cold without rough movement", response)
         self.assertIn("Keep them horizontal", response)
+        self.assertEqual(query._duplicate_citation_count(response), 0)
         self.assertNotIn("routine strain", response.lower())
         self.assertNotIn("sleep it off", response.lower())
 

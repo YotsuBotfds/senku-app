@@ -2353,16 +2353,16 @@ def _build_possible_spinal_injury_movement_pressure_response():
         "Neck/back pain after a fall, crash, or water-side injury plus numbness, tingling, weakness, or clumsiness means casual "
         "carrying, dragging, or walking can make harm worse. [GD-049, GD-232]\n\n"
         "1. Stop unnecessary movement now. Keep the head, neck, and back as aligned and still as possible; do not have them walk, "
-        "stand, twist, or get carried to a cabin or truck just because they are cold. [GD-049, GD-232]\n"
+        "stand, twist, or get carried to a cabin or truck just because they are cold.\n"
         "2. Call for emergency help or start urgent evacuation planning. Move them only if staying put is immediately dangerous, "
         "such as still in water, fire, traffic, falling debris, or an unsafe bank; if movement is unavoidable, use multiple helpers "
-        "and keep the head, neck, and torso moving as one unit. [GD-049, GD-232]\n"
+        "and keep the head, neck, and torso moving as one unit.\n"
         "3. Handle cold without rough movement: block wind, insulate under and over them, remove or cut away wet outer layers only "
         "if you can avoid bending the spine, and add blankets, dry layers, or warm packs to the trunk. Keep them horizontal. "
-        "[GD-024, GD-290]\n"
+        "[GD-024]\n"
         "4. Recheck breathing, alertness, and feeling/movement in both hands and feet. If they vomit or breathing is threatened, "
         "roll only as a unit with helpers to protect the airway. Do not give food, alcohol, or forced fluids while urgent care or "
-        "spine injury remains possible. [GD-232, GD-049]"
+        "spine injury remains possible."
     )
 
 

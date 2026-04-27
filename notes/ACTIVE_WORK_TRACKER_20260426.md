@@ -79,7 +79,16 @@ the `Master Head Health` run for that HEAD was green.
    - Direct cardiac proof: GD-601 card-backed answer cites `[GD-601]` once and `_duplicate_citation_count(...)` returns `0`.
    - Follow-up review found broad `GD-298` pediatric card matching could crowd out the more specific choking card; `0591a5c` gates that broad card away from airway/newborn/meningitis prompts and restores the routing/card test slice.
    - Recent bench artifacts showed duplicate-citation hotspots in card-backed/runtime rows, especially RE6 cardiac, RE7 young-infant, and EVAL8 compound food/medical cases.
-   - Re-check young-infant and contaminated-creek uncertain-fit rows after routing/card changes.
+   - Current-head runtime/citation recheck landed through the focused hotspot panel:
+     `artifacts/bench/runtime_citation_recheck_current_head_citation_fix_20260426_diag/`.
+     It covers `RE7-NB-001`, `RE7-CP-001`, `RE8-SP-001`, `RE8-KT-001`, and
+     `RE8-FS-001` with reviewed-card runtime enabled, LiteRT generation on
+     `1235`, and LM Studio embeddings on `1234`. Result: `5/5` expected rows
+     cited expected owners, `0` bad buckets, `4` reviewed-card runtime rows,
+     `1` deterministic row, `0` generated rows, and duplicate citations are
+     `0` after the `RE8-SP-001` deterministic spinal-boundary citation cleanup.
+     `RE7-NB-001` remains intentionally `uncertain_fit_accepted` by gate policy
+     while passing reviewed-card, evidence, and claim checks.
 
 ## Active Operating Rules
 
