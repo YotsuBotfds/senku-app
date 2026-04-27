@@ -6,6 +6,33 @@ category: defense
 difficulty: intermediate
 tags:
   - important
+aliases:
+  - weapon security intake boundary
+  - weapons storage access control handoff
+  - weapon incident log red flag handoff
+  - noninstructional weapons defense safety boundary
+routing_cues:
+  - Use this guide's reviewed answer card only for weapon or security-situation intake, secure storage and access-control checks, de-escalation, inventory and incident logs, child or unauthorized access red flags, injury or threat red flags, and emergency, medical, community-leadership, or legal-authority handoff.
+  - Keep routine answers focused on observed facts, storage status, who has access, immediate safety concerns, de-escalation, logs, and responsible handoff.
+  - Route weapon construction, use instructions, tactics, targeting, traps, patrols, fortifications, force advice, pursuit, detention, and legal conclusions away from this reviewed card.
+routing_support:
+  - "Storage and security sections support locked storage, separate ammunition, inventory checks, access control, and child or unauthorized access red flags."
+  - "Conflict de-escalation sections support calm communication, space, mediation, negotiation, and diplomacy-first framing."
+  - "Warnings and responsibility sections support injury, threat, unsecured weapon, and emergency or lawful-authority handoff boundaries."
+citations_required: true
+citation_policy: cite reviewed GD-150 answer card only for weapon/security situation intake, secure storage/access-control checks, de-escalation, inventory/incident logs, child or unauthorized access, injury, or threat red flags, and emergency, medical, community-leadership, or legal-authority handoff; do not use it for weapon construction or use instructions, tactics, targeting, traps, patrols, fortifications, force advice, pursuit, detention, legal conclusions, or safety certification.
+runtime_citation_policy: reviewed_source_family
+applicability: >
+  Use for boundary-only weapon or security-situation intake: secure storage,
+  access control, de-escalation, inventory and incident logs, child or
+  unauthorized access red flags, injury or threat red flags, and emergency,
+  medical, community-leadership, or legal-authority handoff. Not a weapon
+  construction, weapon-use, tactical, targeting, trap, patrol, fortification,
+  force, pursuit, detention, legal, or safety-certification guide.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: weapons_defense_security_boundary
+answer_card:
+  - weapons_defense_security_boundary
 icon: 🛡️
 description: Bow making, crossbows, fortification, perimeter security, hunting weapons, traps, community defense, and conflict de-escalation.
 related:
@@ -34,6 +61,14 @@ custom_css: .subtitle{color:var(--muted);font-size:1.1em;margin-bottom:20px}.con
 :::warning
 **Use of Force Warning:** The use of weapons, even in self-defense, carries serious legal consequences. Understand proportional force requirements and self-defense laws in your jurisdiction. Improper weapon use or storage can result in injury or death to yourself, family members, or bystanders. Secure all weapons to prevent unauthorized access.
 :::
+
+## Reviewed Answer-Card Boundary: Weapon Security Intake and Handoff
+
+This is the reviewed answer-card surface for GD-150. Use it only for weapon or security-situation intake, secure storage and access-control checks, de-escalation, inventory and incident logs, child or unauthorized access red flags, injury or threat red flags, and handoff to emergency services, medical responders, community leadership, legal authority, or another responsible owner.
+
+Routine answers should create a factual safety and handoff log: date and time, location, reporter, weapon or security concern, storage status, ammunition or dangerous-material separation status if known, who has access, missing or unsecured items, children or unauthorized people with possible access, injuries, threats, de-escalation steps already attempted, communications sent, decision owner, and handoff status. Keep advice to immediate safety, distance, calm communication, securing access when safe and lawful, factual records, and responsible-authority routing.
+
+Do not use the reviewed answer card for weapon construction or use instructions, aiming or targeting, training drills, tactical positioning, traps, patrols, fortifications, pursuit, detention, force advice, rules of engagement, legal conclusions, or safety certification. If there is active violence, a credible threat, injury, child access, missing weapon, unsecured weapon, suspected crime, or unclear lawful authority, prioritize immediate safety, medical care, emergency services, community leadership, or legal-authority handoff over routine planning.
 
 <section id="weapon-storage">
 

@@ -10,6 +10,16 @@ tags:
   - emergency
 icon: 🌿
 description: Plant identification safety, extraction science and potency optimization, drug interactions, dangerous lookalikes, seasonal harvesting, and transitioning between herbal and modern medicine.
+aliases:
+  - herbal medicine safety intake
+  - medicinal plant uncertainty
+  - herbal product source log
+  - plant lookalike handoff
+  - herbal ingestion exposure log
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level medicinal plant/product intake, plant-ID or source uncertainty, dangerous lookalike concern, allergy/drug interaction/pregnancy/child/chronic disease flags, ingestion or exposure symptom logs, stop-use flags, label/source logs, and clinician, Poison Control, or qualified local expert handoff.
+  - Do not use the reviewed card for plant identification certainty, edibility claims, treatment diagnosis, dosing, preparation recipes, tincture/salve/poultice instructions, medication substitution, legal or certification claims, or safety certification.
+  - Route unknown ingestion, possible toxic lookalike, symptoms after plant or herbal-product exposure, pregnancy, child exposure, chronic disease, medication interactions, or uncertain labels/sources to Poison Control, emergency, clinician, pharmacist, or qualified local plant expert owners as appropriate.
 related:
   - fermentation-science-applied
   - first-aid
@@ -20,13 +30,50 @@ related:
   - solvents-distillation
 read_time: 12
 word_count: 5240
-last_updated: '2026-02-19'
-version: '1.1'
+last_updated: '2026-04-27'
+version: '1.2'
 liability_level: high
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: herbal_medicine_plant_product_safety_boundary
+answer_card:
+  - herbal_medicine_plant_product_safety_boundary
+citations_required: true
+applicability: >
+  Use GD-369 only as a reviewed boundary card for medicinal plant or herbal
+  product intake, plant-ID/source uncertainty, dangerous lookalike concern,
+  allergy, drug interaction, pregnancy, child, chronic disease, ingestion or
+  exposure symptom logs, label/source documentation, stop-use flags, and
+  clinician, Poison Control, pharmacist, or qualified local plant expert
+  handoff. Do not use its reviewed card for plant identification certainty,
+  edibility claims, treatment diagnosis, dosing, preparation recipes,
+  tincture/salve/poultice instructions, medication substitution, legal claims,
+  certification claims, or safety certification.
+citation_policy: >
+  Cite GD-369 and its reviewed answer card only for boundary-level herbal
+  medicine safety intake, plant or product uncertainty, dangerous lookalike
+  concern, allergy/interaction/pregnancy/child/chronic-disease flags, symptom
+  and label/source logs, stop-use language, and clinician, Poison Control,
+  pharmacist, or qualified local expert handoff. Do not cite the reviewed card
+  for plant ID certainty, edibility, treatment diagnosis, dosing, preparation
+  recipes, tincture/salve/poultice instructions, medication substitution, legal
+  claims, certification claims, or safety certification.
 ---
 
 <!-- SVG-TODO: Medicinal herb identification guide showing leaf shapes and stem characteristics; Traditional remedy preparation timeline showing extraction duration; Plant toxicity comparison chart showing lethal dose estimates -->
 
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-369. Use it only for medicinal plant or herbal product safety intake, plant-ID or source uncertainty, dangerous lookalike concern, allergy, drug interaction, pregnancy, child, chronic disease, ingestion or exposure symptom logs, label/source documentation, stop-use flags, and clinician, Poison Control, pharmacist, or qualified local plant expert handoff.
+
+Start with what was taken, touched, inhaled, applied, or prepared; who was exposed; route and timing; symptoms and timing; exact plant or product name as written; label ingredients, concentration, lot or batch, expiration date, seller/source, wild-harvest location if relevant, and whether the container, label, photo, receipt, or remaining sample is available. Treat user-supplied names, photos, smell, taste, local names, and single field traits as intake evidence only, not proof of identity, edibility, purity, dose, effectiveness, or safety.
+
+Stop use and route away from routine herbal discussion when plant identity or source is uncertain, a dangerous lookalike is plausible, symptoms are present, ingestion or exposure was accidental, a child or pregnant/breastfeeding person is involved, chronic liver/kidney/heart/bleeding/immune/seizure disease may matter, or prescription medicines, blood thinners, heart medicines, seizure medicines, psychiatric medicines, diabetes medicines, immunosuppressants, birth control, or multiple supplements are involved. Preserve labels, source notes, photos, and samples for handoff when this can be done without further exposure.
+
+Do not use this reviewed card for plant identification certainty, edibility claims, treatment diagnosis, dosing, preparation recipes, tincture instructions, salve instructions, poultice instructions, medication substitution, pregnancy or child dosing, legal claims, certification claims, or safety certification. If a prompt asks for those, provide only the intake log, uncertainty/red-flag screen, stop-use language, and handoff to Poison Control, a clinician, pharmacist, emergency services, or a qualified local plant expert as appropriate.
+
+</section>
 
 <section id="identification">
 

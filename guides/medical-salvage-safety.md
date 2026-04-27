@@ -9,6 +9,43 @@ tags:
   - salvage
 icon: 💊
 description: Pharmaceutical expiration realities, medication identification, medical device salvage priorities, sterilization of instruments, biohazard assessment, and safe handling protocols for hospital and pharmacy salvage.
+aliases:
+  - medical salvage safety boundary
+  - abandoned clinic inventory handoff
+  - salvaged medication uncertainty
+  - salvaged medical device stop use
+  - hospital salvage hazard triage
+  - unknown medical supplies do not use
+  - biohazard sharps radiation chemical red flags
+  - pharmacist clinician infection control handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level medical facility or salvage-item inventory, outside/safe-vantage hazard triage, label/expiry/seal/storage uncertainty, stop-use flags, symptom or exposure logs, and emergency, public-health, facility-owner, pharmacist, clinician, or infection-control handoff.
+  - Keep reviewed-card answers focused on visible structural, biohazard, sharps, radiation, chemical, unknown-medication, and device red flags; do not enter, handle, use, decontaminate, sterilize, clear, or certify suspect items.
+  - Route entry procedures, PPE guarantees, salvage priorities, sterilization or decontamination steps, pharmaceutical use, device clearance/reuse, clinical decisions, legal claims, and safety certification away from this card.
+citations_required: true
+citation_policy: >
+  Cite GD-390 and its reviewed answer card only for boundary-level medical
+  facility or salvage-item inventory, safe-vantage hazard triage, structural,
+  biohazard, sharps, radiation, chemical, unknown-medication, and device red
+  flags, do-not-enter/do-not-use flags, label/expiry/seal/storage uncertainty,
+  symptom or exposure logs, and emergency, public-health, facility-owner,
+  pharmacist, clinician, or infection-control handoff. Do not cite it for entry
+  procedures, PPE guarantees, salvage priorities, sterilization or
+  decontamination steps, pharmaceutical use, device clearance or reuse, clinical
+  decisions, legal claims, or safety certification.
+applicability: >
+  Use for boundary-only medical salvage questions where the safe answer is to
+  inventory visible facts from outside or another safe vantage, preserve
+  uncertainty about labels, expiry dates, seals, storage history, medications,
+  devices, contamination, or exposures, mark suspect areas/items do-not-enter or
+  do-not-use, and hand off to emergency, public-health, facility-owner,
+  pharmacist, clinician, or infection-control owners. Do not use as a medical
+  salvage, medication-use, device-reuse, entry, sterilization, or
+  decontamination procedure.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: medical_salvage_safety_boundary
+answer_card:
+  - medical_salvage_safety_boundary
 related:
   - chemical-safety
   - first-aid
@@ -27,6 +64,16 @@ liability_level: critical
 Abandoned hospitals and pharmacies contain resources that are disproportionately valuable in survival scenarios: medications, diagnostic instruments, and surgical supplies. However, medical facilities also contain serious hazards—biohazardous materials, structural dangers, radiation sources, and pharmacological substances that require careful handling.
 
 This guide covers assessing the safety of salvage locations, identifying and prioritizing salvageable materials, verifying pharmaceutical integrity, sterilizing salvaged instruments, and managing the hazards unique to medical facility salvage. The goal is maximizing resource recovery while minimizing exposure to contamination, infection, and chemical hazards.
+
+## Reviewed Answer-Card Boundary: Medical Salvage Inventory, Stop-Use Flags, and Handoffs
+
+This is the reviewed answer-card surface for GD-390. Use it only for boundary-level medical facility or salvage-item inventory, outside or otherwise safe-vantage hazard triage, structural, biohazard, sharps, radiation, chemical, unknown-medication, and device red flags, do-not-enter and do-not-use flags, label, expiry, seal, and storage uncertainty, symptom or exposure logs, and emergency, public-health, facility-owner, pharmacist, clinician, or infection-control handoff.
+
+For routine boundary intake, record the facility or item type, visible location, date observed, labels or hazard symbols, original packaging status, expiry date if readable, seal or sterile-barrier condition, storage history if known, temperature or water damage signs, mold, dust, visible body-fluid contamination, sharps, broken glass, chemical containers, radiation markings, powered or damaged devices, and whether anyone has symptoms or exposure concerns. Keep observations separate from guesses; unknown medication identity, unknown device history, broken seals, damaged packaging, questionable storage, or uncertain contamination is not a clearance to use.
+
+Treat these as stop-and-handoff triggers before entry or use: structural instability, collapse indicators, water damage, mold, strong incidental chemical odor or fumes, visible spills, sharps, blood or tissue contamination, biohazard or isolation areas, radiation symbols, radioactive-material labels, damaged imaging equipment, unknown or unlabeled medications, expired or unreadable labels, broken seals, compromised sterile packaging, damaged single-use devices, powered or battery-leaking equipment, device calibration uncertainty, exposure symptoms, or any request to certify an area, item, medication, or device as safe.
+
+Do not use this reviewed card for entry procedures, PPE guarantees, salvage priorities, sterilization or decontamination steps, pharmaceutical identification for use, medication selection, medication dosing, pharmaceutical use, vaccine or cold-chain viability decisions, device clearance or reuse, repair, return-to-service decisions, clinical procedures, legal claims, or safety certification.
 
 <section id="biohazard-assessment">
 

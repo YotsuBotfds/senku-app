@@ -27,6 +27,30 @@ word_count: 3000
 last_updated: '2026-02-20'
 version: '1.0'
 liability_level: high
+aliases:
+  - bow arrow material inventory
+  - archery storage access control
+  - bow arrow child safety red flags
+  - bow arrow injury red flags
+  - bow arrow instructor handoff
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level bow and arrow material or project inventory, secure storage and access-control logs, child/access/injury red flags, stop-construction or stop-use triggers, and qualified instructor, range officer, community safety owner, medical, or emergency handoff.
+  - Keep routine answers focused on non-invasive documentation: what materials or partially completed items exist, where they are stored, who can access them, whether children or untrained people can reach them, whether anyone is injured, and whether construction or use has been paused.
+  - Route bow construction, arrow construction, fletching, heads or points, draw weights, tuning, testing, hunting, combat, legal claims, certification, and safe-to-use approval away from this card.
+citations_required: true
+citation_policy: cite reviewed GD-509 answer card only for boundary-level material/project inventory, secure storage/access control, child/access/injury red flags, stop construction/use triggers, and qualified instructor, range, community safety, medical, or emergency handoff; do not use it for bow construction, arrow construction, fletching, heads or points, draw weights, tuning, testing, hunting, combat, legal claims, certification, or safe-to-use approval.
+applicability: >
+  Use for boundary-only bow and arrow material or project inventory, secure
+  storage and access-control logs, child/access/injury red flags, stop
+  construction or stop-use triggers, and qualified instructor, range officer,
+  community safety owner, medical, or emergency handoff. Do not use for bow
+  construction, arrow construction, fletching, heads or points, draw weights,
+  tuning, testing, hunting, combat, legal claims, certification, or safe-to-use
+  approval.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: bow_arrow_construction_boundary_handoff
+answer_card:
+  - bow_arrow_construction_boundary_handoff
 ---
 
 <section id="overview">
@@ -51,6 +75,20 @@ This guide covers self-bows (made from a single stave of wood) and backed bows (
 - Limb depth at handle: 1.5–2", thinning to 0.5" at tips
 - Bowstring length: 60–64" (bow length minus 4")
 :::
+
+</section>
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-509. Use it only for boundary-level bow and arrow material or project inventory, secure storage and access-control logs, child/access/injury red flags, stop-construction or stop-use triggers, and qualified instructor, range officer, community safety owner, medical, or emergency handoff.
+
+For routine boundary intake, record what materials, tools, partial projects, finished bows, arrows, strings, points, or sharp components are present; where they are stored; who owns or controls them; who can access them; whether children, visitors, untrained users, or bystanders can reach them; whether anyone has been injured; whether any item is damaged, sharp, strung, under tension, unlabeled, abandoned, or source-uncertain; and whether construction or use has already been paused.
+
+Stop construction or use and hand off when red flags are present: injury, near miss, child or bystander access, unsecured sharp components, damaged or unknown items, attempts to test or use a bow or arrow without qualified supervision, unclear ownership, public or shared-space access, or any request for safe-use approval. Handoff may be to a qualified archery instructor, range officer, community safety owner, responsible adult, medical care, emergency services, or local authority as appropriate.
+
+Do not use this reviewed card for bow construction, arrow construction, fletching, heads or points, draw weights, tuning, testing, hunting, combat, legal claims, certification, or safe-to-use approval. If a prompt asks for those, give only the relevant inventory, access-control, stop-use, injury red-flag, and qualified handoff boundary.
 
 </section>
 

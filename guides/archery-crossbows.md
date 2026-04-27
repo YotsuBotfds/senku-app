@@ -23,6 +23,37 @@ word_count: 9376
 last_updated: '2026-02-15'
 version: '1.0'
 liability_level: high
+aliases:
+  - bow storage safety
+  - crossbow access control
+  - archery equipment condition check
+  - bow stop use checklist
+  - crossbow child access red flags
+  - archery range access boundary
+routing_cues:
+  - Use this guide's reviewed answer card only for boundary-level bow or crossbow equipment storage, visible condition concerns, access control, range/backstop access boundaries, injury, child, or unauthorized-access red flags, stop-use or secure decisions, and handoff to a responsible owner, range officer, qualified archery technician, clinician, emergency service, or local authority.
+  - Keep answers non-instructional: record equipment identity, current loaded/cocked/strung status if already known, storage and access status, visible cracks, splinters, frayed strings, loose parts, damage, backstop or bystander concerns, injury reports, child or unauthorized access, stop-use notes, and who has been notified.
+  - Route construction, stringing, draw weights, aiming, firing, shooting technique, range estimation, hunting, combat use, maintenance or repair procedures, legal/certification claims, and safe-to-use declarations away from this card.
+routing_support:
+  - gunsmithing for firearm-adjacent safe-storage boundaries when the question is primarily about firearms or ammunition.
+  - self-defense-fundamentals for de-escalation and escape when a bow or crossbow is involved in a threat or interpersonal incident.
+  - trauma-hemorrhage-control for injury status logging and emergency/trauma handoff when a projectile or equipment injury has occurred.
+citations_required: true
+citation_policy: cite reviewed GD-153 answer card only for boundary-level archery and crossbow storage, condition, access-control, range-access, injury, child or unauthorized-access red flags, stop-use/secure decisions, and owner or emergency handoff; do not use it for construction, stringing, draw weights, aiming, firing, maintenance, repair, hunting, combat use, legal/certification claims, or safety certification.
+applicability: >
+  Use for boundary-only archery and crossbow safety questions: existing
+  equipment storage and condition, access control, range or backstop access
+  concerns, injury, child, or unauthorized-access red flags, stop-use or secure
+  decisions, and handoff to the responsible equipment owner, range officer,
+  qualified archery technician, clinician, emergency service, or local
+  authority. Do not use for construction, stringing, draw weights, aiming,
+  firing, shooting technique, range estimation, maintenance or repair
+  procedures, hunting, combat use, legal or certification claims, or declaring
+  equipment safe to use.
+answer_card_review_status: pilot_reviewed
+reviewed_answer_card: archery_crossbows_storage_access_boundary
+answer_card:
+  - archery_crossbows_storage_access_boundary
 custom_css: nav{background-color:var(--surface);padding:1rem;margin-bottom:2rem;border-left:4px solid var(--accent)}nav a{display:inline-block;color:var(--accent2);text-decoration:none;margin-right:1.5rem;transition:color .3s ease;font-weight:500}section h2{color:var(--accent2);font-size:2rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--border)}section h3{color:var(--accent);font-size:1.3rem;margin-top:1.5rem;margin-bottom:.8rem}section h4{color:var(--accent2);font-size:1.1rem;margin-top:1rem;margin-bottom:.6rem}li{margin-bottom:.6rem}.diagram{background-color:var(--card);border:2px solid var(--border);border-radius:4px;padding:1.5rem;margin:1.5rem 0;text-align:center}.diagram svg{max-width:100%;height:auto}.diagram-caption{color:var(--muted);font-size:.9rem;margin-top:.8rem;font-style:italic}.back-to-top{display:inline-block;margin-top:1rem;padding:.8rem 1.5rem;background-color:var(--card);color:var(--accent2);text-decoration:none;border-radius:4px;transition:all .3s ease;border:1px solid var(--border)}.back-to-top:hover{background-color:var(--accent);color:var(--bg);border-color:var(--accent)}
 ---
 :::warning
@@ -32,6 +63,20 @@ custom_css: nav{background-color:var(--surface);padding:1rem;margin-bottom:2rem;
 :::info-box
 **Which guide do you need?** This guide covers **building a crossbow** (prod, stock, trigger mechanism, bolts) and provides overview material for traditional bow types (self-bow, flatbow, composite). If your goal is to **build a bow** — a self-bow, backed bow, or arrows from scratch — see <a href="../bow-arrow-construction.html">Bow & Arrow Construction</a> for deeper coverage of stave splitting, tillering, arrow shaft construction, fletching, and point hafting.
 :::
+
+<section id="reviewed-answer-card-boundary">
+
+## Reviewed Answer-Card Boundary
+
+This is the reviewed answer-card surface for GD-153. Use it only for boundary-level archery and crossbow safety: existing bow or crossbow storage and condition, access control, range or backstop access concerns, injury, child, or unauthorized-access red flags, stop-use or secure decisions, and handoff to the responsible equipment owner, range officer, qualified archery technician, clinician, emergency service, or local authority.
+
+Start with non-instructional facts: equipment type and owner, whether a crossbow is already cocked or loaded if known, whether a bow is strung if already known, where it is stored, who can access it, whether children or unauthorized people are nearby, visible cracks, splinters, limb distortion, frayed or separated string fibers, loose parts, prior impact, moisture or corrosion exposure, bystander or backstop concerns, injury reports, and who has authority to secure, pause, or review the equipment.
+
+Stop routine use and secure or hand off when there is injury, child or unauthorized access, a cocked or loaded crossbow left unattended, unsafe pointing direction, no safe backstop, people, buildings, animals, or public areas downrange, visible cracks, splinters, limb distortion, frayed strings, loose trigger or catch behavior, misfire or mechanical failure report, unknown ownership, missing storage controls, or pressure to use questionable equipment. Do not declare equipment safe to use from this card.
+
+Do not use this reviewed card for bow or crossbow construction, stringing, draw weights, aiming, firing, shooting technique, range estimation, maintenance or repair procedures, hunting, combat use, legal or certification claims, or safety certification. If a prompt asks for those, provide only the storage, condition, access-control, red-flag, stop-use, secure, and handoff boundary.
+
+</section>
 
 <section id="quick-material-string-reference">
 
