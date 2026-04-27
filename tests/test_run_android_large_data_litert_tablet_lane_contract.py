@@ -78,6 +78,8 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
     def test_script_is_guarded_to_5554_large_data_real_mode(self):
         self.assertIn('[string]$Device = "emulator-5554"', self.script)
         self.assertIn("[int]$PartitionSizeMb = 8192", self.script)
+        self.assertIn("$emulatorCliPartitionSizeMaxMb = 2047", self.script)
+        self.assertIn('$blockedReason = "emulator_cli_partition_size_max_2047"', self.script)
         self.assertIn("[switch]$RealMode", self.script)
         self.assertIn('[string]$ConfirmRealMode = ""', self.script)
         self.assertIn('$confirmationToken = "RUN_EMULATOR_5554_LARGE_LITERT_DATA"', self.script)
@@ -98,6 +100,7 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("validation_commands", self.script)
         self.assertIn("ui_acceptance_evidence = $false", self.script)
         self.assertIn("deploy/runtime evidence only", self.script)
+        self.assertIn('status = "blocked"', self.script)
 
     def test_real_mode_requires_explicit_confirmation_before_running_helpers(self):
         with tempfile.TemporaryDirectory(prefix="large_litert_guard_") as temp_dir:
@@ -207,6 +210,8 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("create UI acceptance evidence", validation_command["note"])
 
         self.assertEqual(launch["profile_metadata"]["profile"], "large-litert-data")
+        self.assertEqual(launch["profile_metadata"]["cli_partition_size_max_mb"], 2047)
+        self.assertFalse(launch["profile_metadata"]["cli_partition_size_supported"])
         self.assertEqual(launch["profile_metadata"]["expected_serial"], "emulator-5554")
         self.assertEqual(launch["selected_lanes"][0]["serial"], "emulator-5554")
         self.assertEqual(launch["selected_lanes"][0]["emulator_args"][-2:], ["-partition-size", "8192"])
@@ -233,6 +238,63 @@ class AndroidLargeDataLiteRtTabletLaneContractTests(unittest.TestCase):
         self.assertIn("android_large_data_litert_tablet_lane_summary: ok", validator.stdout)
         self.assertIn("status: dry_run_only", validator.stdout)
         self.assertIn("evidence: deploy/runtime only, non_acceptance", validator.stdout)
+
+    def test_real_mode_start_emulator_blocks_impossible_cli_partition_size_with_summary(self):
+        payload = b"tiny tablet litert model\n"
+
+        with tempfile.TemporaryDirectory(prefix="large_litert_blocked_") as temp_dir:
+            temp_path = Path(temp_dir)
+            model_path = temp_path / "gemma-4-E2B-it.task"
+            model_path.write_bytes(payload)
+            output_dir = temp_path / "out"
+
+            result = self.run_with_fake_sdk(
+                "-OutputDir",
+                str(output_dir),
+                "-ModelPath",
+                str(model_path),
+                "-RealMode",
+                "-ConfirmRealMode",
+                "RUN_EMULATOR_5554_LARGE_LITERT_DATA",
+                "-StartEmulator",
+            )
+
+            summary_path = output_dir / "summary.json"
+            markdown_path = output_dir / "summary.md"
+            self.assertTrue(summary_path.exists(), result.stderr + result.stdout)
+            self.assertTrue(markdown_path.exists(), result.stderr + result.stdout)
+            summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
+            markdown = markdown_path.read_text(encoding="utf-8-sig")
+            validator = subprocess.run(
+                [str(VALIDATION_PYTHON), str(SUMMARY_VALIDATOR_SCRIPT), str(summary_path)],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 2, result.stderr + result.stdout)
+        self.assertIn("emulator CLI -partition-size max is 2047 MB", result.stdout)
+        self.assertEqual(summary["status"], "blocked")
+        self.assertFalse(summary["dry_run"])
+        self.assertTrue(summary["real_mode"])
+        self.assertTrue(summary["real_mode_guard"]["confirmed"])
+        self.assertEqual(summary["blocked_reason"], "emulator_cli_partition_size_max_2047")
+        self.assertEqual(summary["required_path"], "config_based_avd_data_partition")
+        self.assertEqual(summary["cli_partition_size_max_mb"], 2047)
+        self.assertTrue(summary["non_acceptance_evidence"])
+        self.assertFalse(summary["acceptance_evidence"])
+        self.assertFalse(summary["ui_acceptance_evidence"])
+        self.assertFalse(summary["deploy_evidence"])
+        self.assertFalse(summary["runtime_evidence"])
+        self.assertTrue(summary["start_emulator_requested"])
+        self.assertIsNone(summary["child_status"]["model_push_exit_code"])
+        self.assertEqual(summary["child_status"]["launch_profile_preflight_exit_code"], 0)
+        self.assertIn("-PartitionSizeMb 8192", summary["planned_commands"]["emulator_start"])
+        self.assertEqual(summary["planned_commands"]["model_push"], "")
+        self.assertIn("Status: blocked", markdown)
+        self.assertEqual(validator.returncode, 0, validator.stderr + validator.stdout)
+        self.assertIn("status: blocked", validator.stdout)
 
 
 if __name__ == "__main__":

@@ -119,14 +119,17 @@ Use this as the first stop for Android parity and mobile-pack work.
 - LiteRT model push now checks `/data` free space before upload; use
   `-SkipDataSpaceCheck` only when intentionally bypassing that preflight.
 - `emulator-5554` remains blocked for staged E2B LiteRT push by AVD data
-  partition size. The 2026-04-27 transport follow-up at
+  partition size, now narrowed to an emulator CLI launch limit:
+  emulator 36.4.9 rejects `-partition-size 8192` because the CLI maximum is
+  `2047` MB. The 2026-04-27 transport follow-up at
   `artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md`
   reconfirmed tmp-staging safety for small payloads, but no Windows
   direct-stream candidate is byte-safe enough to bypass staging.
 - `start_senku_emulator_matrix.ps1` exposes opt-in `-Headless` and
   `-PartitionSizeMb` launch-profile knobs for headless and large-data AVD
-  lanes; defaults remain unchanged, and `-WhatIf` output now prints the
-  concrete emulator arguments.
+  lanes; defaults remain unchanged, `-WhatIf` output now prints the concrete
+  emulator arguments, and real launches fail fast above the observed `2047` MB
+  CLI cap instead of hanging on a missing `5554` serial.
 - Launcher helper contracts now guard emulator `-WhatIf` launch arguments plus
   mirror defaults, scrcpy path fallback resolution, and device-scoped mirror
   cleanup.

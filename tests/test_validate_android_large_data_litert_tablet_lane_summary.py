@@ -212,9 +212,42 @@ class ValidateAndroidLargeDataLiteRtTabletLaneSummaryTests(unittest.TestCase):
         self.assertIn("expected root.device to be 'emulator-5554'", errors)
         self.assertIn("expected root.role to be 'tablet_portrait'", errors)
         self.assertIn("expected root.launch_profile to be 'large-litert-data'", errors)
-        self.assertIn("expected root.partition_size_mb to be at least 8192", errors)
         self.assertIn("expected root.selected_roles to include tablet_portrait", errors)
         self.assertIn("expected root.devices to include emulator-5554", errors)
+
+    def test_real_emulator_start_above_cli_max_must_be_blocked(self):
+        summary = make_summary(real_mode=True)
+        summary["start_emulator_requested"] = True
+        summary["status"] = "pass"
+
+        _, errors = validate_large_data_litert_tablet_lane_summary(self.write_summary(summary))
+
+        self.assertIn("expected root.status to be 'blocked'", errors)
+        self.assertIn("missing root.blocked_reason", errors)
+        self.assertIn("missing root.required_path", errors)
+        self.assertIn("missing root.cli_partition_size_max_mb", errors)
+
+    def test_blocked_large_data_summary_passes(self):
+        summary = make_summary(real_mode=True)
+        summary["status"] = "blocked"
+        summary["start_emulator_requested"] = True
+        summary["blocked_reason"] = "emulator_cli_partition_size_max_2047"
+        summary["required_path"] = "config_based_avd_data_partition"
+        summary["cli_partition_size_max_mb"] = 2047
+        summary["deploy_evidence"] = False
+        summary["runtime_evidence"] = False
+        summary["child_artifacts"]["push_summary"] = None
+        summary["child_artifacts"]["instrumentation_summary"] = None
+        summary["child_status"]["model_push_exit_code"] = None
+        summary["child_status"]["model_store_instrumentation_exit_code"] = None
+        summary["planned_commands"]["model_push"] = ""
+        summary["planned_commands"]["model_store_instrumentation"] = ""
+        summary["child_summaries"]["model_push"] = None
+        summary["child_summaries"]["model_store_instrumentation"] = None
+
+        _, errors = validate_large_data_litert_tablet_lane_summary(self.write_summary(summary))
+
+        self.assertEqual(errors, [])
 
     def test_rejects_child_pointer_and_role_drift(self):
         summary = make_summary(real_mode=True)

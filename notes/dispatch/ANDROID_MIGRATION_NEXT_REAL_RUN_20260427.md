@@ -41,6 +41,10 @@ Large-data `5554` LiteRT real lane:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_data_litert_tablet_lane.ps1 -Device emulator-5554 -PartitionSizeMb 8192 -RealMode -ConfirmRealMode RUN_EMULATOR_5554_LARGE_LITERT_DATA -StartEmulator
 ```
 
+Current result: blocked on emulator 36.4.9 because CLI `-partition-size 8192`
+is rejected above the observed `2047` MB maximum. Treat the command as a
+blocked-summary generator until a config-based AVD data-partition path exists.
+
 ## Stop Lines
 
 - Validators and preflights prove shape, command posture, and run intent only.
@@ -49,10 +53,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_large_
   Do not promote from dry-run, plan-only, or validator-only artifacts.
 - The `5554` large-data LiteRT lane is deploy/runtime evidence only until it is
   folded into fixed-four state-pack evidence. Do not force it with
-  `-SkipDataSpaceCheck`; enlarge the AVD partition or stop.
+  `-SkipDataSpaceCheck`; add a config-based AVD data-partition path or stop.
 - Do not retry the old `5554` staged LiteRT push path without the enlarged
-  partition/confirmation posture. The existing blocker is data size/transport,
-  not an app acceptance failure.
+  partition/confirmation posture. The existing blocker is data size/transport
+  plus the emulator CLI `2047` MB partition cap, not an app acceptance failure.
 
 ## Record
 

@@ -46,6 +46,8 @@ REQUIRED_LANE_FIELDS: dict[str, type | tuple[type, ...]] = {
 }
 
 VALID_ORIENTATIONS = {"portrait", "landscape"}
+LARGE_LITERT_PROFILE = "large-litert-data"
+CLI_PARTITION_SIZE_MAX_MB = 2047
 
 
 def _type_name(expected_type: type | tuple[type, ...]) -> str:
@@ -112,6 +114,13 @@ def _validate_profile_metadata(profile_metadata: Any, errors: list[str]) -> None
         errors.append("expected profile_metadata.acceptance_evidence to be false")
     if isinstance(profile_metadata.get("partition_size_mb"), bool):
         errors.append("expected profile_metadata.partition_size_mb to be int|None, got bool")
+    if profile_metadata.get("profile") == LARGE_LITERT_PROFILE:
+        if profile_metadata.get("cli_partition_size_max_mb") != CLI_PARTITION_SIZE_MAX_MB:
+            errors.append(
+                f"expected profile_metadata.cli_partition_size_max_mb to be {CLI_PARTITION_SIZE_MAX_MB}"
+            )
+        if profile_metadata.get("cli_partition_size_supported") is not False:
+            errors.append("expected profile_metadata.cli_partition_size_supported to be false")
 
 
 def _validate_emulator_args(lane: dict[str, Any], errors: list[str], scope: str) -> None:

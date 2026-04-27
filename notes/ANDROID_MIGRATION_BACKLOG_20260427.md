@@ -185,8 +185,10 @@ Reviewer taxonomy for helper evidence:
   `model_name=gemma-4-E2B-it.litertlm`, `identity_cache_hit=true`, and
   landscape screenshot/dump artifacts. `emulator-5554` still cannot use the
   current staged push path for E2B: the helper failed fast with about `3.38 GiB`
-  free versus about `4.87 GiB` required. Treat `5554` as an AVD data-size
-  blocker, not an app/runtime failure.
+  free versus about `4.87 GiB` required, and the follow-up large-data launch
+  probe showed emulator 36.4.9 rejects CLI `-partition-size 8192` with a
+  maximum of `2047` MB. Treat `5554` as a config-based AVD data-size blocker,
+  not an app/runtime failure.
 
 ## Tooling Queue
 
@@ -198,13 +200,16 @@ Reviewer taxonomy for helper evidence:
   <https://developer.android.com/studio/run/emulator-commandline>.
   `scripts/start_senku_emulator_matrix.ps1` now exposes opt-in `-Headless` and
   `-PartitionSizeMb` switches for those profiles; defaults remain unchanged.
-  `-WhatIf` output now includes the concrete emulator launch arguments, so
-  profile changes can be reviewed without launching a lane.
+  `-WhatIf` output now includes the concrete emulator launch arguments and
+  blocked CLI metadata, so profile changes can be reviewed without launching a
+  lane. Real launches fail fast above the observed emulator 36.4.9
+  `-partition-size` maximum of `2047` MB.
 - Launch profile preflight has a named `-LaunchProfile` contract for
   `clean-headless`, `cached-local`, and `large-litert-data`, but it is intentionally
   restricted to `-WhatIf`. The metadata reports profile, headless posture,
-  expected serial, and partition size without changing launch arguments or
-  starting an emulator. Treat it as reviewer context only.
+  expected serial, requested partition size, and whether the CLI partition
+  override is supported without changing launch arguments or starting an
+  emulator. Treat it as reviewer context only.
 - adb/platform-tools version capture has landed in Android harness artifacts.
   Android
   documents normal `adb push`/`pull`, screenshot, and screenrecord flows, and
@@ -324,8 +329,11 @@ Reviewer taxonomy for helper evidence:
 - `run_android_large_data_litert_tablet_lane.ps1` is the guarded
   `emulator-5554` large-data LiteRT lane. Dry runs are preflight only; real mode
   requires the confirmation token and produces deploy/runtime evidence, not UI
-  acceptance, until it is folded into fixed-four state-pack evidence. Validate
-  its summary with
+  acceptance, until it is folded into fixed-four state-pack evidence. With the
+  current emulator CLI, `-StartEmulator -PartitionSizeMb 8192` writes
+  `status=blocked`, `blocked_reason=emulator_cli_partition_size_max_2047`, and
+  `required_path=config_based_avd_data_partition` instead of entering an
+  unbounded `adb wait-for-device`. Validate its summary with
   `scripts/validate_android_large_data_litert_tablet_lane_summary.py`; the
   validator does not confer emulator/UI acceptance.
 - `run_android_migration_preflight_bundle.ps1` collects the current migration

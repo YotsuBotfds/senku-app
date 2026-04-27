@@ -116,6 +116,8 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
         self.assertFalse(metadata["acceptance_evidence"])
         self.assertTrue(metadata["headless"])
         self.assertEqual(metadata["partition_size_mb"], 8192)
+        self.assertEqual(metadata["cli_partition_size_max_mb"], 2047)
+        self.assertFalse(metadata["cli_partition_size_supported"])
         self.assertEqual(metadata["expected_role"], "tablet_portrait")
         self.assertEqual(metadata["expected_serial"], "emulator-5554")
         self.assertIn("LiteRT", metadata["data_sizing"])
@@ -139,6 +141,8 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
             "large-litert-data": {
                 "headless": True,
                 "partition_size_mb": 8192,
+                "cli_partition_size_max_mb": 2047,
+                "cli_partition_size_supported": False,
                 "expected_serial": "emulator-5554",
             },
         }
@@ -158,6 +162,15 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
                 self.assertEqual(metadata["profile"], profile)
                 self.assertEqual(metadata["headless"], profile_expected["headless"])
                 self.assertEqual(metadata["partition_size_mb"], profile_expected["partition_size_mb"])
+                if profile == "large-litert-data":
+                    self.assertEqual(
+                        metadata["cli_partition_size_max_mb"],
+                        profile_expected["cli_partition_size_max_mb"],
+                    )
+                    self.assertEqual(
+                        metadata["cli_partition_size_supported"],
+                        profile_expected["cli_partition_size_supported"],
+                    )
                 self.assertEqual(metadata["expected_serial"], profile_expected["expected_serial"])
                 self.assertTrue(metadata["non_acceptance_evidence"])
                 self.assertFalse(metadata["acceptance_evidence"])
@@ -233,6 +246,19 @@ class StartSenkuEmulatorMatrixContractTests(unittest.TestCase):
         output = result.stdout + result.stderr
         self.assertNotEqual(result.returncode, 0, output)
         self.assertIn("must be used with -WhatIf", output)
+
+    def test_real_launch_rejects_partition_size_above_cli_limit_before_starting(self):
+        result = self.run_with_fake_sdk(
+            "-Roles",
+            "tablet_portrait",
+            "-PartitionSizeMb",
+            "8192",
+        )
+
+        output = result.stdout + result.stderr
+        self.assertNotEqual(result.returncode, 0, output)
+        self.assertIn("exceeds the observed emulator CLI -partition-size maximum of 2047 MB", output)
+        self.assertNotIn("Started emulator-5554", output)
 
     def test_whatif_prints_only_selected_role_serials(self):
         with tempfile.TemporaryDirectory(prefix="fake_android_sdk_") as temp_dir:

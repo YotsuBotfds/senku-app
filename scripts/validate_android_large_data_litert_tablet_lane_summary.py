@@ -16,6 +16,9 @@ EXPECTED_DEVICE = "emulator-5554"
 EXPECTED_ROLE = "tablet_portrait"
 EXPECTED_PROFILE = "large-litert-data"
 EXPECTED_MATRIX = "large_litert_data_emulator_5554"
+CLI_PARTITION_SIZE_MAX_MB = 2047
+EXPECTED_BLOCKED_REASON = "emulator_cli_partition_size_max_2047"
+EXPECTED_REQUIRED_PATH = "config_based_avd_data_partition"
 
 REQUIRED_TOP_LEVEL: dict[str, type | tuple[type, ...]] = {
     "status": str,
@@ -123,8 +126,16 @@ def _validate_lane_markers(data: dict[str, Any], errors: list[str]) -> None:
     _expect_value(data, "role", EXPECTED_ROLE, errors, "root")
     _expect_value(data, "launch_profile", EXPECTED_PROFILE, errors, "root")
 
-    if isinstance(data.get("partition_size_mb"), int) and data["partition_size_mb"] < 8192:
-        errors.append("expected root.partition_size_mb to be at least 8192")
+    partition_size_mb = data.get("partition_size_mb")
+    if isinstance(partition_size_mb, int) and partition_size_mb > CLI_PARTITION_SIZE_MAX_MB:
+        if data.get("real_mode") is True and data.get("start_emulator_requested") is True:
+            _expect_value(data, "status", "blocked", errors, "root")
+            _expect(data, "blocked_reason", str, errors, "root")
+            _expect_value(data, "blocked_reason", EXPECTED_BLOCKED_REASON, errors, "root")
+            _expect(data, "required_path", str, errors, "root")
+            _expect_value(data, "required_path", EXPECTED_REQUIRED_PATH, errors, "root")
+            _expect(data, "cli_partition_size_max_mb", int, errors, "root")
+            _expect_value(data, "cli_partition_size_max_mb", CLI_PARTITION_SIZE_MAX_MB, errors, "root")
     if isinstance(data.get("evidence_boundary"), str) and "not UI acceptance" not in data["evidence_boundary"]:
         errors.append("expected root.evidence_boundary to state not UI acceptance")
 
@@ -152,8 +163,11 @@ def _validate_evidence_posture(data: dict[str, Any], errors: list[str]) -> None:
         _expect_value(data, "runtime_evidence", False, errors, "root")
         _expect_value(data, "start_emulator_requested", False, errors, "root")
     elif real_mode is True:
-        if status not in {"pass", "failed"}:
-            errors.append("expected root.status to be 'pass' or 'failed' in real mode")
+        if status not in {"pass", "failed", "blocked"}:
+            errors.append("expected root.status to be 'pass', 'failed', or 'blocked' in real mode")
+        if status == "blocked":
+            _expect_value(data, "deploy_evidence", False, errors, "root")
+            _expect_value(data, "runtime_evidence", False, errors, "root")
     elif isinstance(dry_run, bool) and isinstance(real_mode, bool):
         errors.append("expected exactly one of root.dry_run or root.real_mode to be true")
 
@@ -218,7 +232,8 @@ def _validate_planned_commands(data: dict[str, Any], errors: list[str]) -> None:
 
     _expect_string_contains(planned.get("launch_profile_preflight"), "-LaunchProfile large-litert-data", errors, "planned_commands.launch_profile_preflight")
     _expect_string_contains(planned.get("launch_profile_preflight"), "-Roles tablet_portrait", errors, "planned_commands.launch_profile_preflight")
-    _expect_string_contains(planned.get("model_push"), "-Device emulator-5554", errors, "planned_commands.model_push")
+    if data.get("status") != "blocked":
+        _expect_string_contains(planned.get("model_push"), "-Device emulator-5554", errors, "planned_commands.model_push")
     if data.get("dry_run") is True:
         _expect_string_contains(planned.get("model_push"), "-DryRun", errors, "planned_commands.model_push")
         if planned.get("model_store_instrumentation"):

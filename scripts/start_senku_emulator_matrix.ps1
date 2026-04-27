@@ -16,6 +16,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$senkuEmulatorCliPartitionSizeMaxMb = 2047
 
 function Resolve-SenkuEmulatorPath {
     $runningPath = $null
@@ -216,6 +217,16 @@ function Get-SenkuEmulatorLaunchArguments {
     return $arguments
 }
 
+function Assert-SenkuEmulatorPartitionSizeLaunchable {
+    param(
+        [int]$PartitionSizeMb = 0
+    )
+
+    if ($PartitionSizeMb -gt $script:senkuEmulatorCliPartitionSizeMaxMb) {
+        throw "Requested -PartitionSizeMb $PartitionSizeMb exceeds the observed emulator CLI -partition-size maximum of $script:senkuEmulatorCliPartitionSizeMaxMb MB. Use an AVD config/data-image based large-data path instead of the CLI override."
+    }
+}
+
 function Get-SenkuEmulatorLaunchProfileMetadata {
     param(
         [string]$LaunchProfile
@@ -256,6 +267,8 @@ function Get-SenkuEmulatorLaunchProfileMetadata {
             acceptance_evidence = $false
             headless = $true
             partition_size_mb = 8192
+            cli_partition_size_max_mb = $script:senkuEmulatorCliPartitionSizeMaxMb
+            cli_partition_size_supported = $false
             data_sizing = "large data partition for LiteRT model and pack transport preflight"
             snapshot_cache_posture = "read-only/no snapshot load or save expected"
             expected_role = "tablet_portrait"
@@ -325,6 +338,9 @@ if ($LaunchProfile -ne "none" -and -not $isWhatIf) {
 }
 if (-not [string]::IsNullOrWhiteSpace($SummaryPath) -and $LaunchProfile -eq "none") {
     throw "-SummaryPath requires -LaunchProfile preflight metadata."
+}
+if (-not $isWhatIf) {
+    Assert-SenkuEmulatorPartitionSizeLaunchable -PartitionSizeMb $PartitionSizeMb
 }
 
 $emulatorPath = Resolve-SenkuEmulatorPath

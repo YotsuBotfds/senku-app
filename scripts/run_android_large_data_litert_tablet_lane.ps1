@@ -32,6 +32,9 @@ $confirmationToken = "RUN_EMULATOR_5554_LARGE_LITERT_DATA"
 $fixedFourEmulatorMatrix = "fixed_four_emulator_matrix"
 $stopLine = "STOP: large-data LiteRT tablet lane evidence is deploy/runtime evidence only; fixed four-emulator UI acceptance evidence remains primary."
 $modelStoreTestClass = "com.senku.mobile.ModelFileStoreImportedModelTest#importedLiteRtModelIsDiscoverableAndNonEmpty"
+$emulatorCliPartitionSizeMaxMb = 2047
+$blockedReason = "emulator_cli_partition_size_max_2047"
+$requiredBlockedPath = "config_based_avd_data_partition"
 
 function Resolve-LanePath {
     param([string]$Path)
@@ -190,6 +193,95 @@ $launchPreflightArgs = @(
     "-WhatIf"
 )
 $childResults.launch_profile_preflight = Invoke-LaneChildPowerShell -Arguments $launchPreflightArgs
+
+if ($RealMode -and $StartEmulator -and $PartitionSizeMb -gt $emulatorCliPartitionSizeMaxMb) {
+    $emulatorStartCommand = "powershell -NoProfile -ExecutionPolicy Bypass -File $launchScript -Roles tablet_portrait -Mode read_only -Headless -PartitionSizeMb $PartitionSizeMb"
+    if ($RestartRunning) {
+        $emulatorStartCommand += " -RestartRunning"
+    }
+
+    $summary = [ordered]@{
+        status = "blocked"
+        blocked_reason = $blockedReason
+        required_path = $requiredBlockedPath
+        cli_partition_size_max_mb = $emulatorCliPartitionSizeMaxMb
+        dry_run = $false
+        real_mode = $true
+        real_mode_guard = [ordered]@{
+            required_switch = "-RealMode"
+            required_confirmation = $confirmationToken
+            confirmed = [bool]($ConfirmRealMode -eq $confirmationToken)
+        }
+        non_acceptance_evidence = $true
+        acceptance_evidence = $false
+        ui_acceptance_evidence = $false
+        deploy_evidence = $false
+        deploy_evidence_kind = "litert_model_push"
+        runtime_evidence = $false
+        runtime_evidence_kind = "model_store_instrumentation"
+        evidence_boundary = "deploy/runtime only; not UI acceptance"
+        stop_line = $stopLine
+        primary_evidence = $fixedFourEmulatorMatrix
+        comparison_baseline = $fixedFourEmulatorMatrix
+        device = $Device
+        role = "tablet_portrait"
+        launch_profile = "large-litert-data"
+        partition_size_mb = $PartitionSizeMb
+        package_name = $PackageName
+        runtime_check = $RuntimeCheck
+        start_emulator_requested = $true
+        selected_roles = @("tablet_portrait")
+        devices = @($Device)
+        generated_utc = [DateTime]::UtcNow.ToString("o")
+        validation_commands = @(
+            [ordered]@{
+                name = "validate_large_data_litert_tablet_lane_summary"
+                command = ("& .\.venvs\senku-validate\Scripts\python.exe scripts\validate_android_large_data_litert_tablet_lane_summary.py " + (ConvertTo-QuotedCliToken -Value $summaryJsonPath))
+                validates = "summary.json"
+                summary_json_path = $summaryJsonPath
+                plan_only = $true
+                will_start_jobs = $false
+                will_touch_emulators = $false
+                note = "Summary validation only; does not start jobs, touch emulators, or create UI acceptance evidence."
+            }
+        )
+        child_artifacts = [ordered]@{
+            launch_profile_summary = $launchSummaryPath
+            push_summary = $null
+            push_markdown = $null
+            readiness_summary = $null
+            instrumentation_summary = $null
+        }
+        child_status = [ordered]@{
+            launch_profile_preflight_exit_code = $childResults.launch_profile_preflight.exit_code
+            emulator_start_exit_code = $null
+            model_push_exit_code = $null
+            litert_readiness_exit_code = $null
+            model_store_instrumentation_exit_code = $null
+        }
+        planned_commands = [ordered]@{
+            launch_profile_preflight = $childResults.launch_profile_preflight.command
+            emulator_start = $emulatorStartCommand
+            model_push = ""
+            litert_readiness = ""
+            model_store_instrumentation = ""
+        }
+        child_summaries = [ordered]@{
+            launch_profile = (Convert-ToJsonObject -Path $launchSummaryPath)
+            model_push = $null
+            litert_readiness = $null
+            model_store_instrumentation = $null
+        }
+    }
+
+    $summary | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $summaryJsonPath -Encoding UTF8
+    New-LaneMarkdown -Summary $summary | Set-Content -LiteralPath $summaryMarkdownPath -Encoding UTF8
+    Write-Host "Android large-data LiteRT tablet lane blocked: emulator CLI -partition-size max is $emulatorCliPartitionSizeMaxMb MB; requested $PartitionSizeMb MB."
+    Write-Host "Summary: $summaryJsonPath"
+    Write-Host "Summary markdown: $summaryMarkdownPath"
+    Write-Host $stopLine
+    exit 2
+}
 
 if (-not $RealMode) {
     $pushArgs = @(

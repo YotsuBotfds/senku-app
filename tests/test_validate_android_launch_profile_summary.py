@@ -43,6 +43,8 @@ def make_launch_profile_summary() -> dict:
             "acceptance_evidence": False,
             "headless": True,
             "partition_size_mb": 8192,
+            "cli_partition_size_max_mb": 2047,
+            "cli_partition_size_supported": False,
             "data_sizing": "large data partition for LiteRT model and pack transport preflight",
             "snapshot_cache_posture": "read-only/no snapshot load or save expected",
             "expected_role": "tablet_portrait",
@@ -100,6 +102,16 @@ class ValidateAndroidLaunchProfileSummaryTests(unittest.TestCase):
         self.assertIn("missing profile_metadata.data_sizing", errors)
         self.assertIn("expected profile_metadata.profile to be non-empty", errors)
         self.assertIn("expected profile_metadata.partition_size_mb to be int|None, got bool", errors)
+
+    def test_large_litert_profile_requires_cli_partition_limit_metadata(self):
+        summary = make_launch_profile_summary()
+        del summary["profile_metadata"]["cli_partition_size_max_mb"]
+        summary["profile_metadata"]["cli_partition_size_supported"] = True
+
+        _, errors = validate_launch_profile_summary(self.write_summary(summary))
+
+        self.assertIn("expected profile_metadata.cli_partition_size_max_mb to be 2047", errors)
+        self.assertIn("expected profile_metadata.cli_partition_size_supported to be false", errors)
 
     def test_selected_lanes_and_concrete_emulator_args_are_required(self):
         summary = make_launch_profile_summary()

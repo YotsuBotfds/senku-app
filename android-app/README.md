@@ -45,7 +45,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\start_senku_emulator_matrix.p
 Notes:
 - default mode is read-only so each emulator session stays disposable
 - app installs, pushed packs, and imported models remain available during the live session, but they do not survive a full emulator restart in read-only mode
-- use `-Headless` for no-window launches, and `-PartitionSizeMb <mb>` only when intentionally starting a large-data AVD lane
+- use `-Headless` for no-window launches; emulator 36.4.9 caps CLI
+  `-partition-size` at `2047`, so the large-data `5554` LiteRT lane remains
+  blocked until a config-based AVD data-partition path is added
 - use `-WhatIf` to review selected lanes and concrete emulator arguments before launching
 - use named `-LaunchProfile clean-headless|cached-local|large-litert-data`
   only with `-WhatIf`; it prints profile metadata such as headless posture,
