@@ -170,7 +170,7 @@ final class DetailGuideContextPresentationFormatter {
         }
         return state.utilityRail
             ? guideRailLabel(context)
-            : context.getString(R.string.detail_next_steps_title_guides_nonrail);
+            : "Cross-reference";
     }
 
     String buildCurrentGuideHandoffSummary(State state) {

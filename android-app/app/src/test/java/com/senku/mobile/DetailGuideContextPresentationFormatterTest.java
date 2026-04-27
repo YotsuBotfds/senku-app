@@ -127,6 +127,27 @@ public final class DetailGuideContextPresentationFormatterTest {
         assertEquals("", DetailGuideContextPresentationFormatter.buildGuideHandoffSummaryText(null, " ", "Anchor"));
     }
 
+    @Test
+    public void nonRailGuideHandoffUsesCrossReferenceLanguage() {
+        DetailGuideContextPresentationFormatter formatter =
+            new DetailGuideContextPresentationFormatter(null);
+        DetailGuideContextPresentationFormatter.State state = state(
+            false,
+            false,
+            true,
+            false,
+            "GD-214",
+            "Water Storage",
+            "",
+            "",
+            "",
+            "",
+            ""
+        );
+
+        assertEquals("Cross-reference", formatter.buildCurrentGuideHandoffLabel(state));
+    }
+
     private static DetailGuideContextPresentationFormatter.State state(
         boolean answerMode,
         boolean activeGuideContextPanel,

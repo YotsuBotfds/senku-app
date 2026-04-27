@@ -55,6 +55,10 @@ class AndroidUiStatePackSummaryContractTests(unittest.TestCase):
                             "sqlite": {"manifest_sha256": "sqlite-sha"},
                             "vectors": {"manifest_sha256": "vectors-sha"},
                         },
+                        "platform_anr": {
+                            "detected": True,
+                            "reason": "System UI isn't responding",
+                        },
                     }
                 ),
                 encoding="utf-8",
@@ -109,6 +113,7 @@ class AndroidUiStatePackSummaryContractTests(unittest.TestCase):
             installed_pack = summary["installed_pack"]
 
             self.assertTrue(installed_pack["metadata_present"])
+            self.assertEqual(summary["platform_anr_count"], 1)
             self.assertTrue(installed_pack["matrix_homogeneous"])
             self.assertEqual(installed_pack["pack_format"], "senku-mobile-pack-v2")
             self.assertEqual(installed_pack["pack_version"], 2)

@@ -58,14 +58,14 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
         assertEquals(
-            "2 related guides for [GD-214] Water Storage. Preview, then open.",
+            "2 linked guides for [GD-214] Water Storage. Preview, then open.",
             formatter.buildAnswerModeRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(false, false, "", "", "[GD-214] Water Storage"),
                 2
             )
         );
         assertEquals(
-            "1 related guide for [GD-215] Rainwater Catchment. Preview, then open.",
+            "1 linked guide for [GD-215] Rainwater Catchment. Preview, then open.",
             formatter.buildNonRailRelatedGuidesSubtitle(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -83,8 +83,9 @@ public final class DetailRelatedGuidePresentationFormatterTest {
     public void nonRailPreviewRowDescriptionUsesGuideConnectionLanguage() {
         DetailRelatedGuidePresentationFormatter formatter = new DetailRelatedGuidePresentationFormatter(null);
 
+        assertEquals("Cross-reference", formatter.buildNonRailRelatedGuidesTitle());
         assertEquals(
-            "Related guide 1 of 1. [GD-215] Rainwater Catchment. Guide connection from GD-214. Preview this related guide here, then use Open full guide when ready.",
+            "Related guide 1 of 1. [GD-215] Rainwater Catchment. Cross-reference from GD-214. Preview this linked guide here, then use Open full guide when ready.",
             formatter.buildRelatedGuideButtonContentDescription(
                 new DetailRelatedGuidePresentationFormatter.State(
                     false,
@@ -109,7 +110,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
         SearchResult guide = new SearchResult("Rainwater Catchment", "", "", "", "GD-215", "", "", "");
 
         assertEquals(
-            "Source-anchored guide connections. 2 related guides for [GD-214] Water Storage. Preview, then open.",
+            "Source-anchored cross-reference guides. 2 linked guides for [GD-214] Water Storage. Preview, then open.",
             formatter.buildAnswerModeRelatedGuidesPanelContentDescription(state, 2)
         );
         assertEquals(

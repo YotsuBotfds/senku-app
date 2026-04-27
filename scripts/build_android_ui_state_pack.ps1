@@ -175,6 +175,49 @@ function Get-PackArtifactTrust {
     }
 }
 
+function Test-PackPlatformAnrDetected {
+    param([object]$PlatformAnr)
+
+    if ($null -eq $PlatformAnr) {
+        return $false
+    }
+    if ($PlatformAnr.PSObject.Properties.Name -notcontains "detected") {
+        return $false
+    }
+    $detected = $PlatformAnr.detected
+    if ($detected -is [bool]) {
+        return $detected
+    }
+    return ([string]$detected).Trim().ToLowerInvariant() -eq "true"
+}
+
+function Get-PackPlatformAnrCount {
+    param([object[]]$ResultEntries)
+
+    $count = 0
+    foreach ($entry in @($ResultEntries)) {
+        if (Test-PackPlatformAnrDetected -PlatformAnr $entry.platform_anr) {
+            $count += 1
+            continue
+        }
+
+        $summaryPath = [string]$entry.summary_path
+        if ([string]::IsNullOrWhiteSpace($summaryPath) -or -not (Test-Path -LiteralPath $summaryPath)) {
+            continue
+        }
+
+        try {
+            $stateSummary = Get-Content -LiteralPath $summaryPath -Raw | ConvertFrom-Json
+        } catch {
+            continue
+        }
+        if (Test-PackPlatformAnrDetected -PlatformAnr $stateSummary.platform_anr) {
+            $count += 1
+        }
+    }
+    return $count
+}
+
 function Write-TrustedPackSummary {
     param(
         [object]$Summary,
@@ -1032,7 +1075,7 @@ $summaryPath = Join-Path $outputDir "summary.json"
 
 $successCount = @($results | Where-Object { $_.status -eq "pass" }).Count
 $failCount = @($results | Where-Object { $_.status -ne "pass" }).Count
-$platformAnrCount = @($results | Where-Object { $null -ne $_.platform_anr -and -not [string]::IsNullOrWhiteSpace([string]$_.platform_anr) }).Count
+$platformAnrCount = Get-PackPlatformAnrCount -ResultEntries $results
 $hostAdbPlatformToolsVersion = Get-FirstNonEmptyPackMetadataValue -Entries $results -PropertyName "host_adb_platform_tools_version"
 $status = if ($failCount -eq 0) { "pass" } elseif ($successCount -gt 0) { "partial" } else { "fail" }
 $identityRollup = Get-PackIdentityRollup -ResultEntries $results

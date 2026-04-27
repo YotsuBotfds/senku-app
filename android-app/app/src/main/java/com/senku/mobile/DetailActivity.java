@@ -411,7 +411,7 @@ public final class DetailActivity extends AppCompatActivity {
     ) {
         String label = railContext
             ? DetailGuideContextPresentationFormatter.guideRailLabel(context)
-            : context.getString(R.string.detail_next_steps_title_guides_nonrail);
+            : "Cross-reference";
         return newGuideIntent(
             context,
             result,
