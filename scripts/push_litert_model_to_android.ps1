@@ -80,6 +80,46 @@ function Resolve-DefaultLiteRtModelPath {
     return ""
 }
 
+function Get-DeviceDataAvailableBytes {
+    $dfOutput = Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "df", "-k", "/data") -AllowFailure
+    if ($script:LastAdbExitCode -ne 0) {
+        return $null
+    }
+
+    foreach ($line in $dfOutput) {
+        $trimmed = ([string]$line).Trim()
+        if ([string]::IsNullOrWhiteSpace($trimmed) -or $trimmed.StartsWith("Filesystem")) {
+            continue
+        }
+        $parts = @($trimmed -split "\s+")
+        if ($parts.Count -lt 4) {
+            continue
+        }
+        $availableKb = 0L
+        if ([long]::TryParse($parts[3], [ref]$availableKb)) {
+            return ($availableKb * 1024L)
+        }
+    }
+    return $null
+}
+
+function Assert-DeviceHasModelStagingSpace {
+    param([long]$ModelBytes)
+
+    $availableBytes = Get-DeviceDataAvailableBytes
+    if ($null -eq $availableBytes) {
+        Write-Warning "Could not determine free space on $Device /data; continuing with model push."
+        return
+    }
+
+    $requiredBytes = ($ModelBytes * 2L) + 67108864L
+    if ($availableBytes -lt $requiredBytes) {
+        $availableGiB = [Math]::Round(($availableBytes / 1GB), 2)
+        $requiredGiB = [Math]::Round(($requiredBytes / 1GB), 2)
+        throw "Insufficient /data free space on $Device for staged LiteRT push. Available ${availableGiB} GiB; need about ${requiredGiB} GiB because the helper stages the model in /data/local/tmp before copying it into app storage."
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($ModelPath)) {
     $ModelPath = Resolve-DefaultLiteRtModelPath
 }
@@ -89,6 +129,7 @@ if ([string]::IsNullOrWhiteSpace($ModelPath) -or -not (Test-Path -LiteralPath $M
 }
 
 $resolvedModelPath = (Resolve-Path -LiteralPath $ModelPath).Path
+$modelBytes = (Get-Item -LiteralPath $resolvedModelPath).Length
 $modelFileName = [System.IO.Path]::GetFileName($resolvedModelPath)
 $modelExtension = [System.IO.Path]::GetExtension($resolvedModelPath).ToLowerInvariant()
 if ($modelExtension -ne ".litertlm" -and $modelExtension -ne ".task") {
@@ -147,6 +188,8 @@ try {
         }
     }
 
+    Assert-DeviceHasModelStagingSpace -ModelBytes $modelBytes
+
     $remoteModelPath = "$RemoteTempDir/$modelFileName"
     $remotePrefsPath = "$RemoteTempDir/senku_model_store.xml"
     Invoke-AdbChecked -Arguments @("-s", $Device, "push", $resolvedModelPath, $remoteModelPath) | Out-Null
@@ -177,6 +220,12 @@ try {
         Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "monkey", "-p", $PackageName, "-c", "android.intent.category.LAUNCHER", "1") | Out-Null
     }
 } finally {
+    if (-not [string]::IsNullOrWhiteSpace($RemoteTempDir)) {
+        try {
+            Invoke-AdbChecked -Arguments @("-s", $Device, "shell", "rm", "-rf", $RemoteTempDir) -AllowFailure | Out-Null
+        } catch {
+        }
+    }
     if (Test-Path -LiteralPath $localPrefsPath) {
         Remove-Item -LiteralPath $localPrefsPath -Force
     }
