@@ -87,6 +87,9 @@ Landed Android sequence:
 - `RAG-A15`: Android test coverage now guards old column-incompatible
   answer-card schemas failing closed, and adds an assumption-gated census for
   already-pushed current-head 271-card packs without invoking runtime planning.
+- `RAG-A15b`: a pushed current-head 271-card pack now has an Android runtime
+  allowlist guard proving the six explicit pilot cards still plan while sampled
+  non-pilot current-head cards do not satisfy the runtime planner hooks.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
