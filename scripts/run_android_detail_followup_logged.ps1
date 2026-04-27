@@ -13,6 +13,8 @@ param(
     [string]$OutputDir = "artifacts\\bench\\android_detail_followups",
     [string]$RunLabel,
     [switch]$SkipSourceProbe,
+    [switch]$SkipPackPushIfCurrent,
+    [switch]$ForcePackPush,
     [int]$InitialMaxWaitSeconds = 260,
     [int]$FollowUpMaxWaitSeconds = 180,
     [int]$PollSeconds = 5
@@ -125,6 +127,12 @@ $scriptArgs = @{
 }
 if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
     $scriptArgs.PushPackDir = $PushPackDir
+}
+if ($SkipPackPushIfCurrent) {
+    $scriptArgs.SkipPackPushIfCurrent = $true
+}
+if ($ForcePackPush) {
+    $scriptArgs.ForcePackPush = $true
 }
 if ($WarmStart) {
     $scriptArgs.WarmStart = $true

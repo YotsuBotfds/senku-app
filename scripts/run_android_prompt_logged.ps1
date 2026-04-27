@@ -14,7 +14,10 @@ param(
     [int]$PollSeconds = 5,
     [string]$OutputDir = "artifacts\\bench\\android_prompts",
     [string]$RunLabel,
-    [string]$ExpectedDetailTitle
+    [string]$ExpectedDetailTitle,
+    [string]$PushPackDir,
+    [switch]$SkipPackPushIfCurrent,
+    [switch]$ForcePackPush
 )
 
 $ErrorActionPreference = "Stop"
@@ -181,6 +184,15 @@ if ($WaitForCompletion) {
 }
 if (-not [string]::IsNullOrWhiteSpace($effectiveExpectedTitle)) {
     $scriptArgs.ExpectedDetailTitle = $effectiveExpectedTitle
+}
+if (-not [string]::IsNullOrWhiteSpace($PushPackDir)) {
+    $scriptArgs.PushPackDir = $PushPackDir
+}
+if ($SkipPackPushIfCurrent) {
+    $scriptArgs.SkipPackPushIfCurrent = $true
+}
+if ($ForcePackPush) {
+    $scriptArgs.ForcePackPush = $true
 }
 
 $capturedError = $null
