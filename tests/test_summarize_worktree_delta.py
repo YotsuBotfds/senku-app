@@ -58,6 +58,8 @@ class SummarizeWorktreeDeltaTests(unittest.TestCase):
         status = (
             "?? notes\\PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md\n"
             "?? notes\\PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md\n"
+            "?? notes\\PLANNER_HANDOFF_future_local.md\n"
+            "?? notes\\OTHER_HANDOFF.md\n"
             " M scripts/tool.py\n"
         )
 
@@ -65,18 +67,21 @@ class SummarizeWorktreeDeltaTests(unittest.TestCase):
         lanes = {lane["lane"]: lane for lane in summary["lanes"]}
         markdown = render_markdown(summary)
 
-        self.assertEqual(1, summary["total_changed"])
+        self.assertEqual(2, summary["total_changed"])
         self.assertEqual(
             [
                 "notes/PLANNER_HANDOFF_2026-04-26_AWAITING_DEEP_RESEARCH.md",
                 "notes/PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md",
+                "notes/PLANNER_HANDOFF_future_local.md",
             ],
             summary["excluded_benign_untracked"],
         )
-        self.assertEqual(2, summary["excluded_benign_untracked_count"])
+        self.assertEqual(3, summary["excluded_benign_untracked_count"])
         self.assertEqual("scripts/tooling", summary["lanes"][0]["lane"])
         self.assertEqual("scripts/tool.py", lanes["scripts/tooling"]["files"][0]["path"])
-        self.assertIn("Benign untracked excluded: 2", markdown)
+        self.assertEqual("other", summary["lanes"][1]["lane"])
+        self.assertEqual("notes/OTHER_HANDOFF.md", lanes["other"]["files"][0]["path"])
+        self.assertIn("Benign untracked excluded: 3", markdown)
 
     def test_renames_and_diff_stat_are_preserved(self):
         status = "R  scripts/old_name.py -> scripts/new_name.py\n"

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -44,6 +45,9 @@ PROTECTED_BENIGN_UNTRACKED = {
     "notes/PLANNER_HANDOFF_2026-04-26_EARLY_WRAP.md",
     "notes/PLANNER_HANDOFF_2026-04-26_POST_CARD5_PAUSE.md",
 }
+PROTECTED_BENIGN_UNTRACKED_PATTERNS = (
+    re.compile(r"^notes/PLANNER_HANDOFF.*\.md$"),
+)
 
 
 @dataclass(frozen=True)
@@ -128,7 +132,10 @@ def parse_porcelain_status(
         path = normalize_path(path)
         if not path:
             continue
-        if status == "??" and path in PROTECTED_BENIGN_UNTRACKED:
+        is_benign_untracked = path in PROTECTED_BENIGN_UNTRACKED or any(
+            pattern.match(path) for pattern in PROTECTED_BENIGN_UNTRACKED_PATTERNS
+        )
+        if status == "??" and is_benign_untracked:
             benign_untracked.append(path)
             continue
         if not include_generated and is_generated_noise(path, status=status):
