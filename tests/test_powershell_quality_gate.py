@@ -133,6 +133,10 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn('host_inference_model = $(if ($state.host) { [string]$followupSummary.host_inference_model } else { $null })', script)
         self.assertIn('model_identity_source = $(if ($state.host) { "host_inference" } else { $null })', script)
         self.assertIn('model_sha = $(if ($state.host) { Get-StableIdentitySha256 -Value ("host-inference|{0}|{1}" -f [string]$followupSummary.host_inference_url, [string]$followupSummary.host_inference_model) } else { $null })', script)
+        self.assertIn("platform_anr = $trustedSummary.platform_anr", script)
+        self.assertIn("platform_anr = $trustedFollowupSummary.platform_anr", script)
+        self.assertIn("$platformAnrCount = @($results | Where-Object", script)
+        self.assertIn("platform_anr_count = [int]$platformAnrCount", script)
 
     def test_android_ui_validation_local_shell_generation_stays_bounded(self):
         script = (REPO_ROOT / "scripts" / "run_android_ui_validation_pack.ps1").read_text(encoding="utf-8")

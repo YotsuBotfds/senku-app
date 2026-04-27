@@ -583,6 +583,8 @@ if ($FinalizeOnly) {
                     status = $(if ($copiedScreenshots.Count -gt 0 -and $copiedDumps.Count -gt 0) { "pass" } else { "fail" })
                     runner = "detail_followup"
                     artifact_dir = $stateRawDir
+                    failure_reason = $followupSummary.error_message
+                    platform_anr = $followupSummary.platform_anr
                     host_inference_url = $(if ($state.host) { [string]$followupSummary.host_inference_url } else { $null })
                     host_inference_model = $(if ($state.host) { [string]$followupSummary.host_inference_model } else { $null })
                     model_identity_source = $(if ($state.host) { "host_inference" } else { $null })
@@ -607,6 +609,8 @@ if ($FinalizeOnly) {
                     summary_path = $stateSummaryPath
                     screenshots = $copiedScreenshots
                     dumps = $copiedDumps
+                    failure_reason = $trustedFollowupSummary.failure_reason
+                    platform_anr = $trustedFollowupSummary.platform_anr
                 })
                 continue
             }
@@ -652,6 +656,8 @@ if ($FinalizeOnly) {
                     summary_path = $stateSummaryPath
                     screenshots = @()
                     dumps = @()
+                    failure_reason = "smoke wrapper failed before trusted summary"
+                    platform_anr = $null
                 })
                 continue
             }
@@ -674,6 +680,8 @@ if ($FinalizeOnly) {
                 summary_path = $stateSummaryPath
                 screenshots = $copied.screenshots
                 dumps = $copied.dumps
+                failure_reason = $trustedSummary.failure_reason
+                platform_anr = $trustedSummary.platform_anr
             })
         }
 
@@ -694,6 +702,7 @@ $summaryPath = Join-Path $outputDir "summary.json"
 
 $successCount = @($results | Where-Object { $_.status -eq "pass" }).Count
 $failCount = @($results | Where-Object { $_.status -ne "pass" }).Count
+$platformAnrCount = @($results | Where-Object { $null -ne $_.platform_anr -and -not [string]::IsNullOrWhiteSpace([string]$_.platform_anr) }).Count
 $status = if ($failCount -eq 0) { "pass" } elseif ($successCount -gt 0) { "partial" } else { "fail" }
 $identityRollup = Get-PackIdentityRollup -ResultEntries $results
 
@@ -727,6 +736,7 @@ $summary = [pscustomobject]@{
     total_states = [int]$results.Count
     pass_count = [int]$successCount
     fail_count = [int]$failCount
+    platform_anr_count = [int]$platformAnrCount
     matrix_homogeneous = [bool]$identityRollup.matrix_homogeneous
     matrix_apk_sha = $identityRollup.matrix_apk_sha
     matrix_model_name = $identityRollup.matrix_model_name
