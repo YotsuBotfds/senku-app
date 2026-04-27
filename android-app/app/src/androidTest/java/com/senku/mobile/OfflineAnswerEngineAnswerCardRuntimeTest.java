@@ -339,30 +339,88 @@ public final class OfflineAnswerEngineAnswerCardRuntimeTest {
         }
     }
 
+    @Test
+    public void reviewedCardRuntimeFallsBackWhenOnlyAnswerCardsTableExists() throws Exception {
+        context = ApplicationProvider.getApplicationContext();
+        databaseFile = File.createTempFile("answer-card-runtime-answer-cards-only", ".db", context.getCacheDir());
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
+        try {
+            createAnswerCardsTable(database);
+            insertPilotAnswerCard(database);
+        } finally {
+            database.close();
+        }
+        HostInferenceConfig.setEnabled(context, true);
+        ReviewedCardRuntimeConfig.setEnabled(context, true);
+
+        try (PackRepository repository = new PackRepository(databaseFile, null)) {
+            assertNull(AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "my child swallowed an unknown cleaner"
+            ));
+        }
+    }
+
+    @Test
+    public void reviewedCardRuntimeFallsBackWhenClausesAreMissing() throws Exception {
+        context = ApplicationProvider.getApplicationContext();
+        databaseFile = File.createTempFile("answer-card-runtime-no-clauses", ".db", context.getCacheDir());
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
+        try {
+            createAnswerCardTables(database);
+            insertPilotAnswerCard(database);
+            insertPilotSource(database);
+        } finally {
+            database.close();
+        }
+        HostInferenceConfig.setEnabled(context, true);
+        ReviewedCardRuntimeConfig.setEnabled(context, true);
+
+        try (PackRepository repository = new PackRepository(databaseFile, null)) {
+            assertNull(AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "my child swallowed an unknown cleaner"
+            ));
+        }
+    }
+
+    @Test
+    public void reviewedCardRuntimeFallsBackWhenSourcesAreMissing() throws Exception {
+        context = ApplicationProvider.getApplicationContext();
+        databaseFile = File.createTempFile("answer-card-runtime-no-sources", ".db", context.getCacheDir());
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
+        try {
+            createAnswerCardTables(database);
+            insertPilotAnswerCard(database);
+            insertClause(
+                database,
+                "required_first_action",
+                1,
+                "Call poison control, EMS, or the fastest clinician now.",
+                null
+            );
+        } finally {
+            database.close();
+        }
+        HostInferenceConfig.setEnabled(context, true);
+        ReviewedCardRuntimeConfig.setEnabled(context, true);
+
+        try (PackRepository repository = new PackRepository(databaseFile, null)) {
+            assertNull(AnswerCardRuntime.tryPlan(
+                context,
+                repository,
+                "my child swallowed an unknown cleaner"
+            ));
+        }
+    }
+
     private static void createPilotPackDatabase(File databaseFile) {
         SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
         try {
             createAnswerCardTables(database);
-            database.execSQL(
-                "INSERT INTO answer_cards (" +
-                    "card_id, guide_id, slug, title, risk_tier, evidence_owner, " +
-                    "review_status, runtime_citation_policy, routine_boundary, " +
-                    "acceptable_uncertain_fit, notes" +
-                    ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                new Object[]{
-                    "poisoning_unknown_ingestion",
-                    "GD-898",
-                    "poisoning_unknown_ingestion",
-                    "Poisoning / Unknown Ingestion",
-                    "critical",
-                    "guide-corpus",
-                    "pilot_reviewed",
-                    "reviewed_source_family",
-                    "Do not wait for symptoms after an unknown ingestion.",
-                    "Say if the substance is unknown.",
-                    "Synthetic card runtime test fixture."
-                }
-            );
+            insertPilotAnswerCard(database);
             insertClause(
                 database,
                 "required_first_action",
@@ -379,19 +437,7 @@ public final class OfflineAnswerEngineAnswerCardRuntimeTest {
             );
             insertClause(database, "first_action", 1, "Check airway and breathing first.", null);
             insertClause(database, "forbidden_advice", 1, "Do not induce vomiting.", null);
-            database.execSQL(
-                "INSERT INTO answer_card_sources (" +
-                    "card_id, source_guide_id, slug, title, sections_json, is_primary" +
-                    ") VALUES (?, ?, ?, ?, ?, ?)",
-                new Object[]{
-                    "poisoning_unknown_ingestion",
-                    "GD-898",
-                    "poisoning",
-                    "Poisoning",
-                    "[\"Triage\"]",
-                    1
-                }
-            );
+            insertPilotSource(database);
         } finally {
             database.close();
         }
@@ -910,6 +956,12 @@ public final class OfflineAnswerEngineAnswerCardRuntimeTest {
     }
 
     private static void createAnswerCardTables(SQLiteDatabase database) {
+        createAnswerCardsTable(database);
+        createClausesTable(database);
+        createSourcesTable(database);
+    }
+
+    private static void createAnswerCardsTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_cards (" +
                 "card_id TEXT PRIMARY KEY, " +
@@ -925,6 +977,9 @@ public final class OfflineAnswerEngineAnswerCardRuntimeTest {
                 "notes TEXT" +
                 ")"
         );
+    }
+
+    private static void createClausesTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_card_clauses (" +
                 "card_id TEXT NOT NULL, " +
@@ -935,6 +990,9 @@ public final class OfflineAnswerEngineAnswerCardRuntimeTest {
                 "PRIMARY KEY (card_id, clause_kind, ordinal)" +
                 ")"
         );
+    }
+
+    private static void createSourcesTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_card_sources (" +
                 "card_id TEXT NOT NULL, " +
@@ -945,6 +1003,45 @@ public final class OfflineAnswerEngineAnswerCardRuntimeTest {
                 "is_primary INTEGER NOT NULL, " +
                 "PRIMARY KEY (card_id, source_guide_id)" +
                 ")"
+        );
+    }
+
+    private static void insertPilotAnswerCard(SQLiteDatabase database) {
+        database.execSQL(
+            "INSERT INTO answer_cards (" +
+                "card_id, guide_id, slug, title, risk_tier, evidence_owner, " +
+                "review_status, runtime_citation_policy, routine_boundary, " +
+                "acceptable_uncertain_fit, notes" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            new Object[]{
+                "poisoning_unknown_ingestion",
+                "GD-898",
+                "poisoning_unknown_ingestion",
+                "Poisoning / Unknown Ingestion",
+                "critical",
+                "guide-corpus",
+                "pilot_reviewed",
+                "reviewed_source_family",
+                "Do not wait for symptoms after an unknown ingestion.",
+                "Say if the substance is unknown.",
+                "Synthetic card runtime test fixture."
+            }
+        );
+    }
+
+    private static void insertPilotSource(SQLiteDatabase database) {
+        database.execSQL(
+            "INSERT INTO answer_card_sources (" +
+                "card_id, source_guide_id, slug, title, sections_json, is_primary" +
+                ") VALUES (?, ?, ?, ?, ?, ?)",
+            new Object[]{
+                "poisoning_unknown_ingestion",
+                "GD-898",
+                "poisoning",
+                "Poisoning",
+                "[\"Triage\"]",
+                1
+            }
         );
     }
 

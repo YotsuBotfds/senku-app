@@ -39,6 +39,20 @@ public final class AnswerCardDaoTest {
     }
 
     @Test
+    public void loadCardsForGuideIdsReturnsEmptyForPartialOldPackTables() {
+        database = SQLiteDatabase.create(null);
+        createAnswerCardsTable(database);
+        insertReviewedCard(database, "poisoning_unknown_ingestion", "GD-001");
+
+        AnswerCardDao dao = new AnswerCardDao(database);
+
+        assertTrue(dao.loadCardsForGuideIds(setOf("GD-001"), 5).isEmpty());
+
+        createClausesTable(database);
+        assertTrue(dao.loadCardsForGuideIds(setOf("GD-001"), 5).isEmpty());
+    }
+
+    @Test
     public void loadCardsForGuideIdsLoadsReviewedCardsClausesAndSources() {
         database = SQLiteDatabase.create(null);
         createAnswerCardTables(database);
@@ -141,6 +155,46 @@ public final class AnswerCardDaoTest {
     }
 
     @Test
+    public void loadCardsForGuideIdsTreatsMalformedJsonAsEmptyLists() {
+        database = SQLiteDatabase.create(null);
+        createAnswerCardTables(database);
+        insertReviewedCard(database, "poisoning_unknown_ingestion", "GD-001");
+        database.execSQL(
+            "INSERT INTO answer_card_clauses (" +
+                "card_id, clause_kind, ordinal, text, trigger_terms_json" +
+                ") VALUES (?, ?, ?, ?, ?)",
+            new Object[]{
+                "poisoning_unknown_ingestion",
+                "conditional_required_action",
+                1,
+                "Keep the child with an adult.",
+                "[not-json"
+            }
+        );
+        database.execSQL(
+            "INSERT INTO answer_card_sources (" +
+                "card_id, source_guide_id, slug, title, sections_json, is_primary" +
+                ") VALUES (?, ?, ?, ?, ?, ?)",
+            new Object[]{
+                "poisoning_unknown_ingestion",
+                "GD-001",
+                "poisoning",
+                "Poisoning",
+                "{not-json",
+                1
+            }
+        );
+
+        AnswerCardDao dao = new AnswerCardDao(database);
+
+        List<AnswerCard> cards = dao.loadCardsForGuideIds(setOf("GD-001"), 5);
+
+        assertEquals(1, cards.size());
+        assertTrue(cards.get(0).clauses.get(0).triggerTerms.isEmpty());
+        assertTrue(cards.get(0).sources.get(0).sections.isEmpty());
+    }
+
+    @Test
     public void loadCardsForGuideIdsRespectsLimitAndStableOrdering() {
         database = SQLiteDatabase.create(null);
         createAnswerCardTables(database);
@@ -156,6 +210,12 @@ public final class AnswerCardDaoTest {
     }
 
     private static void createAnswerCardTables(SQLiteDatabase database) {
+        createAnswerCardsTable(database);
+        createClausesTable(database);
+        createSourcesTable(database);
+    }
+
+    private static void createAnswerCardsTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_cards (" +
                 "card_id TEXT PRIMARY KEY, " +
@@ -171,6 +231,9 @@ public final class AnswerCardDaoTest {
                 "notes TEXT" +
                 ")"
         );
+    }
+
+    private static void createClausesTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_card_clauses (" +
                 "card_id TEXT NOT NULL, " +
@@ -181,6 +244,9 @@ public final class AnswerCardDaoTest {
                 "PRIMARY KEY (card_id, clause_kind, ordinal)" +
                 ")"
         );
+    }
+
+    private static void createSourcesTable(SQLiteDatabase database) {
         database.execSQL(
             "CREATE TABLE answer_card_sources (" +
                 "card_id TEXT NOT NULL, " +

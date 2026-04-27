@@ -65,6 +65,10 @@ Landed Android sequence:
 - `RAG-CH6`: mobile-pack count probe helper landed. It compares Android bundled
   pack counts against a fresh current-head export while safely reporting
   unresolved Git LFS pointer assets instead of opening them as SQLite.
+- `RAG-A14f`: old-pack / partial-pack fallback matrix hardened for Android
+  answer-card DAO and reviewed-card runtime. Missing tables, answer-cards-only
+  packs, missing clause rows, missing source rows, and malformed JSON now have
+  focused connected-test proof.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from
