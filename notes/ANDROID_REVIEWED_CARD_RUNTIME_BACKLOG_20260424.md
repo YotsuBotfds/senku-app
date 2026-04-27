@@ -100,6 +100,10 @@ Landed Android sequence:
 - `RAG-A15c`: current-head pack census now locks 271-card / 6945-clause /
   311-source inventory and required fields, while DAO tests cover old
   column-incompatible clause/source schemas failing closed.
+- `RAG-A14m`: the high-level `run_android_prompt.ps1` wrapper now surfaces
+  smoke-summary `failure_reason` and `platform_anr` evidence when instrumented
+  execution fails, so System UI blockers remain visible outside the lower-level
+  smoke wrapper.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from

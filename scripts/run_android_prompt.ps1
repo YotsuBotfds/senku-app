@@ -176,6 +176,44 @@ function Remove-ArtifactIfExists {
     }
 }
 
+function Get-InstrumentationSummaryFailureMessage {
+    param([string]$SummaryFile)
+
+    if ([string]::IsNullOrWhiteSpace($SummaryFile) -or -not (Test-Path -LiteralPath $SummaryFile)) {
+        return ""
+    }
+
+    try {
+        $summary = Get-Content -LiteralPath $SummaryFile -Raw | ConvertFrom-Json
+    } catch {
+        return ""
+    }
+
+    $details = New-Object System.Collections.Generic.List[string]
+    $failureReason = [string]$summary.failure_reason
+    if (-not [string]::IsNullOrWhiteSpace($failureReason)) {
+        $details.Add(("failure_reason={0}" -f $failureReason))
+    }
+
+    $platformAnr = $summary.platform_anr
+    if ($null -ne $platformAnr) {
+        $anrReason = [string]$platformAnr.reason
+        $anrDump = [string]$platformAnr.dump
+        if (-not [string]::IsNullOrWhiteSpace($anrReason)) {
+            $details.Add(("platform_anr.reason={0}" -f $anrReason))
+        }
+        if (-not [string]::IsNullOrWhiteSpace($anrDump)) {
+            $details.Add(("platform_anr.dump={0}" -f $anrDump))
+        }
+    }
+
+    if ($details.Count -eq 0) {
+        return ""
+    }
+
+    return ($details -join "; ")
+}
+
 function Get-UiSurface {
     param([string]$DumpFile)
 
@@ -757,6 +795,10 @@ if ($resolvedInstrumentationExecution) {
 
         & powershell @instrumentationArgs
         if ($LASTEXITCODE -ne 0) {
+            $summaryFailureMessage = Get-InstrumentationSummaryFailureMessage -SummaryFile $summaryPath
+            if (-not [string]::IsNullOrWhiteSpace($summaryFailureMessage)) {
+                throw "Instrumentation execution failed ($summaryFailureMessage)"
+            }
             throw "Instrumentation execution failed"
         }
 

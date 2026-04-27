@@ -83,6 +83,19 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("throw $platformAnrEvidence.reason", script)
         self.assertIn("platform_anr = $platformAnrEvidence", script)
 
+    def test_android_prompt_surfaces_instrumentation_summary_failure_evidence(self):
+        script = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("function Get-InstrumentationSummaryFailureMessage", script)
+        self.assertIn("$summary.failure_reason", script)
+        self.assertIn("$summary.platform_anr", script)
+        self.assertIn("platform_anr.reason={0}", script)
+        self.assertIn("platform_anr.dump={0}", script)
+        self.assertIn(
+            'throw "Instrumentation execution failed ($summaryFailureMessage)"',
+            script,
+        )
+
     def test_quality_gate_dry_run_lists_selected_files(self):
         result = run_gate(
             "-Path",
