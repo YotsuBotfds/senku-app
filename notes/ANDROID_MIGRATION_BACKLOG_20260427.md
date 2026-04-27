@@ -43,6 +43,12 @@ use it to approve reviewed-card runtime expansion or product exposure.
   `PackRepositoryFtsFallbackAndroidTest` passed `OK (3 tests)` on each fixed
   emulator lane (`5554`, `5556`, `5558`, and `5560`) against the current
   bundled 271-card pack.
+- Repeatable FTS fallback wrapper proof: on 2026-04-27 10:39 CT,
+  `scripts/run_android_fts_fallback_matrix.ps1` passed on all four fixed
+  emulator lanes and wrote
+  `artifacts/bench/android_fts_fallback_matrix_current_20260427/summary.json`.
+  Summary fields: `passed_count=4`, `failed_devices=[]`, `expected_tests=3`,
+  `dry_run=false`, and `runtime_evidence=fts4_fallback`.
 - LiteRT transport proof on `emulator-5554`: on 2026-04-27 10:30 CT,
   `scripts/probe_litert_model_transport.ps1` wrote
   `artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md`.
@@ -131,6 +137,8 @@ use it to approve reviewed-card runtime expansion or product exposure.
   clean-boot profile, a cached local profile, and a large-asset profile for the
   `5554` E2B blocker:
   <https://developer.android.com/studio/run/emulator-commandline>.
+  `scripts/start_senku_emulator_matrix.ps1` now exposes opt-in `-Headless` and
+  `-PartitionSizeMb` switches for those profiles; defaults remain unchanged.
 - Add adb/platform-tools version capture to Android harness artifacts. Android
   documents normal `adb push`/`pull`, screenshot, and screenrecord flows, and
   current Platform Tools also document experimental ADB Burst Mode for large

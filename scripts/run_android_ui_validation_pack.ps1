@@ -698,7 +698,8 @@ function Set-DeviceOrientation {
         [string]$TargetOrientation
     )
 
-    $physicalSize = Get-PhysicalDisplaySize -Device $Device
+    $deviceFacts = Resolve-DeviceFacts -Device $Device -RequestedOrientation $TargetOrientation
+    $physicalSize = $deviceFacts.physical_size_px
     if ($null -ne $physicalSize) {
         $deviceIsLandscapeNative = $physicalSize.width -gt $physicalSize.height
         $rotation = if ($TargetOrientation -eq "landscape") {
@@ -743,22 +744,17 @@ function Restore-DeviceOrientationSettings {
 function Get-DeviceRotation {
     param([string]$Device)
 
-    $displayDump = (& $adb -s $Device shell dumpsys display 2>$null | Out-String)
-    if ([string]::IsNullOrWhiteSpace($displayDump)) {
-        return $null
-    }
+    return Get-AndroidCurrentRotation -AdbPath $adb -DeviceName $Device
+}
 
-    $overrideMatch = [regex]::Match($displayDump, 'mOverrideDisplayInfo=.*?\brotation (\d)')
-    if ($overrideMatch.Success) {
-        return [int]$overrideMatch.Groups[1].Value
-    }
+function Resolve-DeviceFacts {
+    param(
+        [string]$Device,
+        [ValidateSet("portrait", "landscape")]
+        [string]$RequestedOrientation
+    )
 
-    $baseMatch = [regex]::Match($displayDump, 'mBaseDisplayInfo=.*?\brotation (\d)')
-    if ($baseMatch.Success) {
-        return [int]$baseMatch.Groups[1].Value
-    }
-
-    return $null
+    return Resolve-AndroidDeviceFacts -AdbPath $adb -DeviceName $Device -RequestedOrientation $RequestedOrientation
 }
 
 function Wait-ForDeviceOrientation {
@@ -768,17 +764,8 @@ function Wait-ForDeviceOrientation {
         [string]$TargetOrientation
     )
 
-    $physicalSize = Get-PhysicalDisplaySize -Device $Device
-    if ($null -ne $physicalSize) {
-        $deviceIsLandscapeNative = $physicalSize.width -gt $physicalSize.height
-        $expectedRotation = if ($TargetOrientation -eq "landscape") {
-            if ($deviceIsLandscapeNative) { 0 } else { 1 }
-        } else {
-            if ($deviceIsLandscapeNative) { 1 } else { 0 }
-        }
-    } else {
-        $expectedRotation = if ($TargetOrientation -eq "landscape") { 1 } else { 0 }
-    }
+    $deviceFacts = Resolve-DeviceFacts -Device $Device -RequestedOrientation $TargetOrientation
+    $expectedRotation = $deviceFacts.expected_rotation
     for ($attempt = 0; $attempt -lt 6; $attempt++) {
         $currentRotation = Get-DeviceRotation -Device $Device
         if ($currentRotation -eq $expectedRotation) {
@@ -788,48 +775,6 @@ function Wait-ForDeviceOrientation {
     }
 
     return $false
-}
-
-function Get-ScreenshotDimensions {
-    param([string]$Path)
-
-    if (-not (Test-Path -LiteralPath $Path)) {
-        return $null
-    }
-
-    try {
-        Add-Type -AssemblyName System.Drawing -ErrorAction SilentlyContinue | Out-Null
-        $image = [System.Drawing.Image]::FromFile((Resolve-Path -LiteralPath $Path))
-        try {
-            return [pscustomobject]@{
-                width = $image.Width
-                height = $image.Height
-            }
-        } finally {
-            $image.Dispose()
-        }
-    } catch {
-        return $null
-    }
-}
-
-function Get-PhysicalDisplaySize {
-    param([string]$Device)
-
-    $wmOutput = (& $adb -s $Device shell wm size 2>$null | Out-String)
-    if ([string]::IsNullOrWhiteSpace($wmOutput)) {
-        return $null
-    }
-
-    $match = [regex]::Match($wmOutput, 'Physical size:\s*(\d+)x(\d+)')
-    if (-not $match.Success) {
-        return $null
-    }
-
-    return [pscustomobject]@{
-        width = [int]$match.Groups[1].Value
-        height = [int]$match.Groups[2].Value
-    }
 }
 
 function Set-DeviceSizeOverride {
@@ -1074,7 +1019,8 @@ foreach ($device in $normalizedDevices) {
 
             Set-DeviceOrientation -Device $device -TargetOrientation $Orientation
             if ($Orientation -eq "landscape" -and $device -like "emulator-*") {
-                $physicalSize = Get-PhysicalDisplaySize -Device $device
+                $deviceFacts = Resolve-DeviceFacts -Device $device -RequestedOrientation $Orientation
+                $physicalSize = $deviceFacts.physical_size_px
                 if ($null -ne $physicalSize -and $physicalSize.width -lt $physicalSize.height) {
                     Set-DeviceSizeOverride -Device $device -Width $physicalSize.height -Height $physicalSize.width
                     $prelaunchSizeOverride = $true
@@ -1216,37 +1162,44 @@ foreach ($device in $normalizedDevices) {
                     Set-DeviceOrientation -Device $device -TargetOrientation $Orientation
                     [void](Wait-ForDeviceOrientation -Device $device -TargetOrientation $Orientation)
                     Capture-Screenshot -Device $device -LocalPath $screenPath
-                    $dims = Get-ScreenshotDimensions -Path $screenPath
+                    $screenshotFacts = Get-AndroidScreenshotFacts -Path $screenPath -RequestedOrientation $Orientation
+                    $dims = $screenshotFacts.dimensions_px
                     if ($null -eq $dims) {
                         throw "Could not read screenshot dimensions for $screenPath"
                     }
-                    if ($Orientation -eq "landscape" -and -not ($dims.width -gt $dims.height)) {
+                    if ($Orientation -eq "landscape" -and $screenshotFacts.orientation_mismatch) {
                         Set-DeviceOrientation -Device $device -TargetOrientation $Orientation
                         [void](Wait-ForDeviceOrientation -Device $device -TargetOrientation $Orientation)
                         Capture-Screenshot -Device $device -LocalPath $screenPath
-                        $dims = Get-ScreenshotDimensions -Path $screenPath
-                        if ($null -ne $dims -and -not ($dims.width -gt $dims.height)) {
-                            $physicalSize = Get-PhysicalDisplaySize -Device $device
+                        $screenshotFacts = Get-AndroidScreenshotFacts -Path $screenPath -RequestedOrientation $Orientation
+                        $dims = $screenshotFacts.dimensions_px
+                        if ($null -ne $dims -and $screenshotFacts.orientation_mismatch) {
+                            $deviceFacts = Resolve-DeviceFacts -Device $device -RequestedOrientation $Orientation
+                            $physicalSize = $deviceFacts.physical_size_px
                             if ($null -ne $physicalSize -and $physicalSize.width -lt $physicalSize.height) {
                                 Set-DeviceSizeOverride -Device $device -Width $physicalSize.height -Height $physicalSize.width
                                 $usedSizeOverride = $true
                                 Capture-Screenshot -Device $device -LocalPath $screenPath
-                                $dims = Get-ScreenshotDimensions -Path $screenPath
+                                $screenshotFacts = Get-AndroidScreenshotFacts -Path $screenPath -RequestedOrientation $Orientation
+                                $dims = $screenshotFacts.dimensions_px
                             }
                         }
                     }
-                    if ($Orientation -eq "portrait" -and -not ($dims.height -gt $dims.width)) {
+                    if ($Orientation -eq "portrait" -and $screenshotFacts.orientation_mismatch) {
                         Set-DeviceOrientation -Device $device -TargetOrientation $Orientation
                         [void](Wait-ForDeviceOrientation -Device $device -TargetOrientation $Orientation)
                         Capture-Screenshot -Device $device -LocalPath $screenPath
-                        $dims = Get-ScreenshotDimensions -Path $screenPath
-                        if ($null -ne $dims -and -not ($dims.height -gt $dims.width)) {
-                            $physicalSize = Get-PhysicalDisplaySize -Device $device
+                        $screenshotFacts = Get-AndroidScreenshotFacts -Path $screenPath -RequestedOrientation $Orientation
+                        $dims = $screenshotFacts.dimensions_px
+                        if ($null -ne $dims -and $screenshotFacts.orientation_mismatch) {
+                            $deviceFacts = Resolve-DeviceFacts -Device $device -RequestedOrientation $Orientation
+                            $physicalSize = $deviceFacts.physical_size_px
                             if ($null -ne $physicalSize -and $physicalSize.width -gt $physicalSize.height) {
                                 Set-DeviceSizeOverride -Device $device -Width $physicalSize.height -Height $physicalSize.width
                                 $usedSizeOverride = $true
                                 Capture-Screenshot -Device $device -LocalPath $screenPath
-                                $dims = Get-ScreenshotDimensions -Path $screenPath
+                                $screenshotFacts = Get-AndroidScreenshotFacts -Path $screenPath -RequestedOrientation $Orientation
+                                $dims = $screenshotFacts.dimensions_px
                             }
                         }
                     }

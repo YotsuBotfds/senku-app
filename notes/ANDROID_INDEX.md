@@ -37,6 +37,9 @@ Use this as the first stop for Android parity and mobile-pack work.
   all four fixed emulator lanes at 2026-04-27 10:25 CT. Treat current emulator
   retrieval/performance evidence as FTS4 fallback evidence, not FTS5 runtime
   proof.
+- Repeatable FTS fallback wrapper proof passed `4 / 4` at
+  `artifacts/bench/android_fts_fallback_matrix_current_20260427/summary.json`
+  with `runtime_evidence=fts4_fallback`.
 
 ## Fast Replay Helpers - 2026-04-27
 
@@ -65,6 +68,9 @@ Use this as the first stop for Android parity and mobile-pack work.
   `artifacts/bench/litert_transport_probe_5554_e2b_20260427_1028/summary.md`
   reconfirmed tmp-staging safety for small payloads, but no Windows
   direct-stream candidate is byte-safe enough to bypass staging.
+- `start_senku_emulator_matrix.ps1` exposes opt-in `-Headless` and
+  `-PartitionSizeMb` launch-profile knobs for headless and large-data AVD
+  lanes; defaults remain unchanged.
 
 ## Current artifact baseline
 

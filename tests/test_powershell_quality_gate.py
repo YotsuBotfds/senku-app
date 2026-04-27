@@ -118,6 +118,16 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn("Parser gate passed", result.stdout)
 
+    def test_emulator_matrix_exposes_optional_launch_profile_knobs(self):
+        script = (REPO_ROOT / "scripts" / "start_senku_emulator_matrix.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("[switch]$Headless", script)
+        self.assertIn("[int]$PartitionSizeMb = 0", script)
+        self.assertIn('$arguments += "-no-window"', script)
+        self.assertIn('$arguments += @("-partition-size", [string]$PartitionSizeMb)', script)
+        self.assertIn("-Headless:$Headless", script)
+        self.assertIn("-PartitionSizeMb $PartitionSizeMb", script)
+
     def test_android_ui_state_pack_exposes_slice_contracts(self):
         script = ANDROID_UI_STATE_PACK_PATH.read_text(encoding="utf-8")
 
@@ -150,7 +160,8 @@ class PowerShellQualityGateTests(unittest.TestCase):
         script = ANDROID_UI_STATE_PACK_PARALLEL_PATH.read_text(encoding="utf-8")
 
         self.assertIn('[switch]$SkipHostStates', script)
-        self.assertIn('$roles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")', script)
+        self.assertIn('$allRoles = @("phone_portrait", "phone_landscape", "tablet_portrait", "tablet_landscape")', script)
+        self.assertIn("$roles = @($allRoles)", script)
         self.assertIn('-RunId "{2}" -RoleFilter "{3}" -SkipFinalize -SkipBuild{4}', script)
         self.assertIn("$(if ($SkipHostStates) { ' -SkipHostStates' } else { '' })", script)
         self.assertIn("-FinalizeOnly -SkipBuild", script)
@@ -266,6 +277,17 @@ class PowerShellQualityGateTests(unittest.TestCase):
         self.assertIn("$Emulators = @(Resolve-AndroidHarnessDeviceList -Devices $Emulators)", matrix)
         self.assertIn("Resolve-AndroidHarnessDeviceList", validation)
         self.assertIn("$normalizedDevices = @(Resolve-AndroidHarnessDeviceList -Devices $Devices)", validation)
+
+    def test_android_ui_validation_uses_shared_posture_helpers(self):
+        validation = (REPO_ROOT / "scripts" / "run_android_ui_validation_pack.ps1").read_text(encoding="utf-8")
+
+        self.assertIn("Resolve-AndroidDeviceFacts -AdbPath $adb", validation)
+        self.assertIn("Get-AndroidScreenshotFacts -Path $screenPath -RequestedOrientation $Orientation", validation)
+        self.assertIn("Get-AndroidCurrentRotation -AdbPath $adb", validation)
+        self.assertNotIn("function Get-PhysicalDisplaySize", validation)
+        self.assertNotIn("function Get-ScreenshotDimensions", validation)
+        self.assertNotIn("Get-PhysicalDisplaySize -Device", validation)
+        self.assertNotIn("Get-ScreenshotDimensions -Path", validation)
 
     def test_android_smoke_is_single_device_and_summarizes_direct_proof(self):
         script = ANDROID_SMOKE_PATH.read_text(encoding="utf-8")

@@ -6,7 +6,9 @@ param(
     [string]$Mode = "read_only",
     [switch]$RestartRunning,
     [switch]$NoBootAnim,
-    [switch]$GpuSwiftshader
+    [switch]$GpuSwiftshader,
+    [switch]$Headless,
+    [int]$PartitionSizeMb = 0
 )
 
 Set-StrictMode -Version Latest
@@ -167,7 +169,9 @@ function Start-SenkuEmulatorLane {
         [object]$Lane,
         [string]$Mode,
         [switch]$NoBootAnim,
-        [switch]$GpuSwiftshader
+        [switch]$GpuSwiftshader,
+        [switch]$Headless,
+        [int]$PartitionSizeMb = 0
     )
 
     $arguments = @(
@@ -183,6 +187,12 @@ function Start-SenkuEmulatorLane {
     }
     if ($GpuSwiftshader) {
         $arguments += @("-gpu", "swiftshader_indirect")
+    }
+    if ($Headless) {
+        $arguments += "-no-window"
+    }
+    if ($PartitionSizeMb -gt 0) {
+        $arguments += @("-partition-size", [string]$PartitionSizeMb)
     }
 
     return Start-Process -FilePath $EmulatorPath -ArgumentList $arguments -PassThru
@@ -224,7 +234,7 @@ foreach ($lane in $selectedLanes) {
 
     $target = "{0} ({1})" -f $lane.serial, $lane.avd
     if ($PSCmdlet.ShouldProcess($target, ("Start emulator in {0} mode" -f $Mode))) {
-        $process = Start-SenkuEmulatorLane -EmulatorPath $emulatorPath -Lane $lane -Mode $Mode -NoBootAnim:$NoBootAnim -GpuSwiftshader:$GpuSwiftshader
+        $process = Start-SenkuEmulatorLane -EmulatorPath $emulatorPath -Lane $lane -Mode $Mode -NoBootAnim:$NoBootAnim -GpuSwiftshader:$GpuSwiftshader -Headless:$Headless -PartitionSizeMb $PartitionSizeMb
         Write-Host ("Started {0} as PID {1}" -f $target, $process.Id)
     }
 }
