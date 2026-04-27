@@ -17,11 +17,11 @@
     <string name="reviewed_card_runtime_support_text">Developer-only proof mode. Default app behavior stays off.</string>
     <string name="browse_guides_button">Browse Manual</string>
     <string name="home_button">Home</string>
-    <string name="bottom_tab_home">Home</string>
+    <string name="bottom_tab_home">Library</string>
     <string name="bottom_tab_search">Search</string>
     <string name="bottom_tab_ask">Ask</string>
     <string name="bottom_tab_threads">Threads</string>
-    <string name="bottom_tab_pins">Pins</string>
+    <string name="bottom_tab_pins">Saved</string>
     <string name="home_identity_subtitle_ready">%1$s guides &#183; manual ed. %2$d</string>
     <string name="home_identity_subtitle_loading">Pack loading &#183; manual ed. --</string>
     <string name="home_identity_status_loading">Loading</string>

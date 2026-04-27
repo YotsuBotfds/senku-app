@@ -42,6 +42,7 @@ import com.senku.ui.primitives.BottomTabModel;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -2067,13 +2068,39 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private List<BottomTabModel> buildPhoneTabs() {
-        ArrayList<BottomTabModel> tabs = new ArrayList<>(5);
-        tabs.add(new BottomTabModel(BottomTabDestination.HOME, getString(R.string.bottom_tab_home), getString(R.string.bottom_tab_home)));
-        tabs.add(new BottomTabModel(BottomTabDestination.SEARCH, getString(R.string.bottom_tab_search), getString(R.string.bottom_tab_search)));
-        tabs.add(new BottomTabModel(BottomTabDestination.ASK, getString(R.string.bottom_tab_ask), getString(R.string.bottom_tab_ask)));
-        tabs.add(new BottomTabModel(BottomTabDestination.THREADS, getString(R.string.bottom_tab_threads), getString(R.string.bottom_tab_threads)));
-        tabs.add(new BottomTabModel(BottomTabDestination.PINS, getString(R.string.bottom_tab_pins), getString(R.string.bottom_tab_pins)));
+        List<BottomTabDestination> visibleDestinations = buildVisiblePhoneTabDestinations();
+        ArrayList<BottomTabModel> tabs = new ArrayList<>(visibleDestinations.size());
+        for (BottomTabDestination destination : visibleDestinations) {
+            int labelRes = phoneTabLabelResource(destination);
+            String label = getString(labelRes);
+            tabs.add(new BottomTabModel(destination, label, label));
+        }
         return tabs;
+    }
+
+    static List<BottomTabDestination> buildVisiblePhoneTabDestinations() {
+        return Arrays.asList(
+            BottomTabDestination.HOME,
+            BottomTabDestination.ASK,
+            BottomTabDestination.PINS
+        );
+    }
+
+    private static int phoneTabLabelResource(BottomTabDestination destination) {
+        switch (destination) {
+            case HOME:
+                return R.string.bottom_tab_home;
+            case ASK:
+                return R.string.bottom_tab_ask;
+            case PINS:
+                return R.string.bottom_tab_pins;
+            case SEARCH:
+                return R.string.bottom_tab_search;
+            case THREADS:
+                return R.string.bottom_tab_threads;
+            default:
+                return R.string.bottom_tab_home;
+        }
     }
 
     private void openPhoneTabFromTap(BottomTabDestination destination) {
