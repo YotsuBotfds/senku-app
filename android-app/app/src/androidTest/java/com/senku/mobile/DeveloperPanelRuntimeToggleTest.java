@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -18,20 +19,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RunWith(AndroidJUnit4.class)
 public final class DeveloperPanelRuntimeToggleTest {
-    private static final String REMOTE_ARTIFACT_DIR = "/sdcard/Download/senku-developer-panel";
-
     private Context context;
     private UiDevice device;
+    private File artifactDir;
 
     @Before
     public void setUp() {
         context = ApplicationProvider.getApplicationContext();
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        executeShell("mkdir -p " + REMOTE_ARTIFACT_DIR);
+        artifactDir = new File(context.getFilesDir(), "test-artifacts");
+        if (!artifactDir.exists()) {
+            artifactDir.mkdirs();
+        }
         ReviewedCardRuntimeConfig.setEnabled(context, false);
     }
 
@@ -49,10 +53,12 @@ public final class DeveloperPanelRuntimeToggleTest {
                 View developerContent = activity.findViewById(R.id.developer_content);
                 Button developerToggle = activity.findViewById(R.id.developer_toggle_button);
                 Button runtimeToggle = activity.findViewById(R.id.reviewed_card_runtime_button);
+                TextView supportText = activity.findViewById(R.id.reviewed_card_runtime_support_text);
 
                 Assert.assertNotNull("developer content should exist", developerContent);
                 Assert.assertNotNull("developer toggle should exist", developerToggle);
                 Assert.assertNotNull("reviewed-card runtime toggle should exist", runtimeToggle);
+                Assert.assertNotNull("reviewed-card support text should exist", supportText);
                 Assert.assertEquals(View.GONE, developerContent.getVisibility());
                 Assert.assertFalse(ReviewedCardRuntimeConfig.isEnabled(activity));
                 Assert.assertEquals(
@@ -70,6 +76,7 @@ public final class DeveloperPanelRuntimeToggleTest {
                 Button developerToggle = activity.findViewById(R.id.developer_toggle_button);
                 developerToggle.performClick();
                 Assert.assertEquals(View.VISIBLE, developerContent.getVisibility());
+                assertReviewedRuntimeSupportText(activity);
             });
 
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
@@ -84,6 +91,7 @@ public final class DeveloperPanelRuntimeToggleTest {
                 Button runtimeToggle = activity.findViewById(R.id.reviewed_card_runtime_button);
                 runtimeToggle.performClick();
                 scrollRuntimeToggleIntoView(activity, runtimeToggle);
+                assertReviewedRuntimeSupportText(activity);
                 Assert.assertTrue(ReviewedCardRuntimeConfig.isEnabled(activity));
                 Assert.assertEquals(
                     activity.getString(R.string.reviewed_card_runtime_on_button),
@@ -97,6 +105,7 @@ public final class DeveloperPanelRuntimeToggleTest {
             scenario.onActivity(activity -> {
                 Button runtimeToggle = activity.findViewById(R.id.reviewed_card_runtime_button);
                 runtimeToggle.performClick();
+                assertReviewedRuntimeSupportText(activity);
                 Assert.assertFalse(ReviewedCardRuntimeConfig.isEnabled(activity));
                 Assert.assertEquals(
                     activity.getString(R.string.reviewed_card_runtime_off_button),
@@ -108,23 +117,34 @@ public final class DeveloperPanelRuntimeToggleTest {
 
     private void captureUiState(String label) {
         String safeLabel = label.replaceAll("[^a-zA-Z0-9._-]+", "_");
-        String screenshotOutput = REMOTE_ARTIFACT_DIR + "/developer_panel_runtime_toggle__" + safeLabel + ".png";
-        String dumpOutput = REMOTE_ARTIFACT_DIR + "/developer_panel_runtime_toggle__" + safeLabel + ".xml";
+        File screenshotOutput = new File(
+            artifactDir,
+            "developer_panel_runtime_toggle__" + safeLabel + ".png"
+        );
+        File dumpOutput = new File(
+            artifactDir,
+            "developer_panel_runtime_toggle__" + safeLabel + ".xml"
+        );
         device.waitForIdle();
-        executeShell("screencap -p " + screenshotOutput);
-        executeShell("uiautomator dump " + dumpOutput);
         Assert.assertTrue(
             "developer-panel screenshot should be captured",
-            executeShell("ls -l " + screenshotOutput).contains("developer_panel_runtime_toggle")
+            device.takeScreenshot(screenshotOutput)
         );
+        try {
+            device.dumpWindowHierarchy(dumpOutput);
+        } catch (Exception exc) {
+            throw new AssertionError("developer-panel dump should be captured", exc);
+        }
     }
 
-    private String executeShell(String command) {
-        try {
-            return device.executeShellCommand(command);
-        } catch (Exception exc) {
-            throw new AssertionError("Shell command failed: " + command, exc);
-        }
+    private static void assertReviewedRuntimeSupportText(MainActivity activity) {
+        TextView supportText = activity.findViewById(R.id.reviewed_card_runtime_support_text);
+        Assert.assertNotNull("reviewed-card support text should exist", supportText);
+        Assert.assertEquals(View.VISIBLE, supportText.getVisibility());
+        Assert.assertEquals(
+            activity.getString(R.string.reviewed_card_runtime_support_text),
+            supportText.getText().toString()
+        );
     }
 
     private static void scrollRuntimeToggleIntoView(MainActivity activity, View runtimeToggle) {

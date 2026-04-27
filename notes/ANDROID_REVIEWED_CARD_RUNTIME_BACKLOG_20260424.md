@@ -58,6 +58,10 @@ Landed Android sequence:
   behavior unchanged, androidTest-only.
 - `RAG-CH5`: direct androidTest coverage added for
   `ScriptedPromptHarnessContract`; behavior unchanged, test-only.
+- `RAG-A14e`: developer-panel support-language proof landed for the hidden
+  reviewed-card runtime toggle. Runtime remains developer/test scoped and
+  default `off`; four-lane phone/tablet portrait/landscape proof captured
+  screenshots and UI dumps through the shared Android artifact harness.
 
 This is real progress toward guide-backed answers. We are no longer only
 patching after bench failures; the app now has a narrow, tested path from

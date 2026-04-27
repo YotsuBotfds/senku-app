@@ -761,6 +761,15 @@
                         android:textColor="@color/senku_text_light" />
 
                     <TextView
+                        android:id="@+id/reviewed_card_runtime_support_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/home_compact_gap"
+                        android:text="@string/reviewed_card_runtime_support_text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/senku_text_muted_light" />
+
+                    <TextView
                         android:id="@+id/developer_diagnostics_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
