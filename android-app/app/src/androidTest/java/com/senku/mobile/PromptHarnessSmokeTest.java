@@ -80,6 +80,21 @@ public final class PromptHarnessSmokeTest {
     private static final long DETAIL_WAIT_MS = 15_000L;
     private static final long GENERATIVE_DETAIL_WAIT_MS = 20_000L;
     private static final double SCREENSHOT_DIMENSION_COVERAGE_THRESHOLD = 0.6d;
+    private static final String[] DETAIL_SURFACE_RES_IDS = new String[] {
+        "detail_body",
+        "detail_body_mirror_shell",
+        "detail_answer_card",
+        "tablet_detail_root",
+        "detail_inline_thread_container",
+        "detail_prior_turns_container",
+        "detail_thread_container"
+    };
+    private static final String[] IME_PACKAGES = new String[] {
+        "com.google.android.inputmethod.latin",
+        "com.android.inputmethod.latin",
+        "com.samsung.android.honeyboard",
+        "com.microsoft.swiftkey"
+    };
 
     private HarnessBusyIdlingResource harnessIdlingResource;
     private UiDevice device;
@@ -2515,14 +2530,7 @@ public final class PromptHarnessSmokeTest {
                     SystemClock.sleep(extraSettleMs);
                     awaitHarnessIdle();
                 }
-                // Dismiss IME if it is showing - landscape phones auto-focus the
-                // follow-up EditText after settle, which surfaces Gboard and makes
-                // dumpWindowHierarchy() return the IME window instead of the app's.
-                UiObject2 imeRoot = device.findObject(By.pkg("com.google.android.inputmethod.latin"));
-                if (imeRoot != null) {
-                    device.pressBack();
-                    device.waitForIdle();
-                }
+                dismissSoftKeyboardIfVisible();
                 captureUiState(captureLabel);
             } catch (AssertionError assertionError) {
                 captureUiState(captureLabel + "_failure");
@@ -2995,6 +3003,12 @@ public final class PromptHarnessSmokeTest {
             failureLabel + "; " + describeResumedActivityAndHarnessSignals(),
             waitForDetailBodyReady(timeoutMs, minimumVisibleLength)
         );
+        dismissSoftKeyboardIfVisible();
+        Assert.assertTrue(
+            failureLabel + "; visible Senku detail surface never appeared after settle; "
+                + describeResumedActivityAndHarnessSignals(),
+            waitForVisibleSenkuDetailSurface(timeoutMs)
+        );
 
         if (!expectedTitle.isEmpty()) {
             Assert.assertTrue(
@@ -3286,12 +3300,18 @@ public final class PromptHarnessSmokeTest {
         File screenshotOutput = new File(artifactDir, safeTestName + "__" + safeLabel + ".png");
         File dumpOutput = new File(artifactDir, safeTestName + "__" + safeLabel + ".xml");
         device.waitForIdle();
+        dismissSoftKeyboardIfVisible();
         String focusedWindowPackage = currentFocusedWindowPackage();
         String foregroundPackage = safe(device.getCurrentPackageName());
         Assert.assertEquals(
             "ui capture must happen with Senku owning mCurrentFocus for " + safeTestName + "/" + safeLabel,
             APP_PACKAGE,
             focusedWindowPackage
+        );
+        Assert.assertTrue(
+            "ui capture must include an app-owned visible detail surface when DetailActivity is foregrounded for "
+                + safeTestName + "/" + safeLabel,
+            !isResumedActivity(DetailActivity.class) || hasVisibleSenkuDetailSurface()
         );
         Assert.assertTrue(
             "screenshot capture failed for " + safeTestName + "/" + safeLabel,
@@ -3629,6 +3649,62 @@ public final class PromptHarnessSmokeTest {
         });
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
         SystemClock.sleep(250L);
+    }
+
+    private void dismissSoftKeyboardIfVisible() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            if (activity == null) {
+                return;
+            }
+            android.view.View focused = activity.getCurrentFocus();
+            if (focused instanceof EditText) {
+                focused.clearFocus();
+            }
+            InputMethodManager imm =
+                (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null && focused != null) {
+                imm.hideSoftInputFromWindow(focused.getWindowToken(), 0);
+            }
+            android.view.View detailSurface = firstExistingView(
+                activity,
+                R.id.detail_body,
+                R.id.detail_body_mirror_shell,
+                R.id.detail_answer_card,
+                R.id.tablet_detail_root,
+                R.id.results_list
+            );
+            if (detailSurface != null) {
+                detailSurface.requestFocus();
+            }
+        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        boolean imeVisible = false;
+        for (String packageName : IME_PACKAGES) {
+            if (device.hasObject(By.pkg(packageName))) {
+                imeVisible = true;
+                break;
+            }
+        }
+        if (imeVisible || !APP_PACKAGE.equals(currentFocusedWindowPackage())) {
+            device.pressBack();
+            device.waitForIdle();
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        }
+        SystemClock.sleep(250L);
+    }
+
+    private android.view.View firstExistingView(Activity activity, int... resIds) {
+        if (activity == null || resIds == null) {
+            return null;
+        }
+        for (int resId : resIds) {
+            android.view.View view = activity.findViewById(resId);
+            if (view != null) {
+                return view;
+            }
+        }
+        return null;
     }
 
     private void submitFollowUpFromResumedDetail(String query) {
@@ -4538,6 +4614,29 @@ public final class PromptHarnessSmokeTest {
             }
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             SystemClock.sleep(50L);
+        }
+        return false;
+    }
+
+    private boolean waitForVisibleSenkuDetailSurface(long timeoutMs) {
+        long deadline = SystemClock.uptimeMillis() + timeoutMs;
+        while (SystemClock.uptimeMillis() < deadline) {
+            if (hasVisibleSenkuDetailSurface()) {
+                return true;
+            }
+            dismissSoftKeyboardIfVisible();
+            device.waitForIdle();
+            SystemClock.sleep(75L);
+        }
+        return false;
+    }
+
+    private boolean hasVisibleSenkuDetailSurface() {
+        for (String resId : DETAIL_SURFACE_RES_IDS) {
+            UiObject2 object = device.findObject(By.res(APP_PACKAGE, resId));
+            if (hasVisibleBounds(object)) {
+                return true;
+            }
         }
         return false;
     }
@@ -5658,6 +5757,15 @@ public final class PromptHarnessSmokeTest {
             }
         }
         return activities.iterator().next();
+    }
+
+    private boolean isResumedActivity(Class<? extends Activity> expectedActivityClass) {
+        final boolean[] matched = {false};
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Activity activity = getResumedActivityOnMainThread();
+            matched[0] = activity != null && expectedActivityClass.isInstance(activity);
+        });
+        return matched[0];
     }
 
     private int childCount(android.view.View view) {

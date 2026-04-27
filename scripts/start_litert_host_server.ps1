@@ -24,10 +24,10 @@ function Resolve-DefaultLiteRtModelPath {
 
     $userHome = [Environment]::GetFolderPath("UserProfile")
     $modelNames = @(
-        "gemma-4-E4B-it.litertlm",
-        "gemma-4-E4B-it.task",
         "gemma-4-E2B-it.litertlm",
-        "gemma-4-E2B-it.task"
+        "gemma-4-E2B-it.task",
+        "gemma-4-E4B-it.litertlm",
+        "gemma-4-E4B-it.task"
     )
     $candidates = foreach ($modelName in $modelNames) {
         @(
