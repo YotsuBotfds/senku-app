@@ -68,6 +68,22 @@ class SearchResultCardHeuristicsTest {
     }
 
     @Test
+    fun compactSearchResultMetadataLabel_keepsDenseRowTokens() {
+        assertEquals(
+            "SAFETY  \u00B7  WATER  \u00B7  WINDOW IMMEDIATE",
+            compactSearchResultMetadataLabel("Role: Safety // Window: Immediate // Category: Water"),
+        )
+        assertEquals(
+            "FIRE",
+            compactSearchResultMetadataLabel("Category: Fire"),
+        )
+        assertEquals(
+            "LEGACY META",
+            compactSearchResultMetadataLabel("legacy meta"),
+        )
+    }
+
+    @Test
     fun warmThreadGuideIdsForPreview_onlyKeepsFreshThreads() {
         val now = 1_000_000L
         val freshIds = warmThreadGuideIdsForPreview(

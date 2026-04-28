@@ -1,0 +1,53 @@
+# Android Next UI Slices - 2026-04-27
+
+Worker T planning note from current code after `5648d16` (`advance android tablet and emergency redesign`). This is analysis only; no production code was edited.
+
+## Inputs Read
+
+- Target mocks: `artifacts/mocks/*.png`
+- Current Android code and layouts under `android-app/app/src/main`
+- Current tests under `android-app/app/src/test`
+- Current notes:
+  - `notes/ANDROID_TARGET_MOCKS_20260427.md`
+  - `notes/ANDROID_UI_REDESIGN_PROGRESS_20260427.md`
+  - `notes/ANDROID_SEARCH_TABLET_SHELL_PLAN_20260427.md`
+  - `notes/ANDROID_UI_DIRECTION_20260427.md`
+  - `notes/specs/ui_direction_rev03.md`
+  - `notes/specs/tablet_three_pane_spec.md`
+
+## Planning Boundary
+
+Completed enough to avoid duplicating as fresh slices:
+
+- Tablet search shell baseline: `tablet_search_surface`, query/count text, preview rail, portrait preview suppression, and landscape visibility hooks now exist in `MainActivity` and tablet `activity_main.xml` variants.
+- Tablet answer/thread/evidence baseline: `TabletDetailScreen`, `ThreadRail`, `EvidencePane`, docked composer, and stress reading policy tests were updated in `5648d16`.
+- Emergency portrait baseline: emergency eligibility, short-answer extraction, action blocks, and portrait/tablet portrait emergency presentation hooks exist in `DetailActivity`.
+
+The slices below focus on remaining mock mismatches and scoped follow-up polish.
+
+## Delegatable Slices
+
+| Priority | Slice | Remaining Mock Mismatch | Exact Write Set | Validation Commands | Main Risks |
+|---|---|---|---|---|---|
+| P0 | Guide reader tablet station | `guide-tablet-landscape.png` and `guide-tablet-portrait.png` show a distinct guide-reading station: left sections rail, centered parchment page, right cross-reference rail. Current guide mode still routes through legacy `DetailActivity` XML except tablet detail answer/thread Compose; guide reader is not a first-class Compose station. | `android-app/app/src/main/java/com/senku/ui/guide/GuideReaderScreen.kt` new; `android-app/app/src/main/java/com/senku/ui/guide/GuideRail.kt` new; `android-app/app/src/main/java/com/senku/ui/guide/CrossReferenceRail.kt` new; `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`; tablet detail layout qualifiers only if a new `ComposeView` id is needed: `res/layout-large*/activity_detail.xml`, `res/layout-sw600dp-*/activity_detail.xml`; tests under `android-app/app/src/test/java/com/senku/ui/guide/*Test.kt` and focused `DetailGuidePresentationFormatterTest` additions. | `cd android-app; .\gradlew.bat testDebugUnitTest --tests "com.senku.mobile.DetailGuidePresentationFormatterTest" --tests "com.senku.ui.guide.*" --console=plain`; then `.\gradlew.bat assembleDebug testDebugUnitTest --console=plain`; smoke with `run_android_instrumented_ui_smoke.ps1` on `emulator-5554` and `emulator-5558` opening `GD-132`; final compare against guide tablet mocks. | Must not merge guide and answer display contracts. Avoid breaking phone guide reader while adding tablet station. Related-guide rail needs real pack data and must degrade cleanly when links are empty. |
+| P0 | Phone landscape density pass | Phone landscape mocks for home/search/answer/thread/guide are compact, mostly header + dense content, with minimal vertical chrome. Code has some stress policies, but `layout-land/activity_detail.xml` and search/home visibility still retain large legacy panels and can crowd the fold. | `android-app/app/src/main/res/layout-land/activity_main.xml`; `android-app/app/src/main/res/layout-land/list_item_result.xml`; `android-app/app/src/main/res/layout-land/activity_detail.xml`; `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`; `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`; focused tests: `DetailFollowupLandscapeComposerTest.java`, `MainActivityPhoneNavigationTest.java`, `StressReadingPolicyTest.kt`. | `cd android-app; .\gradlew.bat testDebugUnitTest --tests "com.senku.mobile.DetailFollowupLandscapeComposerTest" --tests "com.senku.mobile.MainActivityPhoneNavigationTest" --tests "com.senku.ui.tablet.StressReadingPolicyTest" --console=plain`; smoke `run_android_instrumented_ui_smoke.ps1 -Serial emulator-5560 -SearchQuery "rain shelter"` and deterministic detail/thread/guide paths; compare against all `*-phone-landscape.png` mocks. | Landscape is easy to regress because it shares IDs with portrait. Keep this visual-only: no retrieval, routing, or reviewed-card policy changes. Keyboard/composer focus can obscure content if vertical budgets are too aggressive. |
+| P1 | Paper answer flattening and answer body hierarchy | `answer-phone-portrait.png` and tablet answer mocks read as clean text-first manual surfaces. `PaperAnswerCard.kt` still uses bordered card sections, dividers, and badge-like CTA treatment that can read heavier than the mock, especially inside legacy detail XML. | `android-app/app/src/main/java/com/senku/ui/answer/PaperAnswerCard.kt`; `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java` only for mode/spacing integration; drawables only if XML host shell needs adjustment: `bg_detail_answer_shell.xml`, `bg_detail_warning_shell.xml`; tests: `PaperAnswerCardLabelTest.kt`, `DetailAnswerBodyFormatterTest.java`, `DetailSurfaceContractTest.java`. | `cd android-app; .\gradlew.bat testDebugUnitTest --tests "com.senku.ui.answer.PaperAnswerCardLabelTest" --tests "com.senku.mobile.DetailAnswerBodyFormatterTest" --tests "com.senku.mobile.DetailSurfaceContractTest" --console=plain`; smoke `emulator-5556`, `emulator-5558` answer detail; compare answer phone/tablet mocks. | Do not remove evidence labels/source CTA; flatten visual weight only. Must preserve uncertain-fit and abstain distinction. Typography changes may cause clipping at large font scale. |
+| P1 | Tablet search interactive polish, not shell rebuild | Baseline shell exists after `5648d16`, so do not redo it. Remaining gap: filter rail is display-only/structural, preview binds first result only, and mock implies selected result/preview coherence. | `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`; `android-app/app/src/main/java/com/senku/mobile/SearchResultAdapter.java`; `android-app/app/src/main/res/layout-sw600dp-port/activity_main.xml`; `android-app/app/src/main/res/layout-sw600dp-land/activity_main.xml`; optional ids in `res/values/ids.xml`; tests: `MainPresentationFormatterTest.java`, `SearchResultAdapterTest.java` or new tablet-search helper JVM test. | `cd android-app; .\gradlew.bat testDebugUnitTest --tests "com.senku.mobile.MainPresentationFormatterTest" --tests "com.senku.mobile.SearchResultAdapterTest" --console=plain`; smoke `emulator-5554` and `emulator-5558` search; verify phone search does not expose tablet IDs; compare tablet search mocks. | Decide explicitly whether filters filter locally or remain display-only. Row click semantics can conflict with open-detail; prefer separate selection callback or first tap selects / second opens only if tested. Avoid duplicate `results_list` or `search_input` IDs. |
+| P2 | Tablet home alignment and nav rail polish | Tablet home mocks have a stable left rail, content column, and recent-thread/right-side balance. Current tablet home is close, but portrait/landscape layouts still show differences in content width, recent thread placement, and top-left overlay/capture artifact sensitivity. | `android-app/app/src/main/res/layout-sw600dp-port/activity_main.xml`; `android-app/app/src/main/res/layout-sw600dp-land/activity_main.xml`; `android-app/app/src/main/java/com/senku/mobile/MainActivity.java`; `android-app/app/src/main/java/com/senku/ui/home/CategoryShelf.kt`; `android-app/app/src/main/java/com/senku/ui/primitives/BottomTabBar.kt`; tests: `MainActivityHomeChromeTest.java`, `MainActivityIdentityTest.java`, `MainActivityPhoneNavigationTest.java`. | `cd android-app; .\gradlew.bat testDebugUnitTest --tests "com.senku.mobile.MainActivityHomeChromeTest" --tests "com.senku.mobile.MainActivityIdentityTest" --tests "com.senku.mobile.MainActivityPhoneNavigationTest" --console=plain`; smoke home on `emulator-5554` and `emulator-5558`; compare home tablet mocks. | Tablet XML has many shared utility views; keep IDs stable. Nav rail label/order changes can affect product semantics and existing tests. Do not reopen five-tab product decisions in this polish slice. |
+| P2 | Emergency follow-up polish only | Emergency portrait baseline exists. Remaining mismatch is polish: mock emphasizes one danger lane, ordered actions, one evidence card, and very quiet composer; tablet portrait mock still has large empty lower area and needs screenshot proof. | `android-app/app/src/main/java/com/senku/mobile/DetailActivity.java`; `android-app/app/src/main/java/com/senku/mobile/DetailActionBlockPresentationFormatter.java`; `android-app/app/src/main/res/drawable/bg_emergency_banner.xml`; `android-app/app/src/main/res/drawable/bg_emergency_action_badge.xml`; focused tests: `EmergencySurfacePolicyTest.java`, `DetailActionBlockPresentationFormatterTest.java`, `DetailWarningCopySanitizerTest.java`. | `cd android-app; .\gradlew.bat testDebugUnitTest --tests "com.senku.mobile.EmergencySurfacePolicyTest" --tests "com.senku.mobile.DetailActionBlockPresentationFormatterTest" --tests "com.senku.mobile.DetailWarningCopySanitizerTest" --console=plain`; smoke true emergency on `emulator-5556` and `emulator-5554`; include two negative controls; compare emergency portrait mocks only. | Must not broaden emergency eligibility. Do not invent emergency landscape target. Preserve guide-reading negative control and reviewed-card runtime exposure policy. |
+
+## Suggested Delegation Order
+
+1. `Guide reader tablet station` and `Phone landscape density pass` can run in parallel; write sets are mostly disjoint except `DetailActivity.java`, so coordinate if both need it.
+2. `Paper answer flattening` should wait until phone landscape has stabilized if both touch detail spacing.
+3. `Tablet search interactive polish` can run independently after the shell baseline.
+4. `Tablet home alignment` is low-risk but should not overlap with tablet search XML edits.
+5. `Emergency follow-up polish` is intentionally narrow and should stay eligibility-neutral.
+
+## Acceptance Reminder
+
+For any slice that changes Android UI production behavior, do not call it visually closed from JVM tests alone. Promote only after screenshot/dump proof against the target mocks, then run the fixed four-posture pack when a coherent batch is ready:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_state_pack_parallel.ps1 -RealRun
+```
