@@ -1,0 +1,156 @@
+package com.senku.mobile;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import com.senku.ui.home.CategoryShelfItemModel;
+import com.senku.ui.home.CategoryShelfLayoutMode;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Test;
+
+public final class MainActivityHomeChromeTest {
+    @Test
+    public void categoryShelfModelsAreSortedByCountThenContractOrder() {
+        List<CategoryShelfItemModel> items = MainActivity.buildHomeChromeCategoryShelfItems(
+            Arrays.asList(
+                guide("Solar still", "water", ""),
+                guide("Rainwater barrel", "", ""),
+                guide("Camp stove", "fire", ""),
+                guide("Signal mast", "communications", ""),
+                guide("Antenna basics", "", "radio antenna"),
+                guide("Clinic triage", "medicine", ""),
+                guide("Root cellar", "food", ""),
+                guide("Tool repair", "tools", ""),
+                guide("Cabin roof", "shelter", "")
+            ),
+            false
+        );
+
+        assertEquals("water", items.get(0).getBucketKey());
+        assertEquals("communications", items.get(1).getBucketKey());
+        assertEquals("shelter", items.get(2).getBucketKey());
+        assertEquals("fire", items.get(3).getBucketKey());
+        assertEquals("medicine", items.get(4).getBucketKey());
+        assertEquals("food", items.get(5).getBucketKey());
+        assertEquals("tools", items.get(6).getBucketKey());
+    }
+
+    @Test
+    public void categoryShelfModelCarriesLabelCountAccentAndDescription() {
+        CategoryShelfItemModel item = MainActivity.buildHomeChromeCategoryShelfItems(
+            Arrays.asList(
+                guide("Rainwater catchment", "water", ""),
+                guide("Sand filter", "", "water filtration")
+            ),
+            false
+        ).get(0);
+
+        assertEquals("water", item.getBucketKey());
+        assertEquals("Water & sanitation", item.getLabel());
+        assertEquals("2 guides", item.getCountLabel());
+        assertEquals((int) 0xFF7A9AB4L, item.getAccentColor());
+        assertTrue(item.getEnabled());
+        assertEquals("Water & sanitation, 2 guides. Tap to filter.", item.getContentDescription());
+    }
+
+    @Test
+    public void categoryShelfOmitsEmptyBuckets() {
+        List<CategoryShelfItemModel> items = MainActivity.buildHomeChromeCategoryShelfItems(
+            Arrays.asList(
+                guide("Clinic triage", "medicine", ""),
+                guide("First aid", "health", "")
+            ),
+            false
+        );
+
+        assertEquals(1, items.size());
+        assertEquals("medicine", items.get(0).getBucketKey());
+        assertEquals("2 guides", items.get(0).getCountLabel());
+    }
+
+    @Test
+    public void compactCategoryShelfOnlyCondensesWhenTopSixAreDominant() {
+        List<SearchResult> guides = Arrays.asList(
+            guide("Water one", "water", ""),
+            guide("Water two", "water", ""),
+            guide("Shelter one", "shelter", ""),
+            guide("Shelter two", "shelter", ""),
+            guide("Fire one", "fire", ""),
+            guide("Fire two", "fire", ""),
+            guide("Medicine one", "medicine", ""),
+            guide("Medicine two", "medicine", ""),
+            guide("Food one", "food", ""),
+            guide("Food two", "food", ""),
+            guide("Tools one", "tools", ""),
+            guide("Tools two", "tools", ""),
+            guide("Radio one", "communications", ""),
+            guide("Radio two", "communications", ""),
+            guide("Community one", "community", "")
+        );
+
+        List<CategoryShelfItemModel> uncondensed = MainActivity.buildHomeChromeCategoryShelfItems(guides, true);
+        assertEquals(8, uncondensed.size());
+
+        List<CategoryShelfItemModel> dominant = MainActivity.buildHomeChromeCategoryShelfItems(
+            Arrays.asList(
+                guide("Water one", "water", ""),
+                guide("Water two", "water", ""),
+                guide("Shelter one", "shelter", ""),
+                guide("Shelter two", "shelter", ""),
+                guide("Fire one", "fire", ""),
+                guide("Fire two", "fire", ""),
+                guide("Medicine one", "medicine", ""),
+                guide("Medicine two", "medicine", ""),
+                guide("Food one", "food", ""),
+                guide("Food two", "food", ""),
+                guide("Tools one", "tools", ""),
+                guide("Tools two", "tools", ""),
+                guide("Radio one", "communications", ""),
+                guide("Community one", "community", "")
+            ),
+            true
+        );
+
+        assertEquals(6, dominant.size());
+    }
+
+    @Test
+    public void categoryShelfModeFollowsPhoneFormFactor() {
+        assertEquals(
+            CategoryShelfLayoutMode.PHONE_GRID,
+            MainActivity.resolveCategoryShelfLayoutMode(true)
+        );
+        assertEquals(
+            CategoryShelfLayoutMode.TABLET_RAIL,
+            MainActivity.resolveCategoryShelfLayoutMode(false)
+        );
+    }
+
+    @Test
+    public void categoryShelfInteractionsRequireRepositoryAndIdleState() {
+        assertTrue(MainActivity.areCategoryInteractionsEnabled(true, false));
+        assertFalse(MainActivity.areCategoryInteractionsEnabled(false, false));
+        assertFalse(MainActivity.areCategoryInteractionsEnabled(true, true));
+    }
+
+    private static SearchResult guide(String title, String category, String topicTags) {
+        return new SearchResult(
+            title,
+            "",
+            "",
+            "",
+            "",
+            "",
+            category,
+            "",
+            "",
+            "",
+            "",
+            topicTags
+        );
+    }
+}
