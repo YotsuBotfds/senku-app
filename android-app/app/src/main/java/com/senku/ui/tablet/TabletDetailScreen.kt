@@ -1618,12 +1618,12 @@ private fun tabletGuideBodyLineKind(line: String): TabletGuideBodyLineKind {
 }
 
 private fun normalizeGuidePaperRequiredReadingLine(line: String): String =
-    line.trim()
+    normalizeGuidePaperMojibake(normalizeGuidePaperTokenLine(line))
         .replace(Regex("\\s+"), " ")
         .replace("REQUIRED READING ·", "REQUIRED READING  ·")
 
 internal fun parseGuideRequiredReadingParts(line: String): TabletGuideRequiredReadingParts {
-    val normalized = normalizeGuidePaperTokenLine(line)
+    val normalized = normalizeGuidePaperMojibake(normalizeGuidePaperTokenLine(line))
     val tokens = normalized
         .split('\u00B7')
         .map { it.trim() }
@@ -1645,12 +1645,12 @@ internal fun parseGuideRequiredReadingParts(line: String): TabletGuideRequiredRe
 }
 
 private fun normalizeGuidePaperDangerLine(line: String): String =
-    line.trim()
+    normalizeGuidePaperMojibake(normalizeGuidePaperTokenLine(line))
         .replace(Regex("\\s+"), " ")
         .replace("DANGER ·", "DANGER  ·")
 
 private fun normalizeGuidePaperSectionLine(line: String): String =
-    line.trim().replace(Regex("\\s+"), " ")
+    normalizeGuidePaperMojibake(normalizeGuidePaperTokenLine(line)).replace(Regex("\\s+"), " ")
 
 private fun normalizeGuidePaperTokenLine(line: String): String =
     line.trim()
@@ -1658,6 +1658,11 @@ private fun normalizeGuidePaperTokenLine(line: String): String =
         .replace("Â·", "\u00B7")
         .replace("â€”", "\u2014")
         .replace(Regex("\\s+"), " ")
+
+private fun normalizeGuidePaperMojibake(line: String): String =
+    line.replace("\u00C2\u00A7", "\u00A7")
+        .replace("\u00C2\u00B7", "\u00B7")
+        .replace("\u00E2\u20AC\u201D", "\u2014")
 
 internal fun TabletDetailState.isGuideMode(): Boolean = detailMode == TabletDetailMode.Guide
 
@@ -1749,7 +1754,7 @@ internal fun buildGuideSectionAnchorTurns(turns: List<ThreadTurnState>): List<Th
             id = "guide-section-anchor-${index + 1}",
             question = label,
             answer = AnswerContent(
-                short = label.removePrefix("$${index + 1} ").trim().ifEmpty { "Guide section" },
+                short = label.removePrefix("\u00A7${index + 1} ").trim().ifEmpty { "Guide section" },
                 sourceCount = 0,
                 host = "Guide",
                 elapsedSeconds = 0.0,
@@ -1768,9 +1773,9 @@ internal fun guideSectionAnchorLabels(text: String): List<String> {
         .forEach { line ->
             val sectionTitle = parseGuideSectionAnchorTitle(line)
             if (sectionTitle != null) {
-                labels += "$${labels.size + 1} $sectionTitle"
+                labels += "\u00A7${labels.size + 1} $sectionTitle"
             } else if (tabletGuideBodyLineKind(line) == TabletGuideBodyLineKind.RequiredReading) {
-                labels += "$${labels.size + 1} Required reading"
+                labels += "\u00A7${labels.size + 1} Required reading"
             }
         }
     return labels

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -431,27 +432,36 @@ private fun ManualEvidenceCard(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val isCompact = density == EvidenceCardDensity.Compact
-    val rowEndPadding = if (isCompact) 12.dp else 11.dp
-    val rowGap = 11.dp
-    val railWidth = 3.dp
-    val contentVerticalPadding = if (isCompact) 10.dp else 12.dp
-    val contentGap = if (isCompact) 6.dp else 6.dp
+    val isAnchor = relation == "ANCHOR"
+    val showsSelectionRail = !isCompact || isAnchor
+    val rowEndPadding = if (isCompact) 10.dp else 11.dp
+    val rowGap = if (isCompact) 9.dp else 11.dp
+    val railWidth = if (isCompact) 3.dp else 4.dp
+    val contentVerticalPadding = if (isCompact) 9.dp else 12.dp
+    val contentGap = if (isCompact) 5.dp else 6.dp
     val metaColor = if (relation == "ANCHOR") colors.accent else colors.ink2
-    val titleFontSize = if (isCompact) 13.sp else 14.sp
-    val titleLineHeight = if (isCompact) 17.sp else 18.sp
+    val titleFontSize = if (isCompact) 12.5.sp else 14.sp
+    val titleLineHeight = if (isCompact) 16.sp else 18.sp
+    val cardColor = when {
+        !isCompact -> colors.bg2
+        isAnchor -> colors.bg2
+        else -> colors.bg1
+    }
+    val cardBorderColor = when {
+        !isCompact -> colors.hairlineStrong
+        isAnchor -> colors.hairlineStrong
+        else -> colors.hairline
+    }
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = if (isCompact) colors.bg1 else colors.bg2,
+        color = cardColor,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(0.dp),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            if (isCompact) colors.hairline else colors.hairlineStrong,
-        ),
+        border = androidx.compose.foundation.BorderStroke(1.dp, cardBorderColor),
         onClick = onClick,
     ) {
-        if (isCompact) {
+        if (!showsSelectionRail) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -480,6 +490,7 @@ private fun ManualEvidenceCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
                     .padding(end = rowEndPadding),
                 horizontalArrangement = Arrangement.spacedBy(rowGap),
                 verticalAlignment = Alignment.Top,
@@ -487,7 +498,7 @@ private fun ManualEvidenceCard(
                 Box(
                     modifier = Modifier
                         .width(railWidth)
-                        .height(84.dp)
+                        .fillMaxHeight()
                         .background(metaColor),
                 )
                 Column(

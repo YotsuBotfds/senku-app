@@ -121,7 +121,7 @@ class StressReadingPolicyTest {
         val railTurns = state.resolvedThreadRailTurns()
         val railSources = state.resolvedThreadRailSources()
 
-        assertEquals(listOf("$1 Area readiness", "$2 Required reading", "$3 Dry tools"), railTurns.map { it.question })
+        assertEquals(listOf("\u00A71 Area readiness", "\u00A72 Required reading", "\u00A73 Dry tools"), railTurns.map { it.question })
         assertEquals(listOf("GD-220", "GD-499"), railSources.map { it.id })
     }
 
@@ -164,6 +164,17 @@ class StressReadingPolicyTest {
         assertEquals("REQUIRED READING", parts.label)
         assertEquals("GD-499", parts.id)
         assertEquals("Bellows Forge Blower Construction", parts.title)
+    }
+
+    @Test
+    fun tabletGuideRequiredReadingParserNormalizesMojibakeSeparators() {
+        val parts = parseGuideRequiredReadingParts(
+            "REQUIRED READING \u00C2\u00B7 GD-225 \u00C2\u00B7 Bloomery Furnace Construction",
+        )
+
+        assertEquals("REQUIRED READING", parts.label)
+        assertEquals("GD-225", parts.id)
+        assertEquals("Bloomery Furnace Construction", parts.title)
     }
 
     @Test

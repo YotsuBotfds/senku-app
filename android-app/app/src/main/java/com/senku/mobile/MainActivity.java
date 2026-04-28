@@ -75,9 +75,9 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 42;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 34;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 3;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 40;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 32;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 2;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -1455,13 +1455,24 @@ public final class MainActivity extends AppCompatActivity {
     private Button createSearchSuggestionButton(SearchSuggestion suggestion, int index) {
         Button button = new Button(this);
         button.setAllCaps(false);
-        button.setBackgroundResource(R.drawable.bg_chip_olive);
+        boolean manualHomeShell = isManualHomeShellLayout();
+        button.setBackgroundResource(manualHomeShell
+            ? R.drawable.bg_manual_home_recent_row
+            : R.drawable.bg_chip_olive);
         button.setMinWidth(0);
         button.setMinimumWidth(0);
         button.setMinHeight(0);
         button.setMinimumHeight(0);
-        button.setPadding(dp(12), dp(8), dp(12), dp(8));
-        button.setTextColor(getColor(R.color.senku_text_light));
+        button.setPadding(
+            dp(manualHomeShell ? 10 : 12),
+            dp(manualHomeShell ? 5 : 8),
+            dp(manualHomeShell ? 10 : 12),
+            dp(manualHomeShell ? 5 : 8)
+        );
+        button.setTextColor(getColor(manualHomeShell ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
+        if (manualHomeShell) {
+            button.setTextSize(11f);
+        }
         button.setText(suggestion.label);
         button.setContentDescription(suggestion.contentDescription);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -2364,10 +2375,10 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         boolean tabletHome = isTabletPortraitLayout() || isLandscapeTabletLayout();
-        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 5 : (tabletHome ? 6 : 8));
-        setTopMargin(categorySectionContainer, tabletHome ? 3 : 4);
-        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : (tabletHome ? 6 : 8));
-        setTopMargin(recentThreadsContainer, tabletHome ? 4 : 5);
+        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 4 : (tabletHome ? 5 : 7));
+        setTopMargin(categorySectionContainer, tabletHome ? 2 : 3);
+        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : (tabletHome ? 5 : 7));
+        setTopMargin(recentThreadsContainer, tabletHome ? 3 : 4);
         allowChildOverflow(categorySectionContainer);
         allowChildOverflow(recentThreadsSection);
         allowChildOverflow(recentThreadsContainer);
@@ -3950,7 +3961,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
         }
-        updateSearchResultDisplayLimit(Integer.MAX_VALUE);
+        updateSearchResultDisplayLimit(resolveSearchResultDisplayLimit(false, browseMode, hasResults));
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
         }
@@ -3977,7 +3988,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
         }
-        updateSearchResultDisplayLimit(Integer.MAX_VALUE);
+        updateSearchResultDisplayLimit(resolveSearchResultDisplayLimit(false, browseMode, hasResults));
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
         }
@@ -4003,7 +4014,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
-        updateSearchResultDisplayLimit(!browseMode && hasResults ? 3 : Integer.MAX_VALUE);
+        updateSearchResultDisplayLimit(resolveSearchResultDisplayLimit(true, browseMode, hasResults));
         if (phoneLandscapeSearchSurface != null) {
             phoneLandscapeSearchSurface.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
@@ -4050,7 +4061,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
-        updateSearchResultDisplayLimit(Integer.MAX_VALUE);
+        updateSearchResultDisplayLimit(resolveSearchResultDisplayLimit(false, false, hasResults));
         if (phoneSearchQueryWell != null) {
             phoneSearchQueryWell.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
@@ -4078,6 +4089,25 @@ public final class MainActivity extends AppCompatActivity {
         if (adapter != null) {
             adapter.setMaxDisplayedItems(maxDisplayedItems);
         }
+    }
+
+    static int resolveSearchResultDisplayLimitForTest(
+        boolean landscapePhone,
+        boolean browseMode,
+        boolean hasResults
+    ) {
+        return resolveSearchResultDisplayLimit(landscapePhone, browseMode, hasResults);
+    }
+
+    private static int resolveSearchResultDisplayLimit(
+        boolean landscapePhone,
+        boolean browseMode,
+        boolean hasResults
+    ) {
+        if (landscapePhone) {
+            return !browseMode && hasResults ? 3 : Integer.MAX_VALUE;
+        }
+        return SEARCH_RESULT_LIMIT;
     }
 
     private int getHomeRelatedGuideLimit() {

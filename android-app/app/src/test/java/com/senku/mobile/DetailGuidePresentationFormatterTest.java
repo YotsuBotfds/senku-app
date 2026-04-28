@@ -298,6 +298,40 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void buildGuideBodyCompactsFencelessOpeningGuideCallouts() {
+        SearchResult result = new SearchResult(
+            "Metal Casting",
+            "",
+            "",
+            "DANGER\n"
+                + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions. "
+                + "EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. "
+                + "Inspect crucibles for cracks before every use. Never cast alone.\n\n"
+                + "WARNING\n"
+                + "Required Reading: Before attempting any procedures in this guide, read the Chemical Safety Guide in full.\n\n"
+                + "## Reviewed Answer-Card Boundary: Area readiness, hazard screen, and handoffs\n"
+                + "This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness.",
+            "GD-214",
+            "",
+            "metalworking",
+            "guide-focus"
+        );
+
+        assertEquals(
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
+                + "Metal Casting\n"
+                + "GD-214 \u00b7 1 SECTION\n\n"
+                + "DANGER \u00b7 EXTREME BURN HAZARD\n"
+                + "A single drop of water contacting molten metal causes a violent steam explosion, spraying molten metal 3+ meters in all directions. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. Inspect crucibles for cracks before every use. Never cast alone.\n"
+                + "REQUIRED READING \u00b7 Chemical Safety Guide\n"
+                + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
+                + "Reviewed Answer-Card Boundary\n"
+                + "Use this section only for foundry-area readiness.",
+            DetailGuidePresentationFormatter.buildGuideBody(result)
+        );
+    }
+
+    @Test
     public void guideReaderSpanColorResourcesUsePaperSafeRev03Tokens() {
         assertEquals(R.color.senku_rev03_paper_ink, DetailGuidePresentationFormatter.guideBodyTextColorResForLegacy());
         assertEquals(R.color.senku_rev03_paper_ok, DetailGuidePresentationFormatter.guideAnchorLabelColorResForLegacy());

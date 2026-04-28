@@ -73,7 +73,7 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "1. Stop all hot work. No new charges, no new pours. [GD-132]\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
                     "3. Confirm two paths of egress.\n" +
-                    "4. Notify the area owner. GD-132 lists current owner.",
+                    "4. Notify the area owner. Use GD-132 owner listing.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
@@ -95,8 +95,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "Immediate actions:\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
-                    "4. Notify the area owner. GD-132 lists current owner.\n\n" +
+                    "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
+                    "4. Notify the area owner. Use GD-132 owner listing.\n\n" +
                     "Sources:\n" +
                     "1. GD-132 - Foundry & Metal Casting: Section 1 Area readiness.",
                 text -> citationFormatter.stripInlineCitationText(text)
@@ -142,8 +142,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                     "STEPS\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
-                    "4. Notify the area owner. GD-132 lists current owner.",
+                    "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
+                    "4. Notify the area owner. Use GD-132 owner listing.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
@@ -168,8 +168,8 @@ public final class DetailActionBlockPresentationFormatterTest {
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
                 "Stop work immediately.\n\n" +
                     "EMERGENCY ACTIONS\n" +
-                    "1. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
-                    "2. Notify the area owner. GD-132 lists current owner.",
+                    "1. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
+                    "2. Notify the area owner. Use GD-132 owner listing.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );
 
@@ -190,8 +190,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                 "FIELD STEPS\n" +
                 "1. Stop all hot work. No new charges, no new pours.\n" +
                 "2. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
-                "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
-                "4. Notify the area owner. GD-132 lists current owner."
+                "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
+                "4. Notify the area owner. Use GD-132 owner listing."
         );
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -246,8 +246,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                 "Immediate actions:\n" +
                     "1) Stop all hot work. No new charges, no new pours.\n" +
                     "2) Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3) Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
-                    "4) Notify the area owner. GD-132 lists current owner.\n\n" +
+                    "3) Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
+                    "4) Notify the area owner. Use GD-132 owner listing.\n\n" +
                     "Evidence:\n" +
                     "1) GD-132 - Foundry & Metal Casting.\n\n" +
                     "Provenance:\n" +
@@ -389,8 +389,8 @@ public final class DetailActionBlockPresentationFormatterTest {
                 "Immediate actions:\n" +
                     "1. Stop all hot work. No new charges, no new pours.\n" +
                     "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
-                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
-                    "4. Notify the area owner. GD-132 lists current owner.\n" +
+                    "3. Confirm two paths of egress. Keep doors and roll-up openings unobstructed.\n" +
+                    "4. Notify the area owner. Use GD-132 owner listing.\n" +
                     "5. Document the pause for handoff.",
                 text -> citationFormatter.stripInlineCitationText(text)
             );

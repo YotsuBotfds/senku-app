@@ -227,11 +227,14 @@ public final class DetailFollowupLandscapeComposerTest {
     @Test
     public void phonePortraitHeaderUsesShortAnswerLabel() {
         assertEquals(
-            "Answer GD-345 - Rain shelter",
+            "ANSWER GD-345 - Rain shelter",
             DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", "Rain shelter")
         );
-        assertEquals("Answer GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
-        assertEquals("Answer", DetailActivity.buildPhonePortraitAnswerHeaderTitle("", ""));
+        assertEquals("ANSWER GD-345", DetailActivity.buildPhonePortraitAnswerHeaderTitle("GD-345", ""));
+        assertEquals("ANSWER", DetailActivity.buildPhonePortraitAnswerHeaderTitle("", ""));
+        assertTrue(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, true));
+        assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(true, false));
+        assertFalse(DetailActivity.shouldUsePhoneAnswerHeaderTitle(false, true));
     }
 
     @Test

@@ -27,6 +27,8 @@ final class DetailGuidePresentationFormatter {
         Pattern.compile("^GD-\\d+\\s+\\u00b7\\s+\\d+\\s+SECTIONS?(?:\\s+\\u00b7\\s+.+)?$");
     private static final Pattern GUIDE_TABLET_SECTION_PREFIX_PATTERN =
         Pattern.compile("^SEC\\s+\\d+$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_OPENING_DANGER_TITLE_PATTERN =
+        Pattern.compile("^EXTREME\\s+BURN\\s+HAZARD\\s*[:\\-\\u00b7]?\\s*(.*)$", Pattern.CASE_INSENSITIVE);
     private static final String[] GUIDE_REQUIRED_READING_PRIORITY_SLUGS = new String[]{
         "abrasives-manufacturing",
         "bellows-forge-blower-construction",
@@ -34,16 +36,16 @@ final class DetailGuidePresentationFormatter {
     };
     private static final int FOUNDRY_LIVE_RELATED_SECTION_COUNT = 17;
     private static final float GUIDE_ANCHOR_TEXT_SIZE = 0.52f;
-    private static final float GUIDE_HEADING_TEXT_SIZE = 0.60f;
+    private static final float GUIDE_HEADING_TEXT_SIZE = 0.56f;
     private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.50f;
-    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 0.68f;
+    private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 0.62f;
     private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.50f;
-    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.54f;
-    private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.54f;
-    private static final float GUIDE_BODY_TEXT_SIZE = 0.56f;
-    private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 4;
-    private static final int GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP = 4;
-    private static final int GUIDE_REQUIRED_READING_RIGHT_INSET_DP = 28;
+    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.50f;
+    private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.50f;
+    private static final float GUIDE_BODY_TEXT_SIZE = 0.50f;
+    private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 3;
+    private static final int GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP = 3;
+    private static final int GUIDE_REQUIRED_READING_RIGHT_INSET_DP = 22;
     private static final String GUIDE_ROW_CHEVRON = "\u203a";
 
     private final Context context;
@@ -60,11 +62,13 @@ final class DetailGuidePresentationFormatter {
         String sourceBody = safe(result.body);
         String body = buildGuideBodyWithSection(sectionHeading, sourceBody);
         if (!body.isEmpty()) {
+            body = polishGuideDisplayBody(body);
             body = applyGuideRequiredReadingRows(result, sourceBody, body);
             return prependGuidePaperHeader(result, body, inferGuideSectionCount(result, sourceBody, body));
         }
         String sourceSnippet = safe(result.snippet);
         String snippetBody = buildGuideBodyWithSection(sectionHeading, sourceSnippet);
+        snippetBody = polishGuideDisplayBody(snippetBody);
         snippetBody = applyGuideRequiredReadingRows(result, sourceSnippet, snippetBody);
         return prependGuidePaperHeader(result, snippetBody, inferGuideSectionCount(result, sourceSnippet, snippetBody));
     }
@@ -86,7 +90,8 @@ final class DetailGuidePresentationFormatter {
     }
 
     SpannableStringBuilder buildStyledGuideBody(String body) {
-        GuideBodySanitizer.ParsedGuideBody parsedBody = GuideBodySanitizer.parseGuideBodyForDisplay(body);
+        GuideBodySanitizer.ParsedGuideBody parsedBody =
+            GuideBodySanitizer.parseGuideBodyForDisplay(polishGuideDisplayBody(body));
         String cleaned = parsedBody.displayText;
         SpannableStringBuilder styled = new SpannableStringBuilder(cleaned);
         if (cleaned.isEmpty()) {
@@ -320,8 +325,8 @@ final class DetailGuidePresentationFormatter {
                 requiredReadingInsetBackgroundColor(),
                 color(guideAdmonitionWarningColorResForLegacy()),
                 dp(GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP),
-                dp(2),
-                true,
+                0,
+                false,
                 true,
                 dp(GUIDE_REQUIRED_READING_RIGHT_INSET_DP),
                 color(guideAnchorValueColorResForLegacy())
@@ -499,6 +504,71 @@ final class DetailGuidePresentationFormatter {
             return GuideBodySanitizer.sanitizeGuideBodyForDisplay(source);
         }
         return GuideBodySanitizer.sanitizeGuideBodyForDisplay("## " + section + "\n\n" + source);
+    }
+
+    private static String polishGuideDisplayBody(String body) {
+        String cleaned = safe(body).replace("\r\n", "\n").replace('\r', '\n').trim();
+        if (cleaned.isEmpty()) {
+            return "";
+        }
+        String[] lines = cleaned.split("\\n", -1);
+        StringBuilder builder = new StringBuilder(cleaned.length());
+        boolean compactedOpeningDanger = false;
+        for (int i = 0; i < lines.length; i++) {
+            String line = safe(lines[i]);
+            String trimmed = line.trim();
+            if (!compactedOpeningDanger && "DANGER".equalsIgnoreCase(trimmed) && i + 1 < lines.length) {
+                String dangerBody = safe(lines[i + 1]).trim();
+                Matcher dangerMatcher = GUIDE_OPENING_DANGER_TITLE_PATTERN.matcher(dangerBody);
+                if (dangerMatcher.matches()) {
+                    appendLine(builder, "DANGER \u00b7 EXTREME BURN HAZARD");
+                    appendLine(builder, compactOpeningDangerDetail(safe(dangerMatcher.group(1)).trim()));
+                    i++;
+                    compactedOpeningDanger = true;
+                    continue;
+                }
+            }
+            if ("WARNING".equalsIgnoreCase(trimmed) && i + 1 < lines.length) {
+                String warningBody = safe(lines[i + 1]).trim();
+                String compactedRequiredReading = compactStandaloneRequiredReading(warningBody);
+                if (!compactedRequiredReading.isEmpty()) {
+                    trimTrailingLineBreaks(builder);
+                    appendLine(builder, compactedRequiredReading);
+                    i++;
+                    if (i + 1 < lines.length && safe(lines[i + 1]).trim().isEmpty()) {
+                        i++;
+                    }
+                    continue;
+                }
+            }
+            appendLine(builder, line);
+        }
+        return builder.toString().trim();
+    }
+
+    private static void trimTrailingLineBreaks(StringBuilder builder) {
+        while (builder.length() > 0 && builder.charAt(builder.length() - 1) == '\n') {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+    }
+
+    private static String compactOpeningDangerDetail(String detail) {
+        String cleaned = safe(detail).trim();
+        return cleaned.replaceAll("\\s+", " ");
+    }
+
+    private static String compactStandaloneRequiredReading(String line) {
+        String cleaned = safe(line).trim();
+        if (!cleaned.toLowerCase(Locale.US).startsWith("required reading")) {
+            return "";
+        }
+        String detail = cleaned.replaceFirst("(?i)^required\\s+reading\\s*[:\\-\\u00b7]?\\s*", "").trim();
+        String normalized = detail.toLowerCase(Locale.US);
+        if (normalized.startsWith("before attempting any procedures in this guide, read the chemical safety guide")
+            || normalized.startsWith("before attempting this guide, read the chemical safety guide")) {
+            return "REQUIRED READING \u00b7 Chemical Safety Guide";
+        }
+        return detail.isEmpty() ? "REQUIRED READING" : "REQUIRED READING \u00b7 " + detail;
     }
 
     private static boolean sourceAlreadyStartsWithSection(String source, String section) {

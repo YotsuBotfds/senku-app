@@ -5472,10 +5472,21 @@ public final class DetailActivity extends AppCompatActivity {
                 currentAnswerThreadTurnCount()
             );
         }
-        if (isCompactPortraitPhoneLayout() && answerMode) {
-            return buildPhonePortraitAnswerHeaderTitle(primaryGuideId, primarySourceLabel);
+        if (shouldUsePhoneAnswerHeaderTitle(
+            answerMode,
+            isCompactPortraitPhoneLayout() || isLandscapePhoneLayout()
+        )) {
+            String topicLabel = buildThreadTopicLabel();
+            return buildPhonePortraitAnswerHeaderTitle(
+                primaryGuideId,
+                topicLabel.isEmpty() ? primarySourceLabel : topicLabel
+            );
         }
         return detailSessionPresentationFormatter().buildCompactHeaderTitle(primaryGuideId, primarySourceLabel);
+    }
+
+    static boolean shouldUsePhoneAnswerHeaderTitle(boolean answerMode, boolean phoneFormFactor) {
+        return answerMode && phoneFormFactor;
     }
 
     static String buildPhonePortraitThreadHeaderTitle(String primaryGuideId, String topicLabel, int totalTurnCount) {
@@ -5533,12 +5544,12 @@ public final class DetailActivity extends AppCompatActivity {
         String guideId = safe(primaryGuideId).trim();
         String label = safe(primarySourceLabel).trim();
         if (!guideId.isEmpty() && !label.isEmpty()) {
-            return "Answer " + guideId + " - " + label;
+            return "ANSWER " + guideId + " - " + label;
         }
         if (!guideId.isEmpty()) {
-            return "Answer " + guideId;
+            return "ANSWER " + guideId;
         }
-        return label.isEmpty() ? "Answer" : "Answer - " + label;
+        return label.isEmpty() ? "ANSWER" : "ANSWER - " + label;
     }
 
     private void applyPhonePortraitHeaderTreatment() {

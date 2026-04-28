@@ -47,15 +47,15 @@ enum class Mode {
 }
 
 private val PaperAnswerCardInnerPadding = 0.dp
-internal val PaperAnswerCardSectionSpacing = 7.dp
+internal val PaperAnswerCardSectionSpacing = 6.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
 internal val PaperAnswerCardBodySize = 14.sp
 internal val PaperAnswerCardBodyLineHeight = 20.sp
 internal val PaperAnswerCardSupportSize = 12.sp
-internal val PaperAnswerCardSupportLineHeight = 16.sp
+internal val PaperAnswerCardSupportLineHeight = 15.sp
 internal val PaperAnswerCardMetaSize = 9.sp
 internal val PaperAnswerCardMetaLineHeight = 11.sp
-internal val PaperAnswerCardSupportHeaderSpacing = 5.dp
+internal val PaperAnswerCardSupportHeaderSpacing = 4.dp
 
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
@@ -502,8 +502,8 @@ internal fun uncertainFitNoticeLabel(content: AnswerContent): String {
 internal fun uncertainFitNoticeText(content: AnswerContent): String {
     val count = content.sourceCount.coerceAtLeast(0)
     val guideWord = if (count == 1) "guide" else "guides"
-    val countText = if (count > 0) "$count $guideWord" else "related guides"
-    return "Senku found $countText that may apply, but no single guide is a confident anchor. Treat as guidance."
+    val countText = if (count > 0) "$count related $guideWord" else "Related guides"
+    return "$countText found; no single confident anchor. Treat as guidance."
 }
 
 internal fun displayProofCtaLabel(label: String): String {

@@ -74,6 +74,12 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void adapterDefaultsToMockSearchRowBudget() {
+        assertEquals(4, SearchResultAdapter.defaultMaxDisplayedItemsForTest());
+        assertEquals(4, SearchResultAdapter.boundedItemCountForTest(75, SearchResultAdapter.defaultMaxDisplayedItemsForTest()));
+    }
+
+    @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
             "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",

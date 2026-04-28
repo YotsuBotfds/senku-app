@@ -40,6 +40,7 @@ import static com.senku.ui.search.SearchResultCardKt.metadataLineForSearchResult
 
 public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
     private static final int MAX_HIGHLIGHT_TERMS = 4;
+    private static final int DEFAULT_MAX_DISPLAYED_ITEMS = 4;
 
     public static final class LinkedGuidePreview {
         public final String guideId;
@@ -87,7 +88,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private List<String> queryHighlightTerms = Collections.emptyList();
     private String activeQuery = "";
     private Set<String> warmThreadGuideIds = Collections.emptySet();
-    private int maxDisplayedItems = Integer.MAX_VALUE;
+    private int maxDisplayedItems = DEFAULT_MAX_DISPLAYED_ITEMS;
 
     public SearchResultAdapter(
         Context context,
@@ -397,6 +398,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     static int boundedItemCountForTest(int resultCount, int maxDisplayedItems) {
         return boundedItemCount(resultCount, maxDisplayedItems);
+    }
+
+    static int defaultMaxDisplayedItemsForTest() {
+        return DEFAULT_MAX_DISPLAYED_ITEMS;
     }
 
     private static int boundedItemCount(int resultCount, int maxDisplayedItems) {

@@ -184,6 +184,14 @@ public final class MainActivityHomeChromeTest {
     }
 
     @Test
+    public void searchDisplayLimitKeepsTargetFourExceptPhoneLandscapeResultCap() {
+        assertEquals(4, MainActivity.resolveSearchResultDisplayLimitForTest(false, false, true));
+        assertEquals(4, MainActivity.resolveSearchResultDisplayLimitForTest(false, true, false));
+        assertEquals(3, MainActivity.resolveSearchResultDisplayLimitForTest(true, false, true));
+        assertEquals(Integer.MAX_VALUE, MainActivity.resolveSearchResultDisplayLimitForTest(true, true, true));
+    }
+
+    @Test
     public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
         assertEquals(
             "PACK READY",
@@ -232,9 +240,9 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeCategoryShelfReservesTwoRowsWithoutClipping() {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
-        assertEquals(42, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
-        assertEquals(87, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
-        assertEquals(71, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(40, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
+        assertEquals(82, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(66, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

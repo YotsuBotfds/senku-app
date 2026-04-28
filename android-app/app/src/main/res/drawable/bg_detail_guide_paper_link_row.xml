@@ -2,14 +2,11 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#5CF7F0DF" />
-            <stroke
-                android:width="1dp"
-                android:color="#A0B9AA90" />
+            <solid android:color="#38F7F0DF" />
         </shape>
     </item>
     <item
-        android:width="4dp"
+        android:width="3dp"
         android:gravity="left">
         <shape android:shape="rectangle">
             <solid android:color="@color/senku_rev03_paper_warn" />
@@ -20,21 +17,21 @@
         android:gravity="bottom"
         android:left="8dp">
         <shape android:shape="rectangle">
-            <solid android:color="#54B9AA90" />
+            <solid android:color="#38B9AA90" />
         </shape>
     </item>
     <item
-        android:width="8dp"
-        android:height="12dp"
+        android:width="7dp"
+        android:height="11dp"
         android:gravity="right|center_vertical"
         android:right="12dp">
         <vector
-            android:width="8dp"
-            android:height="12dp"
+            android:width="7dp"
+            android:height="11dp"
             android:viewportWidth="8"
             android:viewportHeight="12">
             <path
-                android:fillColor="#7C6A3A"
+                android:fillColor="#6E6244"
                 android:pathData="M2,0 L8,6 L2,12 L0.8,10.8 L5.6,6 L0.8,1.2 Z" />
         </vector>
     </item>

@@ -251,6 +251,23 @@ after the proof-rail fix. Residual risks: guide/tablet composition and global
 density still need visual QA against the mocks, and future accepted deltas should
 remain classified as content/data, layout/density, or behavior before closure.
 
+Wave36 integration proof: `artifacts/ui_state_pack/wave36_integration_final/20260428_142818`
+is green (`pass`, 47/47, fail count 0, ANR count 0), homogeneous APK
+`c07ce37dbd1b13f4658cf7099facb4155d4f9c5ee57af4a3166ea172ddba366b`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Scope was mock-polish rather than structural
+rerouting: phone answer headers now read `ANSWER GD-345 - Rain shelter`,
+home/search density and search result caps moved closer to the target, guide
+paper/callout/required-reading rows were tightened, tablet guide anchors use
+section symbols with mojibake normalization, answer source rails are denser, and
+answer fit-copy is shorter. Reviewer status: post-blocker review PASS after
+restoring imperative emergency action copy, preserving all guide danger safety
+sentences in formatter tests, and constraining the uppercase answer-header path
+to phone detail layouts. Residual risks: visual parity remains roughly
+polish-stage rather than exact, especially guide paper sizing, answer/thread
+composer placement, and tablet source-rail proportions.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |
