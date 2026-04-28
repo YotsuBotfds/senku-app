@@ -116,6 +116,12 @@ if ($PlanOnly) {
             expected_png_names = @($goalMockExpectedNames)
             validator = "scripts/validate_android_mock_goal_pack.py"
             excludes_debug_intermediate_screenshots = $true
+            deterministic_frame_exporter = "scripts/export_android_goal_mock_frame.ps1"
+            deterministic_status_time = "4:21"
+            deterministic_status_right = "OFFLINE"
+            battery_style = "outline"
+            target_dimensions = "match artifacts/mocks"
+            metadata = "goal_mock_export_metadata.json"
         }
         migration_checklist_intent = [pscustomobject]@{
             selected_roles = @($roles)

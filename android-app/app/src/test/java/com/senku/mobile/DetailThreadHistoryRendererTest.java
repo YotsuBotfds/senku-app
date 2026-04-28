@@ -275,6 +275,24 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void threadContextFooterUsesFirstThreadAnchor() {
+        assertEquals(
+            "THREAD CONTEXT \u00B7 2 TURNS \u00B7 GD-220 ANCHOR",
+            DetailThreadHistoryRenderer.threadContextFooterLabel(
+                List.of(turn("answer", "GD-220", 0L), turn("answer", "GD-345", 0L)),
+                "GD-220"
+            )
+        );
+        assertEquals(
+            "THREAD CONTEXT \u00B7 1 TURN",
+            DetailThreadHistoryRenderer.threadContextFooterLabel(
+                List.of(turn("answer", "", 0L)),
+                ""
+            )
+        );
+    }
+
+    @Test
     public void guideChipLabelsKeepRainShelterContextInline() {
         SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
             "how do i build a rain shelter",

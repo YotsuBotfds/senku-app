@@ -173,7 +173,7 @@ class TabletEvidenceVisibilityPolicyTest {
         )
 
         assertEquals(17, state.resolvedGuideSectionCount())
-        assertEquals("SECTIONS · 17", threadRailSectionTitle("SECTIONS", state.resolvedGuideSectionCount()))
+        assertEquals("SECTIONS - 17", threadRailSectionTitle("SECTIONS", state.resolvedGuideSectionCount()))
     }
 
     @Test
@@ -216,7 +216,7 @@ class TabletEvidenceVisibilityPolicyTest {
         assertEquals(17, state.resolvedGuideSectionCount())
         assertEquals(6, buildCrossReferenceCardCount(tabletSourceGraphAnchor(state.anchor), state.xrefs))
         assertEquals(6, railSources.size)
-        assertEquals("CROSS-REFERENCE \u00B7 6", threadRailSectionTitle("CROSS-REFERENCE", railSources.size))
+        assertEquals("CROSS-REFERENCE - 6", threadRailSectionTitle("CROSS-REFERENCE", railSources.size))
         assertEquals(listOf("GD-225", "GD-499", "GD-301", "GD-302", "GD-303", "GD-304"), railSources.map { it.id })
         assertEquals("GD-220", state.anchor.id)
     }

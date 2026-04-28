@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuTheme
 
 internal fun threadRailSectionTitle(label: String, count: Int): String =
-    "${label.trim().ifEmpty { "THREAD" }} \u00B7 $count"
+    "${label.trim().ifEmpty { "THREAD" }} - $count"
 
 internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
     if (active) 62 else 54
@@ -306,7 +306,7 @@ fun ThreadRail(
         }
 
         RailSection(
-            label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
+            label = if (guideMode) guideLabels.referenceLabel else "SOURCES IN THREAD",
             count = visibleSources.size,
         ) {
             if (visibleSources.isEmpty()) {

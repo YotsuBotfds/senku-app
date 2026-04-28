@@ -198,7 +198,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:includeFontPadding="false"
-                        android:text="754 guides &#8226; 12 categories &#8226; ed.2"
+                        android:text="754 guides &#8226; 12 categories &#8226; ready offline &#8226; ed. 2"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_1" />
 
@@ -301,7 +301,7 @@
                         android:layout_marginTop="6dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="Categories - 12"
+                        android:text="&#8212; CATEGORIES &#8226; 12"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -681,7 +681,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="FILTER &#8226; CATEGORY"
+                        android:text="FILTER &#8226; CAT"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textSize="9sp"
@@ -753,7 +753,7 @@
                         android:layout_marginTop="14dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="Window"
+                        android:text="WINDOW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textSize="9sp"

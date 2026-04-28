@@ -126,8 +126,8 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
-    public void phonePortraitAnswerSourcesStayCollapsedByDefaultAfterStableAnswer() {
-        assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 3));
+    public void phonePortraitAnswerSourcesExpandByDefaultAfterStableAnswer() {
+        assertTrue(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 3));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, true, 3));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 0));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(false, true, false, 3));
@@ -184,8 +184,12 @@ public final class DetailFollowupLandscapeComposerTest {
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, false)
         );
         assertEquals(
-            "Sources | Hide",
+            "SOURCES",
             DetailActivity.buildCompactPhoneSourcesTriggerTitle("", 0, true)
+        );
+        assertEquals(
+            "SOURCES - 3",
+            DetailActivity.buildCompactPhoneSourcesTriggerTitle("Source guides", 3, true)
         );
     }
 
@@ -462,7 +466,7 @@ public final class DetailFollowupLandscapeComposerTest {
             );
 
         assertEquals(
-            "GD-345 - ANCHOR - 93%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
+            "GD-345 \u2022 ANCHOR \u2022 93%\nTarp & Cord Shelters\n\"A simple ridgeline shelter requires only tarp, cord, and two anchor points.\"",
             DetailActivity.buildPhonePortraitSourceCardLabel(card)
         );
     }

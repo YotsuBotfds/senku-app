@@ -485,9 +485,19 @@ private fun sourceEvidenceLabel(content: AnswerContent): String {
 }
 
 internal fun buildFooterMeta(content: AnswerContent): String {
+    val reviewedGuideId = content.reviewedCardMetadata.cardGuideId.trim().uppercase(Locale.US)
+    if (content.answerSurfaceLabel == AnswerSurfaceLabel.LimitedFit && reviewedGuideId.isNotBlank()) {
+        val tokens = mutableListOf(reviewedGuideId)
+        val host = displayHostLabel(content.host).trim()
+        if (host.isNotBlank()) {
+            tokens += host
+        }
+        tokens += "CONTEXT KEPT"
+        return tokens.joinToString(" \u2022 ")
+    }
     val tokens = mutableListOf<String>()
-    if (content.reviewedCardMetadata.cardGuideId.isNotBlank()) {
-        tokens += content.reviewedCardMetadata.cardGuideId.trim().uppercase(Locale.US)
+    if (reviewedGuideId.isNotBlank()) {
+        tokens += reviewedGuideId
     }
     tokens += sourceCountLabel(content.sourceCount).uppercase(Locale.US)
     if (content.elapsedSeconds > 0.0) {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -352,6 +353,14 @@ internal fun tabletComposerContextHint(state: TabletDetailState): String {
         1 -> if (guideMode) "1 section" else "1 turn"
         else -> if (guideMode) "$count sections" else "$count turns"
     }
+    if (state.isThreadMode()) {
+        val anchorLabel = state.guideId.trim().takeIf { it.isNotEmpty() }?.let { "$it anchor" }
+        return listOf("Thread context", turnLabel, anchorLabel)
+            .filterNotNull()
+            .joinToString(" - ")
+            .uppercase()
+    }
+
     val sourceCount = if (guideMode) state.sources.size else state.resolvedAnswerSourceCount()
     val sourceLabel = when (sourceCount) {
         0 -> if (guideMode) "No references" else "No sources"
@@ -508,6 +517,7 @@ fun TabletDetailScreen(
             DetailWorkspace(
                 state = state,
                 onTurnClick = onTurnClick,
+                onSourceClick = onSourceClick,
                 onAnchorClick = onAnchorClick,
                 onComposerTextChange = onComposerTextChange,
                 onComposerSendClick = onComposerSendClick,
@@ -532,6 +542,7 @@ fun TabletDetailScreen(
 private fun DetailWorkspace(
     state: TabletDetailState,
     onTurnClick: (String) -> Unit,
+    onSourceClick: (String) -> Unit,
     onAnchorClick: () -> Unit,
     onComposerTextChange: (String) -> Unit,
     onComposerSendClick: (String) -> Unit,
@@ -579,7 +590,6 @@ private fun DetailWorkspace(
             )
 
             if (showEvidencePane) {
-                val evidenceGraph = state.resolvedEvidencePaneGraph()
                 Box(
                     modifier = Modifier
                         .width(1.dp)
@@ -587,22 +597,38 @@ private fun DetailWorkspace(
                         .background(colors.hairlineStrong),
                 )
 
-                EvidencePane(
-                    anchor = evidenceGraph.anchor,
-                    xrefs = evidenceGraph.xrefs,
-                    answerMode = state.isAnswerOrThreadMode(),
-                    answerSourceCount = state.resolvedAnswerSourceCount(),
-                    onAnchorClick = onAnchorClick,
-                    onXRefClick = onXRefClick,
-                    modifier = Modifier
-                        .width(readingPolicy.evidenceRailWidthDp.dp)
-                        .fillMaxHeight()
-                        .semantics {
-                            paneTitle = evidencePaneTitle
-                            isTraversalGroup = true
-                            traversalIndex = 2f
-                        },
-                )
+                if (state.isThreadMode()) {
+                    ThreadSourcePane(
+                        sources = state.resolvedThreadRailSources(),
+                        onSourceClick = onSourceClick,
+                        modifier = Modifier
+                            .width(readingPolicy.evidenceRailWidthDp.dp)
+                            .fillMaxHeight()
+                            .semantics {
+                                paneTitle = evidencePaneTitle
+                                isTraversalGroup = true
+                                traversalIndex = 2f
+                            },
+                    )
+                } else {
+                    val evidenceGraph = state.resolvedEvidencePaneGraph()
+                    EvidencePane(
+                        anchor = evidenceGraph.anchor,
+                        xrefs = evidenceGraph.xrefs,
+                        answerMode = state.isAnswerOrThreadMode(),
+                        answerSourceCount = state.resolvedAnswerSourceCount(),
+                        onAnchorClick = onAnchorClick,
+                        onXRefClick = onXRefClick,
+                        modifier = Modifier
+                            .width(readingPolicy.evidenceRailWidthDp.dp)
+                            .fillMaxHeight()
+                            .semantics {
+                                paneTitle = evidencePaneTitle
+                                isTraversalGroup = true
+                                traversalIndex = 2f
+                            },
+                    )
+                }
             }
         }
 
@@ -729,6 +755,131 @@ private fun ThreadReadingSurface(
             onAnchorClick = onAnchorClick,
         )
         Spacer(modifier = Modifier.height(12.dp))
+    }
+}
+
+@Composable
+private fun ThreadSourcePane(
+    sources: List<SourceState>,
+    onSourceClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SenkuTheme.colors
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = modifier
+            .background(colors.bg1)
+            .verticalScroll(scrollState)
+            .padding(horizontal = 10.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            HorizontalDivider(
+                modifier = Modifier.width(20.dp),
+                thickness = 1.dp,
+                color = colors.ink3,
+            )
+            Text(
+                text = "SOURCES IN THREAD - ${sources.size}",
+                style = SenkuTheme.typography.monoCaps.copy(
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        if (sources.isEmpty()) {
+            Text(
+                text = "No thread sources yet.",
+                style = SenkuTheme.typography.smallBody.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp,
+                ),
+                color = colors.ink3,
+            )
+        } else {
+            sources.forEach { source ->
+                ThreadSourceCard(
+                    source = source,
+                    onClick = { onSourceClick(source.key) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThreadSourceCard(
+    source: SourceState,
+    onClick: () -> Unit,
+) {
+    val colors = SenkuTheme.colors
+    val relation = when {
+        source.isAnchor -> "ANCHOR"
+        source.isSelected -> "CURRENT"
+        else -> "SOURCE"
+    }
+    val accent = if (source.isAnchor) colors.ok else colors.accent
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = if (source.isAnchor || source.isSelected) colors.bg2 else colors.bg1,
+        contentColor = colors.ink0,
+        shape = RoundedCornerShape(0.dp),
+        border = BorderStroke(1.dp, colors.hairlineStrong),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .padding(end = 9.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .fillMaxHeight()
+                    .background(accent),
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = listOf(source.id.trim().ifEmpty { "THREAD" }, relation)
+                        .joinToString(" - "),
+                    style = SenkuTheme.typography.monoCaps.copy(
+                        fontSize = 9.5.sp,
+                        lineHeight = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = accent,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = source.title.trim().ifEmpty { "Thread source" },
+                    style = SenkuTheme.typography.uiBody.copy(
+                        fontSize = 12.5.sp,
+                        lineHeight = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+                    color = colors.ink0,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
     }
 }
 
@@ -1121,7 +1272,7 @@ private fun TitleBar(
         val handoffLabel = guideModeLabel.trim()
         val handoffSummary = guideModeSummary.trim()
         val handoffAnchor = guideModeAnchorLabel.trim()
-        if (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty()) {
+        if (detailMode != TabletDetailMode.Thread && (handoffLabel.isNotEmpty() || handoffSummary.isNotEmpty())) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -1733,7 +1884,7 @@ internal fun TabletDetailState.resolvedThreadRailTurns(): List<ThreadTurnState> 
 
 internal fun TabletDetailState.resolvedThreadRailSources(): List<SourceState> {
     if (!isGuideMode()) {
-        return sources
+        return resolvedThreadSourceRows()
     }
     val visibleXRefs = tabletSourceGraphVisibleXRefs(tabletSourceGraphAnchor(anchor), tabletSourceGraphXRefs(xrefs))
     if (visibleXRefs.isEmpty()) {
@@ -1750,6 +1901,32 @@ internal fun TabletDetailState.resolvedThreadRailSources(): List<SourceState> {
             isSelected = currentGuideId.isNotEmpty() && xrefId.equals(currentGuideId, ignoreCase = true),
         )
     }
+}
+
+internal fun TabletDetailState.resolvedThreadSourceRows(): List<SourceState> {
+    val rows = mutableListOf<SourceState>()
+    val seenGuideIds = mutableSetOf<String>()
+    val threadAnchorId = guideId.trim()
+    if (threadAnchorId.isNotEmpty()) {
+        seenGuideIds += threadAnchorId.uppercase()
+        rows += SourceState(
+            key = threadAnchorId,
+            id = threadAnchorId,
+            title = guideTitle.trim().ifEmpty { "Thread anchor" },
+            isAnchor = true,
+            isSelected = false,
+        )
+    }
+    sources.forEach { source ->
+        val sourceId = source.id.trim()
+        val seenKey = sourceId.uppercase()
+        if (sourceId.isNotEmpty() && seenGuideIds.add(seenKey)) {
+            rows += source
+        } else if (sourceId.isEmpty() && threadRailShouldShowSource(source, guideMode = false)) {
+            rows += source
+        }
+    }
+    return rows
 }
 
 internal fun TabletDetailState.resolvedEvidencePaneGraph(): TabletGuideEvidencePaneGraph {

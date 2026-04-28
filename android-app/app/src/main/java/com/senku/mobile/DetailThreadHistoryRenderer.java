@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 final class DetailThreadHistoryRenderer {
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 2;
-    private static final int ANSWER_MAX_LINES = 3;
+    private static final int ANSWER_MAX_LINES = 4;
     private static final int RAIL_ANSWER_MAX_LINES = 1;
     private static final int GUIDE_CHIP_LIMIT = 2;
     private static final int THREAD_ANSWER_CHAR_LIMIT = 240;
@@ -88,6 +88,7 @@ final class DetailThreadHistoryRenderer {
             addTurn(container, displayTurn.turn, previousAnchorGuideId, state, answerFormatter, true, displayTurn.turnNumber);
             previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, displayTurn.turn);
         }
+        addThreadContextFooter(container, transcriptTurns, state);
     }
 
     void renderPriorTurnsHistory(
@@ -119,6 +120,7 @@ final class DetailThreadHistoryRenderer {
             addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, firstTurnNumber + index);
             previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
+        addThreadContextFooter(container, transcriptTurns, state);
     }
 
     static List<SessionMemory.TurnSnapshot> transcriptTurns(
@@ -350,6 +352,27 @@ final class DetailThreadHistoryRenderer {
         return row;
     }
 
+    private void addThreadContextFooter(
+        LinearLayout container,
+        List<SessionMemory.TurnSnapshot> transcriptTurns,
+        State state
+    ) {
+        if (container == null || state == null || state.utilityRail) {
+            return;
+        }
+        String labelText = threadContextFooterLabel(
+            transcriptTurns,
+            firstAnchorGuideIdForTranscript(transcriptTurns)
+        );
+        if (labelText.isEmpty()) {
+            return;
+        }
+        TextView label = buildMetaLine(labelText, true);
+        label.setTextColor(context.getColor(R.color.senku_rev03_ink_2));
+        label.setPadding(dp(10), dp(4), dp(10), dp(2));
+        container.addView(label);
+    }
+
     private View buildDivider() {
         View divider = new View(context);
         divider.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline));
@@ -417,9 +440,38 @@ final class DetailThreadHistoryRenderer {
         return resolved.get(0) + "/" + resolved.get(1) + " +" + (resolved.size() - 2);
     }
 
+    static String threadContextFooterLabel(
+        List<SessionMemory.TurnSnapshot> transcriptTurns,
+        String anchorGuideId
+    ) {
+        int turnCount = transcriptTurns == null ? 0 : transcriptTurns.size();
+        if (turnCount <= 0) {
+            return "";
+        }
+        String turnLabel = turnCount == 1 ? "1 TURN" : turnCount + " TURNS";
+        String anchorLabel = safe(anchorGuideId).trim();
+        if (anchorLabel.isEmpty()) {
+            return "THREAD CONTEXT \u00B7 " + turnLabel;
+        }
+        return "THREAD CONTEXT \u00B7 " + turnLabel + " \u00B7 " + anchorLabel + " ANCHOR";
+    }
+
     private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         return anchorGuideId.isEmpty() ? safe(previousAnchorGuideId).trim() : anchorGuideId;
+    }
+
+    private String firstAnchorGuideIdForTranscript(List<SessionMemory.TurnSnapshot> transcriptTurns) {
+        if (transcriptTurns == null) {
+            return "";
+        }
+        for (SessionMemory.TurnSnapshot turn : transcriptTurns) {
+            String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
+            if (!anchorGuideId.isEmpty()) {
+                return anchorGuideId;
+            }
+        }
+        return "";
     }
 
     static String compactThreadAnswer(String answerSummary, boolean utilityRail, UnaryOperator<String> answerFormatter) {

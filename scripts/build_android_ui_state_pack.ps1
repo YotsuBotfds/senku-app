@@ -23,6 +23,7 @@ $smokeScript = Join-Path $PSScriptRoot "run_android_instrumented_ui_smoke.ps1"
 $detailFollowupScript = Join-Path $PSScriptRoot "run_android_detail_followup.ps1"
 $commonHarnessModule = Join-Path $PSScriptRoot "android_harness_common.psm1"
 $goalPackValidator = Join-Path $PSScriptRoot "validate_android_mock_goal_pack.py"
+$goalMockFrameExporter = Join-Path $PSScriptRoot "export_android_goal_mock_frame.ps1"
 
 if (-not (Test-Path -LiteralPath $gradlew)) {
     throw "gradlew.bat not found at $gradlew"
@@ -38,6 +39,9 @@ if (-not (Test-Path -LiteralPath $commonHarnessModule)) {
 }
 if (-not (Test-Path -LiteralPath $goalPackValidator)) {
     throw "validate_android_mock_goal_pack.py not found at $goalPackValidator"
+}
+if (-not (Test-Path -LiteralPath $goalMockFrameExporter)) {
+    throw "export_android_goal_mock_frame.ps1 not found at $goalMockFrameExporter"
 }
 
 Import-Module $commonHarnessModule -Force -DisableNameChecking
@@ -127,6 +131,27 @@ function Invoke-GoalMockValidator {
     }
 }
 
+function Invoke-GoalMockFrameExporter {
+    param(
+        [string]$MocksDir,
+        [string]$MetadataPath
+    )
+
+    $referenceDir = Join-Path $repoRoot "artifacts\mocks"
+    $exportOutput = & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $goalMockFrameExporter `
+        -MocksDir $MocksDir `
+        -MetadataPath $MetadataPath `
+        -ReferenceDir $referenceDir 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw ("Goal mock deterministic frame export failed for {0}: {1}" -f $MocksDir, (($exportOutput | Out-String).Trim()))
+    }
+    foreach ($line in @($exportOutput)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$line)) {
+            Write-Host $line
+        }
+    }
+}
+
 function Export-GoalMockPack {
     param(
         [object[]]$ResultEntries,
@@ -200,6 +225,8 @@ function Export-GoalMockPack {
         }
     }
 
+    $metadataPath = Join-Path $OutputDir "goal_mock_export_metadata.json"
+    Invoke-GoalMockFrameExporter -MocksDir $mocksDir -MetadataPath $metadataPath
     Invoke-GoalMockValidator -Path $mocksDir
     $zipPath = Join-Path (Split-Path -Parent $OutputDir) ($Timestamp + "_mocks.zip")
     $zipPath = Write-GoalMockZip -MocksDir $mocksDir -ZipPath $zipPath
@@ -209,6 +236,8 @@ function Export-GoalMockPack {
         status = "pass"
         mocks_dir = $mocksDir
         zip_path = $zipPath
+        metadata_path = $metadataPath
+        deterministic_frame_export = $true
         expected_count = [int]$expectedNames.Count
         actual_count = [int]$actualNames.Count
         expected_names = @($expectedNames)
@@ -1330,6 +1359,7 @@ $readme = @(
     'Artifacts:',
     '- canonical flat mock PNGs under `mocks/`',
     '- canonical flat mock ZIP at `goal_mock_pack.zip_path` in `summary.json`',
+    '- deterministic screenshot-only frame metadata at `goal_mock_pack.metadata_path`',
     '- source screenshots by posture under `screenshots/`',
     '- matching XML dumps under `dumps/`',
     '- per-state summaries under `summaries/`',

@@ -126,11 +126,11 @@ public final class MainActivityHomeChromeTest {
             MainActivity.resolveCategoryShelfLayoutMode(true, false, false)
         );
         assertEquals(
-            CategoryShelfLayoutMode.TABLET_GRID,
+            CategoryShelfLayoutMode.PHONE_GRID,
             MainActivity.resolveCategoryShelfLayoutMode(false, true, false)
         );
         assertEquals(
-            CategoryShelfLayoutMode.TABLET_GRID,
+            CategoryShelfLayoutMode.PHONE_GRID,
             MainActivity.resolveCategoryShelfLayoutMode(false, false, true)
         );
     }
@@ -204,7 +204,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
         assertEquals(
-            "Pack ready",
+            "PACK READY",
             MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true)
         );
         assertEquals(
@@ -252,7 +252,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(40, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
         assertEquals(82, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
-        assertEquals(66, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(82, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

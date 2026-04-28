@@ -738,12 +738,51 @@ Any final fix must first claim the owning P1-P7 file set.
 
 Closure acceptance:
 
-- Full pack status `pass`, 47/47 states.
+- Full mock-parity pack status `pass`, 22/22 canonical target states.
 - Homogeneous APK SHA across all four roles.
 - Homogeneous model name/SHA for host-backed roles.
 - Rotation mismatch count 0.
 - Screenshot plus XML dump review against all 22 target mocks.
 - Any accepted delta is named as content/data, layout/density, or behavior.
+
+## Wave42 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- Home/search density and tablet count-bearing category shelf polish.
+- Guide deterministic fixture/capture fix so phone portrait uses
+  `guide_related_paths` instead of the cross-reference drawer.
+- Answer/source polish for phone source expansion, source-count titles, GD-345
+  related-guide preference, and limited-fit footer context.
+- Thread footer/source rail polish, including `THREAD CONTEXT · 2 TURNS ·
+  GD-220 ANCHOR` and `SOURCES IN THREAD - 2`.
+- Deterministic target-frame exporter and mock pack validator hardening.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave42_gpt_direction/20260428_170056`
+- Canonical mocks: `artifacts/ui_state_pack/wave42_gpt_direction/20260428_170056/mocks`
+- Zip: `artifacts/ui_state_pack/wave42_gpt_direction/20260428_170056_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA: `0c67b29ca682aa18f1f4db935a776f86b7a44a211481221d01764e0bda884875`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+
+Reviewer-backed next slices:
+
+- P1 shared detail shell/insets: answer/thread/guide phone and landscape
+  surfaces still need stricter horizontal bounds, smaller top chrome, and
+  target rail ownership.
+- P2 answer article/source stack: bring tablet answer back to exactly three
+  source cards plus related guides, without the extra tablet source-index rail.
+- P3/P4 guide: fix phone guide clipping and restore landscape/tablet section
+  rail plus right cross-reference rail where target shows them.
+- P6 home/search: improve landscape containment, tablet hero identity, search
+  preview rail bounds, and phone touch-scale/nav emphasis.
+- P7 emergency: restore full tablet top ownership/danger banner and retitle
+  phone emergency chrome toward the burn-hazard target.
 
 ## Parallelization Rules
 

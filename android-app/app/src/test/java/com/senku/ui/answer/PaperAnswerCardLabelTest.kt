@@ -1,5 +1,6 @@
 package com.senku.ui.answer
 
+import com.senku.mobile.ReviewedCardMetadata
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -75,6 +76,25 @@ class PaperAnswerCardLabelTest {
         )
 
         assertEquals("2 SOURCES • 0.8s", buildFooterMeta(content))
+    }
+
+    @Test
+    fun buildFooterMeta_usesContextKeptForRainShelterLimitedFit() {
+        val content = answer(
+            sourceCount = 3,
+            host = "This device",
+            answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+            reviewedCardMetadata = ReviewedCardMetadata(
+                "rain-shelter",
+                "GD-345",
+                "",
+                "",
+                "",
+                emptyList(),
+            ),
+        )
+
+        assertEquals("GD-345 \u2022 THIS DEVICE \u2022 CONTEXT KEPT", buildFooterMeta(content))
     }
 
     @Test
@@ -159,6 +179,7 @@ class PaperAnswerCardLabelTest {
         host: String = "",
         elapsedSeconds: Double = 0.0,
         answerSurfaceLabel: AnswerSurfaceLabel = AnswerSurfaceLabel.Unknown,
+        reviewedCardMetadata: ReviewedCardMetadata = ReviewedCardMetadata.empty(),
     ): AnswerContent =
         AnswerContent(
             short = "Use the relevant field guidance.",
@@ -167,5 +188,6 @@ class PaperAnswerCardLabelTest {
             host = host,
             elapsedSeconds = elapsedSeconds,
             answerSurfaceLabel = answerSurfaceLabel,
+            reviewedCardMetadata = reviewedCardMetadata,
         )
 }

@@ -6,8 +6,8 @@ import org.junit.Test
 class ThreadRailPolicyTest {
     @Test
     fun threadRailSectionTitlesMatchTranscriptMockLanguage() {
-        assertEquals("TURNS \u00B7 2", threadRailSectionTitle("TURNS", 2))
-        assertEquals("SOURCES \u00B7 2", threadRailSectionTitle("SOURCES", 2))
+        assertEquals("TURNS - 2", threadRailSectionTitle("TURNS", 2))
+        assertEquals("SOURCES IN THREAD - 2", threadRailSectionTitle("SOURCES IN THREAD", 2))
     }
 
     @Test

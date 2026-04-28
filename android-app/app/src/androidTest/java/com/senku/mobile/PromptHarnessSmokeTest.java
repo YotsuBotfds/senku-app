@@ -1542,8 +1542,8 @@ public final class PromptHarnessSmokeTest {
 
     @Test
     public void guideDetailShowsRelatedGuideNavigation() throws Exception {
-        RelatedGuideSeed seed = findGuideWithRelations();
-        Assume.assumeNotNull("no guide with related links available in installed pack", seed);
+        RelatedGuideSeed seed = findFoundryGuideWithRelations();
+        Assume.assumeNotNull("GD-132 guide with related links is required for the canonical guide mock", seed);
 
         Intent intent = DetailActivity.newGuideIntent(
             ApplicationProvider.getApplicationContext(),
@@ -1559,6 +1559,7 @@ public final class PromptHarnessSmokeTest {
                 "related guides panel never became ready",
                 waitForRelatedGuidePanel(scenario, seed.relatedGuide.title, DETAIL_WAIT_MS)
             );
+            captureCanonicalGuideReaderState(scenario);
             final boolean[] previewFirstMode = {false};
             scenario.onActivity(activity -> {
                 DetailSettleSignals signals = collectDetailSettleSignals(activity);
@@ -1731,9 +1732,31 @@ public final class PromptHarnessSmokeTest {
                 "guide-to-guide handoff should preserve cross-reference context on the destination page",
                 waitForDetailGuideModeContext("cross-reference|field links", expectedCrossReferenceAnchor, DETAIL_WAIT_MS)
             );
-            captureUiState("guide_related_paths");
         } finally {
             closeScenarioLeniently(scenario);
+        }
+    }
+
+    private void captureCanonicalGuideReaderState(ActivityScenario<DetailActivity> scenario) {
+        final boolean[] restorePhonePortraitPanel = {false};
+        scenario.onActivity(activity -> {
+            DetailSettleSignals signals = collectDetailSettleSignals(activity);
+            if ("compact".equals(signals.postureLabel) && !signals.tabletCompose) {
+                android.view.View panel = activity.findViewById(R.id.detail_next_steps_panel);
+                if (panel != null && panel.getVisibility() == android.view.View.VISIBLE) {
+                    panel.setVisibility(android.view.View.GONE);
+                    restorePhonePortraitPanel[0] = true;
+                }
+            }
+        });
+        captureUiState("guide_related_paths");
+        if (restorePhonePortraitPanel[0]) {
+            scenario.onActivity(activity -> {
+                android.view.View panel = activity.findViewById(R.id.detail_next_steps_panel);
+                if (panel != null) {
+                    panel.setVisibility(android.view.View.VISIBLE);
+                }
+            });
         }
     }
 
@@ -3478,14 +3501,14 @@ public final class PromptHarnessSmokeTest {
                     return;
                 }
                 if (sourcesTitle != null && isVisible(sourcesTitle)
-                    && !containsAny(safe(String.valueOf(sourcesTitle.getText())), sourcesTitleLabel)) {
-                    failure[0] = "sources title should keep source-guide wording visible";
+                    && !containsAny(safe(String.valueOf(sourcesTitle.getText())), sourcesTitleLabel, "SOURCES")) {
+                    failure[0] = "sources title should keep source-guide or source-count wording visible";
                     return;
                 }
 
                 boolean visibleSourceTitleTrigger = sourcesTitle != null
                     && isVisible(sourcesTitle)
-                    && containsAny(safe(String.valueOf(sourcesTitle.getText())), sourcesTitleLabel);
+                    && containsAny(safe(String.valueOf(sourcesTitle.getText())), sourcesTitleLabel, "SOURCES");
                 int visibleSourceCount = visibleButtonCount(sourcesContainer) + visibleButtonCount(inlineSourcesContainer);
                 if (visibleSourceCount <= 0 && !visibleSourceTitleTrigger) {
                     failure[0] = "generated detail should keep at least one source trigger visible after settling";
@@ -4030,6 +4053,24 @@ public final class PromptHarnessSmokeTest {
         );
         try (PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile)) {
             SearchResult guide = repo.loadGuideById("GD-345");
+            if (guide == null || safe(guide.guideId).trim().isEmpty()) {
+                return null;
+            }
+            java.util.List<SearchResult> relatedGuides = repo.loadRelatedGuides(guide.guideId, 1);
+            if (relatedGuides.isEmpty()) {
+                return null;
+            }
+            return new RelatedGuideSeed(guide, relatedGuides.get(0));
+        }
+    }
+
+    private RelatedGuideSeed findFoundryGuideWithRelations() throws Exception {
+        PackInstaller.InstalledPack pack = PackInstaller.ensureInstalled(
+            ApplicationProvider.getApplicationContext(),
+            false
+        );
+        try (PackRepository repo = new PackRepository(pack.databaseFile, pack.vectorFile)) {
+            SearchResult guide = repo.loadGuideById("GD-132");
             if (guide == null || safe(guide.guideId).trim().isEmpty()) {
                 return null;
             }

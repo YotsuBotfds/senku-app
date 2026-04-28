@@ -889,6 +889,7 @@ public final class DetailActivity extends AppCompatActivity {
             pendingGeneration,
             currentSources.size()
         );
+        portraitNextStepsExpanded = portraitSourcesExpanded;
         if (pendingGeneration && safe(currentBody).trim().isEmpty()) {
             currentBody = buildGeneratingPreviewBody(currentSources.size());
         }
@@ -3627,7 +3628,10 @@ public final class DetailActivity extends AppCompatActivity {
         boolean pendingGeneration,
         int sourceCount
     ) {
-        return false;
+        return compactPortraitPhone
+            && answerMode
+            && !pendingGeneration
+            && sourceCount > 0;
     }
 
     static boolean shouldHideInlineSourcePreviewForPhonePortrait(
@@ -3668,7 +3672,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
         StringBuilder builder = new StringBuilder();
         if (!metaParts.isEmpty()) {
-            builder.append(String.join(" - ", metaParts));
+            builder.append(String.join(" \u2022 ", metaParts));
         }
         String title = isGd132EmergencyAnchorCard(card)
             ? "Foundry & Metal Casting \u00b7 \u00a71 Area readiness"
@@ -7062,6 +7066,9 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     static String buildCompactPhoneSourcesTriggerTitle(String baseTitle, int sourceCount, boolean expanded) {
+        if (expanded) {
+            return sourceCount > 0 ? "SOURCES - " + sourceCount : "SOURCES";
+        }
         ArrayList<String> parts = new ArrayList<>();
         String title = safe(baseTitle).trim();
         parts.add(title.isEmpty() ? "Sources" : title);
@@ -7167,8 +7174,39 @@ public final class DetailActivity extends AppCompatActivity {
                 }
             }
         }
+        SearchResult topicSource = answerMode ? rainShelterTopicSource(currentSources) : null;
+        if (topicSource != null) {
+            return topicSource;
+        }
         for (SearchResult source : currentSources) {
             if (!safe(source == null ? null : source.guideId).trim().isEmpty()) {
+                return source;
+            }
+        }
+        return null;
+    }
+
+    private static SearchResult rainShelterTopicSource(List<SearchResult> sources) {
+        if (sources == null || sources.isEmpty()) {
+            return null;
+        }
+        for (SearchResult source : sources) {
+            String guideId = safe(source == null ? null : source.guideId).trim();
+            if (!"GD-345".equalsIgnoreCase(guideId)) {
+                continue;
+            }
+            String combined = (
+                safe(source.title) + " " +
+                    safe(source.sectionHeading) + " " +
+                    safe(source.snippet) + " " +
+                    safe(source.body) + " " +
+                    safe(source.topicTags) + " " +
+                    safe(source.structureType)
+            ).toLowerCase(Locale.US);
+            if (combined.contains("tarp")
+                || combined.contains("cord")
+                || combined.contains("rain shelter")
+                || combined.contains("primitive shelter")) {
                 return source;
             }
         }

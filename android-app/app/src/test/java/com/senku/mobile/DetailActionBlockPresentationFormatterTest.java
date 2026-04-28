@@ -365,7 +365,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         String label = DetailActivity.buildPhonePortraitSourceCardLabel(card);
 
-        assertTrue(label.contains("GD-132 - ANCHOR - 93%"));
+        assertTrue(label.contains("GD-132 \u2022 ANCHOR \u2022 93%"));
         assertTrue(label.contains("Foundry & Metal Casting \u00b7 \u00a71 Area readiness"));
         assertTrue(label.contains("A single drop of water contacting molten metal causes a violent steam explosion"));
     }

@@ -336,6 +336,26 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletThreadContextHintUsesAnchorInsteadOfGenericSourceCount() {
+        val state = tabletDetailState(
+            guideId = "GD-220",
+            guideTitle = "Rain shelter",
+            sources = listOf(SourceState("gd345", "GD-345", "Tarp & Cord Shelters", isAnchor = true, isSelected = true)),
+            turns = listOf(threadTurn("q1"), threadTurn("q2")),
+            detailMode = TabletDetailMode.Thread,
+        )
+
+        assertEquals(
+            "THREAD CONTEXT - 2 TURNS - GD-220 ANCHOR",
+            tabletComposerContextHint(state),
+        )
+        assertEquals(
+            listOf("GD-220", "GD-345"),
+            state.resolvedThreadSourceRows().map { it.id },
+        )
+    }
+
+    @Test
     fun tabletComposerContextHintKeepsThreadLanguageOutsideGuideMode() {
         val state = tabletDetailState(
             guideId = "GD-FALLBACK",

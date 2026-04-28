@@ -191,7 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:includeFontPadding="false"
-                    android:text="754 guides &#8226; 12 categories &#8226; ed.2"
+                    android:text="754 guides &#8226; 12 categories &#8226; ready offline &#8226; ed. 2"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_1" />
 
@@ -489,7 +489,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="FILTER &#8226; CATEGORY"
+                        android:text="FILTER &#8226; CAT"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -556,7 +556,7 @@
                         android:layout_marginTop="20dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="Window"
+                        android:text="WINDOW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
