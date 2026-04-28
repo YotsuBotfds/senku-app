@@ -123,3 +123,28 @@ Validation run before the full pack:
 Remaining work is now visual parity rather than harness readiness: home/search
 content and density, answer/thread density, cream guide reader styling, and
 emergency content hierarchy against the target mocks.
+
+## Wave8 P2/P3 Proof - 2026-04-27 23:38 Local
+
+- Latest local state pack: `artifacts/ui_state_pack/20260427_233208`.
+- State-pack status: `pass`, 47 pass, 0 fail, 47 total, 0 platform ANRs.
+- Search capture now uses the `rain shelter` review query instead of `fire`.
+- Home manual-shell category counts now match the target mock contract:
+  Shelter 84, Water 67, Fire 52, Food 91, Medicine 73, Tools 119.
+- Tablet search score markers now use compact check labels.
+- Phone-landscape host answer now emits and asserts
+  `rain_shelter_gd345_split_answer`, proving a real GD-345 split answer
+  surface instead of a source/guide substitute.
+- Wave8 review note added:
+  `notes/ANDROID_VISUAL_REVIEW_20260427_WAVE8_STATE_PACK_231419.md`.
+
+Validation before this pack:
+
+- `scripts/run_android_local_quality_gate.ps1` passed.
+- Focused JVM tests passed for home/search and P3 split-answer proof:
+  `SearchResultAdapterTest`, `MainActivityHomeChromeTest`,
+  `DetailFollowupLandscapeComposerTest`, and `DetailSurfaceContractTest`.
+
+Remaining visual-parity priorities from the Wave8 reviewer: guide document
+surface, thread density, emergency burn-hazard scenario/content, global chrome
+density, and search card heaviness.
