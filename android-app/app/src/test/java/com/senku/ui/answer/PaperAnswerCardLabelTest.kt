@@ -30,6 +30,18 @@ class PaperAnswerCardLabelTest {
             "LIMITED SOURCES",
             compactEvidenceLabel(answer(evidence = Evidence.None)),
         )
+        assertEquals(
+            "UNSURE",
+            compactEvidenceLabel(
+                AnswerContent(
+                    short = "Related guidance only.",
+                    sourceCount = 2,
+                    host = "",
+                    elapsedSeconds = 0.0,
+                    uncertainFit = true,
+                ),
+            ),
+        )
     }
 
     @Test
@@ -74,7 +86,11 @@ class PaperAnswerCardLabelTest {
 
         assertEquals(true, shouldShowUncertainFitNotice(content))
         assertEquals(
-            "Senku found 3 guides that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below.",
+            "UNSURE",
+            uncertainFitNoticeLabel(content),
+        )
+        assertEquals(
+            "Senku found 3 guides that may apply, but no single guide is a confident anchor. Treat as guidance, not procedure.",
             uncertainFitNoticeText(content),
         )
     }
@@ -93,6 +109,18 @@ class PaperAnswerCardLabelTest {
         assertEquals(
             true,
             shouldEmphasizeUncertainFitNotice(
+                AnswerContent(
+                    short = "",
+                    sourceCount = 0,
+                    host = "",
+                    elapsedSeconds = 0.0,
+                    answerSurfaceLabel = AnswerSurfaceLabel.LimitedFit,
+                ),
+            ),
+        )
+        assertEquals(
+            "UNSURE FIT",
+            uncertainFitNoticeLabel(
                 AnswerContent(
                     short = "",
                     sourceCount = 0,

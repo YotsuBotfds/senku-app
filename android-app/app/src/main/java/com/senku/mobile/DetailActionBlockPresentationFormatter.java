@@ -343,11 +343,19 @@ final class DetailActionBlockPresentationFormatter {
         String detail = safe(text).trim();
         detail = detail.replace(
             "Doors and roll-up openings must be unobstructed.",
-            "Door and roll-up open and unobstructed."
+            "Keep doors and roll-up openings unobstructed."
+        );
+        detail = detail.replace(
+            "Door and roll-up open and unobstructed.",
+            "Keep doors and roll-up openings unobstructed."
         );
         detail = detail.replace(
             "GD-132 \u00a71 is current owner.",
-            "GD-132 lists current owner."
+            "Use GD-132 owner listing."
+        );
+        detail = detail.replace(
+            "GD-132 lists current owner.",
+            "Use GD-132 owner listing."
         );
         return detail;
     }
@@ -463,6 +471,11 @@ final class DetailActionBlockPresentationFormatter {
             || normalizedLine.startsWith("confidence")
             || normalizedLine.startsWith("match type")
             || normalizedLine.startsWith("reviewed card")
+            || normalizedLine.startsWith("answer status")
+            || normalizedLine.startsWith("normal answer")
+            || normalizedLine.startsWith("status")
+            || normalizedLine.startsWith("metadata")
+            || normalizedLine.startsWith("meta")
             || normalizedLine.startsWith("source")
             || normalizedLine.startsWith("sources")
             || normalizedLine.startsWith("guide connection")

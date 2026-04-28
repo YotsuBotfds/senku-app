@@ -116,8 +116,8 @@ public final class DetailGuidePresentationFormatterTest {
                 + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
                 + "Reviewed Answer-Card Boundary\n"
-                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n"
-                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n"
+                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n\n"
+                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n\n"
                 + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
@@ -289,9 +289,9 @@ public final class DetailGuidePresentationFormatterTest {
                 + "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "Keep tools dry.\n"
                 + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
-                + "Check dry tools.\n"
-                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n"
-                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction\n"
+                + "Check dry tools.\n\n"
+                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n\n"
+                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction\n\n"
                 + "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );

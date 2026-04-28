@@ -104,7 +104,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
     }
 
     @Test
@@ -128,9 +128,9 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
         assertEquals("Move personnel upwind.", actions.get(1).detail);
         assertEquals("Confirm two paths of egress", actions.get(2).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
+        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
     }
 
     @Test
@@ -208,6 +208,25 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsStopsBeforeStatusAndRouteMetaChrome() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Emergency actions:\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n\n" +
+                    "Answer status\n" +
+                    "1. answered (ok), danger (danger).\n\n" +
+                    "Route metadata\n" +
+                    "1. reviewed_card_runtime proof route.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(2, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsReadsGd132AnswerHeadingAsActions() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
@@ -224,8 +243,8 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(4, actions.size());
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
+        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
+        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
     }
 
     @Test
@@ -241,8 +260,8 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(3, actions.size());
         assertEquals("Clear the floor to 5 m radius", actions.get(0).title);
-        assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
-        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
+        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(1).detail);
+        assertEquals("Use GD-132 owner listing.", actions.get(2).detail);
     }
 
     @Test

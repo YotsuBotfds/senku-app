@@ -7,8 +7,8 @@
     android:orientation="horizontal"
     android:paddingStart="0dp"
     android:paddingTop="0dp"
-    android:paddingEnd="8dp"
-    android:paddingBottom="4dp">
+    android:paddingEnd="6dp"
+    android:paddingBottom="2dp">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -59,14 +59,14 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingEnd="4dp"
+        android:paddingEnd="2dp"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="8dp">
+            android:paddingBottom="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -141,13 +141,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/senku_rev03_hairline" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="22dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -188,7 +188,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="3dp"
                 android:indeterminate="true"
                 android:indeterminateTint="@color/senku_rev03_accent"
                 android:importantForAccessibility="no"
@@ -256,7 +256,7 @@
                 android:id="@+id/category_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="6dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="-- CATEGORIES  &#8226;  12"
@@ -268,7 +268,7 @@
                 android:id="@+id/category_section_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="3dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -280,14 +280,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="6dp"
                 android:background="@color/senku_rev03_hairline_strong" />
 
             <LinearLayout
                 android:id="@+id/browse_rail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="6dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -380,9 +380,9 @@
         android:layout_weight="1.78"
         android:background="@drawable/bg_manual_home_row"
         android:orientation="vertical"
-        android:paddingStart="12dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="12dp"
+        android:paddingStart="10dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="10dp"
         android:paddingBottom="0dp"
         android:visibility="gone">
 
@@ -406,13 +406,13 @@
         <LinearLayout
             android:id="@+id/phone_search_query_well"
             android:layout_width="match_parent"
-            android:layout_height="28dp"
-            android:layout_marginBottom="2dp"
+            android:layout_height="26dp"
+            android:layout_marginBottom="1dp"
             android:background="@drawable/bg_manual_phone_home_search"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
             android:visibility="gone">
 
             <ImageView
@@ -456,7 +456,7 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:contentDescription="@string/results_list_description"
-            android:paddingTop="2dp"
+            android:paddingTop="1dp"
             android:paddingBottom="0dp"
             android:visibility="gone" />
     </LinearLayout>

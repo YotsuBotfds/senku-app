@@ -179,6 +179,23 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void emergencyPortraitAnswerDoesNotRestoreGenericQuestionChrome() {
+        assertFalse(DetailActivity.shouldRestoreAnswerSemanticPresentation(true, true));
+        assertTrue(DetailActivity.shouldRestoreAnswerSemanticPresentation(true, false));
+        assertFalse(DetailActivity.shouldRestoreAnswerSemanticPresentation(false, true));
+    }
+
+    @Test
+    public void phoneGuidePaperKeepsExtraBottomBreathingRoomForRequiredReadingRows() {
+        assertEquals(20, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, false));
+        assertEquals(12, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(true, true));
+        assertEquals(16, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(false, false));
+        assertEquals(14, DetailActivity.resolvePhoneGuideBodyShellBottomPaddingDp(false, true));
+        assertEquals(2, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(false));
+        assertEquals(2, DetailActivity.resolvePhoneGuideBodyLineSpacingExtraDp(true));
+    }
+
+    @Test
     public void phonePortraitHeaderUsesShortAnswerLabel() {
         assertEquals(
             "Answer GD-345 - Rain shelter",

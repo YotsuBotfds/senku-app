@@ -40,7 +40,7 @@ public final class DetailAnswerBodyFormatterTest {
 
         assertEquals(
             "ANSWER\nControl bleeding first.\n\n" +
-                "FIELD STEPS\n1. Apply steady pressure.\n2. Wrap the wound.\n\n" +
+                "STEPS\n1. Apply steady pressure.\n2. Wrap the wound.\n\n" +
                 "WATCH\nWatch for shock.\nAvoid: Do not remove deeply embedded objects.",
             formatter.formatAnswerBody(
                 "Steps:\n" +

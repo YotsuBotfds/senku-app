@@ -90,9 +90,20 @@ public final class DetailWarningCopySanitizerTest {
         assertEquals(
             "Stop work immediately. Move to minimum 5 m from active work zone. "
                 + "Clear the floor to 5 m radius. "
-                + "Door and roll-up open and unobstructed. "
-                + "GD-132 lists current owner.",
+                + "Keep doors and roll-up openings unobstructed. "
+                + "Use GD-132 owner listing.",
             cleaned
         );
+    }
+
+    @Test
+    public void sanitizeWarningResidualCopy_removesRouteMetaStatusResidue() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "Stop all hot work [Route Metadata reviewed_card_runtime]. "
+                + "Keep distance [Answer Status answered ok]. "
+                + "Use GD-132 [Source Proof anchor]."
+        );
+
+        assertEquals("Stop all hot work. Keep distance. Use GD-132.", cleaned);
     }
 }

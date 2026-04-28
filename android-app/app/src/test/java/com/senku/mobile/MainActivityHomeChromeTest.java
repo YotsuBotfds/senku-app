@@ -186,7 +186,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
         assertEquals(
-            "Ready offline",
+            "Pack ready",
             MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true)
         );
         assertEquals(
@@ -234,7 +234,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(42, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
         assertEquals(87, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
-        assertEquals(75, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(71, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

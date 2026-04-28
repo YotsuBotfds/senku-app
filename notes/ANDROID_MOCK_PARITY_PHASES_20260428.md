@@ -215,6 +215,25 @@ required-reading row before the cross-reference panel. Emergency copy improved,
 but normal field-question/status chrome still adds noise before immediate
 actions.
 
+Wave34 integration proof: `artifacts/ui_state_pack/wave34_integration/20260428_102212`
+is green (`pass`, 47/47, fail count 0), homogeneous APK
+`e17465338c2621d4fd3dd5b3d25bf28f3dd9ba1c7664b577a2b81f06dcb13f23`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Local full Android build/unit tests and local
+quality gate passed before the pack. Integrated slices: P1 emergency/guide
+shell cleanup, P2 answer compact label/spacing, P4 guide callout and
+required-reading spacing, P6 tablet home/search density plus `Pack ready`
+status, and P7 emergency copy/status residue cleanup. Post-pack QA: P6 is not
+blocking, and tablet Search has no fresh blocker. Remaining blockers are now
+structural: guide tablet/landscape still reads like raw document text instead
+of centered paper plus section rail/cross-reference cards; emergency phone and
+tablet still flatten numbered actions into the danger/banner copy and expose
+backend proof chrome; phone-landscape answer remains too tall and can collide
+with the bottom composer in anchored/source states. Next wave should prioritize
+guide structure, emergency numbered-action structure, and landscape answer
+density, with tablet Home/status-pill parity as residual visual cleanup.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

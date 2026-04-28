@@ -39,6 +39,8 @@ final class DetailGuidePresentationFormatter {
     private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.54f;
     private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.54f;
     private static final float GUIDE_BODY_TEXT_SIZE = 0.56f;
+    private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 4;
+    private static final int GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP = 4;
 
     private final Context context;
 
@@ -141,7 +143,7 @@ final class DetailGuidePresentationFormatter {
                             new GuideRowBackgroundSpan(
                                 admonitionInsetBackgroundColor(admonitionAccentColorRes),
                                 color(admonitionAccentColorRes),
-                                dp(3),
+                                dp(GUIDE_ADMONITION_ACCENT_WIDTH_DP),
                                 0
                             ),
                             lineStart,
@@ -306,7 +308,7 @@ final class DetailGuidePresentationFormatter {
             new GuideRowBackgroundSpan(
                 requiredReadingInsetBackgroundColor(),
                 color(guideAdmonitionWarningColorResForLegacy()),
-                dp(3),
+                dp(GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP),
                 dp(1)
             ),
             lineStart,
@@ -341,10 +343,16 @@ final class DetailGuidePresentationFormatter {
     ) {
         int labelEnd = Math.min(lineEnd, lineStart + safe(label).length());
         styled.setSpan(
+            new LeadingMarginSpan.Standard(dp(14), dp(14)),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        styled.setSpan(
             new GuideRowBackgroundSpan(
                 admonitionInsetBackgroundColor(accentColorRes),
                 color(accentColorRes),
-                dp(3),
+                dp(GUIDE_ADMONITION_ACCENT_WIDTH_DP),
                 0
             ),
             lineStart,
@@ -406,7 +414,7 @@ final class DetailGuidePresentationFormatter {
             new GuideRowBackgroundSpan(
                 admonitionInsetBackgroundColor(accentColorRes),
                 color(accentColorRes),
-                dp(3),
+                dp(GUIDE_ADMONITION_ACCENT_WIDTH_DP),
                 0
             ),
             lineStart,
@@ -416,14 +424,15 @@ final class DetailGuidePresentationFormatter {
     }
 
     private int admonitionInsetBackgroundColor(int accentColorRes) {
-        return blendColors(color(guideAdmonitionBackgroundColorResForLegacy()), color(accentColorRes), 0.18f);
+        float overlayRatio = accentColorRes == guideAdmonitionDangerColorResForLegacy() ? 0.28f : 0.20f;
+        return blendColors(color(guideAdmonitionBackgroundColorResForLegacy()), color(accentColorRes), overlayRatio);
     }
 
     private int requiredReadingInsetBackgroundColor() {
         return blendColors(
             color(guideAdmonitionBackgroundColorResForLegacy()),
             color(guideAdmonitionWarningColorResForLegacy()),
-            0.13f
+            0.18f
         );
     }
 
@@ -622,13 +631,13 @@ final class DetailGuidePresentationFormatter {
                 seenSections++;
             }
             if (!insertedAfterOpeningSection && seenSections > 1) {
-                appendLine(builder, requiredRows);
+                appendRequiredReadingRows(builder, requiredRows);
                 insertedAfterOpeningSection = true;
             }
             appendLine(builder, line);
         }
         if (!insertedAfterOpeningSection) {
-            appendLine(builder, requiredRows);
+            appendRequiredReadingRows(builder, requiredRows);
         }
         return builder.toString().trim();
     }
@@ -660,7 +669,7 @@ final class DetailGuidePresentationFormatter {
                 continue;
             }
             if (builder.length() > 0) {
-                builder.append('\n');
+                builder.append("\n\n");
             }
             builder.append(row);
         }
@@ -727,6 +736,13 @@ final class DetailGuidePresentationFormatter {
             builder.append('\n');
         }
         builder.append(safe(line));
+    }
+
+    private static void appendRequiredReadingRows(StringBuilder builder, String rows) {
+        if (builder.length() > 0) {
+            appendLine(builder, "");
+        }
+        appendLine(builder, rows);
     }
 
     private static String formatGuideSectionCount(int sections) {

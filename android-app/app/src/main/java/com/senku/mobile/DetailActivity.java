@@ -143,6 +143,9 @@ public final class DetailActivity extends AppCompatActivity {
     private TextView emergencyHeaderTitle;
     private TextView emergencyHeaderText;
     private LinearLayout tabletEmergencyHeaderOverlay;
+    private LinearLayout tabletEmergencyChromeOverlayPanel;
+    private TextView tabletEmergencyChromeOverlayTitle;
+    private TextView tabletEmergencyChromeOverlayMeta;
     private LinearLayout tabletEmergencyActionsOverlayPanel;
     private LinearLayout tabletEmergencyProofOverlayPanel;
     private TextView tabletEmergencyProofOverlayTitle;
@@ -1304,6 +1307,7 @@ public final class DetailActivity extends AppCompatActivity {
             text.setTextSize(isTabletPortraitLayout() ? 15f : 14f);
             text.setMaxLines(isTabletPortraitLayout() ? 3 : 2);
         }
+        updateTabletEmergencyOverlayChrome(emergencyFullHeightPage);
         overlay.setContentDescription(buildTabletEmergencyOverlayContentDescription());
         renderTabletEmergencyOverlayActions();
         updateTabletEmergencyHeaderOverlayLayout(overlay);
@@ -1352,6 +1356,81 @@ public final class DetailActivity extends AppCompatActivity {
         overlay.setClickable(true);
         overlay.setFocusable(true);
         overlay.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        tabletEmergencyChromeOverlayPanel = new LinearLayout(this);
+        tabletEmergencyChromeOverlayPanel.setOrientation(LinearLayout.HORIZONTAL);
+        tabletEmergencyChromeOverlayPanel.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams chromeParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        chromeParams.bottomMargin = dp(16);
+
+        Button back = new Button(this);
+        back.setAllCaps(false);
+        back.setText(R.string.detail_back);
+        back.setContentDescription(getString(R.string.detail_back_content_description));
+        back.setTextColor(getColor(R.color.senku_text_light));
+        back.setBackgroundResource(R.drawable.bg_detail_topbar_chip);
+        back.setMinHeight(0);
+        back.setMinimumHeight(0);
+        back.setPadding(dp(14), dp(8), dp(14), dp(8));
+        back.setOnClickListener(v -> finish());
+        tabletEmergencyChromeOverlayPanel.addView(back, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        Button home = new Button(this);
+        home.setAllCaps(false);
+        home.setText(R.string.home_button);
+        home.setContentDescription(getString(R.string.detail_home_content_description));
+        home.setTextColor(getColor(R.color.senku_text_light));
+        home.setBackgroundResource(R.drawable.bg_detail_topbar_chip);
+        home.setMinHeight(0);
+        home.setMinimumHeight(0);
+        home.setPadding(dp(14), dp(8), dp(14), dp(8));
+        home.setOnClickListener(v -> navigateHomeFromDetail());
+        LinearLayout.LayoutParams homeParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        homeParams.leftMargin = dp(8);
+        tabletEmergencyChromeOverlayPanel.addView(home, homeParams);
+
+        LinearLayout chromeText = new LinearLayout(this);
+        chromeText.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams chromeTextParams = new LinearLayout.LayoutParams(
+            0,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            1f
+        );
+        chromeTextParams.leftMargin = dp(16);
+
+        tabletEmergencyChromeOverlayTitle = new TextView(this);
+        tabletEmergencyChromeOverlayTitle.setTextColor(getColor(R.color.senku_text_light));
+        tabletEmergencyChromeOverlayTitle.setTypeface(Typeface.DEFAULT_BOLD);
+        tabletEmergencyChromeOverlayTitle.setTextSize(18f);
+        tabletEmergencyChromeOverlayTitle.setMaxLines(1);
+        tabletEmergencyChromeOverlayTitle.setEllipsize(TextUtils.TruncateAt.END);
+        chromeText.addView(tabletEmergencyChromeOverlayTitle, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        tabletEmergencyChromeOverlayMeta = new TextView(this);
+        tabletEmergencyChromeOverlayMeta.setTextColor(getColor(R.color.senku_text_muted_light));
+        tabletEmergencyChromeOverlayMeta.setTypeface(Typeface.MONOSPACE);
+        tabletEmergencyChromeOverlayMeta.setTextSize(12f);
+        tabletEmergencyChromeOverlayMeta.setMaxLines(1);
+        tabletEmergencyChromeOverlayMeta.setEllipsize(TextUtils.TruncateAt.END);
+        chromeText.addView(tabletEmergencyChromeOverlayMeta, new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        tabletEmergencyChromeOverlayPanel.addView(chromeText, chromeTextParams);
+        overlay.addView(tabletEmergencyChromeOverlayPanel, chromeParams);
 
         TextView title = new TextView(this);
         title.setId(R.id.detail_emergency_header_title);
@@ -1426,6 +1505,43 @@ public final class DetailActivity extends AppCompatActivity {
         root.addView(overlay, params);
         tabletEmergencyHeaderOverlay = overlay;
         return overlay;
+    }
+
+    private void updateTabletEmergencyOverlayChrome(boolean emergencyFullHeightPage) {
+        if (tabletEmergencyChromeOverlayPanel == null) {
+            return;
+        }
+        boolean showChrome = emergencyFullHeightPage && isTabletPortraitLayout();
+        tabletEmergencyChromeOverlayPanel.setVisibility(showChrome ? View.VISIBLE : View.GONE);
+        if (!showChrome) {
+            return;
+        }
+        if (tabletEmergencyChromeOverlayTitle != null) {
+            tabletEmergencyChromeOverlayTitle.setText(buildTabletEmergencyOverlayChromeTitle());
+        }
+        if (tabletEmergencyChromeOverlayMeta != null) {
+            tabletEmergencyChromeOverlayMeta.setText(buildTabletEmergencyOverlayChromeMeta());
+        }
+    }
+
+    private String buildTabletEmergencyOverlayChromeTitle() {
+        String primaryGuideId = primaryGuideIdForSources(currentSources);
+        String primarySourceLabel = buildPrimarySourceLabel();
+        return buildPhonePortraitAnswerHeaderTitle(primaryGuideId, primarySourceLabel);
+    }
+
+    private String buildTabletEmergencyOverlayChromeMeta() {
+        ArrayList<String> labels = new ArrayList<>();
+        String guideId = primaryGuideIdForSources(currentSources);
+        if (!safe(guideId).trim().isEmpty()) {
+            labels.add(safe(guideId).trim());
+        }
+        labels.add("DANGER");
+        String evidenceLabel = getEvidenceTrustSurfaceLabel();
+        if (!safe(evidenceLabel).trim().isEmpty()) {
+            labels.add(safe(evidenceLabel).trim());
+        }
+        return TextUtils.join(" - ", labels).toUpperCase(Locale.US);
     }
 
     private void updateTabletEmergencyHeaderOverlayLayout(LinearLayout overlay) {
@@ -1568,6 +1684,9 @@ public final class DetailActivity extends AppCompatActivity {
             ((ViewGroup) parent).removeView(tabletEmergencyHeaderOverlay);
         }
         tabletEmergencyHeaderOverlay = null;
+        tabletEmergencyChromeOverlayPanel = null;
+        tabletEmergencyChromeOverlayTitle = null;
+        tabletEmergencyChromeOverlayMeta = null;
         tabletEmergencyActionsOverlayPanel = null;
         tabletEmergencyProofOverlayPanel = null;
         tabletEmergencyProofOverlayTitle = null;
@@ -7633,7 +7752,9 @@ public final class DetailActivity extends AppCompatActivity {
 
     private void applyGuideReaderPresentation() {
         if (answerMode) {
-            restoreAnswerSemanticPresentation();
+            if (shouldRestoreAnswerSemanticPresentation(answerMode, isEmergencyPortraitSurface())) {
+                restoreAnswerSemanticPresentation();
+            }
             return;
         }
         boolean singlePaperPhoneGuide = shouldUseSinglePaperPhoneGuideShell();
@@ -7683,16 +7804,31 @@ public final class DetailActivity extends AppCompatActivity {
                 dp(singlePaperPhoneGuide ? 12 : 16),
                 dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 8 : 10) : (isLandscapePhoneLayout() ? 10 : 12)),
                 dp(singlePaperPhoneGuide ? 12 : 16),
-                dp(singlePaperPhoneGuide ? (isLandscapePhoneLayout() ? 12 : 14) : (isLandscapePhoneLayout() ? 14 : 16))
+                dp(resolvePhoneGuideBodyShellBottomPaddingDp(singlePaperPhoneGuide, isLandscapePhoneLayout()))
             );
             setTopMargin(bodyMirrorShell, dp(0));
         }
         if (bodyView != null) {
             bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
             bodyView.setTextSize(isLandscapePhoneLayout() ? 15f : 16f);
-            bodyView.setLineSpacing(dp(isLandscapePhoneLayout() ? 2 : 3), 1.08f);
+            bodyView.setLineSpacing(dp(resolvePhoneGuideBodyLineSpacingExtraDp(isLandscapePhoneLayout())), 1.08f);
             bodyView.setIncludeFontPadding(false);
         }
+    }
+
+    static boolean shouldRestoreAnswerSemanticPresentation(boolean answerMode, boolean emergencyPortrait) {
+        return answerMode && !emergencyPortrait;
+    }
+
+    static int resolvePhoneGuideBodyShellBottomPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {
+        if (singlePaperPhoneGuide) {
+            return landscapePhone ? 12 : 20;
+        }
+        return landscapePhone ? 14 : 16;
+    }
+
+    static int resolvePhoneGuideBodyLineSpacingExtraDp(boolean landscapePhone) {
+        return landscapePhone ? 2 : 2;
     }
 
     private void restoreAnswerSemanticPresentation() {

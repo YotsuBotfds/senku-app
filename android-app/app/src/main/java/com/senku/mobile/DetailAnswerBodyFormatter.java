@@ -15,7 +15,7 @@ final class DetailAnswerBodyFormatter {
         "Limits or safety:"
     };
     private static final String SUMMARY_DISPLAY_LABEL = "ANSWER";
-    private static final String STEPS_DISPLAY_LABEL = "FIELD STEPS";
+    private static final String STEPS_DISPLAY_LABEL = "STEPS";
     private static final String SAFETY_DISPLAY_LABEL = "WATCH";
     private static final String STEPS_LABEL = "Steps:";
     private static final String LIMITS_OR_SAFETY_LABEL = "Limits or safety:";

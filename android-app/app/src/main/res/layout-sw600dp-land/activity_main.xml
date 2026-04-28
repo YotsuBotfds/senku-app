@@ -19,12 +19,12 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:layout_width="72dp"
+        android:layout_width="68dp"
         android:layout_height="match_parent"
         android:background="@color/senku_rev03_bg_0"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="18dp">
+        android:paddingTop="14dp">
 
         <TextView
             android:layout_width="30dp"
@@ -40,7 +40,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="18dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -67,7 +67,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="14dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -92,7 +92,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="14dp"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -128,11 +128,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="34dp"
+            android:layout_height="32dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
 
             <TextView
                 android:id="@+id/home_chrome_title"
@@ -166,9 +166,9 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:fillViewport="true"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="10dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="8dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -176,12 +176,12 @@
                 android:layout_height="match_parent"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:paddingTop="4dp">
+                android:paddingTop="2dp">
 
                 <LinearLayout
                     android:layout_width="472dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="12dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -240,8 +240,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="34dp"
-                        android:layout_marginTop="6dp"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="5dp"
                         android:addStatesFromChildren="true"
                         android:background="@drawable/bg_manual_home_search"
                         android:gravity="center_vertical"
@@ -282,7 +282,7 @@
                         android:id="@+id/search_suggestions_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:fadingEdge="horizontal"
                         android:fadingEdgeLength="24dp"
                         android:scrollbars="none"
@@ -299,7 +299,7 @@
                         android:id="@+id/category_section_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
                         android:text="CATEGORIES - FIELD SHELF"
@@ -311,7 +311,7 @@
                         android:id="@+id/category_section_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="5dp"
                         android:orientation="vertical">
 
                         <LinearLayout

@@ -47,12 +47,12 @@ enum class Mode {
 }
 
 private val PaperAnswerCardInnerPadding = 0.dp
-private val PaperAnswerCardSectionSpacing = 12.dp
+private val PaperAnswerCardSectionSpacing = 10.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
 private val PaperAnswerCardBodySize = 16.sp
 private val PaperAnswerCardBodyLineHeight = 25.sp
 private val PaperAnswerCardSupportSize = 13.sp
-private val PaperAnswerCardSupportLineHeight = 20.sp
+private val PaperAnswerCardSupportLineHeight = 19.sp
 private val PaperAnswerCardMetaSize = 10.sp
 private val PaperAnswerCardMetaLineHeight = 13.sp
 
@@ -231,7 +231,7 @@ fun PaperAnswerCard(
 
                 if (shouldShowUncertainFitNotice(content)) {
                     SupportBlock(
-                        label = "UNSURE FIT",
+                        label = uncertainFitNoticeLabel(content),
                         labelColor = evidenceTone,
                         palette = palette,
                         emphasized = shouldEmphasizeUncertainFitNotice(content),
@@ -319,9 +319,9 @@ private fun SupportBlock(
             .background(blockBackground)
             .padding(
                 start = 0.dp,
-                top = if (emphasized) 12.dp else 0.dp,
+                top = if (emphasized) 10.dp else 0.dp,
                 end = if (emphasized) 12.dp else 0.dp,
-                bottom = if (emphasized) 12.dp else 0.dp,
+                bottom = if (emphasized) 10.dp else 0.dp,
             ),
     ) {
         if (emphasized) {
@@ -444,7 +444,7 @@ internal fun compactEvidenceLabel(content: AnswerContent): String {
         AnswerSurfaceLabel.ReviewedCardEvidence -> sourceEvidenceLabel(content)
         AnswerSurfaceLabel.GeneratedEvidence,
         AnswerSurfaceLabel.Unknown -> when {
-            content.uncertainFit -> "UNSURE FIT"
+            content.uncertainFit -> "UNSURE"
             content.evidence == Evidence.Strong -> sourceEvidenceLabel(content)
             content.evidence == Evidence.Moderate -> sourceEvidenceLabel(content)
             content.abstain -> "NO MATCH"
@@ -494,11 +494,15 @@ internal fun shouldEmphasizeUncertainFitNotice(content: AnswerContent): Boolean 
     return content.short.isBlank() && content.steps.isNullOrEmpty() && content.limits.isNullOrBlank()
 }
 
+internal fun uncertainFitNoticeLabel(content: AnswerContent): String {
+    return if (shouldEmphasizeUncertainFitNotice(content)) "UNSURE FIT" else "UNSURE"
+}
+
 internal fun uncertainFitNoticeText(content: AnswerContent): String {
     val count = content.sourceCount.coerceAtLeast(0)
     val guideWord = if (count == 1) "guide" else "guides"
     val countText = if (count > 0) "$count $guideWord" else "related guides"
-    return "Senku found $countText that may apply but no single guide is a confident anchor. Treat this as guidance, not procedure. See sources below."
+    return "Senku found $countText that may apply, but no single guide is a confident anchor. Treat as guidance, not procedure."
 }
 
 internal fun displayProofCtaLabel(label: String): String {

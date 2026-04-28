@@ -35,9 +35,18 @@ final class DetailWarningCopySanitizer {
         "proof rail",
         "proof route",
         "proof metadata",
+        "proof status",
         "route proof",
         "backend route",
-        "route backend"
+        "route backend",
+        "route metadata",
+        "route status",
+        "deterministic route",
+        "review status",
+        "answer status",
+        "normal answer status",
+        "source proof",
+        "source metadata"
     };
     private static final String[] WARNING_RESIDUAL_TRAIL_MARKERS = new String[] {
         "implied",
@@ -114,11 +123,19 @@ final class DetailWarningCopySanitizer {
         );
         cleaned = cleaned.replace(
             "Doors and roll-up openings must be unobstructed.",
-            "Door and roll-up open and unobstructed."
+            "Keep doors and roll-up openings unobstructed."
+        );
+        cleaned = cleaned.replace(
+            "Door and roll-up open and unobstructed.",
+            "Keep doors and roll-up openings unobstructed."
         );
         cleaned = cleaned.replace(
             "GD-132 \u00a71 is current owner.",
-            "GD-132 lists current owner."
+            "Use GD-132 owner listing."
+        );
+        cleaned = cleaned.replace(
+            "GD-132 lists current owner.",
+            "Use GD-132 owner listing."
         );
         return cleaned;
     }
