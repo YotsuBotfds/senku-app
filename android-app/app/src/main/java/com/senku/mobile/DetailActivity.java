@@ -1152,6 +1152,7 @@ public final class DetailActivity extends AppCompatActivity {
         clearStatus();
         renderActionBlocks();
         applyEmergencyPortraitPresentation();
+        applyGuideReaderPresentation();
 
         detailScroll.post(() -> {
             if (isFinishing() || isDestroyed()) {
@@ -2314,6 +2315,11 @@ public final class DetailActivity extends AppCompatActivity {
                 clearProvenancePanel();
                 return;
             }
+            if (isEmergencyPortraitSurface()) {
+                sourcesPanel.setVisibility(View.GONE);
+                clearProvenancePanel();
+                return;
+            }
             boolean landscapePhoneSideRail = shouldUseLandscapePhoneSourceRail(answerMode, isLandscapePhoneLayout());
             boolean inlineLandscapeProvenance = isLandscapePhoneLayout()
                 && provenancePanel != null
@@ -2898,7 +2904,7 @@ public final class DetailActivity extends AppCompatActivity {
         }
         boolean emergencyPortrait = isEmergencyPortraitSurface();
         whyText.setText(emergencyPortrait && !currentSources.isEmpty()
-            ? buildCompactWhyPanelSummary()
+            ? buildEmergencyProofCardSummary()
             : (compactLandscapePhone
             ? buildCompactWhyPanelSummary()
             : (showUtilityRail()
@@ -2906,11 +2912,11 @@ public final class DetailActivity extends AppCompatActivity {
                 : (currentSources.isEmpty()
                 ? buildNoCitationProofSummary(false)
                 : buildWhyThisAnswerSummary()))));
-        whyText.setLineSpacing(0f, compactLandscapePhone ? 1.0f : 1.08f);
+        whyText.setLineSpacing(0f, emergencyPortrait ? 1.16f : (compactLandscapePhone ? 1.0f : 1.08f));
         boolean collapseWhyText = compactLandscapePhone
             || emergencyPortrait
             || (compactContextSections && !portraitWhyExpanded);
-        whyText.setMaxLines(emergencyPortrait ? 5 : (collapseWhyText ? 4 : Integer.MAX_VALUE));
+        whyText.setMaxLines(emergencyPortrait ? 4 : (collapseWhyText ? 4 : Integer.MAX_VALUE));
         whyText.setEllipsize(collapseWhyText ? TextUtils.TruncateAt.END : null);
         if (compactLandscapePhone && !currentSources.isEmpty()) {
             whyPanel.setClickable(true);
@@ -4389,6 +4395,63 @@ public final class DetailActivity extends AppCompatActivity {
         return builder;
     }
 
+    private CharSequence buildEmergencyProofCardSummary() {
+        SearchResult source = firstRealSource(currentSources);
+        if (source == null) {
+            return buildCompactWhyPanelSummary();
+        }
+        String guideId = safe(source.guideId).trim();
+        String title = safe(source.title).trim();
+        String section = safe(source.sectionHeading).trim();
+        String excerpt = firstNonEmpty(source.snippet, source.body).trim();
+        excerpt = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(excerpt)
+            .replaceAll("\\s+", " ")
+            .trim();
+        if (excerpt.length() > 96) {
+            excerpt = excerpt.substring(0, 96).trim() + "...";
+        }
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        String lead = firstNonEmpty(guideId, "Source guide");
+        builder.append(lead.toUpperCase(Locale.US)).append("  ");
+        int anchorStart = builder.length();
+        builder.append("ANCHOR");
+        builder.setSpan(
+            new ForegroundColorSpan(getColor(R.color.senku_rev03_accent)),
+            0,
+            builder.length(),
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        builder.setSpan(new TypefaceSpan("monospace"), 0, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.setSpan(new StyleSpan(Typeface.BOLD), 0, anchorStart, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append('\n');
+        int titleStart = builder.length();
+        builder.append(firstNonEmpty(title, buildPrimarySourceLabel()));
+        if (!section.isEmpty()) {
+            builder.append(" \u00b7 ").append(section);
+        }
+        builder.setSpan(
+            new ForegroundColorSpan(getColor(R.color.senku_text_light)),
+            titleStart,
+            builder.length(),
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        builder.setSpan(new StyleSpan(Typeface.BOLD), titleStart, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (!excerpt.isEmpty()) {
+            builder.append('\n');
+            int excerptStart = builder.length();
+            builder.append("\"").append(excerpt).append("\"");
+            builder.setSpan(
+                new ForegroundColorSpan(getColor(R.color.senku_text_muted_light)),
+                excerptStart,
+                builder.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+            builder.setSpan(new StyleSpan(Typeface.ITALIC), excerptStart, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        applyInlineCitationSpans(builder);
+        return builder;
+    }
+
     private CharSequence buildUtilityRailWhySummary() {
         SpannableStringBuilder builder = detailProofPresentationFormatter().buildWhySummary(
             buildProofPresentationState(),
@@ -4496,10 +4559,9 @@ public final class DetailActivity extends AppCompatActivity {
             heroPanel.setVisibility(View.GONE);
             return;
         }
-        boolean showForGuide = surface == DetailSurfaceContract.Surface.GUIDE_READER;
         boolean showForStatus = statusText != null && statusText.getVisibility() == View.VISIBLE;
         boolean showForProgress = progressBar != null && progressBar.getVisibility() == View.VISIBLE;
-        heroPanel.setVisibility((showForGuide || showForStatus || showForProgress) ? View.VISIBLE : View.GONE);
+        heroPanel.setVisibility((showForStatus || showForProgress) ? View.VISIBLE : View.GONE);
     }
 
     private boolean isCurrentAnswerFollowUpEligible() {
@@ -4759,7 +4821,11 @@ public final class DetailActivity extends AppCompatActivity {
         if (hazard.isEmpty()) {
             return getString(R.string.detail_emergency_header_title);
         }
-        return "DANGER - " + hazard.toUpperCase(Locale.US);
+        String normalized = hazard.toLowerCase(Locale.US);
+        if (normalized.contains("burn") || normalized.contains("foundry") || normalized.contains("molten")) {
+            hazard = "extreme burn hazard";
+        }
+        return "DANGER \u00b7 " + hazard.toUpperCase(Locale.US);
     }
 
     static String extractEmergencyShortAnswer(String formattedAnswerText) {
@@ -6473,6 +6539,73 @@ public final class DetailActivity extends AppCompatActivity {
         }
         if (inlineNextStepsScroll != null && emergencyPortrait) {
             inlineNextStepsScroll.setVisibility(View.GONE);
+        }
+    }
+
+    private void applyGuideReaderPresentation() {
+        if (answerMode) {
+            restoreAnswerSemanticPresentation();
+            return;
+        }
+        if (questionBubble != null) {
+            questionBubble.setBackgroundResource(R.drawable.bg_detail_guide_paper_panel);
+            questionBubble.setPadding(dp(24), dp(20), dp(24), dp(14));
+        }
+        if (headerLabel != null) {
+            headerLabel.setText("FIELD MANUAL");
+            headerLabel.setTextColor(getColor(R.color.senku_rev03_paper_warn));
+            headerLabel.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            headerLabel.setLetterSpacing(0.12f);
+            headerLabel.setVisibility(View.VISIBLE);
+        }
+        if (titleView != null) {
+            titleView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
+            titleView.setTypeface(Typeface.DEFAULT_BOLD);
+            titleView.setTextSize(28f);
+        }
+        if (subtitleView != null) {
+            subtitleView.setTextColor(getColor(R.color.senku_rev03_paper_ink_muted));
+            subtitleView.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+            subtitleView.setLetterSpacing(0.08f);
+        }
+        if (answerBubble != null) {
+            answerBubble.setBackgroundColor(getColor(android.R.color.transparent));
+            answerBubble.setPadding(0, 0, 0, 0);
+        }
+        if (bodyLabel != null) {
+            bodyLabel.setVisibility(View.GONE);
+        }
+        if (bodyMirrorShell != null) {
+            bodyMirrorShell.setBackgroundResource(R.drawable.bg_detail_guide_paper_shell);
+            bodyMirrorShell.setPadding(dp(24), dp(18), dp(24), dp(22));
+            setTopMargin(bodyMirrorShell, dp(0));
+        }
+        if (bodyView != null) {
+            bodyView.setTextColor(getColor(R.color.senku_rev03_paper_ink));
+            bodyView.setTextSize(18f);
+            bodyView.setLineSpacing(dp(3), 1.08f);
+        }
+    }
+
+    private void restoreAnswerSemanticPresentation() {
+        if (questionBubble != null && questionBubble.getVisibility() == View.VISIBLE) {
+            questionBubble.setBackgroundResource(R.drawable.bg_detail_question_shell);
+            questionBubble.setPadding(0, 0, 0, 0);
+        }
+        if (headerLabel != null) {
+            headerLabel.setTextColor(getColor(R.color.senku_rev03_accent));
+            headerLabel.setTypeface(Typeface.DEFAULT_BOLD);
+            headerLabel.setLetterSpacing(0f);
+        }
+        if (titleView != null) {
+            titleView.setTextColor(getColor(R.color.senku_text_light));
+            titleView.setTypeface(Typeface.DEFAULT_BOLD);
+            titleView.setTextSize(18f);
+        }
+        if (subtitleView != null) {
+            subtitleView.setTextColor(getColor(R.color.senku_text_muted_light));
+            subtitleView.setTypeface(Typeface.MONOSPACE);
+            subtitleView.setLetterSpacing(0f);
         }
     }
 

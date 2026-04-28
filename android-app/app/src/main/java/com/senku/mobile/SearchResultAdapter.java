@@ -151,10 +151,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         boolean stressCompactCard = landscapePhoneCard && largeFontCard;
         holder.title.setText(formatDisplayText(
             result.title,
-            richTabletCard ? 110 : (landscapePhoneCard ? 100 : 90),
+            richTabletCard ? 96 : (landscapePhoneCard ? 86 : 82),
             2
         ));
-        holder.title.setMaxLines(richTabletCard ? 1 : (stressCompactCard ? 1 : 2));
+        holder.title.setMaxLines((richTabletCard || landscapePhoneCard || stressCompactCard) ? 1 : 2);
         holder.title.setEllipsize(TextUtils.TruncateAt.END);
         holder.meta.setText(buildTabletGuideMarker(result, position));
         holder.meta.setMaxLines((richTabletCard || stressCompactCard) ? 1 : 2);
@@ -174,10 +174,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         bindTabletAttributeLine(holder.section, result);
         holder.snippet.setText(formatDisplayText(
             result.snippet,
-            richTabletCard ? 136 : (landscapePhoneCard ? 180 : (smallPhonePortraitCard ? 110 : 240)),
+            richTabletCard ? 118 : (landscapePhoneCard ? 150 : (smallPhonePortraitCard ? 118 : 220)),
             richTabletCard ? 4 : 3
         ));
-        holder.snippet.setMaxLines(richTabletCard ? 2 : (stressCompactCard ? 1 : (landscapePhoneCard ? 2 : (smallPhonePortraitCard ? 1 : 5))));
+        holder.snippet.setMaxLines((richTabletCard || landscapePhoneCard || stressCompactCard) ? 1 : (smallPhonePortraitCard ? 2 : 4));
         holder.snippet.setEllipsize(TextUtils.TruncateAt.END);
         if (smallPhonePortraitCard || stressCompactCard) {
             holder.snippet.setAlpha(0.66f);
@@ -206,7 +206,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout row = new LinearLayout(context);
         row.setId(R.id.result_legacy_mirror);
         row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(dp(24), dp(13), dp(24), 0);
+        row.setPadding(dp(5), dp(10), dp(5), 0);
         root.addView(row, new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -220,7 +220,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.WRAP_CONTENT
         ));
 
-        TextView meta = buildMonoTextView(context, 12, 15, Typeface.BOLD);
+        TextView meta = buildMonoTextView(context, 10, 13, Typeface.BOLD);
         meta.setId(R.id.result_meta);
         meta.setTextColor(ContextCompat.getColor(context, R.color.senku_rev03_accent));
         head.addView(meta, new LinearLayout.LayoutParams(
@@ -232,7 +232,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         LinearLayout scoreCluster = new LinearLayout(context);
         scoreCluster.setOrientation(LinearLayout.HORIZONTAL);
         scoreCluster.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        scoreCluster.setPadding(dp(10), 0, 0, 0);
+        scoreCluster.setPadding(dp(8), 0, 0, 0);
         head.addView(scoreCluster, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -241,14 +241,14 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         View scoreBar = new View(context);
         scoreBar.setId(R.id.result_accent_strip);
         scoreCluster.addView(scoreBar, new LinearLayout.LayoutParams(
-            dp(42),
-            dp(4)
+            dp(32),
+            dp(3)
         ));
 
-        TextView score = buildMonoTextView(context, 10, 13, Typeface.BOLD);
+        TextView score = buildMonoTextView(context, 9, 12, Typeface.BOLD);
         score.setId(R.id.result_retrieval_badge);
         score.setTextColor(accentOliveColor);
-        score.setPadding(dp(8), 0, 0, 0);
+        score.setPadding(dp(6), 0, 0, 0);
         scoreCluster.addView(score, new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -258,35 +258,35 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         title.setId(R.id.result_title);
         title.setTextColor(ContextCompat.getColor(context, R.color.senku_text_light));
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        title.setLineSpacing(0, 1.02f);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        title.setLineSpacing(0, 1.00f);
         LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        titleParams.topMargin = dp(7);
+        titleParams.topMargin = dp(5);
         row.addView(title, titleParams);
 
-        TextView section = buildMonoTextView(context, 10, 14, Typeface.NORMAL);
+        TextView section = buildMonoTextView(context, 9, 12, Typeface.NORMAL);
         section.setId(R.id.result_section);
         section.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
         LinearLayout.LayoutParams sectionParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        sectionParams.topMargin = dp(6);
+        sectionParams.topMargin = dp(4);
         row.addView(section, sectionParams);
 
         TextView snippet = new TextView(context);
         snippet.setId(R.id.result_snippet);
         snippet.setTextColor(ContextCompat.getColor(context, R.color.senku_text_muted_light));
-        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        snippet.setLineSpacing(0, 1.08f);
+        snippet.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+        snippet.setLineSpacing(0, 1.02f);
         LinearLayout.LayoutParams snippetParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        snippetParams.topMargin = dp(9);
+        snippetParams.topMargin = dp(6);
         row.addView(snippet, snippetParams);
 
         LinearLayout chips = new LinearLayout(context);
@@ -326,7 +326,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             ViewGroup.LayoutParams.MATCH_PARENT,
             Math.max(1, dp(1))
         );
-        dividerParams.topMargin = dp(18);
+        dividerParams.topMargin = dp(14);
         row.addView(divider, dividerParams);
 
         ComposeView composeView = new ComposeView(context);
@@ -408,7 +408,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             scoreBar.setBackground(buildScoreBarDrawable(score));
             ViewGroup.LayoutParams params = scoreBar.getLayoutParams();
             if (params != null) {
-                params.width = dp(Math.max(24, Math.min(42, Math.round(score * 0.46f))));
+                params.width = dp(Math.max(18, Math.min(32, Math.round(score * 0.34f))));
                 scoreBar.setLayoutParams(params);
             }
         }
@@ -417,7 +417,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private GradientDrawable buildScoreBarDrawable(int score) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setCornerRadius(dp(2));
+        drawable.setCornerRadius(dp(1));
         drawable.setColor(score >= 70 ? accentOliveColor : ContextCompat.getColor(inflater.getContext(), R.color.senku_text_muted_light));
         return drawable;
     }
@@ -833,7 +833,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         StringBuilder builder = new StringBuilder();
         for (String token : tokens) {
             if (builder.length() > 0) {
-                builder.append("  ·  ");
+                builder.append("  \u00b7  ");
             }
             builder.append(token);
         }

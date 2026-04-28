@@ -61,13 +61,13 @@ private enum class EvidenceCardDensity {
 
 internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
     TabletEvidenceVisibilityPolicy(
-        evidencePaneWidthDp = 360,
+        evidencePaneWidthDp = 320,
         landscapeRailDensity = EvidenceRailDensity.Full,
         activeTitleMaxLines = 2,
-        activeSnippetMaxLines = 10,
+        activeSnippetMaxLines = 8,
         portraitCollapsedByDefault = true,
         collapsedTitleMaxLines = 2,
-        collapsedSnippetMaxLines = 5,
+        collapsedSnippetMaxLines = 4,
     )
 
 @Composable
@@ -88,8 +88,8 @@ fun EvidencePane(
             .background(colors.bg1)
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .padding(horizontal = 18.dp, vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
+            .padding(horizontal = 14.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         CrossReferenceSection(
             anchor = anchor,
@@ -131,8 +131,8 @@ fun CollapsibleEvidencePane(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(onClick = onToggleClick)
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    .padding(horizontal = 11.dp, vertical = 9.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -148,8 +148,8 @@ fun CollapsibleEvidencePane(
                     text = "Source evidence & guide connections (${xrefs.size})",
                     modifier = Modifier.weight(1f),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 12.sp,
-                        lineHeight = 16.sp,
+                        fontSize = 11.5.sp,
+                        lineHeight = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                     ),
                     color = colors.ink0,
@@ -165,8 +165,8 @@ fun CollapsibleEvidencePane(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                        .padding(11.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     ActiveEvidenceSection(
                         anchor = anchor,
@@ -219,7 +219,7 @@ private fun ActiveEvidenceSection(
             isTraversalGroup = true
             traversalIndex = 0f
         },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         SectionHeader(
             title = "SOURCE EVIDENCE",
@@ -262,7 +262,7 @@ private fun CollapsedEvidencePreview(
     val previewText = buildCollapsedEvidencePreviewText(anchor)
 
     Column(
-        modifier = modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+        modifier = modifier.padding(horizontal = 11.dp, vertical = 9.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
@@ -282,8 +282,8 @@ private fun CollapsedEvidencePreview(
         Text(
             text = title,
             style = typography.uiBody.copy(
-                fontSize = 13.sp,
-                lineHeight = 17.sp,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
                 fontWeight = FontWeight.SemiBold,
             ),
             color = colors.ink0,
@@ -294,8 +294,8 @@ private fun CollapsedEvidencePreview(
             Text(
                 text = previewText,
                 style = typography.smallBody.copy(
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp,
                 ),
                 color = colors.ink2,
                 maxLines = snippetMaxLines.coerceAtLeast(1),
@@ -334,7 +334,7 @@ private fun CrossReferenceSection(
             isTraversalGroup = true
             traversalIndex = 1f
         },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         SectionHeader(
             title = "CROSS-REFERENCE - $cardCount",
@@ -345,7 +345,7 @@ private fun CrossReferenceSection(
                 count = cardCount,
             ),
         )
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (cardCount == 0) {
                 PlaceholderCard("No guide connections")
             } else {
@@ -398,14 +398,14 @@ private fun ManualEvidenceCard(
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
     val isCompact = density == EvidenceCardDensity.Compact
-    val rowEndPadding = if (isCompact) 14.dp else 12.dp
-    val rowGap = 14.dp
+    val rowEndPadding = if (isCompact) 12.dp else 11.dp
+    val rowGap = 11.dp
     val railWidth = 3.dp
-    val contentVerticalPadding = if (isCompact) 12.dp else 14.dp
-    val contentGap = if (isCompact) 8.dp else 7.dp
+    val contentVerticalPadding = if (isCompact) 10.dp else 12.dp
+    val contentGap = if (isCompact) 6.dp else 6.dp
     val metaColor = if (relation == "ANCHOR") colors.accent else colors.ink2
-    val titleFontSize = if (isCompact) 14.sp else 15.sp
-    val titleLineHeight = if (isCompact) 18.sp else 19.sp
+    val titleFontSize = if (isCompact) 13.sp else 14.sp
+    val titleLineHeight = if (isCompact) 17.sp else 18.sp
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -454,7 +454,7 @@ private fun ManualEvidenceCard(
                 Box(
                     modifier = Modifier
                         .width(railWidth)
-                        .height(96.dp)
+                        .height(84.dp)
                         .background(metaColor),
                 )
                 Column(
@@ -503,7 +503,7 @@ private fun EvidenceCardText(
             .joinToString(" - "),
         style = typography.monoCaps.copy(
             fontSize = 10.sp,
-            lineHeight = 13.sp,
+            lineHeight = 12.sp,
             fontWeight = FontWeight.Medium,
         ),
         color = metaColor,
@@ -526,7 +526,7 @@ private fun EvidenceCardText(
             text = snippet.trim(),
             style = typography.smallBody.copy(
                 fontSize = 12.sp,
-                lineHeight = 17.sp,
+                lineHeight = 16.sp,
                 fontStyle = FontStyle.Italic,
             ),
             color = colors.ink2,
@@ -553,7 +553,7 @@ private fun SectionHeader(
     ) {
         Box(
             modifier = Modifier
-                .width(24.dp)
+                .width(20.dp)
                 .height(1.dp)
                 .background(colors.ink3),
         )
@@ -561,7 +561,7 @@ private fun SectionHeader(
             text = title,
             style = SenkuTheme.typography.monoCaps.copy(
                 fontSize = 10.sp,
-                lineHeight = 13.sp,
+                lineHeight = 12.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = colors.ink2,
@@ -586,10 +586,10 @@ private fun PlaceholderCard(
     ) {
         Text(
             text = text,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp),
+            modifier = Modifier.padding(horizontal = 11.dp, vertical = 12.dp),
             style = SenkuTheme.typography.smallBody.copy(
-                fontSize = 12.sp,
-                lineHeight = 16.sp,
+                fontSize = 11.sp,
+                lineHeight = 15.sp,
             ),
             color = colors.ink3,
         )

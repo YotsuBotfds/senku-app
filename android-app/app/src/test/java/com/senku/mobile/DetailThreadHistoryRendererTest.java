@@ -29,7 +29,7 @@ public final class DetailThreadHistoryRendererTest {
             720
         );
 
-        assertEquals(3, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
+        assertEquals(2, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
     }
 
     @Test
@@ -41,20 +41,20 @@ public final class DetailThreadHistoryRendererTest {
         );
 
         assertEquals(
-            "Q2",
+            "Q2 - FIELD QUESTION",
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 GD-220 -> GD-345",
+            "A2 - ANCHOR GD-220 -> GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
         );
     }
 
     @Test
-    public void statusLabelsUseShortTranscriptTokens() {
-        assertEquals("SRC", DetailThreadHistoryRenderer.compactStatusLabel("source-backed"));
-        assertEquals("REVIEWED", DetailThreadHistoryRenderer.compactStatusLabel("reviewed"));
-        assertEquals("READY", DetailThreadHistoryRenderer.compactStatusLabel("ready"));
+    public void statusLabelsUseScreenshotTranscriptTokens() {
+        assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("source-backed"));
+        assertEquals("CONFIDENT", DetailThreadHistoryRenderer.compactStatusLabel("reviewed"));
+        assertEquals("UNSURE", DetailThreadHistoryRenderer.compactStatusLabel("ready"));
     }
 
     @Test

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -213,10 +212,11 @@ private fun BottomTabItem(
     val colors = SenkuTheme.colors
     val tint = if (selected) colors.accent else colors.ink3
     val verticalRail = layoutMode == BottomTabBarLayoutMode.VERTICAL_RAIL
+    val itemHeight = if (verticalRail) 66.dp else 54.dp
 
     Column(
         modifier = modifier
-            .heightIn(min = if (verticalRail) 58.dp else 48.dp)
+            .height(itemHeight)
             .selectable(
                 selected = selected,
                 onClick = onClick,
@@ -224,12 +224,12 @@ private fun BottomTabItem(
             )
             .padding(horizontal = if (verticalRail) 5.dp else 3.dp, vertical = if (verticalRail) 6.dp else 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(if (verticalRail) 4.dp else 4.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(3.dp, Alignment.CenterVertically),
     ) {
         BottomTabIcon(
             destination = tab.destination,
             tint = tint,
-            modifier = Modifier.size(if (verticalRail) 17.dp else 18.dp),
+            modifier = Modifier.size(if (verticalRail) 18.dp else 19.dp),
         )
         Text(
             text = tab.label,
@@ -242,6 +242,12 @@ private fun BottomTabItem(
             maxLines = if (verticalRail) 2 else 1,
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
+        )
+        Box(
+            modifier = Modifier
+                .width(if (selected) 18.dp else 0.dp)
+                .height(2.dp)
+                .background(if (selected) colors.accent else Color.Transparent),
         )
     }
 }

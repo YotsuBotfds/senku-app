@@ -2,6 +2,7 @@ package com.senku.ui.home
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,11 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.res.dimensionResource
@@ -118,7 +115,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 50.dp,
+                    cardHeight = 54.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -128,7 +125,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 48.dp,
+                    cardHeight = 54.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -186,9 +183,8 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = 3.dp
-    val accentWidth = 2.dp
-    val horizontalPadding = dimensionResource(R.dimen.senku_rev03_space_8)
+    val corner = 6.dp
+    val horizontalPadding = 12.dp
     val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_6)
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
@@ -201,58 +197,48 @@ private fun PhoneCategoryCard(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg0,
+        color = colors.bg1,
         contentColor = colors.ink0,
         shape = RoundedCornerShape(corner),
+        border = BorderStroke(1.dp, colors.hairlineStrong),
         enabled = enabled,
         onClick = onClick,
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(cardHeight),
+                .height(cardHeight)
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .width(accentWidth)
-                    .fillMaxHeight()
+                    .width(20.dp)
+                    .height(2.dp)
                     .background(accent),
             )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text = item.label,
-                    style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 14.sp,
-                        lineHeight = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    ),
-                    color = colors.ink0,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = item.countLabel.uppercase(Locale.US),
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 10.sp,
-                        lineHeight = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.ink2,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(colors.hairline),
-                )
-            }
+            Text(
+                text = item.label,
+                style = SenkuTheme.typography.uiBody.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 17.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = colors.ink0,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = item.countLabel,
+                style = SenkuTheme.typography.uiBody.copy(
+                    fontSize = 12.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                ),
+                color = colors.ink2,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
@@ -275,27 +261,27 @@ private fun TabletCategoryRow(
                     contentDescription = item.contentDescription
                 }
             },
-        color = colors.bg0,
+        color = colors.bg1,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(2.dp),
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, colors.hairlineStrong),
         enabled = enabled,
         onClick = onClick,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 40.dp)
+                .height(40.dp)
                 .padding(
                     horizontal = dimensionResource(R.dimen.senku_rev03_space_8),
-                    vertical = dimensionResource(R.dimen.senku_rev03_space_6),
                 ),
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.senku_rev03_space_8)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier = Modifier
-                    .size(dimensionResource(R.dimen.senku_rev03_space_6))
-                    .clip(CircleShape)
+                    .width(14.dp)
+                    .height(2.dp)
                     .background(accent),
             )
             Text(

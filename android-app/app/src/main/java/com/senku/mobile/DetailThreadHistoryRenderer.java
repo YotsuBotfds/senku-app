@@ -74,11 +74,13 @@ final class DetailThreadHistoryRenderer {
             container.setVisibility(View.GONE);
             return;
         }
+        List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(earlierTurns, state);
         container.setVisibility(View.VISIBLE);
         String previousAnchorGuideId = "";
-        for (int index = 0; index < earlierTurns.size(); index++) {
-            SessionMemory.TurnSnapshot turn = earlierTurns.get(index);
-            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, index + 1);
+        int firstTurnNumber = Math.max(1, earlierTurns.size() - visibleTurns.size() + 1);
+        for (int index = 0; index < visibleTurns.size(); index++) {
+            SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
+            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, firstTurnNumber + index);
             previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
     }
@@ -128,9 +130,6 @@ final class DetailThreadHistoryRenderer {
         }
         if (state.compactPortraitSections) {
             return 2;
-        }
-        if (state.wideLayout) {
-            return 3;
         }
         return 2;
     }
@@ -307,12 +306,12 @@ final class DetailThreadHistoryRenderer {
         int safeTurnNumber = Math.max(1, turnNumber);
         String time = timeForTurn(turn);
         if (userTurn) {
-            return "Q" + safeTurnNumber + time;
+            return "Q" + safeTurnNumber + time + " - FIELD QUESTION";
         }
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         StringBuilder builder = new StringBuilder("A").append(safeTurnNumber).append(time);
         if (!anchorGuideId.isEmpty()) {
-            builder.append(" ");
+            builder.append(" - ANCHOR ");
             String previous = safe(previousAnchorGuideId).trim();
             if (!previous.isEmpty() && !previous.equals(anchorGuideId)) {
                 builder.append(previous).append(" -> ");
@@ -345,13 +344,13 @@ final class DetailThreadHistoryRenderer {
     static String compactStatusLabel(String status) {
         String resolvedStatus = safe(status).trim().toLowerCase(Locale.US);
         if ("source-backed".equals(resolvedStatus)) {
-            return "SRC";
+            return "CONFIDENT";
         }
         if ("reviewed".equals(resolvedStatus)) {
-            return "REVIEWED";
+            return "CONFIDENT";
         }
         if ("ready".equals(resolvedStatus)) {
-            return "READY";
+            return "UNSURE";
         }
         return resolvedStatus.toUpperCase(Locale.US);
     }

@@ -151,18 +151,18 @@ private fun tabletGuidePaperPalette() = GuidePaperPalette()
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 276,
-        answerMaxWidthDp = 486,
-        evidenceRailWidthDp = 344,
-        answerHorizontalPaddingDp = 16,
+        threadRailWidthDp = 236,
+        answerMaxWidthDp = 520,
+        evidenceRailWidthDp = 320,
+        answerHorizontalPaddingDp = 18,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 148,
-        answerMaxWidthDp = 472,
-        evidenceRailWidthDp = 224,
-        answerHorizontalPaddingDp = 10,
+        threadRailWidthDp = 132,
+        answerMaxWidthDp = 456,
+        evidenceRailWidthDp = 208,
+        answerHorizontalPaddingDp = 12,
     )
 
 internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayoutPolicy =
@@ -173,26 +173,26 @@ internal fun tabletReadingLayoutPolicy(isLandscape: Boolean): TabletReadingLayou
 
 internal fun tabletLandscapeDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
-        questionFontSizeSp = 20,
-        questionLineHeightSp = 25,
-        answerFontSizeSp = 14,
-        answerLineHeightSp = 21,
+        questionFontSizeSp = 18,
+        questionLineHeightSp = 23,
+        answerFontSizeSp = 13,
+        answerLineHeightSp = 20,
         stepFontSizeSp = 12,
-        stepLineHeightSp = 17,
+        stepLineHeightSp = 16,
         limitFontSizeSp = 11,
-        limitLineHeightSp = 16,
+        limitLineHeightSp = 15,
     )
 
 internal fun tabletPortraitDetailTypeScalePolicy(): TabletDetailTypeScalePolicy =
     TabletDetailTypeScalePolicy(
-        questionFontSizeSp = 20,
-        questionLineHeightSp = 25,
-        answerFontSizeSp = 14,
-        answerLineHeightSp = 21,
-        stepFontSizeSp = 12,
-        stepLineHeightSp = 17,
-        limitFontSizeSp = 11,
-        limitLineHeightSp = 16,
+        questionFontSizeSp = 17,
+        questionLineHeightSp = 22,
+        answerFontSizeSp = 13,
+        answerLineHeightSp = 19,
+        stepFontSizeSp = 11,
+        stepLineHeightSp = 15,
+        limitFontSizeSp = 10,
+        limitLineHeightSp = 14,
     )
 
 internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailTypeScalePolicy =
@@ -529,7 +529,7 @@ private fun GuidePaperSurface(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val paperPalette = tabletGuidePaperPalette()
-    val horizontalPadding = if (state.isLandscape) 34.dp else 24.dp
+    val horizontalPadding = if (state.isLandscape) 30.dp else 22.dp
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -543,11 +543,11 @@ private fun GuidePaperSurface(
                 .fillMaxWidth()
                 .padding(
                     start = horizontalPadding,
-                    top = 26.dp,
+                    top = 24.dp,
                     end = horizontalPadding,
-                    bottom = 30.dp,
+                    bottom = 26.dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
             content = content,
         )
     }
@@ -585,8 +585,8 @@ private fun GuidePaperHeader(
         Text(
             text = state.guideTitle.trim().ifEmpty { "Guide" },
             style = typography.sectionTitle.copy(
-                fontSize = if (state.isLandscape) 30.sp else 28.sp,
-                lineHeight = if (state.isLandscape) 34.sp else 32.sp,
+                fontSize = if (state.isLandscape) 26.sp else 24.sp,
+                lineHeight = if (state.isLandscape) 31.sp else 29.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
             ),
@@ -675,7 +675,7 @@ private fun TitleBar(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.bg0)
-            .padding(horizontal = 18.dp, vertical = 6.dp),
+            .padding(horizontal = 16.dp, vertical = 5.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         Row(
@@ -984,7 +984,7 @@ private fun AnswerInlineBlock(
                 Box(
                     modifier = Modifier
                         .width(3.dp)
-                        .height(58.dp)
+                        .height(50.dp)
                         .background(if (guideMode) paperPalette.danger else if (content.abstain) colors.danger else colors.warn),
                 )
                 Column(

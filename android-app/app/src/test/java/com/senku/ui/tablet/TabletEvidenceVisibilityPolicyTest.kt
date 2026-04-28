@@ -9,9 +9,9 @@ class TabletEvidenceVisibilityPolicyTest {
     fun tabletLandscapeEvidencePaneKeepsUsefulSourceEvidenceWidth() {
         val policy = tabletEvidenceVisibilityPolicy()
 
-        assertEquals(360, policy.evidencePaneWidthDp)
+        assertEquals(320, policy.evidencePaneWidthDp)
         assertEquals(EvidenceRailDensity.Full, policy.landscapeRailDensity)
-        assertTrue(policy.activeSnippetMaxLines >= 10)
+        assertTrue(policy.activeSnippetMaxLines >= 8)
     }
 
     @Test
@@ -20,7 +20,7 @@ class TabletEvidenceVisibilityPolicyTest {
 
         assertTrue(policy.portraitCollapsedByDefault)
         assertTrue(policy.collapsedTitleMaxLines >= 2)
-        assertTrue(policy.collapsedSnippetMaxLines >= 5)
+        assertTrue(policy.collapsedSnippetMaxLines >= 4)
     }
 
     @Test
