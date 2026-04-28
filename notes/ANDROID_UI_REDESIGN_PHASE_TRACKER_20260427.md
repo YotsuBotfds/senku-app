@@ -6,21 +6,22 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 ## Current Anchor And Proof
 
-- Current pushed anchor: `c06e0c3`
-  (`advance android answer parity wave13`), observed at `HEAD`, `origin/master`,
-  and `origin/HEAD` during this refresh.
+- Current pushed anchor: `b0d8a34`
+  (`advance android mock parity wave14`), observed at `HEAD`, `origin/master`,
+  and `origin/HEAD` after the wave14 implementation push.
 - Current technical proof:
-  `artifacts/ui_state_pack/20260428_020610`.
+  `artifacts/ui_state_pack/20260428_024021`.
   - Status: `pass`, 47 states, 47 pass, 0 fail, 0 platform ANRs.
   - Matrix APK homogeneity: `true`.
   - APK SHA:
-    `0d8a6c6d711d9d4be0c8093c0fb6b82b2cef9341e44cf1c67174a3a08233a779`.
+    `dea572e14f73fa8ee8115205b4beae06bd37be720d33f1c5bd7345be9af197bf`.
   - Model: `gemma-4-e2b-it-litert`.
   - Model SHA:
     `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`.
   - Rotation mismatch count: 0.
-- Local quality gate passed after the wave13 answer, parser, and emergency
-  geometry integration:
+  - Summary generated: `2026-04-28T07:47:37.7006879Z`.
+- Local quality gate passed after the wave14 guide/search/thread/emergency/home
+  integration:
   `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_local_quality_gate.ps1`.
 - Current target mocks: `artifacts/mocks`, 22 PNGs total:
   - home, search, answer, guide, and thread each cover phone portrait, phone
@@ -29,8 +30,9 @@ one write target: `notes/ANDROID_UI_REDESIGN_PHASE_TRACKER_20260427.md`.
 
 Interpretation:
 
-- `20260428_020610` is the current acceptance-grade technical proof pack for
-  state-pack health, APK homogeneity, model identity, and device rotation.
+- `20260428_024021` is the current acceptance-grade
+  technical proof pack for state-pack health, APK homogeneity, model identity,
+  and device rotation.
 - Passing technical proof is not final visual parity. Remaining work is judged
   against `artifacts/mocks` and must cite current screenshots and XML dumps.
 - Earlier diagnostic packs and focused runs are superseded for baseline
@@ -54,7 +56,16 @@ Interpretation:
 - `notes/ANDROID_EMERGENCY_TABLET_POLISH_20260428.md`: worker note for tablet
   emergency geometry. Wave13 applied the narrow portrait overlay candidate, but
   true inline tablet emergency treatment remains a later Compose/tablet phase.
+- Screenshot reviewer verdict carried forward: wave14 technical pack
+  `artifacts/ui_state_pack/20260428_024021` is healthy 47/47, but visual
+  closure still requires a fresh human/reviewer pass against all 22 mocks.
+  Answer remains phone-blocking and tablet-partial; Thread and Emergency need
+  current screenshot review after wave14 polish; Home, Search, and Guide status
+  should be rechecked from the new pack before dispatching more work.
 - `artifacts/mocks`: visual truth for phase closure. Do not modify these files.
+  Inventory inspected during this refresh: 22 PNGs covering Home, Search,
+  Answer, Guide, and Thread across phone/tablet portrait/landscape, plus
+  Emergency phone/tablet portrait only.
 - Existing tracker sections were reconciled into the current phase map below;
   stale latest-proof and older-anchor claims were removed.
 
@@ -63,8 +74,11 @@ Interpretation:
 - Tracker-Planner may edit only this tracker.
 - Do not edit Android source, generated artifacts, `artifacts/mocks`, or
   protected `notes/PLANNER_HANDOFF_*.md` files from this lane.
-- Current `git status --short` after wave13 push is clean except protected
-  untracked `notes/PLANNER_HANDOFF_*.md` files.
+- Current `git status --short` after wave13 push was clean except protected
+  untracked `notes/PLANNER_HANDOFF_*.md` files; during the 2026-04-28 planner
+  refresh, concurrent Android source edits were present across several phase
+  ownership areas. Treat live `git status` output as authoritative before
+  dispatching any implementation slice.
 - Protected `notes/PLANNER_HANDOFF_*.md` files remain untouched and must not be
   staged as part of redesign proof commits.
 - Every implementation worker starts with:
@@ -78,6 +92,35 @@ git diff --stat
 - If a phase needs a file currently dirty under another worker, resequence the
   phase or transfer ownership before writing. Do not open two active
   implementation slices on the same source file.
+
+## Local Validation Before Each Commit
+
+Every implementation or proof commit in this redesign lane must run local
+validation before committing. Use the smallest targeted checks needed for the
+slice, then add screenshot proof for any UI surface touched.
+
+Minimum pre-commit gate:
+
+```powershell
+git status --short
+git diff --check
+cd android-app
+$env:JAVA_HOME='C:\Program Files\Android\Android Studio\jbr'
+.\gradlew.bat --no-daemon :app:testDebugUnitTest --console=plain
+cd ..
+```
+
+UI proof gate before committing a visual phase:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\run_android_local_quality_gate.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_android_ui_state_pack_parallel.ps1 -OutputRoot artifacts\ui_state_pack\<phase_local_proof> -RoleFilter phone_portrait,phone_landscape,tablet_portrait,tablet_landscape -MaxParallelDevices 4
+```
+
+For narrow worker commits, a focused device run is acceptable only when the
+handoff names the device, APK SHA, screenshot path, dump path, and why the
+evidence is diagnostic rather than closure-grade. Final closure still requires
+the full homogeneous four-role pack.
 
 ## Device Matrix And ADB Discipline
 
@@ -102,19 +145,19 @@ Rules:
 
 ## Current Visual Defect Map
 
-Use `artifacts/ui_state_pack/20260428_020610/screenshots` and matching
-`dumps` for fresh comparisons unless a newer phase-specific proof replaces it.
-The visual QA notes used this pack or earlier packs as context; each worker must
-first confirm which gaps still reproduce on the current pack.
+Use `artifacts/ui_state_pack/20260428_024021/screenshots`
+and matching `dumps` for fresh comparisons unless a newer phase-specific proof
+replaces it. The visual QA notes used this pack or earlier packs as context;
+each worker must first confirm which gaps still reproduce on the current pack.
 
-| Family | Current priority | Remaining gap to check against mocks |
-| --- | --- | --- |
-| Answer | Blocking | Screens may still read as provenance/source or old detail-card states instead of compact answer article plus source cards. |
-| Guide | Blocking | Phone guide header/body density, tablet guide sections rail, centered paper page, cross-reference rail count/labels, and raw marker cleanup remain priority checks. |
-| Search | Blocking | Search behavior passes, but result order/content, count/filter copy, compact score markers, and tablet preview composition need mock parity. |
-| Thread | Partial | Transcript is closer, but phone crowding and tablet rail/center proportions need tighter density. |
-| Emergency | Partial | Phone is closer; tablet portrait still needs inline hierarchy rather than a dominant overlay-like danger treatment. No emergency landscape target exists. |
-| Home | Partial | Closest family; remaining work is compact header/status/search/category/recent proportions and bottom chrome clearance. |
+| Family | Phone portrait | Phone landscape | Tablet portrait | Tablet landscape | Overall blocker status |
+| --- | --- | --- | --- | --- | --- |
+| Home | Partial, not blocking: compact header/status/search/category/recent proportions still need mock parity. | Partial, not blocking: landscape spacing and bottom chrome clearance still need mock parity. | Partial, not blocking: tablet rail/content density still needs proof against target. | Partial, not blocking: tablet landscape proportions still need proof against target. | Open polish, not current blocker. |
+| Search | Blocking carried forward: result order/content, count/filter copy, and compact score markers need current proof. | Blocking carried forward: row density and compact labels need current proof. | Blocking carried forward: tablet preview composition and linked-guide handoff need current proof. | Blocking carried forward: preview/row proportions need current proof. | Blocking until a current screenshot review clears P4. |
+| Guide | Blocking carried forward: phone header/body density and raw marker cleanup need proof. | Blocking carried forward: compact reader density and clipping need proof. | Blocking carried forward: sections rail, centered paper, and cross-reference rail need proof. | Blocking carried forward: sections rail, centered paper, and cross-reference rail need proof. | Blocking until a current screenshot review clears P2. |
+| Answer | Blocking: reviewer reports portrait proof/provenance collision with bottom input. | Blocking: reviewer reports header/body clipping in landscape. | Partial, not blocking: answer-first improved, but source/detail layout incomplete. | Partial, not blocking: answer-first improved, but source/detail layout incomplete. | Blocking due phone portrait/landscape. |
+| Thread | Blocking: reviewer reports phone clipping/overlap. | Blocking: reviewer reports phone clipping/overlap. | Blocking: reviewer reports tablet remains answer-detail-first instead of thread transcript hierarchy. | Blocking: reviewer reports tablet remains answer-detail-first instead of thread transcript hierarchy. | Blocking across phone and tablet. |
+| Emergency | Partial, not blocking unless current proof shows bottom collision. | No target mock; do not create emergency landscape acceptance. | Blocking: reviewer reports a narrow red panel over stale background rather than full tablet hierarchy. | No target mock; do not create emergency landscape acceptance. | Blocking due tablet portrait. |
 
 No screenshot item is closed by unit tests alone. Every phase handoff must cite
 target mock(s), current screenshot(s), current XML dump(s), and residual
@@ -124,7 +167,9 @@ mismatches split into content/data, layout/density, and behavior.
 
 The slices below are ordered by current visual risk. Each phase owns only the
 write targets listed for that phase while active. Files outside a phase's write
-targets require resequencing through the owning phase.
+targets require resequencing through the owning phase. If live `git status`
+shows another worker already owns a listed file, hold the phase or transfer
+ownership explicitly before editing.
 
 ### P0 - Planner Evidence Lock
 
@@ -136,10 +181,18 @@ Write ownership:
 
 Status:
 
-- Current anchor and proof reconciled to `c06e0c3` and
-  `artifacts/ui_state_pack/20260428_020610`.
+- Current anchor and proof reconciled to `b0d8a34` and
+  `artifacts/ui_state_pack/20260428_024021`.
 - Android source, generated artifacts, target mocks, and protected handoffs are
   out of scope for this lane.
+
+Remaining planner checklist:
+
+- Keep this tracker aligned to the latest accepted local proof pack.
+- Record screenshot-review verdicts without touching code or generated
+  artifacts.
+- Recheck the dirty worktree before every dispatch because Android source files
+  are actively changing outside this planner lane.
 
 ### P1 - Shared Detail Mode And Shell
 
@@ -149,12 +202,18 @@ Priority:
 
 - First implementation slice if answer/guide screenshots still show source,
   provenance, thread, or old detail modes in place of the target surfaces.
+- Also first owner for shared collisions/clipping if Answer phone, Thread
+  tablet, or Emergency tablet defects require detail XML, tablet shell, or
+  composer geometry.
 
 Primary targets:
 
 - Answer mode selection across all four answer mocks.
 - Guide mode selection across all four guide mocks.
 - Shared detail shell/chrome that affects answer, guide, thread, or emergency.
+- Shared bottom-composer clearance and landscape header/body safe area.
+- Tablet detail hierarchy selection so thread and emergency do not inherit
+  answer-first or stale-background surfaces.
 
 Write ownership:
 
@@ -179,10 +238,20 @@ Proof gate:
   emergency states in every posture touched by shell changes.
 - Answer and guide screenshots must show the intended family surface, not a
   source/provenance substitute.
+- Phone portrait proof must show no content collision with the bottom input.
+- Phone landscape proof must show header/body content fully visible.
+- Tablet thread proof must show transcript hierarchy, not answer-detail-first.
+- Tablet emergency proof must show full tablet hierarchy, not a narrow overlay
+  panel over stale content.
 
 ### P2 - Guide Reader Structure
 
 Owner slice: guide reader lane.
+
+Current status:
+
+- Blocking carried forward from guide visual audits until a current screenshot
+  review clears all four guide targets.
 
 Primary targets:
 
@@ -198,6 +267,13 @@ Remaining slices:
   `[[SECTION]]` markers or mojibake section text.
 - Tablet guide sections rail, centered paper content, and cross-reference rail
   contract.
+
+Current-proof checklist:
+
+- Compare `guideDetailShowsRelatedGuideNavigation` and off-rail cross-reference
+  screenshots/dumps from `20260428_024021`.
+- Split remaining mismatches into parser/content, reader density, and tablet
+  rail/paper/xref layout before assigning code.
 
 Write ownership:
 
@@ -230,12 +306,29 @@ Proof gate:
 
 Owner slice: answer/detail content lane.
 
+Current status:
+
+- Blocking on phone portrait and phone landscape per latest screenshot review.
+- Tablet answer is partial, not blocking, but source/detail layout remains
+  incomplete versus the target mocks.
+
 Primary targets:
 
 - `answer-phone-portrait.png`
 - `answer-phone-landscape.png`
 - `answer-tablet-portrait.png`
 - `answer-tablet-landscape.png`
+
+Remaining checklist:
+
+- Phone portrait: remove proof/provenance collision with the bottom input while
+  preserving answer article priority.
+- Phone landscape: fix header/body clipping and keep the true split answer
+  state visible.
+- Tablet portrait/landscape: keep answer-first improvement and complete the
+  source/detail stack proportions.
+- Reconfirm source/provenance states stay distinct in dumps after density
+  changes.
 
 Write ownership:
 
@@ -272,6 +365,11 @@ Proof gate:
 
 Owner slice: search lane.
 
+Current status:
+
+- Blocking carried forward until a current screenshot review clears P4 across
+  all four search mocks.
+
 Primary targets:
 
 - `search-phone-portrait.png`
@@ -296,10 +394,18 @@ Proof gate:
 - All four search mocks reviewed.
 - XML dumps retain query `rain shelter`, result count `4`, timing `12ms`,
   compact score/result labels, and stable linked-guide handoff behavior.
+- Before committing, include screenshot/dump proof for search results and
+  browse linked-guide handoff in each posture touched.
 
 ### P5 - Thread Transcript Density
 
 Owner slice: thread/detail content lane.
+
+Current status:
+
+- Blocking on phone because screenshots still clip or overlap.
+- Blocking on tablet because the surface still reads answer-detail-first rather
+  than thread transcript hierarchy.
 
 Primary targets:
 
@@ -307,6 +413,15 @@ Primary targets:
 - `thread-phone-landscape.png`
 - `thread-tablet-portrait.png`
 - `thread-tablet-landscape.png`
+
+Remaining checklist:
+
+- Phone portrait/landscape: resolve clipping/overlap while preserving composer
+  focus and transcript order.
+- Tablet portrait/landscape: make the transcript the primary hierarchy; rails
+  should support the thread, not make it read as an answer detail.
+- Re-run thread screenshots and dumps after any `ThreadRail.kt` or renderer
+  change.
 
 Write ownership:
 
@@ -329,6 +444,12 @@ Proof gate:
 ### P6 - Emergency Portrait Hierarchy
 
 Owner slice: emergency/detail content lane.
+
+Current status:
+
+- Blocking on tablet portrait per latest screenshot review.
+- Phone portrait remains partial and must be rechecked for bottom collision.
+- No emergency landscape target exists; do not add one as acceptance evidence.
 
 Primary targets:
 
@@ -358,11 +479,18 @@ Proof gate:
 - Confirm four ordered immediate actions, one evidence/provenance card, quiet
   composer, and no bottom collision.
 - Confirm at least two negative controls stay non-emergency.
+- Tablet portrait must become a full tablet hierarchy instead of a narrow red
+  panel over stale background content.
 - Do not add emergency landscape acceptance.
 
 ### P7 - Home And Shared App Chrome Polish
 
 Owner slice: shell/home integrator.
+
+Current status:
+
+- Partial, not current blocker, but all four home mocks remain open for final
+  proportion and chrome polish.
 
 Primary targets:
 
@@ -397,6 +525,8 @@ Proof gate:
 - All four home mocks reviewed.
 - Verify status/search/category/recent order, bottom-nav clearance, and
   recent-row density.
+- Recheck Home after Search or shared chrome changes because P4/P7 can affect
+  the same app-level layout.
 
 ### P8 - Global Mock-Parity Closure
 
@@ -433,14 +563,18 @@ Closure criteria:
 ## Dispatch Priority
 
 1. P0: keep tracker/evidence lock current.
-2. P1: fix family mode selection and shared detail shell if current screenshots
-   still show source/provenance/thread substitution.
-3. P2/P3: close guide reader and answer article/source density; run in parallel
-   only if neither needs the P1 shared lock.
-4. P4: close search rows, data/order, and tablet preview parity.
-5. P5/P6: tighten thread density and emergency portrait hierarchy.
-6. P7: final home/shared chrome polish.
-7. P8: full homogeneous four-role closure and 22-mock review.
+2. P1: claim shared detail shell work needed for bottom-input collisions,
+   landscape clipping, tablet thread hierarchy, or tablet emergency stale
+   background.
+3. P3: close Answer phone blocking issues first, then tablet source/detail
+   incompleteness.
+4. P5: close Thread phone clipping/overlap and tablet transcript hierarchy.
+5. P6: close Emergency tablet portrait hierarchy; keep emergency landscape out
+   of acceptance scope.
+6. P2/P4: re-review and close carried-forward Guide and Search blockers,
+   running in parallel only when live write ownership does not overlap P1/P7.
+7. P7: final Home/shared chrome polish after Search and detail surfaces settle.
+8. P8: full homogeneous four-role closure and 22-mock review.
 
 ## Non-Negotiables
 
