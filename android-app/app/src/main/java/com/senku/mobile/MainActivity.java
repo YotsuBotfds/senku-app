@@ -76,7 +76,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
-    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
+    private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 82;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
     private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 72;
     private static final int MANUAL_HOME_RECENT_ROW_GAP_DP = 10;
@@ -1804,14 +1804,14 @@ public final class MainActivity extends AppCompatActivity {
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(isTabletSearchLayout() ? 12 : 12f);
+            button.setTextSize(isTabletSearchLayout() ? 16 : 12f);
             button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
-        if (manualHomeShell && !isTabletSearchLayout()) {
+        if (manualHomeShell) {
             int minimumHeight = resolveManualHomeRecentThreadMinimumHeightDp(
                 isTabletSearchLayout(),
                 isLandscapePhoneLayout(),
@@ -1858,8 +1858,11 @@ public final class MainActivity extends AppCompatActivity {
         boolean landscapePhoneLayout,
         boolean manualHomeShell
     ) {
-        if (!manualHomeShell || tabletSearchLayout) {
+        if (!manualHomeShell) {
             return 0;
+        }
+        if (tabletSearchLayout) {
+            return 100;
         }
         return MANUAL_HOME_RECENT_ROW_HEIGHT_DP;
     }
@@ -1884,7 +1887,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean compactPhoneHome
     ) {
         if (tabletSearchLayout) {
-            return 4;
+            return 12;
         }
         if (manualHomeShell) {
             return 7;
@@ -3524,7 +3527,7 @@ public final class MainActivity extends AppCompatActivity {
         boolean landscapeTabletLayout
     ) {
         if (landscapeTabletLayout || tabletPortraitLayout) {
-            return CategoryShelfLayoutMode.PHONE_GRID;
+            return CategoryShelfLayoutMode.TABLET_GRID;
         }
         return CategoryShelfLayoutMode.PHONE_GRID;
     }
@@ -4337,7 +4340,7 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText("HOME SENKU \u2022 Field manual \u2022 ed.2");
+            homeChromeTitleText.setText("HOME SENKU \u2022 Field manual \u2022 edition 2");
             return;
         }
         String cleanQuery = safe(query).trim();
@@ -4345,9 +4348,7 @@ public final class MainActivity extends AppCompatActivity {
             homeChromeTitleText.setText("SEARCH SENKU");
             return;
         }
-        homeChromeTitleText.setText(isReviewSearchQuery(cleanQuery)
-            ? "SEARCH '" + cleanQuery + "'"
-            : "SEARCH " + cleanQuery);
+        homeChromeTitleText.setText("SEARCH " + cleanQuery);
     }
 
     private void updateTabletSearchPreview() {

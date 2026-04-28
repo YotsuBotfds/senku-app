@@ -14,6 +14,8 @@ class ThreadRailPolicyTest {
     fun threadRailToolbarStaysOutOfThreadModeMockRail() {
         assertEquals(false, threadRailShouldShowToolbar(guideMode = false))
         assertEquals(true, threadRailShouldShowToolbar(guideMode = true))
+        assertEquals(false, threadRailShouldShowSourceSectionHeader(guideMode = false))
+        assertEquals(true, threadRailShouldShowSourceSectionHeader(guideMode = true))
     }
 
     @Test
@@ -182,6 +184,16 @@ class ThreadRailPolicyTest {
         assertEquals(
             listOf("GD-345", "GD-132", "GD-220"),
             threadRailVisibleSources(listOf(extra, anchor, rainShelter), guideMode = true).map { it.id },
+        )
+    }
+
+    @Test
+    fun threadRailThreadModeDoesNotFallBackToUnrelatedSupportSources() {
+        val unrelated = SourceState("extra", "GD-132", "Foundry & Metal Casting", isAnchor = false, isSelected = false)
+
+        assertEquals(
+            emptyList<String>(),
+            threadRailVisibleSources(listOf(unrelated), guideMode = false).map { it.id },
         )
     }
 

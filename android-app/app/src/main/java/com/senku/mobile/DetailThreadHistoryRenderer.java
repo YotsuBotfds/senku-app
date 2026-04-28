@@ -410,16 +410,9 @@ final class DetailThreadHistoryRenderer {
         if (userTurn) {
             return "Q" + safeTurnNumber + time + " \u00B7 FIELD QUESTION";
         }
-        String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
         StringBuilder builder = new StringBuilder("A")
             .append(safeTurnNumber)
             .append(time);
-        String anchorLabel = anchorGuideId;
-        if (!anchorLabel.isEmpty()) {
-            builder.append(" \u00B7 ");
-            builder.append("ANCHOR ");
-            builder.append(anchorLabel);
-        }
         return builder.toString();
     }
 

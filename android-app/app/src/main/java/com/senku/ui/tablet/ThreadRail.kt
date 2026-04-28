@@ -45,6 +45,8 @@ internal fun threadRailSourceRowMinHeightDp(): Int = 38
 
 internal fun threadRailShouldShowToolbar(guideMode: Boolean): Boolean = guideMode
 
+internal fun threadRailShouldShowSourceSectionHeader(guideMode: Boolean): Boolean = guideMode
+
 internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
     if (guideMode) "SEC $index" else "Q$index"
 
@@ -233,8 +235,7 @@ internal fun threadRailVisibleSources(sources: List<SourceState>, guideMode: Boo
         return visibleSources.sortedByDescending { threadRailSourceContextPriority(it) }
     }
     val deterministicThreadIds = setOf("GD-220", "GD-345")
-    val deterministicSupport = visibleSources.filter { it.id.uppercase() in deterministicThreadIds }
-    return deterministicSupport.ifEmpty { visibleSources }
+    return visibleSources.filter { it.id.uppercase() in deterministicThreadIds }
 }
 
 private fun String.isConfusingSourceFallbackTitle(): Boolean =
@@ -311,6 +312,7 @@ fun ThreadRail(
         RailSection(
             label = if (guideMode) guideLabels.referenceLabel else "SOURCES",
             count = visibleSources.size,
+            showHeader = threadRailShouldShowSourceSectionHeader(guideMode),
         ) {
             if (visibleSources.isEmpty()) {
                 PlaceholderText(if (guideMode) guideLabels.emptyReferenceLabel else "No sources yet.")
@@ -377,6 +379,7 @@ private fun Toolbar(
 private fun RailSection(
     label: String,
     count: Int,
+    showHeader: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = SenkuTheme.colors
@@ -384,26 +387,28 @@ private fun RailSection(
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                HorizontalDivider(
-                    modifier = Modifier.width(14.dp),
-                    thickness = 1.dp,
-                    color = colors.hairlineStrong,
-                )
-                Text(
-                    text = threadRailSectionTitle(label, count),
-                    style = SenkuTheme.typography.monoCaps.copy(
-                        fontSize = 9.5.sp,
-                        lineHeight = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    color = colors.ink2,
-                    maxLines = 1,
-                )
+            if (showHeader) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    HorizontalDivider(
+                        modifier = Modifier.width(14.dp),
+                        thickness = 1.dp,
+                        color = colors.hairlineStrong,
+                    )
+                    Text(
+                        text = threadRailSectionTitle(label, count),
+                        style = SenkuTheme.typography.monoCaps.copy(
+                            fontSize = 9.5.sp,
+                            lineHeight = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = colors.ink2,
+                        maxLines = 1,
+                    )
+                }
             }
             content()
         },

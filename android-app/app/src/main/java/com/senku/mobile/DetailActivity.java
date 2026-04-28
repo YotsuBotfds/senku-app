@@ -179,7 +179,7 @@ public final class DetailActivity extends AppCompatActivity {
     private LinearLayout inlineThreadContainer;
     private LinearLayout threadContainer;
     private View sourcesPanel;
-    private View sourcesProofStamp;
+    private TextView sourcesProofStamp;
     private View sourcesProofDivider;
     private TextView sourcesTitleText;
     private TextView sourcesSubtitle;
@@ -1799,6 +1799,23 @@ public final class DetailActivity extends AppCompatActivity {
             : TabletDetailMode.Answer;
     }
 
+    static String buildTabletAnswerGuideModeSummary(String guideId, String threadTopic) {
+        String cleanGuideId = safe(guideId).trim();
+        if (!cleanGuideId.isEmpty()) {
+            return "Answer source: " + cleanGuideId;
+        }
+        String cleanTopic = safe(threadTopic).trim();
+        return cleanTopic.isEmpty() ? "Answer context kept" : "Answer context kept: " + cleanTopic;
+    }
+
+    static String buildTabletAnswerGuideModeAnchorLabel(boolean threadDetailRoute) {
+        return threadDetailRoute ? "Thread sources" : "Sources";
+    }
+
+    static String buildDetailSourcesProofStampLabel() {
+        return "SOURCE GUIDES";
+    }
+
     private String buildTabletGuideModeLabel(SearchResult activeSource) {
         if (answerMode) {
             if (isCurrentThreadDetailRoute()) {
@@ -1815,21 +1832,14 @@ public final class DetailActivity extends AppCompatActivity {
                 return "Sources in thread - " + countDistinctTabletThreadSources(turnBindings);
             }
             String guideId = safe(activeSource == null ? null : activeSource.guideId).trim();
-            if (!guideId.isEmpty()) {
-                return "Answer source selected: " + guideId;
-            }
-            String threadTopic = buildTabletThreadTopicTitle(turnBindings);
-            return threadTopic.isEmpty() ? "Thread context kept" : "Thread context kept: " + threadTopic;
+            return buildTabletAnswerGuideModeSummary(guideId, buildTabletThreadTopicTitle(turnBindings));
         }
         return safe(currentGuideModeSummary);
     }
 
     private String buildTabletGuideModeAnchorLabel(SearchResult activeSource) {
         if (answerMode) {
-            if (isCurrentThreadDetailRoute()) {
-                return "Thread sources";
-            }
-            return "Proof rail";
+            return buildTabletAnswerGuideModeAnchorLabel(isCurrentThreadDetailRoute());
         }
         return safe(currentGuideModeAnchorLabel);
     }
@@ -3095,6 +3105,9 @@ public final class DetailActivity extends AppCompatActivity {
                 sourcesPanel.setVisibility(View.GONE);
                 clearProvenancePanel();
                 return;
+            }
+            if (sourcesProofStamp != null) {
+                sourcesProofStamp.setText(buildDetailSourcesProofStampLabel());
             }
             if (shouldHideSourcesPanelForEmergencySurface(
                 isEmergencyPortraitSurface(),

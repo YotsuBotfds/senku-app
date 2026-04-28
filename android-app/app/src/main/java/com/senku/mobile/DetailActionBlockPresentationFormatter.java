@@ -22,7 +22,7 @@ final class DetailActionBlockPresentationFormatter {
     static final String EMERGENCY_ACTION_HEADING_PREFIX = "IMMEDIATE ACTIONS \u00b7 ";
     static final int EMERGENCY_DISTANCE_HIGHLIGHT_COLOR = 0xFFC4704B;
     private static final int MAX_EMERGENCY_PORTRAIT_ACTIONS = 4;
-    private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 17;
+    private static final int EMERGENCY_ACTION_BADGE_SIZE_DP = 18;
 
     enum ActionBlockKind {
         DO_FIRST,
@@ -227,7 +227,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout row = new LinearLayout(context);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, dp(4), 0, dp(4));
+        row.setPadding(0, dp(5), 0, dp(5));
         LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -249,7 +249,7 @@ final class DetailActionBlockPresentationFormatter {
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(8), 0, 0, 0);
+        content.setPadding(dp(10), 0, 0, 0);
 
         TextView title = new TextView(context);
         title.setText(styleEmergencyMinimumDistance(action.title));
@@ -371,16 +371,7 @@ final class DetailActionBlockPresentationFormatter {
             "The guide lists the current owner.",
             "GD-132 lists current owner."
         );
-        if (isProofAdjacentEmergencyOwnerCopy(detail)) {
-            return "";
-        }
         return detail;
-    }
-
-    private static boolean isProofAdjacentEmergencyOwnerCopy(String text) {
-        String normalized = safe(text).trim().toLowerCase(Locale.US);
-        return "gd-132 lists current owner.".equals(normalized)
-            || "gd-132 lists current owner".equals(normalized);
     }
 
     private static int firstSentenceBoundary(String text) {

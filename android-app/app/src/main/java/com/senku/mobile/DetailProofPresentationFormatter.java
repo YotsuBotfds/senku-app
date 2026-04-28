@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 final class DetailProofPresentationFormatter {
-    static final String MATCH_TYPE_LABEL = "TYPE";
+    static final String MATCH_TYPE_LABEL = "MATCH";
 
     static final class State {
         final String routeValue;
@@ -88,20 +88,17 @@ final class DetailProofPresentationFormatter {
     }
 
     private String text(int resId) {
-        if (context != null) {
-            return context.getString(resId);
-        }
         if (resId == R.string.detail_external_review_proof_route) {
-            return "Route";
+            return "Match";
         }
         if (resId == R.string.detail_external_review_proof_backend) {
-            return "Backend";
+            return "Engine";
         }
         if (resId == R.string.detail_external_review_proof_evidence) {
-            return "Evidence";
+            return "Sources";
         }
         if (resId == R.string.detail_external_review_proof_lead) {
-            return "Lead";
+            return "Guide";
         }
         if (resId == R.string.detail_external_review_proof_section) {
             return "Section";
@@ -113,16 +110,16 @@ final class DetailProofPresentationFormatter {
             return "Review";
         }
         if (resId == R.string.detail_external_review_proof_card_guide) {
-            return "Card guide";
+            return "Anchor";
         }
         if (resId == R.string.detail_external_review_proof_reviewed_sources) {
-            return "Reviewed sources";
+            return "Related";
         }
         if (resId == R.string.detail_external_review_proof_corpus) {
-            return "Corpus";
+            return "Library";
         }
         if (resId == R.string.detail_external_review_proof_verify) {
-            return "Verify";
+            return "Check";
         }
         if (resId == R.string.detail_external_review_no_citations_value) {
             return "No guide citations attached yet";
@@ -142,7 +139,7 @@ final class DetailProofPresentationFormatter {
         if (resId == R.string.detail_loop4_proof_revision) {
             return "Revision";
         }
-        return "";
+        return context == null ? "" : readerFacingProofText(context.getString(resId));
     }
 
     private int color(int resId) {
@@ -784,6 +781,8 @@ final class DetailProofPresentationFormatter {
     }
 
     private static String readerFacingProofText(String value) {
-        return safe(value).replaceAll("(?i)proof\\s+rail", "sources");
+        return safe(value)
+            .replaceAll("(?i)proof\\s+rail", "sources")
+            .replaceAll("(?i)\\bproof\\b", "sources");
     }
 }

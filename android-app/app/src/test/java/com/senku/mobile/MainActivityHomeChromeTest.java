@@ -126,11 +126,11 @@ public final class MainActivityHomeChromeTest {
             MainActivity.resolveCategoryShelfLayoutMode(true, false, false)
         );
         assertEquals(
-            CategoryShelfLayoutMode.PHONE_GRID,
+            CategoryShelfLayoutMode.TABLET_GRID,
             MainActivity.resolveCategoryShelfLayoutMode(false, true, false)
         );
         assertEquals(
-            CategoryShelfLayoutMode.PHONE_GRID,
+            CategoryShelfLayoutMode.TABLET_GRID,
             MainActivity.resolveCategoryShelfLayoutMode(false, false, true)
         );
     }
@@ -182,10 +182,11 @@ public final class MainActivityHomeChromeTest {
     public void manualHomeRecentRowsUseCompactPhoneDensityForThreeRows() {
         assertEquals(72, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(false, false, true));
         assertEquals(72, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(false, true, true));
-        assertEquals(0, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(true, false, true));
+        assertEquals(100, MainActivity.resolveManualHomeRecentThreadMinimumHeightDp(true, false, true));
         assertEquals(10, MainActivity.resolveManualHomeRecentThreadGapDp(false, true, true));
         assertEquals(7, MainActivity.resolveManualHomeRecentThreadVerticalPaddingDp(false, true, true));
         assertEquals(10, MainActivity.resolveManualHomeRecentThreadGapDp(true, true, false));
+        assertEquals(12, MainActivity.resolveManualHomeRecentThreadVerticalPaddingDp(true, true, false));
     }
 
     @Test
@@ -252,7 +253,7 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
         assertEquals(64, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
         assertEquals(136, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
-        assertEquals(116, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
+        assertEquals(172, MainActivity.resolveTabletManualHomeCategoryShelfMinimumHeightDp(6));
     }
 
     @Test

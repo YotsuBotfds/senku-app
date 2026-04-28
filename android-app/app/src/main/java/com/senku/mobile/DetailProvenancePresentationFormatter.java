@@ -71,21 +71,21 @@ final class DetailProvenancePresentationFormatter {
     }
 
     String buildPhoneProvenanceRegionDescription(SearchResult source, String entryValue, String sectionHeading) {
-        String landmark = context.getString(R.string.detail_a11y_landmark_provenance);
+        String landmark = readerFacingSourceText(text(R.string.detail_a11y_landmark_provenance));
         String resolvedEntryValue = safe(entryValue).trim();
         if (source == null || resolvedEntryValue.isEmpty()) {
-            return landmark + ". " + context.getString(R.string.detail_a11y_provenance_none);
+            return landmark + ". " + readerFacingSourceText(text(R.string.detail_a11y_provenance_none));
         }
         String section = trimHeaderLabel(safe(sectionHeading).trim());
         StringBuilder builder = new StringBuilder();
         builder.append(landmark);
         builder.append(". ");
-        builder.append(context.getString(R.string.detail_provenance_title));
+        builder.append(readerFacingSourceText(text(R.string.detail_provenance_title)));
         builder.append(' ');
         builder.append(resolvedEntryValue);
         if (!section.isEmpty()) {
             builder.append(". ");
-            builder.append(context.getString(R.string.detail_external_review_proof_section));
+            builder.append(readerFacingSourceText(text(R.string.detail_external_review_proof_section)));
             builder.append(' ');
             builder.append(section);
         }
@@ -109,7 +109,7 @@ final class DetailProvenancePresentationFormatter {
     String buildProvenanceOpenButtonContentDescription(String sourceLabel) {
         String resolvedSourceLabel = safe(sourceLabel).trim();
         return resolvedSourceLabel.isEmpty()
-            ? context.getString(R.string.detail_provenance_open)
+            ? readerFacingSourceText(text(R.string.detail_provenance_open))
             : "Open full guide: " + resolvedSourceLabel;
     }
 
@@ -151,6 +151,35 @@ final class DetailProvenancePresentationFormatter {
 
     private static boolean isVisible(View view) {
         return view != null && view.getVisibility() == View.VISIBLE;
+    }
+
+    private String text(int resId) {
+        if (context == null) {
+            if (resId == R.string.detail_a11y_landmark_provenance) {
+                return "Sources";
+            }
+            if (resId == R.string.detail_a11y_provenance_none) {
+                return "No source entry selected";
+            }
+            if (resId == R.string.detail_provenance_title) {
+                return "Source entry";
+            }
+            if (resId == R.string.detail_external_review_proof_section) {
+                return "Section";
+            }
+            if (resId == R.string.detail_provenance_open) {
+                return "Open full guide";
+            }
+            return "";
+        }
+        return context.getString(resId);
+    }
+
+    private static String readerFacingSourceText(String text) {
+        return safe(text)
+            .replaceAll("(?i)\\bprovenance\\b", "Sources")
+            .replaceAll("(?i)proof\\s+rail", "sources")
+            .replaceAll("(?i)\\bproof\\b", "sources");
     }
 
     private static String safe(String text) {

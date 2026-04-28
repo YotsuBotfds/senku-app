@@ -19,16 +19,16 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:layout_width="58dp"
+        android:layout_width="72dp"
         android:layout_height="match_parent"
         android:background="@color/senku_rev03_bg_0"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="12dp">
+        android:paddingTop="20dp">
 
         <TextView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/bg_manual_home_nav_shell"
             android:gravity="center"
             android:includeFontPadding="false"
@@ -45,8 +45,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:contentDescription="@string/browse_guides_button"
                 android:src="@drawable/ic_home_library"
                 android:tint="@color/senku_rev03_accent" />
@@ -72,8 +72,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:contentDescription="@string/ask_button"
                 android:src="@drawable/ic_home_ask"
                 android:tint="@color/senku_rev03_ink_2" />
@@ -97,8 +97,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:contentDescription="@string/bottom_tab_pins"
                 android:src="@drawable/ic_home_saved"
                 android:tint="@color/senku_rev03_ink_2" />
@@ -128,11 +128,11 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="54dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp">
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp">
 
             <TextView
                 android:id="@+id/home_chrome_title"
@@ -143,7 +143,7 @@
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:text="Home  Senku  &#8226;  Field manual &#8226; ed.2"
+                android:text="HOME  SENKU  &#8226; Field manual &#8226; edition 2"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_1"
                 android:textStyle="bold" />
@@ -156,7 +156,8 @@
                 android:text="754 guides"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ScrollView
@@ -166,9 +167,9 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:fillViewport="true"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:paddingBottom="8dp"
+            android:paddingStart="54dp"
+            android:paddingEnd="30dp"
+            android:paddingBottom="18dp"
             android:scrollbars="none">
 
             <LinearLayout
@@ -176,12 +177,13 @@
                 android:layout_height="match_parent"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:paddingTop="2dp">
+                android:paddingTop="18dp">
 
                 <LinearLayout
-                    android:layout_width="432dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="14dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_weight="1.35"
                     android:orientation="vertical">
 
                     <TextView
@@ -191,6 +193,7 @@
                         android:text="Field manual"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_rev03_ink_0"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -200,17 +203,18 @@
                         android:includeFontPadding="false"
                         android:text="754 guides &#8226; 12 categories &#8226; ready offline &#8226; ed. 2"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_rev03_ink_1" />
+                        android:textColor="@color/senku_rev03_ink_1"
+                        android:textSize="16sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="26dp"
-                        android:layout_marginTop="7dp"
+                        android:layout_height="38dp"
+                        android:layout_marginTop="28dp"
                         android:background="@drawable/bg_manual_home_status"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp">
+                        android:paddingStart="18dp"
+                        android:paddingEnd="18dp">
 
                         <TextView
                             android:id="@+id/status_text"
@@ -225,6 +229,7 @@
                             android:text="@string/status_starting"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/senku_rev03_ok"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -235,25 +240,26 @@
                             android:text="754 GUIDES &#8226; ED.2 &#8226; 184 MB"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/senku_rev03_ink_2"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="29dp"
-                        android:layout_marginTop="3dp"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="34dp"
                         android:addStatesFromChildren="true"
                         android:background="@drawable/bg_manual_home_search"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp">
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp">
 
                         <ImageView
-                            android:layout_width="17dp"
-                            android:layout_height="17dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:contentDescription="@string/search_input_description"
-                            android:padding="2dp"
+                            android:padding="3dp"
                             android:src="@drawable/ic_search_magnifier"
                             android:tint="@color/senku_rev03_accent" />
 
@@ -272,16 +278,19 @@
                             android:imeOptions="actionSearch"
                             android:inputType="text"
                             android:maxLines="1"
+                            android:includeFontPadding="false"
+                            android:minHeight="0dp"
                             android:padding="0dp"
                             android:textColor="@color/senku_rev03_ink_0"
-                            android:textColorHint="@color/senku_rev03_ink_2" />
+                            android:textColorHint="@color/senku_rev03_ink_2"
+                            android:textSize="17sp" />
                     </LinearLayout>
 
                     <HorizontalScrollView
                         android:id="@+id/search_suggestions_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="28dp"
                         android:fadingEdge="horizontal"
                         android:fadingEdgeLength="24dp"
                         android:scrollbars="none"
@@ -538,13 +547,14 @@
 
                 <LinearLayout
                     android:id="@+id/recent_threads_section"
-                    android:layout_width="300dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="0.95"
                     android:background="@drawable/bg_tablet_home_recent_row"
                     android:orientation="vertical"
-                    android:paddingStart="14dp"
-                    android:paddingTop="12dp"
-                    android:paddingEnd="14dp"
+                    android:paddingStart="30dp"
+                    android:paddingTop="34dp"
+                    android:paddingEnd="30dp"
                     android:paddingBottom="12dp"
                     android:visibility="gone">
 
@@ -614,16 +624,16 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:background="@color/senku_rev03_bg_0"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp">
+                android:paddingStart="28dp"
+                android:paddingEnd="28dp">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:contentDescription="@string/search_input_description"
                     android:src="@drawable/ic_search_magnifier"
                     android:tint="@color/senku_rev03_accent" />
@@ -641,6 +651,7 @@
                     android:text="Search guide titles, IDs, field notes..."
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_ink_0"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -652,7 +663,7 @@
                     android:text="0 RESULTS"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_rev03_accent"
-                    android:textSize="9sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -669,12 +680,12 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="184dp"
+                    android:layout_width="250dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingStart="14dp"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="10dp">
+                    android:paddingStart="24dp"
+                    android:paddingTop="24dp"
+                    android:paddingEnd="22dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -684,13 +695,13 @@
                         android:text="FILTER &#8226; CATEGORY"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="9sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="9dp"
+                        android:layout_marginTop="20dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -700,12 +711,12 @@
                         android:text="Shelter (12)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="12dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -715,12 +726,12 @@
                         android:text="Water (4)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="12dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -730,12 +741,12 @@
                         android:text="Fire (3)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="12dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -745,24 +756,24 @@
                         android:text="Survival (8)"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
+                        android:layout_marginTop="26dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
                         android:text="WINDOW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="9sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="9dp"
+                        android:layout_marginTop="20dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -772,12 +783,12 @@
                         android:text="Immediate"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="12dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -787,12 +798,12 @@
                         android:text="Short"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="12dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -802,12 +813,12 @@
                         android:text="Long"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="12dp"
                         android:button="@drawable/bg_search_filter_checkbox"
                         android:clickable="false"
                         android:focusable="false"
@@ -817,7 +828,7 @@
                         android:text="Mixed"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="9sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <View
@@ -829,8 +840,8 @@
                     android:id="@+id/results_list"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="18dp"
-                    android:layout_marginEnd="18dp"
+                    android:layout_marginStart="36dp"
+                    android:layout_marginEnd="36dp"
                     android:layout_weight="1"
                     android:clipToPadding="false"
                     android:contentDescription="@string/results_list_description"
@@ -839,15 +850,15 @@
 
                 <LinearLayout
                     android:id="@+id/tablet_search_preview_rail"
-                    android:layout_width="256dp"
+                    android:layout_width="340dp"
                     android:layout_height="match_parent"
                     android:background="@color/senku_rev03_bg_1"
                     android:clickable="true"
                     android:focusable="true"
                     android:orientation="vertical"
-                    android:paddingStart="13dp"
-                    android:paddingTop="12dp"
-                    android:paddingEnd="13dp">
+                    android:paddingStart="28dp"
+                    android:paddingTop="30dp"
+                    android:paddingEnd="28dp">
 
                     <TextView
                         android:id="@+id/tablet_search_preview_kicker"
@@ -858,52 +869,52 @@
                         android:text="PREVIEW"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="9sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tablet_search_preview_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="24dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_rev03_ink_0"
-                        android:textSize="16sp"
+                        android:textSize="22sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tablet_search_preview_meta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="9dp"
+                        android:layout_marginTop="18dp"
                         android:fontFamily="monospace"
                         android:letterSpacing="0.08"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
-                        android:textSize="9sp"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="9dp"
+                        android:layout_marginTop="18dp"
                         android:background="@color/senku_rev03_hairline_strong" />
 
                     <TextView
                         android:id="@+id/tablet_search_preview_body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="22dp"
                         android:lineSpacingExtra="2dp"
                         android:maxLines="4"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/senku_rev03_ink_1"
-                        android:textSize="12sp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="24dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
                         android:text="Tap to open"

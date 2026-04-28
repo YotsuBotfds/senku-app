@@ -282,8 +282,8 @@ internal fun tabletThreadRailWidthDp(
     guideMode: Boolean,
 ): Int =
     when {
-        guideMode && isLandscape -> 196
-        guideMode -> 216
+        guideMode && isLandscape -> 316
+        guideMode -> 330
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
     }
 
@@ -305,7 +305,10 @@ internal fun tabletGuidePaperBottomPaddingDp(isLandscape: Boolean): Int =
     if (isLandscape) 28 else 46
 
 internal fun tabletGuideReferenceRailWidthDp(isLandscape: Boolean): Int =
-    if (isLandscape) 392 else 0
+    if (isLandscape) 424 else 0
+
+internal fun tabletGuideReferenceHeaderTitle(count: Int): String =
+    "${tabletGuideNavigationLabels().referenceLabel} \u00B7 ${count.coerceAtLeast(0)}"
 
 internal fun tabletGuideNavigationLabels(): TabletGuideNavigationLabels =
     TabletGuideNavigationLabels(
@@ -942,7 +945,7 @@ private fun GuideReferencePane(
                 color = colors.ink3,
             )
             Text(
-                text = "CROSS-REFERENCE - ${xrefs.size}",
+                text = tabletGuideReferenceHeaderTitle(xrefs.size),
                 style = typography.monoCaps.copy(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,
@@ -990,7 +993,7 @@ private fun GuideReferenceCard(
         ) {
             Text(
                 text = listOf(xref.id.trim().ifEmpty { "GD-?" }, relation)
-                    .joinToString(" - "),
+                    .joinToString(" \u00B7 "),
                 style = typography.monoCaps.copy(
                     fontSize = 11.sp,
                     lineHeight = 14.sp,

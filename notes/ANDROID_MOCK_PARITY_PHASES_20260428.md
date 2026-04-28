@@ -996,6 +996,55 @@ Residuals for next wave:
 - Emergency action/badge styling is closer, with remaining work concentrated in
   proof/evidence card shape and composer context copy.
 
+## Wave47 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- P1 detail state/shell: replaced residual proof-rail labels with
+  reader-facing source language in phone detail and tablet answer detail shells.
+- P2 proof/provenance formatter: remapped proof-summary and accessibility
+  labels toward `sources`, `match`, `engine`, and `library` language, with
+  sanitization for legacy standalone proof wording.
+- P3 thread rail: reduced thread rail source rows to the target two sources and
+  removed anchor-heavy A-row labels in the history formatter.
+- P4 guide tablet shell: widened section/cross-reference rail budgets and moved
+  cross-reference metadata to mock-style source separators.
+- P6 home/search tablet shell: retuned tablet landscape home proportions,
+  category shelf density, and home/search chrome copy.
+- P7 emergency: flattened danger banner/action styling, reduced rounded/boxed
+  treatment, and preserved the ordered four-action response.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave47_integrated/20260428_181902`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave47_integrated/20260428_181902/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave47_integrated/20260428_181902_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA:
+  `a4aeb04ae8441479fbe83ba6917f82233e5900edfcb3812d562b640e30cab323`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed, Android local quality gate
+  passed, `git diff --check` passed with only CRLF warnings from Git. Dump sweep
+  found no `PROOF RAIL`, `Proof rail`, `Answer source selected`, mojibake, or
+  `GD-?` fallback residue in the Wave47 state pack.
+
+Residuals for next wave:
+
+- Guide tablet landscape still shows top chrome clipping/overlap around the
+  title and nav buttons, even though the paper/rails are closer.
+- Thread tablet landscape footer still says `THREAD CONTEXT - 2 TURNS - GD-220
+  ANCHOR`; target wants quieter context copy.
+- Answer tablet portrait is clean of proof-rail language, but the first-viewport
+  header still has a top source stamp (`Sources - Answer source: GD-345`) that
+  may need to become quieter or move below the main answer.
+- Home tablet landscape structure is close enough to keep, with remaining polish
+  around exact card stroke weight, density, and typographic scale.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

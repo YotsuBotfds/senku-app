@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public final class DetailProofPresentationFormatterTest {
     @Test
-    public void compactReviewedCardLinesUseUiProofLanguage() {
+    public void compactReviewedCardLinesUseSourceLanguage() {
         ReviewedCardMetadata metadata = new ReviewedCardMetadata(
             "burns_pilot_card",
             "GD-380",
@@ -88,19 +88,20 @@ public final class DetailProofPresentationFormatterTest {
         String visible = formatter.buildWhySummaryPlainText(state, sources, false, false);
 
         assertFalse(visible.toLowerCase().contains("proof rail"));
+        assertFalse(visible.toLowerCase().contains("proof"));
         assertEquals(
             "SOURCES  sources reviewed | 1 source\n" +
                 "GUIDE  [GD-101] sources anchor\n" +
-                "ROUTE  generated sources\n" +
+                "MATCH  generated sources\n" +
                 "SECTION  sources section\n" +
-                "TYPE  Best match",
+                "MATCH  Best match",
             visible
         );
     }
 
     @Test
     public void retrievalModesUseReaderFacingMatchTypes() {
-        assertEquals("TYPE", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
+        assertEquals("MATCH", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
         assertEquals("Best match", DetailProofPresentationFormatter.humanizeRetrievalMode("route-focus"));
         assertEquals("Related", DetailProofPresentationFormatter.humanizeRetrievalMode("guide-focus"));
         assertEquals("Generated answer", DetailProofPresentationFormatter.humanizeRetrievalMode("ai-generated"));
@@ -257,6 +258,36 @@ public final class DetailProofPresentationFormatterTest {
         );
         assertFalse(visible.contains("MATCH"));
         assertFalse(visible.contains("FIT"));
+    }
+
+    @Test
+    public void noCitationSummaryUsesSourcesLanguageWithoutProofLabels() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        DetailProofPresentationFormatter.State state = new DetailProofPresentationFormatter.State(
+            "generated proof",
+            1,
+            "host proof",
+            "Limited",
+            0,
+            2,
+            "04-27",
+            3,
+            false,
+            ReviewedCardMetadata.empty()
+        );
+
+        String visible = formatter.buildWhySummaryPlainText(state, List.of(), false, false);
+
+        assertFalse(visible.toLowerCase().contains("proof"));
+        assertEquals(
+            "MATCH  generated sources\n" +
+                "ENGINE  host sources\n" +
+                "SOURCES  No guide citations attached yet\n" +
+                "LIBRARY  No cited guide lines surfaced from the installed pack for this answer yet.\n" +
+                "REVISION  04-27\n" +
+                "CHECK  Reopen search or inspect a guide directly before relying on this.",
+            visible
+        );
     }
 
 }

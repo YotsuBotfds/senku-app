@@ -52,4 +52,43 @@ public final class DetailProvenancePresentationFormatterTest {
         ));
         assertEquals(2, formatter.getCollapsedProvenanceMaxLines(null));
     }
+
+    @Test
+    public void phoneSourceRegionDescriptionUsesSourcesLanguage() {
+        DetailProvenancePresentationFormatter formatter = new DetailProvenancePresentationFormatter(null);
+        SearchResult source = new SearchResult(
+            "Tarp & Cord Shelters",
+            "",
+            "",
+            "",
+            "GD-345",
+            "Ridgeline pitch",
+            "survival",
+            "guide-focus"
+        );
+
+        String description = formatter.buildPhoneProvenanceRegionDescription(
+            source,
+            "[GD-345] Tarp & Cord Shelters",
+            "Ridgeline pitch"
+        );
+
+        assertEquals(
+            "Sources. Source entry [GD-345] Tarp & Cord Shelters. Section Ridgeline pitch.",
+            description
+        );
+        assertFalse(description.toLowerCase().contains("provenance"));
+        assertFalse(description.toLowerCase().contains("proof"));
+    }
+
+    @Test
+    public void phoneSourceRegionDescriptionHandlesMissingSourceWithoutProvenanceCopy() {
+        DetailProvenancePresentationFormatter formatter = new DetailProvenancePresentationFormatter(null);
+
+        String description = formatter.buildPhoneProvenanceRegionDescription(null, "", "");
+
+        assertEquals("Sources. No source entry selected", description);
+        assertFalse(description.toLowerCase().contains("provenance"));
+        assertFalse(description.toLowerCase().contains("proof"));
+    }
 }

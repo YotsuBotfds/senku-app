@@ -47,8 +47,8 @@ class StressReadingPolicyTest {
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
         assertEquals(184, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
         assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
-        assertEquals(196, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
-        assertEquals(216, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+        assertEquals(316, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
+        assertEquals(330, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
     }
 
     @Test
@@ -69,8 +69,14 @@ class StressReadingPolicyTest {
         assertEquals(42, tabletGuidePaperInnerHorizontalPaddingDp(isLandscape = false))
         assertEquals(28, tabletGuidePaperBottomPaddingDp(isLandscape = true))
         assertEquals(46, tabletGuidePaperBottomPaddingDp(isLandscape = false))
-        assertEquals(392, tabletGuideReferenceRailWidthDp(isLandscape = true))
+        assertEquals(424, tabletGuideReferenceRailWidthDp(isLandscape = true))
         assertEquals(0, tabletGuideReferenceRailWidthDp(isLandscape = false))
+    }
+
+    @Test
+    fun tabletGuideReferenceHeaderUsesMockBulletSeparator() {
+        assertEquals("CROSS-REFERENCE \u00B7 6", tabletGuideReferenceHeaderTitle(6))
+        assertEquals("CROSS-REFERENCE \u00B7 0", tabletGuideReferenceHeaderTitle(-1))
     }
 
     @Test

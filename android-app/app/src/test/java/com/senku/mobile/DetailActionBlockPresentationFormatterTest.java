@@ -104,7 +104,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -130,7 +130,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Confirm two paths of egress", actions.get(2).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -151,7 +151,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -203,7 +203,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -259,7 +259,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -318,7 +318,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Stop all hot work", actions.get(0).title);
         assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(2).detail);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test
@@ -335,7 +335,7 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(3, actions.size());
         assertEquals("Clear the floor to minimum 5 m radius", actions.get(0).title);
         assertEquals("Door and roll-up open and unobstructed.", actions.get(1).detail);
-        assertEquals("", actions.get(2).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
 
     @Test
@@ -352,11 +352,11 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals(3, actions.size());
         assertEquals("Move to minimum 5 m from active work zone", actions.get(0).title);
         assertEquals("Clear the floor to minimum 5 m radius", actions.get(1).title);
-        assertEquals("", actions.get(2).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(2).detail);
     }
 
     @Test
-    public void extractEmergencyActionSpecsKeepsOwnerActionButDropsProofAdjacentOwnerDetail() {
+    public void extractEmergencyActionSpecsKeepsOwnerActionAndCompactOwnerDetail() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
                 "Immediate actions:\n" +
@@ -369,7 +369,7 @@ public final class DetailActionBlockPresentationFormatterTest {
 
         assertEquals(4, actions.size());
         assertEquals("Notify the area owner", actions.get(3).title);
-        assertEquals("", actions.get(3).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(3).detail);
     }
 
     @Test

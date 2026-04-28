@@ -195,6 +195,14 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void answerSourcesStampUsesSourceLanguageInsteadOfProofRail() {
+        String label = DetailActivity.buildDetailSourcesProofStampLabel();
+
+        assertEquals("SOURCE GUIDES", label);
+        assertFalse(label.contains("PROOF"));
+    }
+
+    @Test
     public void phonePortraitProofPanelDefersBelowSourceTriggerExceptEmergency() {
         assertTrue(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, true, false));
         assertFalse(DetailActivity.shouldDeferPhonePortraitProofPanelBelowSources(true, true, true));
@@ -414,6 +422,17 @@ public final class DetailFollowupLandscapeComposerTest {
         assertTrue(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, true));
         assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 2, false));
         assertFalse(DetailActivity.shouldHideGenericAnswerScaffoldForThread(true, 1, true));
+    }
+
+    @Test
+    public void tabletAnswerGuideModeUsesSourceLanguageInsteadOfProofRail() {
+        String summary = DetailActivity.buildTabletAnswerGuideModeSummary("GD-345", "");
+        String anchorLabel = DetailActivity.buildTabletAnswerGuideModeAnchorLabel(false);
+
+        assertEquals("Answer source: GD-345", summary);
+        assertEquals("Sources", anchorLabel);
+        assertFalse((anchorLabel + " - " + summary).contains("Proof rail"));
+        assertFalse(summary.contains("selected"));
     }
 
     @Test

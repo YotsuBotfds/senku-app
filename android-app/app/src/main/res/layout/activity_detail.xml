@@ -589,7 +589,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="monospace"
                     android:letterSpacing="0.08"
-                    android:text="@string/detail_external_review_proof_stamp"
+                    android:text="@string/detail_sources_title"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/senku_text_muted_light"
                     android:textStyle="bold" />
