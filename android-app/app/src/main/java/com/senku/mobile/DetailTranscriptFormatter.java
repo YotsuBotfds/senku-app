@@ -1,9 +1,14 @@
 package com.senku.mobile;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 final class DetailTranscriptFormatter {
+    private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
+
     interface TurnAnchorResolver {
         String resolve(SessionMemory.TurnSnapshot turn);
     }
@@ -35,8 +40,9 @@ final class DetailTranscriptFormatter {
         }
 
         String previousAnchorGuideId = "";
-        for (SessionMemory.TurnSnapshot turn : transcriptTurns) {
-            appendTranscriptTurn(builder, turn, previousAnchorGuideId, turnAnchorResolver);
+        for (int index = 0; index < transcriptTurns.size(); index++) {
+            SessionMemory.TurnSnapshot turn = transcriptTurns.get(index);
+            appendTranscriptTurn(builder, turn, previousAnchorGuideId, turnAnchorResolver, index + 1);
             String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
             if (!anchorGuideId.isEmpty()) {
                 previousAnchorGuideId = anchorGuideId;
@@ -50,31 +56,56 @@ final class DetailTranscriptFormatter {
         StringBuilder builder,
         SessionMemory.TurnSnapshot turn,
         String previousAnchorGuideId,
-        TurnAnchorResolver turnAnchorResolver
+        TurnAnchorResolver turnAnchorResolver,
+        int turnNumber
     ) {
         if (builder.length() > 0) {
             builder.append("\n\n");
         }
 
-        builder.append("You: ").append(safe(turn == null ? null : turn.question).trim());
+        int safeTurnNumber = Math.max(1, turnNumber);
+        builder.append("Q").append(safeTurnNumber).append(": ")
+            .append(safe(turn == null ? null : turn.question).trim());
 
         String answerText = safe(turn == null ? null : turn.answerSummary).trim();
         if (!answerText.isEmpty()) {
-            builder.append("\nSenku: ").append(answerText);
-        }
-
-        String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
-        if (!anchorGuideId.isEmpty()) {
-            if (!previousAnchorGuideId.isEmpty() && !previousAnchorGuideId.equals(anchorGuideId)) {
-                builder.append("\nAnchor shift: ").append(previousAnchorGuideId).append(" -> ").append(anchorGuideId);
-            } else {
-                builder.append("\nAnchor: ").append(anchorGuideId);
+            builder.append("\nA").append(safeTurnNumber);
+            String answerMeta = buildAnswerMeta(turn, previousAnchorGuideId, turnAnchorResolver);
+            if (!answerMeta.isEmpty()) {
+                builder.append(" (").append(answerMeta).append(")");
             }
+            builder.append(": ").append(answerText);
         }
 
-        if (turn != null && turn.sources != null && !turn.sources.isEmpty()) {
-            builder.append("\nSources: ").append(String.join(", ", turn.sources));
+        List<String> guideIds = guideIdsForTurn(turn, turnAnchorResolver);
+        if (!guideIds.isEmpty()) {
+            builder.append("\nGuides: ").append(String.join(", ", guideIds));
         }
+    }
+
+    private static String buildAnswerMeta(
+        SessionMemory.TurnSnapshot turn,
+        String previousAnchorGuideId,
+        TurnAnchorResolver turnAnchorResolver
+    ) {
+        String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
+        StringBuilder builder = new StringBuilder();
+        if (!anchorGuideId.isEmpty()) {
+            String previous = safe(previousAnchorGuideId).trim();
+            builder.append("Guide ");
+            if (!previous.isEmpty() && !previous.equals(anchorGuideId)) {
+                builder.append(previous).append(" -> ");
+            }
+            builder.append(anchorGuideId);
+        }
+        String status = statusForTurn(turn);
+        if (!status.isEmpty()) {
+            if (builder.length() > 0) {
+                builder.append(" | ");
+            }
+            builder.append(status);
+        }
+        return builder.toString();
     }
 
     private static boolean hasMatchingTrailingTurn(
@@ -116,6 +147,47 @@ final class DetailTranscriptFormatter {
         TurnAnchorResolver turnAnchorResolver
     ) {
         return turnAnchorResolver == null ? "" : safe(turnAnchorResolver.resolve(turn)).trim();
+    }
+
+    private static List<String> guideIdsForTurn(
+        SessionMemory.TurnSnapshot turn,
+        TurnAnchorResolver turnAnchorResolver
+    ) {
+        LinkedHashSet<String> guideIds = new LinkedHashSet<>();
+        String anchorGuideId = resolveAnchorGuideId(turn, turnAnchorResolver);
+        if (!anchorGuideId.isEmpty()) {
+            guideIds.add(anchorGuideId);
+        }
+        if (turn != null && turn.sourceResults != null) {
+            for (SearchResult source : turn.sourceResults) {
+                String guideId = safe(source == null ? null : source.guideId).trim();
+                if (!guideId.isEmpty()) {
+                    guideIds.add(guideId);
+                }
+            }
+        }
+        if (turn != null && turn.sources != null) {
+            for (String sourceLabel : turn.sources) {
+                Matcher matcher = SIMPLE_GUIDE_ID_PATTERN.matcher(safe(sourceLabel));
+                while (matcher.find()) {
+                    guideIds.add(matcher.group());
+                }
+            }
+        }
+        return new ArrayList<>(guideIds);
+    }
+
+    private static String statusForTurn(SessionMemory.TurnSnapshot turn) {
+        if (turn == null) {
+            return "";
+        }
+        if (ReviewedCardMetadata.normalize(turn.reviewedCardMetadata).isPresent()) {
+            return "reviewed";
+        }
+        if (turn.sources != null && !turn.sources.isEmpty()) {
+            return "source-backed";
+        }
+        return safe(turn.answerSummary).trim().isEmpty() ? "" : "ready";
     }
 
     private static String safe(String text) {

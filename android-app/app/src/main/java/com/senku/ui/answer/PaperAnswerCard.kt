@@ -48,8 +48,8 @@ enum class Mode {
     Dark,
 }
 
-private val PaperAnswerCardInnerPadding = 16.dp
-private val PaperAnswerCardSectionSpacing = 10.dp
+private val PaperAnswerCardInnerPadding = 14.dp
+private val PaperAnswerCardSectionSpacing = 9.dp
 
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
@@ -100,30 +100,29 @@ fun PaperAnswerCard(
     val typography = SenkuTheme.typography
     val palette = rememberPaperAnswerPalette(mode, content)
     val evidenceTone = if (content.uncertainFit) {
-        if (mode == Mode.Paper) colors.paperWarn else colors.warn
+        colors.warn
     } else {
         evidenceToneColor(
             evidence = content.evidence,
             colors = colors,
-            usePaperTones = mode == Mode.Paper,
+            usePaperTones = false,
         )
     }
     val footerMeta = buildFooterMeta(content)
     val statusTone = when {
         !content.abstain -> palette.muted
-        mode == Mode.Paper -> colors.paperDanger
         else -> colors.danger
     }
-    val safetyTone = if (mode == Mode.Paper) colors.paperDanger else colors.danger
+    val safetyTone = colors.danger
 
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = palette.background,
         contentColor = palette.body,
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(6.dp),
         border = BorderStroke(1.dp, palette.border),
-        tonalElevation = if (mode == Mode.Paper) 1.dp else 0.dp,
-        shadowElevation = if (mode == Mode.Paper) 8.dp else 0.dp,
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp,
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             if (palette.leftAccent.alpha > 0f) {
@@ -194,7 +193,11 @@ fun PaperAnswerCard(
 
                 Text(
                     text = content.short.trim(),
-                    style = typography.answerBody,
+                    style = typography.answerBody.copy(
+                        fontSize = 16.sp,
+                        lineHeight = 23.sp,
+                        letterSpacing = 0.sp,
+                    ),
                     color = palette.body,
                 )
 
@@ -209,9 +212,10 @@ fun PaperAnswerCard(
                             Text(
                                 text = "${index + 1}. ${step.trim()}",
                                 style = typography.answerBody.copy(
-                                    fontSize = 14.sp,
-                                    lineHeight = 22.sp,
+                                    fontSize = 13.sp,
+                                    lineHeight = 20.sp,
                                     fontWeight = FontWeight.Normal,
+                                    letterSpacing = 0.sp,
                                 ),
                                 color = palette.body,
                             )
@@ -229,8 +233,9 @@ fun PaperAnswerCard(
                         text = content.limits.trim(),
                         style = typography.answerBody.copy(
                             fontSize = 13.sp,
-                            lineHeight = 19.5.sp,
+                            lineHeight = 19.sp,
                             fontWeight = FontWeight.Normal,
+                            letterSpacing = 0.sp,
                         ),
                         color = palette.body,
                     )
@@ -257,7 +262,7 @@ fun PaperAnswerCard(
                     Spacer(modifier = Modifier.size(10.dp))
                     Surface(
                         color = Color.Transparent,
-                        contentColor = if (mode == Mode.Dark) colors.accent else palette.body,
+                        contentColor = colors.accent,
                         onClick = onShowProof,
                     ) {
                         Row(
@@ -272,7 +277,7 @@ fun PaperAnswerCard(
                                     lineHeight = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 ),
-                                color = if (mode == Mode.Dark) colors.accent else palette.body,
+                                color = colors.accent,
                             )
                             Text(
                                 text = ">",
@@ -281,7 +286,7 @@ fun PaperAnswerCard(
                                     lineHeight = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                 ),
-                                color = if (mode == Mode.Dark) colors.accent else palette.body,
+                                color = colors.accent,
                             )
                         }
                     }
@@ -354,19 +359,19 @@ private fun rememberPaperAnswerPalette(
 
         Mode.Paper -> {
             val base = when {
-                content.abstain -> Color(0x0FC4704B)
-                content.uncertainFit -> Color(0x1AC49A4B)
-                else -> colors.paper
+                content.abstain -> colors.danger.copy(alpha = 0.12f)
+                content.uncertainFit -> colors.warn.copy(alpha = 0.12f)
+                else -> colors.bg1
             }
             PaperAnswerPalette(
                 background = base,
-                body = colors.paperInk,
-                muted = colors.paperInkMuted,
-                hairline = colors.paperInk.copy(alpha = 0.12f),
-                border = colors.paperInk.copy(alpha = 0.08f),
+                body = colors.ink0,
+                muted = colors.ink2,
+                hairline = colors.hairline,
+                border = colors.ink0.copy(alpha = 0.10f),
                 leftAccent = when {
-                    content.abstain -> colors.paperDanger
-                    content.uncertainFit -> colors.paperWarn
+                    content.abstain -> colors.danger
+                    content.uncertainFit -> colors.warn
                     else -> Color.Transparent
                 },
             )

@@ -53,21 +53,21 @@ final class DetailGuideContextPresentationFormatter {
 
     String buildRelatedGuidePreviewRowBehaviorText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview this linked guide here, then use Open full guide when ready.";
+            return "Preview in this rail; open the full guide to switch pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }
 
     String buildRelatedGuidePreviewTitleText(State state) {
         if (state.answerMode || state.activeGuideContextPanel || state.nonRailCrossReferenceCopy) {
-            return "Selected linked guide";
+            return "Cross-reference preview";
         }
         return guideRailLabel(context);
     }
 
     String buildRelatedGuidePreviewCaptionText(State state) {
         if (state.answerMode || state.nonRailCrossReferenceCopy) {
-            return "Preview selected linked guide here. Open full guide when ready.";
+            return "Selected guide appears here before you open the full page.";
         }
         if (state.activeGuideContextPanel) {
             return buildRelatedGuidePreviewComparisonCaption(state);
@@ -79,17 +79,17 @@ final class DetailGuideContextPresentationFormatter {
         if (state.answerMode) {
             String sourceLabel = buildActiveGuideContextPrimaryLabel(state);
             if (!sourceLabel.isEmpty()) {
-                return "Selected linked guide preview. Guide cross-reference stays anchored to "
+                return "Cross-reference preview rail anchored to "
                     + sourceLabel
-                    + " while this preview is open. Use Open full guide to navigate to the selected guide page.";
+                    + ". Select a linked guide to inspect it here, then open the full guide to switch pages.";
             }
-            return "Selected linked guide preview. Inspect it on this page, then use Open full guide to navigate to the selected guide page.";
+            return "Cross-reference preview rail. Inspect a linked guide here, then open the full guide to switch pages.";
         }
         if (state.activeGuideContextPanel) {
             return buildRelatedGuidePreviewPanelDescription(state);
         }
         if (state.nonRailCrossReferenceCopy) {
-            return "Selected linked guide preview. Inspect it on this page, then use Open full guide to navigate to the selected guide page.";
+            return "Cross-reference preview rail. Inspect a linked guide here, then open the full guide to switch pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_panel_description);
     }
@@ -118,7 +118,7 @@ final class DetailGuideContextPresentationFormatter {
     String buildActiveGuideContextBody(State state) {
         if (state.answerMode) {
             String subtitle = safe(state.sourceAnchorSubtitle).trim();
-            String anchorText = "Guide cross-reference stays anchored to this selected source while the preview is open.";
+            String anchorText = "Cross-reference rail stays anchored to this source.";
             if (!subtitle.isEmpty()) {
                 return subtitle + "\n\n" + anchorText;
             }
@@ -132,25 +132,25 @@ final class DetailGuideContextPresentationFormatter {
     }
 
     CharSequence buildActiveGuideContextTitleText(State state) {
-        return state.answerMode ? "Selected source guide" : context.getString(R.string.detail_active_guide_context_title);
+        return state.answerMode ? "Source guide" : context.getString(R.string.detail_active_guide_context_title);
     }
 
     String buildActiveGuideContextContentDescription(State state, String guideLabel) {
         if (state.answerMode) {
-            return "Selected source guide context. Guide cross-reference stays anchored to " + guideLabel + ".";
+            return "Source guide context. Cross-reference rail stays anchored to " + guideLabel + ".";
         }
         return context.getString(R.string.detail_active_guide_context_content_description, guideLabel);
     }
 
     String buildRelatedGuidePreviewLoadingText(State state) {
         return state.nonRailCrossReferenceCopy
-            ? "Loading linked guide preview..."
+            ? "Loading cross-reference preview..."
             : context.getString(R.string.detail_loop2_field_links_preview_loading);
     }
 
     String buildRelatedGuidePreviewEmptyText(State state) {
         return state.nonRailCrossReferenceCopy
-            ? "No linked guide preview text is available in this pack."
+            ? "No cross-reference preview text is available in this pack."
             : context.getString(R.string.detail_loop2_field_links_preview_empty);
     }
 

@@ -33,12 +33,14 @@ public final class DetailTranscriptFormatterTest {
 
         assertTrue(transcript.contains("Senku transcript"));
         assertTrue(transcript.contains("Topic: Storm shelter"));
-        assertTrue(transcript.contains("You: how do i build a rain shelter"));
-        assertTrue(transcript.contains("Senku: Keep one side low to the wind."));
-        assertTrue(transcript.contains("Anchor: GD-111"));
-        assertTrue(transcript.contains("You: what about drainage"));
-        assertTrue(transcript.contains("Anchor shift: GD-111 -> GD-222"));
-        assertTrue(transcript.contains("Sources: [GD-222] Site Drainage"));
+        assertTrue(transcript.contains("Q1: how do i build a rain shelter"));
+        assertTrue(transcript.contains("A1 (Guide GD-111 | source-backed): Keep one side low to the wind."));
+        assertTrue(transcript.contains("Guides: GD-111"));
+        assertTrue(transcript.contains("Q2: what about drainage"));
+        assertTrue(transcript.contains("A2 (Guide GD-111 -> GD-222 | source-backed): Dig a shallow uphill diversion trench."));
+        assertTrue(transcript.contains("Guides: GD-222"));
+        assertFalse(transcript.contains("Site Drainage"));
+        assertFalse(transcript.contains("Anchor shift"));
     }
 
     @Test
@@ -57,7 +59,7 @@ public final class DetailTranscriptFormatterTest {
             DetailTranscriptFormatterTest::anchorFor
         );
 
-        assertEquals(1, countOccurrences(transcript, "You: what about drainage"));
+        assertEquals(1, countOccurrences(transcript, "Q1: what about drainage"));
     }
 
     @Test

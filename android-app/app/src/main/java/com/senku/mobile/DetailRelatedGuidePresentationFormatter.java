@@ -86,21 +86,23 @@ final class DetailRelatedGuidePresentationFormatter {
         if (anchorLabel.isEmpty()) {
             anchorLabel = context.getString(R.string.detail_related_guides_anchor_fallback);
         }
-        return formatCountLabel(count, "linked guide", "linked guides")
-            + " for "
+        return "Cross-reference · "
+            + formatCountLabel(count, "linked guide", "linked guides")
+            + " · "
             + anchorLabel
-            + ". Preview, then open.";
+            + ".";
     }
 
     String buildAnswerModeRelatedGuidesSubtitle(State state, int count) {
-        return formatCountLabel(count, "linked guide", "linked guides")
-            + " for "
+        return "Cross-reference · "
+            + formatCountLabel(count, "linked guide", "linked guides")
+            + " · "
             + resolveSourceAnchorLabel(state)
-            + ". Preview, then open.";
+            + ".";
     }
 
     String buildAnswerModeRelatedGuidesPanelContentDescription(State state, int count) {
-        return "Source-anchored cross-reference guides. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
+        return "Source-anchored cross-reference rail. " + buildAnswerModeRelatedGuidesSubtitle(state, count);
     }
 
     String buildRelatedGuideButtonLabel(SearchResult guide) {
@@ -157,7 +159,7 @@ final class DetailRelatedGuidePresentationFormatter {
         }
         String anchorGuideId = safe(state == null ? null : state.currentGuideId).trim();
         if (!anchorGuideId.isEmpty()) {
-            builder.append(nonRailCrossReferenceCopy ? ". Cross-reference from " : ". Related to ");
+            builder.append(nonRailCrossReferenceCopy ? ". Anchored to " : ". Related to ");
             builder.append(anchorGuideId);
         }
         builder.append(opensPreview
@@ -176,7 +178,7 @@ final class DetailRelatedGuidePresentationFormatter {
         boolean opensPreview
     ) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Cross-reference row ");
+        builder.append("Cross-reference ");
         builder.append(index + 1);
         builder.append(" of ");
         builder.append(total);
@@ -189,11 +191,11 @@ final class DetailRelatedGuidePresentationFormatter {
         }
         String anchorLabel = resolveSourceAnchorLabel(state);
         if (!anchorLabel.isEmpty()) {
-            builder.append(". Linked from ");
+            builder.append(". Anchored to ");
             builder.append(anchorLabel);
         }
         builder.append(opensPreview
-            ? ". Previews the related guide on this page while staying anchored to the selected source guide. Use Open full guide when ready to switch pages."
+            ? ". Previews here while the source guide stays pinned. Open full guide to switch pages."
             : ". Opens this guide with source-guide context.");
         return builder.toString();
     }
@@ -232,7 +234,7 @@ final class DetailRelatedGuidePresentationFormatter {
 
     private String buildRelatedGuidePreviewRowBehaviorText(boolean nonRailCrossReferenceCopy) {
         if (nonRailCrossReferenceCopy) {
-            return "Preview this linked guide here, then use Open full guide when ready.";
+            return "Preview in this rail; open the full guide to switch pages.";
         }
         return context.getString(R.string.detail_loop2_field_links_preview_row_behavior);
     }

@@ -120,6 +120,21 @@ public final class DetailSessionPresentationFormatterTest {
         assertNull(formatter.reopenedConfidenceLabel(plainTurn));
     }
 
+    @Test
+    public void threadHistoryGuideIdsAreCompactAndDeduplicated() {
+        SessionMemory.TurnSnapshot turn = new SessionMemory.TurnSnapshot(
+            "follow-up",
+            "answer",
+            "answer",
+            List.of("[GD-345] Rain shelter drainage", "diagnostic: lexical", "GD-132"),
+            List.of(source("Rain shelter", "GD-345", ""), source("Wind", "GD-132", "")),
+            "",
+            1234L
+        );
+
+        assertEquals(List.of("GD-345", "GD-132"), DetailThreadHistoryRenderer.guideIdsForTurn(turn));
+    }
+
     private static SessionMemory.TurnSnapshot turn(
         String question,
         List<String> sourceLabels,

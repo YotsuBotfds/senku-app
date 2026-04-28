@@ -9,10 +9,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 final class DetailThreadHistoryRenderer {
+    private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
+
     static final class State {
         final boolean utilityRail;
         final boolean wideLayout;
@@ -29,7 +35,6 @@ final class DetailThreadHistoryRenderer {
 
     private final Context context;
     private final DetailSessionPresentationFormatter sessionFormatter;
-    private final DetailSourcePresentationFormatter sourceFormatter;
 
     DetailThreadHistoryRenderer(
         Context context,
@@ -38,7 +43,6 @@ final class DetailThreadHistoryRenderer {
     ) {
         this.context = context;
         this.sessionFormatter = sessionFormatter;
-        this.sourceFormatter = sourceFormatter;
     }
 
     void clearHistory(LinearLayout container) {
@@ -65,9 +69,10 @@ final class DetailThreadHistoryRenderer {
         }
         container.setVisibility(View.VISIBLE);
         String previousAnchorGuideId = "";
-        for (SessionMemory.TurnSnapshot turn : earlierTurns) {
-            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, false);
-            previousAnchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
+        for (int index = 0; index < earlierTurns.size(); index++) {
+            SessionMemory.TurnSnapshot turn = earlierTurns.get(index);
+            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, true, false, index + 1);
+            previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
     }
 
@@ -88,9 +93,11 @@ final class DetailThreadHistoryRenderer {
         }
         container.setVisibility(View.VISIBLE);
         String previousAnchorGuideId = "";
-        for (SessionMemory.TurnSnapshot turn : visibleTurns) {
-            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, true);
-            previousAnchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
+        int firstTurnNumber = Math.max(1, (earlierTurns == null ? 0 : earlierTurns.size()) - visibleTurns.size() + 1);
+        for (int index = 0; index < visibleTurns.size(); index++) {
+            SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
+            addTurn(container, turn, previousAnchorGuideId, state, answerFormatter, false, true, firstTurnNumber + index);
+            previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, turn);
         }
     }
 
@@ -122,29 +129,34 @@ final class DetailThreadHistoryRenderer {
         State state,
         UnaryOperator<String> answerFormatter,
         boolean inlineTranscriptBubble,
-        boolean includeSourceSummary
+        boolean includeSourceSummary,
+        int turnNumber
     ) {
         if (turn == null || container == null) {
             return;
         }
-        container.addView(buildHistoryBubble(turn.question, true, container, state, inlineTranscriptBubble));
+        container.addView(buildHistoryBubble(
+            turn.question,
+            buildTurnLabel(turnNumber, true, turn, previousAnchorGuideId),
+            true,
+            container,
+            state,
+            inlineTranscriptBubble
+        ));
         String answerSummary = safe(turn.answerSummary).trim();
         if (answerSummary.isEmpty()) {
             return;
         }
         LinearLayout answerBubble = buildHistoryBubble(
             compactThreadAnswer(answerSummary, state.utilityRail, answerFormatter),
+            buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId),
             false,
             container,
             state,
             inlineTranscriptBubble
         );
-        String anchorText = sessionFormatter.buildAnchorLineText(turn, previousAnchorGuideId);
-        if (!anchorText.isEmpty()) {
-            answerBubble.addView(buildMutedLine(anchorText));
-        }
         if (includeSourceSummary) {
-            String sourceSummary = sourceFormatter.buildSourceSummary(turn.sources);
+            String sourceSummary = buildCompactGuideSummary(turn);
             if (!sourceSummary.isEmpty()) {
                 answerBubble.addView(buildMutedLine(sourceSummary));
             }
@@ -154,6 +166,7 @@ final class DetailThreadHistoryRenderer {
 
     private LinearLayout buildHistoryBubble(
         String text,
+        String labelText,
         boolean userTurn,
         LinearLayout container,
         State state,
@@ -182,7 +195,7 @@ final class DetailThreadHistoryRenderer {
         bubble.setLayoutParams(params);
 
         TextView label = new TextView(context);
-        label.setText(userTurn ? context.getString(R.string.detail_header_question) : context.getString(R.string.detail_body_answer));
+        label.setText(labelText);
         label.setTextAppearance(context, android.R.style.TextAppearance_Small);
         label.setTextColor(context.getColor(R.color.senku_text_muted_light));
         label.setBackgroundResource(R.drawable.bg_status_pill);
@@ -212,6 +225,46 @@ final class DetailThreadHistoryRenderer {
         return line;
     }
 
+    private String buildTurnLabel(
+        int turnNumber,
+        boolean userTurn,
+        SessionMemory.TurnSnapshot turn,
+        String previousAnchorGuideId
+    ) {
+        int safeTurnNumber = Math.max(1, turnNumber);
+        if (userTurn) {
+            return "Q" + safeTurnNumber + " · FIELD QUESTION";
+        }
+        String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
+        StringBuilder builder = new StringBuilder("A").append(safeTurnNumber);
+        if (!anchorGuideId.isEmpty()) {
+            builder.append(" · ANCHOR ");
+            String previous = safe(previousAnchorGuideId).trim();
+            if (!previous.isEmpty() && !previous.equals(anchorGuideId)) {
+                builder.append(previous).append(" -> ");
+            }
+            builder.append(anchorGuideId);
+        }
+        String status = statusForTurn(turn);
+        if (!status.isEmpty()) {
+            builder.append(" · ").append(status.toUpperCase(Locale.US));
+        }
+        return builder.toString();
+    }
+
+    private String buildCompactGuideSummary(SessionMemory.TurnSnapshot turn) {
+        List<String> guideIds = guideIdsForTurn(turn);
+        if (guideIds.isEmpty()) {
+            return "";
+        }
+        return "Guides " + String.join(", ", guideIds);
+    }
+
+    private String nextAnchorGuideId(String previousAnchorGuideId, SessionMemory.TurnSnapshot turn) {
+        String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
+        return anchorGuideId.isEmpty() ? safe(previousAnchorGuideId).trim() : anchorGuideId;
+    }
+
     private String compactThreadAnswer(String answerSummary, boolean utilityRail, UnaryOperator<String> answerFormatter) {
         String compact = answerFormatter == null ? safe(answerSummary) : safe(answerFormatter.apply(answerSummary));
         if (!utilityRail) {
@@ -225,6 +278,41 @@ final class DetailThreadHistoryRenderer {
             compact = compact.substring(0, 217).trim() + "...";
         }
         return compact;
+    }
+
+    static List<String> guideIdsForTurn(SessionMemory.TurnSnapshot turn) {
+        LinkedHashSet<String> guideIds = new LinkedHashSet<>();
+        if (turn != null && turn.sourceResults != null) {
+            for (SearchResult source : turn.sourceResults) {
+                String guideId = safe(source == null ? null : source.guideId).trim();
+                if (!guideId.isEmpty()) {
+                    guideIds.add(guideId);
+                }
+            }
+        }
+        if (turn != null && turn.sources != null) {
+            for (String sourceLabel : turn.sources) {
+                Matcher matcher = SIMPLE_GUIDE_ID_PATTERN.matcher(safe(sourceLabel));
+                while (matcher.find()) {
+                    guideIds.add(matcher.group());
+                }
+            }
+        }
+        return new ArrayList<>(guideIds);
+    }
+
+    private static String statusForTurn(SessionMemory.TurnSnapshot turn) {
+        if (turn == null) {
+            return "";
+        }
+        if (ReviewedCardMetadata.normalize(turn.reviewedCardMetadata).isPresent()) {
+            return "reviewed";
+        }
+        if ((turn.sources != null && !turn.sources.isEmpty())
+            || (turn.sourceResults != null && !turn.sourceResults.isEmpty())) {
+            return "source-backed";
+        }
+        return safe(turn.answerSummary).trim().isEmpty() ? "" : "ready";
     }
 
     private int dp(int value) {

@@ -30,6 +30,8 @@ final class DetailGuidePresentationFormatter {
     private static final Pattern GUIDE_MARKDOWN_ESCAPE_PATTERN = Pattern.compile("\\\\([\\[\\]\\(\\)#*_`])");
     private static final Pattern GUIDE_SECTION_LINE_PATTERN = Pattern.compile("^Source section:\\s*(.+)$", Pattern.CASE_INSENSITIVE);
     private static final String GUIDE_SECTION_ANCHOR_MARKER = "[[SECTION]] ";
+    private static final String GUIDE_SECTION_DISPLAY_PREFIX = "- § ";
+    private static final String GUIDE_SECTION_DISPLAY_SEPARATOR = " · ";
 
     private static final class GuideBodyLine {
         final String text;
@@ -85,8 +87,12 @@ final class DetailGuidePresentationFormatter {
         String[] rawLines = cleaned.split("\\R", -1);
         ArrayList<GuideBodyLine> lines = new ArrayList<>(rawLines.length);
         StringBuilder displayBuilder = new StringBuilder(cleaned.length() + 32);
+        int sectionOrdinal = 0;
         for (int i = 0; i < rawLines.length; i++) {
-            GuideBodyLine line = toGuideBodyLine(rawLines[i]);
+            GuideBodyLine line = toGuideBodyLine(rawLines[i], sectionOrdinal + 1);
+            if (line.isAnchor()) {
+                sectionOrdinal++;
+            }
             lines.add(line);
             displayBuilder.append(line.text);
             if (i < rawLines.length - 1) {
@@ -185,24 +191,32 @@ final class DetailGuidePresentationFormatter {
         return guideAdmonitionNoteColorResForLegacy();
     }
 
-    private GuideBodyLine toGuideBodyLine(String rawLine) {
+    private GuideBodyLine toGuideBodyLine(String rawLine, int sectionOrdinal) {
         String line = safe(rawLine);
         Matcher sectionMatcher = GUIDE_SECTION_LINE_PATTERN.matcher(line.trim());
         if (sectionMatcher.matches()) {
             String value = safe(sectionMatcher.group(1)).trim();
             return new GuideBodyLine(
-                context.getString(R.string.detail_external_review_source_anchor_prefix) + " " + value,
-                context.getString(R.string.detail_external_review_source_anchor_prefix)
+                buildGuideSectionLabel(sectionOrdinal, value),
+                buildGuideSectionPrefix(sectionOrdinal)
             );
         }
         if (line.startsWith(GUIDE_SECTION_ANCHOR_MARKER)) {
             String value = line.substring(GUIDE_SECTION_ANCHOR_MARKER.length()).trim();
             return new GuideBodyLine(
-                context.getString(R.string.detail_external_review_section_anchor_prefix) + " " + value,
-                context.getString(R.string.detail_external_review_section_anchor_prefix)
+                buildGuideSectionLabel(sectionOrdinal, value),
+                buildGuideSectionPrefix(sectionOrdinal)
             );
         }
         return new GuideBodyLine(line, "");
+    }
+
+    private static String buildGuideSectionLabel(int sectionOrdinal, String value) {
+        return buildGuideSectionPrefix(sectionOrdinal) + GUIDE_SECTION_DISPLAY_SEPARATOR + safe(value).trim().toUpperCase(Locale.US);
+    }
+
+    private static String buildGuideSectionPrefix(int sectionOrdinal) {
+        return GUIDE_SECTION_DISPLAY_PREFIX + Math.max(sectionOrdinal, 1);
     }
 
     private void styleGuideAnchorLine(
