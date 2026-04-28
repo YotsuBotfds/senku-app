@@ -234,6 +234,23 @@ with the bottom composer in anchored/source states. Next wave should prioritize
 guide structure, emergency numbered-action structure, and landscape answer
 density, with tablet Home/status-pill parity as residual visual cleanup.
 
+Wave35 integration proof: `artifacts/ui_state_pack/wave35_integration_final4/20260428_115316`
+is green (`pass`, 47/47, fail count 0, ANR count 0), homogeneous APK
+`695ec014b0c770bfcaf2293b547b5334d65af355cb31c06b0b24463226a9da88`,
+model `gemma-4-e2b-it-litert`
+(`ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`),
+rotation mismatch count 0. Scope covered broad mock-parity integration across
+P1/P2/P4/P6/P7: guide reader/tablet stress-reading structure, emergency
+action/warning cleanup, answer/source compactness, tablet detail behavior, and
+home/search density/layout polish. Focused emergency proof
+`artifacts/ui_state_pack/wave35_emergency_proof_fix/20260428_114834` is also
+green (`pass`, 12/12) after suppressing the duplicate phone emergency proof rail;
+the matching dump now shows one compact `WHY THIS ANSWER` card and no
+`PROOF RAIL`. Reviewer status: Home/Search PASS, Guide PASS, and Emergency PASS
+after the proof-rail fix. Residual risks: guide/tablet composition and global
+density still need visual QA against the mocks, and future accepted deltas should
+remain classified as content/data, layout/density, or behavior before closure.
+
 ## Wave25+ Plan
 
 | Wave | Slice | Why this order | Avoid overlapping write sets | Acceptance proof |

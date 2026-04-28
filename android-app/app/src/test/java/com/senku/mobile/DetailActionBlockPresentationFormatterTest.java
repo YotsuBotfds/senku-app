@@ -134,6 +134,79 @@ public final class DetailActionBlockPresentationFormatterTest {
     }
 
     @Test
+    public void extractEmergencyActionSpecsReadsFormattedStepsDisplayLabel() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "ANSWER\n" +
+                    "Stop work immediately. Move to minimum 5 m from active work zone.\n\n" +
+                    "STEPS\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to 5 m radius. Move personnel upwind.\n" +
+                    "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "4. Notify the area owner. GD-132 lists current owner.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(4, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
+        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+    }
+
+    @Test
+    public void extractEmergencyActionSpecsReadsNoColonImmediateActionHeadings() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> immediateActions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Stop work immediately.\n\n" +
+                    "IMMEDIATE ACTIONS\n" +
+                    "1. Stop all hot work. No new charges, no new pours.\n" +
+                    "2. Clear the floor to a 5 m radius. Move personnel upwind.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> emergencyActions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Stop work immediately.\n\n" +
+                    "EMERGENCY ACTIONS\n" +
+                    "1. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                    "2. Notify the area owner. GD-132 lists current owner.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(2, immediateActions.size());
+        assertEquals("Stop all hot work", immediateActions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", immediateActions.get(1).title);
+        assertEquals(2, emergencyActions.size());
+        assertEquals("Confirm two paths of egress", emergencyActions.get(0).title);
+        assertEquals("Notify the area owner", emergencyActions.get(1).title);
+    }
+
+    @Test
+    public void extractEmergencyActionSpecsKeepsUppercaseFieldStepsAfterAnswerFormatting() {
+        DetailAnswerBodyFormatter bodyFormatter = new DetailAnswerBodyFormatter(null);
+
+        String formatted = bodyFormatter.formatAnswerBody(
+            "Stop work immediately. Move to minimum 5 m from active work zone.\n\n" +
+                "FIELD STEPS\n" +
+                "1. Stop all hot work. No new charges, no new pours.\n" +
+                "2. Clear the floor to a 5 m radius. Move personnel upwind.\n" +
+                "3. Confirm two paths of egress. Door and roll-up open and unobstructed.\n" +
+                "4. Notify the area owner. GD-132 lists current owner."
+        );
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                formatted,
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(4, actions.size());
+        assertEquals("Stop all hot work", actions.get(0).title);
+        assertEquals("Clear the floor to 5 m radius", actions.get(1).title);
+        assertEquals("Keep doors and roll-up openings unobstructed.", actions.get(2).detail);
+        assertEquals("Use GD-132 owner listing.", actions.get(3).detail);
+    }
+
+    @Test
     public void extractEmergencyActionSpecsRequiresActionSectionBeforeNumberedRows() {
         List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
             DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(

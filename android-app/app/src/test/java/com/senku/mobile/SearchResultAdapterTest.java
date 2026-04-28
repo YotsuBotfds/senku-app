@@ -67,6 +67,13 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
+    public void adapterDisplayLimitCanHideLandscapeOverflowRowsWithoutChangingResultCountText() {
+        assertEquals(3, SearchResultAdapter.boundedItemCountForTest(4, 3));
+        assertEquals(4, SearchResultAdapter.boundedItemCountForTest(4, Integer.MAX_VALUE));
+        assertEquals(4, SearchResultAdapter.boundedItemCountForTest(4, 0));
+    }
+
+    @Test
     public void tabletRowsFlattenMetadataIntoPreviewRailTokens() {
         assertEquals(
             "SHELTER \u00b7 TOPIC \u00b7 WINDOW IMMEDIATE",

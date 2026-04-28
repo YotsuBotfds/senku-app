@@ -332,6 +332,14 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void guideFormatterRecognizesTabletLandscapeSectionPrefixes() {
+        assertTrue(DetailGuidePresentationFormatter.isTabletSectionPrefixLineForLegacy("SEC 1"));
+        assertTrue(DetailGuidePresentationFormatter.isTabletSectionPrefixLineForLegacy("sec 12"));
+        assertFalse(DetailGuidePresentationFormatter.isTabletSectionPrefixLineForLegacy("SECTION 1"));
+        assertFalse(DetailGuidePresentationFormatter.isTabletSectionPrefixLineForLegacy("SEC 1 \u00b7 AREA READINESS"));
+    }
+
+    @Test
     public void guideBodySanitizerFormatsInlineAdmonitionsAsManualLabels() {
         assertEquals(
             "DANGER \u00b7 Extreme burn hazard\nKeep every tool dry.",

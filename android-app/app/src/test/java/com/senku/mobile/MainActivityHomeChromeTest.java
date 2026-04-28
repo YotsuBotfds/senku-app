@@ -186,7 +186,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void manualHomeStatusDropsDuplicateGuideCountForNarrowChrome() {
         assertEquals(
-            "Pack ready",
+            "PACK READY",
             MainActivity.compactManualHomeStatusForTest("Ready offline | 754 guides", true)
         );
         assertEquals(
@@ -295,7 +295,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
         assertEquals(
-            "rain shelter    4 RESULTS  \u00b7  12MS",
+            "SEARCH rain shelter    4 RESULTS  \u00b7  12MS",
             MainActivity.appendReviewSearchLatency(
                 MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
                 "rain shelter",
@@ -303,6 +303,17 @@ public final class MainActivityHomeChromeTest {
             )
         );
         assertEquals("SEARCH - 1 RESULT", MainActivity.buildPhoneSearchHeaderForTest("", 1));
+    }
+
+    @Test
+    public void searchChromeSplitsTargetQueryAndCountLatency() {
+        assertEquals("SEARCH rain shelter", MainActivity.buildSearchChromeQueryLabelForTest(" rain shelter "));
+        assertEquals(
+            "4 RESULTS  \u00b7  12MS",
+            MainActivity.buildSearchChromeCountLabelForTest("rain shelter", 4, true)
+        );
+        assertEquals("SEARCH guides", MainActivity.buildSearchChromeQueryLabelForTest(""));
+        assertEquals("1 RESULT", MainActivity.buildSearchChromeCountLabelForTest("water", 1, true));
     }
 
     @Test

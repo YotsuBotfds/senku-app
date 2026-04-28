@@ -106,4 +106,32 @@ public final class DetailWarningCopySanitizerTest {
 
         assertEquals("Stop all hot work. Keep distance. Use GD-132.", cleaned);
     }
+
+    @Test
+    public void sanitizeWarningResidualCopy_trimsInlineEmergencyActionStackFromBannerCopy() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "Stop work immediately. Move to minimum five meters from the active work zone. "
+                + "Confirm two paths of egress. STEPS 1. Stop all hot work. "
+                + "2. Clear the floor to 5 m radius."
+        );
+
+        assertEquals(
+            "Stop work immediately. Move to minimum 5 m from active work zone. Confirm two paths of egress.",
+            cleaned
+        );
+    }
+
+    @Test
+    public void sanitizeWarningResidualCopy_keepsStandaloneEmergencyActionSections() {
+        String cleaned = DetailWarningCopySanitizer.sanitizeWarningResidualCopy(
+            "Stop work immediately. Move to minimum five meters from the active work zone.\n\n"
+                + "FIELD STEPS\n"
+                + "1. Stop all hot work. No new charges, no new pours.\n"
+                + "2. Clear the floor to a 5 m radius. Move personnel upwind."
+        );
+
+        assertTrue(cleaned.contains("FIELD STEPS"));
+        assertTrue(cleaned.contains("1. Stop all hot work."));
+        assertTrue(cleaned.contains("2. Clear the floor to 5 m radius."));
+    }
 }

@@ -225,6 +225,25 @@ private data class GuidePaperPalette(
 
 private fun tabletGuidePaperPalette() = GuidePaperPalette()
 
+internal data class TabletGuideEvidencePaneGraph(
+    val anchor: AnchorState,
+    val xrefs: List<XRefState>,
+)
+
+internal data class TabletGuideRequiredReadingParts(
+    val label: String,
+    val id: String,
+    val title: String,
+)
+
+internal enum class TabletGuideBodyLineKind {
+    Skip,
+    RequiredReading,
+    Danger,
+    Section,
+    Body,
+}
+
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
         threadRailWidthDp = 220,
@@ -445,7 +464,7 @@ fun TabletDetailScreen(
                 .background(colors.bg0),
         ) {
             ThreadRail(
-                turns = state.turns,
+                turns = state.resolvedThreadRailTurns(),
                 sources = state.resolvedThreadRailSources(),
                 guideMode = state.isGuideMode(),
                 guideSectionCount = state.resolvedGuideSectionCount(),
@@ -547,6 +566,7 @@ private fun DetailWorkspace(
             )
 
             if (showEvidencePane) {
+                val evidenceGraph = state.resolvedEvidencePaneGraph()
                 Box(
                     modifier = Modifier
                         .width(1.dp)
@@ -555,8 +575,8 @@ private fun DetailWorkspace(
                 )
 
                 EvidencePane(
-                    anchor = tabletSourceGraphAnchor(state.anchor),
-                    xrefs = tabletSourceGraphXRefs(state.xrefs),
+                    anchor = evidenceGraph.anchor,
+                    xrefs = evidenceGraph.xrefs,
                     answerMode = state.isAnswerOrThreadMode(),
                     answerSourceCount = state.resolvedAnswerSourceCount(),
                     onAnchorClick = onAnchorClick,
@@ -1301,15 +1321,22 @@ private fun AnswerInlineBlock(
                 )
             }
         }
-        Text(
-            text = content.short.trim(),
-            style = typography.answerBody.copy(
-                fontSize = typeScalePolicy.answerFontSizeSp.sp,
-                lineHeight = typeScalePolicy.answerLineHeightSp.sp,
-                letterSpacing = 0.sp,
-            ),
-            color = bodyColor,
-        )
+        if (guideMode) {
+            GuidePaperBodyText(
+                text = content.short,
+                typeScalePolicy = typeScalePolicy,
+            )
+        } else {
+            Text(
+                text = content.short.trim(),
+                style = typography.answerBody.copy(
+                    fontSize = typeScalePolicy.answerFontSizeSp.sp,
+                    lineHeight = typeScalePolicy.answerLineHeightSp.sp,
+                    letterSpacing = 0.sp,
+                ),
+                color = bodyColor,
+            )
+        }
         if (!content.steps.isNullOrEmpty() && !content.abstain) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(3.dp),
@@ -1401,6 +1428,237 @@ private fun AnswerInlineBlock(
     }
 }
 
+@Composable
+private fun GuidePaperBodyText(
+    text: String,
+    typeScalePolicy: TabletDetailTypeScalePolicy,
+) {
+    val typography = SenkuTheme.typography
+    val paperPalette = tabletGuidePaperPalette()
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
+    ) {
+        text.lineSequence()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .forEach { line ->
+                when (tabletGuideBodyLineKind(line)) {
+                    TabletGuideBodyLineKind.Skip -> Unit
+                    TabletGuideBodyLineKind.RequiredReading -> GuideRequiredReadingRow(line)
+                    TabletGuideBodyLineKind.Danger -> GuideDangerCalloutRow(line)
+                    TabletGuideBodyLineKind.Section -> Text(
+                        text = normalizeGuidePaperSectionLine(line),
+                        style = typography.monoCaps.copy(
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        color = paperPalette.accent,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    TabletGuideBodyLineKind.Body -> Text(
+                        text = line,
+                        style = typography.answerBody.copy(
+                            fontSize = (typeScalePolicy.answerFontSizeSp - 1).sp,
+                            lineHeight = (typeScalePolicy.answerLineHeightSp - 1).sp,
+                            letterSpacing = 0.sp,
+                        ),
+                        color = paperPalette.ink,
+                    )
+                }
+            }
+    }
+}
+
+@Composable
+private fun GuideDangerCalloutRow(line: String) {
+    val typography = SenkuTheme.typography
+    val paperPalette = tabletGuidePaperPalette()
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = paperPalette.pageInset,
+        contentColor = paperPalette.ink,
+        shape = RoundedCornerShape(2.dp),
+        border = BorderStroke(1.dp, paperPalette.rule),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .height(50.dp)
+                    .background(paperPalette.danger),
+            )
+            Text(
+                text = normalizeGuidePaperDangerLine(line),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                style = typography.answerBody.copy(
+                    fontSize = 15.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = if (line.startsWith("DANGER", ignoreCase = true)) FontWeight.Medium else FontWeight.Normal,
+                    letterSpacing = 0.sp,
+                ),
+                color = if (line.startsWith("DANGER", ignoreCase = true)) paperPalette.danger else paperPalette.ink,
+            )
+        }
+    }
+}
+
+@Composable
+private fun GuideRequiredReadingRow(line: String) {
+    val typography = SenkuTheme.typography
+    val paperPalette = tabletGuidePaperPalette()
+    val parts = parseGuideRequiredReadingParts(line)
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = paperPalette.pageInset,
+        contentColor = paperPalette.ink,
+        shape = RoundedCornerShape(2.dp),
+        border = BorderStroke(1.dp, paperPalette.rule),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .height(42.dp)
+                    .background(paperPalette.accent),
+            )
+            Text(
+                text = parts.id.ifEmpty { parts.label },
+                modifier = Modifier
+                    .widthIn(min = 58.dp, max = 78.dp)
+                    .padding(vertical = 9.dp),
+                style = typography.monoCaps.copy(
+                    fontSize = 11.sp,
+                    lineHeight = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                color = paperPalette.accent,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 7.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = parts.label,
+                    style = typography.monoCaps.copy(
+                        fontSize = 9.sp,
+                        lineHeight = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
+                    color = paperPalette.accent,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = parts.title.ifEmpty { normalizeGuidePaperRequiredReadingLine(line) },
+                    style = typography.answerBody.copy(
+                        fontSize = 13.sp,
+                        lineHeight = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 0.sp,
+                    ),
+                    color = paperPalette.ink,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Text(
+                text = ">",
+                style = typography.sectionTitle.copy(
+                    fontSize = 18.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = paperPalette.inkSoft,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+internal fun tabletGuideBodyLineKindForTest(line: String): TabletGuideBodyLineKind =
+    tabletGuideBodyLineKind(line)
+
+private fun tabletGuideBodyLineKind(line: String): TabletGuideBodyLineKind {
+    val trimmed = line.trim()
+    if (trimmed.isEmpty()) return TabletGuideBodyLineKind.Skip
+    val upper = trimmed.uppercase()
+    if (upper.startsWith("FIELD MANUAL")) return TabletGuideBodyLineKind.Skip
+    if (Regex("^GD-\\d+\\b.*\\bSECTIONS?\\b").containsMatchIn(upper)) return TabletGuideBodyLineKind.Skip
+    if (upper.startsWith("REQUIRED READING")) return TabletGuideBodyLineKind.RequiredReading
+    if (upper.startsWith("DANGER") ||
+        upper.contains("MOLTEN METAL") ||
+        upper.contains("COMPLETELY DRY")) {
+        return TabletGuideBodyLineKind.Danger
+    }
+    if (upper.startsWith("SEC ") ||
+        upper.startsWith("- \u00A7") ||
+        upper.startsWith("\u2014 \u00A7") ||
+        upper.startsWith("- §") ||
+        upper.startsWith("— §") ||
+        upper.startsWith("AREA READINESS")) {
+        return TabletGuideBodyLineKind.Section
+    }
+    return TabletGuideBodyLineKind.Body
+}
+
+private fun normalizeGuidePaperRequiredReadingLine(line: String): String =
+    line.trim()
+        .replace(Regex("\\s+"), " ")
+        .replace("REQUIRED READING ·", "REQUIRED READING  ·")
+
+internal fun parseGuideRequiredReadingParts(line: String): TabletGuideRequiredReadingParts {
+    val normalized = normalizeGuidePaperTokenLine(line)
+    val tokens = normalized
+        .split('\u00B7')
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+    val label = tokens.firstOrNull()?.takeIf { it.equals("REQUIRED READING", ignoreCase = true) }
+        ?: "REQUIRED READING"
+    val idIndex = tokens.indexOfFirst { Regex("^GD-\\d+\\b", RegexOption.IGNORE_CASE).containsMatchIn(it) }
+    val id = tokens.getOrNull(idIndex)?.trim().orEmpty()
+    val title = if (idIndex >= 0) {
+        tokens.drop(idIndex + 1).joinToString(" \u00B7 ")
+    } else {
+        tokens.drop(1).joinToString(" \u00B7 ")
+    }
+    return TabletGuideRequiredReadingParts(
+        label = label.uppercase(),
+        id = id.uppercase(),
+        title = title,
+    )
+}
+
+private fun normalizeGuidePaperDangerLine(line: String): String =
+    line.trim()
+        .replace(Regex("\\s+"), " ")
+        .replace("DANGER ·", "DANGER  ·")
+
+private fun normalizeGuidePaperSectionLine(line: String): String =
+    line.trim().replace(Regex("\\s+"), " ")
+
+private fun normalizeGuidePaperTokenLine(line: String): String =
+    line.trim()
+        .replace("Â§", "\u00A7")
+        .replace("Â·", "\u00B7")
+        .replace("â€”", "\u2014")
+        .replace(Regex("\\s+"), " ")
+
 internal fun TabletDetailState.isGuideMode(): Boolean = detailMode == TabletDetailMode.Guide
 
 internal fun TabletDetailState.isThreadMode(): Boolean = detailMode == TabletDetailMode.Thread
@@ -1425,6 +1683,14 @@ internal fun TabletDetailState.resolvedGuideSectionCount(): Int =
         turns.size
     }
 
+internal fun TabletDetailState.resolvedThreadRailTurns(): List<ThreadTurnState> {
+    if (!isGuideMode()) {
+        return turns
+    }
+    val sectionTurns = buildGuideSectionAnchorTurns(turns)
+    return sectionTurns.takeIf { it.size > turns.size } ?: turns
+}
+
 internal fun TabletDetailState.resolvedThreadRailSources(): List<SourceState> {
     if (!isGuideMode()) {
         return sources
@@ -1444,6 +1710,80 @@ internal fun TabletDetailState.resolvedThreadRailSources(): List<SourceState> {
             isSelected = currentGuideId.isNotEmpty() && xrefId.equals(currentGuideId, ignoreCase = true),
         )
     }
+}
+
+internal fun TabletDetailState.resolvedEvidencePaneGraph(): TabletGuideEvidencePaneGraph {
+    val graphAnchor = tabletSourceGraphAnchor(anchor)
+    val graphXRefs = tabletSourceGraphXRefs(xrefs)
+    if (!isGuideMode()) {
+        return TabletGuideEvidencePaneGraph(anchor = graphAnchor, xrefs = graphXRefs)
+    }
+    val visibleXRefs = tabletSourceGraphVisibleXRefs(graphAnchor, graphXRefs)
+    if (!graphAnchor.hasSource) {
+        return TabletGuideEvidencePaneGraph(anchor = graphAnchor, xrefs = visibleXRefs)
+    }
+    val anchorId = graphAnchor.id.trim()
+    val anchorTitle = graphAnchor.title.trim()
+    val anchorRow = XRefState(
+        id = anchorId,
+        title = anchorTitle.ifEmpty { "Anchor guide" },
+        relation = "ANCHOR",
+    )
+    return TabletGuideEvidencePaneGraph(
+        anchor = AnchorState("", "", "", "", "", false),
+        xrefs = listOf(anchorRow) + visibleXRefs,
+    )
+}
+
+internal fun buildGuideSectionAnchorTurns(turns: List<ThreadTurnState>): List<ThreadTurnState> {
+    val anchors = turns
+        .asSequence()
+        .flatMap { turn -> guideSectionAnchorLabels(turn.answer.short).asSequence() }
+        .distinct()
+        .toList()
+    if (anchors.isEmpty()) {
+        return emptyList()
+    }
+    return anchors.mapIndexed { index, label ->
+        ThreadTurnState(
+            id = "guide-section-anchor-${index + 1}",
+            question = label,
+            answer = AnswerContent(
+                short = label.removePrefix("$${index + 1} ").trim().ifEmpty { "Guide section" },
+                sourceCount = 0,
+                host = "Guide",
+                elapsedSeconds = 0.0,
+            ),
+            status = Status.Done,
+            isActive = false,
+        )
+    }
+}
+
+internal fun guideSectionAnchorLabels(text: String): List<String> {
+    val labels = mutableListOf<String>()
+    text.lineSequence()
+        .map { normalizeGuidePaperTokenLine(it) }
+        .filter { it.isNotEmpty() }
+        .forEach { line ->
+            val sectionTitle = parseGuideSectionAnchorTitle(line)
+            if (sectionTitle != null) {
+                labels += "$${labels.size + 1} $sectionTitle"
+            } else if (tabletGuideBodyLineKind(line) == TabletGuideBodyLineKind.RequiredReading) {
+                labels += "$${labels.size + 1} Required reading"
+            }
+        }
+    return labels
+}
+
+private fun parseGuideSectionAnchorTitle(line: String): String? {
+    val match = Regex("^[\\-\u2014]?\\s*\u00A7\\s*\\d+\\s*[\u00B7.:-]\\s*(.+)$").find(line)
+    val title = match?.groupValues?.getOrNull(1)?.trim()
+        ?: line.takeIf { it.equals("AREA READINESS", ignoreCase = true) }
+    return title
+        ?.lowercase()
+        ?.replace(Regex("\\s+"), " ")
+        ?.replaceFirstChar { char -> char.titlecase() }
 }
 
 private fun TabletDetailState.inferredGuideSectionCountFallback(): Int? {

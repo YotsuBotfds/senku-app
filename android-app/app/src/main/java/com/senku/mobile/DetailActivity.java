@@ -1571,11 +1571,12 @@ public final class DetailActivity extends AppCompatActivity {
     }
 
     private FrameLayout.LayoutParams tabletEmergencyHeaderOverlayParams() {
+        boolean fullHeightPage = isTabletEmergencyFullHeightPage();
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            resolveTabletEmergencyOverlayHeight(isTabletPortraitLayout())
+            resolveTabletEmergencyOverlayHeight(fullHeightPage || isTabletPortraitLayout())
         );
-        TabletEmergencyOverlayMargins margins = resolveTabletEmergencyOverlayMarginsDp(isTabletPortraitLayout());
+        TabletEmergencyOverlayMargins margins = resolveTabletEmergencyOverlayMarginsDp(fullHeightPage || isTabletPortraitLayout());
         params.leftMargin = dp(margins.left);
         params.rightMargin = dp(margins.right);
         params.topMargin = dp(margins.top);
@@ -1603,10 +1604,10 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldUseTabletEmergencyFullHeightPage(
         boolean answerMode,
-        boolean tabletPortrait,
+        boolean tabletDetailShell,
         boolean emergencySurfaceEligible
     ) {
-        return answerMode && tabletPortrait && emergencySurfaceEligible;
+        return answerMode && tabletDetailShell && emergencySurfaceEligible;
     }
 
     static boolean shouldSuppressTabletEmergencyStaleChrome(
@@ -1628,7 +1629,7 @@ public final class DetailActivity extends AppCompatActivity {
     private boolean isTabletEmergencyFullHeightPage() {
         return shouldUseTabletEmergencyFullHeightPage(
             answerMode,
-            isTabletPortraitLayout(),
+            wideLayoutActive(),
             shouldShowEmergencyHeader()
         );
     }
@@ -1650,7 +1651,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (tabletEmergencyActionsOverlayPanel == null) {
             return;
         }
-        if (!isTabletPortraitLayout()) {
+        if (!isTabletEmergencyFullHeightPage()) {
             tabletEmergencyActionsOverlayPanel.setVisibility(View.GONE);
             return;
         }
@@ -1666,7 +1667,7 @@ public final class DetailActivity extends AppCompatActivity {
         if (tabletEmergencyProofOverlayPanel == null || tabletEmergencyProofOverlayText == null) {
             return;
         }
-        if (!isTabletPortraitLayout() || currentSources == null || currentSources.isEmpty()) {
+        if (!isTabletEmergencyFullHeightPage() || currentSources == null || currentSources.isEmpty()) {
             tabletEmergencyProofOverlayPanel.setVisibility(View.GONE);
             return;
         }
@@ -3084,7 +3085,10 @@ public final class DetailActivity extends AppCompatActivity {
                 clearProvenancePanel();
                 return;
             }
-            if (isEmergencyPortraitSurface()) {
+            if (shouldHideSourcesPanelForEmergencySurface(
+                isEmergencyPortraitSurface(),
+                useCompactSourceSections()
+            )) {
                 sourcesPanel.setVisibility(View.GONE);
                 clearProvenancePanel();
                 return;
@@ -3228,8 +3232,26 @@ public final class DetailActivity extends AppCompatActivity {
             }
             if (useCompactSourceSections()) {
                 boolean emergencyPortrait = isEmergencyPortraitSurface();
+                boolean collapsedPhonePortraitTrigger = shouldShowCollapsedPhonePortraitSourceTrigger(
+                    isCompactPortraitPhoneLayout(),
+                    portraitSourcesExpanded,
+                    emergencyPortrait,
+                    !safe(selectedSourceKey).isEmpty(),
+                    currentSources.size()
+                );
                 if (sourcesContainer != null) {
-                    sourcesContainer.setVisibility((portraitSourcesExpanded || emergencyPortrait) ? View.VISIBLE : View.GONE);
+                    for (int i = 0; i < sourcesContainer.getChildCount(); i++) {
+                        sourcesContainer.getChildAt(i).setVisibility(View.VISIBLE);
+                    }
+                    sourcesContainer.setVisibility(
+                        (portraitSourcesExpanded || emergencyPortrait || collapsedPhonePortraitTrigger)
+                            ? View.VISIBLE
+                            : View.GONE
+                    );
+                }
+                if (emergencyPortrait) {
+                    clearProvenancePanel();
+                    return;
                 }
                 if (!portraitSourcesExpanded && !emergencyPortrait) {
                     clearProvenancePanel();
@@ -3581,7 +3603,7 @@ public final class DetailActivity extends AppCompatActivity {
         boolean pendingGeneration,
         int sourceCount
     ) {
-        return compactPortraitPhone && answerMode && !pendingGeneration && sourceCount > 0;
+        return false;
     }
 
     static boolean shouldHideInlineSourcePreviewForPhonePortrait(
@@ -3590,6 +3612,20 @@ public final class DetailActivity extends AppCompatActivity {
         boolean portraitSourcesExpanded
     ) {
         return compactPortraitPhone && compactPreview && portraitSourcesExpanded;
+    }
+
+    static boolean shouldShowCollapsedPhonePortraitSourceTrigger(
+        boolean compactPortraitPhone,
+        boolean portraitSourcesExpanded,
+        boolean emergencyPortrait,
+        boolean sourceSelectionActive,
+        int sourceCount
+    ) {
+        return compactPortraitPhone
+            && !portraitSourcesExpanded
+            && !emergencyPortrait
+            && !sourceSelectionActive
+            && sourceCount > 0;
     }
 
     static String buildPhonePortraitSourceCardLabel(DetailSourcePresentationFormatter.EvidenceCard card) {
@@ -3800,6 +3836,13 @@ public final class DetailActivity extends AppCompatActivity {
                 return;
             }
             if (answerMode && isLandscapePhoneLayout()) {
+                nextStepsPanel.setVisibility(View.GONE);
+                clearGuideReturnContextPanel();
+                clearActiveGuideContextPanel();
+                clearRelatedGuidePreviewPanel();
+                return;
+            }
+            if (shouldHideRelatedGuideChromeForEmergencySurface(answerMode, isEmergencyPortraitSurface())) {
                 nextStepsPanel.setVisibility(View.GONE);
                 clearGuideReturnContextPanel();
                 clearActiveGuideContextPanel();
@@ -5922,7 +5965,12 @@ public final class DetailActivity extends AppCompatActivity {
                 continue;
             }
             if (line.equalsIgnoreCase("Steps:")
+                || line.equalsIgnoreCase("STEPS")
                 || line.equalsIgnoreCase("FIELD STEPS")
+                || line.equalsIgnoreCase("Immediate actions:")
+                || line.equalsIgnoreCase("IMMEDIATE ACTIONS")
+                || line.equalsIgnoreCase("Emergency actions:")
+                || line.equalsIgnoreCase("EMERGENCY ACTIONS")
                 || line.equalsIgnoreCase("Limits or safety:")
                 || line.equalsIgnoreCase("WATCH")) {
                 if (sawShortLabel) {
@@ -7402,6 +7450,10 @@ public final class DetailActivity extends AppCompatActivity {
             openSourceGuide(source);
             return;
         }
+        if (shouldHideProofChromeForEmergencySurface(answerMode, isEmergencyPortraitSurface())) {
+            clearProvenancePanel();
+            return;
+        }
         if (!answerMode || source == null) {
             clearProvenancePanel();
             return;
@@ -7818,6 +7870,21 @@ public final class DetailActivity extends AppCompatActivity {
 
     static boolean shouldRestoreAnswerSemanticPresentation(boolean answerMode, boolean emergencyPortrait) {
         return answerMode && !emergencyPortrait;
+    }
+
+    static boolean shouldHideSourcesPanelForEmergencySurface(
+        boolean emergencySurface,
+        boolean compactSourceSections
+    ) {
+        return emergencySurface;
+    }
+
+    static boolean shouldHideProofChromeForEmergencySurface(boolean answerMode, boolean emergencySurface) {
+        return answerMode && emergencySurface;
+    }
+
+    static boolean shouldHideRelatedGuideChromeForEmergencySurface(boolean answerMode, boolean emergencySurface) {
+        return answerMode && emergencySurface;
     }
 
     static int resolvePhoneGuideBodyShellBottomPaddingDp(boolean singlePaperPhoneGuide, boolean landscapePhone) {

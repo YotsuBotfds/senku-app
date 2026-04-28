@@ -188,7 +188,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
-                        android:text="Senku"
+                        android:text="Field manual"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="@color/senku_rev03_ink_0"
                         android:textStyle="bold" />
@@ -302,7 +302,7 @@
                         android:layout_marginTop="6dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
-                        android:text="CATEGORIES - FIELD SHELF"
+                        android:text="CATEGORIES - 12"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="@color/senku_rev03_ink_2"
                         android:textStyle="bold" />
@@ -626,7 +626,7 @@
                     android:layout_height="20dp"
                     android:contentDescription="@string/search_input_description"
                     android:src="@drawable/ic_search_magnifier"
-                    android:tint="@color/senku_rev03_ink_2" />
+                    android:tint="@color/senku_rev03_accent" />
 
                 <TextView
                     android:id="@+id/tablet_search_query_text"
@@ -635,11 +635,13 @@
                     android:layout_marginStart="14dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
+                    android:fontFamily="monospace"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="@string/search_hint"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/senku_rev03_ink_0" />
+                    android:textColor="@color/senku_rev03_ink_0"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tablet_search_count_text"
@@ -649,7 +651,7 @@
                     android:includeFontPadding="false"
                     android:text="0 RESULTS"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/senku_rev03_ink_2"
+                    android:textColor="@color/senku_rev03_accent"
                     android:textStyle="bold" />
             </LinearLayout>
 

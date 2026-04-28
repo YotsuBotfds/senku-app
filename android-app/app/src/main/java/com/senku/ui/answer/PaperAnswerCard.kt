@@ -47,14 +47,15 @@ enum class Mode {
 }
 
 private val PaperAnswerCardInnerPadding = 0.dp
-private val PaperAnswerCardSectionSpacing = 10.dp
+internal val PaperAnswerCardSectionSpacing = 7.dp
 private val PaperAnswerCardBorderWidth = 0.5.dp
-private val PaperAnswerCardBodySize = 16.sp
-private val PaperAnswerCardBodyLineHeight = 25.sp
-private val PaperAnswerCardSupportSize = 13.sp
-private val PaperAnswerCardSupportLineHeight = 19.sp
-private val PaperAnswerCardMetaSize = 10.sp
-private val PaperAnswerCardMetaLineHeight = 13.sp
+internal val PaperAnswerCardBodySize = 14.sp
+internal val PaperAnswerCardBodyLineHeight = 20.sp
+internal val PaperAnswerCardSupportSize = 12.sp
+internal val PaperAnswerCardSupportLineHeight = 16.sp
+internal val PaperAnswerCardMetaSize = 9.sp
+internal val PaperAnswerCardMetaLineHeight = 11.sp
+internal val PaperAnswerCardSupportHeaderSpacing = 5.dp
 
 class PaperAnswerCardHostView @JvmOverloads constructor(
     context: Context,
@@ -192,7 +193,7 @@ fun PaperAnswerCard(
                         palette = palette,
                         emphasized = false,
                     ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             content.steps.forEachIndexed { index, step ->
                                 Text(
                                     text = "${index + 1}. ${step.trim()}",
@@ -333,7 +334,7 @@ private fun SupportBlock(
             )
             Spacer(modifier = Modifier.width(12.dp))
         }
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(PaperAnswerCardSupportHeaderSpacing)) {
             SectionHeader(
                 label = label,
                 color = labelColor,
@@ -502,7 +503,7 @@ internal fun uncertainFitNoticeText(content: AnswerContent): String {
     val count = content.sourceCount.coerceAtLeast(0)
     val guideWord = if (count == 1) "guide" else "guides"
     val countText = if (count > 0) "$count $guideWord" else "related guides"
-    return "Senku found $countText that may apply, but no single guide is a confident anchor. Treat as guidance, not procedure."
+    return "Senku found $countText that may apply, but no single guide is a confident anchor. Treat as guidance."
 }
 
 internal fun displayProofCtaLabel(label: String): String {

@@ -17,6 +17,7 @@ final class DetailAnswerBodyFormatter {
     private static final String SUMMARY_DISPLAY_LABEL = "ANSWER";
     private static final String STEPS_DISPLAY_LABEL = "STEPS";
     private static final String SAFETY_DISPLAY_LABEL = "WATCH";
+    static final int SECTION_SEPARATOR_NEWLINE_COUNT = 1;
     private static final String STEPS_LABEL = "Steps:";
     private static final String LIMITS_OR_SAFETY_LABEL = "Limits or safety:";
 
@@ -257,7 +258,9 @@ final class DetailAnswerBodyFormatter {
             return;
         }
         if (builder.length() > 0) {
-            builder.append("\n\n");
+            for (int index = 0; index < SECTION_SEPARATOR_NEWLINE_COUNT; index++) {
+                builder.append('\n');
+            }
         }
         for (int index = 0; index < lines.size(); index++) {
             if (index > 0) {
@@ -279,7 +282,7 @@ final class DetailAnswerBodyFormatter {
             String currentLine = lines[i];
             String trimmedLine = currentLine.trim();
             if (isAnswerDisplayLabel(trimmedLine) || isKnownAnswerSectionLabel(trimmedLine)) {
-                if (!previousLineBlank && spaced.length() > 0) {
+                if (SECTION_SEPARATOR_NEWLINE_COUNT > 1 && !previousLineBlank && spaced.length() > 0) {
                     spaced.append('\n');
                 }
                 spaced.append(displayLabelForSection(trimmedLine));

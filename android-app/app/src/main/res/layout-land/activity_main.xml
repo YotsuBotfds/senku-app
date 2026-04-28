@@ -11,34 +11,44 @@
     android:paddingBottom="2dp">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="32dp"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingTop="0dp"
-        android:visibility="gone">
+        android:paddingTop="5dp">
+
+        <TextView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/app_badge_letter"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/senku_rev03_accent"
+            android:textStyle="bold" />
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="12dp"
             android:contentDescription="@string/browse_guides_button"
             android:padding="2dp"
             android:src="@drawable/ic_home_library"
             android:tint="@color/senku_rev03_accent" />
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/ask_button"
             android:padding="2dp"
             android:src="@drawable/ic_home_ask"
             android:tint="@color/senku_rev03_ink_2" />
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/bottom_tab_pins"
             android:padding="2dp"
             android:src="@drawable/ic_home_saved"
@@ -46,11 +56,10 @@
     </LinearLayout>
 
     <View
-        android:layout_width="0dp"
+        android:layout_width="1dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="0dp"
-        android:background="@color/senku_rev03_hairline_strong"
-        android:visibility="gone" />
+        android:background="@color/senku_rev03_hairline_strong" />
 
     <ScrollView
         android:id="@+id/browse_scroll_view"
@@ -148,7 +157,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="22dp"
                 android:layout_marginTop="4dp"
-                android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="10dp"
@@ -200,7 +208,6 @@
                 android:layout_height="32dp"
                 android:layout_marginTop="4dp"
                 android:addStatesFromChildren="true"
-                android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="16dp"
@@ -209,7 +216,6 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:background="@drawable/bg_manual_phone_home_search_icon"
                     android:contentDescription="@string/search_input_description"
                     android:padding="3dp"
                     android:src="@drawable/ic_search_magnifier"
@@ -259,7 +265,7 @@
                 android:layout_marginTop="6dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
-                android:text="-- CATEGORIES  &#8226;  12"
+                android:text="CATEGORIES - 12"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/senku_rev03_ink_2"
                 android:textStyle="bold" />
@@ -408,7 +414,6 @@
             android:layout_width="match_parent"
             android:layout_height="26dp"
             android:layout_marginBottom="1dp"
-            android:background="@drawable/bg_manual_phone_home_search"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="12dp"
@@ -418,7 +423,6 @@
             <ImageView
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:background="@drawable/bg_manual_phone_home_search_icon"
                 android:contentDescription="@string/search_input_description"
                 android:padding="3dp"
                 android:src="@drawable/ic_search_magnifier"
@@ -431,6 +435,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:ellipsize="end"
+                android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:text="@string/search_hint"
@@ -445,7 +450,7 @@
                 android:includeFontPadding="false"
                 android:text="0 RESULTS"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/senku_rev03_ink_2"
+                android:textColor="@color/senku_rev03_accent"
                 android:textStyle="bold" />
         </LinearLayout>
 

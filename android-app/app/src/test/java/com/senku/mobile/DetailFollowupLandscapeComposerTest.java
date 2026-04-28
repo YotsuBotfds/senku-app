@@ -126,12 +126,18 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
-    public void phonePortraitAnswerSourcesExpandByDefaultAfterStableAnswer() {
-        assertTrue(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 3));
+    public void phonePortraitAnswerSourcesStayCollapsedByDefaultAfterStableAnswer() {
+        assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 3));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, true, 3));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, true, false, 0));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(false, true, false, 3));
         assertFalse(DetailActivity.shouldExpandPhonePortraitSourcesByDefault(true, false, false, 3));
+
+        assertTrue(DetailActivity.shouldShowCollapsedPhonePortraitSourceTrigger(true, false, false, false, 3));
+        assertFalse(DetailActivity.shouldShowCollapsedPhonePortraitSourceTrigger(true, true, false, false, 3));
+        assertFalse(DetailActivity.shouldShowCollapsedPhonePortraitSourceTrigger(true, false, true, false, 3));
+        assertFalse(DetailActivity.shouldShowCollapsedPhonePortraitSourceTrigger(true, false, false, true, 3));
+        assertFalse(DetailActivity.shouldShowCollapsedPhonePortraitSourceTrigger(true, false, false, false, 0));
     }
 
     @Test
@@ -183,6 +189,29 @@ public final class DetailFollowupLandscapeComposerTest {
         assertFalse(DetailActivity.shouldRestoreAnswerSemanticPresentation(true, true));
         assertTrue(DetailActivity.shouldRestoreAnswerSemanticPresentation(true, false));
         assertFalse(DetailActivity.shouldRestoreAnswerSemanticPresentation(false, true));
+    }
+
+    @Test
+    public void emergencyCompactSurfacesHideProofRailBehindSourceWhyCard() {
+        assertTrue(DetailActivity.shouldHideSourcesPanelForEmergencySurface(true, true));
+        assertTrue(DetailActivity.shouldHideSourcesPanelForEmergencySurface(true, false));
+        assertFalse(DetailActivity.shouldHideSourcesPanelForEmergencySurface(false, false));
+
+        assertTrue(DetailActivity.shouldHideProofChromeForEmergencySurface(true, true));
+        assertFalse(DetailActivity.shouldHideProofChromeForEmergencySurface(true, false));
+        assertFalse(DetailActivity.shouldHideProofChromeForEmergencySurface(false, true));
+
+        assertTrue(DetailActivity.shouldHideRelatedGuideChromeForEmergencySurface(true, true));
+        assertFalse(DetailActivity.shouldHideRelatedGuideChromeForEmergencySurface(true, false));
+        assertFalse(DetailActivity.shouldHideRelatedGuideChromeForEmergencySurface(false, true));
+    }
+
+    @Test
+    public void tabletEmergencyOverlayOwnsAnyTabletDetailShell() {
+        assertTrue(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, true));
+        assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, false, true));
+        assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(true, true, false));
+        assertFalse(DetailActivity.shouldUseTabletEmergencyFullHeightPage(false, true, true));
     }
 
     @Test

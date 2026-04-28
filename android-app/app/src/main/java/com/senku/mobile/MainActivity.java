@@ -3950,6 +3950,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
         }
+        updateSearchResultDisplayLimit(Integer.MAX_VALUE);
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
         }
@@ -3976,6 +3977,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(showSearchSurface && hasResults ? View.VISIBLE : View.GONE);
         }
+        updateSearchResultDisplayLimit(Integer.MAX_VALUE);
         if (browseRail != null) {
             browseRail.setVisibility(browseMode ? View.VISIBLE : View.GONE);
         }
@@ -4001,6 +4003,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
+        updateSearchResultDisplayLimit(!browseMode && hasResults ? 3 : Integer.MAX_VALUE);
         if (phoneLandscapeSearchSurface != null) {
             phoneLandscapeSearchSurface.setVisibility(!browseMode && hasResults ? View.VISIBLE : View.GONE);
         }
@@ -4047,6 +4050,7 @@ public final class MainActivity extends AppCompatActivity {
         if (resultsList != null) {
             resultsList.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
+        updateSearchResultDisplayLimit(Integer.MAX_VALUE);
         if (phoneSearchQueryWell != null) {
             phoneSearchQueryWell.setVisibility(hasResults ? View.VISIBLE : View.GONE);
         }
@@ -4068,6 +4072,12 @@ public final class MainActivity extends AppCompatActivity {
 
     static int resolveRecentThreadPreviewLimit(boolean compactPhoneHome) {
         return MAX_RECENT_THREAD_PREVIEWS;
+    }
+
+    private void updateSearchResultDisplayLimit(int maxDisplayedItems) {
+        if (adapter != null) {
+            adapter.setMaxDisplayedItems(maxDisplayedItems);
+        }
     }
 
     private int getHomeRelatedGuideLimit() {
@@ -4110,7 +4120,7 @@ public final class MainActivity extends AppCompatActivity {
         if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
             return "SEARCH - " + countLabel;
         }
-        return appendReviewSearchLatency("SEARCH  " + cleanQuery + " - " + countLabel, cleanQuery);
+        return appendReviewSearchLatency("SEARCH " + cleanQuery + " - " + countLabel, cleanQuery);
     }
 
     static String buildPhoneSearchHeaderForTest(String query, int resultCount) {
@@ -4128,7 +4138,7 @@ public final class MainActivity extends AppCompatActivity {
         }
         String lowerStatus = cleanStatus.toLowerCase(Locale.US);
         if (lowerStatus.startsWith("ready offline")) {
-            return "Pack ready";
+            return "PACK READY";
         }
         return cleanStatus;
     }
@@ -4139,7 +4149,32 @@ public final class MainActivity extends AppCompatActivity {
         if (cleanQuery.isEmpty()) {
             return "SEARCH - " + countLabel;
         }
-        return cleanQuery + "    " + countLabel;
+        return "SEARCH " + cleanQuery + "    " + countLabel;
+    }
+
+    static String buildSearchChromeQueryLabelForTest(String query) {
+        return buildSearchChromeQueryLabel(query);
+    }
+
+    static String buildSearchChromeCountLabelForTest(String query, int resultCount, boolean productReviewMode) {
+        return buildSearchChromeCountLabel(query, resultCount, productReviewMode);
+    }
+
+    private static String buildSearchChromeQueryLabel(String query) {
+        String cleanQuery = safe(query).trim();
+        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
+            return "SEARCH guides";
+        }
+        return "SEARCH " + cleanQuery;
+    }
+
+    private String buildSearchChromeCountLabel(String query, int resultCount) {
+        return buildSearchChromeCountLabel(query, resultCount, productReviewMode);
+    }
+
+    private static String buildSearchChromeCountLabel(String query, int resultCount, boolean productReviewMode) {
+        String countLabel = resultCount + (resultCount == 1 ? " RESULT" : " RESULTS");
+        return appendReviewSearchLatency(countLabel, query, productReviewMode);
     }
 
     private String appendReviewSearchLatency(String header, String query) {
@@ -4167,10 +4202,10 @@ public final class MainActivity extends AppCompatActivity {
         }
         String cleanQuery = safe(query).trim();
         if (tabletSearchQueryText != null) {
-            tabletSearchQueryText.setText(cleanQuery.isEmpty() ? "guides" : cleanQuery);
+            tabletSearchQueryText.setText(buildSearchChromeQueryLabel(cleanQuery));
         }
         if (tabletSearchCountText != null) {
-            tabletSearchCountText.setText(resultCount + (resultCount == 1 ? " RESULT" : " RESULTS"));
+            tabletSearchCountText.setText(buildSearchChromeCountLabel(cleanQuery, resultCount));
         }
     }
 
@@ -4180,10 +4215,10 @@ public final class MainActivity extends AppCompatActivity {
         }
         String cleanQuery = safe(query).trim();
         if (phoneSearchQueryText != null) {
-            phoneSearchQueryText.setText(cleanQuery.isEmpty() ? "guides" : cleanQuery);
+            phoneSearchQueryText.setText(buildSearchChromeQueryLabel(cleanQuery));
         }
         if (phoneSearchCountText != null) {
-            phoneSearchCountText.setText(resultCount + (resultCount == 1 ? " RESULT" : " RESULTS"));
+            phoneSearchCountText.setText(buildSearchChromeCountLabel(cleanQuery, resultCount));
         }
     }
 
@@ -4192,9 +4227,7 @@ public final class MainActivity extends AppCompatActivity {
             return;
         }
         if (browseMode) {
-            homeChromeTitleText.setText(isManualHomeShellLayout()
-                ? "HOME  SENKU  \u2022  ed.2"
-                : "HOME  SENKU  \u2022  Field manual \u2022 ed.2");
+            homeChromeTitleText.setText("HOME  SENKU  \u2022  Field manual \u2022 ed.2");
             return;
         }
         String cleanQuery = safe(query).trim();

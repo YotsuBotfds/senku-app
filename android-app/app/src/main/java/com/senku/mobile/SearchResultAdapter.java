@@ -87,6 +87,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     private List<String> queryHighlightTerms = Collections.emptyList();
     private String activeQuery = "";
     private Set<String> warmThreadGuideIds = Collections.emptySet();
+    private int maxDisplayedItems = Integer.MAX_VALUE;
 
     public SearchResultAdapter(
         Context context,
@@ -132,6 +133,15 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     public void setActiveQuery(String query) {
         activeQuery = safe(query).trim();
         queryHighlightTerms = buildHighlightTerms(query);
+    }
+
+    public void setMaxDisplayedItems(int maxDisplayedItems) {
+        int next = maxDisplayedItems <= 0 ? Integer.MAX_VALUE : maxDisplayedItems;
+        if (this.maxDisplayedItems == next) {
+            return;
+        }
+        this.maxDisplayedItems = next;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -382,7 +392,19 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     @Override
     public int getItemCount() {
-        return results.size();
+        return boundedItemCount(results.size(), maxDisplayedItems);
+    }
+
+    static int boundedItemCountForTest(int resultCount, int maxDisplayedItems) {
+        return boundedItemCount(resultCount, maxDisplayedItems);
+    }
+
+    private static int boundedItemCount(int resultCount, int maxDisplayedItems) {
+        int safeCount = Math.max(0, resultCount);
+        if (maxDisplayedItems <= 0 || maxDisplayedItems == Integer.MAX_VALUE) {
+            return safeCount;
+        }
+        return Math.min(safeCount, maxDisplayedItems);
     }
 
     private void bindCategoryBadge(TextView badge, View accent, String category) {

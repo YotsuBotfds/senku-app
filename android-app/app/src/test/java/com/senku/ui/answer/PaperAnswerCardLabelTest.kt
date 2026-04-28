@@ -90,9 +90,21 @@ class PaperAnswerCardLabelTest {
             uncertainFitNoticeLabel(content),
         )
         assertEquals(
-            "Senku found 3 guides that may apply, but no single guide is a confident anchor. Treat as guidance, not procedure.",
+            "Senku found 3 guides that may apply, but no single guide is a confident anchor. Treat as guidance.",
             uncertainFitNoticeText(content),
         )
+    }
+
+    @Test
+    fun answerCardTypography_usesDenseLandscapeFriendlyRhythm() {
+        assertEquals(7f, PaperAnswerCardSectionSpacing.value)
+        assertEquals(14f, PaperAnswerCardBodySize.value)
+        assertEquals(20f, PaperAnswerCardBodyLineHeight.value)
+        assertEquals(12f, PaperAnswerCardSupportSize.value)
+        assertEquals(16f, PaperAnswerCardSupportLineHeight.value)
+        assertEquals(9f, PaperAnswerCardMetaSize.value)
+        assertEquals(11f, PaperAnswerCardMetaLineHeight.value)
+        assertEquals(5f, PaperAnswerCardSupportHeaderSpacing.value)
     }
 
     @Test

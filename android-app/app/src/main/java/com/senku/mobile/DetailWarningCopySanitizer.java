@@ -9,6 +9,8 @@ final class DetailWarningCopySanitizer {
         Pattern.compile("\\[([^\\[\\]\\n]{1,80})\\]");
     private static final Pattern WARNING_RESIDUAL_CITATION_PATTERN =
         Pattern.compile("(?i)^(?:GD[-/]\\d{1,3})(?:\\s*,\\s*GD[-/]\\d{1,3})*$");
+    private static final Pattern INLINE_EMERGENCY_ACTION_STACK_PATTERN =
+        Pattern.compile("[ \\t]+(?:STEPS|FIELD STEPS|IMMEDIATE ACTIONS|EMERGENCY ACTIONS)[ \\t]*:?[ \\t]+\\d+[.)][ \\t]+.*$");
     private static final String[] WARNING_RESIDUAL_PREFIXES = new String[] {
         "instructional mandate",
         "instructional constraint",
@@ -71,6 +73,7 @@ final class DetailWarningCopySanitizer {
         if (cleaned.isEmpty()) {
             return "";
         }
+        cleaned = stripInlineEmergencyActionStack(cleaned);
         Matcher matcher = WARNING_RESIDUAL_BRACKET_PATTERN.matcher(cleaned);
         StringBuffer buffer = new StringBuffer(cleaned.length());
         while (matcher.find()) {
@@ -138,6 +141,10 @@ final class DetailWarningCopySanitizer {
             "Use GD-132 owner listing."
         );
         return cleaned;
+    }
+
+    private static String stripInlineEmergencyActionStack(String text) {
+        return INLINE_EMERGENCY_ACTION_STACK_PATTERN.matcher(safe(text)).replaceFirst("").trim();
     }
 
     private static boolean isWarningResidualBracket(String label) {

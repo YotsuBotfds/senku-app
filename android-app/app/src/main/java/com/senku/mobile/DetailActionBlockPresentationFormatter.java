@@ -446,11 +446,14 @@ final class DetailActionBlockPresentationFormatter {
 
     private static boolean isActionSectionHeading(String normalizedLine) {
         return "steps:".equals(normalizedLine)
+            || "steps".equals(normalizedLine)
             || "field steps".equals(normalizedLine)
             || "field steps:".equals(normalizedLine)
             || "field actions".equals(normalizedLine)
             || "field actions:".equals(normalizedLine)
+            || "immediate actions".equals(normalizedLine)
             || "immediate actions:".equals(normalizedLine)
+            || "emergency actions".equals(normalizedLine)
             || "emergency actions:".equals(normalizedLine)
             || "emergency response:".equals(normalizedLine)
             || "response actions:".equals(normalizedLine)

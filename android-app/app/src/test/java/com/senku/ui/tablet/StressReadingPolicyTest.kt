@@ -68,6 +68,105 @@ class StressReadingPolicyTest {
     }
 
     @Test
+    fun tabletGuidePaperClassifiesCalloutsAndRequiredRowsForBoxedRendering() {
+        assertEquals(
+            TabletGuideBodyLineKind.Skip,
+            tabletGuideBodyLineKindForTest("FIELD MANUAL \u00B7 REV 04-27 \u00B7 PK 2"),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.Skip,
+            tabletGuideBodyLineKindForTest("GD-132 \u00B7 17 SECTIONS"),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.Danger,
+            tabletGuideBodyLineKindForTest("DANGER \u00B7 EXTREME BURN HAZARD"),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.Danger,
+            tabletGuideBodyLineKindForTest("Every tool, mold, crucible, and surface that contacts molten metal must be completely dry."),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.RequiredReading,
+            tabletGuideBodyLineKindForTest("REQUIRED READING \u00B7 GD-220 \u00B7 Abrasives Manufacturing"),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.Section,
+            tabletGuideBodyLineKindForTest("\u2014 \u00A7 1 \u00B7 AREA READINESS"),
+        )
+        assertEquals(
+            TabletGuideBodyLineKind.Body,
+            tabletGuideBodyLineKindForTest("Confirm area readiness before lighting the work zone."),
+        )
+    }
+
+    @Test
+    fun tabletGuideRailExtractsSectionAnchorRowsBeforeCrossReferences() {
+        val state = tabletDetailState(
+            turns = listOf(
+                threadTurn(
+                    id = "guide",
+                    answer = "\u2014 \u00A7 1 \u00B7 AREA READINESS\n" +
+                        "Confirm the work zone is ready.\n" +
+                        "REQUIRED READING \u00B7 GD-220 \u00B7 Abrasives Manufacturing\n" +
+                        "\u2014 \u00A7 3 \u00B7 DRY TOOLS",
+                )
+            ),
+            xrefs = listOf(
+                XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+                XRefState(id = "GD-499", title = "Bellows Forge Blower Construction"),
+            ),
+            detailMode = TabletDetailMode.Guide,
+        )
+
+        val railTurns = state.resolvedThreadRailTurns()
+        val railSources = state.resolvedThreadRailSources()
+
+        assertEquals(listOf("$1 Area readiness", "$2 Required reading", "$3 Dry tools"), railTurns.map { it.question })
+        assertEquals(listOf("GD-220", "GD-499"), railSources.map { it.id })
+    }
+
+    @Test
+    fun tabletGuideEvidenceGraphCountsAnchorPlusVisibleCrossReferences() {
+        val state = tabletDetailState(
+            guideId = "GD-132",
+            anchor = AnchorState(
+                key = "gd-132",
+                id = "GD-132",
+                title = "Foundry & Metal Casting",
+                section = "Area readiness",
+                snippet = "",
+                hasSource = true,
+            ),
+            xrefs = listOf(
+                XRefState(id = "GD-220", title = "Abrasives Manufacturing"),
+                XRefState(id = "GD-225", title = "Bloomery Furnace"),
+                XRefState(id = "GD-301", title = "Charcoal Production"),
+                XRefState(id = "GD-302", title = "Clay Furnace Lining"),
+                XRefState(id = "GD-499", title = "Bellows Forge Blower Construction"),
+            ),
+            detailMode = TabletDetailMode.Guide,
+        )
+
+        val graph = state.resolvedEvidencePaneGraph()
+
+        assertFalse(graph.anchor.hasSource)
+        assertEquals(6, graph.xrefs.size)
+        assertEquals("ANCHOR", graph.xrefs.first().relation)
+        assertEquals("GD-132", graph.xrefs.first().id)
+    }
+
+    @Test
+    fun tabletGuideRequiredReadingParserSplitsIdFromReadableTitle() {
+        val parts = parseGuideRequiredReadingParts(
+            "REQUIRED READING \u00B7 GD-499 \u00B7 Bellows Forge Blower Construction",
+        )
+
+        assertEquals("REQUIRED READING", parts.label)
+        assertEquals("GD-499", parts.id)
+        assertEquals("Bellows Forge Blower Construction", parts.title)
+    }
+
+    @Test
     fun tabletLandscapeTypeScaleKeepsAnswerReadableWithoutOversizingBody() {
         val policy = tabletLandscapeDetailTypeScalePolicy()
 
@@ -351,6 +450,7 @@ class StressReadingPolicyTest {
         turns: List<ThreadTurnState> = emptyList(),
         guideModeLabel: String = "",
         guideModeAnchorLabel: String = "",
+        xrefs: List<XRefState> = emptyList(),
         evidenceExpanded: Boolean = false,
         isLandscape: Boolean = true,
         detailMode: TabletDetailMode = TabletDetailMode.Answer,
@@ -362,7 +462,7 @@ class StressReadingPolicyTest {
             turns = turns,
             sources = sources,
             anchor = anchor,
-            xrefs = emptyList(),
+            xrefs = xrefs,
             composerText = "",
             composerPlaceholder = "Ask a follow-up",
             composerEnabled = true,
@@ -378,12 +478,16 @@ class StressReadingPolicyTest {
             detailMode = detailMode,
         )
 
-    private fun threadTurn(id: String, sourceCount: Int = 1): ThreadTurnState =
+    private fun threadTurn(
+        id: String,
+        sourceCount: Int = 1,
+        answer: String = "Answer",
+    ): ThreadTurnState =
         ThreadTurnState(
             id = id,
             question = "Question",
             answer = com.senku.ui.answer.AnswerContent(
-                short = "Answer",
+                short = answer,
                 sourceCount = sourceCount,
                 host = "Host",
                 elapsedSeconds = 1.0,

@@ -25,6 +25,8 @@ final class DetailGuidePresentationFormatter {
         Pattern.compile("^FIELD MANUAL\\s+\\u00b7\\s+REV\\s+\\d{2}-\\d{2}\\s+\\u00b7\\s+PK\\s+\\d+$");
     private static final Pattern GUIDE_MANUAL_META_PATTERN =
         Pattern.compile("^GD-\\d+\\s+\\u00b7\\s+\\d+\\s+SECTIONS?(?:\\s+\\u00b7\\s+.+)?$");
+    private static final Pattern GUIDE_TABLET_SECTION_PREFIX_PATTERN =
+        Pattern.compile("^SEC\\s+\\d+$", Pattern.CASE_INSENSITIVE);
     private static final String[] GUIDE_REQUIRED_READING_PRIORITY_SLUGS = new String[]{
         "abrasives-manufacturing",
         "bellows-forge-blower-construction",
@@ -41,6 +43,8 @@ final class DetailGuidePresentationFormatter {
     private static final float GUIDE_BODY_TEXT_SIZE = 0.56f;
     private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 4;
     private static final int GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP = 4;
+    private static final int GUIDE_REQUIRED_READING_RIGHT_INSET_DP = 28;
+    private static final String GUIDE_ROW_CHEVRON = "\u203a";
 
     private final Context context;
 
@@ -102,6 +106,9 @@ final class DetailGuidePresentationFormatter {
             } else if (isGuideManualKickerLine(trimmed)) {
                 styleGuideManualKickerLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
+            } else if (isTabletSectionPrefixLine(trimmed)) {
+                styleGuideTabletSectionPrefixLine(styled, lineStart, lineEnd);
+                insideAdmonitionBlock = false;
             } else if (isGuideManualMetaLine(trimmed)) {
                 styleGuideManualMetaLine(styled, lineStart, lineEnd);
                 insideAdmonitionBlock = false;
@@ -144,7 +151,11 @@ final class DetailGuidePresentationFormatter {
                                 admonitionInsetBackgroundColor(admonitionAccentColorRes),
                                 color(admonitionAccentColorRes),
                                 dp(GUIDE_ADMONITION_ACCENT_WIDTH_DP),
-                                0
+                                0,
+                                true,
+                                false,
+                                0,
+                                color(guideBodyTextColorResForLegacy())
                             ),
                             lineStart,
                             lineEnd,
@@ -309,7 +320,11 @@ final class DetailGuidePresentationFormatter {
                 requiredReadingInsetBackgroundColor(),
                 color(guideAdmonitionWarningColorResForLegacy()),
                 dp(GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP),
-                dp(1)
+                dp(2),
+                true,
+                true,
+                dp(GUIDE_REQUIRED_READING_RIGHT_INSET_DP),
+                color(guideAnchorValueColorResForLegacy())
             ),
             lineStart,
             lineEnd,
@@ -353,7 +368,11 @@ final class DetailGuidePresentationFormatter {
                 admonitionInsetBackgroundColor(accentColorRes),
                 color(accentColorRes),
                 dp(GUIDE_ADMONITION_ACCENT_WIDTH_DP),
-                0
+                dp(1),
+                true,
+                false,
+                0,
+                color(guideBodyTextColorResForLegacy())
             ),
             lineStart,
             lineEnd,
@@ -415,7 +434,11 @@ final class DetailGuidePresentationFormatter {
                 admonitionInsetBackgroundColor(accentColorRes),
                 color(accentColorRes),
                 dp(GUIDE_ADMONITION_ACCENT_WIDTH_DP),
-                0
+                dp(1),
+                true,
+                false,
+                0,
+                color(guideBodyTextColorResForLegacy())
             ),
             lineStart,
             lineEnd,
@@ -432,7 +455,7 @@ final class DetailGuidePresentationFormatter {
         return blendColors(
             color(guideAdmonitionBackgroundColorResForLegacy()),
             color(guideAdmonitionWarningColorResForLegacy()),
-            0.18f
+            0.24f
         );
     }
 
@@ -758,6 +781,26 @@ final class DetailGuidePresentationFormatter {
         return GUIDE_MANUAL_META_PATTERN.matcher(safe(line).trim()).matches();
     }
 
+    static boolean isTabletSectionPrefixLineForLegacy(String line) {
+        return isTabletSectionPrefixLine(line);
+    }
+
+    private static boolean isTabletSectionPrefixLine(String line) {
+        return GUIDE_TABLET_SECTION_PREFIX_PATTERN.matcher(safe(line).trim()).matches();
+    }
+
+    private void styleGuideTabletSectionPrefixLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new TypefaceSpan("monospace"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(GUIDE_ANCHOR_TEXT_SIZE), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(
+            new ForegroundColorSpan(color(guideAdmonitionWarningColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+    }
+
     private static boolean isGuideManualTitleLine(
         GuideBodySanitizer.GuideBodyLine[] lines,
         GuideBodySanitizer.GuideBodyLine line
@@ -795,12 +838,33 @@ final class DetailGuidePresentationFormatter {
         private final int accentColor;
         private final int accentWidthPx;
         private final int verticalInsetPx;
+        private final boolean drawBorder;
+        private final boolean drawChevron;
+        private final int rightInsetPx;
+        private final int chevronColor;
 
         GuideRowBackgroundSpan(int backgroundColor, int accentColor, int accentWidthPx, int verticalInsetPx) {
+            this(backgroundColor, accentColor, accentWidthPx, verticalInsetPx, false, false, 0, accentColor);
+        }
+
+        GuideRowBackgroundSpan(
+            int backgroundColor,
+            int accentColor,
+            int accentWidthPx,
+            int verticalInsetPx,
+            boolean drawBorder,
+            boolean drawChevron,
+            int rightInsetPx,
+            int chevronColor
+        ) {
             this.backgroundColor = backgroundColor;
             this.accentColor = accentColor;
             this.accentWidthPx = Math.max(0, accentWidthPx);
             this.verticalInsetPx = Math.max(0, verticalInsetPx);
+            this.drawBorder = drawBorder;
+            this.drawChevron = drawChevron;
+            this.rightInsetPx = Math.max(0, rightInsetPx);
+            this.chevronColor = chevronColor;
         }
 
         @Override
@@ -821,10 +885,34 @@ final class DetailGuidePresentationFormatter {
             Paint.Style previousStyle = paint.getStyle();
             paint.setColor(backgroundColor);
             paint.setStyle(Paint.Style.FILL);
-            canvas.drawRect(left, top + verticalInsetPx, right, bottom - verticalInsetPx, paint);
+            int rowTop = top + verticalInsetPx;
+            int rowBottom = bottom - verticalInsetPx;
+            int rowRight = Math.max(left, right - rightInsetPx);
+            canvas.drawRect(left, rowTop, right, rowBottom, paint);
             if (accentWidthPx > 0) {
                 paint.setColor(accentColor);
-                canvas.drawRect(left, top + verticalInsetPx, left + accentWidthPx, bottom - verticalInsetPx, paint);
+                canvas.drawRect(left, rowTop, left + accentWidthPx, rowBottom, paint);
+            }
+            if (drawBorder) {
+                paint.setColor(blendColors(backgroundColor, accentColor, 0.36f));
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(Math.max(1f, accentWidthPx / 4f));
+                canvas.drawRect(left, rowTop, right, rowBottom, paint);
+                paint.setStyle(Paint.Style.FILL);
+            }
+            if (drawChevron) {
+                float previousTextSize = paint.getTextSize();
+                Typeface previousTypeface = paint.getTypeface();
+                Paint.Align previousAlign = paint.getTextAlign();
+                paint.setColor(chevronColor);
+                paint.setTypeface(Typeface.DEFAULT_BOLD);
+                paint.setTextAlign(Paint.Align.RIGHT);
+                paint.setTextSize(previousTextSize * 1.18f);
+                float chevronBaseline = baseline;
+                canvas.drawText(GUIDE_ROW_CHEVRON, rowRight + rightInsetPx - Math.max(6f, accentWidthPx), chevronBaseline, paint);
+                paint.setTextSize(previousTextSize);
+                paint.setTypeface(previousTypeface);
+                paint.setTextAlign(previousAlign);
             }
             paint.setStyle(previousStyle);
             paint.setColor(previousColor);
