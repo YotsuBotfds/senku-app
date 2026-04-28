@@ -57,7 +57,7 @@ final class DetailMetaPresentationFormatter {
         }
     }
 
-    private static final String SERIAL_META_SEPARATOR = " | ";
+    static final String SERIAL_META_SEPARATOR = " \u00B7 ";
 
     private final Context context;
 
@@ -213,19 +213,15 @@ final class DetailMetaPresentationFormatter {
                 }
             }
         }
-        return TextUtils.join(SERIAL_META_SEPARATOR, cleaned);
+        return String.join(SERIAL_META_SEPARATOR, cleaned);
     }
 
-    private static String buildHeaderMetaText(List<String> primaryParts, boolean wide, String packFreshness) {
+    static String buildHeaderMetaText(List<String> primaryParts, boolean wide, String packFreshness) {
         ArrayList<String> firstLineParts = new ArrayList<>(primaryParts);
-        if (packFreshness.isEmpty()) {
-            return joinSerialTokens(firstLineParts);
-        }
-        if (wide) {
+        if (!packFreshness.isEmpty()) {
             firstLineParts.add(packFreshness);
-            return joinSerialTokens(firstLineParts);
         }
-        return joinSerialTokens(firstLineParts) + "\n" + packFreshness;
+        return joinSerialTokens(firstLineParts);
     }
 
     private static String compactPackGeneratedAt(String currentPackGeneratedAt, boolean wide) {
