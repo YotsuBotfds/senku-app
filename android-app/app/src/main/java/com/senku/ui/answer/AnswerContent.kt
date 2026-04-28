@@ -252,7 +252,23 @@ private fun stripEnvelope(body: String): String {
     if (sourcesIndex >= 0) {
         cleaned = cleaned.substring(0, sourcesIndex).trim()
     }
+    cleaned = stripProofRailResidue(cleaned)
     return cleaned
+}
+
+private fun stripProofRailResidue(body: String): String {
+    val lines = body.split('\n')
+    val proofRailIndex = lines.indexOfFirst { line ->
+        line.trim().equals("PROOF RAIL", ignoreCase = true)
+            || line.trim().equals("Proof rail", ignoreCase = true)
+    }
+    if (proofRailIndex < 0) {
+        return body
+    }
+    return lines
+        .take(proofRailIndex)
+        .joinToString("\n")
+        .trim()
 }
 
 private fun parseStructured(body: String): ParsedAnswer {

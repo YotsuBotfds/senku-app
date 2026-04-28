@@ -3069,22 +3069,24 @@ public final class DetailActivity extends AppCompatActivity {
         }
         try {
             sourcesContainer.removeAllViews();
+            List<SearchResult> visibleSources = visibleSourceRailSources();
+            int visibleSourceCount = visibleSources.size();
             Log.d(
                 TAG,
                 "detail.sources title=\"" + currentTitle + "\" answerMode=" + answerMode +
-                    " count=" + currentSources.size() +
-                    " firstSource=" + summarizeSource(currentSources.isEmpty() ? null : currentSources.get(0))
+                    " count=" + visibleSourceCount +
+                    " firstSource=" + summarizeSource(visibleSources.isEmpty() ? null : visibleSources.get(0))
             );
             if (sourcesSubtitle != null) {
                 sourcesSubtitle.setText(useCompactSourceSections()
                     ? detailSourcePresentationFormatter().buildCompactSourcesSubtitle(
-                        currentSources.size(),
+                        visibleSourceCount,
                         portraitSourcesExpanded,
                         generationStallNoticeVisible,
                         buildTrustRouteBackendSummary(false)
                     )
                     : detailSourcePresentationFormatter().buildExpandedSourcesSubtitle(
-                        currentSources.size(),
+                        visibleSourceCount,
                         generationStallNoticeVisible,
                         buildTrustRouteBackendSummary(true)
                     ));
@@ -3115,7 +3117,7 @@ public final class DetailActivity extends AppCompatActivity {
             boolean inlineLandscapeProvenance = isLandscapePhoneLayout()
                 && provenancePanel != null
                 && !landscapePhoneSideRail;
-            if (currentSources.isEmpty()) {
+            if (visibleSources.isEmpty()) {
                 clearProvenancePanel();
                 if (showUtilityRail()) {
                     sourcesPanel.setVisibility(View.VISIBLE);
@@ -3140,7 +3142,7 @@ public final class DetailActivity extends AppCompatActivity {
                         : (isCompactPortraitPhoneLayout()
                             ? buildCompactPhoneSourcesTriggerTitle(
                                 getString(R.string.detail_sources_title),
-                                currentSources.size(),
+                                visibleSourceCount,
                                 portraitSourcesExpanded
                             )
                             : buildCompactToggleTitle(R.string.detail_sources_title, portraitSourcesExpanded)));
@@ -3150,7 +3152,7 @@ public final class DetailActivity extends AppCompatActivity {
                     if (!emergencyPortrait) {
                         sourcesSubtitle.setText(
                             detailSourcePresentationFormatter().buildCompactSourcesSubtitle(
-                                currentSources.size(),
+                                visibleSourceCount,
                                 portraitSourcesExpanded,
                                 generationStallNoticeVisible,
                                 buildTrustRouteBackendSummary(false)
@@ -3173,14 +3175,14 @@ public final class DetailActivity extends AppCompatActivity {
             applyPhonePortraitSourcePanelTreatment(phonePortraitSourceCards);
             if ((landscapePhoneSideRail || showUtilityRail()) && sourcesTitleText != null) {
                 sourcesTitleText.setText(landscapePhoneSideRail
-                    ? buildLandscapePhoneSourceRailTitle(getString(R.string.detail_sources_title), currentSources.size())
+                    ? buildLandscapePhoneSourceRailTitle(getString(R.string.detail_sources_title), visibleSourceCount)
                     : getString(R.string.detail_sources_title));
             }
             boolean stationRail = shouldUseSourceProvenancePanel() || landscapePhoneSideRail;
             boolean compactPreview = shouldUseCompactSourceProvenancePreview();
             boolean previewMode = stationRail || compactPreview;
-            for (int i = 0; i < currentSources.size(); i++) {
-                SearchResult source = currentSources.get(i);
+            for (int i = 0; i < visibleSources.size(); i++) {
+                SearchResult source = visibleSources.get(i);
                 DetailSourcePresentationFormatter.EvidenceCard evidenceCard =
                     detailSourcePresentationFormatter().buildEvidenceCard(source, i, i == 0 ? "anchor" : "related");
                 Button button = new Button(this);
@@ -3195,7 +3197,7 @@ public final class DetailActivity extends AppCompatActivity {
                 String sourceLabel = phonePortraitSourceCards
                     ? buildPhonePortraitSourceCardLabel(evidenceCard)
                     : (stationRail
-                        ? detailSourcePresentationFormatter().buildStationSourceButtonLabel(source, i, currentSources.size(), i == 0)
+                        ? detailSourcePresentationFormatter().buildStationSourceButtonLabel(source, i, visibleSourceCount, i == 0)
                         : detailSourcePresentationFormatter().buildSourceButtonLabel(source));
                 button.setText(sourceLabel);
                 button.setContentDescription(
@@ -3203,7 +3205,7 @@ public final class DetailActivity extends AppCompatActivity {
                         evidenceCard,
                         previewMode,
                         i,
-                        currentSources.size()
+                        visibleSourceCount
                     )
                 );
                 button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
@@ -3252,7 +3254,7 @@ public final class DetailActivity extends AppCompatActivity {
                     portraitSourcesExpanded,
                     emergencyPortrait,
                     !safe(selectedSourceKey).isEmpty(),
-                    currentSources.size()
+                    visibleSourceCount
                 );
                 if (sourcesContainer != null) {
                     for (int i = 0; i < sourcesContainer.getChildCount(); i++) {
@@ -3274,16 +3276,14 @@ public final class DetailActivity extends AppCompatActivity {
                 return;
             }
             if (stationRail || compactPreview) {
-                Button firstButton = sourcesContainer.getChildCount() > 0 && sourcesContainer.getChildAt(0) instanceof Button
-                    ? (Button) sourcesContainer.getChildAt(0)
-                    : null;
-                SearchResult primarySource = firstRealSource(currentSources);
+                SearchResult primarySource = firstRealSource(visibleSources);
+                Button primaryButton = findSourceButtonByKey(buildSourceSelectionKey(primarySource));
                 if (primarySource != null && shouldAutoOpenProvenanceForAnswerRail(
                     answerMode,
                     currentAnswerThreadTurnCount(),
                     isLandscapePhoneLayout()
                 )) {
-                    showSourceProvenancePanel(primarySource, firstButton);
+                    showSourceProvenancePanel(primarySource, primaryButton);
                 } else {
                     clearProvenancePanel();
                 }
@@ -4167,12 +4167,19 @@ public final class DetailActivity extends AppCompatActivity {
         if (nextStepsPanel == null) {
             return;
         }
+        if (shouldKeepGuideRelatedRailInPlace(answerMode, showUtilityRail())) {
+            return;
+        }
         ViewParent currentParent = nextStepsPanel.getParent();
         if (shouldPromoteGuideCrossReferenceRail()) {
             moveNextStepsPanelToStationRail(currentParent);
         } else {
             moveNextStepsPanelToHelperSection(currentParent);
         }
+    }
+
+    static boolean shouldKeepGuideRelatedRailInPlace(boolean answerMode, boolean utilityRail) {
+        return !answerMode && !utilityRail;
     }
 
     private boolean shouldPromoteGuideCrossReferenceRail() {
@@ -6736,6 +6743,103 @@ public final class DetailActivity extends AppCompatActivity {
                 subtitleView.setVisibility(showMetaStrip ? View.GONE : View.VISIBLE);
             }
         }
+    }
+
+    private List<SearchResult> visibleSourceRailSources() {
+        List<SessionMemory.TurnSnapshot> snapshots = sessionMemory == null
+            ? Collections.emptyList()
+            : sessionMemory.recentTurnSnapshots(6);
+        return resolveVisibleSourceRailSourcesForState(
+            answerMode,
+            isCurrentThreadDetailRoute(),
+            isLandscapePhoneLayout(),
+            currentSources,
+            snapshots
+        );
+    }
+
+    static List<SearchResult> resolveVisibleSourceRailSourcesForState(
+        boolean answerMode,
+        boolean threadDetailRoute,
+        boolean landscapePhone,
+        List<SearchResult> currentSources,
+        List<SessionMemory.TurnSnapshot> snapshots
+    ) {
+        List<SearchResult> safeSources = currentSources == null ? Collections.emptyList() : currentSources;
+        if (!answerMode) {
+            return new ArrayList<>(safeSources);
+        }
+        if (threadDetailRoute && landscapePhone) {
+            return mergeThreadSourceRailSourcesForState(safeSources, snapshots);
+        }
+        return promoteRainShelterTopicSourceForState(safeSources);
+    }
+
+    static List<SearchResult> promoteRainShelterTopicSourceForState(List<SearchResult> sources) {
+        ArrayList<SearchResult> safeSources = new ArrayList<>(sources == null ? Collections.emptyList() : sources);
+        SearchResult topicSource = rainShelterTopicSource(safeSources);
+        if (topicSource == null) {
+            return safeSources;
+        }
+        ArrayList<SearchResult> promoted = new ArrayList<>();
+        promoted.add(topicSource);
+        String topicKey = buildStaticSourceSelectionKey(topicSource);
+        for (SearchResult source : safeSources) {
+            if (!safe(buildStaticSourceSelectionKey(source)).equals(topicKey)) {
+                promoted.add(source);
+            }
+        }
+        return promoted;
+    }
+
+    static List<SearchResult> mergeThreadSourceRailSourcesForState(
+        List<SearchResult> currentSources,
+        List<SessionMemory.TurnSnapshot> snapshots
+    ) {
+        LinkedHashMap<String, SearchResult> deduped = new LinkedHashMap<>();
+        if (snapshots != null) {
+            for (SessionMemory.TurnSnapshot snapshot : snapshots) {
+                addSourceRailCandidate(deduped, firstStaticRealSource(snapshot == null ? null : snapshot.sourceResults));
+            }
+        }
+        addSourceRailCandidate(deduped, firstStaticRealSource(currentSources));
+        return new ArrayList<>(deduped.values());
+    }
+
+    private static void addSourceRailCandidate(
+        LinkedHashMap<String, SearchResult> deduped,
+        SearchResult source
+    ) {
+        if (deduped == null || source == null) {
+            return;
+        }
+        String key = buildStaticSourceSelectionKey(source);
+        if (!key.isEmpty() && !deduped.containsKey(key)) {
+            deduped.put(key, source);
+        }
+    }
+
+    private static String buildStaticSourceSelectionKey(SearchResult source) {
+        return DetailProvenancePresentationFormatter.buildSourceSelectionKey(source);
+    }
+
+    private static SearchResult firstStaticRealSource(List<SearchResult> sources) {
+        if (sources == null) {
+            return null;
+        }
+        for (SearchResult source : sources) {
+            if (source == null) {
+                continue;
+            }
+            if (!safe(source.guideId).trim().isEmpty()
+                || !safe(source.title).trim().isEmpty()
+                || !safe(source.sectionHeading).trim().isEmpty()
+                || !safe(source.body).trim().isEmpty()
+                || !safe(source.snippet).trim().isEmpty()) {
+                return source;
+            }
+        }
+        return null;
     }
 
     private boolean shouldAllowRev03TopBarTitleWrap() {

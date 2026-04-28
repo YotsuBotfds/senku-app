@@ -943,6 +943,59 @@ Reviewer-backed next slices:
   before further formatter work, especially guide tablet paper/rail allocation
   and emergency bottom composer/context copy.
 
+## Wave46 Checkpoint
+
+Committed scope pending at the time of this update:
+
+- P1 detail state/shell: answer source rails promote the `GD-345` rain-shelter
+  topic source, phone-landscape thread keeps one representative source per turn
+  (`GD-220` + `GD-345`), and guide phone landscape keeps its related-guide rail
+  mounted in the layout-owned rail.
+- P1 tablet detail shell: non-guide portrait hides the left thread rail,
+  non-guide landscape thread rail is narrower, source/evidence rails are wider,
+  and answer top spacing is tighter so source/related content lands higher.
+- P2 answer/proof: parsed answer bodies strip leaked `PROOF RAIL` blocks,
+  proof summary/CTA wording maps toward reader-facing `sources`, and tests cover
+  legacy proof-rail labels.
+- P4 guide: required-reading rows now render as compact `GD-### · Title` rows
+  with thin outlined paper styling and cleaner `Required` metadata.
+- P6 home/search shell: phone home density was retuned after Wave45, and tablet
+  landscape home/search hides the stray static `754 guides` header label while
+  giving the top row enough room to avoid clipping.
+- P7 emergency: square/target-like action badges and flatter warning/banner
+  shells, while preserving four actions and `minimum 5 m radius`.
+
+Fresh proof:
+
+- Pack: `artifacts/ui_state_pack/wave46_integrated/20260428_180708`
+- Canonical mocks:
+  `artifacts/ui_state_pack/wave46_integrated/20260428_180708/mocks`
+- Zip:
+  `artifacts/ui_state_pack/wave46_integrated/20260428_180708_mocks.zip`
+- Summary: status `pass`, states `22/22`, failures `0`, ANRs `0`, mock pack
+  `pass`, deterministic frame export `true`.
+- APK SHA:
+  `fc1ed81c18afc33f9959f274cb373a5fcb232a47c3227b6f00ee7ffa6bf781af`
+- Host model: `gemma-4-e2b-it-litert`
+- Host model SHA:
+  `ea1102014465edeb14b517bf270f6751d036749e3c5f517a7ff802782cb92161`
+- Validation: full `:app:testDebugUnitTest` passed, Android local quality gate
+  passed, `git diff --check` passed with only CRLF warnings from Git.
+
+Residuals for next wave:
+
+- Answer tablet is materially closer and reader-first, but dumps still contain
+  `Proof rail - Answer source selected: GD-345` metadata and phone portrait still
+  exposes a lower `PROOF RAIL` stamp. This needs a DetailActivity/layout-owned
+  proof-stamp suppression pass.
+- Home tablet landscape no longer clips the top header or shows the stray static
+  `754 guides`, but layout remains too compressed/left-heavy compared with the
+  target balanced columns.
+- Guide phone/tablet row styling improved in formatter-owned layers; largest
+  remaining guide work is still shell/pane allocation and section rail behavior.
+- Emergency action/badge styling is closer, with remaining work concentrated in
+  proof/evidence card shape and composer context copy.
+
 ## Parallelization Rules
 
 - Start every worker with `git status --short`, `git log --oneline -n 8

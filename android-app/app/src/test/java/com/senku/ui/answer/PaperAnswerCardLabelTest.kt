@@ -168,7 +168,11 @@ class PaperAnswerCardLabelTest {
 
     @Test
     fun displayProofCtaLabel_replacesLegacyProofCopyOnly() {
+        assertEquals("Sources", displayProofCtaLabel("Proof rail"))
+        assertEquals("Sources", displayProofCtaLabel("Open proof"))
         assertEquals("Sources", displayProofCtaLabel("Show proof"))
+        assertEquals("Sources", displayProofCtaLabel("Show proof rail"))
+        assertEquals("Sources", displayProofCtaLabel("Hide proof"))
         assertEquals("Sources", displayProofCtaLabel("View sources"))
         assertEquals("View citations", displayProofCtaLabel("View citations"))
     }

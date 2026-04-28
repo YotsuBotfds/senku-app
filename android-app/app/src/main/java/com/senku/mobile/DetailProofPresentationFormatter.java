@@ -64,8 +64,8 @@ final class DetailProofPresentationFormatter {
         }
 
         StructuredLine(String label, String value, int accentColor, boolean telemetryValue) {
-            this.label = safe(label);
-            this.value = safe(value);
+            this.label = readerFacingProofText(label);
+            this.value = readerFacingProofText(value);
             this.accentColor = accentColor;
             this.telemetryValue = telemetryValue;
         }
@@ -76,8 +76,8 @@ final class DetailProofPresentationFormatter {
         final String value;
 
         CompactReviewedCardLine(String label, String value) {
-            this.label = safe(label);
-            this.value = safe(value);
+            this.label = readerFacingProofText(label);
+            this.value = readerFacingProofText(value);
         }
     }
 
@@ -781,5 +781,9 @@ final class DetailProofPresentationFormatter {
 
     private static String safe(String value) {
         return value == null ? "" : value;
+    }
+
+    private static String readerFacingProofText(String value) {
+        return safe(value).replaceAll("(?i)proof\\s+rail", "sources");
     }
 }

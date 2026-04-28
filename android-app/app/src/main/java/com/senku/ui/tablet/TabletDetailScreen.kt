@@ -257,17 +257,17 @@ internal enum class TabletGuideBodyLineKind {
 
 internal fun tabletLandscapeReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 212,
-        answerMaxWidthDp = 568,
-        evidenceRailWidthDp = 248,
-        answerHorizontalPaddingDp = 16,
+        threadRailWidthDp = 184,
+        answerMaxWidthDp = 560,
+        evidenceRailWidthDp = 360,
+        answerHorizontalPaddingDp = 14,
     )
 
 internal fun tabletPortraitReadingLayoutPolicy(): TabletReadingLayoutPolicy =
     TabletReadingLayoutPolicy(
-        threadRailWidthDp = 132,
-        answerMaxWidthDp = 456,
-        evidenceRailWidthDp = 208,
+        threadRailWidthDp = 0,
+        answerMaxWidthDp = 620,
+        evidenceRailWidthDp = 288,
         answerHorizontalPaddingDp = 12,
     )
 
@@ -286,6 +286,11 @@ internal fun tabletThreadRailWidthDp(
         guideMode -> 216
         else -> tabletReadingLayoutPolicy(isLandscape).threadRailWidthDp
     }
+
+internal fun tabletShouldShowThreadRail(
+    isLandscape: Boolean,
+    guideMode: Boolean,
+): Boolean = tabletThreadRailWidthDp(isLandscape, guideMode) > 0
 
 internal fun tabletGuidePaperMaxWidthDp(isLandscape: Boolean): Int =
     if (isLandscape) 548 else 820
@@ -343,14 +348,14 @@ internal fun tabletDetailTypeScalePolicy(isLandscape: Boolean): TabletDetailType
 internal fun tabletAnswerReadingChromePolicy(isLandscape: Boolean): TabletAnswerReadingChromePolicy =
     if (isLandscape) {
         TabletAnswerReadingChromePolicy(
-            topPaddingDp = 28,
-            blockSpacingDp = 20,
+            topPaddingDp = 18,
+            blockSpacingDp = 16,
             bottomPaddingDp = 8,
         )
     } else {
         TabletAnswerReadingChromePolicy(
-            topPaddingDp = 16,
-            blockSpacingDp = 14,
+            topPaddingDp = 12,
+            blockSpacingDp = 12,
             bottomPaddingDp = 4,
         )
     }
@@ -494,34 +499,37 @@ fun TabletDetailScreen(
                 .fillMaxSize()
                 .background(colors.bg0),
         ) {
-            ThreadRail(
-                turns = state.resolvedThreadRailTurns(),
-                sources = state.resolvedThreadRailSources(),
-                guideMode = state.isGuideMode(),
-                guideSectionCount = state.resolvedGuideSectionCount(),
-                pinVisible = state.pinVisible,
-                pinActive = state.pinActive,
-                onBackClick = onBackClick,
-                onHomeClick = onHomeClick,
-                onPinClick = onPinClick,
-                onTurnClick = onTurnClick,
-                onSourceClick = onSourceClick,
-                modifier = Modifier
-                    .width(tabletThreadRailWidthDp(state.isLandscape, state.isGuideMode()).dp)
-                    .fillMaxHeight()
-                    .semantics {
-                        paneTitle = threadPaneTitle
-                        isTraversalGroup = true
-                        traversalIndex = 0f
-                    },
-            )
+            val showThreadRail = tabletShouldShowThreadRail(state.isLandscape, state.isGuideMode())
+            if (showThreadRail) {
+                ThreadRail(
+                    turns = state.resolvedThreadRailTurns(),
+                    sources = state.resolvedThreadRailSources(),
+                    guideMode = state.isGuideMode(),
+                    guideSectionCount = state.resolvedGuideSectionCount(),
+                    pinVisible = state.pinVisible,
+                    pinActive = state.pinActive,
+                    onBackClick = onBackClick,
+                    onHomeClick = onHomeClick,
+                    onPinClick = onPinClick,
+                    onTurnClick = onTurnClick,
+                    onSourceClick = onSourceClick,
+                    modifier = Modifier
+                        .width(tabletThreadRailWidthDp(state.isLandscape, state.isGuideMode()).dp)
+                        .fillMaxHeight()
+                        .semantics {
+                            paneTitle = threadPaneTitle
+                            isTraversalGroup = true
+                            traversalIndex = 0f
+                        },
+                )
 
-            Box(
-                modifier = Modifier
-                    .width(1.dp)
-                    .fillMaxHeight()
-                    .background(colors.hairlineStrong),
-            )
+                Box(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .fillMaxHeight()
+                        .background(colors.hairlineStrong),
+                )
+            }
 
             DetailWorkspace(
                 state = state,

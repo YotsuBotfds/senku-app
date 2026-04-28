@@ -64,7 +64,7 @@ public final class DetailRelatedGuidePresentationFormatterTest {
             )
         );
         assertEquals(
-            "GD-499 \u00b7 Bellows\nRequired reading",
+            "GD-499 \u00b7 Bellows\nRequired",
             formatter.buildRelatedGuideButtonLabel(
                 new SearchResult("Bellows", "", "", "", "GD-499", "", "", "", "required_reading", "", "", "")
             )

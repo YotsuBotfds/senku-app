@@ -119,8 +119,8 @@ public final class DetailGuidePresentationFormatterTest {
                 + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.\n"
                 + "Start with the current activity status.\n\n"
                 + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
-                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n\n"
-                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction",
+                + "GD-220 \u00b7 Abrasives Manufacturing\n\n"
+                + "GD-499 \u00b7 Bellows & Forge Blower Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -250,9 +250,9 @@ public final class DetailGuidePresentationFormatterTest {
 
         assertTrue(displayBody.contains("GD-132 \u00b7 17 SECTIONS"));
         assertFalse(displayBody.contains("GD-132 \u00b7 26 SECTIONS"));
-        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing"));
-        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction"));
-        assertTrue(displayBody.contains("REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction"));
+        assertTrue(displayBody.contains("GD-220 \u00b7 Abrasives Manufacturing"));
+        assertTrue(displayBody.contains("GD-499 \u00b7 Bellows & Forge Blower Construction"));
+        assertTrue(displayBody.contains("GD-225 \u00b7 Bloomery Furnace Construction"));
         assertFalse(displayBody.contains("REQUIRED READING \u00b7 Chemical Safety Guide"));
     }
 
@@ -293,9 +293,9 @@ public final class DetailGuidePresentationFormatterTest {
                 + "\u2014 \u00a7 1 \u00b7 FOUNDRY SAFETY QUICKSTART\n"
                 + "Check dry tools.\n\n"
                 + "\u2014 \u00a7 2 \u00b7 REQUIRED READING\n"
-                + "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing\n\n"
-                + "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction\n\n"
-                + "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction",
+                + "GD-220 \u00b7 Abrasives Manufacturing\n\n"
+                + "GD-499 \u00b7 Bellows & Forge Blower Construction\n\n"
+                + "GD-225 \u00b7 Bloomery Furnace Construction",
             DetailGuidePresentationFormatter.buildGuideBody(result)
         );
     }
@@ -616,6 +616,18 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals("\u2014 \u00a7 1 \u00b7", parsed.lines[0].label);
         assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[1].kind);
         assertEquals("REQUIRED READING", parsed.lines[1].label);
+    }
+
+    @Test
+    public void guideBodyParserTreatsCompactGuideIdsAsRequiredReadingRows() {
+        GuideBodySanitizer.ParsedGuideBody parsed = GuideBodySanitizer.parseGuideBodyForDisplay(
+            "GD-220 \u00b7 Abrasives Manufacturing"
+        );
+
+        assertEquals("GD-220 \u00b7 Abrasives Manufacturing", parsed.displayText);
+        assertEquals(1, parsed.lines.length);
+        assertEquals(GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING, parsed.lines[0].kind);
+        assertEquals("GD-220", parsed.lines[0].label);
     }
 
     @Test

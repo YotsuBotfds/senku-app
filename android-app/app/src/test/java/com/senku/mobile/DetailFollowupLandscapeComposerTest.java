@@ -10,6 +10,7 @@ import com.senku.ui.tablet.TabletDetailMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -310,6 +311,60 @@ public final class DetailFollowupLandscapeComposerTest {
     }
 
     @Test
+    public void phoneLandscapeGuideKeepsRelatedGuideRailMounted() {
+        assertTrue(DetailActivity.shouldKeepGuideRelatedRailInPlace(false, false));
+        assertFalse(DetailActivity.shouldKeepGuideRelatedRailInPlace(false, true));
+        assertFalse(DetailActivity.shouldKeepGuideRelatedRailInPlace(true, false));
+    }
+
+    @Test
+    public void answerSourceRailPromotesRainShelterTopicState() {
+        List<SearchResult> railSources = DetailActivity.resolveVisibleSourceRailSourcesForState(
+            true,
+            false,
+            true,
+            Arrays.asList(
+                source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing"),
+                source("GD-132", "Foundry & Metal Casting", "foundry metal casting"),
+                source("GD-345", "Tarp & Cord Shelters", "rain shelter tarp cord")
+            ),
+            null
+        );
+
+        assertEquals(3, railSources.size());
+        assertEquals("GD-345", railSources.get(0).guideId);
+        assertEquals("GD-220", railSources.get(1).guideId);
+        assertEquals("GD-132", railSources.get(2).guideId);
+    }
+
+    @Test
+    public void phoneLandscapeThreadSourceRailUsesOneRepresentativePerTurn() {
+        SearchResult initialAnchor = source("GD-220", "Abrasives Manufacturing", "abrasives manufacturing");
+        SearchResult relatedSafety = source("GD-132", "Foundry & Metal Casting", "foundry metal casting");
+        SearchResult currentAnchor = source("GD-345", "Tarp & Cord Shelters", "rain shelter tarp cord");
+
+        List<SearchResult> railSources = DetailActivity.resolveVisibleSourceRailSourcesForState(
+            true,
+            true,
+            true,
+            Arrays.asList(currentAnchor),
+            Arrays.asList(new SessionMemory.TurnSnapshot(
+                "How do I build a simple rain shelter from tarp and cord?",
+                "Build a ridgeline first.",
+                "Build a ridgeline first.",
+                Arrays.asList("GD-220", "GD-132"),
+                Arrays.asList(initialAnchor, relatedSafety),
+                null,
+                0L
+            ))
+        );
+
+        assertEquals(2, railSources.size());
+        assertEquals("GD-220", railSources.get(0).guideId);
+        assertEquals("GD-345", railSources.get(1).guideId);
+    }
+
+    @Test
     public void landscapePhoneThreadPreservesTopAfterComposerSetup() {
         assertTrue(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 2, true));
         assertFalse(DetailActivity.shouldPreservePhoneLandscapeThreadTopAfterComposerSetup(true, 1, true));
@@ -487,5 +542,9 @@ public final class DetailFollowupLandscapeComposerTest {
         assertEquals("rev 04-27", items.get(0).getLabel());
         assertEquals("pack 12", items.get(1).getLabel());
         assertEquals("hash abc123", items.get(2).getLabel());
+    }
+
+    private static SearchResult source(String guideId, String title, String topicTags) {
+        return new SearchResult(title, "", "", "", guideId, "", "", "", "", "", "", topicTags);
     }
 }

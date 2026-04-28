@@ -17,6 +17,8 @@ final class GuideBodySanitizer {
         Pattern.compile("^\\[\\[?/?SECTION\\]?\\]?\\s*(.*)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_REQUIRED_READING_PATTERN =
         Pattern.compile("^Required Reading\\s*[:\\-\\u00b7]\\s*(.+)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUIDE_REQUIRED_READING_ROW_PATTERN =
+        Pattern.compile("^GD-\\d+\\s+\\u00b7\\s+.+$");
     private static final Pattern GUIDE_SECTION_DISPLAY_PATTERN =
         Pattern.compile("^(?:[\\-\\u2013\\u2014]+\\s*)?(?:Section\\s+|\\u00a7\\s*)\\d+\\s*[:\\-\\u00b7]?\\s+.+$", Pattern.CASE_INSENSITIVE);
     private static final Pattern GUIDE_LAYOUT_TAG_PATTERN = Pattern.compile("(?i)</?(section|div|span|p)\\b[^>]*>");
@@ -202,7 +204,7 @@ final class GuideBodySanitizer {
                         new GuideBodyLine(
                             GuideBodyLine.Kind.REQUIRED_READING,
                             requiredReadingDisplayLine,
-                            GUIDE_REQUIRED_READING_LABEL
+                            requiredReadingLabelForDisplay(requiredReadingDisplayLine)
                         )
                     );
                     pendingAdmonitionLabel = false;
@@ -456,18 +458,33 @@ final class GuideBodySanitizer {
     }
 
     private static boolean isRequiredReadingLine(String line) {
-        return GUIDE_REQUIRED_READING_PATTERN.matcher(safe(line).trim()).matches();
+        String cleaned = safe(line).trim();
+        return GUIDE_REQUIRED_READING_PATTERN.matcher(cleaned).matches()
+            || GUIDE_REQUIRED_READING_ROW_PATTERN.matcher(cleaned).matches();
     }
 
     private static String formatRequiredReadingLine(String line) {
-        Matcher matcher = GUIDE_REQUIRED_READING_PATTERN.matcher(safe(line).trim());
+        String cleaned = safe(line).trim();
+        if (GUIDE_REQUIRED_READING_ROW_PATTERN.matcher(cleaned).matches()) {
+            return cleaned;
+        }
+        Matcher matcher = GUIDE_REQUIRED_READING_PATTERN.matcher(cleaned);
         if (!matcher.matches()) {
-            return safe(line).trim();
+            return cleaned;
         }
         String detail = safe(matcher.group(1)).trim();
         detail = detail.replaceFirst("(?i)^required\\s+reading\\s*[:\\-\\u00b7]?\\s*", "").trim();
         detail = compactRequiredReadingDetail(detail);
         return detail.isEmpty() ? GUIDE_REQUIRED_READING_LABEL : GUIDE_REQUIRED_READING_LABEL + " \u00b7 " + detail;
+    }
+
+    private static String requiredReadingLabelForDisplay(String line) {
+        String cleaned = safe(line).trim();
+        if (GUIDE_REQUIRED_READING_ROW_PATTERN.matcher(cleaned).matches()) {
+            int separator = cleaned.indexOf('\u00b7');
+            return separator > 0 ? cleaned.substring(0, separator).trim() : cleaned;
+        }
+        return GUIDE_REQUIRED_READING_LABEL;
     }
 
     private static String trimReviewedBoundaryOpeningBoilerplate(String line) {

@@ -58,6 +58,47 @@ public final class DetailProofPresentationFormatterTest {
     }
 
     @Test
+    public void proofLinesNormalizeLegacyProofRailResidueToSourcesLanguage() {
+        DetailProofPresentationFormatter formatter = new DetailProofPresentationFormatter(null);
+        DetailProofPresentationFormatter.State state = new DetailProofPresentationFormatter.State(
+            "generated proof rail",
+            1,
+            "",
+            "Proof rail reviewed",
+            1,
+            2,
+            "",
+            3,
+            false,
+            ReviewedCardMetadata.empty()
+        );
+        List<SearchResult> sources = Arrays.asList(
+            new SearchResult(
+                "Proof rail anchor",
+                "",
+                "Source residue should be reader-facing.",
+                "",
+                "GD-101",
+                "Proof rail section",
+                "survival",
+                "hybrid"
+            )
+        );
+
+        String visible = formatter.buildWhySummaryPlainText(state, sources, false, false);
+
+        assertFalse(visible.toLowerCase().contains("proof rail"));
+        assertEquals(
+            "SOURCES  sources reviewed | 1 source\n" +
+                "GUIDE  [GD-101] sources anchor\n" +
+                "ROUTE  generated sources\n" +
+                "SECTION  sources section\n" +
+                "TYPE  Best match",
+            visible
+        );
+    }
+
+    @Test
     public void retrievalModesUseReaderFacingMatchTypes() {
         assertEquals("TYPE", DetailProofPresentationFormatter.MATCH_TYPE_LABEL);
         assertEquals("Best match", DetailProofPresentationFormatter.humanizeRetrievalMode("route-focus"));

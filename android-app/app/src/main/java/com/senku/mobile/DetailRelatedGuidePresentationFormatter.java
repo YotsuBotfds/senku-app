@@ -293,7 +293,7 @@ final class DetailRelatedGuidePresentationFormatter {
             return "Anchor";
         }
         if (normalized.contains("required") || normalized.contains("prereq")) {
-            return "Required reading";
+            return "Required";
         }
         if (normalized.contains("related") || normalized.contains("cross reference") || normalized.contains("crossref")) {
             return "Cross-ref";

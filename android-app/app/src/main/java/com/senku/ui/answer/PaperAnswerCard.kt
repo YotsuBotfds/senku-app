@@ -537,8 +537,12 @@ internal fun uncertainFitNoticeText(content: AnswerContent): String {
 internal fun displayProofCtaLabel(label: String): String {
     val trimmed = label.trim()
     return when {
+        trimmed.equals("Proof rail", ignoreCase = true) -> "Sources"
+        trimmed.equals("Open proof", ignoreCase = true) -> "Sources"
         trimmed.equals("Show proof", ignoreCase = true) -> "Sources"
         trimmed.equals("Show proof rail", ignoreCase = true) -> "Sources"
+        trimmed.equals("Hide proof", ignoreCase = true) -> "Sources"
+        trimmed.equals("Hide proof rail", ignoreCase = true) -> "Sources"
         trimmed.equals("View sources", ignoreCase = true) -> "Sources"
         else -> label
     }

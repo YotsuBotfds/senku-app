@@ -75,7 +75,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
-    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 68;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
     private static final int TABLET_MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
     private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
     private static final int MANUAL_HOME_RECENT_ROW_HEIGHT_DP = 72;
@@ -469,6 +469,7 @@ public final class MainActivity extends AppCompatActivity {
         communicationsCategoryCard = findViewById(R.id.category_communications_card);
         communityCategoryCard = findViewById(R.id.category_community_card);
         installRev03Chrome(savedInstanceState);
+        applyTabletLandscapeChromePolish();
         updateCategoryCards(Collections.emptyList());
 
         resultsList = findViewById(R.id.results_list);
@@ -2439,6 +2440,37 @@ public final class MainActivity extends AppCompatActivity {
                     ? resolveTabletManualHomeCategoryShelfMinimumHeightDp(6)
                     : resolveManualHomeCategoryShelfMinimumHeightDp(6)
             ));
+        }
+    }
+
+    private void applyTabletLandscapeChromePolish() {
+        if (!isLandscapeTabletLayout() || homeChromeTitleText == null) {
+            return;
+        }
+        ViewParent parent = homeChromeTitleText.getParent();
+        if (!(parent instanceof ViewGroup)) {
+            return;
+        }
+        ViewGroup chromeRow = (ViewGroup) parent;
+        chromeRow.setPadding(
+            chromeRow.getPaddingLeft(),
+            Math.max(chromeRow.getPaddingTop(), dp(8)),
+            chromeRow.getPaddingRight(),
+            chromeRow.getPaddingBottom()
+        );
+        ViewGroup.LayoutParams params = chromeRow.getLayoutParams();
+        if (params != null && params.height > 0) {
+            params.height = Math.max(params.height, dp(38));
+            chromeRow.setLayoutParams(params);
+        }
+        for (int i = 0; i < chromeRow.getChildCount(); i++) {
+            View child = chromeRow.getChildAt(i);
+            if (child instanceof TextView && child != homeChromeTitleText) {
+                CharSequence text = ((TextView) child).getText();
+                if ("754 guides".contentEquals(text)) {
+                    child.setVisibility(View.GONE);
+                }
+            }
         }
     }
 

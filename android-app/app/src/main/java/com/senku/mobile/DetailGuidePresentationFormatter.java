@@ -40,7 +40,7 @@ final class DetailGuidePresentationFormatter {
     private static final float GUIDE_MANUAL_KICKER_TEXT_SIZE = 0.66f;
     private static final float GUIDE_MANUAL_TITLE_TEXT_SIZE = 1.12f;
     private static final float GUIDE_MANUAL_META_TEXT_SIZE = 0.66f;
-    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.68f;
+    private static final float GUIDE_REQUIRED_READING_TEXT_SIZE = 0.72f;
     private static final float GUIDE_ADMONITION_LABEL_TEXT_SIZE = 0.66f;
     private static final float GUIDE_BODY_TEXT_SIZE = 0.86f;
     private static final int GUIDE_ADMONITION_ACCENT_WIDTH_DP = 3;
@@ -322,11 +322,11 @@ final class DetailGuidePresentationFormatter {
         );
         styled.setSpan(
             new GuideRowBackgroundSpan(
-                requiredReadingInsetBackgroundColor(),
+                color(guideAdmonitionBackgroundColorResForLegacy()),
                 color(guideAdmonitionWarningColorResForLegacy()),
                 dp(GUIDE_REQUIRED_READING_ACCENT_WIDTH_DP),
-                0,
-                false,
+                dp(1),
+                true,
                 true,
                 dp(GUIDE_REQUIRED_READING_RIGHT_INSET_DP),
                 color(guideAnchorValueColorResForLegacy())
@@ -454,14 +454,6 @@ final class DetailGuidePresentationFormatter {
     private int admonitionInsetBackgroundColor(int accentColorRes) {
         float overlayRatio = accentColorRes == guideAdmonitionDangerColorResForLegacy() ? 0.18f : 0.14f;
         return blendColors(color(guideAdmonitionBackgroundColorResForLegacy()), color(accentColorRes), overlayRatio);
-    }
-
-    private int requiredReadingInsetBackgroundColor() {
-        return blendColors(
-            color(guideAdmonitionBackgroundColorResForLegacy()),
-            color(guideAdmonitionWarningColorResForLegacy()),
-            0.18f
-        );
     }
 
     private static int blendColors(int baseColor, int overlayColor, float overlayRatio) {
@@ -812,13 +804,13 @@ final class DetailGuidePresentationFormatter {
     private static String requiredReadingRowForSlug(String slug) {
         String normalized = safe(slug).trim().toLowerCase(Locale.US);
         if ("abrasives-manufacturing".equals(normalized)) {
-            return "REQUIRED READING \u00b7 GD-220 \u00b7 Abrasives Manufacturing";
+            return "GD-220 \u00b7 Abrasives Manufacturing";
         }
         if ("bellows-forge-blower-construction".equals(normalized)) {
-            return "REQUIRED READING \u00b7 GD-499 \u00b7 Bellows & Forge Blower Construction";
+            return "GD-499 \u00b7 Bellows & Forge Blower Construction";
         }
         if ("bloomery-furnace".equals(normalized)) {
-            return "REQUIRED READING \u00b7 GD-225 \u00b7 Bloomery Furnace Construction";
+            return "GD-225 \u00b7 Bloomery Furnace Construction";
         }
         return "";
     }

@@ -191,6 +191,32 @@ class AnswerContentFactoryTest {
     }
 
     @Test
+    fun fromRenderedAnswer_stripsLeakedProofRailBlockFromPrimaryAnswer() {
+        val content = fromRenderedAnswer(
+            body = """
+                ANSWER
+                Use the attached source guide [GD-345] to build a simple rain shelter.
+
+                PROOF RAIL
+                SOURCES  3 sources
+                GUIDE  [GD-345] Tarp & Cord Shelters
+            """.trimIndent(),
+            sourceCount = 3,
+            host = "This device",
+            elapsedSeconds = 0.0,
+            evidence = Evidence.Moderate,
+            abstain = false,
+        )
+
+        assertEquals(
+            "Use the attached source guide [GD-345] to build a simple rain shelter.",
+            content.short,
+        )
+        assertEquals(null, content.steps)
+        assertEquals(null, content.limits)
+    }
+
+    @Test
     fun fromRenderedAnswer_keepsSubstantiveSteps() {
         val content = fromRenderedAnswer(
             body = """

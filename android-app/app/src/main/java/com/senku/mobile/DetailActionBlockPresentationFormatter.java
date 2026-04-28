@@ -371,7 +371,16 @@ final class DetailActionBlockPresentationFormatter {
             "The guide lists the current owner.",
             "GD-132 lists current owner."
         );
+        if (isProofAdjacentEmergencyOwnerCopy(detail)) {
+            return "";
+        }
         return detail;
+    }
+
+    private static boolean isProofAdjacentEmergencyOwnerCopy(String text) {
+        String normalized = safe(text).trim().toLowerCase(Locale.US);
+        return "gd-132 lists current owner.".equals(normalized)
+            || "gd-132 lists current owner".equals(normalized);
     }
 
     private static int firstSentenceBoundary(String text) {

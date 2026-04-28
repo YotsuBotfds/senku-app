@@ -10,19 +10,19 @@ class StressReadingPolicyTest {
     fun tabletLandscapeReadingPolicyKeepsAnswerFirstWidthBudget() {
         val policy = tabletLandscapeReadingLayoutPolicy()
 
-        assertEquals(212, policy.threadRailWidthDp)
-        assertEquals(568, policy.answerMaxWidthDp)
-        assertEquals(248, policy.evidenceRailWidthDp)
-        assertEquals(16, policy.answerHorizontalPaddingDp)
+        assertEquals(184, policy.threadRailWidthDp)
+        assertEquals(560, policy.answerMaxWidthDp)
+        assertEquals(360, policy.evidenceRailWidthDp)
+        assertEquals(14, policy.answerHorizontalPaddingDp)
     }
 
     @Test
-    fun tabletPortraitReadingPolicyUsesSqueezedPortraitBudget() {
+    fun tabletPortraitReadingPolicyUsesReaderFirstSourceBudget() {
         val policy = tabletPortraitReadingLayoutPolicy()
 
-        assertEquals(132, policy.threadRailWidthDp)
-        assertEquals(456, policy.answerMaxWidthDp)
-        assertEquals(208, policy.evidenceRailWidthDp)
+        assertEquals(0, policy.threadRailWidthDp)
+        assertEquals(620, policy.answerMaxWidthDp)
+        assertEquals(288, policy.evidenceRailWidthDp)
         assertEquals(12, policy.answerHorizontalPaddingDp)
     }
 
@@ -33,22 +33,30 @@ class StressReadingPolicyTest {
 
         assertEquals(tabletPortraitReadingLayoutPolicy(), portraitPolicy)
         assertEquals(tabletLandscapeReadingLayoutPolicy(), landscapePolicy)
-        assertEquals(132, portraitPolicy.threadRailWidthDp)
-        assertEquals(456, portraitPolicy.answerMaxWidthDp)
-        assertEquals(208, portraitPolicy.evidenceRailWidthDp)
+        assertEquals(0, portraitPolicy.threadRailWidthDp)
+        assertEquals(620, portraitPolicy.answerMaxWidthDp)
+        assertEquals(288, portraitPolicy.evidenceRailWidthDp)
         assertEquals(12, portraitPolicy.answerHorizontalPaddingDp)
-        assertEquals(212, landscapePolicy.threadRailWidthDp)
-        assertEquals(568, landscapePolicy.answerMaxWidthDp)
-        assertEquals(248, landscapePolicy.evidenceRailWidthDp)
-        assertEquals(16, landscapePolicy.answerHorizontalPaddingDp)
+        assertEquals(184, landscapePolicy.threadRailWidthDp)
+        assertEquals(560, landscapePolicy.answerMaxWidthDp)
+        assertEquals(360, landscapePolicy.evidenceRailWidthDp)
+        assertEquals(14, landscapePolicy.answerHorizontalPaddingDp)
     }
 
     @Test
     fun tabletGuideThreadRailUsesSectionIndexWidthWithoutChangingAnswerRails() {
-        assertEquals(212, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
-        assertEquals(132, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
+        assertEquals(184, tabletThreadRailWidthDp(isLandscape = true, guideMode = false))
+        assertEquals(0, tabletThreadRailWidthDp(isLandscape = false, guideMode = false))
         assertEquals(196, tabletThreadRailWidthDp(isLandscape = true, guideMode = true))
         assertEquals(216, tabletThreadRailWidthDp(isLandscape = false, guideMode = true))
+    }
+
+    @Test
+    fun tabletThreadRailShellHidesOnlyNonGuidePortraitRail() {
+        assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = false))
+        assertTrue(tabletShouldShowThreadRail(isLandscape = true, guideMode = true))
+        assertFalse(tabletShouldShowThreadRail(isLandscape = false, guideMode = false))
+        assertTrue(tabletShouldShowThreadRail(isLandscape = false, guideMode = true))
     }
 
     @Test
