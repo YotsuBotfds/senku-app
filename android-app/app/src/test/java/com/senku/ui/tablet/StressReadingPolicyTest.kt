@@ -172,7 +172,7 @@ class StressReadingPolicyTest {
     }
 
     @Test
-    fun tabletAnswerModeHidesEvidencePaneByDefault() {
+    fun tabletAnswerModeShowsEvidencePaneWhenSourcesExist() {
         val state = tabletDetailState(
             sources = listOf(
                 SourceState("s1", "GD-001", "Anchor guide", isAnchor = true, isSelected = true),
@@ -180,7 +180,7 @@ class StressReadingPolicyTest {
             ),
         )
 
-        assertFalse(tabletShouldShowEvidencePane(state, guideMode = false))
+        assertTrue(tabletShouldShowEvidencePane(state, guideMode = false))
     }
 
     @Test

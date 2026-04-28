@@ -21,7 +21,7 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
-    public void visiblePriorTurnLimitKeepsWideLayoutContextBroader() {
+    public void visiblePriorTurnLimitKeepsWideLayoutBounded() {
         DetailThreadHistoryRenderer.State wide = new DetailThreadHistoryRenderer.State(
             false,
             true,
@@ -29,7 +29,19 @@ public final class DetailThreadHistoryRendererTest {
             720
         );
 
-        assertEquals(2, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
+        assertEquals(1, DetailThreadHistoryRenderer.visiblePriorTurnLimit(wide));
+    }
+
+    @Test
+    public void visiblePriorTurnLimitKeepsUtilityRailBounded() {
+        DetailThreadHistoryRenderer.State utilityRail = new DetailThreadHistoryRenderer.State(
+            true,
+            false,
+            false,
+            360
+        );
+
+        assertEquals(1, DetailThreadHistoryRenderer.visiblePriorTurnLimit(utilityRail));
     }
 
     @Test
@@ -45,8 +57,12 @@ public final class DetailThreadHistoryRendererTest {
             renderer.buildTurnLabel(2, true, turn("question", "GD-345", 0L), "")
         );
         assertEquals(
-            "A2 \u00B7 ANCHOR GD-345",
+            "A2 \u00B7 ANCHOR GD-220 -> GD-345",
             renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-220")
+        );
+        assertEquals(
+            "A2 \u00B7 ANCHOR GD-345",
+            renderer.buildTurnLabel(2, false, turn("answer", "GD-345", 0L), "GD-345")
         );
     }
 

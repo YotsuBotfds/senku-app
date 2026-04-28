@@ -70,6 +70,10 @@ final class DetailGuidePresentationFormatter {
             } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.REQUIRED_READING) {
                 styleRequiredReadingLine(styled, displayText, lineStart, lineEnd, line.label);
                 insideAdmonitionBlock = false;
+            } else if (line.kind == GuideBodySanitizer.GuideBodyLine.Kind.ADMONITION_LABEL) {
+                admonitionAccentColorRes = admonitionAccentColorRes(trimmed);
+                styleGuideAdmonitionLabelLine(styled, lineStart, lineEnd, line.label, admonitionAccentColorRes);
+                insideAdmonitionBlock = true;
             } else {
                 int prefixEnd = guideAdmonitionPrefixEnd(trimmed);
                 if (prefixEnd > 0) {
@@ -204,6 +208,28 @@ final class DetailGuidePresentationFormatter {
                 lineEnd,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             );
+        }
+    }
+
+    private void styleGuideAdmonitionLabelLine(
+        SpannableStringBuilder styled,
+        int lineStart,
+        int lineEnd,
+        String label,
+        int accentColorRes
+    ) {
+        int labelEnd = Math.min(lineEnd, lineStart + safe(label).length());
+        styled.setSpan(
+            new BackgroundColorSpan(color(guideAdmonitionBackgroundColorResForLegacy())),
+            lineStart,
+            lineEnd,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+        styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.92f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (labelEnd > lineStart) {
+            styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            styled.setSpan(new ForegroundColorSpan(color(accentColorRes)), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 

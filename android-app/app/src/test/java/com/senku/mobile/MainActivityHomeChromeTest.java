@@ -184,7 +184,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void reviewSearchLatencyOnlyAppliesToTargetMockQuery() {
         assertEquals(
-            "SEARCH  rain shelter - 4 results - 12ms",
+            "SEARCH  rain shelter - 4 results  \u00b7  12MS",
             MainActivity.appendReviewSearchLatency("SEARCH  rain shelter - 4 results", "rain shelter", true)
         );
         assertEquals(
@@ -200,7 +200,7 @@ public final class MainActivityHomeChromeTest {
     @Test
     public void phoneSearchHeaderKeepsCompactCountAndReviewLatency() {
         assertEquals(
-            "SEARCH rain shelter - 4 RESULTS - 12ms",
+            "rain shelter    4 RESULTS  \u00b7  12MS",
             MainActivity.appendReviewSearchLatency(
                 MainActivity.buildPhoneSearchHeaderForTest("rain shelter", 4),
                 "rain shelter",

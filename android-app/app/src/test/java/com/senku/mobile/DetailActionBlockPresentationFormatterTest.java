@@ -128,6 +128,21 @@ public final class DetailActionBlockPresentationFormatterTest {
         assertEquals("Notify the area owner", actions.get(3).title);
     }
 
+    @Test
+    public void extractEmergencyActionSpecsNormalizesFoundryMockDetailCopy() {
+        List<DetailActionBlockPresentationFormatter.EmergencyActionSpec> actions =
+            DetailActionBlockPresentationFormatter.extractEmergencyActionSpecs(
+                "Immediate actions:\n" +
+                    "1. Confirm two paths of egress. Doors and roll-up openings must be unobstructed.\n" +
+                    "2. Notify the area owner. GD-132 \u00a71 is current owner.",
+                text -> citationFormatter.stripInlineCitationText(text)
+            );
+
+        assertEquals(2, actions.size());
+        assertEquals("Door and roll-up open and unobstructed.", actions.get(0).detail);
+        assertEquals("GD-132 lists current owner.", actions.get(1).detail);
+    }
+
     private List<DetailActionBlockPresentationFormatter.ActionBlockSpec> extract(String formattedAnswerText) {
         return DetailActionBlockPresentationFormatter.extractHighRiskActionBlockSpecs(
             formattedAnswerText,

@@ -74,6 +74,7 @@ internal fun tabletEvidenceVisibilityPolicy(): TabletEvidenceVisibilityPolicy =
 fun EvidencePane(
     anchor: AnchorState,
     xrefs: List<XRefState>,
+    answerMode: Boolean,
     onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -94,6 +95,7 @@ fun EvidencePane(
         CrossReferenceSection(
             anchor = anchor,
             xrefs = xrefs,
+            answerMode = answerMode,
             onAnchorClick = onAnchorClick,
             onXRefClick = onXRefClick,
             landmark = sourceGraphLandmark,
@@ -179,6 +181,7 @@ fun CollapsibleEvidencePane(
                     CrossReferenceSection(
                         anchor = anchor,
                         xrefs = xrefs,
+                        answerMode = false,
                         onAnchorClick = onAnchorClick,
                         onXRefClick = onXRefClick,
                         landmark = sourceGraphLandmark,
@@ -323,6 +326,7 @@ internal fun buildCollapsedEvidencePreviewText(anchor: AnchorState): String {
 private fun CrossReferenceSection(
     anchor: AnchorState,
     xrefs: List<XRefState>,
+    answerMode: Boolean,
     onAnchorClick: () -> Unit,
     onXRefClick: (String) -> Unit,
     landmark: String,
@@ -337,7 +341,7 @@ private fun CrossReferenceSection(
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         SectionHeader(
-            title = "CROSS-REFERENCE - $cardCount",
+            title = if (answerMode) "SOURCES - $cardCount" else "CROSS-REFERENCE - $cardCount",
             accessibilitySummary = buildSourceGraphAccessibilitySummary(
                 landmark = landmark,
                 emptyDescription = emptyDescription,

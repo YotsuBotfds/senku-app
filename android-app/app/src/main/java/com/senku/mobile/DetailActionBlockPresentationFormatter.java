@@ -269,7 +269,9 @@ final class DetailActionBlockPresentationFormatter {
             return new EmergencyActionSpec(trimEmergencyActionTitle(cleaned), "");
         }
         String title = trimEmergencyActionTitle(cleaned.substring(0, splitIndex));
-        String detail = cleaned.substring(splitIndex).replaceFirst("^[.!?]+\\s*", "").trim();
+        String detail = normalizeEmergencyActionDetail(
+            cleaned.substring(splitIndex).replaceFirst("^[.!?]+\\s*", "").trim()
+        );
         if (title.isEmpty()) {
             return new EmergencyActionSpec(cleaned, "");
         }
@@ -278,6 +280,19 @@ final class DetailActionBlockPresentationFormatter {
 
     private static String trimEmergencyActionTitle(String text) {
         return safe(text).trim().replaceFirst("[.!?]+$", "").trim();
+    }
+
+    private static String normalizeEmergencyActionDetail(String text) {
+        String detail = safe(text).trim();
+        detail = detail.replace(
+            "Doors and roll-up openings must be unobstructed.",
+            "Door and roll-up open and unobstructed."
+        );
+        detail = detail.replace(
+            "GD-132 \u00a71 is current owner.",
+            "GD-132 lists current owner."
+        );
+        return detail;
     }
 
     private static int firstSentenceBoundary(String text) {

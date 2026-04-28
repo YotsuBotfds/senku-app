@@ -105,15 +105,15 @@ fun SearchResultCard(
             Box(
                 modifier = Modifier
                     .width(1.dp)
-                    .heightIn(min = 76.dp)
-                    .background(laneColor.copy(alpha = 0.80f)),
+                    .heightIn(min = 72.dp)
+                    .background(laneColor.copy(alpha = 0.60f)),
             ) {
             }
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 10.dp, top = 8.dp, end = 12.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+                    .padding(start = 9.dp, top = 7.dp, end = 10.dp, bottom = 7.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -140,8 +140,8 @@ fun SearchResultCard(
                 Text(
                     text = model.title.trim(),
                     style = SenkuTheme.typography.uiBody.copy(
-                        fontSize = 14.sp,
-                        lineHeight = 16.sp,
+                        fontSize = 13.sp,
+                        lineHeight = 15.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     color = colors.ink0,
@@ -154,8 +154,8 @@ fun SearchResultCard(
                     Text(
                         text = metadataLabel,
                         style = SenkuTheme.typography.monoCaps.copy(
-                            fontSize = 9.sp,
-                            lineHeight = 11.sp,
+                            fontSize = 8.sp,
+                            lineHeight = 10.sp,
                             fontWeight = FontWeight.Medium,
                         ),
                         color = colors.ink2,
@@ -167,8 +167,8 @@ fun SearchResultCard(
                 Text(
                     text = compactResultPreviewText(model.subtitle, model.snippet),
                     style = SenkuTheme.typography.smallBody.copy(
-                        fontSize = 11.sp,
-                        lineHeight = 14.sp,
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
                         fontWeight = FontWeight.Normal,
                     ),
                     color = colors.ink1.copy(alpha = 0.78f),
@@ -179,8 +179,8 @@ fun SearchResultCard(
                 val hasActionChips = model.showContinueThreadChip || !model.linkedGuideLabel.isNullOrBlank()
                 if (hasActionChips) {
                     FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
                     ) {
                         if (model.showContinueThreadChip) {
                             ActionChip(
@@ -226,7 +226,7 @@ private fun ScoreTick(
     ) {
         Box(
             modifier = Modifier
-                .width(24.dp)
+                .width(22.dp)
                 .height(2.dp)
                 .background(color.copy(alpha = 0.30f)),
         ) {
@@ -240,8 +240,8 @@ private fun ScoreTick(
         Text(
             text = honestRankLabel(label),
             style = SenkuTheme.typography.monoCaps.copy(
-                fontSize = 9.sp,
-                lineHeight = 12.sp,
+                fontSize = 8.sp,
+                lineHeight = 10.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = SenkuTheme.colors.ink1,
@@ -265,17 +265,17 @@ private fun ActionChip(
         },
         color = backgroundColor,
         contentColor = textColor,
-        shape = RoundedCornerShape(1.dp),
+        shape = RoundedCornerShape(0.dp),
         onClick = {
             onClick?.run()
         },
     ) {
         Text(
             text = label.trim(),
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+            modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
             style = SenkuTheme.typography.tag.copy(
-                fontSize = 10.sp,
-                lineHeight = 12.sp,
+                fontSize = 9.sp,
+                lineHeight = 11.sp,
                 fontWeight = FontWeight.Medium,
             ),
             color = textColor,

@@ -105,6 +105,26 @@ public final class EmergencySurfacePolicyTest {
     }
 
     @Test
+    public void tabletPortraitEmergencyOverlayUsesPageWidthMargins() {
+        DetailActivity.TabletEmergencyOverlayMargins margins =
+            DetailActivity.resolveTabletEmergencyOverlayMarginsDp(true);
+
+        assertEquals(44, margins.left);
+        assertEquals(56, margins.right);
+        assertEquals(44, margins.top);
+    }
+
+    @Test
+    public void tabletLandscapeEmergencyOverlayKeepsRailAnchoredMargins() {
+        DetailActivity.TabletEmergencyOverlayMargins margins =
+            DetailActivity.resolveTabletEmergencyOverlayMarginsDp(false);
+
+        assertEquals(336, margins.left);
+        assertEquals(24, margins.right);
+        assertEquals(16, margins.top);
+    }
+
+    @Test
     public void detailBridgeTreatsGuideReaderAsGuideReading() {
         ReviewedCardMetadata metadata = reviewedMetadata(
             "poisoning_unknown_ingestion",

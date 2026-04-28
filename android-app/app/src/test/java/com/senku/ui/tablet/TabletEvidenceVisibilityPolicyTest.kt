@@ -1,6 +1,11 @@
 package com.senku.ui.tablet
 
+import com.senku.ui.answer.AnswerContent
+import com.senku.ui.answer.Evidence
+import com.senku.ui.primitives.MetaItem
+import com.senku.ui.primitives.Tone
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -130,6 +135,48 @@ class TabletEvidenceVisibilityPolicyTest {
         assertEquals(0, count)
     }
 
+    @Test
+    fun tabletAnswerModeShowsSourceRailWhenSourcesExist() {
+        assertTrue(
+            tabletShouldShowEvidencePane(
+                state = stateWithSources(sourceCount = 1, isLandscape = false),
+                guideMode = false,
+            )
+        )
+    }
+
+    @Test
+    fun tabletAnswerModeKeepsEvidenceRailHiddenWithoutSourcesUnlessExpanded() {
+        assertFalse(
+            tabletShouldShowEvidencePane(
+                state = stateWithSources(sourceCount = 0, isLandscape = true),
+                guideMode = false,
+            )
+        )
+        assertTrue(
+            tabletShouldShowEvidencePane(
+                state = stateWithSources(sourceCount = 0, evidenceExpanded = true, isLandscape = false),
+                guideMode = false,
+            )
+        )
+    }
+
+    @Test
+    fun tabletGuideModeKeepsPortraitReaderSingleColumnAndLandscapeEvidenceRail() {
+        assertFalse(
+            tabletShouldShowEvidencePane(
+                state = stateWithSources(sourceCount = 1, isLandscape = false),
+                guideMode = true,
+            )
+        )
+        assertTrue(
+            tabletShouldShowEvidencePane(
+                state = stateWithSources(sourceCount = 1, isLandscape = true),
+                guideMode = true,
+            )
+        )
+    }
+
     private fun anchor(
         section: String,
         snippet: String,
@@ -141,6 +188,59 @@ class TabletEvidenceVisibilityPolicyTest {
             section = section,
             snippet = snippet,
             hasSource = true,
+        )
+    }
+
+    private fun stateWithSources(
+        sourceCount: Int,
+        evidenceExpanded: Boolean = false,
+        isLandscape: Boolean,
+    ): TabletDetailState {
+        val sources = (1..sourceCount).map { index ->
+            SourceState(
+                key = "source-$index",
+                id = "GD-$index",
+                title = "Source $index",
+                isAnchor = index == 1,
+                isSelected = index == 1,
+            )
+        }
+        return TabletDetailState(
+            guideId = "GD-214",
+            guideTitle = "Water purification and storage",
+            meta = listOf(MetaItem("answer", Tone.Accent)),
+            turns = listOf(
+                ThreadTurnState(
+                    id = "T1",
+                    question = "How do I store water?",
+                    answer = AnswerContent(
+                        short = "Keep treated water sealed between uses.",
+                        sourceCount = sourceCount,
+                        host = "On-device",
+                        elapsedSeconds = 0.8,
+                        evidence = Evidence.Moderate,
+                    ),
+                    status = Status.Active,
+                    isActive = true,
+                )
+            ),
+            sources = sources,
+            anchor = if (sources.isEmpty()) {
+                AnchorState("", "", "", "", "", false)
+            } else {
+                anchor(section = "water storage", snippet = "Keep treated water sealed between uses.")
+            },
+            xrefs = emptyList(),
+            composerText = "",
+            composerPlaceholder = "",
+            composerEnabled = true,
+            composerVisible = true,
+            composerShowRetry = false,
+            composerRetryLabel = "Retry",
+            pinVisible = false,
+            pinActive = false,
+            evidenceExpanded = evidenceExpanded,
+            isLandscape = isLandscape,
         )
     }
 }

@@ -90,6 +90,12 @@ public final class DetailActivity extends AppCompatActivity {
     private static final float STREAMING_FIRST_CHUNK_ALPHA = 0.88f;
     private static final long GENERATION_STALL_NOTICE_MS = 12000L;
     private static final long GENERATION_STALL_POLL_MS = 1000L;
+    private static final int TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP = 44;
+    private static final int TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP = 56;
+    private static final int TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP = 44;
+    private static final int TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP = 336;
+    private static final int TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP = 24;
+    private static final int TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP = 16;
     private static final Pattern GUIDE_HTML_BREAK_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_SUBTITLE = "subtitle";
@@ -1411,16 +1417,26 @@ public final class DetailActivity extends AppCompatActivity {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        if (isTabletPortraitLayout()) {
-            params.leftMargin = dp(148);
-            params.rightMargin = dp(212);
-            params.topMargin = dp(56);
-        } else {
-            params.leftMargin = dp(336);
-            params.rightMargin = dp(24);
-            params.topMargin = dp(16);
-        }
+        TabletEmergencyOverlayMargins margins = resolveTabletEmergencyOverlayMarginsDp(isTabletPortraitLayout());
+        params.leftMargin = dp(margins.left);
+        params.rightMargin = dp(margins.right);
+        params.topMargin = dp(margins.top);
         return params;
+    }
+
+    static TabletEmergencyOverlayMargins resolveTabletEmergencyOverlayMarginsDp(boolean tabletPortrait) {
+        if (tabletPortrait) {
+            return new TabletEmergencyOverlayMargins(
+                TABLET_EMERGENCY_PORTRAIT_LEFT_MARGIN_DP,
+                TABLET_EMERGENCY_PORTRAIT_RIGHT_MARGIN_DP,
+                TABLET_EMERGENCY_PORTRAIT_TOP_MARGIN_DP
+            );
+        }
+        return new TabletEmergencyOverlayMargins(
+            TABLET_EMERGENCY_LANDSCAPE_LEFT_MARGIN_DP,
+            TABLET_EMERGENCY_LANDSCAPE_RIGHT_MARGIN_DP,
+            TABLET_EMERGENCY_LANDSCAPE_TOP_MARGIN_DP
+        );
     }
 
     private void renderTabletEmergencyOverlayActions() {
@@ -6555,7 +6571,11 @@ public final class DetailActivity extends AppCompatActivity {
             answerCardView.setVisibility(emergencyPortrait ? View.GONE : (answerMode ? View.VISIBLE : View.GONE));
         }
         if (bodyMirrorShell != null) {
-            bodyMirrorShell.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
+            bodyMirrorShell.setVisibility(
+                emergencyPortrait || shouldHideBodyMirrorForAnswerMode(answerMode)
+                    ? View.GONE
+                    : View.VISIBLE
+            );
         }
         if (bodyLabel != null) {
             bodyLabel.setVisibility(emergencyPortrait ? View.GONE : View.VISIBLE);
@@ -7257,6 +7277,18 @@ public final class DetailActivity extends AppCompatActivity {
             safe(loadedGuide.structureType),
             safe(loadedGuide.topicTags)
         );
+    }
+
+    static final class TabletEmergencyOverlayMargins {
+        final int left;
+        final int right;
+        final int top;
+
+        TabletEmergencyOverlayMargins(int left, int right, int top) {
+            this.left = left;
+            this.right = right;
+            this.top = top;
+        }
     }
 
     private static final class TabletTurnBinding {

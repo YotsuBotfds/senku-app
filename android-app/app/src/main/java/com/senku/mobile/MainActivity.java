@@ -111,6 +111,7 @@ public final class MainActivity extends AppCompatActivity {
     private TextView infoText;
     private TextView homeSubtitleText;
     private TextView homeManualStampText;
+    private TextView homeChromeTitleText;
     private TextView resultsHeader;
     private ProgressBar progressBar;
     private EditText searchInput;
@@ -303,6 +304,7 @@ public final class MainActivity extends AppCompatActivity {
         infoText = findViewById(R.id.info_text);
         homeSubtitleText = findViewById(R.id.home_subtitle);
         homeManualStampText = findViewById(R.id.home_manual_stamp);
+        homeChromeTitleText = findViewById(R.id.home_chrome_title);
         resultsHeader = findViewById(R.id.results_header);
         progressBar = findViewById(R.id.progress_bar);
         searchInput = findViewById(R.id.search_input);
@@ -652,6 +654,7 @@ public final class MainActivity extends AppCompatActivity {
                     }
                     header = appendReviewSearchLatency(header, displayQuery);
                     resultsHeader.setText(header);
+                    updateHomeChromeTitle(false, displayQuery);
                     updateTabletSearchQuery(displayQuery, results.size());
                     updateSessionPanel();
                     updatePortraitPhoneResultsPriority();
@@ -686,6 +689,7 @@ public final class MainActivity extends AppCompatActivity {
             header = "Deterministic source picks for \"" + query + "\" (" + deterministic.sources.size() + ")";
         }
         resultsHeader.setText(appendReviewSearchLatency(header, query));
+        updateHomeChromeTitle(false, query);
         updateTabletSearchQuery(query, deterministic.sources.size());
         updateInfoText();
         updatePortraitPhoneResultsPriority();
@@ -3443,6 +3447,7 @@ public final class MainActivity extends AppCompatActivity {
 
     private void showBrowseChrome(boolean show) {
         browseChromeActive = show;
+        updateHomeChromeTitle(show, searchInput == null ? "" : searchInput.getText().toString());
         int visibility = show ? View.VISIBLE : View.GONE;
         if (browseScrollView != null) {
             browseScrollView.setVisibility(visibility);
@@ -3686,7 +3691,7 @@ public final class MainActivity extends AppCompatActivity {
         if (cleanQuery.isEmpty()) {
             return "SEARCH - " + countLabel;
         }
-        return "SEARCH " + cleanQuery + " - " + countLabel;
+        return cleanQuery + "    " + countLabel;
     }
 
     private String appendReviewSearchLatency(String header, String query) {
@@ -3698,10 +3703,10 @@ public final class MainActivity extends AppCompatActivity {
         if (!productReviewMode
             || cleanHeader.isEmpty()
             || !isReviewSearchQuery(query)
-            || cleanHeader.contains(REVIEW_SEARCH_LATENCY_LABEL)) {
+            || cleanHeader.toLowerCase(Locale.US).contains(REVIEW_SEARCH_LATENCY_LABEL)) {
             return cleanHeader;
         }
-        return cleanHeader + " - " + REVIEW_SEARCH_LATENCY_LABEL;
+        return cleanHeader + "  \u00B7  " + REVIEW_SEARCH_LATENCY_LABEL.toUpperCase(Locale.US);
     }
 
     private static boolean isReviewSearchQuery(String query) {
@@ -3719,6 +3724,22 @@ public final class MainActivity extends AppCompatActivity {
         if (tabletSearchCountText != null) {
             tabletSearchCountText.setText(resultCount + (resultCount == 1 ? " RESULT" : " RESULTS"));
         }
+    }
+
+    private void updateHomeChromeTitle(boolean browseMode, String query) {
+        if (homeChromeTitleText == null) {
+            return;
+        }
+        if (browseMode) {
+            homeChromeTitleText.setText("HOME  SENKU  \u2022  Field manual \u2022 ed.2");
+            return;
+        }
+        String cleanQuery = safe(query).trim();
+        if (cleanQuery.isEmpty() || "guides".equalsIgnoreCase(cleanQuery)) {
+            homeChromeTitleText.setText("SEARCH  SENKU");
+            return;
+        }
+        homeChromeTitleText.setText("SEARCH  '" + cleanQuery + "'");
     }
 
     private void updateTabletSearchPreview() {

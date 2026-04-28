@@ -43,6 +43,35 @@ internal fun threadRailTurnRowMinHeightDp(active: Boolean): Int =
 
 internal fun threadRailSourceRowMinHeightDp(): Int = 56
 
+internal fun threadRailTurnLabel(index: Int, guideMode: Boolean): String =
+    if (guideMode) "SEC $index" else "Q$index"
+
+internal fun threadRailTurnStatusLabel(status: Status, active: Boolean): String =
+    when {
+        active -> "ACTIVE"
+        status == Status.Done -> "DONE"
+        status == Status.Pending -> "PENDING"
+        else -> "READY"
+    }
+
+internal fun threadRailTurnMetaLabel(index: Int, guideMode: Boolean, status: Status, active: Boolean): String =
+    "${threadRailTurnLabel(index, guideMode)} \u00B7 ${threadRailTurnStatusLabel(status, active)}"
+
+internal fun threadRailTurnSourceLabel(sourceCount: Int): String =
+    when (sourceCount.coerceAtLeast(0)) {
+        0 -> "NO SRC"
+        1 -> "1 SRC"
+        else -> "$sourceCount SRC"
+    }
+
+internal fun threadRailTurnMetaLabel(
+    index: Int,
+    guideMode: Boolean,
+    status: Status,
+    active: Boolean,
+    sourceCount: Int,
+): String = "${threadRailTurnMetaLabel(index, guideMode, status, active)} \u00B7 ${threadRailTurnSourceLabel(sourceCount)}"
+
 @Composable
 fun ThreadRail(
     turns: List<ThreadTurnState>,
@@ -241,7 +270,13 @@ private fun ThreadTurnRow(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 Text(
-                    text = if (guideMode) "SEC $index" else turn.id,
+                    text = threadRailTurnMetaLabel(
+                        index = index,
+                        guideMode = guideMode,
+                        status = turn.status,
+                        active = turn.isActive,
+                        sourceCount = turn.answer.sourceCount,
+                    ),
                     style = SenkuTheme.typography.monoCaps.copy(
                         fontSize = 9.sp,
                         lineHeight = 11.sp,

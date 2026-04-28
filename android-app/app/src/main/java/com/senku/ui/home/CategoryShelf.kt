@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.sp
 import com.senku.mobile.R
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
-import java.util.Locale
 
 enum class CategoryShelfLayoutMode {
     PHONE_GRID,
@@ -115,7 +114,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 54.dp,
+                    cardHeight = 50.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -125,7 +124,7 @@ fun CategoryShelf(
                 CategoryGrid(
                     items = items,
                     columns = 3,
-                    cardHeight = 54.dp,
+                    cardHeight = 50.dp,
                     selectionEnabled = selectionEnabled,
                     onCategorySelected = onCategorySelected,
                 )
@@ -152,7 +151,7 @@ private fun CategoryGrid(
     selectionEnabled: Boolean,
     onCategorySelected: (CategoryShelfItemModel) -> Unit,
 ) {
-    val gap = dimensionResource(R.dimen.senku_rev03_space_8)
+    val gap = 6.dp
     items.chunked(columns).forEach { rowItems ->
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -183,9 +182,9 @@ private fun PhoneCategoryCard(
     cardHeight: Dp = 74.dp,
 ) {
     val colors = SenkuTheme.colors
-    val corner = 4.dp
-    val horizontalPadding = 12.dp
-    val verticalPadding = dimensionResource(R.dimen.senku_rev03_space_6)
+    val corner = 3.dp
+    val horizontalPadding = 10.dp
+    val verticalPadding = 5.dp
     val enabled = selectionEnabled && item.enabled
     val accent = Color(item.accentColor)
 
@@ -209,19 +208,19 @@ private fun PhoneCategoryCard(
                 .fillMaxWidth()
                 .height(cardHeight)
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-            verticalArrangement = Arrangement.spacedBy(3.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Box(
                 modifier = Modifier
                     .width(20.dp)
                     .height(2.dp)
-                    .background(accent),
+                    .background(accent.copy(alpha = 0.92f)),
             )
             Text(
                 text = item.label,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 13.sp,
-                    lineHeight = 16.sp,
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                 ),
                 color = colors.ink0,
@@ -231,8 +230,8 @@ private fun PhoneCategoryCard(
             Text(
                 text = item.countLabel,
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 11.sp,
-                    lineHeight = 13.sp,
+                    fontSize = 10.sp,
+                    lineHeight = 12.sp,
                     fontWeight = FontWeight.Normal,
                 ),
                 color = colors.ink2,
@@ -263,7 +262,7 @@ private fun TabletCategoryRow(
             },
         color = colors.bg1,
         contentColor = colors.ink0,
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(3.dp),
         border = BorderStroke(1.dp, colors.hairlineStrong),
         enabled = enabled,
         onClick = onClick,
@@ -271,7 +270,7 @@ private fun TabletCategoryRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp)
+                .height(38.dp)
                 .padding(
                     horizontal = dimensionResource(R.dimen.senku_rev03_space_8),
                 ),
@@ -288,8 +287,8 @@ private fun TabletCategoryRow(
                 text = item.label,
                 modifier = Modifier.weight(1f),
                 style = SenkuTheme.typography.uiBody.copy(
-                    fontSize = 14.sp,
-                    lineHeight = 18.sp,
+                    fontSize = 13.sp,
+                    lineHeight = 17.sp,
                     fontWeight = FontWeight.Medium,
                 ),
                 color = colors.ink0,
@@ -297,7 +296,7 @@ private fun TabletCategoryRow(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = item.countLabel.uppercase(Locale.US),
+                text = item.countLabel,
                 style = SenkuTheme.typography.monoCaps.copy(
                     fontSize = 10.sp,
                     lineHeight = 13.sp,

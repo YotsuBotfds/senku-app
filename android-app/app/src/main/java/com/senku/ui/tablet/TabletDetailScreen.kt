@@ -472,6 +472,7 @@ private fun DetailWorkspace(
                 EvidencePane(
                     anchor = state.anchor,
                     xrefs = state.xrefs,
+                    answerMode = !guideMode,
                     onAnchorClick = onAnchorClick,
                     onXRefClick = onXRefClick,
                     modifier = Modifier
@@ -1274,7 +1275,7 @@ internal fun tabletShouldShowEvidencePane(
     when {
         guideMode -> state.isLandscape
         state.evidenceExpanded -> true
-        else -> state.sources.any { it.isSelected && !it.isAnchor }
+        else -> state.sources.isNotEmpty()
     }
 
 private fun buildTitleSummary(

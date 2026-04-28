@@ -24,6 +24,7 @@ final class DetailThreadHistoryRenderer {
     private static final Pattern SIMPLE_GUIDE_ID_PATTERN = Pattern.compile("GD-\\d{3}");
     private static final int QUESTION_MAX_LINES = 3;
     private static final int ANSWER_MAX_LINES = 4;
+    private static final int RAIL_ANSWER_MAX_LINES = 2;
     private static final int GUIDE_CHIP_LIMIT = 3;
     private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 180;
 
@@ -77,7 +78,7 @@ final class DetailThreadHistoryRenderer {
         }
         List<SessionMemory.TurnSnapshot> visibleTurns = trimPriorTurnsForInlineHistory(earlierTurns, state);
         container.setVisibility(View.VISIBLE);
-        String previousAnchorGuideId = "";
+        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(earlierTurns, visibleTurns);
         int firstTurnNumber = Math.max(1, earlierTurns.size() - visibleTurns.size() + 1);
         for (int index = 0; index < visibleTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
@@ -102,7 +103,7 @@ final class DetailThreadHistoryRenderer {
             return;
         }
         container.setVisibility(View.VISIBLE);
-        String previousAnchorGuideId = "";
+        String previousAnchorGuideId = anchorGuideIdBeforeVisibleTurns(earlierTurns, visibleTurns);
         int firstTurnNumber = Math.max(1, (earlierTurns == null ? 0 : earlierTurns.size()) - visibleTurns.size() + 1);
         for (int index = 0; index < visibleTurns.size(); index++) {
             SessionMemory.TurnSnapshot turn = visibleTurns.get(index);
@@ -132,7 +133,25 @@ final class DetailThreadHistoryRenderer {
         if (state.compactPortraitSections) {
             return 2;
         }
+        if (state.wideLayout || state.utilityRail) {
+            return 1;
+        }
         return 2;
+    }
+
+    private String anchorGuideIdBeforeVisibleTurns(
+        List<SessionMemory.TurnSnapshot> earlierTurns,
+        List<SessionMemory.TurnSnapshot> visibleTurns
+    ) {
+        if (earlierTurns == null || earlierTurns.isEmpty() || visibleTurns == null || visibleTurns.isEmpty()) {
+            return "";
+        }
+        int hiddenCount = Math.max(0, earlierTurns.size() - visibleTurns.size());
+        String previousAnchorGuideId = "";
+        for (int index = 0; index < hiddenCount; index++) {
+            previousAnchorGuideId = nextAnchorGuideId(previousAnchorGuideId, earlierTurns.get(index));
+        }
+        return previousAnchorGuideId;
     }
 
     private void addTurn(
@@ -220,7 +239,7 @@ final class DetailThreadHistoryRenderer {
             body.setMaxLines(QUESTION_MAX_LINES);
             body.setEllipsize(TextUtils.TruncateAt.END);
         } else {
-            body.setMaxLines(ANSWER_MAX_LINES);
+            body.setMaxLines(railBubble ? RAIL_ANSWER_MAX_LINES : ANSWER_MAX_LINES);
             body.setEllipsize(TextUtils.TruncateAt.END);
         }
         return body;
@@ -313,6 +332,11 @@ final class DetailThreadHistoryRenderer {
         StringBuilder builder = new StringBuilder("A").append(safeTurnNumber).append(time);
         if (!anchorGuideId.isEmpty()) {
             builder.append(" \u00B7 ANCHOR ");
+            String previousAnchor = safe(previousAnchorGuideId).trim();
+            if (!previousAnchor.isEmpty() && !previousAnchor.equals(anchorGuideId)) {
+                builder.append(previousAnchor);
+                builder.append(" -> ");
+            }
             builder.append(anchorGuideId);
         }
         return builder.toString();

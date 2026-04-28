@@ -102,9 +102,19 @@ public final class DetailGuidePresentationFormatterTest {
     @Test
     public void guideBodySanitizerPreservesRequiredReadingAsCompactGuideRow() {
         assertEquals(
-            "WARNING\nRequired reading \u00b7 Before attempting this guide, read the Chemical Safety Guide in full.",
+            "Required reading \u00b7 Before attempting this guide, read the Chemical Safety Guide in full.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "::: warning\nRequired Reading: Before attempting this guide, read the Chemical Safety Guide in full.\n:::"
+            )
+        );
+    }
+
+    @Test
+    public void guideBodySanitizerPromotesAdmonitionTitleOutOfBodyCopy() {
+        assertEquals(
+            "DANGER \u00b7 EXTREME BURN HAZARD\nA single drop of water contacting molten metal causes a violent steam explosion.",
+            GuideBodySanitizer.sanitizeGuideBodyForDisplay(
+                "::: danger\nEXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion.\n:::"
             )
         );
     }
