@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.SolidColor
@@ -36,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.senku.ui.theme.SenkuAppTheme
 import com.senku.ui.theme.SenkuTheme
 
@@ -120,19 +120,19 @@ fun SenkuTopBar(
 
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(9.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (visibleActions.isNotEmpty()) {
             Surface(
-                color = colors.bg2.copy(alpha = 0.96f),
+                color = Color.Transparent,
                 contentColor = colors.ink0,
-                shape = RoundedCornerShape(18.dp),
-                border = BorderStroke(1.dp, colors.hairlineStrong),
+                shape = RoundedCornerShape(7.dp),
+                border = BorderStroke(1.dp, colors.hairline.copy(alpha = 0.78f)),
             ) {
                 Row(
-                    modifier = Modifier.padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     visibleActions.forEach { action ->
                         TopBarActionButton(
@@ -146,11 +146,11 @@ fun SenkuTopBar(
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = title,
-                style = typography.sectionTitle,
+                style = typography.uiBody.copy(fontSize = 15.sp, lineHeight = 18.sp),
                 color = colors.ink0,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -167,17 +167,9 @@ fun SenkuTopBar(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp)
-                    .height(2.dp)
-                    .clip(RoundedCornerShape(percent = 100))
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                colors.accent.copy(alpha = 0.92f),
-                                colors.hairlineStrong,
-                            ),
-                        ),
-                    ),
+                    .padding(top = 3.dp)
+                    .height(1.dp)
+                    .background(colors.hairlineStrong),
             )
         }
     }
@@ -190,15 +182,14 @@ private fun TopBarActionButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = SenkuTheme.colors
-    val shape = RoundedCornerShape(14.dp)
+    val shape = RoundedCornerShape(5.dp)
     val containerColor = when {
-        action.isActive -> colors.ok.copy(alpha = 0.18f)
-        action.isEnabled -> colors.bg1.copy(alpha = 0.78f)
-        else -> colors.bg1.copy(alpha = 0.42f)
+        action.isActive -> colors.ok.copy(alpha = 0.14f)
+        else -> Color.Transparent
     }
     val borderColor = when {
-        action.isActive -> colors.ok.copy(alpha = 0.62f)
-        else -> colors.hairlineStrong
+        action.isActive -> colors.ok.copy(alpha = 0.58f)
+        else -> Color.Transparent
     }
     val iconTint = when {
         !action.isEnabled -> colors.ink3
@@ -210,7 +201,7 @@ private fun TopBarActionButton(
 
     Box(
         modifier = modifier
-            .size(40.dp)
+            .size(30.dp)
             .clip(shape)
             .background(containerColor)
             .clickable(

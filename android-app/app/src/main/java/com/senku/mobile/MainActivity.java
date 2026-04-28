@@ -76,7 +76,7 @@ public final class MainActivity extends AppCompatActivity {
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
     private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
     private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 54;
-    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 4;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 5;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final ReviewSearchResultSpec[] REVIEW_RAIN_SHELTER_RESULTS = {
@@ -1770,25 +1770,25 @@ public final class MainActivity extends AppCompatActivity {
         button.setMinimumHeight(0);
         boolean compactPhoneHome = isCompactPhoneHomeLayout();
         button.setPadding(
-            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10))),
-            dp(isTabletSearchLayout() ? 8 : (manualHomeShell ? 11 : (compactPhoneHome ? 10 : 12))),
-            dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 8 : (compactPhoneHome ? 8 : 10)))
+            dp(isTabletSearchLayout() ? 10 : (manualHomeShell ? 13 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 9 : (compactPhoneHome ? 8 : 10))),
+            dp(isTabletSearchLayout() ? 10 : (manualHomeShell ? 12 : (compactPhoneHome ? 10 : 12))),
+            dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 9 : (compactPhoneHome ? 8 : 10)))
         );
         button.setTextColor(getResources().getColor(manualHomeShell
             ? R.color.senku_rev03_ink_0
             : R.color.senku_text_light));
         if (manualHomeShell) {
-            button.setTextSize(11);
-            button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.NORMAL);
+            button.setTextSize(isTabletSearchLayout() ? 12 : 11.5f);
+            button.setTypeface(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD);
         }
         button.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
         button.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
         button.setMaxLines(manualHomeShell ? 2 : (compactPhoneHome ? 2 : 3));
         button.setEllipsize(TextUtils.TruncateAt.END);
         if (manualHomeShell && !isTabletSearchLayout()) {
-            button.setMinHeight(dp(isLandscapePhoneLayout() ? 48 : 54));
-            button.setMinimumHeight(dp(isLandscapePhoneLayout() ? 48 : 54));
+            button.setMinHeight(dp(isLandscapePhoneLayout() ? 52 : 58));
+            button.setMinimumHeight(dp(isLandscapePhoneLayout() ? 52 : 58));
         }
         button.setText(manualHomeShell
             ? buildManualHomeRecentThreadLabelSpannable(preview, index)
@@ -1801,7 +1801,7 @@ public final class MainActivity extends AppCompatActivity {
             LinearLayout.LayoutParams.WRAP_CONTENT
         );
         if (index > 0) {
-            params.topMargin = dp(isTabletSearchLayout() ? 3 : (manualHomeShell ? 4 : (compactPhoneHome ? 6 : 8)));
+            params.topMargin = dp(isTabletSearchLayout() ? 5 : (manualHomeShell ? 5 : (compactPhoneHome ? 6 : 8)));
         }
         button.setLayoutParams(params);
         button.setOnClickListener(v -> openRecentThread(preview));
@@ -2353,10 +2353,10 @@ public final class MainActivity extends AppCompatActivity {
         if (!isManualHomeShellLayout()) {
             return;
         }
-        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 8 : 10);
+        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 7 : 9);
         setTopMargin(categorySectionContainer, 5);
-        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 10);
-        setTopMargin(recentThreadsContainer, 5);
+        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 9);
+        setTopMargin(recentThreadsContainer, 6);
         allowChildOverflow(categorySectionContainer);
         allowChildOverflow(recentThreadsSection);
         allowChildOverflow(recentThreadsContainer);

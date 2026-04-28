@@ -11,9 +11,9 @@ files from this lane.
   - Home, Search, Answer, Guide, Thread: phone portrait, phone landscape,
     tablet portrait, tablet landscape.
   - Emergency: phone portrait and tablet portrait only.
-- Current proof pack: `artifacts/ui_state_pack/20260428_070150`.
+- Current proof pack: `artifacts/ui_state_pack/20260428_071545`.
   - Status `pass`, 47/47 states, homogeneous APK
-    `2a0e7aa7c1584405bf1bad7f92c007b2406e1b0550974cee1e7bac7d6d699dd8`,
+    `bbed58bcc9f097b9e262d7ff93ccfb0adc205cadb57d7164195149e80df204fb`,
     model `gemma-4-e2b-it-litert`, rotation mismatch count 0.
 - Baseline commit for Wave23+ planning: `9835ba7` (`disable github workflow
   ci`) plus local Wave24 proof pack `20260428_064105`.
@@ -43,7 +43,7 @@ files from this lane.
 ## Proof Path Rules
 
 - For every screenshot path below, the matching dump path is the same relative
-  path under `artifacts/ui_state_pack/20260428_070150/dumps/` with `.xml`
+  path under `artifacts/ui_state_pack/20260428_071545/dumps/` with `.xml`
   replacing `.png`.
 - Every worker must cite target mock(s), current screenshot(s), current dump(s),
   and remaining deltas split as content/data, layout/density, or behavior.
@@ -53,7 +53,7 @@ files from this lane.
 
 ## Wave25+ Visual Triage
 
-Use proof pack `20260428_070150` as the baseline until a newer closure pack
+Use proof pack `20260428_071545` as the baseline until a newer closure pack
 supersedes it. Ordering below prioritizes visual drift, but shared ownership
 dependencies still win over raw drift.
 
@@ -97,6 +97,18 @@ Read-only visual review of the same pack prioritizes next work as: Guide
 scaffold/columns first, Answer scaffold/source rail second, Thread mode split
 third, Emergency action-list template fourth, Home density fifth, Search polish
 last.
+
+Wave26 integration note: local proof `20260428_071545` is green after guide
+section-count inference, required-reading preservation, slimmer shared top bar,
+thread preview compaction, emergency `FIELD STEPS` action extraction, answer
+section/source-label polish, and Home/Search density passes. Visual spot-check:
+Guide is materially closer and no longer shows `1 SECTION`, but still needs
+document-first shell/rail work; Emergency phone now exposes the four ordered
+actions and a quiet proof card; Home is heavier/closer but still not exact;
+Answer still has proof rail dominance; Thread still duplicates into answer
+detail below the chronological transcript. Next shared-shell priority should be
+to make Answer and Thread stop mounting generic proof/detail sections in the
+first viewport.
 
 ## Wave25+ Plan
 
@@ -150,7 +162,7 @@ Owner: planner only.
 
 Acceptance:
 
-- Active proof pack remains `artifacts/ui_state_pack/20260428_070150`.
+- Active proof pack remains `artifacts/ui_state_pack/20260428_071545`.
 - This file stays aligned with reviewer findings and live `git status`.
 - No code, generated artifacts, target mocks, or protected handoff notes are
   edited from this lane.

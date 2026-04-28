@@ -150,6 +150,16 @@ public final class DetailThreadHistoryRendererTest {
     }
 
     @Test
+    public void threadAnswerPreviewDropsAnswerDetailSections() {
+        String answer = "Center the tarp and shape the low edge for runoff.\n\nFIELD STEPS\n1. Pull the tarp evenly.";
+
+        assertEquals(
+            "Center the tarp and shape the low edge for runoff.",
+            DetailThreadHistoryRenderer.compactThreadAnswer(answer, false, text -> text)
+        );
+    }
+
+    @Test
     public void utilityRailAnswerPreviewStaysTranscriptSized() {
         String answer = "A rain shelter answer with enough detail to become a full card if it is not compacted. "
             + "Keep only a short transcript preview in the rail and history surfaces.";

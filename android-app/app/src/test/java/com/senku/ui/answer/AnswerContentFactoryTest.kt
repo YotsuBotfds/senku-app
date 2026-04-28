@@ -163,6 +163,34 @@ class AnswerContentFactoryTest {
     }
 
     @Test
+    fun fromRenderedAnswer_parsesDisplaySectionLabelsOutOfPrimaryAnswer() {
+        val content = fromRenderedAnswer(
+            body = """
+                ANSWER
+                Use the attached source guide [GD-345] to build a simple rain shelter.
+
+                FIELD STEPS
+                1. Check the cited guide before moving. [GD-345]
+
+                WATCH
+                Treat this as guidance, not procedure.
+            """.trimIndent(),
+            sourceCount = 2,
+            host = "This device",
+            elapsedSeconds = 0.0,
+            evidence = Evidence.Moderate,
+            abstain = false,
+        )
+
+        assertEquals(
+            "Use the attached source guide [GD-345] to build a simple rain shelter.",
+            content.short,
+        )
+        assertEquals(listOf("Check the cited guide before moving. [GD-345]"), content.steps)
+        assertEquals("Treat this as guidance, not procedure.", content.limits)
+    }
+
+    @Test
     fun fromRenderedAnswer_keepsUncertainEscalationAsLimits() {
         val content = fromRenderedAnswer(
             body = """

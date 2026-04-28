@@ -192,17 +192,15 @@ final class GuideBodySanitizer {
                     }
                 } else if (requiredReadingLine) {
                     String requiredReadingDisplayLine = formatRequiredReadingLine(displayLine);
-                    if (!isVerboseGuidePrerequisite(requiredReadingDisplayLine)) {
-                        appendParsedLine(
-                            builder,
-                            parsedLines,
-                            new GuideBodyLine(
-                                GuideBodyLine.Kind.REQUIRED_READING,
-                                requiredReadingDisplayLine,
-                                GUIDE_REQUIRED_READING_LABEL
-                            )
-                        );
-                    }
+                    appendParsedLine(
+                        builder,
+                        parsedLines,
+                        new GuideBodyLine(
+                            GuideBodyLine.Kind.REQUIRED_READING,
+                            requiredReadingDisplayLine,
+                            GUIDE_REQUIRED_READING_LABEL
+                        )
+                    );
                     pendingAdmonitionLabel = false;
                 } else {
                     if (insideReviewedBoundaryOpening) {
@@ -439,12 +437,8 @@ final class GuideBodySanitizer {
         }
         String detail = safe(matcher.group(1)).trim();
         detail = detail.replaceFirst("(?i)^required\\s+reading\\s*[:\\-\\u00b7]?\\s*", "").trim();
+        detail = compactRequiredReadingDetail(detail);
         return detail.isEmpty() ? GUIDE_REQUIRED_READING_LABEL : GUIDE_REQUIRED_READING_LABEL + " \u00b7 " + detail;
-    }
-
-    private static boolean isVerboseGuidePrerequisite(String line) {
-        String normalized = safe(line).trim().toLowerCase(QUERY_LOCALE);
-        return normalized.startsWith("required reading \u00b7 before attempting any procedures in this guide");
     }
 
     private static String trimReviewedBoundaryOpeningBoilerplate(String line) {
@@ -453,15 +447,29 @@ final class GuideBodySanitizer {
             "(?i)^This is the reviewed answer-card surface for\\s+GD-\\d+\\.\\s*",
             ""
         );
+        cleaned = cleaned.replaceFirst("(?i)^Use it only for\\s+", "Use this section only for ");
+        cleaned = cleaned.replaceFirst("(?i)\\s+Start with .*$", "");
         return cleaned.trim();
+    }
+
+    private static String compactRequiredReadingDetail(String detail) {
+        String cleaned = safe(detail).trim();
+        String normalized = cleaned.toLowerCase(QUERY_LOCALE);
+        if (normalized.startsWith("before attempting any procedures in this guide, read the chemical safety guide")) {
+            return "Chemical Safety Guide";
+        }
+        if (normalized.startsWith("before attempting this guide, read the chemical safety guide")) {
+            return "Chemical Safety Guide";
+        }
+        return cleaned;
     }
 
     private static String compactOpeningDangerLine(String line) {
         String cleaned = safe(line).trim();
-        if (cleaned.length() <= 220) {
+        String[] sentences = cleaned.split("(?<=[.!?])\\s+");
+        if (cleaned.length() <= 220 && sentences.length <= 2) {
             return cleaned;
         }
-        String[] sentences = cleaned.split("(?<=[.!?])\\s+");
         if (sentences.length < 2) {
             return cleaned;
         }
@@ -475,11 +483,29 @@ final class GuideBodySanitizer {
                 builder.append(' ');
             }
             builder.append(candidate);
+            if (candidate.toUpperCase(QUERY_LOCALE).startsWith("EVERY ")) {
+                break;
+            }
             if (builder.length() >= 130) {
+                if (nextSentenceStartsWithEvery(sentences, sentence)) {
+                    continue;
+                }
                 break;
             }
         }
         return builder.length() == 0 ? cleaned : builder.toString();
+    }
+
+    private static boolean nextSentenceStartsWithEvery(String[] sentences, String currentSentence) {
+        if (sentences == null || currentSentence == null) {
+            return false;
+        }
+        for (int i = 0; i < sentences.length - 1; i++) {
+            if (currentSentence.equals(sentences[i])) {
+                return safe(sentences[i + 1]).trim().toUpperCase(QUERY_LOCALE).startsWith("EVERY ");
+            }
+        }
+        return false;
     }
 
     private static AdmonitionTitleSplit splitAdmonitionTitle(String line) {

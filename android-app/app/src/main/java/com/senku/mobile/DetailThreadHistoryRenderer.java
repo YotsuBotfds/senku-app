@@ -26,6 +26,7 @@ final class DetailThreadHistoryRenderer {
     private static final int ANSWER_MAX_LINES = 2;
     private static final int RAIL_ANSWER_MAX_LINES = 1;
     private static final int GUIDE_CHIP_LIMIT = 2;
+    private static final int THREAD_ANSWER_CHAR_LIMIT = 150;
     private static final int UTILITY_RAIL_ANSWER_CHAR_LIMIT = 96;
 
     static final class State {
@@ -407,15 +408,19 @@ final class DetailThreadHistoryRenderer {
 
     static String compactThreadAnswer(String answerSummary, boolean utilityRail, UnaryOperator<String> answerFormatter) {
         String compact = answerFormatter == null ? safe(answerSummary) : safe(answerFormatter.apply(answerSummary));
-        if (!utilityRail) {
-            return compact;
+        compact = leadTranscriptAnswer(compact);
+        int limit = utilityRail ? UTILITY_RAIL_ANSWER_CHAR_LIMIT : THREAD_ANSWER_CHAR_LIMIT;
+        if (compact.length() > limit) {
+            compact = compact.substring(0, limit - 3).trim() + "...";
         }
+        return compact;
+    }
+
+    static String leadTranscriptAnswer(String answerText) {
+        String compact = safe(answerText).trim();
         int firstBreak = compact.indexOf('\n');
         if (firstBreak > 0) {
             compact = compact.substring(0, firstBreak).trim();
-        }
-        if (compact.length() > UTILITY_RAIL_ANSWER_CHAR_LIMIT) {
-            compact = compact.substring(0, UTILITY_RAIL_ANSWER_CHAR_LIMIT - 3).trim() + "...";
         }
         return compact;
     }

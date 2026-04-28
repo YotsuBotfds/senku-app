@@ -128,7 +128,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="42dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="18dp"
@@ -175,7 +175,7 @@
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:paddingTop="6dp">
+                android:paddingTop="4dp">
 
                 <LinearLayout
                     android:layout_width="500dp"
@@ -204,7 +204,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="34dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="10dp"
                         android:background="@drawable/bg_manual_home_status"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
@@ -239,8 +239,8 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="38dp"
+                        android:layout_marginTop="7dp"
                         android:addStatesFromChildren="true"
                         android:background="@drawable/bg_manual_home_search"
                         android:gravity="center_vertical"
@@ -298,7 +298,7 @@
                         android:id="@+id/category_section_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="8dp"
                         android:fontFamily="monospace"
                         android:includeFontPadding="false"
                         android:text="CATEGORIES - FIELD SHELF"
@@ -310,7 +310,7 @@
                         android:id="@+id/category_section_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="7dp"
                         android:orientation="vertical">
 
                         <LinearLayout

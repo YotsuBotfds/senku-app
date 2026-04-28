@@ -67,7 +67,9 @@ final class DetailTranscriptFormatter {
         builder.append("Q").append(safeTurnNumber).append(": ")
             .append(safe(turn == null ? null : turn.question).trim());
 
-        String answerText = safe(turn == null ? null : turn.answerSummary).trim();
+        String answerText = DetailThreadHistoryRenderer.leadTranscriptAnswer(
+            safe(turn == null ? null : turn.answerSummary)
+        );
         if (!answerText.isEmpty()) {
             builder.append("\nA").append(safeTurnNumber);
             String answerMeta = buildAnswerMeta(turn, turnAnchorResolver);

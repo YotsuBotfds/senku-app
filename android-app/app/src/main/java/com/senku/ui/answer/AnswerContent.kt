@@ -265,13 +265,21 @@ private fun parseStructured(body: String): ParsedAnswer {
         val trimmed = line.trim()
         section = when {
             trimmed.equals("Short answer:", ignoreCase = true) -> "short"
+            trimmed.equals("ANSWER", ignoreCase = true) -> "short"
             trimmed.equals("Steps:", ignoreCase = true) -> "steps"
+            trimmed.equals("STEPS", ignoreCase = true) -> "steps"
+            trimmed.equals("FIELD STEPS", ignoreCase = true) -> "steps"
             trimmed.equals("Limits or safety:", ignoreCase = true) -> "limits"
+            trimmed.equals("WATCH", ignoreCase = true) -> "limits"
             else -> section
         }
         if (trimmed.equals("Short answer:", ignoreCase = true)
+            || trimmed.equals("ANSWER", ignoreCase = true)
             || trimmed.equals("Steps:", ignoreCase = true)
+            || trimmed.equals("STEPS", ignoreCase = true)
+            || trimmed.equals("FIELD STEPS", ignoreCase = true)
             || trimmed.equals("Limits or safety:", ignoreCase = true)
+            || trimmed.equals("WATCH", ignoreCase = true)
         ) {
             continue
         }

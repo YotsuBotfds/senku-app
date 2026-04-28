@@ -34,11 +34,14 @@ final class DetailGuidePresentationFormatter {
             return "";
         }
         String sectionHeading = safe(result.sectionHeading).trim();
-        String body = buildGuideBodyWithSection(sectionHeading, safe(result.body));
+        String sourceBody = safe(result.body);
+        String body = buildGuideBodyWithSection(sectionHeading, sourceBody);
         if (!body.isEmpty()) {
-            return prependGuidePaperHeader(result, body);
+            return prependGuidePaperHeader(result, body, inferGuideSectionCount(sourceBody, body));
         }
-        return prependGuidePaperHeader(result, buildGuideBodyWithSection(sectionHeading, safe(result.snippet)));
+        String sourceSnippet = safe(result.snippet);
+        String snippetBody = buildGuideBodyWithSection(sectionHeading, sourceSnippet);
+        return prependGuidePaperHeader(result, snippetBody, inferGuideSectionCount(sourceSnippet, snippetBody));
     }
 
     static String normalizeGuideDisplayTextForLegacy(String text) {
@@ -206,7 +209,7 @@ final class DetailGuidePresentationFormatter {
         }
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("sans"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.86f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.82f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
             lineStart,
@@ -230,7 +233,7 @@ final class DetailGuidePresentationFormatter {
     private void styleGuideManualTitleLine(SpannableStringBuilder styled, int lineStart, int lineEnd) {
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("sans"), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.92f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.88f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
             lineStart,
@@ -262,7 +265,7 @@ final class DetailGuidePresentationFormatter {
         int valueStart = firstNonWhitespaceIndex(fullText, labelEnd, lineEnd);
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.74f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.70f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideAdmonitionWarningColorResForLegacy())),
             lineStart,
@@ -294,7 +297,7 @@ final class DetailGuidePresentationFormatter {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         styled.setSpan(new StyleSpan(Typeface.BOLD), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        styled.setSpan(new RelativeSizeSpan(0.74f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.70f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (labelEnd > lineStart) {
             styled.setSpan(new TypefaceSpan("monospace"), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             styled.setSpan(new ForegroundColorSpan(color(accentColorRes)), lineStart, labelEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -305,7 +308,7 @@ final class DetailGuidePresentationFormatter {
         if (lineStart >= lineEnd) {
             return;
         }
-        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.74f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new ForegroundColorSpan(color(guideBodyTextColorResForLegacy())),
             lineStart,
@@ -343,7 +346,7 @@ final class DetailGuidePresentationFormatter {
             lineEnd,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
-        styled.setSpan(new RelativeSizeSpan(0.78f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        styled.setSpan(new RelativeSizeSpan(0.74f), lineStart, lineEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         styled.setSpan(
             new BackgroundColorSpan(color(admonitionContinuationBackgroundColorRes(accentColorRes))),
             lineStart,
@@ -405,7 +408,7 @@ final class DetailGuidePresentationFormatter {
         return !normalizedSection.isEmpty() && normalizedFirstLine.equals(normalizedSection);
     }
 
-    private static String prependGuidePaperHeader(SearchResult result, String body) {
+    private static String prependGuidePaperHeader(SearchResult result, String body, int inferredSectionCount) {
         String cleanedBody = safe(body).trim();
         if (cleanedBody.isEmpty()) {
             return "";
@@ -422,11 +425,18 @@ final class DetailGuidePresentationFormatter {
         }
         if (!guideId.isEmpty()) {
             builder.append(guideId).append(" \u00b7 ")
-                .append(formatGuideSectionCount(countGuideSections(cleanedBody)))
+                .append(formatGuideSectionCount(Math.max(countGuideSections(cleanedBody), inferredSectionCount)))
                 .append('\n');
         }
         builder.append('\n').append(cleanedBody);
         return builder.toString().trim();
+    }
+
+    private static int inferGuideSectionCount(String sourceText, String displayBody) {
+        int displaySections = countGuideSections(displayBody);
+        int sourceSections = countRawGuideSections(sourceText);
+        int frontMatterRelatedCount = countFrontMatterListEntries(sourceText, "related");
+        return Math.max(displaySections, Math.max(sourceSections, frontMatterRelatedCount));
     }
 
     private static int countGuideSections(String body) {
@@ -438,6 +448,65 @@ final class DetailGuidePresentationFormatter {
             }
         }
         return Math.max(1, sections);
+    }
+
+    private static int countRawGuideSections(String body) {
+        String cleaned = safe(body);
+        if (cleaned.trim().isEmpty()) {
+            return 0;
+        }
+        int sections = 0;
+        String[] lines = cleaned.split("\\n", -1);
+        for (String line : lines) {
+            String trimmed = safe(line).trim();
+            if (trimmed.matches("(?i)^<section\\b.*")) {
+                sections++;
+            } else if (trimmed.matches("^##\\s+.+")) {
+                sections++;
+            } else if (trimmed.startsWith("[[SECTION]] ")
+                || trimmed.matches("(?i)^Source section:\\s*.+$")
+                || GuideBodySanitizer.isGuideSectionDisplayLine(trimmed)) {
+                sections++;
+            }
+        }
+        return sections;
+    }
+
+    private static int countFrontMatterListEntries(String body, String key) {
+        String cleaned = safe(body).trim();
+        String safeKey = safe(key).trim();
+        if (cleaned.isEmpty() || safeKey.isEmpty() || !cleaned.startsWith("---\n")) {
+            return 0;
+        }
+        String[] lines = cleaned.split("\\n", -1);
+        boolean insideFrontMatter = false;
+        boolean insideTargetList = false;
+        int count = 0;
+        for (String line : lines) {
+            String trimmed = safe(line).trim();
+            if ("---".equals(trimmed)) {
+                if (!insideFrontMatter) {
+                    insideFrontMatter = true;
+                    continue;
+                }
+                break;
+            }
+            if (!insideFrontMatter) {
+                continue;
+            }
+            if (trimmed.equals(safeKey + ":")) {
+                insideTargetList = true;
+                continue;
+            }
+            if (insideTargetList && trimmed.startsWith("- ")) {
+                count++;
+                continue;
+            }
+            if (insideTargetList && !trimmed.isEmpty() && !line.startsWith(" ") && trimmed.endsWith(":")) {
+                insideTargetList = false;
+            }
+        }
+        return count;
     }
 
     private static String formatGuideSectionCount(int sections) {

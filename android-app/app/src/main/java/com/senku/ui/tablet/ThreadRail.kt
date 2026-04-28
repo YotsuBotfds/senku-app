@@ -71,7 +71,17 @@ internal fun threadRailAnswerMetaLabel(index: Int, guideMode: Boolean, sourceCou
     threadRailAnswerLabel(index, guideMode)
 
 internal fun threadRailAnswerPreviewLabel(index: Int, guideMode: Boolean, answer: String): String =
-    "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${answer.trim().ifEmpty { "No answer recorded." }}"
+    "${threadRailAnswerLabel(index, guideMode)} \u00B7 ${threadRailAnswerPreviewText(answer)}"
+
+internal fun threadRailAnswerPreviewText(answer: String): String =
+    answer.trim()
+        .lineSequence()
+        .firstOrNull { it.isNotBlank() }
+        ?.trim()
+        ?.take(96)
+        ?.trimEnd()
+        ?.ifEmpty { null }
+        ?: "No answer recorded."
 
 internal fun threadRailSourceContextPriority(source: SourceState): Int {
     val sourceText = "${source.id} ${source.title}".lowercase()

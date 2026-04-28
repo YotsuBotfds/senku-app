@@ -81,6 +81,45 @@ public final class DetailGuidePresentationFormatterTest {
     }
 
     @Test
+    public void buildGuideBodyInfersRicherSectionCountFromFullGuideMetadata() {
+        SearchResult result = new SearchResult(
+            "Foundry & Metal Casting",
+            "",
+            "",
+            "---\n"
+                + "id: GD-132\n"
+                + "related:\n"
+                + "  - abrasives-manufacturing\n"
+                + "  - bearing-manufacturing\n"
+                + "  - bellows-forge-blower-construction\n"
+                + "---\n"
+                + ":::danger\n"
+                + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry. Never cast alone.\n"
+                + ":::\n"
+                + "## Reviewed Answer-Card Boundary: Area Readiness, Hazard Screen, and Handoffs\n"
+                + "This is the reviewed answer-card surface for GD-132. Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.\n"
+                + "## Foundry Safety Quickstart\n"
+                + "Check the area.",
+            "GD-132",
+            "",
+            "metalworking",
+            "guide-focus"
+        );
+
+        assertEquals(
+            "FIELD MANUAL \u00b7 REV 04-27 \u00b7 PK 2\n"
+                + "Foundry & Metal Casting\n"
+                + "GD-132 \u00b7 3 SECTIONS\n\n"
+                + "DANGER \u00b7 EXTREME BURN HAZARD\n"
+                + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
+                + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
+                + "Reviewed Answer-Card Boundary\n"
+                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.",
+            DetailGuidePresentationFormatter.buildGuideBody(result)
+        );
+    }
+
+    @Test
     public void guideReaderSpanColorResourcesUsePaperSafeRev03Tokens() {
         assertEquals(R.color.senku_rev03_paper_ink, DetailGuidePresentationFormatter.guideBodyTextColorResForLegacy());
         assertEquals(R.color.senku_rev03_paper_ok, DetailGuidePresentationFormatter.guideAnchorLabelColorResForLegacy());
@@ -160,7 +199,7 @@ public final class DetailGuidePresentationFormatterTest {
     @Test
     public void guideBodySanitizerPreservesRequiredReadingAsCompactGuideRow() {
         assertEquals(
-            "REQUIRED READING \u00b7 Before attempting this guide, read the Chemical Safety Guide in full.",
+            "REQUIRED READING \u00b7 Chemical Safety Guide",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "::: warning\nRequired Reading: Before attempting this guide, read the Chemical Safety Guide in full.\n:::"
             )
@@ -202,9 +241,10 @@ public final class DetailGuidePresentationFormatterTest {
         assertEquals(
             "DANGER \u00b7 EXTREME BURN HAZARD\n"
                 + "A single drop of water contacting molten metal causes a violent steam explosion. EVERY tool, mold, crucible, and surface that contacts molten metal must be completely dry.\n"
+                + "REQUIRED READING \u00b7 Chemical Safety Guide\n"
                 + "\u2014 \u00a7 1 \u00b7 AREA READINESS\n"
                 + "Reviewed Answer-Card Boundary\n"
-                + "Use it only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff. Start with the current activity status.",
+                + "Use this section only for foundry-area readiness, visible hazard screening, material and source labeling, no-go triggers, access control, and expert or owner handoff.",
             GuideBodySanitizer.sanitizeGuideBodyForDisplay(
                 "::: danger\n"
                     + "EXTREME BURN HAZARD: A single drop of water contacting molten metal causes a violent steam explosion. "

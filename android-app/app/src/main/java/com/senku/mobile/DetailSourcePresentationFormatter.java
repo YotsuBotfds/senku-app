@@ -59,7 +59,7 @@ final class DetailSourcePresentationFormatter {
         boolean anchor = isAnchorEvidenceCard(position, mode);
         return new EvidenceCard(
             guideId,
-            buildEvidenceRoleLabel(anchor, mode),
+            buildEvidenceRoleLabel(anchor, mode, position),
             buildEvidenceMatchLabel(source, position),
             title.isEmpty() ? "Open guide note" : title,
             quote,
@@ -279,19 +279,13 @@ final class DetailSourcePresentationFormatter {
     }
 
     String buildCompactSourcesSubtitle(int sourceCount, boolean expanded, boolean generationStallNoticeVisible, String trustSummary) {
-        String label = formatCountLabel(sourceCount, "guide", "guides");
-        String action = expanded
-            ? (generationStallNoticeVisible
-                ? label + " ready."
-                : label + " ready.")
-            : label + " ready.";
+        String label = formatCountLabel(sourceCount, "source", "sources");
         String compactTrustSummary = safe(trustSummary).trim();
-        return compactTrustSummary.isEmpty() ? action : compactTrustSummary + " | " + action;
+        return compactTrustSummary.isEmpty() ? label : compactTrustSummary + " | " + label;
     }
 
     String buildExpandedSourcesSubtitle(int sourceCount, boolean generationStallNoticeVisible, String trustSummary) {
-        String label = formatCountLabel(sourceCount, "guide", "guides");
-        String action = label + " ready.";
+        String action = formatCountLabel(sourceCount, "source", "sources");
         String expandedTrustSummary = safe(trustSummary).trim();
         return expandedTrustSummary.isEmpty() ? action : expandedTrustSummary + " | " + action;
     }
@@ -316,11 +310,14 @@ final class DetailSourcePresentationFormatter {
         return position <= 0 || "anchor".equals(normalized) || "primary".equals(normalized);
     }
 
-    private static String buildEvidenceRoleLabel(boolean anchor, String mode) {
+    private static String buildEvidenceRoleLabel(boolean anchor, String mode, int position) {
         if (anchor) {
             return "ANCHOR";
         }
         String normalized = safe(mode).trim().toLowerCase(Locale.US);
+        if ("related".equals(normalized) && position >= 2) {
+            return "TOPIC";
+        }
         if ("topic".equals(normalized) || "supporting".equals(normalized)) {
             return "TOPIC";
         }
@@ -340,18 +337,19 @@ final class DetailSourcePresentationFormatter {
         String mode = safe(retrievalMode).trim().toLowerCase(Locale.US);
         switch (mode) {
             case "answer-card":
+                return 82;
             case "route-focus":
             case "hybrid":
-                return 93;
+                return 78;
             case "guide-focus":
             case "guide":
-                return 89;
+                return 74;
             case "vector":
-                return 84;
+                return 70;
             case "lexical":
-                return 78;
+                return 68;
             default:
-                return 72;
+                return 61;
         }
     }
 

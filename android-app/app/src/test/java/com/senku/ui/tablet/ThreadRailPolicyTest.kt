@@ -34,6 +34,14 @@ class ThreadRailPolicyTest {
         assertEquals("A2", threadRailAnswerMetaLabel(2, guideMode = false, sourceCount = 3))
         assertEquals("REF 2", threadRailAnswerMetaLabel(2, guideMode = true, sourceCount = 0))
         assertEquals("A2 \u00B7 Keep the tarp angled.", threadRailAnswerPreviewLabel(2, guideMode = false, answer = " Keep the tarp angled. "))
+        assertEquals(
+            "A2 \u00B7 Keep the tarp angled.",
+            threadRailAnswerPreviewLabel(
+                2,
+                guideMode = false,
+                answer = "Keep the tarp angled.\n\nFIELD STEPS\n1. Stake the corners.",
+            ),
+        )
         assertEquals("A3 \u00B7 No answer recorded.", threadRailAnswerPreviewLabel(3, guideMode = false, answer = " "))
         assertEquals("NO SOURCES", threadRailTurnSourceLabel(sourceCount = 0))
         assertEquals("1 SOURCE", threadRailTurnSourceLabel(sourceCount = 1))

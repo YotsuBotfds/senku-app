@@ -187,7 +187,7 @@ fun PaperAnswerCard(
 
                 if (!content.steps.isNullOrEmpty() && !content.abstain) {
                     SupportBlock(
-                        label = if (content.uncertainFit) "TRY" else "STEPS",
+                        label = if (content.uncertainFit) "UNSURE FIT" else "STEPS",
                         labelColor = if (content.uncertainFit) evidenceTone else palette.muted,
                         palette = palette,
                         emphasized = content.uncertainFit,
@@ -472,6 +472,8 @@ private fun sourceCountLabel(sourceCount: Int): String {
 
 internal fun displayProofCtaLabel(label: String): String {
     return if (label.trim().equals("Show proof", ignoreCase = true)) {
+        "View sources"
+    } else if (label.trim().equals("Show proof rail", ignoreCase = true)) {
         "View sources"
     } else {
         label

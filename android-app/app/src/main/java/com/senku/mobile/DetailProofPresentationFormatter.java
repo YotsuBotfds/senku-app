@@ -253,22 +253,24 @@ final class DetailProofPresentationFormatter {
             }
             return lines;
         }
-        lines.add(new StructuredLine(
-            context.getString(R.string.detail_external_review_proof_route),
-            state.routeValue,
-            state.routeAccentColor,
-            true
-        ));
-        if (!state.backendValue.isEmpty()) {
+        if (!state.lowCoverageOrAbstain) {
             lines.add(new StructuredLine(
-                context.getString(R.string.detail_external_review_proof_backend),
-                state.backendValue,
-                context.getColor(R.color.senku_text_muted_light),
+                context.getString(R.string.detail_external_review_proof_route),
+                state.routeValue,
+                state.routeAccentColor,
                 true
             ));
+            if (!state.backendValue.isEmpty()) {
+                lines.add(new StructuredLine(
+                    context.getString(R.string.detail_external_review_proof_backend),
+                    state.backendValue,
+                    context.getColor(R.color.senku_text_muted_light),
+                    true
+                ));
+            }
         }
         lines.add(new StructuredLine(
-            context.getString(R.string.detail_external_review_proof_evidence),
+            state.lowCoverageOrAbstain ? "FIT" : context.getString(R.string.detail_external_review_proof_evidence),
             state.evidenceStrengthLabel + " | " + formatCountLabel(state.sourceCount, "source", "sources"),
             state.evidenceAccentColor
         ));
@@ -281,7 +283,9 @@ final class DetailProofPresentationFormatter {
             ));
         }
         appendReviewedCardLines(lines, state, compact);
-        appendProofRevisionLine(lines, state.revisionStamp);
+        if (!state.lowCoverageOrAbstain) {
+            appendProofRevisionLine(lines, state.revisionStamp);
+        }
         return lines;
     }
 

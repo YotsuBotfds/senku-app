@@ -65,6 +65,27 @@ public final class DetailTranscriptFormatterTest {
     }
 
     @Test
+    public void transcriptExportKeepsAnswerLeadWithoutFieldCardSections() {
+        SessionMemory.TurnSnapshot current = turn(
+            "what about runoff",
+            "Shape the low edge for runoff.\n\nFIELD STEPS\n1. Pull the tarp evenly.\n\nWATCH\nRetension after rain.",
+            List.of("[GD-220] Rain shelter"),
+            "GD-220"
+        );
+
+        String transcript = DetailTranscriptFormatter.buildTranscriptExportText(
+            "Rain shelter",
+            List.of(),
+            current,
+            DetailTranscriptFormatterTest::anchorFor
+        );
+
+        assertTrue(transcript.contains("A1 [GD-220 \u00B7 UNSURE]: Shape the low edge for runoff."));
+        assertFalse(transcript.contains("FIELD STEPS"));
+        assertFalse(transcript.contains("WATCH"));
+    }
+
+    @Test
     public void emptyInputsReturnEmptyTranscript() {
         assertEquals(
             "",

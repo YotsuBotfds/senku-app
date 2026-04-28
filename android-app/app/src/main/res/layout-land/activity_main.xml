@@ -6,7 +6,7 @@
     android:keepScreenOn="true"
     android:orientation="horizontal"
     android:paddingStart="0dp"
-    android:paddingTop="6dp"
+    android:paddingTop="4dp"
     android:paddingEnd="12dp"
     android:paddingBottom="8dp">
 
@@ -68,7 +68,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="28dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -139,13 +139,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="5dp"
                 android:background="@color/senku_rev03_hairline" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="26dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/bg_manual_home_status"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
@@ -195,8 +195,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="6dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="5dp"
                 android:addStatesFromChildren="true"
                 android:background="@drawable/bg_manual_phone_home_search"
                 android:gravity="center_vertical"
@@ -254,7 +254,7 @@
                 android:id="@+id/category_section_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="7dp"
                 android:fontFamily="monospace"
                 android:includeFontPadding="false"
                 android:text="-- CATEGORIES  &#8226;  12"
@@ -266,7 +266,7 @@
                 android:id="@+id/category_section_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="4dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -278,14 +278,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="7dp"
                 android:background="@color/senku_rev03_hairline_strong" />
 
             <LinearLayout
                 android:id="@+id/browse_rail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="7dp"
                 android:orientation="vertical">
 
                 <TextView

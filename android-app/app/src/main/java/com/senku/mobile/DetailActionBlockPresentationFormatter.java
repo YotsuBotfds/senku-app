@@ -434,12 +434,15 @@ final class DetailActionBlockPresentationFormatter {
 
     private static boolean isActionSectionHeading(String normalizedLine) {
         return "steps:".equals(normalizedLine)
+            || "field steps".equals(normalizedLine)
+            || "field steps:".equals(normalizedLine)
             || "immediate actions:".equals(normalizedLine)
             || "actions:".equals(normalizedLine);
     }
 
     private static boolean isNonActionSectionHeading(String normalizedLine) {
         return normalizedLine.endsWith(":")
+            || normalizedLine.startsWith("watch")
             || normalizedLine.startsWith("why this answer")
             || normalizedLine.startsWith("evidence")
             || normalizedLine.startsWith("provenance")
@@ -480,11 +483,21 @@ final class DetailActionBlockPresentationFormatter {
         if (start < 0) {
             return value;
         }
+        int end = start + "minimum 5 m".length();
+        int activeWorkZoneEnd = lower.indexOf("from active work zone", start);
+        if (activeWorkZoneEnd >= 0) {
+            end = activeWorkZoneEnd + "from active work zone".length();
+        } else {
+            activeWorkZoneEnd = lower.indexOf("from the active work zone", start);
+            if (activeWorkZoneEnd >= 0) {
+                end = activeWorkZoneEnd + "from the active work zone".length();
+            }
+        }
         SpannableString styled = new SpannableString(value);
         styled.setSpan(
             new UnderlineSpan(),
             start,
-            start + "minimum 5 m".length(),
+            end,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
         return styled;

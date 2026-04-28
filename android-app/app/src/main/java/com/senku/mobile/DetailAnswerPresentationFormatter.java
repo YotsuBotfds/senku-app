@@ -21,6 +21,7 @@ final class DetailAnswerPresentationFormatter {
         "Steps:",
         "Limits or safety:",
         "ANSWER",
+        "STEPS",
         "FIELD STEPS",
         "WATCH"
     };
@@ -231,7 +232,9 @@ final class DetailAnswerPresentationFormatter {
         if ("Limits or safety:".equals(sectionLabel) || "WATCH".equals(sectionLabel)) {
             return color(R.color.senku_accent_warning);
         }
-        if ("Steps:".equals(sectionLabel) || "FIELD STEPS".equals(sectionLabel)) {
+        if ("Steps:".equals(sectionLabel)
+            || "STEPS".equals(sectionLabel)
+            || "FIELD STEPS".equals(sectionLabel)) {
             return color(R.color.senku_accent_olive);
         }
         return color(R.color.senku_text_muted_light);

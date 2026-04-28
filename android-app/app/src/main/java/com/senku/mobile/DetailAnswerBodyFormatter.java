@@ -299,7 +299,9 @@ final class DetailAnswerBodyFormatter {
         if ("Short answer:".equals(safeLabel) || SUMMARY_DISPLAY_LABEL.equals(safeLabel)) {
             return SUMMARY_DISPLAY_LABEL;
         }
-        if ("Steps:".equals(safeLabel) || STEPS_DISPLAY_LABEL.equals(safeLabel)) {
+        if ("Steps:".equals(safeLabel)
+            || STEPS_DISPLAY_LABEL.equals(safeLabel)
+            || "FIELD STEPS".equals(safeLabel)) {
             return STEPS_DISPLAY_LABEL;
         }
         if ("Limits or safety:".equals(safeLabel) || SAFETY_DISPLAY_LABEL.equals(safeLabel)) {
@@ -311,6 +313,7 @@ final class DetailAnswerBodyFormatter {
     private static boolean isAnswerDisplayLabel(String trimmedLine) {
         return SUMMARY_DISPLAY_LABEL.equals(trimmedLine)
             || STEPS_DISPLAY_LABEL.equals(trimmedLine)
+            || "FIELD STEPS".equals(trimmedLine)
             || SAFETY_DISPLAY_LABEL.equals(trimmedLine);
     }
 

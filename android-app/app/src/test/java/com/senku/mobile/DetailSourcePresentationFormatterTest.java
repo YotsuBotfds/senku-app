@@ -25,7 +25,7 @@ public final class DetailSourcePresentationFormatterTest {
 
         assertEquals("GD-444", card.guideId);
         assertEquals("ANCHOR", card.roleLabel);
-        assertEquals("93%", card.matchLabel);
+        assertEquals("78%", card.matchLabel);
         assertEquals("Emergency Shelter", card.title);
         assertEquals("Pitch ridgeline along prevailing wind.", card.quote);
         assertEquals("Ridge Line Setup", card.anchorLabel);
@@ -49,8 +49,8 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(source, 2, "related");
 
         assertEquals("GD-215", card.guideId);
-        assertEquals("RELATED", card.roleLabel);
-        assertEquals("66%", card.matchLabel);
+        assertEquals("TOPIC", card.roleLabel);
+        assertEquals("56%", card.matchLabel);
         assertEquals("Rainwater Catchment", card.title);
         assertEquals("Use first-flush diversion before storage.", card.quote);
         assertEquals("Storage Prep", card.anchorLabel);
@@ -89,7 +89,7 @@ public final class DetailSourcePresentationFormatterTest {
         DetailSourcePresentationFormatter.EvidenceCard card = formatter.buildEvidenceCard(source, 1, "source");
 
         assertEquals("SOURCE", card.roleLabel);
-        assertEquals("87%", card.matchLabel);
+        assertEquals("76%", card.matchLabel);
         assertFalse(card.isAnchor);
     }
 
@@ -219,11 +219,11 @@ public final class DetailSourcePresentationFormatterTest {
         );
 
         assertEquals(
-            "Anchor guide 1 of 2, 93% match: [GD-444] Emergency Shelter Ridge Line Setup. Shows source preview.",
+            "Anchor guide 1 of 2, 78% match: [GD-444] Emergency Shelter Ridge Line Setup. Shows source preview.",
             formatter.buildEvidenceCardRowContentDescription(anchorCard, true, 0, 2)
         );
         assertEquals(
-            "Related guide 3 of 3, 66% match: [GD-215] Rainwater Catchment Storage Prep. Opens source guide.",
+            "Related guide 3 of 3, 56% match: [GD-215] Rainwater Catchment Storage Prep. Opens source guide.",
             formatter.buildEvidenceCardRowContentDescription(relatedCard, false, 2, 3)
         );
     }
