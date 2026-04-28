@@ -74,6 +74,9 @@ public final class MainActivity extends AppCompatActivity {
     private static final int MAX_HOME_RELATED_GUIDES = 4;
     private static final int MAX_RESULT_PREVIEW_BRIDGE_GUIDES = 4;
     private static final int RESULT_PREVIEW_BRIDGE_SIGNAL_LIMIT = 1;
+    private static final int MANUAL_HOME_CATEGORY_COLUMNS = 3;
+    private static final int MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP = 64;
+    private static final int MANUAL_HOME_CATEGORY_ROW_GAP_DP = 8;
     private static final String REVIEW_SEARCH_QUERY = "rain shelter";
     private static final String REVIEW_SEARCH_LATENCY_LABEL = "12ms";
     private static final long MILLIS_PER_MINUTE = 60_000L;
@@ -1911,6 +1914,7 @@ public final class MainActivity extends AppCompatActivity {
     private void installRev03Chrome(Bundle savedInstanceState) {
         installIdentityStrip();
         installCategoryShelf();
+        applyManualHomeShellDensityPolish();
         if (isPhoneFormFactor()) {
             installPhoneBottomTabBar();
         }
@@ -1958,8 +1962,62 @@ public final class MainActivity extends AppCompatActivity {
         }
         categoryShelfView.setLayoutParams(shelfParams);
         categoryShelfView.setSelectionEnabled(false);
+        categoryShelfView.setClipToPadding(false);
+        categoryShelfView.setClipChildren(false);
         host.addView(categoryShelfView, 0);
         configureLegacyCategoryMirrorRows(host);
+    }
+
+    private void applyManualHomeShellDensityPolish() {
+        if (!isManualHomeShellLayout()) {
+            return;
+        }
+        setTopMargin(categorySectionHeader, isLandscapePhoneLayout() ? 12 : 14);
+        setTopMargin(categorySectionContainer, 8);
+        setTopMargin(recentThreadsSection, isLandscapePhoneLayout() ? 0 : 14);
+        setTopMargin(recentThreadsContainer, 7);
+        allowChildOverflow(categorySectionContainer);
+        allowChildOverflow(recentThreadsSection);
+        allowChildOverflow(recentThreadsContainer);
+        if (categoryShelfView != null) {
+            categoryShelfView.setMinimumHeight(dp(resolveManualHomeCategoryShelfMinimumHeightDp(6)));
+        }
+    }
+
+    private void setTopMargin(View view, int marginDp) {
+        if (view == null) {
+            return;
+        }
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (!(params instanceof ViewGroup.MarginLayoutParams)) {
+            return;
+        }
+        ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+        marginParams.topMargin = dp(marginDp);
+        view.setLayoutParams(marginParams);
+    }
+
+    static int resolveManualHomeCategoryShelfMinimumHeightDp(int itemCount) {
+        int safeItemCount = Math.max(0, itemCount);
+        if (safeItemCount == 0) {
+            return 0;
+        }
+        int rows = (safeItemCount + MANUAL_HOME_CATEGORY_COLUMNS - 1) / MANUAL_HOME_CATEGORY_COLUMNS;
+        return rows * MANUAL_HOME_CATEGORY_CARD_HEIGHT_DP
+            + Math.max(0, rows - 1) * MANUAL_HOME_CATEGORY_ROW_GAP_DP;
+    }
+
+    private void allowChildOverflow(View view) {
+        View current = view;
+        while (current != null) {
+            if (current instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) current;
+                group.setClipToPadding(false);
+                group.setClipChildren(false);
+            }
+            ViewParent parent = current.getParent();
+            current = parent instanceof View ? (View) parent : null;
+        }
     }
 
     private void configureLegacyCategoryMirrorRows(ViewGroup host) {
@@ -2905,7 +2963,7 @@ public final class MainActivity extends AppCompatActivity {
         return items;
     }
 
-    private static String manualHomeCategoryLabel(String bucketKey) {
+    static String manualHomeCategoryLabel(String bucketKey) {
         switch (safe(bucketKey).trim()) {
             case "shelter":
                 return "Shelter";
@@ -3612,6 +3670,10 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private String appendReviewSearchLatency(String header, String query) {
+        return appendReviewSearchLatency(header, query, productReviewMode);
+    }
+
+    static String appendReviewSearchLatency(String header, String query, boolean productReviewMode) {
         String cleanHeader = safe(header).trim();
         if (!productReviewMode
             || cleanHeader.isEmpty()

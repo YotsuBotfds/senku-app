@@ -26,10 +26,10 @@ public final class SearchResultAdapterTest {
     }
 
     @Test
-    public void composeBridgeUsesOrdinalRankInsteadOfSyntheticScore() {
-        assertEquals("#1", SearchResultAdapter.buildRankLabelForTest(0));
-        assertEquals("#4", SearchResultAdapter.buildRankLabelForTest(3));
-        assertEquals("#1", SearchResultAdapter.buildRankLabelForTest(-1));
+    public void composeBridgeUsesCompactScoreMarkers() {
+        assertEquals("92", SearchResultAdapter.buildRankLabelForTest(0));
+        assertEquals("61", SearchResultAdapter.buildRankLabelForTest(3));
+        assertEquals("92", SearchResultAdapter.buildRankLabelForTest(-1));
     }
 
     @Test
@@ -92,5 +92,10 @@ public final class SearchResultAdapterTest {
             "Open cross-reference guide: GD-214 - Water Storage",
             SearchResultAdapter.buildLinkedGuideOpenDescriptionForTest("GD-214 - Water Storage")
         );
+    }
+
+    @Test
+    public void linkedGuideChipKeepsCompactVisibleCue() {
+        assertEquals("Guide", SearchResultAdapter.buildLinkedGuideChipLabelForTest());
     }
 }

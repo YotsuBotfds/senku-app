@@ -64,14 +64,8 @@ final class DetailSessionPresentationFormatter {
     }
 
     String buildThreadSummary(int earlierCount, int sourceCount) {
-        String sourceLabel = context.getString(R.string.detail_scope_answer, sourceCount);
-        if (earlierCount <= 0) {
-            return context.getString(R.string.detail_thread_current_only, sourceLabel);
-        }
-        if (earlierCount == 1) {
-            return context.getString(R.string.detail_thread_single_with_sources, sourceLabel);
-        }
-        return context.getString(R.string.detail_thread_multiple_with_sources, earlierCount, sourceLabel);
+        int turnCount = Math.max(1, earlierCount + 1);
+        return "THREAD CONTEXT KEPT - " + turnCount + " TURNS - " + Math.max(0, sourceCount) + " SOURCES";
     }
 
     String buildSessionSummaryText(
@@ -80,14 +74,7 @@ final class DetailSessionPresentationFormatter {
         boolean stationMode,
         int sourceCount
     ) {
-        String base = stationMode
-            ? context.getString(R.string.detail_thread_compact_station)
-            : buildThreadSummary(earlierTurns == null ? 0 : earlierTurns.size(), sourceCount);
-        String shift = buildCurrentAnchorShiftSummary(earlierTurns, currentTurn);
-        if (shift.isEmpty()) {
-            return base;
-        }
-        return base + "\n" + shift;
+        return buildThreadSummary(earlierTurns == null ? 0 : earlierTurns.size(), sourceCount);
     }
 
     String buildCurrentAnchorShiftSummary(

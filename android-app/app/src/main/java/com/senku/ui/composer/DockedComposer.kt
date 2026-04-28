@@ -3,15 +3,12 @@ package com.senku.ui.composer
 import android.content.Context
 import android.util.AttributeSet
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -142,14 +139,12 @@ fun DockedComposer(
 ) {
     val colors = SenkuTheme.colors
     val typography = SenkuTheme.typography
-    var focused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
-    val fieldMinHeight = if (landscapePhoneBudgeted) 40.dp else 44.dp
-    val fieldVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 9.dp
-    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 10.dp
-    val actionSize = if (landscapePhoneBudgeted) 36.dp else 38.dp
+    val fieldHeight = if (landscapePhoneBudgeted) 36.dp else 40.dp
+    val fieldVerticalPadding = if (landscapePhoneBudgeted) 7.dp else 9.dp
+    val rowVerticalPadding = if (landscapePhoneBudgeted) 6.dp else 9.dp
+    val actionSize = if (landscapePhoneBudgeted) 34.dp else 36.dp
     val sendVerticalPadding = if (landscapePhoneBudgeted) 8.dp else 9.dp
-    val bottomSpacerHeight = 0.dp
     val hasSendText = model.enabled && model.text.trim().isNotEmpty()
     val contextHint = model.contextHint.trim()
 
@@ -176,7 +171,7 @@ fun DockedComposer(
                     .fillMaxWidth()
                     .padding(
                         start = if (model.compact) 18.dp else 24.dp,
-                        top = 10.dp,
+                        top = 8.dp,
                         end = if (model.compact) 18.dp else 24.dp,
                     ),
                 style = typography.monoCaps.copy(
@@ -243,17 +238,10 @@ fun DockedComposer(
                 onValueChange = onTextChange,
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(min = fieldMinHeight)
+                    .height(fieldHeight)
                     .focusRequester(focusRequester)
-                    .border(
-                        width = 1.dp,
-                        color = if (focused) colors.accent.copy(alpha = 0.54f) else colors.hairlineStrong.copy(alpha = 0.22f),
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    .background(colors.bg0, RoundedCornerShape(8.dp))
                     .padding(horizontal = 12.dp, vertical = fieldVerticalPadding)
                     .onFocusChanged {
-                        focused = it.isFocused
                         onFocusChange?.invoke(it.isFocused)
                     },
                 enabled = model.enabled,
@@ -327,6 +315,5 @@ fun DockedComposer(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(bottomSpacerHeight))
     }
 }

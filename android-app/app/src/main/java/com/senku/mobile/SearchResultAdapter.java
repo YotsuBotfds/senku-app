@@ -501,7 +501,10 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     private SearchResultCardModel buildSearchResultCardModel(SearchResult result, int position) {
-        String title = cleanDisplayText(result == null ? null : result.title, 120);
+        String title = cleanDisplayText(
+            result == null ? null : result.title,
+            isRichTabletCard(inflater.getContext()) ? 110 : 104
+        );
         String subtitle = buildCardSubtitle(result);
         String snippet = buildCardSnippet(result);
         String laneLabel = laneLabelForRetrievalMode(safe(result == null ? null : result.retrievalMode));
@@ -510,7 +513,9 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         String guideIdLabel = cleanDisplayText(result == null ? null : result.guideId, 32);
         String metadataLine = buildCardMetadataLine(result);
         LinkedGuidePreview linkedPreview = resolveLinkedGuidePreview(result);
-        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide() ? "Guide connection" : null;
+        String linkedLabel = linkedPreview != null && linkedPreview.hasTargetGuide()
+            ? buildLinkedGuideChipLabel()
+            : null;
         String linkedDescription = linkedPreview != null && linkedPreview.hasTargetGuide()
             ? buildLinkedGuideOpenDescription(buildLinkedGuidePreviewLabel(linkedPreview))
             : null;
@@ -525,7 +530,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
             guideIdLabel,
             metadataLine,
             showContinueThreadChip,
-            "Continue conversation",
+            "Continue",
             showContinueThreadChip ? buildContinueThreadContentDescription(result) : continueConversationContentDescription(""),
             linkedLabel,
             linkedDescription
@@ -537,7 +542,7 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
     }
 
     static String buildRankLabelForTest(int position) {
-        return "#" + Math.max(1, position + 1);
+        return Integer.toString(tabletScoreForPosition(position));
     }
 
     static String buildTabletScoreLabelForTest(int position) {
@@ -577,7 +582,11 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (!cleanedGuideId.isEmpty()) {
             return cleanedGuideId;
         }
-        return buildRankLabelForTest(position);
+        return buildOrdinalRankLabel(position);
+    }
+
+    private static String buildOrdinalRankLabel(int position) {
+        return "#" + Math.max(1, position + 1);
     }
 
     static String buildTabletAttributeLineForTest(String category, String contentRole, String timeHorizon) {
@@ -664,12 +673,12 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
         if (result == null) {
             return "";
         }
-        String section = cleanDisplayText(result.sectionHeading, 64);
+        String section = cleanDisplayText(result.sectionHeading, 46);
         if (!section.isEmpty()) {
             return section;
         }
-        String subtitle = cleanDisplayText(result.subtitle, 64);
-        String guideId = cleanDisplayText(result.guideId, 40);
+        String subtitle = cleanDisplayText(result.subtitle, 46);
+        String guideId = cleanDisplayText(result.guideId, 32);
         if (!subtitle.isEmpty() && !subtitle.equalsIgnoreCase(guideId)) {
             return subtitle;
         }
@@ -693,13 +702,21 @@ public final class SearchResultAdapter extends RecyclerView.Adapter<SearchResult
 
     private String buildCardSnippet(SearchResult result) {
         int maxLen = isRichTabletCard(inflater.getContext())
-            ? 190
-            : (isLandscapePhoneCard(inflater.getContext()) ? 220 : (isSmallPhonePortraitCard(inflater.getContext()) ? 150 : 260));
+            ? 170
+            : (isLandscapePhoneCard(inflater.getContext()) ? 180 : (isSmallPhonePortraitCard(inflater.getContext()) ? 126 : 220));
         String snippet = cleanDisplayText(result == null ? null : result.snippet, maxLen);
         if (!snippet.isEmpty()) {
             return snippet;
         }
         return cleanDisplayText(result == null ? null : result.body, maxLen);
+    }
+
+    static String buildLinkedGuideChipLabelForTest() {
+        return buildLinkedGuideChipLabel();
+    }
+
+    private static String buildLinkedGuideChipLabel() {
+        return "Guide";
     }
 
     private int colorForCategory(String category) {

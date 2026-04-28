@@ -1,14 +1,18 @@
 package com.senku.mobile;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -135,92 +139,167 @@ final class DetailThreadHistoryRenderer {
         if (turn == null || container == null) {
             return;
         }
-        container.addView(buildHistoryBubble(
-            turn.question,
-            buildTurnLabel(turnNumber, true, turn, previousAnchorGuideId),
-            true,
-            container,
-            state,
-            inlineTranscriptBubble
-        ));
+        LinearLayout turnRow = buildTurnRow(container, state, inlineTranscriptBubble);
+        turnRow.addView(buildMetaLine(buildTurnLabel(turnNumber, true, turn, previousAnchorGuideId), true));
+        turnRow.addView(buildBodyLine(turn.question, true, inlineTranscriptBubble, state.utilityRail && !inlineTranscriptBubble));
+
         String answerSummary = safe(turn.answerSummary).trim();
         if (answerSummary.isEmpty()) {
+            container.addView(turnRow);
             return;
         }
-        LinearLayout answerBubble = buildHistoryBubble(
+        turnRow.addView(buildAnswerMetaRow(buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId), statusForTurn(turn)));
+        turnRow.addView(buildBodyLine(
             compactThreadAnswer(answerSummary, state.utilityRail, answerFormatter),
-            buildTurnLabel(turnNumber, false, turn, previousAnchorGuideId),
             false,
-            container,
-            state,
-            inlineTranscriptBubble
-        );
+            inlineTranscriptBubble,
+            state.utilityRail && !inlineTranscriptBubble
+        ));
+
+        List<String> guideIds = guideIdsForTurn(turn);
+        if (!guideIds.isEmpty()) {
+            turnRow.addView(buildGuideChipRow(guideIds));
+        }
         if (includeSourceSummary) {
             String sourceSummary = buildCompactGuideSummary(turn);
             if (!sourceSummary.isEmpty()) {
-                answerBubble.addView(buildMutedLine(sourceSummary));
+                turnRow.addView(buildMutedLine(sourceSummary));
             }
         }
-        container.addView(answerBubble);
+        container.addView(turnRow);
     }
 
-    private LinearLayout buildHistoryBubble(
-        String text,
-        String labelText,
-        boolean userTurn,
+    private LinearLayout buildTurnRow(
         LinearLayout container,
         State state,
         boolean inlineTranscriptBubble
     ) {
-        LinearLayout bubble = new LinearLayout(context);
-        bubble.setOrientation(LinearLayout.VERTICAL);
-        bubble.setBackgroundResource(userTurn ? R.drawable.bg_history_card_question : R.drawable.bg_history_card);
-        boolean railBubble = state.utilityRail && !inlineTranscriptBubble;
-        int bubblePadH = railBubble ? dp(10) : dp(14);
-        int bubblePadV = railBubble ? dp(8) : dp(12);
-        bubble.setPadding(bubblePadH, bubblePadV, bubblePadH, bubblePadV);
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.VERTICAL);
+        boolean railRow = state.utilityRail && !inlineTranscriptBubble;
+        int padH = railRow ? dp(12) : dp(16);
+        int padTop = container != null && container.getChildCount() > 0 ? (railRow ? dp(14) : dp(18)) : dp(2);
+        int padBottom = railRow ? dp(12) : dp(18);
+        row.setPadding(padH, padTop, padH, padBottom);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             state.wideLayout ? state.bubbleWidthPx : ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        if (userTurn) {
-            params.setMarginStart(railBubble ? dp(56) : dp(40));
-        } else {
-            params.setMarginEnd(railBubble ? dp(56) : dp(40));
-        }
+        row.setLayoutParams(params);
         if (container != null && container.getChildCount() > 0) {
-            params.topMargin = railBubble ? dp(4) : dp(8);
+            row.addView(buildDivider());
         }
-        bubble.setLayoutParams(params);
+        return row;
+    }
 
+    private TextView buildMetaLine(String labelText, boolean userTurn) {
         TextView label = new TextView(context);
         label.setText(labelText);
         label.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        label.setTextColor(context.getColor(R.color.senku_text_muted_light));
-        label.setBackgroundResource(R.drawable.bg_status_pill);
-        label.setPadding(dp(8), dp(4), dp(8), dp(4));
-        bubble.addView(label);
+        label.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_2 : R.color.senku_rev03_accent));
+        label.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
+        label.setTextSize(12);
+        label.setSingleLine(true);
+        label.setEllipsize(TextUtils.TruncateAt.END);
+        label.setPadding(0, 0, 0, dp(8));
+        return label;
+    }
 
+    private TextView buildBodyLine(String text, boolean userTurn, boolean inlineTranscriptBubble, boolean railBubble) {
         TextView body = new TextView(context);
         body.setText(text);
-        body.setTextAppearance(context, userTurn ? android.R.style.TextAppearance_Medium : android.R.style.TextAppearance_Small);
-        body.setTextColor(context.getColor(R.color.senku_text_light));
-        body.setLineSpacing(0f, 1.1f);
-        body.setPadding(0, dp(6), 0, 0);
+        body.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+        body.setTextColor(context.getColor(userTurn ? R.color.senku_rev03_ink_0 : R.color.senku_text_light));
+        body.setTextSize(userTurn ? (railBubble ? 19 : 21) : (inlineTranscriptBubble ? 20 : 18));
+        body.setLineSpacing(0f, userTurn ? 1.02f : 1.18f);
+        body.setPadding(0, 0, 0, userTurn ? dp(16) : dp(8));
         if (!userTurn && railBubble) {
             body.setMaxLines(5);
             body.setEllipsize(TextUtils.TruncateAt.END);
         }
-        bubble.addView(body);
-        return bubble;
+        return body;
+    }
+
+    private LinearLayout buildAnswerMetaRow(String labelText, String status) {
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, 0, 0, dp(8));
+
+        TextView label = buildMetaLine(labelText, false);
+        label.setPadding(0, 0, dp(8), 0);
+        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        row.addView(label, labelParams);
+
+        String resolvedStatus = safe(status).trim();
+        if (!resolvedStatus.isEmpty()) {
+            TextView statusLabel = new TextView(context);
+            statusLabel.setText(resolvedStatus.toUpperCase(Locale.US));
+            statusLabel.setTextAppearance(context, android.R.style.TextAppearance_Small);
+            statusLabel.setTextColor(context.getColor(statusColorRes(resolvedStatus)));
+            statusLabel.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
+            statusLabel.setTextSize(12);
+            statusLabel.setSingleLine(true);
+            row.addView(statusLabel);
+        }
+        return row;
+    }
+
+    private LinearLayout buildGuideChipRow(List<String> guideIds) {
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setPadding(0, dp(2), 0, 0);
+        for (String guideId : guideIds) {
+            String resolvedGuideId = safe(guideId).trim();
+            if (resolvedGuideId.isEmpty()) {
+                continue;
+            }
+            TextView chip = new TextView(context);
+            chip.setText(resolvedGuideId);
+            chip.setTextAppearance(context, android.R.style.TextAppearance_Small);
+            chip.setTextColor(context.getColor(R.color.senku_rev03_ink_1));
+            chip.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
+            chip.setTextSize(12);
+            chip.setSingleLine(true);
+            chip.setBackground(buildChipBackground());
+            chip.setPadding(dp(10), dp(4), dp(10), dp(4));
+            LinearLayout.LayoutParams chipParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            chipParams.setMarginEnd(dp(8));
+            row.addView(chip, chipParams);
+        }
+        return row;
+    }
+
+    private View buildDivider() {
+        View divider = new View(context);
+        divider.setBackgroundColor(context.getColor(R.color.senku_rev03_hairline));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            Math.max(1, dp(1))
+        );
+        params.setMargins(0, 0, 0, dp(18));
+        divider.setLayoutParams(params);
+        return divider;
+    }
+
+    private GradientDrawable buildChipBackground() {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(context.getColor(android.R.color.transparent));
+        drawable.setStroke(Math.max(1, dp(1)), context.getColor(R.color.senku_rev03_hairline_strong));
+        drawable.setCornerRadius(dp(14));
+        return drawable;
     }
 
     private TextView buildMutedLine(String text) {
         TextView line = new TextView(context);
         line.setText(text);
         line.setTextAppearance(context, android.R.style.TextAppearance_Small);
-        line.setTextColor(context.getColor(R.color.senku_text_muted_light));
+        line.setTextColor(context.getColor(R.color.senku_rev03_ink_2));
+        line.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
+        line.setTextSize(12);
         line.setPadding(0, dp(8), 0, 0);
         return line;
     }
@@ -232,22 +311,19 @@ final class DetailThreadHistoryRenderer {
         String previousAnchorGuideId
     ) {
         int safeTurnNumber = Math.max(1, turnNumber);
+        String time = timeForTurn(turn);
         if (userTurn) {
-            return "Q" + safeTurnNumber + " · FIELD QUESTION";
+            return "Q" + safeTurnNumber + time + " - FIELD QUESTION";
         }
         String anchorGuideId = sessionFormatter.primaryGuideIdForTurn(turn);
-        StringBuilder builder = new StringBuilder("A").append(safeTurnNumber);
+        StringBuilder builder = new StringBuilder("A").append(safeTurnNumber).append(time);
         if (!anchorGuideId.isEmpty()) {
-            builder.append(" · ANCHOR ");
+            builder.append(" - ANCHOR ");
             String previous = safe(previousAnchorGuideId).trim();
             if (!previous.isEmpty() && !previous.equals(anchorGuideId)) {
                 builder.append(previous).append(" -> ");
             }
             builder.append(anchorGuideId);
-        }
-        String status = statusForTurn(turn);
-        if (!status.isEmpty()) {
-            builder.append(" · ").append(status.toUpperCase(Locale.US));
         }
         return builder.toString();
     }
@@ -313,6 +389,24 @@ final class DetailThreadHistoryRenderer {
             return "source-backed";
         }
         return safe(turn.answerSummary).trim().isEmpty() ? "" : "ready";
+    }
+
+    private String timeForTurn(SessionMemory.TurnSnapshot turn) {
+        if (turn == null || turn.recordedAtEpochMs <= 0L) {
+            return "";
+        }
+        return " - " + new SimpleDateFormat("HH:mm", Locale.US).format(new Date(turn.recordedAtEpochMs));
+    }
+
+    private static int statusColorRes(String status) {
+        String resolvedStatus = safe(status).trim().toLowerCase(Locale.US);
+        if ("reviewed".equals(resolvedStatus) || "source-backed".equals(resolvedStatus)) {
+            return R.color.senku_rev03_ok;
+        }
+        if ("ready".equals(resolvedStatus)) {
+            return R.color.senku_rev03_accent;
+        }
+        return R.color.senku_rev03_warn;
     }
 
     private int dp(int value) {

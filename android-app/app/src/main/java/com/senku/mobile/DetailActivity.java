@@ -3873,7 +3873,14 @@ public final class DetailActivity extends AppCompatActivity {
                 return;
             }
             View target = null;
-            if (showUtilityRail()
+            boolean landscapeSourceRail = shouldUseLandscapePhoneSourceRail(answerMode, isLandscapePhoneLayout())
+                && sourcesPanel != null
+                && sourcesPanel.getVisibility() == View.VISIBLE;
+            if (landscapeSourceRail && answerBubble != null && answerBubble.getVisibility() == View.VISIBLE) {
+                target = answerBubble;
+            }
+            if (target == null
+                && showUtilityRail()
                 && inlineThreadContainer != null
                 && inlineThreadContainer.getVisibility() == View.VISIBLE
                 && inlineThreadContainer.getChildCount() > 0) {
@@ -3897,7 +3904,8 @@ public final class DetailActivity extends AppCompatActivity {
             int contentHeight = detailScroll.getChildCount() > 0
                 ? detailScroll.getChildAt(0).getHeight() : 0;
             int maxScroll = Math.max(0, contentHeight - detailScroll.getHeight());
-            int targetScrollY = Math.max(0, Math.min(topOffset - dp(12), maxScroll));
+            int topInset = landscapeSourceRail ? dp(172) : dp(12);
+            int targetScrollY = Math.max(0, Math.min(topOffset - topInset, maxScroll));
             detailScroll.smoothScrollTo(0, targetScrollY);
         }));
     }

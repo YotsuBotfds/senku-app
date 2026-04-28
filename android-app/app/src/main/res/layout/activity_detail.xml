@@ -508,10 +508,11 @@
                             android:id="@+id/detail_body"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:lineSpacingExtra="5dp"
+                            android:layout_marginStart="0dp"
+                            android:fontFamily="serif"
+                            android:lineSpacingExtra="4dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textColor="@color/senku_text_light"
+                            android:textColor="@color/senku_rev03_paper_ink"
                             android:textIsSelectable="true" />
                     </LinearLayout>
 
@@ -762,7 +763,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:background="@drawable/bg_provenance_panel"
+                    android:background="@drawable/bg_detail_guide_paper_panel"
                     android:orientation="vertical"
                     android:padding="12dp"
                     android:visibility="gone">
@@ -771,14 +772,14 @@
                         android:id="@+id/detail_guide_return_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_detail_section_anchor"
+                        android:background="@drawable/bg_detail_guide_paper_section_label"
                         android:paddingStart="10dp"
                         android:paddingTop="5dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="5dp"
                         android:text="@string/detail_active_guide_context_title"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/senku_text_light"
+                        android:textColor="@color/senku_rev03_paper_ink_muted"
                         android:textStyle="bold" />
 
                     <TextView
@@ -789,7 +790,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/senku_text_light"
+                        android:textColor="@color/senku_rev03_paper_ink"
                         android:textStyle="bold"
                         android:visibility="gone" />
 
@@ -800,17 +801,17 @@
                         android:layout_marginTop="8dp"
                         android:lineSpacingExtra="2dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_text_muted_light" />
+                        android:textColor="@color/senku_rev03_paper_ink_muted" />
 
                     <Button
                         android:id="@+id/detail_guide_return_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:background="@drawable/bg_source_link"
+                        android:background="@drawable/bg_detail_guide_paper_link_row"
                         android:text="@string/detail_back"
                         android:textAllCaps="false"
-                        android:textColor="@color/senku_text_light" />
+                        android:textColor="@color/senku_rev03_paper_ink" />
                 </LinearLayout>
 
                 <TextView
@@ -841,7 +842,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_surface_panel"
+                    android:background="@drawable/bg_detail_guide_paper_panel"
                     android:clipToOutline="true"
                     android:orientation="vertical"
                     android:padding="10dp"
@@ -851,14 +852,14 @@
                         android:id="@+id/detail_active_guide_context_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_detail_section_anchor"
+                        android:background="@drawable/bg_detail_guide_paper_section_label"
                         android:paddingStart="10dp"
                         android:paddingTop="5dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="5dp"
                         android:text="@string/detail_active_guide_context_title"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/senku_text_light"
+                        android:textColor="@color/senku_rev03_paper_ink_muted"
                         android:textStyle="bold" />
 
                     <TextView
@@ -869,7 +870,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/senku_text_light"
+                        android:textColor="@color/senku_rev03_paper_ink"
                         android:textStyle="bold" />
 
                     <TextView
@@ -882,7 +883,7 @@
                         android:maxLines="4"
                         android:text="@string/detail_active_guide_context_body_default"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_text_muted_light" />
+                        android:textColor="@color/senku_rev03_paper_ink_muted" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -897,7 +898,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_surface_panel"
+                    android:background="@drawable/bg_detail_guide_paper_panel"
                     android:clipToOutline="true"
                     android:orientation="vertical"
                     android:padding="10dp"
@@ -907,14 +908,14 @@
                         android:id="@+id/detail_related_guide_preview_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_detail_section_anchor"
+                        android:background="@drawable/bg_detail_guide_paper_section_label"
                         android:paddingStart="10dp"
                         android:paddingTop="5dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="5dp"
                         android:text="@string/detail_related_guides_preview_title"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/senku_text_light"
+                        android:textColor="@color/senku_rev03_paper_ink_muted"
                         android:textStyle="bold" />
 
                     <TextView
@@ -924,7 +925,7 @@
                         android:layout_marginTop="4dp"
                         android:text="@string/detail_related_guides_preview_caption"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_text_muted_light" />
+                        android:textColor="@color/senku_rev03_paper_ink_muted" />
 
                     <TextView
                         android:id="@+id/detail_related_guide_preview_meta"
@@ -934,7 +935,7 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/senku_text_light"
+                        android:textColor="@color/senku_rev03_paper_ink"
                         android:textStyle="bold" />
 
                     <TextView
@@ -947,7 +948,7 @@
                         android:maxLines="5"
                         android:text="@string/detail_related_guides_preview_loading"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/senku_text_light" />
+                        android:textColor="@color/senku_rev03_paper_ink" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -959,10 +960,10 @@
                             android:id="@+id/detail_related_guide_preview_toggle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_source_link"
+                            android:background="@drawable/bg_detail_guide_paper_link_row"
                             android:text="@string/detail_provenance_show_more"
                             android:textAllCaps="false"
-                            android:textColor="@color/senku_text_light"
+                            android:textColor="@color/senku_rev03_paper_ink"
                             android:visibility="gone" />
 
                         <Button
@@ -970,10 +971,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:background="@drawable/bg_source_link"
+                            android:background="@drawable/bg_detail_guide_paper_link_row"
                             android:text="@string/detail_related_guides_preview_open"
                             android:textAllCaps="false"
-                            android:textColor="@color/senku_text_light" />
+                            android:textColor="@color/senku_rev03_paper_ink" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

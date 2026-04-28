@@ -5021,8 +5021,10 @@ public final class PromptHarnessSmokeTest {
             "phone-landscape split answer should use source-guide rail wording, not a guide destination substitute",
             sourcesTitle != null && containsAny(safe(String.valueOf(sourcesTitle.getText())), activity.getString(R.string.detail_sources_title))
         );
+        settlePhoneLandscapeSplitProofViewport(activity, answerBubble, sourcesPanel);
         Assert.assertTrue(
-            "phone-landscape split answer should place the answer column to the left of the source rail",
+            "phone-landscape split answer should place the answer column to the left of the source rail; "
+                + describeVisibleRelation(answerBubble, sourcesPanel),
             isVisiblyLeftOf(answerBubble, sourcesPanel)
         );
     }
@@ -5569,6 +5571,46 @@ public final class PromptHarnessSmokeTest {
             && rightBounds.width() > 0
             && leftBounds.left < rightBounds.left
             && leftBounds.right <= rightBounds.left;
+    }
+
+    private void settlePhoneLandscapeSplitProofViewport(Activity activity, View answerColumn, View sourceRail) {
+        if (activity == null || answerColumn == null || sourceRail == null) {
+            return;
+        }
+        ScrollView scroll = activity.findViewById(R.id.detail_scroll);
+        if (scroll == null) {
+            return;
+        }
+        Rect sourceBounds = new Rect();
+        if (sourceRail.getGlobalVisibleRect(sourceBounds)) {
+            return;
+        }
+        Rect rawSourceBounds = new Rect();
+        Rect answerBounds = new Rect();
+        sourceRail.getGlobalVisibleRect(rawSourceBounds);
+        answerColumn.getGlobalVisibleRect(answerBounds);
+        if (rawSourceBounds.bottom >= 0 || answerBounds.top <= 0) {
+            return;
+        }
+        int nudgePx = Math.round(120f * activity.getResources().getDisplayMetrics().density);
+        scroll.scrollTo(0, Math.max(0, scroll.getScrollY() - nudgePx));
+    }
+
+    private String describeVisibleRelation(View left, View right) {
+        return "left=" + describeVisibleBounds(left) + ", right=" + describeVisibleBounds(right);
+    }
+
+    private String describeVisibleBounds(View view) {
+        if (view == null) {
+            return "null";
+        }
+        Rect bounds = new Rect();
+        boolean visibleRect = view.getGlobalVisibleRect(bounds);
+        return "id=" + view.getId()
+            + ", visible=" + isEffectivelyVisible(view)
+            + ", globalVisible=" + visibleRect
+            + ", bounds=" + bounds.toShortString()
+            + ", width=" + bounds.width();
     }
 
     private boolean isResumedLandscapePhoneDetailActivity() {

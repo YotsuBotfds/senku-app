@@ -163,6 +163,40 @@ public final class MainActivityHomeChromeTest {
         assertEquals(0, MainActivity.reviewHomeCategoryCountForTest("communications"));
     }
 
+    @Test
+    public void manualHomeCategoryLabelsStayCompactForPhoneGrid() {
+        assertEquals("Shelter", MainActivity.manualHomeCategoryLabel("shelter"));
+        assertEquals("Water", MainActivity.manualHomeCategoryLabel("water"));
+        assertEquals("Fire", MainActivity.manualHomeCategoryLabel("fire"));
+        assertEquals("Food", MainActivity.manualHomeCategoryLabel("food"));
+        assertEquals("Medicine", MainActivity.manualHomeCategoryLabel("medicine"));
+        assertEquals("Tools", MainActivity.manualHomeCategoryLabel("tools"));
+        assertEquals("Communications", MainActivity.manualHomeCategoryLabel("communications"));
+    }
+
+    @Test
+    public void manualHomeCategoryShelfReservesTwoRowsWithoutClipping() {
+        assertEquals(0, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(0));
+        assertEquals(64, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(3));
+        assertEquals(136, MainActivity.resolveManualHomeCategoryShelfMinimumHeightDp(6));
+    }
+
+    @Test
+    public void reviewSearchLatencyOnlyAppliesToTargetMockQuery() {
+        assertEquals(
+            "SEARCH  rain shelter - 4 results - 12ms",
+            MainActivity.appendReviewSearchLatency("SEARCH  rain shelter - 4 results", "rain shelter", true)
+        );
+        assertEquals(
+            "SEARCH  rain shelter - 4 results",
+            MainActivity.appendReviewSearchLatency("SEARCH  rain shelter - 4 results", "rain shelter", false)
+        );
+        assertEquals(
+            "SEARCH  water - 4 results",
+            MainActivity.appendReviewSearchLatency("SEARCH  water - 4 results", "water", true)
+        );
+    }
+
     private static SearchResult guide(String title, String category, String topicTags) {
         return new SearchResult(
             title,
